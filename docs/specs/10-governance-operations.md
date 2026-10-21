@@ -39,7 +39,7 @@ Summary: built 8, not built 8, partial 11.
 | GOV-011 | P0 | partial | Admin removal with reason; notice and challenge not built |
 | GOV-012 | P1 | not built | Inactivity rule not built |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
-| GOV-014 | P0 | partial | Statement and decision with reasons; response period and deadlines not built |
+| GOV-014 | P0 | partial | Statement and decision with reasons; response period built (network policy); decision-target deadline not built |
 | GOV-015 | P0 | built | Reversal and adjustment are new transactions; originals unchanged |
 | GOV-016 | P0 | not built | Challenges and appeals not built |
 | GOV-017 | P1 | built | No dispute upload route |

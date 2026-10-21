@@ -11,8 +11,8 @@ import (
 // Read notifications are purged after the retention period; unread ones stay.
 func TestPurgeReadNotifications(t *testing.T) {
 	w := newWorld(t, nil)
-	w.propose(w.a, w.bM, service.ProposerPays, 100) // notifies ben
-	w.propose(w.b, w.aM, service.ProposerPays, 100) // notifies ana
+	tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 100)) // notifies ben
+	tu.Must(w.propose(w.b, w.aM, service.ProposerPays, 100)) // notifies ana
 	tu.Must(w.Svc.MarkNotificationsRead(w.Ctx, w.b, w.net.ID, nil))
 	w.Clock.Advance((service.NotificationRetentionDays - 1) * 24 * time.Hour)
 	if rep := tu.Must(w.Svc.Purge(w.Ctx)); rep.Notifications != 0 {

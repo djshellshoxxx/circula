@@ -176,9 +176,9 @@ Each has a timeline. Only one dispute can be open on a trade at a time.
 
 5. **The other person can respond.** The person who did not open the dispute sees **Add your response** on the dispute
    page (also listed under *Waiting for your action* in your Inbox). One response of up to 2000 characters; the reviewer
-   and the opener can read it. You cannot respond once the dispute is decided or withdrawn.
-6. **Ask for a re-review.** After a decision, either person in the trade can use **Ask for a re-review** once, within 14
-   days of the decision, giving a reason (up to 500 characters). A different reviewer or administrator (not a party, not
+   and the opener can read it. A reviewer normally waits for your response or for the network's response period (7 days by default) before deciding, unless they record a reason for not waiting. You cannot respond once the dispute is decided or withdrawn.
+6. **Ask for a re-review.** After a decision, either person in the trade can use **Ask for a re-review** once, within the
+   network's re-review window (14 days by default) of the decision, giving a reason (up to 500 characters). A different reviewer or administrator (not a party, not
    the first reviewer) records the outcome: the original decision stands, or it is upheld or partly upheld with a further
    reversal. The original decision is kept; the re-review is shown next to it.
 
@@ -226,7 +226,8 @@ cannot be used.
 * **Announcements.** Notices from administrators appear at the top of Home, from their start time.
 * **Time zone** (`/account/time-zone`, link under your name). Enter an IANA name such as `Europe/Berlin`; empty means UTC.
   Pages show times in that zone. The API and the audit log stay in UTC.
-* **Credit-limit notice.** When your balance has used 80 percent or more of your credit limit, a notice appears on Home
+* **Notices about administrator actions.** If an administrator suspends or reinstates you, ends your membership, changes your role or credit limit, adjusts your balance or reverses a trade you were in, you get a notification. Read notifications are deleted after 90 days.
+* **Credit-limit notice.** When your balance has used the network's warning share (80 percent by default) or more of your credit limit, a notice appears on Home
   and the propose form, and you get a notification (at most one a week). A trade that would pass the limit is refused.
 * **Read-only network.** If a network fails its ledger integrity check it is frozen: you see "Network read-only"
   (status 423) when you try to change anything. Balances and history can still be viewed. Other networks are not
@@ -239,10 +240,8 @@ cannot be used.
 | Feature | State in this build |
 |---|---|
 | Statements and reports for members | Not present. Use **Download my transactions** on History. (Member reports above are abuse reports, not statements.) |
-| Dispute response period | The other party may respond, but a reviewer can record a decision without waiting for a response or for a period to end. |
 | E-mail or push notifications | Not implemented; notifications show only in the Inbox. |
 | Messages between members | Not present. |
 | Leaving a network, deleting an account | No web page for leaving (JSON API only). Erasure of personal data after departure exists; the account itself is not deleted. |
 | Password recovery by e-mail | None; Circula keeps no e-mail address. Use recovery codes or an administrator. |
 | Hardware keys / passkeys | Not present; the second factor is an authenticator app (TOTP). |
-| Per-network limit-warning setting | The warning threshold is fixed at 80 percent; the administrator's "Limit warning (days)" field does not change it. |

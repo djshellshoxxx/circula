@@ -29,7 +29,7 @@ Summary: decided 2, deferred 1, open 20.
 | DEC-009 | - | open, not built | No recovery channel and no mail |
 | DEC-010 | - | open, partly built | Retain default and settle-to-zero rule built; counsel review open |
 | DEC-011 | - | open, partly built | Grant off by default; approval or invite requirement and caps not built |
-| DEC-012 | - | open, not built | Dispute response period and timelines not built |
+| DEC-012 | - | partly built | Response period is a network policy (default 7 days) and gates decisions; decision-target and appeal timelines not built |
 | DEC-013 | - | open, not built | Dual control not built |
 | DEC-014 | - | open, not built | Break-glass not built |
 | DEC-015 | - | open, partly built | Unkeyed hash chain built; keyed or external publication deferred |

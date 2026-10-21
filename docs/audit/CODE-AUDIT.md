@@ -209,8 +209,8 @@ Legend: P0 = MVP-blocking, P1 = MVP. "Partial" = exists in service but missing a
 | FR-067 admin overview | P1 | built | `Service.AdminOverview` and the web home: pending members, stale proposals (48 h), open and posting-pending disputes, members at or beyond limit, invitations ending within 72 h, last check; counted on read |
 | FR-068 network closure | P1 | partial | `CloseNetwork` has no UI/API caller |
 | FR-024 report listing/member | P1 | built | service, API, web; reporter visible to administrators only |
-| FR-038 notifications and inbox | P1 | built | in-app only (email is out of scope, OQ-VIS-4); retention purge of old read entries not built |
-| FR-076 response by other party; FR-078 one re-review | P1 | built | response period policy not built (OQ-FR-2): a decision does not wait for a response; re-review window is a 14-day constant |
+| FR-038 notifications and inbox | P1 | built | in-app only (email is out of scope, OQ-VIS-4); read entries are purged after 90 days (`Purge`) |
+| FR-076 response by other party; FR-078 one re-review | P1 | built | response period, re-review window and limit-warning percent are network policy fields; a decision waits for a response, the period or a reviewer waiver |
 | API-010 `admin` token scope | P1 | 501 | `api/h_tokens.go:63` |
 | API-064 announcements | P1 | built | list, create, delete for administrators; member read; shown on the dashboard |
 | API-077/078 OpenAPI + compatibility fixtures | P1 | not built | no OpenAPI file in tree |
