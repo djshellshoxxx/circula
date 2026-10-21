@@ -105,7 +105,7 @@ func lockFor(failures int) time.Duration {
 	return d
 }
 
-// Login verifies credentials and returns an opaque bearer session token (shown
+// LoginStep verifies credentials and returns an opaque bearer session token (shown
 // once; only its SHA-256 is stored). Unknown logins and wrong passwords return
 // the identical ErrUnauthenticated and do equal hashing work (SEC-005). After
 // five consecutive failures further attempts for that login are refused with
@@ -120,11 +120,15 @@ func lockFor(failures int) time.Duration {
 // concurrency. Success deletes the counter. Malformed logins (validLogin) are
 // refused uniformly without touching the throttle table, so its keys are
 // bounded by valid login strings (and purged by Purge).
-func (s *Service) Login(ctx context.Context, login, password string) (string, *domain.Person, error) {
+//
+// A person with a second factor gets LoginResult.MFAChallenge instead of a
+// token (SEC-007); CompleteMFA then issues the session. Login (mfa_login.go)
+// is the password-only wrapper that refuses MFA persons.
+func (s *Service) LoginStep(ctx context.Context, login, password string) (*LoginResult, error) {
 	login = normalizeLogin(login)
 	if validLogin(login) != nil {
 		verifyPassword(password, s.dummyHash) // equalise effort; nothing is stored
-		return "", nil, domain.ErrUnauthenticated
+		return nil, domain.ErrUnauthenticated
 	}
 	var person *domain.Person
 	var hash string
@@ -151,7 +155,7 @@ func (s *Service) Login(ctx context.Context, login, password string) (string, *d
 		return nil
 	})
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 	ok := false
 	if person != nil {
@@ -160,24 +164,32 @@ func (s *Service) Login(ctx context.Context, login, password string) (string, *d
 		verifyPassword(password, s.dummyHash) // equalise effort
 	}
 	if !ok {
-		return "", nil, domain.ErrUnauthenticated // the attempt was counted above
+		return nil, domain.ErrUnauthenticated // the attempt was counted above
 	}
 	token, err := randToken(32)
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
 	now := s.now()
+	var challenge string
 	err = s.update(ctx, func(tx store.Tx) error {
 		if err := tx.DeleteThrottle(login); err != nil {
+			return err
+		}
+		if c, ok, err := s.mfaChallengeIfEnabled(tx, person.ID); err != nil || ok {
+			challenge = c
 			return err
 		}
 		return tx.InsertSession(&domain.Session{IDHash: hashToken(token), PersonID: person.ID,
 			CreatedAt: now, LastSeenAt: now, ExpiresAt: now.Add(s.cfg.SessionMax)})
 	})
 	if err != nil {
-		return "", nil, err
+		return nil, err
 	}
-	return token, person, nil
+	if challenge != "" {
+		return &LoginResult{Person: person, MFAChallenge: challenge}, nil
+	}
+	return &LoginResult{Token: token, Person: person}, nil
 }
 
 func hashToken(t string) string {
@@ -247,6 +259,9 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 			return err
 		}
 		if err := tx.RevokeSessionsOf(actor.PersonID, s.now()); err != nil {
+			return err
+		}
+		if err := s.notify(tx, actor.PersonID, domain.NoticePasswordChanged, ""); err != nil {
 			return err
 		}
 		return s.auditPlatform(tx, actor, auditEntry{Action: domain.ActPasswordChanged,

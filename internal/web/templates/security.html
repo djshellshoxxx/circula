@@ -1,0 +1,29 @@
+{{define "content"}}
+<h2>Two-step sign-in</h2>
+{{if .D.MFA.Enabled}}
+  <p>Two-step sign-in is <strong>on</strong>. You have {{.D.MFA.RecoveryRemaining}} unused recovery code{{if ne .D.MFA.RecoveryRemaining 1}}s{{end}}.</p>
+  <h3>Replace recovery codes</h3>
+  <form method="post" action="/account/security/mfa/recovery" novalidate>
+    {{template "csrf" .}}
+    {{template "field" dict "P" . "Name" "code" "Label" "Code from your authenticator app" "Hint" "Older recovery codes stop working." "Auto" "one-time-code" "Mode" "numeric" "Max" "8" "Req" true}}
+    <div class="actions"><button type="submit">Make new recovery codes</button></div>
+  </form>
+  <h3>Turn off</h3>
+  <form method="post" action="/account/security/mfa/disable" novalidate>
+    {{template "csrf" .}}
+    {{template "field" dict "P" . "Name" "password" "Label" "Password" "Type" "password" "Auto" "current-password" "Req" true}}
+    {{template "field" dict "P" . "Name" "code" "Label" "Authenticator code or recovery code" "Auto" "one-time-code" "Max" "16" "Req" true}}
+    <div class="actions"><button type="submit" class="secondary">Turn off two-step sign-in</button></div>
+  </form>
+{{else}}
+  <p>Two-step sign-in is <strong>off</strong>. Turn it on to protect your account if your password is stolen. Administrators may be required to use it.</p>
+  <p><a href="/account/security/mfa/enrol">Turn on two-step sign-in</a></p>
+{{end}}
+
+<h2>Security notices</h2>
+{{if .D.Notices}}
+  {{if .D.Unseen}}<form method="post" action="/account/security/ack">{{template "csrf" .}}<p>{{.D.Unseen}} new. <button type="submit" class="secondary">Mark all as read</button></p></form>{{end}}
+  <ul class="rows">{{range .D.Notices}}<li><p>{{if .New}}<strong>New:</strong> {{end}}{{.Text}}{{if .Detail}} ({{.Detail}}){{end}}</p><p>{{time .When}}</p></li>{{end}}</ul>
+  <p>If you do not recognise a change, change your password and turn on two-step sign-in.</p>
+{{else}}<p>No security notices yet.</p>{{end}}
+{{end}}

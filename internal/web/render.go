@@ -49,6 +49,8 @@ type page struct {
 	// Session expiry warning (UX-030): Unix time and whether activity extends it.
 	ExpiresAt  int64
 	Extendable bool
+	// SecUnseen counts unacknowledged security notices (SEC-012), shown in the header.
+	SecUnseen int
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -158,6 +160,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		if at, ext, ok := s.expiry(r); ok {
 			p.ExpiresAt, p.Extendable = at, ext
 		}
+		s.secBanner(r, p)
 	}
 	if p.V == nil {
 		p.V = map[string]string{}

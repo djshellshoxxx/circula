@@ -12,6 +12,9 @@ type principal struct {
 	actor  domain.Actor
 	net    *domain.Network
 	member *domain.Member // nil for System actors
+	// mfaMissing: Config.RequireMFAForAdmins is on, the member is an
+	// administrator and has no second factor (enforced in requireAdmin).
+	mfaMissing bool
 }
 
 // open resolves actor + network. Anyone who is not a member of the network,
@@ -40,6 +43,13 @@ func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope doma
 		return nil, domain.NotFound("network")
 	}
 	p.member = m
+	if s.cfg.RequireMFAForAdmins && m.HasRole(domain.RoleAdmin) {
+		on, err := s.hasMFA(tx, actor.PersonID)
+		if err != nil {
+			return nil, err
+		}
+		p.mfaMissing = !on
+	}
 	return p, nil
 }
 
@@ -77,6 +87,9 @@ func (p *principal) requireAdmin() error {
 	}
 	if !p.member.HasRole(domain.RoleAdmin) {
 		return domain.Forbidden("administrator role required")
+	}
+	if p.mfaMissing {
+		return domain.Forbidden("mfa-enrolment-required")
 	}
 	return nil
 }

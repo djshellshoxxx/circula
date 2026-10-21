@@ -45,6 +45,9 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		SessionMax:     cfg.SessionMax,
 		IdempotencyTTL: cfg.IdempotencyTTL,
 		MinPasswordLen: cfg.MinPasswordLength,
+
+		RequireMFAForAdmins: cfg.RequireMFAAdmins,
+		SecretKey:           cfg.MFASecret,
 	})
 }
 

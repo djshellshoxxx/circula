@@ -50,6 +50,7 @@ var settingDefs = []settingDef{
 	{key: "session-idle", def: "720h", help: "idle session timeout (DEC-005)"},
 	{key: "session-max", def: "2160h", help: "absolute session lifetime (DEC-005)"},
 	{key: "idempotency-ttl", def: "168h", help: "retention of idempotency records"},
+	{key: "require-mfa-admins", def: "false", help: "network administrators must enrol a second factor before any administrator-only action (SEC-007, DEC-007)"},
 	{key: "min-password-length", def: "12", help: "minimum password length (SEC-002); not below 12"},
 	{key: "max-body-bytes", def: "1048576", help: "maximum request body size in bytes"},
 	{key: "request-timeout", def: "30s", help: "per-request deadline for API and UI routes"},
@@ -61,6 +62,7 @@ var settingDefs = []settingDef{
 	{key: "allow-insecure-http", def: "false", help: "permit a plain-http public-base-url on a non-loopback address (SEC-022); never for production"},
 	{key: "setup-secret-file", help: "file holding the one-time setup secret needed to create a network (FR-002); or env " + envPrefix + "SETUP_SECRET"},
 	{key: "metrics-token-file", help: "file holding a bearer token required for /metrics (SA-15); or env " + envPrefix + "METRICS_TOKEN"},
+	{key: "mfa-secret-file", help: "file holding the key that seals two-step sign-in secrets at rest (SEC-007); or env " + envPrefix + "MFA_SECRET"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 
@@ -71,6 +73,7 @@ var secretDefs = []struct{ name, fileKey string }{
 	{"setup-secret", "setup-secret-file"},
 	{"metrics-token", "metrics-token-file"},
 	{"backup-key", "backup-key-file"},
+	{"mfa-secret", "mfa-secret-file"},
 }
 
 // minSecretLen is the shortest accepted secret.
@@ -90,6 +93,7 @@ type Config struct {
 	SessionMax          time.Duration
 	IdempotencyTTL      time.Duration
 	MinPasswordLength   int
+	RequireMFAAdmins    bool
 	MaxBodyBytes        int64
 	RequestTimeout      time.Duration
 	LogLevel            slog.Level
@@ -102,6 +106,7 @@ type Config struct {
 	SetupSecret  string
 	MetricsToken string
 	BackupKey    []byte
+	MFASecret    []byte
 }
 
 // resolved is one effective setting value and where it came from.
@@ -318,6 +323,12 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		fail("log-format", "must be json or text")
 	}
 
+	if b, err := strconv.ParseBool(get("require-mfa-admins")); err != nil {
+		fail("require-mfa-admins", "must be true or false")
+	} else {
+		cfg.RequireMFAAdmins = b
+	}
+
 	if b, err := strconv.ParseBool(get("cookie-secure")); err != nil {
 		fail("cookie-secure", "must be true or false")
 	} else {
@@ -464,6 +475,8 @@ func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
 			cfg.MetricsToken = val
 		case "backup-key":
 			cfg.BackupKey = []byte(val)
+		case "mfa-secret":
+			cfg.MFASecret = []byte(val)
 		}
 	}
 	return errors.Join(errs...)
@@ -517,4 +530,5 @@ func writeSecretStatus(w io.Writer, cfg *Config) {
 	fmt.Fprintf(w, "setup-secret = %s\n", state(cfg.SetupSecret != ""))
 	fmt.Fprintf(w, "metrics-token = %s\n", state(cfg.MetricsToken != ""))
 	fmt.Fprintf(w, "backup-key = %s\n", state(len(cfg.BackupKey) > 0))
+	fmt.Fprintf(w, "mfa-secret = %s\n", state(len(cfg.MFASecret) > 0))
 }

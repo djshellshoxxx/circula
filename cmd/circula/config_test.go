@@ -24,6 +24,7 @@ var sampleValues = map[string]string{
 	"session-max":           "1000h",
 	"idempotency-ttl":       "48h",
 	"min-password-length":   "14",
+	"require-mfa-admins":    "true",
 	"max-body-bytes":        "2048",
 	"request-timeout":       "5s",
 	"log-level":             "debug",
@@ -35,6 +36,7 @@ var sampleValues = map[string]string{
 	"setup-secret-file":     "", // filled per test: a 0600 file
 	"metrics-token-file":    "",
 	"backup-key-file":       "",
+	"mfa-secret-file":       "",
 }
 
 // baseEnv returns a lookup that supplies the two required settings.

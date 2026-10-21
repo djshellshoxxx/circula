@@ -36,6 +36,15 @@ type Config struct {
 	// ExportsPerHour caps Export calls per member per network per rolling hour
 	// (SA-11). Zero selects 30; negative disables. System actors are exempt.
 	ExportsPerHour int
+
+	// SecretKey, when non-empty, seals TOTP seeds at rest with AES-256-GCM
+	// (key = SHA-256 of a domain label and SecretKey). Without it seeds are
+	// stored base32-encoded (SEC-007). Changing or losing the key makes sealed
+	// seeds unusable: affected people must re-enrol.
+	SecretKey []byte
+	// RequireMFAForAdmins makes every administrator-only operation fail with
+	// forbidden "mfa-enrolment-required" until that person has enabled a second factor.
+	RequireMFAForAdmins bool
 }
 
 // Service implements all use cases. It is safe for concurrent use.

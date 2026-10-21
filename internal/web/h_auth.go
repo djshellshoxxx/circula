@@ -51,7 +51,7 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		s.render(w, r, nil, "login", 429, p)
 		return
 	}
-	tok, _, err := s.svc.Login(r.Context(), r.PostFormValue("login"), r.PostFormValue("password"))
+	res, err := s.svc.LoginStep(r.Context(), r.PostFormValue("login"), r.PostFormValue("password"))
 	if err != nil {
 		if c := domain.CodeOf(err); c == domain.CodeValidation || c == domain.CodeUnauthenticated || c == domain.CodeRateLimited {
 			s.ipFail.fail(ip)
@@ -72,7 +72,11 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.acctFail.reset(acct)
-	s.startSession(w, r, tok)
+	if res.MFAChallenge != "" { // second factor enabled: no session until CompleteMFA (SEC-007)
+		s.renderMFAStep(w, r, 200, res.MFAChallenge, p.Next, "")
+		return
+	}
+	s.startSession(w, r, res.Token)
 	dest := p.Next
 	if dest == "" {
 		dest = "/"
