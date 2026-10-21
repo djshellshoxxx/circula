@@ -158,6 +158,10 @@ func (s *Service) proposeAdjustment(tx store.Tx, p *principal, target *domain.Me
 func (s *Service) postAdjustment(tx store.Tx, net *domain.Network, target *domain.Member, amount int64,
 	dir AdjustDirection, reason, createdBy, requestID string) (*domain.Transaction, error) {
 
+	if err := s.adminNotice(tx, net.ID, target.ID, NotifAdminAdjust, "An administrator adjusted your balance",
+		"An administrator posted an adjustment to your account. See your history for the amount.", "/history"); err != nil {
+		return nil, err
+	}
 	sys, err := tx.GetSystemAccount(net.ID)
 	if err != nil {
 		return nil, err

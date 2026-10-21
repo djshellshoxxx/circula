@@ -56,6 +56,10 @@ func (s *Service) ReverseTransaction(ctx context.Context, actor domain.Actor, ne
 			if err != nil {
 				return "", err
 			}
+			if err := s.notifyOthers(tx, netID, []string{orig.PayerMemberID, orig.PayeeMemberID}, p.memberID(), NotifAdminReversal,
+				"A trade was reversed by an administrator", "An administrator reversed all or part of a trade you were in. See your history.", "/trades/"+orig.ID); err != nil {
+				return "", err
+			}
 			return rev.ID, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActTxReversed, TargetType: "transaction",
 				TargetID: rev.ID, Reason: in.Reason, IdemRef: keyRef(in.IdempotencyKey),
 				Subjects: []string{orig.PayerMemberID, orig.PayeeMemberID},

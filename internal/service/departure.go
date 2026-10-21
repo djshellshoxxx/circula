@@ -83,6 +83,10 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 		at := domain.ActorMember
 		if adminAction {
 			at = domain.ActorAdmin
+			if err := s.adminNotice(tx, netID, target.ID, NotifAdminRemoved, "Your membership was ended",
+				"An administrator ended your membership. Your history stays available to you.", "/"); err != nil {
+				return err
+			}
 		}
 		if err := s.audit(tx, p, auditEntry{Type: at, Action: domain.ActMemberDeparted, TargetType: "member", TargetID: target.ID,
 			Reason: in.Reason, Subjects: []string{target.ID}, Before: map[string]any{"status": target.Status},
