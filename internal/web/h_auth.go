@@ -331,6 +331,14 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
+	// FR-012: join attempts are rate-limited per person and per address.
+	if !s.join.allow("p:"+c.actor.PersonID) || !s.join.allow("i:"+s.clientIP(r)) {
+		w.Header().Set("Retry-After", "600")
+		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r),
+			Summary: "Not sent. Too many join attempts. Wait ten minutes and try again. Nothing changed."}
+		s.render(w, r, nil, "joinnet", 429, p)
+		return
+	}
 	m, err := s.svc.JoinNetworkTerms(r.Context(), c.actor, info.ID, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
 		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r)}
