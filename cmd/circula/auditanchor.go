@@ -109,11 +109,11 @@ func writeAnchorFile(path string, a *auditAnchor) error {
 		return err
 	}
 	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, append(b, '\n'), 0o600); err != nil {
+	if err := os.WriteFile(tmp, append(b, '\n'), 0o600); err != nil { //nolint:gosec // G703: operator-supplied path
 		return err
 	}
-	if err := os.Rename(tmp, path); err != nil {
-		_ = os.Remove(tmp)
+	if err := os.Rename(tmp, path); err != nil { //nolint:gosec // G703: operator-supplied path
+		_ = os.Remove(tmp) //nolint:gosec // G703: operator-supplied path
 		return err
 	}
 	return nil
