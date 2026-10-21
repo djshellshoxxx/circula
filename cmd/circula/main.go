@@ -49,6 +49,10 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return cmdRestore(ctx, rest, stdout, stderr)
 	case "verify-ledger":
 		return cmdVerifyLedger(ctx, rest, stdout, stderr)
+	case "keygen":
+		return cmdKeygen(rest, stdout, stderr)
+	case "setup-reset":
+		return cmdSetupReset(ctx, rest, stdout, stderr)
 	case "admin":
 		return cmdAdmin(ctx, rest, stdout, stderr)
 	case "version", "--version":
@@ -74,6 +78,8 @@ commands:
   backup <dest>               write a verified online snapshot and manifest (file or directory)
   restore <backup-file>       restore a backup into the configured database (stop serve first)
   verify-ledger [-network X]  recompute ledger invariants (read-only except the recorded run)
+  setup-reset                 re-arm the one-time setup secret after it created a network (stop serve first)
+  keygen                      print a fresh random key for backup-encryption-key
   admin create-operator       create a person from --login; password from env or stdin
   version                     print version information
 

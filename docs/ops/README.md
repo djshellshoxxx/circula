@@ -50,8 +50,6 @@ owns the specification. Names of people are kept outside this repository.
 These are not implemented in the current `circula` build. Each one is a deliberate deferral or a missing service hook. Do not
 rely on them until the gap is closed and this list is updated.
 
-- **Backup encryption (OPS-019, SEC-028).** Backups are plain SQLite files with a SHA-256 manifest. Protect them with
-  filesystem permissions and encrypted storage until encryption is added.
 - **Restore audit event (OPS-020).** `restore` writes a local record in the backup directory (`restore-<time>.json`). The
   ledger has no restore event yet.
 - **Maintenance mode (OPS-024).** There is no command that refuses writes while the service stays up. Upgrades stop `serve`
