@@ -206,7 +206,7 @@ func (sf *settingsFlags) Resolve(env lookupEnv, forServe bool) (*Config, map[str
 // readConfigFile parses a JSON object whose keys are setting names. Unknown
 // keys are rejected so that typos cannot silently fall back to defaults.
 func readConfigFile(path string) (map[string]string, error) {
-	b, err := os.ReadFile(path)
+	b, err := os.ReadFile(path) //nolint:gosec // G703: operator-supplied config path
 	if err != nil {
 		return nil, fmt.Errorf("config file %s: %w", path, err)
 	}
@@ -523,7 +523,7 @@ func readSecretFile(path string) (string, error) {
 	if runtime.GOOS != "windows" && fi.Mode().Perm()&0o077 != 0 {
 		return "", fmt.Errorf("%s is readable by group or others (mode %o); chmod 600 it", path, fi.Mode().Perm())
 	}
-	b, err := os.ReadFile(path)
+	b, err := os.ReadFile(path) //nolint:gosec // G703: operator-supplied config path
 	if err != nil {
 		return "", err
 	}
