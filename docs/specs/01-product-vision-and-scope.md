@@ -29,7 +29,7 @@ Small communities (neighbourhoods, makerspaces, transition-town groups, cooperat
 2. **Spreadsheet and chat-group bookkeeping does not scale or build trust.** Informal ledgers are editable by whoever holds the file, lack consent records, drift out of balance, lose history when a coordinator leaves, and give no fair way to resolve a disagreement.
 3. **Generic payment and ledger tools do not fit.** They assume a national currency, assume a regulated intermediary, charge fees, or require identity checks and data collection that a small community neither wants nor needs. They also lack community-level rules: credit limits set by the group, dispute review by peers, balance visibility chosen by the group, and a process for members who leave owing or owed.
 
-Mutual credit addresses the first obstacle: a member who provides value receives a positive balance, a member who receives value takes a negative balance, and the sum across the network is always zero. What is missing is dependable, open, accessible software that enforces the accounting rules, leaves governance to the community, and avoids pretending to be money.
+Mutual credit addresses the first obstacle: a member who provides value receives a positive balance, a member who receives value takes a negative balance, and the sum across the network is always zero. Prior art shows recurring failure modes that the product must address rather than ignore: thin liquidity, persistent deficits with disenchanted creditors, volunteer-administrator burnout and key-person risk, hoarding, dormancy, and weak dispute processes (see [prior-art research note](../notes/research-prior-art-mutual-credit.md), section 2.4; some items there are marked unverified). What is missing is dependable, open, accessible software that enforces the accounting rules, leaves governance to the community, and avoids pretending to be money.
 
 ## 4. Vision
 
@@ -218,4 +218,4 @@ Internal:
 - [18 — Data export and portability](18-data-export-and-portability.md)
 - [19 — Legal and regulatory open questions](19-legal-and-regulatory-open-questions.md)
 
-External: WCAG 2.2, W3C Recommendation, <https://www.w3.org/TR/WCAG22/> (accessed 2026-10-21). Prior-art findings on existing mutual-credit systems, if available, are summarised in `../notes/research-prior-art-mutual-credit.md`.
+External: WCAG 2.2, W3C Recommendation, <https://www.w3.org/TR/WCAG22/> (accessed 2026-10-21). Prior-art findings on existing mutual-credit systems: [research-prior-art-mutual-credit](../notes/research-prior-art-mutual-credit.md). Regulatory and privacy questions: [research-regulatory-privacy-questions](../notes/research-regulatory-privacy-questions.md).

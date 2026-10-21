@@ -177,6 +177,19 @@ The names, signs, states and defaults below are the single source for terminolog
 
 Core: 00–13 as required by the foundational prompt; supporting: 14 glossary, 15 lifecycle state machines, 16 policy catalog, 17 notifications, 18 export/portability, 19 legal questions. Plans and notes live in `docs/plans/` and `docs/notes/`; ADRs in `docs/decisions/`.
 
+### 5.8 Canon amendments (2026-10-21, post-draft reconciliation)
+
+Adopted from the first-draft review; these bind all specs and supersede conflicting wording above.
+
+1. **Invariants added** (owned by doc 03): `INV-015` Trade validity (distinct active parties in the same Network, positive amount within `min_trade_amount`/`max_trade_amount`, both memberships `active`); `INV-016` a `closed` Member Account holds a zero balance. `INV-003` permits exactly three exceptions: disaster recovery, versioned migration, and ledger disposal at Network closure/retention expiry (all audited).
+2. **System Accounts**: `network_clearing` (adjustments/openings) and `community_fund` (used only when `departure_settlement_mode = community_fund` or Network-defined fund). Both exempt from limits.
+3. **Transaction types**: `trade`, `reversal`, `adjustment`, `opening_balance`, `departure_settlement`. Only `trade` requires counterparty acceptance (INV-012 applies to `trade`; the others are admin-initiated, visible to the affected Member, and audited).
+4. **Adjustment/Reversal statuses** are defined in doc 15 (`pending`, `posted`, `refused`, `withdrawn`, `expired`); Network operating status, Appeal and policy-version statuses are defined in docs 10/16.
+5. **Unit identity** (`unit_name` incl. singular/plural forms, `unit_symbol`, `unit_scale`) is stored on the Network record, not in versioned policy (INV-013); doc 16 documents them as "Network identity parameters".
+6. **Admin visibility**: Network Administrators can see all ledger entries of their Network irrespective of `balance_visibility` (which governs Member-to-Member visibility).
+7. **Proposal wording**: UI copy must not use "pay/price/charge" (see glossary banned terms); canon 5.3's wording is descriptive only.
+8. **Local open-decision labels** (`VIS-OD-n`, `PER-OD-n`, `FR-OD-n`, `ARC-OD-n`, `API-OD-n`, `UX-OD-n`, `SEC-OD-n`, `OPS-OD-n`, `NTF-OD-n`, …) are registered in doc 13 as `DEC-nnn` and keep their local label as an alias.
+
 ## 6. Assumptions and open decisions
 
 - ASM/DEC entries for the canon above are registered in doc 13 (Proposed defaults D-01…D-14).
