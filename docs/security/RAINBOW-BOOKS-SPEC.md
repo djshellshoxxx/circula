@@ -339,21 +339,21 @@ Swarm column: the overlap with the security swarm areas (auth, MFA, recovery, du
 |---|---|---|---|---|
 | RB-001 | DAC per network | Partial | P1 | Free |
 | RB-002 | MAC | N/A | P2 | Free |
-| RB-003 | Object reuse / secure delete | Not built | P1 | Erasure (storage) |
+| RB-003 | Object reuse / secure delete | Partial: `secure_delete=ON` and canary test built; erasure-path VACUUM left to erasure swarm | P1 | Erasure (storage) |
 | RB-004 | I&A before action | Built | P1 | Auth |
 | RB-005 | Password storage and policy | Partial | P1 | Auth |
 | RB-006 | Throttling and lockout | Partial | P1 | Auth |
 | RB-007 | MFA and recovery codes | Built | P0 (enforce for admins) | MFA, recovery |
 | RB-008 | Session lifetime | Built | P1 | Auth |
 | RB-009 | Audit coverage | Partial | P1 | Dual control, break-glass, erasure, recovery |
-| RB-010 | Audit tamper evidence with external anchor | Partial | **P0** | Free |
+| RB-010 | Audit tamper evidence with external anchor | Built: `circula audit-anchor write/verify`, optional HMAC, anchor beside backups. `VerifyLedger` does not itself report a missing anchor | **P0** | Free |
 | RB-011 | Scoped audit read | Built | P2 | Free |
-| RB-012 | Audit stored apart | Not built | P1 | Free |
-| RB-013 | Trusted path / TLS refusal | Partial | **P0** | Free |
-| RB-014 | Operator interfaces isolated | Partial | P1 | Free |
+| RB-012 | Audit stored apart | Partial: `audit-mirror-file` append-only JSONL (chain metadata, best effort); remote sinks not built | P1 | Free |
+| RB-013 | Trusted path / TLS refusal | Built: `tls-cert-file`/`tls-key-file` (TLS 1.2+, SIGHUP reload); non-loopback `http://` public URL already refused; https-behind-proxy kept with warning | **P0** | Free |
+| RB-014 | Operator interfaces isolated | Partial (unchanged: metrics allow-list and token exist; separate ops listener not built) | P1 | Free |
 | RB-015 | API token scope and storage | Partial | P1 | Auth |
 | RB-016 | Input validation at boundaries | Built | P1 | Free |
-| RB-017 | Fuzzing and adversarial tests | Partial | P1 | Free (backup parser touches backup) |
+| RB-017 | Fuzzing and adversarial tests | Partial: 8 Go fuzz targets (amounts, FoldName, key/request-id validators, strict JSON decode, parseMinor, time zone) with CI smoke; cursors and backup header not yet fuzzed. First run found `{}}` accepted by the strict decoder (fixed) | P1 | Free (backup parser touches backup) |
 | RB-018 | Covert channels | Not analysed | P2 | Auth, recovery |
 | RB-019 | Design traceability | Built | P2 | Free |
 | RB-020 | Trusted restore with verify | Partial | P1 | Recovery |

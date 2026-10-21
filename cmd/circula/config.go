@@ -69,6 +69,11 @@ var settingDefs = []settingDef{
 	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
 	{key: "backup-require-encryption", def: "false", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019)"},
 	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
+	{key: "audit-anchor-key-file", help: "file holding the key that HMACs audit anchors (RB-010); keep a copy off the database host; or env " + envPrefix + "AUDIT_ANCHOR_KEY"},
+	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
+	{key: "tls-cert-file", help: "PEM certificate chain: serve HTTPS directly (RB-013); requires tls-key-file; reloaded on SIGHUP"},
+	{key: "tls-key-file", help: "PEM private key for tls-cert-file; must not be readable by group or others"},
+	{key: "audit-mirror-file", help: "append-only JSONL file receiving every audit event after commit (RB-012); best effort, point it at a path the service cannot rewrite"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 
@@ -81,6 +86,7 @@ var secretDefs = []struct{ name, fileKey string }{
 	{"backup-key", "backup-key-file"},
 	{"mfa-secret", "mfa-secret-file"},
 	{"backup-encryption-key", "backup-encryption-key-file"},
+	{"audit-anchor-key", "audit-anchor-key-file"},
 }
 
 // minSecretLen is the shortest accepted secret.
@@ -119,6 +125,11 @@ type Config struct {
 	MFASecret    []byte
 	// BackupEncryptionKey is the secret that encrypts backups at rest (OPS-019).
 	BackupEncryptionKey     []byte
+	AuditAnchorKey          []byte
+	AuditAnchorWithBackups  bool
+	TLSCertFile             string
+	TLSKeyFile              string
+	AuditMirrorFile         string
 	BackupRequireEncryption bool
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
@@ -371,6 +382,15 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		}
 	}
 
+	if b, err := strconv.ParseBool(get("audit-anchor-with-backups")); err != nil {
+		fail("audit-anchor-with-backups", "must be true or false")
+	} else {
+		cfg.AuditAnchorWithBackups = b
+	}
+	cfg.TLSCertFile = get("tls-cert-file")
+	cfg.TLSKeyFile = get("tls-key-file")
+	cfg.AuditMirrorFile = get("audit-mirror-file")
+
 	if b, err := strconv.ParseBool(get("backup-require-encryption")); err != nil {
 		fail("backup-require-encryption", "must be true or false")
 	} else {
@@ -455,14 +475,14 @@ func parsePrefixes(s string, fail func(string, string, ...any), key string) []ne
 // plain-http port is reachable by others.
 func checkTransport(cfg *Config) string {
 	u, err := url.Parse(cfg.PublicBaseURL)
-	if err != nil || u.Scheme != "http" || cfg.AllowInsecureHTTP {
+	if err != nil || u.Scheme != "http" || cfg.AllowInsecureHTTP || cfg.TLSCertFile != "" {
 		return ""
 	}
 	if !isLoopback(u.Host) && !isLoopbackHost(u.Hostname()) {
-		return "http:// is refused for " + u.Host + ": use https:// behind a TLS-terminating proxy, or set allow-insecure-http=true knowing that passwords and sessions then cross the network unencrypted (SEC-022)"
+		return "http:// is refused for " + u.Host + ": use https:// behind a TLS-terminating proxy (or set tls-cert-file and tls-key-file), or set allow-insecure-http=true knowing that passwords and sessions then cross the network unencrypted (SEC-022)"
 	}
 	if !isLoopback(cfg.Listen) {
-		return "http:// with listen address " + cfg.Listen + " exposes passwords and sessions on the network: use https:// behind a TLS-terminating proxy, listen on loopback, or set allow-insecure-http=true (SEC-022)"
+		return "http:// with listen address " + cfg.Listen + " exposes passwords and sessions on the network: use https:// behind a TLS-terminating proxy, set tls-cert-file and tls-key-file, listen on loopback, or set allow-insecure-http=true (SEC-022)"
 	}
 	return ""
 }
@@ -513,6 +533,8 @@ func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
 			cfg.MFASecret = []byte(val)
 		case "backup-encryption-key":
 			cfg.BackupEncryptionKey = []byte(val)
+		case "audit-anchor-key":
+			cfg.AuditAnchorKey = []byte(val)
 		}
 	}
 	if len(cfg.BackupEncryptionKey) > 0 && bytes.Equal(cfg.BackupEncryptionKey, cfg.BackupKey) {
@@ -574,4 +596,5 @@ func writeSecretStatus(w io.Writer, cfg *Config) {
 	fmt.Fprintf(w, "backup-key = %s\n", state(len(cfg.BackupKey) > 0))
 	fmt.Fprintf(w, "mfa-secret = %s\n", state(len(cfg.MFASecret) > 0))
 	fmt.Fprintf(w, "backup-encryption-key = %s\n", state(len(cfg.BackupEncryptionKey) > 0))
+	fmt.Fprintf(w, "audit-anchor-key = %s\n", state(len(cfg.AuditAnchorKey) > 0))
 }

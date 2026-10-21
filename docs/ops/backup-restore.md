@@ -171,6 +171,13 @@ with the release evidence. Checklist per drill:
 
 A failed drill blocks the release until the cause is recorded and fixed.
 
+## Audit anchors beside backups (RB-010)
+
+Each scheduled backup also writes `<backup>.anchor.json` with every network's audit chain head (see
+[configuration.md](configuration.md#audit-anchors-rb-010)). The file is not encrypted and holds no personal data, only hashes,
+sequence numbers and network ids and slugs. After a restore, run `circula audit-anchor verify` with the newest anchor you
+kept off-host.
+
 ## Off-host copies
 
 Copy each backup and its manifest off the host, and copy the restore record too. Restrict who can read the copies to the

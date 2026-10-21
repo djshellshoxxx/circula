@@ -134,6 +134,14 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		return err
 	}
 	defer func() { _ = st.Close() }()
+	if cfg.AuditMirrorFile != "" {
+		mir, err := openAuditMirror(cfg.AuditMirrorFile, logger)
+		if err != nil {
+			return fmt.Errorf("audit-mirror-file: %w", err)
+		}
+		defer func() { _ = mir.close() }()
+		st.SetAuditSink(mir.write)
+	}
 	if state.Pending() > 0 {
 		m.migrationRan("applied")
 		logger.Info("migrations applied", "from", state.Applied, "to", state.Known)
@@ -157,6 +165,18 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	// (CMD-07, OPS-033). The operator is told loudly; nothing is refused.
 	applyFreeze(svc, checks, logger)
 
+	useTLS, err := tlsEnabled(cfg)
+	if err != nil {
+		return err
+	}
+	var certs *certReloader
+	if useTLS {
+		if certs, err = newCertReloader(cfg.TLSCertFile, cfg.TLSKeyFile); err != nil {
+			return err
+		}
+		defer certs.reloadOnSIGHUP(logger)()
+	}
+
 	ln, err := net.Listen("tcp", cfg.Listen)
 	if err != nil {
 		return fmt.Errorf("listen on %s: %w", cfg.Listen, err)
@@ -179,10 +199,15 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		MaxHeaderBytes:    1 << 16,
 		ErrorLog:          slog.NewLogLogger(logger.Handler(), slog.LevelWarn),
 	}
+	if useTLS {
+		srv.TLSConfig = certs.tlsConfig()
+	}
 	logger.Info("circula serving", "version", version, "listen", cfg.Listen,
 		"public_base_url", cfg.PublicBaseURL, "schema_version", store.SchemaVersion())
-	if !isLoopback(cfg.Listen) {
-		logger.Warn("listening on a non-loopback address; put TLS termination and /metrics filtering in front of it")
+	if useTLS {
+		logger.Info("serving TLS directly", "min_version", "1.2", "cert", cfg.TLSCertFile)
+	} else if !isLoopback(cfg.Listen) {
+		logger.Warn("listening on a non-loopback address without tls-cert-file; put TLS termination and /metrics filtering in front of it")
 		if cfg.MetricsToken == "" {
 			logger.Warn("no metrics-token configured; /metrics relies on the source address check only (SA-15)")
 		}
@@ -207,7 +232,13 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 
 	ops.ready.Store(true)
 	serveErr := make(chan error, 1)
-	go func() { serveErr <- srv.Serve(ln) }()
+	go func() {
+		if useTLS {
+			serveErr <- srv.ServeTLS(ln, "", "")
+			return
+		}
+		serveErr <- srv.Serve(ln)
+	}()
 
 	var runErr error
 	select {
@@ -467,6 +498,15 @@ func (j *jobRunner) untilNextBackup() time.Duration {
 	return 0
 }
 
+// writeBackupAnchor writes <backup>.anchor.json holding the chain heads (RB-010).
+func (j *jobRunner) writeBackupAnchor(ctx context.Context, backupPath string) error {
+	a, err := buildAnchor(ctx, j.st.DB(), j.cfg.AuditAnchorKey, time.Now())
+	if err != nil {
+		return err
+	}
+	return writeAnchorFile(backupPath+".anchor.json", a)
+}
+
 func (j *jobRunner) backupNow(ctx context.Context) error {
 	mf, path, err := backupTo(ctx, j.cfg, j.cfg.BackupDir, "scheduled", nil)
 	if err != nil {
@@ -477,6 +517,11 @@ func (j *jobRunner) backupNow(ctx context.Context) error {
 	if mf.Ledger.Status == "failed" {
 		j.metrics.ledgerResult(false, mf.Ledger.Failing, time.Now().UTC())
 		j.logger.Error("scheduled backup recorded a ledger verification failure", "file", filepath.Base(path))
+	}
+	if j.cfg.AuditAnchorWithBackups {
+		if err := j.writeBackupAnchor(ctx, path); err != nil {
+			j.logger.Error("audit anchor beside backup failed", "file", filepath.Base(path), "error", err)
+		}
 	}
 	j.logger.Info("backup written", "file", filepath.Base(path), "bytes", mf.Bytes, "ledger", mf.Ledger.Status)
 	removed, err := pruneBackups(j.cfg.BackupDir, j.cfg.BackupRetainDaily, j.cfg.BackupRetainMonthly)

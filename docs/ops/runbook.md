@@ -32,6 +32,14 @@ the database by hand.
 another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
 by the hourly job and the admin consistency check in the UI and API, which record their runs.
 
+## Audit anchor (RB-010)
+
+Weekly (or after each backup), copy the newest `<backup>.anchor.json` or run `circula audit-anchor write <file>` and keep the
+file off the database host. To check for tampering with an older anchor: `circula audit-anchor verify <file>`. Exit `3` means
+the live audit chain no longer contains the anchored head: treat as an integrity incident, preserve the database file and the
+off-host backups, and restore a backup whose `verify` passes. After any restore, run `verify` against the latest anchor.
+See [configuration.md](configuration.md#audit-anchors-rb-010).
+
 ## Maintenance mode
 
 ```sh

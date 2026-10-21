@@ -44,6 +44,11 @@ var sampleValues = map[string]string{
 	"backup-require-encryption":  "f",
 	"backup-encryption-key-file": "",
 	"state-dir":                  "", // filled per test
+	"audit-anchor-key-file":      "",
+	"audit-anchor-with-backups":  "false",
+	"tls-cert-file":              "",
+	"tls-key-file":               "",
+	"audit-mirror-file":          "",
 }
 
 // baseEnv returns a lookup that supplies the two required settings.
