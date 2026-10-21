@@ -19,7 +19,7 @@ func TestA3_01_IPv6RateKeyKeepsBucketsApart(t *testing.T) {
 	atk := service.WithClientIP(e.Ctx, httpx.RateKey("2001:db8:aaaa::99"))
 	vic := service.WithClientIP(e.Ctx, httpx.RateKey("2001:db8:bbbb::7"))
 	for i := 0; i < 5; i++ {
-		e.Svc.LoginStep(atk, "ana@example.org", bad)
+		_, _ = e.Svc.LoginStep(atk, "ana@example.org", bad)
 	}
 	_, err := e.Svc.LoginStep(vic, "ana@example.org", pw)
 	if err != nil {
@@ -36,7 +36,7 @@ func TestA3_02_GlobalLockNotRenewable(t *testing.T) {
 	for i := 0; i < 20; i++ {
 		ctx := service.WithClientIP(e.Ctx, fmt.Sprintf("203.0.113.%d", i+1))
 		for j := 0; j < 5; j++ {
-			e.Svc.LoginStep(ctx, "ana@example.org", bad)
+			_, _ = e.Svc.LoginStep(ctx, "ana@example.org", bad)
 		}
 	}
 	vic := service.WithClientIP(e.Ctx, "198.51.100.7")
@@ -44,7 +44,7 @@ func TestA3_02_GlobalLockNotRenewable(t *testing.T) {
 	wantCode(t, err, domain.ErrRateLimited) // victim locked from a clean address
 	e.Clock.Advance(15*time.Minute + time.Second)
 	atk := service.WithClientIP(e.Ctx, "192.0.2.1")
-	e.Svc.LoginStep(atk, "ana@example.org", bad) // one request at expiry must not re-arm the lock
+	_, _ = e.Svc.LoginStep(atk, "ana@example.org", bad) // one request at expiry must not re-arm the lock
 	if _, err = e.Svc.LoginStep(vic, "ana@example.org", pw); err != nil {
 		t.Fatalf("victim still locked after expiry: %v", err)
 	}
