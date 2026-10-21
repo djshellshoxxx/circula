@@ -19,7 +19,9 @@ Method and heuristics are in the script docstring. Citation = the ID appears on 
 
 ## 2. Coverage gaps
 
-### 2.1 P0/P1 FR with no doc 12 citation (no QA-E2E, no QA-nnn row, no section 5/6 mention)
+### 2.1 P0/P1 FR with no doc 12 citation
+
+No QA-E2E scenario, no QA-nnn row and no other doc 12 mention cites these requirements.
 
 | FR | Pri | Defined in | Area |
 |---|---|---|---|
@@ -101,7 +103,9 @@ Method and heuristics are in the script docstring. Citation = the ID appears on 
 | FR-TRD-024 | P0 | doc 04 line 144 | FR-TRD |
 | FR-TRD-025 | P0 | doc 04 line 145 | FR-TRD |
 
-### 2.2 Gap counts by FR area (P0/P1 with no doc 12 citation / no QA-E2E citation / total P0+P1)
+### 2.2 Gap counts by FR area
+
+Columns: P0/P1 with no doc 12 citation; P0/P1 with no QA-E2E citation; total P0/P1.
 
 | Area | No doc 12 citation | No QA-E2E | Total P0/P1 |
 |---|---|---|---|

@@ -182,7 +182,9 @@ def main():
 
     w('## 2. Coverage gaps')
     w('')
-    w('### 2.1 P0/P1 FR with no doc 12 citation (no QA-E2E, no QA-nnn row, no section 5/6 mention)')
+    w('### 2.1 P0/P1 FR with no doc 12 citation')
+    w('')
+    w('No QA-E2E scenario, no QA-nnn row and no other doc 12 mention cites these requirements.')
     w('')
     if gaps_no_doc12:
         w('| FR | Pri | Defined in | Area |')
@@ -192,7 +194,9 @@ def main():
     else:
         w('None.')
     w('')
-    w('### 2.2 Gap counts by FR area (P0/P1 with no doc 12 citation / no QA-E2E citation / total P0+P1)')
+    w('### 2.2 Gap counts by FR area')
+    w('')
+    w('Columns: P0/P1 with no doc 12 citation; P0/P1 with no QA-E2E citation; total P0/P1.')
     w('')
     w('| Area | No doc 12 citation | No QA-E2E | Total P0/P1 |')
     w('|---|---|---|---|')

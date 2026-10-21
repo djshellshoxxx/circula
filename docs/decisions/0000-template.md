@@ -9,7 +9,7 @@ Specs normative language: see docs/specs/00-conventions.md. Register: docs/specs
 
 | Field | Value |
 |---|---|
-| Status | Proposed / Accepted / Rejected / Deprecated / Superseded by [ADR-NNNN](NNNN-title.md) |
+| Status | Proposed / Accepted / Rejected / Deprecated / Superseded by ADR-NNNN (`NNNN-title.md`) |
 | Date | YYYY-MM-DD (date of the status change) |
 | Decision owner (role) | e.g. Product architect |
 | Deciders | Roles or names who took part in the decision |
