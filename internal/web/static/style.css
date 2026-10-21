@@ -66,3 +66,4 @@ code{overflow-wrap:anywhere}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 [hidden]{display:none!important}
 .acct{margin:0}
+.badge{display:inline-block;border:2px solid currentColor;border-radius:999px;padding:0 .5rem;font-size:.9rem;font-weight:600}

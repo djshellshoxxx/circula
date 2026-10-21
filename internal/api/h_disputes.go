@@ -69,10 +69,12 @@ type disputeEventDTO struct {
 
 type disputeDetail struct {
 	disputeDTO
-	Transaction txDTO             `json:"transaction"`
-	PayerName   string            `json:"payer_display_name"`
-	PayeeName   string            `json:"payee_display_name"`
-	Events      []disputeEventDTO `json:"events"`
+	Transaction txDTO               `json:"transaction"`
+	PayerName   string              `json:"payer_display_name"`
+	PayeeName   string              `json:"payee_display_name"`
+	Events      []disputeEventDTO   `json:"events"`
+	Response    *disputeResponseDTO `json:"response"`  // FR-076
+	ReReview    *reReviewDTO        `json:"re_review"` // FR-078
 }
 
 func (s *server) getDispute(c *reqCtx) error { // API-054
@@ -81,7 +83,8 @@ func (s *server) getDispute(c *reqCtx) error { // API-054
 		return err
 	}
 	out := disputeDetail{disputeDTO: toDispute(v.Dispute), Transaction: toTx(v.Tx, c.member.ID),
-		PayerName: v.PayerName, PayeeName: v.PayeeName, Events: []disputeEventDTO{}}
+		PayerName: v.PayerName, PayeeName: v.PayeeName, Events: []disputeEventDTO{},
+		Response: toDisputeResponse(v.Response), ReReview: toReReview(v.ReReview)}
 	for _, e := range v.Events {
 		out.Events = append(out.Events, disputeEventDTO{Action: e.Action, Outcome: e.Outcome, ActorID: e.ActorID, OccurredAt: ts(e.OccurredAt)})
 	}

@@ -1,0 +1,13 @@
+{{define "content"}}
+{{with .D}}
+<p>You are reporting: <strong>{{.Label}}</strong>.</p>
+<p>A report goes to the network administrators. It does not hide, suspend or change anything by itself, and the person you report is not told who reported.</p>
+<form method="post" action="/n/{{$.Slug}}/report" novalidate>
+  {{template "csrf" $}}{{template "idem" $}}
+  <input type="hidden" name="type" value="{{.Type}}"><input type="hidden" name="id" value="{{.ID}}">
+  {{template "select" dict "P" $ "Name" "category" "Label" "What is the problem?" "Opts" .Cats}}
+  {{template "field" dict "P" $ "Name" "note" "Label" "Details (optional)" "Hint" "Up to 500 characters." "Type" "textarea" "Max" 500}}
+  <div class="actions"><button type="submit">Send report</button> <a class="btn secondary" href="/n/{{$.Slug}}">Cancel</a></div>
+</form>
+{{end}}
+{{end}}

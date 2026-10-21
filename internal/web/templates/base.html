@@ -18,6 +18,7 @@
       <li><a href="/">All networks</a></li>
     </ul>
   </nav>
+  {{if .Slug}}<p class="acct"><a href="/n/{{.Slug}}/inbox">Inbox{{if .Unread}} <span class="badge">{{.Unread}} unread</span>{{end}}</a></p>{{end}}
   <p class="acct"><a href="/account/password">Password</a></p>
   <form method="post" action="/logout" class="signout">{{template "csrf" .}}<button type="submit" class="link">Sign out</button></form>
   {{end}}
@@ -30,6 +31,7 @@
   <h1 id="page-title">{{.Title}}</h1>
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
   {{with .Notice}}<div class="notice" role="note"><strong>Notice:</strong> {{.}}</div>{{end}}
+  {{with .Warn}}<div class="notice" role="note"><strong>Credit limit notice:</strong> {{.}}</div>{{end}}
   {{if or .Errors .Summary}}
   <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">
     <h2 id="errsum-h">There is a problem</h2>

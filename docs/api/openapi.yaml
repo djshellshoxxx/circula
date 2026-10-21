@@ -48,6 +48,8 @@ tags:
   - name: Listings
   - name: Transactions
   - name: Disputes
+  - name: Reports
+  - name: Notifications
   - name: Admin
   - name: Invitations
   - name: Exports
@@ -792,6 +794,326 @@ paths:
         '403': {$ref: '#/components/responses/Forbidden'}
         '404': {$ref: '#/components/responses/NotFound'}
         '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/response:
+    post:
+      operationId: respondToDispute
+      tags: [Disputes]
+      summary: Other party responds to a dispute (FR-076)
+      description: |
+        The party who did not open the dispute submits one bounded response (up to 2000 characters)
+        while the dispute is open or under review. Visible to the opener, reviewer and administrators in
+        GET /disputes/{id}. A second response is 409 invalid-transaction-state; the opener gets 403.
+        A suspended party may respond. As built: a decision is not held back until a response arrives
+        (OQ-FR-2 is open; there is no response-period policy yet).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DisputeResponseRequest'}
+      responses:
+        '201':
+          description: Response recorded.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DisputeResponse'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/re-review:
+    post:
+      operationId: requestDisputeReReview
+      tags: [Disputes]
+      summary: Ask for the one re-review of a decided dispute (FR-078)
+      description: |
+        Either party, once per dispute, within 14 days of the decision (a platform constant, not yet a
+        network policy). The dispute must be resolved. A second request is 409 invalid-transaction-state,
+        also after the first was decided. The request is a separate record linked to the dispute; the
+        original decision is never edited.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReReviewRequest'}
+      responses:
+        '201':
+          description: Re-review requested.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReReview'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/re-review/decision:
+    post:
+      operationId: decideDisputeReReview
+      tags: [Disputes]
+      summary: Record the re-review decision (FR-078)
+      description: |
+        Reviewer or administrator who is not the original reviewer and took no part in the trade (403
+        forbidden otherwise). Outcome confirmed posts nothing. upheld / partially_upheld post a further
+        reversal of at most the amount still reversible; if that would breach the payee's credit limit the
+        call fails with 422 insufficient-available-credit and nothing changes. When the trade is already
+        fully reversed only confirmed is possible (409).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReReviewDecisionRequest'}
+      responses:
+        '200':
+          description: Re-review decided.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReReview'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/reports:
+    post:
+      operationId: createReport
+      tags: [Reports]
+      summary: Report a listing or a member (FR-024)
+      description: |
+        Active members only. Reporting changes nothing about the target. At most one open report per
+        reporter and target (409 conflict) and at most 10 reports per reporter in 24 hours (429
+        rate-limited). Own listing or self is 422. The reporter is visible to administrators only.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReportRequest'}
+      responses:
+        '201':
+          description: Report filed.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Report'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/reports:
+    get:
+      operationId: listReports
+      tags: [Reports, Admin]
+      summary: Report queue (FR-024)
+      description: Administrators only. Newest first; reporter fields are filled.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          schema: {type: string, enum: [open, handled]}
+      responses:
+        '200':
+          description: One page of reports.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReportPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/reports/{id}/handle:
+    post:
+      operationId: handleReport
+      tags: [Reports, Admin]
+      summary: Mark a report handled (FR-024)
+      description: Administrators only. Audited; the reporter gets a report.handled notification. A handled report is 409 invalid-transaction-state. The body is optional.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/HandleReportRequest'}
+      responses:
+        '200':
+          description: Report handled.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Report'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/notifications:
+    get:
+      operationId: listNotifications
+      tags: [Notifications]
+      summary: The caller's inbox (FR-038)
+      description: |
+        Own notifications, newest first. Created in the same unit of work as the event they announce:
+        trade.proposed, trade.accepted, trade.declined, trade.cancelled, dispute.opened,
+        dispute.under_review, dispute.responded, dispute.decided, dispute.withdrawn,
+        dispute.rereview_requested, dispute.rereview_decided, report.handled and account.limit_warning
+        (UX-012, from the scheduled limit-warning job). Titles and bodies are fixed text without
+        member-written content. link is a path relative to the network.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: unread
+          in: query
+          required: false
+          schema: {type: boolean}
+      responses:
+        '200':
+          description: One page of notifications.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/NotificationPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/notifications/unread-count:
+    get:
+      operationId: countUnreadNotifications
+      tags: [Notifications]
+      summary: Number of unread notifications (FR-038)
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: Unread count.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [unread]
+                additionalProperties: false
+                properties:
+                  unread: {type: integer, minimum: 0}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/notifications/read:
+    post:
+      operationId: markNotificationsRead
+      tags: [Notifications]
+      summary: Mark notifications read (FR-038)
+      description: Send exactly one of ids (1..200 ids) or all=true. Ids that are not the caller's are ignored. Naturally idempotent, so no Idempotency-Key is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MarkReadRequest'}
+      responses:
+        '200':
+          description: How many changed from unread to read.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [marked]
+                additionalProperties: false
+                properties:
+                  marked: {type: integer, minimum: 0}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
         '422': {$ref: '#/components/responses/Unprocessable'}
         '429': {$ref: '#/components/responses/RateLimited'}
         '500': {$ref: '#/components/responses/InternalError'}
@@ -2142,6 +2464,121 @@ components:
             events:
               type: array
               items: {$ref: '#/components/schemas/DisputeEvent'}
+            response:
+              description: The other party's response (FR-076); null until submitted.
+              oneOf: [{$ref: '#/components/schemas/DisputeResponse'}, {type: 'null'}]
+            re_review:
+              description: The one re-review of the decision (FR-078); null until requested.
+              oneOf: [{$ref: '#/components/schemas/ReReview'}, {type: 'null'}]
+    DisputeResponseRequest:
+      type: object
+      required: [response]
+      additionalProperties: false
+      properties:
+        response: {type: string, minLength: 1, maxLength: 2000}
+    DisputeResponse:
+      type: object
+      required: [id, responder_member_id, response, submitted_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        responder_member_id: {$ref: '#/components/schemas/Id'}
+        response: {type: string, maxLength: 2000}
+        submitted_at: {$ref: '#/components/schemas/Timestamp'}
+    ReReviewRequest:
+      type: object
+      required: [reason]
+      additionalProperties: false
+      properties:
+        reason: {type: string, minLength: 1, maxLength: 500}
+    ReReviewDecisionRequest:
+      type: object
+      required: [outcome, reason]
+      additionalProperties: false
+      properties:
+        outcome: {type: string, enum: [confirmed, upheld, partially_upheld]}
+        reason: {type: string, minLength: 1, maxLength: 2000}
+        amount_minor:
+          description: Required for partially_upheld; refused for confirmed.
+          $ref: '#/components/schemas/Money'
+    ReReview:
+      type: object
+      required: [id, requested_by, reason, requested_at, status, reviewer_id, outcome, reversal_amount_minor, decision_reason, decided_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        requested_by: {$ref: '#/components/schemas/Id'}
+        reason: {type: string}
+        requested_at: {$ref: '#/components/schemas/Timestamp'}
+        status: {type: string, enum: [requested, decided]}
+        reviewer_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        outcome: {oneOf: [{type: string, enum: [confirmed, upheld, partially_upheld]}, {type: 'null'}]}
+        reversal_amount_minor: {$ref: '#/components/schemas/Money'}
+        decision_reason: {type: string}
+        decided_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+    ReportRequest:
+      type: object
+      required: [target_type, target_id, category]
+      additionalProperties: false
+      properties:
+        target_type: {type: string, enum: [listing, member]}
+        target_id: {$ref: '#/components/schemas/Id'}
+        category: {type: string, enum: [spam, scam, inappropriate, harassment, other]}
+        description: {type: string, maxLength: 500}
+    HandleReportRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        note: {type: string, maxLength: 500}
+    Report:
+      type: object
+      required: [id, target_type, target_id, category, description, status, created_at, reporter_member_id, reporter_display_name, target_label, handled_by, handled_at, handling_note]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        target_type: {type: string, enum: [listing, member]}
+        target_id: {$ref: '#/components/schemas/Id'}
+        category: {type: string}
+        description: {type: string}
+        status: {type: string, enum: [open, handled]}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        reporter_member_id: {$ref: '#/components/schemas/Id'}
+        reporter_display_name: {type: [string, 'null'], description: Filled in the administrator queue only.}
+        target_label: {type: [string, 'null'], description: Filled in the administrator queue only.}
+        handled_by: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        handled_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+        handling_note: {type: string}
+    ReportPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Report'}}
+    Notification:
+      type: object
+      required: [id, kind, title, body, link, read, created_at, read_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        kind: {type: string, example: trade.proposed}
+        title: {type: string}
+        body: {type: string}
+        link: {type: string, description: 'Path relative to the network, for example /trades/<id>.', example: '/trades/0198'}
+        read: {type: boolean}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        read_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+    NotificationPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Notification'}}
+    MarkReadRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        ids: {type: array, minItems: 1, maxItems: 200, items: {$ref: '#/components/schemas/Id'}}
+        all: {type: boolean}
     PolicyResponse:
       type: object
       required: [version, effective_at, policy]

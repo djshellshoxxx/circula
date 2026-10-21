@@ -8,12 +8,46 @@
   <dt>Statement</dt><dd>{{.V.Dispute.Statement}}</dd>
   {{if .Outcome}}<dt>Decision</dt><dd>{{.Outcome}}</dd>{{end}}
   {{if .V.Dispute.Rationale}}<dt>Rationale</dt><dd>{{.V.Dispute.Rationale}}</dd>{{end}}
+  {{if .Response}}<dt>Response from {{.ResponseBy}}</dt><dd>{{.Response}}</dd>{{end}}
+  {{if .ReReviewText}}<dt>Re-review</dt><dd>{{.ReReviewText}}{{if .ReReviewWhy}}<br>Reason for the request: {{.ReReviewWhy}}{{end}}{{if .ReReviewDone}}<br>Rationale: {{.ReReviewDone}}{{end}}</dd>{{end}}
 </dl>
 <h2>Timeline</h2>
 <ol>{{range .Events}}<li>{{.Text}}: {{.At}}</li>{{end}}</ol>
 {{if .Withdraw}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/withdraw">{{template "csrf" $}}<div class="actions"><button type="submit" class="secondary">Withdraw this dispute</button></div></form>{{end}}
 {{if .Review}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/start-review">{{template "csrf" $}}<div class="actions"><button type="submit">Start review</button></div></form>{{end}}
 {{if .Retry}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/retry">{{template "csrf" $}}<div class="actions"><button type="submit">Retry posting the reversal</button></div></form>{{end}}
+{{if .CanRespond}}
+<h2>Add your response</h2>
+<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/respond" novalidate>
+  {{template "csrf" $}}{{template "idem" $}}
+  {{template "field" dict "P" $ "Name" "response" "Label" "Your response" "Hint" "Up to 2000 characters. You can respond once. The reviewer and the person who opened the dispute will read it." "Type" "textarea" "Max" 2000 "Req" true}}
+  <div class="actions"><button type="submit">Send response</button></div>
+</form>
+{{end}}
+{{if .CanReReview}}
+<h2>Ask for a re-review</h2>
+<p>You can ask once for a different reviewer to look at this decision, until {{.ReReviewUntil}}. The original decision is kept; the re-review is recorded next to it.</p>
+<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/rereview" novalidate>
+  {{template "csrf" $}}{{template "idem" $}}
+  {{template "field" dict "P" $ "Name" "reason" "Label" "Why should it be looked at again?" "Hint" "Up to 500 characters." "Type" "textarea" "Max" 500 "Req" true}}
+  <div class="actions"><button type="submit">Request re-review</button></div>
+</form>
+{{end}}
+{{if .DecideReRev}}
+<h2>Record the re-review decision</h2>
+<p>You are not the reviewer who made the original decision.</p>
+<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/rereview-decide" novalidate>
+  {{template "csrf" $}}{{template "idem" $}}
+  <div class="field"><label for="f-outcome">Outcome</label>
+  <select id="f-outcome" name="outcome">
+    <option value="confirmed">Confirmed: the original decision stands</option>
+    <option value="upheld"{{if eq ($.Val "outcome") "upheld"}} selected{{end}}>Upheld: reverse what is still reversible</option>
+    <option value="partially_upheld"{{if eq ($.Val "outcome") "partially_upheld"}} selected{{end}}>Partly upheld: reverse part</option></select></div>
+  {{template "field" dict "P" $ "Name" "amount" "Label" "Amount to reverse (partly upheld only)" "Hint" (printf "Amount in credits, up to %d decimal places." $.Dec) "Mode" "decimal"}}
+  {{template "field" dict "P" $ "Name" "rationale" "Label" "Rationale" "Hint" "Required. Both parties will see it." "Type" "textarea" "Max" 2000 "Req" true}}
+  <div class="actions"><button type="submit">Record re-review decision</button></div>
+</form>
+{{end}}
 {{if .Decide}}
 <h2>Record a decision</h2>
 <form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/resolve" novalidate>

@@ -205,6 +205,48 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 // ListDisputes lists disputes: all for reviewers and administrators, own for members.
 ```
 
+`DisputeView` also carries `Response *store.DisputeResponse` (FR-076) and `ReReview *store.ReReview` (FR-078).
+
+#### disputes_response.go (FR-076, FR-078; migration 0003)
+
+```go
+func (s *Service) RespondToDispute(ctx, actor, netID string, in RespondInput) (*store.DisputeResponse, error)
+// The party who did not open the dispute answers once (up to 2000 characters) while it is open or under review. Suspended parties may answer. Idempotent. A decision does not wait for a response (OQ-FR-2 open).
+
+func (s *Service) RequestReReview(ctx, actor, netID string, in ReReviewRequestInput) (*store.ReReview, error)
+// Either party, once per dispute (UNIQUE in the database), within ReReviewWindowDays (14, platform constant) of the decision. Own record linked to the dispute; the original decision is never edited.
+
+func (s *Service) DecideReReview(ctx, actor, netID string, in ReReviewDecideInput) (*store.ReReview, error)
+// Outcome confirmed | upheld | partially_upheld. Decider must not be the original reviewer and must pass the DOM-038 independence test. upheld / partially_upheld post a further reversal of at most the amount still reversible; an LED-5 block fails with insufficient-available-credit and changes nothing (no posting_pending state for re-reviews).
+```
+
+#### reports.go (FR-024)
+
+```go
+func (s *Service) CreateReport(ctx, actor, netID string, in ReportInput) (*store.Report, error)
+// Active members report a listing or a member (category spam|scam|inappropriate|harassment|other, note up to 500). Changes nothing about the target. One open report per reporter and target (conflict); MaxReportsPerDay = 10 per rolling 24 h (rate-limited). The audit event is about the reporter only, so the reported member never sees it.
+
+func (s *Service) ListReports(ctx, actor, netID, status string, pg Page) ([]ReportView, error)
+// Administrators only; includes the reporter's name.
+
+func (s *Service) HandleReport(ctx, actor, netID string, in HandleReportInput) (*store.Report, error)
+// Administrators only; open -> handled, audited, tells the reporter.
+```
+
+#### notify.go, notify_limits.go (FR-038, UX-012)
+
+```go
+func (s *Service) ListNotifications(ctx, actor, netID string, q NotificationQuery) ([]*store.Notification, error)
+func (s *Service) CountUnreadNotifications(ctx, actor, netID string) (int, error)
+func (s *Service) MarkNotificationsRead(ctx, actor, netID string, ids []string) (int64, error) // empty ids = all; foreign ids ignored
+func (s *Service) ListDisputesAwaitingMyResponse(ctx, actor, netID string) ([]*domain.Dispute, error)
+// The caller's own inbox. Notifications are written in the same unit of work as the event (propose, accept, decline, cancel, dispute opened / review / response / decision / withdrawn, re-review, report handled) so they roll back with it. Titles and bodies are fixed text; no member-written text is copied into them.
+
+func (s *Service) RunLimitWarnings(ctx context.Context) (int, error)
+// Job body, no actor: warns active members whose used credit reached LimitWarningPercent (80) of their effective limit, at most once per ISO week each. Wired into the hourly purge job in cmd/circula (purgeAndWarn).
+func LimitWarning(b *BalanceView) (used int64, warn bool) // the shared threshold test; the web Home and propose form use it
+```
+
 #### export.go
 
 ```go
@@ -739,8 +781,7 @@ Deviations from the specs, with reasons:
 
 Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
 
-* FR-067 admin overview counts, FR-076 other-party dispute response, FR-078 re-review, FR-024 reports, FR-038 notifications,
-  DOM-025.1 limit-warning job, SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
+* FR-067 admin overview counts, SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
   setup-secret bootstrap (FR-002; adapter concern), break-glass operator access (SEC-013), per-person session cap,
   platform-scope (`network_id = ''`) audit-chain verification (SVC-06).
 * `store.Open` migrates. Pre-migration backups, the post-migration consistency gate (DAT-043/044), the single-writer

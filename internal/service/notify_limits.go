@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -49,7 +50,13 @@ func (s *Service) RunLimitWarnings(ctx context.Context) (int, error) {
 			var last string
 			err := s.update(ctx, func(tx store.Tx) error {
 				net, err := tx.GetNetwork(netID)
-				if err != nil || net.Status != domain.NetworkActive {
+				if errors.Is(err, domain.ErrNotFound) {
+					return nil
+				}
+				if err != nil {
+					return err
+				}
+				if net.Status != domain.NetworkActive {
 					return nil
 				}
 				ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive},

@@ -322,7 +322,7 @@ func (j *jobRunner) run(ctx context.Context) {
 	wg.Add(4)
 	go func() { defer wg.Done(); j.every(ctx, "expiry", expiryInterval, j.expire) }()
 	go func() { defer wg.Done(); j.every(ctx, "verify", verifyInterval, j.verify) }()
-	go func() { defer wg.Done(); j.every(ctx, "purge", purgeInterval, j.purge) }()
+	go func() { defer wg.Done(); j.every(ctx, "purge", purgeInterval, j.purgeAndWarn) }()
 	go func() { defer wg.Done(); j.backups(ctx) }()
 	wg.Wait()
 }

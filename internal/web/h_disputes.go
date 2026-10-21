@@ -180,6 +180,16 @@ type disputeData struct {
 	Retry    bool
 	Events   []evRow
 	Amount   string
+	// FR-076 response and FR-078 re-review.
+	Response      string // response text, "" until submitted
+	ResponseBy    string
+	CanRespond    bool
+	ReReviewText  string // one-line state of the re-review, "" when none
+	ReReviewWhy   string
+	ReReviewDone  string // decision rationale
+	CanReReview   bool
+	ReReviewUntil any // last day to ask, shown with the request form
+	DecideReRev   bool
 }
 
 type evRow struct {
@@ -232,6 +242,7 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 	out.Review = reviewer && d.Status == domain.DisputeOpen
 	out.Decide = reviewer && active
 	out.Retry = reviewer && d.Status == domain.DisputePostingPending
+	s.reviewData(c, v, out)
 	for _, e := range v.Events {
 		t := strings.ReplaceAll(e.Action, "_", " ")
 		if e.Outcome != "" {
@@ -257,6 +268,27 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 	case "retry":
 		_, err = s.svc.RetryDisputePosting(r.Context(), c.actor, c.netID(), id)
 		msg = "Posting retried."
+	case "respond":
+		_, err = s.svc.RespondToDispute(r.Context(), c.actor, c.netID(), service.RespondInput{DisputeID: id,
+			Response: r.PostFormValue("response"), IdempotencyKey: idemKey(r)})
+		msg = "Your response was added. The reviewer and the other party can read it."
+	case "rereview":
+		_, err = s.svc.RequestReReview(r.Context(), c.actor, c.netID(), service.ReReviewRequestInput{DisputeID: id,
+			Reason: r.PostFormValue("reason"), IdempotencyKey: idemKey(r)})
+		msg = "Re-review requested. A different reviewer will look at the decision. This can only be done once."
+	case "rereview-decide":
+		in := service.ReReviewDecideInput{DisputeID: id, Outcome: r.PostFormValue("outcome"),
+			Rationale: r.PostFormValue("rationale"), IdempotencyKey: idemKey(r)}
+		if in.Outcome == string(domain.OutcomePartiallyUpheld) {
+			amt, perr := domain.ParseAmount(r.PostFormValue("amount"), c.Net.Policy.Decimals)
+			if perr != nil || amt <= 0 {
+				s.disputeFail(w, r, c, id, domain.Invalid("amount", "enter the amount to reverse, with up to "+itoa(c.Net.Policy.Decimals)+" decimal places"))
+				return
+			}
+			in.Amount = amt
+		}
+		_, err = s.svc.DecideReReview(r.Context(), c.actor, c.netID(), in)
+		msg = "Re-review decision recorded."
 	case "resolve":
 		in := service.ResolveInput{DisputeID: id, Outcome: domain.DisputeOutcome(r.PostFormValue("outcome")),
 			Rationale: r.PostFormValue("rationale"), IdempotencyKey: idemKey(r)}

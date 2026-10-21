@@ -49,6 +49,10 @@ type page struct {
 	// Session expiry warning (UX-030): Unix time and whether activity extends it.
 	ExpiresAt  int64
 	Extendable bool
+	// Unread is the inbox badge count (FR-038); 0 shows no badge.
+	Unread int
+	// Warn is the credit-limit notice shown on Home and the propose form (UX-012).
+	Warn string
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -153,6 +157,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
 		p.Nav = c.nav(r.URL.Path)
 		p.Notice = c.notice()
+		p.Unread = c.unreadCount()
 	}
 	if p.Authed {
 		if at, ext, ok := s.expiry(r); ok {

@@ -95,7 +95,7 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 			d.Recent = append(d.Recent, row)
 		}
 	}
-	s.render(w, r, c, "dashboard", 200, &page{Title: "Home", D: d})
+	s.render(w, r, c, "dashboard", 200, &page{Title: "Home", D: d, Warn: c.limitNotice()})
 }
 
 type historyData struct {
