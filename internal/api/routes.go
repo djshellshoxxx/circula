@@ -70,6 +70,7 @@ func (s *server) routes() {
 	R("POST "+v1+"/admin/invitations", s.createInvitation, idem)            // API-061
 	R("POST "+v1+"/invitations/{token}/accept", s.acceptInvitation, idem, noNet)
 	R("GET "+v1+"/admin/audit-events", s.listAudit)                   // API-062
+	R("GET "+v1+"/audit-events", s.listMyAudit)                       // FR-082, DAT-033, DAT-035
 	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)       // API-063
 	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)         // API-063
 	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)  // API-064

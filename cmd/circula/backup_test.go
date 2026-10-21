@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"os"
 	"path/filepath"
 	"strings"
@@ -121,6 +122,16 @@ func TestRestoreRefusesOverwriteWithoutFlag(t *testing.T) {
 	recs, _ := filepath.Glob(filepath.Join(dir, "backups", "restore-*.json"))
 	if len(recs) != 1 {
 		t.Errorf("restore records = %v", recs)
+	}
+	// OPS-020: the restore is also an event in the audit chain.
+	rdb, err := sql.Open("sqlite", db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = rdb.Close() }()
+	var n int
+	if err := rdb.QueryRow(`SELECT COUNT(*) FROM audit_events WHERE action = 'database.restored'`).Scan(&n); err != nil || n < 1 {
+		t.Errorf("database.restored events = %d err=%v", n, err)
 	}
 }
 

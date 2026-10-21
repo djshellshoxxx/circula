@@ -22,6 +22,7 @@ var sampleValues = map[string]string{
 	"migrate-mode":          "auto",
 	"session-idle":          "1h",
 	"session-max":           "1000h",
+	"shutdown-grace":        "5s",
 	"idempotency-ttl":       "48h",
 	"min-password-length":   "14",
 	"require-mfa-admins":    "true",

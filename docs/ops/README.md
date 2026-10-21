@@ -50,8 +50,6 @@ owns the specification. Names of people are kept outside this repository.
 These are not implemented in the current `circula` build. Each one is a deliberate deferral or a missing service hook. Do not
 rely on them until the gap is closed and this list is updated.
 
-- **Restore audit event (OPS-020).** `restore` writes a local record in the backup directory (`restore-<time>.json`). The
-  ledger has no restore event yet.
 - **Frozen-network visibility (OPS-033).** A network that fails verification is frozen (read-only) and the rest serve;
   administrators see the refusal when they try to write, and operators see `circula_frozen_networks` and the error log.
   There is no administrator dashboard indicator yet, and the frozen state is not stored (a restart re-derives it).

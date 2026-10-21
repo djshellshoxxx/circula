@@ -35,10 +35,10 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
 | ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done |
 | ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
-| ARC-015 | P0 | partial | Verify on demand and in hourly job; scheduled runs are not recorded (SVC-01) |
-| ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace is 30 s, spec says 10 s |
+| ARC-015 | P0 | built | Verify on demand and in hourly job; scheduled runs recorded in consistency_runs, audited only on failure or state change |
+| ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace default 10 s (shutdown-grace) |
 | ARC-017 | P0 | partial | Semantic server-rendered HTML; no automated WCAG tool in CI |
-| ARC-018 | P1 | partial | Layering by convention; no CI import-rule check |
+| ARC-018 | P1 | built | Layering enforced by depguard rules in .golangci.yml |
 | ARC-019 | P0 | built | CI builds all five targets from one commit |
 | ARC-020 | P0 | partial | Export through service; documented reference parser absent |
 | ARC-021 | P1 | built | Clock and IDs injected into service |
