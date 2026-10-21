@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -232,7 +233,7 @@ func TestEncryptDecryptFiles(t *testing.T) {
 	if want, wsize, _ := fileSHA256(enc); want != sum || wsize != size {
 		t.Errorf("ciphertext digest mismatch")
 	}
-	if fi, _ := os.Stat(enc); fi.Mode().Perm() != 0o600 {
+	if fi, _ := os.Stat(enc); runtime.GOOS != "windows" && fi.Mode().Perm() != 0o600 { // Windows has no POSIX modes
 		t.Errorf("mode = %o", fi.Mode().Perm())
 	}
 	out := filepath.Join(dir, "out")
@@ -322,7 +323,7 @@ func TestEncryptedBackupAndRestoreIntegration(t *testing.T) {
 	if bytes.Contains(raw, []byte("SQLite format 3")) || bytes.Contains(raw, []byte("founder01")) {
 		t.Error("ciphertext contains plaintext database content")
 	}
-	if fi, _ := os.Stat(path); fi.Mode().Perm() != 0o600 {
+	if fi, _ := os.Stat(path); runtime.GOOS != "windows" && fi.Mode().Perm() != 0o600 {
 		t.Errorf("backup mode %o", fi.Mode().Perm())
 	}
 	if mf.SHA256 == mf.PlaintextSHA256 || mf.Bytes <= mf.PlaintextBytes {
@@ -615,12 +616,14 @@ func TestEncryptionKeyConfig(t *testing.T) {
 	if _, _, err := resolveWith(t, nil, baseEnv(t, map[string]string{envName("backup-require-encryption"): "true"})); err == nil {
 		t.Error("require-encryption without a key accepted")
 	}
-	// Group-readable key file refused.
-	if err := os.Chmod(kf, 0o640); err != nil {
-		t.Fatal(err)
-	}
-	if _, _, err := resolveWith(t, nil, baseEnv(t, map[string]string{envName("backup-encryption-key-file"): kf})); err == nil {
-		t.Error("group-readable key file accepted")
+	// Group-readable key file refused (POSIX modes only).
+	if runtime.GOOS != "windows" {
+		if err := os.Chmod(kf, 0o640); err != nil {
+			t.Fatal(err)
+		}
+		if _, _, err := resolveWith(t, nil, baseEnv(t, map[string]string{envName("backup-encryption-key-file"): kf})); err == nil {
+			t.Error("group-readable key file accepted")
+		}
 	}
 }
 
