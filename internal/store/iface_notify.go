@@ -88,6 +88,9 @@ type FeatureRepo interface {
 	CountUnreadNotifications(netID, memberID string) (int, error)
 	// MarkNotificationsRead marks the given ids (all when ids is empty) read and returns how many changed.
 	MarkNotificationsRead(netID, memberID string, ids []string, at time.Time) (int64, error)
+	// DeleteReadNotificationsBefore removes up to limit notifications that were read
+	// at or before cutoff (retention). Unread entries are never removed.
+	DeleteReadNotificationsBefore(cutoff time.Time, limit int) (int64, error)
 	// ListNetworkIDs lists every network id (system jobs).
 	ListNetworkIDs() ([]string, error)
 }
