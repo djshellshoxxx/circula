@@ -61,7 +61,7 @@ Summary: built 38, not built 3, partial 7.
 | DAT-038 | P0 | built | Ledger export includes transactions, status, accounts, entries, audit |
 | DAT-039 | P0 | built | Export manifest states ledger_seq of one snapshot |
 | DAT-040 | P0 | built | Manifest checksums; `circula verify-export <zip|dir>` re-hashes and counts rows |
-| DAT-041 | P1 | not built | No versioned export schema document or reference reader |
+| DAT-041 | P1 | built | Versioned schema docs/api/export-schema.md and reference reader scripts/read-export.py |
 | DAT-042 | P0 | built | Forward-only embedded migrations with recorded version |
 | DAT-043 | P0 | built | Pre-migration backup before migration on non-empty database |
 | DAT-044 | P0 | built | Post-migration verification gates serving |

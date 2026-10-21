@@ -149,6 +149,7 @@ transactions** gives your trades as a zip file with CSV or JSON.
 
 **Directory**: every active member of the network by display name, with search by name and **Propose a trade** links. A
 member's profile page shows their active listings. You can see other members' names and listings, not their balances.
+Listings and the directory are for signed-in members only. Every page also asks search engines not to index it (`noindex`, `robots.txt`).
 
 **Listings** are offers (something you provide) and requests (something you want), with an optional price. **New
 listing** asks for the kind, title (up to 120 characters), description (up to 2000) and optional price. **My listings**

@@ -43,8 +43,8 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-020 | P0 | partial | Export through service; documented reference parser absent |
 | ARC-021 | P1 | built | Clock and IDs injected into service |
 | ARC-022 | P1 | partial | Structured logs, request IDs, metrics; posting counters not present |
-| ARC-023 | P1 | partial | Config from file, env and flags; secret files; no repository secret scan in CI |
-| ARC-024 | P1 | not built | No dependency licence manifest |
+| ARC-023 | P1 | built | Config from file, env and flags; secret files; gitleaks scan in CI |
+| ARC-024 | P1 | built | Licence manifest docs/legal/DEPENDENCIES.md; CI fails on a licence outside the approved list |
 | ARC-025 | P2 | deferred | Federation, mobile, payment and tokenisation not built; no route |
 
 ## 1. Architectural summary

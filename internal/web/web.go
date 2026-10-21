@@ -49,10 +49,10 @@ type server struct {
 	csrf  httpx.CSRF
 	// Failure counters: per client address, per client+login, and per signed-in
 	// person for password-change guesses. reg and setup count every attempt.
-	ipFail, acctFail, pwFail, reg, setup *limiter
-	setupUsed                            atomic.Bool // in-process fast path; the durable flag is the service's (SEC-028)
-	setupMu                              sync.Mutex  // serialises check, create and mark so one secret creates one network
-	mux                                  *http.ServeMux
+	ipFail, acctFail, pwFail, reg, setup, join *limiter
+	setupUsed                                  atomic.Bool // in-process fast path; the durable flag is the service's (SEC-028)
+	setupMu                                    sync.Mutex  // serialises check, create and mark so one secret creates one network
+	mux                                        *http.ServeMux
 }
 
 // NewHandler returns the UI handler. Mount it at /.
@@ -67,7 +67,8 @@ func NewHandlerWith(svc *service.Service, opts Options) http.Handler {
 func newServer(svc *service.Service, opts Options) *server {
 	s := &server{svc: svc, opts: opts, key: opts.CSRFKey,
 		ipFail: newLimiter(20, 60), acctFail: newLimiter(5, 60), pwFail: newLimiter(5, 600),
-		reg: newLimiter(10, 60), setup: newLimiter(10, 600)}
+		reg: newLimiter(10, 60), setup: newLimiter(10, 600),
+		join: newLimiter(10, 600)}
 	if len(s.key) == 0 {
 		s.key = make([]byte, 32)
 		if _, err := rand.Read(s.key); err != nil {
@@ -84,6 +85,11 @@ func newServer(svc *service.Service, opts Options) *server {
 	s.mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		w.WriteHeader(http.StatusNoContent)
+	})
+	s.mux.HandleFunc("GET /robots.txt", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("Cache-Control", "public, max-age=3600")
+		_, _ = w.Write([]byte("User-agent: *\nDisallow: /\n"))
 	})
 	s.mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(static)))
 	s.routes()

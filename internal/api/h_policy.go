@@ -25,6 +25,7 @@ type policyDTO struct {
 	ResponsePeriodDays        int    `json:"response_period_days"`
 	ReReviewWindowDays        int    `json:"re_review_window_days"`
 	LimitWarningPercent       int    `json:"limit_warning_percent"`
+	InactivityDays            int    `json:"inactivity_days"`
 }
 
 func toPolicy(p domain.Policy) policyDTO {
@@ -33,7 +34,8 @@ func toPolicy(p domain.Policy) policyDTO {
 		JoinMode: string(p.JoinMode), DepartureRule: string(p.DepartureRule), SignupGrantMinor: minor(p.SignupGrant),
 		LimitWarningDays: p.LimitWarningDays, DefaultFlagBlocksPayer: p.DefaultFlagBlocksPayer, DirectoryVisibility: p.DirectoryVisibility,
 		DualControlThresholdMinor: minor(p.DualControlThreshold),
-		ResponsePeriodDays:        p.ResponsePeriodDays, ReReviewWindowDays: p.ReReviewWindowDays, LimitWarningPercent: p.LimitWarningPercent}
+		ResponsePeriodDays:        p.ResponsePeriodDays, ReReviewWindowDays: p.ReReviewWindowDays, LimitWarningPercent: p.LimitWarningPercent,
+		InactivityDays: p.InactivityDays}
 }
 
 func (d policyDTO) domain() (domain.Policy, error) {
@@ -55,6 +57,7 @@ func (d policyDTO) domain() (domain.Policy, error) {
 	p.DisputeWindowDays, p.JoinMode, p.DepartureRule = d.DisputeWindowDays, domain.JoinMode(d.JoinMode), domain.DepartureRule(d.DepartureRule)
 	p.LimitWarningDays, p.DefaultFlagBlocksPayer, p.DirectoryVisibility = d.LimitWarningDays, d.DefaultFlagBlocksPayer, d.DirectoryVisibility
 	p.ResponsePeriodDays, p.ReReviewWindowDays, p.LimitWarningPercent = d.ResponsePeriodDays, d.ReReviewWindowDays, d.LimitWarningPercent
+	p.InactivityDays = d.InactivityDays
 	return p, nil
 }
 

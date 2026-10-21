@@ -89,3 +89,16 @@ Owners are roles. Assign a named person per instance and record them outside thi
 - `backup`: every `backup-interval`, catching up after a restart. Retries after 15 minutes if it fails.
 
 Each job uses UTC and the server clock. The jobs are idempotent: running one twice has no further effect.
+
+## Log retention (SEC-021, DEC-019)
+
+`circula` writes logs to standard error (`log-format`, `log-level`). Whatever stores them (systemd journal, a log file,
+a shipper) must keep them for the period in `log-retention` (default 90 days) and no longer. Rules:
+
+- Logs hold request ids, route templates and status classes. They hold no secrets, passwords or tokens (SEC-027).
+- Only operator staff who need them may read them. Make log files `0600` and the directory `0700`.
+- Log storage is part of the backup and deletion procedures: include it in off-host copies only if it is covered by the
+  same retention; delete it with the deployment.
+- For log files in a directory, run `circula prune-logs -dir /var/log/circula` daily (a systemd timer or cron job). It
+  deletes regular `*.log`, `*.log.*` and `*.jsonl` files older than `log-retention` and ignores everything else. With
+  journald, set `MaxRetentionSec=90d` in `journald.conf` instead.

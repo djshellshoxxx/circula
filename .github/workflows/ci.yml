@@ -28,6 +28,10 @@ jobs:
         run: scripts/check-action-pins.sh
       - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037)
         run: scripts/check-hygiene.sh
+      - name: Dependency licences against the approved list (ARC-024)
+        run: scripts/licenses.sh --check
+      - name: Secret scan (ARC-023, SEC-027)
+        run: go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact
       - name: gofmt
         run: |
           unformatted="$(gofmt -l .)"

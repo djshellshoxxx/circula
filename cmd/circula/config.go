@@ -57,6 +57,7 @@ var settingDefs = []settingDef{
 	{key: "request-timeout", def: "30s", help: "per-request deadline for API and UI routes"},
 	{key: "log-level", def: "info", help: "debug, info, warn or error"},
 	{key: "log-format", def: "json", help: "json or text"},
+	{key: "log-retention", def: "2160h", help: "how long stored log files are kept by `circula prune-logs` (SEC-021, DEC-019)"},
 	{key: "cookie-secure", def: "true", help: "mark session cookies Secure and use the __Host- cookie name; keep true behind a TLS proxy (SEC-022)"},
 	{key: "maintenance", def: "false", help: "start in maintenance mode: web and API answer 503 with Retry-After, /healthz stays up (OPS-024); toggle live with `circula maintenance on|off`"},
 	{key: "metrics-allow", def: "127.0.0.1/32,::1/128", help: "comma-separated CIDRs allowed to read /metrics; none to deny all"},
@@ -98,6 +99,7 @@ type Config struct {
 	SessionIdle         time.Duration
 	SessionMax          time.Duration
 	ShutdownGrace       time.Duration
+	LogRetention        time.Duration
 	IdempotencyTTL      time.Duration
 	MinPasswordLength   int
 	RequireMFAAdmins    bool
@@ -332,6 +334,7 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	default:
 		fail("log-level", "must be debug, info, warn or error")
 	}
+	cfg.LogRetention = parseDuration(get("log-retention"), "log-retention", fail, 24*time.Hour, 3660*24*time.Hour)
 	cfg.LogFormat = get("log-format")
 	if cfg.LogFormat != "json" && cfg.LogFormat != "text" {
 		fail("log-format", "must be json or text")

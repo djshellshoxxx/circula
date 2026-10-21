@@ -9,6 +9,7 @@ This guide covers running a Circula instance. Specifications it implements: [`do
 | [upgrade.md](upgrade.md) | Upgrading, migrating and rolling back |
 | [monitoring.md](monitoring.md) | Health and readiness endpoints, metrics, alert conditions, failure modes |
 | [hardening.md](hardening.md) | Hardened systemd unit, container recipe, reproducible builds |
+| [rpo-rto.md](rpo-rto.md) | Recovery point and recovery time objectives (ARC-016, OPS-034) |
 
 ## Environments (OPS-004)
 

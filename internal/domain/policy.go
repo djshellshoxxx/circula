@@ -49,6 +49,10 @@ type Policy struct {
 	// LimitWarningPercent: share of the credit limit in use at which a member is
 	// warned (UX-012, OQ-UX-02).
 	LimitWarningPercent int `json:"limit_warning_percent"`
+	// InactivityDays: a member with no sign-in and no trade for this many days is
+	// flagged for the administrators and notified (GOV-012). 0 = no rule (the
+	// recommended default). The product never removes a member for inactivity.
+	InactivityDays int `json:"inactivity_days"`
 }
 
 // Platform bounds for open questions OQ-DOM-5/6.
@@ -58,6 +62,8 @@ const (
 	MaxLimitWarningDays   = 3650
 	MaxResponsePeriodDays = 90
 	MaxReReviewWindowDays = 365
+	MinInactivityDays     = 30
+	MaxInactivityDays     = 3650
 	// MaxPolicyAmount keeps minor-unit magnitudes far from int64 overflow.
 	MaxPolicyAmount int64 = 1 << 50
 )
@@ -130,6 +136,9 @@ func (p Policy) Validate() error {
 	}
 	if p.LimitWarningPercent < 1 || p.LimitWarningPercent > 100 {
 		add("limit_warning_percent", "must be 1 to 100")
+	}
+	if p.InactivityDays != 0 && (p.InactivityDays < MinInactivityDays || p.InactivityDays > MaxInactivityDays) {
+		add("inactivity_days", fmt.Sprintf("must be 0 (no rule) or %d to %d", MinInactivityDays, MaxInactivityDays))
 	}
 	if p.DirectoryVisibility != "members-only" {
 		add("directory_visibility", "only members-only is supported")
