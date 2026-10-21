@@ -1,0 +1,25 @@
+{{define "content"}}
+<p>Current policy is version {{.D}}. Saving creates a new version; earlier versions are kept. Decimal places ({{.Dec}}) cannot be changed.</p>
+<form method="post" action="/n/{{.Slug}}/admin/policy" novalidate>
+  {{template "csrf" .}}{{template "idem" .}}
+  {{template "field" dict "P" . "Name" "currency_name" "Label" "Credit unit name" "Max" 40 "Req" true}}
+  {{template "field" dict "P" . "Name" "default_credit_limit" "Label" "Default credit limit" "Hint" "Amount in credits." "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "max_tx_amount" "Label" "Largest single trade" "Hint" "Amount in credits." "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "signup_grant" "Label" "Sign-up grant" "Hint" "Amount in credits; 0 for none." "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "proposal_expiry_days" "Label" "Proposal expiry (days)" "Mode" "numeric" "Req" true}}
+  {{template "field" dict "P" . "Name" "dispute_window_days" "Label" "Dispute window (days)" "Mode" "numeric" "Req" true}}
+  {{template "field" dict "P" . "Name" "limit_warning_days" "Label" "Limit warning (days, 0 to disable)" "Mode" "numeric" "Req" true}}
+  <div class="field"><label for="f-join_mode">How people join</label>
+  <select id="f-join_mode" name="join_mode">
+    <option value="invite"{{if eq (.Val "join_mode") "invite"}} selected{{end}}>By invitation only</option>
+    <option value="approval"{{if eq (.Val "join_mode") "approval"}} selected{{end}}>Request, then approval</option>
+    <option value="open"{{if eq (.Val "join_mode") "open"}} selected{{end}}>Open</option></select></div>
+  <div class="field"><label for="f-departure_rule">When a member leaves</label>
+  <select id="f-departure_rule" name="departure_rule">
+    <option value="retain"{{if eq (.Val "departure_rule") "retain"}} selected{{end}}>Balance is retained</option>
+    <option value="settle-to-zero"{{if eq (.Val "departure_rule") "settle-to-zero"}} selected{{end}}>Balance is settled to zero</option></select></div>
+  <div class="field"><label><input type="checkbox" name="default_flag_blocks_payer" value="1"{{if .Val "default_flag_blocks_payer"}} checked{{end}}> Members marked in default cannot pay</label></div>
+  {{template "field" dict "P" . "Name" "reason" "Label" "Reason for the change" "Hint" "Required. It is recorded with the new version." "Req" true}}
+  <div class="actions"><button type="submit">Save new version</button></div>
+</form>
+{{end}}

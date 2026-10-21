@@ -1,0 +1,25 @@
+{{define "content"}}
+{{with .D}}
+<div class="actions"><a class="btn" href="/n/{{$.Slug}}/listings/new">New listing</a>
+{{if .Mine}}<a class="btn secondary" href="/n/{{$.Slug}}/listings">All listings</a>{{else}}<a class="btn secondary" href="/n/{{$.Slug}}/listings?mine=1">My listings</a>{{end}}</div>
+{{if not .Mine}}
+<form method="get" action="/n/{{$.Slug}}/listings" role="search">
+  <div class="field"><label for="f-type">Kind</label>
+  <select id="f-type" name="type"><option value="">Offers and requests</option>
+    <option value="offer"{{if eq ($.Val "type") "offer"}} selected{{end}}>Offers</option>
+    <option value="request"{{if eq ($.Val "type") "request"}} selected{{end}}>Requests</option></select></div>
+  <div class="field"><label for="f-q">Search</label><input id="f-q" name="q" type="search" value="{{$.Val "q"}}"></div>
+  <div class="actions"><button type="submit">Filter</button></div>
+</form>
+{{end}}
+{{if .Items}}
+<ul class="rows">{{range .Items}}<li>
+  <p><strong>{{if eq (printf "%s" .Type) "offer"}}Offer{{else}}Request{{end}}:</strong> {{.Title}} <span class="tag">{{.Status}}</span></p>
+  <p>{{.Description}}</p>
+  <p>By {{.Owner}}{{if .Price}} &middot; price {{.Price}} {{$.Unit}}s{{end}}</p>
+  <p>{{if .Own}}<a href="/n/{{$.Slug}}/listings/{{.ID}}/edit">Edit<span class="sr"> {{.Title}}</span></a>{{else}}<a href="/n/{{$.Slug}}/trades/new?to={{.MemberID}}&amp;listing={{.ID}}">Propose a trade<span class="sr"> about {{.Title}}</span></a>{{end}}</p>
+</li>{{end}}</ul>
+{{else}}<p>No listings to show. Offers and requests that members publish appear here. <a href="/n/{{$.Slug}}/listings/new">Publish the first one.</a></p>{{end}}
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/listings?mine=%t&after=" $.Slug .Mine)}}
+{{end}}
+{{end}}

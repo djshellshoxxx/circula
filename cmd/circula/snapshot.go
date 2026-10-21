@@ -1,0 +1,348 @@
+package main
+
+import (
+	"context"
+	"crypto/sha256"
+	"database/sql"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"io/fs"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/store"
+)
+
+// manifestFormat is the version of the backup manifest layout.
+const manifestFormat = 1
+
+// LedgerSummary is the ledger verification result recorded with a backup or a
+// command run. Status is ok, failed or not-run. Only counts are recorded, not
+// network identifiers, so manifests carry no member or network data.
+type LedgerSummary struct {
+	Status   string `json:"status"`
+	Networks int    `json:"networks"`
+	Failing  int    `json:"failing_networks"`
+	Reason   string `json:"reason,omitempty"`
+}
+
+// Manifest accompanies every backup file (OPS-017).
+type Manifest struct {
+	Format        int           `json:"format"`
+	CreatedAt     time.Time     `json:"created_at"`
+	Reason        string        `json:"reason"`
+	AppVersion    string        `json:"app_version"`
+	SchemaVersion int           `json:"schema_version"`
+	File          string        `json:"file"`
+	Bytes         int64         `json:"bytes"`
+	SHA256        string        `json:"sha256"`
+	Integrity     string        `json:"integrity_check"`
+	Ledger        LedgerSummary `json:"ledger_verification"`
+}
+
+// networkCheck is the outcome of verifying one network.
+type networkCheck struct {
+	ID       string
+	Slug     string
+	OK       bool
+	Findings []string
+}
+
+// verifyAllNetworks runs the ledger verification for every network (or only
+// the network whose id or slug equals filter, when filter is not empty) as the
+// system actor. It returns an error only when the check could not run.
+func verifyAllNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string) ([]networkCheck, error) {
+	rows, err := db.QueryContext(ctx, `SELECT id, slug FROM networks WHERE ?1 = '' OR id = ?1 OR slug = ?1 ORDER BY id`, filter)
+	if err != nil {
+		return nil, fmt.Errorf("list networks: %w", err)
+	}
+	type net struct{ id, slug string }
+	var nets []net
+	for rows.Next() {
+		var n net
+		if err := rows.Scan(&n.id, &n.slug); err != nil {
+			_ = rows.Close()
+			return nil, err
+		}
+		nets = append(nets, n)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	out := make([]networkCheck, 0, len(nets))
+	for _, n := range nets {
+		rep, err := svc.VerifyLedger(ctx, domain.SystemActor(requestID), n.id)
+		if err != nil {
+			return out, fmt.Errorf("verify network %s: %w", n.slug, err)
+		}
+		out = append(out, networkCheck{ID: n.id, Slug: n.slug, OK: rep.OK, Findings: rep.Findings})
+	}
+	return out, nil
+}
+
+// summarise turns per-network results into a LedgerSummary.
+func summarise(checks []networkCheck) LedgerSummary {
+	s := LedgerSummary{Status: "ok", Networks: len(checks)}
+	for _, c := range checks {
+		if !c.OK {
+			s.Failing++
+		}
+	}
+	if s.Failing > 0 {
+		s.Status = "failed"
+	}
+	return s
+}
+
+// ledgerFunc verifies a database file and returns its summary.
+type ledgerFunc func(ctx context.Context, path string) (LedgerSummary, error)
+
+// verifyFile opens the database file at path (which must already be at the
+// binary's schema version), runs ledger verification and closes it.
+func verifyFile(ctx context.Context, path string, cfg *Config) (LedgerSummary, error) {
+	st, err := store.Open(ctx, path)
+	if err != nil {
+		return LedgerSummary{}, err
+	}
+	defer func() { _ = st.Close() }()
+	svc, err := newService(st, cfg)
+	if err != nil {
+		return LedgerSummary{}, err
+	}
+	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "backup-verify", "")
+	if err != nil {
+		return LedgerSummary{}, err
+	}
+	return summarise(checks), nil
+}
+
+// snapshot writes a consistent online copy of the database behind db to dest,
+// verifies it, and writes dest + ".manifest.json". The copy is built under a
+// .partial name and renamed only after every check passed, so an interrupted
+// backup never looks complete. VACUUM INTO reads a snapshot and does not hold
+// the write lock (OPS-017).
+func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc) (*Manifest, error) {
+	if _, err := os.Stat(dest); err == nil {
+		return nil, fmt.Errorf("backup destination %s already exists", dest)
+	}
+	partial := dest + ".partial"
+	removeDBFiles(partial)
+	if _, err := db.ExecContext(ctx, "VACUUM INTO ?", partial); err != nil {
+		removeDBFiles(partial)
+		return nil, fmt.Errorf("online snapshot: %w", err)
+	}
+	fail := func(err error) (*Manifest, error) {
+		removeDBFiles(partial)
+		return nil, err
+	}
+
+	integrity, err := integrityCheck(ctx, partial)
+	if err != nil {
+		return fail(err)
+	}
+	schema, err := inspectSchema(ctx, partial)
+	if err != nil {
+		return fail(err)
+	}
+	ledgerSum := LedgerSummary{Status: "not-run", Reason: "snapshot schema is older than this binary (pre-migration copy)"}
+	if schema.Pending() == 0 && ledger != nil {
+		ledgerSum, err = ledger(ctx, partial)
+		if err != nil {
+			return fail(fmt.Errorf("verify snapshot: %w", err))
+		}
+	}
+	removeSideFiles(partial)
+
+	sum, size, err := fileSHA256(partial)
+	if err != nil {
+		return fail(err)
+	}
+	if err := os.Rename(partial, dest); err != nil {
+		return fail(err)
+	}
+	m := &Manifest{
+		Format:        manifestFormat,
+		CreatedAt:     now.UTC().Truncate(time.Second),
+		Reason:        reason,
+		AppVersion:    version,
+		SchemaVersion: schema.Applied,
+		File:          filepath.Base(dest),
+		Bytes:         size,
+		SHA256:        sum,
+		Integrity:     integrity,
+		Ledger:        ledgerSum,
+	}
+	if err := writeManifest(dest+".manifest.json", m); err != nil {
+		return nil, fmt.Errorf("backup %s written but manifest failed: %w", dest, err)
+	}
+	return m, nil
+}
+
+// integrityCheck runs PRAGMA integrity_check on a file and returns "ok" or the
+// first reported problem.
+func integrityCheck(ctx context.Context, path string) (string, error) {
+	db, err := openRaw(path)
+	if err != nil {
+		return "", err
+	}
+	defer func() { _ = db.Close() }()
+	var res string
+	if err := db.QueryRowContext(ctx, `PRAGMA integrity_check`).Scan(&res); err != nil {
+		return "", fmt.Errorf("integrity check of %s: %w", path, err)
+	}
+	return res, nil
+}
+
+// removeDBFiles deletes a database file and its WAL side files, ignoring
+// missing ones.
+func removeDBFiles(path string) {
+	removeSideFiles(path)
+	_ = os.Remove(path)
+}
+
+// removeSideFiles deletes the WAL and shared-memory files next to path.
+func removeSideFiles(path string) {
+	_ = os.Remove(path + "-wal")
+	_ = os.Remove(path + "-shm")
+}
+
+// fileSHA256 returns the hex SHA-256 and size of a file.
+func fileSHA256(path string) (string, int64, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", 0, err
+	}
+	defer func() { _ = f.Close() }()
+	h := sha256.New()
+	n, err := io.Copy(h, f)
+	if err != nil {
+		return "", 0, err
+	}
+	return hex.EncodeToString(h.Sum(nil)), n, nil
+}
+
+// writeManifest writes the manifest atomically.
+func writeManifest(path string, m *Manifest) error {
+	b, err := json.MarshalIndent(m, "", "  ")
+	if err != nil {
+		return err
+	}
+	b = append(b, '\n')
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, b, 0o600); err != nil {
+		return err
+	}
+	return os.Rename(tmp, path)
+}
+
+// readManifest loads and validates the manifest for a backup file.
+func readManifest(path string) (*Manifest, error) {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("read manifest: %w", err)
+	}
+	var m Manifest
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, fmt.Errorf("manifest %s is not valid JSON: %w", path, err)
+	}
+	if m.Format != manifestFormat {
+		return nil, fmt.Errorf("manifest %s has unsupported format %d", path, m.Format)
+	}
+	return &m, nil
+}
+
+// verifyBackupFile recomputes the checksum of a backup and compares it with
+// its manifest.
+func verifyBackupFile(path string, m *Manifest) error {
+	sum, size, err := fileSHA256(path)
+	if err != nil {
+		return err
+	}
+	if sum != m.SHA256 || size != m.Bytes {
+		return errors.New("backup file does not match its manifest checksum or size")
+	}
+	return nil
+}
+
+// backupFileName returns the backup file name for a time (UTC, second precision).
+const backupPrefix = "circula-"
+const backupSuffix = ".db"
+const backupTimeLayout = "20060102T150405Z"
+
+func backupFileName(t time.Time) string {
+	return backupPrefix + t.UTC().Format(backupTimeLayout) + backupSuffix
+}
+
+type backupEntry struct {
+	path string
+	at   time.Time
+}
+
+// listBackups returns the backups in dir, newest first. Files that do not
+// match the naming scheme are ignored.
+func listBackups(dir string) ([]backupEntry, error) {
+	ents, err := os.ReadDir(dir)
+	if errors.Is(err, fs.ErrNotExist) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var out []backupEntry
+	for _, e := range ents {
+		name := e.Name()
+		if e.IsDir() || !strings.HasPrefix(name, backupPrefix) || !strings.HasSuffix(name, backupSuffix) {
+			continue
+		}
+		t, err := time.Parse(backupTimeLayout, strings.TrimSuffix(strings.TrimPrefix(name, backupPrefix), backupSuffix))
+		if err != nil {
+			continue
+		}
+		out = append(out, backupEntry{path: filepath.Join(dir, name), at: t})
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].at.After(out[j].at) })
+	return out, nil
+}
+
+// pruneBackups keeps the newest keepDaily backups and, for each of the newest
+// keepMonthly calendar months that has backups, the newest backup of that
+// month. It returns the names of removed backup files.
+func pruneBackups(dir string, keepDaily, keepMonthly int) ([]string, error) {
+	entries, err := listBackups(dir)
+	if err != nil {
+		return nil, err
+	}
+	keep := map[string]bool{}
+	for i, e := range entries {
+		if i < keepDaily {
+			keep[e.path] = true
+		}
+	}
+	months := map[string]bool{}
+	for _, e := range entries {
+		key := e.at.Format("2006-01")
+		if months[key] || len(months) >= keepMonthly {
+			continue
+		}
+		months[key] = true
+		keep[e.path] = true
+	}
+	var removed []string
+	for _, e := range entries {
+		if keep[e.path] {
+			continue
+		}
+		removeDBFiles(e.path)
+		_ = os.Remove(e.path + ".manifest.json")
+		removed = append(removed, filepath.Base(e.path))
+	}
+	return removed, nil
+}

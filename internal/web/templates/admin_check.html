@@ -1,0 +1,8 @@
+{{define "content"}}
+{{with .D}}
+<p class="big">{{if .OK}}Check passed: no problems found.{{else}}Check failed: problems found.{{end}}</p>
+<p>Ledger sequence {{.LedgerSeq}}; {{.AuditEvents}} audit events checked.</p>
+{{if .Findings}}<ul>{{range .Findings}}<li>{{.}}</li>{{end}}</ul>{{end}}
+{{end}}
+<p><a href="/n/{{.Slug}}/admin/audit">Back to audit and checks</a></p>
+{{end}}

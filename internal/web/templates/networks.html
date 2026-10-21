@@ -1,0 +1,8 @@
+{{define "content"}}
+{{if .D}}
+<ul class="rows">{{range .D}}<li><a href="/n/{{.Slug}}">{{.Name}}</a> <span class="tag">{{.Status}}</span></li>{{end}}</ul>
+{{else}}
+<p>You are not a member of any network yet. Open an invitation link from a network administrator to join one, or start your own.</p>
+{{end}}
+<div class="actions"><a class="btn" href="/setup">Create a network</a></div>
+{{end}}

@@ -1,0 +1,73 @@
+{{define "base"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}}{{if .NetName}} - {{.NetName}}{{end}} - Circula</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="top">
+  <p class="brand"><a href="{{if .Slug}}/n/{{.Slug}}{{else}}/{{end}}">Circula{{if .NetName}}<span class="sr">, </span><span class="netname"> {{.NetName}}</span>{{end}}</a></p>
+  {{if .Authed}}
+  <nav aria-label="Main">
+    <ul class="nav">
+      {{range .Nav}}<li><a href="{{.Href}}"{{if .Current}} aria-current="page"{{end}}>{{.Label}}</a></li>{{end}}
+      <li><a href="/">All networks</a></li>
+    </ul>
+  </nav>
+  <form method="post" action="/logout" class="signout">{{template "csrf" .}}<button type="submit" class="link">Sign out</button></form>
+  {{end}}
+</header>
+<main id="main" tabindex="-1">
+  <h1 id="page-title">{{.Title}}</h1>
+  {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
+  {{with .Notice}}<div class="notice" role="note"><strong>Notice:</strong> {{.}}</div>{{end}}
+  {{if or .Errors .Summary}}
+  <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">
+    <h2 id="errsum-h">There is a problem</h2>
+    {{with .Summary}}<p>{{.}}</p>{{end}}
+    {{if .Errors}}<ul>{{range .Errors}}<li><a href="#f-{{.Field}}">{{.Text}}</a></li>{{end}}</ul>{{end}}
+  </div>
+  {{end}}
+  {{template "content" .}}
+</main>
+<footer class="foot">
+  <p>Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted.</p>
+  <p><a href="/help">Help: credits, balances and statuses</a>{{if .ReqID}} &middot; Reference <code>{{.ReqID}}</code>{{end}}</p>
+</footer>
+</body>
+</html>{{end}}
+
+{{define "csrf"}}<input type="hidden" name="csrf" value="{{.CSRF}}">{{end}}
+{{define "idem"}}<input type="hidden" name="idem" value="{{.Idem}}">{{end}}
+
+{{define "field"}}<div class="field{{if .P.Err .Name}} has-error{{end}}">
+  <label for="f-{{.Name}}">{{.Label}}</label>
+  {{if .Hint}}<p class="hint" id="h-{{.Name}}">{{.Hint}}</p>{{end}}
+  {{with .P.Err .Name}}<p class="error" id="e-{{$.Name}}"><span class="sr">Error: </span>{{.}}</p>{{end}}
+  {{if eq .Type "textarea"}}<textarea id="f-{{.Name}}" name="{{.Name}}" rows="4"{{if .Max}} maxlength="{{.Max}}"{{end}}{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err .Name)}} aria-describedby="{{if .Hint}}h-{{.Name}}{{end}}{{if .P.Err .Name}} e-{{.Name}}{{end}}"{{end}}{{if .Req}} required{{end}}>{{.P.Val .Name}}</textarea>
+  {{else}}<input id="f-{{.Name}}" name="{{.Name}}" type="{{or .Type "text"}}"{{if ne .Type "password"}} value="{{.P.Val .Name}}"{{end}}{{if .Auto}} autocomplete="{{.Auto}}"{{end}}{{if .Mode}} inputmode="{{.Mode}}"{{end}}{{if .Max}} maxlength="{{.Max}}"{{end}}{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err .Name)}} aria-describedby="{{if .Hint}}h-{{.Name}}{{end}}{{if .P.Err .Name}} e-{{.Name}}{{end}}"{{end}}{{if .Req}} required{{end}}>{{end}}
+</div>{{end}}
+
+{{define "select"}}<div class="field{{if .P.Err .Name}} has-error{{end}}">
+  <label for="f-{{.Name}}">{{.Label}}</label>
+  {{if .Hint}}<p class="hint" id="h-{{.Name}}">{{.Hint}}</p>{{end}}
+  {{with .P.Err .Name}}<p class="error" id="e-{{$.Name}}"><span class="sr">Error: </span>{{.}}</p>{{end}}
+  <select id="f-{{.Name}}" name="{{.Name}}"{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if .Hint}} aria-describedby="h-{{.Name}}"{{end}}>
+    {{range .Opts}}<option value="{{.Value}}"{{if eq2 .Value ($.P.Val $.Name)}} selected{{end}}>{{.Label}}</option>{{end}}
+  </select>
+</div>{{end}}
+
+{{define "balance"}}<span class="bal"><span aria-hidden="true"><span class="num">{{.Signed}}</span> &middot; <strong>{{.State}}</strong></span><span class="sr">{{.Spoken}}</span></span>{{end}}
+
+{{define "txlist"}}<ul class="rows">
+{{range .Rows}}<li>
+  <p><a href="{{$.Base}}/trades/{{.ID}}">{{.Text}}</a></p>
+  <p><span class="num">{{.Signed}}</span> &middot; <span class="tag">{{.Status}}</span> &middot; {{time .When}}{{if .Ledger}} &middot; {{.Ledger}}{{end}}</p>
+</li>{{end}}
+</ul>{{end}}
+
+{{define "pager"}}{{if .Next}}<p><a href="{{.Href}}{{.Next}}">Next page</a></p>{{end}}{{end}}

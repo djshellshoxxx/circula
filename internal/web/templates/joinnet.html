@@ -1,0 +1,12 @@
+{{define "content"}}
+{{if eq (printf "%s" .D.JoinMode) "invite"}}
+<p>{{.D.Name}} is invitation only. Ask an administrator for an invitation link.</p>
+{{else}}
+<p>{{if eq (printf "%s" .D.JoinMode) "approval"}}Your request will wait for an administrator to approve it.{{else}}You will join straight away.{{end}}</p>
+<form method="post" action="/n/{{.D.Slug}}/join" novalidate>
+  {{template "csrf" .}}
+  {{template "field" dict "P" . "Name" "display_name" "Label" "Your display name" "Hint" "Other members see this name." "Auto" "nickname" "Max" 60 "Req" true}}
+  <div class="actions"><button type="submit">{{if eq (printf "%s" .D.JoinMode) "approval"}}Request to join{{else}}Join{{end}}</button></div>
+</form>
+{{end}}
+{{end}}

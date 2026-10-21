@@ -1,0 +1,23 @@
+{{define "content"}}
+{{with .D}}
+<div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new">Propose a trade</a></div>
+<section aria-labelledby="t1"><h2 id="t1">Waiting for you</h2>
+{{if .Needs}}{{template "txlist" dict "Rows" .Needs "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>Nothing is waiting for you.</p>{{end}}</section>
+<section aria-labelledby="t2"><h2 id="t2">Pending</h2>
+{{if .Waiting}}{{template "txlist" dict "Rows" .Waiting "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>No trades are waiting for someone else.</p>{{end}}</section>
+<section aria-labelledby="t3"><h2 id="t3">Past trades</h2>
+<form method="get" action="/n/{{$.Slug}}/trades">
+  <div class="field"><label for="f-status">Show</label>
+  <select id="f-status" name="status"><option value="">All statuses</option>
+    <option value="completed"{{if eq .Filter "completed"}} selected{{end}}>Completed</option>
+    <option value="declined"{{if eq .Filter "declined"}} selected{{end}}>Declined</option>
+    <option value="cancelled"{{if eq .Filter "cancelled"}} selected{{end}}>Cancelled</option>
+    <option value="expired"{{if eq .Filter "expired"}} selected{{end}}>Expired</option>
+    <option value="disputed"{{if eq .Filter "disputed"}} selected{{end}}>Disputed</option>
+    <option value="reversed"{{if eq .Filter "reversed"}} selected{{end}}>Reversed</option></select></div>
+  <div class="actions"><button type="submit" class="secondary">Apply filter</button></div>
+</form>
+{{if .Past}}{{template "txlist" dict "Rows" .Past "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>No past trades yet. Completed and closed trades appear here.</p>{{end}}
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/trades?status=%s&after=" $.Slug .Filter)}}</section>
+{{end}}
+{{end}}

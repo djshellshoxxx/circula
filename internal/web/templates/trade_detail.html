@@ -1,0 +1,28 @@
+{{define "content"}}
+{{with .D}}
+{{if .Party}}<p class="big">{{.Row.Text}}</p>{{end}}
+<dl class="kv">
+  <dt>Status</dt><dd><span class="tag">{{.Row.Status}}</span> {{.Explain}}</dd>
+  <dt>Payer</dt><dd>{{.Payer}}</dd>
+  <dt>Payee</dt><dd>{{.Payee}}</dd>
+  <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
+  {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
+  {{if .Tx.Reason}}<dt>Reason</dt><dd>{{.Tx.Reason}}</dd>{{end}}
+  <dt>Proposed</dt><dd>{{time .Tx.ProposedAt}}</dd>
+  {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>Expires</dt><dd>{{time (deref .Tx.ExpiresAt)}}</dd>{{end}}{{end}}
+  {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{time (deref .Tx.CompletedAt)}}</dd>{{end}}
+  {{if .Row.Ledger}}<dt>Ledger reference</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
+</dl>
+<div class="actions">
+  {{if .Accept}}<a class="btn" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">Review and accept</a>{{end}}
+  {{if .Decline}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/decline">Decline</a>{{end}}
+  {{if .Cancel}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/cancel">Cancel this proposal</a>{{end}}
+  {{if .Dispute}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/dispute">Raise a dispute</a>{{end}}
+  {{if .DisputeID}}<a class="btn secondary" href="/n/{{$.Slug}}/disputes/{{.DisputeID}}">View the dispute</a>{{end}}
+</div>
+{{if .WhyNot}}<p>{{.WhyNot}}</p>{{end}}
+<h2>Timeline</h2>
+{{if .History}}<ol>{{range .History}}<li>{{.Label}}: {{.At}}</li>{{end}}</ol>{{else}}<p>No status changes recorded yet.</p>{{end}}
+{{end}}
+<p><a href="/n/{{.Slug}}/trades">Back to trades</a></p>
+{{end}}

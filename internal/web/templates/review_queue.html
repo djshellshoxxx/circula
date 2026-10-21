@@ -1,0 +1,6 @@
+{{define "content"}}
+{{if .D}}
+<ul class="rows">{{range .D}}<li><a href="/n/{{$.Slug}}/disputes/{{.ID}}">Dispute: {{.Category}}</a> &middot; <span class="tag">{{.Status}}</span> &middot; opened {{.Opened}}</li>{{end}}</ul>
+<p>You cannot decide a dispute on a trade you took part in.</p>
+{{else}}<p>The queue is empty. Disputes that need a decision appear here.</p>{{end}}
+{{end}}

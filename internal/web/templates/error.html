@@ -1,0 +1,5 @@
+{{define "content"}}
+<p>{{.Text}}</p>
+{{if eq .Status 500}}<p>Reference: <code>{{.ReqID}}</code></p>{{end}}
+<div class="actions"><a class="btn" href="/">Return home</a>{{if eq .Status 403}} <a class="btn secondary" href="/login">Sign in</a>{{end}}</div>
+{{end}}

@@ -1,0 +1,28 @@
+{{define "content"}}
+<p>You will be the first administrator. You can change most of these settings later, except the number of decimal places.</p>
+<form method="post" action="/setup" novalidate>
+  {{template "csrf" .}}
+  {{if .D}}{{template "field" dict "P" . "Name" "setup_secret" "Label" "Setup secret" "Hint" "Given to you by the person who runs this service." "Type" "password" "Req" true}}{{end}}
+  {{template "field" dict "P" . "Name" "name" "Label" "Network name" "Max" 80 "Req" true}}
+  {{template "field" dict "P" . "Name" "slug" "Label" "Web address name" "Hint" "Lower-case letters, numbers and hyphens, for example town-swap." "Max" 40 "Req" true}}
+  {{template "field" dict "P" . "Name" "display_name" "Label" "Your display name in this network" "Auto" "nickname" "Max" 60 "Req" true}}
+  {{template "field" dict "P" . "Name" "currency_name" "Label" "Credit unit name" "Hint" "A singular word, for example credit or hour." "Max" 40 "Req" true}}
+  <div class="field"><label for="f-decimals">Decimal places</label>
+    <select id="f-decimals" name="decimals">
+      <option value="0"{{if eq (.Val "decimals") "0"}} selected{{end}}>0 (whole units)</option>
+      <option value="1"{{if eq (.Val "decimals") "1"}} selected{{end}}>1</option>
+      <option value="2"{{if eq (.Val "decimals") "2"}} selected{{end}}>2</option>
+      <option value="3"{{if eq (.Val "decimals") "3"}} selected{{end}}>3</option>
+      <option value="4"{{if eq (.Val "decimals") "4"}} selected{{end}}>4</option>
+    </select></div>
+  {{template "field" dict "P" . "Name" "default_credit_limit" "Label" "Default credit limit per member" "Hint" "How far below zero a member's balance may go. Amount in credits, using the decimal places chosen above." "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "signup_grant" "Label" "Sign-up grant" "Hint" "Credits given to each new member. Use 0 for none." "Mode" "decimal" "Req" true}}
+  <div class="field"><label for="f-join_mode">How people join</label>
+    <select id="f-join_mode" name="join_mode">
+      <option value="invite"{{if eq (.Val "join_mode") "invite"}} selected{{end}}>By invitation only</option>
+      <option value="approval"{{if eq (.Val "join_mode") "approval"}} selected{{end}}>Request, then an administrator approves</option>
+      <option value="open"{{if eq (.Val "join_mode") "open"}} selected{{end}}>Open to any signed-in person</option>
+    </select></div>
+  <div class="actions"><button type="submit">Create network</button></div>
+</form>
+{{end}}

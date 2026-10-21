@@ -1,0 +1,12 @@
+{{define "content"}}
+{{with .D}}
+<p class="big">{{.Def.Verb}}: {{.M.DisplayName}}</p>
+<p>{{.Def.Consequence}}</p>
+<form method="post" action="/n/{{$.Slug}}/admin/members/{{.M.ID}}/{{.Key}}" novalidate>
+  {{template "csrf" $}}
+  {{if .Def.Amount}}{{template "field" dict "P" $ "Name" "amount" "Label" "Credit limit" "Hint" "Amount in credits. Leave empty to use the network default." "Mode" "decimal"}}{{end}}
+  {{if .Def.Reason}}{{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" "Required. It is recorded in the audit log." "Req" true}}{{end}}
+  <div class="actions"><button type="submit"{{if eq .Key "remove" "suspend" "deny"}} class="danger"{{end}}>{{.Def.Verb}}</button> <a class="btn secondary" href="/n/{{$.Slug}}/admin/members">Go back</a></div>
+</form>
+{{end}}
+{{end}}

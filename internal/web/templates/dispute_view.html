@@ -1,0 +1,33 @@
+{{define "content"}}
+{{with .D}}
+<dl class="kv">
+  <dt>Status</dt><dd><span class="tag">{{.Status}}</span></dd>
+  <dt>Trade</dt><dd><a href="/n/{{$.Slug}}/trades/{{.V.Tx.ID}}">{{.V.PayerName}} paid {{.V.PayeeName}} {{.Amount}} {{$.Unit}}s</a></dd>
+  <dt>Reason</dt><dd>{{.Category}}</dd>
+  <dt>Opened by</dt><dd>{{.Opener}} on {{time .V.Dispute.OpenedAt}}</dd>
+  <dt>Statement</dt><dd>{{.V.Dispute.Statement}}</dd>
+  {{if .Outcome}}<dt>Decision</dt><dd>{{.Outcome}}</dd>{{end}}
+  {{if .V.Dispute.Rationale}}<dt>Rationale</dt><dd>{{.V.Dispute.Rationale}}</dd>{{end}}
+</dl>
+<h2>Timeline</h2>
+<ol>{{range .Events}}<li>{{.Text}}: {{.At}}</li>{{end}}</ol>
+{{if .Withdraw}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/withdraw">{{template "csrf" $}}<div class="actions"><button type="submit" class="secondary">Withdraw this dispute</button></div></form>{{end}}
+{{if .Review}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/start-review">{{template "csrf" $}}<div class="actions"><button type="submit">Start review</button></div></form>{{end}}
+{{if .Retry}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/retry">{{template "csrf" $}}<div class="actions"><button type="submit">Retry posting the reversal</button></div></form>{{end}}
+{{if .Decide}}
+<h2>Record a decision</h2>
+<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/resolve" novalidate>
+  {{template "csrf" $}}{{template "idem" $}}
+  <div class="field"><label for="f-outcome">Outcome</label>
+  <select id="f-outcome" name="outcome">
+    <option value="dismissed">Dismissed: the balance stands</option>
+    <option value="upheld"{{if eq ($.Val "outcome") "upheld"}} selected{{end}}>Upheld: reverse the whole trade</option>
+    <option value="partially_upheld"{{if eq ($.Val "outcome") "partially_upheld"}} selected{{end}}>Partly upheld: reverse part</option></select></div>
+  {{template "field" dict "P" $ "Name" "amount" "Label" "Amount to reverse (partly upheld only)" "Hint" (printf "Amount in credits, up to %d decimal places." $.Dec) "Mode" "decimal"}}
+  {{template "field" dict "P" $ "Name" "rationale" "Label" "Rationale" "Hint" "Required. Both parties will see it." "Type" "textarea" "Max" 2000 "Req" true}}
+  <div class="actions"><button type="submit">Record decision</button></div>
+</form>
+{{end}}
+{{end}}
+<p><a href="/n/{{.Slug}}/disputes">Back to disputes</a></p>
+{{end}}

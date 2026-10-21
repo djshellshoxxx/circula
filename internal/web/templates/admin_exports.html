@@ -1,0 +1,11 @@
+{{define "content"}}
+<p>Exports are recorded in the audit log and download as one zip file.</p>
+<form method="post" action="/n/{{.Slug}}/admin/exports">
+  {{template "csrf" .}}
+  <div class="field"><label for="f-scope">What to export</label>
+  <select id="f-scope" name="scope"><option value="ledger">Ledger: accounts, trades, entries</option><option value="members">Members and roles</option><option value="audit">Audit history</option><option value="full">Everything</option></select></div>
+  <div class="field"><label for="f-format">File format</label>
+  <select id="f-format" name="format"><option value="csv">CSV</option><option value="json">JSON</option></select></div>
+  <div class="actions"><button type="submit">Download export</button></div>
+</form>
+{{end}}
