@@ -106,6 +106,13 @@ type networkCheck struct {
 // the network whose id or slug equals filter, when filter is not empty) as the
 // system actor. It returns an error only when the check could not run.
 func verifyAllNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string) ([]networkCheck, error) {
+	return verifyNetworks(ctx, svc, db, requestID, filter, false)
+}
+
+// verifyNetworks is verifyAllNetworks that can also record each run in
+// consistency_runs (scheduled job, ARC-015); the audit event is written only
+// on failure or a state change.
+func verifyNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string, record bool) ([]networkCheck, error) {
 	nets, err := store.ListNetworks(ctx, db, filter)
 	if err != nil {
 		return nil, err
@@ -115,6 +122,11 @@ func verifyAllNetworks(ctx context.Context, svc *service.Service, db *sql.DB, re
 		rep, err := svc.VerifyLedger(ctx, domain.SystemActor(requestID), n.ID)
 		if err != nil {
 			return out, fmt.Errorf("verify network %s: %w", n.Slug, err)
+		}
+		if record {
+			if err := svc.RecordScheduledConsistencyRun(ctx, domain.SystemActor(requestID), rep); err != nil {
+				return out, fmt.Errorf("record run for network %s: %w", n.Slug, err)
+			}
 		}
 		out = append(out, networkCheck{ID: n.ID, Slug: n.Slug, OK: rep.OK, Findings: rep.Findings})
 	}

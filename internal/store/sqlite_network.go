@@ -76,3 +76,20 @@ func (t *txImpl) InsertConsistencyRun(r ConsistencyRun) error {
 		r.ID, r.NetworkID, ms(r.Started), ms(r.Finished), b2i(r.OK), r.Findings)
 	return err
 }
+
+func (t *txImpl) LastConsistencyRun(netID string) (*ConsistencyRun, error) {
+	var run ConsistencyRun
+	var started, finished int64
+	var ok int
+	err := t.row(`SELECT id,network_id,started_at,finished_at,ok,findings FROM consistency_runs
+		WHERE network_id = ? ORDER BY finished_at DESC, id DESC LIMIT 1`, netID).
+		Scan(&run.ID, &run.NetworkID, &started, &finished, &ok, &run.Findings)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, mapErr(err)
+	}
+	run.Started, run.Finished, run.OK = fromMS(started), fromMS(finished), ok == 1
+	return &run, nil
+}

@@ -397,7 +397,7 @@ func (j *jobRunner) purge(ctx context.Context) error {
 }
 
 func (j *jobRunner) verify(ctx context.Context) error {
-	checks, err := verifyAllNetworks(ctx, j.svc, j.st.DB(), "job-verify", "")
+	checks, err := verifyNetworks(ctx, j.svc, j.st.DB(), "job-verify", "", true)
 	if err != nil {
 		return err
 	}

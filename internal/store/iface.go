@@ -52,6 +52,8 @@ type NetworkRepo interface {
 	NextLedgerSeq(netID string) (int64, error)
 	LedgerSeq(netID string) (int64, error)
 	InsertConsistencyRun(r ConsistencyRun) error
+	// LastConsistencyRun is the newest recorded run for the network, or nil.
+	LastConsistencyRun(netID string) (*ConsistencyRun, error)
 }
 
 // PersonRepo covers identities, login throttling, sessions and API tokens.

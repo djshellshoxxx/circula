@@ -95,6 +95,17 @@ func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID st
 // event, in one short write unit that does no scanning (SVC-01). Administrators
 // or System only; write scope. It sets rep.RunID.
 func (s *Service) RecordConsistencyRun(ctx context.Context, actor domain.Actor, rep *LedgerReport) error {
+	return s.recordConsistencyRun(ctx, actor, rep, false)
+}
+
+// RecordScheduledConsistencyRun is RecordConsistencyRun for the hourly job: the
+// run is always recorded, but the ledger.verified audit event is written only
+// when the run fails or the state changes from the previous run.
+func (s *Service) RecordScheduledConsistencyRun(ctx context.Context, actor domain.Actor, rep *LedgerReport) error {
+	return s.recordConsistencyRun(ctx, actor, rep, true)
+}
+
+func (s *Service) recordConsistencyRun(ctx context.Context, actor domain.Actor, rep *LedgerReport, quiet bool) error {
 	if rep == nil || rep.NetworkID == "" {
 		return domain.Invalid("report", "a ledger report is required")
 	}
@@ -106,12 +117,21 @@ func (s *Service) RecordConsistencyRun(ctx context.Context, actor domain.Actor, 
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		prev, err := tx.LastConsistencyRun(rep.NetworkID)
+		if err != nil {
+			return err
+		}
 		id := s.id()
 		if err := tx.InsertConsistencyRun(store.ConsistencyRun{ID: id, NetworkID: rep.NetworkID, Started: rep.Started,
 			Finished: rep.Finished, OK: rep.OK, Findings: strings.Join(rep.Findings, "\n")}); err != nil {
 			return err
 		}
 		rep.RunID = id
+		// Scheduled runs are recorded in consistency_runs but audited only on a
+		// failure or a change of state, so an hourly job cannot flood the log (ARC-015).
+		if quiet && rep.OK && (prev == nil || prev.OK) {
+			return nil
+		}
 		return s.audit(tx, p, auditEntry{Type: p.actorType(domain.ActorAdmin), Action: domain.ActVerify, TargetType: "network", TargetID: rep.NetworkID,
 			After: map[string]any{"status": map[bool]string{true: "ok", false: "findings"}[rep.OK]}})
 	})
