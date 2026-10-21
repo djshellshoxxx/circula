@@ -2,6 +2,7 @@ package web
 
 import (
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -28,8 +29,12 @@ func (s *server) adminRoutes() {
 }
 
 func (s *server) adminHome(w http.ResponseWriter, r *http.Request, c *rc) {
-	pend, _ := s.svc.AdminListMembers(r.Context(), c.actor, c.netID(), []domain.MemberStatus{domain.MemberPending}, service.Page{Limit: 500})
-	s.render(w, r, c, "admin_home", 200, &page{Title: "Network admin", D: len(pend)})
+	pend, err := s.svc.CountMembers(r.Context(), c.actor, c.netID(), []domain.MemberStatus{domain.MemberPending})
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	s.render(w, r, c, "admin_home", 200, &page{Title: "Network admin", D: pend})
 }
 
 type memberRow struct {
@@ -99,25 +104,54 @@ func (s *server) adminMembers(w http.ResponseWriter, r *http.Request, c *rc) {
 			st = []domain.MemberStatus{x}
 		}
 	}
-	ms, err := s.svc.AdminListMembers(r.Context(), c.actor, c.netID(), st, service.Page{AfterID: r.URL.Query().Get("after"), Limit: 100})
+	total, err := s.svc.CountMembers(r.Context(), c.actor, c.netID(), st)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	cur := r.URL.Query()
+	mq := service.MemberPageQuery{Limit: 100}
+	paged := false
+	switch {
+	case cur.Get("after") != "":
+		mq.AfterID, paged = cur.Get("after"), true
+	case cur.Get("before") != "":
+		mq.BeforeID, paged = cur.Get("before"), true
+	}
+	pg, err := s.svc.AdminMemberPage(r.Context(), c.actor, c.netID(), st, mq)
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
 	var rows []memberRow
-	next := ""
-	for _, m := range ms {
+	for _, m := range pg.Members {
 		var roles []string
 		for _, ro := range m.Roles {
 			roles = append(roles, string(ro))
 		}
 		rows = append(rows, memberRow{Member: m, Roles: strings.Join(roles, ", "), Actions: actionsFor(m)})
 	}
-	if len(ms) == 100 {
-		next = ms[99].ID
+	base := c.base() + "/admin/members?" + url.Values{"status": {f}}.Encode()
+	pn := pageNav{Total: total}
+	if paged {
+		pn.First = base
 	}
-	s.render(w, r, c, "admin_members", 200, &page{Title: "Members", D: map[string]any{"Rows": rows, "Next": next},
+	if n := len(pg.Members); n > 0 {
+		if pg.HasPrev {
+			pn.Prev = base + "&before=" + url.QueryEscape(pg.Members[0].ID)
+		}
+		if pg.HasNext {
+			pn.Next = base + "&after=" + url.QueryEscape(pg.Members[n-1].ID)
+		}
+	}
+	s.render(w, r, c, "admin_members", 200, &page{Title: "Members", D: map[string]any{"Rows": rows, "Pages": pn},
 		V: map[string]string{"status": f}})
+}
+
+// pageNav carries the links and totals for a keyset-paged list. Empty hrefs mean no such page.
+type pageNav struct {
+	Total             int
+	First, Prev, Next string
 }
 
 type memberAct struct {

@@ -2,6 +2,7 @@ package web
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -133,53 +134,75 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 	s.render(w, r, c, "history", 200, &page{Title: "History", D: h, V: map[string]string{"status": f}})
 }
 
-func (c *rc) directoryAll() []service.DirectoryEntry {
-	var all []service.DirectoryEntry
+// activeMembers returns every active member, paging through the directory without a cap.
+func (c *rc) activeMembers() ([]service.DirectoryEntry, error) {
+	var out []service.DirectoryEntry
 	after := ""
-	for i := 0; i < 20; i++ {
-		es, err := c.s.svc.ListDirectory(c.ctx, c.actor, c.netID(), service.Page{AfterID: after, Limit: 500})
-		if err != nil || len(es) == 0 {
-			break
+	for {
+		pg, err := c.s.svc.ListDirectoryPage(c.ctx, c.actor, c.netID(), service.MemberPageQuery{AfterID: after, Limit: 500})
+		if err != nil {
+			return nil, err
 		}
-		all = append(all, es...)
-		after = es[len(es)-1].MemberID
-		if len(es) < 500 {
-			break
+		out = append(out, pg.Entries...)
+		if !pg.HasNext || len(pg.Entries) == 0 {
+			return out, nil
 		}
+		after = pg.Entries[len(pg.Entries)-1].MemberID
 	}
-	return all
+}
+
+// activeOther returns the display name of an active member other than the caller. It reads
+// one member, so it does not depend on any list.
+func (c *rc) activeOther(id string) (string, bool) {
+	if id == "" || id == c.Me.ID {
+		return "", false
+	}
+	m, err := c.s.svc.GetMember(c.ctx, c.actor, c.netID(), id)
+	if err != nil || m.Status != domain.MemberActive {
+		return "", false
+	}
+	return m.DisplayName, true
 }
 
 type dirData struct {
-	Entries    []service.DirectoryEntry
-	Q          string
-	Prev, Next int
-	Total      int
+	Entries []service.DirectoryEntry
+	Q       string
+	Pages   pageNav
 }
 
 func (s *server) directory(w http.ResponseWriter, r *http.Request, c *rc) {
-	if _, err := s.svc.ListDirectory(r.Context(), c.actor, c.netID(), service.Page{Limit: 1}); err != nil {
+	q := strings.TrimSpace(r.URL.Query().Get("q"))
+	total, err := s.svc.CountDirectory(r.Context(), c.actor, c.netID(), q)
+	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	q := strings.TrimSpace(r.URL.Query().Get("q"))
-	var match []service.DirectoryEntry
-	for _, e := range c.directoryAll() {
-		if q == "" || strings.Contains(strings.ToLower(e.DisplayName), strings.ToLower(q)) {
-			match = append(match, e)
+	mq := service.MemberPageQuery{Name: q, Limit: perPage}
+	cur := r.URL.Query()
+	paged := false
+	switch {
+	case cur.Get("after") != "":
+		mq.AfterID, paged = cur.Get("after"), true
+	case cur.Get("before") != "":
+		mq.BeforeID, paged = cur.Get("before"), true
+	}
+	pg, err := s.svc.ListDirectoryPage(r.Context(), c.actor, c.netID(), mq)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	base := c.base() + "/directory?" + url.Values{"q": {q}}.Encode()
+	d := &dirData{Entries: pg.Entries, Q: q, Pages: pageNav{Total: total}}
+	if paged {
+		d.Pages.First = base
+	}
+	if n := len(pg.Entries); n > 0 {
+		if pg.HasPrev {
+			d.Pages.Prev = base + "&before=" + url.QueryEscape(pg.Entries[0].MemberID)
 		}
-	}
-	pg, _ := strconv.Atoi(r.URL.Query().Get("page"))
-	if pg < 0 || pg*perPage > len(match) {
-		pg = 0
-	}
-	end := min(len(match), (pg+1)*perPage)
-	d := &dirData{Entries: match[pg*perPage : end], Q: q, Total: len(match), Prev: -1, Next: -1}
-	if pg > 0 {
-		d.Prev = pg - 1
-	}
-	if end < len(match) {
-		d.Next = pg + 1
+		if pg.HasNext {
+			d.Pages.Next = base + "&after=" + url.QueryEscape(pg.Entries[n-1].MemberID)
+		}
 	}
 	s.render(w, r, c, "directory", 200, &page{Title: "Directory", D: d, V: map[string]string{"q": q}})
 }
@@ -192,13 +215,11 @@ type profileData struct {
 
 func (s *server) profile(w http.ResponseWriter, r *http.Request, c *rc) {
 	id := r.PathValue("id")
-	name := ""
-	for _, e := range c.directoryAll() {
-		if e.MemberID == id {
-			name = e.DisplayName
-		}
+	name, ok := c.activeOther(id)
+	if id == c.Me.ID {
+		name, ok = c.Me.DisplayName, true
 	}
-	if name == "" {
+	if !ok {
 		s.fail(w, r, domain.NotFound("member"))
 		return
 	}

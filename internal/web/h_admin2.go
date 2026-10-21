@@ -83,17 +83,26 @@ type adjustReview struct {
 	Before, After             balanceVM
 }
 
+// activeMemberOptions lists every active member except the caller, paging without a cap.
 func (c *rc) activeMemberOptions() []option {
 	o := []option{{"", "Choose a member"}}
-	ms, err := c.s.svc.AdminListMembers(c.ctx, c.actor, c.netID(), []domain.MemberStatus{domain.MemberActive}, service.Page{Limit: 500})
-	if err == nil {
-		for _, m := range ms {
+	after := ""
+	for {
+		pg, err := c.s.svc.AdminMemberPage(c.ctx, c.actor, c.netID(), []domain.MemberStatus{domain.MemberActive},
+			service.MemberPageQuery{AfterID: after, Limit: 500})
+		if err != nil {
+			return o
+		}
+		for _, m := range pg.Members {
 			if m.ID != c.Me.ID {
 				o = append(o, option{m.ID, m.DisplayName})
 			}
 		}
+		if !pg.HasNext || len(pg.Members) == 0 {
+			return o
+		}
+		after = pg.Members[len(pg.Members)-1].ID
 	}
-	return o
 }
 
 func (s *server) adjustForm(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -120,12 +129,7 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	dec := c.Net.Policy.Decimals
 	var fe []fieldErr
-	name := ""
-	for _, o := range c.activeMemberOptions() {
-		if o.Value == v["member_id"] && o.Value != "" {
-			name = o.Label
-		}
-	}
+	name, _ := c.activeOther(v["member_id"])
 	if name == "" {
 		fe = append(fe, fieldErr{"member_id", "Member: choose a member other than yourself."})
 	}
@@ -197,7 +201,7 @@ func (s *server) auditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	var rows []auditRow
 	for _, e := range evs {
 		who := e.ActorID
-		if nm, ok := n[e.ActorID]; ok {
+		if nm, ok := n.lookup(e.ActorID); ok {
 			who = nm
 		} else if e.ActorType == domain.ActorSystem || who == "" {
 			who = "System"

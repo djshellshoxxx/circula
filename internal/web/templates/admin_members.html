@@ -19,6 +19,7 @@
   <td data-label="Roles">{{if .Roles}}{{.Roles}}{{else}}member{{end}}</td>
   <td data-label="Actions">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}">{{.Label}}<span class="sr"> {{$m.DisplayName}}</span></a> {{end}}</td>
 </tr>{{end}}</tbody></table></div>
-{{template "pager" dict "Next" .D.Next "Href" (printf "/n/%s/admin/members?status=%s&after=" .Slug (.Val "status"))}}
+<p>{{.D.Pages.Total}} member{{if ne .D.Pages.Total 1}}s{{end}} match this filter.</p>
+{{template "pagenav" dict "Label" "Member list pages" "Pages" .D.Pages}}
 {{else}}<p>No members match this filter.</p>{{end}}
 {{end}}

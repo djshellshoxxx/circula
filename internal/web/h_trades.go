@@ -82,7 +82,11 @@ type review struct {
 
 func (c *rc) counterpartyOptions() []option {
 	var o []option
-	for _, e := range c.directoryAll() {
+	all, err := c.activeMembers()
+	if err != nil {
+		return nil
+	}
+	for _, e := range all {
 		if e.MemberID != c.Me.ID {
 			o = append(o, option{e.MemberID, e.DisplayName})
 		}
@@ -120,12 +124,7 @@ func (s *server) proposePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	dec := c.Net.Policy.Decimals
 	var fe []fieldErr
-	cp := ""
-	for _, o := range c.counterpartyOptions() {
-		if o.Value == v["counterparty_id"] {
-			cp = o.Label
-		}
-	}
+	cp, _ := c.activeOther(v["counterparty_id"])
 	if cp == "" {
 		fe = append(fe, fieldErr{"counterparty_id", "Counterparty: choose another active member from the list."})
 	}

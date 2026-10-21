@@ -4,10 +4,10 @@
   <div class="field"><label for="f-q">Search by name</label><input id="f-q" name="q" type="search" value="{{.Q}}"></div>
   <div class="actions"><button type="submit">Search</button></div>
 </form>
-<p>{{.Total}} member{{if ne .Total 1}}s{{end}} found.</p>
+<p>{{.Pages.Total}} member{{if ne .Pages.Total 1}}s{{end}} found.</p>
 {{if .Entries}}
 <ul class="rows">{{range .Entries}}<li><a href="/n/{{$.Slug}}/members/{{.MemberID}}">{{.DisplayName}}</a> &middot; <a href="/n/{{$.Slug}}/trades/new?to={{.MemberID}}">Propose a trade<span class="sr"> with {{.DisplayName}}</span></a></li>{{end}}</ul>
 {{else}}<p>No members match. Try a shorter search, or clear it to see everyone.</p>{{end}}
-<p>{{if ge .Prev 0}}<a href="?q={{qs .Q}}&page={{.Prev}}">Previous page</a>{{end}} {{if ge .Next 0}}<a href="?q={{qs .Q}}&page={{.Next}}">Next page</a>{{end}}</p>
+{{template "pagenav" dict "Label" "Directory pages" "Pages" .Pages}}
 {{end}}
 {{end}}

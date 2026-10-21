@@ -94,16 +94,44 @@ type txRow struct {
 	Counter   string
 }
 
-type names map[string]string
+// names resolves member display names for one request. Names the request already holds are
+// kept in known; any other id is fetched on first use through the service, which applies the
+// usual visibility rules, so no list cap can hide a name. A miss is remembered as nil.
+type names struct {
+	c     *rc
+	known map[string]*string
+}
 
+// of returns the display name for id, or a neutral label when the caller may not see it.
 func (n names) of(id string) string {
-	if v, ok := n[id]; ok {
+	if v, ok := n.lookup(id); ok {
 		return v
 	}
 	if id == "" {
 		return "the network"
 	}
 	return "another member"
+}
+
+// lookup returns the display name for id when the caller may see it.
+func (n names) lookup(id string) (string, bool) {
+	if v, ok := n.known[id]; ok {
+		if v == nil {
+			return "", false
+		}
+		return *v, true
+	}
+	if id == "" || n.c == nil {
+		return "", false
+	}
+	m, err := n.c.s.svc.GetMember(n.c.ctx, n.c.actor, n.c.netID(), id)
+	if err != nil || m == nil {
+		n.known[id] = nil
+		return "", false
+	}
+	name := m.DisplayName
+	n.known[id] = &name
+	return name, true
 }
 
 func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label string, needsMe bool) {
@@ -192,31 +220,12 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 	return r
 }
 
-// memberNames loads display names for active members plus the caller.
+// memberNames returns a resolver for member display names. The caller's own name is known up
+// front; everything else is resolved on demand (see names.lookup).
 func (c *rc) memberNames() names {
-	n := names{}
-	after := ""
-	for i := 0; i < 20; i++ {
-		es, err := c.s.svc.ListDirectory(c.ctx, c.actor, c.netID(), service.Page{AfterID: after, Limit: 500})
-		if err != nil || len(es) == 0 {
-			break
-		}
-		for _, e := range es {
-			n[e.MemberID] = e.DisplayName
-		}
-		after = es[len(es)-1].MemberID
-		if len(es) < 500 {
-			break
-		}
-	}
-	if c.isAdmin() {
-		if ms, err := c.s.svc.AdminListMembers(c.ctx, c.actor, c.netID(), nil, service.Page{Limit: 500}); err == nil {
-			for _, m := range ms {
-				n[m.ID] = m.DisplayName
-			}
-		}
-	}
-	n[c.Me.ID] = c.Me.DisplayName
+	n := names{c: c, known: map[string]*string{}}
+	name := c.Me.DisplayName
+	n.known[c.Me.ID] = &name
 	return n
 }
 

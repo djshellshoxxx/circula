@@ -75,4 +75,5 @@
 </li>{{end}}
 </ul>{{end}}
 
+{{define "pagenav"}}{{with .Pages}}{{if or .First .Prev .Next}}<nav aria-label="{{$.Label}}">{{if .First}}<a href="{{.First}}">First page</a> {{end}}{{if .Prev}}<a href="{{.Prev}}">Previous page</a> {{end}}{{if .Next}}<a href="{{.Next}}">Next page</a>{{end}}</nav>{{end}}{{end}}{{end}}
 {{define "pager"}}{{if .Next}}<p><a href="{{.Href}}{{.Next}}">Next page</a></p>{{end}}{{end}}
