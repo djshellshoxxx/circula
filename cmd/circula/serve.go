@@ -243,17 +243,17 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 	return apiH, webH, nil
 }
 
-// preMigrationBackup takes a verified-by-construction backup before any
-// migration of an existing database (OPS-018, OPS-023). Migration is refused
-// if the backup fails.
+// preMigrationBackup takes and verifies a backup before any migration of an
+// existing database (OPS-018, OPS-023). Migration is refused if the integrity
+// check, the backup or its verification fails.
 func preMigrationBackup(ctx context.Context, cfg *Config, logger *slog.Logger, m *metrics, state schemaState) error {
 	if state.Applied == 0 {
 		return nil // nothing recorded yet; there is no data to protect
 	}
 	logger.Info("taking pre-migration backup", "from", state.Applied, "to", state.Known)
-	mf, path, err := backupTo(ctx, cfg, cfg.BackupDir, "pre-migration", nil)
+	mf, path, err := preMigrationSafeguard(ctx, cfg, state)
 	if err != nil {
-		return fmt.Errorf("pre-migration backup failed; migrations not applied: %w", err)
+		return err
 	}
 	m.backupSucceeded(mf.CreatedAt)
 	logger.Info("pre-migration backup written", "file", filepath.Base(path))

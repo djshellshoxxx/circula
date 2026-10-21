@@ -123,12 +123,13 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	}
 	defer func() { _ = lock.Release() }()
 	if state.Exists && state.Applied > 0 {
-		mf, path, err := backupTo(ctx, cfg, cfg.BackupDir, "pre-migration", nil)
+		mf, path, err := preMigrationSafeguard(ctx, cfg, state)
 		if err != nil {
-			fmt.Fprintf(stderr, "circula: pre-migration backup failed; nothing migrated: %v\n", err)
+			fmt.Fprintf(stderr, "circula: %v\n", err)
 			return exitFailure
 		}
-		fmt.Fprintf(stdout, "pre-migration backup: %s (ledger: %s)\n", path, mf.Ledger.Status)
+		fmt.Fprintf(stdout, "pre-migration backup: %s (verified: checksum, integrity ok, schema v%d; ledger: %s)\n",
+			path, mf.SchemaVersion, mf.Ledger.Status)
 	}
 	if _, err := secureDatabase(cfg.Database); err != nil {
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
