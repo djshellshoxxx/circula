@@ -227,6 +227,9 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.DeleteThrottle(login); err != nil {
 			return err
 		}
+		if err := s.notify(tx, pid, domain.NoticePasswordChanged, "recovery code used"); err != nil { // SA2-03
+			return err
+		}
 		return s.auditPlatform(tx, domain.Actor{PersonID: pid}, auditEntry{Action: domain.ActPersonRecovered,
 			TargetType: "person", TargetID: pid})
 	})
@@ -283,7 +286,7 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 			return err
 		}
 	}
-	return nil
+	return s.notify(tx, personID, domain.NoticePasswordChanged, "password reset by an administrator or operator") // SA2-03
 }
 
 // AdminResetPassword lets an active administrator of netID reset the password
@@ -294,7 +297,9 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 // Guards: administrator role (or System actor); the target must be an active
 // member of THIS network (anyone else is NotFound, so another network's
 // administrator learns nothing); never one's own account (including through a
-// second membership); a reason is mandatory; at most adminResetsPerHour
+// second membership); the target must not hold the administrator role here nor
+// an active membership in any other network (SA2-01: those need the operator
+// CLI, since a reset hands over the person's whole identity); a reason is mandatory; at most adminResetsPerHour
 // successful resets per administrator per hour. Resetting another
 // administrator is flagged high_risk in the audit event.
 func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, netID, memberID, reason string) (string, error) {
@@ -333,6 +338,24 @@ func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, ne
 		person, _, err := tx.GetPerson(m.PersonID)
 		if err != nil {
 			return domain.NotFound("member")
+		}
+		if !p.actor.System {
+			// SA2-01: a password reset replaces the person's global identity, so a
+			// network administrator may only reset an account that exists in this
+			// network alone and holds no administrator role here. Anything else
+			// needs the platform operator (`circula reset-password`).
+			if m.HasRole(domain.RoleAdmin) {
+				return domain.Forbidden("this account can only be reset by the platform operator")
+			}
+			others, err := tx.ListMembershipsOfPerson(person.ID)
+			if err != nil {
+				return err
+			}
+			for _, o := range others {
+				if o.NetworkID != netID && o.Status != domain.MemberDeparted {
+					return domain.Forbidden("this account can only be reset by the platform operator")
+				}
+			}
 		}
 		if err := s.resetPerson(tx, person.ID, person.Login, th); err != nil {
 			return err

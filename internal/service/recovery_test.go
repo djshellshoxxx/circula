@@ -345,20 +345,12 @@ func TestAdminResetGuards(t *testing.T) {
 	if _, err := e.Svc.AdminResetPassword(ctx, bob, net.ID, bobM.ID, "self again"); !errors.Is(err, domain.ErrForbidden) {
 		t.Errorf("self as admin: %v", err)
 	}
-	temp, err := e.Svc.AdminResetPassword(ctx, admin, net.ID, bobM.ID, "bob lost his phone and codes")
-	if err != nil {
-		t.Fatal(err)
+	// SA2-01: resetting another administrator needs the platform operator.
+	if _, err := e.Svc.AdminResetPassword(ctx, admin, net.ID, bobM.ID, "bob lost his phone and codes"); !errors.Is(err, domain.ErrForbidden) {
+		t.Errorf("admin-on-admin reset must be refused: %v", err)
 	}
-	var after, reason, actor string
-	if err := e.Store.DB().QueryRow(`SELECT summary_after, reason, actor_id FROM audit_events WHERE action = ?`,
-		domain.ActMemberPasswordReset).Scan(&after, &reason, &actor); err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(after, `"high_risk":true`) || reason != "bob lost his phone and codes" || actor != adminM.ID {
-		t.Errorf("audit: after=%s reason=%q actor=%q", after, reason, actor)
-	}
-	if strings.Contains(after+reason, temp) {
-		t.Error("temp password in audit")
+	if _, _, err := e.Svc.Login(ctx, "bob@example.org", pw); err != nil {
+		t.Errorf("bob must be untouched: %v", err)
 	}
 	// plain member: high_risk false
 	dan, danM := e.Member(admin, net, "dan@example.org")
@@ -439,5 +431,29 @@ func TestOperatorReset(t *testing.T) {
 	}
 	if typ != string(domain.ActorOperator) || !strings.Contains(reason, "ticket 42") {
 		t.Fatalf("audit: %s %q", typ, reason)
+	}
+}
+
+// SA2-01: an administrator of one network must not be able to take over a
+// person who is also a member of another network.
+func TestAdminResetRefusesMultiNetworkTarget(t *testing.T) {
+	e := tu.NewEnv(t)
+	admin := e.Person("admin@example.org")
+	net, _ := e.Network(admin, "net-one", nil)
+	eve, eveM := e.Member(admin, net, "eve@example.org")
+	other := e.Person("other@example.org")
+	net2, _ := e.Network(other, "net-two", nil)
+	tok, _ := tu.Must2(e.Svc.CreateInvitation(e.Ctx, other, net2.ID, service.InviteInput{}))
+	tu.Must(e.Svc.RedeemInvitation(e.Ctx, eve, tok, "eve"))
+
+	if _, err := e.Svc.AdminResetPassword(e.Ctx, admin, net.ID, eveM.ID, "eve is in two networks"); !errors.Is(err, domain.ErrForbidden) {
+		t.Fatalf("multi-network target must be refused: %v", err)
+	}
+	if _, _, err := e.Svc.Login(e.Ctx, "eve@example.org", pw); err != nil {
+		t.Errorf("eve must be untouched: %v", err)
+	}
+	// The operator path still works.
+	if _, err := e.Svc.OperatorResetPassword(e.Ctx, domain.SystemActor("test"), "eve@example.org", "operator reset"); err != nil {
+		t.Errorf("operator reset: %v", err)
 	}
 }
