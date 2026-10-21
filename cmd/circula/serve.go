@@ -366,6 +366,9 @@ func (j *jobRunner) expire(ctx context.Context) error {
 	if total > 0 {
 		j.logger.Info("proposals expired", "count", total)
 	}
+	if _, err := j.svc.ExpirePendingAdjustments(ctx, domain.SystemActor("job-expiry"), 500); err != nil { // SEC-011
+		return err
+	}
 	return nil
 }
 

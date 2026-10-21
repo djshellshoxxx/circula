@@ -32,6 +32,7 @@ type Tx interface {
 	IdemRepo
 	VerifyRepo
 	ExportRepo
+	PendingAdjustmentRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.

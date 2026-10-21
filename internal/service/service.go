@@ -36,6 +36,10 @@ type Config struct {
 	// ExportsPerHour caps Export calls per member per network per rolling hour
 	// (SA-11). Zero selects 30; negative disables. System actors are exempt.
 	ExportsPerHour int
+
+	// PendingAdjustmentTTL is how long a dual-control adjustment request waits
+	// for a second administrator (SEC-011). Zero selects 7 days.
+	PendingAdjustmentTTL time.Duration
 }
 
 // Service implements all use cases. It is safe for concurrent use.
@@ -76,6 +80,9 @@ func New(st store.Store, cfg Config) (*Service, error) {
 	}
 	if cfg.ExportsPerHour == 0 {
 		cfg.ExportsPerHour = 30
+	}
+	if cfg.PendingAdjustmentTTL <= 0 {
+		cfg.PendingAdjustmentTTL = 7 * 24 * time.Hour
 	}
 	s := &Service{st: st, cfg: cfg}
 	h, err := hashPassword("dummy-password-for-timing", cfg.Argon)

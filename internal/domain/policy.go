@@ -36,6 +36,9 @@ type Policy struct {
 	LimitWarningDays       int           `json:"limit_warning_days"`
 	DefaultFlagBlocksPayer bool          `json:"default_flag_blocks_payer"`
 	DirectoryVisibility    string        `json:"directory_visibility"`
+	// DualControlThreshold: administrator adjustments above this amount need a
+	// second administrator (SEC-011). 0 = disabled (the default).
+	DualControlThreshold int64 `json:"dual_control_threshold,omitempty"`
 }
 
 // Platform bounds for open questions OQ-DOM-5/6.
@@ -100,6 +103,9 @@ func (p Policy) Validate() error {
 	}
 	if p.LimitWarningDays < 0 || p.LimitWarningDays > MaxLimitWarningDays {
 		add("limit_warning_days", fmt.Sprintf("must be 0 (disabled) to %d", MaxLimitWarningDays))
+	}
+	if p.DualControlThreshold < 0 || p.DualControlThreshold > MaxPolicyAmount {
+		add("dual_control_threshold", "must be 0 (disabled) or a positive amount within platform maximum")
 	}
 	if p.DirectoryVisibility != "members-only" {
 		add("directory_visibility", "only members-only is supported")

@@ -251,7 +251,7 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 	case domain.CodeUnauthenticated:
 		s.clearSession(w, r)
 		s.toLogin(w, r)
-	case domain.CodeForbidden:
+	case domain.CodeForbidden, domain.CodeApprovalRequired:
 		s.renderError(w, r, 403)
 	case domain.CodeNotFound:
 		s.renderError(w, r, 404)
