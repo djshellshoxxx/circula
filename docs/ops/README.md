@@ -8,6 +8,7 @@ This guide covers running a Circula instance. Specifications it implements: [`do
 | [backup-restore.md](backup-restore.md) | Taking, checking, pruning and restoring backups; restore drills |
 | [upgrade.md](upgrade.md) | Upgrading, migrating and rolling back |
 | [monitoring.md](monitoring.md) | Health and readiness endpoints, metrics, alert conditions, failure modes |
+| [onion-i2p.md](onion-i2p.md) | Tor onion service and I2P hosting guidance (not yet supported by the code) |
 
 ## Environments (OPS-004)
 
