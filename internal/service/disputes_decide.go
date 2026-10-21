@@ -122,6 +122,10 @@ func (s *Service) finishDecision(tx store.Tx, p *principal, d *domain.Dispute, t
 	if err := s.disputeEvent(tx, d, p.member.ID, string(d.Status)); err != nil {
 		return err
 	}
+	if err := s.notifyOthers(tx, d.NetworkID, []string{t.PayerMemberID, t.PayeeMemberID}, p.member.ID, NotifDisputeDecided,
+		"A dispute has a decision", "The dispute was decided: "+strings.ReplaceAll(string(d.Outcome), "_", " ")+".", "/disputes/"+d.ID); err != nil {
+		return err
+	}
 	return s.audit(tx, p, auditEntry{Type: p.deciderType(), Action: action, TargetType: "dispute", TargetID: d.ID,
 		Reason: "decision recorded; rationale held on dispute", IdemRef: keyRef(key),
 		Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
@@ -166,6 +170,8 @@ type DisputeView struct {
 	PayerName string
 	PayeeName string
 	Events    []store.DisputeEvent
+	Response  *store.DisputeResponse // the other party's response, nil until submitted (FR-076)
+	ReReview  *store.ReReview        // the one re-review, nil until requested (FR-078)
 }
 
 func (s *Service) disputeView(tx store.Tx, netID string, d *domain.Dispute) (*DisputeView, error) {
@@ -180,7 +186,13 @@ func (s *Service) disputeView(tx store.Tx, netID string, d *domain.Dispute) (*Di
 	if m, err := tx.GetMember(netID, t.PayeeMemberID); err == nil {
 		v.PayeeName = m.DisplayName
 	}
-	v.Events, err = tx.ListDisputeEvents(netID, d.ID)
+	if v.Events, err = tx.ListDisputeEvents(netID, d.ID); err != nil {
+		return nil, err
+	}
+	if v.Response, err = tx.GetDisputeResponse(netID, d.ID); err != nil {
+		return nil, err
+	}
+	v.ReReview, err = tx.GetReReview(netID, d.ID)
 	return v, err
 }
 
