@@ -164,7 +164,7 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.render(w, r, c, "admin_adjust_review", 200, p)
 		return
 	}
-	_, err = s.svc.CreateAdjustment(r.Context(), c.actor, c.netID(), service.AdjustInput{MemberID: v["member_id"], Amount: amt,
+	res, err := s.svc.CreateAdjustmentRequest(r.Context(), c.actor, c.netID(), service.AdjustInput{MemberID: v["member_id"], Amount: amt,
 		Direction: dir, Reason: reason, IdempotencyKey: idemKey(r)})
 	if err != nil {
 		if sum, f, ok := c.refuse(err); ok {
@@ -173,6 +173,11 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 			return
 		}
 		s.fail(w, r, err)
+		return
+	}
+	if res.Pending != nil { // SEC-011: nothing is posted until a second administrator approves
+		s.setFlash(w, r, fmt.Sprintf("Adjustment for %s is above the dual-control threshold. Nothing is posted yet: another administrator must approve it before it expires.", name))
+		http.Redirect(w, r, c.base()+"/admin/adjustments/pending", http.StatusSeeOther)
 		return
 	}
 	s.setFlash(w, r, fmt.Sprintf("Adjustment posted for %s. Their balance is now %s · %s.", name, rv.After.Signed, rv.After.State))
