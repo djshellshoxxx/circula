@@ -2301,7 +2301,7 @@ components:
       required: [pointer, code, detail]
       additionalProperties: false
       properties:
-        pointer: {type: string, description: RFC 6901 pointer into the request body, for example /amount_minor.}
+        pointer: {type: string, description: "RFC 6901 pointer into the request body, for example /amount_minor."}
         code: {type: string, description: "Field-level code. Open set as built: invalid, invalid-enum, invalid-amount, invalid-type, invalid-timestamp, out-of-range, required, incorrect."}
         detail: {type: string}
     ErrorCode:
@@ -2540,7 +2540,7 @@ components:
       type: object
       required: [id, kind, status, payer_member_id, payee_member_id, amount_minor, my_direction, listing_id, description, original_transaction_id, reversed_total_minor, proposed_at, expires_at, completed_at, posted_ledger_seq]
       additionalProperties: false
-      properties:
+      properties: &txProps
         id: {$ref: '#/components/schemas/Id'}
         kind: {$ref: '#/components/schemas/TxKind'}
         status: {$ref: '#/components/schemas/TxStatus'}
@@ -2565,20 +2565,23 @@ components:
         posted_ledger_seq:
           oneOf: [{type: integer, format: int64, minimum: 1}, {type: 'null'}]
     TransactionDetail:
-      allOf:
-        - $ref: '#/components/schemas/Transaction'
-        - type: object
-          required: [events_url]
-          properties:
-            events_url: {type: string}
+      type: object
+      description: Transaction plus the events link.
+      required: [id, kind, status, payer_member_id, payee_member_id, amount_minor, my_direction, listing_id, description, original_transaction_id, reversed_total_minor, proposed_at, expires_at, completed_at, posted_ledger_seq, events_url]
+      additionalProperties: false
+      properties:
+        <<: *txProps
+        events_url: {type: string}
     TransactionAcceptResult:
-      allOf:
-        - $ref: '#/components/schemas/Transaction'
-        - type: object
-          properties:
-            account:
-              description: Caller's account after posting (API-069). Omitted when the balance could not be read.
-              $ref: '#/components/schemas/Account'
+      type: object
+      description: Transaction plus the caller's account after posting.
+      required: [id, kind, status, payer_member_id, payee_member_id, amount_minor, my_direction, listing_id, description, original_transaction_id, reversed_total_minor, proposed_at, expires_at, completed_at, posted_ledger_seq]
+      additionalProperties: false
+      properties:
+        <<: *txProps
+        account:
+          description: Caller's account after posting (API-069). Omitted when the balance could not be read.
+          $ref: '#/components/schemas/Account'
     TransactionEvent:
       type: object
       required: [from, to, actor_type, actor_id, occurred_at]
@@ -2595,7 +2598,7 @@ components:
       type: object
       required: [id, transaction_id, opened_by, category, statement, status, outcome, reversal_amount_minor, reviewer_id, reason, opened_at, decided_at]
       additionalProperties: false
-      properties:
+      properties: &disputeProps
         id: {$ref: '#/components/schemas/Id'}
         transaction_id: {$ref: '#/components/schemas/Id'}
         opened_by: {$ref: '#/components/schemas/Id'}
@@ -2620,23 +2623,23 @@ components:
         actor_id: {$ref: '#/components/schemas/Id'}
         occurred_at: {$ref: '#/components/schemas/Timestamp'}
     DisputeDetail:
-      allOf:
-        - $ref: '#/components/schemas/Dispute'
-        - type: object
-          required: [transaction, payer_display_name, payee_display_name, events]
-          properties:
-            transaction: {$ref: '#/components/schemas/Transaction'}
-            payer_display_name: {type: string}
-            payee_display_name: {type: string}
-            events:
-              type: array
-              items: {$ref: '#/components/schemas/DisputeEvent'}
-            response:
-              description: The other party's response (FR-076); null until submitted.
-              oneOf: [{$ref: '#/components/schemas/DisputeResponse'}, {type: 'null'}]
-            re_review:
-              description: The one re-review of the decision (FR-078); null until requested.
-              oneOf: [{$ref: '#/components/schemas/ReReview'}, {type: 'null'}]
+      type: object
+      required: [id, transaction_id, opened_by, category, statement, status, outcome, reversal_amount_minor, reviewer_id, reason, opened_at, decided_at, transaction, payer_display_name, payee_display_name, events, response, re_review]
+      additionalProperties: false
+      properties:
+        <<: *disputeProps
+        transaction: {$ref: '#/components/schemas/Transaction'}
+        payer_display_name: {type: string}
+        payee_display_name: {type: string}
+        events:
+          type: array
+          items: {$ref: '#/components/schemas/DisputeEvent'}
+        response:
+          description: The other party's response (FR-076); null until submitted.
+          oneOf: [{$ref: '#/components/schemas/DisputeResponse'}, {type: 'null'}]
+        re_review:
+          description: The one re-review of the decision (FR-078); null until requested.
+          oneOf: [{$ref: '#/components/schemas/ReReview'}, {type: 'null'}]
     DisputeResponseRequest:
       type: object
       required: [response]
@@ -2807,8 +2810,8 @@ components:
         target_id: {type: string}
         request_id: {type: string}
         reason: {type: string}
-        summary_before: {description: JSON summary or null.}
-        summary_after: {description: JSON summary or null.}
+        summary_before: {description: "JSON object summary, or null when there is no state on that side.", oneOf: [{type: object}, {type: 'null'}]}
+        summary_after: {description: "JSON object summary, or null when there is no state on that side.", oneOf: [{type: object}, {type: 'null'}]}
         hash: {type: string}
     ConsistencyCheck:
       type: object
@@ -2841,7 +2844,7 @@ components:
       type: object
       required: [id, name, scopes, network_id, created_at, last_used_at, expires_at, revoked_at]
       additionalProperties: false
-      properties:
+      properties: &tokenProps
         id: {$ref: '#/components/schemas/Id'}
         name: {type: string}
         scopes:
@@ -2853,14 +2856,14 @@ components:
         expires_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
         revoked_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
     TokenCreated:
-      allOf:
-        - $ref: '#/components/schemas/Token'
-        - type: object
-          required: [token]
-          properties:
-            token:
-              type: string
-              description: The bearer token value (prefix cir_). Shown once; never returned again.
+      type: object
+      required: [id, name, scopes, network_id, created_at, last_used_at, expires_at, revoked_at, token]
+      additionalProperties: false
+      properties:
+        <<: *tokenProps
+        token:
+          type: string
+          description: The bearer token value (prefix cir_). Shown once; never returned again.
     InvitationCreated:
       type: object
       required: [id, token, expires_at, created_at]

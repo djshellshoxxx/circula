@@ -233,7 +233,7 @@ type disputeData struct {
 	CanReReview   bool
 	ReReviewUntil any // last day to ask, shown with the request form
 	DecideReRev   bool
-	OpenedAt template.HTML
+	OpenedAt      template.HTML
 }
 
 type evRow struct {
