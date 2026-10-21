@@ -31,7 +31,7 @@ func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Ser
 	if !state.Exists {
 		return nil, nil, fmt.Errorf("database %s does not exist", cfg.Database)
 	}
-	if err := state.checkSchemaNotNewer(); err != nil {
+	if err := state.CheckNotNewer(); err != nil {
 		return nil, nil, err
 	}
 	if state.Pending() > 0 {
@@ -105,7 +105,7 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
 		return exitFailure
 	}
-	if err := state.checkSchemaNotNewer(); err != nil {
+	if err := state.CheckNotNewer(); err != nil {
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
 		return exitFailure
 	}
@@ -140,7 +140,7 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	if err := checkPragmas(ctx, st.DB()); err != nil {
+	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
 		fmt.Fprintf(stderr, "circula: %v\n", err)
 		return exitFailure
 	}
@@ -311,7 +311,7 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		if err != nil {
 			return fmt.Errorf("opening the restored database: %w", err)
 		}
-		if err := checkPragmas(ctx, st.DB()); err != nil {
+		if err := store.CheckPragmas(ctx, st.DB()); err != nil {
 			_ = st.Close()
 			return fmt.Errorf("checking the restored database: %w", err)
 		}

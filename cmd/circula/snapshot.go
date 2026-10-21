@@ -94,30 +94,17 @@ type networkCheck struct {
 // the network whose id or slug equals filter, when filter is not empty) as the
 // system actor. It returns an error only when the check could not run.
 func verifyAllNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string) ([]networkCheck, error) {
-	rows, err := db.QueryContext(ctx, `SELECT id, slug FROM networks WHERE ?1 = '' OR id = ?1 OR slug = ?1 ORDER BY id`, filter)
+	nets, err := store.ListNetworks(ctx, db, filter)
 	if err != nil {
-		return nil, fmt.Errorf("list networks: %w", err)
-	}
-	type net struct{ id, slug string }
-	var nets []net
-	for rows.Next() {
-		var n net
-		if err := rows.Scan(&n.id, &n.slug); err != nil {
-			_ = rows.Close()
-			return nil, err
-		}
-		nets = append(nets, n)
-	}
-	if err := rows.Close(); err != nil {
 		return nil, err
 	}
 	out := make([]networkCheck, 0, len(nets))
 	for _, n := range nets {
-		rep, err := svc.VerifyLedger(ctx, domain.SystemActor(requestID), n.id)
+		rep, err := svc.VerifyLedger(ctx, domain.SystemActor(requestID), n.ID)
 		if err != nil {
-			return out, fmt.Errorf("verify network %s: %w", n.slug, err)
+			return out, fmt.Errorf("verify network %s: %w", n.Slug, err)
 		}
-		out = append(out, networkCheck{ID: n.id, Slug: n.slug, OK: rep.OK, Findings: rep.Findings})
+		out = append(out, networkCheck{ID: n.ID, Slug: n.Slug, OK: rep.OK, Findings: rep.Findings})
 	}
 	return out, nil
 }
@@ -191,7 +178,7 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 	}
 	partial := dest + ".partial"
 	removeDBFiles(partial)
-	if _, err := db.ExecContext(ctx, "VACUUM INTO ?", partial); err != nil {
+	if err := store.VacuumInto(ctx, db, partial); err != nil {
 		removeDBFiles(partial)
 		return nil, fmt.Errorf("online snapshot: %w", err)
 	}
@@ -265,16 +252,7 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 // integrityCheck runs PRAGMA integrity_check on a file and returns "ok" or the
 // first reported problem.
 func integrityCheck(ctx context.Context, path string) (string, error) {
-	db, err := openRaw(path)
-	if err != nil {
-		return "", err
-	}
-	defer func() { _ = db.Close() }()
-	var res string
-	if err := db.QueryRowContext(ctx, `PRAGMA integrity_check`).Scan(&res); err != nil {
-		return "", fmt.Errorf("integrity check of %s: %w", path, err)
-	}
-	return res, nil
+	return store.IntegrityCheck(ctx, path)
 }
 
 // removeDBFiles deletes a database file and its WAL side files, ignoring

@@ -139,7 +139,7 @@ func (o *opsServer) probeDB(ctx context.Context) error {
 	if err := o.db.PingContext(ctx); err != nil {
 		return err
 	}
-	cur, err := currentSchemaVersion(ctx, o.db)
+	cur, err := store.AppliedVersion(ctx, o.db)
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func (o *opsServer) serveMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	now := time.Now().UTC()
-	cur, _ := currentSchemaVersion(r.Context(), o.db)
+	cur, _ := store.AppliedVersion(r.Context(), o.db)
 	dyn := dynamicMetrics{
 		version:    version,
 		schemaCur:  cur,
@@ -240,13 +240,6 @@ func (o *opsServer) serveMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 	o.metrics.write(w, dyn)
-}
-
-// currentSchemaVersion reads the highest applied migration version.
-func currentSchemaVersion(ctx context.Context, db *sql.DB) (int, error) {
-	var v int
-	err := db.QueryRowContext(ctx, `SELECT COALESCE(MAX(version), 0) FROM schema_migrations`).Scan(&v)
-	return v, err
 }
 
 func fileSize(path string) int64 {

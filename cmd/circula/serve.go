@@ -107,7 +107,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
-	if err := state.checkSchemaNotNewer(); err != nil {
+	if err := state.CheckNotNewer(); err != nil {
 		return err
 	}
 	if state.Pending() > 0 && state.Exists {
@@ -136,7 +136,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		m.migrationRan("applied")
 		logger.Info("migrations applied", "from", state.Applied, "to", state.Known)
 	}
-	if err := checkPragmas(ctx, st.DB()); err != nil {
+	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
 		return err
 	}
 	svc, err := newService(st, cfg)
@@ -281,30 +281,6 @@ func backupTo(ctx context.Context, cfg *Config, dir, reason string, db *sql.DB) 
 	}
 	mf, err := snapshot(ctx, db, dest, reason, now, ledger, cfg.BackupKey)
 	return mf, dest, err
-}
-
-// checkPragmas confirms the connection settings the design depends on (OPS-011).
-func checkPragmas(ctx context.Context, db *sql.DB) error {
-	conn, err := db.Conn(ctx)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = conn.Close() }()
-	var mode string
-	if err := conn.QueryRowContext(ctx, `PRAGMA journal_mode`).Scan(&mode); err != nil {
-		return err
-	}
-	if mode != "wal" {
-		return fmt.Errorf("journal_mode is %q; expected wal (OPS-011)", mode)
-	}
-	var fk int
-	if err := conn.QueryRowContext(ctx, `PRAGMA foreign_keys`).Scan(&fk); err != nil {
-		return err
-	}
-	if fk != 1 {
-		return errors.New("foreign key enforcement is off; expected on (OPS-011)")
-	}
-	return nil
 }
 
 // jobRunner runs the scheduled jobs: proposal expiry (OPS-027, OPS-028),
