@@ -331,3 +331,21 @@ func TestAnonymiseBySystemAndImmutableRecord(t *testing.T) {
 		t.Error("erasure record deletable")
 	}
 }
+
+// SA2-05: second-factor rows and notices must not outlive erasure.
+func TestErasureRemovesMFAAndNotices(t *testing.T) {
+	w, _ := erasureWorld(t)
+	tu.Must2(w.Svc.CreateAPIToken(w.Ctx, w.a, service.TokenInput{Name: "AnaSecretLaptop", Scopes: []domain.Scope{domain.ScopeRead}}))
+	tu.Must(w.Svc.BeginMFAEnrolment(w.Ctx, w.a))
+	w.depart(w.admin, w.aM)
+	tu.Must(w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, "gdpr"))
+	for _, q := range []string{"person_mfa", "security_notices", "recovery_codes", "account_recovery_codes"} {
+		var n int
+		if err := w.Store.DB().QueryRow(`SELECT COUNT(*) FROM `+q+` WHERE person_id = ?`, w.a.PersonID).Scan(&n); err != nil || n != 0 {
+			t.Errorf("%s rows after erasure = %d (err %v)", q, n, err)
+		}
+	}
+	if hits := dbMatches(t, w.Store.DB(), "AnaSecretLaptop"); len(hits) != 0 {
+		t.Errorf("token name survives erasure: %v", hits)
+	}
+}

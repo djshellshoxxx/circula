@@ -374,10 +374,10 @@ func TestDualControlPolicyValidation(t *testing.T) {
 	pol.DualControlThreshold = -1
 	_, err = w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "try", IdempotencyKey: w.Key()})
 	wantCode(t, err, domain.ErrValidation)
-	// With two administrators it can be enabled, changed and disabled again; each change is audited.
+	// With two administrators it can be tightened; only the operator disables it (SA2-01). Each change is audited.
 	d := newDC(t)
-	tu.Must(0, d.setThreshold(2000))
-	tu.Must(0, d.setThreshold(0))
+	tu.Must(0, d.setThreshold(500))
+	tu.Must(0, d.Svc.OperatorSetDualControl(d.Ctx, domain.SystemActor("t"), d.net.Slug, 0, "wind down"))
 	if d.audits(domain.ActPolicyChanged) < 3 {
 		t.Error("policy changes not audited")
 	}

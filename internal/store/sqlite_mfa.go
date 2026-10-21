@@ -157,3 +157,8 @@ func (t *txImpl) AckNotices(personID string, at time.Time) (int64, error) {
 	}
 	return res.RowsAffected()
 }
+
+func (t *txImpl) DeleteNoticesOf(personID string) error {
+	_, err := t.exec(`DELETE FROM security_notices WHERE person_id = ?`, personID)
+	return err
+}

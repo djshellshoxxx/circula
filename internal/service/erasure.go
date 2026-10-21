@@ -185,5 +185,19 @@ func (s *Service) erasePersonIfUnused(tx store.Tx, target *domain.Member) (bool,
 	if err := tx.RevokeSessionsOf(person.ID, now); err != nil {
 		return false, err
 	}
+	// SA2-05: second-factor material and notices (which can carry token names)
+	// are personal data too.
+	if err := tx.DeleteMFA(person.ID); err != nil {
+		return false, err
+	}
+	if err := tx.ReplaceRecoveryCodes(person.ID, nil); err != nil {
+		return false, err
+	}
+	if err := tx.DeleteAccountRecoveryCodes(person.ID); err != nil {
+		return false, err
+	}
+	if err := tx.DeleteNoticesOf(person.ID); err != nil {
+		return false, err
+	}
 	return true, tx.RedactTokensOf(person.ID, now)
 }

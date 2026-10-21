@@ -231,6 +231,9 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := p.requireLasting(); err != nil {
+			return err
+		}
 		out, err = idempotent(s, tx, netID, actor, "policy.update", in.IdempotencyKey, in, func() (string, error) {
 			if p.net.Status == domain.NetworkClosed {
 				return "", domain.InvalidState("network is closed")
@@ -243,6 +246,11 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 			}
 			if in.Policy.Decimals != p.net.Policy.Decimals && p.net.LedgerSeq > 0 {
 				return "", domain.Invalid("decimals", "cannot change after the first posting")
+			}
+			if weakensDualControl(p.net.Policy.DualControlThreshold, in.Policy.DualControlThreshold) {
+				// SA2-01: one administrator must not switch off or loosen the control
+				// that exists to stop one administrator; the operator CLI can.
+				return "", domain.Forbidden("dual control can only be loosened or disabled by the platform operator")
 			}
 			if t := in.Policy.DualControlThreshold; t > 0 && t != p.net.Policy.DualControlThreshold {
 				// SEC-011: dual control needs a second approver; refuse a control nobody can satisfy.

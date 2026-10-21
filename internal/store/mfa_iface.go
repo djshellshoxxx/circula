@@ -38,4 +38,6 @@ type MFARepo interface {
 	CountUnseenNotices(personID string) (int, error)
 	// AckNotices marks every unseen notice of the person seen; returns the count.
 	AckNotices(personID string, at time.Time) (int64, error)
+	// DeleteNoticesOf removes every notice of the person (erasure, SEC-018).
+	DeleteNoticesOf(personID string) error
 }
