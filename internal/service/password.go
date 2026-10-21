@@ -59,7 +59,8 @@ func verifyPassword(pw, encoded string) bool {
 	if _, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.MemoryKiB, &p.Time, &th); err != nil {
 		return false
 	}
-	if th == 0 || th > 255 {
+	// argon2.IDKey panics when t < 1; cap t so a damaged row cannot stall a login.
+	if th == 0 || th > 255 || p.Time == 0 || p.Time > 64 {
 		return false
 	}
 	p.Threads = uint8(th) //nolint:gosec // bounded above
