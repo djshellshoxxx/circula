@@ -68,7 +68,7 @@ Owner shorthand: [00](00-conventions.md) Conventions · [01](01-product-vision-a
 | **Charter version** | A numbered edition of the Charter with a publication date; each Member's acceptance is recorded. | A Policy version (parameters only). | [10](10-governance-and-network-operations.md) |
 | **`closed`** | Terminal Membership state after departure; personal data is anonymised per D-09. | `closing`, a Network operating status. | [15](15-lifecycle-state-machines.md) |
 | **Component / Module** | A logical unit with one responsibility / its code-level realisation inside the deployable. | A separate process or service. | [05](05-architecture-and-trust-boundaries.md) |
-| **`community_fund`** | System Account that can receive or absorb residual balances when `departure_settlement_mode` is `community_fund`. | A pool of money; it holds credit units only. | [03](03-domain-model-and-mutual-credit-rules.md) |
+| **`community_fund`** | System Account (exempt from limits) used only when `departure_settlement_mode` is `community_fund` or a Network-defined fund, to receive or absorb residual balances (canon 5.8 item 2). | A pool of money; it holds credit units only. | [03](03-domain-model-and-mutual-credit-rules.md) |
 | **Copy catalogue** | The single externalised set of all user-visible strings, shared by web client and notifications. | A marketing copy deck. | [08](08-ux-and-accessibility.md) |
 | **Counterparty** | In a proposal, the Member who did not propose and must accept. | The *Provider* or *Recipient* (roles in the exchange, independent of who proposed). | [00](00-conventions.md) |
 | **Credit limit** (`credit_limit`) | The magnitude of negative balance permitted for a Member Account; floor is `−credit_limit`. | A loan limit or overdraft (UI never says so). | [03](03-domain-model-and-mutual-credit-rules.md) |
@@ -211,7 +211,11 @@ Owner shorthand: [00](00-conventions.md) Conventions · [01](01-product-vision-a
 | **SLI / SLO** | Service level indicator / objective. | A contractual SLA. | [11](11-deployment-operations-and-support.md) |
 | **Source system** | A non-Circula system from which an import originates. | A Network. | [18](18-data-export-and-portability.md) |
 | **Status message** | A message that reports an action's result without taking focus (WCAG 4.1.3). | A notification. | [08](08-ux-and-accessibility.md) |
-| **Step-up** | Fresh re-authentication required before a sensitive operation. | Sign-in. | [09](09-security-privacy-and-abuse.md) |
+| **Step-up** | Fresh re-authentication within the single platform window `step_up_window_minutes` (SEC-009) required before a sensitive operation. | Sign-in. | [09](09-security-privacy-and-abuse.md) |
+| **Cap headroom** | The unsigned amount a Member can still receive before reaching `max_balance` (API field `max_balance_headroom`; shown only when a cap is set). | `available_to_spend`, which concerns the credit limit. | [07](07-api-and-integration-contract.md), [08](08-ux-and-accessibility.md) |
+| **`available_to_spend`** | The amount a Member can still spend before reaching their credit limit, never below 0; supplied by the API and never recomputed in the client. | Balance. | [07](07-api-and-integration-contract.md) |
+| **`neutral_subjects`** | Network setting that removes the Network name from notification email subjects; subjects never carry amounts or names. | A content filter for bodies. | [17](17-notifications-and-communications.md) |
+| **Transaction types** | The five `type` values: `trade`, `reversal`, `adjustment`, `opening_balance`, `departure_settlement`; only `trade` needs counterparty acceptance (canon 5.8 item 3). | A bank transaction (discouraged member-facing word). | [00](00-conventions.md), [03](03-domain-model-and-mutual-credit-rules.md) |
 | **`suspended`** | Membership state in which the Member is restricted but keeps read-only access to their own data; reversible. | `closed`, or a ban flag. | [15](15-lifecycle-state-machines.md) |
 | **System Account** | Per-Network non-member account that balances Adjustments, openings and settlements (`network_clearing`, `community_fund`); exempt from limits. | A Member Account. | [00](00-conventions.md) |
 

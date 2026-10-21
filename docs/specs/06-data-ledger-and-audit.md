@@ -74,12 +74,17 @@ Note: UUIDv7 reveals creation time to the millisecond. This is accepted for ledg
 | AuditEvent | **I** (R fields) | yes / platform | Governance and security record | P |
 | HistoryRecord | A | yes | Per-object transition log ([LIF-008](15-lifecycle-state-machines.md)) | P |
 | IdempotencyRecord | M* | yes / actor | Retry protection | P |
-| Notification | M* | yes | Notification intent and delivery state ([17](17-notifications-and-communications.md)) | P |
+| Notification | M* | yes | Notification intent and delivery state; carries `template_version` ([17](17-notifications-and-communications.md)) | P |
 | ExportJob | M | yes | Export request and artifact reference ([18](18-data-export-and-portability.md)) | P |
 | IntegrityCheckpoint | I | yes | Sealed digest over ledger or audit data | no |
 | ReconciliationRun | A | yes | Result of a reconciliation | no |
 | Invitation, ConsentRecord, Attachment | M, A, M | yes | Supporting records | D / P / C |
 | ImportBatch | M | yes | P2 hook for importing from other systems | P |
+| Appeal | M | yes | Review of a Network officer's Decision ([10](10-governance-and-network-operations.md) section 6.3) | C |
+| AgreementNote | M | yes | Free-text plan or work-off note on a Member (GOV-068); no enforcement | C |
+| CharterVersion, CharterAcceptance | I, A | yes | Published Charter editions and each Member's acceptance (GOV-003) | no, P |
+| ConflictDeclaration (conflict register) | M | yes | Declared conflicts of interest of administrators and Dispute Reviewers (GOV-044) | P |
+| ErasureRegister | A | platform | Opaque record of anonymisation actions re-applied after restore (OPS-029, DAT-079) | no |
 
 ### 4.2 ER diagram
 
@@ -118,7 +123,7 @@ Text description: a Network owns two System Accounts, versioned Policies, Member
 | network_id | id | N | I | | |
 | slug | text(63) | N | M | | Unique, human-readable label |
 | display_name | text(120) | N | M | | |
-| unit_name, unit_symbol | text(40), text(8) | N | I* | | Mutable only while the Network has no Journal Entry (`DOM-007`) |
+| unit_name, unit_name_singular, unit_name_plural, unit_symbol | text(40) each, text(8) | N | I* | | Mutable only while the Network has no Journal Entry (`DOM-007`); stored here, never in PolicyVersion |
 | unit_scale | int 0–4 | N | I* | | Same rule; default 2 |
 | service_state | enum | N | M | | Values owned by [10](10-governance-and-network-operations.md) (for example active, paused, closing, closed) |
 | posting_halted | bool | N | M | | Set by integrity-breach rule (DAT-047); not a lifecycle state |
@@ -219,7 +224,8 @@ Text description: a Network owns two System Accounts, versioned Policies, Member
 | listing_id | id | Y | I | | Informational (`DOM-006`) |
 | expires_at | ts | N | I | | `created_at + proposal_expiry_days`, fixed (`DOM-021`) |
 | completed_at | ts | Y | I* | | |
-| dispute_window_ends_at | ts | Y | I* | | Computed at completion from policy then in force (A-DAT-3) |
+| policy_version_id | id | Y | I* | | `PolicyVersion` in force at completion, stamped in the posting unit of work (POL-015, [16](16-network-policy-catalog.md)); dispute window and joint-Reversal window are read from it |
+| dispute_window_ends_at | ts | Y | I* | | Computed at completion from the stamped policy and snapshotted; later policy changes do not move it (A-DAT-3) |
 
 **Adjustment** (type `adjustment`): `transaction_id`; `member_account_id`; `system_account_id`; `direction` (`credit_member` or `debit_member`); `amount` int ≥ 1; `reason_code` (required); `reason_text` R; `override_reason` text(500) Y R (`DOM-033`); `dispute_id` Y; `corrects_journal_entry_id` Y; `approvals_required` int (snapshot of `admin_quorum`). All I except text redaction.
 
@@ -295,7 +301,7 @@ Text description: a Network owns two System Accounts, versioned Policies, Member
 
 **IdempotencyRecord** (class M*): section 7.
 
-**Notification** (class M* for delivery fields; payload I): `notification_id`; `network_id` Y; `recipient_membership_id` Y or `recipient_user_id` Y (exactly one); `template_key` (owned by [17](17-notifications-and-communications.md)); `subject_type`, `subject_id`; `channel` enum; `params` json (identifiers and codes only; display text is rendered at send time); `status` (`queued`, `sent`, `delivered`, `failed`, `read`, `suppressed`); `attempts`; `created_at`, `sent_at`, `read_at`.
+**Notification** (class M* for delivery fields; payload I): `notification_id`; `network_id` Y; `recipient_membership_id` Y or `recipient_user_id` Y (exactly one); `template_key` and `template_version` (both owned by [17](17-notifications-and-communications.md); the version used at render time is stored so a resent notice is reproducible); `subject_type`, `subject_id`; `channel` enum; `params` json (identifiers and codes only; display text is rendered at send time); `status` (`queued`, `sent`, `delivered`, `failed`, `read`, `suppressed`); `attempts`; `created_at`, `sent_at`, `read_at`.
 
 **ExportJob** (class M): `export_job_id`; `network_id` Y; `requested_by_user_id`; `requested_by_membership_id` Y; `scope` (`member_self`, `network_admin`, `network_closure`, `network_archive`, `audit_events`; [18](18-data-export-and-portability.md)); `format`; `schema_version`; `as_of` ts; `filters` json; `state` (`queued`, `running`, `ready`, `failed`, `expired`, `cancelled`); `progress`; `row_counts` json; `manifest_hash` hash Y; `artifact_ref` Y; `artifact_expires_at` Y; `download_count`; `created_at`, `completed_at`.
 
@@ -313,6 +319,19 @@ Text description: a Network owns two System Accounts, versioned Policies, Member
 ### 4.8 Import hook (P2)
 
 `ImportBatch` (class M): `import_batch_id`, `network_id`, `source_label`, `source_format`, `source_file_hash`, `mode` (`dry_run`, `commit`), `state`, `counts` json, `created_by_membership_id`, `created_at`, `report_ref`. The nullable `external_ref` and `import_batch_id` attributes on Membership and Transaction exist so that import can be added without a migration of ledger tables. Behaviour is specified in [18](18-data-export-and-portability.md).
+
+### 4.9 Governance, erasure and package entities
+
+| Entity | Class | Key attributes |
+|---|---|---|
+| PolicyVersion (see 4.6) | I | Referenced by `Trade.policy_version_id`, `Dispute.policy_version_id`, `JournalEntry.policy_version_id`, and the departure snapshot (`departure_mode_snapshot`) |
+| Appeal | M | `appeal_id`, `network_id`, `decision_ref` (type, id, Audit Event id), `appellant_membership_id`, `grounds` (set), `statement` (R), `status` (`filed`, `in_review`, `decision_confirmed`, `decision_modified`, `decision_overturned`, `withdrawn`), `state_version`, `reviewer_refs`, `reasoning` (R), `due_at`, `filed_at`, `decided_at`; status vocabulary owned by [10](10-governance-and-network-operations.md) |
+| AgreementNote | M | `agreement_note_id`, `network_id`, `membership_id`, `body` (R), `visibility` (`member_and_admins`), `remind_on` Y, `created_by_membership_id`, `created_at`; no enforcement behaviour |
+| CharterVersion | I | `charter_version_id`, `network_id`, `version_no`, `text`, `published_at`, `published_by_membership_id`, `reason`, `is_material` bool |
+| CharterAcceptance | A | `membership_id`, `charter_version_id`, `accepted_at` |
+| ConflictDeclaration | M | `conflict_id`, `network_id`, `declarer_membership_id`, `other_membership_id`, `relation` (`household`, `family`, `business_partner`, `employer`, `other`), `declared_at`, `cleared_at` Y; visible to administrators only |
+| ErasureRegister | A | `erasure_id`, `membership_id` (opaque), `phase` (`restricted`, `erased`), `performed_at`; no personal data; platform-scoped (OPS-029) |
+| NetworkPackage (descriptor) | I | `package_id`, `network_id`, `format_version`, `data_model_version`, `as_of`, `manifest_hash`, `checkpoint_id`, `created_at`; content defined by ARC-024 and [18](18-data-export-and-portability.md) |
 
 ## 5. Relationships and cardinalities
 
@@ -408,7 +427,7 @@ Each Posting carries `account_seq`, assigned while holding the Account's seriali
 | Replay | Same scope, key, payload hash: return the stored outcome with an indication that it is a replay; no new row, no new posting, no new notification, no new Audit Event. The resource representation returned MAY reflect later state. |
 | Mismatch | Same scope and key, different payload hash: reject, change nothing. |
 | In progress | Same scope and key while the first request is still executing: MUST either wait and return the first outcome, or return a retryable error naming a retry delay; MUST NOT execute twice. |
-| TTL | Record retained at least `idempotency_ttl` [DECISION NEEDED: DEC-DAT-4; options 24 hours, 72 hours, 7 days; recommended 72 hours]; deleted after. State machines independently prevent double posting ([LIF-006](15-lifecycle-state-machines.md)); DAT-021 covers creation requests. |
+| TTL | Retention by operation class (resolves DEC-090 / DEC-DAT-4, [13 section 5.5](13-assumptions-risks-decisions-roadmap.md)): **posting keys** (any operation that creates a Journal Entry or changes ledger state) 72 hours; **non-posting keys** 24 hours; **export keys** 7 days. Record deleted after. [07](07-api-and-integration-contract.md) cites this row. State machines independently prevent double posting ([LIF-006](15-lifecycle-state-machines.md)); DAT-021 covers creation requests. |
 
 | ID | Pri | Requirement | Rationale | Verification |
 |---|---|---|---|---|
@@ -465,7 +484,7 @@ A reconciliation run examines one Network at a consistent snapshot and executes 
 | R7 | Each entry with `reverses_journal_entry_id` negates the original exactly; each original is reversed at most once | Critical |
 | R8 | A `closed` Membership's Account has balance 0 and no Posting with `posted_at` after `closed_at` (`INV-016`) | Critical |
 | R9 | Each Adjustment, Reversal, policy change, role change, dispute resolution, membership decision and export has its Audit Event (`INV-010`) | High |
-| R10 | `limit_flag` is consistent with `balance_after` relative to limits at that time; Trade entries have `limit_flag = none` | High |
+| R10 | `limit_flag` is consistent with `balance_after` relative to limits at that time; Trade entries have `limit_flag = none`; and the IntegrityCheckpoint chain is append-only (each checkpoint's `previous_checkpoint_id` and digest chain reproduce, DAT-097) | High |
 | R11 | Trade entries have exactly two Postings with opposite signs and the Trade's `amount` (DAT-014); `INV-015` participants are distinct | Critical |
 | R12 | Recomputed `entry_hash` equals stored `entry_hash` for every entry (DAT-022); latest IntegrityCheckpoint digest reproduces over the entries it covers | Critical |
 | R13 | No two Transactions share (`network_id`, creator, `origin_key_hash`) | Medium |
@@ -639,7 +658,7 @@ Periods below are **recommended defaults**, not legal conclusions. Counsel confi
 | Trade description, reason texts | As parent unless member-authored and member erased | Phase 2 | Tombstone |
 | Dispute, DisputeEvent | As the Transaction they concern | | Text tombstoned per 12.3 |
 | Attachment | As the Dispute plus 90 days after resolution | Resolution | Delete |
-| IdempotencyRecord | TTL (DEC-DAT-4) | Creation | Delete |
+| IdempotencyRecord | Posting keys 72 hours; non-posting 24 hours; export keys 7 days (section 7) | Creation | Delete |
 | Notification | 90 days after sent or read [DECISION NEEDED: DEC-DAT-18] | Sent | Delete |
 | ExportJob metadata | 12 months | Completion | Delete (Audit Event stays per its row) |
 | Export artifacts | Until link expiry, at most 7 days | Ready | Delete and verify |
@@ -688,21 +707,29 @@ Restore from backup is a documented procedure owned by [11](11-deployment-operat
 | DAT-090 | P0 | Every derived store (cached balances, directory/search indexes, statements, dashboards, caches) MUST be rebuildable from source entities and MUST NOT be the only copy of any fact. A derived store MUST be rebuilt or invalidated for a Member upon erasure Phase 1. | `INV-008`; erasure completeness. | Rebuild test; erasure test covering search |
 | DAT-091 | P1 | Aggregates shown to members (Network totals, counts) MUST be computed from the ledger and MUST NOT disclose individual balances beyond `balance_visibility`. | Policy enforcement ([04 FR-BAL-008](04-functional-requirements.md)). | Test |
 
+| DAT-092 | P0 | The entities of section 4.9 (Appeal, AgreementNote, CharterVersion, CharterAcceptance, ConflictDeclaration) MUST be stored Network-scoped (DAT-005); Appeal statements, reasoning and AgreementNote bodies are R fields. Their content is covered by DAT-069 and the export schema. | Carries the [10](10-governance-and-network-operations.md) governance needs (GOV-003, GOV-044, GOV-068, Appeal record). | Schema inspection; export completeness test |
+| DAT-093 | P0 | Every `Trade` MUST store `policy_version_id` (the version in force at completion, POL-015) in the posting unit of work; `dispute_window_ends_at` MUST be derived from it at completion and MUST NOT change afterwards. Disputes and departures MUST snapshot the policy version in force at their start (`Dispute.policy_version_id`, `departure_mode_snapshot`). | Fairness: rules known at the time ([16](16-network-policy-catalog.md) POL-015). | Test: change the window after completion; the Trade keeps its window |
+| DAT-094 | P0 | The Platform MUST keep the ErasureRegister (OPS-029) outside the Network ledger store, append to it in the same unit of work as each Phase 1 and Phase 2 action, and replay it after restore (DAT-079). | A restore must not resurrect erased data ([11](11-deployment-operations-and-support.md) OPS-029). | Restore-across-erasure test |
+| DAT-095 | P0 | Network Administrators MUST be able to read every Journal Entry and Posting of their Network irrespective of `balance_visibility`; that setting governs only Member-to-Member visibility. Such reads are not themselves audited per row, but bulk exports are (DAT-063). | [00 section 5.8](00-conventions.md) item 6. | Authorisation test with `balance_visibility = self` |
+| DAT-096 | P1 | The Network package of ARC-024 MUST be built from one consistent snapshot, include the entities of section 4 in the export schema, the ErasureRegister entries for the Network's Memberships, and the latest IntegrityCheckpoint chain, and MUST restore into a scratch deployment with reconciliation (R1 to R14) passing. | Portability and per-Network exit ([05](05-architecture-and-trust-boundaries.md) ARC-024; [18](18-data-export-and-portability.md)). | Round-trip test with digest comparison |
+| DAT-097 | P1 | Each IntegrityCheckpoint digest MUST incorporate the previous checkpoint's digest (a hash chain), checkpoints MUST be append-only, and reconciliation check R10 MUST verify that the chain reproduces and no checkpoint was removed or replaced. | Tamper evidence for history already exported; extends DAT-023 and DAT-053. | Delete or alter one checkpoint in a test copy and see R10 fail |
+| DAT-098 | P0 | Outbox rows (DAT-016, ARC-006) and IdempotencyRecords (ARC-010) MUST be written in the posting unit of work; outbox consumers MUST be idempotent; idempotency retention follows the class table in section 7 (posting 72 hours, non-posting 24 hours, exports 7 days). | Resolves DEC-090. | Replay tests at 71 and 73 hours (posting) |
+
 ## 15. Assumptions and open decisions
 
 | Ref | Item | Options | Recommended default |
 |---|---|---|---|
 | A-DAT-1 | Time-sortable identifiers expose creation time of Membership and Listing to those who see the identifier. | Accept (D-03) / UUIDv4 for member-facing entities | Accept |
-| A-DAT-2 | `unit_name`, `unit_symbol`, `unit_scale` are stored on Network, not in PolicyVersion, although [canon 5.6](00-conventions.md) lists them as policy parameter names; [16](16-network-policy-catalog.md) must reflect this. | Network / PolicyVersion copy | Network |
+| A-DAT-2 | `unit_name` (with singular and plural forms), `unit_symbol`, `unit_scale` are stored on Network, not in PolicyVersion ([canon 5.8](00-conventions.md) item 5); [16](16-network-policy-catalog.md) lists them as Network identity parameters. | Network / PolicyVersion copy | Network |
 | A-DAT-3 | `dispute_window_ends_at` is fixed at completion from the policy then in force; later policy changes do not move it. [03](03-domain-model-and-mutual-credit-rules.md) does not state which policy applies. | Snapshot at completion / current policy at dispute time | Snapshot |
-| A-DAT-4 | `limit_flag` value `limit_exceeded_by_adjustment` extends the canon; [03](03-domain-model-and-mutual-credit-rules.md) names only the reversal value. | Add / reuse one value | Add |
+| A-DAT-4 | `limit_flag` values `limit_exceeded_by_reversal` and `limit_exceeded_by_adjustment` are both in use; [03](03-domain-model-and-mutual-credit-rules.md) names only the reversal value. | Add / reuse one value | Add |
 | A-DAT-5 | Member-authored Trade descriptions are tombstoned at Phase 2; counterparty-authored text remains. Alternative: retain all descriptions, or tombstone only on request. [DECISION NEEDED: DEC-DAT-20, description handling at erasure.] | Tombstone member-authored / retain / on request | Tombstone member-authored |
-| A-DAT-6 | Canon `INV-003` allows "documented disaster-recovery and migration procedures" only; Network disposal (13.4) is a third. Canon owner should add it to the carve-out. | Add / forbid deletion entirely | Add |
+| A-DAT-6 | Resolved by [00 section 5.8](00-conventions.md) item 1: `INV-003` now permits exactly three exceptions (disaster recovery, versioned migration, ledger disposal at Network closure/retention expiry), matching 13.4. | Adopted | Adopted |
 | A-DAT-7 | The canon has no Network-wide commit order; ordering uses `account_seq` per Account and `(posted_at, journal_entry_id)` listing. | As specified / global gapless sequence (single writer per Network) | As specified |
 | A-DAT-8 | Pseudonymous references to a closed person (the ordinal, context in descriptions) may allow counterparties to infer identity; the design reduces but does not eliminate this. | Accept / larger anonymity sets | Accept; counsel review |
-| A-DAT-9 | Network administrators can read all Journal Entries of their Network for governance and reconciliation regardless of `balance_visibility` (needed by FR-EXP-003/004); [04](04-functional-requirements.md) FR-EXP-008 wording should reflect it. | Admin sees ledger / admin sees only aggregates | Admin sees ledger |
+| A-DAT-9 | Adopted by [00 section 5.8](00-conventions.md) item 6: Network administrators see all ledger entries of their Network irrespective of `balance_visibility` (DAT-095). | Adopted | Admin sees ledger |
 
-Decisions introduced here (for [13](13-assumptions-risks-decisions-roadmap.md) to register): DEC-DAT-1 to DEC-DAT-20 as marked inline. Recommended defaults are proposals; none is a legal conclusion. Retention and erasure sufficiency in each jurisdiction: a question for counsel ([19](19-legal-and-regulatory-open-questions.md): LEG-Q-27, LEG-Q-28, LEG-Q-33).
+Idempotency retention (DEC-DAT-4 / DEC-090) is resolved in section 7: posting 72 hours, non-posting 24 hours, exports 7 days. Decisions introduced here (for [13](13-assumptions-risks-decisions-roadmap.md) to register): DEC-DAT-1 to DEC-DAT-20 as marked inline. Recommended defaults are proposals; none is a legal conclusion. Retention and erasure sufficiency in each jurisdiction: a question for counsel ([19](19-legal-and-regulatory-open-questions.md): LEG-Q-27, LEG-Q-28, LEG-Q-33).
 
 Cross-document needs: [07](07-api-and-integration-contract.md) to define key format, replay indication and error classes for payload mismatch and in-progress; [09](09-security-privacy-and-abuse.md) to own the security log (DAT-061) and User status values; [10](10-governance-and-network-operations.md) to own `service_state` values; [11](11-deployment-operations-and-support.md) to set reconciliation frequency, backup window and Network disposal procedure; [12](12-quality-strategy-and-test-plan.md) to adopt DAT-029, DAT-030, DAT-040, DAT-051, DAT-075, DAT-079 as gates; [16](16-network-policy-catalog.md) per A-DAT-2; [17](17-notifications-and-communications.md) for DAT-016.
 

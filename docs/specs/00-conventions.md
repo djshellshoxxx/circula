@@ -57,7 +57,7 @@ Lower-case "must/should/may" carry no normative weight.
 ### 2.2 Cross-reference rules
 
 1. One authoritative home per rule. Elsewhere: cite the ID and, at most, paraphrase in one clause.
-2. Only cite IDs that exist. The traceability check ([plans/traceability](../plans/traceability.md)) fails on dangling references.
+2. Only cite IDs that exist. The traceability check (`plans/traceability` (document to be created under `docs/plans/`)) fails on dangling references.
 3. Relative links only. Filenames are lowercase kebab-case.
 4. Sources for external facts: URL **and** access date in the owning document; long research lives in [`docs/notes/`](../notes/README.md).
 
@@ -137,7 +137,7 @@ The names, signs, states and defaults below are the single source for terminolog
 |---|---|
 | INV-001 | Every Journal Entry's Postings sum to exactly zero. |
 | INV-002 | Both sides of a Trade are posted atomically; a partial Trade posting MUST NOT be observable or persistable. |
-| INV-003 | Ledger records are append-only; no UPDATE/DELETE of Journal Entries or Postings in normal operation. |
+| INV-003 | Ledger records are append-only; no UPDATE/DELETE of Journal Entries or Postings in normal operation. Exactly three audited exceptions exist: disaster recovery, versioned migration, and ledger disposal at Network closure or retention expiry (5.8 item 1). |
 | INV-004 | Corrections are made only by Reversals or Adjustments, each a new Journal Entry linked to the original and to an Audit Event. |
 | INV-005 | A Member Account balance MUST NOT go below `−credit_limit` as the result of a Trade posting. |
 | INV-006 | A Member Account balance MUST NOT exceed `max_balance` (if set) as the result of a Trade posting. |
@@ -149,6 +149,8 @@ The names, signs, states and defaults below are the single source for terminolog
 | INV-012 | The Platform Operator and Network Administrators cannot create a Trade on behalf of a Member without that Member's acceptance; admin value changes are Adjustments only, visible to the affected Member. |
 | INV-013 | `unit_scale` and the Network's unit identity are immutable once any Journal Entry exists. |
 | INV-014 | Money-like claims are prohibited in the product: the Platform exposes no redemption, cash-out, interest, or fiat conversion in MVP. |
+| INV-015 | A Trade is valid only if Provider and Recipient are distinct Member Accounts of the same Network, both Memberships are `active` at posting time (exception: `departing` Memberships under 03 DOM-035), and the amount is an integer ≥ 1 minor unit within `min_trade_amount`/`max_trade_amount` where set. |
+| INV-016 | After a Membership is `closed`, its Member Account balance is exactly 0 and no further Journal Entry references it. |
 
 ### 5.5 Baseline defaults (to be registered as `DEC-` entries with status *Proposed default* in doc 13)
 
@@ -179,7 +181,7 @@ Core: 00–13 as required by the foundational prompt; supporting: 14 glossary, 1
 
 ### 5.8 Canon amendments (2026-10-21, post-draft reconciliation)
 
-Adopted from the first-draft review; these bind all specs and supersede conflicting wording above.
+**Status: applied (2026-10-21).** Adopted from the first-draft review; these bind all specs and supersede conflicting wording above. Sections 5.3 to 5.6 and the INV table in 5.4 now reflect items 1 to 3 and 6; docs 03, 06, 12, 13 and 15 follow them. Doc 12 ([12](12-quality-strategy-and-test-plan.md)) exists and owns the `QA` prefix; registry links resolve.
 
 1. **Invariants added** (owned by doc 03): `INV-015` Trade validity (distinct active parties in the same Network, positive amount within `min_trade_amount`/`max_trade_amount`, both memberships `active`); `INV-016` a `closed` Member Account holds a zero balance. `INV-003` permits exactly three exceptions: disaster recovery, versioned migration, and ledger disposal at Network closure/retention expiry (all audited).
 2. **System Accounts**: `network_clearing` (adjustments/openings) and `community_fund` (used only when `departure_settlement_mode = community_fund` or Network-defined fund). Both exempt from limits.

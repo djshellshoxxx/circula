@@ -56,7 +56,7 @@ Per D-01 and [05 section 8](05-architecture-and-trust-boundaries.md#8-deployment
 | **OPS-002** | P0 | Every deployment **MUST** have a named accountable Platform Operator (person or organisation) recorded in its operations record, and every Network in it **MUST** be able to see who that is and how to reach them. | Accountability and support routing. | Inspection of record and Network "about this service" page (I). |
 | **OPS-003** | P0 | Each deployment **MUST** keep an operations record containing: topology, software version, datastore and file-store locations, backup schedule and destination, date and result of last restore drill, and at least two named backup and access custodians (three for T3). | Prevents single-person failure; supports handover. | Operations record exists and is current at each release gate (I). |
 | **OPS-004** | P0 | A hosted deployment **MUST** publish, before onboarding any Network, a service description stating: availability objective, support hours, backup policy and retention, data location, sub-service providers, maintenance policy, and Network export and termination rights. Legal terms are drafted with counsel. | Informed Network decision. | Document exists and is linked from the Network onboarding flow (I). |
-| **OPS-005** | P0 | A Network **MUST** be able to export all of its data at any time, including while suspended by the Platform Operator, and for at least 30 days after termination of hosting [DECISION NEEDED: OPS-OD-1: post-termination export window]. | No lock-in (A7 in 05). | Export test on a suspended Network (T). |
+| **OPS-005** | P0 | A Network **MUST** be able to export all of its data at any time, including while suspended by the Platform Operator, and for at least 30 days after termination of hosting (policy minimum 30 days; hosted terms **SHOULD** recommend 90 days) [DECISION NEEDED: OPS-OD-1: post-termination export window]. | No lock-in (A7 in 05). | Export test on a suspended Network (T). |
 | **OPS-006** | P1 | Migration between hosted and self-hosted (either direction) **MUST** work through the Network package (05 ARC-024) with identical balances verified by reconciliation, and **MUST** be rehearsed in every release gate. | Escape hatch for D-01. | Cross-deployment migration test in CI/staging (T). |
 | **OPS-007** | P0 | Closing a Network or decommissioning a deployment **MUST** follow a documented procedure: final export offered, confirmation by Network Administrators meeting `admin_quorum`, deletion of live data, backup expiry per the retention policy, and a deletion record kept without personal data. | Honours erasure expectations (D-09) and prevents accidental deletion. | Runbook walk-through plus test in staging (D, T). |
 | **OPS-008** | P0 | Provisioning a Network **MUST** be an Operator action that creates an empty Network and an invitation for its first Network Administrator(s); the Operator **MUST NOT** obtain a Member or Network Administrator role as part of provisioning (see [02](02-personas-roles-and-journeys.md)). | Separation of duties (INV-012). | Provisioning test and role inspection (T). |
@@ -165,7 +165,7 @@ flowchart LR
 | **Trade acceptance latency** | Server-side time from request received to response | p95 at most 300 ms, p99 at most 1 s at the Standard envelope (05 ARC-040) | 30 days | Application metrics |
 | **Balance/history read latency** | As above | p95 at most 150 ms | 30 days | Application metrics |
 | **Outbox freshness** | Age of oldest unprocessed Outbox event | at most 5 minutes at p99 | 7 days | Job runner |
-| **Notification delivery** | Proportion of notifications handed to the transport within 10 minutes of the event | 95 percent | 7 days | Job runner, transport receipts |
+| **Notification dispatch latency** | Proportion of notifications handed to the transport within 60 seconds of commit (target, NTF-044); alert floor at 10 minutes | p95 at most 60 s; alert if the 10-minute floor is breached for more than 5 percent | 7 days | Job runner, transport receipts |
 | **Reconciliation** | Proportion of scheduled reconciliation runs completing with zero findings | 100 percent | Ever | Reconciliation records |
 | **Backup freshness** | Age of newest successful backup | at most RPO | Continuous | Backup tooling |
 | **Restore drill** | Last successful restore drill age | at most drill interval | Continuous | Drill records |
@@ -178,7 +178,7 @@ An error budget of 0.5 percent over 30 days (about 3.6 hours) follows from the a
 | Severity of alert | Condition (examples) | Action |
 |---|---|---|
 | **Page (immediate human)** | Reconciliation finding; ledger write error rate above 1 percent for 5 minutes; datastore unreachable; backup older than RPO; certificate expires in less than 3 days; suspected unauthorized operator access; disk or storage above 90 percent | Start incident (section 11) |
-| **Ticket (same business day)** | Outbox oldest event above 15 minutes; job failures above threshold; p95 latency above SLO for 1 hour; restore drill failed; certificate expires in less than 21 days; storage forecast shows exhaustion in less than 30 days; dependency advisory (high) | Create work item |
+| **Ticket (same business day)** | Notification dispatch latency above the 10-minute alert floor (NTF-044); Outbox oldest event above 15 minutes; job failures above threshold; p95 latency above SLO for 1 hour; restore drill failed; certificate expires in less than 21 days; storage forecast shows exhaustion in less than 30 days; dependency advisory (high) | Create work item |
 | **Informational** | Capacity thresholds at 60 percent; slow queries trend | Weekly review |
 
 ### 7.3 Logging
@@ -216,7 +216,7 @@ An error budget of 0.5 percent over 30 days (about 3.6 hours) follows from the a
 | Artifact | Scheme | Rule |
 |---|---|---|
 | **Software release** | Semantic Versioning (MAJOR.MINOR.PATCH) | PATCH: fixes with no schema or contract change; MINOR: backward-compatible features and expand-only migrations; MAJOR: contract removals and incompatible changes |
-| **Public API** | Version identifier in the path/media type, defined in [07](07-api-and-integration-contract.md) | Independent of software version; deprecations announced at least 6 months ahead [DECISION NEEDED: OPS-OD-8] |
+| **Public API** | Version identifier in the path/media type, defined in [07](07-api-and-integration-contract.md) | Independent of software version; removal of a MAJOR API version announced at least 12 months ahead; other feature removals at least 6 months ahead [DECISION NEEDED: OPS-OD-8] |
 | **Database schema** | Monotonic migration number, forward-only | Every release declares the minimum and maximum compatible schema numbers |
 | **Export format** | Version identifier in each export ([18](18-data-export-and-portability.md)) | Older formats remain importable |
 | **Policy catalog** | Version in [16](16-network-policy-catalog.md) | Policy records note the catalog version used |
@@ -262,7 +262,7 @@ flowchart LR
 | **OPS-053** | P0 | Where an upgrade requires write downtime, the deployment **MUST** enter maintenance mode (reads available, writes rejected with an explanatory message and expected duration), and hosted deployments **MUST** announce the window at least 72 hours in advance except for urgent security fixes. | Predictability and honesty. | Maintenance mode test (T). |
 | **OPS-054** | P0 | The release gate of section 8.3 **MUST** pass before any release is published; a failing item blocks the release unless waived through a decision-log entry naming the risk. | Quality gate. | Gate records (I). |
 | **OPS-055** | P0 | Release artifacts **MUST** be published with checksums and a signature verifiable by operators, and with a machine-readable list of components and versions (software bill of materials). | Supply-chain trust. | Verification procedure documented and tested (T). |
-| **OPS-056** | P0 | Security fixes rated critical **MUST** be released as a PATCH within 7 days of confirmation and high within 30 days, with an advisory published through a channel self-hosters can subscribe to [DECISION NEEDED: OPS-OD-9: patch targets]. | Self-hosters need timely fixes. | Advisory process audit (I). |
+| **OPS-056** | P0 | Security fixes **MUST** be released as a PATCH within the patch SLA table in [09 section 6.11](09-security-privacy-and-abuse.md) (SEC-085, SEC-089; this document does not restate the figures), with an advisory published through a channel self-hosters can subscribe to [DECISION NEEDED: OPS-OD-9: patch targets]. | Self-hosters need timely fixes. | Advisory process audit (I). |
 | **OPS-057** | P1 | Risky behavioural changes **SHOULD** be released behind a deployment-level switch, defaulting off, for one release before becoming default. | Safer rollout. | Release record (I). |
 | **OPS-058** | P0 | A change that alters ledger semantics (posting rules, limit enforcement, rounding) **MUST** be a MINOR or MAJOR release with an ADR, a data-compatibility statement, and property tests re-run (see [05 ARC-036](05-architecture-and-trust-boundaries.md#92-quality-attribute-table)). | Highest-risk area. | ADR and test evidence (I, T). |
 | **OPS-059** | P0 | Application rollback to the previous release **MUST** be tested in staging for every release, and the rollback procedure **MUST** state when it is not possible (after a contracting migration). | Recovery from a bad release. | Rollback rehearsal (T). |
@@ -405,10 +405,12 @@ Every runbook below **MUST** exist as a maintained, step-by-step document, teste
 | **R12 Network suspension for platform abuse** | Operator determines misuse of the service | Operator suspends service for that Network, preserving data and export rights; Audit Event; notify Network Administrators | Resolve with Network governance; lift or terminate under OPS-007 | Network Administrators informed |
 | **R13 Hand-over / migration to another host** | Operator change, hosting termination, self-host move | Produce Network package (OPS-006); freeze writes; verify counts | Restore at target; compare reconciliation | Balances identical; DNS/communications |
 | **R14 Hostile load or abuse spike** | Rate-limit block surge, scraping, credential stuffing | Tighten edge limits; per-Network limits (05 ARC-027) | Block sources at the edge; no membership actions by Operator | Normal traffic restored |
+| **R15 Operator-assisted admin recovery** | A Network has no `active` `network_admin` who can authenticate and Members request recovery (GOV-049 to GOV-054) | Verify the request threshold and that the nominee is an `active` Member; verify out of band with the registered contact route; two distinct operator staff accounts record the case; announce to all Members and start the waiting period (at least 7 days, GOV-050) | If no qualifying objection, write the Member-visible Audit Event (fail closed, GOV-051), then issue a single-use invitation (72 hours, GOV-052). The Operator never sees or sets credentials and never becomes or nominates an administrator (GOV-049(d)); the new administrator is restricted for 72 hours (GOV-053) | Invitation accepted by the nominee with own authentication; restrictions active; Audit Event present. Self-host with one custodian: record the residual risk (GOV-054) |
+| **R16 Operator hold** | Platform abuse, security response or other need to pause a Network | Apply `read_only` or `suspended` with reason, reference and review date; Audit Event visible to administrators and Members; notify administrators on every verified channel (up to 24 hours late only for an urgent security response, GOV-075) | Ledger, policy, roles and Membership unchanged (GOV-076); export stays available (OPS-005); administrators may contest through the support route (GOV-077); review at 30 days (GOV-078) | Ledger digest identical before and after; lifting recorded as an Audit Event |
 
 | ID | Pri | Requirement | Rationale | Verification |
 |---|---|---|---|---|
-| **OPS-083** | P0 | Runbooks R1 to R14 **MUST** exist before the first production Network is onboarded, in the repository docs (self-host) and the operator handbook (hosted), with named roles and tested steps. | Preparedness. | Documentation inspection (I). |
+| **OPS-083** | P0 | Runbooks R1 to R16 **MUST** exist before the first production Network is onboarded, in the repository docs (self-host) and the operator handbook (hosted), with named roles and tested steps. | Preparedness. | Documentation inspection (I). |
 | **OPS-084** | P0 | R2, R3, R4 and R11 **MUST** be exercised in staging at least once per year and after significant architecture change, with results recorded and gaps fixed. | Runbooks decay untested. | Exercise records (I). |
 | **OPS-085** | P0 | Runbooks **MUST NOT** instruct any procedure that edits, deletes or inserts Journal Entries or Postings directly (INV-003, INV-004). | Platform invariant. | Runbook review checklist (I). |
 
@@ -460,20 +462,29 @@ Assumptions: Journal Entry plus Postings plus indexes about 1 KiB; Audit Events 
 
 | ID | Decision / assumption | Options | Recommended default |
 |---|---|---|---|
-| OPS-OD-1 | Post-termination export window (OPS-005) | 30 days; 90 days; indefinitely on request | 30 days minimum, 90 days recommended |
+| OPS-OD-1 | Post-termination export window (OPS-005) | 30 days; 90 days; indefinitely on request | Policy minimum 30 days; hosted terms recommend 90 days |
 | OPS-OD-2 | Service credential rotation interval (OPS-019) | 6, 12, 24 months | 12 months and on events |
 | OPS-OD-3 | RPO/RTO per tier (section 6.1) | Stricter (1 min / 1 h hosted); looser | Hosted 5 min / 4 h; self-host recommended 15 min / 8 h; minimum 24 h / 24 h |
 | OPS-OD-4 | Backup retention (section 6.1) | PITR 7 or 14 or 30 days; monthly 6 or 12 months | PITR 14 days, daily 14, weekly 8, monthly 12; Networks may request shorter to support erasure |
 | OPS-OD-5 | Restore drill frequency (OPS-026) | Weekly/monthly/quarterly | Hosted weekly (automated); self-host quarterly |
 | OPS-OD-6 | Availability SLO for hosted (section 7.1) | 99.5; 99.9 | 99.5 percent (aligned with ARC-OD-2 in [05](05-architecture-and-trust-boundaries.md#12-assumptions-and-open-decisions)) |
 | OPS-OD-7 | Log retention and source-address handling (section 7.3) | As proposed; shorter; hashed addresses | As proposed with truncated addresses; final per [09](09-security-privacy-and-abuse.md) |
-| OPS-OD-8 | API deprecation notice and release support window | 3/6/12 months; latest-only | 6-month API notice; latest and previous MINOR supported |
-| OPS-OD-9 | Security patch targets (OPS-056) | 7/30 days; 3/14 days | Critical 7 days, high 30 days |
+| OPS-OD-8 | API deprecation notice and release support window | 3/6/12 months; latest-only | 12 months for MAJOR API removal; 6 months for other feature removals; latest and previous MINOR supported |
+| OPS-OD-9 | Security patch targets (OPS-056) | 7/30 days; 3/14 days | Owned by the table in 09 section 6.11 (SEC-OD-11) |
 | OPS-OD-10 | Hosted support hours and Sev-1 staffing | Business-hours only; extended; 24x7 | Business-hours plus on-call for Sev-1 only; revisit with scale |
 | Assumption | A Platform Operator for hosted use exists as an organisation outside this repository; staffing, funding and legal form are not specified here | | Roadmap in [13](13-assumptions-risks-decisions-roadmap.md) |
 | Assumption | The chosen datastore supports consistent backups and point-in-time recovery | | Checked at ADR time |
 | Assumption | Legal duties of hosts and Networks (data processing roles, breach notification, retention) are not asserted | | A question for counsel; see [19](19-legal-and-regulatory-open-questions.md) |
 | Canon note | No conflict found. 00 section 5.2 defines INV-005/006 as constraining Trade postings, hence reconciliation check R11 is informational, not an invariant failure | | |
+
+### 15.1 Operator hold and recovery mechanics, security annex
+
+| ID | Pri | Requirement | Rationale | Verification |
+|---|---|---|---|---|
+| **OPS-101** | P0 | Operator holds (`read_only`, `suspended`) are deployment attributes owned by this document; they **MUST** be set only through the operator console with reason, reference and review date, **MUST** be reversible, and **MUST** have the governance effects of [10](10-governance-and-network-operations.md) GOV-075 to GOV-078. A hold **MUST NOT** alter ledger records, policy, roles or Memberships. | One mechanism, one owner. | Test: digest before and after (T). |
+| **OPS-102** | P0 | Operator-assisted admin recovery (R15) **MUST** follow GOV-049 to GOV-054 and **MUST** require two distinct operator staff accounts; a single-operator deployment **MUST** use a named external reviewer as second party and record it as an exception (see SEC-042 and 09 section 10). | Prevents operator takeover of a Network. | Procedure inspection (I). |
+| **OPS-103** | P0 | Step-up authentication for operator and administrator actions **MUST** use the single window defined in SEC-009 of [09](09-security-privacy-and-abuse.md); this document and runbooks **MUST NOT** state a different duration. | Single owner of the constant. | Inspection (I). |
+| **OPS-104** | P1 | The security annex ([09](09-security-privacy-and-abuse.md): patch SLA table in section 6.11, break-glass SEC-042 to SEC-043, gates G1 to G5 mirrored in [12](12-quality-strategy-and-test-plan.md)) **MUST** be part of the operator handbook and the self-host documentation. | Operators need the controls they must run. | Documentation inspection (I). |
 
 ## 16. References
 

@@ -91,6 +91,14 @@ Source short names (IRS-1, FIN-1, etc.) are listed in §10. Canon links: INV-014
 | LEG-Q-34 | Accessibility law scope (EAA, ADA, Equality Act, others); accessibility statement | Hosted web app; commercial subscription | EU, US, UK, CA, AU | N for S; by-model for H/P (Y if commercial hosted) | Product architect | H | Open | D-14, LEG-G-17 |
 | LEG-Q-35 | AML/sanctions screening; geo-restrictions | Onboarding Members across borders | US (OFAC), UK, EU | Y for hosted | Platform Operator lead | H | Open | D-10, LEG-G-16 |
 
+### 3.6 Security research, software licence and copy review (added 2026-10-21)
+
+| ID | Topic | Trigger behaviour | Jurisdictions | Launch-blocking | Owner role | Gate | Status | Canon links |
+|---|---|---|---|---|---|---|---|---|
+| LEG-Q-36 | Safe-harbour wording for good-faith vulnerability researchers, and any bounty promise: what protection can lawfully be stated, in which jurisdictions, and by whom (operator versus project) (unverified; no jurisdiction researched) | Publishing `SECURITY.md` or a disclosure policy beyond process (SEC-087) | Not yet researched; hosted operator's jurisdiction first | N for process-only policy; Y before any safe-harbour or bounty text | Platform Operator lead | H | Open | SEC-087, SEC-OD-11 |
+| LEG-Q-37 | Software licence choice, warranty disclaimer and deployer-responsibility wording (unverified) | Publishing the source and releases (LEG-G-20) | Not yet researched | Y before first public release | Product architect | H | Open | D-01, LEG-G-20 |
+| LEG-Q-38 | Counsel review of the credit-unit explanation text and the sensitive-state copy (direction words earned/spent, "owe" wording, negative-balance and limit messages) for money-like or debt-claim implications (unverified) | Onboarding unit explanation; balance, limit and state labels (UX-OD-4, UX-OD-12; INV-014) | Launch jurisdictions (not yet fixed) | Y before launch in any jurisdiction | Product architect | H | Open | INV-014, UX-OD-4, UX-OD-12, LEG-G-01 |
+
 ## 4. Prioritisation
 
 Priority is a planning aid for counsel time, not a legal assessment.
@@ -111,7 +119,7 @@ Order of engagement:
 Self-hosting shifts operator duties to deployers but not the effect of software defaults. Before publishing a release for self-hosting:
 
 - LEG-Q-24 (what the software defaults imply; privacy by design), LEG-Q-27, 28, 33 (erasure/export/retention tooling shipped with defaults), LEG-Q-30 (minimum-age default), LEG-Q-18 and LEG-Q-19 (terminology and DLT-out defaults), LEG-Q-02 (disclaimer text in docs), LEG-Q-34 (deployer-facing accessibility notes).
-- Software licence and deployer-responsibility wording (LEG-G-20): counsel to review the licence choice and warranty disclaimer. Licence selection itself is not yet a numbered question; add as `LEG-Q-36` if counsel advises.
+- Software licence and deployer-responsibility wording (LEG-G-20): counsel to review the licence choice and warranty disclaimer. Licence selection is registered as LEG-Q-37.
 
 ### 4.3 Must resolve before paid subscriptions (Gate P)
 
@@ -209,7 +217,7 @@ Bring to each engagement. Items are inputs for counsel, not outputs of this docu
 - Statuses in §3 are all **Open**; no question is resolved by this document.
 - Baselines D-01, D-08, D-09 and others cited above are *Proposed defaults* (see [00 §5.5](00-conventions.md); register in [13](13-assumptions-risks-decisions-roadmap.md)). Specific `ASM-`/`DEC-` numbers for the items below are to be assigned in 13; this document does not invent them:
   - Which launch jurisdictions are in scope for Gate H.
-  - Whether licence selection becomes `LEG-Q-36`.
+  - Licence selection is `LEG-Q-37`; researcher safe harbour is `LEG-Q-36`; credit-unit and sensitive-state copy review is `LEG-Q-38`.
   - Whether a DPIA template and DPA template ship with the platform (LEG-Q-24, 26).
   - Per-category retention schedule values (LEG-Q-33).
 
