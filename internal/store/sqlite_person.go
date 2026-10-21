@@ -126,7 +126,8 @@ func (t *txImpl) InsertToken(a *domain.APIToken) error {
 	return err
 }
 
-const tokenCols = `id,person_id,COALESCE(network_id,''),name,token_hash,scopes,created_at,last_used_at,expires_at,revoked_at`
+const tokenCols = //nolint:gosec // column list, not a credential
+`id,person_id,COALESCE(network_id,''),name,token_hash,scopes,created_at,last_used_at,expires_at,revoked_at`
 
 type rowScanner interface{ Scan(dest ...any) error }
 

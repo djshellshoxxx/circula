@@ -106,7 +106,7 @@ func TestHeadersAndCookies(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		found := false
 		for _, c := range resp.Cookies() {
 			if c.Name != cookieSession {

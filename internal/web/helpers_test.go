@@ -67,7 +67,7 @@ func (b *browser) do(req *http.Request) *pg {
 	if err != nil {
 		b.t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	body, _ := io.ReadAll(resp.Body)
 	return &pg{resp.StatusCode, string(body), resp.Header, resp.Request.URL.Path}
 }

@@ -61,7 +61,7 @@ func FormatAmount(v int64, decimals int) string {
 	neg := v < 0
 	var u uint64
 	if neg {
-		u = uint64(-(v + 1)) + 1
+		u = uint64(-(v + 1)) + 1 //nolint:gosec // v < 0 so -(v+1) >= 0
 	} else {
 		u = uint64(v)
 	}

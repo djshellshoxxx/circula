@@ -119,6 +119,7 @@ func fmtTime(t time.Time) template.HTML {
 		return ""
 	}
 	u := t.UTC()
+	//nolint:gosec // both values are formatted times, no user input
 	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, u.Format(time.RFC3339), u.Format("2 Jan 2006, 15:04 UTC")))
 }
 

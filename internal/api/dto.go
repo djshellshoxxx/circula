@@ -74,7 +74,7 @@ func toAdminMember(m *domain.Member) adminMemberDTO {
 }
 
 func memberETag(m *domain.Member) string {
-	return etagOf("member", m.ID, string(m.Status), string(roleJoin(m.Roles)), boolStr(m.DefaultFlag))
+	return etagOf("member", m.ID, string(m.Status), roleJoin(m.Roles), boolStr(m.DefaultFlag))
 }
 
 func roleJoin(rs []domain.Role) string {

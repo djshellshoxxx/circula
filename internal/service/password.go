@@ -59,13 +59,16 @@ func verifyPassword(pw, encoded string) bool {
 	if _, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.MemoryKiB, &p.Time, &th); err != nil {
 		return false
 	}
-	p.Threads = uint8(th)
+	if th == 0 || th > 255 {
+		return false
+	}
+	p.Threads = uint8(th) //nolint:gosec // bounded above
 	salt, err1 := phc64.DecodeString(parts[4])
 	want, err2 := phc64.DecodeString(parts[5])
 	if err1 != nil || err2 != nil || len(want) == 0 || p.Threads == 0 || p.MemoryKiB > 1<<21 {
 		return false
 	}
-	got := argon2.IDKey([]byte(pw), salt, p.Time, p.MemoryKiB, p.Threads, uint32(len(want)))
+	got := argon2.IDKey([]byte(pw), salt, p.Time, p.MemoryKiB, p.Threads, uint32(len(want))) //nolint:gosec // want is a short decoded hash
 	return subtle.ConstantTimeCompare(got, want) == 1
 }
 
