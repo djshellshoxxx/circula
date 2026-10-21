@@ -9,7 +9,7 @@ import (
 
 var (
 	recCodeRe = regexp.MustCompile(`<code>([A-Z2-7]{4}(?:-[A-Z2-7]{4}){3})</code>`)
-	tempRe = regexp.MustCompile(`<code class="temp">([^<]+)</code>`)
+	tempRe    = regexp.MustCompile(`<code class="temp">([^<]+)</code>`)
 )
 
 // SEC-008 web flow: generate codes (shown once), recover on /recover with
