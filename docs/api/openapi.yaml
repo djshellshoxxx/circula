@@ -2546,6 +2546,9 @@ components:
         max_tx_amount_minor: {$ref: '#/components/schemas/Money'}
         default_credit_limit_minor: {$ref: '#/components/schemas/Money'}
         policy_version: {type: integer, minimum: 0}
+        read_only: {type: boolean, description: "True while the network is frozen after a failed ledger check: reads work, writes return 423 network-frozen."}
+        frozen_since: {type: string, format: date-time, description: "When the freeze began (kept in service memory, not stored)."}
+        frozen_reason: {type: string, description: "Administrators only."}
     Membership:
       type: object
       required: [network_id, member_id, display_name, status, roles]

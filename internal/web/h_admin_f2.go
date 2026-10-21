@@ -31,6 +31,10 @@ type overviewData struct {
 	Rows  []attentionRow
 	AsOf  template.HTML
 	Check string
+	// Frozen is set while the network is read-only; FrozenReason is the administrator-only cause.
+	Frozen       bool
+	FrozenSince  template.HTML
+	FrozenReason string
 }
 
 func plural(n int, one, many string) string {
@@ -59,6 +63,9 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 		{ov.NearLimit, plural(ov.NearLimit, "active member is", "active members are") + " at or beyond their credit limit", b + "/members?status=active", "Open the member list"},
 		{ov.ExpiringInvites, plural(ov.ExpiringInvites, "invitation ends", "invitations end") + " within " + itoa(soon) + " hours", b + "/invitations", "Open invitations"},
 	}}
+	if ov.Frozen != nil {
+		d.Frozen, d.FrozenSince, d.FrozenReason = true, c.when(ov.Frozen.Since), ov.Frozen.Reason
+	}
 	switch {
 	case ov.LastCheck == nil:
 		d.Check = "No ledger check has been recorded yet."

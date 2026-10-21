@@ -59,10 +59,11 @@ async function login(page, loginName, next) {
 }
 
 /** Starts one more circula instance with a fresh temporary database. env adds or overrides settings. */
-async function startInstance(env = {}) {
+async function startInstance(env = {}, opts = {}) {
   const bin = path.resolve(process.env.CIRCULA_BIN || path.join(__dirname, '..', 'bin', 'circula'));
   if (!fs.existsSync(bin)) throw new Error(`binary not found: ${bin} (run "make build" or set CIRCULA_BIN)`);
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'circula-e2e-'));
+  // opts.dir reuses a directory (and its database) the caller owns; stop() then leaves it in place.
+  const dir = opts.dir || fs.mkdtempSync(path.join(os.tmpdir(), 'circula-e2e-'));
   const port = await freePort();
   const base = `http://127.0.0.1:${port}`;
   const logs = [];
@@ -92,7 +93,7 @@ async function startInstance(env = {}) {
         child.on('exit', () => { clearTimeout(t); r(); });
       });
     }
-    fs.rmSync(dir, { recursive: true, force: true });
+    if (!opts.dir) fs.rmSync(dir, { recursive: true, force: true });
   };
   try {
     await waitReady(base, child, logs);
@@ -100,7 +101,7 @@ async function startInstance(env = {}) {
     await stop();
     throw e;
   }
-  return { base, dir, stop };
+  return { base, dir, stop, logs };
 }
 
 module.exports = async function globalSetup() {
@@ -340,5 +341,6 @@ async function seed(base) {
 }
 
 module.exports.startInstance = startInstance;
+module.exports.helpers = { register, login, submit, PASSWORD, SETUP_SECRET, SLUG };
 module.exports.STATE_FILE = STATE_FILE;
 module.exports.STATE_DIR = STATE_DIR;

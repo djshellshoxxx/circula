@@ -1,5 +1,11 @@
 {{define "content"}}
 {{with .D}}
+{{if .Frozen}}<section class="notice" role="alert" aria-labelledby="frz-h">
+  <h2 id="frz-h">This network is read-only</h2>
+  <p>Frozen since {{.FrozenSince}}. Members can read balances and history, but every change is refused (status 423) until the ledger check passes again.</p>
+  <p>Reason: {{.FrozenReason}}</p>
+  <p><a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></p>
+</section>{{end}}
 <section aria-labelledby="att-h">
   <h2 id="att-h">Needs attention</h2>
   <p>Counted from the ledger and the dispute records when this page loaded, {{.AsOf}}.</p>

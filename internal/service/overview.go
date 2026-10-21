@@ -36,6 +36,9 @@ type AdminOverview struct {
 
 	// LastCheck is the newest recorded ledger consistency check; nil when none has run.
 	LastCheck *CheckSummary
+
+	// Frozen is set while the network is read-only after a failed ledger check.
+	Frozen *FreezeInfo
 }
 
 // CheckSummary is the outcome of a recorded consistency check.
@@ -75,6 +78,9 @@ func (s *Service) AdminOverview(ctx context.Context, actor domain.Actor, netID s
 			ExpiringInvites: c.ExpiringInvites, InviteWithin: OverviewInviteWithin}
 		if c.LastCheck != nil {
 			out.LastCheck = &CheckSummary{At: c.LastCheck.Finished, OK: c.LastCheck.OK}
+		}
+		if fi, ok := s.FrozenInfo(netID); ok {
+			out.Frozen = &fi
 		}
 		return nil
 	})

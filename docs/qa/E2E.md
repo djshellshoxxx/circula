@@ -23,6 +23,12 @@ through the web forms, as a person would: it registers four accounts, creates th
 (using the setup secret), creates four invitations and joins three members, completes two trades, leaves one proposal
 pending, publishes a listing and opens a dispute. The binary and the temporary directory are removed at the end.
 
+* `tests/security.spec.js` (own instance and database, built by `secfixture.js`; needs Node 22 for `node:sqlite`):
+  axe plus keyboard-only journeys for the Security page, two-step set-up and sign-in challenge, recovery codes and
+  account recovery, administrator password reset, operator access (break-glass session opened with the CLI),
+  dual-control pending adjustments (approve by a second administrator), administrator and self erasure, password
+  change, and a frozen network (the ledger is broken in the stopped database, the restart freezes it): admin banner,
+  member read-only notice, and the 423 page.
 * `tests/a11y.spec.js`: 57 pages plus 9 error, review, saved and maintenance states, each checked with axe-core for the tags
   `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`. Any violation fails the test and prints rule, selector and HTML. Pages:
   sign-in, register, help, invitation (signed out and in), 404, network list, network creation, password change,
