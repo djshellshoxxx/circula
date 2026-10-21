@@ -1,4 +1,4 @@
--- 0003_notify_reports: other-party dispute responses (FR-076), one re-review of
+-- 0008_notify_reports: other-party dispute responses (FR-076), one re-review of
 -- a dispute decision (FR-078), abuse reports (FR-024) and in-app notifications
 -- (FR-038, UX-012). Additive only: no existing table is altered.
 

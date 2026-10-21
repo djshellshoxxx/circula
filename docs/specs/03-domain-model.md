@@ -8,6 +8,58 @@ Normative terms follow [00-conventions.md §1](00-conventions.md#1-normative-ter
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 35, deferred 1, partial 3.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| DOM-001 | P0 | built | Every entity carries network id; cross-network refs refused |
+| DOM-002 | P0 | built | One member per person per network; second join returns existing |
+| DOM-003 | P0 | built | Membership states and transitions table-tested |
+| DOM-004 | P0 | built | Account state derived from membership |
+| DOM-005 | P0 | built | Integer minor units; parser rejects fractions and zero |
+| DOM-006 | P0 | built | Balance is sum of signed entries; sign convention in UI |
+| DOM-007 | P0 | built | Effective limit: override else default |
+| DOM-008 | P0 | built | Available = balance + limit - reserved outgoing |
+| DOM-009 | P0 | built | Transaction kinds trade, reversal, adjustment, grant |
+| DOM-010 | P0 | built | Transition table enforced; DB trigger tx_status_flow |
+| DOM-011 | P0 | built | Payer and payee consent; requests do not post without accept |
+| DOM-012 | P0 | built | Reservation on payer's own proposals; requests refined per SA-08 (DEC-035) |
+| DOM-013 | P0 | built | Terms immutable; expiry is system transition with no posting |
+| DOM-014 | P0 | built | Acceptance re-checks both parties and limit in one unit |
+| DOM-015 | P0 | built | Completed trades have exactly two equal and opposite entries |
+| DOM-016 | P0 | built | Idempotency key on retryable commands; key reuse refused |
+| DOM-017 | P0 | built | Dispute window from completion; opening creates no entries |
+| DOM-018 | P0 | built | Dispute states and outcomes with rationale and decider |
+| DOM-019 | P0 | built | Reversal is new transaction; reversal cannot be reversed |
+| DOM-020 | P0 | built | Cumulative reversed total capped at original amount |
+| DOM-021 | P0 | built | Upheld reversal blocked by limit goes to posting_pending |
+| DOM-022 | P0 | built | Adjustment: reason, system counter-entry, own-account refused |
+| DOM-023 | P0 | built | No edit or delete of completed records; corrections are new transactions |
+| DOM-024 | P0 | built | Departure preconditions, retain and settle-to-zero rules |
+| DOM-025 | P1 | partial | Default flag built (no ledger effect); limit-warning job (DOM-025.1) not built |
+| DOM-026 | P0 | built | One system account per network; exempt from limit |
+| DOM-027 | P1 | built | Sign-up grant posted from system account on activation; off by default (DEC-051) |
+| DOM-028 | P0 | built | No configuration key for invariants |
+| DOM-029 | P0 | built | Policy bounds and unknown-field refusal; default MaxTxAmount differs (DEC-056) |
+| DOM-030 | P0 | built | Policy versions appended; changes audited with old and new values |
+| DOM-031 | P0 | built | Decimals locked after first posting |
+| DOM-032 | P0 | built | Limit change posts nothing; reduction blocks only new debt |
+| DOM-034 | P2 | deferred | Mutual reversal without dispute is post-MVP |
+| DOM-035 | P0 | built | Audit event in the same unit for each state change |
+| DOM-036 | P1 | partial | Admin reversal built; requires completed status, disputed only via dispute (DEC-052) |
+| DOM-037 | P0 | built | Admin cannot act on own account or own trades |
+| DOM-038 | P0 | partial | Party and conflict refusal built; admin without reviewer role may decide (DEC-072) |
+| DOM-039 | P0 | built | Suspended members may decline, cancel and view; cannot propose or accept |
+| DOM-040 | P0 | built | Listings write no entries |
+
 ## 1. Scope and principles of the model
 
 - The model covers one network at a time. Nothing in it crosses a network boundary (DOM-001).
@@ -319,13 +371,13 @@ These are network governance matters documented in [10-governance-operations.md]
 
 ## 14. Open questions
 
-- **OQ-DOM-1.** Whether `accepted` is written to the audit trail as its own event, or only `completed` is recorded. Recommended default: record the single atomic event `proposed → completed` only.
-- **OQ-DOM-2.** Resolution path for upheld reversals blocked by LED-5 (DOM-021). Options: time-limited audited limit override; hold until balance recovers; both. Recommended default: both, with the override requiring a reason and an expiry.
-- **OQ-DOM-3.** Whether sign-up grants are part of the MVP or post-MVP, and their default amount. Recommended default: disabled.
-- **OQ-DOM-4.** Default departure rule. Recommended default: `retain`, because settle-to-zero is an accounting event whose meaning depends on the network's governance.
-- **OQ-DOM-5.** Platform maximum for proposal expiry and dispute window.
-- **OQ-DOM-6.** Platform maximum for decimals. Recommended: at most 4, to keep minor-unit magnitudes well within 64-bit range; to be confirmed against the storage design.
-- **OQ-DOM-7.** Whether proposal expiry is recalculated on policy change (DOM-030). Recommended default: no recalculation.
+- **OQ-DOM-1 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-036. Owner question on visibility stays open: DEC-074.
+- **OQ-DOM-2 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-039.
+- **OQ-DOM-3 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-051.
+- **OQ-DOM-4 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-049.
+- **OQ-DOM-5 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-050.
+- **OQ-DOM-6 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-050.
+- **OQ-DOM-7 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-037.
 - **OQ-DOM-8 (counsel, before launch).** Whether any element of default handling, departure settlement, or the limit warning needs jurisdiction-specific review. This spec asserts no compliance and gives no legal advice.
 
 Open questions are to be consolidated into [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).

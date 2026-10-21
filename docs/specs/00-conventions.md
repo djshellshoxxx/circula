@@ -2,6 +2,30 @@
 
 Status: Draft v0.1 · Owner: Product architect · Last updated: 2026-10-21 · Scope: all specs · Depends on: none · Open questions: see 13-assumptions-risks-decisions.md
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 7, decided 2, open 2.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| LED-1 | P0 | built | Two postings per trade in one unit; DB trigger; network sum checked by verify |
+| LED-2 | P0 | built | Append-only triggers on entries, audit, status/dispute events, policies, runs; cache row unguarded (CODE-AUDIT LED-2) |
+| LED-3 | P0 | built | AddBalance only inside postTx; VerifyLedger compares cache with sum |
+| LED-4 | P0 | built | One store.Update per command; idempotent() writes key in same unit |
+| LED-5 | P0 | built | checkCapacity inside write unit; service-level only, no DB constraint |
+| LED-6 | P0 | built | Audit written in every command unit; login and session events not audited |
+| LED-7 | P0 | built | int64 minor units; AddChecked overflow guard; MaxPolicyAmount; DB CHECK amount>0 |
+| DEC-001 | - | decided, built | Single Go binary; embedded SQLite (pure-Go driver) behind store; PostgreSQL not built |
+| DEC-002 | - | decided, built | Server-rendered HTML and /api/v1 both call service layer |
+| DEC-003 | - | open, partly built | CI builds the five targets via package-release.sh; smoke run on each target not performed |
+| DEC-004 | - | open, not built | Licence undecided; no LICENSE file in repo (see 13 register) |
+
 ## 1. Normative terms
 **MUST** = absolute requirement. **SHOULD** = recommended; deviation needs a recorded reason. **MAY** = optional. Lowercase "must/should/may" carry no normative weight.
 

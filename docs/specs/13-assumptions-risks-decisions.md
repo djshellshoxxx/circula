@@ -10,6 +10,42 @@ Identifiers `ASM-`, `RSK-` and `DEC-` are never reused. A superseded decision ke
 
 ---
 
+
+
+
+
+## Build status of the decision register (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). Decisions made during the build, and open owner decisions raised by it, are in [DECISIONS.md](../DECISIONS.md) with their IDs. Test names and code paths: [TRACEABILITY.md](../TRACEABILITY.md).
+
+Summary: decided 2, deferred 1, open 20.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| DEC-005 | - | open, partly built | Single idle (720 h) and absolute (2160 h) timeouts for all roles; role split not built |
+| DEC-006 | - | open, partly built | Min length 12 and Argon2id built; benchmark and breached-password list not |
+| DEC-007 | - | open, not built | No second factor built |
+| DEC-008 | - | open, partly built | One shared database with network-scoped rows; per-network files not built |
+| DEC-009 | - | open, not built | No recovery channel and no mail |
+| DEC-010 | - | open, partly built | Retain default and settle-to-zero rule built; counsel review open |
+| DEC-011 | - | open, partly built | Grant off by default; approval or invite requirement and caps not built |
+| DEC-012 | - | open, not built | Dispute response period and timelines not built |
+| DEC-013 | - | open, not built | Dual control not built |
+| DEC-014 | - | open, not built | Break-glass not built |
+| DEC-015 | - | open, partly built | Unkeyed hash chain built; keyed or external publication deferred |
+| DEC-016 | - | open, not built | RPO and RTO not recorded |
+| DEC-017 | - | decided, built | Flags, environment, file, defaults; explicit migrate default |
+| DEC-018 | - | decided, built | Text exposition; loopback allow-list and optional token |
+| DEC-019 | - | open, not built | Log retention not implemented |
+| DEC-020 | - | open, not built | Retention periods not set |
+| DEC-021 | - | open, partly built | Unilateral administrator change built; objection right not built |
+| DEC-022 | - | open, not built | Support objectives not set |
+| DEC-023 | - | open, not built | Numerical thresholds not confirmed |
+| DEC-024 | - | open, not built | Accessibility level and browser list not recorded |
+| DEC-025 | - | open, not built | Notice periods not implemented |
+| DEC-026 | - | open, partly built | Private vulnerability reporting named in SECURITY.md; owner approval not recorded |
+| DEC-027 | - | deferred | Code signing and notarisation deferred |
+
 ## 1. Decision register
 
 ### 1.1 Accepted baseline (from 00)
@@ -188,3 +224,18 @@ The following are deferred. Each requires its own specification, decision record
 5. Confirm the decision method for policy changes (DEC-021).
 6. Confirm the vulnerability disclosure contact (DEC-026).
 7. Confirm whether [01](01-vision-scope.md) through [08](08-ux-accessibility.md) identifiers are bound to the cross-references used in 09 to 13 at integration. This document refers to them by file and prefix only where no exact ID exists yet.
+
+## 9. Owner decisions still open after the build
+
+These owner decisions were raised or confirmed by the build and have no decision yet. Each keeps its recommended default; a default is not a decision. Full options, context and the other open items (DEC-005, 006, 008, 010 to 016, 019 to 026, DEC-072 to 079) are in [DECISIONS.md](../DECISIONS.md), sections 2 and 3.
+
+| ID | Question | Status after build | Recommended default |
+|---|---|---|---|
+| DEC-004 | Product licence | open; no LICENSE file in the repository | AGPL-3.0 or MIT (00 section 6). Needed before the repository is published or takes outside contributions (RSK-016). |
+| DEC-007 | Mandatory second factor for privileged roles | open; no second factor built | Mandatory for network administrators and platform operators; optional for members and reviewers. Blocks the authentication build (SEC-007). |
+| DEC-009 | Recovery channel and mail dependency | open; no recovery flow and no mail settings built | Verified email for recovery; administrator-assisted recovery with dual control when no contact exists. Blocks SEC-008. |
+| DEC-014 | Platform operator break-glass controls and notice period | open; no break-glass path built (operator has no data role in the product) | Two-person approval; audit readable by affected administrators; access expires after 4 hours; notice within 24 hours where legally permitted (counsel review). |
+| DEC-072 | Who may decide a dispute: reviewer role only, or administrators too | open; build allows an administrator without the reviewer role to decide (LIGHT-QA BUG-3) | (a): require the reviewer role, and allow an administrator to hold it; a party or conflicted person never decides. |
+| DEC-074 | Should an accepted-but-not-posted state ever be visible | open; build never persists or shows `accepted` (DEC-036) | (a) keep `accepted` internal, as built, until a two-phase flow is decided (03 DOM-014, 08 UX-016) |
+
+Resolved questions (OQ-*) were moved out of the open lists in their specs and into [DECISIONS.md](../DECISIONS.md) section 4, with the as-built answer.

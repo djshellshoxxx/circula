@@ -51,8 +51,14 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return cmdVerifyLedger(ctx, rest, stdout, stderr)
 	case "maintenance":
 		return cmdMaintenance(ctx, rest, stdout, stderr)
+	case "keygen":
+		return cmdKeygen(rest, stdout, stderr)
+	case "setup-reset":
+		return cmdSetupReset(ctx, rest, stdout, stderr)
 	case "admin":
 		return cmdAdmin(ctx, rest, stdout, stderr)
+	case "reset-password":
+		return cmdResetPassword(ctx, rest, stdout, stderr)
 	case "version", "--version":
 		fmt.Fprintf(stdout, "circula %s (commit %s, built %s, %s %s/%s)\n",
 			version, commit, date, runtime.Version(), runtime.GOOS, runtime.GOARCH)
@@ -61,6 +67,9 @@ func run(args []string, stdout, stderr io.Writer) int {
 		usage(stdout)
 		return exitOK
 	default:
+		if fn, ok := extraCommands[args[0]]; ok {
+			return fn(ctx, rest, stdout, stderr)
+		}
 		fmt.Fprintf(stderr, "circula: unknown command %q\n\n", args[0])
 		usage(stderr)
 		return exitUsage
@@ -77,9 +86,16 @@ commands:
   restore <backup-file>       restore a backup into the configured database (stop serve first)
   verify-ledger [-network X]  recompute ledger invariants (read-only except the recorded run)
   maintenance on|off|status   toggle maintenance mode of a running instance (503 for web and API)
+  setup-reset                 re-arm the one-time setup secret after it created a network (stop serve first)
+  keygen                      print a fresh random key for backup-encryption-key
   admin create-operator       create a person from --login; password from env or stdin
+  reset-password              set a temporary password: -login X -reason "why" (audited)
   version                     print version information
-
+`)
+	for _, l := range extraUsage {
+		fmt.Fprintln(w, l)
+	}
+	fmt.Fprint(w, `
 Every command accepts -config, and every setting may be given as a flag,
 an environment variable (CIRCULA_<NAME>) or in the JSON config file.
 Precedence: flags > environment > config file > defaults.

@@ -19,7 +19,7 @@
     </ul>
   </nav>
   {{if .Slug}}<p class="acct"><a href="/n/{{.Slug}}/inbox">Inbox{{if .Unread}} <span class="badge">{{.Unread}} unread</span>{{end}}</a></p>{{end}}
-  <p class="acct"><a href="/account/time-zone">Time zone</a> &middot; <a href="/account/password">Password</a></p>
+  <p class="acct"><a href="/account/time-zone">Time zone</a> &middot; <a href="/account/password">Password</a> &middot; <a href="/account/security">Security{{if .SecUnseen}} <span class="tag">{{.SecUnseen}} new</span>{{end}}</a></p>
   <form method="post" action="/logout" class="signout">{{template "csrf" .}}<button type="submit" class="link">Sign out</button></form>
   {{end}}
 </header>

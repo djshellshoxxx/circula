@@ -1,4 +1,4 @@
--- 0004_overview_announcements_tz: announcements (API-064), the per-person
+-- 0009_overview_announcements_tz: announcements (API-064), the per-person
 -- display time zone, and indexes behind the administrator overview counts
 -- (FR-067). Additive and forward-only: no existing table is altered.
 

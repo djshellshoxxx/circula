@@ -8,6 +8,54 @@ This document is technology-specific only where [00](00-conventions.md) already 
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 16, deferred 1, not built 2, partial 16.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| OPS-001 | P0 | built | One artefact for both models |
+| OPS-002 | P0 | built | Single process; embedded database; loopback default |
+| OPS-003 | P0 | partial | Five targets built in CI with checksums; per-target smoke run not performed |
+| OPS-004 | P1 | partial | Environments described in docs/ops/README.md; no staging refresh process |
+| OPS-005 | P2 | deferred | Alternative store and multi-node deferred; no SQLite import outside store |
+| OPS-006 | P0 | built | Flags, environment, file, defaults precedence |
+| OPS-007 | P0 | built | Validation before serving; check-config does not create database |
+| OPS-008 | P0 | built | Settings present with documented defaults |
+| OPS-009 | P0 | partial | Secret files read; inline secret warning not separately tested |
+| OPS-010 | P1 | partial | Backup key rotation documented; session key rotation not implemented |
+| OPS-011 | P0 | built | WAL, foreign keys, busy timeout, startup pragma check; durability fixed (CMD-06) |
+| OPS-012 | P0 | built | Short write units; busy returns retryable 503 |
+| OPS-013 | P0 | built | healthz, readyz, metrics with allow-list and token |
+| OPS-014 | P0 | partial | HTTP and job metrics built; posting attempt and idempotent-replay counters absent |
+| OPS-015 | P0 | partial | Alert table in docs/ops/monitoring.md; alerts not configured or tested in staging |
+| OPS-016 | P0 | built | Read-only verify with checksum test; CLI and admin entry points |
+| OPS-017 | P0 | built | Online snapshot with manifest and checksum; load test not run |
+| OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention |
+| OPS-019 | P0 | partial | Backups not encrypted; off-host copy is an operator procedure |
+| OPS-020 | P0 | partial | Restore refuses while serving (lock) and verifies; restore audit event not in ledger |
+| OPS-021 | P0 | partial | Drill procedure documented; no drill records |
+| OPS-022 | P0 | built | Versioned forward-only migrations; newer schema refused |
+| OPS-023 | P0 | partial | Post-migration verification only; pre-migration verification and injected-failure test not present |
+| OPS-024 | P0 | partial | Upgrade sequence documented; maintenance mode not built |
+| OPS-025 | P1 | built | Explicit migrate mode default; auto mode takes backup |
+| OPS-026 | P0 | partial | Release notes template exists; version set by build flag |
+| OPS-027 | P0 | built | Expiry, purge, verify and backup jobs idempotent; last run recorded in metrics |
+| OPS-028 | P0 | built | Expiry uses same service path; no entries |
+| OPS-029 | P1 | not built | No mail and no stored notices |
+| OPS-030 | P1 | partial | Severity levels in docs/ops/runbook.md; not linked from incident procedure |
+| OPS-031 | P1 | partial | Support boundary documented; break-glass not built |
+| OPS-032 | P0 | built | Structured JSON logs; log level needs restart |
+| OPS-033 | P0 | partial | Failure table documented; per-network freeze not built |
+| OPS-034 | P1 | not built | RPO and RTO not set |
+| OPS-035 | P1 | partial | Binary, checksum and module list per target; signing deferred; no secret scan in package |
+
 ## 1. Deployment models
 
 | Model | Description | Who operates | MVP status |
@@ -319,11 +367,11 @@ This document is technology-specific only where [00](00-conventions.md) already 
 ## 12. Open questions
 
 1. Recovery point and recovery time objectives (DEC-016).
-2. Durability setting for the embedded database and the expected trade-off (write-up in [05](05-architecture.md)).
-3. Default metrics exposition format (DEC-018) and the internal address range default.
-4. Configuration file format and precedence (DEC-017), including whether a migration mode is set in the file or only by flag.
+2. Durability setting for the embedded database and the expected trade-off (write-up in [05](05-architecture.md)). Open: DEC-075 (the build fixes synchronous=NORMAL).
+3. Default metrics exposition format (DEC-018) and the internal address range default. Resolved as built: DEC-058.
+4. Configuration file format and precedence (DEC-017), including whether a migration mode is set in the file or only by flag. Resolved as built: DEC-057.
 5. Mail service: required or optional for password recovery (DEC-009).
 6. Support objectives and whether any are offered externally (DEC-022).
-7. Whether hosted and self-hosted backups use different schedules (recommended: same default, configurable).
-8. Hosted storage isolation: one database file per network or one shared file with tenant scoping (DEC-008). This changes backup and restore granularity, and this document will be revised when DEC-008 is decided.
-9. Code signing and notarisation (DEC-027), deferred.
+7. Whether hosted and self-hosted backups use different schedules (recommended: same default, configurable). Resolved as built: DEC-059 (same default).
+8. Hosted storage isolation: one database file per network or one shared file with tenant scoping (DEC-008). This changes backup and restore granularity, and this document will be revised when DEC-008 is decided. Open: DEC-008. As built: one shared database with network-scoped rows; see DEC-008 status in 13.
+9. Code signing and notarisation (DEC-027), deferred. Deferred (DEC-027).

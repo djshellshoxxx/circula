@@ -48,6 +48,13 @@ type Manifest struct {
 	SHA256        string        `json:"sha256"`
 	Integrity     string        `json:"integrity_check"`
 	Ledger        LedgerSummary `json:"ledger_verification"`
+	// Encrypted marks a backup written as an encrypted container (OPS-019).
+	// File, Bytes and SHA256 then describe the ciphertext on disk, and the
+	// plaintext database is described by PlaintextBytes and PlaintextSHA256.
+	Encrypted       bool   `json:"encrypted"`
+	Cipher          string `json:"cipher,omitempty"`
+	PlaintextBytes  int64  `json:"plaintext_bytes,omitempty"`
+	PlaintextSHA256 string `json:"plaintext_sha256,omitempty"`
 	// HMAC is hex HMAC-SHA256 over the identifying fields, present when
 	// backup-key was configured (SA-07). Without the key it proves nothing.
 	HMAC string `json:"hmac_sha256,omitempty"`
@@ -60,6 +67,11 @@ func manifestMAC(m *Manifest, key []byte) string {
 	h := hmac.New(sha256.New, key)
 	fmt.Fprintf(h, "circula-backup-v1\nformat=%d\ncreated=%s\nschema=%d\nbytes=%d\nsha256=%s\n",
 		m.Format, m.CreatedAt.UTC().Format(time.RFC3339), m.SchemaVersion, m.Bytes, m.SHA256)
+	if m.Encrypted {
+		// Covered only for encrypted backups so older manifests still verify.
+		// Flipping "encrypted" off therefore breaks the signature.
+		fmt.Fprintf(h, "encrypted=true\ncipher=%s\nplain_bytes=%d\nplain_sha256=%s\n", m.Cipher, m.PlaintextBytes, m.PlaintextSHA256)
+	}
 	return hex.EncodeToString(h.Sum(nil))
 }
 
@@ -173,10 +185,36 @@ func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, 
 // by comparing digests before and after the checks. A non-empty key signs the
 // manifest (SA-07). Files are created 0600 (SA-06).
 func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc, key []byte) (*Manifest, error) {
+	return snapshotWith(ctx, db, dest, reason, now, ledger, snapshotKeys{Sign: key})
+}
+
+// snapshotKeys are the secrets a snapshot may use: Sign signs the manifest
+// (SA-07) and Encrypt, when set, writes the backup as an encrypted container
+// (OPS-019). With Encrypt the plaintext copy lives only in a private temporary
+// directory next to dest and is overwritten and removed before returning,
+// whether the backup succeeded or not.
+type snapshotKeys struct{ Sign, Encrypt []byte }
+
+func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc, keys snapshotKeys) (*Manifest, error) {
+	key := keys.Sign
 	if _, err := os.Stat(dest); err == nil {
 		return nil, fmt.Errorf("backup destination %s already exists", dest)
 	}
+	encrypting := len(keys.Encrypt) > 0
 	partial := dest + ".partial"
+	if encrypting {
+		sweepStaleTemp(filepath.Dir(dest))
+		work, err := os.MkdirTemp(filepath.Dir(dest), tempDirPrefix)
+		if err != nil {
+			return nil, fmt.Errorf("private work directory: %w", err)
+		}
+		defer secureRemoveAll(work)
+		partial = filepath.Join(work, "snapshot.db")
+	}
+	rm := removeDBFiles
+	if encrypting {
+		rm = secureRemoveDB // plaintext copies are overwritten, not just unlinked
+	}
 	removeDBFiles(partial)
 	if err := store.VacuumInto(ctx, db, partial); err != nil {
 		removeDBFiles(partial)
@@ -184,6 +222,9 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 	}
 	fail := func(err error) (*Manifest, error) {
 		removeDBFiles(partial)
+		if encrypting {
+			_ = os.Remove(dest + ".partial")
+		}
 		return nil, err
 	}
 	if err := os.Chmod(partial, 0o600); err != nil && runtime.GOOS != "windows" {
@@ -207,11 +248,11 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 		scratch := partial + ".verify"
 		removeDBFiles(scratch)
 		if err := copyFileSync(partial, scratch); err != nil {
-			removeDBFiles(scratch)
+			rm(scratch)
 			return fail(fmt.Errorf("verify snapshot: %w", err))
 		}
 		ledgerSum, err = ledger(ctx, scratch)
-		removeDBFiles(scratch)
+		rm(scratch)
 		if err != nil {
 			return fail(fmt.Errorf("verify snapshot: %w", err))
 		}
@@ -225,7 +266,24 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 	if sum != before {
 		return fail(errors.New("snapshot changed while it was being checked; backup discarded"))
 	}
-	if err := os.Rename(partial, dest); err != nil {
+	onDisk, onDiskSize := sum, size
+	if encrypting {
+		// Encrypt, then prove the ciphertext decrypts back to exactly the
+		// verified plaintext before it replaces anything (OPS-019).
+		encPartial := dest + ".partial"
+		_ = os.Remove(encPartial)
+		onDisk, onDiskSize, err = encryptFile(partial, encPartial, keys.Encrypt)
+		if err != nil {
+			return fail(fmt.Errorf("encrypt backup: %w", err))
+		}
+		back, backSize, err := decryptTo(encPartial, io.Discard, keys.Encrypt)
+		if err != nil || back != sum || backSize != size {
+			return fail(fmt.Errorf("encrypted backup did not decrypt to the verified snapshot: %v", err))
+		}
+		if err := os.Rename(encPartial, dest); err != nil {
+			return fail(err)
+		}
+	} else if err := os.Rename(partial, dest); err != nil {
 		return fail(err)
 	}
 	m := &Manifest{
@@ -235,10 +293,13 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 		AppVersion:    version,
 		SchemaVersion: schema.Applied,
 		File:          filepath.Base(dest),
-		Bytes:         size,
-		SHA256:        sum,
+		Bytes:         onDiskSize,
+		SHA256:        onDisk,
 		Integrity:     integrity,
 		Ledger:        ledgerSum,
+	}
+	if encrypting {
+		m.Encrypted, m.Cipher, m.PlaintextBytes, m.PlaintextSHA256 = true, cipherName, size, sum
 	}
 	if len(key) > 0 {
 		m.HMAC = manifestMAC(m, key)
@@ -260,6 +321,13 @@ func integrityCheck(ctx context.Context, path string) (string, error) {
 func removeDBFiles(path string) {
 	removeSideFiles(path)
 	_ = os.Remove(path)
+}
+
+// secureRemoveDB is removeDBFiles that overwrites the files first.
+func secureRemoveDB(path string) {
+	secureRemove(path + "-wal")
+	secureRemove(path + "-shm")
+	secureRemove(path)
 }
 
 // removeSideFiles deletes the WAL and shared-memory files next to path.
@@ -329,10 +397,44 @@ func verifyBackupFile(path string, m *Manifest) error {
 // backupFileName returns the backup file name for a time (UTC, second precision).
 const backupPrefix = "circula-"
 const backupSuffix = ".db"
+const encryptedSuffix = ".db.enc"
+const cipherName = "aes-256-gcm-chunked-v1"
+const tempDirPrefix = ".circula-bk-"
 const backupTimeLayout = "20060102T150405Z"
 
 func backupFileName(t time.Time) string {
 	return backupPrefix + t.UTC().Format(backupTimeLayout) + backupSuffix
+}
+
+// encryptedBackupFileName is backupFileName for an encrypted backup.
+func encryptedBackupFileName(t time.Time) string {
+	return backupPrefix + t.UTC().Format(backupTimeLayout) + encryptedSuffix
+}
+
+// backupFileNameFor names a new backup: *.db.enc when cfg encrypts, else *.db.
+func backupFileNameFor(cfg *Config, t time.Time) string {
+	if len(cfg.BackupEncryptionKey) > 0 {
+		return encryptedBackupFileName(t)
+	}
+	return backupFileName(t)
+}
+
+// sweepStaleTemp removes plaintext work directories that a crashed backup
+// left behind. Only directories older than an hour are touched, so a backup
+// running in another process is never disturbed.
+func sweepStaleTemp(dir string) {
+	ents, err := os.ReadDir(dir)
+	if err != nil {
+		return
+	}
+	for _, e := range ents {
+		if !e.IsDir() || !strings.HasPrefix(e.Name(), tempDirPrefix) {
+			continue
+		}
+		if fi, err := e.Info(); err == nil && time.Since(fi.ModTime()) > time.Hour {
+			secureRemoveAll(filepath.Join(dir, e.Name()))
+		}
+	}
 }
 
 type backupEntry struct {
@@ -353,10 +455,19 @@ func listBackups(dir string) ([]backupEntry, error) {
 	var out []backupEntry
 	for _, e := range ents {
 		name := e.Name()
-		if e.IsDir() || !strings.HasPrefix(name, backupPrefix) || !strings.HasSuffix(name, backupSuffix) {
+		if e.IsDir() || !strings.HasPrefix(name, backupPrefix) {
 			continue
 		}
-		t, err := time.Parse(backupTimeLayout, strings.TrimSuffix(strings.TrimPrefix(name, backupPrefix), backupSuffix))
+		stem := strings.TrimPrefix(name, backupPrefix)
+		switch {
+		case strings.HasSuffix(stem, encryptedSuffix):
+			stem = strings.TrimSuffix(stem, encryptedSuffix)
+		case strings.HasSuffix(stem, backupSuffix):
+			stem = strings.TrimSuffix(stem, backupSuffix)
+		default:
+			continue
+		}
+		t, err := time.Parse(backupTimeLayout, stem)
 		if err != nil {
 			continue
 		}

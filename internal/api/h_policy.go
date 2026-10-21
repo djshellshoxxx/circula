@@ -9,25 +9,27 @@ import (
 )
 
 type policyDTO struct {
-	CurrencyName            string `json:"currency_name"`
-	Decimals                int    `json:"decimals"`
-	DefaultCreditLimitMinor string `json:"default_credit_limit_minor"`
-	MaxTxAmountMinor        string `json:"max_tx_amount_minor"`
-	ProposalExpiryDays      int    `json:"proposal_expiry_days"`
-	DisputeWindowDays       int    `json:"dispute_window_days"`
-	JoinMode                string `json:"join_mode"`
-	DepartureRule           string `json:"departure_rule"`
-	SignupGrantMinor        string `json:"signup_grant_minor"`
-	LimitWarningDays        int    `json:"limit_warning_days"`
-	DefaultFlagBlocksPayer  bool   `json:"default_flag_blocks_payer"`
-	DirectoryVisibility     string `json:"directory_visibility"`
+	CurrencyName              string `json:"currency_name"`
+	Decimals                  int    `json:"decimals"`
+	DefaultCreditLimitMinor   string `json:"default_credit_limit_minor"`
+	MaxTxAmountMinor          string `json:"max_tx_amount_minor"`
+	ProposalExpiryDays        int    `json:"proposal_expiry_days"`
+	DisputeWindowDays         int    `json:"dispute_window_days"`
+	JoinMode                  string `json:"join_mode"`
+	DepartureRule             string `json:"departure_rule"`
+	SignupGrantMinor          string `json:"signup_grant_minor"`
+	LimitWarningDays          int    `json:"limit_warning_days"`
+	DefaultFlagBlocksPayer    bool   `json:"default_flag_blocks_payer"`
+	DirectoryVisibility       string `json:"directory_visibility"`
+	DualControlThresholdMinor string `json:"dual_control_threshold_minor"`
 }
 
 func toPolicy(p domain.Policy) policyDTO {
 	return policyDTO{CurrencyName: p.CurrencyName, Decimals: p.Decimals, DefaultCreditLimitMinor: minor(p.DefaultCreditLimit),
 		MaxTxAmountMinor: minor(p.MaxTxAmount), ProposalExpiryDays: p.ProposalExpiryDays, DisputeWindowDays: p.DisputeWindowDays,
 		JoinMode: string(p.JoinMode), DepartureRule: string(p.DepartureRule), SignupGrantMinor: minor(p.SignupGrant),
-		LimitWarningDays: p.LimitWarningDays, DefaultFlagBlocksPayer: p.DefaultFlagBlocksPayer, DirectoryVisibility: p.DirectoryVisibility}
+		LimitWarningDays: p.LimitWarningDays, DefaultFlagBlocksPayer: p.DefaultFlagBlocksPayer, DirectoryVisibility: p.DirectoryVisibility,
+		DualControlThresholdMinor: minor(p.DualControlThreshold)}
 }
 
 func (d policyDTO) domain() (domain.Policy, error) {
@@ -40,6 +42,9 @@ func (d policyDTO) domain() (domain.Policy, error) {
 		return p, err
 	}
 	if p.SignupGrant, err = parseMinor("signup_grant_minor", d.SignupGrantMinor, true); err != nil {
+		return p, err
+	}
+	if p.DualControlThreshold, err = parseMinor("dual_control_threshold_minor", d.DualControlThresholdMinor, true); err != nil {
 		return p, err
 	}
 	p.CurrencyName, p.Decimals, p.ProposalExpiryDays = d.CurrencyName, d.Decimals, d.ProposalExpiryDays

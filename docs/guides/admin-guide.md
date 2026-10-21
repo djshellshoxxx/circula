@@ -21,7 +21,7 @@ Every administrator action that changes something is written to the audit log wi
 given. Viewing another member's balance is also logged. All of the pages below are under **Network admin**
 (`/n/<name>/admin`) in the header. The overview opens with **Needs attention**: counts taken from the ledger and dispute records when the page loaded
 (with links to the work) and the result of the last consistency check. Below are links to Members, Invitations, Policy,
-Adjustments, Reverse a trade, Announcements, Audit and checks, Exports, Reports and the dispute review queue. A banner
+Adjustments, Adjustments awaiting approval, Reverse a trade, Announcements, Audit and checks, Exports, Reports, Operator access and the dispute review queue. A banner
 shows when membership requests are waiting.
 
 ## 2. Create a network
@@ -119,6 +119,14 @@ shows the member's balance now and after. **Post adjustment** posts it immediate
 adjustment cannot be undone; to correct a mistake, post another one in the opposite direction with an explanation.
 Because adjustments change the total credit in the network, use them rarely and write reasons someone could understand in a year.
 
+### Dual control (second administrator approves)
+
+If the network has two or more active administrators, a threshold can be set (JSON API: `PATCH /api/v1/admin/policy`,
+`dual_control_threshold_minor`; the web policy form keeps but does not edit it). An adjustment above it is not posted:
+it becomes a request on **Adjustments awaiting approval** (`/n/<name>/admin/adjustments/pending`). A different
+administrator, who is not the adjusted member, chooses **Approve and post** or **Reject**; the proposer can **Cancel
+request**. Undecided requests expire after 7 days and post nothing.
+
 ## 7. Disputes
 
 Administrators who are not a party to the trade, and members with the reviewer role, see the **Review queue** in the header: disputes that are open,
@@ -172,6 +180,20 @@ trade you took part in, and disputed trades are decided from the review queue.
 * **Maintenance mode.** Set by the service operator. Reads keep working; every change, signing in included, is refused
   with 503 and a "Back soon" page. Ask the operator for timing.
 
+## 7c. Passwords, second factor, operator access and erasure
+
+* **Reset password** (Members): for a member who lost both password and recovery codes. Check identity out of band, give
+  a reason, hand over the temporary password shown once. All their sessions, tokens and recovery codes are revoked and
+  they must change the password first. You cannot reset yourself; limited to 10 per hour. See
+  [recovery.md](../dev/recovery.md).
+* **Second factor.** Administrators can enrol at `/account/security`. If the operator turned on `require-mfa-admins`,
+  admin-only actions are refused until you have enrolled ([mfa.md](../dev/mfa.md)).
+* **Operator access** (`/n/<name>/admin/break-glass`): lists the time-boxed sessions (at most 4 hours, with reason) in
+  which platform staff reached your network or lent someone the administrator role ([break-glass.md](../dev/break-glass.md)).
+* **Erase a departed member** (Members, departed list, **Erase**): removes the person's name, listings text and free text
+  while the ledger stays intact. Needs a reason, is refused while a trade or dispute is open, cannot be undone. Do not
+  write personal data into reasons: audit entries are never changed ([erasure.md](../dev/erasure.md)).
+
 ## 8. Audit, checks and exports
 
 **Audit and checks** shows the audit log: number, time (UTC), who, action, target and reason, newest first, paged.
@@ -209,7 +231,10 @@ accounts are created on the command line and are ordinary accounts.
 | Feature | State in this build |
 |---|---|
 | Dispute response period | No policy for how long the other party has to respond; a decision can be recorded without a response. |
-| Notices to affected members (SEC-012) | Suspending, removing, limit changes and adjustments are audited but the affected member gets no notification. Tell them yourself. |
+| Notices to affected members (SEC-012) | Members get inbox entries for trades, disputes and reports and security notices for their own credential changes. Suspending, removing, limit changes and adjustments are audited but the affected member gets no notice. Tell them yourself. |
+| Dual control for write-offs and limit changes | Only adjustments are covered (SEC-011). |
+| Dual-control threshold in the web policy form | JSON API only. |
+| Self-service password reset without codes | Not present; an administrator or the operator resets it. |
 | Statements for members | Not present; members use Download my transactions, administrators use Exports. |
 | Limit-warning policy | The "Limit warning (days)" field is stored but does not drive anything; the threshold is fixed at 80 percent. |
 | E-mail or push notifications | Not implemented. |

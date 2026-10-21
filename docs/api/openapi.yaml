@@ -1240,6 +1240,32 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/admin/adjustments:
+    get:
+      operationId: listPendingAdjustments
+      tags: [Admin]
+      summary: Dual-control adjustment requests (SEC-011)
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          schema: {type: string, enum: [pending, approved, rejected, expired, cancelled]}
+      responses:
+        '200':
+          description: One page of requests.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustmentPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
     post:
       operationId: createAdjustment
       tags: [Admin]
@@ -1265,6 +1291,13 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Transaction'}
+        '202':
+          description: Above the dual-control threshold (SEC-011). Nothing is posted; a second administrator decides. Location points at the request.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
         '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
@@ -1274,6 +1307,110 @@ paths:
         '415': {$ref: '#/components/responses/UnsupportedMediaType'}
         '422': {$ref: '#/components/responses/Unprocessable'}
         '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}:
+    get:
+      operationId: getPendingAdjustment
+      tags: [Admin]
+      summary: One dual-control adjustment request (SEC-011)
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The request.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}/approve:
+    post:
+      operationId: approveAdjustment
+      tags: [Admin]
+      summary: Approve and post an adjustment request
+      description: Administrator only (SEC-011). The proposer and the adjusted member cannot approve or reject. Already decided or expired is 409 invalid-transaction-state.
+      security: 
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The posted adjustment transaction.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}/reject:
+    post:
+      operationId: rejectAdjustment
+      tags: [Admin]
+      summary: Reject an adjustment request
+      description: Administrator only (SEC-011). The proposer and the adjusted member cannot approve or reject. Already decided or expired is 409 invalid-transaction-state.
+      security: 
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The rejected request.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}/cancel:
+    post:
+      operationId: cancelAdjustment
+      tags: [Admin]
+      summary: Cancel own adjustment request
+      description: Administrator only (SEC-011). The proposer and the adjusted member cannot approve or reject. Already decided or expired is 409 invalid-transaction-state.
+      security: 
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The cancelled request.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
         '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/admin/policy:
@@ -2341,6 +2478,10 @@ components:
         - internal-error
         - unavailable
         - member-has-open-balance
+        - network-frozen
+        - approval-required
+        - password-change-required
+        - mfa-required
 
     Money:
       type: string
@@ -2761,7 +2902,7 @@ components:
         policy: {$ref: '#/components/schemas/Policy'}
     Policy:
       type: object
-      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility]
+      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor]
       additionalProperties: false
       properties:
         currency_name: {type: string}
@@ -2776,6 +2917,9 @@ components:
         limit_warning_days: {type: integer, minimum: 0}
         default_flag_blocks_payer: {type: boolean}
         directory_visibility: {type: string}
+        dual_control_threshold_minor:
+          description: Adjustments above this amount need a second administrator (SEC-011). 0 turns it off. Needs two or more active administrators to set.
+          $ref: '#/components/schemas/Money'
     PolicyPatch:
       type: object
       required: [reason]
@@ -2794,6 +2938,7 @@ components:
         limit_warning_days: {type: integer, minimum: 0}
         default_flag_blocks_payer: {type: boolean}
         directory_visibility: {type: string}
+        dual_control_threshold_minor: {$ref: '#/components/schemas/Money'}
         reason: {type: string, maxLength: 500}
     AuditEvent:
       type: object
@@ -2961,6 +3106,29 @@ components:
         amount_minor:
           description: Omit for the full remaining amount.
           oneOf: [{$ref: '#/components/schemas/MoneyPositive'}, {type: 'null'}]
+    PendingAdjustment:
+      type: object
+      required: [id, member_id, proposer_member_id, direction, amount_minor, reason, status, created_at, expires_at, decided_by_member_id, decided_at, transaction_id]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        member_id: {$ref: '#/components/schemas/Id'}
+        proposer_member_id: {$ref: '#/components/schemas/Id'}
+        direction: {type: string, enum: [credit, debit]}
+        amount_minor: {$ref: '#/components/schemas/MoneyPositive'}
+        reason: {type: string}
+        status: {type: string, enum: [pending, approved, rejected, expired, cancelled]}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        expires_at: {$ref: '#/components/schemas/Timestamp'}
+        decided_by_member_id: {type: [string, 'null']}
+        decided_at: {type: [string, 'null']}
+        transaction_id: {type: [string, 'null']}
+    PendingAdjustmentPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/PendingAdjustment'}}
     AdjustmentRequest:
       type: object
       required: [member_id, direction, amount_minor, reason]

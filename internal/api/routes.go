@@ -54,9 +54,10 @@ func (s *server) routes() {
 	// Admin.
 	R("POST "+v1+"/admin/transactions/{id}/reversal", s.adminReverse, idem) // API-056
 	R("POST "+v1+"/admin/adjustments", s.adminAdjust, idem)                 // API-057
-	R("GET "+v1+"/admin/policy", s.getPolicy)                               // API-058
-	R("PATCH "+v1+"/admin/policy", s.patchPolicy)                           // API-058
-	R("GET "+v1+"/admin/members", s.adminListMembers)                       // API-059
+	s.dualControlRoutes(R)
+	R("GET "+v1+"/admin/policy", s.getPolicy)         // API-058
+	R("PATCH "+v1+"/admin/policy", s.patchPolicy)     // API-058
+	R("GET "+v1+"/admin/members", s.adminListMembers) // API-059
 	R("POST "+v1+"/admin/members/{id}/approve", s.memberAction("approve"), idem)
 	R("POST "+v1+"/admin/members/{id}/deny", s.memberAction("deny"), idem) // FR-011
 	R("POST "+v1+"/admin/members/{id}/suspend", s.memberAction("suspend"), idem)

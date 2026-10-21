@@ -1,0 +1,5 @@
+{{define "content"}}
+<div class="notice" role="note"><p><strong>Save these codes now.</strong> They are shown only once and cannot be shown again. Each code works one time if you lose access to your authenticator app. Keep them somewhere safe, such as a password manager or a printed copy.</p></div>
+<ul class="rows">{{range .D}}<li><code>{{.}}</code></li>{{end}}</ul>
+<p><a href="/account/security">Back to account security</a></p>
+{{end}}

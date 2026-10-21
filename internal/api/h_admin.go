@@ -43,13 +43,17 @@ func (s *server) adminAdjust(c *reqCtx) error { // API-057
 	if err != nil {
 		return err
 	}
-	t, err := s.svc.CreateAdjustment(c.r.Context(), c.actor, c.netID, service.AdjustInput{MemberID: in.MemberID,
+	res, err := s.svc.CreateAdjustmentRequest(c.r.Context(), c.actor, c.netID, service.AdjustInput{MemberID: in.MemberID,
 		Amount: amt, Direction: service.AdjustDirection(in.Direction), Reason: in.Reason, IdempotencyKey: c.idemKey})
 	if err != nil {
 		return err
 	}
-	c.w.Header().Set("Location", v1+"/transactions/"+t.ID)
-	return ok(c, 201, toTx(t, c.member.ID))
+	if res.Pending != nil { // SEC-011: above the dual-control threshold; nothing posted yet
+		c.w.Header().Set("Location", v1+"/admin/adjustments/"+res.Pending.ID)
+		return ok(c, 202, toPending(res.Pending))
+	}
+	c.w.Header().Set("Location", v1+"/transactions/"+res.Tx.ID)
+	return ok(c, 201, toTx(res.Tx, c.member.ID))
 }
 
 func (s *server) adminListMembers(c *reqCtx) error { // API-059

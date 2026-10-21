@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/rand"
 	"database/sql"
 	"errors"
 	"flag"
@@ -45,6 +44,9 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		SessionMax:     cfg.SessionMax,
 		IdempotencyTTL: cfg.IdempotencyTTL,
 		MinPasswordLen: cfg.MinPasswordLength,
+
+		RequireMFAForAdmins: cfg.RequireMFAAdmins,
+		SecretKey:           cfg.MFASecret,
 	})
 }
 
@@ -188,6 +190,9 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if cfg.SetupSecret == "" {
 		logger.Warn("no setup-secret configured: any signed-in person can create a network (FR-002); set setup-secret-file or " + envPrefix + "SETUP_SECRET")
 	}
+	if len(cfg.BackupEncryptionKey) == 0 && cfg.BackupInterval > 0 {
+		logger.Warn("no backup-encryption-key configured: backups are written unencrypted and hold password hashes and member data in the clear (OPS-019)")
+	}
 	if !cfg.CookieSecure {
 		logger.Warn("cookie-secure is false: session cookies are not marked Secure (SEC-022)")
 	}
@@ -230,9 +235,15 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 // operator's settings reach the adapters (WEB-01): setup secret, Secure
 // cookies, trusted proxies, public base URL and session lifetimes.
 func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, webH http.Handler, err error) {
-	key := make([]byte, 32)
-	if _, err := rand.Read(key); err != nil {
-		return nil, nil, fmt.Errorf("csrf key: %w", err)
+	// The signing key persists across restarts so signed cookies and CSRF
+	// tokens issued before one stay valid (SEC-027).
+	stateDir := cfg.StateDir
+	if stateDir == "" {
+		stateDir = filepath.Dir(cfg.Database)
+	}
+	key, err := loadOrCreateWebKey(stateDir)
+	if err != nil {
+		return nil, nil, fmt.Errorf("web signing key: %w", err)
 	}
 	edge := httpx.Edge{
 		ForceSecure:    cfg.CookieSecure,
@@ -270,8 +281,11 @@ func backupTo(ctx context.Context, cfg *Config, dir, reason string, db *sql.DB) 
 	if err := ensurePrivateDir(dir); err != nil {
 		return nil, "", err
 	}
+	if cfg.BackupRequireEncryption && len(cfg.BackupEncryptionKey) == 0 {
+		return nil, "", errors.New("backup-require-encryption is set but no backup-encryption-key is configured")
+	}
 	now := time.Now().UTC()
-	dest := filepath.Join(dir, backupFileName(now))
+	dest := filepath.Join(dir, backupFileNameFor(cfg, now))
 	if db == nil {
 		raw, err := openRaw(cfg.Database)
 		if err != nil {
@@ -283,7 +297,7 @@ func backupTo(ctx context.Context, cfg *Config, dir, reason string, db *sql.DB) 
 	ledger := func(ctx context.Context, path string) (LedgerSummary, error) {
 		return verifyFile(ctx, path, cfg)
 	}
-	mf, err := snapshot(ctx, db, dest, reason, now, ledger, cfg.BackupKey)
+	mf, err := snapshotWith(ctx, db, dest, reason, now, ledger, snapshotKeys{Sign: cfg.BackupKey, Encrypt: cfg.BackupEncryptionKey})
 	return mf, dest, err
 }
 
@@ -365,7 +379,11 @@ func (j *jobRunner) expire(ctx context.Context) error {
 	if total > 0 {
 		j.logger.Info("proposals expired", "count", total)
 	}
-	return nil
+	if _, err := j.svc.ExpirePendingAdjustments(ctx, domain.SystemActor("job-expiry"), 500); err != nil { // SEC-011
+		return err
+	}
+	_, err := j.svc.ExpireBreakGlass(ctx, domain.SystemActor("job-break-glass")) // SEC-013
+	return err
 }
 
 // purge deletes expired sessions, throttle rows and idempotency records (SA-12).

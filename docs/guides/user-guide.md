@@ -54,6 +54,19 @@ About two minutes before it ends, a notice appears with **Stay signed in** (when
 Choose **Password** in the header. Enter the current password and the new one twice. Changing it signs you out on every
 device. API tokens you created are not affected until you revoke them.
 
+### Second factor, recovery codes and security notices
+
+* **Security** (`/account/security`, link in the header, with a count of new notices). Turn on a second factor (an
+  authenticator app): **Start setup** shows the setup key once, enter the 6-digit code to confirm, and write down the ten
+  recovery codes shown once. After that, sign-in asks for the password and then an app code or one recovery code
+  (`/login/mfa`). You can replace the recovery codes or turn the second factor off there (password and a code needed).
+* **Account recovery codes** (`/account/recovery-codes`). Enter your password and write down ten codes. If you forget
+  your password, open `/recover`, enter your login, one unused code and a new password. All your sessions and API tokens
+  are signed out. Without a code, ask a network administrator to reset your password: you get a temporary password and
+  must change it before anything else works.
+* **Security notices** tell you when a second factor, recovery code, token or password of your account changed.
+  Acknowledge them on the Security page. If you did not do it, change your password.
+
 ### Join a network
 
 * **With an invitation link** from an administrator (`/join/…`): sign in or create an account first (the page offers
@@ -187,7 +200,11 @@ channels. See "Not in this build" for what is still missing.
 
 * **Download my transactions** (History page) exports your own trades.
 * The JSON API at `/api/v1` offers the same data and more with API tokens. See `docs/api/openapi.yaml`.
-* An account cannot be deleted from the web interface in this build.
+* After you have departed from a network you can ask for your personal data there to be removed
+  (`/n/<name>/erase-my-data`, optional reason). Your name becomes "Former member ...", your listings are archived and
+  free text you wrote in trades, disputes and reports is cleared. Balances, amounts and the audit log stay, as the
+  ledger must not change. It cannot be undone and is refused while a trade or dispute of yours is still open.
+* Deleting the whole account is not available in the web interface.
 
 ## 9. Accessibility and keyboard
 
@@ -225,5 +242,7 @@ cannot be used.
 | Dispute response period | The other party may respond, but a reviewer can record a decision without waiting for a response or for a period to end. |
 | E-mail or push notifications | Not implemented; notifications show only in the Inbox. |
 | Messages between members | Not present. |
-| Leaving a network, deleting an account | No web page (leaving exists in the JSON API only). |
+| Leaving a network, deleting an account | No web page for leaving (JSON API only). Erasure of personal data after departure exists; the account itself is not deleted. |
+| Password recovery by e-mail | None; Circula keeps no e-mail address. Use recovery codes or an administrator. |
+| Hardware keys / passkeys | Not present; the second factor is an authenticator app (TOTP). |
 | Per-network limit-warning setting | The warning threshold is fixed at 80 percent; the administrator's "Limit warning (days)" field does not change it. |

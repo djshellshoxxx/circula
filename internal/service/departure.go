@@ -126,6 +126,12 @@ func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Me
 	if acc.Balance > 0 {
 		dir, amt = AdjustDebit, acc.Balance
 	}
+	// SA2-02: an administrator removing someone else must not move more than the
+	// dual-control threshold alone; settle it through a pending adjustment first.
+	if t := p.net.Policy.DualControlThreshold; adminAction && t > 0 && amt > t {
+		return &domain.Error{Code: domain.CodeApprovalRequired,
+			Msg: "the departure settlement exceeds the dual-control threshold; adjust the balance through an approved adjustment first"}
+	}
 	t, err := s.postAdjustment(tx, p.net, target, amt, dir, "departure settlement", p.memberID(), p.actor.RequestID)
 	if err != nil {
 		return err

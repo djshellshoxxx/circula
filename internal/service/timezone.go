@@ -29,13 +29,20 @@ func ValidTimeZone(name string) bool {
 	if strings.HasPrefix(name, "/") || strings.HasSuffix(name, "/") {
 		return false
 	}
+	// Case-insensitive file systems (macOS) would accept "europe/berlin" from disk:
+	// require IANA capitalisation (each segment starts with an upper-case letter).
+	for _, seg := range strings.Split(name, "/") {
+		if seg == "" || seg[0] < 'A' || seg[0] > 'Z' {
+			return false
+		}
+	}
 	_, err := time.LoadLocation(name)
 	return err == nil
 }
 
 // Location returns the zone for name, falling back to UTC for "" or an unknown name.
 func Location(name string) *time.Location {
-	if name == "" {
+	if name == "" || !ValidTimeZone(name) {
 		return time.UTC
 	}
 	if l, err := time.LoadLocation(name); err == nil {

@@ -228,7 +228,7 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 
 `DisputeView` also carries `Response *store.DisputeResponse` (FR-076) and `ReReview *store.ReReview` (FR-078).
 
-#### disputes_response.go (FR-076, FR-078; migration 0003)
+#### disputes_response.go (FR-076, FR-078; migration 0008)
 
 ```go
 func (s *Service) RespondToDispute(ctx, actor, netID string, in RespondInput) (*store.DisputeResponse, error)
@@ -462,7 +462,7 @@ func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor,
 
 #### overview.go, announcements.go, timezone.go, disputes_list.go
 
-These use optional store surfaces (`store.OverviewRepo`, `AnnouncementRepo`, `PrefsRepo`, in `iface_f2.go`) that the SQLite transaction implements; the service asserts for them, so `store.Tx` did not change. Schema is in migration 0004.
+These use optional store surfaces (`store.OverviewRepo`, `AnnouncementRepo`, `PrefsRepo`, in `iface_f2.go`) that the SQLite transaction implements; the service asserts for them, so `store.Tx` did not change. Schema is in migration 0009.
 
 * `AdminOverview(ctx, actor, netID) (*AdminOverview, error)`: administrator only. Exact counts read at call time (FR-067): pending members, live proposals older than `OverviewStaleAfter` (48 h), open or under-review disputes, `posting_pending` disputes, active members whose credit used is at or beyond their effective limit, unused invitations ending within `OverviewInviteWithin` (72 h), and the latest recorded consistency check. `AsOf` is the read time.
 * `CreateAnnouncement` (admin, idempotent, audited), `DeleteAnnouncement` (admin, retracts, audited, second delete is not-found), `AdminListAnnouncements` (admin, scheduled included), `ListAnnouncements` (active and suspended members, only those in force). Append-only: no edit; the table refuses deletes and edits except stamping `deleted_at`.

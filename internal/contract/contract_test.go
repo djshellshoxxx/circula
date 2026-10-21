@@ -416,6 +416,34 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "POST", path: "/me/membership/departure", token: bobT, idem: true, body: m{"reason": "moving"}})
 	h.do(409, call{method: "POST", path: "/me/membership/departure", token: adminT, idem: true})
 
+	// Dual control (SEC-011): above the threshold an adjustment waits for a second administrator.
+	adm2, adm2M := env.Member(admin, net, "admin2")
+	if err := env.Svc.AssignRole(env.Ctx, admin, net.ID, adm2M.ID, domain.RoleAdmin); err != nil {
+		t.Fatal(err)
+	}
+	adm2T := h.token(adm2, rw...)
+	rec = h.do(200, call{method: "GET", path: "/admin/policy", token: adminT})
+	h.do(200, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", rec.Header().Get("ETag")),
+		body: m{"reason": "dual control", "dual_control_threshold_minor": "1000"}})
+	rec = h.do(202, call{method: "POST", path: "/admin/adjustments", token: adminT, idem: true,
+		body: m{"member_id": aliceM.ID, "direction": "credit", "amount_minor": "5000", "reason": "large"}})
+	pa := get[idOnly](t, rec).ID
+	rec = h.do(202, call{method: "POST", path: "/admin/adjustments", token: adminT, idem: true,
+		body: m{"member_id": aliceM.ID, "direction": "credit", "amount_minor": "6000", "reason": "large two"}})
+	pb := get[idOnly](t, rec).ID
+	rec = h.do(202, call{method: "POST", path: "/admin/adjustments", token: adminT, idem: true,
+		body: m{"member_id": aliceM.ID, "direction": "credit", "amount_minor": "7000", "reason": "large three"}})
+	pc := get[idOnly](t, rec).ID
+	h.do(200, call{method: "GET", path: "/admin/adjustments?status=pending", token: adm2T})
+	h.do(400, call{method: "GET", path: "/admin/adjustments?status=weird", token: adm2T, skipRequest: true})
+	h.do(200, call{method: "GET", path: "/admin/adjustments/" + pa, token: adm2T})
+	h.do(403, call{method: "POST", path: "/admin/adjustments/" + pa + "/approve", token: adminT})
+	h.do(200, call{method: "POST", path: "/admin/adjustments/" + pa + "/approve", token: adm2T})
+	h.do(409, call{method: "POST", path: "/admin/adjustments/" + pa + "/reject", token: adm2T})
+	h.do(200, call{method: "POST", path: "/admin/adjustments/" + pb + "/reject", token: adm2T})
+	h.do(200, call{method: "POST", path: "/admin/adjustments/" + pc + "/cancel", token: adminT})
+	h.do(404, call{method: "GET", path: "/admin/adjustments/nope", token: adm2T})
+
 	// Generic problems.
 	h.do(401, call{method: "GET", path: "/accounts/me", token: "cir_bogus"})
 	h.do(400, call{method: "GET", path: "/accounts/me?access_token=x", token: aliceT, skipRequest: true})

@@ -25,6 +25,9 @@ type CreateNetworkInput struct {
 // (setup secret, sign-up policy) is an adapter decision; the service needs
 // only an authenticated person.
 func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in CreateNetworkInput) (*domain.Network, *domain.Member, error) {
+	if actor.MustChangePassword {
+		return nil, nil, domain.PasswordChangeRequired() // SEC-008
+	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) || actor.NetworkScope != "" {
 		return nil, nil, domain.Forbidden("a full-scope person is required to create a network")
 	}
@@ -228,6 +231,9 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := p.requireLasting(); err != nil {
+			return err
+		}
 		out, err = idempotent(s, tx, netID, actor, "policy.update", in.IdempotencyKey, in, func() (string, error) {
 			if p.net.Status == domain.NetworkClosed {
 				return "", domain.InvalidState("network is closed")
@@ -240,6 +246,19 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 			}
 			if in.Policy.Decimals != p.net.Policy.Decimals && p.net.LedgerSeq > 0 {
 				return "", domain.Invalid("decimals", "cannot change after the first posting")
+			}
+			if weakensDualControl(p.net.Policy.DualControlThreshold, in.Policy.DualControlThreshold) {
+				// SA2-01: one administrator must not switch off or loosen the control
+				// that exists to stop one administrator; the operator CLI can.
+				return "", domain.Forbidden("dual control can only be loosened or disabled by the platform operator")
+			}
+			if t := in.Policy.DualControlThreshold; t > 0 && t != p.net.Policy.DualControlThreshold {
+				// SEC-011: dual control needs a second approver; refuse a control nobody can satisfy.
+				if n, err := tx.CountActiveAdmins(netID); err != nil {
+					return "", err
+				} else if n < 2 {
+					return "", domain.Invalid("dual_control_threshold", "needs at least two active administrators")
+				}
 			}
 			v := p.net.PolicyVersion + 1
 			if err := tx.AppendPolicy(netID, v, in.Policy, p.memberID(), in.Reason, s.now()); err != nil {
@@ -278,7 +297,7 @@ func policyMap(p domain.Policy) map[string]any {
 		"currency_name": p.CurrencyName, "decimals": p.Decimals, "default_credit_limit": p.DefaultCreditLimit,
 		"max_tx_amount": p.MaxTxAmount, "proposal_expiry_days": p.ProposalExpiryDays,
 		"dispute_window_days": p.DisputeWindowDays, "join_mode": string(p.JoinMode),
-		"departure_rule": string(p.DepartureRule), "signup_grant": p.SignupGrant,
+		"departure_rule": string(p.DepartureRule), "signup_grant": p.SignupGrant, "dual_control_threshold": p.DualControlThreshold,
 		"limit_warning_days": p.LimitWarningDays, "default_flag_blocks_payer": p.DefaultFlagBlocksPayer,
 		"directory_visibility": p.DirectoryVisibility,
 	}

@@ -186,7 +186,7 @@ func cmdBackup(ctx context.Context, args []string, stdout, stderr io.Writer) int
 	now := time.Now().UTC()
 	dest := rest[0]
 	if fi, err := os.Stat(dest); err == nil && fi.IsDir() {
-		dest = filepath.Join(dest, backupFileName(now))
+		dest = filepath.Join(dest, backupFileNameFor(cfg, now))
 	} else if strings.HasSuffix(dest, string(filepath.Separator)) {
 		fmt.Fprintf(stderr, "circula: backup: destination directory %s does not exist\n", dest)
 		return exitFailure
@@ -198,13 +198,20 @@ func cmdBackup(ctx context.Context, args []string, stdout, stderr io.Writer) int
 	}
 	defer func() { _ = raw.Close() }()
 	ledger := func(ctx context.Context, path string) (LedgerSummary, error) { return verifyFile(ctx, path, cfg) }
-	mf, err := snapshot(ctx, raw, dest, "manual", now, ledger, cfg.BackupKey)
+	if cfg.BackupRequireEncryption && len(cfg.BackupEncryptionKey) == 0 {
+		fmt.Fprintln(stderr, "circula: backup: backup-require-encryption is set but no backup-encryption-key is configured")
+		return exitFailure
+	}
+	mf, err := snapshotWith(ctx, raw, dest, "manual", now, ledger, snapshotKeys{Sign: cfg.BackupKey, Encrypt: cfg.BackupEncryptionKey})
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: backup failed: %v\n", err)
 		return exitFailure
 	}
-	fmt.Fprintf(stdout, "backup: %s\nmanifest: %s.manifest.json\nsha256: %s\nschema: v%d\nledger: %s\n",
-		dest, dest, mf.SHA256, mf.SchemaVersion, mf.Ledger.Status)
+	fmt.Fprintf(stdout, "backup: %s\nmanifest: %s.manifest.json\nsha256: %s\nschema: v%d\nledger: %s\nencrypted: %t\n",
+		dest, dest, mf.SHA256, mf.SchemaVersion, mf.Ledger.Status, mf.Encrypted)
+	if !mf.Encrypted {
+		fmt.Fprintln(stderr, "circula: WARNING: the backup is not encrypted (no backup-encryption-key configured); it holds password hashes and every member's data in the clear (OPS-019)")
+	}
 	if mf.Ledger.Status == "failed" {
 		fmt.Fprintln(stderr, "circula: WARNING: the backup contains a ledger verification failure; see verify-ledger")
 		return exitLedgerFailed
@@ -229,6 +236,10 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	src := rest[0]
 	m, err := readManifest(src + ".manifest.json")
 	if err != nil {
+		fmt.Fprintf(stderr, "circula: restore refused: %v\n", err)
+		return exitFailure
+	}
+	if err := checkEncryptionPolicy(src, m, cfg); err != nil {
 		fmt.Fprintf(stderr, "circula: restore refused: %v\n", err)
 		return exitFailure
 	}
@@ -272,7 +283,17 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 
 	partial := cfg.Database + ".restore-partial"
 	removeDBFiles(partial)
-	if err := copyFileSync(src, partial); err != nil {
+	if m.Encrypted {
+		sum, size, err := decryptFile(src, partial, cfg.BackupEncryptionKey)
+		if err == nil && (sum != m.PlaintextSHA256 || size != m.PlaintextBytes) {
+			secureRemoveDB(partial)
+			err = errors.New("decrypted data does not match the plaintext checksum in the manifest")
+		}
+		if err != nil {
+			fmt.Fprintf(stderr, "circula: restore refused: %v; the current database was not touched\n", err)
+			return exitFailure
+		}
+	} else if err := copyFileSync(src, partial); err != nil {
 		removeDBFiles(partial)
 		fmt.Fprintf(stderr, "circula: restore: copy failed: %v\n", err)
 		return exitFailure
@@ -337,6 +358,23 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: warning: restore record not written: %v\n", err)
 	}
 	return exitOK
+}
+
+// checkEncryptionPolicy decides, before any bytes are decrypted, whether this
+// backup may be restored under the configured encryption settings (OPS-019).
+func checkEncryptionPolicy(src string, m *Manifest, cfg *Config) error {
+	sniffed := isEncryptedBackup(src)
+	switch {
+	case m.Encrypted && !sniffed:
+		return errors.New("manifest says the backup is encrypted but the file has no CIRCBK1 header")
+	case !m.Encrypted && sniffed:
+		return errors.New("the file is an encrypted backup but its manifest says it is not; the manifest was altered or belongs to another file")
+	case m.Encrypted && len(cfg.BackupEncryptionKey) == 0:
+		return errors.New("the backup is encrypted; configure backup-encryption-key (or backup-encryption-key-file) with the key it was written under")
+	case !m.Encrypted && cfg.BackupRequireEncryption:
+		return errors.New("the backup is not encrypted and backup-require-encryption is set")
+	}
+	return nil
 }
 
 // swapDatabase replaces the database at path with the verified file new. When

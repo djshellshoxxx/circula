@@ -8,6 +8,63 @@ Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Test
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 9, deferred 1, not built 6, partial 28.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| QA-001 | P0 | partial | Property tests run in go test; sequence counts and operation list not verified |
+| QA-002 | P0 | built | Cached balance agreement checked after random operations |
+| QA-003 | P0 | built | Two-entry and zero-sum checks |
+| QA-004 | P0 | partial | Limit boundary covered by acceptance tests; zero and one-unit boundary cases not named |
+| QA-005 | P0 | built | No float types; overflow refused |
+| QA-006 | P0 | built | Fault injection at accept and audit failure |
+| QA-007 | P0 | partial | Parallel accept test present; 100 interleavings not configured |
+| QA-008 | P0 | not built | Disjoint concurrent trades test not present |
+| QA-009 | P0 | built | Retry, reuse and expiry tests |
+| QA-010 | P0 | partial | Fault store wrapper exists; injection at each posting step not complete |
+| QA-011 | P0 | partial | Busy retryable test; seeded contention scenario not present |
+| QA-012 | P0 | built | Authorisation matrix test |
+| QA-013 | P0 | partial | Dispute state machine tests; response deadline and appeal not built |
+| QA-014 | P0 | built | Originals unchanged after reversal |
+| QA-015 | P0 | partial | Policy bound and lifecycle tests; notice and objection not built |
+| QA-016 | P0 | partial | Self-approval, conflict and last-admin tests; approval expiry not built |
+| QA-017 | P0 | partial | Invitation join tested at HTTP level; terms acceptance not built |
+| QA-018 | P0 | partial | Trade flow tested over HTTP and API; no browser end-to-end suite |
+| QA-019 | P0 | partial | Decline and expiry tested; notices not built |
+| QA-020 | P0 | partial | Limit boundary scenario tested at service level; browser flow not run |
+| QA-021 | P0 | partial | Dispute and reversal tested; party notices not built |
+| QA-022 | P0 | partial | Limit reduction tested; notice not built |
+| QA-023 | P0 | partial | Departure tested; notices and self-export offer not built |
+| QA-024 | P0 | partial | Snapshot restore tested; restore audit event not in ledger; no load |
+| QA-025 | P0 | deferred | Import of exported data is deferred (04 section 10) |
+| QA-026 | P0 | partial | Restore rollback tested; upgrade with forced migration failure not present |
+| QA-027 | P0 | partial | Migration tests on current schemas; fixture per released version absent |
+| QA-028 | P0 | partial | Restore integrity tested; backup under concurrent load not run |
+| QA-029 | P0 | not built | No restore drill records |
+| QA-030 | P0 | partial | Export totals tested; independent reconciliation script not present |
+| QA-031 | P0 | built | Member scope and canary checks in export tests |
+| QA-032 | P0 | built | Formula neutralisation test |
+| QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI |
+| QA-034 | P0 | partial | Keyboard and scripting-disabled operation checked manually for some flows |
+| QA-035 | P0 | not built | Manual screen-reader review not recorded |
+| QA-036 | P0 | partial | Balance text tested; contrast not checked |
+| QA-037 | P0 | partial | CI runs vet, lint, race tests, govulncheck; L8 and migration static checks partial |
+| QA-038 | P0 | partial | Integration gate partly automated; scenario browser tests absent |
+| QA-039 | P0 | not built | Release gate evidence (drills, reviews, performance) not complete |
+| QA-040 | P0 | not built | Thresholds pending DEC-023; not confirmed |
+| QA-041 | P0 | partial | Injected clocks used; seeds recorded for randomised tests only partly |
+| QA-042 | P0 | partial | Traceability matrix produced in docs/none; test dates and builds to be added at each release |
+| QA-043 | P0 | partial | Fixtures synthetic; no automated personal-data scan |
+| QA-044 | P0 | not built | Evidence retention process not defined |
+
 ## 1. Test layers
 
 | Layer | Purpose | Runs in | Tooling |
@@ -336,7 +393,7 @@ Gates define the evidence required before a change moves forward. A failed gate 
 ## 11. Open questions
 
 1. Concrete values for QA-001 run sizes, QA-007 interleavings and coverage threshold (DEC-023).
-2. Choice of property-based testing library, browser automation and accessibility checker (recorded in [13](13-assumptions-risks-decisions.md) when selected).
+2. Choice of property-based testing library, browser automation and accessibility checker (recorded in [13](13-assumptions-risks-decisions.md) when selected). Resolved as built: standard Go testing, in-house randomised tests (DEC-071).
 3. Accessibility conformance level and supported screen reader and browser combinations (DEC-024).
 4. Vulnerability severity threshold for dependency scans (SEC-029).
 5. Reference hardware for performance claims (DEC-023).

@@ -14,7 +14,9 @@ Each backup is two files:
   - `bytes` and `sha256` of the `.db` file
   - `integrity_check` (`ok` when SQLite's integrity check passed)
   - `ledger_verification`: `status` (`ok`, `failed`, or `not-run`), network counts, and the reason when not run
-  - `hmac_sha256`: present when `backup-key` is configured (see below)
+  - `encrypted`, `cipher`, `plaintext_bytes`, `plaintext_sha256`: present on encrypted backups (see below). `bytes` and
+    `sha256` then describe the ciphertext file on disk
+  - `hmac_sha256`: present when `backup-key` is configured (see below). It also covers the encryption fields
 
 Each snapshot is verified before it is named: it must pass the integrity check and, when its schema matches this binary,
 the ledger verification. A backup is written under a `.partial` name first and renamed only after every check passed.
@@ -24,6 +26,48 @@ The backup is the exact snapshot of the source (CMD-01). Ledger verification rec
 checks, so it runs on a throw-away copy of the snapshot; the digest of the snapshot is taken before the checks and
 compared after them, and a backup that changed is discarded. Backup files and manifests are created 0600 and
 `backup-dir` is 0700 (SA-06).
+
+## Encryption at rest (OPS-019, SEC-028)
+
+Set `backup-encryption-key` and every backup (manual, scheduled, `pre-migration`, `pre-restore`) is written encrypted as
+`circula-<UTC time>.db.enc` with its manifest. Without it, backups are plaintext `.db` files and `serve` and `backup`
+warn. Restoring an old plaintext backup stays possible unless `backup-require-encryption` is set.
+
+Generate a key and store it on the host that takes and restores backups, apart from the backup storage:
+
+```sh
+umask 077
+circula keygen > /etc/circula/backup-encryption-key     # 32 random bytes, base64
+export CIRCULA_BACKUP_ENCRYPTION_KEY_FILE=/etc/circula/backup-encryption-key
+```
+
+Also keep a copy of the key in your password manager or escrow: **a backup cannot be restored without its key, and there
+is no recovery**. Key and backups must live in separate places (SEC-028). Any passphrase of 16 or more characters is also
+accepted and is stretched with Argon2id (64 MiB, per file salt); the random key is stronger and is the recommendation.
+`backup-encryption-key` must differ from `backup-key`.
+
+Format. AES-256-GCM over 64 KiB chunks (standard library only). The file starts with the header `CIRCBK1`, the key
+derivation id, the chunk size, a random 16-byte salt and an 8-byte nonce prefix. The key is HKDF-SHA-256 of the random key
+and the salt (or Argon2id of a passphrase). Each chunk uses nonce = prefix and a counter, and authenticates the header,
+its index and a final-chunk flag as additional data. A flipped bit, reordered, duplicated, dropped or appended chunks, a
+truncation (also exactly at a chunk boundary) and a wrong key all fail with a clear error, and no plaintext is released
+as a database.
+
+How a backup is made. `VACUUM INTO` writes the plaintext snapshot into a private `0700` work directory
+(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there, the snapshot is
+encrypted to `*.db.enc.partial`, decrypted again in memory and compared with the verified plaintext, and only then renamed.
+The work directory is overwritten and removed on success and on every failure. If the process is killed, the next backup
+in that directory removes work directories older than an hour. Overwriting is best effort on copy-on-write file systems
+and SSDs: keep the host disk encrypted too.
+
+Restore decrypts transparently when the key is configured (`CIRCULA_BACKUP_ENCRYPTION_KEY` or
+`backup-encryption-key-file`). `restore` refuses, before changing anything: an encrypted backup with no key, a wrong key,
+a modified or truncated file, a manifest that disagrees with the file about being encrypted, and (with
+`backup-require-encryption`) any plaintext backup.
+
+Key rotation. Set the new key, take a new backup, and keep the old key for as long as old backups are kept. Old backups
+open only under the key that wrote them. To re-encrypt an old backup: restore it into a scratch database with the old
+key, then `circula backup` under the new key.
 
 ## Taking a backup
 
@@ -118,5 +162,6 @@ A failed drill blocks the release until the cause is recorded and fixed.
 ## Off-host copies
 
 Copy each backup and its manifest off the host, and copy the restore record too. Restrict who can read the copies to the
-operator roles that need them. Hosted deployments keep one copy outside the primary failure domain (OPS-019). Encryption at
-rest is not yet implemented (see [README.md](README.md#known-gaps)); until then, the copy location must be encrypted.
+operator roles that need them. Hosted deployments keep one copy outside the primary failure domain (OPS-019). With
+`backup-encryption-key` set the copies are encrypted; never store the key beside them. Without it, the copy location must
+itself be encrypted.

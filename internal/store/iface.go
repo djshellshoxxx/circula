@@ -33,6 +33,12 @@ type Tx interface {
 	VerifyRepo
 	ExportRepo
 	FeatureRepo
+	MFARepo
+	RecoveryRepo
+	PendingAdjustmentRepo
+	BreakGlassRepo
+	ErasureRepo
+	SetupStateRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.
