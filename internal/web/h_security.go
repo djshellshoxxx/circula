@@ -36,6 +36,7 @@ var noticeText = map[string]string{
 	domain.NoticeRecoveryCodeUsed: "A recovery code was used to sign in.",
 	domain.NoticeTokenCreated:     "An API token was created.",
 	domain.NoticeTokenRevoked:     "An API token was revoked.",
+	domain.NoticeAdminGranted:     "A new administrator was appointed in one of your networks.",
 }
 
 type noticeView struct {

@@ -173,7 +173,8 @@ func TestStressParallelDisputeResolve(t *testing.T) {
 func TestStressConcurrentApprovals(t *testing.T) {
 	d := newDC(t)
 	third, thirdM := d.Member(d.admin, d.net, "admin3@example.org")
-	tu.Must(0, d.Svc.AssignRole(d.Ctx, d.admin, d.net.ID, thirdM.ID, domain.RoleAdmin))
+	tu.Must(0, d.Svc.AssignRole(d.Ctx, domain.SystemActor("fixture"), d.net.ID, thirdM.ID, domain.RoleAdmin))
+	d.Clock.Advance(25 * time.Hour) // A3-01
 	const n = 12
 	pend := make([]*domain.PendingAdjustment, n)
 	for i := range pend {

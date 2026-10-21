@@ -32,7 +32,8 @@ func formerName(memberID string) string {
 
 // AnonymiseMember irreversibly removes the personal data of a DEPARTED member
 // while keeping the ledger intact (SEC-018). An administrator of the network
-// (or a System actor, the operator CLI) may do it for anyone; the member may do
+// (or a System actor, the operator CLI) may do it for anyone, but only the
+// member themselves or the operator CLI also erase the login (A3-05); the member may do
 // it for themselves through EraseMyData.
 //
 // Refused unless the member is departed and has no blocker: a proposed or
@@ -80,8 +81,13 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 				return domain.Forbidden("a member is required")
 			}
 			memberID = p.member.ID
-		} else if err := p.requireAdmin(); err != nil {
-			return err
+		} else {
+			if err := p.requireAdmin(); err != nil {
+				return err
+			}
+			if err := p.requireLasting(); err != nil { // A3-02
+				return err
+			}
 		}
 		target, err := tx.GetMember(netID, memberID)
 		if err != nil {
@@ -114,8 +120,13 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 		if rep.DisputeStatements, err = tx.RedactDisputeStatements(netID, target.ID); err != nil {
 			return err
 		}
-		if rep.PersonErased, err = s.erasePersonIfUnused(tx, target); err != nil {
-			return err
+		// A3-05: a tenant administrator must not destroy a login that may serve
+		// other networks. The person row is erased only by the person (self) or
+		// the operator CLI (System actor).
+		if self || p.actor.System {
+			if rep.PersonErased, err = s.erasePersonIfUnused(tx, target); err != nil {
+				return err
+			}
 		}
 		// SA2-17: stored replay records name the person's actions; drop them.
 		idemNet := netID

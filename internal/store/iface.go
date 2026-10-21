@@ -104,6 +104,9 @@ type MemberRepo interface {
 	SetDefaultFlag(netID, id string, v bool) error
 	GrantRole(roleID, netID, memberID string, r domain.Role, by string, at time.Time) error
 	RevokeRole(netID, memberID string, r domain.Role, at time.Time) (bool, error)
+	// LatestAdminGrant returns who granted the member's most recent admin role
+	// (live or revoked) and when. ok is false when the member never held it.
+	LatestAdminGrant(netID, memberID string) (by string, at time.Time, ok bool, err error)
 	// CountActiveAdmins counts members holding admin whose status is active.
 	CountActiveAdmins(netID string) (int, error)
 }

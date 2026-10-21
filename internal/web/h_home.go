@@ -299,16 +299,11 @@ func (s *server) formFail(w http.ResponseWriter, r *http.Request, c *rc, tmpl st
 }
 
 func (c *rc) myListing(id string) *domain.Listing {
-	ls, err := c.s.svc.ListListings(c.ctx, c.actor, c.netID(), service.ListingQuery{MemberID: c.Me.ID, Page: service.Page{Limit: 500}})
-	if err != nil {
+	l, err := c.s.svc.GetListing(c.ctx, c.actor, c.netID(), id) // by id: no page cap can hide an old listing (A3-08)
+	if err != nil || l.MemberID != c.Me.ID {
 		return nil
 	}
-	for _, l := range ls {
-		if l.ID == id {
-			return l
-		}
-	}
-	return nil
+	return l
 }
 
 func (s *server) listingEditForm(w http.ResponseWriter, r *http.Request, c *rc) {

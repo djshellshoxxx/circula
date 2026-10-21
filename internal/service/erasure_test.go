@@ -118,7 +118,8 @@ func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 	if _, err := w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, ""); err == nil {
 		t.Fatal("erasure without a reason accepted")
 	}
-	rep := tu.Must(w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, "erasure request 7"))
+	// A3-05: only the operator CLI (or the person) erases the login; a tenant admin cannot.
+	rep := tu.Must(w.Svc.AnonymiseMember(w.Ctx, domain.SystemActor("cli"), w.net.ID, w.aM.ID, "erasure request 7"))
 	if !strings.HasPrefix(rep.DisplayName, "Former member ") || !rep.PersonErased || rep.Listings != 1 || rep.Memos != 1 || rep.DisputeStatements != 1 {
 		t.Fatalf("report: %+v", rep)
 	}
@@ -156,7 +157,7 @@ func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 
 	// The audit event exists, is visible to administrators and holds no personal data.
 	evs := tu.Must(w.Svc.ListAudit(w.Ctx, w.admin, w.net.ID, service.AuditQuery{Action: domain.ActMemberAnonymised}))
-	if len(evs) != 1 || evs[0].TargetID != w.aM.ID || evs[0].ActorType != domain.ActorAdmin || evs[0].Reason != "erasure request 7" {
+	if len(evs) != 1 || evs[0].TargetID != w.aM.ID || evs[0].ActorType != domain.ActorSystem || evs[0].Reason != "erasure request 7" {
 		t.Fatalf("audit: %+v", evs)
 	}
 
@@ -338,7 +339,7 @@ func TestErasureRemovesMFAAndNotices(t *testing.T) {
 	tu.Must2(w.Svc.CreateAPIToken(w.Ctx, w.a, service.TokenInput{Name: "AnaSecretLaptop", Scopes: []domain.Scope{domain.ScopeRead}}))
 	tu.Must(w.Svc.BeginMFAEnrolment(w.Ctx, w.a, pw))
 	w.depart(w.admin, w.aM)
-	tu.Must(w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, "gdpr"))
+	tu.Must(w.Svc.AnonymiseMember(w.Ctx, domain.SystemActor("cli"), w.net.ID, w.aM.ID, "gdpr"))
 	for _, q := range []string{"person_mfa", "security_notices", "recovery_codes", "account_recovery_codes"} {
 		var n int
 		if err := w.Store.DB().QueryRow(`SELECT COUNT(*) FROM `+q+` WHERE person_id = ?`, w.a.PersonID).Scan(&n); err != nil || n != 0 {
@@ -347,5 +348,32 @@ func TestErasureRemovesMFAAndNotices(t *testing.T) {
 	}
 	if hits := dbMatches(t, w.Store.DB(), "AnaSecretLaptop"); len(hits) != 0 {
 		t.Errorf("token name survives erasure: %v", hits)
+	}
+}
+
+// A3-05: an administrator's erasure anonymises the membership in that network
+// only; the login, sessions and credentials of the person stay usable.
+func TestA3_05_AdminErasureKeepsLogin(t *testing.T) {
+	w, _ := erasureWorld(t)
+	boss := w.Person("boss@other.example")
+	other, _ := w.Network(boss, "other", nil)
+	inv, _ := tu.Must2(w.Svc.CreateInvitation(w.Ctx, boss, other.ID, service.InviteInput{}))
+	tu.Must(w.Svc.RedeemInvitation(w.Ctx, w.a, inv, "Ana in other"))
+	w.depart(w.admin, w.aM)
+	rep := tu.Must(w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, "admin request"))
+	if rep.PersonErased {
+		t.Fatal("admin erased the person row")
+	}
+	if !strings.HasPrefix(rep.DisplayName, "Former member ") {
+		t.Errorf("membership not anonymised: %+v", rep)
+	}
+	if _, _, err := w.Svc.Login(w.Ctx, anaLogin, "correct horse battery"); err != nil {
+		t.Errorf("login destroyed by a tenant admin: %v", err)
+	}
+	// Even with no other membership left the admin cannot erase the login.
+	w2, _ := erasureWorld(t)
+	w2.depart(w2.admin, w2.aM)
+	if rep := tu.Must(w2.Svc.AnonymiseMember(w2.Ctx, w2.admin, w2.net.ID, w2.aM.ID, "admin request")); rep.PersonErased {
+		t.Error("admin erased the login of a person with no other membership")
 	}
 }

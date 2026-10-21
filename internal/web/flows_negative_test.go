@@ -17,7 +17,8 @@ func queueAdjustment(t *testing.T, w *world) (pendingID string, adm *browser) {
 	t.Helper()
 	ctx := w.env.Ctx
 	_, adm2M := w.env.Member(w.admin, w.net, "admin2@example.org")
-	testutil.Must(0, w.env.Svc.AssignRole(ctx, w.admin, w.net.ID, adm2M.ID, domain.RoleAdmin))
+	testutil.Must(0, w.env.Svc.AssignRole(ctx, domain.SystemActor("fixture"), w.net.ID, adm2M.ID, domain.RoleAdmin))
+	w.env.Clock.Advance(25 * time.Hour) // A3-01: a new administrator waits before deciding
 	n := testutil.Must(w.env.Svc.GetNetwork(ctx, w.admin, w.net.ID))
 	pol := n.Policy
 	pol.DualControlThreshold = 1000

@@ -108,6 +108,11 @@ func (s *Service) setMemberStatus(ctx context.Context, actor domain.Actor, netID
 		if err != nil {
 			return err
 		}
+		if to == domain.MemberSuspended {
+			if err := p.requireLasting(); err != nil { // A3-02
+				return err
+			}
+		}
 		if err := requireReason(reason); err != nil {
 			return err
 		}
@@ -164,6 +169,11 @@ func (s *Service) changeRole(ctx context.Context, actor domain.Actor, netID, mem
 			if err := tx.GrantRole(s.id(), netID, m.ID, role, p.memberID(), now); err != nil {
 				return err
 			}
+			if role == domain.RoleAdmin {
+				if err := s.noticeAdminGranted(tx, netID, m, p); err != nil { // A3-01
+					return err
+				}
+			}
 		} else {
 			if !m.HasRole(role) {
 				return domain.InvalidState("member does not hold %s", role)
@@ -188,6 +198,9 @@ func (s *Service) SetDefaultFlag(ctx context.Context, actor domain.Actor, netID,
 	return s.update(ctx, func(tx store.Tx) error {
 		p, m, err := s.adminOnMember(tx, actor, netID, memberID, false)
 		if err != nil {
+			return err
+		}
+		if err := p.requireLasting(); err != nil { // A3-02
 			return err
 		}
 		if err := requireReason(reason); err != nil {
@@ -280,4 +293,22 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 	return p, m, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActLimitChanged, TargetType: "account", TargetID: acc.ID,
 		Reason: in.Reason, Subjects: []string{m.ID}, Before: map[string]any{"effective_limit": before},
 		After: map[string]any{"effective_limit": after, "override": in.Limit != nil, "expires": in.ExpiresAt != nil}})
+}
+
+// noticeAdminGranted tells every other active administrator of the network
+// that a new one was appointed, so a rogue appointment is visible (A3-01).
+func (s *Service) noticeAdminGranted(tx store.Tx, netID string, grantee *domain.Member, p *principal) error {
+	ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, Limit: 500})
+	if err != nil {
+		return err
+	}
+	for _, o := range ms {
+		if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
+			continue
+		}
+		if err := s.notify(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed"); err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -53,3 +53,13 @@ Each step needs: a regression test (split attack stays blocked, large reversal r
 1. Is `1 x threshold` per 24 hours the right cap, or should it be configurable?
 2. Should administrators be able to reverse a large adjustment at all, or only the operator?
 3. Is B.1 (operator for large raises) acceptable, or do administrators need to raise limits unaided?
+
+## Appendix: audit 3 findings deferred to the owner
+
+These were reported by the third security audit (A3-xx) and are not implemented: each changes policy, not just code. Fixed in the same pass for reference: A3-01 (Sybil administrator: grant-chain and 24 h wait for dual control), A3-02 (break-glass administrators refused for lasting actions), A3-03 (balance bound), A3-05 (administrator erasure keeps the login), A3-06 (erasure hook wired), A3-08 (listing text and cap), A3-09 (token not cached).
+
+- A3-04, operator CLI and break-glass. `OperatorSetDualControl` and `OperatorResetPassword` for an administrator run as the System actor without an open break-glass session, so the operator can lower the threshold or take over an administrator login with no session record or time limit. Decision needed: require an open break-glass session for those CLI commands (and for which others), or accept the CLI as a root-level tool whose use is shown only by the audit trail.
+- A3-07, self-departure and debt. Under the `settle-to-zero` departure rule a member who leaves voluntarily has their negative balance moved to the system account (forgiven) with no approval, even above the dual-control threshold. With an accomplice who received the credit this converts value into a loss for the network. Decision needed: block voluntary departure above the threshold until an administrator approves, route the settlement through the pending flow, or keep the rule and document it.
+- A3-10 and A3-11. Deferred by the owner together with the above; the audit text for them is in the audit 3 report, not in this repository. Record the decision here when it is made.
+
+Side effects of the A3-01 fix the owner should know about: the network founder (self-granted root) is the only administrator who can approve requests proposed by administrators the founder appointed, and an administrator appointed by someone can never approve that appointer's requests or those of anyone below them in the grant chain. A network that wants two independent approvers needs a second root, which today means the operator granting the role (a System-actor grant has no granter). The wait is `service.Config.NewAdminApprovalDelay` (default 24 h, negative disables). Break-glass administrators are not covered by this check.

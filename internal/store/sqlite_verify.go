@@ -1,6 +1,12 @@
 package store
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"strings"
+
+	"github.com/djshellshoxxx/circula/internal/domain"
+)
 
 func (t *txImpl) BalanceMismatches(netID string) ([]BalanceMismatch, error) {
 	rows, err := t.query(`SELECT a.id, a.balance, COALESCE(SUM(e.amount),0) FROM accounts a
@@ -48,12 +54,55 @@ func (t *txImpl) TxProblems(netID string) ([]string, error) {
 }
 
 func (t *txImpl) Totals(netID string) (int64, int64, error) {
-	var b, e int64
-	if err := t.row(`SELECT COALESCE(SUM(balance),0) FROM accounts WHERE network_id = ?`, netID).Scan(&b); err != nil {
+	b, err := t.sumSaturating("accounts", "balance", netID)
+	if err != nil {
 		return 0, 0, err
 	}
-	err := t.row(`SELECT COALESCE(SUM(amount),0) FROM entries WHERE network_id = ?`, netID).Scan(&e)
+	e, err := t.sumSaturating("entries", "amount", netID)
 	return b, e, err
+}
+
+// sumSaturating sums an int64 column of one network. It tries SQL SUM first
+// and, if that overflows (legacy or corrupt data), sums in Go
+// and saturates, so verification reports a mismatch instead of failing (A3-03).
+// table and col are package constants, never user input.
+func (t *txImpl) sumSaturating(table, col, netID string) (int64, error) {
+	var s int64
+	err := t.row(`SELECT COALESCE(SUM(`+col+`),0) FROM `+table+` WHERE network_id = ?`, netID).Scan(&s)
+	if err == nil {
+		return s, nil
+	}
+	if !strings.Contains(err.Error(), "integer overflow") {
+		return 0, err
+	}
+	rows, err := t.query(`SELECT `+col+` FROM `+table+` WHERE network_id = ?`, netID)
+	if err != nil {
+		return 0, err
+	}
+	defer func() { _ = rows.Close() }()
+	var total int64
+	sat := false
+	for rows.Next() {
+		var v int64
+		if err := rows.Scan(&v); err != nil {
+			return 0, err
+		}
+		if sat {
+			continue
+		}
+		next, ok := domain.AddChecked(total, v)
+		if !ok { // saturate at the end that overflowed; a mismatch is then reported
+			sat = true
+			if v > 0 {
+				total = math.MaxInt64
+			} else {
+				total = math.MinInt64
+			}
+			continue
+		}
+		total = next
+	}
+	return total, rows.Err()
 }
 
 func (t *txImpl) ReversalMismatches(netID string) ([]string, error) {

@@ -46,6 +46,7 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		MinPasswordLen: cfg.MinPasswordLength,
 
 		RequireMFAForAdmins: cfg.RequireMFAAdmins,
+		OnMemberErased:      api.OnMemberErased, // A3-06
 		SecretKey:           cfg.MFASecret,
 	})
 }

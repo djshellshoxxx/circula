@@ -74,10 +74,10 @@ func (s *server) routes() {
 	R("GET "+v1+"/admin/announcements", s.notImpl("announcements"))  // API-064
 
 	// Exports and tokens.
-	R("POST "+v1+"/exports", s.createExport, idemOpt)    // API-065
-	R("GET "+v1+"/exports/{id}", s.getExport)            // API-065
-	R("GET "+v1+"/exports/{id}/artefact", s.getArtefact) // API-065
-	R("GET "+v1+"/tokens", s.listTokens, noNet)          // API-066
-	R("POST "+v1+"/tokens", s.createToken, noNet, cookieOnly, idemOpt)
+	R("POST "+v1+"/exports", s.createExport, idemOpt)         // API-065
+	R("GET "+v1+"/exports/{id}", s.getExport)                 // API-065
+	R("GET "+v1+"/exports/{id}/artefact", s.getArtefact)      // API-065
+	R("GET "+v1+"/tokens", s.listTokens, noNet)               // API-066
+	R("POST "+v1+"/tokens", s.createToken, noNet, cookieOnly) // never cached: the response holds the plaintext token (A3-09)
 	R("DELETE "+v1+"/tokens/{id}", s.revokeToken, noNet)
 }

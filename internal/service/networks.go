@@ -154,6 +154,9 @@ func (s *Service) CloseNetwork(ctx context.Context, actor domain.Actor, netID, r
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := p.requireLasting(); err != nil { // A3-02
+			return err
+		}
 		if p.net.Status == domain.NetworkClosed {
 			return domain.InvalidState("network is already closed")
 		}
