@@ -1,0 +1,9 @@
+# ARC-023: repository secret scan configuration (run by the "secret scan" step in ci.yml).
+title = "circula"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Throwaway TOTP seed for the end-to-end test fixture; never used outside tests"
+paths = ['''^e2e/secfixture\.js$''']
