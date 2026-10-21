@@ -18,6 +18,8 @@ func TestExportSchemaDocMatches(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Windows checkouts may convert line endings.
+	doc = []byte(strings.ReplaceAll(string(doc), "\r\n", "\n"))
 	want := map[string]string{}
 	re := regexp.MustCompile("(?m)^### (\\w+)\\n`([^`]+)`")
 	for _, m := range re.FindAllStringSubmatch(string(doc), -1) {
