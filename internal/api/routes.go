@@ -72,6 +72,17 @@ func (s *server) routes() {
 	R("POST "+v1+"/admin/announcements", s.notImpl("announcements")) // API-064
 	R("GET "+v1+"/admin/announcements", s.notImpl("announcements"))  // API-064
 
+	// Dispute response and re-review, reports, notifications (FR-076, FR-078, FR-024, FR-038).
+	R("POST "+v1+"/disputes/{id}/response", s.respondDispute, idem)
+	R("POST "+v1+"/disputes/{id}/re-review", s.requestReReview, idem)
+	R("POST "+v1+"/disputes/{id}/re-review/decision", s.decideReReview, idem)
+	R("POST "+v1+"/reports", s.fileReport, idem)
+	R("GET "+v1+"/admin/reports", s.reportQueue)
+	R("POST "+v1+"/admin/reports/{id}/handle", s.closeReport, idem)
+	R("GET "+v1+"/notifications", s.listNotifications)
+	R("GET "+v1+"/notifications/unread-count", s.unreadCount)
+	R("POST "+v1+"/notifications/read", s.markNotificationsRead)
+
 	// Exports and tokens.
 	R("POST "+v1+"/exports", s.createExport, idemOpt)    // API-065
 	R("GET "+v1+"/exports/{id}", s.getExport)            // API-065

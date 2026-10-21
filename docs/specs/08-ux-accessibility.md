@@ -86,7 +86,7 @@ Rules that apply to all three states:
 | UX-009 · P0 | The Home balance card MUST show, as separate labelled values: current balance with direction (UX-004); credit limit; reserved amount for pending outgoing trades; available to spend (API-044 `available_minor`). |
 | UX-010 · P0 | Available to spend MUST NOT be presented as the balance. Its label MUST include the words "available to spend", and the help link MUST explain that pending outgoing trades reduce it. |
 | UX-011 · P0 | When the member is in debt, the card MUST show the portion of the credit limit in use as text ("You are using 25.00 of your 50.00 credit limit") and MAY show a meter. The meter MUST have a text equivalent and MUST NOT be the only indicator. |
-| UX-012 · P1 | When the member's in-use credit reaches the network's warning threshold (default proposed 80 percent, product decision), an inline notice MUST appear on Home and on the propose form. |
+| UX-012 · P1 | When the member's in-use credit reaches the network's warning threshold (default proposed 80 percent, product decision), an inline notice MUST appear on Home and on the propose form. As built: threshold is the constant 80 percent (`service.LimitWarningPercent`), not yet a network policy; the notice shows on Home and the propose form, and the hourly job also sends an inbox notification once per ISO week. |
 
 ### 4.3 Transactions and pending versus completed
 

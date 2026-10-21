@@ -145,6 +145,7 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
   - Any active member can report a listing or member with a category and a bounded note.
   - Reports appear in the administrator queue; reporting does not automatically hide, suspend or change anything.
   - The reporter's identity is visible to administrators only, and is not shown to the reported member.
+- **Status (as built).** Built (service, API `POST /reports`, `GET /admin/reports`, web). Categories: spam, scam, inappropriate, harassment, other. One open report per reporter and target; at most 10 reports per reporter per 24 hours. The queue is administrator-only.
 
 ### FR-025 · P1 · Members-only visibility of listings
 - **Rationale.** Prevents external indexing of member data by default (VIS-010).
@@ -215,6 +216,7 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
   - An active member has an inbox listing proposals awaiting their action, disputes awaiting response, and recent outcomes.
   - Unread state is shown in text as well as visually.
   - Email notifications are not part of this requirement (OQ-VIS-4).
+- **Status (as built).** Built, in-app only (service `ListNotifications`, API `GET /notifications`, web inbox with an unread badge that also states the count in text). Emitted for proposal received, accepted, declined, withdrawn, dispute events, re-review events and report outcome; limit warnings come from the hourly job. Old read entries are not yet purged.
 
 ---
 
@@ -361,6 +363,7 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
 - **Acceptance.**
   - The other party can submit a bounded response before a decision; the response is visible to the reviewer and to the opener.
   - A decision cannot be recorded before the response period in the network's policy has ended, or before the response is submitted or waived. The response period is a network policy (OQ-FR-2).
+- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Not built: the response-period policy and holding a decision until the period ends (OQ-FR-2 is open), so a decision may be recorded without a response.
 
 ### FR-077 · P0 · Dispute window enforcement and deadlines
 - **Rationale.** DOM-017.
@@ -373,6 +376,7 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
 - **Acceptance.**
   - A party can request one re-review of a decided dispute within a stated period.
   - The re-review is assigned to a different reviewer than the original and is recorded as a new decision linked to the first. The original decision is never edited.
+- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within 14 days of the decision (a constant, not yet network policy). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
 
 ---
 

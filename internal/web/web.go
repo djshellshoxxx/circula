@@ -94,6 +94,7 @@ func (s *server) routes() {
 	s.homeRoutes()
 	s.tradeRoutes()
 	s.disputeRoutes()
+	s.notifyRoutes()
 	s.adminRoutes()
 	s.mux.HandleFunc("/", s.notFoundOrRoot)
 }

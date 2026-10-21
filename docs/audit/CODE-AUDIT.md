@@ -194,7 +194,7 @@ Legend: P0 = MVP-blocking, P1 = MVP. "Partial" = exists in service but missing a
 | SEC-008 account recovery | P0 | not built | SERVICE.md lists as not implemented; no route, no token table |
 | SEC-013 operator break-glass | P0 | not built | no operator role in code; `admin create-operator` only creates a person, with no special rights |
 | SEC-018 retention / erasure / pseudonymisation | P0 | not built | no code touches `display_name` after departure |
-| SEC-012 notices to affected members | P0 | not built | (FR-038 notifications, P1, also not built) |
+| SEC-012 notices to affected members | P0 | partial | FR-038 inbox exists (trade, dispute, report, limit-warning events) but administrative actions (suspend, remove, adjust, limit change) emit no notification yet |
 | UX-030 session expiry warning | P0 | not built | WEB-04 |
 | API-008 browser session cookie for API | P0 | broken | API-01 |
 | API-026/027 `If-Match` on membership status | P0 | partial | API-02 |
@@ -208,9 +208,9 @@ Legend: P0 = MVP-blocking, P1 = MVP. "Partial" = exists in service but missing a
 | FR-064 default flag | P1 | partial | web only; no API route |
 | FR-067 admin overview | P1 | partial | web shows pending-member count only |
 | FR-068 network closure | P1 | partial | `CloseNetwork` has no UI/API caller |
-| FR-024 report listing/member | P1 | not built | |
-| FR-038 notifications and inbox | P1 | not built | |
-| FR-076 response by other party; FR-078 one re-review | P1 | not built | |
+| FR-024 report listing/member | P1 | built | service, API, web; reporter visible to administrators only |
+| FR-038 notifications and inbox | P1 | built | in-app only (email is out of scope, OQ-VIS-4); retention purge of old read entries not built |
+| FR-076 response by other party; FR-078 one re-review | P1 | built | response period policy not built (OQ-FR-2): a decision does not wait for a response; re-review window is a 14-day constant |
 | API-010 `admin` token scope | P1 | 501 | `api/h_tokens.go:63` |
 | API-064 announcements | P1 | 501 | `api/routes.go:20,70,71` |
 | API-077/078 OpenAPI + compatibility fixtures | P1 | not built | no OpenAPI file in tree |

@@ -106,6 +106,7 @@ func (s *server) proposeForm(w http.ResponseWriter, r *http.Request, c *rc) {
 func (s *server) renderPropose(w http.ResponseWriter, r *http.Request, c *rc, st int, p *page) {
 	opts := c.counterpartyOptions()
 	p.D = &proposeData{Members: append([]option{{"", "Choose a member"}}, opts...)}
+	p.Warn = c.limitNotice()
 	s.render(w, r, c, "propose", st, p)
 }
 
