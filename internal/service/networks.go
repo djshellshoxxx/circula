@@ -25,6 +25,9 @@ type CreateNetworkInput struct {
 // (setup secret, sign-up policy) is an adapter decision; the service needs
 // only an authenticated person.
 func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in CreateNetworkInput) (*domain.Network, *domain.Member, error) {
+	if actor.MustChangePassword {
+		return nil, nil, domain.PasswordChangeRequired() // SEC-008
+	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) || actor.NetworkScope != "" {
 		return nil, nil, domain.Forbidden("a full-scope person is required to create a network")
 	}

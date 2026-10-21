@@ -105,6 +105,7 @@ var codeStatus = map[domain.Code]int{
 	domain.CodeCounterpartyInact: 422, domain.CodeKeyReused: 422, domain.CodeKeyRequired: 400,
 	domain.CodeUnauthenticated: 401, domain.CodeForbidden: 403, domain.CodeNotFound: 404,
 	domain.CodeInvalidState: 409, domain.CodeConflict: 409, domain.CodeBlocked: 409, domain.CodeRateLimited: 429, domain.CodeUnavailable: 503,
+	domain.CodePasswordChangeRequired: 403,
 }
 
 // fromErr converts any error into an apiError. Unknown errors become opaque
