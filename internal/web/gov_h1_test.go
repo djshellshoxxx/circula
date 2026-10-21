@@ -72,6 +72,7 @@ func TestPolicyNoticePages(t *testing.T) {
 	vals := func(limit, notice, nreason string) url.Values {
 		return url.Values{"currency_name": {"credit"}, "default_credit_limit": {limit}, "max_tx_amount": {"1000000.00"},
 			"signup_grant": {"0.00"}, "proposal_expiry_days": {"7"}, "dispute_window_days": {"30"}, "limit_warning_days": {"0"},
+			"response_period_days": {"7"}, "re_review_window_days": {"14"}, "limit_warning_percent": {"80"},
 			"join_mode": {"invite"}, "departure_rule": {"retain"}, "reason": {"tighten"}, "notice_days": {notice}, "notice_reason": {nreason}}
 	}
 	cur := w.env.Svc
