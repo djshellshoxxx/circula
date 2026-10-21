@@ -87,7 +87,7 @@ func (s *server) termsAccept(w http.ResponseWriter, r *http.Request, c *rc) {
 	if n := safeNext(r.PostFormValue("next")); n != "" {
 		dest = n
 	}
-	http.Redirect(w, r, dest, http.StatusSeeOther)
+	http.Redirect(w, r, dest, http.StatusSeeOther) //nolint:gosec // G710: dest is a fixed local path or one that safeNext checked
 }
 
 // ---- change log (GOV-002, GOV-003) ----
