@@ -69,6 +69,7 @@ The project is currently in its documentation and design stage. The repository c
 - [Foundational specifications](docs/specs/README.md): purpose, scope, roles, domain rules, MVP requirements, architecture, data, API, UX, security, governance, operations, and verification.
 - [Future disruptive ideas](docs/brainstorming/disruptive-future-ideas.md): possible extensions for increasing Circula’s reach and social impact. These are concepts for discussion, not approved requirements.
 - [Business model options](docs/brainstorming/business-model-options.md): possible ways to make the software and related services commercially sustainable.
+- [Wiki framework](wiki/README.md): source pages for the future GitHub Wiki, clearly marked as draft until features are implemented.
 - [Specification authoring prompt](prompts/create-foundational-specs.md): original scope and completion checklist.
 
 ## Contributing and next steps
