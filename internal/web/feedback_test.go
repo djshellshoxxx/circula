@@ -113,7 +113,7 @@ func TestDisputeResponseAndReReviewPages(t *testing.T) {
 		t.Error("re-review offered before a decision")
 	}
 	rp := r1.get(path)
-	r1.mustContain(r1.post(path+"/resolve", rp, url.Values{"outcome": {"dismissed"}, "rationale": {"not enough evidence"}}), "Dismissed")
+	r1.mustContain(r1.post(path+"/resolve", rp, url.Values{"outcome": {"dismissed"}, "rationale": {"not enough evidence"}, "step": {"confirm"}}), "Dismissed")
 
 	ap := alice.get(path)
 	alice.mustContain(ap, "Ask for a re-review", "Request re-review")

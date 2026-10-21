@@ -222,7 +222,10 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/accounts/me", token: aliceT})
 	h.do(200, call{method: "GET", path: "/accounts/me/entries", token: aliceT})
 	h.do(400, call{method: "GET", path: "/accounts/me/entries?limit=0", token: aliceT, skipRequest: true})
-	h.do(501, call{method: "GET", path: "/network/announcements", token: aliceT})
+	h.do(200, call{method: "GET", path: "/network/announcements", token: aliceT})
+	h.do(200, call{method: "PATCH", path: "/me", token: aliceT, body: m{"time_zone": "Europe/Stockholm"}})
+	h.do(422, call{method: "PATCH", path: "/me", token: aliceT, body: m{"time_zone": "Mars/Base"}, skipRequest: true})
+	h.do(422, call{method: "PATCH", path: "/me", token: aliceT, body: m{}, skipRequest: true})
 
 	// Listings.
 	rec := h.do(201, call{method: "POST", path: "/listings", token: aliceT, idem: true,
@@ -231,6 +234,9 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	letag := rec.Header().Get("ETag")
 	h.do(422, call{method: "POST", path: "/listings", token: aliceT, idem: true, body: m{"kind": "offer", "title": ""}, skipRequest: true})
 	h.do(200, call{method: "GET", path: "/listings", token: bobT})
+	h.do(200, call{method: "GET", path: "/listings/" + lid, token: bobT})
+	h.do(304, call{method: "GET", path: "/listings/" + lid, token: bobT, hdr: m2("If-None-Match", letag)})
+	h.do(404, call{method: "GET", path: "/listings/nope", token: bobT})
 	h.do(200, call{method: "PATCH", path: "/listings/" + lid, token: aliceT, hdr: m2("If-Match", letag), body: m{"title": "bike fix"}})
 	h.do(428, call{method: "PATCH", path: "/listings/" + lid, token: aliceT, body: m{"title": "x"}, skipRequest: true})
 	h.do(412, call{method: "PATCH", path: "/listings/" + lid, token: aliceT, hdr: m2("If-Match", `"stale"`), body: m{"title": "x"}})
@@ -275,8 +281,24 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(404, call{method: "GET", path: "/disputes/" + d, token: outsiderT})
 	h.do(200, call{method: "POST", path: "/disputes/" + d + "/review", token: adminT})
 	h.do(501, call{method: "POST", path: "/disputes/" + d + "/resolve", token: adminT, idem: true, body: m{"outcome": "adjustment", "reason": "x"}})
+	h.do(403, call{method: "POST", path: "/disputes/" + d + "/response", token: aliceT, idem: true, body: m{"response": "mine"}})
+	h.do(422, call{method: "POST", path: "/disputes/" + d + "/response", token: bobT, idem: true, body: m{"response": " "}, skipRequest: true})
+	h.do(201, call{method: "POST", path: "/disputes/" + d + "/response", token: bobT, idem: true, body: m{"response": "I handed it over"}})
+	h.do(409, call{method: "POST", path: "/disputes/" + d + "/response", token: bobT, idem: true, body: m{"response": "again"}})
+	h.do(409, call{method: "POST", path: "/disputes/" + d + "/re-review", token: aliceT, idem: true, body: m{"reason": "too early"}})
 	h.do(200, call{method: "POST", path: "/disputes/" + d + "/resolve", token: adminT, idem: true,
 		body: m{"outcome": "dismissed", "reason": "evidence shows delivery"}})
+	// Re-review: requested by a party, decided by a reviewer other than the original one.
+	rev, revM := env.Member(admin, net, "rev")
+	h.do(200, call{method: "PUT", path: "/admin/members/" + revM.ID + "/roles/reviewer", token: adminT})
+	revT := h.token(rev, rw...)
+	h.do(404, call{method: "POST", path: "/disputes/" + d + "/re-review", token: revT, idem: true, body: m{"reason": "not mine"}})
+	h.do(201, call{method: "POST", path: "/disputes/" + d + "/re-review", token: aliceT, idem: true, body: m{"reason": "I have photos"}})
+	h.do(409, call{method: "POST", path: "/disputes/" + d + "/re-review", token: aliceT, idem: true, body: m{"reason": "again"}})
+	h.do(403, call{method: "POST", path: "/disputes/" + d + "/re-review/decision", token: adminT, idem: true,
+		body: m{"outcome": "confirmed", "reason": "same reviewer"}})
+	h.do(200, call{method: "POST", path: "/disputes/" + d + "/re-review/decision", token: revT, idem: true,
+		body: m{"outcome": "confirmed", "reason": "decision stands"}})
 	tx2 := env.Trade(net.ID, alice, bob, aliceM, bobM, 700)
 	rec = h.do(201, call{method: "POST", path: "/disputes", token: aliceT, idem: true,
 		body: m{"transaction_id": tx2.ID, "category": "not_delivered", "statement": "nothing"}})
@@ -324,8 +346,35 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	rec = h.do(201, call{method: "POST", path: "/admin/consistency-checks", token: adminT, idem: true})
 	h.do(200, call{method: "GET", path: "/admin/consistency-checks/" + get[idOnly](t, rec).ID, token: adminT})
 	h.do(404, call{method: "GET", path: "/admin/consistency-checks/nope", token: adminT})
-	h.do(501, call{method: "GET", path: "/admin/announcements", token: adminT})
-	h.do(501, call{method: "POST", path: "/admin/announcements", token: adminT, skipRequest: true})
+	h.do(400, call{method: "POST", path: "/admin/announcements", token: adminT, body: m{"title": "Closed", "body": "x"}, skipRequest: true})
+	rec = h.do(201, call{method: "POST", path: "/admin/announcements", token: adminT, idem: true,
+		body: m{"title": "Market day", "body": "Saturday at the hall"}})
+	ann := get[idOnly](t, rec).ID
+	h.do(200, call{method: "GET", path: "/admin/announcements", token: adminT})
+	h.do(403, call{method: "GET", path: "/admin/announcements", token: aliceT})
+	h.do(204, call{method: "DELETE", path: "/admin/announcements/" + ann, token: adminT})
+	h.do(404, call{method: "DELETE", path: "/admin/announcements/" + ann, token: adminT})
+
+	// Reports and notifications.
+	h.do(422, call{method: "POST", path: "/reports", token: aliceT, idem: true, skipRequest: true,
+		body: m{"target_type": "listing", "target_id": lid, "category": "scam"}})
+	rec = h.do(201, call{method: "POST", path: "/reports", token: bobT, idem: true,
+		body: m{"target_type": "listing", "target_id": lid, "category": "scam", "description": "looks fake"}})
+	rep := get[idOnly](t, rec).ID
+	h.do(409, call{method: "POST", path: "/reports", token: bobT, idem: true,
+		body: m{"target_type": "listing", "target_id": lid, "category": "spam"}})
+	h.do(200, call{method: "GET", path: "/admin/reports", token: adminT})
+	h.do(200, call{method: "GET", path: "/admin/reports?status=open", token: adminT})
+	h.do(403, call{method: "GET", path: "/admin/reports", token: aliceT})
+	h.do(403, call{method: "POST", path: "/admin/reports/" + rep + "/handle", token: aliceT, idem: true})
+	h.do(200, call{method: "POST", path: "/admin/reports/" + rep + "/handle", token: adminT, idem: true, body: m{"note": "checked"}})
+	h.do(409, call{method: "POST", path: "/admin/reports/" + rep + "/handle", token: adminT, idem: true})
+	h.do(200, call{method: "GET", path: "/notifications", token: aliceT})
+	h.do(200, call{method: "GET", path: "/notifications?unread=true", token: bobT})
+	h.do(200, call{method: "GET", path: "/notifications/unread-count", token: bobT})
+	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"all": true}})
+	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"ids": []string{"nope"}}})
+	h.do(422, call{method: "POST", path: "/notifications/read", token: bobT, body: m{}, skipRequest: true})
 
 	// Reversal (admin) on a fresh trade.
 	tx3 := env.Trade(net.ID, bob, alice, bobM, aliceM, 300)
