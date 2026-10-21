@@ -37,6 +37,9 @@ func WithClientIP(ctx context.Context, ip string) context.Context {
 }
 
 func canonicalIP(s string) string {
+	if pf, err := netip.ParsePrefix(s); err == nil { // an adapter rate key such as "2001:db8::/64"
+		s = pf.Addr().String()
+	}
 	a, err := netip.ParseAddr(s)
 	if err != nil {
 		return "?"
@@ -68,13 +71,18 @@ func lockAfter(failures, after int) time.Duration {
 func ipKey(key, ip string) string { return key + " ip:" + ip }
 
 // readThrottle returns the live failure count and lock end of key.
-func (s *Service) readThrottle(tx store.Tx, key string) (int, time.Time, error) {
+func (s *Service) readThrottle(tx store.Tx, key string, after int) (int, time.Time, error) {
 	f, until, _, err := tx.GetThrottle(key)
 	if err != nil {
 		return 0, time.Time{}, err
 	}
 	if f > 0 && s.now().After(until.Add(throttleDecay)) {
 		f = 0 // idle for a day: the history is forgotten
+	}
+	if f >= after && !until.IsZero() && s.now().After(until) {
+		// A lock that has run out grants half the allowance again, so a single
+		// attempt timed at expiry cannot re-arm it (A3-02).
+		f = after - after/2
 	}
 	return f, until, nil
 }
@@ -88,11 +96,11 @@ func (s *Service) reserveAttemptCtx(ctx context.Context, tx store.Tx, key string
 		return s.reserveAttempt(tx, key)
 	}
 	pk := ipKey(key, ip)
-	pf, pu, err := s.readThrottle(tx, pk)
+	pf, pu, err := s.readThrottle(tx, pk, throttleAfter)
 	if err != nil {
 		return err
 	}
-	gf, gu, err := s.readThrottle(tx, key)
+	gf, gu, err := s.readThrottle(tx, key, throttleGlobalAfter)
 	if err != nil {
 		return err
 	}
