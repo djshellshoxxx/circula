@@ -198,6 +198,15 @@ func TestLargeExportRoundTrip(t *testing.T) {
 	if ex.Status != "complete" || ex.SHA256 == nil {
 		t.Fatalf("export = %s", rec.Body.String())
 	}
+	// The metadata endpoint reports the same checksum and row count.
+	meta := get(t, w, adminT, "/api/v1/exports/"+ex.ID)
+	wantStatus(t, meta, http.StatusOK)
+	if m := decode[struct {
+		SHA256 *string `json:"sha256"`
+		Status string
+	}](t, meta); m.SHA256 == nil || *m.SHA256 != *ex.SHA256 || m.Status != "complete" {
+		t.Fatalf("export metadata = %s", meta.Body.String())
+	}
 	got := get(t, w, adminT, ex.Artefact)
 	if got.Code != http.StatusOK || got.Header().Get("X-Content-SHA256") != *ex.SHA256 {
 		t.Fatalf("artefact: %d sha %q want %q", got.Code, got.Header().Get("X-Content-SHA256"), *ex.SHA256)

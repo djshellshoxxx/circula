@@ -583,3 +583,35 @@ func TestServeStartsAndStopsCleanly(t *testing.T) {
 		t.Fatalf("database unusable after shutdown: %v", err)
 	}
 }
+
+// OPS-018 / OPS-023: before a database is migrated, a verified backup is taken
+// with reason pre-migration; a database with no recorded schema has nothing to
+// protect and gets none.
+func TestPreMigrationBackupIsTakenBeforeMigrating(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	db := seedDatabase(t, dir)
+	cfg := testConfigFor(db)
+	logger := discardLogger()
+	m := newMetrics(time.Now().UTC())
+	if err := preMigrationBackup(ctx, cfg, logger, m, schemaState{Exists: true, Applied: 0, Known: 1}); err != nil {
+		t.Fatalf("empty schema record: %v", err)
+	}
+	if n := countBackups(t, cfg.BackupDir); n != 0 {
+		t.Fatalf("backup taken for a database with no schema record: %d", n)
+	}
+	state := schemaState{Exists: true, Applied: store.SchemaVersion(), Known: store.SchemaVersion()}
+	if err := preMigrationBackup(ctx, cfg, logger, m, state); err != nil {
+		t.Fatalf("pre-migration backup: %v", err)
+	}
+	entries, err := listBackups(cfg.BackupDir)
+	if err != nil || len(entries) != 1 {
+		t.Fatalf("backups = %v %v", entries, err)
+	}
+	if got := mustManifest(t, entries[0].path); got.Reason != "pre-migration" || got.Ledger.Status != "ok" {
+		t.Errorf("manifest = %+v", got)
+	}
+	if m.backupOKAt == 0 {
+		t.Error("pre-migration backup not recorded in metrics")
+	}
+}
