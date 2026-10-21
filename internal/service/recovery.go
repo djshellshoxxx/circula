@@ -161,8 +161,8 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 //   - The remaining codes are deleted because a code in the wrong hands means
 //     the sheet may be compromised; generate a new batch after signing in.
 func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword string) error {
-	if err := s.validatePassword(newPassword); err != nil {
-		return err // says nothing about the login or the code
+	if err := s.validatePassword(newPassword, login); err != nil {
+		return err // says nothing about the code; the login is the caller's own input
 	}
 	nh, err := hashPassword(newPassword, s.cfg.Argon) // equal work on every path
 	if err != nil {
@@ -174,7 +174,7 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	}
 	var person *domain.Person
 	err = s.update(ctx, func(tx store.Tx) error {
-		if err := s.reserveAttempt(tx, recoverKey(login)); err != nil {
+		if err := s.reserveAttemptCtx(ctx, tx, recoverKey(login)); err != nil {
 			return err
 		}
 		p, _, err := tx.GetPersonByLogin(login)
@@ -221,11 +221,13 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.DeleteAccountRecoveryCodes(pid); err != nil {
 			return err
 		}
-		if err := tx.DeleteThrottle(recoverKey(login)); err != nil {
+		if err := tx.DeleteMFAChallengesOf(pid); err != nil { // SA2-13
 			return err
 		}
-		if err := tx.DeleteThrottle(login); err != nil {
-			return err
+		for _, k := range []string{recoverKey(login), login} {
+			if _, err := tx.DeleteThrottleFamily(k); err != nil {
+				return err
+			}
 		}
 		if err := s.notify(tx, pid, domain.NoticePasswordChanged, "recovery code used"); err != nil { // SA2-03
 			return err
@@ -282,9 +284,13 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 		return err
 	}
 	for _, k := range []string{login, recoverKey(login)} {
-		if err := tx.DeleteThrottle(k); err != nil {
+		if _, err := tx.DeleteThrottleFamily(k); err != nil {
 			return err
 		}
+	}
+	// SA2-13: a second-factor challenge issued before the reset must not finish.
+	if err := tx.DeleteMFAChallengesOf(personID); err != nil {
+		return err
 	}
 	return s.notify(tx, personID, domain.NoticePasswordChanged, "password reset by an administrator or operator") // SA2-03
 }

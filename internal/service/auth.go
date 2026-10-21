@@ -53,7 +53,7 @@ func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain
 	if err := validLogin(login); err != nil {
 		return nil, err
 	}
-	if err := s.validatePassword(in.Password); err != nil {
+	if err := s.validatePassword(in.Password, login); err != nil {
 		return nil, err
 	}
 	hash, err := hashPassword(in.Password, s.cfg.Argon)
@@ -85,32 +85,12 @@ func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain
 	return p, nil
 }
 
-const (
-	throttleAfter = 5
-	throttleBase  = 15 * time.Minute
-	throttleMax   = 24 * time.Hour
-)
-
-func lockFor(failures int) time.Duration {
-	if failures < throttleAfter {
-		return 0
-	}
-	d := throttleBase
-	for i := throttleAfter; i < failures && d < throttleMax; i++ {
-		d *= 2
-	}
-	if d > throttleMax {
-		d = throttleMax
-	}
-	return d
-}
-
 // LoginStep verifies credentials and returns an opaque bearer session token (shown
 // once; only its SHA-256 is stored). Unknown logins and wrong passwords return
 // the identical ErrUnauthenticated and do equal hashing work (SEC-005). After
-// five consecutive failures further attempts for that login are refused with
-// ErrRateLimited for an increasing delay starting at 15 minutes (SEC-006);
-// success resets the counter. Per-address limits belong to the adapter.
+// five consecutive failures further attempts for that login (from that client
+// address, see WithClientIP and throttle.go, SA2-10) are refused with
+// ErrRateLimited for 15 minutes (SEC-006); success resets the counters.
 //
 // Atomicity (AUTH-01, SA-04): the lock check and the attempt reservation happen
 // in ONE write unit before the password is verified. Every evaluated attempt
@@ -133,16 +113,7 @@ func (s *Service) LoginStep(ctx context.Context, login, password string) (*Login
 	var person *domain.Person
 	var hash string
 	err := s.update(ctx, func(tx store.Tx) error {
-		f, until, _, err := tx.GetThrottle(login)
-		if err != nil {
-			return err
-		}
-		now := s.now()
-		if now.Before(until) {
-			return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
-		}
-		n := f + 1
-		if err := tx.PutThrottle(login, n, now.Add(lockFor(n))); err != nil {
+		if err := s.reserveAttemptCtx(ctx, tx, login); err != nil {
 			return err
 		}
 		p, h, err := tx.GetPersonByLogin(login)
@@ -173,7 +144,7 @@ func (s *Service) LoginStep(ctx context.Context, login, password string) (*Login
 	now := s.now()
 	var challenge string
 	err = s.update(ctx, func(tx store.Tx) error {
-		if err := tx.DeleteThrottle(login); err != nil {
+		if err := s.clearThrottle(ctx, tx, login); err != nil {
 			return err
 		}
 		if c, ok, err := s.mfaChallengeIfEnabled(tx, person.ID); err != nil || ok {
@@ -248,12 +219,18 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 	if !scoped.Can(domain.ScopeWrite) || actor.PersonID == "" {
 		return domain.ErrForbidden
 	}
-	if err := s.validatePassword(newPW); err != nil {
+	var hash, login string
+	if err := s.view(ctx, func(tx store.Tx) error {
+		p, h, err := tx.GetPerson(actor.PersonID)
+		if err == nil {
+			hash, login = h, p.Login
+		}
 		return err
-	}
-	var hash string
-	if err := s.view(ctx, func(tx store.Tx) (err error) { _, hash, err = tx.GetPerson(actor.PersonID); return }); err != nil {
+	}); err != nil {
 		return authnErr(err)
+	}
+	if err := s.validatePassword(newPW, login); err != nil {
+		return err
 	}
 	if !verifyPassword(oldPW, hash) {
 		return domain.ErrUnauthenticated

@@ -48,6 +48,11 @@ type Config struct {
 	// PendingAdjustmentTTL is how long a dual-control adjustment request waits
 	// for a second administrator (SEC-011). Zero selects 7 days.
 	PendingAdjustmentTTL time.Duration
+	// OnMemberErased, when set, runs after a member's anonymisation committed
+	// (SA2-17). Adapters use it to drop what they keep in memory for that
+	// person: export artefacts and cached idempotent responses. personID is
+	// the person behind the erased membership.
+	OnMemberErased func(netID, personID string)
 }
 
 // Service implements all use cases. It is safe for concurrent use.

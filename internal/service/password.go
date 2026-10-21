@@ -3,9 +3,12 @@ package service
 import (
 	"crypto/rand"
 	"crypto/subtle"
+	_ "embed" // commonpw.txt
 	"encoding/base64"
 	"fmt"
 	"strings"
+	"sync"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -73,15 +76,86 @@ func verifyPassword(pw, encoded string) bool {
 	return subtle.ConstantTimeCompare(got, want) == 1
 }
 
-// validatePassword enforces SEC-002: minimum length, at least 64 accepted,
-// no composition rules.
-func (s *Service) validatePassword(pw string) error {
+//go:embed commonpw.txt
+var commonPasswordsRaw string
+
+var (
+	commonOnce sync.Once
+	commonSet  map[string]struct{}
+)
+
+func commonPasswords() map[string]struct{} {
+	commonOnce.Do(func() {
+		commonSet = map[string]struct{}{}
+		for _, l := range strings.Split(commonPasswordsRaw, "\n") {
+			if l = strings.TrimSpace(l); l != "" && !strings.HasPrefix(l, "#") {
+				commonSet[l] = struct{}{}
+			}
+		}
+	})
+	return commonSet
+}
+
+var unleet = strings.NewReplacer("@", "a", "0", "o", "1", "i", "3", "e", "$", "s", "5", "s", "7", "t", "!", "i")
+
+// commonPassword reports whether pw is, ignoring case, a listed password,
+// optionally spelled with look-alike characters (p@ssw0rd) and/or followed by
+// digits and punctuation (password2025!).
+func commonPassword(pw string) bool {
+	set := commonPasswords()
+	lower := strings.ToLower(strings.TrimSpace(pw))
+	for _, c := range []string{lower, unleet.Replace(lower)} {
+		if _, ok := set[c]; ok {
+			return true
+		}
+		stem := strings.TrimRightFunc(c, func(r rune) bool { return !unicode.IsLetter(r) })
+		if len(stem) >= 4 {
+			if _, ok := set[stem]; ok {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// derivedPassword reports whether pw contains one of the related strings
+// (the login, its local part) of at least four characters, ignoring case and
+// look-alike spellings: a password built from the account name.
+func derivedPassword(pw string, related []string) bool {
+	lower := strings.ToLower(pw)
+	plain := unleet.Replace(lower)
+	for _, r := range related {
+		r = strings.ToLower(strings.TrimSpace(r))
+		cands := []string{r}
+		if at := strings.IndexByte(r, '@'); at > 0 {
+			r = r[:at]
+			cands = append(cands, r)
+		}
+		cands = append(cands, strings.FieldsFunc(r, func(c rune) bool { return !unicode.IsLetter(c) && !unicode.IsDigit(c) })...)
+		for _, c := range cands {
+			if utf8.RuneCountInString(c) >= 4 && (strings.Contains(lower, c) || strings.Contains(plain, c)) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// validatePassword enforces SEC-002: minimum length, at least 64 accepted, no
+// composition rules, plus a refusal of common passwords (embedded list) and of
+// passwords derived from related strings such as the login. Config.PasswordDenied
+// may add a stricter check.
+func (s *Service) validatePassword(pw string, related ...string) error {
 	n := utf8.RuneCountInString(pw)
 	switch {
 	case n < s.cfg.MinPasswordLen:
 		return domain.Invalid("password", fmt.Sprintf("must be at least %d characters", s.cfg.MinPasswordLen))
 	case len(pw) > 1024:
 		return domain.Invalid("password", "too long")
+	case commonPassword(pw):
+		return domain.Invalid("password", "is too common; choose another")
+	case derivedPassword(pw, related):
+		return domain.Invalid("password", "must not contain your login; choose another")
 	case s.cfg.PasswordDenied != nil && s.cfg.PasswordDenied(pw):
 		return domain.Invalid("password", "is too common; choose another")
 	}

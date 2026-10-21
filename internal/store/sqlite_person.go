@@ -63,6 +63,15 @@ func (t *txImpl) DeleteThrottle(login string) error {
 	return err
 }
 
+func (t *txImpl) DeleteThrottleFamily(key string) (int64, error) {
+	res, err := t.exec(`DELETE FROM login_throttle WHERE login = ? OR substr(login, 1, ?) = ?`,
+		key, len(key)+1, key+" ")
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // DeleteStaleThrottles removes up to limit rows whose lock (or last failure)
 // ended at or before cutoff.
 func (t *txImpl) DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error) {

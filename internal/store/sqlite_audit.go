@@ -175,6 +175,15 @@ func (t *txImpl) DeleteIdem(netID, actorID, op, key string) error {
 	return err
 }
 
+func (t *txImpl) DeleteIdemOfActor(netID, actorID string) (int64, error) {
+	res, err := t.exec(`DELETE FROM idempotency_keys WHERE actor_id = ? AND (? = '' OR network_id = ?)`,
+		actorID, netID, netID)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // DeleteExpiredIdem removes up to limit records that expired at or before now.
 func (t *txImpl) DeleteExpiredIdem(now time.Time, limit int) (int64, error) {
 	res, err := t.exec(`DELETE FROM idempotency_keys WHERE rowid IN

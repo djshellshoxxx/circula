@@ -62,6 +62,9 @@ type PersonRepo interface {
 	GetThrottle(login string) (failures int, lockedUntil time.Time, found bool, err error)
 	PutThrottle(login string, failures int, lockedUntil time.Time) error
 	DeleteThrottle(login string) error
+	// DeleteThrottleFamily removes the row named key and every row named key+" "+suffix
+	// (the per-address rows of SA2-10); returns the number removed.
+	DeleteThrottleFamily(key string) (int64, error)
 	// DeleteStaleThrottles purges up to limit rows whose lock ended at or before cutoff (SA-12).
 	DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error)
 
@@ -243,6 +246,8 @@ type IdemRepo interface {
 	GetIdem(netID, actorID, op, key string) (*IdemRecord, error) // nil, nil when absent
 	PutIdem(r IdemRecord) error
 	DeleteIdem(netID, actorID, op, key string) error
+	// DeleteIdemOfActor removes every record of actor in the network (netID "" = all networks); SA2-17.
+	DeleteIdemOfActor(netID, actorID string) (int64, error)
 	// DeleteExpiredIdem purges up to limit records expired at or before now (SA-12).
 	DeleteExpiredIdem(now time.Time, limit int) (int64, error)
 }
