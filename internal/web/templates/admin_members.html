@@ -1,0 +1,25 @@
+{{define "content"}}
+<form method="get" action="/n/{{.Slug}}/admin/members">
+  <div class="field"><label for="f-status">Show members</label>
+  <select id="f-status" name="status"><option value="">All</option>
+    <option value="pending"{{if eq (.Val "status") "pending"}} selected{{end}}>Pending approval</option>
+    <option value="active"{{if eq (.Val "status") "active"}} selected{{end}}>Active</option>
+    <option value="suspended"{{if eq (.Val "status") "suspended"}} selected{{end}}>Suspended</option>
+    <option value="departed"{{if eq (.Val "status") "departed"}} selected{{end}}>Departed</option></select></div>
+  <div class="actions"><button type="submit" class="secondary">Apply filter</button></div>
+</form>
+{{if .D.Rows}}
+<div class="scroll" role="region" aria-label="Members table" tabindex="0">
+<table class="stack">
+<caption>Members of {{.NetName}}</caption>
+<thead><tr><th scope="col">Name</th><th scope="col">Status</th><th scope="col">Roles</th><th scope="col">Actions</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr>
+  <th scope="row" data-label="Name">{{.DisplayName}}{{if .DefaultFlag}} <span class="tag">in default</span>{{end}}</th>
+  <td data-label="Status">{{.Status}}</td>
+  <td data-label="Roles">{{if .Roles}}{{.Roles}}{{else}}member{{end}}</td>
+  <td data-label="Actions">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}">{{.Label}}<span class="sr"> {{$m.DisplayName}}</span></a> {{end}}</td>
+</tr>{{end}}</tbody></table></div>
+<p>{{.D.Pages.Total}} member{{if ne .D.Pages.Total 1}}s{{end}} match this filter.</p>
+{{template "pagenav" dict "Label" "Member list pages" "Pages" .D.Pages}}
+{{else}}<p>No members match this filter.</p>{{end}}
+{{end}}

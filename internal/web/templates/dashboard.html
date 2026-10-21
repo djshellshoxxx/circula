@@ -1,0 +1,31 @@
+{{define "content"}}
+{{with .D}}
+<section class="card" aria-labelledby="bal-h">
+  <h2 id="bal-h">Your balance</h2>
+  <p class="big">{{template "balance" .Card.Balance}}</p>
+  <dl class="kv">
+    <dt>Credit limit</dt><dd>{{.Card.Limit}} {{$.Unit}}s</dd>
+    <dt>Reserved for pending outgoing trades</dt><dd>{{.Card.Reserved}} {{$.Unit}}s</dd>
+    <dt>Available to spend</dt><dd><strong>{{.Card.Available}} {{$.Unit}}s</strong></dd>
+    <dt>Awaiting from others (not available yet)</dt><dd>{{.Card.Awaiting}} {{$.Unit}}s</dd>
+  </dl>
+  {{if .Card.InDebt}}<p>{{.Card.Used}}</p>
+  {{if .Card.UsedPct}}<meter class="meter" min="0" max="100" value="{{.Card.UsedPct}}" aria-label="Credit limit in use">{{.Card.UsedPct}}%</meter>{{end}}{{end}}
+  <p>Available to spend is not your balance: pending outgoing trades reduce it. <a href="/help">What do these mean?</a></p>
+</section>
+<div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new">Propose a trade</a> <a class="btn secondary" href="/n/{{$.Slug}}/history">Full history</a></div>
+<section aria-labelledby="needs-h">
+  <h2 id="needs-h">Trades waiting for you</h2>
+  {{if .Needs}}{{template "txlist" dict "Rows" .Needs "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>Nothing is waiting for you. Proposals sent to you will appear here.</p>{{end}}
+</section>
+<section aria-labelledby="pend-h">
+  <h2 id="pend-h">Pending</h2>
+  {{if .Outgoing}}{{template "txlist" dict "Rows" .Outgoing "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>You have no pending trades waiting for others.</p>{{end}}
+</section>
+<section aria-labelledby="rec-h">
+  <h2 id="rec-h">Latest activity</h2>
+  {{if .Err}}<p role="alert">{{.Err}}</p>{{end}}
+  {{if .Recent}}{{template "txlist" dict "Rows" .Recent "Base" (printf "/n/%s" $.Slug)}}{{else if not .Err}}<p>No completed activity yet. Completed trades will appear here.</p>{{end}}
+</section>
+{{end}}
+{{end}}

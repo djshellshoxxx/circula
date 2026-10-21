@@ -1,0 +1,20 @@
+{{define "content"}}
+<h2>What credits are</h2>
+<p>Credits are accounting units used inside one network to record value that members give and receive. They have no value outside the network and nobody is obliged to accept them.</p>
+<h2>Balance: in credit, in debt, level</h2>
+<ul>
+<li><strong>In credit</strong> (shown with a plus sign): you have provided more value than you have received in this network.</li>
+<li><strong>In debt</strong> (shown with a minus sign): you have received more value than you have provided and are using part of your credit limit. It is not owed to or by the network itself.</li>
+<li><strong>Level</strong>: you have given and received the same.</li>
+</ul>
+<h2>Available to spend</h2>
+<p>Available to spend is your balance plus your credit limit, minus amounts set aside for your pending outgoing trades. It is not your balance. Pending outgoing trades reduce it straight away, and the amount is released if the trade is declined, cancelled or expires.</p>
+<h2>Trade statuses</h2>
+<dl class="kv">
+<dt>Waiting for someone to respond</dt><dd>Proposed but not accepted. Nothing is posted and it is not part of the balance.</dd>
+<dt>Completed</dt><dd>Accepted and posted to both accounts.</dd>
+<dt>Declined, Cancelled, Expired</dt><dd>Closed without posting anything.</dd>
+<dt>Disputed</dt><dd>A dispute is open; postings stay as they were until a reviewer decides.</dd>
+<dt>Reversed</dt><dd>A later posting has undone the trade.</dd>
+</dl>
+{{end}}

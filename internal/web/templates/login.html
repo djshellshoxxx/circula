@@ -1,0 +1,10 @@
+{{define "content"}}
+<form method="post" action="/login" novalidate>
+  {{template "csrf" .}}
+  <input type="hidden" name="next" value="{{.Next}}">
+  {{template "field" dict "P" . "Name" "login" "Label" "Login" "Auto" "username" "Req" true}}
+  {{template "field" dict "P" . "Name" "password" "Label" "Password" "Type" "password" "Auto" "current-password" "Req" true}}
+  <div class="actions"><button type="submit">Sign in</button></div>
+</form>
+<p>New here? <a href="/register{{if .Next}}?next={{qs .Next}}{{end}}">Create an account</a>. To join a network you need an invitation link from its administrator, or the network's join page.</p>
+{{end}}

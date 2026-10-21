@@ -1,0 +1,30 @@
+{{define "content"}}
+{{with .D}}
+<form method="get" action="/n/{{$.Slug}}/history">
+  <div class="field"><label for="f-status">Show</label>
+  <select id="f-status" name="status">
+    <option value="">All statuses</option>
+    <option value="proposed"{{if eq .Filter "proposed"}} selected{{end}}>Pending</option>
+    <option value="completed"{{if eq .Filter "completed"}} selected{{end}}>Completed</option>
+    <option value="declined"{{if eq .Filter "declined"}} selected{{end}}>Declined</option>
+    <option value="cancelled"{{if eq .Filter "cancelled"}} selected{{end}}>Cancelled</option>
+    <option value="expired"{{if eq .Filter "expired"}} selected{{end}}>Expired</option>
+    <option value="disputed"{{if eq .Filter "disputed"}} selected{{end}}>Disputed</option>
+    <option value="reversed"{{if eq .Filter "reversed"}} selected{{end}}>Reversed</option>
+  </select></div>
+  <div class="actions"><button type="submit" class="secondary">Apply filter</button></div>
+</form>
+<section aria-labelledby="hp-h"><h2 id="hp-h">Pending</h2>
+{{if .Pending}}<p>Pending trades are not part of your balance.</p>{{template "txlist" dict "Rows" .Pending "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>No pending trades.</p>{{end}}</section>
+<section aria-labelledby="hd-h"><h2 id="hd-h">Posted and closed</h2>
+{{if .Done}}{{template "txlist" dict "Rows" .Done "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>Nothing here yet. Once you trade, each entry shows who paid whom, the signed amount, its status and ledger reference.</p>{{end}}</section>
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/history?status=%s&after=" $.Slug .Filter)}}
+{{end}}
+<h2>Download your data</h2>
+<form method="post" action="/n/{{.Slug}}/export">
+  {{template "csrf" .}}
+  <div class="field"><label for="f-format">File format</label>
+  <select id="f-format" name="format"><option value="csv">CSV (spreadsheet)</option><option value="json">JSON</option></select></div>
+  <div class="actions"><button type="submit" class="secondary">Download my transactions</button></div>
+</form>
+{{end}}

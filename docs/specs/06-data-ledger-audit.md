@@ -1,0 +1,298 @@
+# 06 Data, Ledger and Audit Requirements
+
+Status: Draft v0.1 · Owner/role: Ledger and data lead · Last updated: 2026-10-21
+Scope: Conceptual data entities, identifiers, relationships, idempotency, append-only ledger entries, audit event contents and access, reconstructable balances, retention expectations, migration principles. No database vendor is prescribed beyond DEC-001 (embedded SQLite default behind a storage interface).
+Dependencies: [00-conventions.md](00-conventions.md) (glossary, LED-1..LED-7, DEC-001); [03-domain-model.md](03-domain-model.md) (domain definitions and rules); [05-architecture.md](05-architecture.md) (ARC-004..ARC-006, ARC-011, ARC-015); [07-api-contract.md](07-api-contract.md) (Idempotency-Key header); [09-security-privacy.md](09-security-privacy.md) (personal data minimisation, access); [12-quality-test-plan.md](12-quality-test-plan.md).
+Open questions: see section 11.
+
+Ledger rules (LED-1..LED-7) are defined once in [00-conventions.md](00-conventions.md) section 4. This document states the data-level requirements that enforce them and does not restate them as separate rules.
+
+---
+
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 38, not built 3, partial 7.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| DAT-001 | P0 | built | Identifiers are UUIDv7 text |
+| DAT-002 | P0 | built | IDs from injected generator |
+| DAT-003 | P0 | built | IDs carry no personal data |
+| DAT-004 | P1 | built | Invitation and session tokens random and stored hashed |
+| DAT-005 | P0 | built | Composite foreign keys with network id |
+| DAT-006 | P0 | built | Entry references one transaction and one account in same network |
+| DAT-007 | P0 | built | Two entries, equal and opposite, for trade, adjustment, reversal |
+| DAT-008 | P0 | built | Integer amounts with CHECK constraints |
+| DAT-009 | P0 | built | Network sum checked by verify |
+| DAT-010 | P0 | built | Triggers block update and delete on append-only tables |
+| DAT-011 | P0 | built | Enforcement tested via raw SQL |
+| DAT-012 | P1 | partial | One reversal per original not enforced; cumulative cap instead (DEC-040) |
+| DAT-013 | P1 | built | Adjustment reason required; counter-account is system account |
+| DAT-014 | P0 | built | Posting writes status, entries, balances, audit in one transaction |
+| DAT-015 | P0 | built | Limit check under write gate before posting |
+| DAT-016 | P0 | built | ledger_seq per network; history ordered by it |
+| DAT-017 | P0 | built | Times stored as UTC milliseconds |
+| DAT-018 | P0 | built | Available computed from balance, limit and proposed reservations |
+| DAT-019 | P0 | built | Cache changed only in posting |
+| DAT-020 | P0 | built | Verify checks per-account, per-transaction and network sums |
+| DAT-021 | P1 | built | BalanceAt sums entries up to a sequence (service only) |
+| DAT-022 | P0 | built | Reversal is new transaction; original unchanged |
+| DAT-023 | P1 | built | Adjustment against system account with audit |
+| DAT-024 | P1 | partial | Override path is time-limited audited limit change; no general admin override flag |
+| DAT-025 | P0 | built | Idempotency record written in same unit |
+| DAT-026 | P0 | built | Record key over network, person, operation and key |
+| DAT-027 | P0 | built | Fingerprint of request; reuse refused |
+| DAT-028 | P1 | built | Records expire after TTL (7 days) |
+| DAT-029 | P0 | built | Audit in same unit as change |
+| DAT-030 | P1 | built | Per-network hash chain with head; unkeyed (DEC-044) |
+| DAT-031 | P0 | built | Audit excludes secrets and tokens |
+| DAT-032 | P1 | partial | Audit export scope exists; format identical to ledger export not checked |
+| DAT-033 | P0 | partial | Member view of own audit exists in service; no member UI or API |
+| DAT-034 | P0 | built | Admin audit read is itself audited |
+| DAT-035 | P0 | partial | Reviewer audit scope in service; no reviewer UI |
+| DAT-036 | P0 | built | No operator read path to audit |
+| DAT-037 | P0 | built | CSV and JSON export with manifest and SHA-256 |
+| DAT-038 | P0 | built | Ledger export includes transactions, status, accounts, entries, audit |
+| DAT-039 | P0 | built | Export manifest states ledger_seq of one snapshot |
+| DAT-040 | P0 | partial | Manifest checksums exist; no verifier command for export packages |
+| DAT-041 | P1 | not built | No versioned export schema document or reference reader |
+| DAT-042 | P0 | built | Forward-only embedded migrations with recorded version |
+| DAT-043 | P0 | built | Pre-migration backup before migration on non-empty database |
+| DAT-044 | P0 | built | Post-migration verification gates serving |
+| DAT-045 | P1 | partial | Expand-then-contract is a practice; not enforced by tests |
+| DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
+| DAT-047 | P0 | not built | No 10,000-transaction fixture and no migration from prior released schema |
+| DAT-048 | P1 | not built | Migration duration not recorded |
+
+## 1. Principles
+
+1. **Entries are facts; balances are views.** Ledger entries are the record. Cached balances are a performance copy that MUST always equal the sum of entries (LED-3).
+2. **Corrections are new facts.** Nothing is edited or deleted in the ledger. A mistake is corrected by a reversal or an adjustment (LED-2).
+3. **One atomic unit per state change.** The status change, its ledger entries, cached balance updates, status history and audit event commit together or not at all (LED-4, LED-6).
+4. **Minimal personal data.** Store what the domain needs. Other personal data is held only where a documented purpose exists (09).
+5. **Network scoping everywhere.** Every network-scoped row carries a network id (ARC-007).
+
+## 2. Identifiers
+
+| Rule | Requirement |
+|---|---|
+| DAT-001 · P0 | Primary identifiers for all entities MUST be UUIDv7 in canonical 36-character lowercase text form (RFC 9562). |
+| DAT-002 · P0 | Identifiers MUST be generated by the domain layer through an injected generator (ARC-021), not by the database default, so tests are deterministic. |
+| DAT-003 · P0 | Identifiers MUST NOT encode personal data, network names, or sequence values that reveal membership counts. |
+| DAT-004 · P1 | Identifiers exposed in URLs and APIs MUST be the same as internal identifiers, so that the API does not require a second mapping; if a non-guessable public token is needed for an invitation or export link, it MUST be a separate random value of at least 128 bits. |
+
+Rationale: UUIDv7 is time-ordered, which helps index locality, and is widely supported. Ledger order is not derived from ids (see DAT-016).
+
+**Alternative recorded:** ULID text (26 characters, Crockford base32) is equivalent for these purposes. Choice: UUIDv7 (open question OQ-DAT-01 only if the owner prefers ULID).
+
+## 3. Entities
+
+Each entity is listed with its owning context and key attributes. Types are conceptual.
+
+| Entity | Context | Key attributes (conceptual) | Scope |
+|---|---|---|---|
+| Network | Governance | id, name, slug, status (active, suspended, closing, closed), created_at, currency name, decimals, closure record | Platform-level record; contains no member data |
+| NetworkPolicy (versioned) | Governance | network id, version, policy values (see 00 section 5), effective_at, changed_by, change reason | Append-only versions |
+| Member | Membership | id, network id, person id (or member-only identity), display name, status (invited, pending_approval, active, suspended, departed), joined_at, departed_at, directory visibility | One per person per network |
+| Person (identity) | Identity | id, sign-in identifier, credential material (hashed), recovery method, created_at | Global to the platform instance; not network data |
+| Role assignment | Identity/governance | network id, member id, role (network_administrator, dispute_reviewer), granted_at, granted_by, revoked_at | Append-only with revocation timestamp |
+| Account | Ledger | id, network id, member id (or system), credit_limit_minor (>= 0), cached_balance_minor, updated_at | One per member per network, plus one system account per network |
+| Listing | Market | id, network id, member id, kind (offer, request), title, description, status (active, paused, removed), created_at, updated_at | Versioned via audit, not overwritten history |
+| Transaction | Ledger | id, network id, kind (trade, adjustment, reversal), status, payer account id, payee account id, amount_minor (> 0), currency decimals (from policy at creation), listing id (optional), description, reason (mandatory for adjustment), original transaction id (for reversal), proposed_at, expires_at, completed_at, idempotency key reference | Immutable identity; mutable only through status transitions recorded in TransactionStatusEvent |
+| TransactionStatusEvent | Ledger | id, transaction id, from status, to status, actor, occurred_at, request id | Append-only |
+| LedgerEntry (posting) | Ledger | id, network id, transaction id, account id, signed_amount_minor (non-zero integer), ledger_seq, posted_at | Append-only (DAT-010) |
+| Dispute | Disputes | id, network id, transaction id, raised_by (member), reason category, description, status (open, under_review, resolved, withdrawn), opened_at, decided_at | Status changes are events |
+| DisputeEvent | Disputes | id, dispute id, actor, action, outcome (if any), occurred_at | Append-only |
+| AuditEvent | Audit | see section 7 | Append-only |
+| IdempotencyRecord | Platform | network id (or platform), actor id, operation, key, request fingerprint, response status, response reference, created_at, expires_at | Retained per section 9 |
+| Invitation / JoinRequest | Membership | id, network id, token reference (hashed), status, created_by, expires_at | Token stored only as hash |
+| ExportJob | Data export | id, network id, requested_by, scope (member or network), format, status, created_at, completed_at, artefact reference, checksum | Artefacts expire per section 9 |
+| ConsistencyCheckRun | Ledger | id, network id, started_at, finished_at, result, findings summary | Append-only |
+| Announcement | Governance | id, network id, title, body, published_at, effective_at, supersedes id | Append-only |
+| ApiToken | Identity | id, person id, network id (or platform scope), name, token hash, scopes, created_at, last_used_at, expires_at, revoked_at | Token value shown once; only hash stored |
+| Session | Identity | id (hashed), person id, created_at, last_seen_at, expires_at, revoked_at | Expires per 09 |
+
+## 4. Relationships and constraints
+
+| Rule | Requirement |
+|---|---|
+| DAT-005 · P0 | Every network-scoped table MUST have a non-null network id and a foreign key (or equivalent constraint) that makes cross-network references impossible. |
+| DAT-006 · P0 | A LedgerEntry MUST reference exactly one Transaction and exactly one Account, both in the same network. |
+| DAT-007 · P0 | A Transaction of kind `trade`, `adjustment`, or `reversal` MUST have exactly two LedgerEntries with equal magnitude and opposite sign (LED-1). Account of the payer and the payee MUST differ. |
+| DAT-008 · P0 | `amount_minor` MUST be an integer greater than zero. Signed amounts on entries MUST be non-zero integers (LED-7). Floating-point types MUST NOT be used for money at any layer. |
+| DAT-009 · P0 | Account balances per network MUST sum to zero, including the system account (LED-1). |
+| DAT-010 · P0 | LedgerEntry, TransactionStatusEvent, AuditEvent, DisputeEvent and ConsistencyCheckRun rows MUST NOT be updated or deleted by the application or by any administrative tool, except through the documented repair procedure in section 10, which itself writes audit events. Database permissions for the application role MUST NOT grant UPDATE or DELETE on these tables where the storage engine supports it. |
+| DAT-011 · P0 | Enforcement of DAT-010 MUST be tested, including attempts through the repository layer and raw database access in the test environment. |
+| DAT-012 · P1 | Reversal transactions MUST reference the original transaction; a transaction MUST NOT be reversed more than once. Enforced by a uniqueness constraint on `original transaction id` for kind `reversal`. |
+| DAT-013 · P1 | Each adjustment MUST carry a non-empty reason (maximum length to be set in 03) and MUST reference the system account as its counter-account (00 section 3). |
+
+## 5. Ledger and balances
+
+### 5.1 Posting
+
+| Rule | Requirement |
+|---|---|
+| DAT-014 · P0 | Posting a transaction (LED-4) MUST insert its status event, both ledger entries, update both cached balances, write the audit event, and set the status to `completed` within one storage transaction. Partial commits are forbidden. |
+| DAT-015 · P0 | Before posting, the storage transaction MUST read the current cached balance of every affected non-system account and check the credit limit (LED-5). Concurrent postings on the same account MUST be serialised (ARC-006). |
+| DAT-016 · P0 | Each committed posting batch receives a `ledger_seq` value from a per-network counter that is strictly increasing in commit order. Gaps caused by rolled-back attempts are permitted. Ordering of history MUST use `ledger_seq`, not `id` or wall-clock time. |
+| DAT-017 · P0 | Times MUST be stored in UTC with at least millisecond precision. Display time zones are a UX concern (08). |
+
+### 5.2 Balance semantics
+
+Sign convention (from 00 glossary): a member's balance is the sum of its signed entries. A payer's entry is negative; a payee's entry is positive. Positive balance means the member has provided more value than it has received in this network. Negative balance means it has received more value than it has provided, within its credit limit.
+
+| Rule | Requirement |
+|---|---|
+| DAT-018 · P0 | `available_minor` for a payer MUST be computed as `cached_balance_minor + credit_limit_minor − reserved_outgoing_minor`, where reserved amounts are the sum of outgoing `proposed` and `accepted` transactions not yet completed, as defined in 00. |
+| DAT-019 · P0 | Cached balances MUST be updated only inside a posting (DAT-014) or a documented repair (section 10). |
+| DAT-020 · P0 | The consistency check (ARC-015) MUST verify, per network, that the sum of entries per account equals the cached balance, that per-transaction sums are zero, and that the network total is zero. |
+| DAT-021 · P1 | Balance history for an account MUST be reconstructable at any `ledger_seq` by summing entries with `ledger_seq` at or below the requested value. A test MUST verify this against the cached balance at the latest value. |
+
+### 5.3 Reversals and adjustments
+
+| Rule | Requirement |
+|---|---|
+| DAT-022 · P0 | A reversal creates a new transaction of kind `reversal` with entries equal and opposite to the original's entries. The original and its entries MUST NOT change. |
+| DAT-023 · P1 | An adjustment creates a new transaction of kind `adjustment` posting equal and opposite entries between the member account and the system account. The adjustment MUST be created by a network administrator with a reason, and MUST write an audit event (LED-6). |
+| DAT-024 · P1 | A reversal or adjustment that would take a non-system account below its negative limit MUST be refused unless the policy explicitly allows administrative override, and any override MUST be recorded in the audit event with the reason (LED-5 and 03). |
+
+Detailed reversal, cancellation, and dispute rules are in [03-domain-model.md](03-domain-model.md).
+
+## 6. Idempotency
+
+Requests that create or change ledger state MUST be idempotent (LED-4). The Idempotency-Key header and its HTTP behaviour are specified in [07-api-contract.md](07-api-contract.md) section 5. The storage requirements are:
+
+| Rule | Requirement |
+|---|---|
+| DAT-025 · P0 | An IdempotencyRecord MUST be written in the same storage transaction as the state change it protects. A retry with the same key MUST return the original stored response without any second posting. |
+| DAT-026 · P0 | The record key MUST be unique over (network id, actor id, operation, key). Concurrent duplicate requests MUST NOT both proceed (uniqueness constraint, not an application check alone). |
+| DAT-027 · P0 | The record MUST store a fingerprint of the normalised request body. Reuse of a key with a different fingerprint MUST be rejected, not replayed. |
+| DAT-028 · P1 | Idempotency records MUST expire after the retention period in section 9. An expired record means the key is free for reuse. |
+
+### 6.1 Idempotency keys table
+
+| Operation (domain command) | Idempotency required | Key scope | Behaviour on retry |
+|---|---|---|---|
+| Propose transaction | Yes (MUST) | network, member actor | Returns original transaction |
+| Accept transaction | Yes (MUST) | network, actor | Returns original posting result |
+| Decline, cancel transaction | Yes (MUST) | network, actor | Returns original status event |
+| Create dispute | Yes (MUST) | network, member | Returns original dispute |
+| Create adjustment | Yes (MUST) | network, administrator | Returns original adjustment |
+| Create reversal | Yes (MUST) | network, administrator or dispute reviewer | Returns original reversal |
+| Create listing | Yes (SHOULD) | network, member | Returns original listing |
+| Join network or accept invitation | Yes (MUST) | network or invitation, person | Returns original membership |
+| Change policy | Yes (MUST) | network, administrator | Returns original policy version |
+| Create export job | Yes (SHOULD) | network, requester | Returns original job |
+| Create API token | Yes (SHOULD) | person | Returns original token id only; token value is not re-shown |
+| Expiry sweep (background) | Not applicable; idempotent by construction (ARC-012) | Not applicable | Re-running changes nothing |
+
+## 7. Audit events
+
+### 7.1 Contents
+
+Every state change (LED-6) MUST write one AuditEvent in the same storage transaction. Required fields:
+
+| Field | Requirement |
+|---|---|
+| id | UUIDv7 (DAT-001) |
+| network_id | Required, except for platform-level events (network provisioning) which use a platform scope marker |
+| seq | Monotonic per network, assigned at commit |
+| occurred_at | UTC timestamp, millisecond precision |
+| actor_type | One of `member`, `network_administrator`, `dispute_reviewer`, `platform_operator`, `system` |
+| actor_id | Id of the actor, or null for `system` |
+| action | Stable verb identifier from a documented list (for example `transaction.proposed`, `transaction.completed`, `member.approved`, `policy.changed`, `dispute.opened`, `operator.access_granted`) |
+| target_type, target_id | Entity type and id affected |
+| request_id | Request identifier from the edge (ARC-022), or the job id for background work |
+| idempotency reference | Key reference (hash) when the change came from an idempotent request |
+| summary_before, summary_after | Minimal, non-personal snapshot of changed fields only (see 7.3) |
+| reason | Required for adjustments, overrides, operator access, and policy changes |
+
+### 7.2 Properties
+
+| Rule | Requirement |
+|---|---|
+| DAT-029 · P0 | Audit events MUST be append-only (DAT-010) and MUST be written in the same storage transaction as the change they describe (LED-6). |
+| DAT-030 · P1 | Each network's audit chain SHOULD be tamper-evident: each event stores a hash of its content and the previous event hash. This detects silent edits; it does not prevent a database administrator from rewriting the whole chain. The spec does not claim tamper-proofing. |
+| DAT-031 · P0 | An audit event MUST NOT contain passwords, session identifiers, token values, invitation tokens, or full contact details. |
+| DAT-032 · P1 | Audit events MUST be exportable in the same format as the ledger export (section 8). |
+
+### 7.3 Summaries and minimisation
+
+Audit summaries record which fields changed and their old and new values only where the value is a status, policy value, amount, or a non-personal identifier. Free text (listing descriptions, dispute narratives) MUST NOT be copied into audit summaries; the audit event stores the target id instead.
+
+### 7.4 Access to audit history
+
+| Rule | Requirement |
+|---|---|
+| DAT-033 · P0 | Members MAY see audit events that concern their own transactions and accounts, with actor identities reduced to a role or pseudonymous label where the policy requires. |
+| DAT-034 · P0 | Network administrators MUST be able to read the network's full audit history. Access MUST itself be audited. |
+| DAT-035 · P0 | Dispute reviewers MUST be able to read audit events that concern disputes they are assigned to. |
+| DAT-036 · P0 | Platform operators MUST NOT read audit events except through the break-glass path in ARC-009, which is itself audited in the network. |
+
+## 8. Export format
+
+| Rule | Requirement |
+|---|---|
+| DAT-037 · P0 | Exports MUST use documented, open, machine-readable formats. The MVP format set is: CSV for tabular data (one file per table, UTF-8, RFC 4180 quoting, header row) and JSON for the full structured package, with a manifest listing files, row counts and SHA-256 checksums. |
+| DAT-038 · P0 | Exports MUST include ledger entries, transactions, status history, accounts with cached balances at export time, listings, members (minimum fields), disputes and audit events within scope. |
+| DAT-039 · P0 | An export MUST be taken from a consistent snapshot of one `ledger_seq` value and the manifest MUST state that value. |
+| DAT-040 · P0 | A checksum mismatch or row count mismatch detected during verification MUST fail the export verification step. |
+| DAT-041 · P1 | The export format MUST be documented in a versioned schema description, and a reference reader MUST read it without the application. |
+
+## 9. Retention
+
+Retention values are recommended defaults. Legal and jurisdiction-specific retention requirements are unresolved and for qualified counsel; this spec does not assert compliance (00 section 6).
+
+| Data | Default retention (recommended) | Notes |
+|---|---|---|
+| Ledger entries, transactions, status events | Lifetime of the network, then retained in its closure export per 10 | Required for balance reconstruction (LED-3); not deleted by member departure |
+| Audit events | Lifetime of the network | Minimal content (7.3) |
+| Disputes and dispute events | Lifetime of the network, or as counsel determines | Ties to dispute window (00 section 5) |
+| Member personal fields | Until departure plus a configured period (default 90 days, product decision) | Display names may be pseudonymised on departure while keeping ledger references |
+| Sessions | Expire after 30 days idle (default, see 09) | Revoked on password change |
+| API tokens | Until revoked or expired; revoked tokens kept as metadata for 1 year (default) | Token value never stored |
+| IdempotencyRecord | 24 hours minimum; 7 days recommended default | Must exceed the longest retry window of supported clients |
+| Export artefacts | Deleted 7 days after creation (default) | Checksum kept in ExportJob |
+| Backups | Per 11 (product decision) | Deleted backups must not restore data that departed members asked to be erased, unless the ledger requires it; see OQ-DAT-03 |
+| Consistency check runs | Lifetime of the network | Small records |
+
+## 10. Migrations and repairs
+
+### 10.1 Migration principles
+
+| Rule | Requirement |
+|---|---|
+| DAT-042 · P0 | Schema migrations MUST be forward-only, versioned, and applied in order with a recorded version. Each migration MUST be idempotent under a retried run (or refuse to start if partially applied). |
+| DAT-043 · P0 | Before any migration on a non-empty database, a backup MUST be taken and verified. |
+| DAT-044 · P0 | After every migration, the consistency check (ARC-015, DAT-020) MUST pass before the application serves writes. |
+| DAT-045 · P1 | Schema changes SHOULD follow expand-then-contract: add new structures, backfill, switch reads, then remove old structures in a later release. |
+| DAT-046 · P0 | Migrations MUST NOT modify rows of append-only tables, except a migration that only adds nullable columns with a documented default meaning, which MUST be recorded in the migration notes and tested. |
+| DAT-047 · P0 | Each release MUST be tested with a migration from the previous released schema, using a fixture with at least 10,000 transactions across at least 50 accounts, with the consistency check passing afterwards. |
+| DAT-048 · P1 | Migration duration on the fixture MUST be recorded per release so operators can estimate downtime (threshold set by product decision). |
+
+### 10.2 Repair procedure
+
+Ledger repair is a last resort. It MUST:
+
+1. Be requested with a reason and an identified finding from the consistency check or an incident record.
+2. Prefer a compensating reversal or adjustment over direct data change. A direct data change is allowed only to restore a cached balance to the sum of entries (DAT-019), or in an incident with approval from two people, one of them a network administrator (or platform operator with the network administrator's consent) and one independent reviewer.
+3. Write audit events describing the before and after values, with actor, reason and incident reference, and run the consistency check again.
+
+The repair procedure is specified in detail in [11-deployment-operations.md](11-deployment-operations.md).
+
+## 11. Open questions
+
+- **OQ-DAT-01 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-062.
+- **OQ-DAT-02 (decision needed):** Whether members may see the actor identity on audit events concerning their transactions (DAT-033). Recommended default: role or pseudonymous label only. Raised by the build: DEC-078 in [DECISIONS.md](../DECISIONS.md).
+- **OQ-DAT-03 (decision needed, counsel):** How backups and ledger retention interact with deletion requests of departed members. Affects section 9 and DAT-033. No compliance is asserted.
+- **OQ-DAT-04 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-044.
+- **OQ-DAT-05 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
+- **OQ-DAT-06 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-050.
+
+Cross-references: domain rules [03-domain-model.md](03-domain-model.md); architecture [05-architecture.md](05-architecture.md); API [07-api-contract.md](07-api-contract.md); security [09-security-privacy.md](09-security-privacy.md); governance [10-governance-operations.md](10-governance-operations.md); operations [11-deployment-operations.md](11-deployment-operations.md); test plan [12-quality-test-plan.md](12-quality-test-plan.md); decisions [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).

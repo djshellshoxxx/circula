@@ -1,0 +1,5 @@
+{{define "content"}}
+{{if .D}}
+<ul class="rows">{{range .D}}<li><a href="/n/{{$.Slug}}/disputes/{{.ID}}">Dispute: {{.Category}}</a> &middot; <span class="tag">{{.Status}}</span> &middot; opened {{.Opened}}</li>{{end}}</ul>
+{{else}}<p>You have no disputes. To contest a completed trade, open it from your <a href="/n/{{.Slug}}/trades">trades</a> and choose Raise a dispute.</p>{{end}}
+{{end}}
