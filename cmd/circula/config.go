@@ -56,6 +56,7 @@ var settingDefs = []settingDef{
 	{key: "log-level", def: "info", help: "debug, info, warn or error"},
 	{key: "log-format", def: "json", help: "json or text"},
 	{key: "cookie-secure", def: "true", help: "mark session cookies Secure and use the __Host- cookie name; keep true behind a TLS proxy (SEC-022)"},
+	{key: "maintenance", def: "false", help: "start in maintenance mode: web and API answer 503 with Retry-After, /healthz stays up (OPS-024); toggle live with `circula maintenance on|off`"},
 	{key: "metrics-allow", def: "127.0.0.1/32,::1/128", help: "comma-separated CIDRs allowed to read /metrics; none to deny all"},
 	{key: "trusted-proxies", def: "none", help: "comma-separated CIDRs of reverse proxies whose X-Forwarded-For and X-Forwarded-Proto are believed; none ignores those headers"},
 	{key: "allow-insecure-http", def: "false", help: "permit a plain-http public-base-url on a non-loopback address (SEC-022); never for production"},
@@ -95,6 +96,7 @@ type Config struct {
 	LogLevel            slog.Level
 	LogFormat           string
 	CookieSecure        bool
+	Maintenance         bool // start in maintenance mode (OPS-024)
 	MetricsAllow        []netip.Prefix
 	TrustedProxies      []netip.Prefix
 	AllowInsecureHTTP   bool
@@ -322,6 +324,12 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		fail("cookie-secure", "must be true or false")
 	} else {
 		cfg.CookieSecure = b
+	}
+
+	if b, err := strconv.ParseBool(get("maintenance")); err != nil {
+		fail("maintenance", "must be true or false")
+	} else {
+		cfg.Maintenance = b
 	}
 
 	cfg.MetricsAllow = parsePrefixes(get("metrics-allow"), fail, "metrics-allow")

@@ -29,6 +29,7 @@ var sampleValues = map[string]string{
 	"log-level":             "debug",
 	"log-format":            "text",
 	"cookie-secure":         "false",
+	"maintenance":           "true",
 	"metrics-allow":         "10.0.0.0/8",
 	"trusted-proxies":       "10.0.0.0/8, 192.168.1.1",
 	"allow-insecure-http":   "true",

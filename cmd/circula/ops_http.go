@@ -28,7 +28,17 @@ type opsServer struct {
 	db      *sql.DB
 	logger  *slog.Logger
 	metrics *metrics
-	ready   atomic.Bool // set once serving starts, cleared on shutdown
+	ready   atomic.Bool  // set once serving starts, cleared on shutdown
+	maint   *maintenance // nil disables maintenance mode (tests)
+	frozen  func() int   // number of frozen networks; nil means none
+}
+
+// gated puts the maintenance gate in front of h (OPS-024).
+func (o *opsServer) gated(h http.Handler, api bool) http.Handler {
+	if o.maint == nil {
+		return h
+	}
+	return o.maint.gate(h, api)
 }
 
 // routeOf maps a request path to a route template label. Only fixed templates
@@ -48,8 +58,8 @@ func routeOf(p string) string {
 // the request deadline; the operational endpoints do not.
 func (o *opsServer) routes(api, web http.Handler) http.Handler {
 	mux := http.NewServeMux()
-	mux.Handle("/api/", o.bounded(api))
-	mux.Handle("/", o.bounded(web))
+	mux.Handle("/api/", o.bounded(o.gated(api, true)))
+	mux.Handle("/", o.bounded(o.gated(web, false)))
 	mux.HandleFunc("/healthz", o.healthz)
 	mux.HandleFunc("/readyz", o.readyz)
 	mux.HandleFunc("/metrics", o.metricsAccess(o.serveMetrics))
@@ -237,6 +247,12 @@ func (o *opsServer) serveMetrics(w http.ResponseWriter, r *http.Request) {
 		dbBytes:    fileSize(o.cfg.Database),
 		walBytes:   fileSize(o.cfg.Database + "-wal"),
 		now:        now,
+	}
+	if o.maint != nil {
+		dyn.maintenance, _ = o.maint.state()
+	}
+	if o.frozen != nil {
+		dyn.frozen = o.frozen()
 	}
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 	o.metrics.write(w, dyn)

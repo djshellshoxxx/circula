@@ -143,6 +143,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	svc.SetObserver(m)
 
 	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "startup-verify", "")
 	if err != nil {
@@ -150,17 +151,20 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	}
 	sum := summarise(checks)
 	m.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
-	if sum.Failing > 0 {
-		logger.Error("ledger verification failed at start-up; serving refused", "failing_networks", sum.Failing)
-		return fmt.Errorf("ledger verification failed for %d network(s); serving refused. Run `circula verify-ledger` "+
-			"and restore a verified backup if the fault is confirmed (OPS-016, OPS-020)", sum.Failing)
-	}
+	// A failing network is frozen (read-only) and every other network serves
+	// (CMD-07, OPS-033). The operator is told loudly; nothing is refused.
+	applyFreeze(svc, checks, logger)
 
 	ln, err := net.Listen("tcp", cfg.Listen)
 	if err != nil {
 		return fmt.Errorf("listen on %s: %w", cfg.Listen, err)
 	}
-	ops := &opsServer{cfg: cfg, db: st.DB(), logger: logger, metrics: m}
+	maint := newMaintenance(cfg)
+	if on, _ := maint.state(); on {
+		logger.Warn("maintenance mode is on: web and API answer 503 until it is turned off", "file", maintenancePath(cfg.Database))
+	}
+	ops := &opsServer{cfg: cfg, db: st.DB(), logger: logger, metrics: m, maint: maint,
+		frozen: func() int { return len(svc.FrozenNetworks()) }}
 	apiH, webH, err := newHandlers(svc, cfg, logger)
 	if err != nil {
 		return err
@@ -293,12 +297,31 @@ type jobRunner struct {
 	metrics *metrics
 }
 
+// periodicJob is one entry of the scheduled job table.
+type periodicJob struct {
+	name     string
+	interval time.Duration
+	fn       func(context.Context) error
+}
+
+// periodicJobs is the table of interval jobs. To add a job, append a row
+// (name is the metrics label; fn runs at start and then every interval).
+// Backups have their own schedule and are started separately in run.
+func (j *jobRunner) periodicJobs() []periodicJob {
+	return []periodicJob{
+		{"expiry", expiryInterval, j.expire},
+		{"verify", verifyInterval, j.verify},
+		{"purge", purgeInterval, j.purge},
+	}
+}
+
 func (j *jobRunner) run(ctx context.Context) {
 	var wg sync.WaitGroup
-	wg.Add(4)
-	go func() { defer wg.Done(); j.every(ctx, "expiry", expiryInterval, j.expire) }()
-	go func() { defer wg.Done(); j.every(ctx, "verify", verifyInterval, j.verify) }()
-	go func() { defer wg.Done(); j.every(ctx, "purge", purgeInterval, j.purge) }()
+	for _, pj := range j.periodicJobs() {
+		wg.Add(1)
+		go func() { defer wg.Done(); j.every(ctx, pj.name, pj.interval, pj.fn) }()
+	}
+	wg.Add(1)
 	go func() { defer wg.Done(); j.backups(ctx) }()
 	wg.Wait()
 }
@@ -362,10 +385,25 @@ func (j *jobRunner) verify(ctx context.Context) error {
 	}
 	sum := summarise(checks)
 	j.metrics.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
-	if sum.Failing > 0 {
-		j.logger.Error("ledger verification failed", "failing_networks", sum.Failing)
-	}
+	applyFreeze(j.svc, checks, j.logger)
 	return nil
+}
+
+// applyFreeze freezes every network that failed verification and thaws the
+// ones that passed (a repaired or restored network recovers on the next run).
+// Reasons are the finding counts only; findings stay in verify-ledger output.
+func applyFreeze(svc *service.Service, checks []networkCheck, logger *slog.Logger) {
+	for _, c := range checks {
+		switch {
+		case !c.OK && !svc.IsFrozen(c.ID):
+			svc.FreezeNetwork(c.ID, fmt.Sprintf("%d ledger finding(s)", len(c.Findings)))
+			logger.Error("ledger verification failed; network frozen (writes refused, other networks serve)",
+				"network", c.Slug, "findings", len(c.Findings))
+		case c.OK && svc.IsFrozen(c.ID):
+			svc.UnfreezeNetwork(c.ID)
+			logger.Warn("ledger verification passes again; network unfrozen", "network", c.Slug)
+		}
+	}
 }
 
 // backups takes a backup when the newest one is older than backup-interval,

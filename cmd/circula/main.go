@@ -49,6 +49,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return cmdRestore(ctx, rest, stdout, stderr)
 	case "verify-ledger":
 		return cmdVerifyLedger(ctx, rest, stdout, stderr)
+	case "maintenance":
+		return cmdMaintenance(ctx, rest, stdout, stderr)
 	case "admin":
 		return cmdAdmin(ctx, rest, stdout, stderr)
 	case "version", "--version":
@@ -74,6 +76,7 @@ commands:
   backup <dest>               write a verified online snapshot and manifest (file or directory)
   restore <backup-file>       restore a backup into the configured database (stop serve first)
   verify-ledger [-network X]  recompute ledger invariants (read-only except the recorded run)
+  maintenance on|off|status   toggle maintenance mode of a running instance (503 for web and API)
   admin create-operator       create a person from --login; password from env or stdin
   version                     print version information
 
