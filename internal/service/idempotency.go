@@ -9,7 +9,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/store"
 )
 
-const maxKeyLen = 200
+const maxKeyLen = 255 // matches the API edge and API-021 (D-03)
 
 func requireKey(key string) error {
 	if key == "" {
