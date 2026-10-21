@@ -55,6 +55,7 @@ const (
 	ActAuditRead          = "audit.read"
 	ActExport             = "export.created"
 	ActVerify             = "ledger.verified"
+	ActRestore            = "database.restored" // OPS-020: written into each network chain after a restore
 	ActPersonRegistered   = "person.registered"
 	ActRegisterDuplicate  = "person.register_duplicate" // sign-up with a login that already exists (SA-10)
 	ActPasswordChanged    = "person.password_changed"
