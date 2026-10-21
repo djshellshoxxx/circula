@@ -336,7 +336,7 @@ func TestAnonymiseBySystemAndImmutableRecord(t *testing.T) {
 func TestErasureRemovesMFAAndNotices(t *testing.T) {
 	w, _ := erasureWorld(t)
 	tu.Must2(w.Svc.CreateAPIToken(w.Ctx, w.a, service.TokenInput{Name: "AnaSecretLaptop", Scopes: []domain.Scope{domain.ScopeRead}}))
-	tu.Must(w.Svc.BeginMFAEnrolment(w.Ctx, w.a))
+	tu.Must(w.Svc.BeginMFAEnrolment(w.Ctx, w.a, pw))
 	w.depart(w.admin, w.aM)
 	tu.Must(w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, "gdpr"))
 	for _, q := range []string{"person_mfa", "security_notices", "recovery_codes", "account_recovery_codes"} {

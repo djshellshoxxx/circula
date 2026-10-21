@@ -201,7 +201,7 @@ func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor,
 	if now.Sub(sess.LastSeenAt) > time.Minute {
 		_ = s.update(ctx, func(tx store.Tx) error { return tx.TouchSession(id, now) })
 	}
-	return domain.Actor{PersonID: sess.PersonID, Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}, MustChangePassword: must}, nil
+	return domain.Actor{PersonID: sess.PersonID, Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}, MustChangePassword: must, SessionID: id}, nil
 }
 
 // Logout revokes the session behind token. Unknown tokens are ignored.

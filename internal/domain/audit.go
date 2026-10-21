@@ -106,6 +106,9 @@ type Actor struct {
 	// person's password was reset by someone else (SEC-008). Can(ScopeWrite)
 	// is then false, so every write refuses until ChangePassword succeeds.
 	MustChangePassword bool
+	// SessionID is the hashed id of the session behind this actor (empty for
+	// tokens and system actors); lets a call spare the caller's own session.
+	SessionID string
 }
 
 // SystemActor is used by background jobs (expiry sweep) and operator CLI.

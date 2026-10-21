@@ -140,7 +140,7 @@ func (s *Service) OperatorUnlockLogin(ctx context.Context, actor domain.Actor, l
 		if err != nil {
 			return domain.NotFound("person")
 		}
-		for _, k := range []string{login, recoverKey(login), mfaKey(person.ID)} {
+		for _, k := range []string{login, recoverKey(login), mfaKey(person.ID), recgenKey(person.ID)} {
 			c, err := tx.DeleteThrottleFamily(k)
 			if err != nil {
 				return err

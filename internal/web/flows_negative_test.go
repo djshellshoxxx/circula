@@ -149,7 +149,7 @@ func TestWebMFANegative(t *testing.T) {
 	b.mustContain(b.get("/account/security"), "is <strong>on</strong>", "10 unused recovery codes")
 
 	// Start enrolment again while on: refused, nothing changes.
-	if p := b.post("/account/security/mfa/enrol", sec, nil); p.Status != 409 {
+	if p := b.post("/account/security/mfa/enrol", sec, url.Values{"password": {testPW}}); p.Status != 409 {
 		t.Errorf("enrol while on: %d", p.Status)
 	}
 	// Disable with a correct code but a wrong password.

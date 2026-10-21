@@ -141,12 +141,40 @@ func (s *Service) MFAStatus(ctx context.Context, actor domain.Actor) (*MFAStatus
 	return st, nil
 }
 
+// checkCurrentPassword proves the caller knows the account password (A3-03): a
+// stolen session alone must not be able to bind an attacker's authenticator.
+// Guesses share the recgen throttle with GenerateRecoveryCodes and are counted
+// before the hash is compared. A wrong password is a validation error on the
+// "password" field.
+func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, password string) error {
+	var hash string
+	err := s.update(ctx, func(tx store.Tx) error {
+		if err := s.reserveAttempt(tx, recgenKey(actor.PersonID)); err != nil {
+			return err
+		}
+		_, h, err := tx.GetPerson(actor.PersonID)
+		hash = h
+		return authnErr(err)
+	})
+	if err != nil {
+		return err
+	}
+	if !verifyPassword(password, hash) {
+		return domain.Invalid("password", "is not correct") // the attempt was counted above
+	}
+	return nil
+}
+
 // BeginMFAEnrolment starts (or, within 15 minutes, resumes) enrolment: it
 // returns the secret and otpauth URI. MFA stays off until ConfirmMFAEnrolment.
 // Resuming returns the same pending secret so a mistyped confirmation does not
-// strand the authenticator app. Conflict when MFA is already enabled.
-func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor) (*MFAEnrolment, error) {
+// strand the authenticator app. Conflict when MFA is already enabled. It needs
+// the current password (A3-03).
+func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor, password string) (*MFAEnrolment, error) {
 	if err := s.mfaActor(actor); err != nil {
+		return nil, err
+	}
+	if err := s.checkCurrentPassword(ctx, actor, password); err != nil {
 		return nil, err
 	}
 	var out *MFAEnrolment
@@ -204,9 +232,15 @@ func (s *Service) issueRecoveryCodes(tx store.Tx, personID string) ([]string, er
 
 // ConfirmMFAEnrolment enables the second factor when code is valid for the
 // pending secret and returns ten single-use recovery codes. The codes are
-// shown once; only salted hashes are kept. Attempts are throttled.
-func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, code string) ([]string, error) {
+// shown once; only salted hashes are kept. Attempts are throttled. It needs the
+// current password as well as the code (A3-03), and on success revokes every
+// other session of the person, so a session stolen earlier cannot ride along
+// with the new second factor.
+func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, password, code string) ([]string, error) {
 	if err := s.mfaActor(actor); err != nil {
+		return nil, err
+	}
+	if err := s.checkCurrentPassword(ctx, actor, password); err != nil {
 		return nil, err
 	}
 	if err := s.reserveMFA(ctx, actor.PersonID); err != nil {
@@ -243,6 +277,9 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, c
 			return err
 		}
 		if err := tx.DeleteThrottle(mfaKey(actor.PersonID)); err != nil {
+			return err
+		}
+		if err := tx.RevokeOtherSessionsOf(actor.PersonID, actor.SessionID, now); err != nil {
 			return err
 		}
 		if err := s.auditPlatform(tx, actor, auditEntry{Action: domain.ActMFAEnabled, TargetType: "person", TargetID: actor.PersonID}); err != nil {
@@ -344,4 +381,56 @@ func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Acto
 		return nil, err
 	}
 	return codes, nil
+}
+
+// OperatorResetMFA removes a person's second factor from the CLI
+// (`circula reset-mfa`) for someone who lost both authenticator and recovery
+// codes. actor must be domain.SystemActor. It deletes the MFA record, the
+// recovery codes and every pending second-factor challenge, clears the
+// second-factor throttles and revokes every session (the password is not
+// touched; reset that separately if it is in doubt). The person gets a
+// security notice and the audit event carries the mandatory reason. An unknown
+// login is NotFound and a person without a second factor InvalidState (the CLI
+// is trusted).
+func (s *Service) OperatorResetMFA(ctx context.Context, actor domain.Actor, login, reason string) error {
+	if !actor.System {
+		return domain.ErrForbidden
+	}
+	reason, err := checkResetReason(reason)
+	if err != nil {
+		return err
+	}
+	login = normalizeLogin(login)
+	return s.update(ctx, func(tx store.Tx) error {
+		person, _, err := tx.GetPersonByLogin(login)
+		if err != nil {
+			return domain.NotFound("person")
+		}
+		if _, err := tx.GetMFA(person.ID); err != nil {
+			if errors.Is(err, domain.ErrNotFound) {
+				return domain.InvalidState("second factor is not set up")
+			}
+			return err
+		}
+		if err := tx.DeleteMFA(person.ID); err != nil {
+			return err
+		}
+		if err := tx.ReplaceRecoveryCodes(person.ID, nil); err != nil {
+			return err
+		}
+		if err := tx.DeleteMFAChallengesOf(person.ID); err != nil {
+			return err
+		}
+		if _, err := tx.DeleteThrottleFamily(mfaKey(person.ID)); err != nil {
+			return err
+		}
+		if err := tx.RevokeSessionsOf(person.ID, s.now()); err != nil {
+			return err
+		}
+		if err := s.notify(tx, person.ID, domain.NoticeMFADisabled, "removed by the platform operator"); err != nil {
+			return err
+		}
+		return s.auditPlatform(tx, actor, auditEntry{Type: domain.ActorOperator, Action: domain.ActMFAReset,
+			TargetType: "person", TargetID: person.ID, Reason: reason})
+	})
 }

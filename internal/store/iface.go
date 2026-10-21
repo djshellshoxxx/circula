@@ -73,6 +73,8 @@ type PersonRepo interface {
 	TouchSession(idHash string, seen time.Time) error
 	RevokeSession(idHash string, at time.Time) error
 	RevokeSessionsOf(personID string, at time.Time) error
+	// RevokeOtherSessionsOf revokes every live session of the person except keepID (A3-03).
+	RevokeOtherSessionsOf(personID, keepID string, at time.Time) error
 	// DeleteDeadSessions purges up to limit sessions that are expired, idle since
 	// idleBefore or revoked at or before revokedBefore (SA-12).
 	DeleteDeadSessions(now, idleBefore, revokedBefore time.Time, limit int) (int64, error)

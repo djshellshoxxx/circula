@@ -50,6 +50,18 @@ circula unlock -config /etc/circula/circula.json -login NAME
 The command clears the throttle for that login only and is audited. It does not reset the password; use the recovery flow
 for that. Confirm the person's identity out of band first.
 
+## Lost authenticator and recovery codes
+
+After verifying the person out of band, with `serve` stopped:
+
+```sh
+circula reset-mfa -config /etc/circula/circula.json -login NAME -reason "ticket 42: lost phone and codes"
+```
+
+This removes the second factor, recovery codes and pending challenges, ends every session, notifies the person and writes an
+audit event as the platform operator. The password is untouched: also run `circula reset-password` if it may be
+compromised. `circula unlock` also clears the password-guess lock used by recovery-code and MFA setup.
+
 ## Reverse proxy checklist
 
 - Set `trusted-proxies` to the proxy address, or every client shares one rate-limit bucket (`serve` warns at start).

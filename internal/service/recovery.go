@@ -151,7 +151,10 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 // signed in: the person must log in afterwards.
 //
 //   - Uniform: unknown login, malformed code, wrong code and used code all
-//     return the same ErrUnauthenticated, after the same hashing work.
+//     return the same ErrUnauthenticated, and none of them runs the Argon2
+//     hash (A3-04: the expensive work is only done for a throttle-admitted
+//     attempt that presents a code that is valid right now, so guessing
+//     cannot be used to burn CPU; the code is consumed atomically later).
 //   - Throttled: attempts are counted per login ("recover: "+login) before the
 //     code is evaluated, with the escalating lock of Login; a locked login is
 //     refused with ErrRateLimited whether or not it exists.
@@ -164,16 +167,12 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	if err := s.validatePassword(newPassword, login); err != nil {
 		return err // says nothing about the code; the login is the caller's own input
 	}
-	nh, err := hashPassword(newPassword, s.cfg.Argon) // equal work on every path
-	if err != nil {
-		return err
-	}
 	login = normalizeLogin(login)
 	if validLogin(login) != nil {
 		return errRecovery()
 	}
 	var person *domain.Person
-	err = s.update(ctx, func(tx store.Tx) error {
+	err := s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttemptCtx(ctx, tx, recoverKey(login)); err != nil {
 			return err
 		}
@@ -196,6 +195,22 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	}
 	if !wellFormed {
 		norm = strings.Repeat("A", recoveryCodeChars)
+	}
+	// A3-04: look at the code (read only) before spending Argon2 on the new
+	// password. The same statement runs for an unknown login.
+	var valid bool
+	if err := s.view(ctx, func(tx store.Tx) (err error) {
+		valid, err = tx.HasUnusedAccountRecoveryCode(pid, recoveryHash(pid, norm))
+		return err
+	}); err != nil {
+		return err
+	}
+	if !valid || person == nil || !wellFormed {
+		return errRecovery()
+	}
+	nh, err := hashPassword(newPassword, s.cfg.Argon)
+	if err != nil {
+		return err
 	}
 	return s.update(ctx, func(tx store.Tx) error {
 		ok, err := tx.ConsumeAccountRecoveryCode(pid, recoveryHash(pid, norm), s.now())

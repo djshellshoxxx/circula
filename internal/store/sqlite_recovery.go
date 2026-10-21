@@ -25,6 +25,13 @@ func (t *txImpl) ConsumeAccountRecoveryCode(personID, hash string, at time.Time)
 	return n == 1, err
 }
 
+func (t *txImpl) HasUnusedAccountRecoveryCode(personID, hash string) (bool, error) {
+	var n int
+	err := t.row(`SELECT COUNT(*) FROM account_recovery_codes WHERE person_id = ? AND code_hash = ? AND used_at IS NULL`,
+		personID, hash).Scan(&n)
+	return n > 0, err
+}
+
 func (t *txImpl) CountAccountRecoveryCodes(personID string) (int, error) {
 	var n int
 	err := t.row(`SELECT COUNT(*) FROM account_recovery_codes WHERE person_id = ? AND used_at IS NULL`, personID).Scan(&n)
