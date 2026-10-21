@@ -29,21 +29,33 @@
 <section aria-labelledby="close-h">
   <h2 id="close-h">Close the network</h2>
   {{if .Closed}}
-  <p>This network is closed. History stays readable and exports are available to members and administrators.</p>
+  <p>This network is closed. History stays readable and exports are available to members and administrators{{if .ReadOnlyUntil}} until {{.ReadOnlyUntil}}{{end}}.</p>
+  {{if .FinalSHA256}}<p>Final export checksum (SHA-256): <code>{{.FinalSHA256}}</code></p>{{end}}
+  {{else if .Closing}}
+  <p>The network closes on <strong>{{.ClosingAt}}</strong>: {{.ClosureReason}}. Trading continues until then. On that date open proposals are cancelled and new trades stop. Members keep read and export access afterwards.</p>
+  {{if .CanCancel}}
+  <form method="post" action="/n/{{$.Slug}}/admin/network/close/cancel" novalidate>
+    {{template "csrf" $}}
+    {{template "field" dict "P" $ "Name" "reason" "Label" "Reason for cancelling" "Hint" "Shown to members and recorded in the audit log." "Max" 500 "Req" true}}
+    <div class="actions"><button type="submit">Cancel the closure</button></div>
+  </form>
+  {{else}}<p>The closing date has passed. The network completes closing once every dispute is resolved.</p>{{end}}
   {{else}}
-  <p>Closing is permanent. New trades, memberships, adjustments and grants stop for good. History stays readable and exports stay available. All {{.Members}} active members are told.</p>
+  <p>Closing is announced at least {{.MinNoticeDays}} days ahead. Until the date, trading continues. On the date, open proposals are cancelled and new trades, memberships, adjustments and grants stop for good. History stays readable and exports stay available for 90 days. All {{.Members}} active members are told now.</p>
+  {{if .OpenProposals}}<p><strong>{{.OpenProposals}}</strong> open {{if eq .OpenProposals 1}}proposal will be{{else}}proposals will be{{end}} cancelled on the closing date.</p>{{end}}
   {{if .NonZeroBalances}}<p><strong>{{.NonZeroBalances}}</strong> {{if eq .NonZeroBalances 1}}account has{{else}}accounts have{{end}} a balance that is not zero. Closing does not settle balances. Tell members how you expect to settle them before you close.</p>{{end}}
-  <p>Download a full export first: <a href="/n/{{$.Slug}}/admin/exports">Exports</a>.</p>
+  <p>A final export with a checksum is produced when the network closes. You can also download one now: <a href="/n/{{$.Slug}}/admin/exports">Exports</a>.</p>
   {{if .Blockers}}
-  <p><strong>Closing is blocked until these are resolved:</strong></p>
+  <p><strong>Closing cannot be announced until these are resolved:</strong></p>
   <ul class="rows">{{range .Blockers}}<li>{{.}}</li>{{end}}</ul>
-  <p>Use the <a href="/n/{{$.Slug}}/review">dispute review queue</a> and ask members to settle or cancel open proposals.</p>
+  <p>Use the <a href="/n/{{$.Slug}}/review">dispute review queue</a>.</p>
   {{else}}
   <form method="post" action="/n/{{$.Slug}}/admin/network/close" novalidate>
     {{template "csrf" $}}
     {{template "field" dict "P" $ "Name" "reason" "Label" "Reason for closing" "Hint" "Shown to members and recorded in the audit log." "Max" 500 "Req" true}}
-    {{template "field" dict "P" $ "Name" "confirm" "Label" "Type the network address name to confirm" "Hint" "This cannot be undone." "Max" 40 "Req" true}}
-    <div class="actions"><button type="submit">Close this network</button></div>
+    {{template "field" dict "P" $ "Name" "notice_days" "Label" "Days of notice" "Hint" "At least 30. Leave empty for 30." "Max" 3}}
+    {{template "field" dict "P" $ "Name" "confirm" "Label" "Type the network address name to confirm" "Hint" "Members are told at once." "Max" 40 "Req" true}}
+    <div class="actions"><button type="submit">Announce the closure</button></div>
   </form>
   {{end}}
   {{end}}

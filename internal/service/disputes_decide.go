@@ -210,9 +210,12 @@ type DisputeView struct {
 	Events    []store.DisputeEvent
 	Response  *store.DisputeResponse // the other party's response, nil until submitted (FR-076)
 	ReReview  *store.ReReview        // the one re-review, nil until requested (FR-078)
+	// Deadlines are the response deadline and decision target (GOV-014).
+	Deadlines domain.DisputeDeadlines
 }
 
-func (s *Service) disputeView(tx store.Tx, netID string, d *domain.Dispute) (*DisputeView, error) {
+func (s *Service) disputeView(tx store.Tx, net *domain.Network, d *domain.Dispute) (*DisputeView, error) {
+	netID := net.ID
 	t, err := tx.GetTransaction(netID, d.TxID)
 	if err != nil {
 		return nil, err
@@ -230,8 +233,11 @@ func (s *Service) disputeView(tx store.Tx, netID string, d *domain.Dispute) (*Di
 	if v.Response, err = tx.GetDisputeResponse(netID, d.ID); err != nil {
 		return nil, err
 	}
-	v.ReReview, err = tx.GetReReview(netID, d.ID)
-	return v, err
+	if v.ReReview, err = tx.GetReReview(netID, d.ID); err != nil {
+		return nil, err
+	}
+	v.Deadlines = domain.DeadlinesOf(d, net.Policy.ResponsePeriodDays, v.Response != nil, s.now())
+	return v, nil
 }
 
 // GetDispute returns a dispute to its parties, reviewers and administrators;
@@ -247,7 +253,7 @@ func (s *Service) GetDispute(ctx context.Context, actor domain.Actor, netID, dis
 		if err != nil {
 			return domain.NotFound("dispute")
 		}
-		v, err := s.disputeView(tx, netID, d)
+		v, err := s.disputeView(tx, p.net, d)
 		if err != nil {
 			return err
 		}

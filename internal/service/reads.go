@@ -85,7 +85,7 @@ func (s *Service) GetDisputeForTx(ctx context.Context, actor domain.Actor, netID
 		if len(ds) == 0 {
 			return domain.NotFound("dispute")
 		}
-		v, err := s.disputeView(tx, netID, ds[0])
+		v, err := s.disputeView(tx, p.net, ds[0])
 		if err != nil {
 			return err
 		}

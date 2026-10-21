@@ -73,17 +73,22 @@ func (s *server) routes() {
 	R("PUT "+v1+"/admin/accounts/{id}/credit-limit", s.putCreditLimit)      // API-060
 	R("POST "+v1+"/admin/invitations", s.createInvitation, idem)            // API-061
 	R("POST "+v1+"/invitations/{token}/accept", s.acceptInvitation, idem, noNet)
-	R("GET "+v1+"/admin/audit-events", s.listAudit)                   // API-062
-	R("GET "+v1+"/audit-events", s.listMyAudit)                       // FR-082, DAT-033, DAT-035
-	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)       // API-063
-	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)         // API-063
-	R("POST "+v1+"/admin/network/suspend", s.suspendNetwork)          // GOV-023
-	R("POST "+v1+"/admin/network/resume", s.resumeNetwork)            // GOV-023
-	R("GET "+v1+"/admin/network/closure", s.closureStatus)            // FR-068
-	R("POST "+v1+"/admin/network/close", s.closeNetwork)              // FR-068, GOV-025
-	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)  // API-064
-	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))    // API-064
-	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement) // API-064 (retract)
+	R("GET "+v1+"/admin/audit-events", s.listAudit)                    // API-062
+	R("GET "+v1+"/audit-events", s.listMyAudit)                        // FR-082, DAT-033, DAT-035
+	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)        // API-063
+	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)          // API-063
+	R("POST "+v1+"/admin/network/suspend", s.suspendNetwork)           // GOV-023
+	R("POST "+v1+"/admin/network/resume", s.resumeNetwork)             // GOV-023
+	R("GET "+v1+"/admin/network/closure", s.closureStatus)             // FR-068
+	R("POST "+v1+"/admin/network/close", s.closeNetwork)               // FR-068, GOV-025: announce the closure date
+	R("POST "+v1+"/admin/network/close/cancel", s.cancelClosure)       // GOV-025
+	R("POST "+v1+"/admin/network/closure/verify", s.verifyClosure)     // GOV-025 e
+	R("POST "+v1+"/challenges", s.openChallenge, idem)                 // GOV-016
+	R("GET "+v1+"/challenges", s.listChallenges)                       // GOV-016
+	R("POST "+v1+"/challenges/{id}/decision", s.decideChallenge, idem) // GOV-016
+	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)   // API-064
+	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))     // API-064
+	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement)  // API-064 (retract)
 
 	// Dispute response and re-review, reports, notifications (FR-076, FR-078, FR-024, FR-038).
 	R("POST "+v1+"/disputes/{id}/response", s.respondDispute, idem)

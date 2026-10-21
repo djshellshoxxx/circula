@@ -242,6 +242,15 @@ func (c *rc) notice() string {
 	if c.Net.Status == domain.NetworkClosed {
 		return "This network is closed. History stays readable and exports are available; new trades are not possible."
 	}
+	if c.Net.Status == domain.NetworkClosing {
+		return "This network has reached its closing date and is completing its closure. New trades are not possible; history stays readable and exports are available."
+	}
+	if c.Net.AdminRequired {
+		return "This network has no active administrator, so it is read-only (administrator required). You can read balances and history and download your data; nothing that moves value is possible until an administrator is appointed."
+	}
+	if cl := c.Net.Closure; cl != nil && !cl.Done() {
+		return "This network closes on " + cl.ClosingAt.Format("2 Jan 2006") + ". You can keep trading until then. Download your data before the date; read access continues for a while afterwards."
+	}
 	if c.Net.Suspended() {
 		return "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
 	}

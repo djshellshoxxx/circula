@@ -50,6 +50,9 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 		return nil, err
 	}
 	n.Suspensions = sus
+	if n.Closure, err = t.GetClosure(n.ID); err != nil {
+		return nil, err
+	}
 	return &n, nil
 }
 

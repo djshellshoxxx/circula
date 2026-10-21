@@ -7,11 +7,12 @@ import (
 	"github.com/djshellshoxxx/circula/internal/store"
 )
 
-// closureBlockers lists what stops a closure (FR-068): proposed, disputed and
-// posting-pending transactions.
+// closureBlockers lists what stops a closure (FR-068, GOV-025): disputed
+// transactions (a dispute stays disputed while posting is pending). Open
+// proposals do not block: they are cancelled at the closure date (GOV-025 c).
 func closureBlockers(tx store.Tx, netID string) ([]string, error) {
 	var blockers []string
-	props, err := tx.ListTransactions(netID, store.TxFilter{Statuses: []domain.TxStatus{domain.TxProposed, domain.TxDisputed}, Limit: 500})
+	props, err := tx.ListTransactions(netID, store.TxFilter{Statuses: []domain.TxStatus{domain.TxDisputed}, Limit: 500})
 	if err != nil {
 		return nil, err
 	}
@@ -26,6 +27,9 @@ type ClosurePreview struct {
 	Blockers        []string // closure is refused while any exist
 	NonZeroBalances int      // member accounts that will close with a balance (warning only, RSK-020)
 	Members         int      // members who will be notified
+	OpenProposals   int      // proposals that will be cancelled at the closure date
+	Closure         *domain.Closure
+	NetworkStatus   domain.NetworkStatus
 }
 
 // PreviewClosure reports the blockers and the balances that would remain. It
@@ -43,6 +47,12 @@ func (s *Service) PreviewClosure(ctx context.Context, actor domain.Actor, netID 
 		if out.Blockers, err = closureBlockers(tx, netID); err != nil {
 			return err
 		}
+		out.Closure, out.NetworkStatus = p.net.Closure, p.net.Status
+		props, err := tx.ListTransactions(netID, store.TxFilter{Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500})
+		if err != nil {
+			return err
+		}
+		out.OpenProposals = len(props)
 		after := ""
 		for {
 			ms, err := tx.ListMembers(netID, store.MemberFilter{AfterID: after, Limit: 500})

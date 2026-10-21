@@ -123,42 +123,6 @@ func (s *Service) ActivateNetwork(ctx context.Context, actor domain.Actor, netID
 	return out, err
 }
 
-// CloseNetwork closes a network (FR-068). It is refused while proposals or
-// unresolved disputes exist; the error lists them. History and exports stay available.
-func (s *Service) CloseNetwork(ctx context.Context, actor domain.Actor, netID, reason string) error {
-	return s.update(ctx, func(tx store.Tx) error {
-		p, err := s.open(tx, actor, netID, domain.ScopeWrite)
-		if err != nil {
-			return err
-		}
-		if err := p.requireAdmin(); err != nil {
-			return err
-		}
-		if p.net.Status == domain.NetworkClosed {
-			return domain.InvalidState("network is already closed")
-		}
-		if err := requireReason(reason); err != nil {
-			return err
-		}
-		blockers, err := closureBlockers(tx, netID)
-		if err != nil {
-			return err
-		}
-		if len(blockers) > 0 {
-			return &domain.Error{Code: domain.CodeBlocked, Msg: "network has unresolved items", Blockers: blockers}
-		}
-		if err := tx.SetNetworkStatus(netID, domain.NetworkClosed); err != nil {
-			return err
-		}
-		if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActNetworkClosed, TargetType: "network",
-			TargetID: netID, Reason: reason, Before: map[string]any{"status": p.net.Status}, After: map[string]any{"status": domain.NetworkClosed}}); err != nil {
-			return err
-		}
-		return s.notifyMembers(tx, netID, false, NotifNetworkClosed, "This network is closed",
-			"The network is closed: "+strings.TrimSpace(reason)+". History stays readable and you can download your data; new trades are not possible.")
-	})
-}
-
 // GetNetwork returns the network for any of its members (any membership status).
 func (s *Service) GetNetwork(ctx context.Context, actor domain.Actor, netID string) (*domain.Network, error) {
 	var out *domain.Network
@@ -187,6 +151,9 @@ func (s *Service) NetworkBySlug(ctx context.Context, slug string) (*NetworkInfo,
 		n, err := tx.GetNetworkBySlug(slug)
 		if err != nil {
 			return domain.NotFound("network")
+		}
+		if err := s.lifecycle(tx, n); err != nil {
+			return err
 		}
 		out = &NetworkInfo{ID: n.ID, Name: n.Name, Slug: n.Slug, Status: n.Status, JoinMode: n.Policy.JoinMode}
 		return nil
