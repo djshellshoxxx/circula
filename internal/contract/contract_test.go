@@ -508,10 +508,29 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/admin/network/closure", token: adminT})
 	h.do(403, call{method: "GET", path: "/admin/network/closure", token: aliceT})
 	h.do(422, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": ""}, skipRequest: true})
-	// An open proposal blocks closure (FR-068); withdraw it, then close.
-	h.do(409, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down"}})
+	// Closure is announced with notice (GOV-025); an open proposal does not block it, it is cancelled at the date.
 	h.do(200, call{method: "POST", path: "/transactions/" + openTx + "/cancel", token: aliceT, idem: true})
-	h.do(204, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down"}})
+	h.do(422, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down", "notice_days": 10}, skipRequest: true})
+	h.do(403, call{method: "POST", path: "/admin/network/close", token: aliceT, body: m{"reason": "winding down"}})
+	h.do(409, call{method: "POST", path: "/admin/network/close/cancel", token: adminT, body: m{"reason": "nothing scheduled"}})
+	h.do(409, call{method: "POST", path: "/admin/network/closure/verify", token: adminT})
+	h.do(200, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down"}})
+	h.do(409, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "again"}})
+	h.do(200, call{method: "GET", path: "/admin/network/closure", token: adminT})
+	h.do(204, call{method: "POST", path: "/admin/network/close/cancel", token: adminT, body: m{"reason": "changed our minds"}})
+	h.do(200, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down", "notice_days": 45}})
+	h.do(200, call{method: "GET", path: "/network", token: aliceT})
+
+	// Challenges (GOV-016): the credit limit set above was an administrator decision.
+	h.do(409, call{method: "POST", path: "/challenges", token: aliceT, idem: true, body: m{"kind": "removal", "reason": "unfair"}})
+	rec = h.do(201, call{method: "POST", path: "/challenges", token: aliceT, idem: true, body: m{"kind": "credit_limit", "reason": "unfair"}})
+	chID := get[idOnly](t, rec).ID
+	h.do(200, call{method: "GET", path: "/challenges", token: aliceT})
+	h.do(200, call{method: "GET", path: "/challenges?status=requested", token: adm2T})
+	h.do(403, call{method: "POST", path: "/challenges/" + chID + "/decision", token: adminT, idem: true, body: m{"outcome": "upheld", "reason": "I set it"}})
+	h.do(404, call{method: "POST", path: "/challenges/nope/decision", token: adm2T, idem: true, body: m{"outcome": "upheld", "reason": "x"}})
+	h.do(200, call{method: "POST", path: "/challenges/" + chID + "/decision", token: adm2T, idem: true, body: m{"outcome": "rejected", "reason": "the limit stands"}})
+	h.do(409, call{method: "POST", path: "/challenges/" + chID + "/decision", token: adm2T, idem: true, body: m{"outcome": "upheld", "reason": "again"}})
 
 	// Generic problems.
 	h.do(401, call{method: "GET", path: "/accounts/me", token: "cir_bogus"})

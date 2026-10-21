@@ -20,7 +20,7 @@ func TestNetworkSuspendAndCloseWeb(t *testing.T) {
 
 	f := adm.get(b + "/admin/network")
 	checkStructure(t, "network page", f)
-	adm.mustContain(f, "Pause trading", "Close the network", "Download a full export first")
+	adm.mustContain(f, "Pause trading", "Close the network", "A final export with a checksum")
 	bad := adm.post(b+"/admin/network/suspend", f, url.Values{"reason": {""}})
 	if bad.Status != 422 {
 		t.Fatalf("empty reason: %d", bad.Status)
@@ -34,16 +34,22 @@ func TestNetworkSuspendAndCloseWeb(t *testing.T) {
 	adm.mustContain(adm.post(b+"/admin/network/resume", adm.get(b+"/admin/network"), url.Values{"reason": {"done"}}), "Your suspension is lifted")
 	al.mustNotContain(al.get(b), "Trading in this network is paused")
 
-	// closure: blocked by an open proposal, then confirmed by typing the slug
+	// closure: announced with notice and a typed confirmation; an open proposal does not block it
 	pend := tu.Must(w.env.Svc.ProposeTransaction(w.env.Ctx, w.alice, w.net.ID, service.ProposeInput{CounterpartyID: w.bobM.ID,
 		Direction: service.ProposerPays, Amount: 100, IdempotencyKey: w.env.Key()}))
-	adm.mustContain(adm.get(b+"/admin/network"), "Closing is blocked", pend.ID)
-	tu.Must(w.env.Svc.CancelTransaction(w.env.Ctx, w.alice, w.net.ID, service.CancelInput{TxID: pend.ID, IdempotencyKey: w.env.Key()}))
 	f = adm.get(b + "/admin/network")
+	adm.mustContain(f, "will be cancelled on the closing date")
 	wrong := adm.post(b+"/admin/network/close", f, url.Values{"reason": {"end"}, "confirm": {"nope"}})
 	if wrong.Status != 422 {
 		t.Fatalf("wrong confirmation: %d", wrong.Status)
 	}
-	adm.mustContain(adm.post(b+"/admin/network/close", f, url.Values{"reason": {"end"}, "confirm": {w.net.Slug}}), "The network is closed")
-	al.mustContain(al.get(b), "This network is closed")
+	short := adm.post(b+"/admin/network/close", f, url.Values{"reason": {"end"}, "confirm": {w.net.Slug}, "notice_days": {"5"}})
+	if short.Status != 422 {
+		t.Fatalf("short notice: %d", short.Status)
+	}
+	adm.mustContain(adm.post(b+"/admin/network/close", f, url.Values{"reason": {"end"}, "confirm": {w.net.Slug}}), "The closure date is announced", "Cancel the closure")
+	al.mustContain(al.get(b), "This network closes on")
+	adm.mustContain(adm.post(b+"/admin/network/close/cancel", adm.get(b+"/admin/network"), url.Values{"reason": {"changed our minds"}}), "The closure is cancelled")
+	al.mustNotContain(al.get(b), "This network closes on")
+	_ = pend
 }

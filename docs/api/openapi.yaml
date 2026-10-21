@@ -2202,11 +2202,12 @@ paths:
     get:
       operationId: getClosureStatus
       tags: [Admin]
-      summary: What blocks a network closure (FR-068)
+      summary: Closure preview and status (FR-068, GOV-025)
       description: |
-        Administrator only. Read-only preview: blockers (proposed, disputed and posting-pending
-        transactions) stop a closure; non_zero_balances is a warning count of accounts that would close
-        with a balance.
+        Administrator only. Read-only preview: blockers (disputed transactions, including those with
+        posting pending) stop a closure from being announced; open_proposals is how many proposals will be
+        cancelled at the closing date; non_zero_balances is a warning count of accounts that would close
+        with a balance. closure is the scheduled or completed closure, null when none.
       security:
         - cookieAuth: []
         - bearerAuth: []
@@ -2219,12 +2220,15 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [blockers, non_zero_balances, members]
+                required: [blockers, non_zero_balances, members, open_proposals, closure]
                 additionalProperties: false
                 properties:
                   blockers: {type: array, items: {type: string}}
                   non_zero_balances: {type: integer, minimum: 0}
                   members: {type: integer, minimum: 0}
+                  open_proposals: {type: integer, minimum: 0}
+                  closure:
+                    oneOf: [{$ref: '#/components/schemas/Closure'}, {type: 'null'}]
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
         '500': {$ref: '#/components/responses/InternalError'}
@@ -2233,12 +2237,53 @@ paths:
     post:
       operationId: closeNetwork
       tags: [Admin]
-      summary: Close the network (FR-068, GOV-025)
+      summary: Announce a network closure (FR-068, GOV-025)
       description: |
-        Administrator only. Body {reason} (required). Refused with 409 blocked, listing the blockers, while
-        proposals or disputes are open. On success new proposals, acceptances, adjustments, grants and
-        memberships stop, every member is notified, and history and exports stay available. Irreversible.
-        Recorded as network.closed.
+        Administrator only. Body {reason (required), notice_days (optional, 30 to 365, default 30)}. Fewer
+        than 30 days is 422 (DEC-025). Refused with 409 blocked, listing the disputes, while a dispute is
+        unresolved; 409 if a closure is already scheduled or the network is not active. Every member is
+        notified. Trading continues until closing_at; open proposals are cancelled then, and new
+        proposals, acceptances, adjustments, grants and memberships stop. After the closure completes,
+        read and export access continue for 90 days, then personal data is erased (SEC-018). The
+        administrator can cancel before closing_at. Recorded as network.closure_scheduled, later
+        network.closed and network.closure_exported.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              additionalProperties: false
+              properties:
+                reason: {type: string, minLength: 1, maxLength: 500}
+                notice_days: {type: integer, minimum: 30, maximum: 365}
+      responses:
+        '200':
+          description: The closure is announced.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Closure'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Blocked'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/close/cancel:
+    post:
+      operationId: cancelNetworkClosure
+      tags: [Admin]
+      summary: Cancel a scheduled closure (GOV-025)
+      description: |
+        Administrator only. Body {reason} (required). Allowed only before closing_at; afterwards 409.
+        Members are notified. Recorded as network.closure_cancelled.
       security:
         - cookieAuth: []
           csrfToken: []
@@ -2251,11 +2296,167 @@ paths:
           application/json:
             schema: {$ref: '#/components/schemas/ReasonRequest'}
       responses:
-        '204': {description: Closed.}
+        '204': {description: Cancelled.}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
-        '409': {$ref: '#/components/responses/Blocked'}
+        '409': {$ref: '#/components/responses/Conflict'}
         '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/closure/verify:
+    post:
+      operationId: verifyClosureExport
+      tags: [Admin]
+      summary: Recompute the final export checksum (GOV-025)
+      description: |
+        Administrator only. Recomputes the checksum of the ledger export and compares it with the one
+        stored when the closure completed. 409 until the closure has completed. After the erasure the
+        recomputed value legitimately differs (erased is true). The checksum is SHA-256 over one line per
+        file of the export manifest ("name TAB rows TAB sha256").
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: The comparison.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [stored_sha256, recomputed_sha256, match, ledger_seq, entries_sum_minor, balance_total_minor, erased]
+                additionalProperties: false
+                properties:
+                  stored_sha256: {type: string}
+                  recomputed_sha256: {type: string}
+                  match: {type: boolean}
+                  ledger_seq: {type: integer}
+                  entries_sum_minor: {$ref: '#/components/schemas/Money'}
+                  balance_total_minor: {$ref: '#/components/schemas/Money'}
+                  erased: {type: boolean}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/challenges:
+    get:
+      operationId: listChallenges
+      tags: [Disputes]
+      summary: Challenges (GOV-016)
+      description: |
+        Members see their own challenges; reviewers and administrators see all of the network's.
+        Optional status filter: requested or decided. Newest first, up to 200.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - {name: status, in: query, required: false, schema: {type: string, enum: [requested, decided]}}
+      responses:
+        '200':
+          description: The challenges.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, next_cursor]
+                additionalProperties: false
+                properties:
+                  data: {type: array, items: {$ref: '#/components/schemas/Challenge'}}
+                  next_cursor: {type: ['string', 'null']}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: openChallenge
+      tags: [Disputes]
+      summary: Challenge an administrator decision (GOV-016)
+      description: |
+        A member challenges their own membership removal or suspension (kind removal), a credit-limit
+        change applied to them (credit_limit) or the removal of their listing (listing_removal, with
+        subject_id). 409 when no administrator decision of that kind exists. A dispute outcome is
+        contested through the one re-review (FR-078). Deciders are notified. Recorded as challenge.opened.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, reason]
+              additionalProperties: false
+              properties:
+                kind: {type: string, enum: [removal, credit_limit, listing_removal]}
+                subject_id: {type: string}
+                reason: {type: string, minLength: 1, maxLength: 2000}
+      responses:
+        '201':
+          description: Challenge recorded.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Challenge'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/challenges/{id}/decision:
+    post:
+      operationId: decideChallenge
+      tags: [Disputes]
+      summary: Decide a challenge (GOV-016)
+      description: |
+        Reviewer or administrator who is neither the challenger nor the person who took the original
+        decision (403 otherwise). Body {outcome upheld or rejected, reason (required)}. upheld says the
+        decision should be reversed; the decider then uses the ordinary administrator action. The member
+        is notified. Recorded as challenge.decided.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outcome, reason]
+              additionalProperties: false
+              properties:
+                outcome: {type: string, enum: [upheld, rejected]}
+                reason: {type: string, minLength: 1, maxLength: 2000}
+      responses:
+        '200':
+          description: Decided.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Challenge'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
         '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/admin/announcements:
@@ -2784,7 +2985,7 @@ components:
     Id:
       type: string
       description: Identifier. UUIDv7 for domain records (API-005); export and consistency-run identifiers are generated as UUIDv4 as built.
-    NetworkStatus: {type: string, enum: [setup, active, closed]}
+    NetworkStatus: {type: string, enum: [setup, active, closing, closed], description: 'closing is derived: the closure date has passed and the closure is finishing (GOV-025). Trading is already frozen.'}
     JoinMode: {type: string, enum: [invite, approval, open]}
     DepartureRule: {type: string, enum: [retain, settle-to-zero]}
     MemberStatus: {type: string, enum: [pending, active, suspended, departed]}
@@ -2810,9 +3011,15 @@ components:
 
     Network:
       type: object
-      required: [id, name, slug, status, currency_name, decimals, join_mode, dispute_window_days, proposal_expiry_days, max_tx_amount_minor, default_credit_limit_minor, policy_version, suspended, suspensions]
+      required: [id, name, slug, status, currency_name, decimals, join_mode, dispute_window_days, proposal_expiry_days, max_tx_amount_minor, default_credit_limit_minor, policy_version, suspended, suspensions, admin_required, closure]
       additionalProperties: false
       properties:
+        admin_required:
+          type: boolean
+          description: True while an active network has no active administrator (GOV-020). The network is read-only; no value-moving action is allowed until an administrator is appointed.
+        closure:
+          description: The scheduled or completed closure (GOV-025); null when none.
+          oneOf: [{$ref: '#/components/schemas/Closure'}, {type: 'null'}]
         suspended:
           type: boolean
           description: True while an administrator or platform suspension is in force (GOV-023, GOV-024). Trading and posting are refused; reads and exports work.
@@ -2854,6 +3061,46 @@ components:
         roles:
           type: array
           items: {$ref: '#/components/schemas/Role'}
+    Closure:
+      type: object
+      required: [reason, scheduled_at, closing_at, notice_days, closed_at, read_only_until, final_export, erased_at]
+      additionalProperties: false
+      properties:
+        reason: {type: string}
+        scheduled_at: {type: string, format: date-time}
+        closing_at: {type: string, format: date-time, description: 'Trading stops at this time (GOV-025 b).'}
+        notice_days: {type: integer, minimum: 30}
+        closed_at: {type: ['string', 'null'], format: date-time}
+        read_only_until: {type: ['string', 'null'], format: date-time, description: 'End of the read and export period (90 days after closed_at); personal data is erased afterwards.'}
+        final_export:
+          description: The final ledger export record (GOV-025 e); null until produced.
+          oneOf:
+            - type: object
+              required: [sha256, ledger_seq, entries_sum_minor, balance_total_minor]
+              additionalProperties: false
+              properties:
+                sha256: {type: string}
+                ledger_seq: {type: integer}
+                entries_sum_minor: {$ref: '#/components/schemas/Money'}
+                balance_total_minor: {$ref: '#/components/schemas/Money'}
+            - {type: 'null'}
+        erased_at: {type: ['string', 'null'], format: date-time}
+    Challenge:
+      type: object
+      required: [id, member_id, kind, subject_id, reason, status, outcome, decided_by, rationale, created_at, decided_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        member_id: {$ref: '#/components/schemas/Id'}
+        kind: {type: string, enum: [removal, credit_limit, listing_removal]}
+        subject_id: {type: ['string', 'null']}
+        reason: {type: string}
+        status: {type: string, enum: [requested, decided]}
+        outcome: {type: ['string', 'null'], enum: [upheld, rejected, null]}
+        decided_by: {type: ['string', 'null']}
+        rationale: {type: string}
+        created_at: {type: string, format: date-time}
+        decided_at: {type: ['string', 'null'], format: date-time}
     ReasonRequest:
       type: object
       required: [reason]
@@ -3069,10 +3316,14 @@ components:
         occurred_at: {$ref: '#/components/schemas/Timestamp'}
     DisputeDetail:
       type: object
-      required: [id, transaction_id, opened_by, category, statement, status, outcome, reversal_amount_minor, reviewer_id, reason, opened_at, decided_at, transaction, payer_display_name, payee_display_name, events, response, re_review]
+      required: [id, transaction_id, opened_by, category, statement, status, outcome, reversal_amount_minor, reviewer_id, reason, opened_at, decided_at, transaction, payer_display_name, payee_display_name, events, response, re_review, response_deadline, decision_target, response_overdue, decision_overdue]
       additionalProperties: false
       properties:
         <<: *disputeProps
+        response_deadline: {type: string, format: date-time, description: 'Opened at plus the network response period (GOV-014). A missed deadline decides nothing; the case stays open for reviewer assessment.'}
+        decision_target: {type: string, format: date-time, description: 'Response deadline plus 14 days (DEC-012).'}
+        response_overdue: {type: boolean}
+        decision_overdue: {type: boolean}
         transaction: {$ref: '#/components/schemas/Transaction'}
         payer_display_name: {type: string}
         payee_display_name: {type: string}
