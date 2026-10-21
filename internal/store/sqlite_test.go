@@ -23,7 +23,7 @@ func openStore(t *testing.T) *store.SQLite {
 
 // seed creates a network with two members, each with an account, and one
 // proposed trade of 100 from a to b. It returns the ids.
-func seed(t *testing.T, s *store.SQLite) (netID, txID, accA, accB string) {
+func seed(t testing.TB, s *store.SQLite) (netID, txID, accA, accB string) {
 	t.Helper()
 	ctx := context.Background()
 	now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)

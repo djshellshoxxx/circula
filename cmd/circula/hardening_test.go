@@ -373,7 +373,7 @@ func TestRestoreRefusesBackupFailingEmbeddedChecks(t *testing.T) {
 	tamper(t, path, `DROP TRIGGER audit_no_update`, `UPDATE audit_events SET reason = 'forged' WHERE seq = 1`)
 	before := sha(t, db)
 	var out, errOut bytes.Buffer
-	code := run([]string{"restore", "-database", db, "-overwrite", path}, &out, &errOut)
+	code := run([]string{"restore", "-allow-unsigned", "-database", db, "-overwrite", path}, &out, &errOut)
 	if code != exitLedgerFailed || !strings.Contains(errOut.String(), "FAILS ledger or audit-chain verification") || !strings.Contains(errOut.String(), "not touched") {
 		t.Fatalf("code %d\nstdout %s\nstderr %s", code, out.String(), errOut.String())
 	}
@@ -428,7 +428,7 @@ func TestSignedBackupManifest(t *testing.T) {
 	// Same file, no key configured: restore proceeds but says plainly it is unauthenticated.
 	out.Reset()
 	errOut.Reset()
-	code = run([]string{"restore", "-database", db, "-overwrite", path}, &out, &errOut)
+	code = run([]string{"restore", "-allow-unsigned", "-database", db, "-overwrite", path}, &out, &errOut)
 	if code != exitOK || !strings.Contains(out.String(), "not authenticated") {
 		t.Fatalf("unkeyed restore: code %d\n%s\n%s", code, out.String(), errOut.String())
 	}
@@ -502,3 +502,63 @@ func TestOperatorCommandsTakeTheLock(t *testing.T) {
 }
 
 func testNow() time.Time { return time.Now() }
+
+// SA2-11: without a backup-key a restore is refused unless -allow-unsigned is
+// given; the audit's forged plaintext backup is therefore not accepted by default.
+func TestRestoreRefusesUnsignedByDefault(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	db := seedDatabase(t, dir)
+	cfg := testConfigFor(db)
+	_, path, err := backupTo(ctx, cfg, filepath.Join(dir, "bk"), "manual", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Forgery: swap a credential and fix the manifest digest, as an attacker with write access to the backup directory would.
+	tamper(t, path, `UPDATE persons SET password_hash = 'attacker'`)
+	before := sha(t, db)
+	var out, errOut bytes.Buffer
+	code := run([]string{"restore", "-database", db, "-overwrite", path}, &out, &errOut)
+	if code != exitFailure || !strings.Contains(errOut.String(), "-allow-unsigned") {
+		t.Fatalf("unsigned restore: code %d %s", code, errOut.String())
+	}
+	if sha(t, db) != before {
+		t.Error("refused restore changed the database")
+	}
+	// A signed manifest with the wrong key is refused as before, even with -allow-unsigned.
+	keyFile := writeSecret(t, "0123456789abcdef-backup-key", 0o600)
+	errOut.Reset()
+	code = run([]string{"restore", "-database", db, "-overwrite", "-allow-unsigned", "-backup-key-file", keyFile, path}, &out, &errOut)
+	if code != exitFailure || !strings.Contains(errOut.String(), "not signed") {
+		t.Fatalf("keyed restore of unsigned manifest: code %d %s", code, errOut.String())
+	}
+	// With the explicit flag the old behaviour (warning) remains.
+	errOut.Reset()
+	out.Reset()
+	code = run([]string{"restore", "-database", db, "-overwrite", "-allow-unsigned", path}, &out, &errOut)
+	if code != exitOK || !strings.Contains(out.String(), "not authenticated") {
+		t.Fatalf("-allow-unsigned: code %d\n%s\n%s", code, out.String(), errOut.String())
+	}
+}
+
+// SA2-11: backup-require-encryption follows the key unless set explicitly.
+func TestRequireEncryptionDefaultsToKeyPresence(t *testing.T) {
+	keyFile := writeKeyFile(t, t.TempDir(), "k", testKey(t))
+	get := func(args ...string) *Config {
+		t.Helper()
+		c, _, err := resolveWith(t, args, baseEnv(t, nil))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return c
+	}
+	if get().BackupRequireEncryption {
+		t.Error("required without a key")
+	}
+	if !get("-backup-encryption-key-file", keyFile).BackupRequireEncryption {
+		t.Error("key set but encryption not required by default")
+	}
+	if get("-backup-encryption-key-file", keyFile, "-backup-require-encryption", "false").BackupRequireEncryption {
+		t.Error("explicit false ignored")
+	}
+}

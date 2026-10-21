@@ -104,14 +104,14 @@ func TestRestoreRefusesOverwriteWithoutFlag(t *testing.T) {
 	}
 
 	var out, errOut bytes.Buffer
-	code := run([]string{"restore", "-database", db, path}, &out, &errOut)
+	code := run([]string{"restore", "-allow-unsigned", "-database", db, path}, &out, &errOut)
 	if code == exitOK || !strings.Contains(errOut.String(), "-overwrite") {
 		t.Fatalf("restore over existing db without -overwrite: code %d, %s", code, errOut.String())
 	}
 
 	out.Reset()
 	errOut.Reset()
-	code = run([]string{"restore", "-database", db, "-overwrite", path}, &out, &errOut)
+	code = run([]string{"restore", "-allow-unsigned", "-database", db, "-overwrite", path}, &out, &errOut)
 	if code != exitOK {
 		t.Fatalf("restore with -overwrite: code %d, stderr %s", code, errOut.String())
 	}

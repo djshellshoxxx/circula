@@ -68,4 +68,6 @@ rely on them until the gap is closed and this list is updated.
 - **Disk-usage percentage.** `/metrics` reports file sizes, not the percentage of the volume in use. Use the host's
   monitoring for the disk alert in OPS-015.
 - **Backup schedule.** `backup-interval` is a fixed interval, not a cron expression.
+- **Backup rollback (SA2-11).** The signed manifest carries the creation time but no sequence number, so a genuine older
+  backup cannot be told from the latest. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key).
 - **Long streaming responses.** `request-timeout` bounds each request, so an export that takes longer is cut off.

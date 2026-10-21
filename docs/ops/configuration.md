@@ -34,16 +34,17 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `request-timeout` | `CIRCULA_REQUEST_TIMEOUT` | `30s` | no | Deadline for each API and UI request. |
 | `log-level` | `CIRCULA_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. Needs a restart to change. |
 | `log-format` | `CIRCULA_LOG_FORMAT` | `json` | no | `json` or `text`. |
-| `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | Marks every cookie `Secure` and names the session cookie `__Host-circula_session` (SEC-022). Keep `true` behind a TLS proxy: TLS ends at the proxy, so the service cannot see it. `false` is for plain-http development only; with `false` the cookie is `circula_session`. |
+| `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | Marks every cookie `Secure` and names the session cookie `__Host-circula_session` and the CSRF cookie with the `__Host-` prefix too (SEC-022, SA2-14). When `true` the service reads only the `__Host-` names and ignores a plain `circula_session` or CSRF cookie, which a sibling subdomain could plant; after upgrading from a release that used the plain CSRF cookie, people may need to reload once. Keep `true` behind a TLS proxy: TLS ends at the proxy, so the service cannot see it. `false` is for plain-http development only; with `false` the cookie is `circula_session`. |
 | `metrics-allow` | `CIRCULA_METRICS_ALLOW` | `127.0.0.1/32,::1/128` | no | Comma-separated addresses or CIDRs allowed to read `/metrics`. `none` denies all. |
-| `trusted-proxies` | `CIRCULA_TRUSTED_PROXIES` | `none` | no | Comma-separated addresses or CIDRs of the reverse proxies in front of the service. Only requests whose TCP peer is in this list are believed when they carry `X-Forwarded-For` (client address for rate limits) or `X-Forwarded-Proto`. The client address is the right-most `X-Forwarded-For` entry that is not itself a trusted proxy. Empty: both headers are ignored and every client looks like the proxy. Set it to the proxy's address, for example `127.0.0.1/32`. |
+| `trusted-proxies` | `CIRCULA_TRUSTED_PROXIES` | `none` | no | Comma-separated addresses or CIDRs of the reverse proxies in front of the service. Only requests whose TCP peer is in this list are believed when they carry `X-Forwarded-For` (client address for rate limits) or `X-Forwarded-Proto`. The client address is the right-most `X-Forwarded-For` entry that is not itself a trusted proxy. Empty: both headers are ignored and every client looks like the proxy. Set it to the proxy's address, for example `127.0.0.1/32`. `serve` logs a warning at start when it looks like it runs behind a reverse proxy (HTTPS `public-base-url`, loopback `listen`) but `trusted-proxies` is empty, because all clients then share one rate-limit bucket (SA2-15). IPv6 clients are limited per /64 prefix, not per address, so a client cannot dodge a limit by rotating addresses within its prefix. |
 | `allow-insecure-http` | `CIRCULA_ALLOW_INSECURE_HTTP` | `false` | no | `serve` refuses to start when `public-base-url` is `http://` for a non-loopback host, or when it is `http://` and `listen` is not loopback (SEC-022). Set `true` only for a closed test network. |
 | `setup-secret-file` | `CIRCULA_SETUP_SECRET_FILE` | none | no | File holding the setup secret (see below). |
 | `metrics-token-file` | `CIRCULA_METRICS_TOKEN_FILE` | none | no | File holding a bearer token that `/metrics` then requires (see below). |
 | `backup-key-file` | `CIRCULA_BACKUP_KEY_FILE` | none | no | File holding the backup signing key (see below). |
 | `mfa-secret-file` | `CIRCULA_MFA_SECRET_FILE` | none | no | File holding the key that seals two-step sign-in secrets in the database (see below). |
 | `backup-encryption-key-file` | `CIRCULA_BACKUP_ENCRYPTION_KEY_FILE` | none | no | File holding the key that encrypts backups at rest (see below). |
-| `backup-require-encryption` | `CIRCULA_BACKUP_REQUIRE_ENCRYPTION` | `false` | no | `true` makes `restore` refuse plaintext backups and makes backups fail unless an encryption key is configured. Configuration is invalid when `true` without a key. |
+| `backup-require-encryption` | `CIRCULA_BACKUP_REQUIRE_ENCRYPTION` | `auto` | no | `auto` (default): `true` whenever `backup-encryption-key` is set, `false` otherwise (SA2-11). `true` makes `restore` refuse plaintext backups and makes backups fail unless an encryption key is configured; configuration is invalid when `true` without a key. `false` lets a restore accept an old plaintext backup even though a key is set. |
+| `db-synchronous` | `CIRCULA_DB_SYNCHRONOUS` | `normal` | no | SQLite durability level in WAL mode: `normal` or `full` (SA2-20). See [Durability](#durability-db-synchronous). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
 
 ## Secrets
@@ -60,7 +61,30 @@ ignored. Each secret must have at least 16 characters; use 32 random characters 
 | `CIRCULA_METRICS_TOKEN` | SA-15. When set, `/metrics` also requires `Authorization: Bearer <token>`. Set it whenever a reverse proxy runs on the same host: such a proxy reaches `/metrics` from loopback. Independently, `/metrics` always refuses requests carrying any proxy header (`X-Forwarded-*`, `Forwarded`, `X-Real-IP`, `Via`) and requests from a `trusted-proxies` address. |
 | `CIRCULA_MFA_SECRET` | SEC-007. When set, authenticator seeds are stored AES-256-GCM sealed under a key derived from it; otherwise they are stored base32-encoded. Losing or changing it makes sealed seeds unreadable: affected people must disable (recovery code) and re-enrol. Set it before people enrol. See `docs/dev/mfa.md`. |
 | `CIRCULA_BACKUP_ENCRYPTION_KEY` | OPS-019, SEC-028. Encrypts backups (AES-256-GCM). 32 random bytes in base64 (`circula keygen`, recommended) or a passphrase of 16+ characters. Must differ from the backup key. Without it backups are plaintext and `serve` warns. See [backup-restore.md](backup-restore.md#encryption-at-rest-ops-019-sec-028). |
-| `CIRCULA_BACKUP_KEY` | SA-07. Signs backup manifests (HMAC-SHA-256) and is required to restore them. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key). |
+| `CIRCULA_BACKUP_KEY` | SA-07. Signs backup manifests (HMAC-SHA-256) and is required to restore them. Without it `restore` refuses unless `-allow-unsigned` is passed, and `serve` warns when scheduled backups run unsigned (SA2-11). See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key). |
+
+## Durability (`db-synchronous`)
+
+SA2-20. The database runs in WAL mode. `db-synchronous=normal` (default) syncs the WAL only at checkpoints. It never
+corrupts the database, but after a power loss or operating-system crash the newest committed transactions can be lost,
+together with their audit rows (a posting and its audit event commit in one transaction, so they are lost together and the
+ledger and audit chain stay consistent; the trade simply did not happen). A process crash alone loses nothing.
+`db-synchronous=full` syncs the WAL on every commit, so a commit that was acknowledged survives power loss.
+
+Measured cost (Go benchmark `BenchmarkPostingSynchronous` in `internal/store`: propose, post two entries and complete a
+trade in one transaction, 1000 iterations, 4 vCPU virtual machine, temporary directory of the build sandbox):
+
+| Level | Time per posting (3 runs) |
+|---|---|
+| `normal` | 0.70, 0.78, 0.86 ms |
+| `full` | 1.89, 2.04, 2.41 ms (about 2.7 times `normal`) |
+
+The ratio is above the 2x the project accepts as a default, so `normal` stays the default. In absolute terms `full` still
+allows several hundred postings per second on one writer, far above a community network's load, so choose `full` when you
+cannot tolerate losing acknowledged trades after a power failure (for example a host without a UPS or battery-backed
+storage). Real disks change the numbers: re-run the benchmark on your hardware with
+`go test ./internal/store -run NONE -bench PostingSynchronous -benchtime 1000x`. The setting applies to every command that
+opens the database.
 
 ### Runtime state: the web signing key (SEC-027)
 
@@ -95,6 +119,7 @@ Settings that are documented in the specification but not yet implemented (mail)
   "backup-retain-monthly": 12,
   "migrate-mode": "explicit",
   "request-timeout": "30s",
+  "db-synchronous": "normal",
   "log-format": "json",
   "metrics-allow": "10.20.0.0/16",
   "trusted-proxies": "127.0.0.1/32",

@@ -128,7 +128,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	} else if tightened {
 		logger.Warn("database file was readable by group or others; permissions restricted to the owner", "file", cfg.Database)
 	}
-	st, err := store.Open(ctx, cfg.Database)
+	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
 	if err != nil {
 		m.migrationRan("failed")
 		return err
@@ -191,6 +191,9 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	}
 	if msg := proxyWarning(cfg); msg != "" {
 		logger.Warn(msg)
+	}
+	if len(cfg.BackupKey) == 0 && cfg.BackupInterval > 0 {
+		logger.Warn("scheduled backups run without a backup-key: manifests are unsigned, so a restore cannot tell a genuine backup from a forged or rolled-back one; set backup-key-file (SA2-11)")
 	}
 	if !cfg.CookieSecure {
 		logger.Warn("cookie-secure is false: session cookies are not marked Secure (SEC-022)")

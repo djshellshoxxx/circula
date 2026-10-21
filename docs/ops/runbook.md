@@ -34,7 +34,35 @@ by the hourly job and the admin consistency check in the UI and API, which recor
 
 ## Restoring after a fault
 
-See [backup-restore.md](backup-restore.md#restoring). Stop the service first.
+See [backup-restore.md](backup-restore.md#restoring). Stop the service first. `restore` needs `backup-key` (and
+`backup-encryption-key` for encrypted backups) in its configuration; without `backup-key` it refuses unless you pass
+`-allow-unsigned` for a file you trust (SA2-11).
+
+## Unlocking a locked-out person
+
+Repeated wrong passwords lock a login for a while. To clear the lock before it expires, with `serve` stopped or running as
+the command allows:
+
+```sh
+circula unlock -config /etc/circula/circula.json -login NAME
+```
+
+The command clears the throttle for that login only and is audited. It does not reset the password; use the recovery flow
+for that. Confirm the person's identity out of band first.
+
+## Reverse proxy checklist
+
+- Set `trusted-proxies` to the proxy address, or every client shares one rate-limit bucket (`serve` warns at start).
+  IPv6 clients are limited per /64.
+- Keep `cookie-secure=true`: cookies carry the `__Host-` prefix and plain-name cookies are ignored over HTTPS. A proxy must
+  not rewrite or strip `Set-Cookie` attributes (`Secure`, no `Domain`, `Path=/`).
+- Block `/metrics` at the proxy and set `metrics-token-file`.
+
+## Releasing
+
+Tag only a commit that is already on the default branch: the release workflow fails when the tag's commit is not an
+ancestor of `origin/<default branch>` (SA2-19). Protect `v*` tags in the repository settings so only maintainers can
+create them, and keep `docs/releases/<tag>.md` in the tagged commit.
 
 ## Upgrading
 
