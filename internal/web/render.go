@@ -261,7 +261,7 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		s.renderError(w, r, 409)
 	default:
 		if domain.CodeOf(err) == domain.CodeInternal {
-			log.Printf("web: internal error req=%s: %v", reqID(r), err)
+			log.Printf("web: internal error req=%q: %q", reqID(r), err.Error()) //nolint:gosec // G706: both values are %q-quoted, no control characters pass
 		}
 		s.renderError(w, r, 500)
 	}

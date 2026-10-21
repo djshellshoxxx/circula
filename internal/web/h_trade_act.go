@@ -132,5 +132,5 @@ func (s *server) tradeActionPost(w http.ResponseWriter, r *http.Request, c *rc) 
 		}
 	}
 	s.setFlash(w, r, msg)
-	http.Redirect(w, r, c.base()+"/trades/"+a.Tx.ID, http.StatusSeeOther)
+	http.Redirect(w, r, c.base()+"/trades/"+a.Tx.ID, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix, server-generated id
 }

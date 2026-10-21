@@ -30,6 +30,7 @@ func (s *server) secure(r *http.Request) bool { return s.opts.Edge.Secure(r) }
 func (s *server) clientIP(r *http.Request) string { return s.opts.Edge.ClientIP(r) }
 
 func (s *server) setCookie(w http.ResponseWriter, r *http.Request, name, val string, maxAge int) {
+	//nolint:gosec // G124: HttpOnly, SameSite=Lax and Secure (when the request or config is HTTPS) are all set
 	http.SetCookie(w, &http.Cookie{Name: name, Value: val, Path: "/", MaxAge: maxAge,
 		HttpOnly: true, SameSite: http.SameSiteLaxMode, Secure: s.secure(r)})
 }

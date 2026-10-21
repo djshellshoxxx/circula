@@ -77,7 +77,7 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 	if dest == "" {
 		dest = "/"
 	}
-	http.Redirect(w, r, dest, http.StatusSeeOther)
+	http.Redirect(w, r, dest, http.StatusSeeOther) //nolint:gosec // G710: dest comes from safeNext (local paths only)
 }
 
 func (s *server) startSession(w http.ResponseWriter, r *http.Request, tok string) {
@@ -250,7 +250,7 @@ func (s *server) afterJoin(w http.ResponseWriter, r *http.Request, c *rc, m *dom
 	} else {
 		s.setFlash(w, r, "You have joined "+n.Name+".")
 	}
-	http.Redirect(w, r, "/n/"+n.Slug, http.StatusSeeOther)
+	http.Redirect(w, r, "/n/"+n.Slug, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix plus validated slug
 }
 
 func (s *server) joinNetForm(w http.ResponseWriter, r *http.Request, c *rc) {

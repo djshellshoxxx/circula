@@ -279,7 +279,7 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	s.setFlash(w, r, msg)
-	http.Redirect(w, r, c.base()+"/disputes/"+id, http.StatusSeeOther)
+	http.Redirect(w, r, c.base()+"/disputes/"+id, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix, id is a single path segment
 }
 
 // disputeFail shows the refusal on the dispute page itself.
