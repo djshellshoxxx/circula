@@ -488,8 +488,9 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	}
 	h.do(422, call{method: "POST", path: "/me/terms/accept", token: aliceT, idem: true, body: m{"version": 9}})
 	h.do(200, call{method: "POST", path: "/me/terms/accept", token: aliceT, idem: true, body: m{"version": 1}})
-	h.do(201, call{method: "POST", path: "/transactions", token: aliceT, idem: true,
+	rec = h.do(201, call{method: "POST", path: "/transactions", token: aliceT, idem: true,
 		body: m{"counterparty_member_id": adm2M.ID, "direction": "pay", "amount_minor": "10"}})
+	openTx := get[idOnly](t, rec).ID
 	rec = h.do(201, call{method: "POST", path: "/admin/invitations", token: adminT, idem: true, body: m{"ttl_seconds": 3600}})
 	inv2 := get[idOnly](t, rec).Token
 	erin := env.Person("erin")
@@ -507,6 +508,9 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/admin/network/closure", token: adminT})
 	h.do(403, call{method: "GET", path: "/admin/network/closure", token: aliceT})
 	h.do(422, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": ""}, skipRequest: true})
+	// An open proposal blocks closure (FR-068); withdraw it, then close.
+	h.do(409, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down"}})
+	h.do(200, call{method: "POST", path: "/transactions/" + openTx + "/cancel", token: aliceT, idem: true})
 	h.do(204, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down"}})
 
 	// Generic problems.
