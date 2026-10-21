@@ -30,6 +30,7 @@ var sampleValues = map[string]string{
 	"request-timeout":       "5s",
 	"log-level":             "debug",
 	"log-format":            "text",
+	"log-retention":         "48h",
 	"cookie-secure":         "false",
 	"maintenance":           "true",
 	"metrics-allow":         "10.0.0.0/8",

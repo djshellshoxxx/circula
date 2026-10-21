@@ -35,6 +35,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `request-timeout` | `CIRCULA_REQUEST_TIMEOUT` | `30s` | no | Deadline for each API and UI request. |
 | `log-level` | `CIRCULA_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. Needs a restart to change. |
 | `log-format` | `CIRCULA_LOG_FORMAT` | `json` | no | `json` or `text`. |
+| `log-retention` | `CIRCULA_LOG_RETENTION` | `2160h` (90 days) | no | How long `circula prune-logs -dir <dir>` keeps stored log files (24h to 3660d). See "Log retention" in monitoring.md. |
 | `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | Marks every cookie `Secure` and names the session cookie `__Host-circula_session` (SEC-022). Keep `true` behind a TLS proxy: TLS ends at the proxy, so the service cannot see it. `false` is for plain-http development only; with `false` the cookie is `circula_session`. |
 | `maintenance` | `CIRCULA_MAINTENANCE` | `false` | no | Start in maintenance mode (OPS-024): reads (GET, HEAD, OPTIONS) keep working, every other web and API request (sign-in included) answers `503` with `Retry-After` and a friendly page; `/healthz`, `/readyz` and `/metrics` keep working. See [upgrade.md](upgrade.md#maintenance-mode). Turn it on or off while running with `circula maintenance on|off`. |
 | `metrics-allow` | `CIRCULA_METRICS_ALLOW` | `127.0.0.1/32,::1/128` | no | Comma-separated addresses or CIDRs allowed to read `/metrics`. `none` denies all. |
