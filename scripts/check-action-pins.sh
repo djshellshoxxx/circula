@@ -16,6 +16,8 @@ allowed=(
   "actions/upload-artifact"
   "actions/download-artifact"
   "golangci/golangci-lint-action"
+  "ossf/scorecard-action"
+  "github/codeql-action/upload-sarif"
 )
 
 fail=0

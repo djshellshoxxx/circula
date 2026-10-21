@@ -92,6 +92,23 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  reproducible:
+    name: reproducible build (two builds, same sha256)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: build twice (different directory and cache) and compare
+        run: scripts/check-reproducible.sh
+      - name: deploy smoke (binary under the systemd unit's settings, minus systemd)
+        run: scripts/smoke-deploy.sh
+
   contract:
     name: API contract and load smoke
     runs-on: ubuntu-24.04
