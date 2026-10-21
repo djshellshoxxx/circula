@@ -325,6 +325,10 @@ async function seed(base) {
     await decide(pd, state.disputeResolved, 'Dismissed: the balance stands', 'The work was delivered as described.');
     // D3 (t1): admin dismisses, alice asks for a re-review; carol (reviewer, not a party) can decide it.
     state.disputeReReview = await openDispute(t1, 'I did not agree to the final amount.');
+    // The response-period gate (FR-076) refuses a decision until the other party has responded.
+    await pb.goto(state.disputeReReview);
+    await pb.getByLabel('Your response').fill('The amount was agreed in the chat before the trade.');
+    await submit(pb, 'Send response');
     await decide(pd, state.disputeReReview, 'Dismissed: the balance stands', 'The amount matches what both agreed.');
     await pa.goto(state.disputeReReview);
     await pa.getByLabel('Why should it be looked at again?').fill('The chat shows a lower amount was agreed.');
