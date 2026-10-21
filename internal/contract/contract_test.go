@@ -496,6 +496,18 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(422, call{method: "POST", path: "/invitations/" + inv2 + "/accept", token: h.token(erin, rw...), idem: true, body: m{"display_name": "Erin"}})
 	h.do(201, call{method: "POST", path: "/invitations/" + inv2 + "/accept", token: h.token(erin, rw...), idem: true,
 		body: m{"display_name": "Erin", "terms_version": 1}})
+	// Suspension and closure (GOV-023, FR-068).
+	h.do(403, call{method: "POST", path: "/admin/network/suspend", token: aliceT, body: m{"reason": "x"}})
+	h.do(422, call{method: "POST", path: "/admin/network/suspend", token: adminT, body: m{"reason": ""}, skipRequest: true})
+	h.do(204, call{method: "POST", path: "/admin/network/suspend", token: adminT, body: m{"reason": "security review"}})
+	h.do(409, call{method: "POST", path: "/admin/network/suspend", token: adminT, body: m{"reason": "again"}})
+	h.do(200, call{method: "GET", path: "/accounts/me", token: aliceT})
+	h.do(204, call{method: "POST", path: "/admin/network/resume", token: adminT, body: m{"reason": "review done"}})
+	h.do(409, call{method: "POST", path: "/admin/network/resume", token: adminT, body: m{"reason": "again"}})
+	h.do(200, call{method: "GET", path: "/admin/network/closure", token: adminT})
+	h.do(403, call{method: "GET", path: "/admin/network/closure", token: aliceT})
+	h.do(422, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": ""}, skipRequest: true})
+	h.do(204, call{method: "POST", path: "/admin/network/close", token: adminT, body: m{"reason": "winding down"}})
 
 	// Generic problems.
 	h.do(401, call{method: "GET", path: "/accounts/me", token: "cir_bogus"})

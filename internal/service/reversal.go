@@ -81,6 +81,9 @@ func blockedByLimit(err error) bool { return errors.Is(err, domain.ErrInsufficie
 func (s *Service) reverse(tx store.Tx, net *domain.Network, orig *domain.Transaction, amount int64,
 	reason, createdBy, requestID string) (*domain.Transaction, error) {
 
+	if net.Suspended() {
+		return nil, networkOpenErr(net)
+	}
 	if orig.Kind == domain.KindReversal {
 		return nil, domain.InvalidState("a reversal cannot be reversed")
 	}

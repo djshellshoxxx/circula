@@ -1,4 +1,4 @@
--- 0012_terms_policy_notice: terms versions and acceptances (GOV-009) and the
+-- 0011_terms_policy_notice: terms versions and acceptances (GOV-009) and the
 -- notice-period columns of policy versions (GOV-003). Additive and forward-only.
 
 -- A policy version may take effect later than it was announced (notice period).

@@ -140,13 +140,9 @@ func (s *Service) CloseNetwork(ctx context.Context, actor domain.Actor, netID, r
 		if err := requireReason(reason); err != nil {
 			return err
 		}
-		var blockers []string
-		props, err := tx.ListTransactions(netID, store.TxFilter{Statuses: []domain.TxStatus{domain.TxProposed, domain.TxDisputed}, Limit: 500})
+		blockers, err := closureBlockers(tx, netID)
 		if err != nil {
 			return err
-		}
-		for _, t := range props {
-			blockers = append(blockers, string(t.Status)+" transaction "+t.ID)
 		}
 		if len(blockers) > 0 {
 			return &domain.Error{Code: domain.CodeBlocked, Msg: "network has unresolved items", Blockers: blockers}
@@ -154,8 +150,12 @@ func (s *Service) CloseNetwork(ctx context.Context, actor domain.Actor, netID, r
 		if err := tx.SetNetworkStatus(netID, domain.NetworkClosed); err != nil {
 			return err
 		}
-		return s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActNetworkClosed, TargetType: "network",
-			TargetID: netID, Reason: reason, Before: map[string]any{"status": p.net.Status}, After: map[string]any{"status": domain.NetworkClosed}})
+		if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActNetworkClosed, TargetType: "network",
+			TargetID: netID, Reason: reason, Before: map[string]any{"status": p.net.Status}, After: map[string]any{"status": domain.NetworkClosed}}); err != nil {
+			return err
+		}
+		return s.notifyMembers(tx, netID, false, NotifNetworkClosed, "This network is closed",
+			"The network is closed: "+strings.TrimSpace(reason)+". History stays readable and you can download your data; new trades are not possible.")
 	})
 }
 

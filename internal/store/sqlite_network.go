@@ -45,6 +45,11 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	if err := json.Unmarshal([]byte(pj), &n.Policy); err != nil {
 		return nil, err
 	}
+	sus, err := t.ListSuspensions(n.ID)
+	if err != nil {
+		return nil, err
+	}
+	n.Suspensions = sus
 	return &n, nil
 }
 

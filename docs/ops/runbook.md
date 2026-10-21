@@ -49,6 +49,20 @@ read but not write (API `423 network-frozen`, web "Network read-only"). Other ne
 `circula verify-ledger -network <slug>`, capture the findings (SEC-030) and decide with the product architect. If you
 restore a verified backup, the network is verified again at start and serves normally when it passes.
 
+## Suspending a network (GOV-024)
+
+Only for a legal order, a serious security incident, persistent abuse of the platform, or non-performance of a written
+hosting agreement. Never for a reason about members' trades or balances.
+
+    circula suspend start -network <slug> -category legal_order|security_incident|platform_abuse|hosting_agreement -reason "..." -operator "<your name>"
+    circula suspend lift  -network <slug> -reason "..." -operator "<your name>"
+
+Run with the service stopped (it takes the same lock as `break-glass`). Trading and posting stop; members keep read and
+export access. Each network administrator gets an inbox notice, and the event (`network.platform_suspended`) is written
+at platform scope and to the network's audit log, where its administrators can read it. The network's own administrators
+cannot lift a platform suspension, and lifting it does not lift an administrator suspension. DEC-014 allows withholding
+the notice where law prohibits it; this build always sends it.
+
 ## Restoring after a fault
 
 See [backup-restore.md](backup-restore.md#restoring). Stop the service first.

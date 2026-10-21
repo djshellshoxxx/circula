@@ -56,6 +56,9 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
 	case domain.CodeKeyRequired:
 		return "Not sent. The form is missing its safety key. Reload the page and try again. Nothing changed.", nil, true
 	case domain.CodeInvalidState:
+		if strings.Contains(de.Msg, "network is suspended") {
+			return "Not done. Trading in this network is paused (suspended). You can still read balances and history and download your data. Nothing changed.", nil, true
+		}
 		return "Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed.", nil, true
 	case domain.CodeConflict:
 		return "Not saved. That value is not available. Choose a different one. Nothing changed.", nil, true

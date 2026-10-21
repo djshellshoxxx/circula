@@ -11,6 +11,7 @@ import (
 )
 
 func (s *server) adminOverviewRoutes() {
+	s.adminNetworkRoutes()
 	s.mux.HandleFunc("GET /n/{slug}/admin/reverse", s.adminH(s.reverseForm))
 	s.mux.HandleFunc("POST /n/{slug}/admin/reverse", s.adminH(s.reversePost))
 	s.mux.HandleFunc("GET /n/{slug}/admin/announcements", s.adminH(s.announcementsPage))

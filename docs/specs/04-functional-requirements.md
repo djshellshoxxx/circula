@@ -58,7 +58,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute |
 | FR-066 | P1 | built | Admin reversal via API with reason |
 | FR-067 | P1 | partial | Admin home shows pending-member count only |
-| FR-068 | P1 | partial | CloseNetwork refuses with blockers; no web or API caller |
+| FR-068 | P1 | built | Closure in web and API; refuses with blockers; members notified |
 | FR-069 | P0 | built | Last-admin guard; role changes audited |
 | FR-070 | P0 | built | Open dispute within window by party on completed trade |
 | FR-071 | P0 | built | Postings unchanged on open, withdraw, dismiss |
