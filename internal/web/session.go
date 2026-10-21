@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
@@ -132,6 +133,8 @@ type rc struct {
 	Info *service.NetworkInfo
 	Net  *domain.Network
 	Me   *domain.Member
+	// loc is the person's display time zone; nil means UTC. Pages show times in it, the API stays UTC.
+	loc *time.Location
 }
 
 func (c *rc) netID() string { return c.Net.ID }
@@ -208,6 +211,9 @@ func (s *server) netH(h func(http.ResponseWriter, *http.Request, *rc)) http.Hand
 			return
 		}
 		c.Info = info
+		if z, err := s.svc.GetTimeZone(r.Context(), c.actor); err == nil {
+			c.loc = service.Location(z)
+		}
 		if c.Me.Status == domain.MemberPending {
 			s.render(w, r, c, "pending", 200, &page{Title: "Waiting for approval"})
 			return

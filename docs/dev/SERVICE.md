@@ -387,6 +387,16 @@ func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor,
 
 
 
+#### overview.go, announcements.go, timezone.go, disputes_list.go
+
+These use optional store surfaces (`store.OverviewRepo`, `AnnouncementRepo`, `PrefsRepo`, in `iface_f2.go`) that the SQLite transaction implements; the service asserts for them, so `store.Tx` did not change. Schema is in migration 0004.
+
+* `AdminOverview(ctx, actor, netID) (*AdminOverview, error)`: administrator only. Exact counts read at call time (FR-067): pending members, live proposals older than `OverviewStaleAfter` (48 h), open or under-review disputes, `posting_pending` disputes, active members whose credit used is at or beyond their effective limit, unused invitations ending within `OverviewInviteWithin` (72 h), and the latest recorded consistency check. `AsOf` is the read time.
+* `CreateAnnouncement` (admin, idempotent, audited), `DeleteAnnouncement` (admin, retracts, audited, second delete is not-found), `AdminListAnnouncements` (admin, scheduled included), `ListAnnouncements` (active and suspended members, only those in force). Append-only: no edit; the table refuses deletes and edits except stamping `deleted_at`.
+* `GetTimeZone` / `SetTimeZone(ctx, actor, name)`: per-person display zone, stored in `person_prefs`. `name` must be an IANA zone (`ValidTimeZone`; "Local" and odd characters refused; zone data is embedded via `time/tzdata`) or "" for UTC. Audited at platform scope (`person.time_zone_changed`). `Location(name)` returns the `*time.Location` (UTC on empty or unknown). Adapters convert only for display; the API stays UTC.
+* `FindDisputes(ctx, actor, netID, DisputeQuery{Statuses, TxID, Page})`: `ListDisputes` with a transaction filter and keyset paging (newest first, page by the last id). Same visibility as `ListDisputes`.
+* Directory search (`MemberPageQuery.Name`, `CountDirectory`, admin member pages) folds case and accents with `domain.FoldName` (NFKD, combining marks removed, Unicode case folding, Turkish dotless i mapped to i) through the SQLite function `circula_fold`, registered by the store.
+
 ### Input and result types
 
 ```go
@@ -739,7 +749,7 @@ Deviations from the specs, with reasons:
 
 Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
 
-* FR-067 admin overview counts, FR-076 other-party dispute response, FR-078 re-review, FR-024 reports, FR-038 notifications,
+* FR-076 other-party dispute response, FR-078 re-review, FR-024 reports, FR-038 notifications,
   DOM-025.1 limit-warning job, SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
   setup-secret bootstrap (FR-002; adapter concern), break-glass operator access (SEC-013), per-person session cap,
   platform-scope (`network_id = ''`) audit-chain verification (SVC-06).

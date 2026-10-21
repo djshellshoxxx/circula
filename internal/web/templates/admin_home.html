@@ -1,10 +1,22 @@
 {{define "content"}}
-{{if .D}}<div class="notice" role="note">{{.D}} membership request{{if ne .D 1}}s are{{else}} is{{end}} waiting. <a href="/n/{{.Slug}}/admin/members?status=pending">Review requests</a></div>{{end}}
+{{with .D}}
+<section aria-labelledby="att-h">
+  <h2 id="att-h">Needs attention</h2>
+  <p>Counted from the ledger and the dispute records when this page loaded, {{.AsOf}}.</p>
+  <ul class="rows">{{range .Rows}}
+    <li>{{.Count}} {{.Text}}.{{if and .Href .Count}} <a href="{{.Href}}">{{.Label}}</a>{{end}}</li>{{end}}
+    <li>{{.Check}} <a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></li>
+  </ul>
+</section>
+{{end}}
+<h2>Manage the network</h2>
 <ul class="rows">
 <li><a href="/n/{{.Slug}}/admin/members">Members</a>: approve, suspend, restore, remove, roles and credit limits</li>
 <li><a href="/n/{{.Slug}}/admin/invitations">Invitations</a>: create and revoke invitation links</li>
 <li><a href="/n/{{.Slug}}/admin/policy">Policy</a>: limits, expiry, join mode</li>
 <li><a href="/n/{{.Slug}}/admin/adjust">Adjustments</a>: audited corrections to a member's balance</li>
+<li><a href="/n/{{.Slug}}/admin/reverse">Reverse a trade</a>: give back a completed trade, with a reason</li>
+<li><a href="/n/{{.Slug}}/admin/announcements">Announcements</a>: notices on every member's home page</li>
 <li><a href="/n/{{.Slug}}/admin/audit">Audit and checks</a></li>
 <li><a href="/n/{{.Slug}}/admin/exports">Exports</a></li>
 <li><a href="/n/{{.Slug}}/review">Dispute review queue</a></li>

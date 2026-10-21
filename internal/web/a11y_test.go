@@ -155,13 +155,18 @@ func TestPageStructure(t *testing.T) {
 	adm.login("admin@example.org")
 	for _, path := range []string{b + "/admin", b + "/admin/members", b + "/admin/members?status=active", b + "/admin/members/" + w.bobM.ID + "/suspend",
 		b + "/admin/members/" + w.bobM.ID + "/limit", b + "/admin/invitations", b + "/admin/policy", b + "/admin/adjust", b + "/admin/audit",
-		b + "/admin/exports", b + "/review"} {
+		b + "/admin/exports", b + "/review", b + "/review?status=open", b + "/admin/reverse", b + "/admin/reverse?tx=" + tx.ID, b + "/admin/announcements", "/account/time-zone"} {
 		checkStructure(t, path, adm.get(path))
 	}
 	// Review and error states.
 	f := adm.get(b + "/admin/adjust")
 	rev := adm.post(b+"/admin/adjust", f, url.Values{"member_id": {w.bobM.ID}, "direction": {"credit"}, "amount": {"5"}, "reason": {"fix"}, "step": {"review"}})
 	checkStructure(t, "adjust review", rev)
+	rf := adm.get(b + "/admin/reverse")
+	checkStructure(t, "reverse review", adm.post(b+"/admin/reverse", rf, url.Values{"tx": {tx.ID}, "reason": {"fix"}, "step": {"review"}}))
+	checkStructure(t, "reverse errors", adm.post(b+"/admin/reverse", rf, url.Values{"tx": {"x"}, "step": {"review"}}))
+	dvw := adm.get(b + "/disputes/" + ds[0].ID)
+	checkStructure(t, "decision review", adm.post(b+"/disputes/"+ds[0].ID+"/resolve", dvw, url.Values{"outcome": {"upheld"}, "rationale": {"r"}}))
 	errp := adm.post(b+"/admin/adjust", f, url.Values{"step": {"review"}})
 	checkStructure(t, "adjust errors", errp)
 	checkStructure(t, "login error", br.post("/login", br.get("/login"), url.Values{"login": {"x"}, "password": {"y"}}))

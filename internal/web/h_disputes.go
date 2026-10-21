@@ -1,6 +1,7 @@
 package web
 
 import (
+	"html/template"
 	"net/http"
 	"strings"
 
@@ -52,21 +53,56 @@ func statusWords(s domain.DisputeStatus) string {
 	return string(s)
 }
 
-func rows(ds []*domain.Dispute) []disputeRow {
+func (c *rc) disputeRows(ds []*domain.Dispute) []disputeRow {
 	var out []disputeRow
 	for _, d := range ds {
-		out = append(out, disputeRow{ID: d.ID, Category: categoryLabel(d.Category), Status: statusWords(d.Status), Tx: d.TxID, Opened: fmtTime(d.OpenedAt)})
+		out = append(out, disputeRow{ID: d.ID, Category: categoryLabel(d.Category), Status: statusWords(d.Status), Tx: d.TxID, Opened: c.when(d.OpenedAt)})
 	}
 	return out
 }
 
+// disputeListData is one page of disputes. Next is the cursor of the following page, "" at the end.
+type disputeListData struct {
+	Rows   []disputeRow
+	Next   string
+	Filter string
+}
+
+// disputePage reads one page of disputes (newest first) with a status filter. It asks for one row
+// more than the page size to learn whether a further page exists, so no fixed window hides
+// older disputes (WEB-02).
+func (c *rc) disputePage(r *http.Request, statuses []domain.DisputeStatus) (*disputeListData, error) {
+	ds, err := c.s.svc.FindDisputes(r.Context(), c.actor, c.netID(), service.DisputeQuery{Statuses: statuses,
+		Page: service.Page{AfterID: r.URL.Query().Get("after"), Limit: perPage + 1}})
+	if err != nil {
+		return nil, err
+	}
+	d := &disputeListData{}
+	if len(ds) > perPage {
+		ds = ds[:perPage]
+		d.Next = ds[perPage-1].ID
+	}
+	d.Rows = c.disputeRows(ds)
+	return d, nil
+}
+
 func (s *server) disputes(w http.ResponseWriter, r *http.Request, c *rc) {
-	ds, err := s.svc.ListDisputes(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 100})
+	d, err := c.disputePage(r, nil)
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "disputes", 200, &page{Title: "Disputes", D: rows(ds)})
+	s.render(w, r, c, "disputes", 200, &page{Title: "Disputes", D: d})
+}
+
+var queueFilters = []option{
+	{"", "All needing action"}, {string(domain.DisputeOpen), "Waiting for a reviewer"},
+	{string(domain.DisputeUnderReview), "Under review"}, {string(domain.DisputePostingPending), "Decided, reversal not yet posted"},
+}
+
+type queueData struct {
+	*disputeListData
+	Filters []option
 }
 
 func (s *server) reviewQueue(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -74,13 +110,20 @@ func (s *server) reviewQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, domain.ErrForbidden)
 		return
 	}
-	ds, err := s.svc.ListDisputes(r.Context(), c.actor, c.netID(),
-		[]domain.DisputeStatus{domain.DisputeOpen, domain.DisputeUnderReview, domain.DisputePostingPending}, service.Page{Limit: 100})
+	f := r.URL.Query().Get("status")
+	sts := []domain.DisputeStatus{domain.DisputeOpen, domain.DisputeUnderReview, domain.DisputePostingPending}
+	for _, o := range queueFilters[1:] {
+		if o.Value == f {
+			sts = []domain.DisputeStatus{domain.DisputeStatus(f)}
+		}
+	}
+	d, err := c.disputePage(r, sts)
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "review_queue", 200, &page{Title: "Dispute review queue", D: rows(ds)})
+	d.Filter = f
+	s.render(w, r, c, "review_queue", 200, &page{Title: "Dispute review queue", D: &queueData{d, queueFilters}, V: map[string]string{"status": f}})
 }
 
 type disputeForm struct {
@@ -180,6 +223,7 @@ type disputeData struct {
 	Retry    bool
 	Events   []evRow
 	Amount   string
+	OpenedAt template.HTML
 }
 
 type evRow struct {
@@ -218,6 +262,7 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 	pol := c.Net.Policy
 	out := &disputeData{V: v, Category: categoryLabel(d.Category), Status: statusWords(d.Status), Party: v.Tx.IsParty(c.Me.ID)}
 	out.Amount = domain.FormatAmount(v.Tx.Amount, pol.Decimals)
+	out.OpenedAt = c.when(d.OpenedAt)
 	if d.Outcome != "" {
 		out.Outcome = outcomeWords(d, domain.FormatAmount(d.ReversalAmount, pol.Decimals), unitFor(pol.CurrencyName, d.ReversalAmount, pol.Decimals))
 	}
@@ -237,7 +282,7 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 		if e.Outcome != "" {
 			t += " (" + strings.ReplaceAll(e.Outcome, "_", " ") + ")"
 		}
-		out.Events = append(out.Events, evRow{Text: strings.ToUpper(t[:1]) + t[1:], At: fmtTime(e.OccurredAt)})
+		out.Events = append(out.Events, evRow{Text: strings.ToUpper(t[:1]) + t[1:], At: c.when(e.OccurredAt)})
 	}
 	p.Title, p.D = "Dispute", out
 	s.render(w, r, c, "dispute_view", status, p)
@@ -267,6 +312,17 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 				return
 			}
 			in.Amount = amt
+		}
+		// A decision can move credit, so it gets a review step like every other money form: the
+		// form posts step=review (or nothing) and only step=confirm records it.
+		switch r.PostFormValue("step") {
+		case "back":
+			s.showDispute(w, r, c, id, &page{V: formValues(r)}, 200)
+			return
+		case "confirm":
+		default:
+			s.decisionReview(w, r, c, id, in)
+			return
 		}
 		_, err = s.svc.ResolveDispute(r.Context(), c.actor, c.netID(), in)
 		msg = "Decision recorded."
