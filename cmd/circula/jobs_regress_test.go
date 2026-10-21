@@ -477,9 +477,7 @@ func TestJobBackupFailureIsRetriedAndStoppable(t *testing.T) {
 	done := make(chan struct{})
 	go func() { f.runner.backups(ctx); close(done) }()
 	waitFor(t, "failed backup", func() bool { return jobRuns(f.runner.metrics, "backup", "failed") == 1 })
-	if !strings.Contains(f.logs.String(), "scheduled backup failed") {
-		t.Errorf("failure not logged: %s", f.logs.String())
-	}
+	waitFor(t, "failure log line", func() bool { return strings.Contains(f.logs.String(), "scheduled backup failed") })
 	cancel()
 	select {
 	case <-done:
