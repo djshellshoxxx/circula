@@ -95,6 +95,9 @@ func (s *server) routes() {
 	s.tradeRoutes()
 	s.disputeRoutes()
 	s.adminRoutes()
+	for _, f := range extraRoutes {
+		f(s)
+	}
 	s.mux.HandleFunc("/", s.notFoundOrRoot)
 }
 
