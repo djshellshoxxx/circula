@@ -21,6 +21,7 @@
   {{template "field" dict "P" . "Name" "response_period_days" "Label" "Dispute response period (days, 0 for none)" "Hint" "A decision waits for the other party's response or this period, unless the reviewer waives the response." "Mode" "numeric" "Req" true}}
   {{template "field" dict "P" . "Name" "re_review_window_days" "Label" "Re-review window (days)" "Mode" "numeric" "Req" true}}
   {{template "field" dict "P" . "Name" "limit_warning_percent" "Label" "Limit warning (percent of limit used)" "Hint" "1 to 100." "Mode" "numeric" "Req" true}}
+  {{template "field" dict "P" . "Name" "inactivity_days" "Label" "Inactivity flag (days, 0 for no rule)" "Hint" "Members with no sign-in and no trade for this long are listed for administrators and told. They are never removed automatically. 0 or 30 to 3650." "Mode" "numeric"}}
   <div class="field"><label for="f-join_mode">How people join</label>
   <select id="f-join_mode" name="join_mode">
     <option value="invite"{{if eq (.Val "join_mode") "invite"}} selected{{end}}>By invitation only</option>

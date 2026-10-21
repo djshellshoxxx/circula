@@ -341,7 +341,7 @@ func policyMap(p domain.Policy) map[string]any {
 		"dispute_window_days": p.DisputeWindowDays, "join_mode": string(p.JoinMode),
 		"departure_rule": string(p.DepartureRule), "signup_grant": p.SignupGrant, "dual_control_threshold": p.DualControlThreshold,
 		"limit_warning_days": p.LimitWarningDays, "response_period_days": p.ResponsePeriodDays,
-		"re_review_window_days": p.ReReviewWindowDays, "limit_warning_percent": p.LimitWarningPercent, "default_flag_blocks_payer": p.DefaultFlagBlocksPayer,
+		"re_review_window_days": p.ReReviewWindowDays, "limit_warning_percent": p.LimitWarningPercent, "inactivity_days": p.InactivityDays, "default_flag_blocks_payer": p.DefaultFlagBlocksPayer,
 		"directory_visibility": p.DirectoryVisibility,
 	}
 }

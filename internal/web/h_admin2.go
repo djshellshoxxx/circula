@@ -21,7 +21,7 @@ func policyValues(p domain.Policy) map[string]string {
 		"max_tx_amount": domain.FormatAmount(p.MaxTxAmount, d), "signup_grant": domain.FormatAmount(p.SignupGrant, d),
 		"proposal_expiry_days": itoa(p.ProposalExpiryDays), "dispute_window_days": itoa(p.DisputeWindowDays),
 		"limit_warning_days": itoa(p.LimitWarningDays), "response_period_days": itoa(p.ResponsePeriodDays),
-		"re_review_window_days": itoa(p.ReReviewWindowDays), "limit_warning_percent": itoa(p.LimitWarningPercent), "join_mode": string(p.JoinMode), "departure_rule": string(p.DepartureRule),
+		"re_review_window_days": itoa(p.ReReviewWindowDays), "limit_warning_percent": itoa(p.LimitWarningPercent), "inactivity_days": itoa(p.InactivityDays), "join_mode": string(p.JoinMode), "departure_rule": string(p.DepartureRule),
 	}
 	if p.DefaultFlagBlocksPayer {
 		v["default_flag_blocks_payer"] = "1"
@@ -72,9 +72,13 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		*dst[f] = n
 	}
 	days := map[string]*int{"proposal_expiry_days": &pol.ProposalExpiryDays, "dispute_window_days": &pol.DisputeWindowDays, "limit_warning_days": &pol.LimitWarningDays,
-		"response_period_days": &pol.ResponsePeriodDays, "re_review_window_days": &pol.ReReviewWindowDays, "limit_warning_percent": &pol.LimitWarningPercent}
+		"response_period_days": &pol.ResponsePeriodDays, "re_review_window_days": &pol.ReReviewWindowDays, "limit_warning_percent": &pol.LimitWarningPercent, "inactivity_days": &pol.InactivityDays}
 	for f, d := range days {
-		n, err := strconv.Atoi(strings.TrimSpace(v[f]))
+		t := strings.TrimSpace(v[f])
+		if f == "inactivity_days" && t == "" {
+			t = "0" // optional: empty means no inactivity rule (GOV-012)
+		}
+		n, err := strconv.Atoi(t)
 		if err != nil {
 			fe = append(fe, fieldErr{f, label(f) + ": enter a whole number."})
 			continue

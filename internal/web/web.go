@@ -50,9 +50,9 @@ type server struct {
 	// Failure counters: per client address, per client+login, and per signed-in
 	// person for password-change guesses. reg and setup count every attempt.
 	ipFail, acctFail, pwFail, reg, setup, join *limiter
-	setupUsed                            atomic.Bool // in-process fast path; the durable flag is the service's (SEC-028)
-	setupMu                              sync.Mutex  // serialises check, create and mark so one secret creates one network
-	mux                                  *http.ServeMux
+	setupUsed                                  atomic.Bool // in-process fast path; the durable flag is the service's (SEC-028)
+	setupMu                                    sync.Mutex  // serialises check, create and mark so one secret creates one network
+	mux                                        *http.ServeMux
 }
 
 // NewHandler returns the UI handler. Mount it at /.

@@ -64,7 +64,7 @@ The links use the service's public base URL, so ask the service operator if they
 
 If the policy is *Request, then approval*, people ask to join from `/n/<name>/join` and appear in **Members** as *Pending
 approval*. The overview page shows how many are waiting. For each, **Approve** makes them an active member; **Deny**
-(reason required) closes the request. If the policy is *Open*, people join without approval. If it is *By invitation
+(reason required) closes the request. If the policy is *Open*, people join without approval; joining is rate limited (ten attempts per ten minutes per person and per address, then a retry-later page). If it is *By invitation
 only*, the join page shows no form.
 
 ## 4. Members
@@ -106,6 +106,7 @@ required and is stored with the change.
 | Dispute response period (days, 0 for none) | How long the other party has to answer a dispute before a decision may be recorded without a response. Default 7, up to 90. |
 | Re-review window (days) | How long after a decision a party may ask for the one re-review. Default 14, 1 to 365. |
 | Limit warning (percent of limit used) | Members at or above this share of their credit limit are warned (a notification at most weekly, plus a notice on Home and the propose form). Default 80, 1 to 100. |
+| Inactivity flag (days, 0 for no rule) | 0 (default) means no rule. Otherwise 30 to 3650: a member with no sign-in and no trade for that long is told in their inbox once a year and listed under **Members > Inactive members** (API: `GET /admin/members?inactive=true`). Nobody is suspended or removed automatically; you decide. Sign-in activity is saved hourly. |
 | How people join | Invitation, approval or open. |
 | When a member leaves | *Balance is retained* or *Balance is settled to zero*. Settling posts an audited adjustment. |
 | Members marked in default cannot pay | See section 4. |
@@ -231,7 +232,7 @@ also verifies the ledger by itself at start-up and on a schedule.
 
 **Exports** downloads one zip file containing CSV or JSON for: ledger (accounts, trades, entries), members and roles,
 audit history, or everything. Each export is recorded in the audit log. Exports contain personal data. Store and share
-them accordingly, and delete them when finished. Members can export their own trades from History without your help.
+them accordingly, and delete them when finished. The file layout is documented in [export schema](../api/export-schema.md), with a reference reader `scripts/read-export.py` that needs no Circula installation. Members can export their own trades from History without your help.
 
 ## 9. Good practice
 

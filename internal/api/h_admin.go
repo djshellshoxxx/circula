@@ -57,7 +57,7 @@ func (s *server) adminAdjust(c *reqCtx) error { // API-057
 }
 
 func (s *server) adminListMembers(c *reqCtx) error { // API-059
-	if err := c.only("limit", "cursor", "status"); err != nil {
+	if err := c.only("limit", "cursor", "status", "inactive"); err != nil {
 		return err
 	}
 	var sts []domain.MemberStatus
@@ -69,11 +69,21 @@ func (s *server) adminListMembers(c *reqCtx) error { // API-059
 			return invalidQuery("unknown status")
 		}
 	}
-	p, err := c.page(c.query.Get("status"))
+	p, err := c.page(c.query.Get("status") + "|" + c.query.Get("inactive"))
 	if err != nil {
 		return err
 	}
+	inactive := c.query.Get("inactive") == "true" // GOV-012: members the inactivity rule flags
+	if v := c.query.Get("inactive"); v != "" && v != "true" && v != "false" {
+		return invalidQuery("inactive must be true or false")
+	}
+	if inactive && c.query.Get("status") != "" {
+		return invalidQuery("inactive cannot be combined with status")
+	}
 	rows, next, err := collect(c, p, func(pg service.Page) ([]*domain.Member, error) {
+		if inactive {
+			return s.svc.ListInactiveMembers(c.r.Context(), c.actor, c.netID, pg)
+		}
 		return s.svc.AdminListMembers(c.r.Context(), c.actor, c.netID, sts, pg)
 	}, func(m *domain.Member) string { return m.ID }, nil)
 	if err != nil {

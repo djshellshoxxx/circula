@@ -32,6 +32,7 @@ const (
 	ActMemberSuspended          = "member.suspended"
 	ActMemberRestored           = "member.restored"
 	ActMemberDeparted           = "member.departed"
+	ActMemberInactive           = "member.inactive_flagged" // GOV-012
 	ActRoleGranted              = "role.granted"
 	ActRoleRevoked              = "role.revoked"
 	ActLimitChanged             = "account.limit_changed"

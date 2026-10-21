@@ -319,6 +319,11 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(412, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag), body: m{"reason": "again"}})
 	h.do(200, call{method: "GET", path: "/admin/members", token: adminT})
 	h.do(400, call{method: "GET", path: "/admin/members?status=weird", token: adminT, skipRequest: true})
+	h.do(200, call{method: "GET", path: "/admin/members?inactive=true", token: adminT})
+	h.do(400, call{method: "GET", path: "/admin/members?inactive=true&status=active", token: adminT, skipRequest: true})
+	rec = h.do(200, call{method: "GET", path: "/admin/policy", token: adminT})
+	h.do(200, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", rec.Header().Get("ETag")),
+		body: m{"reason": "flag idle members", "inactivity_days": 90}})
 	h.do(200, call{method: "GET", path: "/admin/accounts/" + bobM.ID, token: adminT})
 	rec = h.do(200, call{method: "GET", path: "/admin/accounts/" + aliceM.ID, token: adminT})
 	h.do(200, call{method: "PUT", path: "/admin/accounts/" + aliceM.ID + "/credit-limit", token: adminT,

@@ -1629,6 +1629,11 @@ paths:
           in: query
           required: false
           schema: {$ref: '#/components/schemas/MemberStatus'}
+        - name: inactive
+          in: query
+          required: false
+          description: When true, lists only active members that the network's inactivity rule currently flags (GOV-012); empty when the network has no rule. Cannot be combined with status.
+          schema: {type: boolean}
       responses:
         '200':
           description: One page of members with roles and join data.
@@ -3240,7 +3245,7 @@ components:
           $ref: '#/components/schemas/PolicyLogEntry'
     Policy:
       type: object
-      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor, response_period_days, re_review_window_days, limit_warning_percent]
+      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor, response_period_days, re_review_window_days, limit_warning_percent, inactivity_days]
       additionalProperties: false
       properties:
         currency_name: {type: string}
@@ -3261,6 +3266,7 @@ components:
         response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
         re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
+        inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
     PolicyPatch:
       type: object
       required: [reason]
@@ -3283,6 +3289,7 @@ components:
         response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
         re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
+        inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
         reason: {type: string, maxLength: 500}
         notice_days: {type: integer, minimum: 0, maximum: 90, description: 'Notice before the change takes effect (GOV-003). Default 14 for a change that reduces default credit, shortens the dispute window, changes the departure rule, makes the directory less restrictive or the join mode more open; 0 otherwise. Fewer than 14 for such a change needs notice_reason. While a change is scheduled only a PATCH that restores the values in force (a cancellation) is accepted; others get 409.'}
         notice_reason: {type: string, maxLength: 500}
