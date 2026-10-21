@@ -238,6 +238,9 @@ func (c *rc) notice() string {
 	if c.Net.Status == domain.NetworkClosed {
 		return "This network is closed. History stays readable and exports are available; new trades are not possible."
 	}
+	if c.Net.Suspended() {
+		return "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
+	}
 	return ""
 }
 

@@ -53,7 +53,7 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | FR-065 | P1 | built | S/membership.go role assign; A routes.go:66-67; S/dispute_test.go |
 | FR-066 | P1 | built | A/routes.go:55 adminReverse; S/reversal.go; S/reversal_test.go; W/h_admin_f2.go reverse UI |
 | FR-067 | P1 | built | S/overview.go AdminOverview; W/templates/admin_home.html; W/f2_test.go |
-| FR-068 | P1 | partial | S/networks.go:127 CloseNetwork; no web/API/CLI caller (grep) |
+| FR-068 | P1 | built | web /admin/network and API /admin/network/close with blockers list, confirm step and member notices |
 | FR-069 | P0 | built | S/membership.go AssignRole; S/membership_test.go TestAdministratorSuccession |
 | FR-070 | P0 | built | S/disputes.go OpenDispute; S/dispute_test.go TestOpenDisputeRules |
 | FR-071 | P0 | built | S/dispute_test.go |
@@ -358,9 +358,9 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | GOV-020 | P0 | partial | last-admin guard; no read-only admin-required state |
 | GOV-021 | P0 | partial | break-glass grant-admin (docs/dev/break-glass.md) + reset-password; no member-facing recovery of lost-admin network beyond operator |
 | GOV-022 | P0 | partial | S/export.go member/network/full; import deferred |
-| GOV-023 | P0 | not built | no network suspension (networks status has no suspended) |
-| GOV-024 | P0 | not built | no platform suspension |
-| GOV-025 | P0 | partial | CloseNetwork S/networks.go:127 refuses with blockers; no caller, notices, final export, erasure |
+| GOV-023 | P0 | built | overlay table 0013; S/suspend.go; web /admin/network; API /admin/network/suspend,resume |
+| GOV-024 | P0 | built | `circula suspend start/lift` (categories enforced), admin notice, network-visible audit |
+| GOV-025 | P0 | partial | closure exposed (web+API), notices to members, preview; no closure-date notice period, final export checksum, or post-period erasure |
 | GOV-026 | P1 | not built | no hosted platform policy docs |
 | GOV-027 | P1 | partial | docs/ops runbook boundary; not linked from admin UI |
 

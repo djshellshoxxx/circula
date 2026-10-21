@@ -226,6 +226,21 @@ when a setup secret is in force, changing the public address used in invitation 
 restores, upgrades, and anything about the machine ([operations guide](../ops/README.md)). The operator's own sign-in
 accounts are created on the command line and are ordinary accounts.
 
+## 10a. Pausing trading and closing the network
+
+Open **Network admin > Pause or close** (`/admin/network`).
+
+* **Pause trading (GOV-023).** Give a reason. New proposals, acceptances, postings and joins are refused; members can
+  still read balances and history and download their data. Every member gets an inbox notice with your reason, and a
+  banner shows on their pages. Resume with a reason; resuming is audited. If the platform operator has also paused the
+  network, only the operator can lift that pause.
+* **Platform pause (GOV-024).** The service operator can pause a network only for a documented category (legal order,
+  security incident, platform abuse, hosting agreement). You get an inbox notice and the event shows in your audit log.
+* **Close the network (FR-068, GOV-025).** Closing is permanent. It is blocked while any proposal, dispute or
+  posting-pending item is open; the page lists them. Accounts with a non-zero balance are shown as a warning count:
+  closing does not settle balances. Download a full export first (Exports), give a reason, type the network address
+  name to confirm. Members are told; history and exports stay available.
+
 ## 11. Not in this build
 
 | Feature | State in this build |

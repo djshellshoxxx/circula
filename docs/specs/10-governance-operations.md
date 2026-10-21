@@ -48,9 +48,9 @@ Summary: built 8, not built 8, partial 11.
 | GOV-020 | P0 | partial | Last-admin guard built; read-only administrator-required state not built |
 | GOV-021 | P0 | not built | Platform-assisted recovery not built |
 | GOV-022 | P0 | partial | Member, network and full exports built; reconciliation summary in manifest; import not built |
-| GOV-023 | P0 | not built | Network suspension not built (status has no suspended value) |
-| GOV-024 | P0 | not built | Platform suspension not built |
-| GOV-025 | P0 | partial | Closure refuses with blockers and freezes postings; notices, final export and erasure not built |
+| GOV-023 | P0 | built | Administrator suspension overlay: postings, acceptances and joins refused; reads and exports kept; members notified; audited |
+| GOV-024 | P0 | built | Operator command with mandatory category; administrators notified; audit visible to the network |
+| GOV-025 | P0 | partial | Closure exposed in web and API with blockers, confirm and member notices; closure-date notice period, final export checksum and erasure not built |
 | GOV-026 | P1 | not built | Hosted platform policy documents not written |
 | GOV-027 | P1 | partial | Support boundary in docs/ops; not linked from admin UI |
 
