@@ -136,15 +136,15 @@ func randToken(n int) (string, error) {
 // update and view are thin wrappers so call sites read uniformly.
 func (s *Service) update(ctx context.Context, fn func(store.Tx) error) error {
 	if s.obs == nil {
-		return s.st.Update(ctx, fn)
+		return s.st.Update(ctx, s.asOf(fn))
 	}
 	var posts, replays int
-	err := s.st.Update(ctx, func(tx store.Tx) error {
+	err := s.st.Update(ctx, s.asOf(func(tx store.Tx) error {
 		s.unit = unitStats{}
 		ferr := fn(tx)
 		posts, replays = s.unit.posts, s.unit.replays
 		return ferr
-	})
+	}))
 	if err == nil {
 		if posts > 0 {
 			s.obs.Posted(posts)
@@ -157,7 +157,18 @@ func (s *Service) update(ctx context.Context, fn func(store.Tx) error) error {
 }
 
 func (s *Service) view(ctx context.Context, fn func(store.Tx) error) error {
-	return s.st.View(ctx, fn)
+	return s.st.View(ctx, s.asOf(fn))
+}
+
+// asOf pins each unit of work to the service clock, so a policy version whose
+// notice period has not run out yet is not in force (GOV-003).
+func (s *Service) asOf(fn func(store.Tx) error) func(store.Tx) error {
+	return func(tx store.Tx) error {
+		if r, ok := tx.(store.GovRepo); ok {
+			r.SetAsOf(s.now())
+		}
+		return fn(tx)
+	}
 }
 
 // Page is a keyset pagination request: items strictly after AfterID in the

@@ -4,6 +4,7 @@ import (
 	"context"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -213,8 +214,13 @@ func (s *Service) MyMemberships(ctx context.Context, actor domain.Actor) ([]*dom
 
 // PolicyChange replaces the network policy (all keys at once, validated).
 type PolicyChange struct {
-	Policy         domain.Policy
-	Reason         string
+	Policy domain.Policy
+	Reason string
+	// NoticeDays is the notice before the change takes effect (GOV-003). Nil
+	// means the default: 14 days for an adverse change, none otherwise. An
+	// adverse change with fewer days needs NoticeReason.
+	NoticeDays     *int
+	NoticeReason   string
 	IdempotencyKey string `json:"-"`
 }
 
@@ -234,6 +240,7 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 		if err := p.requireLasting(); err != nil {
 			return err
 		}
+		var effAt time.Time
 		out, err = idempotent(s, tx, netID, actor, "policy.update", in.IdempotencyKey, in, func() (string, error) {
 			if p.net.Status == domain.NetworkClosed {
 				return "", domain.InvalidState("network is closed")
@@ -260,13 +267,48 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 					return "", domain.Invalid("dual_control_threshold", "needs at least two active administrators")
 				}
 			}
+			now := s.now()
 			v := p.net.PolicyVersion + 1
-			if err := tx.AppendPolicy(netID, v, in.Policy, p.memberID(), in.Reason, s.now()); err != nil {
+			days := 0
+			if g, ok := tx.(store.GovRepo); ok {
+				latest, err := g.LatestPolicyVersion(netID)
+				if err != nil {
+					return "", err
+				}
+				pending := latest >= v
+				if pending {
+					v = latest + 1
+				}
+				switch {
+				case pending && in.Policy != p.net.Policy:
+					return "", domain.InvalidState("a policy change is already scheduled; cancel it before making another")
+				case pending: // the effective values again: cancels the scheduled change at once
+				default:
+					if days, err = noticeDays(domain.Adverse(p.net.Policy, in.Policy), in); err != nil {
+						return "", err
+					}
+				}
+				eff := now.AddDate(0, 0, days)
+				err = g.AppendPolicyNotice(netID, v, in.Policy, p.memberID(), in.Reason, now, eff, days, strings.TrimSpace(in.NoticeReason))
+				if err != nil {
+					return "", err
+				}
+				if days > 0 {
+					if err := s.notifyActive(tx, netID, "", NotifPolicyNotice, "Rule change announced",
+						"A change to the network rules takes effect on "+eff.Format("2 Jan 2006")+". See the rules page for what changes.",
+						"/policy"); err != nil {
+						return "", err
+					}
+				}
+				effAt = eff
+			} else if err := tx.AppendPolicy(netID, v, in.Policy, p.memberID(), in.Reason, now); err != nil {
 				return "", err
+			} else {
+				effAt = now
 			}
 			if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActPolicyChanged, TargetType: "policy",
 				TargetID: netID, Reason: in.Reason, IdemRef: keyRef(in.IdempotencyKey),
-				Before: policyDiff(p.net.Policy, in.Policy, true), After: policyDiff(p.net.Policy, in.Policy, false)}); err != nil {
+				Before: policyDiff(p.net.Policy, in.Policy, true), After: withNotice(policyDiff(p.net.Policy, in.Policy, false), effAt, days, in.NoticeReason)}); err != nil {
 				return "", err
 			}
 			return netID, nil
@@ -301,4 +343,37 @@ func policyMap(p domain.Policy) map[string]any {
 		"limit_warning_days": p.LimitWarningDays, "default_flag_blocks_payer": p.DefaultFlagBlocksPayer,
 		"directory_visibility": p.DirectoryVisibility,
 	}
+}
+
+// noticeDays resolves the notice for a change (GOV-003): the default is 14
+// days for an adverse change; a shorter notice needs a recorded reason.
+func noticeDays(adverse bool, in PolicyChange) (int, error) {
+	n := 0
+	switch {
+	case in.NoticeDays != nil:
+		n = *in.NoticeDays
+	case adverse:
+		n = domain.DefaultNoticeDays
+	}
+	if n < 0 || n > domain.MaxNoticeDays {
+		return 0, domain.Invalid("notice_days", "must be between 0 and 90")
+	}
+	if err := boundedText("notice_reason", in.NoticeReason, maxReasonLen); err != nil {
+		return 0, err
+	}
+	if adverse && n < domain.DefaultNoticeDays && strings.TrimSpace(in.NoticeReason) == "" {
+		return 0, domain.Invalid("notice_days", "this change needs at least 14 days' notice; give a notice_reason to shorten it")
+	}
+	return n, nil
+}
+
+func withNotice(after map[string]any, eff time.Time, days int, reason string) map[string]any {
+	after["effective_at"] = eff.UnixMilli()
+	if days > 0 {
+		after["notice_days"] = days
+	}
+	if r := strings.TrimSpace(reason); r != "" {
+		after["notice_reason"] = r
+	}
+	return after
 }

@@ -20,6 +20,10 @@ func (s *server) routes() {
 	R("GET "+v1+"/network/announcements", s.listAnnouncements(false)) // API-064
 	R("GET "+v1+"/me", s.getMe, noNet)                                // API-041
 	R("PATCH "+v1+"/me", s.patchMe, noNet)                            // extension: display time zone
+	R("GET "+v1+"/network/terms", s.getTerms)                         // GOV-009
+	R("POST "+v1+"/me/terms/accept", s.acceptTerms, idem)             // GOV-009
+	R("GET "+v1+"/network/policy-log", s.policyLog)                   // GOV-002, GOV-003
+	R("POST "+v1+"/admin/terms", s.publishTerms, idem)                // GOV-009
 	R("GET "+v1+"/members", s.listMembers)                            // API-042
 	R("GET "+v1+"/members/{id}", s.getMember)                         // API-043
 	R("GET "+v1+"/accounts/me", s.getAccount)                         // API-044

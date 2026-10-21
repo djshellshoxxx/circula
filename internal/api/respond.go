@@ -107,6 +107,7 @@ var codeStatus = map[domain.Code]int{
 	domain.CodeInvalidState: 409, domain.CodeConflict: 409, domain.CodeBlocked: 409, domain.CodeRateLimited: 429, domain.CodeUnavailable: 503,
 	domain.CodeNetworkFrozen:          423,
 	domain.CodePasswordChangeRequired: 403,
+	domain.CodeTermsRequired:          409,
 }
 
 // fromErr converts any error into an apiError. Unknown errors become opaque

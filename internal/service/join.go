@@ -152,6 +152,13 @@ func existingMembership(ex *domain.Member) (*domain.Member, error) {
 // back unchanged and the token is not consumed (DOM-002, FR-017); a suspended
 // or departed one is refused (see existingMembership).
 func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, token, displayName string) (*domain.Member, error) {
+	return s.RedeemInvitationTerms(ctx, actor, token, displayName, 0)
+}
+
+// RedeemInvitationTerms is RedeemInvitation for a network that publishes
+// terms: termsVersion is the version the person accepted, which must be the
+// current one (GOV-009). It is ignored when the network has no terms.
+func (s *Service) RedeemInvitationTerms(ctx context.Context, actor domain.Actor, token, displayName string, termsVersion int) (*domain.Member, error) {
 	if err := joinableActor(actor); err != nil {
 		return nil, err
 	}
@@ -182,8 +189,15 @@ func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, toke
 		if net.Status != domain.NetworkActive {
 			return domain.InvalidState("network is %s and not accepting members", net.Status)
 		}
+		record, err := s.joinTerms(tx, net.ID, termsVersion)
+		if err != nil {
+			return err
+		}
 		m, err := s.createMember(tx, net, actor.PersonID, name, domain.MemberActive, "invite", actor.RequestID)
 		if err != nil {
+			return err
+		}
+		if err := record(m.ID); err != nil {
 			return err
 		}
 		if err := tx.MarkInvitationUsed(inv.ID, m.ID, now); err != nil {
@@ -201,6 +215,12 @@ func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, toke
 // membership is returned unchanged (FR-017); a suspended or departed one is
 // refused (see existingMembership).
 func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, displayName string) (*domain.Member, error) {
+	return s.JoinNetworkTerms(ctx, actor, netID, displayName, 0)
+}
+
+// JoinNetworkTerms is JoinNetwork with the terms version the person accepted
+// (GOV-009); see RedeemInvitationTerms.
+func (s *Service) JoinNetworkTerms(ctx context.Context, actor domain.Actor, netID, displayName string, termsVersion int) (*domain.Member, error) {
 	if err := joinableActor(actor); err != nil {
 		return nil, err
 	}
@@ -229,8 +249,15 @@ func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, di
 		default:
 			return domain.Forbidden("this network is invitation-only")
 		}
+		record, err := s.joinTerms(tx, net.ID, termsVersion)
+		if err != nil {
+			return err
+		}
 		m, err := s.createMember(tx, net, actor.PersonID, name, status, string(net.Policy.JoinMode), actor.RequestID)
 		if err != nil {
+			return err
+		}
+		if err := record(m.ID); err != nil {
 			return err
 		}
 		out = m

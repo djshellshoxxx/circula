@@ -48,19 +48,9 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 		if target.Status != domain.MemberActive && target.Status != domain.MemberSuspended {
 			return domain.InvalidState("member is %s", target.Status)
 		}
-		var blockers []string
-		disputed, err := tx.ListTransactions(netID, store.TxFilter{MemberID: target.ID, Statuses: []domain.TxStatus{domain.TxDisputed}, Limit: 500})
+		blockers, err := departBlockers(tx, netID, target)
 		if err != nil {
 			return err
-		}
-		for _, t := range disputed {
-			blockers = append(blockers, "disputed transaction "+t.ID)
-		}
-		if err := lastAdminGuard(tx, netID, target); err != nil {
-			if domain.CodeOf(err) != domain.CodeBlocked {
-				return err
-			}
-			blockers = append(blockers, "last active administrator")
 		}
 		if len(blockers) > 0 {
 			return &domain.Error{Code: domain.CodeBlocked, Msg: "departure is blocked", Blockers: blockers}
@@ -84,6 +74,12 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 		if adminAction {
 			at = domain.ActorAdmin
 		}
+		if adminAction { // GOV-011: the member is told; the reason stays in the audit log
+			if err := s.notify(tx, netID, target.ID, NotifMemberRemoved, "Your membership was ended",
+				"An administrator ended your membership. You keep read-only access to your own history and can export it.", "/history", ""); err != nil {
+				return err
+			}
+		}
 		if err := s.audit(tx, p, auditEntry{Type: at, Action: domain.ActMemberDeparted, TargetType: "member", TargetID: target.ID,
 			Reason: in.Reason, Subjects: []string{target.ID}, Before: map[string]any{"status": target.Status},
 			After: map[string]any{"status": domain.MemberDeparted, "rule": string(p.net.Policy.DepartureRule)}}); err != nil {
@@ -102,6 +98,15 @@ func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.
 	}
 	for _, t := range props {
 		if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
+			return err
+		}
+		// GOV-010: the other party is told their open proposal ended.
+		other := t.PayerMemberID
+		if other == target.ID {
+			other = t.PayeeMemberID
+		}
+		if err := s.notify(tx, p.net.ID, other, NotifMemberLeft, "A trade was cancelled",
+			"A member left the network, so your open trade proposal with them was cancelled.", "/trades/"+t.ID, ""); err != nil {
 			return err
 		}
 		if err := s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
@@ -143,4 +148,59 @@ func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Me
 	return s.audit(tx, p, auditEntry{Type: at, Action: domain.ActAdjustment, TargetType: "transaction", TargetID: t.ID,
 		Reason: "departure settlement", Subjects: []string{target.ID},
 		After: map[string]any{"member": target.ID, "direction": string(dir), "amount": amt, "status": "completed"}})
+}
+
+// departBlockers lists what stops target from leaving (FR-014, FR-015).
+func departBlockers(tx store.Tx, netID string, target *domain.Member) ([]string, error) {
+	var blockers []string
+	disputed, err := tx.ListTransactions(netID, store.TxFilter{MemberID: target.ID, Statuses: []domain.TxStatus{domain.TxDisputed}, Limit: 500})
+	if err != nil {
+		return nil, err
+	}
+	for _, t := range disputed {
+		blockers = append(blockers, "disputed transaction "+t.ID)
+	}
+	if err := lastAdminGuard(tx, netID, target); err != nil {
+		if domain.CodeOf(err) != domain.CodeBlocked {
+			return nil, err
+		}
+		blockers = append(blockers, "last active administrator")
+	}
+	return blockers, nil
+}
+
+// DepartPreview is what a member sees before confirming that they leave.
+type DepartPreview struct {
+	Blockers      []string
+	Rule          domain.DepartureRule
+	Balance       int64
+	Decimals      int
+	OpenProposals int
+}
+
+// PreviewDeparture shows the caller what leaving would do, without changing
+// anything (FR-014): blockers, the departure rule, the balance it applies to
+// and how many open proposals would be cancelled.
+func (s *Service) PreviewDeparture(ctx context.Context, actor domain.Actor, netID string) (*DepartPreview, error) {
+	var out *DepartPreview
+	err := s.view(ctx, func(tx store.Tx) error {
+		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		if err != nil {
+			return err
+		}
+		if p.member == nil || (p.member.Status != domain.MemberActive && p.member.Status != domain.MemberSuspended) {
+			return domain.InvalidState("only a current member can leave")
+		}
+		out = &DepartPreview{Rule: p.net.Policy.DepartureRule, Decimals: p.net.Policy.Decimals}
+		if out.Blockers, err = departBlockers(tx, netID, p.member); err != nil {
+			return err
+		}
+		if acc, err := tx.GetAccountByMember(netID, p.member.ID); err == nil {
+			out.Balance = acc.Balance
+		}
+		props, err := tx.ListTransactions(netID, store.TxFilter{MemberID: p.member.ID, Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500})
+		out.OpenProposals = len(props)
+		return err
+	})
+	return out, err
 }

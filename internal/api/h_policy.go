@@ -61,6 +61,8 @@ type policyResp struct {
 	Version     int       `json:"version"`
 	EffectiveAt *string   `json:"effective_at"`
 	Policy      policyDTO `json:"policy"`
+	// Pending is the scheduled change that has been announced but is not in force yet (GOV-003).
+	Pending *policyLogDTO `json:"pending,omitempty"`
 }
 
 // adminOnly is a cheap pre-check for admin-only reads whose service method
@@ -81,7 +83,17 @@ func (s *server) getPolicy(c *reqCtx) error { // API-058
 		return err
 	}
 	c.w.Header().Set("ETag", policyETag(n))
-	return ok(c, 200, policyResp{Version: n.PolicyVersion, Policy: toPolicy(n.Policy)})
+	resp := policyResp{Version: n.PolicyVersion, Policy: toPolicy(n.Policy)}
+	if log, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID); err == nil {
+		for _, e := range log {
+			if e.Pending {
+				d := toPolicyLog(e)
+				resp.Pending = &d
+				break
+			}
+		}
+	}
+	return ok(c, 200, resp)
 }
 
 func (s *server) patchPolicy(c *reqCtx) error { // API-058
@@ -105,6 +117,22 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 			return validation("reason", "invalid-type", "must be a string")
 		}
 		delete(patch, "reason")
+	}
+	var notice *int
+	if r, has := patch["notice_days"]; has {
+		var n int
+		if json.Unmarshal(r, &n) != nil {
+			return validation("notice_days", "invalid-type", "must be a whole number")
+		}
+		notice = &n
+		delete(patch, "notice_days")
+	}
+	var noticeReason string
+	if r, has := patch["notice_reason"]; has {
+		if json.Unmarshal(r, &noticeReason) != nil {
+			return validation("notice_reason", "invalid-type", "must be a string")
+		}
+		delete(patch, "notice_reason")
 	}
 	s.casMu.Lock()
 	defer s.casMu.Unlock()
@@ -141,11 +169,21 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 	if key == "" || !validKey(key) { // idempotent by ETag (API-058)
 		key = "policy:" + cur + ":" + etagOf(string(b))
 	}
-	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, IdempotencyKey: key})
+	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, NoticeDays: notice, NoticeReason: noticeReason, IdempotencyKey: key})
 	if err != nil {
 		return err
 	}
-	eff := ts(s.opt.Now())
 	c.w.Header().Set("ETag", policyETag(u))
-	return ok(c, 200, policyResp{Version: u.PolicyVersion, EffectiveAt: &eff, Policy: toPolicy(u.Policy)})
+	resp := policyResp{Version: u.PolicyVersion, Policy: toPolicy(u.Policy)}
+	eff := ts(s.opt.Now())
+	resp.EffectiveAt = &eff
+	if log, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID); err == nil && len(log) > 0 {
+		e := log[0] // the version just written
+		if e.Pending {
+			d := toPolicyLog(e)
+			resp.Pending = &d
+		}
+		eff = ts(e.EffectiveAt)
+	}
+	return ok(c, 200, resp)
 }
