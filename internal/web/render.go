@@ -229,6 +229,9 @@ func (c *rc) nav(cur string) []navItem {
 }
 
 func (c *rc) notice() string {
+	if n := c.frozenNotice(); n != "" {
+		return n
+	}
 	switch c.Me.Status {
 	case domain.MemberSuspended:
 		return "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
@@ -307,4 +310,15 @@ func (s *server) notFoundOrRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.home(w, r)
+}
+
+// frozenNotice is the read-only notice for a frozen network, shown on every page of it so
+// forms that change anything are not a surprise. Members see no reason.
+func (c *rc) frozenNotice() string {
+	fi, ok := c.s.svc.FrozenInfo(c.Net.ID)
+	if !ok {
+		return ""
+	}
+	return "This network is read-only while its ledger is being checked, since " + string(c.when(fi.Since)) +
+		". You can read balances and history; anything that would change them is refused until the check passes."
 }

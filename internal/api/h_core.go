@@ -13,7 +13,15 @@ func (s *server) getNetwork(c *reqCtx) error { // API-040
 	if err != nil {
 		return err
 	}
-	return ok(c, 200, toNetwork(n))
+	d := toNetwork(n)
+	fs, err := s.svc.NetworkFreezeStatus(c.r.Context(), c.actor, c.netID)
+	if err != nil {
+		return err
+	}
+	if fs.ReadOnly {
+		d.ReadOnly, d.FrozenSince, d.FrozenReason = true, &fs.Since, fs.Reason
+	}
+	return ok(c, 200, d)
 }
 
 func (s *server) getMe(c *reqCtx) error { // API-041

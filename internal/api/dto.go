@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -20,6 +21,11 @@ type networkDTO struct {
 	MaxTxAmountMinor        string `json:"max_tx_amount_minor"`
 	DefaultCreditLimitMinor string `json:"default_credit_limit_minor"`
 	PolicyVersion           int    `json:"policy_version"`
+	// ReadOnly is true while the network is frozen after a failed ledger check: reads work, writes return 423.
+	ReadOnly    bool       `json:"read_only"`
+	FrozenSince *time.Time `json:"frozen_since,omitempty"`
+	// FrozenReason is shown to administrators only.
+	FrozenReason string `json:"frozen_reason,omitempty"`
 }
 
 func toNetwork(n *domain.Network) networkDTO {
