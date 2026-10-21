@@ -64,6 +64,9 @@ func (s *Service) openAny(tx store.Tx, actor domain.Actor, netID string, scope d
 	if err != nil {
 		return nil, domain.NotFound("network")
 	}
+	if err := s.lifecycle(tx, net); err != nil {
+		return nil, err
+	}
 	p := &principal{actor: actor, net: net}
 	if actor.System {
 		return p, nil
@@ -117,6 +120,9 @@ func (p *principal) requireNetworkActive() error {
 func networkOpenErr(n *domain.Network) error {
 	if n.Status != domain.NetworkActive {
 		return domain.InvalidState("network is %s", n.Status)
+	}
+	if n.AdminRequired {
+		return domain.InvalidState("network is read-only: it has no active administrator (administrator required); balances, history and exports stay available")
 	}
 	if n.Suspended() {
 		return domain.InvalidState("network is suspended: trading and posting are paused; balances, history and exports stay available")

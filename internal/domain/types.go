@@ -30,6 +30,8 @@ type Network struct {
 	LedgerSeq       int64
 	CreatedAt       time.Time
 	Suspensions     []Suspension // GOV-023, GOV-024; empty when trading is open
+	Closure         *Closure     // GOV-025; nil when no closure is scheduled
+	AdminRequired   bool         // GOV-020; derived: an active network with no active administrator
 }
 
 // SuspensionKind says who suspended a network.

@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -258,12 +259,18 @@ func TestNetworkLifecycle(t *testing.T) {
 	pa := e.Person("pa@example.org")
 	pm := tu.Must(e.Svc.RedeemInvitation(e.Ctx, pa, tok, "P"))
 	prop := tu.Must(e.Svc.ProposeTransaction(e.Ctx, admin, n.ID, service.ProposeInput{CounterpartyID: pm.ID, Direction: service.ProposerIsPaid, Amount: 5, IdempotencyKey: "k"}))
-	err = e.Svc.CloseNetwork(e.Ctx, admin, n.ID, "winding up")
-	wantCode(t, err, domain.ErrBlocked)
-	tu.Must(e.Svc.CancelTransaction(e.Ctx, admin, n.ID, service.CancelInput{TxID: prop.ID, IdempotencyKey: "k2"}))
-	tu.Must(0, e.Svc.CloseNetwork(e.Ctx, admin, n.ID, "winding up"))
+	// GOV-025: closing is announced with notice; a proposal does not block it, it is cancelled at the date.
+	_, err = e.Svc.ScheduleClosure(e.Ctx, admin, n.ID, service.ClosureInput{Reason: "winding up", NoticeDays: 29})
+	wantCode(t, err, domain.ErrValidation)
+	tu.Must(e.Svc.ScheduleClosure(e.Ctx, admin, n.ID, service.ClosureInput{Reason: "winding up"}))
+	e.Clock.Advance(31 * 24 * time.Hour)
 	_, err = e.Svc.ProposeTransaction(e.Ctx, admin, n.ID, service.ProposeInput{CounterpartyID: pm.ID, Direction: service.ProposerIsPaid, Amount: 5, IdempotencyKey: "k3"})
 	wantCode(t, err, domain.ErrInvalidState)
+	tu.Must(e.Svc.FinaliseClosures(e.Ctx, domain.SystemActor("job")))
+	if got := tu.Must(e.Svc.GetNetwork(e.Ctx, admin, n.ID)); got.Status != domain.NetworkClosed {
+		t.Fatalf("status = %s", got.Status)
+	}
+	_ = prop
 	// history and exports stay available on a closed network (FR-068, FR-094)
 	tu.Must(e.Svc.ListTransactions(e.Ctx, pa, n.ID, nil, service.Page{}))
 	tu.Must(e.Svc.Export(e.Ctx, admin, n.ID, service.ExportFull, service.FormatJSON, &service.MemSink{}))

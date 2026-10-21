@@ -41,6 +41,7 @@ type Tx interface {
 	SetupStateRepo
 	SuspensionRepo
 	InactivityRepo
+	ClosureRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.

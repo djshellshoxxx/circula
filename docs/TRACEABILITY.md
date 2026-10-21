@@ -69,7 +69,7 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | PER-014 | P0 | J5 Raise a dispute | partial | `internal/service/disputes.go` (OpenDispute)<br>`internal/service/disputes_decide.go` (ResolveDispute) | `internal/service/dispute_test.go:TestOpenDisputeRules` | Dispute open, review and decision built; other-party response (FR-076) not built |
 | PER-015 | P0 | J6 Administer network rules | partial | `internal/service/membership.go` (SuspendMember)<br>`internal/service/adjustments.go` (CreateAdjustment)<br>`internal/service/membership.go` (SetCreditLimit)<br>`internal/service/networks.go` (UpdatePolicy) | - | Admin controls built; limit warnings, dual control and network suspension not built |
 | PER-016 | P1 | J7 Leave a network or be offboarded | partial | `internal/service/departure.go` (DepartMember) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding` | Departure with blockers built; counterparty notices and self-export offer not built |
-| PER-017 | P1 | J8 Close a network | partial | `internal/service/networks.go` (CloseNetwork) | - | CloseNetwork in service only; no web or API route calls it |
+| PER-017 | P1 | J8 Close a network | built | `internal/service/closure_schedule.go` (ScheduleClosure) | `internal/service/closure_test.go` | Web and API |
 | PER-020 | P0 | Error states are specific and safe | built | - | `internal/service/authz_test.go:TestCrossNetworkIdsAreNotFound` | Not-found is uniform for other-network and missing ids |
 | PER-021 | P0 | Empty states explain the next step | partial | `internal/web/templates/history.html` | - | Empty-state copy in templates; no UX test run |
 | PER-022 | P1 | Loading and stale data | not built | - | - | No stale-data indicator on balance views |
@@ -164,7 +164,7 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | FR-065 | P1 | Assign dispute reviewers | built | `internal/service/membership.go` (AssignRole)<br>`internal/api/h_admin.go` (roleAction)<br>`internal/service/membership.go` (changeRole) | - | Assign or remove reviewer; reviewer cannot review own dispute |
 | FR-066 | P1 | Administrative reversal | built | `internal/service/reversal.go` (ReverseTransaction)<br>`internal/api/h_admin.go` (adminReverse) | `internal/service/reversal_test.go:TestReversalAuthorization` | Admin reversal via API with reason |
 | FR-067 | P1 | Administrator overview | partial | `internal/web/h_admin.go` (adminHome) | - | Admin home shows pending-member count only |
-| FR-068 | P1 | Network closure | partial | `internal/service/networks.go` (CloseNetwork) | - | CloseNetwork refuses with blockers; no web or API caller |
+| FR-068 | P1 | Network closure | built | `internal/service/closure_schedule.go` (ScheduleClosure) | `internal/service/closure_test.go:TestClosureBlockersPreviewAndNotice` | Announced with notice; refuses with dispute blockers; web and API |
 | FR-069 | P0 | Administrator succession | built | `internal/service/membership.go` (changeRole) | `internal/service/membership_test.go:TestAdministratorSuccession` | Last-admin guard; role changes audited |
 | FR-070 | P0 | Open a dispute | built | `internal/service/disputes.go` (OpenDispute)<br>`internal/web/h_disputes.go` (disputePost) | `internal/service/dispute_test.go:TestOpenDisputeRules` | Open dispute within window by party on completed trade |
 | FR-071 | P0 | Dispute does not change postings | built | - | `internal/service/dispute_test.go:TestOpenDisputeWindowAndNoPostings`<br>`internal/service/dispute_test.go:TestWithdrawDispute` | Postings unchanged on open, withdraw, dismiss |
@@ -479,18 +479,18 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | GOV-011 | P0 | Removal by administrator | partial | `internal/web/h_admin.go` (memberActionPost) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding`<br>`internal/service/gov_h1_test.go:TestDeparturePreviewAndNotices` | Admin removal with reason; member notified; challenge not built |
 | GOV-012 | P1 | Inactivity | not built | - | - | Inactivity rule not built |
 | GOV-013 | P0 | Dispute window and eligibility | built | `internal/service/disputes.go` (OpenDispute) | `internal/service/dispute_test.go:TestOpenDisputeRules` | Window and party rule; dispute keeps entries unchanged |
-| GOV-014 | P0 | Dispute process | partial | `internal/service/disputes_decide.go` (ResolveDispute)<br>`internal/service/disputes.go` (OpenDispute) | - | Statement and decision with reasons; response period and deadlines not built |
+| GOV-014 | P0 | Dispute process | built | `internal/service/disputes_decide.go` (ResolveDispute)<br>`internal/service/disputes_deadlines.go` (RemindOverdueDisputes) | `internal/service/closure_test.go:TestDisputeDeadlinesAndReminders` | Response deadline and decision target visible; missed deadline decides nothing |
 | GOV-015 | P0 | Reversals and adjustments | built | `internal/service/reversal.go` (ReverseTransaction)<br>`internal/service/adjustments.go` (CreateAdjustment) | `internal/service/reversal_test.go:TestFullReversal` | Reversal and adjustment are new transactions; originals unchanged |
-| GOV-016 | P0 | Challenges and appeals | not built | - | - | Challenges and appeals not built |
+| GOV-016 | P0 | Challenges and appeals | built | `internal/service/challenges.go`<br>`internal/service/disputes_response.go` (RequestReReview) | `internal/service/closure_test.go:TestChallengeRemovalAndLimit`<br>`internal/service/disputes_response_test.go:TestReReviewWindow` | Policy-change objections (GOV-006) not built |
 | GOV-017 | P1 | Dispute evidence | built | `internal/api/routes.go` | - | No dispute upload route |
 | GOV-018 | P0 | Recovery of negative balances | partial | `internal/service/adjustments.go` (CreateAdjustment) | - | Trades continue within limits; write-off by approved adjustment not built (SEC-011) |
 | GOV-019 | P0 | Reduction of credit limit below current negative balance | built | - | `internal/service/trades_test.go:TestLimitReductionDoesNotPost`<br>`internal/service/trades_test.go:TestAcceptRechecksLimit` | Limit reduction posts nothing; increases refused |
-| GOV-020 | P0 | Administrator continuity | partial | - | `internal/service/membership_test.go:TestAdministratorSuccession` | Last-admin guard built; read-only administrator-required state not built |
+| GOV-020 | P0 | Administrator continuity | built | `internal/service/closure_schedule.go` (lifecycle)<br>`internal/service/principal.go` (networkOpenErr) | `internal/service/membership_test.go:TestAdministratorSuccession`<br>`internal/service/closure_test.go:TestAdminRequiredReadOnly` | Last-admin guard; read-only administrator-required state |
 | GOV-021 | P0 | Recovery when no administrator is available | not built | - | - | Platform-assisted recovery not built |
 | GOV-022 | P0 | Export contents and portability | partial | `internal/service/export.go` (Export) | `internal/service/export_test.go:TestFullExportJSON` | Member, network and full exports built; reconciliation summary in manifest; import not built |
 | GOV-023 | P0 | Network suspension by an administrator | not built | `internal/domain/types.go` (NetworkStatus) | - | Network suspension not built (status has no suspended value) |
 | GOV-024 | P0 | Platform suspension | not built | - | - | Platform suspension not built |
-| GOV-025 | P0 | Network closure | partial | `internal/service/networks.go` (CloseNetwork) | `internal/service/admin_test.go:TestNetworkLifecycle` | Closure refuses with blockers and freezes postings; notices, final export and erasure not built |
+| GOV-025 | P0 | Network closure | built | `internal/service/closure_schedule.go` | `internal/service/closure_test.go` | Notice, freeze, final export checksum, read-only period, erasure |
 | GOV-026 | P1 | Published platform policies | not built | - | - | Hosted platform policy documents not written |
 | GOV-027 | P1 | Support boundaries | partial | `docs/ops/runbook.md` | - | Support boundary in docs/ops; not linked from admin UI |
 
@@ -607,6 +607,6 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | DEC-022 | - | - | open, not built | - | - | Support objectives not set |
 | DEC-023 | - | - | open, not built | - | - | Numerical thresholds not confirmed |
 | DEC-024 | - | - | open, not built | - | - | Accessibility level and browser list not recorded |
-| DEC-025 | - | - | open, not built | - | - | Notice periods not implemented |
+| DEC-025 | - | - | open, partly built | `internal/domain/closure.go` | `internal/service/closure_test.go` | Closure notice built; policy-change notice per GOV-003 |
 | DEC-026 | - | - | open, partly built | `SECURITY.md` | - | Private vulnerability reporting named in SECURITY.md; owner approval not recorded |
 | DEC-027 | - | - | deferred | - | - | Code signing and notarisation deferred |

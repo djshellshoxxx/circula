@@ -186,6 +186,9 @@ func (s *Service) RedeemInvitationTerms(ctx context.Context, actor domain.Actor,
 		if err != nil {
 			return domain.NotFound("invitation")
 		}
+		if err := s.lifecycle(tx, net); err != nil {
+			return err
+		}
 		if err := networkOpenErr(net); err != nil {
 			return domain.InvalidState("%s; not accepting members", err.Error())
 		}
@@ -233,6 +236,9 @@ func (s *Service) JoinNetworkTerms(ctx context.Context, actor domain.Actor, netI
 		net, err := tx.GetNetwork(netID)
 		if err != nil {
 			return domain.NotFound("network")
+		}
+		if err := s.lifecycle(tx, net); err != nil {
+			return err
 		}
 		if ex, err := tx.GetMemberByPerson(netID, actor.PersonID); err == nil {
 			out, err = existingMembership(ex)

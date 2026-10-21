@@ -60,17 +60,6 @@ func (s *server) closureStatus(c *reqCtx) error { // FR-068
 	if bl == nil {
 		bl = []string{}
 	}
-	return ok(c, 200, map[string]any{"blockers": bl, "non_zero_balances": pv.NonZeroBalances, "members": pv.Members})
-}
-
-func (s *server) closeNetwork(c *reqCtx) error { // FR-068, GOV-025
-	reason, err := s.reasonOnly(c)
-	if err != nil {
-		return err
-	}
-	if err := s.svc.CloseNetwork(c.r.Context(), c.actor, c.netID, reason); err != nil {
-		return err
-	}
-	c.w.WriteHeader(204)
-	return nil
+	return ok(c, 200, map[string]any{"blockers": bl, "non_zero_balances": pv.NonZeroBalances, "members": pv.Members,
+		"open_proposals": pv.OpenProposals, "closure": toClosure(pv.Closure)})
 }

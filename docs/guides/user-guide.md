@@ -176,7 +176,7 @@ dispute window (30 days after completion by default). Only the two people in the
 **Disputes** lists yours, with status: open, under review, decided but reversal not yet posted, resolved or withdrawn.
 Each has a timeline. Only one dispute can be open on a trade at a time.
 
-5. **The other person can respond.** The person who did not open the dispute sees **Add your response** on the dispute
+5. **The other person can respond.** The dispute page shows when the response is due and the decision target. If no response arrives by then, the case stays open for the reviewer; silence never decides it. The person who did not open the dispute sees **Add your response** on the dispute
    page (also listed under *Waiting for your action* in your Inbox). One response of up to 2000 characters; the reviewer
    and the opener can read it. A reviewer normally waits for your response or for the network's response period (7 days by default) before deciding, unless they record a reason for not waiting. You cannot respond once the dispute is decided or withdrawn.
 6. **Ask for a re-review.** After a decision, either person in the trade can use **Ask for a re-review** once, within the

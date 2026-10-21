@@ -5,6 +5,8 @@
   <dt>Trade</dt><dd><a href="/n/{{$.Slug}}/trades/{{.V.Tx.ID}}">{{.V.PayerName}} paid {{.V.PayeeName}} {{.Amount}} {{$.Unit}}s</a></dd>
   <dt>Reason</dt><dd>{{.Category}}</dd>
   <dt>Opened by</dt><dd>{{.Opener}} on {{.OpenedAt}}</dd>
+  {{if .Deadlines}}<dt>Response due</dt><dd>{{.ResponseDue}}{{if .ResponseLate}} (no response yet; a reviewer will assess the case, silence decides nothing){{end}}</dd>
+  <dt>Decision target</dt><dd>{{.DecisionBy}}{{if .DecisionLate}} (overdue){{end}}</dd>{{end}}
   <dt>Statement</dt><dd>{{.V.Dispute.Statement}}</dd>
   {{if .Outcome}}<dt>Decision</dt><dd>{{.Outcome}}</dd>{{end}}
   {{if .V.Dispute.Rationale}}<dt>Rationale</dt><dd>{{.V.Dispute.Rationale}}</dd>{{end}}

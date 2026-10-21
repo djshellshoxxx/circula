@@ -357,6 +357,7 @@ func (j *jobRunner) periodicJobs() []periodicJob {
 		{"expiry", expiryInterval, j.expire},
 		{"verify", verifyInterval, j.verify},
 		{"purge", purgeInterval, j.purgeAndWarn},
+		{"closures", purgeInterval, j.closures},
 	}
 }
 
