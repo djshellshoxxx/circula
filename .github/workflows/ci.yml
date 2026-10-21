@@ -89,3 +89,54 @@ jobs:
           path: bin/ci-dist
           if-no-files-found: error
           retention-days: 7
+
+  contract:
+    name: API contract and load smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: contract (JSON API against docs/api/openapi.yaml)
+        run: make contract
+      - name: load smoke (small, QA-008 and QA-040 evidence)
+        # Short run: 4 workers, 20 members, 25 trades each. Full-size runs are manual (docs/qa/LOAD-TEST.md).
+        env:
+          CIRCULA_LOAD: "1"
+          CIRCULA_LOAD_WORKERS: "4"
+          CIRCULA_LOAD_MEMBERS: "20"
+          CIRCULA_LOAD_TRADES: "25"
+        run: go test -count=1 -v -run 'LoadConcurrentTrades|QA008' ./internal/service
+
+  e2e:
+    name: e2e (Playwright, axe, keyboard)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)
+        run: |
+          cd e2e
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: make e2e
+        run: make e2e
+      - name: upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: e2e-test-results
+          path: e2e/test-results
+          if-no-files-found: ignore
+          retention-days: 7

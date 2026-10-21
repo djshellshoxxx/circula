@@ -15,6 +15,11 @@ function chromiumExecutable() {
       if (fs.statSync(c).isFile()) return c;
     } catch (_) { /* try the next one */ }
   }
+  // CI: `npx playwright install chromium` puts the pinned browser in Playwright's own cache.
+  try {
+    const own = require('@playwright/test').chromium.executablePath();
+    if (own && fs.statSync(own).isFile()) return own;
+  } catch (_) { /* none installed */ }
   throw new Error('no Chromium found; set CHROMIUM_PATH (tried: ' + candidates.join(', ') + ')');
 }
 
