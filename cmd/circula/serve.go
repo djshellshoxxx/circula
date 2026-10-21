@@ -366,7 +366,8 @@ func (j *jobRunner) expire(ctx context.Context) error {
 	if total > 0 {
 		j.logger.Info("proposals expired", "count", total)
 	}
-	return nil
+	_, err := j.svc.ExpireBreakGlass(ctx, domain.SystemActor("job-break-glass")) // SEC-013
+	return err
 }
 
 // purge deletes expired sessions, throttle rows and idempotency records (SA-12).

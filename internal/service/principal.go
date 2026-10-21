@@ -40,6 +40,9 @@ func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope doma
 		return nil, domain.NotFound("network")
 	}
 	p.member = m
+	if err := s.applyBreakGlassRoles(tx, m); err != nil { // SEC-013: temporary roles end with their session
+		return nil, err
+	}
 	return p, nil
 }
 

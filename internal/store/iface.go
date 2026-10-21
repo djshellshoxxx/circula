@@ -32,6 +32,8 @@ type Tx interface {
 	IdemRepo
 	VerifyRepo
 	ExportRepo
+	BreakGlassRepo
+	ErasureRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.

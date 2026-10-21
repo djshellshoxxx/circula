@@ -59,6 +59,9 @@ func run(args []string, stdout, stderr io.Writer) int {
 		usage(stdout)
 		return exitOK
 	default:
+		if fn, ok := extraCommands[args[0]]; ok {
+			return fn(ctx, rest, stdout, stderr)
+		}
 		fmt.Fprintf(stderr, "circula: unknown command %q\n\n", args[0])
 		usage(stderr)
 		return exitUsage
@@ -76,7 +79,11 @@ commands:
   verify-ledger [-network X]  recompute ledger invariants (read-only except the recorded run)
   admin create-operator       create a person from --login; password from env or stdin
   version                     print version information
-
+`)
+	for _, l := range extraUsage {
+		fmt.Fprintln(w, l)
+	}
+	fmt.Fprint(w, `
 Every command accepts -config, and every setting may be given as a flag,
 an environment variable (CIRCULA_<NAME>) or in the JSON config file.
 Precedence: flags > environment > config file > defaults.
