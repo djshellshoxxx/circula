@@ -59,18 +59,15 @@ func (s *server) putCreditLimit(c *reqCtx) error {
 	id := c.r.PathValue("id")
 	s.casMu.Lock()
 	defer s.casMu.Unlock()
-	cur, err := s.svc.AdminGetMemberBalance(c.r.Context(), c.actor, c.netID, id)
+	cur, err := s.svc.PeekMemberBalance(c.r.Context(), c.actor, c.netID, id)
 	if err != nil {
 		return err
 	}
 	if err := c.requireIfMatch(limitETag(cur)); err != nil {
 		return err
 	}
-	if err := s.svc.SetCreditLimit(c.r.Context(), c.actor, c.netID, service.SetLimitInput{MemberID: id, Limit: lim,
-		ExpiresAt: exp, Reason: in.Reason}); err != nil {
-		return err
-	}
-	b, err := s.svc.AdminGetMemberBalance(c.r.Context(), c.actor, c.netID, id)
+	b, err := s.svc.SetCreditLimitView(c.r.Context(), c.actor, c.netID, service.SetLimitInput{MemberID: id, Limit: lim,
+		ExpiresAt: exp, Reason: in.Reason})
 	if err != nil {
 		return err
 	}

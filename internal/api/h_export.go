@@ -60,6 +60,11 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 	if format != service.FormatJSON && format != service.FormatCSV {
 		return validation("format", "invalid-enum", "must be csv or json")
 	}
+	// Refuse before running: the service audits every export it performs, and
+	// one member must not be able to fill the shared store (SA-11).
+	if why := s.jobs.exportSlot(c.actor.PersonID); why != "" {
+		return storeFull(why)
+	}
 	sink := &service.MemSink{}
 	_, err := s.svc.Export(c.r.Context(), c.actor, c.netID, scope, format, sink)
 	if err != nil {
@@ -84,7 +89,7 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 		ExpiresAt: ts(now.Add(jobTTL)), SHA256: &hexsum, Bytes: len(data), ArtefactURL: &url}
 	if !s.jobs.putExport(&exportEntry{net: c.netID, person: c.actor.PersonID, at: now, dto: d, file: data,
 		ctype: "application/zip", name: "circula-export-" + in.Scope + ".zip"}) {
-		return &apiError{status: 503, code: "unavailable", detail: "export storage is full; retry later", retryAfter: "60"}
+		return storeFull("full")
 	}
 	c.w.Header().Set("Location", v1+"/exports/"+id)
 	return ok(c, 201, d)
@@ -122,4 +127,15 @@ func (s *server) getArtefact(c *reqCtx) error { // API-065
 	c.w.WriteHeader(http.StatusOK)
 	_, _ = c.w.Write(e.file)
 	return nil
+}
+
+// storeFull is the refusal for a full artefact store. A person at their own
+// cap gets 429 (their own exports must expire or be downloaded first); a full
+// shared store is a 503.
+func storeFull(why string) *apiError {
+	if why == "person" {
+		return &apiError{status: 429, code: "rate-limited", retryAfter: "3600",
+			detail: "you already hold the maximum number of unexpired exports; they expire after 24 hours"}
+	}
+	return &apiError{status: 503, code: "unavailable", detail: "export storage is full; retry later", retryAfter: "60"}
 }

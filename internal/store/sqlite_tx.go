@@ -132,6 +132,18 @@ func (t *txImpl) ListTransactions(netID string, f TxFilter) ([]*domain.Transacti
 		q += ` AND t.original_tx_id = ?`
 		args = append(args, f.OriginalTxID)
 	}
+	if f.CreatedBy != "" {
+		q += ` AND t.created_by = ?`
+		args = append(args, f.CreatedBy)
+	}
+	if f.NotCreatedBy != "" {
+		q += ` AND (t.created_by IS NULL OR t.created_by <> ?)`
+		args = append(args, f.NotCreatedBy)
+	}
+	if !f.LiveAt.IsZero() {
+		q += ` AND (t.expires_at IS NULL OR t.expires_at > ?)`
+		args = append(args, ms(f.LiveAt))
+	}
 	if f.AfterID != "" {
 		q += ` AND t.id < ?`
 		args = append(args, f.AfterID)
@@ -177,4 +189,48 @@ func (t *txImpl) SumEntries(accountID string, uptoSeq int64) (int64, error) {
 	err := t.row(`SELECT COALESCE(SUM(amount),0) FROM entries WHERE account_id = ? AND (? <= 0 OR ledger_seq <= ?)`,
 		accountID, uptoSeq, uptoSeq).Scan(&v)
 	return v, err
+}
+
+// ListAccountEntries lists an account's entries newest first by ledger_seq.
+// beforeSeq > 0 returns entries strictly older than that sequence (keyset).
+// (account_id, ledger_seq) is unique: an account has one entry per posting.
+func (t *txImpl) ListAccountEntries(netID, accountID string, beforeSeq int64, limit int) ([]*domain.Entry, error) {
+	rows, err := t.query(`SELECT id,network_id,tx_id,account_id,amount,ledger_seq,posted_at FROM entries
+		WHERE network_id = ? AND account_id = ? AND (? <= 0 OR ledger_seq < ?)
+		ORDER BY ledger_seq DESC LIMIT ?`, netID, accountID, beforeSeq, beforeSeq, limitOf(limit))
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+	var out []*domain.Entry
+	for rows.Next() {
+		var e domain.Entry
+		var at int64
+		if err := rows.Scan(&e.ID, &e.NetworkID, &e.TxID, &e.AccountID, &e.Amount, &e.LedgerSeq, &at); err != nil {
+			return nil, err
+		}
+		e.PostedAt = fromMS(at)
+		out = append(out, &e)
+	}
+	return out, rows.Err()
+}
+
+// LiveProposalStats counts and sums unexpired proposed trades created by
+// createdBy. counterparty, when set, limits to proposals with that member as
+// the other party; requestsOnly limits to those where the creator is the payee.
+func (t *txImpl) LiveProposalStats(netID, createdBy, counterparty string, requestsOnly bool, now time.Time) (int, int64, error) {
+	q := `SELECT COUNT(*), COALESCE(SUM(t.amount),0)` + txFrom + `
+		WHERE t.network_id = ? AND t.status = 'proposed' AND t.kind = 'trade' AND t.expires_at > ? AND t.created_by = ?`
+	args := []any{netID, ms(now), createdBy}
+	if counterparty != "" {
+		q += ` AND (pa.member_id = ? OR pb.member_id = ?)`
+		args = append(args, counterparty, counterparty)
+	}
+	if requestsOnly {
+		q += ` AND pb.member_id = t.created_by`
+	}
+	var n int
+	var sum int64
+	err := t.row(q, args...).Scan(&n, &sum)
+	return n, sum, err
 }

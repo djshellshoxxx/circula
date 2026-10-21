@@ -27,6 +27,9 @@ const (
 	maxChecks   = 200
 	maxExports  = 50
 	maxExpBytes = 64 << 20
+	// maxExportsPerPerson caps the live artefacts one person can hold, so a
+	// single member cannot fill the shared store for everyone (SA-11).
+	maxExportsPerPerson = 5
 )
 
 func newJobStore(now func() time.Time) *jobStore {
@@ -65,17 +68,40 @@ func (j *jobStore) getCheck(net, id string) (checkDTO, bool) {
 	return e.d, true
 }
 
-func (j *jobStore) putExport(e *exportEntry) bool {
+// exportSlot says why a new export cannot be stored: "" when it can,
+// "person" when the caller holds too many, "full" when the store is full.
+func (j *jobStore) exportSlot(person string) string {
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	return j.slotLocked(person, 0)
+}
+
+func (j *jobStore) slotLocked(person string, size int) string {
 	now := j.now()
+	own := 0
 	for k, x := range j.exps {
 		if now.Sub(x.at) > jobTTL {
 			j.bytes -= int64(len(x.file))
 			delete(j.exps, k)
+			continue
+		}
+		if x.person == person {
+			own++
 		}
 	}
-	if len(j.exps) >= maxExports || j.bytes+int64(len(e.file)) > maxExpBytes {
+	switch {
+	case own >= maxExportsPerPerson:
+		return "person"
+	case len(j.exps) >= maxExports || j.bytes+int64(size) > maxExpBytes:
+		return "full"
+	}
+	return ""
+}
+
+func (j *jobStore) putExport(e *exportEntry) bool {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	if j.slotLocked(e.person, len(e.file)) != "" {
 		return false
 	}
 	j.exps[e.dto.ID] = e

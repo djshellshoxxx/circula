@@ -64,3 +64,5 @@ code{overflow-wrap:anywhere}
   table.stack td::before{content:attr(data-label) ": ";font-weight:600}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+[hidden]{display:none!important}
+.acct{margin:0}

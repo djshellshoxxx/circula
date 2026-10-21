@@ -75,4 +75,4 @@ else
   shasum -a 256 ./*.zip ./*.tar.gz ./go-modules-*.txt > SHA256SUMS
 fi
 echo "packaged into $OUT:"
-ls -1 "$OUT"
+ls -1 .

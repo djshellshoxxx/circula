@@ -105,6 +105,17 @@ func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string, 
 		} else if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		// SA-11: per-actor quota, checked before anything is written, so a flood
+		// of requests neither fills the audit log nor starves other members.
+		if lim := s.cfg.ExportsPerHour; lim > 0 && !p.actor.System {
+			n, err := tx.CountAuditSince(netID, domain.ActExport, p.memberID(), s.now().Add(-time.Hour))
+			if err != nil {
+				return err
+			}
+			if n >= lim {
+				return domain.Errf(domain.CodeRateLimited, "export limit reached (%d per hour); try again later", lim)
+			}
+		}
 		return s.audit(tx, p, auditEntry{Action: domain.ActExport, TargetType: "export", TargetID: netID,
 			After: map[string]any{"status": string(scope)}})
 	})

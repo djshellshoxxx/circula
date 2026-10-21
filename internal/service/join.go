@@ -120,10 +120,31 @@ func joinableActor(actor domain.Actor) error {
 	return nil
 }
 
+// existingMembership is the outcome of a join attempt by a person who already
+// has a membership (DOM-002, FR-017, SVC-04). A pending or active membership is
+// returned unchanged (idempotent join). A suspended or departed one is NOT a
+// success: DOM-003 has no transition out of `departed` (denied, withdrawn,
+// left and removed members alike) and a suspended member is under
+// administrative control, so the join is refused with forbidden and nothing is
+// changed. Re-application after denial or removal is therefore not supported
+// (recorded decision; reinstating a departed person would need a new DOM-003
+// transition).
+func existingMembership(ex *domain.Member) (*domain.Member, error) {
+	switch ex.Status {
+	case domain.MemberPending, domain.MemberActive:
+		return ex, nil
+	case domain.MemberSuspended:
+		return nil, domain.Forbidden("your membership in this network is suspended; contact an administrator")
+	default:
+		return nil, domain.Forbidden("your membership in this network has ended and cannot be re-opened by joining again")
+	}
+}
+
 // RedeemInvitation joins the caller to the invitation's network as an active
 // member. Unknown, expired, used and revoked tokens are indistinguishable
-// (SEC-005). A person who already has a membership gets it back unchanged and
-// the token is not consumed (DOM-002, FR-017).
+// (SEC-005). A person who already has a pending or active membership gets it
+// back unchanged and the token is not consumed (DOM-002, FR-017); a suspended
+// or departed one is refused (see existingMembership).
 func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, token, displayName string) (*domain.Member, error) {
 	if err := joinableActor(actor); err != nil {
 		return nil, err
@@ -142,8 +163,8 @@ func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, toke
 		// A retry by the person who already redeemed it, or a redemption by an
 		// existing member, returns that membership unchanged (DOM-002, FR-017).
 		if ex, err := tx.GetMemberByPerson(inv.NetworkID, actor.PersonID); err == nil && (inv.UsedAt == nil || inv.UsedBy == ex.ID) {
-			out = ex
-			return nil
+			out, err = existingMembership(ex)
+			return err
 		}
 		if inv.UsedAt != nil || inv.RevokedAt != nil || !now.Before(inv.ExpiresAt) {
 			return domain.NotFound("invitation")
@@ -170,8 +191,9 @@ func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, toke
 }
 
 // JoinNetwork joins an approval-mode network (-> pending) or open-mode network
-// (-> active). Invite-mode networks refuse it. An existing membership is
-// returned unchanged (FR-017).
+// (-> active). Invite-mode networks refuse it. An existing pending or active
+// membership is returned unchanged (FR-017); a suspended or departed one is
+// refused (see existingMembership).
 func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, displayName string) (*domain.Member, error) {
 	if err := joinableActor(actor); err != nil {
 		return nil, err
@@ -187,8 +209,8 @@ func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, di
 			return domain.NotFound("network")
 		}
 		if ex, err := tx.GetMemberByPerson(netID, actor.PersonID); err == nil {
-			out = ex
-			return nil
+			out, err = existingMembership(ex)
+			return err
 		}
 		if net.Status != domain.NetworkActive {
 			return domain.InvalidState("network is %s and not accepting members", net.Status)

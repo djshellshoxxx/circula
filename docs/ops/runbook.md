@@ -28,6 +28,10 @@ circula verify-ledger -config /etc/circula/circula.json
 Exit `0`: every network passed. Exit `3`: at least one network failed. Capture the output and follow SEC-030. Do not edit
 the database by hand.
 
+`verify-ledger` and `admin create-operator` take the single-writer lock (`<database>.lock`) and refuse with "in use by
+another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
+by the hourly job and the admin consistency check in the UI and API, which record their runs.
+
 ## Restoring after a fault
 
 See [backup-restore.md](backup-restore.md#restoring). Stop the service first.

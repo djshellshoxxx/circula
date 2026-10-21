@@ -53,7 +53,8 @@ func (s *server) wrap(rt route) http.HandlerFunc {
 		if err := s.serve(c, rt); err != nil {
 			ae, expected := fromErr(err)
 			if !expected {
-				s.log.Error("api internal error", "request_id", c.rid, "path", r.URL.Path, "err", err)
+				// The route pattern, never the raw path: it may carry an invitation token.
+				s.log.Error("api internal error", "request_id", c.rid, "route", r.Pattern, "err", err)
 			}
 			writeProblem(w, r, c.rid, ae)
 		}
@@ -67,14 +68,14 @@ func (s *server) serve(c *reqCtx, rt route) error {
 			return err
 		}
 		if c.cookie {
-			c.w.Header().Set("X-CSRF-Token", CSRFToken(c.session))
+			c.w.Header().Set("X-CSRF-Token", s.csrf.Token(c.session))
 		}
 		if s.opt.PrincipalPerMinute > 0 {
 			if ok, retry := s.rl.allow("p:"+c.actor.PersonID, s.opt.PrincipalPerMinute); !ok {
 				return rateLimited(retry)
 			}
 		}
-		if err := checkCSRF(r, c); err != nil {
+		if err := s.checkCSRF(r, c); err != nil {
 			return err
 		}
 		if rt.cookieOnly && !c.cookie {

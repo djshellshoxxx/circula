@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/hmac"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
@@ -12,6 +13,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -46,6 +48,38 @@ type Manifest struct {
 	SHA256        string        `json:"sha256"`
 	Integrity     string        `json:"integrity_check"`
 	Ledger        LedgerSummary `json:"ledger_verification"`
+	// HMAC is hex HMAC-SHA256 over the identifying fields, present when
+	// backup-key was configured (SA-07). Without the key it proves nothing.
+	HMAC string `json:"hmac_sha256,omitempty"`
+}
+
+// manifestMAC computes the signature of m under key. It covers every field
+// that identifies the content (format, time, schema, size, digest), not the
+// file name, so a renamed backup still verifies.
+func manifestMAC(m *Manifest, key []byte) string {
+	h := hmac.New(sha256.New, key)
+	fmt.Fprintf(h, "circula-backup-v1\nformat=%d\ncreated=%s\nschema=%d\nbytes=%d\nsha256=%s\n",
+		m.Format, m.CreatedAt.UTC().Format(time.RFC3339), m.SchemaVersion, m.Bytes, m.SHA256)
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// checkManifestAuth enforces the backup key policy for restore. With a key
+// the manifest must carry a valid signature (an unsigned manifest may have
+// been stripped by an attacker). Without a key the backup is only
+// integrity-checked, and the caller says so (authenticated is false).
+func checkManifestAuth(m *Manifest, key []byte) (authenticated bool, err error) {
+	if len(key) == 0 {
+		return false, nil
+	}
+	if m.HMAC == "" {
+		return false, errors.New("backup-key is configured but the manifest is not signed; refusing an unauthenticated backup")
+	}
+	want, err := hex.DecodeString(m.HMAC)
+	got, _ := hex.DecodeString(manifestMAC(m, key))
+	if err != nil || !hmac.Equal(want, got) {
+		return false, errors.New("manifest signature does not verify under the configured backup-key (wrong key, or the backup was altered)")
+	}
+	return true, nil
 }
 
 // networkCheck is the outcome of verifying one network.
@@ -105,31 +139,53 @@ func summarise(checks []networkCheck) LedgerSummary {
 // ledgerFunc verifies a database file and returns its summary.
 type ledgerFunc func(ctx context.Context, path string) (LedgerSummary, error)
 
-// verifyFile opens the database file at path (which must already be at the
-// binary's schema version), runs ledger verification and closes it.
-func verifyFile(ctx context.Context, path string, cfg *Config) (LedgerSummary, error) {
+// verifyFileChecks opens the database file at path (which must already be at
+// the binary's schema version), runs ledger verification for every network and
+// closes it. Verification records its run in the file, so callers pass a copy
+// whenever the file itself must stay unchanged.
+func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
 	st, err := store.Open(ctx, path)
 	if err != nil {
-		return LedgerSummary{}, err
+		return nil, err
 	}
 	defer func() { _ = st.Close() }()
 	svc, err := newService(st, cfg)
 	if err != nil {
-		return LedgerSummary{}, err
+		return nil, err
 	}
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "backup-verify", "")
+	return verifyAllNetworks(ctx, svc, st.DB(), "backup-verify", "")
+}
+
+// verifyFile is verifyFileChecks reduced to a summary.
+func verifyFile(ctx context.Context, path string, cfg *Config) (LedgerSummary, error) {
+	checks, err := verifyFileChecks(ctx, path, cfg)
 	if err != nil {
 		return LedgerSummary{}, err
 	}
 	return summarise(checks), nil
 }
 
+// verifyCopy verifies a throw-away copy of path, leaving path untouched.
+func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
+	scratch := path + ".verify"
+	removeDBFiles(scratch)
+	defer removeDBFiles(scratch)
+	if err := copyFileSync(path, scratch); err != nil {
+		return nil, err
+	}
+	return verifyFileChecks(ctx, scratch, cfg)
+}
+
 // snapshot writes a consistent online copy of the database behind db to dest,
 // verifies it, and writes dest + ".manifest.json". The copy is built under a
 // .partial name and renamed only after every check passed, so an interrupted
 // backup never looks complete. VACUUM INTO reads a snapshot and does not hold
-// the write lock (OPS-017).
-func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc) (*Manifest, error) {
+// the write lock (OPS-017). The ledger check runs on a throw-away copy, because
+// verification records its run in the database it checks: the backup must stay
+// byte-identical to what VACUUM INTO produced (CMD-01), which snapshot proves
+// by comparing digests before and after the checks. A non-empty key signs the
+// manifest (SA-07). Files are created 0600 (SA-06).
+func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc, key []byte) (*Manifest, error) {
 	if _, err := os.Stat(dest); err == nil {
 		return nil, fmt.Errorf("backup destination %s already exists", dest)
 	}
@@ -143,6 +199,13 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 		removeDBFiles(partial)
 		return nil, err
 	}
+	if err := os.Chmod(partial, 0o600); err != nil && runtime.GOOS != "windows" {
+		return fail(fmt.Errorf("restrict backup permissions: %w", err))
+	}
+	before, _, err := fileSHA256(partial)
+	if err != nil {
+		return fail(err)
+	}
 
 	integrity, err := integrityCheck(ctx, partial)
 	if err != nil {
@@ -154,7 +217,14 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 	}
 	ledgerSum := LedgerSummary{Status: "not-run", Reason: "snapshot schema is older than this binary (pre-migration copy)"}
 	if schema.Pending() == 0 && ledger != nil {
-		ledgerSum, err = ledger(ctx, partial)
+		scratch := partial + ".verify"
+		removeDBFiles(scratch)
+		if err := copyFileSync(partial, scratch); err != nil {
+			removeDBFiles(scratch)
+			return fail(fmt.Errorf("verify snapshot: %w", err))
+		}
+		ledgerSum, err = ledger(ctx, scratch)
+		removeDBFiles(scratch)
 		if err != nil {
 			return fail(fmt.Errorf("verify snapshot: %w", err))
 		}
@@ -164,6 +234,9 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 	sum, size, err := fileSHA256(partial)
 	if err != nil {
 		return fail(err)
+	}
+	if sum != before {
+		return fail(errors.New("snapshot changed while it was being checked; backup discarded"))
 	}
 	if err := os.Rename(partial, dest); err != nil {
 		return fail(err)
@@ -179,6 +252,9 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 		SHA256:        sum,
 		Integrity:     integrity,
 		Ledger:        ledgerSum,
+	}
+	if len(key) > 0 {
+		m.HMAC = manifestMAC(m, key)
 	}
 	if err := writeManifest(dest+".manifest.json", m); err != nil {
 		return nil, fmt.Errorf("backup %s written but manifest failed: %w", dest, err)

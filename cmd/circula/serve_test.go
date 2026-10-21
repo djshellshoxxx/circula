@@ -20,7 +20,7 @@ func TestServeRefusesPendingMigrationsInExplicitMode(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := raw.ExecContext(ctx, `DELETE FROM schema_migrations WHERE version = 1`); err != nil {
+	if _, err := raw.ExecContext(ctx, `DELETE FROM schema_migrations WHERE version = (SELECT MAX(version) FROM schema_migrations)`); err != nil {
 		t.Fatal(err)
 	}
 	_ = raw.Close()

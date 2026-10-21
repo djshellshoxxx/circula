@@ -112,3 +112,29 @@ func (s *Service) BalanceAt(ctx context.Context, actor domain.Actor, netID strin
 	})
 	return out, err
 }
+
+// PeekMemberBalance is the NON-audited admin read of a member's position. It
+// exists only so adapters can derive optimistic-concurrency tokens (ETags) and
+// check state around an admin command without writing an account.viewed event
+// and taking the write gate on every request (SVC-05). Do not render its result
+// to a user: displaying a member's balance to an administrator must go through
+// AdminGetMemberBalance, which audits the read (DAT-034).
+func (s *Service) PeekMemberBalance(ctx context.Context, actor domain.Actor, netID, memberID string) (*BalanceView, error) {
+	var out *BalanceView
+	err := s.view(ctx, func(tx store.Tx) error {
+		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		if err != nil {
+			return err
+		}
+		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		m, err := tx.GetMember(netID, memberID)
+		if err != nil {
+			return domain.NotFound("member")
+		}
+		out, err = s.balanceView(tx, p.net, m)
+		return err
+	})
+	return out, err
+}

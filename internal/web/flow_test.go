@@ -138,7 +138,10 @@ func TestJoinByInvitationLink(t *testing.T) {
 	anon := b.get("/join/" + tok)
 	b.mustContain(anon, "Sign in", "Create an account")
 	reg := b.get("/register?next=/join/" + tok)
-	p := b.post("/register", reg, url.Values{"login": {"carol@example.org"}, "password": {testPW}, "password2": {testPW}, "next": {"/join/" + tok}})
+	b.post("/register", reg, url.Values{"login": {"carol@example.org"}, "password": {testPW}, "password2": {testPW}, "next": {"/join/" + tok}})
+	// Registration never signs in (SA-10); the person signs in, then lands on the invitation.
+	lf := b.get("/login?next=/join/" + tok)
+	p := b.post("/login", lf, url.Values{"login": {"carol@example.org"}, "password": {testPW}, "next": {"/join/" + tok}})
 	b.mustContain(p, "Accept your invitation", "Your display name")
 	j := b.post("/join/"+tok, p, url.Values{"display_name": {"Carol"}})
 	b.mustContain(j, "You have joined Net town", "Available to spend")
@@ -146,6 +149,7 @@ func TestJoinByInvitationLink(t *testing.T) {
 	d := w.browser(t)
 	reg2 := d.get("/register")
 	d.post("/register", reg2, url.Values{"login": {"dave@example.org"}, "password": {testPW}, "password2": {testPW}})
+	d.post("/login", d.get("/login"), url.Values{"login": {"dave@example.org"}, "password": {testPW}})
 	jf := d.get("/join/" + tok)
 	again := d.post("/join/"+tok, jf, url.Values{"display_name": {"Dave"}})
 	d.mustContain(again, "expired, already used or not valid")
@@ -156,6 +160,7 @@ func TestSetupFirstNetwork(t *testing.T) {
 	b := w.browser(t)
 	reg := b.get("/register")
 	b.post("/register", reg, url.Values{"login": {"founder@example.org"}, "password": {testPW}, "password2": {testPW}})
+	b.post("/login", b.get("/login"), url.Values{"login": {"founder@example.org"}, "password": {testPW}})
 	f := b.get("/setup")
 	b.mustContain(f, "Create a network", "Credit unit name")
 	p := b.post("/setup", f, url.Values{"name": {"Fresh"}, "slug": {"fresh"}, "display_name": {"Fran"}, "currency_name": {"hour"},

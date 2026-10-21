@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"database/sql"
 	"errors"
 	"flag"
@@ -13,12 +14,14 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/api"
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/store"
 	"github.com/djshellshoxxx/circula/internal/web"
@@ -29,6 +32,7 @@ var errSchemaMismatch = errors.New("database schema does not match this binary")
 const (
 	expiryInterval      = 5 * time.Minute
 	verifyInterval      = time.Hour
+	purgeInterval       = time.Hour
 	backupRetryInterval = 15 * time.Minute
 	shutdownGracePeriod = 30 * time.Second
 )
@@ -67,6 +71,7 @@ func cmdServe(args []string, stdout, stderr io.Writer) int {
 	}
 	if *checkOnly {
 		writeEffective(stdout, vals)
+		writeSecretStatus(stdout, cfg)
 		return exitOK
 	}
 	logger := newLogger(cfg, stderr)
@@ -88,7 +93,7 @@ func cmdServe(args []string, stdout, stderr io.Writer) int {
 // or the listener fails. Order: lock; schema check and pre-migration backup;
 // open and migrate; pragma check; startup ledger verification; listen.
 func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
-	if err := os.MkdirAll(cfg.BackupDir, 0o700); err != nil && cfg.BackupInterval > 0 {
+	if err := ensurePrivateDir(cfg.BackupDir); err != nil && cfg.BackupInterval > 0 {
 		return fmt.Errorf("backup directory %s: %w", cfg.BackupDir, err)
 	}
 	lock, err := acquireLock(lockPath(cfg.Database))
@@ -116,6 +121,11 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		}
 	}
 
+	if tightened, err := secureDatabase(cfg.Database); err != nil {
+		return err
+	} else if tightened {
+		logger.Warn("database file was readable by group or others; permissions restricted to the owner", "file", cfg.Database)
+	}
 	st, err := store.Open(ctx, cfg.Database)
 	if err != nil {
 		m.migrationRan("failed")
@@ -151,8 +161,12 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		return fmt.Errorf("listen on %s: %w", cfg.Listen, err)
 	}
 	ops := &opsServer{cfg: cfg, db: st.DB(), logger: logger, metrics: m}
+	apiH, webH, err := newHandlers(svc, cfg, logger)
+	if err != nil {
+		return err
+	}
 	srv := &http.Server{
-		Handler:           ops.routes(api.NewHandler(svc), web.NewHandler(svc)),
+		Handler:           ops.routes(apiH, webH),
 		ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout:       cfg.RequestTimeout,
 		IdleTimeout:       2 * time.Minute,
@@ -163,6 +177,15 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		"public_base_url", cfg.PublicBaseURL, "schema_version", store.SchemaVersion())
 	if !isLoopback(cfg.Listen) {
 		logger.Warn("listening on a non-loopback address; put TLS termination and /metrics filtering in front of it")
+		if cfg.MetricsToken == "" {
+			logger.Warn("no metrics-token configured; /metrics relies on the source address check only (SA-15)")
+		}
+	}
+	if cfg.SetupSecret == "" {
+		logger.Warn("no setup-secret configured: any signed-in person can create a network (FR-002); set setup-secret-file or " + envPrefix + "SETUP_SECRET")
+	}
+	if !cfg.CookieSecure {
+		logger.Warn("cookie-secure is false: session cookies are not marked Secure (SEC-022)")
 	}
 
 	jobCtx, cancelJobs := context.WithCancel(context.Background())
@@ -198,6 +221,28 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	return runErr
 }
 
+// newHandlers builds the JSON API and the HTML UI with one shared edge policy
+// and CSRF key, so a browser session works for both (API-01) and the
+// operator's settings reach the adapters (WEB-01): setup secret, Secure
+// cookies, trusted proxies, public base URL and session lifetimes.
+func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, webH http.Handler, err error) {
+	key := make([]byte, 32)
+	if _, err := rand.Read(key); err != nil {
+		return nil, nil, fmt.Errorf("csrf key: %w", err)
+	}
+	edge := httpx.Edge{
+		ForceSecure:    cfg.CookieSecure,
+		PublicHTTPS:    strings.HasPrefix(cfg.PublicBaseURL, "https://"),
+		TrustedProxies: cfg.TrustedProxies,
+	}
+	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge})
+	webH = web.NewHandlerWith(svc, web.Options{
+		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
+		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax,
+	})
+	return apiH, webH, nil
+}
+
 // preMigrationBackup takes a verified-by-construction backup before any
 // migration of an existing database (OPS-018, OPS-023). Migration is refused
 // if the backup fails.
@@ -218,7 +263,7 @@ func preMigrationBackup(ctx context.Context, cfg *Config, logger *slog.Logger, m
 // backupTo writes a snapshot of the database into dir and returns its manifest
 // and path. A nil db means the database is opened for the duration of the call.
 func backupTo(ctx context.Context, cfg *Config, dir, reason string, db *sql.DB) (*Manifest, string, error) {
-	if err := os.MkdirAll(dir, 0o700); err != nil {
+	if err := ensurePrivateDir(dir); err != nil {
 		return nil, "", err
 	}
 	now := time.Now().UTC()
@@ -234,7 +279,7 @@ func backupTo(ctx context.Context, cfg *Config, dir, reason string, db *sql.DB) 
 	ledger := func(ctx context.Context, path string) (LedgerSummary, error) {
 		return verifyFile(ctx, path, cfg)
 	}
-	mf, err := snapshot(ctx, db, dest, reason, now, ledger)
+	mf, err := snapshot(ctx, db, dest, reason, now, ledger, cfg.BackupKey)
 	return mf, dest, err
 }
 
@@ -274,9 +319,10 @@ type jobRunner struct {
 
 func (j *jobRunner) run(ctx context.Context) {
 	var wg sync.WaitGroup
-	wg.Add(3)
+	wg.Add(4)
 	go func() { defer wg.Done(); j.every(ctx, "expiry", expiryInterval, j.expire) }()
 	go func() { defer wg.Done(); j.every(ctx, "verify", verifyInterval, j.verify) }()
+	go func() { defer wg.Done(); j.every(ctx, "purge", purgeInterval, j.purge) }()
 	go func() { defer wg.Done(); j.backups(ctx) }()
 	wg.Wait()
 }
@@ -320,6 +366,16 @@ func (j *jobRunner) expire(ctx context.Context) error {
 	if total > 0 {
 		j.logger.Info("proposals expired", "count", total)
 	}
+	return nil
+}
+
+// purge deletes expired sessions, throttle rows and idempotency records (SA-12).
+func (j *jobRunner) purge(ctx context.Context) error {
+	rep, err := j.svc.Purge(ctx)
+	if err != nil {
+		return err
+	}
+	j.logger.Debug("expired rows purged", "report", fmt.Sprintf("%+v", rep))
 	return nil
 }
 

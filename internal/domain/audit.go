@@ -56,6 +56,7 @@ const (
 	ActExport             = "export.created"
 	ActVerify             = "ledger.verified"
 	ActPersonRegistered   = "person.registered"
+	ActRegisterDuplicate  = "person.register_duplicate" // sign-up with a login that already exists (SA-10)
 	ActPasswordChanged    = "person.password_changed"
 	ActTokenCreated       = "token.created"
 	ActTokenRevoked       = "token.revoked"

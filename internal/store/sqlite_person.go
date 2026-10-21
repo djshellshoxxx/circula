@@ -63,7 +63,31 @@ func (t *txImpl) DeleteThrottle(login string) error {
 	return err
 }
 
+// DeleteStaleThrottles removes up to limit rows whose lock (or last failure)
+// ended at or before cutoff.
+func (t *txImpl) DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error) {
+	res, err := t.exec(`DELETE FROM login_throttle WHERE login IN
+		(SELECT login FROM login_throttle WHERE locked_until <= ? LIMIT ?)`, ms(cutoff), limit)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // ---- sessions ----
+
+// DeleteDeadSessions removes up to limit sessions that can no longer
+// authenticate: absolutely expired, idle since idleBefore, or revoked at or
+// before revokedBefore.
+func (t *txImpl) DeleteDeadSessions(now, idleBefore, revokedBefore time.Time, limit int) (int64, error) {
+	res, err := t.exec(`DELETE FROM sessions WHERE id IN (SELECT id FROM sessions
+		WHERE expires_at <= ? OR last_seen_at <= ? OR (revoked_at IS NOT NULL AND revoked_at <= ?) LIMIT ?)`,
+		ms(now), ms(idleBefore), ms(revokedBefore), limit)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
 
 func (t *txImpl) InsertSession(s *domain.Session) error {
 	_, err := t.exec(`INSERT INTO sessions(id,person_id,created_at,last_seen_at,expires_at) VALUES (?,?,?,?,?)`,

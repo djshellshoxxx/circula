@@ -26,7 +26,18 @@ Production data must never be copied to development or CI.
   `<database>.lock`.
 - The database is a single SQLite file in WAL mode. Its directory must be writable.
 - Put a TLS-terminating reverse proxy in front of the listener. Do not forward `/metrics` or `/healthz` to the public
-  internet.
+  internet. `serve` refuses an `http://` `public-base-url` on a non-loopback address unless `allow-insecure-http` is set.
+- Tell the service about the proxy: set `trusted-proxies` to the proxy's address and make the proxy send
+  `X-Forwarded-For` (client address) and `X-Forwarded-Proto: https`. Without `trusted-proxies` all clients share the
+  proxy's address in the rate limiters (one noisy client can then block sign-in for everyone), and forwarded headers are
+  ignored. Keep `cookie-secure=true` (default): cookies are then `Secure` and `__Host-` prefixed, and the service sends
+  `Strict-Transport-Security` when `public-base-url` is `https://`.
+- Set `public-base-url` to the exact address users type. Invitation links use it, and form posts are accepted only with
+  that `Origin`.
+- Files: the process sets umask `077`. The database, its WAL files, backups, manifests and the lock file are owner-only
+  (0600) and `backup-dir` is 0700; `serve` tightens a database file or backup directory it finds wider. Keep the
+  database directory itself private to the service account.
+- Set a setup secret (FR-002) before exposing the first run, see [configuration.md](configuration.md#secrets).
 - Backups go to `backup-dir` on the same host by default. Copy them off the host (OPS-019).
 
 ## Ownership

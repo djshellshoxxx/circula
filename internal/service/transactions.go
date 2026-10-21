@@ -27,9 +27,21 @@ type ProposeInput struct {
 	IdempotencyKey string `json:"-"`
 }
 
-// ProposeTransaction creates a `proposed` trade and reserves the payer's
-// capacity (DOM-011, DOM-012). The payer's available credit
-// (balance + limit - reserved) must cover the amount; nothing posts yet.
+// ProposeTransaction creates a `proposed` trade (DOM-011, DOM-012). The payer's
+// available credit (balance + limit - reserved) must cover the amount; nothing
+// posts yet.
+//
+// Reservation follows consent (DOM-011/012, SA-08). When the proposer is the
+// payer (Direction pay) the amount is reserved against the proposer's own
+// available credit. When the proposer is the payee (Direction request) the
+// payer has not consented, so NOTHING is reserved against them: an unsolicited
+// request cannot reduce the payer's available credit or block their own
+// payments. The payer's capacity is checked when the request is made (so
+// hopeless requests are refused) and re-checked as a hard limit when the payer
+// accepts (DOM-014). Requests are further capped: the open requests from one
+// proposer to one payer must together fit the payer's available credit and
+// number at most Config.MaxOpenRequestsPerPair, and one member may have at most
+// Config.MaxOpenProposalsPerMember open proposals (rate-limited otherwise).
 func (s *Service) ProposeTransaction(ctx context.Context, actor domain.Actor, netID string, in ProposeInput) (*domain.Transaction, error) {
 	var out *domain.Transaction
 	err := s.update(ctx, func(tx store.Tx) error {
@@ -96,11 +108,31 @@ func (s *Service) propose(tx store.Tx, p *principal, in ProposeInput) (string, e
 		return "", err
 	}
 	now := s.now()
+	if lim := s.cfg.MaxOpenProposalsPerMember; lim > 0 {
+		n, _, err := tx.LiveProposalStats(p.net.ID, p.member.ID, "", false, now)
+		if err != nil {
+			return "", err
+		}
+		if n >= lim {
+			return "", domain.Errf(domain.CodeRateLimited, "too many open proposals; wait for some to be answered or withdraw them")
+		}
+	}
 	reserved, err := tx.ReservedOutgoing(p.net.ID, payer.ID, now)
 	if err != nil {
 		return "", err
 	}
-	if avail := payer.Balance + payer.EffectiveLimit(pol.DefaultCreditLimit, now) - reserved; avail < in.Amount {
+	need := in.Amount
+	if in.Direction == ProposerIsPaid {
+		n, sum, err := tx.LiveProposalStats(p.net.ID, p.member.ID, cp.ID, true, now)
+		if err != nil {
+			return "", err
+		}
+		if lim := s.cfg.MaxOpenRequestsPerPair; lim > 0 && n >= lim {
+			return "", domain.Errf(domain.CodeRateLimited, "too many open requests to this member")
+		}
+		need += sum // open requests to the same payer count toward the exposure check
+	}
+	if avail := payer.Balance + payer.EffectiveLimit(pol.DefaultCreditLimit, now) - reserved; avail < need {
 		if avail < 0 {
 			avail = 0
 		}
@@ -178,6 +210,12 @@ func (s *Service) AcceptTransaction(ctx context.Context, actor domain.Actor, net
 				m, err := tx.GetMember(netID, id)
 				if err != nil || m.Status != domain.MemberActive {
 					return "", domain.Errf(domain.CodeCounterpartyInact, "a party is no longer active")
+				}
+				// SVC-03 (recorded decision): the default flag also gates posting, not
+				// only proposing. A payer flagged after the proposal must not complete
+				// a payment while the network's policy blocks flagged payers (DOM-025).
+				if id == t.PayerMemberID && p.net.Policy.DefaultFlagBlocksPayer && m.DefaultFlag {
+					return "", domain.Forbidden("payer is flagged and cannot commit new payments")
 				}
 			}
 			t.AcceptedBy = p.member.ID

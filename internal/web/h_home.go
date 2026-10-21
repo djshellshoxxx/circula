@@ -72,19 +72,25 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	d.Card = makeCard(b, c.Net.Policy.CurrencyName)
-	txs, err := s.svc.ListTransactions(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 100})
-	if err != nil {
+	// Open proposals come from a filtered query, so an old proposal is never
+	// hidden behind a window of newer activity (WEB-02, FR-053).
+	pending, perr := s.svc.ListPendingForActor(r.Context(), c.actor, c.netID(), service.PendingQuery{Page: service.Page{Limit: 100}})
+	recent, rerr := s.svc.ListTransactions(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 30})
+	if perr != nil || rerr != nil {
 		d.Err = "Your recent activity could not be loaded just now. The figures above are current as of this page load; reload to try again."
 	}
 	n := c.memberNames()
-	for _, t := range txs {
+	for _, t := range pending {
 		row := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
-		switch {
-		case row.Needs:
+		if row.Needs {
 			d.Needs = append(d.Needs, row)
-		case row.Pending:
+		} else {
 			d.Outgoing = append(d.Outgoing, row)
-		case len(d.Recent) < 5:
+		}
+	}
+	for _, t := range recent {
+		row := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+		if !row.Needs && !row.Pending && len(d.Recent) < 5 {
 			d.Recent = append(d.Recent, row)
 		}
 	}

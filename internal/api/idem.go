@@ -130,7 +130,7 @@ func (s *server) runIdempotent(c *reqCtx, rt route) error {
 		return rt.h(c)
 	}
 	if !validKey(key) {
-		return &apiError{status: 400, code: "idempotency-key-required", detail: "Idempotency-Key must be 1 to 255 printable ASCII characters"}
+		return &apiError{status: 400, code: "invalid-header", detail: "Idempotency-Key must be 1 to 255 printable ASCII characters"}
 	}
 	body, err := c.body()
 	if err != nil {
@@ -167,7 +167,17 @@ func (s *server) runIdempotent(c *reqCtx, rt route) error {
 	c.idemKey = key
 	rw := &recorder{w: c.w}
 	c.w = rw
+	finished := false
+	defer func() {
+		// A panic in the handler must not leave the record "in progress"
+		// until it expires: release the key so the client can retry (API-06).
+		if !finished {
+			c.w = rw.w
+			s.idem.finish(scoped, 0, nil, nil, false)
+		}
+	}()
 	herr := rt.h(c)
+	finished = true
 	c.w = rw.w
 	if herr != nil {
 		s.idem.finish(scoped, 0, nil, nil, false)

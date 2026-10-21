@@ -110,7 +110,7 @@ func TestAppendOnlyThroughRawAccess(t *testing.T) {
 		`UPDATE transactions SET amount = 1`, `DELETE FROM transactions`,
 		`UPDATE consistency_runs SET ok = 0`,
 	} {
-		tu.Must(w.Svc.VerifyLedger(w.Ctx, w.admin, w.net.ID)) // ensure consistency_runs has a row
+		tu.Must(w.Svc.VerifyAndRecordLedger(w.Ctx, w.admin, w.net.ID)) // ensure consistency_runs has a row
 		if _, err := db.Exec(q); err == nil {
 			t.Errorf("%q succeeded", q)
 		}
@@ -159,20 +159,20 @@ func TestVerifyDetectsBalanceCorruptionAndBalanceAt(t *testing.T) {
 	if _, err := w.Store.DB().Exec(`UPDATE accounts SET balance = balance + 7 WHERE member_id = ?`, w.aM.ID); err != nil {
 		t.Fatal(err)
 	}
-	rep := tu.Must(w.Svc.VerifyLedger(w.Ctx, w.admin, w.net.ID))
+	rep := tu.Must(w.Svc.VerifyAndRecordLedger(w.Ctx, w.admin, w.net.ID))
 	if rep.OK || len(rep.Findings) < 2 { // account mismatch and non-zero network total
 		t.Errorf("corruption not detected: %+v", rep)
 	}
-	if n := countRows(t, w.Env, "consistency_runs"); n != 1 {
-		t.Errorf("consistency runs recorded = %d", n)
+	if n := countRows(t, w.Env, "consistency_runs"); n != 1 || rep.RunID == "" {
+		t.Errorf("consistency runs recorded = %d (run id %q)", n, rep.RunID)
 	}
 }
 
-// Operator tooling (CLI) verifies with the system actor and records the run.
+// Operator tooling (CLI) verifies with the system actor; recording is explicit.
 func TestVerifyAsSystemActor(t *testing.T) {
 	w := newWorld(t, nil)
 	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 100)
-	rep := tu.Must(w.Svc.VerifyLedger(w.Ctx, domain.SystemActor("cli-1"), w.net.ID))
+	rep := tu.Must(w.Svc.VerifyAndRecordLedger(w.Ctx, domain.SystemActor("cli-1"), w.net.ID))
 	if !rep.OK || rep.LedgerSeq != 1 {
 		t.Errorf("report %+v", rep)
 	}

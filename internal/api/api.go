@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -30,6 +31,13 @@ type Options struct {
 	// CursorKey signs pagination cursors (API-035). Default: random per
 	// process, so cursors do not survive a restart.
 	CursorKey []byte
+	// CSRFKey keys the CSRF tokens. It must equal the key the HTML adapter
+	// uses (web.Options.CSRFKey) so that one browser session works for both;
+	// default: random per process.
+	CSRFKey []byte
+	// Edge carries the trusted-proxy, Secure and HSTS policy shared with the
+	// HTML adapter. The zero value ignores forwarding headers.
+	Edge httpx.Edge
 }
 
 type server struct {
@@ -42,6 +50,8 @@ type server struct {
 	jobs   *jobStore
 	casMu  sync.Mutex // serialises check-then-write for If-Match updates
 	cursor []byte
+	csrf   httpx.CSRF
+	pwFail *limiter // current-password guesses per person
 }
 
 // NewHandler returns the API handler. Mount it at /api/.
@@ -70,9 +80,15 @@ func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
 			panic("api: no entropy: " + err.Error())
 		}
 	}
+	if len(opt.CSRFKey) == 0 {
+		opt.CSRFKey = make([]byte, 32)
+		if _, err := io.ReadFull(rand.Reader, opt.CSRFKey); err != nil {
+			panic("api: no entropy: " + err.Error())
+		}
+	}
 	s := &server{svc: svc, opt: opt, log: opt.Logger, mux: http.NewServeMux(),
 		idem: newIdemStore(24*time.Hour, 10000), rl: newLimiter(opt.Now), jobs: newJobStore(opt.Now),
-		cursor: opt.CursorKey}
+		cursor: opt.CursorKey, csrf: httpx.CSRF{Key: opt.CSRFKey}, pwFail: newLimiter(opt.Now)}
 	s.routes()
 	s.mux.HandleFunc("/", s.notFound)
 	return s

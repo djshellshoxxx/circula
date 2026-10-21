@@ -5,7 +5,7 @@ trades that move credit between their accounts. Every posting is an append-only 
 audit event, and a verification operation recomputes the ledger invariants.
 
 This repository contains the Go core (domain, service layer, SQLite store) and the `circula` command, which runs the
-HTTP service and operates the database. The web UI and JSON API are being built on top of the service layer.
+HTTP service, the web UI and the JSON API, and operates the database.
 
 - Specifications: [`docs/specs/`](docs/specs/README.md)
 - Operations (configuration, backup and restore, upgrades, monitoring): [`docs/ops/`](docs/ops/README.md)
@@ -19,7 +19,9 @@ Requirements: Go 1.24 or newer. No C compiler is needed (the SQLite driver is pu
 ```sh
 make build                       # writes bin/circula
 
-export CIRCULA_PUBLIC_BASE_URL=http://127.0.0.1:8080   # the address users open
+export CIRCULA_PUBLIC_BASE_URL=http://127.0.0.1:8080   # the address users open (https:// for anything but loopback)
+export CIRCULA_COOKIE_SECURE=false                      # local http only; keep the default (true) behind TLS
+export CIRCULA_SETUP_SECRET="$(head -c 24 /dev/urandom | base64)"   # asked for when the first network is created
 export CIRCULA_DATABASE="$PWD/data/circula.db"          # created on first use
 
 mkdir -p data
@@ -37,7 +39,9 @@ curl -s http://127.0.0.1:8080/metrics    # only from loopback or the ranges in C
 ```
 
 `serve` listens on `127.0.0.1:8080` unless you set `CIRCULA_LISTEN` or `-listen`. Put a TLS-terminating reverse proxy in
-front of it for any other use, and do not forward `/metrics` through it.
+front of it for any other use, set `trusted-proxies` to that proxy, and do not forward `/metrics` through it. `serve`
+refuses an `http://` public URL on a non-loopback address. Secrets (setup secret, metrics token, backup key) come from the
+environment or a 0600 file, never from a flag: see [`docs/ops/configuration.md`](docs/ops/configuration.md#secrets).
 
 ## Commands
 

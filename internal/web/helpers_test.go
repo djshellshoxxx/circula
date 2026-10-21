@@ -29,7 +29,10 @@ type world struct {
 }
 
 // newWorld builds a network (founder "admin") with members alice and bob.
-func newWorld(t *testing.T) *world {
+func newWorld(t *testing.T) *world { return newWorldWith(t, nil) }
+
+// newWorldWith is newWorld with a hook to adjust the handler options.
+func newWorldWith(t *testing.T, tune func(*Options)) *world {
 	t.Helper()
 	env := testutil.NewEnv(t)
 	w := &world{env: env}
@@ -37,7 +40,11 @@ func newWorld(t *testing.T) *world {
 	w.net, w.adminM = env.Network(w.admin, "town", nil)
 	w.alice, w.aliceM = env.Member(w.admin, w.net, "alice@example.org")
 	w.bob, w.bobM = env.Member(w.admin, w.net, "bob@example.org")
-	w.srv = httptest.NewServer(NewHandlerWith(env.Svc, Options{CSRFKey: []byte("0123456789abcdef0123456789abcdef"), Clock: env.Clock}))
+	opts := Options{CSRFKey: []byte("0123456789abcdef0123456789abcdef"), Clock: env.Clock}
+	if tune != nil {
+		tune(&opts)
+	}
+	w.srv = httptest.NewServer(NewHandlerWith(env.Svc, opts))
 	t.Cleanup(w.srv.Close)
 	return w
 }

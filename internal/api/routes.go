@@ -24,6 +24,7 @@ func (s *server) routes() {
 	R("GET "+v1+"/accounts/me", s.getAccount)                         // API-044
 	R("GET "+v1+"/accounts/me/entries", s.listEntries)                // API-045
 	R("POST "+v1+"/me/membership/departure", s.depart, idem)          // API-067
+	R("POST "+v1+"/me/password", s.changePassword, noNet, cookieOnly) // AUTH-03 / SEC-003
 
 	// Listings.
 	R("GET "+v1+"/listings", s.listListings)         // API-046
@@ -55,6 +56,7 @@ func (s *server) routes() {
 	R("PATCH "+v1+"/admin/policy", s.patchPolicy)                           // API-058
 	R("GET "+v1+"/admin/members", s.adminListMembers)                       // API-059
 	R("POST "+v1+"/admin/members/{id}/approve", s.memberAction("approve"), idem)
+	R("POST "+v1+"/admin/members/{id}/deny", s.memberAction("deny"), idem) // FR-011
 	R("POST "+v1+"/admin/members/{id}/suspend", s.memberAction("suspend"), idem)
 	R("POST "+v1+"/admin/members/{id}/reinstate", s.memberAction("reinstate"), idem)
 	R("POST "+v1+"/admin/members/{id}/remove", s.memberAction("remove"), idem)

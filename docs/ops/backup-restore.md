@@ -14,10 +14,16 @@ Each backup is two files:
   - `bytes` and `sha256` of the `.db` file
   - `integrity_check` (`ok` when SQLite's integrity check passed)
   - `ledger_verification`: `status` (`ok`, `failed`, or `not-run`), network counts, and the reason when not run
+  - `hmac_sha256`: present when `backup-key` is configured (see below)
 
 Each snapshot is verified before it is named: it must pass the integrity check and, when its schema matches this binary,
 the ledger verification. A backup is written under a `.partial` name first and renamed only after every check passed.
 A backup whose ledger verification failed is still kept, because it is evidence. Its manifest says `failed`.
+
+The backup is the exact snapshot of the source (CMD-01). Ledger verification records its own run in the database it
+checks, so it runs on a throw-away copy of the snapshot; the digest of the snapshot is taken before the checks and
+compared after them, and a backup that changed is discarded. Backup files and manifests are created 0600 and
+`backup-dir` is 0700 (SA-06).
 
 ## Taking a backup
 
@@ -61,16 +67,34 @@ What `restore` does, in order:
 
 1. Reads the manifest and checks the file's SHA-256 and size. It refuses a backup whose schema is newer than the binary.
 2. Takes the single-writer lock. It refuses if `serve` is running.
+   With `backup-key` configured it also requires a valid manifest signature (below).
 3. If the database exists, it refuses unless `-overwrite` is given. With `-overwrite`, it first writes a `pre-restore`
    backup of the current database. If that backup fails, nothing changes.
-4. Copies the backup to a temporary file, checks SQLite's integrity, and refuses a backup that needs migration. The
-   copy is then moved into place, and the old WAL and shared-memory files are removed.
-5. Verifies the ledger for every network. It prints the backup time and states that data written after it may be
-   missing and must be reconciled from other sources.
-6. Writes `restore-<time>.json` to `backup-dir`.
+4. Copies the backup to a temporary file, checks SQLite's integrity, and refuses a backup that needs migration.
+5. Verifies the ledger and every network's audit hash chain inside the backup itself, on a throw-away copy (SA-07).
+   A backup that fails exits with code `3` and the current database is not touched.
+6. Moves the current database aside, moves the verified copy into place, opens it and checks the journal mode and
+   foreign keys. If any step fails the previous database is put back unchanged (CMD-08); otherwise the old files are
+   deleted. A copy of the old data stays in the `pre-restore` backup from step 3.
+7. Prints the backup time, states that data written after it may be missing and must be reconciled from other sources,
+   and writes `restore-<time>.json` to `backup-dir`.
 
-A restore whose ledger verification fails exits with code `3`. `serve` will refuse to start on that database. Restore an
-earlier verified backup, or follow the incident procedure in SEC-030.
+## Authenticity and the backup key
+
+Threat (SA-07). The manifest sits next to the backup and holds the checksum, so it protects against corruption, not
+against a person who can write to the backup storage. Such a person can edit a backup (for example replace a password
+hash with their own), recompute the checksum, and have the restore install it. Ledger and audit-chain verification
+catch edits to balances, entries and audit rows, but not edits to accounts, password hashes, sessions or tokens.
+
+Control. Set `CIRCULA_BACKUP_KEY` (or `backup-key-file`), a secret kept outside the backup location, on the host that
+takes and restores backups. Then every manifest carries an HMAC-SHA-256 over its format, time, schema version, size and
+digest, and `restore` refuses a manifest that is unsigned or whose signature does not verify under the key. Without the
+key, `restore` still verifies the ledger and audit chains, but prints a warning that the backup is not authenticated:
+restore only files you trust. Rotate the key by taking a new backup under the new key; old backups verify only under the
+key that signed them, so keep old keys with the old backups. After restoring any backup you did not make yourself, make
+everyone change their password; a password change revokes the person's sessions.
+
+A failing ledger or audit chain is never overridden: fix the cause or restore an earlier backup (SEC-030).
 
 Then start the service again:
 

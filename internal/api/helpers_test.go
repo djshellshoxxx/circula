@@ -11,6 +11,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/api"
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/testutil"
 )
@@ -33,7 +34,12 @@ type world struct {
 	keySeq int
 }
 
-func newWorld(t *testing.T) *world { return newWorldOpts(t, api.Options{}) }
+var testCSRFKey = []byte("0123456789abcdef0123456789abcdef")
+
+// csrfFor is the CSRF token the API expects for a browser session.
+func csrfFor(sess string) string { return httpx.CSRF{Key: testCSRFKey}.Token(sess) }
+
+func newWorld(t *testing.T) *world { return newWorldOpts(t, api.Options{CSRFKey: testCSRFKey}) }
 
 func newWorldOpts(t *testing.T, opt api.Options) *world {
 	t.Helper()

@@ -1,10 +1,12 @@
 # Service layer reference
 
 Package `github.com/djshellshoxxx/circula/internal/service` is the **only write path** to Circula state (ARC-002).
-HTTP, HTML and CLI adapters (to be built) translate requests into calls on `*service.Service` and domain
-errors into responses; they hold no business rules (ARC-003). Specs: `docs/specs/` (03 domain, 06 ledger, 09 security).
+HTTP (`internal/api`), HTML (`internal/web`) and CLI (`cmd/circula`) adapters translate requests into calls on
+`*service.Service` and domain errors into responses; they hold no business rules (ARC-003). Specs: `docs/specs/`
+(03 domain, 06 ledger, 09 security). Audit findings addressed here: `docs/audit/CODE-AUDIT.md`, `SECURITY-AUDIT.md`
+(IDs such as SVC-01, SA-08 are used in code comments and tests).
 
-Status: Go core complete and tested; no HTTP, UI or CLI yet.
+Status: service and store are complete and tested; the adapters above are built on top of this surface.
 
 ## 1. Wiring
 
@@ -14,7 +16,10 @@ svc, err := service.New(st, service.Config{})            // defaults: wall clock
 ```
 
 * One `*Service` per process; safe for concurrent use. **One writer process per database file** (ARC-011). Writers are
-  serialised in-process by a gate and across processes by `BEGIN IMMEDIATE`.
+  serialised in-process by a gate and across processes by `BEGIN IMMEDIATE`. `store.Open` uses a 5 s busy timeout
+  (`store.OpenWith(ctx, path, store.Options{BusyTimeout: d})` to change it).
+* `Store.View` is truly read-only: the connection runs `PRAGMA query_only=ON` for the unit, so a write inside a view
+  fails and cannot bypass the write gate (SVC-02). Everything that must not write (reads, `VerifyLedger`) uses it.
 * `Config.Clock` and `Config.IDs` are injected (DAT-002, DOM section 12); tests use `internal/testutil`.
 * `Config.Argon` cost parameters are a placeholder until DEC-006 (benchmark on minimum hardware) is decided.
 
@@ -60,11 +65,18 @@ Records expire after 7 days (`Config.IdempotencyTTL`). Input structs carry the k
 | `invalid-transaction-state` | 409 | state machine refusal (also used for dispute/membership/network state) |
 | `conflict` | 409 | duplicate (e.g. login unavailable) |
 | `blocked` | 409 | `Blockers` lists what prevents departure, closure or last-admin removal |
-| `rate-limited` | 429 | login throttle (per login; add per-address limits at the edge) |
+| `rate-limited` | 429 | login throttle (per login; add per-address limits at the edge); open-proposal caps; export quota |
+| `unavailable` | 503 | database busy past the busy timeout (SQLITE_BUSY/LOCKED). **Retryable**: nothing was written. Send `Retry-After`; `domain.IsRetryable(err)` |
 | `internal-error` | 500 | not produced by the service; adapters map unknown errors to it |
 
 **Pagination.** Keyset: `Page{AfterID, Limit}` (default 100, max 500). Lists are ordered by id (UUIDv7, time-ordered),
-newest first for transactions, listings, disputes; oldest first for members; audit uses `AuditQuery.AfterSeq`.
+newest first for transactions, listings, disputes; oldest first for members; audit uses `AuditQuery.AfterSeq`;
+`ListEntries` pages by `ledger_seq` descending with `EntryQuery.BeforeSeq`. Adapters must page with the cursor rather
+than scan a fixed window; use the single-object reads (`GetMember`, `GetListing`, `GetDispute`, `GetDisputeForTx`,
+`GetTransaction`) to fetch one item (API-04).
+
+**Never log credentials.** Invitation tokens (`inv_...`) travel in URL paths; pass any path, URL or error text through
+`service.RedactSecrets` before logging, or log the route pattern (SA-13, API-07, SEC-020). The service itself logs nothing.
 
 **Secrets.** Session tokens, API tokens and invitation tokens are returned once and stored only as SHA-256. Passwords are Argon2id PHC strings.
 
@@ -79,7 +91,10 @@ func (s *Service) GetBalance(ctx context.Context, actor domain.Actor, netID stri
 // GetBalance returns the caller's own balance view.
 
 func (s *Service) AdminGetMemberBalance(ctx context.Context, actor domain.Actor, netID, memberID string) (*BalanceView, error)
-// AdminGetMemberBalance lets an administrator see another member's balance and limit.
+// AdminGetMemberBalance lets an administrator see another member's balance and limit. The read is audited (account.viewed), so it takes the write gate.
+
+func (s *Service) PeekMemberBalance(ctx context.Context, actor domain.Actor, netID, memberID string) (*BalanceView, error)
+// Non-audited admin read in a View, ONLY for ETags / preconditions (SVC-05). Never render it; displaying goes through AdminGetMemberBalance.
 
 func (s *Service) BalanceAt(ctx context.Context, actor domain.Actor, netID string, seq int64) (int64, error)
 // BalanceAt reconstructs the caller's balance at a ledger_seq by summing entries (DAT-021, FR-054).
@@ -90,6 +105,35 @@ func (s *Service) BalanceAt(ctx context.Context, actor domain.Actor, netID strin
 ```go
 func (s *Service) CreateAdjustment(ctx context.Context, actor domain.Actor, netID string, in AdjustInput) (*domain.Transaction, error)
 // CreateAdjustment posts one entry on the member and the equal opposite entry on the system account, completed on creation (DOM-022, FR-062).
+```
+
+#### reads.go (single-object and paged reads; all run in `Store.View`)
+
+```go
+func (s *Service) GetMember(ctx, actor, netID, memberID string) (*domain.Member, error)
+// Own record or administrator: full. Active member viewing another ACTIVE member: directory subset (ID, NetworkID, DisplayName, Status). Else not-found.
+
+func (s *Service) GetListing(ctx, actor, netID, listingID string) (*domain.Listing, error)
+// Active members: active listings of active owners, plus all of their own. Else not-found.
+
+func (s *Service) GetDisputeForTx(ctx, actor, netID, txID string) (*DisputeView, error)
+// Latest dispute on a transaction, to parties, reviewers, administrators. GetDispute (disputes_decide.go) is the by-id read; both are tenant-scoped.
+
+func (s *Service) ListEntries(ctx, actor, netID string, q EntryQuery) ([]EntryRow, error)
+// The caller's own entries, ledger_seq DESC (API-045). EntryQuery{BeforeSeq, Limit}: pass the last row's Entry.LedgerSeq as the next BeforeSeq.
+
+func (s *Service) ListPendingForActor(ctx, actor, netID string, q PendingQuery) ([]*domain.Transaction, error)
+// Open (proposed, unexpired) trades the caller is party to, keyset-paged, no fixed window. PendingQuery{AwaitingMe, Page}.
+```
+
+#### purge.go
+
+```go
+func (s *Service) Purge(ctx context.Context) (PurgeReport, error)
+// Retention (SA-12, DATA-01): deletes dead sessions (expired, idle past SessionIdle, revoked >24 h ago), login_throttle rows whose lock/last failure ended >24 h ago, and expired idempotency records. Batches of 1000, one short write unit each. No actor: internal maintenance only, call it from the job runner (hourly). Never touches ledger, audit or membership data.
+
+func RedactSecrets(s string) string
+// Replaces inv_... and cir_... tokens with a marker (SA-13).
 ```
 
 #### audit.go
@@ -110,13 +154,13 @@ func (s *Service) ListAudit(ctx context.Context, actor domain.Actor, netID strin
 
 ```go
 func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain.Person, error)
-// RegisterPerson creates a Person with an Argon2id password hash.
+// RegisterPerson creates a Person with an Argon2id password hash. UNIFORM RESPONSE (SA-10): a taken login returns success with a decoy Person (ID matches no row), leaves the account untouched and audits person.register_duplicate. Adapters must not auto-login or branch on the outcome. RegisterInput.RevealDuplicate (CLI only) returns conflict instead.
 
 func (s *Service) Login(ctx context.Context, login, password string) (string, *domain.Person, error)
-// Login verifies credentials and returns an opaque bearer session token (shown once; only its SHA-256 is stored).
+// Login verifies credentials and returns an opaque bearer session token (shown once; only its SHA-256 is stored). Atomic throttle (AUTH-01/SA-04): lock check + attempt count are ONE write unit before the password is verified, so at most 5 guesses are evaluated per lock window however many run in parallel. Malformed logins (validLogin) are refused uniformly and never stored.
 
 func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor, error)
-// Authenticate resolves a session token to an Actor.
+// Authenticate resolves a session token to an Actor. Only an unknown/revoked/expired session is `unauthenticated`; store failures (including `unavailable`) are returned as they are, so an outage never logs users out (AUTH-02). Same for AuthenticateToken.
 
 func (s *Service) Logout(ctx context.Context, token string) error
 // Logout revokes the session behind token.
@@ -181,10 +225,10 @@ func (s *Service) ListInvitations(ctx context.Context, actor domain.Actor, netID
 // ListInvitations lists the network's invitations (admin).
 
 func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, token, displayName string) (*domain.Member, error)
-// RedeemInvitation joins the caller to the invitation's network as an active member.
+// RedeemInvitation joins the caller to the invitation's network as an active member. A pending/active member gets the existing membership back (token not consumed); suspended/departed -> forbidden (SVC-04).
 
 func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, displayName string) (*domain.Member, error)
-// JoinNetwork joins an approval-mode network (-> pending) or open-mode network (-> active).
+// JoinNetwork joins an approval-mode network (-> pending) or open-mode network (-> active). Same existing-membership rule as RedeemInvitation.
 
 func (s *Service) DecideJoinRequest(ctx context.Context, actor domain.Actor, netID, memberID string, approve bool, reason string) (*domain.Member, error)
 // DecideJoinRequest approves (-> active) or denies (-> departed) a pending member (FR-011).
@@ -229,6 +273,9 @@ func (s *Service) SetDefaultFlag(ctx context.Context, actor domain.Actor, netID,
 
 func (s *Service) SetCreditLimit(ctx context.Context, actor domain.Actor, netID string, in SetLimitInput) error
 // SetCreditLimit changes a member's override.
+
+func (s *Service) SetCreditLimitView(ctx context.Context, actor domain.Actor, netID string, in SetLimitInput) (*BalanceView, error)
+// SetCreditLimit that returns the position after the change from the same unit: one write, one limit.changed event, no account.viewed (SVC-05).
 ```
 
 #### networks.go
@@ -297,10 +344,10 @@ func (s *Service) ListAPITokens(ctx context.Context, actor domain.Actor) ([]*dom
 
 ```go
 func (s *Service) ProposeTransaction(ctx context.Context, actor domain.Actor, netID string, in ProposeInput) (*domain.Transaction, error)
-// ProposeTransaction creates a `proposed` trade and reserves the payer's capacity (DOM-011, DOM-012).
+// ProposeTransaction creates a `proposed` trade. Reservation follows consent: a payer's own proposal reserves their credit; a request (proposer is payee) reserves NOTHING against the payer (section 6, SA-08). Open-proposal caps apply.
 
 func (s *Service) AcceptTransaction(ctx context.Context, actor domain.Actor, netID string, in TxRef) (*domain.Transaction, error)
-// AcceptTransaction is consent by the party who did not propose.
+// AcceptTransaction is consent by the party who did not propose. Re-checks both parties active, the payer's default flag when the policy blocks flagged payers (SVC-03), and the hard credit limit.
 
 func (s *Service) DeclineTransaction(ctx context.Context, actor domain.Actor, netID string, in TxRef) (*domain.Transaction, error)
 // DeclineTransaction is the counterparty's exit.
@@ -329,7 +376,13 @@ func (s *Service) AdminListTransactions(ctx context.Context, actor domain.Actor,
 
 ```go
 func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID string) (*LedgerReport, error)
-// VerifyLedger runs the consistency check for one network and records the run (append-only).
+// READ-ONLY (OPS-016, SVC-01): runs in one Store.View snapshot, takes no write lock, writes no consistency run and no audit event; the database is unchanged afterwards. Also checks that the audit chain ends at the recorded head (SA-09).
+
+func (s *Service) RecordConsistencyRun(ctx context.Context, actor domain.Actor, rep *LedgerReport) error
+// Appends rep (from VerifyLedger) to consistency_runs and writes ledger.verified in one short write unit. Admin/System, write scope. Sets rep.RunID.
+
+func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor, netID string) (*LedgerReport, error)
+// VerifyLedger then RecordConsistencyRun. Use for an explicit administrator-initiated check only; startup, migrate, restore, backup verification and hourly jobs use plain VerifyLedger.
 ```
 
 
@@ -366,11 +419,6 @@ type AuditQuery struct {
 	From, To	time.Time
 	AfterSeq	int64
 	Limit		int
-}
-
-type RegisterInput struct {
-	Login		string
-	Password	string
 }
 
 type DepartInput struct {
@@ -515,6 +563,10 @@ type Config struct {
 	SessionIdle	time.Duration		// default 30 days (DAT section 9)
 	SessionMax	time.Duration		// default 90 days
 	IdempotencyTTL	time.Duration		// default 7 days (DAT section 9)
+
+	MaxOpenRequestsPerPair		int	// open requests from one proposer to one payer; default 5, <0 off (SA-08)
+	MaxOpenProposalsPerMember	int	// open proposals created by one member; default 200, <0 off (SA-08)
+	ExportsPerHour			int	// Export calls per member per network per hour; default 30, <0 off (SA-11)
 }
 
 type Service struct {
@@ -569,6 +621,34 @@ type LedgerReport struct {
 	Findings	[]string
 	LedgerSeq	int64
 	AuditEvents	int64
+	Started		time.Time
+	Finished	time.Time
+	RunID		string	// set by RecordConsistencyRun / VerifyAndRecordLedger
+}
+
+type RegisterInput struct {
+	Login		string
+	Password	string
+	RevealDuplicate	bool	// trusted operator tooling only (SA-10)
+}
+
+type EntryQuery struct {
+	BeforeSeq	int64	// 0 = newest; keyset cursor
+	Limit		int
+}
+
+type EntryRow struct {
+	Entry	*domain.Entry
+	Tx	*domain.Transaction
+}
+
+type PendingQuery struct {
+	AwaitingMe	bool	// only proposals made by the other party
+	Page		Page
+}
+
+type PurgeReport struct {
+	Sessions, Throttles, IdempotencyKeys	int64
 }
 ```
 
@@ -600,6 +680,13 @@ Domain types (`Network`, `Member`, `Transaction`, `Dispute`, `AuditEvent`, `Poli
 | DAT-005 no cross-network refs | composite FKs `(network_id, id)` | `TestCrossNetworkReferencesRejected`, `TestCrossNetworkIdsAreNotFound` |
 | DOM-010 state machine | `domain.NextTxStatus` + trigger `tx_status_flow` | `statemachine_test.go` (full cross product) |
 | DAT-030 audit hash chain | `AuditHash`, checked by `VerifyLedger` | `TestAuditChainDetectsTampering` |
+| SA-09 audit tail truncation | `audit_heads` row advanced in the same unit as every append (trigger: head only advances); `VerifyLedger` compares | `TestAuditTailTruncationDetected`, `TestAuditHeadTracksAppendsAndIsProtected`, `TestMigration0002BackfillsAuditHeads` |
+| OPS-016 verify is read-only | `VerifyLedger` on `Store.View` | `TestVerifyLedgerIsReadOnly` (database content hash unchanged), `TestVerifyLedgerDoesNotTakeWriteGate` |
+| SVC-02 View is read-only | `PRAGMA query_only` per view connection | `store.TestViewIsReadOnly` |
+| SEC-006 atomic login throttle | check + count in one write unit before verifying | `TestLoginThrottleIsAtomicUnderConcurrency`, `TestLoginThrottleKeyIsBounded` |
+| CMD-05 busy is retryable | `isBusy` -> `domain.CodeUnavailable` in `store.run`/`mapErr` | `store.TestBusyDatabaseIsRetryable` |
+| DOM-011/012 consent before reservation | `ReservedOutgoing` counts the payer's own proposals only | `TestUnsolicitedRequestsDoNotFreezeCredit`, `TestRequestExposureAndCounts` |
+| SA-12 retention | `Purge` | `TestPurge`, `store.TestPurgePrimitives` |
 
 ## 6. Decisions, deviations and gaps
 
@@ -611,23 +698,58 @@ Deviations from the specs, with reasons:
 * **Admin reversal needs status `completed`**; disputed transactions are reversed only through the dispute decision.
 * **`accepted` is never persisted** (OQ-DOM-1 default); the audit trail records `proposed -> completed`.
 * **OQ-DOM-2** implemented as both paths: `posting_pending` plus a time-limited, audited `SetCreditLimit` override, then `RetryDisputePosting`.
-* **Departed members cannot rejoin** (UNIQUE network+person); a second join returns the existing departed membership.
+* **Departed members cannot rejoin** (UNIQUE network+person, and DOM-003 has no transition out of `departed`). Denied
+  applicants, people who left and people who were removed all end as `departed`. A second join by a pending/active
+  member is idempotent (FR-017, DOM-002); by a **suspended or departed** one it is refused with `forbidden` and changes
+  nothing (SVC-04; before, it returned success and the web UI said "you have joined"). Re-application after denial or
+  removal is therefore **not supported**; supporting it needs a new DOM-003 transition (open question for FR-011).
 * Founder membership and the founder's account get no sign-up grant. The founder is active in a `setup` network (needed to bootstrap FR-004).
 * Sign-up grants are the only `grant` source (DOM-027); there is no periodic grant.
 * Login throttling is per login (including unknown logins); per-address limiting belongs to the HTTP adapter (SEC-006).
+  Each evaluated attempt is counted before the password is checked (see `Login`), so a correct password on the 5th try
+  still resets the counter but a parallel burst cannot out-run it. A locked attempt is not counted again.
+* **Request proposals (SA-08).** DOM-012 reserves the payer's capacity on proposal, but for a `request` the payer has not
+  consented (DOM-011), so reserving would let anyone freeze another member's credit. Decision: `ReservedOutgoing`
+  counts only proposals the payer made; a request is checked against the payer's available credit when made (hopeless
+  requests are refused), counted with the proposer's other open requests to that payer (their sum must fit the payer's
+  available credit; at most `MaxOpenRequestsPerPair`, default 5), and the payer's acceptance re-checks the hard limit
+  (DOM-014). One member may hold at most `MaxOpenProposalsPerMember` (200) open proposals. Both return `rate-limited`.
+  This refines DOM-012's "reserve" for requests; the DOM-012 acceptance test (30.00 available, 20.00 then 15.00) holds
+  for payer-initiated proposals.
+* **Default flag at accept (SVC-03).** With `DefaultFlagBlocksPayer`, `AcceptTransaction` also refuses a payer flagged
+  after the proposal (forbidden). DOM-025 names proposals as an example only; blocking the posting is the stricter
+  reading and keeps a flagged member from paying through a stale proposal.
+* **Sign-up is uniform (SA-10).** `RegisterPerson` never reveals a taken login (see method reference). Consequence for
+  adapters: do not auto-login after sign-up and show one message for both outcomes ("sign in with the details you chose").
+* **Consistency checks are read-only (SVC-01).** `VerifyLedger` never writes. Only an explicit administrator action
+  records a run (`VerifyAndRecordLedger`); startup, scheduled, migrate/restore and backup-verification callers use
+  `VerifyLedger` and keep their own result, so they no longer add an audit event and a run row each.
+* **Audit head (SA-09).** `audit_heads` holds the newest `(seq, hash)` per scope, written in the same unit as the
+  event. It detects deletion of the newest events by anyone who drops the append-only triggers but does not also edit
+  the head; an attacker who can rewrite both (and recompute the unkeyed hashes) is still undetected. For stronger
+  evidence publish the head outside the database (metrics, backup manifest). After tampering, appends to that scope fail
+  closed (head cannot move backwards) until an operator investigates.
 * Reads by admins that are audited (`ListAudit`, `AdminGetMemberBalance`) write an audit row, so they use a write transaction.
+  Adapters that only need state for a precondition use `PeekMemberBalance` (or `SetCreditLimitView`) instead (SVC-05).
 * `Export` audits first in its own unit, then streams from one read snapshot; the snapshot's `ledger_seq` is in the manifest.
+  A per-member quota (`ExportsPerHour`, default 30) is checked before the audit write (SA-11); the adapter still owns
+  its artefact store limits.
+* **Retention (SA-12).** `Purge` is the only deleter of sessions, throttle rows and idempotency records. It is not
+  scheduled by the service; the job runner must call it (hourly is plenty).
 
 Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
 
 * FR-067 admin overview counts, FR-076 other-party dispute response, FR-078 re-review, FR-024 reports, FR-038 notifications,
   DOM-025.1 limit-warning job, SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
-  setup-secret bootstrap (FR-002; adapter concern), break-glass operator access (SEC-013), CSRF (adapter).
-* Backups before migration and post-migration consistency gate (DAT-043/044): `store.Open` migrates; operators must back up first
-  and run `VerifyLedger` per network before serving writes (a CLI should wrap both).
-* Second-process detection (ARC-011): SQLite's lock prevents corruption; a clear start-up error is an adapter/CLI task.
+  setup-secret bootstrap (FR-002; adapter concern), break-glass operator access (SEC-013), per-person session cap,
+  platform-scope (`network_id = ''`) audit-chain verification (SVC-06).
+* `store.Open` migrates. Pre-migration backups, the post-migration consistency gate (DAT-043/044), the single-writer
+  lock (ARC-011), CSRF and the CLI wrapping are implemented in `cmd/circula` and `internal/web`, not here; the service
+  only supplies read-only `VerifyLedger` for those gates.
 
 ## 7. Testing notes
 
-`go vet ./... && go test -race ./...` (about one minute under `-race`). Tests build real SQLite files in temp dirs;
+`go vet ./... && go test -race ./internal/service/... ./internal/store/... ./internal/domain/...` (about one minute under `-race`).
+IDs from `testutil.IDs` are deterministic per `Env`, so two `Env`s collide on ids; build a second network inside the same
+`Env` to test tenant isolation. `testutil.NewEnvConfig(t, wrap, func(*service.Config))` adjusts limits. Tests build real SQLite files in temp dirs;
 `internal/testutil` provides a fake clock, deterministic ids, a fault-injecting store wrapper and a world builder.

@@ -39,6 +39,7 @@ func (s *server) wrap(next http.Handler) http.Handler {
 		h.Set("X-Frame-Options", "DENY")
 		h.Set("Cache-Control", "no-store")
 		h.Set("X-Request-Id", id)
+		s.opts.Edge.HSTS(w, r)
 		ctx := context.WithValue(r.Context(), keyReqID, id)
 		defer func() {
 			if rec := recover(); rec != nil {
@@ -66,17 +67,26 @@ func reqID(r *http.Request) string {
 }
 
 // sameOrigin rejects cross-site browser requests when the browser says so.
-func sameOrigin(r *http.Request) bool {
+// With a configured public base URL the Origin must be exactly that origin;
+// otherwise it must match the Host header.
+func (s *server) sameOrigin(r *http.Request) bool {
 	if sf := r.Header.Get("Sec-Fetch-Site"); sf == "cross-site" {
 		return false
 	}
-	if o := r.Header.Get("Origin"); o != "" && o != "null" {
-		u, err := url.Parse(o)
-		if err != nil || u.Host != r.Host {
-			return false
-		}
-	} else if o == "null" {
+	o := r.Header.Get("Origin")
+	if o == "null" {
 		return false
 	}
-	return true
+	if o == "" {
+		return true
+	}
+	u, err := url.Parse(o)
+	if err != nil {
+		return false
+	}
+	if s.opts.PublicBaseURL != "" {
+		pub, err := url.Parse(s.opts.PublicBaseURL)
+		return err == nil && strings.EqualFold(u.Scheme, pub.Scheme) && strings.EqualFold(u.Host, pub.Host)
+	}
+	return u.Host == r.Host
 }

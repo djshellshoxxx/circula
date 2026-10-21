@@ -24,7 +24,11 @@ const (
 	CodeConflict           Code = "conflict"
 	CodeBlocked            Code = "blocked"
 	CodeRateLimited        Code = "rate-limited"
-	CodeInternal           Code = "internal-error"
+	// CodeUnavailable is the retryable "try again" error: the database was busy
+	// or locked past the busy timeout. No partial state was written. Adapters
+	// map it to 503 with Retry-After.
+	CodeUnavailable Code = "unavailable"
+	CodeInternal    Code = "internal-error"
 )
 
 // FieldError describes one invalid input field.
@@ -40,7 +44,11 @@ type Error struct {
 	Msg      string
 	Fields   []FieldError // for CodeValidation
 	Blockers []string     // for CodeBlocked (departure, closure)
+	Cause    error        // underlying error for logs; never shown to callers
 }
+
+// Unwrap exposes Cause to errors.Is / errors.As.
+func (e *Error) Unwrap() error { return e.Cause }
 
 // Error implements error.
 func (e *Error) Error() string {
@@ -71,7 +79,12 @@ var (
 	ErrConflict           = &Error{Code: CodeConflict}
 	ErrBlocked            = &Error{Code: CodeBlocked}
 	ErrRateLimited        = &Error{Code: CodeRateLimited}
+	ErrUnavailable        = &Error{Code: CodeUnavailable}
 )
+
+// IsRetryable reports whether err is a transient failure the caller may retry
+// unchanged (database busy). Rate limits are not retryable immediately.
+func IsRetryable(err error) bool { return CodeOf(err) == CodeUnavailable }
 
 // Errf builds an Error with a formatted message.
 func Errf(c Code, format string, a ...any) *Error {

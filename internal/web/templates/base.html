@@ -18,9 +18,14 @@
       <li><a href="/">All networks</a></li>
     </ul>
   </nav>
+  <p class="acct"><a href="/account/password">Password</a></p>
   <form method="post" action="/logout" class="signout">{{template "csrf" .}}<button type="submit" class="link">Sign out</button></form>
   {{end}}
 </header>
+{{if and .Authed .ExpiresAt}}<div id="session-warning" class="notice" role="alert" tabindex="-1" hidden data-expires="{{.ExpiresAt}}" data-extendable="{{.Extendable}}">
+  <p><strong>Your session is about to end.</strong> <span id="session-msg"></span></p>
+  <p><button type="button" id="session-extend">Stay signed in</button> <a id="session-login" href="/login">Sign in again</a> <button type="button" id="session-dismiss" class="link">Dismiss</button></p>
+</div>{{end}}
 <main id="main" tabindex="-1">
   <h1 id="page-title">{{.Title}}</h1>
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}

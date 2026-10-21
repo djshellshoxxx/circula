@@ -66,27 +66,17 @@ func (s *server) createListing(c *reqCtx) error { // API-046
 	return ok(c, 201, toListing(l))
 }
 
-// ownListing finds one of the caller's listings (any status); the service has
-// no single-listing read. Not found covers non-owners (API-017).
+// ownListing reads one of the caller's listings (any status). Not found
+// covers other people's listings (API-017).
 func (s *server) ownListing(c *reqCtx, id string) (*domain.Listing, error) {
-	after := ""
-	for i := 0; i < 20; i++ {
-		rows, err := s.svc.ListListings(c.r.Context(), c.actor, c.netID,
-			service.ListingQuery{MemberID: c.member.ID, Page: service.Page{AfterID: after, Limit: 100}})
-		if err != nil {
-			return nil, err
-		}
-		for _, l := range rows {
-			if l.ID == id {
-				return l, nil
-			}
-		}
-		if len(rows) < 100 {
-			break
-		}
-		after = rows[len(rows)-1].ID
+	l, err := s.svc.GetListing(c.r.Context(), c.actor, c.netID, id)
+	if err != nil {
+		return nil, err
 	}
-	return nil, notFoundErr()
+	if l.MemberID != c.member.ID {
+		return nil, notFoundErr()
+	}
+	return l, nil
 }
 
 type patchListingReq struct {

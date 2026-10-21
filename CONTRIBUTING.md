@@ -30,8 +30,11 @@ lock handling) is covered in `cmd/circula`.
 
 - Workflows live in `.github/workflows/`. Each workflow declares `permissions:` at the top level. Grant write
   permissions only to the job that needs them.
-- Actions are pinned to a major tag (for example `@v4`). `scripts/check-action-pins.sh` fails on any other form and on any
-  action that is not on its allowlist. To adopt a new action, add it to the allowlist in that script in the same change.
+- Actions are pinned to a full 40-character commit SHA followed by a comment naming the release
+  (`uses: actions/checkout@<sha> # v4.3.1`), because tags are mutable (SA-14). `scripts/check-action-pins.sh` fails on a tag,
+  a missing `# vX.Y.Z` comment, any action not on its allowlist, and `cache: true` in the release workflow. To adopt or
+  bump an action, resolve the tag to its commit with `git ls-remote https://github.com/<owner>/<repo> 'refs/tags/<tag>*'`
+  (for an annotated tag use the `^{}` line), add it to the allowlist in the same change, and let Dependabot propose updates.
 - Do not use `write-all` or `pull_request_target` without a security review.
 
 ## Releases

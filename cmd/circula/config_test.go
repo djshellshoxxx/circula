@@ -30,6 +30,11 @@ var sampleValues = map[string]string{
 	"log-format":            "text",
 	"cookie-secure":         "false",
 	"metrics-allow":         "10.0.0.0/8",
+	"trusted-proxies":       "10.0.0.0/8, 192.168.1.1",
+	"allow-insecure-http":   "true",
+	"setup-secret-file":     "", // filled per test: a 0600 file
+	"metrics-token-file":    "",
+	"backup-key-file":       "",
 }
 
 // baseEnv returns a lookup that supplies the two required settings.
@@ -138,6 +143,12 @@ func TestEverySettingAcceptedByEverySource(t *testing.T) {
 		}
 		if d.key == "backup-dir" {
 			v = filepath.Join(dir, "bk")
+		}
+		if strings.HasSuffix(d.key, "-file") {
+			v = filepath.Join(dir, d.key+".secret")
+			if err := os.WriteFile(v, []byte("0123456789abcdef-secret\n"), 0o600); err != nil {
+				t.Fatal(err)
+			}
 		}
 		base := baseEnv(t, map[string]string{envName(d.key): ""})
 		// Environment source.

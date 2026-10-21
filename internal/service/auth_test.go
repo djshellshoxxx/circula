@@ -75,9 +75,20 @@ func TestPasswordPolicy(t *testing.T) {
 	if _, _, err := e.Svc.Login(e.Ctx, "c@example.org", long); err != nil {
 		t.Errorf("long password does not verify: %v", err)
 	}
-	if err := reg("B@Example.org ", pw); err == nil {
-		t.Error("case-insensitive duplicate login accepted")
+	// SA-10: a taken login (case-insensitively) is indistinguishable from a new one...
+	if err := reg("B@Example.org ", "another passphrase!!"); err != nil {
+		t.Errorf("duplicate login must get the uniform success response: %v", err)
 	}
+	// ...and must not change the existing account.
+	if _, _, err := e.Svc.Login(e.Ctx, "b@example.org", "another passphrase!!"); err == nil {
+		t.Error("duplicate registration overwrote the existing password")
+	}
+	if _, _, err := e.Svc.Login(e.Ctx, "b@example.org", strings.Repeat("a", 12)); err != nil {
+		t.Errorf("original password no longer works: %v", err)
+	}
+	// Operator tooling can still ask for the conflict.
+	_, err := e.Svc.RegisterPerson(e.Ctx, service.RegisterInput{Login: "b@example.org", Password: pw, RevealDuplicate: true})
+	wantCode(t, err, domain.ErrConflict)
 	for _, bad := range []string{"", "ab", "has space@x.org"} {
 		if err := reg(bad, pw); err == nil {
 			t.Errorf("login %q accepted", bad)

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Checks every GitHub Actions workflow:
-#   * each `uses:` references an action from the allowlist at a major-version tag (for example @v4),
+#   * each `uses:` references an action from the allowlist pinned to a full 40-hex commit SHA
+#     followed by a `# vX[.Y.Z]` comment naming the release (SA-14),
+#   * the release workflow does not enable the Go build cache,
 #   * every workflow declares a top-level permissions block (least privilege),
 #   * no job-level permissions are write-all.
 set -euo pipefail
@@ -20,6 +22,9 @@ fail=0
 for wf in .github/workflows/*.yml; do
   while IFS= read -r line; do
     ref="${line#*uses:}"
+    comment=""
+    case "$ref" in *"#"*) comment="${ref#*#}" ;; esac
+    ref="${ref%%#*}"
     ref="$(echo "$ref" | tr -d ' "' | sed "s/'//g")"
     action="${ref%@*}"
     version="${ref#*@}"
@@ -31,8 +36,12 @@ for wf in .github/workflows/*.yml; do
       echo "$wf: action $action is not on the allowlist"
       fail=1
     fi
-    if ! [[ "$version" =~ ^v[0-9]+$ ]]; then
-      echo "$wf: $action must be pinned to a major tag such as @v4, found @$version"
+    if ! [[ "$version" =~ ^[0-9a-f]{40}$ ]]; then
+      echo "$wf: $action must be pinned to a full 40-character commit SHA, found @$version"
+      fail=1
+    fi
+    if ! [[ "$comment" =~ ^[[:space:]]*v[0-9]+(\.[0-9]+){0,2}[[:space:]]*$ ]]; then
+      echo "$wf: $action needs a trailing '# vX.Y.Z' comment naming the pinned release, found '#$comment'"
       fail=1
     fi
   done < <(grep -E '^\s*-?\s*uses:' "$wf" || true)
@@ -46,6 +55,11 @@ for wf in .github/workflows/*.yml; do
     fail=1
   fi
 done
+
+if grep -nE 'cache:[[:space:]]*true' .github/workflows/release.yml; then
+  echo ".github/workflows/release.yml: setup-go cache must be off in the release workflow"
+  fail=1
+fi
 
 if [ "$fail" -ne 0 ]; then
   exit 1

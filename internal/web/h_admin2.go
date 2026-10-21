@@ -213,7 +213,7 @@ func (s *server) auditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 func (s *server) ledgerCheck(w http.ResponseWriter, r *http.Request, c *rc) {
-	rep, err := s.svc.VerifyLedger(r.Context(), c.actor, c.netID())
+	rep, err := s.svc.VerifyAndRecordLedger(r.Context(), c.actor, c.netID())
 	if err != nil {
 		s.fail(w, r, err)
 		return

@@ -7,7 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/djshellshoxxx/circula/internal/api"
 	"github.com/djshellshoxxx/circula/internal/domain"
 )
 
@@ -84,13 +83,13 @@ func TestCookieSessionNeedsCSRF(t *testing.T) {
 	}
 	rec := do("GET", "/api/v1/accounts/me", "", nil)
 	wantStatus(t, rec, 200)
-	if rec.Header().Get("X-CSRF-Token") != api.CSRFToken(sess) {
+	if rec.Header().Get("X-CSRF-Token") != csrfFor(sess) {
 		t.Fatal("csrf token not advertised")
 	}
 	body := m{"counterparty_member_id": w.bobM.ID, "direction": "pay", "amount_minor": "100"}
 	wantProblem(t, do("POST", "/api/v1/transactions", "", body), 403, "csrf-invalid")
 	wantProblem(t, do("POST", "/api/v1/transactions", "wrong", body), 403, "csrf-invalid")
-	wantStatus(t, do("POST", "/api/v1/transactions", api.CSRFToken(sess), body), 201)
+	wantStatus(t, do("POST", "/api/v1/transactions", csrfFor(sess), body), 201)
 	// Bearer-authenticated unsafe requests are exempt.
 	wantStatus(t, w.post(w.aliceT, "/transactions", body, w.key()), 201)
 }
@@ -105,7 +104,7 @@ func TestTokenScopesAndRevocation(t *testing.T) {
 	// Token management: create needs a session, not a token (API-011).
 	wantProblem(t, w.post(w.aliceT, "/tokens", m{"name": "x", "scopes": []string{"read"}}, ""), 403, "forbidden")
 	sess, _, _ := w.env.Svc.Login(context.Background(), "alice", "correct horse battery")
-	hdr := map[string]string{"Cookie": (&http.Cookie{Name: "circula_session", Value: sess}).String(), "X-CSRF-Token": api.CSRFToken(sess)}
+	hdr := map[string]string{"Cookie": (&http.Cookie{Name: "circula_session", Value: sess}).String(), "X-CSRF-Token": csrfFor(sess)}
 	rec := w.do(req{method: "POST", path: "/api/v1/tokens", body: m{"name": "ci", "scopes": []string{"read"}}, hdr: hdr})
 	wantStatus(t, rec, 201)
 	created := decode[struct {

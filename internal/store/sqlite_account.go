@@ -67,8 +67,16 @@ func (t *txImpl) sumProposed(col, netID, accountID string, now time.Time) (int64
 	return v, err
 }
 
+// ReservedOutgoing sums the payer's own unexpired proposals. Proposals made by
+// the other party ("requests") are not consented to by the payer yet and
+// reserve nothing (DOM-011, DOM-012, SA-08).
 func (t *txImpl) ReservedOutgoing(netID, accountID string, now time.Time) (int64, error) {
-	return t.sumProposed("payer_account_id", netID, accountID, now)
+	var v int64
+	err := t.row(`SELECT COALESCE(SUM(t.amount),0) FROM transactions t
+		JOIN accounts pa ON pa.id = t.payer_account_id
+		WHERE t.network_id = ? AND t.payer_account_id = ? AND t.status = 'proposed' AND t.kind = 'trade'
+		AND t.expires_at > ? AND t.created_by = pa.member_id`, netID, accountID, ms(now)).Scan(&v)
+	return v, err
 }
 
 func (t *txImpl) PendingIncoming(netID, accountID string, now time.Time) (int64, error) {

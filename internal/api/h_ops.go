@@ -97,11 +97,14 @@ type checkDTO struct {
 }
 
 func (s *server) runCheck(c *reqCtx) error { // API-063
-	rep, err := s.svc.VerifyLedger(c.r.Context(), c.actor, c.netID)
+	rep, err := s.svc.VerifyAndRecordLedger(c.r.Context(), c.actor, c.netID) // admin action: records the run (read-only VerifyLedger writes nothing)
 	if err != nil {
 		return err
 	}
-	id := uuid.NewString()
+	id := rep.RunID // the consistency_runs id
+	if id == "" {
+		id = uuid.NewString()
+	}
 	d := checkDTO{ID: id, Status: "complete", OK: rep.OK, Findings: append([]string{}, rep.Findings...),
 		LedgerSeq: rep.LedgerSeq, AuditEvents: rep.AuditEvents, CreatedAt: ts(s.opt.Now())}
 	s.jobs.putCheck(c.netID, c.actor.PersonID, d)

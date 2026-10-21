@@ -27,6 +27,15 @@ type Config struct {
 	SessionIdle    time.Duration     // default 30 days (DAT section 9)
 	SessionMax     time.Duration     // default 90 days
 	IdempotencyTTL time.Duration     // default 7 days (DAT section 9)
+
+	// Abuse limits on open proposals (SA-08). A proposal is "open" while it is
+	// proposed and unexpired. Zero selects the default; negative disables.
+	MaxOpenRequestsPerPair    int // requests (proposer is payee) from one member to one payer; default 5
+	MaxOpenProposalsPerMember int // all open proposals created by one member; default 200
+
+	// ExportsPerHour caps Export calls per member per network per rolling hour
+	// (SA-11). Zero selects 30; negative disables. System actors are exempt.
+	ExportsPerHour int
 }
 
 // Service implements all use cases. It is safe for concurrent use.
@@ -58,6 +67,15 @@ func New(st store.Store, cfg Config) (*Service, error) {
 	}
 	if cfg.IdempotencyTTL == 0 {
 		cfg.IdempotencyTTL = 7 * 24 * time.Hour
+	}
+	if cfg.MaxOpenRequestsPerPair == 0 {
+		cfg.MaxOpenRequestsPerPair = 5
+	}
+	if cfg.MaxOpenProposalsPerMember == 0 {
+		cfg.MaxOpenProposalsPerMember = 200
+	}
+	if cfg.ExportsPerHour == 0 {
+		cfg.ExportsPerHour = 30
 	}
 	s := &Service{st: st, cfg: cfg}
 	h, err := hashPassword("dummy-password-for-timing", cfg.Argon)

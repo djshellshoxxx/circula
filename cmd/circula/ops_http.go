@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
+	"crypto/subtle"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
@@ -147,17 +149,61 @@ func (o *opsServer) probeDB(ctx context.Context) error {
 	return nil
 }
 
-// metricsAccess admits only clients from the configured internal ranges (OPS-013).
-// Requests carrying forwarding headers are refused, because a reverse proxy
-// that forwards /metrics would otherwise appear to come from loopback.
+// forwardingHeaders are set by reverse proxies. /metrics refuses any request
+// that carries one, because a proxy on the same host would otherwise present
+// a loopback source address and publish the endpoint (SA-15).
+var forwardingHeaders = []string{"X-Forwarded-For", "Forwarded", "X-Forwarded-Host", "X-Forwarded-Proto",
+	"X-Forwarded-Port", "X-Real-Ip", "Via", "X-Original-Forwarded-For"}
+
+// metricsAccess admits only clients from the configured internal ranges
+// (OPS-013) that are not a proxy hop, and, when metrics-token is configured,
+// only requests presenting it as a bearer token. The token is the control
+// that does not depend on how a proxy is set up; configure it whenever a
+// proxy runs on the same host.
 func (o *opsServer) metricsAccess(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("X-Forwarded-For") != "" || r.Header.Get("Forwarded") != "" || !o.internal(r.RemoteAddr) {
+		for _, h := range forwardingHeaders {
+			if r.Header.Get(h) != "" {
+				http.Error(w, "forbidden", http.StatusForbidden)
+				return
+			}
+		}
+		if !o.internal(r.RemoteAddr) || o.fromTrustedProxy(r.RemoteAddr) {
 			http.Error(w, "forbidden", http.StatusForbidden)
 			return
 		}
+		if o.cfg.MetricsToken != "" {
+			scheme, tok, found := strings.Cut(r.Header.Get("Authorization"), " ")
+			want := sha256.Sum256([]byte(o.cfg.MetricsToken))
+			got := sha256.Sum256([]byte(strings.TrimSpace(tok)))
+			if !found || !strings.EqualFold(scheme, "Bearer") || subtle.ConstantTimeCompare(want[:], got[:]) != 1 {
+				w.Header().Set("WWW-Authenticate", `Bearer realm="circula-metrics"`)
+				http.Error(w, "unauthorized", http.StatusUnauthorized)
+				return
+			}
+		}
 		next(w, r)
 	}
+}
+
+// fromTrustedProxy reports whether the TCP peer is a configured reverse
+// proxy: a proxy hop is never an internal scraper.
+func (o *opsServer) fromTrustedProxy(remote string) bool {
+	host, _, err := net.SplitHostPort(remote)
+	if err != nil {
+		host = remote
+	}
+	addr, err := netip.ParseAddr(host)
+	if err != nil {
+		return false
+	}
+	addr = addr.Unmap()
+	for _, p := range o.cfg.TrustedProxies {
+		if p.Contains(addr) {
+			return true
+		}
+	}
+	return false
 }
 
 func (o *opsServer) internal(remote string) bool {

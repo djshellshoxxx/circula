@@ -128,16 +128,11 @@ type memberAct struct {
 }
 
 func (c *rc) findMember(id string) *domain.Member {
-	ms, err := c.s.svc.AdminListMembers(c.ctx, c.actor, c.netID(), nil, service.Page{Limit: 500})
+	m, err := c.s.svc.GetMember(c.ctx, c.actor, c.netID(), id)
 	if err != nil {
 		return nil
 	}
-	for _, m := range ms {
-		if m.ID == id {
-			return m
-		}
-	}
-	return nil
+	return m
 }
 
 func (s *server) memberActionForm(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -264,11 +259,7 @@ func (s *server) invitationCreate(w http.ResponseWriter, r *http.Request, c *rc)
 		s.fail(w, r, err)
 		return
 	}
-	scheme := "http"
-	if s.secure(r) {
-		scheme = "https"
-	}
-	s.renderInvites(w, r, c, 200, &page{V: map[string]string{"days": "7"}}, scheme+"://"+r.Host+"/join/"+tok)
+	s.renderInvites(w, r, c, 200, &page{V: map[string]string{"days": "7"}}, s.baseURL(r)+"/join/"+tok)
 }
 
 func parseDays(s string) (int, error) {
@@ -295,4 +286,17 @@ func (s *server) invitationRevoke(w http.ResponseWriter, r *http.Request, c *rc)
 	}
 	s.setFlash(w, r, "Invitation revoked.")
 	http.Redirect(w, r, c.base()+"/admin/invitations", http.StatusSeeOther)
+}
+
+// baseURL is the origin used in links shown to users: the configured public
+// base URL, else the scheme and Host of this request.
+func (s *server) baseURL(r *http.Request) string {
+	if s.opts.PublicBaseURL != "" {
+		return strings.TrimRight(s.opts.PublicBaseURL, "/")
+	}
+	scheme := "http"
+	if s.secure(r) {
+		scheme = "https"
+	}
+	return scheme + "://" + r.Host
 }

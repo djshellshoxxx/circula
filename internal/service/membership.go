@@ -218,40 +218,63 @@ type SetLimitInput struct {
 // debits are refused (DOM-032). Administrators cannot change their own limit.
 func (s *Service) SetCreditLimit(ctx context.Context, actor domain.Actor, netID string, in SetLimitInput) error {
 	return s.update(ctx, func(tx store.Tx) error {
-		p, m, err := s.adminOnMember(tx, actor, netID, in.MemberID, false)
-		if err != nil {
-			return err
-		}
-		if err := requireReason(in.Reason); err != nil {
-			return err
-		}
-		if in.Limit != nil && (*in.Limit < 0 || *in.Limit > domain.MaxPolicyAmount) {
-			return domain.Invalid("limit", "must be >= 0 and within the platform maximum")
-		}
-		if in.Limit == nil && in.ExpiresAt != nil {
-			return domain.Invalid("expires_at", "only valid together with a limit")
-		}
-		if in.ExpiresAt != nil && !in.ExpiresAt.After(s.now()) {
-			return domain.Invalid("expires_at", "must be in the future")
-		}
-		if m.Status != domain.MemberActive && m.Status != domain.MemberSuspended {
-			return domain.InvalidState("member is %s", m.Status)
-		}
-		acc, err := tx.GetAccountByMember(netID, m.ID)
-		if err != nil {
-			return err
-		}
-		now := s.now()
-		before := acc.EffectiveLimit(p.net.Policy.DefaultCreditLimit, now)
-		if err := tx.SetLimitOverride(netID, acc.ID, in.Limit, in.ExpiresAt); err != nil {
-			return err
-		}
-		after := p.net.Policy.DefaultCreditLimit
-		if in.Limit != nil {
-			after = *in.Limit
-		}
-		return s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActLimitChanged, TargetType: "account", TargetID: acc.ID,
-			Reason: in.Reason, Subjects: []string{m.ID}, Before: map[string]any{"effective_limit": before},
-			After: map[string]any{"effective_limit": after, "override": in.Limit != nil, "expires": in.ExpiresAt != nil}})
+		_, _, err := s.setCreditLimit(tx, actor, netID, in)
+		return err
 	})
+}
+
+// SetCreditLimitView is SetCreditLimit that also returns the member's position
+// after the change, read in the same unit. Adapters use it to answer a limit
+// PUT (and compute the new ETag) with ONE write and ONE audit event
+// (limit.changed), instead of reading the balance through the audited admin
+// read before and after (SVC-05).
+func (s *Service) SetCreditLimitView(ctx context.Context, actor domain.Actor, netID string, in SetLimitInput) (*BalanceView, error) {
+	var out *BalanceView
+	err := s.update(ctx, func(tx store.Tx) error {
+		p, m, err := s.setCreditLimit(tx, actor, netID, in)
+		if err != nil {
+			return err
+		}
+		out, err = s.balanceView(tx, p.net, m)
+		return err
+	})
+	return out, err
+}
+
+func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, in SetLimitInput) (*principal, *domain.Member, error) {
+	p, m, err := s.adminOnMember(tx, actor, netID, in.MemberID, false)
+	if err != nil {
+		return nil, nil, err
+	}
+	if err := requireReason(in.Reason); err != nil {
+		return nil, nil, err
+	}
+	if in.Limit != nil && (*in.Limit < 0 || *in.Limit > domain.MaxPolicyAmount) {
+		return nil, nil, domain.Invalid("limit", "must be >= 0 and within the platform maximum")
+	}
+	if in.Limit == nil && in.ExpiresAt != nil {
+		return nil, nil, domain.Invalid("expires_at", "only valid together with a limit")
+	}
+	if in.ExpiresAt != nil && !in.ExpiresAt.After(s.now()) {
+		return nil, nil, domain.Invalid("expires_at", "must be in the future")
+	}
+	if m.Status != domain.MemberActive && m.Status != domain.MemberSuspended {
+		return nil, nil, domain.InvalidState("member is %s", m.Status)
+	}
+	acc, err := tx.GetAccountByMember(netID, m.ID)
+	if err != nil {
+		return nil, nil, err
+	}
+	now := s.now()
+	before := acc.EffectiveLimit(p.net.Policy.DefaultCreditLimit, now)
+	if err := tx.SetLimitOverride(netID, acc.ID, in.Limit, in.ExpiresAt); err != nil {
+		return nil, nil, err
+	}
+	after := p.net.Policy.DefaultCreditLimit
+	if in.Limit != nil {
+		after = *in.Limit
+	}
+	return p, m, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActLimitChanged, TargetType: "account", TargetID: acc.ID,
+		Reason: in.Reason, Subjects: []string{m.ID}, Before: map[string]any{"effective_limit": before},
+		After: map[string]any{"effective_limit": after, "override": in.Limit != nil, "expires": in.ExpiresAt != nil}})
 }

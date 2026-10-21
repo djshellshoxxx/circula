@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -129,6 +130,10 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		}
 		fmt.Fprintf(stdout, "pre-migration backup: %s (ledger: %s)\n", path, mf.Ledger.Status)
 	}
+	if _, err := secureDatabase(cfg.Database); err != nil {
+		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
+		return exitFailure
+	}
 	st, err := store.Open(ctx, cfg.Database)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: migrate failed (database left at its previous version): %v\n", err)
@@ -192,7 +197,7 @@ func cmdBackup(ctx context.Context, args []string, stdout, stderr io.Writer) int
 	}
 	defer func() { _ = raw.Close() }()
 	ledger := func(ctx context.Context, path string) (LedgerSummary, error) { return verifyFile(ctx, path, cfg) }
-	mf, err := snapshot(ctx, raw, dest, "manual", now, ledger)
+	mf, err := snapshot(ctx, raw, dest, "manual", now, ledger, cfg.BackupKey)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: backup failed: %v\n", err)
 		return exitFailure
@@ -227,6 +232,11 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		return exitFailure
 	}
 	if err := verifyBackupFile(src, m); err != nil {
+		fmt.Fprintf(stderr, "circula: restore refused: %v\n", err)
+		return exitFailure
+	}
+	authenticated, err := checkManifestAuth(m, cfg.BackupKey)
+	if err != nil {
 		fmt.Fprintf(stderr, "circula: restore refused: %v\n", err)
 		return exitFailure
 	}
@@ -268,7 +278,7 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	}
 	fail := func(format string, a ...any) int {
 		removeDBFiles(partial)
-		fmt.Fprintf(stderr, "circula: restore refused: "+format+"\n", a...)
+		fmt.Fprintf(stderr, "circula: restore refused: "+format+"; the current database was not touched\n", a...)
 		return exitFailure
 	}
 	if res, err := integrityCheck(ctx, partial); err != nil || res != "ok" {
@@ -281,27 +291,34 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	if pend.Pending() > 0 {
 		return fail("backup schema v%d is older than this binary (v%d); restore with the matching binary or run migrate on a copy first", pend.Applied, pend.Known)
 	}
-
-	removeSideFiles(cfg.Database)
-	_ = os.Remove(cfg.Database + "-journal")
-	if err := os.Rename(partial, cfg.Database); err != nil {
-		return fail("replacing the database: %v", err)
+	// SA-07: the manifest only vouches for the file bytes, and it sits next to
+	// them. Check the ledger and the audit hash chains inside the backup itself,
+	// on a throw-away copy, before anything is replaced.
+	checks, err := verifyCopy(ctx, partial, cfg)
+	if err != nil {
+		return fail("ledger verification of the backup could not run: %v", err)
+	}
+	if !printChecks(stdout, checks) {
+		removeDBFiles(partial)
+		fmt.Fprintln(stderr, "circula: restore refused: the backup FAILS ledger or audit-chain verification; the current database was not touched (OPS-020)")
+		return exitLedgerFailed
 	}
 
-	st, err := store.Open(ctx, cfg.Database)
-	if err != nil {
-		fmt.Fprintf(stderr, "circula: restore: opening restored database: %v\n", err)
-		return exitFailure
-	}
-	defer func() { _ = st.Close() }()
-	svc, err := newService(st, cfg)
-	if err != nil {
-		fmt.Fprintf(stderr, "circula: restore: %v\n", err)
-		return exitFailure
-	}
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "restore-verify", "")
-	if err != nil {
-		fmt.Fprintf(stderr, "circula: restore: verification could not run: %v\n", err)
+	// Swap with a way back (CMD-08): the current database is moved aside, not
+	// deleted, until the restored one has opened and passed its checks.
+	if err := swapDatabase(ctx, cfg.Database, partial, state.Exists, func(ctx context.Context) error {
+		st, err := store.Open(ctx, cfg.Database)
+		if err != nil {
+			return fmt.Errorf("opening the restored database: %w", err)
+		}
+		if err := checkPragmas(ctx, st.DB()); err != nil {
+			_ = st.Close()
+			return fmt.Errorf("checking the restored database: %w", err)
+		}
+		return st.Close()
+	}); err != nil {
+		removeDBFiles(partial)
+		fmt.Fprintf(stderr, "circula: restore failed: %v; the previous database was put back\n", err)
 		return exitFailure
 	}
 	restoredAt := time.Now().UTC().Truncate(time.Second)
@@ -309,15 +326,57 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		src, m.CreatedAt.Format(time.RFC3339), cfg.Database, restoredAt.Format(time.RFC3339))
 	fmt.Fprintf(stdout, "data written after %s may be missing and must be reconciled from other sources (OPS-020)\n",
 		m.CreatedAt.Format(time.RFC3339))
-	ok := printChecks(stdout, checks)
-	if err := writeRestoreRecord(cfg.BackupDir, m, restoredAt, ok, src); err != nil {
+	if authenticated {
+		fmt.Fprintln(stdout, "backup signature: valid (backup-key)")
+	} else {
+		fmt.Fprintln(stdout, "WARNING: the backup is not authenticated (no backup-key configured): ledger and audit chains verified, but "+
+			"accounts, password hashes and sessions are not covered by any check. Restore only files you trust.")
+	}
+	if err := writeRestoreRecord(cfg.BackupDir, m, restoredAt, true, src); err != nil {
 		fmt.Fprintf(stderr, "circula: warning: restore record not written: %v\n", err)
 	}
-	if !ok {
-		fmt.Fprintln(stderr, "circula: restored data FAILS ledger verification; serve will refuse to start until a verified backup is restored (OPS-020)")
-		return exitLedgerFailed
-	}
 	return exitOK
+}
+
+// swapDatabase replaces the database at path with the verified file new. When
+// a database exists it is moved aside (with its WAL files) first; check runs
+// on the new database, and if the move, the rename or check fails the previous
+// database is put back unchanged. On success the old one is deleted.
+func swapDatabase(ctx context.Context, path, newFile string, hadDB bool, check func(context.Context) error) error {
+	aside := path + ".pre-restore-swap"
+	suffixes := []string{"", "-wal", "-shm"}
+	putBack := func() {
+		removeDBFiles(path)
+		_ = os.Remove(path + "-journal")
+		if hadDB {
+			for _, sfx := range suffixes {
+				_ = os.Rename(aside+sfx, path+sfx)
+			}
+		}
+	}
+	if hadDB {
+		removeDBFiles(aside)
+		for _, sfx := range suffixes {
+			if err := os.Rename(path+sfx, aside+sfx); err != nil && !errors.Is(err, fs.ErrNotExist) {
+				for _, back := range suffixes {
+					_ = os.Rename(aside+back, path+back)
+				}
+				return fmt.Errorf("moving the current database aside: %w", err)
+			}
+		}
+	}
+	if err := os.Rename(newFile, path); err != nil {
+		putBack()
+		return fmt.Errorf("replacing the database: %w", err)
+	}
+	if err := check(ctx); err != nil {
+		putBack()
+		return err
+	}
+	if hadDB {
+		removeDBFiles(aside)
+	}
+	return nil
 }
 
 // restoreRecord is the local record of a restore. It is not a ledger audit
@@ -357,6 +416,13 @@ func cmdVerifyLedger(ctx context.Context, args []string, stdout, stderr io.Write
 	}
 	ctx, stop := withInterrupt(ctx)
 	defer stop()
+	// Verification records its run in the database, so it is a writer: it must
+	// not run beside `serve` (OPS-011, ARC-011).
+	lock, err := acquireLock(lockPath(cfg.Database))
+	if err != nil {
+		return reportLockError(stderr, err, cfg.Database)
+	}
+	defer func() { _ = lock.Release() }()
 	st, svc, err := openDatabase(ctx, cfg)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: verify-ledger: %v\n", err)
@@ -401,13 +467,19 @@ func cmdAdmin(ctx context.Context, args []string, stdout, stderr io.Writer) int 
 	}
 	ctx, stop := withInterrupt(ctx)
 	defer stop()
+	// create-operator writes: refuse while `serve` (or another command) holds the database.
+	lock, err := acquireLock(lockPath(cfg.Database))
+	if err != nil {
+		return reportLockError(stderr, err, cfg.Database)
+	}
+	defer func() { _ = lock.Release() }()
 	st, svc, err := openDatabase(ctx, cfg)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: admin create-operator: %v\n", err)
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	p, err := svc.RegisterPerson(ctx, service.RegisterInput{Login: login, Password: password})
+	p, err := svc.RegisterPerson(ctx, service.RegisterInput{Login: login, Password: password, RevealDuplicate: true})
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: admin create-operator: %v\n", err)
 		return exitFailure

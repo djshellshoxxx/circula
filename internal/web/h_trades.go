@@ -262,13 +262,8 @@ func (s *server) tradeDetail(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 	}
 	if t.Status == domain.TxDisputed && d.Party {
-		if ds, err := s.svc.ListDisputes(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 100}); err == nil {
-			for _, x := range ds {
-				if x.TxID == t.ID {
-					d.DisputeID = x.ID
-					break
-				}
-			}
+		if dv, err := s.svc.GetDisputeForTx(r.Context(), c.actor, c.netID(), t.ID); err == nil {
+			d.DisputeID = dv.Dispute.ID
 		}
 	}
 	s.render(w, r, c, "trade_detail", 200, &page{Title: "Trade detail", D: d})

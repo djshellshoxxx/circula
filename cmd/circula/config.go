@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -54,9 +55,26 @@ var settingDefs = []settingDef{
 	{key: "request-timeout", def: "30s", help: "per-request deadline for API and UI routes"},
 	{key: "log-level", def: "info", help: "debug, info, warn or error"},
 	{key: "log-format", def: "json", help: "json or text"},
-	{key: "cookie-secure", def: "true", help: "Secure attribute for session cookies (SEC-022); reserved until the web adapter reads it"},
+	{key: "cookie-secure", def: "true", help: "mark session cookies Secure and use the __Host- cookie name; keep true behind a TLS proxy (SEC-022)"},
 	{key: "metrics-allow", def: "127.0.0.1/32,::1/128", help: "comma-separated CIDRs allowed to read /metrics; none to deny all"},
+	{key: "trusted-proxies", def: "none", help: "comma-separated CIDRs of reverse proxies whose X-Forwarded-For and X-Forwarded-Proto are believed; none ignores those headers"},
+	{key: "allow-insecure-http", def: "false", help: "permit a plain-http public-base-url on a non-loopback address (SEC-022); never for production"},
+	{key: "setup-secret-file", help: "file holding the one-time setup secret needed to create a network (FR-002); or env " + envPrefix + "SETUP_SECRET"},
+	{key: "metrics-token-file", help: "file holding a bearer token required for /metrics (SA-15); or env " + envPrefix + "METRICS_TOKEN"},
+	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
+
+// secretDefs are secrets that are never accepted as flags or as keys of the
+// configuration file: the environment variable CIRCULA_<NAME>, or the file
+// named by the matching <name>-file setting, supplies them.
+var secretDefs = []struct{ name, fileKey string }{
+	{"setup-secret", "setup-secret-file"},
+	{"metrics-token", "metrics-token-file"},
+	{"backup-key", "backup-key-file"},
+}
+
+// minSecretLen is the shortest accepted secret.
+const minSecretLen = 16
 
 // Config is the typed, validated configuration.
 type Config struct {
@@ -78,6 +96,12 @@ type Config struct {
 	LogFormat           string
 	CookieSecure        bool
 	MetricsAllow        []netip.Prefix
+	TrustedProxies      []netip.Prefix
+	AllowInsecureHTTP   bool
+	// Secrets (SEC-027). Empty when not configured.
+	SetupSecret  string
+	MetricsToken string
+	BackupKey    []byte
 }
 
 // resolved is one effective setting value and where it came from.
@@ -154,6 +178,9 @@ func (sf *settingsFlags) Resolve(env lookupEnv, forServe bool) (*Config, map[str
 
 	cfg, err := buildConfig(vals, forServe)
 	if err != nil {
+		return nil, nil, err
+	}
+	if err := loadSecrets(cfg, vals, env); err != nil {
 		return nil, nil, err
 	}
 	if _, ok := vals["backup-dir"]; !ok {
@@ -297,7 +324,18 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		cfg.CookieSecure = b
 	}
 
-	cfg.MetricsAllow = parsePrefixes(get("metrics-allow"), fail)
+	cfg.MetricsAllow = parsePrefixes(get("metrics-allow"), fail, "metrics-allow")
+	cfg.TrustedProxies = parsePrefixes(get("trusted-proxies"), fail, "trusted-proxies")
+	if b, err := strconv.ParseBool(get("allow-insecure-http")); err != nil {
+		fail("allow-insecure-http", "must be true or false")
+	} else {
+		cfg.AllowInsecureHTTP = b
+	}
+	if forServe && cfg.PublicBaseURL != "" {
+		if msg := checkTransport(cfg); msg != "" {
+			fail("public-base-url", "%s", msg)
+		}
+	}
 
 	if len(errs) > 0 {
 		return nil, errors.Join(errs...)
@@ -342,7 +380,7 @@ func parseInt(s, key string, fail func(string, string, ...any), min, max int) in
 
 // parsePrefixes accepts CIDRs or single addresses, comma separated. "none"
 // or an empty list denies everything.
-func parsePrefixes(s string, fail func(string, string, ...any)) []netip.Prefix {
+func parsePrefixes(s string, fail func(string, string, ...any), key string) []netip.Prefix {
 	if s == "none" {
 		return nil
 	}
@@ -360,14 +398,99 @@ func parsePrefixes(s string, fail func(string, string, ...any)) []netip.Prefix {
 			out = append(out, netip.PrefixFrom(a, a.BitLen()))
 			continue
 		}
-		fail("metrics-allow", "%q is not an address or CIDR", part)
+		fail(key, "%q is not an address or CIDR", part)
 		return nil
 	}
 	return out
 }
 
-// writeEffective prints every setting, its value and its source. Settings are
-// all non-secret; secret values, when added, must be redacted here.
+// checkTransport enforces SEC-022: a plain-http public URL on anything but
+// loopback is refused unless allow-insecure-http is set explicitly. It is also
+// refused when the process listens on a non-loopback address, since then the
+// plain-http port is reachable by others.
+func checkTransport(cfg *Config) string {
+	u, err := url.Parse(cfg.PublicBaseURL)
+	if err != nil || u.Scheme != "http" || cfg.AllowInsecureHTTP {
+		return ""
+	}
+	if !isLoopback(u.Host) && !isLoopbackHost(u.Hostname()) {
+		return "http:// is refused for " + u.Host + ": use https:// behind a TLS-terminating proxy, or set allow-insecure-http=true knowing that passwords and sessions then cross the network unencrypted (SEC-022)"
+	}
+	if !isLoopback(cfg.Listen) {
+		return "http:// with listen address " + cfg.Listen + " exposes passwords and sessions on the network: use https:// behind a TLS-terminating proxy, listen on loopback, or set allow-insecure-http=true (SEC-022)"
+	}
+	return ""
+}
+
+func isLoopbackHost(h string) bool {
+	if h == "localhost" {
+		return true
+	}
+	ip := net.ParseIP(h)
+	return ip != nil && ip.IsLoopback()
+}
+
+// loadSecrets reads the secrets from the environment or their files. A secret
+// that is both in the environment and in a file is ambiguous and refused.
+func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
+	var errs []error
+	for _, d := range secretDefs {
+		envVal, _ := env(envName(d.name))
+		file := vals[d.fileKey].value
+		if envVal != "" && file != "" {
+			errs = append(errs, &settingError{key: d.fileKey, msg: "set together with " + envName(d.name) + "; configure the secret in one place"})
+			continue
+		}
+		val := envVal
+		if file != "" {
+			v, err := readSecretFile(file)
+			if err != nil {
+				errs = append(errs, &settingError{key: d.fileKey, msg: err.Error()})
+				continue
+			}
+			val = v
+		}
+		if val == "" {
+			continue
+		}
+		if len(val) < minSecretLen {
+			errs = append(errs, &settingError{key: d.name, msg: fmt.Sprintf("must be at least %d characters", minSecretLen)})
+			continue
+		}
+		switch d.name {
+		case "setup-secret":
+			cfg.SetupSecret = val
+		case "metrics-token":
+			cfg.MetricsToken = val
+		case "backup-key":
+			cfg.BackupKey = []byte(val)
+		}
+	}
+	return errors.Join(errs...)
+}
+
+// readSecretFile returns the trimmed content of a secret file. On Unix the
+// file must not be readable by group or others.
+func readSecretFile(path string) (string, error) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return "", err
+	}
+	if !fi.Mode().IsRegular() {
+		return "", fmt.Errorf("%s is not a regular file", path)
+	}
+	if runtime.GOOS != "windows" && fi.Mode().Perm()&0o077 != 0 {
+		return "", fmt.Errorf("%s is readable by group or others (mode %o); chmod 600 it", path, fi.Mode().Perm())
+	}
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimRight(string(b), "\r\n"), nil
+}
+
+// writeEffective prints every setting, its value and its source. Secrets are
+// never printed: only whether each one is configured.
 func writeEffective(w io.Writer, vals map[string]resolved) {
 	for _, d := range settingDefs {
 		r, ok := vals[d.key]
@@ -381,4 +504,17 @@ func writeEffective(w io.Writer, vals map[string]resolved) {
 		}
 		fmt.Fprintf(w, "%s = %s (%s)\n", d.key, r.value, r.source)
 	}
+}
+
+// writeSecretStatus reports which secrets are configured, without values.
+func writeSecretStatus(w io.Writer, cfg *Config) {
+	state := func(set bool) string {
+		if set {
+			return "<set>"
+		}
+		return "<unset>"
+	}
+	fmt.Fprintf(w, "setup-secret = %s\n", state(cfg.SetupSecret != ""))
+	fmt.Fprintf(w, "metrics-token = %s\n", state(cfg.MetricsToken != ""))
+	fmt.Fprintf(w, "backup-key = %s\n", state(len(cfg.BackupKey) > 0))
 }

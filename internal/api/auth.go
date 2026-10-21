@@ -1,27 +1,12 @@
 package api
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"crypto/subtle"
-	"encoding/base64"
 	"net/http"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
 )
-
-// SessionCookieNames are the cookie names the sign-in flow may use.
-var SessionCookieNames = []string{"__Host-circula_session", "circula_session"}
-
-// CSRFToken derives the per-session CSRF token for a session token. The HTML
-// sign-in flow may hand it to scripts; the API also returns it in the
-// X-CSRF-Token response header of every cookie-authenticated response (API-014).
-func CSRFToken(sessionToken string) string {
-	m := hmac.New(sha256.New, []byte("circula-csrf-v1"))
-	m.Write([]byte(sessionToken))
-	return base64.RawURLEncoding.EncodeToString(m.Sum(nil))
-}
 
 func isUnsafe(method string) bool {
 	switch method {
@@ -47,30 +32,24 @@ func (s *server) authenticate(r *http.Request, c *reqCtx) error {
 		c.actor = a
 		return nil
 	}
-	for _, name := range SessionCookieNames {
-		ck, err := r.Cookie(name)
-		if err != nil || ck.Value == "" {
-			continue
-		}
-		a, err := s.svc.Authenticate(r.Context(), ck.Value)
+	if tok := httpx.SessionToken(r); tok != "" {
+		a, err := s.svc.Authenticate(r.Context(), tok)
 		if err != nil {
 			return errUnauth
 		}
 		a.RequestID = c.rid
-		c.actor, c.cookie, c.session = a, true, ck.Value
+		c.actor, c.cookie, c.session = a, true, tok
 		return nil
 	}
 	return errUnauth
 }
 
 // checkCSRF enforces API-014 for cookie-authenticated unsafe requests.
-func checkCSRF(r *http.Request, c *reqCtx) error {
+func (s *server) checkCSRF(r *http.Request, c *reqCtx) error {
 	if !c.cookie || !isUnsafe(r.Method) {
 		return nil
 	}
-	got := r.Header.Get("X-CSRF-Token")
-	want := CSRFToken(c.session)
-	if got == "" || subtle.ConstantTimeCompare([]byte(got), []byte(want)) != 1 {
+	if !s.csrf.Valid(c.session, r.Header.Get("X-CSRF-Token")) {
 		return &apiError{status: 403, code: "csrf-invalid", detail: "missing or invalid CSRF token"}
 	}
 	return nil

@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 )
@@ -30,7 +31,32 @@ func (t *txImpl) InsertAudit(e *domain.AuditEvent) error {
 			return err
 		}
 	}
-	return nil
+	// Advance the chain head in the same unit (SA-09). The trigger refuses a
+	// head that does not move forward.
+	_, err := t.exec(`INSERT INTO audit_heads(network_id,seq,hash) VALUES (?,?,?)
+		ON CONFLICT(network_id) DO UPDATE SET seq = excluded.seq, hash = excluded.hash`, e.NetworkID, e.Seq, e.Hash)
+	return err
+}
+
+// AuditHead returns the recorded chain head of a scope. found is false when no
+// event was ever appended.
+func (t *txImpl) AuditHead(netID string) (int64, string, bool, error) {
+	var seq int64
+	var hash string
+	err := t.row(`SELECT seq, hash FROM audit_heads WHERE network_id = ?`, netID).Scan(&seq, &hash)
+	if err == sql.ErrNoRows {
+		return 0, "", false, nil
+	}
+	return seq, hash, err == nil, err
+}
+
+// CountAuditSince counts a scope's events with the given action and actor at
+// or after since (per-actor quotas).
+func (t *txImpl) CountAuditSince(netID, action, actorID string, since time.Time) (int, error) {
+	var n int
+	err := t.row(`SELECT COUNT(*) FROM audit_events WHERE network_id = ? AND actor_id = ? AND action = ? AND occurred_at >= ?`,
+		netID, actorID, action, ms(since)).Scan(&n)
+	return n, err
 }
 
 func (t *txImpl) ListAudit(netID string, f AuditFilter) ([]*domain.AuditEvent, error) {
@@ -147,4 +173,14 @@ func (t *txImpl) DeleteIdem(netID, actorID, op, key string) error {
 	_, err := t.exec(`DELETE FROM idempotency_keys WHERE network_id=? AND actor_id=? AND operation=? AND key=?`,
 		netID, actorID, op, key)
 	return err
+}
+
+// DeleteExpiredIdem removes up to limit records that expired at or before now.
+func (t *txImpl) DeleteExpiredIdem(now time.Time, limit int) (int64, error) {
+	res, err := t.exec(`DELETE FROM idempotency_keys WHERE rowid IN
+		(SELECT rowid FROM idempotency_keys WHERE expires_at <= ? LIMIT ?)`, ms(now), limit)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"strings"
 	"time"
 	"unicode"
@@ -18,6 +19,10 @@ import (
 type RegisterInput struct {
 	Login    string
 	Password string
+	// RevealDuplicate makes a taken login fail with CodeConflict. Only trusted
+	// operator tooling (the CLI) may set it; network-facing adapters must leave
+	// it false so sign-up cannot be used to probe which logins exist (SA-10).
+	RevealDuplicate bool
 }
 
 func normalizeLogin(l string) string { return strings.ToLower(strings.TrimSpace(l)) }
@@ -35,6 +40,14 @@ func validLogin(l string) error {
 }
 
 // RegisterPerson creates a Person with an Argon2id password hash.
+//
+// Uniform response (SA-10, SEC-005): when the login is already taken the call
+// does the same hashing work, leaves the existing account untouched, records a
+// platform audit event and returns success with a decoy Person whose ID matches
+// no stored row (nobody can sign in with it). The caller therefore cannot tell
+// a new login from an existing one; adapters must not auto-login or otherwise
+// branch on the outcome, and should tell the user to sign in with the details
+// they chose. RegisterInput.RevealDuplicate restores the conflict for the CLI.
 func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain.Person, error) {
 	login := normalizeLogin(in.Login)
 	if err := validLogin(login); err != nil {
@@ -50,10 +63,18 @@ func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain
 	p := &domain.Person{ID: s.id(), Login: login, CreatedAt: s.now()}
 	err = s.update(ctx, func(tx store.Tx) error {
 		if err := tx.InsertPerson(p, hash); err != nil {
-			if domain.CodeOf(err) == domain.CodeConflict {
+			if domain.CodeOf(err) != domain.CodeConflict {
+				return err
+			}
+			if in.RevealDuplicate {
 				return domain.Errf(domain.CodeConflict, "login unavailable")
 			}
-			return err
+			existing, _, gerr := tx.GetPersonByLogin(login)
+			if gerr != nil {
+				return gerr
+			}
+			return s.auditPlatform(tx, domain.Actor{PersonID: existing.ID}, auditEntry{
+				Action: domain.ActRegisterDuplicate, TargetType: "person", TargetID: existing.ID})
 		}
 		return s.auditPlatform(tx, domain.Actor{PersonID: p.ID}, auditEntry{
 			Action: domain.ActPersonRegistered, TargetType: "person", TargetID: p.ID})
@@ -90,24 +111,42 @@ func lockFor(failures int) time.Duration {
 // five consecutive failures further attempts for that login are refused with
 // ErrRateLimited for an increasing delay starting at 15 minutes (SEC-006);
 // success resets the counter. Per-address limits belong to the adapter.
+//
+// Atomicity (AUTH-01, SA-04): the lock check and the attempt reservation happen
+// in ONE write unit before the password is verified. Every evaluated attempt
+// is counted up front, so N parallel guesses are counted as N and, once the
+// threshold is reached, later ones are refused without being evaluated; at most
+// throttleAfter guesses can be evaluated per lock window regardless of
+// concurrency. Success deletes the counter. Malformed logins (validLogin) are
+// refused uniformly without touching the throttle table, so its keys are
+// bounded by valid login strings (and purged by Purge).
 func (s *Service) Login(ctx context.Context, login, password string) (string, *domain.Person, error) {
 	login = normalizeLogin(login)
+	if validLogin(login) != nil {
+		verifyPassword(password, s.dummyHash) // equalise effort; nothing is stored
+		return "", nil, domain.ErrUnauthenticated
+	}
 	var person *domain.Person
 	var hash string
-	var failures int
-	err := s.view(ctx, func(tx store.Tx) error {
-		f, until, found, err := tx.GetThrottle(login)
+	err := s.update(ctx, func(tx store.Tx) error {
+		f, until, _, err := tx.GetThrottle(login)
 		if err != nil {
 			return err
 		}
-		if found {
-			failures = f
-			if s.now().Before(until) {
-				return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
-			}
+		now := s.now()
+		if now.Before(until) {
+			return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
 		}
-		if p, h, err := tx.GetPersonByLogin(login); err == nil {
+		n := f + 1
+		if err := tx.PutThrottle(login, n, now.Add(lockFor(n))); err != nil {
+			return err
+		}
+		p, h, err := tx.GetPersonByLogin(login)
+		switch {
+		case err == nil:
 			person, hash = p, h
+		case !errors.Is(err, domain.ErrNotFound):
+			return err
 		}
 		return nil
 	})
@@ -121,11 +160,7 @@ func (s *Service) Login(ctx context.Context, login, password string) (string, *d
 		verifyPassword(password, s.dummyHash) // equalise effort
 	}
 	if !ok {
-		_ = s.update(ctx, func(tx store.Tx) error {
-			n := failures + 1
-			return tx.PutThrottle(login, n, s.now().Add(lockFor(n)))
-		})
-		return "", nil, domain.ErrUnauthenticated
+		return "", nil, domain.ErrUnauthenticated // the attempt was counted above
 	}
 	token, err := randToken(32)
 	if err != nil {
@@ -150,6 +185,16 @@ func hashToken(t string) string {
 	return hex.EncodeToString(sum[:])
 }
 
+// authnErr maps a lookup failure for a credential: only "no such credential"
+// is unauthenticated. Store failures (busy database, I/O) are returned as they
+// are, so an outage never looks like a logout (AUTH-02).
+func authnErr(err error) error {
+	if errors.Is(err, domain.ErrNotFound) {
+		return domain.ErrUnauthenticated
+	}
+	return err
+}
+
 // Authenticate resolves a session token to an Actor. Revoked, idle-expired or
 // absolutely expired sessions are rejected (SEC-003). last_seen is refreshed
 // at most once a minute.
@@ -160,7 +205,7 @@ func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor,
 		sess, err = tx.GetSession(id)
 		return err
 	}); err != nil {
-		return domain.Actor{}, domain.ErrUnauthenticated
+		return domain.Actor{}, authnErr(err)
 	}
 	now := s.now()
 	if sess.RevokedAt != nil || !now.Before(sess.ExpiresAt) || !now.Before(sess.LastSeenAt.Add(s.cfg.SessionIdle)) {
@@ -188,7 +233,7 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 	}
 	var hash string
 	if err := s.view(ctx, func(tx store.Tx) (err error) { _, hash, err = tx.GetPerson(actor.PersonID); return }); err != nil {
-		return domain.ErrUnauthenticated
+		return authnErr(err)
 	}
 	if !verifyPassword(oldPW, hash) {
 		return domain.ErrUnauthenticated

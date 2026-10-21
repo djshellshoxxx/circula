@@ -2,11 +2,13 @@ package web
 
 import (
 	"net/http"
+	"net/netip"
 	"net/url"
 	"regexp"
 	"strings"
 	"testing"
 
+	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -74,7 +76,9 @@ func TestCSRFRejections(t *testing.T) {
 }
 
 func TestHeadersAndCookies(t *testing.T) {
-	w := newWorld(t)
+	// The httptest client connects from loopback, so trust it as the proxy to
+	// exercise X-Forwarded-Proto.
+	w := newWorldWith(t, func(o *Options) { o.Edge.TrustedProxies = []netip.Prefix{netip.MustParsePrefix("127.0.0.0/8")} })
 	a := w.browser(t)
 	p := a.get("/login")
 	csp := p.Header.Get("Content-Security-Policy")
@@ -109,7 +113,7 @@ func TestHeadersAndCookies(t *testing.T) {
 		_ = resp.Body.Close()
 		found := false
 		for _, c := range resp.Cookies() {
-			if c.Name != cookieSession {
+			if c.Name != httpx.SessionCookieName(secure) {
 				continue
 			}
 			found = true

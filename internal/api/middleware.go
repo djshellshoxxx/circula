@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"net"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -40,9 +39,7 @@ func (s *server) edge(next http.Handler) http.Handler {
 		h.Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
 		h.Set("Cross-Origin-Resource-Policy", "same-origin")
 		h.Set("Cache-Control", "no-store") // API-039; safe default for every response
-		if r.TLS != nil {
-			h.Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
-		}
+		s.opt.Edge.HSTS(w, r)
 		defer func() {
 			if v := recover(); v != nil {
 				if v == http.ErrAbortHandler {
@@ -53,7 +50,7 @@ func (s *server) edge(next http.Handler) http.Handler {
 			}
 		}()
 		if s.opt.IPPerMinute > 0 {
-			if ok, retry := s.rl.allow("ip:"+clientIP(r), s.opt.IPPerMinute); !ok {
+			if ok, retry := s.rl.allow("ip:"+s.opt.Edge.ClientIP(r), s.opt.IPPerMinute); !ok {
 				writeProblem(w, r, rid, rateLimited(retry))
 				return
 			}
@@ -89,19 +86,12 @@ func hasCredentialQuery(r *http.Request) bool {
 	return false
 }
 
-func clientIP(r *http.Request) string {
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return r.RemoteAddr
-	}
-	return host
-}
-
 // limiter is a fixed-window counter per key (API-038). In memory, per process.
 type limiter struct {
-	now func() time.Time
-	mu  sync.Mutex
-	m   map[string]*window
+	now       func() time.Time
+	mu        sync.Mutex
+	m         map[string]*window
+	lastSweep time.Time
 }
 
 type window struct {
@@ -115,7 +105,8 @@ func (l *limiter) allow(key string, perMinute int) (bool, int) {
 	now := l.now()
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	if len(l.m) > 50000 {
+	if now.Sub(l.lastSweep) >= time.Minute { // sweep on a timer, not per request
+		l.lastSweep = now
 		for k, w := range l.m {
 			if now.Sub(w.start) >= time.Minute {
 				delete(l.m, k)

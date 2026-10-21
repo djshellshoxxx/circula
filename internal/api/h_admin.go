@@ -82,25 +82,9 @@ func (s *server) adminListMembers(c *reqCtx) error { // API-059
 	return listOK(c, out, next)
 }
 
-// adminMember finds one member of any status (no single-member service read).
+// adminMember reads one member of any status (admin view).
 func (s *server) adminMember(c *reqCtx, id string) (*domain.Member, error) {
-	after := ""
-	for i := 0; i < 20; i++ {
-		rows, err := s.svc.AdminListMembers(c.r.Context(), c.actor, c.netID, nil, service.Page{AfterID: after, Limit: 100})
-		if err != nil {
-			return nil, err
-		}
-		for _, m := range rows {
-			if m.ID == id {
-				return m, nil
-			}
-		}
-		if len(rows) < 100 {
-			break
-		}
-		after = rows[len(rows)-1].ID
-	}
-	return nil, notFoundErr()
+	return s.svc.GetMember(c.r.Context(), c.actor, c.netID, id)
 }
 
 func (s *server) memberAction(action string) handlerFunc { // API-059
@@ -126,6 +110,8 @@ func (s *server) memberAction(action string) handlerFunc { // API-059
 		switch action {
 		case "approve":
 			m, err = s.svc.DecideJoinRequest(ctx, c.actor, c.netID, id, true, in.Reason)
+		case "deny":
+			m, err = s.svc.DecideJoinRequest(ctx, c.actor, c.netID, id, false, in.Reason)
 		case "suspend":
 			err = s.svc.SuspendMember(ctx, c.actor, c.netID, id, in.Reason)
 		case "reinstate":

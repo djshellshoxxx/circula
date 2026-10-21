@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
 )
 
 type pageTemplate = template.Template
@@ -45,6 +46,9 @@ type page struct {
 	Next    string
 	Status  int
 	Text    string
+	// Session expiry warning (UX-030): Unix time and whether activity extends it.
+	ExpiresAt  int64
+	Extendable bool
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -139,7 +143,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		if p.Dec == 0 {
 			p.Dec = 2
 		}
-		if ck, err := r.Cookie(cookieSession); err == nil && ck.Value != "" {
+		if httpx.SessionToken(r) != "" {
 			p.Authed = true
 		}
 	}
@@ -149,6 +153,11 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
 		p.Nav = c.nav(r.URL.Path)
 		p.Notice = c.notice()
+	}
+	if p.Authed {
+		if at, ext, ok := s.expiry(r); ok {
+			p.ExpiresAt, p.Extendable = at, ext
+		}
 	}
 	if p.V == nil {
 		p.V = map[string]string{}
@@ -219,6 +228,9 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 		p.Title, p.Text = "Page not found", "We could not find that page. It may not exist, or you may not have access to it."
 	case 429:
 		p.Title, p.Text = "Too many attempts", "Too many attempts. Wait a minute and try again. Nothing changed."
+	case 503:
+		w.Header().Set("Retry-After", "5")
+		p.Title, p.Text = "Busy, try again", "The service is busy and could not complete the request. Nothing changed. Wait a few seconds and try again."
 	case 409:
 		p.Title, p.Text = "Conflict", "That cannot be done in the current state. Nothing changed. Reload the page to see the latest state."
 	default:
@@ -231,9 +243,13 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 
 // fail maps an unexpected service error to a page-level response.
 func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
+	if httpx.IsBusy(err) || domain.CodeOf(err) == domain.CodeUnavailable { // SQLITE_BUSY: retryable, not a fault (OPS-011)
+		s.renderError(w, r, 503)
+		return
+	}
 	switch domain.CodeOf(err) {
 	case domain.CodeUnauthenticated:
-		s.setCookie(w, r, cookieSession, "", -1)
+		s.clearSession(w, r)
 		s.toLogin(w, r)
 	case domain.CodeForbidden:
 		s.renderError(w, r, 403)

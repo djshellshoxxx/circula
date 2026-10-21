@@ -66,7 +66,7 @@ func TestFullTradeFlow(t *testing.T) {
 	body2 := m{"counterparty_member_id": w.bobM.ID, "direction": "pay", "amount_minor": "2600"}
 	wantProblem(t, w.post(w.aliceT, "/transactions", body2, key), 422, "idempotency-key-reused")
 	wantProblem(t, w.post(w.aliceT, "/transactions", body, ""), 400, "idempotency-key-required")
-	wantProblem(t, w.post(w.aliceT, "/transactions", body, "bad\tkey"), 400, "idempotency-key-required")
+	wantProblem(t, w.post(w.aliceT, "/transactions", body, "bad\tkey"), 400, "invalid-header")
 	list := w.get(w.aliceT, "/transactions")
 	if n := len(decode[struct{ Data []txResp }](t, list).Data); n != 1 {
 		t.Fatalf("transactions after retries = %d", n)

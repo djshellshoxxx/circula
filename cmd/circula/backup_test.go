@@ -56,7 +56,7 @@ func TestSnapshotWritesVerifiedManifestAndRestores(t *testing.T) {
 	dest := filepath.Join(dir, "snap.db")
 	mf, err := snapshot(ctx, raw, dest, "manual", time.Now(), func(ctx context.Context, p string) (LedgerSummary, error) {
 		return verifyFile(ctx, p, cfg)
-	})
+	}, nil)
 	_ = raw.Close()
 	if err != nil {
 		t.Fatalf("snapshot: %v", err)

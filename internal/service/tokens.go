@@ -75,7 +75,7 @@ func (s *Service) AuthenticateToken(ctx context.Context, token string) (domain.A
 	}
 	var t *domain.APIToken
 	if err := s.view(ctx, func(tx store.Tx) (err error) { t, err = tx.GetTokenByHash(hashToken(token)); return }); err != nil {
-		return domain.Actor{}, domain.ErrUnauthenticated
+		return domain.Actor{}, authnErr(err)
 	}
 	now := s.now()
 	if t.RevokedAt != nil || (t.ExpiresAt != nil && !now.Before(*t.ExpiresAt)) {

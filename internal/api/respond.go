@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // apiError is the transport form of every failure (RFC 9457, API-029..032).
@@ -53,7 +55,7 @@ var titles = map[string]string{
 	"unsupported-media-type": "Unsupported media type", "rate-limited": "Rate limit exceeded",
 	"internal-error": "Internal error", "unavailable": "Service unavailable", "conflict": "Conflict",
 	"blocked": "Action blocked", "method-not-allowed": "Method not allowed", "not-implemented": "Not implemented",
-	"network-required": "Network required", "member-has-open-balance": "Member has open balance",
+	"network-required": "Network required", "invalid-header": "Invalid request header", "member-has-open-balance": "Member has open balance",
 }
 
 var (
@@ -102,7 +104,7 @@ var codeStatus = map[domain.Code]int{
 	domain.CodeValidation: 422, domain.CodeInsufficientCredit: 422, domain.CodeAmountExceeds: 422,
 	domain.CodeCounterpartyInact: 422, domain.CodeKeyReused: 422, domain.CodeKeyRequired: 400,
 	domain.CodeUnauthenticated: 401, domain.CodeForbidden: 403, domain.CodeNotFound: 404,
-	domain.CodeInvalidState: 409, domain.CodeConflict: 409, domain.CodeBlocked: 409, domain.CodeRateLimited: 429,
+	domain.CodeInvalidState: 409, domain.CodeConflict: 409, domain.CodeBlocked: 409, domain.CodeRateLimited: 429, domain.CodeUnavailable: 503,
 }
 
 // fromErr converts any error into an apiError. Unknown errors become opaque
@@ -111,6 +113,9 @@ func fromErr(err error) (*apiError, bool) {
 	var ae *apiError
 	if errors.As(err, &ae) {
 		return ae, true
+	}
+	if httpx.IsBusy(err) { // lock contention is retryable, not a fault (OPS-011)
+		return &apiError{status: 503, code: "unavailable", detail: "the service is busy; retry shortly", retryAfter: "5"}, true
 	}
 	var de *domain.Error
 	if errors.As(err, &de) {
@@ -127,6 +132,9 @@ func fromErr(err error) (*apiError, bool) {
 		}
 		if out.status == 429 {
 			out.retryAfter = "60"
+		}
+		if out.status == 503 {
+			out.retryAfter = "5" // retryable (CMD-05)
 		}
 		return out, true
 	}
@@ -147,7 +155,7 @@ func writeProblem(w http.ResponseWriter, r *http.Request, rid string, e *apiErro
 	w.Header().Set("Content-Type", "application/problem+json; charset=utf-8")
 	w.WriteHeader(e.status)
 	_ = json.NewEncoder(w).Encode(problemBody{Type: "urn:circula:problem:" + e.code, Title: title, Status: e.status,
-		Detail: e.detail, Instance: r.URL.Path, Code: e.code, RequestID: rid, Errors: e.errors,
+		Detail: e.detail, Instance: service.RedactSecrets(r.URL.Path), Code: e.code, RequestID: rid, Errors: e.errors,
 		Blockers: e.blockers, CurrentStatus: e.currentStatus})
 }
 

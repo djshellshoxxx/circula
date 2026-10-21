@@ -1,10 +1,14 @@
 package web
 
 import (
+	"crypto/sha256"
+	"crypto/subtle"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -41,13 +45,18 @@ func (s *server) loginForm(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 	p := &page{Title: "Sign in", V: formValues(r), Next: safeNext(r.PostFormValue("next"))}
-	if !s.login.allow(remoteIP(r)) {
+	ip, acct := s.clientIP(r), acctKey(s.clientIP(r), r.PostFormValue("login"))
+	if s.ipFail.blocked(ip) || s.acctFail.blocked(acct) {
 		p.Summary = "Too many attempts. Wait a minute and try again. Nothing changed."
 		s.render(w, r, nil, "login", 429, p)
 		return
 	}
 	tok, _, err := s.svc.Login(r.Context(), r.PostFormValue("login"), r.PostFormValue("password"))
 	if err != nil {
+		if c := domain.CodeOf(err); c == domain.CodeValidation || c == domain.CodeUnauthenticated || c == domain.CodeRateLimited {
+			s.ipFail.fail(ip)
+			s.acctFail.fail(acct)
+		}
 		switch domain.CodeOf(err) {
 		case domain.CodeRateLimited:
 			p.Summary = "Too many attempts for this login. Wait a few minutes and try again."
@@ -62,6 +71,7 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	s.acctFail.reset(acct)
 	s.startSession(w, r, tok)
 	dest := p.Next
 	if dest == "" {
@@ -71,15 +81,15 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) startSession(w http.ResponseWriter, r *http.Request, tok string) {
-	s.setCookie(w, r, cookieSession, tok, 0)
+	s.setSession(w, r, tok)
 	s.rotateCSRF(w, r)
 }
 
 func (s *server) logout(w http.ResponseWriter, r *http.Request) {
-	if ck, err := r.Cookie(cookieSession); err == nil {
-		_ = s.svc.Logout(r.Context(), ck.Value)
+	if tok := httpx.SessionToken(r); tok != "" {
+		_ = s.svc.Logout(r.Context(), tok)
 	}
-	s.setCookie(w, r, cookieSession, "", -1)
+	s.clearSession(w, r)
 	s.rotateCSRF(w, r)
 	s.setFlash(w, r, "You are signed out.")
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -91,7 +101,7 @@ func (s *server) registerForm(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) registerPost(w http.ResponseWriter, r *http.Request) {
 	p := &page{Title: "Create an account", V: formValues(r), Next: safeNext(r.PostFormValue("next"))}
-	if !s.login.allow("reg" + remoteIP(r)) {
+	if !s.reg.allow(s.clientIP(r)) {
 		p.Summary = "Too many attempts. Wait a minute and try again. Nothing changed."
 		s.render(w, r, nil, "register", 429, p)
 		return
@@ -103,27 +113,22 @@ func (s *server) registerPost(w http.ResponseWriter, r *http.Request) {
 		s.render(w, r, nil, "register", 422, p)
 		return
 	}
+	// RegisterPerson answers identically for a new and a taken login (SA-10), so
+	// this page must not sign in or branch on the outcome: it always sends the
+	// person to the sign-in form, which works only with the right password.
 	_, err := s.svc.RegisterPerson(r.Context(), service.RegisterInput{Login: r.PostFormValue("login"), Password: pw})
 	if err == nil {
-		var tok string
-		if tok, _, err = s.svc.Login(r.Context(), r.PostFormValue("login"), pw); err == nil {
-			s.startSession(w, r, tok)
-			s.setFlash(w, r, "Account created. You are signed in.")
-			dest := p.Next
-			if dest == "" {
-				dest = "/"
-			}
-			http.Redirect(w, r, dest, http.StatusSeeOther)
-			return
+		s.setFlash(w, r, "Thank you. If that login was available the account now exists. Sign in with it and your password.")
+		to := "/login"
+		if p.Next != "" {
+			to += "?next=" + url.QueryEscape(p.Next)
 		}
+		http.Redirect(w, r, to, http.StatusSeeOther)
+		return
 	}
 	c := &rc{s: s, ctx: r.Context(), Net: &domain.Network{}}
 	if sum, fe, ok := c.refuse(err); ok {
 		p.Summary, p.Errors = sum, fe
-		if domain.CodeOf(err) == domain.CodeConflict {
-			p.Summary = "Not saved. That login is not available. Choose a different one. Nothing changed."
-			p.Errors = []fieldErr{{"login", "Login: not available. Choose a different one."}}
-		}
 		s.render(w, r, nil, "register", 422, p)
 		return
 	}
@@ -144,9 +149,21 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		p.Summary, p.Errors = sum, fe
 		s.render(w, r, nil, "setup", st, p)
 	}
-	if s.opts.SetupSecret != "" && r.PostFormValue("setup_secret") != s.opts.SetupSecret {
-		fail("Not saved. Fix the problems below. Nothing changed.", []fieldErr{{"setup_secret", "Setup secret: not correct. Ask the person who runs this service."}}, 422)
-		return
+	if s.opts.SetupSecret != "" {
+		if s.setupUsed.Load() {
+			fail("Not saved. The setup secret has already been used. Restart the service with a new secret to create another network. Nothing changed.", nil, 403)
+			return
+		}
+		ip := s.clientIP(r)
+		if s.setup.blocked(ip) {
+			fail("Too many attempts. Wait and try again. Nothing changed.", nil, 429)
+			return
+		}
+		if !secretEqual(r.PostFormValue("setup_secret"), s.opts.SetupSecret) {
+			s.setup.fail(ip)
+			fail("Not saved. Fix the problems below. Nothing changed.", []fieldErr{{"setup_secret", "Setup secret: not correct. Ask the person who runs this service."}}, 422)
+			return
+		}
 	}
 	dec, _ := strconv.Atoi(v["decimals"])
 	pol := domain.DefaultPolicy()
@@ -182,6 +199,9 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		s.fail(w, r, err)
 		return
+	}
+	if s.opts.SetupSecret != "" {
+		s.setupUsed.Store(true) // FR-002: the secret is invalidated by its first use
 	}
 	s.setFlash(w, r, "Network created and open. You are its first administrator.")
 	http.Redirect(w, r, "/n/"+net.Slug, http.StatusSeeOther)
@@ -270,4 +290,10 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 
 func (s *server) help(w http.ResponseWriter, r *http.Request) {
 	s.render(w, r, nil, "help", 200, &page{Title: "Help: credits, balances and statuses"})
+}
+
+// secretEqual compares two secrets in constant time regardless of length.
+func secretEqual(a, b string) bool {
+	ha, hb := sha256.Sum256([]byte(a)), sha256.Sum256([]byte(b))
+	return subtle.ConstantTimeCompare(ha[:], hb[:]) == 1
 }

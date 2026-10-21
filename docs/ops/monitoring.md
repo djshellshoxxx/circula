@@ -8,15 +8,18 @@ Specifications: OPS-013 to OPS-015, OPS-027, OPS-032, OPS-033.
 |---|---|---|
 | `/healthz` | anyone who can reach the listener | Coarse status only: `{"status":"ok"|"unavailable","version":"..."}`. `503` when the database is unreachable or its schema does not match the binary. No member, network, balance or configuration data. |
 | `/readyz` | anyone who can reach the listener | `{"status":"ready"}` once serving, `503` while starting, shutting down, or when the database check fails. |
-| `/metrics` | clients whose address is in `metrics-allow` (default loopback), and no forwarding headers | Prometheus text exposition format. `403` for everyone else. |
+| `/metrics` | clients whose address is in `metrics-allow` (default loopback), not a `trusted-proxies` address, no forwarding headers, and the bearer token when `metrics-token` is configured | Prometheus text exposition format. `403` for everyone else, `401` for a missing or wrong token. |
 | `/api/...` | per the API contract | The JSON API, served under `/api/v1` (not stripped). |
 | `/...` | per the UI | The web UI. |
 
 Every response carries `X-Request-Id`. A caller-supplied value is kept if it is short and printable. Otherwise the service
 generates one. Logs record the route template, status and duration. They never record query strings, headers or bodies.
 
-Do not expose `/metrics` through a reverse proxy. The service refuses `/metrics` requests that carry `X-Forwarded-For` or
-`Forwarded`, but a proxy that forwards `/metrics` from a loopback connection is still a misconfiguration.
+Do not expose `/metrics` through a reverse proxy. The service refuses `/metrics` requests that carry any proxy header
+(`X-Forwarded-For`, `Forwarded`, `X-Forwarded-Host`, `X-Forwarded-Proto`, `X-Real-IP`, `Via`) and requests whose peer is a
+`trusted-proxies` address. A proxy on the same host that strips those headers still looks like loopback, so set
+`metrics-token` (SA-15): Prometheus then sends `Authorization: Bearer <token>` (`authorization: {credentials_file: ...}`),
+and a forwarded `/metrics` without it gets `401`.
 
 ## Metrics
 

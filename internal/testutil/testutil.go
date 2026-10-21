@@ -52,6 +52,13 @@ func NewEnv(t *testing.T) *Env { return NewEnvWith(t, nil) }
 // NewEnvWith lets the caller wrap the store (fault injection).
 func NewEnvWith(t *testing.T, wrap func(store.Store) store.Store) *Env {
 	t.Helper()
+	return NewEnvConfig(t, wrap, nil)
+}
+
+// NewEnvConfig is NewEnvWith plus a hook to adjust the service Config (limits,
+// TTLs) before the service is built. Clock, IDs and cheap Argon2 are preset.
+func NewEnvConfig(t *testing.T, wrap func(store.Store) store.Store, mod func(*service.Config)) *Env {
+	t.Helper()
 	ctx := context.Background()
 	st, err := store.Open(ctx, filepath.Join(t.TempDir(), "circula.db"))
 	if err != nil {
@@ -63,8 +70,12 @@ func NewEnvWith(t *testing.T, wrap func(store.Store) store.Store) *Env {
 	if wrap != nil {
 		s = wrap(st)
 	}
-	svc, err := service.New(s, service.Config{Clock: clk, IDs: &IDs{},
-		Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}})
+	cfg := service.Config{Clock: clk, IDs: &IDs{},
+		Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}}
+	if mod != nil {
+		mod(&cfg)
+	}
+	svc, err := service.New(s, cfg)
 	if err != nil {
 		t.Fatal(err)
 	}

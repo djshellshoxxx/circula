@@ -33,8 +33,27 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `request-timeout` | `CIRCULA_REQUEST_TIMEOUT` | `30s` | no | Deadline for each API and UI request. |
 | `log-level` | `CIRCULA_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. Needs a restart to change. |
 | `log-format` | `CIRCULA_LOG_FORMAT` | `json` | no | `json` or `text`. |
-| `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | `Secure` attribute on session cookies (SEC-022). Reserved: not yet applied by the web adapter. |
+| `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | Marks every cookie `Secure` and names the session cookie `__Host-circula_session` (SEC-022). Keep `true` behind a TLS proxy: TLS ends at the proxy, so the service cannot see it. `false` is for plain-http development only; with `false` the cookie is `circula_session`. |
 | `metrics-allow` | `CIRCULA_METRICS_ALLOW` | `127.0.0.1/32,::1/128` | no | Comma-separated addresses or CIDRs allowed to read `/metrics`. `none` denies all. |
+| `trusted-proxies` | `CIRCULA_TRUSTED_PROXIES` | `none` | no | Comma-separated addresses or CIDRs of the reverse proxies in front of the service. Only requests whose TCP peer is in this list are believed when they carry `X-Forwarded-For` (client address for rate limits) or `X-Forwarded-Proto`. The client address is the right-most `X-Forwarded-For` entry that is not itself a trusted proxy. Empty: both headers are ignored and every client looks like the proxy. Set it to the proxy's address, for example `127.0.0.1/32`. |
+| `allow-insecure-http` | `CIRCULA_ALLOW_INSECURE_HTTP` | `false` | no | `serve` refuses to start when `public-base-url` is `http://` for a non-loopback host, or when it is `http://` and `listen` is not loopback (SEC-022). Set `true` only for a closed test network. |
+| `setup-secret-file` | `CIRCULA_SETUP_SECRET_FILE` | none | no | File holding the setup secret (see below). |
+| `metrics-token-file` | `CIRCULA_METRICS_TOKEN_FILE` | none | no | File holding a bearer token that `/metrics` then requires (see below). |
+| `backup-key-file` | `CIRCULA_BACKUP_KEY_FILE` | none | no | File holding the backup signing key (see below). |
+
+## Secrets
+
+Three secrets exist. None is accepted as a flag (a flag would show in the process list) or as a key in the JSON file.
+Supply each either as an environment variable or as a file named by the matching `*-file` setting, not both. A secret
+file must be a regular file and, on Unix, must not be readable by group or others (`chmod 600`). One trailing newline is
+ignored. Each secret must have at least 16 characters; use 32 random characters or more
+(`head -c 32 /dev/urandom | base64`). `-check-config` prints only `<set>` or `<unset>`.
+
+| Environment variable | Purpose |
+|---|---|
+| `CIRCULA_SETUP_SECRET` | FR-002. With a secret, the network-creation page (`/setup`) asks for it and refuses without it. The secret is invalidated by its first successful use in that process: to create another network, restart the service (and change the secret). Remove it from the configuration once the first network exists. Without a secret, any signed-in person may create a network, and `serve` logs a warning at start. Wrong guesses are rate limited per client address. |
+| `CIRCULA_METRICS_TOKEN` | SA-15. When set, `/metrics` also requires `Authorization: Bearer <token>`. Set it whenever a reverse proxy runs on the same host: such a proxy reaches `/metrics` from loopback. Independently, `/metrics` always refuses requests carrying any proxy header (`X-Forwarded-*`, `Forwarded`, `X-Real-IP`, `Via`) and requests from a `trusted-proxies` address. |
+| `CIRCULA_BACKUP_KEY` | SA-07. Signs backup manifests (HMAC-SHA-256) and is required to restore them. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key). |
 
 Other settings:
 
@@ -43,7 +62,7 @@ Other settings:
 | `CIRCULA_OPERATOR_PASSWORD` | environment only | Password for `admin create-operator`. Not a setting; it is read once and never printed. |
 | `-config` / `CIRCULA_CONFIG` | | Path to the JSON file. |
 
-Settings that are documented in the specification but not yet implemented (mail, backup encryption keys) are listed in
+Settings that are documented in the specification but not yet implemented (mail, backup encryption) are listed in
 [README.md](README.md#known-gaps).
 
 ## Example configuration file
@@ -60,7 +79,9 @@ Settings that are documented in the specification but not yet implemented (mail,
   "migrate-mode": "explicit",
   "request-timeout": "30s",
   "log-format": "json",
-  "metrics-allow": "10.20.0.0/16"
+  "metrics-allow": "10.20.0.0/16",
+  "trusted-proxies": "127.0.0.1/32",
+  "setup-secret-file": "/etc/circula/setup-secret"
 }
 ```
 
@@ -68,7 +89,7 @@ Settings that are documented in the specification but not yet implemented (mail,
 
 On every `serve` start, in this order (before the port opens):
 
-1. Configuration validation.
+1. Configuration validation, including the transport rule for `public-base-url` (SEC-022).
 2. Acquire `<database>.lock`. A second `serve` or `migrate` or `restore` on the same file refuses to start.
 3. Read the schema version without migrating. In `explicit` mode, pending migrations stop the start. In `auto` mode, a
    pre-migration backup is taken first and migration is refused if the backup fails.

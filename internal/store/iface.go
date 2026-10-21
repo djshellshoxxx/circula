@@ -56,12 +56,17 @@ type PersonRepo interface {
 	GetThrottle(login string) (failures int, lockedUntil time.Time, found bool, err error)
 	PutThrottle(login string, failures int, lockedUntil time.Time) error
 	DeleteThrottle(login string) error
+	// DeleteStaleThrottles purges up to limit rows whose lock ended at or before cutoff (SA-12).
+	DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error)
 
 	InsertSession(s *domain.Session) error
 	GetSession(idHash string) (*domain.Session, error)
 	TouchSession(idHash string, seen time.Time) error
 	RevokeSession(idHash string, at time.Time) error
 	RevokeSessionsOf(personID string, at time.Time) error
+	// DeleteDeadSessions purges up to limit sessions that are expired, idle since
+	// idleBefore or revoked at or before revokedBefore (SA-12).
+	DeleteDeadSessions(now, idleBefore, revokedBefore time.Time, limit int) (int64, error)
 
 	InsertToken(t *domain.APIToken) error
 	GetTokenByHash(hash string) (*domain.APIToken, error)
@@ -101,7 +106,9 @@ type AccountRepo interface {
 	// AddBalance applies delta to the cached balance. Only posting and repair may call it (DAT-019).
 	AddBalance(netID, id string, delta int64) error
 	SetLimitOverride(netID, id string, limit *int64, until *time.Time) error
-	// ReservedOutgoing sums unexpired proposed trades with the account as payer (DOM-008).
+	// ReservedOutgoing sums unexpired proposed trades the payer proposed themselves
+	// (DOM-008, DOM-012). A request proposed by the payee reserves nothing until
+	// the payer consents, which posts immediately (SA-08).
 	ReservedOutgoing(netID, accountID string, now time.Time) (int64, error)
 	PendingIncoming(netID, accountID string, now time.Time) (int64, error)
 }
@@ -143,6 +150,9 @@ type TxFilter struct {
 	OriginalTxID string
 	AfterID      string // keyset: ids strictly below (newest first)
 	Limit        int
+	CreatedBy    string    // proposer member id
+	NotCreatedBy string    // proposals made by the other party
+	LiveAt       time.Time // when set, hides proposals whose expiry is at or before it
 }
 
 // TxnRepo covers transactions, status history and ledger entries.
@@ -160,6 +170,11 @@ type TxnRepo interface {
 	InsertEntry(e *domain.Entry) error
 	ListEntries(netID, txID string) ([]*domain.Entry, error)
 	SumEntries(accountID string, uptoSeq int64) (int64, error)
+	// ListAccountEntries lists an account's entries newest first by ledger_seq; beforeSeq > 0 is the keyset cursor.
+	ListAccountEntries(netID, accountID string, beforeSeq int64, limit int) ([]*domain.Entry, error)
+	// LiveProposalStats counts and sums unexpired proposed trades created by createdBy
+	// (optionally with one counterparty, optionally only those where the creator is the payee).
+	LiveProposalStats(netID, createdBy, counterparty string, requestsOnly bool, now time.Time) (count int, sum int64, err error)
 }
 
 // DisputeFilter selects disputes.
@@ -204,6 +219,10 @@ type AuditRepo interface {
 	LastAudit(netID string) (seq int64, hash string, err error)
 	InsertAudit(e *domain.AuditEvent) error
 	ListAudit(netID string, f AuditFilter) ([]*domain.AuditEvent, error)
+	// AuditHead returns the chain head recorded in the same unit as the last append (SA-09).
+	AuditHead(netID string) (seq int64, hash string, found bool, err error)
+	// CountAuditSince counts events of one action by one actor since a time.
+	CountAuditSince(netID, action, actorID string, since time.Time) (int, error)
 }
 
 // IdemRecord stores the outcome of an idempotent command (DAT-025..027).
@@ -218,6 +237,8 @@ type IdemRepo interface {
 	GetIdem(netID, actorID, op, key string) (*IdemRecord, error) // nil, nil when absent
 	PutIdem(r IdemRecord) error
 	DeleteIdem(netID, actorID, op, key string) error
+	// DeleteExpiredIdem purges up to limit records expired at or before now (SA-12).
+	DeleteExpiredIdem(now time.Time, limit int) (int64, error)
 }
 
 // ConsistencyRun is an append-only record of a ledger verification.
