@@ -56,7 +56,7 @@ func (s *Service) RunLimitWarnings(ctx context.Context) (int, error) {
 				if err != nil {
 					return err
 				}
-				if net.Status != domain.NetworkActive {
+				if net.Status != domain.NetworkActive || net.Suspended() {
 					return nil
 				}
 				ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive},

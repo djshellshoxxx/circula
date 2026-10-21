@@ -179,8 +179,8 @@ func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, toke
 		if err != nil {
 			return domain.NotFound("invitation")
 		}
-		if net.Status != domain.NetworkActive {
-			return domain.InvalidState("network is %s and not accepting members", net.Status)
+		if err := networkOpenErr(net); err != nil {
+			return domain.InvalidState("%s; not accepting members", err.Error())
 		}
 		m, err := s.createMember(tx, net, actor.PersonID, name, domain.MemberActive, "invite", actor.RequestID)
 		if err != nil {
@@ -218,8 +218,8 @@ func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, di
 			out, err = existingMembership(ex)
 			return err
 		}
-		if net.Status != domain.NetworkActive {
-			return domain.InvalidState("network is %s and not accepting members", net.Status)
+		if err := networkOpenErr(net); err != nil {
+			return domain.InvalidState("%s; not accepting members", err.Error())
 		}
 		status, action := domain.MemberPending, domain.ActMemberRequested
 		switch net.Policy.JoinMode {

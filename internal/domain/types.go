@@ -29,6 +29,50 @@ type Network struct {
 	SystemAccountID string
 	LedgerSeq       int64
 	CreatedAt       time.Time
+	Suspensions     []Suspension // GOV-023, GOV-024; empty when trading is open
+}
+
+// SuspensionKind says who suspended a network.
+type SuspensionKind string
+
+// Suspension kinds.
+const (
+	SuspendedByAdmin    SuspensionKind = "admin"
+	SuspendedByPlatform SuspensionKind = "platform"
+)
+
+// Platform suspension categories (GOV-024). Nothing about members' trades or
+// balances is a valid category.
+const (
+	SuspendLegalOrder       = "legal_order"
+	SuspendSecurityIncident = "security_incident"
+	SuspendPlatformAbuse    = "platform_abuse"
+	SuspendHostingAgreement = "hosting_agreement"
+)
+
+// SuspensionCategories lists the allowed platform categories.
+var SuspensionCategories = []string{SuspendLegalOrder, SuspendSecurityIncident, SuspendPlatformAbuse, SuspendHostingAgreement}
+
+// Suspension pauses trading in a network; reads and exports stay available.
+type Suspension struct {
+	Kind     SuspensionKind
+	Category string // platform suspensions only
+	Reason   string
+	By       string // member id (admin) or operator label (platform)
+	At       time.Time
+}
+
+// Suspended reports whether any suspension is in force.
+func (n *Network) Suspended() bool { return len(n.Suspensions) > 0 }
+
+// SuspensionOf returns the suspension of the given kind, if any.
+func (n *Network) SuspensionOf(k SuspensionKind) *Suspension {
+	for i := range n.Suspensions {
+		if n.Suspensions[i].Kind == k {
+			return &n.Suspensions[i]
+		}
+	}
+	return nil
 }
 
 // MemberStatus is the membership state (DOM-003).

@@ -109,8 +109,17 @@ func (p *principal) requireActive() error {
 
 // requireNetworkActive: ledger-affecting operations need an active network (FR-004, FR-068).
 func (p *principal) requireNetworkActive() error {
-	if p.net.Status != domain.NetworkActive {
-		return domain.InvalidState("network is %s", p.net.Status)
+	return networkOpenErr(p.net)
+}
+
+// networkOpenErr refuses trading and membership changes unless the network is
+// active and not suspended (GOV-023, GOV-024).
+func networkOpenErr(n *domain.Network) error {
+	if n.Status != domain.NetworkActive {
+		return domain.InvalidState("network is %s", n.Status)
+	}
+	if n.Suspended() {
+		return domain.InvalidState("network is suspended: trading and posting are paused; balances, history and exports stay available")
 	}
 	return nil
 }
