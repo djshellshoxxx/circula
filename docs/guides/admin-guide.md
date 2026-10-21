@@ -260,10 +260,27 @@ Open **Network admin > Pause or close** (`/admin/network`).
   network, only the operator can lift that pause.
 * **Platform pause (GOV-024).** The service operator can pause a network only for a documented category (legal order,
   security incident, platform abuse, hosting agreement). You get an inbox notice and the event shows in your audit log.
-* **Close the network (FR-068, GOV-025).** Closing is permanent. It is blocked while any proposal, dispute or
-  posting-pending item is open; the page lists them. Accounts with a non-zero balance are shown as a warning count:
-  closing does not settle balances. Download a full export first (Exports), give a reason, type the network address
-  name to confirm. Members are told; history and exports stay available.
+* **Close the network (FR-068, GOV-025).** Closing is announced with a closing date at least 30 days ahead (30 by
+  default; the minimum cannot be shortened). It cannot be announced while a dispute is unresolved; the page lists
+  them. Give a reason, the days of notice, and type the network address name to confirm. Members are told at once.
+  Trading continues until the date. You can **cancel the closure** (with a reason) any time before the date; members
+  are told. On the date new trades, memberships, adjustments and grants stop, and open proposals are cancelled with
+  a notice to both people. If a dispute is still open the network stays in a "closing" state until it is resolved.
+  When the closure completes the system produces a final export of the ledger and records its SHA-256 checksum, shown
+  on this page; use `POST /api/v1/admin/network/closure/verify` to recompute it. Accounts with a non-zero balance are
+  shown as a warning count: closing does not settle balances, so tell members how you expect to settle them. Members
+  and you keep read and export access for 90 days after the closure. After that the members' personal data is
+  anonymised (the ledger, balances and audit log stay). Download any export you need before then.
+* **No administrator (GOV-020).** If a network has no active administrator it becomes read-only ("administrator
+  required"): members can read and export, nothing that moves value is possible. Members see a banner. Ask the
+  operator about recovery (break-glass).
+* **Challenges (GOV-016).** A member can challenge their removal or suspension, a credit-limit change or a listing
+  removal through the API (`/api/v1/challenges`). A reviewer or administrator who did not take the original decision
+  decides, with reasons; the member is told. If the challenge is upheld, use the normal action (reinstate, set the
+  limit, restore the listing). A dispute outcome is contested through the one re-review, not through a challenge.
+* **Dispute deadlines (GOV-014).** The dispute page shows the response due date and a decision target (14 days after
+  it). Reviewers get one reminder for each when passed. A missed response deadline decides nothing: the reviewer
+  still assesses the case.
 
 ## 11. Not in this build
 

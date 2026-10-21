@@ -350,8 +350,39 @@ func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in Crea
 func (s *Service) ActivateNetwork(ctx context.Context, actor domain.Actor, netID string) (*domain.Network, error)
 // ActivateNetwork moves setup -> active once an active administrator exists (FR-004).
 
-func (s *Service) CloseNetwork(ctx context.Context, actor domain.Actor, netID, reason string) error
-// CloseNetwork closes a network (FR-068).
+func (s *Service) ScheduleClosure(ctx context.Context, actor domain.Actor, netID string, in ClosureInput) (*domain.Closure, error)
+// ScheduleClosure announces a closing date at least 30 days away (GOV-025, DEC-025). Refused with `blocked`
+// while a dispute is unresolved. Trading continues until the date; from then the network is derived as
+// `closing` (no job needed) and refuses proposals, acceptances, postings and joins.
+
+func (s *Service) CancelClosure(ctx context.Context, actor domain.Actor, netID, reason string) error
+// CancelClosure withdraws a scheduled closure before its date.
+
+func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int, error)
+// FinaliseClosures (System actor, hourly job) cancels open proposals with notices, completes closures with no
+// unresolved dispute and records the final ledger export checksum (SHA-256 over "name TAB rows TAB sha256" lines
+// of the manifest) with the entries sum and balance total.
+
+func (s *Service) VerifyClosureExport(ctx context.Context, actor domain.Actor, netID string) (*ClosureCheck, error)
+// VerifyClosureExport recomputes that checksum (administrator).
+
+func (s *Service) EraseClosedNetworks(ctx context.Context, actor domain.Actor) (int, error)
+// EraseClosedNetworks (System actor) runs 90 days after completion: marks remaining members departed (status only,
+// no settlement) and anonymises each through AnonymiseMember. Ledger, audit chain and balances stay.
+
+func (s *Service) OpenChallenge(ctx context.Context, actor domain.Actor, netID string, in ChallengeInput) (*store.Challenge, error)
+func (s *Service) DecideChallenge(ctx context.Context, actor domain.Actor, netID string, in ChallengeDecision) (*store.Challenge, error)
+func (s *Service) ListChallenges(ctx context.Context, actor domain.Actor, netID, status string) ([]store.Challenge, error)
+// Challenges (GOV-016) to removal, credit-limit and listing-removal decisions. The decider is a reviewer or
+// administrator who is neither the challenger nor the person who took the decision (found in the audit log).
+
+func (s *Service) RemindOverdueDisputes(ctx context.Context, actor domain.Actor) (int, error)
+// RemindOverdueDisputes (System actor) tells reviewers once when a dispute passes its response deadline and once
+// when it passes its decision target (GOV-014). It decides nothing.
+
+// GetNetwork derives two states that are never stored: Status `closing` (closure date reached, closure not
+// finished) and AdminRequired (an active network with no active administrator, GOV-020). Both make
+// networkOpenErr refuse value-moving actions while reads and exports keep working.
 
 func (s *Service) GetNetwork(ctx context.Context, actor domain.Actor, netID string) (*domain.Network, error)
 // GetNetwork returns the network for any of its members (any membership status).

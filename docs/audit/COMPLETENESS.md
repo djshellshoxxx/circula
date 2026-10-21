@@ -53,7 +53,7 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | FR-065 | P1 | built | S/membership.go role assign; A routes.go:66-67; S/dispute_test.go |
 | FR-066 | P1 | built | A/routes.go:55 adminReverse; S/reversal.go; S/reversal_test.go; W/h_admin_f2.go reverse UI |
 | FR-067 | P1 | built | S/overview.go AdminOverview; W/templates/admin_home.html; W/f2_test.go |
-| FR-068 | P1 | built | web /admin/network and API /admin/network/close with blockers list, confirm step and member notices |
+| FR-068 | P1 | built | web /admin/network and API /admin/network/close (announces the closing date, 30-day minimum), dispute blockers, confirm step, member notices, cancel before the date |
 | FR-069 | P0 | built | S/membership.go AssignRole; S/membership_test.go TestAdministratorSuccession |
 | FR-070 | P0 | built | S/disputes.go OpenDispute; S/dispute_test.go TestOpenDisputeRules |
 | FR-071 | P0 | built | S/dispute_test.go |
@@ -349,18 +349,18 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | GOV-011 | P0 | partial | admin removal with reason; member notice built (claude/cc-h1); no challenge |
 | GOV-012 | P1 | not built | no inactivity rule |
 | GOV-013 | P0 | built | S/disputes.go |
-| GOV-014 | P0 | partial | statement, response (S/disputes_response.go), decision with reasons; no response deadline/auto-escalation |
+| GOV-014 | P0 | built | statement, response, decision with reasons; response deadline and 14-day decision target (domain.DeadlinesOf) in API, web and reminders (S/disputes_deadlines.go, job `closures`); silence decides nothing |
 | GOV-015 | P0 | built | S/reversal.go |
-| GOV-016 | P0 | partial | re-review request/decision (A routes.go:81-82) is one level of challenge; no formal appeal body/time limits |
+| GOV-016 | P0 | built | challenges for removal, credit limit, listing removal (S/challenges.go, API /challenges, migration 0014; API only, no web page); dispute appeal = the one re-review (window, different reviewer, audit, notice); policy-change objection stays under GOV-006 |
 | GOV-017 | P1 | built | no upload route |
 | GOV-018 | P0 | partial | trades continue within limits; write-off via adjustment (dual control optional) |
 | GOV-019 | P0 | built | S/membership.go SetCreditLimit |
-| GOV-020 | P0 | partial | last-admin guard; no read-only admin-required state |
+| GOV-020 | P0 | built | last-admin guard; derived admin-required state (S/closure_schedule.go lifecycle): value-moving actions refused, reads and exports kept, shown in API (admin_required) and web banner |
 | GOV-021 | P0 | partial | break-glass grant-admin (docs/dev/break-glass.md) + reset-password; no member-facing recovery of lost-admin network beyond operator |
 | GOV-022 | P0 | partial | S/export.go member/network/full; import deferred |
 | GOV-023 | P0 | built | overlay table 0012; S/suspend.go; web /admin/network; API /admin/network/suspend,resume |
 | GOV-024 | P0 | built | `circula suspend start/lift` (categories enforced), admin notice, network-visible audit |
-| GOV-025 | P0 | partial | closure exposed (web+API), notices to members, preview; no closure-date notice period, final export checksum, or post-period erasure |
+| GOV-025 | P0 | built | ScheduleClosure/CancelClosure/FinaliseClosures/EraseClosedNetworks (S/closure_schedule.go, migration 0014); freeze at the date derived from the clock; proposals cancelled; final ledger export checksum + reconciliation sums; 90-day read period; erasure via AnonymiseMember (members first marked departed, no settlement) |
 | GOV-026 | P1 | not built | no hosted platform policy docs |
 | GOV-027 | P1 | partial | docs/ops runbook boundary; not linked from admin UI |
 
@@ -510,13 +510,13 @@ Order: not built, then partial, then deviation; swarm = owned by security swarm 
 | 26 | GOV-002 | partial | member-visible policy change log page from network_policies | S | free |
 | 27 | GOV-010 | partial | notify counterparties on departure + offer self-export | M | free |
 | 28 | GOV-011 | partial | notify member on admin removal + challenge path | M | free |
-| 29 | GOV-014 | partial | response deadline + overdue state/job | M | free |
-| 30 | GOV-016 | partial | formal appeal timeline/reviewer rule beyond one re-review | M | free |
+| 29 | GOV-014 | done | response deadline + overdue state/job | M | done (cc-i2) |
+| 30 | GOV-016 | done | formal appeal timeline/reviewer rule beyond one re-review | M | done (cc-i2) |
 | 31 | GOV-018 | partial | document/write-off flow via adjustment with dual control | S | free |
-| 32 | GOV-020 | partial | admin-required read-only network state when no admin | M | free |
+| 32 | GOV-020 | done | admin-required read-only network state when no admin | M | done (cc-i2) |
 | 33 | GOV-021 | partial | member-facing lost-admin recovery request flow over break-glass | M | swarm |
 | 34 | GOV-022 | partial | import of export package (deferred in spec) | L | free |
-| 35 | GOV-025 | partial | expose CloseNetwork (admin UI+API), notices, final export | M | free |
+| 35 | GOV-025 | done | expose CloseNetwork (admin UI+API), notices, final export | M | done (cc-i2) |
 | 36 | OPS-003 | partial | smoke-run each target in CI/manual | M | free |
 | 37 | OPS-009 | partial | test inline-secret warning | S | free |
 | 38 | OPS-015 | partial | ship alert rules and test in staging | M | free |
@@ -602,7 +602,7 @@ Order: not built, then partial, then deviation; swarm = owned by security swarm 
 | 17 | FR-025 | partial | add `<meta name=robots noindex>` + X-Robots-Tag header + /robots.txt disallow | S | free |
 | 18 | FR-054 | partial | add GET /accounts/me/balance-at + history UI | S | free |
 | 19 | FR-064 | partial | add API route for default flag | S | free |
-| 20 | FR-068 | partial | wire CloseNetwork to admin UI/API (same as GOV-025) | S | free |
+| 20 | FR-068 | done | wire CloseNetwork to admin UI/API (same as GOV-025) | S | done (cc-i2) |
 | 21 | FR-095 | partial | stream export to response, size gate | M | free |
 | 22 | GOV-006 | partial | objection record/vote on policy change | L | free |
 | 23 | GOV-027 | partial | link support boundary from admin UI | S | free |

@@ -234,6 +234,12 @@ type disputeData struct {
 	ReReviewUntil any // last day to ask, shown with the request form
 	DecideReRev   bool
 	OpenedAt      template.HTML
+	// GOV-014: deadlines shown while the dispute is unresolved.
+	Deadlines    bool
+	ResponseDue  template.HTML
+	DecisionBy   template.HTML
+	ResponseLate bool
+	DecisionLate bool
 }
 
 type evRow struct {
@@ -273,6 +279,10 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 	out := &disputeData{V: v, Category: categoryLabel(d.Category), Status: statusWords(d.Status), Party: v.Tx.IsParty(c.Me.ID)}
 	out.Amount = domain.FormatAmount(v.Tx.Amount, pol.Decimals)
 	out.OpenedAt = c.when(d.OpenedAt)
+	if d.Status == domain.DisputeOpen || d.Status == domain.DisputeUnderReview {
+		out.Deadlines, out.ResponseDue, out.DecisionBy = true, c.when(v.Deadlines.ResponseDeadline), c.when(v.Deadlines.DecisionTarget)
+		out.ResponseLate, out.DecisionLate = v.Deadlines.ResponseOverdue, v.Deadlines.DecisionOverdue
+	}
 	if d.Outcome != "" {
 		out.Outcome = outcomeWords(d, domain.FormatAmount(d.ReversalAmount, pol.Decimals), unitFor(pol.CurrencyName, d.ReversalAmount, pol.Decimals))
 	}

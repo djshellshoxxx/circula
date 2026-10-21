@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -44,8 +45,11 @@ func (s *Service) remindNetwork(ctx context.Context, netID string) (int, error) 
 	sent := 0
 	err := s.update(ctx, func(tx store.Tx) error {
 		net, err := tx.GetNetwork(netID)
-		if err != nil {
+		if errors.Is(err, domain.ErrNotFound) {
 			return nil
+		}
+		if err != nil {
+			return err
 		}
 		after := ""
 		for {

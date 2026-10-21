@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -195,7 +196,13 @@ func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, netID str
 	closed := false
 	err := s.update(ctx, func(tx store.Tx) error {
 		n, err := tx.GetNetwork(netID)
-		if err != nil || n.Status != domain.NetworkActive || n.Closure == nil || n.Closure.Done() {
+		if errors.Is(err, domain.ErrNotFound) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		if n.Status != domain.NetworkActive || n.Closure == nil || n.Closure.Done() {
 			return nil
 		}
 		// (c) cancel open proposals, telling both parties.

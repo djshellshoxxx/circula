@@ -39,18 +39,18 @@ Summary: built 11, not built 6, partial 10.
 | GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
 | GOV-012 | P1 | not built | Inactivity rule not built |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
-| GOV-014 | P0 | partial | Statement and decision with reasons; response period built (network policy); decision-target deadline not built |
+| GOV-014 | P0 | built | Statement and decision with reasons; response deadline and 14-day decision target shown to parties; a missed deadline decides nothing and reviewers are reminded once |
 | GOV-015 | P0 | built | Reversal and adjustment are new transactions; originals unchanged |
-| GOV-016 | P0 | not built | Challenges and appeals not built |
+| GOV-016 | P0 | built | Challenges to removal, credit-limit and listing decisions (non-involved decider, reasons, audit, notice); dispute appeal is the one re-review with its own period; objections to policy changes not built |
 | GOV-017 | P1 | built | No dispute upload route |
 | GOV-018 | P0 | partial | Trades continue within limits; write-off by approved adjustment not built (SEC-011) |
 | GOV-019 | P0 | built | Limit reduction posts nothing; increases refused |
-| GOV-020 | P0 | partial | Last-admin guard built; read-only administrator-required state not built |
+| GOV-020 | P0 | built | Last-admin guard; a network with no active administrator is read-only (administrator required) and visible to members |
 | GOV-021 | P0 | not built | Platform-assisted recovery not built |
 | GOV-022 | P0 | partial | Member, network and full exports built; reconciliation summary in manifest; import not built |
 | GOV-023 | P0 | built | Administrator suspension overlay: postings, acceptances and joins refused; reads and exports kept; members notified; audited |
 | GOV-024 | P0 | built | Operator command with mandatory category; administrators notified; audit visible to the network |
-| GOV-025 | P0 | partial | Closure exposed in web and API with blockers, confirm and member notices; closure-date notice period, final export checksum and erasure not built |
+| GOV-025 | P0 | built | Closing date with 30-day minimum notice, freeze at the date, proposals cancelled, 90-day read and export period, final export checksum, erasure through AnonymiseMember afterwards |
 | GOV-026 | P1 | not built | Hosted platform policy documents not written |
 | GOV-027 | P1 | partial | Support boundary in docs/ops; not linked from admin UI |
 
