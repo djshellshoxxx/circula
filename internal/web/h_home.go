@@ -17,6 +17,7 @@ func (s *server) homeRoutes() {
 	s.mux.HandleFunc("GET /{$}", s.home)
 	s.mux.HandleFunc("GET /n/{slug}/{$}", s.netH(s.dashboard))
 	s.mux.HandleFunc("GET /n/{slug}/history", s.netH(s.history))
+	s.mux.HandleFunc("GET /n/{slug}/audit", s.netH(s.myAuditPage)) // FR-082
 	s.mux.HandleFunc("POST /n/{slug}/export", s.netH(s.exportMine))
 	s.mux.HandleFunc("GET /n/{slug}/directory", s.netH(s.directory))
 	s.mux.HandleFunc("GET /n/{slug}/members/{id}", s.netH(s.profile))

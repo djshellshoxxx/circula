@@ -47,6 +47,11 @@ func (s *server) listAudit(c *reqCtx) error { // API-062
 	if err := c.adminOnly(); err != nil {
 		return err
 	}
+	return s.auditList(c)
+}
+
+// auditList is the shared read; the service scopes rows by role (FR-082).
+func (s *server) auditList(c *reqCtx) error {
 	q := service.AuditQuery{Action: c.query.Get("action"), TargetID: c.query.Get("target_id"), ActorID: c.query.Get("actor_id")}
 	for name, dst := range map[string]*time.Time{"from": &q.From, "to": &q.To} {
 		if v := c.query.Get(name); v != "" {

@@ -1929,6 +1929,32 @@ paths:
         '404': {$ref: '#/components/responses/NotFound'}
         '500': {$ref: '#/components/responses/InternalError'}
 
+  /api/v1/audit-events:
+    get:
+      operationId: listMyAuditEvents
+      tags: [Accounts]
+      summary: Audit events visible to the caller (FR-082, DAT-033, DAT-035)
+      description: Role-scoped. Members see events about their own account with other people's identifiers, reasons and hash material removed and only safe summary keys kept. Dispute reviewers see dispute events. Administrators see the full log (and the read is audited). Filters action, from and to; actor_id and target_id are administrator-only via the admin route.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - {name: action, in: query, required: false, schema: {type: string}}
+        - {name: from, in: query, required: false, schema: {type: string, format: date-time}}
+        - {name: to, in: query, required: false, schema: {type: string, format: date-time}}
+      responses:
+        '200':
+          description: One page of audit events, ordered by seq.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AuditPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
   /api/v1/admin/consistency-checks:
     post:
       operationId: runConsistencyCheck

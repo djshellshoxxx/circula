@@ -343,6 +343,8 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "POST", path: "/admin/members/" + carolM + "/remove", token: adminT, idem: true, body: m{"reason": "left"}})
 	h.do(200, call{method: "GET", path: "/admin/audit-events?limit=2", token: adminT})
 	h.do(400, call{method: "GET", path: "/admin/audit-events?from=yesterday", token: adminT, skipRequest: true})
+	h.do(200, call{method: "GET", path: "/audit-events?limit=2", token: h.token(bob, rw...)})
+	h.do(400, call{method: "GET", path: "/audit-events?actor_id=x", token: adminT, skipRequest: true})
 	rec = h.do(201, call{method: "POST", path: "/admin/consistency-checks", token: adminT, idem: true})
 	h.do(200, call{method: "GET", path: "/admin/consistency-checks/" + get[idOnly](t, rec).ID, token: adminT})
 	h.do(404, call{method: "GET", path: "/admin/consistency-checks/nope", token: adminT})
