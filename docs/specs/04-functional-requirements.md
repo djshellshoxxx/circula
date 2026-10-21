@@ -198,7 +198,7 @@ Journey: Administer network rules. Sensitive actions use quorum (`admin_quorum`)
 | FR-ADM-028 | P0 | Adm | An admin **MUST** be able to resign the `network_admin` role at any time provided another active admin exists and `admin_quorum` still does not exceed the remaining admin count; resignation is an Audit Event and does not alter pending decisions. The Platform **SHOULD** offer an incoming admin a hand-over view (open Disputes, Appeals, pending approvals, scheduled policy versions, admin list, Charter versions, Appeal contact, departing Memberships, last export date). | Planned succession without deadlock (GOV-047, GOV-048; extends FR-ADM-011). | Given 2 admins with `admin_quorum` 2, when one resigns, then it is rejected until quorum is lowered by the quorum process; with 3 admins it succeeds and is audited. |
 | FR-ADM-029 | P0 | M, Op, Adm | If a Network has no active `network_admin` who can authenticate, the Platform **MUST** support a recovery request by at least the greater of 3 Members and 10% of active Members naming an active Member as nominee; the request is verified out of band, announced to all Members with a waiting period of at least the GOV-050 minimum during which any Member may object (a threshold of objections stops it) and any reachable admin may cancel, and is executed by two distinct Operator staff who **MUST NOT** nominate, choose among nominees or become `network_admin`. The only outcome is a single-use, time-limited invitation to the nominee to accept the role through ordinary authentication, preceded by an Audit Event visible to all Members (procedure fails closed if it cannot be written). For a fixed window after the role takes effect, the new admin **MUST NOT** post Adjustments or Reversals, change sensitive parameters, grant `network_admin` or begin closure. | Restores authority to the community, not to the Operator (GOV-049 to GOV-054; FR-ADM-017). | Given a valid request and no objection, when two Operator staff approve after the waiting period, then only an invitation is issued and the Audit Event exists; an attempted Adjustment by the nominee during the restriction window is rejected; objections at the threshold stop the procedure. |
 | FR-ADM-030 | P1 | Adm, Sys | When the number of active `network_admin` Memberships is smaller than `admin_quorum`, the Platform **MUST** apply the effective quorum rule in [16](16-network-policy-catalog.md) (degraded quorum), show every admin a "degraded quorum" banner, record the state in the policy history and notify all Members within 24 hours. | No silent reduction of protection (POL-036; DEC-033). | Given `admin_quorum` 3 and 2 active admins after a lock-out, then the banner shows, the effective quorum is applied as specified in 16, the policy history records the state and every Member is notified within 24 hours. |
-| FR-ADM-031 | P0 | Adm, Sys | Admins **MUST** be able to view every Journal Entry of their own Network (including entries between other Members) irrespective of `balance_visibility`, which governs Member-to-Member visibility only; the view **MUST** exclude credentials and free text beyond the Trade description, and admin access to entry lists **SHOULD** itself be audited (FR-AUD-009). | Canon 5.8 item 6; resolves the conflict between FR-BAL-007/FR-EXP-008 and admin oversight. | Given `balance_visibility = self`, when an admin lists the Network's Journal Entries, then all appear; when a Member lists another's entries, then none appear. |
+| FR-ADM-031 | P0 | Adm, Sys | Admins **MUST** be able to view every Journal Entry of their own Network (including entries between other Members) irrespective of `balance_visibility`, which governs Member-to-Member visibility only; the view **MUST** exclude credentials and free text beyond the Trade description, and admin access to entry lists **SHOULD** itself be logged. | Canon 5.8 item 6; resolves the conflict between FR-BAL-007/FR-EXP-008 and admin oversight. | Given `balance_visibility = self`, when an admin lists the Network's Journal Entries, then all appear; when a Member lists another's entries, then none appear. |
 | FR-ADM-032 | P1 | Op, Sys | Granting or revoking a `platform_operator` role **MUST** require dual control, be logged, and be possible only by the deployment owner or an existing Operator. | Operator accountability (PER-062). | Given a single Operator, when they grant the role alone, then it stays pending until a second authorised party approves; an Audit Event exists. |
 
 ## 9. Disputes (FR-DSP)
@@ -315,6 +315,8 @@ Registered with owners in [13](13-assumptions-risks-decisions-roadmap.md). Canon
 | FR-OD-14 | Notification dispatch latency | 10 s / 60 s / 5 min | 60 s | FR-NTF-003 |
 | FR-OD-15 | Free text in notification emails | none / truncated / full | none | FR-NTF-005 |
 
+Assumptions added in the reconciliation of 2026-10-21 (no new decision labels; registered decisions are cited): (A4) **Member invitations in MVP**: FR-MEM-007/FR-MEM-008 are kept (Member invitations only where the Network enables them; at most 3 open per Member; P1), as in DEC-031. The alternative, [10 section 7.1](10-governance-and-network-operations.md)'s "administrators only in MVP" option, would remove the Member path and make FR-MEM-008 inapplicable; admin invitations (FR-MEM-007) are unaffected either way. (A5) **Admin visibility**: admins see all ledger entries of their Network irrespective of `balance_visibility` (canon 5.8 item 6; FR-ADM-031); FR-BAL-007, FR-BAL-008 and FR-EXP-008 are read accordingly. (A6) **Closing Networks**: "new Trades are blocked" in FR-NET-011 means all Trades except settlement Trades under FR-NET-014 (GOV-079, assumption GOV-A5). (A7) Appeal filing windows and due times are the platform constants of [10 section 6.2](10-governance-and-network-operations.md); degraded quorum follows DEC-033. (A8) Network operating-status names are those of [10 section 11.1](10-governance-and-network-operations.md); FR-NET-001's "setup" and FR-NET-005's "open" are the same statuses.
+
 Further assumptions: (A1) Trade description length limit and settlement window are decided in [03](03-domain-model-and-mutual-credit-rules.md) (recommended 500 characters and 30 days) and apply here unchanged. (A2) Canon note: [03](03-domain-model-and-mutual-credit-rules.md) adds invariants beyond INV-014 (trade validity, closed-account zero balance) and transaction types (`reversal`, `adjustment`, `opening_balance`, `departure_settlement`); this document relies on them by name only and the canon registry should be extended. (A3) Role abbreviations in this document map one-to-one to the roles in [02](02-personas-roles-and-journeys.md).
 
 Research input ([prior art note](../notes/research-prior-art-mutual-credit.md), sections 2.4 and 3): admin burnout and key-person risk informed FR-NET-007, FR-ADM-011, FR-ADM-019 and FR-NTF-007; dormant-member visibility informed FR-MEM-020 (flag only, no automatic effect); departure close-out informed FR-MEM-012 to FR-MEM-014; the note's recommended dispute workflow is marked inference there, so FR-DSP is designed from first principles and flagged for review. Its suggestions of demurrage, limit decay, health dashboards, vouching and time-boxed debt are not in the MVP (see section 11 and `[DECISION NEEDED]` items for governance in [13](13-assumptions-risks-decisions-roadmap.md)).
@@ -336,7 +338,85 @@ Journeys are cited by title as in [02](02-personas-roles-and-journeys.md). "Prim
 | Network setup by the first Administrator | NET | ADM, AUD | FR-NET-001 to 009, FR-ADM-001 |
 | Accessible and error-state baseline (cross-cutting) | All | — | Section 1.1 inherited rules; per-row acceptance criteria for error states |
 
-Capabilities in the [permission matrix](02-personas-roles-and-journeys.md#5-permission-matrix) not reached from a journey are covered here as operations or reporting: network pause and closure (FR-NET-010, FR-NET-011), aggregates (FR-BAL-008), audit browsing (FR-AUD-003), moderation reporting (FR-LST-011, FR-ADM-013), and operator constraints (FR-ADM-017, FR-AUD-006).
+Capabilities in the [permission matrix](02-personas-roles-and-journeys.md#5-permission-matrix) not reached from a journey are covered here as operations or reporting: network pause, hold and closure (FR-NET-010, FR-NET-011, FR-NET-013 to FR-NET-015), aggregates (FR-BAL-008), audit browsing (FR-AUD-003), moderation reporting (FR-LST-011, FR-ADM-013), and operator constraints (FR-ADM-017, FR-ADM-032, FR-AUD-006), appeals and conflict declarations (FR-ADM-021 to FR-ADM-025) and administrator recovery (FR-ADM-028, FR-ADM-029).
+
+### 13.1 Role-permission and MVP-scope coverage
+
+Every row of the [permission matrix](02-personas-roles-and-journeys.md#5-permission-matrix) (PER-010 to PER-062) and every "In MVP" capability area of [01 section 10](01-product-vision-and-scope.md) maps to at least one requirement here (VIS-038, JRN-011). Rows PER-058 and PER-059 are infrastructure operations: this document fixes only the Operator constraints; the operational detail is in [11](11-deployment-operations-and-support.md).
+
+| Permission row | Capability (short) | Requirements |
+|---|---|---|
+| PER-010 | View public Network information | FR-NET-006 |
+| PER-011 | View public Listings | FR-LST-007 |
+| PER-012 | Apply or accept an invitation | FR-MEM-001, FR-MEM-002, FR-MEM-007 |
+| PER-013 | Applicant status and withdrawal | FR-MEM-009 |
+| PER-014 | Sign in, authentication methods, sessions | FR-MEM-023 |
+| PER-015 | Recover own account | FR-MEM-019 |
+| PER-016 | Own profile | FR-MEM-018 |
+| PER-017 | View other Members' profiles | FR-LST-015, FR-ADM-016 |
+| PER-018 | Manage own Listings | FR-LST-001, FR-LST-003, FR-LST-013 |
+| PER-019 | Browse and search directory | FR-LST-005, FR-LST-006 |
+| PER-020 | Contact a Listing owner | FR-LST-008 |
+| PER-021 | Moderate or restore Listings | FR-LST-009, FR-ADM-013 |
+| PER-022 | Report abuse | FR-LST-011 |
+| PER-023 | Propose a Trade | FR-TRD-001 to FR-TRD-004 |
+| PER-024 | Accept or decline | FR-TRD-006, FR-TRD-007, FR-TRD-010 |
+| PER-025 | Cancel own proposal | FR-TRD-011 |
+| PER-026 | View own Trades | FR-TRD-017 |
+| PER-027 | View another Member's Trades | FR-DSP-006, FR-ADM-031 |
+| PER-028 | No Trade on behalf of anyone | FR-ADM-010, FR-TRD-006 |
+| PER-029 | Own balance and history | FR-BAL-001 to FR-BAL-006 |
+| PER-030 | Another Member's balance | FR-BAL-007, FR-ADM-031 |
+| PER-031 | Network aggregates | FR-BAL-007, FR-BAL-008 |
+| PER-032 | Export own data | FR-EXP-001, FR-EXP-002, FR-BAL-011 |
+| PER-033 | Export Network data | FR-EXP-003, FR-EXP-004 |
+| PER-034 | Raise a Dispute | FR-DSP-001, FR-DSP-002, FR-DSP-014 |
+| PER-035 | Statements and evidence | FR-DSP-004, FR-DSP-005, FR-DSP-015 |
+| PER-036 | Withdraw a Dispute | FR-DSP-011 |
+| PER-037 | Dispute queue and assignment | FR-DSP-006, FR-DSP-013 |
+| PER-038 | Decide a Dispute | FR-DSP-008, FR-DSP-007 |
+| PER-039 | Escalate a Dispute | FR-DSP-012 |
+| PER-040 | Apply Dispute remedy | FR-DSP-009, FR-DSP-010, FR-ADM-009 |
+| PER-041 | Review applications | FR-MEM-005 |
+| PER-042 | Create and revoke invitations | FR-MEM-007, FR-MEM-008 |
+| PER-043 | Suspend or reinstate | FR-MEM-010, FR-MEM-011 |
+| PER-044 | Removal and ban flag | FR-MEM-016 |
+| PER-045 | Dispute Reviewer role | FR-ADM-011, FR-ADM-012 |
+| PER-046 | Network Administrator role | FR-ADM-011, FR-ADM-012, FR-ADM-028 |
+| PER-047 | Edit policy parameters | FR-ADM-001 to FR-ADM-005, FR-ADM-026 |
+| PER-048 | Per-Member credit limit | FR-ADM-006 |
+| PER-049 | Post an Adjustment | FR-ADM-007, FR-ADM-008 |
+| PER-050 | Initiate a Reversal | FR-ADM-009, FR-TRD-023 |
+| PER-051 | Start own departure | FR-MEM-012 to FR-MEM-014 |
+| PER-052 | View Audit Events | FR-AUD-003 to FR-AUD-006 |
+| PER-053 | Announcements and notices | FR-ADM-014, FR-NTF-002 |
+| PER-054 | Initiate Network closure | FR-NET-011, FR-NET-013, FR-NET-014 |
+| PER-055 | Provision a Network | FR-NET-001, FR-NET-002 |
+| PER-056 | Self-service Network creation | FR-NET-001 (authorised actor; deployment option per DEC-021) |
+| PER-057 | Suspend or restore a Network | FR-NET-010, FR-NET-015 |
+| PER-058 | Operate infrastructure | FR-ADM-017 (constraints; operations in [11](11-deployment-operations-and-support.md)) |
+| PER-059 | Operational logs and metrics | FR-AUD-006, FR-AUD-007 |
+| PER-060 | Break-glass access | FR-ADM-017, FR-AUD-006 |
+| PER-061 | No ledger edits by any role | FR-ADM-010, FR-AUD-002 |
+| PER-062 | Grant or revoke Operator roles | FR-ADM-032 |
+
+| MVP capability area ([01 section 10](01-product-vision-and-scope.md)) | Requirements |
+|---|---|
+| Network setup | FR-NET-001 to FR-NET-005, FR-NET-008, FR-NET-009, FR-NET-013 |
+| Identity and access | FR-MEM-003, FR-MEM-004, FR-MEM-019, FR-MEM-023, FR-ADM-018 |
+| Membership | FR-MEM-001 to FR-MEM-022 |
+| Listings and directory | FR-LST-001 to FR-LST-015 |
+| Trades | FR-TRD-001 to FR-TRD-025 |
+| Balances and history | FR-BAL-001 to FR-BAL-011 |
+| Admin controls | FR-ADM-001 to FR-ADM-032 |
+| Disputes | FR-DSP-001 to FR-DSP-015 |
+| Audit | FR-AUD-001 to FR-AUD-009 |
+| Export and portability | FR-EXP-001 to FR-EXP-008 |
+| Notifications | FR-NTF-001 to FR-NTF-008 |
+| Platform operation | FR-NET-010, FR-NET-015, FR-ADM-017, FR-ADM-029, FR-AUD-006 |
+| Cross-Network (None in MVP) | FR-NET-012 (isolation), FR-MEM-004 |
+| Localisation | FR-NET-016 |
+| Mobile (responsive web) | FR-NET-016 |
 
 ## 14. References
 

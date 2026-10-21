@@ -115,7 +115,7 @@ Legend: **Y** permitted; **Y\*** permitted subject to the condition in the Notes
 | **PER-024** | Accept or decline a Trade proposed to them | — | — | Y* | = Mem | = Mem | — | Only the Counterparty; acceptance and posting are one atomic step; rejected if limits would be breached |
 | **PER-025** | Cancel own `proposed` Trade | — | — | Y* | = Mem | = Mem | — | Only the Proposer, only while `proposed` |
 | **PER-026** | View own Trades (any state) and their notes | — | — | Y | = Mem | = Mem | — | Parties only |
-| **PER-027** | View another Member's Trades | — | — | — | Y* | — | — | Reviewer: only Trades that are the subject of an assigned Dispute (PER-005). Administrators have no general right; they see Trades through Dispute escalation, Audit Events and Adjustment targets only |
+| **PER-027** | View another Member's Trades | — | — | — | Y* | — | — | Reviewer: only Trades that are the subject of an assigned Dispute (PER-005). Administrators see all ledger entries of their Network irrespective of `balance_visibility` (canon 5.8 item 6; FR-ADM-031) and Dispute material through escalation; they have no right to act on Trades |
 | **PER-028** | Create, accept, decline or cancel a Trade on behalf of another Member | — | — | — | — | — | — | Never permitted to any role (INV-012) |
 
 ### 5.4 Balances, history and export
@@ -123,7 +123,7 @@ Legend: **Y** permitted; **Y\*** permitted subject to the condition in the Notes
 | ID | Capability | Vis | App | Mem | Rev | Adm | Op | Notes |
 |---|---|---|---|---|---|---|---|---|
 | **PER-029** | View own balance, available credit, credit limit, pending proposals and full history | — | — | Y | = Mem | = Mem | — | Real-time consistent with ledger (INV-008) |
-| **PER-030** | View another Member's balance | — | — | Y* | = Mem | Y* | — | By `balance_visibility`: `self` (no one), `admins` (Administrators only), `members` (all Members). Under `self`, Administrators still see network-level aggregates only |
+| **PER-030** | View another Member's balance | — | — | Y* | = Mem | Y* | — | By `balance_visibility`: `self` (no one), `admins` (Administrators only), `members` (all Members). Under `self`, Administrators still see all ledger entries and balances of their own Network (canon 5.8 item 6; FR-ADM-031), but no Member sees another's balance |
 | **PER-031** | View Network aggregate figures (member count, number and volume of Trades, sum of balances equals zero check) | — | — | Y* | = Mem | Y | Y* | Members: if Network policy allows aggregates. Operator: aggregate counts only, no per-Member figures |
 | **PER-032** | Export own data (profile, listings, Trades, statement) | — | Y* | Y | = Mem | = Mem | — | Applicant: application data only; see [18](18-data-export-and-portability.md) |
 | **PER-033** | Export Network data (members, Journal Entries, Audit Events, policy history) | — | — | — | — | Y | — | Q; produces an Audit Event; personal fields minimised per [18](18-data-export-and-portability.md) |
@@ -145,7 +145,7 @@ Legend: **Y** permitted; **Y\*** permitted subject to the condition in the Notes
 | ID | Capability | Vis | App | Mem | Rev | Adm | Op | Notes |
 |---|---|---|---|---|---|---|---|---|
 | **PER-041** | Review applications: approve or reject with reason | — | — | — | — | Y | — | Audit Event; applicant notified; rejection reason visible to the applicant |
-| **PER-042** | Create and revoke invitations | — | — | Y* | = Mem | Y | — | Members may invite only if the Network enables it (`membership_mode = invite` and member-invite option, see [16](16-network-policy-catalog.md)) |
+| **PER-042** | Create and revoke invitations | — | — | Y* | = Mem | Y | — | Members may invite only if the Network enables it (`membership_mode = invite` and the Network enables Member invitations, at most 3 open per Member; FR-MEM-007, FR-MEM-008, DEC-031) |
 | **PER-043** | Suspend or reinstate a Member, with reason | — | — | — | — | Y | — | Q; Audit Event; Member notified and may appeal; suspension never alters balances |
 | **PER-044** | Start closure of a Membership (`departing` to `closed`), including removal and ban flag, with reason | — | — | — | — | Y | — | Q; Member may also start own departure (PER-051) |
 | **PER-045** | Assign and revoke the Dispute Reviewer role | — | — | — | — | Y | — | Audit Event |
@@ -153,7 +153,7 @@ Legend: **Y** permitted; **Y\*** permitted subject to the condition in the Notes
 | **PER-047** | Edit Network policy parameters | — | — | — | — | Y | — | Q for sensitive parameters (see [16](16-network-policy-catalog.md)); effective after `policy_notice_days` except safety fixes; `unit_name`, `unit_symbol`, `unit_scale` immutable once any Journal Entry exists (INV-013) |
 | **PER-048** | Set a Member's individual `credit_limit` within `max_credit_limit` | — | — | — | — | Y | — | Audit Event; Member notified; lowering below current negative balance does not alter balance but blocks further spending |
 | **PER-049** | Post an Adjustment to a Member Account or System Account with mandatory reason | — | — | — | — | Y | — | Q; INV-004, INV-010, INV-012; visible to the affected Member; not self-service for the Administrator's own account |
-| **PER-050** | Initiate a standalone Reversal of a completed Trade, with reason | — | — | — | — | Y | — | Q; used for Administrator-initiated corrections outside a Dispute; counterparty-consent requirement per [03](03-domain-model-and-mutual-credit-rules.md) |
+| **PER-050** | Initiate a standalone Reversal of a completed Trade, with reason | — | — | — | — | Y | — | Q; only as the remedy of an upheld or settled Dispute, or to implement a joint party agreement (FR-ADM-009, FR-TRD-023); never unrelated to either path |
 | **PER-051** | Start own departure from the Network | — | Y* | Y | = Mem | = Mem | — | Applicant: withdraw application instead (PER-013). Settlement mode per `departure_settlement_mode` |
 | **PER-052** | View the Network's Audit Events | — | — | Y* | Y* | Y | Y* | Members: only events concerning themselves. Reviewer: events concerning assigned Disputes. Operator: platform-level events only, not Network content |
 | **PER-053** | Post announcements and policy notices to all Members | — | — | — | — | Y | — | Policy notices are mandatory for policy changes (D-11) |
@@ -471,14 +471,14 @@ Registered in [13](13-assumptions-risks-decisions-roadmap.md). Canon defaults D-
 
 | Ref | Decision needed | Options | Recommended default |
 |---|---|---|---|
-| PER-OD-1 | Minimum number of Network Administrators before the Network opens to Members | 1; 2 | Allow 1 with persistent warning; recommend 2 |
-| PER-OD-2 | Account recovery assurance and delay when no second factor or recovery code remains | Email-only immediate; email plus 72-hour delay with notifications; Administrator-vouched | Email plus delay of 72 hours with notifications to all channels; no Administrator-vouched recovery in MVP. Detail in [09](09-security-privacy-and-abuse.md) |
-| PER-OD-3 | Who executes the ledger remedy of an upheld Dispute, and handling when it would breach a limit | Reviewer-triggered automatic; Administrator-executed; Administrator-executed with limit override via Adjustment | Administrator-executed, non-Party, Q; if the remedy would breach a limit, the remedy is recorded and handled as an Adjustment with reason, never by bypassing INV-005 on a Trade posting. Exact mechanics belong in [03](03-domain-model-and-mutual-credit-rules.md) |
-| PER-OD-4 | What happens when no unconflicted Dispute Reviewer exists | Escalate to another Administrator; escalate to an external process; auto-`escalated` | Auto-`escalated` to Administrators who are not Parties; otherwise to the Network's outside process per [10](10-governance-and-network-operations.md) |
-| PER-OD-5 | Self-service Network creation | Operator-provisioned only; self-service with approval; open self-service | Operator-provisioned or deployment-flag self-service (for self-hosted single-Network installs, setup wizard) |
-| PER-OD-6 | New-member limits (probation) | None; lower initial `credit_limit`; limited trade counts | Lower initial credit limit via `default_credit_limit`; no extra mechanism in MVP |
-| PER-OD-7 | Counter-proposals on Trades | Not in MVP; single counter-offer; negotiation thread | Not in MVP (decline with note and re-propose) |
-| PER-OD-8 | May Members view the identity of the Reviewer before assignment | Yes; no | Yes, with a right to object for conflict |
+| PER-OD-1 (DEC-024) | Minimum number of Network Administrators before the Network opens to Members | 1; 2 | Allow 1 with persistent warning; recommend 2 |
+| PER-OD-2 (DEC-069) | Account recovery assurance and delay when no second factor or recovery code remains | Email-only immediate; email plus 72-hour delay with notifications; Administrator-vouched | Email plus delay of 72 hours with notifications to all channels; no Administrator-vouched recovery in MVP. Detail in [09](09-security-privacy-and-abuse.md) |
+| PER-OD-3 (DEC-028) | Who executes the ledger remedy of an upheld Dispute, and handling when it would breach a limit | Reviewer-triggered automatic; Administrator-executed; Administrator-executed with limit override via Adjustment | Administrator-executed, non-Party, Q; if the remedy would breach a limit, the remedy is recorded and handled as an Adjustment with reason, never by bypassing INV-005 on a Trade posting. Exact mechanics belong in [03](03-domain-model-and-mutual-credit-rules.md) |
+| PER-OD-4 (DEC-029) | What happens when no unconflicted Dispute Reviewer exists | Escalate to another Administrator; escalate to an external process; auto-`escalated` | Auto-`escalated` to Administrators who are not Parties; otherwise to the Network's outside process per [10](10-governance-and-network-operations.md) |
+| PER-OD-5 (DEC-021) | Self-service Network creation | Operator-provisioned only; self-service with approval; open self-service | Operator-provisioned or deployment-flag self-service (for self-hosted single-Network installs, setup wizard) |
+| PER-OD-6 (DEC-025) | New-member limits (probation) | None; lower initial `credit_limit`; limited trade counts | Lower initial credit limit via `default_credit_limit`; no extra mechanism in MVP |
+| PER-OD-7 (DEC-026) | Counter-proposals on Trades | Not in MVP; single counter-offer; negotiation thread | Not in MVP (decline with note and re-propose) |
+| PER-OD-8 (DEC-027) | May Members view the identity of the Reviewer before assignment | Yes; no | Yes, with a right to object for conflict |
 
 Assumptions: (A1) Every Member has an email address. (A2) The Network communicates its rules out of band as well as in the product. (A3) Administrators are Members and can be affected by their own actions; conflict-of-interest guards in this document are enforced by the Platform where detectable and by Network governance otherwise.
 
