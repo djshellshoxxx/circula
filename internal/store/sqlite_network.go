@@ -40,6 +40,7 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	}
 	n.Status = domain.NetworkStatus(status)
 	n.CreatedAt = fromMS(created)
+	n.Policy = domain.DefaultPolicy() // fields absent from older versions keep their defaults
 	if err := json.Unmarshal([]byte(pj), &n.Policy); err != nil {
 		return nil, err
 	}

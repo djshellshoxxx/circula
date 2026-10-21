@@ -31,7 +31,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-009 | P0 | built | Default deny; authorisation matrix test |
 | SEC-010 | P0 | built | Self-approval, conflicts, last-admin and operator-grant refusals |
 | SEC-011 | P1 | not built | No dual control; adjustments post at once |
-| SEC-012 | P0 | partial | Audit in same unit for admin actions; notices to affected members not built |
+| SEC-012 | P0 | built | Audit in same unit for admin actions; fixed-text in-app notice to the affected member on suspend, reinstate, removal, role change, credit-limit change, adjustment and reversal |
 | SEC-013 | P0 | partial | No operator role reads network data in product; break-glass not built |
 | SEC-014 | P0 | partial | Minimal profile fields; data inventory document absent |
 | SEC-015 | P0 | built | Network-scoped queries and cross-network tests |

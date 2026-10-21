@@ -66,7 +66,7 @@ Summary: built 51, not built 3, partial 11.
 | FR-073 | P0 | built | Dismissed, upheld, partially upheld with rationale |
 | FR-074 | P0 | built | Blocked reversal enters posting_pending; override then retry |
 | FR-075 | P1 | built | Opener withdraws before decision |
-| FR-076 | P1 | not built | Response by other party and response period not built |
+| FR-076 | P1 | built | Response by other party; response-period policy (default 7 days) holds a decision unless a response exists or the reviewer waives it |
 | FR-077 | P0 | built | Window measured from completion with server clock |
 | FR-078 | P1 | not built | Re-review of a decision not built |
 | FR-080 | P0 | built | Sweep: every command writes one audit event |
@@ -441,7 +441,7 @@ Summary: built 51, not built 3, partial 11.
 - **Acceptance.**
   - The other party can submit a bounded response before a decision; the response is visible to the reviewer and to the opener.
   - A decision cannot be recorded before the response period in the network's policy has ended, or before the response is submitted or waived. The response period is a network policy (OQ-FR-2).
-- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Not built: the response-period policy and holding a decision until the period ends (OQ-FR-2 is open), so a decision may be recorded without a response.
+- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Network policy `response_period_days` (default 7, 0 to 90; 0 means no waiting period; DEC-012 recommendation). `ResolveDispute` is refused with invalid-transaction-state until a response exists, the period since the dispute was opened has elapsed, or the reviewer sets `waive_response` with a `waive_reason` (audited). Silence never decides the case. OQ-FR-2 stays open for counsel review of the default.
 
 ### FR-077 · P0 · Dispute window enforcement and deadlines
 - **Rationale.** DOM-017.
@@ -454,7 +454,7 @@ Summary: built 51, not built 3, partial 11.
 - **Acceptance.**
   - A party can request one re-review of a decided dispute within a stated period.
   - The re-review is assigned to a different reviewer than the original and is recorded as a new decision linked to the first. The original decision is never edited.
-- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within 14 days of the decision (a constant, not yet network policy). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
+- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within `re_review_window_days` of the decision (network policy, default 14, 1 to 365). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
 
 ---
 

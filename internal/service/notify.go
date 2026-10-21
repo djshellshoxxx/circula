@@ -24,6 +24,14 @@ const (
 	NotifReReviewDecided = "dispute.rereview_decided"
 	NotifReportHandled   = "report.handled"
 	NotifLimitWarning    = "account.limit_warning"
+	// SEC-012: administrator actions that change a member's rights, obligations or balance.
+	NotifAdminSuspended = "admin.member_suspended"
+	NotifAdminReinstate = "admin.member_reinstated"
+	NotifAdminRemoved   = "admin.member_removed"
+	NotifAdminRole      = "admin.role_changed"
+	NotifAdminLimit     = "admin.limit_changed"
+	NotifAdminAdjust    = "admin.adjustment"
+	NotifAdminReversal  = "admin.reversal"
 )
 
 // maxMarkIDs bounds one mark-read call.
@@ -40,6 +48,13 @@ func (s *Service) notify(tx store.Tx, netID, memberID, kind, title, body, link, 
 	_, err := tx.InsertNotification(store.Notification{ID: s.id(), NetworkID: netID, MemberID: memberID, Kind: kind,
 		Title: title, Body: body, Link: link, DedupeKey: dedupe, CreatedAt: s.now()})
 	return err
+}
+
+// adminNotice tells the affected member about an administrator action
+// (SEC-012). The text is fixed: it names the action and where to look, and
+// never carries the administrator's reason or any member-written text.
+func (s *Service) adminNotice(tx store.Tx, netID, memberID, kind, title, body, link string) error {
+	return s.notify(tx, netID, memberID, kind, title, body, link, "")
 }
 
 // notifyOthers notifies each distinct member id except skip.

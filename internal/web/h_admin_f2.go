@@ -245,7 +245,10 @@ type annAdminRow struct {
 	Scheduled bool
 }
 
-type annAdminData struct{ Rows []annAdminRow }
+type annAdminData struct {
+	Rows    []annAdminRow
+	Options []option
+}
 
 func (s *server) announcementsPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	s.renderAnnouncements(w, r, c, 200, &page{})
@@ -260,6 +263,7 @@ func (s *server) renderAnnouncements(w http.ResponseWriter, r *http.Request, c *
 	d := &annAdminData{}
 	now := s.opts.Clock.Now()
 	for _, a := range as {
+		d.Options = append(d.Options, option{Value: a.ID, Label: a.Title})
 		d.Rows = append(d.Rows, annAdminRow{annRow{ID: a.ID, Title: a.Title, Body: a.Body, At: c.when(a.EffectiveAt)}, a.EffectiveAt.After(now)})
 	}
 	p.Title, p.D = "Announcements", d
@@ -269,7 +273,7 @@ func (s *server) renderAnnouncements(w http.ResponseWriter, r *http.Request, c *
 func (s *server) announcementCreate(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
 	p := &page{V: v}
-	in := service.AnnouncementInput{Title: v["title"], Body: v["body"], IdempotencyKey: idemKey(r)}
+	in := service.AnnouncementInput{Title: v["title"], Body: v["body"], SupersedesID: v["supersedes_id"], IdempotencyKey: idemKey(r)}
 	if d := strings.TrimSpace(v["days"]); d != "" {
 		n, ok := atoiRange(d, 0, 365)
 		if !ok {

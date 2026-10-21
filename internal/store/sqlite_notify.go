@@ -207,6 +207,15 @@ func (t *txImpl) CountUnreadNotifications(netID, memberID string) (int, error) {
 	return n, mapErr(err)
 }
 
+func (t *txImpl) DeleteReadNotificationsBefore(cutoff time.Time, limit int) (int64, error) {
+	res, err := t.exec(`DELETE FROM notifications WHERE rowid IN
+		(SELECT rowid FROM notifications WHERE read_at IS NOT NULL AND read_at <= ? LIMIT ?)`, ms(cutoff), limit)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 func (t *txImpl) MarkNotificationsRead(netID, memberID string, ids []string, at time.Time) (int64, error) {
 	q := `UPDATE notifications SET read_at = ? WHERE network_id = ? AND member_id = ? AND read_at IS NULL`
 	args := []any{ms(at), netID, memberID}

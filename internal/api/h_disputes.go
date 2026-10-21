@@ -100,9 +100,11 @@ var outcomes = map[string]domain.DisputeOutcome{
 
 func (s *server) resolveDispute(c *reqCtx) error { // API-055
 	var in struct {
-		Outcome     string  `json:"outcome"`
-		Reason      string  `json:"reason"`
-		AmountMinor *string `json:"amount_minor"`
+		Outcome       string  `json:"outcome"`
+		Reason        string  `json:"reason"`
+		AmountMinor   *string `json:"amount_minor"`
+		WaiveResponse bool    `json:"waive_response"`
+		WaiveReason   string  `json:"waive_reason"`
 	}
 	if err := c.decode(&in); err != nil {
 		return err
@@ -122,7 +124,7 @@ func (s *server) resolveDispute(c *reqCtx) error { // API-055
 		}
 	}
 	d, err := s.svc.ResolveDispute(c.r.Context(), c.actor, c.netID, service.ResolveInput{DisputeID: c.r.PathValue("id"),
-		Outcome: oc, Amount: amt, Rationale: in.Reason, IdempotencyKey: c.idemKey})
+		Outcome: oc, Amount: amt, Rationale: in.Reason, WaiveResponse: in.WaiveResponse, WaiveReason: in.WaiveReason, IdempotencyKey: c.idemKey})
 	if err != nil {
 		return err
 	}

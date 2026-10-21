@@ -59,6 +59,8 @@
     <option value="partially_upheld"{{if eq ($.Val "outcome") "partially_upheld"}} selected{{end}}>Partly upheld: reverse part</option></select></div>
   {{template "field" dict "P" $ "Name" "amount" "Label" "Amount to reverse (partly upheld only)" "Hint" (printf "Amount in credits, up to %d decimal places." $.Dec) "Mode" "decimal"}}
   {{template "field" dict "P" $ "Name" "rationale" "Label" "Rationale" "Hint" "Required. Both parties will see it." "Type" "textarea" "Max" 2000 "Req" true}}
+  <div class="field"><label><input type="checkbox" name="waive_response" value="1"{{if $.Val "waive_response"}} checked{{end}}> Decide without waiting for the other party's response</label></div>
+  {{template "field" dict "P" $ "Name" "waive_reason" "Label" "Reason for not waiting" "Hint" "Needed only if the response period has not ended and no response was given. It is recorded in the audit trail." "Max" 500}}
   <div class="actions"><button type="submit">Review decision</button></div>
 </form>
 {{end}}

@@ -232,7 +232,7 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 
 ```go
 func (s *Service) RespondToDispute(ctx, actor, netID string, in RespondInput) (*store.DisputeResponse, error)
-// The party who did not open the dispute answers once (up to 2000 characters) while it is open or under review. Suspended parties may answer. Idempotent. A decision does not wait for a response (OQ-FR-2 open).
+// The party who did not open the dispute answers once (up to 2000 characters) while it is open or under review. Suspended parties may answer. Idempotent. A decision waits for a response, the network policy response_period_days, or a reviewer waiver (ResolveInput.WaiveResponse with WaiveReason) (FR-076).
 
 func (s *Service) RequestReReview(ctx, actor, netID string, in ReReviewRequestInput) (*store.ReReview, error)
 // Either party, once per dispute (UNIQUE in the database), within ReReviewWindowDays (14, platform constant) of the decision. Own record linked to the dispute; the original decision is never edited.

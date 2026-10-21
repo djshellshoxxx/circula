@@ -102,7 +102,10 @@ required and is stored with the change.
 | Sign-up grant | See above. Applies to members who join after the change. |
 | Proposal expiry (days) | After this many days an unanswered proposal expires. |
 | Dispute window (days) | How long after completion a trade can be disputed. |
-| Limit warning (days, 0 to disable) | Stored in the policy but not used yet. Members are warned at a fixed 80 percent of their credit limit (a notification at most weekly, plus a notice on Home and the propose form). |
+| Limit warning (days, 0 to disable) | Stored in the policy but not used yet. |
+| Dispute response period (days, 0 for none) | How long the other party has to answer a dispute before a decision may be recorded without a response. Default 7, up to 90. |
+| Re-review window (days) | How long after a decision a party may ask for the one re-review. Default 14, 1 to 365. |
+| Limit warning (percent of limit used) | Members at or above this share of their credit limit are warned (a notification at most weekly, plus a notice on Home and the propose form). Default 80, 1 to 100. |
 | How people join | Invitation, approval or open. |
 | When a member leaves | *Balance is retained* or *Balance is settled to zero*. Settling posts an audited adjustment. |
 | Members marked in default cannot pay | See section 4. |
@@ -143,9 +146,9 @@ You cannot decide a dispute on a trade you took part in; another reviewer or adm
 people with the right role in a network.
 
 **Responses.** The party who did not open the dispute can add one response (up to 2000 characters), shown on the
-dispute page. You may decide without a response; no response period is enforced.
+dispute page. A decision is refused until the response is in or the response period (see Policy) has ended since the dispute was opened. To decide earlier, tick **Decide without waiting for the other party's response** and give a reason; the reason is recorded in the audit log. API: `waive_response` and `waive_reason` on the resolve call.
 
-**Re-review.** After a decision, either party can ask once, within 14 days, for a re-review. The request appears in the
+**Re-review.** After a decision, either party can ask once, within the re-review window (Policy, 14 days by default), for a re-review. The request appears in the
 review queue. A reviewer or administrator who is not a party and did not make the first decision sees **Record the
 re-review decision**: *Confirmed* (original stands), *Upheld* or *Partly upheld* (a further reversal, limited to what is
 still reversible). A rationale is required. The original decision is kept alongside.
@@ -165,10 +168,10 @@ trade you took part in, and disputed trades are decided from the review queue.
 * **Reports** (`/n/<name>/admin/reports`, filter Open, Handled, All). Members report listings and members; you see the
   category, target, reporter and note. **Mark handled** (optional note) only records that you looked; it does not act on
   the member or listing. Use Members and Policy to act.
-* **Announcements** (`/n/<name>/admin/announcements`). Title (up to 120), message (up to 4000), optional "Start in (days)".
+* **Announcements** (`/n/<name>/admin/announcements`). Title (up to 120), message (up to 4000), optional "Start in (days)" and optional **Replaces an earlier announcement** (the old one disappears once the new one starts).
   They show on every member's Home from the start time. They cannot be edited; **Delete** and publish again. Deletions
   are in the audit log.
-* **Notifications.** Members get in-application notifications (see the user guide, Inbox). No e-mail is sent.
+* **Notifications.** Members get in-application notifications (see the user guide, Inbox). No e-mail is sent. When you suspend, reinstate or remove a member, change a role or credit limit, post an adjustment or reverse a trade, the affected member gets a fixed-text notice (it never includes your reason). Read notifications are deleted after 90 days.
 * **Time zone.** Each person sets their own display zone under **Time zone**. The audit log and API stay in UTC.
 
 ## 7b. Read-only networks and maintenance
@@ -230,12 +233,11 @@ accounts are created on the command line and are ordinary accounts.
 
 | Feature | State in this build |
 |---|---|
-| Dispute response period | No policy for how long the other party has to respond; a decision can be recorded without a response. |
 | Notices to affected members (SEC-012) | Members get inbox entries for trades, disputes and reports and security notices for their own credential changes. Suspending, removing, limit changes and adjustments are audited but the affected member gets no notice. Tell them yourself. |
 | Dual control for write-offs and limit changes | Only adjustments are covered (SEC-011). |
 | Dual-control threshold in the web policy form | JSON API only. |
 | Self-service password reset without codes | Not present; an administrator or the operator resets it. |
 | Statements for members | Not present; members use Download my transactions, administrators use Exports. |
-| Limit-warning policy | The "Limit warning (days)" field is stored but does not drive anything; the threshold is fixed at 80 percent. |
+| Limit warning (days) | The "Limit warning (days)" field is stored but does not drive anything; use the percent field. |
 | E-mail or push notifications | Not implemented. |
 | Leaving a network in the web interface | JSON API only. |

@@ -41,13 +41,13 @@ func (t *txImpl) SetTimeZone(personID, zone string, at time.Time) error {
 	return err
 }
 
-const announcementCols = `id,network_id,title,body,created_by,published_at,effective_at,deleted_at,deleted_by`
+const announcementCols = `id,network_id,title,body,created_by,published_at,effective_at,deleted_at,deleted_by,supersedes_id`
 
 func scanAnnouncement(r rowScanner) (*domain.Announcement, error) {
 	var a domain.Announcement
 	var pub, eff int64
 	var del sql.NullInt64
-	if err := r.Scan(&a.ID, &a.NetworkID, &a.Title, &a.Body, &a.CreatedBy, &pub, &eff, &del, &a.DeletedBy); err != nil {
+	if err := r.Scan(&a.ID, &a.NetworkID, &a.Title, &a.Body, &a.CreatedBy, &pub, &eff, &del, &a.DeletedBy, &a.SupersedesID); err != nil {
 		return nil, err
 	}
 	a.PublishedAt, a.EffectiveAt, a.DeletedAt = fromMS(pub), fromMS(eff), ptrTime(del)
@@ -55,14 +55,20 @@ func scanAnnouncement(r rowScanner) (*domain.Announcement, error) {
 }
 
 func (t *txImpl) InsertAnnouncement(a *domain.Announcement) error {
-	_, err := t.exec(`INSERT INTO announcements(`+announcementCols+`) VALUES (?,?,?,?,?,?,?,NULL,'')`,
-		a.ID, a.NetworkID, a.Title, a.Body, a.CreatedBy, ms(a.PublishedAt), ms(a.EffectiveAt))
+	_, err := t.exec(`INSERT INTO announcements(`+announcementCols+`) VALUES (?,?,?,?,?,?,?,NULL,'',?)`,
+		a.ID, a.NetworkID, a.Title, a.Body, a.CreatedBy, ms(a.PublishedAt), ms(a.EffectiveAt), a.SupersedesID)
 	return err
 }
 
 func (t *txImpl) GetAnnouncement(netID, id string) (*domain.Announcement, error) {
 	a, err := scanAnnouncement(t.row(`SELECT `+announcementCols+` FROM announcements WHERE network_id = ? AND id = ?`, netID, id))
 	return a, notFound(err, "announcement")
+}
+
+func (t *txImpl) AnnouncementSuperseded(netID, id string) (bool, error) {
+	var n int
+	err := mapErr(t.row(`SELECT COUNT(*) FROM announcements WHERE network_id = ? AND supersedes_id = ? AND deleted_at IS NULL`, netID, id).Scan(&n))
+	return n > 0, err
 }
 
 func (t *txImpl) RetractAnnouncement(netID, id, by string, at time.Time) (bool, error) {
@@ -80,6 +86,11 @@ func (t *txImpl) ListAnnouncements(netID string, f AnnouncementFilter) ([]*domai
 	args := []any{netID}
 	if !f.IncludeDeleted {
 		q += ` AND deleted_at IS NULL`
+	}
+	if !f.SupersededBefore.IsZero() {
+		q += ` AND NOT EXISTS (SELECT 1 FROM announcements s WHERE s.network_id = announcements.network_id
+			AND s.supersedes_id = announcements.id AND s.deleted_at IS NULL AND s.effective_at <= ?)`
+		args = append(args, ms(f.SupersededBefore))
 	}
 	if !f.EffectiveBy.IsZero() {
 		q += ` AND effective_at <= ?`

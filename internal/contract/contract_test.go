@@ -314,7 +314,8 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	petag := rec.Header().Get("ETag")
 	h.do(403, call{method: "GET", path: "/admin/policy", token: aliceT})
 	h.do(200, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag),
-		body: m{"reason": "raise limit", "default_credit_limit_minor": "20000"}})
+		body: m{"reason": "raise limit", "default_credit_limit_minor": "20000",
+			"response_period_days": 5, "re_review_window_days": 10, "limit_warning_percent": 90}})
 	h.do(412, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag), body: m{"reason": "again"}})
 	h.do(200, call{method: "GET", path: "/admin/members", token: adminT})
 	h.do(400, call{method: "GET", path: "/admin/members?status=weird", token: adminT, skipRequest: true})
@@ -412,7 +413,7 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(204, call{method: "POST", path: "/me/password", hdr: cookie, body: m{"current_password": "correct horse battery", "new_password": "another long password"}})
 
 	// Departure last (needs no open disputes).
-	h.do(200, call{method: "POST", path: "/disputes/" + d3 + "/resolve", token: adminT, idem: true, body: m{"outcome": "dismissed", "reason": "no evidence"}})
+	h.do(200, call{method: "POST", path: "/disputes/" + d3 + "/resolve", token: adminT, idem: true, body: m{"outcome": "dismissed", "reason": "no evidence", "waive_response": true, "waive_reason": "other party did not engage"}})
 	h.do(200, call{method: "POST", path: "/me/membership/departure", token: bobT, idem: true, body: m{"reason": "moving"}})
 	h.do(409, call{method: "POST", path: "/me/membership/departure", token: adminT, idem: true})
 

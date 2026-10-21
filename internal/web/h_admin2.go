@@ -20,7 +20,8 @@ func policyValues(p domain.Policy) map[string]string {
 		"currency_name": p.CurrencyName, "default_credit_limit": domain.FormatAmount(p.DefaultCreditLimit, d),
 		"max_tx_amount": domain.FormatAmount(p.MaxTxAmount, d), "signup_grant": domain.FormatAmount(p.SignupGrant, d),
 		"proposal_expiry_days": itoa(p.ProposalExpiryDays), "dispute_window_days": itoa(p.DisputeWindowDays),
-		"limit_warning_days": itoa(p.LimitWarningDays), "join_mode": string(p.JoinMode), "departure_rule": string(p.DepartureRule),
+		"limit_warning_days": itoa(p.LimitWarningDays), "response_period_days": itoa(p.ResponsePeriodDays),
+		"re_review_window_days": itoa(p.ReReviewWindowDays), "limit_warning_percent": itoa(p.LimitWarningPercent), "join_mode": string(p.JoinMode), "departure_rule": string(p.DepartureRule),
 	}
 	if p.DefaultFlagBlocksPayer {
 		v["default_flag_blocks_payer"] = "1"
@@ -50,7 +51,8 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		*dst[f] = n
 	}
-	days := map[string]*int{"proposal_expiry_days": &pol.ProposalExpiryDays, "dispute_window_days": &pol.DisputeWindowDays, "limit_warning_days": &pol.LimitWarningDays}
+	days := map[string]*int{"proposal_expiry_days": &pol.ProposalExpiryDays, "dispute_window_days": &pol.DisputeWindowDays, "limit_warning_days": &pol.LimitWarningDays,
+		"response_period_days": &pol.ResponsePeriodDays, "re_review_window_days": &pol.ReReviewWindowDays, "limit_warning_percent": &pol.LimitWarningPercent}
 	for f, d := range days {
 		n, err := strconv.Atoi(strings.TrimSpace(v[f]))
 		if err != nil {

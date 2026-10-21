@@ -198,11 +198,11 @@ func TestLimitWarningHelper(t *testing.T) {
 		warn     bool
 	}{{-8000, 10000, true}, {-7999, 10000, false}, {-10000, 10000, true}, {500, 10000, false}, {-100, 0, false}, {0, 10000, false}}
 	for _, c := range cases {
-		if _, got := service.LimitWarning(&service.BalanceView{Balance: c.bal, CreditLimit: c.lim}); got != c.warn {
+		if _, got := service.LimitWarning(&service.BalanceView{Balance: c.bal, CreditLimit: c.lim}, 80); got != c.warn {
 			t.Errorf("balance %d limit %d: warn=%v want %v", c.bal, c.lim, got, c.warn)
 		}
 	}
-	if _, got := service.LimitWarning(nil); got {
+	if _, got := service.LimitWarning(nil, 80); got {
 		t.Error("nil view warns")
 	}
 }
