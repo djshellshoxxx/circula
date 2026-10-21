@@ -17,7 +17,7 @@ var fieldLabels = map[string]string{
 	"currency_name": "Credit unit name", "default_credit_limit": "Default credit limit", "max_tx_amount": "Largest trade",
 	"proposal_expiry_days": "Proposal expiry (days)", "dispute_window_days": "Dispute window (days)",
 	"join_mode": "Join mode", "departure_rule": "Departure rule", "signup_grant": "Sign-up grant",
-	"limit_warning_days": "Limit warning (days)", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
+	"limit_warning_days": "Limit warning (days)", "notice_days": "Notice (days)", "notice_reason": "Reason for shorter notice", "terms_version": "Terms", "body": "Terms text", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
 }
 
 func label(f string) string {

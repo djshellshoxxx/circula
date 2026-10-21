@@ -209,7 +209,8 @@ func (c *rc) nav(cur string) []navItem {
 	case domain.MemberActive:
 		items = append(items, navItem{Label: "Trades", Href: b + "/trades"},
 			navItem{Label: "Directory", Href: b + "/directory"}, navItem{Label: "Listings", Href: b + "/listings"},
-			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"})
+			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"},
+			navItem{Label: "Rules", Href: b + "/policy"})
 	case domain.MemberSuspended:
 		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"})
 	default:
@@ -285,6 +286,13 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		s.toLogin(w, r)
 	case domain.CodePasswordChangeRequired:
 		s.mustChange(w, r)
+	case domain.CodeTermsRequired: // GOV-009: show the terms, then come back
+		if slug := r.PathValue("slug"); slug != "" {
+			s.setFlash(w, r, "The network's rules and terms changed. Please read and accept them before you trade.")
+			http.Redirect(w, r, "/n/"+url.PathEscape(slug)+"/terms?next="+url.QueryEscape("/n/"+slug+"/trades"), http.StatusSeeOther)
+			return
+		}
+		s.renderError(w, r, 409)
 	case domain.CodeForbidden, domain.CodeApprovalRequired:
 		s.renderError(w, r, 403)
 	case domain.CodeNotFound:

@@ -28,13 +28,33 @@ func policyValues(p domain.Policy) map[string]string {
 	return v
 }
 
+// policyPageData is the policy form's screen data: the version in force and any scheduled change (GOV-003).
+type policyPageData struct {
+	Version int
+	Pending *ruleRow
+}
+
+func (s *server) policyData(r *http.Request, c *rc) *policyPageData {
+	d := &policyPageData{Version: c.Net.PolicyVersion}
+	if log, err := s.svc.PolicyLog(r.Context(), c.actor, c.netID()); err == nil {
+		for _, e := range log {
+			if e.Pending {
+				row := ruleRows([]service.PolicyLogEntry{e}, c.Net.Policy.Decimals)[0]
+				d.Pending = &row
+				break
+			}
+		}
+	}
+	return d
+}
+
 func (s *server) policyForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, c, "admin_policy", 200, &page{Title: "Network policy", V: policyValues(c.Net.Policy), D: c.Net.PolicyVersion})
+	s.render(w, r, c, "admin_policy", 200, &page{Title: "Network policy", V: policyValues(c.Net.Policy), D: s.policyData(r, c)})
 }
 
 func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "Network policy", V: v, D: c.Net.PolicyVersion}
+	p := &page{Title: "Network policy", V: v, D: s.policyData(r, c)}
 	pol := c.Net.Policy
 	dec := pol.Decimals
 	var fe []fieldErr
@@ -59,17 +79,31 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		*d = n
 	}
+	var notice *int
+	if t := strings.TrimSpace(v["notice_days"]); t != "" {
+		n, err := strconv.Atoi(t)
+		if err != nil {
+			fe = append(fe, fieldErr{"notice_days", "Notice (days): enter a whole number, or leave it empty."})
+		} else {
+			notice = &n
+		}
+	}
 	if len(fe) > 0 {
 		p.Summary, p.Errors = "Not saved. Fix the problems below. Nothing changed.", fe
 		s.render(w, r, c, "admin_policy", 422, p)
 		return
 	}
-	_, err := s.svc.UpdatePolicy(r.Context(), c.actor, c.netID(), service.PolicyChange{Policy: pol, Reason: strings.TrimSpace(v["reason"]), IdempotencyKey: idemKey(r)})
+	_, err := s.svc.UpdatePolicy(r.Context(), c.actor, c.netID(), service.PolicyChange{Policy: pol, Reason: strings.TrimSpace(v["reason"]),
+		NoticeDays: notice, NoticeReason: strings.TrimSpace(v["notice_reason"]), IdempotencyKey: idemKey(r)})
 	if err != nil {
 		s.formFail(w, r, c, "admin_policy", p, err)
 		return
 	}
-	s.setFlash(w, r, "Policy saved as a new version.")
+	if d := s.policyData(r, c); d.Pending != nil {
+		s.setFlash(w, r, "Change announced to members. It takes effect after its notice period; see the scheduled change below.")
+	} else {
+		s.setFlash(w, r, "Policy saved as a new version.")
+	}
 	http.Redirect(w, r, c.base()+"/admin/policy", http.StatusSeeOther)
 }
 
