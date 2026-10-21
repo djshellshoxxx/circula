@@ -72,6 +72,10 @@ func (s *server) routes() {
 	R("GET "+v1+"/admin/audit-events", s.listAudit)                   // API-062
 	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)       // API-063
 	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)         // API-063
+	R("POST "+v1+"/admin/network/suspend", s.suspendNetwork)          // GOV-023
+	R("POST "+v1+"/admin/network/resume", s.resumeNetwork)            // GOV-023
+	R("GET "+v1+"/admin/network/closure", s.closureStatus)            // FR-068
+	R("POST "+v1+"/admin/network/close", s.closeNetwork)              // FR-068, GOV-025
 	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)  // API-064
 	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))    // API-064
 	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement) // API-064 (retract)

@@ -1980,6 +1980,122 @@ paths:
         '404': {$ref: '#/components/responses/NotFound'}
         '500': {$ref: '#/components/responses/InternalError'}
 
+  /api/v1/admin/network/suspend:
+    post:
+      operationId: suspendNetwork
+      tags: [Admin]
+      summary: Suspend trading in the network (GOV-023)
+      description: |
+        Administrator only. Body {reason} (required). New proposals, acceptances, postings and joins are
+        refused with 409 invalid-state while any suspension is in force; balances, history and exports stay
+        available. Members are notified. Recorded as network.suspended.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonRequest'}
+      responses:
+        '204': {description: Suspended.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/resume:
+    post:
+      operationId: resumeNetwork
+      tags: [Admin]
+      summary: Resume trading after an administrator suspension (GOV-023)
+      description: |
+        Administrator only. Body {reason} (required). Lifts only the administrator suspension; a platform
+        suspension (GOV-024) can be lifted by the operator only and the call is refused with 409 while it
+        is the only one in force. Recorded as network.resumed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonRequest'}
+      responses:
+        '204': {description: Resumed.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/closure:
+    get:
+      operationId: getClosureStatus
+      tags: [Admin]
+      summary: What blocks a network closure (FR-068)
+      description: |
+        Administrator only. Read-only preview: blockers (proposed, disputed and posting-pending
+        transactions) stop a closure; non_zero_balances is a warning count of accounts that would close
+        with a balance.
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: The preview.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [blockers, non_zero_balances, members]
+                additionalProperties: false
+                properties:
+                  blockers: {type: array, items: {type: string}}
+                  non_zero_balances: {type: integer, minimum: 0}
+                  members: {type: integer, minimum: 0}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/close:
+    post:
+      operationId: closeNetwork
+      tags: [Admin]
+      summary: Close the network (FR-068, GOV-025)
+      description: |
+        Administrator only. Body {reason} (required). Refused with 409 blocked, listing the blockers, while
+        proposals or disputes are open. On success new proposals, acceptances, adjustments, grants and
+        memberships stop, every member is notified, and history and exports stay available. Irreversible.
+        Recorded as network.closed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonRequest'}
+      responses:
+        '204': {description: Closed.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Blocked'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
   /api/v1/admin/announcements:
     get:
       operationId: listAdminAnnouncements
@@ -2531,9 +2647,23 @@ components:
 
     Network:
       type: object
-      required: [id, name, slug, status, currency_name, decimals, join_mode, dispute_window_days, proposal_expiry_days, max_tx_amount_minor, default_credit_limit_minor, policy_version]
+      required: [id, name, slug, status, currency_name, decimals, join_mode, dispute_window_days, proposal_expiry_days, max_tx_amount_minor, default_credit_limit_minor, policy_version, suspended, suspensions]
       additionalProperties: false
       properties:
+        suspended:
+          type: boolean
+          description: True while an administrator or platform suspension is in force (GOV-023, GOV-024). Trading and posting are refused; reads and exports work.
+        suspensions:
+          type: array
+          items:
+            type: object
+            required: [kind, reason, at]
+            additionalProperties: false
+            properties:
+              kind: {type: string, enum: [admin, platform]}
+              category: {type: string, description: 'Platform suspensions only: legal_order, security_incident, platform_abuse or hosting_agreement.'}
+              reason: {type: string}
+              at: {type: string, format: date-time}
         id: {$ref: '#/components/schemas/Id'}
         name: {type: string}
         slug: {type: string}
@@ -2558,6 +2688,12 @@ components:
         roles:
           type: array
           items: {$ref: '#/components/schemas/Role'}
+    ReasonRequest:
+      type: object
+      required: [reason]
+      additionalProperties: false
+      properties:
+        reason: {type: string, minLength: 1, maxLength: 500}
     SetTimeZoneRequest:
       type: object
       required: [time_zone]
