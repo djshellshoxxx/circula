@@ -60,6 +60,7 @@ func cmdVerifyExport(_ context.Context, args []string, stdout, stderr io.Writer)
 type exportReader struct {
 	names []string
 	read  func(name string) ([]byte, error)
+	close func() // releases the zip handle; nil for a directory (Windows cannot delete an open file)
 }
 
 func openExport(path string) (*exportReader, error) {
@@ -85,7 +86,7 @@ func openExport(path string) (*exportReader, error) {
 		return nil, fmt.Errorf("not a zip file or directory: %w", err)
 	}
 	files := map[string]*zip.File{}
-	r := &exportReader{}
+	r := &exportReader{close: func() { _ = zr.Close() }}
 	for _, f := range zr.File {
 		files[f.Name] = f
 		r.names = append(r.names, f.Name)
@@ -120,6 +121,9 @@ func verifyExportPackage(path string) ([]string, *service.Manifest, error) {
 	r, err := openExport(path)
 	if err != nil {
 		return nil, nil, err
+	}
+	if r.close != nil {
+		defer r.close()
 	}
 	mb, err := r.read("manifest.json")
 	if err != nil {
