@@ -92,6 +92,25 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  fuzz:
+    name: fuzz smoke (RB-017)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: seed corpora of every fuzz target (also part of go test ./...)
+        run: go test -count=1 -run '^Fuzz' ./internal/...
+      - name: fuzz amount parser for 10s
+        run: go test -run '^$' -fuzz '^FuzzParseAmount$' -fuzztime 10s ./internal/domain
+      - name: fuzz strict JSON decoder for 10s
+        run: go test -run '^$' -fuzz '^FuzzStrictUnmarshal$' -fuzztime 10s ./internal/api
+
   contract:
     name: API contract and load smoke
     runs-on: ubuntu-24.04
