@@ -227,7 +227,7 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.DeleteThrottle(login); err != nil {
 			return err
 		}
-		if err := s.notify(tx, pid, domain.NoticePasswordChanged, "recovery code used"); err != nil { // SA2-03
+		if err := s.secNotice(tx, pid, domain.NoticePasswordChanged, "recovery code used"); err != nil { // SA2-03
 			return err
 		}
 		return s.auditPlatform(tx, domain.Actor{PersonID: pid}, auditEntry{Action: domain.ActPersonRecovered,
@@ -286,7 +286,7 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 			return err
 		}
 	}
-	return s.notify(tx, personID, domain.NoticePasswordChanged, "password reset by an administrator or operator") // SA2-03
+	return s.secNotice(tx, personID, domain.NoticePasswordChanged, "password reset by an administrator or operator") // SA2-03
 }
 
 // AdminResetPassword lets an active administrator of netID reset the password

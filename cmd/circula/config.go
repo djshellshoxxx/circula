@@ -49,6 +49,7 @@ var settingDefs = []settingDef{
 	{key: "migrate-mode", def: "explicit", help: "explicit: refuse to serve with pending migrations; auto: back up and migrate at start-up"},
 	{key: "session-idle", def: "720h", help: "idle session timeout (DEC-005)"},
 	{key: "session-max", def: "2160h", help: "absolute session lifetime (DEC-005)"},
+	{key: "shutdown-grace", def: "10s", help: "time to let in-flight requests finish on shutdown (ARC-016)"},
 	{key: "idempotency-ttl", def: "168h", help: "retention of idempotency records"},
 	{key: "require-mfa-admins", def: "false", help: "network administrators must enrol a second factor before any administrator-only action (SEC-007, DEC-007)"},
 	{key: "min-password-length", def: "12", help: "minimum password length (SEC-002); not below 12"},
@@ -56,7 +57,9 @@ var settingDefs = []settingDef{
 	{key: "request-timeout", def: "30s", help: "per-request deadline for API and UI routes"},
 	{key: "log-level", def: "info", help: "debug, info, warn or error"},
 	{key: "log-format", def: "json", help: "json or text"},
+	{key: "log-retention", def: "2160h", help: "how long stored log files are kept by `circula prune-logs` (SEC-021, DEC-019)"},
 	{key: "cookie-secure", def: "true", help: "mark session cookies Secure and use the __Host- cookie name; keep true behind a TLS proxy (SEC-022)"},
+	{key: "maintenance", def: "false", help: "start in maintenance mode: web and API answer 503 with Retry-After, /healthz stays up (OPS-024); toggle live with `circula maintenance on|off`"},
 	{key: "metrics-allow", def: "127.0.0.1/32,::1/128", help: "comma-separated CIDRs allowed to read /metrics; none to deny all"},
 	{key: "trusted-proxies", def: "none", help: "comma-separated CIDRs of reverse proxies whose X-Forwarded-For and X-Forwarded-Proto are believed; none ignores those headers"},
 	{key: "allow-insecure-http", def: "false", help: "permit a plain-http public-base-url on a non-loopback address (SEC-022); never for production"},
@@ -66,6 +69,11 @@ var settingDefs = []settingDef{
 	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
 	{key: "backup-require-encryption", def: "false", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019)"},
 	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
+	{key: "audit-anchor-key-file", help: "file holding the key that HMACs audit anchors (RB-010); keep a copy off the database host; or env " + envPrefix + "AUDIT_ANCHOR_KEY"},
+	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
+	{key: "tls-cert-file", help: "PEM certificate chain: serve HTTPS directly (RB-013); requires tls-key-file; reloaded on SIGHUP"},
+	{key: "tls-key-file", help: "PEM private key for tls-cert-file; must not be readable by group or others"},
+	{key: "audit-mirror-file", help: "append-only JSONL file receiving every audit event after commit (RB-012); best effort, point it at a path the service cannot rewrite"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 
@@ -78,6 +86,7 @@ var secretDefs = []struct{ name, fileKey string }{
 	{"backup-key", "backup-key-file"},
 	{"mfa-secret", "mfa-secret-file"},
 	{"backup-encryption-key", "backup-encryption-key-file"},
+	{"audit-anchor-key", "audit-anchor-key-file"},
 }
 
 // minSecretLen is the shortest accepted secret.
@@ -95,6 +104,8 @@ type Config struct {
 	MigrateMode         string
 	SessionIdle         time.Duration
 	SessionMax          time.Duration
+	ShutdownGrace       time.Duration
+	LogRetention        time.Duration
 	IdempotencyTTL      time.Duration
 	MinPasswordLength   int
 	RequireMFAAdmins    bool
@@ -103,6 +114,7 @@ type Config struct {
 	LogLevel            slog.Level
 	LogFormat           string
 	CookieSecure        bool
+	Maintenance         bool // start in maintenance mode (OPS-024)
 	MetricsAllow        []netip.Prefix
 	TrustedProxies      []netip.Prefix
 	AllowInsecureHTTP   bool
@@ -113,6 +125,11 @@ type Config struct {
 	MFASecret    []byte
 	// BackupEncryptionKey is the secret that encrypts backups at rest (OPS-019).
 	BackupEncryptionKey     []byte
+	AuditAnchorKey          []byte
+	AuditAnchorWithBackups  bool
+	TLSCertFile             string
+	TLSKeyFile              string
+	AuditMirrorFile         string
 	BackupRequireEncryption bool
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
@@ -307,6 +324,7 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 
 	cfg.SessionIdle = parseDuration(get("session-idle"), "session-idle", fail, time.Minute, 366*24*time.Hour)
 	cfg.SessionMax = parseDuration(get("session-max"), "session-max", fail, time.Minute, 366*24*time.Hour)
+	cfg.ShutdownGrace = parseDuration(get("shutdown-grace"), "shutdown-grace", fail, time.Second, 10*time.Minute)
 	if cfg.SessionMax < cfg.SessionIdle {
 		fail("session-max", "must not be shorter than session-idle")
 	}
@@ -327,6 +345,7 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	default:
 		fail("log-level", "must be debug, info, warn or error")
 	}
+	cfg.LogRetention = parseDuration(get("log-retention"), "log-retention", fail, 24*time.Hour, 3660*24*time.Hour)
 	cfg.LogFormat = get("log-format")
 	if cfg.LogFormat != "json" && cfg.LogFormat != "text" {
 		fail("log-format", "must be json or text")
@@ -344,6 +363,12 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		cfg.CookieSecure = b
 	}
 
+	if b, err := strconv.ParseBool(get("maintenance")); err != nil {
+		fail("maintenance", "must be true or false")
+	} else {
+		cfg.Maintenance = b
+	}
+
 	cfg.MetricsAllow = parsePrefixes(get("metrics-allow"), fail, "metrics-allow")
 	cfg.TrustedProxies = parsePrefixes(get("trusted-proxies"), fail, "trusted-proxies")
 	if b, err := strconv.ParseBool(get("allow-insecure-http")); err != nil {
@@ -356,6 +381,15 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 			fail("public-base-url", "%s", msg)
 		}
 	}
+
+	if b, err := strconv.ParseBool(get("audit-anchor-with-backups")); err != nil {
+		fail("audit-anchor-with-backups", "must be true or false")
+	} else {
+		cfg.AuditAnchorWithBackups = b
+	}
+	cfg.TLSCertFile = get("tls-cert-file")
+	cfg.TLSKeyFile = get("tls-key-file")
+	cfg.AuditMirrorFile = get("audit-mirror-file")
 
 	if b, err := strconv.ParseBool(get("backup-require-encryption")); err != nil {
 		fail("backup-require-encryption", "must be true or false")
@@ -441,14 +475,14 @@ func parsePrefixes(s string, fail func(string, string, ...any), key string) []ne
 // plain-http port is reachable by others.
 func checkTransport(cfg *Config) string {
 	u, err := url.Parse(cfg.PublicBaseURL)
-	if err != nil || u.Scheme != "http" || cfg.AllowInsecureHTTP {
+	if err != nil || u.Scheme != "http" || cfg.AllowInsecureHTTP || cfg.TLSCertFile != "" {
 		return ""
 	}
 	if !isLoopback(u.Host) && !isLoopbackHost(u.Hostname()) {
-		return "http:// is refused for " + u.Host + ": use https:// behind a TLS-terminating proxy, or set allow-insecure-http=true knowing that passwords and sessions then cross the network unencrypted (SEC-022)"
+		return "http:// is refused for " + u.Host + ": use https:// behind a TLS-terminating proxy (or set tls-cert-file and tls-key-file), or set allow-insecure-http=true knowing that passwords and sessions then cross the network unencrypted (SEC-022)"
 	}
 	if !isLoopback(cfg.Listen) {
-		return "http:// with listen address " + cfg.Listen + " exposes passwords and sessions on the network: use https:// behind a TLS-terminating proxy, listen on loopback, or set allow-insecure-http=true (SEC-022)"
+		return "http:// with listen address " + cfg.Listen + " exposes passwords and sessions on the network: use https:// behind a TLS-terminating proxy, set tls-cert-file and tls-key-file, listen on loopback, or set allow-insecure-http=true (SEC-022)"
 	}
 	return ""
 }
@@ -499,6 +533,8 @@ func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
 			cfg.MFASecret = []byte(val)
 		case "backup-encryption-key":
 			cfg.BackupEncryptionKey = []byte(val)
+		case "audit-anchor-key":
+			cfg.AuditAnchorKey = []byte(val)
 		}
 	}
 	if len(cfg.BackupEncryptionKey) > 0 && bytes.Equal(cfg.BackupEncryptionKey, cfg.BackupKey) {
@@ -560,4 +596,5 @@ func writeSecretStatus(w io.Writer, cfg *Config) {
 	fmt.Fprintf(w, "backup-key = %s\n", state(len(cfg.BackupKey) > 0))
 	fmt.Fprintf(w, "mfa-secret = %s\n", state(len(cfg.MFASecret) > 0))
 	fmt.Fprintf(w, "backup-encryption-key = %s\n", state(len(cfg.BackupEncryptionKey) > 0))
+	fmt.Fprintf(w, "audit-anchor-key = %s\n", state(len(cfg.AuditAnchorKey) > 0))
 }

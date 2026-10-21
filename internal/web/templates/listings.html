@@ -17,7 +17,7 @@
   <p><strong>{{if eq (printf "%s" .Type) "offer"}}Offer{{else}}Request{{end}}:</strong> {{.Title}} <span class="tag">{{.Status}}</span></p>
   <p>{{.Description}}</p>
   <p>By {{.Owner}}{{if .Price}} &middot; price {{.Price}} {{$.Unit}}s{{end}}</p>
-  <p>{{if .Own}}<a href="/n/{{$.Slug}}/listings/{{.ID}}/edit">Edit<span class="sr"> {{.Title}}</span></a>{{else}}<a href="/n/{{$.Slug}}/trades/new?to={{.MemberID}}&amp;listing={{.ID}}">Propose a trade<span class="sr"> about {{.Title}}</span></a>{{end}}</p>
+  <p>{{if .Own}}<a href="/n/{{$.Slug}}/listings/{{.ID}}/edit">Edit<span class="sr"> {{.Title}}</span></a>{{else}}<a href="/n/{{$.Slug}}/trades/new?to={{.MemberID}}&amp;listing={{.ID}}">Propose a trade<span class="sr"> about {{.Title}}</span></a> &middot; <a href="/n/{{$.Slug}}/report?type=listing&amp;id={{.ID}}">Report<span class="sr"> {{.Title}}</span></a>{{end}}</p>
 </li>{{end}}</ul>
 {{else}}<p>No listings to show. Offers and requests that members publish appear here. <a href="/n/{{$.Slug}}/listings/new">Publish the first one.</a></p>{{end}}
 {{template "pager" dict "Next" .Next "Href" (printf "/n/%s/listings?mine=%t&after=" $.Slug .Mine)}}

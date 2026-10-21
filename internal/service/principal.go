@@ -32,10 +32,28 @@ func (p *principal) requireLasting() error {
 // open resolves actor + network. Anyone who is not a member of the network,
 // or whose token is scoped to another network, gets the same not-found as for
 // a non-existent network (API-017, FR-006).
+//
+// A write-scope open on a frozen network fails with network-frozen (CMD-07),
+// after membership is established so outsiders learn nothing.
 func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope domain.Scope) (*principal, error) {
 	if actor.MustChangePassword && scope == domain.ScopeWrite {
 		return nil, domain.PasswordChangeRequired() // SEC-008
 	}
+	p, err := s.openAny(tx, actor, netID, scope)
+	if err != nil {
+		return nil, err
+	}
+	if scope == domain.ScopeWrite {
+		if err := s.checkNotFrozen(netID); err != nil {
+			return nil, err
+		}
+	}
+	return p, nil
+}
+
+// openAny is open without the frozen-network check; only the consistency-run
+// record uses it, so a frozen network's verification stays auditable.
+func (s *Service) openAny(tx store.Tx, actor domain.Actor, netID string, scope domain.Scope) (*principal, error) {
 	if !actor.Can(scope) {
 		return nil, domain.Forbidden("token lacks %s scope", scope)
 	}
@@ -45,6 +63,9 @@ func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope doma
 	net, err := tx.GetNetwork(netID)
 	if err != nil {
 		return nil, domain.NotFound("network")
+	}
+	if err := s.lifecycle(tx, net); err != nil {
+		return nil, err
 	}
 	p := &principal{actor: actor, net: net}
 	if actor.System {
@@ -91,8 +112,20 @@ func (p *principal) requireActive() error {
 
 // requireNetworkActive: ledger-affecting operations need an active network (FR-004, FR-068).
 func (p *principal) requireNetworkActive() error {
-	if p.net.Status != domain.NetworkActive {
-		return domain.InvalidState("network is %s", p.net.Status)
+	return networkOpenErr(p.net)
+}
+
+// networkOpenErr refuses trading and membership changes unless the network is
+// active and not suspended (GOV-023, GOV-024).
+func networkOpenErr(n *domain.Network) error {
+	if n.Status != domain.NetworkActive {
+		return domain.InvalidState("network is %s", n.Status)
+	}
+	if n.AdminRequired {
+		return domain.InvalidState("network is read-only: it has no active administrator (administrator required); balances, history and exports stay available")
+	}
+	if n.Suspended() {
+		return domain.InvalidState("network is suspended: trading and posting are paused; balances, history and exports stay available")
 	}
 	return nil
 }

@@ -17,7 +17,7 @@ var fieldLabels = map[string]string{
 	"currency_name": "Credit unit name", "default_credit_limit": "Default credit limit", "max_tx_amount": "Largest trade",
 	"proposal_expiry_days": "Proposal expiry (days)", "dispute_window_days": "Dispute window (days)",
 	"join_mode": "Join mode", "departure_rule": "Departure rule", "signup_grant": "Sign-up grant",
-	"limit_warning_days": "Limit warning (days)", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
+	"limit_warning_days": "Limit warning (days)", "response_period_days": "Dispute response period", "re_review_window_days": "Re-review window", "limit_warning_percent": "Limit warning percent", "inactivity_days": "Inactivity flag", "waive_reason": "Reason for not waiting", "notice_days": "Notice (days)", "notice_reason": "Reason for shorter notice", "terms_version": "Terms", "body": "Terms text", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
 }
 
 func label(f string) string {
@@ -56,6 +56,9 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
 	case domain.CodeKeyRequired:
 		return "Not sent. The form is missing its safety key. Reload the page and try again. Nothing changed.", nil, true
 	case domain.CodeInvalidState:
+		if strings.Contains(de.Msg, "network is suspended") {
+			return "Not done. Trading in this network is paused (suspended). You can still read balances and history and download your data. Nothing changed.", nil, true
+		}
 		return "Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed.", nil, true
 	case domain.CodeConflict:
 		return "Not saved. That value is not available. Choose a different one. Nothing changed.", nil, true

@@ -8,17 +8,20 @@ import (
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
-// notImpl answers 501 for features the service layer does not provide.
-func (s *server) notImpl(what string) handlerFunc {
-	return func(c *reqCtx) error { return notImplemented(what) }
-}
-
 func (s *server) getNetwork(c *reqCtx) error { // API-040
 	n, err := s.svc.GetNetwork(c.r.Context(), c.actor, c.netID)
 	if err != nil {
 		return err
 	}
-	return ok(c, 200, toNetwork(n))
+	d := toNetwork(n)
+	fs, err := s.svc.NetworkFreezeStatus(c.r.Context(), c.actor, c.netID)
+	if err != nil {
+		return err
+	}
+	if fs.ReadOnly {
+		d.ReadOnly, d.FrozenSince, d.FrozenReason = true, &fs.Since, fs.Reason
+	}
+	return ok(c, 200, d)
 }
 
 func (s *server) getMe(c *reqCtx) error { // API-041
@@ -32,7 +35,11 @@ func (s *server) getMe(c *reqCtx) error { // API-041
 			out = append(out, toMembership(m))
 		}
 	}
-	return ok(c, 200, map[string]any{"person_id": c.actor.PersonID, "memberships": out})
+	zone, err := s.svc.GetTimeZone(c.r.Context(), c.actor)
+	if err != nil {
+		return err
+	}
+	return ok(c, 200, map[string]any{"person_id": c.actor.PersonID, "memberships": out, "time_zone": zonePtr(zone)})
 }
 
 func (s *server) listMembers(c *reqCtx) error { // API-042

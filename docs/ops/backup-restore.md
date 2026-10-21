@@ -157,7 +157,26 @@ year for self-hosted deployments. Use a separate host or a separate directory:
 3. Record the date, backup file name, duration, and the ledger result in the drill log.
 4. Start `circula serve` against the drilled copy with a different `listen` port. Check `/readyz`.
 
+`scripts/restore-drill.sh <backup> [drill-log]` runs steps 2 and 3 in a scratch directory: it restores, runs
+`verify-ledger` on the copy, times both and appends one JSON line (date, backup, restore result, ledger result,
+seconds) to the drill log (default `restore-drills.jsonl`). Set `CIRCULA_BIN` to the binary under test. Keep the log
+with the release evidence. Checklist per drill:
+
+- [ ] backup chosen has `ledger_verification.status` ok and, if configured, a valid signature
+- [ ] script exit status 0; log line has `"restore":"ok"` and `"ledger":"ok"`
+- [ ] restore time is inside the RTO recorded for this deployment
+- [ ] `database.restored` event present in the restored copy's audit log
+- [ ] `circula serve` on the copy answers `/readyz`
+- [ ] log line copied off-host with the backup
+
 A failed drill blocks the release until the cause is recorded and fixed.
+
+## Audit anchors beside backups (RB-010)
+
+Each scheduled backup also writes `<backup>.anchor.json` with every network's audit chain head (see
+[configuration.md](configuration.md#audit-anchors-rb-010)). The file is not encrypted and holds no personal data, only hashes,
+sequence numbers and network ids and slugs. After a restore, run `circula audit-anchor verify` with the newest anchor you
+kept off-host.
 
 ## Off-host copies
 

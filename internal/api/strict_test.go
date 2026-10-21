@@ -71,13 +71,6 @@ func TestPatchRequiresMergePatchType(t *testing.T) {
 	wantProblem(t, rec, 415, "unsupported-media-type")
 }
 
-func TestNotImplementedFeatures(t *testing.T) {
-	w := newWorld(t)
-	wantProblem(t, w.get(w.adminT, "/admin/announcements"), 501, "not-implemented")
-	wantProblem(t, w.post(w.adminT, "/admin/announcements", m{"title": "x"}, w.key()), 501, "not-implemented")
-	wantProblem(t, w.get(w.aliceT, "/network/announcements"), 501, "not-implemented")
-}
-
 func TestRateLimit(t *testing.T) {
 	w := newWorldOpts(t, optsRate(3))
 	for i := 0; i < 3; i++ {

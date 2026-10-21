@@ -33,7 +33,7 @@ const (
 	verifyInterval      = time.Hour
 	purgeInterval       = time.Hour
 	backupRetryInterval = 15 * time.Minute
-	shutdownGracePeriod = 30 * time.Second
+	shutdownGracePeriod = 10 * time.Second // ARC-016 default; shutdown-grace overrides
 )
 
 // newService builds the service layer with the configured session, password
@@ -109,7 +109,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
-	if err := state.checkSchemaNotNewer(); err != nil {
+	if err := state.CheckNotNewer(); err != nil {
 		return err
 	}
 	if state.Pending() > 0 && state.Exists {
@@ -134,17 +134,26 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		return err
 	}
 	defer func() { _ = st.Close() }()
+	if cfg.AuditMirrorFile != "" {
+		mir, err := openAuditMirror(cfg.AuditMirrorFile, logger)
+		if err != nil {
+			return fmt.Errorf("audit-mirror-file: %w", err)
+		}
+		defer func() { _ = mir.close() }()
+		st.SetAuditSink(mir.write)
+	}
 	if state.Pending() > 0 {
 		m.migrationRan("applied")
 		logger.Info("migrations applied", "from", state.Applied, "to", state.Known)
 	}
-	if err := checkPragmas(ctx, st.DB()); err != nil {
+	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
 		return err
 	}
 	svc, err := newService(st, cfg)
 	if err != nil {
 		return err
 	}
+	svc.SetObserver(m)
 
 	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "startup-verify", "")
 	if err != nil {
@@ -152,17 +161,32 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	}
 	sum := summarise(checks)
 	m.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
-	if sum.Failing > 0 {
-		logger.Error("ledger verification failed at start-up; serving refused", "failing_networks", sum.Failing)
-		return fmt.Errorf("ledger verification failed for %d network(s); serving refused. Run `circula verify-ledger` "+
-			"and restore a verified backup if the fault is confirmed (OPS-016, OPS-020)", sum.Failing)
+	// A failing network is frozen (read-only) and every other network serves
+	// (CMD-07, OPS-033). The operator is told loudly; nothing is refused.
+	applyFreeze(svc, checks, logger)
+
+	useTLS, err := tlsEnabled(cfg)
+	if err != nil {
+		return err
+	}
+	var certs *certReloader
+	if useTLS {
+		if certs, err = newCertReloader(cfg.TLSCertFile, cfg.TLSKeyFile); err != nil {
+			return err
+		}
+		defer certs.reloadOnSIGHUP(logger)()
 	}
 
 	ln, err := net.Listen("tcp", cfg.Listen)
 	if err != nil {
 		return fmt.Errorf("listen on %s: %w", cfg.Listen, err)
 	}
-	ops := &opsServer{cfg: cfg, db: st.DB(), logger: logger, metrics: m}
+	maint := newMaintenance(cfg)
+	if on, _ := maint.state(); on {
+		logger.Warn("maintenance mode is on: web and API answer 503 until it is turned off", "file", maintenancePath(cfg.Database))
+	}
+	ops := &opsServer{cfg: cfg, db: st.DB(), logger: logger, metrics: m, maint: maint,
+		frozen: func() int { return len(svc.FrozenNetworks()) }}
 	apiH, webH, err := newHandlers(svc, cfg, logger)
 	if err != nil {
 		return err
@@ -175,10 +199,15 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		MaxHeaderBytes:    1 << 16,
 		ErrorLog:          slog.NewLogLogger(logger.Handler(), slog.LevelWarn),
 	}
+	if useTLS {
+		srv.TLSConfig = certs.tlsConfig()
+	}
 	logger.Info("circula serving", "version", version, "listen", cfg.Listen,
 		"public_base_url", cfg.PublicBaseURL, "schema_version", store.SchemaVersion())
-	if !isLoopback(cfg.Listen) {
-		logger.Warn("listening on a non-loopback address; put TLS termination and /metrics filtering in front of it")
+	if useTLS {
+		logger.Info("serving TLS directly", "min_version", "1.2", "cert", cfg.TLSCertFile)
+	} else if !isLoopback(cfg.Listen) {
+		logger.Warn("listening on a non-loopback address without tls-cert-file; put TLS termination and /metrics filtering in front of it")
 		if cfg.MetricsToken == "" {
 			logger.Warn("no metrics-token configured; /metrics relies on the source address check only (SA-15)")
 		}
@@ -203,7 +232,13 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 
 	ops.ready.Store(true)
 	serveErr := make(chan error, 1)
-	go func() { serveErr <- srv.Serve(ln) }()
+	go func() {
+		if useTLS {
+			serveErr <- srv.ServeTLS(ln, "", "")
+			return
+		}
+		serveErr <- srv.Serve(ln)
+	}()
 
 	var runErr error
 	select {
@@ -215,7 +250,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		}
 	}
 	ops.ready.Store(false)
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownGracePeriod)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), graceFor(cfg))
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil && runErr == nil {
 		runErr = fmt.Errorf("shutdown: %w", err)
@@ -254,17 +289,17 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 	return apiH, webH, nil
 }
 
-// preMigrationBackup takes a verified-by-construction backup before any
-// migration of an existing database (OPS-018, OPS-023). Migration is refused
-// if the backup fails.
+// preMigrationBackup takes and verifies a backup before any migration of an
+// existing database (OPS-018, OPS-023). Migration is refused if the integrity
+// check, the backup or its verification fails.
 func preMigrationBackup(ctx context.Context, cfg *Config, logger *slog.Logger, m *metrics, state schemaState) error {
 	if state.Applied == 0 {
 		return nil // nothing recorded yet; there is no data to protect
 	}
 	logger.Info("taking pre-migration backup", "from", state.Applied, "to", state.Known)
-	mf, path, err := backupTo(ctx, cfg, cfg.BackupDir, "pre-migration", nil)
+	mf, path, err := preMigrationSafeguard(ctx, cfg, state)
 	if err != nil {
-		return fmt.Errorf("pre-migration backup failed; migrations not applied: %w", err)
+		return err
 	}
 	m.backupSucceeded(mf.CreatedAt)
 	logger.Info("pre-migration backup written", "file", filepath.Base(path))
@@ -297,30 +332,6 @@ func backupTo(ctx context.Context, cfg *Config, dir, reason string, db *sql.DB) 
 	return mf, dest, err
 }
 
-// checkPragmas confirms the connection settings the design depends on (OPS-011).
-func checkPragmas(ctx context.Context, db *sql.DB) error {
-	conn, err := db.Conn(ctx)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = conn.Close() }()
-	var mode string
-	if err := conn.QueryRowContext(ctx, `PRAGMA journal_mode`).Scan(&mode); err != nil {
-		return err
-	}
-	if mode != "wal" {
-		return fmt.Errorf("journal_mode is %q; expected wal (OPS-011)", mode)
-	}
-	var fk int
-	if err := conn.QueryRowContext(ctx, `PRAGMA foreign_keys`).Scan(&fk); err != nil {
-		return err
-	}
-	if fk != 1 {
-		return errors.New("foreign key enforcement is off; expected on (OPS-011)")
-	}
-	return nil
-}
-
 // jobRunner runs the scheduled jobs: proposal expiry (OPS-027, OPS-028),
 // periodic ledger verification (OPS-016) and backups (OPS-018).
 type jobRunner struct {
@@ -331,12 +342,32 @@ type jobRunner struct {
 	metrics *metrics
 }
 
+// periodicJob is one entry of the scheduled job table.
+type periodicJob struct {
+	name     string
+	interval time.Duration
+	fn       func(context.Context) error
+}
+
+// periodicJobs is the table of interval jobs. To add a job, append a row
+// (name is the metrics label; fn runs at start and then every interval).
+// Backups have their own schedule and are started separately in run.
+func (j *jobRunner) periodicJobs() []periodicJob {
+	return []periodicJob{
+		{"expiry", expiryInterval, j.expire},
+		{"verify", verifyInterval, j.verify},
+		{"purge", purgeInterval, j.purgeAndWarn},
+		{"closures", purgeInterval, j.closures},
+	}
+}
+
 func (j *jobRunner) run(ctx context.Context) {
 	var wg sync.WaitGroup
-	wg.Add(4)
-	go func() { defer wg.Done(); j.every(ctx, "expiry", expiryInterval, j.expire) }()
-	go func() { defer wg.Done(); j.every(ctx, "verify", verifyInterval, j.verify) }()
-	go func() { defer wg.Done(); j.every(ctx, "purge", purgeInterval, j.purge) }()
+	for _, pj := range j.periodicJobs() {
+		wg.Add(1)
+		go func() { defer wg.Done(); j.every(ctx, pj.name, pj.interval, pj.fn) }()
+	}
+	wg.Add(1)
 	go func() { defer wg.Done(); j.backups(ctx) }()
 	wg.Wait()
 }
@@ -398,16 +429,31 @@ func (j *jobRunner) purge(ctx context.Context) error {
 }
 
 func (j *jobRunner) verify(ctx context.Context) error {
-	checks, err := verifyAllNetworks(ctx, j.svc, j.st.DB(), "job-verify", "")
+	checks, err := verifyNetworks(ctx, j.svc, j.st.DB(), "job-verify", "", true)
 	if err != nil {
 		return err
 	}
 	sum := summarise(checks)
 	j.metrics.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
-	if sum.Failing > 0 {
-		j.logger.Error("ledger verification failed", "failing_networks", sum.Failing)
-	}
+	applyFreeze(j.svc, checks, j.logger)
 	return nil
+}
+
+// applyFreeze freezes every network that failed verification and thaws the
+// ones that passed (a repaired or restored network recovers on the next run).
+// Reasons are the finding counts only; findings stay in verify-ledger output.
+func applyFreeze(svc *service.Service, checks []networkCheck, logger *slog.Logger) {
+	for _, c := range checks {
+		switch {
+		case !c.OK && !svc.IsFrozen(c.ID):
+			svc.FreezeNetwork(c.ID, fmt.Sprintf("%d ledger finding(s)", len(c.Findings)))
+			logger.Error("ledger verification failed; network frozen (writes refused, other networks serve)",
+				"network", c.Slug, "findings", len(c.Findings))
+		case c.OK && svc.IsFrozen(c.ID):
+			svc.UnfreezeNetwork(c.ID)
+			logger.Warn("ledger verification passes again; network unfrozen", "network", c.Slug)
+		}
+	}
 }
 
 // backups takes a backup when the newest one is older than backup-interval,
@@ -453,6 +499,15 @@ func (j *jobRunner) untilNextBackup() time.Duration {
 	return 0
 }
 
+// writeBackupAnchor writes <backup>.anchor.json holding the chain heads (RB-010).
+func (j *jobRunner) writeBackupAnchor(ctx context.Context, backupPath string) error {
+	a, err := buildAnchor(ctx, j.st.DB(), j.cfg.AuditAnchorKey, time.Now())
+	if err != nil {
+		return err
+	}
+	return writeAnchorFile(backupPath+".anchor.json", a)
+}
+
 func (j *jobRunner) backupNow(ctx context.Context) error {
 	mf, path, err := backupTo(ctx, j.cfg, j.cfg.BackupDir, "scheduled", nil)
 	if err != nil {
@@ -463,6 +518,11 @@ func (j *jobRunner) backupNow(ctx context.Context) error {
 	if mf.Ledger.Status == "failed" {
 		j.metrics.ledgerResult(false, mf.Ledger.Failing, time.Now().UTC())
 		j.logger.Error("scheduled backup recorded a ledger verification failure", "file", filepath.Base(path))
+	}
+	if j.cfg.AuditAnchorWithBackups {
+		if err := j.writeBackupAnchor(ctx, path); err != nil {
+			j.logger.Error("audit anchor beside backup failed", "file", filepath.Base(path), "error", err)
+		}
 	}
 	j.logger.Info("backup written", "file", filepath.Base(path), "bytes", mf.Bytes, "ledger", mf.Ledger.Status)
 	removed, err := pruneBackups(j.cfg.BackupDir, j.cfg.BackupRetainDaily, j.cfg.BackupRetainMonthly)

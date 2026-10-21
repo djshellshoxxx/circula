@@ -1,0 +1,39 @@
+name: scorecard
+
+# OpenSSF Scorecard supply-chain check (https://scorecard.dev). Results go to the Security tab as SARIF and,
+# on the default branch, to the public Scorecard API (publish_results). Needs a public repository for
+# publish_results; set it to false for a private one.
+on:
+  branch_protection_rule:
+  schedule:
+    - cron: "23 5 * * 3"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  analysis:
+    name: scorecard analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      security-events: write # upload SARIF
+      id-token: write # publish results to the Scorecard API (OIDC)
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: run Scorecard
+        uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a # v2.4.3
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+      - name: upload SARIF to code scanning
+        uses: github/codeql-action/upload-sarif@42213152a85ae7569bdb6bec7bcd74cd691bfe41 # v3.30.9
+        with:
+          sarif_file: results.sarif

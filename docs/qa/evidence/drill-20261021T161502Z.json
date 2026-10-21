@@ -1,0 +1,11 @@
+{
+  "kind": "restore-drill",
+  "date_utc": "20261021T161502Z",
+  "commit": "bfa16c2bea98",
+  "source": "fresh migrated empty database (no ledger data)",
+  "backup": "circula-20261021T161501Z.db",
+  "restore_seconds": 0.331,
+  "ledger_verification": "ok",
+  "outcome": "pass",
+  "detail": ""
+}

@@ -34,7 +34,28 @@ func (t *txImpl) RedactDisputeStatements(netID, memberID string) (int64, error) 
 	if err != nil {
 		return 0, err
 	}
-	return res.RowsAffected()
+	n, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	// Free text the member wrote in later features (migration 0008): the
+	// response to a dispute, a re-review reason and abuse-report notes.
+	for _, q := range []string{
+		`UPDATE dispute_responses SET body = '' WHERE network_id = ? AND responder_id = ? AND body <> ''`,
+		`UPDATE dispute_rereviews SET reason = '' WHERE network_id = ? AND requested_by = ? AND reason <> ''`,
+		`UPDATE reports SET note = '' WHERE network_id = ? AND reporter_id = ? AND note <> ''`,
+	} {
+		r, err := t.exec(q, netID, memberID)
+		if err != nil {
+			return 0, err
+		}
+		c, err := r.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
+		n += c
+	}
+	return n, nil
 }
 
 func (t *txImpl) AnonymisePerson(personID, login, unusableHash string) error {
@@ -67,4 +88,15 @@ func (t *txImpl) GetErasure(netID, memberID string) (*domain.ErasureRecord, erro
 	}
 	e.ErasedAt, e.PersonErased = fromMS(at), pe == 1
 	return &e, nil
+}
+
+// RedactNotificationNames blanks inbox bodies that name the member (fixed text
+// plus the display name, see migration 0008) and the member's own inbox.
+func (t *txImpl) RedactNotificationNames(netID, memberID, name string) (int64, error) {
+	res, err := t.exec(`UPDATE notifications SET body = '' WHERE network_id = ? AND body <> ''
+		AND (member_id = ? OR (? <> '' AND instr(body, ?) > 0))`, netID, memberID, name, name)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
 }

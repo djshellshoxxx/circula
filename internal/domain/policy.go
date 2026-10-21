@@ -39,6 +39,20 @@ type Policy struct {
 	// DualControlThreshold: administrator adjustments above this amount need a
 	// second administrator (SEC-011). 0 = disabled (the default).
 	DualControlThreshold int64 `json:"dual_control_threshold,omitempty"`
+	// ResponsePeriodDays: days the other party has to answer a dispute before a
+	// decision may be recorded without a response (FR-076, OQ-FR-2; DEC-012
+	// recommends 7). 0 = no waiting period.
+	ResponsePeriodDays int `json:"response_period_days"`
+	// ReReviewWindowDays: days after a decision in which one re-review may be
+	// requested (FR-078).
+	ReReviewWindowDays int `json:"re_review_window_days"`
+	// LimitWarningPercent: share of the credit limit in use at which a member is
+	// warned (UX-012, OQ-UX-02).
+	LimitWarningPercent int `json:"limit_warning_percent"`
+	// InactivityDays: a member with no sign-in and no trade for this many days is
+	// flagged for the administrators and notified (GOV-012). 0 = no rule (the
+	// recommended default). The product never removes a member for inactivity.
+	InactivityDays int `json:"inactivity_days"`
 }
 
 // Platform bounds for open questions OQ-DOM-5/6.
@@ -46,6 +60,10 @@ const (
 	MaxProposalExpiryDays = 365
 	MaxDisputeWindowDays  = 3650
 	MaxLimitWarningDays   = 3650
+	MaxResponsePeriodDays = 90
+	MaxReReviewWindowDays = 365
+	MinInactivityDays     = 30
+	MaxInactivityDays     = 3650
 	// MaxPolicyAmount keeps minor-unit magnitudes far from int64 overflow.
 	MaxPolicyAmount int64 = 1 << 50
 )
@@ -59,6 +77,9 @@ func DefaultPolicy() Policy {
 		MaxTxAmount:         100_000_000,
 		ProposalExpiryDays:  7,
 		DisputeWindowDays:   30,
+		ResponsePeriodDays:  7,
+		ReReviewWindowDays:  14,
+		LimitWarningPercent: 80,
 		JoinMode:            JoinInvite,
 		DepartureRule:       DepartRetain,
 		DirectoryVisibility: "members-only",
@@ -106,6 +127,18 @@ func (p Policy) Validate() error {
 	}
 	if p.DualControlThreshold < 0 || p.DualControlThreshold > MaxPolicyAmount {
 		add("dual_control_threshold", "must be 0 (disabled) or a positive amount within platform maximum")
+	}
+	if p.ResponsePeriodDays < 0 || p.ResponsePeriodDays > MaxResponsePeriodDays {
+		add("response_period_days", fmt.Sprintf("must be 0 (no waiting period) to %d", MaxResponsePeriodDays))
+	}
+	if p.ReReviewWindowDays < 1 || p.ReReviewWindowDays > MaxReReviewWindowDays {
+		add("re_review_window_days", fmt.Sprintf("must be 1 to %d", MaxReReviewWindowDays))
+	}
+	if p.LimitWarningPercent < 1 || p.LimitWarningPercent > 100 {
+		add("limit_warning_percent", "must be 1 to 100")
+	}
+	if p.InactivityDays != 0 && (p.InactivityDays < MinInactivityDays || p.InactivityDays > MaxInactivityDays) {
+		add("inactivity_days", fmt.Sprintf("must be 0 (no rule) or %d to %d", MinInactivityDays, MaxInactivityDays))
 	}
 	if p.DirectoryVisibility != "members-only" {
 		add("directory_visibility", "only members-only is supported")

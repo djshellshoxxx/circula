@@ -49,6 +49,10 @@ type page struct {
 	// Session expiry warning (UX-030): Unix time and whether activity extends it.
 	ExpiresAt  int64
 	Extendable bool
+	// Unread is the inbox badge count (FR-038); 0 shows no badge.
+	Unread int
+	// Warn is the credit-limit notice shown on Home and the propose form (UX-012).
+	Warn string
 	// SecUnseen counts unacknowledged security notices (SEC-012), shown in the header.
 	SecUnseen int
 }
@@ -124,9 +128,28 @@ func fmtTime(t time.Time) template.HTML {
 	if t.IsZero() {
 		return ""
 	}
-	u := t.UTC()
+	// The text uses t's own zone (UTC unless the handler moved it with rc.at); the machine-readable
+	// attribute is always UTC.
 	//nolint:gosec // both values are formatted times, no user input
-	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, u.Format(time.RFC3339), u.Format("2 Jan 2006, 15:04 UTC")))
+	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, t.UTC().Format(time.RFC3339), t.Format("2 Jan 2006, 15:04 MST")))
+}
+
+// at moves t into the viewer's display time zone (UTC when none is set).
+func (c *rc) at(t time.Time) time.Time {
+	if c.loc == nil {
+		return t.UTC()
+	}
+	return t.In(c.loc)
+}
+
+// when formats a time in the viewer's zone.
+func (c *rc) when(t time.Time) template.HTML { return fmtTime(c.at(t)) }
+
+// row builds a transaction row with its time in the viewer's zone.
+func (c *rc) row(t *domain.Transaction, n names) txRow {
+	r := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+	r.When = c.at(r.When)
+	return r
 }
 
 // render writes a page. c may be nil (public pages).
@@ -155,6 +178,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
 		p.Nav = c.nav(r.URL.Path)
 		p.Notice = c.notice()
+		p.Unread = c.unreadCount()
 	}
 	if p.Authed {
 		if at, ext, ok := s.expiry(r); ok {
@@ -185,7 +209,8 @@ func (c *rc) nav(cur string) []navItem {
 	case domain.MemberActive:
 		items = append(items, navItem{Label: "Trades", Href: b + "/trades"},
 			navItem{Label: "Directory", Href: b + "/directory"}, navItem{Label: "Listings", Href: b + "/listings"},
-			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"})
+			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"},
+			navItem{Label: "Rules", Href: b + "/policy"})
 	case domain.MemberSuspended:
 		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"})
 	default:
@@ -205,6 +230,9 @@ func (c *rc) nav(cur string) []navItem {
 }
 
 func (c *rc) notice() string {
+	if n := c.frozenNotice(); n != "" {
+		return n
+	}
 	switch c.Me.Status {
 	case domain.MemberSuspended:
 		return "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
@@ -213,6 +241,18 @@ func (c *rc) notice() string {
 	}
 	if c.Net.Status == domain.NetworkClosed {
 		return "This network is closed. History stays readable and exports are available; new trades are not possible."
+	}
+	if c.Net.Status == domain.NetworkClosing {
+		return "This network has reached its closing date and is completing its closure. New trades are not possible; history stays readable and exports are available."
+	}
+	if c.Net.AdminRequired {
+		return "This network has no active administrator, so it is read-only (administrator required). You can read balances and history and download your data; nothing that moves value is possible until an administrator is appointed."
+	}
+	if cl := c.Net.Closure; cl != nil && !cl.Done() {
+		return "This network closes on " + cl.ClosingAt.Format("2 Jan 2006") + ". You can keep trading until then. Download your data before the date; read access continues for a while afterwards."
+	}
+	if c.Net.Suspended() {
+		return "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
 	}
 	return ""
 }
@@ -234,6 +274,9 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 	case 503:
 		w.Header().Set("Retry-After", "5")
 		p.Title, p.Text = "Busy, try again", "The service is busy and could not complete the request. Nothing changed. Wait a few seconds and try again."
+	case errFrozen:
+		st = 423
+		p.Title, p.Text = "Network read-only", "This network is read-only because its ledger failed an integrity check. Balances and history can still be viewed. Nothing was changed. The administrator has been alerted; try again later."
 	case 409:
 		p.Title, p.Text = "Conflict", "That cannot be done in the current state. Nothing changed. Reload the page to see the latest state."
 	default:
@@ -251,11 +294,20 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		return
 	}
 	switch domain.CodeOf(err) {
+	case domain.CodeNetworkFrozen:
+		s.renderError(w, r, errFrozen)
 	case domain.CodeUnauthenticated:
 		s.clearSession(w, r)
 		s.toLogin(w, r)
 	case domain.CodePasswordChangeRequired:
 		s.mustChange(w, r)
+	case domain.CodeTermsRequired: // GOV-009: show the terms, then come back
+		if slug := r.PathValue("slug"); slug != "" {
+			s.setFlash(w, r, "The network's rules and terms changed. Please read and accept them before you trade.")
+			http.Redirect(w, r, "/n/"+url.PathEscape(slug)+"/terms?next="+url.QueryEscape("/n/"+slug+"/trades"), http.StatusSeeOther)
+			return
+		}
+		s.renderError(w, r, 409)
 	case domain.CodeForbidden, domain.CodeApprovalRequired:
 		s.renderError(w, r, 403)
 	case domain.CodeNotFound:
@@ -278,4 +330,15 @@ func (s *server) notFoundOrRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.home(w, r)
+}
+
+// frozenNotice is the read-only notice for a frozen network, shown on every page of it so
+// forms that change anything are not a surprise. Members see no reason.
+func (c *rc) frozenNotice() string {
+	fi, ok := c.s.svc.FrozenInfo(c.Net.ID)
+	if !ok {
+		return ""
+	}
+	return "This network is read-only while its ledger is being checked, since " + string(c.when(fi.Since)) +
+		". You can read balances and history; anything that would change them is refused until the check passes."
 }

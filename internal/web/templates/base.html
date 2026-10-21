@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <title>{{.Title}}{{if .NetName}} - {{.NetName}}{{end}} - Circula</title>
 <link rel="stylesheet" href="/static/style.css">
 <script src="/static/app.js" defer></script>
@@ -18,7 +19,8 @@
       <li><a href="/">All networks</a></li>
     </ul>
   </nav>
-  <p class="acct"><a href="/account/password">Password</a> <a href="/account/security">Security{{if .SecUnseen}} <span class="tag">{{.SecUnseen}} new</span>{{end}}</a></p>
+  {{if .Slug}}<p class="acct"><a href="/n/{{.Slug}}/inbox">Inbox{{if .Unread}} <span class="badge">{{.Unread}} unread</span>{{end}}</a></p>{{end}}
+  <p class="acct"><a href="/account/time-zone">Time zone</a> &middot; <a href="/account/password">Password</a> &middot; <a href="/account/security">Security{{if .SecUnseen}} <span class="tag">{{.SecUnseen}} new</span>{{end}}</a></p>
   <form method="post" action="/logout" class="signout">{{template "csrf" .}}<button type="submit" class="link">Sign out</button></form>
   {{end}}
 </header>
@@ -30,6 +32,7 @@
   <h1 id="page-title">{{.Title}}</h1>
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
   {{with .Notice}}<div class="notice" role="note"><strong>Notice:</strong> {{.}}</div>{{end}}
+  {{with .Warn}}<div class="notice" role="note"><strong>Credit limit notice:</strong> {{.}}</div>{{end}}
   {{if or .Errors .Summary}}
   <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">
     <h2 id="errsum-h">There is a problem</h2>
@@ -77,3 +80,11 @@
 
 {{define "pagenav"}}{{with .Pages}}{{if or .First .Prev .Next}}<nav aria-label="{{$.Label}}">{{if .First}}<a href="{{.First}}">First page</a> {{end}}{{if .Prev}}<a href="{{.Prev}}">Previous page</a> {{end}}{{if .Next}}<a href="{{.Next}}">Next page</a>{{end}}</nav>{{end}}{{end}}{{end}}
 {{define "pager"}}{{if .Next}}<p><a href="{{.Href}}{{.Next}}">Next page</a></p>{{end}}{{end}}
+
+{{define "termsbox"}}{{with .D.Terms}}
+<section aria-labelledby="terms-h"><h2 id="terms-h">Network terms (version {{.Version}})</h2>
+{{range $.D.Paras}}<p>{{.}}</p>{{end}}</section>
+{{with $.Err "terms_version"}}<p class="error" id="e-terms_version"><span class="sr">Error: </span>{{.}}</p>{{end}}
+<div class="field" id="f-terms_version"><input type="hidden" name="terms_version" value="{{.Version}}">
+  <label><input type="checkbox" name="accept_terms" value="1"> I have read and accept these terms</label></div>
+{{end}}{{end}}

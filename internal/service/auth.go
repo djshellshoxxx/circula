@@ -269,7 +269,7 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 		if err := tx.RevokeSessionsOf(actor.PersonID, s.now()); err != nil {
 			return err
 		}
-		if err := s.notify(tx, actor.PersonID, domain.NoticePasswordChanged, ""); err != nil {
+		if err := s.secNotice(tx, actor.PersonID, domain.NoticePasswordChanged, ""); err != nil {
 			return err
 		}
 		if err := tx.SetMustChangePassword(actor.PersonID, false); err != nil {

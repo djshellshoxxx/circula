@@ -62,7 +62,7 @@ func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in Tok
 		if err := tx.InsertToken(t); err != nil {
 			return err
 		}
-		if err := s.notify(tx, actor.PersonID, domain.NoticeTokenCreated, name); err != nil {
+		if err := s.secNotice(tx, actor.PersonID, domain.NoticeTokenCreated, name); err != nil {
 			return err
 		}
 		return s.auditPlatform(tx, actor, auditEntry{Action: domain.ActTokenCreated, TargetType: "api_token", TargetID: t.ID})
@@ -116,7 +116,7 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 		if !ok {
 			return domain.NotFound("token")
 		}
-		if err := s.notify(tx, actor.PersonID, domain.NoticeTokenRevoked, ""); err != nil {
+		if err := s.secNotice(tx, actor.PersonID, domain.NoticeTokenRevoked, ""); err != nil {
 			return err
 		}
 		return s.auditPlatform(tx, actor, auditEntry{Action: domain.ActTokenRevoked, TargetType: "api_token", TargetID: tokenID})

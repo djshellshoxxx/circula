@@ -32,6 +32,45 @@ the database by hand.
 another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
 by the hourly job and the admin consistency check in the UI and API, which record their runs.
 
+## Audit anchor (RB-010)
+
+Weekly (or after each backup), copy the newest `<backup>.anchor.json` or run `circula audit-anchor write <file>` and keep the
+file off the database host. To check for tampering with an older anchor: `circula audit-anchor verify <file>`. Exit `3` means
+the live audit chain no longer contains the anchored head: treat as an integrity incident, preserve the database file and the
+off-host backups, and restore a backup whose `verify` passes. After any restore, run `verify` against the latest anchor.
+See [configuration.md](configuration.md#audit-anchors-rb-010).
+
+## Maintenance mode
+
+```sh
+circula maintenance -config /etc/circula/circula.json -retry-after 600 on   # writes answer 503 within a second, reads keep working
+circula maintenance -config /etc/circula/circula.json status
+circula maintenance -config /etc/circula/circula.json off
+```
+
+Details in [upgrade.md](upgrade.md#maintenance-mode).
+
+## A network is frozen
+
+`circula_frozen_networks > 0` or a log line "network frozen": that network failed ledger verification. Its members can
+read but not write (API `423 network-frozen`, web "Network read-only"). Other networks are unaffected. Stop `serve`, run
+`circula verify-ledger -network <slug>`, capture the findings (SEC-030) and decide with the product architect. If you
+restore a verified backup, the network is verified again at start and serves normally when it passes.
+
+## Suspending a network (GOV-024)
+
+Only for a legal order, a serious security incident, persistent abuse of the platform, or non-performance of a written
+hosting agreement. Never for a reason about members' trades or balances.
+
+    circula suspend start -network <slug> -category legal_order|security_incident|platform_abuse|hosting_agreement -reason "..." -operator "<your name>"
+    circula suspend lift  -network <slug> -reason "..." -operator "<your name>"
+
+Run with the service stopped (it takes the same lock as `break-glass`). Trading and posting stop; members keep read and
+export access. Each network administrator gets an inbox notice, and the event (`network.platform_suspended`) is written
+at platform scope and to the network's audit log, where its administrators can read it. The network's own administrators
+cannot lift a platform suspension, and lifting it does not lift an administrator suspension. DEC-014 allows withholding
+the notice where law prohibits it; this build always sends it.
+
 ## Restoring after a fault
 
 See [backup-restore.md](backup-restore.md#restoring). Stop the service first.

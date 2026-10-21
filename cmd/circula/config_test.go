@@ -22,6 +22,7 @@ var sampleValues = map[string]string{
 	"migrate-mode":          "auto",
 	"session-idle":          "1h",
 	"session-max":           "1000h",
+	"shutdown-grace":        "5s",
 	"idempotency-ttl":       "48h",
 	"min-password-length":   "14",
 	"require-mfa-admins":    "true",
@@ -29,7 +30,9 @@ var sampleValues = map[string]string{
 	"request-timeout":       "5s",
 	"log-level":             "debug",
 	"log-format":            "text",
+	"log-retention":         "48h",
 	"cookie-secure":         "false",
+	"maintenance":           "true",
 	"metrics-allow":         "10.0.0.0/8",
 	"trusted-proxies":       "10.0.0.0/8, 192.168.1.1",
 	"allow-insecure-http":   "true",
@@ -41,6 +44,11 @@ var sampleValues = map[string]string{
 	"backup-require-encryption":  "f",
 	"backup-encryption-key-file": "",
 	"state-dir":                  "", // filled per test
+	"audit-anchor-key-file":      "",
+	"audit-anchor-with-backups":  "false",
+	"tls-cert-file":              "",
+	"tls-key-file":               "",
+	"audit-mirror-file":          "",
 }
 
 // baseEnv returns a lookup that supplies the two required settings.

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -20,6 +21,21 @@ import (
 type SQLite struct {
 	db   *sql.DB
 	gate chan struct{}
+	sink atomic.Pointer[AuditSink]
+}
+
+// AuditSink receives audit events after the transaction that wrote them has
+// committed (RB-012). It must not block for long and its failures are its own
+// to report: the audit row is already durable in the database.
+type AuditSink func(*domain.AuditEvent)
+
+// SetAuditSink installs (or, with nil, removes) the post-commit audit sink.
+func (s *SQLite) SetAuditSink(f AuditSink) {
+	if f == nil {
+		s.sink.Store(nil)
+		return
+	}
+	s.sink.Store(&f)
 }
 
 var _ Store = (*SQLite)(nil)
@@ -46,6 +62,20 @@ func Open(ctx context.Context, path string) (*SQLite, error) {
 
 // OpenWith is Open with explicit options.
 func OpenWith(ctx context.Context, path string, opt Options) (*SQLite, error) {
+	return openAt(ctx, path, opt, 0)
+}
+
+// OpenAtVersion opens (creating if needed) the database but migrates it only
+// up to schema version v. It exists so upgrade tests can build a database as
+// an earlier release left it (DAT-047); production code uses Open.
+func OpenAtVersion(ctx context.Context, path string, v int) (*SQLite, error) {
+	if v < 1 || v > SchemaVersion() {
+		return nil, fmt.Errorf("store: schema version %d is not between 1 and %d", v, SchemaVersion())
+	}
+	return openAt(ctx, path, Options{}, v)
+}
+
+func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, error) {
 	busy := opt.BusyTimeout
 	if busy <= 0 {
 		busy = DefaultBusyTimeout
@@ -55,6 +85,9 @@ func OpenWith(ctx context.Context, path string, opt Options) (*SQLite, error) {
 	q.Add("_pragma", "journal_mode(WAL)")
 	q.Add("_pragma", "synchronous(NORMAL)")
 	q.Add("_pragma", "foreign_keys(1)")
+	// Freed pages are overwritten with zeros so deleted text does not linger
+	// in the file (RB-003).
+	q.Add("_pragma", "secure_delete(1)")
 	dsn := "file:" + path + "?" + q.Encode()
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
@@ -63,7 +96,7 @@ func OpenWith(ctx context.Context, path string, opt Options) (*SQLite, error) {
 	db.SetMaxOpenConns(8)
 	db.SetConnMaxLifetime(0)
 	s := &SQLite{db: db, gate: make(chan struct{}, 1)}
-	if err := s.migrate(ctx); err != nil {
+	if err := s.migrateTo(ctx, limit); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
@@ -155,13 +188,19 @@ func (s *SQLite) run(ctx context.Context, begin string, readOnly bool, fn func(T
 			panic(r)
 		}
 	}()
-	if err = fn(&txImpl{ctx: ctx, q: conn}); err != nil {
+	tx := &txImpl{ctx: ctx, q: conn}
+	if err = fn(tx); err != nil {
 		return err
 	}
 	if _, err = conn.ExecContext(ctx, "COMMIT"); err != nil {
 		return fmt.Errorf("store: commit: %w", err)
 	}
 	done = true
+	if sink := s.sink.Load(); sink != nil {
+		for _, e := range tx.audits {
+			(*sink)(e)
+		}
+	}
 	return nil
 }
 
@@ -174,6 +213,11 @@ type querier interface {
 type txImpl struct {
 	ctx context.Context
 	q   querier
+	// asOf (unix ms) hides policy versions that take effect later (GOV-003);
+	// 0 means the newest version regardless of its effective time.
+	asOf int64
+	// audits are the events appended in this unit, for the post-commit sink.
+	audits []*domain.AuditEvent
 }
 
 var _ Tx = (*txImpl)(nil)

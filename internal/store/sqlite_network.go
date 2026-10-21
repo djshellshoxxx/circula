@@ -28,7 +28,8 @@ const networkSelect = `SELECT n.id, n.name, n.slug, n.status, n.ledger_seq, n.cr
 	p.version, p.policy_json,
 	COALESCE((SELECT a.id FROM accounts a WHERE a.network_id = n.id AND a.is_system = 1), '')
 	FROM networks n JOIN network_policies p ON p.network_id = n.id
-	AND p.version = (SELECT MAX(version) FROM network_policies WHERE network_id = n.id)`
+	AND p.version = (SELECT MAX(version) FROM network_policies WHERE network_id = n.id
+		AND (? = 0 OR effective_at <= ?))`
 
 func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	var n domain.Network
@@ -40,18 +41,27 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	}
 	n.Status = domain.NetworkStatus(status)
 	n.CreatedAt = fromMS(created)
+	n.Policy = domain.DefaultPolicy() // fields absent from older versions keep their defaults
 	if err := json.Unmarshal([]byte(pj), &n.Policy); err != nil {
+		return nil, err
+	}
+	sus, err := t.ListSuspensions(n.ID)
+	if err != nil {
+		return nil, err
+	}
+	n.Suspensions = sus
+	if n.Closure, err = t.GetClosure(n.ID); err != nil {
 		return nil, err
 	}
 	return &n, nil
 }
 
 func (t *txImpl) GetNetwork(id string) (*domain.Network, error) {
-	return t.scanNetwork(t.row(networkSelect+` WHERE n.id = ?`, id))
+	return t.scanNetwork(t.row(networkSelect+` WHERE n.id = ?`, t.asOf, t.asOf, id))
 }
 
 func (t *txImpl) GetNetworkBySlug(slug string) (*domain.Network, error) {
-	return t.scanNetwork(t.row(networkSelect+` WHERE n.slug = ?`, slug))
+	return t.scanNetwork(t.row(networkSelect+` WHERE n.slug = ?`, t.asOf, t.asOf, slug))
 }
 
 func (t *txImpl) SetNetworkStatus(id string, s domain.NetworkStatus) error {
@@ -75,4 +85,21 @@ func (t *txImpl) InsertConsistencyRun(r ConsistencyRun) error {
 	_, err := t.exec(`INSERT INTO consistency_runs(id,network_id,started_at,finished_at,ok,findings) VALUES (?,?,?,?,?,?)`,
 		r.ID, r.NetworkID, ms(r.Started), ms(r.Finished), b2i(r.OK), r.Findings)
 	return err
+}
+
+func (t *txImpl) LastConsistencyRun(netID string) (*ConsistencyRun, error) {
+	var run ConsistencyRun
+	var started, finished int64
+	var ok int
+	err := t.row(`SELECT id,network_id,started_at,finished_at,ok,findings FROM consistency_runs
+		WHERE network_id = ? ORDER BY finished_at DESC, id DESC LIMIT 1`, netID).
+		Scan(&run.ID, &run.NetworkID, &started, &finished, &ok, &run.Findings)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, mapErr(err)
+	}
+	run.Started, run.Finished, run.OK = fromMS(started), fromMS(finished), ok == 1
+	return &run, nil
 }

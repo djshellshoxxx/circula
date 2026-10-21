@@ -9,7 +9,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/store"
 )
 
-const maxKeyLen = 200
+const maxKeyLen = 255 // matches the API edge and API-021 (D-03)
 
 func requireKey(key string) error {
 	if key == "" {
@@ -62,6 +62,7 @@ func idempotent[T any](s *Service, tx store.Tx, netID string, actor domain.Actor
 			if rec.Fingerprint != fp {
 				return zero, domain.Errf(domain.CodeKeyReused, "idempotency key reused with a different request")
 			}
+			s.unit.replays++
 			return load(rec.ResultRef)
 		}
 		if err := tx.DeleteIdem(netID, actorID, op, key); err != nil { // expired: key is free (DAT-028)

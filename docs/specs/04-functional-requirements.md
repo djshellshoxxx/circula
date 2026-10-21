@@ -12,7 +12,7 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary: built 51, not built 3, partial 11.
+Summary: built 52, not built 3, partial 10.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -24,9 +24,9 @@ Summary: built 51, not built 3, partial 11.
 | FR-006 | P0 | built | Cross-network identifier test covers web and API |
 | FR-010 | P0 | built | Single-use invitation token hashed; redemption creates member |
 | FR-011 | P0 | built | Approve and deny applicants; deny via API and web |
-| FR-012 | P1 | partial | Open join creates active member; join rate limit per abuse baseline not built |
+| FR-012 | P1 | built | Open join creates active member; join attempts rate limited (10 per 10 minutes per person and address, retry-later page) |
 | FR-013 | P0 | built | Membership transitions table-tested |
-| FR-014 | P0 | partial | Departure in service and JSON API; no web self-service departure form |
+| FR-014 | P0 | built | Departure in service, JSON API and a web "Leave this network" form that shows blockers and consequences |
 | FR-015 | P0 | built | Admin removal with mandatory reason; last-admin guard |
 | FR-016 | P1 | built | Display name is the only required profile field |
 | FR-017 | P0 | built | Duplicate join returns existing membership |
@@ -35,7 +35,7 @@ Summary: built 51, not built 3, partial 11.
 | FR-022 | P0 | built | Edit, pause, resume, archive own listing |
 | FR-023 | P0 | built | Filter by type and text; paginated |
 | FR-024 | P1 | not built | Member reports not built |
-| FR-025 | P1 | partial | Members-only pages require session; no-index directive absent |
+| FR-025 | P1 | built | Members-only pages require session; X-Robots-Tag, robots meta and robots.txt disallow |
 | FR-030 | P0 | built | Propose to active member in same network |
 | FR-031 | P0 | built | Amount, limit and effect preview on review page |
 | FR-032 | P0 | built | Accept posts both entries atomically; limit re-checked |
@@ -58,7 +58,7 @@ Summary: built 51, not built 3, partial 11.
 | FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute |
 | FR-066 | P1 | built | Admin reversal via API with reason |
 | FR-067 | P1 | partial | Admin home shows pending-member count only |
-| FR-068 | P1 | partial | CloseNetwork refuses with blockers; no web or API caller |
+| FR-068 | P1 | built | Closure in web and API; announced with notice (GOV-025); refuses with dispute blockers; members notified |
 | FR-069 | P0 | built | Last-admin guard; role changes audited |
 | FR-070 | P0 | built | Open dispute within window by party on completed trade |
 | FR-071 | P0 | built | Postings unchanged on open, withdraw, dismiss |
@@ -66,7 +66,7 @@ Summary: built 51, not built 3, partial 11.
 | FR-073 | P0 | built | Dismissed, upheld, partially upheld with rationale |
 | FR-074 | P0 | built | Blocked reversal enters posting_pending; override then retry |
 | FR-075 | P1 | built | Opener withdraws before decision |
-| FR-076 | P1 | not built | Response by other party and response period not built |
+| FR-076 | P1 | built | Response by other party; response-period policy (default 7 days) holds a decision unless a response exists or the reviewer waives it |
 | FR-077 | P0 | built | Window measured from completion with server clock |
 | FR-078 | P1 | not built | Re-review of a decision not built |
 | FR-080 | P0 | built | Sweep: every command writes one audit event |
@@ -223,6 +223,7 @@ Summary: built 51, not built 3, partial 11.
   - Any active member can report a listing or member with a category and a bounded note.
   - Reports appear in the administrator queue; reporting does not automatically hide, suspend or change anything.
   - The reporter's identity is visible to administrators only, and is not shown to the reported member.
+- **Status (as built).** Built (service, API `POST /reports`, `GET /admin/reports`, web). Categories: spam, scam, inappropriate, harassment, other. One open report per reporter and target; at most 10 reports per reporter per 24 hours. The queue is administrator-only.
 
 ### FR-025 · P1 · Members-only visibility of listings
 - **Rationale.** Prevents external indexing of member data by default (VIS-010).
@@ -293,6 +294,7 @@ Summary: built 51, not built 3, partial 11.
   - An active member has an inbox listing proposals awaiting their action, disputes awaiting response, and recent outcomes.
   - Unread state is shown in text as well as visually.
   - Email notifications are not part of this requirement (OQ-VIS-4).
+- **Status (as built).** Built, in-app only (service `ListNotifications`, API `GET /notifications`, web inbox with an unread badge that also states the count in text). Emitted for proposal received, accepted, declined, withdrawn, dispute events, re-review events and report outcome; limit warnings come from the hourly job. Old read entries are not yet purged.
 
 ---
 
@@ -439,6 +441,7 @@ Summary: built 51, not built 3, partial 11.
 - **Acceptance.**
   - The other party can submit a bounded response before a decision; the response is visible to the reviewer and to the opener.
   - A decision cannot be recorded before the response period in the network's policy has ended, or before the response is submitted or waived. The response period is a network policy (OQ-FR-2).
+- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Network policy `response_period_days` (default 7, 0 to 90; 0 means no waiting period; DEC-012 recommendation). `ResolveDispute` is refused with invalid-transaction-state until a response exists, the period since the dispute was opened has elapsed, or the reviewer sets `waive_response` with a `waive_reason` (audited). Silence never decides the case. OQ-FR-2 stays open for counsel review of the default.
 
 ### FR-077 · P0 · Dispute window enforcement and deadlines
 - **Rationale.** DOM-017.
@@ -451,6 +454,7 @@ Summary: built 51, not built 3, partial 11.
 - **Acceptance.**
   - A party can request one re-review of a decided dispute within a stated period.
   - The re-review is assigned to a different reviewer than the original and is recorded as a new decision linked to the first. The original decision is never edited.
+- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within `re_review_window_days` of the decision (network policy, default 14, 1 to 365). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
 
 ---
 

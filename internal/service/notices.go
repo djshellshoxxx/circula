@@ -9,9 +9,9 @@ import (
 
 const noticeListMax = 100
 
-// notify records a security notice for personID in the caller's unit of work
+// secNotice records a security notice for personID in the caller's unit of work
 // (SEC-012). detail must not contain secrets.
-func (s *Service) notify(tx store.Tx, personID, kind, detail string) error {
+func (s *Service) secNotice(tx store.Tx, personID, kind, detail string) error {
 	if len(detail) > 200 {
 		detail = detail[:200]
 	}

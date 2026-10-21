@@ -248,7 +248,7 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, c
 		if err := s.auditPlatform(tx, actor, auditEntry{Action: domain.ActMFAEnabled, TargetType: "person", TargetID: actor.PersonID}); err != nil {
 			return err
 		}
-		return s.notify(tx, actor.PersonID, domain.NoticeMFAEnabled, "")
+		return s.secNotice(tx, actor.PersonID, domain.NoticeMFAEnabled, "")
 	})
 	if err != nil {
 		return nil, err
@@ -300,7 +300,7 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 		if err := s.auditPlatform(tx, actor, auditEntry{Action: domain.ActMFADisabled, TargetType: "person", TargetID: actor.PersonID}); err != nil {
 			return err
 		}
-		return s.notify(tx, actor.PersonID, domain.NoticeMFADisabled, "")
+		return s.secNotice(tx, actor.PersonID, domain.NoticeMFADisabled, "")
 	})
 }
 
@@ -338,7 +338,7 @@ func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Acto
 		if err := s.auditPlatform(tx, actor, auditEntry{Action: domain.ActMFARecoveryRegen, TargetType: "person", TargetID: actor.PersonID}); err != nil {
 			return err
 		}
-		return s.notify(tx, actor.PersonID, domain.NoticeRecoveryRegen, "")
+		return s.secNotice(tx, actor.PersonID, domain.NoticeRecoveryRegen, "")
 	})
 	if err != nil {
 		return nil, err

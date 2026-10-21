@@ -302,9 +302,8 @@ func TestDualControlRevalidatesAtApproval(t *testing.T) {
 	t.Run("network closed", func(t *testing.T) {
 		d := newDC(t)
 		pa := d.pending(5000)
-		if err := d.Svc.CloseNetwork(d.Ctx, d.admin, d.net.ID, "done"); err != nil {
-			t.Skipf("network closure blocked in this fixture: %v", err)
-		}
+		tu.Must(d.Svc.ScheduleClosure(d.Ctx, d.admin, d.net.ID, service.ClosureInput{Reason: "done"}))
+		d.Clock.Advance(31 * 24 * time.Hour)
 		_, err := d.Svc.ApproveAdjustment(d.Ctx, d.admin2, d.net.ID, pa.ID)
 		if err == nil {
 			t.Error("approved on a closed network")

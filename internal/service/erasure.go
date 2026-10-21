@@ -113,6 +113,13 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 		if rep.DisputeStatements, err = tx.RedactDisputeStatements(netID, target.ID); err != nil {
 			return err
 		}
+		if nr, ok := tx.(interface {
+			RedactNotificationNames(netID, memberID, name string) (int64, error)
+		}); ok {
+			if _, err = nr.RedactNotificationNames(netID, target.ID, target.DisplayName); err != nil {
+				return err
+			}
+		}
 		if rep.PersonErased, err = s.erasePersonIfUnused(tx, target); err != nil {
 			return err
 		}
