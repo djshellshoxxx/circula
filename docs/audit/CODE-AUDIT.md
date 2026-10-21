@@ -154,7 +154,7 @@ Severity: critical / high / med / low. No critical finding. Line numbers are at 
 - `cmdVerifyLedger` (`commands.go:350`) and `cmdAdmin create-operator` (`:381`) call `openDatabase` but never `acquireLock` (only `migrate` `:119`, `restore` `:238`, and `serve` lock). While `serve` runs they become a second writer process (VerifyLedger writes; `RegisterPerson` writes). OPS-011 ("MUST NOT be shared with another process other than the app's own backup routine") and ARC-011 are violated. The in-process write gate does not span processes; only SQLite's lock does, with a 10 s busy timeout.
 - Fix: for `verify-ledger` use the read-only path (SVC-01) and no lock; for `create-operator` either require the lock (refuse if `serve` runs) or route through the running service.
 
-**CMD-03 low. `cmd` reads SQLite directly**
+**CMD-03 low. `cmd` reads SQLite directly** (fixed: `internal/store/inspect.go` holds `ListNetworks`, `InspectSchema`/`SchemaState`, `ReadPragmas`/`CheckPragmas`, `IntegrityCheck`, `VacuumInto`; `cmd/circula` contains no SQL)
 - `snapshot.go:63` lists networks with raw SQL against the store's DB (`st.DB()`); `schema.go` `inspectSchema` and `ops_http.go:202` read `schema_migrations`; `serve.go:242` `checkPragmas` queries pragmas. Duplicates schema knowledge outside `internal/store`; a renamed table breaks the CLI silently. Fix: add `store.ListNetworks`, `store.SchemaState`, `store.Pragmas` and use them.
 
 **CMD-04 low. Hourly verify job floods the audit log**
@@ -166,7 +166,7 @@ Severity: critical / high / med / low. No critical finding. Line numbers are at 
 **CMD-06 low. Durability and runbook text**
 - `store/sqlite.go:33` hard-codes `synchronous(NORMAL)`; OPS-011 wants a documented setting the operator can read (documented in `docs/ops/monitoring.md:67`, but not configurable). The same runbook line says to "reconcile recent activity from the audit trail" after power loss, but audit rows commit in the same unit as the data, so a lost transaction loses its audit row too. Fix text, or offer `synchronous=FULL` as a setting for ledger-grade durability.
 
-**CMD-07 low. Startup refuses to serve all tenants if one network fails verification**
+**CMD-07 low. Startup refuses to serve all tenants if one network fails verification** (fixed: the failing network is frozen via `Service.FreezeNetwork`, others serve; see `docs/dev/SERVICE.md` section 6)
 - `serve.go:143-146`. Matches OPS-016/OPS-020 as written, but a single failing network takes every network offline, and the check itself is slow and write-locking (SVC-01). Consider serving read-only or per-network degrade; record the decision.
 
 **CMD-08 low. `restore` leaves a failing database in place**
@@ -215,7 +215,7 @@ Legend: P0 = MVP-blocking, P1 = MVP. "Partial" = exists in service but missing a
 | API-064 announcements | P1 | 501 | `api/routes.go:20,70,71` |
 | API-077/078 OpenAPI + compatibility fixtures | P1 | not built | no OpenAPI file in tree |
 | DAT-012 one reversal per original | P1 | deviation | documented; see section 2 |
-| DAT-047 10 000-tx migration fixture; DAT-048 timing | P0/P1 | not built | only one migration exists, no fixture test |
+| DAT-047 10 000-tx migration fixture; DAT-048 timing | P0/P1 | built | `internal/store/golden_migration_test.go` (v1 to current, timing logged) |
 | FR-095 export correctness/performance gates | P1 | not built | no large-data export test; API buffers (API-05) |
 | SEC-007 MFA, SEC-011 dual control | P1 | not built | |
 

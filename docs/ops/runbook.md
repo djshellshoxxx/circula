@@ -32,6 +32,23 @@ the database by hand.
 another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
 by the hourly job and the admin consistency check in the UI and API, which record their runs.
 
+## Maintenance mode
+
+```sh
+circula maintenance -config /etc/circula/circula.json -retry-after 600 on   # web and API answer 503 within a second
+circula maintenance -config /etc/circula/circula.json status
+circula maintenance -config /etc/circula/circula.json off
+```
+
+Details in [upgrade.md](upgrade.md#maintenance-mode).
+
+## A network is frozen
+
+`circula_frozen_networks > 0` or a log line "network frozen": that network failed ledger verification. Its members can
+read but not write (API `423 network-frozen`, web "Network read-only"). Other networks are unaffected. Stop `serve`, run
+`circula verify-ledger -network <slug>`, capture the findings (SEC-030) and decide with the product architect. If you
+restore a verified backup, the network is verified again at start and serves normally when it passes.
+
 ## Restoring after a fault
 
 See [backup-restore.md](backup-restore.md#restoring). Stop the service first.

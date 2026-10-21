@@ -34,6 +34,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `log-level` | `CIRCULA_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. Needs a restart to change. |
 | `log-format` | `CIRCULA_LOG_FORMAT` | `json` | no | `json` or `text`. |
 | `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | Marks every cookie `Secure` and names the session cookie `__Host-circula_session` (SEC-022). Keep `true` behind a TLS proxy: TLS ends at the proxy, so the service cannot see it. `false` is for plain-http development only; with `false` the cookie is `circula_session`. |
+| `maintenance` | `CIRCULA_MAINTENANCE` | `false` | no | Start in maintenance mode (OPS-024): the web UI and the API answer `503` with `Retry-After` and a friendly page; `/healthz`, `/readyz` and `/metrics` keep working. See [upgrade.md](upgrade.md#maintenance-mode). Turn it on or off while running with `circula maintenance on|off`. |
 | `metrics-allow` | `CIRCULA_METRICS_ALLOW` | `127.0.0.1/32,::1/128` | no | Comma-separated addresses or CIDRs allowed to read `/metrics`. `none` denies all. |
 | `trusted-proxies` | `CIRCULA_TRUSTED_PROXIES` | `none` | no | Comma-separated addresses or CIDRs of the reverse proxies in front of the service. Only requests whose TCP peer is in this list are believed when they carry `X-Forwarded-For` (client address for rate limits) or `X-Forwarded-Proto`. The client address is the right-most `X-Forwarded-For` entry that is not itself a trusted proxy. Empty: both headers are ignored and every client looks like the proxy. Set it to the proxy's address, for example `127.0.0.1/32`. |
 | `allow-insecure-http` | `CIRCULA_ALLOW_INSECURE_HTTP` | `false` | no | `serve` refuses to start when `public-base-url` is `http://` for a non-loopback host, or when it is `http://` and `listen` is not loopback (SEC-022). Set `true` only for a closed test network. |
@@ -94,4 +95,12 @@ On every `serve` start, in this order (before the port opens):
 3. Read the schema version without migrating. In `explicit` mode, pending migrations stop the start. In `auto` mode, a
    pre-migration backup is taken first and migration is refused if the backup fails.
 4. Open the database. Check WAL journal mode and foreign-key enforcement.
-5. Verify the ledger for every network. Any failure stops the start (exit code 1) with a message naming the next step.
+5. Verify the ledger for every network. A network that fails is **frozen** (CMD-07, OPS-033): its writes are refused with
+   `network-frozen` (API `423`, web page "Network read-only"), reads still work, and every other network serves. The
+   failure is logged at error level and `circula_frozen_networks` / `circula_ledger_verification_ok` show it. The hourly
+   verification re-checks every network: a network that passes again thaws on its own. Run `circula verify-ledger` for
+   the findings and follow the ledger-failure procedure in [monitoring.md](monitoring.md#failure-modes-ops-033).
+6. Log a warning if maintenance mode is on, then open the port.
+
+If the integrity check or the verified backup before a migration fails (step 3, `auto` mode, or `circula migrate`), the
+migration is not applied and the start stops (OPS-023, see [upgrade.md](upgrade.md#pre-migration-verification-ops-023)).

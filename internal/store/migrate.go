@@ -56,14 +56,12 @@ func SchemaVersion() int {
 	return len(ms)
 }
 
-// migrate applies pending migrations in order, each inside its own
+// migrateTo applies pending migrations in order, each inside its own
 // BEGIN IMMEDIATE transaction (DDL is transactional in SQLite), so a failed
 // migration leaves no partial schema (DAT-042). It refuses to run against a
-// database newer than the binary or one whose recorded names differ.
-func (s *SQLite) migrate(ctx context.Context) error { return s.migrateTo(ctx, 0) }
-
-// migrateTo is migrate limited to versions up to limit (0 = all). Upgrade
-// tests use it to build a database at an earlier schema (DAT-047).
+// database newer than the binary or one whose recorded names differ. limit
+// stops after that version (0 = all); upgrade tests use it to build a
+// database at an earlier schema (DAT-047).
 func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
 	ms, err := loadMigrations()
 	if err != nil {

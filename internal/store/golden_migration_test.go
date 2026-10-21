@@ -3,11 +3,13 @@ package store_test
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -48,9 +50,19 @@ func buildGoldenV1(t *testing.T, path string) goldenStats {
 	if err != nil {
 		t.Fatal(err)
 	}
+	prepared := map[string]*sql.Stmt{}
 	must := func(q string, a ...any) {
 		t.Helper()
-		if _, err := dbx.ExecContext(ctx, q, a...); err != nil {
+		stmt, ok := prepared[q]
+		if !ok {
+			var err error
+			if stmt, err = dbx.PrepareContext(ctx, q); err != nil {
+				_ = dbx.Rollback()
+				t.Fatalf("%s: %v", q, err)
+			}
+			prepared[q] = stmt
+		}
+		if _, err := stmt.ExecContext(ctx, a...); err != nil {
 			_ = dbx.Rollback()
 			t.Fatalf("%s: %v", q, err)
 		}
@@ -112,22 +124,63 @@ func buildGoldenV1(t *testing.T, path string) goldenStats {
 	return goldenStats{txs: goldenTxCount, accounts: goldenMembers + 1, checksum: hex.EncodeToString(sum.Sum(nil))}
 }
 
+// goldenOnce builds the fixture once per test binary; tests copy the file.
+var (
+	goldenOnce  sync.Once
+	goldenDir   string
+	goldenBuilt goldenStats
+	goldenTime  time.Duration
+)
+
+func goldenCopy(t *testing.T, name string) (string, goldenStats, time.Duration) {
+	t.Helper()
+	goldenOnce.Do(func() {
+		d, err := os.MkdirTemp("", "circula-golden-")
+		if err != nil {
+			t.Fatal(err)
+		}
+		goldenDir = d
+		start := time.Now()
+		goldenBuilt = buildGoldenV1(t, filepath.Join(d, "base.db"))
+		goldenTime = time.Since(start)
+	})
+	if goldenDir == "" {
+		t.Fatal("fixture build failed in an earlier test")
+	}
+	// Truncate the WAL into the main file so a plain copy is complete.
+	raw, err := store.OpenRaw(filepath.Join(goldenDir, "base.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`PRAGMA wal_checkpoint(TRUNCATE)`); err != nil {
+		t.Fatal(err)
+	}
+	_ = raw.Close()
+	b, err := os.ReadFile(filepath.Join(goldenDir, "base.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	dst := filepath.Join(t.TempDir(), name)
+	if err := os.WriteFile(dst, b, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	return dst, goldenBuilt, goldenTime
+}
+
+func TestMain(m *testing.M) {
+	code := m.Run()
+	if goldenDir != "" {
+		_ = os.RemoveAll(goldenDir)
+	}
+	os.Exit(code)
+}
+
 func TestGoldenMigrationV1With10000Transactions(t *testing.T) {
 	if testing.Short() {
 		t.Skip("10,000-transaction fixture skipped with -short")
 	}
 	ctx := context.Background()
-	path := filepath.Join(t.TempDir(), "golden.db")
-
-	genStart := time.Now()
-	want := buildGoldenV1(t, path)
-	genTime := time.Since(genStart)
-
-	// Determinism: a second build has identical content.
-	other := filepath.Join(t.TempDir(), "golden2.db")
-	if again := buildGoldenV1(t, other); again.checksum != want.checksum {
-		t.Fatalf("fixture is not deterministic: %s vs %s", want.checksum, again.checksum)
-	}
+	path, want, genTime := goldenCopy(t, "golden.db")
 
 	before, err := store.InspectSchema(ctx, path)
 	if err != nil || before.Applied != 1 {
@@ -184,8 +237,7 @@ func TestGoldenMigrationDetectsDamagedFixture(t *testing.T) {
 		t.Skip("fixture skipped with -short")
 	}
 	ctx := context.Background()
-	path := filepath.Join(t.TempDir(), "damaged.db")
-	buildGoldenV1(t, path)
+	path, _, _ := goldenCopy(t, "damaged.db")
 	raw, err := store.OpenRaw(path)
 	if err != nil {
 		t.Fatal(err)

@@ -54,14 +54,12 @@ rely on them until the gap is closed and this list is updated.
   filesystem permissions and encrypted storage until encryption is added.
 - **Restore audit event (OPS-020).** `restore` writes a local record in the backup directory (`restore-<time>.json`). The
   ledger has no restore event yet.
-- **Maintenance mode (OPS-024).** There is no command that refuses writes while the service stays up. Upgrades stop `serve`
-  instead.
-- **Per-network freeze (OPS-033).** A ledger verification failure at start-up stops the instance from serving, rather than
-  freezing one network. The service layer has no per-network posting gate yet.
-- **Pre-migration verification (OPS-023).** Only the post-migration verification runs. The pre-migration backup is the
-  rollback point.
-- **Posting metrics (OPS-014).** Posting attempts, successes, failures, idempotent replays and authentication failures are
-  not counted inside the service. `/metrics` counts HTTP 401 and 429 responses instead.
+- **Frozen-network visibility (OPS-033).** A network that fails verification is frozen (read-only) and the rest serve;
+  administrators see the refusal when they try to write, and operators see `circula_frozen_networks` and the error log.
+  There is no administrator dashboard indicator yet, and the frozen state is not stored (a restart re-derives it).
+- **Posting metrics (OPS-014).** Committed postings and idempotent replays are counted (`circula_ledger_postings_total`,
+  `circula_idempotent_replays_total`). Refused or failed posting attempts and authentication failures as seen by the
+  service are not; `/metrics` counts HTTP 401 and 429 responses instead.
 - **Mail (OPS-029, DEC-009).** No mail settings exist yet.
 - **Secrets from files (OPS-009).** No setting currently holds a secret. The operator password is read from
   `CIRCULA_OPERATOR_PASSWORD` or stdin only.

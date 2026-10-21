@@ -6,7 +6,8 @@ HTTP (`internal/api`), HTML (`internal/web`) and CLI (`cmd/circula`) adapters tr
 (03 domain, 06 ledger, 09 security). Audit findings addressed here: `docs/audit/CODE-AUDIT.md`, `SECURITY-AUDIT.md`
 (IDs such as SVC-01, SA-08 are used in code comments and tests).
 
-Status: service and store are complete and tested; the adapters above are built on top of this surface.
+Status: service and store are complete and tested; the adapters above are built on top of this surface. Operations
+(`circula serve`, jobs, maintenance mode, freeze, metrics) are described in `docs/ops/`.
 
 ## 1. Wiring
 
@@ -21,6 +22,9 @@ svc, err := service.New(st, service.Config{})            // defaults: wall clock
 * `Store.View` is truly read-only: the connection runs `PRAGMA query_only=ON` for the unit, so a write inside a view
   fails and cannot bypass the write gate (SVC-02). Everything that must not write (reads, `VerifyLedger`) uses it.
 * `Config.Clock` and `Config.IDs` are injected (DAT-002, DOM section 12); tests use `internal/testutil`.
+* `svc.SetObserver(o)` installs an optional `service.Observer` (see section 2, "Operational hooks"); `circula serve`
+  sets its metrics here. `svc.FreezeNetwork` / `UnfreezeNetwork` / `IsFrozen` / `FrozenNetworks` implement the
+  per-network freeze (CMD-07).
 * `Config.Argon` cost parameters are a placeholder until DEC-006 (benchmark on minimum hardware) is decided.
 
 ## 2. Conventions every adapter must follow
@@ -46,6 +50,7 @@ object id and a missing id all return the same `not-found` (API-017, FR-006).
 dispute, create listing, update policy) require a non-empty `IdempotencyKey` (map the `Idempotency-Key` header; else
 `idempotency-key-required`). Scope: network + person + operation. Same key + same payload returns the original result;
 same key + different payload is `idempotency-key-reused`. Failed commands are not recorded, so the key stays reusable (API-025).
+The key is 1 to 255 characters, the same limit as the API edge (API-021, D-03); longer is `validation-failed` at `idempotency_key`.
 Records expire after 7 days (`Config.IdempotencyTTL`). Input structs carry the key as `IdempotencyKey` (excluded from the fingerprint).
 
 **Errors.** Expected failures are `*domain.Error{Code, Msg, Fields, Blockers}`; use `errors.Is(err, domain.ErrForbidden)` or
@@ -67,7 +72,23 @@ Records expire after 7 days (`Config.IdempotencyTTL`). Input structs carry the k
 | `blocked` | 409 | `Blockers` lists what prevents departure, closure or last-admin removal |
 | `rate-limited` | 429 | login throttle (per login; add per-address limits at the edge); open-proposal caps; export quota |
 | `unavailable` | 503 | database busy past the busy timeout (SQLITE_BUSY/LOCKED). **Retryable**: nothing was written. Send `Retry-After`; `domain.IsRetryable(err)` |
+| `network-frozen` | 423 | the network failed ledger verification and is read-only (CMD-07, OPS-033). Every write with scope `write` on that network, member creation and proposal expiry are refused; reads and `VerifyLedger` still work. Nothing was written. Not retryable until an operator resolves the fault |
 | `internal-error` | 500 | not produced by the service; adapters map unknown errors to it |
+
+**Frozen networks (CMD-07, OPS-033).** `freeze.go` keeps an in-memory set of network ids. `Service.open(..., ScopeWrite)`
+returns `network-frozen` for a member of a frozen network (after membership is established, so outsiders still get
+`not-found`); `createMember` (join, invitation redeem, approvals) refuses it too, and `ExpireProposals` skips the
+network's proposals. `RecordConsistencyRun` is deliberately exempt so an administrator can still record a verification
+of a frozen network. The set is process memory: `circula serve` freezes failing networks after the start-up
+verification and re-evaluates every network in the hourly verify job (a repaired or restored network thaws on the next
+passing run). Adapters map `network-frozen` to 423 (API problem code `network-frozen`; web page "Network read-only").
+Embedders that need a different policy call `FreezeNetwork` / `UnfreezeNetwork` themselves.
+
+**Operational hooks.** `observe.go` defines `Observer { Posted(n int); Replayed(n int) }`. `Posted` is called after a
+write unit commits with the number of ledger postings it made; `Replayed` with the number of idempotent retries answered
+from a stored record. Rolled-back units report nothing. Callbacks run on the calling goroutine and must not call back
+into the service. `cmd/circula` implements it in `metrics.go` (`circula_ledger_postings_total`,
+`circula_idempotent_replays_total`).
 
 **Pagination.** Keyset: `Page{AfterID, Limit}` (default 100, max 500). Lists are ordered by id (UUIDv7, time-ordered),
 newest first for transactions, listings, disputes; oldest first for members; audit uses `AuditQuery.AfterSeq`;
@@ -370,6 +391,16 @@ func (s *Service) ListTransactions(ctx context.Context, actor domain.Actor, netI
 
 func (s *Service) AdminListTransactions(ctx context.Context, actor domain.Actor, netID string, kind domain.TxKind, statuses []domain.TxStatus, pg Page) ([]*domain.Transaction, error)
 // AdminListTransactions lists every transaction of the network (administrators).
+```
+
+#### freeze.go / observe.go
+
+```go
+func (s *Service) FreezeNetwork(netID, reason string)   // writes to the network fail with network-frozen
+func (s *Service) UnfreezeNetwork(netID string)
+func (s *Service) IsFrozen(netID string) bool
+func (s *Service) FrozenNetworks() []string             // sorted ids
+func (s *Service) SetObserver(o Observer)               // nil removes; call before serving
 ```
 
 #### verify.go
@@ -734,18 +765,28 @@ Deviations from the specs, with reasons:
 * `Export` audits first in its own unit, then streams from one read snapshot; the snapshot's `ledger_seq` is in the manifest.
   A per-member quota (`ExportsPerHour`, default 30) is checked before the audit write (SA-11); the adapter still owns
   its artefact store limits.
-* **Retention (SA-12).** `Purge` is the only deleter of sessions, throttle rows and idempotency records. It is not
-  scheduled by the service; the job runner must call it (hourly is plenty).
+* **Retention (SA-12).** `Purge` is the only deleter of sessions, throttle rows and idempotency records. The service does
+  not schedule it; `circula serve` runs it hourly (`periodicJobs` in `cmd/circula/serve.go`, the table to extend with new
+  jobs).
+* **Ledger failure freezes one network (CMD-07, OPS-033).** Start-up verification used to refuse to serve at all when any
+  network failed. It now freezes only the failing networks (`Service.FreezeNetwork`), logs at error level, exposes
+  `circula_frozen_networks` and keeps serving the rest. `circula verify-ledger` and the hourly job stay the way to
+  confirm and to thaw (a passing run unfreezes). Frozen state is not persisted: a restart re-derives it from the ledger.
+  Administrators see the refusal (423 / "Network read-only") when they try to write; there is no dedicated dashboard
+  indicator yet.
 
 Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
 
 * FR-067 admin overview counts, FR-076 other-party dispute response, FR-078 re-review, FR-024 reports, FR-038 notifications,
   DOM-025.1 limit-warning job, SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
-  setup-secret bootstrap (FR-002; adapter concern), break-glass operator access (SEC-013), per-person session cap,
+  break-glass operator access (SEC-013), per-person session cap,
   platform-scope (`network_id = ''`) audit-chain verification (SVC-06).
-* `store.Open` migrates. Pre-migration backups, the post-migration consistency gate (DAT-043/044), the single-writer
-  lock (ARC-011), CSRF and the CLI wrapping are implemented in `cmd/circula` and `internal/web`, not here; the service
-  only supplies read-only `VerifyLedger` for those gates.
+* `store.Open` migrates. Pre-migration backup and its verification (OPS-018, OPS-023), the post-migration consistency
+  gate (DAT-043/044), the single-writer lock (ARC-011), maintenance mode (OPS-024), CSRF and the CLI wrapping are
+  implemented in `cmd/circula` and `internal/web`, not here; the service only supplies read-only `VerifyLedger` for those
+  gates. SQLite-specific inspection used by the CLI (`InspectSchema`, `AppliedVersion`, `ListNetworks`, `ReadPragmas` /
+  `CheckPragmas`, `IntegrityCheck`, `VacuumInto`, `OpenRaw`) lives in `internal/store/inspect.go` so `cmd/circula`
+  contains no SQL (CMD-03). `store.OpenAtVersion(ctx, path, v)` builds a database at an earlier schema for upgrade tests.
 
 ## 7. Testing notes
 
@@ -753,3 +794,8 @@ Not implemented (outside this core task or spec P1/P2); adapters must not assume
 IDs from `testutil.IDs` are deterministic per `Env`, so two `Env`s collide on ids; build a second network inside the same
 `Env` to test tenant isolation. `testutil.NewEnvConfig(t, wrap, func(*service.Config))` adjusts limits. Tests build real SQLite files in temp dirs;
 `internal/testutil` provides a fake clock, deterministic ids, a fault-injecting store wrapper and a world builder.
+
+`internal/store/golden_migration_test.go` builds a deterministic 10,000-transaction, 61-account database at schema v1,
+migrates it to the current schema, verifies the ledger and the audit chain, and logs the timing (DAT-047, DAT-048). It is
+skipped under `go test -short`. Set `CIRCULA_MIGRATION_TIMING_FILE=path` to append the timing line to a file for the
+release record.
