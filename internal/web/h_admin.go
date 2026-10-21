@@ -83,6 +83,8 @@ func actionsFor(m *domain.Member) []option {
 		}
 	case domain.MemberSuspended:
 		keys = []string{"restore", "remove"}
+	case domain.MemberDeparted:
+		keys = []string{"erase"} // SEC-018; see h_erasure.go
 	}
 	var o []option
 	for _, k := range keys {

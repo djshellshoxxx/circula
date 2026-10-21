@@ -2,7 +2,7 @@ package store
 
 import "time"
 
-func (t *txImpl) ReplaceRecoveryCodes(personID string, ids, hashes []string, at time.Time) error {
+func (t *txImpl) ReplaceAccountRecoveryCodes(personID string, ids, hashes []string, at time.Time) error {
 	if _, err := t.exec(`DELETE FROM account_recovery_codes WHERE person_id = ?`, personID); err != nil {
 		return err
 	}
@@ -15,7 +15,7 @@ func (t *txImpl) ReplaceRecoveryCodes(personID string, ids, hashes []string, at 
 	return nil
 }
 
-func (t *txImpl) ConsumeRecoveryCode(personID, hash string, at time.Time) (bool, error) {
+func (t *txImpl) ConsumeAccountRecoveryCode(personID, hash string, at time.Time) (bool, error) {
 	res, err := t.exec(`UPDATE account_recovery_codes SET used_at = ? WHERE person_id = ? AND code_hash = ? AND used_at IS NULL`,
 		ms(at), personID, hash)
 	if err != nil {
@@ -25,13 +25,13 @@ func (t *txImpl) ConsumeRecoveryCode(personID, hash string, at time.Time) (bool,
 	return n == 1, err
 }
 
-func (t *txImpl) CountRecoveryCodes(personID string) (int, error) {
+func (t *txImpl) CountAccountRecoveryCodes(personID string) (int, error) {
 	var n int
 	err := t.row(`SELECT COUNT(*) FROM account_recovery_codes WHERE person_id = ? AND used_at IS NULL`, personID).Scan(&n)
 	return n, err
 }
 
-func (t *txImpl) DeleteRecoveryCodes(personID string) error {
+func (t *txImpl) DeleteAccountRecoveryCodes(personID string) error {
 	_, err := t.exec(`DELETE FROM account_recovery_codes WHERE person_id = ?`, personID)
 	return err
 }

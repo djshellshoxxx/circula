@@ -35,6 +35,8 @@ type Tx interface {
 	MFARepo
 	RecoveryRepo
 	PendingAdjustmentRepo
+	BreakGlassRepo
+	ErasureRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.

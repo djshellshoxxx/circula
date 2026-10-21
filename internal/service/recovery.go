@@ -122,7 +122,7 @@ func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor,
 		codes[i], hashes[i], ids[i] = formatRecoveryCode(norm), recoveryHash(actor.PersonID, norm), s.id()
 	}
 	err = s.update(ctx, func(tx store.Tx) error {
-		if err := tx.ReplaceRecoveryCodes(actor.PersonID, ids, hashes, s.now()); err != nil {
+		if err := tx.ReplaceAccountRecoveryCodes(actor.PersonID, ids, hashes, s.now()); err != nil {
 			return err
 		}
 		if err := tx.DeleteThrottle(recgenKey(actor.PersonID)); err != nil {
@@ -143,7 +143,7 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 		return 0, domain.ErrForbidden
 	}
 	var n int
-	err := s.view(ctx, func(tx store.Tx) (err error) { n, err = tx.CountRecoveryCodes(actor.PersonID); return })
+	err := s.view(ctx, func(tx store.Tx) (err error) { n, err = tx.CountAccountRecoveryCodes(actor.PersonID); return })
 	return n, err
 }
 
@@ -198,7 +198,7 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		norm = strings.Repeat("A", recoveryCodeChars)
 	}
 	return s.update(ctx, func(tx store.Tx) error {
-		ok, err := tx.ConsumeRecoveryCode(pid, recoveryHash(pid, norm), s.now())
+		ok, err := tx.ConsumeAccountRecoveryCode(pid, recoveryHash(pid, norm), s.now())
 		if err != nil {
 			return err
 		}
@@ -218,7 +218,7 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.RevokeTokensOf(pid, now); err != nil {
 			return err
 		}
-		if err := tx.DeleteRecoveryCodes(pid); err != nil {
+		if err := tx.DeleteAccountRecoveryCodes(pid); err != nil {
 			return err
 		}
 		if err := tx.DeleteThrottle(recoverKey(login)); err != nil {
@@ -275,7 +275,7 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 	if err := tx.RevokeTokensOf(personID, now); err != nil {
 		return err
 	}
-	if err := tx.DeleteRecoveryCodes(personID); err != nil {
+	if err := tx.DeleteAccountRecoveryCodes(personID); err != nil {
 		return err
 	}
 	for _, k := range []string{login, recoverKey(login)} {
