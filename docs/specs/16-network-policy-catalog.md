@@ -13,7 +13,7 @@
 
 [03 section 9](03-domain-model-and-mutual-credit-rules.md) states which rules are configurable and which are fixed. [10](10-governance-and-network-operations.md) specifies the human procedure for changing them. This document is the **single authoritative home for the parameters themselves**: what values are legal, what each does to data that already exists, and how a policy change is stored, dated and resolved at any moment in time.
 
-The catalog contains exactly the 18 parameters of canon 5.6. No additional parameter is introduced; values that other documents leave as `[DECISION NEEDED]` platform constants (for example invitation validity or the settlement window) are listed in section 6.4 as *not* Network-configurable in MVP.
+The catalog contains exactly the 18 parameters of canon 5.6: three **Network identity parameters** (`unit_name`, `unit_symbol`, `unit_scale`, section 4.2; stored on the Network record, not in versioned policy, [canon 5.8](00-conventions.md) item 5) and 15 versioned policy parameters. No additional *policy* parameter is introduced; the few non-policy **Network settings** that other documents need (invitations by Members, `neutral_subjects`, Broadcast controls) are listed separately in section 4.10 and are not part of any policy version; values that other documents leave as `[DECISION NEEDED]` platform constants (for example invitation validity or the settlement window) are listed in section 6.4 as *not* Network-configurable in MVP.
 
 Nothing here lets a policy weaken an invariant (INV-001..INV-014, [03 section 4](03-domain-model-and-mutual-credit-rules.md)). Where a legal question arises from a value (for example whether a credit limit amounts to lending) it is routed to [19](19-legal-and-regulatory-open-questions.md) as a question for counsel; no value is asserted to be lawful.
 
@@ -23,12 +23,12 @@ Terms as in [00 section 5.1](00-conventions.md), [14](14-glossary.md) and [10 se
 
 | Term | Meaning |
 |---|---|
-| **Policy set** | The complete set of 18 parameter values of a Network at one moment. |
+| **Policy set** | The complete set of the 15 versioned policy parameter values of a Network at one moment (the three Network identity parameters are held on the Network record and shown beside it). |
 | **Policy version** | An immutable, numbered, full snapshot of the policy set with metadata and an `effective_at` time (section 5). |
 | **Minor units** | Integer amounts of the Network's credit unit scaled by `unit_scale`; all amount parameters are stored in minor units (DOM-008). |
 | **Whole-unit notation** | Decimal text used in this document and in UI, for example `50.00` for 5000 minor units at `unit_scale` 2. |
 | **In force** | A policy version is in force at time *t* if it is the version with the greatest `effective_at` not later than *t* among versions that reached effect (section 5.4). |
-| **Sensitive parameter** | One whose change needs `admin_quorum` approvals and step-up authentication (section 3.3). |
+| **Sensitive parameter** | One whose change needs `admin_quorum` approvals and step-up authentication (marked in 4.1, rule in 6.2; the step-up recency is owned by [09](09-security-privacy-and-abuse.md) SEC-009). |
 | **Safety-eligible change** | A change in a tightening direction that may skip the notice period under a recorded safety fix (section 6.3). |
 | **Over limit / over cap** | Account states of DOM-012 and DOM-013. |
 | **Platform constant** | A value fixed by the Platform in MVP and not a Network policy (section 6.4). |
@@ -73,7 +73,7 @@ No parameter has a retroactive effect on posted ledger data (DOM-049).
 
 | ID | Pri | Requirement | Rationale | Verification |
 |---|---|---|---|---|
-| POL-001 | P0 | The Platform MUST accept only the 18 parameters of canon 5.6 in a policy set, MUST reject unknown keys, and MUST validate every value against the type, range and cross-parameter rules of this document before accepting a draft. | A closed schema keeps governance inside platform bounds. | Test: unknown key rejected; boundary values accepted and rejected as stated |
+| POL-001 | P0 | The Platform MUST accept only the 15 policy parameters of canon 5.6 in a policy set (and the three identity parameters only on the Network record), MUST reject unknown keys, and MUST validate every value against the type, range and cross-parameter rules of this document before accepting a draft. | A closed schema keeps governance inside platform bounds. | Test: unknown key rejected; boundary values accepted and rejected as stated |
 | POL-002 | P0 | Every amount parameter MUST be an integer in minor units with no floating-point representation, within `0..9007199254740991` (2^53 − 1) so that JSON consumers can represent it exactly; the representation used on the wire (number or decimal string) is owned by [07](07-api-and-integration-contract.md). | DOM-008; interoperability. | Test: 9007199254740992 rejected; round-trip through JSON parser |
 | POL-003 | P0 | The admin interface and API MUST, for each parameter shown or edited, expose: current value, scheduled values with dates, allowed range, default, mutability class, who may change, effect on existing data, and a plain-language impact preview computed from current data where computable. | JRN-006 step 1 and 2; FR-ADM-001. | Demo for all 18 parameters |
 | POL-004 | P0 | Every accepted change MUST generate Audit Events (INV-010) naming actor, time, reason, target Network, parameter, old value and new value; for scheduled changes events are generated at proposal, approval, activation, lapse and withdrawal. | Governance accountability. | Test: event set per lifecycle path |
@@ -84,35 +84,37 @@ No parameter has a retroactive effect on posted ledger data (DOM-049).
 
 ### 4.1 Summary
 
-| # | Parameter | Type / unit | Range | Platform default | Class | Who | Effect |
+| # | Parameter | Type / unit | Range | Platform default | Class | Who (sensitive = Q) | Effect |
 |---|---|---|---|---|---|---|---|
-| 1 | `unit_name` | string | 1..40 characters | none (required) | L | Q | P (frozen) |
-| 2 | `unit_symbol` | string | 1..6 characters | none (required) | L | Q | P (frozen) |
-| 3 | `unit_scale` | integer, decimal places | 0..4 | 2 | L | Q | P (frozen) |
-| 4 | `membership_mode` | enum | `invite`, `approval`, `open` | `approval` | N+S | Q | P-S |
-| 5 | `default_credit_limit` | integer, minor units | 0..`max_credit_limit` | 50.00 | N+S | Q | P-C |
-| 6 | `max_credit_limit` | integer, minor units | `default_credit_limit`..2^53−1 | 200.00 | N+S | Q | P-C |
-| 7 | `max_balance` | integer minor units or null | 1..2^53−1 or null | null | N+S | Q | P-C |
-| 8 | `min_trade_amount` | integer, minor units | 1..`max_trade_amount` | 0.01 (1 minor unit) | N | Q | P |
-| 9 | `max_trade_amount` | integer minor units or null | `min_trade_amount`..2^53−1 or null | null | N+S | Q | P |
-| 10 | `proposal_expiry_days` | integer, days | 1..90 | 14 | N | A | P-S |
-| 11 | `dispute_window_days` | integer, days | 7..365 | 30 | N | Q | P-S |
-| 12 | `dispute_review_sla_days` | integer, days | 2..30 | 7 | N | A | P-S |
-| 13 | `balance_visibility` | enum | `self`, `admins`, `members` | `admins` | N+S | Q | V |
-| 14 | `directory_visibility` | enum | `members`, `public_listings` | `members` | N+S | Q | V |
-| 15 | `inactivity_threshold_days` | integer days or null | 30..730 or null | 180 | N | A | P |
-| 16 | `departure_settlement_mode` | enum | `settle`, `write_off`, `community_fund` | `settle` | N | Q | P-S |
-| 17 | `policy_notice_days` | integer, days | 7..90 | 14 | N | Q | P-S |
-| 18 | `admin_quorum` | integer | 1..number of `active` `network_admin` | 1 | N | Q | P-S |
+| 1 | `unit_name` | string | 1..40 characters | none (required) | L | Q (sensitive) | P (frozen) |
+| 2 | `unit_symbol` | string | 1..6 characters | none (required) | L | Q (sensitive) | P (frozen) |
+| 3 | `unit_scale` | integer, decimal places | 0..4 | 2 | L | Q (sensitive) | P (frozen) |
+| 4 | `membership_mode` | enum | `invite`, `approval`, `open` | `approval` | N+S | Q (sensitive) | P-S |
+| 5 | `default_credit_limit` | integer, minor units | 0..`max_credit_limit` | 50.00 | N+S | Q (sensitive) | P-C |
+| 6 | `max_credit_limit` | integer, minor units | `default_credit_limit`..2^53−1 | 200.00 | N+S | Q (sensitive) | P-C |
+| 7 | `max_balance` | integer minor units or null | 1..2^53−1 or null | null | N+S | Q (sensitive) | P-C |
+| 8 | `min_trade_amount` | integer, minor units | 1..`max_trade_amount` | 0.01 (1 minor unit) | N | Q (sensitive) | P |
+| 9 | `max_trade_amount` | integer minor units or null | `min_trade_amount`..2^53−1 or null | null | N+S | Q (sensitive) | P |
+| 10 | `proposal_expiry_days` | integer, days | 1..90 | 14 | N | A (not sensitive) | P-S |
+| 11 | `dispute_window_days` | integer, days | 7..365 | 30 | N | Q (sensitive) | P-S |
+| 12 | `dispute_review_sla_days` | integer, days | 2..30 | 7 | N | A (not sensitive) | P-S |
+| 13 | `balance_visibility` | enum | `self`, `admins`, `members` | `admins` | N+S | Q (sensitive) | V |
+| 14 | `directory_visibility` | enum | `members`, `public_listings` | `members` | N+S | Q (sensitive) | V |
+| 15 | `inactivity_threshold_days` | integer days or null | 30..730 or null | 180 | N | A (not sensitive) | P |
+| 16 | `departure_settlement_mode` | enum | `settle`, `write_off`, `community_fund` | `settle` | N | Q (sensitive) | P-S |
+| 17 | `policy_notice_days` | integer, days | 7..90 | 14 | N | Q (sensitive) | P-S |
+| 18 | `admin_quorum` | integer | 1..number of `active` `network_admin` | 1 | N | Q (sensitive) | P-S |
 
-Archetype presets for all 18 are in section 7.
+Archetype presets are in section 7. Rows 1 to 3 are the Network identity parameters; rows 4 to 18 are versioned policy parameters. Sensitivity is repeated in 6.2.
 
-### 4.2 Unit identity (parameters 1 to 3)
+### 4.2 Network identity parameters (parameters 1 to 3)
+
+These three are stored on the Network record, not in a policy version ([06](06-data-ledger-and-audit.md) A-DAT-2, DAT-037; canon 5.8 item 5), so no policy version can change them and they are not rolled back with policy. `unit_name` carries singular and plural forms: `unit_name_singular` and `unit_name_plural` (each 1..40 characters, same character rules as `unit_name`); `unit_name` is the canonical label, and when a form is omitted it defaults to `unit_name`. UI copy chooses the form by quantity (locale rules for plurals are a UX matter, [08](08-ux-and-accessibility.md)). All forms freeze with `unit_name` (INV-013).
 
 | Aspect | `unit_name` | `unit_symbol` | `unit_scale` |
 |---|---|---|---|
 | Type, unit | Unicode string, NFC-normalised | Unicode string, NFC-normalised | integer, decimal places |
-| Allowed range | 1..40 characters; no control characters; no leading or trailing whitespace; no line breaks | 1..6 characters; no whitespace; no character in Unicode general category Sc (currency symbol); not equal (case-insensitively) to an ISO 4217 alphabetic code | 0..4 |
+| Allowed range | 1..40 characters (also each of `unit_name_singular`, `unit_name_plural`); no control characters; no leading or trailing whitespace; no line breaks | 1..6 characters; no whitespace; no character in Unicode general category Sc (currency symbol); not equal (case-insensitively) to an ISO 4217 alphabetic code | 0..4 |
 | Default | None: required. Presets: LETS "seeds"; TB "hours"; BIZ "credits" (illustrative) | None: required. Presets: `sd`; `h`; `cr` | 2 (all presets) |
 | Mutability | L | L | L |
 | Who | Q (at `setup` finalisation) | Q | Q |
@@ -194,7 +196,7 @@ Archetype presets for all 18 are in section 7.
 | Aspect | `balance_visibility` | `directory_visibility` |
 |---|---|---|
 | Type | Enum: `self` (a Member sees only their own balance and history), `admins` (also Network Administrators), `members` (all Members) | Enum: `members` (Listings and directory visible to Members only), `public_listings` (published Listings visible to non-members; Member identity limited to fields the owner chose to make public) |
-| Default | Platform `admins`; LETS `members`; TB `admins`; BIZ `admins` | Platform `members`; all presets `members` |
+| Default | Platform `admins` (**proposed default**: [canon 5.6](00-conventions.md) lists the options but defines no default; [09](09-security-privacy-and-abuse.md) SEC-OD-14 and SEC-101 recommend the most restrictive value that keeps administrator duties, which is `admins`; recorded for [13](13-assumptions-risks-decisions-roadmap.md)); LETS `members`; TB `admins`; BIZ `admins` | Platform `members`; all presets `members` |
 | Mutability / who | N+S; Q. Safety direction: more private (`members` → `admins` → `self`) | N+S; Q. Safety direction: `public_listings` → `members` |
 | Effect on existing data | V: the value in force at each read decides what is shown; no stored record changes. A Member always sees their own balance and history and every Adjustment or Reversal touching them (DOM-031). Under `self`, administrators still see aggregate and flag-level information (PER-030, FR-BAL-008) | V: from `effective_at`, non-members can see published Listings; before it they cannot. Moving to `members` hides them immediately at `effective_at`; caches and search-engine copies outside the Platform cannot be recalled |
 | Validation | Loosening (`self` → `admins` → `members`) is not safety-eligible and MUST show a warning that existing balances become visible to more people. Whether loosening requires fresh Member consent is a question for counsel (LEG-Q-25) | Moving to `public_listings` MUST require that the Network has a published privacy description (FR-NET-006) |
@@ -240,14 +242,57 @@ Archetype presets for all 18 are in section 7.
 | POL-012 | P0 | `min_trade_amount` and `max_trade_amount` MUST be evaluated at acceptance against the policy in force at commit (DOM-014); a `proposed` Trade outside the bounds MUST remain `proposed` and unacceptable until it ends. | Policy may change during a proposal's life. | Test |
 | POL-013 | P0 | `max_balance`, when not null, MUST be at least `min_trade_amount`; the Platform SHOULD warn when it is below `max_trade_amount`. | Prevents a cap that makes the minimum Trade impossible. | Test |
 | POL-014 | P0 | `proposal_expiry_days` changes MUST NOT change the `expires_at` of any existing Trade (DOM-021). | Determinism. | Test |
-| POL-015 | P0 | Each Trade MUST record the `policy_version` in force at its completion, and `dispute_window_days` for that Trade and for the joint Reversal path MUST be taken from that version. | Fairness: rules known at the time of the Trade. [DECISION NEEDED: policy version stamp on Trade; recommended yes; carried to 06] | Test: change the window after a Trade completes; the Trade keeps its window |
+| POL-015 | P0 | Each Trade MUST record the `policy_version` in force at its completion, and `dispute_window_days` for that Trade and for the joint Reversal path MUST be taken from that version. | Fairness: rules known at the time of the Trade. Adopted: stamp stored as `Trade.policy_version_id` ([06](06-data-ledger-and-audit.md) DAT-093; DOM-052). | Test: change the window after a Trade completes; the Trade keeps its window |
 | POL-016 | P0 | `dispute_review_sla_days` MUST be snapshotted onto a Dispute at `raise` and all SLA, reminder, response-period and escalation computations for it MUST use the snapshot (LIF-024). | Fairness to disputants. | Test |
 | POL-017 | P0 | `balance_visibility` and `directory_visibility` MUST be evaluated on every read against the policy in force at the time of the read (LIF-046). Loosening MUST NOT be safety-eligible. | Visibility is a view, not a record. | Test; negative test for safety flag |
 | POL-018 | P1 | Moving `directory_visibility` to `public_listings` SHOULD require the Network's privacy description to be published, and the question whether visibility loosening needs fresh consent is a question for counsel (LEG-Q-25). | Privacy by default; no legal conclusion. | Test; cross-reference |
 | POL-019 | P0 | `inactivity_threshold_days` MUST affect only the derived inactive flag and its notifications; it MUST NOT trigger any state change or posting (DOM-044). | No automatic consequences. | 5-year idle simulation |
 | POL-020 | P0 | `departure_settlement_mode` in force at the transition to `departing` MUST be stored on the Membership and MUST be the mode used at finalisation unless a recorded quorum decision (DOM-037) overrides it. | DOM-039; LIF-030. | Test |
-| POL-021 | P0 | `policy_notice_days` MUST be at least the platform floor (7) outside `setup`; a policy change that alters `policy_notice_days` MUST use as its own notice the larger of the old and new values. | Prevents notice-shortening bypass. | Test |
+| POL-021 | P0 | `policy_notice_days` MUST be at least the platform minimum of 7 days outside `setup` (the minimum is a platform constant; a Network MAY choose up to 90) and the default is 14 (D-11); a policy change that alters `policy_notice_days` MUST use as its own notice the larger of the old and new values. | Prevents notice-shortening bypass. | Test |
 | POL-022 | P0 | `admin_quorum` MUST satisfy `1 ≤ admin_quorum ≤` number of `active` `network_admin` Memberships when set; a role change that would reduce `active` administrators below `admin_quorum` MUST be rejected, except by the closure and recovery procedures of [10](10-governance-and-network-operations.md). | Avoids deadlock and bypass (FR-ADM-003). | Test |
+
+### 4.10 Network settings outside the policy set
+
+These settings are stored on the Network record (not in a policy version), changed with an Audit Event, take effect when saved unless stated, and are not subject to `policy_notice_days` because they do not alter Member rights over balances. Members are informed of changes to the invitation and Broadcast settings through the ordinary announcement channel. They are not canon 5.6 parameters; [00 section 5.6](00-conventions.md) is unchanged.
+
+| Setting | Type, range | Default | Who | Used by |
+|---|---|---|---|---|
+| `member_invitations_enabled` | bool; effective only when `membership_mode` = `invite` (an invite-only Network MAY let Members, not only administrators, create invitations) | false (administrators only) | Q (sensitive: it widens who can admit people) | FR-MEM-007, FR-MEM-008 in [04](04-functional-requirements.md); API `create_invitation` |
+| `member_invitation_quota` | integer 1..10, open (unused, unexpired) invitations per Member | 3 | A | FR-MEM-008 (resolves DEC-031 on the MVP side: Member invitation is supported as an option, off by default) |
+| `neutral_subjects` | bool | false (Network name appears in email subjects) | A | NTF-023 in [17](17-notifications-and-communications.md) |
+| `broadcasts_enabled` | bool (per-Network switch; when false, Broadcasts and Broadcast banners are unavailable) | true | A | NTF-085 |
+| `broadcast_limit_7d`, `broadcast_limit_30d` | integer; platform maximum 2 and 6 respectively; a Network MAY set lower values, never higher | 2 and 6 | A (lowering) | NTF-080 |
+
+| ID | Pri | Requirement | Rationale | Verification |
+|---|---|---|---|---|
+| POL-042 | P0 | The settings of 4.10 MUST be validated against their ranges, MUST NOT be accepted inside a policy version, and each change MUST produce an Audit Event with old and new value. `member_invitations_enabled` MUST be rejected unless `membership_mode` = `invite`, and MUST be forced false if the mode changes away from `invite`. | Keeps the closed policy schema (POL-001) while giving other documents their switches. | Test per setting; mode-change test |
+| POL-043 | P0 | When `member_invitations_enabled` is true, a Member MUST NOT hold more than `member_invitation_quota` open invitations, and every invitation MUST record its inviter (FR-MEM-008). Revoking the option MUST NOT invalidate invitations already issued, which expire normally. | Bounds growth through personal networks. | Test at quota |
+| POL-044 | P1 | Broadcast limits MUST never exceed the platform maxima of NTF-080; the admin console MUST show the remaining allowance. | Abuse control. | Test |
+
+### 4.11 Platform-fixed boundaries (from doc 03 section 9)
+
+A policy value is valid only inside these bounds ([03 section 9](03-domain-model-and-mutual-credit-rules.md), DOM-049); none can be configured away.
+
+| Parameter | Bound (owner) |
+|---|---|
+| `unit_name`, `unit_symbol`, `unit_scale` | Immutable once a Journal Entry exists (INV-013, DOM-007); never presented as money (DOM-001); integer arithmetic only (DOM-008) |
+| `membership_mode` | Every Member has an identified, authenticated Membership (D-07); lifecycle fixed in [15](15-lifecycle-state-machines.md) |
+| `default_credit_limit`, `max_credit_limit` | `0 ≤ credit_limit ≤ max_credit_limit` (DOM-011); limits bind Trade postings only (INV-005); System Accounts exempt |
+| `max_balance` | Applies to Trade postings only (INV-006, DOM-027) |
+| `min_trade_amount`, `max_trade_amount` | Amount at least 1 minor unit (INV-015) |
+| `proposal_expiry_days` | Proposals always expire; expiry has no ledger effect (DOM-021, DOM-022) |
+| `dispute_window_days`, `dispute_review_sla_days` | Disputes never mutate balances directly; remedies limited to DOM-047 |
+| `balance_visibility`, `directory_visibility` | A Member always sees their own balance and history and every Adjustment or Reversal touching them (DOM-031); Network Administrators see all ledger entries (DOM-053, canon 5.8 item 6) |
+| `inactivity_threshold_days` | No automatic balance effect (DOM-044) |
+| `departure_settlement_mode` | Balance zero at close (INV-016); no cash-out (INV-014) |
+| `policy_notice_days` | Platform minimum 7 days outside `setup` |
+| `admin_quorum` | At least 1 and at most the number of `active` `network_admin` Memberships; Operator holds no ledger powers (INV-012) |
+
+### 4.12 Snapshotting for disputes and departures
+
+| ID | Pri | Requirement | Rationale | Verification |
+|---|---|---|---|---|
+| POL-045 | P0 | At Dispute `raise` the Platform MUST record the `policy_version` in force and use it for `dispute_review_sla_days`; the Trade's stamped version (POL-015) governs the dispute window. At the transition to `departing` the `departure_settlement_mode` MUST be copied to the Membership. Later policy versions MUST NOT alter either (POL-016, POL-020). | Predictable rules for people already in a process. | Change policy mid-Dispute and mid-departure; outcomes unchanged |
 
 ## 5. Policy document, versioning and effective dating
 
@@ -270,7 +315,7 @@ A policy version is a JSON document with the following members. Field names are 
 | `approved_at` | UTC time or null | Time quorum was reached |
 | `announced_at` | UTC time or null | Time the Member notice was sent |
 | `effective_at` | UTC time or null | Time the version becomes in force |
-| `parameters` | object | Full snapshot: all 18 parameters |
+| `parameters` | object | Full snapshot of the 15 policy parameters (identity parameters are on the Network record and are not part of a policy version) |
 | `changes` | array | Derived diff against `supersedes`: `{ "parameter", "old", "new" }` (not authoritative; recomputable) |
 | `impact` | object | Stored counts from the impact preview (POL-006) |
 
@@ -299,9 +344,6 @@ An ordinary (non-safety) change by a business network raising `dispute_window_da
   "announced_at": "2026-10-21T10:03:12Z",
   "effective_at": "2026-11-20T10:03:10Z",
   "parameters": {
-    "unit_name": "credits",
-    "unit_symbol": "cr",
-    "unit_scale": 2,
     "membership_mode": "invite",
     "default_credit_limit": 100000,
     "max_credit_limit": 500000,
@@ -326,7 +368,7 @@ An ordinary (non-safety) change by a business network raising `dispute_window_da
 }
 ```
 
-Here `effective_at` is 30 days after approval because `policy_notice_days` in force at approval was 30. The example is illustrative; values are not recommendations beyond section 7.
+Network identity (`unit_name` "credits", `unit_symbol` "cr", `unit_scale` 2) is held on the Network record and is therefore absent from `parameters`. Here `effective_at` is 30 days after approval because `policy_notice_days` in force at approval was 30. The example is illustrative; values are not recommendations beyond section 7.
 
 ### 5.3 Statuses and transitions
 
@@ -383,9 +425,9 @@ A policy cannot be rolled back; the previous values are re-applied by a new vers
 |---|---|---|---|
 | `proposal_expiry_days` | Trade `propose` (TR1) | Trade (`expires_at`) | No |
 | `min_trade_amount`, `max_trade_amount`, `default_credit_limit` (effective limit), `max_credit_limit`, `max_balance` | Trade `accept` commit (TR2) | Evaluated, not stored | Yes: next event uses the new policy |
-| `dispute_window_days` | Trade completion | Trade (`policy_version`) | No |
+| `dispute_window_days` | Trade completion | Trade (`policy_version_id`, [06](06-data-ledger-and-audit.md) DAT-093); `dispute_window_ends_at` snapshotted | No |
 | `dispute_review_sla_days` | Dispute `raise` (DS1) | Dispute | No |
-| `departure_settlement_mode` | Membership `request_departure`/`remove` (MB6) | Membership | No (except DOM-037 quorum decision) |
+| `departure_settlement_mode` | Membership `request_departure`/`remove` (MB6) | Membership (`departure_mode_snapshot`) | No (except DOM-037 quorum decision) |
 | `membership_mode` | `apply`/`accept_invite` (MB1) | Evaluated, not stored | Yes for later applicants |
 | `inactivity_threshold_days` | Each recomputation | Derived flag | Yes |
 | `balance_visibility`, `directory_visibility` | Each read | None | Yes (view) |
@@ -434,7 +476,7 @@ If the number of `active` `network_admin` Memberships is smaller than `admin_quo
 Sensitive (Q): `unit_name`, `unit_symbol`, `unit_scale`, `membership_mode`, `default_credit_limit`, `max_credit_limit`, `max_balance`, `min_trade_amount`, `max_trade_amount`, `dispute_window_days`, `balance_visibility`, `directory_visibility`, `departure_settlement_mode`, `policy_notice_days`, `admin_quorum`.
 Not sensitive (A): `proposal_expiry_days`, `dispute_review_sla_days`, `inactivity_threshold_days`.
 
-A version containing at least one sensitive change needs Q for the whole version. Approval always requires a mandatory reason.
+A version containing at least one sensitive change needs Q for the whole version, including step-up authentication within the window owned by SEC-009 ([09](09-security-privacy-and-abuse.md)). Approval always requires a mandatory reason. The Network settings of 4.10 are not policy parameters; those marked sensitive there also need Q.
 
 ### 6.3 Safety-eligible changes
 
@@ -472,7 +514,7 @@ These values are used by the lifecycle and governance documents. They are not pa
 | Applicant review reminder | 7 days | [15](15-lifecycle-state-machines.md) |
 | Pending Adjustment/Reversal lifetime | 7 days | [15](15-lifecycle-state-machines.md) |
 | Dispute automatic escalation | 2 x `dispute_review_sla_days` | [15](15-lifecycle-state-machines.md) |
-| Step-up authentication window | 10 minutes | [04](04-functional-requirements.md) (FR-ADM-018) |
+| Step-up authentication window | Single constant owned by SEC-009 | [09](09-security-privacy-and-abuse.md) (cited by FR-ADM-018 and [07](07-api-and-integration-contract.md)) |
 | Policy approval timeout | 7 days | [04](04-functional-requirements.md) (FR-ADM-002), GOV-013 |
 | Appeal windows, due times, recovery thresholds, closure notice | See [10 sections 6, 8.3, 11.4](10-governance-and-network-operations.md) | [10](10-governance-and-network-operations.md) |
 | Platform notice floor | 7 days | This document (`policy_notice_days`) |
@@ -504,6 +546,8 @@ Presets are starting policy sets for a Network's first version. They are recomme
 | `admin_quorum` | 1 | 1 | 1 | 2 |
 
 ### 7.2 Preset documents (`parameters` member only; scale 2)
+
+In each document the `unit_*` members are the Network identity set at `setup` and stored on the Network record; they are shown here for completeness and are not stored in the policy version.
 
 Small neighbourhood LETS:
 
@@ -562,7 +606,7 @@ Each preset satisfies rules R1 to R13 except that the BIZ preset requires at lea
 
 | Need | Owner | What is needed |
 |---|---|---|
-| Entity for policy version, `policy_version` stamp on Trade, Audit Event kinds `policy.*` | [06](06-data-ledger-and-audit.md) | Fields in 5.1; stamp per POL-015 |
+| Entity for policy version, `policy_version_id` stamp on Trade, Audit Event kinds `policy.*`, Network identity attributes | [06](06-data-ledger-and-audit.md) | Fields in 5.1; stamp per POL-015 and DAT-093 |
 | Wire representation of amounts and policy endpoints | [07](07-api-and-integration-contract.md) | Per POL-002 and section 5 |
 | UI for impact previews, warnings and acknowledgement | [08](08-ux-and-accessibility.md) | POL-003, POL-035 |
 | Notices | [17](17-notifications-and-communications.md) | Policy notice content (GOV-010), clamp notices, degraded quorum notice |
@@ -574,13 +618,15 @@ Each preset satisfies rules R1 to R13 except that the BIZ preset requires at lea
 
 | Ref | Item | Options | Recommended default |
 |---|---|---|---|
-| POL-A1 | No parameter beyond canon 5.6 is added; timing constants in 15 are platform constants (6.4). | Constants / parameters | Constants |
+| POL-A1 | No policy parameter beyond canon 5.6 is added; timing constants in 15 are platform constants (6.4); non-policy Network settings are in 4.10. | Constants / parameters | Constants |
+| POL-A10 | Member invitations are an option under `membership_mode` = `invite` (off by default, quota 3), resolving DEC-031 for MVP; doc 10 still treats administrators as the default inviters. | Option / admins only / always on | Option, off |
+| POL-A11 | Network identity (`unit_*`, incl. singular and plural forms) lives on the Network record, so the policy snapshot has 15 members. | Network / policy copy | Network |
 | POL-A2 | Overrides above a lowered `max_credit_limit` are clamped at activation and not restored. Alternative: block the change until overrides are lowered; or keep overrides and cap at read. | Clamp / block / cap-at-read | Clamp |
 | POL-A3 | A Trade carries the `policy_version` at completion, used for `dispute_window_days`. Alternative: use the version in force when the Dispute is raised. | Stamp / current | Stamp (needs 06) |
 | POL-A4 | Degraded quorum (6.1). | Degrade / block | Degrade |
 | POL-A5 | `min_trade_amount` is classed sensitive (Q) because it can exclude small contributors; this matches [10 section 4.1](10-governance-and-network-operations.md). | A / Q | Q |
 | POL-A6 | Reserved-term check on `unit_name` is a warning with acknowledgement, because genuine local units are named after places or traditions; hard-reject only for `unit_symbol`. | Warn / reject | Warn |
-| POL-A7 | Platform default `balance_visibility` is `admins` (see GOV-A8). | `self` / `admins` / `members` | `admins` |
+| POL-A7 | Platform default `balance_visibility` is `admins`. The canon has no default; this is a **proposed default** recommended by [09](09-security-privacy-and-abuse.md) (SEC-OD-14) and GOV-A8. | `self` / `admins` / `members` | `admins` |
 | POL-A8 | A single `dispute_window_days` lower bound of 7 days. | 3 / 7 / 14 | 7 |
 | POL-A9 | Presets are unit-relative; no equivalence to money is stated. Limits expressed as multiples of typical activity are a human choice. | — | Accept |
 
