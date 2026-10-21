@@ -61,10 +61,12 @@ Rolling upgrades are not supported for a single-node embedded deployment.
 
 ## Maintenance mode
 
-Maintenance mode (OPS-024) makes the web UI and the API answer `503 Service Unavailable` with a `Retry-After` header.
-The web UI shows a short "Back soon" page; the API returns a `application/problem+json` document with code
-`maintenance`. `/healthz`, `/readyz` and `/metrics` keep working, so monitors and load balancers still see the
-instance (`circula_maintenance_mode` is `1`). No request reaches the service, so nothing is written.
+Maintenance mode (OPS-024) keeps reads working and refuses writes. Reads (`GET`, `HEAD`, `OPTIONS`) on the web UI and
+the API are served as usual, so members can still look at balances and history. Every other method, sign-in and
+sign-out included, gets `503 Service Unavailable` with a `Retry-After` header. The web UI shows a short "Back soon"
+page; the API returns a `application/problem+json` document with code `maintenance`. Nothing is written by a refused
+request. `/healthz`, `/readyz` and `/metrics` keep working, so monitors and load balancers still see the instance
+(`circula_maintenance_mode` is `1`). People who are not yet signed in cannot sign in while it is on.
 
 Two switches, either turns it on:
 

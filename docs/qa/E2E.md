@@ -23,15 +23,15 @@ through the web forms, as a person would: it registers four accounts, creates th
 (using the setup secret), creates four invitations and joins three members, completes two trades, leaves one proposal
 pending, publishes a listing and opens a dispute. The binary and the temporary directory are removed at the end.
 
-* `tests/a11y.spec.js`: 38 pages plus three error or review states, each checked with axe-core for the tags
+* `tests/a11y.spec.js`: 57 pages plus 9 error, review, saved and maintenance states, each checked with axe-core for the tags
   `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`. Any violation fails the test and prints rule, selector and HTML. Pages:
   sign-in, register, help, invitation (signed out and in), 404, network list, network creation, password change,
   dashboard, directory, profile, listings (list, new, edit), trades (list, propose, detail, accept, decline, cancel),
-  history, dispute form, disputes, dispute detail, review queue, and every admin page. A guard test confirms the harness
+  history, dispute form, disputes, dispute detail, review queue, every admin page, and the pages added later: inbox, report form, time zone, dispute response, resolved and re-review states (several roles), admin overview, reports, announcements and reversal (form, error, review step), the dispute decision review step, and the 503 maintenance page (served by a second instance started with the maintenance setting, which also checks that GET still works). The setup also seeds an announcement, a report and three disputes (open, resolved with response, re-review requested). A guard test confirms the harness
   does report a deliberately broken DOM.
 * `tests/keyboard.spec.js`: only key presses are used. Checks: skip link is the first Tab stop, is visible when
   focused and moves focus to `main`; tab order on the sign-in page; no positive `tabindex` and a visible focus
-  indicator on every Tab stop of five pages; sign in, propose a trade (select by type-ahead, amount, review, send) and
+  indicator on every Tab stop of five pages, then of the inbox, report, time zone, dispute and admin overview, reports, announcements and reverse pages; respond to a dispute, set the time zone, mark notifications read and reverse a trade by keyboard; sign in, propose a trade (select by type-ahead, amount, review, send) and
   accept it as the counterparty; the error summary takes focus on a failed sign-in and its link focuses the field.
 
 Axe does not find everything. It covers rule-based checks only, a subset of the criteria. Screen

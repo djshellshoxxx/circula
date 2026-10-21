@@ -35,7 +35,7 @@ by the hourly job and the admin consistency check in the UI and API, which recor
 ## Maintenance mode
 
 ```sh
-circula maintenance -config /etc/circula/circula.json -retry-after 600 on   # web and API answer 503 within a second
+circula maintenance -config /etc/circula/circula.json -retry-after 600 on   # writes answer 503 within a second, reads keep working
 circula maintenance -config /etc/circula/circula.json status
 circula maintenance -config /etc/circula/circula.json off
 ```

@@ -72,7 +72,8 @@ If you belong to exactly one network, signing in takes you straight to it. If yo
 ## 3. Finding your way around
 
 The header shows **Home**, **Trades**, **Directory**, **Listings**, **History**, **Disputes**, and, for reviewers and
-administrators, **Review queue** and **Network admin**. **All networks** returns to the list. Pages also have a
+administrators, **Review queue** and **Network admin**. Under your name are **Inbox** (with an unread count), **Time
+zone** and **Password**. **All networks** returns to the list. Pages also have a
 **Skip to main content** link, which appears when you press Tab on a page. Every page can be used with the keyboard
 alone. The footer repeats the reminder that credits are accounting units, and links to **Help** (`/help`), which explains
 balances and trade statuses.
@@ -80,7 +81,7 @@ balances and trade statuses.
 ### Home (dashboard)
 
 Shows your balance card (balance with sign and word, credit limit, reserved, available to spend, awaiting from others;
-if you are in debt, how much of the limit you are using), **Propose a trade**, the trades **waiting for you**, your
+if you are in debt, how much of the limit you are using), any **Announcements** from administrators, **Propose a trade**, the trades **waiting for you**, your
 **pending** outgoing trades and your **latest activity**.
 
 ## 4. Trading
@@ -160,8 +161,16 @@ dispute window (30 days after completion by default). Only the two people in the
 **Disputes** lists yours, with status: open, under review, decided but reversal not yet posted, resolved or withdrawn.
 Each has a timeline. Only one dispute can be open on a trade at a time.
 
-Things the current build does **not** do: there is no in-app message to the other party or reviewer, no way for the other
-party to reply to a dispute, and no second review of a decision (see "Not in this build" below).
+5. **The other person can respond.** The person who did not open the dispute sees **Add your response** on the dispute
+   page (also listed under *Waiting for your action* in your Inbox). One response of up to 2000 characters; the reviewer
+   and the opener can read it. You cannot respond once the dispute is decided or withdrawn.
+6. **Ask for a re-review.** After a decision, either person in the trade can use **Ask for a re-review** once, within 14
+   days of the decision, giving a reason (up to 500 characters). A different reviewer or administrator (not a party, not
+   the first reviewer) records the outcome: the original decision stands, or it is upheld or partly upheld with a further
+   reversal. The original decision is kept; the re-review is shown next to it.
+
+There is no free-form message to the other party or reviewer; the response and the re-review reason are the only text
+channels. See "Not in this build" for what is still missing.
 
 ## 7. Leaving, suspension and removal
 
@@ -184,23 +193,37 @@ party to reply to a dispute, and no second review of a decision (see "Not in thi
 
 Pages use headings, landmarks and labelled form fields. Errors are listed in a summary at the top that receives focus,
 and each entry links to its field. Amounts and balances are given in words as well as symbols. The site is intended to
-conform to WCAG 2.x level AA; automated checks (axe-core, 38 pages) and keyboard-only tests run against every release
+conform to WCAG 2.x level AA; automated checks (axe-core, many pages and states) and keyboard-only tests run against every release
 build candidate (`docs/qa/E2E.md`), but automated checks do not find everything. Tell your administrator if something
 cannot be used.
 
-## 10. Not in this build
+## 10. Inbox, reports, announcements, time zone and notices
 
-The following are being added by other work items. They are **not** present on the branch this guide was written from.
-Do not rely on them until the release notes list them.
+* **Inbox** (`/n/<name>/inbox`, link in the header with an unread count). *Waiting for your action* lists trade
+  proposals sent to you and disputes you can respond to. *Notifications* lists what happened (newest first, paged); you
+  can show unread only, **Mark as read** one, or **Mark all as read**. Notifications are in the application only. No
+  e-mail is sent.
+* **Report a listing or member.** Each listing has **Report** and each member profile has **Report <name>**. Choose
+  the problem, add optional details (up to 500 characters) and **Send report**. It goes to the network administrators
+  only; it hides or changes nothing by itself, and the person reported is not told who reported.
+* **Announcements.** Notices from administrators appear at the top of Home, from their start time.
+* **Time zone** (`/account/time-zone`, link under your name). Enter an IANA name such as `Europe/Berlin`; empty means UTC.
+  Pages show times in that zone. The API and the audit log stay in UTC.
+* **Credit-limit notice.** When your balance has used 80 percent or more of your credit limit, a notice appears on Home
+  and the propose form, and you get a notification (at most one a week). A trade that would pass the limit is refused.
+* **Read-only network.** If a network fails its ledger integrity check it is frozen: you see "Network read-only"
+  (status 423) when you try to change anything. Balances and history can still be viewed. Other networks are not
+  affected. It thaws when a later check passes.
+* **Maintenance.** While the service operator has maintenance mode on, pages can still be read, but anything that
+  changes data (including signing in) shows "Back soon" and nothing is changed. Try again in a few minutes.
+
+## 11. Not in this build
 
 | Feature | State in this build |
 |---|---|
-| Notifications (in-app) | Not present. Nothing tells you about a new proposal except visiting Home. Mail is not implemented either. |
-| Reports and statements | Not present. Use **Download my transactions**. |
-| Dispute response from the other party and one re-review | Not present. Only the opener can withdraw; reviewers decide once. |
-| Announcements from administrators | Not present. The API routes exist but answer "not implemented". |
-| Display time zone | Not present. Times are shown in UTC. |
-| Credit-limit warnings | The policy field exists; no warning is shown to you. |
-
-(A work branch with dispute responses, re-review, reports, notifications and limit warnings, and another with
-announcements, time zone and an admin overview, exist in the repository but have not been merged into the base branch.)
+| Statements and reports for members | Not present. Use **Download my transactions** on History. (Member reports above are abuse reports, not statements.) |
+| Dispute response period | The other party may respond, but a reviewer can record a decision without waiting for a response or for a period to end. |
+| E-mail or push notifications | Not implemented; notifications show only in the Inbox. |
+| Messages between members | Not present. |
+| Leaving a network, deleting an account | No web page (leaving exists in the JSON API only). |
+| Per-network limit-warning setting | The warning threshold is fixed at 80 percent; the administrator's "Limit warning (days)" field does not change it. |

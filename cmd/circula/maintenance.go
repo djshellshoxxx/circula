@@ -16,8 +16,10 @@ import (
 	"time"
 )
 
-// Maintenance mode (OPS-024). While active, the web UI and the API answer
-// 503 with Retry-After and a friendly page (HTML) or problem document (API).
+// Maintenance mode (OPS-024). While active, reads (GET, HEAD, OPTIONS) on the
+// web UI and the API keep working; every other method (including sign-in and
+// sign-out) answers 503 with Retry-After and a friendly page (HTML) or problem
+// document (API).
 // /healthz, /readyz and /metrics keep working so monitoring and load balancers
 // still see the instance. Two switches, either one turns it on:
 //
@@ -77,11 +79,18 @@ func readMaintenanceFile(path string) (bool, int) {
 	return true, n
 }
 
-// gate wraps a handler so it answers 503 while maintenance is active.
+// readOnlyMethod reports whether a method only reads. Reads keep working in
+// maintenance mode (OPS-024); everything else, sign-in and sign-out included,
+// is refused.
+func readOnlyMethod(method string) bool {
+	return method == http.MethodGet || method == http.MethodHead || method == http.MethodOptions
+}
+
+// gate wraps a handler so mutating requests answer 503 while maintenance is active.
 func (m *maintenance) gate(next http.Handler, api bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		on, retry := m.state()
-		if !on {
+		if !on || readOnlyMethod(r.Method) {
 			next.ServeHTTP(w, r)
 			return
 		}

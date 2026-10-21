@@ -175,3 +175,85 @@ test('validation errors are announced and reachable from the keyboard', async ({
   await page.keyboard.press('Enter');
   expect(await page.evaluate(() => document.activeElement.id)).toBe('f-login');
 });
+
+test('focus indicator and no positive tabindex on the inbox, report, time zone and dispute pages', async ({ as, st }) => {
+  const page = await as('carol');
+  const pages = [`/n/${st.slug}/inbox`, st.reportPath, '/account/time-zone', st.disputeReReview, st.disputePath];
+  for (const p of pages) {
+    await page.goto(p);
+    const positive = await page.evaluate(() => Array.from(document.querySelectorAll('[tabindex]')).filter((e) => Number(e.getAttribute('tabindex')) > 0).length);
+    expect(positive, `positive tabindex on ${p}`).toBe(0);
+    const stops = await tabOrder(page);
+    expect(stops.length, `tab stops on ${p}`).toBeGreaterThan(3);
+    await page.goto(p);
+    for (let i = 0; i < stops.length; i++) {
+      await page.keyboard.press('Tab');
+      const ring = await page.evaluate(() => {
+        const cs = getComputedStyle(document.activeElement);
+        return { outline: cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2, shadow: cs.boxShadow !== 'none' };
+      });
+      expect(ring.outline || ring.shadow, `focus indicator on "${await focused(page)}" at ${p}`).toBe(true);
+    }
+  }
+});
+
+test('focus indicator on the admin overview, reports, announcements and reverse pages', async ({ as, st }) => {
+  const page = await as('admin');
+  for (const p of [`/n/${st.slug}/admin`, `/n/${st.slug}/admin/reports`, `/n/${st.slug}/admin/announcements`, `/n/${st.slug}/admin/reverse`]) {
+    await page.goto(p);
+    const stops = await tabOrder(page);
+    expect(stops.length, `tab stops on ${p}`).toBeGreaterThan(5);
+    await page.goto(p);
+    for (let i = 0; i < stops.length; i++) {
+      await page.keyboard.press('Tab');
+      const ring = await page.evaluate(() => {
+        const cs = getComputedStyle(document.activeElement);
+        return cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2 || cs.boxShadow !== 'none';
+      });
+      expect(ring, `focus indicator on "${await focused(page)}" at ${p}`).toBe(true);
+    }
+  }
+});
+
+test('respond to a dispute using only the keyboard', async ({ as, st }) => {
+  const page = await as('carol');
+  await page.goto(st.disputePath);
+  await tabTo(page, /^Your response$/);
+  await typeText(page, 'The repair was done as agreed.');
+  await tabTo(page, /^Send response$/);
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Your response was added')).toBeVisible();
+});
+
+test('set the time zone using only the keyboard', async ({ as }) => {
+  const page = await as('alice');
+  await page.goto('/account/time-zone');
+  await tabTo(page, /^Time zone$/);
+  await typeText(page, 'Europe/Berlin');
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('Europe/Berlin').first()).toBeVisible();
+});
+
+test('mark all notifications as read using only the keyboard', async ({ as, st }) => {
+  const page = await as('bob');
+  await page.goto(`/n/${st.slug}/inbox`);
+  await tabTo(page, /^Mark all as read$/);
+  await page.keyboard.press('Enter');
+  await expect(page.getByText('No unread notifications')).toBeVisible();
+});
+
+test('reverse a trade using only the keyboard', async ({ as, st }) => {
+  const page = await as('admin');
+  await page.goto(`/n/${st.slug}/admin/reverse`);
+  await tabTo(page, /^Trade reference$/);
+  await typeText(page, st.tradeReverse);
+  await tabTo(page, /^Reason$/);
+  await typeText(page, 'Keyboard-only reversal test.');
+  await tabTo(page, /^Review reversal$/);
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Post reversal' })).toBeVisible();
+  await tabTo(page, /^Post reversal$/);
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Post reversal' })).toHaveCount(0);
+  await expect(page.locator('h1')).toBeVisible();
+});

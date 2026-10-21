@@ -58,6 +58,51 @@ async function login(page, loginName, next) {
   await submit(page, 'Sign in');
 }
 
+/** Starts one more circula instance with a fresh temporary database. env adds or overrides settings. */
+async function startInstance(env = {}) {
+  const bin = path.resolve(process.env.CIRCULA_BIN || path.join(__dirname, '..', 'bin', 'circula'));
+  if (!fs.existsSync(bin)) throw new Error(`binary not found: ${bin} (run "make build" or set CIRCULA_BIN)`);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'circula-e2e-'));
+  const port = await freePort();
+  const base = `http://127.0.0.1:${port}`;
+  const logs = [];
+  const child = spawn(bin, ['serve'], {
+    env: {
+      PATH: process.env.PATH,
+      CIRCULA_LISTEN: `127.0.0.1:${port}`,
+      CIRCULA_PUBLIC_BASE_URL: base,
+      CIRCULA_DATABASE: path.join(dir, 'circula.db'),
+      CIRCULA_BACKUP_DIR: path.join(dir, 'backups'),
+      CIRCULA_BACKUP_INTERVAL: '0',
+      CIRCULA_MIGRATE_MODE: 'auto',
+      CIRCULA_COOKIE_SECURE: 'false', // plain http on loopback
+      CIRCULA_LOG_FORMAT: 'text',
+      CIRCULA_SETUP_SECRET: SETUP_SECRET,
+      ...env,
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  child.stdout.on('data', (d) => logs.push(d.toString()));
+  child.stderr.on('data', (d) => logs.push(d.toString()));
+  const stop = async () => {
+    if (child.exitCode === null) {
+      child.kill('SIGTERM');
+      await new Promise((r) => {
+        const t = setTimeout(() => { child.kill('SIGKILL'); r(); }, 10_000);
+        child.on('exit', () => { clearTimeout(t); r(); });
+      });
+    }
+    fs.rmSync(dir, { recursive: true, force: true });
+  };
+  try {
+    await waitReady(base, child, logs);
+  } catch (e) {
+    await stop();
+    throw e;
+  }
+  return { base, dir, stop };
+}
+
 module.exports = async function globalSetup() {
   const bin = path.resolve(process.env.CIRCULA_BIN || path.join(__dirname, '..', 'bin', 'circula'));
   if (!fs.existsSync(bin)) throw new Error(`binary not found: ${bin} (run "make build" or set CIRCULA_BIN)`);
@@ -221,14 +266,79 @@ async function seed(base) {
     state.bobProfile = prof;
     state.bobId = prof.split('/').pop();
 
+    // 8. More trades: t4 and t5 are completed alice -> bob payments. t4 is disputed below, t5 is left for the reversal pages.
+    const t4 = await propose(pa, 'Bob Member', '1.00', 'bike tuning', 'pay');
+    await accept(pb, t4);
+    const t5 = await propose(pa, 'Bob Member', '0.50', 'spare key', 'pay');
+    await accept(pb, t5);
+    state.tradeReverse = t5;
+
+    // 9. Admin: make carol a dispute reviewer, publish an announcement.
+    let [cd, pd] = await as('admin');
+    await pa.goto(`/n/${SLUG}/directory`);
+    const carolHref = await pa.locator(`a[href*="/n/${SLUG}/members/"]`).filter({ hasText: 'Carol' }).first().getAttribute('href');
+    state.carolId = carolHref.split('/').pop();
+    await pd.goto(`/n/${SLUG}/admin/members/${state.carolId}/grant-reviewer`);
+    await submit(pd, 'Make dispute reviewer');
+    await pd.goto(`/n/${SLUG}/admin/announcements`);
+    await pd.getByLabel('Title').fill('Meet-up on Saturday');
+    await pd.getByLabel('Message').fill('We meet at the library at noon to swap goods and talk.');
+    await submit(pd, 'Publish announcement');
+
+    // 10. A report by carol about alice's listing.
+    const listingId = edit.split('/').slice(-2)[0];
+    state.listingId = listingId;
+    state.reportPath = `/n/${SLUG}/report?type=listing&id=${listingId}`;
+    await pc.goto(state.reportPath);
+    await submit(pc, 'Send report');
+
+    // 11. Disputes with a response and re-review. The ids of new disputes are read from the list.
+    const disputeIds = async () => {
+      await pa.goto(`/n/${SLUG}/disputes`);
+      return (await pa.locator(`a[href*="/n/${SLUG}/disputes/"]`).evaluateAll((a) => a.map((x) => x.getAttribute('href'))));
+    };
+    const openDispute = async (trade, text) => {
+      const before = await disputeIds();
+      await pa.goto(`/n/${SLUG}/trades/${trade}/dispute`);
+      await pa.getByLabel('What went wrong?').fill(text);
+      await submit(pa, 'Review dispute');
+      await submit(pa, 'Open dispute');
+      const after = await disputeIds();
+      const fresh = after.find((h) => !before.includes(h));
+      if (!fresh) throw new Error('dispute not created for ' + trade);
+      return fresh;
+    };
+    const decide = async (pg, path, outcomeLabel, why) => {
+      await pg.goto(path);
+      await submit(pg, 'Start review');
+      await pg.getByLabel('Outcome').selectOption({ label: outcomeLabel });
+      await pg.getByLabel('Rationale').fill(why);
+      await submit(pg, 'Review decision');
+      await submit(pg, 'Record decision');
+    };
+    // D2 (t4): bob responds, admin dismisses; alice can still ask for a re-review (state: resolved, with response).
+    state.disputeResolved = await openDispute(t4, 'The tuning was not finished.');
+    await pb.goto(state.disputeResolved);
+    await pb.getByLabel('Your response').fill('It was finished and tested before hand-over.');
+    await submit(pb, 'Send response');
+    await decide(pd, state.disputeResolved, 'Dismissed: the balance stands', 'The work was delivered as described.');
+    // D3 (t1): admin dismisses, alice asks for a re-review; carol (reviewer, not a party) can decide it.
+    state.disputeReReview = await openDispute(t1, 'I did not agree to the final amount.');
+    await decide(pd, state.disputeReReview, 'Dismissed: the balance stands', 'The amount matches what both agreed.');
+    await pa.goto(state.disputeReReview);
+    await pa.getByLabel('Why should it be looked at again?').fill('The chat shows a lower amount was agreed.');
+    await submit(pa, 'Request re-review');
+
     await ca.close();
     await cb.close();
     await cc.close();
+    await cd.close();
   } finally {
     await browser.close();
   }
   return state;
 }
 
+module.exports.startInstance = startInstance;
 module.exports.STATE_FILE = STATE_FILE;
 module.exports.STATE_DIR = STATE_DIR;

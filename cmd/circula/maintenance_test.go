@@ -17,12 +17,20 @@ func maintOps(t *testing.T, cfgOn bool) (*opsServer, string) {
 	return ops, maintenancePath(ops.cfg.Database)
 }
 
-// OPS-024: web and API answer 503 with Retry-After; health stays up.
+// OPS-024: reads pass; mutating web and API requests answer 503 with Retry-After; health stays up.
 func TestMaintenanceModeServes503ExceptOps(t *testing.T) {
 	ops, _ := maintOps(t, true)
 	h := ops.routes(stubHandler("api"), stubHandler("web"))
 
-	api := do(t, h, "GET", "/api/v1/me", "127.0.0.1:1", nil)
+	for _, m := range []string{"GET", "HEAD", "OPTIONS"} {
+		if r := do(t, h, m, "/api/v1/me", "127.0.0.1:1", nil); r.Code != 200 || r.Header().Get("Retry-After") != "" {
+			t.Errorf("api %s read in maintenance: %d %v", m, r.Code, r.Header())
+		}
+		if r := do(t, h, m, "/x", "127.0.0.1:1", nil); r.Code != 200 {
+			t.Errorf("web %s read in maintenance: %d", m, r.Code)
+		}
+	}
+	api := do(t, h, "POST", "/api/v1/me", "127.0.0.1:1", nil)
 	if api.Code != 503 || api.Header().Get("Retry-After") != "300" ||
 		!strings.HasPrefix(api.Header().Get("Content-Type"), "application/problem+json") ||
 		!strings.Contains(api.Body.String(), `"code":"maintenance"`) {
@@ -68,7 +76,7 @@ func TestMaintenanceFileSwitch(t *testing.T) {
 		t.Fatalf("on: %d %s", code, errb.String())
 	}
 	now = now.Add(2 * time.Second)
-	r := do(t, h, "GET", "/api/v1/me", "127.0.0.1:1", nil)
+	r := do(t, h, "POST", "/api/v1/me", "127.0.0.1:1", nil)
 	if r.Code != 503 || r.Header().Get("Retry-After") != "120" {
 		t.Fatalf("after on: %d %v", r.Code, r.Header())
 	}

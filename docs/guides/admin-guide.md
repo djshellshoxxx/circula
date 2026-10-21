@@ -5,8 +5,7 @@ configuring, backing up, upgrading) is a different job, covered by the [operatio
 should read the [user guide](user-guide.md) first; this guide assumes it.
 
 Status: written from the handlers and templates in `internal/web` and the service layer on branch
-`claude/circula-completeness` (commit `925f637`). Items that other work is adding are listed at the end under
-"Not in this build" and are marked as such where they would otherwise appear.
+`claude/circula-completeness`. Items that are still missing are listed at the end under "Not in this build".
 
 ## 1. What an administrator can and cannot do
 
@@ -20,8 +19,10 @@ last administrator.
 
 Every administrator action that changes something is written to the audit log with who did it, when, and the reason
 given. Viewing another member's balance is also logged. All of the pages below are under **Network admin**
-(`/n/<name>/admin`) in the header. The overview lists Members, Invitations, Policy, Adjustments, Audit and checks, Exports
-and the dispute review queue, and shows a banner when membership requests are waiting.
+(`/n/<name>/admin`) in the header. The overview opens with **Needs attention**: counts taken from the ledger and dispute records when the page loaded
+(with links to the work) and the result of the last consistency check. Below are links to Members, Invitations, Policy,
+Adjustments, Reverse a trade, Announcements, Audit and checks, Exports, Reports and the dispute review queue. A banner
+shows when membership requests are waiting.
 
 ## 2. Create a network
 
@@ -101,7 +102,7 @@ required and is stored with the change.
 | Sign-up grant | See above. Applies to members who join after the change. |
 | Proposal expiry (days) | After this many days an unanswered proposal expires. |
 | Dispute window (days) | How long after completion a trade can be disputed. |
-| Limit warning (days, 0 to disable) | Stored in the policy. No member-facing warning exists yet (see the end of this guide). |
+| Limit warning (days, 0 to disable) | Stored in the policy but not used yet. Members are warned at a fixed 80 percent of their credit limit (a notification at most weekly, plus a notice on Home and the propose form). |
 | How people join | Invitation, approval or open. |
 | When a member leaves | *Balance is retained* or *Balance is settled to zero*. Settling posts an audited adjustment. |
 | Members marked in default cannot pay | See section 4. |
@@ -133,7 +134,43 @@ the reversal no longer has enough available credit), the dispute shows "Decided,
 You cannot decide a dispute on a trade you took part in; another reviewer or administrator has to. Plan for at least two
 people with the right role in a network.
 
+**Responses.** The party who did not open the dispute can add one response (up to 2000 characters), shown on the
+dispute page. You may decide without a response; no response period is enforced.
+
+**Re-review.** After a decision, either party can ask once, within 14 days, for a re-review. The request appears in the
+review queue. A reviewer or administrator who is not a party and did not make the first decision sees **Record the
+re-review decision**: *Confirmed* (original stands), *Upheld* or *Partly upheld* (a further reversal, limited to what is
+still reversible). A rationale is required. The original decision is kept alongside.
+
 Administrators can also **Cancel** a pending trade between two other members, giving a reason.
+
+### Reverse a completed trade
+
+**Reverse a trade** (`/n/<name>/admin/reverse`) gives credit back from the receiver to the payer of a completed trade
+without a dispute. Enter the trade reference (as in its page address), optionally an amount (empty reverses everything
+left), and a required reason (up to 500 characters). Choose **Review reversal**, check the summary (payer, payee, amount,
+already reversed, left to reverse) and confirm. It is posted as a new entry; the original stays. You cannot reverse a
+trade you took part in, and disputed trades are decided from the review queue.
+
+## 7a. Reports, announcements and notifications
+
+* **Reports** (`/n/<name>/admin/reports`, filter Open, Handled, All). Members report listings and members; you see the
+  category, target, reporter and note. **Mark handled** (optional note) only records that you looked; it does not act on
+  the member or listing. Use Members and Policy to act.
+* **Announcements** (`/n/<name>/admin/announcements`). Title (up to 120), message (up to 4000), optional "Start in (days)".
+  They show on every member's Home from the start time. They cannot be edited; **Delete** and publish again. Deletions
+  are in the audit log.
+* **Notifications.** Members get in-application notifications (see the user guide, Inbox). No e-mail is sent.
+* **Time zone.** Each person sets their own display zone under **Time zone**. The audit log and API stay in UTC.
+
+## 7b. Read-only networks and maintenance
+
+* **Frozen network.** If the ledger fails verification (at start-up, on the hourly job or in a consistency check), the
+  network is frozen: members and you can read, but every change is refused with "Network read-only" (423 in the API).
+  Other networks keep working. The service operator investigates ([runbook](../ops/runbook.md)); it thaws on the next
+  passing verification.
+* **Maintenance mode.** Set by the service operator. Reads keep working; every change, signing in included, is refused
+  with 503 and a "Back soon" page. Ask the operator for timing.
 
 ## 8. Audit, checks and exports
 
@@ -169,19 +206,11 @@ accounts are created on the command line and are ordinary accounts.
 
 ## 11. Not in this build
 
-Work by other agents is adding these. They are **not** on the base branch (`claude/circula-completeness`, commit `925f637`),
-so the pages above do not show them. Treat anything below as planned until the release notes say otherwise.
-
-| Feature | State in this build | Where the work is |
-|---|---|---|
-| Admin overview with counts and health | The overview page is only a list of links and a pending-requests banner. | branch `claude/cc-f2` (not merged) |
-| Announcements to all members | API routes answer "not implemented"; no page. | branch `claude/cc-f2` (not merged) |
-| Network display time zone | Not present; all times are UTC. | branch `claude/cc-f2` (not merged) |
-| Notifications to members | Not present. | branch `claude/cc-f1` (not merged) |
-| Reports (balances, activity statements) | Not present; use Exports. | branch `claude/cc-f1` (not merged) |
-| Dispute response by the other party and one re-review | Not present; reviewers decide once. | branch `claude/cc-f1` (not merged) |
-| Limit warnings to members | Policy field exists, no warning is sent. | branch `claude/cc-f1` (not merged) |
-| Maintenance mode, per-network freeze | Not present on this branch; a ledger verification failure at start-up stops the service. | branch `claude/cc-ops` (not merged) |
-
-When these are merged, update this guide: the sections above that mention them (policy "Limit warning", overview, audit)
-need to be revised to describe the final behaviour, checked against the code rather than against this table.
+| Feature | State in this build |
+|---|---|
+| Dispute response period | No policy for how long the other party has to respond; a decision can be recorded without a response. |
+| Notices to affected members (SEC-012) | Suspending, removing, limit changes and adjustments are audited but the affected member gets no notification. Tell them yourself. |
+| Statements for members | Not present; members use Download my transactions, administrators use Exports. |
+| Limit-warning policy | The "Limit warning (days)" field is stored but does not drive anything; the threshold is fixed at 80 percent. |
+| E-mail or push notifications | Not implemented. |
+| Leaving a network in the web interface | JSON API only. |
