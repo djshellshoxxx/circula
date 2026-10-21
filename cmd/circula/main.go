@@ -55,6 +55,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 		return cmdSetupReset(ctx, rest, stdout, stderr)
 	case "admin":
 		return cmdAdmin(ctx, rest, stdout, stderr)
+	case "reset-mfa":
+		return cmdResetMFA(ctx, rest, stdout, stderr)
 	case "reset-password":
 		return cmdResetPassword(ctx, rest, stdout, stderr)
 	case "version", "--version":
@@ -87,6 +89,7 @@ commands:
   keygen                      print a fresh random key for backup-encryption-key
   admin create-operator       create a person from --login; password from env or stdin
   reset-password              set a temporary password: -login X -reason "why" (audited)
+  reset-mfa                   remove a lost second factor: -login X -reason "why" (audited)
   version                     print version information
 `)
 	for _, l := range extraUsage {

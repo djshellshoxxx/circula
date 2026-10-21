@@ -145,7 +145,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		if p.Dec == 0 {
 			p.Dec = 2
 		}
-		if httpx.SessionToken(r) != "" {
+		if s.opts.Edge.SessionToken(r) != "" {
 			p.Authed = true
 		}
 	}

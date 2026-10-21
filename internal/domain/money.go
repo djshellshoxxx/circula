@@ -78,6 +78,20 @@ func FormatAmount(v int64, decimals int) string {
 	return s
 }
 
+// MaxBalance bounds the magnitude of any cached account balance (A3-03). It is
+// far above MaxPolicyAmount yet leaves headroom so int64 sums cannot overflow.
+const MaxBalance int64 = 1 << 62
+
+// AddBounded adds delta to balance and reports whether the result is within
+// +-MaxBalance (and did not overflow).
+func AddBounded(balance, delta int64) (int64, bool) {
+	next, ok := AddChecked(balance, delta)
+	if !ok || next > MaxBalance || next < -MaxBalance {
+		return 0, false
+	}
+	return next, true
+}
+
 // AddChecked adds two int64 values and reports overflow.
 func AddChecked(a, b int64) (int64, bool) {
 	if (b > 0 && a > math.MaxInt64-b) || (b < 0 && a < math.MinInt64-b) {

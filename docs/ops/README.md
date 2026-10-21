@@ -8,6 +8,7 @@ This guide covers running a Circula instance. Specifications it implements: [`do
 | [backup-restore.md](backup-restore.md) | Taking, checking, pruning and restoring backups; restore drills |
 | [upgrade.md](upgrade.md) | Upgrading, migrating and rolling back |
 | [monitoring.md](monitoring.md) | Health and readiness endpoints, metrics, alert conditions, failure modes |
+| [onion-i2p.md](onion-i2p.md) | Tor onion service and I2P hosting guidance (not yet supported by the code) |
 
 ## Environments (OPS-004)
 
@@ -68,4 +69,6 @@ rely on them until the gap is closed and this list is updated.
 - **Disk-usage percentage.** `/metrics` reports file sizes, not the percentage of the volume in use. Use the host's
   monitoring for the disk alert in OPS-015.
 - **Backup schedule.** `backup-interval` is a fixed interval, not a cron expression.
+- **Backup rollback (SA2-11).** The signed manifest carries the creation time but no sequence number, so a genuine older
+  backup cannot be told from the latest. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key).
 - **Long streaming responses.** `request-timeout` bounds each request, so an export that takes longer is cut off.

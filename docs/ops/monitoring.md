@@ -67,7 +67,7 @@ Owners are roles. Assign a named person per instance and record them outside thi
 | Failure | Detection | Immediate action | Recovery | Owner role |
 |---|---|---|---|---|
 | Crash during a posting | Process exits; restart | None needed. Postings are atomic (one transaction). | Restart `serve`; run `verify-ledger`. | Platform operator |
-| Power loss | Host restarts | None needed beyond restart. Durability is `synchronous=NORMAL` in WAL mode, so the most recent committed transactions can be lost. | Start `serve`; run `verify-ledger`; reconcile recent activity from the audit trail. | Platform operator |
+| Power loss | Host restarts | None needed beyond restart. Durability is `db-synchronous=normal` (default) in WAL mode, so the most recent committed transactions can be lost, each with its audit row; set `db-synchronous=full` to keep every acknowledged commit ([configuration.md](configuration.md#durability-db-synchronous)). | Start `serve`; run `verify-ledger`; reconcile recent activity with the members (a lost transaction leaves no audit row either). | Platform operator |
 | Disk full | Writes fail; the volume alert fires | Free space by means that do not touch the ledger or WAL. | Restart after space is restored; run `verify-ledger`. | Platform operator |
 | Database corruption | `PRAGMA integrity_check` fails in a backup; `verify-ledger` fails | Stop `serve`. Keep the damaged file. | Restore the newest verified backup (see [backup-restore.md](backup-restore.md)). Reconcile the gap. | Platform operator |
 | Ledger verification failure | Alert above; startup refusal | Stop serving. Capture findings. | Follow SEC-030. Do not auto-correct. Restore only after the product architect agrees. | Platform operator; product architect |

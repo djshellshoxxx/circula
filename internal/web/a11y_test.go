@@ -98,6 +98,7 @@ func checkStructure(t *testing.T, path string, p *pg) {
 	}
 	// Copy rules (UX-050): no value words.
 	text := strings.ToLower(html.UnescapeString(tagRe.ReplaceAllString(b, " ")))
+	text = strings.NewReplacer("api tokens", "", "api token", "").Replace(text) // the credential kind, not a unit of value
 	for _, bad := range []string{"money", "cash", "coins", "tokens", "investment"} {
 		if strings.Contains(text, bad) {
 			fail("forbidden word %q", bad)

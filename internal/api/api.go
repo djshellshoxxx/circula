@@ -91,6 +91,7 @@ func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
 		cursor: opt.CursorKey, csrf: httpx.CSRF{Key: opt.CSRFKey}, pwFail: newLimiter(opt.Now)}
 	s.routes()
 	s.mux.HandleFunc("/", s.notFound)
+	setErasureHook(s)
 	return s
 }
 

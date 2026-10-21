@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -51,7 +50,7 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		s.render(w, r, nil, "login", 429, p)
 		return
 	}
-	res, err := s.svc.LoginStep(r.Context(), r.PostFormValue("login"), r.PostFormValue("password"))
+	res, err := s.svc.LoginStep(service.WithClientIP(r.Context(), s.clientIP(r)), r.PostFormValue("login"), r.PostFormValue("password"))
 	if err != nil {
 		if c := domain.CodeOf(err); c == domain.CodeValidation || c == domain.CodeUnauthenticated || c == domain.CodeRateLimited {
 			s.ipFail.fail(ip)
@@ -90,7 +89,7 @@ func (s *server) startSession(w http.ResponseWriter, r *http.Request, tok string
 }
 
 func (s *server) logout(w http.ResponseWriter, r *http.Request) {
-	if tok := httpx.SessionToken(r); tok != "" {
+	if tok := s.opts.Edge.SessionToken(r); tok != "" {
 		_ = s.svc.Logout(r.Context(), tok)
 	}
 	s.clearSession(w, r)
@@ -202,7 +201,8 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	net, _, err := s.svc.CreateNetwork(r.Context(), c.actor, service.CreateNetworkInput{Name: v["name"], Slug: v["slug"],
-		Policy: &pol, CreatorDisplayName: v["display_name"]})
+		Policy: &pol, CreatorDisplayName: v["display_name"],
+		ConsumeSetupSecret: s.opts.SetupSecret != ""}) // SA2-16: spent in the same transaction
 	if err == nil {
 		_, err = s.svc.ActivateNetwork(r.Context(), c.actor, net.ID)
 	}
@@ -219,12 +219,7 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if s.opts.SetupSecret != "" {
-		// FR-002, SEC-028: the secret is invalidated by its first use, durably.
-		if err := s.svc.MarkSetupSecretUsed(r.Context(), c.actor); err != nil {
-			s.fail(w, r, err)
-			return
-		}
-		s.setupUsed.Store(true)
+		s.setupUsed.Store(true) // FR-002, SEC-028: spent durably by CreateNetwork
 	}
 	s.setFlash(w, r, "Network created and open. You are its first administrator.")
 	http.Redirect(w, r, "/n/"+net.Slug, http.StatusSeeOther)

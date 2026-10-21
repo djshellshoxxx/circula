@@ -62,6 +62,9 @@ type PersonRepo interface {
 	GetThrottle(login string) (failures int, lockedUntil time.Time, found bool, err error)
 	PutThrottle(login string, failures int, lockedUntil time.Time) error
 	DeleteThrottle(login string) error
+	// DeleteThrottleFamily removes the row named key and every row named key+" "+suffix
+	// (the per-address rows of SA2-10); returns the number removed.
+	DeleteThrottleFamily(key string) (int64, error)
 	// DeleteStaleThrottles purges up to limit rows whose lock ended at or before cutoff (SA-12).
 	DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error)
 
@@ -70,6 +73,8 @@ type PersonRepo interface {
 	TouchSession(idHash string, seen time.Time) error
 	RevokeSession(idHash string, at time.Time) error
 	RevokeSessionsOf(personID string, at time.Time) error
+	// RevokeOtherSessionsOf revokes every live session of the person except keepID (A3-03).
+	RevokeOtherSessionsOf(personID, keepID string, at time.Time) error
 	// DeleteDeadSessions purges up to limit sessions that are expired, idle since
 	// idleBefore or revoked at or before revokedBefore (SA-12).
 	DeleteDeadSessions(now, idleBefore, revokedBefore time.Time, limit int) (int64, error)
@@ -99,6 +104,9 @@ type MemberRepo interface {
 	SetDefaultFlag(netID, id string, v bool) error
 	GrantRole(roleID, netID, memberID string, r domain.Role, by string, at time.Time) error
 	RevokeRole(netID, memberID string, r domain.Role, at time.Time) (bool, error)
+	// LatestAdminGrant returns who granted the member's most recent admin role
+	// (live or revoked) and when. ok is false when the member never held it.
+	LatestAdminGrant(netID, memberID string) (by string, at time.Time, ok bool, err error)
 	// CountActiveAdmins counts members holding admin whose status is active.
 	CountActiveAdmins(netID string) (int, error)
 }
@@ -243,6 +251,8 @@ type IdemRepo interface {
 	GetIdem(netID, actorID, op, key string) (*IdemRecord, error) // nil, nil when absent
 	PutIdem(r IdemRecord) error
 	DeleteIdem(netID, actorID, op, key string) error
+	// DeleteIdemOfActor removes every record of actor in the network (netID "" = all networks); SA2-17.
+	DeleteIdemOfActor(netID, actorID string) (int64, error)
 	// DeleteExpiredIdem purges up to limit records expired at or before now (SA-12).
 	DeleteExpiredIdem(now time.Time, limit int) (int64, error)
 }

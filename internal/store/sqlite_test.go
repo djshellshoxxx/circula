@@ -23,7 +23,7 @@ func openStore(t *testing.T) *store.SQLite {
 
 // seed creates a network with two members, each with an account, and one
 // proposed trade of 100 from a to b. It returns the ids.
-func seed(t *testing.T, s *store.SQLite) (netID, txID, accA, accB string) {
+func seed(t testing.TB, s *store.SQLite) (netID, txID, accA, accB string) {
 	t.Helper()
 	ctx := context.Background()
 	now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -218,4 +218,47 @@ func TestUpdateRollsBackOnError(t *testing.T) {
 		}
 		return nil
 	})
+}
+
+// A3-03 (migration 0008): no write can store a balance outside +-2^62, and
+// VerifyLedger's totals do not fail when an SQL SUM would overflow.
+func TestBalanceBoundTriggers(t *testing.T) {
+	s := openStore(t)
+	_, _, a, b := seed(t, s)
+	db := s.DB()
+	const bound = int64(1) << 62
+	if _, err := db.Exec(`UPDATE accounts SET balance = ? WHERE id = ?`, bound, a); err != nil {
+		t.Fatalf("balance at the bound refused: %v", err)
+	}
+	if _, err := db.Exec(`UPDATE accounts SET balance = balance + 1 WHERE id = ?`, a); err == nil {
+		t.Error("balance above +2^62 accepted")
+	}
+	if _, err := db.Exec(`UPDATE accounts SET balance = ? WHERE id = ?`, -bound-1, b); err == nil {
+		t.Error("balance below -2^62 accepted")
+	}
+	if _, err := db.Exec(`INSERT INTO accounts(id,network_id,is_system,balance) VALUES ('sys','n1',1,?)`, bound+1); err == nil {
+		t.Error("insert beyond the bound accepted")
+	}
+	// Totals never fail: three legacy balances whose running SUM overflows int64.
+	if _, err := db.Exec(`DROP TRIGGER accounts_balance_bound_update`); err != nil {
+		t.Fatal(err)
+	}
+	for _, id := range []string{a, b} {
+		if _, err := db.Exec(`UPDATE accounts SET balance = ? WHERE id = ?`, int64(1)<<62+int64(1)<<61, id); err != nil {
+			t.Fatal(err)
+		}
+	}
+	err := s.View(context.Background(), func(tx store.Tx) error {
+		bal, _, err := tx.Totals("n1")
+		if err != nil {
+			return err
+		}
+		if bal <= 0 {
+			t.Errorf("saturated total = %d", bal)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("Totals failed on overflow: %v", err)
+	}
 }

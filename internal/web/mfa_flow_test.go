@@ -39,18 +39,18 @@ func enrolWeb(t *testing.T, w *world, b *browser) (string, []string) {
 	b.login("alice@example.org")
 	pg1 := b.get("/account/security/mfa/enrol")
 	b.mustContain(pg1, "Start setup")
-	pg2 := b.post("/account/security/mfa/enrol", pg1, nil)
+	pg2 := b.post("/account/security/mfa/enrol", pg1, url.Values{"password": {testPW}})
 	m := secretRe.FindStringSubmatch(pg2.Body)
 	if pg2.Status != 200 || m == nil {
 		t.Fatalf("no secret shown: %d %s", pg2.Status, snippet(pg2.Body))
 	}
 	secret := m[1]
 	// wrong code keeps the same secret on the page
-	bad := b.post("/account/security/mfa/enrol/confirm", pg2, url.Values{"code": {"000000"}})
+	bad := b.post("/account/security/mfa/enrol/confirm", pg2, url.Values{"password": {testPW}, "code": {"000000"}})
 	if bad.Status != 422 || !strings.Contains(bad.Body, secret) || !strings.Contains(bad.Body, "id=\"error-summary\"") {
 		t.Fatalf("bad code: %d %s", bad.Status, snippet(bad.Body))
 	}
-	ok := b.post("/account/security/mfa/enrol/confirm", bad, url.Values{"code": {webTOTP(t, secret, w.env.Clock.Now())}})
+	ok := b.post("/account/security/mfa/enrol/confirm", bad, url.Values{"password": {testPW}, "code": {webTOTP(t, secret, w.env.Clock.Now())}})
 	cs := codeRe.FindAllStringSubmatch(ok.Body, -1)
 	if ok.Status != 200 || len(cs) != 10 {
 		t.Fatalf("codes: %d %d %s", ok.Status, len(cs), snippet(ok.Body))
@@ -150,7 +150,7 @@ func TestWebSecurityNoticesAndDisable(t *testing.T) {
 		t.Errorf("notices not acknowledged: %s", snippet(ack.Body))
 	}
 	// regenerate codes
-	reg := b.post("/account/security/mfa/recovery", ack, url.Values{"code": {webTOTP(t, secret, w.env.Clock.Now())}})
+	reg := b.post("/account/security/mfa/recovery", ack, url.Values{"password": {testPW}, "code": {webTOTP(t, secret, w.env.Clock.Now())}})
 	if got := codeRe.FindAllString(reg.Body, -1); reg.Status != 200 || len(got) != 10 {
 		t.Fatalf("regen: %d %d", reg.Status, len(got))
 	}
