@@ -24,7 +24,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-006 | P0 | built | Cross-network identifier test covers web and API |
 | FR-010 | P0 | built | Single-use invitation token hashed; redemption creates member |
 | FR-011 | P0 | built | Approve and deny applicants; deny via API and web |
-| FR-012 | P1 | partial | Open join creates active member; join rate limit per abuse baseline not built |
+| FR-012 | P1 | built | Open join creates active member; join attempts rate limited (10 per 10 minutes per person and address, retry-later page) |
 | FR-013 | P0 | built | Membership transitions table-tested |
 | FR-014 | P0 | built | Departure in service, JSON API and a web "Leave this network" form that shows blockers and consequences |
 | FR-015 | P0 | built | Admin removal with mandatory reason; last-admin guard |
@@ -35,7 +35,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-022 | P0 | built | Edit, pause, resume, archive own listing |
 | FR-023 | P0 | built | Filter by type and text; paginated |
 | FR-024 | P1 | not built | Member reports not built |
-| FR-025 | P1 | partial | Members-only pages require session; no-index directive absent |
+| FR-025 | P1 | built | Members-only pages require session; X-Robots-Tag, robots meta and robots.txt disallow |
 | FR-030 | P0 | built | Propose to active member in same network |
 | FR-031 | P0 | built | Amount, limit and effect preview on review page |
 | FR-032 | P0 | built | Accept posts both entries atomically; limit re-checked |

@@ -37,7 +37,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-009 | P0 | built | Append-only terms versions; acceptance recorded at join and re-required before proposing or accepting a trade after an update; reading and leaving stay open |
 | GOV-010 | P0 | partial | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page points to the self-export on History, no export is offered in the flow |
 | GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
-| GOV-012 | P1 | not built | Inactivity rule not built |
+| GOV-012 | P1 | built | Optional inactivity rule (policy inactivity_days): flags, notifies, lists for administrators; never removes |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
 | GOV-014 | P0 | partial | Statement and decision with reasons; response period built (network policy); decision-target deadline not built |
 | GOV-015 | P0 | built | Reversal and adjustment are new transactions; originals unchanged |
@@ -51,7 +51,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-023 | P0 | built | Administrator suspension overlay: postings, acceptances and joins refused; reads and exports kept; members notified; audited |
 | GOV-024 | P0 | built | Operator command with mandatory category; administrators notified; audit visible to the network |
 | GOV-025 | P0 | partial | Closure exposed in web and API with blockers, confirm and member notices; closure-date notice period, final export checksum and erasure not built |
-| GOV-026 | P1 | not built | Hosted platform policy documents not written |
+| GOV-026 | P1 | partial | Policy documents drafted in docs/platform, dated and versioned; counsel review and advance-notice test outstanding |
 | GOV-027 | P1 | partial | Support boundary in docs/ops; not linked from admin UI |
 
 ## 1. Roles and responsibilities

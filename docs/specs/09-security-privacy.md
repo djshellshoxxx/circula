@@ -40,7 +40,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-018 | P0 | not built | No pseudonymisation or erasure on departure |
 | SEC-019 | P0 | partial | Audit excludes secrets; admin-only read path; member read in service only |
 | SEC-020 | P0 | partial | RedactSecrets and route templates in logs; no log-wide canary scan |
-| SEC-021 | P1 | not built | Log retention not implemented |
+| SEC-021 | P1 | partial | `log-retention` setting and `circula prune-logs`; documented in ops monitoring guide |
 | SEC-022 | P0 | built | Refuses plain HTTP on non-loopback unless explicit; Secure cookies forced |
 | SEC-023 | P0 | built | CSP, frame-ancestors, no-store, same-origin scripts |
 | SEC-024 | P0 | built | Safe next parsing; html/template; integer amounts |
