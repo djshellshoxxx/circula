@@ -3,7 +3,7 @@
 # Does not tag, publish or push anything.
 #
 # Usage: scripts/release-gate.sh [-o EVIDENCE_DIR] [-s check,check]   (-s skips named checks; they are recorded SKIPPED)
-# Checks: fmt vet race lint contract golden e2e load vuln pins drill defects thresholds
+# Checks: fmt vet race lint contract golden e2e load vuln pins hygiene drill defects thresholds
 # Result per check: PASS, FAIL, SKIPPED (not run, reason given), MANUAL (needs a human record; never auto-passes).
 # Exit 0 only when nothing is FAIL. SKIPPED/MANUAL are listed so a reader cannot mistake them for a pass.
 set -uo pipefail
@@ -52,6 +52,7 @@ run e2e e2erun
 run load loadsmoke
 run vuln vulncheck
 run pins scripts/check-action-pins.sh
+run hygiene scripts/check-hygiene.sh
 run drill drillrun
 
 # Documentation checks.

@@ -8,7 +8,7 @@ BIN       := bin/circula
 export CGO_ENABLED ?= 0
 GOVULNCHECK := golang.org/x/vuln/cmd/govulncheck@v1.1.4
 
-.PHONY: help build test test-race vet fmt-check lint vuln actions-check check e2e e2e-install load contract release-local clean
+.PHONY: help build test test-race vet fmt-check lint vuln actions-check hygiene release-gate restore-drill check e2e e2e-install load contract release-local clean
 
 help:
 	@echo "build          build $(BIN) for the host (CGO_ENABLED=0, -trimpath)"
@@ -47,10 +47,19 @@ lint:
 vuln:
 	$(GO) run $(GOVULNCHECK) ./...
 
+hygiene:
+	scripts/check-hygiene.sh
+
+release-gate:
+	scripts/release-gate.sh
+
+restore-drill:
+	scripts/restore-drill.sh
+
 actions-check:
 	scripts/check-action-pins.sh
 
-check: fmt-check vet test-race lint vuln actions-check
+check: fmt-check vet test-race lint vuln actions-check hygiene
 
 contract:
 	$(GO) test -count=1 -run TestAPIMatchesOpenAPI -v ./internal/contract

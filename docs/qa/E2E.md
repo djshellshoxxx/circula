@@ -64,3 +64,10 @@ step:
 Pin every action by commit SHA to satisfy `scripts/check-action-pins.sh`. On a runner the browser is installed by
 Playwright; the `CHROMIUM_PATH` shown makes the config use it. Upload `e2e/test-results` on failure to keep the
 failure screenshots.
+
+## CI and ARIA proxy tests
+`ci.yml` job `e2e` runs `make e2e` on ubuntu-24.04 after `npx playwright install --with-deps chromium` (the only place a
+browser is downloaded; locally `/opt/pw-browsers` is used). Job `contract` runs `make contract` and a small load smoke
+(`CIRCULA_LOAD=1`, 4 workers, 20 members, 25 trades each) plus the QA-008 test.
+`tests/aria.spec.js` (16 tests) is a screen-reader proxy based on ARIA snapshots; it is not a screen-reader run
+(docs/qa/SCREEN-READER.md). Total with it: 93 e2e tests.

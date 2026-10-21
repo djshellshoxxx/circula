@@ -26,6 +26,8 @@ jobs:
           cache: true
       - name: Check workflow action pins
         run: scripts/check-action-pins.sh
+      - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037)
+        run: scripts/check-hygiene.sh
       - name: gofmt
         run: |
           unformatted="$(gofmt -l .)"
