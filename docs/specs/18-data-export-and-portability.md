@@ -306,10 +306,10 @@ The **Network package** of [05](05-architecture-and-trust-boundaries.md) ARC-024
 
 | ID | Pri | Requirement | Rationale | Verification |
 |---|---|---|---|---|
-| PRT-050 | P1 | The Network package MUST use the package layout of section 4 (ZIP, manifest, embedded schemas, CSV and JSON Lines) with `export_type = network_archive`, MUST be built from one consistent snapshot, and MUST restore into a scratch deployment so that reconciliation R1 to R14 passes and the restored ledger digest equals the manifest `ledger_digest`. | Portability and restore drills without cross-Network effects. | Round-trip test with digest and balance comparison |
-| PRT-051 | P1 | Timing targets at 1 million Postings: generation within 30 minutes (DEC-PRT-12) with posting degradation within DEC-PRT-6; restore into an empty deployment plus reconciliation within [DECISION NEEDED: DEC-PRT-13, recommended 60 minutes]. Hosted Operators SHOULD be able to produce a Network package on demand within one business day of an administrator's `admin_quorum`-approved request. | Makes exit and migration rehearsable. | Performance test; process drill |
-| PRT-052 | P1 | Format versions overlap: the Platform MUST be able to read a Network package of the previous MAJOR `schema_version` for 12 months after a MAJOR release (PRT-013), and MUST refuse, naming the version, a package newer than it understands. | Safe cross-version migration between hosted and self-hosted. | Test: restore N-1 and N+1 packages |
-| PRT-053 | P0 | A Network package MUST never contain credentials, sessions or IdempotencyRecords (PRT-037, PRT-044), and personal data of closed Members MUST appear only as "Former member #n" (PRT-036, DAT-072). | Consistency with erasure and with [04](04-functional-requirements.md) FR-EXP-005. | Content scan |
+| PRT-054 | P1 | The Network package MUST use the package layout of section 4 (ZIP, manifest, embedded schemas, CSV and JSON Lines) with `export_type = network_archive`, MUST be built from one consistent snapshot, and MUST restore into a scratch deployment so that reconciliation R1 to R14 passes and the restored ledger digest equals the manifest `ledger_digest`. | Portability and restore drills without cross-Network effects. | Round-trip test with digest and balance comparison |
+| PRT-055 | P1 | Timing targets at 1 million Postings: generation within 30 minutes (DEC-PRT-12) with posting degradation within DEC-PRT-6; restore into an empty deployment plus reconciliation within [DECISION NEEDED: DEC-PRT-13, recommended 60 minutes]. Hosted Operators SHOULD be able to produce a Network package on demand within one business day of an administrator's `admin_quorum`-approved request. | Makes exit and migration rehearsable. | Performance test; process drill |
+| PRT-056 | P1 | Format versions overlap: the Platform MUST be able to read a Network package of the previous MAJOR `schema_version` for 12 months after a MAJOR release (PRT-013), and MUST refuse, naming the version, a package newer than it understands. | Safe cross-version migration between hosted and self-hosted. | Test: restore N-1 and N+1 packages |
+| PRT-057 | P0 | A Network package MUST never contain credentials, sessions or IdempotencyRecords (PRT-037, PRT-044), and personal data of closed Members MUST appear only as "Former member #n" (PRT-036, DAT-072). | Consistency with erasure and with [04](04-functional-requirements.md) FR-EXP-005. | Content scan |
 
 ## 10. Verification of this document
 
@@ -392,7 +392,7 @@ Required logical fields: source member reference; display name; legacy balance a
 | DEC-PRT-10 | Counterparty names in member export | ref only / display name as visible / none | Display name as visible |
 | DEC-PRT-11 | Administrator export of contact data | never / opt-in with audit / default | Opt-in with audit |
 | DEC-PRT-12 | Time budget at 1 million Postings | 10 / 30 / 60 minutes | 30 minutes |
-| DEC-PRT-13 | Network package restore plus reconciliation time at 1 million Postings (PRT-051) | 30 / 60 / 120 minutes | 60 minutes |
+| DEC-PRT-13 | Network package restore plus reconciliation time at 1 million Postings (PRT-055) | 30 / 60 / 120 minutes | 60 minutes |
 | DEC-PRT-13 | Import depth | balances-only / full history | Balances-only |
 | DEC-PRT-14 | Imported members before consent | invitation-then-post / unclaimed Membership | Invitation-then-post |
 
