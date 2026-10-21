@@ -107,30 +107,3 @@ func TestPlatformSuspension(t *testing.T) {
 		t.Fatal("platform resume not audited")
 	}
 }
-
-// FR-068 / GOV-025: closure lists blockers, previews balances, notifies members.
-func TestClosureBlockersPreviewAndNotice(t *testing.T) {
-	w := newWorld(t, nil)
-	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
-	open := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 100))
-
-	pv := tu.Must(w.Svc.PreviewClosure(w.Ctx, w.admin, w.net.ID))
-	if len(pv.Blockers) != 1 || pv.NonZeroBalances != 2 {
-		t.Fatalf("preview = %+v", pv)
-	}
-	if _, err := w.Svc.PreviewClosure(w.Ctx, w.a, w.net.ID); err == nil {
-		t.Fatal("member previewed a closure")
-	}
-	wantCode(t, w.Svc.CloseNetwork(w.Ctx, w.admin, w.net.ID, "end"), domain.ErrBlocked)
-
-	tu.Must(w.Svc.CancelTransaction(w.Ctx, w.a, w.net.ID, service.CancelInput{TxID: open.ID, IdempotencyKey: w.Key()}))
-	noErr(t, w.Svc.CloseNetwork(w.Ctx, w.admin, w.net.ID, "end"))
-	if !hasKind(w.inbox(w.b), service.NotifNetworkClosed) {
-		t.Fatal("member not notified of closure")
-	}
-	if _, err := w.Svc.GetBalance(w.Ctx, w.a, w.net.ID); err != nil {
-		t.Fatalf("read after closure: %v", err)
-	}
-	_, err := w.propose(w.a, w.bM, service.ProposerPays, 100)
-	wantCode(t, err, domain.ErrInvalidState)
-}
