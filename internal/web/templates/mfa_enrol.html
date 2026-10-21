@@ -1,0 +1,29 @@
+{{define "content"}}
+{{if .D.Status}}
+  {{if .D.Status.Enabled}}<p>Two-step sign-in is already on. Manage it on the <a href="/account/security">account security</a> page.</p>
+  {{else}}
+  <p>Two-step sign-in asks for a code from an authenticator app each time you sign in, in addition to your password.</p>
+  <form method="post" action="/account/security/mfa/enrol" novalidate>
+    {{template "csrf" .}}
+    <div class="actions"><button type="submit">Start setup</button></div>
+  </form>
+  <p><a href="/account/security">Cancel</a></p>
+  {{end}}
+{{else if .D.Enrol}}
+  <ol>
+    <li>In your authenticator app choose to add an account by entering a key, and type this setup key. Choose time-based, 6 digits, 30 seconds.
+      <p><code>{{.D.Enrol.Secret}}</code></p>
+      <p>Apps that import links can use this address instead: <code>{{.D.Enrol.URI}}</code></p>
+    </li>
+    <li>Enter the 6-digit code the app shows to confirm.</li>
+  </ol>
+  <form method="post" action="/account/security/mfa/enrol/confirm" novalidate>
+    {{template "csrf" .}}
+    {{template "field" dict "P" . "Name" "code" "Label" "Code from your app" "Auto" "one-time-code" "Mode" "numeric" "Max" "8" "Req" true}}
+    <div class="actions"><button type="submit">Turn on two-step sign-in</button></div>
+  </form>
+  <p>This setup key is shown only while setup is in progress and expires after 15 minutes. <a href="/account/security">Cancel</a></p>
+{{else}}
+  <p><a href="/account/security">Back to account security</a></p>
+{{end}}
+{{end}}

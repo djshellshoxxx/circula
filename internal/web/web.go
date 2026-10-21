@@ -7,6 +7,7 @@ import (
 	"embed"
 	"io/fs"
 	"net/http"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -22,7 +23,7 @@ var assets embed.FS
 type Options struct {
 	// SetupSecret, when non-empty, must be entered to create a network
 	// (FR-002 bootstrap) and stops working after the first network it
-	// created in this process. Empty: any signed-in person may create a network.
+	// created, durably (survives restarts until `circula setup-reset`, SEC-028). Empty: any signed-in person may create a network.
 	SetupSecret string
 	// Edge carries the Secure-cookie, HSTS and trusted-proxy policy shared with
 	// the JSON API. The zero value trusts no forwarding header.
@@ -49,7 +50,8 @@ type server struct {
 	// Failure counters: per client address, per client+login, and per signed-in
 	// person for password-change guesses. reg and setup count every attempt.
 	ipFail, acctFail, pwFail, reg, setup *limiter
-	setupUsed                            atomic.Bool
+	setupUsed                            atomic.Bool // in-process fast path; the durable flag is the service's (SEC-028)
+	setupMu                              sync.Mutex  // serialises check, create and mark so one secret creates one network
 	mux                                  *http.ServeMux
 }
 
@@ -95,6 +97,9 @@ func (s *server) routes() {
 	s.tradeRoutes()
 	s.disputeRoutes()
 	s.adminRoutes()
+	for _, f := range extraRoutes {
+		f(s)
+	}
 	s.mux.HandleFunc("/", s.notFoundOrRoot)
 }
 

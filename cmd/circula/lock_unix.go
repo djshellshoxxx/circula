@@ -12,7 +12,7 @@ import (
 // acquireLock takes an exclusive, non-blocking advisory lock on path. The
 // lock is released when the process exits or Release is called.
 func acquireLock(path string) (*dbLock, error) {
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o600)
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0o600) //nolint:gosec // G703: operator-supplied database path
 	if err != nil {
 		return nil, fmt.Errorf("open lock file %s: %w", path, err)
 	}

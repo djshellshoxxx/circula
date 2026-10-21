@@ -70,7 +70,7 @@ func actionsFor(m *domain.Member) []option {
 	case domain.MemberPending:
 		keys = []string{"approve", "deny"}
 	case domain.MemberActive:
-		keys = []string{"limit", "suspend", "remove"}
+		keys = []string{"limit", "suspend", "remove", "reset-password"}
 		if m.HasRole(domain.RoleAdmin) {
 			keys = append(keys, "revoke-admin")
 		} else {
@@ -88,6 +88,8 @@ func actionsFor(m *domain.Member) []option {
 		}
 	case domain.MemberSuspended:
 		keys = []string{"restore", "remove"}
+	case domain.MemberDeparted:
+		keys = []string{"erase"} // SEC-018; see h_erasure.go
 	}
 	var o []option
 	for _, k := range keys {

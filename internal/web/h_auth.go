@@ -51,7 +51,7 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		s.render(w, r, nil, "login", 429, p)
 		return
 	}
-	tok, _, err := s.svc.Login(r.Context(), r.PostFormValue("login"), r.PostFormValue("password"))
+	res, err := s.svc.LoginStep(r.Context(), r.PostFormValue("login"), r.PostFormValue("password"))
 	if err != nil {
 		if c := domain.CodeOf(err); c == domain.CodeValidation || c == domain.CodeUnauthenticated || c == domain.CodeRateLimited {
 			s.ipFail.fail(ip)
@@ -72,7 +72,11 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.acctFail.reset(acct)
-	s.startSession(w, r, tok)
+	if res.MFAChallenge != "" { // second factor enabled: no session until CompleteMFA (SEC-007)
+		s.renderMFAStep(w, r, 200, res.MFAChallenge, p.Next, "")
+		return
+	}
+	s.startSession(w, r, res.Token)
 	dest := p.Next
 	if dest == "" {
 		dest = "/"
@@ -150,8 +154,22 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.render(w, r, nil, "setup", st, p)
 	}
 	if s.opts.SetupSecret != "" {
+		// One secret creates one network, even across restarts and concurrent posts.
+		s.setupMu.Lock()
+		defer s.setupMu.Unlock()
+		const usedMsg = "Not saved. The setup secret has already been used. Ask the person who runs this service to reset it. Nothing changed."
 		if s.setupUsed.Load() {
-			fail("Not saved. The setup secret has already been used. Restart the service with a new secret to create another network. Nothing changed.", nil, 403)
+			fail(usedMsg, nil, 403)
+			return
+		}
+		used, err := s.svc.SetupSecretUsed(r.Context())
+		if err != nil {
+			s.fail(w, r, err)
+			return
+		}
+		if used {
+			s.setupUsed.Store(true)
+			fail(usedMsg, nil, 403)
 			return
 		}
 		ip := s.clientIP(r)
@@ -201,7 +219,12 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if s.opts.SetupSecret != "" {
-		s.setupUsed.Store(true) // FR-002: the secret is invalidated by its first use
+		// FR-002, SEC-028: the secret is invalidated by its first use, durably.
+		if err := s.svc.MarkSetupSecretUsed(r.Context(), c.actor); err != nil {
+			s.fail(w, r, err)
+			return
+		}
+		s.setupUsed.Store(true)
 	}
 	s.setFlash(w, r, "Network created and open. You are its first administrator.")
 	http.Redirect(w, r, "/n/"+net.Slug, http.StatusSeeOther)

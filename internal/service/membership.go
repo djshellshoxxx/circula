@@ -146,6 +146,9 @@ func (s *Service) changeRole(ctx context.Context, actor domain.Actor, netID, mem
 		if err != nil {
 			return err
 		}
+		if err := p.requireLasting(); err != nil {
+			return err
+		}
 		if role != domain.RoleAdmin && role != domain.RoleReviewer {
 			return domain.Invalid("role", "must be admin or reviewer")
 		}

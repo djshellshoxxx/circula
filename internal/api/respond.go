@@ -89,7 +89,7 @@ func validation(field, code, detail string) *apiError {
 var fieldNames = map[string]string{
 	"amount": "amount_minor", "counterparty_id": "counterparty_member_id", "note": "description",
 	"price": "price_minor", "type": "kind", "rationale": "reason", "default_credit_limit": "default_credit_limit_minor",
-	"max_tx_amount": "max_tx_amount_minor", "signup_grant": "signup_grant_minor", "limit": "credit_limit_minor",
+	"max_tx_amount": "max_tx_amount_minor", "signup_grant": "signup_grant_minor", "dual_control_threshold": "dual_control_threshold_minor", "limit": "credit_limit_minor",
 	"tx_id": "transaction_id",
 }
 
@@ -103,8 +103,9 @@ func pointerFor(field string) string {
 var codeStatus = map[domain.Code]int{
 	domain.CodeValidation: 422, domain.CodeInsufficientCredit: 422, domain.CodeAmountExceeds: 422,
 	domain.CodeCounterpartyInact: 422, domain.CodeKeyReused: 422, domain.CodeKeyRequired: 400,
-	domain.CodeUnauthenticated: 401, domain.CodeForbidden: 403, domain.CodeNotFound: 404,
+	domain.CodeUnauthenticated: 401, domain.CodeForbidden: 403, domain.CodeApprovalRequired: 403, domain.CodeNotFound: 404,
 	domain.CodeInvalidState: 409, domain.CodeConflict: 409, domain.CodeBlocked: 409, domain.CodeRateLimited: 429, domain.CodeUnavailable: 503,
+	domain.CodePasswordChangeRequired: 403,
 }
 
 // fromErr converts any error into an apiError. Unknown errors become opaque

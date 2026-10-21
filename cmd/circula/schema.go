@@ -31,7 +31,7 @@ func inspectSchema(ctx context.Context, path string) (schemaState, error) {
 		return schemaState{}, errors.New("embedded migrations are invalid")
 	}
 	st := schemaState{Known: known}
-	if _, err := os.Stat(path); errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(path); errors.Is(err, fs.ErrNotExist) { //nolint:gosec // G703: operator-supplied database path
 		return st, nil
 	} else if err != nil {
 		return st, err

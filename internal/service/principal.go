@@ -12,12 +12,30 @@ type principal struct {
 	actor  domain.Actor
 	net    *domain.Network
 	member *domain.Member // nil for System actors
+	// mfaMissing: Config.RequireMFAForAdmins is on, the member is an
+	// administrator and has no second factor (enforced in requireAdmin).
+	mfaMissing bool
+	// bgAdmin: the administrator role comes only from a live break-glass grant
+	// (SEC-013). Such access must not leave lasting changes behind (SA2-04).
+	bgAdmin bool
+}
+
+// requireLasting refuses actions whose effect outlives a break-glass session
+// (role changes, policy changes) when the caller is admin only through one.
+func (p *principal) requireLasting() error {
+	if p.bgAdmin {
+		return domain.Forbidden("break-glass access cannot make lasting changes")
+	}
+	return nil
 }
 
 // open resolves actor + network. Anyone who is not a member of the network,
 // or whose token is scoped to another network, gets the same not-found as for
 // a non-existent network (API-017, FR-006).
 func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope domain.Scope) (*principal, error) {
+	if actor.MustChangePassword && scope == domain.ScopeWrite {
+		return nil, domain.PasswordChangeRequired() // SEC-008
+	}
 	if !actor.Can(scope) {
 		return nil, domain.Forbidden("token lacks %s scope", scope)
 	}
@@ -40,6 +58,18 @@ func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope doma
 		return nil, domain.NotFound("network")
 	}
 	p.member = m
+	hadAdmin := m.HasRole(domain.RoleAdmin)
+	if err := s.applyBreakGlassRoles(tx, m); err != nil { // SEC-013: temporary roles end with their session
+		return nil, err
+	}
+	p.bgAdmin = !hadAdmin && m.HasRole(domain.RoleAdmin)
+	if s.cfg.RequireMFAForAdmins && m.HasRole(domain.RoleAdmin) {
+		on, err := s.hasMFA(tx, actor.PersonID)
+		if err != nil {
+			return nil, err
+		}
+		p.mfaMissing = !on
+	}
 	return p, nil
 }
 
@@ -77,6 +107,9 @@ func (p *principal) requireAdmin() error {
 	}
 	if !p.member.HasRole(domain.RoleAdmin) {
 		return domain.Forbidden("administrator role required")
+	}
+	if p.mfaMissing {
+		return domain.Forbidden("mfa-enrolment-required")
 	}
 	return nil
 }

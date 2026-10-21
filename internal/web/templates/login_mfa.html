@@ -1,0 +1,11 @@
+{{define "content"}}
+<p>Your password was correct. Enter the 6-digit code from your authenticator app, or one unused recovery code. This step expires in 5 minutes.</p>
+<form method="post" action="/login/mfa" novalidate>
+  {{template "csrf" .}}
+  <input type="hidden" name="challenge" value="{{.D}}">
+  <input type="hidden" name="next" value="{{.Next}}">
+  {{template "field" dict "P" . "Name" "code" "Label" "Authentication or recovery code" "Hint" "For example 123456, or ABCDE-FGHIJ. Each code works once." "Auto" "one-time-code" "Max" "16" "Req" true}}
+  <div class="actions"><button type="submit">Continue</button></div>
+</form>
+<p><a href="/login{{if .Next}}?next={{qs .Next}}{{end}}">Start again</a></p>
+{{end}}

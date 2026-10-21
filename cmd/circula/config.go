@@ -50,6 +50,7 @@ var settingDefs = []settingDef{
 	{key: "session-idle", def: "720h", help: "idle session timeout (DEC-005)"},
 	{key: "session-max", def: "2160h", help: "absolute session lifetime (DEC-005)"},
 	{key: "idempotency-ttl", def: "168h", help: "retention of idempotency records"},
+	{key: "require-mfa-admins", def: "false", help: "network administrators must enrol a second factor before any administrator-only action (SEC-007, DEC-007)"},
 	{key: "min-password-length", def: "12", help: "minimum password length (SEC-002); not below 12"},
 	{key: "max-body-bytes", def: "1048576", help: "maximum request body size in bytes"},
 	{key: "request-timeout", def: "30s", help: "per-request deadline for API and UI routes"},
@@ -61,6 +62,10 @@ var settingDefs = []settingDef{
 	{key: "allow-insecure-http", def: "false", help: "permit a plain-http public-base-url on a non-loopback address (SEC-022); never for production"},
 	{key: "setup-secret-file", help: "file holding the one-time setup secret needed to create a network (FR-002); or env " + envPrefix + "SETUP_SECRET"},
 	{key: "metrics-token-file", help: "file holding a bearer token required for /metrics (SA-15); or env " + envPrefix + "METRICS_TOKEN"},
+	{key: "mfa-secret-file", help: "file holding the key that seals two-step sign-in secrets at rest (SEC-007); or env " + envPrefix + "MFA_SECRET"},
+	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
+	{key: "backup-require-encryption", def: "false", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019)"},
+	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 
@@ -71,6 +76,8 @@ var secretDefs = []struct{ name, fileKey string }{
 	{"setup-secret", "setup-secret-file"},
 	{"metrics-token", "metrics-token-file"},
 	{"backup-key", "backup-key-file"},
+	{"mfa-secret", "mfa-secret-file"},
+	{"backup-encryption-key", "backup-encryption-key-file"},
 }
 
 // minSecretLen is the shortest accepted secret.
@@ -90,6 +97,7 @@ type Config struct {
 	SessionMax          time.Duration
 	IdempotencyTTL      time.Duration
 	MinPasswordLength   int
+	RequireMFAAdmins    bool
 	MaxBodyBytes        int64
 	RequestTimeout      time.Duration
 	LogLevel            slog.Level
@@ -102,6 +110,12 @@ type Config struct {
 	SetupSecret  string
 	MetricsToken string
 	BackupKey    []byte
+	MFASecret    []byte
+	// BackupEncryptionKey is the secret that encrypts backups at rest (OPS-019).
+	BackupEncryptionKey     []byte
+	BackupRequireEncryption bool
+	// StateDir holds runtime state such as the web signing key (SEC-027).
+	StateDir string
 }
 
 // resolved is one effective setting value and where it came from.
@@ -192,7 +206,7 @@ func (sf *settingsFlags) Resolve(env lookupEnv, forServe bool) (*Config, map[str
 // readConfigFile parses a JSON object whose keys are setting names. Unknown
 // keys are rejected so that typos cannot silently fall back to defaults.
 func readConfigFile(path string) (map[string]string, error) {
-	b, err := os.ReadFile(path)
+	b, err := os.ReadFile(path) //nolint:gosec // G703: operator-supplied config path
 	if err != nil {
 		return nil, fmt.Errorf("config file %s: %w", path, err)
 	}
@@ -318,6 +332,12 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		fail("log-format", "must be json or text")
 	}
 
+	if b, err := strconv.ParseBool(get("require-mfa-admins")); err != nil {
+		fail("require-mfa-admins", "must be true or false")
+	} else {
+		cfg.RequireMFAAdmins = b
+	}
+
 	if b, err := strconv.ParseBool(get("cookie-secure")); err != nil {
 		fail("cookie-secure", "must be true or false")
 	} else {
@@ -335,6 +355,17 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		if msg := checkTransport(cfg); msg != "" {
 			fail("public-base-url", "%s", msg)
 		}
+	}
+
+	if b, err := strconv.ParseBool(get("backup-require-encryption")); err != nil {
+		fail("backup-require-encryption", "must be true or false")
+	} else {
+		cfg.BackupRequireEncryption = b
+	}
+	if raw, ok := vals["state-dir"]; ok && raw.value != "" {
+		cfg.StateDir = filepath.Clean(raw.value)
+	} else if cfg.Database != "" {
+		cfg.StateDir = filepath.Dir(cfg.Database)
 	}
 
 	if len(errs) > 0 {
@@ -464,7 +495,17 @@ func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
 			cfg.MetricsToken = val
 		case "backup-key":
 			cfg.BackupKey = []byte(val)
+		case "mfa-secret":
+			cfg.MFASecret = []byte(val)
+		case "backup-encryption-key":
+			cfg.BackupEncryptionKey = []byte(val)
 		}
+	}
+	if len(cfg.BackupEncryptionKey) > 0 && bytes.Equal(cfg.BackupEncryptionKey, cfg.BackupKey) {
+		errs = append(errs, &settingError{key: "backup-encryption-key", msg: "must differ from backup-key; use separate keys"})
+	}
+	if cfg.BackupRequireEncryption && len(cfg.BackupEncryptionKey) == 0 {
+		errs = append(errs, &settingError{key: "backup-require-encryption", msg: "set, but no backup-encryption-key is configured"})
 	}
 	return errors.Join(errs...)
 }
@@ -482,7 +523,7 @@ func readSecretFile(path string) (string, error) {
 	if runtime.GOOS != "windows" && fi.Mode().Perm()&0o077 != 0 {
 		return "", fmt.Errorf("%s is readable by group or others (mode %o); chmod 600 it", path, fi.Mode().Perm())
 	}
-	b, err := os.ReadFile(path)
+	b, err := os.ReadFile(path) //nolint:gosec // G703: operator-supplied config path
 	if err != nil {
 		return "", err
 	}
@@ -517,4 +558,6 @@ func writeSecretStatus(w io.Writer, cfg *Config) {
 	fmt.Fprintf(w, "setup-secret = %s\n", state(cfg.SetupSecret != ""))
 	fmt.Fprintf(w, "metrics-token = %s\n", state(cfg.MetricsToken != ""))
 	fmt.Fprintf(w, "backup-key = %s\n", state(len(cfg.BackupKey) > 0))
+	fmt.Fprintf(w, "mfa-secret = %s\n", state(len(cfg.MFASecret) > 0))
+	fmt.Fprintf(w, "backup-encryption-key = %s\n", state(len(cfg.BackupEncryptionKey) > 0))
 }

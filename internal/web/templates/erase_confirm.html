@@ -1,0 +1,22 @@
+{{define "content"}}
+{{with .D}}
+<p class="big">{{if .Self}}Erase my personal data in this network{{else}}Erase the personal data of {{.Name}}{{end}}</p>
+<p>This cannot be undone.</p>
+<ul>
+  <li>The display name is replaced by "Former member" and a short code.</li>
+  <li>Listings are archived and their text is removed.</li>
+  <li>Notes written on trades and statements written in disputes are removed.</li>
+  <li>If this is the person's only membership, the login is erased and the password stops working.</li>
+</ul>
+<p>Balances, trades, amounts and the audit log stay as they are, because the network's accounts must keep adding up. Anything still open (a proposed trade or a dispute) blocks erasure until it is settled.</p>
+<form method="post" action="{{if .Self}}/n/{{$.Slug}}/erase-my-data{{else}}/n/{{$.Slug}}/admin/members/{{.MemberID}}/erase{{end}}" novalidate>
+  {{template "csrf" $}}
+  {{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" (printf "%s It is written to the audit log, which is never rewritten, so do not put names or contact details in it." (or (and .Self "Optional.") "Required.")) "Req" (not .Self)}}
+  <div class="field{{if $.Err "confirm"}} has-error{{end}}">
+    {{with $.Err "confirm"}}<p class="error" id="e-confirm"><span class="sr">Error: </span>{{.}}</p>{{end}}
+    <label><input type="checkbox" name="confirm" value="yes"{{if $.Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> I understand this cannot be undone</label>
+  </div>
+  <div class="actions"><button type="submit" class="danger">Erase personal data</button> <a class="btn secondary" href="/n/{{$.Slug}}{{if not .Self}}/admin/members?status=departed{{end}}">Go back</a></div>
+</form>
+{{end}}
+{{end}}

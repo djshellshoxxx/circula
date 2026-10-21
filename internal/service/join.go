@@ -114,6 +114,9 @@ func (s *Service) createMember(tx store.Tx, net *domain.Network, personID, name 
 }
 
 func joinableActor(actor domain.Actor) error {
+	if actor.MustChangePassword {
+		return domain.PasswordChangeRequired() // SEC-008
+	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) || actor.NetworkScope != "" {
 		return domain.Forbidden("a full-scope person is required to join a network")
 	}

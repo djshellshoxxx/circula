@@ -29,6 +29,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `session-max` | `CIRCULA_SESSION_MAX` | `2160h` | no | Absolute session lifetime. Must not be shorter than `session-idle`. |
 | `idempotency-ttl` | `CIRCULA_IDEMPOTENCY_TTL` | `168h` | no | How long idempotency records are kept. |
 | `min-password-length` | `CIRCULA_MIN_PASSWORD_LENGTH` | `12` | no | Minimum password length (SEC-002). Cannot be set below 12. |
+| `require-mfa-admins` | `CIRCULA_REQUIRE_MFA_ADMINS` | `false` | no | When `true`, a network administrator without an enabled second factor is refused every administrator-only action with `forbidden` / `mfa-enrolment-required` until they enrol at `/account/security` (SEC-007, DEC-007). See `docs/dev/mfa.md`. |
 | `max-body-bytes` | `CIRCULA_MAX_BODY_BYTES` | `1048576` | no | Largest accepted request body. |
 | `request-timeout` | `CIRCULA_REQUEST_TIMEOUT` | `30s` | no | Deadline for each API and UI request. |
 | `log-level` | `CIRCULA_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. Needs a restart to change. |
@@ -40,10 +41,14 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `setup-secret-file` | `CIRCULA_SETUP_SECRET_FILE` | none | no | File holding the setup secret (see below). |
 | `metrics-token-file` | `CIRCULA_METRICS_TOKEN_FILE` | none | no | File holding a bearer token that `/metrics` then requires (see below). |
 | `backup-key-file` | `CIRCULA_BACKUP_KEY_FILE` | none | no | File holding the backup signing key (see below). |
+| `mfa-secret-file` | `CIRCULA_MFA_SECRET_FILE` | none | no | File holding the key that seals two-step sign-in secrets in the database (see below). |
+| `backup-encryption-key-file` | `CIRCULA_BACKUP_ENCRYPTION_KEY_FILE` | none | no | File holding the key that encrypts backups at rest (see below). |
+| `backup-require-encryption` | `CIRCULA_BACKUP_REQUIRE_ENCRYPTION` | `false` | no | `true` makes `restore` refuse plaintext backups and makes backups fail unless an encryption key is configured. Configuration is invalid when `true` without a key. |
+| `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
 
 ## Secrets
 
-Three secrets exist. None is accepted as a flag (a flag would show in the process list) or as a key in the JSON file.
+Four secrets exist. None is accepted as a flag (a flag would show in the process list) or as a key in the JSON file.
 Supply each either as an environment variable or as a file named by the matching `*-file` setting, not both. A secret
 file must be a regular file and, on Unix, must not be readable by group or others (`chmod 600`). One trailing newline is
 ignored. Each secret must have at least 16 characters; use 32 random characters or more
@@ -51,9 +56,21 @@ ignored. Each secret must have at least 16 characters; use 32 random characters 
 
 | Environment variable | Purpose |
 |---|---|
-| `CIRCULA_SETUP_SECRET` | FR-002. With a secret, the network-creation page (`/setup`) asks for it and refuses without it. The secret is invalidated by its first successful use in that process: to create another network, restart the service (and change the secret). Remove it from the configuration once the first network exists. Without a secret, any signed-in person may create a network, and `serve` logs a warning at start. Wrong guesses are rate limited per client address. |
+| `CIRCULA_SETUP_SECRET` | FR-002. With a secret, the network-creation page (`/setup`) asks for it and refuses without it. The secret is spent by its first successful use and stays spent across restarts (SEC-028): the use is recorded in the audit log (`setup.secret_used`). To allow exactly one more network, stop the service and run `circula setup-reset` (audited as `setup.secret_reset`, system actor), then start it again; change the secret too if it may have leaked. Remove it from the configuration once the first network exists. Without a secret, any signed-in person may create a network, and `serve` logs a warning at start. Wrong guesses are rate limited per client address. |
 | `CIRCULA_METRICS_TOKEN` | SA-15. When set, `/metrics` also requires `Authorization: Bearer <token>`. Set it whenever a reverse proxy runs on the same host: such a proxy reaches `/metrics` from loopback. Independently, `/metrics` always refuses requests carrying any proxy header (`X-Forwarded-*`, `Forwarded`, `X-Real-IP`, `Via`) and requests from a `trusted-proxies` address. |
+| `CIRCULA_MFA_SECRET` | SEC-007. When set, authenticator seeds are stored AES-256-GCM sealed under a key derived from it; otherwise they are stored base32-encoded. Losing or changing it makes sealed seeds unreadable: affected people must disable (recovery code) and re-enrol. Set it before people enrol. See `docs/dev/mfa.md`. |
+| `CIRCULA_BACKUP_ENCRYPTION_KEY` | OPS-019, SEC-028. Encrypts backups (AES-256-GCM). 32 random bytes in base64 (`circula keygen`, recommended) or a passphrase of 16+ characters. Must differ from the backup key. Without it backups are plaintext and `serve` warns. See [backup-restore.md](backup-restore.md#encryption-at-rest-ops-019-sec-028). |
 | `CIRCULA_BACKUP_KEY` | SA-07. Signs backup manifests (HMAC-SHA-256) and is required to restore them. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key). |
+
+### Runtime state: the web signing key (SEC-027)
+
+`serve` signs CSRF tokens and the session-start cookie with a 32-byte key kept in `<state-dir>/circula-web.key`
+(base64, mode `0600`), created on first start and reused after every restart, so people stay signed in across restarts and
+upgrades. It is created atomically and safely when several processes race. `serve` refuses to start, and never replaces
+the file, when it is readable by group or others, is not a regular file, or does not hold exactly 32 bytes. Back it up
+with your configuration (it holds no ledger data and is not part of a database backup). Rotation: stop the service, delete
+the file, start it; every signed cookie and form token stops validating and people sign in again. Ledger data is
+unaffected.
 
 Other settings:
 
@@ -62,7 +79,7 @@ Other settings:
 | `CIRCULA_OPERATOR_PASSWORD` | environment only | Password for `admin create-operator`. Not a setting; it is read once and never printed. |
 | `-config` / `CIRCULA_CONFIG` | | Path to the JSON file. |
 
-Settings that are documented in the specification but not yet implemented (mail, backup encryption) are listed in
+Settings that are documented in the specification but not yet implemented (mail) are listed in
 [README.md](README.md#known-gaps).
 
 ## Example configuration file
