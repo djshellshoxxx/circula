@@ -89,16 +89,16 @@ func TestCSRFScheme(t *testing.T) {
 	}
 	r := req("1.1.1.1:1")
 	r.AddCookie(&http.Cookie{Name: CSRFCookie, Value: "pre"})
-	if Binding(r) != "pre" {
+	if (Edge{}).Binding(r) != "pre" {
 		t.Error("pre-login binding")
 	}
 	r.AddCookie(&http.Cookie{Name: SessionCookie, Value: "s"})
-	if Binding(r) != "s" || SessionToken(r) != "s" {
+	if (Edge{}).Binding(r) != "s" || (Edge{}).SessionToken(r) != "s" {
 		t.Error("session binding")
 	}
 	r2 := req("1.1.1.1:1")
 	r2.AddCookie(&http.Cookie{Name: SessionCookieSecure, Value: "hs"})
-	if SessionToken(r2) != "hs" {
+	if (Edge{ForceSecure: true}).SessionToken(r2) != "hs" {
 		t.Error("__Host- cookie not read")
 	}
 }

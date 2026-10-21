@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -90,7 +89,7 @@ func (s *server) startSession(w http.ResponseWriter, r *http.Request, tok string
 }
 
 func (s *server) logout(w http.ResponseWriter, r *http.Request) {
-	if tok := httpx.SessionToken(r); tok != "" {
+	if tok := s.opts.Edge.SessionToken(r); tok != "" {
 		_ = s.svc.Logout(r.Context(), tok)
 	}
 	s.clearSession(w, r)

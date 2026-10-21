@@ -233,7 +233,7 @@ func TestServeWiresSettingsIntoAdapters(t *testing.T) {
 	}
 	var csrfCookie *http.Cookie
 	for _, c := range resp.Cookies() {
-		if c.Name == httpx.CSRFCookie {
+		if c.Name == httpx.CSRFCookieSecure {
 			csrfCookie = c
 			if !c.Secure {
 				t.Error("csrf cookie not Secure although cookie-secure is on")
