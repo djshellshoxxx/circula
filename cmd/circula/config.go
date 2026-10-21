@@ -49,6 +49,7 @@ var settingDefs = []settingDef{
 	{key: "migrate-mode", def: "explicit", help: "explicit: refuse to serve with pending migrations; auto: back up and migrate at start-up"},
 	{key: "session-idle", def: "720h", help: "idle session timeout (DEC-005)"},
 	{key: "session-max", def: "2160h", help: "absolute session lifetime (DEC-005)"},
+	{key: "shutdown-grace", def: "10s", help: "time to let in-flight requests finish on shutdown (ARC-016)"},
 	{key: "idempotency-ttl", def: "168h", help: "retention of idempotency records"},
 	{key: "require-mfa-admins", def: "false", help: "network administrators must enrol a second factor before any administrator-only action (SEC-007, DEC-007)"},
 	{key: "min-password-length", def: "12", help: "minimum password length (SEC-002); not below 12"},
@@ -96,6 +97,7 @@ type Config struct {
 	MigrateMode         string
 	SessionIdle         time.Duration
 	SessionMax          time.Duration
+	ShutdownGrace       time.Duration
 	IdempotencyTTL      time.Duration
 	MinPasswordLength   int
 	RequireMFAAdmins    bool
@@ -309,6 +311,7 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 
 	cfg.SessionIdle = parseDuration(get("session-idle"), "session-idle", fail, time.Minute, 366*24*time.Hour)
 	cfg.SessionMax = parseDuration(get("session-max"), "session-max", fail, time.Minute, 366*24*time.Hour)
+	cfg.ShutdownGrace = parseDuration(get("shutdown-grace"), "shutdown-grace", fail, time.Second, 10*time.Minute)
 	if cfg.SessionMax < cfg.SessionIdle {
 		fail("session-max", "must not be shorter than session-idle")
 	}

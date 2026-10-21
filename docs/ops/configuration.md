@@ -27,6 +27,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start with pending migrations. `auto`: back up, then migrate at start-up. |
 | `session-idle` | `CIRCULA_SESSION_IDLE` | `720h` | no | Idle session timeout (DEC-005). |
 | `session-max` | `CIRCULA_SESSION_MAX` | `2160h` | no | Absolute session lifetime. Must not be shorter than `session-idle`. |
+| `shutdown-grace` | `CIRCULA_SHUTDOWN_GRACE` | `10s` | no | How long in-flight requests may finish after a stop signal (1s to 10m). |
 | `idempotency-ttl` | `CIRCULA_IDEMPOTENCY_TTL` | `168h` | no | How long idempotency records are kept. |
 | `min-password-length` | `CIRCULA_MIN_PASSWORD_LENGTH` | `12` | no | Minimum password length (SEC-002). Cannot be set below 12. |
 | `require-mfa-admins` | `CIRCULA_REQUIRE_MFA_ADMINS` | `false` | no | When `true`, a network administrator without an enabled second factor is refused every administrator-only action with `forbidden` / `mfa-enrolment-required` until they enrol at `/account/security` (SEC-007, DEC-007). See `docs/dev/mfa.md`. |

@@ -33,7 +33,7 @@ const (
 	verifyInterval      = time.Hour
 	purgeInterval       = time.Hour
 	backupRetryInterval = 15 * time.Minute
-	shutdownGracePeriod = 30 * time.Second
+	shutdownGracePeriod = 10 * time.Second // ARC-016 default; shutdown-grace overrides
 )
 
 // newService builds the service layer with the configured session, password
@@ -219,7 +219,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		}
 	}
 	ops.ready.Store(false)
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownGracePeriod)
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), graceFor(cfg))
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil && runErr == nil {
 		runErr = fmt.Errorf("shutdown: %w", err)
