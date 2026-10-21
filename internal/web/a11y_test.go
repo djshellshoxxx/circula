@@ -155,7 +155,7 @@ func TestPageStructure(t *testing.T) {
 	adm.login("admin@example.org")
 	for _, path := range []string{b + "/admin", b + "/admin/members", b + "/admin/members?status=active", b + "/admin/members/" + w.bobM.ID + "/suspend",
 		b + "/admin/members/" + w.bobM.ID + "/limit", b + "/admin/invitations", b + "/admin/policy", b + "/admin/adjust", b + "/admin/audit",
-		b + "/admin/exports", b + "/review", b + "/review?status=open", b + "/admin/reverse", b + "/admin/reverse?tx=" + tx.ID, b + "/admin/announcements", b + "/admin/terms", b + "/admin/network", "/account/time-zone"} {
+		b + "/admin/exports", b + "/review", b + "/review?status=open", b + "/admin/reverse", b + "/admin/reverse?tx=" + tx.ID, b + "/admin/announcements", b + "/admin/terms", b + "/admin/network", b + "/admin/inactive", "/account/time-zone"} {
 		checkStructure(t, path, adm.get(path))
 	}
 	// Review and error states.
