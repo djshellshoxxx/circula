@@ -35,7 +35,7 @@ run() { # name command...  (output saved; last 3 lines in note on failure)
   fi
 }
 fmtcheck() { [ -z "$(gofmt -l .)" ] || { gofmt -l .; return 1; }; }
-lintrun() { command -v golangci-lint >/dev/null && golangci-lint run; }
+lintrun() { PATH="$HOME/go/bin:$PATH" command -v golangci-lint >/dev/null && PATH="$HOME/go/bin:$PATH" golangci-lint run; }
 vulncheck() { go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...; }
 loadsmoke() { CIRCULA_LOAD=1 CIRCULA_LOAD_WORKERS=4 CIRCULA_LOAD_MEMBERS=20 CIRCULA_LOAD_TRADES=25 go test -count=1 -run LoadConcurrentTrades ./internal/service; }
 e2erun() { make e2e; }

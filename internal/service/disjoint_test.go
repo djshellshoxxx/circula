@@ -27,8 +27,8 @@ func TestQA008DisjointConcurrentTrades(t *testing.T) {
 	}
 	ps := make([]pair, pairs)
 	for i := range ps {
-		a, am := w.Env.Member(w.admin, w.net, fmt.Sprintf("p%03d@example.org", i))
-		b, bm := w.Env.Member(w.admin, w.net, fmt.Sprintf("q%03d@example.org", i))
+		a, am := w.Member(w.admin, w.net, fmt.Sprintf("p%03d@example.org", i))
+		b, bm := w.Member(w.admin, w.net, fmt.Sprintf("q%03d@example.org", i))
 		ps[i] = pair{a, b, am, bm}
 	}
 	done := make(chan struct{})

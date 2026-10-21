@@ -288,11 +288,11 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | UX-053 | P0 | built | S/mfa.go, S/totp.go, W/h_security.go (opt-in; RequireMFAForAdmins in C/config.go:101) |
 | UX-054 | P0 | partial | axe-core in e2e/tests/a11y.spec.js, run only by `make e2e`; not wired in .github/workflows/ci.yml |
 | UX-055 | P0 | partial | automated keyboard.spec.js exists; no recorded manual walkthrough per release |
-| UX-056 | P0 | not built | no screen-reader pass recorded (docs/qa/LIGHT-QA.md:178 'not run') |
+| UX-056 | P0 | partial | e2e/tests/aria.spec.js proxy + docs/qa/SCREEN-READER.md script; NO human screen-reader run |
 | UX-057 | P0 | partial | dark tokens (css:2); dark contrast not measured |
 | UX-058 | P1 | built | prefers-reduced-motion css:66 |
 | UX-059 | P1 | built | session extend |
-| UX-060 | P0 | not built | no defect-logging process in repo |
+| UX-060 | P0 | partial | docs/qa/DEFECTS.md log + classification; gate counts open A-block |
 
 ## 09 Security and privacy
 
@@ -410,11 +410,11 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | QA-001 | P0 | partial | S/property_test.go seeds 1-6; counts/op list unverified |
 | QA-002 | P0 | built | S/property_test.go TestRandomisedLedgerInvariants |
 | QA-003 | P0 | built | property_test.go |
-| QA-004 | P0 | partial | limit boundary S/trades_test.go; zero/one-unit not named |
+| QA-004 | P0 | partial | TestQA004LimitBoundary (limits 0, 1, large); GOV-019 and system-account cases not named |
 | QA-005 | P0 | built | domain TestNoFloatsInMoneyPackages, TestParseAmount |
 | QA-006 | P0 | built | S/atomicity_test.go |
 | QA-007 | P0 | partial | S/concurrency_test.go; not 100 interleavings |
-| QA-008 | P0 | not built | no disjoint concurrent trades test |
+| QA-008 | P0 | partial | TestQA008DisjointConcurrentTrades (100 trades, 60 s limit pending DEC-023) |
 | QA-009 | P0 | built | S/idempotency_test.go |
 | QA-010 | P0 | partial | fault store; not every posting step |
 | QA-011 | P0 | partial | busy-retry test; no seeded contention scenario (S/loadtest_test.go is load) |
@@ -435,22 +435,22 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | QA-026 | P0 | partial | C/premigrate_test.go failure path; no forced-failure upgrade E2E |
 | QA-027 | P0 | built | ST/golden_migration_test.go (v1 fixture -> current) |
 | QA-028 | P0 | partial | restore integrity tested; backup under concurrent load not run |
-| QA-029 | P0 | not built | no restore drill records |
+| QA-029 | P0 | partial | scripts/restore-drill.sh + docs/qa/EVIDENCE.md; one drill on an empty DB, none on real data |
 | QA-030 | P0 | partial | export totals tested; no independent reconciliation script |
 | QA-031 | P0 | built | S/export_test.go canary/scope |
 | QA-032 | P0 | built | S/export_test.go formula neutralisation |
-| QA-033 | P0 | partial | W/a11y_test.go structural; axe only in `make e2e`, not CI |
+| QA-033 | P0 | partial | e2e job in ci.yml (make e2e, axe); not yet observed green on GitHub |
 | QA-034 | P0 | partial | e2e/tests/keyboard.spec.js local; scripting-disabled flows via Go tests |
-| QA-035 | P0 | not built | no manual screen-reader record |
+| QA-035 | P0 | partial | same as UX-056: script written, not run by a human |
 | QA-036 | P0 | partial | balance text tested; contrast via axe local only |
-| QA-037 | P0 | partial | ci.yml: gofmt, vet, golangci-lint, govulncheck, race tests x3 OS, action-pin check; no migration static check |
-| QA-038 | P0 | partial | integration gate Go tests; e2e not in CI |
-| QA-039 | P0 | not built | release gate evidence (drills, reviews, perf) not assembled |
-| QA-040 | P0 | not built | thresholds pending DEC-023; docs/qa/LOAD-TEST.md measured, no accepted thresholds |
+| QA-037 | P0 | partial | scripts/check-hygiene.sh migration numbering/destructive check in CI |
+| QA-038 | P0 | partial | e2e job in ci.yml; not yet observed green on GitHub |
+| QA-039 | P0 | partial | scripts/release-gate.sh + docs/qa/RELEASE-GATE.md; manual items (SR, L14, SEC-033, L13) never auto-pass |
+| QA-040 | P0 | partial | docs/qa/THRESHOLDS.md proposed values; DEC-023 owner confirmation missing, gate fails until then |
 | QA-041 | P0 | partial | injected clocks; seeds only in property test |
 | QA-042 | P0 | partial | docs/TRACEABILITY.md exists (stale: snapshot 925f637) |
-| QA-043 | P0 | partial | synthetic fixtures; no PII scan |
-| QA-044 | P0 | not built | no evidence retention process |
+| QA-043 | P0 | partial | scripts/check-hygiene.sh PII scan in CI |
+| QA-044 | P0 | partial | docs/qa/EVIDENCE.md retention process; release-notes link check manual |
 
 ## Summary
 
