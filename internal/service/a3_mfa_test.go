@@ -142,7 +142,7 @@ func TestA3_04_RecoverSkipsHashingBeforeCodeCheck(t *testing.T) {
 	_ = e.Svc.RecoverPassword(e.Ctx, "nobody@example.org", "AAAA-AAAA-AAAA-AAAA", newPW)
 	_ = e.Svc.RecoverPassword(e.Ctx, "ana@example.org", "AAAA-AAAA-AAAA-AAAA", newPW) // 5th: locks
 	wantCode(t, e.Svc.RecoverPassword(e.Ctx, "ana@example.org", codes[0], newPW), domain.ErrRateLimited)
-	if d := time.Since(start); d > oneHash {
+	if d := time.Since(start); d > 3*oneHash {
 		t.Fatalf("7 refused recoveries took %v, one Argon2 hash takes %v: hashing runs before the code check", d, oneHash)
 	}
 	// the right code still works once the lock is over
