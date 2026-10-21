@@ -227,7 +227,7 @@ func TestServeWiresSettingsIntoAdapters(t *testing.T) {
 		_ = resp.Body.Close()
 		return resp, string(b)
 	}
-	resp, body := get("/login")
+	resp, body := get("/login") //nolint:bodyclose // get closes the body
 	if resp.Header.Get("Strict-Transport-Security") == "" {
 		t.Error("no HSTS with an https public URL")
 	}
@@ -261,7 +261,7 @@ func TestServeWiresSettingsIntoAdapters(t *testing.T) {
 		t.Fatalf("login: %d %v", lr.StatusCode, lr.Cookies())
 	}
 	// The same cookie authenticates the API.
-	ar, abody := get("/api/v1/me", sess)
+	ar, abody := get("/api/v1/me", sess) //nolint:bodyclose // get closes the body
 	if ar.StatusCode != 200 || !strings.Contains(abody, "person_id") {
 		t.Errorf("API with the web session: %d %s", ar.StatusCode, abody)
 	}
@@ -269,7 +269,7 @@ func TestServeWiresSettingsIntoAdapters(t *testing.T) {
 		t.Error("no HSTS on the API")
 	}
 	// The setup secret is wired: the form asks for it.
-	_, setup := get("/setup", sess)
+	_, setup := get("/setup", sess) //nolint:bodyclose // get closes the body
 	if !strings.Contains(setup, "setup_secret") {
 		t.Errorf("setup form does not ask for the secret:\n%s", setup)
 	}

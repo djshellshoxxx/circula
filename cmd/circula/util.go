@@ -76,7 +76,7 @@ func ensurePrivateDir(dir string) error {
 // the driver cannot create it with the umask default. It reports whether it
 // had to tighten an existing file.
 func secureDatabase(path string) (tightened bool, err error) {
-	fi, err := os.Stat(path)
+	_, err = os.Stat(path)
 	if errors.Is(err, fs.ErrNotExist) {
 		f, cerr := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0o600)
 		if cerr != nil {
@@ -88,8 +88,8 @@ func secureDatabase(path string) (tightened bool, err error) {
 		return false, err
 	}
 	for _, p := range []string{path, path + "-wal", path + "-shm"} {
-		fi, err = os.Stat(p)
-		if err != nil {
+		fi, serr := os.Stat(p)
+		if serr != nil {
 			continue
 		}
 		if runtime.GOOS != "windows" && fi.Mode().Perm()&0o077 != 0 {
