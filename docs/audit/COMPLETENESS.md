@@ -21,7 +21,7 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | FR-011 | P0 | built | S/join.go DecideJoinRequest; A/routes.go:62; A/hardening_test.go TestAPIDenyJoinRequest |
 | FR-012 | P1 | partial | open join built (S/join.go JoinNetwork, W/h_auth.go:25); no join-specific rate limit (W/web.go limiters: ip/acct/pw/reg/setup only) |
 | FR-013 | P0 | built | domain/statemachine_test.go |
-| FR-014 | P0 | partial | S/departure.go; A/routes.go:27 POST /me/membership/departure; no member-facing web departure form (W/ has only admin remove, h_admin.go:204) |
+| FR-014 | P0 | built | S/departure.go; A/routes.go:27; W/h_gov.go leaveForm/leavePost (fixed in claude/cc-h1) |
 | FR-015 | P0 | built | S/membership.go; W/h_admin.go memberActions[remove]; S/membership_test.go |
 | FR-016 | P1 | built | S/join.go; display name only required |
 | FR-017 | P0 | built | S/membership_test.go TestJoinModes; S/regress_rejoin_test.go |
@@ -337,16 +337,16 @@ Path prefixes: `S/`=internal/service, `A/`=internal/api, `W/`=internal/web, `ST/
 | ID | Pri | Status | Evidence |
 |---|---|---|---|
 | GOV-001 | P0 | partial | policy versions prospective (ST network_policies); version not stored on transactions |
-| GOV-002 | P0 | partial | audited before/after; announcements (S/announcements.go) usable as notice; no member-visible policy change log |
-| GOV-003 | P0 | not built | no notice period / effective-date enforcement on policy change (S/networks.go UpdatePolicy) |
+| GOV-002 | P0 | built | audited before/after; S/gov_terms.go PolicyLog; W/h_gov.go rulesPage; GET /network/policy-log (claude/cc-h1) |
+| GOV-003 | P0 | built | S/networks.go UpdatePolicy noticeDays; ST network_policies effective_at as-of read; migration 0012 (claude/cc-h1) |
 | GOV-004 | P0 | built | S/networks.go decimals lock |
 | GOV-005 | P1 | built | domain/statemachine_test.go TestPolicyBounds |
 | GOV-006 | P1 | partial | unilateral admin change; no objection mechanism |
 | GOV-007 | P0 | built | S/reversal.go, adjustments; property tests |
 | GOV-008 | P0 | built | S/join.go; S/membership_test.go TestJoinModes |
-| GOV-009 | P0 | not built | no terms versioning/acceptance (grep terms: only schema/tests) |
-| GOV-010 | P0 | partial | S/departure.go blockers/retain/settle; no counterparty notices or self-export offer |
-| GOV-011 | P0 | partial | admin removal with reason; no member notice/challenge |
+| GOV-009 | P0 | built | S/gov_terms.go; S/join.go *Terms; gate in transactions.go; migration 0012 (claude/cc-h1) |
+| GOV-010 | P0 | partial | S/departure.go blockers/retain/settle; counterparty notices built (claude/cc-h1); self-export only linked |
+| GOV-011 | P0 | partial | admin removal with reason; member notice built (claude/cc-h1); no challenge |
 | GOV-012 | P1 | not built | no inactivity rule |
 | GOV-013 | P0 | built | S/disputes.go |
 | GOV-014 | P0 | partial | statement, response (S/disputes_response.go), decision with reasons; no response deadline/auto-escalation |

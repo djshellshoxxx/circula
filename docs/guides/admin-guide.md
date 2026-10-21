@@ -107,6 +107,27 @@ required and is stored with the change.
 | When a member leaves | *Balance is retained* or *Balance is settled to zero*. Settling posts an audited adjustment. |
 | Members marked in default cannot pay | See section 4. |
 
+### Notice before a change takes effect
+
+A change that could disadvantage members is **announced first**: less default credit, a shorter dispute window, a
+different departure rule, a less restrictive directory or a more open way to join. It takes effect after **14 days** by
+default. The form's **Notice (days)** field (JSON API: `notice_days`, up to 90) sets another period. Fewer than 14 days for
+such a change needs a **Reason for shorter notice** (`notice_reason`), which members see in the change log. Every active
+member gets an inbox notice when the change is announced. Other changes take effect at once unless you give a notice.
+
+While a change is scheduled the Policy page shows it with a **Cancel the scheduled change** button; make no other change
+until it is cancelled or in force (the JSON API refuses another change with 409, and a PATCH that restores the values in
+force cancels it). Members see all versions, dates and reasons under **Rules** (`/n/<name>/policy`, JSON API
+`GET /api/v1/network/policy-log`). Earlier trades are never changed by a new rule.
+
+### Terms
+
+**Network terms** (`/n/<name>/admin/terms`, JSON API `POST /api/v1/admin/terms`) holds the onboarding rules. Publish text
+and it becomes the next numbered version; versions are kept. New members are shown the current version and must tick
+that they accept it to join (the invitation page and the join page). Publishing a new version tells every active member,
+and each must accept it before proposing or accepting a trade; reading balances and history and leaving stay open. A
+network with no published terms asks for no acceptance.
+
 Decimal places cannot be changed here. The web form does not detect two administrators editing at the same time: the
 last save wins (the JSON API requires an `If-Match` version and refuses a stale one). Agree changes between
 administrators first.

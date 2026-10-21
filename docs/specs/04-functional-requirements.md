@@ -12,7 +12,7 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary: built 51, not built 3, partial 11.
+Summary: built 52, not built 3, partial 10.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -26,7 +26,7 @@ Summary: built 51, not built 3, partial 11.
 | FR-011 | P0 | built | Approve and deny applicants; deny via API and web |
 | FR-012 | P1 | partial | Open join creates active member; join rate limit per abuse baseline not built |
 | FR-013 | P0 | built | Membership transitions table-tested |
-| FR-014 | P0 | partial | Departure in service and JSON API; no web self-service departure form |
+| FR-014 | P0 | built | Departure in service, JSON API and a web "Leave this network" form that shows blockers and consequences |
 | FR-015 | P0 | built | Admin removal with mandatory reason; last-admin guard |
 | FR-016 | P1 | built | Display name is the only required profile field |
 | FR-017 | P0 | built | Duplicate join returns existing membership |

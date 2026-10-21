@@ -22,21 +22,21 @@ The product does not decide whether credits have value, whether members will acc
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary: built 8, not built 8, partial 11.
+Summary: built 11, not built 6, partial 10.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | GOV-001 | P0 | partial | Policy versions prospective; policy version stored on each transaction not verified |
-| GOV-002 | P0 | partial | Changes audited with before and after; member-visible change log not built |
-| GOV-003 | P0 | not built | Notice periods and member notices not built |
+| GOV-002 | P0 | built | Changes audited with before and after; member-visible change log at /n/{slug}/policy and GET /network/policy-log |
+| GOV-003 | P0 | built | Adverse changes wait 14 days by default (notice_days up to 90); a shorter notice needs a reason shown in the change log; members get an inbox notice; a scheduled change can be cancelled |
 | GOV-004 | P0 | built | Decimals lock after first completed transaction |
 | GOV-005 | P1 | built | Bounds with boundary tests |
 | GOV-006 | P1 | partial | Unilateral admin change built; objection right not built |
 | GOV-007 | P0 | built | Corrective actions are transactions; property tests |
 | GOV-008 | P0 | built | Invite, approval, open modes; audit per decision |
-| GOV-009 | P0 | not built | Terms versioning and acceptance not built |
-| GOV-010 | P0 | partial | Blockers, retain and settle rules built; counterparty notices and self-export offer not built |
-| GOV-011 | P0 | partial | Admin removal with reason; notice and challenge not built |
+| GOV-009 | P0 | built | Append-only terms versions; acceptance recorded at join and re-required before proposing or accepting a trade after an update; reading and leaving stay open |
+| GOV-010 | P0 | partial | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page points to the self-export on History, no export is offered in the flow |
+| GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
 | GOV-012 | P1 | not built | Inactivity rule not built |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
 | GOV-014 | P0 | partial | Statement and decision with reasons; response period and deadlines not built |
