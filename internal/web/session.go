@@ -24,6 +24,9 @@ const (
 // errCSRF is the pseudo status renderError uses for a rejected form token.
 const errCSRF = -403
 
+// errFrozen selects the read-only page for a frozen network (CMD-07).
+const errFrozen = -423
+
 func (s *server) secure(r *http.Request) bool { return s.opts.Edge.Secure(r) }
 
 // clientIP is the address used for rate limiting (trusted proxies only).

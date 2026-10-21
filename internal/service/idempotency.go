@@ -62,6 +62,7 @@ func idempotent[T any](s *Service, tx store.Tx, netID string, actor domain.Actor
 			if rec.Fingerprint != fp {
 				return zero, domain.Errf(domain.CodeKeyReused, "idempotency key reused with a different request")
 			}
+			s.unit.replays++
 			return load(rec.ResultRef)
 		}
 		if err := tx.DeleteIdem(netID, actorID, op, key); err != nil { // expired: key is free (DAT-028)

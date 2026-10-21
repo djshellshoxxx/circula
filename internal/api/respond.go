@@ -53,7 +53,7 @@ var titles = map[string]string{
 	"idempotency-request-in-progress": "Request in progress", "precondition-failed": "Precondition failed",
 	"precondition-required": "Precondition required", "payload-too-large": "Payload too large",
 	"unsupported-media-type": "Unsupported media type", "rate-limited": "Rate limit exceeded",
-	"internal-error": "Internal error", "unavailable": "Service unavailable", "conflict": "Conflict",
+	"internal-error": "Internal error", "unavailable": "Service unavailable", "network-frozen": "Network frozen", "conflict": "Conflict",
 	"blocked": "Action blocked", "method-not-allowed": "Method not allowed", "not-implemented": "Not implemented",
 	"network-required": "Network required", "invalid-header": "Invalid request header", "member-has-open-balance": "Member has open balance",
 }
@@ -105,6 +105,7 @@ var codeStatus = map[domain.Code]int{
 	domain.CodeCounterpartyInact: 422, domain.CodeKeyReused: 422, domain.CodeKeyRequired: 400,
 	domain.CodeUnauthenticated: 401, domain.CodeForbidden: 403, domain.CodeNotFound: 404,
 	domain.CodeInvalidState: 409, domain.CodeConflict: 409, domain.CodeBlocked: 409, domain.CodeRateLimited: 429, domain.CodeUnavailable: 503,
+	domain.CodeNetworkFrozen: 423,
 }
 
 // fromErr converts any error into an apiError. Unknown errors become opaque

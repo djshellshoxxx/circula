@@ -17,7 +17,25 @@ type principal struct {
 // open resolves actor + network. Anyone who is not a member of the network,
 // or whose token is scoped to another network, gets the same not-found as for
 // a non-existent network (API-017, FR-006).
+//
+// A write-scope open on a frozen network fails with network-frozen (CMD-07),
+// after membership is established so outsiders learn nothing.
 func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope domain.Scope) (*principal, error) {
+	p, err := s.openAny(tx, actor, netID, scope)
+	if err != nil {
+		return nil, err
+	}
+	if scope == domain.ScopeWrite {
+		if err := s.checkNotFrozen(netID); err != nil {
+			return nil, err
+		}
+	}
+	return p, nil
+}
+
+// openAny is open without the frozen-network check; only the consistency-run
+// record uses it, so a frozen network's verification stays auditable.
+func (s *Service) openAny(tx store.Tx, actor domain.Actor, netID string, scope domain.Scope) (*principal, error) {
 	if !actor.Can(scope) {
 		return nil, domain.Forbidden("token lacks %s scope", scope)
 	}

@@ -338,6 +338,9 @@ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit
 			return err
 		}
 		for _, t := range ts {
+			if s.IsFrozen(t.NetworkID) {
+				continue // frozen networks take no writes (CMD-07)
+			}
 			if err := s.transition(tx, t.NetworkID, t, domain.CmdExpire, "", actor.RequestID); err != nil {
 				return err
 			}

@@ -43,6 +43,10 @@ type Service struct {
 	st        store.Store
 	cfg       Config
 	dummyHash string // for constant-effort login of unknown users (SEC-005)
+
+	frozen frozenSet // networks refusing writes after a ledger failure (freeze.go)
+	obs    Observer  // optional metrics observer (observe.go)
+	unit   unitStats // counters of the write unit in progress (serialised by the store gate)
 }
 
 // New builds a Service over st, filling defaults.
@@ -116,7 +120,25 @@ func randToken(n int) (string, error) {
 
 // update and view are thin wrappers so call sites read uniformly.
 func (s *Service) update(ctx context.Context, fn func(store.Tx) error) error {
-	return s.st.Update(ctx, fn)
+	if s.obs == nil {
+		return s.st.Update(ctx, fn)
+	}
+	var posts, replays int
+	err := s.st.Update(ctx, func(tx store.Tx) error {
+		s.unit = unitStats{}
+		ferr := fn(tx)
+		posts, replays = s.unit.posts, s.unit.replays
+		return ferr
+	})
+	if err == nil {
+		if posts > 0 {
+			s.obs.Posted(posts)
+		}
+		if replays > 0 {
+			s.obs.Replayed(replays)
+		}
+	}
+	return err
 }
 
 func (s *Service) view(ctx context.Context, fn func(store.Tx) error) error {

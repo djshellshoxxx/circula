@@ -99,7 +99,7 @@ func (s *Service) RecordConsistencyRun(ctx context.Context, actor domain.Actor, 
 		return domain.Invalid("report", "a ledger report is required")
 	}
 	return s.update(ctx, func(tx store.Tx) error {
-		p, err := s.open(tx, actor, rep.NetworkID, domain.ScopeWrite)
+		p, err := s.openAny(tx, actor, rep.NetworkID, domain.ScopeWrite)
 		if err != nil {
 			return err
 		}

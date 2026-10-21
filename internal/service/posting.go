@@ -72,6 +72,7 @@ func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction
 			return err
 		}
 	}
+	s.unit.posts++
 	prev := t.Status
 	t.Status, t.CompletedAt, t.LedgerSeq = next, &now, seq
 	if err := tx.UpdateTransaction(t); err != nil {

@@ -96,6 +96,9 @@ func (s *Service) ListInvitations(ctx context.Context, actor domain.Actor, netID
 // createMember inserts a member with its account and, when active, the
 // sign-up grant. The caller audits.
 func (s *Service) createMember(tx store.Tx, net *domain.Network, personID, name string, status domain.MemberStatus, method, requestID string) (*domain.Member, error) {
+	if err := s.checkNotFrozen(net.ID); err != nil {
+		return nil, err
+	}
 	m := &domain.Member{ID: s.id(), NetworkID: net.ID, PersonID: personID, DisplayName: name,
 		Status: status, JoinMethod: method, JoinedAt: s.now()}
 	if err := tx.InsertMember(m); err != nil {

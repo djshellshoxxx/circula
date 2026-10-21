@@ -231,6 +231,9 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 	case 503:
 		w.Header().Set("Retry-After", "5")
 		p.Title, p.Text = "Busy, try again", "The service is busy and could not complete the request. Nothing changed. Wait a few seconds and try again."
+	case errFrozen:
+		st = 423
+		p.Title, p.Text = "Network read-only", "This network is read-only because its ledger failed an integrity check. Balances and history can still be viewed. Nothing was changed. The administrator has been alerted; try again later."
 	case 409:
 		p.Title, p.Text = "Conflict", "That cannot be done in the current state. Nothing changed. Reload the page to see the latest state."
 	default:
@@ -248,6 +251,8 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		return
 	}
 	switch domain.CodeOf(err) {
+	case domain.CodeNetworkFrozen:
+		s.renderError(w, r, errFrozen)
 	case domain.CodeUnauthenticated:
 		s.clearSession(w, r)
 		s.toLogin(w, r)
