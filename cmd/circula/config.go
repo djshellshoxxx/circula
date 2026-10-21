@@ -289,6 +289,9 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 
 	if raw, ok := vals["database"]; ok {
 		p := filepath.Clean(raw.value)
+		if strings.ContainsAny(p, "?#%") { // A3-05: the path is embedded in a SQLite file: URI
+			fail("database", "path must not contain ?, # or %%")
+		}
 		if fi, err := os.Stat(filepath.Dir(p)); err != nil || !fi.IsDir() {
 			fail("database", "directory %s does not exist", filepath.Dir(p))
 		}

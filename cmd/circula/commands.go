@@ -304,6 +304,15 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: restore: copy failed: %v\n", err)
 		return exitFailure
 	}
+	if !m.Encrypted {
+		// A3-01: the file was checked before the pre-restore backup ran; re-hash the
+		// copy we will actually restore so a swap in that window is caught.
+		if sum, size, err := fileSHA256(partial); err != nil || sum != m.SHA256 || size != m.Bytes {
+			removeDBFiles(partial)
+			fmt.Fprintf(stderr, "circula: restore refused: backup file changed after verification; the current database was not touched\n")
+			return exitFailure
+		}
+	}
 	fail := func(format string, a ...any) int {
 		removeDBFiles(partial)
 		fmt.Fprintf(stderr, "circula: restore refused: "+format+"; the current database was not touched\n", a...)
