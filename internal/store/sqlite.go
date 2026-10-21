@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -20,6 +21,21 @@ import (
 type SQLite struct {
 	db   *sql.DB
 	gate chan struct{}
+	sink atomic.Pointer[AuditSink]
+}
+
+// AuditSink receives audit events after the transaction that wrote them has
+// committed (RB-012). It must not block for long and its failures are its own
+// to report: the audit row is already durable in the database.
+type AuditSink func(*domain.AuditEvent)
+
+// SetAuditSink installs (or, with nil, removes) the post-commit audit sink.
+func (s *SQLite) SetAuditSink(f AuditSink) {
+	if f == nil {
+		s.sink.Store(nil)
+		return
+	}
+	s.sink.Store(&f)
 }
 
 var _ Store = (*SQLite)(nil)
@@ -69,6 +85,9 @@ func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, 
 	q.Add("_pragma", "journal_mode(WAL)")
 	q.Add("_pragma", "synchronous(NORMAL)")
 	q.Add("_pragma", "foreign_keys(1)")
+	// Freed pages are overwritten with zeros so deleted text does not linger
+	// in the file (RB-003).
+	q.Add("_pragma", "secure_delete(1)")
 	dsn := "file:" + path + "?" + q.Encode()
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
@@ -169,13 +188,19 @@ func (s *SQLite) run(ctx context.Context, begin string, readOnly bool, fn func(T
 			panic(r)
 		}
 	}()
-	if err = fn(&txImpl{ctx: ctx, q: conn}); err != nil {
+	tx := &txImpl{ctx: ctx, q: conn}
+	if err = fn(tx); err != nil {
 		return err
 	}
 	if _, err = conn.ExecContext(ctx, "COMMIT"); err != nil {
 		return fmt.Errorf("store: commit: %w", err)
 	}
 	done = true
+	if sink := s.sink.Load(); sink != nil {
+		for _, e := range tx.audits {
+			(*sink)(e)
+		}
+	}
 	return nil
 }
 
@@ -191,6 +216,8 @@ type txImpl struct {
 	// asOf (unix ms) hides policy versions that take effect later (GOV-003);
 	// 0 means the newest version regardless of its effective time.
 	asOf int64
+	// audits are the events appended in this unit, for the post-commit sink.
+	audits []*domain.AuditEvent
 }
 
 var _ Tx = (*txImpl)(nil)

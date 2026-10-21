@@ -519,6 +519,7 @@ func pruneBackups(dir string, keepDaily, keepMonthly int) ([]string, error) {
 		}
 		removeDBFiles(e.path)
 		_ = os.Remove(e.path + ".manifest.json")
+		_ = os.Remove(e.path + ".anchor.json")
 		removed = append(removed, filepath.Base(e.path))
 	}
 	return removed, nil

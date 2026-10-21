@@ -31,6 +31,8 @@ func (t *txImpl) InsertAudit(e *domain.AuditEvent) error {
 			return err
 		}
 	}
+	cp := *e
+	t.audits = append(t.audits, &cp)
 	// Advance the chain head in the same unit (SA-09). The trigger refuses a
 	// head that does not move forward.
 	_, err := t.exec(`INSERT INTO audit_heads(network_id,seq,hash) VALUES (?,?,?)
