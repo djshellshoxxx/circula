@@ -1,6 +1,7 @@
 package web
 
 import (
+	"html/template"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -62,7 +63,47 @@ type dash struct {
 	Needs    []txRow
 	Outgoing []txRow
 	Recent   []txRow
+	Notices  []annRow
 	Err      string
+}
+
+// annRow is one announcement on the dashboard.
+type annRow struct {
+	ID, Title, Body string
+	At              template.HTML
+}
+
+// announcementRows loads the announcements in force. A failure shows none: they are
+// secondary to the balance and the trades waiting for the member.
+func (c *rc) announcementRows() []annRow {
+	as, err := c.s.svc.ListAnnouncements(c.ctx, c.actor, c.netID(), service.Page{Limit: 5})
+	if err != nil {
+		return nil
+	}
+	var out []annRow
+	for _, a := range as {
+		out = append(out, annRow{ID: a.ID, Title: a.Title, Body: a.Body, At: c.when(a.EffectiveAt)})
+	}
+	return out
+}
+
+// allPending returns every open proposal of the caller, oldest included, by paging the filtered
+// query to its end (WEB-02): the dashboard never stops at a fixed window.
+func (c *rc) allPending() ([]*domain.Transaction, error) {
+	const page = 500
+	var out []*domain.Transaction
+	after := ""
+	for {
+		ts, err := c.s.svc.ListPendingForActor(c.ctx, c.actor, c.netID(), service.PendingQuery{Page: service.Page{AfterID: after, Limit: page}})
+		if err != nil {
+			return out, err
+		}
+		out = append(out, ts...)
+		if len(ts) < page {
+			return out, nil
+		}
+		after = ts[len(ts)-1].ID
+	}
 }
 
 func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -75,14 +116,15 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 	d.Card = makeCard(b, c.Net.Policy.CurrencyName)
 	// Open proposals come from a filtered query, so an old proposal is never
 	// hidden behind a window of newer activity (WEB-02, FR-053).
-	pending, perr := s.svc.ListPendingForActor(r.Context(), c.actor, c.netID(), service.PendingQuery{Page: service.Page{Limit: 100}})
+	pending, perr := c.allPending()
+	d.Notices = c.announcementRows()
 	recent, rerr := s.svc.ListTransactions(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 30})
 	if perr != nil || rerr != nil {
 		d.Err = "Your recent activity could not be loaded just now. The figures above are current as of this page load; reload to try again."
 	}
 	n := c.memberNames()
 	for _, t := range pending {
-		row := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+		row := c.row(t, n)
 		if row.Needs {
 			d.Needs = append(d.Needs, row)
 		} else {
@@ -90,7 +132,7 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 	}
 	for _, t := range recent {
-		row := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+		row := c.row(t, n)
 		if !row.Needs && !row.Pending && len(d.Recent) < 5 {
 			d.Recent = append(d.Recent, row)
 		}
@@ -121,7 +163,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 	n := c.memberNames()
 	h := &historyData{Filter: f}
 	for _, t := range txs {
-		row := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+		row := c.row(t, n)
 		if row.Pending {
 			h.Pending = append(h.Pending, row)
 		} else {

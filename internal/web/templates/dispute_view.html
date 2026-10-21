@@ -4,7 +4,7 @@
   <dt>Status</dt><dd><span class="tag">{{.Status}}</span></dd>
   <dt>Trade</dt><dd><a href="/n/{{$.Slug}}/trades/{{.V.Tx.ID}}">{{.V.PayerName}} paid {{.V.PayeeName}} {{.Amount}} {{$.Unit}}s</a></dd>
   <dt>Reason</dt><dd>{{.Category}}</dd>
-  <dt>Opened by</dt><dd>{{.Opener}} on {{time .V.Dispute.OpenedAt}}</dd>
+  <dt>Opened by</dt><dd>{{.Opener}} on {{.OpenedAt}}</dd>
   <dt>Statement</dt><dd>{{.V.Dispute.Statement}}</dd>
   {{if .Outcome}}<dt>Decision</dt><dd>{{.Outcome}}</dd>{{end}}
   {{if .V.Dispute.Rationale}}<dt>Rationale</dt><dd>{{.V.Dispute.Rationale}}</dd>{{end}}
@@ -59,7 +59,7 @@
     <option value="partially_upheld"{{if eq ($.Val "outcome") "partially_upheld"}} selected{{end}}>Partly upheld: reverse part</option></select></div>
   {{template "field" dict "P" $ "Name" "amount" "Label" "Amount to reverse (partly upheld only)" "Hint" (printf "Amount in credits, up to %d decimal places." $.Dec) "Mode" "decimal"}}
   {{template "field" dict "P" $ "Name" "rationale" "Label" "Rationale" "Hint" "Required. Both parties will see it." "Type" "textarea" "Max" 2000 "Req" true}}
-  <div class="actions"><button type="submit">Record decision</button></div>
+  <div class="actions"><button type="submit">Review decision</button></div>
 </form>
 {{end}}
 {{end}}

@@ -126,9 +126,28 @@ func fmtTime(t time.Time) template.HTML {
 	if t.IsZero() {
 		return ""
 	}
-	u := t.UTC()
+	// The text uses t's own zone (UTC unless the handler moved it with rc.at); the machine-readable
+	// attribute is always UTC.
 	//nolint:gosec // both values are formatted times, no user input
-	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, u.Format(time.RFC3339), u.Format("2 Jan 2006, 15:04 UTC")))
+	return template.HTML(fmt.Sprintf(`<time datetime="%s">%s</time>`, t.UTC().Format(time.RFC3339), t.Format("2 Jan 2006, 15:04 MST")))
+}
+
+// at moves t into the viewer's display time zone (UTC when none is set).
+func (c *rc) at(t time.Time) time.Time {
+	if c.loc == nil {
+		return t.UTC()
+	}
+	return t.In(c.loc)
+}
+
+// when formats a time in the viewer's zone.
+func (c *rc) when(t time.Time) template.HTML { return fmtTime(c.at(t)) }
+
+// row builds a transaction row with its time in the viewer's zone.
+func (c *rc) row(t *domain.Transaction, n names) txRow {
+	r := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+	r.When = c.at(r.When)
+	return r
 }
 
 // render writes a page. c may be nil (public pages).

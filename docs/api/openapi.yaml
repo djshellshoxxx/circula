@@ -85,14 +85,24 @@ paths:
     get:
       operationId: listNetworkAnnouncements
       tags: [Network]
-      summary: Member read of announcements (API-064) - not implemented
-      description: As built, always 501 not-implemented. The service layer has no announcements.
+      summary: Member read of announcements (API-064)
+      description: |
+        Announcements in force (effective time reached, not deleted), newest first, for active and
+        suspended members. Scheduled announcements are not shown here. Keyset paging with limit and cursor.
       security: *secSafe
       parameters:
         - $ref: '#/components/parameters/XNetwork'
       responses:
+        '200':
+          description: One page of announcements.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AnnouncementPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
-        '501': {$ref: '#/components/responses/NotImplemented'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/me:
     get:
@@ -106,11 +116,45 @@ paths:
       security: *secSafe
       responses:
         '200':
-          description: Person and memberships.
+          description: Person and memberships. time_zone is the display zone chosen by the person, or null (UTC).
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Me'}
         '401': {$ref: '#/components/responses/Unauthorized'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    patch:
+      operationId: patchMe
+      tags: [Identity]
+      summary: Set the display time zone (extension)
+      description: |
+        Merge patch with one member, time_zone: an IANA name such as Europe/Berlin, or "" to go back to UTC.
+        The preference belongs to the person and drives how web pages show times. The API itself always
+        sends UTC timestamps. noNet. Invalid names ("Local", unknown zones) are 422 validation-failed at /time_zone.
+        The change is audited (person.time_zone_changed).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: {$ref: '#/components/schemas/SetTimeZoneRequest'}
+      responses:
+        '200':
+          description: The stored preference.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [person_id, time_zone]
+                additionalProperties: false
+                properties:
+                  person_id: {$ref: '#/components/schemas/Id'}
+                  time_zone: {type: [string, 'null']}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
         '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/me/password:
@@ -342,6 +386,41 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/listings/{id}:
+    get:
+      operationId: getListing
+      tags: [Listings]
+      summary: Read one listing with its ETag (API-046)
+      description: |
+        Active members read active listings of active owners, and every listing of their own
+        (any status). Anything else, including another network's id, is 404. The response carries a
+        strong ETag, the value If-Match expects on PATCH. A request with If-None-Match that matches the
+        current ETag (comma-separated list, "*" and W/ prefixes accepted) gets 304 with no body and the
+        same ETag.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - name: If-None-Match
+          in: header
+          required: false
+          schema: {type: string}
+      responses:
+        '200':
+          description: The listing.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Listing'}
+        '304':
+          description: Not modified; the If-None-Match value matches the current ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
     patch:
       operationId: patchListing
       tags: [Listings]
@@ -349,8 +428,8 @@ paths:
       description: |
         Merge patch (RFC 7396) with If-Match (API-026/027). Owner only; another member's
         listing is 404 (API-017). price_minor null clears the price. Other fields reject null
-        with 422. status is active, paused or archived. There is no GET for a single listing,
-        so the current ETag comes from the create or patch response.
+        with 422. status is active, paused or archived. The current ETag comes from GET
+        /listings/{id}, or from the create or patch response.
       security:
         - cookieAuth: []
           csrfToken: []
@@ -1768,19 +1847,32 @@ paths:
     get:
       operationId: listAdminAnnouncements
       tags: [Admin]
-      summary: Announcements, administrator read (API-064) - not implemented
-      description: As built, always 501 not-implemented.
+      summary: Announcements, administrator read (API-064)
+      description: |
+        Administrator only. Live (not deleted) announcements newest first, scheduled ones included.
       security: *secSafe
       parameters:
         - $ref: '#/components/parameters/XNetwork'
       responses:
+        '200':
+          description: One page of announcements.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AnnouncementPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
-        '501': {$ref: '#/components/responses/NotImplemented'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
     post:
       operationId: createAnnouncement
       tags: [Admin]
-      summary: Publish an announcement (API-064) - not implemented
-      description: As built, always 501 not-implemented, before any body is read.
+      summary: Publish an announcement (API-064)
+      description: |
+        Administrator only; Idempotency-Key required. Announcements are append-only: there is no edit.
+        effective_at (RFC 3339, optional) defaults to now; it may not be in the past (one minute of
+        skew is allowed) or more than a year ahead. Title 1 to 120 characters, body 1 to 4000.
+        Audited (announcement.created).
       security:
         - cookieAuth: []
           csrfToken: []
@@ -1788,9 +1880,47 @@ paths:
       parameters:
         - $ref: '#/components/parameters/XNetwork'
         - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateAnnouncementRequest'}
       responses:
+        '201':
+          description: Announcement published.
+          headers:
+            Location: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Announcement'}
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
-        '501': {$ref: '#/components/responses/NotImplemented'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/announcements/{id}:
+    delete:
+      operationId: deleteAnnouncement
+      tags: [Admin]
+      summary: Delete an announcement (API-064)
+      description: |
+        Administrator only. Retracts the announcement from every view; the record stays for the audit
+        trail (announcement.deleted). A second delete, or an unknown id, is 404.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '204': {description: Deleted.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
 
   /api/v1/exports:
     post:
@@ -2126,7 +2256,7 @@ components:
         application/problem+json:
           schema: {$ref: '#/components/schemas/Problem'}
     NotImplemented:
-      description: not-implemented. Feature not provided by the service layer as built (announcements, admin token scope, dispute adjustment outcome).
+      description: not-implemented. Feature not provided by the service layer as built (admin token scope, dispute adjustment outcome).
       content:
         application/problem+json:
           schema: {$ref: '#/components/schemas/Problem'}
@@ -2287,12 +2417,49 @@ components:
         roles:
           type: array
           items: {$ref: '#/components/schemas/Role'}
+    SetTimeZoneRequest:
+      type: object
+      required: [time_zone]
+      additionalProperties: false
+      properties:
+        time_zone:
+          type: string
+          maxLength: 64
+          description: IANA zone name, or the empty string for UTC.
+          examples: [Europe/Berlin]
+    Announcement:
+      type: object
+      required: [id, title, body, published_at, effective_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        title: {type: string, maxLength: 120}
+        body: {type: string, maxLength: 4000}
+        published_at: {type: string, format: date-time}
+        effective_at: {type: string, format: date-time}
+    CreateAnnouncementRequest:
+      type: object
+      required: [title, body]
+      additionalProperties: false
+      properties:
+        title: {type: string, minLength: 1, maxLength: 120}
+        body: {type: string, minLength: 1, maxLength: 4000}
+        effective_at: {type: string, format: date-time}
+    AnnouncementPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Announcement'}}
     Me:
       type: object
-      required: [person_id, memberships]
+      required: [person_id, memberships, time_zone]
       additionalProperties: false
       properties:
         person_id: {$ref: '#/components/schemas/Id'}
+        time_zone:
+          type: [string, 'null']
+          description: Display time zone chosen by the person (IANA name), or null for UTC. API timestamps are always UTC.
         memberships:
           type: array
           description: As built, memberships across the networks in the credential's scope (see spec 07 section 12).

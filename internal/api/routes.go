@@ -17,8 +17,9 @@ func (s *server) routes() {
 
 	// Network, identity, directory, account.
 	R("GET "+v1+"/network", s.getNetwork)                             // API-040
-	R("GET "+v1+"/network/announcements", s.notImpl("announcements")) // API-064
+	R("GET "+v1+"/network/announcements", s.listAnnouncements(false)) // API-064
 	R("GET "+v1+"/me", s.getMe, noNet)                                // API-041
+	R("PATCH "+v1+"/me", s.patchMe, noNet)                            // extension: display time zone
 	R("GET "+v1+"/members", s.listMembers)                            // API-042
 	R("GET "+v1+"/members/{id}", s.getMember)                         // API-043
 	R("GET "+v1+"/accounts/me", s.getAccount)                         // API-044
@@ -29,6 +30,7 @@ func (s *server) routes() {
 	// Listings.
 	R("GET "+v1+"/listings", s.listListings)         // API-046
 	R("POST "+v1+"/listings", s.createListing, idem) // API-046
+	R("GET "+v1+"/listings/{id}", s.getListing)      // API-046: ETag, If-None-Match
 	R("PATCH "+v1+"/listings/{id}", s.patchListing)  // API-047
 
 	// Transactions.
@@ -66,11 +68,12 @@ func (s *server) routes() {
 	R("PUT "+v1+"/admin/accounts/{id}/credit-limit", s.putCreditLimit)      // API-060
 	R("POST "+v1+"/admin/invitations", s.createInvitation, idem)            // API-061
 	R("POST "+v1+"/invitations/{token}/accept", s.acceptInvitation, idem, noNet)
-	R("GET "+v1+"/admin/audit-events", s.listAudit)                  // API-062
-	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)      // API-063
-	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)        // API-063
-	R("POST "+v1+"/admin/announcements", s.notImpl("announcements")) // API-064
-	R("GET "+v1+"/admin/announcements", s.notImpl("announcements"))  // API-064
+	R("GET "+v1+"/admin/audit-events", s.listAudit)                   // API-062
+	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)       // API-063
+	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)         // API-063
+	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)  // API-064
+	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))    // API-064
+	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement) // API-064 (retract)
 
 	// Dispute response and re-review, reports, notifications (FR-076, FR-078, FR-024, FR-038).
 	R("POST "+v1+"/disputes/{id}/response", s.respondDispute, idem)

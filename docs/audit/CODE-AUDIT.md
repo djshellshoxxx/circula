@@ -203,16 +203,16 @@ Legend: P0 = MVP-blocking, P1 = MVP. "Partial" = exists in service but missing a
 | OPS-016 / FR-052 verification must not modify data | P0 | violated | SVC-01 |
 | OPS-011/OPS-012 retryable error on busy DB | P0 | violated | CMD-05 |
 | OPS-011 no second writer process | P0 | violated | CMD-02 |
-| FR-053 pending items view | P1 | partial | WEB-02 (older items hidden) |
+| FR-053 pending items view | P1 | built | WEB-02 fixed: the dashboard pages the filtered pending query to its end; disputes list and review queue are keyset-paged (branch cc-f2) |
 | FR-054 balance at past date | P1 | partial | service `BalanceAt` only, no UI/API |
 | FR-064 default flag | P1 | partial | web only; no API route |
-| FR-067 admin overview | P1 | partial | web shows pending-member count only |
+| FR-067 admin overview | P1 | built | `Service.AdminOverview` and the web home: pending members, stale proposals (48 h), open and posting-pending disputes, members at or beyond limit, invitations ending within 72 h, last check; counted on read |
 | FR-068 network closure | P1 | partial | `CloseNetwork` has no UI/API caller |
 | FR-024 report listing/member | P1 | built | service, API, web; reporter visible to administrators only |
 | FR-038 notifications and inbox | P1 | built | in-app only (email is out of scope, OQ-VIS-4); retention purge of old read entries not built |
 | FR-076 response by other party; FR-078 one re-review | P1 | built | response period policy not built (OQ-FR-2): a decision does not wait for a response; re-review window is a 14-day constant |
 | API-010 `admin` token scope | P1 | 501 | `api/h_tokens.go:63` |
-| API-064 announcements | P1 | 501 | `api/routes.go:20,70,71` |
+| API-064 announcements | P1 | built | list, create, delete for administrators; member read; shown on the dashboard |
 | API-077/078 OpenAPI + compatibility fixtures | P1 | not built | no OpenAPI file in tree |
 | DAT-012 one reversal per original | P1 | deviation | documented; see section 2 |
 | DAT-047 10 000-tx migration fixture; DAT-048 timing | P0/P1 | built | `internal/store/golden_migration_test.go` (v1 to current, timing logged) |

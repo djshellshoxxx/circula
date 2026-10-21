@@ -9,7 +9,7 @@ import (
 // MemberPageFilter selects one keyset page of a network's members, ordered by id.
 type MemberPageFilter struct {
 	Statuses []domain.MemberStatus
-	// Name is a case-insensitive substring of the display name. Empty matches all.
+	// Name is a case- and accent-insensitive substring of the display name. Empty matches all.
 	Name string
 	// AfterID selects members with id > AfterID (forward paging).
 	AfterID string
@@ -40,9 +40,10 @@ func memberWhere(netID string, statuses []domain.MemberStatus, name string) (str
 		args = append(args, a...)
 	}
 	if name = strings.TrimSpace(name); name != "" {
-		// instr over lower() keeps the match a plain substring test, with no LIKE escaping needed.
-		q += ` AND instr(lower(m.display_name), lower(?)) > 0`
-		args = append(args, name)
+		// instr over the folded name keeps the match a plain substring test, with no LIKE escaping
+		// needed, and ignores case and accents beyond ASCII (see domain.FoldName).
+		q += ` AND instr(circula_fold(m.display_name), ?) > 0`
+		args = append(args, domain.FoldName(name))
 	}
 	return q, args
 }

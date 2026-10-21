@@ -84,7 +84,7 @@ Admin routes are a separate prefix so that authorisation policy, rate limits and
 
 | Rule | Requirement |
 |---|---|
-| API-026 · P0 | Responses for mutable resources with conflict risk (policy, listing, credit limit, membership status) MUST include a strong `ETag`. Updates to these resources MUST include `If-Match` with the current ETag. **As built:** the ETag is returned by `GET /admin/policy`, `PATCH /admin/policy`, `GET /admin/accounts/{id}`, the credit-limit PUT, the listing POST and PATCH responses, and the member action and role responses. It is not returned by `GET /members`, `GET /members/{id}`, `GET /network` or listing lists, and there is no `GET /listings/{id}`, so a client obtains a listing ETag only from the create or patch response (gap G-1). `If-Match` is required on policy, listing and credit-limit updates, but optional on member actions (`approve`, `deny`, `suspend`, `reinstate`, `remove`) and on role changes, which do not require it (deviation D-05). |
+| API-026 · P0 | Responses for mutable resources with conflict risk (policy, listing, credit limit, membership status) MUST include a strong `ETag`. Updates to these resources MUST include `If-Match` with the current ETag. **As built:** the ETag is returned by `GET /admin/policy`, `PATCH /admin/policy`, `GET /admin/accounts/{id}`, the credit-limit PUT, the listing POST and PATCH responses, and the member action and role responses. It is also returned by `GET /listings/{id}`, which honours `If-None-Match` with 304 (gap G-1 closed). It is not returned by `GET /members`, `GET /members/{id}`, `GET /network` or listing lists. `If-Match` is required on policy, listing and credit-limit updates, but optional on member actions (`approve`, `deny`, `suspend`, `reinstate`, `remove`) and on role changes, which do not require it (deviation D-05). |
 | API-027 · P0 | A mismatched `If-Match` MUST return 412 (`precondition-failed`) and no change. A missing `If-Match` on such a resource MUST return 428 (`precondition-required`). **As built:** applies to the required resources above; see D-05 for the optional ones. |
 | API-028 · P0 | Transaction actions MUST be validated against the current status inside the atomic unit (06). An action invalid for the current status MUST return 409 (`invalid-transaction-state`) with the current status in the problem body. **As built:** `current_status` is added for accept, decline, cancel and the administrative reversal; it is not added to dispute actions. |
 
@@ -132,7 +132,7 @@ The catalogue below is the stable set. New codes MAY be added in a minor revisio
 | `internal-error` | 500 | Unexpected failure |
 | `unavailable` | 503 | Temporarily unavailable (for example maintenance); `Retry-After` present |
 | `method-not-allowed` | 405 | Added as built (API-074 minor addition). Path exists with other methods; `Allow` header lists them |
-| `not-implemented` | 501 | Added as built (API-074). Feature not provided by the service layer: announcements (API-064), token scope `admin` (API-010), dispute outcome `adjustment` (API-055) |
+| `not-implemented` | 501 | Added as built (API-074). Feature not provided by the service layer: token scope `admin` (API-010), dispute outcome `adjustment` (API-055) |
 | `network-required` | 400 | Added as built. Caller belongs to several networks and sent no `X-Network` header |
 | `blocked` | 409 | Added as built. Action refused by a rule with a `blockers` list (departure or removal with a disputed transaction or as last active administrator; see D-06) |
 | `conflict` | 409 | Added as built. Store-level duplicate or conflicting state that the service maps to 409 |
@@ -183,7 +183,7 @@ Each operation has one ID. Columns: method and path; minimum role; idempotency r
 | API-061 | `POST /admin/invitations`, `POST /invitations/{token}/accept` | Administrator; invitee | MUST | P1 | Invitation token shown once, stored hashed, expires per policy; accepting creates membership in the state required by join mode. |
 | API-062 | `GET /admin/audit-events` | Network administrator | No | P0 | Paginated, filterable by `action`, `target_id`, `actor_id`, date range. Access is itself audited (DAT-034). Returns only fields in 06 section 7.1. **As built:** filters `action`, `target_id`, `actor_id`, `from`, `to` (RFC 3339); the cursor is the audit `seq`. |
 | API-063 | `POST /admin/consistency-checks`, `GET /admin/consistency-checks/{id}` | Network administrator | MUST on POST | P0 | Runs ARC-015 checks and returns a result with a summary; no amounts for named members in the summary beyond what 06 section 7.3 allows. **As built:** the result (`ok`, `findings`, `ledger_seq`, `audit_events`) is kept in process memory for 24 hours, at most 200 results, scoped to the network (any administrator of that network can read it) (D-11). The result id is the consistency run id when one is recorded. |
-| API-064 | `POST /admin/announcements`, `GET /admin/announcements` (and member read via `/network/announcements`) | Administrator (write); member (read) | MUST on POST | P1 | Announcements are append-only and carry `effective_at`. Policy changes SHOULD be linked to an announcement (10). **As built: not implemented.** All three routes return 501 `not-implemented` (deviation D-12). The service layer has no announcements. |
+| API-064 | `POST /admin/announcements`, `GET /admin/announcements` (and member read via `/network/announcements`) | Administrator (write); member (read) | MUST on POST | P1 | Announcements are append-only and carry `effective_at`. Policy changes SHOULD be linked to an announcement (10). **As built:** implemented. `POST /admin/announcements` (Idempotency-Key required; title 1 to 120, body 1 to 4000, optional `effective_at` not in the past and at most a year ahead), `GET /admin/announcements` (live ones, scheduled included), `DELETE /admin/announcements/{id}` (retracts; the row is kept for the audit trail) and `GET /network/announcements` (members; only those in force). Create and delete are audited. There is no edit and no supersede link (deviation D-12 narrowed). |
 | API-065 | `POST /exports`, `GET /exports/{id}`, `GET /exports/{id}/artefact` | Member (own data) or administrator (network) | SHOULD on POST | P1 | Creates a job; status `queued`, `running`, `complete`, `failed`. Artefact download is available only when complete and checksum-verified (DAT-040); expires per 06 section 9. **As built (D-13):** export runs synchronously; the 201 response already has status `complete` with `sha256`, `bytes` and `artefact_url`. No `queued`, `running` or `failed` state is exposed. The artefact is a ZIP of CSV or JSON files (`application/zip`), kept in memory for 24 hours. Scope `mine` is for every member; the scopes `ledger`, `members`, `audit` and `full` are for administrators only. Limits: 5 live exports per person (429 `rate-limited`, `Retry-After` 3600), 50 live exports and 64 MiB in total (503 `unavailable`, `Retry-After` 60). The artefact is served only when its bytes match the recorded SHA-256 (DAT-040). Export ids are UUIDv4, not UUIDv7 (D-14). |
 | API-066 | `GET /tokens`, `POST /tokens`, `DELETE /tokens/{id}` | Authenticated person (session auth only for create) | SHOULD on POST | P1 | Create requires session authentication (API-011). Token value appears once in the 201 response. Delete revokes immediately; revoked tokens fail with 401. **As built:** create with a bearer token returns 403 `forbidden`; scope `admin` returns 501 (D-07); `expires_at` defaults and is capped at 365 days; the list is not paginated and returns at most 100 rows; `DELETE` needs write scope and returns 204. |
 | API-067a | `POST /me/password` | Signed-in person, session cookie only | MAY | P0 | Body `current_password`, `new_password`. `204` on success; every session of the person is revoked, API tokens are not. A wrong current password is `422 validation-failed` at `/current_password` (not a `401`), limited to 5 attempts per minute per person. Implements AUTH-03 / SEC-003. **As built:** a bearer token gets 403 `forbidden`; the 429 `rate-limited` answer comes when the 5-per-minute cap is exceeded; a new-password policy failure is reported at `/new_password`. Path `/me/password` is registered as `POST /api/v1/me/password`. |
@@ -236,7 +236,7 @@ Source of truth for this section: `internal/api` on branch `claude/circula-build
 
 ### 12.1 Route coverage
 
-- Routes in the spec and in code: every operation in section 8 is registered. Announcement routes (API-064) exist and return 501. The OpenAPI file has 53 operations on 46 paths.
+- Routes in the spec and in code: every operation in section 8 is registered. Announcement routes (API-064) are implemented. The OpenAPI file has 56 operations on 47 paths.
 - Routes in code and not in section 8 (extensions; no new requirement IDs):
 
 | Route | As built |
@@ -246,6 +246,9 @@ Source of truth for this section: `internal/api` on branch `claude/circula-build
 | `POST /api/v1/disputes/{id}/retry-posting` | Retries a posting_pending dispute (DOM-021). |
 | `PUT` and `DELETE /api/v1/admin/members/{id}/roles/{role}` | Grant or revoke `admin` or `reviewer`. Other role values are 404. No If-Match. |
 | `GET /api/v1/admin/accounts/{id}` | Administrator balance view; source of the credit-limit ETag. Audited (account.viewed). |
+| `GET /api/v1/listings/{id}` | One listing with ETag; `If-None-Match` gets 304. Members see active listings of active owners and all their own. |
+| `PATCH /api/v1/me` | Merge patch `{"time_zone": "<IANA name>" or ""}`: the person's display zone for web pages. `GET /me` returns `time_zone` (string or null). The API stays UTC. Audited. |
+| `DELETE /api/v1/admin/announcements/{id}` | Retracts an announcement (API-064). |
 
 - Routes in section 8 and not in code: none.
 
@@ -257,7 +260,7 @@ Source of truth for this section: `internal/api` on branch `claude/circula-build
 - **API-059 (`deny`).** Implemented as `POST /admin/members/{id}/deny` (FR-011). All six member actions exist.
 - **API-067a (`POST /me/password`).** Implemented as specified: 204 on success, 422 at `/current_password`, cookie session only, 5 attempts per minute per person.
 - **API-021 (`invalid-header`).** Malformed `Idempotency-Key` returns 400 `invalid-header`.
-- **API-064 and API-010 (501s).** Announcements and the `admin` token scope return 501 `not-implemented`.
+- **API-010 (501).** The `admin` token scope returns 501 `not-implemented`. Announcements (API-064) are implemented.
 - **API-077.** OpenAPI 3.1 description published (see G-2 for validation).
 - **Error catalogue (7.2).** Added as-built codes `method-not-allowed`, `not-implemented`, `network-required`, `blocked`, `conflict`. `member-has-open-balance` is reserved and not emitted.
 
@@ -276,7 +279,7 @@ Source of truth for this section: `internal/api` on branch `claude/circula-build
 | D-09 | API-046 | `POST /listings` requires `Idempotency-Key` (SHOULD in the spec). | `h_listings.go` route flags | Keep and amend to MUST, or relax. |
 | D-10 | API-056 | Administrative reversal is administrator-only. Reviewers reverse only through dispute resolution. | `service/reversal.go` `requireAdmin` | Keep and amend the Role column (done as built), or add reviewer access. |
 | D-11 | API-063 | Consistency results are in memory for 24 h (at most 200) and do not survive a restart. | `jobs.go` | Store results with the run in the database, or accept as ephemeral and amend. |
-| D-12 | API-064 | Announcements not implemented (501). | `routes.go` | Implement, or keep 501 for MVP and mark API-064 deferred. |
+| D-12 | API-064 | Announcements are append-only without edit or a supersede link; delete retracts. | `h_f2.go` | Add supersede links if governance needs them (10). |
 | D-13 | API-065 | Exports are synchronous; `queued`, `running` and `failed` are not exposed; artefacts expire after 24 h in memory. | `h_export.go` `createExport` | Keep for MVP and amend API-065, or add the job states. |
 | D-14 | API-005 | Export ids are UUIDv4 (`uuid.NewString`). Other ids are UUIDv7. | `h_export.go`, `h_ops.go` | Use UUIDv7 for consistency. |
 
@@ -284,7 +287,7 @@ Source of truth for this section: `internal/api` on branch `claude/circula-build
 
 | ID | Gap | Note |
 |---|---|---|
-| G-1 | No `GET /listings/{id}`; listing ETag is available only from the create and patch responses. | Add the read (owner and visible listings), or document that clients keep the ETag. Not in section 8. |
+| G-1 | Closed: `GET /listings/{id}` returns the listing with its ETag and answers `If-None-Match` with 304. | `h_f2.go` | None. |
 | G-2 | No contract test validates live responses against `docs/api/openapi.yaml` (API-077) and no fixtures cover the previous release (API-078). | Add a schema check to the contract test set in 12. |
 | G-3 | Error `errors[].code` is an open set in the code; section 7.1 implied a closed set. | Keep open and amend API-030 (done as built in 7.1). |
 

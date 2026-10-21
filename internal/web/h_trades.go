@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"strings"
 
@@ -45,7 +46,7 @@ func (s *server) trades(w http.ResponseWriter, r *http.Request, c *rc) {
 		if t.Kind != domain.KindTrade {
 			continue
 		}
-		row := makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+		row := c.row(t, n)
 		switch {
 		case row.Needs:
 			d.Needs = append(d.Needs, row)
@@ -216,6 +217,9 @@ type tradeDetail struct {
 	DisputeID string
 	WhyNot    string
 	Party     bool
+	Reverse   bool // an administrator who is not a party may reverse it (FR-066)
+	// Times in the viewer's display zone.
+	Proposed, Expires, Posted template.HTML
 }
 
 type histRow struct {
@@ -234,12 +238,12 @@ func (s *server) tradeDetail(w http.ResponseWriter, r *http.Request, c *rc) {
 	d := &tradeDetail{Tx: t, Payer: n.of(t.PayerMemberID), Payee: n.of(t.PayeeMemberID), Explain: statusExplain(t.Status),
 		Party: t.IsParty(c.Me.ID)}
 	if d.Party {
-		d.Row = makeRow(t, c.Me, n, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
+		d.Row = c.row(t, n)
 	} else {
 		d.Row.Status, _ = statusLabel(t, c.Me, n)
 	}
 	for _, h := range v.History {
-		d.History = append(d.History, histRow{Label: historyWord(h.From, h.To), At: fmtTime(h.OccurredAt)})
+		d.History = append(d.History, histRow{Label: historyWord(h.From, h.To), At: c.when(h.OccurredAt)})
 	}
 	if t.Status == domain.TxProposed {
 		switch {
@@ -261,7 +265,15 @@ func (s *server) tradeDetail(w http.ResponseWriter, r *http.Request, c *rc) {
 			d.WhyNot = "Raising a dispute is not available while your membership is not active."
 		}
 	}
-	if t.Status == domain.TxDisputed && d.Party {
+	d.Proposed = c.when(t.ProposedAt)
+	if t.ExpiresAt != nil {
+		d.Expires = c.when(*t.ExpiresAt)
+	}
+	if t.CompletedAt != nil {
+		d.Posted = c.when(*t.CompletedAt)
+	}
+	d.Reverse = c.isAdmin() && !d.Party && t.Kind != domain.KindReversal && t.Status == domain.TxCompleted && t.ReversedTotal < t.Amount
+	if t.Status == domain.TxDisputed && (d.Party || c.isAdmin() || c.isReviewer()) {
 		if dv, err := s.svc.GetDisputeForTx(r.Context(), c.actor, c.netID(), t.ID); err == nil {
 			d.DisputeID = dv.Dispute.ID
 		}

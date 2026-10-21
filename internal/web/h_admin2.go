@@ -206,7 +206,7 @@ func (s *server) auditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 		} else if e.ActorType == domain.ActorSystem || who == "" {
 			who = "System"
 		}
-		rows = append(rows, auditRow{e.Seq, fmtTime(e.OccurredAt), who, e.Action, e.TargetType + " " + e.TargetID, e.Reason, e.RequestID})
+		rows = append(rows, auditRow{e.Seq, c.when(e.OccurredAt), who, e.Action, e.TargetType + " " + e.TargetID, e.Reason, e.RequestID})
 	}
 	next := ""
 	if len(evs) == 50 {
