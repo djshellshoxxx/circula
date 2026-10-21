@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -10,10 +11,14 @@ import (
 
 // ResolveInput records a reviewer decision (FR-073).
 type ResolveInput struct {
-	DisputeID      string
-	Outcome        domain.DisputeOutcome
-	Amount         int64 // partially_upheld only: minor units to reverse
-	Rationale      string
+	DisputeID string
+	Outcome   domain.DisputeOutcome
+	Amount    int64 // partially_upheld only: minor units to reverse
+	Rationale string
+	// WaiveResponse lets the reviewer decide before the response period ends and
+	// without a response (FR-076); WaiveReason is then required and audited.
+	WaiveResponse  bool
+	WaiveReason    string
 	IdempotencyKey string `json:"-"`
 }
 
@@ -65,6 +70,10 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
 	if err := boundedText("rationale", in.Rationale, maxTextLen); err != nil {
 		return "", err
 	}
+	waived, err := s.responseGate(tx, p, d, in)
+	if err != nil {
+		return "", err
+	}
 	remaining := t.Amount - t.ReversedTotal
 	amount := int64(0)
 	switch in.Outcome {
@@ -112,10 +121,35 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
 	if d.Status, err = domain.NextDisputeStatus(d.Status, cmd); err != nil {
 		return "", err
 	}
-	return d.ID, s.finishDecision(tx, p, d, t, action, in.IdempotencyKey)
+	return d.ID, s.finishDecision(tx, p, d, t, action, in.IdempotencyKey, waived)
 }
 
-func (s *Service) finishDecision(tx store.Tx, p *principal, d *domain.Dispute, t *domain.Transaction, action, key string) error {
+// responseGate enforces FR-076: a decision needs a submitted response, an
+// elapsed response period (network policy), or a reviewer waiver with a reason.
+// It returns the waiver reason actually relied on ("" when none was needed).
+func (s *Service) responseGate(tx store.Tx, p *principal, d *domain.Dispute, in ResolveInput) (string, error) {
+	resp, err := tx.GetDisputeResponse(d.NetworkID, d.ID)
+	if err != nil {
+		return "", err
+	}
+	closes := d.OpenedAt.Add(time.Duration(p.net.Policy.ResponsePeriodDays) * 24 * time.Hour)
+	if resp != nil || !s.now().Before(closes) {
+		return "", nil
+	}
+	if !in.WaiveResponse {
+		return "", domain.InvalidState("the other party's response period ends on %s; wait for a response or waive it with a reason", closes.Format("2006-01-02"))
+	}
+	reason := strings.TrimSpace(in.WaiveReason)
+	if reason == "" {
+		return "", domain.Invalid("waive_reason", "required to waive the response")
+	}
+	if err := boundedText("waive_reason", reason, maxReasonLen); err != nil {
+		return "", err
+	}
+	return reason, nil
+}
+
+func (s *Service) finishDecision(tx store.Tx, p *principal, d *domain.Dispute, t *domain.Transaction, action, key, waived string) error {
 	if err := tx.UpdateDispute(d); err != nil {
 		return err
 	}
@@ -126,8 +160,12 @@ func (s *Service) finishDecision(tx store.Tx, p *principal, d *domain.Dispute, t
 		"A dispute has a decision", "The dispute was decided: "+strings.ReplaceAll(string(d.Outcome), "_", " ")+".", "/disputes/"+d.ID); err != nil {
 		return err
 	}
+	reason := "decision recorded; rationale held on dispute"
+	if waived != "" {
+		reason += "; response waived: " + waived
+	}
 	return s.audit(tx, p, auditEntry{Type: p.deciderType(), Action: action, TargetType: "dispute", TargetID: d.ID,
-		Reason: "decision recorded; rationale held on dispute", IdemRef: keyRef(key),
+		Reason: reason, IdemRef: keyRef(key),
 		Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
 		After:    map[string]any{"status": d.Status, "outcome": string(d.Outcome), "amount": d.ReversalAmount, "transaction_status": t.Status}})
 }
@@ -157,7 +195,7 @@ func (s *Service) RetryDisputePosting(ctx context.Context, actor domain.Actor, n
 		}
 		d.Status = next
 		out = d
-		return s.finishDecision(tx, p, d, t, domain.ActDisputeResolved, "")
+		return s.finishDecision(tx, p, d, t, domain.ActDisputeResolved, "", "")
 	})
 	return out, err
 }

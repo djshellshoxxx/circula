@@ -336,7 +336,8 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 		msg = "Re-review decision recorded."
 	case "resolve":
 		in := service.ResolveInput{DisputeID: id, Outcome: domain.DisputeOutcome(r.PostFormValue("outcome")),
-			Rationale: r.PostFormValue("rationale"), IdempotencyKey: idemKey(r)}
+			Rationale: r.PostFormValue("rationale"), WaiveResponse: r.PostFormValue("waive_response") == "1",
+			WaiveReason: r.PostFormValue("waive_reason"), IdempotencyKey: idemKey(r)}
 		if in.Outcome == domain.OutcomePartiallyUpheld {
 			amt, perr := domain.ParseAmount(r.PostFormValue("amount"), c.Net.Policy.Decimals)
 			if perr != nil || amt <= 0 {

@@ -9,27 +9,22 @@ import (
 	"github.com/djshellshoxxx/circula/internal/store"
 )
 
-// LimitWarningPercent is the share of the credit limit in use at which a
-// member is warned (UX-012, default proposed 80 percent; OQ-UX-02 is open, so
-// it is a platform constant until the product owner makes it a network policy).
-const LimitWarningPercent = 80
-
 // limitWarnBatch bounds the members handled in one write unit.
 const limitWarnBatch = 200
 
 // LimitWarning reports whether the balance view has reached the warning
 // threshold, and how much credit is in use. Credit is in use only while the
 // balance is negative; a member without a limit is never warned.
-func LimitWarning(b *BalanceView) (used int64, warn bool) {
+func LimitWarning(b *BalanceView, percent int) (used int64, warn bool) {
 	if b == nil || b.CreditLimit <= 0 || b.Balance >= 0 {
 		return 0, false
 	}
 	used = -b.Balance
-	return used, used*100 >= b.CreditLimit*LimitWarningPercent
+	return used, used*100 >= b.CreditLimit*int64(percent)
 }
 
 // RunLimitWarnings notifies every active member whose used credit has reached
-// LimitWarningPercent of their effective limit (UX-012). It is the body of a
+// the network policy percent of their effective limit (UX-012). It is the body of a
 // scheduled job: it takes no actor, spans all networks (closed ones are
 // skipped), and is safe to run as often as wanted because a member gets at
 // most one warning per ISO week (dedupe key). It returns the number of
@@ -74,7 +69,7 @@ func (s *Service) RunLimitWarnings(ctx context.Context) (int, error) {
 						return err
 					}
 					b := &BalanceView{Balance: acc.Balance, CreditLimit: acc.EffectiveLimit(net.Policy.DefaultCreditLimit, now)}
-					used, warn := LimitWarning(b)
+					used, warn := LimitWarning(b, net.Policy.LimitWarningPercent)
 					if !warn {
 						continue
 					}

@@ -263,10 +263,10 @@ func (c *rc) limitNotice() string {
 	if err != nil {
 		return ""
 	}
-	used, warn := service.LimitWarning(b)
+	used, warn := service.LimitWarning(b, c.Net.Policy.LimitWarningPercent)
 	if !warn {
 		return ""
 	}
 	return "You are using " + plainAmt(used, b.Decimals) + " of your " + plainAmt(b.CreditLimit, b.Decimals) +
-		" credit limit (" + itoa(service.LimitWarningPercent) + " percent or more). A trade that would take you past the limit is refused."
+		" credit limit (" + itoa(c.Net.Policy.LimitWarningPercent) + " percent or more). A trade that would take you past the limit is refused."
 }

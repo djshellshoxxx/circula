@@ -190,12 +190,12 @@ func TestReReviewWindow(t *testing.T) {
 	rev, _ := w.reviewerAs("rev@example.org")
 	d := tu.Must(w.open(w.a, w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000).ID))
 	tu.Must(w.resolve(rev, d.ID, domain.OutcomeDismissed, 0, "no"))
-	w.Clock.Advance((service.ReReviewWindowDays + 1) * 24 * time.Hour)
+	w.Clock.Advance(time.Duration(domain.DefaultPolicy().ReReviewWindowDays+1) * 24 * time.Hour)
 	wantCode(t, w.rereview(w.a, d.ID, "late"), domain.ErrInvalidState)
 
 	d2 := tu.Must(w.open(w.a, w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 100).ID))
 	tu.Must(w.resolve(rev, d2.ID, domain.OutcomeDismissed, 0, "no"))
-	w.Clock.Advance((service.ReReviewWindowDays - 1) * 24 * time.Hour)
+	w.Clock.Advance(time.Duration(domain.DefaultPolicy().ReReviewWindowDays-1) * 24 * time.Hour)
 	if err := w.rereview(w.a, d2.ID, "in time"); err != nil {
 		t.Fatalf("within the window: %v", err)
 	}

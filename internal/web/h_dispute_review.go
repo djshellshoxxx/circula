@@ -33,7 +33,7 @@ func (s *server) reviewData(c *rc, v *service.DisputeView, out *disputeData) {
 		}
 	}
 	if d.Status == domain.DisputeResolved && d.DecidedAt != nil {
-		until := d.DecidedAt.Add(service.ReReviewWindowDays * 24 * time.Hour)
+		until := d.DecidedAt.Add(time.Duration(c.Net.Policy.ReReviewWindowDays) * 24 * time.Hour)
 		out.ReReviewUntil = fmtTime(until)
 		out.CanReReview = rr == nil && party && c.isActive() && s.opts.Clock.Now().Before(until)
 	}

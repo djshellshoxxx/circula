@@ -11,6 +11,7 @@
   {{template "csrf" $}}{{template "idem" $}}
   <input type="hidden" name="outcome" value="{{$.Val "outcome"}}"><input type="hidden" name="amount" value="{{$.Val "amount"}}">
   <input type="hidden" name="rationale" value="{{$.Val "rationale"}}">
+  <input type="hidden" name="waive_response" value="{{$.Val "waive_response"}}"><input type="hidden" name="waive_reason" value="{{$.Val "waive_reason"}}">
   <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Record decision</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
 </form>
 {{end}}
