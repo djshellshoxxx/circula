@@ -236,13 +236,53 @@ func (s *server) joinInviteForm(w http.ResponseWriter, r *http.Request) {
 		s.render(w, r, nil, "join_anon", 200, &page{Title: "Accept your invitation", Next: "/join/" + tok})
 		return
 	}
-	s.render(w, r, nil, "join", 200, &page{Title: "Accept your invitation", D: tok})
+	s.render(w, r, nil, "join", 200, &page{Title: "Accept your invitation", D: s.inviteData(r, tok)})
+}
+
+// joinData is the join pages' data: the invitation token or network, and the terms to show (GOV-009).
+type joinData struct {
+	Token string
+	Terms *domain.Terms
+	Paras []string
+}
+
+func newJoinData(tok string, t *domain.Terms) *joinData {
+	d := &joinData{Token: tok, Terms: t}
+	if t != nil {
+		d.Paras = paragraphs(t.Body)
+	}
+	return d
+}
+
+func (s *server) inviteData(r *http.Request, tok string) *joinData {
+	t, _ := s.svc.InvitationTerms(r.Context(), tok) // unusable tokens show no terms; the post explains
+	return newJoinData(tok, t)
+}
+
+// joinNetData adds the terms to the network description.
+type joinNetData struct {
+	*service.NetworkInfo
+	*joinData
+}
+
+func (s *server) netJoinData(r *http.Request, info *service.NetworkInfo) *joinNetData {
+	t, _ := s.svc.NetworkTerms(r.Context(), info.ID)
+	return &joinNetData{info, newJoinData("", t)}
+}
+
+// termsVersion is the version the person ticked, 0 when the box is not ticked.
+func termsVersion(r *http.Request) int {
+	if r.PostFormValue("accept_terms") != "1" {
+		return 0
+	}
+	n, _ := strconv.Atoi(r.PostFormValue("terms_version"))
+	return n
 }
 
 func (s *server) joinInvitePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	tok := r.PathValue("token")
-	p := &page{Title: "Accept your invitation", D: tok, V: formValues(r)}
-	m, err := s.svc.RedeemInvitation(r.Context(), c.actor, tok, r.PostFormValue("display_name"))
+	p := &page{Title: "Accept your invitation", D: s.inviteData(r, tok), V: formValues(r)}
+	m, err := s.svc.RedeemInvitationTerms(r.Context(), c.actor, tok, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
 		cc := &rc{s: s, ctx: r.Context(), Net: &domain.Network{}}
 		switch domain.CodeOf(err) {
@@ -282,7 +322,7 @@ func (s *server) joinNetForm(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, nil, "joinnet", 200, &page{Title: "Join " + info.Name, D: info})
+	s.render(w, r, nil, "joinnet", 200, &page{Title: "Join " + info.Name, D: s.netJoinData(r, info)})
 }
 
 func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -291,9 +331,9 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	m, err := s.svc.JoinNetwork(r.Context(), c.actor, info.ID, r.PostFormValue("display_name"))
+	m, err := s.svc.JoinNetworkTerms(r.Context(), c.actor, info.ID, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
-		p := &page{Title: "Join " + info.Name, D: info, V: formValues(r)}
+		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r)}
 		cc := &rc{s: s, ctx: r.Context(), Net: &domain.Network{}}
 		if sum, fe, ok := cc.refuse(err); ok {
 			p.Summary, p.Errors = sum, fe

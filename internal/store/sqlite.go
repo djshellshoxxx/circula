@@ -188,6 +188,9 @@ type querier interface {
 type txImpl struct {
 	ctx context.Context
 	q   querier
+	// asOf (unix ms) hides policy versions that take effect later (GOV-003);
+	// 0 means the newest version regardless of its effective time.
+	asOf int64
 }
 
 var _ Tx = (*txImpl)(nil)

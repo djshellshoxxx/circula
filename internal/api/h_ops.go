@@ -28,12 +28,13 @@ func (s *server) createInvitation(c *reqCtx) error { // API-061
 
 func (s *server) acceptInvitation(c *reqCtx) error { // API-061
 	var in struct {
-		DisplayName string `json:"display_name"`
+		DisplayName  string `json:"display_name"`
+		TermsVersion int    `json:"terms_version"` // GOV-009: required when the network has terms
 	}
 	if err := c.decode(&in); err != nil {
 		return err
 	}
-	m, err := s.svc.RedeemInvitation(c.r.Context(), c.actor, c.r.PathValue("token"), in.DisplayName)
+	m, err := s.svc.RedeemInvitationTerms(c.r.Context(), c.actor, c.r.PathValue("token"), in.DisplayName, in.TermsVersion)
 	if err != nil {
 		return err
 	}

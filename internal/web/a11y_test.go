@@ -138,7 +138,7 @@ func TestPageStructure(t *testing.T) {
 
 	member := []string{"/", b, b + "/trades", b + "/trades/new?to=" + w.bobM.ID, b + "/trades/" + tx.ID, b + "/trades/" + pend.ID + "/cancel",
 		b + "/history", b + "/directory?q=bo", b + "/members/" + w.bobM.ID, b + "/listings", b + "/listings?mine=1", b + "/listings/new",
-		b + "/disputes", b + "/disputes/" + ds[0].ID, "/setup", b + "/join", b + "/nothing"}
+		b + "/disputes", b + "/disputes/" + ds[0].ID, b + "/policy", b + "/terms", b + "/leave", "/setup", b + "/join", b + "/nothing"}
 	a := w.browser(t)
 	a.login("alice@example.org")
 	for _, path := range member {
@@ -155,7 +155,7 @@ func TestPageStructure(t *testing.T) {
 	adm.login("admin@example.org")
 	for _, path := range []string{b + "/admin", b + "/admin/members", b + "/admin/members?status=active", b + "/admin/members/" + w.bobM.ID + "/suspend",
 		b + "/admin/members/" + w.bobM.ID + "/limit", b + "/admin/invitations", b + "/admin/policy", b + "/admin/adjust", b + "/admin/audit",
-		b + "/admin/exports", b + "/review", b + "/review?status=open", b + "/admin/reverse", b + "/admin/reverse?tx=" + tx.ID, b + "/admin/announcements", "/account/time-zone"} {
+		b + "/admin/exports", b + "/review", b + "/review?status=open", b + "/admin/reverse", b + "/admin/reverse?tx=" + tx.ID, b + "/admin/announcements", b + "/admin/terms", "/account/time-zone"} {
 		checkStructure(t, path, adm.get(path))
 	}
 	// Review and error states.

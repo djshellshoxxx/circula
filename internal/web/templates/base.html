@@ -79,3 +79,11 @@
 
 {{define "pagenav"}}{{with .Pages}}{{if or .First .Prev .Next}}<nav aria-label="{{$.Label}}">{{if .First}}<a href="{{.First}}">First page</a> {{end}}{{if .Prev}}<a href="{{.Prev}}">Previous page</a> {{end}}{{if .Next}}<a href="{{.Next}}">Next page</a>{{end}}</nav>{{end}}{{end}}{{end}}
 {{define "pager"}}{{if .Next}}<p><a href="{{.Href}}{{.Next}}">Next page</a></p>{{end}}{{end}}
+
+{{define "termsbox"}}{{with .D.Terms}}
+<section aria-labelledby="terms-h"><h2 id="terms-h">Network terms (version {{.Version}})</h2>
+{{range $.D.Paras}}<p>{{.}}</p>{{end}}</section>
+{{with $.Err "terms_version"}}<p class="error" id="e-terms_version"><span class="sr">Error: </span>{{.}}</p>{{end}}
+<div class="field" id="f-terms_version"><input type="hidden" name="terms_version" value="{{.Version}}">
+  <label><input type="checkbox" name="accept_terms" value="1"> I have read and accept these terms</label></div>
+{{end}}{{end}}

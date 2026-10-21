@@ -1,7 +1,8 @@
 {{define "content"}}
-<form method="post" action="/join/{{.D}}" novalidate>
+<form method="post" action="/join/{{.D.Token}}" novalidate>
   {{template "csrf" .}}
   {{template "field" dict "P" . "Name" "display_name" "Label" "Your display name" "Hint" "Other members see this name." "Auto" "nickname" "Max" 60 "Req" true}}
+  {{template "termsbox" .}}
   <p>By joining you agree to follow this network's rules. Credits are accounting units inside the network.</p>
   <div class="actions"><button type="submit">Join the network</button></div>
 </form>

@@ -71,7 +71,8 @@ device. API tokens you created are not affected until you revoke them.
 
 * **With an invitation link** from an administrator (`/join/…`): sign in or create an account first (the page offers
   both and brings you back), then enter the display name other members will see and choose **Join the network**.
-  A link works once and expires after the number of days the administrator chose.
+  A link works once and expires after the number of days the administrator chose. If the network has published terms, the
+  page shows them and you tick that you accept that version; joining does not complete without it.
 * **From the network's join page** (`/n/<name>/join`), if the network allows it. Depending on the network's setting you
   either join straight away ("Open") or your request waits for an administrator ("Request, then approval"). A network
   that is "By invitation only" shows no form. While your request is waiting you cannot trade; check back later.
@@ -191,10 +192,18 @@ channels. See "Not in this build" for what is still missing.
   cannot propose, accept or open disputes. A notice at the top of each page says so. Contact an administrator.
 * If you are **removed**, your membership ends, open proposals involving you are cancelled and you keep read-only access
   to your own history. A removed member cannot rejoin the same network.
-* Leaving by your own choice is available in the JSON API (`POST /api/v1/me/membership/departure`) but there is no page for
-  it in the web interface in this build. What happens to your balance depends on the network's departure rule. It
-  is either kept as it is, or settled to zero. Departure can be blocked, for example while a dispute is open on one of your
-  trades or when you are the only administrator; the response lists what blocks it.
+* **Leaving by your own choice**: open **Rules**, then **Leave this network** (`/n/<name>/leave`; the JSON API is
+  `POST /api/v1/me/membership/departure`). The page lists what leaving does before you confirm: open proposals involving
+  you are cancelled (the other members get a notice), and your balance is kept as it is or settled to zero, depending on the
+  network's departure rule. Your history stays readable and you can still download your data from History. Departure can
+  be blocked, for example while a dispute is open on one of your trades or when you are the only administrator; the page
+  lists what blocks it and offers no button until it is resolved. You cannot rejoin the same network afterwards.
+* **Rules and terms**: **Rules** (`/n/<name>/policy`) lists every version of the network's rules with when it was
+  announced and when it takes effect. A change that could disadvantage you (less default credit, a shorter dispute
+  window, a different departure rule) is announced in your Inbox and only takes effect after its notice period, normally
+  14 days; an administrator who shortens the notice has to say why, and you can read the reason there. If the network
+  has terms, a new version asks you to accept it before your next trade: you can still read your balance and history and
+  leave without accepting.
 
 ## 8. Your data
 
@@ -242,6 +251,6 @@ cannot be used.
 | Statements and reports for members | Not present. Use **Download my transactions** on History. (Member reports above are abuse reports, not statements.) |
 | E-mail or push notifications | Not implemented; notifications show only in the Inbox. |
 | Messages between members | Not present. |
-| Leaving a network, deleting an account | No web page for leaving (JSON API only). Erasure of personal data after departure exists; the account itself is not deleted. |
+| Deleting an account | The account itself is not deleted. Leaving a network has a page; erasure of personal data after departure exists. |
 | Password recovery by e-mail | None; Circula keeps no e-mail address. Use recovery codes or an administrator. |
 | Hardware keys / passkeys | Not present; the second factor is an authenticator app (TOTP). |

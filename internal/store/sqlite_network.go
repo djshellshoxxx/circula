@@ -28,7 +28,8 @@ const networkSelect = `SELECT n.id, n.name, n.slug, n.status, n.ledger_seq, n.cr
 	p.version, p.policy_json,
 	COALESCE((SELECT a.id FROM accounts a WHERE a.network_id = n.id AND a.is_system = 1), '')
 	FROM networks n JOIN network_policies p ON p.network_id = n.id
-	AND p.version = (SELECT MAX(version) FROM network_policies WHERE network_id = n.id)`
+	AND p.version = (SELECT MAX(version) FROM network_policies WHERE network_id = n.id
+		AND (? = 0 OR effective_at <= ?))`
 
 func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	var n domain.Network
@@ -48,11 +49,11 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 }
 
 func (t *txImpl) GetNetwork(id string) (*domain.Network, error) {
-	return t.scanNetwork(t.row(networkSelect+` WHERE n.id = ?`, id))
+	return t.scanNetwork(t.row(networkSelect+` WHERE n.id = ?`, t.asOf, t.asOf, id))
 }
 
 func (t *txImpl) GetNetworkBySlug(slug string) (*domain.Network, error) {
-	return t.scanNetwork(t.row(networkSelect+` WHERE n.slug = ?`, slug))
+	return t.scanNetwork(t.row(networkSelect+` WHERE n.slug = ?`, t.asOf, t.asOf, slug))
 }
 
 func (t *txImpl) SetNetworkStatus(id string, s domain.NetworkStatus) error {

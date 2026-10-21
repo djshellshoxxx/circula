@@ -18,7 +18,7 @@ Checks run in this pass: `go vet ./...` exit 0 (final run). `go test -count=1 ./
 - **deferred**: out of MVP by the spec or by a recorded decision.
 - Decision-register rows (DEC-001 to DEC-027 in 00 and 13) use decision states: decided, open or deferred. The owner decisions are in [DECISIONS.md](DECISIONS.md).
 
-Counts (requirement IDs, excluding decision-register rows): built 286, deferred 9, not built 43, partial 155.
+Counts (requirement IDs, excluding decision-register rows): built 290, deferred 9, not built 41, partial 153.
 
 
 ## 00 Conventions and invariants
@@ -132,7 +132,7 @@ Counts (requirement IDs, excluding decision-register rows): built 286, deferred 
 | FR-011 | P0 | Join by approval | built | `internal/service/join.go` (DecideJoinRequest)<br>`internal/web/h_admin.go` (memberActionPost) | `internal/api/hardening_test.go:TestAPIDenyJoinRequest` | Approve and deny applicants; deny via API and web |
 | FR-012 | P1 | Join by open link | partial | `internal/service/join.go` (JoinNetwork)<br>`internal/web/h_auth.go` (joinNetPost) | `internal/service/membership_test.go:TestJoinModes` | Open join creates active member; join rate limit per abuse baseline not built |
 | FR-013 | P0 | Membership lifecycle states | built | - | `internal/domain/statemachine_test.go:TestMemberTransitionsExhaustive` | Membership transitions table-tested |
-| FR-014 | P0 | Voluntary departure | partial | `internal/service/departure.go` (DepartMember) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding` | Departure in service and JSON API; no web self-service departure form |
+| FR-014 | P0 | Voluntary departure | built | `internal/service/departure.go` (DepartMember, PreviewDeparture)<br>`internal/web/h_gov.go` (leaveForm, leavePost) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding`<br>`internal/web/gov_h1_test.go:TestLeavePages` | Departure in service, JSON API and the web leave form |
 | FR-015 | P0 | Administrative offboarding | built | `internal/web/h_admin.go` (memberActionPost) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding` | Admin removal with mandatory reason; last-admin guard |
 | FR-016 | P1 | Member profile minimum | built | `internal/service/auth.go` (RegisterPerson) | - | Display name is the only required profile field |
 | FR-017 | P0 | Duplicate join is idempotent | built | `internal/service/join.go` (JoinNetwork) | `internal/service/hardening_test.go:TestRejoinSemantics` | Duplicate join returns existing membership |
@@ -467,16 +467,16 @@ Counts (requirement IDs, excluding decision-register rows): built 286, deferred 
 | ID | Pri | Requirement (short) | Status | Code path(s) | Test name(s) | Note |
 |---|---|---|---|---|---|---|
 | GOV-001 | P0 | Prospective-only policy changes | partial | `internal/store/sqlite_network.go` (AppendPolicy) | `internal/service/admin_test.go:TestPolicyChanges` | Policy versions prospective; policy version stored on each transaction not verified |
-| GOV-002 | P0 | Recording policy changes | partial | `internal/service/networks.go` (UpdatePolicy)<br>`internal/web/h_admin2.go` (policyPost) | - | Changes audited with before and after; member-visible change log not built |
-| GOV-003 | P0 | Notice before adverse changes | not built | - | - | Notice periods and member notices not built |
+| GOV-002 | P0 | Recording policy changes | built | `internal/service/networks.go` (UpdatePolicy)<br>`internal/service/gov_terms.go` (PolicyLog)<br>`internal/web/h_gov.go` (rulesPage) | `internal/service/gov_h1_test.go:TestPolicyNoticePeriod`<br>`internal/web/gov_h1_test.go:TestPolicyNoticePages` | Changes audited with before and after; member-visible change log |
+| GOV-003 | P0 | Notice before adverse changes | built | `internal/service/networks.go` (UpdatePolicy, noticeDays)<br>`internal/domain/terms.go` (Adverse)<br>`internal/store/sqlite_gov.go` | `internal/service/gov_h1_test.go:TestPolicyNoticePeriod`<br>`internal/service/gov_h1_test.go:TestPolicyNoticeCancel` | 14-day default notice, shortened only with a reason shown in the log, inbox notice to members, cancellation |
 | GOV-004 | P0 | Decimal scale lock | built | `internal/service/networks.go` (UpdatePolicy) | `internal/service/admin_test.go:TestPolicyChanges` | Decimals lock after first completed transaction |
 | GOV-005 | P1 | Policy validation bounds | built | `internal/domain/policy.go` (Validate) | `internal/domain/statemachine_test.go:TestPolicyBounds` | Bounds with boundary tests |
 | GOV-006 | P1 | Policy decision method | partial | `internal/service/networks.go` (UpdatePolicy) | - | Unilateral admin change built; objection right not built |
 | GOV-007 | P0 | No governance override of ledger invariants | built | - | `internal/service/property_test.go:TestRandomisedLedgerInvariants` | Corrective actions are transactions; property tests |
 | GOV-008 | P0 | Join modes | built | - | `internal/service/membership_test.go:TestJoinModes`<br>`internal/service/membership_test.go:TestInvitations` | Invite, approval, open modes; audit per decision |
-| GOV-009 | P0 | Onboarding | not built | - | - | Terms versioning and acceptance not built |
-| GOV-010 | P0 | Voluntary departure | partial | `internal/service/departure.go` (DepartMember) | `internal/service/admin_test.go:TestDepartureRetain` | Blockers, retain and settle rules built; counterparty notices and self-export offer not built |
-| GOV-011 | P0 | Removal by administrator | partial | `internal/web/h_admin.go` (memberActionPost) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding` | Admin removal with reason; notice and challenge not built |
+| GOV-009 | P0 | Onboarding | built | `internal/service/gov_terms.go`<br>`internal/service/join.go` (RedeemInvitationTerms, JoinNetworkTerms)<br>`internal/web/h_gov.go` | `internal/service/gov_h1_test.go:TestTermsGovernance`<br>`internal/web/gov_h1_test.go:TestTermsPages` | Versioned terms; acceptance at join; re-acceptance before trading after an update |
+| GOV-010 | P0 | Voluntary departure | partial | `internal/service/departure.go` (DepartMember) | `internal/service/admin_test.go:TestDepartureRetain`<br>`internal/service/gov_h1_test.go:TestDeparturePreviewAndNotices` | Blockers, retain and settle rules built; counterparties notified; self-export only linked, not offered in the flow |
+| GOV-011 | P0 | Removal by administrator | partial | `internal/web/h_admin.go` (memberActionPost) | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding`<br>`internal/service/gov_h1_test.go:TestDeparturePreviewAndNotices` | Admin removal with reason; member notified; challenge not built |
 | GOV-012 | P1 | Inactivity | not built | - | - | Inactivity rule not built |
 | GOV-013 | P0 | Dispute window and eligibility | built | `internal/service/disputes.go` (OpenDispute) | `internal/service/dispute_test.go:TestOpenDisputeRules` | Window and party rule; dispute keeps entries unchanged |
 | GOV-014 | P0 | Dispute process | partial | `internal/service/disputes_decide.go` (ResolveDispute)<br>`internal/service/disputes.go` (OpenDispute) | - | Statement and decision with reasons; response period and deadlines not built |

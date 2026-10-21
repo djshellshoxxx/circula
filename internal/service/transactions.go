@@ -52,6 +52,9 @@ func (s *Service) ProposeTransaction(ctx context.Context, actor domain.Actor, ne
 		if err := p.requireActive(); err != nil {
 			return err
 		}
+		if err := s.requireTerms(tx, p); err != nil { // GOV-009
+			return err
+		}
 		out, err = idempotent(s, tx, netID, actor, "tx.propose", in.IdempotencyKey, in, func() (string, error) {
 			return s.propose(tx, p, in)
 		}, func(id string) (*domain.Transaction, error) { return tx.GetTransaction(netID, id) })
@@ -187,6 +190,9 @@ func (s *Service) AcceptTransaction(ctx context.Context, actor domain.Actor, net
 			return err
 		}
 		if err := p.requireActive(); err != nil {
+			return err
+		}
+		if err := s.requireTerms(tx, p); err != nil { // GOV-009
 			return err
 		}
 		out, err = idempotent(s, tx, netID, actor, "tx.accept", in.IdempotencyKey, in, func() (string, error) {

@@ -1,5 +1,14 @@
 {{define "content"}}
-<p>Current policy is version {{.D}}. Saving creates a new version; earlier versions are kept. Decimal places ({{.Dec}}) cannot be changed.</p>
+<p>Current policy is version {{.D.Version}}. Saving creates a new version; earlier versions are kept. Decimal places ({{.Dec}}) cannot be changed.</p>
+<p>Changes that could disadvantage members (less default credit, a shorter dispute window, a different departure rule, a more open way to join) are announced first and take effect after at least 14 days. The <a href="/n/{{.Slug}}/policy">change log</a> shows members what changed and when.</p>
+{{with .D.Pending}}
+<section aria-labelledby="pend-h" class="notice" role="note"><h2 id="pend-h">Scheduled change</h2>
+  <p>Version {{.Version}} was announced {{.Announced}} and takes effect {{.Effective}}. Until then the rules in force are unchanged.</p>
+  {{if .Lines}}<ul>{{range .Lines}}<li>{{.}}</li>{{end}}</ul>{{end}}
+  <form method="post" action="/n/{{$.Slug}}/admin/policy/cancel">{{template "csrf" $}}{{template "idem" $}}<button type="submit" class="secondary">Cancel the scheduled change</button></form>
+  <p>While a change is scheduled, make no other policy change: cancel it first.</p>
+</section>
+{{end}}
 <form method="post" action="/n/{{.Slug}}/admin/policy" novalidate>
   {{template "csrf" .}}{{template "idem" .}}
   {{template "field" dict "P" . "Name" "currency_name" "Label" "Credit unit name" "Max" 40 "Req" true}}
@@ -23,6 +32,8 @@
     <option value="settle-to-zero"{{if eq (.Val "departure_rule") "settle-to-zero"}} selected{{end}}>Balance is settled to zero</option></select></div>
   <div class="field"><label><input type="checkbox" name="default_flag_blocks_payer" value="1"{{if .Val "default_flag_blocks_payer"}} checked{{end}}> Members marked in default cannot pay</label></div>
   {{template "field" dict "P" . "Name" "reason" "Label" "Reason for the change" "Hint" "Required. It is recorded with the new version." "Req" true}}
+  {{template "field" dict "P" . "Name" "notice_days" "Label" "Notice (days)" "Hint" "Optional. Empty means 14 days for a change that could disadvantage members and none otherwise. Up to 90." "Mode" "numeric"}}
+  {{template "field" dict "P" . "Name" "notice_reason" "Label" "Reason for shorter notice" "Hint" "Required only if you give fewer than 14 days for such a change. Members see it." "Max" 500}}
   <div class="actions"><button type="submit">Save new version</button></div>
 </form>
 {{end}}
