@@ -5,7 +5,7 @@ root = pathlib.Path(__file__).resolve().parent.parent
 files = sorted(root.glob('docs/**/*.md')) + [p for p in [root/'README.md'] if p.exists()]
 ID = re.compile(r'\b((?:FR-[A-Z]{3}|[A-Z]{2,4})-\d{3})\b')
 # definitions: table rows or list items beginning with an ID, or headings
-DEF = re.compile(r'^(?:\|\s*[*`]*|[-*]\s+[*`]*|#+\s+[*`]*|[*`]+)((?:FR-[A-Z]{3}|[A-Z]{2,4})-\d{3})\b')
+DEF = re.compile(r'^(?:\|\s*(?:<a [^>]*><\/a>)?[*`]*|\|\s*[*`]*|[-*]\s+[*`]*|#+\s+[*`]*|[*`]+)((?:FR-[A-Z]{3}|[A-Z]{2,4})-\d{3})\b')
 PFX = {'VIS','PER','JRN','DOM','INV','ARC','DAT','API','UX','SEC','GOV','OPS','QA','ASM','RSK','DEC','LIF','POL','NTF','PRT','LEG','FR'}
 defs = collections.defaultdict(list); refs = []
 errs = []
