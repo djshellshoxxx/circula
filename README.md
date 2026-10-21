@@ -30,6 +30,14 @@ This is an experiment in economic coordination, not a promise to replace existin
 6. **Privacy by design:** collect the minimum information needed and make visibility and export permissions explicit.
 7. **Interoperability by consent:** future network connections should be opt-in, transparent, and governed by participating networks.
 
+## The crypto and crypto-libertarian angle
+
+“Crypto” can mean cryptography and distributed protocols, or it can mean a tradable cryptocurrency. Circula’s mutual-credit model does not require a coin, blockchain, mining, or token speculation. Its crypto-libertarian potential is the ability for people to form voluntary networks, set local rules, operate their own infrastructure, connect by consent, and leave with portable records. This reduces dependence on a single issuer or platform; it does not make a network independent of governance, infrastructure, or law.
+
+Cryptographic tools could support that direction: signed transaction approvals, verifiable append-only audit records, encrypted backups and dispute evidence, member-controlled credentials, and multi-administrator recovery. These can help detect tampering and limit unilateral control, but they do not make false claims true, prevent coercion, guarantee privacy, or replace a fair dispute process. A signature also proves control of a key, not necessarily a person’s real-world identity or informed consent.
+
+A conventional database with atomic balanced postings is likely the simplest initial ledger. Cryptographic signatures or tamper-evident event proofs could be layered on when a clear member need justifies them. A public blockchain is an optional future experiment, not a foundation: public ledgers can expose durable transaction metadata, fees and irreversible errors can harm users, and token framing can invite speculation that conflicts with mutual-credit accounting. See [Crypto and crypto-libertarian design options](docs/brainstorming/crypto-and-crypto-libertarian-design.md) for the distinctions, candidate features, and tradeoffs.
+
 ## Initial MVP direction
 
 The draft MVP focuses on network setup, membership, an offers and requests directory, transaction proposals and acceptance, balance and history views, administration, disputes, audit history, and basic data exports. The [specifications index](docs/specs/README.md) links to the detailed requirements and unresolved decisions.
