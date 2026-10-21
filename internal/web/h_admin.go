@@ -65,7 +65,7 @@ func actionsFor(m *domain.Member) []option {
 	case domain.MemberPending:
 		keys = []string{"approve", "deny"}
 	case domain.MemberActive:
-		keys = []string{"limit", "suspend", "remove"}
+		keys = []string{"limit", "suspend", "remove", "reset-password"}
 		if m.HasRole(domain.RoleAdmin) {
 			keys = append(keys, "revoke-admin")
 		} else {

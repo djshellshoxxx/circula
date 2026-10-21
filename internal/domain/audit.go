@@ -102,6 +102,10 @@ type Actor struct {
 	NetworkScope string  // when non-empty, restricts a token to one network
 	RequestID    string
 	System       bool // background jobs and CLI operations
+	// MustChangePassword is set by Authenticate/AuthenticateToken while the
+	// person's password was reset by someone else (SEC-008). Can(ScopeWrite)
+	// is then false, so every write refuses until ChangePassword succeeds.
+	MustChangePassword bool
 }
 
 // SystemActor is used by background jobs (expiry sweep) and operator CLI.
@@ -113,6 +117,9 @@ func SystemActor(requestID string) Actor {
 func (a Actor) Can(s Scope) bool {
 	if a.System {
 		return true
+	}
+	if a.MustChangePassword && s == ScopeWrite {
+		return false
 	}
 	for _, x := range a.Scopes {
 		if x == s {

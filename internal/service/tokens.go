@@ -22,6 +22,9 @@ type TokenInput struct {
 // CreateAPIToken returns the bearer value once; only its hash is stored. A
 // token can never hold a scope its creator lacks.
 func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in TokenInput) (string, *domain.APIToken, error) {
+	if actor.MustChangePassword {
+		return "", nil, domain.PasswordChangeRequired() // SEC-008
+	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) {
 		return "", nil, domain.Forbidden("write scope required")
 	}
@@ -77,7 +80,14 @@ func (s *Service) AuthenticateToken(ctx context.Context, token string) (domain.A
 		return domain.Actor{}, domain.ErrUnauthenticated
 	}
 	var t *domain.APIToken
-	if err := s.view(ctx, func(tx store.Tx) (err error) { t, err = tx.GetTokenByHash(hashToken(token)); return }); err != nil {
+	var must bool
+	if err := s.view(ctx, func(tx store.Tx) (err error) {
+		if t, err = tx.GetTokenByHash(hashToken(token)); err != nil {
+			return err
+		}
+		must, err = tx.MustChangePassword(t.PersonID)
+		return err
+	}); err != nil {
 		return domain.Actor{}, authnErr(err)
 	}
 	now := s.now()
@@ -87,11 +97,14 @@ func (s *Service) AuthenticateToken(ctx context.Context, token string) (domain.A
 	if t.LastUsedAt == nil || now.Sub(*t.LastUsedAt) > time.Minute {
 		_ = s.update(ctx, func(tx store.Tx) error { return tx.TouchToken(t.ID, now) })
 	}
-	return domain.Actor{PersonID: t.PersonID, Scopes: t.Scopes, NetworkScope: t.NetworkID}, nil
+	return domain.Actor{PersonID: t.PersonID, Scopes: t.Scopes, NetworkScope: t.NetworkID, MustChangePassword: must}, nil
 }
 
 // RevokeAPIToken revokes one of the caller's own tokens.
 func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenID string) error {
+	if actor.MustChangePassword {
+		return domain.PasswordChangeRequired() // SEC-008
+	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) {
 		return domain.Forbidden("write scope required")
 	}

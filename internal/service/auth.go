@@ -213,8 +213,12 @@ func authnErr(err error) error {
 func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor, error) {
 	id := hashToken(token)
 	var sess *domain.Session
+	var must bool
 	if err := s.view(ctx, func(tx store.Tx) (err error) {
-		sess, err = tx.GetSession(id)
+		if sess, err = tx.GetSession(id); err != nil {
+			return err
+		}
+		must, err = tx.MustChangePassword(sess.PersonID)
 		return err
 	}); err != nil {
 		return domain.Actor{}, authnErr(err)
@@ -226,7 +230,7 @@ func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor,
 	if now.Sub(sess.LastSeenAt) > time.Minute {
 		_ = s.update(ctx, func(tx store.Tx) error { return tx.TouchSession(id, now) })
 	}
-	return domain.Actor{PersonID: sess.PersonID, Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}}, nil
+	return domain.Actor{PersonID: sess.PersonID, Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}, MustChangePassword: must}, nil
 }
 
 // Logout revokes the session behind token. Unknown tokens are ignored.
@@ -237,7 +241,11 @@ func (s *Service) Logout(ctx context.Context, token string) error {
 // ChangePassword verifies the old password, sets the new one and revokes every
 // session of the person, including the caller's (SEC-003). API tokens stay valid.
 func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW, newPW string) error {
-	if !actor.Can(domain.ScopeWrite) || actor.PersonID == "" {
+	// A pending forced change must not block the change itself (SEC-008), but
+	// the scope rule still applies, so judge the scope without the flag.
+	scoped := actor
+	scoped.MustChangePassword = false
+	if !scoped.Can(domain.ScopeWrite) || actor.PersonID == "" {
 		return domain.ErrForbidden
 	}
 	if err := s.validatePassword(newPW); err != nil {
@@ -262,6 +270,9 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 			return err
 		}
 		if err := s.notify(tx, actor.PersonID, domain.NoticePasswordChanged, ""); err != nil {
+			return err
+		}
+		if err := tx.SetMustChangePassword(actor.PersonID, false); err != nil {
 			return err
 		}
 		return s.auditPlatform(tx, actor, auditEntry{Action: domain.ActPasswordChanged,

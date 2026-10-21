@@ -33,6 +33,7 @@ type Tx interface {
 	VerifyRepo
 	ExportRepo
 	MFARepo
+	RecoveryRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.

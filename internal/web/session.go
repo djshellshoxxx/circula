@@ -176,6 +176,10 @@ func (s *server) auth(h func(http.ResponseWriter, *http.Request, *rc)) http.Hand
 			s.toLogin(w, r)
 			return
 		}
+		if a.MustChangePassword && r.URL.Path != "/account/password" { // SEC-008: forced change first
+			s.mustChange(w, r)
+			return
+		}
 		h(w, r, &rc{s: s, ctx: r.Context(), actor: a, token: tok})
 	}
 }

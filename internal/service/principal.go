@@ -21,6 +21,9 @@ type principal struct {
 // or whose token is scoped to another network, gets the same not-found as for
 // a non-existent network (API-017, FR-006).
 func (s *Service) open(tx store.Tx, actor domain.Actor, netID string, scope domain.Scope) (*principal, error) {
+	if actor.MustChangePassword && scope == domain.ScopeWrite {
+		return nil, domain.PasswordChangeRequired() // SEC-008
+	}
 	if !actor.Can(scope) {
 		return nil, domain.Forbidden("token lacks %s scope", scope)
 	}
