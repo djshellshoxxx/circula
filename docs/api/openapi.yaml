@@ -104,6 +104,141 @@ paths:
         '404': {$ref: '#/components/responses/NotFound'}
         '500': {$ref: '#/components/responses/InternalError'}
 
+  /api/v1/network/terms:
+    get:
+      operationId: getNetworkTerms
+      tags: [Network]
+      summary: Current terms and the caller's acceptance (GOV-009)
+      description: |
+        The network's current onboarding terms (null when none are published), the version the caller
+        accepted (0 for none) and whether they must accept before proposing or accepting a trade.
+        Reading is always allowed.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: Terms state.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TermsState'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/network/policy-log:
+    get:
+      operationId: getPolicyLog
+      tags: [Network]
+      summary: Member-visible rules change log (GOV-002, GOV-003)
+      description: |
+        Every policy version, newest first, with the keys it changed, the previous values, when it was
+        announced and when it takes (or took) effect, its reason and any shorter-notice reason. A version
+        not yet in force has pending true; one cancelled before it took effect has withdrawn true.
+        Not paged.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: The change log.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, next_cursor]
+                properties:
+                  data: {type: array, items: {$ref: '#/components/schemas/PolicyLogEntry'}}
+                  next_cursor: {oneOf: [{type: string}, {type: 'null'}]}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/me/terms/accept:
+    post:
+      operationId: acceptTerms
+      tags: [Identity]
+      summary: Accept the current terms (GOV-009)
+      description: |
+        Records the caller's acceptance of the given version, which must be the current one (422
+        otherwise; 409 when the network has no terms). Idempotency-Key required; accepting again is a no-op.
+        Returns the terms state.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              additionalProperties: false
+              properties:
+                version: {type: integer, minimum: 1}
+      responses:
+        '200':
+          description: Terms state after acceptance.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TermsState'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/terms:
+    post:
+      operationId: publishTerms
+      tags: [Admin]
+      summary: Publish a new terms version (GOV-009)
+      description: |
+        Administrator only; Idempotency-Key required. Versions are append-only and numbered from 1. Text of
+        1 to 20000 characters that differs from the current terms. Every active member gets a notice and
+        must accept the new version before proposing or accepting a trade (409 terms-acceptance-required
+        otherwise). Audited (terms.published).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              additionalProperties: false
+              properties:
+                body: {type: string, minLength: 1, maxLength: 20000}
+      responses:
+        '201':
+          description: Terms published.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Terms'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
   /api/v1/me:
     get:
       operationId: getMe
@@ -2482,6 +2617,7 @@ components:
         - approval-required
         - password-change-required
         - mfa-required
+        - terms-acceptance-required
 
     Money:
       type: string
@@ -2890,6 +3026,37 @@ components:
       properties:
         ids: {type: array, minItems: 1, maxItems: 200, items: {$ref: '#/components/schemas/Id'}}
         all: {type: boolean}
+    Terms:
+      type: object
+      required: [version, body, published_at]
+      additionalProperties: false
+      properties:
+        version: {type: integer, minimum: 1}
+        body: {type: string}
+        published_at: {$ref: '#/components/schemas/Timestamp'}
+    TermsState:
+      type: object
+      required: [current, accepted_version, needs_acceptance]
+      additionalProperties: false
+      properties:
+        current: {oneOf: [{$ref: '#/components/schemas/Terms'}, {type: 'null'}]}
+        accepted_version: {type: integer, minimum: 0}
+        needs_acceptance: {type: boolean}
+    PolicyLogEntry:
+      type: object
+      required: [version, changes, reason, announced_at, effective_at, notice_days, pending, withdrawn]
+      additionalProperties: false
+      properties:
+        version: {type: integer, minimum: 1}
+        changes: {type: object, description: Changed policy keys with their new values (the first version lists them all).}
+        previous: {type: object, description: The same keys before the change.}
+        reason: {type: string}
+        announced_at: {$ref: '#/components/schemas/Timestamp'}
+        effective_at: {$ref: '#/components/schemas/Timestamp'}
+        notice_days: {type: integer, minimum: 0}
+        notice_reason: {type: string, description: Why the notice was shorter than 14 days for an adverse change.}
+        pending: {type: boolean}
+        withdrawn: {type: boolean}
     PolicyResponse:
       type: object
       required: [version, effective_at, policy]
@@ -2897,9 +3064,12 @@ components:
       properties:
         version: {type: integer, minimum: 0}
         effective_at:
-          description: Set on PATCH responses; null on GET.
+          description: Set on PATCH responses (when the new version takes effect); null on GET.
           oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]
         policy: {$ref: '#/components/schemas/Policy'}
+        pending:
+          description: The announced change that is not in force yet, if any (GOV-003). policy is what is in force.
+          $ref: '#/components/schemas/PolicyLogEntry'
     Policy:
       type: object
       required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor]
@@ -2940,6 +3110,8 @@ components:
         directory_visibility: {type: string}
         dual_control_threshold_minor: {$ref: '#/components/schemas/Money'}
         reason: {type: string, maxLength: 500}
+        notice_days: {type: integer, minimum: 0, maximum: 90, description: 'Notice before the change takes effect (GOV-003). Default 14 for a change that reduces default credit, shortens the dispute window, changes the departure rule, makes the directory less restrictive or the join mode more open; 0 otherwise. Fewer than 14 for such a change needs notice_reason. While a change is scheduled only a PATCH that restores the values in force (a cancellation) is accepted; others get 409.'}
+        notice_reason: {type: string, maxLength: 500}
     AuditEvent:
       type: object
       required: [id, seq, occurred_at, actor_type, actor_id, action, target_type, target_id, request_id, reason, summary_before, summary_after, hash]
@@ -3167,6 +3339,7 @@ components:
       additionalProperties: false
       properties:
         display_name: {type: string, minLength: 1, maxLength: 80, description: Trimmed; no control characters.}
+        terms_version: {type: integer, minimum: 0, description: 'The terms version the person accepted (GOV-009). Required, and equal to the current version, when the network has published terms; otherwise ignored.'}
     CreateTokenRequest:
       type: object
       required: [name, scopes]

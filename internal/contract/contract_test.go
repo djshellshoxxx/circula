@@ -444,6 +444,56 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "POST", path: "/admin/adjustments/" + pc + "/cancel", token: adminT})
 	h.do(404, call{method: "GET", path: "/admin/adjustments/nope", token: adm2T})
 
+	// Governance: notice before an adverse policy change (GOV-003), change log (GOV-002), terms (GOV-009).
+	rec = h.do(200, call{method: "GET", path: "/admin/policy", token: adminT})
+	petag = rec.Header().Get("ETag")
+	h.do(422, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag), skipRequest: true,
+		body: m{"reason": "lower", "default_credit_limit_minor": "100", "notice_days": 13}})
+	rec = h.do(200, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag),
+		body: m{"reason": "lower", "default_credit_limit_minor": "100"}})
+	if got := get[struct {
+		Pending *struct {
+			NoticeDays int `json:"notice_days"`
+		} `json:"pending"`
+	}](t, rec); got.Pending == nil || got.Pending.NoticeDays != 14 {
+		t.Errorf("adverse change was not scheduled with 14 days' notice: %s", rec.Body.String())
+	}
+	h.do(409, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag),
+		body: m{"reason": "more", "dispute_window_days": 10}})
+	rec = h.do(200, call{method: "GET", path: "/admin/policy", token: adminT})
+	if !strings.Contains(rec.Body.String(), `"pending":{`) {
+		t.Errorf("scheduled change not shown: %s", rec.Body.String())
+	}
+	rec = h.do(200, call{method: "GET", path: "/network/policy-log", token: aliceT})
+	if !strings.Contains(rec.Body.String(), `"pending":true`) {
+		t.Errorf("policy log: %s", rec.Body.String())
+	}
+	h.do(200, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag), body: m{"reason": "cancel"}})
+
+	h.do(200, call{method: "GET", path: "/network/terms", token: aliceT})
+	h.do(403, call{method: "POST", path: "/admin/terms", token: aliceT, idem: true, body: m{"body": "x"}})
+	h.do(422, call{method: "POST", path: "/admin/terms", token: adminT, idem: true, skipRequest: true, body: m{"body": ""}})
+	h.do(201, call{method: "POST", path: "/admin/terms", token: adminT, idem: true, body: m{"body": "Be kind.\n\nPay promptly."}})
+	rec = h.do(200, call{method: "GET", path: "/network/terms", token: aliceT})
+	if !strings.Contains(rec.Body.String(), `"needs_acceptance":true`) {
+		t.Errorf("terms state: %s", rec.Body.String())
+	}
+	rec = h.do(409, call{method: "POST", path: "/transactions", token: aliceT, idem: true,
+		body: m{"counterparty_member_id": adm2M.ID, "direction": "pay", "amount_minor": "10"}})
+	if !strings.Contains(rec.Body.String(), "terms-acceptance-required") {
+		t.Errorf("want terms-acceptance-required: %s", rec.Body.String())
+	}
+	h.do(422, call{method: "POST", path: "/me/terms/accept", token: aliceT, idem: true, body: m{"version": 9}})
+	h.do(200, call{method: "POST", path: "/me/terms/accept", token: aliceT, idem: true, body: m{"version": 1}})
+	h.do(201, call{method: "POST", path: "/transactions", token: aliceT, idem: true,
+		body: m{"counterparty_member_id": adm2M.ID, "direction": "pay", "amount_minor": "10"}})
+	rec = h.do(201, call{method: "POST", path: "/admin/invitations", token: adminT, idem: true, body: m{"ttl_seconds": 3600}})
+	inv2 := get[idOnly](t, rec).Token
+	erin := env.Person("erin")
+	h.do(422, call{method: "POST", path: "/invitations/" + inv2 + "/accept", token: h.token(erin, rw...), idem: true, body: m{"display_name": "Erin"}})
+	h.do(201, call{method: "POST", path: "/invitations/" + inv2 + "/accept", token: h.token(erin, rw...), idem: true,
+		body: m{"display_name": "Erin", "terms_version": 1}})
+
 	// Generic problems.
 	h.do(401, call{method: "GET", path: "/accounts/me", token: "cir_bogus"})
 	h.do(400, call{method: "GET", path: "/accounts/me?access_token=x", token: aliceT, skipRequest: true})
