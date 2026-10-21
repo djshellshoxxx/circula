@@ -6,6 +6,34 @@ Personas are behavioural descriptions used to derive requirements. They are not 
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 4, not built 1, partial 10.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| PER-001 | P0 | built | Member role: balance, listings, trades, disputes, export |
+| PER-002 | P0 | partial | Admin limits and self-restrictions built; dual control, notices and reviewer-conflict audit partly missing |
+| PER-003 | P0 | partial | Reviewer decides with independence checks; admin without reviewer role can also decide (open decision DEC-072) |
+| PER-004 | P0 | partial | No operator role routes; break-glass and operator access record not built |
+| PER-010 | P0 | partial | Invite, approval and open joins built; onboarding terms (GOV-009) not built |
+| PER-011 | P0 | built | Create, edit, pause, archive listing; browse by type and text |
+| PER-012 | P0 | built | Propose, accept, decline, cancel; review step; idempotent commands |
+| PER-013 | P0 | partial | Balance and history views built; stale-data indicator (PER-022) not built |
+| PER-014 | P0 | partial | Dispute open, review and decision built; other-party response (FR-076) not built |
+| PER-015 | P0 | partial | Admin controls built; limit warnings, dual control and network suspension not built |
+| PER-016 | P1 | partial | Departure with blockers built; counterparty notices and self-export offer not built |
+| PER-017 | P1 | partial | CloseNetwork in service only; no web or API route calls it |
+| PER-020 | P0 | built | Not-found is uniform for other-network and missing ids |
+| PER-021 | P0 | partial | Empty-state copy in templates; no UX test run |
+| PER-022 | P1 | not built | No stale-data indicator on balance views |
+
 ## 1. Roles
 
 A **role** is a permission set scoped to one network. A person MAY hold several roles in one network (for example, member and administrator) and MUST hold a separate membership in each network they join.
@@ -195,9 +223,9 @@ Each journey lists the trigger, main path, error and accessible states, and the 
 
 ## 7. Open questions
 
-- **OQ-PER-1 (product owner).** Whether members may be invited by other members (not only administrators) in invite mode. Current spec: administrators only; FR-010 is written accordingly.
+- **OQ-PER-1 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-053.
 - **OQ-PER-2 (product owner and counsel-reviewed policy).** Whether platform operators may access network content for support, and under what break-glass controls. Current spec: no routine access; any access is audited and cannot alter ledger data.
-- **OQ-PER-3 (product owner).** Whether an administrator who is also a member may see other members' balances. Current spec: yes, limit and balance only, audited (matrix).
-- **OQ-PER-4 (UX).** Whether a suspended member can still view the directory. Current spec: no; they keep personal history and export only.
+- **OQ-PER-3 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-053.
+- **OQ-PER-4 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-053.
 
 Open questions are labelled `OQ-PER-n` and are to be consolidated into [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).

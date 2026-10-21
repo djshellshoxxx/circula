@@ -9,6 +9,67 @@ Ledger rules (LED-1..LED-7) are defined once in [00-conventions.md](00-conventio
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 38, not built 3, partial 7.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| DAT-001 | P0 | built | Identifiers are UUIDv7 text |
+| DAT-002 | P0 | built | IDs from injected generator |
+| DAT-003 | P0 | built | IDs carry no personal data |
+| DAT-004 | P1 | built | Invitation and session tokens random and stored hashed |
+| DAT-005 | P0 | built | Composite foreign keys with network id |
+| DAT-006 | P0 | built | Entry references one transaction and one account in same network |
+| DAT-007 | P0 | built | Two entries, equal and opposite, for trade, adjustment, reversal |
+| DAT-008 | P0 | built | Integer amounts with CHECK constraints |
+| DAT-009 | P0 | built | Network sum checked by verify |
+| DAT-010 | P0 | built | Triggers block update and delete on append-only tables |
+| DAT-011 | P0 | built | Enforcement tested via raw SQL |
+| DAT-012 | P1 | partial | One reversal per original not enforced; cumulative cap instead (DEC-040) |
+| DAT-013 | P1 | built | Adjustment reason required; counter-account is system account |
+| DAT-014 | P0 | built | Posting writes status, entries, balances, audit in one transaction |
+| DAT-015 | P0 | built | Limit check under write gate before posting |
+| DAT-016 | P0 | built | ledger_seq per network; history ordered by it |
+| DAT-017 | P0 | built | Times stored as UTC milliseconds |
+| DAT-018 | P0 | built | Available computed from balance, limit and proposed reservations |
+| DAT-019 | P0 | built | Cache changed only in posting |
+| DAT-020 | P0 | built | Verify checks per-account, per-transaction and network sums |
+| DAT-021 | P1 | built | BalanceAt sums entries up to a sequence (service only) |
+| DAT-022 | P0 | built | Reversal is new transaction; original unchanged |
+| DAT-023 | P1 | built | Adjustment against system account with audit |
+| DAT-024 | P1 | partial | Override path is time-limited audited limit change; no general admin override flag |
+| DAT-025 | P0 | built | Idempotency record written in same unit |
+| DAT-026 | P0 | built | Record key over network, person, operation and key |
+| DAT-027 | P0 | built | Fingerprint of request; reuse refused |
+| DAT-028 | P1 | built | Records expire after TTL (7 days) |
+| DAT-029 | P0 | built | Audit in same unit as change |
+| DAT-030 | P1 | built | Per-network hash chain with head; unkeyed (DEC-044) |
+| DAT-031 | P0 | built | Audit excludes secrets and tokens |
+| DAT-032 | P1 | partial | Audit export scope exists; format identical to ledger export not checked |
+| DAT-033 | P0 | partial | Member view of own audit exists in service; no member UI or API |
+| DAT-034 | P0 | built | Admin audit read is itself audited |
+| DAT-035 | P0 | partial | Reviewer audit scope in service; no reviewer UI |
+| DAT-036 | P0 | built | No operator read path to audit |
+| DAT-037 | P0 | built | CSV and JSON export with manifest and SHA-256 |
+| DAT-038 | P0 | built | Ledger export includes transactions, status, accounts, entries, audit |
+| DAT-039 | P0 | built | Export manifest states ledger_seq of one snapshot |
+| DAT-040 | P0 | partial | Manifest checksums exist; no verifier command for export packages |
+| DAT-041 | P1 | not built | No versioned export schema document or reference reader |
+| DAT-042 | P0 | built | Forward-only embedded migrations with recorded version |
+| DAT-043 | P0 | built | Pre-migration backup before migration on non-empty database |
+| DAT-044 | P0 | built | Post-migration verification gates serving |
+| DAT-045 | P1 | partial | Expand-then-contract is a practice; not enforced by tests |
+| DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
+| DAT-047 | P0 | not built | No 10,000-transaction fixture and no migration from prior released schema |
+| DAT-048 | P1 | not built | Migration duration not recorded |
+
 ## 1. Principles
 
 1. **Entries are facts; balances are views.** Ledger entries are the record. Cached balances are a performance copy that MUST always equal the sum of entries (LED-3).
@@ -227,11 +288,11 @@ The repair procedure is specified in detail in [11-deployment-operations.md](11-
 
 ## 11. Open questions
 
-- **OQ-DAT-01:** UUIDv7 (recommended) or ULID for identifiers. Either satisfies DAT-001; owner preference needed.
-- **OQ-DAT-02 (decision needed):** Whether members may see the actor identity on audit events concerning their transactions (DAT-033). Recommended default: role or pseudonymous label only.
+- **OQ-DAT-01 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-062.
+- **OQ-DAT-02 (decision needed):** Whether members may see the actor identity on audit events concerning their transactions (DAT-033). Recommended default: role or pseudonymous label only. Raised by the build: DEC-078 in [DECISIONS.md](../DECISIONS.md).
 - **OQ-DAT-03 (decision needed, counsel):** How backups and ledger retention interact with deletion requests of departed members. Affects section 9 and DAT-033. No compliance is asserted.
-- **OQ-DAT-04 (decision needed):** Tamper-evident audit chain (DAT-030) is recommended as P1; confirm whether it is required for the MVP.
-- **OQ-DAT-05 (assumption):** Entries and transactions are never partially settled; a trade is either fully posted or not posted (no multi-leg or partial payments in MVP).
-- **OQ-DAT-06 (decision needed):** Maximum length of adjustment reasons and listing text. To be set in 03 and 04.
+- **OQ-DAT-04 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-044.
+- **OQ-DAT-05 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
+- **OQ-DAT-06 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-050.
 
 Cross-references: domain rules [03-domain-model.md](03-domain-model.md); architecture [05-architecture.md](05-architecture.md); API [07-api-contract.md](07-api-contract.md); security [09-security-privacy.md](09-security-privacy.md); governance [10-governance-operations.md](10-governance-operations.md); operations [11-deployment-operations.md](11-deployment-operations.md); test plan [12-quality-test-plan.md](12-quality-test-plan.md); decisions [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).

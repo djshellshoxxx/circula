@@ -4,6 +4,84 @@ Status: Draft v0.1 · Owner: Product architect · Last updated: 2026-10-21 · Sc
 
 Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-authoritative). Ledger rules are in [03-domain-model.md](03-domain-model.md) and are referenced by ID, not restated. Platform invariants are referenced as LED-n from [00-conventions.md §4](00-conventions.md#4-platform-wide-invariants-not-configurable).
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 51, not built 3, partial 11.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| FR-001 | P0 | built | Create network with policy; system account; audit |
+| FR-002 | P0 | partial | One-time setup secret; used flag is per process, so a restart re-enables it while the secret is set |
+| FR-003 | P0 | built | Policy change within bounds, versioned and audited |
+| FR-004 | P0 | built | Setup to active once an admin exists |
+| FR-005 | P0 | built | Decimals fixed after first posting |
+| FR-006 | P0 | built | Cross-network identifier test covers web and API |
+| FR-010 | P0 | built | Single-use invitation token hashed; redemption creates member |
+| FR-011 | P0 | built | Approve and deny applicants; deny via API and web |
+| FR-012 | P1 | partial | Open join creates active member; join rate limit per abuse baseline not built |
+| FR-013 | P0 | built | Membership transitions table-tested |
+| FR-014 | P0 | partial | Departure in service and JSON API; no web self-service departure form |
+| FR-015 | P0 | built | Admin removal with mandatory reason; last-admin guard |
+| FR-016 | P1 | built | Display name is the only required profile field |
+| FR-017 | P0 | built | Duplicate join returns existing membership |
+| FR-020 | P0 | built | Directory returns active members only; keyset paging and exact counts since 925f637 |
+| FR-021 | P0 | built | Create offer or request listing; no entries |
+| FR-022 | P0 | built | Edit, pause, resume, archive own listing |
+| FR-023 | P0 | built | Filter by type and text; paginated |
+| FR-024 | P1 | not built | Member reports not built |
+| FR-025 | P1 | partial | Members-only pages require session; no-index directive absent |
+| FR-030 | P0 | built | Propose to active member in same network |
+| FR-031 | P0 | built | Amount, limit and effect preview on review page |
+| FR-032 | P0 | built | Accept posts both entries atomically; limit re-checked |
+| FR-033 | P0 | built | Decline and withdraw release reservation |
+| FR-034 | P0 | built | Scheduled expiry, idempotent, injected clock |
+| FR-035 | P0 | built | Idempotency on propose, accept, decline, cancel, reverse |
+| FR-036 | P0 | built | Concurrent accepts for last credit: one succeeds |
+| FR-037 | P1 | built | Plain-text note and listing reference on proposal |
+| FR-038 | P1 | partial | Dashboard lists pending items; no inbox, unread state or outcome notices |
+| FR-050 | P0 | built | Balance, limit, available, reserved and time shown |
+| FR-051 | P0 | built | Reverse-chronological history with status and counterparty |
+| FR-052 | P0 | built | Read-only ledger verification from admin page and CLI |
+| FR-053 | P1 | built | Pending view paged; dashboard shows 100 newest pending |
+| FR-054 | P1 | partial | BalanceAt in service only; no UI or API |
+| FR-060 | P0 | built | Set or remove override with reason; audited |
+| FR-061 | P0 | built | Suspend and restore with reason; audited |
+| FR-062 | P0 | built | Admin adjustment with reason; two entries |
+| FR-063 | P0 | built | List, revoke invitations; approve or deny join requests |
+| FR-064 | P1 | partial | Default flag in web admin only; no API route |
+| FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute |
+| FR-066 | P1 | built | Admin reversal via API with reason |
+| FR-067 | P1 | partial | Admin home shows pending-member count only |
+| FR-068 | P1 | partial | CloseNetwork refuses with blockers; no web or API caller |
+| FR-069 | P0 | built | Last-admin guard; role changes audited |
+| FR-070 | P0 | built | Open dispute within window by party on completed trade |
+| FR-071 | P0 | built | Postings unchanged on open, withdraw, dismiss |
+| FR-072 | P0 | built | Party and proposer conflicts refused |
+| FR-073 | P0 | built | Dismissed, upheld, partially upheld with rationale |
+| FR-074 | P0 | built | Blocked reversal enters posting_pending; override then retry |
+| FR-075 | P1 | built | Opener withdraws before decision |
+| FR-076 | P1 | not built | Response by other party and response period not built |
+| FR-077 | P0 | built | Window measured from completion with server clock |
+| FR-078 | P1 | not built | Re-review of a decision not built |
+| FR-080 | P0 | built | Sweep: every command writes one audit event |
+| FR-081 | P0 | built | Audit event carries required fields |
+| FR-082 | P0 | partial | Admin reads full audit; member and reviewer views exist in service only |
+| FR-083 | P0 | built | No update or delete path; triggers |
+| FR-084 | P1 | built | Admin audit filters by action, actor, target, dates; paged |
+| FR-085 | P2 | built | Hash chain built ahead of P2 deferral (DEC-044); not keyed |
+| FR-090 | P0 | built | Member exports own history as CSV or JSON |
+| FR-091 | P0 | built | Admin ledger export with manifest and checksums |
+| FR-092 | P0 | built | Members export scope with role and limit fields |
+| FR-093 | P0 | built | Audit export scope with manifest |
+| FR-094 | P1 | built | Full export scope incl. closed networks |
+| FR-095 | P1 | partial | Export buffered in memory by API adapter; no streaming or size gates |
+
 ## 0. How to read this file
 
 - Each requirement has: **ID**, **priority** (P0 = MVP-blocking, P1 = MVP, P2 = post-MVP), **rationale**, and **acceptance criteria** written as observable, testable checks.
@@ -490,11 +568,11 @@ Counts are a summary for planning and are checked against the file in the tracea
 
 ## 12. Open questions
 
-- **OQ-FR-1 (product owner).** Whether non-administrator members may send invitations in invite mode (see also OQ-PER-1). Current spec: administrators only.
+- **OQ-FR-1 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-053.
 - **OQ-FR-2 (product owner, counsel-reviewed where relevant).** Default response period for disputes (FR-076), and whether a decision may be recorded without a response.
 - **OQ-FR-3 (product owner and QA).** Size and duration thresholds for FR-095.
-- **OQ-FR-4 (product owner).** Whether members see the reviewer's identity in dispute decisions (FR-073). Current spec: visible to administrators; visible to parties per the policy in [09-security-privacy.md](09-security-privacy.md).
-- **OQ-FR-5 (product owner).** Whether listing prices are required or optional for the MVP. Current spec: optional (FR-021).
-- **OQ-FR-6 (product owner).** Whether FR-012 (open join) is in the MVP or only invite and approval. Current spec: P1, so it may slip without blocking the MVP gate if the product owner records a deferral.
+- **OQ-FR-4 (product owner).** Whether members see the reviewer's identity in dispute decisions (FR-073). Current spec: visible to administrators; visible to parties per the policy in [09-security-privacy.md](09-security-privacy.md). Raised by the build: DEC-077 in [DECISIONS.md](../DECISIONS.md).
+- **OQ-FR-5 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
+- **OQ-FR-6 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
 
 Open questions are labelled `OQ-FR-n` and are to be consolidated into [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).

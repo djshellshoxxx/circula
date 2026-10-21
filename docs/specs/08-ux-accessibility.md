@@ -9,6 +9,79 @@ Normative terms follow [00-conventions.md](00-conventions.md) section 1. WCAG re
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 31, not built 7, partial 22.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| UX-001 | P0 | built | Navigation by role; hidden pages return not-found or forbidden |
+| UX-002 | P0 | partial | Home reachable in three activations not measured |
+| UX-003 | P1 | built | Network switcher and separate network pages |
+| UX-004 | P0 | built | In credit, In debt, Level labels |
+| UX-005 | P0 | partial | Sign and words used; greyscale check not run |
+| UX-006 | P0 | built | Accessible name spells out direction in words |
+| UX-007 | P0 | built | Help text explains sign convention |
+| UX-008 | P0 | built | Network unit name and decimals; no currency symbols |
+| UX-009 | P0 | built | Balance card shows balance, limit, reserved, available |
+| UX-010 | P0 | built | Available labelled as available to spend with help link |
+| UX-011 | P0 | built | Text states credit in use against limit |
+| UX-012 | P1 | not built | Credit-use warning notice not built (OQ-UX-02) |
+| UX-013 | P0 | built | Direction in words per transaction line |
+| UX-014 | P0 | built | Pending section excluded from balance |
+| UX-015 | P0 | built | Completed rows show posted time |
+| UX-016 | P0 | built | Status labels and explanations; accepted not shown |
+| UX-017 | P1 | partial | Reversal and adjustment rows exist; link to original not verified |
+| UX-018 | P0 | built | Review step before accept, propose, dispute |
+| UX-019 | P0 | built | Confirmation message after posting |
+| UX-020 | P0 | built | Refusal copy names cause and that nothing changed |
+| UX-021 | P0 | partial | Error summary and field messages present; not verified against all codes |
+| UX-022 | P0 | partial | Error summary present; focus move and value retention not verified |
+| UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
+| UX-024 | P1 | not built | Member time zone not supported; times shown in server zone |
+| UX-025 | P0 | built | Generic 5xx page with request reference |
+| UX-026 | P0 | partial | Live region on some pages; asynchronous announcements not verified |
+| UX-027 | P0 | partial | Disabled controls explained in text; not audited for all |
+| UX-028 | P0 | partial | Loading state not implemented; empty and error states present |
+| UX-029 | P0 | built | Permission failure page with link home |
+| UX-030 | P0 | built | Two-minute warning with Stay signed in extension |
+| UX-031 | P1 | partial | Suspended notice not verified in templates |
+| UX-032 | P0 | built | Confirmation step names object for remove and cancel |
+| UX-033 | P0 | partial | Single-column layout with media queries; 320px checked by manual QA only |
+| UX-034 | P0 | partial | Resize and reflow not measured |
+| UX-035 | P0 | partial | Target sizes not measured |
+| UX-036 | P0 | partial | No orientation lock; not tested |
+| UX-037 | P1 | not built | Stacked rows for wide tables not built |
+| UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
+| UX-039 | P0 | partial | Reading order by template; not automated |
+| UX-040 | P0 | partial | Focus outline present in CSS; not automated |
+| UX-041 | P0 | built | Skip link to main |
+| UX-042 | P0 | built | No drag interactions |
+| UX-043 | P0 | built | Actions fire on submit and link activation |
+| UX-044 | P0 | built | Page title includes network name and screen |
+| UX-045 | P0 | built | Semantic lists, tables, landmarks |
+| UX-046 | P0 | built | Document language en |
+| UX-047 | P1 | not built | Strings not externalised into catalogues |
+| UX-048 | P0 | built | Visible labels and autocomplete |
+| UX-049 | P1 | partial | Help link in same place not verified |
+| UX-050 | P0 | built | Copy avoids money and cash wording for credits |
+| UX-051 | P0 | built | Sign-in form allows paste; no cognitive test |
+| UX-052 | P0 | partial | Recovery not built; registration response uniform |
+| UX-053 | P0 | not built | Second factor not built |
+| UX-054 | P0 | partial | No automated WCAG checker in CI; structural tests only |
+| UX-055 | P0 | not built | Keyboard-only walkthrough not recorded for release |
+| UX-056 | P0 | not built | Screen-reader pass not recorded |
+| UX-057 | P0 | partial | Dark scheme token set present; contrast not measured |
+| UX-058 | P1 | built | Reduced motion media query present |
+| UX-059 | P1 | built | Session warning can be extended |
+| UX-060 | P0 | partial | Defect logging process not evidenced in repo |
+
 ## 1. Principles
 
 1. **Direction is unmistakable.** A reader MUST be able to tell whether a balance or a transaction increases or decreases their balance from text alone (section 4).
@@ -178,12 +251,12 @@ Rules that apply to all three states:
 
 ## 12. Open questions
 
-- **OQ-UX-01 (decision needed):** Whether the MVP includes a dark colour scheme. If it does, UX-057 applies to both schemes.
+- **OQ-UX-01 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-055.
 - **OQ-UX-02 (decision needed):** Warning threshold for credit use (UX-012, default 80 percent) and session warning lead time (UX-030, default 2 minutes).
-- **OQ-UX-03 (decision needed):** MVP languages beyond English (UX-046, UX-047).
+- **OQ-UX-03 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
 - **OQ-UX-04 (decision needed, counsel):** Final wording of balance and credit explanations (UX-007, UX-050). Copy must not assert monetary value, redemption, or regulatory status. Qualified counsel review is required before launch.
-- **OQ-UX-05 (assumption):** Trades always have exactly two parties and a single amount; no multi-party or split-payment screens exist in the MVP.
+- **OQ-UX-05 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
 - **OQ-UX-06 (verification):** The WCAG 2.2 success-criterion numbers cited in this document are taken from the W3C Recommendation and MUST be checked against the published text by the accessibility reviewer before the first release. Access date and URL to be recorded in that review.
-- **OQ-UX-07 (assumption):** Trade acceptance and proposal screens do not need a per-member "remember my choice" preference in the MVP.
+- **OQ-UX-07 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-054.
 
 Cross-references: domain definitions [03-domain-model.md](03-domain-model.md); functional requirements [04-functional-requirements.md](04-functional-requirements.md); API operations and error codes [07-api-contract.md](07-api-contract.md); security and sign-in [09-security-privacy.md](09-security-privacy.md); governance announcements [10-governance-operations.md](10-governance-operations.md); test plan [12-quality-test-plan.md](12-quality-test-plan.md); decisions [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).

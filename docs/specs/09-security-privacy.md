@@ -8,6 +8,53 @@ This document does not claim anonymity, cryptographic guarantees for ledger cont
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 8, deferred 1, not built 7, partial 18.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| SEC-001 | P0 | partial | Argon2id PHC with per-password salt; benchmark for DEC-006 not recorded |
+| SEC-002 | P0 | partial | Length 12 enforced; breached-password check not wired (PasswordDenied unset) |
+| SEC-003 | P0 | partial | Server sessions, cookie attributes, password change revokes; role-specific timeouts not built |
+| SEC-004 | P0 | partial | CSRF tokens on unsafe methods; token bound to random cookie, not to session |
+| SEC-005 | P0 | partial | Login and sign-up responses uniform; recovery not built |
+| SEC-006 | P0 | partial | Atomic per-login throttle and per-address limiter via trusted proxies; no per-network or invitation limits |
+| SEC-007 | P1 | not built | MFA not built |
+| SEC-008 | P0 | not built | Account recovery not built |
+| SEC-009 | P0 | built | Default deny; authorisation matrix test |
+| SEC-010 | P0 | built | Self-approval, conflicts, last-admin and operator-grant refusals |
+| SEC-011 | P1 | not built | No dual control; adjustments post at once |
+| SEC-012 | P0 | partial | Audit in same unit for admin actions; notices to affected members not built |
+| SEC-013 | P0 | partial | No operator role reads network data in product; break-glass not built |
+| SEC-014 | P0 | partial | Minimal profile fields; data inventory document absent |
+| SEC-015 | P0 | built | Network-scoped queries and cross-network tests |
+| SEC-016 | P0 | partial | Members-only directory; no-index directive absent |
+| SEC-017 | P0 | built | Member and admin scopes; CSV formula neutralisation; 24h download expiry |
+| SEC-018 | P0 | not built | No pseudonymisation or erasure on departure |
+| SEC-019 | P0 | partial | Audit excludes secrets; admin-only read path; member read in service only |
+| SEC-020 | P0 | partial | RedactSecrets and route templates in logs; no log-wide canary scan |
+| SEC-021 | P1 | not built | Log retention not implemented |
+| SEC-022 | P0 | built | Refuses plain HTTP on non-loopback unless explicit; Secure cookies forced |
+| SEC-023 | P0 | built | CSP, frame-ancestors, no-store, same-origin scripts |
+| SEC-024 | P0 | built | Safe next parsing; html/template; integer amounts |
+| SEC-025 | P1 | not built | Abuse reporting not built |
+| SEC-026 | P1 | not built | Velocity and reciprocal signals not built |
+| SEC-027 | P0 | partial | Secrets from env or files; rotation procedure not documented for session key |
+| SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600 |
+| SEC-029 | P1 | partial | Module versions pinned; govulncheck and SBOM module list in CI; dependency checksum failure test not present |
+| SEC-030 | P0 | partial | Incident contacts and failure table in docs/ops; drills not recorded |
+| SEC-031 | P1 | built | SECURITY.md with private reporting channel; owner approval of contact pending (DEC-026) |
+| SEC-032 | P1 | partial | Grant defaults to zero; cap and open-mode confirmation not built |
+| SEC-033 | P1 | partial | Tests cover most P0 SEC items; independent review not performed |
+| SEC-034 | P2 | deferred | Tamper-evident option deferred; unkeyed chain already present (DEC-044) |
+
 ## 1. Assets
 
 | ID | Asset | Why it matters | Primary home |
@@ -389,7 +436,7 @@ The full procedure is SEC-030. In summary: detect (monitoring in [11](11-deploym
 5. Recovery channel when no verified email exists (DEC-009).
 6. Platform operator break-glass technical controls and notice period (DEC-014).
 7. Retention periods for logs, backups and personal data (DEC-019, DEC-020); counsel review of the erasure versus append-only ledger trade-off (RSK entries).
-8. Tamper-evident audit chain timing (DEC-015).
+8. Tamper-evident audit chain timing (DEC-015). As built in part: unkeyed chain and head (DEC-044); keyed chain still open under DEC-015.
 9. Vulnerability disclosure contact (DEC-026).
 10. Whether the threshold for velocity signals (SEC-026) is a product decision or a test-engineering default.
 11. Relationship to [05](05-architecture.md) and [06](06-data-ledger-audit.md) identifiers once those specs are finalised: this document references them by file and prefix, and cross-ID bindings will be checked at integration.

@@ -9,6 +9,44 @@ This document uses the normative terms and glossary defined in [00-conventions.m
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 11, deferred 1, not built 2, partial 11.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| ARC-001 | P0 | built | One executable per target; no edition split |
+| ARC-002 | P0 | partial | Service is the write path; cmd reads SQLite directly for some checks |
+| ARC-003 | P0 | built | Adapters map and render; rules in service |
+| ARC-004 | P0 | partial | Store interface exists but lives beside SQLite; no contract suite for another store |
+| ARC-005 | P0 | built | Only postTx writes entries and balances |
+| ARC-006 | P0 | built | Per-account serialisation via write gate and BEGIN IMMEDIATE |
+| ARC-007 | P0 | built | Network scoping in queries and tests |
+| ARC-008 | P0 | partial | No operator API route; host-level CLI restore and SQL access remain outside service |
+| ARC-009 | P1 | not built | Break-glass access not built |
+| ARC-010 | P0 | partial | Input limits and tests exist; trust-boundary checklist and fuzzing not run |
+| ARC-011 | P0 | built | One writer per database file; lock refuses second holder |
+| ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
+| ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done |
+| ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
+| ARC-015 | P0 | partial | Verify on demand and in hourly job; scheduled runs are not recorded (SVC-01) |
+| ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace is 30 s, spec says 10 s |
+| ARC-017 | P0 | partial | Semantic server-rendered HTML; no automated WCAG tool in CI |
+| ARC-018 | P1 | partial | Layering by convention; no CI import-rule check |
+| ARC-019 | P0 | built | CI builds all five targets from one commit |
+| ARC-020 | P0 | partial | Export through service; documented reference parser absent |
+| ARC-021 | P1 | built | Clock and IDs injected into service |
+| ARC-022 | P1 | partial | Structured logs, request IDs, metrics; posting counters not present |
+| ARC-023 | P1 | partial | Config from file, env and flags; secret files; no repository secret scan in CI |
+| ARC-024 | P1 | not built | No dependency licence manifest |
+| ARC-025 | P2 | deferred | Federation, mobile, payment and tokenisation not built; no route |
+
 ## 1. Architectural summary
 
 Circula is one server program, built from one codebase, that can run as:
@@ -300,7 +338,7 @@ Risks in other areas are recorded in 13.
 - **OQ-ARC-01 (decision needed):** Confirm that centralised hosting is supported in the MVP launch scope or deferred. Recommended default: architecture supports both; hosted launch gated.
 - **OQ-ARC-02 (decision needed):** Storage layout for hosted multi-network: one database file per network (recommended: simpler isolation, export and closure) or one shared database with network id scoping (smaller operational footprint, weaker isolation). Owner: architecture lead with operations.
 - **OQ-ARC-03:** Maximum acceptable RTO/RPO for the hosted service. Placeholders in ARC-016 require product approval.
-- **OQ-ARC-04 (assumption):** Whether `accepted` is ever externally visible. This spec assumes acceptance and posting occur in one atomic unit in the MVP, so the `accepted` status is internal. If a two-phase flow is required (for example, a counterparty confirmation after acceptance), 03 and 06 must be revised.
+- **OQ-ARC-04 (resolved as built).** Question moved to [DECISIONS.md](../DECISIONS.md): see DEC-036. Owner question on visibility stays open: DEC-074.
 - **OQ-ARC-05 (decision needed):** Operator break-glass expiry default (ARC-009 proposes 4 hours).
 
 Cross-references: domain rules [03-domain-model.md](03-domain-model.md); data [06-data-ledger-audit.md](06-data-ledger-audit.md); API [07-api-contract.md](07-api-contract.md); UX [08-ux-accessibility.md](08-ux-accessibility.md); security [09-security-privacy.md](09-security-privacy.md); operations [11-deployment-operations.md](11-deployment-operations.md); test plan [12-quality-test-plan.md](12-quality-test-plan.md).

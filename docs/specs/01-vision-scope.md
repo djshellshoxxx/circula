@@ -6,6 +6,31 @@ Terms such as *network*, *member*, *credit*, *transaction* and *system account* 
 
 ---
 
+
+
+
+
+## Build status (as built)
+
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Summary: built 5, not built 1, partial 6.
+
+| ID | Priority | Status | Note |
+|---|---|---|---|
+| VIS-001 | P0 | partial | Help text and dashboard copy avoid redeemable/money wording; no review checklist run |
+| VIS-002 | P0 | partial | Help text says nobody is obliged to accept credits; no network "about" page |
+| VIS-003 | P0 | built | Cross-network ids return not-found in service and API |
+| VIS-004 | P0 | built | LED invariant tests present; run in go test |
+| VIS-005 | P0 | built | Policy stored per network; bounds tested; prospective versions |
+| VIS-006 | P0 | not built | Completeness gate not met: P0/P1 gaps listed in 04 and 09-11 status tables |
+| VIS-007 | P0 | partial | One artefact per target from package-release.sh; clean-machine install not tested |
+| VIS-008 | P1 | partial | Structural accessibility tests only; WCAG tooling not run |
+| VIS-009 | P1 | partial | Export round trip implemented; import (needed for round trip) deferred |
+| VIS-010 | P1 | partial | Entity list in 06 exists; no personal-data inventory document |
+| VIS-011 | P1 | built | No billing or payment-provider code; "payment" is trade wording only |
+| VIS-012 | P2 | built | No route for deferred capabilities in routes.go |
+
 ## 1. Purpose and statement of limits
 
 Circula is software for operating a **community mutual-credit network**. Members provide goods or services, receive a positive balance when they provide value, and use credits earned to obtain value from other members. Circula records these exchanges as balanced ledger postings, enforces the network's configured rules, and keeps an audit trail.
