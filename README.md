@@ -30,19 +30,19 @@ This is an experiment in economic coordination, not a promise to replace existin
 6. **Privacy by design:** collect the minimum information needed and make visibility and export permissions explicit.
 7. **Interoperability by consent:** future network connections should be opt-in, transparent, and governed by participating networks.
 
-## What is in the repository
-
-The project is currently in its documentation and design stage. The repository contains draft foundational specifications and a list of future concepts for community review. It does not yet contain a working application.
-
-- [Foundational specifications](docs/specs/README.md): purpose, scope, roles, domain rules, MVP requirements, architecture, data, API, UX, security, governance, operations, and verification.
-- [Future brainstorming ideas](docs/brainstorming/disruptive-future-ideas.md): possible extensions for increasing Circula’s reach and social impact. These are concepts for discussion, not approved requirements.
-- [Specification authoring prompt](prompts/create-foundational-specs.md): original scope and completion checklist.
-
 ## Initial MVP direction
 
 The draft MVP focuses on network setup, membership, an offers and requests directory, transaction proposals and acceptance, balance and history views, administration, disputes, audit history, and basic data exports. The [specifications index](docs/specs/README.md) links to the detailed requirements and unresolved decisions.
 
-Ideas such as cross-network exchange, community reserves, member-controlled credentials, and participatory governance experiments are intentionally kept in the brainstorming list until the project owner and prospective networks choose what belongs in a later roadmap.
+Ideas such as cross-network exchange, community reserves, member-controlled credentials, and participatory governance experiments are intentionally kept in the [future brainstorming list](docs/brainstorming/disruptive-future-ideas.md) until the project owner and prospective networks choose what belongs in a later roadmap.
+
+## Sustainable business and profit options
+
+Circula can pursue commercial success by selling useful operations and expertise around open, community-controlled software. The strongest fit to explore is a free, inspectable core with paid convenience, reliability, and support. That can create a viable business while allowing communities to self-host, export their records, and avoid paying a toll on every unit of mutual credit.
+
+Potential revenue paths include hosted network subscriptions, managed self-hosted deployments, backup and recovery services, organization-level administration features, migration and onboarding, training, integrations, and paid support. Federation or clearing services could be considered later if participating networks define transparent limits and governance. The product should earn from operating the software and helping networks succeed, not from controlling or speculating on their balances.
+
+The business model is undecided. Pricing, software licensing, company structure, and any paid network services need separate evaluation. The detailed options, tradeoffs, and staged approach are in [Business model options](docs/brainstorming/business-model-options.md).
 
 ## What Circula does not claim
 
@@ -54,8 +54,17 @@ Ideas such as cross-network exchange, community reserves, member-controlled cred
 
 Any future feature involving conversion, redemption, payment processing, or other legally significant behavior requires separate product definition and qualified jurisdiction-specific review.
 
+## What is in the repository
+
+The project is currently in its documentation and design stage. The repository contains draft foundational specifications and future concepts for community review. It does not yet contain a working application.
+
+- [Foundational specifications](docs/specs/README.md): purpose, scope, roles, domain rules, MVP requirements, architecture, data, API, UX, security, governance, operations, and verification.
+- [Future disruptive ideas](docs/brainstorming/disruptive-future-ideas.md): possible extensions for increasing Circula’s reach and social impact. These are concepts for discussion, not approved requirements.
+- [Business model options](docs/brainstorming/business-model-options.md): possible ways to make the software and related services commercially sustainable.
+- [Specification authoring prompt](prompts/create-foundational-specs.md): original scope and completion checklist.
+
 ## Contributing and next steps
 
-The first step is to review the [foundational specifications](docs/specs/README.md), especially the open decisions on hosting, pending credit reservations, membership, privacy retention, accessibility, and service targets. The brainstorming list is a place to propose ideas and record benefits, risks, and questions before turning any concept into a requirement.
+The first step is to review the [foundational specifications](docs/specs/README.md), especially the open decisions on hosting, pending credit reservations, membership, privacy retention, accessibility, and service targets. The brainstorming lists are places to propose ideas and record benefits, risks, and questions before turning concepts into requirements.
 
 As implementation begins, contribution guidance, supported deployment targets, and release criteria should be added here and linked from the specs index.
