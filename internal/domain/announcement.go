@@ -16,6 +16,8 @@ type Announcement struct {
 	EffectiveAt time.Time
 	DeletedAt   *time.Time
 	DeletedBy   string
+	// SupersedesID names the earlier announcement this one replaces ("" = none).
+	SupersedesID string
 }
 
 // Audit actions for announcements and the person time-zone preference.

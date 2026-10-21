@@ -42,15 +42,16 @@ func ifNoneMatch(header, etag string) bool {
 }
 
 type announcementDTO struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Body        string `json:"body"`
-	PublishedAt string `json:"published_at"`
-	EffectiveAt string `json:"effective_at"`
+	ID           string `json:"id"`
+	Title        string `json:"title"`
+	Body         string `json:"body"`
+	PublishedAt  string `json:"published_at"`
+	EffectiveAt  string `json:"effective_at"`
+	SupersedesID string `json:"supersedes_id,omitempty"`
 }
 
 func toAnnouncement(a *domain.Announcement) announcementDTO {
-	return announcementDTO{ID: a.ID, Title: a.Title, Body: a.Body, PublishedAt: ts(a.PublishedAt), EffectiveAt: ts(a.EffectiveAt)}
+	return announcementDTO{ID: a.ID, Title: a.Title, Body: a.Body, PublishedAt: ts(a.PublishedAt), EffectiveAt: ts(a.EffectiveAt), SupersedesID: a.SupersedesID}
 }
 
 func (s *server) listAnnouncements(admin bool) handlerFunc { // API-064
@@ -81,14 +82,15 @@ func (s *server) listAnnouncements(admin bool) handlerFunc { // API-064
 
 func (s *server) createAnnouncement(c *reqCtx) error { // API-064
 	var in struct {
-		Title       string  `json:"title"`
-		Body        string  `json:"body"`
-		EffectiveAt *string `json:"effective_at"`
+		Title        string  `json:"title"`
+		Body         string  `json:"body"`
+		EffectiveAt  *string `json:"effective_at"`
+		SupersedesID string  `json:"supersedes_id"`
 	}
 	if err := c.decode(&in); err != nil {
 		return err
 	}
-	ai := service.AnnouncementInput{Title: in.Title, Body: in.Body, IdempotencyKey: c.idemKey}
+	ai := service.AnnouncementInput{Title: in.Title, Body: in.Body, SupersedesID: in.SupersedesID, IdempotencyKey: c.idemKey}
 	if in.EffectiveAt != nil {
 		t, err := parseTime("effective_at", *in.EffectiveAt)
 		if err != nil {

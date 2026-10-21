@@ -24,7 +24,10 @@ type AnnouncementInput struct {
 	Body  string
 	// EffectiveAt is when members start to see it; zero means now. Not in the past by more than
 	// a minute (clock skew), not more than a year ahead.
-	EffectiveAt    time.Time
+	EffectiveAt time.Time
+	// SupersedesID optionally names a live announcement this one replaces. The old one is
+	// hidden once this one is in force; it is never edited.
+	SupersedesID   string
 	IdempotencyKey string `json:"-"`
 }
 
@@ -83,14 +86,26 @@ func (s *Service) CreateAnnouncement(ctx context.Context, actor domain.Actor, ne
 			if err != nil {
 				return "", err
 			}
+			sup := strings.TrimSpace(in.SupersedesID)
+			if sup != "" {
+				old, err := repo.GetAnnouncement(netID, sup)
+				if err != nil || old.DeletedAt != nil {
+					return "", domain.Invalid("supersedes_id", "must name a live announcement of this network")
+				}
+				if taken, err := repo.AnnouncementSuperseded(netID, sup); err != nil {
+					return "", err
+				} else if taken {
+					return "", domain.InvalidState("announcement is already superseded")
+				}
+			}
 			a := &domain.Announcement{ID: s.id(), NetworkID: netID, Title: title, Body: body, CreatedBy: p.memberID(),
-				PublishedAt: now, EffectiveAt: eff}
+				PublishedAt: now, EffectiveAt: eff, SupersedesID: sup}
 			if err := repo.InsertAnnouncement(a); err != nil {
 				return "", err
 			}
 			return a.ID, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActAnnouncementCreated,
 				TargetType: "announcement", TargetID: a.ID, IdemRef: keyRef(in.IdempotencyKey),
-				After: map[string]any{"effective_at": eff.UnixMilli()}})
+				After: map[string]any{"effective_at": eff.UnixMilli(), "supersedes": sup}})
 		}, func(id string) (*domain.Announcement, error) { return repo.GetAnnouncement(netID, id) })
 		return err
 	})
@@ -158,7 +173,7 @@ func (s *Service) listAnnouncements(ctx context.Context, actor domain.Actor, net
 		if err != nil {
 			return err
 		}
-		f := store.AnnouncementFilter{AfterID: pg.AfterID, Limit: clampPage(pg)}
+		f := store.AnnouncementFilter{AfterID: pg.AfterID, Limit: clampPage(pg), SupersededBefore: s.now()}
 		if !admin {
 			f.EffectiveBy = s.now()
 		}

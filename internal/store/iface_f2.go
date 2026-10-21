@@ -21,6 +21,9 @@ type PrefsRepo interface {
 type AnnouncementFilter struct {
 	// EffectiveBy, when set, hides announcements that take effect after it.
 	EffectiveBy time.Time
+	// SupersededBefore, when set, hides announcements replaced by one that is live and
+	// effective by that time.
+	SupersededBefore time.Time
 	// IncludeDeleted also returns retracted announcements.
 	IncludeDeleted bool
 	AfterID        string // keyset: ids strictly below
@@ -31,6 +34,8 @@ type AnnouncementFilter struct {
 type AnnouncementRepo interface {
 	InsertAnnouncement(a *domain.Announcement) error
 	GetAnnouncement(netID, id string) (*domain.Announcement, error)
+	// AnnouncementSuperseded reports whether a live announcement already replaces id.
+	AnnouncementSuperseded(netID, id string) (bool, error)
 	// RetractAnnouncement stamps deleted_at/deleted_by; false when already retracted.
 	RetractAnnouncement(netID, id, by string, at time.Time) (bool, error)
 	ListAnnouncements(netID string, f AnnouncementFilter) ([]*domain.Announcement, error)

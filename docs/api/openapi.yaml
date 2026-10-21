@@ -2579,6 +2579,7 @@ components:
         body: {type: string, maxLength: 4000}
         published_at: {type: string, format: date-time}
         effective_at: {type: string, format: date-time}
+        supersedes_id: {$ref: '#/components/schemas/Id'}
     CreateAnnouncementRequest:
       type: object
       required: [title, body]
@@ -2587,6 +2588,7 @@ components:
         title: {type: string, minLength: 1, maxLength: 120}
         body: {type: string, minLength: 1, maxLength: 4000}
         effective_at: {type: string, format: date-time}
+        supersedes_id: {description: A live announcement this one replaces. The replaced one disappears from lists once this one is in force; it is never edited., $ref: '#/components/schemas/Id'}
     AnnouncementPage:
       allOf:
         - $ref: '#/components/schemas/Page'
