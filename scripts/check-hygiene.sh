@@ -27,5 +27,13 @@ if grep -nEi 'drop[[:space:]]+(table|column)|delete[[:space:]]+from' internal/st
   grep -nEi 'drop[[:space:]]+(table|column)|delete[[:space:]]+from' internal/store/migrations/*.sql | grep -vi 'allow-destructive'
   fail=1
 fi
+# --- GOV-026 ----------------------------------------------------------------------------------------------------
+# Each hosted platform policy exists and carries a version and a date.
+for p in terms privacy operator-access suspension-categories incident-notification; do
+  f="docs/platform/$p.md"
+  if [ ! -f "$f" ] || ! grep -qE '^Version: .+' "$f" || ! grep -qE '^Date: [0-9]{4}-[0-9]{2}-[0-9]{2}$' "$f"; then
+    echo "GOV-026: $f missing or without Version:/Date: lines"; fail=1
+  fi
+done
 [ "$fail" -eq 0 ] && echo "hygiene checks: ok"
 exit "$fail"
