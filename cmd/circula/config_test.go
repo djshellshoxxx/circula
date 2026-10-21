@@ -37,6 +37,10 @@ var sampleValues = map[string]string{
 	"metrics-token-file":    "",
 	"backup-key-file":       "",
 	"mfa-secret-file":       "",
+	// require-encryption needs a key, so its only valid sample here is the non-default spelling of false.
+	"backup-require-encryption":  "f",
+	"backup-encryption-key-file": "",
+	"state-dir":                  "", // filled per test
 }
 
 // baseEnv returns a lookup that supplies the two required settings.
@@ -142,6 +146,9 @@ func TestEverySettingAcceptedByEverySource(t *testing.T) {
 		}
 		if d.key == "database" {
 			v = filepath.Join(dir, "x.db")
+		}
+		if d.key == "state-dir" {
+			v = dir
 		}
 		if d.key == "backup-dir" {
 			v = filepath.Join(dir, "bk")

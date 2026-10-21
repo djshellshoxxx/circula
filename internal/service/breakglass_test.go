@@ -33,7 +33,7 @@ func (w *world) auditActions(netID string) []string {
 	return out
 }
 
-func count(list []string, s string) int {
+func countStr(list []string, s string) int {
 	n := 0
 	for _, x := range list {
 		if x == s {
@@ -146,7 +146,7 @@ func TestBreakGlassAutoClose(t *testing.T) {
 	w.Clock.Advance(2 * time.Hour)
 	w.openBG(time.Hour)
 	acts := w.auditActions(w.net.ID)
-	if count(acts, domain.ActBreakGlassExpired) != 2 || count(acts, domain.ActBreakGlassOpened) != 3 {
+	if countStr(acts, domain.ActBreakGlassExpired) != 2 || countStr(acts, domain.ActBreakGlassOpened) != 3 {
 		t.Errorf("audit actions: %v", acts)
 	}
 }
@@ -159,10 +159,10 @@ func TestBreakGlassAuditRows(t *testing.T) {
 	tu.Must(w.Svc.CloseBreakGlass(w.Ctx, sys, b.ID, "done"))
 	netActs, platActs := w.auditActions(w.net.ID), w.auditActions("")
 	for _, a := range []string{domain.ActBreakGlassOpened, domain.ActBreakGlassRoleGranted, domain.ActBreakGlassClosed} {
-		if count(netActs, a) != 1 {
+		if countStr(netActs, a) != 1 {
 			t.Errorf("network scope lacks %s: %v", a, netActs)
 		}
-		if count(platActs, a) != 1 {
+		if countStr(platActs, a) != 1 {
 			t.Errorf("platform scope lacks %s: %v", a, platActs)
 		}
 	}
@@ -296,7 +296,7 @@ func TestBreakGlassCrossTenant(t *testing.T) {
 	_, err = w.Svc.ListBreakGlass(w.Ctx, scoped, w.net.ID, service.Page{})
 	wantCode(t, err, domain.ErrNotFound)
 	// Operator events of demo are not in other's audit log.
-	if count(w.auditActions(other.ID), domain.ActBreakGlassOpened) != 0 {
+	if countStr(w.auditActions(other.ID), domain.ActBreakGlassOpened) != 0 {
 		t.Error("break-glass event leaked into another network's audit log")
 	}
 }

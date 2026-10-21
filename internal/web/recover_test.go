@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	codeRe = regexp.MustCompile(`<code>([A-Z2-7]{4}(?:-[A-Z2-7]{4}){3})</code>`)
+	recCodeRe = regexp.MustCompile(`<code>([A-Z2-7]{4}(?:-[A-Z2-7]{4}){3})</code>`)
 	tempRe = regexp.MustCompile(`<code class="temp">([^<]+)</code>`)
 )
 
@@ -23,17 +23,17 @@ func TestWebRecoveryFlow(t *testing.T) {
 	b.mustContain(f, "0</strong> unused codes")
 	bad := b.post("/account/recovery-codes", f, url.Values{"password": {"not the password!"}})
 	b.mustContain(bad, "Current password: not correct")
-	if codeRe.MatchString(bad.Body) {
+	if recCodeRe.MatchString(bad.Body) {
 		t.Fatal("codes shown after a wrong password")
 	}
 	ok := b.post("/account/recovery-codes", f, url.Values{"password": {testPW}})
-	codes := codeRe.FindAllStringSubmatch(ok.Body, -1)
+	codes := recCodeRe.FindAllStringSubmatch(ok.Body, -1)
 	if len(codes) != 10 {
 		t.Fatalf("got %d codes\n%s", len(codes), snippet(ok.Body))
 	}
 	// shown once: reloading shows only the count
 	again := b.get("/account/recovery-codes")
-	if codeRe.MatchString(again.Body) {
+	if recCodeRe.MatchString(again.Body) {
 		t.Fatal("codes must not be shown a second time")
 	}
 	b.mustContain(again, "10</strong> unused codes")

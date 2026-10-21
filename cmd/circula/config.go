@@ -63,6 +63,9 @@ var settingDefs = []settingDef{
 	{key: "setup-secret-file", help: "file holding the one-time setup secret needed to create a network (FR-002); or env " + envPrefix + "SETUP_SECRET"},
 	{key: "metrics-token-file", help: "file holding a bearer token required for /metrics (SA-15); or env " + envPrefix + "METRICS_TOKEN"},
 	{key: "mfa-secret-file", help: "file holding the key that seals two-step sign-in secrets at rest (SEC-007); or env " + envPrefix + "MFA_SECRET"},
+	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
+	{key: "backup-require-encryption", def: "false", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019)"},
+	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 
@@ -74,6 +77,7 @@ var secretDefs = []struct{ name, fileKey string }{
 	{"metrics-token", "metrics-token-file"},
 	{"backup-key", "backup-key-file"},
 	{"mfa-secret", "mfa-secret-file"},
+	{"backup-encryption-key", "backup-encryption-key-file"},
 }
 
 // minSecretLen is the shortest accepted secret.
@@ -107,6 +111,11 @@ type Config struct {
 	MetricsToken string
 	BackupKey    []byte
 	MFASecret    []byte
+	// BackupEncryptionKey is the secret that encrypts backups at rest (OPS-019).
+	BackupEncryptionKey     []byte
+	BackupRequireEncryption bool
+	// StateDir holds runtime state such as the web signing key (SEC-027).
+	StateDir string
 }
 
 // resolved is one effective setting value and where it came from.
@@ -348,6 +357,17 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		}
 	}
 
+	if b, err := strconv.ParseBool(get("backup-require-encryption")); err != nil {
+		fail("backup-require-encryption", "must be true or false")
+	} else {
+		cfg.BackupRequireEncryption = b
+	}
+	if raw, ok := vals["state-dir"]; ok && raw.value != "" {
+		cfg.StateDir = filepath.Clean(raw.value)
+	} else if cfg.Database != "" {
+		cfg.StateDir = filepath.Dir(cfg.Database)
+	}
+
 	if len(errs) > 0 {
 		return nil, errors.Join(errs...)
 	}
@@ -477,7 +497,15 @@ func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
 			cfg.BackupKey = []byte(val)
 		case "mfa-secret":
 			cfg.MFASecret = []byte(val)
+		case "backup-encryption-key":
+			cfg.BackupEncryptionKey = []byte(val)
 		}
+	}
+	if len(cfg.BackupEncryptionKey) > 0 && bytes.Equal(cfg.BackupEncryptionKey, cfg.BackupKey) {
+		errs = append(errs, &settingError{key: "backup-encryption-key", msg: "must differ from backup-key; use separate keys"})
+	}
+	if cfg.BackupRequireEncryption && len(cfg.BackupEncryptionKey) == 0 {
+		errs = append(errs, &settingError{key: "backup-require-encryption", msg: "set, but no backup-encryption-key is configured"})
 	}
 	return errors.Join(errs...)
 }
@@ -531,4 +559,5 @@ func writeSecretStatus(w io.Writer, cfg *Config) {
 	fmt.Fprintf(w, "metrics-token = %s\n", state(cfg.MetricsToken != ""))
 	fmt.Fprintf(w, "backup-key = %s\n", state(len(cfg.BackupKey) > 0))
 	fmt.Fprintf(w, "mfa-secret = %s\n", state(len(cfg.MFASecret) > 0))
+	fmt.Fprintf(w, "backup-encryption-key = %s\n", state(len(cfg.BackupEncryptionKey) > 0))
 }
