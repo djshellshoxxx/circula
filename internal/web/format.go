@@ -3,6 +3,7 @@ package web
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -22,6 +23,9 @@ func unitFor(name string, v int64, dec int) string {
 		one *= 10
 	}
 	if abs64(v) == one {
+		return name
+	}
+	if strings.HasSuffix(strings.ToLower(name), "s") {
 		return name
 	}
 	return name + "s"

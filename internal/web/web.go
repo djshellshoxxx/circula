@@ -79,6 +79,10 @@ func newServer(svc *service.Service, opts Options) *server {
 	s.pages = mustLoadTemplates()
 	s.mux = http.NewServeMux()
 	static, _ := fs.Sub(assets, "static")
+	s.mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.WriteHeader(http.StatusNoContent)
+	})
 	s.mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(static)))
 	s.routes()
 	return s
