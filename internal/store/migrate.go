@@ -60,10 +60,18 @@ func SchemaVersion() int {
 // BEGIN IMMEDIATE transaction (DDL is transactional in SQLite), so a failed
 // migration leaves no partial schema (DAT-042). It refuses to run against a
 // database newer than the binary or one whose recorded names differ.
-func (s *SQLite) migrate(ctx context.Context) error {
+func (s *SQLite) migrate(ctx context.Context) error { return s.migrateTo(ctx, 0) }
+
+// migrateTo is migrate limited to versions up to limit (0 = all). Upgrade
+// tests use it to build a database at an earlier schema (DAT-047).
+func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
 	ms, err := loadMigrations()
 	if err != nil {
 		return err
+	}
+	all := ms
+	if limit > 0 && limit < len(ms) {
+		ms = ms[:limit]
 	}
 	conn, err := s.db.Conn(ctx)
 	if err != nil {
@@ -92,11 +100,11 @@ func (s *SQLite) migrate(ctx context.Context) error {
 		return err
 	}
 	for v, n := range applied {
-		if v > len(ms) {
-			return fmt.Errorf("store: database schema v%d is newer than this binary (v%d)", v, len(ms))
+		if v > len(all) {
+			return fmt.Errorf("store: database schema v%d is newer than this binary (v%d)", v, len(all))
 		}
-		if ms[v-1].name != n {
-			return fmt.Errorf("store: migration %d recorded as %q but binary has %q", v, n, ms[v-1].name)
+		if all[v-1].name != n {
+			return fmt.Errorf("store: migration %d recorded as %q but binary has %q", v, n, all[v-1].name)
 		}
 	}
 	for _, m := range ms {

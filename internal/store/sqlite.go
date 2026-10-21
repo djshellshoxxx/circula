@@ -46,6 +46,20 @@ func Open(ctx context.Context, path string) (*SQLite, error) {
 
 // OpenWith is Open with explicit options.
 func OpenWith(ctx context.Context, path string, opt Options) (*SQLite, error) {
+	return openAt(ctx, path, opt, 0)
+}
+
+// OpenAtVersion opens (creating if needed) the database but migrates it only
+// up to schema version v. It exists so upgrade tests can build a database as
+// an earlier release left it (DAT-047); production code uses Open.
+func OpenAtVersion(ctx context.Context, path string, v int) (*SQLite, error) {
+	if v < 1 || v > SchemaVersion() {
+		return nil, fmt.Errorf("store: schema version %d is not between 1 and %d", v, SchemaVersion())
+	}
+	return openAt(ctx, path, Options{}, v)
+}
+
+func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, error) {
 	busy := opt.BusyTimeout
 	if busy <= 0 {
 		busy = DefaultBusyTimeout
@@ -63,7 +77,7 @@ func OpenWith(ctx context.Context, path string, opt Options) (*SQLite, error) {
 	db.SetMaxOpenConns(8)
 	db.SetConnMaxLifetime(0)
 	s := &SQLite{db: db, gate: make(chan struct{}, 1)}
-	if err := s.migrate(ctx); err != nil {
+	if err := s.migrateTo(ctx, limit); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
