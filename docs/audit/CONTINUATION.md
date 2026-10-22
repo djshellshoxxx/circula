@@ -23,7 +23,9 @@ do not replace it with main or the older specification-only branch.
 1. Verify the integrated branches with unit/contract tests and vet; fix integration failures.
 2. Complete FR-064's missing API adapter with strict input, existing service authorization,
    OpenAPI contract coverage and assertions that flags never change the ledger.
-3. Re-audit remaining partial rows against code: COMPLETENESS.md contains historical
+3. Compare the older specification-only branch (`claude/sweet-turing-m3ftja`)
+   with the application's canonical specs and port any missing requirements without
+   replacing implemented modules. Re-audit remaining partial rows against code: COMPLETENESS.md contains historical
    rows already superseded by later changes. Prioritize P0 behavior over stale status text.
 4. Continue FR-054 historical balances, export resource bounds and other verified gaps.
 5. Run release checks and code/security review. Keep manual accessibility and independent
@@ -46,7 +48,7 @@ This is an in-progress checkpoint, not a claim that all specifications are imple
 - Focused restore-drill regression passes; the fresh-database full drill also passes
   with signature authentication enabled. This empty-database drill is not evidence
   of restoring a populated production instance.
-- Focused race check for FR-064 is pending compilation at this checkpoint.
+- `go test -race ./internal/api -run ^TestDefaultFlagAPI$` passes.
 - Published as PR #9 against `claude/circula-completeness`; full spec completion
   remains in progress. No production release or completion claim is made.
 
