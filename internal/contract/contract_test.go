@@ -15,6 +15,7 @@ import (
 	"sort"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
@@ -318,6 +319,8 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 			"response_period_days": 5, "re_review_window_days": 10, "limit_warning_percent": 90}})
 	h.do(412, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag), body: m{"reason": "again"}})
 	h.do(200, call{method: "GET", path: "/admin/members", token: adminT})
+	h.do(200, call{method: "PUT", path: "/admin/members/" + bobM.ID + "/default-flag", token: adminT, body: m{"default_flag": true, "reason": "review"}})
+	h.do(200, call{method: "PUT", path: "/admin/members/" + bobM.ID + "/default-flag", token: adminT, body: m{"default_flag": false, "reason": "cleared"}})
 	h.do(400, call{method: "GET", path: "/admin/members?status=weird", token: adminT, skipRequest: true})
 	h.do(200, call{method: "GET", path: "/admin/members?inactive=true", token: adminT})
 	h.do(400, call{method: "GET", path: "/admin/members?inactive=true&status=active", token: adminT, skipRequest: true})
@@ -426,9 +429,11 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 
 	// Dual control (SEC-011): above the threshold an adjustment waits for a second administrator.
 	adm2, adm2M := env.Member(admin, net, "admin2")
-	if err := env.Svc.AssignRole(env.Ctx, admin, net.ID, adm2M.ID, domain.RoleAdmin); err != nil {
+	if err := env.Svc.AssignRole(env.Ctx, domain.SystemActor("fixture"), net.ID, adm2M.ID, domain.RoleAdmin); err != nil {
 		t.Fatal(err)
 	}
+	// The second administrator must satisfy the anti-Sybil maturation period.
+	env.Clock.Advance(24 * time.Hour)
 	adm2T := h.token(adm2, rw...)
 	rec = h.do(200, call{method: "GET", path: "/admin/policy", token: adminT})
 	h.do(200, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", rec.Header().Get("ETag")),

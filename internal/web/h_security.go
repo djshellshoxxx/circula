@@ -36,6 +36,7 @@ var noticeText = map[string]string{
 	domain.NoticeRecoveryCodeUsed: "A recovery code was used to sign in.",
 	domain.NoticeTokenCreated:     "An API token was created.",
 	domain.NoticeTokenRevoked:     "An API token was revoked.",
+	domain.NoticeAdminGranted:     "A new administrator was appointed in one of your networks.",
 }
 
 type noticeView struct {
@@ -100,7 +101,7 @@ func (s *server) securityAck(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 // mfaRefusal maps second-factor service errors to page text. ok=false: use fail.
-func mfaRefusal(err error) (status int, summary string, fe []fieldErr, ok bool) {
+func mfaRefusal(err error, codeField string) (status int, summary string, fe []fieldErr, ok bool) {
 	var de *domain.Error
 	if !errors.As(err, &de) {
 		return 0, "", nil, false
@@ -112,7 +113,7 @@ func mfaRefusal(err error) (status int, summary string, fe []fieldErr, ok bool) 
 			case "password":
 				fe = append(fe, fieldErr{"password", "Password: not correct. Check it and try again."})
 			default:
-				fe = append(fe, fieldErr{"code", "Code: not correct. Use the current 6-digit code from your authenticator app" +
+				fe = append(fe, fieldErr{codeField, "Code: not correct. Use the current 6-digit code from your authenticator app" +
 					" (or an unused recovery code where allowed). Codes work once."})
 			}
 		}
@@ -141,39 +142,62 @@ type enrolData struct {
 	Enrol  *service.MFAEnrolment // set only on the response that shows the secret
 }
 
-func (s *server) showEnrol(w http.ResponseWriter, r *http.Request, c *rc, status int, p *page) {
-	en, err := s.svc.BeginMFAEnrolment(r.Context(), c.actor) // resumes the pending secret
+// showEnrol renders the setup key. Enrolment needs the current password (A3-03),
+// so it is asked for again here; when it is wrong the start page comes back
+// with that error instead.
+func (s *server) showEnrol(w http.ResponseWriter, r *http.Request, c *rc, status int, p *page, password string) {
+	en, err := s.svc.BeginMFAEnrolment(r.Context(), c.actor, password) // resumes the pending secret
+	d := &enrolData{Enrol: en}
 	if err != nil {
-		if st, sum, fe, ok := mfaRefusal(err); ok {
-			p.Summary, p.Errors = sum, append(p.Errors, fe...)
-			status = st
-		} else {
+		st, sum, fe, ok := mfaRefusal(err, "code")
+		if !ok {
+			s.fail(w, r, err)
+			return
+		}
+		p.Summary, p.Errors, status = sum, fe, st
+		if d.Status, err = s.svc.MFAStatus(r.Context(), c.actor); err != nil {
 			s.fail(w, r, err)
 			return
 		}
 	}
-	p.Title, p.D = "Turn on two-step sign-in", &enrolData{Enrol: en}
+	p.Title, p.D = "Turn on two-step sign-in", d
 	s.render(w, r, nil, "mfa_enrol", status, p)
 }
 
+func (s *server) enrolBlocked(w http.ResponseWriter, r *http.Request, c *rc) {
+	st, err := s.svc.MFAStatus(r.Context(), c.actor)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	s.render(w, r, nil, "mfa_enrol", 429, &page{Title: "Turn on two-step sign-in", D: &enrolData{Status: st},
+		Summary: "Too many attempts. Wait a few minutes and try again. Nothing changed."})
+}
+
 func (s *server) mfaEnrolBegin(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.showEnrol(w, r, c, 200, &page{})
+	key := "mfa|" + c.actor.PersonID
+	if s.pwFail.blocked(key) {
+		s.enrolBlocked(w, r, c)
+		return
+	}
+	s.showEnrol(w, r, c, 200, &page{}, r.PostFormValue("password"))
 }
 
 func (s *server) mfaEnrolConfirm(w http.ResponseWriter, r *http.Request, c *rc) {
 	key := "mfa|" + c.actor.PersonID
 	if s.pwFail.blocked(key) {
-		s.showEnrol(w, r, c, 429, &page{Summary: "Too many attempts. Wait a few minutes and try again. Nothing changed."})
+		s.enrolBlocked(w, r, c)
 		return
 	}
-	codes, err := s.svc.ConfirmMFAEnrolment(r.Context(), c.actor, r.PostFormValue("code"))
+	pw := r.PostFormValue("password")
+	codes, err := s.svc.ConfirmMFAEnrolment(r.Context(), c.actor, pw, r.PostFormValue("code"))
 	if err != nil {
-		if st, sum, fe, ok := mfaRefusal(err); ok {
+		if st, sum, fe, ok := mfaRefusal(err, "code"); ok {
 			if domain.CodeOf(err) == domain.CodeValidation {
 				s.pwFail.fail(key)
 			}
 			p := &page{Summary: sum, Errors: fe}
-			s.showEnrol(w, r, c, st, p)
+			s.showEnrol(w, r, c, st, p, pw)
 			return
 		}
 		s.fail(w, r, err)
@@ -191,7 +215,7 @@ func (s *server) mfaDisable(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	err := s.svc.DisableMFA(r.Context(), c.actor, r.PostFormValue("password"), r.PostFormValue("code"))
 	if err != nil {
-		if st, sum, fe, ok := mfaRefusal(err); ok {
+		if st, sum, fe, ok := mfaRefusal(err, "disable_code"); ok {
 			if domain.CodeOf(err) == domain.CodeValidation {
 				s.pwFail.fail(key)
 			}
@@ -214,7 +238,7 @@ func (s *server) mfaRecovery(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	codes, err := s.svc.RegenerateRecoveryCodes(r.Context(), c.actor, r.PostFormValue("code"))
 	if err != nil {
-		if st, sum, fe, ok := mfaRefusal(err); ok {
+		if st, sum, fe, ok := mfaRefusal(err, "regen_code"); ok {
 			if domain.CodeOf(err) == domain.CodeValidation {
 				s.pwFail.fail(key)
 			}

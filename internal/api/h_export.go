@@ -116,6 +116,9 @@ func (s *server) getArtefact(c *reqCtx) error { // API-065
 	if err != nil {
 		return err
 	}
+	if err := s.svc.AuthorizeExportDownload(c.r.Context(), c.actor, c.netID, exportScopes[e.dto.Scope]); err != nil {
+		return err // SA2-17: role is re-checked at download
+	}
 	sum := sha256.Sum256(e.file)
 	if hex.EncodeToString(sum[:]) != *e.dto.SHA256 { // DAT-040: only serve verified artefacts
 		return errInternal

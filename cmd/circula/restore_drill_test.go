@@ -15,6 +15,8 @@ func TestRestoreDrillScript(t *testing.T) {
 	if _, err := exec.LookPath("sh"); err != nil {
 		t.Skip("no sh")
 	}
+	// Restore authenticates the backup using the same configured signing key.
+	t.Setenv("CIRCULA_BACKUP_KEY", "restore-drill-fixture-signing-key-32")
 	dir := t.TempDir()
 	db := seedDatabase(t, dir)
 	var out, errOut bytes.Buffer

@@ -31,6 +31,7 @@ const (
 	NoticeRecoveryCodeUsed = "mfa.recovery_code_used"
 	NoticeTokenCreated     = "token.created"
 	NoticeTokenRevoked     = "token.revoked"
+	NoticeAdminGranted     = "admin.granted"
 )
 
 // SecurityNotice tells a person about a security-relevant change to their

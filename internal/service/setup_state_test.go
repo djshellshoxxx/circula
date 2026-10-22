@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/store"
 	tu "github.com/djshellshoxxx/circula/internal/testutil"
 )
@@ -88,5 +89,45 @@ func TestSetupSecretMarkRace(t *testing.T) {
 	wg.Wait()
 	if ok.Load() != 1 {
 		t.Fatalf("%d concurrent marks succeeded, want 1", ok.Load())
+	}
+}
+
+// SA2-16: creating the network and spending the setup secret are one
+// transaction; a second creation with the secret is refused and leaves nothing.
+func TestCreateNetworkConsumesSetupSecretAtomically(t *testing.T) {
+	e := tu.NewEnv(t)
+	p := e.Person("founder@example.org")
+	in := service.CreateNetworkInput{Name: "One", Slug: "one-net", CreatorDisplayName: "F", ConsumeSetupSecret: true}
+	if _, _, err := e.Svc.CreateNetwork(e.Ctx, p, in); err != nil {
+		t.Fatal(err)
+	}
+	if used, _ := e.Svc.SetupSecretUsed(e.Ctx); !used {
+		t.Fatal("secret not spent by CreateNetwork")
+	}
+	in.Slug, in.Name = "two-net", "Two"
+	if _, _, err := e.Svc.CreateNetwork(e.Ctx, p, in); domain.CodeOf(err) != domain.CodeConflict {
+		t.Fatalf("second creation: %v", err)
+	}
+	if n := countRows(t, e, "networks"); n != 1 {
+		t.Errorf("networks = %d, want 1", n)
+	}
+	// a failed creation (slug taken) does not spend the secret
+	if _, err := e.Svc.ResetSetupSecret(e.Ctx, domain.SystemActor("t")); err != nil {
+		t.Fatal(err)
+	}
+	in.Slug = "one-net"
+	if _, _, err := e.Svc.CreateNetwork(e.Ctx, p, in); err == nil {
+		t.Fatal("duplicate slug accepted")
+	}
+	if used, _ := e.Svc.SetupSecretUsed(e.Ctx); used {
+		t.Error("failed creation spent the secret")
+	}
+	// without the flag the secret state is untouched
+	in.Slug, in.ConsumeSetupSecret = "three-net", false
+	if _, _, err := e.Svc.CreateNetwork(e.Ctx, p, in); err != nil {
+		t.Fatal(err)
+	}
+	if used, _ := e.Svc.SetupSecretUsed(e.Ctx); used {
+		t.Error("flag-less creation spent the secret")
 	}
 }

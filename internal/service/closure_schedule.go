@@ -75,6 +75,9 @@ func (s *Service) ScheduleClosure(ctx context.Context, actor domain.Actor, netID
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := p.requireLasting(); err != nil {
+			return err
+		}
 		switch {
 		case p.net.Status == domain.NetworkClosed:
 			return domain.InvalidState("network is already closed")
@@ -131,6 +134,9 @@ func (s *Service) CancelClosure(ctx context.Context, actor domain.Actor, netID, 
 			return err
 		}
 		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		if err := p.requireLasting(); err != nil {
 			return err
 		}
 		if err := requireReason(reason); err != nil {
@@ -327,6 +333,9 @@ func (s *Service) VerifyClosureExport(ctx context.Context, actor domain.Actor, n
 			return err
 		}
 		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		if err := p.requireLasting(); err != nil {
 			return err
 		}
 		c = p.net.Closure

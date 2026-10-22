@@ -107,6 +107,25 @@ Reference run (development container, Go 1.26, v1 to v2): migration 27 ms, ledge
 transactions. Real databases with more audit rows or slower disks take longer; plan downtime with margin and measure on a
 copy (`circula migrate -dry-run` reports the pending versions without changing anything).
 
+## What changes for operators in this release line
+
+Review these before you restart; each is a behaviour change, not a schema change.
+
+- `restore` refuses a backup it cannot authenticate: configure `backup-key-file`, or pass `-allow-unsigned` for files you
+  trust (SA2-11).
+- `backup-require-encryption` is now `auto`: with a `backup-encryption-key`, plaintext backups are refused on restore.
+  Pass `-backup-require-encryption false` to restore an old plaintext backup.
+- `serve` warns when scheduled backups run without `backup-key`.
+- New setting `db-synchronous` (`normal` default; `full` for power-loss durability), see
+  [configuration.md](configuration.md#durability-db-synchronous).
+- With `cookie-secure=true` only `__Host-` cookies are read. People signed in with the old plain CSRF cookie reload the
+  page once; sessions are unaffected.
+- `circula unlock -login NAME` clears a login lock-out ([runbook.md](runbook.md#unlocking-a-locked-out-person)).
+- Per-IP limits key IPv6 clients on their /64; set `trusted-proxies` behind a proxy (start-up warning otherwise).
+
+Upgrades are tested from the first schema: `TestUpgradeFromMigration0001` builds a database as migration 0001 wrote it,
+runs `circula migrate` and checks the data, SQLite integrity and foreign keys, and ledger and audit-chain verification.
+
 ## Migration mode
 
 - `explicit` (default, recommended, and required for hosted deployments): migrations run only through `circula migrate`.
@@ -123,5 +142,5 @@ Stop the service. Restore the pre-upgrade backup with the previous binary:
 circula restore -database /var/lib/circula/circula.db -overwrite /var/backups/circula/<pre-upgrade backup>.db
 ```
 
-`restore` refuses a backup whose schema is newer than the binary, so an older binary cannot restore a newer backup. Rolling
+Add `-allow-unsigned` if no `backup-key` is configured. `restore` refuses a backup whose schema is newer than the binary, so an older binary cannot restore a newer backup. Rolling
 back to an older binary is only safe with a backup taken before the upgrade.

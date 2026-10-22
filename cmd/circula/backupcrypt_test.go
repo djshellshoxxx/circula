@@ -340,7 +340,7 @@ func TestEncryptedBackupAndRestoreIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	var out, errOut bytes.Buffer
-	code := run([]string{"restore", "-database", target, "-backup-encryption-key-file", keyFile, path}, &out, &errOut)
+	code := run([]string{"restore", "-allow-unsigned", "-database", target, "-backup-encryption-key-file", keyFile, path}, &out, &errOut)
 	if code != exitOK {
 		t.Fatalf("restore: %d %s", code, errOut.String())
 	}
@@ -362,7 +362,7 @@ func TestEncryptedBackupAndRestoreIntegration(t *testing.T) {
 	target2 := filepath.Join(dir, "restored", "second.db")
 	out.Reset()
 	errOut.Reset()
-	code = run([]string{"restore", "-database", target2, "-backup-encryption-key-file", bad, path}, &out, &errOut)
+	code = run([]string{"restore", "-allow-unsigned", "-database", target2, "-backup-encryption-key-file", bad, path}, &out, &errOut)
 	if code == exitOK || !strings.Contains(errOut.String(), "wrong backup-encryption-key") {
 		t.Fatalf("wrong key restore: %d %s", code, errOut.String())
 	}
@@ -378,7 +378,7 @@ func TestEncryptedBackupAndRestoreIntegration(t *testing.T) {
 	// No key configured at all.
 	out.Reset()
 	errOut.Reset()
-	code = run([]string{"restore", "-database", target2, path}, &out, &errOut)
+	code = run([]string{"restore", "-allow-unsigned", "-database", target2, path}, &out, &errOut)
 	if code == exitOK || !strings.Contains(errOut.String(), "backup is encrypted") {
 		t.Fatalf("keyless restore: %d %s", code, errOut.String())
 	}
@@ -396,7 +396,7 @@ func TestEncryptedBackupAndRestoreIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	errOut.Reset()
-	if code := run([]string{"restore", "-database", target2, "-backup-encryption-key-file", keyFile, tpath}, &out, &errOut); code == exitOK ||
+	if code := run([]string{"restore", "-allow-unsigned", "-database", target2, "-backup-encryption-key-file", keyFile, tpath}, &out, &errOut); code == exitOK ||
 		!strings.Contains(errOut.String(), "checksum") {
 		t.Fatalf("tampered restore: %d %s", code, errOut.String())
 	}
@@ -407,7 +407,7 @@ func TestEncryptedBackupAndRestoreIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 	errOut.Reset()
-	if code := run([]string{"restore", "-database", target2, "-backup-encryption-key-file", keyFile, tpath}, &out, &errOut); code == exitOK ||
+	if code := run([]string{"restore", "-allow-unsigned", "-database", target2, "-backup-encryption-key-file", keyFile, tpath}, &out, &errOut); code == exitOK ||
 		!strings.Contains(errOut.String(), "wrong backup-encryption-key, or the backup was altered") {
 		t.Fatalf("GCM-detected tamper: %d %s", code, errOut.String())
 	}
@@ -431,7 +431,7 @@ func TestEncryptedBackupEmptyDatabase(t *testing.T) {
 	target := filepath.Join(dir, "r.db")
 	var out, errOut bytes.Buffer
 	kf := writeKeyFile(t, dir, "k", key)
-	if code := run([]string{"restore", "-database", target, "-backup-encryption-key-file", kf, path}, &out, &errOut); code != exitOK {
+	if code := run([]string{"restore", "-allow-unsigned", "-database", target, "-backup-encryption-key-file", kf, path}, &out, &errOut); code != exitOK {
 		t.Fatalf("restore empty: %d %s", code, errOut.String())
 	}
 }
@@ -447,16 +447,22 @@ func TestPlaintextBackupRefusedWhenEncryptionRequired(t *testing.T) {
 	kf := writeKeyFile(t, dir, "k", testKey(t))
 	target := filepath.Join(dir, "r.db")
 	var out, errOut bytes.Buffer
-	code := run([]string{"restore", "-database", target, "-backup-encryption-key-file", kf, "-backup-require-encryption", "true", path}, &out, &errOut)
+	code := run([]string{"restore", "-allow-unsigned", "-database", target, "-backup-encryption-key-file", kf, "-backup-require-encryption", "true", path}, &out, &errOut)
 	if code == exitOK || !strings.Contains(errOut.String(), "not encrypted") {
 		t.Fatalf("plaintext restore under require: %d %s", code, errOut.String())
 	}
 	if _, err := os.Stat(target); err == nil {
 		t.Error("database created")
 	}
-	// Without the requirement, a plaintext backup still restores (migration of old backups).
+	// SA2-11: a key alone now implies the requirement (auto) ...
 	errOut.Reset()
-	if code := run([]string{"restore", "-database", target, "-backup-encryption-key-file", kf, path}, &out, &errOut); code != exitOK {
+	if code := run([]string{"restore", "-allow-unsigned", "-database", target, "-backup-encryption-key-file", kf, path}, &out, &errOut); code == exitOK ||
+		!strings.Contains(errOut.String(), "not encrypted") {
+		t.Fatalf("plaintext restore under key-implied require: %d %s", code, errOut.String())
+	}
+	// ... and only an explicit false lets an old plaintext backup through.
+	errOut.Reset()
+	if code := run([]string{"restore", "-allow-unsigned", "-database", target, "-backup-encryption-key-file", kf, "-backup-require-encryption", "false", path}, &out, &errOut); code != exitOK {
 		t.Fatalf("plaintext restore: %d %s", code, errOut.String())
 	}
 	// The requirement without a key is a configuration error, and backups refuse too.

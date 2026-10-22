@@ -52,19 +52,19 @@
 {{define "csrf"}}<input type="hidden" name="csrf" value="{{.CSRF}}">{{end}}
 {{define "idem"}}<input type="hidden" name="idem" value="{{.Idem}}">{{end}}
 
-{{define "field"}}<div class="field{{if .P.Err .Name}} has-error{{end}}">
-  <label for="f-{{.Name}}">{{.Label}}</label>
-  {{if .Hint}}<p class="hint" id="h-{{.Name}}">{{.Hint}}</p>{{end}}
-  {{with .P.Err .Name}}<p class="error" id="e-{{$.Name}}"><span class="sr">Error: </span>{{.}}</p>{{end}}
-  {{if eq .Type "textarea"}}<textarea id="f-{{.Name}}" name="{{.Name}}" rows="4"{{if .Max}} maxlength="{{.Max}}"{{end}}{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err .Name)}} aria-describedby="{{if .Hint}}h-{{.Name}}{{end}}{{if .P.Err .Name}} e-{{.Name}}{{end}}"{{end}}{{if .Req}} required{{end}}>{{.P.Val .Name}}</textarea>
-  {{else}}<input id="f-{{.Name}}" name="{{.Name}}" type="{{or .Type "text"}}"{{if ne .Type "password"}} value="{{.P.Val .Name}}"{{end}}{{if .Auto}} autocomplete="{{.Auto}}"{{end}}{{if .Mode}} inputmode="{{.Mode}}"{{end}}{{if .Max}} maxlength="{{.Max}}"{{end}}{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err .Name)}} aria-describedby="{{if .Hint}}h-{{.Name}}{{end}}{{if .P.Err .Name}} e-{{.Name}}{{end}}"{{end}}{{if .Req}} required{{end}}>{{end}}
+{{define "field"}}{{$k := or .Key .Name}}<div class="field{{if .P.Err $k}} has-error{{end}}">
+  <label for="f-{{$k}}">{{.Label}}</label>
+  {{if .Hint}}<p class="hint" id="h-{{$k}}">{{.Hint}}</p>{{end}}
+  {{with .P.Err $k}}<p class="error" id="e-{{$k}}"><span class="sr">Error: </span>{{.}}</p>{{end}}
+  {{if eq .Type "textarea"}}<textarea id="f-{{$k}}" name="{{.Name}}" rows="4"{{if .Max}} maxlength="{{.Max}}"{{end}}{{if .P.Err $k}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err $k)}} aria-describedby="{{if .Hint}}h-{{$k}}{{end}}{{if and .Hint (.P.Err $k)}} {{end}}{{if .P.Err $k}}e-{{$k}}{{end}}"{{end}}{{if .Req}} required{{end}}>{{.P.Val .Name}}</textarea>
+  {{else}}<input id="f-{{$k}}" name="{{.Name}}" type="{{or .Type "text"}}"{{if ne .Type "password"}} value="{{.P.Val .Name}}"{{end}}{{if .Auto}} autocomplete="{{.Auto}}"{{end}}{{if .Mode}} inputmode="{{.Mode}}"{{end}}{{if .Max}} maxlength="{{.Max}}"{{end}}{{if .P.Err $k}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err $k)}} aria-describedby="{{if .Hint}}h-{{$k}}{{end}}{{if and .Hint (.P.Err $k)}} {{end}}{{if .P.Err $k}}e-{{$k}}{{end}}"{{end}}{{if .Req}} required{{end}}>{{end}}
 </div>{{end}}
 
 {{define "select"}}<div class="field{{if .P.Err .Name}} has-error{{end}}">
   <label for="f-{{.Name}}">{{.Label}}</label>
   {{if .Hint}}<p class="hint" id="h-{{.Name}}">{{.Hint}}</p>{{end}}
   {{with .P.Err .Name}}<p class="error" id="e-{{$.Name}}"><span class="sr">Error: </span>{{.}}</p>{{end}}
-  <select id="f-{{.Name}}" name="{{.Name}}"{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if .Hint}} aria-describedby="h-{{.Name}}"{{end}}>
+  <select id="f-{{.Name}}" name="{{.Name}}"{{if .P.Err .Name}} aria-invalid="true"{{end}}{{if or .Hint (.P.Err .Name)}} aria-describedby="{{if .Hint}}h-{{.Name}}{{end}}{{if and .Hint (.P.Err .Name)}} {{end}}{{if .P.Err .Name}}e-{{.Name}}{{end}}"{{end}}>
     {{range .Opts}}<option value="{{.Value}}"{{if eq2 .Value ($.P.Val $.Name)}} selected{{end}}>{{.Label}}</option>{{end}}
   </select>
 </div>{{end}}

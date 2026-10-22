@@ -151,7 +151,10 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 // signed in: the person must log in afterwards.
 //
 //   - Uniform: unknown login, malformed code, wrong code and used code all
-//     return the same ErrUnauthenticated, after the same hashing work.
+//     return the same ErrUnauthenticated, and none of them runs the Argon2
+//     hash (A3-04: the expensive work is only done for a throttle-admitted
+//     attempt that presents a code that is valid right now, so guessing
+//     cannot be used to burn CPU; the code is consumed atomically later).
 //   - Throttled: attempts are counted per login ("recover: "+login) before the
 //     code is evaluated, with the escalating lock of Login; a locked login is
 //     refused with ErrRateLimited whether or not it exists.
@@ -161,20 +164,16 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 //   - The remaining codes are deleted because a code in the wrong hands means
 //     the sheet may be compromised; generate a new batch after signing in.
 func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword string) error {
-	if err := s.validatePassword(newPassword); err != nil {
-		return err // says nothing about the login or the code
-	}
-	nh, err := hashPassword(newPassword, s.cfg.Argon) // equal work on every path
-	if err != nil {
-		return err
+	if err := s.validatePassword(newPassword, login); err != nil {
+		return err // says nothing about the code; the login is the caller's own input
 	}
 	login = normalizeLogin(login)
 	if validLogin(login) != nil {
 		return errRecovery()
 	}
 	var person *domain.Person
-	err = s.update(ctx, func(tx store.Tx) error {
-		if err := s.reserveAttempt(tx, recoverKey(login)); err != nil {
+	err := s.update(ctx, func(tx store.Tx) error {
+		if err := s.reserveAttemptCtx(ctx, tx, recoverKey(login)); err != nil {
 			return err
 		}
 		p, _, err := tx.GetPersonByLogin(login)
@@ -196,6 +195,22 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	}
 	if !wellFormed {
 		norm = strings.Repeat("A", recoveryCodeChars)
+	}
+	// A3-04: look at the code (read only) before spending Argon2 on the new
+	// password. The same statement runs for an unknown login.
+	var valid bool
+	if err := s.view(ctx, func(tx store.Tx) (err error) {
+		valid, err = tx.HasUnusedAccountRecoveryCode(pid, recoveryHash(pid, norm))
+		return err
+	}); err != nil {
+		return err
+	}
+	if !valid || person == nil || !wellFormed {
+		return errRecovery()
+	}
+	nh, err := hashPassword(newPassword, s.cfg.Argon)
+	if err != nil {
+		return err
 	}
 	return s.update(ctx, func(tx store.Tx) error {
 		ok, err := tx.ConsumeAccountRecoveryCode(pid, recoveryHash(pid, norm), s.now())
@@ -221,11 +236,13 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.DeleteAccountRecoveryCodes(pid); err != nil {
 			return err
 		}
-		if err := tx.DeleteThrottle(recoverKey(login)); err != nil {
+		if err := tx.DeleteMFAChallengesOf(pid); err != nil { // SA2-13
 			return err
 		}
-		if err := tx.DeleteThrottle(login); err != nil {
-			return err
+		for _, k := range []string{recoverKey(login), login} {
+			if _, err := tx.DeleteThrottleFamily(k); err != nil {
+				return err
+			}
 		}
 		if err := s.secNotice(tx, pid, domain.NoticePasswordChanged, "recovery code used"); err != nil { // SA2-03
 			return err
@@ -282,9 +299,13 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 		return err
 	}
 	for _, k := range []string{login, recoverKey(login)} {
-		if err := tx.DeleteThrottle(k); err != nil {
+		if _, err := tx.DeleteThrottleFamily(k); err != nil {
 			return err
 		}
+	}
+	// SA2-13: a second-factor challenge issued before the reset must not finish.
+	if err := tx.DeleteMFAChallengesOf(personID); err != nil {
+		return err
 	}
 	return s.secNotice(tx, personID, domain.NoticePasswordChanged, "password reset by an administrator or operator") // SA2-03
 }

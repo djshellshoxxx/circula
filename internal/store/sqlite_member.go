@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -163,4 +164,19 @@ func (t *txImpl) CountActiveAdmins(netID string) (int, error) {
 	err := t.row(`SELECT COUNT(*) FROM role_assignments r JOIN members m ON m.id = r.member_id
 		WHERE r.network_id = ? AND r.role = 'admin' AND r.revoked_at IS NULL AND m.status = 'active'`, netID).Scan(&n)
 	return n, err
+}
+
+func (t *txImpl) LatestAdminGrant(netID, memberID string) (string, time.Time, bool, error) {
+	var by string
+	var at int64
+	err := t.row(`SELECT granted_by, granted_at FROM role_assignments
+		WHERE network_id = ? AND member_id = ? AND role = 'admin' ORDER BY granted_at DESC, rowid DESC LIMIT 1`,
+		netID, memberID).Scan(&by, &at)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", time.Time{}, false, nil
+	}
+	if err != nil {
+		return "", time.Time{}, false, err
+	}
+	return by, fromMS(at), true, nil
 }

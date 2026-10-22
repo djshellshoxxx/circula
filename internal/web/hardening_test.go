@@ -60,15 +60,15 @@ func TestSecureCookiesAndHSTS(t *testing.T) {
 	// The jar will not return Secure cookies over http, so replay them by hand.
 	var csrfCookie string
 	for _, sc := range f.Header.Values("Set-Cookie") {
-		if strings.HasPrefix(sc, cookieCSRF+"=") {
-			csrfCookie = strings.TrimPrefix(strings.SplitN(sc, ";", 2)[0], cookieCSRF+"=")
+		if strings.HasPrefix(sc, httpx.CSRFCookieSecure+"=") {
+			csrfCookie = strings.TrimPrefix(strings.SplitN(sc, ";", 2)[0], httpx.CSRFCookieSecure+"=")
 		}
 	}
 	token := httpx.CSRF{Key: []byte("0123456789abcdef0123456789abcdef")}.Token(csrfCookie)
 	req, _ := http.NewRequest("POST", b.url+"/login", strings.NewReader(url.Values{"login": {"alice@example.org"},
 		"password": {testPW}, "csrf": {token}}.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.AddCookie(&http.Cookie{Name: cookieCSRF, Value: csrfCookie})
+	req.AddCookie(&http.Cookie{Name: httpx.CSRFCookieSecure, Value: csrfCookie})
 	rt, err := http.DefaultTransport.RoundTrip(req)
 	if err != nil {
 		t.Fatal(err)

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/httpx"
 )
 
 func isUnsafe(method string) bool {
@@ -32,7 +31,7 @@ func (s *server) authenticate(r *http.Request, c *reqCtx) error {
 		c.actor = a
 		return nil
 	}
-	if tok := httpx.SessionToken(r); tok != "" {
+	if tok := s.opt.Edge.SessionToken(r); tok != "" {
 		a, err := s.svc.Authenticate(r.Context(), tok)
 		if err != nil {
 			return errUnauth

@@ -133,14 +133,14 @@ func TestSecureSessionCookieWorksForAPI(t *testing.T) {
 	}
 	var csrf string
 	for _, ck := range resp.Cookies() {
-		if ck.Name == httpx.CSRFCookie {
+		if ck.Name == httpx.CSRFCookieSecure {
 			csrf = ck.Value
 		}
 	}
 	form := formCSRF.FindSubmatch(b)[1]
 	req, _ := http.NewRequest("POST", srv.URL+"/login", strings.NewReader(url.Values{"login": {"alice"}, "password": {"correct horse battery"}, "csrf": {string(form)}}.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.AddCookie(&http.Cookie{Name: httpx.CSRFCookie, Value: csrf})
+	req.AddCookie(&http.Cookie{Name: httpx.CSRFCookieSecure, Value: csrf})
 	resp, err = http.DefaultTransport.RoundTrip(req)
 	if err != nil {
 		t.Fatal(err)

@@ -17,7 +17,6 @@ import (
 )
 
 const (
-	cookieCSRF  = httpx.CSRFCookie
 	cookieFlash = "cm_flash"
 	cookieStart = "cm_sstart" // signed session start time, drives the expiry warning only
 )
@@ -28,10 +27,14 @@ const errCSRF = -403
 // errFrozen selects the read-only page for a frozen network (CMD-07).
 const errFrozen = -423
 
+// csrfName is the pre-login CSRF cookie name for this request (__Host- over HTTPS).
+func (s *server) csrfName(r *http.Request) string { return httpx.CSRFCookieName(s.secure(r)) }
+
 func (s *server) secure(r *http.Request) bool { return s.opts.Edge.Secure(r) }
 
-// clientIP is the address used for rate limiting (trusted proxies only).
-func (s *server) clientIP(r *http.Request) string { return s.opts.Edge.ClientIP(r) }
+// clientIP is the key used for rate limiting: the client address (trusted
+// proxies only), IPv6 reduced to its /64 (SA2-15).
+func (s *server) clientIP(r *http.Request) string { return s.opts.Edge.RateKey(r) }
 
 func (s *server) setCookie(w http.ResponseWriter, r *http.Request, name, val string, maxAge int) {
 	//nolint:gosec // G124: HttpOnly, SameSite=Lax and Secure (when the request or config is HTTPS) are all set
@@ -66,21 +69,21 @@ func (s *server) mac(v string) string {
 // (httpx.CSRF, the same scheme the API uses), so a planted cookie cannot mint
 // tokens for a session.
 func (s *server) ensureCSRF(w http.ResponseWriter, r *http.Request) context.Context {
-	if c, err := r.Cookie(cookieCSRF); err == nil && len(c.Value) == 32 {
-		return context.WithValue(r.Context(), keyCSRF, c.Value)
+	if v := s.opts.Edge.CSRFSecret(r); len(v) == 32 {
+		return context.WithValue(r.Context(), keyCSRF, v)
 	}
 	v := randHex(16)
-	s.setCookie(w, r, cookieCSRF, v, 0)
+	s.setCookie(w, r, s.csrfName(r), v, 0)
 	return context.WithValue(r.Context(), keyCSRF, v)
 }
 
 // rotateCSRF issues a fresh csrf secret (on login and logout).
 func (s *server) rotateCSRF(w http.ResponseWriter, r *http.Request) {
-	s.setCookie(w, r, cookieCSRF, randHex(16), 0)
+	s.setCookie(w, r, s.csrfName(r), randHex(16), 0)
 }
 
 func (s *server) csrfToken(r *http.Request) string {
-	if t := httpx.SessionToken(r); t != "" {
+	if t := s.opts.Edge.SessionToken(r); t != "" {
 		return s.csrf.Token(t)
 	}
 	v, _ := r.Context().Value(keyCSRF).(string)
@@ -91,8 +94,8 @@ func (s *server) csrfOK(r *http.Request) bool {
 	if !s.sameOrigin(r) {
 		return false
 	}
-	if c, err := r.Cookie(cookieCSRF); err != nil || len(c.Value) != 32 {
-		if httpx.SessionToken(r) == "" {
+	if len(s.opts.Edge.CSRFSecret(r)) != 32 {
+		if s.opts.Edge.SessionToken(r) == "" {
 			return false
 		}
 	}
@@ -100,7 +103,7 @@ func (s *server) csrfOK(r *http.Request) bool {
 	if got == "" {
 		got = r.PostFormValue("csrf")
 	}
-	return s.csrf.Valid(httpx.Binding(r), got)
+	return s.csrf.Valid(s.opts.Edge.Binding(r), got)
 }
 
 // setFlash stores a signed one-shot message shown on the next page.
@@ -151,7 +154,7 @@ func (c *rc) isReviewer() bool {
 func (c *rc) isActive() bool { return c.Me != nil && c.Me.Status == domain.MemberActive }
 
 func (s *server) authenticate(r *http.Request) (domain.Actor, string, bool) {
-	tok := httpx.SessionToken(r)
+	tok := s.opts.Edge.SessionToken(r)
 	if tok == "" {
 		return domain.Actor{}, "", false
 	}
