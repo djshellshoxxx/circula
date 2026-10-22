@@ -40,4 +40,20 @@ This is an in-progress checkpoint, not a claim that all specifications are imple
   implementing the route. OpenAPI contract suite passes with the new operation.
 - Pagination fixtures distribute active listings among members to honor the 100-listing
   anti-flood cap. Dual-control fixtures honor independent appointment and the 24-hour delay.
-- Full integrated suite, API/store suite and vet are being run; final results follow.
+- `go test ./...` passes across all packages, including command tests (336 s),
+  API tests (77 s), service tests (190 s), web tests (93 s), store and OpenAPI contracts.
+- `go vet ./...`, the application build, hygiene checks and action-pin checks pass.
+- Focused restore-drill regression passes; the fresh-database full drill also passes
+  with signature authentication enabled. This empty-database drill is not evidence
+  of restoring a populated production instance.
+- Focused race check for FR-064 is pending compilation at this checkpoint.
+- Published as PR #9 against `claude/circula-completeness`; full spec completion
+  remains in progress. No production release or completion claim is made.
+
+## Migration compatibility
+
+The integrated branch preserves completeness's existing migration names. A database
+created by the security-only branch that already records `0008_balance_bound` has
+an alternative migration history; startup refuses that mismatch. Such databases
+need an explicit, tested conversion before being supported by this branch. Do not
+rename an applied schema-history row by hand or bypass migration validation.
