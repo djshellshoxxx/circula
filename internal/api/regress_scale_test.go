@@ -147,13 +147,16 @@ func TestPaginationBeyondOneHundredAndTwoThousandRows(t *testing.T) {
 	admin := env.Person("admin")
 	net, _ := env.Network(admin, "acme", nil)
 	alice, _ := env.Member(admin, net, "alice")
+	// Respect the anti-flood cap while exercising a directory of >2000 listings.
+	const members = 120
+	owners := []domain.Actor{alice}
+	for i := 0; i < members; i++ {
+		owner, _ := env.Member(admin, net, fmt.Sprintf("member%03d", i))
+		owners = append(owners, owner)
+	}
 	const listings = 2105
 	for i := 0; i < listings; i++ {
-		testutil.Must(env.Svc.CreateListing(env.Ctx, alice, net.ID, service.ListingInput{Type: domain.ListingOffer, Title: fmt.Sprintf("item %d", i), IdempotencyKey: env.Key()}))
-	}
-	const members = 120
-	for i := 0; i < members; i++ {
-		env.Member(admin, net, fmt.Sprintf("member%03d", i))
+		testutil.Must(env.Svc.CreateListing(env.Ctx, owners[i%len(owners)], net.ID, service.ListingInput{Type: domain.ListingOffer, Title: fmt.Sprintf("item %d", i), IdempotencyKey: env.Key()}))
 	}
 	w := &world{t: t, env: env, h: api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey})}
 	aliceT := w.token(alice, domain.ScopeRead, domain.ScopeWrite)

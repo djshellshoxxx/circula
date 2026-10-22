@@ -77,6 +77,35 @@ var scopeTables = map[ExportScope][]store.ExportTable{
 		store.TblStatusEvents, store.TblEntries, store.TblDisputes, store.TblPolicies, store.TblAudit},
 }
 
+// AuthorizeExportDownload re-checks, at download time, that actor may still
+// obtain an export of scope from netID (SA2-17): a member who was demoted,
+// suspended, departed or erased since the export was made must not fetch a
+// stored artefact. Members may fetch ExportMine; every other scope needs an
+// active administrator. It writes nothing.
+func (s *Service) AuthorizeExportDownload(ctx context.Context, actor domain.Actor, netID string, scope ExportScope) error {
+	if _, ok := scopeTables[scope]; !ok {
+		return domain.Invalid("scope", "unknown export scope")
+	}
+	return s.view(ctx, func(tx store.Tx) error {
+		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		if err != nil {
+			return err
+		}
+		if scope == ExportMine {
+			if p.member == nil || p.member.Status == domain.MemberPending {
+				return domain.Forbidden("no data to export")
+			}
+			if done, err := tx.GetErasure(netID, p.member.ID); err != nil {
+				return err
+			} else if done != nil {
+				return domain.Forbidden("no data to export")
+			}
+			return nil
+		}
+		return p.requireAdmin()
+	})
+}
+
 // Export streams an export package to sink and returns its manifest. Members
 // may export only their own data (also when suspended or departed, SEC-017);
 // every other scope needs an administrator. The export is read from one

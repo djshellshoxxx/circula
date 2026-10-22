@@ -18,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // envPrefix is prepended to every upper-cased setting key to form its
@@ -55,6 +57,7 @@ var settingDefs = []settingDef{
 	{key: "min-password-length", def: "12", help: "minimum password length (SEC-002); not below 12"},
 	{key: "max-body-bytes", def: "1048576", help: "maximum request body size in bytes"},
 	{key: "request-timeout", def: "30s", help: "per-request deadline for API and UI routes"},
+	{key: "db-synchronous", def: "normal", help: "SQLite durability in WAL mode: normal (default; the newest commits can be lost on power loss) or full (every commit is synced; about 2-3x slower writes) (SA2-20)"},
 	{key: "log-level", def: "info", help: "debug, info, warn or error"},
 	{key: "log-format", def: "json", help: "json or text"},
 	{key: "log-retention", def: "2160h", help: "how long stored log files are kept by `circula prune-logs` (SEC-021, DEC-019)"},
@@ -67,7 +70,7 @@ var settingDefs = []settingDef{
 	{key: "metrics-token-file", help: "file holding a bearer token required for /metrics (SA-15); or env " + envPrefix + "METRICS_TOKEN"},
 	{key: "mfa-secret-file", help: "file holding the key that seals two-step sign-in secrets at rest (SEC-007); or env " + envPrefix + "MFA_SECRET"},
 	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
-	{key: "backup-require-encryption", def: "false", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019)"},
+	{key: "backup-require-encryption", def: "auto", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019); auto (default) means true whenever a backup-encryption-key is set (SA2-11), false/true force it"},
 	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
 	{key: "audit-anchor-key-file", help: "file holding the key that HMACs audit anchors (RB-010); keep a copy off the database host; or env " + envPrefix + "AUDIT_ANCHOR_KEY"},
 	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
@@ -111,6 +114,7 @@ type Config struct {
 	RequireMFAAdmins    bool
 	MaxBodyBytes        int64
 	RequestTimeout      time.Duration
+	Synchronous         string // store.SyncNormal or store.SyncFull
 	LogLevel            slog.Level
 	LogFormat           string
 	CookieSecure        bool
@@ -131,6 +135,7 @@ type Config struct {
 	TLSKeyFile              string
 	AuditMirrorFile         string
 	BackupRequireEncryption bool
+	backupRequireAuto       bool // backup-require-encryption=auto: follows the presence of the key
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
 }
@@ -301,6 +306,9 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 
 	if raw, ok := vals["database"]; ok {
 		p := filepath.Clean(raw.value)
+		if strings.ContainsAny(p, "?#%") { // A3-05: the path is embedded in a SQLite file: URI
+			fail("database", "path must not contain ?, # or %%")
+		}
 		if fi, err := os.Stat(filepath.Dir(p)); err != nil || !fi.IsDir() {
 			fail("database", "directory %s does not exist", filepath.Dir(p))
 		}
@@ -332,6 +340,14 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.MinPasswordLength = parseInt(get("min-password-length"), "min-password-length", fail, 12, 1024)
 	cfg.MaxBodyBytes = int64(parseInt(get("max-body-bytes"), "max-body-bytes", fail, 1024, 1<<30))
 	cfg.RequestTimeout = parseDuration(get("request-timeout"), "request-timeout", fail, time.Second, 10*time.Minute)
+	switch strings.ToLower(get("db-synchronous")) {
+	case "normal":
+		cfg.Synchronous = store.SyncNormal
+	case "full":
+		cfg.Synchronous = store.SyncFull
+	default:
+		fail("db-synchronous", "must be normal or full")
+	}
 
 	switch strings.ToLower(get("log-level")) {
 	case "debug":
@@ -391,8 +407,10 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.TLSKeyFile = get("tls-key-file")
 	cfg.AuditMirrorFile = get("audit-mirror-file")
 
-	if b, err := strconv.ParseBool(get("backup-require-encryption")); err != nil {
-		fail("backup-require-encryption", "must be true or false")
+	if v := strings.ToLower(strings.TrimSpace(get("backup-require-encryption"))); v == "auto" || v == "" {
+		cfg.backupRequireAuto = true // resolved in loadSecrets, once the key is known (SA2-11)
+	} else if b, err := strconv.ParseBool(v); err != nil {
+		fail("backup-require-encryption", "must be auto, true or false")
 	} else {
 		cfg.BackupRequireEncryption = b
 	}
@@ -539,6 +557,9 @@ func loadSecrets(cfg *Config, vals map[string]resolved, env lookupEnv) error {
 	}
 	if len(cfg.BackupEncryptionKey) > 0 && bytes.Equal(cfg.BackupEncryptionKey, cfg.BackupKey) {
 		errs = append(errs, &settingError{key: "backup-encryption-key", msg: "must differ from backup-key; use separate keys"})
+	}
+	if cfg.backupRequireAuto && len(cfg.BackupEncryptionKey) > 0 {
+		cfg.BackupRequireEncryption = true
 	}
 	if cfg.BackupRequireEncryption && len(cfg.BackupEncryptionKey) == 0 {
 		errs = append(errs, &settingError{key: "backup-require-encryption", msg: "set, but no backup-encryption-key is configured"})

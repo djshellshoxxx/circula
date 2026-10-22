@@ -155,7 +155,7 @@ type ledgerFunc func(ctx context.Context, path string) (LedgerSummary, error)
 // closes it. Verification records its run in the file, so callers pass a copy
 // whenever the file itself must stay unchanged.
 func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
-	st, err := store.Open(ctx, path)
+	st, err := store.OpenWith(ctx, path, storeOptions(cfg))
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,9 @@
 name: release
 
 # Runs only for version tags (v*). The publish job creates a published (not draft)
-# GitHub release for the tag; nothing else publishes.
+# GitHub release for the tag; nothing else publishes. The tag's commit must be
+# reachable from the default branch (SA2-19); also protect v* tags in the
+# repository settings (docs/ops/runbook.md).
 on:
   push:
     tags:
@@ -20,10 +22,20 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # full history for the ancestry check below
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
           cache: false # release builds never restore a cache a CI run could have poisoned (SA-14)
+      - name: tag commit must be on the default branch (SA2-19)
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          git fetch --no-tags origin "+refs/heads/${DEFAULT_BRANCH}:refs/remotes/origin/${DEFAULT_BRANCH}"
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" "origin/${DEFAULT_BRANCH}"; then
+            echo "commit $GITHUB_SHA (tag $GITHUB_REF_NAME) is not an ancestor of origin/${DEFAULT_BRANCH}; releases are cut only from reviewed default-branch history"
+            exit 1
+          fi
       - name: check tag format
         run: |
           if ! [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
@@ -40,6 +52,11 @@ jobs:
         run: |
           go vet ./...
           go test -race -count=1 ./...
+      - name: govulncheck
+        # Pinned to an exact release; `go run mod@version` checks the module
+        # against the public checksum database (sumdb), which is the hash pin
+        # the toolchain supports. Keep in step with ci.yml and the Makefile.
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
 
   build:
     name: build release artifacts

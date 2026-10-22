@@ -43,6 +43,16 @@ front of it for any other use, set `trusted-proxies` to that proxy, and do not f
 refuses an `http://` public URL on a non-loopback address. Secrets (setup secret, metrics token, backup key) come from the
 environment or a 0600 file, never from a flag: see [`docs/ops/configuration.md`](docs/ops/configuration.md#secrets).
 
+## Features
+
+- Double-entry credit ledger per network, hash-chained audit log, ledger verification.
+- Web UI and JSON API (scoped API tokens, idempotency keys, keyset paging).
+- Accounts: TOTP multi-factor sign-in with recovery codes, account recovery, security notices, password policy with a common-password blocklist.
+- Governance: dual-control approval of large adjustments, time-limited break-glass access, member erasure, administrator and operator password reset.
+- Abuse limits: sign-in lock keyed by login and client address (with a login-wide cap and `circula unlock`), per-address rate limits (IPv6 by /64), `__Host-` cookies over HTTPS.
+- Operations: encrypted, signed backups (restore refuses unsigned backups unless `-allow-unsigned`), forward-only migrations, optional `db-synchronous=full`.
+- Quality: fuzz, property and stress tests, RFC 4226/6238 test vectors, audits in `docs/audit/`, research notes in `docs/research/`.
+
 ## Commands
 
 | Command | Purpose |
@@ -53,6 +63,7 @@ environment or a 0600 file, never from a flag: see [`docs/ops/configuration.md`]
 | `circula restore [-overwrite] <backup-file>` | Restore a backup into the configured database. Stop `serve` first. |
 | `circula verify-ledger [-network id-or-slug]` | Recompute the ledger invariants for each network. |
 | `circula admin create-operator -login <name>` | Create a person. The password comes from `CIRCULA_OPERATOR_PASSWORD` or the first line of stdin, never from the command line. |
+| `circula unlock -login <name>` | Clear sign-in, recovery and MFA lockouts for a login (audited). |
 | `circula version` | Print the version, commit and build date. |
 
 Exit codes: `0` success, `1` failure, `2` usage or configuration error, `3` the operation completed but a ledger

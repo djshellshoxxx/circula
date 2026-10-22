@@ -36,6 +36,9 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 			if err := p.requireAdmin(); err != nil {
 				return err
 			}
+			if err := p.requireLasting(); err != nil { // A3-02
+				return err
+			}
 			if err := requireReason(in.Reason); err != nil {
 				return err
 			}

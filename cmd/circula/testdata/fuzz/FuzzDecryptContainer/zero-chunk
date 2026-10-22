@@ -1,0 +1,2 @@
+go test fuzz v1
+[]byte("CIRCBK1\x01\x00\x00\x00\x000123456789abcdef01234567")

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -18,12 +19,39 @@ type ListingInput struct {
 	IdempotencyKey string `json:"-"`
 }
 
+// MaxActiveListingsPerMember caps the active listings one member can have, so
+// one member cannot flood the directory (A3-08). Paused and archived listings
+// do not count.
+const MaxActiveListingsPerMember = 100
+
+// cleanListingText refuses control characters and invisible format runes
+// (zero-width joiners and spaces, bidi overrides, BOM, line separators), which
+// let a listing spoof another text or hide content (A3-08). In multi-line text
+// only newline, carriage return and tab are allowed.
+func cleanListingText(field, v string, multiline bool) error {
+	for _, r := range v {
+		if multiline && (r == '\n' || r == '\r' || r == '\t') {
+			continue
+		}
+		if unicode.IsControl(r) || unicode.Is(unicode.Cf, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r) {
+			return domain.Invalid(field, "must not contain control or invisible formatting characters")
+		}
+	}
+	return nil
+}
+
 func validateListing(title, desc string, price *int64) (string, error) {
 	title = strings.TrimSpace(title)
 	if c := utf8.RuneCountInString(title); c < 1 || c > 120 {
 		return "", domain.Invalid("title", "must be 1 to 120 characters")
 	}
+	if err := cleanListingText("title", title, false); err != nil {
+		return "", err
+	}
 	if err := boundedText("description", desc, maxTextLen); err != nil {
+		return "", err
+	}
+	if err := cleanListingText("description", desc, true); err != nil {
 		return "", err
 	}
 	if price != nil && (*price <= 0 || *price > domain.MaxPolicyAmount) {
@@ -55,6 +83,9 @@ func (s *Service) CreateListing(ctx context.Context, actor domain.Actor, netID s
 			if err != nil {
 				return "", err
 			}
+			if err := activeListingRoom(tx, netID, p.member.ID); err != nil {
+				return "", err
+			}
 			now := s.now()
 			l := &domain.Listing{ID: s.id(), NetworkID: netID, MemberID: p.member.ID, Type: in.Type, Title: title,
 				Description: in.Description, Price: in.Price, Status: domain.ListingActive, CreatedAt: now, UpdatedAt: now}
@@ -67,6 +98,19 @@ func (s *Service) CreateListing(ctx context.Context, actor domain.Actor, netID s
 		return err
 	})
 	return out, err
+}
+
+// activeListingRoom refuses another active listing once the member holds
+// MaxActiveListingsPerMember.
+func activeListingRoom(tx store.Tx, netID, memberID string) error {
+	ls, err := tx.ListListings(netID, store.ListingFilter{MemberID: memberID, Status: domain.ListingActive, Limit: MaxActiveListingsPerMember})
+	if err != nil {
+		return err
+	}
+	if len(ls) >= MaxActiveListingsPerMember {
+		return domain.Invalid("listing", "at most 100 active listings per member; pause or archive some first")
+	}
+	return nil
 }
 
 // ListingUpdate edits the owner's listing; nil fields are unchanged.
@@ -118,8 +162,17 @@ func (s *Service) UpdateListing(ctx context.Context, actor domain.Actor, netID s
 				return domain.Invalid("status", "must be active, paused or archived")
 			}
 		}
-		if l.Title, err = validateListing(l.Title, l.Description, l.Price); err != nil {
-			return err
+		// A status-only change (pause, archive) must stay possible for an older
+		// listing whose text predates the A3-08 character rules.
+		if in.Title != nil || in.Description != nil || in.Price != nil || in.ClearPrice {
+			if l.Title, err = validateListing(l.Title, l.Description, l.Price); err != nil {
+				return err
+			}
+		}
+		if l.Status == domain.ListingActive && before != domain.ListingActive {
+			if err := activeListingRoom(tx, netID, p.member.ID); err != nil {
+				return err
+			}
 		}
 		l.UpdatedAt = s.now()
 		if err := tx.UpdateListing(l); err != nil {

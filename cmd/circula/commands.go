@@ -38,7 +38,7 @@ func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Ser
 	if state.Pending() > 0 {
 		return nil, nil, fmt.Errorf("database has %d pending migration(s); run `circula migrate` first", state.Pending())
 	}
-	st, err := store.Open(ctx, cfg.Database)
+	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -136,7 +136,7 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
 		return exitFailure
 	}
-	st, err := store.Open(ctx, cfg.Database)
+	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: migrate failed (database left at its previous version): %v\n", err)
 		return exitFailure
@@ -221,8 +221,9 @@ func cmdBackup(ctx context.Context, args []string, stdout, stderr io.Writer) int
 }
 
 func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) int {
-	var overwrite bool
+	var overwrite, allowUnsigned bool
 	cfg, rest, code, done := resolveFlags("restore", args, stderr, func(fs *flag.FlagSet) {
+		fs.BoolVar(&allowUnsigned, "allow-unsigned", false, "restore a backup that carries no verifiable manifest signature (no backup-key); only for files you made yourself and kept safe")
 		fs.BoolVar(&overwrite, "overwrite", false, "replace an existing database (a pre-restore backup is taken first)")
 	})
 	if done {
@@ -251,6 +252,12 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	authenticated, err := checkManifestAuth(m, cfg.BackupKey)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: restore refused: %v\n", err)
+		return exitFailure
+	}
+	if !authenticated && !allowUnsigned {
+		fmt.Fprintln(stderr, "circula: restore refused: no backup-key is configured, so this backup cannot be authenticated "+
+			"(a forged or substituted file would be accepted). Configure backup-key-file with the key the backup was signed under, "+
+			"or pass -allow-unsigned if you made and stored this file yourself (SA2-11)")
 		return exitFailure
 	}
 	if m.SchemaVersion > store.SchemaVersion() {
@@ -299,6 +306,15 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: restore: copy failed: %v\n", err)
 		return exitFailure
 	}
+	if !m.Encrypted {
+		// A3-01: the file was checked before the pre-restore backup ran; re-hash the
+		// copy we will actually restore so a swap in that window is caught.
+		if sum, size, err := fileSHA256(partial); err != nil || sum != m.SHA256 || size != m.Bytes {
+			removeDBFiles(partial)
+			fmt.Fprintf(stderr, "circula: restore refused: backup file changed after verification; the current database was not touched\n")
+			return exitFailure
+		}
+	}
 	fail := func(format string, a ...any) int {
 		removeDBFiles(partial)
 		fmt.Fprintf(stderr, "circula: restore refused: "+format+"; the current database was not touched\n", a...)
@@ -330,7 +346,7 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	// Swap with a way back (CMD-08): the current database is moved aside, not
 	// deleted, until the restored one has opened and passed its checks.
 	if err := swapDatabase(ctx, cfg.Database, partial, state.Exists, func(ctx context.Context) error {
-		st, err := store.Open(ctx, cfg.Database)
+		st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
 		if err != nil {
 			return fmt.Errorf("opening the restored database: %w", err)
 		}

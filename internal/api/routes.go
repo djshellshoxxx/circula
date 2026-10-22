@@ -56,6 +56,7 @@ func (s *server) routes() {
 	R("POST "+v1+"/disputes/{id}/retry-posting", s.retryDispute)   // extension: DOM-021
 
 	// Admin.
+	R("PUT "+v1+"/admin/members/{id}/default-flag", s.putDefaultFlag)       // FR-064
 	R("POST "+v1+"/admin/transactions/{id}/reversal", s.adminReverse, idem) // API-056
 	R("POST "+v1+"/admin/adjustments", s.adminAdjust, idem)                 // API-057
 	s.dualControlRoutes(R)
@@ -102,10 +103,10 @@ func (s *server) routes() {
 	R("POST "+v1+"/notifications/read", s.markNotificationsRead)
 
 	// Exports and tokens.
-	R("POST "+v1+"/exports", s.createExport, idemOpt)    // API-065
-	R("GET "+v1+"/exports/{id}", s.getExport)            // API-065
-	R("GET "+v1+"/exports/{id}/artefact", s.getArtefact) // API-065
-	R("GET "+v1+"/tokens", s.listTokens, noNet)          // API-066
-	R("POST "+v1+"/tokens", s.createToken, noNet, cookieOnly, idemOpt)
+	R("POST "+v1+"/exports", s.createExport, idemOpt)         // API-065
+	R("GET "+v1+"/exports/{id}", s.getExport)                 // API-065
+	R("GET "+v1+"/exports/{id}/artefact", s.getArtefact)      // API-065
+	R("GET "+v1+"/tokens", s.listTokens, noNet)               // API-066
+	R("POST "+v1+"/tokens", s.createToken, noNet, cookieOnly) // never cached: the response holds the plaintext token (A3-09)
 	R("DELETE "+v1+"/tokens/{id}", s.revokeToken, noNet)
 }

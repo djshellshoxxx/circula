@@ -107,6 +107,11 @@ func (t *txImpl) UseMFAChallenge(idHash string, at time.Time) (bool, error) {
 	return n == 1, err
 }
 
+func (t *txImpl) DeleteMFAChallengesOf(personID string) error {
+	_, err := t.exec(`DELETE FROM mfa_challenges WHERE person_id = ?`, personID)
+	return err
+}
+
 func (t *txImpl) DeleteDeadMFAChallenges(personID string, cutoff time.Time) error {
 	_, err := t.exec(`DELETE FROM mfa_challenges WHERE person_id = ? AND (expires_at <= ? OR used_at IS NOT NULL)`,
 		personID, ms(cutoff))

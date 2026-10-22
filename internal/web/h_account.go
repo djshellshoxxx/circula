@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/httpx"
 )
 
 func (s *server) accountRoutes() {
@@ -69,7 +68,7 @@ func (s *server) passwordPost(w http.ResponseWriter, r *http.Request, c *rc) {
 // end and whether staying active can extend it (UX-030). It is advisory: the
 // service decides. The absolute limit comes from the signed start cookie.
 func (s *server) expiry(r *http.Request) (at int64, extendable, ok bool) {
-	if s.opts.SessionIdle <= 0 || httpx.SessionToken(r) == "" {
+	if s.opts.SessionIdle <= 0 || s.opts.Edge.SessionToken(r) == "" {
 		return 0, false, false
 	}
 	now := s.opts.Clock.Now()

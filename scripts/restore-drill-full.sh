@@ -20,6 +20,12 @@ mkdir -p "$work/src" "$work/drill" "$out"
 
 kind="existing database"
 if [ -z "$src" ]; then
+  # The fresh-db self-test signs its own disposable backup. Never bypass
+  # restore authentication; existing-source drills use the operator's key.
+  if [ -z "${CIRCULA_BACKUP_KEY:-}" ] && [ -z "${CIRCULA_BACKUP_KEY_FILE:-}" ]; then
+    (umask 077; "$bin" keygen >"$work/drill-signing.key")
+    export CIRCULA_BACKUP_KEY_FILE="$work/drill-signing.key"
+  fi
   kind="fresh migrated empty database (no ledger data)"
   src="$work/src/circula.db"
   CIRCULA_DATABASE="$src" CIRCULA_MIGRATE_MODE=auto "$bin" migrate >/dev/null

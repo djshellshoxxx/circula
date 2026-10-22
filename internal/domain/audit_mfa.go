@@ -6,6 +6,7 @@ const (
 	ActMFAEnrolBegun       = "mfa.enrol_begun"
 	ActMFAEnabled          = "mfa.enabled"
 	ActMFADisabled         = "mfa.disabled"
+	ActMFAReset            = "mfa.reset" // operator CLI, A3-03
 	ActMFARecoveryRegen    = "mfa.recovery_codes_regenerated"
 	ActMFARecoveryCodeUsed = "mfa.recovery_code_used"
 )
