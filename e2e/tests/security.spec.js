@@ -71,6 +71,7 @@ test('axe: security page, two-step set-up and recovery codes shown once', async 
   await checkPage(page, 'security (two-step off)');
   await page.goto('/account/security/mfa/enrol');
   await checkPage(page, 'two-step set-up start');
+  await page.getByLabel('Password').fill(PASSWORD);
   await Promise.all([page.waitForLoadState('load'), page.getByRole('button', { name: 'Start setup' }).click()]);
   await expect(page.getByLabel('Code from your app')).toBeVisible();
   await checkPage(page, 'two-step set-up with key');
@@ -78,11 +79,13 @@ test('axe: security page, two-step set-up and recovery codes shown once', async 
 
   // wrong code: error state
   await page.getByLabel('Code from your app').fill('000000');
+  await page.getByLabel('Password').fill(PASSWORD);
   await Promise.all([page.waitForLoadState('load'), page.getByRole('button', { name: 'Turn on two-step sign-in' }).click()]);
   await expect(page.locator('#error-summary')).toBeVisible();
   await checkPage(page, 'two-step set-up wrong code');
 
   await page.getByLabel('Code from your app').fill(totp(state.secret));
+  await page.getByLabel('Password').fill(PASSWORD);
   await Promise.all([page.waitForLoadState('load'), page.getByRole('button', { name: 'Turn on two-step sign-in' }).click()]);
   await expect(page.getByText('Save these codes now')).toBeVisible();
   await checkPage(page, 'two-step recovery codes shown');
