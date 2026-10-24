@@ -4,6 +4,8 @@ Circula is a self-hosted credit-ledger service for trading networks. Members of 
 trades that move credit between their accounts. Every posting is an append-only double entry, every command writes an
 audit event, and a verification operation recomputes the ledger invariants.
 
+Circula is also a software artwork exploring community exchange through shared rules and ledger interfaces.
+
 This repository contains the Go core (domain, service layer, SQLite store) and the `circula` command, which runs the
 HTTP service, the web UI and the JSON API, and operates the database.
 
@@ -14,7 +16,7 @@ HTTP service, the web UI and the JSON API, and operates the database.
 
 ## Quickstart
 
-Requirements: Go 1.24 or newer. No C compiler is needed (the SQLite driver is pure Go).
+Requirements: the Go version required by [`go.mod`](go.mod), currently 1.26.10. No C compiler is needed for the normal build (the SQLite driver is pure Go); race tests require one.
 
 ```sh
 make build                       # writes bin/circula
