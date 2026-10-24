@@ -1,6 +1,6 @@
 # 12 Quality Strategy and Test Plan
 
-Status: Draft v0.1 · Owner/role: Quality lead (test engineering) with Product architect · Last updated: 2026-10-21 · Scope: test layers, required coverage for ledger invariants, concurrency, retries, authorization, disputes, migrations, accessibility, backup and restore, and export correctness; scenario end-to-end tests; quality gates; traceability for the MVP · Dependencies: [00](00-conventions.md) (LED-1..LED-7), [03](03-domain-model.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [08](08-ux-accessibility.md), [09](09-security-privacy.md), [10](10-governance-operations.md), [11](11-deployment-operations.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 10
+Status: Draft v0.1 · Owner/role: Quality lead (test engineering) with Product architect · Last updated: 2026-10-24 · Scope: test layers, required coverage for ledger invariants, concurrency, retries, authorization, disputes, migrations, accessibility, backup and restore, and export correctness; scenario end-to-end tests; quality gates; traceability for the MVP · Dependencies: [00](00-conventions.md) (LED-1..LED-7), [03](03-domain-model.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [08](08-ux-accessibility.md), [09](09-security-privacy.md), [10](10-governance-operations.md), [11](11-deployment-operations.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 10
 
 Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Test requirements use the prefix `QA`. Requirements from other documents are verified here by reference; this document does not restate them, it maps tests to their IDs.
 
@@ -12,9 +12,9 @@ Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Test
 
 
 
-## Build status (as built)
+## Historical build status snapshot
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+The table records the historical implementation snapshot at HEAD `925f637` on branch `claude/circula-build`; it is not an assessment of the current branch. Statuses were first read at `31b1015` and re-checked at `925f637` (see [TRACEABILITY.md](../TRACEABILITY.md)). **built** means behaviour exists in that snapshot; **partial** means behaviour exists with the stated gaps, or required verification was not run; **not built** and **deferred** retain their meanings in that snapshot. Code paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md). Current checkpoint evidence and limitations are in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). Neither this snapshot nor the current checkpoint is a compliance claim or release attestation.
 
 Summary: built 9, deferred 1, not built 6, partial 28.
 
@@ -387,6 +387,25 @@ Gates define the evidence required before a change moves forward. A failed gate 
 - Rationale: Evidence is needed for audits and incident reviews.
 - Acceptance criteria:
   - Each release record links to its evidence (release check).
+
+**QA-045** · P0 · Monetary scale, pending proposals and limit boundaries
+- Requirement: Tests MUST prove that network creation fixes the meaning of stored monetary configuration, that acceptance re-checks the current effective limit after a limit change while a proposal is pending (DOM-014), and that LED-5 behaves correctly at and beyond the limit boundary.
+- Rationale: A scale reinterpretation or stale capacity check can change the meaning or safety of a committed amount.
+- Acceptance criteria:
+  - After network creation, any change to the decimal scale is refused, including on an otherwise empty network; initial limits and maximum amounts retain their original unit meaning. A policy update that keeps the same decimal scale remains allowed (test).
+  - Creation atomically stores the chosen decimal scale and monetary settings; a failed scale-change attempt leaves all settings unchanged (test). Concurrent updates that preserve the scale do not alter the unit meaning of stored amounts (test).
+  - If the effective limit changes while a proposal is pending, acceptance is refused without postings when it would worsen an account's below-limit position; the proposal remains pending and retryable if the policy later permits it (test).
+  - An incoming posting that partially improves an already below-limit balance is allowed, while a later debit that would worsen that position is refused with no entries or balance change (test).
+  - A reversal cannot exceed the original transaction's remaining reversible amount; a refused excess reversal leaves the original, entries and balances unchanged (test).
+
+**QA-046** · P1 · Historical balance uses an inclusive timestamp cutoff
+- Requirement: Tests MUST verify FR-054 against entry `posted_at` timestamps in one read snapshot; ledger sequence is trace metadata and MUST NOT substitute for the timestamp filter or split equal-timestamp entries.
+- Rationale: A historical balance must represent the requested instant even when multiple postings share a timestamp or the clock moves backward.
+- Acceptance criteria:
+  - Entries exactly at the requested instant are included as a complete timestamp tie set; an entry after the instant is excluded (test).
+  - With a clock rollback that gives a higher-sequence entry an earlier `posted_at` than a lower-sequence entry, inclusion follows the timestamp cutoff rather than a maximum-sequence prefix (test).
+  - Pending proposals do not affect the result; a reversal or adjustment affects it only at or after its own posting timestamp (test).
+  - A posting timestamped before network creation after a clock rollback is still included when it satisfies the cutoff; return zero only when no account entries in the snapshot satisfy `posted_at <= as_of` (test).
 
 ---
 

@@ -1,10 +1,12 @@
 # 03 Domain Model and Mutual-Credit Rules
 
-Status: Draft v0.1 · Owner: Product architect (with domain review by a second maintainer before v1.0) · Last updated: 2026-10-21 · Scope: entities, balance semantics, transaction kinds and state machine, consent, reservations, reversals, disputes, adjustments, default handling, member departure, configuration versus invariants · Depends on: [00-conventions.md](00-conventions.md) (glossary, LED-1..7, configurable defaults), [01-vision-scope.md](01-vision-scope.md), [04-functional-requirements.md](04-functional-requirements.md), [06-data-ledger-audit.md](06-data-ledger-audit.md) (storage of these rules), [07-api-contract.md](07-api-contract.md) (idempotency and error surface), [09-security-privacy.md](09-security-privacy.md) (authorization) · Open questions: section 14
+Status: Draft v0.1 · Owner: Product architect (with domain review by a second maintainer before v1.0) · Last updated: 2026-10-24 · Scope: entities, balance semantics, transaction kinds and state machine, consent, reservations, reversals, disputes, adjustments, default handling, member departure, configuration versus invariants · Depends on: [00-conventions.md](00-conventions.md) (glossary, LED-1..7, configurable defaults), [01-vision-scope.md](01-vision-scope.md), [04-functional-requirements.md](04-functional-requirements.md), [06-data-ledger-audit.md](06-data-ledger-audit.md) (storage of these rules), [07-api-contract.md](07-api-contract.md) (idempotency and error surface), [09-security-privacy.md](09-security-privacy.md) (authorization) · Open questions: section 14
 
 This file is the authoritative home for **domain rules**. Terms are defined in the glossary of [00-conventions.md](00-conventions.md#3-glossary-authoritative) and are not redefined here. Platform invariants LED-1..LED-7 are defined in [00-conventions.md §4](00-conventions.md#4-platform-wide-invariants-not-configurable) and are referenced by ID only. Default values for configurable policies are defined in [00-conventions.md §5](00-conventions.md#5-configurable-network-policies-defaults) and are referenced by name only.
 
 Normative terms follow [00-conventions.md §1](00-conventions.md#1-normative-terms).
+
+Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RESUME-2026-10-24.md). This reconciliation adds target requirements; it does not claim those corrections are implemented.
 
 ---
 
@@ -14,9 +16,9 @@ Normative terms follow [00-conventions.md §1](00-conventions.md#1-normative-ter
 
 ## Build status (as built)
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md); this is a historical implementation snapshot, not a claim about the current resume branch. **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run. At checkpoint `d39bfef`, DOM-017's completion-time deadline snapshot is unimplemented: `OpenDispute` reads the then-current policy at dispute opening (`internal/service/disputes.go`), and there is no persisted completion deadline. The legacy derivation rule is specified in DOM-017/DAT-051 and requires migration work. At the same checkpoint, the required DOM-031 correction is unimplemented: `UpdatePolicy` rejects decimal changes only when `LedgerSeq > 0` (`internal/service/networks.go`), so it does not protect an unposted proposal or other persisted minor-unit values.
 
-Summary: built 35, deferred 1, partial 3.
+Summary for the historical implementation snapshot: built 33, required unimplemented corrections 2 (DOM-017, DOM-031), deferred 1, partial 3.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -36,7 +38,7 @@ Summary: built 35, deferred 1, partial 3.
 | DOM-014 | P0 | built | Acceptance re-checks both parties and limit in one unit |
 | DOM-015 | P0 | built | Completed trades have exactly two equal and opposite entries |
 | DOM-016 | P0 | built | Idempotency key on retryable commands; key reuse refused |
-| DOM-017 | P0 | built | Dispute window from completion; opening creates no entries |
+| DOM-017 | P0 | required unimplemented correction | Persist dispute deadline from policy effective at completion; current code reads policy at dispute opening |
 | DOM-018 | P0 | built | Dispute states and outcomes with rationale and decider |
 | DOM-019 | P0 | built | Reversal is new transaction; reversal cannot be reversed |
 | DOM-020 | P0 | built | Cumulative reversed total capped at original amount |
@@ -50,7 +52,7 @@ Summary: built 35, deferred 1, partial 3.
 | DOM-028 | P0 | built | No configuration key for invariants |
 | DOM-029 | P0 | built | Policy bounds and unknown-field refusal; default MaxTxAmount differs (DEC-056) |
 | DOM-030 | P0 | built | Policy versions appended; changes audited with old and new values |
-| DOM-031 | P0 | built | Decimals locked after first posting |
+| DOM-031 | P0 | required unimplemented correction | Decimal scale must lock when any scaled monetary value or commitment is persisted; current code only locks after the first posting |
 | DOM-032 | P0 | built | Limit change posts nothing; reduction blocks only new debt |
 | DOM-034 | P2 | deferred | Mutual reversal without dispute is post-MVP |
 | DOM-035 | P0 | built | Audit event in the same unit for each state change |
@@ -222,12 +224,12 @@ stateDiagram-v2
 - **Acceptance.** Test: payer with available 30.00 proposes 20.00 (accepted), then 15.00 (refused: available 10.00); declining the first restores availability to 30.00.
 
 ### DOM-013 · P0 · Proposal immutability and exits
-- **Statement.** The terms of a `proposed` transaction (payer, payee, amount, kind, listing reference) MUST NOT be edited. To change terms, the proposer withdraws (`cancelled`) and creates a new proposal. A note MAY be added only by the proposer before acceptance; notes are not terms.
+- **Statement.** The terms of a `proposed` transaction (payer, payee, amount, kind, listing reference, and decimal scale) MUST NOT be edited. To change terms, the proposer withdraws (`cancelled`) and creates a new proposal. A note MAY be added only by the proposer before acceptance; notes are not terms. Once posted, transaction terms and entries are immutable (DOM-023).
 - **Expiry.** Proposals expire after the network's proposal expiry (default in [00-conventions.md §5](00-conventions.md#5-configurable-network-policies-defaults)). Expiry is a system transition with no posting.
 - **Acceptance.** An edit attempt on terms is refused; an expired proposal cannot be accepted (refused with "expired"); the reservation is released at expiry (test with a clock source).
 
 ### DOM-014 · P0 · Acceptance posts atomically and re-checks capacity
-- **Statement.** Acceptance MUST, in one atomic unit: re-check that both parties are still active, re-check the payer's effective limit (LED-5) against the current balance, insert both entries, set the transaction to `completed`, and write the audit event (LED-4, LED-6). If any check fails, nothing is written, the transaction remains `proposed`, and the acceptance is refused with a reason. The hard check uses the balance and effective limit only (LED-5). Other pending reservations (DOM-012) are not subtracted here: they were guarded when each proposal was made, and any change that would invalidate this acceptance (such as a limit reduction) is caught by this check.
+- **Statement.** Acceptance MUST, in one atomic unit: re-check the caller's current authorization and that both parties are still active; re-check the payer's current effective limit (LED-5) against the current balance; insert both entries; set the transaction to `completed`; and write the audit event (LED-4, LED-6). A proposal does not snapshot authorization, membership state, or credit capacity. If any check fails, nothing is written, the transaction remains `proposed`, and acceptance is refused with a reason. The hard check uses the balance and effective limit only (LED-5). Other pending reservations (DOM-012) are not subtracted here: they were guarded when each proposal was made, and any change that would invalidate this acceptance (such as a limit reduction) is caught by this check.
 - **Per-account serialisation.** Postings against the same account MUST be serialised (LED-5).
 - **Acceptance.**
   - Fault injection at each step leaves either no change or the full change.
@@ -263,8 +265,10 @@ stateDiagram-v2
 ## 8. Disputes
 
 ### DOM-017 · P0 · When a dispute may be opened
-- **Statement.** A party to a `completed` transaction MAY open a dispute on it within the network's dispute window (default in [00-conventions.md §5](00-conventions.md#5-configurable-network-policies-defaults)), measured from the completion time. Opening a dispute sets the transaction to `disputed` and MUST NOT create or change entries.
-- **Acceptance.** Dispute opened on day window−1 succeeds; on day window+1 is refused; postings and balances are identical before and after opening (test).
+- **Status. REQUIRED UNIMPLEMENTED CORRECTION at checkpoint `d39bfef`.** Current `OpenDispute` calculates `CompletedAt + current DisputeWindowDays` at opening time (`internal/service/disputes.go`). A policy change between completion and opening can therefore change the dispute right; this does not satisfy the target rule below.
+- **Statement.** At trade completion, compute and persist an immutable `dispute_deadline_at` from the dispute-window policy version effective at that completion instant. A party to a `completed` transaction MAY open a dispute only while the server time is at or before that stored deadline. Opening a dispute sets the transaction to `disputed` and MUST NOT create or change entries. A later policy change MUST NOT shorten or extend an existing transaction's deadline.
+- **Legacy records.** For a completed trade without a stored deadline, derive the deadline from the latest policy version whose `effective_at` is at or before `completed_at`, using a deterministic version order. If there is no such version or the applicable version cannot be determined unambiguously, migration MUST stop before writes are served and require an owner-supplied mapping; it MUST NOT substitute the current policy silently.
+- **Acceptance.** Dispute opened on or before the stored deadline succeeds; after it is refused. Changing the dispute-window policy after completion leaves the stored deadline unchanged. A policy change between completion and opening does not change eligibility. The legacy backfill uses the policy version effective at completion or blocks for owner mapping; postings and balances are identical before and after opening (test).
 
 ### DOM-018 · P0 · Dispute lifecycle and outcomes
 - **Statement.** A dispute MUST be in one of these states: `open`, `under_review`, `posting_pending` (upheld, reversal blocked by DOM-021), `resolved`, `withdrawn`. Outcomes: `dismissed` (no posting; transaction returns to `completed`), `upheld` (full reversal posted), `partially_upheld` (partial reversal of a stated amount, not exceeding the remaining reversible amount, DOM-020). Withdrawal by the opener is allowed only before a decision. Each outcome MUST carry a rationale and the decider's identity.
@@ -337,7 +341,7 @@ stateDiagram-v2
 | Per-member limit override | Non-negative magnitude, administrator only | DOM-007, audited |
 | Maximum transaction amount | Positive integer in minor units; must be at least one minor unit | DOM-012 |
 | Proposal expiry | Positive duration; platform maximum to be set (OQ-DOM-5) | DOM-013 |
-| Decimals | 0 to a platform maximum (OQ-DOM-6); fixed once any posting exists | DOM-031 |
+| Decimals | 0 to 4 (DEC-050); fixed atomically at network creation with the monetary settings | DOM-031 |
 | Member directory visibility | Members-only is the only MVP value | FR-020 |
 | Join mode | `invite`, `approval`, `open` | DOM-003 |
 | Dispute window | Positive duration; platform maximum to be set | DOM-017 |
@@ -349,12 +353,22 @@ stateDiagram-v2
 - **Acceptance.** Every bound has a test with a value at the edge (accepted) and just beyond (refused).
 
 ### DOM-030 · P0 · Policy changes take effect prospectively
-- **Statement.** A policy change MUST apply only to transactions and decisions made after the change. It MUST NOT alter completed transactions, existing reservations' amounts, or the outcome of decided disputes. Each change is audited with old and new values, actor, and reason.
-- **Acceptance.** Changing the dispute window does not reopen or close disputes already decided; changing the proposal expiry does not alter existing proposals' expiry times (or, if the network chose recalculation, the audit records it; open question OQ-DOM-7).
+- **Statement.** Policy values are not snapshotted as one undifferentiated policy version when a proposal is created. Each policy MUST be evaluated at its defined binding event; changing a policy MUST NOT rewrite persisted transaction terms, existing reservations, completed transactions, or decided disputes. Each change is audited with old and new values, actor, and reason. The MVP binding events are:
+  - maximum transaction amount: proposal creation; a change affects new proposals only;
+  - proposal expiry: proposal creation; the resulting expiry instant is stored on the proposal and does not move after a policy change (DEC-037);
+  - outgoing proposal capacity: proposal creation; use current balance, current effective limit, and all current outgoing reservations (DOM-008, DOM-012);
+  - posting capacity and payer effective limit: acceptance; use the current balance and current effective limit in the atomic hard-limit check, without subtracting reservations (DOM-014);
+  - member authorization and lifecycle: each command, including acceptance; use current roles and membership state;
+  - dispute window: completion time; compute and persist the deadline from the policy effective when the trade completes (DOM-017).
+  - every other configurable policy: its owning requirement MUST name the binding event before implementation; no policy is implicitly snapshotted as part of the whole network policy object.
+- **Acceptance.** Changing the maximum transaction amount does not change the amount or eligibility of an existing proposal; changing proposal expiry leaves every existing `expires_at` unchanged; lowering a payer's limit may cause a pending proposal's later acceptance to fail; a role revocation or suspension between proposal and acceptance causes acceptance to fail; a dispute window change does not alter a deadline already set at completion. Tests cover a policy change immediately before and after each binding event.
 
-### DOM-031 · P0 · Decimals fixed after first posting
-- **Statement.** The decimal setting MUST be fixed when the first entry is written to the network. Changing it afterwards is refused, because it would change the meaning of stored minor units.
-- **Acceptance.** Change attempt after first posting refused; before first posting accepted and reflected in input and display.
+### DOM-031 · P0 · Decimals lock when a monetary value is persisted
+- **Status. REQUIRED UNIMPLEMENTED CORRECTION at checkpoint `d39bfef`.** Current `UpdatePolicy` checks only whether `LedgerSeq > 0`; it can change decimals while an unposted proposal or another stored minor-unit value exists.
+- **Statement.** The decimal scale MUST lock permanently when any monetary value denominated in that scale is persisted. This includes a trade proposal as soon as it is created (even if later declined, cancelled, or expired), any posting, and any stored amount in a policy, account limit, or listing price. Historical proposals and audit records retain the scale under which their integer amounts were created. A network MUST NOT silently reinterpret a persisted integer by changing decimals.
+- **Initial setup.** Network creation MUST explicitly select and persist the decimal scale together with the complete initial set of monetary policy and account settings in one atomic unit; that operation locks the scale. Any listing price added later is stored under the locked scale. After network creation, a decimal change is refused permanently in the MVP; there is no in-place conversion or re-entry exception. An existing network with persisted monetary settings is locked even if no posting exists. The implementation MAY represent the lock with a one-way marker, but correctness MUST NOT depend on a new schema field when the existing network state and persisted values suffice.
+- **Concurrency.** Network creation and initial monetary configuration MUST share one network-scoped atomic storage boundary. No observable network may exist with the scale and its initial minor-unit settings written under different interpretations. Every later write of a monetary value uses the immutable network scale.
+- **Acceptance.** Tests cover: network creation persists the selected scale and all initial monetary settings atomically; every post-creation scale change is refused, even before the first posting; listing prices, proposals, and postings use the locked scale; proposal later declined/cancelled/expired never makes scale mutable; existing networks with monetary settings are treated as locked; concurrent network creation/monetary initialization cannot persist mixed scales; and historical amounts are never reinterpreted.
 
 ### DOM-035 · P0 · Audit coupling
 - **Statement.** Every state change defined in this model (membership, account, transaction status, dispute, reversal, adjustment, grant, policy change, role assignment, default flag) MUST write an audit event in the same atomic unit (LED-6). Audit content and access are defined in [06-data-ledger-audit.md](06-data-ledger-audit.md) and [09-security-privacy.md](09-security-privacy.md).

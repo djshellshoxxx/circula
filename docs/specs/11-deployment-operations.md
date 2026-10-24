@@ -1,6 +1,6 @@
 # 11 Deployment and Operations
 
-Status: Draft v0.1 · Owner/role: Operations lead (platform operator role) with Product architect · Last updated: 2026-10-21 · Scope: supported deployment models, environments, single-binary packaging, configuration and secrets, embedded SQLite storage, backup and restore, migrations and upgrades, monitoring (health and metrics endpoints), scheduled jobs, support boundaries and failure recovery for the MVP · Dependencies: [00](00-conventions.md) (DEC-001, DEC-003), [05](05-architecture.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [09](09-security-privacy.md), [10](10-governance-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 12
+Status: Draft v0.1 · Owner/role: Operations lead (platform operator role) with Product architect · Last updated: 2026-10-24 · Scope: supported deployment models, environments, single-binary packaging, configuration and secrets, embedded SQLite storage, backup and restore, migrations and upgrades, monitoring (health and metrics endpoints), scheduled jobs, support boundaries and failure recovery for the MVP · Dependencies: [00](00-conventions.md) (DEC-001, DEC-003), [05](05-architecture.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [09](09-security-privacy.md), [10](10-governance-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 12
 
 Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Decisions DEC-001 (single binary, Go, embedded SQLite) and DEC-003 (release targets) are authoritative in [00 section 6](00-conventions.md#6-shared-technical-decisions-recommended-defaults-see-dec-log) and are not restated here. Requirements use the prefix `OPS`.
 
@@ -12,9 +12,9 @@ This document is technology-specific only where [00](00-conventions.md) already 
 
 
 
-## Build status (as built)
+## Historical implementation snapshot (not a current release attestation)
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release approval. Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate is claimed here.
 
 Summary: built 16, deferred 1, not built 2, partial 16.
 
@@ -193,12 +193,14 @@ Summary: built 16, deferred 1, not built 2, partial 16.
   - A simulated ledger failure in staging triggers the critical alert (staging test).
 
 **OPS-016** · P0 · Ledger verification command
-- Requirement: The product MUST provide a verification operation that recomputes, for each network, the sum of entries per transaction, the sum of all balances, the cached balances against summed entries, and the credit-limit condition (LED-1, LED-3, LED-5). The operation MUST be runnable while the service is running (read-only, consistent snapshot) and offline against a restored copy. Its result MUST be recorded in the metrics (OPS-014) and as an audit event where the network is affected. The operation MUST NOT modify any data.
+- Requirement: The product MUST provide a verification operation that recomputes, for each network, the sum of entries per transaction, the sum of all balances, the cached balances against summed entries, and the credit-limit condition (LED-1, LED-3, LED-5). The LED-5 check MUST assess each debit against the effective credit limit applicable when that posting occurred: a debit that worsened an account beyond its then-effective limit is an integrity failure; an incoming credit that improves an already over-limit position is permitted. A current balance below the current limit, by itself, MUST NOT be reported as corruption when a prospective limit reduction left an inherited negative balance (GOV-019). The verification calculation MUST be read-only and runnable while the service is running against a consistent snapshot and offline against a restored copy. Scheduled and other automatic verification MUST write no database state; its outcome MUST be observable through operational metrics and logs (OPS-014, ARC-015, DEC-031). An explicit administrator-initiated check MUST additionally record its result in `consistency_runs` and as an audit event for an affected network. Neither path may change ledger or other business data.
 - Rationale: Ledger verification is the primary detection control for integrity faults (T-04, T-14).
 - Acceptance criteria:
   - On a seeded consistent dataset the operation reports success (test).
   - On a dataset with a seeded cached-balance mismatch the operation reports the network and account and exits non-zero (test).
-  - The operation leaves a checksum of the database unchanged (test).
+  - A member's inherited below-limit balance after a prospective limit reduction, and a later incoming credit that improves it while it remains below that limit, do not fail verification; a debit that improperly worsened the position is detected (test; GOV-019, LED-5).
+  - Read-only verification, including scheduled verification, leaves a checksum of the database unchanged (test).
+  - A scheduled verification outcome is observable through metrics and logs without a database write; an explicit administrator-initiated check records a consistency run and audit event (test; DEC-031).
 
 ## 4. Backup and restore
 
@@ -284,7 +286,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 ## 6. Scheduled work
 
 **OPS-027** · P0 · Idempotent scheduled jobs
-- Requirement: Scheduled jobs (proposal expiry, dispute deadlines, session cleanup, backup, verification, log retention and notice delivery) MUST be idempotent and MUST be safe to run twice or late. A job MUST record its last run and result. Jobs MUST use server time in UTC and MUST NOT depend on the local time zone of the host.
+- Requirement: Scheduled jobs (proposal expiry, dispute deadlines, session cleanup, backup, verification, log retention and notice delivery) MUST be idempotent and MUST be safe to run twice or late. Each job MUST expose its last run and result through the appropriate operational metrics or logs. Jobs that maintain resumable work state MUST persist that state; scheduled ledger verification follows the read-only and reporting rule in OPS-016 and DEC-031. Jobs MUST use server time in UTC and MUST NOT depend on the local time zone of the host.
 - Rationale: Restarts and clock changes are normal operating events.
 - Acceptance criteria:
   - Running the expiry job twice expires each proposal once (test).

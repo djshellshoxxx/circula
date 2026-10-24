@@ -1,6 +1,6 @@
 # 04 Functional Requirements and Acceptance Criteria (MVP)
 
-Status: Draft v0.1 · Owner: Product architect · Last updated: 2026-10-21 · Scope: MVP functional requirements for network setup, membership, directory and listings, trade proposal and acceptance, balances and history, administrator controls, disputes, audit history, CSV/JSON exports; explicit deferred list · Depends on: [01-vision-scope.md](01-vision-scope.md), [02-personas-journeys.md](02-personas-journeys.md), [03-domain-model.md](03-domain-model.md), [05-architecture.md](05-architecture.md), [06-data-ledger-audit.md](06-data-ledger-audit.md), [07-api-contract.md](07-api-contract.md), [08-ux-accessibility.md](08-ux-accessibility.md), [09-security-privacy.md](09-security-privacy.md), [10-governance-operations.md](10-governance-operations.md), [12-quality-test-plan.md](12-quality-test-plan.md) · Open questions: section 9
+Status: Draft v0.1 · Owner: Product architect · Last updated: 2026-10-24 · Scope: MVP functional requirements for network setup, membership, directory and listings, trade proposal and acceptance, balances and history, administrator controls, disputes, audit history, CSV/JSON exports; explicit deferred list · Depends on: [01-vision-scope.md](01-vision-scope.md), [02-personas-journeys.md](02-personas-journeys.md), [03-domain-model.md](03-domain-model.md), [05-architecture.md](05-architecture.md), [06-data-ledger-audit.md](06-data-ledger-audit.md), [07-api-contract.md](07-api-contract.md), [08-ux-accessibility.md](08-ux-accessibility.md), [09-security-privacy.md](09-security-privacy.md), [10-governance-operations.md](10-governance-operations.md), [12-quality-test-plan.md](12-quality-test-plan.md) · Open questions: section 9
 
 Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-authoritative). Ledger rules are in [03-domain-model.md](03-domain-model.md) and are referenced by ID, not restated. Platform invariants are referenced as LED-n from [00-conventions.md §4](00-conventions.md#4-platform-wide-invariants-not-configurable).
 
@@ -11,6 +11,8 @@ Terms are defined in [00-conventions.md §3](00-conventions.md#3-glossary-author
 ## Build status (as built)
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). FR-054 below clarifies the required contract; it does not claim that the API or UI is implemented.
 
 Summary: built 52, not built 3, partial 10.
 
@@ -122,9 +124,14 @@ Summary: built 52, not built 3, partial 10.
   - A new network is in setup status until required policies are set and at least one administrator exists; then an administrator can activate it.
   - While in setup status, no membership can become active and no transaction can be proposed.
 
-### FR-005 · P0 · Decimals fixed after first posting
+### FR-005 · P0 · Decimal scale immutable from network creation
 - **Rationale.** DOM-031.
-- **Acceptance.** Decimal changes are refused after the first entry; before it, the change is accepted and reflected in input formatting and exports.
+- **Acceptance.**
+  - Network creation MUST atomically persist the selected decimal scale with the complete initial monetary policies and account settings. The scale MUST be immutable from creation onward in the MVP; an update request MUST be refused without changing the scale or stored values.
+  - Every proposal, posting, listing price, and later monetary setting MUST use the creation-time scale. A proposal locks the network from creation even if it is later declined, cancelled, or expired. Persisted integer amounts MUST NOT be converted or reinterpreted to support a scale change.
+  - Concurrent network initialization and writes MUST NOT persist monetary values under mixed scales; partial initialization is forbidden. Existing networks with persisted monetary settings MUST be treated as scale-locked even when they have no ledger entries. A separate lock marker is optional only if existing network state and monetary values enforce the rule.
+  - Tests MUST prove the initial scale and monetary settings commit atomically, that scale-update attempts are refused from the first moment after network creation (including before the first posting), and that proposals, postings, listing prices and settings always retain the creation-time scale. Include races between initialization and monetary writes and verify no stored amount changes meaning.
+- **Implementation note (2026-10-24).** The creation-time immutable scale guard is required and unimplemented at this checkpoint; the historical build-status row above does not establish it.
 
 ### FR-006 · P0 · Network isolation in every interface
 - **Rationale.** VIS-003, DOM-001.
@@ -183,7 +190,10 @@ Summary: built 52, not built 3, partial 10.
 
 ### FR-017 · P0 · Duplicate join is idempotent
 - **Rationale.** DOM-002.
-- **Acceptance.** Joining a network with an identity that already has a membership in it returns the existing membership status and creates no second membership; repeated submissions with the same idempotency key return the same result (DOM-016).
+- **Acceptance.**
+  - A join attempt by an identity with an existing `pending` or `active` membership MUST return that existing membership unchanged and MUST NOT create a second membership.
+  - A join or re-application attempt by an identity with an existing `suspended` or `departed` membership MUST be refused as `forbidden` with no state change and no second membership. Rejoining after departure requires a new transition explicitly defined by DOM-003; it is not granted by this requirement (DEC-038).
+  - Repeating a request with the same idempotency key and payload MUST return its original result and MUST NOT create another membership or change the current membership (DOM-016). A new join attempt is evaluated against the current membership state under the preceding rules.
 
 ---
 
@@ -328,7 +338,12 @@ Summary: built 52, not built 3, partial 10.
 
 ### FR-054 · P1 · Balance at a past date
 - **Rationale.** Dispute and audit questions need a historical position.
-- **Acceptance.** For any date within the network's history, the balance shown equals the sum of entries posted on or before that instant (test with a fixture of postings around the boundary).
+- **Acceptance.**
+  - The member can request a historical balance for their own account at an exact instant. The request MUST use an RFC 3339 timestamp with an explicit `Z` or numeric UTC offset, with no more than millisecond precision; the service MUST normalize it to UTC. API response timestamps MUST follow API-005. A date-only value, a timestamp with no offset, excess fractional precision, or a future instant MUST be rejected by the API with HTTP 400 `invalid-query` (API-083); the UI MUST show a timestamp field error and preserve the submitted value where safe.
+  - The response MUST identify normalized UTC `as_of`, the account's historical signed `balance_minor`, `direction` (API-007), immutable `decimals`, snapshot high-water `ledger_seq`, and `has_postings_by_as_of`. It MUST NOT present the current credit limit, reserved amount, or available credit as if those were historical values. This operation reads only the caller's own account; it MUST NOT expose another member's historical balance through this member operation.
+  - The balance MUST equal the sum of that account's ledger entries visible in one fixed read snapshot whose `posted_at` is less than or equal to `as_of`, inclusive. Use the append-only posting model (DAT-010, DAT-017); pending proposals and current mutable transaction status MUST NOT contribute. A reversal or adjustment affects the result only at or after its own posting instant. Entries with equal `posted_at` timestamps MUST be included as a complete tie set; `ledger_seq` (DAT-016) MUST provide deterministic ordering and the response MUST return the snapshot high-water sequence from the same read snapshot. The high-water sequence is a snapshot boundary, not a cursor or timestamp cutoff; because posting timestamps need not be monotonic with sequence, the balance MUST NOT be computed from a greatest-sequence prefix.
+  - If no account entries in the read snapshot have `posted_at <= as_of`, the response MUST return zero and `has_postings_by_as_of: false`, with an explicit "No postings as of this instant" state. This rule is based on actual stored posting timestamps, not `network.created_at`: a posting timestamped before network creation (for example after clock rollback) MUST be included when it satisfies the cutoff. A malformed timestamp, future instant, or instant with unsupported precision MUST be rejected by the API with HTTP 400 `invalid-query` (API-083). The HTML and API adapters MUST return the same historical balance semantics.
+  - Tests MUST cover offsets that normalize to the same UTC instant, the inclusive boundary, multiple entries tied at the boundary, a posting immediately after it, pending proposals, later reversals/adjustments, non-monotonic timestamps after clock rollback including a posting timestamp before network creation, snapshot high-water sequence distinct from the latest included posting sequence, zero/no-postings results when no account entries satisfy the cutoff, malformed and excess-precision input, and future input. Verify both API contract and member history behavior. The existing `BalanceAt` sequence capability alone does not satisfy this requirement until the instant-based adapters and acceptance evidence exist.
 
 ---
 

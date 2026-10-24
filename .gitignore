@@ -2,6 +2,7 @@
 *.db-wal
 *.db-shm
 /bin/
+/.tools/
 e2e/node_modules/
 e2e/test-results/
 e2e/.state/

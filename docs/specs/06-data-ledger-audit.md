@@ -1,11 +1,13 @@
 # 06 Data, Ledger and Audit Requirements
 
-Status: Draft v0.1 · Owner/role: Ledger and data lead · Last updated: 2026-10-21
+Status: Draft v0.1 · Owner/role: Ledger and data lead · Last updated: 2026-10-24
 Scope: Conceptual data entities, identifiers, relationships, idempotency, append-only ledger entries, audit event contents and access, reconstructable balances, retention expectations, migration principles. No database vendor is prescribed beyond DEC-001 (embedded SQLite default behind a storage interface).
 Dependencies: [00-conventions.md](00-conventions.md) (glossary, LED-1..LED-7, DEC-001); [03-domain-model.md](03-domain-model.md) (domain definitions and rules); [05-architecture.md](05-architecture.md) (ARC-004..ARC-006, ARC-011, ARC-015); [07-api-contract.md](07-api-contract.md) (Idempotency-Key header); [09-security-privacy.md](09-security-privacy.md) (personal data minimisation, access); [12-quality-test-plan.md](12-quality-test-plan.md).
 Open questions: see section 11.
 
 Ledger rules (LED-1..LED-7) are defined once in [00-conventions.md](00-conventions.md) section 4. This document states the data-level requirements that enforce them and does not restate them as separate rules.
+
+Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RESUME-2026-10-24.md). DAT-049 through DAT-051 below are target requirements, not claims of implementation.
 
 ---
 
@@ -17,7 +19,7 @@ Ledger rules (LED-1..LED-7) are defined once in [00-conventions.md](00-conventio
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary: built 38, not built 3, partial 7.
+Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 has no timestamp-based service/API implementation.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -41,7 +43,7 @@ Summary: built 38, not built 3, partial 7.
 | DAT-018 | P0 | built | Available computed from balance, limit and proposed reservations |
 | DAT-019 | P0 | built | Cache changed only in posting |
 | DAT-020 | P0 | built | Verify checks per-account, per-transaction and network sums |
-| DAT-021 | P1 | built | BalanceAt sums entries up to a sequence (service only) |
+| DAT-021 | P1 | built | Sequence-based BalanceAt sums entries up to a sequence (service only); this is not a timestamp cutoff |
 | DAT-022 | P0 | built | Reversal is new transaction; original unchanged |
 | DAT-023 | P1 | built | Adjustment against system account with audit |
 | DAT-024 | P1 | partial | Override path is time-limited audited limit change; no general admin override flag |
@@ -69,6 +71,9 @@ Summary: built 38, not built 3, partial 7.
 | DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
 | DAT-047 | P0 | not built | No 10,000-transaction fixture and no migration from prior released schema |
 | DAT-048 | P1 | not built | Migration duration not recorded |
+| DAT-049 | P0 | required unimplemented correction | Decimal scale lock includes any persisted scaled monetary value or proposal, enforced atomically with writes |
+| DAT-050 | P1 | not built | Historical balance reconstructed by timestamp from a fixed snapshot; no timestamp API adapter |
+| DAT-051 | P0 | required unimplemented correction | Persist dispute deadline and policy version at completion; backfill from policy history or block for owner mapping |
 
 ## 1. Principles
 
@@ -97,14 +102,14 @@ Each entity is listed with its owning context and key attributes. Types are conc
 
 | Entity | Context | Key attributes (conceptual) | Scope |
 |---|---|---|---|
-| Network | Governance | id, name, slug, status (active, suspended, closing, closed), created_at, currency name, decimals, closure record | Platform-level record; contains no member data |
+| Network | Governance | id, name, slug, status (active, suspended, closing, closed), created_at, currency name, decimals, closure record | Platform-level record; contains no member data; decimals are selected with initial monetary settings at creation and immutable afterwards |
 | NetworkPolicy (versioned) | Governance | network id, version, policy values (see 00 section 5), effective_at, changed_by, change reason | Append-only versions |
 | Member | Membership | id, network id, person id (or member-only identity), display name, status (invited, pending_approval, active, suspended, departed), joined_at, departed_at, directory visibility | One per person per network |
 | Person (identity) | Identity | id, sign-in identifier, credential material (hashed), recovery method, created_at | Global to the platform instance; not network data |
 | Role assignment | Identity/governance | network id, member id, role (network_administrator, dispute_reviewer), granted_at, granted_by, revoked_at | Append-only with revocation timestamp |
 | Account | Ledger | id, network id, member id (or system), credit_limit_minor (>= 0), cached_balance_minor, updated_at | One per member per network, plus one system account per network |
 | Listing | Market | id, network id, member id, kind (offer, request), title, description, status (active, paused, removed), created_at, updated_at | Versioned via audit, not overwritten history |
-| Transaction | Ledger | id, network id, kind (trade, adjustment, reversal), status, payer account id, payee account id, amount_minor (> 0), currency decimals (from policy at creation), listing id (optional), description, reason (mandatory for adjustment), original transaction id (for reversal), proposed_at, expires_at, completed_at, idempotency key reference | Immutable identity; mutable only through status transitions recorded in TransactionStatusEvent |
+| Transaction | Ledger | id, network id, kind (trade, adjustment, reversal), status, payer account id, payee account id, amount_minor (> 0), currency decimals (from policy at creation), listing id (optional), description, reason (mandatory for adjustment), original transaction id (for reversal), proposed_at, expires_at, completed_at, dispute_deadline_at and dispute-window policy version (set at completion), idempotency key reference | Immutable identity and terms; mutable only through status transitions recorded in TransactionStatusEvent |
 | TransactionStatusEvent | Ledger | id, transaction id, from status, to status, actor, occurred_at, request id | Append-only |
 | LedgerEntry (posting) | Ledger | id, network id, transaction id, account id, signed_amount_minor (non-zero integer), ledger_seq, posted_at | Append-only (DAT-010) |
 | Dispute | Disputes | id, network id, transaction id, raised_by (member), reason category, description, status (open, under_review, resolved, withdrawn), opened_at, decided_at | Status changes are events |
@@ -152,7 +157,10 @@ Sign convention (from 00 glossary): a member's balance is the sum of its signed 
 | DAT-018 · P0 | `available_minor` for a payer MUST be computed as `cached_balance_minor + credit_limit_minor − reserved_outgoing_minor`, where reserved amounts are the sum of outgoing `proposed` and `accepted` transactions not yet completed, as defined in 00. |
 | DAT-019 · P0 | Cached balances MUST be updated only inside a posting (DAT-014) or a documented repair (section 10). |
 | DAT-020 · P0 | The consistency check (ARC-015) MUST verify, per network, that the sum of entries per account equals the cached balance, that per-transaction sums are zero, and that the network total is zero. |
-| DAT-021 · P1 | Balance history for an account MUST be reconstructable at any `ledger_seq` by summing entries with `ledger_seq` at or below the requested value. A test MUST verify this against the cached balance at the latest value. |
+| DAT-021 · P1 | Sequence-based balance history for an account MUST be reconstructable at any `ledger_seq` by summing entries with `ledger_seq` at or below the requested value. A test MUST verify this against the cached balance at the latest value. A sequence cutoff is not a substitute for a timestamp cutoff (DAT-050). |
+| DAT-049 · P0 | Network creation MUST select and persist the decimal scale together with the complete initial monetary policy and account settings in one atomic storage unit; after creation the scale is immutable for the MVP. Any persisted listing price, proposal (including one later declined, cancelled, or expired), or posting uses that locked scale and never makes it mutable again. Existing networks with monetary settings MUST be treated as locked even when `ledger_seq` is zero. Persisted integers MUST NOT be converted or reinterpreted. A scale lock marker MAY be used but is not required if existing network state and values enforce the rule. Concurrent network creation/initialization and writes MUST NOT persist monetary values under mixed scales; partial initialization is forbidden. |
+| DAT-050 · P1 | A historical account balance at instant `T` MUST be computed by summing every entry for that account with `posted_at <= T` from one consistent read snapshot. `posted_at` is stored at millisecond precision; the query instant MUST resolve to that precision without rounding or truncation. Both entries of a posting are visible atomically and share that posting's timestamp. Include all entries at an equal timestamp. Do not translate `T` to a greatest-`ledger_seq` prefix: posting timestamps are not guaranteed monotonic with sequence. The returned `ledger_seq` is the high-water sequence visible in the fixed read snapshot, even when later-timestamped entries at that sequence are excluded from the sum; it is a snapshot boundary, not a replay cursor or definition of the timestamp cutoff. For any cutoff, including one before `network.created_at`, sum actual entries satisfying the timestamp predicate; return zero and `has_postings_by_as_of: false` exactly when no entry for that account is included. Future cutoffs are refused. Tests cover equal timestamps, clock rollback/non-monotonic timestamps (including entries timestamped before network creation), no included entries, future cutoff rejection, and concurrent posting. |
+| DAT-051 · P0 | At trade completion, the posting transaction MUST persist `dispute_deadline_at` and the policy version used to derive it, using the dispute-window policy effective at `completed_at`. The deadline is immutable thereafter. For legacy completed trades without this value, a forward-only migration MUST derive it from the latest policy version with `effective_at <= completed_at`, ordered deterministically by version. If that policy version cannot be identified unambiguously, the migration MUST stop before writes are served until the owner supplies a mapping; it MUST NOT use the current policy as a silent fallback. This is a required unimplemented correction at checkpoint `d39bfef`; current dispute opening reads the then-current policy rather than a stored completion deadline. |
 
 ### 5.3 Reversals and adjustments
 
