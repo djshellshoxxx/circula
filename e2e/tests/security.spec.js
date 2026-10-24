@@ -190,7 +190,9 @@ test('axe and keyboard: operator access page lists the session', async ({ browse
 
 test('axe and keyboard: dual-control pending adjustments, approve with a second administrator', async ({ browser }) => {
   const a = await newPage(browser);
-  await signIn(a.page, 'admin');
+  // The newly appointed admin2 requests. The founder's root grant is exempt
+  // from the 24-hour wait and was not appointed by the requester.
+  await signIn(a.page, 'admin2');
   await a.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
   await expect(a.page.getByText('No requests match this filter')).toBeVisible();
   await checkPage(a.page, 'pending adjustments (empty)');
@@ -213,7 +215,7 @@ test('axe and keyboard: dual-control pending adjustments, approve with a second 
   await checkPage(a.page, 'pending adjustments (proposer view)');
 
   const b = await newPage(browser);
-  await signIn(b.page, 'admin2');
+  await signIn(b.page, 'admin');
   await b.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
   await expect(b.page.getByRole('button', { name: /Approve and post/ }).first()).toBeVisible();
   await checkPage(b.page, 'pending adjustments (second administrator)');
