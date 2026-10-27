@@ -1,10 +1,10 @@
 package web
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"html/template"
+	"io"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -81,11 +81,7 @@ var histBalanceTmpl = template.Must(template.New("histbal").Parse(`<section aria
 </div>{{end}}
 </section>`))
 
-// renderHistBalance renders the fragment. html/template escapes every value.
-func renderHistBalance(vm histBalanceVM) (template.HTML, error) {
-	var b bytes.Buffer
-	if err := histBalanceTmpl.Execute(&b, vm); err != nil {
-		return "", err
-	}
-	return template.HTML(b.String()), nil
+// renderHistBalance writes the fragment to w. html/template escapes every value.
+func renderHistBalance(w io.Writer, vm histBalanceVM) error {
+	return histBalanceTmpl.Execute(w, vm)
 }

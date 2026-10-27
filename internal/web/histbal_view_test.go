@@ -33,11 +33,11 @@ func hbRun(t *testing.T, raw string, f *fakeHB) (histBalanceVM, string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	h, err := renderHistBalance(vm)
-	if err != nil {
+	var h strings.Builder
+	if err := renderHistBalance(&h, vm); err != nil {
 		t.Fatal(err)
 	}
-	return vm, string(h)
+	return vm, h.String()
 }
 
 func TestHistBalanceFormOnly(t *testing.T) {
