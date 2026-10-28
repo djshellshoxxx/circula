@@ -51,7 +51,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-051 | P0 | built | Reverse-chronological history with status and counterparty |
 | FR-052 | P0 | built | Read-only ledger verification from admin page and CLI |
 | FR-053 | P1 | built | Pending view paged; dashboard shows 100 newest pending |
-| FR-054 | P1 | partial | BalanceAt in service only; no UI or API |
+| FR-054 | P1 | built (2026-10-28, unreviewed) | Timestamp read `Service.HistoricalBalance` (one snapshot, inclusive `posted_at`); API-083 `GET /accounts/me?at=`; UX-061 History lookup. Not independently reviewed |
 | FR-060 | P0 | built | Set or remove override with reason; audited |
 | FR-061 | P0 | built | Suspend and restore with reason; audited |
 | FR-062 | P0 | built | Admin adjustment with reason; two entries |

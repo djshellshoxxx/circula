@@ -17,7 +17,7 @@ Normative terms follow [00-conventions.md](00-conventions.md) section 1. WCAG re
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). Historical-balance presentation below clarifies UX-061; it does not claim that the feature or its acceptance evidence exists.
+Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). Historical-balance presentation below clarifies UX-061. Update 2026-10-28: the lookup is on the History page (`internal/web/histbal_view.go`) with Go page tests and a Playwright keyboard/axe test; manual screen-reader review is still pending.
 
 Summary: built 31, not built 7, partial 22.
 

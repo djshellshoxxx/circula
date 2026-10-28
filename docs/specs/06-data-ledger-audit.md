@@ -19,7 +19,7 @@ Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RE
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 has no timestamp-based service/API implementation.
+Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 had no timestamp-based service/API implementation at that snapshot; it was added on 2026-10-28 (see the DAT-050 row).
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -72,7 +72,7 @@ Summary for the historical implementation snapshot: built 38, not built 3, requi
 | DAT-047 | P0 | not built | No 10,000-transaction fixture and no migration from prior released schema |
 | DAT-048 | P1 | not built | Migration duration not recorded |
 | DAT-049 | P0 | required unimplemented correction | Decimal scale lock includes any persisted scaled monetary value or proposal, enforced atomically with writes |
-| DAT-050 | P1 | not built | Historical balance reconstructed by timestamp from a fixed snapshot; no timestamp API adapter |
+| DAT-050 | P1 | built (2026-10-28, unreviewed) | `entries.posted_at <= as_of` sum and high-water `ledger_seq` in one view transaction (`SumEntriesAsOf`, `Service.HistoricalBalance`); tests in `internal/service/histbal_test.go` |
 | DAT-051 | P0 | required unimplemented correction | Persist dispute deadline and policy version at completion; backfill from policy history or block for owner mapping |
 
 ## 1. Principles
