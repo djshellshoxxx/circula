@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -42,9 +43,14 @@ func TestSecurityHeadersAndRequestID(t *testing.T) {
 	if rec.Header().Get("X-Request-Id") != "trace-12345678" {
 		t.Error("request id not echoed")
 	}
-	rec = w.do(req{method: "GET", path: "/api/v1/network", token: w.aliceT, hdr: map[string]string{"X-Request-Id": "bad id\x01"}})
-	if strings.Contains(rec.Header().Get("X-Request-Id"), "bad") {
-		t.Error("hostile request id accepted")
+	hostileID := "bad id\x01"
+	rec = w.do(req{method: "GET", path: "/api/v1/network", token: w.aliceT, hdr: map[string]string{"X-Request-Id": hostileID}})
+	returnedID := rec.Header().Get("X-Request-Id")
+	if returnedID == hostileID {
+		t.Error("hostile request id was echoed")
+	}
+	if !regexp.MustCompile(`^[A-Za-z0-9._-]{8,64}$`).MatchString(returnedID) {
+		t.Errorf("replacement request id is empty or malformed: %q", returnedID)
 	}
 }
 

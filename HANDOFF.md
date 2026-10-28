@@ -4,7 +4,8 @@ Branch: `codex/circula-support-boundaries-20261028`.
 Feature commit: `ae3d0928d077196de20b594bce6adaf555f290f9`.
 Base: `bb5a36f9e6912d73fa6989f1ae00fc2017f3f18f` on
 `claude/awesome-darwin-y6eaiz`, after merged PR #11. This is not main.
-The current HEAD adds this handoff; use `git rev-parse HEAD` for its exact SHA.
+Later HEADs also correct a request-ID test false positive and update receipts;
+use `git rev-parse HEAD` for the exact checkpoint SHA.
 
 ## Preserved work and ownership
 
@@ -69,12 +70,18 @@ overly broad interpretation and is superseded by this clarification.
 Source-push CI [40713730369](https://github.com/djshellshoxxx/circula/actions/runs/40713730369)
 completed successfully: all nine jobs at exact source `912598d...`, including all
 OS tests, E2E, lint/vulnerability/secret checks, build/reproducibility, contract/load
-and fuzz. Separate PR CI `40715371415` is still running; at the last read seven
-jobs passed and Ubuntu/macOS race tests remained active. These are remote results;
-local full-package dependency and artifact access limits are unchanged.
+and fuzz. Separate PR CI `40715371415` finished with eight successful jobs and a macOS failure in
+`TestSecurityHeadersAndRequestID`. Its old substring check can reject a valid
+random hex ID containing `bad`. The next checkpoint corrects only that assertion,
+with deterministic counterexample, predicate checks and independent review. See
+[request-ID CI evidence](docs/audit/REQUEST-ID-CI-2026-10-28.md). Fresh exact-head
+CI is required for the updated test. These are remote results; local full-package
+dependency and artifact access limits are unchanged.
 
-This documentation receipt is held locally while CI is active, avoiding a new
-synchronize event and restart. No merge has been attempted. Recheck live ownership,
+The documentation receipt was held while CI was active. After its completed
+failure, the assertion correction and receipt are checkpointed together; no
+running workflow was restarted or cancelled manually. No merge has been attempted.
+Recheck live ownership,
 full source/target SHAs, all required checks and review gates before integration.
 Do not merge PR #13 over newer work. No force push, deployment, release, paid
 Claude call, purchase or credentials/security-setting change is authorized here.
