@@ -192,3 +192,26 @@ test('axe: maintenance page, and reads keep working in maintenance mode', async 
     await inst.stop();
   }
 });
+
+// UX-061: balance at an exact instant on the History page, keyboard only.
+test('axe and keyboard: historical balance lookup, error then result', async ({ as, st }) => {
+  const { tabTo } = require('../kbd');
+  const page = await as('alice');
+  await page.goto(`${n(st)}/history`);
+  await tabTo(page, /Date and time/);
+  await page.keyboard.type('2026-03-01');
+  await Promise.all([page.waitForNavigation(), page.keyboard.press('Enter')]);
+  await expect(page.locator('#histbal-err')).toContainText('Date and time: use a full RFC 3339 date-time');
+  await expect(page.locator('#histbal-at')).toHaveValue('2026-03-01');
+  await expect(page.locator('#histbal-at')).toHaveAttribute('aria-invalid', 'true');
+  await expectNoAxeViolations(page, 'historical balance field error');
+
+  const at = new Date(Date.now() - 1000).toISOString(); // Z, millisecond precision, not in the future
+  await page.locator('#histbal-at').fill('');
+  await tabTo(page, /Date and time/);
+  await page.keyboard.type(at);
+  await Promise.all([page.waitForNavigation(), page.keyboard.press('Enter')]);
+  await expect(page.locator('#histbal-result')).toContainText('posted balance of your account at this instant');
+  await expect(page.locator('#histbal-result time')).toHaveAttribute('datetime', at);
+  await expectNoAxeViolations(page, 'historical balance result');
+});

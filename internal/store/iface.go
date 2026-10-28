@@ -190,6 +190,9 @@ type TxnRepo interface {
 	InsertEntry(e *domain.Entry) error
 	ListEntries(netID, txID string) ([]*domain.Entry, error)
 	SumEntries(accountID string, uptoSeq int64) (int64, error)
+	// SumEntriesAsOf sums an account's entries with posted_at <= asOf (inclusive, millisecond
+	// precision) and counts how many were included (DAT-050). It never uses a ledger_seq prefix.
+	SumEntriesAsOf(accountID string, asOf time.Time) (sum, included int64, err error)
 	// ListAccountEntries lists an account's entries newest first by ledger_seq; beforeSeq > 0 is the keyset cursor.
 	ListAccountEntries(netID, accountID string, beforeSeq int64, limit int) ([]*domain.Entry, error)
 	// LiveProposalStats counts and sums unexpired proposed trades created by createdBy

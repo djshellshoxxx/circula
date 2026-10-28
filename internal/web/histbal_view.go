@@ -15,8 +15,8 @@ import (
 const histBalanceExample = "2026-03-01T12:00:00Z"
 
 // histBalanceVM is the view model for the historical-balance lookup on the
-// History screen (UX-061, FR-054). It is presentation only and unwired: no
-// route renders it until the service has a timestamp read.
+// History screen (UX-061, FR-054). The history page embeds it through the
+// "histbal" template defined by histBalanceSrc.
 type histBalanceVM struct {
 	Raw        string // submitted value, preserved verbatim (escaped by the template)
 	FieldError string // reason text for field "at"; empty when valid
@@ -48,6 +48,12 @@ func buildHistBalanceVM(ctx context.Context, raw string, now time.Time, rd histb
 	}
 	res, err := rd.HistoricalBalance(ctx, actor, netID, at)
 	if err != nil {
+		// The reader re-checks precision and the future bound on its own clock.
+		var ie *histbal.InputError
+		if errors.As(err, &ie) {
+			vm.FieldError = ie.Reason
+			return vm, nil
+		}
 		return vm, err
 	}
 	bal := res.BalanceMinor
@@ -62,7 +68,10 @@ func buildHistBalanceVM(ctx context.Context, raw string, now time.Time, rd histb
 	return vm, nil
 }
 
-var histBalanceTmpl = template.Must(template.New("histbal").Parse(`<section aria-labelledby="histbal-h">
+// histBalanceSrc defines the "histbal" fragment. It is parsed on its own for
+// renderHistBalance and into the history page set, so the page includes it as
+// a template call rather than as pre-rendered template.HTML.
+const histBalanceSrc = `{{define "histbal"}}<section aria-labelledby="histbal-h">
 <h2 id="histbal-h">Balance at an exact time</h2>
 <form method="get" action="">
 <div class="field">
@@ -79,9 +88,11 @@ var histBalanceTmpl = template.Must(template.New("histbal").Parse(`<section aria
 {{if .NoPostings}}<p>No postings as of this instant</p>{{end}}
 <p>{{.Explanation}}</p>
 </div>{{end}}
-</section>`))
+</section>{{end}}`
+
+var histBalanceTmpl = template.Must(template.New("histbal-root").Parse(histBalanceSrc))
 
 // renderHistBalance writes the fragment to w. html/template escapes every value.
 func renderHistBalance(w io.Writer, vm histBalanceVM) error {
-	return histBalanceTmpl.Execute(w, vm)
+	return histBalanceTmpl.ExecuteTemplate(w, "histbal", vm)
 }

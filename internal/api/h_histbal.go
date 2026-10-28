@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/histbal"
@@ -18,7 +19,7 @@ type histBalanceBody struct {
 }
 
 // histBalanceHandler implements the historical variant of API-044 (API-083).
-// It is not registered on any route yet; the service has no timestamp read.
+// getAccount dispatches here when the query carries `at`.
 func histBalanceHandler(rd histbal.Reader, now func() time.Time) handlerFunc {
 	return func(c *reqCtx) error {
 		if err := c.only("at"); err != nil {
@@ -34,13 +35,19 @@ func histBalanceHandler(rd histbal.Reader, now func() time.Time) handlerFunc {
 		}
 		asOf, err := histbal.ParseInstant(raw, now())
 		if err != nil {
-			if ie, isIn := err.(*histbal.InputError); isIn {
+			var ie *histbal.InputError
+			if errors.As(err, &ie) {
 				return invalidQuery("at: " + ie.Reason)
 			}
 			return err
 		}
 		res, err := rd.HistoricalBalance(c.r.Context(), c.actor, c.netID, asOf)
 		if err != nil {
+			// The reader re-checks precision and the future bound on its own clock.
+			var ie *histbal.InputError
+			if errors.As(err, &ie) {
+				return invalidQuery("at: " + ie.Reason)
+			}
 			return err
 		}
 		return ok(c, 200, histBalanceBody{
