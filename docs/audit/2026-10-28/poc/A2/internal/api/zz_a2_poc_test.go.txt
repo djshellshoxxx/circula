@@ -105,7 +105,7 @@ func TestA2_NetworkScopedTokenActsOnWholePerson(t *testing.T) {
 // token. Replays never re-check scope or role (cf. SA2-17).
 func TestA2_ReplayIgnoresScopeAndRole(t *testing.T) {
 	w := newWorld(t)
-	key := "inv-key-0001-abcdef"
+	key := "inv-key-0001-abcdef" // gitleaks:allow (synthetic idempotency key, not a secret)
 	first := w.post(w.adminT, "/admin/invitations", m{"ttl_seconds": 3600}, key)
 	wantStatus(t, first, 201)
 	inv := decode[map[string]any](t, first)["token"]
