@@ -56,8 +56,9 @@ by PR #12.
   or production/logging behavior change found. This is not a professional audit.
 - Full API tests remain unavailable locally because module caches are absent
   and previous download HTTP 403s remain binding. No denied download was retried.
-- The next source checkpoint needs fresh exact-head CI. Do not infer that a
-  passing probe or the earlier green source run validates the updated full API.
+- Later corrected source `5000a5e39dbfa224af4dd91123ca0b3a78e86a4c` has final CI
+  evidence below; neither the predicate probe nor the earlier source run alone
+  validates the updated full API.
 
 Offline probe commands used the existing Go 1.26.10 toolchain with
 `GO111MODULE=off GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off
@@ -69,5 +70,25 @@ tool transcript. Required follow-up when dependencies are lawfully available:
 go test -count=1 ./internal/api -run '^TestSecurityHeadersAndRequestID$'
 go test -race -count=1 ./internal/api -run '^TestSecurityHeadersAndRequestID$'
 ```
+
+## Final remote receipt and documentation-only handoff
+
+At corrected source `5000a5e39dbfa224af4dd91123ca0b3a78e86a4c`,
+[PR run 40718272756](https://github.com/djshellshoxxx/circula/actions/runs/40718272756)
+completed successfully: all nine jobs passed, including the macOS race test that
+previously failed, the other two OS jobs, E2E, static/security checks and
+cross-build/reproducibility/contract/load/fuzz jobs. This is remote execution;
+local dependency-blocked API tests were not rerun.
+
+Separate [push run 40718262628](https://github.com/djshellshoxxx/circula/actions/runs/40718262628)
+failed overall: eight jobs passed and the queued macOS job was cancelled. No
+assertion failure is reported for that cancelled job; the same-source PR macOS
+job passed. This coordinator did not cancel, rerun or dispatch either workflow.
+Reconcile required-check implications before integration; both runs are not green.
+
+A later handoff commit changes Markdown only and uses `[skip ci]` to avoid
+expensive reruns. It is not a newly tested source head; skipped checks may remain
+pending and do not waive any integration gate. Exact document-head recovery and
+ownership are in [HANDOFF.md](../../HANDOFF.md).
 
 No approval review, merge, deployment or release was submitted.
