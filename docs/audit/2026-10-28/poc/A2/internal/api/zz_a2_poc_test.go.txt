@@ -1,0 +1,386 @@
+package api_test
+
+// Auditor A2 proof-of-concept tests (throwaway evidence, 2026-10-28).
+// Each test asserts the CURRENT (defective) behaviour, so it passes while the
+// finding is present and fails once the defect is fixed. Run with:
+//   go test ./internal/api -run 'TestA2' -v
+
+import (
+	"context"
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/base32"
+	"encoding/binary"
+	"fmt"
+	"net/http/httptest"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+
+	"github.com/djshellshoxxx/circula/internal/api"
+	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/store"
+	"github.com/djshellshoxxx/circula/internal/testutil"
+)
+
+// A2-A1: strict decoding (API-003) rejects exact duplicate keys and unknown
+// names, but encoding/json matches field names case-insensitively, so a
+// case-variant duplicate passes the duplicate check and the LAST spelling wins;
+// a wrongly-cased field name is accepted instead of refused as unknown.
+func TestA2_CaseVariantDuplicateKeysAccepted(t *testing.T) {
+	w := newWorld(t)
+	raw := `{"counterparty_member_id":"` + w.bobM.ID + `","direction":"pay","amount_minor":"100","AMOUNT_MINOR":"7"}`
+	rec := w.do(req{method: "POST", path: "/api/v1/transactions", token: w.aliceT, raw: raw,
+		hdr: map[string]string{"Idempotency-Key": w.key()}})
+	t.Logf("case-variant duplicate -> %d %s", rec.Code, strings.TrimSpace(rec.Body.String()))
+	if rec.Code != 201 {
+		t.Fatalf("defect absent: %d", rec.Code)
+	}
+	got := decode[map[string]any](t, rec)
+	if got["amount_minor"] != "7" {
+		t.Fatalf("amount = %v", got["amount_minor"])
+	}
+	// Exact duplicate for comparison: refused.
+	raw2 := `{"counterparty_member_id":"` + w.bobM.ID + `","direction":"pay","amount_minor":"100","amount_minor":"7"}`
+	rec = w.do(req{method: "POST", path: "/api/v1/transactions", token: w.aliceT, raw: raw2,
+		hdr: map[string]string{"Idempotency-Key": w.key()}})
+	t.Logf("exact duplicate -> %d", rec.Code)
+	// Non-canonical spelling of every field accepted.
+	rec = w.do(req{method: "POST", path: "/api/v1/listings", token: w.aliceT, raw: `{"KIND":"offer","Title":"bike"}`,
+		hdr: map[string]string{"Idempotency-Key": w.key()}})
+	t.Logf("wrongly cased names -> %d", rec.Code)
+	if rec.Code != 201 {
+		t.Fatalf("listing: %d %s", rec.Code, rec.Body.String())
+	}
+}
+
+// A2-A2: a bearer token restricted to one network (TokenInput.NetworkID) is
+// confined for network data and for joins, but GET/DELETE /tokens and
+// PATCH /me act on the whole person: it lists the person's other tokens with
+// their network ids, revokes an unrestricted token and changes the time zone.
+func TestA2_NetworkScopedTokenActsOnWholePerson(t *testing.T) {
+	w := newWorld(t)
+	ctx := context.Background()
+	adm2 := w.env.Person("admin2")
+	net2, _ := w.env.Network(adm2, "other", nil)
+	tok, _ := testutilInvite(t, w, adm2, net2.ID)
+	if _, err := w.env.Svc.RedeemInvitation(ctx, w.alice, tok, "alice-other"); err != nil {
+		t.Fatal(err)
+	}
+	scoped, _, err := w.env.Svc.CreateAPIToken(ctx, w.alice, service.TokenInput{Name: "integration-for-acme",
+		Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}, NetworkID: w.net.ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, other, err := w.env.Svc.CreateAPIToken(ctx, w.alice, service.TokenInput{Name: "integration-for-other",
+		Scopes: []domain.Scope{domain.ScopeRead}, NetworkID: net2.ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// For network data the scope holds: the other network does not exist.
+	wantProblem(t, w.do(req{method: "GET", path: "/api/v1/network", token: scoped, hdr: map[string]string{"X-Network": "other"}}), 404, "not-found")
+	me := w.get(scoped, "/me")
+	if strings.Contains(me.Body.String(), net2.ID) {
+		t.Fatal("GET /me leaks the other network (unexpected)")
+	}
+	list := w.get(scoped, "/tokens")
+	t.Logf("scoped GET /tokens -> %d, mentions other network id: %v", list.Code, strings.Contains(list.Body.String(), net2.ID))
+	if list.Code != 200 || !strings.Contains(list.Body.String(), net2.ID) || !strings.Contains(list.Body.String(), "integration-for-other") {
+		t.Fatalf("defect absent: %s", list.Body.String())
+	}
+	del := w.do(req{method: "DELETE", path: "/api/v1/tokens/" + other.ID, token: scoped})
+	t.Logf("scoped DELETE other network's token -> %d", del.Code)
+	if del.Code != 204 {
+		t.Fatalf("revoke: %d", del.Code)
+	}
+	tz := w.do(req{method: "PATCH", path: "/api/v1/me", token: scoped, body: m{"time_zone": "Asia/Tokyo"}})
+	t.Logf("scoped PATCH /me (person-wide display zone) -> %d", tz.Code)
+}
+
+// A2-A3: the replay cache is keyed by person and key only. A read-only token
+// of the same person (or the person after losing a role) gets the cached
+// response of a write it could not perform now, here a plaintext invitation
+// token. Replays never re-check scope or role (cf. SA2-17).
+func TestA2_ReplayIgnoresScopeAndRole(t *testing.T) {
+	w := newWorld(t)
+	key := "inv-key-0001-abcdef"
+	first := w.post(w.adminT, "/admin/invitations", m{"ttl_seconds": 3600}, key)
+	wantStatus(t, first, 201)
+	inv := decode[map[string]any](t, first)["token"]
+	ro := w.token(w.admin, domain.ScopeRead)
+	// Fresh write with the read-only token is refused...
+	wantProblem(t, w.post(ro, "/admin/invitations", m{"ttl_seconds": 3600}, "another-key-0001"), 403, "forbidden")
+	// ...but the replay hands back the credential.
+	rep := w.post(ro, "/admin/invitations", m{"ttl_seconds": 3600}, key)
+	t.Logf("read-only replay -> %d Idempotent-Replayed=%q", rep.Code, rep.Header().Get("Idempotent-Replayed"))
+	if rep.Code != 201 || decode[map[string]any](t, rep)["token"] != inv {
+		t.Fatalf("defect absent: %d %s", rep.Code, rep.Body.String())
+	}
+}
+
+// A2-A4: break-glass grant-admin makes a member an administrator for the
+// service (POST /admin/invitations works), but adapter pre-checks that read
+// the stored membership (reqCtx.adminOnly) answer 403 for GET /admin/policy,
+// GET /admin/audit-events and GET /admin/consistency-checks/{id}.
+func TestA2_BreakGlassAdminRefusedByAPIPrechecks(t *testing.T) {
+	w := newWorld(t)
+	sys := domain.SystemActor("op")
+	testutil.Must(w.env.Svc.OpenBreakGlass(w.env.Ctx, sys, service.OpenBreakGlassInput{Network: "acme", Operator: "Olga",
+		Reason: "ticket 42", TTL: time.Hour}))
+	testutil.Must(w.env.Svc.GrantBreakGlassAdmin(w.env.Ctx, sys, service.GrantBreakGlassInput{Network: "acme", Login: "alice", Reason: "ticket 42"}))
+	inv := w.post(w.aliceT, "/admin/invitations", m{"ttl_seconds": 3600}, w.key())
+	pol := w.get(w.aliceT, "/admin/policy")
+	aud := w.get(w.aliceT, "/admin/audit-events")
+	mem := w.get(w.aliceT, "/admin/members")
+	t.Logf("break-glass admin: POST /admin/invitations %d, GET /admin/members %d, GET /admin/policy %d, GET /admin/audit-events %d",
+		inv.Code, mem.Code, pol.Code, aud.Code)
+	if inv.Code != 201 || mem.Code != 200 || pol.Code != 403 || aud.Code != 403 {
+		t.Fatal("defect absent")
+	}
+}
+
+// A2-A5: the credit-limit ETag is derived from the member id and the effective
+// limit only. Turning a default into an override with an expiry (or back)
+// does not change it, so a stale If-Match still matches (API-026/027).
+func TestA2_CreditLimitETagMissesOverrideAndExpiry(t *testing.T) {
+	w := newWorld(t)
+	path := "/admin/accounts/" + w.aliceM.ID
+	e0 := w.get(w.adminT, path).Header().Get("ETag")
+	exp := w.env.Clock.Now().Add(48 * time.Hour).Format(time.RFC3339)
+	r1 := w.do(req{method: "PUT", path: "/api/v1" + path + "/credit-limit", token: w.adminT,
+		hdr:  map[string]string{"If-Match": e0},
+		body: m{"credit_limit_minor": "10000", "reason": "temporary override", "expires_at": exp}})
+	wantStatus(t, r1, 200)
+	e1 := r1.Header().Get("ETag")
+	t.Logf("ETag before %s, after override+expiry %s", e0, e1)
+	// A second administrator still holding e0 silently undoes the change.
+	r2 := w.do(req{method: "PUT", path: "/api/v1" + path + "/credit-limit", token: w.adminT,
+		hdr:  map[string]string{"If-Match": e0},
+		body: m{"credit_limit_minor": nil, "reason": "stale client"}})
+	t.Logf("stale If-Match PUT -> %d", r2.Code)
+	if e0 != e1 || r2.Code != 200 {
+		t.Fatal("defect absent")
+	}
+}
+
+// A2-A6: GET /network/policy-log is not paginated and returns every version
+// (API-034, API-036: at most 100 rows without pagination).
+func TestA2_PolicyLogUnbounded(t *testing.T) {
+	w := newWorld(t)
+	ctx := context.Background()
+	for i := 0; i < 104; i++ {
+		n := testutil.Must(w.env.Svc.GetNetwork(ctx, w.admin, w.net.ID))
+		pol := n.Policy
+		pol.DefaultCreditLimit += 1 // a favourable change takes effect at once
+		if _, err := w.env.Svc.UpdatePolicy(ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "step",
+			IdempotencyKey: w.env.Key()}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	rec := w.get(w.aliceT, "/network/policy-log?limit=5")
+	got := decode[struct {
+		Data       []any   `json:"data"`
+		NextCursor *string `json:"next_cursor"`
+	}](t, rec)
+	t.Logf("GET /network/policy-log?limit=5 -> %d rows, next_cursor=%v", len(got.Data), got.NextCursor)
+	if len(got.Data) <= 100 {
+		t.Fatal("defect absent")
+	}
+}
+
+// A2-A7: problem detail for a type error echoes Go internals (struct type and
+// field path), and several reads ignore unknown query parameters.
+func TestA2_DetailEchoesGoTypesAndUnknownQueryIgnored(t *testing.T) {
+	w := newWorld(t)
+	raw := `{"counterparty_member_id":"` + w.bobM.ID + `","direction":"pay","amount_minor":100}`
+	rec := w.do(req{method: "POST", path: "/api/v1/transactions", token: w.aliceT, raw: raw,
+		hdr: map[string]string{"Idempotency-Key": w.key()}})
+	p := wantProblem(t, rec, 400, "invalid-body")
+	t.Logf("detail: %q", p.Detail)
+	for _, path := range []string{"/network?bogus=1", "/challenges?bogus=1", "/challenges?status=bogus", "/network/policy-log?limit=abc", "/accounts/me?foo=1"} {
+		t.Logf("GET %s -> %d", path, w.get(w.aliceT, path).Code)
+	}
+	if !strings.Contains(p.Detail, "Go struct field") {
+		t.Fatal("defect absent")
+	}
+}
+
+// idRecorder records identifiers that reach the store's GetTransaction.
+type idRecorder struct {
+	store.Store
+	mu  sync.Mutex
+	ids []string
+}
+
+func (r *idRecorder) View(ctx context.Context, fn func(store.Tx) error) error {
+	return r.Store.View(ctx, func(tx store.Tx) error { return fn(recTx{tx, r}) })
+}
+
+type recTx struct {
+	store.Tx
+	r *idRecorder
+}
+
+func (t recTx) GetTransaction(netID, id string) (*domain.Transaction, error) {
+	t.r.mu.Lock()
+	t.r.ids = append(t.r.ids, id)
+	t.r.mu.Unlock()
+	return t.Tx.GetTransaction(netID, id)
+}
+
+// A2-A8: SEC-024 asks that identifiers with injection characters be refused
+// before any database call. The adapters and the service pass path ids
+// straight to the store (parameterised, so not injectable, but unvalidated).
+func TestA2_IdentifierReachesStoreUnvalidated(t *testing.T) {
+	var rec *idRecorder
+	env := testutil.NewEnvWith(t, func(s store.Store) store.Store { rec = &idRecorder{Store: s}; return rec })
+	h := api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey})
+	admin := env.Person("admin")
+	env.Network(admin, "acme", nil)
+	raw, _, err := env.Svc.CreateAPIToken(context.Background(), admin, service.TokenInput{Name: "t",
+		Scopes: []domain.Scope{domain.ScopeRead}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	evil := "x'%20OR%20'1'='1"
+	r := httptest.NewRequest("GET", "/api/v1/transactions/"+evil, nil)
+	r.Header.Set("Authorization", "Bearer "+raw)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	rec.mu.Lock()
+	defer rec.mu.Unlock()
+	t.Logf("GET /transactions/%s -> %d; ids passed to store.GetTransaction: %q", evil, w.Code, rec.ids)
+	if w.Code != 404 || len(rec.ids) == 0 || !strings.Contains(rec.ids[0], "'") {
+		t.Fatal("defect absent")
+	}
+}
+
+func totpNow(t *testing.T, b32 string, at time.Time) string {
+	t.Helper()
+	key, err := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString(b32)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var msg [8]byte
+	binary.BigEndian.PutUint64(msg[:], uint64(at.Unix()/30))
+	mac := hmac.New(sha1.New, key)
+	mac.Write(msg[:])
+	s := mac.Sum(nil)
+	o := s[19] & 15
+	return fmt.Sprintf("%06d", (binary.BigEndian.Uint32(s[o:o+4])&0x7fffffff)%1000000)
+}
+
+// A2-A9: GET /admin/consistency-checks/{id} and GET /admin/policy are
+// authorised only by the adapter's adminOnly() role check, which ignores the
+// service's RequireMFAForAdmins rule (SEC-007 addendum): an administrator
+// without a second factor reads them, while every service-authorised admin
+// operation refuses that administrator.
+func TestA2_AdminOnlyPrecheckIgnoresMandatoryMFA(t *testing.T) {
+	env := testutil.NewEnvConfig(t, nil, func(c *service.Config) { c.RequireMFAForAdmins = true })
+	ctx := context.Background()
+	admin := env.Person("admin")
+	en, err := env.Svc.BeginMFAEnrolment(ctx, admin, "correct horse battery")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := env.Svc.ConfirmMFAEnrolment(ctx, admin, "correct horse battery", totpNow(t, en.Secret, env.Clock.Now())); err != nil {
+		t.Fatal(err)
+	}
+	env.Clock.Advance(31 * time.Second)
+	net, _ := env.Network(admin, "acme", nil)
+	admin2, admin2M := env.Member(admin, net, "admin2")
+	if err := env.Svc.AssignRole(ctx, admin, net.ID, admin2M.ID, domain.RoleAdmin); err != nil {
+		t.Fatal(err)
+	}
+	h := api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey})
+	tok := func(a domain.Actor) string {
+		raw, _, err := env.Svc.CreateAPIToken(ctx, a, service.TokenInput{Name: "t", Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return raw
+	}
+	do := func(method, path, token string) *httptest.ResponseRecorder {
+		r := httptest.NewRequest(method, "/api/v1"+path, nil)
+		r.Header.Set("Authorization", "Bearer "+token)
+		if method == "POST" {
+			r.Header.Set("Idempotency-Key", "k-"+path[len(path)-6:]+token[len(token)-6:])
+		}
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		return w
+	}
+	adminT, admin2T := tok(admin), tok(admin2)
+	run := do("POST", "/admin/consistency-checks", adminT)
+	if run.Code != 201 {
+		t.Fatalf("check by MFA admin: %d %s", run.Code, run.Body.String())
+	}
+	id := decode[map[string]any](t, run)["id"].(string)
+	own := do("POST", "/admin/consistency-checks", admin2T)
+	got := do("GET", "/admin/consistency-checks/"+id, admin2T)
+	pol := do("GET", "/admin/policy", admin2T)
+	mem := do("GET", "/admin/members", admin2T)
+	t.Logf("admin without MFA: POST check %d, GET /admin/members %d, GET check %d, GET /admin/policy %d", own.Code, mem.Code, got.Code, pol.Code)
+	if own.Code != 403 || mem.Code != 403 || got.Code != 200 || pol.Code != 200 {
+		t.Fatal("defect absent")
+	}
+}
+
+// A2-A10: the policy ETag is derived from the in-force version only. When an
+// adverse change is scheduled (GOV-003) the GET /admin/policy representation
+// gains a "pending" block but the ETag stays the same, so a client holding the
+// pre-schedule ETag can PATCH a no-op body and silently cancel the other
+// administrator's announced change (API-026/027 lost update).
+func TestA2_PolicyETagMissesScheduledChange(t *testing.T) {
+	w := newWorld(t)
+	e0 := w.get(w.adminT, "/admin/policy").Header().Get("ETag")
+	sched := w.do(req{method: "PATCH", path: "/api/v1/admin/policy", token: w.adminT, hdr: map[string]string{"If-Match": e0},
+		body: m{"reason": "lower the default limit", "default_credit_limit_minor": "100"}})
+	wantStatus(t, sched, 200)
+	after := w.get(w.adminT, "/admin/policy")
+	e1 := after.Header().Get("ETag")
+	t.Logf("ETag before %s, after scheduling %s; GET shows pending: %v", e0, e1, strings.Contains(after.Body.String(), `"pending":{`))
+	stale := w.do(req{method: "PATCH", path: "/api/v1/admin/policy", token: w.adminT, hdr: map[string]string{"If-Match": e0},
+		body: m{"reason": "unrelated note"}})
+	now := w.get(w.adminT, "/admin/policy")
+	t.Logf("stale If-Match no-op PATCH -> %d; pending still shown: %v", stale.Code, strings.Contains(now.Body.String(), `"pending":{`))
+	if e0 != e1 || stale.Code != 200 || strings.Contains(now.Body.String(), `"pending":{`) {
+		t.Fatal("defect absent")
+	}
+}
+
+// A2-A11 (spec gap evidence): the replay fingerprint is the compacted raw body,
+// so a retry whose JSON members are in another order is "a different body".
+func TestA2_ReorderedRetryIsKeyReuse(t *testing.T) {
+	w := newWorld(t)
+	key := "reorder-key-0001"
+	a := w.do(req{method: "POST", path: "/api/v1/listings", token: w.aliceT, raw: `{"kind":"offer","title":"bike"}`,
+		hdr: map[string]string{"Idempotency-Key": key}})
+	b := w.do(req{method: "POST", path: "/api/v1/listings", token: w.aliceT, raw: `{"title":"bike","kind":"offer"}`,
+		hdr: map[string]string{"Idempotency-Key": key}})
+	t.Logf("first %d, reordered retry %d %s", a.Code, b.Code, strings.TrimSpace(b.Body.String()))
+	if a.Code != 201 || b.Code != 422 {
+		t.Fatal("behaviour changed")
+	}
+}
+
+// A2-A12: openapi.yaml declares an optional Idempotency-Key on POST /tokens,
+// but the route has no idempotency (A3-09 removed caching); the header is
+// ignored and a retry with the same key mints a second credential.
+func TestA2_TokenCreateIgnoresIdempotencyKey(t *testing.T) {
+	w := newWorld(t)
+	sess, _, err := w.env.Svc.Login(context.Background(), "alice", "correct horse battery")
+	if err != nil {
+		t.Fatal(err)
+	}
+	hdr := map[string]string{"Cookie": "circula_session=" + sess, "X-CSRF-Token": csrfFor(sess), "Idempotency-Key": "same-key-0001"}
+	a := w.do(req{method: "POST", path: "/api/v1/tokens", body: m{"name": "ci", "scopes": []string{"read"}}, hdr: hdr})
+	b := w.do(req{method: "POST", path: "/api/v1/tokens", body: m{"name": "ci", "scopes": []string{"read"}}, hdr: hdr})
+	ida, idb := decode[map[string]any](t, a)["id"], decode[map[string]any](t, b)["id"]
+	t.Logf("same Idempotency-Key twice -> %d %v, %d %v (Idempotent-Replayed=%q)", a.Code, ida, b.Code, idb, b.Header().Get("Idempotent-Replayed"))
+	if a.Code != 201 || b.Code != 201 || ida == idb {
+		t.Fatal("behaviour changed")
+	}
+}

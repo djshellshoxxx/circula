@@ -1,0 +1,37 @@
+package web
+
+// A3 audit proof-of-concept (2026-10-28). Throwaway evidence.
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"strings"
+	"testing"
+)
+
+// A3-F13: docs/ops/configuration.md says rotating the web signing key (stop,
+// delete circula-web.key, start) makes "people sign in again". Sessions are
+// opaque database tokens that the key does not sign, so after rotation every
+// session keeps working; only forms rendered before the restart fail once.
+// SEC-027 / OPS-010 require that rotating the session key invalidates sessions.
+func TestA3Audit_WebKeyRotationKeepsSessions(t *testing.T) {
+	w := newWorld(t) // handler signed with key K1
+	b := w.browser(t)
+	b.login("alice@example.org")
+
+	// "Restart" with a new key K2 over the same database.
+	srv2 := httptest.NewServer(NewHandlerWith(w.env.Svc, Options{CSRFKey: []byte("fedcba9876543210fedcba9876543210"), Clock: w.env.Clock}))
+	defer srv2.Close()
+	u1, _ := url.Parse(w.srv.URL)
+	u2, _ := url.Parse(srv2.URL)
+	b.c.Jar.SetCookies(u2, b.c.Jar.Cookies(u1))
+	b.url = srv2.URL
+
+	p := b.get("/n/town/")
+	if p.Status == http.StatusOK && !strings.HasPrefix(p.URL, "/login") {
+		// and a write with a freshly rendered form succeeds too
+		f := b.get("/account/security")
+		t.Errorf("after the web key was rotated the old session still works (dashboard %d at %s; security page %d)", p.Status, p.URL, f.Status)
+	}
+}

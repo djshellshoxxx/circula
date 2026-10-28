@@ -1,0 +1,316 @@
+package web
+
+// Auditor A2 proof-of-concept tests (throwaway evidence, 2026-10-28).
+// Each test asserts the CURRENT (defective) behaviour, so it passes while the
+// finding is present and fails once the defect is fixed. Run with:
+//   go test ./internal/web -run 'TestA2' -v
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"net/http/cookiejar"
+	"net/http/httptest"
+	"net/url"
+	"regexp"
+	"strings"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/store"
+	"github.com/djshellshoxxx/circula/internal/testutil"
+)
+
+// A2-W1: a member granted the administrator role through break-glass
+// (SEC-013 grant-admin) is an administrator for the service, but every web
+// admin page answers 403 because adminH reads the stored membership
+// (MyMemberships) without the live break-glass roles.
+func TestA2_BreakGlassAdminRefusedByWebAdminPages(t *testing.T) {
+	w := newWorld(t)
+	sys := domain.SystemActor("op")
+	testutil.Must(w.env.Svc.OpenBreakGlass(w.env.Ctx, sys, service.OpenBreakGlassInput{Network: "town", Operator: "Olga",
+		Reason: "ticket 42: lost admin", TTL: time.Hour}))
+	testutil.Must(w.env.Svc.GrantBreakGlassAdmin(w.env.Ctx, sys, service.GrantBreakGlassInput{Network: "town",
+		Login: "alice@example.org", Reason: "ticket 42"}))
+	// The service accepts alice as an administrator (requireAdmin passes).
+	if _, err := w.env.Svc.ListInvitations(w.env.Ctx, w.alice, w.net.ID); err != nil {
+		t.Fatalf("service refuses the break-glass admin: %v", err)
+	}
+	b := w.browser(t)
+	b.login("alice@example.org")
+	for _, path := range []string{"/n/town/admin", "/n/town/admin/members", "/n/town/admin/invitations"} {
+		p := b.get(path)
+		t.Logf("break-glass admin GET %s -> %d", path, p.Status)
+		if p.Status != 403 {
+			t.Fatalf("expected the defect (403) on %s, got %d", path, p.Status)
+		}
+	}
+}
+
+// A2-W2: the read-only notice of a frozen network and the admin overview's
+// "last ledger check" line embed fmtTime's <time> element in a plain string,
+// so html/template escapes it and the page shows raw markup as text.
+func TestA2_FrozenNoticeAndCheckLineShowEscapedMarkup(t *testing.T) {
+	w := newWorld(t)
+	testutil.Must(w.env.Svc.VerifyAndRecordLedger(w.env.Ctx, w.admin, w.net.ID))
+	ab := w.browser(t)
+	ab.login("admin@example.org")
+	p := ab.get("/n/town/admin")
+	if !strings.Contains(p.Body, "&lt;time datetime=") {
+		t.Fatalf("admin overview: no escaped markup found:\n%s", snippet(p.Body))
+	}
+	i := strings.Index(p.Body, "The last ledger check")
+	t.Logf("admin overview excerpt: %s", p.Body[i:i+140])
+
+	w.env.Svc.FreezeNetwork(w.net.ID, "hash mismatch")
+	mb := w.browser(t)
+	mb.login("alice@example.org")
+	p = mb.get("/n/town")
+	j := strings.Index(p.Body, "read-only while its ledger")
+	if j < 0 || !strings.Contains(p.Body[j:j+220], "&lt;time datetime=") {
+		t.Fatalf("member notice: no escaped markup:\n%s", snippet(p.Body))
+	}
+	t.Logf("member notice excerpt: %s", p.Body[j:j+200])
+}
+
+// A2-W3: any signed-in person (registration is open) can learn whether a
+// network slug exists and the name of an invitation-only network through
+// /n/{slug}/join, while every other /n/{slug} page hides it (404).
+func TestA2_JoinPageDisclosesInviteOnlyNetwork(t *testing.T) {
+	w := newWorld(t) // "town" is created with the default join mode (invite)
+	if w.net.Policy.JoinMode != domain.JoinInvite {
+		t.Fatalf("fixture join mode = %s", w.net.Policy.JoinMode)
+	}
+	w.env.Person("eve@example.org")
+	e := w.browser(t)
+	e.login("eve@example.org")
+	real, fake := e.get("/n/town/join"), e.get("/n/no-such-net/join")
+	home := e.get("/n/town")
+	t.Logf("outsider: /n/town -> %d, /n/town/join -> %d, /n/no-such-net/join -> %d", home.Status, real.Status, fake.Status)
+	if home.Status != 404 || real.Status != 200 || fake.Status != 404 || !strings.Contains(real.Body, "Net town is invitation only") {
+		t.Fatalf("expected the disclosure: home %d real %d fake %d", home.Status, real.Status, fake.Status)
+	}
+}
+
+// failingRevoke makes Logout's RevokeSession fail while armed, as a busy or
+// failing database would.
+type failingRevoke struct {
+	store.Store
+	armed atomic.Bool
+}
+
+func (f *failingRevoke) Update(ctx context.Context, fn func(store.Tx) error) error {
+	if !f.armed.Load() {
+		return f.Store.Update(ctx, fn)
+	}
+	return f.Store.Update(ctx, func(tx store.Tx) error { return fn(revokeFailTx{tx}) })
+}
+
+type revokeFailTx struct{ store.Tx }
+
+func (revokeFailTx) RevokeSession(string, time.Time) error {
+	return errors.New("SQLITE_BUSY: database is locked")
+}
+
+// A2-W4: POST /logout ignores the error from Service.Logout, tells the person
+// "You are signed out." and clears the cookie, but the server-side session
+// stays valid: a copy of the cookie taken before logout still works (SEC-003).
+func TestA2_LogoutFailureLeavesSessionValid(t *testing.T) {
+	var fr *failingRevoke
+	env := testutil.NewEnvWith(t, func(s store.Store) store.Store { fr = &failingRevoke{Store: s}; return fr })
+	admin := env.Person("admin@example.org")
+	env.Network(admin, "town", nil)
+	srv := httptest.NewServer(NewHandlerWith(env.Svc, Options{CSRFKey: []byte("0123456789abcdef0123456789abcdef"), Clock: env.Clock}))
+	t.Cleanup(srv.Close)
+	w := &world{env: env, srv: srv}
+	b := w.browser(t)
+	b.login("admin@example.org")
+	u := mustURL(t, srv.URL)
+	var stolen string
+	for _, c := range b.c.Jar.Cookies(u) {
+		if c.Name == httpx.SessionCookie {
+			stolen = c.Value
+		}
+	}
+	if stolen == "" {
+		t.Fatal("no session cookie")
+	}
+	page := b.get("/n/town")
+	fr.armed.Store(true)
+	out := b.post("/logout", page, nil)
+	fr.armed.Store(false)
+	b.mustContain(out, "You are signed out.")
+	// Replay the cookie captured before logout from a fresh client.
+	jar, _ := cookiejar.New(nil)
+	jar.SetCookies(u, []*http.Cookie{{Name: httpx.SessionCookie, Value: stolen, Path: "/"}})
+	thief := &browser{t: t, w: w, url: srv.URL, c: &http.Client{Jar: jar}}
+	p := thief.get("/n/town")
+	t.Logf("after 'You are signed out.', replayed cookie GET /n/town -> %d at %s", p.Status, p.URL)
+	if p.URL != "/n/town/" || p.Status != 200 {
+		t.Fatalf("session was revoked after all: %d %s", p.Status, p.URL)
+	}
+}
+
+// A2-W5: static assets (and robots.txt) are served with Cache-Control: public
+// together with a fresh Set-Cookie for the pre-login CSRF secret, so a shared
+// cache may store one client's CSRF cookie and hand it to others.
+func TestA2_StaticPublicCacheWithSetCookie(t *testing.T) {
+	w := newWorld(t)
+	for _, path := range []string{"/static/style.css", "/robots.txt"} {
+		req, _ := http.NewRequest("GET", w.srv.URL+path, nil)
+		resp, err := http.DefaultTransport.RoundTrip(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		_ = resp.Body.Close()
+		cc, sc := resp.Header.Get("Cache-Control"), resp.Header.Values("Set-Cookie")
+		t.Logf("%s: Cache-Control=%q Set-Cookie=%q", path, cc, sc)
+		if !strings.HasPrefix(cc, "public") || len(sc) == 0 || !strings.HasPrefix(sc[0], httpx.CSRFCookie+"=") {
+			t.Fatalf("%s: defect not present", path)
+		}
+	}
+}
+
+// A2-W6: UX-001 says a section hidden from the navigation must not be
+// reachable by URL with a result other than 403/404. A suspended member's
+// navigation hides Directory, Listings, Disputes and Rules; a departed
+// member's hides everything but Home and History. Record what the URLs return.
+func TestA2_HiddenSectionsReachable(t *testing.T) {
+	w := newWorld(t)
+	testutil.Must(0, w.env.Svc.SuspendMember(w.env.Ctx, w.admin, w.net.ID, w.aliceM.ID, "review"))
+	testutil.Must(w.env.Svc.DepartMember(w.env.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, Reason: "left"}))
+	reach := map[string][]string{}
+	for who, hidden := range map[string][]string{
+		"alice@example.org": {"/directory", "/listings", "/disputes", "/policy"},
+		"bob@example.org":   {"/trades", "/directory", "/listings", "/disputes", "/policy"},
+	} {
+		b := w.browser(t)
+		b.login(who)
+		home := b.get(w.base())
+		for _, h := range hidden {
+			if strings.Contains(home.Body, `href="`+w.base()+h+`"`) {
+				t.Fatalf("%s: %s is in the navigation after all", who, h)
+			}
+			if p := b.get(w.base() + h); p.Status == 200 {
+				reach[who] = append(reach[who], h)
+			}
+		}
+	}
+	t.Logf("hidden sections answering 200: %v", reach)
+	if len(reach) == 0 {
+		t.Fatal("no hidden section reachable")
+	}
+}
+
+func mustURL(t *testing.T, s string) *url.URL {
+	t.Helper()
+	u, err := url.Parse(s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return u
+}
+
+// A2-W7: SEC-008 addendum decision 5 says every authenticated page except
+// /account/password redirects a person whose password must change. "/" and
+// "/join/{token}" read the session directly (not through s.auth) and render.
+func TestA2_ForcedChangeNotEnforcedOnHomeAndJoin(t *testing.T) {
+	w := newWorld(t)
+	adm2 := w.env.Person("admin2@example.org")
+	net2, _ := w.env.Network(adm2, "city", nil)
+	tok, _ := testutil.Must2(w.env.Svc.CreateInvitation(w.env.Ctx, adm2, net2.ID, service.InviteInput{}))
+	testutil.Must(w.env.Svc.RedeemInvitation(w.env.Ctx, w.alice, tok, "alice"))
+	temp := testutil.Must(w.env.Svc.OperatorResetPassword(w.env.Ctx, domain.SystemActor("op"), "alice@example.org", "ticket 7"))
+	b := w.browser(t)
+	f := b.get("/login")
+	b.post("/login", f, url.Values{"login": {"alice@example.org"}, "password": {temp}})
+	home := b.get("/")
+	join := b.get("/join/inv_anything")
+	other := b.get("/n/town/history")
+	t.Logf("must-change person: / -> %d at %s, /join/x -> %d at %s, /n/town/history -> %d at %s",
+		home.Status, home.URL, join.Status, join.URL, other.Status, other.URL)
+	if home.URL != "/" || join.URL == "/account/password" || other.URL != "/account/password" {
+		t.Fatal("behaviour changed")
+	}
+}
+
+// A2-W8: the anonymous invitation page builds its links with the custom
+// "qs" function (url.QueryEscape) inside an href, where html/template escapes
+// the query value again. The double-encoded next ("%252Fjoin...") fails
+// safeNext after one decode, so after signing in through the page's own
+// link the person lands on "/" instead of the invitation (UX: "You will come
+// back to this page afterwards" is not true).
+func TestA2_InviteLinkNextDoubleEncoded(t *testing.T) {
+	w := newWorld(t)
+	tok, _, err := w.env.Svc.CreateInvitation(w.env.Ctx, w.admin, w.net.ID, service.InviteInput{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	w.env.Person("carol@example.org")
+	b := w.browser(t)
+	anon := b.get("/join/" + tok)
+	i := strings.Index(anon.Body, `href="/login?next=`)
+	if i < 0 {
+		t.Fatalf("no sign-in link: %s", snippet(anon.Body))
+	}
+	href := anon.Body[i+6 : i+6+strings.Index(anon.Body[i+6:], `"`)]
+	href = strings.ReplaceAll(href, "&amp;", "&")
+	t.Logf("sign-in link on the invitation page: %s", href)
+	lf := b.get(href)
+	nm := regexp.MustCompile(`name="next" value="([^"]*)"`).FindStringSubmatch(lf.Body)
+	next := ""
+	if nm != nil {
+		next = nm[1]
+	}
+	p := b.post("/login", lf, url.Values{"login": {"carol@example.org"}, "password": {testPW}, "next": {next}})
+	t.Logf("hidden next on the login form = %q; after sign-in landed on %s", next, p.URL)
+	if p.URL == "/join/"+tok {
+		t.Fatal("defect absent: the person came back to the invitation")
+	}
+}
+
+// A2 negative check (no finding expected): hostile markup in member-controlled
+// text (display name, listing title/description, announcement, terms, dispute
+// statement, report note) is escaped on every page that shows it.
+func TestA2_NoStoredXSSOnMainPages(t *testing.T) {
+	w := newWorld(t)
+	ctx := w.env.Ctx
+	evil := `<script>alert(1)</script><img src=x onerror=alert(2)>"'`
+	mal, malM := w.env.Member(w.admin, w.net, "mallory@example.org")
+	// display name via a fresh join with a hostile name
+	p2 := w.env.Person("eve2@example.org")
+	tok, _ := testutil.Must2(w.env.Svc.CreateInvitation(ctx, w.admin, w.net.ID, service.InviteInput{}))
+	_, err := w.env.Svc.RedeemInvitation(ctx, p2, tok, evil)
+	t.Logf("hostile display name accepted: %v", err == nil)
+	l, err := w.env.Svc.CreateListing(ctx, mal, w.net.ID, service.ListingInput{Type: domain.ListingOffer, Title: "t " + evil[:20],
+		Description: evil, IdempotencyKey: w.env.Key()})
+	if err != nil {
+		t.Logf("listing refused: %v", err)
+	}
+	_, _ = w.env.Svc.CreateAnnouncement(ctx, w.admin, w.net.ID, service.AnnouncementInput{Title: "a " + evil[:20], Body: evil, IdempotencyKey: w.env.Key()})
+	tx := w.env.Trade(w.net.ID, mal, w.alice, malM, w.aliceM, 100)
+	_, _ = w.env.Svc.OpenDispute(ctx, mal, w.net.ID, service.OpenDisputeInput{TxID: tx.ID, Category: "other", Statement: evil, IdempotencyKey: w.env.Key()})
+	_, _ = w.env.Svc.PublishTerms(ctx, w.admin, w.net.ID, evil)
+	if l != nil {
+		_, _ = w.env.Svc.CreateReport(ctx, w.alice, w.net.ID, service.ReportInput{TargetType: service.ReportListing, TargetID: l.ID, Category: "spam", Note: evil, IdempotencyKey: w.env.Key()})
+	}
+	ab := w.browser(t)
+	ab.login("admin@example.org")
+	paths := []string{"/n/town", "/n/town/directory", "/n/town/listings", "/n/town/terms", "/n/town/admin/members",
+		"/n/town/admin/reports", "/n/town/admin/announcements", "/n/town/review", "/n/town/trades/" + tx.ID, "/n/town/admin/audit"}
+	ds, _ := w.env.Svc.FindDisputes(ctx, w.admin, w.net.ID, service.DisputeQuery{})
+	for _, d := range ds {
+		paths = append(paths, "/n/town/disputes/"+d.ID)
+	}
+	for _, p := range paths {
+		pg := ab.get(p)
+		if strings.Contains(pg.Body, "<script>alert") || strings.Contains(pg.Body, "<img src=x") {
+			t.Errorf("%s renders raw markup", p)
+		}
+		t.Logf("%s -> %d (escaped)", p, pg.Status)
+	}
+}
