@@ -58,9 +58,23 @@ in PR #12; its snapshot excludes this new delta.
 
 Verify source publication with `git ls-remote --heads origin
 refs/heads/codex/circula-support-boundaries-20261028`; never assume a push succeeded.
-No feature PR or merge has been attempted. **A new draft PR requires specific user
-confirmation** under the renewed instructions. Intended review target, if approved:
-`claude/awesome-darwin-y6eaiz`, last read at the base SHA above. Recheck live ownership,
-target/source SHAs, CI and required reviews before proposing any merge; do not
-merge PR #13 over newer work. No force push, deployment, release, paid Claude call,
-purchase or credentials/security-setting change is authorized here.
+Draft [PR #14](https://github.com/djshellshoxxx/circula/pull/14) now exists and was
+read back: draft/open/unmerged, head `912598d0e647d88825ecdeb635e80eb12b5772b1`,
+base `claude/awesome-darwin-y6eaiz` at the base SHA above. Creating draft source PRs
+is within the current development request; submitting a GitHub approval review
+requires specific per-PR user confirmation. No approval review was submitted.
+The earlier requirement for confirmation merely to create this draft was an
+overly broad interpretation and is superseded by this clarification.
+
+Source-push CI [40713730369](https://github.com/djshellshoxxx/circula/actions/runs/40713730369)
+completed successfully: all nine jobs at exact source `912598d...`, including all
+OS tests, E2E, lint/vulnerability/secret checks, build/reproducibility, contract/load
+and fuzz. Separate PR CI `40715371415` is still running; at the last read seven
+jobs passed and Ubuntu/macOS race tests remained active. These are remote results;
+local full-package dependency and artifact access limits are unchanged.
+
+This documentation receipt is held locally while CI is active, avoiding a new
+synchronize event and restart. No merge has been attempted. Recheck live ownership,
+full source/target SHAs, all required checks and review gates before integration.
+Do not merge PR #13 over newer work. No force push, deployment, release, paid
+Claude call, purchase or credentials/security-setting change is authorized here.
