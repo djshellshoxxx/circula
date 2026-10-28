@@ -55,6 +55,16 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 		s.fail(w, r, err)
 		return
 	}
+	// Offer approve/reject only where the service would accept them (A3-01).
+	ids := make([]string, 0, len(rows))
+	for _, x := range rows {
+		ids = append(ids, x.ID)
+	}
+	decidable, err := s.svc.DecidableAdjustments(r.Context(), c.actor, c.netID(), ids)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
 	nm := c.memberNames()
 	dec, now := c.Net.Policy.Decimals, s.opts.Clock.Now()
 	d := &pendingData{}
@@ -74,7 +84,7 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 		if x.Status == domain.PendingOpen && !row.Expired {
 			mine := x.Proposer == c.Me.ID
 			row.CanCancel = mine
-			row.CanApprove = !mine && x.Target != c.Me.ID
+			row.CanApprove = decidable[x.ID]
 			row.CanReject = row.CanApprove
 		}
 		d.Rows = append(d.Rows, row)

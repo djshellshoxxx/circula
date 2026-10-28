@@ -79,3 +79,59 @@ func TestDualControlWebFlow(t *testing.T) {
 	}
 	two.mustContain(two.get(b+"/admin/adjustments/pending?status=approved"), "approved by", "admin2@example.org")
 }
+
+// A3-01 in the list: no approve/reject button where the service would refuse
+// (founder-appointed administrator on the founder's request; any administrator
+// in the 24 h after their grant). The honest direction keeps its button.
+func TestDualControlButtonsFollowA3_01(t *testing.T) {
+	w := newWorld(t)
+	b := w.base()
+	_, apM := w.env.Member(w.admin, w.net, "appointed@example.org")
+	testutil.Must(0, w.env.Svc.AssignRole(w.env.Ctx, w.admin, w.net.ID, apM.ID, domain.RoleAdmin))
+	n := testutil.Must(w.env.Svc.GetNetwork(w.env.Ctx, w.admin, w.net.ID))
+	pol := n.Policy
+	pol.DualControlThreshold = 1000
+	testutil.Must(w.env.Svc.UpdatePolicy(w.env.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "dual", IdempotencyKey: w.env.Key()}))
+	ap := w.browser(t)
+	ap.login("appointed@example.org")
+	adm := w.browser(t)
+	adm.login("admin@example.org")
+	request := func(br *browser, reason string) {
+		vals := url.Values{"member_id": {w.bobM.ID}, "direction": {"credit"}, "amount": {"25.00"}, "reason": {reason}}
+		f := br.get(b + "/admin/adjust")
+		vals.Set("step", "review")
+		rev := br.post(b+"/admin/adjust", f, vals)
+		vals.Set("step", "confirm")
+		br.mustContain(br.post(b+"/admin/adjust", rev, vals), "Adjustments awaiting approval", reason)
+	}
+	request(adm, "founder asks")
+
+	// Within 24 h of the grant: nothing to decide, and the page says so.
+	l := ap.get(b + "/admin/adjustments/pending")
+	if approveRe.MatchString(l.Body) || regexp.MustCompile(`/reject"`).MatchString(l.Body) {
+		t.Fatal("new administrator offered a decision")
+	}
+	ap.mustContain(l, "founder asks", "Another administrator must decide this.")
+
+	// After the wait: still nothing on the founder's request (appointed by the requester).
+	w.env.Clock.Advance(25 * time.Hour)
+	if l = ap.get(b + "/admin/adjustments/pending"); approveRe.MatchString(l.Body) {
+		t.Fatal("founder-appointed administrator offered the founder's request")
+	}
+
+	// The appointed administrator asks; the founder gets the button, and it works.
+	request(ap, "appointed asks")
+	fl := adm.get(b + "/admin/adjustments/pending")
+	m := approveRe.FindAllStringSubmatch(fl.Body, -1)
+	pending := testutil.Must(w.env.Svc.ListPendingAdjustments(w.env.Ctx, w.admin, w.net.ID, []domain.PendingStatus{domain.PendingOpen}, service.Page{}))
+	var theirs string
+	for _, pa := range pending {
+		if pa.Proposer == apM.ID {
+			theirs = pa.ID
+		}
+	}
+	if len(m) != 1 || m[0][1] != theirs {
+		t.Fatalf("founder offered %v, want only %s", m, theirs)
+	}
+	adm.mustContain(adm.post(b+"/admin/adjustments/"+theirs+"/approve", fl, nil), "Adjustment request approved")
+}

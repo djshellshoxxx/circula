@@ -188,6 +188,10 @@ test('axe and keyboard: operator access page lists the session', async ({ browse
 
 // ---- dual control ----
 
+// A3-01 (SEC-011 addendum): an administrator appointed by the founder can never
+// decide the founder's requests, and a new administrator waits 24 h before
+// deciding anything. The founder's own grant is the root of trust, so here the
+// second administrator requests and the founder approves; the reverse is refused.
 test('axe and keyboard: dual-control pending adjustments, approve with a second administrator', async ({ browser }) => {
   const a = await newPage(browser);
   await signIn(a.page, 'admin');
@@ -195,35 +199,41 @@ test('axe and keyboard: dual-control pending adjustments, approve with a second 
   await expect(a.page.getByText('No requests match this filter')).toBeVisible();
   await checkPage(a.page, 'pending adjustments (empty)');
 
-  const request = async (amount, reason) => {
-    await a.page.goto(`/n/${SLUG}/admin/adjust`);
-    await a.page.getByLabel('Member', { exact: true }).selectOption({ label: 'Alice Member' });
-    await a.page.getByLabel('Amount').fill(amount);
-    await a.page.getByLabel('Reason').fill(reason);
-    await Promise.all([a.page.waitForLoadState('load'), a.page.getByRole('button', { name: 'Review adjustment' }).click()]);
-    await Promise.all([a.page.waitForLoadState('load'), a.page.getByRole('button', { name: 'Post adjustment' }).click()]);
+  const request = async (page, amount, reason) => {
+    await page.goto(`/n/${SLUG}/admin/adjust`);
+    await page.getByLabel('Member', { exact: true }).selectOption({ label: 'Alice Member' });
+    await page.getByLabel('Amount').fill(amount);
+    await page.getByLabel('Reason').fill(reason);
+    await Promise.all([page.waitForLoadState('load'), page.getByRole('button', { name: 'Review adjustment' }).click()]);
+    await Promise.all([page.waitForLoadState('load'), page.getByRole('button', { name: 'Post adjustment' }).click()]);
   };
-  await request('5.00', 'Goods credit one');
+  await request(a.page, '5.00', 'Goods credit one');
   await expect(a.page.locator('#flash')).toContainText('another administrator must approve');
-  await request('6.00', 'Goods credit two');
-
-  await a.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
-  await expect(a.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
-  await expect(a.page.getByRole('button', { name: /Approve and post/ })).toHaveCount(0); // not your own
-  await checkPage(a.page, 'pending adjustments (proposer view)');
 
   const b = await newPage(browser);
   await signIn(b.page, 'admin2');
+  await request(b.page, '6.00', 'Goods credit two');
+  await expect(b.page.locator('#flash')).toContainText('another administrator must approve');
   await b.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
-  await expect(b.page.getByRole('button', { name: /Approve and post/ }).first()).toBeVisible();
+  await expect(b.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
+  // admin2 may not decide the founder's request (appointed by the requester),
+  // so no approve or reject button is offered for it.
+  await expect(b.page.getByRole('button', { name: /Approve and post|Reject/ })).toHaveCount(0);
+  await expect(b.page.getByText('Another administrator must decide this.')).toBeVisible();
   await checkPage(b.page, 'pending adjustments (second administrator)');
-  // keyboard only: Tab to the first Approve button and press Enter
-  await tabTo(b.page, /^Approve and post/);
-  await Promise.all([b.page.waitForNavigation(), b.page.keyboard.press('Enter')]);
-  await expect(b.page.locator('#flash')).toBeVisible();
-  await checkPage(b.page, 'pending adjustments after approval');
-  await b.page.goto(`/n/${SLUG}/admin/adjustments/pending?status=approved`);
-  await checkPage(b.page, 'approved adjustments');
+
+  await a.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
+  await expect(a.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
+  await expect(a.page.getByRole('button', { name: /Approve and post/ })).toHaveCount(1); // admin2's only, not your own
+  await checkPage(a.page, 'pending adjustments (founder view)');
+  // keyboard only: Tab to the Approve button and press Enter
+  await tabTo(a.page, /^Approve and post/);
+  await Promise.all([a.page.waitForNavigation(), a.page.keyboard.press('Enter')]);
+  await expect(a.page.locator('#flash')).toBeVisible();
+  await checkPage(a.page, 'pending adjustments after approval');
+  await a.page.goto(`/n/${SLUG}/admin/adjustments/pending?status=approved`);
+  await expect(a.page.getByText('Goods credit two')).toBeVisible();
+  await checkPage(a.page, 'approved adjustments');
   await a.ctx.close();
   await b.ctx.close();
 });

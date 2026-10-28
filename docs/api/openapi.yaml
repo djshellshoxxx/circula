@@ -371,17 +371,31 @@ paths:
     get:
       operationId: getAccount
       tags: [Accounts]
-      summary: Caller's balance view (API-044)
-      description: Balance, credit limit, reserved and available amounts, and derived direction (API-007). No ETag.
+      summary: Caller's balance view (API-044), or own balance at an exact past instant (API-083)
+      description: >-
+        Without `at`: balance, credit limit, reserved and available amounts, and derived direction (API-007). No ETag.
+        With `at` (API-083, FR-054, DAT-050): the caller's own posted balance at that instant, summing every entry
+        with posted_at <= as_of (inclusive, equal timestamps all included) from one read snapshot. `ledger_seq` is that
+        snapshot's high-water sequence, not a cursor or cutoff. No current credit limit, reserved or available values.
       security: *secSafe
       parameters:
         - $ref: '#/components/parameters/XNetwork'
+        - name: at
+          in: query
+          required: false
+          description: >-
+            RFC 3339 date-time with an explicit Z or numeric offset (percent-encode `+`) and at most millisecond
+            precision. Date-only, offset-less, finer-precision or future values are refused with 400 invalid-query.
+          schema: {type: string}
       responses:
         '200':
-          description: Balance view.
+          description: Balance view, or the historical balance when `at` is given.
           content:
             application/json:
-              schema: {$ref: '#/components/schemas/Account'}
+              schema:
+                oneOf:
+                  - {$ref: '#/components/schemas/Account'}
+                  - {$ref: '#/components/schemas/HistoricalBalance'}
         '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '404': {$ref: '#/components/responses/NotFound'}
@@ -3246,6 +3260,17 @@ components:
         direction: {$ref: '#/components/schemas/Direction'}
         decimals: {type: integer, minimum: 0}
         ledger_seq: {type: integer, format: int64, minimum: 0}
+    HistoricalBalance:
+      type: object
+      required: [as_of, balance_minor, direction, decimals, ledger_seq, has_postings_by_as_of]
+      additionalProperties: false
+      properties:
+        as_of: {$ref: '#/components/schemas/Timestamp'}
+        balance_minor: {$ref: '#/components/schemas/SignedMoney'}
+        direction: {$ref: '#/components/schemas/Direction'}
+        decimals: {type: integer, minimum: 0}
+        ledger_seq: {type: integer, format: int64, minimum: 0}
+        has_postings_by_as_of: {type: boolean}
     Entry:
       type: object
       required: [transaction_id, kind, status, ledger_seq, amount_minor, counterparty_member_id, counterparty_display_name, posted_at]

@@ -191,6 +191,16 @@ func (t *txImpl) SumEntries(accountID string, uptoSeq int64) (int64, error) {
 	return v, err
 }
 
+// SumEntriesAsOf filters on the stored posted_at, not on ledger_seq: posting
+// timestamps need not be monotonic with sequence (clock rollback), and every
+// entry at an equal timestamp is included (DAT-050).
+func (t *txImpl) SumEntriesAsOf(accountID string, asOf time.Time) (int64, int64, error) {
+	var sum, n int64
+	err := t.row(`SELECT COALESCE(SUM(amount),0), COUNT(*) FROM entries WHERE account_id = ? AND posted_at <= ?`,
+		accountID, ms(asOf)).Scan(&sum, &n)
+	return sum, n, err
+}
+
 // ListAccountEntries lists an account's entries newest first by ledger_seq.
 // beforeSeq > 0 returns entries strictly older than that sequence (keyset).
 // (account_id, ledger_seq) is unique: an account has one entry per posting.

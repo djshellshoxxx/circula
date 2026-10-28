@@ -237,6 +237,45 @@ func (s *Service) ListPendingAdjustments(ctx context.Context, actor domain.Actor
 	return out, err
 }
 
+// DecidableAdjustments reports which of the requests ids the caller may approve
+// or reject now: open, not their own request, not their own account (DOM-037),
+// and an independent approver (A3-01). Each request is read from the store in
+// one snapshot, not taken from the caller. It uses the same checks as the
+// decision paths but only shapes what adapters offer; ApproveAdjustment and
+// RejectAdjustment still re-check everything in their own write unit.
+func (s *Service) DecidableAdjustments(ctx context.Context, actor domain.Actor, netID string, ids []string) (map[string]bool, error) {
+	out := map[string]bool{}
+	err := s.view(ctx, func(tx store.Tx) error {
+		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		if err != nil {
+			return err
+		}
+		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		if p.member == nil { // system actors cannot decide
+			return nil
+		}
+		for _, id := range ids {
+			pa, err := tx.GetPendingAdjustment(netID, id)
+			if err != nil {
+				continue // unknown here: nothing to offer
+			}
+			if pa.Status != domain.PendingOpen || pa.Proposer == p.memberID() || pa.Target == p.memberID() {
+				continue
+			}
+			switch err := s.requireIndependentApprover(tx, p, pa); {
+			case err == nil:
+				out[pa.ID] = true
+			case domain.CodeOf(err) != domain.CodeForbidden:
+				return err
+			}
+		}
+		return nil
+	})
+	return out, err
+}
+
 // ExpirePendingAdjustments closes open requests past their expiry, with an
 // audit event each and no posting (SEC-011). System actors only. Idempotent.
 // Returns the number closed in this run (at most limit, default 100).

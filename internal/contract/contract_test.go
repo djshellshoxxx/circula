@@ -12,6 +12,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"sort"
 	"strings"
 	"testing"
@@ -221,6 +222,8 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/members/" + bobM.ID, token: aliceT})
 	h.do(404, call{method: "GET", path: "/members/nope", token: aliceT})
 	h.do(200, call{method: "GET", path: "/accounts/me", token: aliceT})
+	h.do(200, call{method: "GET", path: "/accounts/me?at=" + url.QueryEscape(env.Clock.Now().Format(time.RFC3339)), token: aliceT}) // API-083
+	h.do(400, call{method: "GET", path: "/accounts/me?at=2026-03-01", token: aliceT, skipRequest: true})
 	h.do(200, call{method: "GET", path: "/accounts/me/entries", token: aliceT})
 	h.do(400, call{method: "GET", path: "/accounts/me/entries?limit=0", token: aliceT, skipRequest: true})
 	h.do(200, call{method: "GET", path: "/network/announcements", token: aliceT})
