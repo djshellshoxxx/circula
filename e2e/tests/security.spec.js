@@ -216,13 +216,11 @@ test('axe and keyboard: dual-control pending adjustments, approve with a second 
   await expect(b.page.locator('#flash')).toContainText('another administrator must approve');
   await b.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
   await expect(b.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
+  // admin2 may not decide the founder's request (appointed by the requester),
+  // so no approve or reject button is offered for it.
+  await expect(b.page.getByRole('button', { name: /Approve and post|Reject/ })).toHaveCount(0);
+  await expect(b.page.getByText('Another administrator must decide this.')).toBeVisible();
   await checkPage(b.page, 'pending adjustments (second administrator)');
-  // The founder's request is listed first among the ones admin2 did not make;
-  // deciding it is refused (appointed by the requester) and posts nothing.
-  await tabTo(b.page, /^Approve and post/);
-  await Promise.all([b.page.waitForNavigation(), b.page.keyboard.press('Enter')]);
-  await expect(b.page.getByText(/Not done\. You cannot decide this request/)).toBeVisible();
-  await checkPage(b.page, 'pending adjustment refused (appointed by the requester)');
 
   await a.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
   await expect(a.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
