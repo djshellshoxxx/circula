@@ -1,6 +1,6 @@
 # 09 Security, Privacy and Abuse Resistance
 
-Status: Draft v0.1 · Owner/role: Security reviewer (with Product architect) · Last updated: 2026-10-21 · Scope: assets, actors, trust assumptions, threat model, authentication, authorization, privacy, abuse resistance, secure logging, backups, incident response for the MVP · Dependencies: [00](00-conventions.md) (glossary, LED invariants, DEC-001..004), [03](03-domain-model.md), [05](05-architecture.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [08](08-ux-accessibility.md), [10](10-governance-operations.md), [11](11-deployment-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: listed in section 9 and in [13](13-assumptions-risks-decisions.md)
+Status: Draft v0.1 · Owner/role: Security reviewer (with Product architect) · Last updated: 2026-10-24 · Scope: assets, actors, trust assumptions, threat model, authentication, authorization, privacy, abuse resistance, secure logging, backups, incident response for the MVP · Dependencies: [00](00-conventions.md) (glossary, LED invariants, DEC-001..004), [03](03-domain-model.md), [05](05-architecture.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [08](08-ux-accessibility.md), [10](10-governance-operations.md), [11](11-deployment-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: listed in section 9 and in [13](13-assumptions-risks-decisions.md)
 
 Normative terms (MUST, SHOULD, MAY) follow [00 section 1](00-conventions.md#1-normative-terms). Ledger rules (LED-1..LED-7) are defined once in [00 section 4](00-conventions.md#4-platform-wide-invariants-not-configurable) and are referenced here, not restated. Requirements in this document use the prefix `SEC`. Threat identifiers `T-nn` are local to this document and are not requirement IDs.
 
@@ -12,9 +12,9 @@ This document does not claim anonymity, cryptographic guarantees for ledger cont
 
 
 
-## Build status (as built)
+## Historical implementation snapshot (not a current release attestation)
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release/security approval. The audit itself identifies an AI-assisted review and pending independent professional review ([SECURITY-AUDIT-3](../audit/SECURITY-AUDIT-3.md)). Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate or independent security review is claimed here.
 
 Summary: built 8, deferred 1, not built 7, partial 18.
 

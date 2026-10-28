@@ -6,8 +6,11 @@ HTTP (`internal/api`), HTML (`internal/web`) and CLI (`cmd/circula`) adapters tr
 (03 domain, 06 ledger, 09 security). Audit findings addressed here: `docs/audit/CODE-AUDIT.md`, `SECURITY-AUDIT.md`
 (IDs such as SVC-01, SA-08 are used in code comments and tests).
 
-Status: service and store are complete and tested; the adapters above are built on top of this surface. Operations
-(`circula serve`, jobs, maintenance mode, freeze, metrics) are described in `docs/ops/`.
+The completion/testing statement in earlier copies of this reference described the historical build snapshot at
+`925f637`; it is not current test evidence. This document describes the service methods and adapters present in the
+current source tree, but does not certify that they pass the full suite. Current checkpoint evidence and known limits
+are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). Operations (`circula serve`, jobs, maintenance
+mode, freeze, metrics) are described in `docs/ops/`.
 
 ## 1. Wiring
 
@@ -876,7 +879,7 @@ Deviations from the specs, with reasons:
     digit/punctuation-suffix variants) and refused when they contain the login or its local-part words.
   * Admin reset, operator reset and recovery delete the person's pending second-factor challenges (SA2-13).
 
-Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
+Historical service capability gaps (snapshot `925f637`): the items below describe that earlier snapshot and are not a current inventory of unavailable behavior. Current service methods and adapter paths are documented above and live under `internal/service`, `internal/api`, `internal/web`, and `cmd/circula`; use the current checkpoint record at [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md) for verification evidence and limits. Do not infer current implementation status from this historical list.
 
 * SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
   break-glass operator access (SEC-013), per-person session cap,

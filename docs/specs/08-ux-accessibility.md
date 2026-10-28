@@ -1,6 +1,6 @@
 # 08 UX, Information Architecture and Accessibility Requirements
 
-Status: Draft v0.1 · Owner/role: UX lead (with accessibility reviewer) · Last updated: 2026-10-21
+Status: Draft v0.1 · Owner/role: UX lead (with accessibility reviewer) · Last updated: 2026-10-24
 Scope: MVP information architecture, core screens (requirements level only), presentation of balances and transactions (direction, pending versus completed, negative balances, available credit), validation and error handling, responsive and keyboard requirements, accessibility targets against WCAG 2.2 Level AA. Excludes visual design, brand, and feature-level interaction specifications.
 Dependencies: [00-conventions.md](00-conventions.md) (glossary, LED-1..LED-7, DEC-002); [02-personas-journeys.md](02-personas-journeys.md) (roles and journeys); [03-domain-model.md](03-domain-model.md) (state definitions); [04-functional-requirements.md](04-functional-requirements.md) (FR screens); [05-architecture.md](05-architecture.md) (ARC-017); [07-api-contract.md](07-api-contract.md) (error codes and balance fields); [09-security-privacy.md](09-security-privacy.md) (session handling); [12-quality-test-plan.md](12-quality-test-plan.md) (accessibility tests).
 Open questions: see section 12.
@@ -16,6 +16,8 @@ Normative terms follow [00-conventions.md](00-conventions.md) section 1. WCAG re
 ## Build status (as built)
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+
+Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). Historical-balance presentation below clarifies UX-061; it does not claim that the feature or its acceptance evidence exists.
 
 Summary: built 31, not built 7, partial 22.
 
@@ -100,7 +102,7 @@ Summary: built 31, not built 7, partial 22.
 | Trades | Active or suspended member | Proposals incoming and outgoing, active and past trades, detail |
 | Directory | Members with directory access | Member list and profiles |
 | Listings | Members | Offers and requests; create and edit own listings |
-| History | Member | Own account statement (entries, running balance optional) |
+| History | Member | Own account statement (entries, running balance optional); historical balance lookup at an exact instant (UX-061) |
 | Disputes | Parties to a dispute; dispute reviewers | Dispute cases and queue |
 | Network admin | Network administrator | Members, policy, adjustments, audit, checks, announcements, exports, invitations, roles |
 | Account | Any signed-in person | Profile, sign-in and security, API tokens, sign out, network memberships |
@@ -170,6 +172,12 @@ Rules that apply to all three states:
 | UX-015 · P0 | Completed trades MUST show "Completed" with the posting date and time (member's time zone, UX-024) and a ledger reference. A completed trade MUST NOT show the word "pending". |
 | UX-016 · P0 | Each status MUST have a text label and a one-line explanation in the detail view. The labels are: `Waiting for <name> to respond` (proposed, incoming or outgoing), `Completed`, `Declined`, `Cancelled`, `Expired`, `Disputed`, `Reversed`. The internal state `accepted` MUST NOT be shown as a separate label in the MVP (assumption OQ-ARC-04). |
 | UX-017 · P1 | Reversals and adjustments MUST be shown as separate lines linked to the original, with their own date, reason, and signed effect. The original line MUST remain unchanged in appearance except for a link "Reversed by …". |
+
+### 4.4 Historical balance
+
+| Requirement | Content |
+|---|---|
+| UX-061 · P1 | The member History screen MUST let a member request the historical balance of their own account at an exact instant, using an explicitly offset RFC 3339 date-time input. The interface MUST NOT infer an instant from a date-only value or the member's display time zone. On success, it MUST show the signed amount, direction and normalized UTC instant (with `Z`), and explain that this is the posted balance at that instant. It MUST NOT label current credit limit, reserved amount, or available-to-spend values as historical. Malformed or future input MUST identify the timestamp field and state the correction. When no account postings satisfy the requested timestamp cutoff, it MUST show zero and an explicit "No postings as of this instant" state, irrespective of network creation time. If clock rollback gives an account posting a timestamp earlier than network creation, that posting MUST still contribute whenever it satisfies the cutoff, consistent with FR-054. |
 
 ## 5. Decisions, confirmation and errors
 

@@ -1,6 +1,6 @@
 # 10 Governance and Network Operations
 
-Status: Draft v0.1 · Owner/role: Product architect (legal items pending counsel review) · Last updated: 2026-10-21 · Scope: rules a network administrator can configure, how changes are announced and recorded, membership lifecycle, administrator succession, disputes, challenges and appeals, negative-balance recovery, suspension, closure, data export, and the platform operator's commitments for the MVP · Dependencies: [00](00-conventions.md) (glossary, LED invariants, configurable policy defaults), [03](03-domain-model.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [09](09-security-privacy.md), [11](11-deployment-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 10
+Status: Draft v0.1 · Owner/role: Product architect (legal items pending counsel review) · Last updated: 2026-10-24 · Scope: rules a network administrator can configure, how changes are announced and recorded, membership lifecycle, administrator succession, disputes, challenges and appeals, negative-balance recovery, suspension, closure, data export, and the platform operator's commitments for the MVP · Dependencies: [00](00-conventions.md) (glossary, LED invariants, configurable policy defaults), [03](03-domain-model.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [09](09-security-privacy.md), [11](11-deployment-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 10
 
 Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Glossary terms (Network, Member, Account, Balance, Credit limit, Transaction, Posting, Adjustment, Reversal, Dispute, Audit event, System account) have the meanings in [00 section 3](00-conventions.md#3-glossary-authoritative) and are not redefined here.
 
@@ -18,9 +18,9 @@ The product does not decide whether credits have value, whether members will acc
 
 
 
-## Build status (as built)
+## Historical implementation snapshot (not a current release attestation)
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release approval. Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate is claimed here.
 
 Summary: built 11, not built 6, partial 10.
 
@@ -73,7 +73,7 @@ Each policy below has a class, a default, and a change rule. The default for eac
 | Per-member credit limit override | Configurable | None | Prospective; notice required (GOV-003) |
 | Maximum transaction amount | Configurable | Set by administrator; no network-wide default | Prospective |
 | Proposal expiry | Configurable | 7 days | Prospective; applies to proposals created after change |
-| Decimals (minor-unit scale) | Configurable at creation | 2 | Locked after first completed transaction (GOV-004) |
+| Decimals (minor-unit scale) | Configurable at creation | 2 | Initial scale and monetary settings are committed atomically at network creation; decimals are locked for the network's lifetime (GOV-004) |
 | Member directory visibility | Configurable | Members-only | Prospective; notice required |
 | Join mode | Configurable | Invite | Prospective; see section 4 |
 | Dispute window | Configurable | 30 days after completion | Prospective; shortening requires notice (GOV-003) |
@@ -82,13 +82,15 @@ Each policy below has a class, a default, and a change rule. The default for eac
 | Dispute timelines | Configurable within bounds | DEC-012 | Prospective |
 | Adjustment approval threshold | Configurable | DEC-013 | Prospective; itself a value-related change requiring dual control |
 
-**GOV-001** · P0 · Prospective-only policy changes
-- Requirement: A policy change MUST apply only to postings, proposals, decisions and memberships that occur after the change takes effect. It MUST NOT alter any existing entry, transaction status that was already reached, or any completed decision.
-- Rationale: Retroactive change would break the mutual-credit promise that completed trades are fixed (LED-2).
+**GOV-001** · P0 · Prospective, policy-specific effect
+- Requirement: A policy change MUST use the effective-time rule defined for that policy; this requirement does not impose a blanket snapshot of every policy at proposal creation or acceptance. A proposal's expiry MUST be fixed from the policy in force when the proposal is created, per [DEC-037](../DECISIONS.md#dec-037--proposal-expiry-fixed-when-the-proposal-is-created). At acceptance, the product MUST recheck current authorization, membership/lifecycle restrictions, and posting capacity under the rules then in force. Once posted, transaction terms and ledger entries MUST NOT be rewritten by later policy changes; statuses and decisions may advance only through their defined workflows.
+- Rationale: Network rules evolve prospectively, while the proposal's stated deadline and the meaning of a posted ledger entry must remain stable.
 - Acceptance criteria:
-  - Lowering a credit limit does not alter an existing completed transaction or its entries (test).
-  - A proposal created before a proposal-expiry change keeps the expiry in force at its creation (test).
-  - Each transaction stores the policy version in force at acceptance (test; field defined in [06](06-data-ledger-audit.md)).
+  - A proposal created before a proposal-expiry change retains its stored expiry (test; DEC-037).
+  - Acceptance after a member is suspended or a relevant authorization changes is refused according to the then-current lifecycle and authorization rules (test).
+  - Acceptance rechecks the then-current available posting capacity; it does not rely on capacity observed when the proposal was created (test).
+  - Changing a policy after posting does not rewrite the posted transaction terms or ledger entries (test).
+  - Each policy with creation-time or action-time semantics identifies that rule in its own requirement and has a regression test; recording a policy version is metadata and does not imply a blanket policy snapshot.
 
 **GOV-002** · P0 · Recording policy changes
 - Requirement: Every policy change MUST be recorded as an audit event (SEC-012) with the actor, the previous and new value, the effective time and an optional reason, and MUST be shown to members in a readable change log within the network.
@@ -107,11 +109,14 @@ Each policy below has a class, a default, and a change rule. The default for eac
   - A shortened notice requires a reason and appears in the change log (test).
 
 **GOV-004** · P0 · Decimal scale lock
-- Requirement: The minor-unit scale (decimals) of a network MUST be set at creation and MUST NOT change after the first completed transaction in that network.
-- Rationale: Changing scale would re-interpret stored integers (LED-7).
+- Requirement: Network creation MUST atomically persist the initial minor-unit scale (decimals) and all initial monetary policy and account settings. Completion of network creation permanently locks decimals for that network in the MVP. Any later persisted monetary amount or transaction proposal in any status is denominated using that immutable scale and likewise implies the network is locked; this includes listing prices created after network creation. No network may change decimals after creation, and no role may perform an in-place scale conversion. Existing networks with persisted monetary configuration MUST be treated as locked. Network creation MUST serialize scale selection and persistence of all initial monetary settings as one atomic operation so no value can be committed under an ambiguous scale. No separate lock marker or migration is required by this specification.
+- Rationale: Changing scale reinterprets stored integer amounts and can change the meaning of balances, proposals, limits, account values, or prices (LED-7). Persisting the scale and its monetary settings atomically makes the unit unambiguous from the network's first committed state.
 - Acceptance criteria:
-  - An attempt to change decimals after a completed transaction is refused (test).
-  - An attempt before any completed transaction is accepted with an audit event and a notice (test).
+  - Creating a network with its initial scale and monetary settings persists them atomically; a failed creation leaves no partial network or monetary values (test).
+  - Every successfully created network refuses a subsequent decimals change, including before its first transaction (test).
+  - A network that already has persisted monetary configuration is treated as locked, regardless of whether any transaction has completed; proposals in proposed, completed, declined, cancelled, expired, disputed, or reversed state do not unlock it (regression test).
+  - Concurrent network creation and monetary-setting persistence cannot commit any amount without its scale (concurrency test).
+- Current checkpoint gap (2026-10-24): the historical implementation note describes locking only after the first completed transaction. The atomic creation boundary and permanent lock above are required corrections, not verified as implemented; regression and concurrency tests are required before marking GOV-004 built.
 
 **GOV-005** · P1 · Policy validation bounds
 - Requirement: The product MUST enforce bounds on each configurable policy so that it cannot be set to a value that breaks platform invariants. Examples: credit limits MUST be zero or positive; expiry MUST be at least one hour and at most a platform-defined maximum; maximum transaction amount MUST be a positive integer in minor units.
@@ -244,10 +249,10 @@ The following are not configurable by any network and are restated only as gover
   - A write-off appears in the change log and the member's history (test).
 
 **GOV-019** · P0 · Reduction of credit limit below current negative balance
-- Requirement: When a credit limit is reduced below a member's current negative balance, the existing balance MUST remain unchanged. The member MUST be prevented from any new posting that increases the negative position, and MUST still be allowed postings that reduce it. The member MUST be notified under GOV-003.
-- Rationale: Software must not silently take value or force reversals. Preventing new debt while allowing recovery is consistent with LED-5.
+- Requirement: When a credit limit is reduced below a member's current negative balance, the existing balance MUST remain unchanged. The member MUST be prevented from any new posting that increases the negative position, and MUST still be allowed a posting that improves it, including an incoming credit that leaves the balance below the newly reduced limit. Ordinary posting checks still apply to both parties: the trade MUST satisfy current authorization, lifecycle, amount, and capacity rules, and MUST NOT worsen another account beyond its permitted limit. The member MUST be notified under GOV-003.
+- Rationale: Software must not silently take value or force reversals. Preventing a new debit that worsens an over-limit position while allowing an incoming credit that improves it follows LED-5 ([00 section 4](00-conventions.md#4-platform-wide-invariants-not-configurable)).
 - Acceptance criteria:
-  - After reducing a limit below the balance, a posting that increases the negative position is refused and a posting that reduces it is accepted (test).
+  - After reducing a limit below the balance, an outgoing posting that worsens the negative position is refused, while an otherwise valid incoming credit that improves the position is accepted even if the resulting balance remains below the reduced limit (test).
   - Existing entries are unchanged (test).
 
 ## 7. Administrator succession and continuity

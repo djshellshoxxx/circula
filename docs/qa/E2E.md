@@ -47,29 +47,16 @@ review in `docs/specs/08-ux-accessibility.md`.
 The tests inject axe-core with `bypassCSP: true` because the application's `Content-Security-Policy` (correctly)
 forbids inline scripts. Nothing else in the application is relaxed.
 
-## Continuous integration note
+## CI and recorded run
 
-Not wired into `.github/workflows/release.yml` (owned elsewhere). To run it in a workflow job, after the Go build
-step:
+The source of truth for CI is [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml). Its `e2e` job installs the
+locked npm dependencies and Chromium, then runs `make e2e` on Ubuntu; on failure it retains the Playwright result
+artifacts. The workflow also has a separate contract/load job. Keep this document aligned with that workflow rather
+than copying a second hypothetical workflow configuration here.
 
-```yaml
-  e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@<pinned sha>
-      - uses: actions/setup-go@<pinned sha>
-        with: { go-version-file: go.mod }
-      - uses: actions/setup-node@<pinned sha>
-        with: { node-version: 22, cache: npm, cache-dependency-path: e2e/package-lock.json }
-      - name: Install Chromium (runners have no preinstalled Playwright browser)
-        run: cd e2e && npx --yes playwright@1.63.0 install --with-deps chromium
-      - run: make build
-      - run: cd e2e && npm ci && CIRCULA_BIN=$PWD/../bin/circula CHROMIUM_PATH="$(node -e "console.log(require('@playwright/test').chromium.executablePath())")" npx playwright test
-```
-
-Pin every action by commit SHA to satisfy `scripts/check-action-pins.sh`. On a runner the browser is installed by
-Playwright; the `CHROMIUM_PATH` shown makes the config use it. Upload `e2e/test-results` on failure to keep the
-failure screenshots.
+Recorded checkpoint result (2026-10-24): [workflow run 39750077129](https://github.com/djshellshoxxx/circula/actions/runs/39750077129)
+for commit `d39bfef12d4ac1430815fa49ad799fb1c4bf9964` reports the E2E job failed and the other eight jobs succeeded.
+This is the outcome of that specific run, not a current passing result or a release attestation.
 
 ## CI and ARIA proxy tests
 `ci.yml` job `e2e` runs `make e2e` on ubuntu-24.04 after `npx playwright install --with-deps chromium` (the only place a

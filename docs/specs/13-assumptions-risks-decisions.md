@@ -1,6 +1,6 @@
 # 13 Assumptions, Risks, Decisions and Roadmap
 
-Status: Draft v0.1 · Owner/role: Product architect (decision log owner) · Last updated: 2026-10-21 · Scope: assumptions (ASM), risks (RSK), the decision register (DEC) including DEC-001..DEC-004 from [00](00-conventions.md), open decisions with recommended defaults, the MVP roadmap and dependency order, deferred sub-specifications, the decision log template, and legal questions reserved for counsel · Dependencies: all of 00 to 12 · Open questions: section 8
+Status: Draft v0.2 · Owner/role: Product architect (decision log owner) · Last updated: 2026-10-24 · Scope: assumptions (ASM), risks (RSK), the decision register (DEC) including DEC-001..DEC-004 from [00](00-conventions.md), open decisions with recommended defaults, the MVP roadmap and dependency order, deferred sub-specifications, the decision log template, and legal questions reserved for counsel · Dependencies: all of 00 to 12 · Open questions: section 8
 
 Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Glossary terms are in [00 section 3](00-conventions.md#3-glossary-authoritative).
 
@@ -14,9 +14,9 @@ Identifiers `ASM-`, `RSK-` and `DEC-` are never reused. A superseded decision ke
 
 
 
-## Build status of the decision register (as built)
+## Historical build status of the decision register
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). Decisions made during the build, and open owner decisions raised by it, are in [DECISIONS.md](../DECISIONS.md) with their IDs. Test names and code paths: [TRACEABILITY.md](../TRACEABILITY.md).
+The table below records decision status at the historical snapshot HEAD `925f637` on branch `claude/circula-build`; it is not an assessment of the current branch. Decisions made during that build and owner decisions raised by it are in [DECISIONS.md](../DECISIONS.md), with implementation evidence in [TRACEABILITY.md](../TRACEABILITY.md). Current checkpoint evidence is tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). No tests or release gates are implied by this historical record.
 
 Summary: decided 2, deferred 1, open 20.
 
@@ -67,7 +67,7 @@ Each open decision has a recommended default. A default is not a decision: it is
 | DEC-006 | Password minimum length, maximum accepted length, breached-password check source, Argon2id or bcrypt parameters | Parameter sets; check via offline list or none | Minimum 12, accept at least 64; offline breached-password check enabled; Argon2id, parameters chosen by benchmark on minimum hardware | SEC-001, SEC-002 | Authentication build |
 | DEC-007 | Mandatory second factor for privileged roles | Mandatory for administrators; for reviewers too; optional for all | Mandatory for network administrators and platform operators; optional for members and reviewers | SEC-007 | Authentication build |
 | DEC-008 | Hosted storage isolation: one database file per network, or one shared file with tenant scoping | Per-network file; shared file | One database file per network in hosted mode. Revisit if operations cost is too high | SEC-015, OPS-017 to OPS-020, OPS-005 | Storage design in 05 and 06 |
-| DEC-009 | Recovery channel and mail dependency | Verified email required; admin-assisted only; both | Verified email for recovery; admin-assisted recovery with dual control (SEC-011) when no verified contact exists; notices are in-app and by mail when configured | SEC-008, OPS-002, OPS-029 | Authentication build |
+| DEC-009 | Recovery channel and mail dependency | Verified email required; admin-assisted only; both | Recovery channel remains open. In-app notices are the baseline; email may be configured as an optional notice channel. Do not treat verified-email recovery or administrator-assisted recovery as settled until the owner records a decision. | SEC-008, OPS-002, OPS-029 | Authentication build |
 | DEC-010 | Departure settlement: residual positive and negative balances | Keep recorded; forfeit; settle by network rule; write off by adjustment | Freeze account; keep residual balances recorded; residual negative balance may be written off only by approved adjustment (GOV-018); no redemption in any form | GOV-010, GOV-018 | Membership build; counsel review (RSK-010) |
 | DEC-011 | Sign-up grants in MVP | Off; on with caps and approval | Off by default (grant zero); when enabled, approval or invite join mode required | SEC-032, GOV-008 | Membership build |
 | DEC-012 | Dispute and appeal timelines | Various | Dispute window 30 days after completion; response 7 days; decision target 14 days after response deadline; appeal within 14 days; no default outcome on silence | GOV-013, GOV-014, GOV-016 | Dispute build |
@@ -233,7 +233,7 @@ These owner decisions were raised or confirmed by the build and have no decision
 |---|---|---|---|
 | DEC-004 | Product licence | open; no LICENSE file in the repository | AGPL-3.0 or MIT (00 section 6). Needed before the repository is published or takes outside contributions (RSK-016). |
 | DEC-007 | Mandatory second factor for privileged roles | open; no second factor built | Mandatory for network administrators and platform operators; optional for members and reviewers. Blocks the authentication build (SEC-007). |
-| DEC-009 | Recovery channel and mail dependency | open; no recovery flow and no mail settings built | Verified email for recovery; administrator-assisted recovery with dual control when no contact exists. Blocks SEC-008. |
+| DEC-009 | Recovery channel and mail dependency | open; historical snapshot had no recovery flow or mail settings | In-app notices are the baseline; email is an optional channel if configured. Recovery channel and fallback remain for owner decision. Blocks SEC-008. |
 | DEC-014 | Platform operator break-glass controls and notice period | open; no break-glass path built (operator has no data role in the product) | Two-person approval; audit readable by affected administrators; access expires after 4 hours; notice within 24 hours where legally permitted (counsel review). |
 | DEC-072 | Who may decide a dispute: reviewer role only, or administrators too | open; build allows an administrator without the reviewer role to decide (LIGHT-QA BUG-3) | (a): require the reviewer role, and allow an administrator to hold it; a party or conflicted person never decides. |
 | DEC-074 | Should an accepted-but-not-posted state ever be visible | open; build never persists or shows `accepted` (DEC-036) | (a) keep `accepted` internal, as built, until a two-phase flow is decided (03 DOM-014, 08 UX-016) |

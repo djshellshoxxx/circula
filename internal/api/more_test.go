@@ -5,6 +5,9 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/djshellshoxxx/circula/internal/api"
 )
 
 type page struct {
@@ -147,6 +150,93 @@ func TestPolicyAndListingETags(t *testing.T) {
 	wantStatus(t, rec, 200)
 	if got := decode[map[string]any](t, rec); got["price_minor"] != nil || got["status"] != "paused" {
 		t.Fatalf("merge-patch null = %v", got)
+	}
+}
+
+func TestPendingCurrencyNamePolicyPatchChangesETag(t *testing.T) {
+	fixedNow := time.Date(2026, 3, 1, 12, 0, 0, 0, time.UTC)
+	w := newWorldOpts(t, api.Options{CSRFKey: testCSRFKey, Now: func() time.Time { return fixedNow }})
+	if !w.env.Clock.Now().Equal(fixedNow) {
+		t.Fatalf("service clock = %s, want %s", w.env.Clock.Now(), fixedNow)
+	}
+	initial := w.get(w.adminT, "/admin/policy")
+	wantStatus(t, initial, 200)
+	oldETag := initial.Header().Get("ETag")
+	if !strings.HasPrefix(oldETag, `"`) || strings.HasPrefix(oldETag, "W/") {
+		t.Fatalf("initial ETag is not strong: %q", oldETag)
+	}
+	initialPolicy := decode[struct {
+		Version int `json:"version"`
+		Policy  struct {
+			CurrencyName string `json:"currency_name"`
+		} `json:"policy"`
+	}](t, initial)
+
+	body := m{"reason": "rename currency", "currency_name": "credits", "notice_days": 14}
+	updated := w.do(req{method: "PATCH", path: "/api/v1/admin/policy", token: w.adminT,
+		body: body, hdr: map[string]string{"If-Match": oldETag}})
+	wantStatus(t, updated, 200)
+	newETag := updated.Header().Get("ETag")
+	out := decode[struct {
+		Version int `json:"version"`
+		Policy  struct {
+			CurrencyName string `json:"currency_name"`
+		} `json:"policy"`
+		Pending *struct {
+			Changes     map[string]any `json:"changes"`
+			EffectiveAt string         `json:"effective_at"`
+			Pending     bool           `json:"pending"`
+		} `json:"pending"`
+	}](t, updated)
+	if out.Pending == nil || !out.Pending.Pending {
+		t.Fatalf("pending policy missing from response: %s", updated.Body.String())
+	}
+	effectiveAt, err := time.Parse(time.RFC3339Nano, out.Pending.EffectiveAt)
+	if err != nil || !effectiveAt.Equal(fixedNow.AddDate(0, 0, 14)) {
+		t.Fatalf("pending effective_at = %q, want fixed-clock +14 days", out.Pending.EffectiveAt)
+	}
+	if out.Version != initialPolicy.Version || out.Policy.CurrencyName != initialPolicy.Policy.CurrencyName {
+		t.Fatalf("active policy changed before effective_at: version %d->%d currency %q->%q",
+			initialPolicy.Version, out.Version, initialPolicy.Policy.CurrencyName, out.Policy.CurrencyName)
+	}
+	if out.Pending.Changes["currency_name"] != "credits" {
+		t.Fatalf("pending currency_name = %v, want credits", out.Pending.Changes["currency_name"])
+	}
+	if newETag == "" {
+		t.Errorf("pending response omitted ETag")
+	} else if newETag == oldETag {
+		t.Errorf("pending currency-name-only update did not change ETag: old=%q new=%q", oldETag, newETag)
+	}
+	if !strings.HasPrefix(newETag, `"`) || strings.HasPrefix(newETag, "W/") {
+		t.Errorf("updated ETag is not strong: %q", newETag)
+	}
+
+	current := w.get(w.adminT, "/admin/policy")
+	wantStatus(t, current, 200)
+	if current.Header().Get("ETag") != newETag {
+		t.Errorf("GET ETag = %q, want pending ETag %q", current.Header().Get("ETag"), newETag)
+	}
+
+	wantProblem(t, w.do(req{method: "PATCH", path: "/api/v1/admin/policy", token: w.adminT,
+		body: m{"reason": "stale rename", "currency_name": "marks", "notice_days": 14},
+		hdr:  map[string]string{"If-Match": oldETag}}), 412, "precondition-failed")
+	afterStale := w.get(w.adminT, "/admin/policy")
+	wantStatus(t, afterStale, 200)
+	if afterStale.Header().Get("ETag") != newETag {
+		t.Fatalf("stale update changed ETag: got %q, want %q", afterStale.Header().Get("ETag"), newETag)
+	}
+	after := decode[struct {
+		Version int `json:"version"`
+		Policy  struct {
+			CurrencyName string `json:"currency_name"`
+		} `json:"policy"`
+		Pending *struct {
+			Changes map[string]any `json:"changes"`
+		} `json:"pending"`
+	}](t, afterStale)
+	if after.Pending == nil || after.Pending.Changes["currency_name"] != "credits" ||
+		after.Version != initialPolicy.Version || after.Policy.CurrencyName != initialPolicy.Policy.CurrencyName {
+		t.Fatalf("stale request changed active or pending policy: %s", afterStale.Body.String())
 	}
 }
 

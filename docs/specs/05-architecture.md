@@ -1,6 +1,6 @@
 # 05 System Architecture and Trust Boundaries
 
-Status: Draft v0.1 · Owner/role: Software architect · Last updated: 2026-10-21
+Status: Draft v0.1 · Owner/role: Software architect · Last updated: 2026-10-24
 Scope: Logical components, responsibilities, data flow, trust boundaries, deployment options, architectural qualities for the MVP. Technology-neutral at spec level, consistent with DEC-001..DEC-003.
 Dependencies: [00-conventions.md](00-conventions.md) (glossary, LED-1..LED-7, DEC-001..DEC-004); [03-domain-model.md](03-domain-model.md) (domain rules); [06-data-ledger-audit.md](06-data-ledger-audit.md) (storage detail); [07-api-contract.md](07-api-contract.md) and [08-ux-accessibility.md](08-ux-accessibility.md) (interfaces); [09-security-privacy.md](09-security-privacy.md) (threats); [11-deployment-operations.md](11-deployment-operations.md) (operational detail).
 Open questions: see section 9. Decisions are logged in [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).
@@ -13,9 +13,9 @@ This document uses the normative terms and glossary defined in [00-conventions.m
 
 
 
-## Build status (as built)
+## Historical build status snapshot
 
-Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
+The table records the historical implementation snapshot at HEAD `925f637` on branch `claude/circula-build`; it is not an assessment of the current branch. Statuses were first read at `31b1015` and re-checked at `925f637` (see [TRACEABILITY.md](../TRACEABILITY.md)). **built** means behaviour exists in that snapshot; **partial** means behaviour exists with the stated gaps, or required verification was not run; **not built** and **deferred** retain their meanings in that snapshot. Code paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md). Current checkpoint evidence and limitations are in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). Neither this snapshot nor the current checkpoint is a compliance claim or release attestation.
 
 Summary: built 11, deferred 1, not built 2, partial 11.
 
@@ -35,7 +35,7 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
 | ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done |
 | ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
-| ARC-015 | P0 | built | Verify on demand and in hourly job; scheduled runs recorded in consistency_runs, audited only on failure or state change |
+| ARC-015 | P0 | built | Explicit admin checks are recorded; scheduled checks are read-only and report through operational metrics/logs (DEC-031) |
 | ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace default 10 s (shutdown-grace) |
 | ARC-017 | P0 | partial | Semantic server-rendered HTML; no automated WCAG tool in CI |
 | ARC-018 | P1 | built | Layering enforced by depguard rules in .golangci.yml |
@@ -200,7 +200,7 @@ A failure at any step before commit leaves no partial ledger state. A failure af
 - A job interrupted mid-run resumes or restarts without duplicating effects (tested for expiry and export).
 
 ### ARC-012 · Background jobs are idempotent and restart-safe · P1
-**Requirement.** Expiry of proposals, export generation, and scheduled consistency checks MUST be idempotent. A job MUST record its progress in storage and MUST be safe to run twice.
+**Requirement.** Expiry of proposals, export generation, and scheduled consistency checks MUST be idempotent and safe to run twice. Jobs that maintain resumable work state MUST record that progress in storage. Ledger verification follows ARC-015 and DEC-031: it is read-only and reports scheduled outcomes through operational metrics and logs.
 **Rationale.** Process restarts and retries are normal in self-hosted environments.
 **Acceptance.**
 - Running the expiry job twice in succession produces the same state and one audit event per expired transaction.
@@ -221,12 +221,12 @@ A failure at any step before commit leaves no partial ledger state. A failure af
 - The deferred item is listed in 13 as a roadmap entry.
 
 ### ARC-015 · Correctness is verified by invariant checks · P0
-**Requirement.** The system MUST provide a consistency check that verifies LED-1 (per-transaction zero sum, per-network zero sum), LED-3 (cached balance equals sum of entries) and LED-2 indicators (no entry without a parent transaction). The check MUST run on demand and on a schedule, and its result MUST be recorded.
+**Requirement.** The system MUST provide a consistency check that verifies LED-1 (per-transaction zero sum, per-network zero sum), LED-3 (cached balance equals sum of entries) and LED-2 indicators (no entry without a parent transaction). The check MUST run on demand and on a schedule, and each result MUST be observable. In accordance with [DEC-031](../DECISIONS.md#dec-031--ledger-verification-is-read-only-recorded-runs-are-an-explicit-admin-action), scheduled checks MUST remain read-only and report outcomes through operational metrics and logs; an explicit administrator-run check MUST also be recorded in `consistency_runs` and audit history.
 **Rationale.** Gives operators evidence that the ledger is intact after restores, migrations and incidents.
 **Acceptance.**
 - A seeded corruption (one cached balance changed directly in the database) is detected by the check, which reports the network, account and expected/actual values.
 - The check passes on a database produced by the full test scenario suite (12).
-- Check runs are recorded in audit history.
+- An explicit administrator-run check is recorded in `consistency_runs` and audit history; a scheduled check reports its outcome through operational metrics and logs without writing to the database (DEC-031).
 
 ### ARC-016 · Availability and recoverability targets · P1
 **Requirement.** Each deployment MUST have a documented recovery point objective (RPO) and recovery time objective (RTO). The MVP architecture MUST support consistent backups without stopping writes for longer than a configured window, and a restore MUST be verified by ARC-015.
