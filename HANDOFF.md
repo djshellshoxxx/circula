@@ -151,3 +151,23 @@ separate evidence; assistant delta reviews do not satisfy those gates. Formal
 GitHub approval-review submission still requires specific per-PR confirmation.
 Do not merge PR #13 over newer work. No force push, deployment, release, paid
 Claude call, purchase or credentials/security-setting change is authorized here.
+
+## Integration receipt — 2026-10-29
+
+PR #14 (`codex/circula-support-boundaries-20261028@837d51b0d5374822b28f1b3a9206f9e2d23bd60c`)
+was fast-forwarded into `claude/awesome-darwin-y6eaiz` (from `bb5a36f`). No source was
+changed by the integration. Local gates at `837d51b`, in a cloud session where module
+downloads work (official Go 1.26.10 via toolchain download):
+
+- `gofmt -l .` empty; `go vet ./...` pass; golangci-lint v2.15.0: 0 issues;
+  `go build -trimpath ./cmd/circula` pass.
+- `go test -count=1 ./...`: all packages ok.
+- `go test -count=200 -run '^TestSecurityHeadersAndRequestID$' ./internal/api`: ok.
+- `make build` + Playwright (pinned 1.63.0, preinstalled Chromium): 103 passed.
+- gitleaks v8.28.0 over `bb5a36f..837d51b`: no leaks; hygiene, action pins and
+  `git diff --check bb5a36f`: pass.
+
+External audit PR #12 (`claude/sharp-archimedes-tu76rh`, last read at
+`fe111799ffabb2427d6d94feb32a037fa3ed2af8`) was not edited and shares no files with
+PR #14. PR #13 stays draft and unmerged. The integration is in PR #10. Screen-reader
+and independent professional review gates remain open.
