@@ -95,19 +95,24 @@ local official compiler and ephemeral caches are not part of the source backup.
 ## Proposed route to main — not executed
 
 1. Reconcile live refs, external remediation ownership and exact post-merge CI.
-   Finish audit verification/coverage/consolidation and reproduce/disprove the six
-   reported Medium candidates before treating interim labels as final. Reserve
-   disjoint work explicitly. Preserve ledger, monetary thresholds, independent
-   founder/grant-chain rules and the 24-hour approval delay.
-2. Fix accepted owned findings in small reviewed commits with preserved
+   Use the current branch-state record and continuation prompt as the next task.
+   Reserve disjoint work explicitly; merging the evidence did not transfer
+   external remediation ownership.
+2. On a new owned consolidation branch, combine the current product-plus-audit
+   tip, separate `f4bfe6b...` receipt and current prompt/plan branch with ordinary
+   merges. The reviewed receipt merge is clean and changes no product tree; the
+   reviewed prompt/plan merge conflicts only in `HANDOFF.md`. Preserve both
+   original notes as source-labelled audit records, repair links when relocated,
+   then write one current root handoff. Verify every input SHA is an ancestor,
+   explain every resulting path and record checks for the new source.
+3. Finish audit verification/coverage/consolidation through reconciled ownership,
+   reproduce/disprove the six reported Medium candidates before treating interim
+   labels as final, and fix accepted owned findings in small reviewed commits with preserved
    failing-before evidence. Reconcile C-09/A2-07 without merging the archive.
    Remove the tracked 21,703,878-byte `circula` build artifact in a normal hygiene
    commit and ignore future build output; do not rewrite history or force push.
    Revalidate stale gap tables against code; automated axe CI already exists.
-3. Create a new consolidation branch from the current product-plus-audit tip.
-   Incorporate the separate `f4bfe6b...` development-merge ancestry with an ordinary
-   merge, preserving unique commits on both sides. Review the resulting tree,
-   expected changes and all fresh source/target SHAs; never reset either source.
+   Preserve ledger/monetary/approval invariants and the 24-hour approval delay.
 4. Run required checks against the actual candidate: `make check`, relevant E2E
    and API-contract coverage, the pinned secret scan, hygiene and workflow-pin
    checks. Resolve cancelled/pending/failed checks without weakening gates.
@@ -130,8 +135,9 @@ message is authorized by this plan.
 ## Documentation checkpoint
 
 This separate branch descends from PR #15's original source and contains only
-three Markdown paths: the corrected prompt, this plan and `HANDOFF.md`.
-Whitespace and all three relative-file links passed; the limited scan of the
+Markdown: the refreshed prompt, this plan, `HANDOFF.md` and the
+[branch/handoff state](BRANCH-STATE-2026-10-30.md).
+Whitespace and relative-file links passed; the limited scan of the
 complete documents found no credential/private-data patterns. There is no
 application or workflow in this prompt-only tree, so no application test pass or
 new full local pinned-scanner pass is claimed for its document head. Product CI

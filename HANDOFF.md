@@ -1,4 +1,4 @@
-# Circula documentation handoff — 2026-10-30
+# Circula consolidation-prompt handoff — 2026-10-30
 
 Repository: `djshellshoxxx/circula`.
 Owned branch: `codex/circula-integration-plan-20261030`.
@@ -19,12 +19,17 @@ tag, release, deployment, purchase or credentials/security-setting change occurr
 
 Read [the detailed integration plan](docs/INTEGRATION-PLAN.md) for exact source/
 target SHAs, CI links/results, review coverage, preserved branches and next steps.
-The corrected [continuation prompt](prompts/continue-circula.md) distinguishes
-already-built axe CI, incomplete audit verification and explicit work ownership.
+The refreshed [branch/handoff review](docs/BRANCH-STATE-2026-10-30.md) records all
+17 reviewed branches, 11 open PRs, distinct historical handoffs and exact inputs.
+Use the [consolidation/development prompt](prompts/continue-circula.md) as the next
+agent's task. It preserves product `827e651...`, separate receipt `f4bfe6b...`
+and this documentation branch on a new owned development branch, resolves the
+expected root-handoff conflict without losing either record, then continues
+accepted unowned work. It does not execute that consolidation during authoring.
 
-Ready next: recheck live refs/ownership and any newer CI, review this docs
-successor ([draft PR #16](https://github.com/djshellshoxxx/circula/pull/16)), then
-reserve accepted unowned remediation work. The main integration
+Ready next: follow the prompt's live-ref/ownership check, owned-branch
+consolidation and bounded implementation sequence. This docs successor remains
+[draft PR #16](https://github.com/djshellshoxxx/circula/pull/16). The main integration
 plan is proposed only. Keep PR #13 and older conflicting docs intact; do not infer
 ownership transfer from an idle or merged audit PR. Manual/professional review,
 owner decisions and release thresholds remain open. This executor's prior module
