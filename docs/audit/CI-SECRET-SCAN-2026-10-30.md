@@ -79,3 +79,13 @@ Independent delta review reproduced the redacted CI finding, verified the commit
 object/tree, and confirmed both label changes retain every full SHA in order.
 Only three Markdown paths change; hygiene, action pins and whitespace pass.
 No suppression, allowlist, scanner-rule or runtime change was made.
+
+## Passing correction rescan at its exact source
+
+At `20bda306bdd180a919db1f567e2a745ebc24ce48`, push run
+[41044069883](https://github.com/djshellshoxxx/circula/actions/runs/41044069883)
+completed lint/security job `124023683341` successfully. Its pinned secret scan,
+gofmt, vet, golangci-lint and govulncheck steps all passed. Eight of nine jobs were
+successful at this observation; Ubuntu race testing remained active. This confirms
+the prose correction at that source without claiming aggregate acceptance or
+validating the subsequent documentation merge. No local scanner run is implied.
