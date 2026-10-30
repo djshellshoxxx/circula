@@ -112,9 +112,8 @@ not validation of this consolidation.
 
 ## Checkpoint evidence
 
-Pending until this merge is committed, statically checked, normally pushed and
-its remote SHA is read back. New-source CI must be observed separately. No claim
-of completed consolidation, runtime remediation or release readiness is made yet.
+The following pre-commit records are historical; the publication receipt below
+records the completed source checkpoint and still-pending aggregate CI.
 
 Pre-commit static checks on the resolved merge index passed:
 - `git diff --cached --check` (all seven changed Markdown paths).
@@ -154,3 +153,27 @@ exact original ordinary merge headers/messages for reproducibility. Their tree
 objects are uploaded and compared before equivalent remote merges are published.
 This preserves local work rather than resetting or overwriting it. This extra
 JSON provenance path is the only addition to the seven-path consolidation scope.
+
+## Verified remote consolidation checkpoint
+
+Authenticated receipt merge: `684d365502c154aff8d8c45caff6d249b940a51b`, with
+the same product/receipt parents and product tree as the local ordinary merge.
+Authenticated plan merge: `01a40dbb3d564651b446c4060187c2fd8508bf31`, parents
+`684d365502c154aff8d8c45caff6d249b940a51b` and the pinned plan head; tree exactly
+`f7c3981726f1187da19e5dfe950d9780b3751c7d`, matching the local resolved merge.
+
+Published receipt checkpoint: `d9c8747280e42f1efeedfea48d0a9c9735bc62dd`, tree
+`745a97cf70ce058ecc9e01ff32c3d24a2bc00913`, identical to the local publication
+receipt commit. Fetched the branch back, compared full trees with `git diff
+--exit-code`, verified all three input ancestors and read back its exact SHA with
+`git ls-remote --heads`. Both checks succeeded. The local publication lineage is
+retained under `preservation/circula-local-publish-20261030`; the active branch
+tracks the published checkpoint. No force update or destructive reset was used.
+
+[Draft PR #17](https://github.com/djshellshoxxx/circula/pull/17) targets product
+`claude/awesome-darwin-y6eaiz@827e651fe151f49659cc20aefe85d4af67bdaa97`; it was
+read back draft/open and mergeable. New-source CI was created for this exact
+head: [push 41041037012](https://github.com/djshellshoxxx/circula/actions/runs/41041037012)
+and [PR 41041084056](https://github.com/djshellshoxxx/circula/actions/runs/41041084056).
+Both are queued at this receipt, not passed. Source consolidation and publication
+are complete; required aggregate acceptance remains pending those results.
