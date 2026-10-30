@@ -132,3 +132,25 @@ byte-preserved historical notes, unchanged incoming docs, valid links, no limite
 credential findings and retained ownership/release boundaries. This is an AI
 review of the consolidation delta, not a professional security review. Plan
 ancestry is checked after finishing the merge; CI/publication remain separate.
+
+## Publication transport adjustment
+
+The completed local plan merge is `f9bbf13650a721c75f3dbe7e4b3cd9420052d738`,
+with parents `9aaa09724fd884c2e9afa49baa85f8d48b5fcd06` and the pinned plan head.
+All three inputs passed `git merge-base --is-ancestor INPUT HEAD`; its tree is
+`f7c3981726f1187da19e5dfe950d9780b3751c7d`. The local preservation branch
+`preservation/circula-local-consolidation-20261030` retains these exact merges.
+
+The normal push failed with `fatal: could not read Username for 'https://github.com':
+No such device or address`. Read-only remote verification confirms the owned
+branch was not created. No credentials were changed or extracted, and the failed
+push was not retried. The existing authenticated GitHub connector is used for
+non-forced branch publication of equivalent merge trees and the same published
+input histories. Connector-generated commit identities/timestamps yield different
+commit SHAs; no claim of a successful Git push is made.
+
+[Raw local merge objects](LOCAL-CONSOLIDATION-COMMITS-2026-10-30.json) preserve the
+exact original ordinary merge headers/messages for reproducibility. Their tree
+objects are uploaded and compared before equivalent remote merges are published.
+This preserves local work rather than resetting or overwriting it. This extra
+JSON provenance path is the only addition to the seven-path consolidation scope.
