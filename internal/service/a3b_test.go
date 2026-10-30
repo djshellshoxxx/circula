@@ -192,3 +192,61 @@ func TestA3_03_SystemAccountBounded(t *testing.T) {
 		t.Fatalf("VerifyLedger failed: %v", err)
 	}
 }
+
+// A3-01: DecidableAdjustments offers a decision exactly where the decision
+// paths would accept one, so adapters do not show buttons that are refused.
+func TestA3_01_DecidableMatchesDecisionRules(t *testing.T) {
+	w := dcSybil(t) // ana (w.a) was made administrator by the founder just now
+	adm2, adm2M := w.Member(w.admin, w.net, "admin2@example.org")
+	tu.Must(0, w.Svc.AssignRole(w.Ctx, w.admin, w.net.ID, adm2M.ID, domain.RoleAdmin))
+	sys, sysM := w.Member(w.admin, w.net, "sys@example.org")
+	tu.Must(0, w.Svc.AssignRole(w.Ctx, domain.SystemActor("fixture"), w.net.ID, sysM.ID, domain.RoleAdmin))
+	byFounder := w.bigRequest(w.admin)
+	byAdm2 := w.bigRequest(adm2)
+	onAna := tu.Must(w.Svc.CreateAdjustmentRequest(w.Ctx, w.admin, w.net.ID, service.AdjustInput{MemberID: w.aM.ID, Amount: 5_000_000,
+		Direction: service.AdjustCredit, Reason: "x", IdempotencyKey: w.Key()})).Pending
+	rows := []*domain.PendingAdjustment{byFounder, byAdm2, onAna}
+	ids := []string{byFounder.ID, byAdm2.ID, onAna.ID, "no-such-request"}
+
+	check := func(when string, who domain.Actor, want ...*domain.PendingAdjustment) {
+		t.Helper()
+		got := tu.Must(w.Svc.DecidableAdjustments(w.Ctx, who, w.net.ID, ids))
+		wantSet := map[string]bool{}
+		for _, pa := range want {
+			wantSet[pa.ID] = true
+		}
+		for _, pa := range rows {
+			if got[pa.ID] != wantSet[pa.ID] {
+				t.Errorf("%s: %s on %s request %s: got %v", when, who.PersonID, pa.Proposer, pa.ID, got[pa.ID])
+			}
+		}
+		if len(got) != len(want) {
+			t.Errorf("%s: offered %d decisions, want %d", when, len(got), len(want))
+		}
+	}
+	// Within 24 h of their grants only the founder (root) may decide, and never
+	// their own request.
+	check("t0", w.admin, byAdm2)
+	check("t0", adm2)
+	check("t0", w.a)
+	check("t0", sys)
+	w.Clock.Advance(service.DefaultNewAdminApprovalDelay)
+	// After the wait: founder-appointed administrators still never decide the
+	// founder's requests; ana is the target of onAna; the System-granted
+	// administrator has no granter in the chain.
+	check("24h", w.admin, byAdm2)
+	check("24h", adm2)
+	check("24h", w.a, byAdm2)
+	check("24h", sys, byFounder, byAdm2, onAna)
+	if _, err := w.Svc.DecidableAdjustments(w.Ctx, w.b, w.net.ID, ids); domain.CodeOf(err) != domain.CodeForbidden {
+		t.Errorf("plain member: %v", err)
+	}
+
+	// Every offered decision is accepted; a refused one stays refused.
+	_, err := w.Svc.ApproveAdjustment(w.Ctx, adm2, w.net.ID, byFounder.ID)
+	wantCode(t, err, domain.ErrForbidden)
+	tu.Must(w.Svc.ApproveAdjustment(w.Ctx, w.a, w.net.ID, byAdm2.ID))
+	tu.Must(w.Svc.ApproveAdjustment(w.Ctx, sys, w.net.ID, byFounder.ID))
+	tu.Must(w.Svc.RejectAdjustment(w.Ctx, sys, w.net.ID, onAna.ID))
+	check("decided", sys) // nothing open is left to offer
+}

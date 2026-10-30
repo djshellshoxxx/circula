@@ -1,6 +1,6 @@
 # 11 Deployment and Operations
 
-Status: Draft v0.1 · Owner/role: Operations lead (platform operator role) with Product architect · Last updated: 2026-10-24 · Scope: supported deployment models, environments, single-binary packaging, configuration and secrets, embedded SQLite storage, backup and restore, migrations and upgrades, monitoring (health and metrics endpoints), scheduled jobs, support boundaries and failure recovery for the MVP · Dependencies: [00](00-conventions.md) (DEC-001, DEC-003), [05](05-architecture.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [09](09-security-privacy.md), [10](10-governance-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 12
+Status: Draft v0.1 · Owner/role: Operations lead (platform operator role) with Product architect · Last updated: 2026-10-28 · Scope: supported deployment models, environments, single-binary packaging, configuration and secrets, embedded SQLite storage, backup and restore, migrations and upgrades, monitoring (health and metrics endpoints), scheduled jobs, support boundaries and failure recovery for the MVP · Dependencies: [00](00-conventions.md) (DEC-001, DEC-003), [05](05-architecture.md), [06](06-data-ledger-audit.md), [07](07-api-contract.md), [09](09-security-privacy.md), [10](10-governance-operations.md), [12](12-quality-test-plan.md), [13](13-assumptions-risks-decisions.md) · Open questions: section 12
 
 Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Decisions DEC-001 (single binary, Go, embedded SQLite) and DEC-003 (release targets) are authoritative in [00 section 6](00-conventions.md#6-shared-technical-decisions-recommended-defaults-see-dec-log) and are not restated here. Requirements use the prefix `OPS`.
 
@@ -324,6 +324,8 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 - Rationale: Support is a common route for unauthorized access (T-17).
 - Acceptance criteria:
   - A support read of a network record without break-glass is refused (test).
+
+GOV-027 support boundary: network administrators help members with network rules and trades. The platform operator helps with software, deployment and platform policy. A support request alone grants no access to network data. Any approved access to financial or personal data for support must use a recorded, time-limited break-glass process under SEC-013, including a documented reason, a second staff approver, minimum necessary access, an audit trail readable by network administrators and notice as required. In hosted mode the operator can technically read stored data; these policy, audit and notice controls do not provide cryptographic separation or protect data from a compromised host. SEC-013 implementation remains partial, and its specific technical controls are governed by DEC-014.
 
 ## 9. Monitoring of the application's own logs
 

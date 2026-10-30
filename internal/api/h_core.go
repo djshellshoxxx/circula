@@ -84,6 +84,9 @@ func (s *server) names(c *reqCtx, ids map[string]bool) map[string]string {
 }
 
 func (s *server) getAccount(c *reqCtx) error { // API-044
+	if _, hist := c.query["at"]; hist { // API-083: historical variant
+		return histBalanceHandler(s.svc, s.opt.Now)(c)
+	}
 	b, err := s.svc.GetBalance(c.r.Context(), c.actor, c.netID)
 	if err != nil {
 		return err

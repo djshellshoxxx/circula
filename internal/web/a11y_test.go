@@ -138,7 +138,7 @@ func TestPageStructure(t *testing.T) {
 	}
 
 	member := []string{"/", b, b + "/trades", b + "/trades/new?to=" + w.bobM.ID, b + "/trades/" + tx.ID, b + "/trades/" + pend.ID + "/cancel",
-		b + "/history", b + "/directory?q=bo", b + "/members/" + w.bobM.ID, b + "/listings", b + "/listings?mine=1", b + "/listings/new",
+		b + "/history", b + "/history?at=2026-03-01T12:00:00Z", b + "/history?at=2026-03-01", b + "/directory?q=bo", b + "/members/" + w.bobM.ID, b + "/listings", b + "/listings?mine=1", b + "/listings/new",
 		b + "/disputes", b + "/disputes/" + ds[0].ID, b + "/policy", b + "/terms", b + "/leave", "/setup", b + "/join", b + "/nothing"}
 	a := w.browser(t)
 	a.login("alice@example.org")

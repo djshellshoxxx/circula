@@ -110,6 +110,9 @@ func mustLoadTemplates() map[string]*pageTemplate {
 		t := template.New(name).Funcs(funcs)
 		template.Must(t.Parse(string(base)))
 		template.Must(t.Parse(string(src)))
+		if name == "history" {
+			template.Must(t.Parse(histBalanceSrc))
+		}
 		out[name] = t
 	}
 	return out

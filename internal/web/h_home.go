@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/histbal"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -146,6 +147,7 @@ type historyData struct {
 	Filter        string
 	Next          string
 	Statuses      []string
+	HistBal       histBalanceVM // UX-061 lookup; only queried when ?at= is present
 }
 
 func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -161,8 +163,16 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
+	hb, err := buildHistBalanceVM(r.Context(), r.URL.Query().Get("at"), s.opts.Clock.Now(), s.svc, c.actor, c.netID(), c.Net.Policy.CurrencyName)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	if _, asked := r.URL.Query()["at"]; asked && hb.Raw == "" {
+		hb.FieldError = histbal.ReasonMissing // submitted blank: say so rather than show the bare form
+	}
 	n := c.memberNames()
-	h := &historyData{Filter: f}
+	h := &historyData{Filter: f, HistBal: hb}
 	for _, t := range txs {
 		row := c.row(t, n)
 		if row.Pending {
