@@ -32,12 +32,18 @@ its results must match the new source.
 The coordinator reserved and implemented the [build-artifact hygiene slice](docs/audit/BUILD-ARTIFACT-HYGIENE-2026-10-30.md):
 untrack the 21,703,878-byte root executable, ignore Unix/Windows root outputs and
 reject their reintroduction in the index. Original history and local ignored
-bytes remain intact. Focused local checks pass; exact-source aggregate CI is pending.
+bytes remain intact. Focused local checks pass. The published hygiene commit is
+`66501ec55eee391b2557118636fdf6af572f7b93`; README correction is
+`b0e9d5dc03016620b541cc073ec9ac11340de0a8`. Both trees match their local reviewed
+counterparts. Current-head CI results are tracked in PR #17; read them before
+resuming rather than attributing older input checks to a later source.
 README's quickstart prerequisite now matches the Go 1.26.10 module directive;
 historical status tables remain unchanged and source-labelled.
 
-Next bounded task: finish exact-source CI, then reconcile external ownership for
-A1-01 or another accepted Medium candidate before copying its original regression.
+Next bounded task: inspect exact-source CI, resolve any actual failure, then
+reconcile external ownership for A1-01 or another accepted Medium candidate
+before copying its original regression. The original executor is still
+unavailable, and no explicit handover appears in the retrieved audit discussion.
 Runtime remediation ownership has not transferred; retain audit/WIP and C-09/A2-07
 reservations. No runtime finding is claimed fixed by this hygiene change.
 One read-only worker compared older spec content; no competing audit was started.
@@ -47,3 +53,8 @@ formal approval reviews, closures, releases, deployments and security settings
 remain gated. Ledger, financial, grant-lineage, 24-hour approval and owner/manual/
 professional-review boundaries are unchanged. Missing `c134253` and `ee78a7f`
 remain unrecovered.
+
+Publication uses the authenticated connector with expected-head checks and no
+force. The clean active worktree tracks the owned remote branch; local ordinary
+merge/publication lineages remain on `preservation/circula-local-*` refs. The
+original tracked executable remains only as an ignored local build and in history.

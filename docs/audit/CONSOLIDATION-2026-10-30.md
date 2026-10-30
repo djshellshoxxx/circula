@@ -192,3 +192,19 @@ are part of this correction. No implementation-mirroring test was added.
 Historical traceability/QA/security tables were checked for provenance and retained
 at their labelled source snapshots; stale historical rows were not reclassified
 as present-day missing features or rewritten as new test evidence.
+
+## Current continuation boundary
+
+The hygiene and README source checkpoint `b0e9d5dc03016620b541cc073ec9ac11340de0a8`
+was remotely read back with exact tree equality and all three input ancestors.
+See the [hygiene receipt](BUILD-ARTIFACT-HYGIENE-2026-10-30.md) for source/fix SHAs,
+independent tests and superseded-CI status. Required acceptance remains the actual
+latest-head CI result, not the old consolidation runs (now cancelled).
+
+No explicit external runtime-remediation handover was found in the retrieved
+PR #12 discussion; it contains automated review feedback. Original executor
+worker state is inaccessible. Further A1/A3/C-09 changes are ownership-blocked
+until the external coordinator/owner reconciles a disjoint reservation. This is
+not a claim that those candidates are all runtime defects or that their owners
+are idle. The build-output and README scopes are complete and no competing audit
+was started. Preserve all owner/manual/professional-release gates.

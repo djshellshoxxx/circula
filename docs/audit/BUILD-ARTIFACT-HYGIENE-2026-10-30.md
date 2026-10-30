@@ -64,10 +64,9 @@ hygiene head; the source consolidation's queued jobs are not a hygiene pass.
 
 ## Review and checkpoint
 
-Independent delta review and exact remote publication/CI evidence are pending.
-Next: review this small delta, publish without force using the existing connector,
-read back the source/tree/ancestry and record actual CI results. Keep runtime
-candidate ownership and all owner/release gates separate from this cleanup.
+Independent delta review and remote publication are complete below. Aggregate
+acceptance must use the latest exact-head CI in draft PR #17; keep runtime
+candidate ownership and owner/release gates separate from this cleanup.
 
 Independent read-only reviewer `spec_disposition` found no blockers and reproduced
 all three guard cases. The real index remained byte-identical; the existing
@@ -75,3 +74,24 @@ QA-043/QA-037/GOV-026 script suffix is byte-identical. The reviewer also verifie
 raw local merge-object hashes, recorded local/remote tree equivalences and input
 ancestry. Shell syntax, action pins and staged whitespace passed independently.
 This assistant delta review is not formal GitHub approval or professional review.
+
+Published fix: `66501ec55eee391b2557118636fdf6af572f7b93`, parent
+`d9c8747280e42f1efeedfea48d0a9c9735bc62dd`, tree
+`b81f29d928a52231be89fb017ce32f197d45136d`. The tree exactly matches local reviewed
+commit `c90a76d2aeb2d6afe9da16202a81a73e98cbe742`. Following README-only correction
+`b0e9d5dc03016620b541cc073ec9ac11340de0a8` has tree
+`9cbfaefb45a54c69c6ae2af78740a3a429fb7777`, equal to local
+`4e2a1c970b8f52931ff3333ac5151a222d9122b7`.
+
+The connector advanced only the owned branch with `force=false` and expected head
+`d9c8747280e42f1efeedfea48d0a9c9735bc62dd`. Fetch/readback confirmed the new remote
+SHA, full tree equality, input ancestry, a clean tracked worktree, and passing
+hygiene/action-pin scripts. Local commit lineage is retained under
+`preservation/circula-local-hygiene-20261030`.
+
+The older d9c8747 push/PR CI runs were automatically cancelled by the unchanged
+per-ref concurrency policy when this source advanced; neither is a pass. At the
+next observation, b0e9d5d push run 41041893777 and PR run 41041899651 were queued.
+A subsequent documentation receipt may supersede these too. Current-head run
+results are authoritative in PR #17; no cancelled, queued, skipped or older run
+constitutes acceptance for a later source. No local full application pass is claimed.
