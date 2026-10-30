@@ -1,0 +1,134 @@
+# Owned development consolidation — 2026-10-30
+
+This record covers `codex/circula-consolidate-20261030`, not a product-main merge.
+The owner explicitly authorized a fresh checkout after both original checkout
+paths were unavailable. Original dirty files, local-only recovery refs and local
+worker reservations remain inaccessible and unverified. No paid infrastructure
+was provisioned; no paid external model call was made.
+
+## Inputs and pre-action records
+
+Origin is `https://github.com/djshellshoxxx/circula.git` with fetch refspec
+`+refs/heads/*:refs/remotes/origin/*`. The fresh main worktree is clean, has no
+local-only commits and remains at `4b422ad1e8578f3e36c5a38c68eafe81f6ee0aa7`.
+All 17 published branches were fetched and matched live metadata; the plan head
+matches its published receipt rather than the older row in its own source table.
+Eleven open PRs are unchanged. No existing remote branch was edited.
+
+| Action recorded before execution | Current input | Incoming input | Result |
+|---|---|---|---|
+| Create owned application worktree | Product/audit `827e651fe151f49659cc20aefe85d4af67bdaa97` | None | Clean owned worktree |
+| Ordinary `git merge --no-ff` | `827e651fe151f49659cc20aefe85d4af67bdaa97` | Receipt `f4bfe6bc3f81c94b859abeae902ae862ea6e143e` | `9aaa09724fd884c2e9afa49baa85f8d48b5fcd06`; identical tree to product |
+| Ordinary `git merge --no-ff --no-commit` | `9aaa09724fd884c2e9afa49baa85f8d48b5fcd06` | Plan `38a13a68ff7a5c4de97aab96634bf5c55ecf05de` | Expected HANDOFF.md add/add conflict only |
+
+Pre-action intent files were written outside the repository before each merge,
+under the session's `consolidation-evidence/merge-intent-1.txt` and
+`merge-intent-2.txt`. The table preserves their inputs, actions and outcomes.
+
+## Conflict resolution and every changed path
+
+- `HANDOFF.md`: short current record replacing conflicting historical next steps.
+- `docs/audit/HANDOFF-product-827e651-2026-10-30.md`: preserved product handoff,
+  original blob `dddfee155569f736b02e5de743bd8e2d99ef5118`.
+- `docs/audit/HANDOFF-plan-38a13a6-2026-10-30.md`: preserved plan handoff,
+  original blob `9d2bfd33e83169e9f514eed023b060a83490a0c9`.
+- `docs/BRANCH-STATE-2026-10-30.md`, `docs/INTEGRATION-PLAN.md` and
+  `prompts/continue-circula.md`: unchanged incoming plan documents.
+- `docs/audit/CONSOLIDATION-2026-10-30.md`: this new receipt and content disposition.
+
+Archived handoffs add provenance headers and rebase relative Markdown links with
+`../../`; all original prose and commands remain. Reversing that relocation and
+removing the header must reproduce each exact original blob. The originals also
+remain reachable through parent history. No runtime source, test, audit PoC,
+WIP patch, dependency, workflow, financial policy or threshold changes in this
+merge. The root executable remains for a separately reviewed hygiene slice.
+
+## Old PR content disposition
+
+A read-only worker compared exact old heads with product
+`827e651fe151f49659cc20aefe85d4af67bdaa97`. Unique commit counts use
+`git rev-list --count PRODUCT..OLD_HEAD`, not missing-feature estimates.
+
+| PR / pinned head | Unique commits | Disposition |
+|---|---:|---|
+| #1 `22e9202f19f55aa46be4b115edbe84178e9cee0b` | 31 | Preserve separate exploratory content. Current canon represents basic mutual-credit/ledger/self-hosting/export intent; the old README's no-application claim is obsolete. |
+| #2 `01b6e5c7cfc5bd9d660b80aaafe2b35de3912904` | 13 | Preserve supplementary specs/research/tooling as references; selectively reconciled requirements already exist. Different IDs/defaults prohibit wholesale import. |
+| #3 `d96f2e75634bff074d26965ae93c2fe00c6f7f24` | 1 | Preserve historical shells, explicitly not approved requirements or decisions. Current authored specs supersede the structure. |
+| #5 `db7826495ec2e8bd3f5459afa5f619cdc8fe8def` | 1 | Preserve historically; no ready salvage identified. README/wiki no-software claims are obsolete; unresolved licence is already in current guidance. |
+
+#1 retains three unique `docs/brainstorming/` documents: business-model options,
+32 future ideas and exploratory crypto/decentralization design. Monetization is
+outside current MVP scope and no cryptographic architecture is selected there.
+Its 20 `wiki/` pages are unpublished draft framework content; `wiki/README.md`
+requires version-specific verification before calling instructions verified.
+Preserve for later bounded documentation/scope decisions, not automatic adoption.
+
+#2 retains supplementary specs 14–19, `docs/notes/`, `docs/plans/`,
+`docs/decisions/` and `scripts/check-specs.py` / `gen-traceability.py`. Current
+`RESUME-2026-10-24.md` already records reconciliation of glossary/statuses, LED-5,
+policy applicability, decimals, historical-balance contracts and notifications
+(e.g. current DAT-049/050, FR-054, API-083 and FR-038). A critical conflict remains:
+old POL-007/008 permits decimal-scale changes before the first journal entry;
+current DAT-049 requires permanent immutability from creation, even at sequence
+zero. Do not reintroduce the old rule. Old plans also recommend no holds and later
+stack selection; current canon has reserved outgoing amounts and Go/SQLite.
+Old DEC-004 means ledger model and DEC-015 licensing; current DEC-004 is licensing.
+Its different FR grammar, eight recorded cross-document conflicts and research
+claims tagged [K]/[U] need mapping/re-verification. Old ADR Accepted labels cannot
+supply owner approval for current decisions, nor can its scripts be imported
+unchanged against current IDs. Legal/owner gates remain open.
+
+#3's unique cryptographic-foundations shell has only research headings and
+placeholders, not approved backlog. #5's README and six-line wiki Home are
+superseded by current README, CONTRIBUTING, guides, dev and ops documentation.
+All four PRs stay intact/open. This is a content disposition, not exhaustive
+requirement coverage or authorization to close them.
+
+## Ownership and preserved work
+
+The coordinator owns integration. One read-only worker compared old spec content;
+no runtime finding was reserved. PR #12's merged state and automated reviews do
+not hand over external remediation ownership. Saved departure/decimal/disputes
+fixer output remains unapplied; disputes is incomplete. C-09/A2-07 stays coordinated
+external work with archive PR #13 untouched. No broad audit was repeated.
+Older code heads #4/#7/#8/#9 and the security branch are checked as product
+ancestors. Missing historical `c134253` / `ee78a7f` remain unrecovered.
+
+## Workflow side effects and validation boundary
+
+The unchanged CI workflow triggers on pushes/PRs, with contents read permission.
+Its nine jobs cover three OS tests, lint/security, E2E, contract/load, fuzz,
+cross-build and reproducibility. It uploads build/failure artifacts. The
+smoke-deploy script starts only a temporary loopback process and stops it; no
+external environment is deployed. Cancellation is scoped by GitHub ref. Scorecard
+pushes are main-only and release publishing triggers only for version tags.
+The owned branch push creates no tag, release or deployment.
+
+Go 1.26.10 is absent from PATH. No compiler/module/artifact download was attempted;
+prior HTTP 403 denials remain unresolved. Local make check, E2E, API contract,
+ledger runtime verification and pinned gitleaks scan are unexecuted. Available
+static checks and new-source CI are recorded below as observed. Old green CI is
+not validation of this consolidation.
+
+## Checkpoint evidence
+
+Pending until this merge is committed, statically checked, normally pushed and
+its remote SHA is read back. New-source CI must be observed separately. No claim
+of completed consolidation, runtime remediation or release readiness is made yet.
+
+Pre-commit static checks on the resolved merge index passed:
+- `git diff --cached --check` (all seven changed Markdown paths).
+- `scripts/check-hygiene.sh` and `scripts/check-action-pins.sh`.
+- Relative-file links and conflict-marker checks on all seven complete documents.
+- Exact original-handoff reconstruction after undoing only header/link relocation.
+- Byte comparison of the three incoming plan files with their pinned source.
+- Ancestor checks for all five older code-stack heads against the product input.
+- Limited full-document credential/private-data pattern scan: no findings.
+This limited scan does not substitute for CI's pinned gitleaks scan.
+
+Independent read-only delta review by worker `spec_disposition` found no blockers:
+seven Markdown paths, exact first-merge parents/tree, correct pending plan parent,
+byte-preserved historical notes, unchanged incoming docs, valid links, no limited
+credential findings and retained ownership/release boundaries. This is an AI
+review of the consolidation delta, not a professional security review. Plan
+ancestry is checked after finishing the merge; CI/publication remain separate.
