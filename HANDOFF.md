@@ -12,6 +12,8 @@ into `codex/circula-resume-20261024@f4bfe6bc3f81c94b859abeae902ae862ea6e143e`,
 then documentation-only #12 into
 `claude/awesome-darwin-y6eaiz@827e651fe151f49659cc20aefe85d4af67bdaa97`.
 Both results were read back and remote refs verified. #14 was already merged.
+Post-merge CI completed successfully at those exact merge SHAs: runs
+`41032607314` and `41032669029` each passed all nine jobs.
 No runtime remediation, product-main merge, formal approval review, old-PR closure,
 tag, release, deployment, purchase or credentials/security-setting change occurred.
 
@@ -20,8 +22,9 @@ target SHAs, CI links/results, review coverage, preserved branches and next step
 The corrected [continuation prompt](prompts/continue-circula.md) distinguishes
 already-built axe CI, incomplete audit verification and explicit work ownership.
 
-Ready next: recheck post-merge CI and live source ownership, review this docs
-successor, then reserve accepted unowned remediation work. The main integration
+Ready next: recheck live refs/ownership and any newer CI, review this docs
+successor ([draft PR #16](https://github.com/djshellshoxxx/circula/pull/16)), then
+reserve accepted unowned remediation work. The main integration
 plan is proposed only. Keep PR #13 and older conflicting docs intact; do not infer
 ownership transfer from an idle or merged audit PR. Manual/professional review,
 owner decisions and release thresholds remain open. This executor's prior module

@@ -33,8 +33,8 @@ satisfy the independent professional security-review gate.
 |---|---|---|
 | `ae512e51d4f7a611119a5567225b862969770207` | [push 40820305135](https://github.com/djshellshoxxx/circula/actions/runs/40820305135), [PR 40820312600](https://github.com/djshellshoxxx/circula/actions/runs/40820312600) | 9/9 jobs successful in each run |
 | `fe111799ffabb2427d6d94feb32a037fa3ed2af8` | [push 40811138499](https://github.com/djshellshoxxx/circula/actions/runs/40811138499), [PR 40811136958](https://github.com/djshellshoxxx/circula/actions/runs/40811136958) | 9/9 jobs successful in each run |
-| `f4bfe6bc3f81c94b859abeae902ae862ea6e143e` | [post-merge 41032607314](https://github.com/djshellshoxxx/circula/actions/runs/41032607314) | In progress at this receipt; recheck before relying on acceptance |
-| `827e651fe151f49659cc20aefe85d4af67bdaa97` | [post-merge 41032669029](https://github.com/djshellshoxxx/circula/actions/runs/41032669029) | Queued at this receipt; recheck before relying on acceptance |
+| `f4bfe6bc3f81c94b859abeae902ae862ea6e143e` | [post-merge 41032607314](https://github.com/djshellshoxxx/circula/actions/runs/41032607314) | Completed success; all 9/9 jobs passed |
+| `827e651fe151f49659cc20aefe85d4af67bdaa97` | [post-merge 41032669029](https://github.com/djshellshoxxx/circula/actions/runs/41032669029) | Completed success; all 9/9 jobs passed |
 
 The nine-job suites include OS tests/race tests where configured, E2E with axe
 and keyboard coverage, formatting/vet/lint/vulnerability/secret checks,
@@ -126,3 +126,16 @@ unconfirmed release thresholds and other explicit owner decisions remain separat
 release/pilot gates. Assistant reviews or green CI do not resolve them. No tag,
 deployment, release, purchase, credential/security-setting change or external
 message is authorized by this plan.
+
+## Documentation checkpoint
+
+This separate branch descends from PR #15's original source and contains only
+three Markdown paths: the corrected prompt, this plan and `HANDOFF.md`.
+Whitespace and all three relative-file links passed; the limited scan of the
+complete documents found no credential/private-data patterns. There is no
+application or workflow in this prompt-only tree, so no application test pass or
+new full local pinned-scanner pass is claimed for its document head. Product CI
+above belongs to the exact merge SHAs, not this separate documentation commit.
+The original branch is unchanged and the corrected successor is published as
+[draft PR #16](https://github.com/djshellshoxxx/circula/pull/16). No product-main
+merge or old-PR closure is performed by publishing this proposal.
