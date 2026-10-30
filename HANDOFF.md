@@ -42,8 +42,11 @@ historical status tables remain unchanged and source-labelled.
 
 CI at `337667b54fbf252c1ceac2cebe377530bad481e0` failed the pinned secret scan
 with one reported finding and no finding detail; later lint/vet/vulnerability
-steps were skipped. The [CI diagnosis receipt](docs/audit/CI-SECRET-SCAN-2026-10-30.md)
-records the redacted diagnostic change. No scan exception or rule was weakened.
+steps were skipped. Redacted diagnostics at `a02eedf` identified a commit SHA in
+the consolidation receipt as a generic-api-key false positive. Its prose label
+was corrected while retaining the full SHA. The
+[CI diagnosis receipt](docs/audit/CI-SECRET-SCAN-2026-10-30.md) preserves evidence;
+no scan exception or rule was weakened. Verify the rescan at the current PR head.
 
 Next bounded task: inspect exact-source CI, resolve the identified scan failure, then
 reconcile external ownership for A1-01 or another accepted Medium candidate

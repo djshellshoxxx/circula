@@ -40,3 +40,42 @@ is `--verbose`, with 100% redaction, version, scope, configuration, failure
 propagation and permissions unchanged. Workflow-pin, hygiene and whitespace
 checks passed independently. The reviewer also checked the pinned tool README;
 no scanner run or passing rescan is implied.
+
+## Identified cause and minimal correction
+
+Source `a02eedfbe526ef9075d376f905e1ab82607b7e79` reproduced the one-finding
+failure in [push run 41042900829](https://github.com/djshellshoxxx/circula/actions/runs/41042900829),
+job `124019828103`. Redacted verbose output identified:
+
+```text
+RuleID: generic-api-key
+Entropy: 3.634830
+File: docs/audit/CONSOLIDATION-2026-10-30.md
+Line: 161
+Fingerprint: docs/audit/CONSOLIDATION-2026-10-30.md:generic-api-key:161
+leaks found: 1
+exit status 1
+```
+
+The matched value is the plan-merge Git commit ID recorded in the consolidation receipt. Its
+credential-like prose label caused the generic matcher to treat that hexadecimal
+ID as key material. `git cat-file -t` confirms it is a commit and its tree matches
+the recorded resolved consolidation tree. It is not a live credential. The
+existing review note about an audit JSON idempotency key was only a lead and was
+not this observed finding; no audit JSON or external PoC was modified.
+
+The correction changes the two merge labels to "Receipt merge commit" and
+"Plan merge commit", retaining all full SHAs and provenance. Only owned receipt
+prose and the handoff change; scanner configuration/rules/coverage/version,
+failure status, redaction, permissions and runtime code remain unchanged. No
+allowlist, inline suppression or detector weakening was used.
+
+The original failure, diagnostic failure and source SHAs remain preserved above.
+Local whitespace, link, hygiene and action-pin checks verify the correction; the
+full pinned scanner and aggregate results must be observed at the new exact head
+in PR #17. Local scanner/runtime execution is still unavailable.
+
+Independent delta review reproduced the redacted CI finding, verified the commit
+object/tree, and confirmed both label changes retain every full SHA in order.
+Only three Markdown paths change; hygiene, action pins and whitespace pass.
+No suppression, allowlist, scanner-rule or runtime change was made.

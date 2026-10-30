@@ -156,9 +156,9 @@ JSON provenance path is the only addition to the seven-path consolidation scope.
 
 ## Verified remote consolidation checkpoint
 
-Authenticated receipt merge: `684d365502c154aff8d8c45caff6d249b940a51b`, with
+Receipt merge commit: `684d365502c154aff8d8c45caff6d249b940a51b`, with
 the same product/receipt parents and product tree as the local ordinary merge.
-Authenticated plan merge: `01a40dbb3d564651b446c4060187c2fd8508bf31`, parents
+Plan merge commit: `01a40dbb3d564651b446c4060187c2fd8508bf31`, parents
 `684d365502c154aff8d8c45caff6d249b940a51b` and the pinned plan head; tree exactly
 `f7c3981726f1187da19e5dfe950d9780b3751c7d`, matching the local resolved merge.
 
