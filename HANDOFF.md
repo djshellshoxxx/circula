@@ -33,6 +33,8 @@ The coordinator reserved and implemented the [build-artifact hygiene slice](docs
 untrack the 21,703,878-byte root executable, ignore Unix/Windows root outputs and
 reject their reintroduction in the index. Original history and local ignored
 bytes remain intact. Focused local checks pass; exact-source aggregate CI is pending.
+README's quickstart prerequisite now matches the Go 1.26.10 module directive;
+historical status tables remain unchanged and source-labelled.
 
 Next bounded task: finish exact-source CI, then reconcile external ownership for
 A1-01 or another accepted Medium candidate before copying its original regression.

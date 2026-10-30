@@ -14,7 +14,7 @@ HTTP service, the web UI and the JSON API, and operates the database.
 
 ## Quickstart
 
-Requirements: Go 1.24 or newer. No C compiler is needed (the SQLite driver is pure Go).
+Requirements: Go 1.26.10, as declared in [`go.mod`](go.mod). Building the service does not require a C compiler (the SQLite driver is pure Go).
 
 ```sh
 make build                       # writes bin/circula

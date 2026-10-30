@@ -177,3 +177,18 @@ head: [push 41041037012](https://github.com/djshellshoxxx/circula/actions/runs/4
 and [PR 41041084056](https://github.com/djshellshoxxx/circula/actions/runs/41041084056).
 Both are queued at this receipt, not passed. Source consolidation and publication
 are complete; required aggregate acceptance remains pending those results.
+
+## Subsequent bounded README correction
+
+After the hygiene commit, the coordinator reserved only README's build-prerequisite
+sentence plus this receipt and the root handoff. README still required Go 1.24,
+while `go.mod` requires 1.26.10. It now names the exact required version and links
+to the module directive, with the no-C-compiler statement scoped to building the
+service (race tests still require a C toolchain). This changes documentation only.
+The version match, link target and whitespace are checked locally. No dependency,
+Go code, runtime test or workflow changes, downloads or toolchain installation
+are part of this correction. No implementation-mirroring test was added.
+
+Historical traceability/QA/security tables were checked for provenance and retained
+at their labelled source snapshots; stale historical rows were not reclassified
+as present-day missing features or rewritten as new test evidence.
