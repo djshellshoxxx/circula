@@ -1,7 +1,7 @@
 # Circula Continuation Prompt — audit remediation and integration
 
 Copy this prompt into a coding agent session with `djshellshoxxx/circula` checked out.
-Written 2026-10-30 from a review of every branch and PR. Re-verify live state before acting; anything below may have moved.
+Updated 2026-10-30 after reviewing all 16 remote branches and merging approved PRs #10 and #12. Re-verify live state before acting; anything below may have moved.
 
 ---
 
@@ -15,29 +15,32 @@ Act as Circula's maintainer: Go engineer, security fixer, and release coordinato
 
 | Ref | Role |
 |---|---|
-| `claude/awesome-darwin-y6eaiz` @ `ae512e5` | **Integration tip.** Contains the whole build line (circula-build → security-features → finish → completeness → work/spec-completion → codex/circula-resume → support-boundaries). Draft [PR #10](https://github.com/djshellshoxxx/circula/pull/10). |
-| `claude/sharp-archimedes-tu76rh` @ `fe11179` | Draft [PR #12](https://github.com/djshellshoxxx/circula/pull/12): 2026-10-28 code audit, docs only. 55 verified findings, PoC tests, unapplied WIP patches. Last activity 2026-10-29 03:15 UTC. |
+| `claude/awesome-darwin-y6eaiz` @ `827e651fe151f49659cc20aefe85d4af67bdaa97` | **Integration tip.** Contains the build line, historical balances, independent-approver UI/fixtures, support guidance and merged interim audit evidence. [PR #12](https://github.com/djshellshoxxx/circula/pull/12) is merged; no audit fix was applied. |
+| `codex/circula-resume-20261024` @ `f4bfe6bc3f81c94b859abeae902ae862ea6e143e` | [PR #10](https://github.com/djshellshoxxx/circula/pull/10) is merged here. Its tree equals tested source `ae512e51d4f7a611119a5567225b862969770207`; it does not yet include PR #12's audit documents. |
+| `claude/sharp-archimedes-tu76rh` @ `fe111799ffabb2427d6d94feb32a037fa3ed2af8` | Preserved external audit source. Interim results contain 55 batch-verifier entries, incomplete extra-lens checks, PoC text and unapplied WIP patches. Verification/coverage/consolidation remain unfinished; this is not a professional audit. |
 | `checkpoint/circula-handoff-20261025` @ `3d0080a` | Draft [PR #13](https://github.com/djshellshoxxx/circula/pull/13): frozen archive. 6 commits not in tip, incl. C-09 pending-policy ETag regression test (overlaps audit A2-07). Keep draft. Do not merge over newer work. |
 | PRs [#1](https://github.com/djshellshoxxx/circula/pull/1), [#2](https://github.com/djshellshoxxx/circula/pull/2), [#3](https://github.com/djshellshoxxx/circula/pull/3), [#5](https://github.com/djshellshoxxx/circula/pull/5) | Early competing spec/README branches against `main`, **not** in tip. Likely superseded. #1 adds crypto/tokenization ideas that contradict spec scope (credit unit is not a cryptocurrency; tokenization deferred). |
 | PRs #4, #7, #8, #9 | Open drafts whose heads are already ancestors of tip. Stack plumbing only. |
 
-Stack: `main ← #4 ← #7 ← #9 ← … ← #10 ← #12`. Nothing has reached `main`.
+Product code has not reached `main`. PR #14 was already merged before this continuation. Read [the proposed integration plan](../docs/INTEGRATION-PLAN.md) for exact source/target receipts and preserved branches; do not repeat the already completed merges.
 
-## Verified state (2026-10-30, tip `ae512e5`)
+## Verified state (2026-10-30)
 
-Go 1.26.10 (from `go.mod`; CI uses `go-version-file`). `go build ./cmd/circula`, `go vet ./...`, `gofmt -l .` (empty), `go test -count=1 ./...`: **all pass**. Last full CI (9/9 jobs, incl. E2E, lint, govulncheck, gitleaks, reproducibility, fuzz) passed on source `5000a5e`; tip adds docs only.
+Go 1.26.10 (from `go.mod`; CI uses `go-version-file`). At source `ae512e51d4f7a611119a5567225b862969770207`, push run `40820305135` and PR run `40820312600` each passed all nine jobs, including E2E, OS tests, lint/vulnerability/secret checks, cross-build, reproducibility, contract/load and fuzz. Audit source `fe11179` also passed nine jobs in each of runs `40811138499` and `40811136958`. Later post-merge results belong to their exact merge SHAs; see the integration plan for current receipts.
+
+The existing integration handoff records another session's local build/vet/test and 103-browser-test results. This review used source inspection, existing remote CI and conflict simulations; it did not rerun full application tests locally. This executor's prior uncached-module and artifact-byte HTTP 403 denials remain unresolved. Do not retry denied downloads, use alternate hosts or treat another session's access as permission here.
 
 Product: self-hosted Go + SQLite mutual-credit ledger. Web UI + JSON API, append-only double entry, hash-chained audit, MFA, recovery, dual control, break-glass, erasure, encrypted signed backups. Specs in `docs/specs/00–13`, decisions in `docs/DECISIONS.md`, traceability in `docs/TRACEABILITY.md`.
 
 ## Setup
 
-1. Use the branch your session assigns. If it has no unique commits, reset it onto the tip:
-   `git fetch origin claude/awesome-darwin-y6eaiz && git checkout -B <your-branch> origin/claude/awesome-darwin-y6eaiz`.
-   If it has unique commits, stop and reconcile; never discard them.
-2. Fetch the audit: `git fetch origin claude/sharp-archimedes-tu76rh`. Read, do not edit:
+1. Inspect repository identity, instructions, `git status`, worktrees and branch ownership. Preserve dirty/untracked files and every unique commit. Fetch the tip with an explicit refspec (some checkouts otherwise fetch only `main`):
+   `git fetch --no-tags origin refs/heads/claude/awesome-darwin-y6eaiz:refs/remotes/origin/claude/awesome-darwin-y6eaiz`.
+   Create a new branch/worktree from the verified tip, for example `git worktree add -b <new-branch> <new-worktree> origin/claude/awesome-darwin-y6eaiz`. Do not reset an existing branch or overwrite another owner's worktree.
+2. The audit packets are now in the integration tip. Read, do not apply blindly:
    `docs/audit/2026-10-28/interim-verification-circula.md` (findings table), `…/poc/**` (PoC tests as `.txt`), `…/wip-fixes/**` (unreviewed patches against `bb5a36f`).
 3. Skim `HANDOFF.md`, `CONTRIBUTING.md`, `docs/qa/RELEASE-GATE.md`. Do not repeat broad repository scans; this prompt is the coverage map.
-4. Check ownership of PR #12 before starting. If it shows new commits or comments after 2026-10-29 03:15 UTC, coordinate: take only findings it has not claimed. If idle, its remediation is yours. Never push to its branch.
+4. Reconcile live audit/remediation branches, handoffs and outstanding ownership before starting. A merged PR or a period of inactivity does not transfer ownership. Reserve only explicitly unowned findings through the coordinator; if ownership is uncertain, continue an independent accepted task or report the blocker. Never push to another owner's source branch.
 
 ## Work, in priority order
 
@@ -48,7 +51,7 @@ Product: self-hosted Go + SQLite mutual-credit ledger. Web UI + JSON API, append
 
 ### 2. Fix the six Medium audit findings
 
-One commit per finding (or per tightly coupled pair). TDD: port the PoC from `poc/` into a real `_test.go`, watch it fail, fix, watch it pass. WIP patches are reference only; review each adversarially before reuse (`disputes.patch.txt` is known incomplete).
+The interim verifier reports six Medium findings; extra-lens review is incomplete and includes a refuted skeptic result for A3-F02. Reproduce and try to disprove each candidate at the current source before claiming a runtime defect or starting an owned fix. Preserve original evidence. One commit per finding (or per tightly coupled pair). Port the PoC into a real `_test.go`, preserve failing-before output, fix, then verify. A1/A3 PoCs assert desired behavior and fail before a fix; A2 PoCs assert defect presence and pass before a fix, so adapt their regression direction explicitly. WIP patches are reference only; review each adversarially before reuse (`disputes.patch.txt` is known incomplete).
 
 | ID | Defect |
 |---|---|
@@ -70,24 +73,28 @@ Info findings (A1-08..10, A2-13, A2-15..21, A3-F07, F12, F20..24): fix the cheap
 
 ### 4. Documentation drift (fix as you touch areas)
 
-- `docs/specs/13-assumptions-risks-decisions.md` §9 and `docs/DECISIONS.md` (~lines 823, 830) still say MFA (DEC-007) and break-glass (DEC-014) are "not built". They are built. Mark "built with recommended default; owner confirmation outstanding". Do not mark the decision itself as made.
+- Reconcile MFA/break-glass implementation wording with both source and interim findings. Distinguish implemented features, remaining enforcement defects and owner-unconfirmed defaults; do not claim the entire control is complete or the decision made.
 - `README.md` says "Go 1.24 or newer"; `go.mod` requires 1.26.10.
 - `docs/audit/COMPLETENESS.md` is stale (e.g. FR-054 done in PR #11). Refresh statuses you can verify. `docs/TRACEABILITY.md` (last updated 2026-10-21) has no committed generator: update affected rows by hand, or add a small script if cheaper.
 - Replace `HANDOFF.md` with a short current handoff (≤60 lines): tip SHA, branch map, done, open, blocked. Move receipts into `docs/audit/`.
 
-### 5. Remaining P0/P1 gaps (only after 2–4)
+### 5. Revalidate remaining P0/P1 candidates (only after 2–4)
 
-From `docs/audit/COMPLETENESS.md` and `docs/qa/GAP-ANALYSIS.md`: axe a11y run in `ci.yml` (ARC-017, QA-033), import-layer lint via `depguard` (ARC-018), export-package verifier command (DAT-040), member and reviewer audit views (FR-082, DAT-033, DAT-035), API `admin` token scope currently 501 (API-010). Pick one at a time; each gets spec cross-ref, tests, traceability update.
+`docs/audit/COMPLETENESS.md` and `docs/qa/GAP-ANALYSIS.md` contain historical statuses. Automated axe/keyboard accessibility tests already run through the `e2e` job in `.github/workflows/ci.yml` and `e2e/tests/a11y.spec.js` (ARC-017, QA-033); do not reimplement them. Manual screen-reader evidence remains distinct. Revalidate candidates such as import-layer lint (ARC-018), export verification (DAT-040), member/reviewer audit views (FR-082, DAT-033, DAT-035) and admin-token scope (API-010) against the current source before calling them missing. Select only an accepted, unowned gap; each gets a spec cross-reference, behavioral tests and traceability update.
 
 ### 6. Integration proposal (owner decides)
 
-Write `docs/INTEGRATION-PLAN.md`: how to land the stack on `main` (e.g. one squash or merge PR from tip → `main`, then close #4/#7/#8/#9 as merged-through; close #1/#2/#3/#5 after salvaging anything useful, listing what). Include exact SHAs and required checks. **Propose only. Do not merge or close PRs without the owner's explicit per-PR confirmation.**
+Maintain `docs/INTEGRATION-PLAN.md`: the owner approved and this continuation completed development merges #10 and #12. Product integration to `main`, release and old-PR closure remain proposed only. Prefer a normal history-preserving product integration once findings, ownership, reviews and required checks are reconciled. Salvage unique older documentation only after content comparison; do not close or overwrite those branches here.
 
 ## Owner-blocked: ask, never decide
 
 Licence (DEC-004; no LICENSE file, README says do not redistribute), DEC-072 (who may decide disputes), DEC-074 (visible `accepted` state), UX-047 locale scope, confirmation of built defaults for DEC-007/009/014, pilot jurisdictions, manual screen-reader test (`docs/qa/SCREEN-READER.md`), independent professional security review. Assistant reviews do not satisfy these gates.
 
-## Gates before every push
+## Gates for product changes before every push
+
+Use these on an application checkout. A prompt-only branch has no `go.mod`,
+Makefile or application CI; record its documentation checks separately and do
+not claim an application test pass for it. Preserve all product gates below.
 
 ```sh
 make check                       # gofmt, vet, race tests, golangci-lint, govulncheck, action pins, hygiene
