@@ -2,6 +2,8 @@
 *.db-wal
 *.db-shm
 /bin/
+/circula
+/circula.exe
 /.tools/
 e2e/node_modules/
 e2e/test-results/

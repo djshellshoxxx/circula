@@ -4,9 +4,19 @@
 #    no phone-number or IBAN-like patterns).
 #  * QA-037: migrations are numbered 0001.. without gaps or duplicates, and never edited destructively
 #    (no DROP TABLE / DROP COLUMN / DELETE FROM without a `-- allow-destructive: reason` comment on the same line).
+#  * Generated root executables from `go build ./cmd/circula` are not tracked.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 fail=0
+
+# Build output belongs outside source control. Check the index, not the working
+# tree, so a developer's ignored local build does not fail repository hygiene.
+artifacts="$(git ls-files -- circula circula.exe | grep -E '^(circula|circula\.exe)$' || true)"
+if [ -n "$artifacts" ]; then
+  echo "hygiene: generated root executables must not be tracked:"
+  echo "$artifacts"
+  fail=1
+fi
 
 # --- QA-043 -----------------------------------------------------------------------------------------------------
 files="$(git ls-files 'e2e/*.js' 'internal/**/*_test.go' 'internal/testutil/*.go' 'docs/qa/*' | grep -v package-lock || true)"

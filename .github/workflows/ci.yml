@@ -31,7 +31,7 @@ jobs:
       - name: Dependency licences against the approved list (ARC-024)
         run: scripts/licenses.sh --check
       - name: Secret scan (ARC-023, SEC-027)
-        run: go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact
+        run: go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact --verbose
       - name: gofmt
         run: |
           unformatted="$(gofmt -l .)"
