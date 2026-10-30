@@ -1,5 +1,11 @@
 # Circula branch and handoff state — 2026-10-30
 
+Later live resumption found 18 branches/12 open PRs, including active consolidation
+PR #17. The original 17-ref snapshot below remains historical input evidence.
+Read [the resumption/readiness receipt](audit/ORIGINAL-EXECUTOR-READINESS-2026-10-30.md)
+for current ownership, original-executor availability, qualified old gap labels
+and exact-source CI observations before using the older next-task sequence.
+
 This is the source-pinned review input for the consolidated continuation prompt.
 The live inventory contained **17 branches and 11 open PRs**. The owned
 documentation branch advances when this packet is published; its row below

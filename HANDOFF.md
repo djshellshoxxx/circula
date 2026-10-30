@@ -7,6 +7,14 @@ from preserved PR #15 source `33b200e00c088c86ffb0d0d8176f1575376a9b49`.
 Resolve this documentation head with `git rev-parse HEAD`; do not attribute
 product CI or a product build to it. The original PR #15 source remains untouched.
 
+Live resumption: the owner selected the unchanged published prompt. A separate
+coordinator has already executed consolidation/hygiene in draft PR #17; its head
+was observed advancing to `20bda306bdd180a919db1f567e2a745ebc24ce48`. Preserve that
+ownership and read [the original-executor/readiness receipt](docs/audit/ORIGINAL-EXECUTOR-READINESS-2026-10-30.md)
+before replaying older next steps. The original executor is available here; all
+current local branch commits are remotely reachable. Missing historical commits
+remain absent. This pass changed documentation only, not PR #17 or runtime code.
+
 Completed: reviewed 16 branches/12 open PRs; normally merged owner-approved #10
 into `codex/circula-resume-20261024@f4bfe6bc3f81c94b859abeae902ae862ea6e143e`,
 then documentation-only #12 into
@@ -27,8 +35,10 @@ and this documentation branch on a new owned development branch, resolves the
 expected root-handoff conflict without losing either record, then continues
 accepted unowned work. It does not execute that consolidation during authoring.
 
-Ready next: follow the prompt's live-ref/ownership check, owned-branch
-consolidation and bounded implementation sequence. This docs successor remains
+Ready next: the PR #17 coordinator checks current-source CI and reconciles
+external runtime-task ownership; this session's receipt provides disjoint
+recovery evidence and qualifies three stale gap candidates as already implemented.
+Do not duplicate the completed consolidation/hygiene steps. This docs successor remains
 [draft PR #16](https://github.com/djshellshoxxx/circula/pull/16). The main integration
 plan is proposed only. Keep PR #13 and older conflicting docs intact; do not infer
 ownership transfer from an idle or merged audit PR. Manual/professional review,

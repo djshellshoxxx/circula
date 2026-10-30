@@ -4,6 +4,12 @@ Updated 2026-10-30. Repository: `djshellshoxxx/circula`.
 This document records completed development merges and proposes later work. It
 does not authorize product integration to `main`, a release, or closing old PRs.
 
+Later resumption: a separate coordinator already completed the proposed
+development-branch consolidation/hygiene in draft PR #17. Read the
+[original-executor/readiness receipt](audit/ORIGINAL-EXECUTOR-READINESS-2026-10-30.md)
+before replaying the proposal. It records the actor-specific original-executor
+availability, active ownership and corrected-source CI still pending at observation.
+
 ## Completed owner-approved development merges
 
 Before each action, the source/target SHAs, CI evidence, review scope and intended
@@ -136,7 +142,8 @@ message is authorized by this plan.
 
 This separate branch descends from PR #15's original source and contains only
 Markdown: the refreshed prompt, this plan, `HANDOFF.md` and the
-[branch/handoff state](BRANCH-STATE-2026-10-30.md).
+[branch/handoff state](BRANCH-STATE-2026-10-30.md), plus the later linked
+resumption/readiness receipt.
 Whitespace and relative-file links passed; the limited scan of the
 complete documents found no credential/private-data patterns. There is no
 application or workflow in this prompt-only tree, so no application test pass or
