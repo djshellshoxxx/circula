@@ -23,7 +23,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-001 | P0 | built | One artefact for both models |
 | OPS-002 | P0 | built | Single process; embedded database; loopback default |
 | OPS-003 | P0 | partial | Five targets built in CI with checksums; per-target smoke run not performed |
-| OPS-004 | P1 | partial | Environments described in docs/ops/README.md; no staging refresh process |
+| OPS-004 | P1 | partial | Environments and synthetic staging refresh documented in docs/ops; hosted staging execution not recorded |
 | OPS-005 | P2 | deferred | Alternative store and multi-node deferred; no SQLite import outside store |
 | OPS-006 | P0 | built | Flags, environment, file, defaults precedence |
 | OPS-007 | P0 | built | Validation before serving; check-config does not create database |

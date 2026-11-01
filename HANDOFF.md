@@ -1,61 +1,51 @@
-# Circula development handoff — 2026-10-30
+# Circula OPS-004 documentation handoff
 
-Owned branch: `codex/circula-consolidate-20261030`, [draft PR #17](https://github.com/djshellshoxxx/circula/pull/17)
-into product `claude/awesome-darwin-y6eaiz`. This Codex coordinator owns integration,
-hygiene, README and CI diagnosis. Worktree:
-`/workspace/scratch/40e99ff92e5c/circula-development`.
-Use `git rev-parse HEAD` and remote readback for the current checkpoint.
+Repository: `djshellshoxxx/circula`.
+Owned branch: `codex/circula-staging-refresh-docs`.
+Published [draft PR #18](https://github.com/djshellshoxxx/circula/pull/18), verified
+open/unmerged into `codex/circula-consolidate-20261030`. Initial documentation
+commit `4fb9019a231194c2c2ae67c2ef5df76f69c5d641` was normally pushed and read back.
+Later handoff-only commits do not change the runbook or add application evidence.
+Application base: `7643fb616208cc318939ded809e6cada66bb7415` from draft PR #17.
+Resolve this later documentation commit with `git rev-parse HEAD`; base CI is
+not a full test pass for this head. Original coordinator handoff is preserved
+at `git show 7643fb616208cc318939ded809e6cada66bb7415:HANDOFF.md`.
 
-History-preserving merge inputs:
-- Product/audit: `827e651fe151f49659cc20aefe85d4af67bdaa97`.
-- Development receipt: `f4bfe6bc3f81c94b859abeae902ae862ea6e143e`.
-- Initial plan: `38a13a68ff7a5c4de97aab96634bf5c55ecf05de`.
-- Later plan/readiness receipt: `24f417c944e4cae79147aa7b58985829b6553212`.
+Completed slice: [OPS-004 staging refresh runbook](docs/ops/staging-refresh.md),
+operations-index link and corrected as-built note. The procedure covers synthetic
+staging data, configuration parity, migration/verification, rollback and evidence.
+OPS-004 remains partial: hosted staging execution has not been performed.
+Detailed scope, ownership and limits: [checkpoint receipt](docs/audit/STAGING-REFRESH-DOCUMENTATION.md).
 
-The receipt merge changes no product tree. Both plan merges resolve only the root
-handoff. Source notes remain in [product history](docs/audit/HANDOFF-product-827e651-2026-10-30.md),
-[initial plan history](docs/audit/HANDOFF-plan-38a13a6-2026-10-30.md) and
-[later plan history](docs/audit/HANDOFF-plan-24f417c-2026-10-30.md), with rebased links.
-See the [consolidation receipt](docs/audit/CONSOLIDATION-2026-10-30.md) for exact inputs,
-old-PR dispositions, reviews, checks and publication transport.
+Runtime ownership remains unchanged. The PR #12 audit owner retains audit/WIP,
+A1/A3 and C-09/A2-07 reservations; PR #17's coordinator retains consolidation/CI.
+Live remote branches/PRs and their discussions supplied no runtime handover.
+This session reserved only the independent staging documentation and its receipts;
+no runtime finding was reproduced or fixed. Keep archive #13 and older branches.
 
-The owner authorized this fresh checkout when the original executor was unavailable
-here. A separate session now reports its original executor available, all local
-branch commits remotely reachable, ignored evidence retained and missing historical
-commits still absent: [source-pinned readiness receipt](docs/audit/ORIGINAL-EXECUTOR-READINESS-2026-10-30.md).
-That actor-specific evidence does not provide this session access or transfer
-runtime ownership. One read-only worker reviewed bounded deltas; no competing
-audit or paid external model call was started.
+Documentation checks passed: whitespace, 66 local links/6 anchors across five
+complete outgoing Markdown files, command references, hygiene/action pins and a
+limited credential/private-data pattern scan. No new
+application/browser run, hosted deployment, restore drill or full local pinned
+scanner pass is claimed. Earlier dependency/artifact HTTP 403 denials were not
+retried. Existing base CI runs 41047232276 and 41047238538 passed 9/9 jobs each.
+No runtime, dependency, workflow, test assertion, credential, security setting,
+retention rule, monetary threshold, ledger or approval-role change is included.
 
-Done: untracked the 21,703,878-byte root executable, ignored Unix/Windows root
-outputs and added an index hygiene guard at `66501ec55eee391b2557118636fdf6af572f7b93`;
-README's prerequisite matches Go 1.26.10 at `b0e9d5dc03016620b541cc073ec9ac11340de0a8`.
-See [hygiene evidence](docs/audit/BUILD-ARTIFACT-HYGIENE-2026-10-30.md).
-Original binary history and ignored local bytes remain intact.
+One coordinator is the sole worker, with no coding/review subagents or paid API
+calls. A safe active-model selector is unavailable, so the existing model remains.
+Usage/budget percentage is unknown; retain a checkpointing reserve and never
+infer 98% usage. No next slice is started while this checkpoint is finished.
 
-Pinned CI scanning identified a commit-ID prose false positive at `a02eedf`.
-The two labels were corrected at `20bda306bdd180a919db1f567e2a745ebc24ce48` with
-full SHAs retained and no rule/configuration exception. The
-[diagnosis receipt](docs/audit/CI-SECRET-SCAN-2026-10-30.md) preserves redacted failure
-evidence. At source20bda30, push run41044069883 passed eight of nine jobs, including
-the pinned rescan, while Ubuntu race testing remained active. This verifies the
-scan correction at that source, not this later merge or aggregate acceptance.
-Read exact-current-head CI in PR #17; no aggregate pass is claimed.
-
-Local whitespace, links, hygiene and action-pin checks pass. Go 1.26.10 and the
-pinned scanner are unavailable here: no local application, E2E, contract, ledger
-or secret-scan pass is claimed. Dependency/artifact HTTP 403 denials remain
-unresolved and were not retried. The reviewed existing CI route remains authorized.
-
-Next: finish exact-source CI validation, then reconcile explicit external ownership
-for A1-01 or another accepted Medium candidate before copying its original regression.
-Runtime reservations remain pending handover; no runtime finding is claimed fixed.
-Retain audit/WIP and C-09/A2-07 ownership. ARC-018, DAT-040 and DAT-048 already have
-implementations; see the readiness receipt before using stale gap tables.
-
-Keep archive PR #13 and every older branch/PR intact. External-target/main merges,
-formal approvals, closures, releases, deployments, security changes and owner/manual/
-professional-review gates remain reserved. Financial and ledger rules are unchanged.
-Missing `c134253` and `ee78a7f` remain unrecovered. Publication uses the existing
-connector with expected-head checks and no force after normal Git push lacked
-credentials. Local ordinary histories remain on `preservation/circula-local-*` refs.
+Publication: use a documentation-only `[skip ci]` checkpoint to avoid redundant
+application CI; skipped checks do not establish acceptance or permit a merge.
+Before resuming, inspect current refs/status and this delta. Fetch this branch
+with an explicit refspec if the default fetch covers only main; normally publish
+only the owned branch and read back the remote SHA. Do not overwrite or merge
+into the base owner's branch, or repeat PR creation after a verified publication.
+Runtime implementation still requires an explicit bounded owner handover; hosted
+staging execution requires a separately authorised target/operator. Manual
+screen-reader work, final audit verification, independent professional review,
+owner/licence/default/threshold decisions and release gates remain open.
+No APPROVE review, PR closure, merge, tag, release, deployment, purchase, force
+push, destructive reset, credential/security change or denial bypass is authorised.
