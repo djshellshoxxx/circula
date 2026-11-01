@@ -10,6 +10,7 @@ This guide covers running a Circula instance. Specifications it implements: [`do
 | [monitoring.md](monitoring.md) | Health and readiness endpoints, metrics, alert conditions, failure modes |
 | [hardening.md](hardening.md) | Hardened systemd unit, container recipe, reproducible builds |
 | [rpo-rto.md](rpo-rto.md) | Recovery point and recovery time objectives (ARC-016, OPS-034) |
+| [staging-refresh.md](staging-refresh.md) | Refresh an existing hosted staging instance with synthetic data and record the result |
 
 | [onion-i2p.md](onion-i2p.md) | Tor onion service and I2P hosting guidance (not yet supported by the code) |
 
@@ -19,7 +20,7 @@ This guide covers running a Circula instance. Specifications it implements: [`do
 |---|---|---|
 | Development | Developer machine | Synthetic only |
 | Continuous integration | Ephemeral runners | Synthetic only |
-| Staging (hosted only) | Mirrors production configuration | Anonymised copy; see SEC-014 and SEC-018 |
+| Staging (hosted only) | Mirrors production configuration | Synthetic refresh data; production-derived copies require SEC-014 and SEC-018 safeguards, see [staging-refresh.md](staging-refresh.md) |
 | Production | Hosted or self-hosted | Real |
 
 Production data must never be copied to development or CI.
