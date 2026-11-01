@@ -55,6 +55,12 @@ The documentation-only commit uses `[skip ci]` to avoid redundant application
 runs. No workflow or test gate changes; skipped CI is not acceptance and cannot
 permit a merge. Record exact remote SHA and draft/base/head readback in PR metadata.
 
+Initial documentation commit `4fb9019a231194c2c2ae67c2ef5df76f69c5d641` was normally
+pushed and read back. [PR #18](https://github.com/djshellshoxxx/circula/pull/18) was
+independently read back draft/open/unmerged, with that head and base
+`7643fb616208cc318939ded809e6cada66bb7415`. Later receipt-only commits resolve via
+the current HEAD and PR metadata; they change no runbook, runtime or test result.
+
 Runtime candidates A1/A3 and C-09/A2-07 still need an explicit bounded handover
 from their owner. OPS-004's remaining hosted execution needs a separately approved
 staging target and operator; it is not authorised by this documentation task.

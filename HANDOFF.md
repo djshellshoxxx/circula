@@ -2,6 +2,10 @@
 
 Repository: `djshellshoxxx/circula`.
 Owned branch: `codex/circula-staging-refresh-docs`.
+Published [draft PR #18](https://github.com/djshellshoxxx/circula/pull/18), verified
+open/unmerged into `codex/circula-consolidate-20261030`. Initial documentation
+commit `4fb9019a231194c2c2ae67c2ef5df76f69c5d641` was normally pushed and read back.
+Later handoff-only commits do not change the runbook or add application evidence.
 Application base: `7643fb616208cc318939ded809e6cada66bb7415` from draft PR #17.
 Resolve this later documentation commit with `git rev-parse HEAD`; base CI is
 not a full test pass for this head. Original coordinator handoff is preserved
@@ -35,10 +39,10 @@ infer 98% usage. No next slice is started while this checkpoint is finished.
 
 Publication: use a documentation-only `[skip ci]` checkpoint to avoid redundant
 application CI; skipped checks do not establish acceptance or permit a merge.
-Inspect current refs/status and this delta, normally publish only this owned
-branch, verify remote SHA and record it in the draft
-PR into `codex/circula-consolidate-20261030`. Do not overwrite or merge into that
-owner's branch. If already published, verify rather than repeating the write.
+Before resuming, inspect current refs/status and this delta. Fetch this branch
+with an explicit refspec if the default fetch covers only main; normally publish
+only the owned branch and read back the remote SHA. Do not overwrite or merge
+into the base owner's branch, or repeat PR creation after a verified publication.
 Runtime implementation still requires an explicit bounded owner handover; hosted
 staging execution requires a separately authorised target/operator. Manual
 screen-reader work, final audit verification, independent professional review,
