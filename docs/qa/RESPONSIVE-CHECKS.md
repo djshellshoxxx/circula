@@ -349,3 +349,56 @@ other `next` templates with the owner), and this original regression. A reviewed
 runtime fix must pass the unchanged case and preserve local-path validation and
 security gates. Neither generic continuation nor QA publication supplies that
 handover. PR creation remains separately paused pending exact approval.
+
+### Independent checks validated; return-link failure preserved
+
+At source `6a4aa6190dcb001fad4ba6aa5bb5e9fd366ddc02`,
+[run 41449741715](https://github.com/djshellshoxxx/circula/actions/runs/41449741715),
+browser job `125291709252` executed 262 cases: 261 passed and one failed.
+All 110 viewport, 20 preference and 18 no-script focus probes passed. Four of
+five no-script journey/validation cases passed, including the corrected balance
+comparison and the new native error-link/correction case. The exact original
+return-link assertion at line108 failed again with a double-encoded `next`;
+its later registration/sign-in/join steps did not execute. This is reproducible
+across two sources/runs with different synthetic invitations, not a fixed defect.
+No job rerun was requested. Aggregate platform-job completion is recorded in the
+current handoff when known; browser success is not claimed.
+
+Failure upload receipt: artifact `13143893566`, 116744 bytes, SHA256
+`5779f04c8c76fffd394e6bdfe7d4fa06684c7cb6a9e81721c456a17b214059bb`.
+Seven-day retention; no artifact bytes fetched. The later next-path token is
+omitted. This record corrects the earlier pending status for this exact source.
+
+### Final prepared independent state coverage
+
+The next source adds one keyboard/no-script plain-registration → sign-in →
+explicit invitation join → balance → empty-history case, using its own fresh
+synthetic account and invitation. Empty network membership is asserted before
+joining, then empty pending/posted history is asserted afterwards. Direct URL
+entry is explicit setup for this separate invitation-acceptance path; it does not
+activate or repair the defective return link. The original failing case remains
+active, unchanged and separately reported. No membership/policy fixture is changed.
+
+Two read-only not-found-state probes add 404 status, exact route, visible content,
+no horizontal overflow and an operable Help recovery link at both viewports.
+They extend negative-state coverage without broadening authorization or testing
+hidden resources. All 110 original positive viewport assertions remain intact.
+The next source statically registers 112 viewport/error cases, 20 preference,
+six no-script and 18 focus cases: 265 expected total, not a pass count.
+Exact-source runtime/aggregate results remain pending.
+
+| Accepted QA slice | Recorded coverage | Remaining boundary |
+|---|---|---|
+| QA-034 named trade/balance/history/dispute core flows | Combined key-only/script-disabled completion and response, plus native validation recovery at6a4aa61 | Invitation return-link regression blocks that entry path; final direct registration/join case needs its own execution |
+| QA-034/UX-040 focus |18 key-only/script-disabled probes on nine entry screens at both sizes passed6a4aa61 | Entry-screen sampling does not establish every subsequent state, reading order, screen-reader or native/browser combination |
+| UX-033/UX-036 |110 positive layout probes across55 requests/54 final destinations passed6a4aa61 | Negative-state additions need execution; all possible data permutations and native orientation remain unverified |
+| UX-034 |20 enlargement/spacing probes passed6a4aa61, including complete own-trade and explicit onboarding paths | DOM style injection in Chromium is not native browser/OS text-settings certification or all admin/mutation functions |
+| UX-022/UX-028 | Script-disabled invalid-proposal recovery; fresh-account empty membership/history states | Final script-disabled empty-state/404 checks pending; all refusal codes and loading implementations are not established |
+| Manual and ownership gates | No runtime/CSS edits, PoC restore, independent review or deployment | Reserved return-path/runtime handover, manual/native/screen-reader/professional review, operator/target authority and exact PR approval remain required |
+
+The executable continuation is bounded to these accepted ordinary-core UX slices.
+Do not interpret this ledger as a whole-codebase/security audit or launch approval,
+restore archived tests, or invent grant/policy/financial scenarios to inflate coverage.
+Further reserved runtime/security/lifecycle work requires its existing owner;
+manual/native gates require the named human/device/tool evidence and cannot be
+marked complete by these browser probes. Preserve every prior failure and threshold.

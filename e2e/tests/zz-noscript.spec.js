@@ -203,3 +203,40 @@ test('QA-034/UX-022: no-script keyboard validation links retain and correct a pr
     await Promise.all(contexts.map((context) => context.close()));
   }
 });
+
+test('QA-034: no-script keyboard plain registration and explicit invitation join show empty history', async ({ browser, st }) => {
+  const contexts = [];
+  try {
+    // This is a separate entry path. The original return-link regression above
+    // stays active; direct invitation navigation does not establish its success.
+    const admin = await newPage(browser, st, contexts, 'admin');
+    await admin.goto(`/n/${st.slug}/admin/invitations`);
+    await kbActivate(admin, /^Create invitation link$/);
+    const invitation = new URL((await admin.locator('#flash code').innerText()).trim());
+    expect(invitation.origin).toBe(st.base);
+    expect(invitation.pathname).toMatch(/^\/join\/[^/]+$/);
+    expect(invitation.pathname).not.toBe(st.unusedInvite);
+
+    const member = await newPage(browser, st, contexts);
+    const login = 'noscript-direct-invite@example.org';
+    await member.goto('/register');
+    await kbSubmit(member, [[/^Login$/, login], [/^Password$/, st.password], [/^Confirm password$/, st.password]], /^Create account$/);
+    await expect(member).toHaveURL((url) => url.pathname === '/login' && !url.searchParams.has('next'));
+    await kbSubmit(member, [[/^Login$/, login], [/^Password$/, st.password]], /^Sign in$/);
+    await expect(member).toHaveURL((url) => url.pathname === '/');
+    await expect(member.locator('h1')).toHaveText('Your networks');
+    await expect(member.locator('main')).toContainText('You are not a member of any network yet.');
+
+    await member.goto(invitation.pathname);
+    await kbSubmit(member, [[/^Your display name$/, 'No Script Direct Member']], /^Join the network$/);
+    await expect(member).toHaveURL((url) => url.pathname.replace(/\/$/, '') === `/n/${st.slug}`);
+    await expect(member.locator('#flash')).toContainText('You have joined Demo Circle.');
+    await expect(member.getByRole('region', { name: 'Your balance', exact: true })).toBeVisible();
+    await kbActivate(member, /^History$/);
+    await expect(member).toHaveURL((url) => url.pathname === `/n/${st.slug}/history`);
+    await expect(member.getByRole('region', { name: 'Pending', exact: true })).toContainText('No pending trades.');
+    await expect(member.getByRole('region', { name: 'Posted and closed', exact: true })).toContainText('Nothing here yet. Once you trade');
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
+  }
+});

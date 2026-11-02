@@ -112,3 +112,27 @@ for (const viewport of VIEWPORTS) {
     });
   }
 }
+
+for (const viewport of VIEWPORTS) {
+  test(`UX-028/UX-033: not-found state and Help recovery, ${viewport.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    const response = await page.goto('/no-such-page');
+    expect(response).not.toBeNull();
+    expect(response.status(), 'the error page preserves its 404 status').toBe(404);
+    await expect(page).toHaveURL((url) => url.pathname === '/no-such-page');
+    await expect(page.locator('main')).toBeVisible();
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toBeVisible();
+    const layout = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      document: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+    }));
+    expect(layout.viewport).toBeGreaterThan(0);
+    expect(layout.document, 'not-found content stays within the viewport').toBeLessThanOrEqual(layout.viewport);
+    const help = page.getByRole('link', { name: 'Help: credits, balances and statuses', exact: true });
+    await expect(help).toHaveAttribute('href', '/help');
+    await help.click();
+    await expect(page).toHaveURL((url) => url.pathname === '/help');
+    await expect(page.locator('h1')).toBeVisible();
+  });
+}
