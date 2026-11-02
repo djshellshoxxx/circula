@@ -1,51 +1,46 @@
-# Circula OPS-004 documentation handoff
+# Circula responsive QA continuation
 
 Repository: `djshellshoxxx/circula`.
-Owned branch: `codex/circula-staging-refresh-docs`.
-Published [draft PR #18](https://github.com/djshellshoxxx/circula/pull/18), verified
-open/unmerged into `codex/circula-consolidate-20261030`. Initial documentation
-commit `4fb9019a231194c2c2ae67c2ef5df76f69c5d641` was normally pushed and read back.
-Later handoff-only commits do not change the runbook or add application evidence.
-Application base: `7643fb616208cc318939ded809e6cada66bb7415` from draft PR #17.
-Resolve this later documentation commit with `git rev-parse HEAD`; base CI is
-not a full test pass for this head. Original coordinator handoff is preserved
-at `git show 7643fb616208cc318939ded809e6cada66bb7415:HANDOFF.md`.
+Owned branch: `codex/circula-responsive-qa`.
+Input checkpoint: `9c0bc500cb19f11f18694c76d134f4bfebf896e7` (draft PR #18),
+preserving application `7643fb616208cc318939ded809e6cada66bb7415` (draft PR #17).
+Use `git rev-parse HEAD` and remote readback for the current test checkpoint.
+Prior staging handoff remains at `git show 9c0bc500cb19f11f18694c76d134f4bfebf896e7:HANDOFF.md`.
 
-Completed slice: [OPS-004 staging refresh runbook](docs/ops/staging-refresh.md),
-operations-index link and corrected as-built note. The procedure covers synthetic
-staging data, configuration parity, migration/verification, rollback and evidence.
-OPS-004 remains partial: hosted staging execution has not been performed.
-Detailed scope, ownership and limits: [checkpoint receipt](docs/audit/STAGING-REFRESH-DOCUMENTATION.md).
+Ready slice: [24 responsive browser cases](e2e/tests/responsive.spec.js) for 12
+representative pages at 320×640 portrait and 640×320 landscape. They check the
+intended route, heading/main visibility, page-level overflow and table-scroll
+region labelling/focusability. These cases navigate only; fixtures and every
+existing assertion are unchanged. UX-033/UX-036 remain partial.
+[Coverage, commands and actual evidence](docs/qa/RESPONSIVE-CHECKS.md).
 
-Runtime ownership remains unchanged. The PR #12 audit owner retains audit/WIP,
-A1/A3 and C-09/A2-07 reservations; PR #17's coordinator retains consolidation/CI.
-Live remote branches/PRs and their discussions supplied no runtime handover.
-This session reserved only the independent staging documentation and its receipts;
-no runtime finding was reproduced or fixed. Keep archive #13 and older branches.
+Local checks passed: Node syntax, whitespace, repository hygiene/action pins,
+27 local links and complete outgoing limited credential/private-data patterns
+across four files. Browser execution is pending exact-source CI, not passed.
+No local application/browser or pinned full-scanner pass is claimed. Node modules
+and Chromium are absent here; earlier module/artifact HTTP 403 denials remain
+binding and were not retried. Existing reviewed CI is the validation route.
 
-Documentation checks passed: whitespace, 66 local links/6 anchors across five
-complete outgoing Markdown files, command references, hygiene/action pins and a
-limited credential/private-data pattern scan. No new
-application/browser run, hosted deployment, restore drill or full local pinned
-scanner pass is claimed. Earlier dependency/artifact HTTP 403 denials were not
-retried. Existing base CI runs 41047232276 and 41047238538 passed 9/9 jobs each.
-No runtime, dependency, workflow, test assertion, credential, security setting,
-retention rule, monetary threshold, ledger or approval-role change is included.
+Freeze the published test candidate while CI runs. Record exact source/run/job,
+actual results and original failures before claiming this QA slice validated.
+Do not weaken assertions, shrink coverage or edit reserved runtime/CSS if a new
+case fails. Keep routine CI receipts separate until candidate checks finish.
+No workflow, runtime, dependency, ledger, monetary value, threshold, credential,
+security setting, policy or 24-hour/grant-lineage fixture changed.
 
-One coordinator is the sole worker, with no coding/review subagents or paid API
-calls. A safe active-model selector is unavailable, so the existing model remains.
-Usage/budget percentage is unknown; retain a checkpointing reserve and never
-infer 98% usage. No next slice is started while this checkpoint is finished.
+Ownership: this coordinator reserves only the new responsive test, its QA notes,
+two as-built notes and this branch's handoff. Existing PR #17 integration and
+PR #12 audit/WIP, A1/A3 and C-09/A2-07 reservations remain intact. No runtime
+handover was found; no external private-session activity state is inferred.
+One local worker; no coding/review subagents or paid API calls. Model switching
+and reliable usage percentage are unavailable; retain a checkpointing reserve.
 
-Publication: use a documentation-only `[skip ci]` checkpoint to avoid redundant
-application CI; skipped checks do not establish acceptance or permit a merge.
-Before resuming, inspect current refs/status and this delta. Fetch this branch
-with an explicit refspec if the default fetch covers only main; normally publish
-only the owned branch and read back the remote SHA. Do not overwrite or merge
-into the base owner's branch, or repeat PR creation after a verified publication.
-Runtime implementation still requires an explicit bounded owner handover; hosted
-staging execution requires a separately authorised target/operator. Manual
-screen-reader work, final audit verification, independent professional review,
-owner/licence/default/threshold decisions and release gates remain open.
-No APPROVE review, PR closure, merge, tag, release, deployment, purchase, force
-push, destructive reset, credential/security change or denial bypass is authorised.
+Next: normally publish this owned branch and open a draft into the preserved
+PR #18 branch after checking live refs and outgoing content. Verify remote SHA,
+draft/base/head and exact-source CI. Preserve the runbook and all older refs.
+Before runtime remediation, obtain a bounded audit-owner assignment naming the
+finding, base, permitted files and original regression. Hosted staging still
+needs a separately authorised operator/target. Manual screen-reader, independent
+professional review, owner decisions and release gates remain open. No APPROVE,
+merge, PR closure, force push, release/deployment, purchase, credential/security
+change or denial bypass is authorised by this QA task.

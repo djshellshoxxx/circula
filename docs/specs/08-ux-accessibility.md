@@ -55,10 +55,10 @@ Summary: built 31, not built 7, partial 22.
 | UX-030 | P0 | built | Two-minute warning with Stay signed in extension |
 | UX-031 | P1 | partial | Suspended notice not verified in templates |
 | UX-032 | P0 | built | Confirmation step names object for remove and cancel |
-| UX-033 | P0 | partial | Single-column layout with media queries; 320px checked by manual QA only |
+| UX-033 | P0 | partial | 320px portrait/640px landscape overflow checks added for 12 representative screens; browser results pending |
 | UX-034 | P0 | partial | Resize and reflow not measured |
 | UX-035 | P0 | partial | Target sizes not measured |
-| UX-036 | P0 | partial | No orientation lock; not tested |
+| UX-036 | P0 | partial | Portrait/landscape browser viewport checks added; native-device evaluation not performed |
 | UX-037 | P1 | not built | Stacked rows for wide tables not built |
 | UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
 | UX-039 | P0 | partial | Reading order by template; not automated |
