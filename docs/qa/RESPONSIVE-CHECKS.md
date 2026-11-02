@@ -1,6 +1,8 @@
 # Responsive viewport checks (UX-033, UX-036)
 
-Owned branch: `codex/circula-responsive-qa`.
+Original viewport branch: `codex/circula-responsive-qa`, frozen at
+`04e11989b811b4541a20b4e06e7a020beabb6af3` for pending exact PR approval.
+Current follow-up owner: `codex/circula-noscript-qa`, derived from that checkpoint.
 Input: `9c0bc500cb19f11f18694c76d134f4bfebf896e7`, preserving draft PR #18 and
 application `7643fb616208cc318939ded809e6cada66bb7415`. Read the latest tested
 source in [the current handoff](../../HANDOFF.md). `git rev-parse HEAD` resolves
@@ -22,14 +24,16 @@ The branch is normally published and its remote commit was read back. An attempt
 to create a draft against PR #18's branch returned no usable structured receipt;
 the orchestration then failed with `Unable to store "responsive_pr". Only plain serializable objects can be stored.` Readback found no PR
 for the branch. No permission-denial reason was captured and no create retry was
-made. Inspect the original action result/permissions before another create
-attempt; do not infer that a draft exists or bypass any denial.
+made. This is a historical publication account, not permission to create a PR.
+The parent subsequently reported that automatic review rejected conditional PR
+creation because clear exact approval was absent. That approval is pending;
+this continuation attempts no PR creation, retry or workaround on either branch.
 
 ## Scope and ownership
 
-The current suite contains axe, ARIA, keyboard and security tests but no viewport
-or orientation checks. The accepted UX-033/UX-036 requirements therefore have an
-independent automated-QA slice. This reservation covers only
+At the original input the suite contained axe, ARIA, keyboard and security tests
+but no viewport/orientation checks. UX-033/UX-036 therefore supplied the initial
+independent automated-QA slice. That initial reservation covered
 `e2e/tests/responsive.spec.js`, these notes, the two as-built status notes and this
 branch's handoff. No existing fixture, test assertion, runtime/CSS, audit finding,
 PoC, workflow, dependency or OPS-004 runbook is edited.
@@ -52,7 +56,8 @@ form, plus Carol's own-proposal cancellation form. `global-setup.js` creates
 `tradePending` as Carol → Bob; existing axe/ARIA cases only navigate these forms
 and no current test submits a decision for that seeded ID. The new checks are
 GET-only and leave the seed proposed. The current viewport matrix therefore
-registers 32 cases for 16 screen/role entries; these additions need their own CI.
+registers 32 cases for 16 screen/role entries; their successful browser evidence
+and aggregate CI after one fuzz rerun are recorded below at source `ca908a8`.
 Original entries, geometry assertions and fixtures are unchanged.
 Local checks for this extension passed: Node syntax, staged whitespace/hygiene,
 59 local links across the five outgoing files, fences/conflicts, limited
@@ -171,7 +176,7 @@ The correction replaces only that new invalid meter assertion with UX-009's
 required balance fields: direction text, credit limit, reserved outgoing amount
 and available to spend. All flow assertions and the scripting-disabled setting
 remain; no fixture, runtime/CSS, timeout, existing test or policy is altered.
-The corrected source must pass its own browser/aggregate CI.
+Its subsequent exact-source validation is recorded below.
 
 Failure artifact metadata: `e2e-test-results`, ID `13139080390`, 138629 bytes,
 expires `2026-11-09T11:48:39Z`. Screenshot/error-context bytes were not retrieved;
@@ -185,7 +190,36 @@ both no-script journeys. All previous browser cases remained intact. This
 validates the bounded test correction at that exact source, not the subsequent
 eight party-state viewport additions or any runtime remediation.
 
-### Reserved runtime handover
+### Party-state viewport checkpoint and fuzz gate
+
+At source `ca908a8b5743c7d674b4bac4b492c2a5c7c46698`,
+[push run 41442176782](https://github.com/djshellshoxxx/circula/actions/runs/41442176782)
+attempt 1 passed eight jobs, including browser job `125266472066`: 147 passed,
+with all eight added party-state viewport cases and both no-script cases.
+The source is frozen; no aggregate pass is claimed at this observation.
+
+Fuzz job `125266472051` failed `FuzzParseAmount` at 10.10 seconds with
+`context deadline exceeded`, after 779943 executions. It reported no failing
+input or panic. Baseline coverage completed 21/21 inputs; the later JSON fuzz
+command did not run after this failure. No dependency/artifact HTTP 403 occurred
+in this job. These facts suggest a possible cutoff/scheduling issue; they do not
+establish a benign flake or a runtime defect.
+
+One failed-job-only rerun was requested at the same source, with the unchanged
+command and 10-second budget. Run attempt 2 completed successfully. Fuzz job
+`125272062062` passed both `FuzzParseAmount` and `FuzzStrictUnmarshal`, each with
+the original 10-second budget. No code, assertion, workflow or limit changed;
+there was no source push or further retry to obtain this result.
+
+The attempt-2 API lists nine successful job entries with new IDs. Their execution
+times show that eight retained their original 12:07–12:14 UTC results, while fuzz
+alone executed at 12:20–12:21 UTC. The returned browser log also retains the
+original 147-pass timestamps. Treat those eight as carried-forward successful
+results, not fresh reruns. This corrects an initial interpretation of the job-ID
+listing. Overall CI is successful at the same immutable source; the initial
+cutoff failure remains a CI-reliability follow-up, not a defect claimed fixed.
+
+### Reserved runtime handover details
 
 The audit owner must explicitly assign the finding, base, permitted files and
 original regression before remediation. In particular, A1-01/A1-06 departure

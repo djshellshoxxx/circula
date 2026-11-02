@@ -55,7 +55,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-030 | P0 | built | Two-minute warning with Stay signed in extension |
 | UX-031 | P1 | partial | Suspended notice not verified in templates |
 | UX-032 | P0 | built | Confirmation step names object for remove and cancel |
-| UX-033 | P0 | partial | 32 viewport cases for 16 screen/role entries; eight added party-state cases await CI; broader coverage remains |
+| UX-033 | P0 | partial | 32 viewport cases for 16 screen/role entries passed at ca908a8; broader state/role coverage remains |
 | UX-034 | P0 | partial | Four enlargement/spacing form-flow probes passed at 2e323a1; wider functionality/browser coverage remains |
 | UX-035 | P0 | partial | Target sizes not measured |
 | UX-036 | P0 | partial | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |

@@ -1,57 +1,59 @@
-# Circula member-flow QA restart handoff
+# Circula member-flow QA restart checkpoint
 
-Repository: `djshellshoxxx/circula`; sole local worker on `codex/circula-noscript-qa`.
-Worktree: `/workspace/circula-noscript-qa`, original executor.
+Repository: `djshellshoxxx/circula`; owned branch: `codex/circula-noscript-qa`.
+Worktree: `/workspace/circula-noscript-qa`, original executor; one local worker.
 Input `04e11989b811b4541a20b4e06e7a020beabb6af3` remains frozen on the responsive-QA
-branch for pending exact PR approval. Draft PR #18 stays at
-`9c0bc500cb19f11f18694c76d134f4bfebf896e7`; application stays at
+branch for pending exact PR approval. PR #18 remains at
+`9c0bc500cb19f11f18694c76d134f4bfebf896e7`; application remains at
 `7643fb616208cc318939ded809e6cada66bb7415`. No environment was replaced.
 
-Validated no-script test source: `de156e4e098991c9e393bce932f73c689c100d09`.
-Run 41440673562 passed 9/9; browser job 125261430576 reports 139 passed, including
-both new keyboard/site-JS-disabled journeys. Initial source 0666f4636ed70b21d3586e9f3e696f60e3907b34
-failed only at an invalid new unconditional Bob meter assertion (138 passed/1
-failed). UX-011 makes the meter optional; the corrected assertion checks UX-009
-required fields. No runtime fix, site-script enablement or wait extension occurred.
-Failure source/run 41439165546 and artifact metadata 13139080390 remain preserved;
-artifact bytes were not fetched. Detailed [inventory/evidence](docs/qa/RESPONSIVE-CHECKS.md).
+Last tested source: `ca908a8b5743c7d674b4bac4b492c2a5c7c46698`.
+Run 41442176782 concluded success on attempt 2 after one unchanged failed-fuzz-job
+rerun. Browser job 125266472066 reports 147 passed: 10 new cases beyond the
+prior 34 (two no-script keyboard journeys and eight party-state viewport cases).
+Attempt 1 passed eight jobs; FuzzParseAmount stopped at 10.10s with context deadline
+exceeded and no reported input. Retry job 125272062062 passed both unchanged 10s
+fuzz commands. Eight earlier successes were carried forward, not freshly rerun.
+The original deadline failure remains a reliability observation, not a fixed defect.
 
-Next slice: eight GET-only viewport cases for Bob's pending detail/accept/decline
-and Carol's cancellation of her own seeded proposal. Current viewport matrix has
-16 screen/role entries and 32 cases. Original entries/geometry assertions stay
-unchanged; the seeded pending trade is not submitted/cancelled by these checks.
-This slice still needs exact new-source CI; prior green results do not validate it.
-Use `git rev-parse HEAD` and remote readback to identify the candidate after push.
+Earlier source `de156e4e098991c9e393bce932f73c689c100d09` passed 9/9 with 139 browser
+cases. Initial 0666f4636ed70b21d3586e9f3e696f60e3907b34 failed a new invalid meter
+assertion; UX-011 makes that meter optional. It was corrected to UX-009 required
+fields, with the failure/source/artifact metadata preserved and no runtime change.
+[Reconciled inventory, commands, failures and exact evidence](docs/qa/RESPONSIVE-CHECKS.md).
 
-The no-script journeys use existing kbd.js and ordinary-member fixtures, create
-only their own two synthetic proposals (accept one, decline one), and check
-balance/history. Runtime/CSS, all baseline assertions, fixtures, dependencies,
-workflows, OPS-004 runbook, credentials/security settings, roles, grant lineage,
-24-hour rules, monetary thresholds and retention are untouched. QA-034 and UX
-coverage remain partial; manual/native and independent gates are unperformed.
+The no-script cases complete sign-in/propose/accept/balance/history and propose/
+decline/history via keys, on their own new synthetic trade IDs. The viewport
+matrix now has 32 cases for 16 screen/role entries, including Bob's pending detail/
+accept/decline and Carol's own-proposal cancellation, using GET only for the seed.
+Runtime/CSS, baseline assertions, fixtures, dependencies, workflows, OPS-004 runbook,
+credentials/security settings, roles, grant lineage, 24-hour rules, thresholds and
+retention are unchanged. Departure.go/A1, pagination, C-09/A2-07 and audit/WIP
+reservations remain intact. No archived PoC was restored or run.
 
-Local viewport-slice checks passed: syntax, whitespace/hygiene, 59 local links,
-limited review of five complete files and unchanged original assertion code. Local
-browser dependencies remain unavailable; prior dependency/artifact HTTP 403
-boundaries are binding and were not retried. Use the existing reviewed branch-push
-CI only; keep its candidate fixed, preserve failures and fix only an allowed test
-defect. Any runtime/CSS change needs a bounded owner handover first.
+Local source checks passed. Final receipt checks passed: whitespace, 28 local
+links, fences/conflicts and limited review of three complete documents.
+No local browser or full pinned-scanner run is claimed; existing reviewed CI
+provided validation. Local dependency/artifact HTTP 403 boundaries remain binding
+and were not retried; failure artifact bytes were not retrieved.
+
+This later receipt changes documentation only and uses [skip ci]. Resolve its
+head with `git rev-parse HEAD`; do not attribute tested-source CI to a later head.
+Normal source pushes and remote readbacks succeeded. Before resuming, inspect
+status/refs, preserve later authors' work and fetch explicit refs if default fetch
+covers only main. Never reset to the prompt-only main to recreate application work.
 
 PR CREATION PAUSED: automatic approval review rejected the parent's conditional
 PR-creation step because clear exact approval was absent. The parent requested
-approval; no answer is known. No PR-create attempt or workaround, merge or APPROVE
-review occurs in this continuation. Ordinary owned source checkpoints are allowed.
-Keep the earlier responsive-QA ref frozen; do not reinterpret its pending approval.
+approval; no answer is known. This continuation made no PR-create attempt or
+workaround, merge or APPROVE review. Do not reinterpret pending approval for the
+frozen earlier branch as authority for a different source or action.
 
-Only owned QA files, inventory/as-built notes and this handoff are reserved.
-Departure.go/A1, pagination, C-09/A2-07, audit/WIP and PR #17 ownership remain intact.
-No archived PoC was restored or run. One local worker, no extra/review workers or
-paid API calls; external private writer state is unverified. Usage/model switching
-is unavailable; retain a checkpointing reserve rather than guessing a percentage.
-
-Next: finish scoped static checks, normally push only this child branch and verify
-its SHA; observe exact-source CI without PR creation/manual dispatch. Preserve
-all unique input branches. Hosted staging still needs an authorised operator/target.
-Manual/native, independent/professional, owner/licence/default/threshold and release
-gates remain open. No deployment, purchase, credential/security change, force push,
-destructive reset, denial bypass or assumed runtime handover is authorised here.
+Remaining QA: no-script registration/invitation/dispute flows, wider screen/state
+coverage, native/manual focus/reading checks and independent/professional review.
+Runtime changes need a bounded owner handover naming finding/base/files/regression.
+Hosted staging needs its own authorised operator/target. Owner/licence/default/
+threshold and release gates remain open. No extra/review workers or paid API calls;
+external private writer state is unverified. Usage/model switching is unavailable;
+keep a reserve. No deployment, purchase, credential/security change, force push,
+destructive reset, source loss, denied download or approval bypass is authorised.
