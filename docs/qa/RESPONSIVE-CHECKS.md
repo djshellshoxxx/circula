@@ -125,7 +125,8 @@ history and proposal/decline/history flows, using only their own new trade IDs:
 one small synthetic trade is completed;
 the other is declined without a ledger reference. The seeded trade IDs, policy,
 roles and existing security instance are preserved. Contexts are closed on
-success or failure. No CSP bypass is enabled for these new contexts.
+success or failure. These cases configure only script mode and role context
+data; the suite's existing CSP configuration is unchanged.
 
 QA-034 remains partial: registration, invitation acceptance, dispute raise, all
 states and manual focus/reading checks are not established by these two cases.
@@ -138,6 +139,32 @@ pins, 36 local links across outgoing documents, fences/conflicts and limited
 credential/private-data review of all four complete outgoing files, with no
 findings. Exact new-source browser/aggregate CI results remain pending.
 No local browser run or retry of denied dependency/artifact downloads is implied.
+
+### Failing-before evidence and bounded test correction
+
+At `0666f4636ed70b21d3586e9f3e696f60e3907b34`,
+[push run 41439165546](https://github.com/djshellshoxxx/circula/actions/runs/41439165546)
+failed browser job `125256412697`: 138 passed and one failed. The new decline
+journey passed. The sign-in/propose/accept/history journey reached Bob's balance
+card, then its line 65 incorrectly required an always-visible `Credit limit in use`
+meter. That original assertion remains preserved in the failed source.
+
+`dashboard.html` renders the meter only inside `.Card.InDebt` and `.Card.UsedPct`.
+Bob is the seeded recipient in credit. UX-011 makes that meter optional and
+requires debt-use text only for a member in debt; it does not require this meter
+on Bob's card. The assertion had been copied from Alice's debt-specific ARIA
+check and added an unsupported requirement. No runtime defect is established.
+
+The correction replaces only that new invalid meter assertion with UX-009's
+required balance fields: direction text, credit limit, reserved outgoing amount
+and available to spend. All flow assertions and the scripting-disabled setting
+remain; no fixture, runtime/CSS, timeout, existing test or policy is altered.
+The corrected source must pass its own browser/aggregate CI.
+
+Failure artifact metadata: `e2e-test-results`, ID `13139080390`, 138629 bytes,
+expires `2026-11-09T11:48:39Z`. Screenshot/error-context bytes were not retrieved;
+the earlier artifact-byte HTTP 403 boundary remains binding. The decoded job log,
+source/template and accepted requirement supply the diagnosis above.
 
 ### Reserved runtime handover
 

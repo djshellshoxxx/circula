@@ -61,8 +61,10 @@ test('QA-034: no-script keyboard sign-in, proposal, acceptance, balance and hist
     await kbActivate(bob, /^Home$/);
     const balance = bob.getByRole('region', { name: 'Your balance', exact: true });
     await expect(balance).toBeVisible();
+    await expect(balance).toContainText(/In debt by|In credit by|Balance is zero|Your balance is/);
+    await expect(balance.getByText('Credit limit', { exact: true })).toBeVisible();
+    await expect(balance.getByText('Reserved for pending outgoing trades', { exact: true })).toBeVisible();
     await expect(balance).toContainText('Available to spend');
-    await expect(bob.getByRole('meter', { name: 'Credit limit in use', exact: true })).toBeVisible();
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
   }

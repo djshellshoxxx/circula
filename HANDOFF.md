@@ -16,15 +16,22 @@ Selected QA-034 slice: [two no-script keyboard journeys](e2e/tests/zz-noscript.s
 using existing kbd.js helpers and ordinary-member fixtures in explicit
 javaScriptEnabled:false contexts. The tests propose two new synthetic trades,
 accept one and decline the other, then check balance/history and no posting for
-the declined proposal. Seeded trade IDs and all existing assertions are intact.
+the declined proposal. Seeded trade IDs and all baseline assertions are intact.
 [Reconciled screen/role/flow inventory and coverage](docs/qa/RESPONSIVE-CHECKS.md).
+First source `0666f4636ed70b21d3586e9f3e696f60e3907b34` failed run 41439165546:
+8 jobs passed; E2E had 138 passed/1 failed at an invalid new Bob meter assertion.
+UX-011 makes that debt meter optional. The corrected test checks UX-009's required
+fields; no runtime fix, script enablement or wait extension. Original failure and
+artifact metadata 13139080390 are preserved in the inventory record; bytes unfetched.
+The corrected source still needs its own CI. Do not report the failed source green.
 QA-034 remains partial: registration, invitation acceptance, dispute raise,
 all states and manual focus/reading checks are outside these two cases.
 
-Local Node syntax, whitespace, hygiene/action pins, 36 local links, fences/conflicts
+Initial slice: Node syntax, whitespace, hygiene/action pins, 36 local links, fences/conflicts
 and limited review of four complete outgoing files passed. Record actual new-source
 CI before claiming validation. Local browser dependencies remain unavailable;
 prior dependency/artifact HTTP 403 denials are binding and were not retried.
+Correction checks passed: syntax/whitespace/hygiene, 5 links and limited scan of 3 files.
 Only the existing reviewed branch-push CI route may supply browser validation.
 Freeze its source while CI runs, preserve failures/assertions and diagnose actual
 causes; do not enable site scripting or weaken a test to obtain green checks.
