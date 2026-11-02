@@ -41,10 +41,22 @@ of an external private session is inferred from unchanged published branches.
 
 ## Coverage and limits
 
-[The test](../../e2e/tests/responsive.spec.js) registers 24 cases: 12 seeded pages
+[The initial test](../../e2e/tests/responsive.spec.js) registered 24 cases: 12 seeded pages
 at 320×640 CSS pixels (portrait) and 640×320 (landscape): login, registration,
 help, member dashboard, directory, new listing, propose trade, completed trade,
 history, admin overview, admin members and admin audit.
+
+The no-script child branch adds four verified party-state screens at both
+viewports (eight cases): Bob's pending trade detail, accept form and decline
+form, plus Carol's own-proposal cancellation form. `global-setup.js` creates
+`tradePending` as Carol → Bob; existing axe/ARIA cases only navigate these forms
+and no current test submits a decision for that seeded ID. The new checks are
+GET-only and leave the seed proposed. The current viewport matrix therefore
+registers 32 cases for 16 screen/role entries; these additions need their own CI.
+Original entries, geometry assertions and fixtures are unchanged.
+Local checks for this extension passed: Node syntax, staged whitespace/hygiene,
+59 local links across the five outgoing files, fences/conflicts, limited
+credential/private-data review and byte-identical existing assertion code.
 
 Each case requires a 200 response at the intended route, one visible heading,
 visible main content, no page-level horizontal overflow, and a labelled,
@@ -89,7 +101,7 @@ coverage or edit reserved runtime/CSS to make a failure disappear.
 Reconciled from test source `32a8314ebd28094dd6d2500c454ed809f6b16b3c` and
 handoff `04e11989b811b4541a20b4e06e7a020beabb6af3`. The existing axe page table has
 57 screen/role entries; it also allows responses below 500, so it is not a
-reviewed authorization or successful-flow inventory. The 34 later cases cover
+reviewed authorization or successful-flow inventory. At that input the 34 later cases cover
 12 representative positive screens, four preference cases and six section/
 viewport Help checks; those counts are not interchangeable with all routes.
 
@@ -97,7 +109,7 @@ viewport Help checks; those counts are not interchangeable with all routes.
 |---|---|---|
 | Anonymous login, registration, Help | Axe; keyboard sign-in; viewport and Help probes | Scripting-disabled completion; registration/invitation flows remain beyond the new member slice |
 | Alice/Bob ordinary members: dashboard, proposal, completed trade, history | Axe/ARIA, keyboard proposal/acceptance, viewport, proposal text preferences, Help | Combined keyboard/no-script member journeys selected below; broader flow/state coverage remains |
-| Pending trade: Carol proposes to Bob; Carol is also a reviewer | Axe covers Bob accept/decline and Carol cancellation; ARIA covers Bob's pending/accept pages | These are genuine party-specific screens, not assumed 403 cases; viewport/text preference coverage remains narrower |
+| Pending trade: Carol proposes to Bob; Carol is also a reviewer | Axe covers Bob accept/decline and Carol cancellation; ARIA covers Bob's pending/accept pages | Eight party-state viewport cases added after role reconciliation; results pending; text preference coverage remains narrower |
 | Inbox, reports, time zone | Axe and specific keyboard/focus journeys | Not included in the 12-screen viewport set; wider visual/preference coverage remains |
 | Review/dispute states | Axe plus selected keyboard response/decision probes | No archived PoC restoration or reserved dispute/A1 runtime remediation is assigned here |
 | Founder/admin overview, members, audit | Axe plus viewport and Help probes | Invitations, policy, exports, reports, adjustments and other admin states have narrower automated coverage |
@@ -165,6 +177,13 @@ Failure artifact metadata: `e2e-test-results`, ID `13139080390`, 138629 bytes,
 expires `2026-11-09T11:48:39Z`. Screenshot/error-context bytes were not retrieved;
 the earlier artifact-byte HTTP 403 boundary remains binding. The decoded job log,
 source/template and accepted requirement supply the diagnosis above.
+
+At corrected source `de156e4e098991c9e393bce932f73c689c100d09`,
+[push run 41440673562](https://github.com/djshellshoxxx/circula/actions/runs/41440673562)
+passed all nine jobs. Browser job `125261430576` reports 139 passed, including
+both no-script journeys. All previous browser cases remained intact. This
+validates the bounded test correction at that exact source, not the subsequent
+eight party-state viewport additions or any runtime remediation.
 
 ### Reserved runtime handover
 

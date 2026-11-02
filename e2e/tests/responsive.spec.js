@@ -20,6 +20,10 @@ const PAGES = [
   ['admin overview', 'admin', (st) => `/n/${st.slug}/admin`],
   ['admin members', 'admin', (st) => `/n/${st.slug}/admin/members`],
   ['admin audit', 'admin', (st) => `/n/${st.slug}/admin/audit`],
+  ['pending trade (recipient)', 'bob', (st) => `/n/${st.slug}/trades/${st.tradePending}`],
+  ['accept a trade (recipient)', 'bob', (st) => `/n/${st.slug}/trades/${st.tradePending}/accept`],
+  ['decline a trade (recipient)', 'bob', (st) => `/n/${st.slug}/trades/${st.tradePending}/decline`],
+  ['cancel own proposal', 'carol', (st) => `/n/${st.slug}/trades/${st.tradePending}/cancel`],
 ];
 
 for (const viewport of VIEWPORTS) {
