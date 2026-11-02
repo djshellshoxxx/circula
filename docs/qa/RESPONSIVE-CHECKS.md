@@ -114,7 +114,7 @@ viewport Help checks; those counts are not interchangeable with all routes.
 |---|---|---|
 | Anonymous login, registration, Help | Axe; keyboard sign-in; viewport and Help probes | Scripting-disabled completion; registration/invitation flows remain beyond the new member slice |
 | Alice/Bob ordinary members: dashboard, proposal, completed trade, history | Axe/ARIA, keyboard proposal/acceptance, viewport, proposal text preferences, Help | Combined keyboard/no-script member journeys selected below; broader flow/state coverage remains |
-| Pending trade: Carol proposes to Bob; Carol is also a reviewer | Axe covers Bob accept/decline and Carol cancellation; ARIA covers Bob's pending/accept pages | Eight party-state viewport cases added after role reconciliation; results pending; text preference coverage remains narrower |
+| Pending trade: Carol proposes to Bob; Carol is also a reviewer | Axe covers Bob accept/decline and Carol cancellation; ARIA covers Bob's pending/accept pages | Eight party-state viewport cases passed at ca908a8; text preference coverage remains narrower |
 | Inbox, reports, time zone | Axe and specific keyboard/focus journeys | Not included in the 12-screen viewport set; wider visual/preference coverage remains |
 | Review/dispute states | Axe plus selected keyboard response/decision probes | No archived PoC restoration or reserved dispute/A1 runtime remediation is assigned here |
 | Founder/admin overview, members, audit | Axe plus viewport and Help probes | Invitations, policy, exports, reports, adjustments and other admin states have narrower automated coverage |
@@ -145,8 +145,9 @@ roles and existing security instance are preserved. Contexts are closed on
 success or failure. These cases configure only script mode and role context
 data; the suite's existing CSP configuration is unchanged.
 
-QA-034 remains partial: registration, invitation acceptance, dispute raise, all
-states and manual focus/reading checks are not established by these two cases.
+At that checkpoint QA-034 remained partial: registration, invitation acceptance,
+dispute raise, all states and manual focus/reading checks were not established by
+those two cases. The later continuation below has its own validation status.
 No manual/native or independent gate is satisfied by adding them.
 
 With an existing built binary and cached Node/Chromium dependencies, the focused
@@ -228,3 +229,54 @@ A1-02/A1-11 concerns currency policy/initialisation and related store methods;
 C-09/A2-07 concerns API resource ETags and the archived fixed-clock regression.
 Verify exact paths against the selected current packet before a handover; this
 QA branch does not claim those modules. Preserve archived drafts and PR #13.
+
+## Registration, invitation, dispute and wider-screen continuation
+
+Input receipt: `5337c443d3b4f5d839e4d9b6f5f0854011cef53b`; application and reserved
+runtime are unchanged. On resumption the owned remote matched that receipt,
+the earlier responsive branch still matched `04e1198`, and the external integrated
+branch still matched `827e651fe151f49659cc20aefe85d4af67bdaa97`. PR #12's published
+comments supplied no explicit runtime handover. One worker continues only the
+two owned browser-test files and these existing notes/handoff. No PR is created.
+
+QA-034 explicitly lists registration, invitation acceptance and dispute raising.
+Two additional combined keyboard/no-script cases now register in
+`zz-noscript.spec.js` (four total), with validation pending at this source:
+
+- A founder creates a new synthetic invitation through the UI with its existing
+  seven-day default. An anonymous visitor follows its account-creation link,
+  registers, signs in, returns to that exact invitation, joins and finds their
+  display name in Directory. The original unused invitation is not redeemed;
+  its token is neither hard-coded nor logged. No role/policy/grant changes occur.
+- Alice and Bob complete their own new 0.03 synthetic trade. Alice reviews and
+  opens a dispute, Bob responds once, both can read that response, and Alice's
+  balance card is unchanged by the dispute. Their own history row is Disputed.
+  No seeded dispute is mutated, decision/reversal made or reserved PoC run.
+
+These cases use the same explicit `javaScriptEnabled: false` contexts and keyboard
+helpers as the original cases, with context cleanup in `finally`. Runtime/CSS,
+original assertions/helpers/fixtures and workflow budgets are unchanged.
+
+The viewport table now registers 55 distinct positive screen/role/query entries,
+110 cases at the existing two sizes. It covers the original 57-entry axe inventory
+apart from the deliberate not-found page and the duplicate admin-overview entry.
+It uses only GET navigation, requires a 200 response, intended path, visible main
+and heading, no page overflow and the original scrolling-table accessibility
+assertions. This is a screen/role sample, not all possible data/state permutations.
+The 39 added entries produce 78 cases; with the two new journeys the expected
+suite grows from 147 to 227, subject to actual execution. It is not a pass count.
+
+Local checks passed: Node syntax, 110/four unique static registrations, unchanged
+existing test assertions, whitespace, hygiene/action pins and scope checks.
+Local browser dependencies remain absent; no denied download is retried. Existing
+branch-push CI is the permitted execution route. Exact-source results, any new
+failure and unexecuted gates must be recorded before calling these cases passed.
+
+Remaining coverage includes 200-percent-text/spacing beyond the proposal sample,
+negative/empty/loading states, every-step visible-focus evidence, wider browser/
+native-device permutations and manual screen-reader/independent review. Adding
+positive layout probes does not validate submissions of admin/policy/reversal
+forms. Any failure requiring reserved runtime/CSS changes is preserved and parked
+for a bounded owner handover, without weakening its assertion. The earlier invalid
+meter assertion and unchanged fuzz deadline failure above remain original evidence;
+no repeated fuzz retry or reliability fix is authorised by this continuation.

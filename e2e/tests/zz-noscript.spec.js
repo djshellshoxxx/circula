@@ -88,3 +88,83 @@ test('QA-034: no-script keyboard proposal and decline with no posting', async ({
     await Promise.all(contexts.map((context) => context.close()));
   }
 });
+
+test('QA-034: no-script keyboard registration and invitation acceptance preserve the return path', async ({ browser, st }) => {
+  const contexts = [];
+  try {
+    const admin = await newPage(browser, st, contexts, 'admin');
+    await admin.goto(`/n/${st.slug}/admin/invitations`);
+    await expect(admin.getByLabel('Valid for (days)', { exact: true })).toHaveValue('7');
+    await kbActivate(admin, /^Create invitation link$/);
+    const invitation = new URL((await admin.locator('#flash code').innerText()).trim());
+    expect(invitation.origin, 'invitation stays on the temporary test instance').toBe(st.base);
+    expect(invitation.pathname).toMatch(/^\/join\/[^/]+$/);
+    expect(invitation.pathname, 'the seeded unused invitation is not consumed').not.toBe(st.unusedInvite);
+
+    const member = await newPage(browser, st, contexts);
+    await member.goto(invitation.pathname);
+    await expect(member.locator('h1')).toHaveText('Accept your invitation');
+    await kbActivate(member, /^Create an account$/);
+    await expect(member).toHaveURL((url) => url.pathname === '/register' && url.searchParams.get('next') === invitation.pathname);
+    const login = 'noscript-invite@example.org';
+    await kbSubmit(member, [[/^Login$/, login], [/^Password$/, st.password], [/^Confirm password$/, st.password]], /^Create account$/);
+    await expect(member).toHaveURL((url) => url.pathname === '/login' && url.searchParams.get('next') === invitation.pathname);
+    await expect(member.locator('#flash')).toContainText('Sign in with it and your password.');
+    await kbSubmit(member, [[/^Login$/, login], [/^Password$/, st.password]], /^Sign in$/);
+    await expect(member).toHaveURL((url) => url.pathname === invitation.pathname);
+    await kbSubmit(member, [[/^Your display name$/, 'No Script Member']], /^Join the network$/);
+    await expect(member).toHaveURL((url) => url.pathname.replace(/\/$/, '') === `/n/${st.slug}`);
+    await expect(member.locator('#flash')).toContainText('You have joined Demo Circle.');
+    await expect(member.getByRole('region', { name: 'Your balance', exact: true })).toBeVisible();
+    await kbActivate(member, /^Directory$/);
+    await expect(member.getByRole('link', { name: 'No Script Member', exact: true })).toBeVisible();
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
+  }
+});
+
+test('QA-034: no-script keyboard dispute review, opening and other-party response', async ({ browser, st }) => {
+  const contexts = [];
+  try {
+    const alice = await newPage(browser, st, contexts, 'alice');
+    await alice.goto(`/n/${st.slug}`);
+    const id = await propose(alice, st, '0.03', 'no-script dispute journey');
+    const bob = await newPage(browser, st, contexts, 'bob');
+    await openPending(bob, st, '0.03', id);
+    await kbActivate(bob, /^Review and accept$/);
+    await kbActivate(bob, /^Confirm and accept$/);
+    await expect(bob.locator('#flash')).toContainText('Trade completed.');
+
+    await alice.goto(`/n/${st.slug}`);
+    const balanceBefore = await alice.getByRole('region', { name: 'Your balance', exact: true }).innerText();
+    await alice.goto(`/n/${st.slug}/trades/${id}`);
+    await kbActivate(alice, /^Raise a dispute$/);
+    await expect(alice.getByLabel('Reason', { exact: true })).toHaveValue('not_delivered');
+    const statement = 'The agreed delivery is still missing.';
+    await kbSubmit(alice, [[/^What went wrong\?$/, statement]], /^Review dispute$/);
+    await expect(alice.locator('h1')).toHaveText('Review your dispute');
+    await expect(alice.locator('main')).toContainText(statement);
+    await expect(alice.locator('main')).toContainText('Your balance and available credit do not change until a reviewer decides.');
+    await kbActivate(alice, /^Open dispute$/);
+    await expect(alice.locator('#flash')).toContainText('Dispute opened. The trade is marked Disputed. Your balance has not changed.');
+    const disputePath = new URL(alice.url()).pathname;
+    expect(disputePath).toMatch(new RegExp(`^/n/${st.slug}/disputes/[^/]+$`));
+    expect([st.disputePath, st.disputeResolved, st.disputeReReview]).not.toContain(disputePath);
+    await expect(alice.locator('main')).toContainText(statement);
+
+    await bob.goto(disputePath);
+    const response = 'I will contact you to arrange the delivery.';
+    await kbSubmit(bob, [[/^Your response$/, response]], /^Send response$/);
+    await expect(bob.locator('#flash')).toContainText('Your response was added');
+    await expect(bob.locator('main')).toContainText(response);
+    await expect(bob.getByRole('button', { name: 'Send response', exact: true })).toHaveCount(0);
+
+    await alice.goto(disputePath);
+    await expect(alice.locator('main')).toContainText(response);
+    await kbActivate(alice, /^Home$/);
+    await expect(alice.getByRole('region', { name: 'Your balance', exact: true })).toHaveText(balanceBefore);
+    await expect(await historyRow(alice, st, id)).toContainText('Disputed');
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
+  }
+});
