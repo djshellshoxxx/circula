@@ -53,7 +53,7 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 | QA-031 | P0 | built | Member scope and canary checks in export tests |
 | QA-032 | P0 | built | Formula neutralisation test |
 | QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI |
-| QA-034 | P0 | partial | Trade/dispute/validation journeys and 18 focus probes passed at 6a4aa61; invitation return-link regression fails; direct no-script onboarding/manual checks remain |
+| QA-034 | P0 | partial | Five no-script journeys/validation cases and 18 focus probes passed at d75f31e, including direct onboarding; original return-link regression fails; manual review remains |
 | QA-035 | P0 | not built | Manual screen-reader review not recorded |
 | QA-036 | P0 | partial | Balance text tested; contrast not checked |
 | QA-037 | P0 | partial | CI runs vet, lint, race tests, govulncheck; L8 and migration static checks partial |

@@ -1,60 +1,60 @@
 # Circula core UX QA restart checkpoint
 
-Repo `djshellshoxxx/circula`; owned branch `codex/circula-noscript-qa`.
-Worktree `/workspace/circula-noscript-qa`, original executor; one active worker.
-Frozen earlier responsive branch: `04e11989b811b4541a20b4e06e7a020beabb6af3`.
-PR18: `9c0bc500cb19f11f18694c76d134f4bfebf896e7`; application:
-`7643fb616208cc318939ded809e6cada66bb7415`. External integrated branch readback:
-`827e651fe151f49659cc20aefe85d4af67bdaa97`. No published runtime handover found.
+Repo: `djshellshoxxx/circula`; owned branch: `codex/circula-noscript-qa`.
+Worktree: `/workspace/circula-noscript-qa`, original executor; one active worker.
+Latest tested source: `d75f31e76c0e1f67dcb744ff8899487b57edda6a`.
+Run 41451135622, attempt 1, completed: eight jobs passed; browser job
+125296339997 failed with 264 passed / one failed (265 executed, 5.4 minutes).
+Both unchanged 10-second fuzz commands passed. No job reruns requested here.
 
-Last executed source `6a4aa6190dcb001fad4ba6aa5bb5e9fd366ddc02`:
-run41449741715 attempt1 completed; eight jobs passed, browser failed261passed/1failed.
-Passing groups:110 viewport,20 text-preference,18 no-script focus,4/5 no-script
-journeys/validation. No jobs retried; both unchanged10s fuzz commands passed.
-The sole failure is the original invitation return-link assertion at line108:
-`next` is still encoded after URLSearchParams decoding. Case remains ACTIVE, byte-identical; no extra decode/skip/xfail or runtime fix. Its later account/sign-in/
-join steps are unexecuted. Runtime owner must assign finding/base/files/regression.
-[Full coverage, source/command/failure/artifact ledger](docs/qa/RESPONSIVE-CHECKS.md).
+Passing groups: 112 viewport/error, 20 text-preference, 18 no-script focus and
+five of six no-script journey/validation cases, plus unchanged baseline tests.
+118 cases were added beyond the input's 147; 117 pass and one remains failing.
+Plain key-only/no-script registration, explicit invitation join, balance and
+empty history pass, as do fresh-trade/dispute/response, native validation recovery
+and 404/Help recovery. No original core assertion, runtime or policy is weakened.
+[Complete source, command, coverage, failure and artifact ledger](docs/qa/RESPONSIVE-CHECKS.md).
 
-Earlier d93a97b ran223passed/4failed; the root-path assumption and mixed
-innerText/textContent comparison were demonstrated test mistakes and corrected.
-6a4aa61 validates those corrections. Original failures remain in Git/ledger.
-Last fully green source is `ca908a8b5743c7d674b4bac4b492c2a5c7c46698`,147passes
+Sole browser failure: original return-link assertion in zz-noscript.spec.js:108.
+After Create an account, next is still encoded after URLSearchParams parsing.
+It remains ACTIVE and byte-identical, reproduced across d93a97b, 6a4aa61 and
+this source. Later account/sign-in/join steps in that case are unexecuted.
+No extra decoding, skip/xfail, deleted assertion or runtime fix. Direct entry
+paths passing do not certify the broken return link. CI is not green/merge-ready.
+
+Earlier d93a97b ran 223 passed / four failed: two root-path assumptions and one
+innerText/textContent mismatch were demonstrated test mistakes. Their corrections
+passed at 6a4aa61 (261/1) and this source. Original failures remain in Git/ledger.
+Last fully green source: ca908a8b5743c7d674b4bac4b492c2a5c7c46698, 147 passes
 with one unchanged fuzz retry. Its original deadline failure remains unresolved;
-no new reliability fix or retry to obtain green is claimed. Earlier invalid-meter
-assertion/source is also preserved. Failure artifact metadata only; no bytes fetched.
+no reliability fix claimed. Earlier invalid-meter assertion/source also preserved.
+Latest failure artifact: 13145300826, 116458 bytes; metadata/digest in ledger.
+No artifact bytes fetched or dependency/artifact HTTP403 denial retried.
 
-Current follow-up adds a separate key-only/no-script plain-registration/sign-in/
-explicit-invitation/join/balance/empty-history journey, plus two404/Help layout
-probes. They preserve the known broken return-link case and do not claim its fix.
-Expected next suite265:112 viewport/error,20 preference,6 no-script,18 focus cases
-plus unchanged baseline. This is static enumeration, not executed/pass evidence.
-Current new-source runtime/aggregate CI is PENDING; inspect exact source before
-any pass claim. Known failure means no green/merge-ready claim even if others pass.
-
-Node syntax, unique case counts, whitespace, hygiene/action pins and limited
-complete-outgoing-file credential/private-data/link/fence/conflict review precede
-publication. Existing branch-push CI only; no tag/dispatch. No local browser/full
-scanner claim. Local dependency/artifact HTTP403 boundaries remain binding;
-no retry, alternate route or environment replacement. Final docs may use skip-ci;
-resolve HEAD with `git rev-parse HEAD` and distinguish it from tested source.
-
-No runtime/CSS, baseline test, helper/fixture, dependency/workflow, OPS004 runbook,
-role/grant/24h invariant, threshold or security/retention change. Departure.go/A1,
-pagination,C09/A2-07,audit/WIP reserved; no archived PoC restored/run.
-Smallest owner action: hand over return-path finding/base/files and original test,
-at least join_anon.html/render.go (owner verifies other next links), then reviewed
-fix preserving safe local-path validation. Generic continuation is not handover.
-
-PR CREATION PAUSED: automatic review rejected conditional creation without exact
-approval; parent asked, no answer known. No create/retry/workaround, merge,
+Final receipt changes documentation only and uses skip-ci. Resolve its head with
+`git rev-parse HEAD`; the tested source above remains distinct. Local checks:
+Node syntax/static registration, whitespace, hygiene/action pins and limited
+complete-outgoing-file credential/private-data/link/fence/conflict review.
+No local browser or full scanner result is claimed for this documentation head.
+Normal source pushes/readbacks succeeded; no unpushed source intentionally left.
+Frozen earlier branch: codex/circula-responsive-qa at 04e11989b811b4541a20b4e06e7a020beabb6af3.
+PR17 is draft/open at 7643fb616208cc318939ded809e6cada66bb7415; PR18 draft/open
+at 9c0bc500cb19f11f18694c76d134f4bfebf896e7. External integrated branch remains
+827e651fe151f49659cc20aefe85d4af67bdaa97. PR12 audit is merged, not runtime handover.
+No runtime/CSS, baseline helper/fixture, dependency/workflow, OPS004 runbook,
+role/grant/24-hour invariant, threshold or security/retention change. Departure.go/
+A1, pagination, C09/A2-07 and audit/WIP remain reserved; no archived PoC run.
+Smallest next owner action: explicitly hand over the return-path finding at this
+base, bounded files (at least internal/web/templates/join_anon.html and
+internal/web/render.go; owner checks other next links) and the unchanged original
+regression; then make a reviewed fix preserving safe local-path validation.
+Generic continuation is not that handover. Broader permutations/admin/security/
+lifecycle/loading/multi-network and native/manual/screen-reader/independent/
+professional review remain unestablished. No full feature/release-completion claim.
+PR creation PAUSED: automatic review rejected conditional creation without exact
+approval; parent asked and no answer is known. No create/retry/workaround, merge,
 APPROVE review, deploy/release, credential/security change or purchase attempted.
-Pending approval for frozen04e1198 does not approve this later source.
-
-Next: inspect exact-source CI, preserve all failures; fix only demonstrated test
-mistakes in owned scope. No weakened assertions/budgets or repeated fuzz retries.
-Native/manual/screen-reader and independent/professional gates remain open;
-other data permutations, admin mutations, loading and full security review are not
-established. Preserve dirty/untracked/unpushed and external work; explicit ref fetch
-if needed, no main reset/force push. No extra workers/paid calls. Usage/model switch
-unavailable; keep reserve.
+Pending approval for the frozen older branch does not approve this later source.
+Preserve dirty/untracked/unpushed and external work; fetch explicit owned refs as
+needed, no main reset/force push. No extra workers/paid calls/environment replacement.
+Usage/model switching unavailable; keep reserve. Do not weaken gates or repeat fuzz retries.

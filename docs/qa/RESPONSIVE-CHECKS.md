@@ -9,6 +9,17 @@ source in [the current handoff](../../HANDOFF.md). `git rev-parse HEAD` resolves
 the checkout head, which can be a later document-only receipt; earlier
 application CI does not validate later tests or receipts.
 
+## Current reading guide
+
+Latest tested source: `d75f31e76c0e1f67dcb744ff8899487b57edda6a`.
+Run41451135622 browser job 125296339997: **264 passed / one failed** (265 executed).
+The unchanged invitation return-link case fails; no runtime fix, full green
+result, merge or review approval is claimed. Read the final execution receipt
+and coverage/limits table below. Earlier sections preserve observations at their
+named checkpoint and do not supersede newer exact-source evidence. The handoff
+resolves tested source versus any later documentation-only head. One coordinator
+is the sole worker. Local dependency/artifact403 boundaries remain binding.
+
 ## Validated viewport checkpoint
 
 Test source `5d2b2c219acbd0d6ba192c42372cc7a8a484ab7b` completed
@@ -389,11 +400,11 @@ Exact-source runtime/aggregate results remain pending.
 
 | Accepted QA slice | Recorded coverage | Remaining boundary |
 |---|---|---|
-| QA-034 named trade/balance/history/dispute core flows | Combined key-only/script-disabled completion and response, plus native validation recovery at6a4aa61 | Invitation return-link regression blocks that entry path; final direct registration/join case needs its own execution |
-| QA-034/UX-040 focus |18 key-only/script-disabled probes on nine entry screens at both sizes passed6a4aa61 | Entry-screen sampling does not establish every subsequent state, reading order, screen-reader or native/browser combination |
-| UX-033/UX-036 |110 positive layout probes across55 requests/54 final destinations passed6a4aa61 | Negative-state additions need execution; all possible data permutations and native orientation remain unverified |
-| UX-034 |20 enlargement/spacing probes passed6a4aa61, including complete own-trade and explicit onboarding paths | DOM style injection in Chromium is not native browser/OS text-settings certification or all admin/mutation functions |
-| UX-022/UX-028 | Script-disabled invalid-proposal recovery; fresh-account empty membership/history states | Final script-disabled empty-state/404 checks pending; all refusal codes and loading implementations are not established |
+| QA-034 named core flows | Five combined key-only/script-disabled journey/validation cases pass at d75f31e, including plain registration and explicit join | Original invitation return-link regression fails; manual/transition review remains |
+| QA-034/UX-040 focus |18 key-only/script-disabled probes on nine entry screens at both sizes passed at d75f31e | Entry-screen sampling does not establish every subsequent state, reading order, screen-reader or native/browser combination |
+| UX-033/UX-036 |110 positive layout probes across 55 requests/54 final destinations plus two 404/Help probes passed at d75f31e | Other data permutations and native orientation remain unverified |
+| UX-034 |20 enlargement/spacing probes passed at d75f31e, including complete own-trade and explicit onboarding paths | DOM style injection in Chromium is not native browser/OS text-settings certification or all admin/mutation functions |
+| UX-022/UX-028 | Script-disabled invalid-proposal recovery and fresh-account empty membership/history, plus 404/Help checks pass at d75f31e | All refusal codes and loading implementations are not established |
 | Manual and ownership gates | No runtime/CSS edits, PoC restore, independent review or deployment | Reserved return-path/runtime handover, manual/native/screen-reader/professional review, operator/target authority and exact PR approval remain required |
 
 The executable continuation is bounded to these accepted ordinary-core UX slices.
@@ -402,3 +413,54 @@ restore archived tests, or invent grant/policy/financial scenarios to inflate co
 Further reserved runtime/security/lifecycle work requires its existing owner;
 manual/native gates require the named human/device/tool evidence and cannot be
 marked complete by these browser probes. Preserve every prior failure and threshold.
+
+### Final execution receipt: 265 cases, one preserved runtime gate
+
+Source `d75f31e76c0e1f67dcb744ff8899487b57edda6a`,
+[run 41451135622](https://github.com/djshellshoxxx/circula/actions/runs/41451135622),
+attempt1, browser job `125296339997`: **264 passed, one failed** (5.4 minutes).
+All nine jobs completed: the other eight passed (lint/scanning, three OS jobs,
+cross-build, reproducibility, contract/load and fuzz). Overall run conclusion is
+failure, with no job reruns. Both original 10-second fuzz commands passed.
+The decoded successful-case list contains 112 viewport/error, 20 preference,
+18 no-script focus and five of six no-script journey/validation cases. The three
+final state additions all passed, including direct no-script onboarding and both
+404/Help recovery probes. This supersedes their earlier pending observations.
+All earlier baseline browser cases still pass. The suite has grown from 147 at
+the input receipt to 265: 118 added cases,117 passing and one preserved failure.
+
+The sole failing case is the byte-identical original return-link regression at
+`e2e/tests/zz-noscript.spec.js:108`. Its `next` query value is still encoded after
+URLSearchParams parsing; its later registration/sign-in/join steps remain
+unexecuted. Plain registration and explicit invitation acceptance now have their
+own passing keyboard/no-script evidence; they do not repair or certify that
+return-link path. Neither extra decoding nor skip/xfail/deletion was introduced.
+The same failure now reproduces across all three genuinely changed source
+checkpoints and independent synthetic invitations. No unchanged workflow/fuzz job
+was rerun to obtain a green status; there is no green aggregate claim.
+
+Final failure upload receipt: artifact `13145300826`, 116458 bytes, SHA256
+`e271b1feebf28e932ad12febb92c07a917643d9a4ecdcf285ee8327a3442557c`.
+Retention remains seven days. No artifact bytes were fetched or denied route
+retried; no synthetic invitation token is copied into these notes. The earlier
+invalid-meter assertion and fuzz deadline failure remain preserved above and in
+Git, with no reliability/runtime fix claimed.
+
+The executable named ordinary-core UX continuation is complete as tested, apart
+from the explicitly reserved return-link path. This is a bounded automated-QA
+milestone. Other data/state permutations, admin/security/lifecycle mutations,
+loading behaviour, multi-network fixtures, native browser/device settings and
+manual/screen-reader/independent/professional review are not established. No full
+feature, accessibility, security, integration or release-completion claim follows.
+The smallest next action remains the explicit bounded runtime-owner handover
+specified above, then a reviewed fix against the unchanged original regression.
+PR creation has its own pending exact approval and is not attempted here.
+
+Final ref/PR readback: PR12 is closed/merged (audit evidence); PR17 remains open/
+draft, head 7643fb616208cc318939ded809e6cada66bb7415, base external 827e651. PR18
+remains open/draft, head 9c0bc500cb19f11f18694c76d134f4bfebf896e7, base PR17.
+The earlier responsive branch is still frozen at 04e11989b811b4541a20b4e06e7a020beabb6af3.
+No PR creation, comment, approval, merge or deployment occurred in this continuation.
+Merged audit evidence and an unchanged external head do not transfer runtime ownership
+or establish an external private writer's inactivity. The final receipt is docs-only;
+CI evidence above belongs to d75f31e. Remote receipt SHA is verified after publication.

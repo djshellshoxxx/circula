@@ -55,14 +55,14 @@ Summary: built 31, not built 7, partial 22.
 | UX-030 | P0 | built | Two-minute warning with Stay signed in extension |
 | UX-031 | P1 | partial | Suspended notice not verified in templates |
 | UX-032 | P0 | built | Confirmation step names object for remove and cancel |
-| UX-033 | P0 | partial | 110 viewport cases across 55 requests passed at 6a4aa61; broader data/native coverage remains; known return-link gate separate |
-| UX-034 | P0 | partial | 20 enlargement/spacing probes passed at 6a4aa61, including own-trade/onboarding paths; wider functionality/native coverage remains |
+| UX-033 | P0 | partial | 112 viewport/error cases passed at d75f31e; broader data/native coverage remains; known return-link gate separate |
+| UX-034 | P0 | partial | 20 enlargement/spacing probes passed at d75f31e, including own-trade/onboarding paths; wider functionality/native coverage remains |
 | UX-035 | P0 | partial | Target sizes not measured |
 | UX-036 | P0 | partial | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |
 | UX-037 | P1 | not built | Stacked rows for wide tables not built |
 | UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
 | UX-039 | P0 | partial | Reading order by template; not automated |
-| UX-040 | P0 | partial | 18 no-script key-only entry-screen focus probes passed at 6a4aa61; transition/manual/native review remains |
+| UX-040 | P0 | partial | 18 no-script key-only entry-screen focus probes passed at d75f31e; transition/manual/native review remains |
 | UX-041 | P0 | built | Skip link to main |
 | UX-042 | P0 | built | No drag interactions |
 | UX-043 | P0 | built | Actions fire on submit and link activation |
