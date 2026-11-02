@@ -2,8 +2,10 @@
 
 Owned branch: `codex/circula-responsive-qa`.
 Input: `9c0bc500cb19f11f18694c76d134f4bfebf896e7`, preserving draft PR #18 and
-application `7643fb616208cc318939ded809e6cada66bb7415`. Resolve the current test
-commit with `git rev-parse HEAD`; earlier application CI does not validate it.
+application `7643fb616208cc318939ded809e6cada66bb7415`. Read the latest tested
+source in [the current handoff](../../HANDOFF.md). `git rev-parse HEAD` resolves
+the checkout head, which can be a later document-only receipt; earlier
+application CI does not validate later tests or receipts.
 
 ## Validated viewport checkpoint
 
@@ -18,7 +20,7 @@ Later text-preference tests need their own exact-source CI.
 
 The branch is normally published and its remote commit was read back. An attempt
 to create a draft against PR #18's branch returned no usable structured receipt;
-the orchestration then failed while storing the response. Readback found no PR
+the orchestration then failed with `Unable to store "responsive_pr". Only plain serializable objects can be stored.` Readback found no PR
 for the branch. No permission-denial reason was captured and no create retry was
 made. Inspect the original action result/permissions before another create
 attempt; do not infer that a draft exists or bypass any denial.

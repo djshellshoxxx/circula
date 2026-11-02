@@ -58,7 +58,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-033 | P0 | partial | 24 viewport cases passed at 5d2b2c2 for 12 representative screens; broader coverage remains |
 | UX-034 | P0 | partial | Four enlargement/spacing form-flow probes passed at 2e323a1; wider functionality/browser coverage remains |
 | UX-035 | P0 | partial | Target sizes not measured |
-| UX-036 | P0 | partial | Portrait/landscape browser viewport checks added; native-device evaluation not performed |
+| UX-036 | P0 | partial | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |
 | UX-037 | P1 | not built | Stacked rows for wide tables not built |
 | UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
 | UX-039 | P0 | partial | Reading order by template; not automated |
@@ -71,7 +71,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-046 | P0 | built | Document language en |
 | UX-047 | P1 | not built | Strings not externalised into catalogues |
 | UX-048 | P0 | built | Visible labels and autocomplete |
-| UX-049 | P1 | partial | Six section/viewport Help-landmark cases added; browser results pending; broader visual/all-page review remains |
+| UX-049 | P1 | partial | Six section/viewport Help-landmark cases passed at 32a8314; broader visual/all-page review remains |
 | UX-050 | P0 | built | Copy avoids money and cash wording for credits |
 | UX-051 | P0 | built | Sign-in form allows paste; no cognitive test |
 | UX-052 | P0 | partial | Recovery not built; registration response uniform |
