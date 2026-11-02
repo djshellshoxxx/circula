@@ -1,46 +1,50 @@
-# Circula responsive QA continuation
+# Circula automated accessibility QA continuation
 
 Repository: `djshellshoxxx/circula`.
 Owned branch: `codex/circula-responsive-qa`.
-Input checkpoint: `9c0bc500cb19f11f18694c76d134f4bfebf896e7` (draft PR #18),
-preserving application `7643fb616208cc318939ded809e6cada66bb7415` (draft PR #17).
+Input: `9c0bc500cb19f11f18694c76d134f4bfebf896e7` (preserved draft PR #18),
+retaining application `7643fb616208cc318939ded809e6cada66bb7415` (draft PR #17).
 Use `git rev-parse HEAD` and remote readback for the current test checkpoint.
-Prior staging handoff remains at `git show 9c0bc500cb19f11f18694c76d134f4bfebf896e7:HANDOFF.md`.
 
-Ready slice: [24 responsive browser cases](e2e/tests/responsive.spec.js) for 12
-representative pages at 320×640 portrait and 640×320 landscape. They check the
-intended route, heading/main visibility, page-level overflow and table-scroll
-region labelling/focusability. These cases navigate only; fixtures and every
-existing assertion are unchanged. UX-033/UX-036 remain partial.
-[Coverage, commands and actual evidence](docs/qa/RESPONSIVE-CHECKS.md).
+Validated viewport source: `5d2b2c219acbd0d6ba192c42372cc7a8a484ab7b`.
+Push CI 41429404139 passed all 9 jobs. Browser job 125223913309 reports
+127 passed, including all 24 new portrait/landscape cases. Exact evidence and
+limits: [viewport checks](docs/qa/RESPONSIVE-CHECKS.md). No local browser pass.
 
-Local checks passed: Node syntax, whitespace, repository hygiene/action pins,
-27 local links and complete outgoing limited credential/private-data patterns
-across four files. Browser execution is pending exact-source CI, not passed.
-No local application/browser or pinned full-scanner pass is claimed. Node modules
-and Chromium are absent here; earlier module/artifact HTTP 403 denials remain
-binding and were not retried. Existing reviewed CI is the validation route.
+Next slice: [four text-preference probes](e2e/tests/resize.spec.js), exercising
+proposal review with doubled text and WCAG spacing at two viewports. They stop
+before Send trade; no posting, policy/role or independent/24-hour fixture changes.
+[Commands, sources and limits](docs/qa/TEXT-PREFERENCES.md). Browser execution of
+this new slice is pending its own exact-source CI; older green results do not
+validate it. UX-033/034/036 remain partial; no complete WCAG claim is made.
 
-Freeze the published test candidate while CI runs. Record exact source/run/job,
-actual results and original failures before claiming this QA slice validated.
-Do not weaken assertions, shrink coverage or edit reserved runtime/CSS if a new
-case fails. Keep routine CI receipts separate until candidate checks finish.
-No workflow, runtime, dependency, ledger, monetary value, threshold, credential,
-security setting, policy or 24-hour/grant-lineage fixture changed.
+One local worker; no subagent, external writer invocation or paid API call.
+Audit/WIP, A1/A3 and C-09/A2-07 plus PR #17 integration reservations remain intact.
+No runtime handover was found; private external-session activity is unverified.
+Only new QA files, their coverage/as-built notes and this handoff are reserved.
+Runtime/CSS, old tests/assertions, fixtures, dependencies, workflows, OPS-004
+runbook, monetary values, retention/security settings and ledger rules are intact.
 
-Ownership: this coordinator reserves only the new responsive test, its QA notes,
-two as-built notes and this branch's handoff. Existing PR #17 integration and
-PR #12 audit/WIP, A1/A3 and C-09/A2-07 reservations remain intact. No runtime
-handover was found; no external private-session activity state is inferred.
-One local worker; no coding/review subagents or paid API calls. Model switching
-and reliable usage percentage are unavailable; retain a checkpointing reserve.
+Local checks for this new slice passed: Node syntax, whitespace, hygiene/action
+pins, 29 local links, fences/conflicts and limited outgoing sensitive-data review
+across five complete files. Record actual new source/job results before validation. Node
+modules and Chromium remain absent locally; previous module/artifact HTTP 403
+denials were not retried. The existing reviewed CI route is authorised.
+Keep the published candidate fixed until its CI finishes; preserve failures and
+assertions, and do not shrink coverage or alter reserved runtime/CSS for green CI.
 
-Next: normally publish this owned branch and open a draft into the preserved
-PR #18 branch after checking live refs and outgoing content. Verify remote SHA,
-draft/base/head and exact-source CI. Preserve the runbook and all older refs.
-Before runtime remediation, obtain a bounded audit-owner assignment naming the
-finding, base, permitted files and original regression. Hosted staging still
-needs a separately authorised operator/target. Manual screen-reader, independent
-professional review, owner decisions and release gates remain open. No APPROVE,
-merge, PR closure, force push, release/deployment, purchase, credential/security
-change or denial bypass is authorised by this QA task.
+Draft creation returned no usable structured receipt and response storage failed;
+readback showed no PR for this branch. No create retry or alternative route was
+used. No permission-denial reason was captured. Review the original result and
+current permissions before another attempt; never claim a draft was created.
+Normal source push/readback succeeded. Expected target remains PR #18's branch.
+
+Next: normally checkpoint only this owned source, verify the remote SHA and read
+its existing CI. Reconcile any new external ownership before a further slice.
+Runtime remediation needs an explicit finding/base/file/regression assignment;
+A1-01/A1-06 concerns internal/service/departure.go and dedicated service tests.
+Keep archived drafts and PR #13. Hosted staging needs a separately authorised
+operator/target; manual screen-reader, professional/independent review, owner
+and release gates remain open. No merge, APPROVE, closure, force push, deployment,
+purchase, credential/security change or denial bypass is authorised here.
+Usage/model switching is unavailable; retain a checkpointing reserve.

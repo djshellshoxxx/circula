@@ -5,6 +5,24 @@ Input: `9c0bc500cb19f11f18694c76d134f4bfebf896e7`, preserving draft PR #18 and
 application `7643fb616208cc318939ded809e6cada66bb7415`. Resolve the current test
 commit with `git rev-parse HEAD`; earlier application CI does not validate it.
 
+## Validated viewport checkpoint
+
+Test source `5d2b2c219acbd0d6ba192c42372cc7a8a484ab7b` completed
+[push CI 41429404139](https://github.com/djshellshoxxx/circula/actions/runs/41429404139)
+with all nine jobs successful. Browser job `125223913309` reports 127 tests
+passed, including all 24 new viewport cases. The filtered log contains one
+successful result for each new case. Lint/pinned scanning, three OS jobs,
+contract/load, fuzz, cross-build and reproducibility passed at that exact source.
+No cancelled or older-source job is counted, and no local browser pass is implied.
+Later text-preference tests need their own exact-source CI.
+
+The branch is normally published and its remote commit was read back. An attempt
+to create a draft against PR #18's branch returned no usable structured receipt;
+the orchestration then failed while storing the response. Readback found no PR
+for the branch. No permission-denial reason was captured and no create retry was
+made. Inspect the original action result/permissions before another create
+attempt; do not infer that a draft exists or bypass any denial.
+
 ## Scope and ownership
 
 The current suite contains axe, ARIA, keyboard and security tests but no viewport
