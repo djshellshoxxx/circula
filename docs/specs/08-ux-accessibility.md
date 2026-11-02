@@ -24,7 +24,7 @@ Summary: built 31, not built 7, partial 22.
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | UX-001 | P0 | built | Navigation by role; hidden pages return not-found or forbidden |
-| UX-002 | P0 | partial | Home reachable in three activations not measured |
+| UX-002 | P0 | partial | Paths from Home within three activations: new 60-case core/adjacent sample pending exact-source CI; broader states remain |
 | UX-003 | P1 | built | Network switcher and separate network pages |
 | UX-004 | P0 | built | In credit, In debt, Level labels |
 | UX-005 | P0 | partial | Sign and words used; greyscale check not run |

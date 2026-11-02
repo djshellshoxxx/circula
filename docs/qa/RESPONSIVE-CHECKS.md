@@ -464,3 +464,52 @@ No PR creation, comment, approval, merge or deployment occurred in this continua
 Merged audit evidence and an unchanged external head do not transfer runtime ownership
 or establish an external private writer's inactivity. The final receipt is docs-only;
 CI evidence above belongs to d75f31e. Remote receipt SHA is verified after publication.
+
+## UX-002 continuation: measured paths from Home
+
+Resumed from clean published receipt
+`f51295dd9bcce68467fcf928ff9d3de235db21ef`. The owned, frozen responsive,
+application, PR18 and external integrated refs still matched their recorded
+heads. Published PR12/PR17 comments supplied no explicit runtime handover;
+external private writer activity remains unverified. Generic continuation does
+not transfer the reserved return-link/runtime/CSS/A1/pagination work or approve
+PR creation. One coordinator continues in the existing executor.
+
+UX-002's normative text in spec08 requires screens to be reachable **from Home**
+in no more than three link/button activations. The older as-built row's shorthand
+was ambiguous; the new test measures this direction, not a return-to-Home path.
+No existing test recorded this activation budget. This is an accepted independent
+QA gap; it creates no new product feature or runtime behaviour.
+
+[The new navigation test](../../e2e/tests/navigation.spec.js) registers60 cases:
+29 core/adjacent destinations at both existing viewports, plus two fresh-trade
+routes to the dispute form. Each starts with a successful Home page and balance
+card, then clicks only visible, actually rendered anchors. One to three explicit
+link destinations are allowed; every navigation requires status200, the exact
+intended path/query and a visible single heading. No direct goto, form submission
+or programmatic routing occurs inside the measured path.
+
+The ordinary matrix only navigates GET pages as Alice, Bob, Carol or admin.
+For the dispute-form path, bounded UI setup first creates/completes a new0.07
+synthetic Alice→Bob trade for that variant. It never mutates a seeded transaction.
+The measured path then starts afresh: Home→History→that trade→Raise a dispute,
+exactly three links. It stops at the form; no dispute/decision/reversal is posted.
+Existing helpers, fixtures, baseline assertions, runtime/CSS, dependencies,
+workflows, roles, financial policy and original budgets remain unchanged.
+
+Local Node syntax,60 unique static registrations and whitespace passed. New-source
+browser/aggregate results are pending;325 is the expected suite count (265+60),
+not an executed/pass count. Existing local dependency/artifact403 boundaries
+remain binding and are not retried. Reviewed branch-push CI is the execution
+route; release requires a version tag and Scorecard push publication is main-only.
+No PR creation, dispatch, merge, release or deployment is requested or attempted.
+
+UX-002 remains partial even if the matrix passes: this is the seeded active-role
+core/adjacent sample, not every signup/join mode, authentication/session/error
+state, multi-network fixture or primary-action submission. It does not prove a
+missing chosen link implies no other valid three-activation path; any failure
+requires the current UI/fixture and accepted requirement to be checked first.
+Reserved runtime fixes still require handover. The original invitation-return
+regression remains active and unmodified; the source cannot be called green or
+merge-ready while it fails. Earlier invalid-meter and fuzz-deadline evidence is
+preserved; no unchanged fuzz/workflow rerun is used to obtain green.
