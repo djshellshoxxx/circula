@@ -11,14 +11,15 @@ application CI does not validate later tests or receipts.
 
 ## Current reading guide
 
-Latest tested source: `d75f31e76c0e1f67dcb744ff8899487b57edda6a`.
-Run41451135622 browser job 125296339997: **264 passed / one failed** (265 executed).
-The unchanged invitation return-link case fails; no runtime fix, full green
-result, merge or review approval is claimed. Read the final execution receipt
-and coverage/limits table below. Earlier sections preserve observations at their
-named checkpoint and do not supersede newer exact-source evidence. The handoff
-resolves tested source versus any later documentation-only head. One coordinator
-is the sole worker. Local dependency/artifact403 boundaries remain binding.
+Latest tested source: `b231dc5d160d98614825bfc6f8099f3e409d5930`.
+Run 41472456920 browser job 125369302163: **324 passed / one failed** (325 executed).
+All 60 new UX-002 navigation cases pass. The unchanged invitation return-link case
+fails; no runtime fix, full green result, merge or review approval is claimed.
+Read the navigation execution receipt below for exact-source coverage and limits.
+Earlier sections preserve observations at their named checkpoint and do not
+supersede newer evidence. The handoff distinguishes tested source from any later
+documentation-only head. One coordinator is the sole worker; local dependency/
+artifact403 boundaries remain binding.
 
 ## Validated viewport checkpoint
 
@@ -414,11 +415,11 @@ Further reserved runtime/security/lifecycle work requires its existing owner;
 manual/native gates require the named human/device/tool evidence and cannot be
 marked complete by these browser probes. Preserve every prior failure and threshold.
 
-### Final execution receipt: 265 cases, one preserved runtime gate
+### Core-flow execution receipt: 265 cases, one preserved runtime gate
 
 Source `d75f31e76c0e1f67dcb744ff8899487b57edda6a`,
 [run 41451135622](https://github.com/djshellshoxxx/circula/actions/runs/41451135622),
-attempt1, browser job `125296339997`: **264 passed, one failed** (5.4 minutes).
+attempt 1, browser job `125296339997`: **264 passed, one failed** (5.4 minutes).
 All nine jobs completed: the other eight passed (lint/scanning, three OS jobs,
 cross-build, reproducibility, contract/load and fuzz). Overall run conclusion is
 failure, with no job reruns. Both original 10-second fuzz commands passed.
@@ -481,7 +482,7 @@ was ambiguous; the new test measures this direction, not a return-to-Home path.
 No existing test recorded this activation budget. This is an accepted independent
 QA gap; it creates no new product feature or runtime behaviour.
 
-[The new navigation test](../../e2e/tests/navigation.spec.js) registers60 cases:
+[The new navigation test](../../e2e/tests/navigation.spec.js) registers 60 cases:
 29 core/adjacent destinations at both existing viewports, plus two fresh-trade
 routes to the dispute form. Each starts with a successful Home page and balance
 card, then clicks only visible, actually rendered anchors. One to three explicit
@@ -490,15 +491,15 @@ intended path/query and a visible single heading. No direct goto, form submissio
 or programmatic routing occurs inside the measured path.
 
 The ordinary matrix only navigates GET pages as Alice, Bob, Carol or admin.
-For the dispute-form path, bounded UI setup first creates/completes a new0.07
+For the dispute-form path, bounded UI setup first creates/completes a new 0.07
 synthetic Alice→Bob trade for that variant. It never mutates a seeded transaction.
 The measured path then starts afresh: Home→History→that trade→Raise a dispute,
 exactly three links. It stops at the form; no dispute/decision/reversal is posted.
 Existing helpers, fixtures, baseline assertions, runtime/CSS, dependencies,
 workflows, roles, financial policy and original budgets remain unchanged.
 
-Local Node syntax,60 unique static registrations and whitespace passed. New-source
-browser/aggregate results are pending;325 is the expected suite count (265+60),
+Local Node syntax, 60 unique static registrations and whitespace passed. New-source
+browser/aggregate results are pending; 325 is the expected suite count (265+60),
 not an executed/pass count. Existing local dependency/artifact403 boundaries
 remain binding and are not retried. Reviewed branch-push CI is the execution
 route; release requires a version tag and Scorecard push publication is main-only.
@@ -513,3 +514,44 @@ Reserved runtime fixes still require handover. The original invitation-return
 regression remains active and unmodified; the source cannot be called green or
 merge-ready while it fails. Earlier invalid-meter and fuzz-deadline evidence is
 preserved; no unchanged fuzz/workflow rerun is used to obtain green.
+
+### UX-002 execution receipt
+
+At source `b231dc5d160d98614825bfc6f8099f3e409d5930`,
+[run 41472456920](https://github.com/djshellshoxxx/circula/actions/runs/41472456920),
+attempt 1, browser job `125369302163`: **324 passed, one failed** (325 executed,
+4.4 minutes). All jobs completed: the other eight passed (lint/scanning, three
+OS jobs, cross-build, reproducibility, contract/load and fuzz). Overall conclusion
+is failure, with no reruns. Both original 10-second fuzz commands passed.
+The decoded case list confirms all 60 new navigation cases passed,
+including both exactly-three-link fresh-trade paths to Raise a dispute. This
+supersedes the new-source pending/static-count observations above. The earlier
+265-case baseline still has its same single failure; there are no new failures.
+
+Measured ordinary paths cover Directory/profile, listings/create/edit, proposal,
+trades/detail/accept/decline/cancel, history, disputes/reviewer queue/detail,
+admin overview/members/policy/adjustment/audit/invitations/announcements/exports/
+reports, account time-zone/password forms and Help. They use one to three actual
+rendered links from Home at 320px portrait and 640px landscape. Two variants use
+their own completed synthetic trades prepared before measurement, so the new
+assertions do not rely on unresolved/reversed seeded trades exposing a raise link.
+No seeded IDs, roles, policy, threshold or baseline assertion changed.
+
+The sole failing case remains the exact original return-link assertion at
+`e2e/tests/zz-noscript.spec.js:108`: URLSearchParams parsing leaves the invitation
+return path encoded. Its later registration/sign-in/join steps remain unexecuted.
+No decode/skip/xfail/runtime fix or job rerun was introduced. Separate passing
+direct-entry paths and passing navigation budgets do not certify that broken path.
+
+Failure artifact receipt: `13156910519`, 116382 bytes, SHA256
+`d2b8b9c36477cdea07f0a3b7b42b234f47eb222586f0c99a1a2cb41e3afcc881`.
+Seven-day retention; no artifact bytes fetched and no denied route retried.
+Synthetic invitation-token values are omitted. Original invalid-meter and
+unchanged-fuzz-deadline evidence remain preserved; no reliability fix is claimed.
+
+UX-002 remains partial, with the previously stated signup/join/auth/error/state/
+multi-network/native/manual limits. Passing this sample is not a whole feature,
+accessibility, security, review or release-completion claim. Runtime-owner handover
+is still required for the preserved return-link fix; exact PR creation approval
+remains separately pending. No runtime/CSS or reserved work is assigned by this
+QA receipt. The frozen responsive branch and other owners' refs remain preserved.
