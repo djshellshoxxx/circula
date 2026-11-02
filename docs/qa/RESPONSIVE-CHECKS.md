@@ -84,7 +84,62 @@ exact-source jobs/results, including failures, before declaring this QA slice
 validated. Keep original assertions and any failing evidence; do not weaken
 coverage or edit reserved runtime/CSS to make a failure disappear.
 
-## Runtime handover still needed
+## Screen, role and flow reconciliation
+
+Reconciled from test source `32a8314ebd28094dd6d2500c454ed809f6b16b3c` and
+handoff `04e11989b811b4541a20b4e06e7a020beabb6af3`. The existing axe page table has
+57 screen/role entries; it also allows responses below 500, so it is not a
+reviewed authorization or successful-flow inventory. The 34 later cases cover
+12 representative positive screens, four preference cases and six section/
+viewport Help checks; those counts are not interchangeable with all routes.
+
+| Screen/role/flow group | Existing evidence | Remaining accepted coverage |
+|---|---|---|
+| Anonymous login, registration, Help | Axe; keyboard sign-in; viewport and Help probes | Scripting-disabled completion; registration/invitation flows remain beyond the new member slice |
+| Alice/Bob ordinary members: dashboard, proposal, completed trade, history | Axe/ARIA, keyboard proposal/acceptance, viewport, proposal text preferences, Help | Combined keyboard/no-script member journeys selected below; broader flow/state coverage remains |
+| Pending trade: Carol proposes to Bob; Carol is also a reviewer | Axe covers Bob accept/decline and Carol cancellation; ARIA covers Bob's pending/accept pages | These are genuine party-specific screens, not assumed 403 cases; viewport/text preference coverage remains narrower |
+| Inbox, reports, time zone | Axe and specific keyboard/focus journeys | Not included in the 12-screen viewport set; wider visual/preference coverage remains |
+| Review/dispute states | Axe plus selected keyboard response/decision probes | No archived PoC restoration or reserved dispute/A1 runtime remediation is assigned here |
+| Founder/admin overview, members, audit | Axe plus viewport and Help probes | Invitations, policy, exports, reports, adjustments and other admin states have narrower automated coverage |
+| Security/MFA/recovery/operator/erasure/dual-control | `security.spec.js` uses its own `secfixture.js` instance | Preserve that isolation and reserved ownership; these are not ordinary member fixture roles |
+
+Roles were checked against `global-setup.js`: Alice/Bob are ordinary members,
+Carol is the pending trade's proposer and a dispute reviewer, and admin is the
+founder. Security tests explicitly use a separate database, so their account
+changes do not invalidate the ordinary-member seed. The new QA slice does not
+change that setup, any grant, the 24-hour rules or existing test assertions.
+
+### Selected independent QA-034 slice
+
+At the input source no browser context disabled JavaScript. The existing `as` fixture opens
+its own context, so a test-level default alone would not disable scripting for
+its role pages. New [no-script journeys](../../e2e/tests/zz-noscript.spec.js)
+explicitly create contexts with `javaScriptEnabled: false`, using the
+[documented Playwright option](https://playwright.dev/docs/api/class-browser#browser-new-context-option-java-script-enabled).
+They reuse the existing `kbd.js` helpers: all page controls are operated by Tab,
+typing and Enter, with no click/fill/selectOption or script-driven form changes.
+Playwright's DOM inspection remains test instrumentation, not site scripting.
+
+The two cases exercise ordinary-member sign-in/proposal/acceptance/balance/
+history and proposal/decline/history flows, using only their own new trade IDs:
+one small synthetic trade is completed;
+the other is declined without a ledger reference. The seeded trade IDs, policy,
+roles and existing security instance are preserved. Contexts are closed on
+success or failure. No CSP bypass is enabled for these new contexts.
+
+QA-034 remains partial: registration, invitation acceptance, dispute raise, all
+states and manual focus/reading checks are not established by these two cases.
+No manual/native or independent gate is satisfied by adding them.
+
+With an existing built binary and cached Node/Chromium dependencies, the focused
+command is `cd e2e && CIRCULA_BIN=/absolute/path/to/bin/circula ./node_modules/.bin/playwright test tests/zz-noscript.spec.js`.
+Local checks passed: Node syntax, staged whitespace, repository hygiene/action
+pins, 36 local links across outgoing documents, fences/conflicts and limited
+credential/private-data review of all four complete outgoing files, with no
+findings. Exact new-source browser/aggregate CI results remain pending.
+No local browser run or retry of denied dependency/artifact downloads is implied.
+
+### Reserved runtime handover
 
 The audit owner must explicitly assign the finding, base, permitted files and
 original regression before remediation. In particular, A1-01/A1-06 departure

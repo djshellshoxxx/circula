@@ -53,7 +53,7 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 | QA-031 | P0 | built | Member scope and canary checks in export tests |
 | QA-032 | P0 | built | Formula neutralisation test |
 | QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI |
-| QA-034 | P0 | partial | Keyboard and scripting-disabled operation checked manually for some flows |
+| QA-034 | P0 | partial | Existing keyboard flows are automated; two combined no-script member journeys added, browser results pending; broader flows/manual checks remain |
 | QA-035 | P0 | not built | Manual screen-reader review not recorded |
 | QA-036 | P0 | partial | Balance text tested; contrast not checked |
 | QA-037 | P0 | partial | CI runs vet, lint, race tests, govulncheck; L8 and migration static checks partial |

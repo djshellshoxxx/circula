@@ -1,54 +1,53 @@
-# Circula accessibility QA restart checkpoint
+# Circula no-script QA restart handoff
 
-Repository: `djshellshoxxx/circula`; owned branch: `codex/circula-responsive-qa`.
-Worktree: `/workspace/circula-responsive-qa` in the original executor.
-Application remains `7643fb616208cc318939ded809e6cada66bb7415` (draft PR #17).
-Input `9c0bc500cb19f11f18694c76d134f4bfebf896e7` and draft PR #18 are preserved.
+Repository: `djshellshoxxx/circula`; sole local worker on
+`codex/circula-noscript-qa`, worktree `/workspace/circula-noscript-qa`.
+Input: `04e11989b811b4541a20b4e06e7a020beabb6af3`. Keep the responsive-QA branch
+frozen there for its pending exact PR approval. Draft PR #18 remains at
+`9c0bc500cb19f11f18694c76d134f4bfebf896e7`; application is unchanged at
+`7643fb616208cc318939ded809e6cada66bb7415`. No environment was replaced.
 
-Frozen test source: `32a8314ebd28094dd6d2500c454ed809f6b16b3c`.
-Push run 41432973449: completed successfully, all 9 jobs passed at that source.
-Browser job 125235861360: 137 passed, including 34 new cases (24 viewport,
-4 text-preference and 6 Help-placement). Older sources 5d2b2c2 and 2e323a1 each
-passed all 9 CI jobs; their exact evidence remains in the coverage records.
-Resolve a later document-only HEAD with `git rev-parse HEAD`; do not attribute
-source CI to a later handoff-only commit. No local browser or full scanner pass.
+Earlier tested source `32a8314ebd28094dd6d2500c454ed809f6b16b3c` passed 9/9 in
+run 41432973449, with 137 browser tests including 34 new UX cases. Those results
+are historical evidence, not validation of this new slice. Current test source
+must be resolved with `git rev-parse HEAD` after publication and remote readback.
 
-Coverage/commands/limits: [viewport](docs/qa/RESPONSIVE-CHECKS.md),
-[text preferences](docs/qa/TEXT-PREFERENCES.md), [Help](docs/qa/CONSISTENT-HELP.md).
-UX-033/034/036/049 remain partial: representative screens/flows do not establish
-all-state/all-page, native-device, manual reading or complete WCAG acceptance.
-Runtime/CSS, old assertions, fixtures, dependencies, workflows, OPS-004 runbook,
-monetary values, grant lineage, 24-hour rules and security/retention are unchanged.
-Preview tests stop before Send trade; no transaction is proposed.
+Selected QA-034 slice: [two no-script keyboard journeys](e2e/tests/zz-noscript.spec.js),
+using existing kbd.js helpers and ordinary-member fixtures in explicit
+javaScriptEnabled:false contexts. The tests propose two new synthetic trades,
+accept one and decline the other, then check balance/history and no posting for
+the declined proposal. Seeded trade IDs and all existing assertions are intact.
+[Reconciled screen/role/flow inventory and coverage](docs/qa/RESPONSIVE-CHECKS.md).
+QA-034 remains partial: registration, invitation acceptance, dispute raise,
+all states and manual focus/reading checks are outside these two cases.
 
-One local worker; no subagent, external writer invocation or paid API call.
-PR #17 integration and PR #12 audit/WIP, A1/A3 and C-09/A2-07 reservations remain.
-No runtime handover was found; private external-session activity is unverified.
-Final receipt checks passed: whitespace, 29 local links, fences/conflicts and
-limited review of four complete documents. Prior dependency/artifact HTTP 403 denials remain
-binding and were not retried. Local Node modules/Chromium are absent; existing
-reviewed CI supplied browser evidence. Usage/model switching is unavailable;
-retain a checkpointing reserve rather than guessing a usage percentage.
+Local Node syntax, whitespace, hygiene/action pins, 36 local links, fences/conflicts
+and limited review of four complete outgoing files passed. Record actual new-source
+CI before claiming validation. Local browser dependencies remain unavailable;
+prior dependency/artifact HTTP 403 denials are binding and were not retried.
+Only the existing reviewed branch-push CI route may supply browser validation.
+Freeze its source while CI runs, preserve failures/assertions and diagnose actual
+causes; do not enable site scripting or weaken a test to obtain green checks.
 
-Draft creation returned no usable structured receipt, then response storage failed.
-Repeated readback found no PR for this branch. No create retry/alternative route
-was used and no permission-denial reason was captured. Review the original action
-result/current permissions before another PR-create attempt. Source push/readback
-succeeded; expected draft target remains PR #18's branch. Never claim draft creation
-without readback. Keep this tested checkpoint unmerged pending appropriate review.
+PR CREATION PAUSED: automatic approval review rejected the parent's conditional
+PR-creation step because clear exact approval was absent. The parent requested
+that approval; no answer is known. This task attempts no PR creation, workaround,
+merge or APPROVE review. Ordinary owned source checkpoints remain permitted.
+The earlier unconfirmed creation result is historical; it does not lift this gate.
 
-This later receipt uses `[skip ci]` only for documentation; source/tests are
-unchanged from the validated commit. No passing CI is claimed for the later head.
-Next: review this checkpoint and resolve the PR-create result before another
-attempt. Normally publish only this owned handoff and verify SHA. Runtime needs an owner
-assignment for `internal/service/departure.go`, new `internal/service/departure_test.go`
-and temporary `internal/service/a1_poc_test.go`, restored only with permission from
-`docs/audit/2026-10-28/poc/A1/internal/service/a1_poc_test.go.txt`.
-After handover: `go test -tags=a1poc -run '^TestA1PoC_01' -count=1 ./internal/service`.
-No A1 regression ran here. Keep A1-06 pagination separate unless handed over;
-do not apply the saved patch wholesale. Cached/approved test access is required.
-Broader QA follow-up needs an accurate screen/role inventory and additional flows;
-manual/native and independent review remain open. Hosted staging needs a separately
-authorised operator/target. Owner/licence/default/threshold and release gates remain.
-No merge, APPROVE, closure, force push, deployment, purchase, credential/security
-change or denial bypass is authorised by this QA task.
+Only this new test, existing QA inventory, QA-034 as-built note and this handoff
+are reserved. Runtime/CSS, departure.go/A1, pagination, archived PoCs, fixtures,
+workflows, dependencies, credentials/security settings, roles, grant lineage,
+24-hour rules, monetary thresholds and retention remain unchanged. Security tests
+retain their separate secfixture instance. No reserved PoC is restored or run.
+One local worker, no extra/review workers or paid API calls; external private
+writer state is unverified. Usage/model switching is unavailable; keep a reserve.
+
+Next: finish scoped checks, normally checkpoint this owned child branch and
+verify its SHA; observe exact-source CI without a PR or manual dispatch. If it
+fails, preserve the exact run/job/assertion and fix only an allowed test defect.
+A runtime/CSS defect needs an explicit bounded owner handover before edits.
+Manual/native, independent/professional, owner/licence/default/threshold and
+release gates remain open. Hosted staging still needs its own authorised target.
+No deployment, purchase, credential/security change, force push, destructive
+reset, denial bypass or reinterpretation of pending PR approval is authorised.
