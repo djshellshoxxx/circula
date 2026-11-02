@@ -37,6 +37,13 @@ UX-034 remains partial; manual and independent gates remain open.
 
 ## Validation
 
+At `2e323a18e4f3af5e080d58e941f8cc2f74f0842f`,
+[push CI 41431266623](https://github.com/djshellshoxxx/circula/actions/runs/41431266623)
+completed all nine jobs successfully. Browser job `125230148678` reports
+131 passed, including all four new preference cases and the previous 24 viewport
+cases. The filtered log confirms both preferences at both orientations. This
+is exact-source CI evidence, not a local browser run or proof for later changes.
+
 With the existing built binary and cached browser dependencies, run:
 
 ```sh
