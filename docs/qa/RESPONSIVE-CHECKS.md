@@ -257,9 +257,11 @@ These cases use the same explicit `javaScriptEnabled: false` contexts and keyboa
 helpers as the original cases, with context cleanup in `finally`. Runtime/CSS,
 original assertions/helpers/fixtures and workflow budgets are unchanged.
 
-The viewport table now registers 55 distinct positive screen/role/query entries,
-110 cases at the existing two sizes. It covers the original 57-entry axe inventory
-apart from the deliberate not-found page and the duplicate admin-overview entry.
+The expanded viewport table registers 55 requested screen/role/query entries,
+110 cases at the existing two sizes, drawn from the original 57-entry axe inventory
+apart from the deliberate not-found page and duplicate admin-overview entry.
+The later runtime observation below corrects the root-path entry: with one
+membership it redirects to the dashboard, not a distinct network-list screen.
 It uses only GET navigation, requires a 200 response, intended path, visible main
 and heading, no page overflow and the original scrolling-table accessibility
 assertions. This is a screen/role sample, not all possible data/state permutations.
@@ -280,3 +282,70 @@ forms. Any failure requiring reserved runtime/CSS changes is preserved and parke
 for a bounded owner handover, without weakening its assertion. The earlier invalid
 meter assertion and unchanged fuzz deadline failure above remain original evidence;
 no repeated fuzz retry or reliability fix is authorised by this continuation.
+
+### First execution: four preserved failures
+
+Source `d93a97b314e4ced620a05a0eeae5c59cb4ad920e`,
+[run 41447665095](https://github.com/djshellshoxxx/circula/actions/runs/41447665095),
+attempt 1: eight jobs succeeded, including both original 10s fuzz commands.
+Browser job `125284693199` reported 223 passed and four failed (227 executed).
+No job was retried. All 147 earlier browser cases passed. The failures were:
+
+| Cases | Observed failure | Diagnosis and disposition |
+|---|---|---|
+| Root path as Carol, both sizes | Requested `/`, received `/n/demo/`; expected exact root | Test assumption error: `h_home.go` intentionally redirects a single membership. Correct only the new entry's label and explicitly expected destination. Preserve exact-path, status and layout assertions; no arbitrary redirect allowance. Original failures remain at d93a97b. |
+| New no-script invitation/account return path | After Create an account, `next` contains percent-encoded `/join/...` after URLSearchParams already decodes it once | Runtime candidate reproduced in normal synthetic UI. `join_anon.html` calls `qs`, which is `url.QueryEscape` in `render.go`, inside html/template's URL query context. No runtime fix or extra decode is applied. Original failing case stays active and byte-identical. Registration/sign-in/join after this assertion were unexecuted in this case. |
+| New no-script dispute balance comparison | Rendered innerText was compared to default textContent; the latter includes a hidden meter fallback plus different element separators | Test instrumentation error: compare innerText on both sides (`useInnerText: true`), preserving full balance equality, amounts and limits. Proposal/accept/open/response completed before the assertion failed; final History assertion was unexecuted. Original source and diff remain at d93a97b. |
+
+Failure artifact, from the job upload receipt: `e2e-test-results`, ID
+`13143965652`, 324482 bytes, SHA256
+`117cffc98de01c8561fd6177f578b37c18ab9a4ab246536c3b7cd8c771f891e5`.
+Workflow retention is seven days. No artifact bytes were requested; the existing
+403 boundary remains. Synthetic invitation token values are omitted from notes.
+
+The network-list label in the original axe inventory therefore was not evidence
+of that screen. The corrected 55-request matrix has 54 distinct final positive
+role/path/query destinations; the one-network root redirect is separately tested.
+An empty network-list state is instead exercised by a fresh account in the next
+text-preference cases. This does not establish multi-network switching coverage.
+
+### Next independent source: validation and text preferences
+
+New-source browser/aggregate results are pending. The new source retains the
+invitation failure with its exact original assertion and contains only two
+justified test corrections above, plus these independent accepted checks:
+
+- One no-script invalid-proposal case: alert and retained amount/note, native
+  keyboard error-link navigation to Amount, a visible focus indicator, correction
+  and successful preview. It never sends the trade; no automatic focus move is
+  claimed with scripting disabled.
+- Sixteen text-preference variants (four flow groups × two sizes × two settings),
+  added to the original four proposal probes. Plain registration/sign-in then
+  explicit invitation acceptance; fresh proposal/acceptance/dispute raise/balance/
+  history; fresh proposal/decline/history with no posting; and dispute preview/
+  edit retaining the statement. Every new document gets the same preference,
+  and actual heading/control font or spacing changes are asserted. The plain
+  registration/explicit-invitation paths do not click or validate the broken
+  return link; that separate original regression remains active. Only own new
+  accounts/invitations/trades are mutated. Seeded dispute preview/edit is not
+  submitted with Open dispute; no reviewer decision or reversal occurs.
+- Eighteen keyboard/no-script focus probes for the nine named core-flow entry
+  screens at both viewports. They walk Tab stops without activating controls,
+  check no positive tabindex, a visible ring, viewport intersection and a sampled
+  unoccluded point, and require traversal to terminate/wrap within 120 stops.
+  Sampling is not a manual focus/reading-order or full-occlusion proof.
+
+Static enumeration registers 110 viewport, 20 text-preference, five no-script
+journey/validation and 18 focus cases. The expected aggregate is 262; actual CI
+must replace that expectation. Existing baseline tests, helper/fixture code,
+workflow budgets and runtime/CSS remain unchanged. The known return-path failure
+means this source cannot be called green or merge-ready even if independent cases
+pass. Do not skip/xfail/delete/decode around that regression to obtain a green gate.
+
+Smallest runtime-owner action: explicitly hand over the invitation return-path
+finding at source d93a97b, bounded production files (at least
+`internal/web/templates/join_anon.html` and `internal/web/render.go`, verifying
+other `next` templates with the owner), and this original regression. A reviewed
+runtime fix must pass the unchanged case and preserve local-path validation and
+security gates. Neither generic continuation nor QA publication supplies that
+handover. PR creation remains separately paused pending exact approval.

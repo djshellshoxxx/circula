@@ -26,7 +26,7 @@ const PAGES = [
   ['cancel own proposal', 'carol', (st) => `/n/${st.slug}/trades/${st.tradePending}/cancel`],
   ['invitation (signed out)', null, (st) => st.unusedInvite],
   ['invitation (signed in)', 'alice', (st) => st.unusedInvite],
-  ['networks list', 'carol', () => '/'],
+  ['home (single-network redirect)', 'carol', () => '/', (st) => `/n/${st.slug}`],
   ['create network form', 'carol', () => '/setup'],
   ['password change form', 'alice', () => '/account/password'],
   ['help (member)', 'alice', () => '/help'],
@@ -66,7 +66,7 @@ const PAGES = [
 ];
 
 for (const viewport of VIEWPORTS) {
-  for (const [name, who, pathOf] of PAGES) {
+  for (const [name, who, pathOf, expectedPathOf = pathOf] of PAGES) {
     test(`UX-033/UX-036: ${name}, ${viewport.name}`, async ({ st, as, page: anon }) => {
       const page = who ? await as(who) : anon;
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -74,7 +74,7 @@ for (const viewport of VIEWPORTS) {
       const response = await page.goto(path);
       expect(response, `${name}: navigation response`).not.toBeNull();
       expect(response.status(), `${name}: status`).toBe(200);
-      const expectedPath = new URL(path, st.base).pathname.replace(/\/$/, '');
+      const expectedPath = new URL(expectedPathOf(st), st.base).pathname.replace(/\/$/, '');
       await expect(page).toHaveURL((url) => url.pathname.replace(/\/$/, '') === expectedPath);
       await expect(page.locator('main')).toBeVisible();
       await expect(page.locator('h1')).toHaveCount(1);

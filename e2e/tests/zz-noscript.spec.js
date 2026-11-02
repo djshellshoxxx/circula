@@ -162,8 +162,43 @@ test('QA-034: no-script keyboard dispute review, opening and other-party respons
     await alice.goto(disputePath);
     await expect(alice.locator('main')).toContainText(response);
     await kbActivate(alice, /^Home$/);
-    await expect(alice.getByRole('region', { name: 'Your balance', exact: true })).toHaveText(balanceBefore);
+    await expect(alice.getByRole('region', { name: 'Your balance', exact: true })).toHaveText(balanceBefore, { useInnerText: true });
     await expect(await historyRow(alice, st, id)).toContainText('Disputed');
+  } finally {
+    await Promise.all(contexts.map((context) => context.close()));
+  }
+});
+
+test('QA-034/UX-022: no-script keyboard validation links retain and correct a proposal', async ({ browser, st }) => {
+  const contexts = [];
+  try {
+    const page = await newPage(browser, st, contexts, 'alice');
+    await page.goto(`/n/${st.slug}/trades/new?to=${st.bobId}`);
+    const note = 'Correct this no-script preview without sending it.';
+    await kbSubmit(page, [[/^Amount$/, 'not an amount'], [/^What is it for/, note]], /^Review trade$/);
+    const summary = page.locator('#error-summary');
+    await expect(summary).toBeVisible();
+    await expect(summary).toHaveAttribute('role', 'alert');
+    const amount = page.getByLabel('Amount', { exact: true });
+    await expect(amount).toHaveValue('not an amount');
+    await expect(amount).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.getByLabel(/What is it for/)).toHaveValue(note);
+    // Native fragment navigation must work without the site's focus script.
+    await kbActivate(page, /^Amount:/);
+    await expect(amount).toBeFocused();
+    const ring = await amount.evaluate((el) => {
+      const cs = getComputedStyle(el);
+      return (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none';
+    });
+    expect(ring, 'keyboard-corrected amount has a visible focus indicator').toBe(true);
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.type('0.04');
+    await kbActivate(page, /^Review trade$/);
+    await expect(page.locator('#error-summary')).toHaveCount(0);
+    await expect(page.locator('h1')).toHaveText('Review your trade');
+    await expect(page.locator('main')).toContainText(note);
+    await expect(page.getByRole('button', { name: 'Send trade', exact: true })).toBeVisible();
+    // Do not send: this case validates correction/preview, not a new posting.
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
   }
