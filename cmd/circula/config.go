@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
 )
 
@@ -51,6 +52,20 @@ var settingDefs = []settingDef{
 	{key: "migrate-mode", def: "explicit", help: "explicit: refuse to serve with pending migrations; auto: back up and migrate at start-up"},
 	{key: "session-idle", def: "720h", help: "idle session timeout (DEC-005)"},
 	{key: "session-max", def: "2160h", help: "absolute session lifetime (DEC-005)"},
+	{key: "session-idle-admin", help: "idle session timeout for a person who is an administrator in any network (SEC-003); default: session-idle; not longer than it (DEC-005 recommends 1h, not applied)"},
+	{key: "session-max-admin", help: "absolute session lifetime for administrators (SEC-003); default: session-max; not longer than it (DEC-005 recommends 12h, not applied)"},
+	{key: "session-idle-reviewer", help: "idle session timeout for a person who is a dispute reviewer in any network (SEC-003); default: session-idle; not longer than it (DEC-005 recommends 1h, not applied)"},
+	{key: "session-max-reviewer", help: "absolute session lifetime for dispute reviewers (SEC-003); default: session-max; not longer than it (DEC-005 recommends 12h, not applied)"},
+	{key: "rate-signin-address", def: "20/1m", help: "web: failed sign-in, recovery and second-factor attempts per client address, as count/window (SEC-006)"},
+	{key: "rate-signin-account", def: "5/1m", help: "web: failed sign-ins and recoveries per client address and login, as count/window (SEC-006)"},
+	{key: "rate-password-check", def: "5/10m", help: "web: wrong current passwords and second-factor codes entered by a signed-in person (password change, recovery codes, two-step settings), as count/window (SEC-006)"},
+	{key: "rate-register", def: "10/1m", help: "web: account creations per client address, as count/window (SEC-006)"},
+	{key: "rate-setup", def: "10/10m", help: "web: wrong setup secrets per client address, as count/window (SEC-006)"},
+	{key: "rate-join", def: "10/10m", help: "web: join requests and invitation acceptances per person and per client address, as count/window (SEC-006, FR-012)"},
+	{key: "api-rate-principal", def: "600", help: "API: requests per minute per signed-in person or token (API-038, SEC-006)"},
+	{key: "api-rate-address", def: "1200", help: "API: requests per minute per client address (API-038, SEC-006)"},
+	{key: "network-join-limit", def: "off", help: "new memberships (invitation redemptions and join requests) per network, as count/window such as 50/24h; off disables (SEC-006)"},
+	{key: "signup-grant-cap", def: strconv.FormatInt(domain.MaxPolicyAmount, 10), help: "largest sign-up grant a network may set, in minor units of its credit; 0 turns grants off (SEC-032); default: the general policy bound"},
 	{key: "shutdown-grace", def: "10s", help: "time to let in-flight requests finish on shutdown (ARC-016)"},
 	{key: "idempotency-ttl", def: "168h", help: "retention of idempotency records"},
 	{key: "require-mfa-admins", def: "false", help: "network administrators must enrol a second factor before any administrator-only action (SEC-007, DEC-007)"},
@@ -138,6 +153,19 @@ type Config struct {
 	backupRequireAuto       bool // backup-require-encryption=auto: follows the presence of the key
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
+	// Role-specific session lifetimes (SEC-003); equal to SessionIdle /
+	// SessionMax unless set shorter.
+	SessionIdleAdmin, SessionMaxAdmin       time.Duration
+	SessionIdleReviewer, SessionMaxReviewer time.Duration
+	// Rate limits (SEC-006). NetworkJoinLimit.N == 0 means off.
+	RateSigninAddress, RateSigninAccount, RatePasswordCheck rateSpec
+	RateRegister, RateSetup, RateJoin                       rateSpec
+	APIRatePrincipal, APIRateAddress                        int
+	NetworkJoinLimit                                        rateSpec
+	// SignupGrantCap is the largest sign-up grant in minor units (SEC-032) in
+	// service.Config.MaxSignupGrant terms: 0 = the default (the general policy
+	// bound), -1 = no grant allowed (signup-grant-cap=0).
+	SignupGrantCap int64
 }
 
 // resolved is one effective setting value and where it came from.
@@ -221,6 +249,11 @@ func (sf *settingsFlags) Resolve(env lookupEnv, forServe bool) (*Config, map[str
 	}
 	if _, ok := vals["backup-dir"]; !ok {
 		vals["backup-dir"] = resolved{value: cfg.BackupDir, source: "derived"}
+	}
+	for _, k := range []string{"session-idle-admin", "session-max-admin", "session-idle-reviewer", "session-max-reviewer"} {
+		if _, ok := vals[k]; !ok {
+			vals[k] = resolved{value: vals[k[:strings.LastIndexByte(k, '-')]].value, source: "derived"}
+		}
 	}
 	return cfg, vals, nil
 }
@@ -335,6 +368,37 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.ShutdownGrace = parseDuration(get("shutdown-grace"), "shutdown-grace", fail, time.Second, 10*time.Minute)
 	if cfg.SessionMax < cfg.SessionIdle {
 		fail("session-max", "must not be shorter than session-idle")
+	}
+	roleLife := func(key, memberKey string, member time.Duration) time.Duration {
+		raw, ok := vals[key]
+		if !ok || raw.value == "" {
+			return member
+		}
+		d := parseDuration(raw.value, key, fail, time.Minute, 366*24*time.Hour)
+		if d > member {
+			fail(key, "must not be longer than %s (%s)", memberKey, vals[memberKey].value)
+		}
+		return d
+	}
+	cfg.SessionIdleAdmin = roleLife("session-idle-admin", "session-idle", cfg.SessionIdle)
+	cfg.SessionMaxAdmin = roleLife("session-max-admin", "session-max", cfg.SessionMax)
+	cfg.SessionIdleReviewer = roleLife("session-idle-reviewer", "session-idle", cfg.SessionIdle)
+	cfg.SessionMaxReviewer = roleLife("session-max-reviewer", "session-max", cfg.SessionMax)
+	cfg.RateSigninAddress = parseRate(get("rate-signin-address"), "rate-signin-address", fail, false)
+	cfg.RateSigninAccount = parseRate(get("rate-signin-account"), "rate-signin-account", fail, false)
+	cfg.RatePasswordCheck = parseRate(get("rate-password-check"), "rate-password-check", fail, false)
+	cfg.RateRegister = parseRate(get("rate-register"), "rate-register", fail, false)
+	cfg.RateSetup = parseRate(get("rate-setup"), "rate-setup", fail, false)
+	cfg.RateJoin = parseRate(get("rate-join"), "rate-join", fail, false)
+	cfg.APIRatePrincipal = parseInt(get("api-rate-principal"), "api-rate-principal", fail, 1, maxRateCount)
+	cfg.APIRateAddress = parseInt(get("api-rate-address"), "api-rate-address", fail, 1, maxRateCount)
+	cfg.NetworkJoinLimit = parseRate(get("network-join-limit"), "network-join-limit", fail, true)
+	if n, err := strconv.ParseInt(get("signup-grant-cap"), 10, 64); err != nil || n < 0 || n > domain.MaxPolicyAmount {
+		fail("signup-grant-cap", "must be a whole number of minor units from 0 to %d", domain.MaxPolicyAmount)
+	} else if n == 0 {
+		cfg.SignupGrantCap = -1 // service.Config.MaxSignupGrant: negative forbids every grant, zero means the default
+	} else {
+		cfg.SignupGrantCap = n
 	}
 	cfg.IdempotencyTTL = parseDuration(get("idempotency-ttl"), "idempotency-ttl", fail, time.Hour, 90*24*time.Hour)
 	cfg.MinPasswordLength = parseInt(get("min-password-length"), "min-password-length", fail, 12, 1024)
@@ -459,6 +523,53 @@ func parseInt(s, key string, fail func(string, string, ...any), min, max int) in
 		fail(key, "must be between %d and %d", min, max)
 	}
 	return n
+}
+
+// rateSpec is a fixed-window rate limit: N events per Window. The zero value
+// means off (only network-join-limit may be off).
+type rateSpec struct {
+	N      int
+	Window time.Duration
+}
+
+// Technical sanity bounds of a rate setting. They only reject values that
+// cannot work (a zero count, a window below the limiters' one-second
+// resolution); they are not the SEC-006 policy bounds, which the
+// specification leaves open.
+const (
+	maxRateCount  = 1_000_000
+	maxRateWindow = 31 * 24 * time.Hour
+)
+
+// parseRate reads "count/window", for example 5/1m. With allowOff, "off" or
+// "0" yields the zero rateSpec.
+func parseRate(s, key string, fail func(string, string, ...any), allowOff bool) rateSpec {
+	s = strings.TrimSpace(s)
+	if allowOff && (s == "off" || s == "0") {
+		return rateSpec{}
+	}
+	n, w, ok := strings.Cut(s, "/")
+	count, err := strconv.Atoi(strings.TrimSpace(n))
+	if !ok || err != nil {
+		if allowOff {
+			fail(key, "must be off or count/window such as 50/24h")
+		} else {
+			fail(key, "must be count/window such as 5/1m")
+		}
+		return rateSpec{}
+	}
+	window, err := time.ParseDuration(strings.TrimSpace(w))
+	if err != nil {
+		fail(key, "window must be a duration such as 1m or 24h")
+		return rateSpec{}
+	}
+	if count < 1 || count > maxRateCount {
+		fail(key, "count must be between 1 and %d", maxRateCount)
+	}
+	if window < time.Second || window > maxRateWindow || window%time.Second != 0 {
+		fail(key, "window must be whole seconds between 1s and %s", maxRateWindow)
+	}
+	return rateSpec{N: count, Window: window}
 }
 
 // parsePrefixes accepts CIDRs or single addresses, comma separated. "none"

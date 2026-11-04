@@ -179,14 +179,22 @@ func authnErr(err error) error {
 }
 
 // Authenticate resolves a session token to an Actor. Revoked, idle-expired or
-// absolutely expired sessions are rejected (SEC-003). last_seen is refreshed
+// absolutely expired sessions are rejected (SEC-003). A person who holds the
+// administrator or reviewer role in any network gets the role-specific idle
+// and absolute lifetimes when those are shorter (Config.AdminSessionIdle and
+// friends, DEC-005); the role is judged on every request, so a role granted
+// after sign-in shortens the running session at once. last_seen is refreshed
 // at most once a minute.
 func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor, error) {
 	id := hashToken(token)
 	var sess *domain.Session
 	var must bool
+	var idle, maxAge time.Duration
 	if err := s.view(ctx, func(tx store.Tx) (err error) {
 		if sess, err = tx.GetSession(id); err != nil {
+			return err
+		}
+		if idle, maxAge, err = s.sessionLifetimes(tx, sess.PersonID); err != nil {
 			return err
 		}
 		must, err = tx.MustChangePassword(sess.PersonID)
@@ -195,7 +203,8 @@ func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor,
 		return domain.Actor{}, authnErr(err)
 	}
 	now := s.now()
-	if sess.RevokedAt != nil || !now.Before(sess.ExpiresAt) || !now.Before(sess.LastSeenAt.Add(s.cfg.SessionIdle)) {
+	if sess.RevokedAt != nil || !now.Before(sess.ExpiresAt) || !now.Before(sess.CreatedAt.Add(maxAge)) ||
+		!now.Before(sess.LastSeenAt.Add(idle)) {
 		return domain.Actor{}, domain.ErrUnauthenticated
 	}
 	if now.Sub(sess.LastSeenAt) > time.Minute {

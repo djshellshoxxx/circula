@@ -24,6 +24,9 @@ type CreateNetworkInput struct {
 	// network created with the secret still valid. Adapters that gate creation
 	// on the setup secret must set it and must not call MarkSetupSecretUsed.
 	ConsumeSetupSecret bool
+	// ConfirmOpenGrantRisk is the founder's audited confirmation that open
+	// join mode with a sign-up grant is wanted (SEC-032); see PolicyChange.
+	ConfirmOpenGrantRisk bool
 }
 
 // CreateNetwork creates a network in `setup` status with its system account
@@ -54,6 +57,10 @@ func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in Crea
 		pol = *in.Policy
 	}
 	if err := pol.Validate(); err != nil {
+		return nil, nil, err
+	}
+	riskConfirmed, err := s.checkGrantPolicy(nil, pol, in.ConfirmOpenGrantRisk)
+	if err != nil {
 		return nil, nil, err
 	}
 	now := s.now()
@@ -98,6 +105,11 @@ func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in Crea
 			TargetType: "network", TargetID: n.ID, After: map[string]any{"status": n.Status, "slug": n.Slug},
 			Subjects: []string{m.ID}}); err != nil {
 			return err
+		}
+		if riskConfirmed {
+			if err := s.emit(tx, n.ID, m.ID, actor.RequestID, grantRiskAudit(n.ID, pol, "confirmed when the network was created")); err != nil {
+				return err
+			}
 		}
 		if in.ConsumeSetupSecret {
 			return s.auditPlatform(tx, actor, auditEntry{Action: domain.ActSetupSecretUsed, TargetType: "setup_secret"})
@@ -207,9 +219,16 @@ type PolicyChange struct {
 	// NoticeDays is the notice before the change takes effect (GOV-003). Nil
 	// means the default: 14 days for an adverse change, none otherwise. An
 	// adverse change with fewer days needs NoticeReason.
-	NoticeDays     *int
-	NoticeReason   string
-	IdempotencyKey string `json:"-"`
+	NoticeDays   *int
+	NoticeReason string
+	// ConfirmOpenGrantRisk is the administrator's confirmation that open join
+	// mode is to be combined with a sign-up grant (SEC-032). A change that
+	// turns that combination on, or raises the grant while it is on, is refused
+	// without it; with it, the confirmation is audited
+	// (policy.open_grant_risk_confirmed). Omitted from the idempotency
+	// fingerprint when false, so existing keys keep their fingerprint.
+	ConfirmOpenGrantRisk bool   `json:",omitempty"`
+	IdempotencyKey       string `json:"-"`
 }
 
 // UpdatePolicy appends a new policy version (DOM-029, DOM-030). Changes apply
@@ -248,6 +267,12 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 			// effect after postings exist (A1-02).
 			if in.Policy.Decimals != p.net.Policy.Decimals {
 				return "", domain.Invalid("decimals", "cannot change after the network is created")
+			}
+			riskConfirmed := false
+			if in.Policy != p.net.Policy { // restoring the values in force (a cancellation) is never refused here
+				if riskConfirmed, err = s.checkGrantPolicy(&p.net.Policy, in.Policy, in.ConfirmOpenGrantRisk); err != nil {
+					return "", err
+				}
 			}
 			if weakensDualControl(p.net.Policy.DualControlThreshold, in.Policy.DualControlThreshold) {
 				// SA2-01: one administrator must not switch off or loosen the control
@@ -305,6 +330,11 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 				TargetID: netID, Reason: in.Reason, IdemRef: keyRef(in.IdempotencyKey),
 				Before: policyDiff(p.net.Policy, in.Policy, true), After: withNotice(policyDiff(p.net.Policy, in.Policy, false), effAt, days, in.NoticeReason)}); err != nil {
 				return "", err
+			}
+			if riskConfirmed {
+				if err := s.audit(tx, p, grantRiskAudit(netID, in.Policy, in.Reason)); err != nil {
+					return "", err
+				}
 			}
 			return netID, nil
 		}, func(id string) (*domain.Network, error) { return tx.GetNetwork(id) })

@@ -45,6 +45,11 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		IdempotencyTTL: cfg.IdempotencyTTL,
 		MinPasswordLen: cfg.MinPasswordLength,
 
+		AdminSessionIdle: cfg.SessionIdleAdmin, AdminSessionMax: cfg.SessionMaxAdmin, // SEC-003
+		ReviewerSessionIdle: cfg.SessionIdleReviewer, ReviewerSessionMax: cfg.SessionMaxReviewer,
+		MaxSignupGrant:   cfg.SignupGrantCap,                                                     // SEC-032
+		NetworkJoinLimit: cfg.NetworkJoinLimit.N, NetworkJoinWindow: cfg.NetworkJoinLimit.Window, // SEC-006
+
 		RequireMFAForAdmins: cfg.RequireMFAAdmins,
 		OnMemberErased:      api.OnMemberErased, // A3-06
 		SecretKey:           cfg.MFASecret,
@@ -288,10 +293,12 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 		PublicHTTPS:    strings.HasPrefix(cfg.PublicBaseURL, "https://"),
 		TrustedProxies: cfg.TrustedProxies,
 	}
-	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge})
+	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge,
+		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress}) // SEC-006
 	webH = web.NewHandlerWith(svc, web.Options{
 		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
 		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax,
+		Limits: webLimits(cfg),
 	})
 	return apiH, webH, nil
 }
@@ -588,4 +595,14 @@ func parseFlags(fs *flag.FlagSet, args []string) (code int, done bool) {
 		return exitUsage, true
 	}
 	return 0, false
+}
+
+// webLimits maps the rate-* settings to the HTML adapter's limits (SEC-006).
+func webLimits(cfg *Config) web.Limits {
+	l := func(r rateSpec) web.Limit { return web.Limit{Max: r.N, Window: r.Window} }
+	return web.Limits{
+		SigninAddress: l(cfg.RateSigninAddress), SigninAccount: l(cfg.RateSigninAccount),
+		PasswordCheck: l(cfg.RatePasswordCheck), Register: l(cfg.RateRegister),
+		Setup: l(cfg.RateSetup), Join: l(cfg.RateJoin),
+	}
 }

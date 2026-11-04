@@ -81,6 +81,10 @@ type PersonRepo interface {
 	RevokeSessionsOf(personID string, at time.Time) error
 	// RevokeOtherSessionsOf revokes every live session of the person except keepID (A3-03).
 	RevokeOtherSessionsOf(personID, keepID string, at time.Time) error
+	// RevokeLiveSessions revokes every session not yet revoked, of one person
+	// or, with personID "", of everyone, and returns how many it revoked
+	// (SEC-027, OPS-010).
+	RevokeLiveSessions(personID string, at time.Time) (int64, error)
 	// DeleteDeadSessions purges up to limit sessions that are expired, idle since
 	// idleBefore or revoked at or before revokedBefore (SA-12).
 	DeleteDeadSessions(now, idleBefore, revokedBefore time.Time, limit int) (int64, error)
@@ -106,6 +110,10 @@ type MemberRepo interface {
 	GetMemberByPerson(netID, personID string) (*domain.Member, error)
 	ListMembers(netID string, f MemberFilter) ([]*domain.Member, error)
 	ListMembershipsOfPerson(personID string) ([]*domain.Member, error)
+	// CountMembersJoinedSince counts memberships of the network created at or
+	// after since, pending requests included and the founder excluded (SEC-006
+	// per-network join limit).
+	CountMembersJoinedSince(netID string, since time.Time) (int, error)
 	SetMemberStatus(netID, id string, s domain.MemberStatus, departedAt *time.Time) error
 	SetDefaultFlag(netID, id string, v bool) error
 	GrantRole(roleID, netID, memberID string, r domain.Role, by string, at time.Time) error

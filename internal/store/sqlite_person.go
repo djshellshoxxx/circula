@@ -137,6 +137,18 @@ func (t *txImpl) RevokeOtherSessionsOf(personID, keepID string, at time.Time) er
 	return err
 }
 
+func (t *txImpl) RevokeLiveSessions(personID string, at time.Time) (int64, error) {
+	q, args := `UPDATE sessions SET revoked_at = ? WHERE revoked_at IS NULL`, []any{ms(at)}
+	if personID != "" {
+		q, args = q+` AND person_id = ?`, append(args, personID)
+	}
+	res, err := t.exec(q, args...)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // ---- API tokens ----
 
 func joinScopes(s []domain.Scope) string {

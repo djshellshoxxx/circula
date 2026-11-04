@@ -100,7 +100,8 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	_, err := s.svc.UpdatePolicy(r.Context(), c.actor, c.netID(), service.PolicyChange{Policy: pol, Reason: strings.TrimSpace(v["reason"]),
-		NoticeDays: notice, NoticeReason: strings.TrimSpace(v["notice_reason"]), IdempotencyKey: idemKey(r)})
+		NoticeDays: notice, NoticeReason: strings.TrimSpace(v["notice_reason"]), IdempotencyKey: idemKey(r),
+		ConfirmOpenGrantRisk: v["confirm_open_grant_risk"] == "1"})
 	if err != nil {
 		s.formFail(w, r, c, "admin_policy", p, err)
 		return

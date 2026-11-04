@@ -31,6 +31,10 @@
   <select id="f-departure_rule" name="departure_rule">
     <option value="retain"{{if eq (.Val "departure_rule") "retain"}} selected{{end}}>Balance is retained</option>
     <option value="settle-to-zero"{{if eq (.Val "departure_rule") "settle-to-zero"}} selected{{end}}>Balance is settled to zero</option></select></div>
+  <div class="field{{if .Err "confirm_open_grant_risk"}} has-error{{end}}">
+    {{with .Err "confirm_open_grant_risk"}}<p class="error" id="e-confirm_open_grant_risk"><span class="sr">Error: </span>{{.}}</p>{{end}}
+    <label><input type="checkbox" id="f-confirm_open_grant_risk" name="confirm_open_grant_risk" value="1"{{if .Val "confirm_open_grant_risk"}} checked{{end}}{{if .Err "confirm_open_grant_risk"}} aria-invalid="true" aria-describedby="e-confirm_open_grant_risk"{{end}}> I accept the risk of open joining together with a grant: anyone can collect it by opening new accounts. Only needed for that combination. People who join openly get nothing; only invited or approved people receive it.</label>
+  </div>
   <div class="field"><label><input type="checkbox" name="default_flag_blocks_payer" value="1"{{if .Val "default_flag_blocks_payer"}} checked{{end}}> Members marked in default cannot pay</label></div>
   {{template "field" dict "P" . "Name" "reason" "Label" "Reason for the change" "Hint" "Required. It is recorded with the new version." "Req" true}}
   {{template "field" dict "P" . "Name" "notice_days" "Label" "Notice (days)" "Hint" "Optional. Empty means 14 days for a change that could disadvantage members and none otherwise. Up to 90." "Mode" "numeric"}}

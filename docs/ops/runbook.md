@@ -101,6 +101,29 @@ This removes the second factor, recovery codes and pending challenges, ends ever
 audit event as the platform operator. The password is untouched: also run `circula reset-password` if it may be
 compromised. `circula unlock` also clears the password-guess lock used by recovery-code and MFA setup.
 
+## Signing everyone out (emergency revocation, SEC-027, OPS-010)
+
+Use this after a suspected leak of session cookies, of the database file or of the web signing key, after a host
+compromise, or as part of rotating the web signing key. Sessions are server-side rows: deleting or replacing the key file
+alone does **not** end them, only this command does. With `serve` stopped (the command needs the database lock):
+
+```sh
+# every session of every person, and a fresh web signing key
+circula revoke-sessions -config /etc/circula/circula.json -reason "incident 7: suspected cookie leak" -rotate-web-key
+
+# only one person's sessions (for example a lost laptop)
+circula revoke-sessions -config /etc/circula/circula.json -login NAME -reason "ticket 42: lost laptop"
+```
+
+- `-reason` is required (3 to 500 characters) and is recorded in the platform audit event `sessions.revoked` (platform
+  operator), together with the number of sessions and the scope (`all` or `person`). No secret is printed or stored.
+- `-rotate-web-key` also replaces `<state-dir>/circula-web.key` atomically (mode `0600`), so CSRF tokens, flash messages
+  and session-start cookies issued before stop validating. It cannot be combined with `-login`.
+- The ledger and every other record are not touched (tested: `TestRevokeAllSessions`, `TestRevokeSessionsCommand`).
+  API tokens are separate credentials and stay valid; people revoke their own tokens, and a password reset
+  (`circula reset-password`) revokes a person's tokens too.
+- Start `serve` again. People sign in again; nothing else changes for them.
+
 ## Reverse proxy checklist
 
 - Set `trusted-proxies` to the proxy address, or every client shares one rate-limit bucket (`serve` warns at start).

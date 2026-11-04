@@ -39,6 +39,43 @@ type Options struct {
 	CSRFKey []byte
 	// Clock is used only to label invitations as expired; default wall clock.
 	Clock domain.Clock
+	// Limits tunes the in-process rate limits (SEC-006). Zero fields keep the
+	// built-in defaults.
+	Limits Limits
+}
+
+// Limit is one fixed-window rate limit: at most Max events per Window for
+// one key. A zero Max or Window selects the built-in default.
+type Limit struct {
+	Max    int
+	Window time.Duration
+}
+
+// Limits are the HTML adapter's rate limits (SEC-006), operator-configurable
+// through `circula serve` settings (docs/ops/configuration.md). They add to
+// the service's per-login throttle, which is not configurable here.
+type Limits struct {
+	SigninAddress Limit // failed sign-ins, recovery and second-factor attempts per client address; default 20 per minute
+	SigninAccount Limit // failed sign-ins and recoveries per client address and login; default 5 per minute
+	PasswordCheck Limit // wrong current passwords and second-factor codes of a signed-in person; default 5 per 10 minutes
+	Register      Limit // account creations per client address; default 10 per minute
+	Setup         Limit // wrong setup secrets per client address; default 10 per 10 minutes
+	Join          Limit // join requests and invitation acceptances per person and per address; default 10 per 10 minutes
+}
+
+// DefaultLimits are the limits used for zero fields of Options.Limits.
+var DefaultLimits = Limits{
+	SigninAddress: Limit{20, time.Minute}, SigninAccount: Limit{5, time.Minute},
+	PasswordCheck: Limit{5, 10 * time.Minute}, Register: Limit{10, time.Minute},
+	Setup: Limit{10, 10 * time.Minute}, Join: Limit{10, 10 * time.Minute},
+}
+
+// limiterFor builds the limiter for l, falling back to def.
+func limiterFor(l, def Limit) *limiter {
+	if l.Max <= 0 || l.Window < time.Second {
+		l = def
+	}
+	return newLimiter(l.Max, int(l.Window/time.Second))
 }
 
 type server struct {
@@ -65,10 +102,11 @@ func NewHandlerWith(svc *service.Service, opts Options) http.Handler {
 }
 
 func newServer(svc *service.Service, opts Options) *server {
+	lim, def := opts.Limits, DefaultLimits
 	s := &server{svc: svc, opts: opts, key: opts.CSRFKey,
-		ipFail: newLimiter(20, 60), acctFail: newLimiter(5, 60), pwFail: newLimiter(5, 600),
-		reg: newLimiter(10, 60), setup: newLimiter(10, 600),
-		join: newLimiter(10, 600)}
+		ipFail: limiterFor(lim.SigninAddress, def.SigninAddress), acctFail: limiterFor(lim.SigninAccount, def.SigninAccount),
+		pwFail: limiterFor(lim.PasswordCheck, def.PasswordCheck), reg: limiterFor(lim.Register, def.Register),
+		setup: limiterFor(lim.Setup, def.Setup), join: limiterFor(lim.Join, def.Join)}
 	if len(s.key) == 0 {
 		s.key = make([]byte, 32)
 		if _, err := rand.Read(s.key); err != nil {

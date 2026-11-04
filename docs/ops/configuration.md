@@ -27,6 +27,20 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start with pending migrations. `auto`: back up, then migrate at start-up. |
 | `session-idle` | `CIRCULA_SESSION_IDLE` | `720h` | no | Idle session timeout (DEC-005). |
 | `session-max` | `CIRCULA_SESSION_MAX` | `2160h` | no | Absolute session lifetime. Must not be shorter than `session-idle`. |
+| `session-idle-admin` | `CIRCULA_SESSION_IDLE_ADMIN` | value of `session-idle` | no | Idle timeout for a person who holds the administrator role in any network they belong to (SEC-003). Not longer than `session-idle`. See [Role-specific session timeouts](#role-specific-session-timeouts-sec-003). |
+| `session-max-admin` | `CIRCULA_SESSION_MAX_ADMIN` | value of `session-max` | no | Absolute session lifetime for administrators. Not longer than `session-max`. |
+| `session-idle-reviewer` | `CIRCULA_SESSION_IDLE_REVIEWER` | value of `session-idle` | no | Idle timeout for a person who holds the dispute reviewer role in any network. Not longer than `session-idle`. |
+| `session-max-reviewer` | `CIRCULA_SESSION_MAX_REVIEWER` | value of `session-max` | no | Absolute session lifetime for dispute reviewers. Not longer than `session-max`. |
+| `rate-signin-address` | `CIRCULA_RATE_SIGNIN_ADDRESS` | `20/1m` | no | Web: failed sign-ins, recovery attempts and second-factor attempts per client address, as `count/window`. See [Rate limits](#rate-limits-sec-006). |
+| `rate-signin-account` | `CIRCULA_RATE_SIGNIN_ACCOUNT` | `5/1m` | no | Web: failed sign-ins and recoveries per client address and login. |
+| `rate-password-check` | `CIRCULA_RATE_PASSWORD_CHECK` | `5/10m` | no | Web: wrong current passwords and second-factor codes entered by a signed-in person (password change, new recovery codes, two-step sign-in settings). |
+| `rate-register` | `CIRCULA_RATE_REGISTER` | `10/1m` | no | Web: account creations per client address. |
+| `rate-setup` | `CIRCULA_RATE_SETUP` | `10/10m` | no | Web: wrong setup secrets per client address. |
+| `rate-join` | `CIRCULA_RATE_JOIN` | `10/10m` | no | Web: join requests and invitation acceptances, per person and per client address (FR-012). `Retry-After` follows the window. |
+| `api-rate-principal` | `CIRCULA_API_RATE_PRINCIPAL` | `600` | no | API: requests per minute per signed-in person or token (API-038). |
+| `api-rate-address` | `CIRCULA_API_RATE_ADDRESS` | `1200` | no | API: requests per minute per client address. |
+| `network-join-limit` | `CIRCULA_NETWORK_JOIN_LIMIT` | `off` | no | New memberships per network (invitation redemptions and join requests together, web and API), as `count/window` such as `50/24h`; `off` or `0` disables (SEC-006). |
+| `signup-grant-cap` | `CIRCULA_SIGNUP_GRANT_CAP` | `1125899906842624` | no | Largest sign-up grant any network may set, in minor units of that network's credit (SEC-032). `0` turns sign-up grants off. The default is the general policy bound, so nothing changes until you lower it. See [Sign-up grant controls](#sign-up-grant-controls-sec-032). |
 | `shutdown-grace` | `CIRCULA_SHUTDOWN_GRACE` | `10s` | no | How long in-flight requests may finish after a stop signal (1s to 10m). |
 | `idempotency-ttl` | `CIRCULA_IDEMPOTENCY_TTL` | `168h` | no | How long idempotency records are kept. |
 | `min-password-length` | `CIRCULA_MIN_PASSWORD_LENGTH` | `12` | no | Minimum password length (SEC-002). Cannot be set below 12. |
@@ -102,8 +116,69 @@ opens the database.
 upgrades. It is created atomically and safely when several processes race. `serve` refuses to start, and never replaces
 the file, when it is readable by group or others, is not a regular file, or does not hold exactly 32 bytes. Back it up
 with your configuration (it holds no ledger data and is not part of a database backup). Rotation: stop the service, delete
-the file, start it; every signed cookie and form token stops validating and people sign in again. Ledger data is
-unaffected.
+the file, start it; every signed cookie and form token stops validating. Ledger data is unaffected.
+
+**Session key rotation (SEC-027, OPS-010).** The key signs CSRF tokens, flash messages and the session-start cookie, but
+the session cookie itself is an opaque random token whose SHA-256 is a row in the database. Replacing the key therefore
+does not end sessions on its own. Rotate with one command while `serve` is stopped:
+
+```sh
+circula revoke-sessions -config /etc/circula/circula.json -reason "routine key rotation" -rotate-web-key
+```
+
+It revokes every live session (audited as `sessions.revoked`, platform operator), then writes a fresh key over the old
+one atomically. Start `serve` again; everyone signs in again. The ledger and all other records are untouched (tests
+`TestRevokeAllSessions` and `TestRevokeSessionsCommand` compare checksums before and after). API tokens are not affected.
+For an emergency sign-out of one person use `-login NAME` without `-rotate-web-key`; see
+[runbook.md](runbook.md#signing-everyone-out-emergency-revocation-sec-027-ops-010).
+
+Rotation of the other secrets: `setup-secret`, `metrics-token` and `audit-anchor-key` can be replaced at any restart (old
+anchors keep verifying only with the old anchor key, so keep it while those anchors matter); `mfa-secret` cannot be rotated
+without people re-enrolling (see the secrets table); the backup keys follow
+[backup-restore.md](backup-restore.md).
+
+### Role-specific session timeouts (SEC-003)
+
+By default every person has the same `session-idle` and `session-max` (DEC-064). The four `session-*-admin` and
+`session-*-reviewer` settings give shorter lifetimes to a person who holds the administrator or dispute reviewer role in
+any network where they are not departed. The role is checked on every request: granting the role shortens a running
+session at once, removing it restores the member lifetimes. When a person has several roles, the shortest value applies.
+A value longer than the member value is refused at start-up. DEC-005 recommends 60 minutes idle and 12 hours absolute for
+administrators and reviewers; that is an owner decision (DEC-005 is open) and is **not** the default. To apply the
+recommendation:
+
+```json
+{"session-idle-admin": "1h", "session-max-admin": "12h", "session-idle-reviewer": "1h", "session-max-reviewer": "12h"}
+```
+
+The web page's "you will be signed out soon" warning (UX-030) still counts with the member values.
+
+### Rate limits (SEC-006)
+
+The `rate-*` settings tune the web interface's in-memory, per-process limiters; `api-rate-*` the JSON API's. A `count/window`
+value allows `count` events per fixed `window` (whole seconds, `1s` to `744h`) per key; exceeding it answers `429` with
+`Retry-After`. The defaults are the limits the product always had. The bounds only reject values that cannot work (count
+1 to 1000000); they are not a security recommendation, and the specification has not set the SEC-006 bounds yet. These
+limits sit on top of the per-login throttle in the service (five failed sign-ins for one login lock it for 15 minutes,
+per client address and login-wide), which is not configurable and cannot be loosened by these settings.
+
+`network-join-limit` is an aggregate per network, counted in the database inside the joining transaction, so it holds
+across restarts and concurrent requests: once `count` memberships (pending requests and invitation redemptions; the
+founder is not counted) were created within `window`, further joins and redemptions answer `rate-limited` (`429` in the
+API) until older ones leave the window. An invitation refused this way is not used up. Existing members repeating a join
+are not affected.
+
+### Sign-up grant controls (SEC-032)
+
+Sign-up grants are off by default (grant `0`, DEC-011). When a network sets one:
+
+- It may not exceed `signup-grant-cap` (minor units; `0` forbids every grant). Lowering the cap does not change stored
+  policies, but the next policy change of a network above the cap is refused until its grant is lowered.
+- Only members admitted by invitation or by an administrator's approval receive it. A person who joins an open network
+  by themselves never receives the grant.
+- Turning on open join mode together with a grant, or raising the grant while both are on, needs an explicit
+  confirmation by the administrator (the tick box on the policy and setup forms, `confirm_open_grant_risk: true` in the
+  API). The confirmation is recorded as the audit event `policy.open_grant_risk_confirmed`.
 
 Other settings:
 

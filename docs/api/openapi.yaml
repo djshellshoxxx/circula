@@ -2070,7 +2070,7 @@ paths:
       operationId: acceptInvitation
       tags: [Invitations]
       summary: Redeem an invitation (API-061)
-      description: Requires authentication (session or bearer) of the invitee. noNet. The token is in the path (never in the query, API-012). Returns the new membership.
+      description: Requires authentication (session or bearer) of the invitee. noNet. The token is in the path (never in the query, API-012). Returns the new membership. When the operator set network-join-limit (SEC-006, off by default) and the network reached it, the answer is 429 rate-limited and the invitation stays unused. The sign-up grant, if the network has one, is posted to the new member (SEC-032).
       security:
         - cookieAuth: []
           csrfToken: []
@@ -3613,6 +3613,7 @@ components:
         reason: {type: string, maxLength: 500}
         notice_days: {type: integer, minimum: 0, maximum: 90, description: 'Notice before the change takes effect (GOV-003). Default 14 for a change that reduces default credit, shortens the dispute window, changes the departure rule, makes the directory less restrictive or the join mode more open; 0 otherwise. Fewer than 14 for such a change needs notice_reason. While a change is scheduled only a PATCH that restores the values in force (a cancellation) is accepted; others get 409.'}
         notice_reason: {type: string, maxLength: 500}
+        confirm_open_grant_risk: {type: boolean, description: 'SEC-032. Not a policy field. Required (true) for a change that turns on open join mode together with a sign-up grant, or raises the grant while both are on; without it such a change is 422 validation-failed at /confirm_open_grant_risk. When given and needed, the confirmation is recorded as the audit event policy.open_grant_risk_confirmed. Members who join an open network themselves never receive the grant; only invited or approved members do. A signup_grant_minor above the platform cap (operator setting signup-grant-cap) is 422 at /signup_grant_minor.'}
     AuditEvent:
       type: object
       required: [id, seq, occurred_at, actor_type, actor_id, action, target_type, target_id, request_id, reason, summary_before, summary_after, hash]
