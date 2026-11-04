@@ -92,6 +92,18 @@ type txRow struct {
 	Ledger    string
 	Kind      string
 	Counter   string
+	// UX-017: a reversal or adjustment line shows its own reason; a reversal links to the
+	// line it reverses (Original); an original links to each reversal posted against it
+	// ("Reversed by …"), oldest first.
+	Reason     string
+	Original   string
+	ReversedBy []txLink
+}
+
+// txLink is a link from one transaction line to a related one.
+type txLink struct {
+	ID   string
+	Text string
 }
 
 // names resolves member display names for one request. Names the request already holds are
@@ -133,6 +145,43 @@ func (n names) lookup(id string) (string, bool) {
 	n.known[id] = &name
 	return name, true
 }
+
+// reversals returns the reversals posted against transaction id, oldest first, under the
+// service's visibility rules. A failed lookup shows no links rather than failing the page.
+func (n names) reversals(id string) []*domain.Transaction {
+	if n.c == nil {
+		return nil
+	}
+	revs, err := n.c.s.svc.ReversalsOf(n.c.ctx, n.c.actor, n.c.netID(), id)
+	if err != nil {
+		return nil
+	}
+	return revs
+}
+
+// memberRef is the stable member reference shown beside a display name in confirmation
+// steps (SEC-016): display names are not unique, member ids are and never change. It is the
+// last eight letters or digits of the id, upper-cased and split in two ("0A1B-2C3D"), or ""
+// when there is no member (the network's own account).
+func memberRef(id string) string {
+	var b []byte
+	for i := 0; i < len(id); i++ {
+		if ch := id[i]; ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' {
+			b = append(b, ch)
+		}
+	}
+	if len(b) > 8 {
+		b = b[len(b)-8:]
+	}
+	ref := strings.ToUpper(string(b))
+	if len(ref) == 8 {
+		ref = ref[:4] + "-" + ref[4:]
+	}
+	return ref
+}
+
+// MemberRef gives templates memberRef for a member id.
+func (p *page) MemberRef(id string) string { return memberRef(id) }
 
 func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label string, needsMe bool) {
 	switch t.Status {
@@ -201,6 +250,22 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 		prefix = "Adjustment: "
 	case domain.KindGrant:
 		prefix = "Sign-up grant: "
+	}
+	if t.Kind == domain.KindReversal || t.Kind == domain.KindAdjustment {
+		r.Reason = t.Reason
+	}
+	if t.Kind == domain.KindReversal {
+		r.Original = t.OriginalTxID
+	}
+	if t.ReversedTotal > 0 {
+		for _, rev := range n.reversals(t.ID) {
+			by := "a later posting"
+			if rev.LedgerSeq > 0 {
+				by = fmt.Sprintf("ledger reference %d", rev.LedgerSeq)
+			}
+			r.ReversedBy = append(r.ReversedBy, txLink{ID: rev.ID, Text: fmt.Sprintf("Reversed by %s (%s %s)", by,
+				domain.FormatAmount(rev.Amount, dec), unitFor(unit, rev.Amount, dec))})
+		}
 	}
 	if t.PayerMemberID == me.ID {
 		r.Counter = n.of(t.PayeeMemberID)

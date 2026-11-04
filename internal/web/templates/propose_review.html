@@ -3,7 +3,7 @@
 <p class="big">{{.Sentence}}</p>
 {{if .TooMuch}}<div class="notice" role="note">This is more than your available to spend ({{.AvailNow}}). It will be refused if you send it. Go back and enter a smaller amount.</div>{{end}}
 <dl class="kv">
-  <dt>With</dt><dd>{{.Counter}}</dd>
+  <dt>With</dt><dd>{{.Counter}}{{with $.MemberRef ($.Val "counterparty_id")}} (member reference {{.}}){{end}}</dd>
   <dt>Amount</dt><dd>{{.Amount}} {{.Unit}}</dd>
   <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
   <dt>Your balance if accepted</dt><dd>{{template "balance" .After}}</dd>
