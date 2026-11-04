@@ -1,0 +1,24 @@
+{{define "content"}}
+<h2>What credits are</h2>
+<p>Credits are accounting units used inside one network to record value that members give and receive. They have no value outside the network and nobody is obliged to accept them.</p>
+<h2>Balance: in credit, in debt, level</h2>
+<ul>
+<li><strong>In credit</strong> (shown with a plus sign): you have provided more value than you have received in this network.</li>
+<li><strong>In debt</strong> (shown with a minus sign): you have received more value than you have provided and are using part of your credit limit. It is not owed to or by the network itself.</li>
+<li><strong>Level</strong>: you have given and received the same.</li>
+</ul>
+<h2>Available to spend</h2>
+<p>Available to spend is your balance plus your credit limit, minus amounts set aside for your pending outgoing trades. It is not your balance. Pending outgoing trades reduce it straight away, and the amount is released if the trade is declined, cancelled or expires.</p>
+<h2>Trade statuses</h2>
+<dl class="kv">
+<dt>Waiting for someone to respond</dt><dd>Proposed but not accepted. Nothing is posted and it is not part of the balance.</dd>
+<dt>Completed</dt><dd>Accepted and posted to both accounts.</dd>
+<dt>Declined, Cancelled, Expired</dt><dd>Closed without posting anything.</dd>
+<dt>Disputed</dt><dd>A dispute is open; postings stay as they were until a reviewer decides.</dd>
+<dt>Reversed</dt><dd>A later posting has undone the trade.</dd>
+</dl>
+<h2 id="support-boundaries">Support boundaries</h2>
+<p>For questions about network rules and trades, contact a network administrator. The platform operator supports software, deployment and platform policy.</p>
+<p>A support request does not grant staff access to network data. For an approved exception involving financial or personal data, policy requires recorded, time-limited break-glass (emergency) access, a documented reason and a second staff approver. Policy also requires minimum necessary access, a record readable by network administrators and notice when required. Some approval and notice steps depend on operator procedures; technical enforcement is incomplete.</p>
+<p>The platform operator can technically read data stored by the deployment. These rules rely on access policy, audit and notice; they are not cryptographic separation.</p>
+{{end}}

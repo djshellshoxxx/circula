@@ -1,0 +1,12 @@
+{{define "content"}}
+{{if .D.NewLink}}<div class="flash" role="status" tabindex="-1" id="flash"><p>Invitation created. Copy this link now: it is shown only once.</p><p><code>{{.D.NewLink}}</code></p></div>{{end}}
+<form method="post" action="/n/{{.Slug}}/admin/invitations" novalidate>
+  {{template "csrf" .}}
+  {{template "field" dict "P" . "Name" "days" "Label" "Valid for (days)" "Hint" "A whole number from 1 to 90." "Mode" "numeric" "Req" true}}
+  <div class="actions"><button type="submit">Create invitation link</button></div>
+</form>
+<h2>Existing invitations</h2>
+{{if .D.List}}<ul class="rows">{{range .D.List}}<li>{{.Status}}, expires {{.Expires}}
+  {{if eq .Status "Unused"}}<form method="post" action="/n/{{$.Slug}}/admin/invitations/{{.ID}}/revoke">{{template "csrf" $}}<button type="submit" class="secondary">Revoke<span class="sr"> invitation expiring {{.Expires}}</span></button></form>{{end}}</li>{{end}}</ul>
+{{else}}<p>No invitations yet.</p>{{end}}
+{{end}}

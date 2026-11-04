@@ -1,0 +1,20 @@
+{{define "content"}}
+{{with .D}}
+<p class="big">{{.Sentence}}</p>
+<dl class="kv">
+  <dt>Payer</dt><dd>{{.Payer}}</dd>
+  <dt>Payee</dt><dd>{{.Payee}}</dd>
+  <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
+  {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
+  <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>Your balance after posting</dt><dd>{{template "balance" .After}}</dd>
+  <dt>Available to spend now</dt><dd>{{.AvailNow}}</dd>
+  <dt>Available to spend after posting</dt><dd>{{.AvailAfter}}</dd>
+</dl>
+<p>Accepting posts this trade to both accounts straight away.</p>
+<form method="post" action="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">
+  {{template "csrf" $}}{{template "idem" $}}
+  <div class="actions"><button type="submit">Confirm and accept</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}">Go back</a></div>
+</form>
+{{end}}
+{{end}}

@@ -1,0 +1,304 @@
+package service_test
+
+// A3 audit proof-of-concept tests (2026-10-28). Throwaway evidence, not part
+// of the product suite. Each test asserts the behaviour the accepted rules
+// call for; a FAIL demonstrates the finding. Run:
+//   go test ./internal/service -run 'TestA3Audit_' -v
+
+import (
+	"bytes"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
+	tu "github.com/djshellshoxxx/circula/internal/testutil"
+)
+
+// A3-F02: SA2-04 / A3-02 say a break-glass administrator must not leave
+// lasting changes behind. Each sub-test performs one lasting action as ana,
+// who is administrator only through a live break-glass grant.
+func TestA3Audit_BreakGlassLastingChanges(t *testing.T) {
+	setup := func(t *testing.T) *world {
+		w := newWorld(t, nil)
+		w.openBG(time.Hour)
+		tu.Must(w.Svc.GrantBreakGlassAdmin(w.Ctx, sys, service.GrantBreakGlassInput{Network: "demo", Login: "ana@example.org", Reason: "support"}))
+		return w
+	}
+	t.Run("adjustment_posts_ledger_entries", func(t *testing.T) {
+		w := setup(t)
+		tx, err := w.Svc.CreateAdjustment(w.Ctx, w.a, w.net.ID, service.AdjustInput{MemberID: w.bM.ID, Amount: 5000,
+			Direction: service.AdjustCredit, Reason: "bg", IdempotencyKey: w.Key()})
+		if err == nil {
+			t.Errorf("break-glass admin posted a permanent adjustment %s (amount %d) to ben", tx.ID, tx.Amount)
+		}
+	})
+	t.Run("credit_limit_override", func(t *testing.T) {
+		w := setup(t)
+		lim := int64(domain.MaxPolicyAmount)
+		if err := w.Svc.SetCreditLimit(w.Ctx, w.a, w.net.ID, service.SetLimitInput{MemberID: w.bM.ID, Limit: &lim, Reason: "bg"}); err == nil {
+			t.Errorf("break-glass admin set ben's credit limit to %d with no expiry", lim)
+		}
+	})
+	t.Run("password_reset_takeover", func(t *testing.T) {
+		w := setup(t)
+		temp, err := w.Svc.AdminResetPassword(w.Ctx, w.a, w.net.ID, w.bM.ID, "bg ticket")
+		if err == nil {
+			// prove the takeover outlives the session
+			w.Clock.Advance(2 * time.Hour) // session expired
+			if _, _, lerr := w.Svc.Login(w.Ctx, "ben@example.org", temp); lerr == nil {
+				t.Errorf("break-glass admin reset ben's password; the temporary password still signs in after the session expired")
+			} else {
+				t.Errorf("break-glass admin reset ben's password (login after expiry: %v)", lerr)
+			}
+		}
+	})
+	t.Run("reversal_of_completed_trade", func(t *testing.T) {
+		w := newWorld(t, nil)
+		tr := w.Trade(w.net.ID, w.b, w.adminM2(t), w.bM, w.adminM, 1000)
+		w.openBG(time.Hour)
+		tu.Must(w.Svc.GrantBreakGlassAdmin(w.Ctx, sys, service.GrantBreakGlassInput{Network: "demo", Login: "ana@example.org", Reason: "support"}))
+		if rv, err := w.Svc.ReverseTransaction(w.Ctx, w.a, w.net.ID, service.ReverseInput{TxID: tr.ID, Reason: "bg", IdempotencyKey: w.Key()}); err == nil {
+			t.Errorf("break-glass admin reversed completed trade %s (reversal %s)", tr.ID, rv.ID)
+		}
+	})
+}
+
+// adminM2 returns the founder actor (helper for the reversal sub-test).
+func (w *world) adminM2(t *testing.T) domain.Actor { t.Helper(); return w.admin }
+
+// A3-F02 (dual control): a break-glass administrator approves the founder's
+// above-threshold request at once: no 24 h wait (A3-01) and no notice to the
+// other administrators, unlike any other appointment.
+func TestA3Audit_BreakGlassApprovesImmediately(t *testing.T) {
+	w := dcSybil(t) // threshold 1000, founder + ana (founder-appointed, cannot approve founder requests)
+	carol, carolM := w.Member(w.admin, w.net, "carol@example.org")
+	_ = carolM
+	pa := w.bigRequest(w.admin) // founder credits ben 50,000.00
+	// ana (founder-appointed) is refused under A3-01:
+	if _, err := w.Svc.ApproveAdjustment(w.Ctx, w.a, w.net.ID, pa.ID); err == nil {
+		t.Fatal("control failed: founder-appointed admin approved")
+	}
+	w.openBG(time.Hour)
+	tu.Must(w.Svc.GrantBreakGlassAdmin(w.Ctx, sys, service.GrantBreakGlassInput{Network: "demo", Login: "carol@example.org", Reason: "support"}))
+	if tx, err := w.Svc.ApproveAdjustment(w.Ctx, carol, w.net.ID, pa.ID); err == nil {
+		t.Errorf("break-glass admin approved the founder's 50,000.00 request seconds after the grant (tx %s); a System-granted admin must wait %s", tx.ID, service.DefaultNewAdminApprovalDelay)
+	}
+}
+
+// A3-F03: with RequireMFAForAdmins, an administrator who has not enrolled is
+// refused administrator-only operations, but still exercises the
+// administrator's dispute powers (requireDecider does not check mfaMissing):
+// resolving a dispute posts a reversal.
+func TestA3Audit_MFAForAdminsBypassViaDecider(t *testing.T) {
+	e := tu.NewEnvConfig(t, nil, func(c *service.Config) { c.RequireMFAForAdmins = true })
+	founder := e.Person("founder@example.org")
+	_, frc := enrol(t, e, founder)
+	net, _ := e.Network(founder, "town", nil)
+	adm, admM := e.Member(founder, net, "adm@example.org")
+	_, _ = enrol(t, e, adm)
+	tu.Must(0, e.Svc.AssignRole(e.Ctx, founder, net.ID, admM.ID, domain.RoleAdmin))
+	a, aM := e.Member(founder, net, "a@example.org")
+	b, bM := e.Member(founder, net, "b@example.org")
+	_ = frc
+	// adm drops the factor (stolen password scenario: attacker has the password, no TOTP)
+	_, codes := "", []string(nil)
+	_ = codes
+	tr := e.Trade(net.ID, a, b, aM, bM, 2500)
+	d := tu.Must(e.Svc.OpenDispute(e.Ctx, a, net.ID, service.OpenDisputeInput{TxID: tr.ID, Category: "not_delivered", Statement: "x", IdempotencyKey: e.Key()}))
+	// Remove adm's factor through the operator path (keeps the test independent of codes).
+	if err := e.Svc.OperatorResetMFA(e.Ctx, domain.SystemActor("poc"), "adm@example.org", "poc reset"); err != nil {
+		t.Fatal(err)
+	}
+	// Control: administrator-only operation is refused.
+	if _, _, err := e.Svc.CreateInvitation(e.Ctx, adm, net.ID, service.InviteInput{}); err == nil || !strings.Contains(err.Error(), "mfa-enrolment-required") {
+		t.Fatalf("control: admin without MFA not refused: %v", err)
+	}
+	// Finding: the same administrator decides the dispute and posts a reversal.
+	out, err := e.Svc.ResolveDispute(e.Ctx, adm, net.ID, service.ResolveInput{DisputeID: d.ID, Outcome: domain.OutcomeUpheld,
+		Rationale: "poc", WaiveResponse: true, WaiveReason: "poc", IdempotencyKey: e.Key()})
+	if err == nil {
+		t.Errorf("administrator without the mandatory second factor resolved dispute %s (status %s): reversal posted", out.ID, out.Status)
+	}
+}
+
+// A3-F05: personal free text and the login survive SEC-018 erasure.
+// (a) the reason of a removal challenge the member wrote (challenges.reason,
+// migration 0014) is not cleared; (b) self-service recovery throttle rows are
+// keyed "recover: <login> ..." and erasure deletes only the "<login>" family.
+func TestA3Audit_ErasureLeftovers(t *testing.T) {
+	w := newWorld(t, nil)
+	const canary = "call-me-555-0100-canary"
+	w.depart(w.admin, w.aM) // administrator removes ana
+	tu.Must(w.Svc.OpenChallenge(w.Ctx, w.a, w.net.ID, service.ChallengeInput{Kind: service.ChallengeRemoval,
+		Reason: "I was removed unfairly, " + canary}))
+	ctx := service.WithClientIP(w.Ctx, "203.0.113.7")
+	_ = w.Svc.RecoverPassword(ctx, "ana@example.org", "AAAA-AAAA-AAAA-AAAA", "another long password 1")
+	rep := tu.Must(w.Svc.EraseMyData(w.Ctx, w.a, w.net.ID, ""))
+	if !rep.PersonErased {
+		t.Fatal("person not erased")
+	}
+	if hits := dbMatches(t, w.Store.DB(), canary); len(hits) > 0 {
+		t.Errorf("member-written challenge text survives erasure in %v", hits)
+	}
+	if hits := dbMatches(t, w.Store.DB(), "ana@example.org"); len(hits) > 0 {
+		t.Errorf("erased login survives in %v", hits)
+	}
+}
+
+// A3-F06: DeleteThrottleFamily compares a Go byte length with SQLite's
+// character-based substr(), so for a login with a non-ASCII character the
+// per-address rows are never matched: `circula unlock` (OperatorUnlockLogin)
+// does not lift the lock it is documented to lift.
+func TestA3Audit_UnlockNonASCIILogin(t *testing.T) {
+	e := tu.NewEnv(t)
+	_ = e.Person("józef01")
+	ctx := service.WithClientIP(e.Ctx, "198.51.100.9")
+	for i := 0; i < 5; i++ {
+		_, _ = e.Svc.LoginStep(ctx, "józef01", "wrong password here")
+	}
+	if _, err := e.Svc.LoginStep(ctx, "józef01", pw); domain.CodeOf(err) != domain.CodeRateLimited {
+		t.Fatalf("control: expected a lock, got %v", err)
+	}
+	n := tu.Must(e.Svc.OperatorUnlockLogin(e.Ctx, domain.SystemActor("poc"), "józef01"))
+	if _, err := e.Svc.LoginStep(ctx, "józef01", pw); err != nil {
+		t.Errorf("after `circula unlock` (cleared %d row(s)) the person is still locked out: %v", n, err)
+	}
+	// Control: an ASCII login is unlocked.
+	_ = e.Person("josef001")
+	for i := 0; i < 5; i++ {
+		_, _ = e.Svc.LoginStep(ctx, "josef001", "wrong password here")
+	}
+	tu.Must(e.Svc.OperatorUnlockLogin(e.Ctx, domain.SystemActor("poc"), "josef001"))
+	if _, err := e.Svc.LoginStep(ctx, "josef001", pw); err != nil {
+		t.Errorf("control: ASCII login still locked: %v", err)
+	}
+}
+
+// A3-F07 (info): secure_delete zeroes freed space in the main file, but the
+// pre-erasure page images stay in the -wal file until they are overwritten.
+// The RB-003 test only passes because it runs wal_checkpoint(TRUNCATE), which
+// production never does; the auto-checkpoint is PASSIVE.
+func TestA3Audit_ErasureWALRemnant(t *testing.T) {
+	w := newWorld(t, nil)
+	const canary = "Zelda Quillfeather-canary"
+	tok, _ := tu.Must2(w.Svc.CreateInvitation(w.Ctx, w.admin, w.net.ID, service.InviteInput{}))
+	z := w.Person("zelda@example.org")
+	zm := tu.Must(w.Svc.RedeemInvitation(w.Ctx, z, tok, canary))
+	w.depart(w.admin, zm)
+	tu.Must(w.Svc.EraseMyData(w.Ctx, z, w.net.ID, ""))
+	if hits := dbMatches(t, w.Store.DB(), canary); len(hits) > 0 {
+		t.Fatalf("live rows still hold the name: %v", hits)
+	}
+	if _, err := w.Store.DB().Exec(`PRAGMA wal_checkpoint(PASSIVE)`); err != nil {
+		t.Fatal(err)
+	}
+	var seq int
+	var name, file string
+	if err := w.Store.DB().QueryRow(`PRAGMA database_list`).Scan(&seq, &name, &file); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []string{file, file + "-wal"} {
+		b, err := os.ReadFile(p)
+		if err != nil {
+			continue
+		}
+		if bytes.Contains(b, []byte(canary)) {
+			t.Errorf("erased display name is still readable in %s (%d bytes)", filepath.Base(p), len(b))
+		}
+	}
+}
+
+// A3-F11: while an adverse policy change waits out its notice period, the
+// operator's `circula dual-control` (the only way to loosen the control,
+// SA2-01b) cannot run: it appends version in-force+1, which is the scheduled
+// version's number.
+func TestA3Audit_OperatorDualControlBlockedByScheduledChange(t *testing.T) {
+	w := dcSybil(t)                                                                        // threshold 1000, two admins
+	tu.Must(w.setPolicy(func(p *domain.Policy) { p.DefaultCreditLimit = 50000 }, nil, "")) // adverse: 14 days
+	err := w.Svc.OperatorSetDualControl(w.Ctx, sys, "demo", 0, "incident 7: second admin left")
+	if err != nil {
+		t.Errorf("operator cannot change the dual-control threshold while a change is scheduled: %v", err)
+	}
+}
+
+// A3-F16: the per-person second-factor counter is shared by DisableMFA (needs
+// only a session) and CompleteMFA (the owner's sign-in) and is counted before
+// the password is checked. mfaReserve lacks the A3-02a "half allowance after
+// expiry" rule: once at five failures, ONE failure at lock expiry re-locks for
+// 15 minutes (only the hourly purge forgets the row after 24 h of quiet).
+// Whoever holds a stolen session can keep the owner from signing in (and so
+// from changing the password to evict the session) with one bad DisableMFA
+// call per lock window.
+func TestA3Audit_StolenSessionLocksOwnerOutOfMFA(t *testing.T) {
+	e := tu.NewEnv(t)
+	victim := e.Person("ana@example.org")
+	secret, _ := enrol(t, e, victim)
+	stolen := victim // the attacker replays the victim's session; no password, no code
+	for i := 0; i < 5; i++ {
+		_ = e.Svc.DisableMFA(e.Ctx, stolen, "not the password", "000000")
+	}
+	for round := 0; round < 3; round++ {
+		r := login(e, "ana@example.org") // the owner knows the password...
+		_, _, err := e.Svc.CompleteMFA(e.Ctx, r.MFAChallenge, totpAt(t, secret, now(e)))
+		if domain.CodeOf(err) == domain.CodeRateLimited {
+			t.Errorf("round %d: owner with the right password and code is refused: %v", round, err)
+		}
+		e.Clock.Advance(15*time.Minute + time.Second)      // lock ran out...
+		_ = e.Svc.DisableMFA(e.Ctx, stolen, "x", "000000") // ...and one bad call re-arms it
+		e.Clock.Advance(31 * time.Second)
+	}
+}
+
+// A3-F18 (conformance GOV-003): lowering the network default limit is an
+// adverse change that waits 14 days, but a per-member override (policy table
+// in 10 section 2: "Per-member credit limit override ... notice required
+// (GOV-003)") takes effect at once, so the notice can be sidestepped member by
+// member.
+func TestA3Audit_PerMemberLimitCutSkipsNotice(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 10000 })
+	if _, err := w.setPolicy(func(p *domain.Policy) { p.DefaultCreditLimit = 0 }, iptr(0), ""); err == nil {
+		t.Fatal("control: an immediate default-limit cut must be refused without a reason")
+	}
+	zero := int64(0)
+	if err := w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.aM.ID, Limit: &zero, Reason: "cut"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := w.propose(w.a, w.bM, service.ProposerPays, 100); err == nil {
+		t.Errorf("control: ana can still spend") // not expected
+	} else {
+		t.Errorf("ana's available credit fell from 100.00 to 0 immediately, with no notice period: next payment refused (%v)", err)
+	}
+}
+
+// A3-F25: RedactNotificationNames blanks every inbox body in the network that
+// contains the erased member's display name as a substring. Display names may
+// be one character long, so a member named "e" who leaves and erases their
+// own data (self-service) wipes the text of other members' notifications.
+func TestA3Audit_ErasureOverRedactsOthersInbox(t *testing.T) {
+	w := newWorld(t, nil)
+	// Other members get ordinary notifications (trade proposed / accepted).
+	tr := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 100))
+	tu.Must(w.accept(w.b, tr.ID))
+	countBodies := func() int {
+		var n int
+		if err := w.Store.DB().QueryRow(`SELECT COUNT(*) FROM notifications WHERE network_id = ? AND body <> '' AND member_id IN (?,?)`,
+			w.net.ID, w.aM.ID, w.bM.ID).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	before := countBodies()
+	tok, _ := tu.Must2(w.Svc.CreateInvitation(w.Ctx, w.admin, w.net.ID, service.InviteInput{}))
+	x := w.Person("x@example.org")
+	xm := tu.Must(w.Svc.RedeemInvitation(w.Ctx, x, tok, "e"))
+	tu.Must(w.Svc.DepartMember(w.Ctx, x, w.net.ID, service.DepartInput{}))
+	_ = xm
+	tu.Must(w.Svc.EraseMyData(w.Ctx, x, w.net.ID, ""))
+	if after := countBodies(); after < before {
+		t.Errorf("erasing member \"e\" blanked %d of %d notification bodies that belong to other members", before-after, before)
+	}
+}
