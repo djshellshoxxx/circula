@@ -156,11 +156,11 @@ func TestDepartureBlockersAndAdminOffboarding(t *testing.T) {
 	wantCode(t, err, domain.ErrBlocked)
 	// administrative offboarding needs admin + reason
 	c, cM := w.Member2(w.admin, "carol@example.org")
-	_, err = w.Svc.DepartMember(w.Ctx, c, w.net.ID, service.DepartInput{MemberID: w.bM.ID, Reason: "x"})
+	_, err = w.Svc.DepartMember(w.Ctx, c, w.net.ID, service.DepartInput{MemberID: w.bM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "x"})
 	wantCode(t, err, domain.ErrForbidden)
 	_, err = w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: cM.ID})
 	wantCode(t, err, domain.ErrValidation)
-	got := tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: cM.ID, Reason: "left town"}))
+	got := tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: cM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left town"}))
 	if got.Status != domain.MemberDeparted {
 		t.Error("offboarding failed")
 	}

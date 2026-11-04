@@ -16,7 +16,7 @@ func (w *world) rrStatus(t *testing.T, id string) string {
 	if v.ReReview == nil {
 		t.Fatalf("dispute %s has no re-review", id)
 	}
-	return string(v.ReReview.Status)
+	return v.ReReview.Status
 }
 
 // DEC-052, DOM-021, DOM-024 (A1-03, was TestA1PoC_03): a re-review of a

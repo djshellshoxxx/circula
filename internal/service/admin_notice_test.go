@@ -35,7 +35,7 @@ func TestAdminActionsNotifyMember(t *testing.T) {
 		}
 	}
 	// SEC-012: removal of a member produces a notice to that member.
-	tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bM.ID, Reason: "rules"}))
+	tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "rules"}))
 	if !hasKind(w.inbox(w.b), service.NotifAdminRemoved) {
 		t.Error("removed member not notified")
 	}

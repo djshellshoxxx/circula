@@ -288,7 +288,7 @@ func TestChallengeRemovalAndLimit(t *testing.T) {
 	_, err = w.challenge(w.b, service.ChallengeCreditLimit, "")
 	wantCode(t, err, domain.ErrInvalidState)
 
-	tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bM.ID, Reason: "complaints"}))
+	tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "complaints"}))
 	id := tu.Must(w.challenge(w.b, service.ChallengeRemoval, ""))
 	if !hasKind(w.inbox(rev), service.NotifChallengeAsked) {
 		t.Fatal("deciders not told")

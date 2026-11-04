@@ -141,7 +141,7 @@ func TestSecurityPagesAccessibility(t *testing.T) {
 	checkPage(t, "pending list as approver", two.get(b+"/admin/adjustments/pending"))
 
 	// Erasure, admin and self, including both error states.
-	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, Reason: "left"}))
+	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left"}))
 	checkPage(t, "departed list", adm.get(b+"/admin/members?status=departed"))
 	ef := adm.get(b + "/admin/members/" + w.bobM.ID + "/erase")
 	checkPage(t, "erase form", ef)

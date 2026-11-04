@@ -47,7 +47,7 @@ func TestDepartureSettlementRespectsDualControl(t *testing.T) {
 	}
 	tx := tu.Must(d.propose(d.b, d.aM, service.ProposerPays, 50000))
 	tu.Must(d.accept(d.a, tx.ID))
-	_, err := d.Svc.DepartMember(d.Ctx, d.admin, d.net.ID, service.DepartInput{MemberID: d.aM.ID, Reason: "r"})
+	_, err := d.Svc.DepartMember(d.Ctx, d.admin, d.net.ID, service.DepartInput{MemberID: d.aM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "r"})
 	if domain.CodeOf(err) != domain.CodeApprovalRequired {
 		t.Fatalf("departure over the threshold: %v", err)
 	}

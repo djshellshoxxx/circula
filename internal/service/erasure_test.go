@@ -58,7 +58,7 @@ func erasureWorld(t *testing.T) (*world, *domain.Transaction) {
 
 func (w *world) depart(actor domain.Actor, m *domain.Member) {
 	w.T.Helper()
-	tu.Must(w.Svc.DepartMember(w.Ctx, actor, w.net.ID, service.DepartInput{MemberID: m.ID, Reason: "left town"}))
+	tu.Must(w.Svc.DepartMember(w.Ctx, actor, w.net.ID, service.DepartInput{MemberID: m.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left town"}))
 }
 
 // dbCount counts rows of all text columns of all tables that contain needle.
@@ -252,7 +252,7 @@ func TestAnonymiseMemberLiveDisputeBlocks(t *testing.T) {
 	w := newWorld(t, nil)
 	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000)
 	d := tu.Must(w.Svc.OpenDispute(w.Ctx, w.b, w.net.ID, service.OpenDisputeInput{TxID: tx.ID, Category: "other", Statement: "late", IdempotencyKey: w.Key()}))
-	_, err := w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.aM.ID, Reason: "x"})
+	_, err := w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.aM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "x"})
 	wantCode(t, err, domain.ErrBlocked)
 	_ = d
 	// Resolve it, depart, then erasure works (deferral ends with the blocker).

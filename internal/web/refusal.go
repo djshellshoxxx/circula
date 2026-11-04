@@ -12,7 +12,7 @@ import (
 var fieldLabels = map[string]string{
 	"login": "Login", "password": "Password", "display_name": "Display name", "amount": "Amount",
 	"counterparty_id": "Counterparty", "direction": "Direction", "title": "Title", "price": "Price",
-	"reason": "Reason", "rationale": "Rationale", "category": "Category", "name": "Name", "slug": "Web address name",
+	"reason": "Reason", "reason_code": "Reason for removal", "transaction_id": "Trade reference", "rationale": "Rationale", "category": "Category", "name": "Name", "slug": "Web address name",
 	"limit": "Credit limit", "type": "Type", "outcome": "Outcome", "ttl": "Valid for", "status": "Status",
 	"currency_name": "Credit unit name", "default_credit_limit": "Default credit limit", "max_tx_amount": "Largest trade",
 	"proposal_expiry_days": "Proposal expiry (days)", "dispute_window_days": "Dispute window (days)",

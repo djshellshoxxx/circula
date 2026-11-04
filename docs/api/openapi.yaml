@@ -1870,7 +1870,14 @@ paths:
       tags: [Admin]
       summary: Remove (depart) a member (API-059)
       description: |
-        Administrator only. Same contract as approve. As built, refused with 409 blocked and a blockers
+        Administrator only. Same contract as approve, except the body: reason_code is required and must
+        be one of the documented removal reasons (GOV-011); reason is optional detail recorded in the audit
+        log only. A missing or unlisted reason_code is 422 with pointer /reason_code. transaction_id
+        optionally names the transaction the removal is about; it must be one the member is a party to
+        (422 with pointer /transaction_id otherwise). A removal for confirmed_fraud or rule_breach is
+        refused with 403 forbidden (conflict of interest) when the calling administrator took part in the
+        matter: the named transaction, or a trade of the member under an undecided dispute or a requested
+        re-review (GOV-011, SEC-010). As built, refused with 409 blocked and a blockers
         array (disputed transaction ids, or last active administrator). The code member-has-open-balance
         is reserved and not emitted; a non-zero balance is not itself refused.
       security:
@@ -1883,10 +1890,10 @@ paths:
         - $ref: '#/components/parameters/IdempotencyKeyRequired'
         - $ref: '#/components/parameters/IfMatchOptional'
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
-            schema: {$ref: '#/components/schemas/ReasonBody'}
+            schema: {$ref: '#/components/schemas/RemoveMemberRequest'}
       responses:
         '200':
           description: Updated member with ETag.
@@ -3708,6 +3715,21 @@ components:
       additionalProperties: false
       properties:
         reason: {type: string, maxLength: 500}
+    RemoveMemberRequest:
+      type: object
+      required: [reason_code]
+      additionalProperties: false
+      properties:
+        reason_code:
+          type: string
+          enum: [rule_breach, confirmed_fraud, dispute_non_response]
+          description: >-
+            The documented removal reason (GOV-011): breach of network rules, confirmed fraud, or prolonged
+            non-response to a dispute. The removed member's notice names it.
+        reason: {type: string, maxLength: 500, description: Optional detail. Recorded in the audit log; never shown in the member's notice.}
+        transaction_id:
+          allOf: [{$ref: '#/components/schemas/Id'}]
+          description: Optional. The transaction the removal is about; the member must be a party to it.
     ChangePasswordRequest:
       type: object
       required: [current_password, new_password]

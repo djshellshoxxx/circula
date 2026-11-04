@@ -49,6 +49,10 @@ func (t *txImpl) ListPolicyVersions(netID string) ([]PolicyVersionRow, error) {
 		if ann != 0 {
 			r.AnnouncedAt = fromMS(ann)
 		}
+		if len(out) > 0 && r.Policy.Decimals != out[0].Policy.Decimals { // DOM-031: the creation scale stays
+			r.ScaleNeutralised, r.StoredDecimals = true, r.Policy.Decimals
+			r.Policy.Decimals = out[0].Policy.Decimals
+		}
 		out = append(out, r)
 	}
 	return out, mapErr(rows.Err())

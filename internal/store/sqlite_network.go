@@ -24,19 +24,33 @@ func (t *txImpl) AppendPolicy(netID string, version int, p domain.Policy, by, re
 	return err
 }
 
+// networkSelect reads a network with its effective policy version and, as
+// the last column, the policy stored at creation (the lowest version), whose
+// scale the network keeps for good (DOM-031).
 const networkSelect = `SELECT n.id, n.name, n.slug, n.status, n.ledger_seq, n.created_at,
 	p.version, p.policy_json,
-	COALESCE((SELECT a.id FROM accounts a WHERE a.network_id = n.id AND a.is_system = 1), '')
+	COALESCE((SELECT a.id FROM accounts a WHERE a.network_id = n.id AND a.is_system = 1), ''),
+	(SELECT p0.policy_json FROM network_policies p0 WHERE p0.network_id = n.id ORDER BY p0.version LIMIT 1)
 	FROM networks n JOIN network_policies p ON p.network_id = n.id
 	AND p.version = (SELECT MAX(version) FROM network_policies WHERE network_id = n.id
 		AND (? = 0 OR effective_at <= ?))`
 
+// creationScale is the decimal scale of the policy stored at creation, read
+// the same way as the effective policy (absent keys take their defaults).
+func creationScale(pj string) (int, error) {
+	p := domain.DefaultPolicy()
+	if err := json.Unmarshal([]byte(pj), &p); err != nil {
+		return 0, err
+	}
+	return p.Decimals, nil
+}
+
 func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	var n domain.Network
-	var status, pj string
+	var status, pj, pj0 string
 	var created int64
 	if err := r.Scan(&n.ID, &n.Name, &n.Slug, &status, &n.LedgerSeq, &created,
-		&n.PolicyVersion, &pj, &n.SystemAccountID); err != nil {
+		&n.PolicyVersion, &pj, &n.SystemAccountID, &pj0); err != nil {
 		return nil, notFound(err, "network")
 	}
 	n.Status = domain.NetworkStatus(status)
@@ -45,6 +59,15 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
 	if err := json.Unmarshal([]byte(pj), &n.Policy); err != nil {
 		return nil, err
 	}
+	// DOM-031: the scale is fixed at creation. A later version stored with
+	// another scale (an earlier build accepted one with notice) applies with
+	// its other keys, but never with its scale: amounts already stored keep
+	// the meaning they were written with.
+	dec, err := creationScale(pj0)
+	if err != nil {
+		return nil, err
+	}
+	n.Policy.Decimals = dec
 	sus, err := t.ListSuspensions(n.ID)
 	if err != nil {
 		return nil, err

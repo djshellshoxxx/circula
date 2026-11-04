@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"regexp"
 	"strings"
 	"time"
@@ -372,4 +373,103 @@ func withNotice(after map[string]any, eff time.Time, days int, reason string) ma
 		after["notice_reason"] = r
 	}
 	return after
+}
+
+// withdrawnVersions marks the policy versions that never come into force: a
+// later version is in force by the time they would have taken effect (a
+// cancelled scheduled change). rows are oldest first.
+func withdrawnVersions(rows []store.PolicyVersionRow) []bool {
+	out := make([]bool, len(rows))
+	for i := range rows {
+		for j := i + 1; j < len(rows); j++ {
+			if !rows[j].EffectiveAt.After(rows[i].EffectiveAt) {
+				out[i] = true
+			}
+		}
+	}
+	return out
+}
+
+// RecordNeutralisedScaleChanges is the body of a scheduled job (DOM-031). An
+// earlier build could store a decimal-scale change as a scheduled policy
+// version. Every read keeps the creation-time scale, so such a version comes
+// into force with its other keys only. For each such version that has come
+// into force this records, once, a system audit event in the network's log
+// with the stored and the kept scale. System actors only; frozen networks are
+// skipped until they are thawed. It returns the number of events written.
+func (s *Service) RecordNeutralisedScaleChanges(ctx context.Context, actor domain.Actor) (int, error) {
+	if !actor.System {
+		return 0, domain.Forbidden("system actor required")
+	}
+	var ids []string
+	if err := s.view(ctx, func(tx store.Tx) (err error) {
+		ids, err = tx.ListNetworkIDs()
+		return err
+	}); err != nil {
+		return 0, err
+	}
+	total := 0
+	for _, netID := range ids {
+		if s.IsFrozen(netID) {
+			continue
+		}
+		n, err := s.recordNeutralisedScale(ctx, actor, netID)
+		if err != nil {
+			return total, err
+		}
+		total += n
+	}
+	return total, nil
+}
+
+func (s *Service) recordNeutralisedScale(ctx context.Context, actor domain.Actor, netID string) (int, error) {
+	written := 0
+	err := s.update(ctx, func(tx store.Tx) error {
+		g, err := govRepo(tx)
+		if err != nil {
+			return err
+		}
+		rows, err := g.ListPolicyVersions(netID)
+		if err != nil {
+			return err
+		}
+		now, withdrawn := s.now(), withdrawnVersions(rows)
+		var due []store.PolicyVersionRow
+		for i, r := range rows {
+			if r.ScaleNeutralised && !withdrawn[i] && !r.EffectiveAt.After(now) {
+				due = append(due, r)
+			}
+		}
+		if len(due) == 0 {
+			return nil
+		}
+		noted := map[int]bool{}
+		evs, err := tx.ListAudit(netID, store.AuditFilter{Action: domain.ActPolicyScaleNeutralised, TargetID: netID, Limit: 500})
+		if err != nil {
+			return err
+		}
+		for _, e := range evs {
+			var after struct {
+				Version int `json:"version"`
+			}
+			if json.Unmarshal([]byte(e.SummaryAfter), &after) == nil {
+				noted[after.Version] = true
+			}
+		}
+		for _, r := range due {
+			if noted[r.Version] {
+				continue
+			}
+			if err := s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActPolicyScaleNeutralised,
+				TargetType: "policy", TargetID: netID,
+				Reason: "the decimal scale is fixed at network creation; this version took effect without its scale change",
+				Before: map[string]any{"decimals": r.StoredDecimals},
+				After:  map[string]any{"decimals": r.Policy.Decimals, "version": r.Version}}); err != nil {
+				return err
+			}
+			written++
+		}
+		return nil
+	})
+	return written, err
 }
