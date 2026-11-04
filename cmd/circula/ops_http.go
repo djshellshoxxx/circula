@@ -17,8 +17,6 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
-
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // opsServer wires the HTTP edge: request policy (ID, body limit, deadline),
@@ -149,11 +147,11 @@ func (o *opsServer) probeDB(ctx context.Context) error {
 	if err := o.db.PingContext(ctx); err != nil {
 		return err
 	}
-	cur, err := store.AppliedVersion(ctx, o.db)
+	cur, err := appliedSchemaVersion(ctx, o.db)
 	if err != nil {
 		return err
 	}
-	if cur != store.SchemaVersion() {
+	if cur != binarySchemaVersion() {
 		return errSchemaMismatch
 	}
 	return nil
@@ -239,11 +237,11 @@ func (o *opsServer) serveMetrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	now := time.Now().UTC()
-	cur, _ := store.AppliedVersion(r.Context(), o.db)
+	cur, _ := appliedSchemaVersion(r.Context(), o.db)
 	dyn := dynamicMetrics{
 		version:    version,
 		schemaCur:  cur,
-		schemaPend: store.SchemaVersion() - cur,
+		schemaPend: binarySchemaVersion() - cur,
 		dbBytes:    fileSize(o.cfg.Database),
 		walBytes:   fileSize(o.cfg.Database + "-wal"),
 		now:        now,
