@@ -1,0 +1,224 @@
+# Authorization table of every HTTP route (QA-012, SEC-009, ARC-008, API-019).
+# Reviewed by hand; TestRouteInventoryMatchesAuthorizationTable fails when a
+# registered route is missing here, a row is not registered, or a gate
+# disagrees with the registration. TestRouteAuthorizationMatrix sends every
+# row as anonymous, as a person of no network and as a plain member.
+#
+# Columns: surface method path gate. method "*" matches any method.
+#
+# Gates (least principal let through):
+#   public    no sign-in needed
+#   person    any signed-in person; no network membership needed
+#   member    a member of the network in the path (web) or X-Network / only
+#             membership (api); status and party rules are the service's
+#   reviewer  dispute reviewer or administrator who is not a party
+#   admin     network administrator
+#   mount     (ops) the API and HTML trees, gated row by row above
+#   health    (ops) health and metrics: GET/HEAD only, no network data
+#             (OPS-013); /metrics only from metrics-allow ranges
+# There is no operator gate: the platform operator acts through the CLI
+# only and has no HTTP route (ARC-008).
+
+# JSON API (internal/api)
+api  *      /                                            public
+api  GET    /api/v1/accounts/me                          member
+api  GET    /api/v1/accounts/me/entries                  member
+api  GET    /api/v1/admin/accounts/{id}                  admin
+api  PUT    /api/v1/admin/accounts/{id}/credit-limit     admin
+api  GET    /api/v1/admin/adjustments                    admin
+api  POST   /api/v1/admin/adjustments                    admin
+api  GET    /api/v1/admin/adjustments/{id}               admin
+api  POST   /api/v1/admin/adjustments/{id}/approve       admin
+api  POST   /api/v1/admin/adjustments/{id}/cancel        admin
+api  POST   /api/v1/admin/adjustments/{id}/reject        admin
+api  GET    /api/v1/admin/announcements                  admin
+api  POST   /api/v1/admin/announcements                  admin
+api  DELETE /api/v1/admin/announcements/{id}             admin
+api  GET    /api/v1/admin/audit-events                   admin
+api  POST   /api/v1/admin/consistency-checks             admin
+api  GET    /api/v1/admin/consistency-checks/{id}        admin
+api  POST   /api/v1/admin/invitations                    admin
+api  GET    /api/v1/admin/members                        admin
+api  POST   /api/v1/admin/members/{id}/approve           admin
+api  PUT    /api/v1/admin/members/{id}/default-flag      admin
+api  POST   /api/v1/admin/members/{id}/deny              admin
+api  POST   /api/v1/admin/members/{id}/reinstate         admin
+api  POST   /api/v1/admin/members/{id}/remove            admin
+api  PUT    /api/v1/admin/members/{id}/roles/{role}      admin
+api  DELETE /api/v1/admin/members/{id}/roles/{role}      admin
+api  POST   /api/v1/admin/members/{id}/suspend           admin
+api  POST   /api/v1/admin/network/close                  admin
+api  POST   /api/v1/admin/network/close/cancel           admin
+api  GET    /api/v1/admin/network/closure                admin
+api  POST   /api/v1/admin/network/closure/verify         admin
+api  POST   /api/v1/admin/network/resume                 admin
+api  POST   /api/v1/admin/network/suspend                admin
+api  GET    /api/v1/admin/policy                         admin
+api  PATCH  /api/v1/admin/policy                         admin
+api  GET    /api/v1/admin/reports                        admin
+api  POST   /api/v1/admin/reports/{id}/handle            admin
+api  POST   /api/v1/admin/terms                          admin
+api  POST   /api/v1/admin/transactions/{id}/reversal     admin
+api  GET    /api/v1/audit-events                         member
+api  GET    /api/v1/challenges                           member
+api  POST   /api/v1/challenges                           member
+api  POST   /api/v1/challenges/{id}/decision             reviewer
+api  GET    /api/v1/disputes                             member
+api  POST   /api/v1/disputes                             member
+api  GET    /api/v1/disputes/{id}                        member
+api  POST   /api/v1/disputes/{id}/re-review              member
+api  POST   /api/v1/disputes/{id}/re-review/decision     reviewer
+api  POST   /api/v1/disputes/{id}/resolve                reviewer
+api  POST   /api/v1/disputes/{id}/response               member
+api  POST   /api/v1/disputes/{id}/retry-posting          reviewer
+api  POST   /api/v1/disputes/{id}/review                 reviewer
+api  POST   /api/v1/disputes/{id}/withdraw               member
+api  POST   /api/v1/exports                              member
+api  GET    /api/v1/exports/{id}                         member
+api  GET    /api/v1/exports/{id}/artefact                member
+api  POST   /api/v1/invitations/{token}/accept           person
+api  GET    /api/v1/listings                             member
+api  POST   /api/v1/listings                             member
+api  GET    /api/v1/listings/{id}                        member
+api  PATCH  /api/v1/listings/{id}                        member
+api  GET    /api/v1/me                                   person
+api  PATCH  /api/v1/me                                   person
+api  POST   /api/v1/me/membership/departure              member
+api  POST   /api/v1/me/password                          person
+api  POST   /api/v1/me/terms/accept                      member
+api  GET    /api/v1/members                              member
+api  GET    /api/v1/members/{id}                         member
+api  GET    /api/v1/network                              member
+api  GET    /api/v1/network/announcements                member
+api  GET    /api/v1/network/policy-log                   member
+api  GET    /api/v1/network/terms                        member
+api  GET    /api/v1/notifications                        member
+api  POST   /api/v1/notifications/read                   member
+api  GET    /api/v1/notifications/unread-count           member
+api  POST   /api/v1/reports                              member
+api  GET    /api/v1/tokens                               person
+api  POST   /api/v1/tokens                               person
+api  DELETE /api/v1/tokens/{id}                          person
+api  GET    /api/v1/transactions                         member
+api  POST   /api/v1/transactions                         member
+api  GET    /api/v1/transactions/{id}                    member
+api  POST   /api/v1/transactions/{id}/accept             member
+api  POST   /api/v1/transactions/{id}/cancel             member
+api  POST   /api/v1/transactions/{id}/decline            member
+api  GET    /api/v1/transactions/{id}/events             member
+
+# HTML interface (internal/web)
+web  *      /                                            public
+web  GET    /account/password                            person
+web  POST   /account/password                            person
+web  GET    /account/recovery-codes                      person
+web  POST   /account/recovery-codes                      person
+web  GET    /account/security                            person
+web  POST   /account/security/ack                        person
+web  POST   /account/security/mfa/disable                person
+web  GET    /account/security/mfa/enrol                  person
+web  POST   /account/security/mfa/enrol                  person
+web  POST   /account/security/mfa/enrol/confirm          person
+web  POST   /account/security/mfa/recovery               person
+web  GET    /account/time-zone                           person
+web  POST   /account/time-zone                           person
+web  GET    /favicon.ico                                 public
+web  GET    /help                                        public
+web  GET    /join/{token}                                public
+web  POST   /join/{token}                                person
+web  GET    /login                                       public
+web  POST   /login                                       public
+web  GET    /login/mfa                                   public
+web  POST   /login/mfa                                   public
+web  POST   /logout                                      public
+web  GET    /n/{slug}/admin                              admin
+web  GET    /n/{slug}/admin/adjust                       admin
+web  POST   /n/{slug}/admin/adjust                       admin
+web  GET    /n/{slug}/admin/adjustments/pending          admin
+web  POST   /n/{slug}/admin/adjustments/{id}/{action}    admin
+web  GET    /n/{slug}/admin/announcements                admin
+web  POST   /n/{slug}/admin/announcements                admin
+web  POST   /n/{slug}/admin/announcements/{id}/delete    admin
+web  GET    /n/{slug}/admin/audit                        admin
+web  GET    /n/{slug}/admin/break-glass                  admin
+web  POST   /n/{slug}/admin/check                        admin
+web  GET    /n/{slug}/admin/exports                      admin
+web  POST   /n/{slug}/admin/exports                      admin
+web  GET    /n/{slug}/admin/inactive                     admin
+web  GET    /n/{slug}/admin/invitations                  admin
+web  POST   /n/{slug}/admin/invitations                  admin
+web  POST   /n/{slug}/admin/invitations/{id}/revoke      admin
+web  GET    /n/{slug}/admin/members                      admin
+web  GET    /n/{slug}/admin/members/{id}/erase           admin
+web  POST   /n/{slug}/admin/members/{id}/erase           admin
+web  GET    /n/{slug}/admin/members/{id}/reset-password  admin
+web  POST   /n/{slug}/admin/members/{id}/reset-password  admin
+web  GET    /n/{slug}/admin/members/{id}/{action}        admin
+web  POST   /n/{slug}/admin/members/{id}/{action}        admin
+web  GET    /n/{slug}/admin/network                      admin
+web  POST   /n/{slug}/admin/network/close                admin
+web  POST   /n/{slug}/admin/network/close/cancel         admin
+web  POST   /n/{slug}/admin/network/resume               admin
+web  POST   /n/{slug}/admin/network/suspend              admin
+web  GET    /n/{slug}/admin/policy                       admin
+web  POST   /n/{slug}/admin/policy                       admin
+web  POST   /n/{slug}/admin/policy/cancel                admin
+web  GET    /n/{slug}/admin/reports                      admin
+web  POST   /n/{slug}/admin/reports/{id}/handle          admin
+web  GET    /n/{slug}/admin/reverse                      admin
+web  POST   /n/{slug}/admin/reverse                      admin
+web  GET    /n/{slug}/admin/terms                        admin
+web  POST   /n/{slug}/admin/terms                        admin
+web  GET    /n/{slug}/audit                              member
+web  GET    /n/{slug}/directory                          member
+web  GET    /n/{slug}/disputes                           member
+web  GET    /n/{slug}/disputes/{id}                      member
+web  POST   /n/{slug}/disputes/{id}/{act}                member
+web  GET    /n/{slug}/erase-my-data                      member
+web  POST   /n/{slug}/erase-my-data                      member
+web  POST   /n/{slug}/export                             member
+web  GET    /n/{slug}/history                            member
+web  GET    /n/{slug}/inbox                              member
+web  POST   /n/{slug}/inbox/read                         member
+web  GET    /n/{slug}/join                               person
+web  POST   /n/{slug}/join                               person
+web  GET    /n/{slug}/leave                              member
+web  POST   /n/{slug}/leave                              member
+web  GET    /n/{slug}/listings                           member
+web  GET    /n/{slug}/listings/new                       member
+web  POST   /n/{slug}/listings/new                       member
+web  GET    /n/{slug}/listings/{id}/edit                 member
+web  POST   /n/{slug}/listings/{id}/edit                 member
+web  GET    /n/{slug}/members/{id}                       member
+web  GET    /n/{slug}/policy                             member
+web  GET    /n/{slug}/report                             member
+web  POST   /n/{slug}/report                             member
+web  GET    /n/{slug}/review                             reviewer
+web  GET    /n/{slug}/terms                              member
+web  POST   /n/{slug}/terms                              member
+web  GET    /n/{slug}/trades                             member
+web  GET    /n/{slug}/trades/new                         member
+web  POST   /n/{slug}/trades/new                         member
+web  GET    /n/{slug}/trades/{id}                        member
+web  GET    /n/{slug}/trades/{id}/dispute                member
+web  POST   /n/{slug}/trades/{id}/dispute                member
+web  GET    /n/{slug}/trades/{id}/{action}               member
+web  POST   /n/{slug}/trades/{id}/{action}               member
+web  GET    /n/{slug}/{$}                                member
+web  GET    /recover                                     public
+web  POST   /recover                                     public
+web  GET    /register                                    public
+web  POST   /register                                    public
+web  GET    /robots.txt                                  public
+web  POST   /session/extend                              person
+web  GET    /setup                                       person
+web  POST   /setup                                       person
+web  GET    /static/                                     public
+web  GET    /{$}                                         public
+
+# Operational mux (cmd/circula/ops_http.go)
+ops  *      /                                            mount
+ops  *      /api/                                        mount
+ops  *      /healthz                                     health
+ops  *      /metrics                                     health
+ops  *      /readyz                                      health
