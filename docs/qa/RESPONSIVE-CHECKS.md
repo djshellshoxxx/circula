@@ -555,3 +555,12 @@ accessibility, security, review or release-completion claim. Runtime-owner hando
 is still required for the preserved return-link fix; exact PR creation approval
 remains separately pending. No runtime/CSS or reserved work is assigned by this
 QA receipt. The frozen responsive branch and other owners' refs remain preserved.
+
+## 2026-11-04 resolution of the return-link failure
+
+The return-link failure recorded above (`e2e/tests/zz-noscript.spec.js:108`) is fixed in
+`94728b1` (DEF-001 in [DEFECTS.md](DEFECTS.md)). Templates piped `next` through
+`url.QueryEscape` inside an href query, which `html/template` already escapes, so the value
+was double-encoded. The assertion is unchanged. Local run at `94728b1` (Chromium in this
+container, `npx playwright test`): 325 passed, 0 failed, 5.0 minutes. Earlier entries above
+are kept as historical evidence.
