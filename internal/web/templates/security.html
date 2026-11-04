@@ -20,6 +20,9 @@
   <p><a href="/account/security/mfa/enrol">Turn on two-step sign-in</a></p>
 {{end}}
 
+<h2>Password recovery codes</h2>
+<p>A recovery code lets you set a new password without email if you forget it. <a href="/account/recovery-codes">Make or replace password recovery codes</a></p>
+
 <h2>Security notices</h2>
 {{if .D.Notices}}
   {{if .D.Unseen}}<form method="post" action="/account/security/ack">{{template "csrf" .}}<p>{{.D.Unseen}} new. <button type="submit" class="secondary">Mark all as read</button></p></form>{{end}}

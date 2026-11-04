@@ -2,7 +2,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#f0f0f0;--muted:#c4c4c4;--line:#8a8a8a;--accent:#8ec5ff;--accent-fg:#06233f;--bad:#ffb4b4;--badbg:#3a1616;--ok:#a6e8b8;--okbg:#12301b;--note:#3a3210;--focus:#ffcf70}}
 *{box-sizing:border-box}
 html{font-size:100%}
-body{margin:0;background:var(--bg);color:var(--fg);font:1rem/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:normal}
+body{margin:0;background:var(--bg);color:var(--fg);font:1rem/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:normal;overflow-wrap:break-word}
 a{color:var(--accent)}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 main:focus{outline:none}
