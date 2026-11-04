@@ -1,6 +1,7 @@
 // Boots the real circula binary on a free loopback port with a temporary database, seeds it through
 // the web forms (the same way a person would), and records what the tests need in .state/state.json.
-// The returned function stops the binary and removes the temporary directory.
+// A second instance with an approval-mode network is seeded the same way (seedApply, state.apply).
+// The returned function stops both binaries and removes the temporary directories.
 const fs = require('fs');
 const os = require('os');
 const net = require('net');
@@ -130,7 +131,9 @@ module.exports = async function globalSetup() {
   child.stdout.on('data', (d) => logs.push(d.toString()));
   child.stderr.on('data', (d) => logs.push(d.toString()));
 
+  let applyInstance = null;
   const teardown = async () => {
+    if (applyInstance) await applyInstance.stop();
     if (child.exitCode === null) {
       child.kill('SIGTERM');
       await new Promise((r) => {
@@ -149,6 +152,10 @@ module.exports = async function globalSetup() {
     state.base = base;
     state.slug = SLUG;
     state.password = PASSWORD;
+    // A second instance, because one setup secret creates one network: see seedApply.
+    applyInstance = await startInstance();
+    state.apply = await seedApply(applyInstance.base);
+    state.apply.base = applyInstance.base;
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
   } catch (e) {
     await teardown();
@@ -342,6 +349,74 @@ async function seed(base) {
     await browser.close();
   }
   return state;
+}
+
+const APPLY_SLUG = 'apply';
+
+/**
+ * Seeds the second instance: a network people join by request and administrator approval, with published terms.
+ * Erin founds it. Hana's request is approved here, so she is an active member with nothing blocking her from
+ * leaving. Finn's and Gail's requests stay pending: the keyboard test approves Finn, Gail stays pending for the
+ * page checks. Terms are published after the requests, so the members still have to accept them. Storage states
+ * are saved as apply-<name>.json. The terms text is placeholder test data, not proposed legal wording.
+ */
+async function seedApply(base) {
+  const { chromiumExecutable } = require('./launch');
+  const browser = await chromium.launch({ executablePath: chromiumExecutable(), args: ['--no-sandbox', '--disable-gpu'] });
+  const ctx = () => browser.newContext({ baseURL: base });
+  const st = { slug: APPLY_SLUG, users: { erin: 'erin@example.org', hana: 'hana@example.org', finn: 'finn@example.org', gail: 'gail@example.org' } };
+  try {
+    const c = await ctx();
+    const p = await c.newPage();
+    await register(p, st.users.erin);
+    await login(p, st.users.erin);
+    await p.goto('/setup');
+    await p.getByLabel('Setup secret').fill(SETUP_SECRET);
+    await p.getByLabel('Network name').fill('Apply Circle');
+    await p.getByLabel('Web address name').fill(APPLY_SLUG);
+    await p.getByLabel('Your display name in this network').fill('Erin Founder');
+    await p.getByLabel('Credit unit name').fill('credit');
+    await p.getByLabel('Default credit limit per member').fill('100.00');
+    await p.getByLabel('Sign-up grant').fill('0.00');
+    await p.getByLabel('How people join').selectOption('approval');
+    await submit(p, 'Create network');
+    if (!new URL(p.url()).pathname.startsWith(`/n/${APPLY_SLUG}`)) throw new Error('approval network not created, at ' + p.url());
+    await c.storageState({ path: path.join(STATE_DIR, 'apply-erin.json') });
+
+    for (const [key, display] of [['hana', 'Hana Member'], ['finn', 'Finn Applicant'], ['gail', 'Gail Applicant']]) {
+      const cc = await ctx();
+      const pp = await cc.newPage();
+      await register(pp, st.users[key]);
+      await login(pp, st.users[key]);
+      await pp.goto(`/n/${APPLY_SLUG}/join`);
+      await pp.getByLabel('Your display name').fill(display);
+      await submit(pp, 'Request to join');
+      await cc.storageState({ path: path.join(STATE_DIR, `apply-${key}.json`) });
+      await cc.close();
+    }
+
+    await p.goto(`/n/${APPLY_SLUG}/admin/members?status=pending`);
+    const approveHref = async (name) => {
+      const href = await p.locator('a[href$="/approve"]').filter({ hasText: name }).first().getAttribute('href');
+      if (!href) throw new Error('no pending request from ' + name);
+      return href;
+    };
+    const idOf = (href) => href.split('/').slice(-2)[0];
+    const hana = await approveHref('Hana Member');
+    st.hanaId = idOf(hana);
+    st.finnId = idOf(await approveHref('Finn Applicant'));
+    st.gailId = idOf(await approveHref('Gail Applicant'));
+    await p.goto(hana);
+    await submit(p, 'Approve');
+
+    await p.goto(`/n/${APPLY_SLUG}/admin/terms`);
+    await p.getByLabel('Terms text').fill('Placeholder terms for the automated tests.\n\nA second paragraph, so that the page shows more than one.');
+    await submit(p, 'Publish new version');
+    await c.close();
+  } finally {
+    await browser.close();
+  }
+  return st;
 }
 
 module.exports.startInstance = startInstance;
