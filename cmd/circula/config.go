@@ -20,7 +20,6 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // envPrefix is prepended to every upper-cased setting key to form its
@@ -130,7 +129,7 @@ type Config struct {
 	RequireMFAAdmins    bool
 	MaxBodyBytes        int64
 	RequestTimeout      time.Duration
-	Synchronous         string // store.SyncNormal or store.SyncFull
+	Synchronous         string // syncNormal or syncFull
 	LogLevel            slog.Level
 	LogFormat           string
 	CookieSecure        bool
@@ -409,9 +408,9 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.RequestTimeout = parseDuration(get("request-timeout"), "request-timeout", fail, time.Second, 10*time.Minute)
 	switch strings.ToLower(get("db-synchronous")) {
 	case "normal":
-		cfg.Synchronous = store.SyncNormal
+		cfg.Synchronous = syncNormal
 	case "full":
-		cfg.Synchronous = store.SyncFull
+		cfg.Synchronous = syncFull
 	default:
 		fail("db-synchronous", "must be normal or full")
 	}
