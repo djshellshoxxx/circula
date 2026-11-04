@@ -93,9 +93,10 @@ func (s *Service) ListInvitations(ctx context.Context, actor domain.Actor, netID
 	return out, err
 }
 
-// createMember inserts a member with its account and, when active and admitted
-// by invitation, the sign-up grant (SEC-032: an open self-service join gets no
-// grant; an approved request gets it in DecideJoinRequest). The caller audits.
+// createMember inserts a member with its account and, when active, the
+// sign-up grant (DOM-027), an open self-join included: SEC-032 gates open mode
+// with a grant when the policy is stored (checkGrantPolicy). An approved
+// request gets the grant in DecideJoinRequest. The caller audits.
 func (s *Service) createMember(tx store.Tx, net *domain.Network, personID, name string, status domain.MemberStatus, method, requestID string) (*domain.Member, error) {
 	if err := s.checkNotFrozen(net.ID); err != nil {
 		return nil, err
@@ -109,7 +110,7 @@ func (s *Service) createMember(tx store.Tx, net *domain.Network, personID, name 
 	if err := tx.InsertAccount(&domain.Account{ID: m.AccountID, NetworkID: net.ID, MemberID: m.ID}); err != nil {
 		return nil, err
 	}
-	if status == domain.MemberActive && grantEligible(method) {
+	if status == domain.MemberActive {
 		if err := s.postSignupGrant(tx, net, m, requestID); err != nil {
 			return nil, err
 		}

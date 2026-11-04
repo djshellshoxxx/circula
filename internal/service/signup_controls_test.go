@@ -139,8 +139,11 @@ func TestSignupGrantCap(t *testing.T) {
 	tu.Must2(d.Svc.CreateNetwork(d.Ctx, c, service.CreateNetworkInput{Name: "Max", Slug: "max-grant", Policy: &pol, CreatorDisplayName: "F"}))
 }
 
-// SEC-032: only members admitted by invitation or approval receive the grant;
-// an open self-service join never does, even after the risk was confirmed.
+// SEC-032 with DOM-027 / DEC-051: once the administrator confirmed the
+// open-mode risk, every member who becomes active receives the grant, an open
+// self-join included (the behaviour before the SEC-032 controls; whether open
+// self-joins should be excluded even after confirmation is an owner question,
+// reported as a spec delta).
 func TestSignupGrantEligibility(t *testing.T) {
 	e := tu.NewEnv(t)
 	admin := e.Person("founder@example.org")
@@ -155,18 +158,80 @@ func TestSignupGrantEligibility(t *testing.T) {
 	if m.Status != domain.MemberActive {
 		t.Fatalf("open join status %s", m.Status)
 	}
-	if b := tu.Must(e.Svc.GetBalance(e.Ctx, self, n.ID)); b.Balance != 0 {
-		t.Errorf("open self-join received a grant: balance %d", b.Balance)
+	if b := tu.Must(e.Svc.GetBalance(e.Ctx, self, n.ID)); b.Balance != 700 {
+		t.Errorf("open self-join balance %d, want the grant 700", b.Balance)
 	}
-	if grantCount(t, e, n.ID) != 0 {
-		t.Error("grant transaction for an open self-join")
+	if grantCount(t, e, n.ID) != 1 {
+		t.Errorf("grants after the open self-join = %d, want 1", grantCount(t, e, n.ID))
 	}
 	invited, _ := e.Member(admin, n, "invited@example.org")
 	if b := tu.Must(e.Svc.GetBalance(e.Ctx, invited, n.ID)); b.Balance != 700 {
 		t.Errorf("invited member balance %d, want the grant 700", b.Balance)
 	}
-	if grantCount(t, e, n.ID) != 1 {
-		t.Errorf("grants = %d, want 1", grantCount(t, e, n.ID))
+	if grantCount(t, e, n.ID) != 2 {
+		t.Errorf("grants = %d, want 2", grantCount(t, e, n.ID))
+	}
+	if rep := tu.Must(e.Svc.VerifyLedger(e.Ctx, admin, n.ID)); !rep.OK {
+		t.Error(rep.Findings)
+	}
+}
+
+// SEC-032: the platform cap also bounds the grant when it is posted, so a
+// network that stored a grant before the operator lowered signup-grant-cap
+// pays at most the cap, and nothing once the cap is 0 (MaxSignupGrant < 0).
+// Invitation redemption and an approved join request are both capped; the
+// default cap leaves the stored grant as it is.
+func TestSignupGrantCapAtPosting(t *testing.T) {
+	var cfg service.Config
+	e := tu.NewEnvConfig(t, nil, func(c *service.Config) { cfg = *c })
+	admin := e.Person("founder@example.org")
+	n, _ := e.Network(admin, "granting", func(p *domain.Policy) { p.JoinMode, p.SignupGrant = domain.JoinApproval, 500 })
+	withCap := func(c int64) *service.Service {
+		cc := cfg // same store, clock and id generator
+		cc.MaxSignupGrant = c
+		return tu.Must(service.New(e.Store, cc))
+	}
+	join := func(svc *service.Service, login string) domain.Actor {
+		a := e.Person(login)
+		tok, _ := tu.Must2(svc.CreateInvitation(e.Ctx, admin, n.ID, service.InviteInput{}))
+		tu.Must(svc.RedeemInvitation(e.Ctx, a, tok, login))
+		return a
+	}
+	approve := func(svc *service.Service, login string) domain.Actor {
+		a := e.Person(login)
+		m := tu.Must(svc.JoinNetwork(e.Ctx, a, n.ID, login))
+		tu.Must(svc.DecideJoinRequest(e.Ctx, admin, n.ID, m.ID, true, ""))
+		return a
+	}
+	balance := func(a domain.Actor) int64 { return tu.Must(e.Svc.GetBalance(e.Ctx, a, n.ID)).Balance }
+
+	off := withCap(-1) // signup-grant-cap=0
+	if b := balance(join(off, "off-invited@example.org")); b != 0 {
+		t.Errorf("cap 0, invited: balance %d, want 0", b)
+	}
+	if b := balance(approve(off, "off-approved@example.org")); b != 0 {
+		t.Errorf("cap 0, approved: balance %d, want 0", b)
+	}
+	if grantCount(t, e, n.ID) != 0 {
+		t.Errorf("grants with cap 0 = %d, want 0", grantCount(t, e, n.ID))
+	}
+	low := withCap(200)
+	if b := balance(join(low, "low-invited@example.org")); b != 200 {
+		t.Errorf("cap 200, invited: balance %d, want 200", b)
+	}
+	if b := balance(approve(low, "low-approved@example.org")); b != 200 {
+		t.Errorf("cap 200, approved: balance %d, want 200", b)
+	}
+	var audited int64
+	if err := e.Store.DB().QueryRow(`SELECT COUNT(*) FROM audit_events WHERE action = ? AND network_id = ? AND summary_after LIKE '%"amount":200%'`,
+		domain.ActGrant, n.ID).Scan(&audited); err != nil || audited != 2 {
+		t.Errorf("capped grants audited with amount 200: %d (%v), want 2", audited, err)
+	}
+	if b := balance(join(e.Svc, "default@example.org")); b != 500 { // default cap: the stored grant
+		t.Errorf("default cap: balance %d, want 500", b)
+	}
+	if grantCount(t, e, n.ID) != 3 {
+		t.Errorf("grants = %d, want 3", grantCount(t, e, n.ID))
 	}
 	if rep := tu.Must(e.Svc.VerifyLedger(e.Ctx, admin, n.ID)); !rep.OK {
 		t.Error(rep.Findings)

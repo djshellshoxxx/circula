@@ -163,8 +163,8 @@ limits sit on top of the per-login throttle in the service (five failed sign-ins
 per client address and login-wide), which is not configurable and cannot be loosened by these settings.
 
 `network-join-limit` is an aggregate per network, counted in the database inside the joining transaction, so it holds
-across restarts and concurrent requests: once `count` memberships (pending requests and invitation redemptions; the
-founder is not counted) were created within `window`, further joins and redemptions answer `rate-limited` (`429` in the
+across restarts and concurrent requests: once `count` memberships (join requests, open joins and invitation
+redemptions; the founder is not counted) were created within `window`, further joins and redemptions answer `rate-limited` (`429` in the
 API) until older ones leave the window. An invitation refused this way is not used up. Existing members repeating a join
 are not affected.
 
@@ -172,10 +172,12 @@ are not affected.
 
 Sign-up grants are off by default (grant `0`, DEC-011). When a network sets one:
 
-- It may not exceed `signup-grant-cap` (minor units; `0` forbids every grant). Lowering the cap does not change stored
-  policies, but the next policy change of a network above the cap is refused until its grant is lowered.
-- Only members admitted by invitation or by an administrator's approval receive it. A person who joins an open network
-  by themselves never receives the grant.
+- It may not exceed `signup-grant-cap` (minor units; `0` turns every grant off). The cap also applies when a grant is
+  posted: lowering it does not change stored policies, but from the next start new members of a network whose stored
+  grant is above the cap receive the cap, and nothing when the cap is `0`. The next policy change of such a network is
+  refused until its grant is lowered to the cap.
+- Every member who becomes active receives it: invited members, approved join requests and, in open join mode, people
+  who join by themselves. The founder does not.
 - Turning on open join mode together with a grant, or raising the grant while both are on, needs an explicit
   confirmation by the administrator (the tick box on the policy and setup forms, `confirm_open_grant_risk: true` in the
   API). The confirmation is recorded as the audit event `policy.open_grant_risk_confirmed`.

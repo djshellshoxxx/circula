@@ -295,10 +295,10 @@ func (s *Service) ListInvitations(ctx context.Context, actor domain.Actor, netID
 // ListInvitations lists the network's invitations (admin).
 
 func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, token, displayName string) (*domain.Member, error)
-// RedeemInvitation joins the caller to the invitation's network as an active member. A pending/active member gets the existing membership back (token not consumed); suspended/departed -> forbidden (SVC-04). The sign-up grant, if any, is posted (SEC-032). Config.NetworkJoinLimit (off by default) refuses a new membership with `rate-limited` once the network had that many new members in NetworkJoinWindow (SEC-006); the token is then not consumed.
+// RedeemInvitation joins the caller to the invitation's network as an active member. A pending/active member gets the existing membership back (token not consumed); suspended/departed -> forbidden (SVC-04). The sign-up grant, if any, is posted, at most Config.MaxSignupGrant (SEC-032). Config.NetworkJoinLimit (off by default) refuses a new membership with `rate-limited` once the network had that many new members in NetworkJoinWindow (SEC-006); the token is then not consumed.
 
 func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, displayName string) (*domain.Member, error)
-// JoinNetwork joins an approval-mode network (-> pending) or open-mode network (-> active). Same existing-membership rule and per-network join limit as RedeemInvitation. An open-mode self-join never receives the sign-up grant (SEC-032); an approved request receives it in DecideJoinRequest.
+// JoinNetwork joins an approval-mode network (-> pending) or open-mode network (-> active). Same existing-membership rule and per-network join limit as RedeemInvitation. An open-mode self-join is active at once and receives the sign-up grant like an invited member (DOM-027; SEC-032 gates open mode with a grant when the policy is stored); an approved request receives it in DecideJoinRequest.
 
 func (s *Service) DecideJoinRequest(ctx context.Context, actor domain.Actor, netID, memberID string, approve bool, reason string) (*domain.Member, error)
 // DecideJoinRequest approves (-> active) or denies (-> departed) a pending member (FR-011).
@@ -841,9 +841,13 @@ Deviations from the specs, with reasons:
   nothing (SVC-04; before, it returned success and the web UI said "you have joined"). Re-application after denial or
   removal is therefore **not supported**; supporting it needs a new DOM-003 transition (open question for FR-011).
 * Founder membership and the founder's account get no sign-up grant. The founder is active in a `setup` network (needed to bootstrap FR-004).
-* Sign-up grant eligibility (SEC-032): invitation redemption and an approved join request only. An open-mode self-join
-  never gets the grant, even when the administrator confirmed the open-mode risk; the grant cap and the confirmation are
-  checked in `signup_controls.go`.
+* Sign-up grant eligibility (SEC-032): every member who becomes active gets the grant (invitation redemption, an
+  approved join request and an open-mode self-join), as before the SEC-032 controls (DOM-027, DEC-051). Open mode with
+  a grant can only be stored after the administrator's audited confirmation (`signup_controls.go`). SEC-032 also asks
+  to restrict eligibility to members who passed approval or invite; whether open self-joins should be excluded even
+  after that confirmation is an open owner question (DEC-011), so it is not applied. The platform cap
+  (Config.MaxSignupGrant) is checked when a policy is stored and again when a grant is posted (`postSignupGrant` posts
+  at most the cap, nothing when it is zero).
 * Sign-up grants are the only `grant` source (DOM-027); there is no periodic grant.
 * Login throttling is per login (including unknown logins); per-address limiting belongs to the HTTP adapter (SEC-006).
   Each evaluated attempt is counted before the password is checked (see `Login`), so a correct password on the 5th try

@@ -34,7 +34,9 @@ func openGrantRisk(p domain.Policy) bool {
 // that is about to be stored; old is the policy in force (nil at creation).
 //   - The grant must not exceed the platform cap (Config.MaxSignupGrant, minor
 //     units; by default the general policy bound, so nothing changes until the
-//     operator lowers it).
+//     operator lowers it). postSignupGrant applies the same cap when a grant
+//     is posted, so a grant stored before the cap was lowered pays at most
+//     the cap, and nothing with a cap of zero.
 //   - Combining open join mode with a grant needs confirm: a change that turns
 //     the combination on, or raises the grant while it is on, without it is
 //     refused at confirm_open_grant_risk. Other changes to a network already in
@@ -68,10 +70,3 @@ func grantRiskAudit(netID string, p domain.Policy, reason string) auditEntry {
 	return auditEntry{Type: domain.ActorAdmin, Action: domain.ActOpenGrantRiskConfirmed, TargetType: "policy",
 		TargetID: netID, Reason: reason, After: map[string]any{"join_mode": string(p.JoinMode), "signup_grant": p.SignupGrant}}
 }
-
-// grantEligible reports whether a membership created with method qualifies
-// for the sign-up grant (SEC-032, DEC-011): only members who passed the
-// network's admission control, an invitation or an administrator's approval
-// (DecideJoinRequest), receive it. Open self-service joins never do, even when
-// the administrator confirmed the open-mode risk.
-func grantEligible(method string) bool { return method == "invite" }

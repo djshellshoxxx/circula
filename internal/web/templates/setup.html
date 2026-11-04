@@ -25,7 +25,7 @@
     </select></div>
   <div class="field{{if .Err "confirm_open_grant_risk"}} has-error{{end}}">
     {{with .Err "confirm_open_grant_risk"}}<p class="error" id="e-confirm_open_grant_risk"><span class="sr">Error: </span>{{.}}</p>{{end}}
-    <label><input type="checkbox" id="f-confirm_open_grant_risk" name="confirm_open_grant_risk" value="1"{{if .Val "confirm_open_grant_risk"}} checked{{end}}{{if .Err "confirm_open_grant_risk"}} aria-invalid="true" aria-describedby="e-confirm_open_grant_risk"{{end}}> I accept the risk of open joining together with a grant: anyone can collect it by opening new accounts. Only needed for that combination. People who join openly get nothing; only invited or approved people receive it.</label>
+    <label><input type="checkbox" id="f-confirm_open_grant_risk" name="confirm_open_grant_risk" value="1"{{if .Val "confirm_open_grant_risk"}} checked{{end}}{{if .Err "confirm_open_grant_risk"}} aria-invalid="true" aria-describedby="e-confirm_open_grant_risk"{{end}}> I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination.</label>
   </div>
   <div class="actions"><button type="submit">Create network</button></div>
 </form>
