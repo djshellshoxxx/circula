@@ -1,6 +1,10 @@
 {{define "content"}}
 {{with .D}}
 <p class="big">{{.Sentence}}</p>
+<dl class="kv">
+  <dt>Payer</dt><dd>{{.Payer}}{{with $.MemberRef .Tx.PayerMemberID}} (member reference {{.}}){{end}}</dd>
+  <dt>Payee</dt><dd>{{.Payee}}{{with $.MemberRef .Tx.PayeeMemberID}} (member reference {{.}}){{end}}</dd>
+</dl>
 <p>{{.Consequence}}</p>
 <form method="post" action="/n/{{$.Slug}}/trades/{{.Tx.ID}}/{{.Action}}">
   {{template "csrf" $}}{{template "idem" $}}

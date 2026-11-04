@@ -19,6 +19,14 @@ var fieldLabels = map[string]string{
 	"join_mode": "Join mode", "departure_rule": "Departure rule", "signup_grant": "Sign-up grant",
 	"limit_warning_days": "Limit warning (days)", "response_period_days": "Dispute response period", "re_review_window_days": "Re-review window", "limit_warning_percent": "Limit warning percent", "inactivity_days": "Inactivity flag", "waive_reason": "Reason for not waiting", "notice_days": "Notice (days)", "notice_reason": "Reason for shorter notice", "terms_version": "Terms", "body": "Terms text", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
 	"confirm_open_grant_risk": "Open joining with a sign-up grant",
+	// UX-021: every other field the service can name in a validation error.
+	"description": "Description", "response": "Response", "time_zone": "Time zone", "version": "Terms version",
+	"effective_at": "Takes effect", "supersedes_id": "Replaces announcement", "listing_id": "Listing", "listing": "Listings",
+	"target_type": "Report about", "target_id": "Reported item", "role": "Role", "scopes": "Token permissions",
+	"code": "Code", "format": "File format", "scope": "Export type", "kind": "Challenge type", "decimals": "Decimal places",
+	"dual_control_threshold": "Dual-control threshold", "threshold": "Dual-control threshold", "report": "Ledger report",
+	"page": "Page", "idempotency_key": "Form key", "operator": "Operator", "directory_visibility": "Directory visibility",
+	"ids": "Notices",
 }
 
 func label(f string) string {
@@ -26,6 +34,48 @@ func label(f string) string {
 		return l
 	}
 	return strings.ReplaceAll(f, "_", " ")
+}
+
+// choiceFixes are the corrections for fields filled from a fixed list (UX-021).
+var choiceFixes = map[string]string{
+	"counterparty_id": "Choose another active member from the list.",
+	"direction":       "Choose whether you pay or are paid.",
+	"category":        "Choose one of the listed categories.",
+	"outcome":         "Choose one of the listed outcomes.",
+	"type":            "Choose one of the listed types.",
+	"status":          "Choose one of the listed statuses.",
+	"format":          "Choose CSV or JSON.",
+	"listing_id":      "Start again from the other member's listing, or propose without one.",
+	"terms_version":   "Read the terms shown, tick the box to accept them and try again.",
+}
+
+// fieldFix suggests how to correct one field error (UX-021: identify the field, describe the
+// problem, suggest a correction). The service detail describes the problem; this says what to
+// do about it, from the kind of problem first and then from the field.
+func (c *rc) fieldFix(f domain.FieldError) string {
+	d := strings.ToLower(f.Detail)
+	switch {
+	case strings.HasPrefix(d, "required"):
+		return "Fill it in and try again."
+	case strings.Contains(d, "is not correct"):
+		return "Type it again carefully and try again."
+	case strings.Contains(d, "too long"):
+		return "Shorten it and try again."
+	case strings.Contains(d, "control") && strings.Contains(d, "characters"):
+		return "Remove hidden or special characters and try again."
+	case strings.Contains(d, "choose another"):
+		return "Choose a different one and try again."
+	case strings.Contains(d, "decimal places") && c != nil && c.Net != nil:
+		return fmt.Sprintf("Use at most %d decimal places and try again.", c.Net.Policy.Decimals)
+	case strings.Contains(d, "not a number") && c != nil && c.Net != nil:
+		return "Enter digits only, for example " + domain.FormatAmount(1250, c.Net.Policy.Decimals) + "."
+	case d == "too large":
+		return "Enter a smaller amount and try again."
+	}
+	if fix, ok := choiceFixes[f.Field]; ok {
+		return fix
+	}
+	return "Check the value and try again."
 }
 
 // refuse turns a service error into summary text and field errors.
@@ -38,7 +88,13 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
 	switch de.Code {
 	case domain.CodeValidation:
 		for _, f := range de.Fields {
-			fields = append(fields, fieldErr{Field: f.Field, Text: fmt.Sprintf("%s: %s. Check the value and try again.", label(f.Field), f.Detail)})
+			fields = append(fields, fieldErr{Field: f.Field, Text: fmt.Sprintf("%s: %s. %s", label(f.Field), f.Detail, c.fieldFix(f))})
+		}
+		if len(fields) == 0 { // no field to point at, for example an amount the accounts cannot record
+			if strings.Contains(de.Msg, "overflows") {
+				return "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed.", nil, true
+			}
+			return "Not saved. Something entered was not accepted. Check the form and try again. Nothing changed.", nil, true
 		}
 		return "Not saved. Fix the problems below. Nothing changed.", fields, true
 	case domain.CodeInsufficientCredit:
@@ -67,6 +123,9 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
 		return "Not done. " + strings.Join(de.Blockers, "; ") + ". Nothing changed.", nil, true
 	case domain.CodeRateLimited:
 		return "Too many attempts. Wait a minute and try again. Nothing changed.", nil, true
+	case domain.CodeApprovalRequired: // for example removing a member whose settlement is above the dual-control threshold
+		return "Not done. The amount is above the dual-control threshold, so one administrator cannot move it alone. " +
+			"Settle it first with an adjustment that a second administrator approves (Adjustments), then try again. Nothing changed.", nil, true
 	}
 	return "", nil, false
 }

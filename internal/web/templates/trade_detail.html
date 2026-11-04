@@ -12,6 +12,8 @@
   {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>Expires</dt><dd>{{.Expires}}</dd>{{end}}{{end}}
   {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{.Posted}}</dd>{{end}}
   {{if .Row.Ledger}}<dt>Ledger reference</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
+  {{if .Tx.OriginalTxID}}<dt>Reverses</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.OriginalTxID}}">The original trade</a></dd>{{end}}
+  {{if .Row.ReversedBy}}<dt>Reversals</dt><dd><ul>{{range .Row.ReversedBy}}<li><a href="/n/{{$.Slug}}/trades/{{.ID}}">{{.Text}}</a></li>{{end}}</ul></dd>{{end}}
 </dl>
 <div class="actions">
   {{if .Accept}}<a class="btn" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">Review and accept</a>{{end}}
