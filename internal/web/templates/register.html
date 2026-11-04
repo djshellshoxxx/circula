@@ -7,5 +7,5 @@
   {{template "field" dict "P" . "Name" "password2" "Label" "Confirm password" "Type" "password" "Auto" "new-password" "Req" true}}
   <div class="actions"><button type="submit">Create account</button></div>
 </form>
-<p>Already have an account? <a href="/login{{if .Next}}?next={{qs .Next}}{{end}}">Sign in</a>.</p>
+<p>Already have an account? <a href="/login{{if .Next}}?next={{.Next}}{{end}}">Sign in</a>.</p>
 {{end}}

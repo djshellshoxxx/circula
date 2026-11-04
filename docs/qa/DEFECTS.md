@@ -17,6 +17,6 @@ Each entry: id (`DEF-NNN`), date, found by (test id or person), flow/page, WCAG 
 ## Log
 | Id | Date | Found by | Flow / page | Criterion | Class | Status | Reference |
 |---|---|---|---|---|---|---|---|
-| (none recorded) | | | | | | | |
+| DEF-001 | 2026-11-04 | e2e `zz-noscript.spec.js` QA-034 return path; `internal/web/next_link_test.go` | Invitation → Create an account / Sign in (`join_anon`, `login`, `register`, `login_mfa` templates) | n/a (functional: return path lost) | Other | fixed | Templates piped `next` through `qs` (url.QueryEscape) inside an href query that html/template already escapes, so `next` decoded to `%2Fjoin%2F...`. Removed the extra escape and the helper; regression `TestReturnLinksDecodeToTheOriginalPath`. |
 
 `scripts/release-gate.sh` counts rows with class `A-block` and status `open` and fails if any exist.

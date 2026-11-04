@@ -82,8 +82,9 @@ func mustLoadTemplates() map[string]*pageTemplate {
 			}
 			return m
 		},
-		"eq2":           func(a, b any) bool { return fmt.Sprint(a) == fmt.Sprint(b) },
-		"qs":            url.QueryEscape,
+		"eq2": func(a, b any) bool { return fmt.Sprint(a) == fmt.Sprint(b) },
+		// No query-escape helper: html/template already escapes a value placed in
+		// an href query, and a second escape corrupts return links ("next").
 		"categoryLabel": categoryLabel,
 		"deref": func(v any) any {
 			switch x := v.(type) {
