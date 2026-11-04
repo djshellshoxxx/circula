@@ -3729,7 +3729,10 @@ components:
         reason: {type: string, maxLength: 500, description: Optional detail. Recorded in the audit log; never shown in the member's notice.}
         transaction_id:
           allOf: [{$ref: '#/components/schemas/Id'}]
-          description: Optional. The transaction the removal is about; the member must be a party to it.
+          description: >-
+            Optional. The transaction the removal is about; the member must be a party to it. Without it the
+            conflict check (GOV-011, SEC-010) sees only the member's trades under an undecided dispute or a
+            requested re-review.
     ChangePasswordRequest:
       type: object
       required: [current_password, new_password]

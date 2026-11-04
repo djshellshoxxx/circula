@@ -6,7 +6,7 @@
   {{template "csrf" $}}
   {{if .Def.Amount}}{{template "field" dict "P" $ "Name" "amount" "Label" "Credit limit" "Hint" "Amount in credits. Leave empty to use the network default." "Mode" "decimal"}}{{end}}
   {{if .Codes}}{{template "select" dict "P" $ "Name" "reason_code" "Label" "Reason for removal" "Hint" "Required. A member can be removed only for one of these reasons. The member's notice names it, and they can challenge the removal." "Opts" .Codes}}
-  {{template "field" dict "P" $ "Name" "transaction_id" "Label" "Trade reference (optional)" "Hint" "If the removal is about one trade, its reference from the trade page address. For fraud or a rules breach you cannot decide a removal about a trade you took part in."}}
+  {{template "field" dict "P" $ "Name" "transaction_id" "Label" "Trade reference (optional)" "Hint" "If the removal is about one trade, its reference from the trade page address. For fraud or a rules breach you cannot decide a removal about a trade you took part in; the check sees only the trade named here and trades still under dispute."}}
   {{template "field" dict "P" $ "Name" "reason" "Label" "Details (optional)" "Hint" "Recorded in the audit log. The member's notice does not include it." "Max" 500}}{{end}}
   {{if .Def.Reason}}{{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" "Required. It is recorded in the audit log." "Req" true}}{{end}}
   <div class="actions"><button type="submit"{{if eq .Key "remove" "suspend" "deny"}} class="danger"{{end}}>{{.Def.Verb}}</button> <a class="btn secondary" href="/n/{{$.Slug}}/admin/members">Go back</a></div>

@@ -17,12 +17,6 @@ type PolicyVersionRow struct {
 	EffectiveAt  time.Time
 	NoticeDays   int
 	NoticeReason string
-	// ScaleNeutralised: the stored row carries a decimal scale other than the
-	// one fixed at creation (only an earlier build could write one). Policy
-	// then holds the creation-time scale, as every network read does
-	// (DOM-031), and StoredDecimals the scale as stored.
-	ScaleNeutralised bool
-	StoredDecimals   int
 }
 
 // GovRepo covers policy notice periods and terms (GOV-003, GOV-009). Like the
@@ -35,8 +29,7 @@ type GovRepo interface {
 	// LatestPolicyVersion is the highest stored version, effective or pending.
 	LatestPolicyVersion(netID string) (int, error)
 	AppendPolicyNotice(netID string, version int, p domain.Policy, by, reason string, announced, effective time.Time, noticeDays int, noticeReason string) error
-	// ListPolicyVersions returns every version, oldest first, each with the
-	// creation-time decimal scale (see PolicyVersionRow.ScaleNeutralised).
+	// ListPolicyVersions returns every version, oldest first.
 	ListPolicyVersions(netID string) ([]PolicyVersionRow, error)
 
 	InsertTerms(netID string, t domain.Terms) error

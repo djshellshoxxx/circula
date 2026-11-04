@@ -390,14 +390,19 @@ func withdrawnVersions(rows []store.PolicyVersionRow) []bool {
 	return out
 }
 
-// RecordNeutralisedScaleChanges is the body of a scheduled job (DOM-031). An
-// earlier build could store a decimal-scale change as a scheduled policy
-// version. Every read keeps the creation-time scale, so such a version comes
-// into force with its other keys only. For each such version that has come
-// into force this records, once, a system audit event in the network's log
-// with the stored and the kept scale. System actors only; frozen networks are
-// skipped until they are thawed. It returns the number of events written.
-func (s *Service) RecordNeutralisedScaleChanges(ctx context.Context, actor domain.Actor) (int, error) {
+// RecordStoredScaleChanges is the body of a scheduled job (DOM-031). A build
+// before c34d947 could store a decimal-scale change as a scheduled policy
+// version; on its date it changes how stored integer amounts read. Whether to
+// neutralise such a version is an owner or operator decision (audit
+// remediation 2026-11-04, open item 2), so this job only reports it. For each
+// scheduled version that changes the scale and is not withdrawn it records,
+// once, a system audit event in the network's log with the scale before it,
+// the stored scale and its effective time, as soon as the row is seen. It
+// changes no read and no stored row. A change that took effect at once (an
+// earlier build allowed one before the first posting) is not reported: the
+// network has run under that scale since. System actors only; frozen networks
+// are skipped until they are thawed. It returns the number of events written.
+func (s *Service) RecordStoredScaleChanges(ctx context.Context, actor domain.Actor) (int, error) {
 	if !actor.System {
 		return 0, domain.Forbidden("system actor required")
 	}
@@ -413,7 +418,7 @@ func (s *Service) RecordNeutralisedScaleChanges(ctx context.Context, actor domai
 		if s.IsFrozen(netID) {
 			continue
 		}
-		n, err := s.recordNeutralisedScale(ctx, actor, netID)
+		n, err := s.recordStoredScale(ctx, actor, netID)
 		if err != nil {
 			return total, err
 		}
@@ -422,7 +427,33 @@ func (s *Service) RecordNeutralisedScaleChanges(ctx context.Context, actor domai
 	return total, nil
 }
 
-func (s *Service) recordNeutralisedScale(ctx context.Context, actor domain.Actor, netID string) (int, error) {
+// scaleChange is a stored scheduled policy version that changes the decimal
+// scale of the version before it (from).
+type scaleChange struct {
+	row  store.PolicyVersionRow
+	from int
+}
+
+// storedScaleChanges lists the scheduled versions (effective after they were
+// announced) that are not withdrawn and change the scale of the last earlier
+// version that is not withdrawn. rows are oldest first.
+func storedScaleChanges(rows []store.PolicyVersionRow) []scaleChange {
+	var out []scaleChange
+	withdrawn := withdrawnVersions(rows)
+	prev := -1
+	for i, r := range rows {
+		if withdrawn[i] {
+			continue
+		}
+		if prev >= 0 && r.EffectiveAt.After(r.AnnouncedAt) && r.Policy.Decimals != rows[prev].Policy.Decimals {
+			out = append(out, scaleChange{row: r, from: rows[prev].Policy.Decimals})
+		}
+		prev = i
+	}
+	return out
+}
+
+func (s *Service) recordStoredScale(ctx context.Context, actor domain.Actor, netID string) (int, error) {
 	written := 0
 	err := s.update(ctx, func(tx store.Tx) error {
 		g, err := govRepo(tx)
@@ -433,18 +464,12 @@ func (s *Service) recordNeutralisedScale(ctx context.Context, actor domain.Actor
 		if err != nil {
 			return err
 		}
-		now, withdrawn := s.now(), withdrawnVersions(rows)
-		var due []store.PolicyVersionRow
-		for i, r := range rows {
-			if r.ScaleNeutralised && !withdrawn[i] && !r.EffectiveAt.After(now) {
-				due = append(due, r)
-			}
-		}
+		due := storedScaleChanges(rows)
 		if len(due) == 0 {
 			return nil
 		}
 		noted := map[int]bool{}
-		evs, err := tx.ListAudit(netID, store.AuditFilter{Action: domain.ActPolicyScaleNeutralised, TargetID: netID, Limit: 500})
+		evs, err := tx.ListAudit(netID, store.AuditFilter{Action: domain.ActPolicyScaleChangeDetected, TargetID: netID, Limit: 500})
 		if err != nil {
 			return err
 		}
@@ -456,15 +481,15 @@ func (s *Service) recordNeutralisedScale(ctx context.Context, actor domain.Actor
 				noted[after.Version] = true
 			}
 		}
-		for _, r := range due {
-			if noted[r.Version] {
+		for _, c := range due {
+			if noted[c.row.Version] {
 				continue
 			}
-			if err := s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActPolicyScaleNeutralised,
+			if err := s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActPolicyScaleChangeDetected,
 				TargetType: "policy", TargetID: netID,
-				Reason: "the decimal scale is fixed at network creation; this version took effect without its scale change",
-				Before: map[string]any{"decimals": r.StoredDecimals},
-				After:  map[string]any{"decimals": r.Policy.Decimals, "version": r.Version}}); err != nil {
+				Reason: "an earlier build stored this scheduled policy version with another decimal scale; on its date it changes how stored amounts read. Nothing was changed: the operator or owner decides",
+				Before: map[string]any{"decimals": c.from},
+				After:  map[string]any{"decimals": c.row.Policy.Decimals, "version": c.row.Version, "effective_at": c.row.EffectiveAt.UnixMilli()}}); err != nil {
 				return err
 			}
 			written++

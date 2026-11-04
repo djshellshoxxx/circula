@@ -1,7 +1,7 @@
 package domain
 
-// ActPolicyScaleNeutralised notes, once per policy version, that a stored
-// version which changes the decimal scale came into force without its scale
-// (DOM-031). Only an earlier build could store such a version; the network
-// keeps the scale fixed at creation. It is written by a system job.
-const ActPolicyScaleNeutralised = "policy.scale_change_neutralised"
+// ActPolicyScaleChangeDetected notes, once per policy version, that a stored
+// scheduled version changes the decimal scale (DOM-031). Only a build before
+// c34d947 could store one. It is a report written by a system job: nothing is
+// changed, and what to do with the version is an owner or operator decision.
+const ActPolicyScaleChangeDetected = "policy.stored_scale_change_detected"
