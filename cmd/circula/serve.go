@@ -21,6 +21,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/api"
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/logx"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/store"
 	"github.com/djshellshoxxx/circula/internal/web"
@@ -56,12 +57,15 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 	})
 }
 
+// newLogger builds the process logger. Every handler is wrapped by logx, so
+// all serve output (access log, jobs, adapters) is redacted, control
+// characters are escaped and timestamps are UTC (SEC-020, OPS-032).
 func newLogger(cfg *Config, w io.Writer) *slog.Logger {
 	opts := &slog.HandlerOptions{Level: cfg.LogLevel}
 	if cfg.LogFormat == "text" {
-		return slog.New(slog.NewTextHandler(w, opts))
+		return slog.New(logx.Wrap(slog.NewTextHandler(w, opts)))
 	}
-	return slog.New(slog.NewJSONHandler(w, opts))
+	return slog.New(logx.Wrap(slog.NewJSONHandler(w, opts)))
 }
 
 // cmdServe runs the HTTP service and its scheduled jobs.
@@ -298,7 +302,7 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 		ExportDir: cfg.ExportDir}) // BR-06
 	webH = web.NewHandlerWith(svc, web.Options{
 		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
-		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax,
+		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax, Logger: logger,
 		Limits: webLimits(cfg),
 	})
 	return apiH, webH, nil

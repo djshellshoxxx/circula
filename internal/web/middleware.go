@@ -4,9 +4,9 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 )
 
@@ -28,10 +28,18 @@ func randHex(n int) string {
 	return hex.EncodeToString(b)
 }
 
+// reqIDPattern is the X-Request-Id an upstream layer (the serve edge, a
+// proxy) may set and the UI keeps, so its log lines and error references match
+// the access log (SEC-020). The JSON API accepts the same form.
+var reqIDPattern = regexp.MustCompile(`^[A-Za-z0-9._-]{8,64}$`)
+
 // wrap adds request id, security headers, panic recovery, body limit and CSRF.
 func (s *server) wrap(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := randHex(8)
+		id := r.Header.Get("X-Request-Id")
+		if !reqIDPattern.MatchString(id) {
+			id = randHex(8)
+		}
 		h := w.Header()
 		h.Set("Content-Security-Policy", csp)
 		h.Set("X-Content-Type-Options", "nosniff")
@@ -44,7 +52,7 @@ func (s *server) wrap(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), keyReqID, id)
 		defer func() {
 			if rec := recover(); rec != nil {
-				log.Printf("web: panic req=%s: %v", id, rec)
+				s.log.Error("web panic", "request_id", id, "panic", rec)
 				s.renderError(w, r.WithContext(ctx), http.StatusInternalServerError)
 			}
 		}()

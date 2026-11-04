@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
-	"log"
 	"net/http"
 	"net/url"
 	"path"
@@ -160,7 +159,7 @@ func (c *rc) row(t *domain.Transaction, n names) txRow {
 func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name string, status int, p *page) {
 	t := s.pages[name]
 	if t == nil {
-		log.Printf("web: missing template %s", name)
+		s.log.Error("web template missing", "request_id", reqID(r), "template", name)
 		http.Error(w, "internal error", 500)
 		return
 	}
@@ -195,7 +194,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 	}
 	var buf bytes.Buffer
 	if err := t.ExecuteTemplate(&buf, "base", p); err != nil {
-		log.Printf("web: render %s req=%s: %v", name, p.ReqID, err)
+		s.log.Error("web render failed", "request_id", p.ReqID, "template", name, "err", err)
 		http.Error(w, "internal error, reference "+p.ReqID, 500)
 		return
 	}
@@ -322,7 +321,8 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		s.renderError(w, r, 409)
 	default:
 		if domain.CodeOf(err) == domain.CodeInternal {
-			log.Printf("web: internal error req=%q: %q", reqID(r), err.Error()) //nolint:gosec // G706: both values are %q-quoted, no control characters pass
+			// The route pattern, never the raw path; logx escapes and redacts the error text.
+			s.log.Error("web internal error", "request_id", reqID(r), "route", r.Pattern, "err", err)
 		}
 		s.renderError(w, r, 500)
 	}

@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"embed"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"sync"
 	"sync/atomic"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/logx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -39,6 +41,10 @@ type Options struct {
 	CSRFKey []byte
 	// Clock is used only to label invitations as expired; default wall clock.
 	Clock domain.Clock
+	// Logger receives the application log (SEC-020); default slog.Default().
+	// It is always wrapped by logx, which redacts credentials and escapes
+	// control characters.
+	Logger *slog.Logger
 	// Limits tunes the in-process rate limits (SEC-006). Zero fields keep the
 	// built-in defaults.
 	Limits Limits
@@ -81,6 +87,7 @@ func limiterFor(l, def Limit) *limiter {
 type server struct {
 	svc   *service.Service
 	opts  Options
+	log   *slog.Logger
 	key   []byte
 	pages map[string]*pageTemplate
 	csrf  httpx.CSRF
@@ -103,7 +110,7 @@ func NewHandlerWith(svc *service.Service, opts Options) http.Handler {
 
 func newServer(svc *service.Service, opts Options) *server {
 	lim, def := opts.Limits, DefaultLimits
-	s := &server{svc: svc, opts: opts, key: opts.CSRFKey,
+	s := &server{svc: svc, opts: opts, key: opts.CSRFKey, log: logx.New(opts.Logger),
 		ipFail: limiterFor(lim.SigninAddress, def.SigninAddress), acctFail: limiterFor(lim.SigninAccount, def.SigninAccount),
 		pwFail: limiterFor(lim.PasswordCheck, def.PasswordCheck), reg: limiterFor(lim.Register, def.Register),
 		setup: limiterFor(lim.Setup, def.Setup), join: limiterFor(lim.Join, def.Join)}

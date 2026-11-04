@@ -15,12 +15,13 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/logx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // Options tunes the handler. The zero value is production-ready.
 type Options struct {
-	Logger *slog.Logger // default: slog.Default()
+	Logger *slog.Logger // default: slog.Default(); always wrapped by logx (SEC-020)
 	Now    func() time.Time
 	// MaxBodyBytes caps request bodies (API-037). Default 64 KiB.
 	MaxBodyBytes int64
@@ -62,9 +63,7 @@ func NewHandler(svc *service.Service) http.Handler { return NewHandlerWithOption
 
 // NewHandlerWithOptions is NewHandler with explicit options.
 func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
-	if opt.Logger == nil {
-		opt.Logger = slog.Default()
-	}
+	opt.Logger = logx.New(opt.Logger) // redacts credentials, escapes control characters
 	if opt.Now == nil {
 		opt.Now = time.Now
 	}
