@@ -94,7 +94,9 @@ func (s *Service) ListInvitations(ctx context.Context, actor domain.Actor, netID
 }
 
 // createMember inserts a member with its account and, when active, the
-// sign-up grant. The caller audits.
+// sign-up grant (DOM-027), an open self-join included: SEC-032 gates open mode
+// with a grant when the policy is stored (checkGrantPolicy). An approved
+// request gets the grant in DecideJoinRequest. The caller audits.
 func (s *Service) createMember(tx store.Tx, net *domain.Network, personID, name string, status domain.MemberStatus, method, requestID string) (*domain.Member, error) {
 	if err := s.checkNotFrozen(net.ID); err != nil {
 		return nil, err
@@ -192,6 +194,9 @@ func (s *Service) RedeemInvitationTerms(ctx context.Context, actor domain.Actor,
 		if err := networkOpenErr(net); err != nil {
 			return domain.InvalidState("%s; not accepting members", err.Error())
 		}
+		if err := s.checkNetworkJoinLimit(tx, net.ID); err != nil {
+			return err
+		}
 		record, err := s.joinTerms(tx, net.ID, termsVersion)
 		if err != nil {
 			return err
@@ -254,6 +259,9 @@ func (s *Service) JoinNetworkTerms(ctx context.Context, actor domain.Actor, netI
 		case domain.JoinApproval:
 		default:
 			return domain.Forbidden("this network is invitation-only")
+		}
+		if err := s.checkNetworkJoinLimit(tx, net.ID); err != nil {
+			return err
 		}
 		record, err := s.joinTerms(tx, net.ID, termsVersion)
 		if err != nil {

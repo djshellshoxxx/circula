@@ -142,6 +142,13 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 		}
 		delete(patch, "notice_reason")
 	}
+	var confirmRisk bool // SEC-032: not a policy field; confirms open join mode with a sign-up grant
+	if r, has := patch["confirm_open_grant_risk"]; has {
+		if json.Unmarshal(r, &confirmRisk) != nil {
+			return validation("confirm_open_grant_risk", "invalid-type", "must be true or false")
+		}
+		delete(patch, "confirm_open_grant_risk")
+	}
 	s.casMu.Lock()
 	defer s.casMu.Unlock()
 	n, err := s.svc.GetNetwork(c.r.Context(), c.actor, c.netID)
@@ -177,7 +184,8 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 	if key == "" || !validKey(key) { // idempotent by ETag (API-058)
 		key = "policy:" + cur + ":" + etagOf(string(b))
 	}
-	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, NoticeDays: notice, NoticeReason: noticeReason, IdempotencyKey: key})
+	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, NoticeDays: notice, NoticeReason: noticeReason,
+		ConfirmOpenGrantRisk: confirmRisk, IdempotencyKey: key})
 	if err != nil {
 		return err
 	}

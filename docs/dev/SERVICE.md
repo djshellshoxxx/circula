@@ -28,7 +28,8 @@ svc, err := service.New(st, service.Config{})            // defaults: wall clock
 * `svc.SetObserver(o)` installs an optional `service.Observer` (see section 2, "Operational hooks"); `circula serve`
   sets its metrics here. `svc.FreezeNetwork` / `UnfreezeNetwork` / `IsFrozen` / `FrozenNetworks` implement the
   per-network freeze (CMD-07).
-* `Config.Argon` cost parameters are a placeholder until DEC-006 (benchmark on minimum hardware) is decided.
+* `Config.Argon` cost parameters are a placeholder until DEC-006 (benchmark on minimum hardware) is decided. Their cost
+  on the build machine is recorded in [argon2-benchmark.md](argon2-benchmark.md) (not the owner's minimum hardware).
 
 ## 2. Conventions every adapter must follow
 
@@ -184,7 +185,10 @@ func (s *Service) Login(ctx context.Context, login, password string) (string, *d
 // Login verifies credentials and returns an opaque bearer session token (shown once; only its SHA-256 is stored). Atomic throttle (AUTH-01/SA-04): lock check + attempt count are ONE write unit before the password is verified, so at most 5 guesses are evaluated per lock window however many run in parallel. Malformed logins (validLogin) are refused uniformly and never stored.
 
 func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor, error)
-// Authenticate resolves a session token to an Actor. Only an unknown/revoked/expired session is `unauthenticated`; store failures (including `unavailable`) are returned as they are, so an outage never logs users out (AUTH-02). Same for AuthenticateToken.
+// Authenticate resolves a session token to an Actor. Only an unknown/revoked/expired session is `unauthenticated`; store failures (including `unavailable`) are returned as they are, so an outage never logs users out (AUTH-02). Same for AuthenticateToken. SEC-003: when Config.Admin*/Reviewer* session lifetimes are shorter than the member ones, a person holding that role in any network where they are not departed gets the shorter idle and absolute lifetime (absolute counted from the session's creation); the role is read on every call. With the defaults no role lookup happens.
+
+func (s *Service) RevokeAllSessions(ctx context.Context, actor domain.Actor, in RevokeSessionsInput) (int64, error)
+// RevokeAllSessions (sessions_revoke.go, `circula revoke-sessions`) revokes every live session, or those of in.Login, and writes one platform audit event `sessions.revoked` (platform operator, reason mandatory, count and scope in the summary). actor must be the system actor. Touches nothing else: no ledger row, no API token (SEC-027, OPS-010).
 
 func (s *Service) Logout(ctx context.Context, token string) error
 // Logout revokes the session behind token.
@@ -291,10 +295,10 @@ func (s *Service) ListInvitations(ctx context.Context, actor domain.Actor, netID
 // ListInvitations lists the network's invitations (admin).
 
 func (s *Service) RedeemInvitation(ctx context.Context, actor domain.Actor, token, displayName string) (*domain.Member, error)
-// RedeemInvitation joins the caller to the invitation's network as an active member. A pending/active member gets the existing membership back (token not consumed); suspended/departed -> forbidden (SVC-04).
+// RedeemInvitation joins the caller to the invitation's network as an active member. A pending/active member gets the existing membership back (token not consumed); suspended/departed -> forbidden (SVC-04). The sign-up grant, if any, is posted, at most Config.MaxSignupGrant (SEC-032). Config.NetworkJoinLimit (off by default) refuses a new membership with `rate-limited` once the network had that many new members in NetworkJoinWindow (SEC-006); the token is then not consumed.
 
 func (s *Service) JoinNetwork(ctx context.Context, actor domain.Actor, netID, displayName string) (*domain.Member, error)
-// JoinNetwork joins an approval-mode network (-> pending) or open-mode network (-> active). Same existing-membership rule as RedeemInvitation.
+// JoinNetwork joins an approval-mode network (-> pending) or open-mode network (-> active). Same existing-membership rule and per-network join limit as RedeemInvitation. An open-mode self-join is active at once and receives the sign-up grant like an invited member (DOM-027; SEC-032 gates open mode with a grant when the policy is stored); an approved request receives it in DecideJoinRequest.
 
 func (s *Service) DecideJoinRequest(ctx context.Context, actor domain.Actor, netID, memberID string, approve bool, reason string) (*domain.Member, error)
 // DecideJoinRequest approves (-> active) or denies (-> departed) a pending member (FR-011).
@@ -397,7 +401,7 @@ func (s *Service) MyMemberships(ctx context.Context, actor domain.Actor) ([]*dom
 // MyMemberships lists every membership of the caller across networks.
 
 func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID string, in PolicyChange) (*domain.Network, error)
-// UpdatePolicy appends a new policy version (DOM-029, DOM-030).
+// UpdatePolicy appends a new policy version (DOM-029, DOM-030). SEC-032: a signup_grant above Config.MaxSignupGrant is refused at `signup_grant`; a change that turns on open join mode with a grant, or raises the grant while both are on, needs PolicyChange.ConfirmOpenGrantRisk (else validation at `confirm_open_grant_risk`) and then also writes `policy.open_grant_risk_confirmed`. CreateNetwork applies the same rules with CreateNetworkInput.ConfirmOpenGrantRisk.
 ```
 
 #### password.go
@@ -641,6 +645,8 @@ type CreateNetworkInput struct {
 	Slug			string
 	Policy			*domain.Policy	// nil = platform defaults
 	CreatorDisplayName	string
+	ConsumeSetupSecret	bool
+	ConfirmOpenGrantRisk	bool	// SEC-032, see UpdatePolicy
 }
 
 type NetworkInfo struct {
@@ -650,9 +656,17 @@ type NetworkInfo struct {
 }
 
 type PolicyChange struct {
-	Policy		domain.Policy
-	Reason		string
-	IdempotencyKey	string	`json:"-"`
+	Policy			domain.Policy
+	Reason			string
+	NoticeDays		*int
+	NoticeReason		string
+	ConfirmOpenGrantRisk	bool	`json:",omitempty"`	// SEC-032; omitted from the idempotency fingerprint when false
+	IdempotencyKey		string	`json:"-"`
+}
+
+type RevokeSessionsInput struct {
+	Login	string	// empty: every person
+	Reason	string	// required, audited
 }
 
 type Argon2Params struct {
@@ -680,6 +694,12 @@ type Config struct {
 	SessionIdle	time.Duration		// default 30 days (DAT section 9)
 	SessionMax	time.Duration		// default 90 days
 	IdempotencyTTL	time.Duration		// default 7 days (DAT section 9)
+
+	AdminSessionIdle, AdminSessionMax		time.Duration	// SEC-003; 0 or longer than SessionIdle/SessionMax = the member value
+	ReviewerSessionIdle, ReviewerSessionMax		time.Duration	// SEC-003; same rule
+	MaxSignupGrant		int64		// SEC-032 cap in minor units; 0 = domain.MaxPolicyAmount, <0 = no grant allowed
+	NetworkJoinLimit	int		// SEC-006 new memberships per network per NetworkJoinWindow; 0 = off
+	NetworkJoinWindow	time.Duration
 
 	MaxOpenRequestsPerPair		int	// open requests from one proposer to one payer; default 5, <0 off (SA-08)
 	MaxOpenProposalsPerMember	int	// open proposals created by one member; default 200, <0 off (SA-08)
@@ -821,6 +841,13 @@ Deviations from the specs, with reasons:
   nothing (SVC-04; before, it returned success and the web UI said "you have joined"). Re-application after denial or
   removal is therefore **not supported**; supporting it needs a new DOM-003 transition (open question for FR-011).
 * Founder membership and the founder's account get no sign-up grant. The founder is active in a `setup` network (needed to bootstrap FR-004).
+* Sign-up grant eligibility (SEC-032): every member who becomes active gets the grant (invitation redemption, an
+  approved join request and an open-mode self-join), as before the SEC-032 controls (DOM-027, DEC-051). Open mode with
+  a grant can only be stored after the administrator's audited confirmation (`signup_controls.go`). SEC-032 also asks
+  to restrict eligibility to members who passed approval or invite; whether open self-joins should be excluded even
+  after that confirmation is an open owner question (DEC-011), so it is not applied. The platform cap
+  (Config.MaxSignupGrant) is checked when a policy is stored and again when a grant is posted (`postSignupGrant` posts
+  at most the cap, nothing when it is zero).
 * Sign-up grants are the only `grant` source (DOM-027); there is no periodic grant.
 * Login throttling is per login (including unknown logins); per-address limiting belongs to the HTTP adapter (SEC-006).
   Each evaluated attempt is counted before the password is checked (see `Login`), so a correct password on the 5th try

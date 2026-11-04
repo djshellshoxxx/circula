@@ -18,6 +18,7 @@ var fieldLabels = map[string]string{
 	"proposal_expiry_days": "Proposal expiry (days)", "dispute_window_days": "Dispute window (days)",
 	"join_mode": "Join mode", "departure_rule": "Departure rule", "signup_grant": "Sign-up grant",
 	"limit_warning_days": "Limit warning (days)", "response_period_days": "Dispute response period", "re_review_window_days": "Re-review window", "limit_warning_percent": "Limit warning percent", "inactivity_days": "Inactivity flag", "waive_reason": "Reason for not waiting", "notice_days": "Notice (days)", "notice_reason": "Reason for shorter notice", "terms_version": "Terms", "body": "Terms text", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
+	"confirm_open_grant_risk": "Open joining with a sign-up grant",
 }
 
 func label(f string) string {

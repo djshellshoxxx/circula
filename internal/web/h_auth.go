@@ -202,7 +202,8 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	net, _, err := s.svc.CreateNetwork(r.Context(), c.actor, service.CreateNetworkInput{Name: v["name"], Slug: v["slug"],
 		Policy: &pol, CreatorDisplayName: v["display_name"],
-		ConsumeSetupSecret: s.opts.SetupSecret != ""}) // SA2-16: spent in the same transaction
+		ConsumeSetupSecret:   s.opts.SetupSecret != "",             // SA2-16: spent in the same transaction
+		ConfirmOpenGrantRisk: v["confirm_open_grant_risk"] == "1"}) // SEC-032
 	if err == nil {
 		_, err = s.svc.ActivateNetwork(r.Context(), c.actor, net.ID)
 	}
@@ -328,9 +329,13 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	// FR-012: join attempts are rate-limited per person and per address.
 	if !s.join.allow("p:"+c.actor.PersonID) || !s.join.allow("i:"+s.clientIP(r)) {
-		w.Header().Set("Retry-After", "600")
+		w.Header().Set("Retry-After", strconv.Itoa(int(s.join.window.Seconds())))
+		wait := "Wait ten minutes and try again."
+		if s.join.window.Minutes() != 10 {
+			wait = "Wait a while and try again."
+		}
 		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r),
-			Summary: "Not sent. Too many join attempts. Wait ten minutes and try again. Nothing changed."}
+			Summary: "Not sent. Too many join attempts. " + wait + " Nothing changed."}
 		s.render(w, r, nil, "joinnet", 429, p)
 		return
 	}

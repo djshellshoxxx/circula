@@ -185,10 +185,12 @@ func (s *Service) postAdjustment(tx store.Tx, net *domain.Network, target *domai
 }
 
 // postSignupGrant posts the network's sign-up grant to a newly active member
-// (DOM-027). It is a no-op when the grant is disabled. Grants are system
-// actions; the audit event names the system as actor.
+// (DOM-027). It is a no-op when the grant is disabled. The amount is at most
+// the platform cap (SEC-032, Config.MaxSignupGrant), also for a grant stored
+// before the operator lowered the cap; with a cap of zero nothing is posted.
+// Grants are system actions; the audit event names the system as actor.
 func (s *Service) postSignupGrant(tx store.Tx, net *domain.Network, m *domain.Member, requestID string) error {
-	amt := net.Policy.SignupGrant
+	amt := min(net.Policy.SignupGrant, s.cfg.MaxSignupGrant)
 	if amt <= 0 {
 		return nil
 	}

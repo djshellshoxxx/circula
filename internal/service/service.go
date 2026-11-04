@@ -28,6 +28,29 @@ type Config struct {
 	SessionMax     time.Duration     // default 90 days
 	IdempotencyTTL time.Duration     // default 7 days (DAT section 9)
 
+	// Role-specific session lifetimes (SEC-003, DEC-005). They apply to a
+	// person who holds the administrator (Admin*) or dispute reviewer
+	// (Reviewer*) role in any network they are a current member of; the
+	// shortest applicable value wins and none is ever longer than
+	// SessionIdle / SessionMax. Zero means the same as SessionIdle /
+	// SessionMax (no role-specific timeout, the default). DEC-005 recommends
+	// 60 minutes idle and 12 hours absolute; that is an owner decision and is
+	// not applied here.
+	AdminSessionIdle, AdminSessionMax       time.Duration
+	ReviewerSessionIdle, ReviewerSessionMax time.Duration
+
+	// MaxSignupGrant caps a network's sign-up grant in minor units (SEC-032).
+	// Zero selects domain.MaxPolicyAmount, the policy bound that applied
+	// before the cap existed (no behaviour change); negative forbids any
+	// grant (a cap of zero).
+	MaxSignupGrant int64
+
+	// NetworkJoinLimit caps new memberships per network (invitation
+	// redemptions and join requests together) within NetworkJoinWindow
+	// (SEC-006). Zero or negative disables it (the default).
+	NetworkJoinLimit  int
+	NetworkJoinWindow time.Duration
+
 	// Abuse limits on open proposals (SA-08). A proposal is "open" while it is
 	// proposed and unexpired. Zero selects the default; negative disables.
 	MaxOpenRequestsPerPair    int // requests (proposer is payee) from one member to one payer; default 5
@@ -92,6 +115,19 @@ func New(st store.Store, cfg Config) (*Service, error) {
 	}
 	if cfg.IdempotencyTTL == 0 {
 		cfg.IdempotencyTTL = 7 * 24 * time.Hour
+	}
+	cfg.AdminSessionIdle = roleLifetime(cfg.AdminSessionIdle, cfg.SessionIdle)
+	cfg.AdminSessionMax = roleLifetime(cfg.AdminSessionMax, cfg.SessionMax)
+	cfg.ReviewerSessionIdle = roleLifetime(cfg.ReviewerSessionIdle, cfg.SessionIdle)
+	cfg.ReviewerSessionMax = roleLifetime(cfg.ReviewerSessionMax, cfg.SessionMax)
+	switch {
+	case cfg.MaxSignupGrant < 0:
+		cfg.MaxSignupGrant = 0 // the operator forbids sign-up grants
+	case cfg.MaxSignupGrant == 0 || cfg.MaxSignupGrant > domain.MaxPolicyAmount:
+		cfg.MaxSignupGrant = domain.MaxPolicyAmount
+	}
+	if cfg.NetworkJoinWindow <= 0 {
+		cfg.NetworkJoinLimit = 0
 	}
 	if cfg.MaxOpenRequestsPerPair == 0 {
 		cfg.MaxOpenRequestsPerPair = 5

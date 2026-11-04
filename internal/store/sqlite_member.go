@@ -100,6 +100,12 @@ func (t *txImpl) ListMembershipsOfPerson(personID string) ([]*domain.Member, err
 	return t.listMembers("", `SELECT `+memberCols+` FROM members m WHERE m.person_id = ? ORDER BY m.id`, []any{personID})
 }
 
+func (t *txImpl) CountMembersJoinedSince(netID string, since time.Time) (int, error) {
+	var n int
+	err := t.row(`SELECT COUNT(*) FROM members WHERE network_id = ? AND joined_at >= ? AND join_method <> 'founder'`, netID, ms(since)).Scan(&n)
+	return n, err
+}
+
 func (t *txImpl) listMembers(netID, q string, args []any) ([]*domain.Member, error) {
 	rows, err := t.query(q, args...)
 	if err != nil {
