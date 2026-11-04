@@ -1,74 +1,13 @@
-// Automated accessibility check (axe-core, WCAG 2.x A and AA) of the main pages of the real binary.
+// Automated accessibility check (axe-core, the WCAG 2.2 AA rule set, light and dark colour schemes) of the pages of
+// the real binary. Every page template must be visited by at least one check (UX-054, QA-033, ARC-017); see the
+// template coverage test at the end.
+const fs = require('fs');
+const path = require('path');
 const { test, expect, expectNoAxeViolations, axeViolations } = require('../fixtures');
-
-const n = (st) => `/n/${st.slug}`;
-
-// [name, who (null = anonymous), path builder]
-const PAGES = [
-  ['login', null, () => '/login'],
-  ['register', null, () => '/register'],
-  ['help (anonymous)', null, () => '/help'],
-  ['invitation, signed out', null, (st) => st.unusedInvite],
-  ['not found', null, () => '/no-such-page'],
-
-  ['networks list', 'carol', () => '/'],
-  ['setup (network creation)', 'carol', () => '/setup'],
-  ['password change', 'alice', () => '/account/password'],
-  ['help (member)', 'alice', () => '/help'],
-  ['invitation, signed in', 'alice', (st) => st.unusedInvite],
-
-  ['dashboard', 'alice', (st) => n(st)],
-  ['dashboard with pending trade', 'bob', (st) => n(st)],
-  ['directory', 'alice', (st) => `${n(st)}/directory`],
-  ['member profile', 'alice', (st) => st.bobProfile],
-  ['listings', 'bob', (st) => `${n(st)}/listings`],
-  ['new listing', 'alice', (st) => `${n(st)}/listings/new`],
-  ['edit listing', 'alice', (st) => st.listingEdit],
-  ['trades', 'alice', (st) => `${n(st)}/trades`],
-  ['propose a trade', 'alice', (st) => `${n(st)}/trades/new?to=${st.bobId}`],
-  ['trade detail (completed)', 'alice', (st) => `${n(st)}/trades/${st.tradeDone}`],
-  ['trade detail (pending, recipient)', 'bob', (st) => `${n(st)}/trades/${st.tradePending}`],
-  ['accept a trade', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/accept`],
-  ['decline a trade', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/decline`],
-  ['cancel a trade', 'carol', (st) => `${n(st)}/trades/${st.tradePending}/cancel`],
-  ['history', 'alice', (st) => `${n(st)}/history`],
-  ['dispute form', 'bob', (st) => `${n(st)}/trades/${st.tradeDone}/dispute`],
-  ['disputes', 'alice', (st) => `${n(st)}/disputes`],
-  ['dispute detail', 'alice', (st) => st.disputePath],
-  ['dispute detail (other party, response form)', 'carol', (st) => st.disputePath],
-  ['dispute detail (resolved, with response, re-review form)', 'alice', (st) => st.disputeResolved],
-  ['dispute detail (resolved, responder view)', 'bob', (st) => st.disputeResolved],
-  ['dispute detail (re-review requested, requester)', 'alice', (st) => st.disputeReReview],
-  ['dispute detail (re-review decision form)', 'carol', (st) => st.disputeReReview],
-  ['inbox (with notifications)', 'alice', (st) => `${n(st)}/inbox`],
-  ['inbox (waiting for action)', 'bob', (st) => `${n(st)}/inbox`],
-  ['inbox (unread only)', 'carol', (st) => `${n(st)}/inbox?show=unread`],
-  ['dashboard with announcement', 'carol', (st) => n(st)],
-  ['report a listing', 'carol', (st) => st.reportPath],
-  ['report a member', 'alice', (st) => `${n(st)}/report?type=member&id=${st.bobId}`],
-  ['time zone', 'alice', () => '/account/time-zone'],
-
-  ['admin overview', 'admin', (st) => `${n(st)}/admin`],
-  ['admin members', 'admin', (st) => `${n(st)}/admin/members`],
-  ['admin member action', 'admin', (st) => `${n(st)}/admin/members/${st.bobId}/suspend`],
-  ['admin invitations', 'admin', (st) => `${n(st)}/admin/invitations`],
-  ['admin policy', 'admin', (st) => `${n(st)}/admin/policy`],
-  ['admin adjustment', 'admin', (st) => `${n(st)}/admin/adjust`],
-  ['admin audit log', 'admin', (st) => `${n(st)}/admin/audit`],
-  ['admin exports', 'admin', (st) => `${n(st)}/admin/exports`],
-  ['admin reports (open)', 'admin', (st) => `${n(st)}/admin/reports`],
-  ['admin reports (all)', 'admin', (st) => `${n(st)}/admin/reports?status=all`],
-  ['admin announcements', 'admin', (st) => `${n(st)}/admin/announcements`],
-  ['admin reverse a trade', 'admin', (st) => `${n(st)}/admin/reverse`],
-  ['admin reverse a trade (trade chosen)', 'admin', (st) => `${n(st)}/admin/reverse?tx=${st.tradeReverse}`],
-  ['admin overview (needs attention)', 'admin', (st) => `${n(st)}/admin`],
-  ['review queue', 'admin', (st) => `${n(st)}/review`],
-  ['dispute detail (reviewer)', 'admin', (st) => st.disputePath],
-  ['dispute detail (re-review waiting, first reviewer)', 'admin', (st) => st.disputeReReview],
-];
+const { PAGES, n } = require('../pages');
 
 for (const [name, who, pathOf] of PAGES) {
-  test(`axe wcag2a/2aa: ${name}`, async ({ st, as, page: anon }) => {
+  test(`axe wcag 2.2 AA, light and dark: ${name}`, async ({ st, as, page: anon }) => {
     const page = who ? await as(who) : anon;
     const resp = await page.goto(pathOf(st));
     expect(resp, 'navigation response').not.toBeNull();
@@ -174,6 +113,30 @@ test('axe harness detects a deliberately broken page', async ({ page }) => {
   expect(ids).toContain('label');
 });
 
+// The same guard for the WCAG 2.2 tag and the dark pass: crowded tiny buttons (2.5.8, wcag22aa) are reported, and a
+// contrast failure that exists only in the dark scheme fails the check, named with its scheme.
+test('axe harness detects a target-size violation and a dark-only contrast failure', async ({ page }) => {
+  await page.goto('/login');
+  await page.addStyleTag({ content: '.tiny{min-height:0;min-width:0;width:10px;height:10px;padding:0;margin:0;border:0}' +
+    '@media (prefers-color-scheme: dark){main p{color:#2a2a2a!important}}' });
+  await page.evaluate(() => {
+    const box = document.createElement('div');
+    for (const name of ['first', 'second']) {
+      const b = document.createElement('button');
+      b.className = 'tiny';
+      b.setAttribute('aria-label', name);
+      box.appendChild(b);
+    }
+    document.querySelector('main').appendChild(box);
+  });
+  expect((await axeViolations(page)).map((v) => v.id)).toContain('target-size');
+  await page.locator('.tiny').evaluateAll((els) => els.forEach((e) => e.remove()));
+  expect(await axeViolations(page), 'light scheme is clean').toEqual([]);
+  const err = await expectNoAxeViolations(page, 'dark-only guard').catch((e) => e);
+  expect(err && err.message).toMatch(/dark-only guard \(dark\): \d+ axe violation\(s\)[\s\S]*color-contrast/);
+  expect(err.message).not.toContain('dark-only guard (light)');
+});
+
 // Maintenance mode (OPS-024): reads still work, a write gets the 503 "Back soon" page. A second instance with the
 // maintenance setting on is started so the shared one is not disturbed.
 test('axe: maintenance page, and reads keep working in maintenance mode', async ({ page }) => {
@@ -214,4 +177,53 @@ test('axe and keyboard: historical balance lookup, error then result', async ({ 
   await expect(page.locator('#histbal-result')).toContainText('posted balance of your account at this instant');
   await expect(page.locator('#histbal-result time')).toHaveAttribute('datetime', at);
   await expectNoAxeViolations(page, 'historical balance result');
+});
+
+// Template coverage (UX-054, QA-033, ARC-017: checks run on every page template). Each template in
+// internal/web/templates, other than the base layout, must be rendered by at least one axe check: a PAGES entry (pages.js)
+// or a labelled check in a spec file listed here. A new template fails this test until such a check is added.
+const TEMPLATES_DIR = path.join(__dirname, '..', '..', 'internal', 'web', 'templates');
+const LAYOUT_ONLY = ['base'];
+// template -> [spec file, label passed to expectNoAxeViolations or checkPage on a page that renders it]
+const STATE_CHECKS = {
+  propose_review: ['a11y.spec.js', 'propose review step'],
+  admin_reverse_review: ['a11y.spec.js', 'reverse review step'],
+  dispute_decide_review: ['a11y.spec.js', 'dispute decision review step'],
+  admin_check: ['a11y-governance.spec.js', 'consistency check result'],
+  admin_adjust_review: ['a11y-governance.spec.js', 'adjustment review step'],
+  pending: ['a11y-governance.spec.js', 'waiting for approval'],
+  networks: ['a11y-governance.spec.js', 'networks list (no network yet)'],
+  security: ['security.spec.js', 'security (two-step off)'],
+  mfa_enrol: ['security.spec.js', 'two-step set-up start'],
+  mfa_recovery: ['security.spec.js', 'two-step recovery codes shown'],
+  login_mfa: ['security.spec.js', 'two-step challenge'],
+  recovery_codes: ['security.spec.js', 'recovery codes (none yet)'],
+  recover: ['security.spec.js', 'recover form'],
+  admin_reset_done: ['security.spec.js', 'temporary password shown'],
+  admin_break_glass: ['security.spec.js', 'operator access'],
+  admin_adjust_pending: ['security.spec.js', 'pending adjustments (empty)'],
+  erase_confirm: ['security.spec.js', 'erase my data'],
+};
+
+function axeLabels(file) {
+  const src = fs.readFileSync(path.join(__dirname, file), 'utf8');
+  return new Set([...src.matchAll(/(?:expectNoAxeViolations|checkPage)\([\w.]+, '([^']+)'\)/g)].map((m) => m[1]));
+}
+
+test('every page template is checked by axe', () => {
+  const templates = fs.readdirSync(TEMPLATES_DIR).filter((f) => f.endsWith('.html')).map((f) => f.slice(0, -5));
+  expect(templates.length, 'templates found').toBeGreaterThan(50);
+  const known = new Set(templates);
+  const covered = new Set();
+  for (const [name, , , tpl] of PAGES) {
+    expect(known.has(tpl), `PAGES "${name}" names template ${tpl}, which does not exist`).toBe(true);
+    covered.add(tpl);
+  }
+  for (const [tpl, [file, label]] of Object.entries(STATE_CHECKS)) {
+    expect(known.has(tpl), `STATE_CHECKS names template ${tpl}, which does not exist`).toBe(true);
+    expect(axeLabels(file).has(label), `${file} has no axe check labelled "${label}" (for ${tpl})`).toBe(true);
+    covered.add(tpl);
+  }
+  const missing = templates.filter((t) => !LAYOUT_ONLY.includes(t) && !covered.has(t));
+  expect(missing, 'templates no axe check renders').toEqual([]);
 });
