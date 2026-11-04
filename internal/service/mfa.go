@@ -29,10 +29,18 @@ type MFAEnrolment struct {
 	URI    string // otpauth://
 }
 
-// mfaKey is the login_throttle key for second-factor attempts. It starts with a
-// control character, which validLogin rejects, so no login string can collide
-// with (and lock or reset) it.
+// mfaKey is the login_throttle key for second-factor attempts at sign-in
+// (CompleteMFA). It starts with a control character, which validLogin
+// rejects, so no login string can collide with (and lock or reset) it.
 func mfaKey(personID string) string { return "\x1fmfa:" + personID }
+
+// mfaManageKey counts second-factor attempts made from a signed-in session
+// (confirm, disable, regenerate). It is kept apart from mfaKey so that whoever
+// holds a session, possibly a stolen one, cannot lock the owner out of signing
+// in with the second factor and so out of changing the password (SEC-006,
+// A3-F16). It belongs to mfaKey's throttle family (mfaKey + " ..."), so every
+// DeleteThrottleFamily(mfaKey(...)) (unlock, MFA reset) clears it too.
+func mfaManageKey(personID string) string { return mfaKey(personID) + " manage" }
 
 func errBadCode() error { return domain.Invalid("code", "is not correct") }
 
@@ -43,11 +51,19 @@ func (s *Service) mfaActor(actor domain.Actor) error {
 	return nil
 }
 
-// mfaReserve counts one second-factor attempt up front (same scheme as Login):
-// refused with rate-limited while locked. It must run in its own committed unit
-// so a failed attempt stays counted.
+// mfaReserve counts one sign-in second-factor attempt up front (same scheme as
+// Login): refused with rate-limited while locked. It must run in its own
+// committed unit so a failed attempt stays counted.
 func (s *Service) mfaReserve(tx store.Tx, personID string) error {
-	f, until, _, err := tx.GetThrottle(mfaKey(personID))
+	return s.reserveFactorAttempt(tx, mfaKey(personID))
+}
+
+// reserveFactorAttempt refuses while key is locked and otherwise counts the
+// attempt. The count decays like a login's (readThrottle): a lock that has run
+// out grants half the allowance again, so one failure timed at expiry cannot
+// re-arm it (A3-02, A3-F16).
+func (s *Service) reserveFactorAttempt(tx store.Tx, key string) error {
+	f, until, err := s.readThrottle(tx, key, throttleAfter)
 	if err != nil {
 		return err
 	}
@@ -56,11 +72,32 @@ func (s *Service) mfaReserve(tx store.Tx, personID string) error {
 		return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
 	}
 	n := f + 1
-	return tx.PutThrottle(mfaKey(personID), n, now.Add(lockFor(n)))
+	return tx.PutThrottle(key, n, now.Add(lockFor(n)))
 }
 
-func (s *Service) reserveMFA(ctx context.Context, personID string) error {
-	return s.update(ctx, func(tx store.Tx) error { return s.mfaReserve(tx, personID) })
+// reserveMFAManage counts a second-factor attempt made from a session
+// (confirm, disable, regenerate) in its own committed unit. It is refused
+// while either the sign-in counter or the session counter is locked, so a
+// lock earned at sign-in still covers these calls, but it is counted on
+// mfaManageKey only: failures here never lock CompleteMFA (A3-F16).
+func (s *Service) reserveMFAManage(ctx context.Context, personID string) error {
+	return s.update(ctx, func(tx store.Tx) error {
+		_, until, err := s.readThrottle(tx, mfaKey(personID), throttleAfter)
+		if err != nil {
+			return err
+		}
+		if s.now().Before(until) {
+			return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
+		}
+		return s.reserveFactorAttempt(tx, mfaManageKey(personID))
+	})
+}
+
+// clearFactorThrottle forgets both second-factor counters of a person once a
+// valid second factor has been shown.
+func clearFactorThrottle(tx store.Tx, personID string) error {
+	_, err := tx.DeleteThrottleFamily(mfaKey(personID))
+	return err
 }
 
 // VerifyAndConsumeRecoveryCode checks code against the person's unused recovery
@@ -243,7 +280,7 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, p
 	if err := s.checkCurrentPassword(ctx, actor, password); err != nil {
 		return nil, err
 	}
-	if err := s.reserveMFA(ctx, actor.PersonID); err != nil {
+	if err := s.reserveMFAManage(ctx, actor.PersonID); err != nil {
 		return nil, err
 	}
 	var codes []string
@@ -276,7 +313,7 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, p
 		if codes, err = s.issueRecoveryCodes(tx, actor.PersonID); err != nil {
 			return err
 		}
-		if err := tx.DeleteThrottle(mfaKey(actor.PersonID)); err != nil {
+		if err := clearFactorThrottle(tx, actor.PersonID); err != nil {
 			return err
 		}
 		if err := tx.RevokeOtherSessionsOf(actor.PersonID, actor.SessionID, now); err != nil {
@@ -295,12 +332,13 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, p
 
 // DisableMFA removes the second factor. It needs the current password and a
 // valid TOTP or recovery code. Existing sessions stay valid. Attempts are
-// throttled together with other second-factor attempts.
+// throttled with the other session second-factor attempts (reserveMFAManage),
+// not on the sign-in counter.
 func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, code string) error {
 	if err := s.mfaActor(actor); err != nil {
 		return err
 	}
-	if err := s.reserveMFA(ctx, actor.PersonID); err != nil {
+	if err := s.reserveMFAManage(ctx, actor.PersonID); err != nil {
 		return err
 	}
 	var hash string
@@ -331,7 +369,7 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 		if err := tx.ReplaceRecoveryCodes(actor.PersonID, nil); err != nil {
 			return err
 		}
-		if err := tx.DeleteThrottle(mfaKey(actor.PersonID)); err != nil {
+		if err := clearFactorThrottle(tx, actor.PersonID); err != nil {
 			return err
 		}
 		if err := s.auditPlatform(tx, actor, auditEntry{Action: domain.ActMFADisabled, TargetType: "person", TargetID: actor.PersonID}); err != nil {
@@ -347,7 +385,7 @@ func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Acto
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
-	if err := s.reserveMFA(ctx, actor.PersonID); err != nil {
+	if err := s.reserveMFAManage(ctx, actor.PersonID); err != nil {
 		return nil, err
 	}
 	var codes []string
@@ -369,7 +407,7 @@ func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Acto
 		if codes, err = s.issueRecoveryCodes(tx, actor.PersonID); err != nil {
 			return err
 		}
-		if err := tx.DeleteThrottle(mfaKey(actor.PersonID)); err != nil {
+		if err := clearFactorThrottle(tx, actor.PersonID); err != nil {
 			return err
 		}
 		if err := s.auditPlatform(tx, actor, auditEntry{Action: domain.ActMFARecoveryRegen, TargetType: "person", TargetID: actor.PersonID}); err != nil {

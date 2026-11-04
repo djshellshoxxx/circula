@@ -18,8 +18,10 @@ type DepartInput struct {
 // last active administrator. Pending proposals involving the member are
 // auto-cancelled and audited. Per the network's departure rule the balance is
 // retained on the closed account (default) or moved to the system account by
-// an audited settlement adjustment. Roles are revoked; entries are retained
-// and history stays exportable by the departed member.
+// an audited settlement adjustment; that adjustment is a posting, so a
+// departure that needs one is refused unless the network accepts postings.
+// Roles are revoked; entries are retained and history stays exportable by the
+// departed member.
 func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID string, in DepartInput) (*domain.Member, error) {
 	var out *domain.Member
 	err := s.update(ctx, func(tx store.Tx) error {
@@ -132,6 +134,15 @@ func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Me
 	}
 	acc, err := tx.GetAccountByMember(p.net.ID, target.ID)
 	if err != nil || acc.Balance == 0 {
+		return err
+	}
+	// The settlement is a posting, so it gets the same network gate as any
+	// adjustment: nothing posts from the closure date on (GOV-025 b, FR-068),
+	// while the network is suspended (GOV-023) or while it has no active
+	// administrator (GOV-020). The whole departure is refused and its unit
+	// rolls back; completing it under `retain` instead would override the
+	// network's departure rule (A1-01).
+	if err := p.requireNetworkActive(); err != nil {
 		return err
 	}
 	dir, amt := AdjustCredit, -acc.Balance

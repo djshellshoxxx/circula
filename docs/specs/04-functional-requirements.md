@@ -22,7 +22,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-002 | P0 | partial | One-time setup secret; used flag is per process, so a restart re-enables it while the secret is set |
 | FR-003 | P0 | built | Policy change within bounds, versioned and audited |
 | FR-004 | P0 | built | Setup to active once an admin exists |
-| FR-005 | P0 | built | Decimals fixed after first posting |
+| FR-005 | P0 | built | Decimal scale fixed at network creation; every later change refused, immediate or with notice, before or after the first posting |
 | FR-006 | P0 | built | Cross-network identifier test covers web and API |
 | FR-010 | P0 | built | Single-use invitation token hashed; redemption creates member |
 | FR-011 | P0 | built | Approve and deny applicants; deny via API and web |
@@ -132,6 +132,7 @@ Summary: built 52, not built 3, partial 10.
   - Concurrent network initialization and writes MUST NOT persist monetary values under mixed scales; partial initialization is forbidden. Existing networks with persisted monetary settings MUST be treated as scale-locked even when they have no ledger entries. A separate lock marker is optional only if existing network state and monetary values enforce the rule.
   - Tests MUST prove the initial scale and monetary settings commit atomically, that scale-update attempts are refused from the first moment after network creation (including before the first posting), and that proposals, postings, listing prices and settings always retain the creation-time scale. Include races between initialization and monetary writes and verify no stored amount changes meaning.
 - **Implementation note (2026-10-24).** The creation-time immutable scale guard is required and unimplemented at this checkpoint; the historical build-status row above does not establish it.
+- **Implementation note (2026-11-04, audit A1-02/A1-11).** `UpdatePolicy` (`internal/service/networks.go`) refuses every decimals change after creation, immediate or scheduled with notice; creation persists the scale with the initial policy in one unit. Tests: `TestPolicyChanges`, `internal/service/decimals_test.go`. Residual: a scale change that an earlier build already stored with a future effective time is not neutralised when it comes into force; check existing databases before upgrading.
 
 ### FR-006 · P0 · Network isolation in every interface
 - **Rationale.** VIS-003, DOM-001.

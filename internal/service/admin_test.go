@@ -182,32 +182,34 @@ func TestDepartedAdminLosesRole(t *testing.T) {
 	}
 }
 
-// DOM-031 / DOM-030 / FR-003.
+// FR-005 / GOV-004 / DOM-031 / DOM-030 / FR-003.
 func TestPolicyChanges(t *testing.T) {
 	w := newWorld(t, nil)
 	pol := w.net.Policy
 	pol.Decimals = 3
 	pc := service.PolicyChange{Policy: pol, Reason: "finer units", IdempotencyKey: w.Key()}
-	n := tu.Must(w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, pc))
-	if n.Policy.Decimals != 3 || n.PolicyVersion != 2 {
+	// decimals fixed at creation: refused before any proposal or posting exists (A1-11)
+	_, err := w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, pc)
+	wantCode(t, err, domain.ErrValidation)
+	if n := w.netNow(); n.Policy.Decimals != 2 || n.PolicyVersion != 1 {
 		t.Fatalf("policy = %+v v%d", n.Policy, n.PolicyVersion)
 	}
 	// prospective: an in-flight proposal keeps its expiry; the dispute window applies to later decisions
 	p := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 100))
 	exp := *p.ExpiresAt
 	pol.ProposalExpiryDays = 30
-	pol.Decimals = 3
+	pol.Decimals = 2
 	tu.Must(w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "slower", IdempotencyKey: w.Key()}))
 	if got := w.txStatus(p.ID); !got.ExpiresAt.Equal(exp) {
 		t.Error("policy change altered an existing proposal's expiry")
 	}
 	tu.Must(w.accept(w.b, p.ID))
-	// decimals frozen after the first posting
-	pol.Decimals = 2
-	_, err := w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "back", IdempotencyKey: w.Key()})
+	// decimals still fixed after the first posting
+	pol.Decimals = 3
+	_, err = w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "back", IdempotencyKey: w.Key()})
 	wantCode(t, err, domain.ErrValidation)
 	// bounds + reason + admin only
-	pol.Decimals = 3
+	pol.Decimals = 2
 	pol.DisputeWindowDays = 0
 	_, err = w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "x", IdempotencyKey: w.Key()})
 	wantCode(t, err, domain.ErrValidation)
@@ -216,9 +218,9 @@ func TestPolicyChanges(t *testing.T) {
 	wantCode(t, err, domain.ErrValidation)
 	_, err = w.Svc.UpdatePolicy(w.Ctx, w.a, w.net.ID, service.PolicyChange{Policy: pol, Reason: "x", IdempotencyKey: w.Key()})
 	wantCode(t, err, domain.ErrForbidden)
-	// the audit event records old and new values
+	// the audit event records old and new values; the refused changes recorded none
 	evs := tu.Must(w.Svc.ListAudit(w.Ctx, w.admin, w.net.ID, service.AuditQuery{Action: domain.ActPolicyChanged}))
-	if len(evs) != 2 || evs[0].SummaryBefore == "" || evs[0].SummaryAfter == "" || evs[0].Reason == "" {
+	if len(evs) != 1 || evs[0].SummaryBefore == "" || evs[0].SummaryAfter == "" || evs[0].Reason == "" {
 		t.Errorf("policy audit events = %+v", evs)
 	}
 }

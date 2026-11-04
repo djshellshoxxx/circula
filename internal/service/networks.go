@@ -213,8 +213,9 @@ type PolicyChange struct {
 }
 
 // UpdatePolicy appends a new policy version (DOM-029, DOM-030). Changes apply
-// prospectively; decimals cannot change once any posting exists (DOM-031).
-// Out-of-bounds values are refused with the field and range.
+// prospectively; the decimal scale never changes after the network is created
+// (FR-005, GOV-004, DOM-031). Out-of-bounds values are refused with the field
+// and range.
 func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID string, in PolicyChange) (*domain.Network, error) {
 	var out *domain.Network
 	err := s.update(ctx, func(tx store.Tx) error {
@@ -239,8 +240,14 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 			if err := in.Policy.Validate(); err != nil {
 				return "", err
 			}
-			if in.Policy.Decimals != p.net.Policy.Decimals && p.net.LedgerSeq > 0 {
-				return "", domain.Invalid("decimals", "cannot change after the first posting")
+			// The scale is fixed at creation (FR-005, GOV-004, DOM-031): limits,
+			// prices, proposals and postings are integers under it, so changing
+			// it, at once or after notice, would reinterpret them. That holds
+			// before the first proposal or posting too, since the creation policy
+			// already stores amounts; a scheduled change would otherwise take
+			// effect after postings exist (A1-02).
+			if in.Policy.Decimals != p.net.Policy.Decimals {
+				return "", domain.Invalid("decimals", "cannot change after the network is created")
 			}
 			if weakensDualControl(p.net.Policy.DualControlThreshold, in.Policy.DualControlThreshold) {
 				// SA2-01: one administrator must not switch off or loosen the control

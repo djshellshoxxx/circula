@@ -52,7 +52,7 @@ Summary for the historical implementation snapshot: built 33, required unimpleme
 | DOM-028 | P0 | built | No configuration key for invariants |
 | DOM-029 | P0 | built | Policy bounds and unknown-field refusal; default MaxTxAmount differs (DEC-056) |
 | DOM-030 | P0 | built | Policy versions appended; changes audited with old and new values |
-| DOM-031 | P0 | required unimplemented correction | Decimal scale must lock when any scaled monetary value or commitment is persisted; current code only locks after the first posting |
+| DOM-031 | P0 | built (2026-11-04, audit A1-02/A1-11) | Decimal scale fixed at network creation; `UpdatePolicy` refuses every later change, immediate or scheduled, before or after the first posting (see FR-005, GOV-004 notes); residual: changes stored by an earlier build with a future effective time |
 | DOM-032 | P0 | built | Limit change posts nothing; reduction blocks only new debt |
 | DOM-034 | P2 | deferred | Mutual reversal without dispute is post-MVP |
 | DOM-035 | P0 | built | Audit event in the same unit for each state change |

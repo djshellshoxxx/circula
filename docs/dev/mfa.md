@@ -58,6 +58,6 @@ Runs inside the caller's `store.Tx`; marks one unused code used atomically (`UPD
 
 ### Data (migration 0003)
 
-`person_mfa` (sealed seed, enabled, `last_step`), `recovery_codes` (salted SHA-256, `used_at`), `mfa_challenges` (hashed bearer, 5 min), `security_notices`. Throttle rows reuse `login_throttle` with key `"\x1fmfa:"+personID`.
+`person_mfa` (sealed seed, enabled, `last_step`), `recovery_codes` (salted SHA-256, `used_at`), `mfa_challenges` (hashed bearer, 5 min), `security_notices`. Throttle rows reuse `login_throttle` with key `"\x1fmfa:"+personID` (sign-in, `CompleteMFA`) and `"\x1fmfa:"+personID+" manage"` (confirm, disable, regenerate from a session; A3-F16).
 
 Never log or audit codes, seeds or challenges.

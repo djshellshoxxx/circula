@@ -29,7 +29,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-001 | P0 | partial | Policy versions prospective; policy version stored on each transaction not verified |
 | GOV-002 | P0 | built | Changes audited with before and after; member-visible change log at /n/{slug}/policy and GET /network/policy-log |
 | GOV-003 | P0 | built | Adverse changes wait 14 days by default (notice_days up to 90); a shorter notice needs a reason shown in the change log; members get an inbox notice; a scheduled change can be cancelled |
-| GOV-004 | P0 | built | Decimals lock after first completed transaction |
+| GOV-004 | P0 | built | Decimals locked from network creation, also before the first transaction and for changes scheduled with notice; regression and concurrency tests |
 | GOV-005 | P1 | built | Bounds with boundary tests |
 | GOV-006 | P1 | partial | Unilateral admin change built; objection right not built |
 | GOV-007 | P0 | built | Corrective actions are transactions; property tests |
@@ -117,6 +117,7 @@ Each policy below has a class, a default, and a change rule. The default for eac
   - A network that already has persisted monetary configuration is treated as locked, regardless of whether any transaction has completed; proposals in proposed, completed, declined, cancelled, expired, disputed, or reversed state do not unlock it (regression test).
   - Concurrent network creation and monetary-setting persistence cannot commit any amount without its scale (concurrency test).
 - Current checkpoint gap (2026-10-24): the historical implementation note describes locking only after the first completed transaction. The atomic creation boundary and permanent lock above are required corrections, not verified as implemented; regression and concurrency tests are required before marking GOV-004 built.
+- Implementation note (2026-11-04, audit A1-02/A1-11): `UpdatePolicy` refuses every decimals change after creation, at once or with notice. Tests: `TestDecimalsFixedFromCreation`, `TestDecimalsLockedWhateverIsStored`, `TestNetworkCreationStoresScaleAtomically`, `TestDecimalsLockUnderConcurrentWrites`, `TestScheduledDecimalChangeCannotReinterpretPostings`, `TestPolicyChanges`. Residual: a scale change that an earlier build already stored with a future effective time is not neutralised when it comes into force.
 
 **GOV-005** · P1 · Policy validation bounds
 - Requirement: The product MUST enforce bounds on each configurable policy so that it cannot be set to a value that breaks platform invariants. Examples: credit limits MUST be zero or positive; expiry MUST be at least one hour and at most a platform-defined maximum; maximum transaction amount MUST be a positive integer in minor units.

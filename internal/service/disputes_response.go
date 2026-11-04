@@ -275,6 +275,15 @@ func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInp
 		if err := p.requireNetworkActive(); err != nil {
 			return "", err
 		}
+		// A disputed trade is reversed only by the decision of the dispute that
+		// holds it (DEC-052). This re-review is of an earlier, decided dispute,
+		// so while a later dispute is live a reversal here would act on that
+		// dispute's trade under it (A1-03): it could strand a posting_pending
+		// dispute or leave an open one on a reversed trade. The re-review stays
+		// requested and can be decided once that dispute is decided or withdrawn.
+		if t.Status == domain.TxDisputed {
+			return "", domain.InvalidState("another dispute on this trade is still undecided; decide or withdraw it before a re-review can reverse the trade")
+		}
 		if _, err := s.reverse(tx, p.net, t, amount, "re-review of dispute "+d.ID, p.member.ID, p.actor.RequestID); err != nil {
 			return "", err
 		}

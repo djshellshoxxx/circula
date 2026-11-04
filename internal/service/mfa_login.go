@@ -53,10 +53,12 @@ func (s *Service) mfaChallengeIfEnabled(tx store.Tx, personID string) (string, b
 // CompleteMFA finishes a login started by LoginStep: it verifies code (a 6
 // digit TOTP code or a recovery code) against the challenge's person and, on
 // success, issues the session token. A challenge works once; a wrong code
-// leaves it usable (until expiry) but counts toward the per-person throttle
-// (5 failures, then 15 minutes and doubling), shared with other second-factor
-// operations. A recovery code is consumed, audited and notified. All failures
-// except throttling return ErrUnauthenticated.
+// leaves it usable (until expiry) but counts toward the per-person sign-in
+// throttle (5 failures, then 15 minutes; an expired lock grants half the
+// allowance again). Second-factor attempts made from a session count on their
+// own key and cannot lock sign-in (A3-F16). A recovery code is consumed,
+// audited and notified. All failures except throttling return
+// ErrUnauthenticated.
 func (s *Service) CompleteMFA(ctx context.Context, challenge, code string) (string, *domain.Person, error) {
 	h := hashToken(challenge)
 	var pid string
@@ -112,7 +114,7 @@ func (s *Service) CompleteMFA(ctx context.Context, challenge, code string) (stri
 		if person, _, err = tx.GetPerson(pid); err != nil {
 			return authnErr(err)
 		}
-		if err := tx.DeleteThrottle(mfaKey(pid)); err != nil {
+		if err := clearFactorThrottle(tx, pid); err != nil {
 			return err
 		}
 		if kind == "recovery" {

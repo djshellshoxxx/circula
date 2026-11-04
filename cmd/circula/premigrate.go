@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 )
 
 // preMigrationSafeguard is the OPS-018 / OPS-023 gate in front of every
@@ -35,7 +38,11 @@ func preMigrationSafeguard(ctx context.Context, cfg *Config, state schemaState) 
 }
 
 // verifyPreMigrationBackup checks a backup file against what is on disk, not
-// against what the writer believes it wrote.
+// against what the writer believes it wrote. An encrypted backup (OPS-019) is
+// decrypted into a private work directory, matched against the plaintext
+// checksum and size in its manifest and integrity-checked there; the
+// plaintext copy is overwritten and removed before returning, as in restore.
+// Opening the ciphertext itself as SQLite can never succeed (A3-F01).
 func verifyPreMigrationBackup(ctx context.Context, cfg *Config, path string, state schemaState) error {
 	m, err := readManifest(path + ".manifest.json")
 	if err != nil {
@@ -53,7 +60,24 @@ func verifyPreMigrationBackup(ctx context.Context, cfg *Config, path string, sta
 	if m.SchemaVersion != state.Applied {
 		return fmt.Errorf("backup holds schema v%d, expected v%d", m.SchemaVersion, state.Applied)
 	}
-	res, err := integrityCheck(ctx, path)
+	check := path
+	if m.Encrypted {
+		work, err := os.MkdirTemp(filepath.Dir(path), tempDirPrefix)
+		if err != nil {
+			return fmt.Errorf("private work directory: %w", err)
+		}
+		defer secureRemoveAll(work)
+		plain := filepath.Join(work, "verify.db")
+		sum, size, err := decryptFile(path, plain, cfg.BackupEncryptionKey)
+		if err != nil {
+			return fmt.Errorf("decrypt backup: %w", err)
+		}
+		if sum != m.PlaintextSHA256 || size != m.PlaintextBytes {
+			return errors.New("decrypted backup does not match the plaintext checksum in the manifest")
+		}
+		check = plain
+	}
+	res, err := integrityCheck(ctx, check)
 	if err != nil {
 		return err
 	}
