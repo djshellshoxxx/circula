@@ -106,7 +106,18 @@ func (s *server) memberAction(action string) handlerFunc { // API-059
 		var in struct {
 			Reason string `json:"reason"`
 		}
-		if err := c.decodeOptional(&in); err != nil {
+		// remove takes a listed reason code and an optional matter (GOV-011);
+		// the other actions keep refusing those fields as unknown.
+		var rm struct {
+			Reason        string `json:"reason"`
+			ReasonCode    string `json:"reason_code"`
+			TransactionID string `json:"transaction_id"`
+		}
+		dst := any(&in)
+		if action == "remove" {
+			dst = &rm
+		}
+		if err := c.decodeOptional(dst); err != nil {
 			return err
 		}
 		id, ctx := c.r.PathValue("id"), c.r.Context()
@@ -131,7 +142,8 @@ func (s *server) memberAction(action string) handlerFunc { // API-059
 		case "reinstate":
 			err = s.svc.RestoreMember(ctx, c.actor, c.netID, id, in.Reason)
 		case "remove":
-			m, err = s.svc.DepartMember(ctx, c.actor, c.netID, service.DepartInput{MemberID: id, Reason: in.Reason})
+			m, err = s.svc.DepartMember(ctx, c.actor, c.netID, service.DepartInput{MemberID: id, ReasonCode: rm.ReasonCode,
+				Reason: rm.Reason, MatterTxID: rm.TransactionID})
 		}
 		if err != nil {
 			return err

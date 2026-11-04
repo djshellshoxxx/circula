@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"regexp"
 	"strings"
 	"time"
@@ -402,4 +403,128 @@ func withNotice(after map[string]any, eff time.Time, days int, reason string) ma
 		after["notice_reason"] = r
 	}
 	return after
+}
+
+// withdrawnVersions marks the policy versions that never come into force: a
+// later version is in force by the time they would have taken effect (a
+// cancelled scheduled change). rows are oldest first.
+func withdrawnVersions(rows []store.PolicyVersionRow) []bool {
+	out := make([]bool, len(rows))
+	for i := range rows {
+		for j := i + 1; j < len(rows); j++ {
+			if !rows[j].EffectiveAt.After(rows[i].EffectiveAt) {
+				out[i] = true
+			}
+		}
+	}
+	return out
+}
+
+// RecordStoredScaleChanges is the body of a scheduled job (DOM-031). A build
+// before c34d947 could store a decimal-scale change as a scheduled policy
+// version; on its date it changes how stored integer amounts read. Whether to
+// neutralise such a version is an owner or operator decision (audit
+// remediation 2026-11-04, open item 2), so this job only reports it. For each
+// scheduled version that changes the scale and is not withdrawn it records,
+// once, a system audit event in the network's log with the scale before it,
+// the stored scale and its effective time, as soon as the row is seen. It
+// changes no read and no stored row. A change that took effect at once (an
+// earlier build allowed one before the first posting) is not reported: the
+// network has run under that scale since. System actors only; frozen networks
+// are skipped until they are thawed. It returns the number of events written.
+func (s *Service) RecordStoredScaleChanges(ctx context.Context, actor domain.Actor) (int, error) {
+	if !actor.System {
+		return 0, domain.Forbidden("system actor required")
+	}
+	var ids []string
+	if err := s.view(ctx, func(tx store.Tx) (err error) {
+		ids, err = tx.ListNetworkIDs()
+		return err
+	}); err != nil {
+		return 0, err
+	}
+	total := 0
+	for _, netID := range ids {
+		if s.IsFrozen(netID) {
+			continue
+		}
+		n, err := s.recordStoredScale(ctx, actor, netID)
+		if err != nil {
+			return total, err
+		}
+		total += n
+	}
+	return total, nil
+}
+
+// scaleChange is a stored scheduled policy version that changes the decimal
+// scale of the version before it (from).
+type scaleChange struct {
+	row  store.PolicyVersionRow
+	from int
+}
+
+// storedScaleChanges lists the scheduled versions (effective after they were
+// announced) that are not withdrawn and change the scale of the last earlier
+// version that is not withdrawn. rows are oldest first.
+func storedScaleChanges(rows []store.PolicyVersionRow) []scaleChange {
+	var out []scaleChange
+	withdrawn := withdrawnVersions(rows)
+	prev := -1
+	for i, r := range rows {
+		if withdrawn[i] {
+			continue
+		}
+		if prev >= 0 && r.EffectiveAt.After(r.AnnouncedAt) && r.Policy.Decimals != rows[prev].Policy.Decimals {
+			out = append(out, scaleChange{row: r, from: rows[prev].Policy.Decimals})
+		}
+		prev = i
+	}
+	return out
+}
+
+func (s *Service) recordStoredScale(ctx context.Context, actor domain.Actor, netID string) (int, error) {
+	written := 0
+	err := s.update(ctx, func(tx store.Tx) error {
+		g, err := govRepo(tx)
+		if err != nil {
+			return err
+		}
+		rows, err := g.ListPolicyVersions(netID)
+		if err != nil {
+			return err
+		}
+		due := storedScaleChanges(rows)
+		if len(due) == 0 {
+			return nil
+		}
+		noted := map[int]bool{}
+		evs, err := tx.ListAudit(netID, store.AuditFilter{Action: domain.ActPolicyScaleChangeDetected, TargetID: netID, Limit: 500})
+		if err != nil {
+			return err
+		}
+		for _, e := range evs {
+			var after struct {
+				Version int `json:"version"`
+			}
+			if json.Unmarshal([]byte(e.SummaryAfter), &after) == nil {
+				noted[after.Version] = true
+			}
+		}
+		for _, c := range due {
+			if noted[c.row.Version] {
+				continue
+			}
+			if err := s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActPolicyScaleChangeDetected,
+				TargetType: "policy", TargetID: netID,
+				Reason: "an earlier build stored this scheduled policy version with another decimal scale; on its date it changes how stored amounts read. Nothing was changed: the operator or owner decides",
+				Before: map[string]any{"decimals": c.from},
+				After:  map[string]any{"decimals": c.row.Policy.Decimals, "version": c.row.Version, "effective_at": c.row.EffectiveAt.UnixMilli()}}); err != nil {
+				return err
+			}
+			written++
+		}
+		return nil
+	})
+	return written, err
 }

@@ -41,7 +41,7 @@ func TestDepartureSettlementRefusedAfterClosure(t *testing.T) {
 
 	departRefused(t, w, w.a, service.DepartInput{}, w.a) // owes 500
 	departRefused(t, w, w.b, service.DepartInput{}, w.b) // is owed 500
-	departRefused(t, w, w.admin, service.DepartInput{MemberID: w.aM.ID, Reason: "wind-down"}, w.a)
+	departRefused(t, w, w.admin, service.DepartInput{MemberID: w.aM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "wind-down"}, w.a)
 	tu.Must(w.Svc.DepartMember(w.Ctx, c, w.net.ID, service.DepartInput{}))
 	if st := w.balance(c).AccountState; st != domain.AccountClosed {
 		t.Fatalf("departure with nothing to settle: account %s", st)
@@ -85,7 +85,7 @@ func TestDepartureSettlementRefusedWhileSuspended(t *testing.T) {
 	noErr(t, w.Svc.SuspendNetwork(w.Ctx, w.admin, w.net.ID, "security review"))
 
 	departRefused(t, w, w.a, service.DepartInput{}, w.a)
-	departRefused(t, w, w.admin, service.DepartInput{MemberID: w.aM.ID, Reason: "left town"}, w.a)
+	departRefused(t, w, w.admin, service.DepartInput{MemberID: w.aM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left town"}, w.a)
 	if got := w.txStatus(open.ID).Status; got != domain.TxProposed {
 		t.Fatalf("refused departure left the open proposal %s", got)
 	}

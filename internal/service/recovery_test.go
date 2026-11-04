@@ -365,7 +365,7 @@ func TestAdminResetGuards(t *testing.T) {
 		t.Errorf("expected one low-risk event, got %d", risky)
 	}
 	// departed members cannot be reset
-	if _, err := e.Svc.DepartMember(ctx, admin, net.ID, service.DepartInput{MemberID: danM.ID, Reason: "left"}); err != nil {
+	if _, err := e.Svc.DepartMember(ctx, admin, net.ID, service.DepartInput{MemberID: danM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left"}); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := e.Svc.AdminResetPassword(ctx, admin, net.ID, danM.ID, "after leaving"); !errors.Is(err, domain.ErrNotFound) {

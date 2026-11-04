@@ -50,7 +50,7 @@ var memberActions = map[string]memberActionDef{
 	"deny":            {"Deny", "The request is closed and the person does not join.", true, false},
 	"suspend":         {"Suspend", "The member can no longer propose, accept or post. They can still view history and decline trades.", true, false},
 	"restore":         {"Restore", "The member becomes active again.", true, false},
-	"remove":          {"Remove", "The membership ends. Open proposals are cancelled and the member keeps read-only access to their own history. This cannot be undone: a departed member cannot rejoin.", true, false},
+	"remove":          {"Remove", "The membership ends. Open proposals are cancelled and the member keeps read-only access to their own history. This cannot be undone: a departed member cannot rejoin.", false, false}, // reason code instead (GOV-011)
 	"grant-admin":     {"Make administrator", "The member can change policy, limits and memberships and see other members' balances.", false, false},
 	"revoke-admin":    {"Remove administrator role", "The member loses administrator rights. A network must keep at least one administrator.", false, false},
 	"grant-reviewer":  {"Make dispute reviewer", "The member can decide disputes they are not a party to.", false, false},
@@ -153,10 +153,22 @@ type pageNav struct {
 }
 
 type memberAct struct {
-	Key  string
-	Def  memberActionDef
-	M    *domain.Member
-	Unit string
+	Key   string
+	Def   memberActionDef
+	M     *domain.Member
+	Unit  string
+	Codes []option // remove: the documented removal reasons (GOV-011)
+}
+
+func newMemberAct(key string, def memberActionDef, m *domain.Member) *memberAct {
+	a := &memberAct{Key: key, Def: def, M: m}
+	if key == "remove" {
+		a.Codes = []option{{"", "Choose a reason"}}
+		for _, c := range domain.RemovalReasons {
+			a.Codes = append(a.Codes, option{c, domain.RemovalReasonLabel(c)})
+		}
+	}
+	return a
 }
 
 func (c *rc) findMember(id string) *domain.Member {
@@ -175,7 +187,7 @@ func (s *server) memberActionForm(w http.ResponseWriter, r *http.Request, c *rc)
 		return
 	}
 	s.render(w, r, c, "admin_member_act", 200, &page{Title: def.Verb + ": " + m.DisplayName + "?",
-		D: &memberAct{Key: r.PathValue("action"), Def: def, M: m}})
+		D: newMemberAct(r.PathValue("action"), def, m)})
 }
 
 func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -187,7 +199,7 @@ func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc)
 		return
 	}
 	v := formValues(r)
-	p := &page{Title: def.Verb + ": " + m.DisplayName + "?", D: &memberAct{Key: key, Def: def, M: m}, V: v}
+	p := &page{Title: def.Verb + ": " + m.DisplayName + "?", D: newMemberAct(key, def, m), V: v}
 	reason := strings.TrimSpace(v["reason"])
 	ctx, id, nid := r.Context(), m.ID, c.netID()
 	var err error
@@ -201,7 +213,13 @@ func (s *server) memberActionPost(w http.ResponseWriter, r *http.Request, c *rc)
 	case "restore":
 		err = s.svc.RestoreMember(ctx, c.actor, nid, id, reason)
 	case "remove":
-		_, err = s.svc.DepartMember(ctx, c.actor, nid, service.DepartInput{MemberID: id, Reason: reason})
+		_, err = s.svc.DepartMember(ctx, c.actor, nid, service.DepartInput{MemberID: id, ReasonCode: v["reason_code"],
+			Reason: reason, MatterTxID: strings.TrimSpace(v["transaction_id"])})
+		if service.IsRemovalConflict(err) { // GOV-011, SEC-010: say why, keep the form
+			p.Summary = "Not done. You took part in the matter of this removal (the named trade, or a trade of this member that is still under dispute or re-review), so another administrator must decide it. Nothing changed."
+			s.render(w, r, c, "admin_member_act", http.StatusForbidden, p)
+			return
+		}
 	case "grant-admin":
 		err = s.svc.AssignRole(ctx, c.actor, nid, id, domain.RoleAdmin)
 	case "revoke-admin":

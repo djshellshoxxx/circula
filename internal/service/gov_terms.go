@@ -292,16 +292,7 @@ func (s *Service) PolicyLog(ctx context.Context, actor domain.Actor, netID strin
 			return err
 		}
 		now := s.now()
-		// A version is withdrawn when a later one is in force by the time it
-		// would have taken effect (a cancelled scheduled change).
-		withdrawn := make([]bool, len(rows))
-		for i := range rows {
-			for j := i + 1; j < len(rows); j++ {
-				if !rows[j].EffectiveAt.After(rows[i].EffectiveAt) {
-					withdrawn[i] = true
-				}
-			}
-		}
+		withdrawn := withdrawnVersions(rows)
 		prev := -1 // last version that was not withdrawn
 		for i := range rows {
 			r := rows[i]

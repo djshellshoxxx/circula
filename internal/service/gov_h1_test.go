@@ -195,7 +195,7 @@ func TestDeparturePreviewAndNotices(t *testing.T) {
 	_, err := w.Svc.PreviewDeparture(w.Ctx, w.a, w.net.ID)
 	wantCode(t, err, domain.ErrInvalidState)
 
-	tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bM.ID, Reason: "abuse"}))
+	tu.Must(w.Svc.DepartMember(w.Ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "abuse"}))
 	if !hasNotifKind(w.notifKinds(w.b), service.NotifMemberRemoved) {
 		t.Errorf("removed member not told: %v", w.notifKinds(w.b))
 	}

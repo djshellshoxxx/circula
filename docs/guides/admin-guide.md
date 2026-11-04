@@ -14,8 +14,9 @@ credit limits, post audited balance adjustments, run consistency checks, read th
 grant or take away the administrator and reviewer roles.
 
 An administrator cannot: edit or delete a posted entry (the ledger only grows; corrections are new entries), change the
-number of decimal places after the network is created, decide a dispute on a trade they are a party to, or remove the
-last administrator.
+number of decimal places after the network is created, decide a dispute on a trade they are a party to, remove a member
+for a reason that is not on the documented list, remove a member for fraud or a rules breach about a trade they took
+part in when that trade is named or still under dispute (section 4), or remove the last administrator.
 
 Every administrator action that changes something is written to the audit log with who did it, when, and the reason
 given. Viewing another member's balance is also logged. All of the pages below are under **Network admin**
@@ -81,10 +82,35 @@ confirm.
 | Set credit limit | active | sets this member's limit; leave the amount empty to return to the network default | required |
 | Suspend | active | cannot propose, accept or post; can view history and decline trades | required |
 | Restore | suspended | active again | required |
-| Remove | active or suspended | membership ends; open proposals are cancelled; the member keeps read-only access to their own history; cannot rejoin | required |
+| Remove | active or suspended | membership ends; open proposals are cancelled; the member keeps read-only access to their own history; cannot rejoin | a reason from the list below is required; details are optional |
 | Make administrator / Remove administrator role | active | grants or revokes policy, limit and membership powers. The network must keep at least one administrator. | no |
 | Make dispute reviewer / Remove reviewer role | active | may decide disputes they are not a party to | no |
 | Mark as in default / Clear default marker | active | a governance marker; with the policy "Members marked in default cannot pay" turned on, a marked member cannot pay | required |
+
+**Removal reasons (GOV-011).** A member can be removed only for one of these documented reasons, chosen on the
+confirmation page (JSON API: `reason_code` on `POST /api/v1/admin/members/{id}/remove`):
+
+| Reason | `reason_code` |
+|---|---|
+| Breach of network rules | `rule_breach` |
+| Confirmed fraud | `confirmed_fraud` |
+| Prolonged non-response to a dispute | `dispute_non_response` |
+
+A removal without one of them is refused and nothing changes. **Details** (`reason`) are optional and go to the audit
+log only. The removed member gets an inbox notice that names the listed reason (not your details) and can challenge the
+removal (Challenges, section 10a). The audit event records the reason code, your details and, when given, the trade reference.
+
+**Trade reference and conflicts (SEC-010).** If the removal is about one trade, give its reference (`transaction_id`);
+it must be a trade the member took part in. A removal for *confirmed fraud* or *breach of network rules* is refused
+(403, nothing changes) when you took part in the matter: you are a party to, proposed, accepted or reversed the named
+trade, or a trade of the member that is still under an undecided dispute or awaiting a requested re-review. Another
+administrator who took no part must decide it. The rule does not apply to *prolonged non-response to a dispute*.
+
+The software knows the matter only from the trade reference you give and from those open cases. The reference is
+optional, because a breach of the rules is not always about a trade, so a removal that leaves it out is not checked
+against the member's other trades. The rule itself still applies: if the removal is about something you took part in,
+name the trade or leave the decision to another administrator. The audit event shows who decided, the reason and the
+details, and the member can challenge the removal.
 
 Guidance, not enforced by software: use *Suspend* for a pause while you look into something, *Remove* only when the
 person should not return, and keep reasons short and factual because other administrators and auditors will read them.
@@ -132,7 +158,17 @@ that they accept it to join (the invitation page and the join page). Publishing 
 and each must accept it before proposing or accepting a trade; reading balances and history and leaving stay open. A
 network with no published terms asks for no acceptance.
 
-Decimal places cannot be changed here. The web form does not detect two administrators editing at the same time: the
+Decimal places cannot be changed here. A database upgraded from an earlier build may hold a scheduled change of
+decimal places that the earlier build accepted (DOM-031). This build does not change such a version: on its date it
+takes effect as stored, which changes how amounts already stored read (for example 25.00 becomes 2.500). Within the
+hour after the upgrade the system writes one `policy.stored_scale_change_detected` event per such version to the
+network audit log, with the decimal places before it, the stored ones and the date, and a warning to the service log.
+While the change is still pending, **Cancel the scheduled change** on this page withdraws it and nothing is
+reinterpreted. What to do with one that has already taken effect is a decision for the network owner and the service
+operator. A change of decimal places that an earlier build applied at once, before anything was posted, is not
+reported: the network has run under those decimal places since.
+
+The web form does not detect two administrators editing at the same time: the
 last save wins (the JSON API requires an `If-Match` version and refuses a stale one). Agree changes between
 administrators first.
 
@@ -193,7 +229,7 @@ trade you took part in, and disputed trades are decided from the review queue.
 * **Announcements** (`/n/<name>/admin/announcements`). Title (up to 120), message (up to 4000), optional "Start in (days)" and optional **Replaces an earlier announcement** (the old one disappears once the new one starts).
   They show on every member's Home from the start time. They cannot be edited; **Delete** and publish again. Deletions
   are in the audit log.
-* **Notifications.** Members get in-application notifications (see the user guide, Inbox). No e-mail is sent. When you suspend, reinstate or remove a member, change a role or credit limit, post an adjustment or reverse a trade, the affected member gets a fixed-text notice (it never includes your reason). Read notifications are deleted after 90 days.
+* **Notifications.** Members get in-application notifications (see the user guide, Inbox). No e-mail is sent. When you suspend, reinstate or remove a member, change a role or credit limit, post an adjustment or reverse a trade, the affected member gets a fixed-text notice (it never includes your reason; a removal notice names the listed removal reason, not your details). Read notifications are deleted after 90 days.
 * **Time zone.** Each person sets their own display zone under **Time zone**. The audit log and API stay in UTC.
 
 ## 7b. Read-only networks and maintenance
@@ -287,7 +323,7 @@ Open **Network admin > Pause or close** (`/admin/network`).
 
 | Feature | State in this build |
 |---|---|
-| Notices to affected members (SEC-012) | Members get inbox entries for trades, disputes and reports and security notices for their own credential changes. Suspending, removing, limit changes and adjustments are audited but the affected member gets no notice. Tell them yourself. |
+| Notices to affected members (SEC-012) | Inbox only (see section 7a): suspending, reinstating, removing, role and credit-limit changes, adjustments and reversals send the affected member a fixed-text notice. No e-mail is sent; tell members yourself if they do not sign in. |
 | Dual control for write-offs and limit changes | Only adjustments are covered (SEC-011). |
 | Dual-control threshold in the web policy form | JSON API only. |
 | Self-service password reset without codes | Not present; an administrator or the operator resets it. |
@@ -295,3 +331,5 @@ Open **Network admin > Pause or close** (`/admin/network`).
 | Limit warning (days) | The "Limit warning (days)" field is stored but does not drive anything; use the percent field. |
 | E-mail or push notifications | Not implemented. |
 | Leaving a network in the web interface | JSON API only. |
+| Conflict check on removals without a trade reference (GOV-011) | Checked only against the named trade and the member's trades under an undecided dispute or requested re-review (section 4). |
+| Neutralising a scheduled change of decimal places stored by an earlier build (DOM-031) | Reported in the audit log, not changed (section 5). |

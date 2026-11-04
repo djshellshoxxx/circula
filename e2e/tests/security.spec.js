@@ -247,7 +247,7 @@ test('axe and keyboard: erase my data and administrator erasure', async ({ brows
   const eve = await memberId(a.page, 'Eve');
   for (const id of [dora, eve]) {
     await a.page.goto(`/n/${SLUG}/admin/members/${id}/remove`);
-    await a.page.getByLabel('Reason').fill('Moved away');
+    await a.page.getByLabel('Reason for removal').selectOption('rule_breach'); // GOV-011: a listed reason is required
     await Promise.all([a.page.waitForLoadState('load'), a.page.getByRole('button', { name: /^Remove/ }).click()]);
   }
 

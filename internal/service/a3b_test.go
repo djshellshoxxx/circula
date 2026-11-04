@@ -147,7 +147,7 @@ func TestA3_02_BreakGlassAdminCannotMakeLastingChanges(t *testing.T) {
 	// Control: ana really is an administrator for reads.
 	tu.Must(w.Svc.AdminListMembers(w.Ctx, w.a, w.net.ID, nil, service.Page{}))
 
-	_, err := w.Svc.DepartMember(w.Ctx, w.a, w.net.ID, service.DepartInput{MemberID: carolM.ID, Reason: "bg"})
+	_, err := w.Svc.DepartMember(w.Ctx, w.a, w.net.ID, service.DepartInput{MemberID: carolM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "bg"})
 	wantCode(t, err, domain.ErrForbidden)
 	wantCode(t, w.Svc.SuspendMember(w.Ctx, w.a, w.net.ID, carolM.ID, "bg"), domain.ErrForbidden)
 	wantCode(t, w.Svc.SetDefaultFlag(w.Ctx, w.a, w.net.ID, carolM.ID, true, "bg"), domain.ErrForbidden)

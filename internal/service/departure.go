@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"errors"
+	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -10,7 +12,15 @@ import (
 // DepartInput ends a membership, voluntarily or administratively.
 type DepartInput struct {
 	MemberID string // empty = the caller departs voluntarily
-	Reason   string // mandatory when an administrator removes someone else
+	// ReasonCode is mandatory when an administrator removes someone else: one
+	// of domain.RemovalReasons (GOV-011). Ignored for a voluntary departure.
+	ReasonCode string
+	// Reason is optional free text: the departing member's own words, or the
+	// administrator's detail on a removal. It is kept in the audit log only.
+	Reason string
+	// MatterTxID optionally names the transaction a removal is about. It
+	// must be one the removed member is a party to (GOV-011).
+	MatterTxID string
 }
 
 // DepartMember ends a membership (DOM-024, FR-014, FR-015). It is refused with
@@ -41,17 +51,25 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 			if err := p.requireLasting(); err != nil { // A3-02
 				return err
 			}
-			if err := requireReason(in.Reason); err != nil {
-				return err
+			if domain.RemovalReasonLabel(in.ReasonCode) == "" { // GOV-011
+				return domain.Invalid("reason_code", "required, one of "+strings.Join(domain.RemovalReasons, ", "))
 			}
+		}
+		if err := boundedText("reason", in.Reason, maxReasonLen); err != nil {
+			return err
+		}
+		if adminAction {
 			if target, err = tx.GetMember(netID, in.MemberID); err != nil {
 				return domain.NotFound("member")
 			}
-		} else if err := boundedText("reason", in.Reason, maxReasonLen); err != nil {
-			return err
 		}
 		if target.Status != domain.MemberActive && target.Status != domain.MemberSuspended {
 			return domain.InvalidState("member is %s", target.Status)
+		}
+		if adminAction {
+			if err := removalIndependent(tx, netID, p.member.ID, target.ID, in); err != nil {
+				return err
+			}
 		}
 		blockers, err := departBlockers(tx, netID, target)
 		if err != nil {
@@ -75,29 +93,121 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 		if err := tx.SetMemberStatus(netID, target.ID, domain.MemberDeparted, &now); err != nil {
 			return err
 		}
-		at := domain.ActorMember
+		at, reason := domain.ActorMember, in.Reason
+		after := map[string]any{"status": domain.MemberDeparted, "rule": string(p.net.Policy.DepartureRule)}
 		if adminAction {
 			at = domain.ActorAdmin
 			if err := s.adminNotice(tx, netID, target.ID, NotifAdminRemoved, "Your membership was ended",
 				"An administrator ended your membership. Your history stays available to you.", "/"); err != nil {
 				return err
 			}
-		}
-		if adminAction { // GOV-011: the member is told; the reason stays in the audit log
+			// GOV-011: the member is told, with the listed reason (fixed text, so
+			// they can challenge it under GOV-016); the administrator's detail
+			// stays in the audit log.
+			label := domain.RemovalReasonLabel(in.ReasonCode)
 			if err := s.notify(tx, netID, target.ID, NotifMemberRemoved, "Your membership was ended",
-				"An administrator ended your membership. You keep read-only access to your own history and can export it.", "/history", ""); err != nil {
+				"An administrator ended your membership. Recorded reason: "+label+
+					". You keep read-only access to your own history and can export it. You can challenge the removal.", "/history", ""); err != nil {
 				return err
+			}
+			reason = label
+			if d := strings.TrimSpace(in.Reason); d != "" {
+				reason += ": " + d
+			}
+			after["reason_code"] = in.ReasonCode
+			if in.MatterTxID != "" {
+				after["matter_transaction"] = in.MatterTxID
 			}
 		}
 		if err := s.audit(tx, p, auditEntry{Type: at, Action: domain.ActMemberDeparted, TargetType: "member", TargetID: target.ID,
-			Reason: in.Reason, Subjects: []string{target.ID}, Before: map[string]any{"status": target.Status},
-			After: map[string]any{"status": domain.MemberDeparted, "rule": string(p.net.Policy.DepartureRule)}}); err != nil {
+			Reason: reason, Subjects: []string{target.ID}, Before: map[string]any{"status": target.Status},
+			After: after}); err != nil {
 			return err
 		}
 		out, err = tx.GetMember(netID, target.ID)
 		return err
 	})
 	return out, err
+}
+
+// errRemovalConflict refuses a removal for fraud or breach decided by an
+// administrator who is the counterparty in the matter (GOV-011, SEC-010).
+var errRemovalConflict = domain.Forbidden("conflict of interest: you took part in the matter of this removal; another administrator must decide it")
+
+// IsRemovalConflict reports whether err is the refusal of a removal by a
+// conflicted administrator (GOV-011), so adapters can explain it.
+func IsRemovalConflict(err error) bool {
+	var de *domain.Error
+	return errors.As(err, &de) && de == errRemovalConflict
+}
+
+// removalIndependent checks the matter of an administrator removal (GOV-011,
+// SEC-010). A named matter must be a transaction the removed member is a
+// party to. A removal for fraud or breach is refused when the deciding
+// administrator took part (DOM-038: party, proposer, accepter or reverser)
+// in the matter: the named transaction, or any trade of the member that is
+// still an open case, under an undecided dispute or a requested re-review.
+func removalIndependent(tx store.Tx, netID, adminID, targetID string, in DepartInput) error {
+	var matters []*domain.Transaction
+	if in.MatterTxID != "" {
+		t, err := tx.GetTransaction(netID, in.MatterTxID)
+		if err != nil || !t.IsParty(targetID) {
+			return domain.Invalid("transaction_id", "must be a transaction the member is a party to")
+		}
+		matters = append(matters, t)
+	}
+	if !domain.RemovalNeedsIndependence(in.ReasonCode) {
+		return nil
+	}
+	open, err := openCases(tx, netID, targetID)
+	if err != nil {
+		return err
+	}
+	for _, t := range append(matters, open...) {
+		if err := independent(tx, netID, t, adminID); err != nil {
+			if domain.CodeOf(err) == domain.CodeForbidden {
+				return errRemovalConflict
+			}
+			return err
+		}
+	}
+	return nil
+}
+
+// openCases lists the member's trades whose dispute is undecided (open, under
+// review or awaiting its posting) or whose decision awaits a requested
+// re-review.
+func openCases(tx store.Tx, netID, memberID string) ([]*domain.Transaction, error) {
+	var out []*domain.Transaction
+	after := ""
+	for {
+		ds, err := tx.ListDisputes(netID, store.DisputeFilter{PartyID: memberID, AfterID: after, Limit: 200})
+		if err != nil {
+			return nil, err
+		}
+		for _, d := range ds {
+			after = d.ID
+			live := d.Status == domain.DisputeOpen || d.Status == domain.DisputeUnderReview || d.Status == domain.DisputePostingPending
+			if !live && d.Status == domain.DisputeResolved {
+				rr, err := tx.GetReReview(netID, d.ID)
+				if err != nil {
+					return nil, err
+				}
+				live = rr != nil && rr.Status == store.ReReviewRequested
+			}
+			if !live {
+				continue
+			}
+			t, err := tx.GetTransaction(netID, d.TxID)
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, t)
+		}
+		if len(ds) < 200 {
+			return out, nil
+		}
+	}
 }
 
 func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.Member) error {

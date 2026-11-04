@@ -51,8 +51,8 @@ func TestErasurePages(t *testing.T) {
 	w := newWorld(t)
 	b := w.base()
 	ctx := w.env.Ctx
-	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.aliceM.ID, Reason: "left"}))
-	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, Reason: "left"}))
+	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.aliceM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left"}))
+	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left"}))
 
 	adm := w.browser(t)
 	adm.login("admin@example.org")

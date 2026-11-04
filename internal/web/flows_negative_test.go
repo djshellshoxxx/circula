@@ -260,8 +260,8 @@ func TestWebBreakGlassErasureNegative(t *testing.T) {
 		t.Error("operator access leaked across networks")
 	}
 
-	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.aliceM.ID, Reason: "left"}))
-	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, Reason: "left"}))
+	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.aliceM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left"}))
+	testutil.Must(w.env.Svc.DepartMember(ctx, w.admin, w.net.ID, service.DepartInput{MemberID: w.bobM.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left"}))
 	adm := w.browser(t)
 	adm.login("admin@example.org")
 	f := adm.get(b + "/admin/members/" + w.aliceM.ID + "/erase")

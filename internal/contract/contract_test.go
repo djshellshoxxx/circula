@@ -352,7 +352,8 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(404, call{method: "POST", path: "/invitations/inv_nope/accept", token: h.token(env.Person("dan"), rw...), idem: true, body: m{"display_name": "Dan"}})
 	h.do(409, call{method: "POST", path: "/admin/members/" + carolM + "/approve", token: adminT, idem: true, body: m{"reason": "ok"}})
 	h.do(409, call{method: "POST", path: "/admin/members/" + carolM + "/deny", token: adminT, idem: true, body: m{"reason": "no"}})
-	h.do(200, call{method: "POST", path: "/admin/members/" + carolM + "/remove", token: adminT, idem: true, body: m{"reason": "left"}})
+	h.do(422, call{method: "POST", path: "/admin/members/" + carolM + "/remove", token: adminT, idem: true, skipRequest: true, body: m{"reason": "left"}}) // GOV-011
+	h.do(200, call{method: "POST", path: "/admin/members/" + carolM + "/remove", token: adminT, idem: true, body: m{"reason_code": "rule_breach", "reason": "left"}})
 	h.do(200, call{method: "GET", path: "/admin/audit-events?limit=2", token: adminT})
 	h.do(400, call{method: "GET", path: "/admin/audit-events?from=yesterday", token: adminT, skipRequest: true})
 	h.do(200, call{method: "GET", path: "/audit-events?limit=2", token: h.token(bob, rw...)})
