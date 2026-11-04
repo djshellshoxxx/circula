@@ -25,8 +25,8 @@ Short procedures for the common tasks. The details are in the linked documents.
 circula verify-ledger -config /etc/circula/circula.json
 ```
 
-Exit `0`: every network passed. Exit `3`: at least one network failed. Capture the output and follow SEC-030. Do not edit
-the database by hand.
+Exit `0`: every network passed. Exit `3`: at least one network failed. Capture the output and follow SEC-030
+([incident-response.md](incident-response.md)). Do not edit the database by hand.
 
 `verify-ledger` and `admin create-operator` take the single-writer lock (`<database>.lock`) and refuse with "in use by
 another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
@@ -153,5 +153,14 @@ administrators.
 
 ## Incident contacts and severity
 
-Severity levels and response targets are defined in [`docs/specs/10-governance-operations.md`](../specs/10-governance-operations.md)
-and SEC-030. Targets are recommendations until the platform operator approves them (OPS-030).
+The incident procedure is [incident-response.md](incident-response.md) (SEC-030): severity levels, roles, detection,
+containment, evidence, notification, recovery and review. Its levels apply to incidents and support requests alike
+(OPS-030):
+
+- `critical`: ledger integrity or security at risk, or the instance down. Page the on-duty platform operator.
+- `high`: one network cannot post, or a safeguard (backups, disk, throttling) is degraded.
+- `normal`: other faults and support requests.
+
+The response targets there are recommendations, not service levels, until the platform operator approves them
+(DEC-022). Contacts and the people holding each role are recorded outside this repository. Each alert in
+[monitoring.md](monitoring.md#alerts-ops-015) names its level.
