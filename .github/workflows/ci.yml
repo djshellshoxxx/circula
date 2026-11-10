@@ -53,7 +53,9 @@ jobs:
   test:
     name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    # macOS Intel's SQLite-heavy race suite exceeded Go's 10m/package default.
+    # Retain every test and race instrumentation; bound the slower runner explicitly.
+    timeout-minutes: ${{ matrix.os == 'macos-15-intel' && 45 || 30 }}
     strategy:
       fail-fast: false
       matrix:
@@ -67,8 +69,13 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: test with race detector
-        if: runner.os != 'Windows'
+        if: runner.os == 'Linux'
         run: go test -race -count=1 ./...
+      - name: test with race detector (macOS Intel, bounded parallelism)
+        if: runner.os == 'macOS'
+        # Keep the complete race suite and every regression. The longer Go per-package
+        # timeout and limited concurrent packages accommodate SQLite on this runner.
+        run: go test -race -count=1 -p 2 -timeout=25m ./...
       - name: test
         if: runner.os == 'Windows'
         # The race detector needs cgo, which the Windows runner does not provide by default.
