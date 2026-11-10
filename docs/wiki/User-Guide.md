@@ -17,6 +17,14 @@ Circula lets members of one network record exchanges in a shared mutual-credit l
 
 The implementation has a verified invitation return-link fix in draft PR #19. See [PR #19](https://github.com/djshellshoxxx/circula/pull/19) for the current work and remaining approval gates.
 
+## Account recovery (draft functionality)
+
+From a signed-in account, open `/account/recovery-codes` and enter your current password to generate **10 one-time recovery codes**. Save them securely: the application displays them only once. Generating a new set invalidates every previously generated code.
+
+If you lose your password, open `/recover` without signing in, enter your login and one unused recovery code, and choose a new password. A successful recovery **does not sign you in**: return to `/login`. Recovery changes the password, invalidates other recovery codes, and revokes existing sessions and API tokens. If no usable code remains, contact a network administrator; administrator resets have restrictions and provide a one-time temporary password that must be changed at next sign-in. A platform operator may be required for accounts with multiple network memberships or elevated roles.
+
+This code-based workflow does not use email and is not an invitation to share codes with an administrator. It is implemented in the unmerged application draft and has source-level tests, but it is **not a released service or independently approved security feature**.
+
 ## Common workflows
 
 - **Propose a trade:** open a member or listing, select the counterparty and direction, enter amount and optional note, review, then explicitly send. A proposal is not a completed posting.
