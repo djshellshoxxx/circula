@@ -61,7 +61,7 @@ Use a disposable SQLite database for tests; keep `/metrics`, operator endpoints,
 ## API contracts, contributions and security rules
 
 - [OpenAPI](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/api/openapi.yaml) — request/response contracts; check its exact-head implementation against `internal/api`.
-- [Data and ledger specs](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/06-data-ledger-audit.md), [security spec](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/09-security-privacy-abuse.md), and [decision log](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/DECISIONS.md).
+- [Data and ledger specs](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/06-data-ledger-audit.md), [security spec](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/09-security-privacy.md), and [decision log](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/DECISIONS.md).
 - [CONTRIBUTING.md](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/CONTRIBUTING.md) — formatting, tests, dependency workflow, action pinning and release rules.
 - [SECURITY.md](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/SECURITY.md) — private vulnerability reporting and disclosure restrictions.
 
