@@ -64,7 +64,8 @@ func (s *server) termsAccept(w http.ResponseWriter, r *http.Request, c *rc) {
 			s.fail(w, r, err)
 			return
 		}
-		d := &termsData{Terms: v.Current, Accepted: v.Accepted, NeedsAcceptance: true}
+		d := &termsData{Terms: v.Current, Accepted: v.Accepted, NeedsAcceptance: true,
+			Next: safeNext(r.PostFormValue("next"))}
 		if v.Current != nil {
 			d.Paras = paragraphs(v.Current.Body)
 		}
