@@ -69,7 +69,7 @@ Create isolated branches and draft PRs. Add a failing regression test before cor
 
 ## Release process, ADRs/specs and outstanding engineering work
 
-Release process: review [release gate](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/qa/RELEASE-GATE.md), record evidence, resolve owner thresholds and manual accessibility/security items, prepare release notes from [releases source](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/releases/), and obtain explicit owner authorization before tag/publish/deploy. `make release-local` builds local archives only.
+Release process: review [release gate](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/qa/RELEASE-GATE.md), record evidence, resolve owner thresholds and manual accessibility/security items, prepare release notes from [releases source](https://github.com/djshellshoxxx/circula/tree/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/releases), and obtain explicit owner authorization before tag/publish/deploy. `make release-local` builds local archives only.
 
 Key open decisions include licence, SEC-033 independent review, DEC-014 (A3-F02), owner financial/security choices and manual QA-035/UX-056. Historical [completeness audit](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/audit/COMPLETENESS.md) and [traceability matrix](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/TRACEABILITY.md) need source-pinned requalification; passing automated checks is not an assertion of full completion.
 
