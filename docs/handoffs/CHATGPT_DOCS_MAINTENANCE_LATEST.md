@@ -29,3 +29,7 @@
 Review stacked draft PR and its CI, publish live wiki only with separately authorized wiki write capability, verify navigation, then reconcile the highest-impact operator/QA documentation drift and release-gate evidence without interfering with active owner work.
 
 No separate documentation subagent was available. This was a third **sequential** maintenance phase, not a concurrent worker.
+
+## Follow-up source-link check (same run)
+
+Compared all 30 pinned GitHub blob links across the four wiki pages to the recursive exact-source tree (724 paths). Found one invalid security spec path (`docs/specs/09-security-privacy-abuse.md`) and corrected it to the existing `docs/specs/09-security-privacy.md` in commit `87d0afe63d5b60d1b917848eb4a17158470845ca`. A `docs/releases/` URL is a directory, not a file, and is intentionally valid as a directory link. Wiki-local links still target the four proposed page names. New documentation-branch CI runs may be pending; no passing claim until exact latest-head result is returned.
