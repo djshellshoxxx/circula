@@ -45,7 +45,7 @@ Per [DEC-001](13-assumptions-risks-decisions-and-roadmap.md#dec-001), Circula is
 |---|---|---|---|
 | Self-hosted, single network | The community itself or a volunteer | One | Supported (P0) |
 | Self-hosted, multi-network | A federation, cooperative, or service group | Many | Supported (P0) |
-| Hosted, multi-network | The project or a third party that offers the service | Many, unrelated communities | Supported if a hosted offering is launched (P1); open decision [OQ-OPS-1](#14-open-questions) |
+| Hosted, multi-network | The project or a third party that offers the service | Many, unrelated communities | Supported if a hosted offering is launched (P1); open decision [OQ-OPS-1](#15-open-questions) |
 
 <a id="ops-001"></a>**OPS-001 — One release artifact for every model.** (P0) The project MUST publish a single release artifact per version from which all three models are deployed. No model MAY depend on code, feature flags compiled in, or schema variants that the other models lack. The recommended default artifact is a container image; the project MUST also document a bare-process deployment (run the application service directly on a host with the same configuration schema).
 *Rationale:* [DEC-001](13-assumptions-risks-decisions-and-roadmap.md#dec-001) requires the hosted offering to run the same software; two artifacts would give two behaviors to test.
@@ -173,7 +173,7 @@ The paths are an [07-api-and-integration-contract.md](07-api-and-integration-con
 <a id="ops-042"></a>**OPS-042 — Encryption and off-site copy.** (P0) Backups MUST be encrypted before leaving the primary site, with keys held separately from the backup medium. At least one copy MUST be stored in a failure domain different from the primary store (a different site, account, or provider). The operator MUST test that the key is available to a person other than the one who created the backup.
 *Rationale:* a backup in the same failure domain as the store is lost with it; a backup nobody can decrypt is not a backup.
 
-<a id="ops-043"></a>**OPS-043 — Retention aligned with data retention.** (P0) Backup retention MUST NOT shorten the ledger retention period and MUST NOT lengthen the retention of personal data beyond what [06-data-model-ledger-and-audit.md](06-data-model-ledger-and-audit.md) states: when personal data is pseudonymized or erased there ([DOM-074](03-domain-model-and-mutual-credit-rules.md#dom-074)), backups older than the stated backup-expiry period (recommended default 35 days; threshold needs product decision) MUST be destroyed, and a restore from a backup older than that period MUST re-apply recorded erasures before the instance serves traffic. Whether backups are in scope of an erasure request is a counsel question ([OQ-OPS-6](#14-open-questions)).
+<a id="ops-043"></a>**OPS-043 — Retention aligned with data retention.** (P0) Backup retention MUST NOT shorten the ledger retention period and MUST NOT lengthen the retention of personal data beyond what [06-data-model-ledger-and-audit.md](06-data-model-ledger-and-audit.md) states: when personal data is pseudonymized or erased there ([DOM-074](03-domain-model-and-mutual-credit-rules.md#dom-074)), backups older than the stated backup-expiry period (recommended default 35 days; threshold needs product decision) MUST be destroyed, and a restore from a backup older than that period MUST re-apply recorded erasures before the instance serves traffic. Whether backups are in scope of an erasure request is a counsel question ([OQ-OPS-6](#15-open-questions)).
 
 <a id="ops-044"></a>**OPS-044 — Recovery objectives.** (P0) The operator documentation MUST state the instance's recovery point objective (RPO) and recovery time objective (RTO). Recommended defaults, threshold needs product decision:
 
@@ -202,7 +202,7 @@ A self-hosted operator who cannot meet a default MUST record the actual values; 
 
 ## 7. Monitoring and alerting
 
-<a id="ops-060"></a>**OPS-060 — Required metrics.** (P0) The application and job runner MUST expose, in a documented machine-readable format (recommended default: a text exposition format widely supported by monitoring tools; alternatives recorded in [OQ-OPS-4](#14-open-questions)), at least:
+<a id="ops-060"></a>**OPS-060 — Required metrics.** (P0) The application and job runner MUST expose, in a documented machine-readable format (recommended default: a text exposition format widely supported by monitoring tools; alternatives recorded in [OQ-OPS-4](#15-open-questions)), at least:
 
 | Group | Metrics |
 |---|---|
@@ -217,7 +217,7 @@ A self-hosted operator who cannot meet a default MUST record the actual values; 
 Metrics MUST NOT carry member identifiers, email addresses, or free text as labels. Network identifier labels are allowed in operator-only metrics and MUST NOT be exposed to network administrators.
 *Rationale:* the listed metrics are those whose absence would hide a ledger-affecting fault.
 
-<a id="ops-061"></a>**OPS-061 — Verification job.** (P0) The verification job MUST run at least daily on every instance and after every migration and restore, per [QA](12-quality-strategy-and-test-plan.md). It MUST be able to run for a single network without locking other networks' postings. Any discrepancy MUST raise the highest-severity alert ([OPS-062](#ops-062)) and trigger the procedure in [OPS-140](#ops-140). The job MUST NOT correct anything.
+<a id="ops-061"></a>**OPS-061 — Verification job.** (P0) The verification job MUST run at least daily on every instance and before and after every migration and restore, per [QA](12-quality-strategy-and-test-plan.md). It MUST be able to run for a single network without locking other networks' postings. Any discrepancy MUST raise the highest-severity alert ([OPS-062](#ops-062)) and trigger the procedure in [OPS-140](#ops-140). The job MUST NOT correct anything.
 *Rationale:* silent drift is the failure the ledger design exists to expose ([DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003)); correction by software would be an unrecorded balance change ([DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014)).
 
 <a id="ops-062"></a>**OPS-062 — Alert set.** (P0) Hosted operators MUST configure, and self-hosted operators SHOULD configure, at least these alerts. Thresholds are recommended defaults, threshold needs product decision.
@@ -241,7 +241,7 @@ Metrics MUST NOT carry member identifiers, email addresses, or free text as labe
 
 <a id="ops-064"></a>**OPS-064 — Traces.** (P1) The application SHOULD emit distributed-trace spans for each API request, each ledger posting, and each outbound email, with the same redaction rules as OPS-063, so that posting latency can be broken down by store time and application time.
 
-<a id="ops-065"></a>**OPS-065 — Availability target.** (P1) The hosted operator SHOULD publish an availability target for the API, measured monthly on the readiness endpoint from outside the operator's network. Recommended default 99.5 percent per calendar month excluding announced maintenance (threshold needs product decision, [OQ-OPS-3](#14-open-questions)). Self-hosted operators set their own target; the project makes no availability promise for self-hosted instances.
+<a id="ops-065"></a>**OPS-065 — Availability target.** (P1) The hosted operator SHOULD publish an availability target for the API, measured monthly on the readiness endpoint from outside the operator's network. Recommended default 99.5 percent per calendar month excluding announced maintenance (threshold needs product decision, [OQ-OPS-3](#15-open-questions)). Self-hosted operators set their own target; the project makes no availability promise for self-hosted instances.
 
 <a id="ops-066"></a>**OPS-066 — Status communication to administrators.** (P1) The operator MUST have a channel that network administrators can read without logging in (a status page or a feed) and MUST notify administrators by email of planned maintenance at least 7 days ahead (threshold needs product decision), of read-only periods ([OPS-088](#ops-088)), and of incidents that affect their networks, per [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md) incident response. Administrators relay notices to members under [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
 
@@ -250,7 +250,7 @@ Metrics MUST NOT carry member identifiers, email addresses, or free text as labe
 <a id="ops-080"></a>**OPS-080 — Versioning and release notes.** (P0) Releases MUST carry a version identifier. Recommended default: semantic versioning (major.minor.patch), where a major version signals a breaking change to the public API or to operator procedures, a minor adds capability with a forward migration, and a patch contains fixes with no schema change. Every release MUST ship release notes stating: changes by area, migration notes (whether the schema or data changes, expected duration for a store of stated size, whether the migration is reversible without restore), breaking-change flags (API, configuration keys, operator procedures), and security fixes. API versioning (`/v1`) is owned by [07-api-and-integration-contract.md](07-api-and-integration-contract.md).
 *Rationale:* operators plan maintenance from the notes; an unflagged breaking change is a failed upgrade waiting to happen.
 
-<a id="ops-081"></a>**OPS-081 — Compatibility window.** (P0) The release notes of each release MUST state the oldest version from which an in-place upgrade is supported. Recommended default: an instance must step through every minor version in order and may skip patch versions. Open decision ([OQ-OPS-2](#14-open-questions)): allow skipping up to a stated number of minors, or support only the previous minor. The application MUST refuse to start migrations from an unsupported version and MUST name the supported path.
+<a id="ops-081"></a>**OPS-081 — Compatibility window.** (P0) The release notes of each release MUST state the oldest version from which an in-place upgrade is supported. Recommended default: an instance must step through every minor version in order and may skip patch versions. Open decision ([OQ-OPS-2](#15-open-questions)): allow skipping up to a stated number of minors, or support only the previous minor. The application MUST refuse to start migrations from an unsupported version and MUST name the supported path.
 
 <a id="ops-082"></a>**OPS-082 — Upgrade procedure.** (P0) The upgrade guide ([OPS-161](#ops-161)) MUST describe, in this order:
 
@@ -281,7 +281,7 @@ Metrics MUST NOT carry member identifiers, email addresses, or free text as labe
 
 ## 9. Scaling and capacity
 
-<a id="ops-100"></a>**OPS-100 — Reference sizing.** (P1) The project SHOULD publish a reference deployment (application service, store, job runner sizes) validated by load tests ([12-quality-strategy-and-test-plan.md](12-quality-strategy-and-test-plan.md)) for a stated number of networks N and members per network M, with the measured posting latency and request rate. The values of N and M for the MVP are a product decision ([OQ-OPS-5](#14-open-questions)); recommended starting figures for discussion: a single instance supports N = 20 networks of M = 500 members with the alert thresholds of OPS-062 holding at the 95th percentile.
+<a id="ops-100"></a>**OPS-100 — Reference sizing.** (P1) The project SHOULD publish a reference deployment (application service, store, job runner sizes) validated by load tests ([12-quality-strategy-and-test-plan.md](12-quality-strategy-and-test-plan.md)) for a stated number of networks N and members per network M, with the measured posting latency and request rate. The values of N and M for the MVP are a product decision ([OQ-OPS-5](#15-open-questions)); recommended starting figures for discussion: a single instance supports N = 20 networks of M = 500 members with the alert thresholds of OPS-062 holding at the 95th percentile.
 
 <a id="ops-101"></a>**OPS-101 — Vertical first.** (P1) The documented growth path is vertical: larger application, store, and job runner resources on a single instance. Capacity guidance MUST state the metrics from OPS-060 that indicate saturation (store connection pool exhaustion, posting latency, disk growth).
 
@@ -305,11 +305,11 @@ Three parties support an instance: the **platform operator**, the **network admi
 | Abuse report (member behavior) | Handles reports about the instance as a whole or about an administrator; applies network suspension where [OPS-152](#ops-152) allows. | Handles reports about a member under network policy ([10-governance-and-network-operations.md](10-governance-and-network-operations.md)). | None. |
 | Data export request (member) | None; the member self-exports ([PER-030](02-personas-roles-and-journeys.md#per-030)). The operator helps only if the product path fails. | Directs the member to self-export. | Fixes export defects. |
 | Data export request (network) | Hosted: runs export on request when the administrator cannot ([OPS-151](#ops-151)). | Runs network export ([PER-031](02-personas-roles-and-journeys.md#per-031)). | Fixes export defects. |
-| Deletion request | Carries out instance-level steps the product provides; never deletes ledger events ([DOM-074](03-domain-model-and-mutual-credit-rules.md#dom-074)). | Handles departure and the member-facing explanation. | Documents what is pseudonymized and what is retained; legal basis is a counsel question ([OQ-OPS-6](#14-open-questions)). |
+| Deletion request | Carries out instance-level steps the product provides; never deletes ledger events ([DOM-074](03-domain-model-and-mutual-credit-rules.md#dom-074)). | Handles departure and the member-facing explanation. | Documents what is pseudonymized and what is retained; legal basis is a counsel question ([OQ-OPS-6](#15-open-questions)). |
 | Security incident | Leads containment and notification at instance level per [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md). | Relays notices to members. | Provides fixes and advisories. |
 | Outage or degraded service | Restores service; posts status ([OPS-066](#ops-066)). | Relays to members. | Supports diagnosis from logs the operator shares. |
 | Software defect, feature request | Reports upstream with redacted logs. | Reports through the operator. | Triage and release. |
-| Installation and upgrade help (self-hosted) | Primary. | Not applicable. | Community support channel and shipped documentation ([OPS-160](#ops-160) to [OPS-164](#ops-164)); response commitments are an open decision ([OQ-OPS-7](#14-open-questions)). |
+| Installation and upgrade help (self-hosted) | Primary. | Not applicable. | Community support channel and shipped documentation ([OPS-160](#ops-160) to [OPS-164](#ops-164)); response commitments are an open decision ([OQ-OPS-7](#15-open-questions)). |
 
 <a id="ops-111"></a>**OPS-111 — Operator never edits the ledger.** (P0) No support procedure in the documentation MAY instruct a person to modify, insert, or delete ledger events, postings, or audit events in storage. A member's or administrator's request that implies it MUST be answered with the adjustment or dispute path.
 *Rationale:* [DOM-002](03-domain-model-and-mutual-credit-rules.md#dom-002).
@@ -352,7 +352,7 @@ Plain-text summary: a verification discrepancy leads to suspending the affected 
 
 <a id="ops-140"></a>**OPS-140 — Suspected ledger discrepancy.** (P0) Procedure:
 
-1. **Freeze** the affected network or networks by suspension (network status Suspended, [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) section 2 status list) or, where the discrepancy spans networks, instance read-only mode ([OPS-088](#ops-088)). Suspension follows [OPS-152](#ops-152) and the notification rules in [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
+1. **Freeze** the affected network or networks by suspension (network status Suspended, [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) section 3.2.1) or, where the discrepancy spans networks, instance read-only mode ([OPS-088](#ops-088)). Suspension follows [OPS-152](#ops-152) and the notification rules in [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
 2. **Preserve evidence**: take a backup of the current state; retain verification output, application logs, and the metadata for the first discrepant sequence number. Do not alter anything.
 3. **Investigate**: identify the first event after which balances differ from postings or the sum is not zero ([DOM-004](03-domain-model-and-mutual-credit-rules.md#dom-004)); decide between a software defect, a storage fault, or an unauthorized change. Unauthorized change is a security incident ([09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md)).
 4. **Correct only by the sanctioned routes**: a cached balance that differs from postings is rebuilt by the application's documented rebuild operation, which derives balances from postings ([DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003)) and records an audit event; a posting-level error is corrected only by adjustments posted by network administrators ([DOM-040](03-domain-model-and-mutual-credit-rules.md#dom-040), [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041)); a storage fault is corrected by restore ([OPS-045](#ops-045)).
@@ -365,8 +365,8 @@ Plain-text summary: a verification discrepancy leads to suspending the affected 
 
 <a id="ops-141"></a>**OPS-141 — Break-glass procedure steps.** (P0) Break-glass access is the only route by which the operator reaches a network's data ([PER-033](02-personas-roles-and-journeys.md#per-033)); its controls are owned by [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md). The operational procedure MUST be:
 
-1. A named operator records a reason and a reference to the support request or incident, and the access window (recommended default no more than 4 hours; threshold needs product decision).
-2. A second operator or the operator lead approves where the instance has more than one operator; a single-operator instance records a self-approval flagged as such.
+1. A named operator records a reason and a reference to the support request or incident, and the access window (time box per [SEC-140](09-security-privacy-and-abuse-resistance.md#sec-140): default 4 h, maximum 24 h).
+2. A second operator or the operator lead approves where the instance has more than one operator; a single-operator instance records a self-approval flagged as such, except for the administrator grant of [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142), which always needs a second operator; a single-operator instance cannot perform it.
 3. Access is granted through a path separate from the normal interface, with read-only scope by default.
 4. Every action is logged as an audit event visible to the affected network's administrators afterward ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012)).
 5. Access expires at the end of the window; extension is a new request.
@@ -378,11 +378,11 @@ Break-glass confers no posting authority ([PER-033](02-personas-roles-and-journe
 <a id="ops-150"></a>**OPS-150 — Isolation tests before each release.** (P0) A hosted operator MUST NOT release to production until the network-isolation tests defined in [12-quality-strategy-and-test-plan.md](12-quality-strategy-and-test-plan.md) pass against the release candidate on staging, covering every API operation ([DEC-001](13-assumptions-risks-decisions-and-roadmap.md#dec-001), [DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005)). The result is recorded per release.
 *Rationale:* in a shared instance, a missing network filter on one query exposes every network.
 
-<a id="ops-151"></a>**OPS-151 — Per-network export on request.** (P0) A hosted operator MUST be able to produce, within 10 working days of a request from a network's administrators (threshold needs product decision), the network export defined in [PER-031](02-personas-roles-and-journeys.md#per-031) in the formats of [07-api-and-integration-contract.md](07-api-and-integration-contract.md), using the product's export path, and the export MUST be audited ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012)). The operator MUST NOT produce an export of one network on a request from anyone who is not an administrator of that network, except under a legal request handled as a counsel question ([OQ-OPS-6](#14-open-questions)).
+<a id="ops-151"></a>**OPS-151 — Per-network export on request.** (P0) A hosted operator MUST be able to produce, within 10 working days of a request from a network's administrators (threshold needs product decision), the network export defined in [PER-031](02-personas-roles-and-journeys.md#per-031) in the formats of [07-api-and-integration-contract.md](07-api-and-integration-contract.md), using the product's export path, and the export MUST be audited ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012)). The operator MUST NOT produce an export of one network on a request from anyone who is not an administrator of that network, except under a legal request handled as a counsel question ([OQ-OPS-6](#15-open-questions)).
 
-<a id="ops-152"></a>**OPS-152 — Network suspension policy.** (P0) The hosted operator MUST publish terms stating the grounds on which it may suspend a network (recommended: abuse affecting other networks or third parties, a legal requirement, a ledger discrepancy under [OPS-140](#ops-140), non-compliance with the hosting terms), the notice given to administrators, and the route to appeal. Suspension is the network status Suspended in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md); it stops ordinary transactions and preserves all history and administrator read access. Governance of suspension, notice, and reinstatement is owned by [10-governance-and-network-operations.md](10-governance-and-network-operations.md). Suspension is an instance-level audit event.
+<a id="ops-152"></a>**OPS-152 — Network suspension policy.** (P0) The hosted operator MUST publish terms stating the grounds on which it may suspend a network (recommended: abuse affecting other networks or third parties, a legal requirement, a ledger discrepancy under [OPS-140](#ops-140), non-compliance with the hosting terms), the notice given to administrators, and the route to appeal. Suspension is the network status Suspended in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md); it stops ordinary transactions (`transaction_completed` events) and new memberships; administrator reversals and adjustments remain possible ([DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016)); it preserves all history and administrator read access. Governance of suspension, notice, and reinstatement is owned by [10-governance-and-network-operations.md](10-governance-and-network-operations.md). Suspension is an instance-level audit event.
 
-<a id="ops-153"></a>**OPS-153 — Data location and controller.** (P0) The hosted operator MUST document where each network's data is stored and processed, and who determines purposes and means (the operator, the network, or jointly). Which party is a data controller or processor, whether cross-border transfers apply, and what notices members receive are counsel questions ([OQ-OPS-6](#14-open-questions)); this document records only that the documentation of location and roles MUST exist before launch.
+<a id="ops-153"></a>**OPS-153 — Data location and controller.** (P0) The hosted operator MUST document where each network's data is stored and processed, and who determines purposes and means (the operator, the network, or jointly). Which party is a data controller or processor, whether cross-border transfers apply, and what notices members receive are counsel questions ([OQ-OPS-6](#15-open-questions)); this document records only that the documentation of location and roles MUST exist before launch.
 
 <a id="ops-154"></a>**OPS-154 — Billing out of scope.** (P0) Billing, pricing, invoicing, and any charge the hosted operator makes for the service are out of scope for these specifications and for the platform. The software MUST NOT include billing logic, and no operational procedure here depends on one. Networks' credit units are not used for any charge by the operator ([DEC-008](13-assumptions-risks-decisions-and-roadmap.md#dec-008), [DOM-080](03-domain-model-and-mutual-credit-rules.md#dom-080)).
 
@@ -406,21 +406,7 @@ Break-glass confers no posting authority ([PER-033](02-personas-roles-and-journe
 
 <a id="ops-167"></a>**OPS-167 — Self-hosted operators and networks' administrators.** (P1) The install guide SHOULD tell a single-community operator who also administers the network how to keep the operator identity and the administrator membership separate (distinct login identity or distinct role usage), so that operator actions remain distinguishable in audit events.
 
-## 14. Open questions
-
-| ID | Question | Decision needed | Decided by |
-|---|---|---|---|
-| OQ-OPS-1 | Will a hosted offering exist at launch, and who operates it? | Decide whether section 12 is in the MVP or deferred; name the hosting party. | Project owner |
-| OQ-OPS-2 | Upgrade compatibility window: step through every minor (recommended), allow skipping N minors, or only previous minor? | Policy stated in release notes ([OPS-081](#ops-081)). | Project owner |
-| OQ-OPS-3 | Availability target for hosted (recommended 99.5 percent monthly) and any commitment for self-hosted. | Accept or change the figure; decide whether it is published. | Project owner |
-| OQ-OPS-4 | Metrics and trace formats: which exposition format is the default; whether to commit to a vendor-neutral tracing standard. | Pick defaults recorded in the configuration reference. | Platform operator lead with architecture owner |
-| OQ-OPS-5 | MVP capacity target: N networks by M members per instance. | Fix N and M for load testing ([OPS-100](#ops-100)). | Project owner |
-| OQ-OPS-6 | Data-controller and processor roles for hosted and self-hosted; whether backups fall within erasure requests; legal-request handling for network exports; cross-border storage. (Counsel question.) | Written advice before a hosted launch. | Project owner with counsel |
-| OQ-OPS-7 | Project support commitments to self-hosting operators (channel, response targets, supported versions and their duration). | Define support policy and end-of-support rules. | Project owner |
-| OQ-OPS-8 | RPO, RTO, backup frequency, drill cadence, and other thresholds marked "threshold needs product decision" in this document. | Accept or replace each default. | Project owner |
-| OQ-OPS-9 | Bootstrap token lifetime and whether a second operator must approve the first break-glass use on single-operator instances. | Accept recommended defaults ([OPS-030](#ops-030), [OPS-141](#ops-141)). | Platform operator lead with security reviewer |
-
-## 14a. Traceability to other specifications
+## 14. Traceability to other specifications
 
 | Operational need | Rule here | Rule it depends on |
 |---|---|---|
@@ -432,8 +418,23 @@ Break-glass confers no posting authority ([PER-033](02-personas-roles-and-journe
 | Operator has no network role | [OPS-110](#ops-110), [OPS-141](#ops-141) | [PER-007](02-personas-roles-and-journeys.md#per-007), [PER-033](02-personas-roles-and-journeys.md#per-033) |
 | Hosted isolation | [OPS-150](#ops-150) | [DEC-001](13-assumptions-risks-decisions-and-roadmap.md#dec-001), [DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005) |
 
-## 15. Change history
+## 15. Open questions
+
+| ID | Question | Decision needed | Decided by |
+|---|---|---|---|
+| OQ-OPS-1 | Will a hosted offering exist at launch, and who operates it? | Decide whether section 12 is in the MVP or deferred; name the hosting party. | Project owner |
+| OQ-OPS-2 | Upgrade compatibility window: step through every minor (recommended), allow skipping N minors, or only previous minor? | Policy stated in release notes ([OPS-081](#ops-081)). | Project owner |
+| OQ-OPS-3 | Availability target for hosted (recommended 99.5 percent monthly) and any commitment for self-hosted. | Accept or change the figure; decide whether it is published. | Project owner |
+| OQ-OPS-4 | Metrics and trace formats: which exposition format is the default; whether to commit to a vendor-neutral tracing standard. | Pick defaults recorded in the configuration reference. | Platform operator lead with architecture owner |
+| OQ-OPS-5 | MVP capacity target: N networks by M members per instance. | Fix N and M for load testing ([OPS-100](#ops-100)). | Project owner |
+| OQ-OPS-6 | Data-controller and processor roles for hosted and self-hosted; whether backups fall within erasure requests; legal-request handling for network exports; cross-border storage. (Counsel question.) | Written advice before a hosted launch. | Project owner with counsel |
+| OQ-OPS-7 | Project support commitments to self-hosting operators (channel, response targets, supported versions and their duration). | Define support policy and end-of-support rules. | Project owner |
+| OQ-OPS-8 | RPO, RTO, backup frequency, drill cadence, and other thresholds marked "threshold needs product decision" in this document. | Accept or replace each default. | Project owner |
+| OQ-OPS-9 | Bootstrap token lifetime and whether a second operator must approve the first break-glass use on single-operator instances. Resolved in part: the dual-control question is answered by SEC-140 and SEC-142 (the administrator grant always needs a second operator; see [OPS-141](#ops-141)). The bootstrap-token lifetime stays open. | Accept recommended default for the token lifetime ([OPS-030](#ops-030)). | Platform operator lead with security reviewer |
+
+## 16. Change history
 
 | Date | Change |
 |---|---|
 | 2026-11-11 | Initial draft. |
+| 2026-11-11 | Consistency review fixes. |

@@ -189,7 +189,7 @@ Measures are observable from the product, its automated checks, or defined resea
 | 5 | Time from proposal to acceptance. | Timestamps on proposal and acceptance. | VIS-002 | Threshold needs product decision. |
 | 6 | Dispute resolution: share of disputes with a recorded resolution, and time to resolution. | Dispute status and timestamps. | VIS-007 | Every dispute resolved or open with a named reviewer; time threshold needs product decision. |
 | 7 | Balance comprehension: share of test participants who correctly interpret a sample balance, available credit, and a pending transaction. | Moderated usability check. | VIS-006 | Threshold needs product decision. |
-| 8 | Accessibility: MVP journeys completable by keyboard only and at 320 px width. | Automated and manual accessibility checks. | VIS-011 | All MVP journeys; conformance level needs product decision. |
+| 8 | Accessibility: MVP journeys completable by keyboard only and at 320 px width. | Automated and manual accessibility checks. | VIS-011 | All MVP journeys; WCAG 2.2 Level AA ([UX-090](08-ux-and-accessibility.md#ux-090)). |
 | 9 | Self-hosting effort: time for a person following only published instructions to reach a working instance with one network. | Timed walkthrough. | VIS-010 | Threshold needs product decision. |
 | 10 | Export fidelity: balances recomputed from an exported file equal the displayed balances. | Automated export round-trip check. | VIS-009 | 100% of tested networks. |
 | 11 | Active use: share of members in a network who take part in at least one transaction or listing in a period. | Activity counts per network, aggregated without member identifiers. | VIS-005 | Threshold and period need product decision. |
@@ -246,7 +246,7 @@ Each question is mirrored as a `DEC-` entry in [13-assumptions-risks-decisions-a
 | OQ-VIS-1 | Counsel question: does operating a network on Circula, or offering a hosted instance, raise money-services, securities, tax, or consumer-protection questions in the jurisdictions where early networks will run? Product behavior to review: members record credit balances, negative balances are permitted within limits, and administrators can write off balances. | Which jurisdictions apply and what review is required before any launch. Does not block technology-neutral requirements. | Project owner with qualified counsel |
 | OQ-VIS-2 | What range of network sizes (members, transactions per day) must the MVP support? | Target figures that feed architecture and test thresholds. Recommended default: record a target range before architecture is accepted. | Project owner |
 | OQ-VIS-3 | Who are the first real networks, and can representatives take part in the usability checks behind measures 7 and 9? | Named pilot communities or an agreed substitute. | Project owner |
-| OQ-VIS-4 | What numeric thresholds apply to measures 4 to 9 and 11? | A threshold and measurement period for each, or a decision to track them without a threshold. | Product owner |
+| OQ-VIS-4 | What numeric thresholds apply to measures 4 to 9 and 11? | A threshold and measurement period for each, or a decision to track them without a threshold. The accessibility threshold (measure 8) is resolved by [UX-090](08-ux-and-accessibility.md#ux-090) (WCAG 2.2 Level AA); the other numeric thresholds remain open. | Product owner |
 | OQ-VIS-5 | Is "Circula" the final product name, and which open-source license applies? | Name and license, recorded before the repository is made public. A license choice may carry counsel questions. | Project owner |
 | OQ-VIS-6 | Is the language "credit unit", used throughout, acceptable to the pilot communities, or do networks need a different label in the interface? | Whether the per-network unit name is sufficient or the product needs further wording controls. | Product owner |
 
@@ -255,3 +255,4 @@ Each question is mirrored as a `DEC-` entry in [13-assumptions-risks-decisions-a
 | Date | Change |
 |---|---|
 | 2026-11-11 | Initial draft. |
+| 2026-11-11 | Consistency review fixes. |
