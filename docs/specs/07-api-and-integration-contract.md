@@ -226,6 +226,7 @@ General codes defined by this contract:
 |---|---|---|
 | `unauthenticated` | 401 | No valid credential where one is required ([API-020](#api-020)). |
 | `forbidden` | 403 | Permissions matrix, PAT scope, CSRF check, or break-glass restriction denies the operation. |
+| `reauthentication_required` | 401 | A high-impact administrator action requires fresh authentication and the session's last authentication is too old ([09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md)); carries `reauthenticate_within_seconds`. |
 | `network_scope_mismatch` | 403 | A PAT addresses a network outside its network list ([API-022](#api-022)). |
 | `not_found` | 404 | Resource does not exist in the addressed network, belongs to another network ([API-003](#api-003)), or is invisible to the caller ([API-023](#api-023)). The three cases MUST be indistinguishable in status, body, and timing class. |
 | `method_not_allowed` | 405 | Method not defined for the path. |

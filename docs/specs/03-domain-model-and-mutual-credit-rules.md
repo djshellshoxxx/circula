@@ -113,8 +113,8 @@ The relationship between one person or organization and one network. The same pe
 stateDiagram-v2
     [*] --> Invited : administrator invites
     [*] --> Pending : person applies via join link
-    Invited --> Active : invitee accepts (and policy needs no approval)
-    Invited --> Pending : invitee accepts (policy needs approval)
+    Invited --> Active : invitee accepts an administrator-sent invitation
+    Invited --> Pending : invitee accepts a member-sent invitation (DOM-115)
     Invited --> Expired : invitation window passes
     Invited --> Revoked : administrator revokes
     Pending --> Active : administrator approves
@@ -126,7 +126,7 @@ stateDiagram-v2
     Departed --> [*]
 ```
 
-Plain-text summary: a membership begins by invitation or application. It is `Active` once accepted and, if the policy requires it, approved. `Suspended` freezes the member account. `Departed` is terminal and requires the account to be closed at zero ([DOM-070](#dom-070), [DOM-071](#dom-071)).
+Plain-text summary: a membership begins by invitation or application. An invitation sent by an administrator is already approved, so accepting it makes the membership `Active`; an invitation sent by a member ([DOM-115](#dom-115)) or an application needs administrator approval first. `Suspended` freezes the member account. `Departed` is terminal and requires the account to be closed at zero ([DOM-070](#dom-070), [DOM-071](#dom-071)).
 
 ### 3.4 Account
 
@@ -300,7 +300,7 @@ All invariants are P0 and platform-wide. No network policy can relax them, and n
 <a id="dom-011"></a>**DOM-011 — Idempotent state changes.** Every command that may create a ledger event, a transaction, a dispute, an adjustment, or a membership change MUST carry a client-supplied idempotency key scoped to the acting identity. A repeated command with the same key MUST return the original outcome and MUST NOT create a second object or posting. A repeated key with a different payload MUST be rejected. The platform MUST recognize a key for at least 24 hours after its first use; a key that created a lasting object (transaction, dispute, adjustment, membership change) SHOULD be kept with that object for as long as the object exists. Storage and expiry are specified in [06-data-model-ledger-and-audit.md](06-data-model-ledger-and-audit.md).
 *Rationale:* retried requests after a network timeout are routine; without this rule they create duplicate trades.
 
-<a id="dom-012"></a>**DOM-012 — Audited state changes.** The platform MUST record an audit event for every: ledger event; transaction status change; dispute status change; membership status or role change; account status or limit change; network status or policy change; listing creation and status change; export of network data; authentication event (login, failed login, recovery, session revocation); and every platform-operator access to network data.
+<a id="dom-012"></a>**DOM-012 — Audited state changes.** The platform MUST record an audit event for every: ledger event; transaction status change; dispute status change; membership status or role change; account status or limit change; network status or policy change; listing creation and status change; export of network data and every download of an export file; authentication and credential event (login, failed login, recovery, password change, email change, second-factor enrolment and removal, session revocation); abuse report creation and handling; and every platform-operator access to network data, including the start, extension, and end of a break-glass grant.
 *Rationale:* administrators and members need to answer "who did this and when" without engineering help.
 
 <a id="dom-013"></a>**DOM-013 — Attribution of authority.** Every ledger event MUST record the actors whose actions caused it and the authority under which it was posted: mutual consent of the two parties; a dispute resolution (with the dispute reference); an administrator (with reason); or an administrator with a second administrator's approval.
@@ -312,7 +312,7 @@ All invariants are P0 and platform-wide. No network policy can relax them, and n
 <a id="dom-015"></a>**DOM-015 — One member account per membership; one network account per network.** Every membership MUST hold exactly one member account, created when the membership first becomes `Active`. Every network MUST have exactly one network account, created with the network, which MUST NOT be closed while the network is `Active` or `Suspended`. Only administrators may act for the network account.
 *Rationale:* keeps the MVP model small while giving write-offs a balanced counterparty ([DEC-003](13-assumptions-risks-decisions-and-roadmap.md#dec-003)).
 
-<a id="dom-016"></a>**DOM-016 — Account status gates.** An `Active` account may take part in any ledger event. A `Frozen` account MUST NOT be payer or payee of a new or accepted transaction, but MAY be a party to a reversal or adjustment. A `Closed` account MUST NOT be a party to any ledger event. A network in `Setup`, `Suspended`, or `Closed` status MUST NOT post any ledger event.
+<a id="dom-016"></a>**DOM-016 — Account status gates.** An `Active` account may take part in any ledger event. A `Frozen` account MUST NOT be payer or payee of a new or accepted transaction, but MAY be a party to a reversal or adjustment. A `Closed` account MUST NOT be a party to any ledger event. A network in `Setup` or `Closed` status MUST NOT post any ledger event. A network in `Suspended` status MUST NOT post `transaction_completed` events, but MAY post reversals and adjustments initiated by its administrators under sections 6 and 7, so that errors can be corrected and the closing adjustments of [DOM-075](#dom-075) remain possible.
 *Rationale:* suspension must stop trading without stopping corrections.
 
 <a id="dom-017"></a>**DOM-017 — Policy is versioned and evaluated at posting time.** Network policy changes MUST create a new immutable policy version with an effective time, which MAY be in the future (a scheduled version). A scheduled version MAY be cancelled by an administrator before its effective time; the cancellation is audited and the version is never evaluated. A ledger event MUST be evaluated under the policy version in force at its posting time and MUST record that version. A policy change MUST NOT retroactively alter the status or validity of existing events, transactions, or disputes; it applies to evaluations after its effective time. Every active member MUST be notified of a new policy version no later than its effective time, and the notification attempt MUST be audited; this notification is mandatory and is not subject to [DOM-114](#dom-114).
@@ -345,7 +345,7 @@ Plain-text summary: a transaction starts as `Proposed`. The counterparty's accep
 <a id="dom-021"></a>**DOM-021 — Proposal validity.** The platform MUST accept a proposal only when all of the following hold at proposal time: the network is `Active`; payer and payee are different accounts in that network; both accounts are `Active`; the proposer holds the payer account or the payee account (or is an administrator acting for the network account as one side); the amount satisfies [DOM-006](#dom-006) and does not exceed the per-transaction maximum ([DOM-104](#dom-104)) if one is set; the description is present and non-empty; any referenced listing belongs to the same network. The proposal MUST record `expires at` = proposed at + proposal expiry window ([DOM-100](#dom-100)). A proposal MUST NOT be rejected for insufficient available credit: limits are checked at acceptance ([DEC-004](13-assumptions-risks-decisions-and-roadmap.md#dec-004)), though the interface SHOULD warn the proposer when the payer's available credit is below the amount ([08-ux-and-accessibility.md](08-ux-and-accessibility.md)).
 *Rationale:* a proposal is a request for consent, not a reservation.
 
-<a id="dom-022"></a>**DOM-022 — Acceptance and posting.** Only the holder of the counterparty account (the account the proposer does not hold) MAY accept a `Proposed` transaction; for the network account, an administrator other than the proposer ([DOM-043](#dom-043)). Acceptance MUST, in one atomic operation satisfying [DOM-009](#dom-009): re-check every condition of [DOM-021](#dom-021) as of now (except expiry, which is checked as `now < expires at`); evaluate the limit checks of [DOM-027](#dom-027); and, if all pass, create the `transaction_completed` ledger event, its two postings, and set the status to `Completed` with `completed at`. If any check fails, the transaction MUST remain `Proposed`, the attempt MUST be appended to `failed acceptance attempts`, the acceptor MUST receive the specific error code (section 5.1), and the proposer SHOULD be notified. Policy [DOM-105](#dom-105) MAY require an additional confirmation step above a threshold amount; when enabled, acceptance by the counterparty moves the transaction to a confirmation-pending substate of `Proposed` and the posting happens when the confirmation is given.
+<a id="dom-022"></a>**DOM-022 — Acceptance and posting.** Only the holder of the counterparty account (the account the proposer does not hold) MAY accept a `Proposed` transaction; for the network account, an administrator other than the proposer ([DOM-043](#dom-043)). Acceptance MUST, in one atomic operation satisfying [DOM-009](#dom-009): re-check every condition of [DOM-021](#dom-021) as of now (except expiry, which is checked as `now < expires at`); evaluate the limit checks of [DOM-027](#dom-027); and, if all pass, create the `transaction_completed` ledger event, its two postings, and set the status to `Completed` with `completed at`. The checks are evaluated under the policy version in force at acceptance ([DOM-017](#dom-017)), so a policy change between proposal and acceptance (for example a lowered [DOM-104](#dom-104)) can make a previously valid proposal fail; this is not a retroactive change, because the proposal's status is unchanged. If any check fails, the transaction MUST remain `Proposed`, the attempt MUST be appended to `failed acceptance attempts`, the acceptor MUST receive the specific error code (section 5.1), and the proposer SHOULD be notified. Policy [DOM-105](#dom-105) MAY require an additional confirmation step above a threshold amount; when enabled, acceptance by the counterparty moves the transaction to a confirmation-pending substate of `Proposed` and the posting happens when the confirmation is given.
 *Rationale:* acceptance is the moment of mutual consent and therefore the moment the ledger moves.
 
 <a id="dom-023"></a>**DOM-023 — Decline.** Only the counterparty MAY decline a `Proposed` transaction. `Declined` is terminal. A declined transaction MUST remain visible to both parties with its decline time and optional reason text.
@@ -386,7 +386,7 @@ These codes are the vocabulary the API ([07-api-and-integration-contract.md](07-
 | `positive_limit_exceeded` | Payee check in [DOM-027](#dom-027) fails. |
 | `transaction_expired` | Acceptance after `expires at` ([DOM-025](#dom-025)). |
 | `invalid_transition` | Action not allowed from the current status ([DOM-020](#dom-020)). |
-| `self_dealing_not_allowed` | Same person on both sides of a system-account event ([DOM-043](#dom-043)). |
+| `self_dealing_not_allowed` | Same person on both sides of a system-account event, or initiating and approving the same adjustment ([DOM-043](#dom-043)). |
 | `idempotency_conflict` | Same idempotency key, different payload ([DOM-011](#dom-011)). |
 | `confirmation_required` | Large-amount confirmation outstanding ([DOM-029](#dom-029)). |
 | `window_closed` | An action is attempted after its policy window: mutual reversal ([DOM-031](#dom-031), [DOM-101](#dom-101)), dispute ([DOM-060](#dom-060), [DOM-102](#dom-102)), appeal ([DOM-063](#dom-063), [DOM-103](#dom-103)), administrator reversal ([DOM-108](#dom-108)). |
@@ -397,8 +397,11 @@ These codes are the vocabulary the API ([07-api-and-integration-contract.md](07-
 | `departure_blocked` | Departure attempted with a non-zero balance, a `Proposed` transaction, or an open dispute ([DOM-070](#dom-070)); the response names the blocking conditions. |
 | `closure_blocked` | Network closure attempted while any account is not `Closed` at zero ([DOM-075](#dom-075)); the response names the blocking accounts. |
 | `decimal_places_locked` | Attempt to change decimal places after the first posting ([DOM-006](#dom-006)). |
-| `policy_value_out_of_range` | Policy value outside the range in section 11 ([DOM-018](#dom-018)). |
+| `policy_value_out_of_range` | Policy value outside the range in section 11, or an account limit above the network maximum ([DOM-018](#dom-018), [DOM-091](#dom-091)). |
 | `last_administrator` | Role change or departure that would leave the network without an active administrator (rule owned by [PER-006](02-personas-roles-and-journeys.md#per-006)). |
+| `setup_incomplete` | Activation attempted before every "set at setup" policy in section 11 is chosen. |
+| `invitation_expired` | Invitation accepted after its validity window ([DOM-099](#dom-099)). |
+| `not_permitted_by_policy` | A policy in section 11 disables the action (for example `invite_only` applications, a zero-length window, [DOM-109](#dom-109) off, [DOM-113](#dom-113) separation, [DOM-115](#dom-115) off). |
 
 ## 6. Reversals
 
@@ -444,7 +447,7 @@ These codes are the vocabulary the API ([07-api-and-integration-contract.md](07-
 
 <a id="dom-052"></a>**DOM-052 — Over-limit state.** An account is over limit when `balance < −credit limit` or, if a positive limit is set, `balance > positive limit`. Over-limit is a derived state, never stored as the only record. While a payer account is over its credit limit it MUST NOT be debited by an ordinary transaction ([DOM-027](#dom-027)); while a payee account is over its positive limit it MUST NOT be credited by one. Reversals and adjustments remain possible under their own rules. The account holder and the administrators MUST be able to see the over-limit state and the amount by which it is exceeded.
 
-<a id="dom-053"></a>**DOM-053 — Network account limits.** The network account's credit limit and positive limit are set by policy ([DOM-093](#dom-093)); the credit limit MAY be unbounded. Its balance, which turns negative as write-offs accumulate, MUST be visible to every active member of the network.
+<a id="dom-053"></a>**DOM-053 — Network account limits.** The network account's credit limit and positive limit are set by policy ([DOM-093](#dom-093)); the credit limit MAY be unbounded. Its balance, which turns negative as write-offs accumulate, MUST be visible to every active member of the network, together with its ledger events (kind, type, amount, reason code, date). The counterparty of each such event MUST be shown by name only when [DOM-096](#dom-096) is `visible_to_members` or the event carries the `self_dealing` flag ([DOM-043](#dom-043)); otherwise the counterparty is shown as an unnamed member, because a named write-off would disclose that member's balance.
 *Rationale:* the network account's negative balance is the network's shared loss; hiding it would be a silent mutation of the community's position.
 
 <a id="dom-054"></a>**DOM-054 — Limits never move balances.** Changing a limit MUST NOT create a ledger event. Limits bound future ordinary transactions only.
@@ -476,7 +479,7 @@ Plain-text summary: a party raises a dispute, a reviewer takes it, and the revie
 | `adjusted` | An `adjustment` of type `correction` specified in the resolution (accounts, amount, reason) is posted under authority `dispute_resolution`. |
 | `withdrawn` | None. Recorded when the raiser withdraws. |
 
-When policy [DOM-111](#dom-111) requires administrator confirmation for the outcome's remedy, the resolution MUST be recorded as decided but the remedy MUST remain pending until an administrator who is not a party confirms it; the dispute status stays `Under review` until then. The remedy event, when posted, MUST reference the dispute ([DOM-007](#dom-007)), and the parties MUST be notified ([DOM-014](#dom-014)).
+When policy [DOM-111](#dom-111) requires administrator confirmation for the outcome's remedy, the resolution MUST be recorded as decided but the remedy MUST remain pending until an administrator who is not a party confirms it; the dispute status stays `Under review` until then. If the confirming administrator declines, the decline and its reason MUST be recorded, the dispute MUST stay `Under review`, and the reviewer MUST record a new resolution (the same remedy for a different administrator to confirm, or a different outcome). A remedy of outcome `reversed` follows [DOM-032](#dom-032); a remedy of outcome `adjusted` restores a prior state in the same way and MUST be posted even if it leaves an account over a limit, with `limit override` recorded. The remedy event, when posted, MUST reference the dispute ([DOM-007](#dom-007)), and the parties MUST be notified ([DOM-014](#dom-014)).
 
 <a id="dom-063"></a>**DOM-063 — Resolution is final except by appeal.** A `Resolved` dispute MUST NOT be reopened. The raiser or the other party MAY file one appeal within the appeal window ([DOM-103](#dom-103)); the appeal process, who hears it, and what it may change are governance matters defined in [10-governance-and-network-operations.md](10-governance-and-network-operations.md). Any ledger consequence of an appeal MUST be posted as a new reversal or adjustment referencing the appeal; it MUST NOT edit the earlier resolution or events.
 
@@ -515,7 +518,7 @@ Everything in this table is configurable by a network administrator within the s
 | <a id="dom-092"></a>DOM-092 | Default positive limit for new member accounts | Non-negative amount or unset | Unset. |
 | <a id="dom-093"></a>DOM-093 | Network account credit limit and positive limit | Non-negative amounts or unbounded | Unbounded credit limit; positive limit unset. |
 | <a id="dom-094"></a>DOM-094 | Credit unit name, symbol, decimal places | Free text; 0 to 2 decimal places | Set at setup; decimal places immutable after first posting ([DOM-006](#dom-006)). |
-| <a id="dom-095"></a>DOM-095 | Membership entry mode | `invite_only`, `invite_or_apply_with_approval`, `open_join_link_with_approval` | `invite_or_apply_with_approval`. Every mode except `invite_only` requires administrator approval before `Active`. |
+| <a id="dom-095"></a>DOM-095 | Membership entry mode | `invite_only`, `invite_or_apply_with_approval`, `open_join_link_with_approval` | `invite_or_apply_with_approval`. Applications always require administrator approval before `Active`. An invitation sent by an administrator counts as approval; an invitation sent by a member ([DOM-115](#dom-115)) does not. |
 | <a id="dom-096"></a>DOM-096 | Balance visibility to other members | `hidden`, `visible_to_members` | `hidden`. Own balance, administrators' view, and the network account balance ([DOM-053](#dom-053)) are not affected. |
 | <a id="dom-097"></a>DOM-097 | Directory and listing visibility | `members_only`, `public_read` | `members_only`. |
 | <a id="dom-098"></a>DOM-098 | Profile fields required beyond display name | Subset of the optional profile fields | None required. |
@@ -535,7 +538,7 @@ Everything in this table is configurable by a network administrator within the s
 | <a id="dom-112"></a>DOM-112 | Positive balance on departure ([DOM-071](#dom-071)) | `forfeit_to_network`, `transfer_then_forfeit_remainder` | `transfer_then_forfeit_remainder`. |
 | <a id="dom-113"></a>DOM-113 | Administrator and reviewer roles may be held by the same person | `allowed`, `separate_people_required` | `allowed` (small networks); governance SHOULD recommend separation ([10-governance-and-network-operations.md](10-governance-and-network-operations.md)). |
 | <a id="dom-114"></a>DOM-114 | Notification channel settings | Which events send email beyond the mandatory sets in [DOM-014](#dom-014) and [DOM-017](#dom-017) | All events on. |
-| <a id="dom-115"></a>DOM-115 | Members may send invitations | `on`, `off` | `off`; administrators can always invite. Member-sent invitations follow the entry mode in [DOM-095](#dom-095), so approval is still required unless the mode is `invite_only`. |
+| <a id="dom-115"></a>DOM-115 | Members may send invitations | `on`, `off` | `off`; administrators can always invite. A member-sent invitation, once accepted, enters `Pending` and requires administrator approval in every entry mode ([DOM-095](#dom-095)). |
 
 Things a network cannot configure, by design: the double-entry rule, the zero-sum property, append-only history, consent for ordinary transactions, atomic limit checks, audit coverage, the existence of the network account, and the fact that credits are not converted to anything.
 
@@ -556,7 +559,7 @@ All examples use a network with 0 decimal places, unit "credits", default credit
 
 **Example 3 — concurrent acceptances.** A is at −80 with two `Proposed` transactions of 15 each, to B and to C. B and C accept at the same instant. Under DOM-009 the ledger serializes the two postings: the first passes (−95), the second fails (−95 − 15 = −110 < −100) with `limit_exceeded`. It is unspecified which of B or C wins; what is specified is that exactly one does.
 
-**Example 4 — dispute and reversal.** B disputes example 1 ("work not done"). Reviewer R (not A or B) takes the dispute, resolves `reversed`. The platform posts sequence 2: debit B 40 (resulting 0), credit A 40 (resulting 0), authority `dispute_resolution`, origin: the dispute. Transaction 1 is now `Reversed`. Both postings of sequence 1 remain in the ledger.
+**Example 4 — dispute and reversal.** A, who was debited in example 1, disputes it ("work not done"). Reviewer R (not A or B) takes the dispute, resolves `reversed`. The platform posts sequence 2: debit B 40 (resulting 0), credit A 40 (resulting 0), authority `dispute_resolution`, origin: the dispute. Transaction 1 is now `Reversed`. Both postings of sequence 1 remain in the ledger.
 
 **Example 5 — write-off on departure.** D is at −150 (an administrator had raised D's limit to 200) and has left the community without settling. Governance declares default. Administrator M posts `write_off`, reason `default`, referencing D's membership: debit NET 150 (NET resulting −150), credit D 150 (D resulting 0). D's account is then `Closed` and the membership `Departed`. The network account now shows −150 to every member: the loss is socialized and visible. Sum of all balances is still 0.
 
