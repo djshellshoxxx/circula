@@ -24,6 +24,9 @@ const (
 	CodeConflict           Code = "conflict"
 	CodeBlocked            Code = "blocked"
 	CodeRateLimited        Code = "rate-limited"
+	// CodeNetworkFrozen: the network's ledger failed verification and the
+	// network is read-only until an operator resolves it (CMD-07, OPS-033).
+	CodeNetworkFrozen Code = "network-frozen"
 	// CodeUnavailable is the retryable "try again" error: the database was busy
 	// or locked past the busy timeout. No partial state was written. Adapters
 	// map it to 503 with Retry-After.
@@ -79,6 +82,7 @@ var (
 	ErrConflict           = &Error{Code: CodeConflict}
 	ErrBlocked            = &Error{Code: CodeBlocked}
 	ErrRateLimited        = &Error{Code: CodeRateLimited}
+	ErrNetworkFrozen      = &Error{Code: CodeNetworkFrozen}
 	ErrUnavailable        = &Error{Code: CodeUnavailable}
 )
 

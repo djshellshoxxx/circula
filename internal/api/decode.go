@@ -82,7 +82,9 @@ func strictUnmarshal(b []byte, v any) error {
 	if err := dec.Decode(v); err != nil {
 		return invalidBody("malformed JSON, unknown field or wrong type: " + sanitize(err.Error()))
 	}
-	if dec.More() {
+	// dec.More is false before a stray closing delimiter ("{}}"), so ask for
+	// the next token: anything but end of input is trailing data.
+	if _, err := dec.Token(); !errors.Is(err, io.EOF) {
 		return invalidBody("unexpected data after the JSON document")
 	}
 	return nil

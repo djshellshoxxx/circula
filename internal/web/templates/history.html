@@ -20,6 +20,7 @@
 {{if .Done}}{{template "txlist" dict "Rows" .Done "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>Nothing here yet. Once you trade, each entry shows who paid whom, the signed amount, its status and ledger reference.</p>{{end}}</section>
 {{template "pager" dict "Next" .Next "Href" (printf "/n/%s/history?status=%s&after=" $.Slug .Filter)}}
 {{end}}
+<p><a href="/n/{{$.Slug}}/audit">Account activity log</a></p>
 <h2>Download your data</h2>
 <form method="post" action="/n/{{.Slug}}/export">
   {{template "csrf" .}}

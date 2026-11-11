@@ -124,7 +124,7 @@ func (s *Service) CompleteMFA(ctx context.Context, challenge, code string) (stri
 				TargetType: "person", TargetID: pid, After: map[string]any{"remaining": left}}); err != nil {
 				return err
 			}
-			if err := s.notify(tx, pid, domain.NoticeRecoveryCodeUsed, ""); err != nil {
+			if err := s.secNotice(tx, pid, domain.NoticeRecoveryCodeUsed, ""); err != nil {
 				return err
 			}
 		}

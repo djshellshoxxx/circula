@@ -6,6 +6,7 @@
 <form method="post" action="/n/{{.D.Slug}}/join" novalidate>
   {{template "csrf" .}}
   {{template "field" dict "P" . "Name" "display_name" "Label" "Your display name" "Hint" "Other members see this name." "Auto" "nickname" "Max" 60 "Req" true}}
+  {{template "termsbox" .}}
   <div class="actions"><button type="submit">{{if eq (printf "%s" .D.JoinMode) "approval"}}Request to join{{else}}Join{{end}}</button></div>
 </form>
 {{end}}

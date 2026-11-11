@@ -32,7 +32,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-009 | P0 | built | Balance card shows balance, limit, reserved, available |
 | UX-010 | P0 | built | Available labelled as available to spend with help link |
 | UX-011 | P0 | built | Text states credit in use against limit |
-| UX-012 | P1 | not built | Credit-use warning notice not built (OQ-UX-02) |
+| UX-012 | P1 | built | Credit-use warning at the policy percent (default 80); OQ-UX-02 threshold default still to confirm |
 | UX-013 | P0 | built | Direction in words per transaction line |
 | UX-014 | P0 | built | Pending section excluded from balance |
 | UX-015 | P0 | built | Completed rows show posted time |
@@ -159,7 +159,7 @@ Rules that apply to all three states:
 | UX-009 · P0 | The Home balance card MUST show, as separate labelled values: current balance with direction (UX-004); credit limit; reserved amount for pending outgoing trades; available to spend (API-044 `available_minor`). |
 | UX-010 · P0 | Available to spend MUST NOT be presented as the balance. Its label MUST include the words "available to spend", and the help link MUST explain that pending outgoing trades reduce it. |
 | UX-011 · P0 | When the member is in debt, the card MUST show the portion of the credit limit in use as text ("You are using 25.00 of your 50.00 credit limit") and MAY show a meter. The meter MUST have a text equivalent and MUST NOT be the only indicator. |
-| UX-012 · P1 | When the member's in-use credit reaches the network's warning threshold (default proposed 80 percent, product decision), an inline notice MUST appear on Home and on the propose form. |
+| UX-012 · P1 | When the member's in-use credit reaches the network's warning threshold (default proposed 80 percent, product decision), an inline notice MUST appear on Home and on the propose form. As built: threshold is the network policy `limit_warning_percent` (default 80, 1 to 100); the notice shows on Home and the propose form, and the hourly job also sends an inbox notification once per ISO week. |
 
 ### 4.3 Transactions and pending versus completed
 

@@ -124,6 +124,13 @@ func (s *Service) setMemberStatus(ctx context.Context, actor domain.Actor, netID
 		if err := tx.SetMemberStatus(netID, m.ID, to, nil); err != nil {
 			return err
 		}
+		kind, title, body := NotifAdminReinstate, "Your membership was reinstated", "An administrator reinstated your membership. You can trade again."
+		if to == domain.MemberSuspended {
+			kind, title, body = NotifAdminSuspended, "Your membership was suspended", "An administrator suspended your membership. Your balance and history are unchanged and you can still respond to disputes."
+		}
+		if err := s.adminNotice(tx, netID, m.ID, kind, title, body, "/"); err != nil {
+			return err
+		}
 		return s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: action, TargetType: "member", TargetID: m.ID,
 			Reason: reason, Subjects: []string{m.ID}, Before: map[string]any{"status": m.Status}, After: map[string]any{"status": to}})
 	})
@@ -176,6 +183,14 @@ func (s *Service) changeRole(ctx context.Context, actor domain.Actor, netID, mem
 			if _, err := tx.RevokeRole(netID, m.ID, role, now); err != nil {
 				return err
 			}
+		}
+		verb := "revoked"
+		if grant {
+			verb = "granted"
+		}
+		if err := s.adminNotice(tx, netID, m.ID, NotifAdminRole, "Your role changed",
+			"An administrator "+verb+" the "+string(role)+" role.", "/"); err != nil {
+			return err
 		}
 		return s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: action, TargetType: "member", TargetID: m.ID,
 			Subjects: []string{m.ID}, After: map[string]any{"role": string(role)}})
@@ -276,6 +291,10 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 	after := p.net.Policy.DefaultCreditLimit
 	if in.Limit != nil {
 		after = *in.Limit
+	}
+	if err := s.adminNotice(tx, netID, m.ID, NotifAdminLimit, "Your credit limit changed",
+		"An administrator changed your credit limit. Your balance is unchanged.", "/"); err != nil {
+		return nil, nil, err
 	}
 	return p, m, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActLimitChanged, TargetType: "account", TargetID: acc.ID,
 		Reason: in.Reason, Subjects: []string{m.ID}, Before: map[string]any{"effective_limit": before},

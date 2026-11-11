@@ -28,12 +28,13 @@ func (s *server) createInvitation(c *reqCtx) error { // API-061
 
 func (s *server) acceptInvitation(c *reqCtx) error { // API-061
 	var in struct {
-		DisplayName string `json:"display_name"`
+		DisplayName  string `json:"display_name"`
+		TermsVersion int    `json:"terms_version"` // GOV-009: required when the network has terms
 	}
 	if err := c.decode(&in); err != nil {
 		return err
 	}
-	m, err := s.svc.RedeemInvitation(c.r.Context(), c.actor, c.r.PathValue("token"), in.DisplayName)
+	m, err := s.svc.RedeemInvitationTerms(c.r.Context(), c.actor, c.r.PathValue("token"), in.DisplayName, in.TermsVersion)
 	if err != nil {
 		return err
 	}
@@ -47,6 +48,11 @@ func (s *server) listAudit(c *reqCtx) error { // API-062
 	if err := c.adminOnly(); err != nil {
 		return err
 	}
+	return s.auditList(c)
+}
+
+// auditList is the shared read; the service scopes rows by role (FR-082).
+func (s *server) auditList(c *reqCtx) error {
 	q := service.AuditQuery{Action: c.query.Get("action"), TargetID: c.query.Get("target_id"), ActorID: c.query.Get("actor_id")}
 	for name, dst := range map[string]*time.Time{"from": &q.From, "to": &q.To} {
 		if v := c.query.Get(name); v != "" {

@@ -97,7 +97,13 @@ func TestLoginTradeFlow(t *testing.T) {
 	ds, _ := w.env.Svc.ListDisputes(w.env.Ctx, w.admin, w.net.ID, nil, service.Page{})
 	dv := adm.get(b + "/disputes/" + ds[0].ID)
 	adm.mustContain(dv, "Record a decision", "Start review")
-	res := adm.post(b+"/disputes/"+ds[0].ID+"/resolve", dv, url.Values{"outcome": {"upheld"}, "rationale": {"Agreed"}})
+	// The decision has a review step; nothing is recorded until it is confirmed.
+	rv := adm.post(b+"/disputes/"+ds[0].ID+"/resolve", dv, url.Values{"outcome": {"upheld"}, "rationale": {"Agreed"}, "step": {"review"}})
+	adm.mustContain(rv, "Review your decision", "Nothing is recorded until you confirm", "25.00 credits go back", "Agreed", "Record decision")
+	if still, err := w.env.Svc.GetDispute(w.env.Ctx, w.admin, w.net.ID, ds[0].ID); err != nil || still.Dispute.Status == domain.DisputeResolved {
+		t.Fatalf("review step recorded the decision (err %v)", err)
+	}
+	res := adm.post(b+"/disputes/"+ds[0].ID+"/resolve", rv, url.Values{"outcome": {"upheld"}, "rationale": {"Agreed"}, "step": {"confirm"}})
 	adm.mustContain(res, "Upheld: a reversal of 25.00 credits has been posted", "Agreed")
 
 	// Logout ends the session.

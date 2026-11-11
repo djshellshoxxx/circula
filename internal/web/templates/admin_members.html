@@ -8,6 +8,7 @@
     <option value="departed"{{if eq (.Val "status") "departed"}} selected{{end}}>Departed</option></select></div>
   <div class="actions"><button type="submit" class="secondary">Apply filter</button></div>
 </form>
+<p><a href="/n/{{.Slug}}/admin/inactive">Inactive members</a></p>
 {{if .D.Rows}}
 <div class="scroll" role="region" aria-label="Members table" tabindex="0">
 <table class="stack">

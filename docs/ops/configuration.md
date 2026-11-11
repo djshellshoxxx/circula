@@ -27,6 +27,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start with pending migrations. `auto`: back up, then migrate at start-up. |
 | `session-idle` | `CIRCULA_SESSION_IDLE` | `720h` | no | Idle session timeout (DEC-005). |
 | `session-max` | `CIRCULA_SESSION_MAX` | `2160h` | no | Absolute session lifetime. Must not be shorter than `session-idle`. |
+| `shutdown-grace` | `CIRCULA_SHUTDOWN_GRACE` | `10s` | no | How long in-flight requests may finish after a stop signal (1s to 10m). |
 | `idempotency-ttl` | `CIRCULA_IDEMPOTENCY_TTL` | `168h` | no | How long idempotency records are kept. |
 | `min-password-length` | `CIRCULA_MIN_PASSWORD_LENGTH` | `12` | no | Minimum password length (SEC-002). Cannot be set below 12. |
 | `require-mfa-admins` | `CIRCULA_REQUIRE_MFA_ADMINS` | `false` | no | When `true`, a network administrator without an enabled second factor is refused every administrator-only action with `forbidden` / `mfa-enrolment-required` until they enrol at `/account/security` (SEC-007, DEC-007). See `docs/dev/mfa.md`. |
@@ -34,7 +35,9 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `request-timeout` | `CIRCULA_REQUEST_TIMEOUT` | `30s` | no | Deadline for each API and UI request. |
 | `log-level` | `CIRCULA_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. Needs a restart to change. |
 | `log-format` | `CIRCULA_LOG_FORMAT` | `json` | no | `json` or `text`. |
+| `log-retention` | `CIRCULA_LOG_RETENTION` | `2160h` (90 days) | no | How long `circula prune-logs -dir <dir>` keeps stored log files (24h to 3660d). See "Log retention" in monitoring.md. |
 | `cookie-secure` | `CIRCULA_COOKIE_SECURE` | `true` | no | Marks every cookie `Secure` and names the session cookie `__Host-circula_session` (SEC-022). Keep `true` behind a TLS proxy: TLS ends at the proxy, so the service cannot see it. `false` is for plain-http development only; with `false` the cookie is `circula_session`. |
+| `maintenance` | `CIRCULA_MAINTENANCE` | `false` | no | Start in maintenance mode (OPS-024): reads (GET, HEAD, OPTIONS) keep working, every other web and API request (sign-in included) answers `503` with `Retry-After` and a friendly page; `/healthz`, `/readyz` and `/metrics` keep working. See [upgrade.md](upgrade.md#maintenance-mode). Turn it on or off while running with `circula maintenance on|off`. |
 | `metrics-allow` | `CIRCULA_METRICS_ALLOW` | `127.0.0.1/32,::1/128` | no | Comma-separated addresses or CIDRs allowed to read `/metrics`. `none` denies all. |
 | `trusted-proxies` | `CIRCULA_TRUSTED_PROXIES` | `none` | no | Comma-separated addresses or CIDRs of the reverse proxies in front of the service. Only requests whose TCP peer is in this list are believed when they carry `X-Forwarded-For` (client address for rate limits) or `X-Forwarded-Proto`. The client address is the right-most `X-Forwarded-For` entry that is not itself a trusted proxy. Empty: both headers are ignored and every client looks like the proxy. Set it to the proxy's address, for example `127.0.0.1/32`. |
 | `allow-insecure-http` | `CIRCULA_ALLOW_INSECURE_HTTP` | `false` | no | `serve` refuses to start when `public-base-url` is `http://` for a non-loopback host, or when it is `http://` and `listen` is not loopback (SEC-022). Set `true` only for a closed test network. |
@@ -44,11 +47,16 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `mfa-secret-file` | `CIRCULA_MFA_SECRET_FILE` | none | no | File holding the key that seals two-step sign-in secrets in the database (see below). |
 | `backup-encryption-key-file` | `CIRCULA_BACKUP_ENCRYPTION_KEY_FILE` | none | no | File holding the key that encrypts backups at rest (see below). |
 | `backup-require-encryption` | `CIRCULA_BACKUP_REQUIRE_ENCRYPTION` | `false` | no | `true` makes `restore` refuse plaintext backups and makes backups fail unless an encryption key is configured. Configuration is invalid when `true` without a key. |
+| `tls-cert-file` | `CIRCULA_TLS_CERT_FILE` | none | no | PEM certificate chain. With `tls-key-file`, the service terminates TLS itself (RB-013): minimum TLS 1.2, Go's default cipher suites, HTTP/2. `public-base-url` must then be `https://`. Both files are re-read on `SIGHUP` (`kill -HUP <pid>`); a failed reload logs an error and keeps the old certificate. See [TLS](#native-tls-rb-013). |
+| `tls-key-file` | `CIRCULA_TLS_KEY_FILE` | none | no | PEM private key for `tls-cert-file`. On Unix it must not be readable by group or others. Setting only one of the two refuses to start. |
+| `audit-anchor-key-file` | `CIRCULA_AUDIT_ANCHOR_KEY_FILE` | none | no | Key that HMACs audit anchors (RB-010). Keep a copy off the database host. See [Audit anchors](#audit-anchors-rb-010). |
+| `audit-anchor-with-backups` | `CIRCULA_AUDIT_ANCHOR_WITH_BACKUPS` | `true` | no | Write `<backup>.anchor.json` beside each scheduled backup. Removed together with the backup it belongs to. |
+| `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Append every audit event (chain metadata only) to this JSONL file after commit (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
 
 ## Secrets
 
-Four secrets exist. None is accepted as a flag (a flag would show in the process list) or as a key in the JSON file.
+Six secrets exist. None is accepted as a flag (a flag would show in the process list) or as a key in the JSON file.
 Supply each either as an environment variable or as a file named by the matching `*-file` setting, not both. A secret
 file must be a regular file and, on Unix, must not be readable by group or others (`chmod 600`). One trailing newline is
 ignored. Each secret must have at least 16 characters; use 32 random characters or more
@@ -60,6 +68,7 @@ ignored. Each secret must have at least 16 characters; use 32 random characters 
 | `CIRCULA_METRICS_TOKEN` | SA-15. When set, `/metrics` also requires `Authorization: Bearer <token>`. Set it whenever a reverse proxy runs on the same host: such a proxy reaches `/metrics` from loopback. Independently, `/metrics` always refuses requests carrying any proxy header (`X-Forwarded-*`, `Forwarded`, `X-Real-IP`, `Via`) and requests from a `trusted-proxies` address. |
 | `CIRCULA_MFA_SECRET` | SEC-007. When set, authenticator seeds are stored AES-256-GCM sealed under a key derived from it; otherwise they are stored base32-encoded. Losing or changing it makes sealed seeds unreadable: affected people must disable (recovery code) and re-enrol. Set it before people enrol. See `docs/dev/mfa.md`. |
 | `CIRCULA_BACKUP_ENCRYPTION_KEY` | OPS-019, SEC-028. Encrypts backups (AES-256-GCM). 32 random bytes in base64 (`circula keygen`, recommended) or a passphrase of 16+ characters. Must differ from the backup key. Without it backups are plaintext and `serve` warns. See [backup-restore.md](backup-restore.md#encryption-at-rest-ops-019-sec-028). |
+| `CIRCULA_AUDIT_ANCHOR_KEY` | RB-010. HMAC key for audit anchors written by `circula audit-anchor write` and the backup job. |
 | `CIRCULA_BACKUP_KEY` | SA-07. Signs backup manifests (HMAC-SHA-256) and is required to restore them. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key). |
 
 ### Runtime state: the web signing key (SEC-027)
@@ -81,6 +90,50 @@ Other settings:
 
 Settings that are documented in the specification but not yet implemented (mail) are listed in
 [README.md](README.md#known-gaps).
+
+## Native TLS (RB-013)
+
+Set `tls-cert-file` and `tls-key-file` to serve HTTPS without a proxy. The service accepts TLS 1.2 and 1.3 only and sends
+`Strict-Transport-Security` on every application response (HSTS is tied to the request being HTTPS, or to an `https://`
+`public-base-url`). Renew the certificate by replacing the files and sending `SIGHUP`; established connections keep the old
+certificate. Plain HTTP on the same port is not served. Reverse-proxy deployments are unchanged: leave the settings empty
+and keep `trusted-proxies`. The existing refusal still applies: an `http://` `public-base-url` with a non-loopback listen
+address does not start unless `allow-insecure-http=true` (or TLS is configured). An `https://` `public-base-url` on a
+non-loopback address without TLS keeps starting with a warning, since that is the proxy layout.
+
+## Audit anchors (RB-010)
+
+The audit hash chain and its head live in the database file, so someone who can write that file can recompute the whole
+chain. An anchor is a small JSON file holding, for every network, the chain head (`seq` and `hash`), the time and a database
+id. Store it off-host.
+
+```sh
+circula audit-anchor write /var/backups/offsite/anchor-$(date +%F).json
+circula audit-anchor verify anchor-2026-10-01.json     # exit 0 intact, exit 3 tail truncated or history rewritten
+```
+
+`verify` passes when each anchored event still exists with the same hash, so the chain may have grown since. It fails when the
+anchored event is missing (truncation, deleted network), differs (rewrite) or the database id changed. Both commands read
+the database without the writer lock, so they work beside `serve`. With `audit-anchor-key-file` set, the anchor carries an
+HMAC-SHA-256 and `verify` rejects an edited, unsigned or wrongly keyed file; the key should not live only on the database
+host. Scheduled backups write `<backup>.anchor.json` beside the backup unless `audit-anchor-with-backups=false`; copy those
+off-host with the backups. Limit: an anchor proves history up to its time. Events after the newest anchor are not covered.
+
+## Audit mirror (RB-012)
+
+`audit-mirror-file` makes the service append one JSON line per audit event after the database commit. Only chain metadata is
+written (ids, seq, time, actor, action, target, request id, `prev_hash`, `hash`); summaries, reasons and subject ids stay in
+the database so that erasure of personal data is not undone by the mirror. Limits: best effort (a crash between commit and
+write, or a write error, loses lines; the first failure is logged), and the file is only as tamper-proof as its location.
+Point it at a path the service account can append to but not rewrite (`chattr +a`, a log-shipper pipe or an object-locked
+mount) and ship it off-host. The mirror lets you compare `hash` and `prev_hash` linkage against the database independently.
+
+## Secure delete (RB-003)
+
+Every connection runs `PRAGMA secure_delete=ON`: freed pages are overwritten with zeros, so text deleted from any table
+(sessions, throttle rows, expired idempotency keys, purged rows) does not linger in the file. Cost: one extra page write per
+freed page, negligible for this write volume. Backups taken before the delete, older WAL segments already copied elsewhere
+and filesystem snapshots are outside its reach. A canary test (`internal/store/securedelete_test.go`) guards the behaviour.
 
 ## Example configuration file
 
@@ -111,4 +164,12 @@ On every `serve` start, in this order (before the port opens):
 3. Read the schema version without migrating. In `explicit` mode, pending migrations stop the start. In `auto` mode, a
    pre-migration backup is taken first and migration is refused if the backup fails.
 4. Open the database. Check WAL journal mode and foreign-key enforcement.
-5. Verify the ledger for every network. Any failure stops the start (exit code 1) with a message naming the next step.
+5. Verify the ledger for every network. A network that fails is **frozen** (CMD-07, OPS-033): its writes are refused with
+   `network-frozen` (API `423`, web page "Network read-only"), reads still work, and every other network serves. The
+   failure is logged at error level and `circula_frozen_networks` / `circula_ledger_verification_ok` show it. The hourly
+   verification re-checks every network: a network that passes again thaws on its own. Run `circula verify-ledger` for
+   the findings and follow the ledger-failure procedure in [monitoring.md](monitoring.md#failure-modes-ops-033).
+6. Log a warning if maintenance mode is on, then open the port.
+
+If the integrity check or the verified backup before a migration fails (step 3, `auto` mode, or `circula migrate`), the
+migration is not applied and the start stops (OPS-023, see [upgrade.md](upgrade.md#pre-migration-verification-ops-023)).

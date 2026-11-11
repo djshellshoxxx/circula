@@ -1,6 +1,6 @@
 {{define "content"}}
 {{with .D}}
-{{if not .Self}}<div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new?to={{.ID}}">Propose a trade with {{.Name}}</a></div>{{end}}
+{{if not .Self}}<div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new?to={{.ID}}">Propose a trade with {{.Name}}</a> <a class="btn secondary" href="/n/{{$.Slug}}/report?type=member&amp;id={{.ID}}">Report {{.Name}}</a></div>{{end}}
 <h2>Listings by {{.Name}}</h2>
 {{if .Listings}}<ul class="rows">{{range .Listings}}<li><strong>{{if eq (printf "%s" .Type) "offer"}}Offer{{else}}Request{{end}}:</strong> {{.Title}}{{if .Price}} &middot; price {{plain (deref .Price) $.Dec}} {{$.Unit}}s{{end}}<br>{{.Description}}</li>{{end}}</ul>
 {{else}}<p>{{.Name}} has no active listings.</p>{{end}}

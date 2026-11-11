@@ -42,7 +42,7 @@ func TestDepartureSettlementRespectsDualControl(t *testing.T) {
 	n := tu.Must(d.Svc.GetNetwork(d.Ctx, d.admin, d.net.ID))
 	pol := n.Policy
 	pol.DepartureRule = domain.DepartSettleToZero
-	if _, err := d.Svc.UpdatePolicy(d.Ctx, d.admin, d.net.ID, service.PolicyChange{Policy: pol, Reason: "x", IdempotencyKey: d.Key()}); err != nil {
+	if _, err := d.Svc.UpdatePolicy(d.Ctx, d.admin, d.net.ID, service.PolicyChange{Policy: pol, Reason: "x", NoticeDays: new(int), NoticeReason: "test: no notice", IdempotencyKey: d.Key()}); err != nil {
 		t.Fatal(err)
 	}
 	tx := tu.Must(d.propose(d.b, d.aM, service.ProposerPays, 50000))

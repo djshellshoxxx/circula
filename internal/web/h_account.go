@@ -15,6 +15,7 @@ func (s *server) accountRoutes() {
 	s.mux.HandleFunc("GET /account/password", s.auth(s.passwordForm))
 	s.mux.HandleFunc("POST /account/password", s.auth(s.passwordPost))
 	s.mux.HandleFunc("POST /session/extend", s.auth(s.sessionExtend))
+	s.timeZoneRoutes()
 }
 
 func (s *server) passwordForm(w http.ResponseWriter, r *http.Request, c *rc) {

@@ -8,9 +8,9 @@
   <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
   {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
   {{if .Tx.Reason}}<dt>Reason</dt><dd>{{.Tx.Reason}}</dd>{{end}}
-  <dt>Proposed</dt><dd>{{time .Tx.ProposedAt}}</dd>
-  {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>Expires</dt><dd>{{time (deref .Tx.ExpiresAt)}}</dd>{{end}}{{end}}
-  {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{time (deref .Tx.CompletedAt)}}</dd>{{end}}
+  <dt>Proposed</dt><dd>{{.Proposed}}</dd>
+  {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>Expires</dt><dd>{{.Expires}}</dd>{{end}}{{end}}
+  {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{.Posted}}</dd>{{end}}
   {{if .Row.Ledger}}<dt>Ledger reference</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
 </dl>
 <div class="actions">
@@ -19,6 +19,7 @@
   {{if .Cancel}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/cancel">Cancel this proposal</a>{{end}}
   {{if .Dispute}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/dispute">Raise a dispute</a>{{end}}
   {{if .DisputeID}}<a class="btn secondary" href="/n/{{$.Slug}}/disputes/{{.DisputeID}}">View the dispute</a>{{end}}
+  {{if .Reverse}}<a class="btn secondary" href="/n/{{$.Slug}}/admin/reverse?tx={{.Tx.ID}}">Reverse this trade (administrator)</a>{{end}}
 </div>
 {{if .WhyNot}}<p>{{.WhyNot}}</p>{{end}}
 <h2>Timeline</h2>

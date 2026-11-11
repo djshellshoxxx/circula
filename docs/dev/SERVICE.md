@@ -6,7 +6,8 @@ HTTP (`internal/api`), HTML (`internal/web`) and CLI (`cmd/circula`) adapters tr
 (03 domain, 06 ledger, 09 security). Audit findings addressed here: `docs/audit/CODE-AUDIT.md`, `SECURITY-AUDIT.md`
 (IDs such as SVC-01, SA-08 are used in code comments and tests).
 
-Status: service and store are complete and tested; the adapters above are built on top of this surface.
+Status: service and store are complete and tested; the adapters above are built on top of this surface. Operations
+(`circula serve`, jobs, maintenance mode, freeze, metrics) are described in `docs/ops/`.
 
 ## 1. Wiring
 
@@ -21,6 +22,9 @@ svc, err := service.New(st, service.Config{})            // defaults: wall clock
 * `Store.View` is truly read-only: the connection runs `PRAGMA query_only=ON` for the unit, so a write inside a view
   fails and cannot bypass the write gate (SVC-02). Everything that must not write (reads, `VerifyLedger`) uses it.
 * `Config.Clock` and `Config.IDs` are injected (DAT-002, DOM section 12); tests use `internal/testutil`.
+* `svc.SetObserver(o)` installs an optional `service.Observer` (see section 2, "Operational hooks"); `circula serve`
+  sets its metrics here. `svc.FreezeNetwork` / `UnfreezeNetwork` / `IsFrozen` / `FrozenNetworks` implement the
+  per-network freeze (CMD-07).
 * `Config.Argon` cost parameters are a placeholder until DEC-006 (benchmark on minimum hardware) is decided.
 
 ## 2. Conventions every adapter must follow
@@ -46,6 +50,7 @@ object id and a missing id all return the same `not-found` (API-017, FR-006).
 dispute, create listing, update policy) require a non-empty `IdempotencyKey` (map the `Idempotency-Key` header; else
 `idempotency-key-required`). Scope: network + person + operation. Same key + same payload returns the original result;
 same key + different payload is `idempotency-key-reused`. Failed commands are not recorded, so the key stays reusable (API-025).
+The key is 1 to 255 characters, the same limit as the API edge (API-021, D-03); longer is `validation-failed` at `idempotency_key`.
 Records expire after 7 days (`Config.IdempotencyTTL`). Input structs carry the key as `IdempotencyKey` (excluded from the fingerprint).
 
 **Errors.** Expected failures are `*domain.Error{Code, Msg, Fields, Blockers}`; use `errors.Is(err, domain.ErrForbidden)` or
@@ -67,7 +72,23 @@ Records expire after 7 days (`Config.IdempotencyTTL`). Input structs carry the k
 | `blocked` | 409 | `Blockers` lists what prevents departure, closure or last-admin removal |
 | `rate-limited` | 429 | login throttle (per login; add per-address limits at the edge); open-proposal caps; export quota |
 | `unavailable` | 503 | database busy past the busy timeout (SQLITE_BUSY/LOCKED). **Retryable**: nothing was written. Send `Retry-After`; `domain.IsRetryable(err)` |
+| `network-frozen` | 423 | the network failed ledger verification and is read-only (CMD-07, OPS-033). Every write with scope `write` on that network, member creation and proposal expiry are refused; reads and `VerifyLedger` still work. Nothing was written. Not retryable until an operator resolves the fault |
 | `internal-error` | 500 | not produced by the service; adapters map unknown errors to it |
+
+**Frozen networks (CMD-07, OPS-033).** `freeze.go` keeps an in-memory set of network ids. `Service.open(..., ScopeWrite)`
+returns `network-frozen` for a member of a frozen network (after membership is established, so outsiders still get
+`not-found`); `createMember` (join, invitation redeem, approvals) refuses it too, and `ExpireProposals` skips the
+network's proposals. `RecordConsistencyRun` is deliberately exempt so an administrator can still record a verification
+of a frozen network. The set is process memory: `circula serve` freezes failing networks after the start-up
+verification and re-evaluates every network in the hourly verify job (a repaired or restored network thaws on the next
+passing run). Adapters map `network-frozen` to 423 (API problem code `network-frozen`; web page "Network read-only").
+Embedders that need a different policy call `FreezeNetwork` / `UnfreezeNetwork` themselves.
+
+**Operational hooks.** `observe.go` defines `Observer { Posted(n int); Replayed(n int) }`. `Posted` is called after a
+write unit commits with the number of ledger postings it made; `Replayed` with the number of idempotent retries answered
+from a stored record. Rolled-back units report nothing. Callbacks run on the calling goroutine and must not call back
+into the service. `cmd/circula` implements it in `metrics.go` (`circula_ledger_postings_total`,
+`circula_idempotent_replays_total`).
 
 **Pagination.** Keyset: `Page{AfterID, Limit}` (default 100, max 500). Lists are ordered by id (UUIDv7, time-ordered),
 newest first for transactions, listings, disputes; oldest first for members; audit uses `AuditQuery.AfterSeq`;
@@ -205,6 +226,48 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 // ListDisputes lists disputes: all for reviewers and administrators, own for members.
 ```
 
+`DisputeView` also carries `Response *store.DisputeResponse` (FR-076) and `ReReview *store.ReReview` (FR-078).
+
+#### disputes_response.go (FR-076, FR-078; migration 0008)
+
+```go
+func (s *Service) RespondToDispute(ctx, actor, netID string, in RespondInput) (*store.DisputeResponse, error)
+// The party who did not open the dispute answers once (up to 2000 characters) while it is open or under review. Suspended parties may answer. Idempotent. A decision waits for a response, the network policy response_period_days, or a reviewer waiver (ResolveInput.WaiveResponse with WaiveReason) (FR-076).
+
+func (s *Service) RequestReReview(ctx, actor, netID string, in ReReviewRequestInput) (*store.ReReview, error)
+// Either party, once per dispute (UNIQUE in the database), within ReReviewWindowDays (14, platform constant) of the decision. Own record linked to the dispute; the original decision is never edited.
+
+func (s *Service) DecideReReview(ctx, actor, netID string, in ReReviewDecideInput) (*store.ReReview, error)
+// Outcome confirmed | upheld | partially_upheld. Decider must not be the original reviewer and must pass the DOM-038 independence test. upheld / partially_upheld post a further reversal of at most the amount still reversible; an LED-5 block fails with insufficient-available-credit and changes nothing (no posting_pending state for re-reviews).
+```
+
+#### reports.go (FR-024)
+
+```go
+func (s *Service) CreateReport(ctx, actor, netID string, in ReportInput) (*store.Report, error)
+// Active members report a listing or a member (category spam|scam|inappropriate|harassment|other, note up to 500). Changes nothing about the target. One open report per reporter and target (conflict); MaxReportsPerDay = 10 per rolling 24 h (rate-limited). The audit event is about the reporter only, so the reported member never sees it.
+
+func (s *Service) ListReports(ctx, actor, netID, status string, pg Page) ([]ReportView, error)
+// Administrators only; includes the reporter's name.
+
+func (s *Service) HandleReport(ctx, actor, netID string, in HandleReportInput) (*store.Report, error)
+// Administrators only; open -> handled, audited, tells the reporter.
+```
+
+#### notify.go, notify_limits.go (FR-038, UX-012)
+
+```go
+func (s *Service) ListNotifications(ctx, actor, netID string, q NotificationQuery) ([]*store.Notification, error)
+func (s *Service) CountUnreadNotifications(ctx, actor, netID string) (int, error)
+func (s *Service) MarkNotificationsRead(ctx, actor, netID string, ids []string) (int64, error) // empty ids = all; foreign ids ignored
+func (s *Service) ListDisputesAwaitingMyResponse(ctx, actor, netID string) ([]*domain.Dispute, error)
+// The caller's own inbox. Notifications are written in the same unit of work as the event (propose, accept, decline, cancel, dispute opened / review / response / decision / withdrawn, re-review, report handled) so they roll back with it. Titles and bodies are fixed text; no member-written text is copied into them.
+
+func (s *Service) RunLimitWarnings(ctx context.Context) (int, error)
+// Job body, no actor: warns active members whose used credit reached LimitWarningPercent (80) of their effective limit, at most once per ISO week each. Wired into the hourly purge job in cmd/circula (purgeAndWarn).
+func LimitWarning(b *BalanceView) (used int64, warn bool) // the shared threshold test; the web Home and propose form use it
+```
+
 #### export.go
 
 ```go
@@ -287,8 +350,39 @@ func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in Crea
 func (s *Service) ActivateNetwork(ctx context.Context, actor domain.Actor, netID string) (*domain.Network, error)
 // ActivateNetwork moves setup -> active once an active administrator exists (FR-004).
 
-func (s *Service) CloseNetwork(ctx context.Context, actor domain.Actor, netID, reason string) error
-// CloseNetwork closes a network (FR-068).
+func (s *Service) ScheduleClosure(ctx context.Context, actor domain.Actor, netID string, in ClosureInput) (*domain.Closure, error)
+// ScheduleClosure announces a closing date at least 30 days away (GOV-025, DEC-025). Refused with `blocked`
+// while a dispute is unresolved. Trading continues until the date; from then the network is derived as
+// `closing` (no job needed) and refuses proposals, acceptances, postings and joins.
+
+func (s *Service) CancelClosure(ctx context.Context, actor domain.Actor, netID, reason string) error
+// CancelClosure withdraws a scheduled closure before its date.
+
+func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int, error)
+// FinaliseClosures (System actor, hourly job) cancels open proposals with notices, completes closures with no
+// unresolved dispute and records the final ledger export checksum (SHA-256 over "name TAB rows TAB sha256" lines
+// of the manifest) with the entries sum and balance total.
+
+func (s *Service) VerifyClosureExport(ctx context.Context, actor domain.Actor, netID string) (*ClosureCheck, error)
+// VerifyClosureExport recomputes that checksum (administrator).
+
+func (s *Service) EraseClosedNetworks(ctx context.Context, actor domain.Actor) (int, error)
+// EraseClosedNetworks (System actor) runs 90 days after completion: marks remaining members departed (status only,
+// no settlement) and anonymises each through AnonymiseMember. Ledger, audit chain and balances stay.
+
+func (s *Service) OpenChallenge(ctx context.Context, actor domain.Actor, netID string, in ChallengeInput) (*store.Challenge, error)
+func (s *Service) DecideChallenge(ctx context.Context, actor domain.Actor, netID string, in ChallengeDecision) (*store.Challenge, error)
+func (s *Service) ListChallenges(ctx context.Context, actor domain.Actor, netID, status string) ([]store.Challenge, error)
+// Challenges (GOV-016) to removal, credit-limit and listing-removal decisions. The decider is a reviewer or
+// administrator who is neither the challenger nor the person who took the decision (found in the audit log).
+
+func (s *Service) RemindOverdueDisputes(ctx context.Context, actor domain.Actor) (int, error)
+// RemindOverdueDisputes (System actor) tells reviewers once when a dispute passes its response deadline and once
+// when it passes its decision target (GOV-014). It decides nothing.
+
+// GetNetwork derives two states that are never stored: Status `closing` (closure date reached, closure not
+// finished) and AdminRequired (an active network with no active administrator, GOV-020). Both make
+// networkOpenErr refuse value-moving actions while reads and exports keep working.
 
 func (s *Service) GetNetwork(ctx context.Context, actor domain.Actor, netID string) (*domain.Network, error)
 // GetNetwork returns the network for any of its members (any membership status).
@@ -372,6 +466,16 @@ func (s *Service) AdminListTransactions(ctx context.Context, actor domain.Actor,
 // AdminListTransactions lists every transaction of the network (administrators).
 ```
 
+#### freeze.go / observe.go
+
+```go
+func (s *Service) FreezeNetwork(netID, reason string)   // writes to the network fail with network-frozen
+func (s *Service) UnfreezeNetwork(netID string)
+func (s *Service) IsFrozen(netID string) bool
+func (s *Service) FrozenNetworks() []string             // sorted ids
+func (s *Service) SetObserver(o Observer)               // nil removes; call before serving
+```
+
 #### verify.go
 
 ```go
@@ -386,6 +490,16 @@ func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor,
 ```
 
 
+
+#### overview.go, announcements.go, timezone.go, disputes_list.go
+
+These use optional store surfaces (`store.OverviewRepo`, `AnnouncementRepo`, `PrefsRepo`, in `iface_f2.go`) that the SQLite transaction implements; the service asserts for them, so `store.Tx` did not change. Schema is in migration 0009.
+
+* `AdminOverview(ctx, actor, netID) (*AdminOverview, error)`: administrator only. Exact counts read at call time (FR-067): pending members, live proposals older than `OverviewStaleAfter` (48 h), open or under-review disputes, `posting_pending` disputes, active members whose credit used is at or beyond their effective limit, unused invitations ending within `OverviewInviteWithin` (72 h), and the latest recorded consistency check. `AsOf` is the read time.
+* `CreateAnnouncement` (admin, idempotent, audited), `DeleteAnnouncement` (admin, retracts, audited, second delete is not-found), `AdminListAnnouncements` (admin, scheduled included), `ListAnnouncements` (active and suspended members, only those in force). Append-only: no edit; the table refuses deletes and edits except stamping `deleted_at`.
+* `GetTimeZone` / `SetTimeZone(ctx, actor, name)`: per-person display zone, stored in `person_prefs`. `name` must be an IANA zone (`ValidTimeZone`; "Local" and odd characters refused; zone data is embedded via `time/tzdata`) or "" for UTC. Audited at platform scope (`person.time_zone_changed`). `Location(name)` returns the `*time.Location` (UTC on empty or unknown). Adapters convert only for display; the API stays UTC.
+* `FindDisputes(ctx, actor, netID, DisputeQuery{Statuses, TxID, Page})`: `ListDisputes` with a transaction filter and keyset paging (newest first, page by the last id). Same visibility as `ListDisputes`.
+* Directory search (`MemberPageQuery.Name`, `CountDirectory`, admin member pages) folds case and accents with `domain.FoldName` (NFKD, combining marks removed, Unicode case folding, Turkish dotless i mapped to i) through the SQLite function `circula_fold`, registered by the store.
 
 ### Input and result types
 
@@ -734,18 +848,27 @@ Deviations from the specs, with reasons:
 * `Export` audits first in its own unit, then streams from one read snapshot; the snapshot's `ledger_seq` is in the manifest.
   A per-member quota (`ExportsPerHour`, default 30) is checked before the audit write (SA-11); the adapter still owns
   its artefact store limits.
-* **Retention (SA-12).** `Purge` is the only deleter of sessions, throttle rows and idempotency records. It is not
-  scheduled by the service; the job runner must call it (hourly is plenty).
+* **Retention (SA-12).** `Purge` is the only deleter of sessions, throttle rows and idempotency records. The service does
+  not schedule it; `circula serve` runs it hourly (`periodicJobs` in `cmd/circula/serve.go`, the table to extend with new
+  jobs).
+* **Ledger failure freezes one network (CMD-07, OPS-033).** Start-up verification used to refuse to serve at all when any
+  network failed. It now freezes only the failing networks (`Service.FreezeNetwork`), logs at error level, exposes
+  `circula_frozen_networks` and keeps serving the rest. `circula verify-ledger` and the hourly job stay the way to
+  confirm and to thaw (a passing run unfreezes). Frozen state is not persisted: a restart re-derives it from the ledger.
+  Administrators see the refusal (423 / "Network read-only") when they try to write; there is no dedicated dashboard
+  indicator yet.
 
 Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
 
-* FR-067 admin overview counts, FR-076 other-party dispute response, FR-078 re-review, FR-024 reports, FR-038 notifications,
-  DOM-025.1 limit-warning job, SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
-  setup-secret bootstrap (FR-002; adapter concern), break-glass operator access (SEC-013), per-person session cap,
+* SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),
+  break-glass operator access (SEC-013), per-person session cap,
   platform-scope (`network_id = ''`) audit-chain verification (SVC-06).
-* `store.Open` migrates. Pre-migration backups, the post-migration consistency gate (DAT-043/044), the single-writer
-  lock (ARC-011), CSRF and the CLI wrapping are implemented in `cmd/circula` and `internal/web`, not here; the service
-  only supplies read-only `VerifyLedger` for those gates.
+* `store.Open` migrates. Pre-migration backup and its verification (OPS-018, OPS-023), the post-migration consistency
+  gate (DAT-043/044), the single-writer lock (ARC-011), maintenance mode (OPS-024), CSRF and the CLI wrapping are
+  implemented in `cmd/circula` and `internal/web`, not here; the service only supplies read-only `VerifyLedger` for those
+  gates. SQLite-specific inspection used by the CLI (`InspectSchema`, `AppliedVersion`, `ListNetworks`, `ReadPragmas` /
+  `CheckPragmas`, `IntegrityCheck`, `VacuumInto`, `OpenRaw`) lives in `internal/store/inspect.go` so `cmd/circula`
+  contains no SQL (CMD-03). `store.OpenAtVersion(ctx, path, v)` builds a database at an earlier schema for upgrade tests.
 
 ## 7. Testing notes
 
@@ -753,3 +876,8 @@ Not implemented (outside this core task or spec P1/P2); adapters must not assume
 IDs from `testutil.IDs` are deterministic per `Env`, so two `Env`s collide on ids; build a second network inside the same
 `Env` to test tenant isolation. `testutil.NewEnvConfig(t, wrap, func(*service.Config))` adjusts limits. Tests build real SQLite files in temp dirs;
 `internal/testutil` provides a fake clock, deterministic ids, a fault-injecting store wrapper and a world builder.
+
+`internal/store/golden_migration_test.go` builds a deterministic 10,000-transaction, 61-account database at schema v1,
+migrates it to the current schema, verifies the ledger and the audit chain, and logs the timing (DAT-047, DAT-048). It is
+skipped under `go test -short`. Set `CIRCULA_MIGRATION_TIMING_FILE=path` to append the timing line to a file for the
+release record.

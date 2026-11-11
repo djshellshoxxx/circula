@@ -2,7 +2,6 @@ package store
 
 import (
 	"database/sql"
-	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 )
@@ -69,9 +68,11 @@ func (t *txImpl) ListListings(netID string, f ListingFilter) ([]*domain.Listing,
 		args = append(args, netID)
 	}
 	if f.Query != "" {
-		esc := strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`).Replace(f.Query)
-		q += ` AND (title LIKE ? ESCAPE '\' OR description LIKE ? ESCAPE '\')`
-		args = append(args, "%"+esc+"%", "%"+esc+"%")
+		// Plain substring test over folded text: ignores case and accents beyond ASCII
+		// (domain.FoldName), with no LIKE escaping.
+		term := domain.FoldName(f.Query)
+		q += ` AND (instr(circula_fold(title), ?) > 0 OR instr(circula_fold(description), ?) > 0)`
+		args = append(args, term, term)
 	}
 	if f.AfterID != "" {
 		q += ` AND id < ?`

@@ -69,10 +69,17 @@ type disputeEventDTO struct {
 
 type disputeDetail struct {
 	disputeDTO
-	Transaction txDTO             `json:"transaction"`
-	PayerName   string            `json:"payer_display_name"`
-	PayeeName   string            `json:"payee_display_name"`
-	Events      []disputeEventDTO `json:"events"`
+	Transaction txDTO               `json:"transaction"`
+	PayerName   string              `json:"payer_display_name"`
+	PayeeName   string              `json:"payee_display_name"`
+	Events      []disputeEventDTO   `json:"events"`
+	Response    *disputeResponseDTO `json:"response"`  // FR-076
+	ReReview    *reReviewDTO        `json:"re_review"` // FR-078
+	// GOV-014: deadlines visible to parties. A missed response deadline decides nothing.
+	ResponseDeadline string `json:"response_deadline"`
+	DecisionTarget   string `json:"decision_target"`
+	ResponseOverdue  bool   `json:"response_overdue"`
+	DecisionOverdue  bool   `json:"decision_overdue"`
 }
 
 func (s *server) getDispute(c *reqCtx) error { // API-054
@@ -81,7 +88,10 @@ func (s *server) getDispute(c *reqCtx) error { // API-054
 		return err
 	}
 	out := disputeDetail{disputeDTO: toDispute(v.Dispute), Transaction: toTx(v.Tx, c.member.ID),
-		PayerName: v.PayerName, PayeeName: v.PayeeName, Events: []disputeEventDTO{}}
+		PayerName: v.PayerName, PayeeName: v.PayeeName, Events: []disputeEventDTO{},
+		Response: toDisputeResponse(v.Response), ReReview: toReReview(v.ReReview),
+		ResponseDeadline: ts(v.Deadlines.ResponseDeadline), DecisionTarget: ts(v.Deadlines.DecisionTarget),
+		ResponseOverdue: v.Deadlines.ResponseOverdue, DecisionOverdue: v.Deadlines.DecisionOverdue}
 	for _, e := range v.Events {
 		out.Events = append(out.Events, disputeEventDTO{Action: e.Action, Outcome: e.Outcome, ActorID: e.ActorID, OccurredAt: ts(e.OccurredAt)})
 	}
@@ -97,9 +107,11 @@ var outcomes = map[string]domain.DisputeOutcome{
 
 func (s *server) resolveDispute(c *reqCtx) error { // API-055
 	var in struct {
-		Outcome     string  `json:"outcome"`
-		Reason      string  `json:"reason"`
-		AmountMinor *string `json:"amount_minor"`
+		Outcome       string  `json:"outcome"`
+		Reason        string  `json:"reason"`
+		AmountMinor   *string `json:"amount_minor"`
+		WaiveResponse bool    `json:"waive_response"`
+		WaiveReason   string  `json:"waive_reason"`
 	}
 	if err := c.decode(&in); err != nil {
 		return err
@@ -119,7 +131,7 @@ func (s *server) resolveDispute(c *reqCtx) error { // API-055
 		}
 	}
 	d, err := s.svc.ResolveDispute(c.r.Context(), c.actor, c.netID, service.ResolveInput{DisputeID: c.r.PathValue("id"),
-		Outcome: oc, Amount: amt, Rationale: in.Reason, IdempotencyKey: c.idemKey})
+		Outcome: oc, Amount: amt, Rationale: in.Reason, WaiveResponse: in.WaiveResponse, WaiveReason: in.WaiveReason, IdempotencyKey: c.idemKey})
 	if err != nil {
 		return err
 	}

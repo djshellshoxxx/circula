@@ -26,7 +26,7 @@ Summary: built 4, not built 1, partial 10.
 | PER-011 | P0 | built | Create, edit, pause, archive listing; browse by type and text |
 | PER-012 | P0 | built | Propose, accept, decline, cancel; review step; idempotent commands |
 | PER-013 | P0 | partial | Balance and history views built; stale-data indicator (PER-022) not built |
-| PER-014 | P0 | partial | Dispute open, review and decision built; other-party response (FR-076) not built |
+| PER-014 | P0 | partial | Dispute open, review, other-party response (FR-076) and decision built |
 | PER-015 | P0 | partial | Admin controls built; limit warnings, dual control and network suspension not built |
 | PER-016 | P1 | partial | Departure with blockers built; counterparty notices and self-export offer not built |
 | PER-017 | P1 | partial | CloseNetwork in service only; no web or API route calls it |

@@ -22,6 +22,10 @@ type policyDTO struct {
 	DefaultFlagBlocksPayer    bool   `json:"default_flag_blocks_payer"`
 	DirectoryVisibility       string `json:"directory_visibility"`
 	DualControlThresholdMinor string `json:"dual_control_threshold_minor"`
+	ResponsePeriodDays        int    `json:"response_period_days"`
+	ReReviewWindowDays        int    `json:"re_review_window_days"`
+	LimitWarningPercent       int    `json:"limit_warning_percent"`
+	InactivityDays            int    `json:"inactivity_days"`
 }
 
 func toPolicy(p domain.Policy) policyDTO {
@@ -29,7 +33,9 @@ func toPolicy(p domain.Policy) policyDTO {
 		MaxTxAmountMinor: minor(p.MaxTxAmount), ProposalExpiryDays: p.ProposalExpiryDays, DisputeWindowDays: p.DisputeWindowDays,
 		JoinMode: string(p.JoinMode), DepartureRule: string(p.DepartureRule), SignupGrantMinor: minor(p.SignupGrant),
 		LimitWarningDays: p.LimitWarningDays, DefaultFlagBlocksPayer: p.DefaultFlagBlocksPayer, DirectoryVisibility: p.DirectoryVisibility,
-		DualControlThresholdMinor: minor(p.DualControlThreshold)}
+		DualControlThresholdMinor: minor(p.DualControlThreshold),
+		ResponsePeriodDays:        p.ResponsePeriodDays, ReReviewWindowDays: p.ReReviewWindowDays, LimitWarningPercent: p.LimitWarningPercent,
+		InactivityDays: p.InactivityDays}
 }
 
 func (d policyDTO) domain() (domain.Policy, error) {
@@ -50,6 +56,8 @@ func (d policyDTO) domain() (domain.Policy, error) {
 	p.CurrencyName, p.Decimals, p.ProposalExpiryDays = d.CurrencyName, d.Decimals, d.ProposalExpiryDays
 	p.DisputeWindowDays, p.JoinMode, p.DepartureRule = d.DisputeWindowDays, domain.JoinMode(d.JoinMode), domain.DepartureRule(d.DepartureRule)
 	p.LimitWarningDays, p.DefaultFlagBlocksPayer, p.DirectoryVisibility = d.LimitWarningDays, d.DefaultFlagBlocksPayer, d.DirectoryVisibility
+	p.ResponsePeriodDays, p.ReReviewWindowDays, p.LimitWarningPercent = d.ResponsePeriodDays, d.ReReviewWindowDays, d.LimitWarningPercent
+	p.InactivityDays = d.InactivityDays
 	return p, nil
 }
 
@@ -61,6 +69,8 @@ type policyResp struct {
 	Version     int       `json:"version"`
 	EffectiveAt *string   `json:"effective_at"`
 	Policy      policyDTO `json:"policy"`
+	// Pending is the scheduled change that has been announced but is not in force yet (GOV-003).
+	Pending *policyLogDTO `json:"pending,omitempty"`
 }
 
 // adminOnly is a cheap pre-check for admin-only reads whose service method
@@ -81,7 +91,17 @@ func (s *server) getPolicy(c *reqCtx) error { // API-058
 		return err
 	}
 	c.w.Header().Set("ETag", policyETag(n))
-	return ok(c, 200, policyResp{Version: n.PolicyVersion, Policy: toPolicy(n.Policy)})
+	resp := policyResp{Version: n.PolicyVersion, Policy: toPolicy(n.Policy)}
+	if log, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID); err == nil {
+		for _, e := range log {
+			if e.Pending {
+				d := toPolicyLog(e)
+				resp.Pending = &d
+				break
+			}
+		}
+	}
+	return ok(c, 200, resp)
 }
 
 func (s *server) patchPolicy(c *reqCtx) error { // API-058
@@ -105,6 +125,22 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 			return validation("reason", "invalid-type", "must be a string")
 		}
 		delete(patch, "reason")
+	}
+	var notice *int
+	if r, has := patch["notice_days"]; has {
+		var n int
+		if json.Unmarshal(r, &n) != nil {
+			return validation("notice_days", "invalid-type", "must be a whole number")
+		}
+		notice = &n
+		delete(patch, "notice_days")
+	}
+	var noticeReason string
+	if r, has := patch["notice_reason"]; has {
+		if json.Unmarshal(r, &noticeReason) != nil {
+			return validation("notice_reason", "invalid-type", "must be a string")
+		}
+		delete(patch, "notice_reason")
 	}
 	s.casMu.Lock()
 	defer s.casMu.Unlock()
@@ -141,11 +177,21 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 	if key == "" || !validKey(key) { // idempotent by ETag (API-058)
 		key = "policy:" + cur + ":" + etagOf(string(b))
 	}
-	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, IdempotencyKey: key})
+	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, NoticeDays: notice, NoticeReason: noticeReason, IdempotencyKey: key})
 	if err != nil {
 		return err
 	}
-	eff := ts(s.opt.Now())
 	c.w.Header().Set("ETag", policyETag(u))
-	return ok(c, 200, policyResp{Version: u.PolicyVersion, EffectiveAt: &eff, Policy: toPolicy(u.Policy)})
+	resp := policyResp{Version: u.PolicyVersion, Policy: toPolicy(u.Policy)}
+	eff := ts(s.opt.Now())
+	resp.EffectiveAt = &eff
+	if log, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID); err == nil && len(log) > 0 {
+		e := log[0] // the version just written
+		if e.Pending {
+			d := toPolicyLog(e)
+			resp.Pending = &d
+		}
+		eff = ts(e.EffectiveAt)
+	}
+	return ok(c, 200, resp)
 }

@@ -47,6 +47,7 @@ for t in "${TARGETS[@]}"; do
   GOOS="$goos" GOARCH="$goarch" "$GO" build -trimpath -ldflags "$LDFLAGS" -o "$stage/$bin" ./cmd/circula
   cp README.md "$stage/README.md"
   cp -r docs/ops "$stage/ops"
+  cp -r docs/legal "$stage/legal"
 
   if [ "$goos" = "windows" ]; then
     (cd "$OUT/stage" && zip -r -q -X "../$name.zip" "$name")

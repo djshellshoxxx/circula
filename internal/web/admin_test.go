@@ -58,7 +58,7 @@ func TestAdminMembersAdjustPolicy(t *testing.T) {
 	pf := adm.get(b + "/admin/policy")
 	adm.mustContain(pf, `value="100.00"`, "version 1")
 	np := url.Values{"currency_name": {"credit"}, "default_credit_limit": {"150.00"}, "max_tx_amount": {"1000.00"}, "signup_grant": {"0.00"},
-		"proposal_expiry_days": {"7"}, "dispute_window_days": {"30"}, "limit_warning_days": {"0"}, "join_mode": {"invite"}, "departure_rule": {"retain"}}
+		"proposal_expiry_days": {"7"}, "dispute_window_days": {"30"}, "limit_warning_days": {"0"}, "response_period_days": {"7"}, "re_review_window_days": {"14"}, "limit_warning_percent": {"80"}, "join_mode": {"invite"}, "departure_rule": {"retain"}}
 	if p := adm.post(b+"/admin/policy", pf, np); !strings.Contains(p.Body, `id="error-summary"`) {
 		t.Error("policy without reason accepted")
 	}

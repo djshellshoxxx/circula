@@ -39,8 +39,8 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-017 | P0 | built | Online snapshot with manifest and checksum; load test not run |
 | OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention |
 | OPS-019 | P0 | partial | Backups not encrypted; off-host copy is an operator procedure |
-| OPS-020 | P0 | partial | Restore refuses while serving (lock) and verifies; restore audit event not in ledger |
-| OPS-021 | P0 | partial | Drill procedure documented; no drill records |
+| OPS-020 | P0 | built | Restore verifies, refuses while serving, writes a local record and a database.restored audit event |
+| OPS-021 | P0 | built | Drill procedure + checklist in docs/ops/backup-restore.md; scripts/restore-drill.sh records drills |
 | OPS-022 | P0 | built | Versioned forward-only migrations; newer schema refused |
 | OPS-023 | P0 | partial | Post-migration verification only; pre-migration verification and injected-failure test not present |
 | OPS-024 | P0 | partial | Upgrade sequence documented; maintenance mode not built |
@@ -53,7 +53,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-031 | P1 | partial | Support boundary documented; break-glass not built |
 | OPS-032 | P0 | built | Structured JSON logs; log level needs restart |
 | OPS-033 | P0 | partial | Failure table documented; per-network freeze not built |
-| OPS-034 | P1 | not built | RPO and RTO not set |
+| OPS-034 | P1 | partial | RPO and RTO recorded as DEC-016 defaults in docs/ops/rpo-rto.md; owner confirmation outstanding |
 | OPS-035 | P1 | partial | Binary, checksum and module list per target; signing deferred; no secret scan in package |
 
 ## 1. Deployment models

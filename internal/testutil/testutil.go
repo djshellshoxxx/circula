@@ -106,6 +106,7 @@ func (e *Env) Network(admin domain.Actor, slug string, mod func(*domain.Policy))
 	e.T.Helper()
 	pol := domain.DefaultPolicy()
 	pol.DefaultCreditLimit = 10000 // 100.00
+	pol.ResponsePeriodDays = 0     // tests decide freely unless they set a response period
 	if mod != nil {
 		mod(&pol)
 	}

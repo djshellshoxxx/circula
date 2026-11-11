@@ -1,5 +1,9 @@
 {{define "content"}}
 {{with .D}}
+{{if .Notices}}<section aria-labelledby="ann-h">
+  <h2 id="ann-h">Announcements</h2>
+  <ul class="rows">{{range .Notices}}<li><p><strong>{{.Title}}</strong> &middot; {{.At}}</p><p>{{.Body}}</p></li>{{end}}</ul>
+</section>{{end}}
 <section class="card" aria-labelledby="bal-h">
   <h2 id="bal-h">Your balance</h2>
   <p class="big">{{template "balance" .Card.Balance}}</p>

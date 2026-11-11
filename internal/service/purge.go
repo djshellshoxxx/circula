@@ -12,6 +12,8 @@ const (
 	purgeBatch         = 1000
 	throttleRetention  = 24 * time.Hour
 	revokedSessionKeep = 24 * time.Hour
+	// NotificationRetentionDays is how long a read notification is kept (FR-038, DAT retention).
+	NotificationRetentionDays = 90
 )
 
 // PurgeReport counts the rows Purge removed.
@@ -19,13 +21,15 @@ type PurgeReport struct {
 	Sessions        int64
 	Throttles       int64
 	IdempotencyKeys int64
+	Notifications   int64
 }
 
 // Purge deletes rows that can no longer have any effect (SA-12, DATA-01, DAT
 // section 9 retention): sessions that are absolutely expired, idle past
 // Config.SessionIdle, or revoked more than a day ago; login throttle rows whose
-// lock (or last failure) ended more than 24 hours ago; and idempotency records
-// past their expiry. It never touches ledger, audit or membership data.
+// lock (or last failure) ended more than 24 hours ago; idempotency records
+// past their expiry; and notifications read more than NotificationRetentionDays ago
+// (unread ones are kept). It never touches ledger, audit or membership data.
 //
 // Each category is deleted in bounded batches, one short write unit per batch,
 // so the write lock is never held for a long scan and postings interleave.
@@ -46,6 +50,9 @@ func (s *Service) Purge(ctx context.Context) (PurgeReport, error) {
 		}},
 		{&rep.IdempotencyKeys, func(tx store.Tx, now time.Time) (int64, error) {
 			return tx.DeleteExpiredIdem(now, purgeBatch)
+		}},
+		{&rep.Notifications, func(tx store.Tx, now time.Time) (int64, error) {
+			return tx.DeleteReadNotificationsBefore(now.Add(-NotificationRetentionDays*24*time.Hour), purgeBatch)
 		}},
 	}
 	for _, st := range steps {

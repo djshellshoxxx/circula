@@ -29,7 +29,7 @@ Summary: decided 2, deferred 1, open 20.
 | DEC-009 | - | open, not built | No recovery channel and no mail |
 | DEC-010 | - | open, partly built | Retain default and settle-to-zero rule built; counsel review open |
 | DEC-011 | - | open, partly built | Grant off by default; approval or invite requirement and caps not built |
-| DEC-012 | - | open, not built | Dispute response period and timelines not built |
+| DEC-012 | - | partly built | Response period is a network policy (default 7 days) and gates decisions; decision-target and appeal timelines not built |
 | DEC-013 | - | open, not built | Dual control not built |
 | DEC-014 | - | open, not built | Break-glass not built |
 | DEC-015 | - | open, partly built | Unkeyed hash chain built; keyed or external publication deferred |
@@ -42,7 +42,7 @@ Summary: decided 2, deferred 1, open 20.
 | DEC-022 | - | open, not built | Support objectives not set |
 | DEC-023 | - | open, not built | Numerical thresholds not confirmed |
 | DEC-024 | - | open, not built | Accessibility level and browser list not recorded |
-| DEC-025 | - | open, not built | Notice periods not implemented |
+| DEC-025 | - | open, partly built | Closure notice built (30 days minimum, no override); adverse policy changes use the 14-day default of GOV-003 |
 | DEC-026 | - | open, partly built | Private vulnerability reporting named in SECURITY.md; owner approval not recorded |
 | DEC-027 | - | deferred | Code signing and notarisation deferred |
 

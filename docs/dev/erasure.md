@@ -24,6 +24,8 @@ The action cannot be undone.
 | the member's listings | archived, title `Erased listing`, description empty |
 | `transactions.note` of transactions the member proposed | empty |
 | `disputes.statement` of disputes the member opened | empty |
+| the member's dispute response, re-review reason and abuse-report notes (`dispute_responses.body`, `dispute_rereviews.reason`, `reports.note`) | empty |
+| inbox bodies that name the member, and the member's own inbox bodies (`notifications.body`) | empty |
 | person login | `erased-<person id>`, only if the person has no other non-departed membership |
 | person password hash, sessions, API tokens | unusable hash, all revoked, tokens renamed (same condition) |
 

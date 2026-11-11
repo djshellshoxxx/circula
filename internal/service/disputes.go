@@ -71,6 +71,10 @@ func (s *Service) OpenDispute(ctx context.Context, actor domain.Actor, netID str
 			if err := s.disputeEvent(tx, d, p.member.ID, "opened"); err != nil {
 				return "", err
 			}
+			if err := s.notifyOthers(tx, netID, []string{t.PayerMemberID, t.PayeeMemberID}, p.member.ID, NotifDisputeOpened,
+				"A dispute was opened on your trade", p.member.DisplayName+" disputed a completed trade. You can respond.", "/disputes/"+d.ID); err != nil {
+				return "", err
+			}
 			return d.ID, s.audit(tx, p, auditEntry{Action: domain.ActDisputeOpened, TargetType: "dispute", TargetID: d.ID,
 				IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
 				After: map[string]any{"transaction": t.ID, "category": in.Category, "status": "open"}})
@@ -154,6 +158,10 @@ func (s *Service) StartDisputeReview(ctx context.Context, actor domain.Actor, ne
 		if err := s.disputeEvent(tx, d, p.member.ID, "under_review"); err != nil {
 			return err
 		}
+		if err := s.notifyOthers(tx, netID, []string{t.PayerMemberID, t.PayeeMemberID}, p.member.ID, NotifDisputeReview,
+			"A dispute is under review", "A reviewer has started looking at the dispute.", "/disputes/"+d.ID); err != nil {
+			return err
+		}
 		out = d
 		return s.audit(tx, p, auditEntry{Type: p.deciderType(), Action: domain.ActDisputeReview, TargetType: "dispute", TargetID: d.ID,
 			Subjects: []string{t.PayerMemberID, t.PayeeMemberID}, After: map[string]any{"status": next}})
@@ -194,6 +202,10 @@ func (s *Service) WithdrawDispute(ctx context.Context, actor domain.Actor, netID
 			return err
 		}
 		if err := s.disputeEvent(tx, d, p.member.ID, "withdrawn"); err != nil {
+			return err
+		}
+		if err := s.notifyOthers(tx, netID, []string{t.PayerMemberID, t.PayeeMemberID, d.ReviewerID}, p.member.ID, NotifDisputeWithdraw,
+			"A dispute was withdrawn", "The dispute was withdrawn. The trade is completed again.", "/disputes/"+d.ID); err != nil {
 			return err
 		}
 		out = d

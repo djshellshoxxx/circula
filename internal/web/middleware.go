@@ -38,6 +38,7 @@ func (s *server) wrap(next http.Handler) http.Handler {
 		h.Set("Referrer-Policy", "same-origin")
 		h.Set("X-Frame-Options", "DENY")
 		h.Set("Cache-Control", "no-store")
+		h.Set("X-Robots-Tag", "noindex, nofollow, noarchive") // FR-025
 		h.Set("X-Request-Id", id)
 		s.opts.Edge.HSTS(w, r)
 		ctx := context.WithValue(r.Context(), keyReqID, id)

@@ -1,6 +1,14 @@
 {{define "content"}}
-{{if .D}}
-<ul class="rows">{{range .D}}<li><a href="/n/{{$.Slug}}/disputes/{{.ID}}">Dispute: {{.Category}}</a> &middot; <span class="tag">{{.Status}}</span> &middot; opened {{.Opened}}</li>{{end}}</ul>
+{{with .D}}{{$f := .Filter}}
+<form method="get" action="/n/{{$.Slug}}/review">
+  <div class="field"><label for="f-status">Show</label>
+  <select id="f-status" name="status">{{range .Filters}}<option value="{{.Value}}"{{if eq .Value $f}} selected{{end}}>{{.Label}}</option>{{end}}</select></div>
+  <div class="actions"><button type="submit" class="secondary">Show</button></div>
+</form>
+{{if .Rows}}
+<ul class="rows">{{range .Rows}}<li><a href="/n/{{$.Slug}}/disputes/{{.ID}}">Dispute: {{.Category}}</a> &middot; <span class="tag">{{.Status}}</span> &middot; opened {{.Opened}}</li>{{end}}</ul>
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/review?status=%s&after=" $.Slug .Filter)}}
 <p>You cannot decide a dispute on a trade you took part in.</p>
 {{else}}<p>The queue is empty. Disputes that need a decision appear here.</p>{{end}}
+{{end}}
 {{end}}

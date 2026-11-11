@@ -111,10 +111,10 @@ func TestAuthorizationMatrix(t *testing.T) {
 			_, err := w.Svc.ListDisputes(w.Ctx, who, w.net.ID, nil, service.Page{})
 			return err
 		}, all(nf, nf, nf, ok, ok, ok, fb, ok, ok, ok)},
-		// the admin's earlier propose left a pending proposal, so closure is authorised but blocked
 		{"close-network", func(w *world, who domain.Actor, _ *domain.Transaction) error {
-			return w.Svc.CloseNetwork(w.Ctx, who, w.net.ID, "r")
-		}, all(nf, nf, nf, fb, fb, fb, fb, fb, fb, domain.CodeBlocked)},
+			_, err := w.Svc.ScheduleClosure(w.Ctx, who, w.net.ID, service.ClosureInput{Reason: "r"})
+			return err
+		}, all(nf, nf, nf, fb, fb, fb, fb, fb, fb, ok)},
 	}
 	// "suspend-other" and "close-network" mutate shared state, so they run last.
 	last := map[string]bool{"suspend-other": true, "close-network": true}

@@ -52,6 +52,9 @@ func (s *Service) ProposeTransaction(ctx context.Context, actor domain.Actor, ne
 		if err := p.requireActive(); err != nil {
 			return err
 		}
+		if err := s.requireTerms(tx, p); err != nil { // GOV-009
+			return err
+		}
 		out, err = idempotent(s, tx, netID, actor, "tx.propose", in.IdempotencyKey, in, func() (string, error) {
 			return s.propose(tx, p, in)
 		}, func(id string) (*domain.Transaction, error) { return tx.GetTransaction(netID, id) })
@@ -149,6 +152,10 @@ func (s *Service) propose(tx store.Tx, p *principal, in ProposeInput) (string, e
 		To: domain.TxProposed, ActorID: p.member.ID, RequestID: p.actor.RequestID, OccurredAt: now}); err != nil {
 		return "", err
 	}
+	if err := s.notify(tx, p.net.ID, cp.ID, NotifTradeProposed, "You have a trade proposal",
+		p.member.DisplayName+" proposed a trade of "+fmtAmt(p.net, in.Amount)+" "+pol.CurrencyName+".", "/trades/"+t.ID, ""); err != nil {
+		return "", err
+	}
 	return t.ID, s.audit(tx, p, auditEntry{Action: domain.ActTxProposed, TargetType: "transaction", TargetID: t.ID,
 		IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{payerM.ID, payeeM.ID},
 		After: map[string]any{"status": "proposed", "amount": in.Amount, "payer": payerM.ID, "payee": payeeM.ID}})
@@ -183,6 +190,9 @@ func (s *Service) AcceptTransaction(ctx context.Context, actor domain.Actor, net
 			return err
 		}
 		if err := p.requireActive(); err != nil {
+			return err
+		}
+		if err := s.requireTerms(tx, p); err != nil { // GOV-009
 			return err
 		}
 		out, err = idempotent(s, tx, netID, actor, "tx.accept", in.IdempotencyKey, in, func() (string, error) {
@@ -220,6 +230,10 @@ func (s *Service) AcceptTransaction(ctx context.Context, actor domain.Actor, net
 			}
 			t.AcceptedBy = p.member.ID
 			if err := s.postTx(tx, p.net, t, p.member.ID, p.actor.RequestID); err != nil {
+				return "", err
+			}
+			if err := s.notify(tx, netID, t.CreatedBy, NotifTradeAccepted, "Your trade was accepted",
+				p.member.DisplayName+" accepted the trade of "+fmtAmt(p.net, t.Amount)+" "+p.net.Policy.CurrencyName+".", "/trades/"+t.ID, ""); err != nil {
 				return "", err
 			}
 			return t.ID, s.audit(tx, p, auditEntry{Action: domain.ActTxCompleted, TargetType: "transaction", TargetID: t.ID,
@@ -295,6 +309,14 @@ func (s *Service) exit(ctx context.Context, actor domain.Actor, netID string, in
 			if asAdmin {
 				at = domain.ActorAdmin
 			}
+			kind, title := NotifTradeDeclined, "Your trade proposal was declined"
+			if cmd == domain.CmdCancel {
+				kind, title = NotifTradeCancelled, "A trade proposal was withdrawn"
+			}
+			if err := s.notifyOthers(tx, p.net.ID, []string{t.PayerMemberID, t.PayeeMemberID}, p.member.ID, kind, title,
+				"The proposal of "+fmtAmt(p.net, t.Amount)+" "+p.net.Policy.CurrencyName+" is closed.", "/trades/"+t.ID); err != nil {
+				return "", err
+			}
 			return t.ID, s.audit(tx, p, auditEntry{Type: at, Action: action, TargetType: "transaction", TargetID: t.ID, Reason: reason,
 				IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
 				Before: map[string]any{"status": prev}, After: map[string]any{"status": t.Status}})
@@ -338,6 +360,9 @@ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit
 			return err
 		}
 		for _, t := range ts {
+			if s.IsFrozen(t.NetworkID) {
+				continue // frozen networks take no writes (CMD-07)
+			}
 			if err := s.transition(tx, t.NetworkID, t, domain.CmdExpire, "", actor.RequestID); err != nil {
 				return err
 			}

@@ -25,6 +25,8 @@ type metrics struct {
 	rateLimited  uint64               // 429 responses
 	jobRuns      map[[2]string]uint64 // job, result
 	migrations   map[string]uint64    // result
+	postings     uint64               // ledger postings committed (service.Observer)
+	replays      uint64               // idempotent retries answered from a stored record
 
 	ledgerOK        int     // 1 pass, 0 fail, -1 not yet run
 	ledgerFailing   int     // networks failing at the last run
@@ -57,6 +59,19 @@ func (m *metrics) observe(route string, status int, d time.Duration) {
 	case 429:
 		m.rateLimited++
 	}
+}
+
+// Posted and Replayed implement service.Observer (OPS-014).
+func (m *metrics) Posted(n int) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.postings += uint64(n) //nolint:gosec // G115: the service passes a positive count
+}
+
+func (m *metrics) Replayed(n int) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.replays += uint64(n) //nolint:gosec // G115: the service passes a positive count
 }
 
 func (m *metrics) jobRan(job, result string) {
@@ -97,6 +112,9 @@ type dynamicMetrics struct {
 	dbBytes    int64
 	walBytes   int64
 	now        time.Time
+
+	maintenance bool // maintenance mode active
+	frozen      int  // networks frozen after a ledger failure
 }
 
 // write renders the exposition text.
@@ -133,6 +151,13 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 	fmt.Fprintf(&b, "circula_http_auth_failures_total %d\n", m.authFailures)
 	counter("circula_http_rate_limited_total", "Responses with status 429 (throttling seen at the edge).")
 	fmt.Fprintf(&b, "circula_http_rate_limited_total %d\n", m.rateLimited)
+
+	counter("circula_ledger_postings_total", "Ledger postings committed since start.")
+	fmt.Fprintf(&b, "circula_ledger_postings_total %d\n", m.postings)
+	counter("circula_idempotent_replays_total", "Retries answered from a stored idempotency record since start.")
+	fmt.Fprintf(&b, "circula_idempotent_replays_total %d\n", m.replays)
+	gauge("circula_maintenance_mode", "1 while maintenance mode is active.", map[bool]int{true: 1, false: 0}[dyn.maintenance])
+	gauge("circula_frozen_networks", "Networks refusing writes after a ledger verification failure.", dyn.frozen)
 
 	counter("circula_job_runs_total", "Scheduled job runs by job and result.")
 	for _, k := range sortedKeys2(m.jobRuns) {

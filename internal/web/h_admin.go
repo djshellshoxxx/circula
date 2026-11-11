@@ -11,6 +11,7 @@ import (
 )
 
 func (s *server) adminRoutes() {
+	s.adminOverviewRoutes()
 	s.mux.HandleFunc("GET /n/{slug}/admin", s.adminH(s.adminHome))
 	s.mux.HandleFunc("GET /n/{slug}/admin/members", s.adminH(s.adminMembers))
 	s.mux.HandleFunc("GET /n/{slug}/admin/members/{id}/{action}", s.adminH(s.memberActionForm))
@@ -29,12 +30,7 @@ func (s *server) adminRoutes() {
 }
 
 func (s *server) adminHome(w http.ResponseWriter, r *http.Request, c *rc) {
-	pend, err := s.svc.CountMembers(r.Context(), c.actor, c.netID(), []domain.MemberStatus{domain.MemberPending})
-	if err != nil {
-		s.fail(w, r, err)
-		return
-	}
-	s.render(w, r, c, "admin_home", 200, &page{Title: "Network admin", D: pend})
+	s.overview(w, r, c)
 }
 
 type memberRow struct {
@@ -270,7 +266,7 @@ func (s *server) renderInvites(w http.ResponseWriter, r *http.Request, c *rc, st
 		case i.ExpiresAt.Before(now):
 			status = "Expired"
 		}
-		d.List = append(d.List, invRow{i.ID, status, fmtTime(i.ExpiresAt)})
+		d.List = append(d.List, invRow{i.ID, status, c.when(i.ExpiresAt)})
 	}
 	p.Title, p.D = "Invitations", d
 	s.render(w, r, c, "admin_invites", st, p)

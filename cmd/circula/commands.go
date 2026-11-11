@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/store"
 )
@@ -31,7 +32,7 @@ func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Ser
 	if !state.Exists {
 		return nil, nil, fmt.Errorf("database %s does not exist", cfg.Database)
 	}
-	if err := state.checkSchemaNotNewer(); err != nil {
+	if err := state.CheckNotNewer(); err != nil {
 		return nil, nil, err
 	}
 	if state.Pending() > 0 {
@@ -105,7 +106,7 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
 		return exitFailure
 	}
-	if err := state.checkSchemaNotNewer(); err != nil {
+	if err := state.CheckNotNewer(); err != nil {
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
 		return exitFailure
 	}
@@ -123,12 +124,13 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	}
 	defer func() { _ = lock.Release() }()
 	if state.Exists && state.Applied > 0 {
-		mf, path, err := backupTo(ctx, cfg, cfg.BackupDir, "pre-migration", nil)
+		mf, path, err := preMigrationSafeguard(ctx, cfg, state)
 		if err != nil {
-			fmt.Fprintf(stderr, "circula: pre-migration backup failed; nothing migrated: %v\n", err)
+			fmt.Fprintf(stderr, "circula: %v\n", err)
 			return exitFailure
 		}
-		fmt.Fprintf(stdout, "pre-migration backup: %s (ledger: %s)\n", path, mf.Ledger.Status)
+		fmt.Fprintf(stdout, "pre-migration backup: %s (verified: checksum, integrity ok, schema v%d; ledger: %s)\n",
+			path, mf.SchemaVersion, mf.Ledger.Status)
 	}
 	if _, err := secureDatabase(cfg.Database); err != nil {
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
@@ -140,7 +142,7 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	if err := checkPragmas(ctx, st.DB()); err != nil {
+	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
 		fmt.Fprintf(stderr, "circula: %v\n", err)
 		return exitFailure
 	}
@@ -332,7 +334,7 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		if err != nil {
 			return fmt.Errorf("opening the restored database: %w", err)
 		}
-		if err := checkPragmas(ctx, st.DB()); err != nil {
+		if err := store.CheckPragmas(ctx, st.DB()); err != nil {
 			_ = st.Close()
 			return fmt.Errorf("checking the restored database: %w", err)
 		}
@@ -355,6 +357,9 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 	}
 	if err := writeRestoreRecord(cfg.BackupDir, m, restoredAt, true, src); err != nil {
 		fmt.Fprintf(stderr, "circula: warning: restore record not written: %v\n", err)
+	}
+	if err := recordRestoreAudit(ctx, cfg, m); err != nil {
+		fmt.Fprintf(stderr, "circula: warning: restore audit event not written: %v\n", err)
 	}
 	return exitOK
 }
@@ -417,8 +422,30 @@ func swapDatabase(ctx context.Context, path, newFile string, hadDB bool, check f
 	return nil
 }
 
-// restoreRecord is the local record of a restore. It is not a ledger audit
-// event; the service layer has no restore event yet (see docs/ops/backup-restore.md).
+// recordRestoreAudit writes a database.restored event into every network's
+// audit chain of the restored database (OPS-020). The restore already
+// succeeded, so callers treat a failure as a warning.
+func recordRestoreAudit(ctx context.Context, cfg *Config, m *Manifest) error {
+	st, svc, err := openDatabase(ctx, cfg)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = st.Close() }()
+	nets, err := store.ListNetworks(ctx, st.DB(), "")
+	if err != nil {
+		return err
+	}
+	var errs []error
+	for _, n := range nets {
+		if err := svc.RecordRestore(ctx, domain.SystemActor("restore"), n.ID, m.CreatedAt); err != nil {
+			errs = append(errs, fmt.Errorf("network %s: %w", n.Slug, err))
+		}
+	}
+	return errors.Join(errs...)
+}
+
+// restoreRecord is the local file record of a restore; the ledger audit event
+// (database.restored) is written alongside it by recordRestoreAudit.
 type restoreRecord struct {
 	BackupCreatedAt   time.Time `json:"backup_created_at"`
 	BackupSHA256      string    `json:"backup_sha256"`

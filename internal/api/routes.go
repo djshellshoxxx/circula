@@ -17,8 +17,13 @@ func (s *server) routes() {
 
 	// Network, identity, directory, account.
 	R("GET "+v1+"/network", s.getNetwork)                             // API-040
-	R("GET "+v1+"/network/announcements", s.notImpl("announcements")) // API-064
+	R("GET "+v1+"/network/announcements", s.listAnnouncements(false)) // API-064
 	R("GET "+v1+"/me", s.getMe, noNet)                                // API-041
+	R("PATCH "+v1+"/me", s.patchMe, noNet)                            // extension: display time zone
+	R("GET "+v1+"/network/terms", s.getTerms)                         // GOV-009
+	R("POST "+v1+"/me/terms/accept", s.acceptTerms, idem)             // GOV-009
+	R("GET "+v1+"/network/policy-log", s.policyLog)                   // GOV-002, GOV-003
+	R("POST "+v1+"/admin/terms", s.publishTerms, idem)                // GOV-009
 	R("GET "+v1+"/members", s.listMembers)                            // API-042
 	R("GET "+v1+"/members/{id}", s.getMember)                         // API-043
 	R("GET "+v1+"/accounts/me", s.getAccount)                         // API-044
@@ -29,6 +34,7 @@ func (s *server) routes() {
 	// Listings.
 	R("GET "+v1+"/listings", s.listListings)         // API-046
 	R("POST "+v1+"/listings", s.createListing, idem) // API-046
+	R("GET "+v1+"/listings/{id}", s.getListing)      // API-046: ETag, If-None-Match
 	R("PATCH "+v1+"/listings/{id}", s.patchListing)  // API-047
 
 	// Transactions.
@@ -67,11 +73,33 @@ func (s *server) routes() {
 	R("PUT "+v1+"/admin/accounts/{id}/credit-limit", s.putCreditLimit)      // API-060
 	R("POST "+v1+"/admin/invitations", s.createInvitation, idem)            // API-061
 	R("POST "+v1+"/invitations/{token}/accept", s.acceptInvitation, idem, noNet)
-	R("GET "+v1+"/admin/audit-events", s.listAudit)                  // API-062
-	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)      // API-063
-	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)        // API-063
-	R("POST "+v1+"/admin/announcements", s.notImpl("announcements")) // API-064
-	R("GET "+v1+"/admin/announcements", s.notImpl("announcements"))  // API-064
+	R("GET "+v1+"/admin/audit-events", s.listAudit)                    // API-062
+	R("GET "+v1+"/audit-events", s.listMyAudit)                        // FR-082, DAT-033, DAT-035
+	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)        // API-063
+	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)          // API-063
+	R("POST "+v1+"/admin/network/suspend", s.suspendNetwork)           // GOV-023
+	R("POST "+v1+"/admin/network/resume", s.resumeNetwork)             // GOV-023
+	R("GET "+v1+"/admin/network/closure", s.closureStatus)             // FR-068
+	R("POST "+v1+"/admin/network/close", s.closeNetwork)               // FR-068, GOV-025: announce the closure date
+	R("POST "+v1+"/admin/network/close/cancel", s.cancelClosure)       // GOV-025
+	R("POST "+v1+"/admin/network/closure/verify", s.verifyClosure)     // GOV-025 e
+	R("POST "+v1+"/challenges", s.openChallenge, idem)                 // GOV-016
+	R("GET "+v1+"/challenges", s.listChallenges)                       // GOV-016
+	R("POST "+v1+"/challenges/{id}/decision", s.decideChallenge, idem) // GOV-016
+	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)   // API-064
+	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))     // API-064
+	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement)  // API-064 (retract)
+
+	// Dispute response and re-review, reports, notifications (FR-076, FR-078, FR-024, FR-038).
+	R("POST "+v1+"/disputes/{id}/response", s.respondDispute, idem)
+	R("POST "+v1+"/disputes/{id}/re-review", s.requestReReview, idem)
+	R("POST "+v1+"/disputes/{id}/re-review/decision", s.decideReReview, idem)
+	R("POST "+v1+"/reports", s.fileReport, idem)
+	R("GET "+v1+"/admin/reports", s.reportQueue)
+	R("POST "+v1+"/admin/reports/{id}/handle", s.closeReport, idem)
+	R("GET "+v1+"/notifications", s.listNotifications)
+	R("GET "+v1+"/notifications/unread-count", s.unreadCount)
+	R("POST "+v1+"/notifications/read", s.markNotificationsRead)
 
 	// Exports and tokens.
 	R("POST "+v1+"/exports", s.createExport, idemOpt)    // API-065

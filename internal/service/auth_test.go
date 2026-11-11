@@ -89,7 +89,7 @@ func TestPasswordPolicy(t *testing.T) {
 	// Operator tooling can still ask for the conflict.
 	_, err := e.Svc.RegisterPerson(e.Ctx, service.RegisterInput{Login: "b@example.org", Password: pw, RevealDuplicate: true})
 	wantCode(t, err, domain.ErrConflict)
-	for _, bad := range []string{"", "ab", "has space@x.org"} {
+	for _, bad := range []string{"", "ab", "has space@example.org"} {
 		if err := reg(bad, pw); err == nil {
 			t.Errorf("login %q accepted", bad)
 		}

@@ -1,14 +1,34 @@
 {{define "content"}}
-{{if .D}}<div class="notice" role="note">{{.D}} membership request{{if ne .D 1}}s are{{else}} is{{end}} waiting. <a href="/n/{{.Slug}}/admin/members?status=pending">Review requests</a></div>{{end}}
+{{with .D}}
+{{if .Frozen}}<section class="notice" role="alert" aria-labelledby="frz-h">
+  <h2 id="frz-h">This network is read-only</h2>
+  <p>Frozen since {{.FrozenSince}}. Members can read balances and history, but every change is refused (status 423) until the ledger check passes again.</p>
+  <p>Reason: {{.FrozenReason}}</p>
+  <p><a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></p>
+</section>{{end}}
+<section aria-labelledby="att-h">
+  <h2 id="att-h">Needs attention</h2>
+  <p>Counted from the ledger and the dispute records when this page loaded, {{.AsOf}}.</p>
+  <ul class="rows">{{range .Rows}}
+    <li>{{.Count}} {{.Text}}.{{if and .Href .Count}} <a href="{{.Href}}">{{.Label}}</a>{{end}}</li>{{end}}
+    <li>{{.Check}} <a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></li>
+  </ul>
+</section>
+{{end}}
+<h2>Manage the network</h2>
 <ul class="rows">
 <li><a href="/n/{{.Slug}}/admin/members">Members</a>: approve, suspend, restore, remove, roles and credit limits</li>
 <li><a href="/n/{{.Slug}}/admin/invitations">Invitations</a>: create and revoke invitation links</li>
 <li><a href="/n/{{.Slug}}/admin/policy">Policy</a>: limits, expiry, join mode</li>
 <li><a href="/n/{{.Slug}}/admin/adjust">Adjustments</a>: audited corrections to a member's balance</li>
+<li><a href="/n/{{.Slug}}/admin/reverse">Reverse a trade</a>: give back a completed trade, with a reason</li>
+<li><a href="/n/{{.Slug}}/admin/announcements">Announcements</a>: notices on every member's home page</li>
 <li><a href="/n/{{.Slug}}/admin/adjustments/pending">Adjustments awaiting approval</a>: second-administrator approval (dual control)</li>
 <li><a href="/n/{{.Slug}}/admin/audit">Audit and checks</a></li>
+<li><a href="/n/{{.Slug}}/admin/network">Pause or close</a>: pause trading, or close the network</li>
 <li><a href="/n/{{.Slug}}/admin/exports">Exports</a></li>
 <li><a href="/n/{{.Slug}}/admin/break-glass">Operator access</a>: sessions in which platform staff reached this network</li>
+<li><a href="/n/{{.Slug}}/admin/reports">Reports</a>: abuse reports about listings and members</li>
 <li><a href="/n/{{.Slug}}/review">Dispute review queue</a></li>
 </ul>
 {{end}}

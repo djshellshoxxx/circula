@@ -8,7 +8,30 @@ linters:
     - nilerr
     - unconvert
     - gosec
+    - depguard
   settings:
+    depguard:
+      # ARC-018: layering domain <- store <- service <- api/web is enforced here, not by convention.
+      rules:
+        domain:
+          files: ["**/internal/domain/**", "!$test"]
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: domain must not depend on other layers}
+            - {pkg: github.com/djshellshoxxx/circula/internal/service, desc: domain must not depend on other layers}
+            - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: domain must not depend on other layers}
+            - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: domain must not depend on other layers}
+        store:
+          files: ["**/internal/store/**", "!$test"]
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/service, desc: store must not depend on service, api or web}
+            - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: store must not depend on service, api or web}
+            - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: store must not depend on service, api or web}
+        service:
+          files: ["**/internal/service/**", "!$test"]
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: service must not depend on the transport layers}
+            - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: service must not depend on the transport layers}
+
     errcheck:
       # Best-effort operator output; a failed write to stdout or stderr has no recovery path.
       exclude-functions:

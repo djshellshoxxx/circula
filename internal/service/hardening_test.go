@@ -164,7 +164,7 @@ func TestLoginThrottleIsAtomicUnderConcurrency(t *testing.T) {
 // uniformly and stores nothing.
 func TestLoginThrottleKeyIsBounded(t *testing.T) {
 	e := tu.NewEnv(t)
-	for _, bad := range []string{strings.Repeat("x", 1<<20), "has space@x.org", "a\x00b@example.org", "ab", ""} {
+	for _, bad := range []string{strings.Repeat("x", 1<<20), "has space@example.org", "a\x00b@example.org", "ab", ""} {
 		_, _, err := e.Svc.Login(e.Ctx, bad, "whatever password")
 		wantCode(t, err, domain.ErrUnauthenticated)
 	}

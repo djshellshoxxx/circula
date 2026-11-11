@@ -20,7 +20,8 @@ func policyValues(p domain.Policy) map[string]string {
 		"currency_name": p.CurrencyName, "default_credit_limit": domain.FormatAmount(p.DefaultCreditLimit, d),
 		"max_tx_amount": domain.FormatAmount(p.MaxTxAmount, d), "signup_grant": domain.FormatAmount(p.SignupGrant, d),
 		"proposal_expiry_days": itoa(p.ProposalExpiryDays), "dispute_window_days": itoa(p.DisputeWindowDays),
-		"limit_warning_days": itoa(p.LimitWarningDays), "join_mode": string(p.JoinMode), "departure_rule": string(p.DepartureRule),
+		"limit_warning_days": itoa(p.LimitWarningDays), "response_period_days": itoa(p.ResponsePeriodDays),
+		"re_review_window_days": itoa(p.ReReviewWindowDays), "limit_warning_percent": itoa(p.LimitWarningPercent), "inactivity_days": itoa(p.InactivityDays), "join_mode": string(p.JoinMode), "departure_rule": string(p.DepartureRule),
 	}
 	if p.DefaultFlagBlocksPayer {
 		v["default_flag_blocks_payer"] = "1"
@@ -28,13 +29,33 @@ func policyValues(p domain.Policy) map[string]string {
 	return v
 }
 
+// policyPageData is the policy form's screen data: the version in force and any scheduled change (GOV-003).
+type policyPageData struct {
+	Version int
+	Pending *ruleRow
+}
+
+func (s *server) policyData(r *http.Request, c *rc) *policyPageData {
+	d := &policyPageData{Version: c.Net.PolicyVersion}
+	if log, err := s.svc.PolicyLog(r.Context(), c.actor, c.netID()); err == nil {
+		for _, e := range log {
+			if e.Pending {
+				row := ruleRows([]service.PolicyLogEntry{e}, c.Net.Policy.Decimals)[0]
+				d.Pending = &row
+				break
+			}
+		}
+	}
+	return d
+}
+
 func (s *server) policyForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, c, "admin_policy", 200, &page{Title: "Network policy", V: policyValues(c.Net.Policy), D: c.Net.PolicyVersion})
+	s.render(w, r, c, "admin_policy", 200, &page{Title: "Network policy", V: policyValues(c.Net.Policy), D: s.policyData(r, c)})
 }
 
 func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "Network policy", V: v, D: c.Net.PolicyVersion}
+	p := &page{Title: "Network policy", V: v, D: s.policyData(r, c)}
 	pol := c.Net.Policy
 	dec := pol.Decimals
 	var fe []fieldErr
@@ -50,26 +71,45 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		*dst[f] = n
 	}
-	days := map[string]*int{"proposal_expiry_days": &pol.ProposalExpiryDays, "dispute_window_days": &pol.DisputeWindowDays, "limit_warning_days": &pol.LimitWarningDays}
+	days := map[string]*int{"proposal_expiry_days": &pol.ProposalExpiryDays, "dispute_window_days": &pol.DisputeWindowDays, "limit_warning_days": &pol.LimitWarningDays,
+		"response_period_days": &pol.ResponsePeriodDays, "re_review_window_days": &pol.ReReviewWindowDays, "limit_warning_percent": &pol.LimitWarningPercent, "inactivity_days": &pol.InactivityDays}
 	for f, d := range days {
-		n, err := strconv.Atoi(strings.TrimSpace(v[f]))
+		t := strings.TrimSpace(v[f])
+		if f == "inactivity_days" && t == "" {
+			t = "0" // optional: empty means no inactivity rule (GOV-012)
+		}
+		n, err := strconv.Atoi(t)
 		if err != nil {
 			fe = append(fe, fieldErr{f, label(f) + ": enter a whole number."})
 			continue
 		}
 		*d = n
 	}
+	var notice *int
+	if t := strings.TrimSpace(v["notice_days"]); t != "" {
+		n, err := strconv.Atoi(t)
+		if err != nil {
+			fe = append(fe, fieldErr{"notice_days", "Notice (days): enter a whole number, or leave it empty."})
+		} else {
+			notice = &n
+		}
+	}
 	if len(fe) > 0 {
 		p.Summary, p.Errors = "Not saved. Fix the problems below. Nothing changed.", fe
 		s.render(w, r, c, "admin_policy", 422, p)
 		return
 	}
-	_, err := s.svc.UpdatePolicy(r.Context(), c.actor, c.netID(), service.PolicyChange{Policy: pol, Reason: strings.TrimSpace(v["reason"]), IdempotencyKey: idemKey(r)})
+	_, err := s.svc.UpdatePolicy(r.Context(), c.actor, c.netID(), service.PolicyChange{Policy: pol, Reason: strings.TrimSpace(v["reason"]),
+		NoticeDays: notice, NoticeReason: strings.TrimSpace(v["notice_reason"]), IdempotencyKey: idemKey(r)})
 	if err != nil {
 		s.formFail(w, r, c, "admin_policy", p, err)
 		return
 	}
-	s.setFlash(w, r, "Policy saved as a new version.")
+	if d := s.policyData(r, c); d.Pending != nil {
+		s.setFlash(w, r, "Change announced to members. It takes effect after its notice period; see the scheduled change below.")
+	} else {
+		s.setFlash(w, r, "Policy saved as a new version.")
+	}
 	http.Redirect(w, r, c.base()+"/admin/policy", http.StatusSeeOther)
 }
 
@@ -211,7 +251,7 @@ func (s *server) auditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 		} else if e.ActorType == domain.ActorSystem || who == "" {
 			who = "System"
 		}
-		rows = append(rows, auditRow{e.Seq, fmtTime(e.OccurredAt), who, e.Action, e.TargetType + " " + e.TargetID, e.Reason, e.RequestID})
+		rows = append(rows, auditRow{e.Seq, c.when(e.OccurredAt), who, e.Action, e.TargetType + " " + e.TargetID, e.Reason, e.RequestID})
 	}
 	next := ""
 	if len(evs) == 50 {
