@@ -336,7 +336,7 @@ func TestRemoveAboveDualControlThresholdRefusesOnForm(t *testing.T) {
 	adm := w.browser(t)
 	adm.login("admin@example.org")
 	f := adm.get(b + "/admin/members/" + w.bobM.ID + "/remove")
-	p := adm.post(b+"/admin/members/"+w.bobM.ID+"/remove", f, url.Values{"reason": {"breach of network rules"}})
+	p := adm.post(b+"/admin/members/"+w.bobM.ID+"/remove", f, url.Values{"reason_code": {"rule_breach"}, "reason": {"breach of network rules"}})
 	if p.Status != http.StatusUnprocessableEntity {
 		t.Errorf("status %d, want 422", p.Status)
 	}
