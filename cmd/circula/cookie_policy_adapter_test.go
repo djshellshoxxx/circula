@@ -27,8 +27,8 @@ func TestServeCookieSecurePolicyReachesHTMLAdapter(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			cfg := &Config{
-				StateDir: t.TempDir(),
-				CookieSecure: tc.secure,
+				StateDir:      t.TempDir(),
+				CookieSecure:  tc.secure,
 				PublicBaseURL: tc.publicURL,
 			}
 			logger := slog.New(slog.NewTextHandler(io.Discard, nil))
