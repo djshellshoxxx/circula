@@ -475,9 +475,16 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	}](t, rec); got.Pending == nil || got.Pending.NoticeDays != 14 {
 		t.Errorf("adverse change was not scheduled with 14 days' notice: %s", rec.Body.String())
 	}
+	// Scheduling changed the representation, so the old validator is stale (C-09).
+	h.do(412, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag),
+		body: m{"reason": "more", "dispute_window_days": 10}})
+	petag = rec.Header().Get("ETag")
 	h.do(409, call{method: "PATCH", path: "/admin/policy", token: adminT, hdr: m2("If-Match", petag),
 		body: m{"reason": "more", "dispute_window_days": 10}})
 	rec = h.do(200, call{method: "GET", path: "/admin/policy", token: adminT})
+	if rec.Header().Get("ETag") != petag {
+		t.Errorf("GET ETag %q differs from the PATCH response ETag %q", rec.Header().Get("ETag"), petag)
+	}
 	if !strings.Contains(rec.Body.String(), `"pending":{`) {
 		t.Errorf("scheduled change not shown: %s", rec.Body.String())
 	}
