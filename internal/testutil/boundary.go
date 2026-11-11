@@ -90,6 +90,8 @@ func (fx *Fixture) Key() string { return fmt.Sprintf("fx-key-%d", fx.keys.Add(1)
 
 // volatileTables are stamped by every authenticated request, read or write,
 // and so are left out of State. Each entry says why.
+//
+//nolint:gosec // G101 false positive: keys are table names and values explanations, not credentials.
 var volatileTables = map[string]string{
 	"sessions":        "last_seen_at moves on every request a session authenticates",
 	"api_tokens":      "last_used_at moves on every request a token authenticates",

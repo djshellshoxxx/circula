@@ -202,9 +202,10 @@ func TestPendingCurrencyNamePolicyPatchChangesETag(t *testing.T) {
 	if out.Pending.Changes["currency_name"] != "credits" {
 		t.Fatalf("pending currency_name = %v, want credits", out.Pending.Changes["currency_name"])
 	}
-	if newETag == "" {
+	switch newETag {
+	case "":
 		t.Errorf("pending response omitted ETag")
-	} else if newETag == oldETag {
+	case oldETag:
 		t.Errorf("pending currency-name-only update did not change ETag: old=%q new=%q", oldETag, newETag)
 	}
 	if !strings.HasPrefix(newETag, `"`) || strings.HasPrefix(newETag, "W/") {
