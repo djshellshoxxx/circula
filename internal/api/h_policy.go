@@ -61,8 +61,31 @@ func (d policyDTO) domain() (domain.Policy, error) {
 	return p, nil
 }
 
-func policyETag(n *domain.Network) string {
-	return etagOf("policy", n.ID, strconv.Itoa(n.PolicyVersion))
+// policyETag is the strong validator of the /admin/policy representation. That
+// representation includes the scheduled change not yet in force, so the
+// pending version is part of the tag: scheduling a change must change the ETag,
+// and an If-Match taken before it must fail with 412 (API-026/027, C-09).
+func policyETag(n *domain.Network, pending *service.PolicyLogEntry) string {
+	pv := "0"
+	if pending != nil {
+		pv = strconv.Itoa(pending.Version)
+	}
+	return etagOf("policy", n.ID, strconv.Itoa(n.PolicyVersion), pv)
+}
+
+// pendingPolicy returns the scheduled change that is not in force yet, or nil.
+// Errors are returned rather than ignored: the ETag depends on the answer.
+func (s *server) pendingPolicy(c *reqCtx) (*service.PolicyLogEntry, error) {
+	log, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID)
+	if err != nil {
+		return nil, err
+	}
+	for i := range log {
+		if log[i].Pending {
+			return &log[i], nil
+		}
+	}
+	return nil, nil
 }
 
 type policyResp struct {
@@ -90,16 +113,15 @@ func (s *server) getPolicy(c *reqCtx) error { // API-058
 	if err != nil {
 		return err
 	}
-	c.w.Header().Set("ETag", policyETag(n))
+	pending, err := s.pendingPolicy(c)
+	if err != nil {
+		return err
+	}
+	c.w.Header().Set("ETag", policyETag(n, pending))
 	resp := policyResp{Version: n.PolicyVersion, Policy: toPolicy(n.Policy)}
-	if log, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID); err == nil {
-		for _, e := range log {
-			if e.Pending {
-				d := toPolicyLog(e)
-				resp.Pending = &d
-				break
-			}
-		}
+	if pending != nil {
+		d := toPolicyLog(*pending)
+		resp.Pending = &d
 	}
 	return ok(c, 200, resp)
 }
@@ -155,7 +177,11 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 	if err != nil {
 		return err
 	}
-	cur := policyETag(n)
+	pending, err := s.pendingPolicy(c)
+	if err != nil {
+		return err
+	}
+	cur := policyETag(n, pending)
 	if err := c.requireIfMatch(cur); err != nil {
 		return err
 	}
@@ -189,7 +215,11 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 	if err != nil {
 		return err
 	}
-	c.w.Header().Set("ETag", policyETag(u))
+	after, err := s.pendingPolicy(c)
+	if err != nil {
+		return err
+	}
+	c.w.Header().Set("ETag", policyETag(u, after))
 	resp := policyResp{Version: u.PolicyVersion, Policy: toPolicy(u.Policy)}
 	eff := ts(s.opt.Now())
 	resp.EffectiveAt = &eff
