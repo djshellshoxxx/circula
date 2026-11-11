@@ -40,10 +40,20 @@ and under `docs/audit/`.
 - DEC-005, DEC-006 and DEC-011 values. DECISIONS.md rows DEC-051, DEC-064 and DEC-065 are stale
   against the built mechanisms; they are owner records and were not edited.
 
-## In progress
-The 2026-10-21 gap list was re-verified against the current code; many of its rows had been
-fixed since. Verified gaps are being implemented in parallel slices on local `wf/*` branches,
-each reviewed before it is merged here. Items needing an owner decision are excluded.
+## Paused 2026-11-11 (owner instruction)
+- Work stopped at the owner's request. No agents or workflows are running.
+- Unmerged, unreviewed slice work is preserved as patch series in
+  [docs/audit/wip-slices-2026-11-11/](docs/audit/wip-slices-2026-11-11/README.md), with base, head,
+  IDs and state for each.
+- Next steps to resume:
+  1. Review each implemented slice, then fix and merge it: web-ux, e2e-axe, e2e-flows, arch-guards, sec-ops-docs.
+  2. Finish boundary-fuzz, export and release-chain.
+  3. Implement qa-robustness.
+  4. Cut duplicate CI runs and move the macOS/Windows test matrix to main only, measured as in
+     the scratch notes: macOS race 7.9 min, Ubuntu race 6.8 min, e2e 4.7 min.
+  5. Regenerate docs/TRACEABILITY.md (QA-042).
+- Last CI result: `76e2c89` passed every job (push and PR runs). CI for later heads had not
+  finished when work was paused.
 
 ## Owner gates (not decided here)
 - Licence; DEC-005, DEC-011, DEC-013, DEC-014, DEC-021, DEC-022, DEC-023 and DEC-025; UX-047 locale scope.
