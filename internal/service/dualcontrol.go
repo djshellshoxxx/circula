@@ -256,12 +256,15 @@ func (s *Service) DecidableAdjustments(ctx context.Context, actor domain.Actor, 
 		if p.member == nil { // system actors cannot decide
 			return nil
 		}
+		// A hint must not offer a request after the same expiry boundary
+		// enforced by the authoritative approval/rejection paths.
+		now := s.now()
 		for _, id := range ids {
 			pa, err := tx.GetPendingAdjustment(netID, id)
 			if err != nil {
 				continue // unknown here: nothing to offer
 			}
-			if pa.Status != domain.PendingOpen || pa.Proposer == p.memberID() || pa.Target == p.memberID() {
+			if pa.Status != domain.PendingOpen || !now.Before(pa.ExpiresAt) || pa.Proposer == p.memberID() || pa.Target == p.memberID() {
 				continue
 			}
 			switch err := s.requireIndependentApprover(tx, p, pa); {
