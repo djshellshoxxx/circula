@@ -1,6 +1,7 @@
 // UX-002: reach core and adjacent existing screens FROM Home in at most
 // three rendered-link activations. Measured paths use GET navigation only.
-const { test, expect } = require('../fixtures');
+// Rows whose role is "apply:<name>" run in the approval-mode instance (apply.js).
+const { test, expect, homeOf } = require('../apply');
 
 const VIEWPORTS = [
   { name: 'portrait', width: 320, height: 640 },
@@ -16,6 +17,9 @@ const listings = route('/listings');
 const disputes = route('/disputes');
 const review = route('/review');
 const pending = (st) => `${n(st)}/trades/${st.tradePending}`;
+const fixed = (path) => () => path;
+const apply = (suffix) => (st) => `/n/${st.apply.slug}${suffix}`;
+const applyRequests = apply('/admin/members?status=pending');
 
 // [screen, role, actual link destinations in order]
 const PATHS = [
@@ -48,13 +52,38 @@ const PATHS = [
   ['account time zone', 'alice', [() => '/account/time-zone']],
   ['account password form', 'alice', [() => '/account/password']],
   ['Help', 'alice', [() => '/help']],
+  ['account security', 'alice', [fixed('/account/security')]],
+  ['two-step sign-in setup', 'alice', [fixed('/account/security'), fixed('/account/security/mfa/enrol')]],
+  ['password recovery codes', 'alice', [fixed('/account/security'), fixed('/account/recovery-codes')]],
+  ['inbox', 'alice', [route('/inbox')]],
+  ['inbox, unread only', 'alice', [route('/inbox'), route('/inbox?show=unread')]],
+  ['network rules and change log', 'alice', [route('/policy')]],
+  ['leave the network (blocked)', 'alice', [route('/policy'), route('/leave')]],
+  ['own account activity log', 'alice', [history, route('/audit')]],
+  ['admin member action', 'admin', [admin, route('/admin/members'), (st) => `${n(st)}/admin/members/${st.bobId}/suspend`]],
+  ['admin inactive members', 'admin', [admin, route('/admin/members'), route('/admin/inactive')]],
+  ['admin reverse a trade', 'admin', [admin, route('/admin/reverse')]],
+  ['admin adjustments awaiting approval', 'admin', [admin, route('/admin/adjustments/pending')]],
+  ['admin pause or close', 'admin', [admin, route('/admin/network')]],
+  ['admin operator access', 'admin', [admin, route('/admin/break-glass')]],
+  ['admin network terms', 'admin', [admin, route('/admin/terms')]],
+  ['network terms (published)', 'apply:hana', [apply('/policy'), apply('/terms')]],
+  ['leave the network (form)', 'apply:hana', [apply('/policy'), apply('/leave')]],
+  ['admin membership requests', 'apply:erin', [apply('/admin'), applyRequests]],
+  ['admin approve a request', 'apply:erin', [apply('/admin'), applyRequests, (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/approve`]],
 ];
 
-async function startAtHome(page, st) {
-  const response = await page.goto(n(st));
+// Before Home: the sign-in screen leads to the other signed-out entry points.
+const SIGNED_OUT = [
+  ['registration', [fixed('/register')]],
+  ['account recovery', [fixed('/recover')]],
+];
+
+async function startAtHome(page, st, home = n(st)) {
+  const response = await page.goto(home);
   expect(response).not.toBeNull();
   expect(response.status()).toBe(200);
-  await expect(page).toHaveURL((url) => url.pathname.replace(/\/$/, '') === n(st));
+  await expect(page).toHaveURL((url) => url.pathname.replace(/\/$/, '') === home);
   await expect(page.locator('h1')).toHaveText('Home');
   await expect(page.getByRole('region', { name: 'Your balance', exact: true })).toBeVisible();
 }
@@ -77,10 +106,21 @@ async function followPath(page, st, destinations) {
 
 for (const viewport of VIEWPORTS) {
   for (const [name, who, pathOf] of PATHS) {
-    test(`UX-002: ${name} from Home within three activations, ${viewport.name}`, async ({ as, st }) => {
-      const page = await as(who);
+    test(`UX-002: ${name} from Home within three activations, ${viewport.name}`, async ({ open, st }) => {
+      const page = await open(who);
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
-      await startAtHome(page, st);
+      await startAtHome(page, st, homeOf(st, who));
+      await followPath(page, st, pathOf.map((path) => path(st)));
+    });
+  }
+
+  for (const [name, pathOf] of SIGNED_OUT) {
+    test(`UX-002: ${name} from sign-in within three activations, ${viewport.name}`, async ({ page, st }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      const response = await page.goto('/login');
+      expect(response).not.toBeNull();
+      expect(response.status()).toBe(200);
+      await expect(page.locator('h1')).toHaveText('Sign in');
       await followPath(page, st, pathOf.map((path) => path(st)));
     });
   }

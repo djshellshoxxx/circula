@@ -8,8 +8,9 @@ const { test, expect } = require('@playwright/test');
 const { buildSecurityInstance, totp, PASSWORD, SLUG } = require('../secfixture');
 const { tabTo, kbSubmit, kbActivate } = require('../kbd');
 
-const AXE_PATH = require.resolve('axe-core/axe.min.js');
-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+// The same WCAG 2.2 AA tags (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa) and light plus dark scheme pass as
+// tests/a11y.spec.js; see AXE_TAGS and SCHEMES in fixtures.js.
+const { expectNoAxeViolations } = require('../fixtures');
 const NEW_PASSWORD = 'a different long passphrase 42';
 
 test.describe.configure({ mode: 'serial' });
@@ -32,16 +33,7 @@ async function newPage(browser) {
 }
 
 async function expectClean(page, label) {
-  await page.addScriptTag({ path: AXE_PATH });
-  const v = await page.evaluate(async (tags) => {
-    // eslint-disable-next-line no-undef
-    const r = await axe.run(document, { runOnly: { type: 'tag', values: tags }, resultTypes: ['violations'] });
-    return r.violations.map((x) => ({ id: x.id, impact: x.impact, help: x.help, nodes: x.nodes.map((n) => ({ target: n.target.join(' '), html: n.html.slice(0, 200) })) }));
-  }, AXE_TAGS);
-  if (v.length) {
-    throw new Error(`${label}: ${v.length} axe violation(s) at ${page.url()}\n` +
-      v.map((x) => `  [${x.impact}] ${x.id}: ${x.help}\n` + x.nodes.map((n) => `      ${n.target}\n      ${n.html}`).join('\n')).join('\n'));
-  }
+  await expectNoAxeViolations(page, label);
 }
 
 async function checkPage(page, label) {

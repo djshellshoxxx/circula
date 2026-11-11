@@ -1,6 +1,7 @@
 // UX-034: user text preferences must leave the proposal review flow usable.
 // Stop at review: these tests never click Send trade or post ledger entries.
-const { test, expect } = require('../fixtures');
+// Rows whose role is "apply:<name>" use the approval-mode instance (apply.js).
+const { test, expect } = require('../apply');
 
 const VIEWPORTS = [
   { name: 'portrait', width: 320, height: 640 },
@@ -82,6 +83,8 @@ for (const viewport of VIEWPORTS) {
 
 // Apply the preference to every new document and verify the actual control text,
 // rather than merely checking that a style tag was inserted.
+// Chromium draws a select (menu list) at its own line height whatever any style says,
+// so the line-height part of the spacing check does not apply to select elements.
 async function preferControls(page, preference, controls) {
   const before = await Promise.all(controls.map(fontSize));
   await applyPreference(page, preference, await fontSize(page.locator('html')));
@@ -92,9 +95,9 @@ async function preferControls(page, preference, controls) {
     } else {
       const s = await control.evaluate((el) => {
         const cs = getComputedStyle(el);
-        return { font: parseFloat(cs.fontSize), line: parseFloat(cs.lineHeight), letter: parseFloat(cs.letterSpacing), word: parseFloat(cs.wordSpacing) };
+        return { tag: el.tagName, font: parseFloat(cs.fontSize), line: parseFloat(cs.lineHeight), letter: parseFloat(cs.letterSpacing), word: parseFloat(cs.wordSpacing) };
       });
-      expect(s.line).toBeCloseTo(s.font * 1.5, 1);
+      if (s.tag !== 'SELECT') expect(s.line).toBeCloseTo(s.font * 1.5, 1);
       expect(s.letter).toBeCloseTo(s.font * 0.12, 1);
       expect(s.word).toBeCloseTo(s.font * 0.16, 1);
     }
@@ -260,5 +263,77 @@ for (const viewport of VIEWPORTS) {
       await preferControls(page, preference, [page.locator('h1'), statement, review]);
       await expect(review).toBeEnabled();
     });
+  }
+}
+
+// UX-034 on the account, governance and administration pages (GET only). With each preference the heading and
+// every control in main keep the enlarged or spaced text, can be scrolled into view, are not covered by other
+// content, and the page still reflows without page-level horizontal scrolling (UX-033).
+const PAGES = [
+  ['account security', 'alice', () => '/account/security'],
+  ['two-step sign-in setup', 'alice', () => '/account/security/mfa/enrol'],
+  ['password recovery codes', 'alice', () => '/account/recovery-codes'],
+  ['account recovery (signed out)', null, () => '/recover'],
+  ['network rules and change log', 'alice', (st) => `/n/${st.slug}/policy`],
+  ['leave the network (blocked)', 'alice', (st) => `/n/${st.slug}/leave`],
+  ['network terms (published, to accept)', 'apply:hana', (st) => `/n/${st.apply.slug}/terms`],
+  ['leave the network (form)', 'apply:hana', (st) => `/n/${st.apply.slug}/leave`],
+  ['admin overview', 'admin', (st) => `/n/${st.slug}/admin`],
+  ['admin members', 'admin', (st) => `/n/${st.slug}/admin/members`],
+  ['admin suspend member form', 'admin', (st) => `/n/${st.slug}/admin/members/${st.bobId}/suspend`],
+  ['admin set credit limit form', 'admin', (st) => `/n/${st.slug}/admin/members/${st.bobId}/limit`],
+  ['admin policy form', 'admin', (st) => `/n/${st.slug}/admin/policy`],
+  ['admin adjustment form', 'admin', (st) => `/n/${st.slug}/admin/adjust`],
+  ['admin audit and checks', 'admin', (st) => `/n/${st.slug}/admin/audit`],
+  ['admin invitations', 'admin', (st) => `/n/${st.slug}/admin/invitations`],
+  ['admin announcements', 'admin', (st) => `/n/${st.slug}/admin/announcements`],
+  ['admin exports', 'admin', (st) => `/n/${st.slug}/admin/exports`],
+  ['admin reports', 'admin', (st) => `/n/${st.slug}/admin/reports?status=all`],
+  ['admin reverse a trade', 'admin', (st) => `/n/${st.slug}/admin/reverse?tx=${st.tradeReverse}`],
+  ['admin inactive members', 'admin', (st) => `/n/${st.slug}/admin/inactive`],
+  ['admin adjustments awaiting approval', 'admin', (st) => `/n/${st.slug}/admin/adjustments/pending`],
+  ['admin pause or close', 'admin', (st) => `/n/${st.slug}/admin/network`],
+  ['admin operator access', 'admin', (st) => `/n/${st.slug}/admin/break-glass`],
+  ['admin membership requests', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members?status=pending`],
+  ['admin approve a request', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/approve`],
+  ['admin network terms (published)', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/terms`],
+];
+
+const CONTROLS = 'a[href], button, input:not([type="hidden"]), select, textarea, [tabindex="0"]';
+
+for (const viewport of VIEWPORTS) {
+  for (const preference of PREFERENCES) {
+    for (const [name, who, pathOf] of PAGES) {
+      test(`UX-034: ${name} with ${preference}, ${viewport.name}`, async ({ st, open, page: anon }) => {
+        const page = who ? await open(who) : anon;
+        await page.setViewportSize({ width: viewport.width, height: viewport.height });
+        const response = await page.goto(pathOf(st));
+        expect(response, `${name}: navigation response`).not.toBeNull();
+        expect(response.status(), `${name}: status`).toBe(200);
+        const controls = page.locator('main').locator(CONTROLS);
+        const count = await controls.count();
+        const list = [page.locator('h1')];
+        for (let i = 0; i < count; i++) list.push(controls.nth(i));
+        await preferControls(page, preference, list);
+
+        const layout = await page.evaluate((selector) => {
+          const covered = [];
+          for (const el of document.querySelector('main').querySelectorAll(selector)) {
+            el.scrollIntoView({ block: 'center', inline: 'nearest' });
+            const r = el.getBoundingClientRect();
+            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+            if (!hit || !(hit === el || el.contains(hit) || hit.contains(el) || (el.labels && [...el.labels].some((l) => l.contains(hit))))) {
+              covered.push((el.getAttribute('aria-label') || el.innerText || el.name || el.tagName).replace(/\s+/g, ' ').trim());
+            }
+          }
+          const root = document.documentElement;
+          return { covered, viewport: root.clientWidth, document: Math.max(root.scrollWidth, document.body.scrollWidth) };
+        }, CONTROLS);
+        expect(layout.covered, `${name}: controls covered by other content with ${preference}`).toEqual([]);
+        expect(layout.viewport).toBeGreaterThan(0);
+        expect(layout.document, `${name}: page-level horizontal overflow with ${preference} at ${viewport.name}`)
+          .toBeLessThanOrEqual(layout.viewport);
+      });
+    }
   }
 }
