@@ -1,0 +1,2513 @@
+From f4069d1f43ab91dced244dcf4a44a70b9446506d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 09:11:31 +0000
+Subject: [PATCH 1/3] test(store): personal-data inventory checked against the
+ migrated schema (SEC-014)
+
+docs/security/personal-data-inventory.md classifies every column of every
+table after migrations 0001-0015: personal-data columns with category,
+purpose, retention, export and erasure path, and the remaining columns per
+table. internal/store/pii_inventory_test.go migrates an empty database and
+fails on an unclassified column, a stale inventory entry, an incomplete
+personal-data row, or a column name from the SEC-014 forbidden list.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ docs/security/personal-data-inventory.md | 161 +++++++++++++++++++
+ internal/store/pii_inventory_test.go     | 196 +++++++++++++++++++++++
+ 2 files changed, 357 insertions(+)
+ create mode 100644 docs/security/personal-data-inventory.md
+ create mode 100644 internal/store/pii_inventory_test.go
+
+diff --git a/docs/security/personal-data-inventory.md b/docs/security/personal-data-inventory.md
+new file mode 100644
+index 0000000..3029eb4
+--- /dev/null
++++ b/docs/security/personal-data-inventory.md
+@@ -0,0 +1,161 @@
++# Personal data inventory
++
++Version: 1, 2026-11-04. Specifications: SEC-014 (data minimisation), SEC-017 (exports), SEC-018 (retention and erasure),
++DAT section 9 ([06](../specs/06-data-ledger-audit.md#9-retention)). Derived from the migrations in
++`internal/store/migrations/` (0001 to 0015).
++
++This file is checked by `internal/store/pii_inventory_test.go`. The test migrates an empty database and fails when a
++table column is classified neither under [Personal data columns](#personal-data-columns) nor under
++[Other columns](#other-columns), when this file names a column that no longer exists, or when a personal-data row has an
++empty cell. Adding a migration that adds a column therefore means adding a row here, in the same change.
++
++Retention values are what the current build does. Where the specification gives a recommended default that the build
++does not apply, the cell says so. Retention periods for personal data are an open decision (DEC-020, counsel review,
++RSK-022): nothing here is a compliance claim.
++
++## Forbidden data (SEC-014)
++
++The product collects no national identity number, government identifier, bank account number, card data or date of
++birth. `TestSchemaHasNoForbiddenPersonalData` fails if a column whose name suggests one of them is added. Free-text
++fields can still receive such data if a person types it; their length is limited (FR-016 and the service validators)
++and administrators are told not to write personal data into reasons ([erasure.md](../dev/erasure.md#the-audit-chain)).
++
++## Terms used in the tables
++
++- **Category**: `identifier` (names or sign-in identifiers that point at a person), `credential` (secret
++  authentication material, stored only as a hash or sealed), `profile` (a setting the person chose), `free text`
++  (anything a person typed, which may contain personal data), `activity` (when a person was last active), `governance
++  marker` (a statement about a member made by the network).
++- **Export**: the export packages of [07](../specs/07-api-contract.md) and DAT-037/038. "Network export" is the
++  administrator export of the whole network; "self-export" is a member's export of their own data (SEC-017). Exports
++  never contain credentials, password hashes, token hashes, MFA secrets or recovery material.
++- **Erasure**: what the erasure of a departed member does (`AnonymiseMember`, `EraseMyData`, `circula erase-member`;
++  see [docs/dev/erasure.md](../dev/erasure.md)). "Person erasure" means the person row is also anonymised, which happens
++  only when the person has no other live membership and the request came from the person or the operator CLI. Closed
++  networks are erased the same way after their read-only period (GOV-025). Backups taken earlier keep the old values
++  until backup retention ends (SEC-028).
++
++## Personal data columns
++
++| Column | Category | Purpose | Retention | Export | Erasure |
++|---|---|---|---|---|---|
++| `persons.login` | identifier | Sign-in identifier (often an email address) | Until person erasure; no automatic period (DAT 9 recommends departure plus 90 days, DEC-020 open) | Not exported | Person erasure: replaced by `erased-<person id>` |
++| `persons.password_hash` | credential | Verify the password (Argon2id hash) | Until changed or person erasure | Never | Person erasure: replaced by an unusable hash |
++| `sessions.id` | credential | SHA-256 of the session cookie value | Purged when expired, idle past `session-idle`, or 24 hours after revocation | Never | Person erasure: all sessions revoked, then purged |
++| `sessions.last_seen_at` | activity | Idle timeout of the session | As `sessions.id` | Never | As `sessions.id` |
++| `person_activity.last_seen_at` | activity | Inactivity rule (GOV-012): newest sign-in time copied from expiring sessions | Until the person row goes; no automatic period | Never | Not cleared by erasure (gap, see [Findings](#findings)) |
++| `person_prefs.time_zone` | profile | Show times in the person's zone | Until changed | Not exported | Not cleared by erasure (gap, see [Findings](#findings)) |
++| `person_mfa.secret` | credential | TOTP seed (SEC-007), sealed with AES-GCM when a secret key is configured | Until MFA is disabled or reset | Never | Person erasure: row deleted |
++| `recovery_codes.code_hash` | credential | Single-use MFA recovery codes, salted SHA-256 | Until used, regenerated or MFA disabled | Never | Person erasure: deleted |
++| `account_recovery_codes.code_hash` | credential | Single-use account recovery codes (SEC-008), salted SHA-256 | Until used or regenerated | Never | Person erasure: deleted |
++| `mfa_challenges.id_hash` | credential | SHA-256 of the short-lived second-step login token | Expires in minutes; dead rows deleted at the person's next sign-in, on recovery and on MFA reset | Never | Not deleted by erasure; sessions cannot follow because the login is erased |
++| `api_tokens.name` | free text | Label the person gave the token | Until person erasure; revoked tokens stay as metadata (DAT 9 recommends 1 year) | Not exported | Person erasure: renamed `erased` |
++| `api_tokens.token_hash` | credential | Verify a bearer API token; the value is shown once | Until revoked or expired; then kept as metadata | Never | Person erasure: token revoked |
++| `api_tokens.last_used_at` | activity | Show when a token was last used | As `api_tokens.name` | Not exported | Kept (no longer linked to a login after person erasure) |
++| `security_notices.detail` | free text | Security notice to the person (new device, MFA change; can name a token) | Until person erasure | Not exported | Person erasure: deleted |
++| `login_throttle.login` | identifier | Count failed sign-ins per typed login (SEC-006) | Deleted 24 hours after the lock or last failure | Never | Person erasure: rows for the login deleted |
++| `invitations.token_hash` | credential | Verify an invitation link; not linked to a person until used | Until the network goes | Never | Kept (holds no personal data once used) |
++| `members.display_name` | identifier | Name shown to other members (FR-016) | Until erasure; no automatic period (DAT 9 recommends departure plus 90 days, DEC-020 open) | Network export; self-export (own name, counterparties' names on own transactions) | Replaced by `Former member <id suffix>` |
++| `members.default_flag` | governance marker | Network's "default" marker on a member (DOM-025) | Lifetime of the network | Network export | Kept (pseudonymous after erasure) |
++| `listings.title` | free text | Offer or request title | Until the member edits or removes it, or erasure | Network export; self-export (own listings) | Replaced by `Erased listing` |
++| `listings.description` | free text | Offer or request text | As `listings.title` | As `listings.title` | Emptied |
++| `transactions.note` | free text | Memo of a trade, written by the proposer | Lifetime of the network | Network export; self-export (own transactions) | Emptied on transactions the member proposed |
++| `transactions.reason` | free text | Mandatory reason of an adjustment or reversal, written by an administrator | Lifetime of the network | Network export; self-export (own transactions) | Kept: an administrator's record; reasons must not name people |
++| `pending_adjustments.reason` | free text | Reason of a dual-control adjustment proposal | Lifetime of the network | Not exported | Kept: an administrator's record |
++| `disputes.statement` | free text | The opener's statement | Lifetime of the network | Network export (not in self-export) | Emptied on disputes the member opened |
++| `disputes.rationale` | free text | The reviewer's decision rationale | Lifetime of the network | Network export | Kept: the reviewer's record |
++| `dispute_responses.body` | free text | The counterparty's response to a dispute | Lifetime of the network | Not exported | Emptied for responses the member wrote |
++| `dispute_rereviews.reason` | free text | Reason for a re-review request | Lifetime of the network | Not exported | Emptied for requests the member made |
++| `dispute_rereviews.rationale` | free text | Re-review decision rationale | Lifetime of the network | Not exported | Kept: the reviewer's record |
++| `reports.note` | free text | Abuse report written by a member | Lifetime of the network | Not exported | Emptied for reports the member filed |
++| `reports.handling_note` | free text | Administrator's handling note | Lifetime of the network | Not exported | Kept: an administrator's record |
++| `challenges.reason` | free text | A member's challenge of a governance decision (GOV-016) | Lifetime of the network | Not exported | Kept (gap, see [Findings](#findings)) |
++| `challenges.rationale` | free text | Decision on the challenge | Lifetime of the network | Not exported | Kept: the decider's record |
++| `notifications.body` | free text | Inbox text; can contain display names | Read notifications deleted after 90 days; unread kept | Not exported | Emptied when it names the member, and the member's own inbox |
++| `announcements.title` | free text | Administrator announcement title | Lifetime of the network (append-only) | Not exported | Kept: an administrator's record |
++| `announcements.body` | free text | Administrator announcement text | Lifetime of the network (append-only) | Not exported | Kept: an administrator's record |
++| `network_terms.body` | free text | The network's published rules and terms (GOV-009) | Lifetime of the network (versioned) | Not exported | Kept: a published network record |
++| `network_policies.reason` | free text | Reason of a policy change | Lifetime of the network (append-only) | Network export | Kept: an administrator's record |
++| `network_policies.notice_reason` | free text | Reason for a shortened notice period | Lifetime of the network | Not exported | Kept: an administrator's record |
++| `network_closures.reason` | free text | Reason of a network closure | Lifetime of the record | Not exported | Kept |
++| `network_suspensions.reason` | free text | Reason of a suspension (GOV-023, GOV-024) | Until the suspension is lifted (row deleted; the audit log keeps the event) | Not exported | Kept while the suspension lasts |
++| `network_suspensions.suspended_by` | identifier | Name the platform operator gave for a platform suspension | As `network_suspensions.reason` | Not exported | Not applicable: operator staff, not a member |
++| `break_glass_sessions.operator_label` | identifier | Operator staff member who opened a break-glass session (SEC-013) | Lifetime of the network (append-only) | Not exported; the audit trail shows the access to the network's administrators | Not applicable: operator staff, not a member |
++| `break_glass_sessions.reason` | free text | Documented reason of the break-glass access | Lifetime of the network (append-only) | Not exported; the audit trail shows the access to the network's administrators | Kept: an operator record |
++| `break_glass_sessions.closed_reason` | free text | Why the session ended | As `break_glass_sessions.reason` | Not exported | Kept: an operator record |
++| `audit_events.reason` | free text | Reason recorded with an audited action | Lifetime of the network; hash-chained, never changed | Network export | Kept: changing it would break the audit chain ([erasure.md](../dev/erasure.md#the-audit-chain)) |
++
++## Other columns
++
++These columns hold no personal data of their own: identifiers, references to members, persons, accounts and
++transactions, statuses, amounts, hashes and timestamps. Ledger and audit records stay after erasure with the member
++reference unchanged; once the member's name and login are erased the reference is pseudonymous (SEC-018, LED-2).
++`audit_events.summary_before` and `summary_after` are structured values; the code never writes a name, login or contact
++detail into them.
++
++| Table | Columns |
++|---|---|
++| `account_recovery_codes` | `id`, `person_id`, `created_at`, `used_at` |
++| `accounts` | `id`, `network_id`, `member_id`, `is_system`, `balance`, `limit_override`, `limit_override_until` |
++| `announcements` | `id`, `network_id`, `created_by`, `published_at`, `effective_at`, `deleted_at`, `deleted_by`, `supersedes_id` |
++| `api_tokens` | `id`, `person_id`, `network_id`, `scopes`, `created_at`, `expires_at`, `revoked_at` |
++| `audit_events` | `id`, `network_id`, `seq`, `occurred_at`, `actor_type`, `actor_id`, `action`, `target_type`, `target_id`, `request_id`, `idem_ref`, `summary_before`, `summary_after`, `prev_hash`, `hash` |
++| `audit_heads` | `network_id`, `seq`, `hash` |
++| `audit_subjects` | `audit_id`, `network_id`, `member_id` |
++| `break_glass_grants` | `id`, `session_id`, `network_id`, `member_id`, `role`, `granted_at` |
++| `break_glass_sessions` | `id`, `network_id`, `opened_at`, `expires_at`, `closed_at` |
++| `challenges` | `id`, `network_id`, `member_id`, `kind`, `subject_id`, `involved_id`, `status`, `outcome`, `decided_by`, `created_at`, `decided_at` |
++| `consistency_runs` | `id`, `network_id`, `started_at`, `finished_at`, `ok`, `findings` |
++| `dispute_deadline_notices` | `network_id`, `dispute_id`, `kind`, `notified_at` |
++| `dispute_events` | `id`, `network_id`, `dispute_id`, `actor_id`, `action`, `outcome`, `occurred_at` |
++| `dispute_rereviews` | `id`, `network_id`, `dispute_id`, `requested_by`, `requested_at`, `status`, `reviewer_id`, `outcome`, `reversal_amount`, `decided_at` |
++| `dispute_responses` | `id`, `network_id`, `dispute_id`, `responder_id`, `submitted_at` |
++| `disputes` | `id`, `network_id`, `tx_id`, `opened_by`, `category`, `status`, `outcome`, `reversal_amount`, `reviewer_id`, `opened_at`, `decided_at` |
++| `entries` | `id`, `network_id`, `tx_id`, `account_id`, `amount`, `ledger_seq`, `posted_at` |
++| `idempotency_keys` | `network_id`, `actor_id`, `operation`, `key`, `fingerprint`, `result_ref`, `created_at`, `expires_at` |
++| `invitations` | `id`, `network_id`, `created_by`, `created_at`, `expires_at`, `used_at`, `used_by`, `revoked_at` |
++| `listings` | `id`, `network_id`, `member_id`, `type`, `price`, `status`, `created_at`, `updated_at` |
++| `login_throttle` | `failures`, `locked_until` |
++| `member_erasures` | `member_id`, `network_id`, `person_id`, `erased_at`, `person_erased` |
++| `members` | `id`, `network_id`, `person_id`, `status`, `join_method`, `joined_at`, `departed_at` |
++| `mfa_challenges` | `person_id`, `created_at`, `expires_at`, `used_at` |
++| `network_closures` | `network_id`, `scheduled_by`, `scheduled_at`, `closing_at`, `notice_days`, `read_only_days`, `closed_at`, `final_ledger_seq`, `final_sha256`, `final_balance_total`, `final_entries_sum`, `erased_at` |
++| `network_policies` | `network_id`, `version`, `policy_json`, `changed_by`, `effective_at`, `announced_at`, `notice_days` |
++| `network_suspensions` | `network_id`, `kind`, `category`, `suspended_at` |
++| `network_terms` | `network_id`, `version`, `published_by`, `published_at` |
++| `networks` | `id`, `name`, `slug`, `status`, `ledger_seq`, `created_at` |
++| `notifications` | `id`, `network_id`, `member_id`, `kind`, `title`, `link`, `dedupe_key`, `created_at`, `read_at` |
++| `pending_adjustments` | `id`, `network_id`, `proposer_member_id`, `target_member_id`, `amount`, `direction`, `status`, `created_at`, `expires_at`, `decided_by`, `decided_at`, `tx_id` |
++| `person_activity` | `person_id` |
++| `person_mfa` | `person_id`, `enabled`, `last_step`, `created_at`, `enabled_at` |
++| `person_prefs` | `person_id`, `updated_at` |
++| `persons` | `id`, `created_at`, `must_change_password` |
++| `recovery_codes` | `person_id`, `used_at` |
++| `reports` | `id`, `network_id`, `reporter_id`, `target_type`, `target_id`, `category`, `status`, `created_at`, `handled_by`, `handled_at` |
++| `role_assignments` | `id`, `network_id`, `member_id`, `role`, `granted_at`, `granted_by`, `revoked_at` |
++| `schema_migrations` | `version`, `name`, `applied_at` |
++| `security_notices` | `id`, `person_id`, `kind`, `created_at`, `seen_at` |
++| `sessions` | `person_id`, `created_at`, `expires_at`, `revoked_at` |
++| `terms_acceptances` | `network_id`, `member_id`, `version`, `accepted_at` |
++| `transaction_status_events` | `id`, `network_id`, `tx_id`, `from_status`, `to_status`, `actor_id`, `request_id`, `occurred_at` |
++| `transactions` | `id`, `network_id`, `kind`, `status`, `payer_account_id`, `payee_account_id`, `amount`, `listing_id`, `original_tx_id`, `created_by`, `accepted_by`, `reversed_total`, `proposed_at`, `expires_at`, `completed_at`, `ledger_seq` |
++
++## Outside the database
++
++| Store | Personal data | Retention | Notes |
++|---|---|---|---|
++| Application logs | None by design: request ids, route templates, status, durations (SEC-020) | `log-retention`, default 90 days (SEC-021, DEC-019 open) | Written through `internal/logx`, which redacts credentials, masks email addresses and escapes control characters |
++| Backups | Everything in the database at backup time | Backup retention (SEC-028, OPS-019) | Erasure does not reach earlier backups |
++| Export artefacts | As listed in the Export column | Download expiry (SEC-017) | Formats in [07](../specs/07-api-contract.md) |
++| Audit mirror file (`audit-mirror-file`) | As `audit_events` | Operator's file retention | Optional |
++
++## Findings
++
++Found while building this inventory; recorded for the owner, not changed here.
++
++1. `person_prefs.time_zone` and `person_activity.last_seen_at` are not cleared by person erasure
++   (`erasePersonIfUnused` in `internal/service/erasure.go`). Neither identifies the person on its own once the login is
++   erased, but they stay linked to the person id.
++2. `challenges.reason`, written by the member who opened a governance challenge, is not emptied by erasure, unlike the
++   other member-written free text.
++3. No retention period is applied automatically to member or person data (SEC-018 addendum, open point 5; DEC-020).
+diff --git a/internal/store/pii_inventory_test.go b/internal/store/pii_inventory_test.go
+new file mode 100644
+index 0000000..874612d
+--- /dev/null
++++ b/internal/store/pii_inventory_test.go
+@@ -0,0 +1,196 @@
++package store_test
++
++import (
++	"os"
++	"regexp"
++	"sort"
++	"strings"
++	"testing"
++)
++
++// inventoryPath is the committed personal-data inventory (SEC-014). It is the
++// list this test checks the migrated schema against.
++const inventoryPath = "../../docs/security/personal-data-inventory.md"
++
++// personalCategories is the vocabulary of the Category cell in the inventory.
++var personalCategories = map[string]bool{
++	"identifier": true, "credential": true, "profile": true, "free text": true, "activity": true, "governance marker": true,
++}
++
++// forbiddenWords are column-name words for data SEC-014 forbids collecting:
++// national identity numbers, government identifiers, bank account numbers,
++// card data and date of birth.
++var forbiddenWords = map[string]bool{
++	"national": true, "ssn": true, "nin": true, "passport": true, "government": true, "taxid": true, "tin": true,
++	"iban": true, "bic": true, "swift": true, "bank": true, "sortcode": true, "routing": true,
++	"card": true, "pan": true, "cvv": true, "cvc": true,
++	"birth": true, "birthday": true, "birthdate": true, "dob": true,
++}
++
++type inventory struct {
++	personal map[string][]string // "table.column" -> cells after the first
++	other    map[string][]string // table -> columns
++}
++
++var codeSpan = regexp.MustCompile("`([^`]+)`")
++
++// readInventory parses the two machine-checked tables of the inventory: the
++// section "Personal data columns" (one row per column) and "Other columns"
++// (one row per table listing the remaining columns).
++func readInventory(t *testing.T) inventory {
++	t.Helper()
++	b, err := os.ReadFile(inventoryPath)
++	if err != nil {
++		t.Fatalf("personal-data inventory missing (SEC-014): %v", err)
++	}
++	inv := inventory{personal: map[string][]string{}, other: map[string][]string{}}
++	section := ""
++	for _, line := range strings.Split(string(b), "\n") {
++		if strings.HasPrefix(line, "## ") {
++			section = strings.TrimSpace(strings.TrimPrefix(line, "## "))
++			continue
++		}
++		if !strings.HasPrefix(line, "|") || strings.HasPrefix(line, "|---") {
++			continue
++		}
++		cells := strings.Split(strings.Trim(line, "|"), "|")
++		for i := range cells {
++			cells[i] = strings.TrimSpace(cells[i])
++		}
++		key := codeSpan.FindStringSubmatch(cells[0])
++		if key == nil { // header row
++			continue
++		}
++		switch {
++		case strings.HasSuffix(section, "Personal data columns"):
++			if _, dup := inv.personal[key[1]]; dup {
++				t.Errorf("inventory lists %s twice", key[1])
++			}
++			inv.personal[key[1]] = cells[1:]
++		case strings.HasSuffix(section, "Other columns"):
++			if len(cells) < 2 {
++				t.Fatalf("inventory row for %s has no column list", key[1])
++			}
++			if _, dup := inv.other[key[1]]; dup {
++				t.Errorf("inventory lists table %s twice under Other columns", key[1])
++			}
++			var cols []string
++			for _, m := range codeSpan.FindAllStringSubmatch(cells[1], -1) {
++				cols = append(cols, m[1])
++			}
++			inv.other[key[1]] = cols
++		}
++	}
++	if len(inv.personal) == 0 || len(inv.other) == 0 {
++		t.Fatalf("inventory has no machine-readable tables (personal %d, other %d)", len(inv.personal), len(inv.other))
++	}
++	return inv
++}
++
++// schemaColumns returns "table.column" for every column of every table after
++// all migrations.
++func schemaColumns(t *testing.T) []string {
++	t.Helper()
++	s := openStore(t)
++	rows, err := s.DB().Query(`SELECT m.name, p.name FROM sqlite_master m JOIN pragma_table_info(m.name) p
++		WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%' ORDER BY m.name, p.cid`)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer func() { _ = rows.Close() }()
++	var out []string
++	for rows.Next() {
++		var tbl, col string
++		if err := rows.Scan(&tbl, &col); err != nil {
++			t.Fatal(err)
++		}
++		out = append(out, tbl+"."+col)
++	}
++	if err := rows.Err(); err != nil {
++		t.Fatal(err)
++	}
++	return out
++}
++
++// TestPersonalDataInventoryCoversSchema fails when a migration adds a column
++// (or table) that the committed inventory does not classify, or when the
++// inventory names a column that no longer exists (SEC-014 traceability check).
++func TestPersonalDataInventoryCoversSchema(t *testing.T) {
++	inv := readInventory(t)
++	classified := map[string]string{}
++	for col := range inv.personal {
++		classified[col] = "personal"
++	}
++	for tbl, cols := range inv.other {
++		for _, c := range cols {
++			k := tbl + "." + c
++			if prev, ok := classified[k]; ok {
++				t.Errorf("inventory classifies %s twice (%s and other)", k, prev)
++			}
++			classified[k] = "other"
++		}
++	}
++	inSchema := map[string]bool{}
++	var missing []string
++	for _, c := range schemaColumns(t) {
++		inSchema[c] = true
++		if _, ok := classified[c]; !ok {
++			missing = append(missing, c)
++		}
++	}
++	if len(missing) > 0 {
++		t.Errorf("columns not classified in %s (add each to \"Personal data columns\" with purpose, retention, export "+
++			"and erasure, or to \"Other columns\"): %s", inventoryPath, strings.Join(missing, ", "))
++	}
++	var stale []string
++	for c := range classified {
++		if !inSchema[c] {
++			stale = append(stale, c)
++		}
++	}
++	sort.Strings(stale)
++	if len(stale) > 0 {
++		t.Errorf("inventory names columns that are not in the schema: %s", strings.Join(stale, ", "))
++	}
++}
++
++// TestPersonalDataInventoryRowsComplete requires a category, purpose,
++// retention, export and erasure entry for every personal-data column.
++func TestPersonalDataInventoryRowsComplete(t *testing.T) {
++	inv := readInventory(t)
++	for col, cells := range inv.personal {
++		if len(cells) != 5 {
++			t.Errorf("%s: want 5 cells after the column (category, purpose, retention, export, erasure), got %d", col, len(cells))
++			continue
++		}
++		if !personalCategories[cells[0]] {
++			t.Errorf("%s: category %q is not one of the inventory categories", col, cells[0])
++		}
++		for i, name := range []string{"purpose", "retention", "export", "erasure"} {
++			if cells[i+1] == "" {
++				t.Errorf("%s: empty %s", col, name)
++			}
++		}
++	}
++}
++
++// TestSchemaHasNoForbiddenPersonalData is the SEC-014 schema test: no table
++// column stores a national or government identifier, bank account, card data
++// or date of birth.
++func TestSchemaHasNoForbiddenPersonalData(t *testing.T) {
++	split := regexp.MustCompile(`[^a-z0-9]+`)
++	for _, c := range schemaColumns(t) {
++		col := strings.ToLower(c[strings.IndexByte(c, '.')+1:])
++		joined := strings.ReplaceAll(col, "_", "")
++		for _, bad := range []string{"dateofbirth", "accountnumber", "cardnumber", "nationalid", "taxid"} {
++			if strings.Contains(joined, bad) {
++				t.Errorf("column %s looks like forbidden personal data (%s)", c, bad)
++			}
++		}
++		for _, w := range split.Split(col, -1) {
++			if forbiddenWords[w] {
++				t.Errorf("column %s looks like forbidden personal data (word %q)", c, w)
++			}
++		}
++	}
++}
+-- 
+2.43.0
+
+
+From aa750dfc2a08f1fa4b599452ac92bc517eaa37df Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 09:34:38 +0000
+Subject: [PATCH 2/3] feat(logx): structured, redacting application log for
+ web, API and serve (SEC-020)
+
+internal/logx wraps any slog handler: it redacts values of credential-named
+keys (password, secret, token, session, cookie, CSRF, TOTP, OTP, recovery
+code, API key, authorization), removes invitation/API/bearer tokens and
+key=value credentials from free text, masks email addresses and
+international phone numbers, escapes CR/LF, other control characters,
+Unicode line separators and bidi/format runes, and stamps UTC.
+
+The web adapter's four log.Printf call sites now log through
+web.Options.Logger (wrapped by logx) with event name and request_id, and
+keep the edge's X-Request-Id so error references match the access log.
+The API wraps its logger with logx; serve wraps the process logger and
+passes it to the web handler.
+
+Tests: logx unit tests (newline forgery in JSON and text output, key and
+free-text redaction, UTC); TestWebLogForgedDisplayNameIsOneEntry;
+TestLogsCarryNoCanaryAcrossFlows (password, session ids, CSRF tokens, TOTP
+secret, MFA challenge, recovery codes, API and invitation tokens through
+login, MFA, recovery, trade, export and failing requests over web + API;
+required fields schema check); TestAPILogForgeryAndCredentialsInErrors;
+TestServeLoggerEscapesRedactsAndUsesUTC; TestAccessLogCarriesNoCredentials.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ cmd/circula/log_safety_test.go | 158 ++++++++++++++
+ cmd/circula/serve.go           |  10 +-
+ internal/api/api.go            |   7 +-
+ internal/api/log_test.go       |  63 ++++++
+ internal/logx/logx.go          | 210 +++++++++++++++++++
+ internal/logx/logx_test.go     | 204 +++++++++++++++++++
+ internal/web/log_test.go       | 362 +++++++++++++++++++++++++++++++++
+ internal/web/middleware.go     |  14 +-
+ internal/web/render.go         |   8 +-
+ internal/web/web.go            |   9 +-
+ 10 files changed, 1030 insertions(+), 15 deletions(-)
+ create mode 100644 cmd/circula/log_safety_test.go
+ create mode 100644 internal/api/log_test.go
+ create mode 100644 internal/logx/logx.go
+ create mode 100644 internal/logx/logx_test.go
+ create mode 100644 internal/web/log_test.go
+
+diff --git a/cmd/circula/log_safety_test.go b/cmd/circula/log_safety_test.go
+new file mode 100644
+index 0000000..907de39
+--- /dev/null
++++ b/cmd/circula/log_safety_test.go
+@@ -0,0 +1,158 @@
++package main
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"errors"
++	"io"
++	"log/slog"
++	"net/http"
++	"net/http/cookiejar"
++	"net/http/httptest"
++	"net/url"
++	"regexp"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/store"
++)
++
++// SEC-020, OPS-032: the process logger escapes control characters, redacts
++// credentials and stamps UTC in both log formats.
++func TestServeLoggerEscapesRedactsAndUsesUTC(t *testing.T) {
++	for _, format := range []string{"json", "text"} {
++		var buf bytes.Buffer
++		l := newLogger(&Config{LogLevel: slog.LevelDebug, LogFormat: format}, &buf)
++		l.Error("scheduled job failed", "job", "backup", "password", "Zq81canaryPassword",
++			"error", errors.New("open /x: refused\nlevel=INFO msg=\"forged entry\" token=Zq81canaryToken"))
++		out := buf.String()
++		if n := strings.Count(out, "\n"); n != 1 {
++			t.Fatalf("%s: want one line, got %d:\n%s", format, n, out)
++		}
++		if strings.Contains(out, "Zq81canary") {
++			t.Errorf("%s: credential logged:\n%s", format, out)
++		}
++		if format == "json" {
++			var rec map[string]any
++			if err := json.Unmarshal([]byte(out), &rec); err != nil {
++				t.Fatalf("json: %v\n%s", err, out)
++			}
++			if ts, _ := rec["time"].(string); !strings.HasSuffix(ts, "Z") || rec["level"] != "ERROR" || rec["msg"] != "scheduled job failed" {
++				t.Errorf("json entry: %v", rec)
++			}
++		} else if !regexp.MustCompile(`^time=\S+Z level=ERROR msg="scheduled job failed"`).MatchString(out) {
++			t.Errorf("text entry: %s", out)
++		}
++	}
++}
++
++// SEC-020: the access log of the full serve stack (edge, API, UI) records no
++// credential sent in a path, query, header, cookie or form, and every entry
++// has a UTC time, severity, event name and request id.
++func TestAccessLogCarriesNoCredentials(t *testing.T) {
++	ctx := context.Background()
++	db := seedDatabase(t, t.TempDir())
++	st, err := store.Open(ctx, db)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer func() { _ = st.Close() }()
++	cfg := testConfigFor(db)
++	svc, err := newService(st, cfg)
++	if err != nil {
++		t.Fatal(err)
++	}
++	var logs syncBuf
++	logger := newLogger(&Config{LogLevel: slog.LevelDebug, LogFormat: "json"}, &logs)
++	apiH, webH, err := newHandlers(svc, cfg, logger)
++	if err != nil {
++		t.Fatal(err)
++	}
++	ops := &opsServer{cfg: &Config{MaxBodyBytes: 1 << 20, RequestTimeout: 5 * time.Second}, db: st.DB(), logger: logger, metrics: newMetrics(time.Now())}
++	ops.ready.Store(true)
++	srv := httptest.NewServer(ops.routes(apiH, webH))
++	defer srv.Close()
++
++	jar, _ := cookiejar.New(nil)
++	c := &http.Client{Jar: jar}
++	sent := 0
++	send := func(method, path string, hdr map[string]string, form url.Values) string {
++		t.Helper()
++		var body io.Reader
++		if form != nil {
++			body = strings.NewReader(form.Encode())
++		}
++		req, _ := http.NewRequest(method, srv.URL+path, body)
++		if form != nil {
++			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
++		}
++		for k, v := range hdr {
++			req.Header.Set(k, v)
++		}
++		resp, err := c.Do(req)
++		if err != nil {
++			t.Fatal(err)
++		}
++		defer func() { _ = resp.Body.Close() }()
++		b, _ := io.ReadAll(resp.Body)
++		sent++
++		return string(b)
++	}
++	canaries := map[string]string{
++		"password":         "correct horse battery",
++		"invitation token": "inv_Zq81canaryInvite0123",
++		"query token":      "cir_Zq81canaryQueryToken0123456",
++		"bearer token":     "cir_Zq81canaryHeaderToken012345",
++		"forged cookie":    "Zq81canarySessionCookie",
++		"form password":    "Zq81 canary form password",
++	}
++	send("GET", "/join/"+canaries["invitation token"], nil, nil)
++	send("GET", "/api/v1/me?access_token="+canaries["query token"], nil, nil)
++	send("GET", "/api/v1/me", map[string]string{"Authorization": "Bearer " + canaries["bearer token"]}, nil)
++	send("GET", "/", map[string]string{"Cookie": "circula_session=" + canaries["forged cookie"]}, nil)
++	send("POST", "/login", nil, url.Values{"login": {"founder01"}, "password": {canaries["form password"]}})
++	page := send("GET", "/login", nil, nil)
++	m := regexp.MustCompile(`name="csrf" value="([^"]+)"`).FindStringSubmatch(page)
++	if m == nil {
++		t.Fatal("no csrf token on /login")
++	}
++	canaries["csrf token"] = m[1]
++	send("POST", "/login", nil, url.Values{"csrf": {m[1]}, "login": {"founder01"}, "password": {canaries["password"]}})
++	u, _ := url.Parse(srv.URL)
++	for _, ck := range jar.Cookies(u) {
++		canaries["cookie "+ck.Name] = ck.Value
++	}
++	if canaries["cookie circula_session"] == "" {
++		t.Fatalf("sign-in set no session cookie: %v", jar.Cookies(u))
++	}
++	send("GET", "/n/test-net", nil, nil)
++	send("GET", "/healthz", nil, nil)
++
++	// The access-log line is written after the response; wait for all of them.
++	deadline := time.Now().Add(2 * time.Second)
++	for strings.Count(logs.String(), `"msg":"request"`) < sent && time.Now().Before(deadline) {
++		time.Sleep(10 * time.Millisecond)
++	}
++	out := logs.String()
++	if got := strings.Count(out, `"msg":"request"`); got < sent {
++		t.Fatalf("want %d access-log entries, got %d:\n%s", sent, got, out)
++	}
++	for kind, v := range canaries {
++		if strings.Contains(out, v) {
++			t.Errorf("%s reached the log", kind)
++		}
++	}
++	for _, line := range strings.Split(strings.TrimSpace(out), "\n") {
++		var rec map[string]any
++		if err := json.Unmarshal([]byte(line), &rec); err != nil {
++			t.Fatalf("not a JSON record: %v\n%s", err, line)
++		}
++		ts, _ := rec["time"].(string)
++		rid, _ := rec["request_id"].(string)
++		if !strings.HasSuffix(ts, "Z") || rec["level"] == nil || rec["msg"] == "" || rid == "" {
++			t.Errorf("entry lacks UTC time, level, event name or request id: %s", line)
++		}
++	}
++}
+diff --git a/cmd/circula/serve.go b/cmd/circula/serve.go
+index 02b48da..2738323 100644
+--- a/cmd/circula/serve.go
++++ b/cmd/circula/serve.go
+@@ -21,6 +21,7 @@ import (
+ 	"github.com/djshellshoxxx/circula/internal/api"
+ 	"github.com/djshellshoxxx/circula/internal/domain"
+ 	"github.com/djshellshoxxx/circula/internal/httpx"
++	"github.com/djshellshoxxx/circula/internal/logx"
+ 	"github.com/djshellshoxxx/circula/internal/service"
+ 	"github.com/djshellshoxxx/circula/internal/store"
+ 	"github.com/djshellshoxxx/circula/internal/web"
+@@ -51,12 +52,15 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
+ 	})
+ }
+ 
++// newLogger builds the process logger. Every handler is wrapped by logx, so
++// all serve output (access log, jobs, adapters) is redacted, control
++// characters are escaped and timestamps are UTC (SEC-020, OPS-032).
+ func newLogger(cfg *Config, w io.Writer) *slog.Logger {
+ 	opts := &slog.HandlerOptions{Level: cfg.LogLevel}
+ 	if cfg.LogFormat == "text" {
+-		return slog.New(slog.NewTextHandler(w, opts))
++		return slog.New(logx.Wrap(slog.NewTextHandler(w, opts)))
+ 	}
+-	return slog.New(slog.NewJSONHandler(w, opts))
++	return slog.New(logx.Wrap(slog.NewJSONHandler(w, opts)))
+ }
+ 
+ // cmdServe runs the HTTP service and its scheduled jobs.
+@@ -291,7 +295,7 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH,
+ 	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge})
+ 	webH = web.NewHandlerWith(svc, web.Options{
+ 		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
+-		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax,
++		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax, Logger: logger,
+ 	})
+ 	return apiH, webH, nil
+ }
+diff --git a/internal/api/api.go b/internal/api/api.go
+index 849bb66..ce0d3be 100644
+--- a/internal/api/api.go
++++ b/internal/api/api.go
+@@ -15,12 +15,13 @@ import (
+ 	"time"
+ 
+ 	"github.com/djshellshoxxx/circula/internal/httpx"
++	"github.com/djshellshoxxx/circula/internal/logx"
+ 	"github.com/djshellshoxxx/circula/internal/service"
+ )
+ 
+ // Options tunes the handler. The zero value is production-ready.
+ type Options struct {
+-	Logger *slog.Logger // default: slog.Default()
++	Logger *slog.Logger // default: slog.Default(); always wrapped by logx (SEC-020)
+ 	Now    func() time.Time
+ 	// MaxBodyBytes caps request bodies (API-037). Default 64 KiB.
+ 	MaxBodyBytes int64
+@@ -59,9 +60,7 @@ func NewHandler(svc *service.Service) http.Handler { return NewHandlerWithOption
+ 
+ // NewHandlerWithOptions is NewHandler with explicit options.
+ func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
+-	if opt.Logger == nil {
+-		opt.Logger = slog.Default()
+-	}
++	opt.Logger = logx.New(opt.Logger) // redacts credentials, escapes control characters
+ 	if opt.Now == nil {
+ 		opt.Now = time.Now
+ 	}
+diff --git a/internal/api/log_test.go b/internal/api/log_test.go
+new file mode 100644
+index 0000000..fe9f7ad
+--- /dev/null
++++ b/internal/api/log_test.go
+@@ -0,0 +1,63 @@
++package api
++
++import (
++	"bytes"
++	"encoding/json"
++	"fmt"
++	"log/slog"
++	"net/http/httptest"
++	"strings"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++const forgedName = "Mallory\n{\"time\":\"2026-03-01T12:00:00Z\",\"level\":\"INFO\",\"msg\":\"login ok\",\"request_id\":\"forged01\"}\r\n" +
++	"time=2026-03-01T12:00:00Z level=INFO msg=\"login ok\"\u2028"
++
++// SEC-020: user-controlled text (a display name with a newline and a fake log
++// line) and credentials that reach the API's internal-error and panic logging
++// produce one escaped entry each, with the response's request id, UTC time,
++// severity and event name, and no credential.
++func TestAPILogForgeryAndCredentialsInErrors(t *testing.T) {
++	env := testutil.NewEnv(t)
++	var buf bytes.Buffer
++	h := NewHandlerWithOptions(env.Svc, Options{Logger: slog.New(slog.NewJSONHandler(&buf, nil))}).(*server)
++	h.add(route{pattern: "GET /api/v1/zz-forge", public: true, noNet: true, h: func(c *reqCtx) error {
++		return fmt.Errorf("member %s: upstream refused %s with %s", forgedName,
++			c.r.Header.Get("Authorization"), c.r.Header.Get("Cookie"))
++	}})
++	h.add(route{pattern: "GET /api/v1/zz-forge-panic", public: true, noNet: true, h: func(c *reqCtx) error {
++		panic("member " + forgedName + " token=" + c.r.Header.Get("X-Canary"))
++	}})
++	var ids []string
++	for _, p := range []string{"/api/v1/zz-forge", "/api/v1/zz-forge-panic"} {
++		r := httptest.NewRequest("GET", p, nil)
++		r.Header.Set("Authorization", "Bearer cir_Zq81canaryApiToken0123456789")
++		r.Header.Set("Cookie", "circula_session=Zq81canarySession; cm_csrf=Zq81canaryCsrf")
++		r.Header.Set("X-Canary", "Zq81canaryPanicToken")
++		rec := httptest.NewRecorder()
++		h.ServeHTTP(rec, r)
++		if rec.Code != 500 {
++			t.Fatalf("%s: %d %s", p, rec.Code, rec.Body.String())
++		}
++		ids = append(ids, rec.Header().Get("X-Request-Id"))
++	}
++	out := buf.String()
++	lines := strings.Split(strings.TrimSuffix(out, "\n"), "\n")
++	if len(lines) != 2 {
++		t.Fatalf("want 2 log entries, got %d:\n%s", len(lines), out)
++	}
++	for i, want := range []string{"api internal error", "api panic"} {
++		var rec map[string]any
++		if err := json.Unmarshal([]byte(lines[i]), &rec); err != nil {
++			t.Fatalf("entry %d is not one JSON record: %v\n%s", i, err, lines[i])
++		}
++		if ts, _ := rec["time"].(string); rec["msg"] != want || rec["request_id"] != ids[i] || rec["level"] != "ERROR" || !strings.HasSuffix(ts, "Z") {
++			t.Errorf("entry %d: %v (want %s, request id %s)", i, rec, want, ids[i])
++		}
++	}
++	if strings.Contains(out, "Zq81canary") || strings.Contains(out, "\u2028") {
++		t.Errorf("credential or raw separator logged:\n%s", out)
++	}
++}
+diff --git a/internal/logx/logx.go b/internal/logx/logx.go
+new file mode 100644
+index 0000000..b1edc84
+--- /dev/null
++++ b/internal/logx/logx.go
+@@ -0,0 +1,210 @@
++// Package logx is the application-log boundary (SEC-020, OPS-032). The HTTP
++// adapters and the serve command log only through a logger wrapped by New or
++// Wrap, which, whatever the underlying slog handler:
++//
++//   - replaces the value of any attribute whose key names a credential
++//     (password, secret, token, session, cookie, CSRF, TOTP, OTP, recovery
++//     code, API key, authorization) with Redacted;
++//   - redacts invitation and API tokens, bearer values and key=value
++//     credentials inside free text, and masks email addresses and
++//     international phone numbers;
++//   - escapes newlines, other control characters, Unicode line separators and
++//     bidirectional or invisible format characters (and the backslash that
++//     introduces an escape), so user-controlled text cannot end an entry,
++//     forge a second one or hide part of a line;
++//   - stamps every entry in UTC.
++//
++// Errors, Stringers and other values are rendered to text and cleaned the
++// same way. Integers, booleans, durations and times pass unchanged.
++package logx
++
++import (
++	"context"
++	"fmt"
++	"log/slog"
++	"regexp"
++	"strings"
++	"unicode"
++	"unicode/utf8"
++)
++
++// Redacted replaces the value of a sensitive attribute.
++const Redacted = "[REDACTED]"
++
++// New returns l (slog.Default() when nil) with its handler wrapped by Wrap.
++// A logger that is already wrapped is returned unchanged.
++func New(l *slog.Logger) *slog.Logger {
++	if l == nil {
++		l = slog.Default()
++	}
++	if _, ok := l.Handler().(*handler); ok {
++		return l
++	}
++	return slog.New(&handler{inner: l.Handler()})
++}
++
++// Wrap returns h behind the redacting, escaping handler. Wrapping twice adds
++// no second layer.
++func Wrap(h slog.Handler) slog.Handler {
++	if _, ok := h.(*handler); ok {
++		return h
++	}
++	return &handler{inner: h}
++}
++
++type handler struct{ inner slog.Handler }
++
++func (h *handler) Enabled(ctx context.Context, l slog.Level) bool { return h.inner.Enabled(ctx, l) }
++
++func (h *handler) Handle(ctx context.Context, r slog.Record) error {
++	out := slog.NewRecord(r.Time.UTC(), r.Level, Clean(r.Message), r.PC)
++	r.Attrs(func(a slog.Attr) bool {
++		out.AddAttrs(cleanAttr(a))
++		return true
++	})
++	return h.inner.Handle(ctx, out)
++}
++
++func (h *handler) WithAttrs(as []slog.Attr) slog.Handler {
++	clean := make([]slog.Attr, len(as))
++	for i, a := range as {
++		clean[i] = cleanAttr(a)
++	}
++	return &handler{inner: h.inner.WithAttrs(clean)}
++}
++
++func (h *handler) WithGroup(name string) slog.Handler {
++	return &handler{inner: h.inner.WithGroup(Clean(name))}
++}
++
++func cleanAttr(a slog.Attr) slog.Attr {
++	key := Clean(a.Key)
++	if sensitiveKey(a.Key) {
++		return slog.String(key, Redacted)
++	}
++	v := a.Value.Resolve()
++	switch v.Kind() {
++	case slog.KindString:
++		return slog.String(key, Clean(v.String()))
++	case slog.KindTime:
++		return slog.Time(key, v.Time().UTC())
++	case slog.KindGroup:
++		g := v.Group()
++		out := make([]slog.Attr, len(g))
++		for i, x := range g {
++			out[i] = cleanAttr(x)
++		}
++		return slog.Attr{Key: key, Value: slog.GroupValue(out...)}
++	case slog.KindAny:
++		// fmt recovers from a panicking Error or String method.
++		return slog.String(key, Clean(fmt.Sprintf("%+v", v.Any())))
++	default:
++		return slog.Attr{Key: key, Value: v}
++	}
++}
++
++// sensitiveFragments mark a credential when they appear anywhere in the key
++// (lower-cased, separators removed); sensitiveWords only as a whole word.
++var (
++	sensitiveFragments = []string{"password", "passwd", "passphrase", "secret", "token", "csrf", "xsrf", "session",
++		"cookie", "authorization", "bearer", "totp", "credential", "apikey", "privatekey", "recoverycode"}
++	sensitiveWords = map[string]bool{"otp": true, "sid": true, "pwd": true, "pw": true, "auth": true}
++	keyWord        = regexp.MustCompile(`[^a-z0-9]+`)
++)
++
++func sensitiveKey(k string) bool {
++	lower := strings.ToLower(k)
++	joined := keyWord.ReplaceAllString(lower, "")
++	for _, f := range sensitiveFragments {
++		if strings.Contains(joined, f) {
++			return true
++		}
++	}
++	for _, w := range keyWord.Split(lower, -1) {
++		if sensitiveWords[w] {
++			return true
++		}
++	}
++	return false
++}
++
++var (
++	// Invitation tokens (inv_...) and API tokens (cir_...), as service.RedactSecrets.
++	bearerToken = regexp.MustCompile(`\b(inv|cir)_[A-Za-z0-9_-]{8,}`)
++	bearerValue = regexp.MustCompile(`(?i)\b(bearer|basic)\s+[A-Za-z0-9._~+/=-]+`)
++	// key=value, key: value and "key":"value" credentials in free text.
++	credentialKV = regexp.MustCompile(`(?i)((?:password|passwd|passphrase|secret|token|csrf|xsrf|session(?:[_-]?id)?|cookie|` +
++		`totp|otp|recovery[_ -]?codes?|api[_-]?key|authorization)"?\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s"',;&]+)`)
++	email = regexp.MustCompile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}\b`)
++	phone = regexp.MustCompile(`\+\d[\d ().-]{6,}\d`)
++)
++
++// Clean returns s with credentials redacted, email addresses and
++// international phone numbers masked, and every character that could break
++// or disguise a log line escaped (\n, \r, \t, \xNN, \uNNNN; a backslash
++// becomes \\). Text that needs none of this is returned unchanged.
++func Clean(s string) string {
++	s = bearerToken.ReplaceAllString(s, "${1}_REDACTED")
++	s = bearerValue.ReplaceAllString(s, "${1} "+Redacted)
++	s = credentialKV.ReplaceAllString(s, "${1}"+Redacted)
++	s = email.ReplaceAllString(s, "[email]")
++	s = phone.ReplaceAllString(s, "[phone]")
++	if !needsEscape(s) {
++		return s
++	}
++	var b strings.Builder
++	b.Grow(len(s) + 16)
++	for i := 0; i < len(s); {
++		r, n := utf8.DecodeRuneInString(s[i:])
++		switch {
++		case r == utf8.RuneError && n <= 1:
++			b.WriteString(`\ufffd`)
++		case r == '\\':
++			b.WriteString(`\\`)
++		case r == '\n':
++			b.WriteString(`\n`)
++		case r == '\r':
++			b.WriteString(`\r`)
++		case r == '\t':
++			b.WriteString(`\t`)
++		case r < 0x80 && unicode.IsControl(r):
++			fmt.Fprintf(&b, `\x%02x`, r)
++		case unsafeRune(r):
++			fmt.Fprintf(&b, `\u%04x`, r)
++		default:
++			b.WriteString(s[i : i+n])
++		}
++		i += n
++	}
++	return b.String()
++}
++
++// unsafeRune reports runes outside ASCII that end or disguise a line: C1
++// controls (including NEL), line and paragraph separators, and format
++// characters such as bidirectional overrides and zero-width joiners.
++func unsafeRune(r rune) bool {
++	return unicode.IsControl(r) || unicode.In(r, unicode.Zl, unicode.Zp, unicode.Cf)
++}
++
++func needsEscape(s string) bool {
++	for i := 0; i < len(s); i++ {
++		if c := s[i]; c < 0x20 || c == 0x7f || c == '\\' || c >= 0x80 {
++			if c >= 0x80 {
++				return needsEscapeUnicode(s[i:])
++			}
++			return true
++		}
++	}
++	return false
++}
++
++func needsEscapeUnicode(s string) bool {
++	for i := 0; i < len(s); {
++		r, n := utf8.DecodeRuneInString(s[i:])
++		if (r == utf8.RuneError && n <= 1) || r < 0x20 || r == 0x7f || r == '\\' || unsafeRune(r) {
++			return true
++		}
++		i += n
++	}
++	return false
++}
+diff --git a/internal/logx/logx_test.go b/internal/logx/logx_test.go
+new file mode 100644
+index 0000000..e8559ee
+--- /dev/null
++++ b/internal/logx/logx_test.go
+@@ -0,0 +1,204 @@
++package logx_test
++
++import (
++	"bytes"
++	"encoding/json"
++	"errors"
++	"log/slog"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/logx"
++	"github.com/djshellshoxxx/circula/internal/service"
++)
++
++// forged is a display name that tries to end the current entry and append a
++// second, fake one (SEC-020 acceptance: newline forgery).
++const forged = "Mallory\n{\"time\":\"2026-01-01T00:00:00Z\",\"level\":\"INFO\",\"msg\":\"login ok\",\"user\":\"admin\"}\r\n" +
++	"time=2026-01-01T00:00:00Z level=INFO msg=\"login ok\"\u2028\u2029\u0085\u202e\x1b[2J"
++
++type sink struct{ bytes.Buffer }
++
++func newJSON(t *testing.T) (*slog.Logger, *sink) {
++	t.Helper()
++	var s sink
++	return logx.New(slog.New(slog.NewJSONHandler(&s, &slog.HandlerOptions{Level: slog.LevelDebug}))), &s
++}
++
++func newText(t *testing.T) (*slog.Logger, *sink) {
++	t.Helper()
++	var s sink
++	return logx.New(slog.New(slog.NewTextHandler(&s, &slog.HandlerOptions{Level: slog.LevelDebug}))), &s
++}
++
++// emit writes one entry that carries the forged value in every position a
++// caller could put user-controlled text.
++func emit(l *slog.Logger) {
++	l.With("display_name", forged).WithGroup(forged).Error(forged,
++		"request_id", "rid-1234567",
++		"display_name", forged,
++		"err", errors.New("render failed for "+forged),
++		"panic", any([]string{forged}),
++		slog.Group("member", "name", forged),
++	)
++}
++
++func TestNewlineForgeryIsOneJSONEntry(t *testing.T) {
++	l, s := newJSON(t)
++	emit(l)
++	out := s.String()
++	if n := strings.Count(out, "\n"); n != 1 {
++		t.Fatalf("want exactly one log line, got %d:\n%s", n, out)
++	}
++	var rec map[string]any
++	if err := json.Unmarshal([]byte(out), &rec); err != nil {
++		t.Fatalf("entry is not one JSON object: %v\n%s", err, out)
++	}
++	if strings.Count(out, `"msg":`) != 1 || strings.Contains(out, `"msg":"login ok"`) {
++		t.Fatalf("forged entry survived: %s", out)
++	}
++	for _, r := range []string{"\u2028", "\u2029", "\u0085", "\u202e", "\x1b"} {
++		if strings.Contains(out, r) {
++			t.Errorf("raw %q in output", r)
++		}
++	}
++	if !strings.Contains(rec["msg"].(string), `Mallory\n{`) {
++		t.Errorf("newline not visibly escaped in msg: %q", rec["msg"])
++	}
++}
++
++func TestNewlineForgeryIsOneTextEntry(t *testing.T) {
++	l, s := newText(t)
++	emit(l)
++	out := s.String()
++	if n := strings.Count(out, "\n"); n != 1 {
++		t.Fatalf("want exactly one log line, got %d:\n%s", n, out)
++	}
++	// The forged "level=INFO" text stays inside a quoted value of the one line.
++	if !strings.HasPrefix(out, "time=") || !strings.Contains(out, ` level=ERROR msg="Mallory\\n{`) || strings.Contains(out, "\r") {
++		t.Fatalf("forged entry survived: %s", out)
++	}
++}
++
++func TestLiteralBackslashIsDistinguishable(t *testing.T) {
++	if got := logx.Clean(`a\nb`); got != `a\\nb` {
++		t.Errorf("literal backslash-n: %q", got)
++	}
++	if got := logx.Clean("a\nb"); got != `a\nb` {
++		t.Errorf("newline: %q", got)
++	}
++	if got := logx.Clean("plain text 42"); got != "plain text 42" {
++		t.Errorf("plain: %q", got)
++	}
++	if got := logx.Clean("bad \xff byte"); got != `bad \ufffd byte` {
++		t.Errorf("invalid utf-8: %q", got)
++	}
++}
++
++func TestSensitiveKeysRedacted(t *testing.T) {
++	l, s := newJSON(t)
++	canary := "canary-Zq81-secret-value"
++	keys := []string{"password", "Password", "new_password", "session", "session_id", "SessionID", "csrf", "csrf_token",
++		"totp_secret", "mfa_secret", "api_token", "token", "Authorization", "cookie", "recovery_code", "otp", "api-key"}
++	args := []any{}
++	for _, k := range keys {
++		args = append(args, k, canary)
++	}
++	l.Info("event", args...)
++	l.With("secret", canary).Info("event", slog.Group("auth", "password", canary))
++	out := s.String()
++	if strings.Contains(out, canary) {
++		t.Fatalf("canary under a sensitive key reached the log:\n%s", out)
++	}
++	if c := strings.Count(out, logx.Redacted); c != len(keys)+2 {
++		t.Errorf("want %d redactions, got %d:\n%s", len(keys)+2, c, out)
++	}
++}
++
++func TestNeutralKeysKept(t *testing.T) {
++	l, s := newJSON(t)
++	l.Info("request", "request_id", "abc12345", "route", "/api/", "status", 200, "duration_ms", int64(3), "footprint", "ok")
++	out := s.String()
++	for _, want := range []string{`"request_id":"abc12345"`, `"route":"/api/"`, `"status":200`, `"duration_ms":3`, `"footprint":"ok"`} {
++		if !strings.Contains(out, want) {
++			t.Errorf("missing %s in %s", want, out)
++		}
++	}
++}
++
++func TestSecretsInFreeTextRedacted(t *testing.T) {
++	cases := map[string]string{
++		"invitation token":    "GET /join/inv_Zq81canaryInvite01 failed",
++		"api token":           "bearer cir_Zq81canaryApiToken0123456789 rejected",
++		"bearer header":       "authorization: Bearer Zq81canaryBearer.value",
++		"password field":      `decode {"login":"x","password":"Zq81canaryPass"}`,
++		"password kv":         "password=Zq81canaryPass2 and more",
++		"session cookie":      "__Host-circula_session=Zq81canarySession; Path=/",
++		"session id kv":       "session_id: Zq81canarySid",
++		"csrf kv":             "csrf=Zq81canaryCsrf&x=1",
++		"totp kv":             "totp_secret=Zq81CANARYTOTPSECRET",
++		"recovery code kv":    "recovery code: Zq81-canary",
++		"email address":       "no person with login alice.Zq81canary@example.org",
++		"international phone": "call +44 20 7946 0958 now",
++	}
++	for name, in := range cases {
++		out := logx.Clean(in)
++		for _, frag := range []string{"Zq81canary", "Zq81CANARY", "Zq81-canary", "7946 0958"} {
++			if strings.Contains(out, frag) {
++				t.Errorf("%s: %q leaked in %q", name, frag, out)
++			}
++		}
++	}
++	// Agreement with the service's own redaction (service.RedactSecrets).
++	for _, s := range []string{"/join/inv_abcdefgh1234", "cir_abcdefghijklmnop", "x inv_short"} {
++		if strings.Contains(service.RedactSecrets(s), "_REDACTED") && !strings.Contains(logx.Clean(s), "_REDACTED") {
++			t.Errorf("logx.Clean keeps a token service.RedactSecrets removes: %q -> %q", s, logx.Clean(s))
++		}
++	}
++	// Ordinary text is untouched.
++	for _, s := range []string{"ledger verification failed; network frozen", "invalid session expired", "2026-11-04 12:00:00 +0000 UTC"} {
++		if got := logx.Clean(s); got != s {
++			t.Errorf("ordinary text changed: %q -> %q", s, got)
++		}
++	}
++}
++
++func TestTimeIsUTC(t *testing.T) {
++	l, s := newJSON(t)
++	berlin := time.FixedZone("CET", 3600)
++	l.Info("event", "at", time.Date(2026, 1, 1, 12, 0, 0, 0, berlin))
++	var rec map[string]any
++	if err := json.Unmarshal(s.Bytes(), &rec); err != nil {
++		t.Fatal(err)
++	}
++	for _, k := range []string{"time", "at"} {
++		if v, _ := rec[k].(string); !strings.HasSuffix(v, "Z") {
++			t.Errorf("%s not UTC: %q", k, v)
++		}
++	}
++	if rec["at"] != "2026-01-01T11:00:00Z" || rec["level"] != "INFO" || rec["msg"] != "event" {
++		t.Errorf("entry: %v", rec)
++	}
++}
++
++func TestWrapIdempotentAndLevels(t *testing.T) {
++	var s sink
++	inner := slog.NewJSONHandler(&s, &slog.HandlerOptions{Level: slog.LevelWarn})
++	h := logx.Wrap(inner)
++	if logx.Wrap(h) != h {
++		t.Error("Wrap of a wrapped handler must not add a layer")
++	}
++	l := slog.New(h)
++	if logx.New(l) != l {
++		t.Error("New of a wrapped logger must return it unchanged")
++	}
++	l.Info("dropped")
++	l.Warn("kept")
++	if strings.Contains(s.String(), "dropped") || !strings.Contains(s.String(), "kept") {
++		t.Errorf("level not delegated: %s", s.String())
++	}
++	if logx.New(nil) == nil {
++		t.Error("New(nil) must fall back to the default logger")
++	}
++}
+diff --git a/internal/web/log_test.go b/internal/web/log_test.go
+new file mode 100644
+index 0000000..c00e5e0
+--- /dev/null
++++ b/internal/web/log_test.go
+@@ -0,0 +1,362 @@
++package web
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
++	"log"
++	"log/slog"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/api"
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// logBuf is a goroutine-safe log sink.
++type logBuf struct {
++	mu sync.Mutex
++	b  bytes.Buffer
++}
++
++func (l *logBuf) Write(p []byte) (int, error) {
++	l.mu.Lock()
++	defer l.mu.Unlock()
++	return l.b.Write(p)
++}
++
++func (l *logBuf) String() string {
++	l.mu.Lock()
++	defer l.mu.Unlock()
++	return l.b.String()
++}
++
++// captureLogs returns a JSON logger writing to app, and routes slog's default
++// logger and the standard log package into stray until the test ends, so
++// output that bypasses the configured logger is scanned too.
++func captureLogs(t *testing.T) (logger *slog.Logger, app, stray *logBuf) {
++	t.Helper()
++	app, stray = &logBuf{}, &logBuf{}
++	prev, prevOut, prevFlags := slog.Default(), log.Writer(), log.Flags()
++	slog.SetDefault(slog.New(slog.NewTextHandler(stray, &slog.HandlerOptions{Level: slog.LevelDebug})))
++	t.Cleanup(func() {
++		slog.SetDefault(prev)
++		log.SetOutput(prevOut)
++		log.SetFlags(prevFlags)
++	})
++	return slog.New(slog.NewJSONHandler(app, &slog.HandlerOptions{Level: slog.LevelDebug})), app, stray
++}
++
++// logEntries parses JSON log output and checks the SEC-020 required fields:
++// UTC timestamp, severity, event name and request identifier.
++func logEntries(t *testing.T, out string) []map[string]any {
++	t.Helper()
++	var recs []map[string]any
++	for _, line := range strings.Split(strings.TrimSuffix(out, "\n"), "\n") {
++		if line == "" {
++			continue
++		}
++		var rec map[string]any
++		if err := json.Unmarshal([]byte(line), &rec); err != nil {
++			t.Fatalf("log line is not one JSON record: %v\n%s", err, line)
++		}
++		ts, _ := rec["time"].(string)
++		lvl, _ := rec["level"].(string)
++		msg, _ := rec["msg"].(string)
++		rid, _ := rec["request_id"].(string)
++		if !strings.HasSuffix(ts, "Z") || lvl == "" || msg == "" || rid == "" {
++			t.Errorf("log entry lacks UTC time, level, event name or request id: %s", line)
++		}
++		recs = append(recs, rec)
++	}
++	return recs
++}
++
++const forgedName = "Mallory\n{\"time\":\"2026-03-01T12:00:00Z\",\"level\":\"INFO\",\"msg\":\"login ok\",\"request_id\":\"forged01\"}\r\n" +
++	"time=2026-03-01T12:00:00Z level=INFO msg=\"login ok\"\u2028"
++
++// SEC-020: a display name carrying a newline and a fake log line, reaching
++// the web adapter's panic and internal-error logging, produces one escaped
++// entry each, tagged with the response's request id.
++func TestWebLogForgedDisplayNameIsOneEntry(t *testing.T) {
++	env := testutil.NewEnv(t)
++	logger, app, stray := captureLogs(t)
++	s := newServer(env.Svc, Options{CSRFKey: []byte("0123456789abcdef0123456789abcdef"), Logger: logger})
++	s.mux.HandleFunc("GET /zz-panic", func(http.ResponseWriter, *http.Request) {
++		panic("rendering member " + forgedName)
++	})
++	s.mux.HandleFunc("GET /zz-fail", func(w http.ResponseWriter, r *http.Request) {
++		s.fail(w, r, fmt.Errorf("load member %q: %w", forgedName, errors.New("disk I/O error\n"+forgedName)))
++	})
++	h := s.wrap(s.mux)
++	var ids []string
++	for _, p := range []string{"/zz-panic", "/zz-fail"} {
++		rec := httptest.NewRecorder()
++		h.ServeHTTP(rec, httptest.NewRequest("GET", p, nil))
++		if rec.Code != 500 {
++			t.Fatalf("%s: %d", p, rec.Code)
++		}
++		ids = append(ids, rec.Header().Get("X-Request-Id"))
++	}
++	recs := logEntries(t, app.String())
++	if len(recs) != 2 {
++		t.Fatalf("want 2 log entries, got %d:\n%s", len(recs), app.String())
++	}
++	for i, want := range []string{"web panic", "web internal error"} {
++		if recs[i]["msg"] != want || recs[i]["request_id"] != ids[i] {
++			t.Errorf("entry %d: %v (want %s, request id %s)", i, recs[i], want, ids[i])
++		}
++	}
++	if strings.Contains(app.String(), "\u2028") || strings.Contains(app.String(), "forged01\",\"level") {
++		t.Errorf("forgery not neutralised:\n%s", app.String())
++	}
++	if stray.String() != "" {
++		t.Errorf("web logged outside its configured logger:\n%s", stray.String())
++	}
++	// The serve edge's request id is kept, so these lines match the access log.
++	rec := httptest.NewRecorder()
++	req := httptest.NewRequest("GET", "/zz-fail", nil)
++	req.Header.Set("X-Request-Id", "edge-request-0001")
++	h.ServeHTTP(rec, req)
++	if got := rec.Header().Get("X-Request-Id"); got != "edge-request-0001" || !strings.Contains(app.String(), `"request_id":"edge-request-0001"`) {
++		t.Errorf("upstream request id not kept: header %q\n%s", got, app.String())
++	}
++}
++
++// canaryWorld is newWorld with the JSON API mounted beside the UI (as serve
++// does), both logging to one captured logger, over a fault-injecting store.
++func canaryWorld(t *testing.T) (*world, *testutil.FaultStore, *logBuf, *logBuf) {
++	t.Helper()
++	logger, app, stray := captureLogs(t)
++	var fs *testutil.FaultStore
++	env := testutil.NewEnvWith(t, func(s store.Store) store.Store { fs = testutil.NewFaultStore(s); return fs })
++	w := &world{env: env}
++	w.admin = env.Person("admin@example.org")
++	w.net, w.adminM = env.Network(w.admin, "town", nil)
++	w.alice, w.aliceM = env.Member(w.admin, w.net, "alice@example.org")
++	w.bob, w.bobM = env.Member(w.admin, w.net, "bob@example.org")
++	key := []byte("0123456789abcdef0123456789abcdef")
++	mux := http.NewServeMux()
++	mux.Handle("/api/", api.NewHandlerWithOptions(env.Svc, api.Options{Logger: logger, CSRFKey: key}))
++	mux.Handle("/", NewHandlerWith(env.Svc, Options{CSRFKey: key, Clock: env.Clock, Logger: logger}))
++	w.srv = httptest.NewServer(mux)
++	t.Cleanup(w.srv.Close)
++	return w, fs, app, stray
++}
++
++// apiDo sends a JSON API request with the browser's cookie jar.
++func (b *browser) apiDo(method, path string, hdr map[string]string, body any) (int, http.Header, map[string]any) {
++	b.t.Helper()
++	var rd io.Reader
++	if body != nil {
++		raw, _ := json.Marshal(body)
++		rd = bytes.NewReader(raw)
++	}
++	req, _ := http.NewRequest(method, b.url+path, rd)
++	if body != nil {
++		req.Header.Set("Content-Type", "application/json")
++	}
++	for k, v := range hdr {
++		req.Header.Set(k, v)
++	}
++	resp, err := b.c.Do(req)
++	if err != nil {
++		b.t.Fatal(err)
++	}
++	defer func() { _ = resp.Body.Close() }()
++	var out map[string]any
++	_ = json.NewDecoder(resp.Body).Decode(&out)
++	return resp.StatusCode, resp.Header, out
++}
++
++func (b *browser) cookie(name string) string {
++	u, _ := url.Parse(b.url)
++	for _, c := range b.c.Jar.Cookies(u) {
++		if c.Name == name {
++			return c.Value
++		}
++	}
++	return ""
++}
++
++// SEC-020 acceptance: canary values for every forbidden category (password,
++// session id, CSRF token, recovery codes, API and invitation tokens, TOTP
++// secret) go through login, recovery, trade and export flows on the web UI and
++// the JSON API, including requests that fail and are logged; a scan of all log
++// output finds none of them, and every entry carries the required fields.
++func TestLogsCarryNoCanaryAcrossFlows(t *testing.T) {
++	w, fs, app, stray := canaryWorld(t)
++	base := w.base()
++	canaries := map[string]string{"password": testPW}
++	add := func(kind, v string) {
++		if v == "" {
++			t.Fatalf("no %s captured", kind)
++		}
++		canaries[kind+" "+v] = v
++	}
++
++	// Login: a wrong password, then MFA enrolment (TOTP secret, MFA recovery codes).
++	alice := w.browser(t)
++	wrongPW := "Zq81 canary wrong password"
++	add("wrong password", wrongPW)
++	f := alice.get("/login")
++	if p := alice.post("/login", f, url.Values{"login": {"alice@example.org"}, "password": {wrongPW}}); p.Status != 401 {
++		t.Fatalf("wrong password: %d", p.Status)
++	}
++	secret, mfaCodes := enrolWeb(t, w, alice)
++	add("totp secret", secret)
++	for _, c := range mfaCodes {
++		add("mfa recovery code", c)
++	}
++	add("session id", alice.cookie("circula_session"))
++	add("csrf cookie", alice.cookie("cm_csrf"))
++	add("form csrf", alice.get("/account/security").csrf())
++
++	// A second sign-in through the second factor.
++	alice2 := w.browser(t)
++	f = alice2.get("/login")
++	step := alice2.post("/login", f, url.Values{"login": {"alice@example.org"}, "password": {testPW}})
++	challenge := challengeOf(t, step)
++	add("mfa challenge", challenge)
++	if p := alice2.post("/login/mfa", step, url.Values{"challenge": {challenge}, "code": {webTOTP(t, secret, w.env.Clock.Now())}}); p.Status != 200 || p.URL == "/login/mfa" {
++		t.Fatalf("second factor sign-in: %d %s", p.Status, p.URL)
++	}
++	add("second session id", alice2.cookie("circula_session"))
++	w.env.Clock.Advance(31 * time.Second)
++
++	// API token created from the session (cookie + CSRF header), then used.
++	st, hdr, _ := alice.apiDo("GET", "/api/v1/me", nil, nil)
++	if st != 200 {
++		t.Fatalf("api me with session: %d", st)
++	}
++	apiCSRF := hdr.Get("X-CSRF-Token")
++	add("api csrf", apiCSRF)
++	st, _, tok := alice.apiDo("POST", "/api/v1/tokens", map[string]string{"X-CSRF-Token": apiCSRF},
++		map[string]any{"name": "Zq81 token label", "scopes": []string{"read", "write"}})
++	if st != 201 {
++		t.Fatalf("create token: %d %v", st, tok)
++	}
++	aliceTok, _ := tok["token"].(string)
++	add("api token", aliceTok)
++	bobTok, _ := testutil.Must2(w.env.Svc.CreateAPIToken(context.Background(), w.bob,
++		service.TokenInput{Name: "bob", Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}}))
++	add("api token", bobTok)
++	bearer := func(tok, idem string) map[string]string {
++		h := map[string]string{"Authorization": "Bearer " + tok, "X-Network": w.net.Slug}
++		if idem != "" {
++			h["Idempotency-Key"] = idem
++		}
++		return h
++	}
++
++	// Credentials sent where they must not be: refused, never logged.
++	bogus := "cir_Zq81canaryBogusToken0123456789"
++	add("bogus token", bogus)
++	anon := w.browser(t)
++	if st, _, _ := anon.apiDo("GET", "/api/v1/me", bearer(bogus, ""), nil); st != 401 {
++		t.Errorf("bogus token: %d", st)
++	}
++	if st, _, _ := anon.apiDo("GET", "/api/v1/me?access_token="+aliceTok, nil, nil); st != 400 {
++		t.Errorf("token in query: %d", st)
++	}
++	inv := "inv_Zq81canaryInvitation0123456789"
++	add("invitation token", inv)
++	anon.get("/join/" + inv)
++	anon.apiDo("POST", "/api/v1/invitations/"+inv+"/accept", bearer(bobTok, "inv-1"), map[string]any{})
++
++	// Trade over the API; the first accept fails inside the store and is logged.
++	propose := map[string]any{"counterparty_member_id": w.bobM.ID, "direction": "pay", "amount_minor": "500", "description": "garden help"}
++	st, _, tx := alice.apiDo("POST", "/api/v1/transactions", bearer(aliceTok, "p-1"), propose)
++	if st != 201 {
++		t.Fatalf("propose: %d %v", st, tx)
++	}
++	txID, _ := tx["id"].(string)
++	fs.Arm("InsertEntry", 1)
++	if st, _, _ := anon.apiDo("POST", "/api/v1/transactions/"+txID+"/accept", bearer(bobTok, "a-1"), map[string]any{}); st != 500 {
++		t.Fatalf("faulted accept: %d", st)
++	}
++	fs.Disarm()
++	if st, _, body := anon.apiDo("POST", "/api/v1/transactions/"+txID+"/accept", bearer(bobTok, "a-2"), map[string]any{}); st != 200 {
++		t.Fatalf("accept: %d %v", st, body)
++	}
++
++	// Trade on the web; the accept fails inside the store and is logged.
++	st, _, tx = alice.apiDo("POST", "/api/v1/transactions", bearer(aliceTok, "p-2"), propose)
++	if st != 201 {
++		t.Fatalf("propose 2: %d", st)
++	}
++	txID, _ = tx["id"].(string)
++	bob := w.browser(t)
++	bob.login("bob@example.org")
++	add("bob session id", bob.cookie("circula_session"))
++	rev := bob.get(base + "/trades/" + txID + "/accept")
++	fs.Arm("InsertEntry", 1)
++	if p := bob.post(base+"/trades/"+txID+"/accept", rev, nil); p.Status != 500 {
++		t.Fatalf("faulted web accept: %d", p.Status)
++	}
++	fs.Disarm()
++
++	// Export over the API, downloaded.
++	st, _, ex := alice.apiDo("POST", "/api/v1/exports", bearer(aliceTok, "e-1"), map[string]any{"scope": "mine", "format": "csv"})
++	if st != 201 {
++		t.Fatalf("export: %d %v", st, ex)
++	}
++	link, _ := ex["artefact_url"].(string)
++	req, _ := http.NewRequest("GET", w.srv.URL+link, nil)
++	for k, v := range bearer(aliceTok, "") {
++		req.Header.Set(k, v)
++	}
++	resp, err := http.DefaultClient.Do(req)
++	if err != nil {
++		t.Fatal(err)
++	}
++	_ = resp.Body.Close()
++	if link == "" || resp.StatusCode != 200 {
++		t.Fatalf("artefact %q: %d", link, resp.StatusCode)
++	}
++
++	// Account recovery: codes issued, a wrong code, then a successful reset.
++	f = bob.get("/account/recovery-codes")
++	codes := recCodeRe.FindAllStringSubmatch(bob.post("/account/recovery-codes", f, url.Values{"password": {testPW}}).Body, -1)
++	if len(codes) == 0 {
++		t.Fatal("no account recovery codes")
++	}
++	for _, c := range codes {
++		add("account recovery code", c[1])
++	}
++	newPW := "Zq81 canary new passphrase"
++	add("new password", newPW)
++	rec := w.browser(t)
++	f = rec.get("/recover")
++	rec.post("/recover", f, url.Values{"login": {"bob@example.org"}, "recovery_code": {"AAAA-AAAA-AAAA-AAAA"}, "password": {newPW}, "password2": {newPW}})
++	if p := rec.post("/recover", f, url.Values{"login": {"bob@example.org"}, "recovery_code": {codes[0][1]},
++		"password": {newPW}, "password2": {newPW}}); p.Status != 200 {
++		t.Fatalf("recovery: %d %s", p.Status, snippet(p.Body))
++	}
++
++	out := app.String() + stray.String()
++	for kind, v := range canaries {
++		if strings.Contains(out, v) {
++			t.Errorf("%s reached the log", kind)
++		}
++	}
++	recs := logEntries(t, app.String())
++	got := map[string]bool{}
++	for _, r := range recs {
++		got[r["msg"].(string)] = true
++	}
++	if !got["api internal error"] || !got["web internal error"] {
++		t.Fatalf("the flow logged no internal error, so the scan proves little:\n%s", app.String())
++	}
++}
+diff --git a/internal/web/middleware.go b/internal/web/middleware.go
+index 7ba9627..deaaa57 100644
+--- a/internal/web/middleware.go
++++ b/internal/web/middleware.go
+@@ -4,9 +4,9 @@ import (
+ 	"context"
+ 	"crypto/rand"
+ 	"encoding/hex"
+-	"log"
+ 	"net/http"
+ 	"net/url"
++	"regexp"
+ 	"strings"
+ )
+ 
+@@ -28,10 +28,18 @@ func randHex(n int) string {
+ 	return hex.EncodeToString(b)
+ }
+ 
++// reqIDPattern is the X-Request-Id an upstream layer (the serve edge, a
++// proxy) may set and the UI keeps, so its log lines and error references match
++// the access log (SEC-020). The JSON API accepts the same form.
++var reqIDPattern = regexp.MustCompile(`^[A-Za-z0-9._-]{8,64}$`)
++
+ // wrap adds request id, security headers, panic recovery, body limit and CSRF.
+ func (s *server) wrap(next http.Handler) http.Handler {
+ 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+-		id := randHex(8)
++		id := r.Header.Get("X-Request-Id")
++		if !reqIDPattern.MatchString(id) {
++			id = randHex(8)
++		}
+ 		h := w.Header()
+ 		h.Set("Content-Security-Policy", csp)
+ 		h.Set("X-Content-Type-Options", "nosniff")
+@@ -44,7 +52,7 @@ func (s *server) wrap(next http.Handler) http.Handler {
+ 		ctx := context.WithValue(r.Context(), keyReqID, id)
+ 		defer func() {
+ 			if rec := recover(); rec != nil {
+-				log.Printf("web: panic req=%s: %v", id, rec)
++				s.log.Error("web panic", "request_id", id, "panic", rec)
+ 				s.renderError(w, r.WithContext(ctx), http.StatusInternalServerError)
+ 			}
+ 		}()
+diff --git a/internal/web/render.go b/internal/web/render.go
+index 2506c6b..9e7d7d6 100644
+--- a/internal/web/render.go
++++ b/internal/web/render.go
+@@ -5,7 +5,6 @@ import (
+ 	"fmt"
+ 	"html/template"
+ 	"io/fs"
+-	"log"
+ 	"net/http"
+ 	"net/url"
+ 	"path"
+@@ -160,7 +159,7 @@ func (c *rc) row(t *domain.Transaction, n names) txRow {
+ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name string, status int, p *page) {
+ 	t := s.pages[name]
+ 	if t == nil {
+-		log.Printf("web: missing template %s", name)
++		s.log.Error("web template missing", "request_id", reqID(r), "template", name)
+ 		http.Error(w, "internal error", 500)
+ 		return
+ 	}
+@@ -195,7 +194,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
+ 	}
+ 	var buf bytes.Buffer
+ 	if err := t.ExecuteTemplate(&buf, "base", p); err != nil {
+-		log.Printf("web: render %s req=%s: %v", name, p.ReqID, err)
++		s.log.Error("web render failed", "request_id", p.ReqID, "template", name, "err", err)
+ 		http.Error(w, "internal error, reference "+p.ReqID, 500)
+ 		return
+ 	}
+@@ -322,7 +321,8 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
+ 		s.renderError(w, r, 409)
+ 	default:
+ 		if domain.CodeOf(err) == domain.CodeInternal {
+-			log.Printf("web: internal error req=%q: %q", reqID(r), err.Error()) //nolint:gosec // G706: both values are %q-quoted, no control characters pass
++			// The route pattern, never the raw path; logx escapes and redacts the error text.
++			s.log.Error("web internal error", "request_id", reqID(r), "route", r.Pattern, "err", err)
+ 		}
+ 		s.renderError(w, r, 500)
+ 	}
+diff --git a/internal/web/web.go b/internal/web/web.go
+index 3b78d2c..48902fe 100644
+--- a/internal/web/web.go
++++ b/internal/web/web.go
+@@ -6,6 +6,7 @@ import (
+ 	"crypto/rand"
+ 	"embed"
+ 	"io/fs"
++	"log/slog"
+ 	"net/http"
+ 	"sync"
+ 	"sync/atomic"
+@@ -13,6 +14,7 @@ import (
+ 
+ 	"github.com/djshellshoxxx/circula/internal/domain"
+ 	"github.com/djshellshoxxx/circula/internal/httpx"
++	"github.com/djshellshoxxx/circula/internal/logx"
+ 	"github.com/djshellshoxxx/circula/internal/service"
+ )
+ 
+@@ -39,11 +41,16 @@ type Options struct {
+ 	CSRFKey []byte
+ 	// Clock is used only to label invitations as expired; default wall clock.
+ 	Clock domain.Clock
++	// Logger receives the application log (SEC-020); default slog.Default().
++	// It is always wrapped by logx, which redacts credentials and escapes
++	// control characters.
++	Logger *slog.Logger
+ }
+ 
+ type server struct {
+ 	svc   *service.Service
+ 	opts  Options
++	log   *slog.Logger
+ 	key   []byte
+ 	pages map[string]*pageTemplate
+ 	csrf  httpx.CSRF
+@@ -65,7 +72,7 @@ func NewHandlerWith(svc *service.Service, opts Options) http.Handler {
+ }
+ 
+ func newServer(svc *service.Service, opts Options) *server {
+-	s := &server{svc: svc, opts: opts, key: opts.CSRFKey,
++	s := &server{svc: svc, opts: opts, key: opts.CSRFKey, log: logx.New(opts.Logger),
+ 		ipFail: newLimiter(20, 60), acctFail: newLimiter(5, 60), pwFail: newLimiter(5, 600),
+ 		reg: newLimiter(10, 60), setup: newLimiter(10, 600),
+ 		join: newLimiter(10, 600)}
+-- 
+2.43.0
+
+
+From f35a0f08aab7eb7536aaef1682854a8838254eb1 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 09:34:46 +0000
+Subject: [PATCH 3/3] docs(ops): incident procedure, severity levels and
+ shipped alert rules (SEC-030, OPS-030, OPS-015)
+
+docs/ops/incident-response.md is the SEC-030 procedure: severity levels
+critical/high/normal with recommended response targets and channels
+(marked not approved until DEC-022), roles, detection sources, containment
+including the per-network freeze, evidence preservation, notification of
+network administrators and of members through them (deadline left to
+DEC-014 and counsel), recovery verification, post-incident review, the
+alert-to-level map and a drill record (not yet run). The runbook and the
+monitoring guide link it and use the same levels.
+
+docs/ops/alerts/circula.rules.yml ships the OPS-015 conditions as
+Prometheus rules over metrics the binary exports (plus up and, in a
+separate host group, node_exporter filesystem series). The undecided
+throttling rate stays unset: that alert is silent until the operator
+records circula:auth_throttling_alert_threshold:rate10m.
+
+cmd/circula/alert_rules_test.go parses the rule file and fails when a rule
+reads a series cmd/circula/metrics.go does not export, when a required
+alert, severity, incident level, owner role or SEC-030 first response is
+missing, and (TestIncidentProcedureDocumented) when the procedure lacks a
+SEC-030 element or the runbook/monitoring guide stop referencing its
+levels. It runs promtool check rules when promtool is installed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ cmd/circula/alert_rules_test.go   | 357 ++++++++++++++++++++++++++++++
+ docs/ops/alerts/circula.rules.yml | 156 +++++++++++++
+ docs/ops/incident-response.md     | 154 +++++++++++++
+ docs/ops/monitoring.md            |  55 ++++-
+ docs/ops/runbook.md               |  17 +-
+ 5 files changed, 723 insertions(+), 16 deletions(-)
+ create mode 100644 cmd/circula/alert_rules_test.go
+ create mode 100644 docs/ops/alerts/circula.rules.yml
+ create mode 100644 docs/ops/incident-response.md
+
+diff --git a/cmd/circula/alert_rules_test.go b/cmd/circula/alert_rules_test.go
+new file mode 100644
+index 0000000..ff856ff
+--- /dev/null
++++ b/cmd/circula/alert_rules_test.go
+@@ -0,0 +1,357 @@
++package main
++
++import (
++	"bytes"
++	"os"
++	"os/exec"
++	"regexp"
++	"sort"
++	"strings"
++	"testing"
++	"time"
++)
++
++// alertRulesPath is the Prometheus rule file shipped for operators (OPS-015).
++const alertRulesPath = "../../docs/ops/alerts/circula.rules.yml"
++
++// externalSeries are the only series a rule may use that this binary does not
++// export, with where they come from (documented in docs/ops/monitoring.md).
++var externalSeries = map[string]string{
++	"up":                          "Prometheus scrape status of the circula job",
++	"node_filesystem_avail_bytes": "node_exporter",
++	"node_filesystem_size_bytes":  "node_exporter",
++}
++
++// operatorThresholds are recording rules the operator defines with the agreed
++// value; until then the alert that compares against them stays silent.
++var operatorThresholds = map[string]bool{
++	"circula:auth_throttling_alert_threshold:rate10m": true,
++}
++
++type alertRule struct {
++	name, group, expr, forDur string
++	labels, annotations       map[string]string
++}
++
++// parseRules reads the rule file. It accepts the layout the shipped file uses
++// (groups, rules, expr as a block or inline scalar, labels, annotations), not
++// arbitrary YAML; promtool, when installed, checks the full syntax.
++func parseRules(t *testing.T, path string) []alertRule {
++	t.Helper()
++	b, err := os.ReadFile(path)
++	if err != nil {
++		t.Fatalf("alert rules missing (OPS-015): %v", err)
++	}
++	var rules []alertRule
++	var cur *alertRule
++	group, section, block := "", "", false
++	unquote := func(v string) string {
++		v = strings.TrimSpace(v)
++		if len(v) >= 2 && (v[0] == '"' && v[len(v)-1] == '"' || v[0] == '\'' && v[len(v)-1] == '\'') {
++			return v[1 : len(v)-1]
++		}
++		return v
++	}
++	for _, line := range strings.Split(string(b), "\n") {
++		trim := strings.TrimSpace(line)
++		indent := len(line) - len(strings.TrimLeft(line, " "))
++		if block {
++			if trim == "" || indent > 8 {
++				cur.expr += trim + "\n"
++				continue
++			}
++			block = false
++		}
++		if trim == "" || strings.HasPrefix(trim, "#") {
++			continue
++		}
++		key, val, _ := strings.Cut(strings.TrimPrefix(trim, "- "), ":")
++		val = strings.TrimSpace(val)
++		switch {
++		case indent == 2 && strings.HasPrefix(trim, "- name:"):
++			group = unquote(val)
++		case indent == 6 && strings.HasPrefix(trim, "- "):
++			rules = append(rules, alertRule{group: group, labels: map[string]string{}, annotations: map[string]string{}})
++			cur = &rules[len(rules)-1]
++			section = ""
++			if key == "alert" {
++				cur.name = unquote(val)
++			} else {
++				cur.name = "record " + unquote(val)
++			}
++		case cur != nil && indent == 8:
++			section = ""
++			switch key {
++			case "expr":
++				if val == "|" || val == ">" || val == "|-" || val == ">-" {
++					block = true
++				} else {
++					cur.expr = val
++				}
++			case "for":
++				cur.forDur = val
++			case "labels", "annotations":
++				section = key
++			}
++		case cur != nil && indent == 10 && section == "labels":
++			cur.labels[key] = unquote(val)
++		case cur != nil && indent == 10 && section == "annotations":
++			cur.annotations[key] = unquote(val)
++		}
++	}
++	return rules
++}
++
++// exportedSeries lists every series name the /metrics exporter writes once each
++// labelled family has at least one sample.
++func exportedSeries(t *testing.T) map[string]bool {
++	t.Helper()
++	m := newMetrics(time.Now())
++	m.observe("/healthz", 503, time.Millisecond)
++	m.jobRan("backup", "failed")
++	m.migrationRan("failed")
++	m.ledgerResult(false, 1, time.Now())
++	var buf bytes.Buffer
++	m.write(&buf, dynamicMetrics{version: "test", now: time.Now()})
++	names := map[string]bool{}
++	for _, line := range strings.Split(buf.String(), "\n") {
++		if f := strings.Fields(line); len(f) == 4 && f[0] == "#" && f[1] == "TYPE" {
++			names[f[2]] = true
++			if f[3] == "summary" {
++				names[f[2]+"_sum"], names[f[2]+"_count"] = true, true
++			}
++			continue
++		}
++		if line == "" || strings.HasPrefix(line, "#") {
++			continue
++		}
++		names[strings.FieldsFunc(line, func(r rune) bool { return r == '{' || r == ' ' })[0]] = true
++	}
++	return names
++}
++
++var (
++	promString   = regexp.MustCompile(`"(?:[^"\\]|\\.)*"`)
++	promMatchers = regexp.MustCompile(`\{[^}]*\}`)
++	promRange    = regexp.MustCompile(`\[[^\]]*\]`)
++	promLabelArg = regexp.MustCompile(`\b(?:by|without|on|ignoring|group_left|group_right)\s*\([^)]*\)`)
++	promIdent    = regexp.MustCompile(`[A-Za-z_:][A-Za-z0-9_:]*`)
++	promKeywords = map[string]bool{"and": true, "or": true, "unless": true, "bool": true, "offset": true, "inf": true, "nan": true}
++)
++
++// seriesIn returns the metric and recording-rule names a PromQL expression
++// reads: identifiers that are not keywords, not function calls and not part of
++// a number or duration.
++func seriesIn(expr string) []string {
++	e := promString.ReplaceAllString(expr, `""`)
++	e = promMatchers.ReplaceAllString(e, " ")
++	e = promRange.ReplaceAllString(e, " ")
++	e = promLabelArg.ReplaceAllString(e, " ")
++	var out []string
++	for _, loc := range promIdent.FindAllStringIndex(e, -1) {
++		if loc[0] > 0 && strings.ContainsRune("0123456789.", rune(e[loc[0]-1])) { // 5m, 1e3, 0.8
++			continue
++		}
++		if strings.HasPrefix(strings.TrimLeft(e[loc[1]:], " \t\n"), "(") { // a function call
++			continue
++		}
++		if id := e[loc[0]:loc[1]]; !promKeywords[strings.ToLower(id)] {
++			out = append(out, id)
++		}
++	}
++	return out
++}
++
++func TestSeriesInParsesPromQL(t *testing.T) {
++	got := seriesIn(`sum by (job) (rate(circula_x_total{route="/a b",class=~"5xx"}[5m])) > on(job) group_left() ` +
++		`scalar(circula:t:rate10m) unless up == 0 and time() - circula_y > 26 * 3600 or absent(circula_z) offset 5m`)
++	want := []string{"circula_x_total", "circula:t:rate10m", "up", "circula_y", "circula_z"}
++	if strings.Join(got, ",") != strings.Join(want, ",") {
++		t.Fatalf("seriesIn = %v, want %v", got, want)
++	}
++}
++
++// OPS-015: the shipped rule file references only metrics this binary exports
++// (or the documented external series), covers every alert the specification
++// requires, and gives each alert a severity, an incident level from the
++// incident procedure, an owner role and a first response that refers to
++// SEC-030.
++func TestAlertRulesUseExportedMetrics(t *testing.T) {
++	rules := parseRules(t, alertRulesPath)
++	exported := exportedSeries(t)
++	levels := incidentLevels(t)
++	alerts := map[string]alertRule{}
++	recorded := map[string]bool{}
++	for _, r := range rules {
++		if strings.HasPrefix(r.name, "record ") {
++			recorded[strings.TrimPrefix(r.name, "record ")] = true
++		}
++	}
++	for _, r := range rules {
++		if strings.TrimSpace(r.expr) == "" {
++			t.Errorf("%s: no expr", r.name)
++		}
++		used := seriesIn(r.expr)
++		if len(used) == 0 {
++			t.Errorf("%s: expr reads no series: %q", r.name, r.expr)
++		}
++		for _, s := range used {
++			switch {
++			case exported[s], recorded[s], operatorThresholds[s]:
++			case externalSeries[s] != "":
++				if r.group == "circula" && s != "up" { // host exporters belong in circula-host
++					t.Errorf("%s: %s comes from %s; keep it out of the circula group", r.name, s, externalSeries[s])
++				}
++			default:
++				t.Errorf("%s: series %s is not exported by circula (cmd/circula/metrics.go) nor a documented external series", r.name, s)
++			}
++		}
++		if strings.HasPrefix(r.name, "record ") {
++			continue
++		}
++		alerts[r.name] = r
++		if sev := r.labels["severity"]; sev != "critical" && sev != "warning" {
++			t.Errorf("%s: severity label %q, want critical or warning", r.name, sev)
++		}
++		if lvl := r.annotations["incident_level"]; !levels[lvl] {
++			t.Errorf("%s: incident_level %q is not a level of docs/ops/incident-response.md", r.name, lvl)
++		}
++		if r.labels["severity"] == "critical" && r.annotations["incident_level"] != "critical" {
++			t.Errorf("%s: a critical alert must be a critical incident", r.name)
++		}
++		for _, k := range []string{"summary", "owner_role", "first_response", "runbook_url"} {
++			if r.annotations[k] == "" {
++				t.Errorf("%s: missing annotation %s", r.name, k)
++			}
++		}
++		if !strings.Contains(r.annotations["first_response"], "SEC-030") {
++			t.Errorf("%s: first_response must refer to the incident procedure (SEC-030)", r.name)
++		}
++	}
++	// The conditions OPS-015 requires, with their severity.
++	for name, sev := range map[string]string{
++		"CirculaLedgerVerificationFailed": "critical", // ledger verification failure
++		"CirculaHealthCheckFailing":       "critical", // health endpoint unhealthy for a set period
++		"CirculaDown":                     "critical",
++		"CirculaBackupStale":              "warning", // no successful backup within a set period
++		"CirculaVolumeUsageHigh":          "warning", // database or backup volume above a set percentage
++		"CirculaAuthThrottling":           "warning", // sustained authentication throttling
++		"CirculaMigrationFailed":          "critical",
++	} {
++		r, ok := alerts[name]
++		if !ok {
++			t.Errorf("required alert %s missing", name)
++			continue
++		}
++		if r.labels["severity"] != sev {
++			t.Errorf("%s: severity %q, want %q", name, r.labels["severity"], sev)
++		}
++	}
++	// A failed verification sets a value the critical rule matches (OPS-014).
++	if !strings.Contains(alerts["CirculaLedgerVerificationFailed"].expr, "circula_ledger_verification_ok == 0") {
++		t.Errorf("ledger rule does not match a failed verification: %q", alerts["CirculaLedgerVerificationFailed"].expr)
++	}
++	// The incident procedure lists every alert with its level.
++	doc := readDoc(t, incidentDocPath)
++	for name, r := range alerts {
++		if !strings.Contains(doc, "| `"+name+"` | `"+r.annotations["incident_level"]+"` |") {
++			t.Errorf("incident-response.md does not list %s at level %s", name, r.annotations["incident_level"])
++		}
++	}
++	if path, err := exec.LookPath("promtool"); err == nil {
++		if out, err := exec.Command(path, "check", "rules", alertRulesPath).CombinedOutput(); err != nil {
++			t.Errorf("promtool check rules: %v\n%s", err, out)
++		}
++	}
++}
++
++const incidentDocPath = "../../docs/ops/incident-response.md"
++
++func readDoc(t *testing.T, path string) string {
++	t.Helper()
++	b, err := os.ReadFile(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	return string(b)
++}
++
++// incidentLevels reads the level names from the severity table of the
++// incident procedure (OPS-030).
++func incidentLevels(t *testing.T) map[string]bool {
++	t.Helper()
++	doc := readDoc(t, incidentDocPath)
++	_, after, ok := strings.Cut(doc, "\n## Severity levels\n")
++	if !ok {
++		t.Fatal("incident-response.md has no Severity levels section")
++	}
++	section, _, _ := strings.Cut(after, "\n## ")
++	levels := map[string]bool{}
++	row := regexp.MustCompile("(?m)^\\| `([a-z]+)` \\|")
++	for _, m := range row.FindAllStringSubmatch(section, -1) {
++		levels[m[1]] = true
++	}
++	return levels
++}
++
++// SEC-030 and OPS-030 documentation check: the incident procedure contains
++// each element SEC-030 lists, defines the levels OPS-030 names with a
++// recommended target and channel each, marks the targets as not approved
++// (DEC-022), and the runbook and monitoring guide refer to it with the same
++// levels.
++func TestIncidentProcedureDocumented(t *testing.T) {
++	doc := readDoc(t, incidentDocPath)
++	for _, el := range []string{"## Severity levels", "## Roles", "## Detection sources", "### 2. Contain", "frozen",
++		"### 3. Preserve evidence", "Affected network administrators", "Members through their administrators",
++		"### 5. Recover and verify", "post-incident review", "## Drills", "DEC-014", "DEC-022"} {
++		if !strings.Contains(doc, el) {
++			t.Errorf("incident-response.md lacks %q", el)
++		}
++	}
++	levels := incidentLevels(t)
++	var names []string
++	for l := range levels {
++		names = append(names, l)
++	}
++	sort.Strings(names)
++	if strings.Join(names, ",") != "critical,high,normal" {
++		t.Fatalf("severity levels = %v, want critical, high, normal", names)
++	}
++	_, sev, _ := strings.Cut(doc, "\n## Severity levels\n")
++	sev, _, _ = strings.Cut(sev, "\n## ")
++	for _, l := range names {
++		full := false // a row with meaning, examples, two targets and a channel, all filled
++		for _, line := range strings.Split(sev, "\n") {
++			cells := strings.Split(strings.Trim(line, "|"), "|")
++			if !strings.HasPrefix(line, "| `"+l+"` |") || len(cells) != 6 {
++				continue
++			}
++			full = true
++			for _, c := range cells {
++				if strings.TrimSpace(c) == "" {
++					full = false
++				}
++			}
++		}
++		if !full {
++			t.Errorf("level %s lacks a row with meaning, examples, recommended targets and channel", l)
++		}
++	}
++	if !strings.Contains(sev, "Recommended first response (DEC-022 open)") || !strings.Contains(doc, "not service-level commitments") {
++		t.Error("targets are not marked as recommendations pending DEC-022")
++	}
++	for _, p := range []string{"../../docs/ops/runbook.md", "../../docs/ops/monitoring.md"} {
++		other := readDoc(t, p)
++		if !strings.Contains(other, "incident-response.md") {
++			t.Errorf("%s does not link the incident procedure", p)
++		}
++		for _, l := range names {
++			if !strings.Contains(other, "`"+l+"`") {
++				t.Errorf("%s does not use the incident level %s", p, l)
++			}
++		}
++	}
++	if !strings.Contains(readDoc(t, "../../docs/ops/monitoring.md"), "alerts/circula.rules.yml") {
++		t.Error("monitoring.md does not point to the shipped alert rules")
++	}
++}
+diff --git a/docs/ops/alerts/circula.rules.yml b/docs/ops/alerts/circula.rules.yml
+new file mode 100644
+index 0000000..70908f4
+--- /dev/null
++++ b/docs/ops/alerts/circula.rules.yml
+@@ -0,0 +1,156 @@
++# Prometheus alerting rules for Circula (OPS-015).
++#
++# Load with `rule_files: [/etc/prometheus/rules/circula.rules.yml]`. The rules
++# assume the scrape job of the /metrics endpoint is named "circula" (job label)
++# and, for the group circula-host, a node_exporter on the same host.
++#
++# Every series in the group "circula" is exported by the circula binary
++# (cmd/circula/metrics.go) or is Prometheus' own `up`. A Go test
++# (cmd/circula/alert_rules_test.go) fails when a rule reads a series the binary
++# does not export, and checks this file with `promtool check rules` when
++# promtool is installed.
++#
++# Thresholds marked "recommended default" are the OPS-015 recommendations, not
++# owner decisions. The authentication-throttling rate is not decided: the
++# CirculaAuthThrottling alert stays silent until you define the recording rule
++# circula:auth_throttling_alert_threshold:rate10m with the agreed rate (429
++# responses per second over 10 minutes), for example in your own rule file:
++#
++#   groups:
++#     - name: circula-thresholds
++#       rules:
++#         - record: circula:auth_throttling_alert_threshold:rate10m
++#           expr: vector(<agreed rate>)
++#
++# Labels: `severity` (critical or warning) is for alert routing. Annotations:
++# `incident_level` is the level of docs/ops/incident-response.md (critical,
++# high, normal); `owner_role` and `first_response` follow OPS-015.
++groups:
++  - name: circula
++    rules:
++      - alert: CirculaLedgerVerificationFailed
++        expr: |
++          circula_ledger_verification_ok == 0
++            or circula_ledger_verification_failing_networks > 0
++            or circula_frozen_networks > 0
++        labels:
++          severity: critical
++        annotations:
++          summary: "Ledger verification failed on {{ $labels.instance }}; the failing network is frozen (read-only)."
++          incident_level: critical
++          owner_role: "Platform operator; product architect informed"
++          first_response: "Follow the incident procedure (SEC-030, docs/ops/incident-response.md). Do not restore over the live database or edit it. Take a backup, capture the findings with circula verify-ledger, decide with the product architect."
++          runbook_url: "docs/ops/incident-response.md#2-contain"
++
++      - alert: CirculaDown
++        expr: |
++          up{job="circula"} == 0
++        for: 5m
++        labels:
++          severity: critical
++        annotations:
++          summary: "Prometheus cannot scrape circula on {{ $labels.instance }} for 5 minutes (process down, or it exited at start-up)."
++          incident_level: critical
++          owner_role: "Platform operator"
++          first_response: "Follow SEC-030 (docs/ops/incident-response.md). Check the service manager and the start-up error in the logs: a failed or refused migration, a locked database or a configuration error stop serve before it listens."
++          runbook_url: "docs/ops/monitoring.md#failure-modes-ops-033"
++
++      - alert: CirculaHealthCheckFailing
++        # Needs a prober (orchestrator, proxy or blackbox exporter) calling /healthz.
++        expr: |
++          increase(circula_http_requests_total{job="circula",route="/healthz",class="5xx"}[5m]) > 0
++            unless on(job, instance)
++          increase(circula_http_requests_total{job="circula",route="/healthz",class="2xx"}[5m]) > 0
++        labels:
++          severity: critical
++        annotations:
++          summary: "/healthz on {{ $labels.instance }} answered only 503 for 5 minutes (database unreachable or schema mismatch)."
++          incident_level: critical
++          owner_role: "Platform operator"
++          first_response: "Follow SEC-030 (docs/ops/incident-response.md). Check the database file, the disk and the schema version; see the disk-full and corruption rows of the failure-mode table."
++          runbook_url: "docs/ops/monitoring.md#failure-modes-ops-033"
++
++      - alert: CirculaMigrationFailed
++        # serve exits on a failed or refused migration before it listens, so
++        # today CirculaDown fires; this rule covers the counter if it is ever
++        # scraped with a failure.
++        expr: |
++          increase(circula_migrations_total{result=~"failed|refused"}[1h]) > 0
++        labels:
++          severity: critical
++        annotations:
++          summary: "A schema migration failed or was refused on {{ $labels.instance }}; the database is at its previous version."
++          incident_level: critical
++          owner_role: "Platform operator"
++          first_response: "Follow SEC-030 (docs/ops/incident-response.md). Read the start-up error, keep the pre-migration backup, then follow docs/ops/upgrade.md."
++          runbook_url: "docs/ops/upgrade.md"
++
++      - alert: CirculaBackupStale
++        # 26 hours is the recommended default for the daily backup-interval.
++        # The gauge counts backups taken by this serve process; it is 0 after a
++        # restart until the next one, so uptime covers that case. Backups taken
++        # only with the `circula backup` command are not seen here.
++        expr: |
++          (
++            circula_backup_last_success_timestamp_seconds > 0
++              and (time() - circula_backup_last_success_timestamp_seconds) > 26 * 3600
++          )
++          or
++          (
++            circula_backup_last_success_timestamp_seconds == 0
++              and circula_uptime_seconds > 26 * 3600
++          )
++        labels:
++          severity: warning
++        annotations:
++          summary: "No successful backup on {{ $labels.instance }} for more than 26 hours."
++          incident_level: high
++          owner_role: "Platform operator"
++          first_response: "Follow SEC-030 (docs/ops/incident-response.md) at level high. Check backup-interval, the disk and the backup job errors in the logs; run circula backup manually."
++          runbook_url: "docs/ops/backup-restore.md#taking-a-backup"
++
++      - alert: CirculaAuthThrottling
++        expr: |
++          rate(circula_http_rate_limited_total{job="circula"}[10m])
++            > scalar(circula:auth_throttling_alert_threshold:rate10m)
++        labels:
++          severity: warning
++        annotations:
++          summary: "Sustained throttling (429 responses) on {{ $labels.instance }} above the agreed rate."
++          incident_level: high
++          owner_role: "Security owner"
++          first_response: "Review the source addresses in the edge logs. Follow SEC-030 (docs/ops/incident-response.md) if the pattern looks like an attack."
++          runbook_url: "docs/ops/incident-response.md#detection-sources"
++
++      - alert: CirculaJobFailed
++        # The metric's own `job` label (expiry, verify, backup, ...) arrives as
++        # `exported_job`, because Prometheus sets `job` to the scrape job.
++        expr: |
++          increase(circula_job_runs_total{result="failed"}[1h]) > 0
++        labels:
++          severity: warning
++        annotations:
++          summary: "Scheduled job {{ $labels.exported_job }} failed on {{ $labels.instance }}."
++          incident_level: normal
++          owner_role: "Platform operator"
++          first_response: "Read the logged error for the named job. Raise to SEC-030 (docs/ops/incident-response.md) if it is the verify or backup job."
++          runbook_url: "docs/ops/monitoring.md#scheduled-jobs-ops-027-ops-028"
++
++  - name: circula-host
++    rules:
++      - alert: CirculaVolumeUsageHigh
++        # 80 percent is the recommended default. Set mountpoint to the
++        # filesystems holding the database directory and backup-dir.
++        expr: |
++          (
++            1 - node_filesystem_avail_bytes{mountpoint=~"/|/var/lib/circula|/var/backups/circula"}
++              / node_filesystem_size_bytes{mountpoint=~"/|/var/lib/circula|/var/backups/circula"}
++          ) > 0.80
++        labels:
++          severity: warning
++        annotations:
++          summary: "Volume {{ $labels.mountpoint }} on {{ $labels.instance }} is more than 80 percent full."
++          incident_level: high
++          owner_role: "Platform operator"
++          first_response: "Follow SEC-030 (docs/ops/incident-response.md) at level high. Free space only by expiring old backups through retention; never delete the WAL file."
++          runbook_url: "docs/ops/monitoring.md#failure-modes-ops-033"
+diff --git a/docs/ops/incident-response.md b/docs/ops/incident-response.md
+new file mode 100644
+index 0000000..48c001c
+--- /dev/null
++++ b/docs/ops/incident-response.md
+@@ -0,0 +1,154 @@
++# Incident response procedure
++
++Version 1, 2026-11-04. Specifications: SEC-030 (incident response), OPS-030 (support tiers and severity), OPS-015
++(alerts), OPS-033 (failure modes). Related: SEC-013 (break-glass), GOV-023 and GOV-024 (suspension), DAT section 10.2
++(repair), DEC-014 (notice period), DEC-022 (support objectives), RSK-026 (breach notification duties).
++
++**Status.** This is the written procedure SEC-030 requires. The response targets in
++[Severity levels](#severity-levels) are recommendations: they are not service-level commitments and must not be
++presented as such until the platform operator approves them (DEC-022, open). The deadline for notifying affected
++parties is set by DEC-014 and counsel review (RSK-026); this document does not assert one. A tabletop drill is still
++to be run and recorded before hosted launch ([Drills](#drills)).
++
++Names of the people who hold each role are kept outside this repository, with the alert routing.
++
++## Severity levels
++
++The same three levels apply to incidents and to support requests. Alerts carry the level in their `incident_level`
++annotation ([alerts/circula.rules.yml](alerts/circula.rules.yml)); [monitoring.md](monitoring.md#alerts-ops-015) and the
++[runbook](runbook.md#incident-contacts-and-severity) use the same names.
++
++| Level | Meaning | Examples | Recommended first response (DEC-022 open) | Recommended restore target (DEC-022 open) | Channel |
++|---|---|---|---|---|---|
++| `critical` | Ledger integrity or security is at risk, or the instance is down | Ledger verification failure or a frozen network; suspected exposure of credentials, keys or personal data; an authorisation fault; audit anchor mismatch; instance down; migration failure | Within 1 hour of the alert, at any time | Contained at once (a failing network freezes automatically); serving again within the recovery time objective, 4 hours as proposed in [rpo-rto.md](rpo-rto.md) (DEC-016) | Paging route for `severity="critical"` alerts to the on-duty platform operator; the private security channel in [SECURITY.md](../../SECURITY.md) for vulnerability reports |
++| `high` | One network cannot post, or a safeguard is degraded while trading continues | Posting refused for a network for a reason other than integrity; backup stale; volume above 80 percent; sustained authentication throttling | Within 4 hours, during the operator's working hours | 1 working day | Team alert route for `severity="warning"` alerts; incident ticket |
++| `normal` | Other faults and support requests | A failed scheduled job; a user interface defect; a question from a network administrator | 3 working days (the acknowledgement target in [SECURITY.md](../../SECURITY.md)) | Next planned release, or as agreed with the requester | Ticket or issue tracker; network administrators use their usual contact with the operator |
++
++Approved targets (record here when the platform operator decides DEC-022):
++
++| Level | Approved first response | Approved restore target | Approved by and date |
++|---|---|---|---|
++| `critical` | not set | not set | DEC-022 open |
++| `high` | not set | not set | DEC-022 open |
++| `normal` | not set | not set | DEC-022 open |
++
++When in doubt, choose the higher level. A ledger or security incident is always `critical`. The incident lead may
++raise or lower the level as facts arrive and records each change.
++
++## Roles
++
++| Role | Responsibility during an incident |
++|---|---|
++| Incident lead (the on-duty platform operator unless handed over) | Declares the incident, sets and changes the level, coordinates, keeps the incident record and the timeline, decides when the incident is closed |
++| Platform operator | Containment and recovery on the host: freeze, maintenance mode, suspension, secret rotation, backups, restore, verification |
++| Product architect | Decides on every ledger finding and repair (DAT section 10.2); a ledger incident is not closed without their agreement |
++| Security owner | Leads security incidents: scope of exposure, secret rotation, vulnerability handling under [SECURITY.md](../../SECURITY.md), the question to counsel |
++| Network administrators of each affected network | Receive the operator's notice, notify their members, take network-level decisions (for example suspending trading, GOV-023) |
++| Counsel | Advises on notification duties to regulators and individuals and their deadlines (RSK-026, DEC-014) |
++
++## Detection sources
++
++- Alerts: [monitoring.md](monitoring.md#alerts-ops-015) lists them; the Prometheus rules are in
++  [alerts/circula.rules.yml](alerts/circula.rules.yml).
++- Ledger verification: the hourly `verify` job, every start, every backup, `circula verify-ledger`, and the
++  administrators' consistency check. A failure logs "network frozen" and sets `circula_frozen_networks`.
++- Audit chain: `circula audit-anchor verify` exit `3` ([runbook.md](runbook.md#audit-anchor-rb-010)).
++- Application logs: error entries such as `api internal error` and `web internal error`. Users see the request id as
++  the "reference" on error pages; search the logs for it.
++- Reports: abuse reports from members, requests from network administrators, vulnerability reports under
++  [SECURITY.md](../../SECURITY.md).
++- The audit trail: unexpected administrative or break-glass events (SEC-013).
++
++## Procedure
++
++### 1. Declare and classify
++
++Open an incident record (outside this repository) with: time detected (UTC), source, level, incident lead, affected
++networks (by slug), and a timeline that every participant appends to. Use [Severity levels](#severity-levels).
++
++### 2. Contain
++
++- **Ledger verification failure.** The failing network is frozen automatically: its writes are refused (API `423
++  network-frozen`, web "Network read-only"), reads and exports work, other networks keep serving. Do not edit the
++  database and do not auto-correct. If the cause may affect every network, put the instance in maintenance mode:
++  `circula maintenance -config ... on`.
++- **Security incident.** Limit the exposure first:
++  - Revoke the access of an affected person: `circula reset-password -login NAME -reason ...` ends every session, API
++    token and recovery code of that person; `circula reset-mfa` also removes the second factor. This build has no
++    command that ends every session of the instance: if that is needed, keep `serve` stopped while the affected
++    people are reset one by one.
++  - Rotate any secret that may be exposed: the six secrets in [configuration.md](configuration.md#secrets), the web
++    signing key ([configuration.md](configuration.md#runtime-state-the-web-signing-key-sec-027)) and the TLS key. Read
++    what each rotation invalidates there before rotating it.
++  - If a network must stop trading while the incident lasts: `circula suspend start -network <slug> -category
++    security_incident -reason "..." -operator "<name>"` ([runbook.md](runbook.md#suspending-a-network-gov-024)). Members keep
++    read and export access; the network's administrators are notified in their inbox and audit log.
++  - Close any break-glass session that is not needed: `circula break-glass list -network <slug>`, then
++    `circula break-glass close -session ID -reason "..."`.
++- **Loss of service.** Follow the failure-mode table in [monitoring.md](monitoring.md#failure-modes-ops-033).
++
++### 3. Preserve evidence
++
++Before any recovery step:
++
++1. Take a backup of the current state: `circula backup /var/backups/circula/incident-<id>.db` (works while `serve` runs).
++   A backup whose ledger verification fails is still written and is evidence.
++2. Keep the damaged database file if `serve` was stopped because of corruption; do not overwrite it.
++3. Copy the application logs covering the incident window, the audit mirror file if configured, and the newest audit
++   anchor to storage the incident lead controls. Logs contain no credentials by design (SEC-020); treat them as
++   restricted anyway (SEC-021).
++4. Capture the findings: `circula verify-ledger -network <slug>` (stop `serve` first), and the output of any
++   consistency check.
++5. Record hashes (`sha256sum`) of the preserved files in the incident record.
++
++### 4. Notify
++
++1. **Affected network administrators first.** The operator notifies the administrators of each affected network, and
++   only of that network, with: what happened, what is affected, what was done, what members may notice, and the next
++   update time. The deadline is set by DEC-014 and counsel review; it is not asserted here. For a platform suspension
++   the software already sends an inbox notice (GOV-024).
++2. **Members through their administrators.** The operator does not contact members directly. Administrators inform
++   their members, for example with a network announcement.
++3. **Regulators and individuals** only as counsel advises (RSK-026).
++4. For hosted deployments, the published practice is [docs/platform/incident-notification.md](../platform/incident-notification.md).
++
++### 5. Recover and verify
++
++- Restore only from a verified backup whose `ledger_verification.status` is `ok`
++  ([backup-restore.md](backup-restore.md#restoring)), or correct through new ledger transactions (reversal or adjustment
++  with dual control). Never edit ledger entries. A direct data change is allowed only as DAT section 10.2 states.
++- After any restore or repair: run `circula verify-ledger` (exit `0`), `circula audit-anchor verify` against the newest
++  anchor, start `serve`, and check `/readyz`. A frozen network thaws on the next passing verification.
++- Confirm with the affected network administrators that balances and recent trades look right; reconcile any gap
++  between the backup and the incident (trades made after the backup must be re-entered by the members).
++- Record the measured recovery time against the objective in [rpo-rto.md](rpo-rto.md).
++
++### 6. Close and review
++
++The incident lead closes the incident when service is restored, the ledger verifies and notifications are done. Within
++the following two weeks, write a blameless post-incident review: timeline, cause, what worked, what did not, and
++actions with owners. Keep it in the operator's incident register, give it to the affected network administrators, and
++add follow-up defects to `docs/qa/DEFECTS.md` or the issue tracker without personal data.
++
++## Alerts and their levels
++
++| Alert ([alerts/circula.rules.yml](alerts/circula.rules.yml)) | Level |
++|---|---|
++| `CirculaLedgerVerificationFailed` | `critical` |
++| `CirculaDown` | `critical` |
++| `CirculaHealthCheckFailing` | `critical` |
++| `CirculaMigrationFailed` | `critical` |
++| `CirculaBackupStale` | `high` |
++| `CirculaVolumeUsageHigh` | `high` |
++| `CirculaAuthThrottling` | `high` |
++| `CirculaJobFailed` | `normal` |
++
++## Drills
++
++SEC-030 requires an incident drill before hosted launch and at least once a year. Run a tabletop exercise of a ledger
++verification failure in one network (the staging test in SEC-030 and OPS-015 checks that only that network freezes,
++that an audit event is recorded and that `CirculaLedgerVerificationFailed` fires). Record each drill here:
++
++| Date | Scenario | Participants (roles) | Findings | Actions |
++|---|---|---|---|---|
++| not yet run | | | | |
+diff --git a/docs/ops/monitoring.md b/docs/ops/monitoring.md
+index b6f072b..53a9118 100644
+--- a/docs/ops/monitoring.md
++++ b/docs/ops/monitoring.md
+@@ -54,17 +54,26 @@ The verification job runs hourly, and every start and every backup also verifies
+ 
+ ## Alerts (OPS-015)
+ 
+-Owners are roles. Assign a named person per instance and record them outside this repository.
+-
+-| Alert | Condition | Severity | Owner role | First response |
+-|---|---|---|---|---|
+-| Ledger verification failure | `circula_ledger_verification_ok == 0` for any scrape after a run, or `circula_ledger_verification_failing_networks > 0`, or `circula_frozen_networks > 0` | critical | Platform operator; product architect informed | Follow SEC-030. The failing network is already frozen (read-only); the others serve. Do not restore over the live database. Run `circula verify-ledger` (stop `serve` first) to capture the findings, take a backup, then decide with the product architect. |
+-| Instance unhealthy | `/healthz` returns non-200 for more than 5 minutes | critical | Platform operator | Check the process and the database file. See the disk-full and corruption rows below. |
+-| Backup stale | `time() - circula_backup_last_success_timestamp_seconds > 26*3600` (daily schedule) | recommended | Platform operator | Check `backup-interval`, the disk, and the `backup` job failures in logs. Run `circula backup` manually. |
+-| Volume usage high | Host volume holding the database or backups above 80 percent | recommended | Platform operator | Free space by expiring old backups only through retention. Do not delete the WAL file. |
+-| Authentication throttling | `rate(circula_http_rate_limited_total[10m])` sustained above the agreed rate | warning | Security owner | Review the source addresses in the edge logs. Follow SEC-030 if the pattern looks like an attack. |
+-| Migration failure | `increase(circula_migrations_total{result="failed"}[1h]) > 0` or `result="refused"` | critical | Platform operator | The database is at its previous version. Read the start-up error, then follow [upgrade.md](upgrade.md). |
+-| Scheduled job failure | `increase(circula_job_runs_total{result="failed"}[1h]) > 0` | warning | Platform operator | Read the logged error for the named job. |
++The conditions below ship as Prometheus rules in [alerts/circula.rules.yml](alerts/circula.rules.yml). Load the file
++with `rule_files`, name the scrape job of `/metrics` `circula`, and route `severity="critical"` to paging. A Go test
++(`cmd/circula/alert_rules_test.go`) fails when a rule reads a metric the binary does not export; the only other series
++the rules use are Prometheus' `up` and, in the group `circula-host`, node_exporter's `node_filesystem_avail_bytes` and
++`node_filesystem_size_bytes`.
++
++Owners are roles. Assign a named person per instance and record them outside this repository. The incident level is
++the level of the incident procedure, [incident-response.md](incident-response.md#severity-levels) (`critical`, `high`,
++`normal`); every first response starts there (SEC-030).
++
++| Alert | Condition | Severity | Incident level | Owner role | First response |
++|---|---|---|---|---|---|
++| `CirculaLedgerVerificationFailed` | `circula_ledger_verification_ok == 0`, or `circula_ledger_verification_failing_networks > 0`, or `circula_frozen_networks > 0` | critical | `critical` | Platform operator; product architect informed | Follow SEC-030. The failing network is already frozen (read-only); the others serve. Do not restore over the live database. Take a backup, run `circula verify-ledger` (stop `serve` first) to capture the findings, then decide with the product architect. |
++| `CirculaDown` | `up{job="circula"} == 0` for 5 minutes | critical | `critical` | Platform operator | Follow SEC-030. Check the process and the start-up error: a failed or refused migration, a held lock or a configuration error stops `serve` before it listens. |
++| `CirculaHealthCheckFailing` | `/healthz` answered only `503` for 5 minutes (from `circula_http_requests_total{route="/healthz"}`; needs a prober calling `/healthz`) | critical | `critical` | Platform operator | Follow SEC-030. Check the database file and the disk; see the disk-full and corruption rows below. |
++| `CirculaMigrationFailed` | `increase(circula_migrations_total{result=~"failed\|refused"}[1h]) > 0`. Today `serve` exits on a failed or refused migration before it listens, so `CirculaDown` is the alert that fires. | critical | `critical` | Platform operator | Follow SEC-030. The database is at its previous version. Read the start-up error, then follow [upgrade.md](upgrade.md). |
++| `CirculaBackupStale` | No backup by this `serve` process for more than 26 hours (recommended default for the daily schedule): the last-success gauge is older than 26 hours, or it is `0` and uptime exceeds 26 hours | warning | `high` | Platform operator | Check `backup-interval`, the disk, and the `backup` job failures in logs. Run `circula backup` manually. Backups taken only with the command are not seen by the gauge. |
++| `CirculaVolumeUsageHigh` | Filesystem holding the database or backups above 80 percent (recommended default; node_exporter; set the `mountpoint` matcher for your host) | warning | `high` | Platform operator | Free space by expiring old backups only through retention. Do not delete the WAL file. |
++| `CirculaAuthThrottling` | `rate(circula_http_rate_limited_total[10m])` above the agreed rate. The rate is not decided: the alert stays silent until you define the recording rule `circula:auth_throttling_alert_threshold:rate10m` (see the header of the rule file). | warning | `high` | Security owner | Review the source addresses in the edge logs. Follow SEC-030 if the pattern looks like an attack. |
++| `CirculaJobFailed` | `increase(circula_job_runs_total{result="failed"}[1h]) > 0` (the job name arrives as `exported_job`) | warning | `normal` | Platform operator | Read the logged error for the named job. Raise the level if it is `verify` or `backup`. |
+ 
+ ## Failure modes (OPS-033)
+ 
+@@ -74,7 +83,7 @@ Owners are roles. Assign a named person per instance and record them outside thi
+ | Power loss | Host restarts | None needed beyond restart. Durability is `db-synchronous=normal` (default) in WAL mode, so the most recent committed transactions can be lost, each with its audit row; set `db-synchronous=full` to keep every acknowledged commit ([configuration.md](configuration.md#durability-db-synchronous)). | Start `serve`; run `verify-ledger`; reconcile recent activity with the members (a lost transaction leaves no audit row either). | Platform operator |
+ | Disk full | Writes fail; the volume alert fires | Free space by means that do not touch the ledger or WAL. | Restart after space is restored; run `verify-ledger`. | Platform operator |
+ | Database corruption | `PRAGMA integrity_check` fails in a backup; `verify-ledger` fails | Stop `serve`. Keep the damaged file. | Restore the newest verified backup (see [backup-restore.md](backup-restore.md)). Reconcile the gap. | Platform operator |
+-| Ledger verification failure | Alert above; start-up or hourly verification log line "network frozen" | The failing network is frozen automatically: writes get `network-frozen` (423), reads work, other networks serve. Optionally put the whole instance in maintenance mode (`circula maintenance on`). Capture findings. | Follow SEC-030. Do not auto-correct. Restore only after the product architect agrees. A network thaws on the next passing verification (hourly job or restart). | Platform operator; product architect |
++| Ledger verification failure | Alert above; start-up or hourly verification log line "network frozen" | The failing network is frozen automatically: writes get `network-frozen` (423), reads work, other networks serve. Optionally put the whole instance in maintenance mode (`circula maintenance on`). Capture findings. | Follow SEC-030 ([incident-response.md](incident-response.md)). Do not auto-correct. Restore only after the product architect agrees. A network thaws on the next passing verification (hourly job or restart). | Platform operator; product architect |
+ | Mail outage | Not applicable: mail is not implemented | None | None | |
+ | Suspected secret exposure | Report, or alert | Rotate the secret (OPS-010). Invalidate sessions by rotating the session key once that key exists. | Confirm the impact with the security owner. | Security owner |
+ | Clock error on host | Logs and timestamps out of order | Fix the clock. Expiry runs on the server clock and recovers on restart. | Restart if needed. Check proposal expiry through the audit trail. | Platform operator |
+@@ -90,6 +99,28 @@ Owners are roles. Assign a named person per instance and record them outside thi
+ 
+ Each job uses UTC and the server clock. The jobs are idempotent: running one twice has no further effect.
+ 
++## Application logs (SEC-020, OPS-032)
++
++Logs are structured: `log-format=json` (default) writes one JSON object per line, `text` one `key=value` line. Every
++entry has `time` (UTC), `level`, `msg` (the event name, for example `request`, `api internal error`,
++`web internal error`, `scheduled job failed`) and, for entries about a request, `request_id`. The UI and the API keep
++the `X-Request-Id` the edge assigned, so the request id on an error page ("reference") finds both the access-log entry
++and the error entry.
++
++Everything `serve` logs goes through `internal/logx`, which:
++
++- replaces the value of any field whose name refers to a password, secret, token, session, cookie, CSRF token, TOTP or
++  OTP, recovery code, API key or authorization with `[REDACTED]`;
++- removes invitation and API tokens, bearer values and `key=value` credentials from free text such as error messages,
++  and masks email addresses and international phone numbers;
++- escapes newlines, other control characters, Unicode line separators and bidirectional or invisible format
++  characters, so text a user typed cannot end an entry or forge another one.
++
++The access log records method, route template, status and duration; never the path, query, headers or body. Monetary
++amounts and balances are not logged; they are in audit events. Tests: `internal/logx`, `TestLogsCarryNoCanaryAcrossFlows`
++(`internal/web`), `TestAPILogForgeryAndCredentialsInErrors` (`internal/api`), `TestAccessLogCarriesNoCredentials`
++(`cmd/circula`). `log-level` needs a restart to change ([configuration.md](configuration.md)).
++
+ ## Log retention (SEC-021, DEC-019)
+ 
+ `circula` writes logs to standard error (`log-format`, `log-level`). Whatever stores them (systemd journal, a log file,
+diff --git a/docs/ops/runbook.md b/docs/ops/runbook.md
+index 51b4ac0..462a346 100644
+--- a/docs/ops/runbook.md
++++ b/docs/ops/runbook.md
+@@ -25,8 +25,8 @@ Short procedures for the common tasks. The details are in the linked documents.
+ circula verify-ledger -config /etc/circula/circula.json
+ ```
+ 
+-Exit `0`: every network passed. Exit `3`: at least one network failed. Capture the output and follow SEC-030. Do not edit
+-the database by hand.
++Exit `0`: every network passed. Exit `3`: at least one network failed. Capture the output and follow SEC-030
++([incident-response.md](incident-response.md)). Do not edit the database by hand.
+ 
+ `verify-ledger` and `admin create-operator` take the single-writer lock (`<database>.lock`) and refuse with "in use by
+ another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
+@@ -130,5 +130,14 @@ administrators.
+ 
+ ## Incident contacts and severity
+ 
+-Severity levels and response targets are defined in [`docs/specs/10-governance-operations.md`](../specs/10-governance-operations.md)
+-and SEC-030. Targets are recommendations until the platform operator approves them (OPS-030).
++The incident procedure is [incident-response.md](incident-response.md) (SEC-030): severity levels, roles, detection,
++containment, evidence, notification, recovery and review. Its levels apply to incidents and support requests alike
++(OPS-030):
++
++- `critical`: ledger integrity or security at risk, or the instance down. Page the on-duty platform operator.
++- `high`: one network cannot post, or a safeguard (backups, disk, throttling) is degraded.
++- `normal`: other faults and support requests.
++
++The response targets there are recommendations, not service levels, until the platform operator approves them
++(DEC-022). Contacts and the people holding each role are recorded outside this repository. Each alert in
++[monitoring.md](monitoring.md#alerts-ops-015) names its level.
+-- 
+2.43.0
+

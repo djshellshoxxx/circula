@@ -1,0 +1,1591 @@
+From c512f9e3f5935cec99fffe3ad953dcb08645c1d0 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 01:18:53 +0000
+Subject: [PATCH] wip(export): interrupted by project pause; unreviewed, tests
+ not confirmed
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/api/export_memory_test.go        | 183 +++++++
+ internal/api/export_spool.go              | 108 ++++
+ internal/api/export_spool_test.go         | 195 ++++++++
+ internal/api/h_export.go                  |  57 ++-
+ internal/api/jobs.go                      |  31 +-
+ internal/service/export.go                | 187 ++++++-
+ internal/service/export_reconcile_test.go | 568 ++++++++++++++++++++++
+ internal/service/export_write.go          |   6 +-
+ 8 files changed, 1282 insertions(+), 53 deletions(-)
+ create mode 100644 internal/api/export_memory_test.go
+ create mode 100644 internal/api/export_spool.go
+ create mode 100644 internal/api/export_spool_test.go
+ create mode 100644 internal/service/export_reconcile_test.go
+
+diff --git a/internal/api/export_memory_test.go b/internal/api/export_memory_test.go
+new file mode 100644
+index 0000000..3f3b41f
+--- /dev/null
++++ b/internal/api/export_memory_test.go
+@@ -0,0 +1,183 @@
++package api_test
++
++import (
++	"context"
++	"crypto/sha256"
++	"encoding/hex"
++	"fmt"
++	"hash"
++	"math/rand"
++	"net/http"
++	"net/http/httptest"
++	"runtime"
++	"runtime/debug"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/api"
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// bigLedger appends n synthetic, pairwise balanced rows to the network-wide
++// entries table, so a large export costs no postings. Ids are random hex, so
++// the archive compresses about as poorly as real ids do.
++type bigLedger struct {
++	store.Store
++	n int
++}
++
++func (b *bigLedger) View(ctx context.Context, fn func(store.Tx) error) error {
++	return b.Store.View(ctx, func(tx store.Tx) error { return fn(bigTx{Tx: tx, n: b.n}) })
++}
++
++type bigTx struct {
++	store.Tx
++	n int
++}
++
++func (t bigTx) StreamTable(tbl store.ExportTable, netID, memberID string, fn func([]string, []any) error) error {
++	var cols []string
++	var last []any
++	err := t.Tx.StreamTable(tbl, netID, memberID, func(c []string, v []any) error {
++		cols, last = c, v
++		return fn(c, v)
++	})
++	if err != nil || tbl != store.TblEntries || memberID != "" || last == nil {
++		return err
++	}
++	rng := rand.New(rand.NewSource(1))
++	id := func() string { return fmt.Sprintf("%016x-%016x", rng.Uint64(), rng.Uint64()) }
++	for i := 0; i < t.n; i++ {
++		row := append([]any(nil), last...)
++		amt := int64(1 + i/2%997)
++		if i%2 == 1 {
++			amt = -amt
++		}
++		for j, c := range cols {
++			switch c {
++			case "id", "tx_id", "account_id":
++				row[j] = id()
++			case "amount":
++				row[j] = amt
++			}
++		}
++		if err := fn(cols, row); err != nil {
++			return err
++		}
++	}
++	return nil
++}
++
++// peakHeap runs fn and returns the largest growth of the live heap over its
++// starting point, sampled every millisecond with the collector made eager.
++func peakHeap(fn func()) uint64 {
++	defer debug.SetGCPercent(debug.SetGCPercent(5))
++	runtime.GC()
++	var ms runtime.MemStats
++	runtime.ReadMemStats(&ms)
++	base, peak := ms.HeapAlloc, ms.HeapAlloc
++	done := make(chan struct{})
++	var wg sync.WaitGroup
++	wg.Add(1)
++	go func() {
++		defer wg.Done()
++		var m runtime.MemStats
++		for {
++			runtime.ReadMemStats(&m)
++			peak = max(peak, m.HeapAlloc)
++			select {
++			case <-done:
++				return
++			case <-time.After(time.Millisecond):
++			}
++		}
++	}()
++	fn()
++	close(done)
++	wg.Wait()
++	return peak - base
++}
++
++// hashingWriter is a ResponseWriter that keeps nothing but a digest.
++type hashingWriter struct {
++	hdr  http.Header
++	code int
++	h    hash.Hash
++	n    int64
++}
++
++func (w *hashingWriter) Header() http.Header         { return w.hdr }
++func (w *hashingWriter) WriteHeader(code int)        { w.code = code }
++func (w *hashingWriter) Write(p []byte) (int, error) { w.h.Write(p); w.n += int64(len(p)); return len(p), nil }
++
++// FR-095: the API export streams. Creating and downloading a multi-megabyte
++// archive raises the live heap by less than the archive's own size, while
++// the same measurement over a buffering sink sees the whole export. Peak
++// growth is recorded; product size and duration thresholds are not set here
++// (OQ-FR-3).
++func TestExportStreamsWithBoundedMemory(t *testing.T) {
++	if testing.Short() {
++		t.Skip("writes a large export")
++	}
++	const rows = 150_000
++	env := testutil.NewEnvWith(t, func(s store.Store) store.Store { return &bigLedger{Store: s, n: rows} })
++	admin := env.Person("admin")
++	net, _ := env.Network(admin, "acme", nil)
++	alice, aliceM := env.Member(admin, net, "alice")
++	bob, bobM := env.Member(admin, net, "bob")
++	env.Trade(net.ID, alice, bob, aliceM, bobM, 100)
++	w := &world{t: t, env: env, h: api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey})}
++	adminT := w.token(admin, domain.ScopeRead, domain.ScopeWrite)
++
++	type created struct {
++		SHA256   *string `json:"sha256"`
++		Bytes    int64   `json:"bytes"`
++		Artefact string  `json:"artefact_url"`
++	}
++	var ex created
++	create := peakHeap(func() {
++		rec := w.post(adminT, "/exports", map[string]any{"scope": "ledger", "format": "csv"}, "")
++		wantStatus(t, rec, 201)
++		ex = decode[created](t, rec)
++	})
++	if ex.SHA256 == nil || ex.Bytes < 4<<20 {
++		t.Fatalf("test premise: archive of %d bytes is too small to measure", ex.Bytes)
++	}
++	dl := &hashingWriter{hdr: http.Header{}, h: sha256.New()}
++	download := peakHeap(func() {
++		r := httptest.NewRequest("GET", ex.Artefact, nil)
++		r.Header.Set("Authorization", "Bearer "+adminT)
++		w.h.ServeHTTP(dl, r)
++	})
++	if dl.code != 200 || dl.n != ex.Bytes || hex.EncodeToString(dl.h.Sum(nil)) != *ex.SHA256 {
++		t.Fatalf("download: %d, %d bytes, checksum match %v", dl.code, dl.n, hex.EncodeToString(dl.h.Sum(nil)) == *ex.SHA256)
++	}
++	// Control: the measurement does see an export that is held in memory.
++	var held int64
++	buffered := peakHeap(func() {
++		sink := &service.MemSink{}
++		if _, err := env.Svc.Export(env.Ctx, admin, net.ID, service.ExportLedger, service.FormatCSV, sink); err != nil {
++			t.Error(err)
++		}
++		for _, n := range sink.Names() {
++			held += int64(len(sink.Bytes(n)))
++		}
++		runtime.KeepAlive(sink)
++	})
++	t.Logf("FR-095 peak heap growth: create %.1f MiB, download %.1f MiB, buffered control %.1f MiB; archive %.1f MiB, uncompressed %.1f MiB, %d entry rows",
++		mib(create), mib(download), mib(buffered), mib(uint64(ex.Bytes)), mib(uint64(held)), rows)
++	if buffered < uint64(held)/2 {
++		t.Fatalf("test premise: the sampler missed a buffered export (%d of %d bytes)", buffered, held)
++	}
++	// Structural bound, not a product threshold: holding the archive (let
++	// alone the uncompressed files) would by itself exceed it.
++	if limit := uint64(ex.Bytes); create >= limit || download >= limit {
++		t.Errorf("export not streamed: heap grew %d (create) / %d (download) bytes for a %d byte archive", create, download, ex.Bytes)
++	}
++}
++
++func mib(n uint64) float64 { return float64(n) / (1 << 20) }
+diff --git a/internal/api/export_spool.go b/internal/api/export_spool.go
+new file mode 100644
+index 0000000..1c7e24e
+--- /dev/null
++++ b/internal/api/export_spool.go
+@@ -0,0 +1,108 @@
++package api
++
++import (
++	"bytes"
++	"crypto/sha256"
++	"encoding/hex"
++	"hash"
++	"io"
++	"os"
++)
++
++// spoolFile is an export archive on disk (FR-095). It is written once while
++// the export streams and read with ReadAt for every download, so neither step
++// holds the archive in memory. Where the platform allows it (POSIX), the name
++// is unlinked as soon as the file exists: the open descriptor keeps the data
++// readable and nothing is left on disk if the process stops. Elsewhere the
++// file is removed when its export is dropped.
++type spoolFile struct {
++	f    *os.File
++	path string // name still on disk, removed on release; "" once unlinked
++	size int64
++}
++
++func (s *spoolFile) release() {
++	_ = s.f.Close()
++	if s.path != "" {
++		_ = os.Remove(s.path)
++	}
++}
++
++// artefactWriter receives the archive as the export produces it, hashing and
++// counting the bytes on the way. It spools to a new temporary file in dir
++// ("" is os.TempDir()); when none can be created it collects the archive in
++// memory, the DEC-047 interim behaviour.
++type artefactWriter struct {
++	spool *spoolFile
++	mem   bytes.Buffer
++	h     hash.Hash
++	n     int64
++}
++
++func newArtefactWriter(dir string) *artefactWriter {
++	a := &artefactWriter{h: sha256.New()}
++	f, err := os.CreateTemp(dir, "circula-export-*.zip") // mode 0600
++	if err != nil {
++		return a
++	}
++	a.spool = &spoolFile{f: f, path: f.Name()}
++	if os.Remove(f.Name()) == nil {
++		a.spool.path = ""
++	}
++	return a
++}
++
++func (a *artefactWriter) Write(p []byte) (int, error) {
++	var n int
++	var err error
++	if a.spool != nil {
++		n, err = a.spool.f.Write(p)
++	} else {
++		n, err = a.mem.Write(p)
++	}
++	a.h.Write(p[:n])
++	a.n += int64(n)
++	return n, err
++}
++
++// discard releases what was written; the writer is not used again.
++func (a *artefactWriter) discard() {
++	if a.spool != nil {
++		a.spool.release()
++	}
++	a.mem = bytes.Buffer{}
++}
++
++// finish hands the complete archive to e and returns its hex SHA-256.
++func (a *artefactWriter) finish(e *exportEntry) string {
++	if a.spool != nil {
++		a.spool.size = a.n
++		e.spool = a.spool
++	} else {
++		e.file = a.mem.Bytes()
++	}
++	return hex.EncodeToString(a.h.Sum(nil))
++}
++
++func (e *exportEntry) size() int64 {
++	if e.spool != nil {
++		return e.spool.size
++	}
++	return int64(len(e.file))
++}
++
++// release frees the artefact once its export has left the store.
++func (e *exportEntry) release() {
++	if e.spool != nil {
++		e.spool.release()
++	}
++}
++
++// content reads the artefact from its start; each call is independent, so
++// downloads may run side by side.
++func (e *exportEntry) content() *io.SectionReader {
++	if e.spool != nil {
++		return io.NewSectionReader(e.spool.f, 0, e.spool.size)
++	}
++	return io.NewSectionReader(bytes.NewReader(e.file), 0, int64(len(e.file)))
++}
+diff --git a/internal/api/export_spool_test.go b/internal/api/export_spool_test.go
+new file mode 100644
+index 0000000..3f0e1f2
+--- /dev/null
++++ b/internal/api/export_spool_test.go
+@@ -0,0 +1,195 @@
++package api
++
++import (
++	"context"
++	"crypto/sha256"
++	"encoding/hex"
++	"encoding/json"
++	"errors"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++type spoolWorld struct {
++	t              *testing.T
++	h              *server
++	tok, memberTok string // admin's and a member's bearer tokens
++	person         string // the admin's person id
++	mu             sync.Mutex
++	now            time.Time
++}
++
++// spoolEnv is a network with one trade and admin and member tokens; the
++// handler's clock is controllable and its artefacts spool into dir.
++func spoolEnv(t *testing.T, dir string) *spoolWorld {
++	t.Helper()
++	env := testutil.NewEnv(t)
++	admin := env.Person("admin")
++	net, _ := env.Network(admin, "acme", nil)
++	alice, aliceM := env.Member(admin, net, "alice")
++	bob, bobM := env.Member(admin, net, "bob")
++	env.Trade(net.ID, alice, bob, aliceM, bobM, 250)
++	w := &spoolWorld{t: t, person: admin.PersonID, now: time.Now()}
++	w.h = NewHandlerWithOptions(env.Svc, Options{Now: func() time.Time { w.mu.Lock(); defer w.mu.Unlock(); return w.now }}).(*server)
++	w.h.jobs.dir = dir
++	for _, p := range []struct {
++		a   domain.Actor
++		tok *string
++	}{{admin, &w.tok}, {alice, &w.memberTok}} {
++		raw, _, err := env.Svc.CreateAPIToken(context.Background(), p.a, service.TokenInput{Name: "t",
++			Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}})
++		if err != nil {
++			t.Fatal(err)
++		}
++		*p.tok = raw
++	}
++	return w
++}
++
++func (w *spoolWorld) do(method, path, body string) *httptest.ResponseRecorder {
++	r := httptest.NewRequest(method, path, strings.NewReader(body))
++	r.Header.Set("Authorization", "Bearer "+w.tok)
++	if body != "" {
++		r.Header.Set("Content-Type", "application/json")
++	}
++	rec := httptest.NewRecorder()
++	w.h.ServeHTTP(rec, r)
++	return rec
++}
++
++func (w *spoolWorld) export() (exportDTO, *exportEntry) {
++	w.t.Helper()
++	rec := w.do("POST", "/api/v1/exports", `{"scope":"ledger","format":"csv"}`)
++	if rec.Code != 201 {
++		w.t.Fatalf("create: %d %s", rec.Code, rec.Body.String())
++	}
++	var d exportDTO
++	if err := json.Unmarshal(rec.Body.Bytes(), &d); err != nil {
++		w.t.Fatal(err)
++	}
++	w.h.jobs.mu.Lock()
++	e := w.h.jobs.exps[d.ID]
++	w.h.jobs.mu.Unlock()
++	if e == nil {
++		w.t.Fatal("export not stored")
++	}
++	return d, e
++}
++
++func dirEntries(t *testing.T, dir string) int {
++	t.Helper()
++	ents, err := os.ReadDir(dir)
++	if err != nil {
++		t.Fatal(err)
++	}
++	return len(ents)
++}
++
++// FR-095 / DEC-047: the artefact is spooled to disk, not held in memory; the
++// download is served from the file and still verified (DAT-040); dropping or
++// expiring the export releases the file.
++func TestExportArtefactIsSpooled(t *testing.T) {
++	dir := t.TempDir()
++	w := spoolEnv(t, dir)
++	d, e := w.export()
++	if e.spool == nil || e.file != nil || e.spool.size != d.Bytes || d.Bytes == 0 || w.h.jobs.bytes != d.Bytes {
++		t.Fatalf("artefact held in memory or miscounted: spool=%v file=%d dto=%d store=%d", e.spool != nil, len(e.file), d.Bytes, w.h.jobs.bytes)
++	}
++	if runtime.GOOS != "windows" && dirEntries(t, dir) != 0 {
++		t.Error("spooled artefact still has a name on disk; it should be unlinked at once")
++	}
++	got := w.do("GET", "/api/v1/exports/"+d.ID+"/artefact", "")
++	sum := sha256.Sum256(got.Body.Bytes())
++	if got.Code != 200 || hex.EncodeToString(sum[:]) != *d.SHA256 || got.Header().Get("Content-Length") != itoa64(d.Bytes) {
++		t.Fatalf("download: %d len %d (header %s) sha %x want %s", got.Code, got.Body.Len(), got.Header().Get("Content-Length"), sum, *d.SHA256)
++	}
++	// A corrupted spool file is never served.
++	if _, err := e.spool.f.WriteAt([]byte("XX"), 40); err != nil {
++		t.Fatal(err)
++	}
++	if bad := w.do("GET", "/api/v1/exports/"+d.ID+"/artefact", ""); bad.Code != 500 {
++		t.Errorf("corrupted artefact served: %d", bad.Code)
++	}
++	// Erasure drops the export and closes its file.
++	w.h.jobs.dropPerson(w.person)
++	if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) {
++		t.Errorf("spool file still open after drop: %v", err)
++	}
++	if w.h.jobs.bytes != 0 || dirEntries(t, dir) != 0 {
++		t.Errorf("after drop: %d bytes counted, %d files", w.h.jobs.bytes, dirEntries(t, dir))
++	}
++	if gone := w.do("GET", "/api/v1/exports/"+d.ID+"/artefact", ""); gone.Code != 404 {
++		t.Errorf("dropped export: %d", gone.Code)
++	}
++	// Expiry releases the file too.
++	_, e2 := w.export()
++	w.mu.Lock()
++	w.now = w.now.Add(jobTTL + time.Minute)
++	w.mu.Unlock()
++	if why := w.h.jobs.exportSlot(w.person); why != "" {
++		t.Fatalf("slot after expiry: %q", why)
++	}
++	if _, err := e2.spool.f.Stat(); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 || dirEntries(t, dir) != 0 {
++		t.Errorf("expired artefact not released: %v, %d bytes", err, w.h.jobs.bytes)
++	}
++}
++
++func itoa64(n int64) string { b, _ := json.Marshal(n); return string(b) }
++
++// Without a usable temporary directory the export still works, in memory as
++// before (DEC-047).
++func TestExportArtefactFallsBackToMemory(t *testing.T) {
++	w := spoolEnv(t, filepath.Join(t.TempDir(), "missing"))
++	d, e := w.export()
++	if e.spool != nil || int64(len(e.file)) != d.Bytes || d.Bytes == 0 {
++		t.Fatalf("fallback: spool=%v file=%d dto=%d", e.spool != nil, len(e.file), d.Bytes)
++	}
++	got := w.do("GET", "/api/v1/exports/"+d.ID+"/artefact", "")
++	if sum := sha256.Sum256(got.Body.Bytes()); got.Code != http.StatusOK || hex.EncodeToString(sum[:]) != *d.SHA256 {
++		t.Fatalf("download: %d", got.Code)
++	}
++}
++
++// An export refused after it was spooled (the byte cap is reached only once
++// its size is known) or refused by the service leaves no file behind.
++func TestExportRefusedLeavesNoSpool(t *testing.T) {
++	dir := t.TempDir()
++	w := spoolEnv(t, dir)
++	// Another person's artefact almost fills the byte cap (SA-11).
++	other := newArtefactWriter(t.TempDir())
++	if other.spool == nil {
++		t.Fatal("test premise: no spool file")
++	}
++	big := &exportEntry{net: "n", person: "someone-else", at: w.now, dto: exportDTO{ID: "big"}}
++	other.finish(big)
++	big.spool.size = maxExpBytes - 10
++	if !w.h.jobs.putExport(big) {
++		t.Fatal("test premise: filler refused")
++	}
++	if rec := w.do("POST", "/api/v1/exports", `{"scope":"ledger","format":"csv"}`); rec.Code != 503 {
++		t.Fatalf("full store: %d %s", rec.Code, rec.Body.String())
++	}
++	if n := dirEntries(t, dir); n != 0 {
++		t.Errorf("%d files left behind by the refused export", n)
++	}
++	// Refused by the service: a member may not export the ledger.
++	w.h.jobs.dropPerson("someone-else")
++	w.tok = w.memberTok
++	if rec := w.do("POST", "/api/v1/exports", `{"scope":"ledger","format":"csv"}`); rec.Code != 403 {
++		t.Fatalf("member ledger export: %d", rec.Code)
++	}
++	if n := dirEntries(t, dir); n != 0 {
++		t.Errorf("%d files left behind by the forbidden export", n)
++	}
++}
+diff --git a/internal/api/h_export.go b/internal/api/h_export.go
+index f6691b2..7f49825 100644
+--- a/internal/api/h_export.go
++++ b/internal/api/h_export.go
+@@ -1,11 +1,11 @@
+ package api
+ 
+ import (
+-	"archive/zip"
+-	"bytes"
+ 	"crypto/sha256"
+ 	"encoding/hex"
++	"io"
+ 	"net/http"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/google/uuid"
+@@ -17,7 +17,8 @@ type exportEntry struct {
+ 	net, person string
+ 	at          time.Time
+ 	dto         exportDTO
+-	file        []byte
++	file        []byte     // the archive when held in memory (no temporary file could be made)
++	spool       *spoolFile // the archive on disk (FR-095); nil when in memory
+ 	ctype       string
+ 	name        string
+ }
+@@ -30,7 +31,7 @@ type exportDTO struct {
+ 	CreatedAt   string  `json:"created_at"`
+ 	ExpiresAt   string  `json:"expires_at"`
+ 	SHA256      *string `json:"sha256"`
+-	Bytes       int     `json:"bytes"`
++	Bytes       int64   `json:"bytes"`
+ 	ArtefactURL *string `json:"artefact_url"`
+ 	Error       *string `json:"error"`
+ }
+@@ -39,8 +40,10 @@ var exportScopes = map[string]service.ExportScope{"mine": service.ExportMine, "l
+ 	"members": service.ExportMembers, "audit": service.ExportAudit, "full": service.ExportFull}
+ 
+ // createExport runs the export synchronously (the service streams from one
+-// read snapshot) and keeps the artefact in memory for 24 h, so the job is
+-// already `complete` when the 201 returns.
++// read snapshot) and keeps the artefact for 24 h, so the job is already
++// `complete` when the 201 returns. The archive streams from the service
++// through the zip writer into a temporary file, never whole in memory
++// (FR-095); see artefactWriter for the fallback.
+ func (s *server) createExport(c *reqCtx) error { // API-065
+ 	var in struct {
+ 		Scope  string `json:"scope"`
+@@ -65,32 +68,29 @@ func (s *server) createExport(c *reqCtx) error { // API-065
+ 	if why := s.jobs.exportSlot(c.actor.PersonID); why != "" {
+ 		return storeFull(why)
+ 	}
+-	sink := &service.MemSink{}
+-	_, err := s.svc.Export(c.r.Context(), c.actor, c.netID, scope, format, sink)
+-	if err != nil {
+-		return err
++	art := newArtefactWriter(s.jobs.dir)
++	zs := service.NewZipSink(art)
++	_, err := s.svc.Export(c.r.Context(), c.actor, c.netID, scope, format, zs)
++	if err == nil {
++		err = zs.Close()
+ 	}
+-	var zb bytes.Buffer
+-	zw := zip.NewWriter(&zb)
+-	for _, n := range sink.Names() {
+-		f, _ := zw.Create(n)
+-		_, _ = f.Write(sink.Bytes(n))
+-	}
+-	if err := zw.Close(); err != nil {
++	if err != nil {
++		art.discard()
+ 		return err
+ 	}
+-	data := zb.Bytes()
+-	sum := sha256.Sum256(data)
+-	hexsum := hex.EncodeToString(sum[:])
+ 	id := uuid.NewString()
+ 	now := s.opt.Now()
++	e := &exportEntry{net: c.netID, person: c.actor.PersonID, at: now, ctype: "application/zip",
++		name: "circula-export-" + in.Scope + ".zip"}
++	hexsum := art.finish(e)
+ 	url := v1 + "/exports/" + id + "/artefact"
+-	d := exportDTO{ID: id, Scope: in.Scope, Format: string(format), Status: "complete", CreatedAt: ts(now),
+-		ExpiresAt: ts(now.Add(jobTTL)), SHA256: &hexsum, Bytes: len(data), ArtefactURL: &url}
+-	if !s.jobs.putExport(&exportEntry{net: c.netID, person: c.actor.PersonID, at: now, dto: d, file: data,
+-		ctype: "application/zip", name: "circula-export-" + in.Scope + ".zip"}) {
++	e.dto = exportDTO{ID: id, Scope: in.Scope, Format: string(format), Status: "complete", CreatedAt: ts(now),
++		ExpiresAt: ts(now.Add(jobTTL)), SHA256: &hexsum, Bytes: e.size(), ArtefactURL: &url}
++	if !s.jobs.putExport(e) {
++		e.release()
+ 		return storeFull("full")
+ 	}
++	d := e.dto
+ 	c.w.Header().Set("Location", v1+"/exports/"+id)
+ 	return ok(c, 201, d)
+ }
+@@ -119,16 +119,19 @@ func (s *server) getArtefact(c *reqCtx) error { // API-065
+ 	if err := s.svc.AuthorizeExportDownload(c.r.Context(), c.actor, c.netID, exportScopes[e.dto.Scope]); err != nil {
+ 		return err // SA2-17: role is re-checked at download
+ 	}
+-	sum := sha256.Sum256(e.file)
+-	if hex.EncodeToString(sum[:]) != *e.dto.SHA256 { // DAT-040: only serve verified artefacts
++	// DAT-040: only serve verified artefacts. Both the check and the response
++	// stream from the artefact, so a download never holds it in memory (FR-095).
++	sum := sha256.New()
++	if _, err := io.Copy(sum, e.content()); err != nil || hex.EncodeToString(sum.Sum(nil)) != *e.dto.SHA256 {
+ 		return errInternal
+ 	}
+ 	h := c.w.Header()
+ 	h.Set("Content-Type", e.ctype)
+ 	h.Set("Content-Disposition", `attachment; filename="`+e.name+`"`)
++	h.Set("Content-Length", strconv.FormatInt(e.size(), 10))
+ 	h.Set("X-Content-SHA256", *e.dto.SHA256)
+ 	c.w.WriteHeader(http.StatusOK)
+-	_, _ = c.w.Write(e.file)
++	_, _ = io.Copy(c.w, e.content())
+ 	return nil
+ }
+ 
+diff --git a/internal/api/jobs.go b/internal/api/jobs.go
+index 17caff5..c19fdfb 100644
+--- a/internal/api/jobs.go
++++ b/internal/api/jobs.go
+@@ -5,15 +5,18 @@ import (
+ 	"time"
+ )
+ 
+-// jobStore holds consistency-check results and export artefacts in memory:
+-// the service has no persistent job tables. Entries expire after 24 h and the
+-// store is size-bounded, so memory use is bounded.
++// jobStore holds consistency-check results and export artefacts: the service
++// has no persistent job tables. Artefacts are spooled to temporary files when
++// possible (FR-095) and otherwise kept in memory. Entries expire after 24 h
++// and the store is size-bounded, so memory and disk use are bounded.
+ type jobStore struct {
+ 	now    func() time.Time
+ 	mu     sync.Mutex
+ 	checks map[string]checkEntry
+ 	exps   map[string]*exportEntry
+ 	bytes  int64
++	// dir is where export artefacts are spooled; "" is os.TempDir().
++	dir string
+ }
+ 
+ type checkEntry struct {
+@@ -36,14 +39,20 @@ func newJobStore(now func() time.Time) *jobStore {
+ 	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{}}
+ }
+ 
++// dropLocked removes one export and releases its artefact.
++func (j *jobStore) dropLocked(id string, e *exportEntry) {
++	j.bytes -= e.size()
++	delete(j.exps, id)
++	e.release()
++}
++
+ // dropPerson removes the export artefacts and check results of one person.
+ func (j *jobStore) dropPerson(person string) {
+ 	j.mu.Lock()
+ 	defer j.mu.Unlock()
+ 	for k, e := range j.exps {
+ 		if e.person == person {
+-			j.bytes -= int64(len(e.file))
+-			delete(j.exps, k)
++			j.dropLocked(k, e)
+ 		}
+ 	}
+ 	for k, e := range j.checks {
+@@ -93,13 +102,12 @@ func (j *jobStore) exportSlot(person string) string {
+ 	return j.slotLocked(person, 0)
+ }
+ 
+-func (j *jobStore) slotLocked(person string, size int) string {
++func (j *jobStore) slotLocked(person string, size int64) string {
+ 	now := j.now()
+ 	own := 0
+ 	for k, x := range j.exps {
+ 		if now.Sub(x.at) > jobTTL {
+-			j.bytes -= int64(len(x.file))
+-			delete(j.exps, k)
++			j.dropLocked(k, x)
+ 			continue
+ 		}
+ 		if x.person == person {
+@@ -109,20 +117,21 @@ func (j *jobStore) slotLocked(person string, size int) string {
+ 	switch {
+ 	case own >= maxExportsPerPerson:
+ 		return "person"
+-	case len(j.exps) >= maxExports || j.bytes+int64(size) > maxExpBytes:
++	case len(j.exps) >= maxExports || j.bytes+size > maxExpBytes:
+ 		return "full"
+ 	}
+ 	return ""
+ }
+ 
++// putExport stores e; on false the caller still owns (and releases) it.
+ func (j *jobStore) putExport(e *exportEntry) bool {
+ 	j.mu.Lock()
+ 	defer j.mu.Unlock()
+-	if j.slotLocked(e.person, len(e.file)) != "" {
++	if j.slotLocked(e.person, e.size()) != "" {
+ 		return false
+ 	}
+ 	j.exps[e.dto.ID] = e
+-	j.bytes += int64(len(e.file))
++	j.bytes += e.size()
+ 	return true
+ }
+ 
+diff --git a/internal/service/export.go b/internal/service/export.go
+index c8b3b29..70073f5 100644
+--- a/internal/service/export.go
++++ b/internal/service/export.go
+@@ -1,6 +1,7 @@
+ package service
+ 
+ import (
++	"archive/zip"
+ 	"context"
+ 	"crypto/sha256"
+ 	"encoding/hex"
+@@ -56,16 +57,42 @@ type ManifestFile struct {
+ }
+ 
+ // Manifest lists the files with row counts and checksums, and states the
+-// single ledger_seq the whole export was read at (DAT-037, DAT-039).
++// single ledger_seq the whole export was read at (DAT-037, DAT-039). Scopes
++// that export entries also carry a reconciliation summary (GOV-022).
+ type Manifest struct {
+-	SchemaVersion int            `json:"schema_version"`
+-	NetworkID     string         `json:"network_id"`
+-	Scope         ExportScope    `json:"scope"`
+-	Format        ExportFormat   `json:"format"`
+-	Decimals      int            `json:"decimals"`
+-	LedgerSeq     int64          `json:"ledger_seq"`
+-	GeneratedAt   time.Time      `json:"generated_at"`
+-	Files         []ManifestFile `json:"files"`
++	SchemaVersion  int             `json:"schema_version"`
++	NetworkID      string          `json:"network_id"`
++	Scope          ExportScope     `json:"scope"`
++	Format         ExportFormat    `json:"format"`
++	Decimals       int             `json:"decimals"`
++	LedgerSeq      int64           `json:"ledger_seq"`
++	GeneratedAt    time.Time       `json:"generated_at"`
++	Files          []ManifestFile  `json:"files"`
++	Reconciliation *Reconciliation `json:"reconciliation,omitempty"`
++}
++
++// Reconciliation is the summary a recipient recomputes from the exported
++// entries (GOV-022, QA-030), read at the manifest's ledger_seq. Entries and
++// EntrySum cover every exported entry row. BalanceTotal sums the balances of
++// the covered accounts: every account of the network for the ledger and full
++// scopes (zero in a sound ledger, as is EntrySum), the caller's own account
++// for mine (equal to EntrySum, since mine holds only the caller's entries).
++// Accounts fingerprints the per-account balances; it is present for the
++// ledger and full scopes only.
++type Reconciliation struct {
++	Entries      int64          `json:"entries"`
++	EntrySum     int64          `json:"entry_sum"`
++	BalanceTotal int64          `json:"balance_total"`
++	Accounts     *AccountDigest `json:"accounts,omitempty"`
++}
++
++// AccountDigest fingerprints per-account balances so that they can be
++// checked against the entries alone. SHA256 is the hex SHA-256 of one line
++// "<account_id>,<balance>\n" per account whose balance is not zero, in byte
++// order of account_id; NonZero is the number of those lines.
++type AccountDigest struct {
++	NonZero int64  `json:"nonzero"`
++	SHA256  string `json:"sha256"`
+ }
+ 
+ var scopeTables = map[ExportScope][]store.ExportTable{
+@@ -163,10 +190,25 @@ func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string,
+ 		}
+ 		man = &Manifest{SchemaVersion: ExportSchemaVersion, NetworkID: netID, Scope: scope, Format: format,
+ 			Decimals: net.Policy.Decimals, LedgerSeq: seq, GeneratedAt: s.now()}
++		rc := newReconciler(tables, memberID == "")
+ 		if format == FormatCSV {
+-			return writeCSV(tx, sink, man, tables, memberID)
++			err = writeCSV(tx, sink, man, tables, memberID, rc)
++		} else {
++			err = writeJSON(tx, sink, man, tables, memberID, rc)
++		}
++		if err != nil || rc == nil {
++			return err
++		}
++		if memberID != "" { // mine: the caller's own balance, from the same snapshot
++			if err := tx.StreamTable(store.TblAccounts, netID, memberID, func(cols []string, vals []any) error {
++				rc.observe(store.TblAccounts, cols, vals)
++				return nil
++			}); err != nil {
++				return err
++			}
+ 		}
+-		return writeJSON(tx, sink, man, tables, memberID)
++		man.Reconciliation = rc.summary()
++		return nil
+ 	})
+ 	if err != nil {
+ 		return nil, err
+@@ -211,6 +253,87 @@ func (c *countingWriter) file(name string, rows int64) ManifestFile {
+ 	return ManifestFile{Name: name, Rows: rows, Bytes: c.n, SHA256: hex.EncodeToString(c.h.Sum(nil))}
+ }
+ 
++// reconciler builds the reconciliation summary from the rows as they stream
++// past, so it needs no second read and holds nothing but running totals.
++type reconciler struct {
++	rec     Reconciliation
++	digest  hash.Hash // nil unless the scope covers every account of the network
++	nonzero int64
++	amount  int // column of entries.amount
++	id, bal int // columns of accounts.id and accounts.balance
++}
++
++// newReconciler returns nil when tables hold no entries. networkWide selects
++// the per-account digest (ledger and full scopes).
++func newReconciler(tables []store.ExportTable, networkWide bool) *reconciler {
++	for _, t := range tables {
++		if t == store.TblEntries {
++			r := &reconciler{amount: -1, id: -1, bal: -1}
++			if networkWide {
++				r.digest = sha256.New()
++			}
++			return r
++		}
++	}
++	return nil
++}
++
++// observe takes one StreamTable callback: the header (nil vals) or a row.
++// Accounts arrive ordered by id, which is the digest's order.
++func (r *reconciler) observe(t store.ExportTable, cols []string, vals []any) {
++	if r == nil {
++		return
++	}
++	switch t {
++	case store.TblEntries:
++		if vals == nil {
++			r.amount = colIndex(cols, "amount")
++			return
++		}
++		r.rec.Entries++
++		if v, ok := cell[int64](vals, r.amount); ok {
++			r.rec.EntrySum += v
++		}
++	case store.TblAccounts:
++		if vals == nil {
++			r.id, r.bal = colIndex(cols, "id"), colIndex(cols, "balance")
++			return
++		}
++		b, _ := cell[int64](vals, r.bal)
++		r.rec.BalanceTotal += b
++		if id, ok := cell[string](vals, r.id); ok && r.digest != nil && b != 0 {
++			r.nonzero++
++			fmt.Fprintf(r.digest, "%s,%d\n", id, b)
++		}
++	}
++}
++
++func (r *reconciler) summary() *Reconciliation {
++	out := r.rec
++	if r.digest != nil {
++		out.Accounts = &AccountDigest{NonZero: r.nonzero, SHA256: hex.EncodeToString(r.digest.Sum(nil))}
++	}
++	return &out
++}
++
++func colIndex(cols []string, name string) int {
++	for i, c := range cols {
++		if c == name {
++			return i
++		}
++	}
++	return -1
++}
++
++func cell[T any](vals []any, i int) (T, bool) {
++	var zero T
++	if i < 0 || i >= len(vals) {
++		return zero, false
++	}
++	v, ok := vals[i].(T)
++	return v, ok
++}
++
+ // moneyCols are minor-unit columns that also get a formatted twin (FR-090).
+ var moneyCols = map[string]bool{"amount": true, "balance": true, "limit_override": true, "price": true,
+ 	"reversed_total": true, "reversal_amount": true}
+@@ -241,17 +364,55 @@ func decorate(cols []string, vals []any, decimals int) ([]string, []any) {
+ 	return outC, outV
+ }
+ 
++// checkFileName refuses names that could leave the package directory.
++func checkFileName(name string) error {
++	if name == "" || name != filepath.Base(name) || strings.HasPrefix(name, ".") {
++		return fmt.Errorf("export: bad file name %q", name)
++	}
++	return nil
++}
++
+ // DirSink writes export files into a directory (for CLI use).
+ type DirSink struct{ Dir string }
+ 
+ // Create implements ExportSink.
+ func (d DirSink) Create(name string) (io.WriteCloser, error) {
+-	if name != filepath.Base(name) || strings.HasPrefix(name, ".") {
+-		return nil, fmt.Errorf("export: bad file name %q", name)
++	if err := checkFileName(name); err != nil {
++		return nil, err
+ 	}
+ 	return os.OpenFile(filepath.Join(d.Dir, name), os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0o600)
+ }
+ 
++// ZipSink writes the package as one zip archive to an io.Writer, entry by
++// entry in the order the service creates the files (manifest.json last).
++// Nothing is buffered beyond the compressor's window, so the archive can go
++// straight to a file or a response (FR-095). The API and the CLI both use
++// it, so they produce the same archive (ARC-020). Close it after Export.
++type ZipSink struct{ zw *zip.Writer }
++
++// NewZipSink starts an archive on w.
++func NewZipSink(w io.Writer) *ZipSink { return &ZipSink{zw: zip.NewWriter(w)} }
++
++// Create implements ExportSink. Creating a file ends the previous one.
++func (z *ZipSink) Create(name string) (io.WriteCloser, error) {
++	if err := checkFileName(name); err != nil {
++		return nil, err
++	}
++	w, err := z.zw.Create(name)
++	if err != nil {
++		return nil, err
++	}
++	return zipEntry{w}, nil
++}
++
++// Close writes the archive's central directory; it does not close the
++// underlying writer.
++func (z *ZipSink) Close() error { return z.zw.Close() }
++
++type zipEntry struct{ io.Writer }
++
++func (zipEntry) Close() error { return nil }
++
+ // MemSink collects export files in memory (tests, small exports).
+ type MemSink struct{ Files map[string]*memFile }
+ 
+diff --git a/internal/service/export_reconcile_test.go b/internal/service/export_reconcile_test.go
+new file mode 100644
+index 0000000..ee9941e
+--- /dev/null
++++ b/internal/service/export_reconcile_test.go
+@@ -0,0 +1,568 @@
++package service_test
++
++import (
++	"archive/zip"
++	"bytes"
++	"context"
++	"crypto/sha256"
++	"encoding/csv"
++	"encoding/hex"
++	"encoding/json"
++	"fmt"
++	"io"
++	"math/rand"
++	"sort"
++	"strconv"
++	"strings"
++	"sync"
++	"sync/atomic"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// exportedTables reads every table of a package without the service's code:
++// encoding/csv for CSV files, encoding/json with exact numbers for the JSON
++// document. Cells are strings; null is "".
++func exportedTables(t *testing.T, sink *service.MemSink, man *service.Manifest) map[string][]map[string]string {
++	t.Helper()
++	out := map[string][]map[string]string{}
++	for _, f := range man.Files {
++		b := sink.Bytes(f.Name)
++		if name, ok := strings.CutSuffix(f.Name, ".csv"); ok {
++			recs, err := csv.NewReader(bytes.NewReader(b)).ReadAll()
++			if err != nil || len(recs) == 0 {
++				t.Fatalf("%s: %v", f.Name, err)
++			}
++			rows := []map[string]string{}
++			for _, r := range recs[1:] {
++				m := map[string]string{}
++				for i, h := range recs[0] {
++					m[h] = r[i]
++				}
++				rows = append(rows, m)
++			}
++			out[name] = rows
++			continue
++		}
++		dec := json.NewDecoder(bytes.NewReader(b))
++		dec.UseNumber()
++		var doc struct {
++			Tables map[string][]map[string]any `json:"tables"`
++		}
++		if err := dec.Decode(&doc); err != nil {
++			t.Fatalf("%s: %v", f.Name, err)
++		}
++		for name, rows := range doc.Tables {
++			out[name] = []map[string]string{}
++			for _, r := range rows {
++				m := map[string]string{}
++				for k, v := range r {
++					if v != nil {
++						m[k] = fmt.Sprint(v)
++					}
++				}
++				out[name] = append(out[name], m)
++			}
++		}
++	}
++	return out
++}
++
++func atoi(t *testing.T, s string) int64 {
++	t.Helper()
++	v, err := strconv.ParseInt(s, 10, 64)
++	if err != nil {
++		t.Fatalf("not an integer: %q", s)
++	}
++	return v
++}
++
++// snapshotBalances recomputes every account's balance as of ledger_seq seq
++// with raw SQL over the append-only entries, independently of the export.
++func snapshotBalances(t *testing.T, w *world, seq int64) map[string]int64 {
++	t.Helper()
++	rows, err := w.Store.DB().Query(`SELECT account_id, SUM(amount) FROM entries WHERE network_id = ? AND ledger_seq <= ?
++		GROUP BY account_id`, w.net.ID, seq)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer func() { _ = rows.Close() }()
++	out := map[string]int64{}
++	for rows.Next() {
++		var id string
++		var sum int64
++		if err := rows.Scan(&id, &sum); err != nil {
++			t.Fatal(err)
++		}
++		out[id] = sum
++	}
++	return out
++}
++
++// reconcileExport recomputes the reconciliation of one export from its own
++// files (QA-030) and returns every difference: per-transaction sums, per-
++// account sums against the exported balances and against the database at the
++// export's ledger_seq, and the manifest's summary. memberID is set for mine.
++func reconcileExport(t *testing.T, w *world, sink *service.MemSink, man *service.Manifest, memberID string) []string {
++	t.Helper()
++	var diffs []string
++	bad := func(f string, a ...any) { diffs = append(diffs, fmt.Sprintf(string(man.Scope)+"/"+string(man.Format)+": "+f, a...)) }
++	tables := exportedTables(t, sink, man)
++	entries := tables["entries"]
++	var sum int64
++	perTx, perAcct := map[string]int64{}, map[string]int64{}
++	for _, e := range entries {
++		amt := atoi(t, e["amount"])
++		if seq := atoi(t, e["ledger_seq"]); seq > man.LedgerSeq {
++			bad("entry %s posted at %d, after the snapshot %d", e["id"], seq, man.LedgerSeq)
++		}
++		sum += amt
++		perTx[e["tx_id"]] += amt
++		perAcct[e["account_id"]] += amt
++	}
++	at := snapshotBalances(t, w, man.LedgerSeq)
++	var rawCount int64
++	q := `SELECT COUNT(*) FROM entries WHERE network_id = ? AND ledger_seq <= ?`
++	args := []any{w.net.ID, man.LedgerSeq}
++	if memberID != "" {
++		q += ` AND account_id = (SELECT id FROM accounts WHERE network_id = ? AND member_id = ?)`
++		args = append(args, w.net.ID, memberID)
++	}
++	if err := w.Store.DB().QueryRow(q, args...).Scan(&rawCount); err != nil {
++		t.Fatal(err)
++	}
++	if int64(len(entries)) != rawCount {
++		bad("%d entries exported, %d posted by the snapshot", len(entries), rawCount)
++	}
++	got := man.Reconciliation
++	if got == nil {
++		bad("no reconciliation summary")
++		return diffs
++	}
++	if got.Entries != int64(len(entries)) || got.EntrySum != sum {
++		bad("summary says %d entries summing to %d; recomputed %d summing to %d", got.Entries, got.EntrySum, len(entries), sum)
++	}
++	if memberID != "" {
++		var own string
++		if err := w.Store.DB().QueryRow(`SELECT id FROM accounts WHERE network_id = ? AND member_id = ?`, w.net.ID, memberID).Scan(&own); err != nil {
++			t.Fatal(err)
++		}
++		if sum != at[own] || got.BalanceTotal != at[own] {
++			bad("own entries sum to %d, summary balance %d, balance at the snapshot %d", sum, got.BalanceTotal, at[own])
++		}
++		if got.Accounts != nil {
++			bad("member export carries the network-wide balance digest")
++		}
++		return diffs
++	}
++	for tx, s := range perTx {
++		if s != 0 {
++			bad("transaction %s entries sum to %d", tx, s)
++		}
++	}
++	if sum != 0 {
++		bad("entries sum to %d", sum)
++	}
++	for id, b := range at {
++		if perAcct[id] != b {
++			bad("account %s: exported entries sum to %d, database at the snapshot %d", id, perAcct[id], b)
++		}
++	}
++	var total int64
++	for _, a := range tables["accounts"] {
++		b := atoi(t, a["balance"])
++		total += b
++		if perAcct[a["id"]] != b {
++			bad("account %s: exported balance %d, its exported entries sum to %d", a["id"], b, perAcct[a["id"]])
++		}
++	}
++	if got.BalanceTotal != total || total != 0 {
++		bad("summary balance total %d, exported balances total %d", got.BalanceTotal, total)
++	}
++	var ids []string
++	for id, s := range perAcct {
++		if s != 0 {
++			ids = append(ids, id)
++		}
++	}
++	sort.Strings(ids)
++	h := sha256.New()
++	for _, id := range ids {
++		fmt.Fprintf(h, "%s,%d\n", id, perAcct[id])
++	}
++	if d := got.Accounts; d == nil || d.NonZero != int64(len(ids)) || d.SHA256 != hex.EncodeToString(h.Sum(nil)) {
++		bad("balance digest %+v does not match the %d non-zero accounts recomputed from entries", d, len(ids))
++	}
++	return diffs
++}
++
++// GOV-022: every scope that exports entries carries a reconciliation summary
++// whose entry sum and balance total are zero; scopes without entries carry none.
++func TestExportReconciliationSummary(t *testing.T) {
++	w := newWorld(t, nil)
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 2500)
++	w.Trade(w.net.ID, w.b, w.admin, w.bM, w.adminM, 700)
++	tu.Must(w.adjust(w.admin, w.aM, 100, service.AdjustCredit, "bonus"))
++	for _, format := range []service.ExportFormat{service.FormatCSV, service.FormatJSON} {
++		for _, scope := range []service.ExportScope{service.ExportLedger, service.ExportFull} {
++			sink := &service.MemSink{}
++			man := tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, scope, format, sink))
++			r := man.Reconciliation
++			if r == nil || r.Entries != 6 || r.EntrySum != 0 || r.BalanceTotal != 0 || r.Accounts == nil || r.Accounts.NonZero < 3 {
++				t.Fatalf("%s/%s: reconciliation %+v", scope, format, r)
++			}
++			for _, d := range reconcileExport(t, w, sink, man, "") {
++				t.Error(d)
++			}
++			// The summary is in manifest.json as written.
++			var onDisk struct {
++				Reconciliation *service.Reconciliation `json:"reconciliation"`
++			}
++			if err := json.Unmarshal(sink.Bytes("manifest.json"), &onDisk); err != nil || onDisk.Reconciliation == nil ||
++				*onDisk.Reconciliation.Accounts != *r.Accounts || onDisk.Reconciliation.Entries != r.Entries {
++				t.Errorf("%s/%s manifest.json: %v %s", scope, format, err, sink.Bytes("manifest.json"))
++			}
++		}
++		// A's own export: two entries (-2500 trade, +100 adjustment) equal A's balance.
++		sink := &service.MemSink{}
++		man := tu.Must(w.Svc.Export(w.Ctx, w.a, w.net.ID, service.ExportMine, format, sink))
++		if r := man.Reconciliation; r == nil || r.Entries != 2 || r.EntrySum != -2400 || r.BalanceTotal != -2400 || r.Accounts != nil {
++			t.Errorf("mine/%s: reconciliation %+v", format, r)
++		}
++		for _, d := range reconcileExport(t, w, sink, man, w.aM.ID) {
++			t.Error(d)
++		}
++		for _, scope := range []service.ExportScope{service.ExportMembers, service.ExportAudit} {
++			sink := &service.MemSink{}
++			man := tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, scope, format, sink))
++			if man.Reconciliation != nil || bytes.Contains(sink.Bytes("manifest.json"), []byte("reconciliation")) {
++				t.Errorf("%s/%s exports no entries but has a reconciliation summary", scope, format)
++			}
++		}
++	}
++}
++
++// exportCorpus builds a network with seeded random trades, partial and full
++// reversals, adjustments and decided disputes (QA-030 property corpus).
++// Refused commands are part of the corpus; internal errors fail the test.
++func exportCorpus(t *testing.T, seed int64, steps int) (*world, []domain.Actor, []*domain.Member) {
++	t.Helper()
++	rng := rand.New(rand.NewSource(seed))
++	w := newWorldCfg(t, func(p *domain.Policy) { p.DefaultCreditLimit = 5000 }, func(c *service.Config) { c.ExportsPerHour = -1 })
++	rev, _ := w.reviewer()
++	actors, members := []domain.Actor{w.a, w.b}, []*domain.Member{w.aM, w.bM}
++	for i := 0; i < 3; i++ {
++		a, m := w.Member2(w.admin, fmt.Sprintf("c%d@example.org", i))
++		actors, members = append(actors, a), append(members, m)
++	}
++	check := func(err error, what string) {
++		if err != nil && domain.CodeOf(err) == domain.CodeInternal {
++			t.Fatalf("seed %d %s: %v", seed, what, err)
++		}
++	}
++	completed := func() *domain.Transaction {
++		l := tu.Must(w.Svc.AdminListTransactions(w.Ctx, w.admin, w.net.ID, "", []domain.TxStatus{domain.TxCompleted}, service.Page{Limit: 200}))
++		if len(l) == 0 {
++			return nil
++		}
++		return l[rng.Intn(len(l))]
++	}
++	for step := 0; step < steps; step++ {
++		switch rng.Intn(7) {
++		case 0, 1, 2: // trade
++			i, j := rng.Intn(len(members)), rng.Intn(len(members))
++			tx, err := w.Svc.ProposeTransaction(w.Ctx, actors[i], w.net.ID, service.ProposeInput{CounterpartyID: members[j].ID,
++				Direction: service.ProposerPays, Amount: 1 + rng.Int63n(2000), IdempotencyKey: w.Key()})
++			check(err, "propose")
++			if err == nil {
++				_, err = w.Svc.AcceptTransaction(w.Ctx, actors[j], w.net.ID, service.TxRef{TxID: tx.ID, IdempotencyKey: w.Key()})
++				check(err, "accept")
++			}
++		case 3: // full or partial reversal
++			if tx := completed(); tx != nil && tx.Kind != domain.KindReversal {
++				amt := int64(0)
++				if rng.Intn(2) == 0 {
++					amt = 1 + rng.Int63n(tx.Amount)
++				}
++				_, err := w.Svc.ReverseTransaction(w.Ctx, w.admin, w.net.ID, service.ReverseInput{TxID: tx.ID, Amount: amt, Reason: "r", IdempotencyKey: w.Key()})
++				check(err, "reverse")
++			}
++		case 4: // adjustment
++			dir := service.AdjustCredit
++			if rng.Intn(2) == 0 {
++				dir = service.AdjustDebit
++			}
++			_, err := w.Svc.CreateAdjustment(w.Ctx, w.admin, w.net.ID, service.AdjustInput{MemberID: members[rng.Intn(len(members))].ID,
++				Amount: 1 + rng.Int63n(3000), Direction: dir, Reason: "r", IdempotencyKey: w.Key()})
++			check(err, "adjust")
++		case 5, 6: // dispute, decided at once
++			tx := completed()
++			if tx == nil || tx.Kind != domain.KindTrade {
++				break
++			}
++			payer := actors[0]
++			for i, m := range members {
++				if m.ID == tx.PayerMemberID {
++					payer = actors[i]
++				}
++			}
++			d, err := w.Svc.OpenDispute(w.Ctx, payer, w.net.ID, service.OpenDisputeInput{TxID: tx.ID, Category: "other", IdempotencyKey: w.Key()})
++			check(err, "dispute")
++			if err != nil {
++				break
++			}
++			outcome := []domain.DisputeOutcome{domain.OutcomeDismissed, domain.OutcomeUpheld, domain.OutcomePartiallyUpheld}[rng.Intn(3)]
++			amt := int64(0)
++			if outcome == domain.OutcomePartiallyUpheld {
++				amt = 1 + rng.Int63n(tx.Amount)
++			}
++			_, err = w.Svc.ResolveDispute(w.Ctx, rev, w.net.ID, service.ResolveInput{DisputeID: d.ID, Outcome: outcome, Amount: amt, Rationale: "r", IdempotencyKey: w.Key()})
++			check(err, "resolve")
++		}
++	}
++	return w, actors, members
++}
++
++// QA-030: zero reconciliation differences across the property corpus, for
++// every export type that holds entries (ledger, full, each member's own) in
++// both formats; the test recomputes the summary itself.
++func TestExportReconcilesAcrossCorpus(t *testing.T) {
++	steps := 120
++	if raceOn {
++		steps = 40
++	}
++	var diffs, exports, entries int
++	var kinds = map[string]bool{}
++	for seed := int64(1); seed <= 4; seed++ {
++		w, actors, members := exportCorpus(t, seed, steps)
++		rows, _ := w.Store.DB().Query(`SELECT DISTINCT kind FROM transactions WHERE network_id = ? AND ledger_seq > 0`, w.net.ID)
++		for rows.Next() {
++			var k string
++			_ = rows.Scan(&k)
++			kinds[k] = true
++		}
++		_ = rows.Close()
++		var decided int
++		_ = w.Store.DB().QueryRow(`SELECT COUNT(*) FROM disputes WHERE network_id = ? AND outcome IS NOT NULL`, w.net.ID).Scan(&decided)
++		if decided > 0 {
++			kinds["decided dispute"] = true
++		}
++		for _, format := range []service.ExportFormat{service.FormatCSV, service.FormatJSON} {
++			for _, scope := range []service.ExportScope{service.ExportLedger, service.ExportFull} {
++				sink := &service.MemSink{}
++				man := tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, scope, format, sink))
++				for _, d := range reconcileExport(t, w, sink, man, "") {
++					t.Errorf("seed %d: %s", seed, d)
++					diffs++
++				}
++				exports++
++				entries += int(man.Reconciliation.Entries)
++			}
++			for i, a := range actors {
++				sink := &service.MemSink{}
++				man := tu.Must(w.Svc.Export(w.Ctx, a, w.net.ID, service.ExportMine, format, sink))
++				for _, d := range reconcileExport(t, w, sink, man, members[i].ID) {
++					t.Errorf("seed %d member %d: %s", seed, i, d)
++					diffs++
++				}
++				exports++
++			}
++		}
++	}
++	t.Logf("%d exports, %d network entries, kinds posted %v, %d differences", exports, entries, kinds, diffs)
++	// guard against a corpus that never reaches the interesting postings
++	for _, k := range []string{"trade", "reversal", "adjustment", "decided dispute"} {
++		if !kinds[k] {
++			t.Errorf("corpus posted no %s", k)
++		}
++	}
++}
++
++// pauseStore runs hook (once) inside an export's read transaction, after the
++// accounts and before the entries are read, so a test can commit postings
++// while the export is in flight.
++type pauseStore struct {
++	store.Store
++	hook atomic.Pointer[func()]
++}
++
++func (p *pauseStore) View(ctx context.Context, fn func(store.Tx) error) error {
++	return p.Store.View(ctx, func(tx store.Tx) error { return fn(pauseTx{Tx: tx, p: p}) })
++}
++
++type pauseTx struct {
++	store.Tx
++	p *pauseStore
++}
++
++func (t pauseTx) StreamTable(tbl store.ExportTable, netID, memberID string, fn func([]string, []any) error) error {
++	if tbl == store.TblEntries {
++		if h := t.p.hook.Swap(nil); h != nil {
++			(*h)()
++		}
++	}
++	return t.Tx.StreamTable(tbl, netID, memberID, fn)
++}
++
++// QA-030: an export taken during concurrent postings reconciles to its own
++// snapshot time. First deterministically (postings commit inside the export's
++// read transaction, between the balances and the entries), then with a
++// free-running poster beside repeated exports.
++func TestExportDuringConcurrentPostingsReconciles(t *testing.T) {
++	var ps *pauseStore
++	e := tu.NewEnvConfig(t, func(s store.Store) store.Store { ps = &pauseStore{Store: s}; return ps },
++		func(c *service.Config) { c.ExportsPerHour = -1 })
++	w := &world{Env: e}
++	w.admin = e.Person("admin@example.org")
++	w.net, w.adminM = e.Network(w.admin, "demo", func(p *domain.Policy) { p.DefaultCreditLimit = 1_000_000 })
++	w.a, w.aM = e.Member(w.admin, w.net, "ana@example.org")
++	w.b, w.bM = e.Member(w.admin, w.net, "ben@example.org")
++	for i := 0; i < 5; i++ {
++		w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, int64(100+i))
++	}
++	ledgerSeq := func() int64 {
++		var s int64
++		if err := w.Store.DB().QueryRow(`SELECT ledger_seq FROM networks WHERE id = ?`, w.net.ID).Scan(&s); err != nil {
++			t.Fatal(err)
++		}
++		return s
++	}
++
++	cases := []struct {
++		actor  domain.Actor
++		member string
++		scope  service.ExportScope
++		format service.ExportFormat
++	}{
++		{w.admin, "", service.ExportLedger, service.FormatCSV},
++		{w.admin, "", service.ExportFull, service.FormatJSON},
++		{w.a, w.aM.ID, service.ExportMine, service.FormatCSV},
++		{w.b, w.bM.ID, service.ExportMine, service.FormatJSON},
++	}
++	for _, c := range cases {
++		before := ledgerSeq()
++		hook := func() {
++			w.Trade(w.net.ID, w.b, w.a, w.bM, w.aM, 777)
++			tu.Must(w.adjust(w.admin, w.aM, 50, service.AdjustCredit, "mid-export"))
++		}
++		ps.hook.Store(&hook)
++		sink := &service.MemSink{}
++		man := tu.Must(w.Svc.Export(w.Ctx, c.actor, w.net.ID, c.scope, c.format, sink))
++		if ps.hook.Load() != nil {
++			t.Fatal("test premise: no posting ran during the export")
++		}
++		if man.LedgerSeq != before || ledgerSeq() != before+2 {
++			t.Fatalf("%s/%s: snapshot at %d, ledger before %d and after %d", c.scope, c.format, man.LedgerSeq, before, ledgerSeq())
++		}
++		for _, d := range reconcileExport(t, w, sink, man, c.member) {
++			t.Errorf("mid-export postings: %s", d)
++		}
++	}
++
++	// Free-running: a poster commits trades while exports are taken.
++	stop := make(chan struct{})
++	var posted atomic.Int64
++	var wg sync.WaitGroup
++	errc := make(chan error, 1)
++	wg.Add(1)
++	go func() {
++		defer wg.Done()
++		pairs := [][2]int{{0, 1}, {1, 0}}
++		ac, ms := []domain.Actor{w.a, w.b}, []*domain.Member{w.aM, w.bM}
++		for i := 0; ; i++ {
++			select {
++			case <-stop:
++				return
++			default:
++			}
++			p := pairs[i%2]
++			tx, err := w.Svc.ProposeTransaction(context.Background(), ac[p[0]], w.net.ID, service.ProposeInput{CounterpartyID: ms[p[1]].ID,
++				Direction: service.ProposerPays, Amount: int64(1 + i%97), IdempotencyKey: fmt.Sprintf("poster-p-%d", i)})
++			if err == nil {
++				_, err = w.Svc.AcceptTransaction(context.Background(), ac[p[1]], w.net.ID, service.TxRef{TxID: tx.ID, IdempotencyKey: fmt.Sprintf("poster-a-%d", i)})
++			}
++			if err != nil {
++				errc <- err
++				return
++			}
++			posted.Add(1)
++		}
++	}()
++	rounds := 12
++	if raceOn {
++		rounds = 6
++	}
++	seqs := map[int64]bool{}
++	for i := 0; i < rounds; i++ {
++		c := cases[i%len(cases)]
++		sink := &service.MemSink{}
++		man, err := w.Svc.Export(w.Ctx, c.actor, w.net.ID, c.scope, c.format, sink)
++		if err != nil {
++			close(stop)
++			wg.Wait()
++			t.Fatal(err)
++		}
++		seqs[man.LedgerSeq] = true
++		for _, d := range reconcileExport(t, w, sink, man, c.member) {
++			t.Errorf("round %d: %s", i, d)
++		}
++		// let the poster move the ledger on before the next export
++		for target := posted.Load() + 1; posted.Load() < target; {
++			select {
++			case err := <-errc:
++				t.Fatalf("poster: %v", err)
++			default:
++			}
++		}
++	}
++	close(stop)
++	wg.Wait()
++	select {
++	case err := <-errc:
++		t.Fatalf("poster: %v", err)
++	default:
++	}
++	if len(seqs) < rounds/2 {
++		t.Errorf("exports saw only %d distinct snapshots in %d rounds", len(seqs), rounds)
++	}
++	t.Logf("%d postings beside %d exports at %d distinct ledger_seq values", posted.Load(), rounds, len(seqs))
++}
++
++// FR-095 / ARC-020: ZipSink writes each file as it is created, manifest last,
++// and refuses unsafe names like DirSink.
++func TestZipSinkStreamsPackage(t *testing.T) {
++	w := newWorld(t, nil)
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 2500)
++	var zb bytes.Buffer
++	zs := service.NewZipSink(&zb)
++	man := tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, service.ExportLedger, service.FormatCSV, zs))
++	if err := zs.Close(); err != nil {
++		t.Fatal(err)
++	}
++	mem := &service.MemSink{}
++	tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, service.ExportLedger, service.FormatCSV, mem))
++	zr := tu.Must(zip.NewReader(bytes.NewReader(zb.Bytes()), int64(zb.Len())))
++	var names []string
++	for _, f := range zr.File {
++		names = append(names, f.Name)
++		rc := tu.Must(f.Open())
++		b := tu.Must(io.ReadAll(rc))
++		_ = rc.Close()
++		if f.Name != "manifest.json" && !bytes.Equal(b, mem.Bytes(f.Name)) {
++			t.Errorf("%s differs between ZipSink and MemSink", f.Name)
++		}
++	}
++	want := []string{"accounts.csv", "transactions.csv", "transaction_status_events.csv", "entries.csv", "manifest.json"}
++	if strings.Join(names, ",") != strings.Join(want, ",") || len(man.Files) != 4 {
++		t.Errorf("archive entries %v, want %v", names, want)
++	}
++	for _, bad := range []string{"../x.csv", ".hidden", "a/b.csv", ""} {
++		if _, err := zs.Create(bad); err == nil {
++			t.Errorf("ZipSink accepted %q", bad)
++		}
++	}
++}
+diff --git a/internal/service/export_write.go b/internal/service/export_write.go
+index f82ac3b..af6cc3e 100644
+--- a/internal/service/export_write.go
++++ b/internal/service/export_write.go
+@@ -52,7 +52,7 @@ func plainNumber(s string) bool {
+ }
+ 
+ // writeCSV writes one RFC 4180 UTF-8 file per table with a header row.
+-func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string) error {
++func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string, rc *reconciler) error {
+ 	for _, t := range tables {
+ 		name := string(t) + ".csv"
+ 		raw, err := sink.Create(name)
+@@ -63,6 +63,7 @@ func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.Export
+ 		w := csv.NewWriter(cw)
+ 		var rows int64
+ 		err = tx.StreamTable(t, man.NetworkID, memberID, func(cols []string, vals []any) error {
++			rc.observe(t, cols, vals)
+ 			cols, vals = decorate(cols, vals, man.Decimals)
+ 			if vals == nil {
+ 				return w.Write(cols)
+@@ -91,7 +92,7 @@ func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.Export
+ 
+ // writeJSON streams a single structured document; rows are written one at a
+ // time so the ledger is never held in memory (FR-095).
+-func writeJSON(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string) error {
++func writeJSON(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string, rc *reconciler) error {
+ 	name := string(man.Scope) + ".json"
+ 	raw, err := sink.Create(name)
+ 	if err != nil {
+@@ -115,6 +116,7 @@ func writeJSON(tx store.Tx, sink ExportSink, man *Manifest, tables []store.Expor
+ 			}
+ 			first := true
+ 			if err := tx.StreamTable(t, man.NetworkID, memberID, func(cols []string, vals []any) error {
++				rc.observe(t, cols, vals)
+ 				if vals == nil {
+ 					return nil
+ 				}
+-- 
+2.43.0
+
