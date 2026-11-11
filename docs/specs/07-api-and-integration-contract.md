@@ -490,7 +490,7 @@ Create returns 201 with `status: "posted"` and the ledger event, or `status: "pe
 
 | Operation | Method + path | Actor roles (PER) | DOM rules | Error codes | Idem. |
 |---|---|---|---|---|---|
-| List network audit events | `GET {n}/audit-events` (filters [API-043](#api-043)) | Administrator; reviewer for assigned disputes, or per policy ([PER-029](02-personas-roles-and-journeys.md#per-029)) | [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012) | — | Safe |
+| List network audit events | `GET {n}/audit-events` (filters [API-043](#api-043)) | Administrator; reviewer for events of disputes assigned to them only ([PER-029](02-personas-roles-and-journeys.md#per-029)) | [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012) | — | Safe |
 | List break-glass grants on the network | `GET {n}/break-glass-grants` | Administrator ([PER-033](02-personas-roles-and-journeys.md#per-033)) | [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012) | — | Safe |
 | List own security events (logins, sessions) | `GET /v1/me/security-events` | own | [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012) | — | Safe |
 
