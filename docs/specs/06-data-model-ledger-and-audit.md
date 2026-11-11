@@ -51,7 +51,7 @@ Conceptual types used below:
 
 Every entity lists its **owning scope**: `network` (the record belongs to exactly one network and carries its network reference) or `instance` (the record belongs to the instance as a whole).
 
-<a id="data-001"></a>**DATA-001 — Entity set.** A conforming store MUST hold the entities in sections 2.2 to 2.22 with at least the attributes listed. Additional attributes MAY be added if they do not change the meaning of a listed one. Entity semantics are those of [03-domain-model-and-mutual-credit-rules.md §3](03-domain-model-and-mutual-credit-rules.md#3-entities); entities absent from document 03 (identity, invitation, session, idempotency record, notification, export job, reversal request, dispute resolution) are storage records that implement rules stated there. (P0)
+<a id="data-001"></a>**DATA-001 — Entity set.** A conforming store MUST hold the entities in sections 2.2 to 2.24 with at least the attributes listed. Additional attributes MAY be added if they do not change the meaning of a listed one. Entity semantics are those of [03-domain-model-and-mutual-credit-rules.md §3](03-domain-model-and-mutual-credit-rules.md#3-entities); entities absent from document 03 (identity, invitation, session, idempotency record, notification, export job, reversal request, dispute resolution, abuse report, notice-board entry) are storage records that implement rules stated there. (P0)
 *Rationale:* one shared record set keeps API, UI, exports, and tests consistent.
 
 <a id="data-002"></a>**DATA-002 — Network scoping on every network-scoped record.** Every record whose owning scope is `network` MUST store its network reference, and the reference MUST NOT change after creation. Every reference from one network-scoped record to another MUST point to a record with the same network reference; the store MUST reject a write that would create a cross-network reference (for example by composite references that include the network reference, or an equivalent constraint checked inside the write). (P0)
@@ -65,6 +65,9 @@ Every entity lists its **owning scope**: `network` (the record belongs to exactl
 <a id="data-005"></a>**DATA-005 — Timestamps.** Every timestamp MUST be stored as a UTC instant with at least millisecond precision. Ledger `posted at` values MUST be assigned by the store's transaction at commit time or by the ledger module inside the posting transaction, never supplied by a client. Within one network, `posted at` MUST be non-decreasing in sequence order. (P0)
 
 <a id="data-006"></a>**DATA-006 — Enumerations.** Status, kind, type, authority, direction, outcome, and action values MUST be stored as the exact lowercase codes defined in document 03 or in this document. Adding a code is a migration ([section 8](#8-migration-principles)); renaming or removing a code used by any existing ledger or audit record is forbidden. (P0)
+
+<a id="data-007"></a>**DATA-007 — Non-behavioral texts are policy-versioned.** The network description, the statement of what a credit represents, the network rules statement ([GOV-003](10-governance-and-network-operations.md#gov-003)), and the succession contact ([GOV-053](10-governance-and-network-operations.md#gov-053)) MUST be stored in the `texts` attribute of the policy version ([section 2.5](#25-networkpolicyversion)), not as separate mutable records, so that every change creates a new immutable version under [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) as the note to [03 §11](03-domain-model-and-mutual-credit-rules.md#11-network-policy-catalogue-versus-platform-invariants) requires. The store MUST NOT evaluate any rule from these texts. The succession contact holds a membership reference and rule text only; the operator console reads it without break-glass as the named exception of [PER-033](02-personas-roles-and-journeys.md#per-033) and [09 §5.13](09-security-privacy-and-abuse-resistance.md#513-operator-break-glass-access), and that read MUST NOT return any other network data. (P1)
+*Rationale:* the texts need the same history, change note, and announcement as catalogue values, and immutable versions give it without a second versioning mechanism.
 
 ### 2.2 Relationship overview
 
@@ -88,7 +91,7 @@ erDiagram
     REVERSAL_REQUEST }o--o| LEDGER_EVENT : "authorizes reversal"
     ADJUSTMENT ||--o| LEDGER_EVENT : "posts as"
     DISPUTE }o--|| LEDGER_EVENT : challenges
-    DISPUTE ||--o| DISPUTE_RESOLUTION : "resolved by"
+    DISPUTE ||--o{ DISPUTE_RESOLUTION : "resolved by"
     DISPUTE_RESOLUTION ||--o| LEDGER_EVENT : "remedy"
     DISPUTE ||--o| APPEAL : "may have one"
     APPEAL ||--o| LEDGER_EVENT : "consequence"
@@ -96,9 +99,13 @@ erDiagram
     LEDGER_EVENT ||--o{ NOTIFICATION : "triggers"
     NETWORK ||--o{ EXPORT_JOB : "exported by"
     NETWORK ||--o{ AUDIT_EVENT : "scoped to"
+    POLICY_VERSION ||--o| POLICY_VERSION_CANCELLATION : "may be cancelled by"
+    NETWORK ||--o{ ABUSE_REPORT : receives
+    MEMBERSHIP ||--o{ ABUSE_REPORT : files
+    NETWORK ||--o{ NOTICE_BOARD_ENTRY : publishes
 ```
 
-Plain-text summary: an identity (login) holds memberships, sessions, and idempotency records. A network has policy versions, memberships, invitations, accounts, export jobs, and audit events. A membership holds at most one member account (exactly one once first active), carries role assignments, and publishes listings. A ledger event has exactly two postings, each on one account, and records the policy version it was evaluated under. A transaction may produce one ledger event on completion, records failed acceptance attempts, and may receive reversal requests that authorize a reversal event. An adjustment posts as one ledger event once approved. A dispute challenges one ledger event, may have one resolution whose remedy is a ledger event, and may have one appeal whose consequence is another ledger event. Ledger events trigger notifications. Instance-level audit events (no network) exist alongside network-scoped ones.
+Plain-text summary: an identity (login) holds memberships, sessions, and idempotency records. A network has policy versions, memberships, invitations, accounts, export jobs, and audit events. A membership holds at most one member account (exactly one once first active), carries role assignments, and publishes listings. A ledger event has exactly two postings, each on one account, and records the policy version it was evaluated under. A transaction may produce one ledger event on completion, records failed acceptance attempts, and may receive reversal requests that authorize a reversal event. An adjustment posts as one ledger event once approved. A dispute challenges one ledger event, may have several resolutions of which at most one is not superseded and whose remedy is a ledger event, and may have one appeal whose consequence is another ledger event. Ledger events trigger notifications. A scheduled policy version may be cancelled once. A network receives abuse reports filed by memberships and publishes notice-board entries. Instance-level audit events (no network) exist alongside network-scoped ones.
 
 ### 2.3 Identity (login)
 
@@ -144,14 +151,17 @@ Scope: network. Mirrors [03 §3.14](03-domain-model-and-mutual-credit-rules.md#3
 |---|---|---|
 | id | `id` | |
 | network | `ref(Network)` | |
-| version number | integer ≥ 1 | Strictly increasing per network, contiguous. |
+| version number | integer ≥ 1 | Contiguous from 1 per network: each new version takes the previous number plus one, with no gaps and no reuse (the same rule [DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010) sets for ledger sequences). |
 | values | `json` | One key per policy [DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090) to [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) (the full section 11 catalogue), every key present, amounts as integers. |
-| effective at | `timestamp` | |
+| texts | `json` | Non-behavioral texts per [DATA-007](#data-007): description, credit statement, rules statement, succession contact (membership reference and rule text). No enforced effect. |
+| effective at | `timestamp` | Not in the past and at most 180 days ahead ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)). |
 | set by | `ref(Membership)` | Administrator, or operator identity at network creation. |
 | change note | `text` | Required. |
 | created at | `timestamp` | |
 
 Immutable after insert ([DATA-031](#data-031)).
+
+Child record **PolicyVersionCancellation** (scope: network, insert-only): id, network, policy version, cancelled by `ref(Membership)`, cancelled at, reason text. At most one per policy version, and only for a version whose `effective at` is still in the future at insert; a cancelled version is never evaluated and never becomes current ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)).
 
 ### 2.6 Membership
 
@@ -167,6 +177,7 @@ Scope: network. Mirrors [03 §3.3](03-domain-model-and-mutual-credit-rules.md#33
 | status | `enum(invited, pending, active, suspended, departed, expired, revoked, rejected)` | |
 | status reason | `text` or empty | Required for suspension and removal. |
 | pseudonymized at | `timestamp` or empty | [DATA-074](#data-074). |
+| welcome seen at, welcome policy version | `timestamp`, `ref(NetworkPolicyVersion)`, or empty | Set once, with one `welcome.seen` audit event, when the member dismisses the welcome screen ([FR-009](04-functional-requirements.md#fr-009)); a second dismissal changes nothing. |
 | joined at, departed at | `timestamp` | |
 
 Relationships: 0..1 member account (exactly 1 once first `active`), 0..n role assignments, 0..n listings.
@@ -301,7 +312,8 @@ Scope: network. Mirrors [03 §3.11](03-domain-model-and-mutual-credit-rules.md#3
 | initiated by | `ref(Membership)` | |
 | approval required | boolean | Evaluated from policy at initiation. |
 | approved by, approved at | `ref(Membership)`, `timestamp`, or empty | Different from initiator ([DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043)). |
-| status | `enum(pending_approval, posted, rejected, expired)` | |
+| rejected by, rejected at, rejection reason | `ref(Membership)`, `timestamp`, `text`, or empty | Set when a second administrator rejects ([DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041)). |
+| status | `enum(pending_approval, posted, rejected, expired)` | States of [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041): `pending_approval` moves to `posted`, `rejected`, or `expired`; an adjustment without required approval is inserted as `posted`. |
 | expires at | `timestamp` or empty | Set when approval is required. |
 | ledger event | `ref(LedgerEvent)` or empty | |
 | created at, closed at | `timestamp` | |
@@ -322,7 +334,7 @@ Scope: network. Mirrors [03 §3.12](03-domain-model-and-mutual-credit-rules.md#3
 
 ### 2.15 DisputeResolution
 
-Scope: network. One per dispute (0..1).
+Scope: network. 0..n per dispute: a declined confirmation is followed by a new resolution ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)). At most one resolution per dispute is not superseded; the store MUST reject an insert that would leave two.
 
 | Attribute | Type | Notes |
 |---|---|---|
@@ -333,7 +345,10 @@ Scope: network. One per dispute (0..1).
 | remedy specification | `json` or empty | For `adjusted`: from account, to account, amount, reason code. |
 | decided by, decided at | `ref(Membership)`, `timestamp` | |
 | confirmation required | boolean | [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111). |
-| confirmed by, confirmed at | `ref(Membership)`, `timestamp`, or empty | |
+| confirmation status | `enum(pending, confirmed, declined)` or empty | Empty when confirmation is not required. |
+| confirmed by, confirmed at | `ref(Membership)`, `timestamp`, or empty | Neither a party nor the deciding reviewer ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)). |
+| declined by, declined at, decline reason | `ref(Membership)`, `timestamp`, `text`, or empty | Set when the confirming administrator declines. |
+| superseded by | `ref(DisputeResolution)` or empty | Set on a declined resolution when the reviewer records its replacement. |
 | remedy event | `ref(LedgerEvent)` or empty | |
 
 ### 2.16 Appeal
@@ -374,9 +389,9 @@ Scope: network, or instance for identity-level messages (recovery, sign-in alert
 | id | `id` | |
 | network | `ref(Network)` or empty | |
 | recipient | `ref(Identity)` and `ref(Membership)` or empty | Address resolved at send time, not copied ([DATA-072](#data-072)). |
-| notification type | `enum` | Includes the [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) mandatory set. |
+| notification type | `enum` | Includes every type of the mandatory notification set of [FR-084](04-functional-requirements.md#fr-084). |
 | subject object type, subject id | `enum`, `ref` | For example the ledger event. |
-| mandatory | boolean | True for [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) notifications. |
+| mandatory | boolean | True for every type in the mandatory notification set of [FR-084](04-functional-requirements.md#fr-084). |
 | channel | `enum(email, in_app)` | |
 | status | `enum(pending, sent, failed, suppressed)` | |
 | attempts, last attempt at, last error | integer, `timestamp`, `text` | |
@@ -423,7 +438,40 @@ Scope: network.
 
 **Session** (scope: instance): id; identity; token hash (never the token); created at; last seen at; expires at; revoked at and revoked by (or empty); second factor satisfied (boolean); client summary (coarse user-agent family, truncated IP per [DATA-056](#data-056)). Revocation sets `revoked at`; a revoked session MUST NOT authenticate any request.
 
-**ExportJob** (scope: network): id; network; requested by `ref(Membership)` (or operator identity under break-glass); kind `enum(member_self, network_full)`; subject membership (for `member_self`); format `enum(csv, json)`; as of sequence (integer); status `enum(queued, running, completed, failed, expired)`; file reference; file checksum (`hash`, SHA-256); format version; requested at, completed at, expires at. The file is deleted at `expires at`; the job record is retained with the audit log.
+**ExportJob** (scope: network): id; network; requested by `ref(Membership)`; kind `enum(member_self, network_full)`; subject membership (for `member_self`); format `enum(csv, json)`; as of sequence (integer); status `enum(queued, running, completed, failed, expired)`; file reference; file checksum (`hash`, SHA-256); format version; requested at, completed at, expires at. The file is deleted at `expires at`; the job record is retained with the audit log.
+
+### 2.23 AbuseReport
+
+Scope: network. Implements [SEC-060](09-security-privacy-and-abuse-resistance.md#sec-060) to [SEC-065](09-security-privacy-and-abuse-resistance.md#sec-065) and [FR-068](04-functional-requirements.md#fr-068).
+
+| Attribute | Type | Notes |
+|---|---|---|
+| id | `id` | |
+| network | `ref(Network)` | |
+| reporter | `ref(Membership)` | Confidential: readable by the network's administrators only, never shown to the reported member and never in any member export of the reported member ([SEC-062](09-security-privacy-and-abuse-resistance.md#sec-062)). |
+| subject type, subject | `enum(listing, membership, transaction)`, `ref` | |
+| subject administrator | boolean | True when the subject is an administrator or an administrator's listing or transaction; that administrator MUST NOT be recorded as handler ([SEC-065](09-security-privacy-and-abuse-resistance.md#sec-065)). |
+| category | `enum(harassment, spam, suspected_fraud, fake_account, inappropriate_content, other)` | |
+| reason text | `text` | Personal data may appear; never copied into audit events. |
+| status | `enum(open, actioned, dismissed)` | Statuses `Open`, `Actioned`, `Dismissed` of [SEC-061](09-security-privacy-and-abuse-resistance.md#sec-061). |
+| handled by, handled at, closure reason | `ref(Membership)`, `timestamp`, `text`, or empty | Required when status leaves `open`. |
+| idempotency key | `text` | Retained permanently ([DATA-025](#data-025)). |
+| created at | `timestamp` | |
+
+A report changes no other record ([SEC-064](09-security-privacy-and-abuse-resistance.md#sec-064)).
+
+### 2.24 NoticeBoardEntry
+
+Scope: network. Implements [FR-089](04-functional-requirements.md#fr-089) and [GOV-025](10-governance-and-network-operations.md#gov-025). Insert-only.
+
+| Attribute | Type | Notes |
+|---|---|---|
+| id | `id` | |
+| network | `ref(Network)` | |
+| author | `ref(Membership)` or empty | Empty for entries the platform creates for a new policy version. |
+| title, body | `text` | |
+| policy version | `ref(NetworkPolicyVersion)` or empty | Set for entries announcing a policy version. |
+| posted at | `timestamp` | |
 
 ## 3. Identifiers
 
@@ -433,14 +481,14 @@ Scope: network.
 <a id="data-021"></a>**DATA-021 — Identifier text form.** Identifiers MUST appear in the API and exports in one canonical lowercase text form (for UUIDs, the hyphenated form of [RFC 9562 §4](https://www.rfc-editor.org/rfc/rfc9562#section-4)). Internal surrogate keys, if a store uses them, MUST NOT appear in the API, exports, or audit events. (P0)
 
 <a id="data-022"></a>**DATA-022 — Per-network ledger sequence.** The sequence of [DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010) MUST be allocated inside the same database transaction that writes the ledger event, by incrementing the network's `last sequence` counter, so that a rolled-back posting consumes no number. Sequences in a network MUST be contiguous from 1: the store MUST hold events 1..N with no gaps, where N is the network's `last sequence`. The verification job MUST report any gap or duplicate. (P0)
-*Rationale:* contiguity lets any reader detect a missing event without trusting the store. It serializes postings within one network; [OQ-DATA-9](#10-open-questions) records the throughput trade-off.
+*Rationale:* contiguity lets any reader detect a missing event without trusting the store. It serializes postings within one network, which [DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010) accepts ([OQ-DATA-9](#10-open-questions), resolved).
 
 <a id="data-023"></a>**DATA-023 — Sequence is never the only identifier.** Every ledger event MUST be addressable by its opaque identifier. The API and exports MUST include the sequence as an attribute alongside the identifier and MUST NOT accept a sequence number as the sole reference to an event. (P0)
 *Rationale:* sequences are per network and guessable; they order, they do not identify.
 
 <a id="data-024"></a>**DATA-024 — Idempotency record storage.** For every command covered by [DOM-011](03-domain-model-and-mutual-credit-rules.md#dom-011), the store MUST hold an idempotency record unique on (identity, key). The record MUST be inserted in state `in_progress` inside the command's transaction before any effect, and updated to `completed` with the response status, response body, and result reference in the same transaction as the effect. A repeated request with the same (identity, key): with an equal request hash and state `completed`, MUST return the stored response without re-executing; with a different request hash, MUST be rejected with `idempotency_conflict`; with state `in_progress` held by a concurrent transaction, MUST wait for or be rejected with a retryable error defined in [07-api-and-integration-contract.md](07-api-and-integration-contract.md), and MUST NOT execute twice. A command that fails with a validation or rule error MUST store that error response too, so that a retry returns the same error. (P0)
 
-<a id="data-025"></a>**DATA-025 — Idempotency retention window.** Idempotency records MUST be retained for at least the response-cache window, recommended default 7 days from creation ([OQ-DATA-2](#10-open-questions)), and MAY be deleted after it. Independently of the window, the key used to create a transaction, dispute, adjustment, reversal request, or membership change MUST be stored permanently on the created record with a uniqueness constraint per acting identity, so that a retry after the window still cannot create a duplicate object; such a retry MUST return the existing object or `idempotency_conflict`. (P0)
+<a id="data-025"></a>**DATA-025 — Idempotency retention window.** Idempotency records MUST be retained for at least the response-cache window, recommended default 7 days from creation, and MAY be deleted after it. Independently of the window, the key used to create a transaction, dispute, adjustment, reversal request, abuse report, or membership change MUST be stored permanently on the created record with a uniqueness constraint per acting identity, so that a retry after the window still cannot create a duplicate object; such a retry MUST return the existing object ([API-053](07-api-and-integration-contract.md#api-053)), or `idempotency_conflict` when the payload differs. (P0)
 *Rationale:* the response cache can expire; the duplicate-prevention guarantee for ledger-relevant objects cannot.
 
 ## 4. Ledger storage requirements
@@ -453,7 +501,7 @@ Scope: network.
 *Rationale:* [DOM-002](03-domain-model-and-mutual-credit-rules.md#dom-002) applies to every role, including the operator; privilege separation turns an application bug or injection into a refused write instead of a rewritten history.
 *Acceptance criteria:* an update or delete issued with the application role's credentials on each listed table fails; the same statement issued with the migration role outside a migration run fails.
 
-<a id="data-032"></a>**DATA-032 — Mutable ledger-adjacent records.** Accounts (status, limits, balance cache), transactions, reversal requests, adjustments, disputes, resolutions, and appeals MAY be updated only through the state transitions defined in document 03, and every update MUST be accompanied in the same transaction by an audit event carrying the before/after summary. Their deletion by the application role MUST be impossible. (P0)
+<a id="data-032"></a>**DATA-032 — Mutable ledger-adjacent records.** Accounts (status, limits, balance cache), transactions, reversal requests, adjustments, disputes, resolutions, appeals, and abuse reports MAY be updated only through the state transitions defined in document 03, and every update MUST be accompanied in the same transaction by an audit event carrying the before/after summary. Their deletion by the application role MUST be impossible. (P0)
 
 <a id="data-033"></a>**DATA-033 — Concurrency invariant.** The store and the ledger module together MUST guarantee: for every network, the committed ledger events, their postings and resulting balances, and the outcome (posted or rejected with its error code) of every posting attempt that committed a record are identical to those produced by executing the attempts one at a time in ascending sequence order, each attempt reading the balances, account statuses, limits, and policy version left by the previous one. Recommended default: within the posting transaction, first lock the network's sequence counter, then lock the involved accounts in ascending identifier order, then read balances and run the [DOM-027](03-domain-model-and-mutual-credit-rules.md#dom-027) checks, then write. Alternatives: serializable isolation with automatic retry on serialization failure (bounded retries, then a retryable error); or a single writer per network. An implementation MUST NOT evaluate limits outside the posting transaction ([DOM-009](03-domain-model-and-mutual-credit-rules.md#dom-009), [DEC-009](13-assumptions-risks-decisions-and-roadmap.md#dec-009)). (P0)
 *Rationale:* states the property a test can check (equivalence to a serial order) rather than a mechanism; the fixed lock order prevents deadlocks.
@@ -461,7 +509,7 @@ Scope: network.
 
 <a id="data-034"></a>**DATA-034 — Balance caches.** The `resulting balance` on each posting MUST equal the previous resulting balance of the same account (0 for its first posting) plus the amount for `credit` or minus it for `debit`. The account `balance cache` MUST equal the resulting balance of the account's highest-sequence posting and MUST be updated in the posting transaction. Reads that show a balance MAY use the cache. (P0)
 
-<a id="data-035"></a>**DATA-035 — Verification job.** The platform MUST provide the verification operation of [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003) as a job that, per network, recomputes from postings alone and checks: (a) every ledger event has exactly two postings, one debit and one credit, equal amounts, two different accounts, same network ([DOM-001](03-domain-model-and-mutual-credit-rules.md#dom-001), [DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005)); (b) sequences contiguous from 1 ([DATA-022](#data-022)); (c) every posting's resulting balance and every account's balance cache equal the recomputed running sum ([DATA-034](#data-034)); (d) the sum of all account balances is zero ([DOM-004](03-domain-model-and-mutual-credit-rules.md#dom-004)); (e) every event's origin exists and points back ([DOM-007](03-domain-model-and-mutual-credit-rules.md#dom-007)); (f) every event's policy version belongs to the network and was effective at `posted at` ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)); (g) every `transaction_completed` event whose payer or payee ended over limit, and every reversal or adjustment that breached a limit, carries `limit override` true where [DOM-032](03-domain-model-and-mutual-credit-rules.md#dom-032) or [DOM-042](03-domain-model-and-mutual-credit-rules.md#dom-042) requires it, and no `transaction_completed` event breached a limit; (h) the hash chains verify when [DATA-057](#data-057) is adopted. The job MUST run on a schedule (recommended default: daily per network, [OQ-DATA-13](#10-open-questions)), on demand by the operator for any network and by an administrator for their own network, after every restore, and as the migration gate of [DATA-093](#data-093). (P0)
+<a id="data-035"></a>**DATA-035 — Verification job.** The platform MUST provide the verification operation of [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003) as a job that, per network, recomputes from postings alone and checks: (a) every ledger event has exactly two postings, one debit and one credit, equal amounts, two different accounts, same network ([DOM-001](03-domain-model-and-mutual-credit-rules.md#dom-001), [DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005)); (b) sequences contiguous from 1 ([DATA-022](#data-022)); (c) every posting's resulting balance and every account's balance cache equal the recomputed running sum ([DATA-034](#data-034)); (d) the sum of all account balances is zero ([DOM-004](03-domain-model-and-mutual-credit-rules.md#dom-004)); (e) every event's origin exists and points back ([DOM-007](03-domain-model-and-mutual-credit-rules.md#dom-007)); (f) every event's policy version belongs to the network and was effective at `posted at` ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)); (g) every `transaction_completed` event whose payer or payee ended over limit, and every reversal or adjustment that breached a limit, carries `limit override` true where [DOM-032](03-domain-model-and-mutual-credit-rules.md#dom-032) or [DOM-042](03-domain-model-and-mutual-credit-rules.md#dom-042) requires it, and no `transaction_completed` event breached a limit; (h) the hash chains verify when [DATA-057](#data-057) is adopted. The job MUST run at least once every 24 hours per network ([ARCH-061](05-system-architecture.md#arch-061), [OPS-061](11-deployment-operations-and-support.md#ops-061), [QA-116](12-quality-strategy-and-test-plan.md#qa-116)), on demand by the operator for any network and by an administrator for their own network, after every restore, and before and after every migration as the gate of [DATA-093](#data-093). (P0)
 *Acceptance criteria:* each of checks (a) to (h) has a test that corrupts a copy of the store in exactly that way and observes the job report it.
 
 <a id="data-036"></a>**DATA-036 — Verification reports, never repairs.** Each run MUST store a verification result record (network, started at, finished at, highest sequence checked, pass or fail, list of discrepancies with check letter and record identifiers) and an audit event. A failed run MUST alert the operator ([11-deployment-operations-and-support.md](11-deployment-operations-and-support.md)) and MUST be visible to that network's administrators. The job MUST NOT modify any ledger record or cache. Rebuilding a balance cache from postings is a separate operator command that MUST be audited, MUST run only after a failed verification has been investigated, and MUST NOT touch events or postings; any other remedy is a reversal or adjustment by the network's administrators. (P0)
@@ -510,26 +558,29 @@ Scope: network.
 | identity | `identity.created`, `identity.login_succeeded`, `identity.login_failed`, `identity.logout`, `identity.password_changed`, `identity.recovery_requested`, `identity.recovery_completed`, `identity.second_factor_enabled`, `identity.second_factor_disabled`, `identity.email_changed`, `identity.locked`, `identity.unlocked`, `identity.erased` |
 | session | `session.created`, `session.revoked`, `session.expired` |
 | network | `network.created`, `network.setup_completed`, `network.suspended`, `network.reinstated`, `network.closed` |
-| policy version | `policy.version_created` |
+| policy version | `policy.version_created`, `policy.version_cancelled`, `policy.rules_statement_changed`, `policy.succession_contact_changed` |
 | invitation | `invitation.created`, `invitation.accepted`, `invitation.revoked`, `invitation.expired` |
 | membership | `membership.applied`, `membership.approved`, `membership.rejected`, `membership.activated`, `membership.suspended`, `membership.reinstated`, `membership.departure_requested`, `membership.departed`, `membership.profile_updated`, `membership.pseudonymized` |
+| welcome | `welcome.seen` |
 | role assignment | `role.granted`, `role.revoked` |
 | account | `account.created`, `account.frozen`, `account.unfrozen`, `account.closed`, `account.limit_changed`, `account.cache_rebuilt` |
 | transaction | `transaction.proposed`, `transaction.acceptance_failed`, `transaction.confirmation_requested`, `transaction.completed`, `transaction.declined`, `transaction.cancelled`, `transaction.expired`, `transaction.reversed` |
 | ledger event | `ledger_event.posted` |
 | reversal request | `reversal_request.created`, `reversal_request.withdrawn`, `reversal_request.expired`, `reversal_request.superseded` |
 | adjustment | `adjustment.initiated`, `adjustment.approved`, `adjustment.rejected`, `adjustment.expired` |
-| dispute | `dispute.raised`, `dispute.assigned`, `dispute.withdrawn`, `dispute.resolution_recorded`, `dispute.remedy_confirmed`, `dispute.resolved` |
+| dispute | `dispute.raised`, `dispute.assigned`, `dispute.withdrawn`, `dispute.resolution_recorded`, `dispute.remedy_confirmed`, `dispute.remedy_declined`, `dispute.resolved` |
 | appeal | `appeal.filed`, `appeal.decided` |
 | listing | `listing.created`, `listing.updated`, `listing.paused`, `listing.reactivated`, `listing.closed` |
-| notification | `notification.attempted`, `notification.failed` (mandatory set only, [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014)) |
+| abuse report | `abuse_report.created`, `abuse_report.handled` (summary carries the resulting status `actioned` or `dismissed`; category but never reason text, [SEC-063](09-security-privacy-and-abuse-resistance.md#sec-063)) |
+| notice board | `notice_board.posted` |
+| notification | `notification.attempted`, `notification.failed` (types of the mandatory notification set of [FR-084](04-functional-requirements.md#fr-084) only) |
 | export | `export.requested`, `export.completed`, `export.failed`, `export.downloaded` |
-| break-glass | `break_glass.opened`, `break_glass.data_accessed`, `break_glass.closed` |
+| break-glass | `break_glass.opened`, `break_glass.extended`, `break_glass.data_accessed`, `break_glass.administrator_granted` ([SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142); also writes `role.granted` with `break-glass` true), `break_glass.closed` |
 | verification | `verification.passed`, `verification.failed` |
 | personal data | `personal_data.read` (if [OQ-DATA-6](#10-open-questions) adopts it), `personal_data.erasure_requested`, `personal_data.erased` |
 | instance | `migration.applied`, `backup.restored` |
 
-<a id="data-052"></a>**DATA-052 — Coverage.** The platform MUST write an audit event, in the same transaction as the change, for each item of [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012): every ledger event (`ledger_event.posted`); every transaction status change; every dispute status change and every appeal; every membership status change and role grant or revocation; every account status or limit change; every network status change and policy version; every listing creation and status change; every export request, completion, and download; every authentication event (sign-in success and failure, recovery, second-factor change, session revocation); and every operator break-glass opening, data access, and closing. It MUST also audit rejected acceptance attempts, authorization denials on state-changing commands, verification runs, migrations, and restores. Pure validation failures that change nothing MAY be omitted. (P0)
+<a id="data-052"></a>**DATA-052 — Coverage.** The platform MUST write an audit event, in the same transaction as the change, for each item of [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012): every ledger event (`ledger_event.posted`); every transaction status change; every dispute status change and every appeal; every membership status change and role grant or revocation; every account status or limit change; every network status change and policy version; every listing creation and status change; every abuse report creation and handling; every export request, completion, and download; every authentication event (sign-in success and failure, recovery, second-factor change, session revocation); and every operator break-glass opening, extension, data access, administrator grant, and closing. It MUST also audit adjustment rejections, declined remedy confirmations, scheduled policy version cancellations, changes to the rules statement and succession contact, welcome-screen dismissals, notice-board posts, rejected acceptance attempts, authorization denials on state-changing commands, verification runs, migrations, and restores. Pure validation failures that change nothing MAY be omitted. (P0)
 
 <a id="data-053"></a>**DATA-053 — Summary content limits.** The `summary` field MUST contain only: identifiers; status, kind, type, and role codes; amounts, limits, and balances; policy keys and values; timestamps; and booleans. It MUST NOT contain passwords or hashes of them, tokens, second-factor secrets, email addresses, display names, profile values, listing text, transaction descriptions, dispute statements, or reasoning text; those are read from the referenced object under its own access rules. (P0)
 *Rationale:* keeps the immutable audit log free of personal data that may later need erasure ([DATA-073](#data-073)).
@@ -554,7 +605,7 @@ Scope: network.
 
 ## 6. Personal-data minimization in the data model
 
-<a id="data-070"></a>**DATA-070 — Personal-data inventory.** The following fields are personal data and MUST be tagged as such in the data dictionary so that export, erasure, and access logging find them: identity email, password hash, second-factor material; session client summary; membership display name and profile; invitation invitee email; listing title, description, and pricing note; transaction description and decline reason; dispute statement, resolution reasoning, appeal statement; adjustment and reversal reason text; notification recipient references; audit client address. (P0)
+<a id="data-070"></a>**DATA-070 — Personal-data inventory.** The following fields are personal data and MUST be tagged as such in the data dictionary so that export, erasure, and access logging find them: identity email, password hash, second-factor material; session client summary; membership display name and profile; invitation invitee email; listing title, description, and pricing note; transaction description and decline reason; dispute statement, resolution reasoning and decline reason, appeal statement; adjustment and reversal reason text and adjustment rejection reason; abuse report reporter reference and reason text; notice-board entry title and body; notification recipient references; audit client address. (P0)
 
 <a id="data-071"></a>**DATA-071 — Where personal data lives.** Login data (email, credentials) MUST live only on the identity. Names and profile data MUST live only on the membership, separately per network, so that one network's administrators cannot see a person's other memberships or profiles. Ledger events, postings, audit events, and policy versions MUST reference memberships and accounts by identifier and MUST NOT copy names, emails, or profile values. (P0)
 *Rationale:* a name stored once can be pseudonymized once without touching immutable records.
@@ -584,14 +635,14 @@ Scope: network.
 | Sessions | 30 days after expiry or revocation. | Deleted. |
 | Idempotency records | [DATA-025](#data-025) window. | Deleted; keys on created objects remain. |
 | Notification outbox rows | 90 days after final status. | Deleted (mandatory-notification audit events remain). |
-| Export files | 7 days after completion. | File deleted; job record kept with the audit log. |
+| Export files | 7 days after the file is completed. | File deleted; job record kept with the audit log. |
 | Verification results | Same as the network's audit events. | Purged with the network. |
 
 <a id="data-081"></a>**DATA-081 — Ledger entries cannot be deleted.** No deletion request, administrator action, or operator action MAY delete or alter a ledger event, posting, or network-scoped audit event during its retention period ([DOM-002](03-domain-model-and-mutual-credit-rules.md#dom-002), [DOM-074](03-domain-model-and-mutual-credit-rules.md#dom-074)). (P0)
 
 <a id="data-082"></a>**DATA-082 — Deletion requests.** A person's request to delete their data MUST result, after the checks of [10-governance-and-network-operations.md](10-governance-and-network-operations.md): erasure of identity data under [DATA-073](#data-073) once no membership is non-departed; pseudonymization under [DATA-074](#data-074) of each departed membership; erasure of listing text, invitation emails, sessions, and notification rows. It MUST NOT remove ledger rows, account identifiers, amounts, or audit events. The platform MUST tell the requester in plain text which records remain and why. Whether a request can be honored before the departure precondition is met, and response deadlines, are counsel questions ([OQ-DATA-8](#10-open-questions)). (P1)
 
-<a id="data-083"></a>**DATA-083 — Erasure register and backups.** Every erasure or pseudonymization MUST be recorded in an erasure register that holds only the affected record identifiers, action, and time. After any restore from backup, the platform MUST re-apply every register entry newer than the backup before the instance accepts requests. Backup retention and its relation to these periods are owned by [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md); backups older than the longest personal-data period SHOULD NOT be kept. (P1)
+<a id="data-083"></a>**DATA-083 — Erasure register and backups.** Every erasure or pseudonymization MUST be recorded in an erasure register that holds only the affected record identifiers, action, and time. After any restore from backup, the platform MUST re-apply every register entry newer than the backup before the instance accepts requests. Backup retention is owned by [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md): backups expire after the 35-day backup-expiry period of [OPS-043](11-deployment-operations-and-support.md#ops-043), so an erased value survives in backups for at most that period. (P1)
 *Rationale:* without the register, a restore silently undoes erasures.
 
 ## 8. Migration principles
@@ -627,14 +678,14 @@ Scope: network.
 | `disputes` | dispute_id, subject_event_id, raised_by_me, statement (only if raised by me), status, reviewer_membership_id, outcome, reasoning, remedy_event_id, opened_at, resolved_at, appeal_outcome, appeal_decided_at |
 | `listings` | listing_id, type, title, description, categories, indicative_amount, pricing_note, status, created_at, updated_at |
 
-`counterparty_display_name` follows the network's visibility policy and pseudonymization at export time.
+`counterparty_display_name` follows the network's visibility policy and pseudonymization at export time. A member self-export MUST NOT contain abuse reports about the member or any reporter reference ([SEC-062](09-security-privacy-and-abuse-resistance.md#sec-062)).
 
 <a id="data-103"></a>**DATA-103 — Administrator network export files.** A network export ([PER-031](02-personas-roles-and-journeys.md#per-031)) MUST contain the files below; together with the manifest they are sufficient to recompute every balance and run checks (a) to (g) of [DATA-035](#data-035) outside the platform. (P0)
 
 | File | Columns |
 |---|---|
-| `policy_versions` | policy_version_id, version_number, effective_at, set_by_membership_id, change_note, values (JSON string) |
-| `memberships` | membership_id, display_name, status, status_reason, roles, joined_at, departed_at, pseudonymized_at, contact_email (only if [OQ-DATA-12](#10-open-questions) permits administrators to see it) |
+| `policy_versions` | policy_version_id, version_number, effective_at, set_by_membership_id, change_note, values (JSON string), texts (JSON string), cancelled_at, cancelled_by |
+| `memberships` | membership_id, display_name, status, status_reason, roles, joined_at, departed_at, pseudonymized_at, contact_email (the identity's login email, included in network exports per [SEC-125](09-security-privacy-and-abuse-resistance.md#sec-125)) |
 | `role_assignments` | role_assignment_id, membership_id, role, granted_by, granted_at, revoked_by, revoked_at |
 | `accounts` | account_id, type, system_purpose, membership_id, status, credit_limit, credit_limit_unbounded, positive_limit, positive_limit_unset, balance, created_at, closed_at |
 | `ledger_events` | sequence, ledger_event_id, kind, origin_type, origin_id, reversed_transaction_id, authority, actors (JSON string), reason_code, reason_text, limit_override, self_dealing, policy_version_id, posted_at, chain_hash |
@@ -642,11 +693,13 @@ Scope: network.
 | `transactions` | as in [DATA-102](#data-102) with payer_account_id and payee_account_id instead of my_role and counterparty, plus decline_reason |
 | `failed_acceptance_attempts` | transaction_id, attempted_at, actor_membership_id, error_code, policy_version_id |
 | `reversal_requests` | reversal_request_id, transaction_id, kind, requested_by, counter_request_by, counter_request_at, reason_code, reason_text, status, window_ends_at, ledger_event_id, created_at, closed_at |
-| `adjustments` | adjustment_id, type, from_account_id, to_account_id, amount, reason_code, reason_text, related_transaction_id, related_dispute_id, related_membership_id, initiated_by, approved_by, approved_at, status, ledger_event_id, created_at, closed_at |
+| `adjustments` | adjustment_id, type, from_account_id, to_account_id, amount, reason_code, reason_text, related_transaction_id, related_dispute_id, related_membership_id, initiated_by, approved_by, approved_at, rejected_by, rejected_at, rejection_reason, status, ledger_event_id, created_at, closed_at |
 | `disputes` | dispute_id, subject_event_id, raised_by, statement, status, reviewer, opened_at, assigned_at, resolved_at |
-| `dispute_resolutions` | dispute_id, outcome, reasoning, remedy_specification (JSON string), decided_by, decided_at, confirmed_by, confirmed_at, remedy_event_id |
+| `dispute_resolutions` | dispute_resolution_id, dispute_id, outcome, reasoning, remedy_specification (JSON string), decided_by, decided_at, confirmation_status, confirmed_by, confirmed_at, declined_by, declined_at, decline_reason, superseded_by, remedy_event_id |
 | `appeals` | appeal_id, dispute_id, appealed_by, appealed_at, statement, heard_by, outcome, decided_at, consequence_event_id |
 | `listings` | listing_id, membership_id, type, title, description, categories, status, created_at, updated_at |
+| `abuse_reports` | abuse_report_id, reporter, subject_type, subject_id, category, reason_text, status, handled_by, handled_at, closure_reason, created_at |
+| `notice_board` | entry_id, author, title, body, policy_version_id, posted_at |
 | `audit_events` | per [DATA-063](#data-063), network-scoped events only |
 | `verification` | last verification run: started_at, finished_at, highest_sequence, result, discrepancy_count |
 
@@ -658,21 +711,23 @@ Scope: network.
 | ID | Question | Decision needed | Decided by |
 |---|---|---|---|
 | OQ-DATA-1 | Which external identifier format: UUIDv7 (recommended), UUIDv4, or another 128-bit random id? | Confirm [DATA-020](#data-020); UUIDv7 exposes creation time to the millisecond. | Project owner with security reviewer |
-| OQ-DATA-2 | How long is the idempotency response cache kept? | Confirm 7 days in [DATA-025](#data-025) or choose another window; must match [07-api-and-integration-contract.md](07-api-and-integration-contract.md). | Project owner with API owner |
+| OQ-DATA-2 | How long is the idempotency response cache kept? | Resolved: answered by [DATA-025](#data-025) (7 days; [API-053](07-api-and-integration-contract.md#api-053) keeps at least that window). | Project owner with API owner |
 | OQ-DATA-3 | How is the client address stored in audit events: truncated prefix (recommended), keyed hash, or not at all? | Choice for [DATA-056](#data-056); privacy aspects are a counsel question. | Security reviewer, counsel |
 | OQ-DATA-4 | Adopt hash-chain tamper evidence for ledger and audit events, and how are heads anchored? | Confirm [DATA-057](#data-057) and the anchoring method. | Project owner with security reviewer |
 | OQ-DATA-5 | Post-closure retention of ledger and audit data: 7 years recommended. Counsel question: which jurisdictions' record-keeping rules, if any, apply to networks' records. | Period for [DATA-080](#data-080). | Project owner with counsel |
 | OQ-DATA-6 | Are administrator and reviewer reads of personal data audited (`personal_data.read`)? | Choice for [DATA-076](#data-076); linked to [OQ-PER-5](02-personas-roles-and-journeys.md#5-open-questions). | Security reviewer |
 | OQ-DATA-7 | Counsel question: can an erasure request require redaction of personal data in immutable free text (descriptions, statements, reasons)? | Whether [DATA-075](#data-075) redaction procedure is needed for launch. | Project owner with counsel |
 | OQ-DATA-8 | Personal-data retention after a terminal membership (2 years recommended) and whether pseudonymization may occur earlier on request; response deadlines are a counsel question. | Periods in [DATA-080](#data-080), behavior of [DATA-082](#data-082). | Project owner with counsel |
-| OQ-DATA-9 | Contiguous per-network sequence serializes all postings within one network. Acceptable at expected community volumes, or allow gaps with per-account locking? | Confirm [DATA-022](#data-022). | Project owner with architecture owner |
+| OQ-DATA-9 | Contiguous per-network sequence serializes all postings within one network. Acceptable at expected community volumes, or allow gaps with per-account locking? | Resolved: answered by [DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010) (contiguous, no gaps) and [DATA-022](#data-022). | Project owner with architecture owner |
 | OQ-DATA-10 | Retention of instance-level authentication audit events (400 days recommended). | Period for [DATA-080](#data-080). | Security reviewer |
 | OQ-DATA-11 | Export packaging: ZIP archive (recommended) or alternatives; JSON arrays (recommended) or JSON Lines for large tables. | Confirm [DATA-100](#data-100). | Project owner |
-| OQ-DATA-12 | May administrators see and export members' login email addresses, or only an opt-in contact field? | Column rule in [DATA-103](#data-103); depends on [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md). | Security reviewer with project owner |
-| OQ-DATA-13 | Verification schedule: daily per network recommended; should it also run after every N postings? | Confirm [DATA-035](#data-035) and match [12-quality-strategy-and-test-plan.md](12-quality-strategy-and-test-plan.md). | Architecture owner with QA owner |
+| OQ-DATA-12 | May administrators see and export members' login email addresses, or only an opt-in contact field? | Resolved: answered by [SEC-125](09-security-privacy-and-abuse-resistance.md#sec-125) (network export includes email); column in [DATA-103](#data-103). | Security reviewer with project owner |
+| OQ-DATA-13 | Verification schedule: daily per network recommended; should it also run after every N postings? | Resolved: answered by [ARCH-061](05-system-architecture.md#arch-061), [OPS-061](11-deployment-operations-and-support.md#ops-061), and [QA-116](12-quality-strategy-and-test-plan.md#qa-116): at least every 24 hours, and before and after migrations and restores ([DATA-035](#data-035)). | Architecture owner with QA owner |
+| OQ-DATA-14 | Retention of abuse reports and notice-board entries ([section 2.23](#223-abusereport), [section 2.24](#224-noticeboardentry)): kept with the network's audit events, or reporter reference and reason text erased after the personal-data period of [DATA-080](#data-080)? | Row for [DATA-080](#data-080). | Project owner with security reviewer |
 
 ## 11. Change history
 
 | Date | Change |
 |---|---|
 | 2026-11-11 | Initial draft. |
+| 2026-11-11 | Consistency review fixes. |
