@@ -5,15 +5,18 @@ import (
 	"time"
 )
 
-// jobStore holds consistency-check results and export artefacts in memory:
-// the service has no persistent job tables. Entries expire after 24 h and the
-// store is size-bounded, so memory use is bounded.
+// jobStore holds consistency-check results and export artefacts: the service
+// has no persistent job tables. Artefacts are spooled to temporary files when
+// possible (FR-095) and otherwise kept in memory. Entries expire after 24 h
+// and the store is size-bounded, so memory and disk use are bounded.
 type jobStore struct {
 	now    func() time.Time
 	mu     sync.Mutex
 	checks map[string]checkEntry
 	exps   map[string]*exportEntry
 	bytes  int64
+	// dir is where export artefacts are spooled; "" is os.TempDir().
+	dir string
 }
 
 type checkEntry struct {
@@ -36,14 +39,20 @@ func newJobStore(now func() time.Time) *jobStore {
 	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{}}
 }
 
+// dropLocked removes one export and releases its artefact.
+func (j *jobStore) dropLocked(id string, e *exportEntry) {
+	j.bytes -= e.size()
+	delete(j.exps, id)
+	e.release()
+}
+
 // dropPerson removes the export artefacts and check results of one person.
 func (j *jobStore) dropPerson(person string) {
 	j.mu.Lock()
 	defer j.mu.Unlock()
 	for k, e := range j.exps {
 		if e.person == person {
-			j.bytes -= int64(len(e.file))
-			delete(j.exps, k)
+			j.dropLocked(k, e)
 		}
 	}
 	for k, e := range j.checks {
@@ -93,13 +102,12 @@ func (j *jobStore) exportSlot(person string) string {
 	return j.slotLocked(person, 0)
 }
 
-func (j *jobStore) slotLocked(person string, size int) string {
+func (j *jobStore) slotLocked(person string, size int64) string {
 	now := j.now()
 	own := 0
 	for k, x := range j.exps {
 		if now.Sub(x.at) > jobTTL {
-			j.bytes -= int64(len(x.file))
-			delete(j.exps, k)
+			j.dropLocked(k, x)
 			continue
 		}
 		if x.person == person {
@@ -109,20 +117,21 @@ func (j *jobStore) slotLocked(person string, size int) string {
 	switch {
 	case own >= maxExportsPerPerson:
 		return "person"
-	case len(j.exps) >= maxExports || j.bytes+int64(size) > maxExpBytes:
+	case len(j.exps) >= maxExports || j.bytes+size > maxExpBytes:
 		return "full"
 	}
 	return ""
 }
 
+// putExport stores e; on false the caller still owns (and releases) it.
 func (j *jobStore) putExport(e *exportEntry) bool {
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	if j.slotLocked(e.person, len(e.file)) != "" {
+	if j.slotLocked(e.person, e.size()) != "" {
 		return false
 	}
 	j.exps[e.dto.ID] = e
-	j.bytes += int64(len(e.file))
+	j.bytes += e.size()
 	return true
 }
 

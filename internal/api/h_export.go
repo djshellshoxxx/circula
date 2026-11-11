@@ -1,11 +1,11 @@
 package api
 
 import (
-	"archive/zip"
-	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,7 +17,8 @@ type exportEntry struct {
 	net, person string
 	at          time.Time
 	dto         exportDTO
-	file        []byte
+	file        []byte     // the archive when held in memory (no temporary file could be made)
+	spool       *spoolFile // the archive on disk (FR-095); nil when in memory
 	ctype       string
 	name        string
 }
@@ -30,7 +31,7 @@ type exportDTO struct {
 	CreatedAt   string  `json:"created_at"`
 	ExpiresAt   string  `json:"expires_at"`
 	SHA256      *string `json:"sha256"`
-	Bytes       int     `json:"bytes"`
+	Bytes       int64   `json:"bytes"`
 	ArtefactURL *string `json:"artefact_url"`
 	Error       *string `json:"error"`
 }
@@ -39,8 +40,10 @@ var exportScopes = map[string]service.ExportScope{"mine": service.ExportMine, "l
 	"members": service.ExportMembers, "audit": service.ExportAudit, "full": service.ExportFull}
 
 // createExport runs the export synchronously (the service streams from one
-// read snapshot) and keeps the artefact in memory for 24 h, so the job is
-// already `complete` when the 201 returns.
+// read snapshot) and keeps the artefact for 24 h, so the job is already
+// `complete` when the 201 returns. The archive streams from the service
+// through the zip writer into a temporary file, never whole in memory
+// (FR-095); see artefactWriter for the fallback.
 func (s *server) createExport(c *reqCtx) error { // API-065
 	var in struct {
 		Scope  string `json:"scope"`
@@ -65,32 +68,29 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 	if why := s.jobs.exportSlot(c.actor.PersonID); why != "" {
 		return storeFull(why)
 	}
-	sink := &service.MemSink{}
-	_, err := s.svc.Export(c.r.Context(), c.actor, c.netID, scope, format, sink)
+	art := newArtefactWriter(s.jobs.dir)
+	zs := service.NewZipSink(art)
+	_, err := s.svc.Export(c.r.Context(), c.actor, c.netID, scope, format, zs)
+	if err == nil {
+		err = zs.Close()
+	}
 	if err != nil {
+		art.discard()
 		return err
 	}
-	var zb bytes.Buffer
-	zw := zip.NewWriter(&zb)
-	for _, n := range sink.Names() {
-		f, _ := zw.Create(n)
-		_, _ = f.Write(sink.Bytes(n))
-	}
-	if err := zw.Close(); err != nil {
-		return err
-	}
-	data := zb.Bytes()
-	sum := sha256.Sum256(data)
-	hexsum := hex.EncodeToString(sum[:])
 	id := uuid.NewString()
 	now := s.opt.Now()
+	e := &exportEntry{net: c.netID, person: c.actor.PersonID, at: now, ctype: "application/zip",
+		name: "circula-export-" + in.Scope + ".zip"}
+	hexsum := art.finish(e)
 	url := v1 + "/exports/" + id + "/artefact"
-	d := exportDTO{ID: id, Scope: in.Scope, Format: string(format), Status: "complete", CreatedAt: ts(now),
-		ExpiresAt: ts(now.Add(jobTTL)), SHA256: &hexsum, Bytes: len(data), ArtefactURL: &url}
-	if !s.jobs.putExport(&exportEntry{net: c.netID, person: c.actor.PersonID, at: now, dto: d, file: data,
-		ctype: "application/zip", name: "circula-export-" + in.Scope + ".zip"}) {
+	e.dto = exportDTO{ID: id, Scope: in.Scope, Format: string(format), Status: "complete", CreatedAt: ts(now),
+		ExpiresAt: ts(now.Add(jobTTL)), SHA256: &hexsum, Bytes: e.size(), ArtefactURL: &url}
+	if !s.jobs.putExport(e) {
+		e.release()
 		return storeFull("full")
 	}
+	d := e.dto
 	c.w.Header().Set("Location", v1+"/exports/"+id)
 	return ok(c, 201, d)
 }
@@ -119,16 +119,19 @@ func (s *server) getArtefact(c *reqCtx) error { // API-065
 	if err := s.svc.AuthorizeExportDownload(c.r.Context(), c.actor, c.netID, exportScopes[e.dto.Scope]); err != nil {
 		return err // SA2-17: role is re-checked at download
 	}
-	sum := sha256.Sum256(e.file)
-	if hex.EncodeToString(sum[:]) != *e.dto.SHA256 { // DAT-040: only serve verified artefacts
+	// DAT-040: only serve verified artefacts. Both the check and the response
+	// stream from the artefact, so a download never holds it in memory (FR-095).
+	sum := sha256.New()
+	if _, err := io.Copy(sum, e.content()); err != nil || hex.EncodeToString(sum.Sum(nil)) != *e.dto.SHA256 {
 		return errInternal
 	}
 	h := c.w.Header()
 	h.Set("Content-Type", e.ctype)
 	h.Set("Content-Disposition", `attachment; filename="`+e.name+`"`)
+	h.Set("Content-Length", strconv.FormatInt(e.size(), 10))
 	h.Set("X-Content-SHA256", *e.dto.SHA256)
 	c.w.WriteHeader(http.StatusOK)
-	_, _ = c.w.Write(e.file)
+	_, _ = io.Copy(c.w, e.content())
 	return nil
 }
 

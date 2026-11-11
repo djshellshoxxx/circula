@@ -52,7 +52,7 @@ func plainNumber(s string) bool {
 }
 
 // writeCSV writes one RFC 4180 UTF-8 file per table with a header row.
-func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string) error {
+func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string, rc *reconciler) error {
 	for _, t := range tables {
 		name := string(t) + ".csv"
 		raw, err := sink.Create(name)
@@ -63,6 +63,7 @@ func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.Export
 		w := csv.NewWriter(cw)
 		var rows int64
 		err = tx.StreamTable(t, man.NetworkID, memberID, func(cols []string, vals []any) error {
+			rc.observe(t, cols, vals)
 			cols, vals = decorate(cols, vals, man.Decimals)
 			if vals == nil {
 				return w.Write(cols)
@@ -91,7 +92,7 @@ func writeCSV(tx store.Tx, sink ExportSink, man *Manifest, tables []store.Export
 
 // writeJSON streams a single structured document; rows are written one at a
 // time so the ledger is never held in memory (FR-095).
-func writeJSON(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string) error {
+func writeJSON(tx store.Tx, sink ExportSink, man *Manifest, tables []store.ExportTable, memberID string, rc *reconciler) error {
 	name := string(man.Scope) + ".json"
 	raw, err := sink.Create(name)
 	if err != nil {
@@ -115,6 +116,7 @@ func writeJSON(tx store.Tx, sink ExportSink, man *Manifest, tables []store.Expor
 			}
 			first := true
 			if err := tx.StreamTable(t, man.NetworkID, memberID, func(cols []string, vals []any) error {
+				rc.observe(t, cols, vals)
 				if vals == nil {
 					return nil
 				}
