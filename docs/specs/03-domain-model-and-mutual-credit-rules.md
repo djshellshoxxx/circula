@@ -389,6 +389,16 @@ These codes are the vocabulary the API ([07-api-and-integration-contract.md](07-
 | `self_dealing_not_allowed` | Same person on both sides of a system-account event ([DOM-043](#dom-043)). |
 | `idempotency_conflict` | Same idempotency key, different payload ([DOM-011](#dom-011)). |
 | `confirmation_required` | Large-amount confirmation outstanding ([DOM-029](#dom-029)). |
+| `window_closed` | An action is attempted after its policy window: mutual reversal ([DOM-031](#dom-031), [DOM-101](#dom-101)), dispute ([DOM-060](#dom-060), [DOM-102](#dom-102)), appeal ([DOM-063](#dom-063), [DOM-103](#dom-103)), administrator reversal ([DOM-108](#dom-108)). |
+| `already_reversed` | Reversal of a transaction that is already `Reversed` ([DOM-033](#dom-033)). |
+| `not_disputable` | Dispute raised on a `reversal` event ([DOM-060](#dom-060)). |
+| `dispute_already_open` | A dispute on the same ledger event is `Open` or `Under review` ([DOM-060](#dom-060)). |
+| `reviewer_ineligible` | Reviewer is a party to the subject event or initiated the subject adjustment ([DOM-061](#dom-061)). |
+| `departure_blocked` | Departure attempted with a non-zero balance, a `Proposed` transaction, or an open dispute ([DOM-070](#dom-070)); the response names the blocking conditions. |
+| `closure_blocked` | Network closure attempted while any account is not `Closed` at zero ([DOM-075](#dom-075)); the response names the blocking accounts. |
+| `decimal_places_locked` | Attempt to change decimal places after the first posting ([DOM-006](#dom-006)). |
+| `policy_value_out_of_range` | Policy value outside the range in section 11 ([DOM-018](#dom-018)). |
+| `last_administrator` | Role change or departure that would leave the network without an active administrator (rule owned by [PER-006](02-personas-roles-and-journeys.md#per-006)). |
 
 ## 6. Reversals
 
