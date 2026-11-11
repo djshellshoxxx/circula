@@ -1,6 +1,7 @@
 package service
 
 import (
+	"archive/zip"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -56,16 +57,42 @@ type ManifestFile struct {
 }
 
 // Manifest lists the files with row counts and checksums, and states the
-// single ledger_seq the whole export was read at (DAT-037, DAT-039).
+// single ledger_seq the whole export was read at (DAT-037, DAT-039). Scopes
+// that export entries also carry a reconciliation summary (GOV-022).
 type Manifest struct {
-	SchemaVersion int            `json:"schema_version"`
-	NetworkID     string         `json:"network_id"`
-	Scope         ExportScope    `json:"scope"`
-	Format        ExportFormat   `json:"format"`
-	Decimals      int            `json:"decimals"`
-	LedgerSeq     int64          `json:"ledger_seq"`
-	GeneratedAt   time.Time      `json:"generated_at"`
-	Files         []ManifestFile `json:"files"`
+	SchemaVersion  int             `json:"schema_version"`
+	NetworkID      string          `json:"network_id"`
+	Scope          ExportScope     `json:"scope"`
+	Format         ExportFormat    `json:"format"`
+	Decimals       int             `json:"decimals"`
+	LedgerSeq      int64           `json:"ledger_seq"`
+	GeneratedAt    time.Time       `json:"generated_at"`
+	Files          []ManifestFile  `json:"files"`
+	Reconciliation *Reconciliation `json:"reconciliation,omitempty"`
+}
+
+// Reconciliation is the summary a recipient recomputes from the exported
+// entries (GOV-022, QA-030), read at the manifest's ledger_seq. Entries and
+// EntrySum cover every exported entry row. BalanceTotal sums the balances of
+// the covered accounts: every account of the network for the ledger and full
+// scopes (zero in a sound ledger, as is EntrySum), the caller's own account
+// for mine (equal to EntrySum, since mine holds only the caller's entries).
+// Accounts fingerprints the per-account balances; it is present for the
+// ledger and full scopes only.
+type Reconciliation struct {
+	Entries      int64          `json:"entries"`
+	EntrySum     int64          `json:"entry_sum"`
+	BalanceTotal int64          `json:"balance_total"`
+	Accounts     *AccountDigest `json:"accounts,omitempty"`
+}
+
+// AccountDigest fingerprints per-account balances so that they can be
+// checked against the entries alone. SHA256 is the hex SHA-256 of one line
+// "<account_id>,<balance>\n" per account whose balance is not zero, in byte
+// order of account_id; NonZero is the number of those lines.
+type AccountDigest struct {
+	NonZero int64  `json:"nonzero"`
+	SHA256  string `json:"sha256"`
 }
 
 var scopeTables = map[ExportScope][]store.ExportTable{
@@ -163,10 +190,25 @@ func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string, 
 		}
 		man = &Manifest{SchemaVersion: ExportSchemaVersion, NetworkID: netID, Scope: scope, Format: format,
 			Decimals: net.Policy.Decimals, LedgerSeq: seq, GeneratedAt: s.now()}
+		rc := newReconciler(tables, memberID == "")
 		if format == FormatCSV {
-			return writeCSV(tx, sink, man, tables, memberID)
+			err = writeCSV(tx, sink, man, tables, memberID, rc)
+		} else {
+			err = writeJSON(tx, sink, man, tables, memberID, rc)
 		}
-		return writeJSON(tx, sink, man, tables, memberID)
+		if err != nil || rc == nil {
+			return err
+		}
+		if memberID != "" { // mine: the caller's own balance, from the same snapshot
+			if err := tx.StreamTable(store.TblAccounts, netID, memberID, func(cols []string, vals []any) error {
+				rc.observe(store.TblAccounts, cols, vals)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		man.Reconciliation = rc.summary()
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -211,6 +253,87 @@ func (c *countingWriter) file(name string, rows int64) ManifestFile {
 	return ManifestFile{Name: name, Rows: rows, Bytes: c.n, SHA256: hex.EncodeToString(c.h.Sum(nil))}
 }
 
+// reconciler builds the reconciliation summary from the rows as they stream
+// past, so it needs no second read and holds nothing but running totals.
+type reconciler struct {
+	rec     Reconciliation
+	digest  hash.Hash // nil unless the scope covers every account of the network
+	nonzero int64
+	amount  int // column of entries.amount
+	id, bal int // columns of accounts.id and accounts.balance
+}
+
+// newReconciler returns nil when tables hold no entries. networkWide selects
+// the per-account digest (ledger and full scopes).
+func newReconciler(tables []store.ExportTable, networkWide bool) *reconciler {
+	for _, t := range tables {
+		if t == store.TblEntries {
+			r := &reconciler{amount: -1, id: -1, bal: -1}
+			if networkWide {
+				r.digest = sha256.New()
+			}
+			return r
+		}
+	}
+	return nil
+}
+
+// observe takes one StreamTable callback: the header (nil vals) or a row.
+// Accounts arrive ordered by id, which is the digest's order.
+func (r *reconciler) observe(t store.ExportTable, cols []string, vals []any) {
+	if r == nil {
+		return
+	}
+	switch t {
+	case store.TblEntries:
+		if vals == nil {
+			r.amount = colIndex(cols, "amount")
+			return
+		}
+		r.rec.Entries++
+		if v, ok := cell[int64](vals, r.amount); ok {
+			r.rec.EntrySum += v
+		}
+	case store.TblAccounts:
+		if vals == nil {
+			r.id, r.bal = colIndex(cols, "id"), colIndex(cols, "balance")
+			return
+		}
+		b, _ := cell[int64](vals, r.bal)
+		r.rec.BalanceTotal += b
+		if id, ok := cell[string](vals, r.id); ok && r.digest != nil && b != 0 {
+			r.nonzero++
+			fmt.Fprintf(r.digest, "%s,%d\n", id, b)
+		}
+	}
+}
+
+func (r *reconciler) summary() *Reconciliation {
+	out := r.rec
+	if r.digest != nil {
+		out.Accounts = &AccountDigest{NonZero: r.nonzero, SHA256: hex.EncodeToString(r.digest.Sum(nil))}
+	}
+	return &out
+}
+
+func colIndex(cols []string, name string) int {
+	for i, c := range cols {
+		if c == name {
+			return i
+		}
+	}
+	return -1
+}
+
+func cell[T any](vals []any, i int) (T, bool) {
+	var zero T
+	if i < 0 || i >= len(vals) {
+		return zero, false
+	}
+	v, ok := vals[i].(T)
+	return v, ok
+}
+
 // moneyCols are minor-unit columns that also get a formatted twin (FR-090).
 var moneyCols = map[string]bool{"amount": true, "balance": true, "limit_override": true, "price": true,
 	"reversed_total": true, "reversal_amount": true}
@@ -241,16 +364,54 @@ func decorate(cols []string, vals []any, decimals int) ([]string, []any) {
 	return outC, outV
 }
 
+// checkFileName refuses names that could leave the package directory.
+func checkFileName(name string) error {
+	if name == "" || name != filepath.Base(name) || strings.HasPrefix(name, ".") {
+		return fmt.Errorf("export: bad file name %q", name)
+	}
+	return nil
+}
+
 // DirSink writes export files into a directory (for CLI use).
 type DirSink struct{ Dir string }
 
 // Create implements ExportSink.
 func (d DirSink) Create(name string) (io.WriteCloser, error) {
-	if name != filepath.Base(name) || strings.HasPrefix(name, ".") {
-		return nil, fmt.Errorf("export: bad file name %q", name)
+	if err := checkFileName(name); err != nil {
+		return nil, err
 	}
 	return os.OpenFile(filepath.Join(d.Dir, name), os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0o600)
 }
+
+// ZipSink writes the package as one zip archive to an io.Writer, entry by
+// entry in the order the service creates the files (manifest.json last).
+// Nothing is buffered beyond the compressor's window, so the archive can go
+// straight to a file or a response (FR-095). The API and the CLI both use
+// it, so they produce the same archive (ARC-020). Close it after Export.
+type ZipSink struct{ zw *zip.Writer }
+
+// NewZipSink starts an archive on w.
+func NewZipSink(w io.Writer) *ZipSink { return &ZipSink{zw: zip.NewWriter(w)} }
+
+// Create implements ExportSink. Creating a file ends the previous one.
+func (z *ZipSink) Create(name string) (io.WriteCloser, error) {
+	if err := checkFileName(name); err != nil {
+		return nil, err
+	}
+	w, err := z.zw.Create(name)
+	if err != nil {
+		return nil, err
+	}
+	return zipEntry{w}, nil
+}
+
+// Close writes the archive's central directory; it does not close the
+// underlying writer.
+func (z *ZipSink) Close() error { return z.zw.Close() }
+
+type zipEntry struct{ io.Writer }
+
+func (zipEntry) Close() error { return nil }
 
 // MemSink collects export files in memory (tests, small exports).
 type MemSink struct{ Files map[string]*memFile }
