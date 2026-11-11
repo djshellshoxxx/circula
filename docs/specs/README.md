@@ -34,4 +34,8 @@ All documents are `Draft` as of 2026-11-11. This pass produced specifications on
 
 ## Checking the specifications
 
-Every requirement identifier is unique across the set and anchored so that links of the form `03-domain-model-and-mutual-credit-rules.md#dom-001` resolve. Before merging a change to any specification, check that relative links and `PREFIX-NNN` references still resolve and that no identifier is defined twice.
+Every requirement identifier is unique across the set and anchored so that links of the form `03-domain-model-and-mutual-credit-rules.md#dom-001` resolve. Before merging a change to any specification, run the checker, which fails on duplicate or undefined identifiers, broken relative links or anchors, missing required sections, and banned adjectives:
+
+```bash
+python3 tools/check_specs.py docs/specs
+```
