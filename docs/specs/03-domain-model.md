@@ -38,7 +38,7 @@ Summary for the historical implementation snapshot: built 33, required unimpleme
 | DOM-014 | P0 | built | Acceptance re-checks both parties and limit in one unit |
 | DOM-015 | P0 | built | Completed trades have exactly two equal and opposite entries |
 | DOM-016 | P0 | built | Idempotency key on retryable commands; key reuse refused |
-| DOM-017 | P0 | required unimplemented correction | Persist dispute deadline from policy effective at completion; current code reads policy at dispute opening |
+| DOM-017 | P0 | built | Deadline and policy version stored at completion (migration 0016, `postTx`); `OpenDispute` uses the stored deadline; legacy backfill blocks for owner mapping. Tests: `TestDisputeDeadlineFixedAtCompletion`, `TestDisputeDeadlineBackfill*` (2026-11-11) |
 | DOM-018 | P0 | built | Dispute states and outcomes with rationale and decider |
 | DOM-019 | P0 | built | Reversal is new transaction; reversal cannot be reversed |
 | DOM-020 | P0 | built | Cumulative reversed total capped at original amount |
@@ -265,7 +265,7 @@ stateDiagram-v2
 ## 8. Disputes
 
 ### DOM-017 · P0 · When a dispute may be opened
-- **Status. REQUIRED UNIMPLEMENTED CORRECTION at checkpoint `d39bfef`.** Current `OpenDispute` calculates `CompletedAt + current DisputeWindowDays` at opening time (`internal/service/disputes.go`). A policy change between completion and opening can therefore change the dispute right; this does not satisfy the target rule below.
+- **Status. Built 2026-11-11** on the beta consolidation branch. Until then `OpenDispute` calculated `CompletedAt + current DisputeWindowDays` at opening time. Now `postTx` stores `dispute_deadline_at` and `dispute_policy_version` for every completed trade, migration `0016_dispute_deadline.sql` backfills legacy trades (or stops for an owner mapping), triggers keep both values immutable, and `OpenDispute` reads only the stored deadline. Re-review windows (`ReReviewWindowDays`) still read the policy in force at the time; they are outside this requirement.
 - **Statement.** At trade completion, compute and persist an immutable `dispute_deadline_at` from the dispute-window policy version effective at that completion instant. A party to a `completed` transaction MAY open a dispute only while the server time is at or before that stored deadline. Opening a dispute sets the transaction to `disputed` and MUST NOT create or change entries. A later policy change MUST NOT shorten or extend an existing transaction's deadline.
 - **Legacy records.** For a completed trade without a stored deadline, derive the deadline from the latest policy version whose `effective_at` is at or before `completed_at`, using a deterministic version order. If there is no such version or the applicable version cannot be determined unambiguously, migration MUST stop before writes are served and require an owner-supplied mapping; it MUST NOT substitute the current policy silently.
 - **Acceptance.** Dispute opened on or before the stored deadline succeeds; after it is refused. Changing the dispute-window policy after completion leaves the stored deadline unchanged. A policy change between completion and opening does not change eligibility. The legacy backfill uses the policy version effective at completion or blocks for owner mapping; postings and balances are identical before and after opening (test).

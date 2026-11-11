@@ -38,7 +38,7 @@ func FuzzOpenCursor(f *testing.F) {
 		valid, "", ".", "..", valid + ".", "." + sig, payload + ".", payload, valid + "A", valid[:len(valid)-1],
 		strings.ToUpper(valid), strings.Replace(valid, ".", "..", 1), payload + "." + sig + "=", payload + "=." + sig,
 		payload + "\n." + sig, other.sealCursor("x", filter), s.sealCursor("x", filter+"x"), s.sealCursor("", filter),
-		base64.RawURLEncoding.EncodeToString([]byte(`{"p":"x","f":"` + filter + `"}`)) + "." + sig,
+		base64.RawURLEncoding.EncodeToString([]byte(`{"p":"x","f":"`+filter+`"}`)) + "." + sig,
 		base64.RawURLEncoding.EncodeToString([]byte(`not json`)) + "." + base64.RawURLEncoding.EncodeToString(s.mac([]byte(`not json`))),
 		"%00", "\x00.\x00", strings.Repeat("A", 4096) + "." + strings.Repeat("B", 4096),
 	} {

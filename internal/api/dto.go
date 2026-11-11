@@ -177,6 +177,8 @@ type txDTO struct {
 	ExpiresAt          *string `json:"expires_at"`
 	CompletedAt        *string `json:"completed_at"`
 	PostedLedgerSeq    *int64  `json:"posted_ledger_seq"`
+	// DisputeDeadlineAt is set for completed trades only (DOM-017); omitted otherwise.
+	DisputeDeadlineAt *string `json:"dispute_deadline_at,omitempty"`
 }
 
 func strPtr(s string) *string {
@@ -190,7 +192,8 @@ func toTx(t *domain.Transaction, myMember string) txDTO {
 	d := txDTO{ID: t.ID, Kind: string(t.Kind), Status: string(t.Status), PayerMemberID: strPtr(t.PayerMemberID),
 		PayeeMemberID: strPtr(t.PayeeMemberID), AmountMinor: minor(t.Amount), ListingID: strPtr(t.ListingID),
 		Description: t.Note, Reason: t.Reason, OriginalTxID: strPtr(t.OriginalTxID), ReversedTotalMinor: minor(t.ReversedTotal),
-		ProposedAt: ts(t.ProposedAt), ExpiresAt: tsPtr(t.ExpiresAt), CompletedAt: tsPtr(t.CompletedAt)}
+		ProposedAt: ts(t.ProposedAt), ExpiresAt: tsPtr(t.ExpiresAt), CompletedAt: tsPtr(t.CompletedAt),
+		DisputeDeadlineAt: tsPtr(t.DisputeDeadlineAt)}
 	if t.LedgerSeq > 0 {
 		v := t.LedgerSeq
 		d.PostedLedgerSeq = &v

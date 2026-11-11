@@ -10,7 +10,8 @@ import (
 const txCols = `t.id, t.network_id, t.kind, t.status, t.payer_account_id, t.payee_account_id,
 	COALESCE(pa.member_id,''), COALESCE(pb.member_id,''), t.amount, COALESCE(t.listing_id,''),
 	t.note, t.reason, COALESCE(t.original_tx_id,''), COALESCE(t.created_by,''), COALESCE(t.accepted_by,''),
-	t.reversed_total, t.proposed_at, t.expires_at, t.completed_at, COALESCE(t.ledger_seq,0)`
+	t.reversed_total, t.proposed_at, t.expires_at, t.completed_at, COALESCE(t.ledger_seq,0), t.dispute_deadline_at,
+	COALESCE(t.dispute_policy_version,0)`
 
 const txFrom = ` FROM transactions t
 	JOIN accounts pa ON pa.id = t.payer_account_id
@@ -30,15 +31,16 @@ func scanTx(r rowScanner) (*domain.Transaction, error) {
 	var x domain.Transaction
 	var kind, status string
 	var proposed int64
-	var exp, done sql.NullInt64
+	var exp, done, deadline sql.NullInt64
 	if err := r.Scan(&x.ID, &x.NetworkID, &kind, &status, &x.PayerAccountID, &x.PayeeAccountID,
 		&x.PayerMemberID, &x.PayeeMemberID, &x.Amount, &x.ListingID, &x.Note, &x.Reason,
 		&x.OriginalTxID, &x.CreatedBy, &x.AcceptedBy, &x.ReversedTotal, &proposed, &exp, &done,
-		&x.LedgerSeq); err != nil {
+		&x.LedgerSeq, &deadline, &x.DisputePolicyVersion); err != nil {
 		return nil, err
 	}
 	x.Kind, x.Status = domain.TxKind(kind), domain.TxStatus(status)
 	x.ProposedAt, x.ExpiresAt, x.CompletedAt = fromMS(proposed), ptrTime(exp), ptrTime(done)
+	x.DisputeDeadlineAt = ptrTime(deadline)
 	return &x, nil
 }
 
@@ -49,9 +51,9 @@ func (t *txImpl) GetTransaction(netID, id string) (*domain.Transaction, error) {
 
 func (t *txImpl) UpdateTransaction(x *domain.Transaction) error {
 	res, err := t.exec(`UPDATE transactions SET status = ?, accepted_by = ?, note = ?, reversed_total = ?,
-		completed_at = ?, ledger_seq = ? WHERE network_id = ? AND id = ?`,
+		completed_at = ?, ledger_seq = ?, dispute_deadline_at = ?, dispute_policy_version = ? WHERE network_id = ? AND id = ?`,
 		string(x.Status), nullStr(x.AcceptedBy), x.Note, x.ReversedTotal, msPtr(x.CompletedAt),
-		nullInt(x.LedgerSeq), x.NetworkID, x.ID)
+		nullInt(x.LedgerSeq), msPtr(x.DisputeDeadlineAt), nullInt(int64(x.DisputePolicyVersion)), x.NetworkID, x.ID)
 	if err != nil {
 		return err
 	}

@@ -3337,6 +3337,11 @@ components:
         completed_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
         posted_ledger_seq:
           oneOf: [{type: integer, format: int64, minimum: 1}, {type: 'null'}]
+        dispute_deadline_at:
+          $ref: '#/components/schemas/Timestamp'
+          description: >-
+            Trades only, present once completed. The last instant a party may open a dispute, fixed at
+            completion from the dispute window then in force; later policy changes never move it (DOM-017).
     TransactionDetail:
       type: object
       description: Transaction plus the events link.

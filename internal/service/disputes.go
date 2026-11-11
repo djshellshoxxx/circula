@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -53,7 +52,11 @@ func (s *Service) OpenDispute(ctx context.Context, actor domain.Actor, netID str
 				return "", err
 			}
 			now := s.now()
-			closes := t.CompletedAt.Add(time.Duration(p.net.Policy.DisputeWindowDays) * 24 * time.Hour)
+			// DOM-017: the deadline stored at completion, never the policy in force now.
+			if t.DisputeDeadlineAt == nil {
+				return "", domain.Errf(domain.CodeInternal, "trade %s has no stored dispute deadline", t.ID)
+			}
+			closes := *t.DisputeDeadlineAt
 			if now.After(closes) {
 				return "", domain.InvalidState("the dispute window closed on %s", closes.Format("2006-01-02"))
 			}

@@ -176,6 +176,11 @@ type Transaction struct {
 	ExpiresAt      *time.Time
 	CompletedAt    *time.Time
 	LedgerSeq      int64
+	// DisputeDeadlineAt is fixed when a trade completes, from the dispute
+	// window in force then (DOM-017); nil for other kinds and open proposals.
+	DisputeDeadlineAt *time.Time
+	// DisputePolicyVersion is the policy version the deadline came from (DAT-051).
+	DisputePolicyVersion int
 }
 
 // IsParty reports whether member id is the payer or payee.

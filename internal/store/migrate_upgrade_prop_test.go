@@ -106,6 +106,9 @@ func seedV1Ledger(t *testing.T, db *sql.DB) {
 	for _, q := range []string{
 		`INSERT INTO persons(id,login,password_hash,created_at) VALUES ('p1','p1','h',1),('p2','p2','h',1)`,
 		`INSERT INTO networks(id,name,slug,status,ledger_seq,created_at) VALUES ('n1','N','n','active',1,1)`,
+		// Every network has policy version 1 from creation; 0016 derives the
+		// trade's dispute deadline from it (DOM-017).
+		`INSERT INTO network_policies(network_id,version,policy_json,effective_at) VALUES ('n1',1,'{"dispute_window_days":30}',1)`,
 		`INSERT INTO members(id,network_id,person_id,display_name,status,join_method,joined_at) VALUES ('m1','n1','p1','A','active','invite',1),('m2','n1','p2','B','active','invite',1)`,
 		`INSERT INTO accounts(id,network_id,member_id,is_system,balance) VALUES ('a1','n1','m1',0,-2500),('a2','n1','m2',0,2500)`,
 		`INSERT INTO transactions(id,network_id,kind,status,payer_account_id,payee_account_id,amount,proposed_at,completed_at,ledger_seq,created_by,accepted_by)

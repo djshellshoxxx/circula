@@ -127,11 +127,14 @@ func (s *server) reviewQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 type disputeForm struct {
-	TxID    string
-	Cats    []option
-	Row     txRow
-	Window  int
-	Confirm bool
+	TxID string
+	Cats []option
+	Row  txRow
+	// Deadline is the dispute deadline stored when the trade completed
+	// (DOM-017), formatted for display; empty for a trade not completed.
+	Deadline     template.HTML
+	DeadlineText string
+	Confirm      bool
 }
 
 func (s *server) disputeFormData(r *http.Request, c *rc) (*disputeForm, error) {
@@ -143,7 +146,12 @@ func (s *server) disputeFormData(r *http.Request, c *rc) (*disputeForm, error) {
 		return nil, domain.NotFound("trade")
 	}
 	row := makeRow(v.Tx, c.Me, c.memberNames(), c.Net.Policy.CurrencyName, c.Net.Policy.Decimals)
-	return &disputeForm{TxID: v.Tx.ID, Cats: categories, Row: row, Window: c.Net.Policy.DisputeWindowDays}, nil
+	d := &disputeForm{TxID: v.Tx.ID, Cats: categories, Row: row}
+	if dl := v.Tx.DisputeDeadlineAt; dl != nil {
+		at := c.at(*dl)
+		d.Deadline, d.DeadlineText = fmtTime(at), at.Format("2 Jan 2006, 15:04 MST")
+	}
+	return d, nil
 }
 
 func (s *server) disputeForm(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -198,7 +206,10 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		if sum, fe, ok := c.refuse(err); ok {
 			p.Summary, p.Errors = sum, fe
 			if domain.CodeOf(err) == domain.CodeForbidden || domain.CodeOf(err) == domain.CodeInvalidState {
-				p.Summary = "Not sent. This trade cannot be disputed now: it must be completed, within the dispute window (" + itoa(d.Window) + " days from completion) and you must be a party to it. Nothing changed."
+				p.Summary = "Not sent. This trade cannot be disputed now: it must be completed, the dispute deadline must not have passed, and you must be a party to it. Nothing changed."
+				if d.DeadlineText != "" {
+					p.Summary = "Not sent. This trade cannot be disputed now: it must be completed, on or before its dispute deadline (" + d.DeadlineText + "), and you must be a party to it. Nothing changed."
+				}
 			}
 			s.render(w, r, c, "dispute_form", 422, p)
 			return

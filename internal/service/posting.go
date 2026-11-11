@@ -79,6 +79,10 @@ func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction
 	s.unit.posts++
 	prev := t.Status
 	t.Status, t.CompletedAt, t.LedgerSeq = next, &now, seq
+	if t.Kind == domain.KindTrade { // DOM-017: fixed now, from the window in force now
+		dl := disputeDeadline(net, now)
+		t.DisputeDeadlineAt, t.DisputePolicyVersion = &dl, net.PolicyVersion
+	}
 	if err := tx.UpdateTransaction(t); err != nil {
 		return err
 	}
@@ -105,6 +109,12 @@ func (s *Service) newInternalTx(tx store.Tx, net *domain.Network, kind domain.Tx
 		return nil, err
 	}
 	return t, nil
+}
+
+// disputeDeadline is the last instant a party may open a dispute on a trade
+// completed at completedAt under net's policy in force at that instant.
+func disputeDeadline(net *domain.Network, completedAt time.Time) time.Time {
+	return completedAt.Add(time.Duration(net.Policy.DisputeWindowDays) * 24 * time.Hour)
 }
 
 func fmtAmt(net *domain.Network, v int64) string { return domain.FormatAmount(v, net.Policy.Decimals) }

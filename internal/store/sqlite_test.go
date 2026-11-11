@@ -100,6 +100,8 @@ func post(t *testing.T, s *store.SQLite, netID, txID, accA, accB string) {
 			return err
 		}
 		x.Status = domain.TxCompleted
+		done, deadline := now, now.Add(30*24*time.Hour) // the service fixes the deadline at completion (DOM-017)
+		x.CompletedAt, x.DisputeDeadlineAt, x.DisputePolicyVersion = &done, &deadline, 1
 		return tx.UpdateTransaction(x)
 	})
 	if err != nil {

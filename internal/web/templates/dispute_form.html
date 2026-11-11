@@ -1,6 +1,6 @@
 {{define "content"}}
 {{with .D}}
-<p>Trade: {{.Row.Text}} ({{.Row.Status}}). You can dispute a completed trade within {{.Window}} days of completion. Opening a dispute does not change any balance.</p>
+<p>Trade: {{.Row.Text}} ({{.Row.Status}}). {{if .Deadline}}You can open a dispute on this trade until {{.Deadline}}.{{else}}Only a completed trade can be disputed.{{end}} Opening a dispute does not change any balance.</p>
 {{if .Confirm}}
 <dl class="kv"><dt>Reason</dt><dd>{{categoryLabel ($.Val "category")}}</dd><dt>Your statement</dt><dd>{{$.Val "statement"}}</dd>
 <dt>Effect</dt><dd>The trade will be marked Disputed. Your balance and available credit do not change until a reviewer decides.</dd></dl>
