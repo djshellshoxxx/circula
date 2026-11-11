@@ -2,9 +2,9 @@
 # Circula container image: static binary on distroless, non-root, no shell.
 # Build from the repository root:  docker build -f deploy/Dockerfile --build-arg VERSION=v1.2.3 -t circula:v1.2.3 .
 # OWNER: pin both base images by digest before release (tags are mutable):
-#   docker buildx imagetools inspect golang:1.26.10
+#   docker buildx imagetools inspect golang:1.26.11
 #   docker buildx imagetools inspect gcr.io/distroless/static-debian12:nonroot
-FROM golang:1.26.10 AS build
+FROM golang:1.26.11 AS build
 ARG VERSION=dev
 ARG COMMIT=unknown
 ARG DATE=unknown
