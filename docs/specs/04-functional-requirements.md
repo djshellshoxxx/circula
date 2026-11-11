@@ -19,13 +19,14 @@ Identifier ranges are reserved by topic so that later insertions do not renumber
 |---|---|---|
 | FR-001 to FR-009 | Network setup, rules statement, welcome screen | [3](#3-network-setup) |
 | FR-010 to FR-019 | Identity and membership | [4](#4-identity-and-membership) |
-| FR-020 to FR-029 | Member directory and listings | [5](#5-member-directory-and-listings) |
-| FR-030 to FR-049 | Transactions | [6](#6-transactions) |
-| FR-050 to FR-059 | Balance and history, ledger verification | [7](#7-balance-and-history) |
+| FR-020 to FR-029 | Member directory and listings, administrator and reviewer list | [5](#5-member-directory-and-listings) |
+| FR-030 to FR-043 | Transactions | [6](#6-transactions) |
+| FR-044 to FR-049 | Administrator controls, continued: break-glass administrator grant, session revocation, starting limit, oversight notices, message path to administrators (FR-060 to FR-069 is full) | [8](#8-administrator-controls) |
+| FR-050 to FR-059 | Balance and history, ledger verification, network-account summary and adjustment log | [7](#7-balance-and-history) |
 | FR-060 to FR-069 | Administrator controls, abuse reports, succession contact | [8](#8-administrator-controls) |
-| FR-070 to FR-079 | Disputes | [9](#9-disputes) |
+| FR-070 to FR-079 | Disputes, dispute age and reviewer reminder | [9](#9-disputes) |
 | FR-080 to FR-089 | Audit history, notifications, notice board | [10](#10-audit-history-and-notifications) |
-| FR-090 to FR-099 | Exports and export file expiry | [11](#11-exports) |
+| FR-090 to FR-099 | Exports, export file expiry, final export at closure | [11](#11-exports) |
 
 ## 2. Conventions used in this document
 
@@ -38,7 +39,7 @@ Each requirement is written as: anchor and title with priority ([00-conventions.
 Unless a criterion says otherwise:
 
 - The fixture network `N` is `Active`, has 0 decimal places, unit "credits", default credit limit 100 ([DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090)), maximum credit limit 500 ([DOM-091](03-domain-model-and-mutual-credit-rules.md#dom-091)), no positive limit, and all other policies at their recommended defaults ([DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090) to [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115)).
-- Members `A`, `B`, `C` are `Active` with `Active` accounts at balance 0; `M` and `M2` are administrators; `R` is a reviewer who holds no account in the subject event; `NET` is the network account; `O` is the platform operator. Email addresses are of the form `member@example.org`.
+- Members `A`, `B`, `C` are `Active` with `Active` accounts at balance 0; `M` and `M2` are administrators; `R` is a reviewer who holds no account in the subject event; `NET` is the network account; `O` is the platform operator and `O2` a second, different platform operator account. Email addresses are of the form `member@example.org`.
 - Every state-changing request carries a fresh idempotency key ([DOM-011](03-domain-model-and-mutual-credit-rules.md#dom-011)). "Retry with the same key" means the identical request with the identical key; the expected result is always the original outcome with no second object, posting, notification, or audit event for the state change.
 - "Rejected with `code`" means the request changes no state, returns the named error code, and (where [DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022) requires it) records the failed attempt. The web client and the API return the same code for the same request ([DEC-006](13-assumptions-risks-decisions-and-roadmap.md#dec-006), [PER-008](02-personas-roles-and-journeys.md#per-008)).
 - "Audited" means an audit event exists with actor, action, object, network, and timestamp ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012)); contents are defined in [06-data-model-ledger-and-audit.md](06-data-model-ledger-and-audit.md).
@@ -46,15 +47,16 @@ Unless a criterion says otherwise:
 
 ### 2.3 Error codes
 
-Domain-rule codes are those of [03-domain-model-and-mutual-credit-rules.md §5.1](03-domain-model-and-mutual-credit-rules.md#51-error-codes-raised-by-transaction-rules) and are used verbatim; that section is their authoritative home. The first five codes below are general request codes owned by [07-api-and-integration-contract.md](07-api-and-integration-contract.md); the rest are listed here only as a reading aid.
+Domain-rule codes are those of [03-domain-model-and-mutual-credit-rules.md §5.1](03-domain-model-and-mutual-credit-rules.md#51-error-codes-raised-by-transaction-rules) and are used verbatim; that section is their authoritative home. The first six codes below are general request codes owned by [07-api-and-integration-contract.md](07-api-and-integration-contract.md); the rest are listed here only as a reading aid.
 
 | Code | Raised when |
 |---|---|
 | `unauthenticated` | No valid session or token, or sign-in credentials are wrong. |
 | `forbidden` | The actor's role does not permit the action ([PER-008](02-personas-roles-and-journeys.md#per-008)). |
 | `not_found` | Object does not exist or belongs to a network the actor has no membership in ([DEC-001](13-assumptions-risks-decisions-and-roadmap.md#dec-001) isolation). |
-| `validation_failed` | A field is missing or malformed (other than the §5.1 cases). |
+| `validation_failed` | A field is missing or malformed (other than the §5.1 cases). An amount that breaks [DOM-006](03-domain-model-and-mutual-credit-rules.md#dom-006) or [DOM-104](03-domain-model-and-mutual-credit-rules.md#dom-104), including a non-integer, string, or exponent form, is always reported with top-level `invalid_amount` instead. |
 | `rate_limited` | Request rate exceeded; response carries a retry-after interval ([09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md)). |
+| `precondition_failed` | An administrator edit was based on a version that is no longer current (`If-Match` mismatch in [07-api-and-integration-contract.md](07-api-and-integration-contract.md)). |
 | `not_permitted_by_policy` | Network policy disables the action (for example [DOM-095](03-domain-model-and-mutual-credit-rules.md#dom-095) `invite_only`, [DOM-101](03-domain-model-and-mutual-credit-rules.md#dom-101) = 0, [DOM-109](03-domain-model-and-mutual-credit-rules.md#dom-109) `off`). |
 | `policy_value_out_of_range` | A policy or limit value lies outside its catalogue range ([DOM-018](03-domain-model-and-mutual-credit-rules.md#dom-018)). |
 | `decimal_places_locked` | Decimal places changed after the first posting ([DOM-006](03-domain-model-and-mutual-credit-rules.md#dom-006)). |
@@ -105,10 +107,10 @@ Creating a network MUST create its network account in the same operation, with l
 3. Given `N` is `Active`, when `A` (not an administrator) proposes a transaction with `NET` as the account `A` acts for, then it is rejected with `not_a_party`.
 
 <a id="fr-005"></a>**FR-005 — Suspend and reinstate a network.** (P0)
-An administrator or the platform operator MUST be able to suspend an `Active` network with a reason, and reinstate a `Suspended` network. Suspension MUST cancel every `Proposed` transaction with status reason `network_suspended` ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)), stop all postings and new memberships, and keep all data readable and exportable.
-*Rationale:* a community may need to pause trading during a governance crisis or a suspected fault. *Depends on:* [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016), [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012).
+An administrator or the platform operator MUST be able to suspend an `Active` network with a reason, and reinstate a `Suspended` network. Suspension MUST cancel every `Proposed` transaction with status reason `network_suspended` ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)), stop ordinary transactions (`transaction_completed` events) and new memberships while administrator reversals and adjustments remain possible ([DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016)), keep all data readable and exportable, and notify every member with the reason ([GOV-082](10-governance-and-network-operations.md#gov-082), [GOV-083](10-governance-and-network-operations.md#gov-083), [SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156)).
+*Rationale:* a community may need to pause trading during a governance crisis or a suspected fault. *Depends on:* [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016), [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [PER-038](02-personas-roles-and-journeys.md#per-038), [GOV-082](10-governance-and-network-operations.md#gov-082), [GOV-083](10-governance-and-network-operations.md#gov-083), [SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156).
 
-1. Given `N` has two `Proposed` transactions, when `M` suspends `N` with reason "governance review", then `N` is `Suspended`, both transactions are `Cancelled` with reason `network_suspended`, both parties of each are notified, and the suspension is audited.
+1. Given `N` has two `Proposed` transactions, when `M` suspends `N` with reason "governance review", then `N` is `Suspended`, both transactions are `Cancelled` with reason `network_suspended`, both parties of each are notified, every member is notified with the reason, and the suspension is audited.
 2. Given `N` is `Suspended`, when `A` proposes a transaction, then it is rejected with `network_not_active`.
 3. Given `N` is `Suspended`, when a person applies by join link, then the application is rejected with `network_not_active`.
 4. Given `N` is `Suspended`, when `A` views balance and history or requests a self-export, then both succeed.
@@ -180,7 +182,7 @@ A person MUST be able to reset a forgotten password through a single-use, time-l
 An administrator MUST be able to invite a person to an `Active` network by email; a member MAY do so only when [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) is `on`. The invitation MUST expire after [DOM-099](03-domain-model-and-mutual-credit-rules.md#dom-099). An administrator MUST be able to revoke an `Invited` invitation. On acceptance the membership becomes `Active` or `Pending` as [DOM-095](03-domain-model-and-mutual-credit-rules.md#dom-095) and [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) determine ([OQ-FR-2](#14-open-questions)).
 *Rationale:* invitation is the default entry path for small trusted communities. *Depends on:* [DOM-095](03-domain-model-and-mutual-credit-rules.md#dom-095), [DOM-099](03-domain-model-and-mutual-credit-rules.md#dom-099), [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115), [DOM-015](03-domain-model-and-mutual-credit-rules.md#dom-015), [PER-012](02-personas-roles-and-journeys.md#per-012), [JRN-001](02-personas-roles-and-journeys.md#jrn-001).
 
-1. Given entry mode `invite_only`, when `M` invites `d@example.org` and the invitee accepts within 14 days, then the membership is `Active`, a member account exists with credit limit 100, and invitation and acceptance are audited.
+1. Given entry mode `invite_only`, when `M` invites `d@example.org` and the invitee accepts within the [DOM-099](03-domain-model-and-mutual-credit-rules.md#dom-099) window, then the membership is `Active`, a member account exists with credit limit 100, and invitation and acceptance are audited.
 2. Given entry mode `invite_or_apply_with_approval` and [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) `on`, when `A` invites `e@example.org` and the invitee accepts, then the membership is `Pending`.
 3. Given [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) `off`, when `A` invites someone, then the request is rejected with `not_permitted_by_policy`.
 4. Given an invitation sent 15 days ago with [DOM-099](03-domain-model-and-mutual-credit-rules.md#dom-099) = 14 days, when the invitee accepts, then it is rejected with `invitation_expired` and the membership is `Expired`.
@@ -313,6 +315,15 @@ Listings of a `Suspended` member MUST be hidden from browse and search while the
 1. Given `A` has 2 `Active` listings, when `M` suspends `A`, then neither appears in `B`'s browse results; after reinstatement both appear.
 2. Given `A` departs, then `A`'s listings are `Closed` and the closures are audited with actor `system`.
 
+<a id="fr-029"></a>**FR-029 — Administrators and reviewers listed.** (P0)
+Every `Active` member MUST be able to see, on the network's home screen, the display names of the current administrators and reviewers, the date each role was granted, the number of `Active` administrators, and how to contact them through the platform ([FR-048](#fr-048)). The list MUST change when roles change ([GOV-100](10-governance-and-network-operations.md#gov-100), [SEC-052](09-security-privacy-and-abuse-resistance.md#sec-052), [GOV-051](10-governance-and-network-operations.md#gov-051)).
+*Rationale:* members can only hold administrators to account if they know who they are. *Depends on:* [GOV-100](10-governance-and-network-operations.md#gov-100), [GOV-051](10-governance-and-network-operations.md#gov-051), [SEC-052](09-security-privacy-and-abuse-resistance.md#sec-052), [PER-005](02-personas-roles-and-journeys.md#per-005), [DOM-097](03-domain-model-and-mutual-credit-rules.md#dom-097).
+
+1. Given `M` and `M2` are administrators and `R` is a reviewer, when `A` opens `N`'s home screen, then `M`, `M2`, and `R` appear with their roles and grant dates, and the count of `Active` administrators is 2.
+2. Given `M` removes `R`'s reviewer role, when `A` reloads the home screen, then `R` is no longer listed.
+3. Given [DOM-097](03-domain-model-and-mutual-credit-rules.md#dom-097) `public_read`, when an unauthenticated visitor requests the administrator and reviewer list, then it is rejected with `unauthenticated`.
+4. Given `C` has no membership in `N`, when `C` requests the list, then it is rejected with `not_found`.
+
 ## 6. Transactions
 
 ```mermaid
@@ -343,7 +354,7 @@ An `Active` member MUST be able to propose a transaction with themselves as paye
 1. Given `A` and `B`, when `A` proposes to be debited 40 in favor of `B` for "two hours of garden work", then a `Proposed` transaction exists with `expires at` = now + 14 days, balances are unchanged, `B` is notified, and the proposal is audited.
 2. Given `A` at −90, when `A` proposes 40 to `B`, then the proposal is accepted and the response carries a warning that `A`'s available credit (10) is below the amount.
 3. When `A` proposes with payer and payee both `A`'s account, then it is rejected with `same_account`.
-4. When `A` proposes amount 0, amount −5, or amount 2.5 in a 0-decimal network, then each is rejected with `invalid_amount`; with [DOM-104](03-domain-model-and-mutual-credit-rules.md#dom-104) = 100, amount 101 is rejected with `invalid_amount`.
+4. When `A` proposes amount 0, amount −5, amount 2.5, amount 40.0, the exponent form 4e1, or the string "40" in a 0-decimal network, then each is rejected with top-level `invalid_amount` (not `validation_failed`); with [DOM-104](03-domain-model-and-mutual-credit-rules.md#dom-104) = 100, amount 101 is rejected with `invalid_amount`.
 5. When `A` proposes with an empty description, then it is rejected with `description_required`.
 6. When `A` proposes a transaction between `B` and `C`, then it is rejected with `not_a_party`.
 7. Given `B`'s account is `Frozen`, when `A` proposes to `B`, then it is rejected with `account_not_active`.
@@ -430,7 +441,7 @@ When the second party's request arrives within the window, the platform MUST pos
 
 1. Given `A` requested reversal of the 40-credit trade, when `B` requests too, then one `reversal` event posts (debit `B` 40, credit `A` 40, authority `mutual_consent`), the transaction is `Reversed`, the original postings are unchanged, and both are notified.
 2. Given `B` traded down to +5 after the trade and has credit limit 30, when the reversal posts, then `B` is −35, the event has `limit override` true, and `B` is shown over limit by 5 ([DOM-052](03-domain-model-and-mutual-credit-rules.md#dom-052)).
-3. Given a `Reversed` transaction, when either party requests reversal, then it is rejected with `invalid_transition`.
+3. Given a `Reversed` transaction, when either party requests reversal, then it is rejected with `already_reversed` ([DOM-033](03-domain-model-and-mutual-credit-rules.md#dom-033)).
 4. Given an open dispute on the transaction, when both parties request reversal, then the dispute is `Resolved` with outcome `reversed` and reasoning "mutual consent", and exactly one reversal event exists.
 5. Given both parties submit the second request at the same instant, then exactly one reversal event exists.
 
@@ -542,18 +553,29 @@ In addition to [FR-057](#fr-057), the platform operator MUST be able to trigger 
 3. Given `M` administers `N` only, when `M` requests `N2`'s verification result, then it is rejected with `not_found`.
 4. Given a run is already in progress for `N`, when `M` triggers another, then no second run starts and the response refers to the running one.
 
+<a id="fr-059"></a>**FR-059 — Network-account summary and adjustment log.** (P1)
+Every `Active` member SHOULD be able to see, per calendar month, the count and total amount of adjustments by type that debited or credited the network account and the administrators who initiated them ([SEC-056](09-security-privacy-and-abuse-resistance.md#sec-056)), and a log of every adjustment event in the network with date, type, reason code, amount, network-account direction, initiating administrator, and dispute reference where any ([GOV-103](10-governance-and-network-operations.md#gov-103)). Member accounts are named only as [GOV-103](10-governance-and-network-operations.md#gov-103), [DOM-053](03-domain-model-and-mutual-credit-rules.md#dom-053), and [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110) allow; whether the member-to-member default may be restricted further is open ([OQ-GOV-7](10-governance-and-network-operations.md#18-open-questions)).
+*Rationale:* members can follow how the network account is used without seeing other members' balances. *Depends on:* [SEC-056](09-security-privacy-and-abuse-resistance.md#sec-056), [GOV-103](10-governance-and-network-operations.md#gov-103), [DOM-053](03-domain-model-and-mutual-credit-rules.md#dom-053), [DOM-096](03-domain-model-and-mutual-credit-rules.md#dom-096), [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110), [PER-049](02-personas-roles-and-journeys.md#per-049).
+
+1. Given in October `M` posted `write_off`s of 60 and 90 and a `correction` crediting `NET` 10, when `A` opens the October summary, then it shows `write_off` 2 events totalling 150 and `correction` 1 event totalling 10, each initiated by `M`.
+2. Given a `correction` between `B` and `C` and [DOM-096](03-domain-model-and-mutual-credit-rules.md#dom-096) `hidden`, when `A` opens the adjustment log, then both accounts are shown as "a member"; when `B` opens it, `B`'s own account is named.
+3. Given a `write_off` to `A` on `NET` and [DOM-096](03-domain-model-and-mutual-credit-rules.md#dom-096) `hidden`, when `B` opens the log, then the counterparty is shown as an unnamed member ([DOM-053](03-domain-model-and-mutual-credit-rules.md#dom-053)).
+4. Given `C` has no membership in `N`, when `C` requests `N`'s summary or log, then it is rejected with `not_found`.
+
 ## 8. Administrator controls
 
 <a id="fr-060"></a>**FR-060 — Edit policy with versioning.** (P0)
-An administrator MUST be able to change any catalogue policy ([DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090) to [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115)) with a mandatory change note. Each save MUST create a new immutable version, effective at save time or at a scheduled future time that an administrator MAY cancel before it takes effect, and applying only to evaluations after its effective time ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)). Members MUST be notified of each new version ([FR-084](#fr-084)) and it is posted to the notice board ([FR-089](#fr-089)).
+An administrator MUST be able to change any catalogue policy ([DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090) to [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115)) with a mandatory change note. Each save MUST create a new immutable version, effective at save time or at a scheduled future time within the bound of [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) that an administrator MAY cancel before it takes effect ([PER-043](02-personas-roles-and-journeys.md#per-043)), and applying only to evaluations after its effective time ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)). `Active` and `Suspended` members MUST be notified of each new version when it is created and, for a scheduled version, again when it takes effect ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017), [FR-084](#fr-084)), and it is posted to the notice board ([FR-089](#fr-089)).
 *Rationale:* members and reviewers must be able to see which rules applied to a past event. *Depends on:* [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017), [DOM-018](03-domain-model-and-mutual-credit-rules.md#dom-018), [PER-011](02-personas-roles-and-journeys.md#per-011), [PER-007](02-personas-roles-and-journeys.md#per-007), [JRN-006](02-personas-roles-and-journeys.md#jrn-006).
 
 1. Given [DOM-100](03-domain-model-and-mutual-credit-rules.md#dom-100) = 14 days, when `M` sets it to 7 days with a note, then version n+1 exists, proposals created earlier keep their original `expires at`, and new proposals expire after 7 days.
 2. Given `M`, when `M` sets [DOM-102](03-domain-model-and-mutual-credit-rules.md#dom-102) to 400 days, then it is rejected with `policy_value_out_of_range`.
 3. Given a change without a note, when submitted, then it is rejected with `validation_failed`.
 4. Given `O`, when `O` changes a policy through the normal interface or API, then it is rejected with `forbidden`.
-5. Given `M` and `M2` save conflicting changes concurrently from the same base version, then the second is rejected with `invalid_transition` and must be resubmitted against the new version.
+5. Given `M` and `M2` save conflicting changes concurrently from the same base version, then the second is rejected with `precondition_failed` and must be resubmitted against the new version.
 6. Given `M` schedules a version effective in 3 days and cancels it after 1 day, then it is never evaluated and the cancellation is audited.
+7. Given `M` saves a version with an effective time in the past, or more than the [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) maximum ahead (181 days), then it is rejected with `validation_failed` and no version is created.
+8. Given `A` is `Active` and `C` is `Suspended`, when `M` schedules a version effective in 3 days, then `A` and `C` are each notified when it is created and again when it takes effect, and each attempt is audited.
 
 <a id="fr-061"></a>**FR-061 — Policy history.** (P0)
 Every `Active` member MUST be able to see the current policy values that affect them, and administrators and reviewers MUST be able to see every past version with author, effective time, and change note, and which version a given transaction or ledger event was evaluated under.
@@ -584,16 +606,17 @@ An administrator MUST be able to post an adjustment of any type permitted by [DO
 7. Given `M`'s response was lost, when `M` retries with the same key, then exactly one adjustment exists.
 
 <a id="fr-064"></a>**FR-064 — Second-administrator approval and self-dealing guard.** (P0)
-When [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) requires approval, an adjustment MUST stay pending until a different administrator approves it, and MUST expire unposted per [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041). Independently of [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107), adjustments between `NET` and an administrator's own account MUST follow [DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043) and [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110). Pending adjustments MUST be visible to all administrators.
+When [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) requires approval, an adjustment MUST be created in state `pending_approval` and stay unposted until a different administrator approves it (state `posted`) or rejects it with a reason (state `rejected`), and MUST move to `expired` unposted per [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041); the holder of every member account involved is notified at each of these steps ([FR-084](#fr-084)). Independently of [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107), adjustments between `NET` and an administrator's own account MUST follow [DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043) and [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110). Pending adjustments MUST be visible to all administrators.
 *Rationale:* administrator misuse via the network account is the most direct abuse path. *Depends on:* [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041), [DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043), [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107), [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110), [DOM-009](03-domain-model-and-mutual-credit-rules.md#dom-009).
 
-1. Given [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) `all_adjustments`, when `M` initiates a `correction`, then nothing posts, `M2` sees it pending, and when `M2` approves it posts with authority `second_administrator_approved` naming both.
+1. Given [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) `all_adjustments`, when `M` initiates a `correction` affecting `A`, then nothing posts, the adjustment is `pending_approval`, `M2` sees it pending, and `A` is notified; when `M2` approves, it is `posted` with authority `second_administrator_approved` naming both, and `A` is notified.
 2. Given that pending adjustment, when `M` approves it, then it is rejected with `self_dealing_not_allowed`.
-3. Given the pending adjustment is not approved within [DOM-100](03-domain-model-and-mutual-credit-rules.md#dom-100), when `M2` approves it, then it is rejected with `invalid_transition` and it shows `Expired`.
+3. Given the pending adjustment is not approved within [DOM-100](03-domain-model-and-mutual-credit-rules.md#dom-100), when `M2` approves it, then it is rejected with `invalid_transition`, its state is `expired`, and `A` has been notified of the expiry.
 4. Given [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) `above_threshold` 100, when `M` posts a 50-credit correction, then it posts at once.
 5. Given [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) `off`, when `M` initiates a `write_off` to `M`'s own account, then it does not post until `M2` approves it; if `M` is the only administrator and [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110) is `off`, it is rejected with `self_dealing_not_allowed`.
 6. Given `M2` and a third administrator approve the same pending adjustment at once, then exactly one event posts.
 7. Given limits were checked when `M` initiated it, when `M2` approves after the debited account's balance fell, then limits are re-checked at approval and may fail with `limit_exceeded`.
+8. Given a `pending_approval` adjustment by `M` affecting `A`, when `M2` rejects it with reason "wrong account", then it is `rejected`, no event posts, `A` is notified with the reason, and the rejection is audited; a rejection without a reason is rejected with `validation_failed`, and `M` rejecting their own adjustment is rejected with `self_dealing_not_allowed`.
 
 <a id="fr-065"></a>**FR-065 — Freeze and unfreeze an account.** (P0)
 An administrator MUST be able to freeze an `Active` member account with a reason and unfreeze it, independently of membership suspension, with the effects of [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016) and [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024). The holder MUST be notified.
@@ -621,23 +644,78 @@ Administrators SHOULD see one list of items awaiting them: pending applications,
 2. Given `M2` approves an application, when `M` refreshes the queue, then it no longer appears.
 
 <a id="fr-068"></a>**FR-068 — Abuse report.** (P0)
-Any `Active` member MUST be able to report a listing, a member of the same network, or a transaction they can see to the network's administrators, with a reason category and reason text, as defined in [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md). Administrators MUST see open reports in a queue and record how each was handled. Creating and handling a report MUST be audited ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012)). A report MUST NOT change any balance, status, listing, or role by itself; any action follows from a separate administrator action.
-*Rationale:* communities need a way to raise conduct problems that are not ledger disputes, without automatic penalties. *Depends on:* [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [DOM-064](03-domain-model-and-mutual-credit-rules.md#dom-064), [PER-008](02-personas-roles-and-journeys.md#per-008).
+Any `Active` member MUST be able to report a listing, a member of the same network, or a transaction they can see to the network's administrators, with a reason category and reason text, as defined in [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md). Administrators MUST see reports in a queue with statuses `Open`, `Actioned`, and `Dismissed`, and close each with a reason text; the reporter MUST be notified at closure with the status only ([SEC-061](09-security-privacy-and-abuse-resistance.md#sec-061)). A report about an administrator, or that administrator's listing or transaction, MUST be visible to every administrator and MUST NOT be closable by the reported administrator; when the reported administrator is the only administrator, the reporter MUST be told so before submitting ([SEC-065](09-security-privacy-and-abuse-resistance.md#sec-065)). The reporter's identity MUST be visible to administrators only and MUST NOT appear in any export of the reported member ([SEC-062](09-security-privacy-and-abuse-resistance.md#sec-062)). Creating and handling a report MUST be audited ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [SEC-063](09-security-privacy-and-abuse-resistance.md#sec-063)). A report MUST NOT change any balance, status, listing, or role by itself; any action follows from a separate administrator action ([SEC-064](09-security-privacy-and-abuse-resistance.md#sec-064)).
+*Rationale:* communities need a way to raise conduct problems that are not ledger disputes, without automatic penalties. *Depends on:* [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [DOM-064](03-domain-model-and-mutual-credit-rules.md#dom-064), [PER-008](02-personas-roles-and-journeys.md#per-008), [PER-041](02-personas-roles-and-journeys.md#per-041), [SEC-060](09-security-privacy-and-abuse-resistance.md#sec-060), [SEC-061](09-security-privacy-and-abuse-resistance.md#sec-061), [SEC-062](09-security-privacy-and-abuse-resistance.md#sec-062), [SEC-063](09-security-privacy-and-abuse-resistance.md#sec-063), [SEC-064](09-security-privacy-and-abuse-resistance.md#sec-064), [SEC-065](09-security-privacy-and-abuse-resistance.md#sec-065).
 
-1. Given `B` sees `A`'s listing, when `B` reports it with category `spam` and text, then an open report appears in the administrators' queue, administrators are notified, the creation is audited, and the listing is still `Active`.
-2. Given an open report, when `M` records "warned member, no further action", then the report is closed with `M` as handler and the handling is audited.
+1. Given `B` sees `A`'s listing, when `B` reports it with category `spam` and text, then an `Open` report appears in the administrators' queue, `B` receives confirmation, administrators are notified, the creation is audited, and the listing is still `Active`.
+2. Given an `Open` report by `B`, when `M` closes it as `Actioned` with reason "warned member", then the report is `Actioned` with `M` as handler, the handling is audited, and `B` is notified of the status `Actioned` without the details of the action; a closure as `Dismissed` without reason text is rejected with `validation_failed`.
 3. Given `A` is reported, when `A` views the report or the reporter's identity, then it is rejected with `not_found`.
 4. Given `C` has no membership in `N`, when `C` reports a listing of `N`, then it is rejected with `not_found`.
 5. Given `B`'s report response was lost, when `B` retries with the same key, then one report exists.
+6. Given `B` reports `M`'s listing, when `M` closes the report, then it is rejected with `forbidden`, and `M2` can close it.
+7. Given `M` is the only administrator, when `B` starts a report about `M`, then before submitting `B` is told that no other administrator will see it and is shown the network's governance contact.
+8. Given `B` reported `A`, when `A` requests a self-export ([FR-090](#fr-090)), then the export contains no reporter identity.
 
 <a id="fr-069"></a>**FR-069 — Succession contact.** (P1)
-Administrators MUST be able to record a succession contact and succession rule text as defined in [GOV-053](10-governance-and-network-operations.md#gov-053). The record MUST be versioned, audited, announced as a policy change, and visible to the network's administrators and to the platform operator, so that the operator can act on the break-glass administrator grant of [GOV-054](10-governance-and-network-operations.md#gov-054).
+Administrators MUST be able to record a succession contact and succession rule text as defined in [GOV-053](10-governance-and-network-operations.md#gov-053). The record MUST be versioned, audited, announced as a policy change, and visible to the network's administrators and, in the operator console without break-glass, to the platform operator as the named exception of [PER-033](02-personas-roles-and-journeys.md#per-033), so that the operator can act on the break-glass administrator grant of [GOV-054](10-governance-and-network-operations.md#gov-054).
 *Rationale:* a network whose only administrator becomes unreachable can continue under its own written rule. *Depends on:* [GOV-053](10-governance-and-network-operations.md#gov-053), [GOV-054](10-governance-and-network-operations.md#gov-054), [PER-033](02-personas-roles-and-journeys.md#per-033), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017).
 
 1. Given `N`, when `M` records `A` as succession contact with rule text, then a new version exists, the change is audited, and a notice-board entry is created.
 2. Given that record, when `O` opens `N`'s succession information in the operations interface, then `O` sees the contact name and rule text and no ledger data.
 3. Given `A` (not an administrator), when `A` changes the succession contact, then it is rejected with `forbidden`.
 4. Given the recorded contact has `Departed`, then administrators see the record flagged as stale.
+
+### 8.1 Further administrator controls (FR-044 to FR-049)
+
+The range FR-060 to FR-069 is full; these requirements use the free identifiers FR-044 to FR-049 (section [1](#1-purpose-and-reading-guide)).
+
+<a id="fr-044"></a>**FR-044 — Operator grants the administrator role under SEC-142.** (P0)
+When a network has no administrator able to act, the platform operator MUST be able to grant the `administrator` role to one existing `Active` member of that network inside a break-glass session ([FR-088](#fr-088)), as [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142) and [GOV-054](10-governance-and-network-operations.md#gov-054) define. The grant MUST: name the member designated by the network's own written rules (the succession contact of [FR-069](#fr-069) or a written decision of the community), never one chosen by the operator; record the evidence relied on (the written rule, and for each `Active` administrator the statement that they could not be reached after a stated number of attempts); require approval by a second, different operator account regardless of the instance's dual-control setting, so that a single-operator instance cannot perform it; be audited in the network and instance audit logs with both operator identities, the reason, and the evidence ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012)); and be notified to every `Active` member of the network ([FR-084](#fr-084)). The grant MUST NOT post any ledger event or change any limit, policy value, or membership status. The granted role is an ordinary administrator role with no expiry; only the break-glass session is time-boxed ([SEC-140](09-security-privacy-and-abuse-resistance.md#sec-140)). The grant MUST be rejected when the network has an `Active` administrator that the evidence does not record as unreachable.
+*Rationale:* a network whose only administrator is gone can continue under its own rules, without the operator gaining any ledger authority. *Depends on:* [SEC-140](09-security-privacy-and-abuse-resistance.md#sec-140), [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142), [GOV-053](10-governance-and-network-operations.md#gov-053), [GOV-054](10-governance-and-network-operations.md#gov-054), [PER-033](02-personas-roles-and-journeys.md#per-033), [PER-040](02-personas-roles-and-journeys.md#per-040), [PER-006](02-personas-roles-and-journeys.md#per-006), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016).
+
+1. Given `M` is `N`'s only administrator, `A` is the recorded succession contact, and `O` holds a break-glass session on `N`, when `O` submits a grant of `administrator` to `A` with the evidence (rule reference and 5 failed contact attempts with `M`) and `O2` approves it, then `A` holds the `administrator` role with no expiry, no ledger event, limit, policy version, or membership status has changed, the grant is audited in both audit logs naming `O`, `O2`, the reason, and the evidence, and every `Active` member of `N` is notified.
+2. Given the same request, when no second operator approves it, or `O` approves their own request, or the instance has a single operator account, then the grant is rejected with `forbidden` and `A` has no new role.
+3. Given `N` also has `M2` as an `Active` administrator and the evidence records only `M` as unreachable, when `O` submits the grant, then it is rejected with `invalid_transition`.
+4. Given evidence without a reference to the written rule or without the contact attempts, when submitted, then it is rejected with `validation_failed`.
+5. Given the designated member's membership is `Suspended`, when `O` submits the grant, then it is rejected with `invalid_transition`.
+6. Given the break-glass session has ended, when `A` signs in, then `A` still holds the `administrator` role; when `O` uses the same session to post an adjustment or change a limit, it is rejected with `forbidden`.
+7. Given the approval response was lost, when `O2` retries with the same key, then exactly one grant, one set of notifications, and one audit event for the grant exist.
+
+<a id="fr-045"></a>**FR-045 — Administrator revokes a member's sessions.** (P0)
+An administrator MUST be able to revoke all sessions of a member of their network, as [SEC-011](09-security-privacy-and-abuse-resistance.md#sec-011) and [SEC-046](09-security-privacy-and-abuse-resistance.md#sec-046) define. Because sessions belong to the identity, this signs the person out of every network ([OQ-SEC-6](09-security-privacy-and-abuse-resistance.md#8-open-questions)). The revocation MUST be audited in the network audit log and notified to the member. No administrator function MAY set, read, or reset a member's password, second factor, or recovery codes.
+*Rationale:* an administrator can stop misuse of a member's sign-in without gaining control of the member's credentials. *Depends on:* [SEC-011](09-security-privacy-and-abuse-resistance.md#sec-011), [SEC-046](09-security-privacy-and-abuse-resistance.md#sec-046), [PER-047](02-personas-roles-and-journeys.md#per-047), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012).
+
+1. Given `A` has two sessions, when `M` revokes `A`'s sessions with reason "lost phone reported", then the next request on either session is rejected with `unauthenticated`, the revocation is audited in `N`'s audit log, and `A` is notified.
+2. Given `B` (not an administrator), when `B` revokes `A`'s sessions, then it is rejected with `forbidden`.
+3. Given `M`, when `M` attempts to set `A`'s password or remove `A`'s second factor through any interface, then no such operation exists and the request is rejected with `forbidden` or `not_found`.
+4. Given `D` is a member of `N2` only, when `M` (administrator of `N` only) revokes `D`'s sessions, then it is rejected with `not_found`.
+
+<a id="fr-046"></a>**FR-046 — Starting limit set at approval.** (P0)
+When approving a membership ([FR-015](#fr-015)), an administrator MUST be able to set a credit limit and positive limit different from [DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090) and [DOM-092](03-domain-model-and-mutual-credit-rules.md#dom-092), within [DOM-091](03-domain-model-and-mutual-credit-rules.md#dom-091) and with a reason, as a [DOM-050](03-domain-model-and-mutual-credit-rules.md#dom-050) limit change ([GOV-034](10-governance-and-network-operations.md#gov-034)). The new member MUST see the limit set on the welcome screen ([FR-009](#fr-009)).
+*Rationale:* networks with a graded starting scheme can apply it at admission without a second step. *Depends on:* [GOV-034](10-governance-and-network-operations.md#gov-034), [DOM-050](03-domain-model-and-mutual-credit-rules.md#dom-050), [DOM-051](03-domain-model-and-mutual-credit-rules.md#dom-051), [DOM-054](03-domain-model-and-mutual-credit-rules.md#dom-054), [DOM-091](03-domain-model-and-mutual-credit-rules.md#dom-091), [PER-013](02-personas-roles-and-journeys.md#per-013).
+
+1. Given `D`'s `Pending` membership, when `M` approves it with credit limit 50 and reason "first three months", then `D`'s account has credit limit 50, no ledger event exists, the limit and reason are audited, and `D`'s welcome screen shows 50.
+2. Given [DOM-091](03-domain-model-and-mutual-credit-rules.md#dom-091) = 500, when `M` approves `D` with credit limit 600, then it is rejected with `policy_value_out_of_range` and the membership stays `Pending`.
+3. Given `M` approves with a credit limit and no reason, then it is rejected with `validation_failed`.
+4. Given `M` approves without a limit, then the account takes [DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090) and [DOM-092](03-domain-model-and-mutual-credit-rules.md#dom-092) as in [FR-015](#fr-015).
+
+<a id="fr-047"></a>**FR-047 — Administrator oversight notices.** (P1)
+The platform SHOULD show a persistent notice to the sole administrator of a network that has only one `Active` administrator ([GOV-051](10-governance-and-network-operations.md#gov-051)), and SHOULD show each administrator's last sign-in time to the other administrators of the same network, without removing any role automatically ([GOV-055](10-governance-and-network-operations.md#gov-055)). When one administrator exceeds the mass-action threshold of [SEC-055](09-security-privacy-and-abuse-resistance.md#sec-055), every other administrator MUST be alerted with the list of actions, and each further such action by that administrator in the period MUST require fresh authentication ([SEC-025](09-security-privacy-and-abuse-resistance.md#sec-025)).
+*Rationale:* small administrator teams need to see when oversight has thinned or one person is acting at unusual volume. *Depends on:* [GOV-051](10-governance-and-network-operations.md#gov-051), [GOV-055](10-governance-and-network-operations.md#gov-055), [SEC-025](09-security-privacy-and-abuse-resistance.md#sec-025), [SEC-055](09-security-privacy-and-abuse-resistance.md#sec-055), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012).
+
+1. Given `M` is the only `Active` administrator, when `M` opens any administrator screen, then a notice recommends adding a second administrator; after `M` grants `M2` the role, the notice no longer appears.
+2. Given `M` last signed in 3 days ago, when `M2` opens the administrator list, then `M`'s last sign-in time is shown; when `A` (not an administrator) requests it, it is rejected with `forbidden`.
+3. Given `M` has not signed in for 120 days, then `M` still holds the `administrator` role.
+4. Given the [SEC-055](09-security-privacy-and-abuse-resistance.md#sec-055) threshold of 10 actions in 24 hours, when `M` posts an 11th adjustment in that period, then `M2` is alerted with the list of the 11 actions; `M`'s next adjustment in the period without fresh authentication is rejected with `reauthentication_required`.
+
+<a id="fr-048"></a>**FR-048 — Message path to administrators.** (P1)
+A member whose membership is `Active` or `Suspended`, or who was removed or departed within the personal-data period of [DATA-080](06-data-model-ledger-and-audit.md#data-080), MUST be able to send a text message to the network's administrators, for example to challenge a decision under [GOV-112](10-governance-and-network-operations.md#gov-112). Every `Active` administrator MUST be able to read it with sender and time and is notified of it. Sending a message MUST NOT change any status, limit, or ledger state; any outcome is a separate, audited administrator action. Sending MUST be audited without the message text.
+*Rationale:* the challenge route of a network needs a channel that works even for a member who can no longer trade. *Depends on:* [GOV-110](10-governance-and-network-operations.md#gov-110), [GOV-111](10-governance-and-network-operations.md#gov-111), [GOV-112](10-governance-and-network-operations.md#gov-112), [GOV-042](10-governance-and-network-operations.md#gov-042), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012).
+
+1. Given `A` is `Suspended`, when `A` sends "I would like to challenge my suspension", then `M` and `M2` are notified and see the message with sender `A` and the time, `A`'s membership is still `Suspended`, and the sending is audited.
+2. Given an empty message, when `A` sends it, then it is rejected with `validation_failed`.
+3. Given `C` has no membership in `N`, when `C` sends a message to `N`'s administrators, then it is rejected with `not_found`.
+4. Given the send response was lost, when `A` retries with the same key, then exactly one message exists.
 
 ## 9. Disputes
 
@@ -648,12 +726,13 @@ A holder of either account of a `transaction_completed` or `adjustment` event MU
 1. Given a trade completed 10 days ago, when `B` raises a dispute "work not done", then a dispute is `Open`, `A` and administrators are notified, balances are unchanged, and the dispute is audited.
 2. Given a trade completed 31 days ago with [DOM-102](03-domain-model-and-mutual-credit-rules.md#dom-102) = 30 days, when `B` raises a dispute, then it is rejected with `window_closed`.
 3. Given an `Open` dispute on the event, when `A` raises another, then it is rejected with `dispute_already_open`.
-4. Given a `reversal` event, when `A` disputes it, then it is rejected with `invalid_transition`.
+4. Given a `reversal` event, when `A` disputes it, then it is rejected with `not_disputable`.
 5. Given `C` holds neither account, when `C` raises a dispute, then it is rejected with `not_a_party`.
 6. Given the response was lost, when `B` retries with the same key, then one dispute exists.
+7. Given a `Reversed` transaction, when `B` disputes its `transaction_completed` event within the window, then it is rejected with `already_reversed` ([DOM-060](03-domain-model-and-mutual-credit-rules.md#dom-060)).
 
 <a id="fr-071"></a>**FR-071 — Take or assign a dispute.** (P0)
-An eligible reviewer MUST be able to take an `Open` dispute, and an administrator MUST be able to assign it to an eligible reviewer, moving it to `Under review` per [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061). If no eligible reviewer exists, administrators MUST be alerted.
+An eligible reviewer MUST be able to take an `Open` dispute, and an administrator MUST be able to assign it to an eligible reviewer, moving it to `Under review` per [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061). If no eligible reviewer exists, administrators MUST be alerted. If the assigned reviewer's membership leaves `Active` or loses the `reviewer` role, the dispute MUST return to `Open` and administrators MUST be alerted ([DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061)).
 *Rationale:* impartial review requires the reviewer not to be a party. *Depends on:* [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061), [PER-006](02-personas-roles-and-journeys.md#per-006), [PER-026](02-personas-roles-and-journeys.md#per-026), [DOM-113](03-domain-model-and-mutual-credit-rules.md#dom-113).
 
 1. Given an `Open` dispute between `A` and `B`, when `R` takes it, then it is `Under review` with reviewer `R`, and the parties are notified.
@@ -661,6 +740,7 @@ An eligible reviewer MUST be able to take an `Open` dispute, and an administrato
 3. Given the only reviewer is a party, when the dispute is raised, then it stays `Open` and administrators receive a "no eligible reviewer" alert.
 4. Given `R` and `R2` take the same dispute at once, then exactly one becomes reviewer and the other is rejected with `invalid_transition`.
 5. Given `A` without the reviewer role, when `A` takes a dispute, then it is rejected with `forbidden`.
+6. Given `R` is reviewing a dispute, when `M` suspends `R`'s membership or removes `R`'s reviewer role, then the dispute is `Open` with no reviewer, administrators are alerted, and the change is audited; `R` recording a resolution afterwards is rejected with `forbidden`.
 
 <a id="fr-072"></a>**FR-072 — Resolve: dismissed.** (P0)
 The assigned reviewer MUST be able to resolve a dispute as `dismissed` with reasoning text ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)). No ledger event results. Both parties MUST be notified with the reasoning.
@@ -686,14 +766,16 @@ The assigned reviewer MUST be able to resolve a dispute as `adjusted`, specifyin
 2. Given the specified amount is 0, then the resolution is rejected with `invalid_amount`.
 
 <a id="fr-075"></a>**FR-075 — Administrator confirmation of the remedy.** (P0)
-When [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111) requires it, a decided resolution MUST hold its remedy pending until an administrator who is not a party confirms it, and the dispute MUST stay `Under review` until then. Limit checks run at confirmation.
-*Rationale:* a second pair of eyes on ledger-changing outcomes. *Depends on:* [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062), [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111), [DOM-009](03-domain-model-and-mutual-credit-rules.md#dom-009), [DOM-042](03-domain-model-and-mutual-credit-rules.md#dom-042).
+When [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111) requires it, a decided resolution MUST hold its remedy pending until an administrator who is neither a party to the subject event nor the deciding reviewer confirms it, and the dispute MUST stay `Under review` until then ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)). Limit checks run at confirmation. While the network is `Suspended`, an administrator-confirmed remedy MAY post and a remedy that needs no confirmation waits for reinstatement ([DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016)).
+*Rationale:* a second pair of eyes on ledger-changing outcomes. *Depends on:* [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062), [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111), [DOM-009](03-domain-model-and-mutual-credit-rules.md#dom-009), [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016), [DOM-042](03-domain-model-and-mutual-credit-rules.md#dom-042), [PER-045](02-personas-roles-and-journeys.md#per-045).
 
 1. Given [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111) `adjustments_only`, when `R` decides `adjusted`, then no event posts, the dispute is `Under review` with "remedy awaiting confirmation", and `M` confirming posts it and resolves the dispute.
 2. Given `M` is a party to the dispute, when `M` confirms, then it is rejected with `reviewer_ineligible`.
 3. Given [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111) `none`, when `R` decides `adjusted`, then the event posts at once.
 4. Given the remedy leaves `B` beyond its limit, when `M` confirms, then it posts with `limit override` recorded ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)).
-5. Given `M` declines to confirm with a reason, then the decline is recorded, the dispute stays `Under review`, and `R` must record a new resolution.
+5. Given `M` declines to confirm with a reason, then the decline is recorded, the dispute stays `Under review`, `R` is notified, and `R` must record a new resolution.
+6. Given `M` holds the reviewer role and is the deciding reviewer of the dispute, when `M` confirms the remedy, then it is rejected with `reviewer_ineligible`.
+7. Given `N` is `Suspended` and [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111) `adjustments_only`, when `M` confirms an `adjusted` remedy, then it posts; given [DOM-111](03-domain-model-and-mutual-credit-rules.md#dom-111) `none`, a decided remedy does not post until `N` is reinstated.
 
 <a id="fr-076"></a>**FR-076 — Withdraw a dispute.** (P0)
 The raiser MUST be able to withdraw a dispute that is `Open` or `Under review`, which resolves it with outcome `withdrawn`.
@@ -717,6 +799,16 @@ The parties, the assigned reviewer, and administrators MUST be able to see the d
 
 1. Given `R` is assigned, when `R` opens the dispute, then the subject event, both statements, and the parties' subject postings appear.
 2. Given `C` is not involved and not an administrator, when `C` requests the dispute, then it is rejected with `not_found`.
+
+<a id="fr-079"></a>**FR-079 — Dispute age and reviewer reminder.** (P1)
+Administrators SHOULD see each dispute's age and time spent in each status, and the platform SHOULD send the assigned reviewer an email reminder when a dispute has been `Under review` for the reminder age of [GOV-061](10-governance-and-network-operations.md#gov-061). The platform MUST NOT resolve or reassign a dispute automatically when any period passes. An administrator MAY reassign a dispute to another eligible reviewer with a reason; the reassignment MUST be audited and the parties notified.
+*Rationale:* volunteer reviewers forget; a visible age and a reminder keep cases moving without automatic outcomes. *Depends on:* [GOV-061](10-governance-and-network-operations.md#gov-061), [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061), [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [PER-046](02-personas-roles-and-journeys.md#per-046).
+
+1. Given a dispute raised 5 days ago that `R` took 2 days ago, when `M` opens the dispute list, then it shows age 5 days, 3 days `Open`, and 2 days `Under review`.
+2. Given a dispute reaches the reminder age while `Under review`, then `R` receives one reminder email and the dispute's status is unchanged.
+3. Given a dispute has been `Under review` for 60 days with no action, then it is still `Under review` with reviewer `R`.
+4. Given `R` has not acted, when `M` reassigns the dispute to `R2` with reason "no response", then `R2` is the reviewer, the reassignment is audited, and both parties are notified; a reassignment without a reason is rejected with `validation_failed`, and one to a reviewer who is a party is rejected with `reviewer_ineligible`.
+5. Given `A` (not an administrator), when `A` reassigns a dispute, then it is rejected with `forbidden`.
 
 ## 10. Audit history and notifications
 
@@ -758,33 +850,44 @@ Mandatory notification set:
 | Event | Recipients | Source |
 |---|---|---|
 | Ledger event on the member's account that the member did not propose or accept: reversal, adjustment, dispute remedy | Account holder | [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) |
-| New policy version, no later than its effective time | All `Active` members | [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) |
+| New policy version, when created and, for a scheduled version, again when it takes effect | All `Active` and `Suspended` members | [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) |
 | System cancellation of a proposal | Both parties | [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024) |
-| Adjustment affecting the member's account pending second-administrator approval, and its approval | Account holder | [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041) |
+| Adjustment affecting the member's account becomes `pending_approval`, and is approved, rejected, or expires | Account holder | [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041) |
 | Membership suspended, reinstated, removed | Member | [DOM-072](03-domain-model-and-mutual-credit-rules.md#dom-072) |
-| Failed acceptance attempt (SHOULD) | Proposer | [DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022) |
-| Dispute status change (raised, taken, decided, remedy confirmed or declined, resolved, withdrawn) | Both parties | [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062) |
+| Dispute raised, taken for review, decided, and resolved (including `withdrawn`) | Both parties | [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062) |
+| Remedy confirmation declined | Deciding reviewer and both parties | [FR-075](#fr-075) |
+| No eligible reviewer; assigned reviewer left `Active` or lost the role | Administrators | [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061) |
+| Administrator action changing the member's limits, account status, membership status, roles, or listings, with the acting administrator, reason, and time | Affected member | [SEC-051](09-security-privacy-and-abuse-resistance.md#sec-051) |
+| Role granted or removed; administrator suspended or removed; policy change; limit set above [DOM-090](03-domain-model-and-mutual-credit-rules.md#dom-090); `self_dealing` event posted; network export started; break-glass session started | Every administrator, including the actor | [SEC-054](09-security-privacy-and-abuse-resistance.md#sec-054) |
+| Break-glass session started on the network (deferred only under [SEC-141](09-security-privacy-and-abuse-resistance.md#sec-141)) | Every administrator of the network | [SEC-141](09-security-privacy-and-abuse-resistance.md#sec-141), [FR-088](#fr-088) |
+| Administrator role granted through break-glass | All `Active` members | [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142), [FR-044](#fr-044) |
+| Network suspended or reinstated, with reason | Every member | [GOV-082](10-governance-and-network-operations.md#gov-082), [GOV-083](10-governance-and-network-operations.md#gov-083), [SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156) |
+| Network closed | Every member, including departed members whose email is still held | [GOV-094](10-governance-and-network-operations.md#gov-094) |
+| Administrator decision listed in [GOV-110](10-governance-and-network-operations.md#gov-110), with reason and challenge route | Affected person | [GOV-111](10-governance-and-network-operations.md#gov-111) |
+| Abuse report closed, with its status only | Reporter | [SEC-061](09-security-privacy-and-abuse-resistance.md#sec-061) |
 | Invitation; application approved or rejected | Invitee or applicant | [DOM-095](03-domain-model-and-mutual-credit-rules.md#dom-095), [DEC-007](13-assumptions-risks-decisions-and-roadmap.md#dec-007) |
-| Email verification and account recovery | Addressee | [DEC-007](13-assumptions-risks-decisions-and-roadmap.md#dec-007) |
-| No eligible reviewer | Administrators | [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061) |
+| Email verification and account recovery; completed password reset | Addressee | [DEC-007](13-assumptions-risks-decisions-and-roadmap.md#dec-007), [SEC-042](09-security-privacy-and-abuse-resistance.md#sec-042) |
 
 Optional events:
 
 | Event | Recipients |
 |---|---|
 | Proposal received; accepted; declined; cancelled by proposer; expired | Counterparty or proposer |
+| Failed acceptance attempt ([DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022), SHOULD) | Proposer |
 | Reversal requested by the other party ([DOM-031](03-domain-model-and-mutual-credit-rules.md#dom-031)) | Other party |
 | Adjustment or reversal awaiting approval; remedy awaiting confirmation | Administrators |
-| Application received; departure request; abuse report received | Administrators |
-| Limit changed; account frozen or unfrozen; role changed; listing paused or closed by an administrator | Affected member |
+| Application received; departure request; abuse report received; message from a member ([FR-048](#fr-048)) | Administrators |
+| Reminder for a dispute `Under review` beyond the age of [GOV-061](10-governance-and-network-operations.md#gov-061) ([FR-079](#fr-079)) | Assigned reviewer |
 | New notice-board announcement | All `Active` members |
 
-*Rationale:* no silent balance change ([VIS-022](01-product-vision-and-scope.md#vis-022)); members choose the rest. *Depends on:* [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014), [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017), [DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022), [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024), [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041), [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062), [DOM-072](03-domain-model-and-mutual-credit-rules.md#dom-072), [DOM-114](03-domain-model-and-mutual-credit-rules.md#dom-114), [DEC-007](13-assumptions-risks-decisions-and-roadmap.md#dec-007).
+*Rationale:* no silent balance change ([VIS-022](01-product-vision-and-scope.md#vis-022)); members choose the rest. *Depends on:* [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014), [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017), [DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022), [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024), [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041), [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061), [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062), [DOM-072](03-domain-model-and-mutual-credit-rules.md#dom-072), [DOM-114](03-domain-model-and-mutual-credit-rules.md#dom-114), [SEC-042](09-security-privacy-and-abuse-resistance.md#sec-042), [SEC-051](09-security-privacy-and-abuse-resistance.md#sec-051), [SEC-054](09-security-privacy-and-abuse-resistance.md#sec-054), [SEC-061](09-security-privacy-and-abuse-resistance.md#sec-061), [SEC-141](09-security-privacy-and-abuse-resistance.md#sec-141), [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142), [SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156), [GOV-082](10-governance-and-network-operations.md#gov-082), [GOV-094](10-governance-and-network-operations.md#gov-094), [GOV-111](10-governance-and-network-operations.md#gov-111), [DEC-007](13-assumptions-risks-decisions-and-roadmap.md#dec-007).
 
 1. Given `M` posts a `write_off` to `A`, then `A` receives an email and an in-app notification naming the event type and a link to it.
 2. Given `A` turned off all optional emails and [DOM-114](03-domain-model-and-mutual-credit-rules.md#dom-114) has every optional event off, when `M` posts an adjustment to `A` or saves a new policy version, then `A` still receives an email for each and each attempt is audited.
 3. Given `B` accepts `A`'s proposal, then `B` receives no notification for that acceptance (`B` acted) and `A` receives one if enabled.
 4. Given `R` resolves a dispute between `A` and `B`, then both `A` and `B` receive an email.
+5. Given `A` turned off all optional emails, when `M` lowers `A`'s credit limit with reason "review", then `A` still receives an email naming `M`, the reason, and the time, and the attempt is audited.
+6. Given `C` is `Suspended`, when `M` schedules a policy version, then `C` receives an email when it is created and again when it takes effect.
 
 <a id="fr-085"></a>**FR-085 — Email delivery and audit of attempts.** (P0)
 Email notifications MUST be sent by the background job runner after the triggering state change commits, MUST be retried on temporary failure, and every attempt MUST be audited with outcome (accepted by the mail service, temporary failure, permanent failure). Delivery failure MUST NOT roll back the state change. Email content minimization is defined in [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md).
@@ -809,11 +912,12 @@ A member SHOULD be able to turn optional email notifications on or off per event
 2. Given `A` attempts to turn off a mandatory event, then it is rejected with `validation_failed`.
 
 <a id="fr-088"></a>**FR-088 — Break-glass disclosure to administrators.** (P0)
-Every platform-operator break-glass access to a network ([PER-033](02-personas-roles-and-journeys.md#per-033)) MUST appear in that network's audit log with operator identity, stated reason, start and end time, and objects accessed, and administrators MUST be notified when the access starts or, if notice in advance would defeat the purpose, when it ends ([09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md)).
-*Rationale:* operator access is exceptional and visible. *Depends on:* [PER-032](02-personas-roles-and-journeys.md#per-032), [PER-033](02-personas-roles-and-journeys.md#per-033), [PER-007](02-personas-roles-and-journeys.md#per-007), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012).
+Every platform-operator break-glass access to a network ([PER-033](02-personas-roles-and-journeys.md#per-033)) MUST appear in that network's audit log with operator identity, stated reason, start and end time, and objects accessed, and administrators MUST be notified when the access starts, or later only under the deferral rule of [SEC-141](09-security-privacy-and-abuse-resistance.md#sec-141). The session is read-only except the administrator grant of [FR-044](#fr-044) ([SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142)).
+*Rationale:* operator access is exceptional and visible. *Depends on:* [PER-032](02-personas-roles-and-journeys.md#per-032), [PER-033](02-personas-roles-and-journeys.md#per-033), [PER-007](02-personas-roles-and-journeys.md#per-007), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [SEC-140](09-security-privacy-and-abuse-resistance.md#sec-140), [SEC-141](09-security-privacy-and-abuse-resistance.md#sec-141), [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142).
 
-1. Given `O` opens break-glass access to `N` with reason "restore fault", when it ends, then `M` sees the entry with reason and duration and has been notified.
+1. Given `O` opens break-glass access to `N` with reason "restore fault", then `M` is notified at its start with the operator's name, reason category, reason text, and time box; when it ends, `M` sees the entry with reason and duration.
 2. Given break-glass access, when `O` attempts to post a transaction or adjustment, then it is rejected with `forbidden`.
+3. Given `O2` records that notice would hinder an active incident, when `O` opens break-glass access, then the notice to `M` is sent no later than 7 days after the start and shows the deferral and its reason; without a record by a second operator, no deferral is possible.
 
 <a id="fr-089"></a>**FR-089 — Network notice board.** (P1)
 Administrators MUST be able to post announcements (title, body) to the network notice board defined in [GOV-025](10-governance-and-network-operations.md#gov-025); `Active` members MUST be able to read them newest first. Every new policy version ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)), including rules-statement and succession-contact changes, MUST create a notice-board entry automatically, linking to the version. Entries MUST NOT be editable after posting; a correction is a new entry.
@@ -827,13 +931,14 @@ Administrators MUST be able to post announcements (title, body) to the network n
 ## 11. Exports
 
 <a id="fr-090"></a>**FR-090 — Member self-export.** (P0)
-A member MUST be able to export their own data for one network in CSV and JSON: profile, membership and role history, listings, account postings with ledger event references, transactions in every status, and disputes they raised or are party to. Amounts MUST be integers in minor units with the decimal places stated in the export. The export MUST be available to the requester only. Access by `Departed` members is open ([OQ-FR-7](#14-open-questions)).
-*Rationale:* members own a portable record of their participation ([VIS-009](01-product-vision-and-scope.md#vis-009)). *Depends on:* [PER-030](02-personas-roles-and-journeys.md#per-030), [DOM-006](03-domain-model-and-mutual-credit-rules.md#dom-006), [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [DEC-005](13-assumptions-risks-decisions-and-roadmap.md#dec-005).
+A member MUST be able to export their own data for one network in CSV and JSON: profile, membership and role history, listings, account postings with ledger event references, transactions in every status, and disputes they raised or are party to. Amounts MUST be integers in minor units with the decimal places stated in the export. The export MUST be available to the requester only. A `Suspended` or `Departed` member keeps own-history read ([PER-027](02-personas-roles-and-journeys.md#per-027)) and self-export ([PER-030](02-personas-roles-and-journeys.md#per-030)) for the personal-data period of [DATA-080](06-data-model-ledger-and-audit.md#data-080) (2 years after `Departed`), as [GOV-042](10-governance-and-network-operations.md#gov-042) and [GOV-040](10-governance-and-network-operations.md#gov-040) require.
+*Rationale:* members own a portable record of their participation ([VIS-009](01-product-vision-and-scope.md#vis-009)). *Depends on:* [PER-027](02-personas-roles-and-journeys.md#per-027), [PER-030](02-personas-roles-and-journeys.md#per-030), [GOV-040](10-governance-and-network-operations.md#gov-040), [GOV-042](10-governance-and-network-operations.md#gov-042), [DOM-006](03-domain-model-and-mutual-credit-rules.md#dom-006), [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [DEC-005](13-assumptions-risks-decisions-and-roadmap.md#dec-005).
 
 1. Given `A` with 12 postings, when `A` requests a JSON and a CSV export, then both contain 12 postings, and the sum of credits minus debits equals `A`'s balance.
 2. Given `A` is `Suspended`, when `A` requests a self-export, then it is produced.
 3. Given `B`, when `B` requests `A`'s export, then it is rejected with `forbidden`.
 4. Given `A` retries the export request with the same key, then one export job exists.
+5. Given `A` departed 30 days ago, when `A` signs in and requests a self-export, then it is produced and `A` can read own history, and nothing else of `N`.
 
 <a id="fr-091"></a>**FR-091 — Administrator network export.** (P0)
 An administrator MUST be able to export the network in CSV and JSON: members and memberships, accounts with limits, the full ledger (events in sequence order with postings), transactions, disputes and appeals, policy versions, and the audit log. The export MUST state the ledger sequence position it reflects and MUST be consistent as of that position. File formats are documented in [06-data-model-ledger-and-audit.md](06-data-model-ledger-and-audit.md) and [07-api-and-integration-contract.md](07-api-and-integration-contract.md).
@@ -842,7 +947,7 @@ An administrator MUST be able to export the network in CSV and JSON: members and
 1. Given `N` with 200 events, when `M` exports, then replaying the exported postings in sequence reproduces every account's balance and their sum is 0.
 2. Given trades post while the export runs, then the export contains exactly the events up to its stated sequence position.
 3. Given `A`, when `A` requests a network export, then it is rejected with `forbidden`.
-4. Given `O`, when `O` requests a network export outside break-glass, then it is rejected with `forbidden`.
+4. Given `O`, when `O` requests a network export, with or without a break-glass grant, then it is rejected with `forbidden` ([SEC-144](09-security-privacy-and-abuse-resistance.md#sec-144)).
 
 <a id="fr-092"></a>**FR-092 — Export of a closed network.** (P0)
 After closure, the administrators at closure MUST remain able to produce the network export of [FR-091](#fr-091) for the retention period ([OQ-FR-11](#14-open-questions)), and the export MUST show every account `Closed` at zero.
@@ -866,12 +971,22 @@ Each network export SHOULD include a summary record: network identifier, decimal
 2. Given a ledger with a detected discrepancy, then the summary records the discrepancy instead of omitting it.
 
 <a id="fr-095"></a>**FR-095 — Export file expiry.** (P1)
-A generated export file MUST be downloadable only by its requester and only until it expires, with a recommended default of 7 days after generation; the expiry time MUST be shown with the download link. After expiry the file MUST be deleted and a new export requested. Every download and every attempt on an expired file MUST be audited ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [FR-093](#fr-093)).
+A generated export file MUST be downloadable only by its requester and only until it expires, with a recommended default of 7 days after the file is completed; the expiry time MUST be shown with the download link. After expiry the file MUST be deleted and a new export requested. Every download and every attempt on an expired file MUST be audited ([DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [FR-093](#fr-093)).
 *Rationale:* limits how long copies of personal data and ledger history sit on the instance. *Depends on:* [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [PER-030](02-personas-roles-and-journeys.md#per-030), [PER-031](02-personas-roles-and-journeys.md#per-031).
 
-1. Given `M` generated an export 2 days ago, when `M` downloads it, then the file is returned and the download is audited.
-2. Given an export generated 8 days ago, when `M` downloads it, then it is rejected with `not_found`, the attempt is audited, and `M` can request a new export.
+1. Given `M`'s export file was completed 2 days ago, when `M` downloads it, then the file is returned and the download is audited.
+2. Given an export file completed 8 days ago, when `M` downloads it, then it is rejected with `not_found`, the attempt is audited, and `M` can request a new export.
 3. Given `M2` did not request `M`'s export, when `M2` uses its link, then it is rejected with `forbidden`.
+4. Given an export that is still `queued` or `running`, when `M` downloads it, then it is rejected with `invalid_transition`.
+
+<a id="fr-096"></a>**FR-096 — Final export at closure.** (P0)
+When an administrator closes a network ([FR-006](#fr-006)), the platform MUST first prompt that administrator to take a network export ([FR-091](#fr-091)) and MUST record on the closure whether one was taken ([GOV-092](10-governance-and-network-operations.md#gov-092)). Each member keeps self-export of their own data after closure for the retention period ([FR-090](#fr-090)).
+*Rationale:* a community that ends should leave with its records, and the record shows whether it did. *Depends on:* [GOV-092](10-governance-and-network-operations.md#gov-092), [GOV-094](10-governance-and-network-operations.md#gov-094), [DOM-075](03-domain-model-and-mutual-credit-rules.md#dom-075), [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012), [PER-031](02-personas-roles-and-journeys.md#per-031).
+
+1. Given the [DOM-075](03-domain-model-and-mutual-credit-rules.md#dom-075) conditions hold, when `M` starts closing `N`, then `M` is offered a network export before confirming; when `M` confirms without one, `N` is `Closed` and the audited closure records "final export not taken".
+2. Given `M` takes the export and then confirms, then the closure record references that export.
+3. Given `M` starts closing `N` while `A` is at −40, then it is rejected with `closure_blocked` and no closure record exists.
+4. Given `N` is `Closed`, when `A` requests a self-export, then it is produced.
 
 ## 12. Deferred capabilities
 
@@ -906,12 +1021,12 @@ All P2, named to fix the boundary ([01-product-vision-and-scope.md §8.2](01-pro
 | [DOM-009](03-domain-model-and-mutual-credit-rules.md#dom-009) Atomic limit checks | [FR-031](#fr-031), [FR-042](#fr-042), [FR-062](#fr-062), [FR-064](#fr-064), [FR-075](#fr-075) |
 | [DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010) Total order per network | [FR-031](#fr-031), [FR-053](#fr-053), [FR-057](#fr-057), [FR-091](#fr-091) |
 | [DOM-011](03-domain-model-and-mutual-credit-rules.md#dom-011) Idempotent state changes | [FR-001](#fr-001), [FR-015](#fr-015), [FR-022](#fr-022), [FR-030](#fr-030), [FR-031](#fr-031), [FR-063](#fr-063), [FR-070](#fr-070), [FR-080](#fr-080) |
-| [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012) Audited state changes | [FR-005](#fr-005), [FR-011](#fr-011), [FR-037](#fr-037), [FR-080](#fr-080), [FR-009](#fr-009), [FR-068](#fr-068), [FR-085](#fr-085), [FR-088](#fr-088), [FR-093](#fr-093), [FR-095](#fr-095) |
+| [DOM-012](03-domain-model-and-mutual-credit-rules.md#dom-012) Audited state changes | [FR-005](#fr-005), [FR-011](#fr-011), [FR-037](#fr-037), [FR-080](#fr-080), [FR-009](#fr-009), [FR-068](#fr-068), [FR-085](#fr-085), [FR-088](#fr-088), [FR-093](#fr-093), [FR-095](#fr-095), [FR-044](#fr-044), [FR-045](#fr-045), [FR-048](#fr-048), [FR-079](#fr-079), [FR-096](#fr-096) |
 | [DOM-013](03-domain-model-and-mutual-credit-rules.md#dom-013) Attribution of authority | [FR-031](#fr-031), [FR-040](#fr-040), [FR-053](#fr-053), [FR-063](#fr-063), [FR-064](#fr-064) |
-| [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) No silent balance change | [FR-034](#fr-034), [FR-039](#fr-039), [FR-053](#fr-053), [FR-063](#fr-063), [FR-084](#fr-084), [FR-085](#fr-085) |
+| [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) No silent balance change | [FR-034](#fr-034), [FR-039](#fr-039), [FR-053](#fr-053), [FR-063](#fr-063), [FR-064](#fr-064), [FR-084](#fr-084), [FR-085](#fr-085) |
 | [DOM-015](03-domain-model-and-mutual-credit-rules.md#dom-015) One account per membership; one network account | [FR-001](#fr-001), [FR-004](#fr-004), [FR-013](#fr-013), [FR-015](#fr-015), [FR-041](#fr-041) |
-| [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016) Account status gates | [FR-003](#fr-003), [FR-005](#fr-005), [FR-030](#fr-030), [FR-063](#fr-063), [FR-065](#fr-065) |
-| [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) Versioned policy | [FR-002](#fr-002), [FR-008](#fr-008), [FR-089](#fr-089), [FR-031](#fr-031), [FR-060](#fr-060), [FR-061](#fr-061) |
+| [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016) Account status gates | [FR-003](#fr-003), [FR-005](#fr-005), [FR-030](#fr-030), [FR-040](#fr-040), [FR-044](#fr-044), [FR-063](#fr-063), [FR-065](#fr-065), [FR-075](#fr-075) |
+| [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) Versioned policy | [FR-002](#fr-002), [FR-008](#fr-008), [FR-089](#fr-089), [FR-031](#fr-031), [FR-060](#fr-060), [FR-061](#fr-061), [FR-084](#fr-084) |
 | [DOM-018](03-domain-model-and-mutual-credit-rules.md#dom-018) Policy cannot relax invariants | [FR-002](#fr-002), [FR-060](#fr-060), [FR-062](#fr-062) |
 
 ## 14. Open questions
@@ -924,7 +1039,7 @@ All P2, named to fix the boundary ([01-product-vision-and-scope.md §8.2](01-pro
 | OQ-FR-4 | When [DOM-091](03-domain-model-and-mutual-credit-rules.md#dom-091) is lowered below a limit already granted to an account, is that account's limit lowered, kept, or flagged? | Rule for doc 03; recommended default: kept and flagged to administrators. | Domain modeler |
 | OQ-FR-5 | Resolved: [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) allows scheduled policy versions that can be cancelled before their effective time. | None; kept for traceability. | Resolved |
 | OQ-FR-6 | Resolved: a declined confirmation is recorded and the reviewer records a new resolution; remedies are posted with the limit override recorded ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)). | None; kept for traceability. | Resolved |
-| OQ-FR-7 | May a `Departed` member still sign in to export their own history? | Confirm with [OQ-PER-3](02-personas-roles-and-journeys.md#5-open-questions); recommended default: yes, read and export only, for the retention period. | Project owner |
+| OQ-FR-7 | Resolved: answered by [GOV-042](10-governance-and-network-operations.md#gov-042) and [GOV-040](10-governance-and-network-operations.md#gov-040): `Suspended` and `Departed` members keep own-history read and self-export for the personal-data period of [DATA-080](06-data-model-ledger-and-audit.md#data-080) ([FR-090](#fr-090)). | None; kept for traceability. | Resolved |
 | OQ-FR-8 | What happens to listings of suspended and departed members? | Confirm the recommended default in [FR-028](#fr-028). | Project owner with governance owner |
 | OQ-FR-9 | Should self-service network creation be offered? | Mirrors [OQ-PER-1](02-personas-roles-and-journeys.md#5-open-questions); [FR-001](#fr-001) assumes operator creation. | Project owner |
 | OQ-FR-10 | Resolved: export files expire after a recommended default of 7 days ([FR-095](#fr-095)). | None; kept for traceability. | Resolved |
@@ -938,3 +1053,4 @@ All P2, named to fix the boundary ([01-product-vision-and-scope.md §8.2](01-pro
 |---|---|
 | 2026-11-11 | Initial draft. |
 | 2026-11-11 | Added FR-008, FR-009, FR-058, FR-068, FR-069, FR-089, FR-095 and the mandatory notification set in FR-084; aligned FR-040, FR-055, FR-060, FR-075, FR-093 with revised doc 03; resolved OQ-FR-10 and OQ-FR-13. |
+| 2026-11-11 | Consistency review fixes: FR-005 suspension wording; FR-030 top-level `invalid_amount`; FR-039, FR-060, FR-070 error codes (`already_reversed`, `precondition_failed`, `not_disputable`); FR-060 scheduled-version bound and notices (DOM-017); FR-064 adjustment states and rejection (DOM-041); FR-068 report statuses, reporter notice and confidentiality (SEC 5.5); FR-069 operator console exception (PER-033); FR-071 reviewer leaving `Active` (DOM-061); FR-075 confirming-administrator eligibility and suspended network (DOM-062, DOM-016); FR-084 mandatory set extended with SEC and GOV notices and sourced to DOM-041/DOM-062; FR-088 notice timing per SEC-141; FR-090 departed-member access; FR-091 export under break-glass refused (SEC-144); FR-095 expiry anchored on completion; added FR-029, FR-044 to FR-048, FR-059, FR-079, FR-096; reassigned FR-044 to FR-049 to administrator controls; resolved OQ-FR-7. |
