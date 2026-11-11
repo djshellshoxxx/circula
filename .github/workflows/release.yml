@@ -42,12 +42,13 @@ jobs:
             echo "tag $GITHUB_REF_NAME is not vMAJOR.MINOR.PATCH[-pre]"
             exit 1
           fi
-      - name: check release notes exist (OPS-026)
+      - name: check release notes (OPS-026, QA-039, QA-044)
         run: |
           if [ ! -s "docs/releases/${GITHUB_REF_NAME}.md" ]; then
             echo "docs/releases/${GITHUB_REF_NAME}.md is missing; write the release notes before tagging"
             exit 1
           fi
+          scripts/check-release-notes.sh "docs/releases/${GITHUB_REF_NAME}.md" "$GITHUB_REF_NAME"
       - name: vet and test
         run: |
           go vet ./...
@@ -105,6 +106,8 @@ jobs:
         working-directory: dist
         run: |
           if command -v sha256sum >/dev/null; then sha256sum -c SHA256SUMS; else shasum -a 256 -c SHA256SUMS; fi
+      - name: verify the release set (OPS-035, OPS-003, SEC-029)
+        run: scripts/verify-release.sh dist "$GITHUB_REF_NAME"
       - name: create release
         run: |
           gh release create "$GITHUB_REF_NAME" dist/* \
