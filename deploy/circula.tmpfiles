@@ -1,0 +1,5 @@
+# systemd-tmpfiles: install as /usr/lib/tmpfiles.d/circula.conf. The unit's StateDirectory= also creates
+# the data dirs; this is for running `circula backup` or `restore` by hand as the service user before first start.
+d /var/lib/circula         0700 circula circula -
+d /var/lib/circula/backups 0700 circula circula -
+d /etc/circula             0750 root    circula -

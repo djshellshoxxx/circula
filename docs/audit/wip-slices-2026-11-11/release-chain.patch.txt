@@ -1,0 +1,1361 @@
+From 808868b8990b3dfcabfe5095bd0869d93870f2e2 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 01:18:53 +0000
+Subject: [PATCH] wip(release-chain): interrupted by project pause; unreviewed,
+ tests not confirmed
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ docs/releases/TEMPLATE.md      |  31 +-
+ scripts/check-release-notes.sh |  71 +++++
+ scripts/package-release.sh     |  72 +++--
+ scripts/sbom/main.go           | 562 +++++++++++++++++++++++++++++++++
+ scripts/sbom/main_test.go      | 303 ++++++++++++++++++
+ scripts/scan-release.sh        | 104 ++++++
+ scripts/verify-release.sh      |  96 ++++++
+ 7 files changed, 1203 insertions(+), 36 deletions(-)
+ create mode 100755 scripts/check-release-notes.sh
+ create mode 100644 scripts/sbom/main.go
+ create mode 100644 scripts/sbom/main_test.go
+ create mode 100755 scripts/scan-release.sh
+ create mode 100755 scripts/verify-release.sh
+
+diff --git a/docs/releases/TEMPLATE.md b/docs/releases/TEMPLATE.md
+index 912fe92..16727ff 100644
+--- a/docs/releases/TEMPLATE.md
++++ b/docs/releases/TEMPLATE.md
+@@ -1,13 +1,18 @@
+ # Circula vX.Y.Z
+ 
+-Copy this file to `docs/releases/vX.Y.Z.md` before tagging. The release workflow refuses to publish without it (OPS-026).
+-Replace every bracketed item or write "none".
++<!--
++Copy this file to docs/releases/vX.Y.Z.md before tagging, replace every bracketed item, and write "none" where nothing
++applies. The release workflow runs scripts/check-release-notes.sh on it and refuses to build or publish while a
++section is missing or empty, a placeholder or vX.Y.Z is left, or the evidence directory is not linked (OPS-026,
++QA-039, QA-044). This comment may stay; the check ignores HTML comments.
++-->
+ 
+ ## Breaking changes
+ - [none]
+ 
+ ## Schema changes
+-- [none] If the release changes the schema, state the migration version and whether a backup is required before upgrade (required: yes/no).
++- [none] If the release changes the schema, give the migration version and keep the next line.
++- Backup required before upgrade: [yes/no]
+ 
+ ## Configuration changes
+ - [none] New, renamed or removed settings (see docs/ops/configuration.md).
+@@ -21,6 +26,20 @@ Replace every bracketed item or write "none".
+ ## Required operator actions
+ - [none] For example: take a backup, run `circula migrate`, rotate a secret.
+ 
+-## Verification
+-- Checksums: `SHA256SUMS` attached to the release.
+-- Checks run for this tag: [list, and any target not run and why].
++## Evidence
++Release gate items (QA-039), each linked from here. Records live in the evidence directory (QA-044, docs/qa/EVIDENCE.md).
++- Evidence directory: [docs/qa/evidence/vX.Y.Z/](../qa/evidence/vX.Y.Z/)
++- Release gate record (`scripts/release-gate.sh -r vX.Y.Z`): [gate-UTC.md link]
++- Restore drill record (QA-029): [drill-UTC.json link]
++- Traceability matrix at the release commit (QA-042): [traceability.md link]
++- Quality thresholds and their decision references (QA-040): [copy the table from docs/qa/THRESHOLDS.md]
++- Keyboard-only walkthrough (UX-055): [date, tester, browser; pass or fail per flow: sign-in, propose trade, accept
++  trade with review, decline, history view, admin member approval; link to the record]
++- Manual accessibility review and screen-reader run (QA-035, docs/qa/SCREEN-READER.md): [link]
++- Exploratory session records (L14): [link]
++- Independent security review (SEC-033): [link]
++- Performance results on recorded reference hardware (L15, docs/qa/LOAD-TEST.md): [link; hardware, date, commit]
++- Smoke run per target (L13, OPS-003): [release workflow run link; for each target not run, the target and why]
++- Checksums and bills of materials (OPS-035, SEC-029): `SHA256SUMS` and one `circula_vX.Y.Z_<os>_<arch>.cdx.json`
++  (CycloneDX 1.5) per target, attached to the release.
++- Decisions accepted, changed or superseded since the previous release: [DEC ids, or none]
+diff --git a/scripts/check-release-notes.sh b/scripts/check-release-notes.sh
+new file mode 100755
+index 0000000..7e38fcb
+--- /dev/null
++++ b/scripts/check-release-notes.sh
+@@ -0,0 +1,71 @@
++#!/usr/bin/env bash
++# Release record check (OPS-026, QA-039, QA-044) for docs/releases/<version>.md, written from
++# docs/releases/TEMPLATE.md. Run by the release workflow before anything is built and by scripts/release-gate.sh -r.
++#
++#   scripts/check-release-notes.sh NOTES VERSION
++#
++# Fails unless:
++#   * the first heading names VERSION and no template text is left (vX.Y.Z, [bracketed placeholders]);
++#   * each OPS-026 section exists exactly once and is not empty (write "none" when nothing applies):
++#     Breaking changes, Schema changes, Configuration changes, API changes, Security fixes, Required operator actions;
++#   * Schema changes is "none" or states "Backup required before upgrade: yes" (or "no");
++#   * an Evidence section links docs/qa/evidence/VERSION/ and that directory exists (QA-044).
++# HTML comments (<!-- ... -->) are ignored, so template guidance can stay in a copied file.
++# EVIDENCE_ROOT overrides docs/qa/evidence (tests only).
++set -euo pipefail
++cd "$(dirname "$0")/.."
++
++[ "$#" -eq 2 ] || { echo "usage: scripts/check-release-notes.sh NOTES VERSION" >&2; exit 2; }
++notes="$1"; version="$2"
++evidence_root="${EVIDENCE_ROOT:-docs/qa/evidence}"
++fail=0
++bad() { echo "release notes $notes: $*" >&2; fail=1; }
++
++[ -s "$notes" ] || { echo "release notes $notes: missing or empty; write it from docs/releases/TEMPLATE.md" >&2; exit 1; }
++
++# Strip HTML comments, including ones that span lines.
++body="$(awk '
++  { line = $0; out = "" }
++  { while (1) {
++      if (incomment) { i = index(line, "-->"); if (i == 0) { line = ""; break }; line = substr(line, i + 3); incomment = 0 }
++      i = index(line, "<!--"); if (i == 0) { out = out line; break }
++      out = out substr(line, 1, i - 1); line = substr(line, i + 4); incomment = 1
++    }
++    print out }' "$notes")"
++
++first="$(printf '%s\n' "$body" | grep -m1 -E '^# ' || true)"
++case "$first" in *" $version"|*" $version "*) ;; *) bad "first heading must name $version, found '${first:-none}'" ;; esac
++if printf '%s\n' "$body" | grep -q 'vX\.Y\.Z'; then bad "template text vX.Y.Z is left in"; fi
++if printf '%s\n' "$body" | grep -nE '\[[^]]+\]([^(]|$)' >&2; then bad "bracketed template placeholders are left in (lines above)"; fi
++
++section() { # heading -> body lines without blanks, up to the next ## heading
++  printf '%s\n' "$body" | awk -v h="## $1" '
++    $0 == h { on = 1; next }
++    on && /^## / { exit }
++    on && NF { print }'
++}
++count() { printf '%s\n' "$body" | grep -cxF "## $1" || true; }
++
++for s in "Breaking changes" "Schema changes" "Configuration changes" "API changes" "Security fixes" \
++  "Required operator actions" "Evidence"; do
++  n="$(count "$s")"
++  if [ "$n" -ne 1 ]; then bad "section '## $s' appears $n times, want exactly once"; continue; fi
++  [ -n "$(section "$s")" ] || bad "section '## $s' is empty; write \"none\" when nothing applies"
++done
++
++schema="$(section "Schema changes")"
++if [ -n "$schema" ]; then
++  plain="$(printf '%s\n' "$schema" | sed -E 's/^[[:space:]]*[-*][[:space:]]*//; s/[[:space:].]+$//' | tr '[:upper:]' '[:lower:]')"
++  if [ "$plain" != "none" ] && ! printf '%s\n' "$schema" | grep -qiE 'backup required before upgrade:[[:space:]]*[*_]*(yes|no)([^a-z]|$)'; then
++    bad "Schema changes must be \"none\" or state \"Backup required before upgrade: yes\" (or no) (OPS-026)"
++  fi
++fi
++
++esc_version="$(printf '%s' "$version" | sed 's/[.]/\\./g')"
++if ! section "Evidence" | grep -qE "qa/evidence/${esc_version}/"; then
++  bad "Evidence must link docs/qa/evidence/$version/ (QA-044)"
++fi
++[ -d "$evidence_root/$version" ] || bad "evidence directory $evidence_root/$version/ does not exist (QA-044, docs/qa/EVIDENCE.md)"
++
++[ "$fail" -eq 0 ] || exit 1
++echo "release notes $notes: ok"
+diff --git a/scripts/package-release.sh b/scripts/package-release.sh
+index b1c91ca..f6d65e0 100755
+--- a/scripts/package-release.sh
++++ b/scripts/package-release.sh
+@@ -1,11 +1,15 @@
+ #!/usr/bin/env bash
+-# Builds circula for every OPS-003 target and packages each one with the README
+-# and docs/ops, then writes SHA256SUMS and the Go module list (partial SBOM).
++# Builds circula for every OPS-003 target and packages each one with the README, docs/ops and docs/legal, then
++# writes one CycloneDX 1.5 SBOM per target (SEC-029) and SHA256SUMS over archives and SBOMs (OPS-035).
+ #
+ #   VERSION=v1.2.3 OUT=bin/dist scripts/package-release.sh
++#   VERSION=v0.0.0-test OUT=/tmp/dist TARGETS="linux/amd64" scripts/package-release.sh   # subset, local checks
+ #
+-# Binaries are built with CGO_ENABLED=0 and -trimpath. The version, commit and
+-# commit date are injected with -ldflags.
++# Binaries are built with CGO_ENABLED=0 and -trimpath; the version, commit and commit date are injected with
++# -ldflags. Module checksums are enforced: go.sum is read-only (-mod=readonly), a go.sum mismatch fails the build
++# (scripts/test-gosum-tamper.sh proves it) and `go mod verify` checks the module cache after building. Finally
++# scripts/verify-release.sh checks the finished directory: contents list, checksums, each SBOM against its
++# binary, and the OPS-035 archive scan for secrets and personal data (scripts/scan-release.sh).
+ set -euo pipefail
+ 
+ cd "$(dirname "$0")/.."
+@@ -13,30 +17,35 @@ cd "$(dirname "$0")/.."
+ VERSION="${VERSION:?set VERSION, for example v1.2.3}"
+ OUT="${OUT:-bin/dist}"
+ GO="${GO:-go}"
++TARGETS="${TARGETS:-windows/amd64 linux/amd64 linux/arm64 darwin/amd64 darwin/arm64}"
+ 
+ if ! [[ "$VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$|^ci-[0-9a-f]+$|^dev$ ]]; then
+   echo "unexpected VERSION: $VERSION" >&2
+   exit 1
+ fi
++for t in $TARGETS; do
++  case "$t" in windows/amd64|linux/amd64|linux/arm64|darwin/amd64|darwin/arm64) ;;
++    *) echo "unexpected target $t (OPS-003 targets only)" >&2; exit 1 ;; esac
++done
+ 
+ COMMIT="$(git rev-parse --short=12 HEAD 2>/dev/null || echo unknown)"
+ DATE="$(git log -1 --format=%cI 2>/dev/null || echo unknown)"
+ LDFLAGS="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.date=${DATE}"
+ 
+-TARGETS=(
+-  "windows amd64"
+-  "linux amd64"
+-  "linux arm64"
+-  "darwin amd64"
+-  "darwin arm64"
+-)
+-
+ rm -rf "$OUT"
+ mkdir -p "$OUT/stage"
+ export CGO_ENABLED=0
++# SEC-029: never let the build rewrite go.mod/go.sum; a checksum that does not match go.sum stops the build.
++export GOFLAGS="-mod=readonly"
+ 
+-for t in "${TARGETS[@]}"; do
+-  read -r goos goarch <<<"$t"
++# The SBOM generator runs on the build host, not the target.
++sbom="$OUT/stage/sbom-tool"
++GOOS="" GOARCH="" "$GO" build -o "$sbom" ./scripts/sbom
++"$GO" mod graph >"$OUT/stage/modgraph.txt"
++modcache="$("$GO" env GOMODCACHE)"
++
++for t in $TARGETS; do
++  goos="${t%/*}"; goarch="${t#*/}"
+   name="circula_${VERSION}_${goos}_${goarch}"
+   stage="$OUT/stage/$name"
+   mkdir -p "$stage"
+@@ -49,6 +58,11 @@ for t in "${TARGETS[@]}"; do
+   cp -r docs/ops "$stage/ops"
+   cp -r docs/legal "$stage/legal"
+ 
++  sbom_args=(-bin "$stage/$bin" -version "$VERSION" -modcache "$modcache" -graph "$OUT/stage/modgraph.txt"
++    -licenses docs/legal/DEPENDENCIES.md -o "$OUT/$name.cdx.json")
++  [ "$DATE" != unknown ] && sbom_args+=(-timestamp "$DATE") # commit time keeps the bill reproducible
++  "$sbom" "${sbom_args[@]}"
++
+   if [ "$goos" = "windows" ]; then
+     (cd "$OUT/stage" && zip -r -q -X "../$name.zip" "$name")
+   else
+@@ -58,22 +72,20 @@ for t in "${TARGETS[@]}"; do
+ done
+ rm -rf "$OUT/stage"
+ 
+-# Packaging must not carry secrets or personal data (OPS-035). A simple name scan.
+-for archive in "$OUT"/*.zip "$OUT"/*.tar.gz; do
+-  [ -e "$archive" ] || continue
+-  if tar -tzf "$archive" 2>/dev/null | grep -Eiq '\.db$|\.env$|secret|\.lock$|\.partial$'; then
+-    echo "archive $archive contains a forbidden file name" >&2
+-    exit 1
+-  fi
+-done
++# The builds downloaded or reused every linked module; check the module cache still matches go.sum.
++"$GO" mod verify
+ 
+-"$GO" list -m all > "$OUT/go-modules-${VERSION}.txt"
++(
++  cd "$OUT"
++  files=(circula_*)
++  if command -v sha256sum >/dev/null 2>&1; then
++    sha256sum "${files[@]/#/./}" > SHA256SUMS
++  else
++    shasum -a 256 "${files[@]/#/./}" > SHA256SUMS
++  fi
++)
+ 
+-cd "$OUT"
+-if command -v sha256sum >/dev/null 2>&1; then
+-  sha256sum ./*.zip ./*.tar.gz ./go-modules-*.txt > SHA256SUMS
+-else
+-  shasum -a 256 ./*.zip ./*.tar.gz ./go-modules-*.txt > SHA256SUMS
+-fi
++# Contents list, checksums, SBOM against each binary, and the OPS-035 scan for secrets and personal data.
++TARGETS="$TARGETS" scripts/verify-release.sh -s "$OUT" "$VERSION"
+ echo "packaged into $OUT:"
+-ls -1 .
++ls -1 "$OUT"
+diff --git a/scripts/sbom/main.go b/scripts/sbom/main.go
+new file mode 100644
+index 0000000..57b30a7
+--- /dev/null
++++ b/scripts/sbom/main.go
+@@ -0,0 +1,562 @@
++// Command sbom writes a CycloneDX 1.5 JSON software bill of materials for one built circula binary (SEC-029,
++// OPS-035). The module list comes from the build information the Go linker embeds in every binary (the data
++// `go version -m` prints), so the bill names exactly the modules compiled into that target, with the go.sum
++// hash each was built from. Standard library only; the output is deterministic for the same inputs.
++//
++//	go run ./scripts/sbom -bin stage/circula -version v1.2.3 -timestamp 2026-01-02T03:04:05Z \
++//	    -modcache "$(go env GOMODCACHE)" -graph modgraph.txt -licenses docs/legal/DEPENDENCIES.md -o x.cdx.json
++//
++// -modcache adds the SHA-256 of each module zip from the download cache (a missing zip is an error),
++// -graph (output of `go mod graph`) adds module-to-module dependency edges, -licenses (the ARC-024 manifest)
++// adds SPDX licence identifiers. Without -graph the root component depends on every module directly.
++package main
++
++import (
++	"bufio"
++	"bytes"
++	"crypto/sha1" //nolint:gosec // RFC 4122 version 5 UUIDs are defined over SHA-1; not a security use
++	"crypto/sha256"
++	"debug/buildinfo"
++	"encoding/hex"
++	"encoding/json"
++	"errors"
++	"flag"
++	"fmt"
++	"io"
++	"os"
++	"path/filepath"
++	"regexp"
++	"runtime/debug"
++	"sort"
++	"strings"
++	"time"
++)
++
++// CycloneDX 1.5 JSON shapes (only the fields this tool writes).
++type bom struct {
++	BOMFormat    string       `json:"bomFormat"`
++	SpecVersion  string       `json:"specVersion"`
++	SerialNumber string       `json:"serialNumber"`
++	Version      int          `json:"version"`
++	Metadata     metadata     `json:"metadata"`
++	Components   []component  `json:"components"`
++	Dependencies []dependency `json:"dependencies"`
++}
++
++type metadata struct {
++	Timestamp string    `json:"timestamp"`
++	Tools     tools     `json:"tools"`
++	Component component `json:"component"`
++}
++
++type tools struct {
++	Components []component `json:"components"`
++}
++
++type component struct {
++	Type       string     `json:"type"`
++	BOMRef     string     `json:"bom-ref,omitempty"`
++	Name       string     `json:"name"`
++	Version    string     `json:"version,omitempty"`
++	PURL       string     `json:"purl,omitempty"`
++	Hashes     []hash     `json:"hashes,omitempty"`
++	Licenses   []license  `json:"licenses,omitempty"`
++	Properties []property `json:"properties,omitempty"`
++}
++
++type hash struct {
++	Alg     string `json:"alg"`
++	Content string `json:"content"`
++}
++
++type license struct {
++	License licenseID `json:"license"`
++}
++
++type licenseID struct {
++	ID string `json:"id"`
++}
++
++type property struct {
++	Name  string `json:"name"`
++	Value string `json:"value"`
++}
++
++type dependency struct {
++	Ref       string   `json:"ref"`
++	DependsOn []string `json:"dependsOn"`
++}
++
++// options are the inputs besides the build information.
++type options struct {
++	Version   string            // release version of the root component; empty uses the embedded module version
++	Timestamp string            // RFC 3339; empty uses vcs.time from the build information
++	BinarySHA string            // hex SHA-256 of the binary file
++	ZipSHA    map[string]string // "path@version" -> hex SHA-256 of the module zip
++	Graph     [][2]string       // `go mod graph` edges, "path[@version]" pairs
++	Licenses  map[string]string // "path@version" -> SPDX identifier
++}
++
++func main() {
++	if err := run(os.Args[1:], os.Stdout); err != nil {
++		fmt.Fprintln(os.Stderr, "sbom:", err)
++		os.Exit(1)
++	}
++}
++
++func run(args []string, stdout io.Writer) error {
++	fs := flag.NewFlagSet("sbom", flag.ContinueOnError)
++	bin := fs.String("bin", "", "built binary to describe (required)")
++	version := fs.String("version", "", "release version of the root component")
++	timestamp := fs.String("timestamp", "", "RFC 3339 timestamp for metadata (default: vcs.time of the build)")
++	modcache := fs.String("modcache", "", "Go module cache (go env GOMODCACHE); adds module zip SHA-256 hashes")
++	graphFile := fs.String("graph", "", "file holding `go mod graph` output; adds dependency edges")
++	licFile := fs.String("licenses", "", "ARC-024 licence manifest (docs/legal/DEPENDENCIES.md); adds SPDX ids")
++	out := fs.String("o", "", "output file (default stdout)")
++	verifyFile := fs.String("verify", "", "check an existing bill against -bin instead of writing one")
++	if err := fs.Parse(args); err != nil {
++		return err
++	}
++	if *bin == "" {
++		return errors.New("-bin is required")
++	}
++	bi, err := buildinfo.ReadFile(*bin)
++	if err != nil {
++		return fmt.Errorf("read build information from %s: %w", *bin, err)
++	}
++	if *verifyFile != "" {
++		return verify(*verifyFile, *bin, bi)
++	}
++	opt := options{Version: *version, Timestamp: *timestamp}
++	if opt.BinarySHA, err = fileSHA256(*bin); err != nil {
++		return err
++	}
++	if *modcache != "" {
++		if opt.ZipSHA, err = zipHashes(*modcache, bi.Deps); err != nil {
++			return err
++		}
++	}
++	if *graphFile != "" {
++		if opt.Graph, err = readGraph(*graphFile); err != nil {
++			return err
++		}
++	}
++	if *licFile != "" {
++		if opt.Licenses, err = readLicenses(*licFile); err != nil {
++			return err
++		}
++	}
++	doc, err := build(bi, opt)
++	if err != nil {
++		return err
++	}
++	var buf bytes.Buffer
++	enc := json.NewEncoder(&buf)
++	enc.SetEscapeHTML(false) // purl qualifiers keep their '&'
++	enc.SetIndent("", "  ")
++	if err := enc.Encode(doc); err != nil {
++		return err
++	}
++	if *out == "" {
++		_, err = stdout.Write(buf.Bytes())
++		return err
++	}
++	return os.WriteFile(*out, buf.Bytes(), 0o644)
++}
++
++// effective returns the module that was actually compiled in place of m.
++func effective(m *debug.Module) *debug.Module {
++	if m.Replace != nil {
++		return m.Replace
++	}
++	return m
++}
++
++func modKey(path, version string) string { return path + "@" + version }
++
++func build(bi *debug.BuildInfo, opt options) (*bom, error) {
++	if bi == nil || bi.Main.Path == "" {
++		return nil, errors.New("binary carries no main module information")
++	}
++	settings := map[string]string{}
++	for _, s := range bi.Settings {
++		settings[s.Key] = s.Value
++	}
++	ts := opt.Timestamp
++	if ts == "" {
++		ts = settings["vcs.time"]
++	}
++	if ts == "" {
++		ts = time.Now().UTC().Format(time.RFC3339)
++	}
++	t, err := time.Parse(time.RFC3339, ts)
++	if err != nil {
++		return nil, fmt.Errorf("timestamp %q is not RFC 3339: %w", ts, err)
++	}
++	ts = t.UTC().Format(time.RFC3339)
++
++	rootVersion := opt.Version
++	if rootVersion == "" {
++		rootVersion = bi.Main.Version
++	}
++	quals := []string{"type=module"}
++	if v := settings["GOARCH"]; v != "" {
++		quals = append(quals, "goarch="+escape(v))
++	}
++	if v := settings["GOOS"]; v != "" {
++		quals = append(quals, "goos="+escape(v))
++	}
++	sort.Strings(quals) // purl qualifiers are sorted by key
++	root := component{
++		Type:    "application",
++		Name:    bi.Main.Path,
++		Version: rootVersion,
++		PURL:    purl(bi.Main.Path, rootVersion, quals...),
++	}
++	root.BOMRef = root.PURL
++	if opt.BinarySHA != "" {
++		root.Hashes = []hash{{Alg: "SHA-256", Content: opt.BinarySHA}}
++	}
++	root.Properties = append(root.Properties, property{"circula:go:package", bi.Path}, property{"circula:go:toolchain", bi.GoVersion})
++	keys := make([]string, 0, len(settings))
++	for k := range settings {
++		keys = append(keys, k)
++	}
++	sort.Strings(keys)
++	for _, k := range keys {
++		if k == "-ldflags" {
++			continue // carries the version stamps already shown above; keep the bill independent of flag spelling
++		}
++		root.Properties = append(root.Properties, property{"circula:go:build:" + k, settings[k]})
++	}
++
++	std := component{Type: "library", Name: "std", Version: bi.GoVersion, PURL: purl("std", bi.GoVersion, "type=module")}
++	std.BOMRef = std.PURL
++
++	deps := append([]*debug.Module(nil), bi.Deps...)
++	sort.Slice(deps, func(i, j int) bool { return deps[i].Path < deps[j].Path })
++	comps := []component{std}
++	refByPath := map[string]string{} // module path as required in go.mod -> bom-ref
++	selected := map[string]string{}  // module path -> selected version
++	for _, d := range deps {
++		e := effective(d)
++		c := component{Type: "library", Name: d.Path, Version: e.Version, PURL: purl(e.Path, e.Version, "type=module")}
++		if e.Version == "" { // replaced by a local directory: no module version or checksum exists
++			c.Version = "(local)"
++			c.PURL = ""
++			c.BOMRef = "local:" + e.Path
++		} else {
++			c.BOMRef = c.PURL
++		}
++		if h, ok := opt.ZipSHA[modKey(e.Path, e.Version)]; ok {
++			c.Hashes = []hash{{Alg: "SHA-256", Content: h}}
++		}
++		if id, ok := opt.Licenses[modKey(d.Path, d.Version)]; ok && id != "" && id != "UNKNOWN" {
++			c.Licenses = []license{{licenseID{id}}}
++		}
++		if e.Sum != "" {
++			c.Properties = append(c.Properties, property{"circula:go:sum", e.Sum})
++		}
++		if d.Replace != nil {
++			c.Properties = append(c.Properties, property{"circula:go:replaced-by", strings.TrimSuffix(e.Path+" "+e.Version, " ")})
++		}
++		comps = append(comps, c)
++		refByPath[d.Path] = c.BOMRef
++		selected[d.Path] = d.Version
++	}
++
++	edges := map[string]map[string]bool{root.BOMRef: {std.BOMRef: true}}
++	add := func(from, to string) {
++		if edges[from] == nil {
++			edges[from] = map[string]bool{}
++		}
++		edges[from][to] = true
++	}
++	if len(opt.Graph) == 0 {
++		for _, d := range deps {
++			add(root.BOMRef, refByPath[d.Path])
++		}
++	} else {
++		for _, e := range opt.Graph {
++			fromPath, fromVer, _ := strings.Cut(e[0], "@")
++			toPath, _, _ := strings.Cut(e[1], "@")
++			to, ok := refByPath[toPath]
++			if !ok {
++				continue // not linked into this binary
++			}
++			switch {
++			case fromVer == "" && fromPath == bi.Main.Path:
++				add(root.BOMRef, to)
++			case selected[fromPath] == fromVer && refByPath[fromPath] != "":
++				if refByPath[fromPath] != to {
++					add(refByPath[fromPath], to)
++				}
++			}
++		}
++		// A linked module the graph does not reach still ships: attach it to the root so nothing is orphaned.
++		reached := map[string]bool{}
++		for _, tos := range edges {
++			for to := range tos {
++				reached[to] = true
++			}
++		}
++		for _, d := range deps {
++			if !reached[refByPath[d.Path]] {
++				add(root.BOMRef, refByPath[d.Path])
++			}
++		}
++	}
++	var dependencies []dependency
++	for _, c := range append([]component{root}, comps...) {
++		on := []string{}
++		for to := range edges[c.BOMRef] {
++			on = append(on, to)
++		}
++		sort.Strings(on)
++		dependencies = append(dependencies, dependency{Ref: c.BOMRef, DependsOn: on})
++	}
++
++	tool := component{Type: "application", Name: "circula scripts/sbom", Version: rootVersion}
++	return &bom{
++		BOMFormat:    "CycloneDX",
++		SpecVersion:  "1.5",
++		SerialNumber: serial(root.BOMRef, opt.BinarySHA, ts),
++		Version:      1,
++		Metadata:     metadata{Timestamp: ts, Tools: tools{Components: []component{tool}}, Component: root},
++		Components:   comps,
++		Dependencies: dependencies,
++	}, nil
++}
++
++// purl builds pkg:golang/<path>@<version>?<qualifiers>; each path segment and the version are percent-encoded.
++func purl(path, version string, quals ...string) string {
++	segs := strings.Split(path, "/")
++	for i, s := range segs {
++		segs[i] = escape(s)
++	}
++	p := "pkg:golang/" + strings.Join(segs, "/")
++	if version != "" {
++		p += "@" + escape(version)
++	}
++	if len(quals) > 0 {
++		p += "?" + strings.Join(quals, "&")
++	}
++	return p
++}
++
++// escape percent-encodes everything outside the purl unreserved set.
++func escape(s string) string {
++	var b strings.Builder
++	for i := 0; i < len(s); i++ {
++		c := s[i]
++		switch {
++		case c >= 'a' && c <= 'z', c >= 'A' && c <= 'Z', c >= '0' && c <= '9', c == '.', c == '-', c == '_', c == '~':
++			b.WriteByte(c)
++		default:
++			fmt.Fprintf(&b, "%%%02X", c)
++		}
++	}
++	return b.String()
++}
++
++// serial returns a deterministic RFC 4122 version 5 UUID URN for the bill.
++func serial(parts ...string) string {
++	// RFC 4122 URL namespace.
++	ns := [16]byte{0x6b, 0xa7, 0xb8, 0x11, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8}
++	h := sha1.New() //nolint:gosec // see import
++	h.Write(ns[:])
++	h.Write([]byte("circula-sbom:" + strings.Join(parts, "|")))
++	u := h.Sum(nil)[:16]
++	u[6] = (u[6] & 0x0f) | 0x50
++	u[8] = (u[8] & 0x3f) | 0x80
++	x := hex.EncodeToString(u)
++	return "urn:uuid:" + x[0:8] + "-" + x[8:12] + "-" + x[12:16] + "-" + x[16:20] + "-" + x[20:32]
++}
++
++func fileSHA256(path string) (string, error) {
++	f, err := os.Open(path)
++	if err != nil {
++		return "", err
++	}
++	defer func() { _ = f.Close() }()
++	h := sha256.New()
++	if _, err := io.Copy(h, f); err != nil {
++		return "", err
++	}
++	return hex.EncodeToString(h.Sum(nil)), nil
++}
++
++// escapeModPath applies the module cache case encoding: each upper-case letter becomes '!' and its lower case.
++func escapeModPath(s string) string {
++	var b strings.Builder
++	for _, r := range s {
++		if r >= 'A' && r <= 'Z' {
++			b.WriteByte('!')
++			r += 'a' - 'A'
++		}
++		b.WriteRune(r)
++	}
++	return b.String()
++}
++
++// zipHashes hashes the downloaded zip of every linked module. Modules replaced by a local directory have none.
++func zipHashes(modcache string, deps []*debug.Module) (map[string]string, error) {
++	out := map[string]string{}
++	for _, d := range deps {
++		e := effective(d)
++		if e.Version == "" {
++			continue
++		}
++		zip := filepath.Join(modcache, "cache", "download", filepath.FromSlash(escapeModPath(e.Path)), "@v", escapeModPath(e.Version)+".zip")
++		h, err := fileSHA256(zip)
++		if err != nil {
++			return nil, fmt.Errorf("module zip for %s %s: %w (run go mod download)", e.Path, e.Version, err)
++		}
++		out[modKey(e.Path, e.Version)] = h
++	}
++	return out, nil
++}
++
++func readGraph(path string) ([][2]string, error) {
++	f, err := os.Open(path)
++	if err != nil {
++		return nil, err
++	}
++	defer func() { _ = f.Close() }()
++	var edges [][2]string
++	sc := bufio.NewScanner(f)
++	for sc.Scan() {
++		fields := strings.Fields(sc.Text())
++		if len(fields) == 0 {
++			continue
++		}
++		if len(fields) != 2 {
++			return nil, fmt.Errorf("%s: unexpected go mod graph line %q", path, sc.Text())
++		}
++		edges = append(edges, [2]string{fields[0], fields[1]})
++	}
++	return edges, sc.Err()
++}
++
++// readLicenses parses table rows "| `path` | version | SPDX |" of the ARC-024 manifest.
++func readLicenses(path string) (map[string]string, error) {
++	b, err := os.ReadFile(path)
++	if err != nil {
++		return nil, err
++	}
++	out := map[string]string{}
++	for _, line := range strings.Split(string(b), "\n") {
++		cells := strings.Split(line, "|")
++		if len(cells) != 5 || !strings.HasPrefix(strings.TrimSpace(cells[1]), "`") {
++			continue
++		}
++		mod := strings.Trim(strings.TrimSpace(cells[1]), "`")
++		out[modKey(mod, strings.TrimSpace(cells[2]))] = strings.TrimSpace(cells[3])
++	}
++	return out, nil
++}
++
++// validate checks the CycloneDX 1.5 rules the release relies on: the header, a schema-valid serial number, unique
++// bom-refs, one dependency entry per component and no dangling dependency reference.
++func validate(b *bom) error {
++	if b.BOMFormat != "CycloneDX" || b.SpecVersion != "1.5" || b.Version != 1 {
++		return fmt.Errorf("header is %q %q version %d, want CycloneDX 1.5 version 1", b.BOMFormat, b.SpecVersion, b.Version)
++	}
++	if !serialRE.MatchString(b.SerialNumber) {
++		return fmt.Errorf("serialNumber %q does not match the CycloneDX 1.5 pattern", b.SerialNumber)
++	}
++	if _, err := time.Parse(time.RFC3339, b.Metadata.Timestamp); err != nil {
++		return fmt.Errorf("metadata.timestamp: %w", err)
++	}
++	refs := map[string]bool{}
++	for _, c := range append([]component{b.Metadata.Component}, b.Components...) {
++		if c.Type == "" || c.Name == "" || c.BOMRef == "" {
++			return fmt.Errorf("component without type, name or bom-ref: %+v", c)
++		}
++		if refs[c.BOMRef] {
++			return fmt.Errorf("duplicate bom-ref %q", c.BOMRef)
++		}
++		refs[c.BOMRef] = true
++	}
++	seen := map[string]bool{}
++	for _, d := range b.Dependencies {
++		if !refs[d.Ref] {
++			return fmt.Errorf("dependency ref %q names no component", d.Ref)
++		}
++		seen[d.Ref] = true
++		for _, on := range d.DependsOn {
++			if !refs[on] {
++				return fmt.Errorf("%q depends on unknown ref %q", d.Ref, on)
++			}
++		}
++	}
++	for r := range refs {
++		if !seen[r] {
++			return fmt.Errorf("component %q has no dependency entry", r)
++		}
++	}
++	return nil
++}
++
++var serialRE = regexp.MustCompile(`^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$`)
++
++// verify checks that the bill in path is well formed and describes exactly the binary bin: its SHA-256, target
++// and toolchain, and the set of linked modules with their versions and go.sum hashes.
++func verify(path, bin string, bi *debug.BuildInfo) error {
++	raw, err := os.ReadFile(path)
++	if err != nil {
++		return err
++	}
++	var b bom
++	dec := json.NewDecoder(bytes.NewReader(raw))
++	if err := dec.Decode(&b); err != nil {
++		return fmt.Errorf("%s: %w", path, err)
++	}
++	if err := validate(&b); err != nil {
++		return fmt.Errorf("%s: %w", path, err)
++	}
++	sum, err := fileSHA256(bin)
++	if err != nil {
++		return err
++	}
++	root := b.Metadata.Component
++	if len(root.Hashes) != 1 || root.Hashes[0].Alg != "SHA-256" || root.Hashes[0].Content != sum {
++		return fmt.Errorf("%s: root SHA-256 %v does not match %s (%s)", path, root.Hashes, bin, sum)
++	}
++	want, err := build(bi, options{BinarySHA: sum, Version: root.Version, Timestamp: b.Metadata.Timestamp})
++	if err != nil {
++		return err
++	}
++	if root.PURL != want.Metadata.Component.PURL {
++		return fmt.Errorf("%s: root purl %q, binary is %q", path, root.PURL, want.Metadata.Component.PURL)
++	}
++	key := func(c component) string { return c.Name + " " + c.Version + " " + prop(c, "circula:go:sum") }
++	got := map[string]bool{}
++	for _, c := range b.Components {
++		got[key(c)] = true
++	}
++	for _, c := range want.Components {
++		if !got[key(c)] {
++			return fmt.Errorf("%s: linked module %s is missing from the bill", path, key(c))
++		}
++		delete(got, key(c))
++	}
++	if len(got) > 0 {
++		extra := make([]string, 0, len(got))
++		for k := range got {
++			extra = append(extra, k)
++		}
++		sort.Strings(extra)
++		return fmt.Errorf("%s: bill lists %s, not linked into %s", path, strings.Join(extra, ", "), bin)
++	}
++	return nil
++}
++
++func prop(c component, name string) string {
++	for _, p := range c.Properties {
++		if p.Name == name {
++			return p.Value
++		}
++	}
++	return ""
++}
+diff --git a/scripts/sbom/main_test.go b/scripts/sbom/main_test.go
+new file mode 100644
+index 0000000..c8b4047
+--- /dev/null
++++ b/scripts/sbom/main_test.go
+@@ -0,0 +1,303 @@
++package main
++
++import (
++	"bytes"
++	"crypto/sha256"
++	"debug/buildinfo"
++	"encoding/hex"
++	"encoding/json"
++	"os"
++	"path/filepath"
++	"runtime/debug"
++	"strings"
++	"testing"
++)
++
++func sampleInfo() *debug.BuildInfo {
++	return &debug.BuildInfo{
++		GoVersion: "go1.26.10",
++		Path:      "github.com/djshellshoxxx/circula/cmd/circula",
++		Main:      debug.Module{Path: "github.com/djshellshoxxx/circula", Version: "(devel)"},
++		Deps: []*debug.Module{
++			{Path: "modernc.org/sqlite", Version: "v1.60.1", Sum: "h1:/blz53O951KWFOso4QQvEs/Fq6cDBKLtMVrYNSeJVKw="},
++			{Path: "github.com/BurntSushi/Toml", Version: "v1.0.0+incompatible", Sum: "h1:AAAA"},
++			{Path: "golang.org/x/sys", Version: "v0.49.0", Sum: "h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA="},
++			{Path: "example.org/replaced", Version: "v1.0.0", Replace: &debug.Module{Path: "example.org/fork", Version: "v1.0.1", Sum: "h1:BBBB"}},
++		},
++		Settings: []debug.BuildSetting{
++			{Key: "GOOS", Value: "linux"}, {Key: "GOARCH", Value: "arm64"}, {Key: "CGO_ENABLED", Value: "0"},
++			{Key: "-trimpath", Value: "true"}, {Key: "-ldflags", Value: "-s -w -X main.version=v1.2.3"},
++			{Key: "vcs.revision", Value: "abc"}, {Key: "vcs.time", Value: "2026-01-02T03:04:05Z"},
++		},
++	}
++}
++
++// checkWellFormed fails the test when validate rejects the bill.
++func checkWellFormed(t *testing.T, b *bom) {
++	t.Helper()
++	if err := validate(b); err != nil {
++		t.Fatal(err)
++	}
++}
++
++func find(t *testing.T, b *bom, name string) component {
++	t.Helper()
++	for _, c := range b.Components {
++		if c.Name == name {
++			return c
++		}
++	}
++	t.Fatalf("component %q not in bill", name)
++	return component{}
++}
++
++func TestBuildListsEveryLinkedModule(t *testing.T) {
++	b, err := build(sampleInfo(), options{Version: "v1.2.3", BinarySHA: strings.Repeat("ab", 32)})
++	if err != nil {
++		t.Fatal(err)
++	}
++	checkWellFormed(t, b)
++	root := b.Metadata.Component
++	if root.Name != "github.com/djshellshoxxx/circula" || root.Version != "v1.2.3" || root.Type != "application" {
++		t.Fatalf("root = %+v", root)
++	}
++	if want := "pkg:golang/github.com/djshellshoxxx/circula@v1.2.3?goarch=arm64&goos=linux&type=module"; root.PURL != want {
++		t.Fatalf("root purl = %q, want %q", root.PURL, want)
++	}
++	if len(root.Hashes) != 1 || root.Hashes[0].Alg != "SHA-256" || root.Hashes[0].Content != strings.Repeat("ab", 32) {
++		t.Fatalf("root hashes = %+v", root.Hashes)
++	}
++	if prop(root, "circula:go:build:GOOS") != "linux" || prop(root, "circula:go:build:CGO_ENABLED") != "0" ||
++		prop(root, "circula:go:build:vcs.revision") != "abc" || prop(root, "circula:go:toolchain") != "go1.26.10" {
++		t.Fatalf("root build properties = %+v", root.Properties)
++	}
++	if prop(root, "circula:go:build:-ldflags") != "" {
++		t.Fatal("ldflags must not be copied into the bill")
++	}
++	if b.Metadata.Timestamp != "2026-01-02T03:04:05Z" {
++		t.Fatalf("timestamp = %q, want vcs.time", b.Metadata.Timestamp)
++	}
++	if len(b.Components) != 5 { // std + 4 modules
++		t.Fatalf("components = %d, want 5", len(b.Components))
++	}
++	sq := find(t, b, "modernc.org/sqlite")
++	if sq.PURL != "pkg:golang/modernc.org/sqlite@v1.60.1?type=module" || prop(sq, "circula:go:sum") != "h1:/blz53O951KWFOso4QQvEs/Fq6cDBKLtMVrYNSeJVKw=" {
++		t.Fatalf("sqlite = %+v", sq)
++	}
++	toml := find(t, b, "github.com/BurntSushi/Toml")
++	if toml.PURL != "pkg:golang/github.com/BurntSushi/Toml@v1.0.0%2Bincompatible?type=module" {
++		t.Fatalf("purl escaping: %q", toml.PURL)
++	}
++	rep := find(t, b, "example.org/replaced")
++	if rep.Version != "v1.0.1" || rep.PURL != "pkg:golang/example.org/fork@v1.0.1?type=module" ||
++		prop(rep, "circula:go:replaced-by") != "example.org/fork v1.0.1" || prop(rep, "circula:go:sum") != "h1:BBBB" {
++		t.Fatalf("replaced module = %+v", rep)
++	}
++	std := find(t, b, "std")
++	if std.Version != "go1.26.10" {
++		t.Fatalf("std = %+v", std)
++	}
++	// Without a graph the root depends on every component.
++	if got := len(b.Dependencies[0].DependsOn); b.Dependencies[0].Ref != root.BOMRef || got != 5 {
++		t.Fatalf("root dependsOn = %d entries, want 5", got)
++	}
++}
++
++func TestBuildIsDeterministic(t *testing.T) {
++	opt := options{Version: "v1.2.3", BinarySHA: "00"}
++	a, _ := build(sampleInfo(), opt)
++	b, _ := build(sampleInfo(), opt)
++	ja, _ := json.Marshal(a)
++	jb, _ := json.Marshal(b)
++	if !bytes.Equal(ja, jb) {
++		t.Fatal("two builds from the same inputs differ")
++	}
++	c, _ := build(sampleInfo(), options{Version: "v1.2.3", BinarySHA: "01"})
++	if c.SerialNumber == a.SerialNumber {
++		t.Fatal("a different binary must get a different serial number")
++	}
++}
++
++func TestBuildUsesGraphEdgesBetweenLinkedModules(t *testing.T) {
++	graph := [][2]string{
++		{"github.com/djshellshoxxx/circula", "modernc.org/sqlite@v1.60.1"},
++		{"modernc.org/sqlite@v1.60.1", "golang.org/x/sys@v0.40.0"},                       // required version differs; selected is linked
++		{"modernc.org/sqlite@v1.50.0", "github.com/BurntSushi/Toml@v1.0.0+incompatible"}, // not the selected sqlite
++		{"modernc.org/sqlite@v1.60.1", "example.org/not-linked@v1.0.0"},
++	}
++	b, err := build(sampleInfo(), options{Version: "v1.2.3", Graph: graph})
++	if err != nil {
++		t.Fatal(err)
++	}
++	checkWellFormed(t, b)
++	deps := map[string][]string{}
++	for _, d := range b.Dependencies {
++		deps[d.Ref] = d.DependsOn
++	}
++	sq := find(t, b, "modernc.org/sqlite").BOMRef
++	sys := find(t, b, "golang.org/x/sys").BOMRef
++	if got := deps[sq]; len(got) != 1 || got[0] != sys {
++		t.Fatalf("sqlite dependsOn = %v, want [%s]", got, sys)
++	}
++	root := deps[b.Metadata.Component.BOMRef]
++	has := func(list []string, ref string) bool {
++		for _, r := range list {
++			if r == ref {
++				return true
++			}
++		}
++		return false
++	}
++	if !has(root, sq) || has(root, sys) {
++		t.Fatalf("root dependsOn = %v: want sqlite (direct) and not x/sys (reached through sqlite)", root)
++	}
++	// Modules the graph does not reach are attached to the root rather than left orphaned.
++	if !has(root, find(t, b, "github.com/BurntSushi/Toml").BOMRef) {
++		t.Fatalf("unreached module not attached to root: %v", root)
++	}
++}
++
++func TestZipHashesReadTheModuleCache(t *testing.T) {
++	mc := t.TempDir()
++	content := []byte("zip bytes")
++	dir := filepath.Join(mc, "cache", "download", "github.com", "!burnt!sushi", "!toml", "@v")
++	if err := os.MkdirAll(dir, 0o755); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(filepath.Join(dir, "v1.0.0+incompatible.zip"), content, 0o644); err != nil {
++		t.Fatal(err)
++	}
++	deps := []*debug.Module{{Path: "github.com/BurntSushi/Toml", Version: "v1.0.0+incompatible"}, {Path: "example.org/local", Replace: &debug.Module{Path: "../local"}}}
++	got, err := zipHashes(mc, deps)
++	if err != nil {
++		t.Fatal(err)
++	}
++	sum := sha256.Sum256(content)
++	if got["github.com/BurntSushi/Toml@v1.0.0+incompatible"] != hex.EncodeToString(sum[:]) || len(got) != 1 {
++		t.Fatalf("hashes = %v", got)
++	}
++	if _, err := zipHashes(mc, []*debug.Module{{Path: "example.org/missing", Version: "v1.0.0"}}); err == nil {
++		t.Fatal("a missing module zip must be an error, not a bill without hashes")
++	}
++}
++
++func TestReadLicensesFromManifest(t *testing.T) {
++	got, err := readLicenses(filepath.Join("..", "..", "docs", "legal", "DEPENDENCIES.md"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(got) == 0 {
++		t.Fatal("no rows parsed from docs/legal/DEPENDENCIES.md")
++	}
++	for k, v := range got {
++		if !strings.Contains(k, "@v") || v == "" {
++			t.Fatalf("bad row %q -> %q", k, v)
++		}
++	}
++	b, _ := build(&debug.BuildInfo{Main: debug.Module{Path: "m"}, Deps: []*debug.Module{{Path: "a", Version: "v1.0.0"}, {Path: "b", Version: "v1.0.0"}}},
++		options{Timestamp: "2026-01-02T03:04:05Z", Licenses: map[string]string{"a@v1.0.0": "MIT", "b@v1.0.0": "UNKNOWN"}})
++	if l := find(t, b, "a").Licenses; len(l) != 1 || l[0].License.ID != "MIT" {
++		t.Fatalf("licence of a = %+v", l)
++	}
++	if l := find(t, b, "b").Licenses; len(l) != 0 {
++		t.Fatalf("UNKNOWN must not be written as a licence id: %+v", l)
++	}
++}
++
++func TestRunOnARealBinary(t *testing.T) {
++	exe, err := os.Executable()
++	if err != nil {
++		t.Fatal(err)
++	}
++	out := filepath.Join(t.TempDir(), "x.cdx.json")
++	if err := run([]string{"-bin", exe, "-version", "v0.0.0-test", "-timestamp", "2026-01-02T03:04:05+01:00", "-o", out}, nil); err != nil {
++		t.Fatal(err)
++	}
++	raw, err := os.ReadFile(out)
++	if err != nil {
++		t.Fatal(err)
++	}
++	var b bom
++	if err := json.Unmarshal(raw, &b); err != nil {
++		t.Fatal(err)
++	}
++	checkWellFormed(t, &b)
++	want, err := fileSHA256(exe)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if h := b.Metadata.Component.Hashes; len(h) != 1 || h[0].Content != want {
++		t.Fatalf("binary hash = %+v, want %s", h, want)
++	}
++	if b.Metadata.Timestamp != "2026-01-02T02:04:05Z" {
++		t.Fatalf("timestamp not normalised to UTC: %q", b.Metadata.Timestamp)
++	}
++	if bytes.Contains(raw, []byte{'\\', 'u', '0', '0', '2', '6'}) || !bytes.Contains(raw, []byte("goarch=")) {
++		t.Fatal("purl qualifiers must keep a literal '&', not an HTML escape")
++	}
++	if err := run([]string{"-bin", filepath.Join(t.TempDir(), "missing")}, nil); err == nil {
++		t.Fatal("missing binary must fail")
++	}
++	if err := run([]string{"-bin", exe, "-timestamp", "yesterday"}, &bytes.Buffer{}); err == nil {
++		t.Fatal("bad timestamp must fail")
++	}
++}
++
++func TestVerifyMatchesBillToBinary(t *testing.T) {
++	exe, err := os.Executable()
++	if err != nil {
++		t.Fatal(err)
++	}
++	dir := t.TempDir()
++	good := filepath.Join(dir, "good.cdx.json")
++	if err := run([]string{"-bin", exe, "-version", "v1.2.3", "-o", good}, nil); err != nil {
++		t.Fatal(err)
++	}
++	if err := run([]string{"-bin", exe, "-verify", good}, nil); err != nil {
++		t.Fatalf("a freshly written bill must verify: %v", err)
++	}
++	raw, err := os.ReadFile(good)
++	if err != nil {
++		t.Fatal(err)
++	}
++	write := func(name string, mutate func(*bom)) string {
++		t.Helper()
++		var c bom
++		if err := json.Unmarshal(raw, &c); err != nil {
++			t.Fatal(err)
++		}
++		mutate(&c)
++		out, _ := json.Marshal(&c)
++		p := filepath.Join(dir, name)
++		if err := os.WriteFile(p, out, 0o644); err != nil {
++			t.Fatal(err)
++		}
++		return p
++	}
++	cases := map[string]func(*bom){
++		"hash": func(c *bom) { c.Metadata.Component.Hashes[0].Content = strings.Repeat("0", 64) },
++		"extra": func(c *bom) {
++			c.Components = append(c.Components, component{Type: "library", Name: "example.org/x", Version: "v1.0.0", BOMRef: "x"})
++			c.Dependencies = append(c.Dependencies, dependency{Ref: "x", DependsOn: []string{}})
++		},
++		"target": func(c *bom) {
++			c.Metadata.Component.PURL = strings.Replace(c.Metadata.Component.PURL, "goos=", "goos=x", 1)
++		},
++		"spec":     func(c *bom) { c.SpecVersion = "1.4" },
++		"dangling": func(c *bom) { c.Dependencies[0].DependsOn = append(c.Dependencies[0].DependsOn, "nowhere") },
++	}
++	for name, mutate := range cases {
++		if err := run([]string{"-bin", exe, "-verify", write(name+".json", mutate)}, nil); err == nil {
++			t.Errorf("%s: a bill that does not match the binary must fail verification", name)
++		}
++	}
++	// A linked module missing from the bill: the binary's build information plus modules the bill does not list.
++	bi, err := buildinfo.ReadFile(exe)
++	if err != nil {
++		t.Fatal(err)
++	}
++	bi.Deps = append(bi.Deps, sampleInfo().Deps...)
++	if err := verify(good, exe, bi); err == nil || !strings.Contains(err.Error(), "missing from the bill") {
++		t.Fatalf("missing module: err = %v", err)
++	}
++}
+diff --git a/scripts/scan-release.sh b/scripts/scan-release.sh
+new file mode 100755
+index 0000000..abc6c2a
+--- /dev/null
++++ b/scripts/scan-release.sh
+@@ -0,0 +1,104 @@
++#!/usr/bin/env bash
++# OPS-035 release archive scan: packaging must not carry configuration with secret values or test fixtures with
++# personal data. Each archive (.tar.gz or .zip) is listed and extracted, then checked by name and by content:
++#
++#   names    database, backup, environment, key and lock files; anything named secret or credential; test
++#            sources and fixture directories; absolute or parent-relative member paths
++#   all      PEM private keys, well-known cloud and forge token formats, the secret canary marker
++#   files    (circula-canary..., canary-<word>-<hex>) and the e2e fixture secrets read from e2e/*.js
++#   text     secret-looking assignments (key=value with a long literal value), e-mail addresses outside the
++#   files    reserved domains (as QA-043), phone-number-like and IBAN-like strings
++#
++#   scripts/scan-release.sh [-c canary]... ARCHIVE...      exit 0 clean, 1 on any finding, 2 on usage error
++#
++# -c adds a literal canary string that must not appear anywhere (binaries included). Findings name the archive,
++# the member and the rule, never the matched secret.
++set -euo pipefail
++cd "$(dirname "$0")/.."
++
++canaries=()
++while getopts "c:" o; do
++  case "$o" in c) canaries+=("$OPTARG") ;; *) exit 2 ;; esac
++done
++shift $((OPTIND - 1))
++[ "$#" -gt 0 ] || { echo "usage: scripts/scan-release.sh [-c canary]... ARCHIVE..." >&2; exit 2; }
++
++# Fixture secrets from the end-to-end suite: if any of these ships, test material was packaged.
++for f in e2e/global-setup.js e2e/secfixture.js; do
++  [ -f "$f" ] || continue
++  while IFS= read -r v; do
++    [ -n "$v" ] && canaries+=("$v")
++  done < <(sed -nE "s/^const (PASSWORD|[A-Z_]*SECRET) = '([^']{8,})';.*$/\\2/p" "$f")
++done
++
++name_re='(^|/)\.env($|\.)|\.(db|db-wal|db-shm|db\.enc|sqlite|sqlite3|bak|partial|lock|pem|key|p12|pfx|jks|kdbx|har)$|\.manifest\.json$|(^|/)id_(rsa|dsa|ecdsa|ed25519)|secret|credential|_test\.go$|(^|/)(testdata|fixtures?|e2e|\.state)(/|$)'
++key_re='-----BEGIN ([A-Z0-9]+ )*PRIVATE KEY( BLOCK)?-----'
++token_re='AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{40,}|xox[abposr]-[0-9A-Za-z-]{10,}|sk_live_[0-9A-Za-z]{16,}|AIza[0-9A-Za-z_-]{35}|glpat-[0-9A-Za-z_-]{20}'
++canary_re='[Cc][Ii][Rr][Cc][Uu][Ll][Aa][-_][Cc][Aa][Nn][Aa][Rr][Yy]|canary-[a-z0-9]+-[0-9a-f]{8,}'
++assign_re='(secret|password|passwd|api[_-]?key|token|encryption[_-]?key|backup[_-]?key|private[_-]?key)["'"'"']?[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9+_=-][A-Za-z0-9+/_=-]{15,}'
++email_re='[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
++email_ok_re='@([a-z0-9.-]+\.)?(example(\.(org|com|net))?|invalid|test|localhost)$|@(noreply|users\.noreply)'
++phone_re='(\+[0-9]{1,3}[ -]?)?\(?[0-9]{3}\)?[ -][0-9]{3}[ -][0-9]{4}'
++iban_re='(^|[^A-Za-z0-9])[A-Z]{2}[0-9]{2}( ?[A-Z0-9]{4}){3,7}( ?[A-Z0-9]{1,3})?([^A-Za-z0-9]|$)'
++
++work="$(mktemp -d)"
++trap 'rm -rf "$work"' EXIT
++findings=0
++finding() { # archive member rule
++  echo "scan-release: $1: $2: $3" >&2
++  findings=$((findings + 1))
++}
++
++list_zip() {
++  if command -v unzip >/dev/null 2>&1; then unzip -Z1 "$1"; else python3 -c 'import sys,zipfile; print("\n".join(zipfile.ZipFile(sys.argv[1]).namelist()))' "$1"; fi
++}
++extract_zip() {
++  if command -v unzip >/dev/null 2>&1; then unzip -q -o "$1" -d "$2"; else python3 -m zipfile -e "$1" "$2"; fi
++}
++
++n=0
++for archive in "$@"; do
++  [ -f "$archive" ] || { echo "scan-release: $archive: not a file" >&2; exit 2; }
++  n=$((n + 1))
++  dir="$work/$n"
++  mkdir -p "$dir"
++  case "$archive" in
++    *.tar.gz|*.tgz) names="$(tar -tzf "$archive")"; tar -xzf "$archive" -C "$dir" ;;
++    *.zip) names="$(list_zip "$archive")"; extract_zip "$archive" "$dir" ;;
++    *) echo "scan-release: $archive: not a .tar.gz or .zip archive" >&2; exit 2 ;;
++  esac
++  [ -n "$names" ] || finding "$archive" "-" "archive is empty"
++
++  while IFS= read -r m; do
++    [ -n "$m" ] || continue
++    case "$m" in /*|../*|*/../*|..) finding "$archive" "$m" "member path escapes the archive root" ;; esac
++    if printf '%s\n' "$m" | grep -Eiq "$name_re"; then finding "$archive" "$m" "forbidden file name"; fi
++  done <<<"$names"
++
++  # Every regular file, binaries included: high-signal secret material only.
++  while IFS= read -r f; do
++    m="${f#"$dir"/}"
++    if grep -aEq -- "$key_re" "$f"; then finding "$archive" "$m" "private key block"; fi
++    if grep -aEq -- "$token_re" "$f"; then finding "$archive" "$m" "access token format"; fi
++    if grep -aEq -- "$canary_re" "$f"; then finding "$archive" "$m" "secret canary marker"; fi
++    for c in ${canaries[@]+"${canaries[@]}"}; do
++      if grep -aFq -- "$c" "$f"; then finding "$archive" "$m" "fixture secret or canary"; fi
++    done
++  done < <(find "$dir" -type f | LC_ALL=C sort)
++
++  # Text files: secret assignments and personal-data patterns. grep -I skips binary files.
++  while IFS= read -r f; do
++    m="${f#"$dir"/}"
++    if grep -IEiq -- "$assign_re" "$f"; then finding "$archive" "$m" "secret value in configuration"; fi
++    bad="$(grep -IEoh -- "$email_re" "$f" | grep -viE "$email_ok_re" || true)"
++    if [ -n "$bad" ]; then finding "$archive" "$m" "e-mail address outside reserved domains"; fi
++    if grep -IEq -- "$phone_re" "$f"; then finding "$archive" "$m" "phone-number-like string"; fi
++    if grep -IEq -- "$iban_re" "$f"; then finding "$archive" "$m" "IBAN-like string"; fi
++  done < <(grep -rlI '' "$dir" | LC_ALL=C sort)
++done
++
++if [ "$findings" -ne 0 ]; then
++  echo "scan-release: $findings finding(s) in $# archive(s)" >&2
++  exit 1
++fi
++echo "scan-release: $# archive(s) clean"
+diff --git a/scripts/verify-release.sh b/scripts/verify-release.sh
+new file mode 100755
+index 0000000..9b6d56c
+--- /dev/null
++++ b/scripts/verify-release.sh
+@@ -0,0 +1,96 @@
++#!/usr/bin/env bash
++# Release directory check (OPS-035, OPS-003, SEC-029): run by scripts/package-release.sh on its output, by the
++# release workflow before publishing, and by scripts/release-gate.sh.
++#
++#   scripts/verify-release.sh [-s] [-n NOTES] DIST VERSION
++#
++# Checks that DIST holds exactly the required set for VERSION and nothing else: per OPS-003 target one archive
++# (.zip for windows, .tar.gz otherwise) and one CycloneDX SBOM (circula_<v>_<os>_<arch>.cdx.json), plus
++# SHA256SUMS listing each of them once with matching values; that each archive holds only its own top directory
++# with the binary, README.md, ops/ and legal/; and that scripts/scan-release.sh finds nothing.
++#   -s  also check each SBOM against the binary in its archive (hash, target, linked modules; needs Go)
++#   -n  also check the release notes with scripts/check-release-notes.sh
++# TARGETS (space-separated os/arch) narrows the expected set; default all five DEC-003 targets.
++set -euo pipefail
++cd "$(dirname "$0")/.."
++
++sbomcheck=0; notes=""
++while getopts "sn:" o; do
++  case "$o" in s) sbomcheck=1 ;; n) notes="$OPTARG" ;; *) exit 2 ;; esac
++done
++shift $((OPTIND - 1))
++[ "$#" -eq 2 ] || { echo "usage: scripts/verify-release.sh [-s] [-n NOTES] DIST VERSION" >&2; exit 2; }
++dist="$1"; version="$2"
++TARGETS="${TARGETS:-windows/amd64 linux/amd64 linux/arm64 darwin/amd64 darwin/arm64}"
++GO="${GO:-go}"
++[ -d "$dist" ] || { echo "verify-release: $dist is not a directory" >&2; exit 1; }
++
++fail=0
++bad() { echo "verify-release: $*" >&2; fail=1; }
++work="$(mktemp -d)"
++trap 'rm -rf "$work"' EXIT
++
++# 1. Contents list: exactly the required set.
++archives=(); expected=()
++for t in $TARGETS; do
++  goos="${t%/*}"; goarch="${t#*/}"
++  name="circula_${version}_${goos}_${goarch}"
++  if [ "$goos" = windows ]; then a="$name.zip"; else a="$name.tar.gz"; fi
++  archives+=("$a")
++  expected+=("$a" "$name.cdx.json")
++done
++printf '%s\n' "${expected[@]}" SHA256SUMS | LC_ALL=C sort >"$work/want"
++(cd "$dist" && find . -mindepth 1 -maxdepth 1 | sed 's|^\./||' | LC_ALL=C sort) >"$work/have"
++missing="$(LC_ALL=C comm -23 "$work/want" "$work/have")"
++extra="$(LC_ALL=C comm -13 "$work/want" "$work/have")"
++[ -z "$missing" ] || bad "missing from $dist: $(echo "$missing" | tr '\n' ' ')"
++[ -z "$extra" ] || bad "not part of the release set in $dist: $(echo "$extra" | tr '\n' ' ')"
++
++# 2. SHA256SUMS lists every archive and SBOM exactly once, and every value matches.
++if [ -f "$dist/SHA256SUMS" ]; then
++  sed -E 's/^[0-9a-f]{64}  (\*|\.\/)?//' "$dist/SHA256SUMS" | LC_ALL=C sort >"$work/listed"
++  printf '%s\n' "${expected[@]}" | LC_ALL=C sort >"$work/want-sums"
++  if ! cmp -s "$work/listed" "$work/want-sums"; then
++    bad "SHA256SUMS does not list exactly the archives and SBOMs: $(LC_ALL=C diff "$work/want-sums" "$work/listed" | grep '^[<>]' | tr '\n' ' ')"
++  fi
++  if grep -vqE '^[0-9a-f]{64}  ' "$dist/SHA256SUMS"; then bad "SHA256SUMS has a malformed line"; fi
++  if command -v sha256sum >/dev/null 2>&1; then sumcmd=(sha256sum -c); else sumcmd=(shasum -a 256 -c); fi
++  (cd "$dist" && "${sumcmd[@]}" SHA256SUMS >/dev/null) || bad "checksums in SHA256SUMS do not match the files"
++fi
++
++# 3. Archive layout, 4. content scan, 5. SBOM against the binary it describes.
++present=()
++for a in "${archives[@]}"; do
++  [ -f "$dist/$a" ] && present+=("$dist/$a")
++done
++if [ "$sbomcheck" -eq 1 ] && [ "${#present[@]}" -gt 0 ]; then
++  GOOS="" GOARCH="" CGO_ENABLED=0 "$GO" build -o "$work/sbom-tool" ./scripts/sbom
++fi
++for path in ${present[@]+"${present[@]}"}; do
++  a="${path##*/}"
++  case "$a" in *.zip) name="${a%.zip}"; bin="circula.exe" ;; *) name="${a%.tar.gz}"; bin="circula" ;; esac
++  x="$work/x-$name"
++  mkdir -p "$x"
++  case "$a" in
++    *.zip) if command -v unzip >/dev/null 2>&1; then unzip -q "$path" -d "$x"; else python3 -m zipfile -e "$path" "$x"; fi ;;
++    *) tar -xzf "$path" -C "$x" ;;
++  esac
++  others="$(cd "$x" && find . -mindepth 1 -maxdepth 1 ! -name "$name" | sed 's|^\./||')"
++  [ -z "$others" ] || bad "$a: entries outside $name/: $(echo "$others" | tr '\n' ' ')"
++  for need in "$bin" README.md ops legal; do
++    [ -e "$x/$name/$need" ] || bad "$a: $name/$need is missing"
++  done
++  if [ "$sbomcheck" -eq 1 ] && [ -f "$x/$name/$bin" ] && [ -f "$dist/$name.cdx.json" ]; then
++    "$work/sbom-tool" -bin "$x/$name/$bin" -verify "$dist/$name.cdx.json" || bad "$name.cdx.json does not describe the binary in $a"
++  fi
++done
++if [ "${#present[@]}" -gt 0 ]; then
++  scripts/scan-release.sh "${present[@]}" || bad "archive scan found secrets or personal data (OPS-035)"
++fi
++
++if [ -n "$notes" ]; then
++  scripts/check-release-notes.sh "$notes" "$version" || bad "release notes check failed (OPS-026)"
++fi
++
++[ "$fail" -eq 0 ] || exit 1
++echo "verify-release: $dist holds the complete $version release set (${#archives[@]} targets)"
+-- 
+2.43.0
+

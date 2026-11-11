@@ -1,0 +1,27 @@
+{{define "content"}}
+{{with .D}}
+<section aria-labelledby="wait-h">
+  <h2 id="wait-h">Waiting for your action</h2>
+  {{if or .Waiting .Disputes}}
+  {{if .Waiting}}{{template "txlist" dict "Rows" .Waiting "Base" (printf "/n/%s" $.Slug)}}{{end}}
+  {{if .Disputes}}<ul class="rows">{{range .Disputes}}<li><p><a href="/n/{{$.Slug}}/disputes/{{.ID}}">A dispute was opened on a trade with you ({{.Category}})</a></p><p>Opened {{.Opened}}. You can add your response.</p></li>{{end}}</ul>{{end}}
+  {{else}}<p>Nothing is waiting for you. Trade proposals sent to you and disputes you can answer will appear here.</p>{{end}}
+</section>
+<section aria-labelledby="notes-h">
+  <h2 id="notes-h">Notifications</h2>
+  <p>{{if .Unread}}<strong>{{.Unread}} unread</strong>{{else}}No unread notifications{{end}}.
+    {{if eq .Filter "unread"}}<a href="/n/{{$.Slug}}/inbox">Show all</a>{{else}}<a href="/n/{{$.Slug}}/inbox?show=unread">Show unread only</a>{{end}}</p>
+  {{if .Unread}}<form method="post" action="/n/{{$.Slug}}/inbox/read">{{template "csrf" $}}<div class="actions"><button type="submit" class="secondary">Mark all as read</button></div></form>{{end}}
+  {{if .Items}}
+  <ul class="rows">
+  {{range .Items}}<li>
+    <p>{{if .Unread}}<span class="tag">Unread</span> {{else}}<span class="tag">Read</span> {{end}}{{if .Href}}<a href="{{.Href}}">{{.Title}}</a>{{else}}<strong>{{.Title}}</strong>{{end}}</p>
+    <p>{{.Body}} &middot; {{.When}}</p>
+    {{if .Unread}}<form method="post" action="/n/{{$.Slug}}/inbox/read">{{template "csrf" $}}<input type="hidden" name="id" value="{{.ID}}"><button type="submit" class="link">Mark as read<span class="sr">: {{.Title}}</span></button></form>{{end}}
+  </li>{{end}}
+  </ul>
+  {{else}}<p>No notifications to show.</p>{{end}}
+  {{template "pager" dict "Next" .Next "Href" (printf "/n/%s/inbox?show=%s&after=" $.Slug .Filter)}}
+</section>
+{{end}}
+{{end}}

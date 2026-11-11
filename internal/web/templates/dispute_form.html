@@ -1,0 +1,22 @@
+{{define "content"}}
+{{with .D}}
+<p>Trade: {{.Row.Text}} ({{.Row.Status}}). You can dispute a completed trade within {{.Window}} days of completion. Opening a dispute does not change any balance.</p>
+{{if .Confirm}}
+<dl class="kv"><dt>Reason</dt><dd>{{categoryLabel ($.Val "category")}}</dd><dt>Your statement</dt><dd>{{$.Val "statement"}}</dd>
+<dt>Effect</dt><dd>The trade will be marked Disputed. Your balance and available credit do not change until a reviewer decides.</dd></dl>
+<form method="post" action="/n/{{$.Slug}}/trades/{{.TxID}}/dispute">
+  {{template "csrf" $}}{{template "idem" $}}
+  <input type="hidden" name="category" value="{{$.Val "category"}}"><input type="hidden" name="statement" value="{{$.Val "statement"}}">
+  <div class="actions"><button type="submit" name="step" value="confirm">Open dispute</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+</form>
+{{else}}
+<form method="post" action="/n/{{$.Slug}}/trades/{{.TxID}}/dispute" novalidate>
+  {{template "csrf" $}}{{template "idem" $}}
+  <input type="hidden" name="step" value="review">
+  {{template "select" dict "P" $ "Name" "category" "Label" "Reason" "Opts" .Cats}}
+  {{template "field" dict "P" $ "Name" "statement" "Label" "What went wrong?" "Hint" "Up to 2000 characters. The other party and the reviewer will read this." "Type" "textarea" "Max" 2000 "Req" true}}
+  <div class="actions"><button type="submit">Review dispute</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.TxID}}">Cancel</a></div>
+</form>
+{{end}}
+{{end}}
+{{end}}
