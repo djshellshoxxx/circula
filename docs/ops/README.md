@@ -36,7 +36,10 @@ Production data must never be copied to development or CI.
   `X-Forwarded-For` (client address) and `X-Forwarded-Proto: https`. Without `trusted-proxies` all clients share the
   proxy's address in the rate limiters (one noisy client can then block sign-in for everyone), and forwarded headers are
   ignored. Keep `cookie-secure=true` (default): cookies are then `Secure` and `__Host-` prefixed, and the service sends
-  `Strict-Transport-Security` when `public-base-url` is `https://`.
+  `Strict-Transport-Security` when `public-base-url` is `https://`. The current `serve` command passes
+  `cookie-secure` through a shared `httpx.Edge` policy to both API and web handlers; browser regression
+  `TestSecureDeploymentIgnoresPlainCookies` and edge regression `TestHostPrefixOnlyWhenSecure` cover this path.
+  The application and these tests are present in unmerged draft PR #19, not a published release.
 - Set `public-base-url` to the exact address users type. Invitation links use it, and form posts are accepted only with
   that `Origin`.
 - Files: the process sets umask `077`. The database, its WAL files, backups, manifests and the lock file are owner-only
@@ -62,9 +65,11 @@ rely on them until the gap is closed and this list is updated.
   `circula_idempotent_replays_total`). Refused or failed posting attempts and authentication failures as seen by the
   service are not; `/metrics` counts HTTP 401 and 429 responses instead.
 - **Mail (OPS-029, DEC-009).** No mail settings exist yet.
-- **Secrets from files (OPS-009).** No setting currently holds a secret. The operator password is read from
-  `CIRCULA_OPERATOR_PASSWORD` or stdin only.
-- **Cookie security.** `cookie-secure` is parsed and reported, but the web adapter does not read it yet.
+- **Operator password input (OPS-009).** Setup, metrics, backup-signing, backup-encryption and MFA secrets already support
+  dedicated `*-file` configuration options; see [configuration.md](configuration.md#secrets). The operator password
+  for `admin create-operator` is still supplied through `CIRCULA_OPERATOR_PASSWORD` or stdin rather than a dedicated
+  operator-password-file option. This is not a claim that other secrets lack file support.
+
 - **Log level without restart (OPS-032).** The log level needs a restart.
 - **Disk-usage percentage.** `/metrics` reports file sizes, not the percentage of the volume in use. Use the host's
   monitoring for the disk alert in OPS-015.
