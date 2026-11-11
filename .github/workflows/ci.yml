@@ -1,8 +1,15 @@
 name: ci
 
+# One full run per commit. A PR head is validated by the pull_request event only; the push
+# event runs for main (post-merge verification). Before this, every PR commit ran the whole
+# matrix twice at the same SHA (push and pull_request). workflow_dispatch runs the same jobs
+# by hand on a branch that has no PR yet. Job names are unchanged, so required PR checks keep
+# their names.
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,6 +31,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: Check workflow action pins
         run: scripts/check-action-pins.sh
       - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037)
@@ -68,9 +76,12 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: test with race detector
         if: runner.os == 'Linux'
-        run: go test -race -count=1 ./...
+        # -p 4 is explicit (Go's default is GOMAXPROCS, which varies with runner size); it matches
+        # the 4-vCPU ubuntu-24.04 runner. The race suite and all packages are unchanged.
+        run: go test -race -count=1 -p 4 ./...
       - name: test with race detector (macOS Intel, bounded parallelism)
         if: runner.os == 'macOS'
         # Keep the complete race suite and every regression. The longer Go per-package
@@ -79,7 +90,8 @@ jobs:
       - name: test
         if: runner.os == 'Windows'
         # The race detector needs cgo, which the Windows runner does not provide by default.
-        run: go test -count=1 ./...
+        # -p 4 is explicit for the same reason as the Linux race step (4-vCPU windows-2022 runner).
+        run: go test -count=1 -p 4 ./...
 
   build:
     name: build release targets
@@ -93,6 +105,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: cross-build all OPS-003 targets from this commit
         run: VERSION=ci-${GITHUB_SHA::12} OUT=bin/ci-dist scripts/package-release.sh
       - name: upload packaged artifacts for inspection
@@ -114,6 +127,7 @@ jobs:
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version-file: go.mod
+          # no setup-go cache: this job compares two independent builds and should not depend on restored state
           cache: false
       - name: build twice (different directory and cache) and compare
         run: scripts/check-reproducible.sh
@@ -132,6 +146,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: seed corpora of every fuzz target (also part of go test ./...)
         run: go test -count=1 -run '^Fuzz' ./internal/...
       - name: fuzz amount parser for 10s
@@ -151,6 +166,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: contract (JSON API against docs/api/openapi.yaml)
         run: make contract
       - name: load smoke (small, QA-008 and QA-040 evidence)
@@ -174,6 +190,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)
         run: |
           cd e2e
