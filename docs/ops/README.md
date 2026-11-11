@@ -1,0 +1,79 @@
+# Operations guide
+
+This guide covers running a Circula instance. Specifications it implements: [`docs/specs/11-deployment-operations.md`](../specs/11-deployment-operations.md).
+
+| Document | Use it for |
+|---|---|
+| [configuration.md](configuration.md) | Every setting, its default, and how to set it |
+| [backup-restore.md](backup-restore.md) | Taking, checking, pruning and restoring backups; restore drills |
+| [upgrade.md](upgrade.md) | Upgrading, migrating and rolling back |
+| [monitoring.md](monitoring.md) | Health and readiness endpoints, metrics, alert conditions, failure modes |
+| [hardening.md](hardening.md) | Hardened systemd unit, container recipe, reproducible builds |
+| [rpo-rto.md](rpo-rto.md) | Recovery point and recovery time objectives (ARC-016, OPS-034) |
+| [staging-refresh.md](staging-refresh.md) | Refresh an existing hosted staging instance with synthetic data and record the result |
+
+| [onion-i2p.md](onion-i2p.md) | Tor onion service and I2P hosting guidance (not yet supported by the code) |
+
+## Environments (OPS-004)
+
+| Environment | Where | Data |
+|---|---|---|
+| Development | Developer machine | Synthetic only |
+| Continuous integration | Ephemeral runners | Synthetic only |
+| Staging (hosted only) | Mirrors production configuration | Synthetic refresh data; production-derived copies require SEC-014 and SEC-018 safeguards, see [staging-refresh.md](staging-refresh.md) |
+| Production | Hosted or self-hosted | Real |
+
+Production data must never be copied to development or CI.
+
+## Deployment shape (OPS-002)
+
+- One `circula serve` process per database file. A second process refuses to start while the first holds
+  `<database>.lock`.
+- The database is a single SQLite file in WAL mode. Its directory must be writable.
+- Put a TLS-terminating reverse proxy in front of the listener. Do not forward `/metrics` or `/healthz` to the public
+  internet. `serve` refuses an `http://` `public-base-url` on a non-loopback address unless `allow-insecure-http` is set.
+- Tell the service about the proxy: set `trusted-proxies` to the proxy's address and make the proxy send
+  `X-Forwarded-For` (client address) and `X-Forwarded-Proto: https`. Without `trusted-proxies` all clients share the
+  proxy's address in the rate limiters (one noisy client can then block sign-in for everyone), and forwarded headers are
+  ignored. Keep `cookie-secure=true` (default): cookies are then `Secure` and `__Host-` prefixed, and the service sends
+  `Strict-Transport-Security` when `public-base-url` is `https://`. The current `serve` command passes
+  `cookie-secure` through a shared `httpx.Edge` policy to both API and web handlers; browser regression
+  `TestSecureDeploymentIgnoresPlainCookies` and edge regression `TestHostPrefixOnlyWhenSecure` cover this path.
+  The application and these tests are present in unmerged draft PR #19, not a published release.
+- Set `public-base-url` to the exact address users type. Invitation links use it, and form posts are accepted only with
+  that `Origin`.
+- Files: the process sets umask `077`. The database, its WAL files, backups, manifests and the lock file are owner-only
+  (0600) and `backup-dir` is 0700; `serve` tightens a database file or backup directory it finds wider. Keep the
+  database directory itself private to the service account.
+- Set a setup secret (FR-002) before exposing the first run, see [configuration.md](configuration.md#secrets).
+- Backups go to `backup-dir` on the same host by default. Copy them off the host (OPS-019).
+
+## Ownership
+
+Roles are named in the alert and failure-mode tables. The platform operator role owns the instance; the product architect
+owns the specification. Names of people are kept outside this repository.
+
+## Known gaps
+
+These are not implemented in the current `circula` build. Each one is a deliberate deferral or a missing service hook. Do not
+rely on them until the gap is closed and this list is updated.
+
+- **Frozen-network visibility (OPS-033).** A network that fails verification is frozen (read-only) and the rest serve;
+  administrators see the refusal when they try to write, and operators see `circula_frozen_networks` and the error log.
+  There is no administrator dashboard indicator yet, and the frozen state is not stored (a restart re-derives it).
+- **Posting metrics (OPS-014).** Committed postings and idempotent replays are counted (`circula_ledger_postings_total`,
+  `circula_idempotent_replays_total`). Refused or failed posting attempts and authentication failures as seen by the
+  service are not; `/metrics` counts HTTP 401 and 429 responses instead.
+- **Mail (OPS-029, DEC-009).** No mail settings exist yet.
+- **Operator password input (OPS-009).** Setup, metrics, backup-signing, backup-encryption and MFA secrets already support
+  dedicated `*-file` configuration options; see [configuration.md](configuration.md#secrets). The operator password
+  for `admin create-operator` is still supplied through `CIRCULA_OPERATOR_PASSWORD` or stdin rather than a dedicated
+  operator-password-file option. This is not a claim that other secrets lack file support.
+
+- **Log level without restart (OPS-032).** The log level needs a restart.
+- **Disk-usage percentage.** `/metrics` reports file sizes, not the percentage of the volume in use. Use the host's
+  monitoring for the disk alert in OPS-015.
+- **Backup schedule.** `backup-interval` is a fixed interval, not a cron expression.
+- **Backup rollback (SA2-11).** The signed manifest carries the creation time but no sequence number, so a genuine older
+  backup cannot be told from the latest. See [backup-restore.md](backup-restore.md#authenticity-and-the-backup-key).
+- **Long streaming responses.** `request-timeout` bounds each request, so an export that takes longer is cut off.
