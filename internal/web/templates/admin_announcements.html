@@ -1,0 +1,16 @@
+{{define "content"}}
+<p>Announcements appear on every member's home page from their start time. They cannot be edited; delete one and publish a new one to correct it. Deleted announcements stay in the audit log.</p>
+<form method="post" action="/n/{{.Slug}}/admin/announcements" novalidate>
+  {{template "csrf" .}}{{template "idem" .}}
+  {{template "field" dict "P" . "Name" "title" "Label" "Title" "Hint" "Up to 120 characters." "Max" 120 "Req" true}}
+  {{template "field" dict "P" . "Name" "body" "Label" "Message" "Hint" "Up to 4000 characters." "Type" "textarea" "Max" 4000 "Req" true}}
+  {{template "field" dict "P" . "Name" "days" "Label" "Start in (days)" "Hint" "Optional. Leave empty to publish now." "Mode" "numeric"}}
+  {{if .D.Options}}<div class="field"><label for="f-supersedes_id">Replaces an earlier announcement</label>
+  <select id="f-supersedes_id" name="supersedes_id"><option value="">None</option>{{range .D.Options}}<option value="{{.Value}}"{{if eq ($.Val "supersedes_id") .Value}} selected{{end}}>{{.Label}}</option>{{end}}</select></div>{{end}}
+  <div class="actions"><button type="submit">Publish announcement</button></div>
+</form>
+<h2>Current announcements</h2>
+{{if .D.Rows}}<ul class="rows">{{range .D.Rows}}<li><p><strong>{{.Title}}</strong> &middot; {{if .Scheduled}}starts {{else}}since {{end}}{{.At}}</p><p>{{.Body}}</p>
+  <form method="post" action="/n/{{$.Slug}}/admin/announcements/{{.ID}}/delete">{{template "csrf" $}}<button type="submit" class="secondary">Delete<span class="sr"> announcement {{.Title}}</span></button></form></li>{{end}}</ul>
+{{else}}<p>No announcements yet.</p>{{end}}
+{{end}}

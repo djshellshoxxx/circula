@@ -1,0 +1,11 @@
+{{define "content"}}
+<p>Lost your password? Enter your login, one of your recovery codes and a new password. Each code works once. If you have no codes left, ask your network administrator to reset your password.</p>
+<form method="post" action="/recover" novalidate>
+  {{template "csrf" .}}
+  {{template "field" dict "P" . "Name" "login" "Label" "Login" "Auto" "username" "Req" true}}
+  {{template "field" dict "P" . "Name" "recovery_code" "Label" "Recovery code" "Hint" "Looks like ABCD-EFGH-IJKL-MNOP. Capital letters and dashes are optional." "Auto" "off" "Req" true}}
+  {{template "field" dict "P" . "Name" "password" "Label" "New password" "Hint" "At least 12 characters. A password manager is fine; pasting is allowed." "Type" "password" "Auto" "new-password" "Req" true}}
+  {{template "field" dict "P" . "Name" "password2" "Label" "Confirm new password" "Type" "password" "Auto" "new-password" "Req" true}}
+  <div class="actions"><button type="submit">Set new password</button> <a class="btn secondary" href="/login">Back to sign in</a></div>
+</form>
+{{end}}

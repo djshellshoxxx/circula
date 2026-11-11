@@ -1,0 +1,16 @@
+{{define "content"}}
+<p>These are the rules the network's administrators set. A change that could disadvantage members is announced first and only takes effect after its notice period. Earlier trades are never changed by a new rule.</p>
+<p>{{with .D.Terms}}<a href="/n/{{$.Slug}}/terms">Read the network terms (version {{.Version}})</a>{{else}}This network has not published terms.{{end}}</p>
+<h2>Change log</h2>
+<ul class="rows">
+{{range .D.Rows}}<li>
+  <p><strong>Version {{.Version}}</strong>{{if .Pending}} <span class="tag">Scheduled</span>{{end}}{{if .Withdrawn}} <span class="tag">Cancelled before it took effect</span>{{end}}</p>
+  {{if .Init}}<p>Initial rules when the network was created.</p>{{else}}
+  <p>{{if .Pending}}Announced {{.Announced}}; takes effect {{.Effective}}{{if .NoticeDays}} ({{.NoticeDays}} days' notice){{end}}.{{else if .Withdrawn}}Announced {{.Announced}}.{{else}}Announced {{.Announced}}; in force from {{.Effective}}.{{end}}</p>
+  {{if .Lines}}<ul>{{range .Lines}}<li>{{.}}</li>{{end}}</ul>{{end}}
+  {{if .Reason}}<p>Reason: {{.Reason}}</p>{{end}}
+  {{if .NoticeReason}}<p>Shorter notice because: {{.NoticeReason}}</p>{{end}}{{end}}
+</li>{{end}}
+</ul>
+{{if .D.CanLeave}}<p><a href="/n/{{.Slug}}/leave">Leave this network</a></p>{{end}}
+{{end}}
