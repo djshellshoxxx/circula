@@ -21,10 +21,10 @@ Status vocabulary used below (full lifecycles in [03-domain-model-and-mutual-cre
 
 | Object | Statuses |
 |---|---|
-| Membership | Invited, Pending, Active, Suspended, Departed |
+| Membership | Invited, Pending, Active, Suspended, Departed; terminal invitation/application states Expired, Revoked, Rejected |
 | Account | Active, Frozen, Closed |
 | Transaction | Proposed, Completed, Declined, Cancelled, Expired, Reversed |
-| Dispute | Open, Under review, Resolved (outcome: upheld, dismissed, withdrawn) |
+| Dispute | Open, Under review, Resolved (outcome: dismissed, reversed, adjusted, withdrawn; see [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)) |
 | Listing | Active, Paused, Closed |
 | Network | Setup, Active, Suspended, Closed |
 
@@ -80,13 +80,13 @@ Personas describe people the product is designed for. They are composites for re
 
 ### 3.1 Role model
 
-<a id="per-005"></a>**PER-005** (P0) Roles MUST be held per membership, not per person. One person MAY hold memberships in several networks with different roles in each. The role set is: member, network administrator, dispute reviewer (all network-level, held through a membership), and platform operator (instance-level, not a membership).
+<a id="per-005"></a>**PER-005** (P0) Roles MUST be held per membership, not per person. One person MAY hold memberships in several networks with different roles in each. The role set is: member, network administrator, dispute reviewer (all network-level, held through a membership), and platform operator (instance-level, not a membership). Stored role values are `administrator` and `reviewer`; `member` is implicit ([03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) section 3.3). The API scope named `admin` is a token scope, not a role.
 *Rationale:* a coordinator of one network is an ordinary member of another; authority must not leak across networks.
 
 <a id="per-006"></a>**PER-006** (P0) A membership MAY hold the administrator and reviewer roles at once unless network policy forbids it. A dispute reviewer MUST NOT review or resolve a dispute in which that person's own account is the disputed account or a party to the disputed transaction or adjustment. Every Active network MUST have at least one Active administrator; the software MUST reject any action (role removal, suspension, departure) that would leave it with none.
 *Rationale:* impartial review and continuity of governance. Recusal rules beyond this floor are network policy ([10-governance-and-network-operations.md](10-governance-and-network-operations.md)).
 
-<a id="per-007"></a>**PER-007** (P0) The platform operator MUST NOT hold a role in any network's ledger by virtue of operating the instance, and MUST NOT post transactions, post adjustments, or change network policy through the normal interface or API. Operator access to a network's data is limited to the break-glass path in PER-033.
+<a id="per-007"></a>**PER-007** (P0) The platform operator MUST NOT hold a role in any network's ledger by virtue of operating the instance, and MUST NOT post transactions, post adjustments, or change network policy through the normal interface or API. Operator access to a network's data is limited to the break-glass path in PER-033, which is read-only except the administrator grant of SEC-142, and to the succession contact record named in PER-033.
 *Rationale:* separates platform operation from network governance ([05-system-architecture.md](05-system-architecture.md)).
 
 <a id="per-008"></a>**PER-008** (P0) Every permission in the matrix MUST be enforced by the platform on the server side for the user interface and the API alike. A permission not listed as Allowed is denied. A denied action MUST fail with an authorization error that names no data the actor could not otherwise see ([07-api-and-integration-contract.md](07-api-and-integration-contract.md)).
@@ -97,39 +97,61 @@ Personas describe people the product is designed for. They are composites for re
 
 ### 3.2 Matrix
 
-Values: **Allowed**, **Not allowed**, **Policy-dependent** (the network configures it; the recommended default is in the Notes column). "Member" means any Active member, including holders of the other network roles when acting for themselves. Cells for the administrator and reviewer columns describe the additional authority those roles grant within their own network. All actions apply within one network unless stated. A person whose membership is Suspended is treated per JRN-007, not as a member in this matrix.
+Values: **Allowed**, **Not allowed**, **Policy-dependent** (the network configures it; the recommended default is in the Notes column). "Member" means any Active member, including holders of the other network roles when acting for themselves. Cells for the administrator and reviewer columns describe the additional authority those roles grant within their own network. All actions apply within one network unless stated. A person whose membership is Suspended is treated per JRN-007, not as a member in this matrix; a write by such a person is rejected with `forbidden`, except the read and export rights stated at PER-027 and PER-030. Actions the matrix does not cover are in section 3.3.
 
 | ID | Action | Member | Network administrator | Dispute reviewer | Platform operator | Notes |
 |---|---|---|---|---|---|---|
 | <a id="per-010"></a>**PER-010** | Create network | Not allowed | Not allowed | Not allowed | Allowed | Operator creates the network in status Setup and assigns the first administrator. Self-service creation is open ([OQ-PER-1](#5-open-questions)). |
-| <a id="per-011"></a>**PER-011** | Configure network policy | Not allowed | Allowed | Not allowed | Not allowed | Changes are within platform invariants, recorded with a reason, and announced per [10-governance-and-network-operations.md](10-governance-and-network-operations.md). Operator can reach policy only through PER-033. |
+| <a id="per-011"></a>**PER-011** | Configure network policy | Not allowed | Allowed | Not allowed | Not allowed | Changes are within platform invariants, recorded with a reason, and announced per [10-governance-and-network-operations.md](10-governance-and-network-operations.md). Operator cannot change policy by any path; break-glass is read-only except the administrator grant of SEC-142 ([PER-033](#per-033)). |
 | <a id="per-012"></a>**PER-012** | Invite members | Policy-dependent | Allowed | Not allowed | Not allowed | Members may invite only when policy [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) is on; recommended default off. |
 | <a id="per-013"></a>**PER-013** | Approve or decline applications (Pending to Active) | Not allowed | Allowed | Not allowed | Not allowed | |
 | <a id="per-014"></a>**PER-014** | Suspend a member | Not allowed | Allowed | Not allowed | Not allowed | Reason mandatory; see JRN-007. Cannot target the last Active administrator (PER-006). |
 | <a id="per-015"></a>**PER-015** | Remove a member (membership to Departed) | Not allowed | Allowed | Not allowed | Not allowed | Handling of a non-zero balance is defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) and [10-governance-and-network-operations.md](10-governance-and-network-operations.md). A member may depart voluntarily (JRN-006). |
-| <a id="per-016"></a>**PER-016** | Assign or remove roles | Not allowed | Allowed | Not allowed | Not allowed | Subject to PER-006. The operator assigns only the first administrator at network creation. |
+| <a id="per-016"></a>**PER-016** | Assign or remove roles | Not allowed | Allowed | Not allowed | Not allowed | Subject to PER-006. The operator assigns only the first administrator at network creation, and, under break-glass, the administrator role to an existing Active member of a network with no administrator able to act (SEC-142, [PER-033](#per-033)). |
 | <a id="per-017"></a>**PER-017** | Publish and manage own listings (offers, requests) | Allowed | Allowed | Allowed | Not allowed | Requires Active membership. Administrator MAY pause or close another member's listing for a recorded reason. |
-| <a id="per-018"></a>**PER-018** | Propose a transaction | Allowed | Allowed | Allowed | Not allowed | As payer or payee, for the proposer's own account only. Requires both accounts Active. |
-| <a id="per-019"></a>**PER-019** | Accept a transaction | Allowed | Allowed | Allowed | Not allowed | Counterparty only; nobody accepts on another member's behalf. |
-| <a id="per-020"></a>**PER-020** | Decline a transaction | Allowed | Allowed | Allowed | Not allowed | Counterparty only. |
-| <a id="per-021"></a>**PER-021** | Cancel a transaction | Allowed | Allowed | Allowed | Not allowed | Proposer only, while Proposed. |
-| <a id="per-022"></a>**PER-022** | Request reversal of a completed transaction | Allowed | Allowed | Allowed | Not allowed | Either party requests; the other must agree; within the policy window (recommended default 7 days). |
+| <a id="per-018"></a>**PER-018** | Propose a transaction | Allowed | Allowed | Allowed | Not allowed | As payer or payee, for the proposer's own account only, or for the network account when the proposer is an administrator ([DOM-021](03-domain-model-and-mutual-credit-rules.md#dom-021), [DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043)). Requires both accounts Active. |
+| <a id="per-019"></a>**PER-019** | Accept a transaction | Allowed | Allowed | Allowed | Not allowed | Counterparty only; nobody accepts on another member's behalf. For the network account, an administrator other than the proposer ([DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022)). |
+| <a id="per-020"></a>**PER-020** | Decline a transaction | Allowed | Allowed | Allowed | Not allowed | Counterparty only. For the network account, an administrator other than the proposer ([DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022)). |
+| <a id="per-021"></a>**PER-021** | Cancel a transaction | Allowed | Allowed | Allowed | Not allowed | Proposer only, while Proposed. For the network account, an administrator other than the proposer ([DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022)). |
+| <a id="per-022"></a>**PER-022** | Request reversal of a completed transaction | Allowed | Allowed | Allowed | Not allowed | Either party requests; the other must agree; within the policy window ([DOM-101](03-domain-model-and-mutual-credit-rules.md#dom-101)). |
 | <a id="per-023"></a>**PER-023** | Reverse a transaction outside mutual request (as dispute resolution or administrator action) | Not allowed | Allowed | Not allowed | Not allowed | Full reversal only; reason mandatory. The reviewer records the resolution; the effect on the ledger follows [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md). |
 | <a id="per-024"></a>**PER-024** | Post an adjustment | Not allowed | Allowed | Not allowed | Not allowed | Reason mandatory; usually against the network account ([DEC-003](13-assumptions-risks-decisions-and-roadmap.md#dec-003)); affected member notified; can be disputed. |
 | <a id="per-025"></a>**PER-025** | Raise a dispute | Allowed | Allowed | Allowed | Not allowed | Raiser must be a party to the transaction or the account affected by the adjustment. |
-| <a id="per-026"></a>**PER-026** | Review and resolve a dispute | Not allowed | Policy-dependent | Allowed | Not allowed | Administrator may resolve only if network policy lets administrators act as reviewers; never where PER-006 recusal applies. |
-| <a id="per-027"></a>**PER-027** | View own balance and history | Allowed | Allowed | Allowed | Not allowed | Always available while the membership exists in any status that [10-governance-and-network-operations.md](10-governance-and-network-operations.md) keeps readable. |
+| <a id="per-026"></a>**PER-026** | Review and resolve a dispute | Not allowed | Not allowed | Allowed | Not allowed | An administrator reviews only if also granted the `reviewer` role, which [DOM-113](03-domain-model-and-mutual-credit-rules.md#dom-113) permits or forbids; never where PER-006 recusal applies. |
+| <a id="per-027"></a>**PER-027** | View own balance and history | Allowed | Allowed | Allowed | Not allowed | Always available while the membership exists in any status that [10-governance-and-network-operations.md](10-governance-and-network-operations.md) keeps readable. Suspended and Departed memberships keep PER-027 and PER-030 for the personal-data retention period of DATA-080 (2 years after Departed; GOV-042, GOV-080). |
 | <a id="per-028"></a>**PER-028** | View other members' balances | Policy-dependent | Allowed | Policy-dependent | Not allowed | Recommended default for members and reviewers: hidden. A reviewer sees the parties' postings for a dispute assigned to them regardless of this setting. |
-| <a id="per-029"></a>**PER-029** | View audit log | Not allowed | Allowed | Policy-dependent | Not allowed | Administrator sees the network's audit log only. A member sees events about their own account through history (PER-027), not the audit log. Reviewer sees events relating to assigned disputes by default. Instance-level operational logs are not this log ([09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md)). |
-| <a id="per-030"></a>**PER-030** | Export own data | Allowed | Allowed | Allowed | Not allowed | Own memberships, listings, transaction history, disputes raised. |
+| <a id="per-029"></a>**PER-029** | View audit log | Not allowed | Allowed | Allowed (events of disputes assigned to them only) | Not allowed | Administrator sees the network's audit log only. A member sees events about their own account through history (PER-027), not the audit log. Reviewer sees events relating to assigned disputes only. Instance-level operational logs are not this log ([09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md)). |
+| <a id="per-030"></a>**PER-030** | Export own data | Allowed | Allowed | Allowed | Not allowed | Own memberships, listings, transaction history, disputes raised. Kept by Suspended and Departed memberships as stated at PER-027. |
 | <a id="per-031"></a>**PER-031** | Export network data | Not allowed | Allowed | Not allowed | Not allowed | Instance backups are an operations matter ([11-deployment-operations-and-support.md](11-deployment-operations-and-support.md)), not a network export. |
-| <a id="per-032"></a>**PER-032** | Break-glass access to network data | Not allowed | Not allowed | Not allowed | Allowed | Exceptional, justified, time-limited, audited; no posting authority ([PER-033](#per-033)). |
+| <a id="per-032"></a>**PER-032** | Break-glass access to network data | Not allowed | Not allowed | Not allowed | Allowed | Exceptional, justified, time-limited, audited; read-only except the administrator grant of SEC-142; no posting authority; no export ([PER-033](#per-033)). |
 
-<a id="per-033"></a>**PER-033** (P0) Break-glass access is the only route by which the platform operator reaches a network's data or state. It MUST be a path separate from the normal interface, MUST require a recorded justification, MUST be time-limited, and MUST create audit events visible to that network's administrators. The path MUST NOT allow the operator to post a transaction or adjustment as a member or administrator. Details are owned by [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md).
+<a id="per-033"></a>**PER-033** (P0) Break-glass access is the only route by which the platform operator reaches a network's data or state, with one named exception: the succession contact record of GOV-053 (FR-069) is readable in the operator console without break-glass, because it contains no ledger data. It MUST be a path separate from the normal interface, MUST require a recorded justification, MUST be time-limited, and MUST create audit events visible to that network's administrators. The path MUST be read-only, with one exception: the administrator grant of SEC-142, which assigns the administrator role to an existing Active member of a network with no administrator able to act. That grant always needs dual control (a single-operator instance cannot perform it), produces an ordinary administrator role with no expiry, and is notified to every Active member; only the break-glass session itself is time-boxed per SEC-140. The path MUST NOT allow the operator to post a transaction or adjustment, change policy, or export network data (SEC-144). Details are owned by [09-security-privacy-and-abuse-resistance.md](09-security-privacy-and-abuse-resistance.md).
 *Rationale:* operators sometimes need access to repair a fault; that access must be exceptional and visible.
 
 <a id="per-034"></a>**PER-034** (P0) Where the matrix says Policy-dependent, the network's configured value MUST be applied by the platform, and the recommended default MUST apply to a new network until an administrator changes it. The list of policy keys is owned by [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md).
 *Rationale:* a fresh network behaves predictably.
+
+### 3.3 Additional actions
+
+These rows complete the matrix for actions that other documents rely on. Values and conventions are as in section 3.2. PER-008, PER-009 and PER-034 apply to them.
+
+| ID | Action | Member | Network administrator | Dispute reviewer | Platform operator | Notes |
+|---|---|---|---|---|---|---|
+| <a id="per-035"></a>**PER-035** | Browse the directory and search listings | Allowed | Allowed | Allowed | Not allowed | Anonymous access follows [DOM-097](03-domain-model-and-mutual-credit-rules.md#dom-097). |
+| <a id="per-036"></a>**PER-036** | List own notifications and set notification preferences | Allowed | Allowed | Allowed | Not allowed | Preferences cannot disable the mandatory notification set of FR-084. |
+| <a id="per-037"></a>**PER-037** | Trigger and view balance verification | Not allowed | Allowed (own network) | Not allowed | Allowed (results without account data) | FR-057, FR-058. |
+| <a id="per-038"></a>**PER-038** | Suspend or reinstate a network | Not allowed | Allowed | Not allowed | Allowed | Reason mandatory; effects in [DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016) and DOM section 3.2.1. |
+| <a id="per-039"></a>**PER-039** | Close a network; complete setup | Not allowed | Allowed | Not allowed | Not allowed | Setup completion needs the values set at setup ([DOM-094](03-domain-model-and-mutual-credit-rules.md#dom-094)). |
+| <a id="per-040"></a>**PER-040** | Break-glass administrator grant | Not allowed | Not allowed | Not allowed | Allowed (dual control) | Only under SEC-142 and GOV-054; see PER-033. |
+| <a id="per-041"></a>**PER-041** | Report abuse; handle reports | Allowed (report) | Allowed (handle, but not a report about themselves) | Allowed (report) | Not allowed | FR-068, SEC-060 to SEC-065. |
+| <a id="per-042"></a>**PER-042** | Download an export file | Requester only | Requester only | Requester only | Not allowed | Follows PER-030 and PER-031: only the person who requested the export. |
+| <a id="per-043"></a>**PER-043** | Cancel a scheduled policy version | Not allowed | Allowed | Not allowed | Not allowed | [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017); recorded with a reason. |
+| <a id="per-044"></a>**PER-044** | Freeze or unfreeze an account; change account limits | Not allowed | Allowed | Not allowed | Not allowed | Reason mandatory; the affected member is notified (SEC-051). |
+| <a id="per-045"></a>**PER-045** | Approve another administrator's adjustment or reversal; confirm or decline a dispute remedy | Not allowed | Allowed (not the initiator, not a party; for a remedy, not the deciding reviewer) | Not allowed | Not allowed | [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041), [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062). |
+| <a id="per-046"></a>**PER-046** | Assign a dispute; withdraw a dispute; file or hear an appeal | Withdraw (raiser only); file an appeal (party) | Assign; hear an appeal as governance sets | Take assignment; hear an appeal as governance sets | Not allowed | [DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061), [DOM-063](03-domain-model-and-mutual-credit-rules.md#dom-063); the appeal process is in GOV-066. |
+| <a id="per-047"></a>**PER-047** | Revoke another member's sessions | Not allowed | Allowed | Not allowed | Not allowed | SEC-046, SEC-011. |
+| <a id="per-048"></a>**PER-048** | Edit the rules statement, the notice board, and the succession contact | Not allowed | Allowed | Not allowed | Not allowed | FR-008, FR-089, FR-069. The operator reads the succession contact record only (PER-033). |
+| <a id="per-049"></a>**PER-049** | View the network account's balance and events | Allowed | Allowed | Allowed | Not allowed | [DOM-053](03-domain-model-and-mutual-credit-rules.md#dom-053); counterparties are named only as DOM-053 allows. |
 
 ## 4. Core journeys
 
@@ -157,7 +179,7 @@ Steps:
 1. The person opens the invitation link or the network's join page.
 2. The person provides the minimum data the network requires (email address, display name) and confirms they have read the network rules. No further personal data is collected unless the network policy adds it.
 3. The platform verifies control of the email address.
-4. For an invitation, the membership becomes Active, unless network policy requires approval, in which case it becomes Pending. For an application, the membership becomes Pending.
+4. For an invitation sent by an administrator, the membership becomes Active. For an invitation sent by a member ([DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115)) or an application, it becomes Pending ([DOM-095](03-domain-model-and-mutual-credit-rules.md#dom-095)).
 5. For a Pending membership, an administrator reviews the application and approves or declines it with a reason ([PER-013](#per-013)). The applicant is notified of the outcome.
 6. On approval, the platform creates the member account with a balance of zero and the network's default credit limit, and the member sees their own balance view.
 
@@ -214,14 +236,14 @@ Steps:
 5. At acceptance the platform checks credit limits atomically, creates the posting pair, and sets the transaction Completed ([03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md)).
 6. Both parties are notified; each sees the updated balance.
 
-Alternative outcomes: the counterparty declines (Declined); the proposer cancels while Proposed (Cancelled); the proposal passes the policy-set window, recommended default 14 days (Expired).
+Alternative outcomes: the counterparty declines (Declined); the proposer cancels while Proposed (Cancelled); the proposal passes the policy-set window ([DOM-100](03-domain-model-and-mutual-credit-rules.md#dom-100)) (Expired).
 
 Postcondition: Completed with exactly one pair of postings and updated balances for both parties, or no postings and a terminal status of Declined, Cancelled, or Expired. Audit events for each state change.
 
 Error and edge states:
-- Limit exceeded: if at acceptance the payer's balance minus the amount would fall below the negative of their credit limit, or the payee's positive limit would be exceeded, acceptance is rejected with the error "limit exceeded", stating which account and which limit without disclosing the other party's balance. No postings are created. The status afterwards follows [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md); the proposer can cancel and re-propose a smaller amount.
+- Limit exceeded: if at acceptance the payer's balance minus the amount would fall below the negative of their credit limit, or the payee's positive limit would be exceeded, acceptance is rejected with `limit_exceeded` (payer's credit limit) or `positive_limit_exceeded` (payee's positive limit), stating which account and which limit without disclosing the other party's balance. No postings are created. The status afterwards follows [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md); the proposer can cancel and re-propose a smaller amount.
 - Expired proposal: acceptance is rejected, the status shows Expired, and either party can propose again.
-- Suspended or Frozen account on either side, or counterparty Departed: proposing or accepting is refused with the reason (`account_not_active`). Proposals already outstanding are cancelled by the system with the status reason recorded and both parties notified ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)).
+- The actor's own membership is Suspended: the write is refused by the authorization gate with `forbidden` (PER-008; the read and export rights of PER-027 and PER-030 are unaffected). Counterparty account Frozen or Closed, or counterparty Departed: proposing or accepting is refused with the reason (`account_not_active`). Proposals already outstanding are cancelled by the system with the status reason recorded and both parties notified ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)).
 - Duplicate submission or retry: one transaction. A retried accept after a lost response returns the original result and does not post twice.
 - Concurrent actions (counterparty accepts while proposer cancels, or two sessions accept): exactly one outcome occurs; the loser sees the resulting status.
 - Counterparty not in this network or not found: the error does not reveal whether the person belongs to other networks.
@@ -246,7 +268,7 @@ Postcondition: no state changes; viewing creates no audit event unless a view of
 
 Error and edge states:
 - Balances hidden by policy: the member list shows no balance and states that balances are not shown in this network, rather than showing blank or zero.
-- Negative balance: shown with the sign, the word "negative" or "owing to the network" as set by UX in [08-ux-and-accessibility.md](08-ux-and-accessibility.md), and the remaining available credit.
+- Negative balance: shown with the sign and the phrase required by UX-041 in [08-ux-and-accessibility.md](08-ux-and-accessibility.md), and the remaining available credit.
 - Frozen account or Suspended membership: own history remains readable; the reason is stated.
 - Long history: paginated; a position in the list is announced; filters preserve keyboard focus.
 - A displayed balance changes while the page is open (another party accepted a trade): the page states that the balance has changed and offers refresh; it does not alter figures silently.
@@ -265,8 +287,8 @@ Steps:
 1. The member opens the transaction or adjustment and chooses to raise a dispute, selects a reason category, and writes a statement.
 2. The dispute becomes Open. The other party and the network's administrators and eligible reviewers are notified.
 3. A reviewer who is not a party takes the dispute; its status becomes Under review. The other party adds a statement.
-4. The reviewer examines the statements and the related history and records a resolution with reasons: upheld, dismissed, or withdrawn (withdrawn is recorded when the raiser withdraws).
-5. If upheld, the consequence the resolution calls for (for example a full reversal or an adjustment) is carried out by an authorized party as defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) and [10-governance-and-network-operations.md](10-governance-and-network-operations.md), and the resulting postings reference the dispute.
+4. The reviewer examines the statements and the related history and records a resolution with reasons: `dismissed`, `reversed`, or `adjusted` (`withdrawn` is recorded when the raiser withdraws; outcomes in [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)).
+5. If the outcome is `reversed` or `adjusted`, the remedy the resolution calls for (a full reversal or an adjustment) is carried out by an authorized party as defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) and [10-governance-and-network-operations.md](10-governance-and-network-operations.md), and the resulting postings reference the dispute.
 6. Both parties are notified of the resolution and of any appeal route.
 
 Postcondition: dispute Resolved with an outcome and reasons; any resulting reversal or adjustment recorded as new postings; the original postings are unchanged; audit events recorded.
@@ -275,10 +297,10 @@ Error and edge states:
 - Reviewer is a party: the platform prevents that person from taking or resolving the dispute (PER-006).
 - No eligible reviewer (the only reviewer is a party, or no one holds the role): the dispute stays Open and the administrators are told; the escalation route is defined in [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
 - Duplicate submission or a second dispute on the same object: one dispute exists; the second attempt shows the existing one.
-- Transaction already Reversed: raising a dispute on the original is refused with the explanation. A reversal event cannot itself be disputed ([DOM-060](03-domain-model-and-mutual-credit-rules.md#dom-060)); the member challenges it through the appeal on the dispute that caused it ([DOM-063](03-domain-model-and-mutual-credit-rules.md#dom-063)) or, for an administrator-initiated reversal, through the governance route in [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
+- Transaction already Reversed: raising a dispute on the original is refused with `already_reversed` and an explanation. A reversal event cannot itself be disputed ([DOM-060](03-domain-model-and-mutual-credit-rules.md#dom-060)); the member challenges it through the appeal on the dispute that caused it ([DOM-063](03-domain-model-and-mutual-credit-rules.md#dom-063)) or, for an administrator-initiated reversal, through the governance route in [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
 - Dispute window closed: refused with the closing date.
 - Other party Suspended or Departed: the dispute proceeds; notification goes to the address on record.
-- Upheld outcome would leave an account over its limit: the reversal is still posted with the limit-override flag recorded and the account shown as over limit ([DOM-032](03-domain-model-and-mutual-credit-rules.md#dom-032)); the dispute resolves normally.
+- A `reversed` or `adjusted` remedy would leave an account over its limit: the reversal is still posted with the limit-override flag recorded and the account shown as over limit ([DOM-032](03-domain-model-and-mutual-credit-rules.md#dom-032)); the dispute resolves normally.
 
 Accessibility states: statements are plain-text fields that accept long input without character-counter timeouts; dispute status changes are announced and sent by email; the status timeline is available as an ordered list in text.
 
@@ -314,11 +336,11 @@ Accessibility states: each setting has a label, current value, and help text tha
 | Item | Description |
 |---|---|
 | Actor | Network administrator (PER-002); the affected member (PER-001) is notified. |
-| Precondition | Target membership is Active; the actor holds the administrator role and is not suspending themselves. |
+| Precondition | Target membership is Active; the actor holds the administrator role. |
 
 Steps:
 1. The administrator opens the member's record and chooses Suspend.
-2. The platform shows the effects in text: the member cannot propose or accept transactions or publish listings; outstanding Proposed transactions involving them cannot be accepted; open disputes continue.
+2. The platform shows the effects in text: the member cannot propose or accept transactions or publish listings; outstanding Proposed transactions involving them are cancelled ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)); open disputes continue.
 3. The administrator enters a mandatory reason and confirms.
 4. The membership becomes Suspended; the member's account status changes as defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) (expected: Frozen); the member is notified of the reason and of the route to challenge the decision ([10-governance-and-network-operations.md](10-governance-and-network-operations.md)).
 5. Later, an administrator MAY reinstate the member (Active) with a recorded reason.
@@ -327,11 +349,11 @@ Postcondition: membership Suspended, no postings created or altered, balances un
 
 Error and edge states:
 - Target is the last Active administrator: refused (PER-006).
-- Target is a party to an Open or Under review dispute, or the assigned reviewer: the suspension is allowed; the dispute continues, and an assigned reviewer is replaced, with both recorded.
+- Target is a party to an Open or Under review dispute, or the assigned reviewer: the suspension is allowed; the dispute continues, and if the target was the assigned reviewer the dispute returns to Open ([DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061)), with both recorded.
 - Target is a party to a Proposed transaction: the proposal is cancelled by the system with status reason `account_frozen` and the counterparty is notified ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)); either party may propose again after reinstatement.
 - Duplicate or retried submission: one suspension, one notification.
 - Target already Suspended or Departed: the action is refused and shows the current status.
-- Suspended member signs in: sees own balance and history, can export own data ([PER-030](#per-030)), and sees the reason and challenge route; whether they may raise a dispute against the suspension is open ([OQ-PER-3](#5-open-questions)).
+- Suspended member signs in: sees own balance and history ([PER-027](#per-027)), can export own data ([PER-030](#per-030)), and sees the reason and challenge route; whether they may raise a dispute against the suspension is open ([OQ-PER-3](#5-open-questions)).
 - Suspension with a non-zero balance: balances stay as they are; recovery of a negative balance is a governance matter ([10-governance-and-network-operations.md](10-governance-and-network-operations.md)).
 
 Accessibility states: the confirmation dialog moves focus into itself, restates the member and effects, returns focus to the member record, and announces the new status; the reason field is a labelled text area; the suspended member's notice does not depend on color.
@@ -341,26 +363,26 @@ Accessibility states: the confirmation dialog moves focus into itself, restates 
 | Item | Description |
 |---|---|
 | Actor | Active member (PER-001). |
-| Precondition | Membership Active (a Suspended member MAY request to leave per network policy). The member is not the last Active administrator. |
+| Precondition | Membership Active (a Suspended member may also leave, [DOM-070](03-domain-model-and-mutual-credit-rules.md#dom-070)). The member is not the last Active administrator. |
 
 Steps:
 1. The member chooses to leave the network.
-2. The platform shows, in text, what leaving involves: current balance, Proposed transactions that will be cancelled, open disputes involving the member, active listings that will be closed, and the option to export own data first ([PER-030](#per-030)).
-3. If the balance is not zero, the platform states what the network's departure policy requires, as defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md) and [10-governance-and-network-operations.md](10-governance-and-network-operations.md) (for example settle first, or a recorded write-off by an administrator).
+2. The platform shows, in text, what leaving involves: current balance, Proposed transactions and open disputes that must be cancelled or resolved first ([DOM-070](03-domain-model-and-mutual-credit-rules.md#dom-070)), active listings that will be closed, and the option to export own data first ([PER-030](#per-030)).
+3. If the balance is not zero, the platform states that the member may submit a departure request, which an administrator completes ([DOM-071](03-domain-model-and-mutual-credit-rules.md#dom-071)); see also [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
 4. The member confirms.
-5. The platform cancels the member's Proposed transactions, closes their listings, sets the membership to Departed, and sets the account status as defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md).
-6. Counterparties of cancelled proposals and the administrators are notified.
+5. The platform closes their listings, sets the membership to Departed, and sets the account status as defined in [03-domain-model-and-mutual-credit-rules.md](03-domain-model-and-mutual-credit-rules.md).
+6. The administrators are notified.
 
 Postcondition: membership Departed; completed postings and history preserved; the person's other memberships are unaffected; audit event recorded.
 
 Error and edge states:
-- Negative balance: departure is blocked, deferred to an administrator decision, or allowed with a recorded write-off against the network account, as network policy sets; the member is told which and what happens next, without legal conclusions.
+- Negative balance: the member may submit a departure request; an administrator completes it with a `write_off` ([DOM-071](03-domain-model-and-mutual-credit-rules.md#dom-071)); the member is told what happens next, without legal conclusions.
 - Positive balance: handling follows the same policy; the platform never converts or redeems it.
-- Open dispute involving the member: it continues after departure; the member can still receive notices at the address on record.
+- Open dispute involving the member, or a Proposed transaction naming the member's account: departure is blocked (`departure_blocked`) until it is resolved or cancelled.
 - Last Active administrator: refused (PER-006); the member is directed to assign another administrator first.
 - Duplicate or retried confirmation: one departure.
 - Counterparty departed while a proposal to or from them is outstanding: the proposal can no longer be completed and is cancelled with notice to the remaining party.
-- Departed person wants to return: handled as a new application (JRN-001), with the earlier history linked per [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
+- Departed person wants to return: handled as a new invitation or application (JRN-001), with the earlier history linked per [10-governance-and-network-operations.md](10-governance-and-network-operations.md).
 
 Accessibility states: the consequences are listed as text before the confirm control; the confirm control is not the default focus; completion is announced and a confirmation email is sent, since the person's access to the network ends.
 
@@ -371,11 +393,11 @@ Each question is mirrored as a decision-log entry in [13-assumptions-risks-decis
 | ID | Question | Decision needed | Decided by |
 |---|---|---|---|
 | OQ-PER-1 | Can people create their own networks on an instance, or only the platform operator? | Recommended default: operator creates networks (PER-010). Self-service creation changes the operator's role and abuse exposure. | Project owner |
-| OQ-PER-2 | May members invite others by default? | Policy [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) exists with recommended default `off`; confirm that default. | Project owner |
-| OQ-PER-3 | What may a Suspended or Departed member still do (read history, export, raise a dispute against the decision), and what happens to their listings? | Confirm read and export rights; decide whether a challenge uses the dispute process or a separate appeal in [10-governance-and-network-operations.md](10-governance-and-network-operations.md). | Project owner with the governance document owner |
+| OQ-PER-2 | Resolved: answered by [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) (members invite only when it is on; default `off`). | None; kept for traceability. | Resolved |
+| OQ-PER-3 | What may a Suspended or Departed member still do (read history, export, raise a dispute against the decision), and what happens to their listings? | Read and export rights are resolved: answered by GOV-042, GOV-080, FR-016 and FR-090 (see PER-027 and PER-030). Still open: whether a challenge uses the dispute process or a separate appeal in [10-governance-and-network-operations.md](10-governance-and-network-operations.md), and what happens to listings. | Project owner with the governance document owner |
 | OQ-PER-4 | Resolved: when a party's account becomes Frozen or Closed, or a membership departs, outstanding proposals are cancelled by the system ([DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024)). | None; kept for traceability. | Resolved |
 | OQ-PER-5 | Is a view of another member's balance by an administrator or reviewer recorded as an audit event? | Trade-off between accountability and audit-log volume and personal-data minimization. | Security reviewer |
-| OQ-PER-6 | How long are `Rejected` applications and `Departed` memberships retained, and what does an administrator see when the person reapplies ([DOM-076](03-domain-model-and-mutual-credit-rules.md#dom-076))? | Retention rule belongs to [06-data-model-ledger-and-audit.md](06-data-model-ledger-and-audit.md); the status itself is settled (`Rejected`). | Security reviewer with project owner |
+| OQ-PER-6 | Resolved: retention of `Rejected` applications and `Departed` memberships is answered by DATA-080 (2 years); the reapplication view follows [DOM-076](03-domain-model-and-mutual-credit-rules.md#dom-076). | None; kept for traceability. | Resolved |
 | OQ-PER-7 | Resolved: a reversal is posted even when it breaches a limit, with the override recorded ([DOM-032](03-domain-model-and-mutual-credit-rules.md#dom-032)). | None; kept for traceability. | Resolved |
 
 ## 6. Change history
@@ -383,3 +405,4 @@ Each question is mirrored as a decision-log entry in [13-assumptions-risks-decis
 | Date | Change |
 |---|---|
 | 2026-11-11 | Initial draft. |
+| 2026-11-11 | Consistency review fixes. |

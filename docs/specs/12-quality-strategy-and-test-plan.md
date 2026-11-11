@@ -40,7 +40,7 @@ Identifier ranges are reserved by topic:
 
 "Correct" for Circula means: **after every test that changes state, every ledger invariant [DOM-001](03-domain-model-and-mutual-credit-rules.md#dom-001) through [DOM-018](03-domain-model-and-mutual-credit-rules.md#dom-018) holds**, every permission in the [matrix](02-personas-roles-and-journeys.md#32-matrix) is enforced exactly as written, and every user-visible outcome matches the rule that governs it. The goals [VIS-001](01-product-vision-and-scope.md#vis-001) (reconstructable balances), [VIS-002](01-product-vision-and-scope.md#vis-002) (consent), [VIS-003](01-product-vision-and-scope.md#vis-003) (limits under concurrency), [VIS-007](01-product-vision-and-scope.md#vis-007) (disputes), [VIS-008](01-product-vision-and-scope.md#vis-008) (audit), [VIS-009](01-product-vision-and-scope.md#vis-009) (export fidelity), and [VIS-011](01-product-vision-and-scope.md#vis-011) (accessibility) set the success measures this plan turns into gates.
 
-<a id="qa-001"></a>**QA-001 — Invariant oracle after every state-changing test.** (P0) The test suite MUST provide one reusable invariant oracle that, given a network, checks: every ledger event has exactly two postings of equal amount, one debit and one credit, on two different accounts of that network ([DOM-001](03-domain-model-and-mutual-credit-rules.md#dom-001), [DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005)); every account balance and every posting's `resulting balance` equals the derivation from postings ([DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003)); the sum of all balances is zero at every sequence position ([DOM-004](03-domain-model-and-mutual-credit-rules.md#dom-004)); sequence numbers are strictly increasing and replay up to any position reproduces the recorded resulting balances ([DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010)); every event has exactly one origin and authority ([DOM-007](03-domain-model-and-mutual-credit-rules.md#dom-007), [DOM-013](03-domain-model-and-mutual-credit-rules.md#dom-013)); every event records a policy version ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)); every transaction is in one permitted state ([DOM-020](03-domain-model-and-mutual-credit-rules.md#dom-020)); and the store content for all earlier events is byte-for-byte unchanged since the previous oracle run ([DOM-002](03-domain-model-and-mutual-credit-rules.md#dom-002)). Every unit-with-store, property, concurrency, integration, contract, authorization, dispute, migration, restore, and end-to-end test that changes ledger state MUST run the oracle at its end and fail if any check fails.
+<a id="qa-001"></a>**QA-001 — Invariant oracle after every state-changing test.** (P0) The test suite MUST provide one reusable invariant oracle that, given a network, checks: every ledger event has exactly two postings of equal amount, one debit and one credit, on two different accounts of that network ([DOM-001](03-domain-model-and-mutual-credit-rules.md#dom-001), [DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005)); every account balance and every posting's `resulting balance` equals the derivation from postings ([DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003)); the sum of all balances is zero at every sequence position ([DOM-004](03-domain-model-and-mutual-credit-rules.md#dom-004)); sequence numbers are contiguous from 1 with no gaps or reuse, and replay up to any position reproduces the recorded resulting balances ([DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010)); every event has exactly one origin and authority ([DOM-007](03-domain-model-and-mutual-credit-rules.md#dom-007), [DOM-013](03-domain-model-and-mutual-credit-rules.md#dom-013)); every event records a policy version ([DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017)); every transaction is in one permitted state ([DOM-020](03-domain-model-and-mutual-credit-rules.md#dom-020)); and the store content for all earlier events is byte-for-byte unchanged since the previous oracle run ([DOM-002](03-domain-model-and-mutual-credit-rules.md#dom-002)). Every unit-with-store, property, concurrency, integration, contract, authorization, dispute, migration, restore, and end-to-end test that changes ledger state MUST run the oracle at its end and fail if any check fails.
 *Rationale:* a test that passes its own assertion while leaving the ledger inconsistent is a passing test of a broken system. The oracle is independent of the production verification operation so that a defect in one is caught by the other.
 
 <a id="qa-002"></a>**QA-002 — Rule-to-test traceability.** (P0) Every DOM rule with a MUST, every PER matrix row, and every DOM 5.1 error code MUST be referenced by at least one automated test, by identifier in the test's name or metadata. CI MUST produce a traceability report listing each identifier and the tests that reference it, and MUST fail when a P0 identifier has zero tests.
@@ -84,11 +84,11 @@ flowchart TB
     C --> I[Integration: real transactional store, fault injection]
     I --> A[API contract and authorization]
     A --> E[End-to-end scenarios via web client and API]
-    O[Invariant oracle QA-001] -.runs after.-> P
-    O -.runs after.-> C
-    O -.runs after.-> I
-    O -.runs after.-> A
-    O -.runs after.-> E
+    O[Invariant oracle QA-001] -. runs after .-> P
+    O -. runs after .-> C
+    O -. runs after .-> I
+    O -. runs after .-> A
+    O -. runs after .-> E
 ```
 
 Plain-text summary: tests are layered from pure unit tests of the ledger core, through property-based and concurrency tests, integration tests against a real transactional store, API contract and authorization tests, up to end-to-end scenarios. The invariant oracle of QA-001 runs after every state-changing test at every layer above unit. Specialized suites (disputes, policy versioning, migration, restore, export, accessibility, notifications, security, performance, operations) sit at the layer that matches what they exercise and are listed below.
@@ -194,13 +194,26 @@ All concurrency tests run against a real transactional store with the isolation 
 | `not_a_party` | C accepts a transaction between A and B; A accepts own proposal | [QA-060](#qa-060) |
 | `invalid_amount` | Amount 0 | [QA-012](#qa-012) |
 | `description_required` | Empty description | — |
-| `limit_exceeded` | A at −80 accepts 30 outgoing | [E2E-002](#e2e-002) |
+| `limit_exceeded` | A at −80 proposes 30 to C; C accepts | [E2E-002](#e2e-002) |
 | `positive_limit_exceeded` | Payee at 190 with positive limit 200 receives 11 | [QA-011](#qa-011) |
 | `transaction_expired` | Accept after `expires at` | [E2E-001](#e2e-001) |
 | `invalid_transition` | Accept a `Declined` transaction | [QA-013](#qa-013) |
 | `self_dealing_not_allowed` | Single administrator, [DOM-110](03-domain-model-and-mutual-credit-rules.md#dom-110) off | [E2E-008](#e2e-008) |
 | `idempotency_conflict` | Same key, different amount | [E2E-015](#e2e-015) |
 | `confirmation_required` | Threshold 50 enabled, accept 60, attempt to read as posted | [QA-070](#qa-070) |
+| `window_closed` | Mutual reversal requested on day 8 of a 7-day window; dispute on day 31 of a 30-day window | [E2E-004](#e2e-004) |
+| `already_reversed` | Administrator reversal of, or dispute on, a transaction already `Reversed` | [QA-073](#qa-073) |
+| `not_disputable` | Dispute raised on a `reversal` event | [QA-073](#qa-073) |
+| `dispute_already_open` | Second dispute on a ledger event with an `Open` dispute | [QA-073](#qa-073) |
+| `reviewer_ineligible` | Reviewer who holds an account of the subject event takes the dispute; confirming administrator who is the deciding reviewer | [QA-063](#qa-063) |
+| `departure_blocked` | Departure of a member with balance −40, or with a `Proposed` transaction, or an open dispute | [E2E-009](#e2e-009) |
+| `closure_blocked` | Close a network while an account holds balance 10 | [QA-065](#qa-065) |
+| `decimal_places_locked` | Change decimal places from 0 to 2 after the first posting | — |
+| `policy_value_out_of_range` | Set the default credit limit to 400 when the maximum is 300; set an account limit of 301 | [QA-077](#qa-077) |
+| `last_administrator` | Remove the administrator role from the only Active administrator | [QA-065](#qa-065) |
+| `setup_incomplete` | Activate a network in `Setup` before every "set at setup" policy is chosen | — |
+| `invitation_expired` | Accept an invitation on day 15 of a 14-day validity window | [E2E-020](#e2e-020) |
+| `not_permitted_by_policy` | Member sends an invitation while [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) is `off`; `policy_transfer` adjustment while [DOM-109](03-domain-model-and-mutual-credit-rules.md#dom-109) is `off` | — |
 
 Authentication, validation, rate-limit, and not-found codes defined in [07-api-and-integration-contract.md](07-api-and-integration-contract.md) MUST be covered the same way.
 *Rationale:* the codes are part of the rules; a code never produced in tests is either dead or untested.
@@ -225,7 +238,8 @@ Authentication, validation, rate-limit, and not-found codes defined in [07-api-a
 <a id="qa-060"></a>**QA-060 — Permissions matrix, generated.** (P0) The suite MUST generate one test per cell of the matrix ([PER-010](02-personas-roles-and-journeys.md#per-010) to [PER-032](02-personas-roles-and-journeys.md#per-032)) for each actor state: Active member, administrator, reviewer, platform operator (normal path), Suspended member, Departed member, unauthenticated caller, and member of another network. An Allowed cell MUST NOT produce an authorization error (a domain error such as `limit_exceeded` is acceptable). A Not allowed cell MUST produce the authorization error of [07-api-and-integration-contract.md](07-api-and-integration-contract.md) and MUST leave state, balances, and the audit log of state changes unchanged ([PER-008](02-personas-roles-and-journeys.md#per-008)). The matrix MUST be machine-readable so that a change to [02-personas-roles-and-journeys.md](02-personas-roles-and-journeys.md) regenerates the tests. Notes-column restrictions (counterparty only, proposer only, own account only) MUST each have a negative test.
 *Rationale:* a hand-written subset of the matrix drifts from the matrix.
 
-<a id="qa-061"></a>**QA-061 — Policy-dependent cells.** (P0) Each Policy-dependent cell (for example [PER-012](02-personas-roles-and-journeys.md#per-012), [PER-026](02-personas-roles-and-journeys.md#per-026), [PER-028](02-personas-roles-and-journeys.md#per-028), [PER-029](02-personas-roles-and-journeys.md#per-029)) MUST be tested under every policy value and under a new network with no change, which MUST behave as the recommended default ([PER-034](02-personas-roles-and-journeys.md#per-034)). Balance visibility `hidden` MUST be tested on every response that could carry another member's balance (directory, profile, transaction detail, search, export), not only on the balance endpoint.
+<a id="qa-061"></a>**QA-061 — Policy-dependent cells.** (P0) Each Policy-dependent cell (for example [PER-012](02-personas-roles-and-journeys.md#per-012), [PER-026](02-personas-roles-and-journeys.md#per-026), [PER-028](02-personas-roles-and-journeys.md#per-028)) MUST be tested under every policy value and under a new network with no change, which MUST behave as the recommended default ([PER-034](02-personas-roles-and-journeys.md#per-034)). Balance visibility `hidden` MUST be tested on every response that could carry another member's balance (directory, profile, transaction detail, search, export), not only on the balance endpoint.
+[PER-029](02-personas-roles-and-journeys.md#per-029) is not policy-dependent: the reviewer scope is fixed (events of disputes assigned to that reviewer only), and a test MUST show that a reviewer cannot read audit events of disputes not assigned to them.
 *Rationale:* visibility leaks happen on secondary views.
 
 <a id="qa-062"></a>**QA-062 — Cross-network access (IDOR).** (P0) For every resource type the API exposes (network, policy version, membership, account, balance, transaction, ledger event, posting history, listing, dispute, appeal, adjustment, audit event, export, notification), an identity authenticated only in network A MUST request the resource of network B by its identifier through every operation that accepts that identifier (read, list filter, state change, export), and MUST receive the response [07-api-and-integration-contract.md](07-api-and-integration-contract.md) specifies for a resource outside the caller's networks, identical in status, body, and timing class to the response for a non-existent identifier. An identity that is administrator in B and member in A MUST NOT be able to use B authority in A ([PER-005](02-personas-roles-and-journeys.md#per-005)). A proposal naming accounts in two networks MUST be rejected with no object created ([DOM-005](03-domain-model-and-mutual-credit-rules.md#dom-005)). See [E2E-014](#e2e-014).
@@ -234,7 +248,7 @@ Authentication, validation, rate-limit, and not-found codes defined in [07-api-a
 <a id="qa-063"></a>**QA-063 — Recusal and acting on both sides.** (P0) Tests MUST show: a reviewer who holds either account of the subject event cannot take, be assigned, or resolve the dispute ([DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061), [PER-006](02-personas-roles-and-journeys.md#per-006)); the administrator who initiated a disputed adjustment cannot review it; a party cannot confirm a remedy ([DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)); an administrator cannot act for the network account against their own member account nor approve their own adjustment ([DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043)); with no eligible reviewer the dispute stays `Open` and administrators are alerted; and with [DOM-113](03-domain-model-and-mutual-credit-rules.md#dom-113) `separate_people_required`, assigning both roles to one membership is rejected.
 *Rationale:* recusal rules are the platform's defense against self-review.
 
-<a id="qa-064"></a>**QA-064 — Operator separation and break-glass.** (P0) Through the normal API, a platform operator identity MUST be denied every network action in the matrix except [PER-010](02-personas-roles-and-journeys.md#per-010) ([PER-007](02-personas-roles-and-journeys.md#per-007)). Through the break-glass path, access MUST require a justification, MUST end at the time limit, MUST create audit events visible to that network's administrators, and MUST NOT permit posting any event ([PER-033](02-personas-roles-and-journeys.md#per-033)). No role can supply a member's consent ([DOM-008](03-domain-model-and-mutual-credit-rules.md#dom-008)): an administrator accepting a transaction between two other members MUST receive `not_a_party`.
+<a id="qa-064"></a>**QA-064 — Operator separation and break-glass.** (P0) Through the normal API, a platform operator identity MUST be denied every network action in the matrix except [PER-010](02-personas-roles-and-journeys.md#per-010) and the operator cells of [PER-037](02-personas-roles-and-journeys.md#per-037) (verification trigger, [FR-058](04-functional-requirements.md#fr-058)), [PER-038](02-personas-roles-and-journeys.md#per-038) (network suspension and reinstatement, [SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156)), and [PER-040](02-personas-roles-and-journeys.md#per-040) (the administrator grant of [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142)). Through the break-glass path, access MUST require a justification, MUST end at the time limit, MUST create audit events visible to that network's administrators, and MUST NOT permit posting any event, except that the only permitted state change is the dual-control administrator grant of [SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142) ([PER-033](02-personas-roles-and-journeys.md#per-033)). No role can supply a member's consent ([DOM-008](03-domain-model-and-mutual-credit-rules.md#dom-008)): an administrator accepting a transaction between two other members MUST receive `not_a_party`.
 *Rationale:* operator and administrator power are the two highest-impact abuse paths.
 
 <a id="qa-065"></a>**QA-065 — Governance continuity.** (P0) Removing the administrator role from, suspending, or departing the last Active administrator MUST be rejected ([PER-006](02-personas-roles-and-journeys.md#per-006)); a new Active membership MUST have exactly one member account; the network account MUST exist from network creation and MUST NOT be closable while the network is `Active` or `Suspended` ([DOM-015](03-domain-model-and-mutual-credit-rules.md#dom-015)).
@@ -253,6 +267,9 @@ Authentication, validation, rate-limit, and not-found codes defined in [07-api-a
 
 <a id="qa-073"></a>**QA-073 — Dispute raising rules.** (P0) Tests MUST show: raising after the dispute window ([DOM-102](03-domain-model-and-mutual-credit-rules.md#dom-102)) is rejected; a second dispute on the same event while one is open is rejected; a dispute on a `reversal` event is rejected ([DOM-060](03-domain-model-and-mutual-credit-rules.md#dom-060)); a non-party cannot raise; raising changes no balance, available credit, or account status, and both parties' histories mark the event as disputed until `Resolved` ([DOM-064](03-domain-model-and-mutual-credit-rules.md#dom-064)).
 *Rationale:* disputes hold no amounts ([DEC-004](13-assumptions-risks-decisions-and-roadmap.md#dec-004)).
+
+<a id="qa-074"></a>**QA-074 — Adjustment approval and reviewer departure.** (P0) Tests MUST show: with [DOM-107](03-domain-model-and-mutual-credit-rules.md#dom-107) on, an adjustment is created `pending_approval`, posts nothing, and moves to `posted` only when a second, different administrator approves it; a rejection with a reason leaves it `rejected` with no ledger event; an unapproved adjustment becomes `expired` after the proposal expiry window with no ledger event; each of the pending, approved, rejected, and expired transitions notifies the holder of every member account involved ([DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041)); and approval by the initiating administrator is rejected with `self_dealing_not_allowed`. For a dispute `Under review`, when the assigned reviewer's membership is suspended or departs, or the `reviewer` role is removed, the dispute MUST return to `Open` and administrators MUST be alerted; the dispute MUST NOT resolve while `Open` without an eligible reviewer ([DOM-061](03-domain-model-and-mutual-credit-rules.md#dom-061)).
+*Rationale:* an unposted adjustment must never move a balance, and a dispute must never sit with a reviewer who can no longer act.
 
 ### 3.8 Policy-versioning tests
 
@@ -273,7 +290,7 @@ Authentication, validation, rate-limit, and not-found codes defined in [07-api-a
 <a id="qa-081"></a>**QA-081 — Downgrade is a restore drill.** (P0) The supported way back from a failed upgrade is restoring the pre-upgrade backup ([11-deployment-operations-and-support.md](11-deployment-operations-and-support.md)). Every release candidate MUST pass a drill: back up under version N−1, upgrade to N, restore the backup onto N−1, run verification, and confirm the restored instance accepts a new posting with the next sequence number.
 *Rationale:* reverse migrations on an append-only ledger are riskier than a tested restore.
 
-<a id="qa-082"></a>**QA-082 — Backup and restore.** (P0) A test MUST take a backup of a seeded instance, post further events, restore the backup onto a fresh instance, and assert: verification passes; every network sums to zero; each network's sequence is strictly increasing with no gaps from 1 to the last pre-backup sequence (gap-free behavior per [OQ-QA-4](#8-open-questions)); balances equal those recorded at backup time; events posted after the backup are absent; idempotency keys recorded before the backup still replay their original outcome; the restore completes within the recovery time objective of [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md). See [E2E-017](#e2e-017).
+<a id="qa-082"></a>**QA-082 — Backup and restore.** (P0) A test MUST take a backup of a seeded instance, post further events, restore the backup onto a fresh instance, and assert: verification passes; every network sums to zero; each network's sequence is contiguous from 1 to the last pre-backup sequence ([DOM-010](03-domain-model-and-mutual-credit-rules.md#dom-010)); balances equal those recorded at backup time; events posted after the backup are absent; idempotency keys recorded before the backup still replay their original outcome; the restore completes within the recovery time objective of [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md). See [E2E-017](#e2e-017).
 *Rationale:* an untested backup is not a backup.
 
 <a id="qa-083"></a>**QA-083 — Export recomputation.** (P0) For member self-export ([PER-030](02-personas-roles-and-journeys.md#per-030)) and administrator network export ([PER-031](02-personas-roles-and-journeys.md#per-031)), an independent recomputation tool that shares no code with the platform MUST read only the exported files and recompute every balance; each MUST equal the balance returned by the API at the export's stated sequence position. For network export, the recomputed sum MUST be zero and the exported sequence MUST match the ledger's ([VIS-009](01-product-vision-and-scope.md#vis-009) measure 10).
@@ -304,7 +321,7 @@ Authentication, validation, rate-limit, and not-found codes defined in [07-api-a
 
 ### 3.11 Notification and security tests
 
-<a id="qa-100"></a>**QA-100 — Mandatory notifications attempted and audited.** (P0) For each event in the mandatory set of [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) and the related MUST notifications (system cancellation [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024); suspension, reinstatement, removal [DOM-072](03-domain-model-and-mutual-credit-rules.md#dom-072); adjustments [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041); dispute remedies [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)), a test MUST assert that a notification to each affected holder is recorded in the fake outbox ([QA-122](#qa-122)) and that the attempt is audited. Turning off optional notifications under [DOM-114](03-domain-model-and-mutual-credit-rules.md#dom-114) MUST NOT suppress any mandatory one. The full set of notification triggers is owned by [04-functional-requirements.md](04-functional-requirements.md).
+<a id="qa-100"></a>**QA-100 — Mandatory notifications attempted and audited.** (P0) For each event in the mandatory set of [DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014) and the related MUST notifications (system cancellation [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024); suspension, reinstatement, removal [DOM-072](03-domain-model-and-mutual-credit-rules.md#dom-072); adjustments [DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041); dispute remedies [DOM-062](03-domain-model-and-mutual-credit-rules.md#dom-062)), a test MUST assert that a notification to each affected holder is recorded in the fake outbox ([QA-122](#qa-122)) and that the attempt is audited. Turning off optional notifications under [DOM-114](03-domain-model-and-mutual-credit-rules.md#dom-114) MUST NOT suppress any mandatory one. The mandatory notification set of [FR-084](04-functional-requirements.md#fr-084) is the oracle: the test MUST cover every row of it, including the scheduled-version notice of [DOM-017](03-domain-model-and-mutual-credit-rules.md#dom-017) to Active and Suspended members, the network-suspension and administrator-grant notices to all members, and the pending, approved, rejected, and expired adjustment notices. The full set of notification triggers is owned by [04-functional-requirements.md](04-functional-requirements.md).
 *Rationale:* "no silent balance change" is a product promise ([VIS-022](01-product-vision-and-scope.md#vis-022)).
 
 <a id="qa-101"></a>**QA-101 — Delivery failure and retry.** (P0) With the fake email transport set to fail, a committed ledger event MUST still be committed, its notification record MUST exist, delivery MUST be retried per the schedule in [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md), each attempt MUST be audited, and when the transport recovers exactly one message per recipient per event MUST be delivered. A failure in notification creation MUST NOT leave a ledger event without its notification record (both exist or neither, per [05-system-architecture.md](05-system-architecture.md)).
@@ -342,7 +359,7 @@ Authentication, validation, rate-limit, and not-found codes defined in [07-api-a
 <a id="qa-115"></a>**QA-115 — Expiry sweep.** (P0) With an injected clock ([QA-121](#qa-121)), a `Proposed` transaction whose `expires at` is T MUST read as `Expired` on any read or action at or after T, and the scheduled sweep MUST transition it, with an audit event, no later than T + 60 minutes ([DOM-025](03-domain-model-and-mutual-credit-rules.md#dom-025)). The test MUST cover 10,000 expiring proposals at the same T, and sweep restart after a job-runner crash mid-sweep (no proposal skipped, none transitioned twice). Pending second-administrator adjustments ([DOM-041](03-domain-model-and-mutual-credit-rules.md#dom-041)) and large-amount confirmations ([DOM-029](03-domain-model-and-mutual-credit-rules.md#dom-029)) MUST be covered by the same test.
 *Rationale:* the sweep is a SHOULD with a measurable bound.
 
-<a id="qa-116"></a>**QA-116 — Verification job cadence.** (P0) The verification operation of [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003) MUST run: at the end of every state-changing automated test (through the oracle or directly); after every migration and every restore, before the instance accepts writes; at least once every 24 hours per network in every deployed instance (recommended default; [OQ-QA-8](#8-open-questions)); and on demand by the platform operator. A failure MUST raise the alert defined in [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md), and an operational test MUST show that a corrupted test instance ([QA-044](#qa-044)) raises it.
+<a id="qa-116"></a>**QA-116 — Verification job cadence.** (P0) The verification operation of [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003) MUST run: at the end of every state-changing automated test (through the oracle or directly); before and after every migration and after every restore, and before the instance accepts writes; at least once every 24 hours per network in every deployed instance ([ARCH-061](05-system-architecture.md#arch-061), [OPS-061](11-deployment-operations-and-support.md#ops-061); [OQ-QA-8](#8-open-questions)); and on demand by the platform operator (any network) and by administrators (their own network). A failure MUST raise the alert defined in [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md), and an operational test MUST show that a corrupted test instance ([QA-044](#qa-044)) raises it.
 *Rationale:* [DOM-003](03-domain-model-and-mutual-credit-rules.md#dom-003) assigns the cadence to this document.
 
 ## 4. Test data and determinism
@@ -584,8 +601,8 @@ Notation: "A → B 40" is a transaction with payer A, payee B, amount 40. "seq n
 |---|---|
 | Actors | M, A, B, C |
 | Preconditions | F1; at T0 seed A → B 40 (seq 1). Proposals P1: B → C 10 (B proposer) and P2: A → B 5 (A proposer). |
-| Steps | 1. T0 + 1 day: M suspends B with reason. 2. B proposes B → A 5. 3. C attempts to accept P1. 4. M posts an administrator reversal of transaction 1, reason `not_delivered`. 5. M reinstates B. |
-| Expected outcome | After 1: B `Suspended`, B's account `Frozen`; P1 and P2 `Cancelled` with status reason `account_frozen`, actor `system`; A, B, C notified; B notified of suspension. Step 2: `account_not_active`. Step 3: `invalid_transition`. After 4: seq 2 `reversal`, debit B 40 (0), credit A 40 (0), authority `administrator` with reason; B and A notified ([DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014)). After 5: B `Active`, account `Active`; P1, P2 remain `Cancelled`. Final: A 0, B 0, C 0, NET 0. |
+| Steps | 1. T0 + 1 day: M suspends B with reason. 2. B (suspended) proposes B → A 5; separately C proposes C → B 5 to the `Frozen` account of B. 3. C attempts to accept P1. 4. M posts an administrator reversal of transaction 1, reason `not_delivered`. 5. M reinstates B. |
+| Expected outcome | After 1: B `Suspended`, B's account `Frozen`; P1 and P2 `Cancelled` with status reason `account_frozen`, actor `system`; A, B, C notified; B notified of suspension. Step 2: B's own proposal is rejected by the authorization gate with `forbidden` ([DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016), [DOM §5.1](03-domain-model-and-mutual-credit-rules.md#51-error-codes-raised-by-transaction-rules)); C's proposal to the `Frozen` counterparty account is rejected with `account_not_active`. Step 3: `invalid_transition`. After 4: seq 2 `reversal`, debit B 40 (0), credit A 40 (0), authority `administrator` with reason; B and A notified ([DOM-014](03-domain-model-and-mutual-credit-rules.md#dom-014)). After 5: B `Active`, account `Active`; P1, P2 remain `Cancelled`. Final: A 0, B 0, C 0, NET 0. |
 | Invariants checked | DOM-014, DOM-016, DOM-020 |
 | Links | [DOM-024](03-domain-model-and-mutual-credit-rules.md#dom-024), [DOM-072](03-domain-model-and-mutual-credit-rules.md#dom-072), [DOM-108](03-domain-model-and-mutual-credit-rules.md#dom-108), [JRN-007](02-personas-roles-and-journeys.md#jrn-007) |
 
@@ -669,6 +686,58 @@ Notation: "A → B 40" is a transaction with payer A, payee B, amount 40. "seq n
 
 *Rationale:* the scenario volunteer operators will rely on in their worst week.
 
+<a id="e2e-018"></a>**E2E-018 — Network suspension by the operator, administrator correction, reinstatement.** (P0)
+
+| Field | Content |
+|---|---|
+| Actors | Platform operator, M, A, B |
+| Preconditions | F1; at T0 seed A → B 40 (seq 1). A has a `Proposed` transaction P1: A → B 5. |
+| Steps | 1. Operator suspends N1 with reason category `incident` and reason text. 2. A proposes A → B 10. 3. B attempts to accept P1. 4. M posts a `correction` adjustment of 5 from B to A with reason. 5. Operator reinstates N1 with reason. 6. A proposes A → B 10 and B accepts. |
+| Expected outcome | After 1: N1 `Suspended`, no balance changed, audit event with operator and reason; M, M2, A, B, C, D notified ([SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156)). Steps 2 and 3: `network_not_active`; P1 unchanged. After 4: seq 2 `adjustment`, debit B 5 (35), credit A 5 (−35), authority `administrator`, posted while `Suspended` ([DOM-016](03-domain-model-and-mutual-credit-rules.md#dom-016)); A and B notified. After 5: N1 `Active`; all members notified; audit event. Step 6: seq 3 posts, balances A −45, B 45. No operator-authored ledger event exists. |
+| Invariants checked | DOM-004, DOM-010, DOM-014, DOM-016 |
+| Links | [FR-005](04-functional-requirements.md#fr-005), [SEC-156](09-security-privacy-and-abuse-resistance.md#sec-156), [GOV-082](10-governance-and-network-operations.md#gov-082), [QA-064](#qa-064), [QA-051](#qa-051) |
+
+*Rationale:* suspension is containment that stops trading, changes no balance, and leaves corrections available.
+
+<a id="e2e-019"></a>**E2E-019 — Break-glass administrator grant.** (P0)
+
+| Field | Content |
+|---|---|
+| Actors | Operator 1, Operator 2, M, M2, A, B, C, D (N1); N3 with sole administrator M3 and Active member A3 |
+| Preconditions | F1 plus network N3 seeded through the generator ([QA-120](#qa-120)) in a state where its only administrator membership is not Active and A3 is the member designated by the network's written rule (state reached by seed data; the product path is owned by [GOV-054](10-governance-and-network-operations.md#gov-054)). Ledger of N1 and N3 recorded (last sequence numbers, digests). |
+| Steps | 1. Operator 1 starts a break-glass session on N1 and attempts the administrator grant to B. 2. Operator 1 starts a break-glass session on N3 and attempts the grant to A3 with a single operator. 3. Operator 1 proposes the grant to A3 with the recorded evidence; Operator 2 approves it. 4. Operator 1 attempts a ledger write and a bulk export in the session. |
+| Expected outcome | Step 1: `invalid_transition` because N1 has an Active administrator; no role change. Step 2: not performed; dual control is required even on a single-operator instance ([SEC-142](09-security-privacy-and-abuse-resistance.md#sec-142)). After 3: A3 holds an ordinary administrator role with no expiry; the session is time-boxed ([SEC-140](09-security-privacy-and-abuse-resistance.md#sec-140)); evidence record and audit events exist and are visible to N3 administrators; every Active member of N3 is notified, and administrators were notified at session start ([SEC-141](09-security-privacy-and-abuse-resistance.md#sec-141)). Step 4: both rejected. N1 and N3 last sequence numbers and digests are unchanged: no ledger write. |
+| Invariants checked | DOM-002, DOM-010, DOM-012, DOM-014 |
+| Links | [GOV-054](10-governance-and-network-operations.md#gov-054), [SEC-140](09-security-privacy-and-abuse-resistance.md#sec-140) to [SEC-144](09-security-privacy-and-abuse-resistance.md#sec-144), [PER-033](02-personas-roles-and-journeys.md#per-033), [QA-064](#qa-064) |
+
+*Rationale:* the operator's one write path must be narrow, shared, and visible.
+
+<a id="e2e-020"></a>**E2E-020 — Invitation acceptance by sender type.** (P0)
+
+| Field | Content |
+|---|---|
+| Actors | M, A, invitees E, G, H (no membership yet) |
+| Preconditions | F1 with [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115) `on` (v2, effective at T0), validity window 14 days ([DOM-099](03-domain-model-and-mutual-credit-rules.md#dom-099)). |
+| Steps | 1. M invites E; E accepts at T0 + 1 day. 2. A invites G; G accepts at T0 + 1 day. 3. M approves G. 4. A invites H; H accepts at T0 + 15 days. |
+| Expected outcome | After 1: E's membership `Active`, one member account at 0 with the default limit 100. After 2: G's membership `Pending`, no account is usable yet; administrators notified of the pending approval. After 3: G `Active` with one member account at 0. Step 4: `invitation_expired` with `expires_at`; no membership is created. A revoked invitation accepted later is rejected with `invalid_transition`. |
+| Invariants checked | DOM-015, DOM-004 |
+| Links | [DOM-095](03-domain-model-and-mutual-credit-rules.md#dom-095), [DOM-099](03-domain-model-and-mutual-credit-rules.md#dom-099), [DOM-115](03-domain-model-and-mutual-credit-rules.md#dom-115), [QA-051](#qa-051) |
+
+*Rationale:* an administrator's invitation is the approval; a member's is not.
+
+<a id="e2e-021"></a>**E2E-021 — Abuse report lifecycle.** (P0)
+
+| Field | Content |
+|---|---|
+| Actors | A, B, M, M2 |
+| Preconditions | F1; B has an `Active` listing L1 and B is not an administrator. |
+| Steps | 1. A reports L1 with category `spam` and text. 2. M closes the report as `Actioned` with a reason. 3. A reports B's second listing L2 and M2 closes the report as `Dismissed` with a reason. 4. B attempts to view the report and the reporter. |
+| Expected outcome | After 1: report `Open` in the administrators' queue; administrators notified; creation audited with report identifier and category but not the text; L1 still `Active` (no automatic penalty). After 2: `Actioned` with M as handler; A notified of the closure with the status but not the details. After 3: `Dismissed`; A notified. Step 4: `not_found`; the reporter is absent from every export of B. No balance or limit changed. |
+| Invariants checked | DOM-004, DOM-012 |
+| Links | [FR-068](04-functional-requirements.md#fr-068), [SEC-060](09-security-privacy-and-abuse-resistance.md#sec-060) to [SEC-065](09-security-privacy-and-abuse-resistance.md#sec-065) |
+
+*Rationale:* conduct reports are not ledger disputes and carry no automatic consequence.
+
 ## 7. Release readiness checklist
 
 <a id="qa-150"></a>**QA-150 — Release readiness sign-off.** (P0) A release MUST NOT be published until the Quality lead (or a delegate named in the release record) has confirmed every item below with a link to evidence, and the operations items in [11-deployment-operations-and-support.md](11-deployment-operations-and-support.md) are complete.
@@ -701,7 +770,7 @@ Notation: "A → B 40" is a transaction with payer A, payee B, amount 40. "seq n
 | OQ-QA-5 | Resolved: [DOM §5.1](03-domain-model-and-mutual-credit-rules.md#51-error-codes-raised-by-transaction-rules) now defines `window_closed`, `dispute_already_open`, `departure_blocked`, `closure_blocked`, and `policy_value_out_of_range` (limit above maximum). | None; kept for traceability. | Resolved |
 | OQ-QA-6 | Resolved: `self_dealing_not_allowed` now also covers initiating and approving the same adjustment ([DOM-043](03-domain-model-and-mutual-credit-rules.md#dom-043)). | None; kept for traceability. | Resolved |
 | OQ-QA-7 | Which screen reader and browser combinations are required for the manual pass? | Recommended: two combinations on two operating systems, one desktop and one mobile ([QA-092](#qa-092)). | UX owner with Quality lead |
-| OQ-QA-8 | How often does the verification job run in deployed instances? | Confirm at least every 24 hours plus after migrations and restores ([QA-116](#qa-116)). | Operations owner |
+| OQ-QA-8 | Resolved: [ARCH-061](05-system-architecture.md#arch-061), [OPS-061](11-deployment-operations-and-support.md#ops-061), and [QA-116](#qa-116) require verification at least every 24 hours and before and after migrations and restores. | None; kept for traceability. | Resolved |
 | OQ-QA-9 | How strict is the flaky-test policy outside ledger suites? | Confirm no automatic retry and a 5-working-day fix window ([QA-139](#qa-139)). | Quality lead |
 | OQ-QA-10 | Which vulnerability severity scale and waiver period apply? | Confirm CVSS ≥ 7.0 and 30-day waivers ([QA-134](#qa-134)). | Security reviewer |
 | OQ-QA-11 | Resolved: acceptance is evaluated under the policy in force at acceptance, so a lowered maximum fails with `invalid_amount` and the transaction stays `Proposed` ([DOM-022](03-domain-model-and-mutual-credit-rules.md#dom-022)). | None; kept for traceability. | Resolved |
@@ -712,3 +781,4 @@ Notation: "A → B 40" is a transaction with payer A, payee B, amount 40. "seq n
 | Date | Change |
 |---|---|
 | 2026-11-11 | Initial draft. |
+| 2026-11-11 | Consistency review fixes. |
