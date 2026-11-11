@@ -127,7 +127,7 @@ required and is stored with the change.
 | Largest single trade | Upper bound for one trade. |
 | Sign-up grant | See above. Applies to members who join after the change. |
 | Proposal expiry (days) | After this many days an unanswered proposal expires. |
-| Dispute window (days) | How long after completion a trade can be disputed. |
+| Dispute window (days) | How long after completion a trade can be disputed. Each trade's deadline is fixed when it completes, so a change applies only to trades completed after it takes effect. |
 | Limit warning (days, 0 to disable) | Stored in the policy but not used yet. |
 | Dispute response period (days, 0 for none) | How long the other party has to answer a dispute before a decision may be recorded without a response. Default 7, up to 90. |
 | Re-review window (days) | How long after a decision a party may ask for the one re-review. Default 14, 1 to 365. |

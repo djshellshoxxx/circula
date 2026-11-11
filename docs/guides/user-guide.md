@@ -160,7 +160,9 @@ nothing happens automatically.
 ## 6. Disputes
 
 If a completed trade went wrong you can raise a dispute from the trade page (**Raise a dispute**), within the network's
-dispute window (30 days after completion by default). Only the two people in the trade can open one.
+dispute window (30 days after completion by default). The deadline is fixed when the trade completes, and the dispute
+form shows it: a later change to the network's rules does not shorten or lengthen it. Only the two people in the trade
+can open one.
 
 1. Choose a reason (not delivered, not as described or poor quality, wrong amount, I did not agree to this trade, or
    something else) and describe what went wrong (up to 2000 characters). Choose **Review dispute**.

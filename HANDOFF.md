@@ -1,5 +1,32 @@
 # Circula handoff
 
+## 2026-11-11: beta consolidation (current)
+
+Branch `claude/circula-beta-completion-1npjw6`, a draft PR into `main`. It is the integration branch: it starts from
+`claude/gracious-ptolemy-dscc7v@3c2a577` (PR #30) and merges PRs #21–#28, part of #13 and four preserved WIP
+slices. Read these first:
+
+- [docs/plans/branch-consolidation-report.md](docs/plans/branch-consolidation-report.md): every branch and the decision on it.
+- [docs/plans/circula-completion-matrix.md](docs/plans/circula-completion-matrix.md): feature states with evidence, and the dependency graph.
+- [docs/security/security-review.md](docs/security/security-review.md): findings BR-01..BR-06.
+- [docs/releases/beta-readiness-report.md](docs/releases/beta-readiness-report.md): exact SHA, commands and results, blockers.
+
+Done: C-09 policy ETag fix; DOM-017/DAT-051 dispute deadline fixed at completion (migration 0016); beta ledger and
+session tests; release workflow gates; e2e WCAG/contrast/flow coverage (578 tests); lint at 0 issues.
+
+Next, in order:
+1. Owner: review and merge this PR into `main`, then close the PRs it supersedes (see the consolidation report).
+2. Export slice: fix review findings BR-06 (bound in-flight bytes, configurable spool directory, document the
+   manifest field), then integrate.
+3. Rebase web-ux, arch-guards and sec-ops-docs onto this branch, review them, integrate.
+4. CI: cut duplicate runs; move the macOS/Windows matrix to main or nightly (measure first).
+5. BR-04: drop admin full-export artefacts on member erasure. BR-05: timing check for enumeration.
+6. Owner gates below; independent security review (SEC-033); manual screen-reader run.
+
+---
+
+## Earlier handoff (2026-11-04, kept for history)
+
 Updated 2026-11-04. Owned branch: `claude/happy-noether-444cum`, draft PR
 https://github.com/djshellshoxxx/circula/pull/19 (base `main`, which holds prompts only).
 Started from the product tip `codex/circula-noscript-qa@ba57512`, which contains the #17 → #18
