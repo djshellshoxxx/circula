@@ -32,6 +32,9 @@ type MFARepo interface {
 	// DeleteDeadMFAChallenges removes the person's challenges that expired by cutoff or were used.
 	// DeleteMFAChallengesOf removes every challenge of the person, used or not (SA2-13).
 	DeleteMFAChallengesOf(personID string) error
+	// DeleteAllMFAChallenges removes every pending or used challenge of every
+	// person (emergency sign-out, SEC-027).
+	DeleteAllMFAChallenges() error
 	DeleteDeadMFAChallenges(personID string, cutoff time.Time) error
 
 	InsertNotice(n *domain.SecurityNotice) error

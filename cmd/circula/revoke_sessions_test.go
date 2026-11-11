@@ -84,6 +84,20 @@ func TestRevokeSessionsCommand(t *testing.T) {
 			t.Errorf("%v: code %d, want usage error", args, code)
 		}
 	}
+	// An unquoted multi-word reason must not silently drop the flags after it
+	// (the scope would widen to every person, or the rotation be skipped).
+	for _, args := range [][]string{
+		{"revoke-sessions", "-database", db, "-reason", "lost", "laptop", "-login", "founder01"},
+		{"revoke-sessions", "-database", db, "-state-dir", dir, "-reason", "incident", "7", "-rotate-web-key"},
+	} {
+		errOut.Reset()
+		if code := run(args, &out, &errOut); code != exitUsage || !strings.Contains(errOut.String(), "unexpected arguments") {
+			t.Errorf("%v: code %d, stderr %q; want usage error naming the extra arguments", args, code, errOut.String())
+		}
+	}
+	if k, err := readWebKey(filepath.Join(dir, webKeyFile)); err != nil || !bytes.Equal(k, oldKey) {
+		t.Errorf("a refused run replaced the web key (err %v)", err)
+	}
 	if code := run([]string{"revoke-sessions", "-database", db, "-reason", "lost laptop", "-login", "ghost"}, &out, &errOut); code != exitFailure {
 		t.Errorf("unknown login: code %d", code)
 	}

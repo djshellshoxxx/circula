@@ -60,7 +60,7 @@ type Limits struct {
 	PasswordCheck Limit // wrong current passwords and second-factor codes of a signed-in person; default 5 per 10 minutes
 	Register      Limit // account creations per client address; default 10 per minute
 	Setup         Limit // wrong setup secrets per client address; default 10 per 10 minutes
-	Join          Limit // join requests and invitation acceptances per person and per address; default 10 per 10 minutes
+	Join          Limit // join requests on a network's join page, per person and per address; default 10 per 10 minutes (invitation acceptance is not counted here)
 }
 
 // DefaultLimits are the limits used for zero fields of Options.Limits.

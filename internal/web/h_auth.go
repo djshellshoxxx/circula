@@ -280,6 +280,9 @@ func (s *server) joinInvitePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	p := &page{Title: "Accept your invitation", D: s.inviteData(r, tok), V: formValues(r)}
 	m, err := s.svc.RedeemInvitationTerms(r.Context(), c.actor, tok, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
+		if s.networkFull(w, r, err, "join", p) {
+			return
+		}
 		cc := &rc{s: s, ctx: r.Context(), Net: &domain.Network{}}
 		switch domain.CodeOf(err) {
 		case domain.CodeNotFound, domain.CodeInvalidState, domain.CodeForbidden:
@@ -296,6 +299,25 @@ func (s *server) joinInvitePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	s.afterJoin(w, r, c, m)
+}
+
+// networkFull renders the per-network membership limit refusal (SEC-006,
+// network-join-limit) as a throttled response: 429 with Retry-After, not the
+// generic validation refusal, whose sign-in wording ("wait a minute") would be
+// wrong for a window of hours. It reports whether err was that refusal; the
+// join services return rate-limited for nothing else.
+func (s *server) networkFull(w http.ResponseWriter, r *http.Request, err error, tpl string, p *page) bool {
+	if domain.CodeOf(err) != domain.CodeRateLimited {
+		return false
+	}
+	secs := int(s.svc.NetworkJoinWindow().Seconds())
+	if secs < 1 {
+		secs = 60
+	}
+	w.Header().Set("Retry-After", strconv.Itoa(secs))
+	p.Summary = "Not sent. This network is not accepting new members right now. Try again later. Nothing changed."
+	s.render(w, r, nil, tpl, http.StatusTooManyRequests, p)
+	return true
 }
 
 func (s *server) afterJoin(w http.ResponseWriter, r *http.Request, c *rc, m *domain.Member) {
@@ -342,6 +364,9 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	m, err := s.svc.JoinNetworkTerms(r.Context(), c.actor, info.ID, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
 		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r)}
+		if s.networkFull(w, r, err, "joinnet", p) {
+			return
+		}
 		cc := &rc{s: s, ctx: r.Context(), Net: &domain.Network{}}
 		if sum, fe, ok := cc.refuse(err); ok {
 			p.Summary, p.Errors = sum, fe

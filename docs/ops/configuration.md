@@ -36,7 +36,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `rate-password-check` | `CIRCULA_RATE_PASSWORD_CHECK` | `5/10m` | no | Web: wrong current passwords and second-factor codes entered by a signed-in person (password change, new recovery codes, two-step sign-in settings). |
 | `rate-register` | `CIRCULA_RATE_REGISTER` | `10/1m` | no | Web: account creations per client address. |
 | `rate-setup` | `CIRCULA_RATE_SETUP` | `10/10m` | no | Web: wrong setup secrets per client address. |
-| `rate-join` | `CIRCULA_RATE_JOIN` | `10/10m` | no | Web: join requests and invitation acceptances, per person and per client address (FR-012). `Retry-After` follows the window. |
+| `rate-join` | `CIRCULA_RATE_JOIN` | `10/10m` | no | Web: join requests on a network's join page, per person and per client address (FR-012). `Retry-After` follows the window. Invitation acceptance is not counted here: it is limited only by `network-join-limit` (web and API) and the API limits below. |
 | `api-rate-principal` | `CIRCULA_API_RATE_PRINCIPAL` | `600` | no | API: requests per minute per signed-in person or token (API-038). |
 | `api-rate-address` | `CIRCULA_API_RATE_ADDRESS` | `1200` | no | API: requests per minute per client address. |
 | `network-join-limit` | `CIRCULA_NETWORK_JOIN_LIMIT` | `off` | no | New memberships per network (invitation redemptions and join requests together, web and API), as `count/window` such as `50/24h`; `off` or `0` disables (SEC-006). |

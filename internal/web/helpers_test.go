@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/testutil"
 )
 
@@ -34,7 +35,13 @@ func newWorld(t *testing.T) *world { return newWorldWith(t, nil) }
 // newWorldWith is newWorld with a hook to adjust the handler options.
 func newWorldWith(t *testing.T, tune func(*Options)) *world {
 	t.Helper()
-	env := testutil.NewEnv(t)
+	return newWorldCfg(t, nil, tune)
+}
+
+// newWorldCfg is newWorldWith with a hook to adjust the service Config too.
+func newWorldCfg(t *testing.T, mod func(*service.Config), tune func(*Options)) *world {
+	t.Helper()
+	env := testutil.NewEnvConfig(t, nil, mod)
 	w := &world{env: env}
 	w.admin = env.Person("admin@example.org")
 	w.net, w.adminM = env.Network(w.admin, "town", nil)

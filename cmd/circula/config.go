@@ -61,7 +61,7 @@ var settingDefs = []settingDef{
 	{key: "rate-password-check", def: "5/10m", help: "web: wrong current passwords and second-factor codes entered by a signed-in person (password change, recovery codes, two-step settings), as count/window (SEC-006)"},
 	{key: "rate-register", def: "10/1m", help: "web: account creations per client address, as count/window (SEC-006)"},
 	{key: "rate-setup", def: "10/10m", help: "web: wrong setup secrets per client address, as count/window (SEC-006)"},
-	{key: "rate-join", def: "10/10m", help: "web: join requests and invitation acceptances per person and per client address, as count/window (SEC-006, FR-012)"},
+	{key: "rate-join", def: "10/10m", help: "web: join requests on a network's join page, per person and per client address, as count/window (SEC-006, FR-012); invitation acceptance is limited by network-join-limit and the API limits"},
 	{key: "api-rate-principal", def: "600", help: "API: requests per minute per signed-in person or token (API-038, SEC-006)"},
 	{key: "api-rate-address", def: "1200", help: "API: requests per minute per client address (API-038, SEC-006)"},
 	{key: "network-join-limit", def: "off", help: "new memberships (invitation redemptions and join requests) per network, as count/window such as 50/24h; off disables (SEC-006)"},

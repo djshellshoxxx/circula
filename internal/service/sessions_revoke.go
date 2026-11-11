@@ -15,6 +15,10 @@ type RevokeSessionsInput struct {
 	Login string
 	// Reason is mandatory and recorded in the audit event.
 	Reason string
+	// WebKeyRotated records in the audit event that the caller replaces the
+	// web signing key in the same operation (circula revoke-sessions
+	// -rotate-web-key). The service does not touch the key itself.
+	WebKeyRotated bool
 }
 
 // RevokeAllSessions is the operator's emergency sign-out (SEC-027, OPS-010):
@@ -50,8 +54,20 @@ func (s *Service) RevokeAllSessions(ctx context.Context, actor domain.Actor, in 
 			return err
 		}
 		n = c
+		// A pending second-factor challenge is a 5-minute bearer value that
+		// turns into a session; the other revocation paths drop them too
+		// (SA2-13), so an emergency sign-out must not leave them usable.
+		if personID != "" {
+			err = tx.DeleteMFAChallengesOf(personID)
+		} else {
+			err = tx.DeleteAllMFAChallenges()
+		}
+		if err != nil {
+			return err
+		}
 		return s.auditPlatform(tx, actor, auditEntry{Type: domain.ActorOperator, Action: domain.ActSessionsRevoked,
-			TargetType: target, TargetID: personID, Reason: reason, After: map[string]any{"revoked": c, "scope": scope}})
+			TargetType: target, TargetID: personID, Reason: reason,
+			After: map[string]any{"revoked": c, "scope": scope, "web_key_rotated": in.WebKeyRotated}})
 	})
 	return n, err
 }
@@ -76,8 +92,8 @@ func (s *Service) roleLifetimesSet() bool {
 // sessionLifetimes returns the idle and absolute session lifetimes for
 // personID (SEC-003, DEC-005): the member values, shortened to the
 // administrator or reviewer values when the person holds that role in any
-// network where they are not departed. Without role-specific values it does
-// no lookup.
+// network where they are not departed, including a live break-glass grant.
+// Without role-specific values it does no lookup.
 func (s *Service) sessionLifetimes(tx store.Tx, personID string) (idle, maxAge time.Duration, err error) {
 	idle, maxAge = s.cfg.SessionIdle, s.cfg.SessionMax
 	if !s.roleLifetimesSet() {
@@ -90,6 +106,12 @@ func (s *Service) sessionLifetimes(tx store.Tx, personID string) (idle, maxAge t
 	for _, m := range ms {
 		if m.Status == domain.MemberDeparted {
 			continue
+		}
+		// Roles granted through break-glass pass admin checks like assigned
+		// ones (applyBreakGlassRoles), so they shorten the lifetime too; an
+		// error fails closed.
+		if err := s.applyBreakGlassRoles(tx, m); err != nil {
+			return 0, 0, err
 		}
 		if m.HasRole(domain.RoleAdmin) {
 			idle, maxAge = min(idle, s.cfg.AdminSessionIdle), min(maxAge, s.cfg.AdminSessionMax)

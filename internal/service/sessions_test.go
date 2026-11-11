@@ -174,7 +174,7 @@ func TestRevokeAllSessions(t *testing.T) {
 		WHERE action = ? ORDER BY seq DESC LIMIT 1`, domain.ActSessionsRevoked).Scan(&typ, &reason, &after, &netID); err != nil {
 		t.Fatal(err)
 	}
-	if typ != string(domain.ActorOperator) || reason != "web key rotation" || after != `{"revoked":2,"scope":"all"}` || netID != "" {
+	if typ != string(domain.ActorOperator) || reason != "web key rotation" || after != `{"revoked":2,"scope":"all","web_key_rotated":false}` || netID != "" {
 		t.Errorf("audit event: %s %q %s net=%q", typ, reason, after, netID)
 	}
 	// signing in again works and yields a fresh, valid session

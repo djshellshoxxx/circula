@@ -65,7 +65,7 @@ func readWebKey(path string) ([]byte, error) {
 		return nil, fmt.Errorf("web key file %s is not a regular file", path)
 	}
 	if runtime.GOOS != "windows" && fi.Mode().Perm()&0o077 != 0 {
-		return nil, fmt.Errorf("web key file %s is readable by group or others (mode %o); chmod 600 it, or delete it to sign everyone out and start a new key", path, fi.Mode().Perm())
+		return nil, fmt.Errorf("web key file %s is readable by group or others (mode %o); chmod 600 it, or replace it with `circula revoke-sessions -reason <text> -rotate-web-key` (deleting it does not end sessions)", path, fi.Mode().Perm())
 	}
 	b, err := os.ReadFile(path)
 	if err != nil {
@@ -73,7 +73,7 @@ func readWebKey(path string) ([]byte, error) {
 	}
 	key, err := base64.StdEncoding.DecodeString(strings.TrimSpace(string(b)))
 	if err != nil || len(key) != webKeyLen {
-		return nil, fmt.Errorf("web key file %s is corrupt (expected %d base64-encoded bytes); delete it to sign everyone out and start a new key", path, webKeyLen)
+		return nil, fmt.Errorf("web key file %s is corrupt (expected %d base64-encoded bytes); replace it with `circula revoke-sessions -reason <text> -rotate-web-key` (deleting it does not end sessions)", path, webKeyLen)
 	}
 	return key, nil
 }

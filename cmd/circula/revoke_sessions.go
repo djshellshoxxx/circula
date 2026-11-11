@@ -30,13 +30,21 @@ func init() {
 func cmdRevokeSessions(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 	var login, reason string
 	var rotate bool
-	cfg, _, code, done := resolveFlags("revoke-sessions", args, stderr, func(fs *flag.FlagSet) {
+	cfg, rest, code, done := resolveFlags("revoke-sessions", args, stderr, func(fs *flag.FlagSet) {
 		fs.StringVar(&login, "login", "", "only end this person's sessions (default: every person)")
 		fs.StringVar(&reason, "reason", "", "why it is done, recorded in the audit log (required)")
 		fs.BoolVar(&rotate, "rotate-web-key", false, "also replace the web signing key in state-dir (not with -login)")
 	})
 	if done {
 		return code
+	}
+	// flag stops at the first bare word, so an unquoted reason would silently
+	// drop -login or -rotate-web-key after it and widen or weaken the
+	// operation. Refuse before anything is revoked.
+	if len(rest) != 0 {
+		fmt.Fprintln(stderr, "usage: circula revoke-sessions -reason <text> [-login <login> | -rotate-web-key]")
+		fmt.Fprintf(stderr, "circula: revoke-sessions: unexpected arguments %q (quote a reason with spaces)\n", rest)
+		return exitUsage
 	}
 	if reason == "" || (rotate && login != "") {
 		fmt.Fprintln(stderr, "usage: circula revoke-sessions -reason <text> [-login <login> | -rotate-web-key]")
@@ -60,7 +68,7 @@ func cmdRevokeSessions(ctx context.Context, args []string, stdout, stderr io.Wri
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	n, err := svc.RevokeAllSessions(ctx, domain.SystemActor("cli-revoke-sessions"), service.RevokeSessionsInput{Login: login, Reason: reason})
+	n, err := svc.RevokeAllSessions(ctx, domain.SystemActor("cli-revoke-sessions"), service.RevokeSessionsInput{Login: login, Reason: reason, WebKeyRotated: rotate})
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: revoke-sessions: %v\n", err)
 		return exitFailure
@@ -116,5 +124,22 @@ func rotateWebKey(stateDir string) error {
 	if err := tmp.Close(); err != nil {
 		return err
 	}
-	return os.Rename(tmp.Name(), filepath.Join(stateDir, webKeyFile))
+	if err := os.Rename(tmp.Name(), filepath.Join(stateDir, webKeyFile)); err != nil {
+		return err
+	}
+	return syncDir(stateDir)
+}
+
+// syncDir makes a rename in dir durable, so a crash cannot bring the old key
+// back. Directories cannot be synced on Windows; there it is a no-op.
+func syncDir(dir string) error {
+	if runtime.GOOS == "windows" {
+		return nil
+	}
+	d, err := os.Open(dir) //nolint:gosec // G304: dir is the operator-configured state directory
+	if err != nil {
+		return err
+	}
+	defer func() { _ = d.Close() }()
+	return d.Sync()
 }

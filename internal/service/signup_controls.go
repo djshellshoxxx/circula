@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
 )
@@ -23,6 +25,15 @@ func (s *Service) checkNetworkJoinLimit(tx store.Tx, netID string) error {
 		return domain.Errf(domain.CodeRateLimited, "this network is not accepting more members right now; try again later")
 	}
 	return nil
+}
+
+// NetworkJoinWindow is the window of the per-network membership limit, or 0
+// when the limit is off. Adapters use it for Retry-After on a refusal.
+func (s *Service) NetworkJoinWindow() time.Duration {
+	if s.cfg.NetworkJoinLimit <= 0 {
+		return 0
+	}
+	return s.cfg.NetworkJoinWindow
 }
 
 // openGrantRisk reports whether p combines open join mode with a sign-up grant.
