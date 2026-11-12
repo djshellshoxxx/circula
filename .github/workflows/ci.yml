@@ -1,15 +1,24 @@
 name: ci
 
+# Every PR runs the Linux gate (lint, vulncheck, race tests, build, repro, fuzz, contract, e2e).
+# push is limited to main so a PR branch is not tested twice for the same commit. The slow
+# macOS and Windows matrix (job test-cross) runs on main pushes, nightly and on demand only.
 on:
   push:
+    branches: [main]
   pull_request:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # One group per PR (or per ref for push/schedule/dispatch). Only superseded PR runs are cancelled,
+  # so back-to-back main pushes each keep their cross-OS run.
+  group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   lint:
@@ -53,13 +62,11 @@ jobs:
   test:
     name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    # macOS Intel's SQLite-heavy race suite exceeded Go's 10m/package default.
-    # Retain every test and race instrumentation; bound the slower runner explicitly.
-    timeout-minutes: ${{ matrix.os == 'macos-15-intel' && 45 || 30 }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-15-intel, windows-2022]
+        os: [ubuntu-24.04]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -69,8 +76,28 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: test with race detector
-        if: runner.os == 'Linux'
         run: go test -race -count=1 ./...
+
+  test-cross:
+    # Not run on pull requests (macOS race ~8 min, Windows slow). Runs on main pushes, nightly, manual dispatch.
+    if: github.event_name != 'pull_request'
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    # macOS Intel's SQLite-heavy race suite exceeded Go's 10m/package default.
+    # Retain every test and race instrumentation; bound the slower runner explicitly.
+    timeout-minutes: ${{ matrix.os == 'macos-15-intel' && 45 || 30 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15-intel, windows-2022]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
       - name: test with race detector (macOS Intel, bounded parallelism)
         if: runner.os == 'macOS'
         # Keep the complete race suite and every regression. The longer Go per-package

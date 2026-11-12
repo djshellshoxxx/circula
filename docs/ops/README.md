@@ -11,6 +11,7 @@ This guide covers running a Circula instance. Specifications it implements: [`do
 | [hardening.md](hardening.md) | Hardened systemd unit, container recipe, reproducible builds |
 | [rpo-rto.md](rpo-rto.md) | Recovery point and recovery time objectives (ARC-016, OPS-034) |
 | [staging-refresh.md](staging-refresh.md) | Refresh an existing hosted staging instance with synthetic data and record the result |
+| [ci.md](ci.md) | Which CI jobs run on pull requests, on main and nightly |
 
 | [onion-i2p.md](onion-i2p.md) | Tor onion service and I2P hosting guidance (not yet supported by the code) |
 
