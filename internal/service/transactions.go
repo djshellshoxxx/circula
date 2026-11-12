@@ -382,6 +382,14 @@ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit
 				Before: map[string]any{"status": "proposed"}, After: map[string]any{"status": "expired"}}); err != nil {
 				return err
 			}
+			// QA-019 / OPS-028: both parties hear of the expiry; the dedupe key
+			// keeps a re-run of the job from sending a second notice (OPS-027).
+			for _, m := range []string{t.PayerMemberID, t.PayeeMemberID} {
+				if err := s.notify(tx, t.NetworkID, m, NotifTradeExpired, "A trade proposal expired",
+					"The proposal was not answered in time and is closed. Nothing was posted.", "/trades/"+t.ID, "expired:"+t.ID); err != nil {
+					return err
+				}
+			}
 			n++
 		}
 		return nil
