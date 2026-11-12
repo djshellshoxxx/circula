@@ -55,9 +55,9 @@ Summary for the historical implementation snapshot: built 38, not built 3, requi
 | DAT-030 | P1 | built | Per-network hash chain with head; unkeyed (DEC-044) |
 | DAT-031 | P0 | built | Audit excludes secrets and tokens |
 | DAT-032 | P1 | partial | Audit export scope exists; format identical to ledger export not checked |
-| DAT-033 | P0 | partial | Member view of own audit exists in service; no member UI or API |
+| DAT-033 | P0 | built | Member own-audit view in API (`GET /api/v1/audit-events`) and web (`my_audit.html`). Re-checked 2026-11-12 |
 | DAT-034 | P0 | built | Admin audit read is itself audited |
-| DAT-035 | P0 | partial | Reviewer audit scope in service; no reviewer UI |
+| DAT-035 | P0 | built | Reviewer scope served by the same API route and web view (`h_audit_scoped.go`). Re-checked 2026-11-12 |
 | DAT-036 | P0 | built | No operator read path to audit |
 | DAT-037 | P0 | built | CSV and JSON export with manifest and SHA-256 |
 | DAT-038 | P0 | built | Ledger export includes transactions, status, accounts, entries, audit |
@@ -69,9 +69,9 @@ Summary for the historical implementation snapshot: built 38, not built 3, requi
 | DAT-044 | P0 | built | Post-migration verification gates serving |
 | DAT-045 | P1 | partial | Expand-then-contract is a practice; not enforced by tests |
 | DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
-| DAT-047 | P0 | not built | No 10,000-transaction fixture and no migration from prior released schema |
+| DAT-047 | P0 | built | Golden v1 fixture, 10,000 transactions across 60 members, migrated to the current schema with the check passing (`internal/store/golden_migration_test.go`); no released schema exists yet, so v1 stands in. Re-checked 2026-11-12 |
 | DAT-048 | P1 | not built | Migration duration not recorded |
-| DAT-049 | P0 | required unimplemented correction | Decimal scale lock includes any persisted scaled monetary value or proposal, enforced atomically with writes |
+| DAT-049 | P0 | built | Scale stored atomically at creation and locked (`TestNetworkCreationStoresScaleAtomically`, `TestDecimalsLockedWhateverIsStored`, `TestDecimalsLockUnderConcurrentWrites`); legacy scale changes reported, not rewritten (`decimals_legacy_test.go`). Re-checked 2026-11-12 |
 | DAT-050 | P1 | built (2026-10-28, unreviewed) | `entries.posted_at <= as_of` sum and high-water `ledger_seq` in one view transaction (`SumEntriesAsOf`, `Service.HistoricalBalance`); tests in `internal/service/histbal_test.go` |
 | DAT-051 | P0 | built | `transactions.dispute_deadline_at` and `dispute_policy_version` set at completion; migration 0016 backfills from the version with the highest number among those with `effective_at <= completed_at`, else aborts (`dispute_deadline_backfill_needs_owner_mapping`) (2026-11-11) |
 

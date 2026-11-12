@@ -40,7 +40,7 @@ CREATE TEMP TABLE dispute_deadline_backfill_check (
 INSERT INTO dispute_deadline_backfill_check(unmapped)
   SELECT COUNT(*) FROM transactions
   WHERE kind = 'trade' AND completed_at IS NOT NULL AND dispute_deadline_at IS NULL;
-DROP TABLE dispute_deadline_backfill_check;
+DROP TABLE dispute_deadline_backfill_check; -- allow-destructive: drops the temporary check table created above in this migration
 
 -- Once set, the deadline and its policy version never change.
 CREATE TRIGGER tx_dispute_deadline_immutable BEFORE UPDATE OF dispute_deadline_at, dispute_policy_version ON transactions
