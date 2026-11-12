@@ -49,3 +49,29 @@ func TestReversalsOf(t *testing.T) {
 		}
 	}
 }
+
+// TestReversalsOfResultLimit documents the UX-017 pagination boundary. A trade
+// with more than one page of one-unit partial reversals must not silently
+// return a successful but incomplete reversal list.
+func TestReversalsOfResultLimit(t *testing.T) {
+	if testing.Short() {
+		t.Skip("large reversal-history regression")
+	}
+	w := newWorld(t, nil)
+	orig := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 502)
+	for i := 0; i < 501; i++ {
+		_, err := w.Svc.ReverseTransaction(w.Ctx, w.admin, w.net.ID, service.ReverseInput{
+			TxID: orig.ID, Amount: 1, Reason: "partial reversal", IdempotencyKey: w.Key(),
+		})
+		if err != nil {
+			t.Fatalf("partial reversal %d: %v", i+1, err)
+		}
+	}
+	got, err := w.Svc.ReversalsOf(w.Ctx, w.a, w.net.ID, orig.ID)
+	if err != nil {
+		t.Fatalf("ReversalsOf: %v", err)
+	}
+	if len(got) != 501 {
+		t.Fatalf("ReversalsOf returned %d of 501 posted reversals without a truncation indicator", len(got))
+	}
+}
