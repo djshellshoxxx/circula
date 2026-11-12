@@ -31,3 +31,13 @@ Licence, undecided DEC policies (including DEC-014/A3-F02), independent security
 - GitHub compare API: `haiku/circula-consolidation` ahead 84, behind 0 relative to `claude/happy-noether-444cum`.
 - Paths above were returned as additions/modifications by that comparison.
 - **Not executed:** Go tests, browser tests, patch application, merge, deployment or release.
+
+## Focused source review: reversal linkage (UX-017)
+
+Inspected `internal/service/reversal_links.go`, `internal/service/reversal_links_test.go` and `internal/web/ux017_reversal_links_test.go` on the candidate branch.
+
+**Confirmed source behavior:** `ReversalsOf` opens the requested network with read scope, fetches the original transaction, checks `canSeeTx`, returns the same not-found for inaccessible/missing original transactions, queries reversal transactions by `OriginalTxID` and `KindReversal`, and sorts returned entries by ledger sequence then ID. Service regression covers two partial reversals, an unreversed trade, a reversal queried as original, an outsider, a missing transaction and a foreign administrator. Web regression covers original/reversal links, reason text and adjustment history.
+
+**Review finding UX-017-R1 (needs reproduction; not a verified defect):** `maxReversalLinks = 500` bounds the query, but `ReversalsOf` returns a successful result without an indication that additional matching reversals may have been omitted. If the domain permits more than 500 partial reversals of one transaction, History/detail could show an incomplete list. Before changing behavior, establish whether posting limits or minimum reversal amounts make this reachable; if reachable, add a regression with 501 reversals and implement explicit pagination or a documented truncation indicator. Do not silently increase the cap without considering response size and query cost.
+
+**Verification status:** static source review only; no Go or browser tests executed. No defect severity or release blocker assigned without reachability evidence.
