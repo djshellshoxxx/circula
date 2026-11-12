@@ -14,12 +14,12 @@ Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read
 
 Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). FR-054 below clarifies the required contract; it does not claim that the API or UI is implemented.
 
-Summary: built 52, not built 3, partial 10.
+Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, partial 3.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | FR-001 | P0 | built | Create network with policy; system account; audit |
-| FR-002 | P0 | partial | One-time setup secret; used flag is per process, so a restart re-enables it while the secret is set |
+| FR-002 | P0 | built | One-time setup secret; the used flag is stored, so a restart does not re-enable it (`TestSetupSecretUsedSurvivesRestart`). Re-checked 2026-11-12 |
 | FR-003 | P0 | built | Policy change within bounds, versioned and audited |
 | FR-004 | P0 | built | Setup to active once an admin exists |
 | FR-005 | P0 | built | Decimal scale fixed at network creation; every later change refused, immediate or with notice, before or after the first posting |
@@ -73,7 +73,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-078 | P1 | not built | Re-review of a decision not built |
 | FR-080 | P0 | built | Sweep: every command writes one audit event |
 | FR-081 | P0 | built | Audit event carries required fields |
-| FR-082 | P0 | partial | Admin reads full audit; member and reviewer views exist in service only |
+| FR-082 | P0 | built | Admin full audit; member and reviewer scoped views in API `GET /api/v1/audit-events` and web `h_audit_scoped.go` / `my_audit.html`. Re-checked 2026-11-12 |
 | FR-083 | P0 | built | No update or delete path; triggers |
 | FR-084 | P1 | built | Admin audit filters by action, actor, target, dates; paged |
 | FR-085 | P2 | built | Hash chain built ahead of P2 deferral (DEC-044); not keyed |
