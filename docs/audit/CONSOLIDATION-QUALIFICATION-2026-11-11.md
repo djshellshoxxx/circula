@@ -41,3 +41,11 @@ Inspected `internal/service/reversal_links.go`, `internal/service/reversal_links
 **Review finding UX-017-R1 (needs reproduction; not a verified defect):** `maxReversalLinks = 500` bounds the query, but `ReversalsOf` returns a successful result without an indication that additional matching reversals may have been omitted. If the domain permits more than 500 partial reversals of one transaction, History/detail could show an incomplete list. Before changing behavior, establish whether posting limits or minimum reversal amounts make this reachable; if reachable, add a regression with 501 reversals and implement explicit pagination or a documented truncation indicator. Do not silently increase the cap without considering response size and query cost.
 
 **Verification status:** static source review only; no Go or browser tests executed. No defect severity or release blocker assigned without reachability evidence.
+
+## Test-first continuation — reversal result boundary
+
+Added `TestReversalsOfResultLimit` in `internal/service/reversal_links_test.go` on the isolated PR #34 branch. The test attempts 501 one-unit reversals of a 502-unit original and expects a complete result. This is a deliberate regression test of the 500-row limit, **not a passing test**. It may first fail during reversal posting if another domain limit makes 501 partial reversals impossible; in that case the concern is unreachable under those conditions and must be reclassified. The test skips under `go test -short` to avoid imposing 501 postings on fast suites.
+
+Next: run `go test ./internal/service -run '^TestReversalsOfResultLimit$' -count=1 -timeout=15m` on the exact branch head. If it fails with 500 returned, add a bounded paginated store query or an explicit incomplete-result API contract, with focused and full regressions. If the posting itself is refused, document the domain limit instead. No runtime code change is justified until the failure mode is known.
+
+No Go tests were executed in the connector-only session. This draft PR is expected to be red if the truncation path is reachable; it must not be merged as-is.
