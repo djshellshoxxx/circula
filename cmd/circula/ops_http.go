@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/netip"
 	"os"
+	"regexp"
 	"runtime/debug"
 	"strings"
 	"sync/atomic"
@@ -282,18 +283,14 @@ func writeJSON(w http.ResponseWriter, code int, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 
-// validRequestID accepts a caller-supplied ID only when it is short and printable.
-func validRequestID(id string) bool {
-	if id == "" || len(id) > 128 {
-		return false
-	}
-	for _, c := range id {
-		if c < 0x21 || c > 0x7e {
-			return false
-		}
-	}
-	return true
-}
+// requestIDPattern is the caller-supplied X-Request-Id the edge keeps. It is
+// the form the JSON API and the UI accept (internal/api ridPattern,
+// internal/web reqIDPattern): an id they would replace must be replaced here
+// too, or the access log and the error "reference" disagree (SEC-020).
+var requestIDPattern = regexp.MustCompile(`^[A-Za-z0-9._-]{8,64}$`)
+
+// validRequestID accepts a caller-supplied ID only in requestIDPattern form.
+func validRequestID(id string) bool { return requestIDPattern.MatchString(id) }
 
 func newRequestID() string {
 	b := make([]byte, 12)

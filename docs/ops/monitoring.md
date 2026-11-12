@@ -12,8 +12,8 @@ Specifications: OPS-013 to OPS-015, OPS-027, OPS-032, OPS-033.
 | `/api/...` | per the API contract | The JSON API, served under `/api/v1` (not stripped). |
 | `/...` | per the UI | The web UI. |
 
-Every response carries `X-Request-Id`. A caller-supplied value is kept if it is short and printable. Otherwise the service
-generates one. Logs record the route template, status and duration. They never record query strings, headers or bodies.
+Every response carries `X-Request-Id`. A caller-supplied value is kept if it is 8 to 64 characters of letters, digits, `.`,
+`_` and `-`. Otherwise the service generates one, and the access log, the API and the UI all use that same id. Logs record the route template, status and duration. They never record query strings, headers or bodies.
 
 Do not expose `/metrics` through a reverse proxy. The service refuses `/metrics` requests that carry any proxy header
 (`X-Forwarded-For`, `Forwarded`, `X-Forwarded-Host`, `X-Forwarded-Proto`, `X-Real-IP`, `Via`) and requests whose peer is a

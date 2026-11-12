@@ -156,3 +156,55 @@ func TestAccessLogCarriesNoCredentials(t *testing.T) {
 		}
 	}
 }
+
+// SEC-020: the request id in the access log is the one the API and the UI
+// answer with (and show as the error "reference"). The edge used to keep any
+// printable id up to 128 bytes while the adapters accept only
+// [A-Za-z0-9._-]{8,64} and replace the rest, so the two disagreed.
+func TestRequestIDMatchesAcrossEdgeAndAdapters(t *testing.T) {
+	ctx := context.Background()
+	db := seedDatabase(t, t.TempDir())
+	st, err := store.Open(ctx, db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = st.Close() }()
+	cfg := testConfigFor(db)
+	svc, err := newService(st, cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var logs syncBuf
+	logger := newLogger(&Config{LogLevel: slog.LevelDebug, LogFormat: "json"}, &logs)
+	apiH, webH, err := newHandlers(svc, cfg, logger)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ops := &opsServer{cfg: &Config{MaxBodyBytes: 1 << 20, RequestTimeout: 5 * time.Second}, db: st.DB(), logger: logger, metrics: newMetrics(time.Now())}
+	ops.ready.Store(true)
+	h := ops.routes(apiH, webH)
+	for _, path := range []string{"/api/v1/me", "/login"} {
+		for _, sent := range []string{"abc-123", "req<12345678>", `quote"id-1234`, strings.Repeat("a", 65), "good-request-0001"} {
+			before := strings.Count(logs.String(), "\n")
+			req := httptest.NewRequest(http.MethodGet, path, nil)
+			req.Header.Set("X-Request-Id", sent)
+			rec := httptest.NewRecorder()
+			h.ServeHTTP(rec, req)
+			got := rec.Header().Get("X-Request-Id")
+			var logged []string
+			for _, line := range strings.Split(strings.TrimSpace(logs.String()), "\n")[before:] {
+				var e map[string]any
+				if json.Unmarshal([]byte(line), &e) == nil && e["msg"] == "request" {
+					rid, _ := e["request_id"].(string)
+					logged = append(logged, rid)
+				}
+			}
+			if len(logged) != 1 || logged[0] != got {
+				t.Errorf("%s with X-Request-Id %q: response id %q, access-log ids %q", path, sent, got, logged)
+			}
+			if sent == "good-request-0001" && got != sent {
+				t.Errorf("%s: a valid upstream id was replaced: %q", path, got)
+			}
+		}
+	}
+}

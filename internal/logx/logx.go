@@ -40,7 +40,7 @@ func New(l *slog.Logger) *slog.Logger {
 	if _, ok := l.Handler().(*handler); ok {
 		return l
 	}
-	return slog.New(&handler{inner: l.Handler()})
+	return slog.New(Wrap(l.Handler()))
 }
 
 // Wrap returns h behind the redacting, escaping handler. Wrapping twice adds
@@ -52,14 +52,20 @@ func Wrap(h slog.Handler) slog.Handler {
 	return &handler{inner: h}
 }
 
-type handler struct{ inner slog.Handler }
+// handler cleans every record before inner sees it. redactAll is set below a
+// WithGroup whose name is sensitive: the attributes in that group are the
+// credential's parts, so none of their values may pass.
+type handler struct {
+	inner     slog.Handler
+	redactAll bool
+}
 
 func (h *handler) Enabled(ctx context.Context, l slog.Level) bool { return h.inner.Enabled(ctx, l) }
 
 func (h *handler) Handle(ctx context.Context, r slog.Record) error {
 	out := slog.NewRecord(r.Time.UTC(), r.Level, Clean(r.Message), r.PC)
 	r.Attrs(func(a slog.Attr) bool {
-		out.AddAttrs(cleanAttr(a))
+		out.AddAttrs(h.clean(a))
 		return true
 	})
 	return h.inner.Handle(ctx, out)
@@ -68,13 +74,20 @@ func (h *handler) Handle(ctx context.Context, r slog.Record) error {
 func (h *handler) WithAttrs(as []slog.Attr) slog.Handler {
 	clean := make([]slog.Attr, len(as))
 	for i, a := range as {
-		clean[i] = cleanAttr(a)
+		clean[i] = h.clean(a)
 	}
-	return &handler{inner: h.inner.WithAttrs(clean)}
+	return &handler{inner: h.inner.WithAttrs(clean), redactAll: h.redactAll}
 }
 
 func (h *handler) WithGroup(name string) slog.Handler {
-	return &handler{inner: h.inner.WithGroup(Clean(name))}
+	return &handler{inner: h.inner.WithGroup(Clean(name)), redactAll: h.redactAll || sensitiveKey(name)}
+}
+
+func (h *handler) clean(a slog.Attr) slog.Attr {
+	if h.redactAll {
+		return slog.String(Clean(a.Key), Redacted)
+	}
+	return cleanAttr(a)
 }
 
 func cleanAttr(a slog.Attr) slog.Attr {

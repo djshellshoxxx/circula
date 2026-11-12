@@ -74,9 +74,11 @@ networks (by slug), and a timeline that every participant appends to. Use [Sever
   `circula maintenance -config ... on`.
 - **Security incident.** Limit the exposure first:
   - Revoke the access of an affected person: `circula reset-password -login NAME -reason ...` ends every session, API
-    token and recovery code of that person; `circula reset-mfa` also removes the second factor. This build has no
-    command that ends every session of the instance: if that is needed, keep `serve` stopped while the affected
-    people are reset one by one.
+    token and recovery code of that person; `circula reset-mfa` also removes the second factor.
+  - Sign everyone out when session cookies, the database file or the web signing key may have leaked: stop `serve`,
+    run `circula revoke-sessions -reason "..." -rotate-web-key`, start `serve` again
+    ([runbook.md](runbook.md#signing-everyone-out-emergency-revocation-sec-027-ops-010)). API tokens are not ended by
+    it; reset the affected people as above.
   - Rotate any secret that may be exposed: the six secrets in [configuration.md](configuration.md#secrets), the web
     signing key ([configuration.md](configuration.md#runtime-state-the-web-signing-key-sec-027)) and the TLS key. Read
     what each rotation invalidates there before rotating it.

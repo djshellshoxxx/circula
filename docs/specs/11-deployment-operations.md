@@ -49,7 +49,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-027 | P0 | built | Expiry, purge, verify and backup jobs idempotent; last run recorded in metrics |
 | OPS-028 | P0 | built | Expiry uses same service path; no entries |
 | OPS-029 | P1 | not built | No mail and no stored notices |
-| OPS-030 | P1 | partial | Severity levels in docs/ops/runbook.md; not linked from incident procedure |
+| OPS-030 | P1 | built | Levels, recommended targets and channels in docs/ops/incident-response.md (targets not approved, DEC-022); runbook and monitoring use the same levels (TestIncidentProcedureDocumented) |
 | OPS-031 | P1 | partial | Support boundary documented; break-glass not built |
 | OPS-032 | P0 | built | Structured JSON logs; log level needs restart |
 | OPS-033 | P0 | partial | Failure table documented; per-network freeze not built |

@@ -116,6 +116,23 @@ func TestSensitiveKeysRedacted(t *testing.T) {
 	}
 }
 
+// A logger scoped with WithGroup under a sensitive name ("session") holds the
+// credential's parts under neutral keys such as "id"; they were logged as is.
+func TestSensitiveWithGroupRedacted(t *testing.T) {
+	l, s := newJSON(t)
+	canary := "canary-Zq81-group-value"
+	l.WithGroup("session").With("id", canary).Info("event", "value", canary, slog.Group("inner", "x", canary))
+	l.WithGroup("request").WithGroup("csrf").Info("event", "v", canary)
+	l.WithGroup("request").Info("event", "route", "/kept")
+	out := s.String()
+	if strings.Contains(out, canary) {
+		t.Fatalf("value under a sensitive WithGroup reached the log:\n%s", out)
+	}
+	if !strings.Contains(out, `"route":"/kept"`) {
+		t.Errorf("neutral group was redacted:\n%s", out)
+	}
+}
+
 func TestNeutralKeysKept(t *testing.T) {
 	l, s := newJSON(t)
 	l.Info("request", "request_id", "abc12345", "route", "/api/", "status", 200, "duration_ms", int64(3), "footprint", "ok")
