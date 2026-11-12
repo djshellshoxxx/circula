@@ -49,3 +49,9 @@ Added `TestReversalsOfResultLimit` in `internal/service/reversal_links_test.go` 
 Next: run `go test ./internal/service -run '^TestReversalsOfResultLimit$' -count=1 -timeout=15m` on the exact branch head. If it fails with 500 returned, add a bounded paginated store query or an explicit incomplete-result API contract, with focused and full regressions. If the posting itself is refused, document the domain limit instead. No runtime code change is justified until the failure mode is known.
 
 No Go tests were executed in the connector-only session. This draft PR is expected to be red if the truncation path is reachable; it must not be merged as-is.
+
+## Implementation continuation — full reversal-history pagination
+
+Commit `d8e4e0baa62923333afc4ec27e004c186d960c37` changes `ReversalsOf` to iterate the existing `TxFilter.AfterID` keyset in 500-row pages. `internal/store/sqlite_tx.go` implements `AfterID` as `t.id < ?`, orders by `t.id DESC` and applies `limitOf(f.Limit)`. The loop appends each page and sorts the complete list by ledger sequence and ID. This avoids a schema or interface change and preserves the original access check before listing.
+
+The regression added in `fbdcfc1` exercises 501 one-unit reversals. **Validation pending:** no Go tests or CI result were observed at this commit. The regression could fail earlier if domain reversal rules forbid the fixture; diagnose that before declaring it green. Execute focused service tests, full Go tests and web regressions. The web UI may render a large list for very high reversal counts; consider a separate paginated presentation if profiling establishes a problem. No mainline merge or release is authorized.
