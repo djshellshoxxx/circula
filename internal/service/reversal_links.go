@@ -8,7 +8,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/store"
 )
 
-// maxReversalLinks bounds one ReversalsOf answer; it is the store's page maximum.
+// maxReversalLinks is the store page size, not the total reversal count.
 const maxReversalLinks = 500
 
 // ReversalsOf returns the reversals posted against transaction txID, oldest first, so
@@ -31,8 +31,25 @@ func (s *Service) ReversalsOf(ctx context.Context, actor domain.Actor, netID, tx
 		} else if !ok {
 			return domain.NotFound("transaction")
 		}
-		out, err = tx.ListTransactions(netID, store.TxFilter{OriginalTxID: t.ID, Kind: domain.KindReversal, Limit: maxReversalLinks})
-		return err
+		// ListTransactions is ordered by ID descending and caps each page at 500.
+		// Fetch every page before sorting by ledger sequence; otherwise an original
+		// with many small partial reversals silently loses history (UX-017).
+		cursor := ""
+		for {
+			page, err := tx.ListTransactions(netID, store.TxFilter{
+				OriginalTxID: t.ID, Kind: domain.KindReversal,
+				AfterID: cursor, Limit: maxReversalLinks,
+			})
+			if err != nil {
+				return err
+			}
+			out = append(out, page...)
+			if len(page) < maxReversalLinks {
+				break
+			}
+			cursor = page[len(page)-1].ID
+		}
+		return nil
 	})
 	if err != nil {
 		return nil, err
