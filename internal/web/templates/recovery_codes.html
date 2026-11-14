@@ -1,0 +1,16 @@
+{{define "content"}}
+{{if .D.Codes}}
+<p class="big">Your new recovery codes</p>
+<p><strong>This is the only time they are shown.</strong> Write them down or print them and keep them somewhere safe and separate from your password manager. Each code works once. Any codes you had before no longer work.</p>
+<ol class="codes">{{range .D.Codes}}<li><code>{{.}}</code></li>{{end}}</ol>
+<p><a class="btn secondary" href="/account/recovery-codes">I have saved them</a></p>
+{{else}}
+<p>Recovery codes let you set a new password if you forget it, without email. You have <strong>{{.D.Remaining}}</strong> unused code{{if ne .D.Remaining 1}}s{{end}}.</p>
+<p>Making new codes replaces all the old ones. You need your current password.</p>
+<form method="post" action="/account/recovery-codes" novalidate>
+  {{template "csrf" .}}
+  {{template "field" dict "P" . "Name" "password" "Label" "Current password" "Type" "password" "Auto" "current-password" "Req" true}}
+  <div class="actions"><button type="submit">Make new recovery codes</button></div>
+</form>
+{{end}}
+{{end}}

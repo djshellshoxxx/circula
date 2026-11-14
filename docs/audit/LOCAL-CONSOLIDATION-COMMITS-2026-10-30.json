@@ -1,0 +1,13 @@
+{
+  "purpose": "Preserve exact local ordinary merge objects when publishing equivalent trees through the authenticated GitHub connector; reconstruct with git hash-object -t commit -w --stdin.",
+  "commits": [
+    {
+      "sha": "9aaa09724fd884c2e9afa49baa85f8d48b5fcd06",
+      "raw_commit": "tree a54acbde1b235efeeb86f85ae6e8f5685c39c5e3\nparent 827e651fe151f49659cc20aefe85d4af67bdaa97\nparent f4bfe6bc3f81c94b859abeae902ae862ea6e143e\nauthor Codex <codex@openai.com> 1793355650 +0100\ncommitter Codex <codex@openai.com> 1793355650 +0100\n\nMerge preserved development receipt into owned consolidation branch\n"
+    },
+    {
+      "sha": "f9bbf13650a721c75f3dbe7e4b3cd9420052d738",
+      "raw_commit": "tree f7c3981726f1187da19e5dfe950d9780b3751c7d\nparent 9aaa09724fd884c2e9afa49baa85f8d48b5fcd06\nparent 38a13a68ff7a5c4de97aab96634bf5c55ecf05de\nauthor Codex <codex@openai.com> 1793355966 +0100\ncommitter Codex <codex@openai.com> 1793355966 +0100\n\nMerge current consolidation plan and preserve source-labelled handoffs\n"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{{define "content"}}
+{{with .D}}
+<dl class="kv">
+  <dt>Member</dt><dd>{{.Name}}</dd>
+  <dt>Direction</dt><dd>{{.Dir}}</dd>
+  <dt>Amount</dt><dd>{{.Amount}} {{$.Unit}}s</dd>
+  <dt>Reason</dt><dd>{{.Reason}}</dd>
+  <dt>Their balance now</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>Their balance after</dt><dd>{{template "balance" .After}}</dd>
+</dl>
+{{end}}
+<form method="post" action="/n/{{.Slug}}/admin/adjust">
+  {{template "csrf" .}}{{template "idem" .}}
+  <input type="hidden" name="member_id" value="{{.Val "member_id"}}"><input type="hidden" name="direction" value="{{.Val "direction"}}">
+  <input type="hidden" name="amount" value="{{.Val "amount"}}"><input type="hidden" name="reason" value="{{.Val "reason"}}">
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Post adjustment</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+</form>
+{{end}}

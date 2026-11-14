@@ -1,0 +1,1225 @@
+From 4995130a51d27862e128add6d391264f10652f8c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:04:22 +0000
+Subject: [PATCH] web: reversal links, member references, leave export, refusal
+ coverage
+
+UX-017: History and trade detail link each reversal to the trade it
+reverses and give the original a "Reversed by ledger reference N (amount)"
+link per reversal, oldest first. Reversal and adjustment lines show their
+own reason. New read-only service.ReversalsOf applies GetTransaction's
+visibility (not-found otherwise).
+
+SEC-016: propose review, accept, decline and cancel confirmations show a
+stable member reference (last 8 alphanumerics of the member id,
+XXXX-XXXX) beside each display name.
+
+GOV-010: the leave page offers the member self-export (CSV/JSON) ahead of
+the leave form, also when departure is blocked.
+
+UX-021: validation messages name the field, keep the service detail and
+add a correction chosen by problem kind then field; every field the
+service can name has a plain label. approval-required (admin removal
+whose settlement exceeds the dual-control threshold) is now a form
+refusal instead of a "No access" page; field-less validation errors no
+longer point at fields that are not shown. Table test over every
+domain.Code.
+
+UX-049: Go tests render every page template and every GET route (anon,
+member, admin, error pages) and pin the footer Help link location.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/service/reversal_links.go         |  47 +++
+ internal/service/reversal_links_test.go    |  51 +++
+ internal/web/format.go                     |  65 ++++
+ internal/web/gov010_leave_export_test.go   |  45 +++
+ internal/web/refusal.go                    |  61 +++-
+ internal/web/sec016_member_ref_test.go     |  70 ++++
+ internal/web/templates/history.html        |  14 +-
+ internal/web/templates/leave.html          |   8 +
+ internal/web/templates/propose_review.html |   2 +-
+ internal/web/templates/trade_accept.html   |   4 +-
+ internal/web/templates/trade_confirm.html  |   4 +
+ internal/web/templates/trade_detail.html   |   2 +
+ internal/web/ux017_reversal_links_test.go  | 108 +++++++
+ internal/web/ux021_refusal_test.go         | 353 +++++++++++++++++++++
+ internal/web/ux049_help_link_test.go       | 162 ++++++++++
+ 15 files changed, 991 insertions(+), 5 deletions(-)
+ create mode 100644 internal/service/reversal_links.go
+ create mode 100644 internal/service/reversal_links_test.go
+ create mode 100644 internal/web/gov010_leave_export_test.go
+ create mode 100644 internal/web/sec016_member_ref_test.go
+ create mode 100644 internal/web/ux017_reversal_links_test.go
+ create mode 100644 internal/web/ux021_refusal_test.go
+ create mode 100644 internal/web/ux049_help_link_test.go
+
+diff --git a/internal/service/reversal_links.go b/internal/service/reversal_links.go
+new file mode 100644
+index 0000000..4edc3b4
+--- /dev/null
++++ b/internal/service/reversal_links.go
+@@ -0,0 +1,47 @@
++package service
++
++import (
++	"context"
++	"sort"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/store"
++)
++
++// maxReversalLinks bounds one ReversalsOf answer; it is the store's page maximum.
++const maxReversalLinks = 500
++
++// ReversalsOf returns the reversals posted against transaction txID, oldest first, so
++// an original line can link to what reversed it (UX-017). It only reads. Whoever may
++// see the original (GetTransaction) may see the list; anyone else, and any id from
++// another network, gets the same not-found as a missing id (SEC-009).
++func (s *Service) ReversalsOf(ctx context.Context, actor domain.Actor, netID, txID string) ([]*domain.Transaction, error) {
++	var out []*domain.Transaction
++	err := s.view(ctx, func(tx store.Tx) error {
++		p, err := s.open(tx, actor, netID, domain.ScopeRead)
++		if err != nil {
++			return err
++		}
++		t, err := tx.GetTransaction(netID, txID)
++		if err != nil {
++			return domain.NotFound("transaction")
++		}
++		if ok, err := canSeeTx(tx, p, t); err != nil {
++			return err
++		} else if !ok {
++			return domain.NotFound("transaction")
++		}
++		out, err = tx.ListTransactions(netID, store.TxFilter{OriginalTxID: t.ID, Kind: domain.KindReversal, Limit: maxReversalLinks})
++		return err
++	})
++	if err != nil {
++		return nil, err
++	}
++	sort.SliceStable(out, func(i, j int) bool {
++		if out[i].LedgerSeq != out[j].LedgerSeq {
++			return out[i].LedgerSeq < out[j].LedgerSeq
++		}
++		return out[i].ID < out[j].ID
++	})
++	return out, nil
++}
+diff --git a/internal/service/reversal_links_test.go b/internal/service/reversal_links_test.go
+new file mode 100644
+index 0000000..e3bbf07
+--- /dev/null
++++ b/internal/service/reversal_links_test.go
+@@ -0,0 +1,51 @@
++package service_test
++
++import (
++	"errors"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// UX-017: ReversalsOf lists what reversed a transaction, oldest first, to whoever may see
++// the original, and nothing to anyone else.
++func TestReversalsOf(t *testing.T) {
++	w := newWorld(t, nil)
++	orig := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 300)
++	plain := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 50)
++	r1 := tu.Must(w.Svc.ReverseTransaction(w.Ctx, w.admin, w.net.ID, service.ReverseInput{TxID: orig.ID, Amount: 100, Reason: "part", IdempotencyKey: w.Key()}))
++	r2 := tu.Must(w.Svc.ReverseTransaction(w.Ctx, w.admin, w.net.ID, service.ReverseInput{TxID: orig.ID, Reason: "rest", IdempotencyKey: w.Key()}))
++
++	for name, who := range map[string]domain.Actor{"payer": w.a, "payee": w.b, "admin": w.admin} {
++		got := tu.Must(w.Svc.ReversalsOf(w.Ctx, who, w.net.ID, orig.ID))
++		if len(got) != 2 || got[0].ID != r1.ID || got[1].ID != r2.ID {
++			t.Fatalf("%s: reversals = %v", name, got)
++		}
++		if got[0].OriginalTxID != orig.ID || got[0].Kind != domain.KindReversal || got[0].Amount != 100 || got[1].Amount != 200 {
++			t.Errorf("%s: unexpected reversal rows %+v %+v", name, got[0], got[1])
++		}
++		if none := tu.Must(w.Svc.ReversalsOf(w.Ctx, who, w.net.ID, plain.ID)); len(none) != 0 {
++			t.Errorf("%s: unreversed trade lists %d reversals", name, len(none))
++		}
++		if none := tu.Must(w.Svc.ReversalsOf(w.Ctx, who, w.net.ID, r1.ID)); len(none) != 0 {
++			t.Errorf("%s: a reversal lists %d reversals", name, len(none))
++		}
++	}
++
++	// A member who is not a party, a missing id and another network's administrator see the
++	// same not-found (SEC-009).
++	c, _ := w.Member(w.admin, w.net, "cid@example.org")
++	other := w.Person("boss@other.example")
++	w.Network(other, "elsewhere", nil)
++	for name, call := range map[string]func() error{
++		"outsider":      func() error { _, err := w.Svc.ReversalsOf(w.Ctx, c, w.net.ID, orig.ID); return err },
++		"missing":       func() error { _, err := w.Svc.ReversalsOf(w.Ctx, w.a, w.net.ID, "no-such-id"); return err },
++		"foreign admin": func() error { _, err := w.Svc.ReversalsOf(w.Ctx, other, w.net.ID, orig.ID); return err },
++	} {
++		if err := call(); !errors.Is(err, domain.ErrNotFound) {
++			t.Errorf("%s: err = %v, want not-found", name, err)
++		}
++	}
++}
+diff --git a/internal/web/format.go b/internal/web/format.go
+index b3ac761..054d7ce 100644
+--- a/internal/web/format.go
++++ b/internal/web/format.go
+@@ -92,6 +92,18 @@ type txRow struct {
+ 	Ledger    string
+ 	Kind      string
+ 	Counter   string
++	// UX-017: a reversal or adjustment line shows its own reason; a reversal links to the
++	// line it reverses (Original); an original links to each reversal posted against it
++	// ("Reversed by …"), oldest first.
++	Reason     string
++	Original   string
++	ReversedBy []txLink
++}
++
++// txLink is a link from one transaction line to a related one.
++type txLink struct {
++	ID   string
++	Text string
+ }
+ 
+ // names resolves member display names for one request. Names the request already holds are
+@@ -134,6 +146,43 @@ func (n names) lookup(id string) (string, bool) {
+ 	return name, true
+ }
+ 
++// reversals returns the reversals posted against transaction id, oldest first, under the
++// service's visibility rules. A failed lookup shows no links rather than failing the page.
++func (n names) reversals(id string) []*domain.Transaction {
++	if n.c == nil {
++		return nil
++	}
++	revs, err := n.c.s.svc.ReversalsOf(n.c.ctx, n.c.actor, n.c.netID(), id)
++	if err != nil {
++		return nil
++	}
++	return revs
++}
++
++// memberRef is the stable member reference shown beside a display name in confirmation
++// steps (SEC-016): display names are not unique, member ids are and never change. It is the
++// last eight letters or digits of the id, upper-cased and split in two ("0A1B-2C3D"), or ""
++// when there is no member (the network's own account).
++func memberRef(id string) string {
++	var b []byte
++	for i := 0; i < len(id); i++ {
++		if ch := id[i]; ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' {
++			b = append(b, ch)
++		}
++	}
++	if len(b) > 8 {
++		b = b[len(b)-8:]
++	}
++	ref := strings.ToUpper(string(b))
++	if len(ref) == 8 {
++		ref = ref[:4] + "-" + ref[4:]
++	}
++	return ref
++}
++
++// MemberRef gives templates memberRef for a member id.
++func (p *page) MemberRef(id string) string { return memberRef(id) }
++
+ func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label string, needsMe bool) {
+ 	switch t.Status {
+ 	case domain.TxProposed:
+@@ -202,6 +251,22 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
+ 	case domain.KindGrant:
+ 		prefix = "Sign-up grant: "
+ 	}
++	if t.Kind == domain.KindReversal || t.Kind == domain.KindAdjustment {
++		r.Reason = t.Reason
++	}
++	if t.Kind == domain.KindReversal {
++		r.Original = t.OriginalTxID
++	}
++	if t.ReversedTotal > 0 {
++		for _, rev := range n.reversals(t.ID) {
++			by := "a later posting"
++			if rev.LedgerSeq > 0 {
++				by = fmt.Sprintf("ledger reference %d", rev.LedgerSeq)
++			}
++			r.ReversedBy = append(r.ReversedBy, txLink{ID: rev.ID, Text: fmt.Sprintf("Reversed by %s (%s %s)", by,
++				domain.FormatAmount(rev.Amount, dec), unitFor(unit, rev.Amount, dec))})
++		}
++	}
+ 	if t.PayerMemberID == me.ID {
+ 		r.Counter = n.of(t.PayeeMemberID)
+ 		r.Text = fmt.Sprintf("%sYou paid %s %s %s", prefix, r.Counter, amt, u)
+diff --git a/internal/web/gov010_leave_export_test.go b/internal/web/gov010_leave_export_test.go
+new file mode 100644
+index 0000000..5449de9
+--- /dev/null
++++ b/internal/web/gov010_leave_export_test.go
+@@ -0,0 +1,45 @@
++package web
++
++import (
++	"net/url"
++	"strings"
++	"testing"
++)
++
++// GOV-010 (QA-023): the leave page offers the member's self-export (SEC-017) before the
++// departure completes, the offered form really downloads it, and it still works afterwards.
++func TestLeaveOffersSelfExport(t *testing.T) {
++	w := newWorld(t)
++	b := w.base()
++	exportForm := `<form method="post" action="` + b + `/export">`
++
++	al := w.browser(t)
++	al.login("alice@example.org")
++	f := al.get(b + "/leave")
++	al.mustContain(f, "Download your data first", exportForm, `name="format"`, "Download my data", `href="`+b+`/history"`)
++	if i, j := strings.Index(f.Body, exportForm), strings.Index(f.Body, `action="`+b+`/leave"`); i < 0 || j < 0 || i > j {
++		t.Errorf("the self-export is not offered ahead of the leave form (export at %d, leave at %d)", i, j)
++	}
++	for _, format := range []string{"csv", "json"} {
++		dl := al.post(b+"/export", f, url.Values{"format": {format}})
++		if dl.Status != 200 || dl.Header.Get("Content-Type") != "application/zip" || !strings.HasPrefix(dl.Body, "PK") {
++			t.Errorf("%s export from the leave page: status %d type %q", format, dl.Status, dl.Header.Get("Content-Type"))
++		}
++		if !strings.Contains(dl.Header.Get("Content-Disposition"), "-mine-"+format+".zip") {
++			t.Errorf("%s export is not the member self-export: %q", format, dl.Header.Get("Content-Disposition"))
++		}
++	}
++
++	// A member who cannot leave yet is offered the export too.
++	adm := w.browser(t)
++	adm.login("admin@example.org")
++	adm.mustContain(adm.get(b+"/leave"), "You cannot leave yet", exportForm, "Download my data")
++
++	// After leaving, the export the page promised is still there.
++	done := al.post(b+"/leave", f, url.Values{"confirm": {"1"}})
++	al.mustContain(done, "You have left")
++	h := al.get(b + "/history")
++	if dl := al.post(b+"/export", h, url.Values{"format": {"csv"}}); dl.Status != 200 || !strings.HasPrefix(dl.Body, "PK") {
++		t.Errorf("export after leaving: status %d", dl.Status)
++	}
++}
+diff --git a/internal/web/refusal.go b/internal/web/refusal.go
+index 5c1ecd8..1e96c94 100644
+--- a/internal/web/refusal.go
++++ b/internal/web/refusal.go
+@@ -18,6 +18,14 @@ var fieldLabels = map[string]string{
+ 	"proposal_expiry_days": "Proposal expiry (days)", "dispute_window_days": "Dispute window (days)",
+ 	"join_mode": "Join mode", "departure_rule": "Departure rule", "signup_grant": "Sign-up grant",
+ 	"limit_warning_days": "Limit warning (days)", "response_period_days": "Dispute response period", "re_review_window_days": "Re-review window", "limit_warning_percent": "Limit warning percent", "inactivity_days": "Inactivity flag", "waive_reason": "Reason for not waiting", "notice_days": "Notice (days)", "notice_reason": "Reason for shorter notice", "terms_version": "Terms", "body": "Terms text", "statement": "Statement", "note": "Note", "expires_at": "Expiry",
++	// UX-021: every other field the service can name in a validation error.
++	"description": "Description", "response": "Response", "time_zone": "Time zone", "version": "Terms version",
++	"effective_at": "Takes effect", "supersedes_id": "Replaces announcement", "listing_id": "Listing", "listing": "Listings",
++	"target_type": "Report about", "target_id": "Reported item", "role": "Role", "scopes": "Token permissions",
++	"code": "Code", "format": "File format", "scope": "Export type", "kind": "Challenge type", "decimals": "Decimal places",
++	"dual_control_threshold": "Dual-control threshold", "threshold": "Dual-control threshold", "report": "Ledger report",
++	"page": "Page", "idempotency_key": "Form key", "operator": "Operator", "directory_visibility": "Directory visibility",
++	"ids": "Notices",
+ }
+ 
+ func label(f string) string {
+@@ -27,6 +35,48 @@ func label(f string) string {
+ 	return strings.ReplaceAll(f, "_", " ")
+ }
+ 
++// choiceFixes are the corrections for fields filled from a fixed list (UX-021).
++var choiceFixes = map[string]string{
++	"counterparty_id": "Choose another active member from the list.",
++	"direction":       "Choose whether you pay or are paid.",
++	"category":        "Choose one of the listed categories.",
++	"outcome":         "Choose one of the listed outcomes.",
++	"type":            "Choose one of the listed types.",
++	"status":          "Choose one of the listed statuses.",
++	"format":          "Choose CSV or JSON.",
++	"listing_id":      "Start again from the other member's listing, or propose without one.",
++	"terms_version":   "Read the terms shown, tick the box to accept them and try again.",
++}
++
++// fieldFix suggests how to correct one field error (UX-021: identify the field, describe the
++// problem, suggest a correction). The service detail describes the problem; this says what to
++// do about it, from the kind of problem first and then from the field.
++func (c *rc) fieldFix(f domain.FieldError) string {
++	d := strings.ToLower(f.Detail)
++	switch {
++	case strings.HasPrefix(d, "required"):
++		return "Fill it in and try again."
++	case strings.Contains(d, "is not correct"):
++		return "Type it again carefully and try again."
++	case strings.Contains(d, "too long"):
++		return "Shorten it and try again."
++	case strings.Contains(d, "control") && strings.Contains(d, "characters"):
++		return "Remove hidden or special characters and try again."
++	case strings.Contains(d, "choose another"):
++		return "Choose a different one and try again."
++	case strings.Contains(d, "decimal places") && c != nil && c.Net != nil:
++		return fmt.Sprintf("Use at most %d decimal places and try again.", c.Net.Policy.Decimals)
++	case strings.Contains(d, "not a number") && c != nil && c.Net != nil:
++		return "Enter digits only, for example " + domain.FormatAmount(1250, c.Net.Policy.Decimals) + "."
++	case d == "too large":
++		return "Enter a smaller amount and try again."
++	}
++	if fix, ok := choiceFixes[f.Field]; ok {
++		return fix
++	}
++	return "Check the value and try again."
++}
++
+ // refuse turns a service error into summary text and field errors.
+ // ok is false when the error is not a form-level refusal (use fail instead).
+ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
+@@ -37,7 +87,13 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
+ 	switch de.Code {
+ 	case domain.CodeValidation:
+ 		for _, f := range de.Fields {
+-			fields = append(fields, fieldErr{Field: f.Field, Text: fmt.Sprintf("%s: %s. Check the value and try again.", label(f.Field), f.Detail)})
++			fields = append(fields, fieldErr{Field: f.Field, Text: fmt.Sprintf("%s: %s. %s", label(f.Field), f.Detail, c.fieldFix(f))})
++		}
++		if len(fields) == 0 { // no field to point at, for example an amount the accounts cannot record
++			if strings.Contains(de.Msg, "overflows") {
++				return "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed.", nil, true
++			}
++			return "Not saved. Something entered was not accepted. Check the form and try again. Nothing changed.", nil, true
+ 		}
+ 		return "Not saved. Fix the problems below. Nothing changed.", fields, true
+ 	case domain.CodeInsufficientCredit:
+@@ -66,6 +122,9 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
+ 		return "Not done. " + strings.Join(de.Blockers, "; ") + ". Nothing changed.", nil, true
+ 	case domain.CodeRateLimited:
+ 		return "Too many attempts. Wait a minute and try again. Nothing changed.", nil, true
++	case domain.CodeApprovalRequired: // for example removing a member whose settlement is above the dual-control threshold
++		return "Not done. The amount is above the dual-control threshold, so one administrator cannot move it alone. " +
++			"Settle it first with an adjustment that a second administrator approves (Adjustments), then try again. Nothing changed.", nil, true
+ 	}
+ 	return "", nil, false
+ }
+diff --git a/internal/web/sec016_member_ref_test.go b/internal/web/sec016_member_ref_test.go
+new file mode 100644
+index 0000000..f675457
+--- /dev/null
++++ b/internal/web/sec016_member_ref_test.go
+@@ -0,0 +1,70 @@
++package web
++
++import (
++	"html"
++	"net/url"
++	"strings"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++func TestMemberRefFormat(t *testing.T) {
++	for in, want := range map[string]string{
++		"018f0000-0000-7000-8000-00000000000a": "0000-000A",
++		"0190c3b2-7d5e-7a4b-9f3e-2c1d0e9f8a7b": "0E9F-8A7B",
++		"abc":                                  "ABC",
++		"":                                     "",
++	} {
++		if got := memberRef(in); got != want {
++			t.Errorf("memberRef(%q) = %q, want %q", in, got, want)
++		}
++	}
++}
++
++// SEC-016: display names are not unique identity, so every trade confirmation step shows a
++// stable member reference beside each name, and two members with the same name differ there.
++func TestConfirmScreensShowMemberRef(t *testing.T) {
++	w := newWorld(t)
++	b := w.base()
++	ctx := w.env.Ctx
++	// carol joins under bob's display name.
++	carol := w.env.Person("carol@example.org")
++	tok, _ := testutil.Must2(w.env.Svc.CreateInvitation(ctx, w.admin, w.net.ID, service.InviteInput{}))
++	carolM := testutil.Must(w.env.Svc.RedeemInvitation(ctx, carol, tok, w.bobM.DisplayName))
++	if carolM.DisplayName != w.bobM.DisplayName || memberRef(carolM.ID) == memberRef(w.bobM.ID) {
++		t.Fatalf("fixture: names %q/%q refs %q/%q", carolM.DisplayName, w.bobM.DisplayName, memberRef(carolM.ID), memberRef(w.bobM.ID))
++	}
++	ref := func(id string) string { return "(member reference " + memberRef(id) + ")" }
++
++	al := w.browser(t)
++	al.login("alice@example.org")
++	form := al.get(b + "/trades/new")
++	for _, m := range []struct{ id, other string }{{w.bobM.ID, carolM.ID}, {carolM.ID, w.bobM.ID}} {
++		rv := al.post(b+"/trades/new", form, url.Values{"counterparty_id": {m.id}, "direction": {"pay"}, "amount": {"1.00"}, "step": {"review"}})
++		al.mustContain(rv, "Review your trade", "<dt>With</dt><dd>"+html.EscapeString(w.bobM.DisplayName)+" "+ref(m.id)+"</dd>")
++		if strings.Contains(rv.Body, ref(m.other)) {
++			t.Errorf("review for %s shows the other member's reference", m.id)
++		}
++	}
++
++	// Accept, decline and cancel confirmations show both parties with their references.
++	in := testutil.Must(w.env.Svc.ProposeTransaction(ctx, carol, w.net.ID, service.ProposeInput{CounterpartyID: w.aliceM.ID,
++		Direction: service.ProposerPays, Amount: 100, IdempotencyKey: w.env.Key()}))
++	for _, act := range []string{"accept", "decline"} {
++		p := al.get(b + "/trades/" + in.ID + "/" + act)
++		al.mustContain(p, "<dt>Payer</dt><dd>"+html.EscapeString(carolM.DisplayName)+" "+ref(carolM.ID)+"</dd>",
++			"<dt>Payee</dt><dd>"+html.EscapeString(w.aliceM.DisplayName)+" "+ref(w.aliceM.ID)+"</dd>")
++		if strings.Contains(p.Body, ref(w.bobM.ID)) {
++			t.Errorf("%s: shows bob's reference for carol's proposal", act)
++		}
++	}
++	cb := w.browser(t)
++	cb.login("carol@example.org")
++	cb.mustContain(cb.get(b+"/trades/"+in.ID+"/cancel"), ref(carolM.ID), ref(w.aliceM.ID))
++	// An administrator cancelling someone else's proposal sees both references too.
++	adm := w.browser(t)
++	adm.login("admin@example.org")
++	adm.mustContain(adm.get(b+"/trades/"+in.ID+"/cancel"), ref(carolM.ID), ref(w.aliceM.ID), "Reason")
++}
+diff --git a/internal/web/templates/history.html b/internal/web/templates/history.html
+index 6cf8eff..772da77 100644
+--- a/internal/web/templates/history.html
++++ b/internal/web/templates/history.html
+@@ -17,7 +17,7 @@
+ <section aria-labelledby="hp-h"><h2 id="hp-h">Pending</h2>
+ {{if .Pending}}<p>Pending trades are not part of your balance.</p>{{template "txlist" dict "Rows" .Pending "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>No pending trades.</p>{{end}}</section>
+ <section aria-labelledby="hd-h"><h2 id="hd-h">Posted and closed</h2>
+-{{if .Done}}{{template "txlist" dict "Rows" .Done "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>Nothing here yet. Once you trade, each entry shows who paid whom, the signed amount, its status and ledger reference.</p>{{end}}</section>
++{{if .Done}}{{template "histlist" dict "Rows" .Done "Base" (printf "/n/%s" $.Slug)}}{{else}}<p>Nothing here yet. Once you trade, each entry shows who paid whom, the signed amount, its status and ledger reference.</p>{{end}}</section>
+ {{template "pager" dict "Next" .Next "Href" (printf "/n/%s/history?status=%s&after=" $.Slug .Filter)}}
+ {{template "histbal" .HistBal}}
+ {{end}}
+@@ -30,3 +30,15 @@
+   <div class="actions"><button type="submit" class="secondary">Download my transactions</button></div>
+ </form>
+ {{end}}
++
++{{/* histlist is txlist plus UX-017: a reversal or adjustment shows its reason, a reversal
++     links to the trade it reverses, and an original links to each reversal posted against it. */}}
++{{define "histlist"}}<ul class="rows">
++{{range .Rows}}<li>
++  <p><a href="{{$.Base}}/trades/{{.ID}}">{{.Text}}</a></p>
++  <p><span class="num">{{.Signed}}</span> &middot; <span class="tag">{{.Status}}</span> &middot; {{time .When}}{{if .Ledger}} &middot; {{.Ledger}}{{end}}</p>
++  {{with .Reason}}<p>Reason: {{.}}</p>{{end}}
++  {{if .Original}}<p>Reverses <a href="{{$.Base}}/trades/{{.Original}}">the original trade</a></p>{{end}}
++  {{range .ReversedBy}}<p><a href="{{$.Base}}/trades/{{.ID}}">{{.Text}}</a></p>{{end}}
++</li>{{end}}
++</ul>{{end}}
+diff --git a/internal/web/templates/leave.html b/internal/web/templates/leave.html
+index 80f0759..e951727 100644
+--- a/internal/web/templates/leave.html
++++ b/internal/web/templates/leave.html
+@@ -11,6 +11,14 @@
+   <li>You keep read-only access to your own history and can download your data from the History page. Past trades are never changed.</li>
+   <li>You cannot rejoin this network with the same account afterwards.</li>
+ </ul>
++<section aria-labelledby="leave-export-h"><h2 id="leave-export-h">Download your data first</h2>
++<p>Before you leave, download a copy of your transactions and ledger entries in this network. It contains only trades you took part in. After leaving you can still download it from the <a href="/n/{{.Slug}}/history">History page</a>.</p>
++<form method="post" action="/n/{{.Slug}}/export">
++  {{template "csrf" .}}
++  <div class="field"><label for="f-format">File format</label>
++  <select id="f-format" name="format"><option value="csv">CSV (spreadsheet)</option><option value="json">JSON</option></select></div>
++  <div class="actions"><button type="submit" class="secondary">Download my data</button></div>
++</form></section>
+ {{if not .D.Blockers}}
+ <form method="post" action="/n/{{.Slug}}/leave" novalidate>
+   {{template "csrf" .}}
+diff --git a/internal/web/templates/propose_review.html b/internal/web/templates/propose_review.html
+index 45641f6..91a0426 100644
+--- a/internal/web/templates/propose_review.html
++++ b/internal/web/templates/propose_review.html
+@@ -3,7 +3,7 @@
+ <p class="big">{{.Sentence}}</p>
+ {{if .TooMuch}}<div class="notice" role="note">This is more than your available to spend ({{.AvailNow}}). It will be refused if you send it. Go back and enter a smaller amount.</div>{{end}}
+ <dl class="kv">
+-  <dt>With</dt><dd>{{.Counter}}</dd>
++  <dt>With</dt><dd>{{.Counter}}{{with $.MemberRef ($.Val "counterparty_id")}} (member reference {{.}}){{end}}</dd>
+   <dt>Amount</dt><dd>{{.Amount}} {{.Unit}}</dd>
+   <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
+   <dt>Your balance if accepted</dt><dd>{{template "balance" .After}}</dd>
+diff --git a/internal/web/templates/trade_accept.html b/internal/web/templates/trade_accept.html
+index 6c9b6ba..d74f9f8 100644
+--- a/internal/web/templates/trade_accept.html
++++ b/internal/web/templates/trade_accept.html
+@@ -2,8 +2,8 @@
+ {{with .D}}
+ <p class="big">{{.Sentence}}</p>
+ <dl class="kv">
+-  <dt>Payer</dt><dd>{{.Payer}}</dd>
+-  <dt>Payee</dt><dd>{{.Payee}}</dd>
++  <dt>Payer</dt><dd>{{.Payer}}{{with $.MemberRef .Tx.PayerMemberID}} (member reference {{.}}){{end}}</dd>
++  <dt>Payee</dt><dd>{{.Payee}}{{with $.MemberRef .Tx.PayeeMemberID}} (member reference {{.}}){{end}}</dd>
+   <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
+   {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
+   <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
+diff --git a/internal/web/templates/trade_confirm.html b/internal/web/templates/trade_confirm.html
+index 2ddfd1a..01683a8 100644
+--- a/internal/web/templates/trade_confirm.html
++++ b/internal/web/templates/trade_confirm.html
+@@ -1,6 +1,10 @@
+ {{define "content"}}
+ {{with .D}}
+ <p class="big">{{.Sentence}}</p>
++<dl class="kv">
++  <dt>Payer</dt><dd>{{.Payer}}{{with $.MemberRef .Tx.PayerMemberID}} (member reference {{.}}){{end}}</dd>
++  <dt>Payee</dt><dd>{{.Payee}}{{with $.MemberRef .Tx.PayeeMemberID}} (member reference {{.}}){{end}}</dd>
++</dl>
+ <p>{{.Consequence}}</p>
+ <form method="post" action="/n/{{$.Slug}}/trades/{{.Tx.ID}}/{{.Action}}">
+   {{template "csrf" $}}{{template "idem" $}}
+diff --git a/internal/web/templates/trade_detail.html b/internal/web/templates/trade_detail.html
+index 7498905..e21f44d 100644
+--- a/internal/web/templates/trade_detail.html
++++ b/internal/web/templates/trade_detail.html
+@@ -12,6 +12,8 @@
+   {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>Expires</dt><dd>{{.Expires}}</dd>{{end}}{{end}}
+   {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{.Posted}}</dd>{{end}}
+   {{if .Row.Ledger}}<dt>Ledger reference</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
++  {{if .Tx.OriginalTxID}}<dt>Reverses</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.OriginalTxID}}">The original trade</a></dd>{{end}}
++  {{if .Row.ReversedBy}}<dt>Reversals</dt><dd><ul>{{range .Row.ReversedBy}}<li><a href="/n/{{$.Slug}}/trades/{{.ID}}">{{.Text}}</a></li>{{end}}</ul></dd>{{end}}
+ </dl>
+ <div class="actions">
+   {{if .Accept}}<a class="btn" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">Review and accept</a>{{end}}
+diff --git a/internal/web/ux017_reversal_links_test.go b/internal/web/ux017_reversal_links_test.go
+new file mode 100644
+index 0000000..1a28edb
+--- /dev/null
++++ b/internal/web/ux017_reversal_links_test.go
+@@ -0,0 +1,108 @@
++package web
++
++import (
++	"fmt"
++	"strings"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// UX-017: a reversal is its own line, linked to the original; the original keeps its own
++// line and gains only a "Reversed by …" link to each reversal, on History and trade detail.
++func TestReversalLinksHistoryAndDetail(t *testing.T) {
++	w := newWorld(t)
++	b := w.base()
++	ctx := w.env.Ctx
++	orig := w.env.Trade(w.net.ID, w.alice, w.bob, w.aliceM, w.bobM, 300)
++	plain := w.env.Trade(w.net.ID, w.alice, w.bob, w.aliceM, w.bobM, 50)
++	rev1 := testutil.Must(w.env.Svc.ReverseTransaction(ctx, w.admin, w.net.ID, service.ReverseInput{TxID: orig.ID, Amount: 100,
++		Reason: "entered twice", IdempotencyKey: w.env.Key()}))
++	rev2 := testutil.Must(w.env.Svc.ReverseTransaction(ctx, w.admin, w.net.ID, service.ReverseInput{TxID: orig.ID,
++		Reason: "rest of it", IdempotencyKey: w.env.Key()}))
++	adj := testutil.Must(w.env.Svc.CreateAdjustment(ctx, w.admin, w.net.ID, service.AdjustInput{MemberID: w.aliceM.ID, Amount: 25,
++		Direction: service.AdjustCredit, Reason: "welcome correction", IdempotencyKey: w.env.Key()}))
++
++	origLink := fmt.Sprintf(`Reverses <a href="%s/trades/%s">the original trade</a>`, b, orig.ID)
++	by1 := fmt.Sprintf(`<a href="%s/trades/%s">Reversed by ledger reference %d (1.00 `, b, rev1.ID, rev1.LedgerSeq)
++	by2 := fmt.Sprintf(`<a href="%s/trades/%s">Reversed by ledger reference %d (2.00 `, b, rev2.ID, rev2.LedgerSeq)
++
++	for _, who := range []string{"alice@example.org", "bob@example.org"} {
++		br := w.browser(t)
++		br.login(who)
++		h := br.get(b + "/history")
++		br.mustContain(h, origLink, by1, by2, "Reversal: ")
++		if strings.Count(h.Body, origLink) != 2 {
++			t.Errorf("%s: want both reversal lines linked to the original, got %d", who, strings.Count(h.Body, origLink))
++		}
++		// Each reversal keeps its own line, date and signed effect; the original line is still there.
++		for _, id := range []string{orig.ID, rev1.ID, rev2.ID, plain.ID} {
++			br.mustContain(h, fmt.Sprintf(`<p><a href="%s/trades/%s">`, b, id))
++		}
++		if strings.Index(h.Body, by1) > strings.Index(h.Body, by2) {
++			t.Errorf("%s: reversals are not listed oldest first", who)
++		}
++		// A trade that was never reversed carries no link.
++		if li := rowOf(h.Body, b+"/trades/"+plain.ID); strings.Contains(li, "Reversed by") || strings.Contains(li, "Reverses") {
++			t.Errorf("%s: unreversed row has a reversal link: %s", who, li)
++		}
++		// Each reversal line carries its own reason; the original line stays as it was.
++		for id, reason := range map[string]string{rev1.ID: "Reason: entered twice", rev2.ID: "Reason: rest of it"} {
++			if li := rowOf(h.Body, b+"/trades/"+id); !strings.Contains(li, reason) || !strings.Contains(li, origLink) {
++				t.Errorf("%s: reversal row lacks %q or its link: %s", who, reason, li)
++			}
++		}
++		if li := rowOf(h.Body, b+"/trades/"+orig.ID); strings.Contains(li, "Reason:") || strings.Contains(li, "Reversal: ") ||
++			!strings.Contains(li, by1) || !strings.Contains(li, by2) {
++			t.Errorf("%s: original row changed beyond its Reversed by links: %s", who, li)
++		}
++
++		d := br.get(b + "/trades/" + orig.ID)
++		br.mustContain(d, "<dt>Reversals</dt>", by1, by2)
++		if strings.Contains(d.Body, "The original trade") {
++			t.Errorf("%s: original links to an original", who)
++		}
++		r := br.get(b + "/trades/" + rev1.ID)
++		br.mustContain(r, "<dt>Reverses</dt>", fmt.Sprintf(`<a href="%s/trades/%s">The original trade</a>`, b, orig.ID))
++		if strings.Contains(r.Body, "Reversed by") {
++			t.Errorf("%s: a reversal shows a Reversed by link", who)
++		}
++		if p := br.get(b + "/trades/" + plain.ID); strings.Contains(p.Body, "Reversed by") || strings.Contains(p.Body, "The original trade") {
++			t.Errorf("%s: unreversed trade detail has reversal links", who)
++		}
++	}
++
++	// An adjustment is its own line with its date, reason and signed effect. It corrects a
++	// balance, not a transaction, so it has no original to link to (0001_init: only a
++	// reversal carries original_tx_id).
++	al := w.browser(t)
++	al.login("alice@example.org")
++	li := rowOf(al.get(b+"/history").Body, b+"/trades/"+adj.ID)
++	for _, need := range []string{"Adjustment: ", `<span class="num">&#43;0.25</span>`, "Reason: welcome correction", "<time datetime="} {
++		if !strings.Contains(li, need) {
++			t.Errorf("adjustment row lacks %q: %s", need, li)
++		}
++	}
++	if strings.Contains(li, "Reverses") || strings.Contains(li, "Reversed by") {
++		t.Errorf("adjustment row links to an original: %s", li)
++	}
++
++	// An administrator who is not a party still reaches the original from the reversal.
++	adm := w.browser(t)
++	adm.login("admin@example.org")
++	adm.mustContain(adm.get(b+"/trades/"+rev2.ID), fmt.Sprintf(`<a href="%s/trades/%s">The original trade</a>`, b, orig.ID))
++}
++
++// rowOf returns the History list item whose first link is href.
++func rowOf(body, href string) string {
++	i := strings.Index(body, `<p><a href="`+href+`">`)
++	if i < 0 {
++		return ""
++	}
++	end := strings.Index(body[i:], "</li>")
++	if end < 0 {
++		return body[i:]
++	}
++	return body[i : i+end]
++}
+diff --git a/internal/web/ux021_refusal_test.go b/internal/web/ux021_refusal_test.go
+new file mode 100644
+index 0000000..cfd1c64
+--- /dev/null
++++ b/internal/web/ux021_refusal_test.go
+@@ -0,0 +1,353 @@
++package web
++
++import (
++	"go/ast"
++	"go/parser"
++	"go/token"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"os"
++	"path/filepath"
++	"regexp"
++	"sort"
++	"strconv"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// domainCodes parses the domain package and returns every declared Code value, so a code
++// added later without a web mapping fails the table test below.
++func domainCodes(t *testing.T) []domain.Code {
++	t.Helper()
++	files, err := filepath.Glob(filepath.Join("..", "domain", "*.go"))
++	if err != nil || len(files) == 0 {
++		t.Fatalf("domain sources: %v", err)
++	}
++	fset := token.NewFileSet()
++	seen := map[domain.Code]bool{}
++	for _, f := range files {
++		if strings.HasSuffix(f, "_test.go") {
++			continue
++		}
++		file, err := parser.ParseFile(fset, f, nil, 0)
++		if err != nil {
++			t.Fatal(err)
++		}
++		for _, d := range file.Decls {
++			g, ok := d.(*ast.GenDecl)
++			if !ok || g.Tok != token.CONST {
++				continue
++			}
++			for _, s := range g.Specs {
++				vs := s.(*ast.ValueSpec)
++				typed := false
++				if id, ok := vs.Type.(*ast.Ident); ok && id.Name == "Code" {
++					typed = true
++				}
++				for _, v := range vs.Values {
++					lit, ok := v.(*ast.BasicLit)
++					if call, isCall := v.(*ast.CallExpr); isCall {
++						if fn, ok2 := call.Fun.(*ast.Ident); ok2 && fn.Name == "Code" && len(call.Args) == 1 {
++							lit, ok = call.Args[0].(*ast.BasicLit)
++							typed = ok
++						}
++					}
++					if !typed || !ok || lit.Kind != token.STRING {
++						continue
++					}
++					c, err := strconv.Unquote(lit.Value)
++					if err != nil {
++						t.Fatal(err)
++					}
++					seen[domain.Code(c)] = true
++				}
++			}
++		}
++	}
++	out := make([]domain.Code, 0, len(seen))
++	for c := range seen {
++		out = append(out, c)
++	}
++	sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
++	return out
++}
++
++// refusalRC is a request context for alice in w, as the network pages build it.
++func refusalRC(w *world) *rc {
++	s := newServer(w.env.Svc, Options{CSRFKey: []byte("0123456789abcdef0123456789abcdef"), Clock: w.env.Clock})
++	return &rc{s: s, ctx: w.env.Ctx, actor: w.alice, Net: w.net, Me: w.aliceM}
++}
++
++const internalDetail = "internal detail zq9"
++
++// UX-020/UX-021: every domain error code a web form can meet is either a form refusal in
++// plain words that says nothing changed and what to do next, or a page-level answer from fail.
++// No code reaches the member as its machine name or with internal detail.
++func TestRefusalCoversEveryCode(t *testing.T) {
++	w := newWorld(t)
++	c := refusalRC(w)
++	type pageWant struct {
++		status   int
++		contains string // in the body, or in the Location header for a redirect
++	}
++	form := map[domain.Code]string{
++		domain.CodeValidation:         "Fix the problems below",
++		domain.CodeInsufficientCredit: "Available to spend is",
++		domain.CodeAmountExceeds:      "largest single trade",
++		domain.CodeCounterpartyInact:  "not active in this network",
++		domain.CodeKeyReused:          "Reload the page and start again",
++		domain.CodeKeyRequired:        "Reload the page and try again",
++		domain.CodeInvalidState:       "Reload to see its current state",
++		domain.CodeConflict:           "Choose a different one",
++		domain.CodeBlocked:            "first blocker; second blocker",
++		domain.CodeRateLimited:        "Wait a minute and try again",
++		domain.CodeApprovalRequired:   "a second administrator approves",
++	}
++	pages := map[domain.Code]pageWant{
++		domain.CodeUnauthenticated:        {http.StatusSeeOther, "/login"},
++		domain.CodeForbidden:              {http.StatusForbidden, "You do not have access to this page."},
++		domain.CodeNotFound:               {http.StatusNotFound, "We could not find that page."},
++		domain.CodeNetworkFrozen:          {423, "Balances and history can still be viewed. Nothing was changed."},
++		domain.CodeUnavailable:            {http.StatusServiceUnavailable, "Wait a few seconds and try again."},
++		domain.CodeInternal:               {http.StatusInternalServerError, "quote the reference below"},
++		domain.CodePasswordChangeRequired: {http.StatusSeeOther, "/account/password"},
++		domain.CodeTermsRequired:          {http.StatusSeeOther, "/n/town/terms"},
++		// Only the password-only service.Login returns it; the web signs in with LoginStep
++		// (checked below), so a member never meets it. Should it ever escape, it is a plain 500.
++		domain.CodeMFARequired: {http.StatusInternalServerError, "quote the reference below"},
++	}
++	codes := domainCodes(t)
++	if len(codes) < 20 {
++		t.Fatalf("parsed only %d codes: %v", len(codes), codes)
++	}
++	for _, code := range codes {
++		err := &domain.Error{Code: code, Msg: internalDetail, Blockers: []string{"first blocker", "second blocker"},
++			Fields: []domain.FieldError{{Field: "amount", Detail: "must be greater than zero"}}}
++		sum, fields, ok := c.refuse(err)
++		want, isForm := form[code]
++		pw, isPage := pages[code]
++		switch {
++		case isForm == isPage:
++			t.Errorf("%s: the table must list the code exactly once (form %v, page %v)", code, isForm, isPage)
++			continue
++		case isForm:
++			if !ok {
++				t.Errorf("%s: not mapped by refuse", code)
++				continue
++			}
++			text := sum
++			for _, f := range fields {
++				text += " " + f.Text
++			}
++			for _, need := range []string{want, "Nothing changed."} {
++				if !strings.Contains(text, need) {
++					t.Errorf("%s: refusal %q lacks %q", code, text, need)
++				}
++			}
++			if strings.Contains(text, string(code)) || strings.Contains(text, internalDetail) {
++				t.Errorf("%s: refusal leaks the code or internal detail: %q", code, text)
++			}
++		default:
++			if ok {
++				t.Errorf("%s: refuse maps a page-level code as a form refusal: %q", code, sum)
++				continue
++			}
++			req := httptest.NewRequest("POST", "/n/town/trades/new", nil)
++			req.SetPathValue("slug", "town")
++			rec := httptest.NewRecorder()
++			c.s.fail(rec, req, err)
++			body := rec.Body.String()
++			if rec.Code != pw.status {
++				t.Errorf("%s: fail status %d, want %d", code, rec.Code, pw.status)
++			}
++			if got := rec.Header().Get("Location") + body; !strings.Contains(got, pw.contains) {
++				t.Errorf("%s: fail answer lacks %q: %s %s", code, pw.contains, rec.Header().Get("Location"), snippet(body))
++			}
++			if strings.Contains(body, internalDetail) || strings.Contains(body, ">"+string(code)+"<") {
++				t.Errorf("%s: page leaks the code or internal detail", code)
++			}
++		}
++	}
++	for code := range form {
++		if !containsCode(codes, code) {
++			t.Errorf("table lists %s, which the domain no longer declares", code)
++		}
++	}
++	for code := range pages {
++		if !containsCode(codes, code) {
++			t.Errorf("table lists %s, which the domain no longer declares", code)
++		}
++	}
++	// mfa-required stays unreachable from the web only while no handler uses the password-only Login.
++	for _, f := range webSources(t) {
++		if src, _ := os.ReadFile(f); strings.Contains(string(src), "svc.Login(") {
++			t.Errorf("%s calls service.Login, which can return mfa-required; map that code first", f)
++		}
++	}
++}
++
++func containsCode(cs []domain.Code, c domain.Code) bool {
++	for _, x := range cs {
++		if x == c {
++			return true
++		}
++	}
++	return false
++}
++
++func webSources(t *testing.T) []string {
++	t.Helper()
++	files, err := filepath.Glob("*.go")
++	if err != nil {
++		t.Fatal(err)
++	}
++	var out []string
++	for _, f := range files {
++		if !strings.HasSuffix(f, "_test.go") {
++			out = append(out, f)
++		}
++	}
++	return out
++}
++
++// validationField finds the field names the service and domain put in validation errors.
++var validationField = regexp.MustCompile(`(?:Invalid|boundedText|cleanListingText|cleanLabel|add)\("([a-z_]+)"`)
++
++// UX-021: a validation message names the field in words, keeps the service's description of
++// the problem and suggests a correction, for every field the service can name.
++func TestValidationMessagesNameFieldAndFix(t *testing.T) {
++	w := newWorld(t)
++	c := refusalRC(w)
++	var srcs []string
++	for _, dir := range []string{"service", "domain"} {
++		fs, err := filepath.Glob(filepath.Join("..", dir, "*.go"))
++		if err != nil {
++			t.Fatal(err)
++		}
++		srcs = append(srcs, fs...)
++	}
++	fields := map[string]bool{}
++	for _, f := range srcs {
++		if strings.HasSuffix(f, "_test.go") {
++			continue
++		}
++		src, err := os.ReadFile(f)
++		if err != nil {
++			t.Fatal(err)
++		}
++		for _, m := range validationField.FindAllStringSubmatch(string(src), -1) {
++			fields[m[1]] = true
++		}
++	}
++	if len(fields) < 50 {
++		t.Fatalf("found only %d validation fields", len(fields))
++	}
++	for f := range fields {
++		if _, ok := fieldLabels[f]; !ok {
++			t.Errorf("field %q has no plain label; the message would show %q", f, label(f))
++			continue
++		}
++		_, fe, ok := c.refuse(domain.Invalid(f, "is not valid"))
++		if !ok || len(fe) != 1 || fe[0].Field != f {
++			t.Errorf("%s: refuse = %v %v", f, fe, ok)
++			continue
++		}
++		text := fe[0].Text
++		if !strings.HasPrefix(text, fieldLabels[f]+": is not valid. ") || !strings.HasSuffix(text, ".") ||
++			len(text) <= len(fieldLabels[f]+": is not valid. ") {
++			t.Errorf("%s: message %q does not name the field, the problem and a correction", f, text)
++		}
++	}
++
++	cases := []struct {
++		field, detail string
++		noNet         bool
++		want          string
++	}{
++		{"amount", "too many decimal places", false, "Amount: too many decimal places. Use at most 2 decimal places and try again."},
++		{"amount", "not a number", false, "Amount: not a number. Enter digits only, for example 12.50."},
++		{"amount", "not a number", true, "Amount: not a number. Check the value and try again."},
++		{"amount", "too large", false, "Amount: too large. Enter a smaller amount and try again."},
++		{"reason", "required", false, "Reason: required. Fill it in and try again."},
++		{"category", "required, one of not_delivered, other", false, "Category: required, one of not_delivered, other. Fill it in and try again."},
++		{"note", "too long", false, "Note: too long. Shorten it and try again."},
++		{"password", "is too common; choose another", true, "Password: is too common; choose another. Choose a different one and try again."},
++		{"password", "is not correct", true, "Password: is not correct. Type it again carefully and try again."},
++		{"display_name", "must not contain control characters", false, "Display name: must not contain control characters. Remove hidden or special characters and try again."},
++		{"counterparty_id", "cannot trade with yourself", false, "Counterparty: cannot trade with yourself. Choose another active member from the list."},
++		{"direction", "must be pay or request", false, "Direction: must be pay or request. Choose whether you pay or are paid."},
++		{"terms_version", "accept the network's current terms (version 2)", false, "Terms: accept the network's current terms (version 2). Read the terms shown, tick the box to accept them and try again."},
++		{"title", "must be 1 to 120 characters", false, "Title: must be 1 to 120 characters. Check the value and try again."},
++		{"time_zone", "must be an IANA time zone such as Europe/Berlin, or empty for UTC", true, "Time zone: must be an IANA time zone such as Europe/Berlin, or empty for UTC. Check the value and try again."},
++	}
++	for _, tc := range cases {
++		cc := c
++		if tc.noNet {
++			cc = &rc{s: c.s, ctx: c.ctx, actor: c.actor}
++		}
++		sum, fe, ok := cc.refuse(domain.Invalid(tc.field, tc.detail))
++		if !ok || len(fe) != 1 {
++			t.Fatalf("%s/%s: refuse = %v %v", tc.field, tc.detail, fe, ok)
++		}
++		if fe[0].Text != tc.want {
++			t.Errorf("%s/%s:\n got %q\nwant %q", tc.field, tc.detail, fe[0].Text, tc.want)
++		}
++		if sum != "Not saved. Fix the problems below. Nothing changed." {
++			t.Errorf("summary %q", sum)
++		}
++	}
++	// A validation error with no field to point at still says what to do.
++	sum, fe, ok := c.refuse(domain.Errf(domain.CodeValidation, "amount overflows payee balance"))
++	if !ok || len(fe) != 0 || sum != "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed." {
++		t.Errorf("overflow refusal = %q %v %v", sum, fe, ok)
++	}
++	if sum, _, _ := c.refuse(domain.Errf(domain.CodeValidation, "something")); strings.Contains(sum, "below") || !strings.Contains(sum, "Nothing changed.") {
++		t.Errorf("field-less refusal points at fields that are not shown: %q", sum)
++	}
++}
++
++// UX-020: approval-required used to fall through to a "No access" page. Removing a member whose
++// settle-to-zero adjustment is above the dual-control threshold now refuses on the form.
++func TestRemoveAboveDualControlThresholdRefusesOnForm(t *testing.T) {
++	w := newWorld(t)
++	ctx := w.env.Ctx
++	b := w.base()
++	_, adm2M := w.env.Member(w.admin, w.net, "admin2@example.org")
++	testutil.Must(0, w.env.Svc.AssignRole(ctx, domain.SystemActor("fixture"), w.net.ID, adm2M.ID, domain.RoleAdmin))
++	w.env.Clock.Advance(25 * time.Hour)
++	w.env.Trade(w.net.ID, w.alice, w.bob, w.aliceM, w.bobM, 2000)
++	n := testutil.Must(w.env.Svc.GetNetwork(ctx, w.admin, w.net.ID))
++	pol := n.Policy
++	pol.DualControlThreshold = 1000
++	pol.DepartureRule = domain.DepartSettleToZero
++	now := 0
++	testutil.Must(w.env.Svc.UpdatePolicy(ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "test",
++		NoticeDays: &now, NoticeReason: "test fixture", IdempotencyKey: w.env.Key()}))
++	if n := testutil.Must(w.env.Svc.GetNetwork(ctx, w.admin, w.net.ID)); n.Policy.DepartureRule != domain.DepartSettleToZero || n.Policy.DualControlThreshold != 1000 {
++		t.Fatalf("fixture policy not in force: %+v", n.Policy)
++	}
++
++	adm := w.browser(t)
++	adm.login("admin@example.org")
++	f := adm.get(b + "/admin/members/" + w.bobM.ID + "/remove")
++	p := adm.post(b+"/admin/members/"+w.bobM.ID+"/remove", f, url.Values{"reason": {"breach of network rules"}})
++	if p.Status != http.StatusUnprocessableEntity {
++		t.Errorf("status %d, want 422", p.Status)
++	}
++	adm.mustContain(p, `id="error-summary"`, "dual-control threshold", "a second administrator approves", "Nothing changed.")
++	if strings.Contains(p.Body, "You do not have access") {
++		t.Error("the refusal is shown as No access")
++	}
++	if m := testutil.Must(w.env.Svc.GetMember(ctx, w.admin, w.net.ID, w.bobM.ID)); m.Status != domain.MemberActive {
++		t.Errorf("bob is %s after a refused removal", m.Status)
++	}
++	if got := testutil.Must(w.env.Svc.GetBalance(ctx, w.bob, w.net.ID)).Balance; got != 2000 {
++		t.Errorf("bob's balance = %d after a refused removal", got)
++	}
++}
+diff --git a/internal/web/ux049_help_link_test.go b/internal/web/ux049_help_link_test.go
+new file mode 100644
+index 0000000..c177e9d
+--- /dev/null
++++ b/internal/web/ux049_help_link_test.go
+@@ -0,0 +1,162 @@
++package web
++
++import (
++	"bytes"
++	"net/url"
++	"os"
++	"path/filepath"
++	"regexp"
++	"sort"
++	"strings"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// helpFooter pins the shared Help link to one place: the first link of the second
++// paragraph of the page footer, after the main landmark.
++var helpFooter = regexp.MustCompile(`</main>\s*<footer class="foot">\s*<p>[^<]*</p>\s*<p><a href="/help">Help: credits, balances and statuses</a>`)
++
++func assertHelpLocation(t *testing.T, where, body string) {
++	t.Helper()
++	if !helpFooter.MatchString(body) {
++		t.Errorf("%s: the Help link is not in its footer location", where)
++	}
++	foot := body[strings.LastIndex(body, `<footer class="foot">`)+1:]
++	if n := strings.Count(foot, `href="/help"`); n != 1 {
++		t.Errorf("%s: %d Help links in the footer, want 1", where, n)
++	}
++	if i := strings.Index(body, "<main"); i >= 0 && strings.Contains(body[:i], `href="/help`) {
++		t.Errorf("%s: a Help link moved into the header", where)
++	}
++}
++
++// UX-049 (WCAG 3.2.6): every page template renders through the base layout, whose footer
++// carries the Help link; no page replaces the layout or the footer.
++func TestEveryPageTemplateHasHelpLink(t *testing.T) {
++	pages := mustLoadTemplates()
++	if len(pages) < 50 {
++		t.Fatalf("only %d page templates loaded", len(pages))
++	}
++	names := make([]string, 0, len(pages))
++	for n := range pages {
++		names = append(names, n)
++	}
++	sort.Strings(names)
++	for _, name := range names {
++		tmpl, err := pages[name].Clone()
++		if err != nil {
++			t.Fatal(err)
++		}
++		// Only the screen content is replaced; whatever else the page file defines stays.
++		stub := `{{define "content"}}<p>content of ` + name + `</p>{{end}}`
++		if _, err := tmpl.Parse(stub); err != nil {
++			t.Fatalf("%s: %v", name, err)
++		}
++		for _, p := range []*page{
++			{Title: name},
++			{Title: name, Authed: true, Slug: "town", NetName: "Town", ReqID: "req-1", Nav: []navItem{{Label: "Home", Href: "/n/town"}}},
++		} {
++			var buf bytes.Buffer
++			if err := tmpl.ExecuteTemplate(&buf, "base", p); err != nil {
++				t.Fatalf("%s: %v", name, err)
++			}
++			if !strings.Contains(buf.String(), "<p>content of "+name+"</p>") {
++				t.Errorf("%s: the page does not render its content inside the base layout", name)
++			}
++			assertHelpLocation(t, name, buf.String())
++		}
++	}
++}
++
++var getRoute = regexp.MustCompile(`HandleFunc\("GET (/[^"]*)"`)
++
++// UX-049: every GET route, for an anonymous visitor, a member and an administrator, answers
++// with a page whose Help link sits in the same footer location, error pages included.
++func TestEveryRouteHasHelpLinkInFooter(t *testing.T) {
++	w := newWorld(t)
++	ctx := w.env.Ctx
++	in := testutil.Must(w.env.Svc.ProposeTransaction(ctx, w.bob, w.net.ID, service.ProposeInput{CounterpartyID: w.aliceM.ID,
++		Direction: service.ProposerPays, Amount: 100, IdempotencyKey: w.env.Key()}))
++
++	files, err := filepath.Glob("*.go")
++	if err != nil {
++		t.Fatal(err)
++	}
++	routes := map[string]bool{}
++	for _, f := range files {
++		if strings.HasSuffix(f, "_test.go") {
++			continue
++		}
++		src, err := os.ReadFile(f)
++		if err != nil {
++			t.Fatal(err)
++		}
++		for _, m := range getRoute.FindAllStringSubmatch(string(src), -1) {
++			routes[m[1]] = true
++		}
++	}
++	if len(routes) < 40 {
++		t.Fatalf("found only %d GET routes", len(routes))
++	}
++	fill := strings.NewReplacer("{slug}", w.net.Slug, "{$}", "", "{token}", "no-such-token")
++	path := func(r string) string {
++		switch {
++		case strings.HasPrefix(r, "/n/{slug}/trades/{id}"):
++			r = strings.Replace(strings.Replace(r, "{id}", in.ID, 1), "{action}", "accept", 1)
++		case strings.HasPrefix(r, "/n/{slug}/admin/members/{id}"):
++			r = strings.Replace(strings.Replace(r, "{id}", w.bobM.ID, 1), "{action}", "suspend", 1)
++		case strings.Contains(r, "{id}"):
++			r = strings.Replace(r, "{id}", w.bobM.ID, 1)
++		}
++		return fill.Replace(r)
++	}
++
++	anon := w.browser(t)
++	member := w.browser(t)
++	member.login("alice@example.org")
++	admin := w.browser(t)
++	admin.login("admin@example.org")
++	viewers := map[string]*browser{"anonymous": anon, "member": member, "admin": admin}
++
++	sorted := make([]string, 0, len(routes))
++	for r := range routes {
++		sorted = append(sorted, r)
++	}
++	sort.Strings(sorted)
++	checked := 0
++	for _, r := range sorted {
++		if r == "/favicon.ico" || r == "/robots.txt" {
++			continue
++		}
++		u := path(r)
++		if strings.Contains(u, "{") {
++			t.Errorf("route %s: unfilled placeholder in %s", r, u)
++			continue
++		}
++		html := false
++		for who, b := range viewers {
++			p := b.get(u)
++			if !strings.HasPrefix(p.Header.Get("Content-Type"), "text/html") {
++				continue
++			}
++			html = true
++			checked++
++			if p.Status >= 500 {
++				t.Errorf("%s GET %s: status %d", who, u, p.Status)
++			}
++			assertHelpLocation(t, who+" GET "+u+" -> "+p.URL+" ("+itoa(p.Status)+")", p.Body)
++		}
++		if !html {
++			t.Errorf("route %s (%s) answered no viewer with a page", r, u)
++		}
++	}
++	// Error pages are pages of the same site: a missing page and a refused one keep the link.
++	for _, u := range []string{"/no/such/page", "/n/no-such-network", "/n/" + w.net.Slug + "/trades/" + url.PathEscape("no-such-id")} {
++		p := member.get(u)
++		assertHelpLocation(t, "member GET "+u+" ("+itoa(p.Status)+")", p.Body)
++		checked++
++	}
++	t.Logf("checked %d pages over %d routes", checked, len(sorted))
++}
+-- 
+2.43.0
+
