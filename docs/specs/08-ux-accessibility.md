@@ -39,11 +39,11 @@ Summary: built 31, not built 7, partial 22.
 | UX-014 | P0 | built | Pending section excluded from balance |
 | UX-015 | P0 | built | Completed rows show posted time |
 | UX-016 | P0 | built | Status labels and explanations; accepted not shown |
-| UX-017 | P1 | partial | Reversal and adjustment rows exist; link to original not verified |
+| UX-017 | P1 | partial | Reversals link to the original and back (paged, complete history); adjustments have no original in the schema (2026-11-14) |
 | UX-018 | P0 | built | Review step before accept, propose, dispute |
 | UX-019 | P0 | built | Confirmation message after posting |
 | UX-020 | P0 | built | Refusal copy names cause and that nothing changed |
-| UX-021 | P0 | partial | Error summary and field messages present; not verified against all codes |
+| UX-021 | P0 | built | Messages name the field and a correction; table test over every domain.Code (2026-11-14) |
 | UX-022 | P0 | partial | Error summary present; focus move and value retention not verified |
 | UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
 | UX-024 | P1 | not built | Member time zone not supported; times shown in server zone |

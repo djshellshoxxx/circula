@@ -34,7 +34,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-012 | P0 | built | Short write units; busy returns retryable 503 |
 | OPS-013 | P0 | built | healthz, readyz, metrics with allow-list and token |
 | OPS-014 | P0 | partial | HTTP and job metrics built; posting attempt and idempotent-replay counters absent |
-| OPS-015 | P0 | partial | Alert table in docs/ops/monitoring.md; alerts not configured or tested in staging |
+| OPS-015 | P0 | partial | Alert rules shipped in docs/ops/alerts/circula.rules.yml and checked by test; not exercised in staging (2026-11-14) |
 | OPS-016 | P0 | built | Read-only verify with checksum test; CLI and admin entry points |
 | OPS-017 | P0 | built | Online snapshot with manifest and checksum; load test not run |
 | OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention |
@@ -42,14 +42,14 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-020 | P0 | built | Restore verifies, refuses while serving, writes a local record and a database.restored audit event |
 | OPS-021 | P0 | built | Drill procedure + checklist in docs/ops/backup-restore.md; scripts/restore-drill.sh records drills |
 | OPS-022 | P0 | built | Versioned forward-only migrations; newer schema refused |
-| OPS-023 | P0 | partial | Post-migration verification only; pre-migration verification and injected-failure test not present |
+| OPS-023 | P0 | built | Verified pre-migration backup; failed migration leaves prior schema (store and CLI tests) (2026-11-14) |
 | OPS-024 | P0 | partial | Upgrade sequence documented; maintenance mode not built |
 | OPS-025 | P1 | built | Explicit migrate mode default; auto mode takes backup |
 | OPS-026 | P0 | partial | Release notes template exists; version set by build flag |
 | OPS-027 | P0 | built | Expiry, purge, verify and backup jobs idempotent; last run recorded in metrics |
 | OPS-028 | P0 | built | Expiry uses same service path; no entries |
 | OPS-029 | P1 | not built | No mail and no stored notices |
-| OPS-030 | P1 | partial | Severity levels in docs/ops/runbook.md; not linked from incident procedure |
+| OPS-030 | P1 | built | Severity levels and incident procedure in docs/ops/incident-response.md (2026-11-14) |
 | OPS-031 | P1 | partial | Support boundary documented; break-glass not built |
 | OPS-032 | P0 | built | Structured JSON logs; log level needs restart |
 | OPS-033 | P0 | partial | Failure table documented; per-network freeze not built |

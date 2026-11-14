@@ -20,16 +20,16 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| QA-001 | P0 | partial | Property tests run in go test; sequence counts and operation list not verified |
+| QA-001 | P0 | partial | Seeded two-network sequences on every change; TestQA001LongRun sizes by env, saves failing seeds; nightly CI 1,000x50; release 100,000 pending DEC-023 (2026-11-14) |
 | QA-002 | P0 | built | Cached balance agreement checked after random operations |
 | QA-003 | P0 | built | Two-entry and zero-sum checks |
 | QA-004 | P0 | partial | Limit boundary covered by acceptance tests; zero and one-unit boundary cases not named |
 | QA-005 | P0 | built | No float types; overflow refused |
 | QA-006 | P0 | built | Fault injection at accept and audit failure |
-| QA-007 | P0 | partial | Parallel accept test present; 100 interleavings not configured |
+| QA-007 | P0 | built | 100 random over-subscribed interleavings, observer never sees a balance below the limit (20 under -race) (2026-11-14) |
 | QA-008 | P0 | not built | Disjoint concurrent trades test not present |
 | QA-009 | P0 | built | Retry, reuse and expiry tests |
-| QA-010 | P0 | partial | Fault store wrapper exists; injection at each posting step not complete |
+| QA-010 | P0 | built | Child process exits at each of 8 posting write steps and after commit; restart gives original or committed state, integrity ok, verify passes (2026-11-14) |
 | QA-011 | P0 | partial | Busy retryable test; seeded contention scenario not present |
 | QA-012 | P0 | built | Authorisation matrix test |
 | QA-013 | P0 | partial | Dispute state machine tests; response deadline and appeal not built |
@@ -38,16 +38,16 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 | QA-016 | P0 | partial | Self-approval, conflict and last-admin tests; approval expiry not built |
 | QA-017 | P0 | partial | Invitation join tested at HTTP level; terms acceptance not built |
 | QA-018 | P0 | partial | Trade flow tested over HTTP and API; no browser end-to-end suite |
-| QA-019 | P0 | partial | Decline and expiry tested; notices not built |
+| QA-019 | P0 | built | Decline and expiry notify the parties (trade.declined, trade.expired); no entries (2026-11-14) |
 | QA-020 | P0 | partial | Limit boundary scenario tested at service level; browser flow not run |
 | QA-021 | P0 | partial | Dispute and reversal tested; party notices not built |
 | QA-022 | P0 | partial | Limit reduction tested; notice not built |
 | QA-023 | P0 | partial | Departure tested; notices and self-export offer not built |
-| QA-024 | P0 | partial | Snapshot restore tested; restore audit event not in ledger; no load |
+| QA-024 | P0 | built | Backup during trades restored into a clean instance; restore writes database.restored to each network chain (2026-11-14) |
 | QA-025 | P0 | deferred | Import of exported data is deferred (04 section 10) |
-| QA-026 | P0 | partial | Restore rollback tested; upgrade with forced migration failure not present |
+| QA-026 | P0 | built | migrate through a forced head-migration failure keeps schema and data; verified pre-upgrade backup holds the exact prior state for the previous binary to restore (2026-11-14) |
 | QA-027 | P0 | partial | Migration tests on current schemas; fixture per released version absent |
-| QA-028 | P0 | partial | Restore integrity tested; backup under concurrent load not run |
+| QA-028 | P0 | built | Backup under concurrent trades: checksum, integrity, verify-ledger on restore, every pre-backup trade present; restore time logged (2026-11-14) |
 | QA-029 | P0 | not built | No restore drill records |
 | QA-030 | P0 | partial | Export totals tested; independent reconciliation script not present |
 | QA-031 | P0 | built | Member scope and canary checks in export tests |

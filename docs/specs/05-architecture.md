@@ -22,9 +22,9 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | ARC-001 | P0 | built | One executable per target; no edition split |
-| ARC-002 | P0 | partial | Service is the write path; cmd reads SQLite directly for some checks |
+| ARC-002 | P0 | partial | Adapters and cmd reach state through service (depguard); schema.go, serve.go and snapshot.go are listed exceptions (2026-11-14) |
 | ARC-003 | P0 | built | Adapters map and render; rules in service |
-| ARC-004 | P0 | partial | Store interface exists but lives beside SQLite; no contract suite for another store |
+| ARC-004 | P0 | built | Repository contract suite runs against SQLite and a wrapped store; depguard keeps it driver-free (2026-11-14) |
 | ARC-005 | P0 | built | Only postTx writes entries and balances |
 | ARC-006 | P0 | built | Per-account serialisation via write gate and BEGIN IMMEDIATE |
 | ARC-007 | P0 | built | Network scoping in queries and tests |

@@ -82,7 +82,7 @@ Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, p
 | FR-092 | P0 | built | Members export scope with role and limit fields |
 | FR-093 | P0 | built | Audit export scope with manifest |
 | FR-094 | P1 | built | Full export scope incl. closed networks |
-| FR-095 | P1 | partial | Export buffered in memory by API adapter; no streaming or size gates |
+| FR-095 | P1 | built | API export streams to an unlinked spool file in export-dir; stored and in-flight bytes share a 64 MiB cap (BR-06) (2026-11-14) |
 
 ## 0. How to read this file
 

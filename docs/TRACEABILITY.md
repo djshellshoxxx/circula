@@ -18,7 +18,7 @@ Checks run in this pass: `go vet ./...` exit 0 (final run). `go test -count=1 ./
 - **deferred**: out of MVP by the spec or by a recorded decision.
 - Decision-register rows (DEC-001 to DEC-027 in 00 and 13) use decision states: decided, open or deferred. The owner decisions are in [DECISIONS.md](DECISIONS.md).
 
-Counts (requirement IDs, excluding decision-register rows): built 290, deferred 9, not built 41, partial 153.
+Counts (requirement IDs, excluding decision-register rows): built 310, deferred 9, not built 40, partial 133. 2026-11-14: rows for the IDs this pass changed were updated against the source and tests at that head (marked "(2026-11-14)"); every other row is still the earlier snapshot. A full regeneration (QA-042) is still open.
 
 
 ## 00 Conventions and invariants
@@ -186,16 +186,16 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | FR-092 | P0 | Admin exports the member list | built | `internal/service/export.go` (ExportMembers)<br>`internal/service/export.go` (Export) | - | Members export scope with role and limit fields |
 | FR-093 | P0 | Admin exports the audit history | built | `internal/service/export.go` (ExportAudit)<br>`internal/service/export.go` (Export) | - | Audit export scope with manifest |
 | FR-094 | P1 | Full network export for closure or portability | built | `internal/service/export.go` (ExportFull)<br>`internal/service/export.go` (Export) | `internal/service/export_test.go:TestFullExportJSON` | Full export scope incl. closed networks |
-| FR-095 | P1 | Export correctness and performance gates | partial | `internal/service/export.go` (MemSink)<br>`internal/api/h_export.go` (createExport) | - | Export buffered in memory by API adapter; no streaming or size gates |
+| FR-095 | P1 | Export correctness and performance gates | built | `internal/service/export.go` (MemSink)<br>`internal/api/h_export.go` (createExport) | `internal/api/export_budget_test.go:TestExportInFlightBytesAreBounded` | API export streams to an unlinked spool file in export-dir; stored and in-flight bytes share a 64 MiB cap (BR-06) (2026-11-14) |
 
 ## 05 Architecture
 
 | ID | Pri | Requirement (short) | Status | Code path(s) | Test name(s) | Note |
 |---|---|---|---|---|---|---|
 | ARC-001 | P0 | Single binary for both deployment modes | built | `scripts/package-release.sh`<br>`cmd/circula/main.go` (main) | - | One executable per target; no edition split |
-| ARC-002 | P0 | Domain service layer is the only write path | partial | `internal/service/service.go` (Service)<br>`internal/store/sqlite.go` (Update)<br>`cmd/circula/commands.go` (cmdAdmin) | - | Service is the write path; cmd reads SQLite directly for some checks |
+| ARC-002 | P0 | Domain service layer is the only write path | partial | `internal/service/service.go` (Service)<br>`internal/store/sqlite.go` (Update)<br>`cmd/circula/commands.go` (cmdAdmin) | `internal/service/ops_read_test.go` | Adapters and cmd reach state through service (depguard); schema.go, serve.go and snapshot.go are listed exceptions (2026-11-14) |
 | ARC-003 | P0 | Adapters contain no business rules | built | `internal/service/verify.go` (VerifyLedger)<br>`internal/service/posting.go` (checkCapacity) | - | Adapters map and render; rules in service |
-| ARC-004 | P0 | Storage behind a repository interface | partial | `internal/store/sqlite.go` (Open)<br>`internal/store/iface.go` | - | Store interface exists but lives beside SQLite; no contract suite for another store |
+| ARC-004 | P0 | Storage behind a repository interface | built | `internal/store/sqlite.go` (Open)<br>`internal/store/iface.go` | `internal/store/contract_test.go` | Repository contract suite runs against SQLite and a wrapped store; depguard keeps it driver-free (2026-11-14) |
 | ARC-005 | P0 | Ledger component owns posting | built | `internal/service/posting.go` (postTx)<br>`internal/store/sqlite_account.go` (AddBalance) | - | Only postTx writes entries and balances |
 | ARC-006 | P0 | Negative-balance check is serialised per account | built | `internal/service/posting.go` (checkCapacity) | `internal/service/concurrency_test.go:TestParallelAcceptsNeverBreachCreditLimit` | Per-account serialisation via write gate and BEGIN IMMEDIATE |
 | ARC-007 | P0 | Network tenant isolation | built | - | `internal/service/authz_test.go:TestCrossNetworkIdsAreNotFound` | Network scoping in queries and tests |
@@ -266,7 +266,7 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | DAT-042 | P0 | Schema migrations MUST be forward-only, versioned, and applied in order with a recorded ve | built | `internal/store/migrate.go` (loadMigrations)<br>`internal/store/migrate.go` (migrate) | `internal/store/sqlite_test.go:TestMigrationsIdempotentAndVersioned` | Forward-only embedded migrations with recorded version |
 | DAT-043 | P0 | Before any migration on a non-empty database, a backup MUST be taken and verified. | built | `cmd/circula/serve.go` (preMigrationBackup) | - | Pre-migration backup before migration on non-empty database |
 | DAT-044 | P0 | After every migration, the consistency check (ARC-015, DAT-020) MUST pass before the appli | built | `cmd/circula/serve.go` (checkPragmas)<br>`internal/service/verify.go` (VerifyLedger)<br>`cmd/circula/commands.go` (cmdMigrate) | - | Post-migration verification gates serving |
-| DAT-045 | P1 | Schema changes SHOULD follow expand-then-contract: add new structures, backfill, switch re | partial | `internal/store/migrate.go` (loadMigrations) | - | Expand-then-contract is a practice; not enforced by tests |
+| DAT-045 | P1 | Schema changes SHOULD follow expand-then-contract: add new structures, backfill, switch re | built | `internal/store/migrate.go` (loadMigrations) | `internal/store/expand_contract_test.go:TestMigrationsExpandThenContract` | Expand-then-contract enforced: any DROP/RENAME outside contractSteps fails (own TEMP tables exempt) (2026-11-14) |
 | DAT-046 | P0 | Migrations MUST NOT modify rows of append-only tables, except a migration that only adds n | built | `internal/store/migrations/0002_hardening.sql` | `internal/store/hardening_test.go:TestMigration0002BackfillsAuditHeads` | Migrations do not change ledger rows (0002 backfills audit heads only) |
 | DAT-047 | P0 | Each release MUST be tested with a migration from the previous released schema, using a fi | not built | - | - | No 10,000-transaction fixture and no migration from prior released schema |
 | DAT-048 | P1 | Migration duration on the fixture MUST be recorded per release so operators can estimate d | not built | - | - | Migration duration not recorded |
@@ -378,11 +378,11 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | UX-014 | P0 | Pending trades (status `proposed`) MUST be listed in a section labelled "Pending" and MUST | built | `internal/web/templates/dashboard.html` | - | Pending section excluded from balance |
 | UX-015 | P0 | Completed trades MUST show "Completed" with the posting date and time (member's time zone, | built | `internal/web/templates/history.html` | - | Completed rows show posted time |
 | UX-016 | P0 | Each status MUST have a text label and a one-line explanation in the detail view. The labe | built | `internal/web/format.go` (statusLabel)<br>`internal/web/format.go` (statusExplain) | - | Status labels and explanations; accepted not shown |
-| UX-017 | P1 | Reversals and adjustments MUST be shown as separate lines linked to the original, with the | partial | `internal/web/templates/history.html` | - | Reversal and adjustment rows exist; link to original not verified |
+| UX-017 | P1 | Reversals and adjustments MUST be shown as separate lines linked to the original, with the | partial | `internal/web/templates/history.html` | `internal/web/ux017_reversal_links_test.go` | Reversals link to the original and back (paged, complete history); adjustments have no original in the schema (2026-11-14) |
 | UX-018 | P0 | Accepting a trade, proposing a trade, creating a reversal or adjustment, and raising a dis | built | `internal/web/templates/propose_review.html`<br>`internal/web/templates/trade_confirm.html` | - | Review step before accept, propose, dispute |
 | UX-019 | P0 | After a successful posting the confirmation message MUST state the new balance and directi | built | `internal/web/session.go` (setFlash)<br>`internal/web/h_trade_act.go` (tradeActionPost) | - | Confirmation message after posting |
 | UX-020 | P0 | Refusals MUST state the cause in plain language and the fact that nothing changed, for exa | built | `internal/web/refusal.go` | - | Refusal copy names cause and that nothing changed |
-| UX-021 | P0 | Validation errors MUST identify the field in text, describe the problem, and suggest a cor | partial | `internal/web/refusal.go` | - | Error summary and field messages present; not verified against all codes |
+| UX-021 | P0 | Validation errors MUST identify the field in text, describe the problem, and suggest a cor | built | `internal/web/refusal.go` | `internal/web/ux021_refusal_test.go` | Messages name the field and a correction; table test over every domain.Code (2026-11-14) |
 | UX-022 | P0 | On a failed submission, the page MUST show an error summary at the top that links to each  | partial | `internal/web/refusal.go` | - | Error summary present; focus move and value retention not verified |
 | UX-023 | P0 | Amount inputs MUST state the accepted format in the label or helper text ("Amount in credi | partial | `internal/web/templates/propose.html` | `internal/web/a11y_test.go:TestFormLabelsAndAutocomplete` | inputmode decimal on amount fields; format text in helper |
 | UX-024 | P1 | Dates and times MUST be shown in the member's chosen time zone with its abbreviation, in a | not built | `internal/web/render.go` | - | Member time zone not supported; times shown in server zone |
@@ -440,13 +440,13 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | SEC-011 | P1 | Dual control for value-moving administrative actions | not built | `internal/service/adjustments.go` (CreateAdjustment) | - | No dual control; adjustments post at once |
 | SEC-012 | P0 | Administrative action audit and notice | partial | `internal/service/audit.go` (audit) | `internal/service/atomicity_test.go:TestEveryCommandWritesAuditEvent` | Audit in same unit for admin actions; notices to affected members not built |
 | SEC-013 | P0 | Platform operator access | partial | `cmd/circula/commands.go` (cmdAdmin) | - | No operator role reads network data in product; break-glass not built |
-| SEC-014 | P0 | Data minimization | partial | `internal/service/auth.go` (RegisterPerson) | - | Minimal profile fields; data inventory document absent |
+| SEC-014 | P0 | Data minimization | built | `internal/service/auth.go` (RegisterPerson) | `internal/store/pii_inventory_test.go` | Personal-data inventory checked against the migrated schema (2026-11-14) |
 | SEC-015 | P0 | Tenant isolation between networks | built | - | `internal/service/authz_test.go:TestCrossNetworkIdsAreNotFound`<br>`internal/store/sqlite_test.go:TestCrossNetworkReferencesRejected` | Network-scoped queries and cross-network tests |
 | SEC-016 | P0 | Directory visibility and identity display | partial | `internal/service/membership.go` (ListDirectory) | - | Members-only directory; no-index directive absent |
 | SEC-017 | P0 | Export controls | built | `internal/api/jobs.go` (jobTTL) | `internal/service/export_test.go:TestCSVFormulaNeutralisation`<br>`internal/service/export_test.go:TestMemberExportIsScoped` | Member and admin scopes; CSV formula neutralisation; 24h download expiry |
 | SEC-018 | P0 | Retention and erasure | not built | `internal/service/departure.go` (DepartMember) | - | No pseudonymisation or erasure on departure |
 | SEC-019 | P0 | Audit event access and content | partial | `internal/service/audit_read.go` (ListAudit) | `internal/service/audit_test.go:TestAuditEventContent` | Audit excludes secrets; admin-only read path; member read in service only |
-| SEC-020 | P0 | Secure logging | partial | `internal/service/purge.go` (RedactSecrets)<br>`cmd/circula/ops_http.go` (routeOf) | `internal/service/hardening_test.go:TestRedactSecrets` | RedactSecrets and route templates in logs; no log-wide canary scan |
+| SEC-020 | P0 | Secure logging | built | `internal/service/purge.go` (RedactSecrets)<br>`cmd/circula/ops_http.go` (routeOf) | `internal/service/hardening_test.go:TestRedactSecrets`<br>`internal/logx/logx_test.go` | logx redacts credentials and escapes control characters for web, API and serve logs; canary tests (2026-11-14) |
 | SEC-021 | P1 | Log retention and access | not built | - | - | Log retention not implemented |
 | SEC-022 | P0 | Transport security | built | `cmd/circula/config.go` (checkTransport) | `cmd/circula/hardening_test.go:TestPlainHTTPRefusedUnlessExplicit`<br>`internal/web/hardening_test.go:TestSecureCookiesAndHSTS` | Refuses plain HTTP on non-loopback unless explicit; Secure cookies forced |
 | SEC-023 | P0 | Browser security headers | built | - | `internal/web/security_test.go:TestHeadersAndCookies`<br>`internal/httpx/httpx_test.go:TestSecureAndHSTS` | CSP, frame-ancestors, no-store, same-origin scripts |
@@ -512,7 +512,7 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | OPS-012 | P0 | Write concurrency and bounded transactions | built | - | `internal/web/hardening_test.go:TestBusyDatabaseIs503`<br>`internal/store/hardening_test.go:TestBusyDatabaseIsRetryable` | Short write units; busy returns retryable 503 |
 | OPS-013 | P0 | Metrics and health endpoints | built | `cmd/circula/ops_http.go` (healthz)<br>`cmd/circula/ops_http.go` (readyz)<br>`cmd/circula/ops_http.go` (metricsAccess) | `cmd/circula/ops_test.go:TestHealthzReportsCoarseStatusOnly`<br>`cmd/circula/hardening_test.go:TestMetricsGate` | healthz, readyz, metrics with allow-list and token |
 | OPS-014 | P0 | Required operational metrics | partial | `cmd/circula/metrics.go` (newMetrics) | `cmd/circula/ops_test.go:TestMetricsExposeRequiredSeriesWithRouteTemplates` | HTTP and job metrics built; posting attempt and idempotent-replay counters absent |
-| OPS-015 | P0 | Alerts | partial | `docs/ops/monitoring.md` | - | Alert table in docs/ops/monitoring.md; alerts not configured or tested in staging |
+| OPS-015 | P0 | Alerts | partial | `docs/ops/monitoring.md` | `cmd/circula/alert_rules_test.go` | Alert rules shipped in docs/ops/alerts/circula.rules.yml and checked by test; not exercised in staging (2026-11-14) |
 | OPS-016 | P0 | Ledger verification command | built | `internal/service/verify.go` (VerifyLedger)<br>`cmd/circula/commands.go` (cmdVerifyLedger) | `cmd/circula/cli_regress_test.go:TestVerifyLedgerLeavesDatabaseChecksumUnchanged` | Read-only verify with checksum test; CLI and admin entry points |
 | OPS-017 | P0 | Backup method and consistency | built | `cmd/circula/snapshot.go` (snapshot) | `cmd/circula/backup_test.go:TestSnapshotWritesVerifiedManifestAndRestores` | Online snapshot with manifest and checksum; load test not run |
 | OPS-018 | P0 | Backup schedule and retention | built | `cmd/circula/snapshot.go` (pruneBackups) | `cmd/circula/backup_test.go:TestPruneKeepsDailyAndNewestPerMonth`<br>`cmd/circula/jobs_regress_test.go:TestJobScheduledBackupAndRetention` | Daily schedule with 30 daily and 12 monthly retention |
@@ -520,14 +520,14 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | OPS-020 | P0 | Restore procedure and verification | partial | `cmd/circula/commands.go` (cmdRestore)<br>`cmd/circula/commands.go` (swapDatabase)<br>`cmd/circula/commands.go` (writeRestoreRecord) | `cmd/circula/hardening_test.go:TestRestoreRefusesBackupFailingEmbeddedChecks` | Restore refuses while serving (lock) and verifies; restore audit event not in ledger |
 | OPS-021 | P0 | Restore drills | partial | `docs/ops/backup-restore.md` | - | Drill procedure documented; no drill records |
 | OPS-022 | P0 | Versioned, forward-only migrations | built | `internal/store/migrate.go` (loadMigrations)<br>`cmd/circula/schema.go` (checkSchemaNotNewer) | `internal/store/sqlite_test.go:TestMigrationsIdempotentAndVersioned` | Versioned forward-only migrations; newer schema refused |
-| OPS-023 | P0 | Migration safety | partial | `cmd/circula/commands.go` (cmdMigrate)<br>`cmd/circula/serve.go` (preMigrationBackup) | - | Post-migration verification only; pre-migration verification and injected-failure test not present |
+| OPS-023 | P0 | Migration safety | built | `cmd/circula/commands.go` (cmdMigrate)<br>`cmd/circula/serve.go` (preMigrationBackup) | `cmd/circula/qa026_upgrade_rollback_test.go:TestQA026UpgradeWithForcedFailureRollsBack` | Verified pre-migration backup; failed migration leaves prior schema (store and CLI tests) (2026-11-14) |
 | OPS-024 | P0 | Upgrade procedure | partial | `docs/ops/upgrade.md` | - | Upgrade sequence documented; maintenance mode not built |
 | OPS-025 | P1 | Migration mode | built | - | `cmd/circula/serve_test.go:TestServeRefusesPendingMigrationsInExplicitMode` | Explicit migrate mode default; auto mode takes backup |
 | OPS-026 | P0 | Versioning and release notes | partial | `docs/releases/TEMPLATE.md`<br>`cmd/circula/main.go` (version) | - | Release notes template exists; version set by build flag |
 | OPS-027 | P0 | Idempotent scheduled jobs | built | `cmd/circula/serve.go` (jobRunner)<br>`cmd/circula/serve.go` (expire)<br>`cmd/circula/serve.go` (purge)<br>`cmd/circula/serve.go` (verify)<br>`cmd/circula/serve.go` (backups) | `cmd/circula/jobs_regress_test.go:TestJobRunStartsAllJobsAndStops` | Expiry, purge, verify and backup jobs idempotent; last run recorded in metrics |
 | OPS-028 | P0 | Expiry does not bypass posting | built | `internal/service/transactions.go` (ExpireProposals) | `internal/service/trades_test.go:TestExpiry` | Expiry uses same service path; no entries |
 | OPS-029 | P1 | Notification delivery | not built | - | - | No mail and no stored notices |
-| OPS-030 | P1 | Support tiers and severity | partial | `docs/ops/runbook.md` | - | Severity levels in docs/ops/runbook.md; not linked from incident procedure |
+| OPS-030 | P1 | Support tiers and severity | built | `docs/ops/runbook.md` | `cmd/circula/alert_rules_test.go` | Severity levels and incident procedure in docs/ops/incident-response.md (2026-11-14) |
 | OPS-031 | P1 | Support access | partial | `docs/ops/runbook.md` | - | Support boundary documented; break-glass not built |
 | OPS-032 | P0 | Structured logs | built | `cmd/circula/serve.go` (newLogger) | - | Structured JSON logs; log level needs restart |
 | OPS-033 | P0 | Failure recovery requirements | partial | `docs/ops/monitoring.md`<br>`cmd/circula/serve.go` (runServe) | - | Failure table documented; per-network freeze not built |
@@ -538,16 +538,16 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 
 | ID | Pri | Requirement (short) | Status | Code path(s) | Test name(s) | Note |
 |---|---|---|---|---|---|---|
-| QA-001 | P0 | P0 | partial | - | `internal/service/property_test.go:TestRandomisedLedgerInvariants` | Property tests run in go test; sequence counts and operation list not verified |
+| QA-001 | P0 | P0 | partial | - | `internal/service/property_test.go:TestRandomisedLedgerInvariants`<br>`internal/service/qa001_runsize_test.go:TestQA001LongRun` | Seeded two-network sequences on every change; TestQA001LongRun sizes by env, saves failing seeds; nightly CI 1,000x50; release 100,000 pending DEC-023 (2026-11-14) |
 | QA-002 | P0 | P0 | built | `internal/service/verify.go` (VerifyLedger) | `internal/service/property_test.go:TestRandomisedLedgerInvariants` | Cached balance agreement checked after random operations |
 | QA-003 | P0 | P0 | built | - | `internal/store/sqlite_test.go:TestTransactionIntegrityTriggers`<br>`internal/service/trades_test.go:TestTradeScenarioBalances` | Two-entry and zero-sum checks |
 | QA-004 | P0 | P0 | partial | - | `internal/service/trades_test.go:TestAcceptRechecksLimit` | Limit boundary covered by acceptance tests; zero and one-unit boundary cases not named |
 | QA-005 | P0 | P0 | built | - | `internal/domain/domain_test.go:TestNoFloatsInMoneyPackages`<br>`internal/domain/domain_test.go:TestAddChecked` | No float types; overflow refused |
 | QA-006 | P0 | P0 | built | - | `internal/service/atomicity_test.go:TestAcceptFaultInjectionLeavesNoTrace`<br>`internal/service/atomicity_test.go:TestAuditFailureRollsBackStateChange` | Fault injection at accept and audit failure |
-| QA-007 | P0 | P0 | partial | - | `internal/service/concurrency_test.go:TestParallelAcceptsNeverBreachCreditLimit` | Parallel accept test present; 100 interleavings not configured |
+| QA-007 | P0 | P0 | built | - | `internal/service/concurrency_test.go:TestParallelAcceptsNeverBreachCreditLimit`<br>`internal/service/qa007_interleavings_test.go:TestQA007OverSubscriptionInterleavings` | 100 random over-subscribed interleavings, observer never sees a balance below the limit (20 under -race) (2026-11-14) |
 | QA-008 | P0 | P0 | not built | - | - | Disjoint concurrent trades test not present |
 | QA-009 | P0 | P0 | built | - | `internal/service/idempotency_test.go:TestIdempotentRetryReturnsOriginal`<br>`internal/service/idempotency_test.go:TestIdempotencyRecordExpires` | Retry, reuse and expiry tests |
-| QA-010 | P0 | P0 | partial | `internal/testutil/testutil.go`<br>`internal/testutil/fault.go` | - | Fault store wrapper exists; injection at each posting step not complete |
+| QA-010 | P0 | P0 | built | `internal/testutil/testutil.go`<br>`internal/testutil/fault.go` | `internal/service/qa010_crash_test.go:TestQA010CrashDuringPostingThenRestart` | Child process exits at each of 8 posting write steps and after commit; restart gives original or committed state, integrity ok, verify passes (2026-11-14) |
 | QA-011 | P0 | P0 | partial | - | `internal/store/hardening_test.go:TestBusyDatabaseIsRetryable` | Busy retryable test; seeded contention scenario not present |
 | QA-012 | P0 | P0 | built | - | `internal/service/authz_test.go:TestAuthorizationMatrix` | Authorisation matrix test |
 | QA-013 | P0 | P0 | partial | - | `internal/domain/statemachine_test.go:TestDisputeStateMachineExhaustive` | Dispute state machine tests; response deadline and appeal not built |
@@ -556,16 +556,16 @@ Counts (requirement IDs, excluding decision-register rows): built 290, deferred 
 | QA-016 | P0 | P0 | partial | - | `internal/service/dispute_test.go:TestDisputeDecisionAuthorization`<br>`internal/service/membership_test.go:TestAdministratorSuccession` | Self-approval, conflict and last-admin tests; approval expiry not built |
 | QA-017 | P0 | P0 | partial | - | `internal/web/flow_test.go:TestJoinByInvitationLink` | Invitation join tested at HTTP level; terms acceptance not built |
 | QA-018 | P0 | P0 | partial | - | `internal/api/trade_test.go:TestFullTradeFlow`<br>`internal/web/flow_test.go:TestLoginTradeFlow` | Trade flow tested over HTTP and API; no browser end-to-end suite |
-| QA-019 | P0 | P0 | partial | - | `internal/service/trades_test.go:TestDeclineCancelExitRules`<br>`internal/service/trades_test.go:TestExpiry` | Decline and expiry tested; notices not built |
+| QA-019 | P0 | P0 | built | - | `internal/service/trades_test.go:TestDeclineCancelExitRules`<br>`internal/service/trades_test.go:TestExpiry`<br>`internal/service/notify_test.go:TestNotificationsTradeExpired` | Decline and expiry notify the parties (trade.declined, trade.expired); no entries (2026-11-14) |
 | QA-020 | P0 | P0 | partial | - | `internal/service/trades_test.go:TestAcceptRechecksLimit` | Limit boundary scenario tested at service level; browser flow not run |
 | QA-021 | P0 | P0 | partial | - | `internal/service/dispute_test.go:TestUpheldReversalBlockedThenOverride`<br>`internal/service/reversal_test.go:TestFullReversal` | Dispute and reversal tested; party notices not built |
 | QA-022 | P0 | P0 | partial | - | `internal/service/trades_test.go:TestLimitReductionDoesNotPost` | Limit reduction tested; notice not built |
 | QA-023 | P0 | P0 | partial | - | `internal/service/admin_test.go:TestDepartureRetain` | Departure tested; notices and self-export offer not built |
-| QA-024 | P0 | P0 | partial | - | `cmd/circula/backup_test.go:TestSnapshotWritesVerifiedManifestAndRestores` | Snapshot restore tested; restore audit event not in ledger; no load |
+| QA-024 | P0 | P0 | built | - | `cmd/circula/backup_test.go:TestSnapshotWritesVerifiedManifestAndRestores`<br>`cmd/circula/qa028_backup_load_test.go:TestQA028BackupUnderLoadRestores` | Backup during trades restored into a clean instance; restore writes database.restored to each network chain (2026-11-14) |
 | QA-025 | P0 | P0 | deferred | - | - | Import of exported data is deferred (04 section 10) |
-| QA-026 | P0 | P0 | partial | - | `cmd/circula/hardening_test.go:TestSwapDatabaseRollsBack` | Restore rollback tested; upgrade with forced migration failure not present |
+| QA-026 | P0 | P0 | built | - | `cmd/circula/hardening_test.go:TestSwapDatabaseRollsBack`<br>`cmd/circula/qa026_upgrade_rollback_test.go:TestQA026UpgradeWithForcedFailureRollsBack` | migrate through a forced head-migration failure keeps schema and data; verified pre-upgrade backup holds the exact prior state for the previous binary to restore (2026-11-14) |
 | QA-027 | P0 | P0 | partial | - | `internal/store/sqlite_test.go:TestMigrationsIdempotentAndVersioned` | Migration tests on current schemas; fixture per released version absent |
-| QA-028 | P0 | P0 | partial | - | `cmd/circula/hardening_test.go:TestBackupEqualsSource` | Restore integrity tested; backup under concurrent load not run |
+| QA-028 | P0 | P0 | built | - | `cmd/circula/hardening_test.go:TestBackupEqualsSource`<br>`cmd/circula/qa028_backup_load_test.go:TestQA028BackupUnderLoadRestores` | Backup under concurrent trades: checksum, integrity, verify-ledger on restore, every pre-backup trade present; restore time logged (2026-11-14) |
 | QA-029 | P0 | P0 | not built | - | - | No restore drill records |
 | QA-030 | P0 | P0 | partial | - | `internal/service/export_test.go:TestLedgerExportCSV`<br>`internal/service/export_test.go:TestFullExportJSON` | Export totals tested; independent reconciliation script not present |
 | QA-031 | P0 | P0 | built | - | `internal/service/export_test.go:TestMemberExportIsScoped` | Member scope and canary checks in export tests |

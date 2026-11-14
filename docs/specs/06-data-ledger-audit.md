@@ -67,7 +67,7 @@ Summary for the historical implementation snapshot: built 38, not built 3, requi
 | DAT-042 | P0 | built | Forward-only embedded migrations with recorded version |
 | DAT-043 | P0 | built | Pre-migration backup before migration on non-empty database |
 | DAT-044 | P0 | built | Post-migration verification gates serving |
-| DAT-045 | P1 | partial | Expand-then-contract is a practice; not enforced by tests |
+| DAT-045 | P1 | built | Expand-then-contract enforced: any DROP/RENAME outside contractSteps fails (own TEMP tables exempt) (2026-11-14) |
 | DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
 | DAT-047 | P0 | built | Golden v1 fixture, 10,000 transactions across 60 members, migrated to the current schema with the check passing (`internal/store/golden_migration_test.go`); no released schema exists yet, so v1 stands in. Re-checked 2026-11-12 |
 | DAT-048 | P1 | not built | Migration duration not recorded |
