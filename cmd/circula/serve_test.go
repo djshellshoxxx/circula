@@ -47,3 +47,28 @@ func countBackups(t *testing.T, dir string) int {
 	}
 	return len(entries)
 }
+
+// OPS-025: a brand-new database is created at the current schema even in
+// explicit mode (nothing to protect); an existing one with pending migrations
+// is refused in explicit mode and backed up first in auto mode.
+func TestStartupMigrationGate(t *testing.T) {
+	cases := []struct {
+		name         string
+		state        schemaState
+		mode         string
+		backup, fail bool
+	}{
+		{"new database, explicit", schemaState{Exists: false, Applied: 0, Known: 16}, "explicit", false, false},
+		{"new database, auto", schemaState{Exists: false, Applied: 0, Known: 16}, "auto", false, false},
+		{"current, explicit", schemaState{Exists: true, Applied: 16, Known: 16}, "explicit", false, false},
+		{"pending, explicit", schemaState{Exists: true, Applied: 15, Known: 16}, "explicit", false, true},
+		{"pending, auto", schemaState{Exists: true, Applied: 15, Known: 16}, "auto", true, false},
+		{"empty file, explicit", schemaState{Exists: true, Applied: 0, Known: 16}, "explicit", false, true},
+	}
+	for _, c := range cases {
+		backup, err := startupMigrationGate(c.state, c.mode)
+		if backup != c.backup || (err != nil) != c.fail {
+			t.Errorf("%s: backup=%v err=%v, want backup=%v fail=%v", c.name, backup, err, c.backup, c.fail)
+		}
+	}
+}

@@ -122,11 +122,9 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if err := state.CheckNotNewer(); err != nil {
 		return err
 	}
-	if state.Pending() > 0 && state.Exists {
-		if cfg.MigrateMode == "explicit" {
-			return fmt.Errorf("database has %d pending migration(s) (schema v%d, binary v%d); "+
-				"run `circula migrate` to back up and migrate, then start again", state.Pending(), state.Applied, state.Known)
-		}
+	if backup, err := startupMigrationGate(state, cfg.MigrateMode); err != nil {
+		return err
+	} else if backup {
 		if err := preMigrationBackup(ctx, cfg, logger, m, state); err != nil {
 			m.migrationRan("refused")
 			return err
@@ -610,4 +608,20 @@ func webLimits(cfg *Config) web.Limits {
 		PasswordCheck: l(cfg.RatePasswordCheck), Register: l(cfg.RateRegister),
 		Setup: l(cfg.RateSetup), Join: l(cfg.RateJoin),
 	}
+}
+
+// startupMigrationGate decides what serve does with pending migrations
+// (OPS-025). A database file that does not exist yet holds no data to
+// protect, so serve creates it at the current schema in either mode. An
+// existing database with pending migrations is refused in explicit mode and
+// backed up first in auto mode.
+func startupMigrationGate(state schemaState, mode string) (backup bool, err error) {
+	if state.Pending() == 0 || !state.Exists {
+		return false, nil
+	}
+	if mode == "explicit" {
+		return false, fmt.Errorf("database has %d pending migration(s) (schema v%d, binary v%d); "+
+			"run `circula migrate` to back up and migrate, then start again", state.Pending(), state.Applied, state.Known)
+	}
+	return true, nil
 }

@@ -1,5 +1,6 @@
 # Example: Circula behind a TLS proxy. Set CIRCULA_PUBLIC_BASE_URL to the proxy's https address.
-# Run once before first start (migrate-mode is explicit by default):
+# First start: serve creates a new, empty database at the current schema by itself.
+# After an image upgrade with pending migrations (migrate-mode is explicit by default), run:
 #   docker compose -f deploy/compose.yaml run --rm circula migrate
 services:
   circula:

@@ -24,7 +24,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `backup-interval` | `CIRCULA_BACKUP_INTERVAL` | `24h` | no | Time between scheduled backups. `0` disables them. |
 | `backup-retain-daily` | `CIRCULA_BACKUP_RETAIN_DAILY` | `30` | no | Newest backups kept (1 to 10000). |
 | `backup-retain-monthly` | `CIRCULA_BACKUP_RETAIN_MONTHLY` | `12` | no | Months for which the newest backup is also kept. `0` disables. |
-| `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start with pending migrations. `auto`: back up, then migrate at start-up. |
+| `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start when an existing database has pending migrations. `auto`: back up, then migrate at start-up. In both modes a database file that does not exist yet is created at the current schema (there is no data to protect). |
 | `session-idle` | `CIRCULA_SESSION_IDLE` | `720h` | no | Idle session timeout (DEC-005). |
 | `session-max` | `CIRCULA_SESSION_MAX` | `2160h` | no | Absolute session lifetime. Must not be shorter than `session-idle`. |
 | `session-idle-admin` | `CIRCULA_SESSION_IDLE_ADMIN` | value of `session-idle` | no | Idle timeout for a person who holds the administrator role in any network they belong to (SEC-003). Not longer than `session-idle`. See [Role-specific session timeouts](#role-specific-session-timeouts-sec-003). |
