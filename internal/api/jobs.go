@@ -171,3 +171,22 @@ func (j *jobStore) uncharge(n int64) {
 	defer j.mu.Unlock()
 	j.inflight -= n
 }
+
+// networkWideScopes are the export scopes that hold other members' data.
+var networkWideScopes = map[string]bool{"ledger": true, "members": true, "audit": true, "full": true}
+
+// dropNetworkWide removes every network-wide export artefact of net, whoever
+// made it, so an erased member's data does not outlive the erasure in an
+// administrator's export (BR-04).
+func (j *jobStore) dropNetworkWide(net string) {
+	if net == "" {
+		return
+	}
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	for k, e := range j.exps {
+		if e.net == net && networkWideScopes[e.dto.Scope] {
+			j.dropLocked(k, e)
+		}
+	}
+}

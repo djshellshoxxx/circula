@@ -20,7 +20,8 @@ func setErasureHook(s *server) {
 
 // OnMemberErased drops what the API keeps in memory for the person behind an
 // erased membership: cached idempotent responses, export artefacts and check
-// results. It is meant for service.Config.OnMemberErased and is safe to call
+// results, and every network-wide export of that network, which holds the
+// erased member's data (BR-04). It is meant for service.Config.OnMemberErased and is safe to call
 // before any handler exists (it then does nothing).
 func OnMemberErased(netID, personID string) {
 	erasureHook.mu.Lock()
@@ -31,4 +32,5 @@ func OnMemberErased(netID, personID string) {
 	}
 	s.idem.dropPerson(personID)
 	s.jobs.dropPerson(personID)
+	s.jobs.dropNetworkWide(netID) // BR-04
 }
