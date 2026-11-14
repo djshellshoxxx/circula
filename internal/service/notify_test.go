@@ -206,3 +206,22 @@ func TestLimitWarningHelper(t *testing.T) {
 		t.Error("nil view warns")
 	}
 }
+
+// QA-019 / FR-038: an expired proposal notifies both parties, with no entries.
+func TestNotificationsTradeExpired(t *testing.T) {
+	w := newWorld(t, nil)
+	p := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 300))
+	w.Clock.Advance(time.Duration(w.net.Policy.ProposalExpiryDays)*24*time.Hour + time.Minute)
+	if n := tu.Must(w.Svc.ExpireProposals(w.Ctx, domain.SystemActor("test"), 10)); n != 1 {
+		t.Fatalf("expired %d proposals", n)
+	}
+	for _, who := range []domain.Actor{w.a, w.b} {
+		if !hasKind(w.inbox(who), service.NotifTradeExpired) {
+			t.Errorf("%s not notified of the expiry: %v", who.PersonID, w.inbox(who))
+		}
+	}
+	got := tu.Must(w.Svc.GetTransaction(w.Ctx, w.a, w.net.ID, p.ID))
+	if got.Tx.Status != domain.TxExpired || len(got.Entries) != 0 {
+		t.Fatalf("status %s, %d entries", got.Tx.Status, len(got.Entries))
+	}
+}

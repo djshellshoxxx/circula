@@ -382,6 +382,9 @@ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit
 				Before: map[string]any{"status": "proposed"}, After: map[string]any{"status": "expired"}}); err != nil {
 				return err
 			}
+			if err := s.notifyExpired(tx, t); err != nil {
+				return err
+			}
 			n++
 		}
 		return nil
@@ -390,4 +393,16 @@ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit
 		return 0, err
 	}
 	return n, nil
+}
+
+// notifyExpired tells both parties that a proposal expired unanswered (QA-019,
+// FR-038), in the same unit of work as the expiry.
+func (s *Service) notifyExpired(tx store.Tx, t *domain.Transaction) error {
+	n, err := tx.GetNetwork(t.NetworkID)
+	if err != nil {
+		return err
+	}
+	return s.notifyOthers(tx, t.NetworkID, []string{t.PayerMemberID, t.PayeeMemberID}, "", NotifTradeExpired,
+		"A trade proposal expired", "The proposal of "+fmtAmt(n, t.Amount)+" "+n.Policy.CurrencyName+" expired without an answer.",
+		"/trades/"+t.ID)
 }

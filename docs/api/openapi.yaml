@@ -1259,7 +1259,7 @@ paths:
       summary: The caller's inbox (FR-038)
       description: |
         Own notifications, newest first. Created in the same unit of work as the event they announce:
-        trade.proposed, trade.accepted, trade.declined, trade.cancelled, dispute.opened,
+        trade.proposed, trade.accepted, trade.declined, trade.cancelled, trade.expired, dispute.opened,
         dispute.under_review, dispute.responded, dispute.decided, dispute.withdrawn,
         dispute.rereview_requested, dispute.rereview_decided, report.handled and account.limit_warning
         (UX-012, from the scheduled limit-warning job). Titles and bodies are fixed text without
