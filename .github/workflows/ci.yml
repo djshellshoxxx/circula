@@ -111,6 +111,35 @@ jobs:
         # The race detector needs cgo, which the Windows runner does not provide by default.
         run: go test -count=1 ./...
 
+  long-props:
+    # QA-001 long run: seeded ledger-invariant sequences. Nightly and manual only.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    name: QA-001 long property run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+      - name: 1,000 sequences of 50 operations (release size 100,000 pending DEC-023)
+        env:
+          CIRCULA_QA001_SEQUENCES: "1000"
+          CIRCULA_QA001_STEPS: "50"
+          CIRCULA_QA001_FAILDIR: qa001-failures
+        run: go test -count=1 -timeout=25m -run '^TestQA001LongRun$' ./internal/service
+      - name: keep failing seeds
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: qa001-failures
+          path: internal/service/qa001-failures
+          if-no-files-found: ignore
+
   build:
     name: build release targets
     runs-on: ubuntu-24.04
