@@ -10,6 +10,9 @@ type RecoveryRepo interface {
 	// ConsumeAccountRecoveryCode marks the matching unused code used. It reports true
 	// for exactly one of any number of concurrent callers.
 	ConsumeAccountRecoveryCode(personID, hash string, at time.Time) (bool, error)
+	// HasUnusedAccountRecoveryCode reports, without changing anything, whether the
+	// person has an unused code with this hash (A3-04: checked before hashing).
+	HasUnusedAccountRecoveryCode(personID, hash string) (bool, error)
 	// CountAccountRecoveryCodes counts the person's unused codes.
 	CountAccountRecoveryCodes(personID string) (int, error)
 	DeleteAccountRecoveryCodes(personID string) error

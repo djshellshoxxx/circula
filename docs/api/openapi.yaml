@@ -1726,6 +1726,50 @@ paths:
         '429': {$ref: '#/components/responses/RateLimited'}
         '500': {$ref: '#/components/responses/InternalError'}
 
+  /api/v1/admin/members/{id}/default-flag:
+    put:
+      operationId: setDefaultFlag
+      tags: [Admin]
+      summary: Set or clear the governance default flag (FR-064)
+      description: Administrator with write scope only. Requires a reason; audited without changing ledger entries or balances. Repeating the current flag returns 409. Temporary break-glass administrators cannot use this lasting action.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [default_flag, reason]
+              properties:
+                default_flag: {type: boolean}
+                reason: {type: string, minLength: 1}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
   /api/v1/admin/members/{id}/suspend:
     post:
       operationId: suspendMember

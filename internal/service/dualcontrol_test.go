@@ -25,7 +25,8 @@ func newDC(t *testing.T) *dcWorld {
 	w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 100000 })
 	d := &dcWorld{world: w}
 	d.admin2, d.admin2M = w.Member(w.admin, w.net, "admin2@example.org")
-	tu.Must(0, w.Svc.AssignRole(w.Ctx, w.admin, w.net.ID, d.admin2M.ID, domain.RoleAdmin))
+	tu.Must(0, w.Svc.AssignRole(w.Ctx, domain.SystemActor("fixture"), w.net.ID, d.admin2M.ID, domain.RoleAdmin))
+	w.Clock.Advance(25 * time.Hour) // A3-01: a new administrator waits before deciding
 	tu.Must(0, d.setThreshold(1000))
 	return d
 }
@@ -256,7 +257,8 @@ func TestDualControlConfigurableTTL(t *testing.T) {
 	w := newWorldCfg(t, func(p *domain.Policy) { p.DefaultCreditLimit = 100000 }, func(c *service.Config) { c.PendingAdjustmentTTL = time.Hour })
 	d := &dcWorld{world: w}
 	d.admin2, d.admin2M = w.Member(w.admin, w.net, "admin2@example.org")
-	tu.Must(0, w.Svc.AssignRole(w.Ctx, w.admin, w.net.ID, d.admin2M.ID, domain.RoleAdmin))
+	tu.Must(0, w.Svc.AssignRole(w.Ctx, domain.SystemActor("fixture"), w.net.ID, d.admin2M.ID, domain.RoleAdmin))
+	w.Clock.Advance(25 * time.Hour) // A3-01: a new administrator waits before deciding
 	tu.Must(0, d.setThreshold(1000))
 	pa := d.pending(5000)
 	if !pa.ExpiresAt.Equal(w.Clock.Now().Add(time.Hour)) {
@@ -315,7 +317,8 @@ func TestDualControlRevalidatesAtApproval(t *testing.T) {
 func TestDualControlConcurrentApprove(t *testing.T) {
 	d := newDC(t)
 	third, thirdM := d.Member(d.admin, d.net, "admin3@example.org")
-	tu.Must(0, d.Svc.AssignRole(d.Ctx, d.admin, d.net.ID, thirdM.ID, domain.RoleAdmin))
+	tu.Must(0, d.Svc.AssignRole(d.Ctx, domain.SystemActor("fixture"), d.net.ID, thirdM.ID, domain.RoleAdmin))
+	d.Clock.Advance(25 * time.Hour) // A3-01
 	pa := d.pending(5000)
 	var wg sync.WaitGroup
 	var mu sync.Mutex

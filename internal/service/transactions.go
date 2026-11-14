@@ -91,8 +91,19 @@ func (s *Service) propose(tx store.Tx, p *principal, in ProposeInput) (string, e
 		return "", domain.Errf(domain.CodeCounterpartyInact, "counterparty is not an active member")
 	}
 	if in.ListingID != "" {
-		if _, err := tx.GetListing(p.net.ID, in.ListingID); err != nil {
+		// SA2-18: the listing must exist, be active (a paused or archived one
+		// reads as unknown, as it does to other members), belong to the
+		// counterparty and match the direction: an offer is paid for by the
+		// proposer, a request is paid by the counterparty.
+		l, err := tx.GetListing(p.net.ID, in.ListingID)
+		if err != nil || l.Status != domain.ListingActive {
 			return "", domain.Invalid("listing_id", "unknown listing")
+		}
+		if l.MemberID != cp.ID {
+			return "", domain.Invalid("listing_id", "listing does not belong to the counterparty")
+		}
+		if (l.Type == domain.ListingOffer) != (in.Direction == ProposerPays) {
+			return "", domain.Invalid("listing_id", "listing does not match the direction of the trade")
 		}
 	}
 	payerM, payeeM := p.member, cp

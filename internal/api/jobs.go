@@ -36,6 +36,23 @@ func newJobStore(now func() time.Time) *jobStore {
 	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{}}
 }
 
+// dropPerson removes the export artefacts and check results of one person.
+func (j *jobStore) dropPerson(person string) {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	for k, e := range j.exps {
+		if e.person == person {
+			j.bytes -= int64(len(e.file))
+			delete(j.exps, k)
+		}
+	}
+	for k, e := range j.checks {
+		if e.person == person {
+			delete(j.checks, k)
+		}
+	}
+}
+
 func (j *jobStore) putCheck(net, person string, d checkDTO) {
 	j.mu.Lock()
 	defer j.mu.Unlock()

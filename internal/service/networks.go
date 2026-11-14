@@ -18,6 +18,12 @@ type CreateNetworkInput struct {
 	Slug               string
 	Policy             *domain.Policy // nil = platform defaults
 	CreatorDisplayName string
+	// ConsumeSetupSecret makes the network creation also record the one-time
+	// setup secret as spent, in the same transaction (SA2-16). It fails with a
+	// conflict when the secret is already spent, so a crash can never leave a
+	// network created with the secret still valid. Adapters that gate creation
+	// on the setup secret must set it and must not call MarkSetupSecretUsed.
+	ConsumeSetupSecret bool
 }
 
 // CreateNetwork creates a network in `setup` status with its system account
@@ -55,6 +61,15 @@ func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in Crea
 	m := &domain.Member{ID: s.id(), NetworkID: n.ID, PersonID: actor.PersonID, DisplayName: disp,
 		Status: domain.MemberActive, JoinMethod: "founder", JoinedAt: now, Roles: []domain.Role{domain.RoleAdmin}}
 	err = s.update(ctx, func(tx store.Tx) error {
+		if in.ConsumeSetupSecret {
+			used, err := setupUsed(tx)
+			if err != nil {
+				return err
+			}
+			if used {
+				return domain.Errf(domain.CodeConflict, "the setup secret has already been used")
+			}
+		}
 		if _, err := tx.GetNetworkBySlug(in.Slug); err == nil {
 			return domain.Invalid("slug", "already in use")
 		}
@@ -79,9 +94,15 @@ func (s *Service) CreateNetwork(ctx context.Context, actor domain.Actor, in Crea
 		if err := tx.GrantRole(s.id(), n.ID, m.ID, domain.RoleAdmin, m.ID, now); err != nil {
 			return err
 		}
-		return s.emit(tx, n.ID, m.ID, actor.RequestID, auditEntry{Type: domain.ActorAdmin, Action: domain.ActNetworkCreated,
+		if err := s.emit(tx, n.ID, m.ID, actor.RequestID, auditEntry{Type: domain.ActorAdmin, Action: domain.ActNetworkCreated,
 			TargetType: "network", TargetID: n.ID, After: map[string]any{"status": n.Status, "slug": n.Slug},
-			Subjects: []string{m.ID}})
+			Subjects: []string{m.ID}}); err != nil {
+			return err
+		}
+		if in.ConsumeSetupSecret {
+			return s.auditPlatform(tx, actor, auditEntry{Action: domain.ActSetupSecretUsed, TargetType: "setup_secret"})
+		}
+		return nil
 	})
 	if err != nil {
 		return nil, nil, err

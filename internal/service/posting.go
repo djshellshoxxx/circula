@@ -47,11 +47,15 @@ func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction
 	if err != nil {
 		return err
 	}
+	// A3-03: both sides, system account included, stay within +-MaxBalance.
+	if _, ok := domain.AddBounded(payer.Balance, -t.Amount); !ok {
+		return domain.Errf(domain.CodeValidation, "amount overflows payer balance")
+	}
+	if _, ok := domain.AddBounded(payee.Balance, t.Amount); !ok {
+		return domain.Errf(domain.CodeValidation, "amount overflows payee balance")
+	}
 	if err := checkCapacity(net, payer, t.Amount, now); err != nil {
 		return err
-	}
-	if _, ok := domain.AddChecked(payee.Balance, t.Amount); !ok {
-		return domain.Errf(domain.CodeValidation, "amount overflows payee balance")
 	}
 	next, err := domain.NextTxStatus(t.Status, domain.CmdAccept)
 	if err != nil {

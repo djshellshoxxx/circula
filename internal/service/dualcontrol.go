@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -10,6 +11,47 @@ import (
 // Dual control for administrator adjustments (SEC-011, DEC-013). A request
 // above Policy.DualControlThreshold is recorded by CreateAdjustmentRequest and
 // posts only when a different administrator approves it. See docs/dev/dual-control.md.
+
+// DefaultNewAdminApprovalDelay is the wait before a freshly granted
+// administrator may decide a dual-control request (A3-01).
+const DefaultNewAdminApprovalDelay = 24 * time.Hour
+
+// maxGrantChain bounds the walk up the chain of who made whom administrator.
+const maxGrantChain = 32
+
+// requireIndependentApprover enforces A3-01 for a member deciding a request:
+// the decider's administrator role must not descend (directly or through other
+// grants) from the proposer, and must be older than NewAdminApprovalDelay. One
+// person cannot then satisfy "two administrators" with a puppet account.
+func (s *Service) requireIndependentApprover(tx store.Tx, p *principal, pa *domain.PendingAdjustment) error {
+	if p.bgAdmin { // no grant row: the role is a temporary break-glass one
+		return nil
+	}
+	cur, first := p.memberID(), true
+	seen := map[string]bool{}
+	for i := 0; i < maxGrantChain && cur != "" && !seen[cur]; i++ {
+		seen[cur] = true
+		by, at, ok, err := tx.LatestAdminGrant(pa.NetworkID, cur)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			break
+		}
+		if by == cur { // the founder's own creation-time grant is the root of trust: no wait
+			break
+		}
+		if first && s.cfg.NewAdminApprovalDelay > 0 && s.now().Before(at.Add(s.cfg.NewAdminApprovalDelay)) {
+			return domain.Forbidden("a newly granted administrator cannot decide adjustment requests for %s", s.cfg.NewAdminApprovalDelay)
+		}
+		first = false
+		if by == pa.Proposer && cur != pa.Proposer {
+			return domain.Forbidden("an administrator appointed by the requester cannot decide this adjustment request")
+		}
+		cur = by
+	}
+	return nil
+}
 
 // ApproveAdjustment posts a pending adjustment on the second administrator's
 // approval. The approver must be an active administrator who is neither the
@@ -41,6 +83,9 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 			return domain.Forbidden("the administrator who requested an adjustment cannot approve it")
 		}
 		if err := p.notSelf(pa.Target); err != nil { // DOM-037
+			return err
+		}
+		if err := s.requireIndependentApprover(tx, p, pa); err != nil { // A3-01
 			return err
 		}
 		if err := p.requireNetworkActive(); err != nil {
@@ -130,6 +175,9 @@ func (s *Service) decideNoPost(ctx context.Context, actor domain.Actor, netID, i
 				return domain.Forbidden("the administrator who requested an adjustment cannot reject it; cancel it instead")
 			}
 			if err := p.notSelf(pa.Target); err != nil {
+				return err
+			}
+			if err := s.requireIndependentApprover(tx, p, pa); err != nil { // A3-01
 				return err
 			}
 		}

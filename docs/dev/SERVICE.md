@@ -858,6 +858,24 @@ Deviations from the specs, with reasons:
   Administrators see the refusal (423 / "Network read-only") when they try to write; there is no dedicated dashboard
   indicator yet.
 
+* **Audit 2 adapter contract (Agent A changes).**
+  * `service.WithClientIP(ctx, ip)` must wrap the context passed to `LoginStep`, `Login` and `RecoverPassword` (SA2-10).
+    Lockouts are then keyed by (login, address, IPv6 reduced to /64): 5 failures lock that pair for 15 minutes; a
+    login-wide counter locks every address only after 100 failures. Counters idle for 24 h are forgotten. Without an
+    address the old per-login rule (5 failures) applies. `circula unlock -login X` clears all rows (audited as
+    `person.login_unlocked`).
+  * `CreateNetworkInput.ConsumeSetupSecret` creates the network and spends the setup secret in one transaction
+    (SA2-16); adapters set it instead of calling `MarkSetupSecretUsed` afterwards.
+  * `AuthorizeExportDownload(ctx, actor, netID, scope)` re-checks the role when a stored export artefact is fetched, and
+    `Config.OnMemberErased(netID, personID)` fires after a member's anonymisation so the adapter can drop that
+    person's artefacts and cached replay responses (SA2-17). Stored idempotency records of the person are deleted by
+    the service.
+  * `ProposeTransaction` with a `ListingID` requires an active listing of the counterparty whose type matches the
+    direction (offer: proposer pays; request: counterparty pays) (SA2-18).
+  * Passwords are checked against an embedded list of common passwords (case-insensitive, look-alike and
+    digit/punctuation-suffix variants) and refused when they contain the login or its local-part words.
+  * Admin reset, operator reset and recovery delete the person's pending second-factor challenges (SA2-13).
+
 Not implemented (outside this core task or spec P1/P2); adapters must not assume them:
 
 * SEC-011 dual control, SEC-006 per-address limits, account recovery (SEC-008), MFA (SEC-007),

@@ -30,6 +30,8 @@ type MFARepo interface {
 	// UseMFAChallenge marks the challenge used if it is unused; reports success.
 	UseMFAChallenge(idHash string, at time.Time) (bool, error)
 	// DeleteDeadMFAChallenges removes the person's challenges that expired by cutoff or were used.
+	// DeleteMFAChallengesOf removes every challenge of the person, used or not (SA2-13).
+	DeleteMFAChallengesOf(personID string) error
 	DeleteDeadMFAChallenges(personID string, cutoff time.Time) error
 
 	InsertNotice(n *domain.SecurityNotice) error

@@ -48,6 +48,15 @@ type Config struct {
 	// PendingAdjustmentTTL is how long a dual-control adjustment request waits
 	// for a second administrator (SEC-011). Zero selects 7 days.
 	PendingAdjustmentTTL time.Duration
+	// NewAdminApprovalDelay is how long after being granted the administrator
+	// role a member may not yet approve or reject a dual-control adjustment
+	// (A3-01). Zero selects 24 hours; negative disables the wait.
+	NewAdminApprovalDelay time.Duration
+	// OnMemberErased, when set, runs after a member's anonymisation committed
+	// (SA2-17). Adapters use it to drop what they keep in memory for that
+	// person: export artefacts and cached idempotent responses. personID is
+	// the person behind the erased membership.
+	OnMemberErased func(netID, personID string)
 }
 
 // Service implements all use cases. It is safe for concurrent use.
@@ -95,6 +104,9 @@ func New(st store.Store, cfg Config) (*Service, error) {
 	}
 	if cfg.PendingAdjustmentTTL <= 0 {
 		cfg.PendingAdjustmentTTL = 7 * 24 * time.Hour
+	}
+	if cfg.NewAdminApprovalDelay == 0 {
+		cfg.NewAdminApprovalDelay = DefaultNewAdminApprovalDelay
 	}
 	s := &Service{st: st, cfg: cfg}
 	h, err := hashPassword("dummy-password-for-timing", cfg.Argon)

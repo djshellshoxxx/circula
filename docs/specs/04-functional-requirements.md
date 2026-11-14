@@ -54,7 +54,7 @@ Summary: built 52, not built 3, partial 10.
 | FR-061 | P0 | built | Suspend and restore with reason; audited |
 | FR-062 | P0 | built | Admin adjustment with reason; two entries |
 | FR-063 | P0 | built | List, revoke invitations; approve or deny join requests |
-| FR-064 | P1 | partial | Default flag in web admin only; no API route |
+| FR-064 | P1 | built | Web admin plus PUT /admin/members/{id}/default-flag; service audit and payer restriction; API and contract regression tests |
 | FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute |
 | FR-066 | P1 | built | Admin reversal via API with reason |
 | FR-067 | P1 | partial | Admin home shows pending-member count only |

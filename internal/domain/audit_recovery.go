@@ -19,3 +19,6 @@ var ErrPasswordChangeRequired = &Error{Code: CodePasswordChangeRequired}
 func PasswordChangeRequired() *Error {
 	return Errf(CodePasswordChangeRequired, "you must change your password before doing anything else")
 }
+
+// ActLoginUnlocked is the platform audit event of `circula unlock` (SA2-10).
+const ActLoginUnlocked = "person.login_unlocked"

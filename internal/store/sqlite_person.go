@@ -63,6 +63,15 @@ func (t *txImpl) DeleteThrottle(login string) error {
 	return err
 }
 
+func (t *txImpl) DeleteThrottleFamily(key string) (int64, error) {
+	res, err := t.exec(`DELETE FROM login_throttle WHERE login = ? OR substr(login, 1, ?) = ?`,
+		key, len(key)+1, key+" ")
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
 // DeleteStaleThrottles removes up to limit rows whose lock (or last failure)
 // ended at or before cutoff.
 func (t *txImpl) DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error) {
@@ -120,6 +129,11 @@ func (t *txImpl) RevokeSession(idHash string, at time.Time) error {
 
 func (t *txImpl) RevokeSessionsOf(personID string, at time.Time) error {
 	_, err := t.exec(`UPDATE sessions SET revoked_at = ? WHERE person_id = ? AND revoked_at IS NULL`, ms(at), personID)
+	return err
+}
+
+func (t *txImpl) RevokeOtherSessionsOf(personID, keepID string, at time.Time) error {
+	_, err := t.exec(`UPDATE sessions SET revoked_at = ? WHERE person_id = ? AND id <> ? AND revoked_at IS NULL`, ms(at), personID, keepID)
 	return err
 }
 

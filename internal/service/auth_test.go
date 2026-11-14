@@ -181,11 +181,11 @@ func TestLoginThrottle(t *testing.T) {
 	if _, _, err = e.Svc.Login(e.Ctx, "ana@example.org", "wrong password!!"); domain.CodeOf(err) != domain.CodeUnauthenticated {
 		t.Fatalf("after the delay a (wrong) attempt is evaluated again: %v", err)
 	}
-	// the sixth failure doubles the delay
-	e.Clock.Advance(16 * time.Minute)
+	// the sixth failure locks again, but never for longer than 15 minutes (SA2-10)
+	e.Clock.Advance(14 * time.Minute)
 	_, _, err = e.Svc.Login(e.Ctx, "ana@example.org", pw)
 	wantCode(t, err, domain.ErrRateLimited)
-	e.Clock.Advance(15 * time.Minute)
+	e.Clock.Advance(2 * time.Minute)
 	if _, _, err = e.Svc.Login(e.Ctx, "ana@example.org", pw); err != nil {
 		t.Fatalf("success after delay: %v", err)
 	}

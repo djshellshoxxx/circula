@@ -50,7 +50,7 @@ func (s *server) edge(next http.Handler) http.Handler {
 			}
 		}()
 		if s.opt.IPPerMinute > 0 {
-			if ok, retry := s.rl.allow("ip:"+s.opt.Edge.ClientIP(r), s.opt.IPPerMinute); !ok {
+			if ok, retry := s.rl.allow("ip:"+s.opt.Edge.RateKey(r), s.opt.IPPerMinute); !ok {
 				writeProblem(w, r, rid, rateLimited(retry))
 				return
 			}

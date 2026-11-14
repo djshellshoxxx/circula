@@ -14,7 +14,7 @@
   {{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" (printf "%s It is written to the audit log, which is never rewritten, so do not put names or contact details in it." (or (and .Self "Optional.") "Required.")) "Req" (not .Self)}}
   <div class="field{{if $.Err "confirm"}} has-error{{end}}">
     {{with $.Err "confirm"}}<p class="error" id="e-confirm"><span class="sr">Error: </span>{{.}}</p>{{end}}
-    <label><input type="checkbox" name="confirm" value="yes"{{if $.Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> I understand this cannot be undone</label>
+    <label><input type="checkbox" id="f-confirm" name="confirm" value="yes"{{if $.Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> I understand this cannot be undone</label>
   </div>
   <div class="actions"><button type="submit" class="danger">Erase personal data</button> <a class="btn secondary" href="/n/{{$.Slug}}{{if not .Self}}/admin/members?status=departed{{end}}">Go back</a></div>
 </form>

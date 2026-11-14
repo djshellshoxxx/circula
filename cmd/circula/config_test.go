@@ -7,7 +7,26 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/djshellshoxxx/circula/internal/store"
 )
+
+// SA2-20: db-synchronous defaults to normal, accepts full and rejects anything else.
+func TestDBSynchronousSetting(t *testing.T) {
+	get := func(args ...string) (*Config, error) {
+		c, _, err := resolveWith(t, args, baseEnv(t, nil))
+		return c, err
+	}
+	if c, err := get(); err != nil || c.Synchronous != store.SyncNormal {
+		t.Fatalf("default: %v %+v", err, c)
+	}
+	if c, err := get("-db-synchronous", "FULL"); err != nil || c.Synchronous != store.SyncFull {
+		t.Fatalf("full: %v %+v", err, c)
+	}
+	if _, err := get("-db-synchronous", "off"); err == nil {
+		t.Error("db-synchronous=off accepted")
+	}
+}
 
 // sampleValues gives every setting a valid non-default value. TestEverySettingAcceptedByEverySource
 // fails when a setting is added without one.
@@ -28,6 +47,7 @@ var sampleValues = map[string]string{
 	"require-mfa-admins":    "true",
 	"max-body-bytes":        "2048",
 	"request-timeout":       "5s",
+	"db-synchronous":        "full",
 	"log-level":             "debug",
 	"log-format":            "text",
 	"log-retention":         "48h",

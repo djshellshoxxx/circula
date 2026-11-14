@@ -31,7 +31,8 @@ compared after them, and a backup that changed is discarded. Backup files and ma
 
 Set `backup-encryption-key` and every backup (manual, scheduled, `pre-migration`, `pre-restore`) is written encrypted as
 `circula-<UTC time>.db.enc` with its manifest. Without it, backups are plaintext `.db` files and `serve` and `backup`
-warn. Restoring an old plaintext backup stays possible unless `backup-require-encryption` is set.
+warn. `backup-require-encryption` defaults to `auto`: as soon as an encryption key is configured, plaintext backups are
+refused for restore (SA2-11). Restoring an old plaintext backup then needs `-backup-require-encryption false` explicitly.
 
 Generate a key and store it on the host that takes and restores backups, apart from the backup storage:
 
@@ -63,7 +64,7 @@ and SSDs: keep the host disk encrypted too.
 Restore decrypts transparently when the key is configured (`CIRCULA_BACKUP_ENCRYPTION_KEY` or
 `backup-encryption-key-file`). `restore` refuses, before changing anything: an encrypted backup with no key, a wrong key,
 a modified or truncated file, a manifest that disagrees with the file about being encrypted, and (with
-`backup-require-encryption`) any plaintext backup.
+`backup-require-encryption`, which is on by default whenever a key is set) any plaintext backup.
 
 Key rotation. Set the new key, take a new backup, and keep the old key for as long as old backups are kept. Old backups
 open only under the key that wrote them. To re-encrypt an old backup: restore it into a scratch database with the old
@@ -111,7 +112,8 @@ What `restore` does, in order:
 
 1. Reads the manifest and checks the file's SHA-256 and size. It refuses a backup whose schema is newer than the binary.
 2. Takes the single-writer lock. It refuses if `serve` is running.
-   With `backup-key` configured it also requires a valid manifest signature (below).
+   With `backup-key` configured it also requires a valid manifest signature. Without `backup-key` it refuses unless
+   `-allow-unsigned` is given (below).
 3. If the database exists, it refuses unless `-overwrite` is given. With `-overwrite`, it first writes a `pre-restore`
    backup of the current database. If that backup fails, nothing changes.
 4. Copies the backup to a temporary file, checks SQLite's integrity, and refuses a backup that needs migration.
@@ -130,11 +132,28 @@ against a person who can write to the backup storage. Such a person can edit a b
 hash with their own), recompute the checksum, and have the restore install it. Ledger and audit-chain verification
 catch edits to balances, entries and audit rows, but not edits to accounts, password hashes, sessions or tokens.
 
+Restore policy (SA2-11). A backup that cannot be authenticated is refused by default. `restore` accepts a backup when
+the manifest signature verifies under the configured `backup-key`. If no `backup-key` is configured it stops with an
+error that names the flag `-allow-unsigned`; pass it only for a file you made yourself and kept in storage nobody else
+can write to (for example a restore drill on your own host, or an old backup from before the key existed). A configured
+key is never bypassed: an unsigned or wrongly signed manifest is refused even with `-allow-unsigned`. Together with
+`backup-require-encryption` (on whenever `backup-encryption-key` is set) this closes the forgery path where an attacker
+with write access to the backup directory substitutes a plaintext database and a matching manifest. `serve` logs a
+warning at start when scheduled backups run without `backup-key`.
+
+Rollback (replay of an older, genuine backup). The signature covers the creation time, schema version, size and digest,
+so a backup cannot be given a newer date. It does not stop an attacker from swapping in an older, validly signed backup
+(for example one from before a password change or before a member was removed). The manifest carries no sequence number
+or "latest" pointer, so `restore` cannot tell. Controls: restore prints the backup's `created_at` and the window of data
+that will be missing; check it against the restore record (`restore-<time>.json`) and your off-host copies, keep the
+backup directory write-protected from the service account, and after restoring any backup older than you expected make
+everyone change their password and re-check roles. A signed monotonic counter is a possible future change.
+
 Control. Set `CIRCULA_BACKUP_KEY` (or `backup-key-file`), a secret kept outside the backup location, on the host that
 takes and restores backups. Then every manifest carries an HMAC-SHA-256 over its format, time, schema version, size and
 digest, and `restore` refuses a manifest that is unsigned or whose signature does not verify under the key. Without the
-key, `restore` still verifies the ledger and audit chains, but prints a warning that the backup is not authenticated:
-restore only files you trust. Rotate the key by taking a new backup under the new key; old backups verify only under the
+key, `restore` refuses unless `-allow-unsigned` is given; with it, `restore` still verifies the ledger and audit chains,
+but prints a warning that the backup is not authenticated: restore only files you trust. Rotate the key by taking a new backup under the new key; old backups verify only under the
 key that signed them, so keep old keys with the old backups. After restoring any backup you did not make yourself, make
 everyone change their password; a password change revokes the person's sessions.
 
@@ -153,7 +172,8 @@ Run a drill before each release that changes storage or migrations, once a quart
 year for self-hosted deployments. Use a separate host or a separate directory:
 
 1. Pick the newest backup with `ledger_verification.status` of `ok`.
-2. `circula restore -database /tmp/drill/circula.db <backup>` and time the command.
+2. `circula restore -database /tmp/drill/circula.db <backup>` and time the command. Use the same `backup-key` and
+   `backup-encryption-key` as production; `-allow-unsigned` is only for a drill without the key.
 3. Record the date, backup file name, duration, and the ledger result in the drill log.
 4. Start `circula serve` against the drilled copy with a different `listen` port. Check `/readyz`.
 

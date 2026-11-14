@@ -32,7 +32,8 @@ func formerName(memberID string) string {
 
 // AnonymiseMember irreversibly removes the personal data of a DEPARTED member
 // while keeping the ledger intact (SEC-018). An administrator of the network
-// (or a System actor, the operator CLI) may do it for anyone; the member may do
+// (or a System actor, the operator CLI) may do it for anyone, but only the
+// member themselves or the operator CLI also erase the login (A3-05); the member may do
 // it for themselves through EraseMyData.
 //
 // Refused unless the member is departed and has no blocker: a proposed or
@@ -69,6 +70,7 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 	}
 	reason = strings.TrimSpace(reason)
 	var rep *ErasureReport
+	var personID string
 	err := s.update(ctx, func(tx store.Tx) error {
 		p, err := s.open(tx, actor, netID, domain.ScopeWrite)
 		if err != nil {
@@ -79,8 +81,13 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 				return domain.Forbidden("a member is required")
 			}
 			memberID = p.member.ID
-		} else if err := p.requireAdmin(); err != nil {
-			return err
+		} else {
+			if err := p.requireAdmin(); err != nil {
+				return err
+			}
+			if err := p.requireLasting(); err != nil { // A3-02
+				return err
+			}
 		}
 		target, err := tx.GetMember(netID, memberID)
 		if err != nil {
@@ -120,9 +127,23 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 				return err
 			}
 		}
-		if rep.PersonErased, err = s.erasePersonIfUnused(tx, target); err != nil {
+		// A3-05: a tenant administrator must not destroy a login that may serve
+		// other networks. The person row is erased only by the person (self) or
+		// the operator CLI (System actor).
+		if self || p.actor.System {
+			if rep.PersonErased, err = s.erasePersonIfUnused(tx, target); err != nil {
+				return err
+			}
+		}
+		// SA2-17: stored replay records name the person's actions; drop them.
+		idemNet := netID
+		if rep.PersonErased {
+			idemNet = ""
+		}
+		if _, err := tx.DeleteIdemOfActor(idemNet, target.PersonID); err != nil {
 			return err
 		}
+		personID = target.PersonID
 		if err := tx.InsertErasure(&domain.ErasureRecord{MemberID: target.ID, NetworkID: netID, PersonID: target.PersonID,
 			ErasedAt: now, PersonErased: rep.PersonErased}); err != nil {
 			return err
@@ -139,6 +160,9 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.cfg.OnMemberErased != nil {
+		s.cfg.OnMemberErased(netID, personID)
 	}
 	return rep, nil
 }
@@ -186,7 +210,7 @@ func (s *Service) erasePersonIfUnused(tx store.Tx, target *domain.Member) (bool,
 	if err := tx.AnonymisePerson(person.ID, "erased-"+person.ID, unusablePasswordHash); err != nil {
 		return false, err
 	}
-	if err := tx.DeleteThrottle(person.Login); err != nil {
+	if _, err := tx.DeleteThrottleFamily(person.Login); err != nil {
 		return false, err
 	}
 	if err := tx.RevokeSessionsOf(person.ID, now); err != nil {

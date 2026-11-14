@@ -10,6 +10,8 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+
+	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // copyFileSync copies src to dst and flushes dst to stable storage before returning.
@@ -100,4 +102,9 @@ func secureDatabase(path string) (tightened bool, err error) {
 		}
 	}
 	return tightened, nil
+}
+
+// storeOptions maps the configuration to store.Options (SA2-20).
+func storeOptions(cfg *Config) store.Options {
+	return store.Options{Synchronous: cfg.Synchronous}
 }

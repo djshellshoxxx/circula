@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -18,7 +19,8 @@ func TestDualControlWebFlow(t *testing.T) {
 	w := newWorld(t)
 	b := w.base()
 	_, adm2M := w.env.Member(w.admin, w.net, "admin2@example.org")
-	testutil.Must(0, w.env.Svc.AssignRole(w.env.Ctx, w.admin, w.net.ID, adm2M.ID, domain.RoleAdmin))
+	testutil.Must(0, w.env.Svc.AssignRole(w.env.Ctx, domain.SystemActor("fixture"), w.net.ID, adm2M.ID, domain.RoleAdmin))
+	w.env.Clock.Advance(25 * time.Hour) // A3-01: a new administrator waits before deciding
 	n := testutil.Must(w.env.Svc.GetNetwork(w.env.Ctx, w.admin, w.net.ID))
 	pol := n.Policy
 	pol.DualControlThreshold = 1000 // 10.00

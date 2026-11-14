@@ -46,6 +46,7 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		MinPasswordLen: cfg.MinPasswordLength,
 
 		RequireMFAForAdmins: cfg.RequireMFAAdmins,
+		OnMemberErased:      api.OnMemberErased, // A3-06
 		SecretKey:           cfg.MFASecret,
 	})
 }
@@ -128,7 +129,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	} else if tightened {
 		logger.Warn("database file was readable by group or others; permissions restricted to the owner", "file", cfg.Database)
 	}
-	st, err := store.Open(ctx, cfg.Database)
+	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
 	if err != nil {
 		m.migrationRan("failed")
 		return err
@@ -217,6 +218,12 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	}
 	if len(cfg.BackupEncryptionKey) == 0 && cfg.BackupInterval > 0 {
 		logger.Warn("no backup-encryption-key configured: backups are written unencrypted and hold password hashes and member data in the clear (OPS-019)")
+	}
+	if msg := proxyWarning(cfg); msg != "" {
+		logger.Warn(msg)
+	}
+	if len(cfg.BackupKey) == 0 && cfg.BackupInterval > 0 {
+		logger.Warn("scheduled backups run without a backup-key: manifests are unsigned, so a restore cannot tell a genuine backup from a forged or rolled-back one; set backup-key-file (SA2-11)")
 	}
 	if !cfg.CookieSecure {
 		logger.Warn("cookie-secure is false: session cookies are not marked Secure (SEC-022)")
@@ -533,6 +540,20 @@ func (j *jobRunner) backupNow(ctx context.Context) error {
 		j.logger.Info("expired backups removed", "count", len(removed))
 	}
 	return nil
+}
+
+// proxyWarning returns a start-up warning when the deployment looks like it
+// sits behind a reverse proxy that trusted-proxies does not know about: an
+// https public URL served from a loopback listener (the proxy terminates TLS
+// and connects locally) with no trusted-proxies. Every client then appears as
+// the proxy address, so the per-address rate limits (SEC-006) collapse into
+// one shared budget and X-Forwarded-For is ignored (SA2-15).
+func proxyWarning(cfg *Config) string {
+	if len(cfg.TrustedProxies) > 0 || !isLoopback(cfg.Listen) || !strings.HasPrefix(cfg.PublicBaseURL, "https://") {
+		return ""
+	}
+	return "listening on loopback for an https public-base-url but trusted-proxies is not set: if a reverse proxy fronts this process, " +
+		"every client shares the proxy's address (one rate-limit budget, forwarded client addresses ignored); set trusted-proxies to the proxy's CIDR"
 }
 
 func isLoopback(listen string) bool {

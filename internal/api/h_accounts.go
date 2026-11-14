@@ -74,3 +74,27 @@ func (s *server) putCreditLimit(c *reqCtx) error {
 	c.w.Header().Set("ETag", limitETag(b))
 	return ok(c, 200, toAccount(b))
 }
+
+// putDefaultFlag exposes the existing governance command without posting money.
+// A pointer distinguishes an explicit false from an omitted or null field.
+func (s *server) putDefaultFlag(c *reqCtx) error {
+	var in struct {
+		Flag   *bool  `json:"default_flag"`
+		Reason string `json:"reason"`
+	}
+	if err := c.decode(&in); err != nil {
+		return err
+	}
+	if in.Flag == nil {
+		return validation("default_flag", "required", "must be true or false")
+	}
+	if err := s.svc.SetDefaultFlag(c.r.Context(), c.actor, c.netID, c.r.PathValue("id"), *in.Flag, in.Reason); err != nil {
+		return err
+	}
+	m, err := s.adminMember(c, c.r.PathValue("id"))
+	if err != nil {
+		return err
+	}
+	c.w.Header().Set("ETag", memberETag(m))
+	return ok(c, 200, toAdminMember(m))
+}

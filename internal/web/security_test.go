@@ -104,6 +104,9 @@ func TestHeadersAndCookies(t *testing.T) {
 			req.Header.Set("X-Forwarded-Proto", "https")
 		}
 		for _, c := range a.c.Jar.Cookies(req.URL) {
+			if secure && c.Name == httpx.CSRFCookie { // over HTTPS only the __Host- spelling counts (SA2-14)
+				c = &http.Cookie{Name: httpx.CSRFCookieSecure, Value: c.Value}
+			}
 			req.AddCookie(c)
 		}
 		resp, err := http.DefaultTransport.RoundTrip(req)
@@ -129,7 +132,7 @@ func TestHeadersAndCookies(t *testing.T) {
 	fresh := w.browser(t)
 	r := fresh.get("/login")
 	for _, c := range r.Header.Values("Set-Cookie") {
-		if strings.HasPrefix(c, cookieCSRF+"=") && (!strings.Contains(c, "HttpOnly") || !strings.Contains(c, "SameSite=Lax")) {
+		if strings.HasPrefix(c, httpx.CSRFCookie+"=") && (!strings.Contains(c, "HttpOnly") || !strings.Contains(c, "SameSite=Lax")) {
 			t.Errorf("csrf cookie flags: %s", c)
 		}
 	}

@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -18,7 +19,8 @@ type pendingResp struct {
 func TestDualControlAPI(t *testing.T) {
 	w := newWorld(t)
 	adm2, adm2M := w.env.Member(w.admin, w.net, "admin2")
-	testutil.Must(0, w.env.Svc.AssignRole(w.env.Ctx, w.admin, w.net.ID, adm2M.ID, domain.RoleAdmin))
+	testutil.Must(0, w.env.Svc.AssignRole(w.env.Ctx, domain.SystemActor("fixture"), w.net.ID, adm2M.ID, domain.RoleAdmin))
+	w.env.Clock.Advance(25 * time.Hour) // A3-01: a new administrator waits before deciding
 	t2 := w.token(adm2, domain.ScopeRead, domain.ScopeWrite)
 
 	// Enabling through the policy API needs two administrators (present); it is audited like any policy change.

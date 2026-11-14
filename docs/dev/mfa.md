@@ -5,7 +5,7 @@ Specs: SEC-007, SEC-012. Decisions and test map: `docs/specs/addenda/SEC-007.md`
 ## For people
 
 - `/account/security`: status, replace recovery codes, turn off, security notices.
-- `/account/security/mfa/enrol`: Start setup shows the setup key (and `otpauth://` URI) once; enter the 6-digit code to confirm; ten recovery codes are shown once.
+- `/account/security/mfa/enrol`: Start setup asks for your current password (A3-03), then shows the setup key (and `otpauth://` URI); enter the password again with the 6-digit code to confirm; ten recovery codes are shown once. Confirming ends every other session of the person (the one you are using stays).
 - Sign-in with MFA: password, then `/login/mfa` asks for the app code or one recovery code (5 minutes).
 
 ## For operators
@@ -15,7 +15,13 @@ Specs: SEC-007, SEC-012. Decisions and test map: `docs/specs/addenda/SEC-007.md`
 | `require-mfa-admins` (default `false`) | Administrators without MFA get `forbidden` / `mfa-enrolment-required` on admin-only operations. Turn it on after announcing it: an administrator must enrol first at `/account/security` (that page works without admin rights). |
 | `mfa-secret-file` / `CIRCULA_MFA_SECRET` | Seals authenticator seeds in the database (AES-256-GCM). Set it before people enrol. If lost, sealed seeds are unusable: people disable MFA with a recovery code and re-enrol, or an operator deletes the `person_mfa` row. Without it seeds are stored base32-encoded. |
 
-Lost device and lost recovery codes: there is no self-service path yet (account recovery is a separate work item). Operator break-glass: stop writes, back up, then delete the person's rows from `person_mfa` and `recovery_codes` and tell the person.
+Lost device and lost recovery codes: there is no self-service path. Verify the person out of band, stop `serve`, then:
+
+```sh
+circula reset-mfa -login NAME -reason "ticket 42: lost phone and codes, verified by phone"
+```
+
+It deletes the second factor, recovery codes and pending challenges, ends every session, writes a security notice for the person and an audit event (`mfa.reset`, platform operator, with the reason). It leaves the password alone; add `circula reset-password` when the password may be known to someone else. Administrator password resets (`AdminResetPassword`, `OperatorResetPassword`) and `RecoverPassword` do not remove the second factor, only revoke sessions, tokens and pending challenges.
 
 Backups contain the sealed (or raw) seeds and hashed recovery codes: encrypt backups.
 
@@ -24,8 +30,9 @@ Backups contain the sealed (or raw) seeds and hashed recovery codes: encrypt bac
 Service (`internal/service`, files `mfa.go`, `mfa_login.go`, `notices.go`, `totp.go`):
 
 ```go
-BeginMFAEnrolment(ctx, actor) (*MFAEnrolment, error)            // secret + URI; resumes pending for 15 min
-ConfirmMFAEnrolment(ctx, actor, code) ([]string, error)         // enables; returns 10 recovery codes once
+BeginMFAEnrolment(ctx, actor, password) (*MFAEnrolment, error)  // secret + URI; resumes pending for 15 min; password throttled (recgen key)
+ConfirmMFAEnrolment(ctx, actor, password, code) ([]string, error) // enables; revokes the actor's other sessions; returns 10 recovery codes once
+OperatorResetMFA(ctx, systemActor, login, reason) error         // `circula reset-mfa`
 DisableMFA(ctx, actor, password, code) error                    // code = TOTP or recovery
 RegenerateRecoveryCodes(ctx, actor, totpCode) ([]string, error)
 MFAStatus(ctx, actor) (*MFAStatus, error)

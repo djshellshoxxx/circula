@@ -40,8 +40,8 @@ func now(e *tu.Env) time.Time { return e.Clock.Now() }
 // enrol enables MFA for a, then moves the clock one step so fresh codes work.
 func enrol(t *testing.T, e *tu.Env, a domain.Actor) (secret string, codes []string) {
 	t.Helper()
-	en := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, a))
-	codes = tu.Must(e.Svc.ConfirmMFAEnrolment(e.Ctx, a, totpAt(t, en.Secret, now(e))))
+	en := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, a, pw))
+	codes = tu.Must(e.Svc.ConfirmMFAEnrolment(e.Ctx, a, pw, totpAt(t, en.Secret, now(e))))
 	e.Clock.Advance(31 * time.Second)
 	return en.Secret, codes
 }
@@ -70,7 +70,7 @@ func TestMFAEnrolFlow(t *testing.T) {
 	if st.Enabled || st.Pending {
 		t.Fatalf("fresh status %+v", st)
 	}
-	en := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, a))
+	en := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, a, pw))
 	if !strings.HasPrefix(en.URI, "otpauth://totp/Circula:ana@example.org?") && !strings.HasPrefix(en.URI, "otpauth://totp/Circula:ana%40example.org?") &&
 		!strings.HasPrefix(en.URI, "otpauth://totp/Circula%3Aana@example.org?") {
 		t.Errorf("uri %q", en.URI)
@@ -84,7 +84,7 @@ func TestMFAEnrolFlow(t *testing.T) {
 		t.Errorf("secret length %d", len(en.Secret))
 	}
 	// pending: begin again returns the same secret and writes no second audit event
-	if en2 := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, a)); en2.Secret != en.Secret {
+	if en2 := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, a, pw)); en2.Secret != en.Secret {
 		t.Error("resume must return the pending secret")
 	}
 	if n := count(t, e, `SELECT COUNT(*) FROM audit_events WHERE action = ?`, domain.ActMFAEnrolBegun); n != 1 {
@@ -93,13 +93,13 @@ func TestMFAEnrolFlow(t *testing.T) {
 	if !tu.Must(e.Svc.MFAStatus(e.Ctx, a)).Pending {
 		t.Error("expected pending")
 	}
-	if _, err := e.Svc.ConfirmMFAEnrolment(e.Ctx, a, "000000"); domain.CodeOf(err) != domain.CodeValidation {
+	if _, err := e.Svc.ConfirmMFAEnrolment(e.Ctx, a, pw, "000000"); domain.CodeOf(err) != domain.CodeValidation {
 		t.Errorf("wrong code: %v", err)
 	}
 	if tu.Must(e.Svc.MFAStatus(e.Ctx, a)).Enabled {
 		t.Fatal("enabled by wrong code")
 	}
-	codes := tu.Must(e.Svc.ConfirmMFAEnrolment(e.Ctx, a, totpAt(t, en.Secret, now(e))))
+	codes := tu.Must(e.Svc.ConfirmMFAEnrolment(e.Ctx, a, pw, totpAt(t, en.Secret, now(e))))
 	if len(codes) != 10 {
 		t.Fatalf("codes %d", len(codes))
 	}
@@ -107,7 +107,7 @@ func TestMFAEnrolFlow(t *testing.T) {
 	if !st.Enabled || st.RecoveryRemaining != 10 {
 		t.Errorf("status %+v", st)
 	}
-	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, a); domain.CodeOf(err) != domain.CodeConflict {
+	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, a, pw); domain.CodeOf(err) != domain.CodeConflict {
 		t.Errorf("begin when enabled: %v", err)
 	}
 	// SEC-007: enrolment audited and noticed
@@ -162,7 +162,7 @@ func TestMFASecretsAndCodesNotStoredInClear(t *testing.T) {
 		_ = rows.Close()
 	}
 	// no read path hands the secret back after enrolment
-	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, a); err == nil {
+	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, a, pw); err == nil {
 		t.Error("Begin after enrolment must not return a secret")
 	}
 }
@@ -185,11 +185,11 @@ func TestMFASecretSealedWithKey(t *testing.T) {
 	}
 	// a sealed value moved to another person must not open (AAD binds person)
 	b := e.Person("bob@example.org")
-	enB := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, b))
+	enB := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, b, pw))
 	if _, err := e.Store.DB().Exec(`UPDATE person_mfa SET secret = ? WHERE person_id = ?`, stored, b.PersonID); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := e.Svc.ConfirmMFAEnrolment(e.Ctx, b, totpAt(t, enB.Secret, now(e))); err == nil {
+	if _, err := e.Svc.ConfirmMFAEnrolment(e.Ctx, b, pw, totpAt(t, enB.Secret, now(e))); err == nil {
 		t.Error("moved sealed secret accepted")
 	}
 }
@@ -427,10 +427,10 @@ func TestMFAAuthzScopes(t *testing.T) {
 	e := tu.NewEnv(t)
 	a := e.Person("ana@example.org")
 	ro := domain.Actor{PersonID: a.PersonID, Scopes: []domain.Scope{domain.ScopeRead}}
-	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, ro); domain.CodeOf(err) != domain.CodeForbidden {
+	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, ro, pw); domain.CodeOf(err) != domain.CodeForbidden {
 		t.Errorf("read-only begin: %v", err)
 	}
-	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, domain.SystemActor("r")); domain.CodeOf(err) != domain.CodeForbidden {
+	if _, err := e.Svc.BeginMFAEnrolment(e.Ctx, domain.SystemActor("r"), pw); domain.CodeOf(err) != domain.CodeForbidden {
 		t.Errorf("system begin: %v", err)
 	}
 	if _, err := e.Svc.ListSecurityNotices(e.Ctx, domain.Actor{}, false); domain.CodeOf(err) != domain.CodeForbidden {
@@ -463,11 +463,11 @@ func TestRequireMFAForAdmins(t *testing.T) {
 		t.Errorf("plain member: %v", err)
 	}
 	// a pending (unconfirmed) enrolment does not count
-	en := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, admin))
+	en := tu.Must(e.Svc.BeginMFAEnrolment(e.Ctx, admin, pw))
 	if _, _, err := e.Svc.CreateInvitation(e.Ctx, admin, net.ID, service.InviteInput{}); domain.CodeOf(err) != domain.CodeForbidden {
 		t.Errorf("pending enrolment: %v", err)
 	}
-	tu.Must(e.Svc.ConfirmMFAEnrolment(e.Ctx, admin, totpAt(t, en.Secret, now(e))))
+	tu.Must(e.Svc.ConfirmMFAEnrolment(e.Ctx, admin, pw, totpAt(t, en.Secret, now(e))))
 	if _, _, err := e.Svc.CreateInvitation(e.Ctx, admin, net.ID, service.InviteInput{}); err != nil {
 		t.Errorf("admin with MFA: %v", err)
 	}

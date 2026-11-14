@@ -51,7 +51,22 @@ const DefaultBusyTimeout = 5 * time.Second
 type Options struct {
 	// BusyTimeout overrides DefaultBusyTimeout (zero = default).
 	BusyTimeout time.Duration
+	// Synchronous is the SQLite synchronous level: "NORMAL" or "FULL"
+	// (zero = DefaultSynchronous). In WAL mode NORMAL never corrupts the
+	// database but can lose the most recently committed transactions (their
+	// audit rows with them) on power loss or OS crash; FULL syncs the WAL on
+	// every commit (SA2-20).
+	Synchronous string
 }
+
+// Synchronous levels accepted by Options.Synchronous.
+const (
+	SyncNormal = "NORMAL"
+	SyncFull   = "FULL"
+)
+
+// DefaultSynchronous is the level used when Options.Synchronous is empty.
+const DefaultSynchronous = SyncNormal
 
 // Open opens (creating if needed) the database file at path, applies pending
 // forward-only migrations and returns the store. Use ":memory:"-free paths:
@@ -80,10 +95,18 @@ func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, 
 	if busy <= 0 {
 		busy = DefaultBusyTimeout
 	}
+	level := strings.ToUpper(opt.Synchronous)
+	switch level {
+	case "":
+		level = DefaultSynchronous
+	case SyncNormal, SyncFull:
+	default:
+		return nil, fmt.Errorf("store: unsupported synchronous level %q (want NORMAL or FULL)", opt.Synchronous)
+	}
 	q := url.Values{}
 	q.Add("_pragma", fmt.Sprintf("busy_timeout(%d)", busy.Milliseconds()))
 	q.Add("_pragma", "journal_mode(WAL)")
-	q.Add("_pragma", "synchronous(NORMAL)")
+	q.Add("_pragma", "synchronous("+level+")")
 	q.Add("_pragma", "foreign_keys(1)")
 	// Freed pages are overwritten with zeros so deleted text does not linger
 	// in the file (RB-003).

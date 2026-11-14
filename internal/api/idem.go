@@ -24,6 +24,7 @@ type idemRec struct {
 	header http.Header
 	body   []byte
 	at     time.Time
+	person string // for dropping a person's records on erasure (A3-06)
 }
 
 type idemStore struct {
@@ -46,7 +47,7 @@ const (
 	idemMismatch
 )
 
-func (st *idemStore) begin(key, fp string, now time.Time) (idemState, *idemRec) {
+func (st *idemStore) begin(key, fp, person string, now time.Time) (idemState, *idemRec) {
 	st.mu.Lock()
 	defer st.mu.Unlock()
 	if rec, ok := st.m[key]; ok {
@@ -71,8 +72,20 @@ func (st *idemStore) begin(key, fp string, now time.Time) (idemState, *idemRec) 
 			}
 		}
 	}
-	st.m[key] = &idemRec{fp: fp, at: now}
+	st.m[key] = &idemRec{fp: fp, at: now, person: person}
 	return idemNew, nil
+}
+
+// dropPerson forgets every record of one person, in flight or done: cached
+// replays hold the bodies of their earlier responses (A3-06).
+func (st *idemStore) dropPerson(person string) {
+	st.mu.Lock()
+	defer st.mu.Unlock()
+	for k, r := range st.m {
+		if r.person == person {
+			delete(st.m, k)
+		}
+	}
 }
 
 func (st *idemStore) finish(key string, status int, h http.Header, body []byte, keep bool) {
@@ -147,7 +160,7 @@ func (s *server) runIdempotent(c *reqCtx, rt route) error {
 	fp := hex.EncodeToString(sum[:])
 	scoped := c.actor.PersonID + "\x00" + key
 	now := s.opt.Now()
-	switch state, rec := s.idem.begin(scoped, fp, now); state {
+	switch state, rec := s.idem.begin(scoped, fp, c.actor.PersonID, now); state {
 	case idemMismatch:
 		return &apiError{status: 422, code: "idempotency-key-reused", detail: "the key was used with a different request"}
 	case idemBusy:

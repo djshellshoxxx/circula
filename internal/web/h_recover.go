@@ -1,6 +1,7 @@
 package web
 
 import (
+	"github.com/djshellshoxxx/circula/internal/service"
 	"net/http"
 	"strings"
 
@@ -47,7 +48,7 @@ func (s *server) recoverPost(w http.ResponseWriter, r *http.Request) {
 			[]fieldErr{{"password2", "Confirm new password: the two passwords do not match. Type the same password in both fields."}})
 		return
 	}
-	err := s.svc.RecoverPassword(r.Context(), login, r.PostFormValue("recovery_code"), pw)
+	err := s.svc.RecoverPassword(service.WithClientIP(r.Context(), s.clientIP(r)), login, r.PostFormValue("recovery_code"), pw)
 	switch domain.CodeOf(err) {
 	case "":
 		s.acctFail.reset(acct)

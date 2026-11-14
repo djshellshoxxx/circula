@@ -18,13 +18,15 @@ import (
 	"strings"
 )
 
-// Cookie names. The sign-in flow sets SessionCookieSecure whenever the
-// deployment is served over HTTPS (the __Host- prefix needs Secure, Path=/
-// and no Domain), else SessionCookie. Readers accept both.
+// Cookie names. When the request is secure (HTTPS) the sign-in flow sets and
+// readers accept only the __Host- spelling (it needs Secure, Path=/ and no
+// Domain, so a sibling subdomain cannot plant it, SA2-14); otherwise only the
+// plain names are used.
 const (
 	SessionCookie       = "circula_session"
 	SessionCookieSecure = "__Host-circula_session"
 	CSRFCookie          = "cm_csrf"
+	CSRFCookieSecure    = "__Host-cm_csrf"
 )
 
 // SessionCookieName returns the name the sign-in flow uses for secure.
@@ -35,12 +37,27 @@ func SessionCookieName(secure bool) string {
 	return SessionCookie
 }
 
-// SessionToken returns the session token carried by the request cookies, "" if none.
-func SessionToken(r *http.Request) string {
-	for _, n := range []string{SessionCookieSecure, SessionCookie} {
-		if c, err := r.Cookie(n); err == nil && c.Value != "" {
-			return c.Value
-		}
+// CSRFCookieName returns the pre-login CSRF cookie name for secure.
+func CSRFCookieName(secure bool) string {
+	if secure {
+		return CSRFCookieSecure
+	}
+	return CSRFCookie
+}
+
+// SessionToken returns the session token carried by the request, "" if none.
+// Over HTTPS only the __Host- cookie counts; a plain circula_session is ignored.
+func (e Edge) SessionToken(r *http.Request) string {
+	if c, err := r.Cookie(SessionCookieName(e.Secure(r))); err == nil {
+		return c.Value
+	}
+	return ""
+}
+
+// CSRFSecret returns the pre-login CSRF cookie value ("" if none).
+func (e Edge) CSRFSecret(r *http.Request) string {
+	if c, err := r.Cookie(CSRFCookieName(e.Secure(r))); err == nil {
+		return c.Value
 	}
 	return ""
 }
@@ -67,14 +84,11 @@ func (c CSRF) Valid(binding, got string) bool {
 }
 
 // Binding returns the value a request's CSRF token is bound to.
-func Binding(r *http.Request) string {
-	if s := SessionToken(r); s != "" {
+func (e Edge) Binding(r *http.Request) string {
+	if s := e.SessionToken(r); s != "" {
 		return s
 	}
-	if c, err := r.Cookie(CSRFCookie); err == nil {
-		return c.Value
-	}
-	return ""
+	return e.CSRFSecret(r)
 }
 
 // Edge describes how requests reach the process.
@@ -139,6 +153,29 @@ func (e Edge) ClientIP(r *http.Request) string {
 	}
 	return peer.String()
 }
+
+// RateKey returns the address a per-client limiter should count: IPv4 as is
+// (/32), IPv6 truncated to its /64 so that a client rotating addresses inside
+// its allocation shares one budget (SA2-15). IPv4-mapped IPv6 is normalised to
+// IPv4 first.
+func RateKey(ip string) string {
+	a, err := netip.ParseAddr(ip)
+	if err != nil {
+		return ip
+	}
+	a = a.Unmap().WithZone("")
+	if a.Is6() {
+		p, err := a.Prefix(64)
+		if err != nil {
+			return ip
+		}
+		return p.String()
+	}
+	return a.String()
+}
+
+// RateKey is RateKey applied to the client address of r.
+func (e Edge) RateKey(r *http.Request) string { return RateKey(e.ClientIP(r)) }
 
 // Secure reports whether the request reached the user over HTTPS.
 func (e Edge) Secure(r *http.Request) bool {
