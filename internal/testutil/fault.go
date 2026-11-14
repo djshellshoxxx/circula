@@ -19,6 +19,9 @@ type FaultStore struct {
 	store.Store
 	mu     sync.Mutex
 	failOn map[string]int
+	// Crash, when set, is called instead of returning ErrInjected: a crash
+	// test passes a function that ends the process mid-transaction (QA-010).
+	Crash func(op string)
 }
 
 // NewFaultStore wraps s with no faults armed.
@@ -43,19 +46,23 @@ func (f *FaultStore) armed() map[string]int {
 // Update implements store.Store with fault injection.
 func (f *FaultStore) Update(ctx context.Context, fn func(store.Tx) error) error {
 	return f.Store.Update(ctx, func(tx store.Tx) error {
-		return fn(&faultTx{Tx: tx, fail: f.armed(), n: map[string]int{}})
+		return fn(&faultTx{Tx: tx, fail: f.armed(), n: map[string]int{}, crash: f.Crash})
 	})
 }
 
 type faultTx struct {
 	store.Tx
-	fail map[string]int
-	n    map[string]int
+	fail  map[string]int
+	n     map[string]int
+	crash func(op string)
 }
 
 func (t *faultTx) hit(op string) error {
 	t.n[op]++
 	if want, ok := t.fail[op]; ok && t.n[op] == want {
+		if t.crash != nil {
+			t.crash(op)
+		}
 		return ErrInjected
 	}
 	return nil

@@ -148,3 +148,30 @@ func (e *Env) Trade(netID string, payer, payee domain.Actor, payerM, payeeM *dom
 		Direction: service.ProposerPays, Amount: amount, IdempotencyKey: e.Key()}))
 	return Must(e.Svc.AcceptTransaction(e.Ctx, payee, netID, service.TxRef{TxID: t.ID, IdempotencyKey: e.Key()}))
 }
+
+// OpenEnvAt opens an Env over the database file at path, which outlives the
+// test (crash and restart tests, QA-010). The clock starts at at and new ids
+// continue after idBase, so separate processes on one file do not collide.
+// The caller closes Store.
+func OpenEnvAt(t *testing.T, path string, wrap func(store.Store) store.Store, at time.Time, idBase int64) *Env {
+	t.Helper()
+	ctx := context.Background()
+	st, err := store.Open(ctx, path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	clk := &Clock{t: at}
+	ids := &IDs{}
+	ids.n.Store(idBase)
+	var s store.Store = st
+	if wrap != nil {
+		s = wrap(st)
+	}
+	svc, err := service.New(s, service.Config{Clock: clk, IDs: ids,
+		Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}})
+	if err != nil {
+		_ = st.Close()
+		t.Fatal(err)
+	}
+	return &Env{T: t, Ctx: ctx, Store: st, Svc: svc, Clock: clk}
+}
