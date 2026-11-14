@@ -86,6 +86,7 @@ var settingDefs = []settingDef{
 	{key: "mfa-secret-file", help: "file holding the key that seals two-step sign-in secrets at rest (SEC-007); or env " + envPrefix + "MFA_SECRET"},
 	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
 	{key: "backup-require-encryption", def: "auto", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019); auto (default) means true whenever a backup-encryption-key is set (SA2-11), false/true force it"},
+	{key: "export-dir", help: "directory where API export artefacts are spooled while they are kept (FR-095, BR-06); must exist; default: the system temporary directory"},
 	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
 	{key: "audit-anchor-key-file", help: "file holding the key that HMACs audit anchors (RB-010); keep a copy off the database host; or env " + envPrefix + "AUDIT_ANCHOR_KEY"},
 	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
@@ -153,6 +154,8 @@ type Config struct {
 	backupRequireAuto       bool // backup-require-encryption=auto: follows the presence of the key
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
+	// ExportDir is where API export artefacts are spooled; "" is os.TempDir() (BR-06).
+	ExportDir string
 	// Role-specific session lifetimes (SEC-003); equal to SessionIdle /
 	// SessionMax unless set shorter.
 	SessionIdleAdmin, SessionMaxAdmin       time.Duration
@@ -477,6 +480,13 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		fail("backup-require-encryption", "must be auto, true or false")
 	} else {
 		cfg.BackupRequireEncryption = b
+	}
+	if raw, ok := vals["export-dir"]; ok && raw.value != "" {
+		p := filepath.Clean(raw.value)
+		if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
+			fail("export-dir", "directory %s does not exist", p)
+		}
+		cfg.ExportDir = p
 	}
 	if raw, ok := vals["state-dir"]; ok && raw.value != "" {
 		cfg.StateDir = filepath.Clean(raw.value)

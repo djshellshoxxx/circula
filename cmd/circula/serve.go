@@ -294,7 +294,8 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 		TrustedProxies: cfg.TrustedProxies,
 	}
 	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge,
-		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress}) // SEC-006
+		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress, // SEC-006
+		ExportDir: cfg.ExportDir}) // BR-06
 	webH = web.NewHandlerWith(svc, web.Options{
 		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
 		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax,

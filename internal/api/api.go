@@ -38,6 +38,9 @@ type Options struct {
 	// Edge carries the trusted-proxy, Secure and HSTS policy shared with the
 	// HTML adapter. The zero value ignores forwarding headers.
 	Edge httpx.Edge
+	// ExportDir is where export artefacts are spooled (FR-095, BR-06);
+	// "" is os.TempDir().
+	ExportDir string
 }
 
 type server struct {
@@ -89,6 +92,7 @@ func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
 	s := &server{svc: svc, opt: opt, log: opt.Logger, mux: http.NewServeMux(),
 		idem: newIdemStore(24*time.Hour, 10000), rl: newLimiter(opt.Now), jobs: newJobStore(opt.Now),
 		cursor: opt.CursorKey, csrf: httpx.CSRF{Key: opt.CSRFKey}, pwFail: newLimiter(opt.Now)}
+	s.jobs.dir = opt.ExportDir
 	s.routes()
 	s.mux.HandleFunc("/", s.notFound)
 	setErasureHook(s)

@@ -67,6 +67,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `audit-anchor-key-file` | `CIRCULA_AUDIT_ANCHOR_KEY_FILE` | none | no | Key that HMACs audit anchors (RB-010). Keep a copy off the database host. See [Audit anchors](#audit-anchors-rb-010). |
 | `audit-anchor-with-backups` | `CIRCULA_AUDIT_ANCHOR_WITH_BACKUPS` | `true` | no | Write `<backup>.anchor.json` beside each scheduled backup. Removed together with the backup it belongs to. |
 | `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Append every audit event (chain metadata only) to this JSONL file after commit (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
+| `export-dir` | `CIRCULA_EXPORT_DIR` | system temporary directory | no | Where API export artefacts (`POST /api/v1/exports`) are spooled for their 24 h life. Must exist. Files are unlinked at once on POSIX, so nothing is left after a crash. Artefacts in flight and stored share one 64 MiB cap; if no file can be made there the artefact is held in memory within the same cap and a warning is logged (BR-06). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
 
 ## Secrets

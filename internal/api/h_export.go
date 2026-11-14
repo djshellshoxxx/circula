@@ -3,6 +3,7 @@ package api
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
@@ -19,6 +20,7 @@ type exportEntry struct {
 	dto         exportDTO
 	file        []byte     // the archive when held in memory (no temporary file could be made)
 	spool       *spoolFile // the archive on disk (FR-095); nil when in memory
+	charged     int64      // bytes still reserved in the job store (BR-06)
 	ctype       string
 	name        string
 }
@@ -68,7 +70,11 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 	if why := s.jobs.exportSlot(c.actor.PersonID); why != "" {
 		return storeFull(why)
 	}
-	art := newArtefactWriter(s.jobs.dir)
+	art := s.jobs.newArtefactWriter()
+	if art.spool == nil {
+		s.log.Warn("export spool unavailable; holding the artefact in memory within the export byte cap",
+			"dir", s.jobs.dir)
+	}
 	zs := service.NewZipSink(art)
 	_, err := s.svc.Export(c.r.Context(), c.actor, c.netID, scope, format, zs)
 	if err == nil {
@@ -76,6 +82,9 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 	}
 	if err != nil {
 		art.discard()
+		if errors.Is(err, errExportBudget) {
+			return storeFull("full")
+		}
 		return err
 	}
 	id := uuid.NewString()

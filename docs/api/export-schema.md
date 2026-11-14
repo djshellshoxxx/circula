@@ -32,6 +32,16 @@ network currency; each also has a `<column>_formatted` twin as a decimal string 
 | `ledger_seq` | integer | the one ledger sequence every file was read at (DAT-039) |
 | `generated_at` | string | RFC 3339 UTC |
 | `files` | array | per file: `name`, `rows` (data rows, header excluded), `bytes`, `sha256` (hex) |
+| `reconciliation` | object, optional | present when the scope exports entries (`mine`, `ledger`, `full`); GOV-022, QA-030. Fields below |
+
+`reconciliation` is read at the manifest's `ledger_seq`, so a recipient can recompute it from the package alone:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `entries` | integer | number of exported entry rows |
+| `entry_sum` | integer | sum of `amount` over those rows, in minor units; 0 for `ledger` and `full` in a sound ledger |
+| `balance_total` | integer | sum of the covered accounts' balances: every account of the network for `ledger` and `full` (0 in a sound ledger), the caller's own account for `mine` (equal to `entry_sum`) |
+| `accounts` | object, optional | `ledger` and `full` only: `nonzero` (count of accounts whose balance is not 0) and `sha256`, the hex SHA-256 of one line `<account_id>,<balance>\n` per such account in byte order of `account_id` |
 
 For the JSON format `rows` is the total number of table rows in the document. Verification (DAT-040) recomputes `bytes`,
 `sha256` and `rows` for every listed file; any mismatch fails.
@@ -107,3 +117,4 @@ The product's own `circula verify-export` performs the same integrity check.
 | Version | Change |
 |---|---|
 | 1 | first documented version |
+| 1 | optional manifest field `reconciliation` added (GOV-022, QA-030); existing fields unchanged, so the version stays 1 |

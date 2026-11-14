@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"hash"
 	"io"
 	"os"
@@ -28,15 +29,28 @@ func (s *spoolFile) release() {
 	}
 }
 
+// errExportBudget stops an export whose bytes would exceed the job store's
+// cap while it is still being written (BR-06).
+var errExportBudget = errors.New("export storage budget exceeded")
+
 // artefactWriter receives the archive as the export produces it, hashing and
 // counting the bytes on the way. It spools to a new temporary file in dir
 // ("" is os.TempDir()); when none can be created it collects the archive in
-// memory, the DEC-047 interim behaviour.
+// memory, the DEC-047 interim behaviour. With a budget every byte is
+// reserved before it is written, so memory and disk stay within the cap.
 type artefactWriter struct {
-	spool *spoolFile
-	mem   bytes.Buffer
-	h     hash.Hash
-	n     int64
+	spool  *spoolFile
+	mem    bytes.Buffer
+	h      hash.Hash
+	n      int64
+	budget *jobStore // nil: no accounting (tests that build entries by hand)
+}
+
+// newArtefactWriter is newArtefactWriter(j.dir) charged against j's cap.
+func (j *jobStore) newArtefactWriter() *artefactWriter {
+	a := newArtefactWriter(j.dir)
+	a.budget = j
+	return a
 }
 
 func newArtefactWriter(dir string) *artefactWriter {
@@ -53,6 +67,9 @@ func newArtefactWriter(dir string) *artefactWriter {
 }
 
 func (a *artefactWriter) Write(p []byte) (int, error) {
+	if a.budget != nil && !a.budget.charge(int64(len(p))) {
+		return 0, errExportBudget
+	}
 	var n int
 	var err error
 	if a.spool != nil {
@@ -62,11 +79,18 @@ func (a *artefactWriter) Write(p []byte) (int, error) {
 	}
 	a.h.Write(p[:n])
 	a.n += int64(n)
+	if a.budget != nil && n < len(p) {
+		a.budget.uncharge(int64(len(p) - n))
+	}
 	return n, err
 }
 
 // discard releases what was written; the writer is not used again.
 func (a *artefactWriter) discard() {
+	if a.budget != nil {
+		a.budget.uncharge(a.n)
+		a.budget, a.n = nil, 0
+	}
 	if a.spool != nil {
 		a.spool.release()
 	}
@@ -75,6 +99,9 @@ func (a *artefactWriter) discard() {
 
 // finish hands the complete archive to e and returns its hex SHA-256.
 func (a *artefactWriter) finish(e *exportEntry) string {
+	if a.budget != nil {
+		e.charged = a.n // putExport ends the reservation
+	}
 	if a.spool != nil {
 		a.spool.size = a.n
 		e.spool = a.spool

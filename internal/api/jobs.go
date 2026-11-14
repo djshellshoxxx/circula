@@ -15,6 +15,11 @@ type jobStore struct {
 	checks map[string]checkEntry
 	exps   map[string]*exportEntry
 	bytes  int64
+	// inflight counts bytes of exports still being written (BR-06). They
+	// share limit with the stored artefacts, so parallel exports cannot
+	// exceed it before their size is known.
+	inflight int64
+	limit    int64 // byte cap for stored plus in-flight artefacts
 	// dir is where export artefacts are spooled; "" is os.TempDir().
 	dir string
 }
@@ -36,7 +41,7 @@ const (
 )
 
 func newJobStore(now func() time.Time) *jobStore {
-	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{}}
+	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{}, limit: maxExpBytes}
 }
 
 // dropLocked removes one export and releases its artefact.
@@ -117,7 +122,7 @@ func (j *jobStore) slotLocked(person string, size int64) string {
 	switch {
 	case own >= maxExportsPerPerson:
 		return "person"
-	case len(j.exps) >= maxExports || j.bytes+size > maxExpBytes:
+	case len(j.exps) >= maxExports || j.bytes+j.inflight+size > j.limit:
 		return "full"
 	}
 	return ""
@@ -127,6 +132,8 @@ func (j *jobStore) slotLocked(person string, size int64) string {
 func (j *jobStore) putExport(e *exportEntry) bool {
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	j.inflight -= e.charged // the reservation ends here, stored or not
+	e.charged = 0
 	if j.slotLocked(e.person, e.size()) != "" {
 		return false
 	}
@@ -144,4 +151,23 @@ func (j *jobStore) getExport(net, person, id string) *exportEntry {
 		return nil
 	}
 	return e
+}
+
+// charge reserves n more bytes for an export being written; false when the
+// stored and in-flight artefacts would exceed the cap (BR-06).
+func (j *jobStore) charge(n int64) bool {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	if j.bytes+j.inflight+n > j.limit {
+		return false
+	}
+	j.inflight += n
+	return true
+}
+
+// uncharge returns a reservation that will not be stored.
+func (j *jobStore) uncharge(n int64) {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	j.inflight -= n
 }

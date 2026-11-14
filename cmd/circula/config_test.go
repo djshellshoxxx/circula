@@ -35,6 +35,7 @@ var sampleValues = map[string]string{
 	"public-base-url":       "https://circula.example.test",
 	"database":              "", // filled per test: a file in a temp dir
 	"backup-dir":            "", // filled per test
+	"export-dir":            "", // filled per test: an existing directory
 	"backup-interval":       "12h",
 	"backup-retain-daily":   "7",
 	"backup-retain-monthly": "3",
@@ -189,7 +190,7 @@ func TestEverySettingAcceptedByEverySource(t *testing.T) {
 		if d.key == "database" {
 			v = filepath.Join(dir, "x.db")
 		}
-		if d.key == "state-dir" {
+		if d.key == "state-dir" || d.key == "export-dir" {
 			v = dir
 		}
 		if d.key == "backup-dir" {
@@ -342,5 +343,31 @@ func TestCheckConfigDoesNotCreateDatabase(t *testing.T) {
 	}
 	if _, err := os.Stat(db); err == nil {
 		t.Fatal("check-config created the database")
+	}
+}
+
+// BR-06: a configured export spool directory must exist; it is never created
+// or silently replaced.
+func TestExportDirMustExist(t *testing.T) {
+	dir := t.TempDir()
+	base := baseEnv(t, nil)
+	env := func(k string) (string, bool) {
+		if k == envName("export-dir") {
+			return filepath.Join(dir, "missing"), true
+		}
+		return base(k)
+	}
+	if _, _, err := resolveWith(t, nil, env); err == nil || !strings.Contains(err.Error(), "export-dir") {
+		t.Fatalf("missing export-dir accepted: %v", err)
+	}
+	env2 := func(k string) (string, bool) {
+		if k == envName("export-dir") {
+			return dir, true
+		}
+		return base(k)
+	}
+	cfg, _, err := resolveWith(t, nil, env2)
+	if err != nil || cfg.ExportDir != dir {
+		t.Fatalf("export-dir %q: cfg=%v err=%v", dir, cfg, err)
 	}
 }
