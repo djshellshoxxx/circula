@@ -279,4 +279,4 @@ Key: Y = permitted; N = denied; Own = only on records the actor owns or is party
 
 ## Related docs
 - [_context.md](./_context.md): shared terms, normative terms, ledger invariants, configurable vs invariant rules.
-- Planned, not yet written, referenced by prefix only: DOM (domain rules), DAT (ledger, audit), SEC (security, privacy), UX (interaction and accessibility), GOV (governance and policy changes), FR (functional requirements).
+- Related specs by prefix: see [README.md](./README.md). Rules are defined in their owning spec and linked, not restated.

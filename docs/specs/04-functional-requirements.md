@@ -9,7 +9,7 @@ This spec does not define rules. Entities, states, ledger rules and invariants l
 
 Conventions: priority keywords follow [_context.md](./_context.md#normative-terms). Each FR has one priority. "Implements" lists the DOM (domain), ROL (role/journey), PRD (product) and other IDs the FR realizes. Acceptance criteria are written as checks. A check passes or fails.
 
-Out of scope for this spec: UX layout and accessibility detail (UX prefix, not yet written), security controls beyond the FRs below (SEC prefix, not yet written), and deferred capabilities listed at the end.
+Out of scope for this spec: UX layout and accessibility detail (UX prefix), security controls beyond the FRs below (SEC prefix), and deferred capabilities listed at the end.
 
 ## Requirements
 

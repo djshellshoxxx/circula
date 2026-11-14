@@ -161,4 +161,4 @@ Option lists and defaults follow the rules in [_context.md](./_context.md). Open
 - [01 Product vision and scope](./01-product-vision-scope.md): MVP boundaries that bound this spec.
 - [02 Personas, roles and journeys](./02-personas-roles-journeys.md): roles used in the responsibilities table.
 - [03 Domain model and rules](./03-domain-model-rules.md): network policy values referenced in OPS-023.
-- Security spec (SEC prefix): not yet authored. Requirements for protecting backups and secret stores belong there and are referenced, not restated, once written.
+- [09 Security, privacy and abuse-resistance](./09-security-privacy-abuse.md): protection of backups, secret stores and operational logs is owned there and referenced, not restated.

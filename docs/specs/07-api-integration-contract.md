@@ -14,10 +14,10 @@ In scope: interface design principles, authentication and authorization expectat
 Out of scope:
 - Role definitions and journeys: [02](./02-personas-roles-journeys.md). This spec references roles and does not redefine them.
 - Domain entities and mutual-credit rules: [03](./03-domain-model-rules.md). This spec references DOM IDs.
-- Data storage, ledger schema, and audit record format: the DAT prefix (not yet written).
-- Credential issuance, session lifetime, and transport security: the SEC prefix (not yet written).
-- Interface rules for user-facing screens, error wording in the UI, and accessibility: the UX prefix (not yet written).
-- Target latency, load, and test-suite definitions: the QA prefix (not yet written).
+- Data storage, ledger schema, and audit record format: the DAT prefix.
+- Credential issuance, session lifetime, and transport security: the SEC prefix.
+- Interface rules for user-facing screens, error wording in the UI, and accessibility: the UX prefix.
+- Target latency, load, and test-suite definitions: the QA prefix.
 
 Normative terms (MUST, SHOULD, MAY) are defined in [_context.md](./_context.md) and are used here with that meaning.
 
@@ -69,7 +69,7 @@ Normative terms (MUST, SHOULD, MAY) are defined in [_context.md](./_context.md) 
 - Rationale: [ROL-006](./02-personas-roles-journeys.md), [ROL-061](./02-personas-roles-journeys.md), [ROL-021](./02-personas-roles-journeys.md).
 - Verify: fault injection between effect and audit write yields no committed effect and an error outcome.
 
-**API-015** (MUST) A credential that has been revoked, or whose role grant has been removed, MUST be refused on the next operation that requires it, subject to the bound in OD-07-7. Credential lifecycle rules are owned by the SEC prefix (not yet written).
+**API-015** (MUST) A credential that has been revoked, or whose role grant has been removed, MUST be refused on the next operation that requires it, subject to the bound in OD-07-7. Credential lifecycle rules are owned by the SEC prefix.
 - Verify: revoke-then-call test in each role.
 
 ### Error format
@@ -147,7 +147,7 @@ Normative terms (MUST, SHOULD, MAY) are defined in [_context.md](./_context.md) 
 
 ### Ledger invariants at the interface
 
-These requirements restate how the invariants in [_context.md](./_context.md) apply at the interface. They do not replace the invariant definitions. The DAT prefix (not yet written) owns the storage mechanics.
+These requirements restate how the invariants in [_context.md](./_context.md) apply at the interface. They do not replace the invariant definitions. The DAT prefix owns the storage mechanics.
 
 **API-060** (MUST) Every posting MUST be atomic. All entries of a transaction post together or none posts (invariant 7).
 - Verify: fault injection at each step of a posting yields all-or-nothing.
@@ -241,11 +241,11 @@ Operations not listed are not MVP operations and MUST NOT be exposed.
 
 - **OD-07-4 Page size limits.** Whether page size limits are fixed or network-configured.
   - Options: (a) fixed platform maximum and default; (b) network-configured within a platform maximum.
-  - Default: (a). Exact values to be set with the QA spec (QA prefix, not yet written).
+  - Default: (a). Exact values to be set with the QA spec (QA prefix).
 
 - **OD-07-5 Deprecation window.** Minimum time a deprecated version or operation stays functional.
   - Options: (a) at least one full release cycle; (b) fixed calendar period; (c) set per release.
-  - Default: (a), minimum one full release cycle. Exact period to be recorded in the OPS spec (not yet written).
+  - Default: (a), minimum one full release cycle. Exact period to be recorded in the OPS spec.
 
 - **OD-07-6 Public reads.** Whether any operation may be called without authentication.
   - Options: (a) none in MVP; (b) limited public read of network listing metadata.

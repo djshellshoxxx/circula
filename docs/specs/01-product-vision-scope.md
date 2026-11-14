@@ -27,13 +27,13 @@ Groups of people who exchange goods and services often have no shared, auditable
 
 Roles are defined in [_context.md](./_context.md). Detailed journeys are out of scope for this spec.
 
-- **PRD-004** (MUST) The product MUST support four roles: Platform operator, Network administrator, Dispute reviewer and Member. Each role MUST have a distinct permission set, which MUST be defined in the roles and journeys spec (ROL prefix, not yet written).
+- **PRD-004** (MUST) The product MUST support four roles: Platform operator, Network administrator, Dispute reviewer and Member. Each role MUST have a distinct permission set, which MUST be defined in the roles and journeys spec (ROL prefix).
   - Rationale: Separation of duties keeps policy, dispute decisions and daily use apart.
   - Verify: For each role, a test lists permitted and forbidden actions. A Member cannot perform Network administrator or Dispute reviewer actions, and the reverse holds too.
 
 - **PRD-005** (SHOULD) The primary user is a Member who wants to find goods or services from other Members and to record what they provide. Secondary users are Network administrators who set up and run a Network.
   - Rationale: Member use drives the value of a Network; administrator use decides whether a Network can start.
-  - Verify: Usability tests in the UX spec (UX prefix, not yet written) include a Member task and an administrator setup task. Both are completed in a usability session with a recorded success rate target (see PRD-902).
+  - Verify: Usability tests in the UX spec (UX prefix) include a Member task and an administrator setup task. Both are completed in a usability session with a recorded success rate target (see PRD-902).
 
 ## Goals
 
@@ -77,7 +77,7 @@ These items are excluded from this specification pass. They MUST NOT be built as
   - Verify: Before admission, a prospective Member can read every configured policy value for the Network they are joining.
 
 - **PRD-016** (SHOULD) The platform collects only the data needed for Balance, Transaction, Dispute and audit functions.
-  - Rationale: Less data reduces risk for Members and Networks. Detailed privacy rules belong to the security and privacy spec (SEC prefix, not yet written).
+  - Rationale: Less data reduces risk for Members and Networks. Detailed privacy rules belong to the security and privacy spec (SEC prefix).
   - Verify: A data inventory lists each stored field with its function. Each field maps to a requirement in an authoritative spec.
 
 - **PRD-017** (SHOULD) Each Network operates independently. A decision in one Network MUST NOT alter another Network's Balances, rules or listings.
@@ -96,7 +96,7 @@ Targets are not set in this spec. Each measure MUST have a recorded definition, 
 - **PRD-020** (SHOULD) Track the share of Transactions that receive a Dispute.
   - Verify: The metric uses Dispute records divided by completed Transactions, per Network and in total.
 
-- **PRD-021** (SHOULD) Track the number of Networks with at least a set number of active Members, where "active" is defined in the metrics spec (not yet written).
+- **PRD-021** (SHOULD) Track the number of Networks with at least a set number of active Members, where "active" is set by the product owner when targets are recorded (PRD-902).
   - Verify: The definition of "active" and the threshold are recorded before this metric is reported.
 
 ## MVP boundaries
@@ -146,4 +146,4 @@ Each item gives options and a recommended default. The default applies until a d
 ## Related docs
 
 - [_context.md](./_context.md): shared terms, normative keywords, credit semantics, ledger invariants and the spec header template.
-- Foundational specs with prefixes ROL, DOM, FR, ARC, DAT, API, UX, SEC, GOV, OPS, QA and RSK are planned but not yet written. They will link to this spec and MUST NOT redefine its requirements.
+- Foundational specs with prefixes ROL, DOM, FR, ARC, DAT, API, UX, SEC, GOV, OPS, QA and RSK are in this directory (see [README.md](./README.md)). They link to this spec and MUST NOT redefine its requirements.

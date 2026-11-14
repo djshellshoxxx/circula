@@ -11,7 +11,7 @@ This spec defines the logical architecture that an implementation team builds fr
 - the deployment models the software must support;
 - the architectural quality attributes each part is held to.
 
-The spec is technology-neutral. It does not choose languages, frameworks, hosting providers, storage products, or vendors. It does not restate ledger rules (owned by the domain and ledger specs, DOM and DAT prefixes, not yet written) or security controls (SEC prefix, not yet written). It links to them where needed.
+The spec is technology-neutral. It does not choose languages, frameworks, hosting providers, storage products, or vendors. It does not restate ledger rules (owned by the domain and ledger specs, DOM and DAT prefixes) or security controls (SEC prefix). It links to them where needed.
 
 Normative terms (MUST, SHOULD, MAY) follow [_context.md](./_context.md).
 
@@ -124,7 +124,7 @@ Outbound integrations with external services are out of MVP scope (see [13](./13
 
 ### 4.2 Deployment and portability
 
-- **ARC-019** (MUST) The software MUST be installable and operable by a party that is not the platform operator, using only the deployment checklist in the operations spec (OPS prefix, not yet written).
+- **ARC-019** (MUST) The software MUST be installable and operable by a party that is not the platform operator, using only the deployment checklist in the operations spec (OPS prefix).
   - Rationale: RSK-026; RSK-021.
   - Verify: Clean-install check performed by a tester with no platform-operator access.
 - **ARC-020** (MUST) A hosted deployment, when one exists, MUST run the same release artifacts as self-hosted deployments. It MUST NOT depend on any behavior that a self-hosted deployment lacks.
