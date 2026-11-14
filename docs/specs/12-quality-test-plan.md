@@ -26,7 +26,7 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 | QA-004 | P0 | partial | Limit boundary covered by acceptance tests; zero and one-unit boundary cases not named |
 | QA-005 | P0 | built | No float types; overflow refused |
 | QA-006 | P0 | built | Fault injection at accept and audit failure |
-| QA-007 | P0 | built | 100 random over-subscribed interleavings, observer never sees a balance below the limit (20 under -race) (2026-11-14) |
+| QA-007 | P0 | built | 100 random over-subscribed interleavings, observer never sees a balance below the limit (8 under -race) (2026-11-14) |
 | QA-008 | P0 | not built | Disjoint concurrent trades test not present |
 | QA-009 | P0 | built | Retry, reuse and expiry tests |
 | QA-010 | P0 | built | Child process exits at each of 8 posting write steps and after commit; restart gives original or committed state, integrity ok, verify passes (2026-11-14) |

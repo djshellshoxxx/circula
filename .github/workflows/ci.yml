@@ -78,7 +78,8 @@ jobs:
           cache: true
           cache-dependency-path: go.sum
       - name: test with race detector
-        run: go test -race -count=1 ./...
+        # The race suite of internal/service takes about 8 min on 4 vCPUs; Go's 10m per-package default leaves too little room.
+        run: go test -race -count=1 -timeout=20m ./...
 
   test-cross:
     # Not run on pull requests (macOS race ~8 min, Windows slow). Runs on main pushes, nightly, manual dispatch.

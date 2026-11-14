@@ -1,5 +1,35 @@
 # Beta readiness report
 
+## 2026-11-14 follow-up (PR #35, branch `claude/cool-ramanujan-n2peag`)
+
+Code tested: the branch head that carries this section (later commits change only documentation). Toolchain go1.26.11
+linux/amd64 (fetched by `GOTOOLCHAIN=auto` from `go.mod`), golangci-lint v2.15.0 built with go1.26.11, Playwright
+1.63.0 with the pre-installed Chromium, Node 22. Machine: 4 vCPUs.
+
+| Check | Command | Result |
+|---|---|---|
+| Format | `gofmt -l .` | empty |
+| Vet | `go vet ./...` | clean |
+| Lint | `golangci-lint run ./...` (v2.15.0, including the new depguard rules) | 0 issues |
+| Hygiene | `scripts/check-hygiene.sh` | ok |
+| Unit and integration | `go test -count=1 ./...` | all 12 packages ok |
+| Race | `go test -race -count=1 -timeout=20m ./...` | all ok; `internal/service` 460 s |
+| e2e | `make e2e` equivalent (`npx playwright test`) | 578 passed (9.5 min) |
+| Fuzz | `FuzzAPICommandBody`, `FuzzOpenCursor`, 15 s each | no findings |
+| Deploy smoke | `scripts/smoke-deploy.sh` | `smoke-deploy: ok` |
+| Dependency scan | govulncheck in CI (lint job) | passed on PR #35 |
+
+Notes:
+- A first race run, started while e2e shared the same 4 CPUs, hit Go's 10-minute per-package limit in
+  `internal/service`. On its own the package takes about 8 minutes under `-race`, so the Linux race step in `ci.yml` now
+  sets `-timeout=20m` (as the macOS step already did), and QA-007 runs 8 rounds under `-race` (100 without).
+- Backup file names have one-second resolution. A restore started within the same second as a pre-migration backup is
+  refused ("backup destination ... already exists") and changes nothing. Found while writing the QA-026 test; low.
+- Not run here: the QA-001 long run at release size (100,000 sequences, DEC-023), a tagged release, the manual
+  screen-reader run, an independent security review.
+
+Classification is unchanged: **beta candidate**, pending the owner gates in `HANDOFF.md`.
+
 Date: 2026-11-11. Branch `claude/circula-beta-completion-1npjw6`.
 Code tested: commit `3cd1442` (`3cd1442` and later commits change only documentation).
 Toolchain: go1.26.10 linux/amd64 (from `go.mod`), Chromium 1243 (Playwright 1.63.0), Node 22.

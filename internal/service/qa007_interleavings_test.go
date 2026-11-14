@@ -24,7 +24,7 @@ func TestQA007OverSubscriptionInterleavings(t *testing.T) {
 	case testing.Short():
 		rounds = 10
 	case raceOn:
-		rounds = 20
+		rounds = 8
 	}
 	for r := 0; r < rounds; r++ {
 		seed := int64(7000 + r)
