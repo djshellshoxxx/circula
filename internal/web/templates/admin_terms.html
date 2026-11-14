@@ -1,0 +1,10 @@
+{{define "content"}}
+<p>Terms are the onboarding rules new members accept when they join. Publishing a new version tells every active member, and each must accept it before their next trade. Earlier versions are kept.</p>
+{{with .D.Terms}}<p>Current: version {{.Version}}, published {{time .PublishedAt}}.</p>{{else}}<p>No terms are published yet; joining needs no acceptance.</p>{{end}}
+<form method="post" action="/n/{{.Slug}}/admin/terms" novalidate>
+  {{template "csrf" .}}
+  {{template "field" dict "P" . "Name" "body" "Label" "Terms text" "Hint" "Up to 20000 characters. Leave a blank line between paragraphs." "Type" "textarea" "Max" 20000 "Req" true}}
+  <div class="actions"><button type="submit">Publish new version</button></div>
+</form>
+<p><a href="/n/{{.Slug}}/admin">Back to network admin</a></p>
+{{end}}

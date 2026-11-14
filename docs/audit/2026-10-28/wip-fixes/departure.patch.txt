@@ -1,0 +1,278 @@
+diff --git a/internal/service/departure.go b/internal/service/departure.go
+index fe1a039..a3c850f 100644
+--- a/internal/service/departure.go
++++ b/internal/service/departure.go
+@@ -18,8 +18,10 @@ type DepartInput struct {
+ // last active administrator. Pending proposals involving the member are
+ // auto-cancelled and audited. Per the network's departure rule the balance is
+ // retained on the closed account (default) or moved to the system account by
+-// an audited settlement adjustment. Roles are revoked; entries are retained
+-// and history stays exportable by the departed member.
++// an audited settlement adjustment; that adjustment is a posting, so a
++// departure that needs one is refused unless the network accepts postings.
++// Roles are revoked; entries are retained and history stays exportable by the
++// departed member.
+ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID string, in DepartInput) (*domain.Member, error) {
+ 	var out *domain.Member
+ 	err := s.update(ctx, func(tx store.Tx) error {
+@@ -98,12 +100,33 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
+ 	return out, err
+ }
+ 
+-func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.Member) error {
+-	props, err := tx.ListTransactions(p.net.ID, store.TxFilter{MemberID: target.ID, Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500})
+-	if err != nil {
+-		return err
++// eachOpenProposal calls fn for every `proposed` transaction the member is a
++// party to, a page at a time so memory stays bounded however many there are.
++// The keyset cursor walks down the ids, so each proposal is visited once
++// whether or not fn changes its status.
++func eachOpenProposal(tx store.Tx, netID, memberID string, fn func(*domain.Transaction) error) error {
++	f := store.TxFilter{MemberID: memberID, Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500}
++	for {
++		page, err := tx.ListTransactions(netID, f)
++		if err != nil {
++			return err
++		}
++		for _, t := range page {
++			if err := fn(t); err != nil {
++				return err
++			}
++		}
++		if len(page) < f.Limit {
++			return nil
++		}
++		f.AfterID = page[len(page)-1].ID
+ 	}
+-	for _, t := range props {
++}
++
++// cancelOpenProposals cancels every proposal involving the departing member
++// (DOM-024, FR-014) in the departure's write unit.
++func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.Member) error {
++	return eachOpenProposal(tx, p.net.ID, target.ID, func(t *domain.Transaction) error {
+ 		if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
+ 			return err
+ 		}
+@@ -116,14 +139,11 @@ func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.
+ 			"A member left the network, so your open trade proposal with them was cancelled.", "/trades/"+t.ID, ""); err != nil {
+ 			return err
+ 		}
+-		if err := s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
++		return s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
+ 			TargetType: "transaction", TargetID: t.ID, Reason: "party departed",
+ 			Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
+-			Before:   map[string]any{"status": "proposed"}, After: map[string]any{"status": "cancelled"}}); err != nil {
+-			return err
+-		}
+-	}
+-	return nil
++			Before:   map[string]any{"status": "proposed"}, After: map[string]any{"status": "cancelled"}})
++	})
+ }
+ 
+ func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Member, adminAction bool) error {
+@@ -134,6 +154,14 @@ func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Me
+ 	if err != nil || acc.Balance == 0 {
+ 		return err
+ 	}
++	// The settlement posts like any adjustment, so it gets the same network
++	// gate: nothing posts from the closure date on (GOV-025 b, FR-068), while
++	// the network is suspended (GOV-023) or has no active administrator
++	// (GOV-020). The departure is refused as a whole and the unit rolls back;
++	// completing it under `retain` instead would override the network's rule.
++	if err := p.requireNetworkActive(); err != nil {
++		return err
++	}
+ 	dir, amt := AdjustCredit, -acc.Balance
+ 	if acc.Balance > 0 {
+ 		dir, amt = AdjustDebit, acc.Balance
+@@ -205,9 +233,11 @@ func (s *Service) PreviewDeparture(ctx context.Context, actor domain.Actor, netI
+ 		if acc, err := tx.GetAccountByMember(netID, p.member.ID); err == nil {
+ 			out.Balance = acc.Balance
+ 		}
+-		props, err := tx.ListTransactions(netID, store.TxFilter{MemberID: p.member.ID, Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500})
+-		out.OpenProposals = len(props)
+-		return err
++		// Counted over the same set DepartMember cancels, without a cap.
++		return eachOpenProposal(tx, netID, p.member.ID, func(*domain.Transaction) error {
++			out.OpenProposals++
++			return nil
++		})
+ 	})
+ 	return out, err
+ }
+diff --git a/internal/service/departure_test.go b/internal/service/departure_test.go
+new file mode 100644
+index 0000000..67db1ee
+--- /dev/null
++++ b/internal/service/departure_test.go
+@@ -0,0 +1,168 @@
++package service_test
++
++import (
++	"strconv"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// departRefused asserts that the departure is refused as a state error and
++// changes nothing: the leaver's balance, membership (account state) and the
++// network's ledger sequence are as before.
++func departRefused(t *testing.T, w *world, by domain.Actor, in service.DepartInput, leaver domain.Actor) {
++	t.Helper()
++	before := *w.balance(leaver)
++	_, err := w.Svc.DepartMember(w.Ctx, by, w.net.ID, in)
++	wantCode(t, err, domain.ErrInvalidState)
++	if after := *w.balance(leaver); after != before {
++		t.Fatalf("refused departure changed something: %+v -> %+v", before, after)
++	}
++}
++
++// GOV-025 b, FR-068 (A1-01): once the network is closed, a settle-to-zero
++// departure that needs a settlement is refused, whoever starts it, so the
++// ledger the final export certified stays as it was. A departure that posts
++// nothing still completes.
++func TestDepartureSettlementRefusedAfterClosure(t *testing.T) {
++	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
++	c, _ := w.Member2(w.admin, "carol@example.org") // balance 0: nothing to settle
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
++	tu.Must(w.schedule("end of pilot", 0))
++	w.Clock.Advance(31 * 24 * time.Hour)
++	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 1 {
++		t.Fatalf("finalised %d", n)
++	}
++
++	departRefused(t, w, w.a, service.DepartInput{}, w.a) // owes 500
++	departRefused(t, w, w.b, service.DepartInput{}, w.b) // is owed 500
++	departRefused(t, w, w.admin, service.DepartInput{MemberID: w.aM.ID, Reason: "wind-down"}, w.a)
++	tu.Must(w.Svc.DepartMember(w.Ctx, c, w.net.ID, service.DepartInput{}))
++	if st := w.balance(c).AccountState; st != domain.AccountClosed {
++		t.Fatalf("departure with nothing to settle: account %s", st)
++	}
++	if chk := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID)); !chk.Match {
++		t.Fatalf("the certified final export no longer matches: %+v", chk)
++	}
++}
++
++// GOV-025 b (A1-01): postings freeze at the closure date itself. One
++// millisecond before it a settlement still posts; at the date, while the
++// closure has not completed yet (closing), it is refused.
++func TestDepartureSettlementFrozenFromClosureDate(t *testing.T) {
++	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
++	c := tu.Must(w.schedule("end of pilot", 0))
++
++	w.Clock.Advance(c.ClosingAt.Sub(w.Clock.Now()) - time.Millisecond)
++	tu.Must(w.Svc.DepartMember(w.Ctx, w.b, w.net.ID, service.DepartInput{}))
++	if got := w.balance(w.b).Balance; got != 0 {
++		t.Fatalf("balance settled before the closure date = %d", got)
++	}
++
++	w.Clock.Advance(time.Millisecond)
++	if st := w.netNow().Status; st != domain.NetworkClosing {
++		t.Fatalf("status at the closure date = %s", st)
++	}
++	departRefused(t, w, w.a, service.DepartInput{}, w.a)
++}
++
++// GOV-023 (A1-01): a suspended network accepts no postings, so a departure
++// that needs a settlement is refused, voluntary or by an administrator, and
++// the refusal also leaves the member's open proposals open. Leaving with
++// nothing to settle still works, and the settlement posts once trading resumes.
++func TestDepartureSettlementRefusedWhileSuspended(t *testing.T) {
++	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
++	c, _ := w.Member2(w.admin, "carol@example.org")
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
++	open := tu.Must(w.propose(w.b, w.aM, service.ProposerPays, 50))
++	noErr(t, w.Svc.SuspendNetwork(w.Ctx, w.admin, w.net.ID, "security review"))
++
++	departRefused(t, w, w.a, service.DepartInput{}, w.a)
++	departRefused(t, w, w.admin, service.DepartInput{MemberID: w.aM.ID, Reason: "left town"}, w.a)
++	if got := w.txStatus(open.ID).Status; got != domain.TxProposed {
++		t.Fatalf("refused departure left the open proposal %s", got)
++	}
++	tu.Must(w.Svc.DepartMember(w.Ctx, c, w.net.ID, service.DepartInput{}))
++
++	noErr(t, w.Svc.ResumeNetwork(w.Ctx, w.admin, w.net.ID, "review done"))
++	tu.Must(w.Svc.DepartMember(w.Ctx, w.a, w.net.ID, service.DepartInput{}))
++	if got := w.balance(w.a).Balance; got != 0 {
++		t.Fatalf("balance settled after resumption = %d", got)
++	}
++	if got := w.txStatus(open.ID).Status; got != domain.TxCancelled {
++		t.Fatalf("open proposal after the departure: %s", got)
++	}
++}
++
++// GOV-020 (A1-01): with no active administrator the network is read-only and
++// no value moves, so a departure that needs a settlement is refused.
++func TestDepartureSettlementRefusedWhenAdminRequired(t *testing.T) {
++	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
++	// As in TestAdminRequiredReadOnly: the only administrator is no longer active.
++	if _, err := w.Store.DB().Exec(`UPDATE members SET status='suspended' WHERE id = ?`, w.adminM.ID); err != nil {
++		t.Fatal(err)
++	}
++	if !tu.Must(w.Svc.GetNetwork(w.Ctx, w.a, w.net.ID)).AdminRequired {
++		t.Fatal("precondition: administrator required")
++	}
++	departRefused(t, w, w.a, service.DepartInput{}, w.a)
++}
++
++// DOM-024, FR-014 (A1-06): departure cancels every open proposal the member is
++// a party to, not one page of them, and the preview counts all of them. The
++// counts straddle the 500-row page: exactly one full page, and one more. The
++// proposals come from three proposers, each within the default open-proposal
++// cap, and a proposal the member is not a party to stays open.
++func TestDepartureCancelsEveryOpenProposal(t *testing.T) {
++	for _, n := range []int{500, 501} {
++		t.Run(strconv.Itoa(n), func(t *testing.T) {
++			w := newWorld(t, nil)
++			c, _ := w.Member2(w.admin, "carol@example.org")
++			for _, s := range []struct {
++				from  domain.Actor
++				to    *domain.Member
++				count int
++			}{{w.a, w.bM, 200}, {c, w.bM, 200}, {w.b, w.aM, n - 400}} {
++				for i := 0; i < s.count; i++ {
++					tu.Must(w.propose(s.from, s.to, service.ProposerPays, 1))
++				}
++			}
++			other := tu.Must(w.propose(w.admin, w.aM, service.ProposerPays, 1)) // B is not a party
++
++			if pv := tu.Must(w.Svc.PreviewDeparture(w.Ctx, w.b, w.net.ID)); pv.OpenProposals != n {
++				t.Fatalf("preview counts %d open proposals, want %d", pv.OpenProposals, n)
++			}
++			tu.Must(w.Svc.DepartMember(w.Ctx, w.b, w.net.ID, service.DepartInput{}))
++
++			count := func(q string, args ...any) int {
++				t.Helper()
++				var k int
++				if err := w.Store.DB().QueryRow(q, append([]any{w.net.ID}, args...)...).Scan(&k); err != nil {
++					t.Fatal(err)
++				}
++				return k
++			}
++			open := count(`SELECT COUNT(*) FROM transactions WHERE network_id = ? AND status = 'proposed'`)
++			cancelled := count(`SELECT COUNT(*) FROM transactions WHERE network_id = ? AND status = 'cancelled'`)
++			audited := count(`SELECT COUNT(*) FROM audit_events WHERE network_id = ? AND action = ? AND reason = 'party departed'`, domain.ActTxCancelled)
++			told := count(`SELECT COUNT(*) FROM notifications WHERE network_id = ? AND kind = ?`, service.NotifMemberLeft)
++			if open != 1 || cancelled != n || audited != n || told != n {
++				t.Fatalf("after departure: %d open (want 1), %d cancelled, %d audited, %d counterparties told (want %d each)",
++					open, cancelled, audited, told, n)
++			}
++			if got := w.txStatus(other.ID).Status; got != domain.TxProposed {
++				t.Fatalf("a proposal the departed member was not party to is %s", got)
++			}
++			for _, payer := range []domain.Actor{w.a, c} {
++				if r := w.balance(payer).ReservedOutgoing; r != 0 {
++					t.Fatalf("reservation towards the departed member still held: %d", r)
++				}
++			}
++		})
++	}
++}

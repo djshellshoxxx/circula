@@ -1,0 +1,30 @@
+# Example: Circula behind a TLS proxy. Set CIRCULA_PUBLIC_BASE_URL to the proxy's https address.
+# Run once before first start (migrate-mode is explicit by default):
+#   docker compose -f deploy/compose.yaml run --rm circula migrate
+services:
+  circula:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: circula:local
+    command: ["serve"]
+    environment:
+      CIRCULA_PUBLIC_BASE_URL: ${CIRCULA_PUBLIC_BASE_URL:?set the address users open}
+      CIRCULA_TRUSTED_PROXIES: ${CIRCULA_TRUSTED_PROXIES:-172.16.0.0/12}
+      # Secrets: mount files read-only and name them, e.g.
+      # CIRCULA_SETUP_SECRET_FILE: /run/secrets/setup_secret  (file must not be group/other readable)
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    volumes:
+      - circula-data:/data
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 512m
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+volumes:
+  circula-data:
