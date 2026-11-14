@@ -138,7 +138,7 @@ detail into them.
 | `sessions` | `person_id`, `created_at`, `expires_at`, `revoked_at` |
 | `terms_acceptances` | `network_id`, `member_id`, `version`, `accepted_at` |
 | `transaction_status_events` | `id`, `network_id`, `tx_id`, `from_status`, `to_status`, `actor_id`, `request_id`, `occurred_at` |
-| `transactions` | `id`, `network_id`, `kind`, `status`, `payer_account_id`, `payee_account_id`, `amount`, `listing_id`, `original_tx_id`, `created_by`, `accepted_by`, `reversed_total`, `proposed_at`, `expires_at`, `completed_at`, `ledger_seq` |
+| `transactions` | `id`, `network_id`, `kind`, `status`, `payer_account_id`, `payee_account_id`, `amount`, `listing_id`, `original_tx_id`, `created_by`, `accepted_by`, `reversed_total`, `proposed_at`, `expires_at`, `completed_at`, `ledger_seq`, `dispute_deadline_at`, `dispute_policy_version` |
 
 ## Outside the database
 
