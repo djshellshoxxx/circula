@@ -33,6 +33,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: Check workflow action pins
         run: scripts/check-action-pins.sh
       - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037)
@@ -75,6 +76,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: test with race detector
         run: go test -race -count=1 ./...
 
@@ -98,6 +100,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: test with race detector (macOS Intel, bounded parallelism)
         if: runner.os == 'macOS'
         # Keep the complete race suite and every regression. The longer Go per-package
@@ -120,6 +123,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: cross-build all OPS-003 targets from this commit
         run: VERSION=ci-${GITHUB_SHA::12} OUT=bin/ci-dist scripts/package-release.sh
       - name: upload packaged artifacts for inspection
@@ -159,6 +163,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: seed corpora of every fuzz target (also part of go test ./...)
         run: go test -count=1 -run '^Fuzz' ./internal/...
       - name: fuzz amount parser for 10s
@@ -178,6 +183,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: contract (JSON API against docs/api/openapi.yaml)
         run: make contract
       - name: load smoke (small, QA-008 and QA-040 evidence)
@@ -201,6 +207,7 @@ jobs:
         with:
           go-version-file: go.mod
           cache: true
+          cache-dependency-path: go.sum
       - name: install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)
         run: |
           cd e2e
