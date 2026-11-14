@@ -33,7 +33,7 @@ Roles are defined in [_context.md](./_context.md). Detailed journeys are out of 
 
 - **PRD-005** (SHOULD) The primary user is a Member who wants to find goods or services from other Members and to record what they provide. Secondary users are Network administrators who set up and run a Network.
   - Rationale: Member use drives the value of a Network; administrator use decides whether a Network can start.
-  - Verify: Usability tests in the UX spec (UX prefix, not yet written) include a Member task and an administrator setup task. Both are completed in a usability session with a recorded success rate target (see RSK-002).
+  - Verify: Usability tests in the UX spec (UX prefix, not yet written) include a Member task and an administrator setup task. Both are completed in a usability session with a recorded success rate target (see PRD-902).
 
 ## Goals
 
@@ -41,7 +41,7 @@ Roles are defined in [_context.md](./_context.md). Detailed journeys are out of 
   - Verify: A scripted run creates a Network, sets all configurable items, admits a Member, and completes one Transaction, with no direct database or code change.
 
 - **PRD-007** (MUST) A Member MUST be able to record an Offer and a Request, and see Offers and Requests from other Members of the same Network.
-  - Verify: Two Member accounts in one Network create an Offer and a Request. Each sees the other's listing. A Member in a second Network does not see them (subject to RSK-004).
+  - Verify: Two Member accounts in one Network create an Offer and a Request. Each sees the other's listing. A Member in a second Network does not see them (subject to PRD-904).
 
 - **PRD-008** (MUST) Two Members MUST be able to agree on a Transaction, complete it, and see both Balances change by equal and opposite amounts.
   - Verify: Complete a Transaction of value V. The provider's Balance rises by V and the receiver's Balance falls by V. The Network sum of Balances stays at zero.
@@ -85,7 +85,7 @@ These items are excluded from this specification pass. They MUST NOT be built as
 
 ## Success measures
 
-Targets are not set in this spec. Each measure MUST have a recorded definition, data source and target before the MVP release (see RSK-002).
+Targets are not set in this spec. Each measure MUST have a recorded definition, data source and target before the MVP release (see PRD-902).
 
 - **PRD-018** (MUST) The share of completed Transactions whose entries fail the balance check MUST be zero.
   - Verify: Daily report over all Networks. Any non-zero value is a defect.
@@ -106,7 +106,7 @@ The MVP is the smallest delivery that satisfies PRD-002 and PRD-006 to PRD-010 f
 - **PRD-022** (MUST) The MVP MUST include: Network creation and policy settings; Account admission; Offer and Request listings; Transaction proposal, completion and Balance view; ledger entry history; Dispute raise and resolution; and audit events for each security- or accounting-relevant action.
   - Verify: Each listed capability has at least one passing end-to-end test.
 
-- **PRD-023** (MUST) The MVP MUST run one Network end to end. Support for several Networks in one installation is not required (see RSK-001).
+- **PRD-023** (MUST) The MVP MUST run one Network end to end. Support for several Networks in one installation is not required (see PRD-901).
   - Verify: The end-to-end test in PRD-022 passes on a fresh install with one Network.
 
 - **PRD-024** (MAY) The MVP MAY include automated matching of Offers and Requests.
@@ -119,27 +119,27 @@ The MVP is the smallest delivery that satisfies PRD-002 and PRD-006 to PRD-010 f
 
 Each item gives options and a recommended default. The default applies until a decision is recorded in this spec.
 
-- **RSK-001** Tenancy: how many Networks one installation may host.
+- **PRD-901** Tenancy: how many Networks one installation may host.
   - Options: (a) one Network per installation; (b) many Networks per installation with strict data separation.
   - Default: (a) for the MVP. Option (b) is reconsidered after the MVP.
 
-- **RSK-002** Success measure targets and data sources (PRD-018 to PRD-021).
+- **PRD-902** Success measure targets and data sources (PRD-018 to PRD-021).
   - Options: (a) set targets from pilot data; (b) set provisional targets now and review after the first pilot.
   - Default: (b). Targets are recorded in the metrics spec before any external release.
 
-- **RSK-003** Account membership: whether one person may hold Accounts in several Networks.
+- **PRD-903** Account membership: whether one person may hold Accounts in several Networks.
   - Options: (a) one Account per person per Network; (b) one person identity across Networks, with separate Accounts.
   - Default: (a). Option (b) affects the admission and identity model and needs its own decision.
 
-- **RSK-004** Visibility of listings across Networks (PRD-007).
+- **PRD-904** Visibility of listings across Networks (PRD-007).
   - Options: (a) listings visible only inside their Network; (b) listings optionally shared to other Networks by policy.
   - Default: (a). Option (b) would require a cross-network rule set and is not in the MVP (PRD-025).
 
-- **RSK-005** Identity verification before admission. Any question about legal or regulatory duties here is out of scope under PRD-013.
+- **PRD-905** Identity verification before admission. Any question about legal or regulatory duties here is out of scope under PRD-013.
   - Options: (a) none at platform level, with Network policy deciding; (b) a platform-defined minimum that every Network must meet; (c) a Network-defined check run by a named external party.
   - Default: (a). The choice is a product and governance decision, and any legal review is separate.
 
-- **RSK-006** Client scope for the MVP: which devices and platforms must be supported.
+- **PRD-906** Client scope for the MVP: which devices and platforms must be supported.
   - Options: (a) a responsive web application only; (b) web plus native mobile applications.
   - Default: (a). Platform choices are not made in this spec.
 
