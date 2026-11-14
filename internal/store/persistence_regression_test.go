@@ -80,6 +80,8 @@ func postBalanced(t *testing.T, s *store.SQLite, netID, txID, accA, accB string)
 			return err
 		}
 		x.Status = domain.TxCompleted
+		done, deadline := now, now.Add(30*24*time.Hour) // the service fixes the deadline at completion (DOM-017)
+		x.CompletedAt, x.DisputeDeadlineAt, x.DisputePolicyVersion = &done, &deadline, 1
 		return tx.UpdateTransaction(x)
 	})
 	if err != nil {
@@ -441,10 +443,15 @@ func TestPostingFailingMidwayLeavesNoPartialRows(t *testing.T) {
 			return err
 		}
 		x.Status = domain.TxCompleted
+		done, deadline := now, now.Add(30*24*time.Hour) // the service fixes the deadline at completion (DOM-017)
+		x.CompletedAt, x.DisputeDeadlineAt, x.DisputePolicyVersion = &done, &deadline, 1
 		return tx.UpdateTransaction(x)
 	})
 	if err == nil {
 		t.Fatal("second leg must fail")
+	}
+	if !strings.Contains(err.Error(), "account balance out of range") {
+		t.Fatalf("second leg must fail on the balance bound, got: %v", err)
 	}
 	if domain.CodeOf(err) == domain.CodeUnavailable {
 		t.Fatalf("a constraint failure must not look retryable: %v", err)
