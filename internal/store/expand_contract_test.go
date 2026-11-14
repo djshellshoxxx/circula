@@ -15,7 +15,9 @@ import (
 // a later release, after the reads moved off it. Every migration that drops or
 // renames anything must therefore be listed here, with the earlier migration
 // and release after which nothing reads the old structure. Any other DROP or
-// RENAME fails the build. Migrations 0001..0015 contain none.
+// RENAME fails the build. Migrations 0001..0015 contain none. Dropping a TEMP
+// table that the same migration created is not a contract step: no release
+// ever read it (0016 uses one as a backfill check).
 var contractSteps = map[string]string{
 	// "00NN_name.sql": "reads moved to <new structure> in 00MM (release vX.Y); <what is dropped or renamed>",
 }
@@ -24,6 +26,13 @@ var contractSteps = map[string]string{
 // DROP TABLE/INDEX/TRIGGER/VIEW, ALTER TABLE ... DROP COLUMN and
 // ALTER TABLE ... RENAME [COLUMN] ... TO.
 var contractRE = regexp.MustCompile(`(?i)\b(drop|rename)\b`)
+
+// tempTableRE and dropTableRE find TEMP tables a migration creates and the
+// DROP TABLE statements that remove them again.
+var (
+	tempTableRE = regexp.MustCompile(`(?i)\bcreate\s+temp(?:orary)?\s+table\s+(?:if\s+not\s+exists\s+)?(\w+)`)
+	dropTableRE = regexp.MustCompile(`(?i)^\s*drop\s+table\s+(?:if\s+exists\s+)?(\w+)\s*;\s*$`)
+)
 
 // sqlCode blanks comments and quoted strings or identifiers, keeping newlines,
 // so a keyword in a comment or a RAISE message is not taken for a statement.
@@ -75,9 +84,16 @@ func sqlCode(src string) string {
 // outside comments and strings.
 func contractStatements(src string) []string {
 	code := sqlCode(src)
+	temp := map[string]bool{}
+	for _, m := range tempTableRE.FindAllStringSubmatch(code, -1) {
+		temp[strings.ToLower(m[1])] = true
+	}
 	lines := strings.Split(src, "\n")
 	var out []string
 	for i, l := range strings.Split(code, "\n") {
+		if m := dropTableRE.FindStringSubmatch(l); m != nil && temp[strings.ToLower(m[1])] {
+			continue // the migration's own scratch table
+		}
 		if contractRE.MatchString(l) {
 			out = append(out, "line "+strconv.Itoa(i+1)+": "+strings.TrimSpace(lines[i]))
 		}
@@ -150,5 +166,17 @@ func TestContractScannerForms(t *testing.T) {
 	}
 	if got := contractStatements("CREATE TABLE a (x INT);\n-- note\nDROP TABLE a;"); len(got) != 1 || !strings.HasPrefix(got[0], "line 3:") {
 		t.Errorf("line reporting = %v", got)
+	}
+}
+
+// The TEMP-table exemption covers only the migration's own scratch tables.
+func TestContractStatementsTempTableExemption(t *testing.T) {
+	src := "CREATE TEMP TABLE scratch (x INTEGER);\nDROP TABLE scratch;\nDROP TABLE members;\nALTER TABLE t RENAME TO u;\n"
+	got := contractStatements(src)
+	if len(got) != 2 || !strings.Contains(got[0], "members") || !strings.Contains(got[1], "RENAME") {
+		t.Fatalf("contractStatements = %q", got)
+	}
+	if got := contractStatements("DROP TABLE scratch;\n"); len(got) != 1 {
+		t.Fatalf("a drop of a table this migration did not create as TEMP must be flagged: %q", got)
 	}
 }

@@ -423,8 +423,9 @@ func postingGuards(t *testing.T, s store.Store) {
 			return err
 		}
 		x.Status = domain.TxCompleted
-		done := t0
+		done, deadline := t0, t0.Add(30*24*time.Hour) // fixed at completion (DOM-017, DAT-051)
 		x.CompletedAt, x.LedgerSeq = &done, 1
+		x.DisputeDeadlineAt, x.DisputePolicyVersion = &deadline, 1
 		return tx.UpdateTransaction(x)
 	}
 	if err := s.Update(ctx, complete); err == nil {
