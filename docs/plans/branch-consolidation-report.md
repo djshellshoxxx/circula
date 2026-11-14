@@ -83,3 +83,27 @@ main 4b422ad (prompt only)
 3. web-ux, arch-guards, sec-ops-docs: rebase onto this branch, then review.
 4. Open draft PRs #1–#30 stay open. After this branch merges, close those whose content is contained or superseded
    (the table above lists which).
+
+## Follow-up 2026-11-14 (branch `claude/cool-ramanujan-n2peag`, PR #35)
+
+Two frontier branches had diverged from `claude/happy-noether-444cum@34ccb81`: `claude/quirky-einstein-l9ni8m` (#33,
+containing #31) and `chatgpt/circula-consolidation-review-20261111` (#34, on `haiku/circula-consolidation`). This branch
+merges #33 and ports what `git cherry` shows as unique elsewhere.
+
+| Source | Decision | Evidence |
+|---|---|---|
+| #33 `claude/quirky-einstein-l9ni8m@8b4c8ba` | **Base (merged)** | Baseline on Go 1.26.11: gofmt, vet, `go test ./...` and `-race` all pass |
+| #34 `2b01510` web-ux slice | **Integrated** (cherry-pick, no conflict on this base) | web tests; e2e full run (readiness report) |
+| #34 `f8ce749` H05, `f83ae1c` | **Integrated**; H05 fixtures given the 0016 dispute deadline | `go test ./internal/store` |
+| #34 `fbdcfc1`, `d8e4e0b` reversal paging | **Integrated** | red at 500/501 without the fix, green with it |
+| #34 `df89562`, `3c3ebeb` CI | **Partly**: go.sum cache keys only; #33's trigger policy kept; macOS 15 already present | YAML parse, action pins |
+| #34 docs | **Carried over** with verified results | `docs/audit/CONSOLIDATION-QUALIFICATION-2026-11-11.md` |
+| #34 e2e/web slices duplicated under other hashes | Identical trees on both lines; nothing to port | `git diff` on `e2e/` empty |
+| #30 `0a33e3c` HTTP acceptance scenario | **Integrated** | `TestAcceptanceScenarioHTTP` passes |
+| WIP export | **Integrated with BR-06 fixes** | see security review |
+| WIP arch-guards, sec-ops-docs | **Integrated** after conflicts in `cmd/circula/config.go`, `serve.go`, `internal/web/web.go`, and 0016 adaptations | lint 0 issues; tests pass |
+| WIP boundary-fuzz, release-chain, e2e-axe, e2e-flows, web-ux | Already present; rebuilt each series on its base and compared final files: only formatting, lint and later fixes differ | |
+| #32, `planning/future-cli-specs-20261110` | **Not integrated**: future-feature docs, out of beta scope | |
+| #29, #1, #2, #3, #5, #7, #16, #20 | Unchanged decision (see above) | |
+
+Supersedes when merged: #19, #30, #31, #33, #34, plus those listed above as contained.

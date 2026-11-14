@@ -1,6 +1,37 @@
 # Circula handoff
 
-## 2026-11-11: beta consolidation (current)
+## 2026-11-14: beta follow-up integration (current)
+
+Branch `claude/cool-ramanujan-n2peag`, draft PR https://github.com/djshellshoxxx/circula/pull/35 into `main`. It builds on
+`claude/quirky-einstein-l9ni8m@8b4c8ba` (PR #33, which contains #31) and ports the unique work of
+`chatgpt/circula-consolidation-review-20261111` (PR #34) and `claude/gracious-ptolemy-dscc7v` (PR #30). Results and
+commands: [docs/releases/beta-readiness-report.md](docs/releases/beta-readiness-report.md) (2026-11-14 section).
+
+Done in this pass:
+- Ported from #34: web-ux slice (UX-017, UX-049, GOV-010, SEC-016, UX-021), H05 persistence tests (fixtures fixed for
+  migration 0016), reversal-history pagination (UX-017-R1 confirmed red at 500 of 501, green with the fix), go.sum cache
+  keys. Ported from #30: the HTTP-level acceptance scenario.
+- Export slice integrated with the BR-06 fixes (shared in-flight byte budget, `export-dir` setting, bounded and logged
+  memory fallback, manifest `reconciliation` documented). BR-04 fixed (erasure drops network-wide exports).
+- arch-guards (ARC-002/004/008, QA-012, DAT-045) and sec-ops-docs (SEC-014/020/030, OPS-015/030) integrated after
+  conflict resolution and 0016 adaptations. All eight preserved WIP slices are now in the tree.
+- qa-robustness: QA-001 long-run knobs plus nightly job, QA-007 (100 interleavings), QA-010 (real process crash),
+  QA-019 (expiry notice, new kind `trade.expired`), QA-026 (forced migration failure), QA-028 (backup under load).
+  QA-024 was already met.
+- BR-05 timing test. migrate-mode rule for a new database pinned (`startupMigrationGate`) and documented.
+- Spec status rows and TRACEABILITY rows updated for the IDs above.
+
+Next, in order:
+1. Owner: review and merge PR #35, then close the PRs it supersedes (#19, #30, #31, #33, #34; others per
+   [docs/plans/branch-consolidation-report.md](docs/plans/branch-consolidation-report.md)).
+2. QA-042: full regeneration of `docs/TRACEABILITY.md` (only the rows touched here were refreshed).
+3. Remaining P0 rows marked partial in `docs/specs/` (QA-001 release size waits on DEC-023; SEC-030 drills; OPS-015 staging
+   alerts; ARC-002 snapshot.go exception; QA-030 independent reconciliation script).
+4. Backup file names have one-second resolution: a restore in the same second as a pre-migration backup is refused
+   ("destination already exists", nothing changed). Low; consider a unique suffix.
+5. Owner gates below; independent security review (SEC-033); manual screen-reader run.
+
+## 2026-11-11: beta consolidation
 
 Branch `claude/circula-beta-completion-1npjw6`, a draft PR into `main`. It is the integration branch: it starts from
 `claude/gracious-ptolemy-dscc7v@3c2a577` (PR #30) and merges PRs #21–#28, part of #13 and four preserved WIP

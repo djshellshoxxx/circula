@@ -106,3 +106,18 @@ Engineering estimate. Rows count equally and PARTIAL/UNVERIFIED count as half: (
 of the 45 rows above. This counts the beta feature list in this file, not every requirement in `docs/specs/`
 (`docs/specs/12-quality-test-plan.md` alone still lists 28 P0 items as partial). Owner gates are not engineering work
 and are not counted.
+
+## Update 2026-11-14 (PR #35)
+
+| # | Change | Evidence |
+|---|---|---|
+| L11 | Reversal history is complete beyond 500 reversals (paged) | `TestReversalsOfResultLimit` |
+| L9 | Real process crash at each posting step, then restart (QA-010) | `TestQA010CrashDuringPostingThenRestart` |
+| L8 | 100 random over-subscription interleavings (QA-007) | `TestQA007OverSubscriptionInterleavings` |
+| A6 | Timing of unknown login vs wrong secret measured (BR-05) | `TestBR05EnumerationTimingIsComparable` |
+| W10 | **COMPLETE**: streaming spool export integrated with BR-06 fixes; BR-04 fixed | `export_budget_test.go`, `br04_erasure_exports_test.go` |
+| D3 | Backup under concurrent load restored into a clean instance (QA-028); forced migration failure (QA-026) | `TestQA028BackupUnderLoadRestores`, `TestQA026UpgradeWithForcedFailureRollsBack` |
+| O2 | **COMPLETE** (container image built and run 2026-11-12, `docs/ops/container-verification-2026-11-12.md`); new-database migrate rule pinned | `TestStartupMigrationGate` |
+| O4 | **COMPLETE**: PR runs the Linux gate once; macOS/Windows and the QA-001 long run on main, nightly and dispatch | `ci.yml` |
+
+Estimate on the 45 rows: 45 COMPLETE / 45. Spec-level partial rows and owner gates remain (see `HANDOFF.md`).
