@@ -2,17 +2,16 @@
 
 Date: 2026-11-15
 Audit branch: `chatgpt/circula-security-audit-20261115`
-Audit handoff commit: `c55e225fc2df23665a16d02c1bb8f05a67a98669`
 Authoritative application baseline: PR #35 branch `claude/cool-ramanujan-n2peag`
 PR #35 baseline commit: `c033cfa448fb89d1a5cc0ca87458b40d2709fa2e`
-Repository default branch: `main`
 Audit handoff PR: #42 (draft; targets PR #35 integration branch)
+Audit branch latest commit before this update: `2b602c4eed9e83927d06c4b43a180775bf90e8fb`
 Scope: security review only. No application code, financial rules, migrations, or production data were changed.
 
 ## Repository state
 
 - Repository: `djshellshoxxx/circula` (Go, SQLite).
-- PR #35 is the documented integration baseline. Its handoff identifies it as a draft PR into `main`; its branch is 345 commits ahead of main and 0 behind at the checked comparison.
+- PR #35 is the documented integration baseline. Its branch is 345 commits ahead of main and 0 behind at the checked comparison.
 - PR #38: foundational specs. PR #40: QA-042 requirement-ID drift auditor. PR #41: future-only receipt/certificate specs; it explicitly says no current feature code is introduced.
 - PR #35 handoff says QA-042 full traceability regeneration remains incomplete, alongside owner gates and SEC-033.
 - PR #35 baseline commit `c033cfa` has a completed successful GitHub Actions run (run 43685188544). This is CI evidence, not proof of security.
@@ -41,14 +40,6 @@ Scope: security review only. No application code, financial rules, migrations, o
 - A1-07 — final closure export is not retried after a one-time export failure: **CONFIRMED by source trace; runtime PoC not run**. `FinaliseClosures` first calls `finaliseOne`, which sets `closed_at`; it then calls `recordFinalExport` in a separate unit. `ListClosures(true)` only returns rows with `closed_at = 0`. If export/recording fails after closure commits, the next sweep no longer selects that closure, so its final checksum/reconciliation may never be recorded. Severity: Low in the historical A1 report.
 - A1-08 to A1-10 and remaining informational findings: not fully rechecked in this pass. Do not mark resolved.
 
-### Tests and limitations
-
-- Read PR #35 source patches for the posting path, SQLite transaction wrapper, transaction store, migrations, reversal/dispute/departure/closure paths, and the historical A1 report.
-- Reviewed existing test source for atomicity, concurrent acceptance, departure settlement and reversal behavior.
-- No shell/Go runtime was available through the connected GitHub interface. No `go test`, `go test -race`, fuzz, mutation, or PoC execution is claimed.
-- Findings A1-04 through A1-07 are confirmed by code-path inspection but still need focused reproductions and regression tests before remediation is accepted.
-- No destructive or production tests were run.
-
 ## Completed: Priority 2 — authentication, authorization and IDOR (source review only)
 
 ### Positive controls observed
@@ -66,6 +57,7 @@ Scope: security review only. No application code, financial rules, migrations, o
 
 - **A3-F02 — Medium — break-glass administrators can make lasting changes. CONFIRMED by current source trace; historical A3 audit includes PoC evidence, but no current-head PoC was run.** `principal.requireLasting()` exists but is called only by a subset of write paths. Current code paths such as `CreateAdjustment`, `ApproveAdjustment`, `SetCreditLimit`, `AdminResetPassword`, `ReverseTransaction`, `DecideJoinRequest`, network suspension/resumption and other admin actions do not consistently call it. In addition, `requireIndependentApprover` returns success immediately for `p.bgAdmin`, bypassing the new-admin delay and appointment-chain independence check. A temporary break-glass admin can therefore create permanent balance changes, permanent credit-limit changes, reset another member's password, reverse a trade, or approve a pending adjustment immediately. The temporary role expires, but these effects do not. This contradicts the current code comment that break-glass access must not leave lasting changes. Remediation is blocked on an owner decision about the permitted break-glass scope; do not implement an allow-list or broaden powers without that decision.
 - **A3-F03 — Low — configured MFA requirement is bypassed for decider operations. CONFIRMED by source trace; runtime test not run.** `principal.requireAdmin()` checks `mfaMissing`, but `principal.requireDecider()` does not. Admins without an enrolled second factor can reach decider-only paths such as dispute resolution (which can post a reversal) and challenge decisions. The intended policy must clarify whether an administrator using reviewer/decider powers must satisfy the administrator MFA requirement; the historical A3 audit treats this as a confirmed conformance weakness.
+- **A3-F16 — previous throttle coupling appears fixed in current source.** Sign-in MFA attempts use `mfaKey`; session-side MFA management uses a distinct `mfaManageKey`. The current code comments describe the intended separation and lock decay. This is source-level verification only; the regression tests were not run.
 
 ### Owner decision required: A3-F02 / SEC-013 / DEC-014
 
@@ -77,25 +69,44 @@ The owner must decide:
 
 Separately, SEC-013 still records owner/process gaps for a second approver, notice to affected administrators within 24 hours, and a published operator access policy. These are governance/verification gaps, not independently demonstrated code exploits in this pass.
 
-### Areas not fully verified
+## Completed: Priority 3 — cryptography and key management (source review only)
 
-- No current-head tests were run. Historical A3 PoC evidence is not a substitute for reproducing findings on the PR #35 commit.
-- No exhaustive audit of every service method or object identifier was completed. No additional IDOR bypass was confirmed in the sampled paths.
-- Token/session revocation races, API-token survival after password change, MFA enrollment/recovery flows and every route-specific role gate need deeper testing.
-- Break-glass owner decision remains unresolved; do not mark A3-F02 fixed.
+### Positive controls observed
+
+- Password hashes use Argon2id with per-hash random salts and constant-time comparison. The configured default is 64 MiB, 3 iterations, 2 lanes.
+- Session/API tokens use 32 random bytes and are stored as SHA-256 hashes; MFA challenges are also hashed and expire after five minutes.
+- TOTP uses a 160-bit random seed, RFC 6238/HOTP HMAC-SHA1 interoperability, constant-time code comparison and a persisted last-accepted step to prevent replay.
+- Recovery codes are random, single-use, stored as hashes bound to the person ID; tests cover reuse and concurrent replay.
+- MFA seeds are AES-256-GCM sealed with the configured `MFASecret`, with the person ID as associated data. If no MFA secret is configured, the implementation stores a base32 seed and relies on database file permissions and backup encryption; this is an explicit configuration mode, not an implementation bypass.
+- Backup encryption uses AES-256-GCM chunking, per-file random salt and nonce prefix, an incrementing chunk counter, and AAD binding the header, chunk index and final flag. Passphrase mode uses Argon2id; raw 32-byte base64 keys use HKDF-SHA256. Existing tests cover wrong keys, tampering, truncation, reordered/duplicated/appended chunks and nonce differentiation.
+- The web signing key is 32 random bytes, stored with owner-only permissions on Unix; symlinked key files are rejected. Secret configuration files are permission-checked. Backup encryption and manifest-signing keys are required to differ.
+- Backup restore checks the ciphertext checksum and manifest HMAC when a backup key is configured. Unsigned restore requires an explicit `-allow-unsigned` flag.
+
+### Confirmed / suspected findings
+
+- **CRYPTO-01 — Medium (conditional local attack) — predictable temporary manifest/anchor files can follow attacker-planted symlinks. CONFIRMED by source trace; runtime PoC not run.** `cmd/circula/snapshot.go:writeManifest` and `cmd/circula/auditanchor.go:writeAnchorFile` both use a predictable `path + ".tmp"` and `os.WriteFile`, which follows an existing symlink. Manual `circula backup` accepts an operator-supplied destination and does not require a private output directory; `audit-anchor write` also accepts an arbitrary path. If an attacker can create a symlink at the corresponding temporary path in a directory the operator uses, the command can truncate/overwrite the symlink target with manifest or anchor JSON. Impact depends on the operator process's file permissions and the chosen destination directory. Recommended fix: create an unpredictable temporary file with exclusive creation in the same directory, enforce mode 0600, sync and close it, then rename; reject unsafe destination directories where appropriate. Add symlink-preplant regression tests. Do not claim remote exploitability.
+- **CRYPTO-02 — Low — backup manifest HMAC does not authenticate the ledger/integrity summary. CONFIRMED by source trace.** `manifestMAC` covers format, created time (to seconds), schema, byte count, SHA-256, and encrypted-container metadata, but omits `Integrity` and `Ledger` (`ledger_verification`) fields. An attacker who can alter only the manifest can change a recorded ledger result from failed/not-run to ok without invalidating the HMAC, while the backup file checksum still verifies. This does not alter the backed-up database; it can mislead an operator relying on the manifest as an attestation. Include the integrity and ledger summary fields in the authenticated payload, with a versioned MAC format.
+- **Configuration risks, not confirmed code vulnerabilities:** backup encryption is optional unless `backup-require-encryption` is enabled or an encryption key is configured; the manual backup command warns when it writes plaintext. Audit-anchor authentication is also optional; without `audit-anchor-key`, the verifier explicitly reports the anchor as unauthenticated. Production deployments should make these choices explicit.
+- No cryptographic primitive break, nonce reuse, token predictability, or TOTP replay flaw was identified in the sampled source. This is not an independent cryptographic review or a proof of safety.
+
+### Tests and limitations
+
+- Inspected password, MFA, token, backup-encryption, state-key and audit-anchor implementations and relevant test sources.
+- Tests were not executed. No shell/Go runtime was available through the connected GitHub interface.
+- No external cryptographic standards review, fuzzing, timing analysis, key-rotation drill or hardware-backed key-management test was performed.
+- The symlink and manifest-MAC findings need focused reproductions and regression tests on a runtime-capable environment.
 
 ## Remaining audit areas
 
-1. Priority 3 — cryptography and key management.
-2. Priority 4 — SQLite migrations, backup/restore, persistence and recovery.
-3. Priority 5 — privacy and data protection.
-4. Priority 6 — HTTP/API/browser security.
-5. Priority 7 — deployment, infrastructure and secrets.
-6. Priority 8 — CI/CD and software supply chain.
-7. Verify SEC-033, PR #38 requirements, PR #40 QA-042 implementation, historical branches and current CI.
-8. Recheck A1-08 to A1-10 and all lower-severity ledger findings.
-9. Reproduce A1-04 through A1-07, A3-F02 and A3-F03 on a runtime-capable environment and add regression tests before accepting remediation.
+1. Priority 4 — SQLite migrations, backup/restore, persistence and recovery.
+2. Priority 5 — privacy and data protection.
+3. Priority 6 — HTTP/API/browser security.
+4. Priority 7 — deployment, infrastructure and secrets.
+5. Priority 8 — CI/CD and software supply chain.
+6. Verify SEC-033, PR #38 requirements, PR #40 QA-042 implementation, historical branches and current CI.
+7. Recheck A1-08 to A1-10 and all lower-severity ledger findings.
+8. Reproduce A1-04 through A1-07, A3-F02, A3-F03, CRYPTO-01 and CRYPTO-02 on a runtime-capable environment before accepting remediation.
 
 ## Exact next task
 
-Continue with Priority 3. Trace key generation, storage, rotation, encryption/decryption, password hashing, token generation, signature verification, nonce/replay handling and cryptographic error paths. Inspect implementations and vectors; do not replace protocols or change production behavior during the audit. Update this handoff after completing that area.
+Continue with Priority 4. Trace SQLite initialization, migration transactions and rollback, file permissions, backup/restore consistency, WAL behavior, recovery after interruption, concurrent access, and backup naming/retention. Pay particular attention to backup filename collisions and the previously reported backup/recovery issues. Do not modify production behavior during the audit. Update this handoff after completing that area.
