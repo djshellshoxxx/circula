@@ -20,11 +20,12 @@ Done in this pass:
   QA-024 was already met.
 - BR-05 timing test. migrate-mode rule for a new database pinned (`startupMigrationGate`) and documented.
 - Spec status rows and TRACEABILITY rows updated for the IDs above.
+- QA-042: merged the read-only requirement-ID drift auditor (`scripts/traceability_audit.py`) and its three unit tests from PR #40. CI now runs those tests and emits the audit report. This detects missing/matrix-only/duplicate-source IDs; it does not regenerate requirement statuses or certify implementation evidence.
 
 Next, in order:
 1. Owner: review and merge PR #35, then close the PRs it supersedes (#19, #30, #31, #33, #34; others per
    [docs/plans/branch-consolidation-report.md](docs/plans/branch-consolidation-report.md)).
-2. QA-042: full regeneration of `docs/TRACEABILITY.md` (only the rows touched here were refreshed).
+2. QA-042: finish full regeneration of `docs/TRACEABILITY.md`, reconcile every status and evidence citation, and review the drift-audit report. The detector is now in CI; the historical matrix is still not fully regenerated.
 3. Remaining P0 rows marked partial in `docs/specs/` (QA-001 release size waits on DEC-023; SEC-030 drills; OPS-015 staging
    alerts; ARC-002 snapshot.go exception; QA-030 independent reconciliation script).
 4. Backup file names have one-second resolution: a restore in the same second as a pre-migration backup is refused
