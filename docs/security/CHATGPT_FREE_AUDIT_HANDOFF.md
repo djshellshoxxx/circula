@@ -5,7 +5,7 @@ Audit branch: `chatgpt/circula-security-audit-20261115`
 Authoritative application baseline: PR #35 branch `claude/cool-ramanujan-n2peag`
 PR #35 baseline commit: `c033cfa448fb89d1a5cc0ca87458b40d2709fa2e`
 Audit handoff PR: #42 (draft; targets PR #35 integration branch)
-Audit branch latest commit before this update: `2b602c4eed9e83927d06c4b43a180775bf90e8fb`
+Audit branch latest commit before this update: `7f41311fd93abaafea4c37e5753b243646c9f2d9`
 Scope: security review only. No application code, financial rules, migrations, or production data were changed.
 
 ## Repository state
@@ -39,6 +39,14 @@ Scope: security review only. No application code, financial rules, migrations, o
 - A1-06 — incomplete proposal cancellation on member departure: **CONFIRMED by source trace; runtime PoC not run**. `internal/service/departure.go:cancelOpenProposals` fetches only 500 proposed transactions and does not paginate. More than 500 open proposals involving a departing member leave excess proposals active, retaining reservations until expiry and referencing a departed party. Severity: Low.
 - A1-07 — final closure export is not retried after a one-time export failure: **CONFIRMED by source trace; runtime PoC not run**. `FinaliseClosures` first calls `finaliseOne`, which sets `closed_at`; it then calls `recordFinalExport` in a separate unit. `ListClosures(true)` only returns rows with `closed_at = 0`. If export/recording fails after closure commits, the next sweep no longer selects that closure, so its final checksum/reconciliation may never be recorded. Severity: Low in the historical A1 report.
 - A1-08 to A1-10 and remaining informational findings: not fully rechecked in this pass. Do not mark resolved.
+
+### Tests and limitations
+
+- Read PR #35 source patches for the posting path, SQLite transaction wrapper, transaction store, migrations, reversal/dispute/departure/closure paths, and the historical A1 report.
+- Reviewed existing test source for atomicity, concurrent acceptance, departure settlement and reversal behavior.
+- No shell/Go runtime was available through the connected GitHub interface. No `go test`, `go test -race`, fuzz, mutation, or PoC execution is claimed.
+- Findings A1-04 through A1-07 are confirmed by code-path inspection but still need focused reproductions and regression tests before remediation is accepted.
+- No destructive or production tests were run.
 
 ## Completed: Priority 2 — authentication, authorization and IDOR (source review only)
 
@@ -84,7 +92,7 @@ Separately, SEC-013 still records owner/process gaps for a second approver, noti
 
 ### Confirmed / suspected findings
 
-- **CRYPTO-01 — Medium (conditional local attack) — predictable temporary manifest/anchor files can follow attacker-planted symlinks. CONFIRMED by source trace; runtime PoC not run.** `cmd/circula/snapshot.go:writeManifest` and `cmd/circula/auditanchor.go:writeAnchorFile` both use a predictable `path + ".tmp"` and `os.WriteFile`, which follows an existing symlink. Manual `circula backup` accepts an operator-supplied destination and does not require a private output directory; `audit-anchor write` also accepts an arbitrary path. If an attacker can create a symlink at the corresponding temporary path in a directory the operator uses, the command can truncate/overwrite the symlink target with manifest or anchor JSON. Impact depends on the operator process's file permissions and the chosen destination directory. Recommended fix: create an unpredictable temporary file with exclusive creation in the same directory, enforce mode 0600, sync and close it, then rename; reject unsafe destination directories where appropriate. Add symlink-preplant regression tests. Do not claim remote exploitability.
+- **CRYPTO-01 / A3-F17 — Low (conditional local attack) — predictable temporary files can follow attacker-planted symlinks. CONFIRMED by source trace; runtime PoC not run.** `cmd/circula/snapshot.go:writeManifest`, `cmd/circula/auditanchor.go:writeAnchorFile` and `cmd/circula/util.go:writeJSONFile` all use predictable `path + ".tmp"` and `os.WriteFile`, which follows an existing symlink. Manual `circula backup` accepts an operator-supplied destination and does not require a private output directory; `audit-anchor write` also accepts an arbitrary path. If an attacker can create a symlink at the corresponding temporary path in a directory the operator uses, the command can truncate/overwrite the symlink target with manifest, restore-record or anchor JSON. Impact depends on the operator process's file permissions and the chosen destination directory. Recommended fix: create an unpredictable temporary file with exclusive creation in the same directory, enforce mode 0600, sync and close it, then rename; reject unsafe destination directories where appropriate. Add symlink-preplant regression tests. Do not claim remote exploitability.
 - **CRYPTO-02 — Low — backup manifest HMAC does not authenticate the ledger/integrity summary. CONFIRMED by source trace.** `manifestMAC` covers format, created time (to seconds), schema, byte count, SHA-256, and encrypted-container metadata, but omits `Integrity` and `Ledger` (`ledger_verification`) fields. An attacker who can alter only the manifest can change a recorded ledger result from failed/not-run to ok without invalidating the HMAC, while the backup file checksum still verifies. This does not alter the backed-up database; it can mislead an operator relying on the manifest as an attestation. Include the integrity and ledger summary fields in the authenticated payload, with a versioned MAC format.
 - **Configuration risks, not confirmed code vulnerabilities:** backup encryption is optional unless `backup-require-encryption` is enabled or an encryption key is configured; the manual backup command warns when it writes plaintext. Audit-anchor authentication is also optional; without `audit-anchor-key`, the verifier explicitly reports the anchor as unauthenticated. Production deployments should make these choices explicit.
 - No cryptographic primitive break, nonce reuse, token predictability, or TOTP replay flaw was identified in the sampled source. This is not an independent cryptographic review or a proof of safety.
@@ -96,17 +104,52 @@ Separately, SEC-013 still records owner/process gaps for a second approver, noti
 - No external cryptographic standards review, fuzzing, timing analysis, key-rotation drill or hardware-backed key-management test was performed.
 - The symlink and manifest-MAC findings need focused reproductions and regression tests on a runtime-capable environment.
 
+## Completed: Priority 4 — SQLite, migrations, backup/restore and recovery (source review only)
+
+### Positive controls observed
+
+- SQLite opens in WAL mode with foreign keys and `secure_delete=1`; the process applies a restrictive Unix umask. Database and WAL file permissions are tightened on startup.
+- Writers are serialized in-process with a gate and across processes by `BEGIN IMMEDIATE`; read views run in a transaction with `query_only=ON`.
+- Migrations are embedded, versioned contiguously, checked against recorded migration names, and each migration plus its schema_migrations row is applied in its own `BEGIN IMMEDIATE` transaction.
+- Existing tests cover migration rollback after a mid-migration failure, upgrade from every prior schema version, idempotent reopen, foreign-key checks, concurrent writers, WAL-backed snapshots, damaged/truncated database detection, and refusing to overwrite an existing snapshot.
+- Backup creation uses SQLite `VACUUM INTO`, then runs SQLite integrity and ledger/audit-chain checks on a throw-away copy before publishing the backup. Encrypted backups are decrypted again and compared with the verified plaintext before final rename.
+- Restore verifies manifest policy, file hash, decryption, integrity, schema and ledger/audit chains before swapping. It takes a pre-restore backup and restores the old DB on ordinary returned errors.
+
+### Confirmed findings
+
+- **A3-F09 — Low — restore can resurrect credentials revoked after the backup. CONFIRMED by current source trace.** `cmdRestore` replaces the database with the historical snapshot and then only writes a restore record and `database.restored` audit events. It does not revoke restored sessions, API tokens or break-glass sessions. A session or API token revoked after the backup becomes valid again after restore. The documented post-restore password-change step revokes sessions but the CLI explicitly says API tokens are unchanged; token credentials therefore need separate revocation. Old password hashes may also be restored. Add a post-restore invalidation step or preserve a monotonic revocation ledger outside the restored database; require explicit reconciliation of API tokens and credentials.
+- **RESTORE-01 — Medium (conditional crash recovery) — interrupted database swap has no startup recovery. CONFIRMED by source trace; process-kill test not run.** `swapDatabase` moves the current database and WAL files to the fixed `.pre-restore-swap` path, then renames the verified restore into place. Rollback only runs when the function returns an error. If the process or host stops after moving the old database aside but before the new database is installed, no startup code checks for `.pre-restore-swap`; normal startup may create a new empty database instead. The old database remains on disk but is not automatically restored or surfaced. Add a durable restore state marker and fail-closed startup recovery, with kill-point tests around each rename/check boundary.
+- **BACKUP-01 — Low — timestamped backup names collide within one second. CONFIRMED by source trace; concurrency test not run.** `backupFileName` / `backupFileNameFor` encode time only to second precision. `snapshotWith` checks destination existence non-atomically and uses a shared `.partial` path (and, for encrypted output, a shared `.partial` ciphertext path). Two manual or scheduled/manual backups targeting the same directory within the same second can race; one can remove or fail against the other's partial file, and one backup may be lost. Use exclusive destination reservation or a unique suffix and unique temporary files; test simultaneous same-second backups.
+- **A3-F10 — Low — a future-dated backup filename can suppress scheduled backups. CONFIRMED by source trace.** `listBackups` parses timestamps from filenames; `jobRunner.untilNextBackup` trusts the newest parsed timestamp and waits until that time plus the configured interval. A clock fault or future-dated file can therefore delay the next scheduled backup for years; the same file is retained as newest by pruning. Validate filename timestamps against signed manifest time and current time, and cap future skew.
+- **Durability trade-off, not a confirmed defect:** the default SQLite synchronous mode is `NORMAL`. The repository documents that an OS crash or power loss can drop the newest committed WAL transactions (with their audit rows); `FULL` is an opt-in setting because the recorded benchmark showed roughly 2.7x posting latency. Deployments requiring the strongest commit durability should explicitly choose `db-synchronous=FULL`.
+- **WAL erasure limitation for Priority 5:** `secure_delete=1` does not itself erase old values from WAL frames; the prior A3 review records an informational finding where a PASSIVE checkpoint left data in the WAL. Recheck checkpoint/erasure behavior in the privacy pass.
+- The existing A3-F17 symlink issue also applies to `writeRestoreRecord` through `writeJSONFile`; it is documented above under CRYPTO-01.
+
+### Migration and recovery gaps
+
+- `migrateTo` creates the migration table before applying migrations; each actual migration and its version row are transactional. A failure rolls back the partial DDL and leaves the prior version usable. No confirmed partial-migration defect was found in source.
+- The default NORMAL durability choice is documented and intentional; it remains an operator RPO decision.
+- Restore is robust against ordinary returned errors and source-file TOCTOU, but not process termination during the swap. No restore kill-point test was found in the reviewed test inventory.
+- Backup retention trusts file-name timestamps, not a signed monotonic sequence. The documented A3-F10 issue remains.
+- Same-second collision and concurrent partial-file handling lack regression tests in the reviewed backup test file.
+
+### Tests and limitations
+
+- Inspected migration runner, SQLite open/transaction code, migration/upgrade/persistence tests, backup/restore CLI, snapshot writer, scheduled backup loop, restore swap, restore records and operations guide.
+- Existing test sources were inspected but not run. No process-kill simulation, multi-process backup race, power-loss test, or Windows runtime test was performed.
+- A3-F09 and RESTORE-01 need focused restore/revocation and crash-recovery reproductions on a runtime-capable environment.
+- No application code or database was modified.
+
 ## Remaining audit areas
 
-1. Priority 4 — SQLite migrations, backup/restore, persistence and recovery.
-2. Priority 5 — privacy and data protection.
-3. Priority 6 — HTTP/API/browser security.
-4. Priority 7 — deployment, infrastructure and secrets.
-5. Priority 8 — CI/CD and software supply chain.
-6. Verify SEC-033, PR #38 requirements, PR #40 QA-042 implementation, historical branches and current CI.
-7. Recheck A1-08 to A1-10 and all lower-severity ledger findings.
-8. Reproduce A1-04 through A1-07, A3-F02, A3-F03, CRYPTO-01 and CRYPTO-02 on a runtime-capable environment before accepting remediation.
+1. Priority 5 — privacy and data protection.
+2. Priority 6 — HTTP/API/browser security.
+3. Priority 7 — deployment, infrastructure and secrets.
+4. Priority 8 — CI/CD and software supply chain.
+5. Verify SEC-033, PR #38 requirements, PR #40 QA-042 implementation, historical branches and current CI.
+6. Recheck A1-08 to A1-10 and all lower-severity ledger findings.
+7. Reproduce all source-confirmed findings on a runtime-capable environment before accepting remediation.
 
 ## Exact next task
 
-Continue with Priority 4. Trace SQLite initialization, migration transactions and rollback, file permissions, backup/restore consistency, WAL behavior, recovery after interruption, concurrent access, and backup naming/retention. Pay particular attention to backup filename collisions and the previously reported backup/recovery issues. Do not modify production behavior during the audit. Update this handoff after completing that area.
+Continue with Priority 5. Trace personal data collection, storage, logs, exports, deletion/erasure, retention, backups, WAL/checkpoint behavior, account recovery and cross-user visibility. Pay particular attention to the previously reported erasure and WAL findings. Do not modify production behavior during the audit. Update this handoff after completing that area.
