@@ -1,0 +1,13 @@
+{
+  "name": "circula-e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Accessibility (axe-core) and keyboard-only end-to-end tests against the built circula binary",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "axe-core": "4.13.0"
+  }
+}

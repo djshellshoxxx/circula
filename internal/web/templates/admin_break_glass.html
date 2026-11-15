@@ -1,0 +1,10 @@
+{{define "content"}}
+<p>Platform staff may reach this network's data or rights only through a break-glass session. Every session is listed here with its reason. A session lasts at most four hours. You cannot open or close sessions from this page.</p>
+{{if .D.Rows}}
+<div class="scroll" role="region" aria-label="Operator access table" tabindex="0">
+<table class="stack"><caption>Operator access sessions, newest first</caption>
+<thead><tr><th scope="col">Operator</th><th scope="col">Status</th><th scope="col">Opened</th><th scope="col">Expires</th><th scope="col">Closed</th><th scope="col">Reason</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr><th scope="row" data-label="Operator">{{.Operator}}</th><td data-label="Status">{{.Status}}</td><td data-label="Opened">{{.Opened}}</td><td data-label="Expires">{{.Expires}}</td><td data-label="Closed">{{if .Closed}}{{.Closed}}{{if .ClosedReason}} ({{.ClosedReason}}){{end}}{{else}}Not closed{{end}}</td><td data-label="Reason">{{.Reason}}</td></tr>{{end}}</tbody></table></div>
+{{template "pager" dict "Next" .D.Next "Href" (printf "/n/%s/admin/break-glass?after=" .Slug)}}
+{{else}}<p>No operator access has been recorded for this network.</p>{{end}}
+{{end}}

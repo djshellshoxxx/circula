@@ -1,0 +1,3960 @@
+openapi: 3.1.0
+info:
+  title: Circula JSON API
+  version: 1.0.0-draft
+  summary: Versioned JSON API under /api/v1 for a credit-circle network.
+  description: |
+    Machine-readable description of the routes implemented in internal/api
+    (branch claude/circula-build, as built 2026-10-21). Requirement IDs (API-nnn)
+    refer to docs/specs/07-api-contract.md. Where the as-built behaviour differs
+    from the spec, the operation description says "As built:" and spec 07 section 12
+    lists the deviation.
+
+    Conventions (all operations):
+    - Bodies are application/json; charset=utf-8 (API-003). PATCH bodies are
+      application/merge-patch+json (API-006). Unknown fields and duplicate keys are
+      rejected with 400 invalid-body. Request bodies are limited to 64 KiB (API-037).
+    - Money is a JSON string of canonical base-10 minor units (API-004). Timestamps are
+      RFC 3339 UTC with milliseconds and Z (API-005).
+    - Every response carries Cache-Control: no-store, X-Request-Id, X-Content-Type-Options
+      and a restrictive Content-Security-Policy (API-039).
+    - Errors are application/problem+json (RFC 9457) with the stable code catalogue
+      (API-029..033, spec 7.2).
+    - Lists use cursor pagination: limit (1..100, default 25) and opaque HMAC-signed
+      cursor; envelope {data, next_cursor} (API-034/035).
+    - Authentication is either a session cookie (browser) or a bearer API token
+      (non-browser). Cookie-authenticated unsafe requests MUST send X-CSRF-Token, which
+      is returned in the X-CSRF-Token response header of every cookie-authenticated
+      response (API-014). Bearer requests are exempt from CSRF.
+    - Credentials in the query string are refused with 400 credentials-in-query (API-012).
+    - Network scope: network-scoped operations use the X-Network header (network id or
+      slug) when the caller belongs to several networks; otherwise the single membership
+      is used (OQ-API-02, as built). Operations marked noNet do not resolve a network.
+    - Every operation requires authentication. No route is public (as built; OQ-API-06
+      is resolved as members-only for GET /network).
+  contact:
+    name: Circula API maintainers
+  license:
+    name: See repository LICENSE
+    identifier: UNLICENSED
+servers:
+  - url: /
+    description: Deployment origin. Every path below already carries the /api/v1 prefix (API-002, API-073).
+tags:
+  - name: Network
+  - name: Identity
+  - name: Members
+  - name: Accounts
+  - name: Listings
+  - name: Transactions
+  - name: Disputes
+  - name: Reports
+  - name: Notifications
+  - name: Admin
+  - name: Invitations
+  - name: Exports
+  - name: Tokens
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+
+paths:
+  /api/v1/network:
+    get:
+      operationId: getNetwork
+      tags: [Network]
+      summary: Read the current network settings (API-040)
+      description: Network name, decimals, currency name, join mode, dispute window and proposal expiry. As built, the caller must be authenticated (OQ-API-06 resolved as members-only). No ETag is emitted.
+      security: &secSafe
+        - cookieAuth: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: Network settings.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Network'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/network/announcements:
+    get:
+      operationId: listNetworkAnnouncements
+      tags: [Network]
+      summary: Member read of announcements (API-064)
+      description: |
+        Announcements in force (effective time reached, not deleted), newest first, for active and
+        suspended members. Scheduled announcements are not shown here. Keyset paging with limit and cursor.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: One page of announcements.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AnnouncementPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/network/terms:
+    get:
+      operationId: getNetworkTerms
+      tags: [Network]
+      summary: Current terms and the caller's acceptance (GOV-009)
+      description: |
+        The network's current onboarding terms (null when none are published), the version the caller
+        accepted (0 for none) and whether they must accept before proposing or accepting a trade.
+        Reading is always allowed.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: Terms state.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TermsState'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/network/policy-log:
+    get:
+      operationId: getPolicyLog
+      tags: [Network]
+      summary: Member-visible rules change log (GOV-002, GOV-003)
+      description: |
+        Every policy version, newest first, with the keys it changed, the previous values, when it was
+        announced and when it takes (or took) effect, its reason and any shorter-notice reason. A version
+        not yet in force has pending true; one cancelled before it took effect has withdrawn true.
+        Not paged.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: The change log.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, next_cursor]
+                properties:
+                  data: {type: array, items: {$ref: '#/components/schemas/PolicyLogEntry'}}
+                  next_cursor: {oneOf: [{type: string}, {type: 'null'}]}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/me/terms/accept:
+    post:
+      operationId: acceptTerms
+      tags: [Identity]
+      summary: Accept the current terms (GOV-009)
+      description: |
+        Records the caller's acceptance of the given version, which must be the current one (422
+        otherwise; 409 when the network has no terms). Idempotency-Key required; accepting again is a no-op.
+        Returns the terms state.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [version]
+              additionalProperties: false
+              properties:
+                version: {type: integer, minimum: 1}
+      responses:
+        '200':
+          description: Terms state after acceptance.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TermsState'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/terms:
+    post:
+      operationId: publishTerms
+      tags: [Admin]
+      summary: Publish a new terms version (GOV-009)
+      description: |
+        Administrator only; Idempotency-Key required. Versions are append-only and numbered from 1. Text of
+        1 to 20000 characters that differs from the current terms. Every active member gets a notice and
+        must accept the new version before proposing or accepting a trade (409 terms-acceptance-required
+        otherwise). Audited (terms.published).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              additionalProperties: false
+              properties:
+                body: {type: string, minLength: 1, maxLength: 20000}
+      responses:
+        '201':
+          description: Terms published.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Terms'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/me:
+    get:
+      operationId: getMe
+      tags: [Identity]
+      summary: Caller's person and memberships (API-041)
+      description: |
+        Returns the person id and the caller's memberships. noNet route.
+        As built: the list contains the memberships visible to the credential across all
+        networks in its scope, not only the current network (spec API-041 says "in this network"; see spec 07 section 12).
+      security: *secSafe
+      responses:
+        '200':
+          description: Person and memberships. time_zone is the display zone chosen by the person, or null (UTC).
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Me'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    patch:
+      operationId: patchMe
+      tags: [Identity]
+      summary: Set the display time zone (extension)
+      description: |
+        Merge patch with one member, time_zone: an IANA name such as Europe/Berlin, or "" to go back to UTC.
+        The preference belongs to the person and drives how web pages show times. The API itself always
+        sends UTC timestamps. noNet. Invalid names ("Local", unknown zones) are 422 validation-failed at /time_zone.
+        The change is audited (person.time_zone_changed).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: {$ref: '#/components/schemas/SetTimeZoneRequest'}
+      responses:
+        '200':
+          description: The stored preference.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [person_id, time_zone]
+                additionalProperties: false
+                properties:
+                  person_id: {$ref: '#/components/schemas/Id'}
+                  time_zone: {type: [string, 'null']}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/me/password:
+    post:
+      operationId: changePassword
+      tags: [Identity]
+      summary: Change the caller's password (API-067a, AUTH-03, SEC-003)
+      description: |
+        Session cookie only (cookieOnly; a bearer token gets 403 forbidden). noNet. Verifies
+        the current password, sets the new one and revokes every session of the person,
+        including the caller's. API tokens stay valid. A wrong current password is 422
+        validation-failed at /current_password, not 401. Five attempts per minute per person,
+        then 429. Idempotency-Key is not used.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ChangePasswordRequest'}
+      responses:
+        '204': {description: Password changed; all sessions of the person revoked.}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/members:
+    get:
+      operationId: listMembers
+      tags: [Members]
+      summary: Member directory (API-042)
+      description: |
+        Paginated directory of the caller's network. As built, every item has status "active"
+        (the directory lists active members only).
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: One page of directory entries.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/MemberPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/members/{id}:
+    get:
+      operationId: getMember
+      tags: [Members]
+      summary: Visible member detail (API-043)
+      description: Not-visible or other-network members return 404 not-found (API-017).
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Member.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Member'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/accounts/me:
+    get:
+      operationId: getAccount
+      tags: [Accounts]
+      summary: Caller's balance view (API-044), or own balance at an exact past instant (API-083)
+      description: >-
+        Without `at`: balance, credit limit, reserved and available amounts, and derived direction (API-007). No ETag.
+        With `at` (API-083, FR-054, DAT-050): the caller's own posted balance at that instant, summing every entry
+        with posted_at <= as_of (inclusive, equal timestamps all included) from one read snapshot. `ledger_seq` is that
+        snapshot's high-water sequence, not a cursor or cutoff. No current credit limit, reserved or available values.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - name: at
+          in: query
+          required: false
+          description: >-
+            RFC 3339 date-time with an explicit Z or numeric offset (percent-encode `+`) and at most millisecond
+            precision. Date-only, offset-less, finer-precision or future values are refused with 400 invalid-query.
+          schema: {type: string}
+      responses:
+        '200':
+          description: Balance view, or the historical balance when `at` is given.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - {$ref: '#/components/schemas/Account'}
+                  - {$ref: '#/components/schemas/HistoricalBalance'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/accounts/me/entries:
+    get:
+      operationId: listAccountEntries
+      tags: [Accounts]
+      summary: Caller's ledger lines, newest first (API-045)
+      description: Ordered by ledger_seq descending. The cursor encodes the ledger_seq of the last line returned. A page may hold fewer than limit items with a non-null next_cursor when the server work cap is reached.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: One page of ledger lines.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/EntryPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/me/membership/departure:
+    post:
+      operationId: departMember
+      tags: [Members]
+      summary: Start own departure (API-067)
+      description: |
+        Idempotency-Key required. Optional body {reason}. As built, departure is refused with
+        409 blocked (blockers list) while the member has a disputed transaction or is the last
+        active administrator. A non-zero balance is not itself a refusal; the response reports
+        settlement "retained" or "settled". Ledger entries are never deleted.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonBody'}
+      responses:
+        '200':
+          description: Departure recorded.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DepartureResult'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/listings:
+    get:
+      operationId: listListings
+      tags: [Listings]
+      summary: Browse listings (API-046)
+      description: Filters kind, free-text q (max 200 characters) and member_id. Unknown query parameters are 400 invalid-query.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: kind
+          in: query
+          required: false
+          schema: {type: string, enum: [offer, request]}
+        - name: q
+          in: query
+          required: false
+          schema: {type: string, maxLength: 200}
+        - name: member_id
+          in: query
+          required: false
+          schema: {type: string}
+      responses:
+        '200':
+          description: One page of listings. No ETag is emitted on list items.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ListingPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: createListing
+      tags: [Listings]
+      summary: Create an offer or request (API-046)
+      description: |
+        Active member only. Response includes ETag for later PATCH.
+        As built: Idempotency-Key is required (spec 046 says SHOULD). Title 1 to 120 characters.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateListingRequest'}
+      responses:
+        '201':
+          description: Listing created.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Listing'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/listings/{id}:
+    get:
+      operationId: getListing
+      tags: [Listings]
+      summary: Read one listing with its ETag (API-046)
+      description: |
+        Active members read active listings of active owners, and every listing of their own
+        (any status). Anything else, including another network's id, is 404. The response carries a
+        strong ETag, the value If-Match expects on PATCH. A request with If-None-Match that matches the
+        current ETag (comma-separated list, "*" and W/ prefixes accepted) gets 304 with no body and the
+        same ETag.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - name: If-None-Match
+          in: header
+          required: false
+          schema: {type: string}
+      responses:
+        '200':
+          description: The listing.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Listing'}
+        '304':
+          description: Not modified; the If-None-Match value matches the current ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    patch:
+      operationId: patchListing
+      tags: [Listings]
+      summary: Update own listing (API-047)
+      description: |
+        Merge patch (RFC 7396) with If-Match (API-026/027). Owner only; another member's
+        listing is 404 (API-017). price_minor null clears the price. Other fields reject null
+        with 422. status is active, paused or archived. The current ETag comes from GET
+        /listings/{id}, or from the create or patch response.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: {$ref: '#/components/schemas/PatchListingRequest'}
+      responses:
+        '200':
+          description: Updated listing.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Listing'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/transactions:
+    get:
+      operationId: listTransactions
+      tags: [Transactions]
+      summary: Caller's transactions (API-049)
+      description: Only transactions the caller is party to. status is a comma-separated list. The accepted status is not a valid filter (as built, it is transient).
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          description: Comma-separated statuses.
+          schema: {type: string, example: 'proposed,completed'}
+        - name: role
+          in: query
+          required: false
+          schema: {type: string, enum: [payer, payee]}
+      responses:
+        '200':
+          description: One page of transactions.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TransactionPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: proposeTransaction
+      tags: [Transactions]
+      summary: Propose a trade (API-048)
+      description: |
+        Active member proposes. Creates a proposed transaction that expires per network policy.
+        Refused with 422 insufficient-available-credit (payer side, LED-5) or amount-exceeds-policy,
+        with no state change. Response is 201 with Location.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProposeTransactionRequest'}
+      responses:
+        '201':
+          description: Proposal created.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/transactions/{id}:
+    get:
+      operationId: getTransaction
+      tags: [Transactions]
+      summary: Transaction detail (API-049)
+      description: Visible to a party, to a network administrator of the same network (any transaction, as built and per the spec 07 wording update), and to a dispute reviewer when a dispute exists on it. Others get 404.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Transaction with the events link.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TransactionDetail'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/transactions/{id}/events:
+    get:
+      operationId: listTransactionEvents
+      tags: [Transactions]
+      summary: Append-only status history (API-050)
+      description: Paginated status history for a visible transaction. The cursor is an offset into the history, sealed by the server.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: One page of status events.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TransactionEventPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/transactions/{id}/accept:
+    post:
+      operationId: acceptTransaction
+      tags: [Transactions]
+      summary: Accept a proposal (API-051)
+      description: Counterparty only, from proposed. Posts both entries atomically. Returns the updated own account view (API-069). A limit failure leaves the status proposed and returns 422 insufficient-available-credit.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      responses:
+        '200':
+          description: Trade completed.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TransactionAcceptResult'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/transactions/{id}/decline:
+    post:
+      operationId: declineTransaction
+      tags: [Transactions]
+      summary: Decline a proposal (API-052)
+      description: Counterparty only, from proposed. No entries are written.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      responses:
+        '200':
+          description: Declined.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/transactions/{id}/cancel:
+    post:
+      operationId: cancelTransaction
+      tags: [Transactions]
+      summary: Cancel own proposal (API-053)
+      description: Proposer only, from proposed. Optional body {reason}. No entries are written. Completed trades are corrected by reversal (API-056).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonBody'}
+      responses:
+        '200':
+          description: Cancelled.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes:
+    get:
+      operationId: listDisputes
+      tags: [Disputes]
+      summary: Disputes visible to the caller (API-054)
+      description: Parties see their own disputes; reviewers and administrators see the network's disputes, per service visibility.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          description: Comma-separated dispute statuses.
+          schema: {type: string, example: 'open,under_review'}
+      responses:
+        '200':
+          description: One page of disputes.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DisputePage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: openDispute
+      tags: [Disputes]
+      summary: Open a dispute on a completed trade (API-054)
+      description: Party only, within the network dispute window. A second open dispute on the same transaction is 409 invalid-transaction-state. Category is one of not_delivered, quality, wrong_amount, unauthorised, other.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/OpenDisputeRequest'}
+      responses:
+        '201':
+          description: Dispute opened.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Dispute'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}:
+    get:
+      operationId: getDispute
+      tags: [Disputes]
+      summary: Dispute detail with transaction and events (API-054)
+      description: Visible to parties, reviewers and administrators of the network. Others get 404.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Dispute detail.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DisputeDetail'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/resolve:
+    post:
+      operationId: resolveDispute
+      tags: [Disputes]
+      summary: Record the decision on a dispute (API-055)
+      description: |
+        Administrator or dispute reviewer who is not a party (DOM-037/038). Decider identity is recorded.
+        Outcome vocabulary as built: no_action (alias of dismissed), reversal (alias of upheld),
+        partially_upheld, plus the canonical dismissed, upheld. A reversal or partial outcome posts
+        through the ledger command with audit. amount_minor is required for partially_upheld, may equal the remaining amount for upheld, and is refused for dismissed.
+        As built: outcome adjustment returns 501 not-implemented.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ResolveDisputeRequest'}
+      responses:
+        '200':
+          description: Dispute decided.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Dispute'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '501': {$ref: '#/components/responses/NotImplemented'}
+
+  /api/v1/disputes/{id}/review:
+    post:
+      operationId: startDisputeReview
+      tags: [Disputes]
+      summary: Take an open dispute into review (extension)
+      description: Extension not in spec 07 section 8. Moves open to under_review and records the reviewer. Administrator or non-party reviewer.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Dispute under review.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Dispute'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/withdraw:
+    post:
+      operationId: withdrawDispute
+      tags: [Disputes]
+      summary: Opener withdraws a dispute (extension)
+      description: Extension not in spec 07 section 8. Only the party who opened the dispute.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Dispute withdrawn.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Dispute'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/retry-posting:
+    post:
+      operationId: retryDisputePosting
+      tags: [Disputes]
+      summary: Retry a posting_pending dispute (extension, DOM-021)
+      description: Extension not in spec 07 section 8. Re-attempts the blocked reversal of a dispute decided while the payer was over the credit limit.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Dispute after retry.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Dispute'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/response:
+    post:
+      operationId: respondToDispute
+      tags: [Disputes]
+      summary: Other party responds to a dispute (FR-076)
+      description: |
+        The party who did not open the dispute submits one bounded response (up to 2000 characters)
+        while the dispute is open or under review. Visible to the opener, reviewer and administrators in
+        GET /disputes/{id}. A second response is 409 invalid-transaction-state; the opener gets 403.
+        A suspended party may respond. A decision (POST /disputes/{id}/resolve) is refused with 409
+        invalid-transaction-state until a response is submitted, the network's response_period_days has
+        elapsed since the dispute was opened, or the reviewer waives the response with a reason.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DisputeResponseRequest'}
+      responses:
+        '201':
+          description: Response recorded.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DisputeResponse'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/re-review:
+    post:
+      operationId: requestDisputeReReview
+      tags: [Disputes]
+      summary: Ask for the one re-review of a decided dispute (FR-078)
+      description: |
+        Either party, once per dispute, within 14 days of the decision (a platform constant, not yet a
+        network policy). The dispute must be resolved. A second request is 409 invalid-transaction-state,
+        also after the first was decided. The request is a separate record linked to the dispute; the
+        original decision is never edited.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReReviewRequest'}
+      responses:
+        '201':
+          description: Re-review requested.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReReview'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/disputes/{id}/re-review/decision:
+    post:
+      operationId: decideDisputeReReview
+      tags: [Disputes]
+      summary: Record the re-review decision (FR-078)
+      description: |
+        Reviewer or administrator who is not the original reviewer and took no part in the trade (403
+        forbidden otherwise). Outcome confirmed posts nothing. upheld / partially_upheld post a further
+        reversal of at most the amount still reversible; if that would breach the payee's credit limit the
+        call fails with 422 insufficient-available-credit and nothing changes. When the trade is already
+        fully reversed only confirmed is possible (409).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReReviewDecisionRequest'}
+      responses:
+        '200':
+          description: Re-review decided.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReReview'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/reports:
+    post:
+      operationId: createReport
+      tags: [Reports]
+      summary: Report a listing or a member (FR-024)
+      description: |
+        Active members only. Reporting changes nothing about the target. At most one open report per
+        reporter and target (409 conflict) and at most 10 reports per reporter in 24 hours (429
+        rate-limited). Own listing or self is 422. The reporter is visible to administrators only.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReportRequest'}
+      responses:
+        '201':
+          description: Report filed.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Report'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/reports:
+    get:
+      operationId: listReports
+      tags: [Reports, Admin]
+      summary: Report queue (FR-024)
+      description: Administrators only. Newest first; reporter fields are filled.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          schema: {type: string, enum: [open, handled]}
+      responses:
+        '200':
+          description: One page of reports.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReportPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/reports/{id}/handle:
+    post:
+      operationId: handleReport
+      tags: [Reports, Admin]
+      summary: Mark a report handled (FR-024)
+      description: Administrators only. Audited; the reporter gets a report.handled notification. A handled report is 409 invalid-transaction-state. The body is optional.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/HandleReportRequest'}
+      responses:
+        '200':
+          description: Report handled.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Report'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/notifications:
+    get:
+      operationId: listNotifications
+      tags: [Notifications]
+      summary: The caller's inbox (FR-038)
+      description: |
+        Own notifications, newest first. Created in the same unit of work as the event they announce:
+        trade.proposed, trade.accepted, trade.declined, trade.cancelled, trade.expired, dispute.opened,
+        dispute.under_review, dispute.responded, dispute.decided, dispute.withdrawn,
+        dispute.rereview_requested, dispute.rereview_decided, report.handled and account.limit_warning
+        (UX-012, from the scheduled limit-warning job). Titles and bodies are fixed text without
+        member-written content. link is a path relative to the network.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: unread
+          in: query
+          required: false
+          schema: {type: boolean}
+      responses:
+        '200':
+          description: One page of notifications.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/NotificationPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/notifications/unread-count:
+    get:
+      operationId: countUnreadNotifications
+      tags: [Notifications]
+      summary: Number of unread notifications (FR-038)
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: Unread count.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [unread]
+                additionalProperties: false
+                properties:
+                  unread: {type: integer, minimum: 0}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/notifications/read:
+    post:
+      operationId: markNotificationsRead
+      tags: [Notifications]
+      summary: Mark notifications read (FR-038)
+      description: Send exactly one of ids (1..200 ids) or all=true. Ids that are not the caller's are ignored. Naturally idempotent, so no Idempotency-Key is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MarkReadRequest'}
+      responses:
+        '200':
+          description: How many changed from unread to read.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [marked]
+                additionalProperties: false
+                properties:
+                  marked: {type: integer, minimum: 0}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/transactions/{id}/reversal:
+    post:
+      operationId: reverseTransaction
+      tags: [Admin]
+      summary: Administrative reversal of a completed transaction (API-056)
+      description: |
+        Network administrator only (requireAdmin). Reason is mandatory. Creates a reversal transaction
+        (kind reversal) and returns it with 201 and Location. Administrators cannot reverse their own
+        transactions. Only completed transactions qualify; disputed ones go through the dispute process.
+        As built: a dispute reviewer cannot call this directly (spec 056 said admin or reviewer).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReversalRequest'}
+      responses:
+        '201':
+          description: Reversal created.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/InvalidTransactionState'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments:
+    get:
+      operationId: listPendingAdjustments
+      tags: [Admin]
+      summary: Dual-control adjustment requests (SEC-011)
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          schema: {type: string, enum: [pending, approved, rejected, expired, cancelled]}
+      responses:
+        '200':
+          description: One page of requests.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustmentPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: createAdjustment
+      tags: [Admin]
+      summary: Administrator balance adjustment (API-057)
+      description: Administrator only, not own account (DOM-037). Reason mandatory. Posts against the system account. Debits beyond the credit limit are refused with 422 insufficient-available-credit.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AdjustmentRequest'}
+      responses:
+        '201':
+          description: Adjustment posted.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '202':
+          description: Above the dual-control threshold (SEC-011). Nothing is posted; a second administrator decides. Location points at the request.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}:
+    get:
+      operationId: getPendingAdjustment
+      tags: [Admin]
+      summary: One dual-control adjustment request (SEC-011)
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The request.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}/approve:
+    post:
+      operationId: approveAdjustment
+      tags: [Admin]
+      summary: Approve and post an adjustment request
+      description: Administrator only (SEC-011). The proposer and the adjusted member cannot approve or reject. Already decided or expired is 409 invalid-transaction-state.
+      security: 
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The posted adjustment transaction.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Transaction'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}/reject:
+    post:
+      operationId: rejectAdjustment
+      tags: [Admin]
+      summary: Reject an adjustment request
+      description: Administrator only (SEC-011). The proposer and the adjusted member cannot approve or reject. Already decided or expired is 409 invalid-transaction-state.
+      security: 
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The rejected request.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/adjustments/{id}/cancel:
+    post:
+      operationId: cancelAdjustment
+      tags: [Admin]
+      summary: Cancel own adjustment request
+      description: Administrator only (SEC-011). The proposer and the adjusted member cannot approve or reject. Already decided or expired is 409 invalid-transaction-state.
+      security: 
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: The cancelled request.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PendingAdjustment'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/policy:
+    get:
+      operationId: getPolicy
+      tags: [Admin]
+      summary: Current network policy (API-058)
+      description: Administrator only. Returns the policy version and an ETag for PATCH.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: Policy with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicyResponse'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    patch:
+      operationId: patchPolicy
+      tags: [Admin]
+      summary: Create a new policy version (API-058)
+      description: |
+        Administrator only. Merge patch over the flat policy object (RFC 7396): null is refused
+        (422). reason is required (422 validation-failed when empty) and recorded in the audit event. If-Match is required (428 when
+        absent). Idempotency-Key is optional: when absent, the server derives the key from the ETag and
+        the body, so a repeated PATCH with the same ETag is idempotent. Changes apply to new transactions only.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IfMatch'
+        - $ref: '#/components/parameters/IdempotencyKeyOptional'
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema: {$ref: '#/components/schemas/PolicyPatch'}
+      responses:
+        '200':
+          description: New policy version with effective_at.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PolicyResponse'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members:
+    get:
+      operationId: adminListMembers
+      tags: [Admin]
+      summary: Members of any status (API-059)
+      description: Administrator only. Optional status filter (pending, active, suspended, departed).
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          required: false
+          schema: {$ref: '#/components/schemas/MemberStatus'}
+        - name: inactive
+          in: query
+          required: false
+          description: When true, lists only active members that the network's inactivity rule currently flags (GOV-012); empty when the network has no rule. Cannot be combined with status.
+          schema: {type: boolean}
+      responses:
+        '200':
+          description: One page of members with roles and join data.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMemberPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/approve:
+    post:
+      operationId: approveMember
+      tags: [Admin]
+      summary: Approve a pending join request (API-059)
+      description: Administrator only. Idempotency-Key required. If-Match optional; when sent it must match the current member ETag. Optional body {reason}. Writes an audit event.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+        - $ref: '#/components/parameters/IfMatchOptional'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonBody'}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/deny:
+    post:
+      operationId: denyMember
+      tags: [Admin]
+      summary: Deny a pending join request (API-059, FR-011)
+      description: Administrator only. Same contract as approve. Implemented as a join-request decision with approve=false.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+        - $ref: '#/components/parameters/IfMatchOptional'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonBody'}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/default-flag:
+    put:
+      operationId: setDefaultFlag
+      tags: [Admin]
+      summary: Set or clear the governance default flag (FR-064)
+      description: Administrator with write scope only. Requires a reason; audited without changing ledger entries or balances. Repeating the current flag returns 409. Temporary break-glass administrators cannot use this lasting action.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [default_flag, reason]
+              properties:
+                default_flag: {type: boolean}
+                reason: {type: string, minLength: 1}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/suspend:
+    post:
+      operationId: suspendMember
+      tags: [Admin]
+      summary: Suspend a member (API-059)
+      description: Administrator only. Same contract as approve. Response is the member after the action. Suspended members can read their own data but not trade (DOM-039).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+        - $ref: '#/components/parameters/IfMatchOptional'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonBody'}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/reinstate:
+    post:
+      operationId: reinstateMember
+      tags: [Admin]
+      summary: Reinstate a suspended member (API-059)
+      description: Administrator only. Same contract as approve.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+        - $ref: '#/components/parameters/IfMatchOptional'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonBody'}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/remove:
+    post:
+      operationId: removeMember
+      tags: [Admin]
+      summary: Remove (depart) a member (API-059)
+      description: |
+        Administrator only. Same contract as approve, except the body: reason_code is required and must
+        be one of the documented removal reasons (GOV-011); reason is optional detail recorded in the audit
+        log only. A missing or unlisted reason_code is 422 with pointer /reason_code. transaction_id
+        optionally names the transaction the removal is about; it must be one the member is a party to
+        (422 with pointer /transaction_id otherwise). A removal for confirmed_fraud or rule_breach is
+        refused with 403 forbidden (conflict of interest) when the calling administrator took part in the
+        matter: the named transaction, or a trade of the member under an undecided dispute or a requested
+        re-review (GOV-011, SEC-010). As built, refused with 409 blocked and a blockers
+        array (disputed transaction ids, or last active administrator). The code member-has-open-balance
+        is reserved and not emitted; a non-zero balance is not itself refused.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+        - $ref: '#/components/parameters/IfMatchOptional'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/RemoveMemberRequest'}
+      responses:
+        '200':
+          description: Updated member with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Blocked'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/members/{id}/roles/{role}:
+    put:
+      operationId: grantRole
+      tags: [Admin]
+      summary: Grant the admin or reviewer role (extension)
+      description: Extension not in spec 07 section 8. Role path value is admin or reviewer; any other value is 404. No body. No If-Match. Returns the member with ETag.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/PathRole'
+      responses:
+        '200':
+          description: Member after the grant.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    delete:
+      operationId: revokeRole
+      tags: [Admin]
+      summary: Revoke the admin or reviewer role (extension)
+      description: Extension not in spec 07 section 8. Same contract as the grant.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/PathRole'
+      responses:
+        '200':
+          description: Member after the revocation.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminMember'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/accounts/{id}:
+    get:
+      operationId: getMemberAccountAdmin
+      tags: [Admin]
+      summary: Member balance view for administrators (extension, ETag source)
+      description: Extension not in spec 07 section 8. Returns the account view and the ETag used by the credit-limit PUT. The read is audited (account.viewed).
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Account view with ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Account'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/accounts/{id}/credit-limit:
+    put:
+      operationId: putCreditLimit
+      tags: [Admin]
+      summary: Set or clear a member's credit limit override (API-060)
+      description: |
+        Administrator only. If-Match required (ETag from GET /admin/accounts/{id}). Reason required.
+        credit_limit_minor null removes the override so the policy default applies. Lowering below
+        current debt does not change balances; it blocks new debits (03). Optional expires_at (RFC 3339).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreditLimitRequest'}
+      responses:
+        '200':
+          description: Account after the change, with new ETag.
+          headers:
+            ETag: {$ref: '#/components/headers/ETag'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Account'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '412': {$ref: '#/components/responses/PreconditionFailed'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '428': {$ref: '#/components/responses/PreconditionRequired'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/invitations:
+    post:
+      operationId: createInvitation
+      tags: [Invitations]
+      summary: Create an invitation (API-061)
+      description: Administrator only. Token is returned once. ttl_seconds 0 (default 7 days) to 90 days.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateInvitationRequest'}
+      responses:
+        '201':
+          description: Invitation created; token shown once.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/InvitationCreated'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/invitations/{token}/accept:
+    post:
+      operationId: acceptInvitation
+      tags: [Invitations]
+      summary: Redeem an invitation (API-061)
+      description: Requires authentication (session or bearer) of the invitee. noNet. The token is in the path (never in the query, API-012). Returns the new membership. When the operator set network-join-limit (SEC-006, off by default) and the network reached it, the answer is 429 rate-limited and the invitation stays unused. The sign-up grant, if the network has one, is posted to the new member, at most the platform cap (SEC-032).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathToken'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/AcceptInvitationRequest'}
+      responses:
+        '201':
+          description: Membership created.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Membership'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/audit-events:
+    get:
+      operationId: listAuditEvents
+      tags: [Admin]
+      summary: Audit trail (API-062)
+      description: Administrator only. Filters action, target_id, actor_id, from and to (RFC 3339). Access is itself audited (DAT-034). Only fields listed in 06 section 7.1 are returned.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - {name: action, in: query, required: false, schema: {type: string}}
+        - {name: target_id, in: query, required: false, schema: {type: string}}
+        - {name: actor_id, in: query, required: false, schema: {type: string}}
+        - {name: from, in: query, required: false, schema: {type: string, format: date-time}}
+        - {name: to, in: query, required: false, schema: {type: string, format: date-time}}
+      responses:
+        '200':
+          description: One page of audit events, ordered by seq.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AuditPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/audit-events:
+    get:
+      operationId: listMyAuditEvents
+      tags: [Accounts]
+      summary: Audit events visible to the caller (FR-082, DAT-033, DAT-035)
+      description: Role-scoped. Members see events about their own account with other people's identifiers, reasons and hash material removed and only safe summary keys kept. Dispute reviewers see dispute events. Administrators see the full log (and the read is audited). Filters action, from and to; actor_id and target_id are administrator-only via the admin route.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - {name: action, in: query, required: false, schema: {type: string}}
+        - {name: from, in: query, required: false, schema: {type: string, format: date-time}}
+        - {name: to, in: query, required: false, schema: {type: string, format: date-time}}
+      responses:
+        '200':
+          description: One page of audit events, ordered by seq.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AuditPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/consistency-checks:
+    post:
+      operationId: runConsistencyCheck
+      tags: [Admin]
+      summary: Run ledger consistency checks (API-063)
+      description: Administrator only. Records the run. As built, the result is held in process memory for 24 hours (max 200 results), so it does not survive a restart.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      responses:
+        '201':
+          description: Check result.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ConsistencyCheck'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/admin/consistency-checks/{id}:
+    get:
+      operationId: getConsistencyCheck
+      tags: [Admin]
+      summary: Read a consistency check result (API-063)
+      description: Administrator only. Only results recorded by the same network in the last 24 hours are found; others are 404.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Check result.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ConsistencyCheck'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/suspend:
+    post:
+      operationId: suspendNetwork
+      tags: [Admin]
+      summary: Suspend trading in the network (GOV-023)
+      description: |
+        Administrator only. Body {reason} (required). New proposals, acceptances, postings and joins are
+        refused with 409 invalid-state while any suspension is in force; balances, history and exports stay
+        available. Members are notified. Recorded as network.suspended.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonRequest'}
+      responses:
+        '204': {description: Suspended.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/resume:
+    post:
+      operationId: resumeNetwork
+      tags: [Admin]
+      summary: Resume trading after an administrator suspension (GOV-023)
+      description: |
+        Administrator only. Body {reason} (required). Lifts only the administrator suspension; a platform
+        suspension (GOV-024) can be lifted by the operator only and the call is refused with 409 while it
+        is the only one in force. Recorded as network.resumed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonRequest'}
+      responses:
+        '204': {description: Resumed.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/closure:
+    get:
+      operationId: getClosureStatus
+      tags: [Admin]
+      summary: Closure preview and status (FR-068, GOV-025)
+      description: |
+        Administrator only. Read-only preview: blockers (disputed transactions, including those with
+        posting pending) stop a closure from being announced; open_proposals is how many proposals will be
+        cancelled at the closing date; non_zero_balances is a warning count of accounts that would close
+        with a balance. closure is the scheduled or completed closure, null when none.
+      security:
+        - cookieAuth: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: The preview.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [blockers, non_zero_balances, members, open_proposals, closure]
+                additionalProperties: false
+                properties:
+                  blockers: {type: array, items: {type: string}}
+                  non_zero_balances: {type: integer, minimum: 0}
+                  members: {type: integer, minimum: 0}
+                  open_proposals: {type: integer, minimum: 0}
+                  closure:
+                    oneOf: [{$ref: '#/components/schemas/Closure'}, {type: 'null'}]
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/close:
+    post:
+      operationId: closeNetwork
+      tags: [Admin]
+      summary: Announce a network closure (FR-068, GOV-025)
+      description: |
+        Administrator only. Body {reason (required), notice_days (optional, 30 to 365, default 30)}. Fewer
+        than 30 days is 422 (DEC-025). Refused with 409 blocked, listing the disputes, while a dispute is
+        unresolved; 409 if a closure is already scheduled or the network is not active. Every member is
+        notified. Trading continues until closing_at; open proposals are cancelled then, and new
+        proposals, acceptances, adjustments, grants and memberships stop. After the closure completes,
+        read and export access continue for 90 days, then personal data is erased (SEC-018). The
+        administrator can cancel before closing_at. Recorded as network.closure_scheduled, later
+        network.closed and network.closure_exported.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              additionalProperties: false
+              properties:
+                reason: {type: string, minLength: 1, maxLength: 500}
+                notice_days: {type: integer, minimum: 30, maximum: 365}
+      responses:
+        '200':
+          description: The closure is announced.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Closure'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Blocked'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/close/cancel:
+    post:
+      operationId: cancelNetworkClosure
+      tags: [Admin]
+      summary: Cancel a scheduled closure (GOV-025)
+      description: |
+        Administrator only. Body {reason} (required). Allowed only before closing_at; afterwards 409.
+        Members are notified. Recorded as network.closure_cancelled.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReasonRequest'}
+      responses:
+        '204': {description: Cancelled.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/network/closure/verify:
+    post:
+      operationId: verifyClosureExport
+      tags: [Admin]
+      summary: Recompute the final export checksum (GOV-025)
+      description: |
+        Administrator only. Recomputes the checksum of the ledger export and compares it with the one
+        stored when the closure completed. 409 until the closure has completed. After the erasure the
+        recomputed value legitimately differs (erased is true). The checksum is SHA-256 over one line per
+        file of the export manifest ("name TAB rows TAB sha256").
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: The comparison.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [stored_sha256, recomputed_sha256, match, ledger_seq, entries_sum_minor, balance_total_minor, erased]
+                additionalProperties: false
+                properties:
+                  stored_sha256: {type: string}
+                  recomputed_sha256: {type: string}
+                  match: {type: boolean}
+                  ledger_seq: {type: integer}
+                  entries_sum_minor: {$ref: '#/components/schemas/Money'}
+                  balance_total_minor: {$ref: '#/components/schemas/Money'}
+                  erased: {type: boolean}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/challenges:
+    get:
+      operationId: listChallenges
+      tags: [Disputes]
+      summary: Challenges (GOV-016)
+      description: |
+        Members see their own challenges; reviewers and administrators see all of the network's.
+        Optional status filter: requested or decided. Newest first, up to 200.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - {name: status, in: query, required: false, schema: {type: string, enum: [requested, decided]}}
+      responses:
+        '200':
+          description: The challenges.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, next_cursor]
+                additionalProperties: false
+                properties:
+                  data: {type: array, items: {$ref: '#/components/schemas/Challenge'}}
+                  next_cursor: {type: ['string', 'null']}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: openChallenge
+      tags: [Disputes]
+      summary: Challenge an administrator decision (GOV-016)
+      description: |
+        A member challenges their own membership removal or suspension (kind removal), a credit-limit
+        change applied to them (credit_limit) or the removal of their listing (listing_removal, with
+        subject_id). 409 when no administrator decision of that kind exists. A dispute outcome is
+        contested through the one re-review (FR-078). Deciders are notified. Recorded as challenge.opened.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, reason]
+              additionalProperties: false
+              properties:
+                kind: {type: string, enum: [removal, credit_limit, listing_removal]}
+                subject_id: {type: string}
+                reason: {type: string, minLength: 1, maxLength: 2000}
+      responses:
+        '201':
+          description: Challenge recorded.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Challenge'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/challenges/{id}/decision:
+    post:
+      operationId: decideChallenge
+      tags: [Disputes]
+      summary: Decide a challenge (GOV-016)
+      description: |
+        Reviewer or administrator who is neither the challenger nor the person who took the original
+        decision (403 otherwise). Body {outcome upheld or rejected, reason (required)}. upheld says the
+        decision should be reversed; the decider then uses the ordinary administrator action. The member
+        is notified. Recorded as challenge.decided.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outcome, reason]
+              additionalProperties: false
+              properties:
+                outcome: {type: string, enum: [upheld, rejected]}
+                reason: {type: string, minLength: 1, maxLength: 2000}
+      responses:
+        '200':
+          description: Decided.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Challenge'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/announcements:
+    get:
+      operationId: listAdminAnnouncements
+      tags: [Admin]
+      summary: Announcements, administrator read (API-064)
+      description: |
+        Administrator only. Live (not deleted) announcements newest first, scheduled ones included.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+      responses:
+        '200':
+          description: One page of announcements.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AnnouncementPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: createAnnouncement
+      tags: [Admin]
+      summary: Publish an announcement (API-064)
+      description: |
+        Administrator only; Idempotency-Key required. Announcements are append-only: there is no edit.
+        effective_at (RFC 3339, optional) defaults to now; it may not be in the past (one minute of
+        skew is allowed) or more than a year ahead. Title 1 to 120 characters, body 1 to 4000.
+        Audited (announcement.created).
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateAnnouncementRequest'}
+      responses:
+        '201':
+          description: Announcement published.
+          headers:
+            Location: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Announcement'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/admin/announcements/{id}:
+    delete:
+      operationId: deleteAnnouncement
+      tags: [Admin]
+      summary: Delete an announcement (API-064)
+      description: |
+        Administrator only. Retracts the announcement from every view; the record stays for the audit
+        trail (announcement.deleted). A second delete, or an unknown id, is 404.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '204': {description: Deleted.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/exports:
+    post:
+      operationId: createExport
+      tags: [Exports]
+      summary: Create an export (API-065)
+      description: |
+        Runs synchronously. The 201 response already has status complete, with a SHA-256 and the artefact
+        URL. The artefact is a ZIP (application/zip) of CSV or JSON files. Artefacts live in memory for 24 hours.
+        Limits as built: 5 live exports per person (429 rate-limited with Retry-After 3600), 50 in total and
+        64 MiB (503 unavailable with Retry-After 60). Idempotency-Key is optional.
+        As built: no queued, running or failed states are exposed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyOptional'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateExportRequest'}
+      responses:
+        '201':
+          description: Export complete.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Export'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/exports/{id}:
+    get:
+      operationId: getExport
+      tags: [Exports]
+      summary: Export job status (API-065)
+      description: Only the person and network that created the export. Expired or foreign exports are 404.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: Export status.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Export'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/exports/{id}/artefact:
+    get:
+      operationId: getExportArtefact
+      tags: [Exports]
+      summary: Download an export artefact (API-065, DAT-040)
+      description: Served only after the stored bytes match the recorded SHA-256; otherwise 500 internal-error. Returned as an attachment with X-Content-SHA256.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '200':
+          description: ZIP archive.
+          headers:
+            Content-Disposition:
+              description: attachment with filename circula-export-<scope>.zip
+              schema: {type: string}
+            X-Content-SHA256:
+              description: Lowercase hex SHA-256 of the archive.
+              schema: {type: string}
+          content:
+            application/zip:
+              schema: {type: string, format: binary}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+  /api/v1/tokens:
+    get:
+      operationId: listTokens
+      tags: [Tokens]
+      summary: Caller's API tokens (API-066)
+      description: noNet. Requires read scope. Not paginated; at most 100 rows (API-036). Token values are never returned here.
+      security: *secSafe
+      responses:
+        '200':
+          description: Token metadata (next_cursor is always null).
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TokenPage'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '500': {$ref: '#/components/responses/InternalError'}
+    post:
+      operationId: createToken
+      tags: [Tokens]
+      summary: Create an API token (API-066, API-010)
+      description: |
+        Session cookie only (cookieOnly; bearer gets 403). noNet. The token value (prefix cir_) is shown once.
+        Scopes read and write only; admin returns 501 not-implemented. Default and maximum expiry 365 days.
+        Idempotency-Key is optional.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyOptional'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CreateTokenRequest'}
+      responses:
+        '201':
+          description: Token created; token value present once.
+          headers:
+            Location: {$ref: '#/components/headers/Location'}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TokenCreated'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '501': {$ref: '#/components/responses/NotImplemented'}
+
+  /api/v1/tokens/{id}:
+    delete:
+      operationId: revokeToken
+      tags: [Tokens]
+      summary: Revoke an API token (API-066)
+      description: noNet. Requires write scope. Revocation is immediate; the revoked token then fails with 401.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PathId'
+      responses:
+        '204': {description: Token revoked.}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: circula_session
+      description: |
+        Session cookie issued by the HTML sign-in flow. As built the name is circula_session, or
+        __Host-circula_session when served over TLS (both are accepted on read). HttpOnly, SameSite=Lax (API-008).
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: cir_ token
+      description: "Personal API token presented as Authorization: Bearer (API-009). Tokens start with cir_."
+    csrfToken:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+      description: Required on cookie-authenticated POST, PUT, PATCH and DELETE (API-014). Value from the X-CSRF-Token response header. Not used for bearer requests.
+
+  parameters:
+    XNetwork:
+      name: X-Network
+      in: header
+      required: false
+      description: Network id or slug. Required only when the caller belongs to several networks (400 network-required otherwise). An unknown or foreign network is 404.
+      schema: {type: string}
+    IdempotencyKeyRequired:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: |
+        1 to 255 printable ASCII characters (API-021). Same key and same canonical body within 24 hours
+        replays the original response with Idempotent-Replayed: true (API-022). Same key with a different
+        body is 422 idempotency-key-reused (API-023). A concurrent duplicate is 409 idempotency-request-in-progress with Retry-After (API-024).
+        Failed requests are not cached, so the key stays reusable (OQ-API-04 as built). Missing key is 400 idempotency-key-required.
+        Malformed key is 400 invalid-header.
+      schema: {type: string, minLength: 1, maxLength: 255}
+    IdempotencyKeyOptional:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: Optional on this operation. Same rules as the required header when sent.
+      schema: {type: string, minLength: 1, maxLength: 255}
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: Strong ETag of the current version (API-026). Missing header is 428 precondition-required; mismatch is 412 precondition-failed with no change (API-027).
+      schema: {type: string}
+    IfMatchOptional:
+      name: If-Match
+      in: header
+      required: false
+      description: Optional on this operation. When sent, must match the current ETag or the request fails with 412. As built, not required (spec 026 says MUST; see spec 07 section 12).
+      schema: {type: string}
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Page size, integer 1 to 100 (API-034).
+      schema: {type: integer, minimum: 1, maximum: 100, default: 25}
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Opaque cursor from next_cursor. Bound to route, network, caller and filters; reuse with other filters is 400 invalid-cursor (API-035).
+      schema: {type: string}
+    PathId:
+      name: id
+      in: path
+      required: true
+      description: Resource identifier (UUIDv7 for domain records; see API-005). Foreign or unknown ids are 404.
+      schema: {type: string}
+    PathToken:
+      name: token
+      in: path
+      required: true
+      description: Invitation token shown once at creation.
+      schema: {type: string}
+    PathRole:
+      name: role
+      in: path
+      required: true
+      schema: {type: string, enum: [admin, reviewer]}
+
+  headers:
+    ETag:
+      description: Strong ETag of the resource version. Send back in If-Match on the next update.
+      schema: {type: string}
+    Location:
+      description: URL of the created resource (path below /api/v1).
+      schema: {type: string}
+    RetryAfter:
+      description: Seconds to wait before retrying.
+      schema: {type: integer, minimum: 0}
+    WWWAuthenticate:
+      description: Bearer realm="circula" on every 401.
+      schema: {type: string}
+
+  responses:
+    BadRequest:
+      description: invalid-body, invalid-query, invalid-cursor, invalid-header, idempotency-key-required, credentials-in-query, network-required, or not-found-style malformed input.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Unauthorized:
+      description: unauthenticated. Missing, invalid or revoked credentials.
+      headers:
+        WWW-Authenticate: {$ref: '#/components/headers/WWWAuthenticate'}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Forbidden:
+      description: forbidden (role, state or session-only rule) or csrf-invalid (missing or wrong X-CSRF-Token on a cookie request).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    NotFound:
+      description: not-found. Unknown, foreign-network, not-visible, or expired resource (API-017 gives the same body in all cases).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Conflict:
+      description: conflict or blocked (with blockers) or idempotency-request-in-progress (Retry-After 1).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Blocked:
+      description: blocked. Departure or removal refused; blockers lists the reasons (for example disputed transaction ids, last active administrator). Spec 7.2 code member-has-open-balance is not emitted as built.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    InvalidTransactionState:
+      description: invalid-transaction-state. The action is not allowed in the current state. current_status carries the current status (API-028).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    PreconditionFailed:
+      description: precondition-failed. If-Match does not match the current ETag. No change made.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    PreconditionRequired:
+      description: precondition-required. If-Match is required for this operation.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    PayloadTooLarge:
+      description: payload-too-large. Body above 64 KiB (API-037).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    UnsupportedMediaType:
+      description: unsupported-media-type. Body without application/json (or application/merge-patch+json for PATCH) and charset utf-8.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Unprocessable:
+      description: validation-failed (errors[] with pointers), insufficient-available-credit, amount-exceeds-policy, counterparty-not-active, or idempotency-key-reused.
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    RateLimited:
+      description: rate-limited. Per-principal (600 per minute default) or per-IP (1200 per minute default) fixed window, or a per-person cap. Retry-After is set.
+      headers:
+        Retry-After: {$ref: '#/components/headers/RetryAfter'}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    NotImplemented:
+      description: not-implemented. Feature not provided by the service layer as built (admin token scope, dispute adjustment outcome).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    Unavailable:
+      description: unavailable. Storage busy or export store full. Retry-After is set.
+      headers:
+        Retry-After: {$ref: '#/components/headers/RetryAfter'}
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+    InternalError:
+      description: internal-error. Opaque; use request_id for support (API-032).
+      content:
+        application/problem+json:
+          schema: {$ref: '#/components/schemas/Problem'}
+
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 problem details with the extension members of API-030. type is urn:circula:problem:<code>.
+      required: [type, title, status, detail, instance, code, request_id]
+      additionalProperties: false
+      properties:
+        type: {type: string, pattern: '^urn:circula:problem:[a-z-]+$', example: 'urn:circula:problem:validation-failed'}
+        title: {type: string, description: Short English summary that does not vary with detail.}
+        status: {type: integer, minimum: 400, maximum: 599}
+        detail: {type: string}
+        instance: {type: string, description: Request path with credential-like values redacted.}
+        code: {$ref: '#/components/schemas/ErrorCode'}
+        request_id: {type: string, description: Same value as the X-Request-Id response header.}
+        errors:
+          type: array
+          items: {$ref: '#/components/schemas/FieldProblem'}
+        blockers:
+          type: array
+          items: {type: string}
+        current_status:
+          type: string
+          description: Current transaction status for invalid-transaction-state (API-028).
+    FieldProblem:
+      type: object
+      required: [pointer, code, detail]
+      additionalProperties: false
+      properties:
+        pointer: {type: string, description: "RFC 6901 pointer into the request body, for example /amount_minor."}
+        code: {type: string, description: "Field-level code. Open set as built: invalid, invalid-enum, invalid-amount, invalid-type, invalid-timestamp, out-of-range, required, incorrect."}
+        detail: {type: string}
+    ErrorCode:
+      type: string
+      description: |
+        Stable code. Spec 7.2 catalogue plus codes emitted as built: method-not-allowed (405),
+        not-implemented (501), network-required (400), blocked (409), conflict (409).
+        Clients MUST treat unknown codes as the generic error for their status (7.2).
+      enum:
+        - invalid-body
+        - invalid-query
+        - invalid-cursor
+        - invalid-header
+        - credentials-in-query
+        - idempotency-key-required
+        - network-required
+        - validation-failed
+        - insufficient-available-credit
+        - amount-exceeds-policy
+        - counterparty-not-active
+        - idempotency-key-reused
+        - unauthenticated
+        - forbidden
+        - csrf-invalid
+        - not-found
+        - invalid-transaction-state
+        - idempotency-request-in-progress
+        - blocked
+        - conflict
+        - precondition-failed
+        - precondition-required
+        - payload-too-large
+        - unsupported-media-type
+        - rate-limited
+        - method-not-allowed
+        - not-implemented
+        - internal-error
+        - unavailable
+        - member-has-open-balance
+        - network-frozen
+        - approval-required
+        - password-change-required
+        - mfa-required
+        - terms-acceptance-required
+
+    Money:
+      type: string
+      description: Canonical base-10 integer of minor units, no sign, no leading zeros (API-004). Fits a signed 64-bit integer.
+      pattern: '^(0|[1-9][0-9]{0,18})$'
+      example: '1250'
+    MoneyPositive:
+      type: string
+      description: Like Money but greater than zero.
+      pattern: '^[1-9][0-9]{0,18}$'
+      example: '1250'
+    SignedMoney:
+      type: string
+      description: Signed canonical integer of minor units; negative for debits from the caller's view (API-045).
+      pattern: '^-?(0|[1-9][0-9]{0,18})$'
+    Timestamp:
+      type: string
+      format: date-time
+      description: RFC 3339 UTC with milliseconds and Z (API-005).
+      pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$'
+    Id:
+      type: string
+      description: Identifier. UUIDv7 for domain records (API-005); export and consistency-run identifiers are generated as UUIDv4 as built.
+    NetworkStatus: {type: string, enum: [setup, active, closing, closed], description: 'closing is derived: the closure date has passed and the closure is finishing (GOV-025). Trading is already frozen.'}
+    JoinMode: {type: string, enum: [invite, approval, open]}
+    DepartureRule: {type: string, enum: [retain, settle-to-zero]}
+    MemberStatus: {type: string, enum: [pending, active, suspended, departed]}
+    Role: {type: string, enum: [admin, reviewer]}
+    AccountState: {type: string, enum: [active, frozen, closed]}
+    Direction:
+      type: string
+      description: Derived from balance (API-007).
+      enum: [in_credit, in_debt, zero]
+    TxStatus:
+      type: string
+      enum: [proposed, accepted, completed, declined, cancelled, expired, disputed, reversed]
+    TxKind: {type: string, enum: [trade, reversal, adjustment, grant]}
+    ListingKind: {type: string, enum: [offer, request]}
+    ListingStatus: {type: string, enum: [active, paused, archived]}
+    DisputeStatus: {type: string, enum: [open, under_review, posting_pending, resolved, withdrawn]}
+    DisputeOutcome: {type: string, enum: [dismissed, upheld, partially_upheld]}
+    DisputeCategory: {type: string, enum: [not_delivered, quality, wrong_amount, unauthorised, other]}
+    ActorType:
+      type: string
+      description: Audit actor type as shown on the API (member, system) for status events; audit events use the wider set below.
+      enum: [member, system, network_administrator, dispute_reviewer, platform_operator, person]
+
+    Network:
+      type: object
+      required: [id, name, slug, status, currency_name, decimals, join_mode, dispute_window_days, proposal_expiry_days, max_tx_amount_minor, default_credit_limit_minor, policy_version, suspended, suspensions, admin_required, closure]
+      additionalProperties: false
+      properties:
+        admin_required:
+          type: boolean
+          description: True while an active network has no active administrator (GOV-020). The network is read-only; no value-moving action is allowed until an administrator is appointed.
+        closure:
+          description: The scheduled or completed closure (GOV-025); null when none.
+          oneOf: [{$ref: '#/components/schemas/Closure'}, {type: 'null'}]
+        suspended:
+          type: boolean
+          description: True while an administrator or platform suspension is in force (GOV-023, GOV-024). Trading and posting are refused; reads and exports work.
+        suspensions:
+          type: array
+          items:
+            type: object
+            required: [kind, reason, at]
+            additionalProperties: false
+            properties:
+              kind: {type: string, enum: [admin, platform]}
+              category: {type: string, description: 'Platform suspensions only: legal_order, security_incident, platform_abuse or hosting_agreement.'}
+              reason: {type: string}
+              at: {type: string, format: date-time}
+        id: {$ref: '#/components/schemas/Id'}
+        name: {type: string}
+        slug: {type: string}
+        status: {$ref: '#/components/schemas/NetworkStatus'}
+        currency_name: {type: string}
+        decimals: {type: integer, minimum: 0}
+        join_mode: {$ref: '#/components/schemas/JoinMode'}
+        dispute_window_days: {type: integer, minimum: 0}
+        proposal_expiry_days: {type: integer, minimum: 0}
+        max_tx_amount_minor: {$ref: '#/components/schemas/Money'}
+        default_credit_limit_minor: {$ref: '#/components/schemas/Money'}
+        policy_version: {type: integer, minimum: 0}
+        read_only: {type: boolean, description: "True while the network is frozen after a failed ledger check: reads work, writes return 423 network-frozen."}
+        frozen_since: {type: string, format: date-time, description: "When the freeze began (kept in service memory, not stored)."}
+        frozen_reason: {type: string, description: "Administrators only."}
+    Membership:
+      type: object
+      required: [network_id, member_id, display_name, status, roles]
+      additionalProperties: false
+      properties:
+        network_id: {$ref: '#/components/schemas/Id'}
+        member_id: {$ref: '#/components/schemas/Id'}
+        display_name: {type: string}
+        status: {$ref: '#/components/schemas/MemberStatus'}
+        roles:
+          type: array
+          items: {$ref: '#/components/schemas/Role'}
+    Closure:
+      type: object
+      required: [reason, scheduled_at, closing_at, notice_days, closed_at, read_only_until, final_export, erased_at]
+      additionalProperties: false
+      properties:
+        reason: {type: string}
+        scheduled_at: {type: string, format: date-time}
+        closing_at: {type: string, format: date-time, description: 'Trading stops at this time (GOV-025 b).'}
+        notice_days: {type: integer, minimum: 30}
+        closed_at: {type: ['string', 'null'], format: date-time}
+        read_only_until: {type: ['string', 'null'], format: date-time, description: 'End of the read and export period (90 days after closed_at); personal data is erased afterwards.'}
+        final_export:
+          description: The final ledger export record (GOV-025 e); null until produced.
+          oneOf:
+            - type: object
+              required: [sha256, ledger_seq, entries_sum_minor, balance_total_minor]
+              additionalProperties: false
+              properties:
+                sha256: {type: string}
+                ledger_seq: {type: integer}
+                entries_sum_minor: {$ref: '#/components/schemas/Money'}
+                balance_total_minor: {$ref: '#/components/schemas/Money'}
+            - {type: 'null'}
+        erased_at: {type: ['string', 'null'], format: date-time}
+    Challenge:
+      type: object
+      required: [id, member_id, kind, subject_id, reason, status, outcome, decided_by, rationale, created_at, decided_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        member_id: {$ref: '#/components/schemas/Id'}
+        kind: {type: string, enum: [removal, credit_limit, listing_removal]}
+        subject_id: {type: ['string', 'null']}
+        reason: {type: string}
+        status: {type: string, enum: [requested, decided]}
+        outcome: {type: ['string', 'null'], enum: [upheld, rejected, null]}
+        decided_by: {type: ['string', 'null']}
+        rationale: {type: string}
+        created_at: {type: string, format: date-time}
+        decided_at: {type: ['string', 'null'], format: date-time}
+    ReasonRequest:
+      type: object
+      required: [reason]
+      additionalProperties: false
+      properties:
+        reason: {type: string, minLength: 1, maxLength: 500}
+    SetTimeZoneRequest:
+      type: object
+      required: [time_zone]
+      additionalProperties: false
+      properties:
+        time_zone:
+          type: string
+          maxLength: 64
+          description: IANA zone name, or the empty string for UTC.
+          examples: [Europe/Berlin]
+    Announcement:
+      type: object
+      required: [id, title, body, published_at, effective_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        title: {type: string, maxLength: 120}
+        body: {type: string, maxLength: 4000}
+        published_at: {type: string, format: date-time}
+        effective_at: {type: string, format: date-time}
+        supersedes_id: {$ref: '#/components/schemas/Id'}
+    CreateAnnouncementRequest:
+      type: object
+      required: [title, body]
+      additionalProperties: false
+      properties:
+        title: {type: string, minLength: 1, maxLength: 120}
+        body: {type: string, minLength: 1, maxLength: 4000}
+        effective_at: {type: string, format: date-time}
+        supersedes_id: {description: A live announcement this one replaces. The replaced one disappears from lists once this one is in force; it is never edited., $ref: '#/components/schemas/Id'}
+    AnnouncementPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Announcement'}}
+    Me:
+      type: object
+      required: [person_id, memberships, time_zone]
+      additionalProperties: false
+      properties:
+        person_id: {$ref: '#/components/schemas/Id'}
+        time_zone:
+          type: [string, 'null']
+          description: Display time zone chosen by the person (IANA name), or null for UTC. API timestamps are always UTC.
+        memberships:
+          type: array
+          description: As built, memberships across the networks in the credential's scope (see spec 07 section 12).
+          items: {$ref: '#/components/schemas/Membership'}
+    Member:
+      type: object
+      required: [id, display_name, status]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        display_name: {type: string}
+        status: {$ref: '#/components/schemas/MemberStatus'}
+    AdminMember:
+      type: object
+      required: [id, display_name, status, roles, join_method, default_flag, joined_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        display_name: {type: string}
+        status: {$ref: '#/components/schemas/MemberStatus'}
+        roles:
+          type: array
+          items: {$ref: '#/components/schemas/Role'}
+        join_method: {type: string}
+        default_flag: {type: boolean}
+        joined_at: {$ref: '#/components/schemas/Timestamp'}
+        departed_at:
+          oneOf:
+            - {$ref: '#/components/schemas/Timestamp'}
+            - {type: 'null'}
+    Account:
+      type: object
+      required: [member_id, account_state, balance_minor, credit_limit_minor, reserved_minor, available_minor, awaiting_from_others_minor, direction, decimals, ledger_seq]
+      additionalProperties: false
+      properties:
+        member_id: {$ref: '#/components/schemas/Id'}
+        account_state: {$ref: '#/components/schemas/AccountState'}
+        balance_minor: {$ref: '#/components/schemas/SignedMoney'}
+        credit_limit_minor: {$ref: '#/components/schemas/Money'}
+        reserved_minor: {$ref: '#/components/schemas/Money'}
+        available_minor: {$ref: '#/components/schemas/SignedMoney'}
+        awaiting_from_others_minor: {$ref: '#/components/schemas/Money'}
+        direction: {$ref: '#/components/schemas/Direction'}
+        decimals: {type: integer, minimum: 0}
+        ledger_seq: {type: integer, format: int64, minimum: 0}
+    HistoricalBalance:
+      type: object
+      required: [as_of, balance_minor, direction, decimals, ledger_seq, has_postings_by_as_of]
+      additionalProperties: false
+      properties:
+        as_of: {$ref: '#/components/schemas/Timestamp'}
+        balance_minor: {$ref: '#/components/schemas/SignedMoney'}
+        direction: {$ref: '#/components/schemas/Direction'}
+        decimals: {type: integer, minimum: 0}
+        ledger_seq: {type: integer, format: int64, minimum: 0}
+        has_postings_by_as_of: {type: boolean}
+    Entry:
+      type: object
+      required: [transaction_id, kind, status, ledger_seq, amount_minor, counterparty_member_id, counterparty_display_name, posted_at]
+      additionalProperties: false
+      properties:
+        transaction_id: {$ref: '#/components/schemas/Id'}
+        kind: {$ref: '#/components/schemas/TxKind'}
+        status: {$ref: '#/components/schemas/TxStatus'}
+        ledger_seq: {type: integer, format: int64, minimum: 0}
+        amount_minor: {$ref: '#/components/schemas/SignedMoney'}
+        counterparty_member_id:
+          oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]
+        counterparty_display_name:
+          oneOf: [{type: string}, {type: 'null'}]
+        posted_at:
+          oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]
+    Listing:
+      type: object
+      required: [id, member_id, kind, title, description, price_minor, status, created_at, updated_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        member_id: {$ref: '#/components/schemas/Id'}
+        kind: {$ref: '#/components/schemas/ListingKind'}
+        title: {type: string, maxLength: 120}
+        description: {type: string}
+        price_minor:
+          oneOf: [{$ref: '#/components/schemas/Money'}, {type: 'null'}]
+        status: {$ref: '#/components/schemas/ListingStatus'}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        updated_at: {$ref: '#/components/schemas/Timestamp'}
+    Transaction:
+      type: object
+      required: [id, kind, status, payer_member_id, payee_member_id, amount_minor, my_direction, listing_id, description, original_transaction_id, reversed_total_minor, proposed_at, expires_at, completed_at, posted_ledger_seq]
+      additionalProperties: false
+      properties: &txProps
+        id: {$ref: '#/components/schemas/Id'}
+        kind: {$ref: '#/components/schemas/TxKind'}
+        status: {$ref: '#/components/schemas/TxStatus'}
+        payer_member_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        payee_member_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        amount_minor: {$ref: '#/components/schemas/Money'}
+        my_direction:
+          oneOf:
+            - {type: string, enum: [pay, receive]}
+            - {type: 'null'}
+          description: From the caller's view; null when the caller is not a party.
+        listing_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        description: {type: string, maxLength: 500}
+        reason:
+          type: string
+          description: Present only when non-empty (omitted otherwise).
+        original_transaction_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        reversed_total_minor: {$ref: '#/components/schemas/Money'}
+        proposed_at: {$ref: '#/components/schemas/Timestamp'}
+        expires_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+        completed_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+        posted_ledger_seq:
+          oneOf: [{type: integer, format: int64, minimum: 1}, {type: 'null'}]
+        dispute_deadline_at:
+          $ref: '#/components/schemas/Timestamp'
+          description: >-
+            Trades only, present once completed. The last instant a party may open a dispute, fixed at
+            completion from the dispute window then in force; later policy changes never move it (DOM-017).
+    TransactionDetail:
+      type: object
+      description: Transaction plus the events link.
+      required: [id, kind, status, payer_member_id, payee_member_id, amount_minor, my_direction, listing_id, description, original_transaction_id, reversed_total_minor, proposed_at, expires_at, completed_at, posted_ledger_seq, events_url]
+      additionalProperties: false
+      properties:
+        <<: *txProps
+        events_url: {type: string}
+    TransactionAcceptResult:
+      type: object
+      description: Transaction plus the caller's account after posting.
+      required: [id, kind, status, payer_member_id, payee_member_id, amount_minor, my_direction, listing_id, description, original_transaction_id, reversed_total_minor, proposed_at, expires_at, completed_at, posted_ledger_seq]
+      additionalProperties: false
+      properties:
+        <<: *txProps
+        account:
+          description: Caller's account after posting (API-069). Omitted when the balance could not be read.
+          $ref: '#/components/schemas/Account'
+    TransactionEvent:
+      type: object
+      required: [from, to, actor_type, actor_id, occurred_at]
+      additionalProperties: false
+      properties:
+        from:
+          description: Empty string for the first event.
+          oneOf: [{$ref: '#/components/schemas/TxStatus'}, {type: string, const: ''}]
+        to: {$ref: '#/components/schemas/TxStatus'}
+        actor_type: {type: string, enum: [member, system]}
+        actor_id: {type: string, description: Empty for system events.}
+        occurred_at: {$ref: '#/components/schemas/Timestamp'}
+    Dispute:
+      type: object
+      required: [id, transaction_id, opened_by, category, statement, status, outcome, reversal_amount_minor, reviewer_id, reason, opened_at, decided_at]
+      additionalProperties: false
+      properties: &disputeProps
+        id: {$ref: '#/components/schemas/Id'}
+        transaction_id: {$ref: '#/components/schemas/Id'}
+        opened_by: {$ref: '#/components/schemas/Id'}
+        category: {$ref: '#/components/schemas/DisputeCategory'}
+        statement: {type: string, maxLength: 2000}
+        status: {$ref: '#/components/schemas/DisputeStatus'}
+        outcome: {oneOf: [{$ref: '#/components/schemas/DisputeOutcome'}, {type: 'null'}]}
+        reversal_amount_minor: {$ref: '#/components/schemas/Money'}
+        reviewer_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        reason:
+          type: string
+          description: Reviewer rationale (empty until decided).
+        opened_at: {$ref: '#/components/schemas/Timestamp'}
+        decided_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+    DisputeEvent:
+      type: object
+      required: [action, actor_id, occurred_at]
+      additionalProperties: false
+      properties:
+        action: {type: string, description: "Event name, for example opened, under_review, resolved, withdrawn."}
+        outcome: {$ref: '#/components/schemas/DisputeOutcome'}
+        actor_id: {$ref: '#/components/schemas/Id'}
+        occurred_at: {$ref: '#/components/schemas/Timestamp'}
+    DisputeDetail:
+      type: object
+      required: [id, transaction_id, opened_by, category, statement, status, outcome, reversal_amount_minor, reviewer_id, reason, opened_at, decided_at, transaction, payer_display_name, payee_display_name, events, response, re_review, response_deadline, decision_target, response_overdue, decision_overdue]
+      additionalProperties: false
+      properties:
+        <<: *disputeProps
+        response_deadline: {type: string, format: date-time, description: 'Opened at plus the network response period (GOV-014). A missed deadline decides nothing; the case stays open for reviewer assessment.'}
+        decision_target: {type: string, format: date-time, description: 'Response deadline plus 14 days (DEC-012).'}
+        response_overdue: {type: boolean}
+        decision_overdue: {type: boolean}
+        transaction: {$ref: '#/components/schemas/Transaction'}
+        payer_display_name: {type: string}
+        payee_display_name: {type: string}
+        events:
+          type: array
+          items: {$ref: '#/components/schemas/DisputeEvent'}
+        response:
+          description: The other party's response (FR-076); null until submitted.
+          oneOf: [{$ref: '#/components/schemas/DisputeResponse'}, {type: 'null'}]
+        re_review:
+          description: The one re-review of the decision (FR-078); null until requested.
+          oneOf: [{$ref: '#/components/schemas/ReReview'}, {type: 'null'}]
+    DisputeResponseRequest:
+      type: object
+      required: [response]
+      additionalProperties: false
+      properties:
+        response: {type: string, minLength: 1, maxLength: 2000}
+    DisputeResponse:
+      type: object
+      required: [id, responder_member_id, response, submitted_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        responder_member_id: {$ref: '#/components/schemas/Id'}
+        response: {type: string, maxLength: 2000}
+        submitted_at: {$ref: '#/components/schemas/Timestamp'}
+    ReReviewRequest:
+      type: object
+      required: [reason]
+      additionalProperties: false
+      properties:
+        reason: {type: string, minLength: 1, maxLength: 500}
+    ReReviewDecisionRequest:
+      type: object
+      required: [outcome, reason]
+      additionalProperties: false
+      properties:
+        outcome: {type: string, enum: [confirmed, upheld, partially_upheld]}
+        reason: {type: string, minLength: 1, maxLength: 2000}
+        amount_minor:
+          description: Required for partially_upheld; refused for confirmed.
+          $ref: '#/components/schemas/Money'
+    ReReview:
+      type: object
+      required: [id, requested_by, reason, requested_at, status, reviewer_id, outcome, reversal_amount_minor, decision_reason, decided_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        requested_by: {$ref: '#/components/schemas/Id'}
+        reason: {type: string}
+        requested_at: {$ref: '#/components/schemas/Timestamp'}
+        status: {type: string, enum: [requested, decided]}
+        reviewer_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        outcome: {oneOf: [{type: string, enum: [confirmed, upheld, partially_upheld]}, {type: 'null'}]}
+        reversal_amount_minor: {$ref: '#/components/schemas/Money'}
+        decision_reason: {type: string}
+        decided_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+    ReportRequest:
+      type: object
+      required: [target_type, target_id, category]
+      additionalProperties: false
+      properties:
+        target_type: {type: string, enum: [listing, member]}
+        target_id: {$ref: '#/components/schemas/Id'}
+        category: {type: string, enum: [spam, scam, inappropriate, harassment, other]}
+        description: {type: string, maxLength: 500}
+    HandleReportRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        note: {type: string, maxLength: 500}
+    Report:
+      type: object
+      required: [id, target_type, target_id, category, description, status, created_at, reporter_member_id, reporter_display_name, target_label, handled_by, handled_at, handling_note]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        target_type: {type: string, enum: [listing, member]}
+        target_id: {$ref: '#/components/schemas/Id'}
+        category: {type: string}
+        description: {type: string}
+        status: {type: string, enum: [open, handled]}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        reporter_member_id: {$ref: '#/components/schemas/Id'}
+        reporter_display_name: {type: [string, 'null'], description: Filled in the administrator queue only.}
+        target_label: {type: [string, 'null'], description: Filled in the administrator queue only.}
+        handled_by: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        handled_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+        handling_note: {type: string}
+    ReportPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Report'}}
+    Notification:
+      type: object
+      required: [id, kind, title, body, link, read, created_at, read_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        kind: {type: string, example: trade.proposed}
+        title: {type: string}
+        body: {type: string}
+        link: {type: string, description: 'Path relative to the network, for example /trades/<id>.', example: '/trades/0198'}
+        read: {type: boolean}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        read_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+    NotificationPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Notification'}}
+    MarkReadRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        ids: {type: array, minItems: 1, maxItems: 200, items: {$ref: '#/components/schemas/Id'}}
+        all: {type: boolean}
+    Terms:
+      type: object
+      required: [version, body, published_at]
+      additionalProperties: false
+      properties:
+        version: {type: integer, minimum: 1}
+        body: {type: string}
+        published_at: {$ref: '#/components/schemas/Timestamp'}
+    TermsState:
+      type: object
+      required: [current, accepted_version, needs_acceptance]
+      additionalProperties: false
+      properties:
+        current: {oneOf: [{$ref: '#/components/schemas/Terms'}, {type: 'null'}]}
+        accepted_version: {type: integer, minimum: 0}
+        needs_acceptance: {type: boolean}
+    PolicyLogEntry:
+      type: object
+      required: [version, changes, reason, announced_at, effective_at, notice_days, pending, withdrawn]
+      additionalProperties: false
+      properties:
+        version: {type: integer, minimum: 1}
+        changes: {type: object, description: Changed policy keys with their new values (the first version lists them all).}
+        previous: {type: object, description: The same keys before the change.}
+        reason: {type: string}
+        announced_at: {$ref: '#/components/schemas/Timestamp'}
+        effective_at: {$ref: '#/components/schemas/Timestamp'}
+        notice_days: {type: integer, minimum: 0}
+        notice_reason: {type: string, description: Why the notice was shorter than 14 days for an adverse change.}
+        pending: {type: boolean}
+        withdrawn: {type: boolean}
+    PolicyResponse:
+      type: object
+      required: [version, effective_at, policy]
+      additionalProperties: false
+      properties:
+        version: {type: integer, minimum: 0}
+        effective_at:
+          description: Set on PATCH responses (when the new version takes effect); null on GET.
+          oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]
+        policy: {$ref: '#/components/schemas/Policy'}
+        pending:
+          description: The announced change that is not in force yet, if any (GOV-003). policy is what is in force.
+          $ref: '#/components/schemas/PolicyLogEntry'
+    Policy:
+      type: object
+      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor, response_period_days, re_review_window_days, limit_warning_percent, inactivity_days]
+      additionalProperties: false
+      properties:
+        currency_name: {type: string}
+        decimals: {type: integer, minimum: 0}
+        default_credit_limit_minor: {$ref: '#/components/schemas/Money'}
+        max_tx_amount_minor: {$ref: '#/components/schemas/Money'}
+        proposal_expiry_days: {type: integer, minimum: 0}
+        dispute_window_days: {type: integer, minimum: 0}
+        join_mode: {$ref: '#/components/schemas/JoinMode'}
+        departure_rule: {$ref: '#/components/schemas/DepartureRule'}
+        signup_grant_minor: {$ref: '#/components/schemas/Money'}
+        limit_warning_days: {type: integer, minimum: 0}
+        default_flag_blocks_payer: {type: boolean}
+        directory_visibility: {type: string}
+        dual_control_threshold_minor:
+          description: Adjustments above this amount need a second administrator (SEC-011). 0 turns it off. Needs two or more active administrators to set.
+          $ref: '#/components/schemas/Money'
+        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
+        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
+        limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
+        inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
+    PolicyPatch:
+      type: object
+      required: [reason]
+      description: Partial Policy (RFC 7396). Unknown keys are 400 invalid-body; null values are 422. The reason key is required (non-empty) and is recorded on the audit event; it is not a policy field.
+      additionalProperties: false
+      properties:
+        currency_name: {type: string}
+        decimals: {type: integer, minimum: 0}
+        default_credit_limit_minor: {$ref: '#/components/schemas/Money'}
+        max_tx_amount_minor: {$ref: '#/components/schemas/MoneyPositive'}
+        proposal_expiry_days: {type: integer, minimum: 0}
+        dispute_window_days: {type: integer, minimum: 0}
+        join_mode: {$ref: '#/components/schemas/JoinMode'}
+        departure_rule: {$ref: '#/components/schemas/DepartureRule'}
+        signup_grant_minor: {$ref: '#/components/schemas/Money'}
+        limit_warning_days: {type: integer, minimum: 0}
+        default_flag_blocks_payer: {type: boolean}
+        directory_visibility: {type: string}
+        dual_control_threshold_minor: {$ref: '#/components/schemas/Money'}
+        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
+        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
+        limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
+        inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
+        reason: {type: string, maxLength: 500}
+        notice_days: {type: integer, minimum: 0, maximum: 90, description: 'Notice before the change takes effect (GOV-003). Default 14 for a change that reduces default credit, shortens the dispute window, changes the departure rule, makes the directory less restrictive or the join mode more open; 0 otherwise. Fewer than 14 for such a change needs notice_reason. While a change is scheduled only a PATCH that restores the values in force (a cancellation) is accepted; others get 409.'}
+        notice_reason: {type: string, maxLength: 500}
+        confirm_open_grant_risk: {type: boolean, description: 'SEC-032. Not a policy field. Required (true) for a change that turns on open join mode together with a sign-up grant, or raises the grant while both are on; without it such a change is 422 validation-failed at /confirm_open_grant_risk. When given and needed, the confirmation is recorded as the audit event policy.open_grant_risk_confirmed. Every member who becomes active receives the grant, including people who join an open network by themselves (DOM-027). A signup_grant_minor above the platform cap (operator setting signup-grant-cap) is 422 at /signup_grant_minor; a grant stored before the cap was lowered is posted at most at the cap, and not at all when the cap is 0.'}
+    AuditEvent:
+      type: object
+      required: [id, seq, occurred_at, actor_type, actor_id, action, target_type, target_id, request_id, reason, summary_before, summary_after, hash]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        seq: {type: integer, format: int64}
+        occurred_at: {$ref: '#/components/schemas/Timestamp'}
+        actor_type: {type: string}
+        actor_id: {type: string}
+        action: {type: string}
+        target_type: {type: string}
+        target_id: {type: string}
+        request_id: {type: string}
+        reason: {type: string}
+        summary_before: {description: "JSON object summary, or null when there is no state on that side.", oneOf: [{type: object}, {type: 'null'}]}
+        summary_after: {description: "JSON object summary, or null when there is no state on that side.", oneOf: [{type: object}, {type: 'null'}]}
+        hash: {type: string}
+    ConsistencyCheck:
+      type: object
+      required: [id, status, ok, findings, ledger_seq, audit_events, created_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        status: {type: string, enum: [complete]}
+        ok: {type: boolean}
+        findings: {type: array, items: {type: string}}
+        ledger_seq: {type: integer, format: int64}
+        audit_events: {type: integer, format: int64}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+    Export:
+      type: object
+      required: [id, scope, format, status, created_at, expires_at, sha256, bytes, artefact_url, error]
+      additionalProperties: false
+      properties:
+        id: {type: string, description: UUIDv4 as built.}
+        scope: {type: string, enum: [mine, ledger, members, audit, full]}
+        format: {type: string, enum: [csv, json]}
+        status: {type: string, enum: [complete], description: "Only complete as built. Spec 065 also lists queued, running and failed (see spec 07 section 12)."}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        expires_at: {$ref: '#/components/schemas/Timestamp'}
+        sha256: {oneOf: [{type: string, pattern: '^[0-9a-f]{64}$'}, {type: 'null'}]}
+        bytes: {type: integer, minimum: 0}
+        artefact_url: {oneOf: [{type: string}, {type: 'null'}]}
+        error: {oneOf: [{type: string}, {type: 'null'}]}
+    Token:
+      type: object
+      required: [id, name, scopes, network_id, created_at, last_used_at, expires_at, revoked_at]
+      additionalProperties: false
+      properties: &tokenProps
+        id: {$ref: '#/components/schemas/Id'}
+        name: {type: string}
+        scopes:
+          type: array
+          items: {type: string, enum: [read, write]}
+        network_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        last_used_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+        expires_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+        revoked_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
+    TokenCreated:
+      type: object
+      required: [id, name, scopes, network_id, created_at, last_used_at, expires_at, revoked_at, token]
+      additionalProperties: false
+      properties:
+        <<: *tokenProps
+        token:
+          type: string
+          description: The bearer token value (prefix cir_). Shown once; never returned again.
+    InvitationCreated:
+      type: object
+      required: [id, token, expires_at, created_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        token:
+          type: string
+          description: Invitation token, shown once. Stored hashed.
+        expires_at: {$ref: '#/components/schemas/Timestamp'}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+    DepartureResult:
+      type: object
+      required: [member_id, status, settlement]
+      additionalProperties: false
+      properties:
+        member_id: {$ref: '#/components/schemas/Id'}
+        status: {$ref: '#/components/schemas/MemberStatus'}
+        settlement: {type: string, enum: [retained, settled]}
+        account: {$ref: '#/components/schemas/Account'}
+
+    ReasonBody:
+      type: object
+      additionalProperties: false
+      properties:
+        reason: {type: string, maxLength: 500}
+    RemoveMemberRequest:
+      type: object
+      required: [reason_code]
+      additionalProperties: false
+      properties:
+        reason_code:
+          type: string
+          enum: [rule_breach, confirmed_fraud, dispute_non_response]
+          description: >-
+            The documented removal reason (GOV-011): breach of network rules, confirmed fraud, or prolonged
+            non-response to a dispute. The removed member's notice names it.
+        reason: {type: string, maxLength: 500, description: Optional detail. Recorded in the audit log; never shown in the member's notice.}
+        transaction_id:
+          allOf: [{$ref: '#/components/schemas/Id'}]
+          description: >-
+            Optional. The transaction the removal is about; the member must be a party to it. Without it the
+            conflict check (GOV-011, SEC-010) sees only the member's trades under an undecided dispute or a
+            requested re-review.
+    ChangePasswordRequest:
+      type: object
+      required: [current_password, new_password]
+      additionalProperties: false
+      properties:
+        current_password: {type: string}
+        new_password: {type: string, description: Minimum length is a deployment setting (12 characters by default).}
+    CreateListingRequest:
+      type: object
+      required: [kind, title]
+      additionalProperties: false
+      properties:
+        kind: {$ref: '#/components/schemas/ListingKind'}
+        title: {type: string, minLength: 1, maxLength: 120}
+        description: {type: string, maxLength: 2000}
+        price_minor:
+          description: Optional. Omit or null for no price.
+          oneOf: [{$ref: '#/components/schemas/MoneyPositive'}, {type: 'null'}]
+    PatchListingRequest:
+      type: object
+      description: Merge patch. Only these keys; null is accepted only for price_minor (clears price).
+      additionalProperties: false
+      properties:
+        title: {type: string, minLength: 1, maxLength: 120}
+        description: {type: string, maxLength: 2000}
+        price_minor:
+          oneOf: [{$ref: '#/components/schemas/MoneyPositive'}, {type: 'null'}]
+        status: {$ref: '#/components/schemas/ListingStatus'}
+    ProposeTransactionRequest:
+      type: object
+      required: [counterparty_member_id, direction, amount_minor]
+      additionalProperties: false
+      properties:
+        counterparty_member_id: {$ref: '#/components/schemas/Id'}
+        direction:
+          type: string
+          enum: [pay, receive]
+          description: From the proposer's view. pay means the proposer is the payer.
+        amount_minor: {$ref: '#/components/schemas/MoneyPositive'}
+        listing_id: {$ref: '#/components/schemas/Id'}
+        description: {type: string, maxLength: 500}
+    OpenDisputeRequest:
+      type: object
+      required: [transaction_id, category, statement]
+      additionalProperties: false
+      properties:
+        transaction_id: {$ref: '#/components/schemas/Id'}
+        category: {$ref: '#/components/schemas/DisputeCategory'}
+        statement: {type: string, minLength: 1, maxLength: 2000}
+    ResolveDisputeRequest:
+      type: object
+      required: [outcome, reason]
+      additionalProperties: false
+      properties:
+        outcome:
+          type: string
+          enum: [no_action, dismissed, reversal, upheld, partially_upheld, adjustment]
+          description: adjustment is accepted by the schema and returns 501 as built. no_action and dismissed are equivalent, and reversal and upheld are equivalent.
+        reason: {type: string, minLength: 1, maxLength: 500}
+        waive_response: {type: boolean, description: "Decide before the response period ends and without a response (FR-076). Requires waive_reason; the waiver is recorded in the audit trail."}
+        waive_reason: {type: string, maxLength: 500}
+        amount_minor:
+          description: Required for partially_upheld (positive, not above the remaining reversible amount). For upheld it may be omitted or equal the remaining amount. Refused for dismissed.
+          oneOf: [{$ref: '#/components/schemas/MoneyPositive'}, {type: 'null'}]
+    ReversalRequest:
+      type: object
+      required: [reason]
+      additionalProperties: false
+      properties:
+        reason: {type: string, minLength: 1, maxLength: 500}
+        amount_minor:
+          description: Omit for the full remaining amount.
+          oneOf: [{$ref: '#/components/schemas/MoneyPositive'}, {type: 'null'}]
+    PendingAdjustment:
+      type: object
+      required: [id, member_id, proposer_member_id, direction, amount_minor, reason, status, created_at, expires_at, decided_by_member_id, decided_at, transaction_id]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        member_id: {$ref: '#/components/schemas/Id'}
+        proposer_member_id: {$ref: '#/components/schemas/Id'}
+        direction: {type: string, enum: [credit, debit]}
+        amount_minor: {$ref: '#/components/schemas/MoneyPositive'}
+        reason: {type: string}
+        status: {type: string, enum: [pending, approved, rejected, expired, cancelled]}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        expires_at: {$ref: '#/components/schemas/Timestamp'}
+        decided_by_member_id: {type: [string, 'null']}
+        decided_at: {type: [string, 'null']}
+        transaction_id: {type: [string, 'null']}
+    PendingAdjustmentPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/PendingAdjustment'}}
+    AdjustmentRequest:
+      type: object
+      required: [member_id, direction, amount_minor, reason]
+      additionalProperties: false
+      properties:
+        member_id: {$ref: '#/components/schemas/Id'}
+        direction:
+          type: string
+          enum: [credit, debit]
+          description: credit raises the member balance (system account down); debit lowers it.
+        amount_minor: {$ref: '#/components/schemas/MoneyPositive'}
+        reason: {type: string, minLength: 1, maxLength: 500}
+    CreditLimitRequest:
+      type: object
+      required: [credit_limit_minor, reason]
+      additionalProperties: false
+      properties:
+        credit_limit_minor:
+          description: Required. A canonical string, or null to remove the override.
+          oneOf: [{$ref: '#/components/schemas/Money'}, {type: 'null'}]
+        reason: {type: string, minLength: 1, maxLength: 500}
+        expires_at:
+          description: Optional RFC 3339 expiry of the override.
+          oneOf: [{type: string, format: date-time}, {type: 'null'}]
+    CreateInvitationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        ttl_seconds:
+          type: integer
+          minimum: 0
+          maximum: 7776000
+          description: 0 selects the default of 7 days.
+    AcceptInvitationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        display_name: {type: string, minLength: 1, maxLength: 80, description: Trimmed; no control characters.}
+        terms_version: {type: integer, minimum: 0, description: 'The terms version the person accepted (GOV-009). Required, and equal to the current version, when the network has published terms; otherwise ignored.'}
+    CreateTokenRequest:
+      type: object
+      required: [name, scopes]
+      additionalProperties: false
+      properties:
+        name: {type: string, minLength: 1, maxLength: 80}
+        scopes:
+          type: array
+          minItems: 1
+          items: {type: string, enum: [read, write, admin], description: admin returns 501 as built.}
+        network_id: {$ref: '#/components/schemas/Id'}
+        expires_at:
+          description: RFC 3339, at most 365 days from now. Defaults to 365 days.
+          oneOf: [{type: string, format: date-time}, {type: 'null'}]
+    CreateExportRequest:
+      type: object
+      required: [scope]
+      additionalProperties: false
+      properties:
+        scope: {type: string, enum: [mine, ledger, members, audit, full]}
+        format: {type: string, enum: [json, csv], default: json}
+
+    Page:
+      type: object
+      description: Cursor page envelope (API-034). data holds at most limit items.
+      required: [data, next_cursor]
+      properties:
+        next_cursor:
+          type: [string, 'null']
+          description: Opaque cursor for the next page; null on the last page.
+    MemberPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Member'}}
+    AdminMemberPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/AdminMember'}}
+    ListingPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Listing'}}
+    TransactionPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Transaction'}}
+    TransactionEventPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/TransactionEvent'}}
+    DisputePage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Dispute'}}
+    EntryPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Entry'}}
+    AuditPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/AuditEvent'}}
+    TokenPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Token'}, maxItems: 100}

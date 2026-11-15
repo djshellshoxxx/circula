@@ -1,0 +1,578 @@
+diff --git a/docs/specs/04-functional-requirements.md b/docs/specs/04-functional-requirements.md
+index 5370e87..766c7fa 100644
+--- a/docs/specs/04-functional-requirements.md
++++ b/docs/specs/04-functional-requirements.md
+@@ -22,7 +22,7 @@ Summary: built 52, not built 3, partial 10.
+ | FR-002 | P0 | partial | One-time setup secret; used flag is per process, so a restart re-enables it while the secret is set |
+ | FR-003 | P0 | built | Policy change within bounds, versioned and audited |
+ | FR-004 | P0 | built | Setup to active once an admin exists |
+-| FR-005 | P0 | built | Decimals fixed after first posting |
++| FR-005 | P0 | built | Decimal scale fixed at network creation; any later change refused, at once or with notice, before or after the first posting |
+ | FR-006 | P0 | built | Cross-network identifier test covers web and API |
+ | FR-010 | P0 | built | Single-use invitation token hashed; redemption creates member |
+ | FR-011 | P0 | built | Approve and deny applicants; deny via API and web |
+diff --git a/docs/specs/10-governance-operations.md b/docs/specs/10-governance-operations.md
+index 1f0e169..a926366 100644
+--- a/docs/specs/10-governance-operations.md
++++ b/docs/specs/10-governance-operations.md
+@@ -29,7 +29,7 @@ Summary: built 11, not built 6, partial 10.
+ | GOV-001 | P0 | partial | Policy versions prospective; policy version stored on each transaction not verified |
+ | GOV-002 | P0 | built | Changes audited with before and after; member-visible change log at /n/{slug}/policy and GET /network/policy-log |
+ | GOV-003 | P0 | built | Adverse changes wait 14 days by default (notice_days up to 90); a shorter notice needs a reason shown in the change log; members get an inbox notice; a scheduled change can be cancelled |
+-| GOV-004 | P0 | built | Decimals lock after first completed transaction |
++| GOV-004 | P0 | built | Decimals locked from network creation, also before the first transaction; regression and concurrency tests |
+ | GOV-005 | P1 | built | Bounds with boundary tests |
+ | GOV-006 | P1 | partial | Unilateral admin change built; objection right not built |
+ | GOV-007 | P0 | built | Corrective actions are transactions; property tests |
+diff --git a/internal/service/admin_test.go b/internal/service/admin_test.go
+index f0c1a71..825ea51 100644
+--- a/internal/service/admin_test.go
++++ b/internal/service/admin_test.go
+@@ -182,32 +182,34 @@ func TestDepartedAdminLosesRole(t *testing.T) {
+ 	}
+ }
+ 
+-// DOM-031 / DOM-030 / FR-003.
++// FR-005 / GOV-004 / DOM-031 / DOM-030 / FR-003.
+ func TestPolicyChanges(t *testing.T) {
+ 	w := newWorld(t, nil)
+ 	pol := w.net.Policy
+ 	pol.Decimals = 3
+ 	pc := service.PolicyChange{Policy: pol, Reason: "finer units", IdempotencyKey: w.Key()}
+-	n := tu.Must(w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, pc))
+-	if n.Policy.Decimals != 3 || n.PolicyVersion != 2 {
++	// decimals fixed at creation: refused before any proposal or posting exists
++	_, err := w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, pc)
++	wantCode(t, err, domain.ErrValidation)
++	if n := w.netNow(); n.Policy.Decimals != 2 || n.PolicyVersion != 1 {
+ 		t.Fatalf("policy = %+v v%d", n.Policy, n.PolicyVersion)
+ 	}
+ 	// prospective: an in-flight proposal keeps its expiry; the dispute window applies to later decisions
+ 	p := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 100))
+ 	exp := *p.ExpiresAt
+ 	pol.ProposalExpiryDays = 30
+-	pol.Decimals = 3
++	pol.Decimals = 2
+ 	tu.Must(w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "slower", IdempotencyKey: w.Key()}))
+ 	if got := w.txStatus(p.ID); !got.ExpiresAt.Equal(exp) {
+ 		t.Error("policy change altered an existing proposal's expiry")
+ 	}
+ 	tu.Must(w.accept(w.b, p.ID))
+-	// decimals frozen after the first posting
+-	pol.Decimals = 2
+-	_, err := w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "back", IdempotencyKey: w.Key()})
++	// decimals still fixed after the first posting
++	pol.Decimals = 3
++	_, err = w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "back", IdempotencyKey: w.Key()})
+ 	wantCode(t, err, domain.ErrValidation)
+ 	// bounds + reason + admin only
+-	pol.Decimals = 3
++	pol.Decimals = 2
+ 	pol.DisputeWindowDays = 0
+ 	_, err = w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: pol, Reason: "x", IdempotencyKey: w.Key()})
+ 	wantCode(t, err, domain.ErrValidation)
+@@ -216,9 +218,9 @@ func TestPolicyChanges(t *testing.T) {
+ 	wantCode(t, err, domain.ErrValidation)
+ 	_, err = w.Svc.UpdatePolicy(w.Ctx, w.a, w.net.ID, service.PolicyChange{Policy: pol, Reason: "x", IdempotencyKey: w.Key()})
+ 	wantCode(t, err, domain.ErrForbidden)
+-	// the audit event records old and new values
++	// the audit event records old and new values; the refused changes recorded none
+ 	evs := tu.Must(w.Svc.ListAudit(w.Ctx, w.admin, w.net.ID, service.AuditQuery{Action: domain.ActPolicyChanged}))
+-	if len(evs) != 2 || evs[0].SummaryBefore == "" || evs[0].SummaryAfter == "" || evs[0].Reason == "" {
++	if len(evs) != 1 || evs[0].SummaryBefore == "" || evs[0].SummaryAfter == "" || evs[0].Reason == "" {
+ 		t.Errorf("policy audit events = %+v", evs)
+ 	}
+ }
+diff --git a/internal/service/decimals_test.go b/internal/service/decimals_test.go
+new file mode 100644
+index 0000000..cec3145
+--- /dev/null
++++ b/internal/service/decimals_test.go
+@@ -0,0 +1,348 @@
++package service_test
++
++import (
++	"encoding/json"
++	"errors"
++	"fmt"
++	"slices"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// decimalsRefused reports whether err is the field-level refusal of a scale change.
++func decimalsRefused(err error) bool {
++	var de *domain.Error
++	return errors.As(err, &de) && de.Code == domain.CodeValidation && len(de.Fields) == 1 && de.Fields[0].Field == "decimals"
++}
++
++// storedScales returns the scale of every stored policy version of a network, oldest first.
++func storedScales(t *testing.T, e *tu.Env, netID string) []int {
++	t.Helper()
++	rows, err := e.Store.DB().Query(`SELECT policy_json FROM network_policies WHERE network_id = ? ORDER BY version`, netID)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer func() { _ = rows.Close() }()
++	var out []int
++	for rows.Next() {
++		var pj string
++		var p domain.Policy
++		if err := rows.Scan(&pj); err != nil {
++			t.Fatal(err)
++		}
++		if err := json.Unmarshal([]byte(pj), &p); err != nil {
++			t.Fatal(err)
++		}
++		out = append(out, p.Decimals)
++	}
++	if err := rows.Err(); err != nil {
++		t.Fatal(err)
++	}
++	return out
++}
++
++// FR-005, GOV-004, DOM-031, QA-045: the scale is fixed from the moment the
++// network is created. Every other scale in range is refused, at once or with
++// notice, in setup and once active, before any proposal, posting, price or
++// limit override exists; a refusal writes nothing and the initial limits keep
++// their meaning. Updates that keep the scale still apply, at once or after
++// their notice.
++func TestDecimalsFixedFromCreation(t *testing.T) {
++	e := tu.NewEnv(t)
++	admin := e.Person("admin@example.org")
++	pol := domain.DefaultPolicy()
++	pol.DefaultCreditLimit, pol.MaxTxAmount = 12345, 67890
++	n, _, err := e.Svc.CreateNetwork(e.Ctx, admin, service.CreateNetworkInput{Name: "Fixed", Slug: "fixed",
++		Policy: &pol, CreatorDisplayName: "Founder"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	update := func(p domain.Policy, scheduled bool) (*domain.Network, error) {
++		var notice *int
++		if scheduled {
++			notice = iptr(14)
++		}
++		return e.Svc.UpdatePolicy(e.Ctx, admin, n.ID, service.PolicyChange{Policy: p, Reason: "rescale",
++			NoticeDays: notice, IdempotencyKey: e.Key()})
++	}
++	for _, status := range []domain.NetworkStatus{domain.NetworkSetup, domain.NetworkActive} {
++		if status == domain.NetworkActive {
++			tu.Must(e.Svc.ActivateNetwork(e.Ctx, admin, n.ID))
++		}
++		before := dbChecksum(t, e)
++		for dec := 0; dec <= domain.MaxDecimals; dec++ {
++			if dec == pol.Decimals {
++				continue
++			}
++			for _, scheduled := range []bool{false, true} {
++				p := pol
++				p.Decimals = dec
++				if _, err := update(p, scheduled); !decimalsRefused(err) {
++					t.Errorf("%s: decimals %d to %d (scheduled %v): %v", status, pol.Decimals, dec, scheduled, err)
++				}
++			}
++		}
++		if dbChecksum(t, e) != before {
++			t.Errorf("%s: a refused scale change wrote to the database", status)
++		}
++		got := tu.Must(e.Svc.GetNetwork(e.Ctx, admin, n.ID))
++		if got.Status != status || got.LedgerSeq != 0 || got.PolicyVersion != 1 || got.Policy != pol {
++			t.Fatalf("%s: network %s seq %d v%d %+v", status, got.Status, got.LedgerSeq, got.PolicyVersion, got.Policy)
++		}
++	}
++
++	p := pol
++	p.MaxTxAmount = 70000
++	if got := tu.Must(update(p, false)); got.PolicyVersion != 2 || got.Policy != p {
++		t.Fatalf("same-scale update: v%d %+v", got.PolicyVersion, got.Policy)
++	}
++	p.DefaultCreditLimit = 100 // adverse, so it waits out the default notice
++	tu.Must(update(p, false))
++	e.Clock.Advance(15 * 24 * time.Hour)
++	if got := tu.Must(e.Svc.GetNetwork(e.Ctx, admin, n.ID)); got.PolicyVersion != 3 || got.Policy != p {
++		t.Errorf("scheduled same-scale update: v%d %+v", got.PolicyVersion, got.Policy)
++	}
++	if s := storedScales(t, e, n.ID); !slices.Equal(s, []int{2, 2, 2}) {
++		t.Errorf("stored scales %v", s)
++	}
++}
++
++// GOV-004, DOM-031: whatever is stored under the scale (a proposal in any
++// status, a posting, a listing price, a credit limit), a scale change stays
++// refused, at once or with notice, and the refusal changes nothing.
++func TestDecimalsLockedWhateverIsStored(t *testing.T) {
++	proposal := func(w *world) *domain.Transaction { return tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 250)) }
++	trade := func(w *world) *domain.Transaction { return w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 250) }
++	cases := []struct {
++		name  string
++		store func(w *world)
++	}{
++		{"proposed", func(w *world) { proposal(w) }},
++		{"declined", func(w *world) {
++			tu.Must(w.Svc.DeclineTransaction(w.Ctx, w.b, w.net.ID, service.TxRef{TxID: proposal(w).ID, IdempotencyKey: w.Key()}))
++		}},
++		{"cancelled", func(w *world) {
++			tu.Must(w.Svc.CancelTransaction(w.Ctx, w.a, w.net.ID, service.CancelInput{TxID: proposal(w).ID, IdempotencyKey: w.Key()}))
++		}},
++		{"expired", func(w *world) {
++			proposal(w)
++			w.Clock.Advance(time.Duration(w.net.Policy.ProposalExpiryDays)*24*time.Hour + time.Minute)
++			if n := tu.Must(w.Svc.ExpireProposals(w.Ctx, domain.SystemActor("test"), 10)); n != 1 {
++				w.T.Fatalf("expired %d proposals", n)
++			}
++		}},
++		{"completed", func(w *world) { trade(w) }},
++		{"disputed", func(w *world) { tu.Must(w.open(w.a, trade(w).ID)) }},
++		{"reversed", func(w *world) { tu.Must(w.reverse(w.admin, trade(w).ID, 250, "entered twice")) }},
++		{"listing price", func(w *world) {
++			price := int64(250)
++			tu.Must(w.Svc.CreateListing(w.Ctx, w.a, w.net.ID, service.ListingInput{Type: domain.ListingOffer, Title: "Bread",
++				Price: &price, IdempotencyKey: w.Key()}))
++		}},
++		{"credit limit", func(w *world) {
++			limit := int64(250)
++			tu.Must(0, w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.aM.ID, Limit: &limit, Reason: "trusted"}))
++		}},
++	}
++	for _, c := range cases {
++		t.Run(c.name, func(t *testing.T) {
++			w := newWorld(t, nil)
++			c.store(w)
++			before := dbChecksum(t, w.Env)
++			for _, notice := range []*int{nil, iptr(14)} {
++				if _, err := w.setPolicy(func(p *domain.Policy) { p.Decimals = 3 }, notice, ""); !decimalsRefused(err) {
++					t.Errorf("scheduled %v: %v", notice != nil, err)
++				}
++			}
++			if dbChecksum(t, w.Env) != before {
++				t.Error("a refused scale change wrote to the database")
++			}
++			w.Clock.Advance(15 * 24 * time.Hour)
++			if n := w.netNow(); n.Policy.Decimals != 2 || n.PolicyVersion != 1 {
++				t.Errorf("scale %d, policy v%d", n.Policy.Decimals, n.PolicyVersion)
++			}
++		})
++	}
++}
++
++// A1-02 defence in depth (DOM-031, DAT-049): an earlier build accepted a scale
++// change with notice while nothing was posted. When that stored version comes
++// into force after a posting, it applies without its scale: stored amounts keep
++// their meaning, and later writes record the creation scale.
++func TestStoredScaleChangeNeverApplies(t *testing.T) {
++	w := newWorld(t, nil) // scale 2, nothing posted
++	now := w.Clock.Now()
++	stored := w.net.Policy
++	stored.Decimals, stored.ProposalExpiryDays = 0, 30
++	// UpdatePolicy refuses this version now, so write it the way an earlier build did.
++	if err := w.Store.Update(w.Ctx, func(tx store.Tx) error {
++		return tx.(store.GovRepo).AppendPolicyNotice(w.net.ID, 2, stored, w.adminM.ID, "whole credits", now, now.AddDate(0, 0, 14), 14, "")
++	}); err != nil {
++		t.Fatal(err)
++	}
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 2500) // 25.00
++	w.Clock.Advance(15 * 24 * time.Hour)
++
++	n := w.netNow()
++	if n.PolicyVersion != 2 || n.Policy.ProposalExpiryDays != 30 {
++		t.Fatalf("stored version not in force: v%d %+v", n.PolicyVersion, n.Policy)
++	}
++	if n.Policy.Decimals != 2 {
++		t.Fatalf("scale changed to %d with %d posting(s) stored", n.Policy.Decimals, n.LedgerSeq)
++	}
++	if got := domain.FormatAmount(w.balance(w.b).Balance, n.Policy.Decimals); got != "25.00" {
++		t.Errorf("payee balance reads %s, want 25.00", got)
++	}
++	if man := tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, service.ExportLedger, service.FormatCSV, &service.MemSink{})); man.Decimals != 2 {
++		t.Errorf("ledger export scale %d", man.Decimals)
++	}
++	if _, err := w.setPolicy(func(p *domain.Policy) { p.Decimals = 0 }, nil, ""); !decimalsRefused(err) {
++		t.Errorf("change to the stored version's scale: %v", err)
++	}
++	// Later writes, by an administrator or by the operator, store the creation scale.
++	tu.Must(w.setPolicy(func(p *domain.Policy) { p.CurrencyName = "hour" }, nil, ""))
++	tu.Must(0, w.Svc.OperatorSetDualControl(w.Ctx, domain.SystemActor("test"), w.net.ID, 0, "test"))
++	if s := storedScales(t, w.Env, w.net.ID); !slices.Equal(s, []int{2, 0, 2, 2}) {
++		t.Errorf("stored scales %v", s)
++	}
++}
++
++// FR-005, GOV-004, DOM-031: the scale and the initial monetary settings are
++// written in the creation unit. A failure at its last write leaves no network,
++// policy, account, member or role behind; the retry stores them together.
++func TestNetworkCreationStoresScaleAtomically(t *testing.T) {
++	var fs *tu.FaultStore
++	e := tu.NewEnvWith(t, func(s store.Store) store.Store { fs = tu.NewFaultStore(s); return fs })
++	admin := e.Person("admin@example.org")
++	pol := domain.DefaultPolicy()
++	pol.Decimals, pol.DefaultCreditLimit, pol.MaxTxAmount = 3, 5000, 900000
++	in := service.CreateNetworkInput{Name: "Atomic", Slug: "atomic", Policy: &pol, CreatorDisplayName: "Founder"}
++	before := dbChecksum(t, e)
++	fs.Arm("InsertAudit", 1) // network.created is the unit's last write
++	if _, _, err := e.Svc.CreateNetwork(e.Ctx, admin, in); !errors.Is(err, tu.ErrInjected) {
++		t.Fatalf("creation with a failing audit write: %v", err)
++	}
++	fs.Disarm()
++	if dbChecksum(t, e) != before {
++		t.Fatal("a failed creation left rows behind")
++	}
++	n, _, err := e.Svc.CreateNetwork(e.Ctx, admin, in)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if got := tu.Must(e.Svc.GetNetwork(e.Ctx, admin, n.ID)); got.PolicyVersion != 1 || got.Policy != pol {
++		t.Errorf("created v%d %+v", got.PolicyVersion, got.Policy)
++	}
++}
++
++// GOV-004, FR-005, QA-045: creations race with policy writes on the networks
++// just created. No network or account is ever visible without its scale, every
++// scale change is refused, and updates that keep the scale apply with the
++// amounts they store unchanged.
++func TestDecimalsLockUnderConcurrentWrites(t *testing.T) {
++	e := tu.NewEnv(t)
++	const nets, writers = 5, 6
++	founders := make([]domain.Actor, nets)
++	for i := range founders {
++		founders[i] = e.Person(fmt.Sprintf("founder%d@example.org", i))
++	}
++	stop := make(chan struct{})
++	var unscaled atomic.Int64
++	var watch sync.WaitGroup
++	watch.Add(1)
++	go func() { // every committed network and account has its creation policy, hence its scale
++		defer watch.Done()
++		for {
++			select {
++			case <-stop:
++				return
++			default:
++			}
++			var k int
++			err := e.Store.DB().QueryRow(`SELECT
++				(SELECT COUNT(*) FROM networks n WHERE NOT EXISTS
++					(SELECT 1 FROM network_policies p WHERE p.network_id = n.id AND p.version = 1)) +
++				(SELECT COUNT(*) FROM accounts a WHERE NOT EXISTS
++					(SELECT 1 FROM network_policies p WHERE p.network_id = a.network_id AND p.version = 1))`).Scan(&k)
++			if err == nil && k > 0 {
++				unscaled.Add(1)
++			}
++			time.Sleep(time.Millisecond)
++		}
++	}()
++
++	ids := make([]string, nets)
++	var wg sync.WaitGroup
++	for i := range nets {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			pol := domain.DefaultPolicy()
++			pol.Decimals = i % (domain.MaxDecimals + 1)
++			n, _, err := e.Svc.CreateNetwork(e.Ctx, founders[i], service.CreateNetworkInput{Name: "Race",
++				Slug: fmt.Sprintf("race-%d", i), Policy: &pol, CreatorDisplayName: "Founder"})
++			if err != nil {
++				t.Errorf("create %d: %v", i, err)
++				return
++			}
++			ids[i] = n.ID
++			var inner sync.WaitGroup
++			for j := range writers {
++				inner.Add(1)
++				go func() {
++					defer inner.Done()
++					// Even writers keep the scale and change an amount (not adverse,
++					// so it applies at once); odd writers try another scale, every
++					// other one with notice.
++					p := pol
++					p.MaxTxAmount = int64(1000 + j)
++					var notice *int
++					if j%2 == 1 {
++						p.Decimals = (pol.Decimals + 1) % (domain.MaxDecimals + 1)
++						if j%4 == 3 {
++							notice = iptr(14)
++						}
++					}
++					_, err := e.Svc.UpdatePolicy(e.Ctx, founders[i], n.ID, service.PolicyChange{Policy: p, Reason: "race",
++						NoticeDays: notice, IdempotencyKey: e.Key()})
++					switch {
++					case j%2 == 1 && !decimalsRefused(err):
++						t.Errorf("network %d writer %d: scale change: %v", i, j, err)
++					case j%2 == 0 && err != nil:
++						t.Errorf("network %d writer %d: same-scale update: %v", i, j, err)
++					}
++				}()
++			}
++			inner.Wait()
++		}()
++	}
++	wg.Wait()
++	close(stop)
++	watch.Wait()
++
++	if k := unscaled.Load(); k > 0 {
++		t.Errorf("%d observation(s) of a network or account without its scale", k)
++	}
++	for i, id := range ids {
++		if id == "" {
++			continue // creation failed and was reported
++		}
++		scale := i % (domain.MaxDecimals + 1)
++		for v, s := range storedScales(t, e, id) {
++			if s != scale {
++				t.Errorf("network %d version %d stores scale %d, created with %d", i, v+1, s, scale)
++			}
++		}
++		got := tu.Must(e.Svc.GetNetwork(e.Ctx, founders[i], id))
++		if got.Policy.Decimals != scale || !slices.Contains([]int64{1000, 1002, 1004}, got.Policy.MaxTxAmount) {
++			t.Errorf("network %d: scale %d, max_tx_amount %d", i, got.Policy.Decimals, got.Policy.MaxTxAmount)
++		}
++	}
++}
+diff --git a/internal/service/networks.go b/internal/service/networks.go
+index 721e6bc..92f0864 100644
+--- a/internal/service/networks.go
++++ b/internal/service/networks.go
+@@ -213,8 +213,9 @@ type PolicyChange struct {
+ }
+ 
+ // UpdatePolicy appends a new policy version (DOM-029, DOM-030). Changes apply
+-// prospectively; decimals cannot change once any posting exists (DOM-031).
+-// Out-of-bounds values are refused with the field and range.
++// prospectively; the decimal scale never changes after the network is created
++// (FR-005, GOV-004, DOM-031). Out-of-bounds values are refused with the field
++// and range.
+ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID string, in PolicyChange) (*domain.Network, error) {
+ 	var out *domain.Network
+ 	err := s.update(ctx, func(tx store.Tx) error {
+@@ -239,8 +240,13 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
+ 			if err := in.Policy.Validate(); err != nil {
+ 				return "", err
+ 			}
+-			if in.Policy.Decimals != p.net.Policy.Decimals && p.net.LedgerSeq > 0 {
+-				return "", domain.Invalid("decimals", "cannot change after the first posting")
++			// The scale is fixed at creation (FR-005, GOV-004, DOM-031): limits,
++			// prices, proposals and postings are integers under it, so changing
++			// it, at once or after notice, would reinterpret them. That holds
++			// before the first proposal or posting too, since the creation policy
++			// already stores amounts.
++			if in.Policy.Decimals != p.net.Policy.Decimals {
++				return "", domain.Invalid("decimals", "cannot change after the network is created")
+ 			}
+ 			if weakensDualControl(p.net.Policy.DualControlThreshold, in.Policy.DualControlThreshold) {
+ 				// SA2-01: one administrator must not switch off or loosen the control
+diff --git a/internal/store/iface.go b/internal/store/iface.go
+index da3f9c3..b840770 100644
+--- a/internal/store/iface.go
++++ b/internal/store/iface.go
+@@ -48,6 +48,9 @@ type Tx interface {
+ type NetworkRepo interface {
+ 	InsertNetwork(n *domain.Network) error
+ 	AppendPolicy(netID string, version int, p domain.Policy, by, reason string, at time.Time) error
++	// GetNetwork and GetNetworkBySlug return the policy version in force (see
++	// GovRepo.SetAsOf), except that Policy.Decimals is always the scale stored
++	// at creation (DOM-031): no later version changes it.
+ 	GetNetwork(id string) (*domain.Network, error)
+ 	GetNetworkBySlug(slug string) (*domain.Network, error)
+ 	SetNetworkStatus(id string, s domain.NetworkStatus) error
+diff --git a/internal/store/sqlite_network.go b/internal/store/sqlite_network.go
+index eb14d1f..f6fe69d 100644
+--- a/internal/store/sqlite_network.go
++++ b/internal/store/sqlite_network.go
+@@ -24,8 +24,11 @@ func (t *txImpl) AppendPolicy(netID string, version int, p domain.Policy, by, re
+ 	return err
+ }
+ 
++// networkSelect reads the policy version in force at the as-of time (GOV-003)
++// and the creation version, which is the lowest one.
+ const networkSelect = `SELECT n.id, n.name, n.slug, n.status, n.ledger_seq, n.created_at,
+ 	p.version, p.policy_json,
++	(SELECT c.policy_json FROM network_policies c WHERE c.network_id = n.id ORDER BY c.version LIMIT 1),
+ 	COALESCE((SELECT a.id FROM accounts a WHERE a.network_id = n.id AND a.is_system = 1), '')
+ 	FROM networks n JOIN network_policies p ON p.network_id = n.id
+ 	AND p.version = (SELECT MAX(version) FROM network_policies WHERE network_id = n.id
+@@ -33,10 +36,10 @@ const networkSelect = `SELECT n.id, n.name, n.slug, n.status, n.ledger_seq, n.cr
+ 
+ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
+ 	var n domain.Network
+-	var status, pj string
++	var status, pj, firstPJ string
+ 	var created int64
+ 	if err := r.Scan(&n.ID, &n.Name, &n.Slug, &status, &n.LedgerSeq, &created,
+-		&n.PolicyVersion, &pj, &n.SystemAccountID); err != nil {
++		&n.PolicyVersion, &pj, &firstPJ, &n.SystemAccountID); err != nil {
+ 		return nil, notFound(err, "network")
+ 	}
+ 	n.Status = domain.NetworkStatus(status)
+@@ -45,6 +48,14 @@ func (t *txImpl) scanNetwork(r *sql.Row) (*domain.Network, error) {
+ 	if err := json.Unmarshal([]byte(pj), &n.Policy); err != nil {
+ 		return nil, err
+ 	}
++	// The scale is the one stored at creation (DOM-031, DAT-049). No later
++	// version changes it, including one an earlier build scheduled with notice,
++	// so a stored amount keeps the meaning it was written with.
++	first := domain.DefaultPolicy()
++	if err := json.Unmarshal([]byte(firstPJ), &first); err != nil {
++		return nil, err
++	}
++	n.Policy.Decimals = first.Decimals
+ 	sus, err := t.ListSuspensions(n.ID)
+ 	if err != nil {
+ 		return nil, err
+diff --git a/internal/store/sqlite_test.go b/internal/store/sqlite_test.go
+index e8f4981..ebf93e9 100644
+--- a/internal/store/sqlite_test.go
++++ b/internal/store/sqlite_test.go
+@@ -262,3 +262,44 @@ func TestBalanceBoundTriggers(t *testing.T) {
+ 		t.Fatalf("Totals failed on overflow: %v", err)
+ 	}
+ }
++
++// DOM-031, DAT-049: a network's scale is the one stored at creation. A later
++// version with another scale, which only an earlier build could store, takes
++// effect without it, whether or not an as-of time is set.
++func TestNetworkScaleIsCreationScale(t *testing.T) {
++	s := openStore(t)
++	ctx := context.Background()
++	netID, _, _, _ := seed(t, s) // version 1: default policy, scale 2
++	t0 := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
++	later := domain.DefaultPolicy()
++	later.Decimals, later.ProposalExpiryDays = 0, 30
++	if err := s.Update(ctx, func(tx store.Tx) error {
++		return tx.(store.GovRepo).AppendPolicyNotice(netID, 2, later, "", "rescale", t0, t0.Add(24*time.Hour), 1, "")
++	}); err != nil {
++		t.Fatal(err)
++	}
++	for _, asOf := range []time.Time{{}, t0.Add(48 * time.Hour)} {
++		err := s.View(ctx, func(tx store.Tx) error {
++			if !asOf.IsZero() {
++				tx.(store.GovRepo).SetAsOf(asOf)
++			}
++			byID, err := tx.GetNetwork(netID)
++			if err != nil {
++				return err
++			}
++			bySlug, err := tx.GetNetworkBySlug("n")
++			if err != nil {
++				return err
++			}
++			for _, n := range []*domain.Network{byID, bySlug} {
++				if n.PolicyVersion != 2 || n.Policy.ProposalExpiryDays != 30 || n.Policy.Decimals != 2 {
++					t.Errorf("as of %v: v%d expiry %d scale %d", asOf, n.PolicyVersion, n.Policy.ProposalExpiryDays, n.Policy.Decimals)
++				}
++			}
++			return nil
++		})
++		if err != nil {
++			t.Fatal(err)
++		}
++	}
++}

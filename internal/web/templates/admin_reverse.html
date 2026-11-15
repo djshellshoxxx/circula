@@ -1,0 +1,20 @@
+{{define "content"}}
+<p>A reversal gives credit back from the receiver of a completed trade to the payer. It is posted as a new entry, the original trade stays on record, and every reversal needs a reason. You cannot reverse a trade you took part in. Disputed trades are decided from the review queue.</p>
+{{with .D.Trade}}
+<dl class="kv">
+  <dt>Payer</dt><dd>{{.Payer}}</dd>
+  <dt>Payee</dt><dd>{{.Payee}}</dd>
+  <dt>Amount</dt><dd>{{.Amount}} {{$.Unit}}s</dd>
+  <dt>Already reversed</dt><dd>{{.Reversed}} {{$.Unit}}s</dd>
+  <dt>Left to reverse</dt><dd>{{.Remaining}} {{$.Unit}}s</dd>
+</dl>
+{{end}}
+<form method="post" action="/n/{{.Slug}}/admin/reverse" novalidate>
+  {{template "csrf" .}}{{template "idem" .}}
+  <input type="hidden" name="step" value="review">
+  {{template "field" dict "P" . "Name" "tx" "Label" "Trade reference" "Hint" "The reference of the completed trade, as in the address of its page." "Req" true}}
+  {{template "field" dict "P" . "Name" "amount" "Label" "Amount to reverse" "Hint" (printf "Optional. Up to %d decimal places. Leave empty to reverse everything that is left." .Dec) "Mode" "decimal"}}
+  {{template "field" dict "P" . "Name" "reason" "Label" "Reason" "Hint" "Required. Recorded in the audit log and shown on the reversal." "Type" "textarea" "Max" 500 "Req" true}}
+  <div class="actions"><button type="submit">Review reversal</button></div>
+</form>
+{{end}}

@@ -1,0 +1,2 @@
+# systemd-sysusers: install as /usr/lib/sysusers.d/circula.conf, then run `systemd-sysusers`.
+u circula - "Circula service" /var/lib/circula /usr/sbin/nologin

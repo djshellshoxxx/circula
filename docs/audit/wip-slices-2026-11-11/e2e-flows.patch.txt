@@ -1,0 +1,921 @@
+From 129eeefc5858d1931bf4c901b11c313afa4bfa52 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 09:16:47 +0000
+Subject: [PATCH 1/2] fix(web): link recovery codes, account recovery and admin
+ terms; wrap long words (UX-002, UX-034)
+
+Three screens were reachable only by typing their address:
+- /account/recovery-codes: now linked from Account security.
+- /recover: now linked from the sign-in page.
+- /n/{slug}/admin/terms: now listed on the Network admin overview.
+
+At 200 percent text on a 320 pixel screen, long words (headings such as
+"Announcements", identifiers) widened the page. body now sets
+overflow-wrap:break-word, which every element inherits.
+
+Regression tests: TestUX002SecurityPageLinksPasswordRecoveryCodes,
+TestUX002SignInLinksAccountRecovery, TestUX002AdminOverviewLinksNetworkTerms,
+TestUX034BodyWrapsLongWords (internal/web/ux002_reach_test.go).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/web/static/style.css          |  2 +-
+ internal/web/templates/admin_home.html |  1 +
+ internal/web/templates/login.html      |  1 +
+ internal/web/templates/security.html   |  3 ++
+ internal/web/ux002_reach_test.go       | 72 ++++++++++++++++++++++++++
+ 5 files changed, 78 insertions(+), 1 deletion(-)
+ create mode 100644 internal/web/ux002_reach_test.go
+
+diff --git a/internal/web/static/style.css b/internal/web/static/style.css
+index 91eff97..42fe294 100644
+--- a/internal/web/static/style.css
++++ b/internal/web/static/style.css
+@@ -2,7 +2,7 @@
+ @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#f0f0f0;--muted:#c4c4c4;--line:#8a8a8a;--accent:#8ec5ff;--accent-fg:#06233f;--bad:#ffb4b4;--badbg:#3a1616;--ok:#a6e8b8;--okbg:#12301b;--note:#3a3210;--focus:#ffcf70}}
+ *{box-sizing:border-box}
+ html{font-size:100%}
+-body{margin:0;background:var(--bg);color:var(--fg);font:1rem/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:normal}
++body{margin:0;background:var(--bg);color:var(--fg);font:1rem/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:normal;overflow-wrap:break-word}
+ a{color:var(--accent)}
+ :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+ main:focus{outline:none}
+diff --git a/internal/web/templates/admin_home.html b/internal/web/templates/admin_home.html
+index 9518f4c..ac59ec9 100644
+--- a/internal/web/templates/admin_home.html
++++ b/internal/web/templates/admin_home.html
+@@ -20,6 +20,7 @@
+ <li><a href="/n/{{.Slug}}/admin/members">Members</a>: approve, suspend, restore, remove, roles and credit limits</li>
+ <li><a href="/n/{{.Slug}}/admin/invitations">Invitations</a>: create and revoke invitation links</li>
+ <li><a href="/n/{{.Slug}}/admin/policy">Policy</a>: limits, expiry, join mode</li>
++<li><a href="/n/{{.Slug}}/admin/terms">Terms</a>: the terms members accept when they join, and new versions of them</li>
+ <li><a href="/n/{{.Slug}}/admin/adjust">Adjustments</a>: audited corrections to a member's balance</li>
+ <li><a href="/n/{{.Slug}}/admin/reverse">Reverse a trade</a>: give back a completed trade, with a reason</li>
+ <li><a href="/n/{{.Slug}}/admin/announcements">Announcements</a>: notices on every member's home page</li>
+diff --git a/internal/web/templates/login.html b/internal/web/templates/login.html
+index 0990a96..d238791 100644
+--- a/internal/web/templates/login.html
++++ b/internal/web/templates/login.html
+@@ -7,4 +7,5 @@
+   <div class="actions"><button type="submit">Sign in</button></div>
+ </form>
+ <p>New here? <a href="/register{{if .Next}}?next={{.Next}}{{end}}">Create an account</a>. To join a network you need an invitation link from its administrator, or the network's join page.</p>
++<p>Forgot your password? <a href="/recover">Recover your account</a> with one of your recovery codes.</p>
+ {{end}}
+diff --git a/internal/web/templates/security.html b/internal/web/templates/security.html
+index 1f430b6..92028f4 100644
+--- a/internal/web/templates/security.html
++++ b/internal/web/templates/security.html
+@@ -20,6 +20,9 @@
+   <p><a href="/account/security/mfa/enrol">Turn on two-step sign-in</a></p>
+ {{end}}
+ 
++<h2>Password recovery codes</h2>
++<p>A recovery code lets you set a new password without email if you forget it. <a href="/account/recovery-codes">Make or replace password recovery codes</a></p>
++
+ <h2>Security notices</h2>
+ {{if .D.Notices}}
+   {{if .D.Unseen}}<form method="post" action="/account/security/ack">{{template "csrf" .}}<p>{{.D.Unseen}} new. <button type="submit" class="secondary">Mark all as read</button></p></form>{{end}}
+diff --git a/internal/web/ux002_reach_test.go b/internal/web/ux002_reach_test.go
+new file mode 100644
+index 0000000..a267eb4
+--- /dev/null
++++ b/internal/web/ux002_reach_test.go
+@@ -0,0 +1,72 @@
++package web
++
++import (
++	"regexp"
++	"strings"
++	"testing"
++)
++
++// UX-002: screens of the account, sign-in and administration sections must be
++// reachable through rendered links, not only by typing their address. These
++// three were reachable by URL alone (found by e2e/tests/navigation.spec.js).
++
++func mustLinkTo(t *testing.T, p *pg, href string) {
++	t.Helper()
++	if !strings.Contains(p.Body, `href="`+href+`"`) {
++		t.Errorf("page %s (status %d) has no link to %s\n%s", p.URL, p.Status, href, snippet(p.Body))
++	}
++}
++
++func TestUX002SecurityPageLinksPasswordRecoveryCodes(t *testing.T) {
++	w := newWorld(t)
++	b := w.browser(t)
++	b.login("alice@example.org")
++	sec := b.get("/account/security")
++	if sec.Status != 200 {
++		t.Fatalf("security page: %d", sec.Status)
++	}
++	mustLinkTo(t, sec, "/account/recovery-codes")
++	if p := b.get("/account/recovery-codes"); p.Status != 200 {
++		t.Fatalf("recovery codes page: %d", p.Status)
++	}
++}
++
++func TestUX002SignInLinksAccountRecovery(t *testing.T) {
++	w := newWorld(t)
++	b := w.browser(t)
++	login := b.get("/login")
++	mustLinkTo(t, login, "/recover")
++	if p := b.get("/recover"); p.Status != 200 {
++		t.Fatalf("recover page: %d", p.Status)
++	}
++}
++
++func TestUX002AdminOverviewLinksNetworkTerms(t *testing.T) {
++	w := newWorld(t)
++	b := w.browser(t)
++	b.login("admin@example.org")
++	ov := b.get(w.base() + "/admin")
++	if ov.Status != 200 {
++		t.Fatalf("admin overview: %d", ov.Status)
++	}
++	mustLinkTo(t, ov, w.base()+"/admin/terms")
++	if p := b.get(w.base() + "/admin/terms"); p.Status != 200 {
++		t.Fatalf("admin terms page: %d", p.Status)
++	}
++}
++
++// UX-034: a long word (a heading such as "Announcements" at 200 percent text
++// on a 320 pixel screen, or an identifier) must wrap instead of widening the
++// page. Every element inherits the wrap from body. Found by
++// e2e/tests/resize.spec.js.
++func TestUX034BodyWrapsLongWords(t *testing.T) {
++	w := newWorld(t)
++	css := w.browser(t).get("/static/style.css")
++	if css.Status != 200 {
++		t.Fatalf("style.css: %d", css.Status)
++	}
++	body := regexp.MustCompile(`(?m)^body\{[^}]*\}`).FindString(css.Body)
++	if !strings.Contains(body, "overflow-wrap:break-word") {
++		t.Errorf("the body rule does not wrap long words: %q", body)
++	}
++}
+-- 
+2.43.0
+
+
+From e3ddeba8f839f7debd836ee4bef710dca7c89248 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 09:16:57 +0000
+Subject: [PATCH 2/2] test(e2e): approval-mode seed; navigation, reflow, text,
+ focus-order and keyboard admin coverage
+
+- global-setup.js: a second instance (one setup secret creates one network)
+  with an approval-mode network "apply": Erin admin, Hana approved, Finn and
+  Gail pending, placeholder terms published. e2e/apply.js adds the asApply
+  and open fixtures and the session/homeOf helpers.
+- UX-002 navigation.spec: account security, two-step setup, password recovery
+  codes, inbox (+unread), rules, leave (blocked and form), terms (published),
+  own activity log, admin member action/inactive/reverse/pending adjustments/
+  pause or close/operator access/terms, membership requests and approval;
+  sign-in to registration and to account recovery. Both viewports.
+- UX-033 responsive.spec: 24 more pages, plus the two-step setup key and new
+  recovery codes (fresh account) and the ledger check result.
+- UX-034 resize.spec: 27 account, governance and admin pages with 200% text
+  and text spacing: preference applied to h1 and every main control, controls
+  visible and not covered, no page-level horizontal overflow.
+- UX-039 noscript-focus.spec: Tab stops strictly increase in DOM order, no CSS
+  reordering (order, reversed flex, grid placement), each stop starts on the
+  same line to the right or on a later line; 9 more pages.
+- UX-038 kbd-admin.spec: keyboard-only member approval, listing create and
+  edit, policy edit, each from Home.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ e2e/apply.js                     |  36 ++++++++
+ e2e/global-setup.js              |  77 ++++++++++++++++-
+ e2e/tests/kbd-admin.spec.js      |  90 ++++++++++++++++++++
+ e2e/tests/navigation.spec.js     |  54 ++++++++++--
+ e2e/tests/noscript-focus.spec.js |  52 ++++++++++--
+ e2e/tests/resize.spec.js         |  81 +++++++++++++++++-
+ e2e/tests/responsive.spec.js     | 141 +++++++++++++++++++++++--------
+ 7 files changed, 477 insertions(+), 54 deletions(-)
+ create mode 100644 e2e/apply.js
+ create mode 100644 e2e/tests/kbd-admin.spec.js
+
+diff --git a/e2e/apply.js b/e2e/apply.js
+new file mode 100644
+index 0000000..7bd36a0
+--- /dev/null
++++ b/e2e/apply.js
+@@ -0,0 +1,36 @@
++// The shared fixtures plus pages in the second seeded instance ("Apply Circle", see seedApply in global-setup.js):
++// people join it by request and administrator approval, and it has published terms.
++const path = require('path');
++const fixtures = require('./fixtures');
++
++const PREFIX = 'apply:';
++
++/** Context options for a row's role: "apply:<name>" is the approval-mode instance, other names the main seed, null signed out. */
++function session(st, who) {
++  if (who && who.startsWith(PREFIX)) {
++    return { baseURL: st.apply.base, storageState: path.join(fixtures.STATE_DIR, `apply-${who.slice(PREFIX.length)}.json`) };
++  }
++  return who ? { baseURL: st.base, storageState: path.join(fixtures.STATE_DIR, who + '.json') } : { baseURL: st.base };
++}
++
++/** The Home path of the network a row's role belongs to. */
++const homeOf = (st, who) => `/n/${who && who.startsWith(PREFIX) ? st.apply.slug : st.slug}`;
++
++const test = fixtures.test.extend({
++  /** Opens a new page in the approval-mode instance signed in as erin, hana, finn or gail. */
++  asApply: async ({ browser, st }, use) => {
++    const contexts = [];
++    await use(async (who) => {
++      const ctx = await browser.newContext({ ...session(st, PREFIX + who), bypassCSP: true });
++      contexts.push(ctx);
++      return ctx.newPage();
++    });
++    for (const c of contexts) await c.close();
++  },
++  /** Opens a signed-in page for a row's role, in whichever instance it belongs to. */
++  open: async ({ as, asApply }, use) => {
++    await use((who) => (who.startsWith(PREFIX) ? asApply(who.slice(PREFIX.length)) : as(who)));
++  },
++});
++
++module.exports = { ...fixtures, test, session, homeOf };
+diff --git a/e2e/global-setup.js b/e2e/global-setup.js
+index 1e29062..3d1ffa2 100644
+--- a/e2e/global-setup.js
++++ b/e2e/global-setup.js
+@@ -1,6 +1,7 @@
+ // Boots the real circula binary on a free loopback port with a temporary database, seeds it through
+ // the web forms (the same way a person would), and records what the tests need in .state/state.json.
+-// The returned function stops the binary and removes the temporary directory.
++// A second instance with an approval-mode network is seeded the same way (seedApply, state.apply).
++// The returned function stops both binaries and removes the temporary directories.
+ const fs = require('fs');
+ const os = require('os');
+ const net = require('net');
+@@ -130,7 +131,9 @@ module.exports = async function globalSetup() {
+   child.stdout.on('data', (d) => logs.push(d.toString()));
+   child.stderr.on('data', (d) => logs.push(d.toString()));
+ 
++  let applyInstance = null;
+   const teardown = async () => {
++    if (applyInstance) await applyInstance.stop();
+     if (child.exitCode === null) {
+       child.kill('SIGTERM');
+       await new Promise((r) => {
+@@ -149,6 +152,10 @@ module.exports = async function globalSetup() {
+     state.base = base;
+     state.slug = SLUG;
+     state.password = PASSWORD;
++    // A second instance, because one setup secret creates one network: see seedApply.
++    applyInstance = await startInstance();
++    state.apply = await seedApply(applyInstance.base);
++    state.apply.base = applyInstance.base;
+     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+   } catch (e) {
+     await teardown();
+@@ -344,6 +351,74 @@ async function seed(base) {
+   return state;
+ }
+ 
++const APPLY_SLUG = 'apply';
++
++/**
++ * Seeds the second instance: a network people join by request and administrator approval, with published terms.
++ * Erin founds it. Hana's request is approved here, so she is an active member with nothing blocking her from
++ * leaving. Finn's and Gail's requests stay pending: the keyboard test approves Finn, Gail stays pending for the
++ * page checks. Terms are published after the requests, so the members still have to accept them. Storage states
++ * are saved as apply-<name>.json. The terms text is placeholder test data, not proposed legal wording.
++ */
++async function seedApply(base) {
++  const { chromiumExecutable } = require('./launch');
++  const browser = await chromium.launch({ executablePath: chromiumExecutable(), args: ['--no-sandbox', '--disable-gpu'] });
++  const ctx = () => browser.newContext({ baseURL: base });
++  const st = { slug: APPLY_SLUG, users: { erin: 'erin@example.org', hana: 'hana@example.org', finn: 'finn@example.org', gail: 'gail@example.org' } };
++  try {
++    const c = await ctx();
++    const p = await c.newPage();
++    await register(p, st.users.erin);
++    await login(p, st.users.erin);
++    await p.goto('/setup');
++    await p.getByLabel('Setup secret').fill(SETUP_SECRET);
++    await p.getByLabel('Network name').fill('Apply Circle');
++    await p.getByLabel('Web address name').fill(APPLY_SLUG);
++    await p.getByLabel('Your display name in this network').fill('Erin Founder');
++    await p.getByLabel('Credit unit name').fill('credit');
++    await p.getByLabel('Default credit limit per member').fill('100.00');
++    await p.getByLabel('Sign-up grant').fill('0.00');
++    await p.getByLabel('How people join').selectOption('approval');
++    await submit(p, 'Create network');
++    if (!new URL(p.url()).pathname.startsWith(`/n/${APPLY_SLUG}`)) throw new Error('approval network not created, at ' + p.url());
++    await c.storageState({ path: path.join(STATE_DIR, 'apply-erin.json') });
++
++    for (const [key, display] of [['hana', 'Hana Member'], ['finn', 'Finn Applicant'], ['gail', 'Gail Applicant']]) {
++      const cc = await ctx();
++      const pp = await cc.newPage();
++      await register(pp, st.users[key]);
++      await login(pp, st.users[key]);
++      await pp.goto(`/n/${APPLY_SLUG}/join`);
++      await pp.getByLabel('Your display name').fill(display);
++      await submit(pp, 'Request to join');
++      await cc.storageState({ path: path.join(STATE_DIR, `apply-${key}.json`) });
++      await cc.close();
++    }
++
++    await p.goto(`/n/${APPLY_SLUG}/admin/members?status=pending`);
++    const approveHref = async (name) => {
++      const href = await p.locator('a[href$="/approve"]').filter({ hasText: name }).first().getAttribute('href');
++      if (!href) throw new Error('no pending request from ' + name);
++      return href;
++    };
++    const idOf = (href) => href.split('/').slice(-2)[0];
++    const hana = await approveHref('Hana Member');
++    st.hanaId = idOf(hana);
++    st.finnId = idOf(await approveHref('Finn Applicant'));
++    st.gailId = idOf(await approveHref('Gail Applicant'));
++    await p.goto(hana);
++    await submit(p, 'Approve');
++
++    await p.goto(`/n/${APPLY_SLUG}/admin/terms`);
++    await p.getByLabel('Terms text').fill('Placeholder terms for the automated tests.\n\nA second paragraph, so that the page shows more than one.');
++    await submit(p, 'Publish new version');
++    await c.close();
++  } finally {
++    await browser.close();
++  }
++  return st;
++}
++
+ module.exports.startInstance = startInstance;
+ module.exports.helpers = { register, login, submit, PASSWORD, SETUP_SECRET, SLUG };
+ module.exports.STATE_FILE = STATE_FILE;
+diff --git a/e2e/tests/kbd-admin.spec.js b/e2e/tests/kbd-admin.spec.js
+new file mode 100644
+index 0000000..6a9585c
+--- /dev/null
++++ b/e2e/tests/kbd-admin.spec.js
+@@ -0,0 +1,90 @@
++// UX-038 / UX-055: keyboard-only administration and listing journeys in the approval-mode instance (apply.js).
++// Each journey starts on Home and then uses only key presses: Tab to move, typing to fill, Space and arrow keys
++// for choices, Enter to follow links and submit. Nothing is clicked, filled or opened by URL after Home, so a
++// control that the keyboard cannot reach or operate fails the test. The shared demo network is not touched;
++// Gail's request stays pending for the page checks in other specs.
++const { test, expect } = require('../apply');
++const { tabTo, kbSubmit, kbActivate } = require('../kbd');
++
++const home = (st) => `/n/${st.apply.slug}`;
++
++async function startAtHome(page, st) {
++  await page.goto(home(st));
++  await expect(page.locator('h1')).toHaveText('Home');
++}
++
++/** Replaces the text of the focused field with the keyboard. */
++async function retype(page, text) {
++  await page.keyboard.press('ControlOrMeta+A');
++  await page.keyboard.press('Backspace');
++  await page.keyboard.type(text, { delay: 3 });
++}
++
++test('UX-038: approve a request to join using only the keyboard', async ({ asApply, st }) => {
++  const page = await asApply('erin');
++  await startAtHome(page, st);
++  await kbActivate(page, /^Network admin$/);
++  await expect(page.locator('h1')).toHaveText('Network admin');
++  await expect(page.locator('main')).toContainText('membership requests are waiting');
++  await kbActivate(page, /^Review requests$/);
++  await expect(page).toHaveURL((url) => url.pathname === `${home(st)}/admin/members` && url.searchParams.get('status') === 'pending');
++  const finn = page.locator('tbody tr').filter({ hasText: 'Finn Applicant' });
++  await expect(finn).toContainText('pending');
++  await kbActivate(page, /^Approve Finn Applicant$/);
++  await expect(page.locator('h1')).toHaveText('Approve: Finn Applicant?');
++  await kbActivate(page, /^Approve$/);
++  await expect(page.locator('#flash')).toContainText('Approve: done for Finn Applicant.');
++  await expect(page.locator('tbody tr').filter({ hasText: 'Finn Applicant' })).toContainText('active');
++  await expect(page.locator('tbody tr').filter({ hasText: 'Gail Applicant' })).toContainText('pending');
++});
++
++test('UX-038: create and then edit a listing using only the keyboard', async ({ asApply, st }) => {
++  const page = await asApply('hana');
++  await startAtHome(page, st);
++  await kbActivate(page, /^Listings$/);
++  await kbActivate(page, /^New listing$/);
++  await expect(page.locator('h1')).toBeVisible();
++
++  // The kind is a radio group: Tab reaches the checked option, an arrow key moves the choice.
++  await tabTo(page, /^Offer: something I provide$/);
++  await page.keyboard.press('ArrowDown');
++  await expect(page.getByLabel('Request: something I want', { exact: true })).toBeChecked();
++  await kbSubmit(page, [[/^Title$/, 'Keyboard-made shelf'], [/^Description$/, 'Wanted: a small wall shelf.'], [/^Price \(optional\)$/, '3.00']], /^Publish listing$/);
++  await expect(page.locator('#flash')).toContainText('Listing published.');
++  const created = page.locator('main li').filter({ hasText: 'Keyboard-made shelf' });
++  await expect(created).toContainText('Request:');
++
++  await kbActivate(page, /^Edit Keyboard-made shelf$/);
++  await tabTo(page, /^Title$/);
++  await retype(page, 'Keyboard-edited shelf');
++  await tabTo(page, /^Status/);
++  await page.keyboard.type('Paused'); // type-ahead on the focused select
++  await expect(page.getByLabel('Status', { exact: true })).toHaveValue('paused');
++  await kbActivate(page, /^Save$/);
++  await expect(page.locator('#flash')).toContainText('Listing saved.');
++  const edited = page.locator('main li').filter({ hasText: 'Keyboard-edited shelf' });
++  await expect(edited).toContainText('paused');
++  await expect(page.locator('main li').filter({ hasText: 'Keyboard-made shelf' })).toHaveCount(0);
++});
++
++test('UX-038: change the policy using only the keyboard', async ({ asApply, st }) => {
++  const page = await asApply('erin');
++  await startAtHome(page, st);
++  await kbActivate(page, /^Network admin$/);
++  await kbActivate(page, /^Policy$/);
++  await expect(page.locator('h1')).toHaveText('Network policy');
++  const window = page.getByLabel('Dispute window (days)', { exact: true });
++  const before = Number(await window.inputValue());
++  const after = String(before + 15); // a longer window is not adverse, so it applies at once
++  await tabTo(page, /^Dispute window \(days\)$/);
++  await retype(page, after);
++  await tabTo(page, /^Reason for the change$/);
++  await page.keyboard.type('Keyboard-only policy test: longer dispute window.', { delay: 3 });
++  await kbActivate(page, /^Save new version$/);
++  await expect(page.locator('#flash')).toContainText('Policy saved as a new version.');
++  await expect(window).toHaveValue(after);
++  await kbActivate(page, /^change log$/);
++  await expect(page.locator('h1')).toHaveText('Network rules');
++  await expect(page.locator('main')).toContainText(`Dispute window (days): ${before} to ${after}`);
++  await expect(page.locator('main')).toContainText('Reason: Keyboard-only policy test: longer dispute window.');
++});
+diff --git a/e2e/tests/navigation.spec.js b/e2e/tests/navigation.spec.js
+index 60e57ae..412a905 100644
+--- a/e2e/tests/navigation.spec.js
++++ b/e2e/tests/navigation.spec.js
+@@ -1,6 +1,7 @@
+ // UX-002: reach core and adjacent existing screens FROM Home in at most
+ // three rendered-link activations. Measured paths use GET navigation only.
+-const { test, expect } = require('../fixtures');
++// Rows whose role is "apply:<name>" run in the approval-mode instance (apply.js).
++const { test, expect, homeOf } = require('../apply');
+ 
+ const VIEWPORTS = [
+   { name: 'portrait', width: 320, height: 640 },
+@@ -16,6 +17,9 @@ const listings = route('/listings');
+ const disputes = route('/disputes');
+ const review = route('/review');
+ const pending = (st) => `${n(st)}/trades/${st.tradePending}`;
++const fixed = (path) => () => path;
++const apply = (suffix) => (st) => `/n/${st.apply.slug}${suffix}`;
++const applyRequests = apply('/admin/members?status=pending');
+ 
+ // [screen, role, actual link destinations in order]
+ const PATHS = [
+@@ -48,13 +52,38 @@ const PATHS = [
+   ['account time zone', 'alice', [() => '/account/time-zone']],
+   ['account password form', 'alice', [() => '/account/password']],
+   ['Help', 'alice', [() => '/help']],
++  ['account security', 'alice', [fixed('/account/security')]],
++  ['two-step sign-in setup', 'alice', [fixed('/account/security'), fixed('/account/security/mfa/enrol')]],
++  ['password recovery codes', 'alice', [fixed('/account/security'), fixed('/account/recovery-codes')]],
++  ['inbox', 'alice', [route('/inbox')]],
++  ['inbox, unread only', 'alice', [route('/inbox'), route('/inbox?show=unread')]],
++  ['network rules and change log', 'alice', [route('/policy')]],
++  ['leave the network (blocked)', 'alice', [route('/policy'), route('/leave')]],
++  ['own account activity log', 'alice', [history, route('/audit')]],
++  ['admin member action', 'admin', [admin, route('/admin/members'), (st) => `${n(st)}/admin/members/${st.bobId}/suspend`]],
++  ['admin inactive members', 'admin', [admin, route('/admin/members'), route('/admin/inactive')]],
++  ['admin reverse a trade', 'admin', [admin, route('/admin/reverse')]],
++  ['admin adjustments awaiting approval', 'admin', [admin, route('/admin/adjustments/pending')]],
++  ['admin pause or close', 'admin', [admin, route('/admin/network')]],
++  ['admin operator access', 'admin', [admin, route('/admin/break-glass')]],
++  ['admin network terms', 'admin', [admin, route('/admin/terms')]],
++  ['network terms (published)', 'apply:hana', [apply('/policy'), apply('/terms')]],
++  ['leave the network (form)', 'apply:hana', [apply('/policy'), apply('/leave')]],
++  ['admin membership requests', 'apply:erin', [apply('/admin'), applyRequests]],
++  ['admin approve a request', 'apply:erin', [apply('/admin'), applyRequests, (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/approve`]],
+ ];
+ 
+-async function startAtHome(page, st) {
+-  const response = await page.goto(n(st));
++// Before Home: the sign-in screen leads to the other signed-out entry points.
++const SIGNED_OUT = [
++  ['registration', [fixed('/register')]],
++  ['account recovery', [fixed('/recover')]],
++];
++
++async function startAtHome(page, st, home = n(st)) {
++  const response = await page.goto(home);
+   expect(response).not.toBeNull();
+   expect(response.status()).toBe(200);
+-  await expect(page).toHaveURL((url) => url.pathname.replace(/\/$/, '') === n(st));
++  await expect(page).toHaveURL((url) => url.pathname.replace(/\/$/, '') === home);
+   await expect(page.locator('h1')).toHaveText('Home');
+   await expect(page.getByRole('region', { name: 'Your balance', exact: true })).toBeVisible();
+ }
+@@ -77,10 +106,21 @@ async function followPath(page, st, destinations) {
+ 
+ for (const viewport of VIEWPORTS) {
+   for (const [name, who, pathOf] of PATHS) {
+-    test(`UX-002: ${name} from Home within three activations, ${viewport.name}`, async ({ as, st }) => {
+-      const page = await as(who);
++    test(`UX-002: ${name} from Home within three activations, ${viewport.name}`, async ({ open, st }) => {
++      const page = await open(who);
++      await page.setViewportSize({ width: viewport.width, height: viewport.height });
++      await startAtHome(page, st, homeOf(st, who));
++      await followPath(page, st, pathOf.map((path) => path(st)));
++    });
++  }
++
++  for (const [name, pathOf] of SIGNED_OUT) {
++    test(`UX-002: ${name} from sign-in within three activations, ${viewport.name}`, async ({ page, st }) => {
+       await page.setViewportSize({ width: viewport.width, height: viewport.height });
+-      await startAtHome(page, st);
++      const response = await page.goto('/login');
++      expect(response).not.toBeNull();
++      expect(response.status()).toBe(200);
++      await expect(page.locator('h1')).toHaveText('Sign in');
+       await followPath(page, st, pathOf.map((path) => path(st)));
+     });
+   }
+diff --git a/e2e/tests/noscript-focus.spec.js b/e2e/tests/noscript-focus.spec.js
+index 9434970..f48b54b 100644
+--- a/e2e/tests/noscript-focus.spec.js
++++ b/e2e/tests/noscript-focus.spec.js
+@@ -1,7 +1,9 @@
+ // QA-034 / UX-040: visible keyboard focus on the named core-flow entry screens.
++// UX-039: focus order follows reading order. Each Tab stop comes later in the DOM than the one before
++// (no positive tabindex), no CSS reorders a stop or its containers (order, reversed flex, grid placement),
++// and each stop starts on the same line to the right of the one before or on a later line.
+ // GET-only: no control is activated and no seeded transaction is changed.
+-const path = require('path');
+-const { test, expect, STATE_DIR } = require('../fixtures');
++const { test, expect, session } = require('../apply');
+ 
+ const VIEWPORTS = [
+   { name: 'portrait', width: 320, height: 640 },
+@@ -17,17 +19,24 @@ const PAGES = [
+   ['balance', 'alice', (st) => `/n/${st.slug}`],
+   ['history', 'alice', (st) => `/n/${st.slug}/history`],
+   ['dispute raise', 'bob', (st) => `/n/${st.slug}/trades/${st.tradeDone}/dispute`],
++  ['sign-in', null, () => '/login'],
++  ['account security', 'alice', () => '/account/security'],
++  ['network rules', 'alice', (st) => `/n/${st.slug}/policy`],
++  ['new listing', 'alice', (st) => `/n/${st.slug}/listings/new`],
++  ['edit own listing', 'alice', (st) => st.listingEdit],
++  ['admin members', 'admin', (st) => `/n/${st.slug}/admin/members`],
++  ['admin policy', 'admin', (st) => `/n/${st.slug}/admin/policy`],
++  ['admin approve a request', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/approve`],
++  ['network terms (to accept)', 'apply:hana', (st) => `/n/${st.apply.slug}/terms`],
+ ];
+ 
+ for (const viewport of VIEWPORTS) {
+   for (const [name, who, pathOf] of PAGES) {
+-    test(`QA-034/UX-040: no-script focus, ${name}, ${viewport.name}`, async ({ browser, st }) => {
+-      const options = {
+-        baseURL: st.base, javaScriptEnabled: false,
++    test(`QA-034/UX-039/UX-040: no-script focus, ${name}, ${viewport.name}`, async ({ browser, st }) => {
++      const context = await browser.newContext({
++        ...session(st, who), javaScriptEnabled: false,
+         viewport: { width: viewport.width, height: viewport.height },
+-      };
+-      if (who) options.storageState = path.join(STATE_DIR, who + '.json');
+-      const context = await browser.newContext(options);
++      });
+       try {
+         const page = await context.newPage();
+         const response = await page.goto(pathOf(st));
+@@ -37,6 +46,7 @@ for (const viewport of VIEWPORTS) {
+         expect(positive, 'no positive tabindex').toBe(0);
+         const seen = new Set();
+         let ended = false;
++        let previous = null;
+         for (let i = 0; i < 120; i++) {
+           await page.keyboard.press('Tab');
+           const stop = await page.evaluate(() => {
+@@ -53,9 +63,22 @@ for (const viewport of VIEWPORTS) {
+                 if (hit && (hit === el || el.contains(hit))) unoccluded = true;
+               }
+             }
++            // CSS that would show a stop somewhere other than its DOM position.
++            let reordered = '';
++            for (let node = el; node && node !== document.body && !reordered; node = node.parentElement) {
++              const ns = getComputedStyle(node);
++              const parent = node.parentElement ? getComputedStyle(node.parentElement) : null;
++              if (ns.order !== '0') reordered = `order ${ns.order} on ${node.tagName}`;
++              else if (parent && /flex/.test(parent.display) && /reverse/.test(parent.flexDirection + ' ' + parent.flexWrap)) reordered = `reversed flex around ${node.tagName}`;
++              else if (parent && /grid/.test(parent.display) && (ns.gridRowStart !== 'auto' || ns.gridColumnStart !== 'auto' || /dense/.test(parent.gridAutoFlow))) reordered = `grid placement of ${node.tagName}`;
++            }
++            const first = el.getClientRects()[0] || rect;
+             return {
+               index: Array.from(document.querySelectorAll('*')).indexOf(el),
+               name: (el.getAttribute('aria-label') || el.innerText || el.tagName).replace(/\s+/g, ' ').trim(),
++              reordered,
++              // Where the stop starts in the page (its first line box), independent of scrolling.
++              start: { top: first.top + scrollY, bottom: first.bottom + scrollY, left: first.left + scrollX },
+               ring: (cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2) || cs.boxShadow !== 'none',
+               visible: cs.visibility === 'visible' && parseFloat(cs.opacity) > 0 && right > left && bottom > top,
+               unoccluded,
+@@ -63,6 +86,19 @@ for (const viewport of VIEWPORTS) {
+           });
+           if (!stop || seen.has(stop.index)) { ended = true; break; }
+           seen.add(stop.index);
++          expect(stop.reordered, `${stop.name}: no CSS moves this stop away from its DOM position`).toBe('');
++          if (previous) {
++            expect(stop.index, `${stop.name}: Tab moves forward in DOM (reading) order after ${previous.name}`).toBeGreaterThan(previous.index);
++            const a = previous.start, b = stop.start;
++            const overlap = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
++            const sameLine = overlap > Math.min(a.bottom - a.top, b.bottom - b.top) / 2;
++            if (sameLine) {
++              expect(b.left, `${stop.name}: on the line of ${previous.name}, it starts to its right`).toBeGreaterThanOrEqual(a.left - 1);
++            } else {
++              expect(b.top, `${stop.name}: on a later line than ${previous.name}`).toBeGreaterThanOrEqual(a.top - 1);
++            }
++          }
++          previous = stop;
+           expect(stop.visible, `${stop.name}: focused control intersects viewport`).toBe(true);
+           expect(stop.unoccluded, `${stop.name}: a sampled visible focus point is not covered`).toBe(true);
+           expect(stop.ring, `${stop.name}: visible focus indicator`).toBe(true);
+diff --git a/e2e/tests/resize.spec.js b/e2e/tests/resize.spec.js
+index 4b13ece..688c61d 100644
+--- a/e2e/tests/resize.spec.js
++++ b/e2e/tests/resize.spec.js
+@@ -1,6 +1,7 @@
+ // UX-034: user text preferences must leave the proposal review flow usable.
+ // Stop at review: these tests never click Send trade or post ledger entries.
+-const { test, expect } = require('../fixtures');
++// Rows whose role is "apply:<name>" use the approval-mode instance (apply.js).
++const { test, expect } = require('../apply');
+ 
+ const VIEWPORTS = [
+   { name: 'portrait', width: 320, height: 640 },
+@@ -82,6 +83,8 @@ for (const viewport of VIEWPORTS) {
+ 
+ // Apply the preference to every new document and verify the actual control text,
+ // rather than merely checking that a style tag was inserted.
++// Chromium draws a select (menu list) at its own line height whatever any style says,
++// so the line-height part of the spacing check does not apply to select elements.
+ async function preferControls(page, preference, controls) {
+   const before = await Promise.all(controls.map(fontSize));
+   await applyPreference(page, preference, await fontSize(page.locator('html')));
+@@ -92,9 +95,9 @@ async function preferControls(page, preference, controls) {
+     } else {
+       const s = await control.evaluate((el) => {
+         const cs = getComputedStyle(el);
+-        return { font: parseFloat(cs.fontSize), line: parseFloat(cs.lineHeight), letter: parseFloat(cs.letterSpacing), word: parseFloat(cs.wordSpacing) };
++        return { tag: el.tagName, font: parseFloat(cs.fontSize), line: parseFloat(cs.lineHeight), letter: parseFloat(cs.letterSpacing), word: parseFloat(cs.wordSpacing) };
+       });
+-      expect(s.line).toBeCloseTo(s.font * 1.5, 1);
++      if (s.tag !== 'SELECT') expect(s.line).toBeCloseTo(s.font * 1.5, 1);
+       expect(s.letter).toBeCloseTo(s.font * 0.12, 1);
+       expect(s.word).toBeCloseTo(s.font * 0.16, 1);
+     }
+@@ -262,3 +265,75 @@ for (const viewport of VIEWPORTS) {
+     });
+   }
+ }
++
++// UX-034 on the account, governance and administration pages (GET only). With each preference the heading and
++// every control in main keep the enlarged or spaced text, can be scrolled into view, are not covered by other
++// content, and the page still reflows without page-level horizontal scrolling (UX-033).
++const PAGES = [
++  ['account security', 'alice', () => '/account/security'],
++  ['two-step sign-in setup', 'alice', () => '/account/security/mfa/enrol'],
++  ['password recovery codes', 'alice', () => '/account/recovery-codes'],
++  ['account recovery (signed out)', null, () => '/recover'],
++  ['network rules and change log', 'alice', (st) => `/n/${st.slug}/policy`],
++  ['leave the network (blocked)', 'alice', (st) => `/n/${st.slug}/leave`],
++  ['network terms (published, to accept)', 'apply:hana', (st) => `/n/${st.apply.slug}/terms`],
++  ['leave the network (form)', 'apply:hana', (st) => `/n/${st.apply.slug}/leave`],
++  ['admin overview', 'admin', (st) => `/n/${st.slug}/admin`],
++  ['admin members', 'admin', (st) => `/n/${st.slug}/admin/members`],
++  ['admin suspend member form', 'admin', (st) => `/n/${st.slug}/admin/members/${st.bobId}/suspend`],
++  ['admin set credit limit form', 'admin', (st) => `/n/${st.slug}/admin/members/${st.bobId}/limit`],
++  ['admin policy form', 'admin', (st) => `/n/${st.slug}/admin/policy`],
++  ['admin adjustment form', 'admin', (st) => `/n/${st.slug}/admin/adjust`],
++  ['admin audit and checks', 'admin', (st) => `/n/${st.slug}/admin/audit`],
++  ['admin invitations', 'admin', (st) => `/n/${st.slug}/admin/invitations`],
++  ['admin announcements', 'admin', (st) => `/n/${st.slug}/admin/announcements`],
++  ['admin exports', 'admin', (st) => `/n/${st.slug}/admin/exports`],
++  ['admin reports', 'admin', (st) => `/n/${st.slug}/admin/reports?status=all`],
++  ['admin reverse a trade', 'admin', (st) => `/n/${st.slug}/admin/reverse?tx=${st.tradeReverse}`],
++  ['admin inactive members', 'admin', (st) => `/n/${st.slug}/admin/inactive`],
++  ['admin adjustments awaiting approval', 'admin', (st) => `/n/${st.slug}/admin/adjustments/pending`],
++  ['admin pause or close', 'admin', (st) => `/n/${st.slug}/admin/network`],
++  ['admin operator access', 'admin', (st) => `/n/${st.slug}/admin/break-glass`],
++  ['admin membership requests', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members?status=pending`],
++  ['admin approve a request', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/approve`],
++  ['admin network terms (published)', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/terms`],
++];
++
++const CONTROLS = 'a[href], button, input:not([type="hidden"]), select, textarea, [tabindex="0"]';
++
++for (const viewport of VIEWPORTS) {
++  for (const preference of PREFERENCES) {
++    for (const [name, who, pathOf] of PAGES) {
++      test(`UX-034: ${name} with ${preference}, ${viewport.name}`, async ({ st, open, page: anon }) => {
++        const page = who ? await open(who) : anon;
++        await page.setViewportSize({ width: viewport.width, height: viewport.height });
++        const response = await page.goto(pathOf(st));
++        expect(response, `${name}: navigation response`).not.toBeNull();
++        expect(response.status(), `${name}: status`).toBe(200);
++        const controls = page.locator('main').locator(CONTROLS);
++        const count = await controls.count();
++        const list = [page.locator('h1')];
++        for (let i = 0; i < count; i++) list.push(controls.nth(i));
++        await preferControls(page, preference, list);
++
++        const layout = await page.evaluate((selector) => {
++          const covered = [];
++          for (const el of document.querySelector('main').querySelectorAll(selector)) {
++            el.scrollIntoView({ block: 'center', inline: 'nearest' });
++            const r = el.getBoundingClientRect();
++            const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
++            if (!hit || !(hit === el || el.contains(hit) || hit.contains(el) || (el.labels && [...el.labels].some((l) => l.contains(hit))))) {
++              covered.push((el.getAttribute('aria-label') || el.innerText || el.name || el.tagName).replace(/\s+/g, ' ').trim());
++            }
++          }
++          const root = document.documentElement;
++          return { covered, viewport: root.clientWidth, document: Math.max(root.scrollWidth, document.body.scrollWidth) };
++        }, CONTROLS);
++        expect(layout.covered, `${name}: controls covered by other content with ${preference}`).toEqual([]);
++        expect(layout.viewport).toBeGreaterThan(0);
++        expect(layout.document, `${name}: page-level horizontal overflow with ${preference} at ${viewport.name}`)
++          .toBeLessThanOrEqual(layout.viewport);
++      });
++    }
++  }
++}
+diff --git a/e2e/tests/responsive.spec.js b/e2e/tests/responsive.spec.js
+index 13bd92b..f48949b 100644
+--- a/e2e/tests/responsive.spec.js
++++ b/e2e/tests/responsive.spec.js
+@@ -1,6 +1,7 @@
+ // UX-033 / UX-036: representative core screens in portrait and landscape.
+ // These tests navigate seeded pages only; they do not post trades or change policy.
+-const { test, expect } = require('../fixtures');
++// Rows whose role is "apply:<name>" use the approval-mode instance (apply.js).
++const { test, expect } = require('../apply');
+ 
+ const VIEWPORTS = [
+   { name: '320px portrait', width: 320, height: 640 },
+@@ -63,12 +64,35 @@ const PAGES = [
+   ['review queue', 'admin', (st) => `/n/${st.slug}/review`],
+   ['dispute (reviewer)', 'admin', (st) => st.disputePath],
+   ['re-review requested (original reviewer)', 'admin', (st) => st.disputeReReview],
++  ['account recovery (signed out)', null, () => '/recover'],
++  ['account security', 'alice', () => '/account/security'],
++  ['two-step sign-in setup', 'alice', () => '/account/security/mfa/enrol'],
++  ['password recovery codes', 'alice', () => '/account/recovery-codes'],
++  ['network rules and change log', 'alice', (st) => `/n/${st.slug}/policy`],
++  ['network terms (none published)', 'alice', (st) => `/n/${st.slug}/terms`],
++  ['leave the network (blocked)', 'alice', (st) => `/n/${st.slug}/leave`],
++  ['own account activity log', 'alice', (st) => `/n/${st.slug}/audit`],
++  ['admin inactive members', 'admin', (st) => `/n/${st.slug}/admin/inactive`],
++  ['admin adjustments awaiting approval', 'admin', (st) => `/n/${st.slug}/admin/adjustments/pending`],
++  ['admin pause or close', 'admin', (st) => `/n/${st.slug}/admin/network`],
++  ['admin operator access', 'admin', (st) => `/n/${st.slug}/admin/break-glass`],
++  ['admin network terms (none published)', 'admin', (st) => `/n/${st.slug}/admin/terms`],
++  ['admin set credit limit form', 'admin', (st) => `/n/${st.slug}/admin/members/${st.bobId}/limit`],
++  ['network terms (published, to accept)', 'apply:hana', (st) => `/n/${st.apply.slug}/terms`],
++  ['network rules (with terms)', 'apply:hana', (st) => `/n/${st.apply.slug}/policy`],
++  ['leave the network (form)', 'apply:hana', (st) => `/n/${st.apply.slug}/leave`],
++  ['admin overview (requests waiting)', 'apply:erin', (st) => `/n/${st.apply.slug}/admin`],
++  ['admin membership requests', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members?status=pending`],
++  ['admin approve a request', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/approve`],
++  ['admin deny a request', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/members/${st.apply.gailId}/deny`],
++  ['admin network terms (published)', 'apply:erin', (st) => `/n/${st.apply.slug}/admin/terms`],
++  ['join by request (signed in)', 'apply:gail', (st) => `/n/${st.apply.slug}/join`],
+ ];
+ 
+ for (const viewport of VIEWPORTS) {
+   for (const [name, who, pathOf, expectedPathOf = pathOf] of PAGES) {
+-    test(`UX-033/UX-036: ${name}, ${viewport.name}`, async ({ st, as, page: anon }) => {
+-      const page = who ? await as(who) : anon;
++    test(`UX-033/UX-036: ${name}, ${viewport.name}`, async ({ st, open, page: anon }) => {
++      const page = who ? await open(who) : anon;
+       await page.setViewportSize({ width: viewport.width, height: viewport.height });
+       const path = pathOf(st);
+       const response = await page.goto(path);
+@@ -76,41 +100,88 @@ for (const viewport of VIEWPORTS) {
+       expect(response.status(), `${name}: status`).toBe(200);
+       const expectedPath = new URL(expectedPathOf(st), st.base).pathname.replace(/\/$/, '');
+       await expect(page).toHaveURL((url) => url.pathname.replace(/\/$/, '') === expectedPath);
+-      await expect(page.locator('main')).toBeVisible();
+-      await expect(page.locator('h1')).toHaveCount(1);
+-      await expect(page.locator('h1')).toBeVisible();
++      await expectReflow(page, name, viewport);
++    });
++  }
++}
+ 
+-      const layout = await page.evaluate(() => {
+-        const root = document.documentElement;
+-        const tableIssues = [];
+-        for (const table of document.querySelectorAll('table')) {
+-          // Horizontal scrolling is allowed inside a labelled, focusable table region.
+-          for (let parent = table.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
+-            const style = getComputedStyle(parent);
+-            if (parent.scrollWidth <= parent.clientWidth || !['auto', 'scroll'].includes(style.overflowX)) continue;
+-            const labelledBy = (parent.getAttribute('aria-labelledby') || '').split(/\s+/)
+-              .map((id) => document.getElementById(id)?.textContent || '').join(' ').trim();
+-            const label = (parent.getAttribute('aria-label') || '').trim() || labelledBy;
+-            if (parent.getAttribute('role') !== 'region' || parent.tabIndex < 0 || !label) {
+-              tableIssues.push(table.caption?.textContent.trim() || 'unnamed table');
+-            }
+-            break;
+-          }
++/** UX-033: one h1 in a visible main, no page-level horizontal overflow, and scrolling tables in labelled focusable regions. */
++async function expectReflow(page, name, viewport) {
++  await expect(page.locator('main')).toBeVisible();
++  await expect(page.locator('h1')).toHaveCount(1);
++  await expect(page.locator('h1')).toBeVisible();
++
++  const layout = await page.evaluate(() => {
++    const root = document.documentElement;
++    const tableIssues = [];
++    for (const table of document.querySelectorAll('table')) {
++      // Horizontal scrolling is allowed inside a labelled, focusable table region.
++      for (let parent = table.parentElement; parent && parent !== document.body; parent = parent.parentElement) {
++        const style = getComputedStyle(parent);
++        if (parent.scrollWidth <= parent.clientWidth || !['auto', 'scroll'].includes(style.overflowX)) continue;
++        const labelledBy = (parent.getAttribute('aria-labelledby') || '').split(/\s+/)
++          .map((id) => document.getElementById(id)?.textContent || '').join(' ').trim();
++        const label = (parent.getAttribute('aria-label') || '').trim() || labelledBy;
++        if (parent.getAttribute('role') !== 'region' || parent.tabIndex < 0 || !label) {
++          tableIssues.push(table.caption?.textContent.trim() || 'unnamed table');
+         }
+-        return {
+-          viewportWidth: root.clientWidth,
+-          documentWidth: Math.max(root.scrollWidth, document.body.scrollWidth),
+-          tableIssues,
+-        };
+-      });
++        break;
++      }
++    }
++    return {
++      viewportWidth: root.clientWidth,
++      documentWidth: Math.max(root.scrollWidth, document.body.scrollWidth),
++      tableIssues,
++    };
++  });
+ 
+-      expect(layout.viewportWidth, `${name}: viewport is present`).toBeGreaterThan(0);
+-      expect(layout.documentWidth, `${name}: page-level horizontal overflow at ${viewport.name}`)
+-        .toBeLessThanOrEqual(layout.viewportWidth);
+-      expect(layout.tableIssues, `${name}: scrolling tables need a labelled keyboard-focusable region`)
+-        .toEqual([]);
+-    });
+-  }
++  expect(layout.viewportWidth, `${name}: viewport is present`).toBeGreaterThan(0);
++  expect(layout.documentWidth, `${name}: page-level horizontal overflow at ${viewport.name}`)
++    .toBeLessThanOrEqual(layout.viewportWidth);
++  expect(layout.tableIssues, `${name}: scrolling tables need a labelled keyboard-focusable region`)
++    .toEqual([]);
++}
++
++// One-time pages that only a form post shows. Each uses a fresh account or a read-only check, so the
++// shared seed keeps its state.
++for (const viewport of VIEWPORTS) {
++  test(`UX-033/UX-036: two-step sign-in setup key and password recovery codes (fresh account), ${viewport.name}`, async ({ page, st }) => {
++    const login = `reflow-${viewport.width}@example.org`;
++    await page.setViewportSize({ width: viewport.width, height: viewport.height });
++    await page.goto('/register');
++    await page.getByLabel('Login', { exact: true }).fill(login);
++    await page.getByLabel('Password', { exact: true }).fill(st.password);
++    await page.getByLabel('Confirm password', { exact: true }).fill(st.password);
++    await page.getByRole('button', { name: 'Create account', exact: true }).click();
++    await expect(page).toHaveURL((url) => url.pathname === '/login');
++    await page.getByLabel('Login', { exact: true }).fill(login);
++    await page.getByLabel('Password', { exact: true }).fill(st.password);
++    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
++    await expect(page).toHaveURL((url) => url.pathname === '/');
++
++    await page.goto('/account/security/mfa/enrol');
++    await page.getByLabel('Password', { exact: true }).fill(st.password);
++    await page.getByRole('button', { name: 'Start setup', exact: true }).click();
++    await expect(page.getByLabel('Code from your app', { exact: true })).toBeVisible();
++    await expect(page.locator('main code').first()).toBeVisible();
++    await expectReflow(page, 'two-step sign-in setup key', viewport);
++
++    await page.goto('/account/recovery-codes');
++    await page.getByLabel('Current password', { exact: true }).fill(st.password);
++    await page.getByRole('button', { name: 'Make new recovery codes', exact: true }).click();
++    await expect(page.locator('ol.codes li')).toHaveCount(10);
++    await expectReflow(page, 'new password recovery codes', viewport);
++  });
++
++  test(`UX-033/UX-036: ledger consistency check result, ${viewport.name}`, async ({ asApply, st }) => {
++    const page = await asApply('erin');
++    await page.setViewportSize({ width: viewport.width, height: viewport.height });
++    await page.goto(`/n/${st.apply.slug}/admin/audit`);
++    await page.getByRole('button', { name: 'Run consistency check', exact: true }).click();
++    await expect(page).toHaveURL((url) => url.pathname === `/n/${st.apply.slug}/admin/check`);
++    await expect(page.getByRole('link', { name: 'Back to audit and checks', exact: true })).toBeVisible();
++    await expectReflow(page, 'ledger check result', viewport);
++  });
+ }
+ 
+ for (const viewport of VIEWPORTS) {
+-- 
+2.43.0
+

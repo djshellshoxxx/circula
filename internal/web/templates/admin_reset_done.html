@@ -1,0 +1,6 @@
+{{define "content"}}
+<p class="big">Temporary password for {{.D.Name}}</p>
+<p><strong>This is the only time it is shown.</strong> Give it to {{.D.Name}} in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended.</p>
+<p><code class="temp">{{.D.Temp}}</code></p>
+<p><a class="btn secondary" href="/n/{{.Slug}}/admin/members">Back to members</a></p>
+{{end}}

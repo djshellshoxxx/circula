@@ -1,0 +1,745 @@
+From 2204e34eef64b1b6fc7c153a67c442e0d261c79a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 00:57:50 +0000
+Subject: [PATCH 1/2] wip(boundary-fuzz): cursor fuzz target and dispute
+ deadline clock tests (interrupted; unverified)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/api/cursor_fuzz_test.go              |  90 +++++++
+ .../service/dispute_deadline_clock_test.go    | 240 ++++++++++++++++++
+ 2 files changed, 330 insertions(+)
+ create mode 100644 internal/api/cursor_fuzz_test.go
+ create mode 100644 internal/service/dispute_deadline_clock_test.go
+
+diff --git a/internal/api/cursor_fuzz_test.go b/internal/api/cursor_fuzz_test.go
+new file mode 100644
+index 0000000..042967c
+--- /dev/null
++++ b/internal/api/cursor_fuzz_test.go
+@@ -0,0 +1,90 @@
++package api
++
++import (
++	"bytes"
++	"encoding/base64"
++	"encoding/json"
++	"errors"
++	"strings"
++	"testing"
++	"unicode/utf8"
++)
++
++// ARC-010 (TB1) / API-034 / API-035: the pagination cursor is attacker input.
++// Decoding any byte string must not panic; a cursor opens only for the filter
++// it was minted for and only when this server minted it; every refusal is the
++// same 400 invalid-cursor problem, whatever was wrong with it.
++
++var (
++	fuzzCursorKey  = bytes.Repeat([]byte{0x5a}, 32)
++	fuzzCursorKey2 = bytes.Repeat([]byte{0xa5}, 32)
++)
++
++func wantInvalidCursor(t *testing.T, err error) {
++	t.Helper()
++	var ae *apiError
++	if !errors.As(err, &ae) || ae.status != 400 || ae.code != "invalid-cursor" || ae.detail != "cursor is not valid for this request" {
++		t.Fatalf("refusal = %#v, want the uniform 400 invalid-cursor problem", err)
++	}
++}
++
++func FuzzOpenCursor(f *testing.F) {
++	s := &server{cursor: fuzzCursorKey}
++	other := &server{cursor: fuzzCursorKey2}
++	filter := "/api/v1/transactions|net-1|person-1|completed|"
++	valid := s.sealCursor("018f0000-0000-7000-8000-000000000042", filter)
++	payload, sig, _ := strings.Cut(valid, ".")
++	for _, tok := range []string{
++		valid, "", ".", "..", valid + ".", "." + sig, payload + ".", payload, valid + "A", valid[:len(valid)-1],
++		strings.ToUpper(valid), strings.Replace(valid, ".", "..", 1), payload + "." + sig + "=", payload + "=." + sig,
++		payload + "\n." + sig, other.sealCursor("x", filter), s.sealCursor("x", filter+"x"), s.sealCursor("", filter),
++		base64.RawURLEncoding.EncodeToString([]byte(`{"p":"x","f":"` + filter + `"}`)) + "." + sig,
++		base64.RawURLEncoding.EncodeToString([]byte(`not json`)) + "." + base64.RawURLEncoding.EncodeToString(s.mac([]byte(`not json`))),
++		"%00", "\x00.\x00", strings.Repeat("A", 4096) + "." + strings.Repeat("B", 4096),
++	} {
++		f.Add(tok, filter, "pos")
++	}
++	f.Add(valid, "", "")
++	f.Add(valid, "\xff", "\xfe")
++	f.Fuzz(func(t *testing.T, tok, filter, pos string) {
++		// Arbitrary tokens: either the uniform refusal, or a token that this
++		// key minted for exactly this filter (the fuzzer cannot forge the MAC,
++		// so the only accepted inputs are re-encodings of minted payloads).
++		got, err := s.openCursor(tok, filter)
++		if err != nil {
++			wantInvalidCursor(t, err)
++		} else {
++			enc, _, _ := strings.Cut(tok, ".")
++			raw, derr := base64.RawURLEncoding.DecodeString(enc)
++			want, _ := json.Marshal(cursorBody{P: got, F: filter})
++			if derr != nil || !bytes.Equal(raw, want) {
++				t.Fatalf("accepted %q for filter %q with a payload this server never minted: %q", tok, filter, raw)
++			}
++			if _, err := other.openCursor(tok, filter); err == nil {
++				t.Fatalf("token %q opened under a different cursor key", tok)
++			}
++		}
++
++		// Minted tokens: URL-safe, and bound to filter and key. Cursors only
++		// carry ids and filter strings; JSON cannot carry invalid UTF-8, so the
++		// round trip is only promised for valid UTF-8 (see the trust-boundary
++		// checklist, TB1 notes).
++		minted := s.sealCursor(pos, filter)
++		if strings.Trim(minted, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.") != "" {
++			t.Fatalf("minted cursor %q is not URL-safe", minted)
++		}
++		if _, err := other.openCursor(minted, filter); err == nil {
++			t.Fatal("cursor opened under a different key")
++		}
++		if _, err := s.openCursor(minted, filter+"|x"); err == nil {
++			t.Fatal("cursor opened for a different filter")
++		}
++		if !utf8.ValidString(pos) || !utf8.ValidString(filter) {
++			return
++		}
++		back, err := s.openCursor(minted, filter)
++		if err != nil || back != pos {
++			t.Fatalf("round trip of %q for %q = %q, %v", pos, filter, back, err)
++		}
++	})
++}
+diff --git a/internal/service/dispute_deadline_clock_test.go b/internal/service/dispute_deadline_clock_test.go
+new file mode 100644
+index 0000000..888e4e6
+--- /dev/null
++++ b/internal/service/dispute_deadline_clock_test.go
+@@ -0,0 +1,240 @@
++package service_test
++
++import (
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// QA-013 (GOV-013, GOV-014, FR-071, FR-076, FR-078): every dispute deadline is
++// elapsed-time arithmetic on UTC instants. Driven by the injected clock, the
++// raise window, the response deadline, the decision target and the re-review
++// window each fall exactly N*24h after their start, whether the window spans a
++// daylight-saving change (EU, US, southern hemisphere) or the end of the year,
++// and whatever zone the injected clock reports its instants in. One
++// millisecond either side of each boundary is checked.
++
++// zonedClock reports the inner clock's instants in loc, as a host clock in a
++// daylight-saving zone would.
++type zonedClock struct {
++	inner domain.Clock
++	loc   *time.Location
++}
++
++func (z zonedClock) Now() time.Time { return z.inner.Now().In(z.loc) }
++
++func mustZone(t *testing.T, name string) *time.Location {
++	t.Helper()
++	loc, err := time.LoadLocation(name) // the service package embeds time/tzdata
++	if err != nil {
++		t.Fatalf("zone %s: %v", name, err)
++	}
++	return loc
++}
++
++// newDeadlineWorld is newWorld with the policy windows set to the defaults and
++// the service clock reporting its instants in loc.
++func newDeadlineWorld(t *testing.T, loc *time.Location) *world {
++	t.Helper()
++	def := domain.DefaultPolicy()
++	return newWorldCfg(t, func(p *domain.Policy) {
++		p.ResponsePeriodDays = def.ResponsePeriodDays
++		p.DisputeWindowDays = def.DisputeWindowDays
++		p.ReReviewWindowDays = def.ReReviewWindowDays
++	}, func(c *service.Config) { c.Clock = zonedClock{inner: c.Clock, loc: loc} })
++}
++
++// advanceTo moves the fake clock forward to at exactly.
++func (w *world) advanceTo(t *testing.T, at time.Time) {
++	t.Helper()
++	d := at.Sub(w.Clock.Now())
++	if d < 0 {
++		t.Fatalf("clock at %s cannot move back to %s", w.Clock.Now(), at)
++	}
++	w.Clock.Advance(d)
++}
++
++func days(n int) time.Duration { return time.Duration(n) * 24 * time.Hour }
++
++func notificationBodies(t *testing.T, w *world, a domain.Actor, kind string) []string {
++	t.Helper()
++	var out []string
++	for _, n := range tu.Must(w.Svc.ListNotifications(w.Ctx, a, w.net.ID, service.NotificationQuery{})) {
++		if n.Kind == kind {
++			out = append(out, n.Body)
++		}
++	}
++	return out
++}
++
++func wantErrMention(t *testing.T, err error, target *domain.Error, date string) {
++	t.Helper()
++	wantCode(t, err, target)
++	if !strings.Contains(err.Error(), date) {
++		t.Fatalf("refusal %q does not name the UTC date %s", err, date)
++	}
++}
++
++var deadlineZones = []string{"UTC", "Europe/Berlin", "America/New_York", "Australia/Sydney"}
++
++func TestDisputeDeadlinesAcrossDSTAndYearBoundary(t *testing.T) {
++	cases := []struct {
++		name   string
++		opened time.Time // UTC instant the disputes are opened
++	}{
++		// Response window spans the US spring change (8 Mar 2026); the
++		// re-review window spans the EU (29 Mar) and Sydney (5 Apr) changes.
++		{"US spring forward", time.Date(2026, 3, 2, 12, 0, 0, 0, time.UTC)},
++		// Response window spans the EU spring change (29 Mar 2026, 01:00 UTC).
++		{"EU spring forward", time.Date(2026, 3, 26, 0, 30, 0, 0, time.UTC)},
++		// Response window spans the EU autumn change (25 Oct 2026); the
++		// decision target spans the US autumn change (1 Nov 2026).
++		{"EU fall back", time.Date(2026, 10, 20, 22, 30, 0, 0, time.UTC)},
++		// Response window spans the US autumn change (1 Nov 2026, 06:00 UTC).
++		{"US fall back", time.Date(2026, 10, 29, 5, 30, 0, 0, time.UTC)},
++		// Decision target spans the end of 2026.
++		{"decision target crosses new year", time.Date(2026, 12, 20, 12, 0, 0, 0, time.UTC)},
++		// Response window spans the end of 2026.
++		{"response deadline crosses new year", time.Date(2026, 12, 28, 12, 0, 0, 0, time.UTC)},
++		// Opened in the last millisecond of 2026 UTC, when Sydney already reads 2027.
++		{"last millisecond of the year", time.Date(2026, 12, 31, 23, 59, 59, int(999*time.Millisecond), time.UTC)},
++	}
++	for _, c := range cases {
++		for _, zone := range deadlineZones {
++			t.Run(c.name+"/"+zone, func(t *testing.T) {
++				checkDisputeDeadlines(t, newDeadlineWorld(t, mustZone(t, zone)), c.opened)
++			})
++		}
++	}
++}
++
++func checkDisputeDeadlines(t *testing.T, w *world, opened time.Time) {
++	pol := w.net.Policy
++	rev, _ := w.reviewer()
++	w.advanceTo(t, opened)
++	trA := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 100)
++	trB := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 100)
++	silent := tu.Must(w.open(w.a, trA.ID))   // the other party never responds
++	answered := tu.Must(w.open(w.a, trB.ID)) // the other party responds in time
++	if !silent.OpenedAt.Equal(opened) || silent.OpenedAt.Location() != time.UTC {
++		t.Fatalf("opened at %s (%s), want %s UTC", silent.OpenedAt, silent.OpenedAt.Location(), opened)
++	}
++
++	respDeadline := opened.Add(days(pol.ResponsePeriodDays))
++	target := respDeadline.Add(days(domain.DecisionTargetDays))
++	v := tu.Must(w.Svc.GetDispute(w.Ctx, w.b, w.net.ID, silent.ID))
++	dl := v.Deadlines
++	if !dl.ResponseDeadline.Equal(respDeadline) || dl.ResponseDeadline.Sub(v.Dispute.OpenedAt) != days(pol.ResponsePeriodDays) {
++		t.Fatalf("response deadline %s, want %s (exactly %d x 24h after opening)", dl.ResponseDeadline, respDeadline, pol.ResponsePeriodDays)
++	}
++	if !dl.DecisionTarget.Equal(target) || dl.DecisionTarget.Sub(dl.ResponseDeadline) != days(domain.DecisionTargetDays) {
++		t.Fatalf("decision target %s, want %s", dl.DecisionTarget, target)
++	}
++	if dl.ResponseDeadline.Location() != time.UTC || dl.DecisionTarget.Location() != time.UTC {
++		t.Fatalf("deadlines not in UTC: %s / %s", dl.ResponseDeadline.Location(), dl.DecisionTarget.Location())
++	}
++
++	// One millisecond before the response deadline: nothing is overdue, a
++	// decision without a response still needs a waiver.
++	w.advanceTo(t, respDeadline.Add(-time.Millisecond))
++	if err := w.respond(w.b, answered.ID, "I delivered on time."); err != nil {
++		t.Fatalf("response before the deadline: %v", err)
++	}
++	if dl := tu.Must(w.Svc.GetDispute(w.Ctx, w.b, w.net.ID, silent.ID)).Deadlines; dl.ResponseOverdue || dl.DecisionOverdue {
++		t.Fatalf("overdue 1ms before the deadline: %+v", dl)
++	}
++	if n := tu.Must(w.Svc.RemindOverdueDisputes(w.Ctx, sysJob)); n != 0 {
++		t.Fatalf("%d reminder(s) before the response deadline", n)
++	}
++	_, err := w.resolve(rev, silent.ID, domain.OutcomeDismissed, 0, "no evidence")
++	wantErrMention(t, err, domain.ErrInvalidState, respDeadline.Format("2006-01-02"))
++
++	// One millisecond after: the silent case is overdue and reminded once, in
++	// UTC dates; the answered case is not overdue.
++	w.advanceTo(t, respDeadline.Add(time.Millisecond))
++	if dl := tu.Must(w.Svc.GetDispute(w.Ctx, w.b, w.net.ID, silent.ID)).Deadlines; !dl.ResponseOverdue || dl.DecisionOverdue {
++		t.Fatalf("1ms after the response deadline: %+v", dl)
++	}
++	if dl := tu.Must(w.Svc.GetDispute(w.Ctx, w.b, w.net.ID, answered.ID)).Deadlines; dl.ResponseOverdue {
++		t.Fatalf("answered dispute reported without a response: %+v", dl)
++	}
++	if n := tu.Must(w.Svc.RemindOverdueDisputes(w.Ctx, sysJob)); n != 1 {
++		t.Fatalf("response reminders = %d, want 1 (the silent case only)", n)
++	}
++	bodies := notificationBodies(t, w, rev, service.NotifDisputeOverdue)
++	if len(bodies) != 1 || !strings.Contains(bodies[0], respDeadline.Format("2 Jan 2006")) {
++		t.Fatalf("reminder bodies %q do not name the UTC deadline %s", bodies, respDeadline.Format("2 Jan 2006"))
++	}
++
++	// Decision target, both sides.
++	w.advanceTo(t, target.Add(-time.Millisecond))
++	if dl := tu.Must(w.Svc.GetDispute(w.Ctx, w.b, w.net.ID, silent.ID)).Deadlines; dl.DecisionOverdue {
++		t.Fatalf("decision overdue 1ms before the target: %+v", dl)
++	}
++	if n := tu.Must(w.Svc.RemindOverdueDisputes(w.Ctx, sysJob)); n != 0 {
++		t.Fatalf("%d reminder(s) before the decision target", n)
++	}
++	w.advanceTo(t, target.Add(time.Millisecond))
++	if dl := tu.Must(w.Svc.GetDispute(w.Ctx, w.b, w.net.ID, answered.ID)).Deadlines; !dl.DecisionOverdue {
++		t.Fatalf("decision not overdue 1ms after the target: %+v", dl)
++	}
++	if n := tu.Must(w.Svc.RemindOverdueDisputes(w.Ctx, sysJob)); n != 2 {
++		t.Fatalf("decision reminders = %d, want 2", n)
++	}
++
++	// Both are decided now; the re-review (appeal) window is the decision
++	// instant plus exactly ReReviewWindowDays x 24h, inclusive.
++	dSilent := tu.Must(w.resolve(rev, silent.ID, domain.OutcomeDismissed, 0, "no evidence"))
++	dAnswered := tu.Must(w.resolve(rev, answered.ID, domain.OutcomeDismissed, 0, "delivered"))
++	if dSilent.DecidedAt == nil || !dSilent.DecidedAt.Equal(target.Add(time.Millisecond)) || dAnswered.DecidedAt == nil {
++		t.Fatalf("decided at %v, want %s", dSilent.DecidedAt, target.Add(time.Millisecond))
++	}
++	rrCloses := dSilent.DecidedAt.Add(days(pol.ReReviewWindowDays))
++	w.advanceTo(t, rrCloses)
++	if err := w.rereview(w.a, silent.ID, "please look again"); err != nil {
++		t.Fatalf("re-review at the last instant of the window: %v", err)
++	}
++	w.advanceTo(t, rrCloses.Add(time.Millisecond))
++	wantErrMention(t, w.rereview(w.a, answered.ID, "please look again"), domain.ErrInvalidState, rrCloses.Format("2006-01-02"))
++}
++
++// FR-071: the raise window is CompletedAt plus exactly DisputeWindowDays x 24h,
++// inclusive, across daylight-saving changes and the year end.
++func TestDisputeRaiseWindowAcrossDSTAndYearBoundary(t *testing.T) {
++	cases := []struct {
++		name      string
++		completed time.Time
++	}{
++		{"spans EU and US spring changes", time.Date(2026, 3, 5, 12, 0, 0, 0, time.UTC)},
++		{"spans EU and US autumn changes", time.Date(2026, 10, 10, 1, 30, 0, 0, time.UTC)},
++		{"spans the year end", time.Date(2026, 12, 15, 23, 0, 0, 0, time.UTC)},
++	}
++	for _, c := range cases {
++		for _, zone := range deadlineZones {
++			t.Run(c.name+"/"+zone, func(t *testing.T) {
++				w := newDeadlineWorld(t, mustZone(t, zone))
++				w.advanceTo(t, c.completed)
++				trA := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 100)
++				trB := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 100)
++				if trA.CompletedAt == nil || !trA.CompletedAt.Equal(c.completed) {
++					t.Fatalf("completed at %v, want %s", trA.CompletedAt, c.completed)
++				}
++				closes := c.completed.Add(days(w.net.Policy.DisputeWindowDays))
++				w.advanceTo(t, closes)
++				if _, err := w.open(w.a, trA.ID); err != nil {
++					t.Fatalf("dispute at the last instant of the window: %v", err)
++				}
++				w.advanceTo(t, closes.Add(time.Millisecond))
++				_, err := w.open(w.a, trB.ID)
++				wantErrMention(t, err, domain.ErrInvalidState, closes.Format("2006-01-02"))
++				if st := w.txStatus(trB.ID).Status; st != domain.TxCompleted {
++					t.Fatalf("refused dispute changed the transaction to %s", st)
++				}
++			})
++		}
++	}
++}
+-- 
+2.43.0
+
+
+From 187e2a5f132ba135b14cc72dee312fac65050315 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 01:18:53 +0000
+Subject: [PATCH 2/2] wip(boundary-fuzz): interrupted by project pause;
+ unreviewed, tests not confirmed
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/api/boundary_fuzz_test.go | 129 +++++++++++++++++
+ internal/testutil/boundary.go      | 225 +++++++++++++++++++++++++++++
+ 2 files changed, 354 insertions(+)
+ create mode 100644 internal/api/boundary_fuzz_test.go
+ create mode 100644 internal/testutil/boundary.go
+
+diff --git a/internal/api/boundary_fuzz_test.go b/internal/api/boundary_fuzz_test.go
+new file mode 100644
+index 0000000..758302b
+--- /dev/null
++++ b/internal/api/boundary_fuzz_test.go
+@@ -0,0 +1,129 @@
++package api_test
++
++import (
++	"bytes"
++	"io"
++	"log/slog"
++	"net/http"
++	"net/http/httptest"
++	"net/url"
++	"strings"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/api"
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// ARC-010 (TB1 into TB2): a JSON command body and a pagination cursor are
++// attacker input. Whatever the bytes, on any of these routes the API answers
++// without a 5xx (no panic, no internal error), and a refused request (4xx)
++// leaves the ledger, the audit log and every other table exactly as it was
++// (testutil.Snapshot). Seeds include a body each route accepts, so the seed
++// run (go test) also passes through the accepting path.
++
++type fuzzRoute struct {
++	method, path string
++	seed         string // a well-formed body: accepted, except where noted
++}
++
++func FuzzAPICommandBody(f *testing.F) {
++	fx := testutil.NewFixture(f)
++	h := api.NewHandlerWithOptions(fx.Svc, api.Options{CSRFKey: testCSRFKey, Now: fx.Clock.Now,
++		PrincipalPerMinute: -1, IPPerMinute: -1, Logger: slog.New(slog.NewTextHandler(io.Discard, nil))})
++	tok, _, err := fx.Svc.CreateAPIToken(fx.Ctx, fx.Admin, service.TokenInput{Name: "fuzz", Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}})
++	if err != nil {
++		f.Fatal(err)
++	}
++	propose := func(by domain.Actor, to *domain.Member) *domain.Transaction {
++		tx, err := fx.Svc.ProposeTransaction(fx.Ctx, by, fx.Net.ID, service.ProposeInput{CounterpartyID: to.ID,
++			Direction: service.ProposerPays, Amount: 100, IdempotencyKey: fx.Key()})
++		if err != nil {
++			f.Fatal(err)
++		}
++		return tx
++	}
++	complete := func(by, to domain.Actor, toM *domain.Member) *domain.Transaction {
++		tx := propose(by, toM)
++		if _, err := fx.Svc.AcceptTransaction(fx.Ctx, to, fx.Net.ID, service.TxRef{TxID: tx.ID, IdempotencyKey: fx.Key()}); err != nil {
++			f.Fatal(err)
++		}
++		return tx
++	}
++	done := complete(fx.Admin, fx.Alice, fx.AliceM) // the admin is a party: disputes
++	other := complete(fx.Alice, fx.Bob, fx.BobM)    // the admin is not a party: reversal
++	pending := propose(fx.Admin, fx.BobM)
++	lst, err := fx.Svc.CreateListing(fx.Ctx, fx.Admin, fx.Net.ID, service.ListingInput{Type: domain.ListingOffer, Title: "Bike repair", IdempotencyKey: fx.Key()})
++	if err != nil {
++		f.Fatal(err)
++	}
++
++	routes := []fuzzRoute{
++		{"POST", "/transactions", `{"counterparty_member_id":"` + fx.AliceM.ID + `","direction":"pay","amount_minor":"100","description":"eggs"}`},
++		{"POST", "/transactions/" + pending.ID + "/cancel", `{"reason":"changed my mind"}`},
++		{"POST", "/listings", `{"kind":"offer","title":"Eggs","description":"fresh","price_minor":"100"}`},
++		{"PATCH", "/listings/" + lst.ID, `{"title":"Bike repairs"}`},
++		{"POST", "/disputes", `{"transaction_id":"` + done.ID + `","category":"quality","statement":"broken"}`},
++		{"POST", "/admin/adjustments", `{"member_id":"` + fx.BobM.ID + `","direction":"credit","amount_minor":"5","reason":"gift"}`},
++		{"POST", "/admin/transactions/" + other.ID + "/reversal", `{"reason":"agreed undo"}`},
++		{"PATCH", "/admin/policy", `{"reason":"raise limit","default_credit_limit_minor":"20000"}`},
++		{"PUT", "/admin/accounts/" + fx.AliceM.ID + "/credit-limit", `{"credit_limit_minor":"500","reason":"risk review"}`},
++		{"POST", "/admin/invitations", `{}`},
++		{"POST", "/admin/announcements", `{"title":"Market day","body":"Saturday"}`},
++		{"POST", "/reports", `{"target_type":"member","target_id":"` + fx.BobM.ID + `","category":"harassment"}`},
++		{"POST", "/challenges", `{"kind":"credit_limit","reason":"too low"}`}, // refused: no limit decision to challenge
++		{"PATCH", "/me", `{"time_zone":"Europe/Berlin"}`},
++		{"GET", "/transactions?cursor=", ""}, // the body bytes are the cursor
++		{"GET", "/listings?limit=1&cursor=", ""},
++	}
++	malformed := []string{
++		``, ` `, `{}`, `[]`, `null`, `"x"`, `{`, `}`, `{}}`, `{} {}`, `{"a":1}`, `{"reason":1}`, `{"reason":"a","reason":"b"}`,
++		`{"amount_minor":"-1"}`, `{"amount_minor":"1e3"}`, `{"amount_minor":"99999999999999999999"}`, `{"amount_minor":100}`,
++		"{\"title\":\"\xff\xfe\"}", `{"title":"\ud800"}`, "\xef\xbb\xbf{}", `{"x":` + strings.Repeat("[", 200) + strings.Repeat("]", 200) + `}`,
++		"Ey4.Aa", "%00", strings.Repeat("A", 2048) + "." + strings.Repeat("B", 64),
++	}
++	// Few seeds: under -fuzz every execution walks the coverage map of the
++	// whole binary (SQLite included), so a large seed set would use up a
++	// short CI fuzz run before any mutation starts.
++	for i, rt := range routes {
++		f.Add(uint8(i), []byte(rt.seed))
++		if strings.HasPrefix(rt.seed, "{") {
++			f.Add(uint8(i), []byte(rt.seed[:len(rt.seed)-1]+`,"unknown":true}`))
++			f.Add(uint8(i), []byte(rt.seed+" x"))
++		}
++	}
++	for i, b := range malformed {
++		f.Add(uint8(i%len(routes)), []byte(b))
++		f.Add(uint8((i+7)%len(routes)), []byte(b))
++	}
++
++	db := fx.Store.DB()
++	f.Fuzz(func(t *testing.T, route uint8, body []byte) {
++		rt := routes[int(route)%len(routes)]
++		var hr *http.Request
++		if rt.method == "GET" {
++			hr = httptest.NewRequest("GET", "/api/v1"+rt.path+url.QueryEscape(string(body)), nil)
++		} else {
++			hr = httptest.NewRequest(rt.method, "/api/v1"+rt.path, bytes.NewReader(body))
++			ct := "application/json; charset=utf-8"
++			if rt.method == http.MethodPatch {
++				ct = "application/merge-patch+json"
++			}
++			hr.Header.Set("Content-Type", ct)
++			hr.Header.Set("Idempotency-Key", fx.Key())
++			hr.Header.Set("If-Match", "*")
++		}
++		hr.Header.Set("Authorization", "Bearer "+tok)
++		before := testutil.Snapshot(t, db)
++		rec := httptest.NewRecorder()
++		h.ServeHTTP(rec, hr)
++		after := testutil.Snapshot(t, db)
++		if rec.Code >= 500 {
++			t.Fatalf("%s %s with %q: %d %s", rt.method, rt.path, body, rec.Code, rec.Body.String())
++		}
++		if ch := before.Changed(after); len(ch) > 0 && (rec.Code >= 400 || rt.method == "GET") {
++			t.Fatalf("%s %s refused %q with %d but changed %v", rt.method, rt.path, body, rec.Code, ch)
++		}
++	})
++}
+diff --git a/internal/testutil/boundary.go b/internal/testutil/boundary.go
+new file mode 100644
+index 0000000..d698783
+--- /dev/null
++++ b/internal/testutil/boundary.go
+@@ -0,0 +1,225 @@
++package testutil
++
++import (
++	"context"
++	"crypto/sha256"
++	"database/sql"
++	"encoding/hex"
++	"fmt"
++	"path/filepath"
++	"sort"
++	"strconv"
++	"strings"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++)
++
++// Fixture is the Env network (founder "admin", members "alice" and "bob")
++// for callers that hold only a testing.TB, such as the setup of a fuzz target
++// (*testing.F), which outlives every fuzz input (ARC-010).
++type Fixture struct {
++	Ctx                  context.Context
++	Store                *store.SQLite
++	Svc                  *service.Service
++	Clock                *Clock
++	Net                  *domain.Network
++	Admin, Alice, Bob    domain.Actor
++	AdminM, AliceM, BobM *domain.Member
++	keys                 atomic.Int64
++}
++
++// NewFixture builds a Fixture over a fresh SQLite file, with the same clock,
++// ids, Argon2 cost and network policy as NewEnv and Env.Network.
++func NewFixture(tb testing.TB) *Fixture {
++	tb.Helper()
++	ctx := context.Background()
++	st, err := store.Open(ctx, filepath.Join(tb.TempDir(), "circula.db"))
++	if err != nil {
++		tb.Fatal(err)
++	}
++	tb.Cleanup(func() { _ = st.Close() })
++	clk := &Clock{t: time.Date(2026, 3, 1, 12, 0, 0, 0, time.UTC)}
++	svc, err := service.New(st, service.Config{Clock: clk, IDs: &IDs{},
++		Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}})
++	if err != nil {
++		tb.Fatal(err)
++	}
++	fx := &Fixture{Ctx: ctx, Store: st, Svc: svc, Clock: clk}
++	must := func(err error) {
++		tb.Helper()
++		if err != nil {
++			tb.Fatal(err)
++		}
++	}
++	person := func(login string) domain.Actor {
++		p, err := svc.RegisterPerson(ctx, service.RegisterInput{Login: login, Password: "correct horse battery"})
++		must(err)
++		return domain.Actor{PersonID: p.ID, Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}}
++	}
++	fx.Admin = person("admin")
++	pol := domain.DefaultPolicy()
++	pol.DefaultCreditLimit = 10000
++	pol.ResponsePeriodDays = 0
++	n, m, err := svc.CreateNetwork(ctx, fx.Admin, service.CreateNetworkInput{Name: "Net fuzz", Slug: "fuzz",
++		Policy: &pol, CreatorDisplayName: "Founder"})
++	must(err)
++	fx.AdminM = m
++	fx.Net, err = svc.ActivateNetwork(ctx, fx.Admin, n.ID)
++	must(err)
++	member := func(login string) (domain.Actor, *domain.Member) {
++		a := person(login)
++		tok, _, err := svc.CreateInvitation(ctx, fx.Admin, fx.Net.ID, service.InviteInput{})
++		must(err)
++		m, err := svc.RedeemInvitation(ctx, a, tok, login)
++		must(err)
++		return a, m
++	}
++	fx.Alice, fx.AliceM = member("alice")
++	fx.Bob, fx.BobM = member("bob")
++	return fx
++}
++
++// Key returns a fresh idempotency key.
++func (fx *Fixture) Key() string { return fmt.Sprintf("fx-key-%d", fx.keys.Add(1)) }
++
++// volatileTables are stamped by every authenticated request, read or write,
++// and so are left out of State. Each entry says why.
++var volatileTables = map[string]string{
++	"sessions":        "last_seen_at moves on every request a session authenticates",
++	"api_tokens":      "last_used_at moves on every request a token authenticates",
++	"person_activity": "last_seen_at moves on every authenticated request (inactivity flag, GOV)",
++}
++
++// ledgerTables make up State.Ledger.
++var ledgerTables = []string{"accounts", "entries", "transactions", "transaction_status_events"}
++
++// State is what a refused command must leave as it was: a checksum of the
++// ledger, the number of audit events, and a checksum of every other table.
++type State struct {
++	Ledger      string            // SHA-256 over the rows of ledgerTables
++	AuditEvents int               // rows in audit_events
++	Tables      map[string]string // SHA-256 over each table's rows, volatileTables excluded
++}
++
++// snapStmts caches the Snapshot statement per database: the schema is fixed
++// once the store is open, and preparing the statement costs more than running it.
++var snapStmts sync.Map // *sql.DB -> *sql.Stmt
++
++// snapshotStmt builds one statement that returns (table, rows) for every
++// table but the volatile ones, each row rendered by SQLite's quote() so that
++// NULL, the empty string and blobs stay distinct, plus ("#audit", count).
++func snapshotStmt(tb testing.TB, db *sql.DB) *sql.Stmt {
++	tb.Helper()
++	if st, ok := snapStmts.Load(db); ok {
++		return st.(*sql.Stmt)
++	}
++	rows, err := db.Query(`SELECT m.name, p.name FROM sqlite_master m, pragma_table_info(m.name) p
++		WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%' ORDER BY m.name, p.cid`)
++	if err != nil {
++		tb.Fatal(err)
++	}
++	var tables []string
++	cols := map[string][]string{}
++	for rows.Next() {
++		var t, c string
++		if err := rows.Scan(&t, &c); err != nil {
++			tb.Fatal(err)
++		}
++		if _, skip := volatileTables[t]; skip {
++			continue
++		}
++		if cols[t] == nil {
++			tables = append(tables, t)
++		}
++		cols[t] = append(cols[t], `quote("`+c+`")`)
++	}
++	if err := rows.Close(); err != nil {
++		tb.Fatal(err)
++	}
++	parts := []string{`SELECT '#audit', CAST(COUNT(*) AS TEXT) FROM audit_events`}
++	for _, t := range tables { // table and column names come from the schema
++		parts = append(parts, `SELECT '`+t+`', (SELECT group_concat(r, char(10)) FROM (SELECT `+
++			strings.Join(cols[t], ` || ',' || `)+` AS r FROM "`+t+`" ORDER BY rowid))`)
++	}
++	st, err := db.Prepare(strings.Join(parts, " UNION ALL "))
++	if err != nil {
++		tb.Fatal(err)
++	}
++	if prev, loaded := snapStmts.LoadOrStore(db, st); loaded {
++		_ = st.Close()
++		return prev.(*sql.Stmt)
++	}
++	return st
++}
++
++// Snapshot reads State with raw SQL, independently of the service, in one
++// statement, so every table is read from the same database snapshot.
++func Snapshot(tb testing.TB, db *sql.DB) State {
++	tb.Helper()
++	rows, err := snapshotStmt(tb, db).Query()
++	if err != nil {
++		tb.Fatal(err)
++	}
++	s := State{AuditEvents: -1, Tables: map[string]string{}}
++	for rows.Next() {
++		var t string
++		var all sql.NullString
++		if err := rows.Scan(&t, &all); err != nil {
++			tb.Fatal(err)
++		}
++		if t == "#audit" {
++			if s.AuditEvents, err = strconv.Atoi(all.String); err != nil {
++				tb.Fatal(err)
++			}
++			continue
++		}
++		sum := sha256.Sum256([]byte(all.String))
++		s.Tables[t] = hex.EncodeToString(sum[:])
++	}
++	if err := rows.Close(); err != nil {
++		tb.Fatal(err)
++	}
++	if s.AuditEvents < 0 {
++		tb.Fatal("snapshot: no audit count")
++	}
++	ledger := sha256.New()
++	for _, n := range ledgerTables {
++		d, ok := s.Tables[n]
++		if !ok {
++			tb.Fatalf("ledger table %s missing", n)
++		}
++		ledger.Write([]byte(n + "=" + d + ";"))
++	}
++	s.Ledger = hex.EncodeToString(ledger.Sum(nil))
++	return s
++}
++
++// Changed lists what differs between s and o: "ledger", "audit_events" and
++// the names of the tables whose rows changed.
++func (s State) Changed(o State) []string {
++	var out []string
++	if s.Ledger != o.Ledger {
++		out = append(out, "ledger")
++	}
++	if s.AuditEvents != o.AuditEvents {
++		out = append(out, fmt.Sprintf("audit_events (%d -> %d)", s.AuditEvents, o.AuditEvents))
++	}
++	for n, d := range s.Tables {
++		if o.Tables[n] != d {
++			out = append(out, n)
++		}
++	}
++	for n := range o.Tables {
++		if _, ok := s.Tables[n]; !ok {
++			out = append(out, n)
++		}
++	}
++	sort.Strings(out)
++	return out
++}
+-- 
+2.43.0
+

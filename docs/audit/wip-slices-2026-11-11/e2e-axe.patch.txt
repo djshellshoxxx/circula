@@ -1,0 +1,1085 @@
+From 8d24fcdde7acfe989d397d804d22b87b5ee96a65 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:26:31 +0000
+Subject: [PATCH 1/2] test(e2e): axe at WCAG 2.2 AA in light and dark on every
+ template; measure target sizes
+
+ARC-017, UX-054, QA-033, UX-035.
+
+- fixtures.js: AXE_TAGS adds wcag22aa (target-size, 2.5.8). expectNoAxeViolations
+  now checks the same DOM in the light and the dark scheme (emulateMedia
+  colorScheme, confirmed by matchMedia) and names the failing scheme.
+  security.spec.js reuses it, so its pages get the same tags and both schemes.
+- pages.js: the shared-seed page list moves out of a11y.spec.js and names the
+  template each entry renders. New entries: rules (/policy), terms (none
+  published), admin terms, leave (blocked), my_audit, admin_inactive,
+  admin_network, joinnet (invitation only). The old "networks list" entry
+  redirects to the only network's dashboard, so it is relabelled.
+- a11y-governance.spec.js: own instance (startInstance) with join by approval
+  and published terms: networks list (empty), join request form and error,
+  waiting for approval (pending), approve step, admin terms error and
+  published, terms acceptance form and error, leave form and error, consistency
+  check result (admin_check), adjustment review step (admin_adjust_review).
+- a11y.spec.js: "every page template is checked by axe" fails when a template
+  in internal/web/templates (except base) has no axe check; the mapping was
+  verified once against a template-instrumented build (63 of 63 rendered).
+  New guard: a target-size violation and a dark-only contrast failure are
+  reported.
+- targets.js and target-size.spec.js: every pointer target on every page at
+  1280 px and a 320 px touch layout is >= 24 px or exempt per 2.5.8 (inline,
+  spacing); buttons, button links, fields, menus, main navigation and
+  checkbox/radio rows are >= 44 px on the touch layout. Guard test included.
+
+No violations surfaced with the new tag or the dark scheme, so no CSS or
+template change was needed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ e2e/fixtures.js                   |  41 ++++++---
+ e2e/pages.js                      |  77 ++++++++++++++++
+ e2e/targets.js                    |  88 ++++++++++++++++++
+ e2e/tests/a11y-governance.spec.js | 148 ++++++++++++++++++++++++++++++
+ e2e/tests/a11y.spec.js            | 148 ++++++++++++++++--------------
+ e2e/tests/security.spec.js        |  16 +---
+ e2e/tests/target-size.spec.js     |  76 +++++++++++++++
+ 7 files changed, 503 insertions(+), 91 deletions(-)
+ create mode 100644 e2e/pages.js
+ create mode 100644 e2e/targets.js
+ create mode 100644 e2e/tests/a11y-governance.spec.js
+ create mode 100644 e2e/tests/target-size.spec.js
+
+diff --git a/e2e/fixtures.js b/e2e/fixtures.js
+index 18e6151..0350b59 100644
+--- a/e2e/fixtures.js
++++ b/e2e/fixtures.js
+@@ -10,12 +10,15 @@ function state() {
+ }
+ 
+ const AXE_PATH = require.resolve('axe-core/axe.min.js');
+-// WCAG 2.0 A and AA as required, plus the 2.1 additions, which the same engine checks at no extra cost.
+-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
++// The WCAG 2.2 AA rule set (DEC-024, UX-054, QA-033): the 2.0 and 2.1 A and AA tags plus the 2.2 AA tag
++// (target-size, 2.5.8). axe tags each rule with the version that introduced it, so all five are needed.
++const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
++// Both presentations of the stylesheet (prefers-color-scheme), so contrast is checked in light and dark (UX-057).
++const SCHEMES = ['light', 'dark'];
+ 
+ /** Runs axe on the current page and returns the violations. */
+ async function axeViolations(page) {
+-  await page.addScriptTag({ path: AXE_PATH });
++  if (!(await page.evaluate(() => typeof window.axe !== 'undefined'))) await page.addScriptTag({ path: AXE_PATH });
+   return page.evaluate(async (tags) => {
+     // eslint-disable-next-line no-undef
+     const r = await axe.run(document, { runOnly: { type: 'tag', values: tags }, resultTypes: ['violations'] });
+@@ -26,15 +29,31 @@ async function axeViolations(page) {
+   }, AXE_TAGS);
+ }
+ 
+-/** Fails with a readable list when the current page violates any rule. */
++/** Switches the page to the colour scheme and confirms the stylesheet now sees it. */
++async function useScheme(page, scheme) {
++  await page.emulateMedia({ colorScheme: scheme });
++  const seen = await page.evaluate(() => (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
++  if (seen !== scheme) throw new Error(`colour scheme ${scheme} was not applied (page reports ${seen})`);
++}
++
++/**
++ * Fails with a readable list when the current page violates any rule, checked once per colour scheme on the same
++ * DOM. The page is left in the light scheme, the default of every context.
++ */
+ async function expectNoAxeViolations(page, label) {
+-  const results = await axeViolations(page);
+-  if (results.length) {
+-    const text = results.map((v) =>
+-      `  [${v.impact}] ${v.id}: ${v.help}\n` +
+-      v.nodes.map((n) => `      ${n.target}\n      ${n.html}\n      ${(n.summary || '').replace(/\n/g, '\n      ')}`).join('\n')).join('\n');
+-    throw new Error(`${label}: ${results.length} axe violation(s) at ${page.url()}\n${text}`);
++  const failures = [];
++  for (const scheme of SCHEMES) {
++    await useScheme(page, scheme);
++    const results = await axeViolations(page);
++    if (results.length) {
++      const text = results.map((v) =>
++        `  [${v.impact}] ${v.id}: ${v.help}\n` +
++        v.nodes.map((n) => `      ${n.target}\n      ${n.html}\n      ${(n.summary || '').replace(/\n/g, '\n      ')}`).join('\n')).join('\n');
++      failures.push(`${label} (${scheme}): ${results.length} axe violation(s) at ${page.url()}\n${text}`);
++    }
+   }
++  await useScheme(page, 'light');
++  if (failures.length) throw new Error(failures.join('\n'));
+ }
+ 
+ const test = base.test.extend({
+@@ -52,4 +71,4 @@ const test = base.test.extend({
+   },
+ });
+ 
+-module.exports = { test, expect: base.expect, expectNoAxeViolations, axeViolations, state, STATE_DIR };
++module.exports = { test, expect: base.expect, expectNoAxeViolations, axeViolations, useScheme, state, STATE_DIR, AXE_TAGS, SCHEMES };
+diff --git a/e2e/pages.js b/e2e/pages.js
+new file mode 100644
+index 0000000..c3e4914
+--- /dev/null
++++ b/e2e/pages.js
+@@ -0,0 +1,77 @@
++// The pages of the shared seed (global-setup.js) that the page-level checks visit: axe in tests/a11y.spec.js (light
++// and dark) and the target-size sweep in tests/target-size.spec.js. Path builders take the seeded state (state.json).
++const n = (st) => `/n/${st.slug}`;
++
++// [name, who (null = anonymous), path builder, template (internal/web/templates/<name>.html) the page renders]
++const PAGES = [
++  ['login', null, () => '/login', 'login'],
++  ['register', null, () => '/register', 'register'],
++  ['help (anonymous)', null, () => '/help', 'help'],
++  ['invitation, signed out', null, (st) => st.unusedInvite, 'join_anon'],
++  ['not found', null, () => '/no-such-page', 'error'],
++
++  ['networks list (one network, so it opens that dashboard)', 'carol', () => '/', 'dashboard'],
++  ['setup (network creation)', 'carol', () => '/setup', 'setup'],
++  ['password change', 'alice', () => '/account/password', 'password'],
++  ['help (member)', 'alice', () => '/help', 'help'],
++  ['invitation, signed in', 'alice', (st) => st.unusedInvite, 'join'],
++
++  ['dashboard', 'alice', (st) => n(st), 'dashboard'],
++  ['dashboard with pending trade', 'bob', (st) => n(st), 'dashboard'],
++  ['directory', 'alice', (st) => `${n(st)}/directory`, 'directory'],
++  ['member profile', 'alice', (st) => st.bobProfile, 'profile'],
++  ['listings', 'bob', (st) => `${n(st)}/listings`, 'listings'],
++  ['new listing', 'alice', (st) => `${n(st)}/listings/new`, 'listing_form'],
++  ['edit listing', 'alice', (st) => st.listingEdit, 'listing_edit'],
++  ['trades', 'alice', (st) => `${n(st)}/trades`, 'trades'],
++  ['propose a trade', 'alice', (st) => `${n(st)}/trades/new?to=${st.bobId}`, 'propose'],
++  ['trade detail (completed)', 'alice', (st) => `${n(st)}/trades/${st.tradeDone}`, 'trade_detail'],
++  ['trade detail (pending, recipient)', 'bob', (st) => `${n(st)}/trades/${st.tradePending}`, 'trade_detail'],
++  ['accept a trade', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/accept`, 'trade_accept'],
++  ['decline a trade', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/decline`, 'trade_confirm'],
++  ['cancel a trade', 'carol', (st) => `${n(st)}/trades/${st.tradePending}/cancel`, 'trade_confirm'],
++  ['history', 'alice', (st) => `${n(st)}/history`, 'history'],
++  ['account activity log', 'alice', (st) => `${n(st)}/audit`, 'my_audit'],
++  ['dispute form', 'bob', (st) => `${n(st)}/trades/${st.tradeDone}/dispute`, 'dispute_form'],
++  ['disputes', 'alice', (st) => `${n(st)}/disputes`, 'disputes'],
++  ['dispute detail', 'alice', (st) => st.disputePath, 'dispute_view'],
++  ['dispute detail (other party, response form)', 'carol', (st) => st.disputePath, 'dispute_view'],
++  ['dispute detail (resolved, with response, re-review form)', 'alice', (st) => st.disputeResolved, 'dispute_view'],
++  ['dispute detail (resolved, responder view)', 'bob', (st) => st.disputeResolved, 'dispute_view'],
++  ['dispute detail (re-review requested, requester)', 'alice', (st) => st.disputeReReview, 'dispute_view'],
++  ['dispute detail (re-review decision form)', 'carol', (st) => st.disputeReReview, 'dispute_view'],
++  ['inbox (with notifications)', 'alice', (st) => `${n(st)}/inbox`, 'inbox'],
++  ['inbox (waiting for action)', 'bob', (st) => `${n(st)}/inbox`, 'inbox'],
++  ['inbox (unread only)', 'carol', (st) => `${n(st)}/inbox?show=unread`, 'inbox'],
++  ['dashboard with announcement', 'carol', (st) => n(st), 'dashboard'],
++  ['report a listing', 'carol', (st) => st.reportPath, 'report_form'],
++  ['report a member', 'alice', (st) => `${n(st)}/report?type=member&id=${st.bobId}`, 'report_form'],
++  ['time zone', 'alice', () => '/account/time-zone', 'time_zone'],
++  ['network rules and change log', 'alice', (st) => `${n(st)}/policy`, 'rules'],
++  ['network terms (none published)', 'alice', (st) => `${n(st)}/terms`, 'terms'],
++  ['leave the network (blocked by an open dispute)', 'alice', (st) => `${n(st)}/leave`, 'leave'],
++  ['join a network (invitation only)', 'carol', (st) => `${n(st)}/join`, 'joinnet'],
++
++  ['admin overview', 'admin', (st) => `${n(st)}/admin`, 'admin_home'],
++  ['admin members', 'admin', (st) => `${n(st)}/admin/members`, 'admin_members'],
++  ['admin member action', 'admin', (st) => `${n(st)}/admin/members/${st.bobId}/suspend`, 'admin_member_act'],
++  ['admin inactive members', 'admin', (st) => `${n(st)}/admin/inactive`, 'admin_inactive'],
++  ['admin invitations', 'admin', (st) => `${n(st)}/admin/invitations`, 'admin_invites'],
++  ['admin policy', 'admin', (st) => `${n(st)}/admin/policy`, 'admin_policy'],
++  ['admin terms (none published)', 'admin', (st) => `${n(st)}/admin/terms`, 'admin_terms'],
++  ['admin adjustment', 'admin', (st) => `${n(st)}/admin/adjust`, 'admin_adjust'],
++  ['admin audit log', 'admin', (st) => `${n(st)}/admin/audit`, 'admin_audit'],
++  ['admin exports', 'admin', (st) => `${n(st)}/admin/exports`, 'admin_exports'],
++  ['admin reports (open)', 'admin', (st) => `${n(st)}/admin/reports`, 'admin_reports'],
++  ['admin reports (all)', 'admin', (st) => `${n(st)}/admin/reports?status=all`, 'admin_reports'],
++  ['admin announcements', 'admin', (st) => `${n(st)}/admin/announcements`, 'admin_announcements'],
++  ['admin reverse a trade', 'admin', (st) => `${n(st)}/admin/reverse`, 'admin_reverse'],
++  ['admin reverse a trade (trade chosen)', 'admin', (st) => `${n(st)}/admin/reverse?tx=${st.tradeReverse}`, 'admin_reverse'],
++  ['admin pause or close the network', 'admin', (st) => `${n(st)}/admin/network`, 'admin_network'],
++  ['admin overview (needs attention)', 'admin', (st) => `${n(st)}/admin`, 'admin_home'],
++  ['review queue', 'admin', (st) => `${n(st)}/review`, 'review_queue'],
++  ['dispute detail (reviewer)', 'admin', (st) => st.disputePath, 'dispute_view'],
++  ['dispute detail (re-review waiting, first reviewer)', 'admin', (st) => st.disputeReReview, 'dispute_view'],
++];
++
++module.exports = { PAGES, n };
+diff --git a/e2e/targets.js b/e2e/targets.js
+new file mode 100644
+index 0000000..26fcd9f
+--- /dev/null
++++ b/e2e/targets.js
+@@ -0,0 +1,88 @@
++// Target size measurement for UX-035 (WCAG 2.2 success criterion 2.5.8, Target Size (Minimum)), shared by
++// tests/target-size.spec.js (every page of the shared seed) and tests/a11y-governance.spec.js (its own instance).
++//
++// MUST: every pointer target is at least 24 by 24 CSS pixels, or is exempt the way 2.5.8 allows: an inline link inside
++// a line of text, or an undersized target whose 24 px circle (centred on it) reaches no other target and no other
++// undersized target's circle (the spacing exception).
++// SHOULD (touch layouts, checked when `comfortable` is set): the controls the stylesheet sizes for touch are at least
++// 44 by 44 CSS pixels: buttons, button-styled links, text fields, menus, the main navigation links, and each checkbox
++// or radio button together with its label (the label is part of the target).
++
++/** Runs in the page. Returns { count, failures (24 px), comfy (44 px) } for the current layout. */
++function measure(comfortable) {
++  const TARGETS = 'a[href], button, input:not([type=hidden]), select, textarea, summary, [role=button], [tabindex]:not([tabindex="-1"])';
++  const describe = (el) => `${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}${el.className ? '.' + String(el.className).split(' ').join('.') : ''} "${(el.innerText || el.value || el.name || '').replace(/\s+/g, ' ').trim().slice(0, 40)}"`;
++  const onScreen = (el) => {
++    const r = el.getBoundingClientRect();
++    const cs = getComputedStyle(el);
++    return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && r.right > 0 && r.bottom > 0;
++  };
++  // A checkbox or radio button wrapped in its label: the label is part of the target.
++  const targetEl = (el) => (el.matches('input[type=checkbox], input[type=radio]') && el.closest('label')) || el;
++  const els = [...document.querySelectorAll(TARGETS)].filter(onScreen);
++  const boxes = new Map(els.map((el) => [el, targetEl(el).getBoundingClientRect()]));
++  // A link that wraps onto a second line is two boxes, one per line; its bounding box would span both lines.
++  const parts = new Map(els.map((el) => [el, [...targetEl(el).getClientRects()].filter((r) => r.width > 0 && r.height > 0)]));
++  const blockOf = (el) => {
++    let b = el.parentElement;
++    while (b && getComputedStyle(b).display.startsWith('inline')) b = b.parentElement;
++    return b;
++  };
++  // 2.5.8 inline exception: the link sits in a line of text (its block holds text that belongs to no target).
++  const inline = (el) => {
++    if (getComputedStyle(el).display !== 'inline') return false;
++    const block = blockOf(el);
++    if (!block) return false;
++    let text = block.innerText;
++    for (const t of block.querySelectorAll(TARGETS)) text = text.split(t.innerText).join(' ');
++    return /[\p{L}\p{N}·]/u.test(text);
++  };
++  const tooSmall = (r) => r.width < 24 || r.height < 24;
++  // undersized boxes, each with the target it belongs to
++  const small = els.filter((el) => !inline(el)).flatMap((el) => parts.get(el).filter(tooSmall).map((r) => ({ el, r })));
++  const centre = (r) => [r.left + r.width / 2, r.top + r.height / 2];
++  const distToRect = ([x, y], r) => Math.hypot(Math.max(r.left - x, 0, x - r.right), Math.max(r.top - y, 0, y - r.bottom));
++  const failures = [];
++  for (const { el, r } of small) {
++    const c = centre(r);
++    const unrelated = (o) => o !== el && !o.contains(el) && !el.contains(o);
++    // the 24 px circle reaches another target, or intersects the circle of another undersized target
++    const reach = els.find((o) => unrelated(o) && parts.get(o).some((ro) => distToRect(c, ro) < 12));
++    const cross = small.find((s) => unrelated(s.el) && Math.hypot(c[0] - centre(s.r)[0], c[1] - centre(s.r)[1]) < 24);
++    const clash = reach || (cross && cross.el);
++    if (clash) failures.push(`${describe(el)} is ${Math.round(r.width)}x${Math.round(r.height)} and too close to ${describe(clash)}`);
++  }
++  const comfy = [];
++  if (comfortable) {
++    const sized = 'button, .btn, input:not([type=hidden]), select, textarea, ul.nav a';
++    for (const el of els.filter((e) => e.matches(sized))) {
++      const r = boxes.get(el);
++      if (r.width < 44 || r.height < 44) comfy.push(`${describe(el)} is ${Math.round(r.width)}x${Math.round(r.height)}`);
++    }
++  }
++  return { count: els.length, failures, comfy };
++}
++
++/** The UX-035 failures of the current page at its current layout, as readable lines. */
++async function targetSizeFailures(page, comfortable) {
++  const r = await page.evaluate(measure, !!comfortable);
++  return {
++    count: r.count,
++    failures: [...r.failures.map((f) => `below 24 px: ${f}`), ...r.comfy.map((f) => `below 44 px on a touch layout: ${f}`)],
++  };
++}
++
++/**
++ * Measures the current page at its own viewport (24 px) and at a 320 px wide layout (24 and 44 px), then restores the
++ * viewport. The layout does not depend on touch input, so width alone gives the touch layout here.
++ */
++async function expectTargetSizes(page, label) {
++  const size = page.viewportSize();
++  const failures = (await targetSizeFailures(page, false)).failures.map((f) => `${size.width} px: ${f}`);
++  await page.setViewportSize({ width: 320, height: 640 });
++  failures.push(...(await targetSizeFailures(page, true)).failures.map((f) => `320 px: ${f}`));
++  await page.setViewportSize(size);
++  if (failures.length) throw new Error(`${label}: target sizes (UX-035) at ${page.url()}\n  ${failures.join('\n  ')}`);
++}
++
++module.exports = { measure, targetSizeFailures, expectTargetSizes };
+diff --git a/e2e/tests/a11y-governance.spec.js b/e2e/tests/a11y-governance.spec.js
+new file mode 100644
+index 0000000..f0250ae
+--- /dev/null
++++ b/e2e/tests/a11y-governance.spec.js
+@@ -0,0 +1,148 @@
++// Axe (WCAG 2.2 AA rule set, light and dark colour schemes) of the page templates and states that need network
++// settings the shared seed does not have: membership by approval (request form, its error, the waiting page and the
++// approval step), published terms (administrator form, acceptance form and their errors), the leave form of a member
++// who is free to leave, and the administrator's consistency check result and adjustment review step.
++//
++// It runs against its own instance and database (startInstance in global-setup.js), seeded through the web forms with
++// the shared helpers, so the shared seed used by the other specs is not changed. Each check also measures the UX-035
++// target sizes (targets.js). The tests are ordered and serial.
++const { test, expect } = require('@playwright/test');
++const { expectNoAxeViolations } = require('../fixtures');
++const { expectTargetSizes } = require('../targets');
++const gs = require('../global-setup');
++
++const { register, login, submit, SETUP_SECRET, SLUG } = gs.helpers;
++const USERS = { admin: 'gadmin@example.org', pat: 'gpat@example.org' };
++const n = `/n/${SLUG}`;
++
++test.describe.configure({ mode: 'serial' });
++
++let inst; // the instance
++const signedIn = {}; // storage state per user, captured at sign-in
++
++test.beforeAll(async ({ browser }) => {
++  test.setTimeout(120_000);
++  inst = await gs.startInstance();
++  const ctx = await browser.newContext({ baseURL: inst.base });
++  const p = await ctx.newPage();
++  await register(p, USERS.admin);
++  await login(p, USERS.admin);
++  await p.goto('/setup');
++  await p.getByLabel('Setup secret').fill(SETUP_SECRET);
++  await p.getByLabel('Network name').fill('Approval Circle');
++  await p.getByLabel('Web address name').fill(SLUG);
++  await p.getByLabel('Your display name in this network').fill('Gail Admin');
++  await p.getByLabel('Credit unit name').fill('credit');
++  await p.getByLabel('Default credit limit per member').fill('100.00');
++  await p.getByLabel('Sign-up grant').fill('0.00');
++  await p.getByLabel('How people join').selectOption('approval');
++  await submit(p, 'Create network');
++  if (!new URL(p.url()).pathname.startsWith(n)) throw new Error('network not created, at ' + p.url());
++  signedIn.admin = await ctx.storageState();
++  await ctx.close();
++});
++test.afterAll(async () => {
++  if (inst) await inst.stop();
++});
++
++async function as(browser, who) {
++  const ctx = await browser.newContext({ baseURL: inst.base, bypassCSP: true, storageState: signedIn[who] });
++  return { ctx, page: await ctx.newPage() };
++}
++
++// axe in both colour schemes, then the UX-035 target sizes at this width and at 320 px (targets.js).
++async function checkPage(page, label) {
++  await expect(page.locator('h1'), `${label}: one h1`).toHaveCount(1);
++  await expectNoAxeViolations(page, label);
++  await expectTargetSizes(page, label);
++}
++
++test('axe: administrator terms, error state and a published version', async ({ browser }) => {
++  const { ctx, page } = await as(browser, 'admin');
++  await page.goto(`${n}/admin/terms`);
++  await submit(page, 'Publish new version'); // empty text: error state
++  await expect(page.locator('#error-summary')).toBeVisible();
++  await checkPage(page, 'admin terms error state');
++  await page.getByLabel('Terms text').fill('Trade fairly and describe what you offer honestly.\n\nAsk an administrator when in doubt.');
++  await submit(page, 'Publish new version');
++  await expect(page.locator('#flash')).toContainText('Published version 1');
++  await checkPage(page, 'admin terms (version 1 published)');
++  await ctx.close();
++});
++
++test('axe: network terms acceptance form and its error state', async ({ browser }) => {
++  const { ctx, page } = await as(browser, 'admin');
++  await page.goto(`${n}/terms`);
++  await expect(page.getByRole('checkbox', { name: /accept version 1/ })).toBeVisible();
++  await checkPage(page, 'network terms (acceptance needed)');
++  await submit(page, 'Accept these terms'); // box not ticked: error state
++  await expect(page.locator('#error-summary')).toBeVisible();
++  await checkPage(page, 'network terms acceptance error state');
++  await page.getByRole('checkbox', { name: /accept version 1/ }).check();
++  await submit(page, 'Accept these terms');
++  await expect(page.locator('#flash')).toContainText('You accepted version 1');
++  await ctx.close();
++});
++
++test('axe: request to join by approval, its error state, then the waiting page', async ({ browser }) => {
++  const ctx = await browser.newContext({ baseURL: inst.base, bypassCSP: true });
++  const page = await ctx.newPage();
++  await register(page, USERS.pat);
++  await login(page, USERS.pat);
++  await page.goto('/'); // no membership yet: the network list, not a redirect to a dashboard
++  await expect(page.locator('h1')).toHaveText('Your networks');
++  await checkPage(page, 'networks list (no network yet)');
++  await page.goto(`${n}/join`);
++  await expect(page.getByRole('button', { name: 'Request to join' })).toBeVisible();
++  await checkPage(page, 'join a network (approval, with terms)');
++  await submit(page, 'Request to join'); // no name, terms not accepted: error state
++  await expect(page.locator('#error-summary')).toBeVisible();
++  await checkPage(page, 'join request error state');
++  await page.getByLabel('Your display name').fill('Pat Member');
++  await page.getByRole('checkbox', { name: 'I have read and accept these terms' }).check();
++  await submit(page, 'Request to join');
++  await expect(page.locator('h1')).toHaveText('Waiting for approval');
++  await checkPage(page, 'waiting for approval');
++  signedIn.pat = await ctx.storageState();
++  await ctx.close();
++});
++
++test('axe: administrator approves the request', async ({ browser }) => {
++  const { ctx, page } = await as(browser, 'admin');
++  await page.goto(`${n}/admin/members?status=pending`);
++  await page.getByRole('link', { name: 'Approve Pat Member' }).click();
++  await expect(page.getByRole('button', { name: 'Approve', exact: true })).toBeVisible();
++  await checkPage(page, 'admin member action (approve)');
++  await submit(page, 'Approve');
++  await expect(page.locator('#flash')).toBeVisible();
++  await ctx.close();
++});
++
++test('axe: leave form of a member who can leave, and its error state', async ({ browser }) => {
++  const { ctx, page } = await as(browser, 'pat');
++  await page.goto(`${n}/leave`);
++  await expect(page.getByRole('button', { name: 'Leave this network' })).toBeVisible();
++  await checkPage(page, 'leave the network (form)');
++  await submit(page, 'Leave this network'); // not confirmed: error state, nothing changes
++  await expect(page.locator('#error-summary')).toBeVisible();
++  await checkPage(page, 'leave the network error state');
++  await ctx.close();
++});
++
++test('axe: consistency check result and adjustment review step', async ({ browser }) => {
++  const { ctx, page } = await as(browser, 'admin');
++  await page.goto(`${n}/admin/audit`);
++  await submit(page, 'Run consistency check');
++  await expect(page.locator('h1')).toHaveText('Consistency check result');
++  await expect(page.getByText('Check passed: no problems found.')).toBeVisible();
++  await checkPage(page, 'consistency check result');
++
++  await page.goto(`${n}/admin/adjust`);
++  await page.getByLabel('Member', { exact: true }).selectOption({ label: 'Pat Member' });
++  await page.getByLabel('Amount').fill('1.00');
++  await page.getByLabel('Reason').fill('Welcome credit for the first market stall.');
++  await submit(page, 'Review adjustment');
++  await expect(page.getByRole('button', { name: 'Post adjustment' })).toBeVisible();
++  await checkPage(page, 'adjustment review step'); // not posted
++  await ctx.close();
++});
+diff --git a/e2e/tests/a11y.spec.js b/e2e/tests/a11y.spec.js
+index 6d66bba..855e1e4 100644
+--- a/e2e/tests/a11y.spec.js
++++ b/e2e/tests/a11y.spec.js
+@@ -1,74 +1,13 @@
+-// Automated accessibility check (axe-core, WCAG 2.x A and AA) of the main pages of the real binary.
++// Automated accessibility check (axe-core, the WCAG 2.2 AA rule set, light and dark colour schemes) of the pages of
++// the real binary. Every page template must be visited by at least one check (UX-054, QA-033, ARC-017); see the
++// template coverage test at the end.
++const fs = require('fs');
++const path = require('path');
+ const { test, expect, expectNoAxeViolations, axeViolations } = require('../fixtures');
+-
+-const n = (st) => `/n/${st.slug}`;
+-
+-// [name, who (null = anonymous), path builder]
+-const PAGES = [
+-  ['login', null, () => '/login'],
+-  ['register', null, () => '/register'],
+-  ['help (anonymous)', null, () => '/help'],
+-  ['invitation, signed out', null, (st) => st.unusedInvite],
+-  ['not found', null, () => '/no-such-page'],
+-
+-  ['networks list', 'carol', () => '/'],
+-  ['setup (network creation)', 'carol', () => '/setup'],
+-  ['password change', 'alice', () => '/account/password'],
+-  ['help (member)', 'alice', () => '/help'],
+-  ['invitation, signed in', 'alice', (st) => st.unusedInvite],
+-
+-  ['dashboard', 'alice', (st) => n(st)],
+-  ['dashboard with pending trade', 'bob', (st) => n(st)],
+-  ['directory', 'alice', (st) => `${n(st)}/directory`],
+-  ['member profile', 'alice', (st) => st.bobProfile],
+-  ['listings', 'bob', (st) => `${n(st)}/listings`],
+-  ['new listing', 'alice', (st) => `${n(st)}/listings/new`],
+-  ['edit listing', 'alice', (st) => st.listingEdit],
+-  ['trades', 'alice', (st) => `${n(st)}/trades`],
+-  ['propose a trade', 'alice', (st) => `${n(st)}/trades/new?to=${st.bobId}`],
+-  ['trade detail (completed)', 'alice', (st) => `${n(st)}/trades/${st.tradeDone}`],
+-  ['trade detail (pending, recipient)', 'bob', (st) => `${n(st)}/trades/${st.tradePending}`],
+-  ['accept a trade', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/accept`],
+-  ['decline a trade', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/decline`],
+-  ['cancel a trade', 'carol', (st) => `${n(st)}/trades/${st.tradePending}/cancel`],
+-  ['history', 'alice', (st) => `${n(st)}/history`],
+-  ['dispute form', 'bob', (st) => `${n(st)}/trades/${st.tradeDone}/dispute`],
+-  ['disputes', 'alice', (st) => `${n(st)}/disputes`],
+-  ['dispute detail', 'alice', (st) => st.disputePath],
+-  ['dispute detail (other party, response form)', 'carol', (st) => st.disputePath],
+-  ['dispute detail (resolved, with response, re-review form)', 'alice', (st) => st.disputeResolved],
+-  ['dispute detail (resolved, responder view)', 'bob', (st) => st.disputeResolved],
+-  ['dispute detail (re-review requested, requester)', 'alice', (st) => st.disputeReReview],
+-  ['dispute detail (re-review decision form)', 'carol', (st) => st.disputeReReview],
+-  ['inbox (with notifications)', 'alice', (st) => `${n(st)}/inbox`],
+-  ['inbox (waiting for action)', 'bob', (st) => `${n(st)}/inbox`],
+-  ['inbox (unread only)', 'carol', (st) => `${n(st)}/inbox?show=unread`],
+-  ['dashboard with announcement', 'carol', (st) => n(st)],
+-  ['report a listing', 'carol', (st) => st.reportPath],
+-  ['report a member', 'alice', (st) => `${n(st)}/report?type=member&id=${st.bobId}`],
+-  ['time zone', 'alice', () => '/account/time-zone'],
+-
+-  ['admin overview', 'admin', (st) => `${n(st)}/admin`],
+-  ['admin members', 'admin', (st) => `${n(st)}/admin/members`],
+-  ['admin member action', 'admin', (st) => `${n(st)}/admin/members/${st.bobId}/suspend`],
+-  ['admin invitations', 'admin', (st) => `${n(st)}/admin/invitations`],
+-  ['admin policy', 'admin', (st) => `${n(st)}/admin/policy`],
+-  ['admin adjustment', 'admin', (st) => `${n(st)}/admin/adjust`],
+-  ['admin audit log', 'admin', (st) => `${n(st)}/admin/audit`],
+-  ['admin exports', 'admin', (st) => `${n(st)}/admin/exports`],
+-  ['admin reports (open)', 'admin', (st) => `${n(st)}/admin/reports`],
+-  ['admin reports (all)', 'admin', (st) => `${n(st)}/admin/reports?status=all`],
+-  ['admin announcements', 'admin', (st) => `${n(st)}/admin/announcements`],
+-  ['admin reverse a trade', 'admin', (st) => `${n(st)}/admin/reverse`],
+-  ['admin reverse a trade (trade chosen)', 'admin', (st) => `${n(st)}/admin/reverse?tx=${st.tradeReverse}`],
+-  ['admin overview (needs attention)', 'admin', (st) => `${n(st)}/admin`],
+-  ['review queue', 'admin', (st) => `${n(st)}/review`],
+-  ['dispute detail (reviewer)', 'admin', (st) => st.disputePath],
+-  ['dispute detail (re-review waiting, first reviewer)', 'admin', (st) => st.disputeReReview],
+-];
++const { PAGES, n } = require('../pages');
+ 
+ for (const [name, who, pathOf] of PAGES) {
+-  test(`axe wcag2a/2aa: ${name}`, async ({ st, as, page: anon }) => {
++  test(`axe wcag 2.2 AA, light and dark: ${name}`, async ({ st, as, page: anon }) => {
+     const page = who ? await as(who) : anon;
+     const resp = await page.goto(pathOf(st));
+     expect(resp, 'navigation response').not.toBeNull();
+@@ -174,6 +113,30 @@ test('axe harness detects a deliberately broken page', async ({ page }) => {
+   expect(ids).toContain('label');
+ });
+ 
++// The same guard for the WCAG 2.2 tag and the dark pass: crowded tiny buttons (2.5.8, wcag22aa) are reported, and a
++// contrast failure that exists only in the dark scheme fails the check, named with its scheme.
++test('axe harness detects a target-size violation and a dark-only contrast failure', async ({ page }) => {
++  await page.goto('/login');
++  await page.addStyleTag({ content: '.tiny{min-height:0;min-width:0;width:10px;height:10px;padding:0;margin:0;border:0}' +
++    '@media (prefers-color-scheme: dark){main p{color:#2a2a2a!important}}' });
++  await page.evaluate(() => {
++    const box = document.createElement('div');
++    for (const name of ['first', 'second']) {
++      const b = document.createElement('button');
++      b.className = 'tiny';
++      b.setAttribute('aria-label', name);
++      box.appendChild(b);
++    }
++    document.querySelector('main').appendChild(box);
++  });
++  expect((await axeViolations(page)).map((v) => v.id)).toContain('target-size');
++  await page.locator('.tiny').evaluateAll((els) => els.forEach((e) => e.remove()));
++  expect(await axeViolations(page), 'light scheme is clean').toEqual([]);
++  const err = await expectNoAxeViolations(page, 'dark-only guard').catch((e) => e);
++  expect(err && err.message).toMatch(/dark-only guard \(dark\): \d+ axe violation\(s\)[\s\S]*color-contrast/);
++  expect(err.message).not.toContain('dark-only guard (light)');
++});
++
+ // Maintenance mode (OPS-024): reads still work, a write gets the 503 "Back soon" page. A second instance with the
+ // maintenance setting on is started so the shared one is not disturbed.
+ test('axe: maintenance page, and reads keep working in maintenance mode', async ({ page }) => {
+@@ -215,3 +178,52 @@ test('axe and keyboard: historical balance lookup, error then result', async ({
+   await expect(page.locator('#histbal-result time')).toHaveAttribute('datetime', at);
+   await expectNoAxeViolations(page, 'historical balance result');
+ });
++
++// Template coverage (UX-054, QA-033, ARC-017: checks run on every page template). Each template in
++// internal/web/templates, other than the base layout, must be rendered by at least one axe check: a PAGES entry (pages.js)
++// or a labelled check in a spec file listed here. A new template fails this test until such a check is added.
++const TEMPLATES_DIR = path.join(__dirname, '..', '..', 'internal', 'web', 'templates');
++const LAYOUT_ONLY = ['base'];
++// template -> [spec file, label passed to expectNoAxeViolations or checkPage on a page that renders it]
++const STATE_CHECKS = {
++  propose_review: ['a11y.spec.js', 'propose review step'],
++  admin_reverse_review: ['a11y.spec.js', 'reverse review step'],
++  dispute_decide_review: ['a11y.spec.js', 'dispute decision review step'],
++  admin_check: ['a11y-governance.spec.js', 'consistency check result'],
++  admin_adjust_review: ['a11y-governance.spec.js', 'adjustment review step'],
++  pending: ['a11y-governance.spec.js', 'waiting for approval'],
++  networks: ['a11y-governance.spec.js', 'networks list (no network yet)'],
++  security: ['security.spec.js', 'security (two-step off)'],
++  mfa_enrol: ['security.spec.js', 'two-step set-up start'],
++  mfa_recovery: ['security.spec.js', 'two-step recovery codes shown'],
++  login_mfa: ['security.spec.js', 'two-step challenge'],
++  recovery_codes: ['security.spec.js', 'recovery codes (none yet)'],
++  recover: ['security.spec.js', 'recover form'],
++  admin_reset_done: ['security.spec.js', 'temporary password shown'],
++  admin_break_glass: ['security.spec.js', 'operator access'],
++  admin_adjust_pending: ['security.spec.js', 'pending adjustments (empty)'],
++  erase_confirm: ['security.spec.js', 'erase my data'],
++};
++
++function axeLabels(file) {
++  const src = fs.readFileSync(path.join(__dirname, file), 'utf8');
++  return new Set([...src.matchAll(/(?:expectNoAxeViolations|checkPage)\([\w.]+, '([^']+)'\)/g)].map((m) => m[1]));
++}
++
++test('every page template is checked by axe', () => {
++  const templates = fs.readdirSync(TEMPLATES_DIR).filter((f) => f.endsWith('.html')).map((f) => f.slice(0, -5));
++  expect(templates.length, 'templates found').toBeGreaterThan(50);
++  const known = new Set(templates);
++  const covered = new Set();
++  for (const [name, , , tpl] of PAGES) {
++    expect(known.has(tpl), `PAGES "${name}" names template ${tpl}, which does not exist`).toBe(true);
++    covered.add(tpl);
++  }
++  for (const [tpl, [file, label]] of Object.entries(STATE_CHECKS)) {
++    expect(known.has(tpl), `STATE_CHECKS names template ${tpl}, which does not exist`).toBe(true);
++    expect(axeLabels(file).has(label), `${file} has no axe check labelled "${label}" (for ${tpl})`).toBe(true);
++    covered.add(tpl);
++  }
++  const missing = templates.filter((t) => !LAYOUT_ONLY.includes(t) && !covered.has(t));
++  expect(missing, 'templates no axe check renders').toEqual([]);
++});
+diff --git a/e2e/tests/security.spec.js b/e2e/tests/security.spec.js
+index 4608673..f9d9ba4 100644
+--- a/e2e/tests/security.spec.js
++++ b/e2e/tests/security.spec.js
+@@ -8,8 +8,9 @@ const { test, expect } = require('@playwright/test');
+ const { buildSecurityInstance, totp, PASSWORD, SLUG } = require('../secfixture');
+ const { tabTo, kbSubmit, kbActivate } = require('../kbd');
+ 
+-const AXE_PATH = require.resolve('axe-core/axe.min.js');
+-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
++// The same WCAG 2.2 AA tags (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa) and light plus dark scheme pass as
++// tests/a11y.spec.js; see AXE_TAGS and SCHEMES in fixtures.js.
++const { expectNoAxeViolations } = require('../fixtures');
+ const NEW_PASSWORD = 'a different long passphrase 42';
+ 
+ test.describe.configure({ mode: 'serial' });
+@@ -32,16 +33,7 @@ async function newPage(browser) {
+ }
+ 
+ async function expectClean(page, label) {
+-  await page.addScriptTag({ path: AXE_PATH });
+-  const v = await page.evaluate(async (tags) => {
+-    // eslint-disable-next-line no-undef
+-    const r = await axe.run(document, { runOnly: { type: 'tag', values: tags }, resultTypes: ['violations'] });
+-    return r.violations.map((x) => ({ id: x.id, impact: x.impact, help: x.help, nodes: x.nodes.map((n) => ({ target: n.target.join(' '), html: n.html.slice(0, 200) })) }));
+-  }, AXE_TAGS);
+-  if (v.length) {
+-    throw new Error(`${label}: ${v.length} axe violation(s) at ${page.url()}\n` +
+-      v.map((x) => `  [${x.impact}] ${x.id}: ${x.help}\n` + x.nodes.map((n) => `      ${n.target}\n      ${n.html}`).join('\n')).join('\n'));
+-  }
++  await expectNoAxeViolations(page, label);
+ }
+ 
+ async function checkPage(page, label) {
+diff --git a/e2e/tests/target-size.spec.js b/e2e/tests/target-size.spec.js
+new file mode 100644
+index 0000000..a7fd1e3
+--- /dev/null
++++ b/e2e/tests/target-size.spec.js
+@@ -0,0 +1,76 @@
++// UX-035 (WCAG 2.2 success criterion 2.5.8, Target Size (Minimum)) measured on every page of the shared seed, at
++// 1280 px and on a 320 px touch layout. The rules (24 px minimum with the 2.5.8 exceptions, 44 px for the controls
++// sized for touch) are in targets.js. axe's target-size rule (tag wcag22aa) runs on the same pages in a11y.spec.js;
++// this is an independent measurement that also covers the touch-layout recommendation.
++const path = require('path');
++const { test, expect, STATE_DIR } = require('../fixtures');
++const { PAGES } = require('../pages');
++const { measure, targetSizeFailures } = require('../targets');
++
++const LAYOUTS = [
++  { name: '1280 px', viewport: { width: 1280, height: 900 } },
++  { name: '320 px touch', viewport: { width: 320, height: 640 }, hasTouch: true, isMobile: true },
++];
++
++for (const layout of LAYOUTS) {
++  test(`UX-035: target sizes on every page, ${layout.name}`, async ({ browser, st }) => {
++    test.setTimeout(240_000);
++    const contexts = {};
++    const pageFor = async (who) => {
++      const key = who || 'anonymous';
++      if (!contexts[key]) {
++        contexts[key] = await browser.newContext({
++          baseURL: st.base, viewport: layout.viewport, hasTouch: !!layout.hasTouch, isMobile: !!layout.isMobile,
++          storageState: who ? path.join(STATE_DIR, who + '.json') : undefined,
++        });
++      }
++      return contexts[key].newPage();
++    };
++    const failures = [];
++    let measured = 0;
++    try {
++      for (const [name, who, pathOf] of PAGES) {
++        const page = await pageFor(who);
++        await page.goto(pathOf(st));
++        if (layout.hasTouch) expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches), 'touch layout').toBe(true);
++        const r = await targetSizeFailures(page, !!layout.hasTouch);
++        measured += r.count;
++        failures.push(...r.failures.map((f) => `${name}: ${f}`));
++        await page.close();
++      }
++    } finally {
++      for (const c of Object.values(contexts)) await c.close();
++    }
++    expect(measured, 'targets measured').toBeGreaterThan(PAGES.length * 5);
++    expect(failures, `targets that fail UX-035 at ${layout.name}`).toEqual([]);
++  });
++}
++
++// Guard against a false green: crowded small targets and a small control on a touch layout are reported.
++test('UX-035 guard: crowded 16 px links and a 30 px button are reported', async ({ browser, st }) => {
++  const ctx = await browser.newContext({ baseURL: st.base, viewport: { width: 320, height: 640 }, hasTouch: true, isMobile: true });
++  try {
++    const page = await ctx.newPage();
++    await page.goto('/login');
++    await page.evaluate(() => {
++      const box = document.createElement('div');
++      for (const label of ['a', 'b']) {
++        const a = document.createElement('a');
++        a.href = '#';
++        a.textContent = label;
++        a.style.cssText = 'display:inline-block;width:16px;height:16px;margin:0;padding:0';
++        box.appendChild(a);
++      }
++      const b = document.createElement('button');
++      b.textContent = 'x';
++      b.style.cssText = 'min-height:0;min-width:0;height:30px;width:30px;padding:0';
++      box.appendChild(b);
++      document.querySelector('main').appendChild(box);
++    });
++    const r = await page.evaluate(measure, true);
++    expect(r.failures.filter((f) => /^a\b/.test(f)).length).toBe(2);
++    expect(r.comfy.some((f) => f.startsWith('button') && f.includes('30x30'))).toBe(true);
++  } finally {
++    await ctx.close();
++  }
++});
+-- 
+2.43.0
+
+
+From c1d83a80e38f2315e608a8c9aaedb7b07f2f26b7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:26:31 +0000
+Subject: [PATCH 2/2] test(e2e): contrast matrix of every colour token; balance
+ meaning without colour
+
+UX-057, QA-036, UX-005.
+
+- contrast.spec.js: reads the stylesheet through the CSSOM, resolves every
+  :root colour token in the light and the dark scheme, and asserts the WCAG
+  ratio of each pair the stylesheet combines (4.5:1 text, 3:1 UI boundaries,
+  state colours and focus indicator on each surface). It also fails when a
+  token has no dark value, no pair, is not a colour, or when a colour literal
+  is used outside the token blocks. Guards cover the reader and the arithmetic.
+- greyscale.spec.js: dashboard (in debt, in credit, level), history, trades,
+  pending trade and accept review in greyscale (CDP achromatopsia), forced
+  colours and with author colours removed: same words on screen, sign plus
+  word on every balance and consistent with its spoken text, a sign on every
+  amount, a status word on every trade row, all visible at >= 4.5:1.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ e2e/tests/contrast.spec.js  | 162 ++++++++++++++++++++++++++++++++++++
+ e2e/tests/greyscale.spec.js | 139 +++++++++++++++++++++++++++++++
+ 2 files changed, 301 insertions(+)
+ create mode 100644 e2e/tests/contrast.spec.js
+ create mode 100644 e2e/tests/greyscale.spec.js
+
+diff --git a/e2e/tests/contrast.spec.js b/e2e/tests/contrast.spec.js
+new file mode 100644
+index 0000000..2e50caf
+--- /dev/null
++++ b/e2e/tests/contrast.spec.js
+@@ -0,0 +1,162 @@
++// UX-057 and QA-036: contrast of every colour token of the stylesheet, in the light and in the dark scheme.
++//
++// The design tokens are the custom properties on :root in internal/web/static/style.css; the dark scheme redefines
++// them under (prefers-color-scheme: dark). The browser resolves every token in each scheme, and the WCAG 2.x contrast
++// ratio is computed here for each foreground and background pair the stylesheet combines: at least 4.5:1 for text
++// (1.4.3; large text needs only 3:1, so 4.5 covers it) and 3:1 for UI component boundaries, state indicators and the
++// focus indicator against each surface they sit on (1.4.11). The state colours (error, success, notice) are among
++// them. axe checks rendered text in both schemes on every page (a11y.spec.js); this matrix also covers non-text
++// colours and tokens that no seeded page happens to show.
++const { test, expect, useScheme, SCHEMES } = require('../fixtures');
++
++const TEXT = 4.5;
++const UI = 3;
++
++// [foreground token, background token, minimum ratio, where the stylesheet combines them]
++const PAIRS = [
++  ['fg', 'bg', TEXT, 'body text, headings, form field text'],
++  ['muted', 'bg', TEXT, 'hints and footer text'],
++  ['accent', 'bg', TEXT, 'links, secondary and link-style button text'],
++  ['accent-fg', 'accent', TEXT, 'primary button and skip link text'],
++  ['bad', 'bg', TEXT, 'field error messages'],
++  ['bg', 'bad', TEXT, 'danger button text'],
++  ['fg', 'badbg', TEXT, 'error summary text'],
++  ['bad', 'badbg', TEXT, 'error summary heading'],
++  ['accent', 'badbg', TEXT, 'error summary links to the fields'],
++  ['fg', 'okbg', TEXT, 'success message text'],
++  ['fg', 'note', TEXT, 'notice and session warning text'],
++  ['accent', 'note', TEXT, 'links and link-style buttons in notices'],
++
++  ['line', 'bg', UI, 'borders of form fields, fieldsets, tables, cards, tags and the meter'],
++  ['accent', 'bg', UI, 'primary button fill, secondary button border'],
++  ['accent', 'note', UI, 'button fill in the session warning'],
++  ['bad', 'bg', UI, 'error border of a field and of the error summary, danger button fill'],
++  ['ok', 'bg', UI, 'success message border'],
++  ['focus', 'bg', UI, 'focus indicator on the page'],
++  ['focus', 'note', UI, 'focus indicator inside a notice'],
++  ['focus', 'badbg', UI, 'focus indicator inside the error summary'],
++];
++
++function channel(v) {
++  const c = v / 255;
++  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
++}
++
++/** Relative luminance (WCAG 2.x) of a computed colour "rgb(r, g, b)". */
++function luminance(rgb) {
++  const [r, g, b] = rgb;
++  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
++}
++
++function contrast(a, b) {
++  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
++  return (hi + 0.05) / (lo + 0.05);
++}
++
++function parseRgb(s) {
++  const m = s.match(/^rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)$/);
++  if (!m) throw new Error(`not an sRGB computed colour: ${s}`);
++  return { rgb: [Number(m[1]), Number(m[2]), Number(m[3])], alpha: m[4] === undefined ? 1 : Number(m[4]) };
++}
++
++/**
++ * Reads the stylesheet through the CSSOM: the token names declared on :root outside and inside the dark-scheme
++ * media rule, every token's computed colour in the current scheme, and declarations outside the token blocks that
++ * use a colour literal (which would escape this check).
++ */
++async function readTokens(page) {
++  return page.evaluate(() => {
++    const base = new Set();
++    const dark = new Set();
++    const literals = [];
++    const keywords = new Set(['transparent', 'currentcolor', 'inherit', 'initial', 'unset', 'revert', 'revert-layer']);
++    const fn = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/i;
++    const walk = (rules, inDark) => {
++      for (const r of rules) {
++        const isDark = inDark || (r.media && /prefers-color-scheme:\s*dark/.test(r.media.mediaText));
++        if (r.style) {
++          for (const prop of r.style) {
++            const value = r.style.getPropertyValue(prop);
++            if (prop.startsWith('--')) {
++              if (r.selectorText === ':root') (isDark ? dark : base).add(prop);
++              continue;
++            }
++            const words = value.replace(/var\([^)]*\)/g, ' ').replace(/"[^"]*"/g, ' ').split(/[\s,/]+/).filter(Boolean);
++            // named colours are bare identifiers; colour functions and hex values are caught by fn
++            const named = words.filter((w) => /^[a-z]+$/i.test(w) && !keywords.has(w.toLowerCase()) && CSS.supports('color', w));
++            if (fn.test(value) || named.length) literals.push(`${r.selectorText} { ${prop}: ${value} }`);
++          }
++        }
++        if (r.cssRules) walk(r.cssRules, isDark);
++      }
++    };
++    for (const sheet of document.styleSheets) walk(sheet.cssRules, false);
++    const probe = document.createElement('span');
++    document.body.appendChild(probe);
++    const values = {};
++    const notColours = [];
++    const root = getComputedStyle(document.documentElement);
++    for (const name of base) {
++      // All tokens are colours; one that is not a valid colour would silently resolve to the inherited colour.
++      if (!CSS.supports('color', root.getPropertyValue(name).trim())) notColours.push(name);
++      probe.style.color = `var(${name})`;
++      values[name.slice(2)] = getComputedStyle(probe).color;
++    }
++    probe.remove();
++    return { base: [...base].map((x) => x.slice(2)).sort(), dark: [...dark].map((x) => x.slice(2)).sort(), values, literals, notColours };
++  });
++}
++
++test('every colour is a token, every token has a dark value and is in the contrast matrix', async ({ page }) => {
++  await page.goto('/login');
++  const t = await readTokens(page);
++  expect(t.base.length, 'tokens on :root').toBeGreaterThan(5);
++  expect(t.dark, 'tokens redefined for the dark scheme').toEqual(t.base);
++  expect(t.literals, 'colour values outside the token definitions').toEqual([]);
++  expect(t.notColours, 'tokens whose value is not a valid colour').toEqual([]);
++  await useScheme(page, 'dark');
++  expect((await readTokens(page)).notColours, 'dark tokens whose value is not a valid colour').toEqual([]);
++  const paired = new Set(PAIRS.flatMap(([fg, bg]) => [fg, bg]));
++  expect(t.base.filter((x) => !paired.has(x)), 'tokens without a contrast pair').toEqual([]);
++  expect([...paired].filter((x) => !t.base.includes(x)), 'pairs that name an unknown token').toEqual([]);
++});
++
++for (const scheme of SCHEMES) {
++  test(`contrast matrix of the colour tokens, ${scheme} scheme`, async ({ page }, testInfo) => {
++    await page.goto('/login');
++    await useScheme(page, scheme);
++    const { values } = await readTokens(page);
++    const rows = PAIRS.map(([fg, bg, min, use]) => {
++      const f = parseRgb(values[fg]);
++      const b = parseRgb(values[bg]);
++      expect(f.alpha, `--${fg} is opaque`).toBe(1);
++      expect(b.alpha, `--${bg} is opaque`).toBe(1);
++      return { fg, bg, min, use, fgValue: values[fg], bgValue: values[bg], ratio: Math.round(contrast(f.rgb, b.rgb) * 100) / 100 };
++    });
++    await testInfo.attach(`contrast-${scheme}.json`, { body: JSON.stringify(rows, null, 2), contentType: 'application/json' });
++    // The light and the dark values must differ, or the dark scheme was not applied.
++    if (scheme === 'dark') expect(values.bg, 'dark background').not.toBe('rgb(255, 255, 255)');
++    const failing = rows.filter((r) => r.ratio < r.min).map((r) =>
++      `--${r.fg} (${r.fgValue}) on --${r.bg} (${r.bgValue}): ${r.ratio}:1, needs ${r.min}:1 for ${r.use}`);
++    expect(failing, `${scheme} scheme pairs below the minimum`).toEqual([]);
++  });
++}
++
++// Guards against a false green: the stylesheet reader sees an extra token and colour literals when they exist, and
++// the arithmetic matches the WCAG reference values.
++test('token reader reports an untracked token and colour literals', async ({ page }) => {
++  await page.goto('/login');
++  await page.addStyleTag({ content: ':root{--extra:#000}.x{color:#123456}.y{border:1px solid red}.z{background:var(--bg)}' });
++  const t = await readTokens(page);
++  expect(t.base).toContain('extra');
++  expect(t.dark).not.toContain('extra');
++  expect(t.literals.some((l) => l.startsWith('.x '))).toBe(true);
++  expect(t.literals.some((l) => l.startsWith('.y '))).toBe(true);
++  expect(t.literals.some((l) => l.startsWith('.z '))).toBe(false);
++});
++
++test('contrast arithmetic matches known WCAG values', () => {
++  expect(Math.round(contrast([0, 0, 0], [255, 255, 255]) * 100) / 100).toBe(21);
++  expect(Math.round(contrast([118, 118, 118], [255, 255, 255]) * 100) / 100).toBe(4.54); // #767676 on white
++  expect(Math.round(contrast([255, 255, 255], [255, 255, 255]) * 100) / 100).toBe(1);
++});
+diff --git a/e2e/tests/greyscale.spec.js b/e2e/tests/greyscale.spec.js
+new file mode 100644
+index 0000000..e8f1724
+--- /dev/null
++++ b/e2e/tests/greyscale.spec.js
+@@ -0,0 +1,139 @@
++// UX-005 and QA-036: balance direction and trade status are not conveyed by colour alone. Each screen is shown three
++// ways: in greyscale (Chromium's achromatopsia emulation), with forced colours (Windows high contrast style), and with
++// every author colour removed (black text on white). In each one the visible text must still carry the meaning: the
++// sign character and the word for every balance (+ In credit, − In debt, unsigned Level), the spelled-out direction
++// for assistive technology, a sign on every signed amount and a status word on every trade row. The text must stay
++// visible against its background, and the words on screen must be the same as in the normal presentation.
++const { test, expect } = require('../fixtures');
++
++const n = (st) => `/n/${st.slug}`;
++
++// [name, who, path, balance states expected on the page]
++const SCREENS = [
++  ['dashboard, in debt', 'alice', (st) => n(st), ['In debt']],
++  ['dashboard, in credit, with a trade waiting', 'bob', (st) => n(st), ['In credit']],
++  ['dashboard, level', 'admin', (st) => n(st), ['Level']],
++  ['history', 'alice', (st) => `${n(st)}/history`, []],
++  ['trades', 'bob', (st) => `${n(st)}/trades`, []],
++  ['trade detail, pending', 'bob', (st) => `${n(st)}/trades/${st.tradePending}`, []],
++  ['accept review, balance before and after', 'bob', (st) => `${n(st)}/trades/${st.tradePending}/accept`, ['In credit']],
++];
++
++const MODES = {
++  greyscale: async (page) => {
++    const cdp = await page.context().newCDPSession(page);
++    await cdp.send('Emulation.setEmulatedVisionDeficiency', { type: 'achromatopsia' });
++  },
++  'forced colours': async (page) => {
++    await page.emulateMedia({ forcedColors: 'active' });
++    expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches), 'forced colours applied').toBe(true);
++  },
++  'colours removed': async (page) => {
++    await page.addStyleTag({
++      content: '*,*::before,*::after{color:#000!important;background:#fff!important;border-color:#000!important;outline-color:#000!important}',
++    });
++  },
++};
++
++const BALANCE = /^([+−]?)(\d[\d,]*\.\d+) · (In credit|In debt|Level)$/;
++
++/** What the page says, and how visible it is: read from the DOM and computed styles. */
++async function readScreen(page) {
++  return page.evaluate(() => {
++    const parse = (s) => (s.match(/[\d.]+/g) || []).slice(0, 3).map(Number);
++    const lum = ([r, g, b]) => [r, g, b].map((v) => {
++      const c = v / 255;
++      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
++    }).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
++    const background = (el) => {
++      for (let e = el; e; e = e.parentElement) {
++        const bg = getComputedStyle(e).backgroundColor;
++        const m = bg.match(/rgba?\(([^)]+)\)/);
++        if (m && (m[1].split(',')[3] === undefined || Number(m[1].split(',')[3]) > 0)) return bg;
++      }
++      return 'rgb(255, 255, 255)';
++    };
++    const contrast = (el) => {
++      const [a, b] = [lum(parse(getComputedStyle(el).color)), lum(parse(background(el)))].sort((x, y) => y - x);
++      return Math.round(((a + 0.05) / (b + 0.05)) * 100) / 100;
++    };
++    const shown = (el) => {
++      const r = el.getBoundingClientRect();
++      const cs = getComputedStyle(el);
++      return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && Number(cs.opacity) > 0;
++    };
++    const balances = [...document.querySelectorAll('.bal')].map((b) => {
++      const vis = b.querySelector('[aria-hidden="true"]');
++      return {
++        visible: vis.innerText.replace(/\s+/g, ' ').trim(),
++        spoken: b.querySelector('.sr').textContent.trim(),
++        shown: shown(vis),
++        contrast: Math.min(...[...vis.querySelectorAll('.num, strong')].map(contrast)),
++      };
++    });
++    const rows = [...document.querySelectorAll('ul.rows > li')].filter((li) => li.querySelector('.num')).map((li) => ({
++      amount: li.querySelector('.num').innerText.trim(),
++      status: li.querySelector('.tag') ? li.querySelector('.tag').innerText.trim() : '',
++      shown: shown(li.querySelector('.num')) && (!li.querySelector('.tag') || shown(li.querySelector('.tag'))),
++      contrast: Math.min(contrast(li.querySelector('.num')), li.querySelector('.tag') ? contrast(li.querySelector('.tag')) : 21),
++    }));
++    const tags = [...document.querySelectorAll('main .tag')].map((t) => ({ text: t.innerText.trim(), shown: shown(t), contrast: contrast(t) }));
++    return { balances, rows, tags, text: document.querySelector('main').innerText.replace(/\s+/g, ' ').trim() };
++  });
++}
++
++for (const [name, who, pathOf, states] of SCREENS) {
++  test(`UX-005: ${name} is understandable without colour`, async ({ as, st }) => {
++    const page = await as(who);
++    await page.goto(pathOf(st));
++    const normal = await readScreen(page);
++    expect(normal.balances.map((b) => b.visible.match(BALANCE)?.[3]), `${name}: balance states`).toEqual(expect.arrayContaining(states));
++    if (name.startsWith('history') || name.startsWith('trades')) expect(normal.rows.length, `${name}: trade rows`).toBeGreaterThan(0);
++
++    for (const [mode, apply] of Object.entries(MODES)) {
++      const p = await as(who); // a fresh page, so no emulation carries over from the previous mode
++      await p.goto(pathOf(st));
++      await apply(p);
++      const s = await readScreen(p);
++      const where = `${name}, ${mode}`;
++      expect(s.text, `${where}: the same words as in colour`).toBe(normal.text);
++      for (const b of s.balances) {
++        const m = b.visible.match(BALANCE);
++        expect(m, `${where}: balance "${b.visible}" shows a sign and a word`).not.toBeNull();
++        const [, sign, amount, state] = m;
++        if (state === 'In credit') expect(sign, `${where}: ${b.visible}`).toBe('+');
++        if (state === 'In debt') expect(sign, `${where}: ${b.visible}`).toBe('−');
++        if (state === 'Level') expect([sign, Number(amount)], `${where}: ${b.visible}`).toEqual(['', 0]);
++        // assistive technology gets the direction in words, not the minus sign
++        expect(b.spoken, `${where}: spoken balance`).toMatch(state === 'Level' ? /^Level, zero / : new RegExp(`^${state} by ${amount} `));
++        expect(b.shown, `${where}: balance is on screen`).toBe(true);
++        expect(b.contrast, `${where}: balance text contrast`).toBeGreaterThanOrEqual(4.5);
++      }
++      for (const r of s.rows) {
++        expect(r.amount, `${where}: signed amount`).toMatch(/^[+−]\d/);
++        expect(r.status, `${where}: status word for ${r.amount}`).toMatch(/^(Completed|Waiting for .+ to respond|Declined|Cancelled|Expired|Disputed|Reversed)$/);
++        expect(r.shown, `${where}: amount and status are on screen`).toBe(true);
++        expect(r.contrast, `${where}: amount and status contrast`).toBeGreaterThanOrEqual(4.5);
++      }
++      for (const t of s.tags) {
++        expect(t.text, `${where}: status tag has words`).not.toBe('');
++        expect(t.shown && t.contrast >= 4.5, `${where}: status tag "${t.text}" visible (contrast ${t.contrast})`).toBe(true);
++      }
++    }
++  });
++}
++
++// Guard against a false green: a balance that only a colour distinguishes is reported.
++test('UX-005 guard: a colour-only balance fails the sign-and-word check', async ({ as, st }) => {
++  const page = await as('alice');
++  await page.goto(n(st));
++  await page.evaluate(() => {
++    const vis = document.querySelector('.bal [aria-hidden="true"]');
++    const num = vis.querySelector('.num');
++    num.textContent = '14.00';
++    num.style.color = 'rgb(155, 28, 28)';
++    vis.replaceChildren(num); // only the number, its direction left to the colour
++  });
++  const s = await readScreen(page);
++  expect(s.balances[0].visible).not.toMatch(BALANCE);
++});
+-- 
+2.43.0
+

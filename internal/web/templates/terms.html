@@ -1,0 +1,23 @@
+{{define "content"}}
+{{with .D.Terms}}
+<p>Version {{.Version}}, published {{time .PublishedAt}}.</p>
+<section aria-labelledby="terms-h"><h2 id="terms-h" class="sr">Terms text</h2>
+{{range $.D.Paras}}<p>{{.}}</p>{{end}}</section>
+{{if $.D.NeedsAcceptance}}
+<form method="post" action="/n/{{$.Slug}}/terms" novalidate>
+  {{template "csrf" $}}
+  <input type="hidden" name="version" value="{{.Version}}">
+  <input type="hidden" name="next" value="{{$.D.Next}}">
+  {{with $.Err "accept"}}<p class="error" id="e-accept"><span class="sr">Error: </span>{{.}}</p>{{end}}
+  <div class="field" id="f-accept"><label><input type="checkbox" name="accept" value="1"> I have read and accept version {{.Version}} of these terms</label></div>
+  <p>You can read your balance and history without accepting, but you must accept before you propose or accept a trade.</p>
+  <div class="actions"><button type="submit">Accept these terms</button></div>
+</form>
+{{else}}
+<p>{{if gt $.D.Accepted 0}}You accepted version {{$.D.Accepted}}.{{end}}</p>
+{{end}}
+{{else}}
+<p>This network has not published terms yet.</p>
+{{end}}
+<p><a href="/n/{{.Slug}}/policy">See the rules and their change log</a></p>
+{{end}}

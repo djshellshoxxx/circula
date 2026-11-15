@@ -1,0 +1,156 @@
+# Prometheus alerting rules for Circula (OPS-015).
+#
+# Load with `rule_files: [/etc/prometheus/rules/circula.rules.yml]`. The rules
+# assume the scrape job of the /metrics endpoint is named "circula" (job label)
+# and, for the group circula-host, a node_exporter on the same host.
+#
+# Every series in the group "circula" is exported by the circula binary
+# (cmd/circula/metrics.go) or is Prometheus' own `up`. A Go test
+# (cmd/circula/alert_rules_test.go) fails when a rule reads a series the binary
+# does not export, and checks this file with `promtool check rules` when
+# promtool is installed.
+#
+# Thresholds marked "recommended default" are the OPS-015 recommendations, not
+# owner decisions. The authentication-throttling rate is not decided: the
+# CirculaAuthThrottling alert stays silent until you define the recording rule
+# circula:auth_throttling_alert_threshold:rate10m with the agreed rate (429
+# responses per second over 10 minutes), for example in your own rule file:
+#
+#   groups:
+#     - name: circula-thresholds
+#       rules:
+#         - record: circula:auth_throttling_alert_threshold:rate10m
+#           expr: vector(<agreed rate>)
+#
+# Labels: `severity` (critical or warning) is for alert routing. Annotations:
+# `incident_level` is the level of docs/ops/incident-response.md (critical,
+# high, normal); `owner_role` and `first_response` follow OPS-015.
+groups:
+  - name: circula
+    rules:
+      - alert: CirculaLedgerVerificationFailed
+        expr: |
+          circula_ledger_verification_ok == 0
+            or circula_ledger_verification_failing_networks > 0
+            or circula_frozen_networks > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "Ledger verification failed on {{ $labels.instance }}; the failing network is frozen (read-only)."
+          incident_level: critical
+          owner_role: "Platform operator; product architect informed"
+          first_response: "Follow the incident procedure (SEC-030, docs/ops/incident-response.md). Do not restore over the live database or edit it. Take a backup, capture the findings with circula verify-ledger, decide with the product architect."
+          runbook_url: "docs/ops/incident-response.md#2-contain"
+
+      - alert: CirculaDown
+        expr: |
+          up{job="circula"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus cannot scrape circula on {{ $labels.instance }} for 5 minutes (process down, or it exited at start-up)."
+          incident_level: critical
+          owner_role: "Platform operator"
+          first_response: "Follow SEC-030 (docs/ops/incident-response.md). Check the service manager and the start-up error in the logs: a failed or refused migration, a locked database or a configuration error stop serve before it listens."
+          runbook_url: "docs/ops/monitoring.md#failure-modes-ops-033"
+
+      - alert: CirculaHealthCheckFailing
+        # Needs a prober (orchestrator, proxy or blackbox exporter) calling /healthz.
+        expr: |
+          increase(circula_http_requests_total{job="circula",route="/healthz",class="5xx"}[5m]) > 0
+            unless on(job, instance)
+          increase(circula_http_requests_total{job="circula",route="/healthz",class="2xx"}[5m]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "/healthz on {{ $labels.instance }} answered only 503 for 5 minutes (database unreachable or schema mismatch)."
+          incident_level: critical
+          owner_role: "Platform operator"
+          first_response: "Follow SEC-030 (docs/ops/incident-response.md). Check the database file, the disk and the schema version; see the disk-full and corruption rows of the failure-mode table."
+          runbook_url: "docs/ops/monitoring.md#failure-modes-ops-033"
+
+      - alert: CirculaMigrationFailed
+        # serve exits on a failed or refused migration before it listens, so
+        # today CirculaDown fires; this rule covers the counter if it is ever
+        # scraped with a failure.
+        expr: |
+          increase(circula_migrations_total{result=~"failed|refused"}[1h]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "A schema migration failed or was refused on {{ $labels.instance }}; the database is at its previous version."
+          incident_level: critical
+          owner_role: "Platform operator"
+          first_response: "Follow SEC-030 (docs/ops/incident-response.md). Read the start-up error, keep the pre-migration backup, then follow docs/ops/upgrade.md."
+          runbook_url: "docs/ops/upgrade.md"
+
+      - alert: CirculaBackupStale
+        # 26 hours is the recommended default for the daily backup-interval.
+        # The gauge counts backups taken by this serve process; it is 0 after a
+        # restart until the next one, so uptime covers that case. Backups taken
+        # only with the `circula backup` command are not seen here.
+        expr: |
+          (
+            circula_backup_last_success_timestamp_seconds > 0
+              and (time() - circula_backup_last_success_timestamp_seconds) > 26 * 3600
+          )
+          or
+          (
+            circula_backup_last_success_timestamp_seconds == 0
+              and circula_uptime_seconds > 26 * 3600
+          )
+        labels:
+          severity: warning
+        annotations:
+          summary: "No successful backup on {{ $labels.instance }} for more than 26 hours."
+          incident_level: high
+          owner_role: "Platform operator"
+          first_response: "Follow SEC-030 (docs/ops/incident-response.md) at level high. Check backup-interval, the disk and the backup job errors in the logs; run circula backup manually."
+          runbook_url: "docs/ops/backup-restore.md#taking-a-backup"
+
+      - alert: CirculaAuthThrottling
+        expr: |
+          rate(circula_http_rate_limited_total{job="circula"}[10m])
+            > scalar(circula:auth_throttling_alert_threshold:rate10m)
+        labels:
+          severity: warning
+        annotations:
+          summary: "Sustained throttling (429 responses) on {{ $labels.instance }} above the agreed rate."
+          incident_level: high
+          owner_role: "Security owner"
+          first_response: "Review the source addresses in the edge logs. Follow SEC-030 (docs/ops/incident-response.md) if the pattern looks like an attack."
+          runbook_url: "docs/ops/incident-response.md#detection-sources"
+
+      - alert: CirculaJobFailed
+        # The metric's own `job` label (expiry, verify, backup, ...) arrives as
+        # `exported_job`, because Prometheus sets `job` to the scrape job.
+        expr: |
+          increase(circula_job_runs_total{result="failed"}[1h]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Scheduled job {{ $labels.exported_job }} failed on {{ $labels.instance }}."
+          incident_level: normal
+          owner_role: "Platform operator"
+          first_response: "Read the logged error for the named job. Raise to SEC-030 (docs/ops/incident-response.md) if it is the verify or backup job."
+          runbook_url: "docs/ops/monitoring.md#scheduled-jobs-ops-027-ops-028"
+
+  - name: circula-host
+    rules:
+      - alert: CirculaVolumeUsageHigh
+        # 80 percent is the recommended default. Set mountpoint to the
+        # filesystems holding the database directory and backup-dir.
+        expr: |
+          (
+            1 - node_filesystem_avail_bytes{mountpoint=~"/|/var/lib/circula|/var/backups/circula"}
+              / node_filesystem_size_bytes{mountpoint=~"/|/var/lib/circula|/var/backups/circula"}
+          ) > 0.80
+        labels:
+          severity: warning
+        annotations:
+          summary: "Volume {{ $labels.mountpoint }} on {{ $labels.instance }} is more than 80 percent full."
+          incident_level: high
+          owner_role: "Platform operator"
+          first_response: "Follow SEC-030 (docs/ops/incident-response.md) at level high. Free space only by expiring old backups through retention; never delete the WAL file."
+          runbook_url: "docs/ops/monitoring.md#failure-modes-ops-033"

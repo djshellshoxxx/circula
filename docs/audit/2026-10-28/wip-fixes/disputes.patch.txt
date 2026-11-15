@@ -1,0 +1,427 @@
+diff --git a/internal/service/dispute_reversal_test.go b/internal/service/dispute_reversal_test.go
+new file mode 100644
+index 0000000..2354100
+--- /dev/null
++++ b/internal/service/dispute_reversal_test.go
+@@ -0,0 +1,292 @@
++package service_test
++
++import (
++	"encoding/json"
++	"errors"
++	"reflect"
++	"sort"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// setFounderStatus sets the founding (and only) administrator's membership
++// with raw SQL, as TestAdminRequiredReadOnly does: no service path leaves a
++// network without an active administrator, so this is how tests reach the
++// GOV-020 administrator-required state.
++func (w *world) setFounderStatus(t *testing.T, s domain.MemberStatus) {
++	t.Helper()
++	if _, err := w.Store.DB().Exec(`UPDATE members SET status = ? WHERE id = ?`, string(s), w.adminM.ID); err != nil {
++		t.Fatal(err)
++	}
++	if got, want := tu.Must(w.Svc.GetNetwork(w.Ctx, w.a, w.net.ID)).AdminRequired, s != domain.MemberActive; got != want {
++		t.Fatalf("administrator required = %v, want %v", got, want)
++	}
++}
++
++// GOV-020 (A1-04): with no active administrator the network is read-only and
++// no value moves. A dispute decision that would post a reversal is refused
++// with the error the re-review path gives in that state, and changes nothing.
++// A dismissal posts nothing and is not gated, as a confirmed re-review is not.
++// Once an administrator is active again the same decision posts.
++func TestDisputeDecisionPostsNothingWhenAdminRequired(t *testing.T) {
++	w := newWorld(t, nil)
++	rev1, _ := w.reviewerAs("rev1@example.org")
++	rev2, _ := w.reviewerAs("rev2@example.org")
++	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000)
++	d := tu.Must(w.open(w.a, tx.ID))
++	// A decided dispute awaiting its re-review gives the re-review path's refusal.
++	rr := tu.Must(w.open(w.a, w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 300).ID))
++	tu.Must(w.resolve(rev1, rr.ID, domain.OutcomeDismissed, 0, "no evidence"))
++	if err := w.rereview(w.a, rr.ID, "new evidence"); err != nil {
++		t.Fatal(err)
++	}
++	other := tu.Must(w.open(w.b, w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 200).ID))
++
++	w.setFounderStatus(t, domain.MemberSuspended)
++	seq := w.balance(w.a).LedgerSeq
++	gate := w.decideRR(rev2, rr.ID, string(domain.OutcomeUpheld), 0)
++	wantCode(t, gate, domain.ErrInvalidState)
++	for _, c := range []struct {
++		outcome domain.DisputeOutcome
++		amount  int64
++	}{{domain.OutcomeUpheld, 0}, {domain.OutcomePartiallyUpheld, 400}} {
++		_, err := w.resolve(rev1, d.ID, c.outcome, c.amount, "not delivered")
++		wantCode(t, err, domain.ErrInvalidState)
++		if err.Error() != gate.Error() {
++			t.Errorf("%s refused with %q, want the re-review path's %q", c.outcome, err, gate)
++		}
++	}
++	v := tu.Must(w.Svc.GetDispute(w.Ctx, rev1, w.net.ID, d.ID))
++	if v.Dispute.Status != domain.DisputeOpen || v.Tx.Status != domain.TxDisputed || v.Tx.ReversedTotal != 0 ||
++		w.balance(w.a).LedgerSeq != seq {
++		t.Fatalf("refused decision changed state: dispute %s, trade %s reversed %d, ledger_seq %d -> %d",
++			v.Dispute.Status, v.Tx.Status, v.Tx.ReversedTotal, seq, w.balance(w.a).LedgerSeq)
++	}
++	if got := tu.Must(w.resolve(rev1, other.ID, domain.OutcomeDismissed, 0, "delivered")); got.Status != domain.DisputeResolved ||
++		w.balance(w.a).LedgerSeq != seq {
++		t.Fatalf("dismissal = %+v, ledger_seq %d -> %d", got, seq, w.balance(w.a).LedgerSeq)
++	}
++
++	w.setFounderStatus(t, domain.MemberActive)
++	got := tu.Must(w.resolve(rev1, d.ID, domain.OutcomeUpheld, 0, "not delivered"))
++	if got.Status != domain.DisputeResolved || w.txStatus(tx.ID).Status != domain.TxReversed || w.balance(w.a).LedgerSeq != seq+1 {
++		t.Fatalf("with an administrator again: dispute %s, trade %s, ledger_seq %d -> %d",
++			got.Status, w.txStatus(tx.ID).Status, seq, w.balance(w.a).LedgerSeq)
++	}
++}
++
++// GOV-020, DOM-021 (A1-04): while no administrator is active, an upheld
++// decision whose reversal LED-5 would also block is refused by the network
++// gate, not left posting_pending, and the retry of a posting_pending dispute
++// is refused although LED-5 would now allow it. Both change nothing. With an
++// administrator active the decision is held by LED-5 and the retry posts.
++func TestDisputeRetryPostsNothingWhenAdminRequired(t *testing.T) {
++	w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 2500 })
++	rev, _ := w.reviewer()
++	c, cM := w.Member2(w.admin, "carol@example.org")
++	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 2500)
++	w.Trade(w.net.ID, w.b, c, w.bM, cM, 5000) // B spent it all: -2500 at its limit
++	d := tu.Must(w.open(w.a, tx.ID))
++	seq := w.balance(w.a).LedgerSeq
++	refused := func(err, gate error, want domain.DisputeStatus) {
++		t.Helper()
++		wantCode(t, err, domain.ErrInvalidState)
++		if err.Error() != gate.Error() {
++			t.Errorf("refused with %q, want the network gate's %q", err, gate)
++		}
++		v := tu.Must(w.Svc.GetDispute(w.Ctx, rev, w.net.ID, d.ID))
++		if v.Dispute.Status != want || v.Tx.Status != domain.TxDisputed || v.Tx.ReversedTotal != 0 || w.balance(w.a).LedgerSeq != seq {
++			t.Fatalf("refused call changed state: dispute %s, trade %s reversed %d, ledger_seq %d -> %d",
++				v.Dispute.Status, v.Tx.Status, v.Tx.ReversedTotal, seq, w.balance(w.a).LedgerSeq)
++		}
++	}
++
++	w.setFounderStatus(t, domain.MemberSuspended)
++	_, gate := w.propose(w.a, w.bM, service.ProposerPays, 10)
++	wantCode(t, gate, domain.ErrInvalidState)
++	_, err := w.resolve(rev, d.ID, domain.OutcomeUpheld, 0, "not delivered")
++	refused(err, gate, domain.DisputeOpen)
++
++	w.setFounderStatus(t, domain.MemberActive)
++	if got := tu.Must(w.resolve(rev, d.ID, domain.OutcomeUpheld, 0, "not delivered")); got.Status != domain.DisputePostingPending {
++		t.Fatalf("dispute = %+v", got)
++	}
++	big, exp := int64(10000), w.Clock.Now().Add(24*time.Hour)
++	tu.Must(0, w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.bM.ID, Limit: &big, ExpiresAt: &exp, Reason: "dispute DOM-021"}))
++
++	w.setFounderStatus(t, domain.MemberSuspended)
++	_, err = w.Svc.RetryDisputePosting(w.Ctx, rev, w.net.ID, d.ID)
++	refused(err, gate, domain.DisputePostingPending)
++
++	w.setFounderStatus(t, domain.MemberActive)
++	done := tu.Must(w.Svc.RetryDisputePosting(w.Ctx, rev, w.net.ID, d.ID))
++	if done.Status != domain.DisputeResolved || w.txStatus(tx.ID).Status != domain.TxReversed || w.balance(w.a).LedgerSeq != seq+1 {
++		t.Fatalf("with an administrator again: dispute %s, trade %s, ledger_seq %d -> %d",
++			done.Status, w.txStatus(tx.ID).Status, seq, w.balance(w.a).LedgerSeq)
++	}
++}
++
++// reversedEvents counts the transaction.reversed audit events of the network.
++func reversedEvents(w *world) int {
++	return len(tu.Must(w.Svc.ListAudit(w.Ctx, w.admin, w.net.ID, service.AuditQuery{Action: domain.ActTxReversed})))
++}
++
++func wantSummary(t *testing.T, which, got string, want map[string]any) {
++	t.Helper()
++	b, err := json.Marshal(want)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if got != string(b) {
++		t.Errorf("summary %s = %s, want %s", which, got, b)
++	}
++}
++
++// wantReversalAudited checks that the newest reversal of the trade orig has
++// exactly one audit event naming it: transaction.reversed by the decider, with
++// the reversal's own reason, both parties as subjects, links to the original
++// and the dispute, and the trade's state after the decision. A party finds the
++// event by the same id (FR-082).
++func wantReversalAudited(t *testing.T, w *world, orig, disputeID string, decider *domain.Member, amount int64) {
++	t.Helper()
++	var rev *domain.Transaction
++	for _, x := range tu.Must(w.Svc.AdminListTransactions(w.Ctx, w.admin, w.net.ID, domain.KindReversal, nil, service.Page{})) {
++		if x.OriginalTxID == orig && (rev == nil || x.LedgerSeq > rev.LedgerSeq) {
++			rev = x
++		}
++	}
++	if rev == nil || rev.Amount != amount {
++		t.Fatalf("newest reversal of %s = %+v, want amount %d", orig, rev, amount)
++	}
++	evs := tu.Must(w.Svc.ListAudit(w.Ctx, w.admin, w.net.ID, service.AuditQuery{TargetID: rev.ID}))
++	if len(evs) != 1 {
++		t.Fatalf("%d audit events name reversal %s, want 1", len(evs), rev.ID)
++	}
++	e, trade := evs[0], w.txStatus(orig)
++	parties := []string{w.aM.ID, w.bM.ID}
++	sort.Strings(parties)
++	if e.Action != domain.ActTxReversed || e.TargetType != "transaction" || e.ActorType != domain.ActorReviewer ||
++		e.ActorID != decider.ID || e.Reason != rev.Reason || !reflect.DeepEqual(e.SubjectIDs, parties) {
++		t.Errorf("reversal audit event = %+v", e)
++	}
++	wantSummary(t, "before", e.SummaryBefore, map[string]any{"original": orig, "dispute": disputeID})
++	wantSummary(t, "after", e.SummaryAfter, map[string]any{"amount": amount, "original_status": trade.Status, "reversed_total": trade.ReversedTotal})
++	if mine := tu.Must(w.Svc.ListAudit(w.Ctx, w.a, w.net.ID, service.AuditQuery{TargetID: rev.ID})); len(mine) != 1 || mine[0].Action != domain.ActTxReversed {
++		t.Errorf("the opener does not find the reversal by its id: %+v", mine)
++	}
++}
++
++// DOM-035, FR-081 (A1-09): a reversal posted by a dispute decision, a retry or
++// a re-review has an audit event of its own, as an administrative reversal
++// does, so filtering the log by the reversal's id finds it. Decisions that
++// post nothing (dismissed, held by LED-5, confirmed) add no such event.
++func TestDisputeReversalsAuditedUnderOwnID(t *testing.T) {
++	t.Run("decision", func(t *testing.T) {
++		w := newWorld(t, nil)
++		rev, revM := w.reviewer()
++		for _, c := range []struct {
++			outcome        domain.DisputeOutcome
++			amount, posted int64
++		}{{domain.OutcomeDismissed, 0, 0}, {domain.OutcomePartiallyUpheld, 400, 400}, {domain.OutcomeUpheld, 0, 1000}} {
++			tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000)
++			d := tu.Must(w.open(w.a, tx.ID))
++			before := reversedEvents(w)
++			tu.Must(w.resolve(rev, d.ID, c.outcome, c.amount, "decided"))
++			if c.posted == 0 {
++				if n := reversedEvents(w); n != before {
++					t.Errorf("%s: transaction.reversed events %d -> %d", c.outcome, before, n)
++				}
++				continue
++			}
++			wantReversalAudited(t, w, tx.ID, d.ID, revM, c.posted)
++		}
++	})
++	t.Run("retry", func(t *testing.T) {
++		w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 2500 })
++		rev, revM := w.reviewer()
++		c, cM := w.Member2(w.admin, "carol@example.org")
++		tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 2500)
++		w.Trade(w.net.ID, w.b, c, w.bM, cM, 5000) // B spent it all: -2500 at its limit
++		d := tu.Must(w.open(w.a, tx.ID))
++		if got := tu.Must(w.resolve(rev, d.ID, domain.OutcomeUpheld, 0, "not delivered")); got.Status != domain.DisputePostingPending {
++			t.Fatalf("dispute = %+v", got)
++		}
++		if n := reversedEvents(w); n != 0 {
++			t.Fatalf("%d transaction.reversed events while the posting is pending", n)
++		}
++		big, exp := int64(10000), w.Clock.Now().Add(24*time.Hour)
++		tu.Must(0, w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.bM.ID, Limit: &big, ExpiresAt: &exp, Reason: "dispute DOM-021"}))
++		tu.Must(w.Svc.RetryDisputePosting(w.Ctx, rev, w.net.ID, d.ID))
++		wantReversalAudited(t, w, tx.ID, d.ID, revM, 2500)
++	})
++	t.Run("re-review", func(t *testing.T) {
++		w := newWorld(t, nil)
++		rev1, _ := w.reviewerAs("rev1@example.org")
++		rev2, rev2M := w.reviewerAs("rev2@example.org")
++		for _, c := range []struct {
++			outcome        string
++			amount, posted int64
++		}{{service.ReReviewConfirmed, 0, 0}, {string(domain.OutcomePartiallyUpheld), 300, 300}, {string(domain.OutcomeUpheld), 0, 900}} {
++			tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 900)
++			d := tu.Must(w.open(w.a, tx.ID))
++			tu.Must(w.resolve(rev1, d.ID, domain.OutcomeDismissed, 0, "no evidence"))
++			if err := w.rereview(w.a, d.ID, "new evidence"); err != nil {
++				t.Fatal(err)
++			}
++			before := reversedEvents(w)
++			tu.Must(0, w.decideRR(rev2, d.ID, c.outcome, c.amount))
++			if c.posted == 0 {
++				if n := reversedEvents(w); n != before {
++					t.Errorf("%s: transaction.reversed events %d -> %d", c.outcome, before, n)
++				}
++				continue
++			}
++			wantReversalAudited(t, w, tx.ID, d.ID, rev2M, c.posted)
++		}
++	})
++}
++
++// DAT-029, LED-6 (A1-09): the reversal's audit event is written in the unit
++// that posts the reversal. If that write fails the whole decision is undone:
++// nothing posts and the dispute stays open. Retried with the same key and no
++// fault, the decision posts once.
++func TestDisputeReversalAuditFailureUndoesDecision(t *testing.T) {
++	var fs *tu.FaultStore
++	e := tu.NewEnvWith(t, func(s store.Store) store.Store { fs = tu.NewFaultStore(s); return fs })
++	w := &world{Env: e}
++	w.admin = e.Person("admin@example.org")
++	w.net, w.adminM = e.Network(w.admin, "fault-dispute", nil)
++	w.a, w.aM = e.Member(w.admin, w.net, "ana@example.org")
++	w.b, w.bM = e.Member(w.admin, w.net, "ben@example.org")
++	rev, _ := w.reviewer()
++	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000)
++	d := tu.Must(w.open(w.a, tx.ID))
++	seq, audits := w.balance(w.a).LedgerSeq, countRows(t, e, "audit_events")
++	in := service.ResolveInput{DisputeID: d.ID, Outcome: domain.OutcomeUpheld, Rationale: "not delivered", IdempotencyKey: "resolve"}
++
++	fs.Arm("InsertAudit", 2) // the decision's event is the first write, the reversal's the second
++	_, err := w.Svc.ResolveDispute(w.Ctx, rev, w.net.ID, in)
++	fs.Disarm()
++	if !errors.Is(err, tu.ErrInjected) {
++		t.Fatalf("want the injected fault, got %v", err)
++	}
++	v := tu.Must(w.Svc.GetDispute(w.Ctx, rev, w.net.ID, d.ID))
++	if v.Dispute.Status != domain.DisputeOpen || v.Tx.Status != domain.TxDisputed || v.Tx.ReversedTotal != 0 ||
++		w.balance(w.a).LedgerSeq != seq || countRows(t, e, "audit_events") != audits {
++		t.Fatalf("failed decision left a trace: dispute %s, trade %s reversed %d, ledger_seq %d -> %d",
++			v.Dispute.Status, v.Tx.Status, v.Tx.ReversedTotal, seq, w.balance(w.a).LedgerSeq)
++	}
++
++	tu.Must(w.Svc.ResolveDispute(w.Ctx, rev, w.net.ID, in))
++	if w.txStatus(tx.ID).Status != domain.TxReversed || w.balance(w.a).LedgerSeq != seq+1 {
++		t.Fatalf("retried decision: trade %s, ledger_seq %d -> %d", w.txStatus(tx.ID).Status, seq, w.balance(w.a).LedgerSeq)
++	}
++	if rep := tu.Must(w.Svc.VerifyLedger(w.Ctx, w.admin, w.net.ID)); !rep.OK {
++		t.Error(rep.Findings)
++	}
++}
+diff --git a/internal/service/disputes_decide.go b/internal/service/disputes_decide.go
+index 6f338b4..18e98b3 100644
+--- a/internal/service/disputes_decide.go
++++ b/internal/service/disputes_decide.go
+@@ -104,13 +104,16 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
+ 	d.Outcome, d.ReversalAmount, d.ReviewerID, d.Rationale, d.DecidedAt = in.Outcome, amount, p.member.ID, in.Rationale, &now
+ 
+ 	cmd, action := domain.DCmdResolve, domain.ActDisputeResolved
++	var posted *domain.Transaction // the reversal; nil when nothing posts
+ 	if amount > 0 {
+-		_, err := s.reverse(tx, p.net, t, amount, "dispute "+d.ID+": "+string(in.Outcome), p.member.ID, p.actor.RequestID)
++		rev, err := s.reverse(tx, p.net, t, amount, "dispute "+d.ID+": "+string(in.Outcome), p.member.ID, p.actor.RequestID)
+ 		switch {
+ 		case blockedByLimit(err):
+ 			cmd, action = domain.DCmdBlock, domain.ActDisputeBlocked
+ 		case err != nil:
+ 			return "", err
++		default:
++			posted = rev
+ 		}
+ 	}
+ 	if cmd == domain.DCmdResolve && t.Status == domain.TxDisputed {
+@@ -121,7 +124,10 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
+ 	if d.Status, err = domain.NextDisputeStatus(d.Status, cmd); err != nil {
+ 		return "", err
+ 	}
+-	return d.ID, s.finishDecision(tx, p, d, t, action, in.IdempotencyKey, waived)
++	if err := s.finishDecision(tx, p, d, t, action, in.IdempotencyKey, waived); err != nil {
++		return "", err
++	}
++	return d.ID, s.auditDisputeReversal(tx, p, d, t, posted, in.IdempotencyKey)
+ }
+ 
+ // responseGate enforces FR-076: a decision needs a submitted response, an
+@@ -170,6 +176,23 @@ func (s *Service) finishDecision(tx store.Tx, p *principal, d *domain.Dispute, t
+ 		After:    map[string]any{"status": d.Status, "outcome": string(d.Outcome), "amount": d.ReversalAmount, "transaction_status": t.Status}})
+ }
+ 
++// auditDisputeReversal records a reversal posted by a dispute decision, retry
++// or re-review under its own id, as an administrative reversal is
++// (transaction.reversed), so the audit log can be searched by it (DOM-035,
++// FR-081). It joins the decision's unit (DAT-029) and links the original and
++// the dispute; the rationale stays on the dispute or re-review. posted is nil
++// when nothing posted (dismissed, confirmed, or held by LED-5).
++func (s *Service) auditDisputeReversal(tx store.Tx, p *principal, d *domain.Dispute, t, posted *domain.Transaction, key string) error {
++	if posted == nil {
++		return nil
++	}
++	return s.audit(tx, p, auditEntry{Type: p.deciderType(), Action: domain.ActTxReversed, TargetType: "transaction",
++		TargetID: posted.ID, Reason: posted.Reason, IdemRef: keyRef(key),
++		Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
++		Before:   map[string]any{"original": t.ID, "dispute": d.ID},
++		After:    map[string]any{"amount": posted.Amount, "original_status": t.Status, "reversed_total": t.ReversedTotal}})
++}
++
+ // RetryDisputePosting re-attempts the reversal of a `posting_pending` dispute
+ // (DOM-021). It fails with insufficient-available-credit, changing nothing,
+ // until the debited account can absorb the reversal (balance recovered or an
+@@ -185,7 +208,8 @@ func (s *Service) RetryDisputePosting(ctx context.Context, actor domain.Actor, n
+ 		if err != nil {
+ 			return err
+ 		}
+-		if _, err := s.reverse(tx, p.net, t, d.ReversalAmount, "dispute "+d.ID+": "+string(d.Outcome), p.member.ID, p.actor.RequestID); err != nil {
++		posted, err := s.reverse(tx, p.net, t, d.ReversalAmount, "dispute "+d.ID+": "+string(d.Outcome), p.member.ID, p.actor.RequestID)
++		if err != nil {
+ 			return err
+ 		}
+ 		if t.Status == domain.TxDisputed {
+@@ -195,7 +219,10 @@ func (s *Service) RetryDisputePosting(ctx context.Context, actor domain.Actor, n
+ 		}
+ 		d.Status = next
+ 		out = d
+-		return s.finishDecision(tx, p, d, t, domain.ActDisputeResolved, "", "")
++		if err := s.finishDecision(tx, p, d, t, domain.ActDisputeResolved, "", ""); err != nil {
++			return err
++		}
++		return s.auditDisputeReversal(tx, p, d, t, posted, "")
+ 	})
+ 	return out, err
+ }
+diff --git a/internal/service/disputes_response.go b/internal/service/disputes_response.go
+index 6ef0a11..432f157 100644
+--- a/internal/service/disputes_response.go
++++ b/internal/service/disputes_response.go
+@@ -271,11 +271,12 @@ func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInp
+ 	if in.Outcome != ReReviewConfirmed && amount <= 0 {
+ 		return "", domain.InvalidState("nothing left to reverse; the only available outcome is confirmed")
+ 	}
++	var posted *domain.Transaction // the reversal; nil when confirmed
+ 	if amount > 0 {
+ 		if err := p.requireNetworkActive(); err != nil {
+ 			return "", err
+ 		}
+-		if _, err := s.reverse(tx, p.net, t, amount, "re-review of dispute "+d.ID, p.member.ID, p.actor.RequestID); err != nil {
++		if posted, err = s.reverse(tx, p.net, t, amount, "re-review of dispute "+d.ID, p.member.ID, p.actor.RequestID); err != nil {
+ 			return "", err
+ 		}
+ 	}
+@@ -292,8 +293,11 @@ func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInp
+ 		"The re-review of a dispute is decided", "The re-review is decided: "+strings.ReplaceAll(in.Outcome, "_", " ")+".", "/disputes/"+d.ID); err != nil {
+ 		return "", err
+ 	}
+-	return d.ID, s.audit(tx, p, auditEntry{Type: p.deciderType(), Action: domain.ActDisputeReReviewDecide, TargetType: "dispute", TargetID: d.ID,
++	if err := s.audit(tx, p, auditEntry{Type: p.deciderType(), Action: domain.ActDisputeReReviewDecide, TargetType: "dispute", TargetID: d.ID,
+ 		Reason: "decision recorded; rationale held on re-review", IdemRef: keyRef(in.IdempotencyKey),
+ 		Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
+-		After:    map[string]any{"status": "decided", "outcome": in.Outcome, "amount": amount, "transaction_status": t.Status}})
++		After:    map[string]any{"status": "decided", "outcome": in.Outcome, "amount": amount, "transaction_status": t.Status}}); err != nil {
++		return "", err
++	}
++	return d.ID, s.auditDisputeReversal(tx, p, d, t, posted, in.IdempotencyKey)
+ }
+diff --git a/internal/service/reversal.go b/internal/service/reversal.go
+index f2061b9..dec3693 100644
+--- a/internal/service/reversal.go
++++ b/internal/service/reversal.go
+@@ -81,7 +81,11 @@ func blockedByLimit(err error) bool { return errors.Is(err, domain.ErrInsufficie
+ func (s *Service) reverse(tx store.Tx, net *domain.Network, orig *domain.Transaction, amount int64,
+ 	reason, createdBy, requestID string) (*domain.Transaction, error) {
+ 
+-	if net.Suspended() {
++	// No reversal posts while the network is suspended (GOV-023) or has no
++	// active administrator (GOV-020), whichever path asks. ResolveDispute and
++	// RetryDisputePosting rely on this check; they do not apply
++	// networkOpenErr, which would also refuse a closing network.
++	if net.Suspended() || net.AdminRequired {
+ 		return nil, networkOpenErr(net)
+ 	}
+ 	if orig.Kind == domain.KindReversal {
