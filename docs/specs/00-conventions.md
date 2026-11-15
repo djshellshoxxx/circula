@@ -78,7 +78,7 @@ Each requirement states: ID, priority (P0 = MVP-blocking, P1 = MVP, P2 = post-MV
 Default credit limit (default 0 for new members; recommended starting value set by admin), per-member override, max transaction amount, proposal expiry (default 7 days), decimals (default 2), member directory visibility (members-only), join mode (invite | approval | open), dispute window (default 30 days), departure rule (see 03).
 
 ## 6. Shared technical decisions (recommended defaults, see DEC log)
-- DEC-001: Single self-hostable binary + optional hosted deployment of the same binary. Implementation language **Go**; the module's required Go version follows the `go` directive in [`go.mod`](../../go.mod) (currently `1.26.10`). Use stdlib `net/http`, embedded **SQLite** (WAL, pure-Go driver, no cgo) as default store; storage behind an interface so PostgreSQL MAY be added later.
+- DEC-001: Single self-hostable binary + optional hosted deployment of the same binary. Implementation language **Go**; the module's required Go version follows the `go` directive in [`go.mod`](../../go.mod) (currently `1.26.11`). Use stdlib `net/http`, embedded **SQLite** (WAL, pure-Go driver, no cgo) as default store; storage behind an interface so PostgreSQL MAY be added later.
 - DEC-002: Server-rendered HTML (progressive enhancement, no JS required for core flows) + versioned JSON API `/api/v1`. Both call the same domain service layer.
 - DEC-003: Release targets: windows/amd64, linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, plus SHA-256 checksums.
 - DEC-004: Product license undecided (owner decision); repo ships without LICENSE until decided; recommendation: AGPL-3.0 or MIT.

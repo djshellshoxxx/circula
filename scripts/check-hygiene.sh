@@ -45,5 +45,11 @@ for p in terms privacy operator-access suspension-categories incident-notificati
     echo "GOV-026: $f missing or without Version:/Date: lines"; fail=1
   fi
 done
+# --- QA-042 -----------------------------------------------------------------------------------------------------
+# docs/TRACEABILITY.md matches the specs and cites only code and tests that exist (scripts/traceability.py).
+if ! python3 -m unittest -q scripts/traceability_test.py scripts/traceability_audit_test.py >/dev/null 2>&1; then
+  echo "QA-042: traceability script tests fail (python3 -m unittest scripts/traceability_test.py)"; fail=1
+fi
+if ! python3 scripts/traceability.py --check; then fail=1; fi
 [ "$fail" -eq 0 ] && echo "hygiene checks: ok"
 exit "$fail"

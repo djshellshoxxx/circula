@@ -61,7 +61,7 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 | QA-039 | P0 | not built | Release gate evidence (drills, reviews, performance) not complete |
 | QA-040 | P0 | not built | Thresholds pending DEC-023; not confirmed |
 | QA-041 | P0 | partial | Injected clocks used; seeds recorded for randomised tests only partly |
-| QA-042 | P0 | partial | Traceability matrix produced in docs/none; test dates and builds to be added at each release |
+| QA-042 | P0 | partial | `scripts/traceability.py` regenerates docs/TRACEABILITY.md from the spec status tables and checks every cited file, symbol and test exists; `--check` runs in `scripts/check-hygiene.sh` on every PR (`scripts/traceability_test.py`). Criteria 1 and 2 met, 3 met by CI. Open: per-row last result, date and build are in CI logs, not in the matrix; 99 built rows cite no test (`python3 scripts/traceability.py` lists them). Re-checked 2026-11-15 |
 | QA-043 | P0 | partial | Fixtures synthetic; no automated personal-data scan |
 | QA-044 | P0 | not built | Evidence retention process not defined |
 

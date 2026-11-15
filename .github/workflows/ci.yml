@@ -36,7 +36,7 @@ jobs:
           cache-dependency-path: go.sum
       - name: Check workflow action pins
         run: scripts/check-action-pins.sh
-      - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037)
+      - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037, traceability drift QA-042)
         run: scripts/check-hygiene.sh
       - name: Dependency licences against the approved list (ARC-024)
         run: scripts/licenses.sh --check
