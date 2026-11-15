@@ -5,7 +5,7 @@ Audit branch: `chatgpt/circula-security-audit-20261115`
 Authoritative application baseline: PR #35 branch `claude/cool-ramanujan-n2peag`
 PR #35 baseline commit: `c033cfa448fb89d1a5cc0ca87458b40d2709fa2e`
 Audit handoff PR: #42 (draft; targets PR #35 integration branch)
-Audit branch latest commit before this update: `7f41311fd93abaafea4c37e5753b243646c9f2d9`
+Audit branch latest commit before this update: `7a8e3ab89a56ec376388a2b27c68cdf434f0943a`
 Scope: security review only. No application code, financial rules, migrations, or production data were changed.
 
 ## Repository state
@@ -140,16 +140,50 @@ Separately, SEC-013 still records owner/process gaps for a second approver, noti
 - A3-F09 and RESTORE-01 need focused restore/revocation and crash-recovery reproductions on a runtime-capable environment.
 - No application code or database was modified.
 
+## Completed: Priority 5 — privacy and data protection (source review only)
+
+### Positive controls observed
+
+- Erasure is restricted to departed members and blocked while financial/governance items remain in flight. It preserves ledger balances, transaction rows and append-only audit chains.
+- Person erasure replaces login/password with unusable values, revokes sessions and API tokens, deletes MFA/recovery material and security notices, and removes throttle records.
+- Erasure drops the erased person's export artifacts and idempotency data. It also drops every network-wide export artifact for the affected network, preventing a prior administrator export from remaining downloadable after an erasure (A3-F24 appears fixed).
+- API export downloads re-check current authorization and erasure state. Export artifacts are owner/network-bound, size-limited, expire after 24 hours and are released on expiry or erasure.
+- Logging passes messages and attributes through `logx`, which redacts credentials, invitation/API tokens, emails and phone numbers and escapes log-line control characters.
+- Read notifications are deleted after 90 days by the scheduled purge. Logs have a documented daily external pruning procedure.
+
+### Confirmed privacy findings and gaps
+
+- **A3-F25 — Low — erasure can delete unrelated members' notifications. CONFIRMED by current source trace; current-head PoC not run.** `internal/store/sqlite_erasure.go:RedactNotificationNames` blanks every notification body in the network when `instr(body, display_name) > 0`, in addition to the erased member's own inbox. A one-character display name such as `e` matches a large share of ordinary notification text and can erase unrelated members' messages. Restrict the operation to the target member's own inbox and use structured recipient/reference metadata or precise whole-name matching rather than arbitrary substring matching. Severity: Low (cross-member data loss).
+- **PRIV-01 — Low — person erasure leaves activity and preference data linked to the person ID. CONFIRMED by source and the personal-data inventory.** `erasePersonIfUnused` does not clear `person_activity.last_seen_at` or `person_prefs.time_zone`. The login is anonymised, but those rows remain associated with the stable person ID. Decide whether these fields should be deleted or anonymised when the person row is erased.
+- **PRIV-02 — Low — governance challenge reasons survive member erasure. CONFIRMED by source and the personal-data inventory.** `RedactDisputeStatements` clears dispute statements, responses, re-review reasons and abuse-report notes, but it does not clear `challenges.reason`. The inventory identifies this as a gap; the field is member-written free text retained for the life of the network. Add it to erasure or document a specific retention exception.
+- **PRIV-03 — Low — old personal data can remain in SQLite WAL frames after erasure. CONFIRMED in the historical A3 review; current runtime reproduction not run.** The database enables `secure_delete=1`, but this does not wipe historical page images already written to the WAL. The existing secure-delete test forces `wal_checkpoint(TRUNCATE)`; the prior A3 review demonstrated that a normal PASSIVE checkpoint can leave the canary in the WAL. A privacy deletion is therefore not necessarily complete at the file level until an appropriate checkpoint/rotation has completed. Define and test a safe checkpoint strategy that accounts for active readers and backups.
+- **PRIV-04 — retention policy remains incomplete.** The inventory records no automatic retention period for member/person data (DEC-020 remains open). Unread notifications are not purged by the current purge query; only read notifications older than 90 days are deleted. `log-retention` is applied by the manual `circula prune-logs` command, not by a built-in scheduled job; the operations guide requires an external daily systemd timer or cron job. Treat these as policy/deployment obligations, not proof of a remote exploit.
+- **PRIV-05 — free-text audit reasons can retain personal information.** `requireReason` checks only that a reason is non-empty and within length limits. Audit reasons are hash-chained and cannot be edited during erasure; the erasure guide tells administrators not to enter names, logins or contact details. This remains a human-process risk. Consider server-side warnings or validation for obvious email/phone patterns before persisting reasons.
+- Earlier backups intentionally retain pre-erasure values until backup retention ends, as documented in `docs/dev/erasure.md`; this is a known retention boundary, not a defect by itself.
+
+### Export and logging review
+
+- The API creates exports through `Service.Export`; a member export for an already-erased membership may be generated before the later download check, but `AuthorizeExportDownload` denies delivery after erasure. The erasure hook also drops existing network-wide exports. No cross-user export disclosure was confirmed in the sampled paths.
+- Export spool files are created with restrictive temporary-file permissions and are deleted on release; on Windows, deletion may be deferred until release because the file is still open.
+- The logging handler redacts credentials, email addresses and international phone numbers. It does not identify personal names in arbitrary free text, so the design still depends on avoiding personal data in log messages and immutable audit reasons.
+- Unread notifications can remain indefinitely if a member never reads them; this is an explicit inventory/retention condition that needs an owner policy decision.
+
+### Tests and limitations
+
+- Inspected erasure service/store code, erasure tests, PII inventory, erasure guide, purge queries, log redaction, log-retention command, API export creation/download and erasure hook.
+- Existing tests were inspected but not executed. No WAL forensic test, erasure PoC, export-after-erasure runtime test, or retention timer deployment test was run.
+- A3-F25, PRIV-01 to PRIV-03 need focused tests. The owner must decide the unresolved retention policy and any immutable audit-reason exception.
+- No application code or production data was modified.
+
 ## Remaining audit areas
 
-1. Priority 5 — privacy and data protection.
-2. Priority 6 — HTTP/API/browser security.
-3. Priority 7 — deployment, infrastructure and secrets.
-4. Priority 8 — CI/CD and software supply chain.
-5. Verify SEC-033, PR #38 requirements, PR #40 QA-042 implementation, historical branches and current CI.
-6. Recheck A1-08 to A1-10 and all lower-severity ledger findings.
-7. Reproduce all source-confirmed findings on a runtime-capable environment before accepting remediation.
+1. Priority 6 — HTTP/API/browser security.
+2. Priority 7 — deployment, infrastructure and secrets.
+3. Priority 8 — CI/CD and software supply chain.
+4. Verify SEC-033, PR #38 requirements, PR #40 QA-042 implementation, historical branches and current CI.
+5. Recheck A1-08 to A1-10 and all lower-severity ledger findings.
+6. Reproduce all source-confirmed findings on a runtime-capable environment before accepting remediation.
 
 ## Exact next task
 
-Continue with Priority 5. Trace personal data collection, storage, logs, exports, deletion/erasure, retention, backups, WAL/checkpoint behavior, account recovery and cross-user visibility. Pay particular attention to the previously reported erasure and WAL findings. Do not modify production behavior during the audit. Update this handoff after completing that area.
+Continue with Priority 6. Review HTTP, API and browser boundaries end-to-end: CSRF/CORS, cookies, headers, rate limiting, request validation, proxy trust, file uploads/downloads, path traversal, injection, redirects, cache controls and error handling. Cross-check route inventory and browser tests against the service authorization rules. Do not change production behavior during the audit. Update this handoff after completing that area.
