@@ -2,7 +2,7 @@ name: ci
 
 # Every PR runs the Linux gate (lint, vulncheck, race tests, build, repro, fuzz, contract, e2e).
 # push is limited to main so a PR branch is not tested twice for the same commit. The slow
-# macOS and Windows matrix (job test-cross) runs on main pushes, nightly and on demand only.
+# macOS and Windows matrix runs on main, nightly, dispatch and opted-in PRs.
 on:
   push:
     branches: [main]
@@ -106,8 +106,8 @@ jobs:
           retention-days: 14
 
   test-cross:
-    # Not run on pull requests (macOS race ~8 min, Windows slow). Runs on main pushes, nightly, manual dispatch.
-    if: github.event_name != 'pull_request'
+    # Native qualification is opt-in on PRs; ordinary PRs retain the Linux gate.
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'ci:cross-platform')
     name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     # macOS Intel's SQLite-heavy race suite exceeded Go's 10m/package default.
