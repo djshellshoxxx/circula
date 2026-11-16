@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"time"
 )
@@ -108,15 +107,7 @@ func writeAnchorFile(path string, a *auditAnchor) error {
 	if err != nil {
 		return err
 	}
-	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, append(b, '\n'), 0o600); err != nil { //nolint:gosec // G703: operator-supplied path
-		return err
-	}
-	if err := os.Rename(tmp, path); err != nil { //nolint:gosec // G703: operator-supplied path
-		_ = os.Remove(tmp) //nolint:gosec // G703: operator-supplied path
-		return err
-	}
-	return nil
+	return writeAtomicPrivateFile(path, append(b, '\n'))
 }
 
 // verifyAnchor compares the live chain with an anchor and returns one finding
