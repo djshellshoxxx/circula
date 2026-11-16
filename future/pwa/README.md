@@ -8,33 +8,42 @@ The owner authorized independent future-feature development on 2026-11-16, while
 
 - Branch: `future/fux-101-pwa-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
 - Only `future/pwa/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
-- This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
+- This nested Go module has no third-party Go dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
 - Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
 - No production persistence is provided. Pure preflight checks do not guarantee atomicity, idempotency, authorization freshness or restart durability; future adapters must supply these within existing service/store transactions.
 - Spec copies are historical reference snapshots; their original relative links refer to the source branch layout. No third-party source was copied.
 
-## Implemented milestone
+## Implemented isolated feature
 
-Public-asset caching allowlist; reject navigations, private endpoints, query tokens and foreign origins.
+- Pinned Workbox 7.4.1 bundled locally; exact request allowlist, explicit public/MIME response policy, credential omission, SHA-256 content integrity, scoped cache lifecycle and no background replay.
+- Original fingerprinted CSS/client JS and 192/512 PNG icons; deterministic build, lockfile and full third-party notices.
+- Explicitly opt-in Go handler for manifest, worker, assets and accessible install help. Default configuration serves 404. Configurable base path and same-origin scope; loopback HTTP requires an explicit development option.
+- Constant public offline-unavailable navigation response. Private requests and unsafe methods use the network without storage/queueing.
+- Private DOM scrub on pagehide/visibility loss; authenticated reload on resume; session-ended/POST sign-out locking and cross-tab BroadcastChannel. No credential or private HTML local storage.
+- Native navigation and install guidance, safe-area/reduced-motion styles and no-JS synthetic online flows.
+- Loopback-only synthetic demo plus Go, Node policy, and browser acceptance suites. The browser suite exists but has not passed in this execution environment.
 
-## Existing application seams inspected
-
-`internal/web; static asset serving`. A future adapter must map these through the existing service authorization boundary. No direct import or code change is made to these seams. APIs here are provisional until that adapter is qualified.
-
-## Remaining feature work
-
-Service worker and manifest; fingerprint build validation; no-store response checks; icons, install guidance, sign-out cleanup; offline page; Android/iOS installation and back-navigation privacy tests.
-
-## Standalone validation
+## Build and validate
 
 ```sh
-cd future/pwa
+npm ci --ignore-scripts
+npm run build
+npm test
 go test -race -cover ./...
 go vet ./...
+npm audit
 ```
 
-Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. These tests qualify the stated core milestone, not the full roadmap feature, production behavior, browser accessibility, or Circula's release.
+The nested Go module remains dependency-free; browser dependencies are npm-pinned and bundled. No node_modules or package caches are committed. `BUILD-SHA256SUMS` records distributable bytes; `THIRD_PARTY_NOTICES.md` records reuse and licenses.
+
+Run the synthetic harness with `go run ./cmd/demo -port 18761`, then open `http://127.0.0.1:18761/app/`. With Playwright available: `PWA_TEST_ORIGIN=http://127.0.0.1:18761 npm run test:browser`. The test uses `/usr/bin/chromium` by default (`CHROMIUM` overrides it). The A/B demo cookies are fixtures, never production authentication.
+
+## Remaining acceptance gates
+
+See `COMPLETION.md` for requirement-by-requirement evidence. Real Chromium CacheStorage/lifecycle/browser-flow acceptance is blocked by this runtime's browser launch failure; the alternate headless-shell download was invalid. Android/iOS installation/resume, cross-browser behavior, screen-reader/zoom qualification, actual cross-tab and BFCache privacy, and production adapter integration/regression remain pending. **The feature is not complete or release-qualified.**
+
+The future integration contract and actual core seams are documented in `INTEGRATION.md` and `UPSTREAM-RESEARCH.md`. No root application behavior or core release status changed.
 
 ## Later integration, one feature at a time
 

@@ -1,10 +1,17 @@
 {
   "id": "FUX-101",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "isolated-implementation-tested-browser-and-platform-qualification-pending",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Public-asset caching allowlist; reject navigations, private endpoints, query tokens and foreign origins.",
-  "remaining": "Service worker and manifest; fingerprint build validation; no-store response checks; icons, install guidance, sign-out cleanup; offline page; Android/iOS installation and back-navigation privacy tests."
+  "scope": "Pinned locally bundled Workbox PWA: manifest/icons/install help, strict public-asset integrity cache, network-only private/unsafe requests, offline-unavailable fallback, DOM/session lifecycle, opt-in Go adapter and synthetic demo.",
+  "remaining": "Real browser suite blocked by runtime launch/download failures; Android/iOS installation, BFCache/cross-tab/resume privacy, screen-reader/zoom and production adapter/ledger qualification pending. Integration remains HOLD.",
+  "upstream": {
+    "project": "GoogleChrome/workbox",
+    "version": "7.4.1",
+    "commit": "62b9d8ba8eb3c1a2ab8aac9d84c90cda7865d6a3",
+    "license": "MIT-style",
+    "adoption": "locally bundled dependency"
+  }
 }

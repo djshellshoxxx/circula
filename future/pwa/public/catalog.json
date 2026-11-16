@@ -1,0 +1,25 @@
+{
+  "version": "6d93231912760892",
+  "assets": [
+    {
+      "file": "style.471223f5a40e4465.css",
+      "sha256": "RxIj9aQORGUyGL5Vl9sakgVNExqxYLoLioFDUJAISOQ=",
+      "type": "text/css"
+    },
+    {
+      "file": "client.ef2241686b1bc8a2.js",
+      "sha256": "7yJBaGsbyKJMlOw3ggZiQ0u+YCD+19FyCz9ZveQztCQ=",
+      "type": "application/javascript"
+    },
+    {
+      "file": "icon-192.a357dff3e6591aaf.png",
+      "sha256": "o1ff8+ZZGq+3LT8a8P7u/ekyO6VIrNLEUM5q5MAQerQ=",
+      "type": "image/png"
+    },
+    {
+      "file": "icon-512.1bd78cda0fb9713e.png",
+      "sha256": "G9eM2g+5cT6oUT1189gU6AY2EyVkZsTdztan4Vny8/U=",
+      "type": "image/png"
+    }
+  ]
+}

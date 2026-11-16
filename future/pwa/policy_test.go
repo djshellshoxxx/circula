@@ -21,3 +21,15 @@ func TestNeverCachePrivate(t *testing.T) {
 		}
 	}
 }
+
+func TestConfiguredStaticPrefix(t *testing.T) {
+	assets := map[string]bool{"/community/static/app.0123abcd.css": true, "/community/static/private.css": true}
+	if !CacheableAt("https://c.test", "/community/static/", "https://c.test/community/static/app.0123abcd.css", "GET", "style", assets) {
+		t.Fatal("configured prefix")
+	}
+	for _, raw := range []string{"https://c.test/community/static/private.css", "https://c.test/community/static/app.0123abcd.css#", "https://c.test/community/static/app.0123abcd.css?"} {
+		if CacheableAt("https://c.test", "/community/static/", raw, "GET", "style", assets) {
+			t.Fatal(raw)
+		}
+	}
+}
