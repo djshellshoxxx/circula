@@ -238,10 +238,13 @@ func (s *Service) SetDefaultFlag(ctx context.Context, actor domain.Actor, netID,
 
 // SetLimitInput sets or removes a per-member credit-limit override.
 type SetLimitInput struct {
-	MemberID  string
-	Limit     *int64     // nil removes the override (default applies again)
-	ExpiresAt *time.Time // optional: time-limited override (DOM-021, OQ-DOM-2)
-	Reason    string
+	// ExpectedRevision, when supplied, must match the limit configuration
+	// inside the same write transaction. Empty means an unconditional edit.
+	ExpectedRevision string `json:"-"`
+	MemberID         string
+	Limit            *int64     // nil removes the override (default applies again)
+	ExpiresAt        *time.Time // optional: time-limited override (DOM-021, OQ-DOM-2)
+	Reason           string
 }
 
 // SetCreditLimit changes a member's override. It posts nothing: lowering a
@@ -297,6 +300,9 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 		return nil, nil, err
 	}
 	now := s.now()
+	if in.ExpectedRevision != "" && in.ExpectedRevision != creditLimitRevision(netID, acc, p.net.Policy.DefaultCreditLimit, now) {
+		return nil, nil, ErrCreditLimitChanged
+	}
 	before := acc.EffectiveLimit(p.net.Policy.DefaultCreditLimit, now)
 	if err := tx.SetLimitOverride(netID, acc.ID, in.Limit, in.ExpiresAt); err != nil {
 		return nil, nil, err

@@ -39,6 +39,9 @@ type ClosureRepo interface {
 	DecideChallenge(c Challenge) error
 	// ListChallenges lists newest first; memberID "" lists all.
 	ListChallenges(netID, memberID, status string, limit int) ([]Challenge, error)
+	// ListChallengesPage continues strictly after afterID in descending
+	// (created_at, id) order; the anchor is scoped to the same visible member.
+	ListChallengesPage(netID, memberID, status, afterID string, limit int) ([]Challenge, error)
 
 	// RecordDeadlineNotice returns true the first time (dispute, kind) is recorded.
 	RecordDeadlineNotice(netID, disputeID, kind string, at time.Time) (bool, error)

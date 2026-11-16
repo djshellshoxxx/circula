@@ -23,7 +23,7 @@
   <td data-label="Requested by">{{.Proposer}}, {{time .Created}}</td>
   <td data-label="Status">{{.Status}}{{if .Decider}} by {{.Decider}}{{end}}{{if eq .Status "pending"}}{{if .Expired}}: expired, nothing will be posted{{else}}; expires {{time .Expires}}{{end}}{{end}}</td>
   <td data-label="Actions">
-    {{if .CanApprove}}<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/approve" class="inline">{{template "csrf" $}}<button type="submit" class="danger">Approve and post<span class="sr"> adjustment for {{.Target}}</span></button></form>
+    {{if .CanApprove}}<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/approve" class="inline">{{template "csrf" $}}<button type="submit" name="step" value="review">Review approval<span class="sr"> for {{.Target}}</span></button></form>
     <form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/reject" class="inline">{{template "csrf" $}}<button type="submit" class="secondary">Reject<span class="sr"> adjustment for {{.Target}}</span></button></form>{{end}}
     {{if .CanCancel}}<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/cancel" class="inline">{{template "csrf" $}}<button type="submit" class="secondary">Cancel request<span class="sr"> for {{.Target}}</span></button></form>{{end}}
     {{if and (eq .Status "pending") (not .CanApprove) (not .CanCancel) (not .Expired)}}<span>Another administrator must decide this.</span>{{end}}

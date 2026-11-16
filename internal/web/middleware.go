@@ -57,9 +57,14 @@ func (s *server) wrap(next http.Handler) http.Handler {
 			}
 		}()
 		r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
-		ctx = s.ensureCSRF(w, r.WithContext(ctx))
+		// Public assets carry no per-browser state; caches may share their responses.
+		asset := (r.Method == http.MethodGet || r.Method == http.MethodHead) &&
+			(strings.HasPrefix(r.URL.Path, "/static/") || r.URL.Path == "/robots.txt" || r.URL.Path == "/favicon.ico")
+		if !asset {
+			ctx = s.ensureCSRF(w, r.WithContext(ctx))
+		}
 		r = r.WithContext(ctx)
-		if strings.HasPrefix(r.URL.Path, "/static/") {
+		if asset && strings.HasPrefix(r.URL.Path, "/static/") {
 			h.Set("Cache-Control", "public, max-age=3600")
 		}
 		if r.Method == http.MethodPost && !s.csrfOK(r) {

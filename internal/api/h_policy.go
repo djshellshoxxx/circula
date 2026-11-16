@@ -96,13 +96,10 @@ type policyResp struct {
 	Pending *policyLogDTO `json:"pending,omitempty"`
 }
 
-// adminOnly is a cheap pre-check for admin-only reads whose service method
-// would otherwise return a reduced view; the service remains authoritative.
+// adminOnly authorizes adapter-owned administrative views using current
+// effective roles, scope and MFA, including live break-glass grants.
 func (c *reqCtx) adminOnly() error {
-	if c.member == nil || c.member.Status != domain.MemberActive || !c.member.HasRole(domain.RoleAdmin) {
-		return domain.Forbidden("administrator role required")
-	}
-	return nil
+	return c.s.svc.AuthorizeAdminRead(c.r.Context(), c.actor, c.netID)
 }
 
 func (s *server) getPolicy(c *reqCtx) error { // API-058

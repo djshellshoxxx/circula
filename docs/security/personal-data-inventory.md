@@ -108,6 +108,7 @@ detail into them.
 | `consistency_runs` | `id`, `network_id`, `started_at`, `finished_at`, `ok`, `findings` |
 | `dispute_deadline_notices` | `network_id`, `dispute_id`, `kind`, `notified_at` |
 | `dispute_events` | `id`, `network_id`, `dispute_id`, `actor_id`, `action`, `outcome`, `occurred_at` |
+| `dispute_event_order` | `seq`, `event_id` |
 | `dispute_rereviews` | `id`, `network_id`, `dispute_id`, `requested_by`, `requested_at`, `status`, `reviewer_id`, `outcome`, `reversal_amount`, `decided_at` |
 | `dispute_responses` | `id`, `network_id`, `dispute_id`, `responder_id`, `submitted_at` |
 | `disputes` | `id`, `network_id`, `tx_id`, `opened_by`, `category`, `status`, `outcome`, `reversal_amount`, `reviewer_id`, `opened_at`, `decided_at` |
@@ -138,6 +139,7 @@ detail into them.
 | `sessions` | `person_id`, `created_at`, `expires_at`, `revoked_at` |
 | `terms_acceptances` | `network_id`, `member_id`, `version`, `accepted_at` |
 | `transaction_status_events` | `id`, `network_id`, `tx_id`, `from_status`, `to_status`, `actor_id`, `request_id`, `occurred_at` |
+| `transaction_status_event_order` | `seq`, `event_id` |
 | `transactions` | `id`, `network_id`, `kind`, `status`, `payer_account_id`, `payee_account_id`, `amount`, `listing_id`, `original_tx_id`, `created_by`, `accepted_by`, `reversed_total`, `proposed_at`, `expires_at`, `completed_at`, `ledger_seq`, `dispute_deadline_at`, `dispute_policy_version` |
 
 ## Outside the database

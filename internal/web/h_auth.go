@@ -90,7 +90,10 @@ func (s *server) startSession(w http.ResponseWriter, r *http.Request, tok string
 
 func (s *server) logout(w http.ResponseWriter, r *http.Request) {
 	if tok := s.opts.Edge.SessionToken(r); tok != "" {
-		_ = s.svc.Logout(r.Context(), tok)
+		if err := s.svc.Logout(r.Context(), tok); err != nil {
+			s.fail(w, r, err)
+			return
+		}
 	}
 	s.clearSession(w, r)
 	s.rotateCSRF(w, r)

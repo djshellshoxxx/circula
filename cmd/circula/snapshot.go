@@ -395,14 +395,16 @@ func verifyBackupFile(path string, m *Manifest) error {
 	return nil
 }
 
-// backupFileName returns the backup file name for a time (UTC, second precision).
 const backupPrefix = "circula-"
 const backupSuffix = ".db"
 const encryptedSuffix = ".db.enc"
 const cipherName = "aes-256-gcm-chunked-v1"
 const tempDirPrefix = ".circula-bk-"
-const backupTimeLayout = "20060102T150405Z"
+const backupTimeLayout = "20060102T150405.000000000Z"
+const legacyBackupTimeLayout = "20060102T150405Z"
 
+// backupFileName preserves UTC nanoseconds so distinct instants within the
+// same second do not collide. snapshotWith still refuses an existing path.
 func backupFileName(t time.Time) string {
 	return backupPrefix + t.UTC().Format(backupTimeLayout) + backupSuffix
 }
@@ -469,6 +471,10 @@ func listBackups(dir string) ([]backupEntry, error) {
 			continue
 		}
 		t, err := time.Parse(backupTimeLayout, stem)
+		if err != nil {
+			// Backups made before subsecond names remain eligible for retention.
+			t, err = time.Parse(legacyBackupTimeLayout, stem)
+		}
 		if err != nil {
 			continue
 		}

@@ -13,15 +13,16 @@ import (
 // after a limit reduction and is never a balance. AwaitingFromOthers is shown
 // separately and does not increase Available.
 type BalanceView struct {
-	MemberID           string
-	AccountState       domain.AccountState
-	Balance            int64
-	CreditLimit        int64
-	ReservedOutgoing   int64
-	Available          int64
-	AwaitingFromOthers int64
-	Decimals           int
-	LedgerSeq          int64
+	CreditLimitRevision string `json:"-"` // opaque limit-edit precondition, not part of the account DTO
+	MemberID            string
+	AccountState        domain.AccountState
+	Balance             int64
+	CreditLimit         int64
+	ReservedOutgoing    int64
+	Available           int64
+	AwaitingFromOthers  int64
+	Decimals            int
+	LedgerSeq           int64
 }
 
 func (s *Service) balanceView(tx store.Tx, net *domain.Network, m *domain.Member) (*BalanceView, error) {
@@ -44,7 +45,7 @@ func (s *Service) balanceView(tx store.Tx, net *domain.Network, m *domain.Member
 	}
 	lim := acc.EffectiveLimit(net.Policy.DefaultCreditLimit, now)
 	return &BalanceView{MemberID: m.ID, AccountState: domain.AccountStateFor(m.Status), Balance: acc.Balance,
-		CreditLimit: lim, ReservedOutgoing: res, Available: acc.Balance + lim - res, AwaitingFromOthers: in,
+		CreditLimit: lim, CreditLimitRevision: creditLimitRevision(net.ID, acc, net.Policy.DefaultCreditLimit, now), ReservedOutgoing: res, Available: acc.Balance + lim - res, AwaitingFromOthers: in,
 		Decimals: net.Policy.Decimals, LedgerSeq: seq}, nil
 }
 

@@ -125,8 +125,7 @@ func qa26HashRows(t *testing.T, db *sql.DB, q string, h interface{ Write([]byte)
 	}
 }
 
-// qa26Migrate runs `circula migrate`; backups go to backupDir, because
-// backup names have one-second resolution and each run takes one.
+// qa26Migrate runs `circula migrate`; backups go to an isolated backupDir.
 func qa26Migrate(t *testing.T, path, backupDir string) (code int, out string) {
 	t.Helper()
 	var o, e bytes.Buffer
@@ -136,7 +135,9 @@ func qa26Migrate(t *testing.T, path, backupDir string) (code int, out string) {
 
 func TestQA026UpgradeWithFailedMigrationAndRollback(t *testing.T) {
 	ctx := context.Background()
-	head := store.SchemaVersion()
+	// The intentionally unmappable trade is a blocker for migration 0016,
+	// regardless of how many later migrations this binary contains.
+	const head = 16
 	for _, from := range []int{head - 1, head - 2} {
 		t.Run(fmt.Sprintf("from-v%d", from), func(t *testing.T) {
 			dir := t.TempDir()

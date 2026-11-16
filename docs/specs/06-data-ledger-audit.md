@@ -7,7 +7,7 @@ Open questions: see section 11.
 
 Ledger rules (LED-1..LED-7) are defined once in [00-conventions.md](00-conventions.md) section 4. This document states the data-level requirements that enforce them and does not restate them as separate rules.
 
-Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RESUME-2026-10-24.md). DAT-049 through DAT-051 below are target requirements, not claims of implementation.
+Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RESUME-2026-10-24.md). DAT-049 through DAT-051 below are target requirements, not claims of implementation. [Refreshed 2026-11-16: that sentence is stale for DAT-049 and DAT-051, which the table below marks built; DAT-033 and DAT-035 are also built. Matrix rows D1, L16, W6.]
 
 ---
 
@@ -19,7 +19,7 @@ Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RE
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 had no timestamp-based service/API implementation at that snapshot; it was added on 2026-10-28 (see the DAT-050 row).
+Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 had no timestamp-based service/API implementation at that snapshot; it was added on 2026-10-28 (see the DAT-050 row). [Refreshed 2026-11-16: the counts in this paragraph are the 2026-10-24 snapshot and are not recounted. Row-level status is current in the table.]
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -69,9 +69,9 @@ Summary for the historical implementation snapshot: built 38, not built 3, requi
 | DAT-044 | P0 | built | Post-migration verification gates serving |
 | DAT-045 | P1 | built | TestMigrationsExpandThenContract fails on DROP or RENAME unless the migration is a listed contract step |
 | DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
-| DAT-047 | P0 | built | Golden v1 fixture, 10,000 transactions across 60 members, migrated to the current schema with the check passing (`internal/store/golden_migration_test.go`); no released schema exists yet, so v1 stands in. Re-checked 2026-11-12 |
+| DAT-047 | P0 | built | Golden v1 fixture, 10,000 transactions across 60 members, migrated to the current schema with the check passing (`internal/store/golden_migration_test.go`); no released schema exists yet, so v1 stands in. Re-checked 2026-11-12. Confirmed 2026-11-16 (matrix D1: golden v1 to v16 with 10,000 transactions) |
 | DAT-048 | P1 | not built | Migration duration not recorded |
-| DAT-049 | P0 | built | Scale stored atomically at creation and locked (`TestNetworkCreationStoresScaleAtomically`, `TestDecimalsLockedWhateverIsStored`, `TestDecimalsLockUnderConcurrentWrites`); legacy scale changes reported, not rewritten (`decimals_legacy_test.go`). Re-checked 2026-11-12 |
+| DAT-049 | P0 | built | Scale stored atomically at creation and locked (`TestNetworkCreationStoresScaleAtomically`, `TestDecimalsLockedWhateverIsStored`, `TestDecimalsLockUnderConcurrentWrites`); legacy scale changes reported, not rewritten (`internal/service/decimals_legacy_test.go`). Re-checked 2026-11-12. Confirmed 2026-11-16 |
 | DAT-050 | P1 | built (2026-10-28, unreviewed) | `entries.posted_at <= as_of` sum and high-water `ledger_seq` in one view transaction (`SumEntriesAsOf`, `Service.HistoricalBalance`); tests in `internal/service/histbal_test.go` |
 | DAT-051 | P0 | built | `transactions.dispute_deadline_at` and `dispute_policy_version` set at completion; migration 0016 backfills from the version with the highest number among those with `effective_at <= completed_at`, else aborts (`dispute_deadline_backfill_needs_owner_mapping`) (2026-11-11) |
 

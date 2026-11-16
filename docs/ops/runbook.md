@@ -164,3 +164,13 @@ containment, evidence, notification, recovery and review. Its levels apply to in
 The response targets there are recommendations, not service levels, until the platform operator approves them
 (DEC-022). Contacts and the people holding each role are recorded outside this repository. Each alert in
 [monitoring.md](monitoring.md#alerts-ops-015) names its level.
+
+## Restore credentials (2026-11-16)
+
+A successful restore invalidates restored web sessions, API tokens and pending MFA login challenges,
+and closes restored break-glass sessions before the staged database replaces the live file. Users
+must sign in again and recreate integrations' API tokens. If invalidation or verification fails,
+the existing database is left in place and restore reports failure. The original backup is unchanged.
+
+Passwords, MFA enrollment/recovery secrets and memberships still return to the backup's state.
+Reconcile changes made since that snapshot during the existing post-restore recovery procedure.

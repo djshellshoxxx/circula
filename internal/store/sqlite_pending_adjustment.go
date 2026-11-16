@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -87,7 +88,19 @@ func (t *txImpl) DecidePendingAdjustment(netID, id string, to domain.PendingStat
 	return n == 1, nil
 }
 
-func (t *txImpl) ListExpiredPendingAdjustments(now time.Time, limit int) ([]*domain.PendingAdjustment, error) {
-	return t.listPending(`SELECT `+pendCols+` FROM pending_adjustments WHERE status = 'pending' AND expires_at <= ?
-		ORDER BY expires_at, id LIMIT ?`, []any{ms(now), limit})
+func (t *txImpl) ListExpiredPendingAdjustments(now time.Time, limit int, excludedNetworkIDs []string) ([]*domain.PendingAdjustment, error) {
+	q := `SELECT ` + pendCols + ` FROM pending_adjustments WHERE status = 'pending' AND expires_at <= ?`
+	args := []any{ms(now)}
+	if len(excludedNetworkIDs) > 0 {
+		// One parameter keeps large freeze sets within SQLite's variable limit.
+		excluded, err := json.Marshal(excludedNetworkIDs)
+		if err != nil {
+			return nil, err
+		}
+		q += ` AND network_id NOT IN (SELECT value FROM json_each(?))`
+		args = append(args, string(excluded))
+	}
+	q += ` ORDER BY expires_at, id LIMIT ?`
+	args = append(args, limitOf(limit))
+	return t.listPending(q, args)
 }

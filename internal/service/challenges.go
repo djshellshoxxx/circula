@@ -208,6 +208,12 @@ func (s *Service) DecideChallenge(ctx context.Context, actor domain.Actor, netID
 // ListChallenges lists the caller's own challenges; deciders and administrators
 // see all of the network's. status "" lists every status.
 func (s *Service) ListChallenges(ctx context.Context, actor domain.Actor, netID, status string) ([]store.Challenge, error) {
+	return s.ListChallengesPage(ctx, actor, netID, status, Page{Limit: 200})
+}
+
+// ListChallengesPage preserves the same visibility checks while continuing
+// after the last returned challenge in descending (created_at, id) order.
+func (s *Service) ListChallengesPage(ctx context.Context, actor domain.Actor, netID, status string, pg Page) ([]store.Challenge, error) {
 	var out []store.Challenge
 	err := s.view(ctx, func(tx store.Tx) error {
 		p, err := s.open(tx, actor, netID, domain.ScopeRead)
@@ -220,7 +226,7 @@ func (s *Service) ListChallenges(ctx context.Context, actor domain.Actor, netID,
 		} else if p.member == nil {
 			return domain.Forbidden("membership required")
 		}
-		out, err = tx.ListChallenges(netID, who, status, 200)
+		out, err = tx.ListChallengesPage(netID, who, status, pg.AfterID, clampPage(pg))
 		return err
 	})
 	return out, err

@@ -64,8 +64,11 @@ func (t *txImpl) DeleteThrottle(login string) error {
 }
 
 func (t *txImpl) DeleteThrottleFamily(key string) (int64, error) {
-	res, err := t.exec(`DELETE FROM login_throttle WHERE login = ? OR substr(login, 1, ?) = ?`,
-		key, len(key)+1, key+" ")
+	// SQLite length/substr both count Unicode characters. Go len counts UTF-8
+	// bytes and would leave address-specific rows behind for non-ASCII keys.
+	// Equality keeps '%' and '_' literal instead of treating them as patterns.
+	res, err := t.exec(`DELETE FROM login_throttle WHERE login = ? OR substr(login, 1, length(?) + 1) = ?`,
+		key, key, key+" ")
 	if err != nil {
 		return 0, err
 	}

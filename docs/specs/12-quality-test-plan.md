@@ -27,7 +27,7 @@ Summary: built 14, deferred 1, not built 6, partial 23.
 | QA-005 | P0 | built | No float types; overflow refused |
 | QA-006 | P0 | built | Fault injection at accept and audit failure |
 | QA-007 | P0 | built | `TestQA007OversubscriptionInterleavings`: 100 seeded over-subscribed interleavings, observed balance never below limit, serial-order and exact-count checks |
-| QA-008 | P0 | not built | Disjoint concurrent trades test not present |
+| QA-008 | P0 | built | [Refreshed 2026-11-16; was "not built".] Test present: `internal/service/disjoint_test.go:19` (`TestQA008DisjointConcurrentTrades`) and `internal/service/stress_test.go:49`. Not re-run in this refresh |
 | QA-009 | P0 | built | Retry, reuse and expiry tests |
 | QA-010 | P0 | built | `TestQA010CrashDuringPosting`: child process killed at each write step of accept and adjustment, before and after commit; restart yields original or committed state, verification passes, retry posts once |
 | QA-011 | P0 | partial | Busy retryable test; seeded contention scenario not present |
@@ -37,9 +37,9 @@ Summary: built 14, deferred 1, not built 6, partial 23.
 | QA-015 | P0 | partial | Policy bound and lifecycle tests; notice and objection not built |
 | QA-016 | P0 | partial | Self-approval, conflict and last-admin tests; approval expiry not built |
 | QA-017 | P0 | partial | Invitation join tested at HTTP level; terms acceptance not built |
-| QA-018 | P0 | partial | Trade flow tested over HTTP and API; no browser end-to-end suite |
+| QA-018 | P0 | partial | Trade flow tested over HTTP and API; no browser end-to-end suite. [Refreshed 2026-11-16: the "no browser end-to-end suite" note is stale; `e2e/` holds a Playwright suite (matrix W9: 578/578). Whether a trade-flow spec is in it is UNVERIFIED] |
 | QA-019 | P0 | partial | `TestQA019DeclineAndExpiryScenario`: no entries, statuses, audit events and notices (expiry notice `trade.expired` added) at service level; expiry not run in a browser or over the API |
-| QA-020 | P0 | partial | Limit boundary scenario tested at service level; browser flow not run |
+| QA-020 | P0 | partial | Limit boundary scenario tested at service level; browser flow not run [Refreshed 2026-11-16: an e2e suite now exists; a limit-boundary spec was not located, UNVERIFIED] |
 | QA-021 | P0 | partial | Dispute and reversal tested; party notices not built |
 | QA-022 | P0 | partial | Limit reduction tested; notice not built |
 | QA-023 | P0 | partial | Departure tested; notices and self-export offer not built |
@@ -48,16 +48,16 @@ Summary: built 14, deferred 1, not built 6, partial 23.
 | QA-026 | P0 | built | `TestQA026UpgradeWithFailedMigrationAndRollback`: migration 0016 fails on seeded data from v15 and v14; pre-upgrade backup verified, prior schema kept, rollback restores pre-upgrade state (previous-binary restore emulated) |
 | QA-027 | P0 | partial | Migration tests on current schemas; fixture per released version absent |
 | QA-028 | P0 | built | Backup under concurrent load restored into a clean instance with every prior posting, checksum and verification; corrupted backup refused and postings frozen until verification passes; restore duration logged |
-| QA-029 | P0 | not built | No restore drill records |
+| QA-029 | P0 | built | [Refreshed 2026-11-16; was "not built".] Restore drill test `cmd/circula/restore_drill_test.go:14`; matrix D3 records an online backup of a live instance restored and verified 2026-11-11. The readiness report it cites was not located in this refresh (UNVERIFIED path) |
 | QA-030 | P0 | built | Reconciliation recomputed independently by the tests over a seeded corpus (ledger, full, each member's own; CSV and JSON) and during concurrent postings: `TestExportReconcilesAcrossCorpus`, `TestExportDuringConcurrentPostingsReconciles` |
 | QA-031 | P0 | built | Member scope and canary checks in export tests |
 | QA-032 | P0 | built | Formula neutralisation test |
-| QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI |
+| QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); axe-core in `e2e/tests/a11y.spec.js`], so the "no automated WCAG checker" note is stale |
 | QA-034 | P0 | partial | Five no-script journeys/validation cases and 18 focus probes passed at d75f31e, including direct onboarding; original return-link regression fails; manual review remains |
 | QA-035 | P0 | not built | Manual screen-reader review not recorded |
-| QA-036 | P0 | partial | Balance text tested; contrast not checked |
+| QA-036 | P0 | partial | Balance text tested; contrast not checked. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/contrast.spec.js`], so the "contrast not checked" note is stale |
 | QA-037 | P0 | partial | CI runs vet, lint, race tests, govulncheck; L8 and migration static checks partial |
-| QA-038 | P0 | partial | Integration gate partly automated; scenario browser tests absent |
+| QA-038 | P0 | partial | Integration gate partly automated; scenario browser tests absent. [Refreshed 2026-11-16: the "scenario browser tests absent" note is stale; the Playwright suite in `e2e/tests` runs in `make e2e`. Scenario coverage UNVERIFIED] |
 | QA-039 | P0 | not built | Release gate evidence (drills, reviews, performance) not complete |
 | QA-040 | P0 | not built | Thresholds pending DEC-023; not confirmed |
 | QA-041 | P0 | partial | Injected clocks used; seeds recorded for randomised tests only partly |

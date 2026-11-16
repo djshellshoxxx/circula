@@ -314,6 +314,21 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		return exitLedgerFailed
 	}
 
+	// A3-F09: older snapshots can contain credentials revoked after backup.
+	// Invalidate them on the staging copy, in one audited unit, before replacing
+	// the current database. Any failure leaves the current database untouched.
+	invalidated, err := invalidateRestoreCopy(ctx, partial, cfg)
+	if err != nil {
+		return fail("credential invalidation failed: %v", err)
+	}
+	checks, err = verifyCopy(ctx, partial, cfg)
+	if err != nil {
+		return fail("verification after credential invalidation failed: %v", err)
+	}
+	if !printChecks(stdout, checks) {
+		return fail("verification after credential invalidation failed")
+	}
+
 	// Swap with a way back (CMD-08): the current database is moved aside, not
 	// deleted, until the restored one has opened and passed its checks.
 	if err := swapDatabase(ctx, cfg.Database, partial, state.Exists, func(ctx context.Context) error {
@@ -340,6 +355,8 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		src, m.CreatedAt.Format(time.RFC3339), cfg.Database, restoredAt.Format(time.RFC3339))
 	fmt.Fprintf(stdout, "data written after %s may be missing and must be reconciled from other sources (OPS-020)\n",
 		m.CreatedAt.Format(time.RFC3339))
+	fmt.Fprintf(stdout, "restored credentials invalidated: sessions=%d api_tokens=%d mfa_challenges=%d break_glass_sessions=%d\n",
+		invalidated.Sessions, invalidated.Tokens, invalidated.MFAChallenges, invalidated.BreakGlassSessions)
 	if authenticated {
 		fmt.Fprintln(stdout, "backup signature: valid (backup-key)")
 	} else {

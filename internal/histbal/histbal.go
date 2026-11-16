@@ -1,11 +1,10 @@
 // Package histbal holds the adapter-facing contract for a member's balance at
 // an exact past instant (FR-054, DAT-050, API-083, UX-061).
 //
-// The service does not yet provide a timestamp-based read: its BalanceAt takes
-// a ledger_seq prefix, which FR-054 forbids as a substitute. Until the
-// coordinator settles that read (one fixed snapshot, posted_at <= as_of), the
-// adapters depend only on Reader and are tested against fakes. Nothing here
-// touches the ledger, the store or the service; no route is registered.
+// service.HistoricalBalance implements Reader using one fixed snapshot and
+// posted_at <= as_of. Both the API route and the history page use that read.
+// This package holds shared input validation and the adapter-facing result;
+// it never reads or changes the ledger itself.
 package histbal
 
 import (
@@ -27,7 +26,7 @@ type Result struct {
 	HasPostingsByAsOf bool      // false exactly when no entry was included
 }
 
-// Reader is the pending authenticated read. Implementations MUST resolve the
+// Reader is the authenticated read. Implementations MUST resolve the
 // caller's own account from actor (never another member's) and MUST apply
 // the timestamp predicate inside one read snapshot.
 type Reader interface {

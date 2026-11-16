@@ -25,10 +25,14 @@ func TestInProgressIdempotencyKeyIs409UntilFinished(t *testing.T) {
 		t.Fatal(err)
 	}
 	h := NewHandlerWithOptions(env.Svc, Options{}).(*server)
+	t.Cleanup(func() { CloseHandler(h) })
+	// Inject a slow handler for a reviewed cached route. The normal request
+	// authentication and the route's current active-member replay gate remain.
+	h.mux = http.NewServeMux()
 	started := make(chan struct{})
 	release := make(chan struct{})
 	var calls atomic.Int32
-	h.add(route{pattern: "POST /api/v1/zz-slow", idem: idemRequired, h: func(c *reqCtx) error {
+	h.add(route{pattern: "POST /api/v1/listings", idem: idemRequired, h: func(c *reqCtx) error {
 		if calls.Add(1) == 1 {
 			close(started)
 			<-release
@@ -36,7 +40,7 @@ func TestInProgressIdempotencyKeyIs409UntilFinished(t *testing.T) {
 		return ok(c, 201, map[string]string{"run": "first"})
 	}})
 	send := func(body, key string) *httptest.ResponseRecorder {
-		r := httptest.NewRequest("POST", "/api/v1/zz-slow", strings.NewReader(body))
+		r := httptest.NewRequest("POST", "/api/v1/listings", strings.NewReader(body))
 		r.Header.Set("Authorization", "Bearer "+raw)
 		r.Header.Set("Content-Type", "application/json")
 		r.Header.Set("Idempotency-Key", key)

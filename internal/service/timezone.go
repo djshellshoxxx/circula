@@ -79,9 +79,10 @@ func (s *Service) GetTimeZone(ctx context.Context, actor domain.Actor) (string, 
 }
 
 // SetTimeZone stores the caller's display time zone. name must be an IANA zone or "" to go back
-// to UTC. The change is audited at platform scope.
+// to UTC. The change is audited at platform scope. Network-scoped credentials
+// cannot change a preference shared by all the person's networks.
 func (s *Service) SetTimeZone(ctx context.Context, actor domain.Actor, name string) error {
-	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) {
+	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) || actor.NetworkScope != "" {
 		return domain.ErrForbidden
 	}
 	name = strings.TrimSpace(name)

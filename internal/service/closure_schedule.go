@@ -174,7 +174,21 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
 	var due []domain.Closure
 	if err := s.view(ctx, func(tx store.Tx) (err error) {
 		due, err = tx.ListClosures(true)
-		return err
+		if err != nil {
+			return err
+		}
+		// Closing the network commits before the final export is generated.
+		// Recover that second phase after an export failure or process crash.
+		closed, err := tx.ListClosures(false)
+		if err != nil {
+			return err
+		}
+		for _, c := range closed {
+			if c.FinalSHA256 == "" {
+				due = append(due, c)
+			}
+		}
+		return nil
 	}); err != nil {
 		return 0, err
 	}
@@ -183,12 +197,14 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
 		if !c.Due(s.now()) || s.IsFrozen(c.NetworkID) {
 			continue
 		}
-		closed, err := s.finaliseOne(ctx, actor, c.NetworkID)
-		if err != nil {
-			return done, err
-		}
-		if !closed {
-			continue
+		if !c.Done() {
+			closed, err := s.finaliseOne(ctx, actor, c.NetworkID)
+			if err != nil {
+				return done, err
+			}
+			if !closed {
+				continue
+			}
 		}
 		if err := s.recordFinalExport(ctx, actor, c.NetworkID); err != nil {
 			return done, err
@@ -299,6 +315,16 @@ func (s *Service) recordFinalExport(ctx context.Context, actor domain.Actor, net
 	}
 	sum := ManifestChecksum(man)
 	return s.update(ctx, func(tx store.Tx) error {
+		c, err := tx.GetClosure(netID)
+		if err != nil {
+			return err
+		}
+		if c == nil || !c.Done() || !c.ErasedAt.IsZero() {
+			return domain.InvalidState("no closed network awaiting a final export")
+		}
+		if c.FinalSHA256 != "" {
+			return nil // another worker completed the same retry
+		}
 		bal, ent, err := tx.Totals(netID)
 		if err != nil {
 			return err
@@ -376,7 +402,7 @@ func (s *Service) EraseClosedNetworks(ctx context.Context, actor domain.Actor) (
 	}
 	finished := 0
 	for _, c := range cs {
-		if s.now().Before(c.ReadOnlyUntil()) {
+		if c.FinalSHA256 == "" || s.now().Before(c.ReadOnlyUntil()) {
 			continue
 		}
 		if err := s.eraseNetwork(ctx, actor, c.NetworkID); err != nil {

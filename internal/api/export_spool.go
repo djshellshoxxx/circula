@@ -31,6 +31,7 @@ func (s *spoolFile) release() {
 // errExportFull stops an export whose archive would not fit in the shared
 // byte cap (BR-06).
 var errExportFull = errors.New("export storage is full")
+var errExportRevoked = errors.New("export access was revoked")
 
 // artefactWriter receives the archive as the export produces it, reserving
 // every chunk against the store's byte cap before writing it to the spool

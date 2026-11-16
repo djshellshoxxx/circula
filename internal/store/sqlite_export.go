@@ -54,6 +54,8 @@ func exportQuery(tbl ExportTable, netID, memberID string) (string, []any, bool) 
 			COALESCE(accepted_by,'') AS accepted_by, reversed_total, proposed_at, expires_at, completed_at,
 			COALESCE(ledger_seq,0) AS ledger_seq FROM transactions WHERE network_id = ? ORDER BY id`, []any{netID}, true
 	case TblStatusEvents:
+		// Exports retain canonical ID order for stable closure checksums across
+		// upgrades. Display histories use the separate insertion sequence.
 		if own {
 			return `SELECT s.id, s.tx_id, s.from_status, s.to_status, s.occurred_at FROM transaction_status_events s
 				JOIN transactions t ON t.id = s.tx_id JOIN accounts pa ON pa.id = t.payer_account_id

@@ -79,6 +79,6 @@ docker compose down -> ok
    Orchestrator must probe `/healthz`/`/readyz`.
 3. Compose never sets a setup secret, backup key or metrics token; the container logs warnings for all of them. Expected
    for the example file; docs/ops/hardening.md covers them.
-4. `CIRCULA_TRUSTED_PROXIES` default `172.16.0.0/12` suits the compose bridge only.
+4. The compose file sets `CIRCULA_TRUSTED_PROXIES` to `172.16.0.0/12` by default (`${CIRCULA_TRUSTED_PROXIES:-172.16.0.0/12}`); that suits the compose bridge only. The service default is `none`.
 
 Tooling cleanup: containers, volumes and the compose network were removed; dockerd was stopped at the end.

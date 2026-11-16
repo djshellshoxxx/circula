@@ -73,6 +73,25 @@ func TestReferenceReader(t *testing.T) {
 	}
 }
 
+// GOV-022: verify the actual privacy-filtered member projection as well as
+// the full ledger. Member entry rows intentionally omit account_id.
+func TestReferenceReaderMemberReconciliation(t *testing.T) {
+	py, err := exec.LookPath("python3")
+	if err != nil {
+		t.Skip("python3 not installed")
+	}
+	w := newWorld(t, nil)
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 250)
+	for _, format := range []service.ExportFormat{service.FormatCSV, service.FormatJSON} {
+		dir := t.TempDir()
+		tu.Must(w.Svc.Export(w.Ctx, w.a, w.net.ID, service.ExportMine, format, service.DirSink{Dir: dir}))
+		out, err := exec.Command(py, "-I", "../../scripts/read-export.py", dir).CombinedOutput()
+		if err != nil || !strings.Contains(string(out), "export ok") {
+			t.Fatalf("mine/%s: %v\n%s", format, err, out)
+		}
+	}
+}
+
 // manifestKeys lists the keys of a decoded manifest, nested objects as
 // "parent.child"; the files array's items are documented in prose.
 func manifestKeys(prefix string, m map[string]any, out map[string]bool) {

@@ -20,6 +20,11 @@ type exportEntry struct {
 	spool       *spoolFile // the archive on disk (FR-095)
 	ctype       string
 	name        string
+	// Lifecycle fields are protected by jobStore.mu.
+	readers int
+	expired bool
+	timer   *time.Timer
+	revoked chan struct{}
 }
 
 type exportDTO struct {
@@ -123,13 +128,26 @@ func (s *server) getExport(c *reqCtx) error { // API-065
 }
 
 func (s *server) getArtefact(c *reqCtx) error { // API-065
-	e, err := s.ownExport(c)
-	if err != nil {
-		return err
+	e := s.jobs.acquireExport(c.netID, c.actor.PersonID, c.r.PathValue("id"))
+	if e == nil {
+		return notFoundErr()
 	}
+	defer s.jobs.releaseExport(e)
 	if err := s.svc.AuthorizeExportDownload(c.r.Context(), c.actor, c.netID, exportScopes[e.dto.Scope]); err != nil {
 		return err // SA2-17: role is re-checked at download
 	}
+	// Closing the spool stops reads; a deadline also interrupts a client
+	// blocked while receiving a chunk already read before erasure.
+	stop, watched := make(chan struct{}), make(chan struct{})
+	go func() {
+		defer close(watched)
+		select {
+		case <-e.revoked:
+			_ = http.NewResponseController(c.w).SetWriteDeadline(time.Now())
+		case <-stop:
+		}
+	}()
+	defer func() { close(stop); <-watched }()
 	// DAT-040: only serve verified artefacts. Both the check and the response
 	// stream from the artefact, so a download never holds it in memory (FR-095).
 	sum := sha256.New()
@@ -142,15 +160,40 @@ func (s *server) getArtefact(c *reqCtx) error { // API-065
 	h.Set("Content-Length", strconv.FormatInt(e.size(), 10))
 	h.Set("X-Content-SHA256", *e.dto.SHA256)
 	c.w.WriteHeader(http.StatusOK)
-	_, _ = io.Copy(c.w, e.content())
+	if _, err := io.Copy(exportResponseWriter{w: c.w, revoked: e.revoked}, e.content()); err != nil {
+		s.log.Error("export download interrupted", "request_id", c.r.Header.Get("X-Request-Id"), "err", err)
+		// Headers have already been sent. Abort the response; appending a
+		// JSON error would turn a failed archive into a successful response.
+		panic(http.ErrAbortHandler)
+	}
 	return nil
+}
+
+type exportResponseWriter struct {
+	w       io.Writer
+	revoked <-chan struct{}
+}
+
+func (w exportResponseWriter) Write(p []byte) (int, error) {
+	select {
+	case <-w.revoked:
+		return 0, errExportRevoked
+	default:
+	}
+	n, err := w.w.Write(p)
+	select {
+	case <-w.revoked:
+		return n, errExportRevoked
+	default:
+		return n, err
+	}
 }
 
 // storeFull is the refusal for an export that cannot run or be kept. A person
 // at their own cap gets 429 (their own exports must expire first); the rest
 // are 503: the shared store is full, too many exports are running, the spool
 // directory is unusable (BR-06), or a member of the network was erased while
-// an admin-scope export ran (BR-04).
+// an export ran (BR-04).
 func storeFull(why string) *apiError {
 	switch why {
 	case "person":

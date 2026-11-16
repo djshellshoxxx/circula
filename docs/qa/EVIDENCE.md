@@ -13,8 +13,8 @@ plus one year (QA-044 recommended value; confirm under DEC-023).
 
 Untagged working records sit directly in `docs/qa/evidence/`. Move them into the version directory when a release is cut.
 Evidence is committed to git, so it is retained as long as the repository; the release notes
-(docs/releases/vX.Y.Z.md) MUST link the version directory (release check: `scripts/release-gate.sh` fails if the
-directory is missing).
+(docs/releases/vX.Y.Z.md) MUST link the version directory. `scripts/release-gate.sh` does not check this link: release
+notes are a MANUAL row in the gate record (see RELEASE-GATE.md).
 
 ## Restore drill record (QA-029)
 Run `scripts/restore-drill-full.sh [-s SOURCE_DB]`. It backs up, restores into a separate directory, verifies the ledger on the

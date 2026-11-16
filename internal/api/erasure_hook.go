@@ -20,7 +20,7 @@ func setErasureHook(s *server) {
 
 // OnMemberErased drops what the API keeps in memory for the person behind an
 // erased membership: cached idempotent responses, export artefacts and check
-// results, and every admin-scope export artefact of the network, which may
+// results, and every export artefact of the network, which may
 // hold the member's data (BR-04). It is meant for service.Config.OnMemberErased and is safe to call
 // before any handler exists (it then does nothing).
 func OnMemberErased(netID, personID string) {
@@ -30,6 +30,6 @@ func OnMemberErased(netID, personID string) {
 	if s == nil || personID == "" {
 		return
 	}
-	s.idem.dropPerson(personID)
-	s.jobs.dropErased(netID, personID) // BR-04: also the network's admin-scope exports
+	s.idem.dropErased(netID, personID)
+	s.jobs.dropErased(netID, personID) // BR-04: also counterparties' member exports
 }

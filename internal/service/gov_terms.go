@@ -314,3 +314,50 @@ func (s *Service) PolicyLog(ctx context.Context, actor domain.Actor, netID strin
 	})
 	return out, err
 }
+
+// PolicyLogPage is the bounded rules-log read. The key is the last version
+// returned, in descending version order. Previous policy values and withdrawal
+// state are calculated in the same read snapshot, including outside the page.
+func (s *Service) PolicyLogPage(ctx context.Context, actor domain.Actor, netID string, pg Page) ([]PolicyLogEntry, error) {
+	before := 0
+	if pg.AfterID != "" {
+		var err error
+		before, err = strconv.Atoi(pg.AfterID)
+		if err != nil || before <= 0 {
+			return nil, domain.Invalid("cursor", "invalid policy version")
+		}
+	}
+	var out []PolicyLogEntry
+	err := s.view(ctx, func(tx store.Tx) error {
+		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		if err != nil {
+			return err
+		}
+		if p.member != nil && p.member.Status == domain.MemberPending {
+			return domain.Forbidden("membership cannot read the rules log")
+		}
+		g, err := govRepo(tx)
+		if err != nil {
+			return err
+		}
+		rows, err := g.ListPolicyLogPage(netID, before, clampPage(pg))
+		if err != nil {
+			return err
+		}
+		now := s.now()
+		for _, r := range rows {
+			e := PolicyLogEntry{Version: r.Version, Reason: r.Reason, AnnouncedAt: r.AnnouncedAt, EffectiveAt: r.EffectiveAt,
+				NoticeDays: r.NoticeDays, NoticeReason: r.NoticeReason, Withdrawn: r.Withdrawn, Pending: !r.Withdrawn && r.EffectiveAt.After(now)}
+			if r.Previous != nil {
+				e.Changes, e.Previous = policyDiff(*r.Previous, r.Policy, false), policyDiff(*r.Previous, r.Policy, true)
+			} else {
+				e.Changes = policyMap(r.Policy)
+			}
+			delete(e.Changes, "dual_control_threshold")
+			delete(e.Previous, "dual_control_threshold")
+			out = append(out, e)
+		}
+		return nil
+	})
+	return out, err
+}

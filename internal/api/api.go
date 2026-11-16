@@ -63,6 +63,14 @@ type server struct {
 // NewHandler returns the API handler. Mount it at /api/.
 func NewHandler(svc *service.Service) http.Handler { return NewHandlerWithOptions(svc, Options{}) }
 
+// CloseHandler releases cached export files and timers during shutdown.
+// Call it after the HTTP server has finished draining active requests.
+func CloseHandler(h http.Handler) {
+	if s, ok := h.(*server); ok {
+		s.jobs.close()
+	}
+}
+
 // NewHandlerWithOptions is NewHandler with explicit options.
 func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
 	opt.Logger = logx.New(opt.Logger) // redacts credentials, escapes control characters

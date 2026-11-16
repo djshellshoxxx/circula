@@ -100,13 +100,17 @@ func (s *Service) AuthenticateToken(ctx context.Context, token string) (domain.A
 	return domain.Actor{PersonID: t.PersonID, Scopes: t.Scopes, NetworkScope: t.NetworkID, MustChangePassword: must}, nil
 }
 
-// RevokeAPIToken revokes one of the caller's own tokens.
+// RevokeAPIToken revokes one of the caller's own tokens. Network-scoped
+// credentials cannot manage the person's tokens across networks.
 func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenID string) error {
 	if actor.MustChangePassword {
 		return domain.PasswordChangeRequired() // SEC-008
 	}
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) {
 		return domain.Forbidden("write scope required")
+	}
+	if actor.NetworkScope != "" {
+		return domain.Forbidden("an unrestricted person is required to manage API tokens")
 	}
 	return s.update(ctx, func(tx store.Tx) error {
 		ok, err := tx.RevokeToken(actor.PersonID, tokenID, s.now())
@@ -124,9 +128,13 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 }
 
 // ListAPITokens lists the caller's tokens (never the secret values).
+// Network-scoped credentials cannot enumerate person-wide token metadata.
 func (s *Service) ListAPITokens(ctx context.Context, actor domain.Actor) ([]*domain.APIToken, error) {
 	if actor.PersonID == "" || !actor.Can(domain.ScopeRead) {
 		return nil, domain.Forbidden("read scope required")
+	}
+	if actor.NetworkScope != "" {
+		return nil, domain.Forbidden("an unrestricted person is required to manage API tokens")
 	}
 	var out []*domain.APIToken
 	err := s.view(ctx, func(tx store.Tx) (err error) { out, err = tx.ListTokens(actor.PersonID); return })

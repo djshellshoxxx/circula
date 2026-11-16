@@ -366,7 +366,9 @@ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit
 	}
 	n := 0
 	err := s.update(ctx, func(tx store.Tx) error {
-		ts, err := tx.ListExpiredProposals(s.now(), limit)
+		// Frozen proposals must not fill the bounded batch ahead of eligible
+		// proposals from other networks. Recheck below if a freeze changes.
+		ts, err := tx.ListExpiredProposals(s.now(), limit, s.FrozenNetworks())
 		if err != nil {
 			return err
 		}

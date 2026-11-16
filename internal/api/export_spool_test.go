@@ -51,11 +51,7 @@ func spoolEnv(t *testing.T, dir string) *spoolWorld {
 		Now: func() time.Time { w.mu.Lock(); defer w.mu.Unlock(); return w.now }}).(*server)
 	// Release every artefact before dir is removed (Windows keeps open files).
 	t.Cleanup(func() {
-		w.h.jobs.mu.Lock()
-		defer w.h.jobs.mu.Unlock()
-		for k, e := range w.h.jobs.exps {
-			w.h.jobs.dropLocked(k, e)
-		}
+		CloseHandler(w.h)
 	})
 	for _, p := range []struct {
 		a   domain.Actor
@@ -352,11 +348,11 @@ func TestRunningExportsHoldTheirSlot(t *testing.T) {
 	}
 }
 
-// BR-04: erasing a member drops every admin-scope export artefact of that
-// network, since those hold the member's data; the admin's own (mine)
-// export and other networks' exports stay. An admin-scope export still
+// BR-04: erasing a member drops every export artefact of that
+// network, since even member exports can hold counterparties' data.
+// Other networks' exports stay. An export still
 // running when the erasure happens is not stored.
-func TestErasureDropsNetworkAdminExports(t *testing.T) {
+func TestErasureDropsNetworkExports(t *testing.T) {
 	w := spoolEnv(t, t.TempDir())
 	ctx := context.Background()
 	carol, _ := w.env.Member(w.admin, w.net, "carol")
@@ -369,6 +365,10 @@ func TestErasureDropsNetworkAdminExports(t *testing.T) {
 	other := &exportEntry{net: "other-network", person: "someone", at: time.Now(), dto: exportDTO{ID: "o", Scope: "full"}}
 	storeExport(t, w.h.jobs, other, []byte("other"))
 	running, why := w.h.jobs.beginExport(w.netID, "another-admin", true)
+	if why != "" {
+		t.Fatal(why)
+	}
+	runningMine, why := w.h.jobs.beginExport(w.netID, "another-member", false)
 	if why != "" {
 		t.Fatal(why)
 	}
@@ -388,18 +388,21 @@ func TestErasureDropsNetworkAdminExports(t *testing.T) {
 			t.Errorf("%s export file still open: %v", e.dto.Scope, err)
 		}
 	}
-	if w.h.jobs.getExport(w.netID, w.person, mine.dto.ID) == nil {
-		t.Error("the admin's own export was dropped")
+	if w.h.jobs.getExport(w.netID, w.person, mine.dto.ID) != nil {
+		t.Error("the member export survived erasure")
 	}
 	if w.h.jobs.getExport("other-network", "someone", "o") == nil {
 		t.Error("another network's export was dropped")
 	}
-	if want := mine.size() + other.size(); w.h.jobs.bytes != want {
+	if want := other.size(); w.h.jobs.bytes != want {
 		t.Errorf("byte count %d, want %d", w.h.jobs.bytes, want)
 	}
 	e := &exportEntry{net: w.netID, person: "another-admin", at: time.Now(), dto: exportDTO{ID: "late", Scope: "full"}}
 	if running.commit(e) {
 		t.Error("admin-scope export running across the erasure was stored")
+	}
+	if runningMine.commit(&exportEntry{dto: exportDTO{ID: "late-mine", Scope: "mine"}}) {
+		t.Error("member export running across the erasure was stored")
 	}
 	assertIdle(t, w.h.jobs)
 	// A new export after the erasure is stored as usual.

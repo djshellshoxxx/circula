@@ -21,7 +21,7 @@ Summary: built 4, not built 1, partial 10.
 | PER-001 | P0 | built | Member role: balance, listings, trades, disputes, export |
 | PER-002 | P0 | partial | Admin limits and self-restrictions built; dual control, notices and reviewer-conflict audit partly missing |
 | PER-003 | P0 | partial | Reviewer decides with independence checks; admin without reviewer role can also decide (open decision DEC-072) |
-| PER-004 | P0 | partial | No operator role routes; break-glass and operator access record not built |
+| PER-004 | P0 | partial | No operator role routes; [Refreshed 2026-11-16: break-glass is built in part, see ARC-009 and SEC-013] operator access record partly built |
 | PER-010 | P0 | partial | Invite, approval and open joins built; onboarding terms (GOV-009) not built |
 | PER-011 | P0 | built | Create, edit, pause, archive listing; browse by type and text |
 | PER-012 | P0 | built | Propose, accept, decline, cancel; review step; idempotent commands |
@@ -29,7 +29,7 @@ Summary: built 4, not built 1, partial 10.
 | PER-014 | P0 | partial | Dispute open, review, other-party response (FR-076) and decision built |
 | PER-015 | P0 | partial | Admin controls built; limit warnings, dual control and network suspension not built |
 | PER-016 | P1 | partial | Departure with blockers built; counterparty notices and self-export offer not built |
-| PER-017 | P1 | partial | CloseNetwork in service only; no web or API route calls it |
+| PER-017 | P1 | partial | [Refreshed 2026-11-16; "CloseNetwork in service only; no web or API route calls it" is stale.] Closure routes exist: `POST /api/v1/admin/network/close` and the cancel route (`internal/api/routes.go:84-85`), plus the web form; FR-068 is built. Acceptance (closed network refuses postings; read and export still work) UNVERIFIED |
 | PER-020 | P0 | built | Not-found is uniform for other-network and missing ids |
 | PER-021 | P0 | partial | Empty-state copy in templates; no UX test run |
 | PER-022 | P1 | not built | No stale-data indicator on balance views |

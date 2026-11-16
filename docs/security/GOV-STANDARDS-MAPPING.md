@@ -172,7 +172,7 @@ permissions, exploit mitigations (PIE: Go `-buildmode=pie` not used, UNVERIFIED)
 ## 10. Prioritized roadmap
 
 P0 (cheap)
-1. Ship hardened `docs/ops/circula.service` and container recipe from section 8 (S). Not created here (scope limited to this doc).
+1. Review and harden `deploy/circula.service` (present in the repo) and container recipe from section 8 (S).
 2. `[SWARM]` cosign signing + CycloneDX SBOM + build provenance in release (M). Do not duplicate.
 3. OpenSSF Scorecard workflow + branch protection (S).
 4. Reproducible-build double-build CI check (S).

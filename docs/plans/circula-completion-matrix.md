@@ -24,7 +24,7 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | L9 | Failure during posting leaves no trace | COMPLETE | `TestAcceptFaultInjectionLeavesNoTrace` (8 fault points); reversal and adjustment, 8 points each, in `ledger_beta_test.go` | Faults are injected at the store interface, not as real SQLite I/O errors | P0 | | unit |
 | L10 | Reconciliation: cached = entry sum, network sum = 0 | COMPLETE | `VerifyLedger` → `store/sqlite_verify.go`; `TestVerifyDetectsBalanceCorruptionAndBalanceAt`; `TestVerifyDetectsTamperedEntry`; `circula verify-ledger` exit 3 | | P0 | | unit, CLI |
 | L11 | Reversal: compensating entries, original kept | COMPLETE | `reversal.go`; `reversal_test.go:22-94` | | P0 | | unit, e2e |
-| L12 | Immutable records, history integrity | COMPLETE | Append-only triggers (`0001_init.sql:278-351`); hash-chained audit; `TestAuditChainDetectsTampering` | Status-event ordering is checked only by count | P0 | | unit |
+| L12 | Immutable records, history integrity | COMPLETE | Append-only triggers (`0001_init.sql:278-351`); hash-chained audit; `TestAuditChainDetectsTampering` | Insertion order checked across ties, clock rollback, VACUUM and upgrade (`store/event_order_test.go`) | P0 | | unit |
 | L13 | Credit-limit boundary | COMPLETE | `TestQA004LimitBoundary` (limits 0, 1, 1e8) | | P0 | | unit |
 | L14 | Unauthorized transfer (role, scope, other member) | COMPLETE | `TestAuthorizationMatrix` (10 actor classes); `api/authn_test.go` | | P0 | | unit, API |
 | L15 | Restart persistence | COMPLETE | `TestReopenPreservesLedger`; acceptance scenario steps 16–17 | | P0 | | unit, CLI |
@@ -60,13 +60,13 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | W7 | JSON API contract | COMPLETE | `internal/contract` checks 85 operations and 164 (operation, status) pairs against `docs/api/openapi.yaml` | | P1 | | contract |
 | W8 | Policy validators (ETag) | COMPLETE (fixed) | C-09 fix `addc229`; `TestPendingCurrencyNamePolicyPatchChangesETag` | | P1 | | API |
 | W9 | Accessibility (WCAG 2.2 AA in light and dark, contrast, target size, reflow, keyboard, no-script) | COMPLETE (automated) | `make e2e` 578/578 | Manual screen-reader run (UX-056, QA-035) | P1 | owner | e2e |
-| W10 | Data export (member, full) | COMPLETE | disk spool with reserved bytes and running-export slots (BR-06), `export-spool-dir` setting, manifest `reconciliation` documented; erasure drops the network's admin-scope exports (BR-04); `TestParallelLargeExportsStayBounded`, `TestErasureDropsNetworkAdminExports` | ARC-020 (no CLI export), GOV-022 (import deferred), FR-095 thresholds (OQ-FR-3) | P2 | owner | unit |
+| W10 | Data export (member, full) | COMPLETE | disk spool with reserved bytes and running-export slots (BR-06), `export-spool-dir` setting, manifest `reconciliation` documented; erasure drops all affected network archives and aborts in-progress downloads (BR-04); `TestParallelLargeExportsStayBounded`, `TestErasureDropsNetworkAdminExports` | ARC-020 (no CLI export), GOV-022 (import deferred), FR-095 thresholds (OQ-FR-3) | P2 | owner | unit |
 
 ## Platform and operations
 
 | # | Feature | State | Evidence | Remaining | Pri | Owner | Verification |
 |---|---|---|---|---|---|---|---|
-| D1 | Forward-only, transactional, contiguous migrations | COMPLETE | `store/migrate.go`; `TestUpgradeFromEverySchemaVersion` (v1–v15 → v16); golden v1 → v16 with 10,000 transactions | | P0 | | unit |
+| D1 | Forward-only, transactional, contiguous migrations | COMPLETE | `store/migrate.go`; `TestUpgradeFromEverySchemaVersion` (historical versions → current v17); 10,000-transaction upgrade fixture; nonpositive versions rejected | | P0 | | unit |
 | D2 | Foreign keys, CHECKs, triggers, busy timeout, WAL | COMPLETE | `store/sqlite.go:107`; `inspect.go` checks the pragmas | | P0 | | unit |
 | D3 | Backup (signed, optionally encrypted) and restore drill | COMPLETE | `backup_test.go`, `restore_drill_test.go`; online backup of a live instance restored and verified 2026-11-11 (see the readiness report) | | P0 | | CLI, manual |
 | O1 | Health, readiness, metrics, graceful shutdown, structured logs | COMPLETE | `ops_http.go`, `serve_test.go` | | P1 | | unit |

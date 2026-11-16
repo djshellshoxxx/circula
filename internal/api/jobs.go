@@ -20,12 +20,13 @@ type jobStore struct {
 	// capBytes bounds stored plus running artefacts: maxExpBytes, lowered
 	// only by tests.
 	capBytes int64
+	closed   bool
 	// Running exports (BR-06): how many, per person and in total, and the
 	// bytes they have reserved so far.
 	running  map[string]int
 	nRunning int
 	inflight int64
-	// erasures counts member erasures per network, so that an admin-scope
+	// erasures counts member erasures per network, so that any
 	// export running across one is not stored (BR-04).
 	erasures map[string]uint64
 	// dir is where export artefacts are spooled (Options.ExportSpoolDir);
@@ -59,15 +60,36 @@ func newJobStore(now func() time.Time) *jobStore {
 
 // dropLocked removes one export and releases its artefact.
 func (j *jobStore) dropLocked(id string, e *exportEntry) {
+	e.expired = true
+	if e.timer != nil {
+		e.timer.Stop()
+	}
+	// An expiry cannot interrupt a download already admitted. Keep the
+	// archive counted against both limits until its final reader leaves.
+	if e.readers != 0 {
+		return
+	}
+	j.removeLocked(id, e)
+}
+
+func (j *jobStore) removeLocked(id string, e *exportEntry) {
+	if j.exps[id] != e {
+		return
+	}
+	if e.timer != nil {
+		e.timer.Stop()
+	}
+	close(e.revoked)
 	j.bytes -= e.size()
 	delete(j.exps, id)
 	e.release()
 }
 
 // dropErased removes what the store keeps for an erased member: the export
-// artefacts and check results of the person, and every admin-scope export of
+// artefacts and check results of the person, and every export of
 // the member's network, since those may hold the member's data (BR-04).
-// Admin-scope exports of that network still running are not stored when they
+// Member exports also contain counterparties' names and shared notes.
+// Exports of that network still running are not stored when they
 // finish.
 func (j *jobStore) dropErased(net, person string) {
 	j.mu.Lock()
@@ -76,8 +98,10 @@ func (j *jobStore) dropErased(net, person string) {
 		j.erasures[net]++
 	}
 	for k, e := range j.exps {
-		if e.person == person || (net != "" && e.net == net && e.dto.Scope != "mine") {
-			j.dropLocked(k, e)
+		if e.person == person || (net != "" && e.net == net) {
+			// Privacy revocation interrupts readers instead of retaining data
+			// for them as normal expiry does.
+			j.removeLocked(k, e)
 		}
 	}
 	for k, e := range j.checks {
@@ -127,6 +151,9 @@ func (j *jobStore) getCheck(net, id string) (checkDTO, bool) {
 func (j *jobStore) beginExport(net, person string, adminScope bool) (*exportTicket, string) {
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	if j.closed {
+		return nil, "busy"
+	}
 	if j.nRunning >= maxExportsRunning {
 		return nil, "busy"
 	}
@@ -144,9 +171,11 @@ func (j *jobStore) slotLocked(person string) string {
 	now := j.now()
 	own := j.running[person]
 	for k, x := range j.exps {
-		if now.Sub(x.at) > jobTTL {
+		if x.expired || now.Sub(x.at) >= jobTTL {
 			j.dropLocked(k, x)
-			continue
+			if j.exps[k] == nil {
+				continue
+			}
 		}
 		if x.person == person {
 			own++
@@ -178,7 +207,7 @@ func (t *exportTicket) reserve(n int64) bool {
 	j := t.j
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	if t.done || j.bytes+j.inflight+n > j.capBytes {
+	if t.done || j.closed || j.bytes+j.inflight+n > j.capBytes {
 		return false
 	}
 	j.inflight += n
@@ -207,7 +236,7 @@ func (t *exportTicket) abort() {
 }
 
 // commit stores e, whose artefact is the bytes reserved through t. It refuses
-// an admin-scope export when a member of its network was erased while the
+// any export when a member of its network was erased while the
 // export ran (BR-04). On false the caller still owns (and releases) e.
 func (t *exportTicket) commit(e *exportEntry) bool {
 	j := t.j
@@ -217,11 +246,13 @@ func (t *exportTicket) commit(e *exportEntry) bool {
 		return false
 	}
 	t.endLocked()
-	if t.admin && j.erasures[t.net] != t.gen {
+	if j.closed || j.erasures[t.net] != t.gen {
 		return false
 	}
+	e.revoked = make(chan struct{})
 	j.exps[e.dto.ID] = e
 	j.bytes += e.size()
+	e.timer = time.AfterFunc(jobTTL, func() { j.expire(e) })
 	return true
 }
 
@@ -230,8 +261,55 @@ func (j *jobStore) getExport(net, person, id string) *exportEntry {
 	j.mu.Lock()
 	defer j.mu.Unlock()
 	e := j.exps[id]
-	if e == nil || e.net != net || e.person != person || j.now().Sub(e.at) > jobTTL {
+	if e == nil || e.net != net || e.person != person {
+		return nil
+	}
+	if e.expired || j.now().Sub(e.at) >= jobTTL {
+		j.dropLocked(id, e)
 		return nil
 	}
 	return e
+}
+
+func (j *jobStore) expire(e *exportEntry) {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	if j.exps[e.dto.ID] == e {
+		j.dropLocked(e.dto.ID, e)
+	}
+}
+
+// acquireExport pins the archive across verification and streaming. The
+// caller must releaseExport it on every exit path.
+func (j *jobStore) acquireExport(net, person, id string) *exportEntry {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	e := j.exps[id]
+	if e == nil || e.net != net || e.person != person {
+		return nil
+	}
+	if e.expired || j.now().Sub(e.at) >= jobTTL {
+		j.dropLocked(id, e)
+		return nil
+	}
+	e.readers++
+	return e
+}
+
+func (j *jobStore) releaseExport(e *exportEntry) {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	e.readers--
+	if e.readers == 0 && (e.expired || j.now().Sub(e.at) >= jobTTL) {
+		j.removeLocked(e.dto.ID, e)
+	}
+}
+
+func (j *jobStore) close() {
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	j.closed = true
+	for id, e := range j.exps {
+		j.removeLocked(id, e)
+	}
 }

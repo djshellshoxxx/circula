@@ -306,7 +306,7 @@ func (s *Service) GrantBreakGlassAdmin(ctx context.Context, actor domain.Actor, 
 		if err != nil {
 			return err
 		}
-		person, _, err := tx.GetPersonByLogin(strings.TrimSpace(in.Login))
+		person, _, err := tx.GetPersonByLogin(normalizeLogin(in.Login))
 		if err != nil {
 			return domain.NotFound("member")
 		}

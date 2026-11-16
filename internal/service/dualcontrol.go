@@ -281,21 +281,22 @@ func (s *Service) DecidableAdjustments(ctx context.Context, actor domain.Actor, 
 
 // ExpirePendingAdjustments closes open requests past their expiry, with an
 // audit event each and no posting (SEC-011). System actors only. Idempotent.
-// Returns the number closed in this run (at most limit, default 100).
+// Frozen networks are excluded before selecting the batch. Returns the number
+// closed in this run (at most limit; limits outside 1..500 use the default 100).
 func (s *Service) ExpirePendingAdjustments(ctx context.Context, actor domain.Actor, limit int) (int, error) {
 	if !actor.System {
 		return 0, domain.Forbidden("system actor required")
 	}
-	if limit <= 0 {
-		limit = 100
-	}
 	n := 0
 	err := s.update(ctx, func(tx store.Tx) error {
-		rows, err := tx.ListExpiredPendingAdjustments(s.now(), limit)
+		rows, err := tx.ListExpiredPendingAdjustments(s.now(), limit, s.FrozenNetworks())
 		if err != nil {
 			return err
 		}
 		for _, pa := range rows {
+			if s.IsFrozen(pa.NetworkID) {
+				continue // also respect freezes added since selecting the batch
+			}
 			if err := s.expirePending(tx, pa, actor.RequestID); err != nil {
 				return err
 			}

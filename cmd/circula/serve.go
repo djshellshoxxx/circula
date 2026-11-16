@@ -201,6 +201,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	defer api.CloseHandler(apiH)
 	srv := &http.Server{
 		Handler:           ops.routes(apiH, webH),
 		ReadHeaderTimeout: 10 * time.Second,
@@ -514,13 +515,24 @@ func (j *jobRunner) backups(ctx context.Context) {
 
 // untilNextBackup returns how long to wait before the next scheduled backup.
 func (j *jobRunner) untilNextBackup() time.Duration {
+	return j.untilNextBackupAt(time.Now())
+}
+
+func (j *jobRunner) untilNextBackupAt(now time.Time) time.Duration {
 	entries, err := listBackups(j.cfg.BackupDir)
 	if err != nil || len(entries) == 0 {
 		return 0
 	}
-	due := entries[0].at.Add(j.cfg.BackupInterval)
-	if d := time.Until(due); d > 0 {
-		return d
+	for _, entry := range entries {
+		// A clock correction or misplaced file must not delay future backups
+		// indefinitely. Keep the file, but base cadence on a past backup.
+		if entry.at.After(now) {
+			continue
+		}
+		if d := entry.at.Add(j.cfg.BackupInterval).Sub(now); d > 0 {
+			return d
+		}
+		return 0
 	}
 	return 0
 }

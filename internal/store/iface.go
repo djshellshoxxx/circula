@@ -94,6 +94,8 @@ type PersonRepo interface {
 	TouchToken(id string, at time.Time) error
 	RevokeToken(personID, id string, at time.Time) (bool, error)
 	ListTokens(personID string) ([]*domain.APIToken, error)
+	// InvalidateRestoredCredentials revokes restored bearer authority before a database swap.
+	InvalidateRestoredCredentials(at time.Time) (RestoredCredentialCounts, error)
 }
 
 // MemberFilter selects members of a network.
@@ -193,8 +195,9 @@ type TxnRepo interface {
 	InsertStatusEvent(e *domain.StatusEvent) error
 	ListStatusEvents(netID, txID string) ([]*domain.StatusEvent, error)
 	ListTransactions(netID string, f TxFilter) ([]*domain.Transaction, error)
-	// ListExpiredProposals spans all networks (system sweep).
-	ListExpiredProposals(now time.Time, limit int) ([]*domain.Transaction, error)
+	// ListExpiredProposals spans all networks (system sweep), excluding the
+	// supplied networks before applying the batch limit.
+	ListExpiredProposals(now time.Time, limit int, excludedNetworkIDs []string) ([]*domain.Transaction, error)
 	InsertEntry(e *domain.Entry) error
 	ListEntries(netID, txID string) ([]*domain.Entry, error)
 	SumEntries(accountID string, uptoSeq int64) (int64, error)

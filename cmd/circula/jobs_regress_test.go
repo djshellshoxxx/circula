@@ -429,6 +429,46 @@ func TestJobUntilNextBackup(t *testing.T) {
 	}
 }
 
+// A3-F10: a misplaced future-dated backup must not postpone all scheduled
+// backups. Scheduling ignores it, but does not remove or alter the file.
+func TestJobUntilNextBackupIgnoresFutureFiles(t *testing.T) {
+	now := time.Date(2026, 11, 16, 12, 30, 0, 123456789, time.UTC)
+	for _, tc := range []struct {
+		name string
+		age  time.Duration
+		past bool
+		wait time.Duration
+	}{
+		{name: "future only"},
+		{name: "recent backup", age: time.Hour, past: true, wait: 23 * time.Hour},
+		{name: "overdue backup", age: 48 * time.Hour, past: true},
+		{name: "backup at now", past: true, wait: 24 * time.Hour},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			future := filepath.Join(dir, encryptedBackupFileName(now.AddDate(50, 0, 0)))
+			original := []byte("future backup retained")
+			if err := os.WriteFile(future, original, 0o600); err != nil {
+				t.Fatal(err)
+			}
+			if tc.past {
+				path := filepath.Join(dir, backupFileName(now.Add(-tc.age)))
+				if err := os.WriteFile(path, []byte("past backup"), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			j := &jobRunner{cfg: &Config{BackupDir: dir, BackupInterval: 24 * time.Hour}}
+			if got := j.untilNextBackupAt(now); got != tc.wait {
+				t.Errorf("wait = %v, want %v", got, tc.wait)
+			}
+			got, err := os.ReadFile(future)
+			if err != nil || !bytes.Equal(got, original) {
+				t.Errorf("future backup changed: %q, %v", got, err)
+			}
+		})
+	}
+}
+
 // The backup loop takes a backup straight away when none exists, then sleeps
 // for the interval and returns when shut down.
 func TestJobBackupLoopRunsOnceThenStops(t *testing.T) {

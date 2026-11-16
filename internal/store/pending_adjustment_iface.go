@@ -17,6 +17,7 @@ type PendingAdjustmentRepo interface {
 	// DecidePendingAdjustment moves a pending request to a final status. It reports false when the
 	// request was no longer pending (a concurrent decision won), so exactly one decision applies.
 	DecidePendingAdjustment(netID, id string, to domain.PendingStatus, by string, at time.Time, txID string) (bool, error)
-	// ListExpiredPendingAdjustments returns up to limit open requests whose expiry is at or before now.
-	ListExpiredPendingAdjustments(now time.Time, limit int) ([]*domain.PendingAdjustment, error)
+	// ListExpiredPendingAdjustments returns open requests whose expiry is at or before now,
+	// excluding the supplied networks before applying the batch limit (1..500, otherwise 100).
+	ListExpiredPendingAdjustments(now time.Time, limit int, excludedNetworkIDs []string) ([]*domain.PendingAdjustment, error)
 }

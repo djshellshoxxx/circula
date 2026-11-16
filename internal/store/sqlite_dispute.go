@@ -89,8 +89,9 @@ func (t *txImpl) InsertDisputeEvent(e DisputeEvent) error {
 }
 
 func (t *txImpl) ListDisputeEvents(netID, disputeID string) ([]DisputeEvent, error) {
-	rows, err := t.query(`SELECT id,network_id,dispute_id,actor_id,action,outcome,occurred_at FROM dispute_events
-		WHERE network_id = ? AND dispute_id = ? ORDER BY occurred_at, id`, netID, disputeID)
+	rows, err := t.query(`SELECT e.id,e.network_id,e.dispute_id,e.actor_id,e.action,e.outcome,e.occurred_at
+		FROM dispute_events e JOIN dispute_event_order o ON o.event_id = e.id
+		WHERE e.network_id = ? AND e.dispute_id = ? ORDER BY o.seq`, netID, disputeID)
 	if err != nil {
 		return nil, err
 	}

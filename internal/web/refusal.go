@@ -11,7 +11,8 @@ import (
 
 // fieldLabels turn service field names into words for error text.
 var fieldLabels = map[string]string{
-	"login": "Login", "password": "Password", "display_name": "Display name", "amount": "Amount",
+	"cursor": "Page position",
+	"login":  "Login", "password": "Password", "display_name": "Display name", "amount": "Amount",
 	"counterparty_id": "Counterparty", "direction": "Direction", "title": "Title", "price": "Price",
 	"reason": "Reason", "reason_code": "Reason for removal", "transaction_id": "Trade reference", "rationale": "Rationale", "category": "Category", "name": "Name", "slug": "Web address name",
 	"limit": "Credit limit", "type": "Type", "outcome": "Outcome", "ttl": "Valid for", "status": "Status",

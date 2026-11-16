@@ -27,7 +27,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-002 | P0 | partial | 60 core/adjacent paths from Home met the three-activation limit at b231dc5; signup/auth/error/multi-network and other states remain |
 | UX-003 | P1 | built | Network switcher and separate network pages |
 | UX-004 | P0 | built | In credit, In debt, Level labels |
-| UX-005 | P0 | partial | Sign and words used; greyscale check not run |
+| UX-005 | P0 | partial | Sign and words used; greyscale check not run. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/greyscale.spec.js` exists. Its result is UNVERIFIED in this refresh] |
 | UX-006 | P0 | built | Accessible name spells out direction in words |
 | UX-007 | P0 | built | Help text explains sign convention |
 | UX-008 | P0 | built | Network unit name and decimals; no currency symbols |
@@ -46,7 +46,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-021 | P0 | built | Field messages name the field, describe the problem in words and suggest a correction; table tests over every domain code and every service field name |
 | UX-022 | P0 | partial | Error summary present; focus move and value retention not verified |
 | UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
-| UX-024 | P1 | not built | Member time zone not supported; times shown in server zone |
+| UX-024 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Member display time zone built: `PATCH /api/v1/me` (`internal/api/routes.go:22`), `GET /me` returns `time_zone`, web settings (`internal/web/h_account_f2.go`). Zone abbreviation and `time` element with `datetime` UNVERIFIED |
 | UX-025 | P0 | built | Generic 5xx page with request reference |
 | UX-026 | P0 | partial | Live region on some pages; asynchronous announcements not verified |
 | UX-027 | P0 | partial | Disabled controls explained in text; not audited for all |
@@ -57,7 +57,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-032 | P0 | built | Confirmation step names object for remove and cancel |
 | UX-033 | P0 | partial | 112 viewport/error cases passed at d75f31e; broader data/native coverage remains; known return-link gate separate |
 | UX-034 | P0 | partial | 20 enlargement/spacing probes passed at d75f31e, including own-trade/onboarding paths; wider functionality/native coverage remains |
-| UX-035 | P0 | partial | Target sizes not measured |
+| UX-035 | P0 | partial | Target sizes not measured. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/target-size.spec.js` exists. Its result is UNVERIFIED in this refresh] |
 | UX-036 | P0 | partial | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |
 | UX-037 | P1 | not built | Stacked rows for wide tables not built |
 | UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
@@ -74,12 +74,12 @@ Summary: built 31, not built 7, partial 22.
 | UX-049 | P1 | built | Go tests render every page template and every GET route (anonymous, member, admin, error pages) and pin the footer Help link; earlier six section/viewport e2e cases at 32a8314 |
 | UX-050 | P0 | built | Copy avoids money and cash wording for credits |
 | UX-051 | P0 | built | Sign-in form allows paste; no cognitive test |
-| UX-052 | P0 | partial | Recovery not built; registration response uniform |
-| UX-053 | P0 | not built | Second factor not built |
-| UX-054 | P0 | partial | No automated WCAG checker in CI; structural tests only |
+| UX-052 | P0 | partial | [Refreshed 2026-11-16; "Recovery not built" is stale.] Recovery built (`internal/service/recovery.go`, addenda/SEC-008.md, matrix A9). Identical error for recognised and unrecognised identifiers: matrix A6, `recovery_test.go:135`. Uniform wording across all recovery flows UNVERIFIED |
+| UX-053 | P0 | partial | [Refreshed 2026-11-16; was "not built".] TOTP second factor and recovery codes built (`internal/service/totp.go`, `internal/service/mfa.go`, `internal/web/h_security.go`; addenda/SEC-007.md). Known gap there: no QR code or WebAuthn, so enrolment and recovery codes are typed |
+| UX-054 | P0 | partial | No automated WCAG checker in CI; structural tests only. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); axe-core in `e2e/tests/a11y.spec.js`, run from `make e2e`]. The "no automated WCAG checker" wording is stale |
 | UX-055 | P0 | not built | Keyboard-only walkthrough not recorded for release |
 | UX-056 | P0 | not built | Screen-reader pass not recorded |
-| UX-057 | P0 | partial | Dark scheme token set present; contrast not measured |
+| UX-057 | P0 | partial | Dark scheme token set present; contrast not measured. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/contrast.spec.js` exists. Its result is UNVERIFIED in this refresh] |
 | UX-058 | P1 | built | Reduced motion media query present |
 | UX-059 | P1 | built | Session warning can be extended |
 | UX-060 | P0 | partial | Defect logging process not evidenced in repo |

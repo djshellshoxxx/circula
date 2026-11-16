@@ -10,6 +10,7 @@ import (
 	"io"
 	"mime"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -75,12 +76,15 @@ func (c *reqCtx) decodeOptional(v any) error {
 
 func strictUnmarshal(b []byte, v any) error {
 	if err := checkDuplicateKeys(b); err != nil {
-		return invalidBody(err.Error())
+		return invalidBody("malformed JSON or duplicate object key")
+	}
+	if err := checkCanonicalFields(b, reflect.TypeOf(v)); err != nil {
+		return invalidBody("malformed JSON, unknown field or wrong type")
 	}
 	dec := json.NewDecoder(bytes.NewReader(b))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(v); err != nil {
-		return invalidBody("malformed JSON, unknown field or wrong type: " + sanitize(err.Error()))
+		return invalidBody("malformed JSON, unknown field or wrong type")
 	}
 	// dec.More is false before a stray closing delimiter ("{}}"), so ask for
 	// the next token: anything but end of input is trailing data.
@@ -90,18 +94,10 @@ func strictUnmarshal(b []byte, v any) error {
 	return nil
 }
 
-// sanitize keeps decoder messages short and free of Go internals.
-func sanitize(s string) string {
-	s = strings.ReplaceAll(s, "json: ", "")
-	if len(s) > 160 {
-		s = s[:160]
-	}
-	return s
-}
-
 // checkDuplicateKeys walks the token stream and rejects repeated object keys.
 func checkDuplicateKeys(b []byte) error {
 	dec := json.NewDecoder(bytes.NewReader(b))
+	dec.UseNumber()
 	var walk func() error
 	walk = func() error {
 		t, err := dec.Token()
