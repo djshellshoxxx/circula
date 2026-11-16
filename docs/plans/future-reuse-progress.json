@@ -1,0 +1,96 @@
+{
+  "updated": "2026-11-16",
+  "integration": "HOLD",
+  "features": {
+    "pwa": {
+      "sha": "b34b392e5989a40dd9f2f9de51f49c85bfc8c342",
+      "tree": "180463b845dfb36de8a2e6bd16fd914b4c43acac",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fux-101-pwa-20261116"
+    },
+    "qr": {
+      "sha": "ad43ab8e2e854dddd7a724868570b56af51c756e",
+      "tree": "332f63be63e5b9529552fc8825284283fd444770",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fux-102-qr-20261116"
+    },
+    "discovery": {
+      "sha": "338454b6948bc23ed2e5ffba033fbb6ae8b72f15",
+      "tree": "fc38f345c33db947a92167c44c40b3f9e0680cc6",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fux-103-discovery-20261116"
+    },
+    "notifications": {
+      "sha": "5290916d116387a283a9ec344df112f00bccf7c9",
+      "tree": "4ddcc9becfab1e2fc2b7507fa52a16c82ef48ead",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fux-104-notifications-20261116"
+    },
+    "messaging": {
+      "sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "tree": "9d839e55b18cf760a472ae73af48bb6b67c393ed",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fux-105-messaging-20261116"
+    },
+    "onboarding": {
+      "sha": "9761673f5f1634993c1d89be95c675db190d8c41",
+      "tree": "225d084f7461ff4ce6793296d96aacb7c85c9383",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fux-106-onboarding-20261116"
+    },
+    "matching": {
+      "sha": "12850290c6bca7720853c33689662d751aced160",
+      "tree": "39e355958ea72890198d9b033fcdc04fae48144d",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-201-matching-20261116"
+    },
+    "favorites": {
+      "sha": "38adb749e6a6a79f868005c608ca184d65fe4568",
+      "tree": "ff86075e9c4f9b1f144ce1f6487526444831d98f",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-202-favorites-20261116"
+    },
+    "receipts": {
+      "sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "tree": "2ac9b1b70a77fdb46e46973d99feb6c92fbbf9f4",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-203-receipts-20261116"
+    },
+    "feed": {
+      "sha": "5d3819c3b3af031b75eceb5251da0226a4ecee77",
+      "tree": "c021d47bca721e6007fd1254f8012ba3062d201b",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-204-feed-20261116"
+    },
+    "analytics": {
+      "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "tree": "0dcc29d72a50783237fd2ac7cad6d1a953240bd2",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-205-analytics-20261116"
+    },
+    "areas": {
+      "sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "tree": "9da14c69e36bb75dda82e2bc9f3a955a2ba92d63",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-206-areas-20261116"
+    },
+    "recurring": {
+      "sha": "0437e54897c6d9cfb3f2577807b82dd038493850",
+      "tree": "756feed0b71f9fcc070f62f36f48ea8db6b665d4",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-207-recurring-20261116"
+    },
+    "governance": {
+      "sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "tree": "96effe57bcbfbc72bf8ebf1ab6f2017d656f0378",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-208-governance-20261116"
+    },
+    "federation": {
+      "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "tree": "368ce1616f8b4a3b29b6c24809632b03c96e7048",
+      "phase": "document pinned upstream research and adaptation plan",
+      "branch": "future/fnet-209-federation-20261116"
+    }
+  }
+}
