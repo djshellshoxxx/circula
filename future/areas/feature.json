@@ -1,0 +1,10 @@
+{
+  "id": "FNET-206",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Validated named-area catalog, deterministic sorting and optional area resolution restricted to the selected network. No coordinates.",
+  "remaining": "Admin-authorized durable area CRUD; listing association constraints; disabled/deleted area semantics; accessible selection/filtering; export privacy; optional broad geometry/map policy. No GPS/geocoder required."
+}
