@@ -32,6 +32,7 @@ build:
 test:
 	$(GO) test -count=1 ./...
 
+test-race: export CGO_ENABLED = 1
 test-race:
 	$(GO) test -race -count=1 ./...
 
