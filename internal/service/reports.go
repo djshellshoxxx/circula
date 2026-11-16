@@ -77,6 +77,9 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 	}
 	switch in.TargetType {
 	case ReportListing:
+		if !domain.ValidRecordID(in.TargetID) {
+			return "", domain.NotFound("listing")
+		}
 		l, err := tx.GetListing(netID, in.TargetID)
 		if err != nil {
 			return "", domain.NotFound("listing")
@@ -85,6 +88,9 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 			return "", domain.Invalid("target_id", "you cannot report your own listing")
 		}
 	case ReportMember:
+		if !domain.ValidRecordID(in.TargetID) {
+			return "", domain.NotFound("member")
+		}
 		m, err := tx.GetMember(netID, in.TargetID)
 		if err != nil || m.Status == domain.MemberPending {
 			return "", domain.NotFound("member")
@@ -138,6 +144,9 @@ func (s *Service) ListReports(ctx context.Context, actor domain.Actor, netID, st
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		rs, err := tx.ListReports(netID, store.ReportFilter{Status: status, AfterID: pg.AfterID, Limit: clampPage(pg)})
 		if err != nil {
 			return err
@@ -185,6 +194,9 @@ func (s *Service) HandleReport(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		out, err = idempotent(s, tx, netID, actor, "report.handle", in.IdempotencyKey, in, func() (string, error) {
+			if !domain.ValidRecordID(in.ReportID) {
+				return "", domain.NotFound("report")
+			}
 			r, err := tx.GetReport(netID, in.ReportID)
 			if err != nil {
 				return "", domain.NotFound("report")

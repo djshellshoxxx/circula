@@ -89,6 +89,9 @@ func (s *Service) anonymise(ctx context.Context, actor domain.Actor, netID, memb
 				return err
 			}
 		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
+		}
 		target, err := tx.GetMember(netID, memberID)
 		if err != nil {
 			return domain.NotFound("member")

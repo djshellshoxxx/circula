@@ -50,7 +50,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600. [Refreshed 2026-11-16: optional encryption at rest is built, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md; the note above describes the default, unencrypted state] |
 | SEC-029 | P1 | partial | Module versions pinned; govulncheck and SBOM module list in CI; dependency checksum failure test not present |
 | SEC-030 | P0 | partial | Incident contacts and failure table in docs/ops; drills not recorded |
-| SEC-031 | P1 | built | SECURITY.md with private reporting channel; owner approval of contact pending (DEC-026) |
+| SEC-031 | P1 | built | SECURITY.md with private reporting channel; owner approval of contact pending (DEC-026); Source: `SECURITY.md`; private reporting policy exists, but contact/key placeholders and owner approval remain DEC-026; policy text is not a passing test. No execution result is implied |
 | SEC-032 | P1 | partial | Grant defaults to zero; cap and open-mode confirmation not built |
 | SEC-033 | P1 | partial | Tests cover most P0 SEC items; independent review not performed |
 | SEC-034 | P2 | deferred | Tamper-evident option deferred; unkeyed chain already present (DEC-044) |

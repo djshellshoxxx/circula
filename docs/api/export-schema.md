@@ -97,6 +97,13 @@ recovery material are never exported.
 ### transactions
 `id,kind,status,payer_account_id,payee_account_id,amount,amount_formatted,listing_id,note,reason,original_tx_id,created_by,accepted_by,reversed_total,reversed_total_formatted,proposed_at,expires_at,completed_at,ledger_seq`
 
+When the exported scope contains an adjustment linked to an earlier posted transaction, a final optional column
+`related_tx_id` is appended to `transactions` (including the member projection). Unlinked rows contain an empty string.
+This is adjustment context only: `original_tx_id` remains exclusive to reversals. The adjusted member must be a party
+to the related transaction. When the scope has no such links, the exact original columns and bytes above are retained,
+including existing closure checksums. Readers should resolve optional columns by name. JSON carries the same optional
+field only when the column is present for that scope. Existing records and audit events are never rewritten.
+
 ### transaction_status_events
 `id,tx_id,from_status,to_status,actor_id,request_id,occurred_at`
 
@@ -130,3 +137,4 @@ The product's own `circula verify-export` performs the same integrity check.
 |---|---|
 | 1 | first documented version |
 | 1 | manifest field `reconciliation` added (optional object; additive, so the version is unchanged) |
+| 1 | optional trailing transaction field `related_tx_id`, present only in scopes containing linked adjustments; existing no-link exports remain byte-for-byte unchanged |

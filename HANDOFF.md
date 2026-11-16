@@ -48,11 +48,24 @@ subprocess crash tests; added versioned HMAC coverage for backup verification su
 keeping legacy manifests readable. Temporary-admin adjustment proposals remain approvable while
 the grant is live. Invitation-only join pages hide network existence from nonmembers.
 
-Validation: full `go test -count=1 ./...` passed after the export/erasure/migration fixes;
-focused replay and QA-019 tests passed after the next changes. Export lifecycle race tests passed.
-The final consolidated checks are still pending. Local Chromium cannot launch because this execution
-environment rejects its socket operation; the browser gate must run in GitHub Actions. No claim of
-manual screen-reader testing or independent security review is made.
+Further completion: optional adjustment links (migration 0018) now flow through pending requests,
+approval, audit, history, API and exports while preserving legacy export bytes. Repository contracts
+are driver-neutral with old-store aliases. The MVP equivalence suite covers 43 paired HTML/API
+operations and six explicit API-only lifecycle/token operations. Policy revisions are atomic;
+throttle settings are bounded; scheduled verification is read-only; operator provisioning and displayed
+reversal balances are correctly audited. UUID and query validation, forced-password navigation,
+recovery-throttle erasure, reversal independence/audit history, timestamps and migration guards have
+current regressions. Real SQLite disk-full tests verify rollback, retry and reopen. Traceability now
+separates source citations from actual dated test evidence and uploads CI evidence artifacts.
+The property harness now isolates each seed, records complete failures and provides a bounded manual
+long-run workflow; its 50-sequence smoke passed. Release thresholds are still owner decisions.
+
+Validation is recorded for each candidate in [PR #56 checks](https://github.com/djshellshoxxx/circula/pull/56/checks).
+Published checkpoint `e299459` passed Linux race, build targets, lint/vulnerability, fuzz and contract/load
+checks; its browser run passed 578 and failed one stale optional-description label expectation, corrected
+in `e1b67e6`. Later changes have focused regression/race evidence and require combined validation.
+Local Chromium cannot launch in this execution environment; the browser gate runs in GitHub Actions.
+No claim of manual screen-reader testing, independent security review or tagged release is made.
 
 See [docs/TODO.md](docs/TODO.md) for current work. All dated sections below are historical records.
 They can contain superseded next steps, failures and merge instructions.

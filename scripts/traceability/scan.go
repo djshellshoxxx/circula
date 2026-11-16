@@ -35,7 +35,7 @@ var (
 	scanExts  = map[string]bool{".go": true, ".sql": true, ".html": true, ".tmpl": true, ".gohtml": true, ".sh": true, ".py": true, ".js": true}
 )
 
-// selfDir is not scanned: its tests and sources contain sample IDs.
+// selfDir contributes only test declarations for explicit spec-note citations, never sample ID mentions.
 const selfDir = "scripts/traceability"
 
 // scanTree walks root and returns every ID mention in code, test, template and script files, plus the index
@@ -57,12 +57,12 @@ func scanTree(root string) ([]Cite, map[string][]string, error) {
 		rel, _ := filepath.Rel(root, p)
 		rel = filepath.ToSlash(rel)
 		if d.IsDir() {
-			if rel != "." && (strings.HasPrefix(d.Name(), ".") || skipDirs[d.Name()] || rel == selfDir) {
+			if rel != "." && (strings.HasPrefix(d.Name(), ".") || skipDirs[d.Name()]) {
 				return filepath.SkipDir
 			}
 			return nil
 		}
-		if !d.Type().IsRegular() || !scanExts[filepath.Ext(rel)] {
+		if !d.Type().IsRegular() || !scanExts[filepath.Ext(rel)] || (strings.HasPrefix(rel, selfDir+"/") && !strings.HasSuffix(rel, "_test.go")) {
 			return nil
 		}
 		src, err := rt.ReadFile(filepath.FromSlash(rel))
@@ -71,7 +71,10 @@ func scanTree(root string) ([]Cite, map[string][]string, error) {
 		}
 		switch filepath.Ext(rel) {
 		case ".go":
-			cites = append(cites, scanGo(rel, src, testFuncs)...)
+			found := scanGo(rel, src, testFuncs)
+			if !strings.HasPrefix(rel, selfDir+"/") {
+				cites = append(cites, found...)
+			}
 		case ".js":
 			cites = append(cites, scanJS(rel, string(src))...)
 		default:

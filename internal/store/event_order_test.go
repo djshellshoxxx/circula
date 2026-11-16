@@ -110,7 +110,7 @@ func TestEventOrderMigrationPreservesExportChecksum(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	export := func(st *store.SQLite, format service.ExportFormat) (*service.Manifest, *service.MemSink) {
+	export := func(st store.Store, format service.ExportFormat) (*service.Manifest, *service.MemSink) {
 		t.Helper()
 		svc, err := service.New(st, service.Config{Clock: eventOrderClock{time.Unix(1700000000, 0)}})
 		if err != nil {
@@ -127,7 +127,7 @@ func TestEventOrderMigrationPreservesExportChecksum(t *testing.T) {
 	manifests := map[service.ExportFormat]*service.Manifest{}
 	sinks := map[service.ExportFormat]*service.MemSink{}
 	for _, format := range formats {
-		manifests[format], sinks[format] = export(legacy, format)
+		manifests[format], sinks[format] = export(eventOrderLegacyExportStore{Store: legacy, db: legacy.DB()}, format)
 	}
 	if err := legacy.Close(); err != nil {
 		t.Fatal(err)
@@ -148,6 +148,62 @@ func TestEventOrderMigrationPreservesExportChecksum(t *testing.T) {
 			}
 		}
 	}
+}
+
+// Freeze the v16 transaction projection against the actual unupgraded database.
+// Current production queries require the latest schema; using them for the
+// before-upgrade snapshot would no longer test genuine legacy export bytes.
+// The fixture is static during View, so this test-only second read connection
+// sees the same rows. All other ledger tables retain their legacy projections.
+type eventOrderLegacyExportStore struct {
+	store.Store
+	db *sql.DB
+}
+
+func (s eventOrderLegacyExportStore) View(ctx context.Context, fn func(store.Tx) error) error {
+	return s.Store.View(ctx, func(tx store.Tx) error { return fn(eventOrderLegacyExportTx{Tx: tx, db: s.db}) })
+}
+
+type eventOrderLegacyExportTx struct {
+	store.Tx
+	db *sql.DB
+}
+
+func (t eventOrderLegacyExportTx) StreamTable(table store.ExportTable, netID, memberID string, fn func([]string, []any) error) error {
+	if table != store.TblTransactions {
+		return t.Tx.StreamTable(table, netID, memberID, fn)
+	}
+	if memberID != "" {
+		return domain.Invalid("scope", "legacy fixture exports the network ledger only")
+	}
+	rows, err := t.db.Query(`SELECT id, kind, status, payer_account_id, payee_account_id, amount, COALESCE(listing_id,'') AS listing_id,
+		note, reason, COALESCE(original_tx_id,'') AS original_tx_id, COALESCE(created_by,'') AS created_by,
+		COALESCE(accepted_by,'') AS accepted_by, reversed_total, proposed_at, expires_at, completed_at,
+		COALESCE(ledger_seq,0) AS ledger_seq FROM transactions WHERE network_id = ? ORDER BY id`, netID)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = rows.Close() }()
+	cols, err := rows.Columns()
+	if err != nil {
+		return err
+	}
+	if err := fn(cols, nil); err != nil {
+		return err
+	}
+	vals, ptrs := make([]any, len(cols)), make([]any, len(cols))
+	for i := range vals {
+		ptrs[i] = &vals[i]
+	}
+	for rows.Next() {
+		if err := rows.Scan(ptrs...); err != nil {
+			return err
+		}
+		if err := fn(cols, vals); err != nil {
+			return err
+		}
+	}
+	return rows.Err()
 }
 
 func TestEventOrderMigrationPreservesLegacyInsertionOrder(t *testing.T) {

@@ -117,6 +117,9 @@ func pageMembers(tx store.Tx, netID string, statuses []domain.MemberStatus, q Me
 	if q.AfterID != "" && q.BeforeID != "" {
 		return nil, false, false, domain.Invalid("page", "use either after or before, not both")
 	}
+	if err := validatePageIDs(q.AfterID, q.BeforeID); err != nil {
+		return nil, false, false, err
+	}
 	pager, ok := tx.(store.MemberPager)
 	if !ok {
 		return nil, false, false, domain.Errf(domain.CodeInternal, "store does not support member paging")

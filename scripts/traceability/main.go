@@ -31,6 +31,7 @@ import (
 
 type options struct {
 	root, specs, decisions, legacy, head string
+	evidence, report                     string
 	maxCites                             int
 }
 
@@ -44,6 +45,8 @@ type result struct {
 	dups         []Duplicate
 	legacyKept   int
 	legacyTotal  int
+	evidence     *executionEvidence
+	module       string
 }
 
 var headLineRe = regexp.MustCompile("(?m)^Input: git HEAD `([^`]+)`")
@@ -52,6 +55,7 @@ func main() {
 	var o options
 	var out string
 	var check bool
+	var record string
 	flag.StringVar(&o.root, "root", ".", "repository root")
 	flag.StringVar(&o.specs, "specs", "docs/specs", "spec directory, relative to -root")
 	flag.StringVar(&o.decisions, "decisions", "docs/DECISIONS.md", "decision log whose DEC headings count as known IDs, relative to -root")
@@ -60,7 +64,19 @@ func main() {
 	flag.IntVar(&o.maxCites, "max-cites", 6, "citations shown per cell before \"+N more\"")
 	flag.StringVar(&out, "o", "docs/TRACEABILITY.md", "output file, relative to -root")
 	flag.BoolVar(&check, "check", false, "regenerate with the head recorded in -o and fail if the file differs")
+	flag.StringVar(&o.evidence, "evidence", "", "explicit execution evidence JSON; omit for deterministic citation-only inventory")
+	flag.StringVar(&record, "record-results", "", "record actual go test results and provenance here; pass test arguments after --")
 	flag.Parse()
+	o.report = out
+	if record != "" {
+		if err := recordEvidence(o.root, record, flag.Args()); err != nil {
+			fatal(err)
+		}
+		return
+	}
+	if check && o.evidence != "" {
+		fatal(errors.New("-check is for the committed inventory; omit -evidence"))
+	}
 	outPath := out
 	if !filepath.IsAbs(out) {
 		outPath = filepath.Join(o.root, filepath.FromSlash(out))
@@ -124,6 +140,27 @@ type specFile struct {
 }
 
 func generate(o options) (*result, error) {
+	evidence, err := readEvidence(o.root, o.evidence, o.report)
+	if err != nil {
+		return nil, err
+	}
+	module := ""
+	if evidence != nil {
+		mod, err := os.ReadFile(filepath.Join(o.root, "go.mod"))
+		if err != nil {
+			return nil, err
+		}
+		for _, line := range strings.Split(string(mod), "\n") {
+			fields := strings.Fields(line)
+			if len(fields) == 2 && fields[0] == "module" {
+				module = fields[1]
+				break
+			}
+		}
+		if module == "" {
+			return nil, errors.New("go.mod has no module path")
+		}
+	}
 	specDir := filepath.Join(o.root, filepath.FromSlash(o.specs))
 	paths, err := filepath.Glob(filepath.Join(specDir, "[0-9]*.md"))
 	if err != nil {
@@ -222,7 +259,7 @@ func generate(o options) (*result, error) {
 		}
 	}
 	reqs := sortedReqs(reqMap)
-	res := &result{reqs: reqs, dups: dups, unknown: map[string][]string{}, legacyKept: legacyKept, legacyTotal: legacyTotal}
+	res := &result{reqs: reqs, dups: dups, unknown: map[string][]string{}, legacyKept: legacyKept, legacyTotal: legacyTotal, evidence: evidence, module: module}
 	for _, r := range reqs {
 		sortCites(r.Code)
 		sortCites(r.Tests)
@@ -395,13 +432,20 @@ func render(o options, specs []specFile, reqs []*Req, res *result) []byte {
 
 	w("# Traceability matrix\n\n")
 	w("Generated file (QA-042); do not edit by hand. Regenerate with `make traceability`, which runs `go run ./scripts/traceability -head \"$(git rev-parse --short HEAD)\" -o docs/TRACEABILITY.md`. `make traceability-check` fails when this file does not match the specs and code.\n\n")
-	w("Input: git HEAD `%s` (the commit whose tree was read; the commit that adds this file comes after it). The generator reads no clock: the same tree and head give the same file.\n\n", o.head)
+	w("Input: git HEAD `%s` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.\n\n", o.head)
 	w("Depends on: the spec files in [specs/](specs/), [DECISIONS.md](DECISIONS.md) (DEC-028 onward count as known IDs), the source tree outside docs/, and the frozen citations in `scripts/traceability/legacy-citations.tsv`.\n\n")
 
+	if res.evidence != nil {
+		e := res.evidence
+		w("Execution evidence: build `%s`, dirty tree `%t`, source SHA-256 `%s`, exit code `%d`. Command: `%s`. Dates below are actual terminal test-event timestamps; results describe cited tests, not whole-requirement acceptance.\n\n", e.Head, e.Dirty, e.SourceDigest, e.ExitCode, esc(strings.Join(e.Command, " ")))
+	} else {
+		w("Execution evidence: not supplied. This committed inventory contains no last-run or build qualification claims. Generate a separate runtime report with `-evidence`; do not replace this inventory with runtime results.\n\n")
+	}
 	w("## How to read this file\n\n")
 	w("- **ID, Pri, Requirement (short)**: from the spec's requirement heading, bold block line or rule row, else from the ID table row (07 operations). Titles are cut at 90 characters.\n")
 	w("- **Status, Note**: the spec's build status table, verbatim. `-` where the spec has no status row (the 07 API IDs: their status lives in 07 section 12 prose, not in a table).\n")
 	w("- **Code** and **Tests**: `path` (Symbol) for code, `path:TestName` for Go tests, `path` (test title) for browser tests. A file is cited when it names the ID in a comment, string, route comment or test title (Symbol is the enclosing Go declaration or the nearest preceding JavaScript test title), when a Go test function carries the ID in its name (`TestUX002...` cites UX-002), or when the spec's status note names the test function.\n")
+	w("- **Layer**: test location (domain, service, store, API/web, contract, CLI, browser or tooling); this is not a claim about every layer covered. **Last recorded test result**: terminal events only from explicit matching execution evidence; `not recorded` means unqualified. A passing cited test does not establish whole-requirement acceptance; manual and external gates remain in the notes.\n")
 	w("- **†**: citation from the hand-made matrix of 2026-10-21 (HEAD `925f637`), kept only while its file and symbol still exist. It was matched by meaning, not by the ID string.\n")
 	w("- A citation shows that the code or test exists and refers to the requirement. It does not show that the test passes, when it last ran, or that it covers the whole requirement. Cells list at most %d citations, then \"+N more\".\n", o.maxCites)
 	w("- Scanned: `*.go`, `*.sql`, `*.html`, `*.tmpl`, `*.gohtml`, `*.sh`, `*.py`, `*.js` outside `docs/`, `prompts/`, hidden directories, `node_modules/`, `bin/`, `testdata/`, `vendor/` and `scripts/traceability/`.\n\n")
@@ -444,10 +488,10 @@ func render(o options, specs []specFile, reqs []*Req, res *result) []byte {
 		}
 		w("## %s\n\n", title)
 		w("Source: [%s](specs/%s) · IDs: %d · %s\n\n", s.name, s.name, len(rs), countLine(counts))
-		w("| ID | Pri | Requirement (short) | Status | Code | Tests | Note |\n|---|---|---|---|---|---|---|\n")
+		w("| ID | Pri | Requirement (short) | Status | Code | Tests | Layer | Last recorded test result | Note |\n|---|---|---|---|---|---|---|---|---|\n")
 		for _, r := range rs {
-			w("| %s | %s | %s | %s | %s | %s | %s |\n", r.ID, esc(r.Pri), esc(shorten(r.Title, 90)), esc(r.Status),
-				citeCell(r.Code, o.maxCites), citeCell(r.Tests, o.maxCites), esc(r.Note))
+			w("| %s | %s | %s | %s | %s | %s | %s | %s | %s |\n", r.ID, esc(r.Pri), esc(shorten(r.Title, 90)), esc(r.Status),
+				citeCell(r.Code, o.maxCites), citeCell(r.Tests, o.maxCites), testLayers(r.Tests), executionCell(r.Tests, res.evidence, res.module, o.maxCites), esc(r.Note))
 		}
 		w("\n")
 	}

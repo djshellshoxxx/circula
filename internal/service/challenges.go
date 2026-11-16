@@ -115,6 +115,9 @@ func (s *Service) OpenChallenge(ctx context.Context, actor domain.Actor, netID s
 				return err
 			}
 		case ChallengeListingRemoval:
+			if !domain.ValidRecordID(in.SubjectID) {
+				return domain.NotFound("listing")
+			}
 			l, err := tx.GetListing(netID, in.SubjectID)
 			if err != nil || l.MemberID != me {
 				return domain.NotFound("listing")
@@ -168,6 +171,9 @@ func (s *Service) DecideChallenge(ctx context.Context, actor domain.Actor, netID
 		}
 		if err := p.requireDecider(); err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(in.ID) {
+			return domain.NotFound("challenge")
 		}
 		c, err := tx.GetChallenge(netID, in.ID)
 		if err != nil {
@@ -225,6 +231,9 @@ func (s *Service) ListChallengesPage(ctx context.Context, actor domain.Actor, ne
 			who = ""
 		} else if p.member == nil {
 			return domain.Forbidden("membership required")
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListChallengesPage(netID, who, status, pg.AfterID, clampPage(pg))
 		return err

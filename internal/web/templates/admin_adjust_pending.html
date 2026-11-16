@@ -19,7 +19,7 @@
 <tbody>{{range .D.Rows}}<tr>
   <th scope="row" data-label="Member">{{.Target}}</th>
   <td data-label="Adjustment">{{.Dir}}: {{.Amount}} {{$.Unit}}s</td>
-  <td data-label="Reason">{{.Reason}}</td>
+  <td data-label="Reason">{{.Reason}}{{if .RelatedTxID}}<p>Adjusts <a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">the original entry</a></p>{{end}}</td>
   <td data-label="Requested by">{{.Proposer}}, {{time .Created}}</td>
   <td data-label="Status">{{.Status}}{{if .Decider}} by {{.Decider}}{{end}}{{if eq .Status "pending"}}{{if .Expired}}: expired, nothing will be posted{{else}}; expires {{time .Expires}}{{end}}{{end}}</td>
   <td data-label="Actions">

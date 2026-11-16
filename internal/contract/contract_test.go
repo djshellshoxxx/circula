@@ -388,7 +388,7 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/notifications?unread=true", token: bobT})
 	h.do(200, call{method: "GET", path: "/notifications/unread-count", token: bobT})
 	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"all": true}})
-	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"ids": []string{"nope"}}})
+	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"ids": []string{"018f0000-0000-7000-8000-ffffffffffff"}}})
 	h.do(422, call{method: "POST", path: "/notifications/read", token: bobT, body: m{}, skipRequest: true})
 
 	// Reversal (admin) on a fresh trade.

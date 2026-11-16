@@ -22,6 +22,9 @@ func (s *Service) GetMember(ctx context.Context, actor domain.Actor, netID, memb
 		if err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
+		}
 		m, err := tx.GetMember(netID, memberID)
 		if err != nil {
 			return domain.NotFound("member")
@@ -52,6 +55,9 @@ func (s *Service) GetListing(ctx context.Context, actor domain.Actor, netID, lis
 		if err := p.requireActive(); err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(listingID) {
+			return domain.NotFound("listing")
+		}
 		l, err := tx.GetListing(netID, listingID)
 		if err != nil {
 			return domain.NotFound("listing")
@@ -77,6 +83,9 @@ func (s *Service) GetDisputeForTx(ctx context.Context, actor domain.Actor, netID
 		p, err := s.open(tx, actor, netID, domain.ScopeRead)
 		if err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(txID) {
+			return domain.NotFound("dispute")
 		}
 		ds, err := tx.ListDisputes(netID, store.DisputeFilter{TxID: txID, Limit: 1})
 		if err != nil {
@@ -174,6 +183,9 @@ func (s *Service) ListPendingForActor(ctx context.Context, actor domain.Actor, n
 			LiveAt: s.now(), AfterID: q.Page.AfterID, Limit: clampPage(q.Page)}
 		if q.AwaitingMe {
 			f.NotCreatedBy = p.member.ID
+		}
+		if err := validatePageIDs(q.Page.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListTransactions(netID, f)
 		return err

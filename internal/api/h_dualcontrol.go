@@ -19,12 +19,13 @@ type pendingDTO struct {
 	DecidedByMemberID *string `json:"decided_by_member_id"`
 	DecidedAt         *string `json:"decided_at"`
 	TransactionID     *string `json:"transaction_id"`
+	RelatedTxID       *string `json:"related_transaction_id,omitempty"`
 }
 
 func toPending(p *domain.PendingAdjustment) pendingDTO {
 	d := pendingDTO{ID: p.ID, MemberID: p.Target, ProposerMemberID: p.Proposer, Direction: p.Direction,
 		AmountMinor: minor(p.Amount), Reason: p.Reason, Status: string(p.Status), CreatedAt: ts(p.CreatedAt),
-		ExpiresAt: ts(p.ExpiresAt), DecidedAt: tsPtr(p.DecidedAt)}
+		ExpiresAt: ts(p.ExpiresAt), DecidedAt: tsPtr(p.DecidedAt), RelatedTxID: strPtr(p.RelatedTxID)}
 	if p.DecidedBy != "" {
 		d.DecidedByMemberID = &p.DecidedBy
 	}

@@ -108,7 +108,10 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 		if err != nil {
 			return err
 		}
-		t, err := s.postAdjustment(tx, p.net, target, pa.Amount, dir, pa.Reason, p.memberID(), p.actor.RequestID)
+		if err := validateAdjustmentRelation(tx, netID, target.ID, pa.RelatedTxID); err != nil {
+			return err
+		}
+		t, err := s.postAdjustment(tx, p.net, target, pa.Amount, dir, pa.Reason, p.memberID(), p.actor.RequestID, pa.RelatedTxID)
 		if err != nil {
 			return err
 		}
@@ -122,13 +125,13 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 		if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActAdjustmentApproved,
 			TargetType: "pending_adjustment", TargetID: pa.ID, Reason: pa.Reason, Subjects: []string{pa.Target},
 			Before: map[string]any{"status": "pending"},
-			After:  map[string]any{"status": "approved", "proposer": pa.Proposer, "approver": p.memberID(), "transaction": t.ID}}); err != nil {
+			After:  map[string]any{"status": "approved", "proposer": pa.Proposer, "approver": p.memberID(), "transaction": t.ID, "related_transaction_id": pa.RelatedTxID}}); err != nil {
 			return err
 		}
 		if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActAdjustment, TargetType: "transaction",
 			TargetID: t.ID, Reason: pa.Reason, Subjects: []string{pa.Target},
 			After: map[string]any{"member": pa.Target, "direction": pa.Direction, "amount": pa.Amount, "status": "completed",
-				"request": pa.ID, "proposer": pa.Proposer, "approver": p.memberID()}}); err != nil {
+				"request": pa.ID, "proposer": pa.Proposer, "approver": p.memberID(), "related_transaction_id": pa.RelatedTxID}}); err != nil {
 			return err
 		}
 		out = t
@@ -239,6 +242,9 @@ func (s *Service) ListPendingAdjustments(ctx context.Context, actor domain.Actor
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListPendingAdjustments(netID, statuses, pg.AfterID, pg.Limit)
 		return err
 	})
@@ -330,6 +336,9 @@ func (s *Service) openPending(tx store.Tx, actor domain.Actor, netID, id string)
 	}
 	if p.member == nil { // system actors cannot decide
 		return nil, nil, domain.Forbidden("a member administrator is required")
+	}
+	if !domain.ValidRecordID(id) {
+		return nil, nil, domain.NotFound("adjustment request")
 	}
 	pa, err := tx.GetPendingAdjustment(netID, id)
 	if err != nil {

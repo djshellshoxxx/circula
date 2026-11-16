@@ -25,6 +25,7 @@ func init() {
 type pendingRow struct {
 	ID, Target, Proposer, Decider string
 	Dir, Amount, Reason, Status   string
+	RelatedTxID                   string
 	Created, Expires              time.Time
 	Expired                       bool
 	CanApprove, CanReject         bool
@@ -75,7 +76,7 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 	}
 	for _, x := range rows {
 		row := pendingRow{ID: x.ID, Target: nm.of(x.Target), Proposer: nm.of(x.Proposer), Amount: domain.FormatAmount(x.Amount, dec),
-			Reason: x.Reason, Status: string(x.Status), Created: x.CreatedAt, Expires: x.ExpiresAt, Expired: !now.Before(x.ExpiresAt)}
+			Reason: x.Reason, RelatedTxID: x.RelatedTxID, Status: string(x.Status), Created: x.CreatedAt, Expires: x.ExpiresAt, Expired: !now.Before(x.ExpiresAt)}
 		row.Dir = "Credit (balance goes up)"
 		if x.Direction == string(service.AdjustDebit) {
 			row.Dir = "Debit (balance goes down)"
@@ -166,7 +167,7 @@ type pendingApprovalData struct {
 
 func (s *server) pendingApprovalProof(c *rc, pa *domain.PendingAdjustment) string {
 	b, _ := json.Marshal([]string{c.netID(), c.actor.PersonID, pa.ID, pa.Proposer, pa.Target,
-		pa.Direction, strconv.FormatInt(pa.Amount, 10), pa.Reason})
+		pa.Direction, strconv.FormatInt(pa.Amount, 10), pa.Reason, pa.RelatedTxID})
 	return s.mac("adjustment-approval:" + string(b))
 }
 
@@ -201,7 +202,7 @@ func (s *server) pendingApprovalReview(w http.ResponseWriter, r *http.Request, c
 	}
 	names, pol := c.memberNames(), c.Net.Policy
 	d := &pendingApprovalData{ID: id, Proposer: names.of(pa.Proposer), Proof: s.pendingApprovalProof(c, pa),
-		adjustReview: adjustReview{Name: names.of(pa.Target), Dir: direction, Amount: domain.FormatAmount(pa.Amount, pol.Decimals), Reason: pa.Reason,
+		adjustReview: adjustReview{Name: names.of(pa.Target), Dir: direction, Amount: domain.FormatAmount(pa.Amount, pol.Decimals), Reason: pa.Reason, RelatedTxID: pa.RelatedTxID,
 			Before: makeBalance(b.Balance, pol.Decimals, pol.CurrencyName), After: makeBalance(after, pol.Decimals, pol.CurrencyName)}}
 	s.render(w, r, c, "admin_adjust_approve", 200, &page{Title: "Review adjustment approval", D: d})
 	return nil

@@ -163,7 +163,7 @@ func TestLoginDoesNotRevealExistence(t *testing.T) {
 	}
 }
 
-// SEC-006: five failures, then throttled with growing delays; success resets.
+// SEC-006 / A3-02: five failures lock; expiry restores two attempts and success resets.
 func TestLoginThrottle(t *testing.T) {
 	e := tu.NewEnv(t)
 	e.Person("ana@example.org")
@@ -181,7 +181,10 @@ func TestLoginThrottle(t *testing.T) {
 	if _, _, err = e.Svc.Login(e.Ctx, "ana@example.org", "wrong password!!"); domain.CodeOf(err) != domain.CodeUnauthenticated {
 		t.Fatalf("after the delay a (wrong) attempt is evaluated again: %v", err)
 	}
-	// the sixth failure locks again, but never for longer than 15 minutes (SA2-10)
+	// A3-02 restores half the default allowance after expiry. A second wrong
+	// attempt consumes that allowance and re-locks for the finite default.
+	_, _, err = e.Svc.Login(e.Ctx, "ana@example.org", "wrong password!!")
+	wantCode(t, err, domain.ErrUnauthenticated)
 	e.Clock.Advance(14 * time.Minute)
 	_, _, err = e.Svc.Login(e.Ctx, "ana@example.org", pw)
 	wantCode(t, err, domain.ErrRateLimited)
@@ -195,6 +198,34 @@ func TestLoginThrottle(t *testing.T) {
 	_, _, err = e.Svc.Login(e.Ctx, "ana@example.org", pw)
 	if err != nil {
 		t.Errorf("counter not reset: %v", err)
+	}
+}
+
+// A3-02: neither adapter-style login nor direct service login can be locked
+// again by one failure at the exact expiry boundary under the default settings.
+func TestDefaultLoginThrottleExpiryRestoresAllowance(t *testing.T) {
+	for _, address := range []string{"", "203.0.113.8"} {
+		t.Run("address="+address, func(t *testing.T) {
+			e := tu.NewEnv(t)
+			e.Person("ana@example.org")
+			ctx := e.Ctx
+			if address != "" {
+				ctx = service.WithClientIP(ctx, address)
+			}
+			for i := 0; i < 5; i++ {
+				_, _, err := e.Svc.Login(ctx, "ana@example.org", "wrong password!!")
+				wantCode(t, err, domain.ErrUnauthenticated)
+			}
+			e.Clock.Advance(15*time.Minute - time.Millisecond)
+			_, _, err := e.Svc.Login(ctx, "ana@example.org", pw)
+			wantCode(t, err, domain.ErrRateLimited)
+			e.Clock.Advance(time.Millisecond)
+			_, _, err = e.Svc.Login(ctx, "ana@example.org", "wrong password!!")
+			wantCode(t, err, domain.ErrUnauthenticated)
+			if _, _, err = e.Svc.Login(ctx, "ana@example.org", pw); err != nil {
+				t.Fatalf("one failure at expiry re-locked the owner: %v", err)
+			}
+		})
 	}
 }
 

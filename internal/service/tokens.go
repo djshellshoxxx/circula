@@ -55,6 +55,9 @@ func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in Tok
 		TokenHash: hashToken(plain), Scopes: in.Scopes, CreatedAt: s.now(), ExpiresAt: in.ExpiresAt}
 	err = s.update(ctx, func(tx store.Tx) error {
 		if in.NetworkID != "" {
+			if !domain.ValidRecordID(in.NetworkID) {
+				return domain.NotFound("network")
+			}
 			if _, err := tx.GetMemberByPerson(in.NetworkID, actor.PersonID); err != nil {
 				return domain.NotFound("network")
 			}
@@ -113,6 +116,9 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 		return domain.Forbidden("an unrestricted person is required to manage API tokens")
 	}
 	return s.update(ctx, func(tx store.Tx) error {
+		if !domain.ValidRecordID(tokenID) {
+			return domain.NotFound("token")
+		}
 		ok, err := tx.RevokeToken(actor.PersonID, tokenID, s.now())
 		if err != nil {
 			return err

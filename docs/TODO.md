@@ -3,14 +3,29 @@
 Updated 2026-11-16 on `codex/circula-core-completion-20261116`. This list supersedes the old
 unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isolated.
 
-## Engineering in progress
+## Integration evidence
 
-- Final current-head race, lint, contract, browser and dependency checks; then merge the consolidation.
-- Review the remaining historical Low/Info audit findings against current source. Earlier reports
-  are evidence of their recorded revisions, not a reliable list of current defects.
+- [PR #56 checks and merge state](https://github.com/djshellshoxxx/circula/pull/56/checks) record the
+  current candidate. Race, lint, contract, browser, dependency and build checks are merge gates.
+- Historical reports remain evidence of their recorded revisions; current remediations and
+  qualification limits are in the core audit record.
 
 ## Completed engineering in this consolidation
 
+- Optional adjustment links, including dual-control approval, immutable metadata, visible history and
+  API/export support; migration 0018 preserves existing export bytes when no links exist.
+- Driver-neutral repository contracts with old-store aliases; 43 paired MVP HTML/API operations and
+  six explicitly API-only lifecycle/token operations have ledger/audit equivalence coverage.
+- Atomic policy revisions, bounded operator-configurable authentication throttles, audited operator
+  provisioning and rendered reversal balance reads, and read-only scheduled ledger verification.
+- Record UUID validation across HTML/JSON/filter inputs after authorization; strict raw and unknown
+  API query validation; required password-change navigation and suspended/departed read links.
+- Complete reversal audit targets and independence checks beyond 500 reversals; recovery-throttle
+  erasure; structured timestamp markup and destructive migration guards.
+- Real SQLite disk-full rollback/retry/reopen tests and explicit qualification limits. QA-042 records
+  test layers and real dated per-test outcomes separately from deterministic requirement citations.
+- QA-001 isolated seed replay, strict disjoint ranges, complete failure fixtures and an explicit manual
+  long-run workflow. A 50-sequence/1,315-operation smoke run passed; no 100,000-sequence claim is made.
 - Restore interruption guards and recovery instructions, HMAC-v2 authenticated backup summaries with legacy compatibility,
   complete reversal histories beyond 500 entries, live temporary-proposer approval, and invitation-only join privacy.
 - Freeze-safe bounded proposal/adjustment expiry, governance cursor pagination, and signed confirmation
@@ -38,15 +53,14 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Remaining specification and qualification work
 
-- QA-001 long property-run budget/thresholds (DEC-023); short invariant sequences exist.
-- QA-042 source/test citations and per-requirement dated result reporting remain incomplete. Generated
-  traceability detects stale inventory but is not proof that every requirement is qualified.
-- ARC-002 dual-adapter equivalence coverage, ARC-004 driver separation and ARC-008 operator surface audit.
-- L9 real SQLite I/O-failure coverage beyond interface fault injection and process-crash tests.
-- UX-017 optional original-transaction link for adjustments requires a defined data/API contract.
+- QA-001 long property-run budget/thresholds (DEC-023) and actual long-run execution on recorded hardware.
+- QA-042 remaining inspection/manual/external citations and full acceptance-criterion qualification.
+  Source/test mappings and matching dated execution evidence do not prove untested criteria.
+- L9 OS read/write/fsync and WAL commit/checkpoint failure coverage beyond real engine disk-full,
+  interface fault injection and process-crash tests; see the SQLite storage-failure qualification note.
 - SEC-014/018 retention choices for time zone, last activity and challenge reasons remain documented questions.
 - Refresh historical spec status tables only against specific implementation and test evidence.
-- First tagged release pipeline and deployment qualification; release thresholds and supported pilot jurisdictions.
+- First tagged release and deployment qualification; release thresholds and supported pilot jurisdictions.
 
 ## Owner and external gates
 
@@ -54,7 +68,8 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
   Several descriptions there predate built mechanisms: MFA, recovery, dual control, break-glass, grants,
   role-specific session lifetimes, policy notices and objections exist. A stale decision row is not a missing feature.
 - Break-glass scope (A3-F02 / DEC-014), reviewer-versus-administrator decisions (DEC-072), locale scope (UX-047),
-  support commitments and notice defaults require owner policy confirmation where records remain unresolved.
+  operator dual-control exceptions (ARC-008), member-limit notice timing (A3-F18), support commitments and
+  notice defaults require owner policy confirmation where records remain unresolved.
 - Manual screen-reader qualification (UX-056 / QA-035) and independent security review (SEC-033).
 - Hosted wiki publishing remains separate from the versioned `docs/wiki` source.
 

@@ -97,6 +97,7 @@ type txRow struct {
 	// ("Reversed by …"), oldest first.
 	Reason     string
 	Original   string
+	Related    string
 	ReversedBy []txLink
 }
 
@@ -275,6 +276,9 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 	}
 	if t.Kind == domain.KindReversal {
 		r.Original = t.OriginalTxID
+	}
+	if t.Kind == domain.KindAdjustment {
+		r.Related = t.RelatedTxID
 	}
 	if t.PayerMemberID == me.ID {
 		r.Counter = n.of(t.PayeeMemberID)

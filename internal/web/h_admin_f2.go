@@ -195,10 +195,10 @@ func (s *server) reversePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	unit := c.Net.Policy.CurrencyName
 	rv := &reverseReview{reverseTrade: *rt, Reverse: domain.FormatAmount(amt, dec), Reason: reason, Unit: unitFor(unit, amt, dec),
 		PayerName: rt.Payer, PayeeName: rt.Payee, Full: amt == t.Amount-t.ReversedTotal}
-	// Unaudited reads: the audited balance view is for pages that show a member's balance as the
-	// point of the page; here the numbers only explain the effect of the reversal.
-	pb, perr := s.svc.PeekMemberBalance(r.Context(), c.actor, c.netID(), t.PayerMemberID)
-	yb, yerr := s.svc.PeekMemberBalance(r.Context(), c.actor, c.netID(), t.PayeeMemberID)
+	// The confirmation renders both members' current and resulting balances.
+	// Each disclosure uses the audited administrator balance read (DAT-034).
+	pb, perr := s.svc.AdminGetMemberBalance(r.Context(), c.actor, c.netID(), t.PayerMemberID)
+	yb, yerr := s.svc.AdminGetMemberBalance(r.Context(), c.actor, c.netID(), t.PayeeMemberID)
 	if perr != nil || yerr != nil {
 		s.fail(w, r, firstErr(perr, yerr))
 		return

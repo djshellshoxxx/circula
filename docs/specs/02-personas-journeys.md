@@ -18,12 +18,12 @@ Summary: built 4, not built 1, partial 10.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| PER-001 | P0 | built | Member role: balance, listings, trades, disputes, export |
+| PER-001 | P0 | built | Member role: balance, listings, trades, disputes, export; Evidence: `TestLoginTradeFlow`, `TestListingsDirectoryExports`, `TestAuditVisibilityForMembers` (member trade, listing, export and own-audit journeys; role-wide acceptance still needs review). Citations are not execution results |
 | PER-002 | P0 | partial | Admin limits and self-restrictions built; dual control, notices and reviewer-conflict audit partly missing |
 | PER-003 | P0 | partial | Reviewer decides with independence checks; admin without reviewer role can also decide (open decision DEC-072) |
 | PER-004 | P0 | partial | No operator role routes; [Refreshed 2026-11-16: break-glass is built in part, see ARC-009 and SEC-013] operator access record partly built |
 | PER-010 | P0 | partial | Invite, approval and open joins built; onboarding terms (GOV-009) not built |
-| PER-011 | P0 | built | Create, edit, pause, archive listing; browse by type and text |
+| PER-011 | P0 | built | Create, edit, pause, archive listing; browse by type and text; Evidence: `TestListingsDirectoryExports`, `TestListingsDoNotTouchLedger` (create, filter, pause, authorization and ledger isolation). Citations are not execution results |
 | PER-012 | P0 | built | Propose, accept, decline, cancel; review step; idempotent commands |
 | PER-013 | P0 | partial | Balance and history views built; stale-data indicator (PER-022) not built |
 | PER-014 | P0 | partial | Dispute open, review, other-party response (FR-076) and decision built |

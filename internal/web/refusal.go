@@ -14,6 +14,7 @@ var fieldLabels = map[string]string{
 	"cursor": "Page position",
 	"login":  "Login", "password": "Password", "display_name": "Display name", "amount": "Amount",
 	"counterparty_id": "Counterparty", "direction": "Direction", "title": "Title", "price": "Price",
+	"member_id": "Member", "related_transaction_id": "Related trade reference",
 	"reason": "Reason", "reason_code": "Reason for removal", "transaction_id": "Trade reference", "rationale": "Rationale", "category": "Category", "name": "Name", "slug": "Web address name",
 	"limit": "Credit limit", "type": "Type", "outcome": "Outcome", "ttl": "Valid for", "status": "Status",
 	"currency_name": "Credit unit name", "default_credit_limit": "Default credit limit", "max_tx_amount": "Largest trade",
@@ -41,6 +42,8 @@ func label(f string) string {
 // choiceFixes are the corrections for fields filled from a fixed list (UX-021).
 var choiceFixes = map[string]string{
 	"counterparty_id":         "Choose another active member from the list.",
+	"member_id":               "Choose a member from the list.",
+	"related_transaction_id":  "Choose a posted trade involving this member, or leave the reference empty.",
 	"direction":               "Choose whether you pay or are paid.",
 	"category":                "Choose one of the listed categories.",
 	"outcome":                 "Choose one of the listed outcomes.",

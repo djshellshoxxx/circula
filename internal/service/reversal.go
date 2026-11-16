@@ -38,6 +38,9 @@ func (s *Service) ReverseTransaction(ctx context.Context, actor domain.Actor, ne
 			if err := requireReason(in.Reason); err != nil {
 				return "", err
 			}
+			if !domain.ValidRecordID(in.TxID) {
+				return "", domain.NotFound("transaction")
+			}
 			orig, err := tx.GetTransaction(netID, in.TxID)
 			if err != nil {
 				return "", domain.NotFound("transaction")
@@ -101,7 +104,7 @@ func (s *Service) reverse(tx store.Tx, net *domain.Network, orig *domain.Transac
 	if err := checkCapacity(net, debited, amount, s.now()); err != nil {
 		return nil, err
 	}
-	rev, err := s.newInternalTx(tx, net, domain.KindReversal, orig.PayeeAccountID, orig.PayerAccountID, amount, reason, createdBy, orig.ID)
+	rev, err := s.newInternalTx(tx, net, domain.KindReversal, orig.PayeeAccountID, orig.PayerAccountID, amount, reason, createdBy, orig.ID, "")
 	if err != nil {
 		return nil, err
 	}

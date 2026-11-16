@@ -251,6 +251,9 @@ func (s *Service) ListBreakGlass(ctx context.Context, actor domain.Actor, netID 
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListBreakGlass(netID, pg.AfterID, clampPage(pg))
 		return err
 	})

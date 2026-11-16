@@ -7,6 +7,7 @@
   <dt>Direction</dt><dd>{{.Dir}}</dd>
   <dt>Amount</dt><dd>{{.Amount}} {{$.Unit}}s</dd>
   <dt>Reason</dt><dd>{{.Reason}}</dd>
+  {{if .RelatedTxID}}<dt>Related transaction</dt><dd><a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">The original entry</a></dd>{{end}}
   <dt>Their balance now</dt><dd>{{template "balance" .Before}}</dd>
   <dt>Their balance after</dt><dd>{{template "balance" .After}}</dd>
 </dl>

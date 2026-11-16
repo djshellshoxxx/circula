@@ -27,6 +27,9 @@ func (s *Service) ListDirectory(ctx context.Context, actor domain.Actor, netID s
 		if err := p.requireActive(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, AfterID: pg.AfterID, Limit: clampPage(pg)})
 		for _, m := range ms {
 			out = append(out, DirectoryEntry{MemberID: m.ID, DisplayName: m.DisplayName})
@@ -45,6 +48,9 @@ func (s *Service) AdminListMembers(ctx context.Context, actor domain.Actor, netI
 			return err
 		}
 		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
 			return err
 		}
 		out, err = tx.ListMembers(netID, store.MemberFilter{Statuses: statuses, AfterID: pg.AfterID, Limit: clampPage(pg)})
@@ -67,6 +73,9 @@ func (s *Service) adminOnMember(tx store.Tx, actor domain.Actor, netID, memberID
 		if err := p.notSelf(memberID); err != nil {
 			return nil, nil, err
 		}
+	}
+	if !domain.ValidRecordID(memberID) {
+		return nil, nil, domain.NotFound("member")
 	}
 	m, err := tx.GetMember(netID, memberID)
 	if err != nil {

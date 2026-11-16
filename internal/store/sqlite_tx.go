@@ -12,7 +12,7 @@ const txCols = `t.id, t.network_id, t.kind, t.status, t.payer_account_id, t.paye
 	COALESCE(pa.member_id,''), COALESCE(pb.member_id,''), t.amount, COALESCE(t.listing_id,''),
 	t.note, t.reason, COALESCE(t.original_tx_id,''), COALESCE(t.created_by,''), COALESCE(t.accepted_by,''),
 	t.reversed_total, t.proposed_at, t.expires_at, t.completed_at, COALESCE(t.ledger_seq,0), t.dispute_deadline_at,
-	COALESCE(t.dispute_policy_version,0)`
+	COALESCE(t.dispute_policy_version,0), COALESCE(t.related_tx_id,'')`
 
 const txFrom = ` FROM transactions t
 	JOIN accounts pa ON pa.id = t.payer_account_id
@@ -20,11 +20,11 @@ const txFrom = ` FROM transactions t
 
 func (t *txImpl) InsertTransaction(x *domain.Transaction) error {
 	_, err := t.exec(`INSERT INTO transactions(id,network_id,kind,status,payer_account_id,payee_account_id,amount,
-		listing_id,note,reason,original_tx_id,created_by,reversed_total,proposed_at,expires_at)
-		VALUES (?,?,?,'proposed',?,?,?,?,?,?,?,?,0,?,?)`,
+		listing_id,note,reason,original_tx_id,created_by,reversed_total,proposed_at,expires_at,related_tx_id)
+		VALUES (?,?,?,'proposed',?,?,?,?,?,?,?,?,0,?,?,?)`,
 		x.ID, x.NetworkID, string(x.Kind), x.PayerAccountID, x.PayeeAccountID, x.Amount,
 		nullStr(x.ListingID), x.Note, x.Reason, nullStr(x.OriginalTxID), nullStr(x.CreatedBy),
-		ms(x.ProposedAt), msPtr(x.ExpiresAt))
+		ms(x.ProposedAt), msPtr(x.ExpiresAt), nullStr(x.RelatedTxID))
 	return err
 }
 
@@ -36,7 +36,7 @@ func scanTx(r rowScanner) (*domain.Transaction, error) {
 	if err := r.Scan(&x.ID, &x.NetworkID, &kind, &status, &x.PayerAccountID, &x.PayeeAccountID,
 		&x.PayerMemberID, &x.PayeeMemberID, &x.Amount, &x.ListingID, &x.Note, &x.Reason,
 		&x.OriginalTxID, &x.CreatedBy, &x.AcceptedBy, &x.ReversedTotal, &proposed, &exp, &done,
-		&x.LedgerSeq, &deadline, &x.DisputePolicyVersion); err != nil {
+		&x.LedgerSeq, &deadline, &x.DisputePolicyVersion, &x.RelatedTxID); err != nil {
 		return nil, err
 	}
 	x.Kind, x.Status = domain.TxKind(kind), domain.TxStatus(status)

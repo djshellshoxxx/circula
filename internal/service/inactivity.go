@@ -120,6 +120,9 @@ func (s *Service) ListInactiveMembers(ctx context.Context, actor domain.Actor, n
 		if net.Policy.InactivityDays == 0 {
 			return nil
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListInactiveMembers(netID, inactivityCutoff(s.now(), net.Policy.InactivityDays), pg.AfterID, clampPage(pg))
 		return err
 	})

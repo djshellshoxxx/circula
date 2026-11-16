@@ -50,6 +50,9 @@ func (s *Service) ResolveDispute(ctx context.Context, actor domain.Actor, netID 
 
 func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, error) {
 	netID := p.net.ID
+	if !domain.ValidRecordID(in.DisputeID) {
+		return "", domain.NotFound("dispute")
+	}
 	d, err := tx.GetDispute(netID, in.DisputeID)
 	if err != nil {
 		return "", domain.NotFound("dispute")
@@ -249,6 +252,9 @@ func (s *Service) GetDispute(ctx context.Context, actor domain.Actor, netID, dis
 		if err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(disputeID) {
+			return domain.NotFound("dispute")
+		}
 		d, err := tx.GetDispute(netID, disputeID)
 		if err != nil {
 			return domain.NotFound("dispute")
@@ -280,6 +286,9 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 				return domain.ErrForbidden
 			}
 			f.PartyID = p.member.ID
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListDisputes(netID, f)
 		return err

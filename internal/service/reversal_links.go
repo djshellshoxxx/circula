@@ -22,6 +22,9 @@ func (s *Service) ReversalsOf(ctx context.Context, actor domain.Actor, netID, tx
 		if err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(txID) {
+			return domain.NotFound("transaction")
+		}
 		t, err := tx.GetTransaction(netID, txID)
 		if err != nil {
 			return domain.NotFound("transaction")

@@ -93,6 +93,13 @@ reference unchanged; once the member's name and login are erased the reference i
 `audit_events.summary_before` and `summary_after` are structured values; the code never writes a name, login or contact
 detail into them.
 
+`pending_adjustments.related_tx_id` and `transactions.related_tx_id` retain optional adjustment context for the
+lifetime of the network, like the existing transaction reference columns. They hold only a transaction ID and remain
+after erasure. The reference must identify a posted transaction in the same network involving the adjusted member;
+it grants no additional access. Pending requests remain administrator-only and are not exported as a table. Posted
+references appear in network exports and the adjusted member's own history/export, with the relation also retained
+in append-only audit summaries. Standalone adjustments leave the reference empty.
+
 | Table | Columns |
 |---|---|
 | `account_recovery_codes` | `id`, `person_id`, `created_at`, `used_at` |
@@ -126,7 +133,7 @@ detail into them.
 | `network_terms` | `network_id`, `version`, `published_by`, `published_at` |
 | `networks` | `id`, `name`, `slug`, `status`, `ledger_seq`, `created_at` |
 | `notifications` | `id`, `network_id`, `member_id`, `kind`, `title`, `link`, `dedupe_key`, `created_at`, `read_at` |
-| `pending_adjustments` | `id`, `network_id`, `proposer_member_id`, `target_member_id`, `amount`, `direction`, `status`, `created_at`, `expires_at`, `decided_by`, `decided_at`, `tx_id` |
+| `pending_adjustments` | `id`, `network_id`, `proposer_member_id`, `target_member_id`, `amount`, `direction`, `status`, `created_at`, `expires_at`, `decided_by`, `decided_at`, `tx_id`, `related_tx_id` |
 | `person_activity` | `person_id` |
 | `person_mfa` | `person_id`, `enabled`, `last_step`, `created_at`, `enabled_at` |
 | `person_prefs` | `person_id`, `updated_at` |
@@ -140,7 +147,7 @@ detail into them.
 | `terms_acceptances` | `network_id`, `member_id`, `version`, `accepted_at` |
 | `transaction_status_events` | `id`, `network_id`, `tx_id`, `from_status`, `to_status`, `actor_id`, `request_id`, `occurred_at` |
 | `transaction_status_event_order` | `seq`, `event_id` |
-| `transactions` | `id`, `network_id`, `kind`, `status`, `payer_account_id`, `payee_account_id`, `amount`, `listing_id`, `original_tx_id`, `created_by`, `accepted_by`, `reversed_total`, `proposed_at`, `expires_at`, `completed_at`, `ledger_seq`, `dispute_deadline_at`, `dispute_policy_version` |
+| `transactions` | `id`, `network_id`, `kind`, `status`, `payer_account_id`, `payee_account_id`, `amount`, `listing_id`, `original_tx_id`, `related_tx_id`, `created_by`, `accepted_by`, `reversed_total`, `proposed_at`, `expires_at`, `completed_at`, `ledger_seq`, `dispute_deadline_at`, `dispute_policy_version` |
 
 ## Outside the database
 

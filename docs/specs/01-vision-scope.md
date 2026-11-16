@@ -28,7 +28,7 @@ Summary: built 5, not built 1, partial 6.
 | VIS-008 | P1 | partial | Structural accessibility tests only; WCAG tooling not run. [Refreshed 2026-11-16: axe-core and contrast/target-size/greyscale specs exist in `e2e/tests`; this note is stale.] |
 | VIS-009 | P1 | partial | Export round trip implemented; import (needed for round trip) deferred |
 | VIS-010 | P1 | partial | Entity list in 06 exists; no personal-data inventory document |
-| VIS-011 | P1 | built | No billing or payment-provider code; "payment" is trade wording only |
+| VIS-011 | P1 | built | No billing or payment-provider code; "payment" is trade wording only; Inspection target: `cmd/circula` and `go.mod`; repository-wide absence of monetization is not established by an automated requirement test. No execution result is implied |
 | VIS-012 | P2 | built | No route for deferred capabilities in routes.go |
 
 ## 1. Purpose and statement of limits

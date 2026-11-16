@@ -83,6 +83,9 @@ func (s *Service) propose(tx store.Tx, p *principal, in ProposeInput) (string, e
 	if in.CounterpartyID == p.member.ID {
 		return "", domain.Invalid("counterparty_id", "cannot trade with yourself")
 	}
+	if !domain.ValidRecordID(in.CounterpartyID) {
+		return "", domain.NotFound("member")
+	}
 	cp, err := tx.GetMember(p.net.ID, in.CounterpartyID)
 	if err != nil {
 		return "", domain.NotFound("member") // also covers other networks (DOM-001)
@@ -95,6 +98,9 @@ func (s *Service) propose(tx store.Tx, p *principal, in ProposeInput) (string, e
 		// reads as unknown, as it does to other members), belong to the
 		// counterparty and match the direction: an offer is paid for by the
 		// proposer, a request is paid by the counterparty.
+		if !domain.ValidRecordID(in.ListingID) {
+			return "", domain.Invalid("listing_id", "unknown listing")
+		}
 		l, err := tx.GetListing(p.net.ID, in.ListingID)
 		if err != nil || l.Status != domain.ListingActive {
 			return "", domain.Invalid("listing_id", "unknown listing")
@@ -175,6 +181,9 @@ func (s *Service) propose(tx store.Tx, p *principal, in ProposeInput) (string, e
 // loadParty loads a transaction the acting member is a party to. Everything
 // else, including other networks' ids, is an indistinguishable not-found (SEC-009).
 func loadParty(tx store.Tx, p *principal, txID string) (*domain.Transaction, error) {
+	if !domain.ValidRecordID(txID) {
+		return nil, domain.NotFound("transaction")
+	}
 	t, err := tx.GetTransaction(p.net.ID, txID)
 	if err != nil || !t.IsParty(p.memberID()) {
 		return nil, domain.NotFound("transaction")
@@ -290,6 +299,9 @@ func (s *Service) exit(ctx context.Context, actor domain.Actor, netID string, in
 			Reason string
 		}{in, reason}
 		out, err = idempotent(s, tx, netID, actor, op, in.IdempotencyKey, payload, func() (string, error) {
+			if !domain.ValidRecordID(in.TxID) {
+				return "", domain.NotFound("transaction")
+			}
 			t, err := tx.GetTransaction(netID, in.TxID)
 			if err != nil {
 				return "", domain.NotFound("transaction")

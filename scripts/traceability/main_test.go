@@ -258,8 +258,8 @@ func TestGenerateIsDeterministicAndFlags(t *testing.T) {
 	out := string(a.out)
 	for _, want := range []string{
 		"Input: git HEAD `abc1234`",
-		"| FR-001 | P0 | Create a network | built | `internal/a/a.go` (Make) | `internal/a/a_test.go:TestNamed` | covered by `TestNamed` |",
-		"| FR-003 | P1 | - | partial | - | `internal/a/a_test.go:TestNamed` † | gap |",
+		"| FR-001 | P0 | Create a network | built | `internal/a/a.go` (Make) | `internal/a/a_test.go:TestNamed` | a | not recorded | covered by `TestNamed` |",
+		"| FR-003 | P1 | - | partial | - | `internal/a/a_test.go:TestNamed` † | a | not recorded | gap |",
 		"## 13 Decisions",
 		"| FR-777 | `internal/a/a.go` |",
 		"Requirement IDs (excluding decision-register rows): 3; built 2, partial 1.",
@@ -275,5 +275,27 @@ func TestGenerateIsDeterministicAndFlags(t *testing.T) {
 	c, _ := generate(o)
 	if bytes.Equal(a.out, c.out) {
 		t.Error("a different head must change the header")
+	}
+}
+
+func TestSpecNoteRequiresExistingTestDeclaration(t *testing.T) {
+	root := t.TempDir()
+	writeFiles(t, root, map[string]string{
+		"docs/specs/04-fr.md":                    "# Functional\n| ID | Priority | Status | Note |\n|---|---|---|---|\n| FR-001 | P0 | built | TestGone |\n| QA-042 | P0 | partial | TestGenerator |\n",
+		"internal/a/a_test.go":                   "package a\n// TestGone is a removed test, not a declaration.\n",
+		"scripts/traceability/generator_test.go": "package main\n// Sample FR-777 must never become a citation.\nfunc TestGenerator(t *testing.T) {}\n",
+	})
+	res, err := generate(options{root: root, specs: "docs/specs", decisions: "docs/DECISIONS.md", legacy: "legacy.tsv", head: "abc1234", maxCites: 6})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(res.builtNoTest, []string{"FR-001"}) {
+		t.Fatalf("missing test silently qualified: %v", res.builtNoTest)
+	}
+	if len(res.unknown) != 0 {
+		t.Fatalf("generator sample leaked: %v", res.unknown)
+	}
+	if !strings.Contains(string(res.out), "`scripts/traceability/generator_test.go:TestGenerator` | tooling | not recorded") {
+		t.Fatal("explicit generator citation absent")
 	}
 }

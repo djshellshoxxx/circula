@@ -82,7 +82,7 @@ func TestCommonErrorResponsesMatchOpenAPI(t *testing.T) {
 		for _, c := range []call{
 			{method: "POST", path: "/listings", idem: true, hdr: m2("Content-Type", "text/plain")},
 			{method: "PATCH", path: "/me", hdr: m2("Content-Type", "application/json")},
-			{method: "POST", path: "/transactions/unused/accept", idem: true, hdr: m2("Content-Type", "text/plain")},
+			{method: "POST", path: "/transactions/01950980-7b00-7000-8000-000000000001/accept", idem: true, hdr: m2("Content-Type", "text/plain")},
 		} {
 			c.token, c.body, c.skipRequest = token, m{}, true
 			h.do(415, c)

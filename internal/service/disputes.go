@@ -122,6 +122,9 @@ func (s *Service) decideSetup(tx store.Tx, actor domain.Actor, netID, disputeID 
 	if err := p.requireDecider(); err != nil {
 		return nil, nil, nil, err
 	}
+	if !domain.ValidRecordID(disputeID) {
+		return nil, nil, nil, domain.NotFound("dispute")
+	}
 	d, err := tx.GetDispute(netID, disputeID)
 	if err != nil {
 		return nil, nil, nil, domain.NotFound("dispute")
@@ -185,6 +188,9 @@ func (s *Service) WithdrawDispute(ctx context.Context, actor domain.Actor, netID
 		}
 		if p.member == nil || (p.member.Status != domain.MemberActive && p.member.Status != domain.MemberSuspended) {
 			return domain.Forbidden("membership cannot perform this action")
+		}
+		if !domain.ValidRecordID(disputeID) {
+			return domain.NotFound("dispute")
 		}
 		d, err := tx.GetDispute(netID, disputeID)
 		if err != nil || d.OpenedBy != p.member.ID {

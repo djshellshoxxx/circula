@@ -79,6 +79,9 @@ func (s *Service) AdminGetMemberBalance(ctx context.Context, actor domain.Actor,
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
+		}
 		m, err := tx.GetMember(netID, memberID)
 		if err != nil {
 			return domain.NotFound("member")
@@ -129,6 +132,9 @@ func (s *Service) PeekMemberBalance(ctx context.Context, actor domain.Actor, net
 		}
 		if err := p.requireAdmin(); err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
 		}
 		m, err := tx.GetMember(netID, memberID)
 		if err != nil {

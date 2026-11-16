@@ -13,6 +13,7 @@
   {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{.Posted}}</dd>{{end}}
   {{if .Row.Ledger}}<dt>Ledger reference</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
   {{if .Tx.OriginalTxID}}<dt>Reverses</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.OriginalTxID}}">The original entry</a></dd>{{end}}
+  {{if .Tx.RelatedTxID}}<dt>Adjusts</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.RelatedTxID}}">The original entry</a></dd>{{end}}
   {{if .Row.ReversedBy}}<dt>Reversals</dt><dd><ul>{{range .Row.ReversedBy}}<li><a href="/n/{{$.Slug}}/trades/{{.ID}}">{{.Text}}</a></li>{{end}}</ul></dd>{{end}}
 </dl>
 <div class="actions">

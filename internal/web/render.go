@@ -277,6 +277,8 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 		p.Title, p.Text = "No access", "You do not have access to this page."
 	case 404:
 		p.Title, p.Text = "Page not found", "We could not find that page. It may not exist, or you may not have access to it."
+	case 422:
+		p.Title, p.Text = "Request not accepted", "One or more values in this request are invalid. Nothing changed. Go back, check the values and try again."
 	case 429:
 		p.Title, p.Text = "Too many attempts", "Too many attempts. Wait a minute and try again. Nothing changed."
 	case 503:
@@ -320,6 +322,8 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		s.renderError(w, r, 403)
 	case domain.CodeNotFound:
 		s.renderError(w, r, 404)
+	case domain.CodeValidation:
+		s.renderError(w, r, 422)
 	case domain.CodeRateLimited:
 		s.renderError(w, r, 429)
 	case domain.CodeInvalidState, domain.CodeConflict, domain.CodeBlocked:

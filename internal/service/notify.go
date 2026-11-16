@@ -101,6 +101,9 @@ func (s *Service) ListNotifications(ctx context.Context, actor domain.Actor, net
 		if err != nil {
 			return err
 		}
+		if err := validatePageIDs(q.Page.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListNotifications(netID, m.ID, store.NotificationFilter{UnreadOnly: q.UnreadOnly,
 			AfterID: q.Page.AfterID, Limit: clampPage(q.Page)})
 		return err
@@ -143,6 +146,11 @@ func (s *Service) MarkNotificationsRead(ctx context.Context, actor domain.Actor,
 		m, err := p.inboxMember()
 		if err != nil {
 			return err
+		}
+		for _, id := range ids {
+			if !domain.ValidRecordID(id) {
+				return domain.Invalid("ids", "must contain record identifiers")
+			}
 		}
 		n, err = tx.MarkNotificationsRead(netID, m.ID, ids, s.now())
 		return err

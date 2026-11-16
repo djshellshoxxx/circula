@@ -33,6 +33,12 @@ func (s *Service) FindDisputes(ctx context.Context, actor domain.Actor, netID st
 			}
 			f.PartyID = p.member.ID
 		}
+		if q.TxID != "" && !domain.ValidRecordID(q.TxID) {
+			return domain.Invalid("transaction_id", "must be a record identifier")
+		}
+		if err := validatePageIDs(q.Page.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListDisputes(netID, f)
 		return err
 	})

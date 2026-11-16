@@ -2,13 +2,10 @@ package service_test
 
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"math/rand"
 	"os"
-	"path/filepath"
-	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -28,8 +25,10 @@ import (
 // Configuration (recorded in the test log):
 //   - CIRCULA_QA001_SEQUENCES: number of sequences. Default 250, 50 under
 //     the race detector (QA-001 recommends 1000 for the short run; DEC-023
-//     pending). The long run on merge and release sets it to 100000 or more.
-//   - CIRCULA_QA001_SEED: replay one sequence by its seed.
+//     pending). Long runs are manual; no release threshold is confirmed.
+//   - CIRCULA_QA001_START_SEED: first seed of a disjoint range (default 100000).
+//   - CIRCULA_QA001_SHARDS: concurrent workers, 1..8.
+//   - CIRCULA_QA001_SEED: replay one isolated sequence; excludes range options.
 //   - CIRCULA_QA001_FAILDIR: where a failing sequence's fixture is written
 //     (default: a new directory under the system temp directory).
 //
@@ -63,89 +62,72 @@ type qa001Step struct {
 }
 
 type qa001Fixture struct {
-	Seed    int64       `json:"seed"`
-	MaxOps  int         `json:"max_ops"`
-	Failure string      `json:"failure"`
-	Steps   []qa001Step `json:"steps"`
+	Revision  string      `json:"revision"`
+	GoVersion string      `json:"go_version"`
+	Platform  string      `json:"platform"`
+	Clock     string      `json:"clock,omitempty"`
+	Stack     string      `json:"stack,omitempty"`
+	Config    qa001Config `json:"config"`
+	Seed      int64       `json:"seed"`
+	MaxOps    int         `json:"max_ops"`
+	Failure   string      `json:"failure"`
+	Steps     []qa001Step `json:"steps"`
 }
 
 type qa001Run struct {
-	t      *testing.T
-	e      *tu.Env
-	rng    *rand.Rand
-	seed   int64
-	nets   []*qa001Net
-	steps  []qa001Step
-	ok     map[string]int // operation -> successful runs, across sequences
-	tried  map[string]int
-	ledger map[string]string // entry or posted-transaction id -> row image (LED-2)
-	bal    map[string]int64  // account id -> balance after the previous step
-	actor  map[string]domain.Actor
-	serial int
-}
-
-func qa001Env(name string, def int) int {
-	if v := os.Getenv(name); v != "" {
-		if n, err := strconv.Atoi(v); err == nil && n > 0 {
-			return n
-		}
-	}
-	return def
+	t              *testing.T
+	e              *tu.Env
+	rng            *rand.Rand
+	seed           int64
+	nets           []*qa001Net
+	steps          []qa001Step
+	ok             map[string]int // operation -> successful runs, across sequences
+	tried          map[string]int
+	ledger         map[string]string // entry or posted-transaction id -> row image (LED-2)
+	bal            map[string]int64  // account id -> balance after the previous step
+	actor          map[string]domain.Actor
+	serial         int
+	config         qa001Config
+	fixtureWritten bool
 }
 
 func TestQA001InvariantSequences(t *testing.T) {
-	// 1000 sequences take about two minutes on a 4-CPU runner, too long for
-	// every change; the default is 250 (50 under the race detector) and CI
-	// or a release run sets CIRCULA_QA001_SEQUENCES for longer runs.
-	sequences := 250
+	budget := 250
 	if raceOn {
-		sequences = 50
+		budget = 50
 	}
-	sequences = qa001Env("CIRCULA_QA001_SEQUENCES", sequences)
-	seeds := make([]int64, 0, sequences)
-	if v := os.Getenv("CIRCULA_QA001_SEED"); v != "" {
-		s, err := strconv.ParseInt(v, 10, 64)
-		if err != nil {
-			t.Fatalf("CIRCULA_QA001_SEED=%q", v)
-		}
-		seeds = append(seeds, s)
-	} else {
-		for i := 0; i < sequences; i++ {
-			seeds = append(seeds, int64(100_000+i))
-		}
+	cfg, err := readQA001Config(os.Getenv, budget)
+	if err != nil {
+		t.Fatal(err)
 	}
-	// Sequences run in parallel shards, one per CPU (at most 8), each shard
-	// on its own database. A sequence touches only the networks it creates,
-	// so its seed replays it (CIRCULA_QA001_SEED) on a fresh database; a
-	// fresh database per sequence would cost more than the sequence itself.
-	shards := runtime.GOMAXPROCS(0)
-	if shards > 8 {
-		shards = 8
-	}
-	if shards > len(seeds) {
-		shards = len(seeds)
-	}
+	t.Logf("QA-001 config: start_seed=%d sequences=%d shards=%d max_ops=%d", cfg.StartSeed, cfg.Sequences, cfg.Shards, qa001MaxOps)
+
 	var mu sync.Mutex
 	ok, tried := map[string]int{}, map[string]int{}
 	ops := 0
 	t.Run("shards", func(t *testing.T) {
-		for s := 0; s < shards; s++ {
-			t.Run(strconv.Itoa(s), func(t *testing.T) {
+		for shard := 0; shard < cfg.Shards; shard++ {
+			t.Run(strconv.Itoa(shard), func(t *testing.T) {
 				t.Parallel()
-				r := &qa001Run{t: t, ok: map[string]int{}, tried: map[string]int{},
-					e: tu.NewEnvConfig(t, nil, func(c *service.Config) { c.MaxOpenRequestsPerPair = 1_000_000 })}
-				n := 0
-				for i := s; i < len(seeds); i += shards {
-					n += r.sequence(seeds[i])
-				}
-				mu.Lock()
-				defer mu.Unlock()
-				ops += n
-				for k, v := range r.ok {
-					ok[k] += v
-				}
-				for k, v := range r.tried {
-					tried[k] += v
+				for i := shard; i < cfg.Sequences; i += cfg.Shards {
+					seed := cfg.StartSeed + int64(i)
+					if !t.Run(fmt.Sprintf("seed%d", seed), func(t *testing.T) {
+						r := runQA001Sequence(t, seed, cfg)
+						if t.Failed() {
+							return
+						}
+						mu.Lock()
+						defer mu.Unlock()
+						ops += len(r.steps)
+						for k, v := range r.ok {
+							ok[k] += v
+						}
+						for k, v := range r.tried {
+							tried[k] += v
+						}
+					}) {
+						break // keep the first failure in each shard, not a flood
+					}
 				}
 			})
 		}
@@ -153,7 +135,7 @@ func TestQA001InvariantSequences(t *testing.T) {
 	if t.Failed() {
 		return
 	}
-	t.Logf("QA-001: %d sequences, %d operations (at most %d per sequence), checks after every operation", len(seeds), ops, qa001MaxOps)
+	t.Logf("QA-001: %d sequences, %d operations (at most %d per sequence), checks after every operation", cfg.Sequences, ops, qa001MaxOps)
 	names := make([]string, 0, len(tried))
 	for k := range tried {
 		names = append(names, k)
@@ -162,7 +144,7 @@ func TestQA001InvariantSequences(t *testing.T) {
 	for _, k := range names {
 		t.Logf("  %-15s tried %6d  succeeded %6d", k, tried[k], ok[k])
 	}
-	if len(seeds) < 50 {
+	if cfg.Sequences < 50 {
 		return // a single-seed replay cannot reach every operation
 	}
 	for _, op := range qa001Ops {
@@ -179,25 +161,7 @@ func (r *qa001Run) sequence(seed int64) int {
 	n := 0
 	do := func(op string) {
 		n++
-		r.tried[op]++
-		detail, err := r.apply(op)
-		res := "ok"
-		if err != nil {
-			res = err.Error()
-			if err != errSkip && domain.CodeOf(err) == domain.CodeInternal {
-				r.fail(fmt.Sprintf("%s: internal error: %v", op, err))
-			}
-		} else {
-			r.ok[op]++
-			if op == "accept" {
-				r.ok["complete"]++ // an accepted trade completes in the same unit (DOM-012)
-				r.tried["complete"]++
-			}
-		}
-		r.steps = append(r.steps, qa001Step{Op: op, Detail: detail, Result: res})
-		if msg := r.check(); msg != "" {
-			r.fail(fmt.Sprintf("after %s: %s", op, msg))
-		}
+		r.step(op, func() (string, error) { return r.apply(op) })
 	}
 	for i := 0; i < 2; i++ {
 		do("create-network")
@@ -225,27 +189,6 @@ func (r *qa001Run) sequence(seed int64) int {
 		}
 	}
 	return n
-}
-
-func (r *qa001Run) fail(msg string) {
-	r.t.Helper()
-	fx := qa001Fixture{Seed: r.seed, MaxOps: qa001MaxOps, Failure: msg, Steps: r.steps}
-	dir := os.Getenv("CIRCULA_QA001_FAILDIR")
-	var err error
-	if dir == "" {
-		dir, err = os.MkdirTemp("", "circula-qa001-")
-	} else {
-		err = os.MkdirAll(dir, 0o755)
-	}
-	path := "(not written)"
-	if err == nil {
-		path = filepath.Join(dir, fmt.Sprintf("qa001-seed-%d.json", r.seed))
-		b, _ := json.MarshalIndent(fx, "", "  ")
-		if werr := os.WriteFile(path, b, 0o644); werr != nil {
-			path = "(not written: " + werr.Error() + ")"
-		}
-	}
-	r.t.Fatalf("QA-001 invariant violation, seed %d (replay: CIRCULA_QA001_SEED=%d), fixture %s: %s", r.seed, r.seed, path, msg)
 }
 
 func (r *qa001Run) key() string { r.serial++; return fmt.Sprintf("qa001-%d-%d", r.seed, r.serial) }

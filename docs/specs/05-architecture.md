@@ -21,11 +21,11 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| ARC-001 | P0 | built | One executable per target; no edition split |
+| ARC-001 | P0 | built | One executable per target; no edition split; Source: `cmd/circula/main.go`, `scripts/package-release.sh`; release packaging/smoke evidence is separate from Go unit-test results. No execution result is implied |
 | ARC-002 | P0 | partial | Service is the write path; cmd reads SQLite directly for some checks |
-| ARC-003 | P0 | built | Adapters map and render; rules in service |
+| ARC-003 | P0 | built | Adapters map and render; rules in service; Evidence: `TestAdaptersDoNotImportStorage` (adapter import boundaries; business-rule placement still requires code inspection). Citations are not execution results |
 | ARC-004 | P0 | partial | Store interface exists but lives beside SQLite; no contract suite for another store |
-| ARC-005 | P0 | built | Only postTx writes entries and balances |
+| ARC-005 | P0 | built | Only postTx writes entries and balances; Source: `internal/service/posting.go:postTx`; exclusive posting ownership requires a source-boundary inspection, not a generic successful trade test. No execution result is implied |
 | ARC-006 | P0 | built | Per-account serialisation via write gate and BEGIN IMMEDIATE |
 | ARC-007 | P0 | built | Network scoping in queries and tests |
 | ARC-008 | P0 | partial | No operator API route; host-level CLI restore and SQL access remain outside service |
@@ -33,18 +33,18 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-010 | P0 | partial | Input limits and tests exist; trust-boundary checklist and fuzzing not run |
 | ARC-011 | P0 | built | One writer per database file; lock refuses second holder |
 | ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
-| ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done |
+| ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done; Source: `cmd/circula/config.go`, `scripts/package-release.sh`; hosted deployment qualification remains external. No execution result is implied |
 | ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
 | ARC-015 | P0 | built | Explicit admin checks are recorded; scheduled checks are read-only and report through operational metrics/logs (DEC-031) |
 | ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace default 10 s (shutdown-grace) |
 | ARC-017 | P0 | partial | Semantic server-rendered HTML. [Refreshed 2026-11-16: the note "no automated WCAG tool in CI" is stale; axe-core runs in `make e2e`.] |
-| ARC-018 | P1 | built | Layering enforced by depguard rules in .golangci.yml |
-| ARC-019 | P0 | built | CI builds all five targets from one commit |
+| ARC-018 | P1 | built | Layering enforced by depguard rules in .golangci.yml; Evidence: `TestAdaptersDoNotImportStorage` (automated adapter/storage and service/driver import boundary checks). Citations are not execution results |
+| ARC-019 | P0 | built | CI builds all five targets from one commit; Source: `scripts/package-release.sh` and `.github/workflows/ci.yml` release-package job; target build and smoke results must be retained from that CI run. No execution result is implied |
 | ARC-020 | P0 | partial | Export through service; documented reference parser absent |
-| ARC-021 | P1 | built | Clock and IDs injected into service |
+| ARC-021 | P1 | built | Clock and IDs injected into service; Evidence: `TestExpiry`, `TestIdempotencyRecordExpires` (fake-clock domain/service behavior; the required 100-repeat qualification is separate). Citations are not execution results |
 | ARC-022 | P1 | partial | Structured logs, request IDs, metrics; posting counters not present |
 | ARC-023 | P1 | built | Config from file, env and flags; secret files; gitleaks scan in CI |
-| ARC-024 | P1 | built | Licence manifest docs/legal/DEPENDENCIES.md; CI fails on a licence outside the approved list |
+| ARC-024 | P1 | built | Licence manifest docs/legal/DEPENDENCIES.md; CI fails on a licence outside the approved list; Source: `scripts/licenses.sh --check`, `docs/legal/DEPENDENCIES.md`; licence-check execution and maintenance review are not Go test results; product licence remains DEC-004. No execution result is implied |
 | ARC-025 | P2 | deferred | Federation, mobile, payment and tokenisation not built; no route |
 
 ## 1. Architectural summary

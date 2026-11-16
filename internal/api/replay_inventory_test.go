@@ -2,6 +2,7 @@ package api
 
 import (
 	"go/ast"
+	"go/parser"
 	"go/token"
 	"net/http"
 	"testing"
@@ -30,18 +31,11 @@ func TestCachedRouteReplayAuthorizationInventory(t *testing.T) {
 			}
 			cached := false
 			for _, arg := range call.Args[2:] {
-				id, ok := arg.(*ast.Ident)
-				if !ok {
-					t.Errorf("%s: unrecognized registration modifier", fset.Position(arg.Pos()))
-					continue
+				caches, reviewed := replayInventoryModifier(arg)
+				if !reviewed {
+					t.Errorf("%s: unrecognized registration modifier; review its replay behavior", fset.Position(arg.Pos()))
 				}
-				switch id.Name {
-				case "idem", "idemOpt":
-					cached = true
-				case "noNet", "cookieOnly":
-				default:
-					t.Errorf("%s: review registration modifier %q for replay caching", fset.Position(arg.Pos()), id.Name)
-				}
+				cached = cached || caches
 			}
 			if !cached {
 				return true
@@ -63,6 +57,79 @@ func TestCachedRouteReplayAuthorizationInventory(t *testing.T) {
 	}
 	if replayPermission("POST /api/v1/unreviewed-write") != service.ReplayDenied {
 		t.Fatal("unreviewed route must fail closed")
+	}
+}
+
+// queryParams only wraps the handler with query-name validation. Recognize its
+// exact registration shape, while unknown calls, nested modifiers and dynamic
+// argument expansion still require review rather than hiding replay caching.
+func replayInventoryModifier(arg ast.Expr) (cached, reviewed bool) {
+	switch expr := arg.(type) {
+	case *ast.Ident:
+		switch expr.Name {
+		case "idem", "idemOpt":
+			return true, true
+		case "noNet", "cookieOnly":
+			return false, true
+		}
+	case *ast.CallExpr:
+		callee, ok := expr.Fun.(*ast.Ident)
+		if !ok || callee.Name != "queryParams" || expr.Ellipsis.IsValid() {
+			return false, false
+		}
+		for _, allowed := range expr.Args {
+			literal, ok := allowed.(*ast.BasicLit)
+			if !ok || literal.Kind != token.STRING {
+				return false, false
+			}
+		}
+		return false, true
+	}
+	return false, false
+}
+
+func TestReplayInventoryModifiersFailClosed(t *testing.T) {
+	for _, tc := range []struct {
+		src              string
+		cached, reviewed bool
+	}{
+		{"idem", true, true}, {"idemOpt", true, true},
+		{"noNet", false, true}, {"cookieOnly", false, true},
+		{"queryParams()", false, true}, {`queryParams("at")`, false, true},
+		{"unreviewed", false, false}, {"unreviewed()", false, false},
+		{"wrap(idem)", false, false}, {"queryParams(idem)", false, false},
+		{"queryParams(computed())", false, false}, {"queryParams(names...)", false, false},
+		{"other.queryParams()", false, false}, {"queryParams(1)", false, false},
+	} {
+		t.Run(tc.src, func(t *testing.T) {
+			expr, err := parser.ParseExpr(tc.src)
+			if err != nil {
+				t.Fatal(err)
+			}
+			cached, reviewed := replayInventoryModifier(expr)
+			if cached != tc.cached || reviewed != tc.reviewed {
+				t.Fatalf("cached=%t reviewed=%t; want %t %t", cached, reviewed, tc.cached, tc.reviewed)
+			}
+		})
+	}
+}
+
+// The reviewed wrapper must remain neutral to the metadata that controls
+// authentication and replay. If it starts setting these flags, the inventory's
+// classification above must be reviewed as well.
+func TestQueryParamsPreservesAuthorizationMetadata(t *testing.T) {
+	for _, initial := range []route{
+		{pattern: "GET /example"},
+		{pattern: "GET /example", idem: idemRequired},
+		{pattern: "GET /example", idem: idemOptional, noNet: true, cookieOnly: true},
+	} {
+		for _, allowed := range [][]string{nil, {"at"}} {
+			rt := initial
+			queryParams(allowed...)(&rt)
+			if rt.pattern != initial.pattern || rt.idem != initial.idem || rt.noNet != initial.noNet || rt.cookieOnly != initial.cookieOnly {
+				t.Fatal("queryParams changed authentication or replay metadata")
+			}
+		}
 	}
 }
 

@@ -20,7 +20,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| OPS-001 | P0 | built | One artefact for both models |
+| OPS-001 | P0 | built | One artefact for both models; Source: `scripts/package-release.sh`, `cmd/circula/config.go`; packaging and both deployment-mode smoke results require retained CI/drill artifacts. No execution result is implied |
 | OPS-002 | P0 | built | Single process; embedded database; loopback default |
 | OPS-003 | P0 | partial | Five targets built in CI with checksums; per-target smoke run not performed |
 | OPS-004 | P1 | partial | Environments and synthetic staging refresh documented in docs/ops; hosted staging execution not recorded |

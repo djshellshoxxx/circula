@@ -3593,6 +3593,9 @@ components:
         reason:
           type: string
           description: Present only when non-empty (omitted otherwise).
+        related_transaction_id:
+          $ref: '#/components/schemas/Id'
+          description: Optional adjustment context; omitted for standalone adjustments and other kinds. Refers to a posted transaction involving the adjusted member and never affects reversal accounting.
         original_transaction_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
         reversed_total_minor: {$ref: '#/components/schemas/Money'}
         proposed_at: {$ref: '#/components/schemas/Timestamp'}
@@ -4091,6 +4094,9 @@ components:
         expires_at: {$ref: '#/components/schemas/Timestamp'}
         decided_by_member_id: {type: [string, 'null']}
         decided_at: {type: [string, 'null']}
+        related_transaction_id:
+          $ref: '#/components/schemas/Id'
+          description: Optional immutable context retained on the approved transaction; omitted when absent.
         transaction_id: {type: [string, 'null']}
     PendingAdjustmentPage:
       allOf:
@@ -4103,6 +4109,9 @@ components:
       required: [member_id, direction, amount_minor, reason]
       additionalProperties: false
       properties:
+        related_transaction_id:
+          oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]
+          description: Optional posted transaction in this network involving the adjusted member. Omit or send null for a standalone adjustment. Does not reverse or alter that transaction.
         member_id: {$ref: '#/components/schemas/Id'}
         direction:
           type: string
