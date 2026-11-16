@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // finalExportDTO is the final export record of a completed closure (GOV-025 e).
@@ -97,7 +96,7 @@ type challengeDTO struct {
 	DecidedAt *string `json:"decided_at"`
 }
 
-func toChallenge(ch store.Challenge) challengeDTO {
+func toChallenge(ch service.Challenge) challengeDTO {
 	d := challengeDTO{ID: ch.ID, MemberID: ch.MemberID, Kind: ch.Kind, SubjectID: strPtr(ch.SubjectID), Reason: ch.Reason,
 		Status: ch.Status, Outcome: strPtr(ch.Outcome), DecidedBy: strPtr(ch.DecidedBy), Rationale: ch.Rationale, CreatedAt: ts(ch.CreatedAt)}
 	if !ch.DecidedAt.IsZero() {

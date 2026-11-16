@@ -138,7 +138,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	} else if tightened {
 		logger.Warn("database file was readable by group or others; permissions restricted to the owner", "file", cfg.Database)
 	}
-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
+	st, err := openStore(ctx, cfg.Database, cfg)
 	if err != nil {
 		m.migrationRan("failed")
 		return err
@@ -156,16 +156,16 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		m.migrationRan("applied")
 		logger.Info("migrations applied", "from", state.Applied, "to", state.Known)
 	}
-	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
-		return err
-	}
 	svc, err := newService(st, cfg)
 	if err != nil {
 		return err
 	}
+	if err := svc.CheckStorage(ctx); err != nil {
+		return err
+	}
 	svc.SetObserver(m)
 
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "startup-verify", "")
+	checks, err := verifyAllNetworks(ctx, svc, "startup-verify", "")
 	if err != nil {
 		return fmt.Errorf("startup ledger verification: %w", err)
 	}
@@ -447,7 +447,7 @@ func (j *jobRunner) purge(ctx context.Context) error {
 }
 
 func (j *jobRunner) verify(ctx context.Context) error {
-	checks, err := verifyNetworks(ctx, j.svc, j.st.DB(), "job-verify", "", true)
+	checks, err := verifyNetworks(ctx, j.svc, "job-verify", "", true)
 	if err != nil {
 		return err
 	}
