@@ -37,15 +37,8 @@ linters:
             - "**/internal/api/**"
             - "**/internal/web/**"
             - "!$test"
-            # Documented exceptions, value types only: these files name store.Challenge,
-            # store.DisputeResponse, store.ReReview*, store.Notification and store.Report,
-            # which the service returns as-is. They read and write nothing. Remove each line
-            # once those types move to internal/domain.
-            - "!**/internal/api/h_closure.go"
-            - "!**/internal/api/h_dispute_review.go"
-            - "!**/internal/api/h_notify.go"
-            - "!**/internal/api/h_reports.go"
-            - "!**/internal/web/h_dispute_review.go"
+            # No exceptions: records the service returns as stored are named through the
+            # aliases in internal/service/records.go.
           deny:
             - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: adapters call internal/service only (ARC-002)}
             - {pkg: modernc.org/sqlite, desc: adapters call internal/service only (ARC-002)}
@@ -58,7 +51,6 @@ linters:
             - "!$test"
             - "!**/cmd/circula/schema.go"   # storage boundary: open and wire the store, schema inspection, raw handle for snapshots
             - "!**/cmd/circula/serve.go"    # composition root: store, audit sink and job runner wiring
-            - "!**/cmd/circula/snapshot.go" # backup tooling; its store.ListNetworks call is to move to service.OperatorNetworks
           deny:
             - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: "operator tooling goes through internal/service or the helpers in cmd/circula/schema.go (ARC-002)"}
             - {pkg: modernc.org/sqlite, desc: "operator tooling goes through internal/service or the helpers in cmd/circula/schema.go (ARC-002)"}

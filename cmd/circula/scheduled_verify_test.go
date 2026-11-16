@@ -31,7 +31,7 @@ func TestScheduledVerifyRecordsWithoutFlooding(t *testing.T) {
 	runs0 := count(`SELECT COUNT(*) FROM consistency_runs`)
 	ev0 := count(`SELECT COUNT(*) FROM audit_events WHERE action = 'ledger.verified'`)
 	for i := 0; i < 4; i++ {
-		if _, err := verifyNetworks(ctx, svc, st.DB(), "job-verify", "", true); err != nil {
+		if _, err := verifyNetworks(ctx, svc, "job-verify", "", true); err != nil {
 			t.Fatal(err)
 		}
 	}

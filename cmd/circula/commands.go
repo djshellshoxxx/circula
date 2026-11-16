@@ -123,7 +123,7 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		return exitFailure
 	}
 	fmt.Fprintf(stdout, "migrated to v%d\n", binarySchemaVersion())
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "migrate-verify", "")
+	checks, err := verifyAllNetworks(ctx, svc, "migrate-verify", "")
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: verify after migration: %v\n", err)
 		return exitFailure
@@ -485,7 +485,7 @@ func cmdVerifyLedger(ctx context.Context, args []string, stdout, stderr io.Write
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "cli-verify", network)
+	checks, err := verifyAllNetworks(ctx, svc, "cli-verify", network)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: verify-ledger: %v\n", err)
 		return exitFailure

@@ -20,7 +20,6 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // manifestFormat is the version of the backup manifest layout.
@@ -105,15 +104,15 @@ type networkCheck struct {
 // verifyAllNetworks runs the ledger verification for every network (or only
 // the network whose id or slug equals filter, when filter is not empty) as the
 // system actor. It returns an error only when the check could not run.
-func verifyAllNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string) ([]networkCheck, error) {
-	return verifyNetworks(ctx, svc, db, requestID, filter, false)
+func verifyAllNetworks(ctx context.Context, svc *service.Service, requestID, filter string) ([]networkCheck, error) {
+	return verifyNetworks(ctx, svc, requestID, filter, false)
 }
 
 // verifyNetworks is verifyAllNetworks that can also record each run in
 // consistency_runs (scheduled job, ARC-015); the audit event is written only
 // on failure or a state change.
-func verifyNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string, record bool) ([]networkCheck, error) {
-	nets, err := store.ListNetworks(ctx, db, filter)
+func verifyNetworks(ctx context.Context, svc *service.Service, requestID, filter string, record bool) ([]networkCheck, error) {
+	nets, err := svc.OperatorNetworks(ctx, domain.SystemActor(requestID), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +154,7 @@ type ledgerFunc func(ctx context.Context, path string) (LedgerSummary, error)
 // closes it. Verification records its run in the file, so callers pass a copy
 // whenever the file itself must stay unchanged.
 func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
-	st, err := store.OpenWith(ctx, path, storeOptions(cfg))
+	st, err := openStore(ctx, path, cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +163,7 @@ func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkC
 	if err != nil {
 		return nil, err
 	}
-	return verifyAllNetworks(ctx, svc, st.DB(), "backup-verify", "")
+	return verifyAllNetworks(ctx, svc, "backup-verify", "")
 }
 
 // verifyFile is verifyFileChecks reduced to a summary.
@@ -228,7 +227,7 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 		rm = secureRemoveDB // plaintext copies are overwritten, not just unlinked
 	}
 	removeDBFiles(partial)
-	if err := store.VacuumInto(ctx, db, partial); err != nil {
+	if err := vacuumInto(ctx, db, partial); err != nil {
 		removeDBFiles(partial)
 		return nil, fmt.Errorf("online snapshot: %w", err)
 	}
@@ -320,12 +319,6 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 		return nil, fmt.Errorf("backup %s written but manifest failed: %w", dest, err)
 	}
 	return m, nil
-}
-
-// integrityCheck runs PRAGMA integrity_check on a file and returns "ok" or the
-// first reported problem.
-func integrityCheck(ctx context.Context, path string) (string, error) {
-	return store.IntegrityCheck(ctx, path)
 }
 
 // removeDBFiles deletes a database file and its WAL side files, ignoring

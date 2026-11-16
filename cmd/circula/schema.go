@@ -11,10 +11,9 @@ import (
 
 // This file is the storage boundary of the command (CMD-03, ARC-002). All
 // SQLite-specific inspection lives in internal/store; these are the names the
-// commands use. Besides serve.go (composition root) and snapshot.go (backup
-// tooling), it is the only file here allowed to import internal/store
-// (depguard rule "cmd" in .golangci.yml). Everything else the commands read or
-// change goes through internal/service.
+// commands use. Besides serve.go (composition root), it is the only file here
+// allowed to import internal/store (depguard rule "cmd" in .golangci.yml).
+// Everything else the commands read or change goes through internal/service.
 
 // schemaState describes the on-disk schema relative to this binary.
 type schemaState = store.SchemaState
@@ -79,4 +78,16 @@ func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Ser
 		return nil, nil, err
 	}
 	return st, svc, nil
+}
+
+// vacuumInto writes a consistent online snapshot of db to dest (which must
+// not exist) without holding the write lock.
+func vacuumInto(ctx context.Context, db *sql.DB, dest string) error {
+	return store.VacuumInto(ctx, db, dest)
+}
+
+// integrityCheck runs PRAGMA integrity_check on a file and returns "ok" or the
+// first reported problem.
+func integrityCheck(ctx context.Context, path string) (string, error) {
+	return store.IntegrityCheck(ctx, path)
 }
