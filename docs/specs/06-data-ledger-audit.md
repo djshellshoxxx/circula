@@ -7,7 +7,7 @@ Open questions: see section 11.
 
 Ledger rules (LED-1..LED-7) are defined once in [00-conventions.md](00-conventions.md) section 4. This document states the data-level requirements that enforce them and does not restate them as separate rules.
 
-Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RESUME-2026-10-24.md). DAT-049 through DAT-051 below are target requirements, not claims of implementation.
+Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RESUME-2026-10-24.md). DAT-049 through DAT-051 below are target requirements, not claims of implementation. [Refreshed 2026-11-16: that sentence is stale for DAT-049 and DAT-051, which the table below marks built; DAT-033 and DAT-035 are also built. Matrix rows D1, L16, W6.]
 
 ---
 
@@ -19,59 +19,59 @@ Reconciliation provenance for 2026-10-24: see [RESUME-2026-10-24.md](../audit/RE
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
-Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 had no timestamp-based service/API implementation at that snapshot; it was added on 2026-10-28 (see the DAT-050 row).
+Summary for the historical implementation snapshot: built 38, not built 3, required unimplemented corrections 2 (DAT-049, DAT-051), partial 7; DAT-050 had no timestamp-based service/API implementation at that snapshot; it was added on 2026-10-28 (see the DAT-050 row). [Refreshed 2026-11-16: the counts in this paragraph are the 2026-10-24 snapshot and are not recounted. Row-level status is current in the table.]
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| DAT-001 | P0 | built | Identifiers are UUIDv7 text |
-| DAT-002 | P0 | built | IDs from injected generator |
-| DAT-003 | P0 | built | IDs carry no personal data |
-| DAT-004 | P1 | built | Invitation and session tokens random and stored hashed |
+| DAT-001 | P0 | built | Identifiers are UUIDv7 text; Source: `internal/service/service.go:uuidV7.New`; dedicated production UUID format/version assertion is not cited. No execution result is implied |
+| DAT-002 | P0 | built | IDs from injected generator; Source: `internal/domain/types.go:IDGen`, `internal/service/service.go:Service.id`; a dedicated generator-substitution assertion is not cited. No execution result is implied |
+| DAT-003 | P0 | built | IDs carry no personal data; Source: `internal/service/service.go:uuidV7.New`; generated IDs take no member/network input; privacy of identifiers still needs inspection. No execution result is implied |
+| DAT-004 | P1 | built | Invitation and session tokens random and stored hashed; Evidence: `TestLoginSessionLifecycle`, `TestInvitations` assert distinct session secrets and hashed session/invitation storage; internal/public identifier identity and token entropy remain source-inspection items. No execution result is implied |
 | DAT-005 | P0 | built | Composite foreign keys with network id |
 | DAT-006 | P0 | built | Entry references one transaction and one account in same network |
 | DAT-007 | P0 | built | Two entries, equal and opposite, for trade, adjustment, reversal |
 | DAT-008 | P0 | built | Integer amounts with CHECK constraints |
-| DAT-009 | P0 | built | Network sum checked by verify |
+| DAT-009 | P0 | built | Network sum checked by verify; Evidence: `TestRandomisedLedgerInvariants`, `TestVerifyDetectsBalanceCorruptionAndBalanceAt` (zero-sum checks and deliberate balance corruption). Citations are not execution results |
 | DAT-010 | P0 | built | Triggers block update and delete on append-only tables |
 | DAT-011 | P0 | built | Enforcement tested via raw SQL |
 | DAT-012 | P1 | partial | One reversal per original not enforced; cumulative cap instead (DEC-040) |
-| DAT-013 | P1 | built | Adjustment reason required; counter-account is system account |
+| DAT-013 | P1 | built | Adjustment reason required; counter-account is system account; Evidence: `TestAdjustments` (nonempty reason, authorization and paired adjustment entries). Citations are not execution results |
 | DAT-014 | P0 | built | Posting writes status, entries, balances, audit in one transaction |
-| DAT-015 | P0 | built | Limit check under write gate before posting |
+| DAT-015 | P0 | built | Limit check under write gate before posting; Evidence: `TestParallelAcceptsNeverBreachCreditLimit`, `TestAcceptRechecksLimit` (concurrent acceptance and current-limit recheck). Citations are not execution results |
 | DAT-016 | P0 | built | ledger_seq per network; history ordered by it |
-| DAT-017 | P0 | built | Times stored as UTC milliseconds |
-| DAT-018 | P0 | built | Available computed from balance, limit and proposed reservations |
-| DAT-019 | P0 | built | Cache changed only in posting |
-| DAT-020 | P0 | built | Verify checks per-account, per-transaction and network sums |
+| DAT-017 | P0 | built | Times stored as UTC milliseconds; Source: `internal/service/service.go:Service.now`, `internal/store/sqlite.go:ms` and `fromMS`; UTC millisecond conversion is implemented but a dedicated storage precision assertion is not cited. No execution result is implied |
+| DAT-018 | P0 | built | Available computed from balance, limit and proposed reservations; Evidence: `TestAvailableCreditTable`, `TestReservationAndRelease` (available-credit formula and reservation lifecycle). Citations are not execution results |
+| DAT-019 | P0 | built | Cache changed only in posting; Evidence: `TestAcceptFaultInjectionLeavesNoTrace`, `TestReversalAndAdjustmentFaultInjectionLeavesNoTrace` (atomic cached balance rollback for posting failures; exclusive write ownership also needs static inspection). Citations are not execution results |
+| DAT-020 | P0 | built | Verify checks per-account, per-transaction and network sums; Evidence: `TestVerifyDetectsBalanceCorruptionAndBalanceAt`, `TestVerifyDetectsTamperedEntry` (cache mismatch and tampered ledger detection). Citations are not execution results |
 | DAT-021 | P1 | built | Sequence-based BalanceAt sums entries up to a sequence (service only); this is not a timestamp cutoff |
 | DAT-022 | P0 | built | Reversal is new transaction; original unchanged |
-| DAT-023 | P1 | built | Adjustment against system account with audit |
+| DAT-023 | P1 | built | Adjustment against system account with audit; Evidence: `TestAdjustments`, `TestAuditFailureRollsBackStateChange` (paired adjustment postings and atomic audit failure). Citations are not execution results |
 | DAT-024 | P1 | partial | Override path is time-limited audited limit change; no general admin override flag |
-| DAT-025 | P0 | built | Idempotency record written in same unit |
-| DAT-026 | P0 | built | Record key over network, person, operation and key |
+| DAT-025 | P0 | built | Idempotency record written in same unit; Evidence: `TestAcceptFaultInjectionLeavesNoTrace`, `TestIdempotentRetryReturnsOriginal` (posting failure rollback and exactly-once replay). Citations are not execution results |
+| DAT-026 | P0 | built | Record key over network, person, operation and key; Evidence: `TestIdempotencyKeyRequiredAndScoped`, `TestIdempotentConcurrentPropose` (actor scope and concurrent duplicate proposal). Citations are not execution results |
 | DAT-027 | P0 | built | Fingerprint of request; reuse refused |
 | DAT-028 | P1 | built | Records expire after TTL (7 days) |
-| DAT-029 | P0 | built | Audit in same unit as change |
+| DAT-029 | P0 | built | Audit in same unit as change; Evidence: `TestAppendOnlyThroughRawAccess`, `TestAuditFailureRollsBackStateChange` (append-only SQL triggers and atomic mutation/audit rollback). Citations are not execution results |
 | DAT-030 | P1 | built | Per-network hash chain with head; unkeyed (DEC-044) |
 | DAT-031 | P0 | built | Audit excludes secrets and tokens |
 | DAT-032 | P1 | partial | Audit export scope exists; format identical to ledger export not checked |
 | DAT-033 | P0 | built | Member own-audit view in API (`GET /api/v1/audit-events`) and web (`my_audit.html`). Re-checked 2026-11-12 |
 | DAT-034 | P0 | built | Admin audit read is itself audited |
-| DAT-035 | P0 | built | Reviewer scope served by the same API route and web view (`h_audit_scoped.go`). Re-checked 2026-11-12 |
-| DAT-036 | P0 | built | No operator read path to audit |
+| DAT-035 | P0 | built | Reviewer scope served by the same API route and web view (`h_audit_scoped.go`). Re-checked 2026-11-12; Evidence: `TestAuditVisibilityForMembers` (reviewer dispute-only audit visibility). Citations are not execution results |
+| DAT-036 | P0 | built | No operator read path to audit; Evidence: `TestBreakGlassAuditRows`, `TestBreakGlassGrantAdminExpires` (audited temporary grants and expiry; absence of any alternate operator read path still needs inspection). Citations are not execution results |
 | DAT-037 | P0 | built | CSV and JSON export with manifest and SHA-256 |
-| DAT-038 | P0 | built | Ledger export includes transactions, status, accounts, entries, audit |
-| DAT-039 | P0 | built | Export manifest states ledger_seq of one snapshot |
+| DAT-038 | P0 | built | Ledger export includes transactions, status, accounts, entries, audit; Evidence: `TestLedgerExportCSV`, `TestFullExportJSON` (required exported tables and machine-readable data). Citations are not execution results |
+| DAT-039 | P0 | built | Export manifest states ledger_seq of one snapshot; Evidence: `TestExportDuringConcurrentPostingsReconciles` (fixed-snapshot reconstruction while concurrent postings commit). Citations are not execution results |
 | DAT-040 | P0 | built | Manifest checksums; `circula verify-export <zip|dir>` re-hashes and counts rows |
 | DAT-041 | P1 | built | Versioned schema docs/api/export-schema.md and reference reader scripts/read-export.py |
 | DAT-042 | P0 | built | Forward-only embedded migrations with recorded version |
-| DAT-043 | P0 | built | Pre-migration backup before migration on non-empty database |
-| DAT-044 | P0 | built | Post-migration verification gates serving |
-| DAT-045 | P1 | partial | Expand-then-contract is a practice; not enforced by tests |
+| DAT-043 | P0 | built | Pre-migration backup before migration on non-empty database; Evidence: `TestPreMigrationSafeguardVerifiesBackup`, `TestPreMigrationSafeguardRefusesCorruptDatabase` (verified pre-migration backup and corrupt-database refusal). Citations are not execution results |
+| DAT-044 | P0 | built | Post-migration verification gates serving; Evidence: `TestUpgradeFromMigration0001`, `TestQA026UpgradeWithFailedMigrationAndRollback` (upgrade verification and failed migration rollback). Citations are not execution results |
+| DAT-045 | P1 | built | TestMigrationsExpandThenContract fails on DROP or RENAME unless the migration is a listed contract step |
 | DAT-046 | P0 | built | Migrations do not change ledger rows (0002 backfills audit heads only) |
-| DAT-047 | P0 | built | Golden v1 fixture, 10,000 transactions across 60 members, migrated to the current schema with the check passing (`internal/store/golden_migration_test.go`); no released schema exists yet, so v1 stands in. Re-checked 2026-11-12 |
+| DAT-047 | P0 | built | Golden v1 fixture, 10,000 transactions across 60 members, migrated to the current schema with the check passing (`internal/store/golden_migration_test.go`); no released schema exists yet, so v1 stands in. Re-checked 2026-11-12. Confirmed 2026-11-16 (matrix D1: golden v1 to v16 with 10,000 transactions) |
 | DAT-048 | P1 | not built | Migration duration not recorded |
-| DAT-049 | P0 | built | Scale stored atomically at creation and locked (`TestNetworkCreationStoresScaleAtomically`, `TestDecimalsLockedWhateverIsStored`, `TestDecimalsLockUnderConcurrentWrites`); legacy scale changes reported, not rewritten (`decimals_legacy_test.go`). Re-checked 2026-11-12 |
+| DAT-049 | P0 | built | Scale stored atomically at creation and locked (`TestNetworkCreationStoresScaleAtomically`, `TestDecimalsLockedWhateverIsStored`, `TestDecimalsLockUnderConcurrentWrites`); legacy scale changes reported, not rewritten (`internal/service/decimals_legacy_test.go`). Re-checked 2026-11-12. Confirmed 2026-11-16 |
 | DAT-050 | P1 | built (2026-10-28, unreviewed) | `entries.posted_at <= as_of` sum and high-water `ledger_seq` in one view transaction (`SumEntriesAsOf`, `Service.HistoricalBalance`); tests in `internal/service/histbal_test.go` |
 | DAT-051 | P0 | built | `transactions.dispute_deadline_at` and `dispute_policy_version` set at completion; migration 0016 backfills from the version with the highest number among those with `effective_at <= completed_at`, else aborts (`dispute_deadline_backfill_needs_owner_mapping`) (2026-11-11) |
 

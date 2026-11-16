@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Dual control for administrator adjustments (SEC-011, DEC-013). A request
@@ -92,7 +92,15 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 			return err
 		}
 		proposer, err := tx.GetMember(netID, pa.Proposer)
-		if err != nil || proposer.Status != domain.MemberActive || !proposer.HasRole(domain.RoleAdmin) {
+		if err != nil {
+			return err
+		}
+		// Resolve the proposer's temporary authority in this same write unit,
+		// just as openPending resolves the approving administrator's authority.
+		if err := s.applyBreakGlassRoles(tx, proposer); err != nil {
+			return err
+		}
+		if proposer.Status != domain.MemberActive || !proposer.HasRole(domain.RoleAdmin) {
 			return domain.InvalidState("the administrator who requested this adjustment is no longer an active administrator")
 		}
 		dir := AdjustDirection(pa.Direction)
@@ -100,7 +108,10 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 		if err != nil {
 			return err
 		}
-		t, err := s.postAdjustment(tx, p.net, target, pa.Amount, dir, pa.Reason, p.memberID(), p.actor.RequestID)
+		if err := validateAdjustmentRelation(tx, netID, target.ID, pa.RelatedTxID); err != nil {
+			return err
+		}
+		t, err := s.postAdjustment(tx, p.net, target, pa.Amount, dir, pa.Reason, p.memberID(), p.actor.RequestID, pa.RelatedTxID)
 		if err != nil {
 			return err
 		}
@@ -114,13 +125,13 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 		if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActAdjustmentApproved,
 			TargetType: "pending_adjustment", TargetID: pa.ID, Reason: pa.Reason, Subjects: []string{pa.Target},
 			Before: map[string]any{"status": "pending"},
-			After:  map[string]any{"status": "approved", "proposer": pa.Proposer, "approver": p.memberID(), "transaction": t.ID}}); err != nil {
+			After:  map[string]any{"status": "approved", "proposer": pa.Proposer, "approver": p.memberID(), "transaction": t.ID, "related_transaction_id": pa.RelatedTxID}}); err != nil {
 			return err
 		}
 		if err := s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActAdjustment, TargetType: "transaction",
 			TargetID: t.ID, Reason: pa.Reason, Subjects: []string{pa.Target},
 			After: map[string]any{"member": pa.Target, "direction": pa.Direction, "amount": pa.Amount, "status": "completed",
-				"request": pa.ID, "proposer": pa.Proposer, "approver": p.memberID()}}); err != nil {
+				"request": pa.ID, "proposer": pa.Proposer, "approver": p.memberID(), "related_transaction_id": pa.RelatedTxID}}); err != nil {
 			return err
 		}
 		out = t
@@ -231,6 +242,9 @@ func (s *Service) ListPendingAdjustments(ctx context.Context, actor domain.Actor
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListPendingAdjustments(netID, statuses, pg.AfterID, pg.Limit)
 		return err
 	})
@@ -281,21 +295,22 @@ func (s *Service) DecidableAdjustments(ctx context.Context, actor domain.Actor, 
 
 // ExpirePendingAdjustments closes open requests past their expiry, with an
 // audit event each and no posting (SEC-011). System actors only. Idempotent.
-// Returns the number closed in this run (at most limit, default 100).
+// Frozen networks are excluded before selecting the batch. Returns the number
+// closed in this run (at most limit; limits outside 1..500 use the default 100).
 func (s *Service) ExpirePendingAdjustments(ctx context.Context, actor domain.Actor, limit int) (int, error) {
 	if !actor.System {
 		return 0, domain.Forbidden("system actor required")
 	}
-	if limit <= 0 {
-		limit = 100
-	}
 	n := 0
 	err := s.update(ctx, func(tx store.Tx) error {
-		rows, err := tx.ListExpiredPendingAdjustments(s.now(), limit)
+		rows, err := tx.ListExpiredPendingAdjustments(s.now(), limit, s.FrozenNetworks())
 		if err != nil {
 			return err
 		}
 		for _, pa := range rows {
+			if s.IsFrozen(pa.NetworkID) {
+				continue // also respect freezes added since selecting the batch
+			}
 			if err := s.expirePending(tx, pa, actor.RequestID); err != nil {
 				return err
 			}
@@ -321,6 +336,9 @@ func (s *Service) openPending(tx store.Tx, actor domain.Actor, netID, id string)
 	}
 	if p.member == nil { // system actors cannot decide
 		return nil, nil, domain.Forbidden("a member administrator is required")
+	}
+	if !domain.ValidRecordID(id) {
+		return nil, nil, domain.NotFound("adjustment request")
 	}
 	pa, err := tx.GetPendingAdjustment(netID, id)
 	if err != nil {

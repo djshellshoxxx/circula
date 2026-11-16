@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // envPrefix is prepended to every upper-cased setting key to form its
@@ -56,6 +56,9 @@ var settingDefs = []settingDef{
 	{key: "session-max-admin", help: "absolute session lifetime for administrators (SEC-003); default: session-max; not longer than it (DEC-005 recommends 12h, not applied)"},
 	{key: "session-idle-reviewer", help: "idle session timeout for a person who is a dispute reviewer in any network (SEC-003); default: session-idle; not longer than it (DEC-005 recommends 1h, not applied)"},
 	{key: "session-max-reviewer", help: "absolute session lifetime for dispute reviewers (SEC-003); default: session-max; not longer than it (DEC-005 recommends 12h, not applied)"},
+	{key: "auth-throttle-attempts", def: strconv.Itoa(service.DefaultAuthThrottleAttempts), help: "database authentication attempt budget per login/address or sensitive account operation; 4 to 5 (SEC-006)"},
+	{key: "auth-throttle-global-attempts", def: strconv.Itoa(service.DefaultAuthThrottleGlobalAttempts), help: "database login/recovery attempt budget across client addresses; auth-throttle-attempts to 100 (SEC-006)"},
+	{key: "auth-throttle-lock", def: "15m", help: "database authentication lock duration; whole seconds from 15m to 24h; cannot disable throttling (SEC-006)"},
 	{key: "rate-signin-address", def: "20/1m", help: "web: failed sign-in, recovery and second-factor attempts per client address, as count/window (SEC-006)"},
 	{key: "rate-signin-account", def: "5/1m", help: "web: failed sign-ins and recoveries per client address and login, as count/window (SEC-006)"},
 	{key: "rate-password-check", def: "5/10m", help: "web: wrong current passwords and second-factor codes entered by a signed-in person (password change, recovery codes, two-step settings), as count/window (SEC-006)"},
@@ -87,6 +90,7 @@ var settingDefs = []settingDef{
 	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
 	{key: "backup-require-encryption", def: "auto", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019); auto (default) means true whenever a backup-encryption-key is set (SA2-11), false/true force it"},
 	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
+	{key: "export-spool-dir", help: "directory API export archives are written to and kept in until they expire, at most 64 MiB in all (FR-095, BR-06); must be writable or serve refuses to start (default: <state-dir>/export-spool)"},
 	{key: "audit-anchor-key-file", help: "file holding the key that HMACs audit anchors (RB-010); keep a copy off the database host; or env " + envPrefix + "AUDIT_ANCHOR_KEY"},
 	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
 	{key: "tls-cert-file", help: "PEM certificate chain: serve HTTPS directly (RB-013); requires tls-key-file; reloaded on SIGHUP"},
@@ -129,7 +133,7 @@ type Config struct {
 	RequireMFAAdmins    bool
 	MaxBodyBytes        int64
 	RequestTimeout      time.Duration
-	Synchronous         string // store.SyncNormal or store.SyncFull
+	Synchronous         string // syncNormal or syncFull
 	LogLevel            slog.Level
 	LogFormat           string
 	CookieSecure        bool
@@ -153,10 +157,15 @@ type Config struct {
 	backupRequireAuto       bool // backup-require-encryption=auto: follows the presence of the key
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
+	// ExportSpoolDir holds API export archives until they expire (BR-06).
+	ExportSpoolDir string
 	// Role-specific session lifetimes (SEC-003); equal to SessionIdle /
 	// SessionMax unless set shorter.
 	SessionIdleAdmin, SessionMaxAdmin       time.Duration
 	SessionIdleReviewer, SessionMaxReviewer time.Duration
+	// Persistent authentication throttles (SEC-006 / OPS-008).
+	AuthThrottleAttempts, AuthThrottleGlobalAttempts int
+	AuthThrottleLock                                 time.Duration
 	// Rate limits (SEC-006). NetworkJoinLimit.N == 0 means off.
 	RateSigninAddress, RateSigninAccount, RatePasswordCheck rateSpec
 	RateRegister, RateSetup, RateJoin                       rateSpec
@@ -384,6 +393,15 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.SessionMaxAdmin = roleLife("session-max-admin", "session-max", cfg.SessionMax)
 	cfg.SessionIdleReviewer = roleLife("session-idle-reviewer", "session-idle", cfg.SessionIdle)
 	cfg.SessionMaxReviewer = roleLife("session-max-reviewer", "session-max", cfg.SessionMax)
+	cfg.AuthThrottleAttempts = parseInt(get("auth-throttle-attempts"), "auth-throttle-attempts", fail,
+		service.MinAuthThrottleAttempts, service.DefaultAuthThrottleAttempts)
+	cfg.AuthThrottleGlobalAttempts = parseInt(get("auth-throttle-global-attempts"), "auth-throttle-global-attempts", fail,
+		cfg.AuthThrottleAttempts, service.DefaultAuthThrottleGlobalAttempts)
+	cfg.AuthThrottleLock = parseDuration(get("auth-throttle-lock"), "auth-throttle-lock", fail,
+		service.DefaultAuthThrottleLock, service.MaxAuthThrottleLock)
+	if cfg.AuthThrottleLock%time.Second != 0 {
+		fail("auth-throttle-lock", "must be a whole number of seconds")
+	}
 	cfg.RateSigninAddress = parseRate(get("rate-signin-address"), "rate-signin-address", fail, false)
 	cfg.RateSigninAccount = parseRate(get("rate-signin-account"), "rate-signin-account", fail, false)
 	cfg.RatePasswordCheck = parseRate(get("rate-password-check"), "rate-password-check", fail, false)
@@ -406,9 +424,9 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.RequestTimeout = parseDuration(get("request-timeout"), "request-timeout", fail, time.Second, 10*time.Minute)
 	switch strings.ToLower(get("db-synchronous")) {
 	case "normal":
-		cfg.Synchronous = store.SyncNormal
+		cfg.Synchronous = syncNormal
 	case "full":
-		cfg.Synchronous = store.SyncFull
+		cfg.Synchronous = syncFull
 	default:
 		fail("db-synchronous", "must be normal or full")
 	}
@@ -482,6 +500,11 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		cfg.StateDir = filepath.Clean(raw.value)
 	} else if cfg.Database != "" {
 		cfg.StateDir = filepath.Dir(cfg.Database)
+	}
+	if raw, ok := vals["export-spool-dir"]; ok && raw.value != "" {
+		cfg.ExportSpoolDir = filepath.Clean(raw.value)
+	} else if cfg.StateDir != "" {
+		cfg.ExportSpoolDir = filepath.Join(cfg.StateDir, "export-spool")
 	}
 
 	if len(errs) > 0 {

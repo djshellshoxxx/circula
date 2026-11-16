@@ -31,6 +31,9 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `session-max-admin` | `CIRCULA_SESSION_MAX_ADMIN` | value of `session-max` | no | Absolute session lifetime for administrators. Not longer than `session-max`. |
 | `session-idle-reviewer` | `CIRCULA_SESSION_IDLE_REVIEWER` | value of `session-idle` | no | Idle timeout for a person who holds the dispute reviewer role in any network. Not longer than `session-idle`. |
 | `session-max-reviewer` | `CIRCULA_SESSION_MAX_REVIEWER` | value of `session-max` | no | Absolute session lifetime for dispute reviewers. Not longer than `session-max`. |
+| `auth-throttle-attempts` | `CIRCULA_AUTH_THROTTLE_ATTEMPTS` | `5` | no | Persistent per-login/address and sensitive-account attempt budget; 4–5. Zero/off is refused. |
+| `auth-throttle-global-attempts` | `CIRCULA_AUTH_THROTTLE_GLOBAL_ATTEMPTS` | `100` | no | Persistent login/recovery budget across addresses, from `auth-throttle-attempts` through 100. |
+| `auth-throttle-lock` | `CIRCULA_AUTH_THROTTLE_LOCK` | `15m` | no | Persistent authentication lock duration, whole seconds from 15 minutes through 24 hours. |
 | `rate-signin-address` | `CIRCULA_RATE_SIGNIN_ADDRESS` | `20/1m` | no | Web: failed sign-ins, recovery attempts and second-factor attempts per client address, as `count/window`. See [Rate limits](#rate-limits-sec-006). |
 | `rate-signin-account` | `CIRCULA_RATE_SIGNIN_ACCOUNT` | `5/1m` | no | Web: failed sign-ins and recoveries per client address and login. |
 | `rate-password-check` | `CIRCULA_RATE_PASSWORD_CHECK` | `5/10m` | no | Web: wrong current passwords and second-factor codes entered by a signed-in person (password change, new recovery codes, two-step sign-in settings). |
@@ -68,6 +71,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `audit-anchor-with-backups` | `CIRCULA_AUDIT_ANCHOR_WITH_BACKUPS` | `true` | no | Write `<backup>.anchor.json` beside each scheduled backup. Removed together with the backup it belongs to. |
 | `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Append every audit event (chain metadata only) to this JSONL file after commit (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
+| `export-spool-dir` | `CIRCULA_EXPORT_SPOOL_DIR` | `<state-dir>/export-spool` | no | Where API export archives are written and kept until they expire. Created `0700` when missing; `serve` refuses to start if it cannot write there. See [Export spool](#export-spool-fr-095-br-06). |
 
 ## Secrets
 
@@ -159,8 +163,22 @@ The `rate-*` settings tune the web interface's in-memory, per-process limiters; 
 value allows `count` events per fixed `window` (whole seconds, `1s` to `744h`) per key; exceeding it answers `429` with
 `Retry-After`. The defaults are the limits the product always had. The bounds only reject values that cannot work (count
 1 to 1000000); they are not a security recommendation, and the specification has not set the SEC-006 bounds yet. These
-limits sit on top of the per-login throttle in the service (five failed sign-ins for one login lock it for 15 minutes,
-per client address and login-wide), which is not configurable and cannot be loosened by these settings.
+limits sit on top of the persistent service throttle configured by `auth-throttle-*`. The defaults remain five attempts
+per login/address and 100 across all addresses for a login, followed by a fixed 15-minute lock. Without a client
+address the local budget applies. Recovery has a separate counter family. Password checks for sensitive account
+operations and second-factor attempts use the local budget and configured lock; second-factor management retains
+its separate counter so a stolen session cannot repeatedly lock sign-in.
+
+`auth-throttle-attempts` accepts 4–5, `auth-throttle-global-attempts` accepts the local budget through 100, and
+`auth-throttle-lock` accepts whole seconds from 15 minutes through 24 hours. These conservative bounds permit only
+stricter guessing limits; they cannot turn throttling off. The lower count bound preserves at least two attempts
+when an expired lock restores half the allowance. Success clears the applicable counters; idle history decays
+after 24 hours. Settings apply at process start and do not erase stored counters or shorten an already stored lock.
+The CLI, environment and configuration-file sources use the same validation and normal precedence.
+
+For example, `{"auth-throttle-attempts":"4","auth-throttle-global-attempts":"20","auth-throttle-lock":"30m"}`
+uses four local attempts, twenty across addresses, and a 30-minute lock. These are identity-level controls;
+sign-in does not have a network context, so they do not implement a per-network login throttle.
 
 `network-join-limit` is an aggregate per network, counted in the database inside the joining transaction, so it holds
 across restarts and concurrent requests: once `count` memberships (join requests, open joins and invitation
@@ -219,6 +237,25 @@ the database without the writer lock, so they work beside `serve`. With `audit-a
 HMAC-SHA-256 and `verify` rejects an edited, unsigned or wrongly keyed file; the key should not live only on the database
 host. Scheduled backups write `<backup>.anchor.json` beside the backup unless `audit-anchor-with-backups=false`; copy those
 off-host with the backups. Limit: an anchor proves history up to its time. Events after the newest anchor are not covered.
+
+## Export spool (FR-095, BR-06)
+
+`POST /api/v1/exports` streams each archive into a private file (`0600`) in `export-spool-dir` and keeps it there for 24
+hours, until the person who made it or (for administrator scopes) any member of the network is erased, or until the
+process stops. On Linux and macOS the file is unlinked as soon as it is created, so it never shows in a directory
+listing and nothing is left behind after a crash; the disk space is still used while the export lives. On other
+platforms the files stay named `circula-export-*.zip` and `serve` deletes leftovers at start.
+
+Bounds, fixed in this build: at most 64 MiB of archives in total, stored and still being written together. Every chunk
+is reserved against that cap before it is written, so parallel exports stop with `503 unavailable` instead of filling
+the disk. At most 50 exports are held, 5 per person, and 4 run at once; running exports count as held. Plan for
+64 MiB of free space in this directory. A tmpfs mount works but its contents count against memory.
+
+The setting fails closed. `serve` creates the directory (`0700`) when it is missing, and refuses to start when the path
+is not a directory or a file cannot be created in it. If the directory becomes unusable while the service runs, each
+export answers `503 unavailable` and the log records `export spool directory unusable; export refused` with the path.
+Archives are never kept in memory instead. Put it on a local disk owned by the service account, and back it up never:
+it holds only short-lived copies of data that is in the database.
 
 ## Audit mirror (RB-012)
 

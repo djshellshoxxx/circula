@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 var disputeCategories = map[string]bool{"not_delivered": true, "quality": true, "wrong_amount": true, "unauthorised": true, "other": true}
@@ -100,14 +100,15 @@ func independent(tx store.Tx, netID string, t *domain.Transaction, memberID stri
 	if t.IsParty(memberID) || t.CreatedBy == memberID || t.AcceptedBy == memberID {
 		return conflict
 	}
-	revs, err := tx.ListTransactions(netID, store.TxFilter{OriginalTxID: t.ID, Limit: 500})
+	// Search the actor's participation before applying the limit. Inspecting
+	// only the newest page lets an older reversal author regain independence
+	// after sufficiently many later reversals (DOM-038 / SEC-010).
+	revs, err := tx.ListTransactions(netID, store.TxFilter{OriginalTxID: t.ID, CreatedBy: memberID, Limit: 1})
 	if err != nil {
 		return err
 	}
-	for _, r := range revs {
-		if r.CreatedBy == memberID {
-			return conflict
-		}
+	if len(revs) != 0 {
+		return conflict
 	}
 	return nil
 }
@@ -120,6 +121,9 @@ func (s *Service) decideSetup(tx store.Tx, actor domain.Actor, netID, disputeID 
 	}
 	if err := p.requireDecider(); err != nil {
 		return nil, nil, nil, err
+	}
+	if !domain.ValidRecordID(disputeID) {
+		return nil, nil, nil, domain.NotFound("dispute")
 	}
 	d, err := tx.GetDispute(netID, disputeID)
 	if err != nil {
@@ -184,6 +188,9 @@ func (s *Service) WithdrawDispute(ctx context.Context, actor domain.Actor, netID
 		}
 		if p.member == nil || (p.member.Status != domain.MemberActive && p.member.Status != domain.MemberSuspended) {
 			return domain.Forbidden("membership cannot perform this action")
+		}
+		if !domain.ValidRecordID(disputeID) {
+			return domain.NotFound("dispute")
 		}
 		d, err := tx.GetDispute(netID, disputeID)
 		if err != nil || d.OpenedBy != p.member.ID {

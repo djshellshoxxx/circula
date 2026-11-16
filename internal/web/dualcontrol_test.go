@@ -62,8 +62,10 @@ func TestDualControlWebFlow(t *testing.T) {
 	two := w.browser(t)
 	two.login("admin2@example.org")
 	l2 := two.get(b + "/admin/adjustments/pending")
-	two.mustContain(l2, "Approve and post", "Reject", "big correction", "25.00")
-	ok := two.post(b+"/admin/adjustments/"+pa.ID+"/approve", l2, nil)
+	two.mustContain(l2, "Review approval", "Reject", "big correction", "25.00")
+	review := two.post(b+"/admin/adjustments/"+pa.ID+"/approve", l2, nil)
+	two.mustContain(review, "Review adjustment approval", "Their balance after", "25.00")
+	ok := two.post(b+"/admin/adjustments/"+pa.ID+"/approve", review, confirmationValues(t, review, "confirm"))
 	two.mustContain(ok, "Adjustment request approved")
 	if bal, _ := w.env.Svc.GetBalance(w.env.Ctx, w.bob, w.net.ID); bal.Balance != 2500 {
 		t.Errorf("bob balance %d", bal.Balance)
@@ -133,5 +135,6 @@ func TestDualControlButtonsFollowA3_01(t *testing.T) {
 	if len(m) != 1 || m[0][1] != theirs {
 		t.Fatalf("founder offered %v, want only %s", m, theirs)
 	}
-	adm.mustContain(adm.post(b+"/admin/adjustments/"+theirs+"/approve", fl, nil), "Adjustment request approved")
+	review := adm.post(b+"/admin/adjustments/"+theirs+"/approve", fl, nil)
+	adm.mustContain(adm.post(b+"/admin/adjustments/"+theirs+"/approve", review, confirmationValues(t, review, "confirm")), "Adjustment request approved")
 }

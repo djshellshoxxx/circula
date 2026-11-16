@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,40 +14,11 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // operatorPasswordEnv carries the operator password for admin create-operator.
 // The password is never accepted as a command-line argument.
 const operatorPasswordEnv = envPrefix + "OPERATOR_PASSWORD"
-
-// openDatabase opens the configured database after checking that it exists
-// and has no pending migrations. Commands that must not migrate use it.
-func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Service, error) {
-	state, err := inspectSchema(ctx, cfg.Database)
-	if err != nil {
-		return nil, nil, err
-	}
-	if !state.Exists {
-		return nil, nil, fmt.Errorf("database %s does not exist", cfg.Database)
-	}
-	if err := state.CheckNotNewer(); err != nil {
-		return nil, nil, err
-	}
-	if state.Pending() > 0 {
-		return nil, nil, fmt.Errorf("database has %d pending migration(s); run `circula migrate` first", state.Pending())
-	}
-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
-	if err != nil {
-		return nil, nil, err
-	}
-	svc, err := newService(st, cfg)
-	if err != nil {
-		_ = st.Close()
-		return nil, nil, err
-	}
-	return st, svc, nil
-}
 
 // resolveFlags parses a command's flags with the shared settings and returns
 // the configuration. done reports that the caller must return code.
@@ -136,23 +106,23 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
 		return exitFailure
 	}
-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
+	st, err := openStore(ctx, cfg.Database, cfg)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: migrate failed (database left at its previous version): %v\n", err)
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
-		fmt.Fprintf(stderr, "circula: %v\n", err)
-		return exitFailure
-	}
-	fmt.Fprintf(stdout, "migrated to v%d\n", store.SchemaVersion())
 	svc, err := newService(st, cfg)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: %v\n", err)
 		return exitFailure
 	}
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "migrate-verify", "")
+	if err := svc.CheckStorage(ctx); err != nil {
+		fmt.Fprintf(stderr, "circula: %v\n", err)
+		return exitFailure
+	}
+	fmt.Fprintf(stdout, "migrated to v%d\n", binarySchemaVersion())
+	checks, err := verifyAllNetworks(ctx, svc, "migrate-verify", "")
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: verify after migration: %v\n", err)
 		return exitFailure
@@ -260,8 +230,8 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 			"or pass -allow-unsigned if you made and stored this file yourself (SA2-11)")
 		return exitFailure
 	}
-	if m.SchemaVersion > store.SchemaVersion() {
-		fmt.Fprintf(stderr, "circula: restore refused: backup schema v%d is newer than this binary (v%d)\n", m.SchemaVersion, store.SchemaVersion())
+	if m.SchemaVersion > binarySchemaVersion() {
+		fmt.Fprintf(stderr, "circula: restore refused: backup schema v%d is newer than this binary (v%d)\n", m.SchemaVersion, binarySchemaVersion())
 		return exitFailure
 	}
 
@@ -343,21 +313,44 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		return exitLedgerFailed
 	}
 
+	// A3-F09: older snapshots can contain credentials revoked after backup.
+	// Invalidate them on the staging copy, in one audited unit, before replacing
+	// the current database. Any failure leaves the current database untouched.
+	invalidated, err := invalidateRestoreCopy(ctx, partial, cfg)
+	if err != nil {
+		return fail("credential invalidation failed: %v", err)
+	}
+	checks, err = verifyCopy(ctx, partial, cfg)
+	if err != nil {
+		return fail("verification after credential invalidation failed: %v", err)
+	}
+	if !printChecks(stdout, checks) {
+		return fail("verification after credential invalidation failed")
+	}
+
 	// Swap with a way back (CMD-08): the current database is moved aside, not
 	// deleted, until the restored one has opened and passed its checks.
 	if err := swapDatabase(ctx, cfg.Database, partial, state.Exists, func(ctx context.Context) error {
-		st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
+		st, err := openStore(ctx, cfg.Database, cfg)
 		if err != nil {
 			return fmt.Errorf("opening the restored database: %w", err)
 		}
-		if err := store.CheckPragmas(ctx, st.DB()); err != nil {
+		svc, err := newService(st, cfg)
+		if err == nil {
+			err = svc.CheckStorage(ctx)
+		}
+		if err != nil {
 			_ = st.Close()
 			return fmt.Errorf("checking the restored database: %w", err)
 		}
 		return st.Close()
 	}); err != nil {
-		removeDBFiles(partial)
-		fmt.Fprintf(stderr, "circula: restore failed: %v; the previous database was put back\n", err)
+		// Incomplete rollback/cleanup retains the staged file as recovery evidence.
+		// A completed rollback removes its marker and permits ordinary cleanup.
+		if checkInterruptedRestore(ctx, cfg.Database) == nil {
+			removeDBFiles(partial)
+		}
+		fmt.Fprintf(stderr, "circula: restore failed: %v\n", err)
 		return exitFailure
 	}
 	restoredAt := time.Now().UTC().Truncate(time.Second)
@@ -365,6 +358,8 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		src, m.CreatedAt.Format(time.RFC3339), cfg.Database, restoredAt.Format(time.RFC3339))
 	fmt.Fprintf(stdout, "data written after %s may be missing and must be reconciled from other sources (OPS-020)\n",
 		m.CreatedAt.Format(time.RFC3339))
+	fmt.Fprintf(stdout, "restored credentials invalidated: sessions=%d api_tokens=%d mfa_challenges=%d break_glass_sessions=%d\n",
+		invalidated.Sessions, invalidated.Tokens, invalidated.MFAChallenges, invalidated.BreakGlassSessions)
 	if authenticated {
 		fmt.Fprintln(stdout, "backup signature: valid (backup-key)")
 	} else {
@@ -397,47 +392,6 @@ func checkEncryptionPolicy(src string, m *Manifest, cfg *Config) error {
 	return nil
 }
 
-// swapDatabase replaces the database at path with the verified file new. When
-// a database exists it is moved aside (with its WAL files) first; check runs
-// on the new database, and if the move, the rename or check fails the previous
-// database is put back unchanged. On success the old one is deleted.
-func swapDatabase(ctx context.Context, path, newFile string, hadDB bool, check func(context.Context) error) error {
-	aside := path + ".pre-restore-swap"
-	suffixes := []string{"", "-wal", "-shm"}
-	putBack := func() {
-		removeDBFiles(path)
-		_ = os.Remove(path + "-journal")
-		if hadDB {
-			for _, sfx := range suffixes {
-				_ = os.Rename(aside+sfx, path+sfx)
-			}
-		}
-	}
-	if hadDB {
-		removeDBFiles(aside)
-		for _, sfx := range suffixes {
-			if err := os.Rename(path+sfx, aside+sfx); err != nil && !errors.Is(err, fs.ErrNotExist) {
-				for _, back := range suffixes {
-					_ = os.Rename(aside+back, path+back)
-				}
-				return fmt.Errorf("moving the current database aside: %w", err)
-			}
-		}
-	}
-	if err := os.Rename(newFile, path); err != nil {
-		putBack()
-		return fmt.Errorf("replacing the database: %w", err)
-	}
-	if err := check(ctx); err != nil {
-		putBack()
-		return err
-	}
-	if hadDB {
-		removeDBFiles(aside)
-	}
-	return nil
-}
-
 // recordRestoreAudit writes a database.restored event into every network's
 // audit chain of the restored database (OPS-020). The restore already
 // succeeded, so callers treat a failure as a warning.
@@ -447,7 +401,7 @@ func recordRestoreAudit(ctx context.Context, cfg *Config, m *Manifest) error {
 		return err
 	}
 	defer func() { _ = st.Close() }()
-	nets, err := store.ListNetworks(ctx, st.DB(), "")
+	nets, err := svc.OperatorNetworks(ctx, domain.SystemActor("restore"), "")
 	if err != nil {
 		return err
 	}
@@ -510,7 +464,7 @@ func cmdVerifyLedger(ctx context.Context, args []string, stdout, stderr io.Write
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "cli-verify", network)
+	checks, err := verifyAllNetworks(ctx, svc, "cli-verify", network)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: verify-ledger: %v\n", err)
 		return exitFailure
@@ -560,7 +514,7 @@ func cmdAdmin(ctx context.Context, args []string, stdout, stderr io.Writer) int 
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	p, err := svc.RegisterPerson(ctx, service.RegisterInput{Login: login, Password: password, RevealDuplicate: true})
+	p, err := svc.RegisterPersonAsOperator(ctx, domain.SystemActor("cli-create-operator"), service.RegisterInput{Login: login, Password: password})
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: admin create-operator: %v\n", err)
 		return exitFailure

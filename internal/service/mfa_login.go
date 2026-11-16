@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // LoginResult is the outcome of LoginStep. Exactly one of Token and

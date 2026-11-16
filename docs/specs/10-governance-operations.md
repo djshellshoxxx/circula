@@ -35,14 +35,14 @@ Summary: built 11, not built 6, partial 10.
 | GOV-007 | P0 | built | Corrective actions are transactions; property tests |
 | GOV-008 | P0 | built | Invite, approval, open modes; audit per decision |
 | GOV-009 | P0 | built | Append-only terms versions; acceptance recorded at join and re-required before proposing or accepting a trade after an update; reading and leaving stay open |
-| GOV-010 | P0 | partial | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page points to the self-export on History, no export is offered in the flow |
+| GOV-010 | P0 | built | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page offers the CSV/JSON self-export before the leave form, also when blocked (test) |
 | GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
 | GOV-012 | P1 | built | Optional inactivity rule (policy inactivity_days): flags, notifies, lists for administrators; never removes |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
 | GOV-014 | P0 | built | Statement and decision with reasons; response deadline and 14-day decision target shown to parties; a missed deadline decides nothing and reviewers are reminded once |
 | GOV-015 | P0 | built | Reversal and adjustment are new transactions; originals unchanged |
 | GOV-016 | P0 | built | Challenges to removal, credit-limit and listing decisions (non-involved decider, reasons, audit, notice); dispute appeal is the one re-review with its own period; objections to policy changes not built |
-| GOV-017 | P1 | built | No dispute upload route |
+| GOV-017 | P1 | built | No dispute upload route; Inspection targets: `internal/api/routes.go`, `internal/web/routes.go` and dispute input types; absence of an upload capability is not established by a dedicated test. No execution result is implied |
 | GOV-018 | P0 | partial | Trades continue within limits; write-off by approved adjustment not built (SEC-011) |
 | GOV-019 | P0 | built | Limit reduction posts nothing; increases refused |
 | GOV-020 | P0 | built | Last-admin guard; a network with no active administrator is read-only (administrator required) and visible to members |

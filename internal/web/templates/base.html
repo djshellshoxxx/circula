@@ -31,7 +31,7 @@
 <main id="main" tabindex="-1">
   <h1 id="page-title">{{.Title}}</h1>
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
-  {{with .Notice}}<div class="notice" role="note"><strong>Notice:</strong> {{.}}</div>{{end}}
+  {{if .FrozenSince}}<div class="notice" role="note"><strong>Notice:</strong> This network is read-only while its ledger is being checked, since {{.FrozenSince}}. You can read balances and history; anything that would change them is refused until the check passes.</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>Notice:</strong> {{.}}</div>{{end}}{{end}}
   {{with .Warn}}<div class="notice" role="note"><strong>Credit limit notice:</strong> {{.}}</div>{{end}}
   {{if or .Errors .Summary}}
   <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">

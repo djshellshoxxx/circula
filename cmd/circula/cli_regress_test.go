@@ -233,6 +233,17 @@ func TestAdminCreateOperatorPaths(t *testing.T) {
 		!strings.Contains(out.String(), "created person") {
 		t.Fatalf("create from env: %d %s", code, errOut.String())
 	}
+	// A3-F23: provisioning must not impersonate the newly created person.
+	registrationDB, err := openRaw(db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var actorType, actorID, requestID string
+	err = registrationDB.QueryRow(`SELECT actor_type,actor_id,request_id FROM audit_events WHERE action='person.registered' AND target_id=(SELECT id FROM persons WHERE login='ops01')`).Scan(&actorType, &actorID, &requestID)
+	_ = registrationDB.Close()
+	if err != nil || actorType != "platform_operator" || actorID != "" || requestID != "cli-create-operator" {
+		t.Fatalf("operator creation audit = %q/%q/%q: %v", actorType, actorID, requestID, err)
+	}
 	errOut.Reset()
 	if code := run([]string{"admin", "create-operator", "-database", db, "-login", "ops01"}, &out, &errOut); code != exitFailure {
 		t.Errorf("duplicate login: %d %s", code, errOut.String())

@@ -25,6 +25,7 @@ type idemRec struct {
 	body   []byte
 	at     time.Time
 	person string // for dropping a person's records on erasure (A3-06)
+	net    string // responses can contain counterparties' personal data
 }
 
 type idemStore struct {
@@ -47,7 +48,7 @@ const (
 	idemMismatch
 )
 
-func (st *idemStore) begin(key, fp, person string, now time.Time) (idemState, *idemRec) {
+func (st *idemStore) begin(key, fp, person, net string, now time.Time) (idemState, *idemRec) {
 	st.mu.Lock()
 	defer st.mu.Unlock()
 	if rec, ok := st.m[key]; ok {
@@ -72,25 +73,30 @@ func (st *idemStore) begin(key, fp, person string, now time.Time) (idemState, *i
 			}
 		}
 	}
-	st.m[key] = &idemRec{fp: fp, at: now, person: person}
-	return idemNew, nil
+	rec := &idemRec{fp: fp, at: now, person: person, net: net}
+	st.m[key] = rec
+	return idemNew, rec
 }
 
-// dropPerson forgets every record of one person, in flight or done: cached
-// replays hold the bodies of their earlier responses (A3-06).
-func (st *idemStore) dropPerson(person string) {
+// dropErased forgets own records and every response in the affected network;
+// cached bodies can contain counterparties' personal data (A3-06).
+func (st *idemStore) dropErased(net, person string) {
 	st.mu.Lock()
 	defer st.mu.Unlock()
 	for k, r := range st.m {
-		if r.person == person {
+		if r.person == person || (net != "" && r.net == net) {
 			delete(st.m, k)
 		}
 	}
 }
 
-func (st *idemStore) finish(key string, status int, h http.Header, body []byte, keep bool) {
+func (st *idemStore) finish(key string, owner *idemRec, status int, h http.Header, body []byte, keep bool) {
 	st.mu.Lock()
 	defer st.mu.Unlock()
+	// A late request must not overwrite or delete a reused key after erasure or expiry.
+	if owner == nil || st.m[key] != owner {
+		return
+	}
 	if !keep {
 		delete(st.m, key)
 		return
@@ -160,13 +166,17 @@ func (s *server) runIdempotent(c *reqCtx, rt route) error {
 	fp := hex.EncodeToString(sum[:])
 	scoped := c.actor.PersonID + "\x00" + key
 	now := s.opt.Now()
-	switch state, rec := s.idem.begin(scoped, fp, c.actor.PersonID, now); state {
+	state, rec := s.idem.begin(scoped, fp, c.actor.PersonID, c.netID, now)
+	switch state {
 	case idemMismatch:
 		return &apiError{status: 422, code: "idempotency-key-reused", detail: "the key was used with a different request"}
 	case idemBusy:
 		return &apiError{status: 409, code: "idempotency-request-in-progress",
 			detail: "a request with this key is still being processed", retryAfter: "1"}
 	case idemReplay:
+		if err := s.authorizeReplay(c, rt, rec); err != nil {
+			return err
+		}
 		for _, h := range replayHeaders {
 			if v := rec.header.Get(h); v != "" {
 				c.w.Header().Set(h, v)
@@ -186,14 +196,14 @@ func (s *server) runIdempotent(c *reqCtx, rt route) error {
 		// until it expires: release the key so the client can retry (API-06).
 		if !finished {
 			c.w = rw.w
-			s.idem.finish(scoped, 0, nil, nil, false)
+			s.idem.finish(scoped, rec, 0, nil, nil, false)
 		}
 	}()
 	herr := rt.h(c)
 	finished = true
 	c.w = rw.w
 	if herr != nil {
-		s.idem.finish(scoped, 0, nil, nil, false)
+		s.idem.finish(scoped, rec, 0, nil, nil, false)
 		return herr
 	}
 	status := rw.status
@@ -207,7 +217,7 @@ func (s *server) runIdempotent(c *reqCtx, rt route) error {
 			hdr.Set(h, v)
 		}
 	}
-	s.idem.finish(scoped, status, hdr, append([]byte(nil), rw.buf.Bytes()...), keep)
+	s.idem.finish(scoped, rec, status, hdr, append([]byte(nil), rw.buf.Bytes()...), keep)
 	c.w.WriteHeader(status)
 	_, _ = c.w.Write(rw.buf.Bytes())
 	return nil

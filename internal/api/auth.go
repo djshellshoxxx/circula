@@ -25,7 +25,7 @@ func (s *server) authenticate(r *http.Request, c *reqCtx) error {
 		}
 		a, err := s.svc.AuthenticateToken(r.Context(), tok)
 		if err != nil {
-			return errUnauth
+			return authenticationError(err)
 		}
 		a.RequestID = c.rid
 		c.actor = a
@@ -34,11 +34,20 @@ func (s *server) authenticate(r *http.Request, c *reqCtx) error {
 	if tok := s.opt.Edge.SessionToken(r); tok != "" {
 		a, err := s.svc.Authenticate(r.Context(), tok)
 		if err != nil {
-			return errUnauth
+			return authenticationError(err)
 		}
 		a.RequestID = c.rid
 		c.actor, c.cookie, c.session = a, true, tok
 		return nil
+	}
+	return errUnauth
+}
+
+// A temporary store failure must not tell clients their credentials are
+// invalid. Preserve retryability while keeping credential failures opaque.
+func authenticationError(err error) error {
+	if ae, _ := fromErr(err); ae.status == http.StatusServiceUnavailable {
+		return ae
 	}
 	return errUnauth
 }

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // ResolveInput records a reviewer decision (FR-073).
@@ -50,6 +50,9 @@ func (s *Service) ResolveDispute(ctx context.Context, actor domain.Actor, netID 
 
 func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, error) {
 	netID := p.net.ID
+	if !domain.ValidRecordID(in.DisputeID) {
+		return "", domain.NotFound("dispute")
+	}
 	d, err := tx.GetDispute(netID, in.DisputeID)
 	if err != nil {
 		return "", domain.NotFound("dispute")
@@ -105,7 +108,7 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
 
 	cmd, action := domain.DCmdResolve, domain.ActDisputeResolved
 	if amount > 0 {
-		_, err := s.reverse(tx, p.net, t, amount, "dispute "+d.ID+": "+string(in.Outcome), p.member.ID, p.actor.RequestID)
+		_, err := s.reverseDispute(tx, p, t, amount, "dispute "+d.ID+": "+string(in.Outcome), d.ID, in.IdempotencyKey)
 		switch {
 		case blockedByLimit(err):
 			cmd, action = domain.DCmdBlock, domain.ActDisputeBlocked
@@ -185,7 +188,7 @@ func (s *Service) RetryDisputePosting(ctx context.Context, actor domain.Actor, n
 		if err != nil {
 			return err
 		}
-		if _, err := s.reverse(tx, p.net, t, d.ReversalAmount, "dispute "+d.ID+": "+string(d.Outcome), p.member.ID, p.actor.RequestID); err != nil {
+		if _, err := s.reverseDispute(tx, p, t, d.ReversalAmount, "dispute "+d.ID+": "+string(d.Outcome), d.ID, ""); err != nil {
 			return err
 		}
 		if t.Status == domain.TxDisputed {
@@ -249,6 +252,9 @@ func (s *Service) GetDispute(ctx context.Context, actor domain.Actor, netID, dis
 		if err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(disputeID) {
+			return domain.NotFound("dispute")
+		}
 		d, err := tx.GetDispute(netID, disputeID)
 		if err != nil {
 			return domain.NotFound("dispute")
@@ -280,6 +286,9 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 				return domain.ErrForbidden
 			}
 			f.PartyID = p.member.ID
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListDisputes(netID, f)
 		return err

@@ -102,6 +102,21 @@ test('axe: dispute decision review step and empty response error', async ({ as, 
   await expectNoAxeViolations(admin, 'dispute decision review step');
 });
 
+test('axe and keyboard: re-review decision preview and back', async ({ as, st }) => {
+  const { kbActivate } = require('../kbd');
+  const page = await as('carol');
+  await page.goto(st.disputeReReview);
+  await page.getByLabel('Outcome', { exact: true }).selectOption('upheld');
+  await page.getByLabel('Rationale', { exact: true }).fill('New evidence supports returning the credit.');
+  await kbActivate(page, /^Review re-review decision$/);
+  await expect(page.getByRole('heading', { name: 'Review the re-review decision' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Record re-review decision', exact: true })).toBeVisible();
+  await expectNoAxeViolations(page, 're-review decision review step');
+  await kbActivate(page, /^Go back and edit$/);
+  await expect(page.getByLabel('Rationale', { exact: true })).toHaveValue('New evidence supports returning the credit.');
+  await expect(page.locator('main')).toContainText('Re-review requested, waiting for a different reviewer.');
+});
+
 // Guard against a false green: the harness must report a violation when one exists.
 test('axe harness detects a deliberately broken page', async ({ page }) => {
   await page.goto('/login');
@@ -189,6 +204,7 @@ const STATE_CHECKS = {
   propose_review: ['a11y.spec.js', 'propose review step'],
   admin_reverse_review: ['a11y.spec.js', 'reverse review step'],
   dispute_decide_review: ['a11y.spec.js', 'dispute decision review step'],
+  dispute_rereview_confirm: ['a11y.spec.js', 're-review decision review step'],
   admin_check: ['a11y-governance.spec.js', 'consistency check result'],
   admin_adjust_review: ['a11y-governance.spec.js', 'adjustment review step'],
   pending: ['a11y-governance.spec.js', 'waiting for approval'],
@@ -202,6 +218,7 @@ const STATE_CHECKS = {
   admin_reset_done: ['security.spec.js', 'temporary password shown'],
   admin_break_glass: ['security.spec.js', 'operator access'],
   admin_adjust_pending: ['security.spec.js', 'pending adjustments (empty)'],
+  admin_adjust_approve: ['security.spec.js', 'review adjustment approval'],
   erase_confirm: ['security.spec.js', 'erase my data'],
 };
 

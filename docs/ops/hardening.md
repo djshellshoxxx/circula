@@ -82,9 +82,11 @@ image has no tool to run one; probe `/healthz` and `/readyz` from the orchestrat
 Inside a container `CIRCULA_LISTEN` is `0.0.0.0:8080`; publish the port to loopback or an internal network only, and
 keep `/metrics` unreachable from outside (see [monitoring.md](monitoring.md)).
 
-Status: `deploy/Dockerfile` and the commands above were **not built or run** in the authoring environment (no Docker
-daemon). The binary they package is built and smoke-tested by `scripts/smoke-deploy.sh`. Before release, pin both base
-images by digest (see the comment in the Dockerfile) and run `docker run` as above once.
+Status: the image was built and run once on 2026-11-12 through `deploy/compose.yaml`, with a build deviation for the
+sandbox TLS proxy; the unmodified `deploy/Dockerfile` invocation was not run. See
+[container-verification-2026-11-12.md](container-verification-2026-11-12.md). The binary the image packages is built and
+smoke-tested by `scripts/smoke-deploy.sh`. Before release, pin both base images by digest (see the comment in the
+Dockerfile) and run `docker run` as above once.
 
 ## Reproducible builds
 

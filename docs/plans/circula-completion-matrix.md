@@ -1,9 +1,11 @@
 # Circula completion matrix (beta)
 
-Date: 2026-11-11. Branch `claude/circula-beta-completion-1npjw6`. Every state below rests on the source, the tests
-and the runs listed, not on the status columns in `docs/specs/`. Several of those columns are stale: FR-002 (setup
-secret), DAT-047 (the 10,000-transaction migration fixture exists), DAT-049 (the scale is locked at creation) and
-DAT-033/DAT-035/FR-082 (member and reviewer audit views) are built. They were marked partial or not built.
+Updated 2026-11-16 on `codex/circula-core-completion-20261116`. This beta feature matrix is
+an engineering inventory, not completion of every requirement in the larger specification.
+Current changes and regression evidence are recorded in
+[the core audit record](../audit/CORE-COMPLETION-2026-11-16.md); current combined CI results are
+[PR #56 checks](https://github.com/djshellshoxxx/circula/pull/56/checks). Historical verification
+records apply only to their recorded revisions. The 15 future modules remain isolated.
 
 States: **COMPLETE** = implemented and verified by tests named here. **PARTIAL** = implemented, missing required
 behaviour. **UNVERIFIED** = code exists, evidence insufficient. **MISSING**. **BLOCKED** = needs an owner decision or an
@@ -21,10 +23,10 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | L6 | Suspended, departed or pending party | COMPLETE | `TestSuspension`; refusal test (suspended accept, ledger unchanged) | | P0 | | unit |
 | L7 | Idempotent submission (replay, key reuse with another body) | COMPLETE | `idempotency_test.go`; replay checks in `TestReversalAndAdjustmentFaultInjectionLeavesNoTrace` | | P0 | | unit, API |
 | L8 | Concurrent transfers cannot breach the credit limit | COMPLETE | `BEGIN IMMEDIATE` plus process write gate (`store/sqlite.go:135`); `TestParallelAcceptsNeverBreachCreditLimit` (25 parallel, exactly 7 succeed) | | P0 | | unit under `-race` |
-| L9 | Failure during posting leaves no trace | COMPLETE | `TestAcceptFaultInjectionLeavesNoTrace` (8 fault points); reversal and adjustment, 8 points each, in `ledger_beta_test.go` | Faults are injected at the store interface, not as real SQLite I/O errors | P0 | | unit |
+| L9 | Failure during posting leaves no trace | PARTIAL (qualification) | Interface fault tests plus actual engine `SQLITE_FULL` after staged posting in `service/sqlite_full_test.go`; rollback, retry, replay and reopen verified | OS read/write/fsync and WAL commit/checkpoint fault coverage remains; see [qualification limits](../qa/sqlite-storage-failure-qualification.md) | P0 | eng | unit, real SQLite failure |
 | L10 | Reconciliation: cached = entry sum, network sum = 0 | COMPLETE | `VerifyLedger` → `store/sqlite_verify.go`; `TestVerifyDetectsBalanceCorruptionAndBalanceAt`; `TestVerifyDetectsTamperedEntry`; `circula verify-ledger` exit 3 | | P0 | | unit, CLI |
 | L11 | Reversal: compensating entries, original kept | COMPLETE | `reversal.go`; `reversal_test.go:22-94` | | P0 | | unit, e2e |
-| L12 | Immutable records, history integrity | COMPLETE | Append-only triggers (`0001_init.sql:278-351`); hash-chained audit; `TestAuditChainDetectsTampering` | Status-event ordering is checked only by count | P0 | | unit |
+| L12 | Immutable records, history integrity | COMPLETE | Append-only triggers (`0001_init.sql:278-351`); hash-chained audit; `TestAuditChainDetectsTampering` | Insertion order checked across ties, clock rollback, VACUUM and upgrade (`store/event_order_test.go`) | P0 | | unit |
 | L13 | Credit-limit boundary | COMPLETE | `TestQA004LimitBoundary` (limits 0, 1, 1e8) | | P0 | | unit |
 | L14 | Unauthorized transfer (role, scope, other member) | COMPLETE | `TestAuthorizationMatrix` (10 actor classes); `api/authn_test.go` | | P0 | | unit, API |
 | L15 | Restart persistence | COMPLETE | `TestReopenPreservesLedger`; acceptance scenario steps 16–17 | | P0 | | unit, CLI |
@@ -38,9 +40,9 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | A1 | Session fixation | COMPLETE | Session minted server-side at sign-in; `TestLoginDoesNotAdoptPlantedSessionCookie` | | P0 | | HTTP |
 | A2 | Cookie flags (HttpOnly, SameSite=Lax, Secure, `__Host-`) | COMPLETE | `TestHeadersAndCookies`, `TestSecureCookiesAndHSTS`, `cookie_policy_adapter_test.go` | | P0 | | HTTP |
 | A3 | CSRF | COMPLETE | `TestCSRFRejections` (token, Origin, Sec-Fetch-Site) | | P0 | | HTTP |
-| A4 | IDOR | COMPLETE | non-party gets 404 in service, web and API (`authz_test.go:193`, `web/security_test.go:152`) | Same-network member-page reads are tested only lightly | P0 | | unit, HTTP |
-| A5 | Login throttling, lockout, `circula unlock` | COMPLETE | `throttle_test.go`, `web/auth_limits_test.go` | Per-login throttle values: owner (SEC-006) | P0 | owner | unit |
-| A6 | Account enumeration | COMPLETE (functional) | identical error and code: `auth_test.go:156`, `recovery_test.go:135` | Timing equivalence is not measured | P1 | eng | unit |
+| A4 | IDOR | COMPLETE | non-party gets 404 in service, web and API (`authz_test.go:193`, `web/security_test.go:152`); same-network reads expose directory fields only: `service/member_visibility_test.go`, `web/same_network_member_test.go`, `api/same_network_member_test.go` (2026-11-16); QA-012 matrix proves another network's ids look like ids that never existed | | P0 | | unit, HTTP |
+| A5 | Login throttling, lockout, `circula unlock` | COMPLETE | `throttle_test.go`, `throttle_config_test.go`, `cmd/circula/config_throttle_test.go`, `web/auth_limits_test.go`; bounded operator settings preserve defaults | Operator chooses supported values (SEC-006) | P0 | owner | unit |
+| A6 | Account enumeration | COMPLETE | identical error and code (`auth_test.go:156`, `recovery_test.go:135`); equal Argon2id work on every refused sign-in, including an unusable stored hash (BR-05 fix `8768e91`): `TestLoginRefusalsDoEqualWork`, `TestRecoveryRefusalsDoEqualWork`; opt-in `TestLoginTimingStatistical` (`CIRCULA_TIMING_TEST=1`) | A hash stored with older Argon2id parameters costs what those cost; timing threshold is DEC-023 | P1 | owner | unit |
 | A7 | Logout invalidates server-side | COMPLETE | `TestLogoutInvalidatesReplayedCookie`; `circula revoke-sessions` | | P0 | | HTTP, CLI |
 | A8 | Password hashing (Argon2id), policy, blocklist | COMPLETE | `service/password*.go`, vectors | | P0 | | unit |
 | A9 | MFA (TOTP), recovery codes, account recovery | COMPLETE | `mfa_test.go`, RFC vectors, e2e security spec | | P1 | | unit, e2e |
@@ -57,22 +59,23 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | W4 | Account management, credential change | COMPLETE | e2e `security.spec.js` password change | | P1 | | e2e |
 | W5 | Administration: members, limits, suspension, adjustments (dual control), reversal, audit | COMPLETE | `admin_test.go`, `dualcontrol_test.go`, e2e `kbd-admin.spec.js` | Admin without the reviewer role may decide disputes (DEC-072) | P1 | owner | unit, e2e |
 | W6 | Member and reviewer audit views (DAT-033/035, FR-082) | COMPLETE | API `GET /api/v1/audit-events` (`api/routes.go:78`), web `h_audit_scoped.go` with `my_audit.html`; `api/authn_test.go`, contract walk, e2e "own account activity log". The spec rows that say "no UI or API" are stale | | P1 | | API, e2e |
-| W7 | JSON API contract | COMPLETE | `internal/contract` checks 85 operations and 164 (operation, status) pairs against `docs/api/openapi.yaml` | | P1 | | contract |
-| W8 | Policy validators (ETag) | COMPLETE (fixed) | C-09 fix `addc229`; `TestPendingCurrencyNamePolicyPatchChangesETag` | | P1 | | API |
-| W9 | Accessibility (WCAG 2.2 AA in light and dark, contrast, target size, reflow, keyboard, no-script) | COMPLETE (automated) | `make e2e` 578/578 | Manual screen-reader run (UX-056, QA-035) | P1 | owner | e2e |
-| W10 | Data export (member, full) | COMPLETE (in memory) | `service/export.go`, `export_test.go` | Streaming/spool slice not integrated (review findings) | P2 | eng | unit |
+| W7 | JSON API contract | COMPLETE | `internal/contract` validates live requests/responses against OpenAPI; MVP parity inventory tests 43 paired HTML/API operations and 6 API-only lifecycle/token operations | | P1 | | contract |
+| W8 | Policy validators (ETag) | COMPLETE (fixed) | `service/policy_revision.go`, API/service revision tests; explicit policy ETags are rechecked inside the write transaction, including pending changes | | P1 | | API |
+| W9 | Accessibility (WCAG 2.2 AA in light and dark, contrast, target size, reflow, keyboard, no-script) | COMPLETE (automated) | `make e2e` (axe, keyboard, responsive and no-script); current result is in PR #56 checks, separate from historical 578-test runs | Manual screen-reader run (UX-056, QA-035) | P1 | owner | e2e |
+| W10 | Data export (member, full) | COMPLETE | disk spool with reserved bytes and running-export slots (BR-06), `export-spool-dir` setting, manifest `reconciliation` documented; erasure drops all affected network archives and aborts in-progress downloads (BR-04); `TestParallelLargeExportsStayBounded`, `TestErasureDropsNetworkAdminExports` | ARC-020 (no CLI export), GOV-022 (import deferred), FR-095 thresholds (OQ-FR-3) | P2 | owner | unit |
+| W11 | Optional adjustment link to an original entry | COMPLETE | Migration 0018; service/API/web/store adjustment relation tests; approval propagation, immutability and exact legacy export compatibility | Link is optional; it never changes the original transaction or financial semantics | P1 | | unit, API, HTML, export |
 
 ## Platform and operations
 
 | # | Feature | State | Evidence | Remaining | Pri | Owner | Verification |
 |---|---|---|---|---|---|---|---|
-| D1 | Forward-only, transactional, contiguous migrations | COMPLETE | `store/migrate.go`; `TestUpgradeFromEverySchemaVersion` (v1–v15 → v16); golden v1 → v16 with 10,000 transactions | | P0 | | unit |
+| D1 | Forward-only, transactional, contiguous migrations | COMPLETE | `store/migrate.go`; `TestUpgradeFromEverySchemaVersion` (historical versions → current v18); 10,000-transaction upgrade fixture; nonpositive versions rejected | | P0 | | unit |
 | D2 | Foreign keys, CHECKs, triggers, busy timeout, WAL | COMPLETE | `store/sqlite.go:107`; `inspect.go` checks the pragmas | | P0 | | unit |
 | D3 | Backup (signed, optionally encrypted) and restore drill | COMPLETE | `backup_test.go`, `restore_drill_test.go`; online backup of a live instance restored and verified 2026-11-11 (see the readiness report) | | P0 | | CLI, manual |
 | O1 | Health, readiness, metrics, graceful shutdown, structured logs | COMPLETE | `ops_http.go`, `serve_test.go` | | P1 | | unit |
-| O2 | systemd unit, Dockerfile, compose, reverse-proxy and TLS docs | UNVERIFIED | `deploy/`, `docs/ops/` | Container build not run here (no Docker); `scripts/smoke-deploy.sh` run (see the readiness report) | P1 | eng | smoke |
+| O2 | systemd unit, Dockerfile, compose, reverse-proxy and TLS docs | COMPLETE (container run) | image built and run read-only, non-root, caps dropped; `/healthz`, `/readyz`, volume persistence, compose up: [../ops/container-verification-2026-11-12.md](../ops/container-verification-2026-11-12.md) | Built with the sandbox CA added; port publishing, multi-arch and TLS not exercised | P1 | eng | manual |
 | O3 | Release pipeline: SBOM, scans, release-notes gate | COMPLETE (not exercised on a tag) | `scripts/*release*`, `release.yml` | First tagged release | P1 | owner | offline packaging run |
-| O4 | CI | PARTIAL | `ci.yml` (Linux race gate, macOS 15, Windows, e2e) | Remove duplicate CI runs; move macOS/Windows tests to main or nightly (HANDOFF step 4) | P2 | eng | |
+| O4 | CI | COMPLETE | `ci.yml`: one run per commit, Linux race/lint/govulncheck/e2e on every PR, macOS 15 and Windows on main, nightly and dispatch ([../ops/ci.md](../ops/ci.md)) | Remove macOS/Windows from required checks if set | P2 | owner | CI |
 
 ## Security hardening still open
 
@@ -102,7 +105,5 @@ graph TD
 
 ## Estimate
 
-Engineering estimate. Rows count equally and PARTIAL/UNVERIFIED count as half: (43 COMPLETE + 0.5 × 2) / 45 ≈ 98 %
-of the 45 rows above. This counts the beta feature list in this file, not every requirement in `docs/specs/`
-(`docs/specs/12-quality-test-plan.md` alone still lists 28 P0 items as partial). Owner gates are not engineering work
+Engineering estimate (recounted 2026-11-16). Every one of the 45 rows above is COMPLETE; the rows that remain open name owner gates or the exercises listed in their Remaining column. This counts the beta feature list in this file, not every requirement in `docs/specs/` (`docs/specs/12-quality-test-plan.md` still lists 22 P0 items as partial and 6 as not built). Owner gates are not engineering work
 and are not counted.

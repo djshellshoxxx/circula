@@ -21,6 +21,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/api"
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/logx"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/store"
 	"github.com/djshellshoxxx/circula/internal/web"
@@ -45,6 +46,9 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		IdempotencyTTL: cfg.IdempotencyTTL,
 		MinPasswordLen: cfg.MinPasswordLength,
 
+		AuthThrottleAttempts: cfg.AuthThrottleAttempts, AuthThrottleGlobalAttempts: cfg.AuthThrottleGlobalAttempts,
+		AuthThrottleLock: cfg.AuthThrottleLock,
+
 		AdminSessionIdle: cfg.SessionIdleAdmin, AdminSessionMax: cfg.SessionMaxAdmin, // SEC-003
 		ReviewerSessionIdle: cfg.SessionIdleReviewer, ReviewerSessionMax: cfg.SessionMaxReviewer,
 		MaxSignupGrant:   cfg.SignupGrantCap,                                                     // SEC-032
@@ -56,12 +60,15 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 	})
 }
 
+// newLogger builds the process logger. Every handler is wrapped by logx, so
+// all serve output (access log, jobs, adapters) is redacted, control
+// characters are escaped and timestamps are UTC (SEC-020, OPS-032).
 func newLogger(cfg *Config, w io.Writer) *slog.Logger {
 	opts := &slog.HandlerOptions{Level: cfg.LogLevel}
 	if cfg.LogFormat == "text" {
-		return slog.New(slog.NewTextHandler(w, opts))
+		return slog.New(logx.Wrap(slog.NewTextHandler(w, opts)))
 	}
-	return slog.New(slog.NewJSONHandler(w, opts))
+	return slog.New(logx.Wrap(slog.NewJSONHandler(w, opts)))
 }
 
 // cmdServe runs the HTTP service and its scheduled jobs.
@@ -134,7 +141,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	} else if tightened {
 		logger.Warn("database file was readable by group or others; permissions restricted to the owner", "file", cfg.Database)
 	}
-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
+	st, err := openStore(ctx, cfg.Database, cfg)
 	if err != nil {
 		m.migrationRan("failed")
 		return err
@@ -152,16 +159,16 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		m.migrationRan("applied")
 		logger.Info("migrations applied", "from", state.Applied, "to", state.Known)
 	}
-	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
-		return err
-	}
 	svc, err := newService(st, cfg)
 	if err != nil {
 		return err
 	}
+	if err := svc.CheckStorage(ctx); err != nil {
+		return err
+	}
 	svc.SetObserver(m)
 
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "startup-verify", "")
+	checks, err := verifyAllNetworks(ctx, svc, "startup-verify", "")
 	if err != nil {
 		return fmt.Errorf("startup ledger verification: %w", err)
 	}
@@ -197,6 +204,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	defer api.CloseHandler(apiH)
 	srv := &http.Server{
 		Handler:           ops.routes(apiH, webH),
 		ReadHeaderTimeout: 10 * time.Second,
@@ -293,11 +301,19 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 		PublicHTTPS:    strings.HasPrefix(cfg.PublicBaseURL, "https://"),
 		TrustedProxies: cfg.TrustedProxies,
 	}
+	spool := cfg.ExportSpoolDir
+	if spool == "" {
+		spool = filepath.Join(stateDir, "export-spool")
+	}
+	if err := prepareExportSpool(spool); err != nil { // BR-06: fail closed at start
+		return nil, nil, fmt.Errorf("export-spool-dir: %w", err)
+	}
 	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge,
-		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress}) // SEC-006
+		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress, // SEC-006
+		ExportSpoolDir: spool})
 	webH = web.NewHandlerWith(svc, web.Options{
 		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
-		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax,
+		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax, Logger: logger,
 		Limits: webLimits(cfg),
 	})
 	return apiH, webH, nil
@@ -443,7 +459,9 @@ func (j *jobRunner) purge(ctx context.Context) error {
 }
 
 func (j *jobRunner) verify(ctx context.Context) error {
-	checks, err := verifyNetworks(ctx, j.svc, j.st.DB(), "job-verify", "", true)
+	// OPS-016 / DEC-031: automatic checks report through metrics and logs;
+	// only explicit administrator checks persist a consistency run.
+	checks, err := verifyAllNetworks(ctx, j.svc, "job-verify", "")
 	if err != nil {
 		return err
 	}
@@ -502,13 +520,24 @@ func (j *jobRunner) backups(ctx context.Context) {
 
 // untilNextBackup returns how long to wait before the next scheduled backup.
 func (j *jobRunner) untilNextBackup() time.Duration {
+	return j.untilNextBackupAt(time.Now())
+}
+
+func (j *jobRunner) untilNextBackupAt(now time.Time) time.Duration {
 	entries, err := listBackups(j.cfg.BackupDir)
 	if err != nil || len(entries) == 0 {
 		return 0
 	}
-	due := entries[0].at.Add(j.cfg.BackupInterval)
-	if d := time.Until(due); d > 0 {
-		return d
+	for _, entry := range entries {
+		// A clock correction or misplaced file must not delay future backups
+		// indefinitely. Keep the file, but base cadence on a past backup.
+		if entry.at.After(now) {
+			continue
+		}
+		if d := entry.at.Add(j.cfg.BackupInterval).Sub(now); d > 0 {
+			return d
+		}
+		return 0
 	}
 	return 0
 }

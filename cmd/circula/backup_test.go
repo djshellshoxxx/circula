@@ -182,6 +182,95 @@ func TestPruneKeepsDailyAndNewestPerMonth(t *testing.T) {
 	}
 }
 
+// OPS-017: backups taken within one second need distinct names. Both naming
+// generations remain discoverable, and retention compares their full instants.
+func TestBackupNamesPreserveSubsecondTimeAndLegacyRetention(t *testing.T) {
+	dir := t.TempDir()
+	base := time.Date(2026, 11, 16, 8, 30, 0, 0, time.FixedZone("local", -8*60*60))
+	first, second := base.Add(100*time.Nanosecond), base.Add(200*time.Nanosecond)
+	for _, name := range []func(time.Time) string{backupFileName, encryptedBackupFileName} {
+		if name(first) == name(second) {
+			t.Fatalf("same-second backups collide: %s", name(first))
+		}
+		if name(first) != name(first.UTC()) {
+			t.Fatal("backup name depends on the caller's time zone")
+		}
+	}
+	legacyPlain := "circula-20261116T163000Z.db"
+	legacyEncrypted := "circula-20261016T163000Z.db.enc"
+	names := []string{legacyPlain, legacyEncrypted, backupFileName(first), encryptedBackupFileName(second)}
+	for _, name := range names {
+		path := filepath.Join(dir, name)
+		if err := os.WriteFile(path, []byte("backup"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path+".manifest.json", []byte("{}"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	entries, err := listBackups(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{names[3], names[2], names[0], names[1]}
+	if len(entries) != len(want) {
+		t.Fatalf("listed %d backups, want %d", len(entries), len(want))
+	}
+	for i, name := range want {
+		if filepath.Base(entries[i].path) != name {
+			t.Errorf("backup %d = %s, want %s", i, entries[i].path, name)
+		}
+	}
+	if !entries[0].at.Equal(second) || !entries[1].at.Equal(first) {
+		t.Fatal("listing discarded the subsecond timestamp")
+	}
+	removed, err := pruneBackups(dir, 1, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(removed) != 2 {
+		t.Fatalf("removed %d backups, want 2", len(removed))
+	}
+	for _, name := range []string{names[0], names[2]} {
+		for _, suffix := range []string{"", ".manifest.json"} {
+			if _, err := os.Stat(filepath.Join(dir, name+suffix)); !os.IsNotExist(err) {
+				t.Errorf("older backup or manifest still present: %s%s, %v", name, suffix, err)
+			}
+		}
+	}
+	for _, name := range []string{names[1], names[3]} {
+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+			t.Errorf("newest monthly backup was removed: %s, %v", name, err)
+		}
+	}
+}
+
+func TestSnapshotRefusesExistingSubsecondBackup(t *testing.T) {
+	for _, encrypted := range []bool{false, true} {
+		dir := t.TempDir()
+		at := time.Date(2026, 11, 16, 16, 30, 0, 123456789, time.UTC)
+		name := backupFileName(at)
+		keys := snapshotKeys{}
+		if encrypted {
+			name = encryptedBackupFileName(at)
+			keys.Encrypt = bytes.Repeat([]byte{1}, 32)
+		}
+		path := filepath.Join(dir, name)
+		original := []byte("existing backup must survive")
+		if err := os.WriteFile(path, original, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		// A nil database also proves refusal occurs before snapshot work starts.
+		if _, err := snapshotWith(context.Background(), nil, path, "test", at, nil, keys); err == nil || !strings.Contains(err.Error(), "already exists") {
+			t.Fatalf("existing backup not refused: %v", err)
+		}
+		got, err := os.ReadFile(path)
+		if err != nil || !bytes.Equal(got, original) {
+			t.Fatalf("existing backup changed: %q, %v", got, err)
+		}
+	}
+}
+
 func TestLockRefusesSecondHolder(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "circula.db.lock")
 	first, err := acquireLock(path)

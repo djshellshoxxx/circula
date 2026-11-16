@@ -1,6 +1,130 @@
 # Circula handoff
 
-## 2026-11-11: beta consolidation (current)
+## 2026-11-16: core completion and consolidation (current)
+
+Branch `codex/circula-core-completion-20261116` continues `claude/happy-babbage-dcumwz@dc97f7d`,
+which already joined the beta follow-up (#33) with main. Documentation upkeep (#55) is merged,
+with the newer export, logging and QA evidence preserved. The 15 `future/*` modules remain
+isolated; this consolidation does not enable them.
+
+Implemented and regression-tested in this pass:
+- Export expiry actively releases disk space. Admitted downloads pin resources until completion;
+  erasure aborts downloads and invalidates every affected network export, including member archives.
+  Running exports cannot commit snapshots taken before an erasure; shutdown cleans up spools.
+- Cached API retries recheck current scopes, membership, roles and MFA without repeating commands.
+  Network erasure invalidates cached responses that could name counterparties.
+- Migration 0017 preserves insertion order for immutable trade/dispute histories across equal or
+  backward timestamps and VACUUM. Guards also reject REPLACE; invalid schema versions fail safely.
+- Nanosecond backup names support rapid successive snapshots and retain old filename compatibility.
+  Future-dated backups cannot suppress the scheduled cadence.
+- The standalone export reader validates reconciliation for CSV/JSON and all exported scopes.
+- Logout failures are reported without falsely clearing a still-valid session. Unicode login
+  throttles clear correctly. Erasure removes counterpart notification content without broad text matches.
+- Closure final-export failures are retried before erasure; completion/audit events are not duplicated.
+- QA-019 now covers service, JSON API and HTML forms with a controlled clock; browser coverage is separate.
+- Listing descriptions are labelled optional. The race target enables CGO. CI checks traceability
+  freshness and runs the standalone reference-reader tests.
+
+Additional audit completion:
+- Frozen networks no longer starve proposal/adjustment expiry in other networks; batches stay bounded.
+- Policy logs and challenges have signed, bounded cursor pagination and query validation.
+- Re-review and pending adjustment approval require signed review/back/confirm flows, with current
+  service checks and reviewer balance privacy retained.
+- Administrator reads/navigation use effective roles and current MFA, including expiring break-glass grants.
+- Network-scoped tokens cannot manage global credentials/preferences. JSON field spellings are exact;
+  decoder failures no longer reveal Go types. Public static responses do not set CSRF cookies.
+- OpenAPI covers common runtime statuses; temporary authentication storage failures preserve retryable 503 responses.
+- Credit-limit ETags represent override/expiry configuration and are compared again inside the write transaction.
+- Restore invalidates copied sessions, API tokens, MFA login challenges and break-glass sessions on the
+  verified staging copy before swapping; failed invalidation leaves the original database untouched.
+- Operator dual-control edits preserve pending policy notice timing and unrelated future values.
+  Break-glass login lookup uses the same normalization as sign-in.
+- Export byte order remains backwards-compatible with pre-migration closure checksums. Only history
+  presentation uses migration 0017's insertion sequence.
+
+Final historical-branch follow-up: restored the tested >500 reversal-history pagination from
+`claude/cool-ramanujan-n2peag`; fixed RESTORE-01 with durable interruption markers and seven
+subprocess crash tests; added versioned HMAC coverage for backup verification summaries (CRYPTO-02),
+keeping legacy manifests readable. Temporary-admin adjustment proposals remain approvable while
+the grant is live. Invitation-only join pages hide network existence from nonmembers.
+
+Further completion: optional adjustment links (migration 0018) now flow through pending requests,
+approval, audit, history, API and exports while preserving legacy export bytes. Repository contracts
+are driver-neutral with old-store aliases. The MVP equivalence suite covers 43 paired HTML/API
+operations and six explicit API-only lifecycle/token operations. Policy revisions are atomic;
+throttle settings are bounded; scheduled verification is read-only; operator provisioning and displayed
+reversal balances are correctly audited. UUID and query validation, forced-password navigation,
+recovery-throttle erasure, reversal independence/audit history, timestamps and migration guards have
+current regressions. Real SQLite disk-full tests verify rollback, retry and reopen. Traceability now
+separates source citations from actual dated test evidence and uploads CI evidence artifacts.
+The property harness now isolates each seed, records complete failures and provides a bounded manual
+long-run workflow; its 50-sequence smoke passed. Release thresholds are still owner decisions.
+
+Validation is recorded for each candidate in [PR #56 checks](https://github.com/djshellshoxxx/circula/pull/56/checks).
+Published checkpoint `e299459` passed Linux race, build targets, lint/vulnerability, fuzz and contract/load
+checks; its browser run passed 578 and failed one stale optional-description label expectation, corrected
+in `e1b67e6`. Later changes have focused regression/race evidence and require combined validation.
+Local Chromium cannot launch in this execution environment; the browser gate runs in GitHub Actions.
+No claim of manual screen-reader testing, independent security review or tagged release is made.
+
+See [docs/TODO.md](docs/TODO.md) for current work. All dated sections below are historical records.
+They can contain superseded next steps, failures and merge instructions.
+
+## 2026-11-16: beta follow-up
+
+Branch `claude/quirky-einstein-l9ni8m`, draft PR #33 stacked on `claude/circula-beta-completion-1npjw6` (PR #31).
+It works through the "Next" list of the 2026-11-11 section below. Every preserved WIP slice is now integrated.
+
+Merged and reviewed (each slice reviewed, findings fixed with regression tests):
+- **CI (O4):** one run per commit; macOS 15/Windows tests on `main`, nightly and dispatch only. See [docs/ops/ci.md](docs/ops/ci.md).
+- **Go 1.26.11** (GO-2026-6859, ported from PR #30) and the QA-037 marker on migration 0016's temporary-table drop.
+- **Export (BR-06, BR-04):** disk spool with reserved bytes and running-export slots, `export-spool-dir`, manifest
+  `reconciliation` documented; erasure drops the network's admin-scope exports. QA-030 built.
+- **web-ux:** UX-021, UX-049, SEC-016, GOV-010 built. UX-017 partial (adjustments cannot link to an original).
+- **arch-guards:** DAT-045 built; ARC-002/ARC-004 adapter and store-contract guards; QA-012 matrix extended.
+- **sec-ops-docs:** SEC-020, OPS-030 built (redacting log, request ids aligned); SEC-014, SEC-030, OPS-015 partial.
+- **qa-robustness:** QA-007, QA-010, QA-024, QA-026, QA-028 built; QA-001, QA-019 partial. Bug fixed: expired
+  proposals now notify both parties.
+- **BR-05:** equal Argon2id work for an unusable stored hash; same-network visibility tests (A4).
+- **Container (O2):** image and compose run for the first time: [docs/ops/container-verification-2026-11-12.md](docs/ops/container-verification-2026-11-12.md).
+- **Traceability (QA-042, partial):** generated by `make traceability`; `make traceability-check` is in `make check`.
+
+Verified at `927d2ca` (later commits change only docs), Go 1.26.11:
+`gofmt`, `go vet`, golangci-lint v2.15.0 (0 issues), `check-hygiene.sh`, `check-action-pins.sh`, `go test -count=1 ./...`
+and `go test -race -timeout 40m ./...` all pass in every package; `make e2e` 578 passed, 0 failed. CI passed on the PR.
+govulncheck ran only in CI.
+
+Next:
+1. Owner: merge PR #31, then this PR.
+2. Owner decisions raised in this pass: an original link for adjustments (UX-017, schema change); the timing threshold
+   (DEC-023, provisional 10 %); QA-001 sequence count in CI; erasure of `person_prefs.time_zone`,
+   `person_activity.last_seen_at`, `challenges.reason`; BR-04 scope (all admin scopes, not only `full`).
+3. Engineering: backup names have one-second resolution (second backup in the same second is refused); status history
+   orders by `occurred_at` (wrong if the clock steps back); 68 built requirements still have no test citation
+   (`docs/TRACEABILITY.md`); ARC-002 dual-route test, ARC-004 driver split, ARC-008 operator audit; `read-export.py`
+   does not check `reconciliation`; SEC-014 "(optional)" labels on listing forms; run `traceability-check` in CI.
+4. Branch protection: drop `test (macos-15-intel)` and `test (windows-2022)` from required checks if they are set.
+5. Owner gates below are unchanged: licence, DEC-*, SEC-033, manual screen-reader run.
+
+## 2026-11-11: beta consolidation
+
+## 2026-11-16: repo upkeep
+
+- `docs/wiki` source pages refreshed in the repo. The GitHub wiki is NOT synced yet: the wiki git repo does not accept clones (likely no first page saved in the web UI). Owner action needed, then sync.
+- `docs/specs` status refresh in progress (matrix is the reference).
+- [docs/TODO.md](docs/TODO.md) is the single open-work list. The "Next" and "Paused" lists in older sections below are history.
+- PR triage done. The bot closed no PRs; the owner decides which to close. Checked against the GitHub REST API on 2026-11-16:
+  - 0 open issues.
+  - 37 open PRs: 5 Dependabot (#46 to #50), #3 (not a draft), and 31 draft chained PRs.
+  - PR #31 (head `claude/circula-beta-completion-1npjw6`, base `main`) merged 2026-11-16T01:12:49Z (merge commit `bffcede`). The 2026-11-11 section describes that branch as the draft PR into `main`. No open PR has that head now.
+  - PR #19 (named as a draft in the 2026-11-04 section) merged to `main` on 2026-11-16 (`34ccb81`).
+- Repo health checks run on 2026-11-16 with go1.26.11 (`go.mod`, `deploy/Dockerfile` and the CI workflows agree on 1.26.11):
+  - `gofmt -l .`, `go build ./...`, `go vet ./...`, `scripts/check-hygiene.sh`, `scripts/check-action-pins.sh`: clean.
+  - `go test -count=1 ./...`: fails in `internal/service`. `TestDepartureCancelsMoreThanFiveHundredProposals` panics with `rate-limited: too many open proposals` (`testutil.Must`). All other packages pass. Commit `2eacf77` is the last commit that touched it. Owner or engineering to triage.
+  - Not run: race detector, e2e, load test, govulncheck (needs vuln.go.dev), release gate.
+- Docs corrected in this pass: the release archive contents (`README.md`), the PR #19 status (`docs/ops/README.md`), the container build status (`docs/ops/hardening.md`), the lockout description (fixed 15 minutes, not doubling; `docs/dev/recovery.md`, `docs/security/RAINBOW-BOOKS-SPEC.md`), the release-gate notes (`docs/qa/EVIDENCE.md`, `docs/qa/RELEASE-GATE.md`), a stale unit path (`docs/security/GOV-STANDARDS-MAPPING.md`), and the QA-042 pending note in `docs/TRACEABILITY.md`.
+- Not changed: owner decision rows in `docs/DECISIONS.md`. DEC-014 still says "Break-glass not built", which no longer matches `cmd/circula/breakglass.go`. Owner to update the status.
+
 
 Branch `claude/circula-beta-completion-1npjw6`, a draft PR into `main`. It is the integration branch: it starts from
 `claude/gracious-ptolemy-dscc7v@3c2a577` (PR #30) and merges PRs #21–#28, part of #13 and four preserved WIP

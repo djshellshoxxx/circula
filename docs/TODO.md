@@ -1,0 +1,77 @@
+# Circula current work
+
+Updated 2026-11-16 on `codex/circula-core-completion-20261116`. This list supersedes the old
+unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isolated.
+
+## Integration evidence
+
+- [PR #56 checks and merge state](https://github.com/djshellshoxxx/circula/pull/56/checks) record the
+  current candidate. Race, lint, contract, browser, dependency and build checks are merge gates.
+- Historical reports remain evidence of their recorded revisions; current remediations and
+  qualification limits are in the core audit record.
+
+## Completed engineering in this consolidation
+
+- Optional adjustment links, including dual-control approval, immutable metadata, visible history and
+  API/export support; migration 0018 preserves existing export bytes when no links exist.
+- Driver-neutral repository contracts with old-store aliases; 43 paired MVP HTML/API operations and
+  six explicitly API-only lifecycle/token operations have ledger/audit equivalence coverage.
+- Atomic policy revisions, bounded operator-configurable authentication throttles, audited operator
+  provisioning and rendered reversal balance reads, and read-only scheduled ledger verification.
+- Record UUID validation across HTML/JSON/filter inputs after authorization; strict raw and unknown
+  API query validation; required password-change navigation and suspended/departed read links.
+- Complete reversal audit targets and independence checks beyond 500 reversals; recovery-throttle
+  erasure; structured timestamp markup and destructive migration guards.
+- Real SQLite disk-full rollback/retry/reopen tests and explicit qualification limits. QA-042 records
+  test layers and real dated per-test outcomes separately from deterministic requirement citations.
+- QA-001 isolated seed replay, strict disjoint ranges, complete failure fixtures and an explicit manual
+  long-run workflow. A 50-sequence/1,315-operation smoke run passed; no 100,000-sequence claim is made.
+- Restore interruption guards and recovery instructions, HMAC-v2 authenticated backup summaries with legacy compatibility,
+  complete reversal histories beyond 500 entries, live temporary-proposer approval, and invitation-only join privacy.
+- Freeze-safe bounded proposal/adjustment expiry, governance cursor pagination, and signed confirmation
+  flows for re-review decisions and adjustment approval.
+- Effective administrator read/navigation authorization, scoped-token confinement, exact JSON field names,
+  private decoder errors and cookie-free public assets.
+- Atomic credit-limit conditional updates, pending-policy-preserving operator edits and login normalization.
+- Credential invalidation before restore swap; original closure-export checksum compatibility across migration 0017.
+- Integrated the beta follow-up and documentation upkeep. The preserved WIP slices are already in the beta history.
+- Export disk spooling, capacity reservations, active expiry, download pinning/revocation and shutdown cleanup
+  (`internal/api/export_*test.go`); erasure invalidates affected member and administrator archives.
+- Current authorization on cached API responses (`internal/api/replay_*test.go`).
+- Immutable history insertion ordering and migration guards (`internal/store/event_order_test.go`,
+  `migrate_version_test.go`); no dependence on wall-clock ordering.
+- Rapid backup naming, old-name retention and scheduling under clock skew (`cmd/circula/backup_test.go`,
+  `jobs_regress_test.go`).
+- Independent reconciliation reader (`scripts/test_read_export.py`, actual generated member archives
+  in `internal/service/export_schema_test.go`).
+- Logout error handling, Unicode throttle cleanup, precise notification erasure, and retryable closure
+  final exports (the named regression tests in `internal/web`, `internal/store`, `internal/service`).
+- Same-network visibility and equal password-hash work; timestamp-based historical balances are implemented.
+- QA-019 decline/expiry through API and HTML forms; optional listing labels; traceability generation/check in CI.
+- CI already avoids duplicate branch/PR runs and reserves the platform matrix for main/nightly/dispatch.
+  Container evidence is recorded in `docs/ops/container-verification-2026-11-12.md`.
+
+## Remaining specification and qualification work
+
+- QA-001 long property-run budget/thresholds (DEC-023) and actual long-run execution on recorded hardware.
+- QA-042 remaining inspection/manual/external citations and full acceptance-criterion qualification.
+  Source/test mappings and matching dated execution evidence do not prove untested criteria.
+- L9 OS read/write/fsync and WAL commit/checkpoint failure coverage beyond real engine disk-full,
+  interface fault injection and process-crash tests; see the SQLite storage-failure qualification note.
+- SEC-014/018 retention choices for time zone, last activity and challenge reasons remain documented questions.
+- Refresh historical spec status tables only against specific implementation and test evidence.
+- First tagged release and deployment qualification; release thresholds and supported pilot jurisdictions.
+
+## Owner and external gates
+
+- Choose the project licence; confirm outstanding policy decisions in `docs/DECISIONS.md` and relevant addenda.
+  Several descriptions there predate built mechanisms: MFA, recovery, dual control, break-glass, grants,
+  role-specific session lifetimes, policy notices and objections exist. A stale decision row is not a missing feature.
+- Break-glass scope (A3-F02 / DEC-014), reviewer-versus-administrator decisions (DEC-072), locale scope (UX-047),
+  operator dual-control exceptions (ARC-008), member-limit notice timing (A3-F18), support commitments and
+  notice defaults require owner policy confirmation where records remain unresolved.
+- Manual screen-reader qualification (UX-056 / QA-035) and independent security review (SEC-033).
+- Hosted wiki publishing remains separate from the versioned `docs/wiki` source.
+
+Do not mark the entire specification complete from the 45-row beta feature matrix. Do not treat automated
+accessibility checks or AI-assisted security review as completion of the manual/external gates.

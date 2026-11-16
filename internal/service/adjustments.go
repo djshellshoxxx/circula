@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // AdjustDirection says which way an adjustment moves the member's balance.
@@ -23,6 +23,7 @@ type AdjustInput struct {
 	Amount         int64 // minor units, > 0
 	Direction      AdjustDirection
 	Reason         string
+	RelatedTxID    string `json:",omitempty"` // omitted preserves existing idempotency fingerprints
 	IdempotencyKey string `json:"-"`
 }
 
@@ -66,6 +67,9 @@ func (s *Service) validateAdjustTarget(tx store.Tx, netID, memberID string, amou
 	if dir != AdjustCredit && dir != AdjustDebit {
 		return nil, domain.Invalid("direction", "must be credit or debit")
 	}
+	if !domain.ValidRecordID(memberID) {
+		return nil, domain.NotFound("member")
+	}
 	target, err := tx.GetMember(netID, memberID)
 	if err != nil {
 		return nil, domain.NotFound("member")
@@ -74,6 +78,22 @@ func (s *Service) validateAdjustTarget(tx store.Tx, netID, memberID string, amou
 		return nil, domain.InvalidState("member is %s", target.Status)
 	}
 	return target, nil
+}
+
+// validateAdjustmentRelation keeps optional context within the adjusted member's
+// own posted history. A relation never authorizes access to another member's trade.
+func validateAdjustmentRelation(tx store.Tx, netID, memberID, relatedID string) error {
+	if relatedID == "" {
+		return nil
+	}
+	if !domain.ValidRecordID(relatedID) {
+		return domain.Invalid("related_transaction_id", "choose a posted transaction involving the adjusted member")
+	}
+	related, err := tx.GetTransaction(netID, relatedID)
+	if err != nil || !related.IsPosted() || !related.IsParty(memberID) {
+		return domain.Invalid("related_transaction_id", "choose a posted transaction involving the adjusted member")
+	}
+	return nil
 }
 
 func (s *Service) createAdjustment(ctx context.Context, actor domain.Actor, netID string, in AdjustInput, allowPending bool) (*AdjustResult, error) {
@@ -100,19 +120,22 @@ func (s *Service) createAdjustment(ctx context.Context, actor domain.Actor, netI
 			if err != nil {
 				return "", err
 			}
+			if err := validateAdjustmentRelation(tx, netID, target.ID, in.RelatedTxID); err != nil {
+				return "", err
+			}
 			if th := p.net.Policy.DualControlThreshold; th > 0 && in.Amount > th {
 				if !allowPending {
 					return "", domain.Errf(domain.CodeApprovalRequired, "amounts above the dual-control threshold need a second administrator")
 				}
 				return s.proposeAdjustment(tx, p, target, in)
 			}
-			t, err := s.postAdjustment(tx, p.net, target, in.Amount, in.Direction, in.Reason, p.memberID(), p.actor.RequestID)
+			t, err := s.postAdjustment(tx, p.net, target, in.Amount, in.Direction, in.Reason, p.memberID(), p.actor.RequestID, in.RelatedTxID)
 			if err != nil {
 				return "", err
 			}
 			return "t:" + t.ID, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActAdjustment, TargetType: "transaction",
 				TargetID: t.ID, Reason: in.Reason, IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{target.ID},
-				After: map[string]any{"member": target.ID, "direction": string(in.Direction), "amount": in.Amount, "status": "completed"}})
+				After: map[string]any{"member": target.ID, "direction": string(in.Direction), "amount": in.Amount, "status": "completed", "related_transaction_id": in.RelatedTxID}})
 		}, func(ref string) (*AdjustResult, error) {
 			if id, ok := strings.CutPrefix(ref, "p:"); ok {
 				pa, err := tx.GetPendingAdjustment(netID, id)
@@ -142,7 +165,7 @@ func (s *Service) proposeAdjustment(tx store.Tx, p *principal, target *domain.Me
 	}
 	now := s.now()
 	pa := &domain.PendingAdjustment{ID: s.id(), NetworkID: p.net.ID, Proposer: p.memberID(), Target: target.ID,
-		Amount: in.Amount, Direction: string(in.Direction), Reason: in.Reason, Status: domain.PendingOpen,
+		Amount: in.Amount, Direction: string(in.Direction), Reason: in.Reason, RelatedTxID: in.RelatedTxID, Status: domain.PendingOpen,
 		CreatedAt: now, ExpiresAt: now.Add(s.cfg.PendingAdjustmentTTL)}
 	if err := tx.InsertPendingAdjustment(pa); err != nil {
 		return "", err
@@ -151,12 +174,12 @@ func (s *Service) proposeAdjustment(tx store.Tx, p *principal, target *domain.Me
 		TargetType: "pending_adjustment", TargetID: pa.ID, Reason: in.Reason, IdemRef: keyRef(in.IdempotencyKey),
 		Subjects: []string{target.ID},
 		After: map[string]any{"member": target.ID, "direction": in.Direction, "amount": in.Amount, "status": "pending",
-			"proposer": pa.Proposer, "expires_at": pa.ExpiresAt.UnixMilli()}})
+			"proposer": pa.Proposer, "expires_at": pa.ExpiresAt.UnixMilli(), "related_transaction_id": pa.RelatedTxID}})
 }
 
 // postAdjustment is shared by CreateAdjustment and departure settlement.
 func (s *Service) postAdjustment(tx store.Tx, net *domain.Network, target *domain.Member, amount int64,
-	dir AdjustDirection, reason, createdBy, requestID string) (*domain.Transaction, error) {
+	dir AdjustDirection, reason, createdBy, requestID, relatedID string) (*domain.Transaction, error) {
 
 	if err := s.adminNotice(tx, net.ID, target.ID, NotifAdminAdjust, "An administrator adjusted your balance",
 		"An administrator posted an adjustment to your account. See your history for the amount.", "/history"); err != nil {
@@ -174,7 +197,7 @@ func (s *Service) postAdjustment(tx store.Tx, net *domain.Network, target *domai
 	if dir == AdjustDebit {
 		payer, payee = acc.ID, sys.ID
 	}
-	t, err := s.newInternalTx(tx, net, domain.KindAdjustment, payer, payee, amount, reason, createdBy, "")
+	t, err := s.newInternalTx(tx, net, domain.KindAdjustment, payer, payee, amount, reason, createdBy, "", relatedID)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +225,7 @@ func (s *Service) postSignupGrant(tx store.Tx, net *domain.Network, m *domain.Me
 	if err != nil {
 		return err
 	}
-	t, err := s.newInternalTx(tx, net, domain.KindGrant, sys.ID, acc.ID, amt, "sign-up grant", "", "")
+	t, err := s.newInternalTx(tx, net, domain.KindGrant, sys.ID, acc.ID, amt, "sign-up grant", "", "", "")
 	if err != nil {
 		return err
 	}

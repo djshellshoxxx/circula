@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/fs"
-	"log"
 	"net/http"
 	"net/url"
 	"path"
@@ -55,6 +54,8 @@ type page struct {
 	Warn string
 	// SecUnseen counts unacknowledged security notices (SEC-012), shown in the header.
 	SecUnseen int
+	// FrozenSince is separate from notice text so its time element stays markup.
+	FrozenSince template.HTML
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -160,7 +161,7 @@ func (c *rc) row(t *domain.Transaction, n names) txRow {
 func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name string, status int, p *page) {
 	t := s.pages[name]
 	if t == nil {
-		log.Printf("web: missing template %s", name)
+		s.log.Error("web template missing", "request_id", reqID(r), "template", name)
 		http.Error(w, "internal error", 500)
 		return
 	}
@@ -182,6 +183,9 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
 		p.Nav = c.nav(r.URL.Path)
 		p.Notice = c.notice()
+		if fi, ok := c.s.svc.FrozenInfo(c.Net.ID); ok {
+			p.FrozenSince = c.when(fi.Since)
+		}
 		p.Unread = c.unreadCount()
 	}
 	if p.Authed {
@@ -195,7 +199,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 	}
 	var buf bytes.Buffer
 	if err := t.ExecuteTemplate(&buf, "base", p); err != nil {
-		log.Printf("web: render %s req=%s: %v", name, p.ReqID, err)
+		s.log.Error("web render failed", "request_id", p.ReqID, "template", name, "err", err)
 		http.Error(w, "internal error, reference "+p.ReqID, 500)
 		return
 	}
@@ -215,8 +219,11 @@ func (c *rc) nav(cur string) []navItem {
 			navItem{Label: "Directory", Href: b + "/directory"}, navItem{Label: "Listings", Href: b + "/listings"},
 			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"},
 			navItem{Label: "Rules", Href: b + "/policy"})
-	case domain.MemberSuspended:
-		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"})
+	case domain.MemberSuspended, domain.MemberDeparted:
+		// Me is resolved by GetNetworkAccess for this request. These members
+		// retain their own records and rules even though they cannot trade.
+		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"},
+			navItem{Label: "Disputes", Href: b + "/disputes"}, navItem{Label: "Rules", Href: b + "/policy"})
 	default:
 		items = append(items, navItem{Label: "History", Href: b + "/history"})
 	}
@@ -234,9 +241,6 @@ func (c *rc) nav(cur string) []navItem {
 }
 
 func (c *rc) notice() string {
-	if n := c.frozenNotice(); n != "" {
-		return n
-	}
 	switch c.Me.Status {
 	case domain.MemberSuspended:
 		return "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
@@ -273,6 +277,8 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 		p.Title, p.Text = "No access", "You do not have access to this page."
 	case 404:
 		p.Title, p.Text = "Page not found", "We could not find that page. It may not exist, or you may not have access to it."
+	case 422:
+		p.Title, p.Text = "Request not accepted", "One or more values in this request are invalid. Nothing changed. Go back, check the values and try again."
 	case 429:
 		p.Title, p.Text = "Too many attempts", "Too many attempts. Wait a minute and try again. Nothing changed."
 	case 503:
@@ -316,13 +322,16 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		s.renderError(w, r, 403)
 	case domain.CodeNotFound:
 		s.renderError(w, r, 404)
+	case domain.CodeValidation:
+		s.renderError(w, r, 422)
 	case domain.CodeRateLimited:
 		s.renderError(w, r, 429)
 	case domain.CodeInvalidState, domain.CodeConflict, domain.CodeBlocked:
 		s.renderError(w, r, 409)
 	default:
 		if domain.CodeOf(err) == domain.CodeInternal {
-			log.Printf("web: internal error req=%q: %q", reqID(r), err.Error()) //nolint:gosec // G706: both values are %q-quoted, no control characters pass
+			// The route pattern, never the raw path; logx escapes and redacts the error text.
+			s.log.Error("web internal error", "request_id", reqID(r), "route", r.Pattern, "err", err)
 		}
 		s.renderError(w, r, 500)
 	}
@@ -334,15 +343,4 @@ func (s *server) notFoundOrRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.home(w, r)
-}
-
-// frozenNotice is the read-only notice for a frozen network, shown on every page of it so
-// forms that change anything are not a surprise. Members see no reason.
-func (c *rc) frozenNotice() string {
-	fi, ok := c.s.svc.FrozenInfo(c.Net.ID)
-	if !ok {
-		return ""
-	}
-	return "This network is read-only while its ledger is being checked, since " + string(c.when(fi.Since)) +
-		". You can read balances and history; anything that would change them is refused until the check passes."
 }

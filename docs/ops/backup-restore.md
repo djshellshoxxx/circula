@@ -204,3 +204,57 @@ Copy each backup and its manifest off the host, and copy the restore record too.
 operator roles that need them. Hosted deployments keep one copy outside the primary failure domain (OPS-019). With
 `backup-encryption-key` set the copies are encrypted; never store the key beside them. Without it, the copy location must
 itself be encrypted.
+
+## Interrupted restore recovery
+
+A restore writes `<database>.restore-in-progress` before moving the existing database or its WAL files.
+The marker is flushed to disk; directory renames are synced on Unix. Windows uses file flushing and
+retains the same process-crash guard, but the directory-sync helper is a no-op there: power-loss
+persistence remains dependent on the operating system and filesystem.
+
+The marker remains until the replacement has passed checks and the saved files have been cleaned up,
+or until a failed replacement has completely rolled back. `serve`, `migrate`, backup and operator
+commands refuse to open a database with this marker. They also refuse legacy
+`<database>.pre-restore-swap`, `-wal`, `-shm` or `-journal` remnants from older builds. A corrupt or empty
+marker still blocks startup. This avoids silently creating an empty database after interruption
+between renames. An interrupted restore is not automatically completed or rolled back on startup.
+
+Recovery procedure:
+
+1. Keep Circula stopped. Copy the complete database directory to a separate protected recovery
+   directory before changing anything. Preserve the configured database, its `-wal`, `-shm` and
+   `-journal`, the `.restore-partial` file and its sidecars, every `.pre-restore-swap` file and sidecar,
+   and the marker. The marker records the absolute target, staging and saved-file paths; preserve
+   files at those paths too if they are outside the database directory. Keep the original source
+   backup, its manifest and the pre-restore backup.
+2. Choose the intended recovery point explicitly. The pre-restore backup represents the previous
+   instance; the requested source backup represents the requested rollback. Do not infer the choice
+   from whichever filename exists. Do not attach an arbitrary WAL to either database: interruption
+   can leave the original main file under the saved name while its WAL still has the original name.
+3. Restore the selected authenticated backup into a **new, unused database path**. Use the matching
+   binary/schema and configured signing/encryption keys. For example, with a configured backup key:
+
+   ```sh
+   circula restore -config /etc/circula/circula.json -database /var/lib/circula-recovery/recovered.db /protected/selected-backup.db
+   circula verify-ledger -config /etc/circula/circula.json -database /var/lib/circula-recovery/recovered.db
+   ```
+
+   Create the recovery directory with owner-only access first. Do not use `-overwrite` on the
+   interrupted database. Successful restore invalidates the copied bearer credentials as described
+   above; verify the expected network/member/ledger state against the selected recovery point.
+4. Point the stopped service's database setting at the verified recovered path, then start it and
+   check readiness and the expected network state. Retain the quarantined original files and marker
+   until the incident review and backup-retention process permit their removal. Restoring into a new
+   path does not require deleting the original marker.
+
+If no usable backup is available, retain all evidence and reconstruct a coherent SQLite database/WAL
+set on **copies**, then verify the result before replacing the configured path. Never delete the marker
+merely to make startup proceed, and never start against a missing/empty database after a failed restore.
+
+## Backup signature versions
+
+New signed backups use `hmac_version: 2`. The signature covers integrity/ledger verification summaries
+and all other manifest attestation fields; the filename remains renameable. This binary still verifies
+historical manifests with no HMAC version field. Use the current or a compatible newer binary to verify
+new signatures: older binaries cannot authenticate HMAC-v2 manifests. Restore still verifies database
+contents independently of the recorded summaries.

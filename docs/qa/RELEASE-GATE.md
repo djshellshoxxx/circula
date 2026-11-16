@@ -11,7 +11,7 @@ It writes `gate-<UTC>.md` (default `docs/qa/evidence/`) with commit, tree state,
 | lint | `golangci-lint run` (0 issues; `$HOME/go/bin` preferred) | golangci-lint 2.15 |
 | contract | `TestAPIMatchesOpenAPI` | Go |
 | golden | golden migration tests (QA-027, 10,000-entry fixture) | Go |
-| e2e | `make e2e`: axe + keyboard + ARIA proxy, 93 tests | Node 20+, Chromium |
+| e2e | `make e2e`: axe + keyboard + ARIA proxy (`e2e/tests/*.spec.js`; UNVERIFIED: the earlier count of 93 tests was not re-counted) | Node 20+, Chromium |
 | load | small `CIRCULA_LOAD` smoke (4 workers, 20 members, 25 trades) | Go |
 | vuln | `govulncheck` v1.1.4 | network to vuln.go.dev |
 | pins | `scripts/check-action-pins.sh` | none |

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Re-review outcomes beyond the dispute outcomes upheld / partially_upheld.
@@ -36,6 +36,9 @@ func (s *Service) RespondToDispute(ctx context.Context, actor domain.Actor, netI
 			return domain.Forbidden("membership cannot perform this action")
 		}
 		out, err = idempotent(s, tx, netID, actor, "dispute.respond", in.IdempotencyKey, in, func() (string, error) {
+			if !domain.ValidRecordID(in.DisputeID) {
+				return "", domain.NotFound("dispute")
+			}
 			d, err := tx.GetDispute(netID, in.DisputeID)
 			if err != nil {
 				return "", domain.NotFound("dispute")
@@ -112,6 +115,9 @@ func (s *Service) RequestReReview(ctx context.Context, actor domain.Actor, netID
 		out, err = idempotent(s, tx, netID, actor, "dispute.rereview", in.IdempotencyKey, in, func() (string, error) {
 			if err := p.requireNetworkActive(); err != nil {
 				return "", err
+			}
+			if !domain.ValidRecordID(in.DisputeID) {
+				return "", domain.NotFound("dispute")
 			}
 			d, err := tx.GetDispute(netID, in.DisputeID)
 			if err != nil {
@@ -218,6 +224,9 @@ func (s *Service) DecideReReview(ctx context.Context, actor domain.Actor, netID 
 
 func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInput) (string, error) {
 	netID := p.net.ID
+	if !domain.ValidRecordID(in.DisputeID) {
+		return "", domain.NotFound("dispute")
+	}
 	d, err := tx.GetDispute(netID, in.DisputeID)
 	if err != nil {
 		return "", domain.NotFound("dispute")
@@ -284,7 +293,7 @@ func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInp
 		if t.Status == domain.TxDisputed {
 			return "", domain.InvalidState("another dispute on this trade is still undecided; decide or withdraw it before a re-review can reverse the trade")
 		}
-		if _, err := s.reverse(tx, p.net, t, amount, "re-review of dispute "+d.ID, p.member.ID, p.actor.RequestID); err != nil {
+		if _, err := s.reverseDispute(tx, p, t, amount, "re-review of dispute "+d.ID, d.ID, in.IdempotencyKey); err != nil {
 			return "", err
 		}
 	}

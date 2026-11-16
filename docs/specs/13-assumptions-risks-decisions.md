@@ -24,19 +24,19 @@ Summary: decided 2, deferred 1, open 20.
 |---|---|---|---|
 | DEC-005 | - | open, partly built | Single idle (720 h) and absolute (2160 h) timeouts for all roles; role split not built |
 | DEC-006 | - | open, partly built | Min length 12 and Argon2id built; benchmark and breached-password list not |
-| DEC-007 | - | open, not built | No second factor built |
+| DEC-007 | - | open, partly built | [Refreshed 2026-11-16; "No second factor built" is stale.] TOTP and recovery codes built (addenda/SEC-007.md); mandatory-for-admins is a platform setting, default off. Decision still open |
 | DEC-008 | - | open, partly built | One shared database with network-scoped rows; per-network files not built |
-| DEC-009 | - | open, not built | No recovery channel and no mail |
+| DEC-009 | - | open, partly built | [Refreshed 2026-11-16; "not built" is stale.] Channel-free recovery built (addenda/SEC-008.md). No mail channel. Recovery channel decision still open |
 | DEC-010 | - | open, partly built | Retain default and settle-to-zero rule built; counsel review open |
 | DEC-011 | - | open, partly built | Grant off by default; approval or invite requirement and caps not built |
 | DEC-012 | - | partly built | Response period is a network policy (default 7 days) and gates decisions; decision-target and appeal timelines not built |
-| DEC-013 | - | open, not built | Dual control not built |
-| DEC-014 | - | open, not built | Break-glass not built |
+| DEC-013 | - | open, partly built | [Refreshed 2026-11-16; was "not built".] Dual control built for administrator adjustments (addenda/SEC-011.md). Write-offs and credit-limit changes not covered |
+| DEC-014 | - | open, partly built | [Refreshed 2026-11-16; was "not built".] Break-glass built in part, time-boxed (addenda/SEC-013.md). Owner decision still open |
 | DEC-015 | - | open, partly built | Unkeyed hash chain built; keyed or external publication deferred |
-| DEC-016 | - | open, not built | RPO and RTO not recorded |
+| DEC-016 | - | open, partly built | [Refreshed 2026-11-16; was "not built".] RPO and RTO defaults recorded in docs/ops/rpo-rto.md (OPS-034); owner confirmation outstanding |
 | DEC-017 | - | decided, built | Flags, environment, file, defaults; explicit migrate default |
 | DEC-018 | - | decided, built | Text exposition; loopback allow-list and optional token |
-| DEC-019 | - | open, not built | Log retention not implemented |
+| DEC-019 | - | open, partly built | [Refreshed 2026-11-16; was "not built".] `log-retention` setting and `circula prune-logs` built (`cmd/circula/config.go:78`, `cmd/circula/log_retention.go`; SEC-021). Retention period decision still open |
 | DEC-020 | - | open, not built | Retention periods not set |
 | DEC-021 | - | open, partly built | Unilateral administrator change built; objection right not built |
 | DEC-022 | - | open, not built | Support objectives not set |
@@ -232,9 +232,9 @@ These owner decisions were raised or confirmed by the build and have no decision
 | ID | Question | Status after build | Recommended default |
 |---|---|---|---|
 | DEC-004 | Product licence | open; no LICENSE file in the repository | AGPL-3.0 or MIT (00 section 6). Needed before the repository is published or takes outside contributions (RSK-016). |
-| DEC-007 | Mandatory second factor for privileged roles | open; no second factor built | Mandatory for network administrators and platform operators; optional for members and reviewers. Blocks the authentication build (SEC-007). |
+| DEC-007 | Mandatory second factor for privileged roles | open; no second factor built [Refreshed 2026-11-16: TOTP and recovery codes are built; see addenda/SEC-007.md] | Mandatory for network administrators and platform operators; optional for members and reviewers. Blocks the authentication build (SEC-007). |
 | DEC-009 | Recovery channel and mail dependency | open; historical snapshot had no recovery flow or mail settings | In-app notices are the baseline; email is an optional channel if configured. Recovery channel and fallback remain for owner decision. Blocks SEC-008. |
-| DEC-014 | Platform operator break-glass controls and notice period | open; no break-glass path built (operator has no data role in the product) | Two-person approval; audit readable by affected administrators; access expires after 4 hours; notice within 24 hours where legally permitted (counsel review). |
+| DEC-014 | Platform operator break-glass controls and notice period | open; no break-glass path built (operator has no data role in the product) [Refreshed 2026-11-16: a time-boxed break-glass path is built in part, see addenda/SEC-013.md] | Two-person approval; audit readable by affected administrators; access expires after 4 hours; notice within 24 hours where legally permitted (counsel review). |
 | DEC-072 | Who may decide a dispute: reviewer role only, or administrators too | open; build allows an administrator without the reviewer role to decide (LIGHT-QA BUG-3) | (a): require the reviewer role, and allow an administrator to hold it; a party or conflicted person never decides. |
 | DEC-074 | Should an accepted-but-not-posted state ever be visible | open; build never persists or shows `accepted` (DEC-036) | (a) keep `accepted` internal, as built, until a two-phase flow is decided (03 DOM-014, 08 UX-016) |
 

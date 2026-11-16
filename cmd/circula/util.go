@@ -11,8 +11,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"syscall"
-
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // copyFileSync copies src to dst and flushes dst to stable storage before returning.
@@ -56,7 +54,7 @@ func writeAtomicPrivateFile(path string, data []byte) error {
 		return err
 	}
 	tmp := f.Name()
-	defer func() { _ = os.Remove(tmp) }()
+	defer func() { _ = os.Remove(tmp) }() // #nosec G703 -- tmp is the exclusively created temporary file, not request input.
 	if err := f.Chmod(0o600); err != nil {
 		_ = f.Close()
 		return err
@@ -72,7 +70,7 @@ func writeAtomicPrivateFile(path string, data []byte) error {
 	if err := f.Close(); err != nil {
 		return err
 	}
-	return os.Rename(tmp, path)
+	return os.Rename(tmp, path) // #nosec G703 -- destination is an operator-configured output path; tmp is created exclusively alongside it.
 }
 
 // signalContext returns a context cancelled on Ctrl-C or SIGTERM.
@@ -127,9 +125,4 @@ func secureDatabase(path string) (tightened bool, err error) {
 		}
 	}
 	return tightened, nil
-}
-
-// storeOptions maps the configuration to store.Options (SA2-20).
-func storeOptions(cfg *Config) store.Options {
-	return store.Options{Synchronous: cfg.Synchronous}
 }

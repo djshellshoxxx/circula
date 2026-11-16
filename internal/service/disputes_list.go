@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // DisputeQuery filters and pages the dispute list. Disputes come newest first; page forward by
@@ -32,6 +32,12 @@ func (s *Service) FindDisputes(ctx context.Context, actor domain.Actor, netID st
 				return domain.ErrForbidden
 			}
 			f.PartyID = p.member.ID
+		}
+		if q.TxID != "" && !domain.ValidRecordID(q.TxID) {
+			return domain.Invalid("transaction_id", "must be a record identifier")
+		}
+		if err := validatePageIDs(q.Page.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListDisputes(netID, f)
 		return err
