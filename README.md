@@ -75,12 +75,13 @@ Configuration is read from flags, then `CIRCULA_*` environment variables, then a
 ## Build and test
 
 ```sh
-make check          # gofmt, vet, race tests, golangci-lint, govulncheck, workflow checks
+make check          # gofmt, vet, race tests, golangci-lint, govulncheck, workflow pins, repository hygiene
 make release-local VERSION=v0.1.0   # all five release targets into bin/dist
 ```
 
 Release artifacts are built by [`.github/workflows/release.yml`](.github/workflows/release.yml) from a `v*` tag. Each
-archive contains the binary, this README and `ops/`, and `SHA256SUMS` lists every archive.
+archive contains the binary, this README, `ops/` (from `docs/ops`) and `legal/` (from `docs/legal`). Each target also gets
+a CycloneDX SBOM (`*.cdx.json`), and `SHA256SUMS` lists every archive and SBOM.
 
 ## Status and limits
 

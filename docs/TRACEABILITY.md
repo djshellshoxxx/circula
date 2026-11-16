@@ -1,5 +1,11 @@
 # Traceability matrix
 
+> **QA-042 regeneration still pending (2026-11-16).** This matrix was last regenerated on 2026-10-21 and is not current
+> for later commits. No generator exists in the repo: `Makefile`, `scripts/`, `.github/workflows/`, `cmd/` and `internal/`
+> contain no traceability script, so the matrix is maintained by hand and the QA-042 row stays `partial`. Two test names in
+> the 2026-10-21 snapshot (`TestDirectoryPagingReachesEveryMember`, `TestDirectoryNameFilterCoversAllMatches`) are not in the
+> repo now (UNVERIFIED whether they were removed or never committed). `TestHistoricalBalance*` is a name prefix, not one test.
+
 Status: generated from one status table at the build pass · Last updated: 2026-10-21 · Scope: every requirement ID in 00 to 06 and 08 to 13, the API contract IDs in 07, and the decision register IDs in 13 · Depends on: all spec files, [DECISIONS.md](DECISIONS.md)
 
 This matrix answers three questions for each ID: what the requirement says (short title and priority, from the spec), what state the code is in (status), and where it lives (code path and test names). Only symbols and files that exist in the repository are cited; the citations were checked by resolving each name against the Go, SQL, template and script files. A citation proves that the code or test exists. It does not prove that the test passes at a given build.

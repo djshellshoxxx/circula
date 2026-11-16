@@ -16,8 +16,8 @@ replaces all old ones. Keep the sheet away from the password manager.
 3. Everything the member had is signed out (sessions and API tokens). The
    remaining codes are deleted: sign in and make a new batch.
 
-Five wrong attempts for a login lock recovery for that login (15 minutes,
-doubling up to 24 hours). The normal sign-in is not affected. An unknown login
+Five wrong attempts lock recovery for that login for 15 minutes (fixed, not doubling; counters idle for 24 hours are
+forgotten). The normal sign-in is not affected. An unknown login
 looks exactly like a wrong code, so do not tell members "that login does not exist".
 
 ## Case 2: member lost the password and the codes

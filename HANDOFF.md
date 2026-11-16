@@ -1,5 +1,22 @@
 # Circula handoff
 
+## 2026-11-16: repo upkeep
+
+- `docs/wiki` source pages refreshed in the repo. The GitHub wiki is NOT synced yet: the wiki git repo does not accept clones (likely no first page saved in the web UI). Owner action needed, then sync.
+- `docs/specs` status refresh in progress (matrix is the reference).
+- [docs/TODO.md](docs/TODO.md) is the single open-work list. The "Next" and "Paused" lists in older sections below are history.
+- PR triage done. The bot closed no PRs; the owner decides which to close. Checked against the GitHub REST API on 2026-11-16:
+  - 0 open issues.
+  - 37 open PRs: 5 Dependabot (#46 to #50), #3 (not a draft), and 31 draft chained PRs.
+  - PR #31 (head `claude/circula-beta-completion-1npjw6`, base `main`) merged 2026-11-16T01:12:49Z (merge commit `bffcede`). The 2026-11-11 section describes that branch as the draft PR into `main`. No open PR has that head now.
+  - PR #19 (named as a draft in the 2026-11-04 section) merged to `main` on 2026-11-16 (`34ccb81`).
+- Repo health checks run on 2026-11-16 with go1.26.11 (`go.mod`, `deploy/Dockerfile` and the CI workflows agree on 1.26.11):
+  - `gofmt -l .`, `go build ./...`, `go vet ./...`, `scripts/check-hygiene.sh`, `scripts/check-action-pins.sh`: clean.
+  - `go test -count=1 ./...`: fails in `internal/service`. `TestDepartureCancelsMoreThanFiveHundredProposals` panics with `rate-limited: too many open proposals` (`testutil.Must`). All other packages pass. Commit `2eacf77` is the last commit that touched it. Owner or engineering to triage.
+  - Not run: race detector, e2e, load test, govulncheck (needs vuln.go.dev), release gate.
+- Docs corrected in this pass: the release archive contents (`README.md`), the PR #19 status (`docs/ops/README.md`), the container build status (`docs/ops/hardening.md`), the lockout description (fixed 15 minutes, not doubling; `docs/dev/recovery.md`, `docs/security/RAINBOW-BOOKS-SPEC.md`), the release-gate notes (`docs/qa/EVIDENCE.md`, `docs/qa/RELEASE-GATE.md`), a stale unit path (`docs/security/GOV-STANDARDS-MAPPING.md`), and the QA-042 pending note in `docs/TRACEABILITY.md`.
+- Not changed: owner decision rows in `docs/DECISIONS.md`. DEC-014 still says "Break-glass not built", which no longer matches `cmd/circula/breakglass.go`. Owner to update the status.
+
 ## 2026-11-11: beta consolidation (current)
 
 Branch `claude/circula-beta-completion-1npjw6`, a draft PR into `main`. It is the integration branch: it starts from
