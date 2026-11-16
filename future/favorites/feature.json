@@ -1,0 +1,10 @@
+{
+  "id": "FNET-202",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Network-scoped favorite validation and quick-repeat drafts with blank amount and fresh random intent; blocked/inactive target rejection.",
+  "remaining": "Owner-private persistent favorites; pin/reorder/delete; departure cleanup; current authorization adapter; confirmation form; idempotency persistence; account/network switching UI tests."
+}
