@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -9,6 +8,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) adminOverviewRoutes() {
@@ -41,13 +41,6 @@ type overviewData struct {
 	FrozenReason string
 }
 
-func plural(n int, one, many string) string {
-	if n == 1 {
-		return one
-	}
-	return many
-}
-
 // overview renders the administrator home: what needs attention, computed when the page loads
 // (FR-067).
 func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -60,28 +53,28 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 	stale := int(ov.StaleAfter / time.Hour)
 	soon := int(ov.InviteWithin / time.Hour)
 	d := &overviewData{AsOf: c.when(ov.AsOf), Rows: []attentionRow{
-		{ov.PendingMembers, plural(ov.PendingMembers, "membership request is waiting", "membership requests are waiting"), b + "/members?status=pending", "Review requests"},
-		{ov.StaleProposals, plural(ov.StaleProposals, "open proposal has", "open proposals have") + " waited at least " + itoa(stale) + " hours for an answer", b + "/proposals/stale", "Review waiting proposals"},
-		{ov.OpenDisputes, plural(ov.OpenDisputes, "dispute is", "disputes are") + " open or under review", c.base() + "/review", "Open the review queue"},
-		{ov.PostingPending, plural(ov.PostingPending, "dispute is", "disputes are") + " decided but the reversal is not yet posted", c.base() + "/review?status=posting_pending", "See them"},
-		{ov.NearLimit, plural(ov.NearLimit, "active member is", "active members are") + " at or beyond their credit limit", b + "/members?status=active", "Open the member list"},
-		{ov.ExpiringInvites, plural(ov.ExpiringInvites, "invitation ends", "invitations end") + " within " + itoa(soon) + " hours", b + "/invitations", "Open invitations"},
+		{ov.PendingMembers, messages.Text("overview.pending", ov.PendingMembers), b + "/members?status=pending", messages.Text("overview.review_requests")},
+		{ov.StaleProposals, messages.Text("overview.stale", ov.StaleProposals, stale), b + "/proposals/stale", messages.Text("overview.review_waiting")},
+		{ov.OpenDisputes, messages.Text("overview.disputes", ov.OpenDisputes), c.base() + "/review", messages.Text("overview.review_queue")},
+		{ov.PostingPending, messages.Text("overview.posting", ov.PostingPending), c.base() + "/review?status=posting_pending", messages.Text("overview.see_posting")},
+		{ov.NearLimit, messages.Text("overview.limit", ov.NearLimit), b + "/members?status=active", messages.Text("overview.members")},
+		{ov.ExpiringInvites, messages.Text("overview.invites", ov.ExpiringInvites, soon), b + "/invitations", messages.Text("overview.invitations")},
 	}}
 	if ov.Frozen != nil {
 		d.Frozen, d.FrozenSince, d.FrozenReason = true, c.when(ov.Frozen.Since), ov.Frozen.Reason
 	}
 	switch {
 	case ov.LastCheck == nil:
-		d.Check = "No ledger check has been recorded yet."
+		d.Check = messages.Text("overview.check_none")
 	case ov.LastCheck.OK:
-		d.Check = "The last ledger check passed."
+		d.Check = messages.Text("overview.check_ok")
 	default:
-		d.Check = "The last ledger check found problems."
+		d.Check = messages.Text("overview.check_failed")
 	}
 	if ov.LastCheck != nil {
 		d.CheckAt = c.when(ov.LastCheck.At)
 	}
-	s.render(w, r, c, "admin_home", 200, &page{Title: "Network admin", D: d})
+	s.render(w, r, c, "admin_home", 200, &page{Title: messages.Text("overview.title"), D: d})
 }
 
 func (s *server) staleProposals(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -101,15 +94,15 @@ func (s *server) staleProposals(w http.ResponseWriter, r *http.Request, c *rc) {
 		row := c.row(tx, n)
 		amount := domain.FormatAmount(tx.Amount, c.Net.Policy.Decimals)
 		// This is a network-wide queue: the viewer need not be either party.
-		row.Text = fmt.Sprintf("%s proposes to pay %s %s %s", n.of(tx.PayerMemberID), n.of(tx.PayeeMemberID), amount, unitFor(c.Net.Policy.CurrencyName, tx.Amount, c.Net.Policy.Decimals))
+		row.Text = messages.Text("queue.party_proposal", n.of(tx.PayerMemberID), n.of(tx.PayeeMemberID), amount, unitFor(c.Net.Policy.CurrencyName, tx.Amount, c.Net.Policy.Decimals))
 		row.Signed = amount
-		row.Status = "Waiting for an answer"
+		row.Status = messages.Text("queue.waiting")
 		d.Rows = append(d.Rows, row)
 	}
 	if len(txs) == 50 {
 		d.Next = txs[len(txs)-1].ID
 	}
-	s.render(w, r, c, "admin_stale_proposals", 200, &page{Title: "Waiting proposals", D: d})
+	s.render(w, r, c, "admin_stale_proposals", 200, &page{Title: messages.Text("queue.title"), D: d})
 }
 
 // ---- administrative reversal (FR-066) ----

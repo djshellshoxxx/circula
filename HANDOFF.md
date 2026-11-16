@@ -2,6 +2,8 @@
 
 ## 2026-11-16: core completion and consolidation (current)
 
+PR #59 merged as `672cddb` after all seven PR checks passed at `12175ec`; source: [CI run 43930580504](https://github.com/djshellshoxxx/circula/actions/runs/43930580504). The catalogue continuation on `codex/circula-message-catalogs-20261116` adds English complete-sentence messages with CLDR plural/count formatting for the administrator overview and proposal rows. Focused catalogue/web race regressions pass. This is a partial UX-047 migration, with no new language or owner policy decision; see `docs/dev/MESSAGES.md`. Full candidate validation is recorded by its own PR checks.
+
 Continuation also adds PER-022 network-page snapshot timestamps and persistent offline/restored-history notices. Server rendering and focused race checks pass; current browser evidence is supplied by PR checks because local Chromium cannot open its required socket.
 
 Continuation: FR-067 now links aged proposals to a bounded administrator queue with current role checks, exact age/expiry predicates, keyset paging and neutral party descriptions. A real Linux checkpoint database-write failure regression preserves the committed WAL and proves restart, replay, checkpoint retry and reopen. Detailed remaining storage boundaries are in the storage qualification note.
