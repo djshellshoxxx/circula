@@ -103,9 +103,11 @@ func buildAnchor(ctx context.Context, db *sql.DB, key []byte, now time.Time) (*a
 
 // writeAnchorFile writes the anchor atomically with owner-only permissions.
 func writeAnchorFile(path string, a *auditAnchor) error {
- b, err := json.MarshalIndent(a, "", "  ")
- if err != nil { return err }
- return writeAtomicPrivateFile(path, append(b, '\n'))
+	b, err := json.MarshalIndent(a, "", "  ")
+	if err != nil {
+		return err
+	}
+	return writeAtomicPrivateFile(path, append(b, '\n'))
 }
 
 // verifyAnchor compares the live chain with an anchor and returns one finding
