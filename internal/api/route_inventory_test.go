@@ -2,6 +2,7 @@ package api
 
 import (
 	"bufio"
+	"encoding/json"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -456,9 +457,10 @@ func concretePath(path string, vals map[string]string) string {
 
 // routeProbe is one principal's expectation for a gate.
 type routeProbe struct {
-	who  string
-	deny func(status int) bool
-	want string
+	who     string
+	network string // API only: the X-Network header, when set
+	deny    func(status int) bool
+	want    string
 }
 
 // TestRouteAuthorizationMatrix: anonymous callers, people of no network and
@@ -470,10 +472,27 @@ func TestRouteAuthorizationMatrix(t *testing.T) {
 	env := testutil.NewEnv(t)
 	admin := env.Person("admin")
 	net, _ := env.Network(admin, "acme", nil)
-	alice, _ := env.Member(admin, net, "alice")
-	_, bobM := env.Member(admin, net, "bob")
+	alice, aliceM := env.Member(admin, net, "alice")
+	bob, bobM := env.Member(admin, net, "bob")
+	trade := env.Trade(net.ID, alice, bob, aliceM, bobM, 100)
 	outsider := env.Person("outsider")
-	apiH := NewHandlerWithOptions(env.Svc, Options{CSRFKey: key})
+	// QA-012 roles beyond a plain member: a dispute reviewer (never an
+	// administrator), a member who left after holding the reviewer role, a
+	// suspended member, and the administrator of another network.
+	rita, ritaM := env.Member(admin, net, "rita")
+	must(t, env.Svc.AssignRole(env.Ctx, admin, net.ID, ritaM.ID, domain.RoleReviewer))
+	dora, doraM := env.Member(admin, net, "dora")
+	must(t, env.Svc.AssignRole(env.Ctx, admin, net.ID, doraM.ID, domain.RoleReviewer))
+	if _, err := env.Svc.DepartMember(env.Ctx, dora, net.ID, service.DepartInput{}); err != nil {
+		t.Fatal(err)
+	}
+	sam, samM := env.Member(admin, net, "sam")
+	must(t, env.Svc.SuspendMember(env.Ctx, admin, net.ID, samM.ID, "route matrix"))
+	fran := env.Person("fran")
+	other, _ := env.Network(fran, "other", nil)
+	// Rate limits off: the matrix sends several hundred requests from one
+	// address within a fixed window, and a 429 must not stand in for a refusal.
+	apiH := NewHandlerWithOptions(env.Svc, Options{CSRFKey: key, PrincipalPerMinute: -1, IPPerMinute: -1})
 	webH := web.NewHandlerWith(env.Svc, web.Options{CSRFKey: key})
 	srv := apiH.(*server)
 
@@ -491,24 +510,39 @@ func TestRouteAuthorizationMatrix(t *testing.T) {
 		}
 		return s
 	}
-	tokens := map[string]string{"alice": token(alice), "outsider": token(outsider)}
-	sessions := map[string]string{"alice": login("alice"), "outsider": login("outsider")}
+	tokens, sessions := map[string]string{}, map[string]string{}
+	for name, a := range map[string]domain.Actor{"alice": alice, "outsider": outsider, "rita": rita, "dora": dora, "sam": sam, "fran": fran} {
+		tokens[name], sessions[name] = token(a), login(name)
+	}
 	apiVals := map[string]string{"role": "reviewer"}
 	webVals := map[string]string{"slug": net.Slug}
 
 	is4xx := func(s int) bool { return s >= 400 && s < 500 }
+	is404 := func(s int) bool { return s == 404 }
+	is403 := func(s int) bool { return s == 403 }
+	anon := routeProbe{who: "anonymous", deny: func(s int) bool { return s == 401 }, want: "401"}
+	stranger := routeProbe{who: "outsider", deny: is404, want: "404 not-found"}
+	// fran administers another network and names this one: she must get the
+	// answer a non-existent network gets (ARC-007, API-017).
+	foreign := routeProbe{who: "fran", network: net.Slug, deny: is404, want: "404 not-found"}
+	refused := func(who string) routeProbe { return routeProbe{who: who, deny: is4xx, want: "a 4xx refusal"} }
 	api := map[string][]routeProbe{
-		"person":   {{"anonymous", func(s int) bool { return s == 401 }, "401"}},
-		"member":   {{"anonymous", func(s int) bool { return s == 401 }, "401"}, {"outsider", func(s int) bool { return s == 404 }, "404 not-found"}},
-		"reviewer": {{"anonymous", func(s int) bool { return s == 401 }, "401"}, {"outsider", func(s int) bool { return s == 404 }, "404 not-found"}, {"alice", is4xx, "a 4xx refusal"}},
-		"admin":    {{"anonymous", func(s int) bool { return s == 401 }, "401"}, {"outsider", func(s int) bool { return s == 404 }, "404 not-found"}, {"alice", is4xx, "a 4xx refusal"}},
+		"person":   {anon},
+		"member":   {anon, stranger, foreign},
+		"reviewer": {anon, stranger, foreign, refused("alice"), refused("dora"), refused("sam")},
+		"admin":    {anon, stranger, foreign, refused("alice"), refused("rita"), refused("dora"), refused("sam")},
 	}
-	toLogin := func(s int) bool { return s == http.StatusSeeOther }
+	toLogin := routeProbe{who: "anonymous", deny: func(s int) bool { return s == http.StatusSeeOther }, want: "303 to /login"}
+	web404 := func(who string) routeProbe { return routeProbe{who: who, deny: is404, want: "404"} }
+	web403 := func(who string) routeProbe { return routeProbe{who: who, deny: is403, want: "403"} }
+	webRefused := func(who string) routeProbe {
+		return routeProbe{who: who, deny: func(s int) bool { return s == 403 || s == 404 }, want: "403 or 404"}
+	}
 	webP := map[string][]routeProbe{
-		"person":   {{"anonymous", toLogin, "303 to /login"}},
-		"member":   {{"anonymous", toLogin, "303 to /login"}, {"outsider", func(s int) bool { return s == 404 }, "404"}},
-		"reviewer": {{"anonymous", toLogin, "303 to /login"}, {"outsider", func(s int) bool { return s == 404 }, "404"}, {"alice", func(s int) bool { return s == 403 }, "403"}},
-		"admin":    {{"anonymous", toLogin, "303 to /login"}, {"outsider", func(s int) bool { return s == 404 }, "404"}, {"alice", func(s int) bool { return s == 403 }, "403"}},
+		"person":   {toLogin},
+		"member":   {toLogin, web404("outsider"), web404("fran")},
+		"reviewer": {toLogin, web404("outsider"), web404("fran"), web403("alice"), webRefused("dora"), webRefused("sam")},
+		"admin":    {toLogin, web404("outsider"), web404("fran"), web403("alice"), web403("rita"), webRefused("dora"), webRefused("sam")},
 	}
 	csrf := httpx.CSRF{Key: key}
 	anonSecret := strings.Repeat("a", 32)
@@ -543,6 +577,9 @@ func TestRouteAuthorizationMatrix(t *testing.T) {
 				if pr.who != "anonymous" {
 					hr.Header.Set("Authorization", "Bearer "+tokens[pr.who])
 				}
+				if pr.network != "" {
+					hr.Header.Set("X-Network", pr.network)
+				}
 				probeRoute(t, r, pr, apiH, hr)
 			}
 		case "web":
@@ -566,6 +603,70 @@ func TestRouteAuthorizationMatrix(t *testing.T) {
 			}
 		}
 	}
+
+	// QA-012 / ARC-007: an object of another network is indistinguishable
+	// from one that does not exist. fran, the administrator of her own
+	// network, names acme's member, account and trade ids on every route
+	// that takes an object id; each answer must equal the answer for an id
+	// that never existed.
+	foreignIDs := map[string]string{"member": bobM.ID, "account": bobM.AccountID, "trade": trade.ID}
+	const missingID = "no-such-object"
+	n := 0
+	send := func(r authzRow, id string) *httptest.ResponseRecorder {
+		n++
+		var hr *http.Request
+		switch r.surface {
+		case "api":
+			p := concretePath(r.path, map[string]string{"id": id, "role": "reviewer"})
+			hr = httptest.NewRequest(r.method, p, nil)
+			if isUnsafe(r.method) && r.method != http.MethodDelete {
+				hr = httptest.NewRequest(r.method, p, strings.NewReader("{}"))
+				hr.Header.Set("Content-Type", "application/json")
+				if r.method == http.MethodPatch {
+					hr.Header.Set("Content-Type", "application/merge-patch+json")
+				}
+			}
+			hr.Header.Set("Idempotency-Key", "route-foreign-"+strconv.Itoa(n))
+			hr.Header.Set("Authorization", "Bearer "+tokens["fran"])
+			hr.Header.Set("X-Network", other.Slug)
+		default:
+			hr = httptest.NewRequest(r.method, concretePath(r.path, map[string]string{"slug": other.Slug, "id": id}), nil)
+			hr.AddCookie(&http.Cookie{Name: httpx.SessionCookie, Value: sessions["fran"]})
+			hr.Header.Set("X-CSRF-Token", csrf.Token(sessions["fran"]))
+		}
+		rec := httptest.NewRecorder()
+		map[string]http.Handler{"api": apiH, "web": webH}[r.surface].ServeHTTP(rec, hr)
+		return rec
+	}
+	problem := func(rec *httptest.ResponseRecorder) string {
+		var p struct{ Code, Detail string }
+		_ = json.Unmarshal(rec.Body.Bytes(), &p)
+		return strconv.Itoa(rec.Code) + " " + p.Code + " " + p.Detail
+	}
+	checked := 0
+	for _, r := range readAuthzTable(t) {
+		if r.method == "*" || r.surface == "ops" || r.gate == "public" || r.gate == "person" || !strings.Contains(r.path, "{id}") {
+			continue
+		}
+		for kind, id := range foreignIDs {
+			checked++
+			got, want := send(r, id), send(r, missingID)
+			if got.Code >= 500 || (got.Code < 400 && got.Code != http.StatusSeeOther) {
+				t.Errorf("%s: fran (admin of %s) naming acme's %s: status %d, want a refusal (ARC-007)", r.routeKey, other.Slug, kind, got.Code)
+			}
+			if r.surface == "api" && problem(got) != problem(want) {
+				t.Errorf("%s: acme's %s answers %q to fran, an unknown id %q: another network's object must look not-found (QA-012)",
+					r.routeKey, kind, problem(got), problem(want))
+			}
+			if r.surface == "web" && got.Code != want.Code {
+				t.Errorf("%s: acme's %s answers %d to fran, an unknown id %d: another network's object must look not-found (QA-012)",
+					r.routeKey, kind, got.Code, want.Code)
+			}
+		}
+	}
+	if checked < 3*40 {
+		t.Errorf("only %d foreign-object probes ran; the table lost its id routes", checked)
+	}
 }
 
 func probeRoute(t *testing.T, r authzRow, pr routeProbe, h http.Handler, hr *http.Request) *httptest.ResponseRecorder {
@@ -580,8 +681,15 @@ func probeRoute(t *testing.T, r authzRow, pr routeProbe, h http.Handler, hr *htt
 		t.Errorf("%s (gate %s) as %s: status %d, want %s (%s; %s:%d)", r.routeKey, r.gate, pr.who, rec.Code, pr.want,
 			what, authzTablePath, r.line)
 	}
-	if pr.who == "outsider" && r.surface == "api" && rec.Code == 404 && !strings.Contains(rec.Body.String(), `"code":"not-found"`) {
-		t.Errorf("%s as outsider: 404 body %s is not the plain not-found problem", r.routeKey, rec.Body.String())
+	if (pr.who == "outsider" || pr.who == "fran") && r.surface == "api" && rec.Code == 404 && !strings.Contains(rec.Body.String(), `"code":"not-found"`) {
+		t.Errorf("%s as %s: 404 body %s is not the plain not-found problem", r.routeKey, pr.who, rec.Body.String())
 	}
 	return rec
+}
+
+func must(t *testing.T, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
