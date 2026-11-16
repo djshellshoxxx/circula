@@ -49,6 +49,14 @@ func spoolEnv(t *testing.T, dir string) *spoolWorld {
 	w := &spoolWorld{t: t, person: admin.PersonID, env: env, netID: net.ID, net: net, admin: admin, alice: alice, now: time.Now()}
 	w.h = NewHandlerWithOptions(env.Svc, Options{ExportSpoolDir: dir,
 		Now: func() time.Time { w.mu.Lock(); defer w.mu.Unlock(); return w.now }}).(*server)
+	// Release every artefact before dir is removed (Windows keeps open files).
+	t.Cleanup(func() {
+		w.h.jobs.mu.Lock()
+		defer w.h.jobs.mu.Unlock()
+		for k, e := range w.h.jobs.exps {
+			w.h.jobs.dropLocked(k, e)
+		}
+	})
 	for _, p := range []struct {
 		a   domain.Actor
 		tok *string
@@ -176,6 +184,7 @@ func storeExport(t *testing.T, j *jobStore, e *exportEntry, data []byte) {
 		t.Fatal(err)
 	}
 	a.finish(e)
+	t.Cleanup(e.release) // Windows cannot remove a temporary directory holding an open file
 	if !tk.commit(e) {
 		t.Fatal("commit refused")
 	}
