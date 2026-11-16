@@ -1,0 +1,10 @@
+{
+  "id": "FUX-102",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "128-bit random opaque tokens, hashed token storage input, trusted-origin URL parser, expiry/revocation/claimed-intent preflight.",
+  "remaining": "Static aliases and rotation; QR renderer/scanner/manual-entry UI; durable hashed requests; atomic request claim plus existing proposal creation; idempotent retries; current membership/limit authorization and concurrent/restart tests."
+}
