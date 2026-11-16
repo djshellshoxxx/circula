@@ -8,7 +8,7 @@ BIN       := bin/circula
 export CGO_ENABLED ?= 0
 GOVULNCHECK := golang.org/x/vuln/cmd/govulncheck@v1.1.4
 
-.PHONY: help build test test-race vet fmt-check lint vuln actions-check hygiene release-gate restore-drill check e2e e2e-install load contract release-local clean
+.PHONY: help build test test-race vet fmt-check lint vuln actions-check hygiene traceability traceability-check release-gate restore-drill check e2e e2e-install load contract release-local clean
 
 help:
 	@echo "build          build $(BIN) for the host (CGO_ENABLED=0, -trimpath)"
@@ -19,6 +19,8 @@ help:
 	@echo "lint           golangci-lint run"
 	@echo "vuln           govulncheck ./... (needs network for the vulnerability database)"
 	@echo "actions-check  workflow action pin and permission checks"
+	@echo "traceability   regenerate docs/TRACEABILITY.md from docs/specs and the source tree (QA-042)"
+	@echo "traceability-check  fail if docs/TRACEABILITY.md is out of date"
 	@echo "check          everything CI runs except the release build"
 	@echo "contract       validate the JSON API against docs/api/openapi.yaml (also part of test)"
 	@echo "e2e            build the binary, then axe-core accessibility and keyboard tests in headless Chromium (needs node; see docs/qa/E2E.md)"
@@ -59,7 +61,13 @@ restore-drill:
 actions-check:
 	scripts/check-action-pins.sh
 
-check: fmt-check vet test-race lint vuln actions-check hygiene
+traceability:
+	$(GO) run ./scripts/traceability -head "$$(git rev-parse --short HEAD)" -o docs/TRACEABILITY.md
+
+traceability-check:
+	$(GO) run ./scripts/traceability -check -o docs/TRACEABILITY.md
+
+check: fmt-check vet test-race lint vuln actions-check hygiene traceability-check
 
 contract:
 	$(GO) test -count=1 -run TestAPIMatchesOpenAPI -v ./internal/contract
