@@ -223,7 +223,7 @@ func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.
 			return nil
 		}
 		for _, t := range props {
-				if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
+			if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
 				return err
 			}
 			// GOV-010: the other party is told their open proposal ended.
