@@ -1,0 +1,10 @@
+{
+  "id": "FNET-205",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Overflow-checked gross historical completed-transfer volume, distinct trader counts, half-open periods and full small-cohort suppression.",
+  "remaining": "Ledger-backed isolated snapshots including reversal accounting; stock versus flow views; fixed periods and anti-differencing privacy policy; admin authorization; own-member trends; dormant offers; accessible tables/charts and exports. Existing core is gross volume only, not the complete analytics feature."
+}
