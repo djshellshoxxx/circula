@@ -1,0 +1,10 @@
+{
+  "id": "FNET-207",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Daily IANA-local reminder windows, stable daily dedupe keys, DST gap skipping/fold first-occurrence selection and no catch-up backlog.",
+  "remaining": "Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; quotas; weekly/monthly schedules and calendar policy; optional manually confirmed draft adapter; crash/concurrent worker tests. Current core supports daily reminders only."
+}
