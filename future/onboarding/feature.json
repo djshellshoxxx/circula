@@ -1,0 +1,10 @@
+{
+  "id": "FUX-106",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Versioned idempotent checklist transitions and checked integer synthetic balance previews with credit/reservation limits.",
+  "remaining": "Persist per-network/member checklist; separate practice origin/database with canned fixtures and distinct credentials; guided skip/resume templates; admin copy; accessibility and production-ledger isolation acceptance tests."
+}
