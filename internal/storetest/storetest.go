@@ -417,7 +417,8 @@ func postingGuards(t *testing.T, s store.Store) {
 	entry := func(id, acc string, amt int64) *domain.Entry {
 		return &domain.Entry{ID: id, NetworkID: f.net, TxID: f.tx, AccountID: acc, Amount: amt, LedgerSeq: 1, PostedAt: t0}
 	}
-	complete := func(tx store.Tx) error {
+	deadline := t0.Add(30 * 24 * time.Hour)
+	completeWith := func(tx store.Tx, withDeadline bool) error {
 		x, err := tx.GetTransaction(f.net, f.tx)
 		if err != nil {
 			return err
@@ -425,8 +426,13 @@ func postingGuards(t *testing.T, s store.Store) {
 		x.Status = domain.TxCompleted
 		done := t0
 		x.CompletedAt, x.LedgerSeq = &done, 1
+		if withDeadline {
+			// DOM-017/DAT-051: a trade's dispute deadline is fixed at completion.
+			x.DisputeDeadlineAt, x.DisputePolicyVersion = &deadline, 1
+		}
 		return tx.UpdateTransaction(x)
 	}
+	complete := func(tx store.Tx) error { return completeWith(tx, true) }
 	if err := s.Update(ctx, complete); err == nil {
 		t.Error("a transaction completed without entries")
 	}
@@ -451,6 +457,17 @@ func postingGuards(t *testing.T, s store.Store) {
 	}); err == nil {
 		t.Error("illegal transition proposed -> reversed stored")
 	}
+	if err := s.Update(ctx, func(tx store.Tx) error {
+		if err := tx.InsertEntry(entry("e1", f.accA, -100)); err != nil {
+			return err
+		}
+		if err := tx.InsertEntry(entry("e2", f.accB, 100)); err != nil {
+			return err
+		}
+		return completeWith(tx, false)
+	}); err == nil {
+		t.Error("a trade completed without its dispute deadline (DOM-017, DAT-051)")
+	}
 	// A balanced pair completes it; the terms stay as proposed.
 	must(t, s.Update(ctx, func(tx store.Tx) error {
 		if err := tx.InsertEntry(entry("e1", f.accA, -100)); err != nil {
@@ -470,6 +487,16 @@ func postingGuards(t *testing.T, s store.Store) {
 		x.Amount, x.PayerAccountID = 1, f.accB
 		return tx.UpdateTransaction(x)
 	})
+	// So is moving the dispute deadline once fixed.
+	_ = s.Update(ctx, func(tx store.Tx) error {
+		x, err := tx.GetTransaction(f.net, f.tx)
+		if err != nil {
+			return err
+		}
+		later := deadline.Add(time.Hour)
+		x.DisputeDeadlineAt, x.DisputePolicyVersion = &later, 2
+		return tx.UpdateTransaction(x)
+	})
 	view(t, s, func(tx store.Tx) error {
 		x, err := tx.GetTransaction(f.net, f.tx)
 		if err != nil {
@@ -477,6 +504,10 @@ func postingGuards(t *testing.T, s store.Store) {
 		}
 		if x.Status != domain.TxCompleted || x.Amount != 100 || x.PayerAccountID != f.accA {
 			t.Errorf("after posting and a terms rewrite: %+v (terms are immutable, DOM-013)", x)
+		}
+		if x.DisputeDeadlineAt == nil || !x.DisputeDeadlineAt.Equal(deadline) || x.DisputePolicyVersion != 1 {
+			t.Errorf("dispute deadline = %v (policy v%d), want %v (v1) after a deadline rewrite (DOM-017: fixed at completion)",
+				x.DisputeDeadlineAt, x.DisputePolicyVersion, deadline)
 		}
 		es, err := tx.ListEntries(f.net, f.tx)
 		if err != nil {
