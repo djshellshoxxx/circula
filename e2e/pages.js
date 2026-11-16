@@ -53,6 +53,7 @@ const PAGES = [
   ['join a network (invitation only)', 'carol', (st) => `${n(st)}/join`, 'joinnet'],
 
   ['admin overview', 'admin', (st) => `${n(st)}/admin`, 'admin_home'],
+  ['admin waiting proposals', 'admin', (st) => `${n(st)}/admin/proposals/stale`, 'admin_stale_proposals'],
   ['admin members', 'admin', (st) => `${n(st)}/admin/members`, 'admin_members'],
   ['admin member action', 'admin', (st) => `${n(st)}/admin/members/${st.bobId}/suspend`, 'admin_member_act'],
   ['admin inactive members', 'admin', (st) => `${n(st)}/admin/inactive`, 'admin_inactive'],
