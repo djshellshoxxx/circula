@@ -11,8 +11,7 @@ Workflow: `.github/workflows/ci.yml`. The tag-triggered `release.yml` gates are 
 | Push to `main` | All of the above, plus `test-cross`: `test (macos-15-intel)` with `-race`, `test (windows-2022)` |
 | Nightly (03:17 UTC) and manual `workflow_dispatch` | Same as a push to `main` |
 
-Rationale: measured timings were macOS race about 7.9 min, Ubuntu race about 6.8 min and e2e about 4.7 min. The
-macOS and Windows runs add wall time and runner cost on every PR push; running them on `main` and nightly still
+The macOS and Windows runs add wall time and runner cost on every PR push; running them on `main` and nightly still
 catches platform regressions within a day. For native qualification before merge, add the `ci:cross-platform`
 label before pushing the next PR commit. The label is read from that event; adding it alone does not start a
 new run. Alternatively use Actions, ci, "Run workflow", and pick the branch.

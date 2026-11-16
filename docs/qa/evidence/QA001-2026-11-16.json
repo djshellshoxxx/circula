@@ -1,0 +1,107 @@
+{
+  "recorded_date": "2026-11-16",
+  "status": "passed",
+  "source_revision": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+  "source_tree": "f51e05687ac07fcfd625206ae2fc41e402b93a5c",
+  "consolidation_merge": "304600cd5e03c7b0095cecb2cd48d4655c5a6152",
+  "qualification_merge": "7cdb9660a8779e40dc21c1da36c87e3da73ff26f",
+  "qualification_ci": "https://github.com/djshellshoxxx/circula/actions/runs/43914378342",
+  "total_distinct_sequences": 100000,
+  "total_generated_operations": 2800700,
+  "first_seed": 1000000,
+  "last_seed": 1099999,
+  "failed_seed_events": 0,
+  "failure_fixtures": 0,
+  "gaps_or_overlaps": false,
+  "release_threshold_confirmed": false,
+  "production_and_qa001_harness_unchanged_in_qualification": true,
+  "qualification_changed_paths": [
+    ".github/workflows/ci.yml",
+    "cmd/circula/alert_rules_test.go",
+    "cmd/circula/qa028_backup_load_test.go",
+    "docs/TRACEABILITY.md",
+    "docs/ops/ci.md",
+    "docs/qa/sqlite-storage-failure-qualification.md",
+    "internal/api/export_lifecycle_test.go",
+    "internal/api/export_parallel_test.go",
+    "internal/api/export_spool_test.go",
+    "internal/service/sqlite_ioerr_linux_test.go",
+    "internal/store/pii_inventory_test.go"
+  ],
+  "batches": [
+    {
+      "metadata": {
+        "started_at": "2026-11-16T16:26:45.725390+00:00",
+        "status": "passed",
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-p=1",
+          "-parallel=2",
+          "-timeout=600s",
+          "-run=^TestQA001InvariantSequences$",
+          "./internal/service"
+        ],
+        "start_seed": 1000000,
+        "last_seed": 1000999,
+        "sequences": 1000,
+        "shards": 2,
+        "race": false,
+        "timeout_seconds": 600,
+        "release_threshold_confirmed": false,
+        "revision": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+        "dirty": false,
+        "go_version": "go version go1.26.11 linux/amd64",
+        "finished_at": "2026-11-16T16:27:26.432870+00:00",
+        "elapsed_seconds": 40.707,
+        "exit_code": 0,
+        "failure_fixtures": []
+      },
+      "generated_operations": 27463,
+      "sha256": {
+        "metadata.json": "8e5ef38ed4584de1b12b2932e64690ee9e51e1092fe3d0f053765a65cbcdb5ee",
+        "go-test.jsonl": "7a368df50ce88c29bcf826735468d3053b67958bd0fd2bd505679605ba09cd0e"
+      },
+      "archive_directory": "batch-1000"
+    },
+    {
+      "metadata": {
+        "started_at": "2026-11-16T16:29:02.509366+00:00",
+        "status": "passed",
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-count=1",
+          "-p=1",
+          "-parallel=2",
+          "-timeout=5400s",
+          "-run=^TestQA001InvariantSequences$",
+          "./internal/service"
+        ],
+        "start_seed": 1001000,
+        "last_seed": 1099999,
+        "sequences": 99000,
+        "shards": 2,
+        "race": false,
+        "timeout_seconds": 5400,
+        "release_threshold_confirmed": false,
+        "revision": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+        "dirty": false,
+        "go_version": "go version go1.26.11 linux/amd64",
+        "finished_at": "2026-11-16T17:41:39.747442+00:00",
+        "elapsed_seconds": 4357.238,
+        "exit_code": 0,
+        "failure_fixtures": []
+      },
+      "generated_operations": 2773237,
+      "sha256": {
+        "metadata.json": "86d4662d41daaf8bb7d934b3b22e55d6ebfc6ef3880fa4f90d719d5dfaf06872",
+        "go-test.jsonl": "87444c50a9703a09e176bd5c211a061be1941e487434d9cda86b9887a0e1903f"
+      },
+      "archive_directory": "batch-99000"
+    }
+  ]
+}

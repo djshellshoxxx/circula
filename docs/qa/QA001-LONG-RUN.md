@@ -1,5 +1,7 @@
 # QA-001 manual sequence runs
 
+Recorded execution: [100,000 sequences passed on 2026-11-16](QA001-2026-11-16.md), with exact revision, seed ranges, commands, durations and log hashes. This does not confirm a release threshold.
+
 The harness runs at most 50 generated operations per seed and checks ledger invariants after every operation. Each seed gets a fresh database, clock and deterministic ID generator, so replay does not depend on earlier seeds or worker count. The ordinary test budget remains **250 sequences**, or **50 with the race detector**. Merge/release thresholds remain **UNCONFIRMED** in [THRESHOLDS.md](THRESHOLDS.md); this manual workflow does not approve or enforce a release gate.
 
 Run a small batch locally first:
@@ -16,7 +18,7 @@ An explicit long run, when the available runtime is sufficient:
 python3 scripts/run_qa001.py --sequences 100000 --start-seed 100000 --shards 4 --timeout-seconds 18000
 ```
 
-This command is an opt-in workload, not a claim that 100,000 sequences have run or that the owner has accepted that threshold. Benchmark the intended runner using a small batch before selecting its runtime budget. For separate batches, use adjacent non-overlapping ranges: for example, `--start-seed 100000 --sequences 10000`, then `--start-seed 110000 --sequences 10000`. The last included seed is `start + count - 1`.
+This command is an opt-in workload; only a completed passing result counts as execution evidence, and running it does not approve the owner's release threshold. Benchmark the intended runner using a small batch before selecting its runtime budget. For separate batches, use adjacent non-overlapping ranges: for example, `--start-seed 100000 --sequences 10000`, then `--start-seed 110000 --sequences 10000`. The last included seed is `start + count - 1`.
 
 Replay a failure at the recorded checkout revision. Prefer a clean checkout for shared evidence; if metadata records `dirty: true`, replay also requires those local source changes:
 
