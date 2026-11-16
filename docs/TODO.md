@@ -61,6 +61,10 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Remaining specification and qualification work
 
+- SEC-026 is an outstanding implementation: network-configurable proposal-velocity and reciprocal-trade signals, one signal per window, visible only to same-network administrators/reviewers, with no automatic trade blocking. Existing throttles are not this feature.
+- UX-047 message catalogues and catalogue-based plural/number formatting remain outstanding engineering work; translation/locale scope still needs product confirmation.
+- GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
+
 - Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.
   The 100,000-sequence execution itself is complete; it does not approve a release gate.
 - QA-042 remaining inspection/manual/external citations and full acceptance-criterion qualification.

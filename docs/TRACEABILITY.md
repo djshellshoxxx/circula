@@ -2,7 +2,7 @@
 
 Generated file (QA-042); do not edit by hand. Regenerate with `make traceability`, which runs `go run ./scripts/traceability -head "$(git rev-parse --short HEAD)" -o docs/TRACEABILITY.md`. `make traceability-check` fails when this file does not match the specs and code.
 
-Input: git HEAD `ccaebfb` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
+Input: git HEAD `bbd2141` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
 
 Depends on: the spec files in [specs/](specs/), [DECISIONS.md](DECISIONS.md) (DEC-028 onward count as known IDs), the source tree outside docs/, and the frozen citations in `scripts/traceability/legacy-citations.tsv`.
 
@@ -28,7 +28,7 @@ Execution evidence: not supplied. This committed inventory contains no last-run 
 
 ## Summary
 
-Requirement IDs (excluding decision-register rows): 502; built 279, partial 118, not built 12, deferred 5, no status row 88.
+Requirement IDs (excluding decision-register rows): 502; built 280, partial 119, not built 10, deferred 5, no status row 88.
 
 Decision-register IDs: 29; deferred 1, decided, built 4, no status row 2, open, not built 5, open, partly built 16, partly built 1.
 
@@ -36,7 +36,7 @@ Decision-register IDs: 29; deferred 1, decided, built 4, no status row 2, open, 
 |---|---|
 | IDs in the matrix | 531 |
 | IDs with at least one code citation | 449 |
-| IDs with at least one test citation | 421 |
+| IDs with at least one test citation | 422 |
 | Built requirements with no test citation of any kind | 19 |
 | Built requirements with no test that names the ID (legacy and spec-note citations not counted) | 135 |
 | IDs cited in code but not defined in the specs or DECISIONS.md | 0 |
@@ -403,7 +403,7 @@ Source: [07-api-contract.md](specs/07-api-contract.md) · IDs: 85 · no status r
 
 ## 08 UX, Information Architecture and Accessibility Requirements
 
-Source: [08-ux-accessibility.md](specs/08-ux-accessibility.md) · IDs: 61 · built 35, partial 21, not built 4, no status row 1
+Source: [08-ux-accessibility.md](specs/08-ux-accessibility.md) · IDs: 61 · built 36, partial 21, not built 3, no status row 1
 
 | ID | Pri | Requirement (short) | Status | Code | Tests | Layer | Last recorded test result | Note |
 |---|---|---|---|---|---|---|---|---|
@@ -443,7 +443,7 @@ Source: [08-ux-accessibility.md](specs/08-ux-accessibility.md) · IDs: 61 · bui
 | UX-034 | P0 | Text MUST remain readable and all functionality available when text is resized to 200... | partial | `internal/web/static/style.css` † | `e2e/tests/resize.spec.js` (UX-034: ${name} with ${preference}, ${viewport.name})<br>`e2e/tests/resize.spec.js` (UX-034: dispute review and edit with ${preference}, ${viewport.name})<br>`e2e/tests/resize.spec.js` (UX-034: proposal and decline with ${preference}, ${viewport.name})<br>`e2e/tests/resize.spec.js` (UX-034: proposal review with ${preference}, ${viewport.name})<br>`e2e/tests/resize.spec.js` (UX-034: proposal, acceptance and dispute with ${preference},...)<br>`e2e/tests/resize.spec.js` (UX-034: registration and explicit invitation join with ${preference},...)<br>+1 more | browser, web | not recorded | 20 enlargement/spacing probes passed at d75f31e, including own-trade/onboarding paths; wider functionality/native coverage remains |
 | UX-035 | P0 | Interactive targets MUST be at least 24 by 24 CSS pixels; targets SHOULD be at least 44... | partial | `e2e/targets.js`<br>`internal/web/static/style.css` † | `e2e/tests/a11y-governance.spec.js`<br>`e2e/tests/target-size.spec.js` (UX-035 guard: crowded 16 px links and a 30 px button are reported)<br>`e2e/tests/target-size.spec.js` (UX-035: target sizes on every page, ${layout.name}) | browser | not recorded | Target sizes not measured. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/target-size.spec.js` exists. Its result is UNVERIFIED in this refresh] |
 | UX-036 | P0 | The layout MUST NOT lock orientation; portrait and landscape MUST both be usable. | partial | `internal/web/static/style.css` † | `e2e/tests/responsive.spec.js` (UX-033/UX-036: ${name}, ${viewport.name})<br>`e2e/tests/responsive.spec.js` (UX-033/UX-036: ledger consistency check result, ${viewport.name})<br>`e2e/tests/responsive.spec.js` (UX-033/UX-036: two-step sign-in setup key and password recovery codes...) | browser | not recorded | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |
-| UX-037 | P1 | Tables with more than four columns MUST collapse into labelled stacked rows at narrow... | not built | `internal/web/static/style.css` † | - | - | not recorded | Stacked rows for wide tables not built |
+| UX-037 | P1 | Tables with more than four columns MUST collapse into labelled stacked rows at narrow... | built | `internal/web/static/style.css` † | `e2e/tests/stacked-tables.spec.js` | browser | not recorded | Wide tables already use `table.stack` and per-cell `data-label`; the narrow-width media rule stacks cells and renders those labels. `e2e/tests/stacked-tables.spec.js` checks administrator/member audit tables at 1280px and 320px, with unchanged record values and visible cell labels. Browser execution is recorded in current PR checks. |
 | UX-038 | P0 | Every function reachable with a pointer MUST be reachable and operable with the keyboard... | partial | `docs/qa/LIGHT-QA.md` † | `e2e/tests/kbd-admin.spec.js` (UX-038: approve a request to join using only the keyboard)<br>`e2e/tests/kbd-admin.spec.js` (UX-038: change the policy using only the keyboard)<br>`e2e/tests/kbd-admin.spec.js` (UX-038: create and then edit a listing using only the keyboard) | browser | not recorded | Keyboard operation verified manually for sign-in and trade form only |
 | UX-039 | P0 | Focus order MUST follow reading order. | partial | `internal/web/templates/base.html` † | `e2e/tests/noscript-focus.spec.js` (QA-034/UX-039/UX-040: no-script focus, ${name}, ${viewport.name}) | browser | not recorded | Reading order by template; not automated |
 | UX-040 | P0 | A visible focus indicator MUST be present on every focusable element, and focused... | partial | `internal/web/static/style.css` † | `e2e/tests/noscript-focus.spec.js` (QA-034/UX-039/UX-040: no-script focus, ${name}, ${viewport.name}) | browser | not recorded | 18 no-script key-only entry-screen focus probes passed at d75f31e; transition/manual/native review remains |
@@ -588,7 +588,7 @@ Source: [11-deployment-operations.md](specs/11-deployment-operations.md) · IDs:
 
 ## 12 Quality Strategy and Test Plan
 
-Source: [12-quality-test-plan.md](specs/12-quality-test-plan.md) · IDs: 46 · built 17, partial 22, not built 4, deferred 1, no status row 2
+Source: [12-quality-test-plan.md](specs/12-quality-test-plan.md) · IDs: 46 · built 17, partial 23, not built 3, deferred 1, no status row 2
 
 | ID | Pri | Requirement (short) | Status | Code | Tests | Layer | Last recorded test result | Note |
 |---|---|---|---|---|---|---|---|---|
@@ -635,7 +635,7 @@ Source: [12-quality-test-plan.md](specs/12-quality-test-plan.md) · IDs: 46 · b
 | QA-041 | P0 | Test determinism | partial | `internal/testutil/testutil.go` † | - | - | not recorded | Injected clocks used; seeds recorded for randomised tests only partly |
 | QA-042 | P0 | Traceability matrix | partial | - | `scripts/traceability/evidence_test.go:TestEvidenceRecorderRejectsSourceChangeDuringRun`<br>`scripts/traceability/evidence_test.go:TestEvidenceRecorderUsesActualResultsAndRejectsStaleTree`<br>`scripts/traceability/evidence_test.go:TestTerminalEventsRejectMalformedAndRepeatedResults`<br>`scripts/traceability/main_test.go:TestGenerateIsDeterministicAndFlags` | tooling | not recorded | `make traceability` generates the citation inventory with source/test identifiers and test layer; `make traceability-check` rejects stale inventory. Optional `-record-results` captures actual uncached Go test events with UTC timestamps, HEAD and source fingerprint; `-evidence` renders a separate runtime report only when provenance still matches. Tests: `TestGenerateIsDeterministicAndFlags`, `TestTerminalEventsRejectMalformedAndRepeatedResults`, `TestEvidenceRecorderUsesActualResultsAndRejectsStaleTree`, `TestEvidenceRecorderRejectsSourceChangeDuringRun`. Citation-only rows remain unqualified; missing automated/inspection coverage, browser/manual results and per-release execution evidence remain explicit gates |
 | QA-043 | P0 | Test data | partial | `scripts/check-hygiene.sh`<br>`scripts/scan-release.sh`<br>`internal/testutil/testutil.go` † | - | - | not recorded | Fixtures synthetic; no automated personal-data scan |
-| QA-044 | P0 | Evidence retention | not built | `scripts/check-release-notes.sh` | - | - | not recorded | Evidence retention process not defined |
+| QA-044 | P0 | Evidence retention | partial | `scripts/check-release-notes.sh` | - | - | not recorded | Retention process is defined in `docs/qa/EVIDENCE.md`: versioned gate/drill/traceability and external-review records, linked from release notes, retained for supported lifetime plus the proposed year. CI artifacts expire after 7 or 14 days and must be archived into that durable record. DEC-023 confirmation and first-release execution remain open. |
 | QA-045 | P0 | Monetary scale, pending proposals and limit boundaries | - | - | `internal/service/decimals_test.go:TestDecimalsFixedFromCreation`<br>`internal/service/decimals_test.go:TestDecimalsLockUnderConcurrentWrites` | service | not recorded | - |
 | QA-046 | P1 | Historical balance uses an inclusive timestamp cutoff | - | - | `internal/service/histbal_test.go:TestHistoricalBalanceTimestampCutoff` | service | not recorded | - |
 

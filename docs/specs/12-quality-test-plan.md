@@ -63,7 +63,7 @@ Summary: built 14, deferred 1, not built 6, partial 23.
 | QA-041 | P0 | partial | Injected clocks used; seeds recorded for randomised tests only partly |
 | QA-042 | P0 | partial | `make traceability` generates the citation inventory with source/test identifiers and test layer; `make traceability-check` rejects stale inventory. Optional `-record-results` captures actual uncached Go test events with UTC timestamps, HEAD and source fingerprint; `-evidence` renders a separate runtime report only when provenance still matches. Tests: `TestGenerateIsDeterministicAndFlags`, `TestTerminalEventsRejectMalformedAndRepeatedResults`, `TestEvidenceRecorderUsesActualResultsAndRejectsStaleTree`, `TestEvidenceRecorderRejectsSourceChangeDuringRun`. Citation-only rows remain unqualified; missing automated/inspection coverage, browser/manual results and per-release execution evidence remain explicit gates |
 | QA-043 | P0 | partial | Fixtures synthetic; no automated personal-data scan |
-| QA-044 | P0 | not built | Evidence retention process not defined |
+| QA-044 | P0 | partial | Retention process is defined in `docs/qa/EVIDENCE.md`: versioned gate/drill/traceability and external-review records, linked from release notes, retained for supported lifetime plus the proposed year. CI artifacts expire after 7 or 14 days and must be archived into that durable record. DEC-023 confirmation and first-release execution remain open. |
 
 ## 1. Test layers
 

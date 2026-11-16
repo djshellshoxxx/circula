@@ -23,6 +23,9 @@ outcome blocks the gate until the cause is recorded. Without `-s` the drill uses
 the procedure only, not recovery of real data; for a hosted launch, drill with a copy of a real backup.
 Current record: docs/qa/evidence/ (one drill from this build, empty database).
 
+## CI evidence is temporary
+The workflow uploads Go test/traceability evidence for 14 days and browser/build artifacts for 7 days. These artifacts are working evidence, not the release retention record. Before a supported release, archive the required reports under the version directory above and link them from its release notes; an expiring Actions link alone is insufficient. Confirmation of the proposed supported-lifetime-plus-one-year duration remains DEC-023.
+
 ## Retention rules
 * Never delete a record for a release still supported.
 * Records contain no personal data (synthetic or empty databases only; QA-043).
