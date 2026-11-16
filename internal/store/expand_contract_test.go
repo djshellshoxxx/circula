@@ -15,7 +15,9 @@ import (
 // a later release, after the reads moved off it. Every migration that drops or
 // renames anything must therefore be listed here, with the earlier migration
 // and release after which nothing reads the old structure. Any other DROP or
-// RENAME fails the build. Migrations 0001..0015 contain none.
+// RENAME fails the build. Migrations 0001..0016 contain none: dropping an
+// object the same migration created (0016's temporary backfill check table)
+// removes nothing a release ever read, so it is not a contract step.
 var contractSteps = map[string]string{
 	// "00NN_name.sql": "reads moved to <new structure> in 00MM (release vX.Y); <what is dropped or renamed>",
 }
@@ -71,15 +73,40 @@ func sqlCode(src string) string {
 	return string(b)
 }
 
+// createRE and dropObjRE name the object a CREATE or DROP statement acts on.
+// Quoted names are blanked by sqlCode, so a DROP of a quoted name never matches
+// dropObjRE and is always reported.
+var (
+	createRE  = regexp.MustCompile(`(?i)\bcreate\s+(?:(?:temp|temporary|unique)\s+)?(table|index|trigger|view)\s+(?:if\s+not\s+exists\s+)?(?:(?:temp|main)\s*\.\s*)?(\w+)`)
+	dropObjRE = regexp.MustCompile(`(?i)^drop\s+(table|index|trigger|view)\s+(?:if\s+exists\s+)?(?:(?:temp|main)\s*\.\s*)?(\w+)`)
+)
+
 // contractStatements returns "line N: <source line>" for every DROP or RENAME
-// outside comments and strings.
+// outside comments and strings, except a DROP of an object created earlier in
+// the same source: such an object existed only during the migration.
 func contractStatements(src string) []string {
 	code := sqlCode(src)
 	lines := strings.Split(src, "\n")
+	created := map[string]int{} // kind+" "+lower(name) -> offset of its CREATE
+	for _, m := range createRE.FindAllStringSubmatchIndex(code, -1) {
+		key := strings.ToLower(code[m[2]:m[3]]) + " " + strings.ToLower(code[m[4]:m[5]])
+		if _, ok := created[key]; !ok {
+			created[key] = m[0]
+		}
+	}
+	reported := map[int]bool{}
 	var out []string
-	for i, l := range strings.Split(code, "\n") {
-		if contractRE.MatchString(l) {
-			out = append(out, "line "+strconv.Itoa(i+1)+": "+strings.TrimSpace(lines[i]))
+	for _, m := range contractRE.FindAllStringIndex(code, -1) {
+		if d := dropObjRE.FindStringSubmatch(code[m[0]:]); d != nil {
+			key := strings.ToLower(d[1]) + " " + strings.ToLower(d[2])
+			if at, ok := created[key]; ok && at < m[0] {
+				continue
+			}
+		}
+		line := strings.Count(code[:m[0]], "\n")
+		if !reported[line] {
+			reported[line] = true
+			out = append(out, "line "+strconv.Itoa(line+1)+": "+strings.TrimSpace(lines[line]))
 		}
 	}
 	return out
@@ -128,7 +155,15 @@ func TestContractScannerForms(t *testing.T) {
 		"ALTER TABLE persons DROP COLUMN login;",
 		"ALTER TABLE persons RENAME TO people;",
 		"ALTER TABLE persons RENAME COLUMN login TO handle;",
-		"CREATE TABLE t (a INT); /* c */ Drop Table t;",
+		"CREATE TABLE t (a INT); /* c */ Drop Table t;\nDROP TABLE accounts;",
+		// Dropping a table before the migration creates one of that name is a contract.
+		"DROP TABLE x; CREATE TABLE x (a INT);",
+		// A same-named object of another kind is not the one created.
+		"CREATE INDEX accounts ON t(a); DROP TABLE accounts;",
+		// A quoted name cannot be matched to its CREATE, so it is always reported.
+		`CREATE TEMP TABLE "chk" (a INT); DROP TABLE "chk";`,
+		// Renaming an object created in the same migration still counts (table rebuild).
+		"CREATE TABLE persons_new (a INT); ALTER TABLE persons_new RENAME TO persons;",
 	}
 	for _, s := range caught {
 		if len(contractStatements(s)) == 0 {
@@ -142,13 +177,17 @@ func TestContractScannerForms(t *testing.T) {
 		`CREATE TABLE "drop" (a INT);`,
 		"CREATE TABLE t (dropped_at INTEGER, drop_reason TEXT, renamed INTEGER);",
 		"SELECT 'it''s DROP';",
+		// An object created and dropped in the same migration never reached a release.
+		"CREATE TEMP TABLE chk (n INT CHECK (n = 0));\nINSERT INTO chk VALUES (0);\nDROP TABLE chk;",
+		"CREATE TEMPORARY TABLE IF NOT EXISTS temp.chk2 (n INT); drop table if exists Chk2;",
+		"CREATE UNIQUE INDEX ix ON t(a);\nDROP INDEX ix;",
 	}
 	for _, s := range ignored {
 		if got := contractStatements(s); len(got) != 0 {
 			t.Errorf("false positive for %q: %v", s, got)
 		}
 	}
-	if got := contractStatements("CREATE TABLE a (x INT);\n-- note\nDROP TABLE a;"); len(got) != 1 || !strings.HasPrefix(got[0], "line 3:") {
+	if got := contractStatements("CREATE TABLE a (x INT);\n-- note\nDROP TABLE b;"); len(got) != 1 || !strings.HasPrefix(got[0], "line 3:") {
 		t.Errorf("line reporting = %v", got)
 	}
 }
