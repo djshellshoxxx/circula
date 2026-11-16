@@ -193,5 +193,179 @@
   },
   "financial.row.grant.receive": {
     "other": "Sign-up grant: You will receive %[2]s %[3]s from %[1]s"
+  },
+  "footer.credits": {
+    "other": "Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted."
+  },
+  "footer.help": {
+    "other": "Help: credits, balances and statuses"
+  },
+  "terms.accept": {
+    "other": "I have read and accept these terms"
+  },
+  "session.ending": {
+    "other": "Your session is about to end."
+  },
+  "common.skip": {
+    "other": "Skip to main content"
+  },
+  "balance.limit_notice": {
+    "other": "Credit limit notice:"
+  },
+  "form.problem": {
+    "other": "There is a problem"
+  },
+  "session.extend": {
+    "other": "Stay signed in"
+  },
+  "session.sign_in": {
+    "other": "Sign in again"
+  },
+  "pager.previous": {
+    "other": "Previous page"
+  },
+  "navigation.networks": {
+    "other": "All networks"
+  },
+  "pager.first": {
+    "other": "First page"
+  },
+  "account.time_zone": {
+    "other": "Time zone"
+  },
+  "common.reference": {
+    "other": "Reference"
+  },
+  "pager.next": {
+    "other": "Next page"
+  },
+  "account.password": {
+    "other": "Password"
+  },
+  "account.security": {
+    "other": "Security"
+  },
+  "account.sign_out": {
+    "other": "Sign out"
+  },
+  "session.dismiss": {
+    "other": "Dismiss"
+  },
+  "common.notice": {
+    "other": "Notice:"
+  },
+  "form.error_prefix": {
+    "other": "Error: "
+  },
+  "navigation.inbox": {
+    "other": "Inbox"
+  },
+  "navigation.main": {
+    "other": "Main"
+  },
+  "dashboard.explain": {
+    "other": "Available to spend is not your balance: pending outgoing trades reduce it."
+  },
+  "dashboard.needs_empty": {
+    "other": "Nothing is waiting for you. Proposals sent to you will appear here."
+  },
+  "dashboard.recent_empty": {
+    "other": "No completed activity yet. Completed trades will appear here."
+  },
+  "dashboard.outgoing_empty": {
+    "other": "You have no pending trades waiting for others."
+  },
+  "dashboard.awaiting": {
+    "other": "Awaiting from others (not available yet)"
+  },
+  "dashboard.reserved": {
+    "other": "Reserved for pending outgoing trades"
+  },
+  "dashboard.needs": {
+    "other": "Trades waiting for you"
+  },
+  "dashboard.used": {
+    "other": "Credit limit in use"
+  },
+  "dashboard.help": {
+    "other": "What do these mean?"
+  },
+  "dashboard.available": {
+    "other": "Available to spend"
+  },
+  "dashboard.propose": {
+    "other": "Propose a trade"
+  },
+  "dashboard.recent": {
+    "other": "Latest activity"
+  },
+  "dashboard.announcements": {
+    "other": "Announcements"
+  },
+  "dashboard.balance": {
+    "other": "Your balance"
+  },
+  "dashboard.limit": {
+    "other": "Credit limit"
+  },
+  "dashboard.history": {
+    "other": "Full history"
+  },
+  "dashboard.pending": {
+    "other": "Pending"
+  },
+  "common.unread": {
+    "other": "%[1]d unread"
+  },
+  "common.new": {
+    "other": "%[1]d new"
+  },
+  "navigation.home": {
+    "other": "Home"
+  },
+  "navigation.trades": {
+    "other": "Trades"
+  },
+  "navigation.directory": {
+    "other": "Directory"
+  },
+  "navigation.listings": {
+    "other": "Listings"
+  },
+  "navigation.history": {
+    "other": "History"
+  },
+  "navigation.disputes": {
+    "other": "Disputes"
+  },
+  "navigation.rules": {
+    "other": "Rules"
+  },
+  "navigation.review": {
+    "other": "Review queue"
+  },
+  "navigation.admin": {
+    "other": "Network admin"
+  },
+  "notice.closing_date": {
+    "other": "This network closes on %[1]s. You can keep trading until then. Download your data before the date; read access continues for a while afterwards."
+  },
+  "notice.membership_suspended": {
+    "other": "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
+  },
+  "notice.membership_departed": {
+    "other": "You have left this network. You can still read your history and download your data."
+  },
+  "notice.network_closed": {
+    "other": "This network is closed. History stays readable and exports are available; new trades are not possible."
+  },
+  "notice.network_closing": {
+    "other": "This network has reached its closing date and is completing its closure. New trades are not possible; history stays readable and exports are available."
+  },
+  "notice.admin_required": {
+    "other": "This network has no active administrator, so it is read-only (administrator required). You can read balances and history and download your data; nothing that moves value is possible until an administrator is appointed."
+  },
+  "notice.trading_paused": {
+    "other": "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
   }
 }

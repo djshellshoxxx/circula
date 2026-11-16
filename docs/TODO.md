@@ -1,9 +1,11 @@
 # Circula current work
 
-Updated 2026-11-16 after merging PRs #56–#59; catalogue continuation is a separate candidate. This list supersedes the old
+Updated 2026-11-16 after merging PRs #56–#61; common-UI catalogue work is a separate candidate. This list supersedes the old
 unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isolated.
 
 ## Integration evidence
+
+- PR #61 merged as `7e97504c` after all seven jobs passed at `cf5abf5c` in [CI run 43952719310](https://github.com/djshellshoxxx/circula/actions/runs/43952719310).
 
 - PR #60 merged after all seven PR jobs passed at `96059bb4` in [CI run 43942206927](https://github.com/djshellshoxxx/circula/actions/runs/43942206927).
 
@@ -66,7 +68,7 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 ## Remaining specification and qualification work
 
 - SEC-026 is an outstanding implementation: network-configurable proposal-velocity and reciprocal-trade signals, one signal per window, visible only to same-network administrators/reviewers, with no automatic trade blocking. Existing throttles are not this feature.
-- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. The financial-message candidate additionally migrates balance/spoken and transaction-row/status/explanation text, pending CI; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
+- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. The common-UI candidate migrates shell/dashboard labels, navigation, persistent network notices and badge counts; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
 - GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
 
 - Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.

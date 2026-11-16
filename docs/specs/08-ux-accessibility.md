@@ -69,7 +69,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-044 | P0 | built | Page title includes network name and screen |
 | UX-045 | P0 | built | Semantic lists, tables, landmarks |
 | UX-046 | P0 | built | Document language en; Evidence: `TestPageStructure` (English document language on rendered pages; translation externalization is separately tracked by UX-047). Citations are not execution results |
-| UX-047 | P1 | partial | English catalogue and CLDR plural/number formatting now serve complete administrator-overview count messages, actions/checks, and proposal-queue row/status/title text (`internal/web/messages`). No language selection or translation is enabled. Remaining templates, JavaScript and other handler copy still need migration; the whole requirement is not complete. |
+| UX-047 | P1 | partial | English catalogue and CLDR formatting cover overview/queue and financial formatter messages; the common-UI candidate adds shared shell/dashboard labels, navigation, network notices and badge counts. No language selection or translation is enabled. Timestamp-rich notices, remaining templates/handlers and JavaScript still need migration; the whole requirement is not complete. See `docs/dev/MESSAGES.md` and current PR checks. |
 | UX-048 | P0 | built | Visible labels and autocomplete |
 | UX-049 | P1 | built | Go tests render every page template and every GET route (anonymous, member, admin, error pages) and pin the footer Help link; earlier six section/viewport e2e cases at 32a8314 |
 | UX-050 | P0 | built | Copy avoids money and cash wording for credits |

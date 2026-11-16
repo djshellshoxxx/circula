@@ -13,6 +13,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 type pageTemplate = template.Template
@@ -74,6 +75,7 @@ func (p *page) Err(k string) string {
 
 func mustLoadTemplates() map[string]*pageTemplate {
 	funcs := template.FuncMap{
+		"msg":   messages.Text,
 		"amt":   func(v int64, dec int) string { return minus(domain.FormatAmount(v, dec)) },
 		"plain": func(v int64, dec int) string { return domain.FormatAmount(abs64(v), dec) },
 		"time":  fmtTime,
@@ -215,26 +217,26 @@ func (c *rc) base() string { return "/n/" + c.Net.Slug }
 
 func (c *rc) nav(cur string) []navItem {
 	b := c.base()
-	items := []navItem{{Label: "Home", Href: b}}
+	items := []navItem{{Label: messages.Text("navigation.home"), Href: b}}
 	switch c.Me.Status {
 	case domain.MemberActive:
-		items = append(items, navItem{Label: "Trades", Href: b + "/trades"},
-			navItem{Label: "Directory", Href: b + "/directory"}, navItem{Label: "Listings", Href: b + "/listings"},
-			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"},
-			navItem{Label: "Rules", Href: b + "/policy"})
+		items = append(items, navItem{Label: messages.Text("navigation.trades"), Href: b + "/trades"},
+			navItem{Label: messages.Text("navigation.directory"), Href: b + "/directory"}, navItem{Label: messages.Text("navigation.listings"), Href: b + "/listings"},
+			navItem{Label: messages.Text("navigation.history"), Href: b + "/history"}, navItem{Label: messages.Text("navigation.disputes"), Href: b + "/disputes"},
+			navItem{Label: messages.Text("navigation.rules"), Href: b + "/policy"})
 	case domain.MemberSuspended, domain.MemberDeparted:
 		// Me is resolved by GetNetworkAccess for this request. These members
 		// retain their own records and rules even though they cannot trade.
-		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"},
-			navItem{Label: "Disputes", Href: b + "/disputes"}, navItem{Label: "Rules", Href: b + "/policy"})
+		items = append(items, navItem{Label: messages.Text("navigation.trades"), Href: b + "/trades"}, navItem{Label: messages.Text("navigation.history"), Href: b + "/history"},
+			navItem{Label: messages.Text("navigation.disputes"), Href: b + "/disputes"}, navItem{Label: messages.Text("navigation.rules"), Href: b + "/policy"})
 	default:
-		items = append(items, navItem{Label: "History", Href: b + "/history"})
+		items = append(items, navItem{Label: messages.Text("navigation.history"), Href: b + "/history"})
 	}
 	if c.isReviewer() || c.isAdmin() {
-		items = append(items, navItem{Label: "Review queue", Href: b + "/review"})
+		items = append(items, navItem{Label: messages.Text("navigation.review"), Href: b + "/review"})
 	}
 	if c.isAdmin() {
-		items = append(items, navItem{Label: "Network admin", Href: b + "/admin"})
+		items = append(items, navItem{Label: messages.Text("navigation.admin"), Href: b + "/admin"})
 	}
 	for i := range items {
 		it := &items[i]
@@ -246,24 +248,24 @@ func (c *rc) nav(cur string) []navItem {
 func (c *rc) notice() string {
 	switch c.Me.Status {
 	case domain.MemberSuspended:
-		return "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
+		return messages.Text("notice.membership_suspended")
 	case domain.MemberDeparted:
-		return "You have left this network. You can still read your history and download your data."
+		return messages.Text("notice.membership_departed")
 	}
 	if c.Net.Status == domain.NetworkClosed {
-		return "This network is closed. History stays readable and exports are available; new trades are not possible."
+		return messages.Text("notice.network_closed")
 	}
 	if c.Net.Status == domain.NetworkClosing {
-		return "This network has reached its closing date and is completing its closure. New trades are not possible; history stays readable and exports are available."
+		return messages.Text("notice.network_closing")
 	}
 	if c.Net.AdminRequired {
-		return "This network has no active administrator, so it is read-only (administrator required). You can read balances and history and download your data; nothing that moves value is possible until an administrator is appointed."
+		return messages.Text("notice.admin_required")
 	}
 	if cl := c.Net.Closure; cl != nil && !cl.Done() {
-		return "This network closes on " + cl.ClosingAt.Format("2 Jan 2006") + ". You can keep trading until then. Download your data before the date; read access continues for a while afterwards."
+		return messages.Text("notice.closing_date", cl.ClosingAt.Format("2 Jan 2006"))
 	}
 	if c.Net.Suspended() {
-		return "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
+		return messages.Text("notice.trading_paused")
 	}
 	return ""
 }
