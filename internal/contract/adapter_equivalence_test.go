@@ -126,11 +126,11 @@ func (f *adapterFixture) requireStatus(w *httptest.ResponseRecorder, want int) {
 }
 
 type adapterStep struct {
-	key, who, apiMethod, apiPath, webMethod, webPath string
-	json                                             map[string]any
-	form                                             map[string]string
-	apiStatus, webStatus                             int
-	review                                           bool
+	operation, who, apiMethod, apiPath, webMethod, webPath string
+	json                                                   map[string]any
+	form                                                   map[string]string
+	apiStatus, webStatus                                   int
+	review                                                 bool
 	// A balance shown by the adjustment confirmation is an audited read.
 	// The equivalent API operation is explicitly GET account then POST adjust.
 	apiAccountReads []string
@@ -144,7 +144,7 @@ func (f *adapterFixture) prepare(s adapterStep) map[string]string {
 	for k, v := range s.form {
 		vals[k] = v
 	}
-	vals["idem"] = "equivalence-" + s.key
+	vals["idem"] = "equivalence-" + s.operation
 	if f.isAPI && s.review {
 		// Match the HTML review's disclosed account reads before the command
 		// baseline as well as the final confirmation's reads below.
@@ -180,7 +180,7 @@ func (f *adapterFixture) execute(s adapterStep, vals map[string]string) *httptes
 		for _, member := range s.apiAccountReads {
 			f.requireStatus(f.request(s.who, "GET", "/api/v1/admin/accounts/"+member, nil, nil), 200)
 		}
-		w := f.request(s.who, s.apiMethod, "/api/v1"+s.apiPath, s.json, map[string]string{"Idempotency-Key": "equivalence-" + s.key, "If-Match": "*"})
+		w := f.request(s.who, s.apiMethod, "/api/v1"+s.apiPath, s.json, map[string]string{"Idempotency-Key": "equivalence-" + s.operation, "If-Match": "*"})
 		want := s.apiStatus
 		if want == 0 {
 			want = 200
@@ -297,7 +297,7 @@ func newAdapterPair(t *testing.T) *adapterPair {
 func (p *adapterPair) step(s adapterStep) [2]*httptest.ResponseRecorder {
 	p.t.Helper()
 	var result [2]*httptest.ResponseRecorder
-	p.t.Run(s.key, func(t *testing.T) {
+	p.t.Run(s.operation, func(t *testing.T) {
 		p.api.t, p.web.t = t, t
 		ap, wp := p.api.auditMark(), p.web.auditMark()
 		av, wv := p.api.prepare(s), p.web.prepare(s)

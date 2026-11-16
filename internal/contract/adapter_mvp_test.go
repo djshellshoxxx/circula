@@ -22,30 +22,30 @@ import (
 func TestMVPAdapterEquivalence(t *testing.T) {
 	p := newAdapterPair(t)
 	read := func(key, who, ap, wp string) {
-		p.step(adapterStep{key: key, who: who, apiMethod: "GET", apiPath: ap, webMethod: "GET", webPath: wp})
+		p.step(adapterStep{operation: key, who: who, apiMethod: "GET", apiPath: ap, webMethod: "GET", webPath: wp})
 	}
 	read("API-040-network", "alice", "/network", "{base}/policy")
-	p.step(adapterStep{key: "API-041-identity", who: "alice", apiMethod: "GET", apiPath: "/me", webMethod: "GET", webPath: "/", webStatus: 303})
+	p.step(adapterStep{operation: "API-041-identity", who: "alice", apiMethod: "GET", apiPath: "/me", webMethod: "GET", webPath: "/", webStatus: 303})
 	read("API-042-directory", "alice", "/members", "{base}/directory")
 	read("API-043-member", "alice", "/members/{bob}", "{base}/members/{bob}")
 	read("API-044-account", "alice", "/accounts/me", "{base}/")
 	read("API-045-entries", "alice", "/accounts/me/entries", "{base}/history")
-	p.step(adapterStep{key: "API-046-create", who: "bob", apiMethod: "POST", apiPath: "/listings", webMethod: "POST", webPath: "{base}/listings/new", apiStatus: 201,
+	p.step(adapterStep{operation: "API-046-create", who: "bob", apiMethod: "POST", apiPath: "/listings", webMethod: "POST", webPath: "{base}/listings/new", apiStatus: 201,
 		json: m{"kind": "offer", "title": "Garden help", "description": "Two hours", "price_minor": "2500"},
 		form: map[string]string{"type": "offer", "title": "Garden help", "description": "Two hours", "price": "25.00"}})
 	p.remember("listing", "listings", "title=?", "Garden help")
 	read("API-046-list", "bob", "/listings", "{base}/listings")
-	p.step(adapterStep{key: "API-047-edit", who: "bob", apiMethod: "PATCH", apiPath: "/listings/{listing}", webMethod: "POST", webPath: "{base}/listings/{listing}/edit",
+	p.step(adapterStep{operation: "API-047-edit", who: "bob", apiMethod: "PATCH", apiPath: "/listings/{listing}", webMethod: "POST", webPath: "{base}/listings/{listing}/edit",
 		json: m{"title": "Garden work", "description": "Three hours", "price_minor": "3000", "status": "active"},
 		form: map[string]string{"title": "Garden work", "description": "Three hours", "price": "30.00", "status": "active"}})
 	propose := func(alias, amount string) {
-		p.step(adapterStep{key: "API-048-" + alias, who: "alice", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
+		p.step(adapterStep{operation: "API-048-" + alias, who: "alice", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
 			json: m{"counterparty_member_id": "{bob}", "direction": "pay", "amount_minor": amount, "description": alias, "listing_id": "{listing}"},
 			form: map[string]string{"counterparty_id": "{bob}", "direction": "pay", "amount": minorDecimal(amount), "note": alias, "listing_id": "{listing}"}})
 		p.remember(alias, "transactions", "note=?", alias)
 	}
 	act := func(key, who, alias, action string) {
-		p.step(adapterStep{key: key, who: who, apiMethod: "POST", apiPath: "/transactions/{" + alias + "}/" + action, webMethod: "POST", webPath: "{base}/trades/{" + alias + "}/" + action})
+		p.step(adapterStep{operation: key, who: who, apiMethod: "POST", apiPath: "/transactions/{" + alias + "}/" + action, webMethod: "POST", webPath: "{base}/trades/{" + alias + "}/" + action})
 	}
 	propose("completed", "2500")
 	read("API-049-list", "alice", "/transactions", "{base}/trades")
@@ -56,34 +56,34 @@ func TestMVPAdapterEquivalence(t *testing.T) {
 	act("API-052-decline", "bob", "declined", "decline")
 	propose("cancelled", "100")
 	act("API-053-cancel", "alice", "cancelled", "cancel")
-	p.step(adapterStep{key: "API-054-open", who: "alice", apiMethod: "POST", apiPath: "/disputes", webMethod: "POST", webPath: "{base}/trades/{completed}/dispute", apiStatus: 201, review: true,
+	p.step(adapterStep{operation: "API-054-open", who: "alice", apiMethod: "POST", apiPath: "/disputes", webMethod: "POST", webPath: "{base}/trades/{completed}/dispute", apiStatus: 201, review: true,
 		json: m{"transaction_id": "{completed}", "category": "quality", "statement": "Not as agreed"}, form: map[string]string{"category": "quality", "statement": "Not as agreed"}})
 	p.remember("dispute", "disputes", "statement=?", "Not as agreed")
 	read("API-054-list", "alice", "/disputes", "{base}/disputes")
 	read("API-054-detail", "bob", "/disputes/{dispute}", "{base}/disputes/{dispute}")
-	p.step(adapterStep{key: "API-055-resolve", who: "admin", apiMethod: "POST", apiPath: "/disputes/{dispute}/resolve", webMethod: "POST", webPath: "{base}/disputes/{dispute}/resolve", review: true,
+	p.step(adapterStep{operation: "API-055-resolve", who: "admin", apiMethod: "POST", apiPath: "/disputes/{dispute}/resolve", webMethod: "POST", webPath: "{base}/disputes/{dispute}/resolve", review: true,
 		json: m{"outcome": "upheld", "reason": "Evidence confirms the complaint"}, form: map[string]string{"outcome": "upheld", "rationale": "Evidence confirms the complaint"}})
 	propose("reversible", "700")
 	act("API-051-accept-second", "bob", "reversible", "accept")
-	p.step(adapterStep{key: "API-056-reverse", who: "admin", apiMethod: "POST", apiPath: "/admin/transactions/{reversible}/reversal", webMethod: "POST", webPath: "{base}/admin/reverse", apiStatus: 201, review: true,
+	p.step(adapterStep{operation: "API-056-reverse", who: "admin", apiMethod: "POST", apiPath: "/admin/transactions/{reversible}/reversal", webMethod: "POST", webPath: "{base}/admin/reverse", apiStatus: 201, review: true,
 		apiAccountReads: []string{"{alice}", "{bob}"}, json: m{"amount_minor": "700", "reason": "Duplicate trade"}, form: map[string]string{"tx": "{reversible}", "amount": "7.00", "reason": "Duplicate trade"}})
-	p.step(adapterStep{key: "API-057-adjust", who: "admin", apiMethod: "POST", apiPath: "/admin/adjustments", webMethod: "POST", webPath: "{base}/admin/adjust", apiStatus: 201, review: true,
+	p.step(adapterStep{operation: "API-057-adjust", who: "admin", apiMethod: "POST", apiPath: "/admin/adjustments", webMethod: "POST", webPath: "{base}/admin/adjust", apiStatus: 201, review: true,
 		apiAccountReads: []string{"{bob}"}, json: m{"member_id": "{bob}", "direction": "credit", "amount_minor": "250", "reason": "Community work"}, form: map[string]string{"member_id": "{bob}", "direction": "credit", "amount": "2.50", "reason": "Community work"}})
 	read("API-058-read", "admin", "/admin/policy", "{base}/admin/policy")
 	policy := equivalentPolicyForm(p.web.net.Policy)
 	policy["default_credit_limit"], policy["reason"] = "200.00", "Raise default limit"
-	p.step(adapterStep{key: "API-058-update", who: "admin", apiMethod: "PATCH", apiPath: "/admin/policy", webMethod: "POST", webPath: "{base}/admin/policy",
+	p.step(adapterStep{operation: "API-058-update", who: "admin", apiMethod: "PATCH", apiPath: "/admin/policy", webMethod: "POST", webPath: "{base}/admin/policy",
 		json: m{"default_credit_limit_minor": "20000", "reason": "Raise default limit"}, form: policy})
 	read("API-059-members", "admin", "/admin/members", "{base}/admin/members")
 	for _, a := range []struct{ key, member, api, web string }{{"approve", "pending", "approve", "approve"}, {"deny", "denied", "deny", "deny"}, {"suspend", "carol", "suspend", "suspend"}, {"reinstate", "carol", "reinstate", "restore"}} {
-		p.step(adapterStep{key: "API-059-" + a.key, who: "admin", apiMethod: "POST", apiPath: "/admin/members/{" + a.member + "}/" + a.api, webMethod: "POST", webPath: "{base}/admin/members/{" + a.member + "}/" + a.web,
+		p.step(adapterStep{operation: "API-059-" + a.key, who: "admin", apiMethod: "POST", apiPath: "/admin/members/{" + a.member + "}/" + a.api, webMethod: "POST", webPath: "{base}/admin/members/{" + a.member + "}/" + a.web,
 			json: m{"reason": "Membership review"}, form: map[string]string{"reason": "Membership review"}})
 	}
-	p.step(adapterStep{key: "API-059-remove", who: "admin", apiMethod: "POST", apiPath: "/admin/members/{carol}/remove", webMethod: "POST", webPath: "{base}/admin/members/{carol}/remove",
+	p.step(adapterStep{operation: "API-059-remove", who: "admin", apiMethod: "POST", apiPath: "/admin/members/{carol}/remove", webMethod: "POST", webPath: "{base}/admin/members/{carol}/remove",
 		json: m{"reason_code": "rule_breach", "reason": "Repeated breach"}, form: map[string]string{"reason_code": "rule_breach", "reason": "Repeated breach"}})
-	p.step(adapterStep{key: "API-060-limit", who: "admin", apiMethod: "PUT", apiPath: "/admin/accounts/{alice}/credit-limit", webMethod: "POST", webPath: "{base}/admin/members/{alice}/limit",
+	p.step(adapterStep{operation: "API-060-limit", who: "admin", apiMethod: "PUT", apiPath: "/admin/accounts/{alice}/credit-limit", webMethod: "POST", webPath: "{base}/admin/members/{alice}/limit",
 		json: m{"credit_limit_minor": "15000", "reason": "Agreed limit"}, form: map[string]string{"amount": "150.00", "reason": "Agreed limit"}})
-	r := p.step(adapterStep{key: "API-061-invite", who: "admin", apiMethod: "POST", apiPath: "/admin/invitations", webMethod: "POST", webPath: "{base}/admin/invitations", apiStatus: 201, webStatus: 200,
+	r := p.step(adapterStep{operation: "API-061-invite", who: "admin", apiMethod: "POST", apiPath: "/admin/invitations", webMethod: "POST", webPath: "{base}/admin/invitations", apiStatus: 201, webStatus: 200,
 		json: m{"ttl_seconds": 604800}, form: map[string]string{"days": "7"}})
 	p.api.ids["invitation"] = get[idOnly](t, r[0]).Token
 	match := regexp.MustCompile(`/join/(inv_[A-Za-z0-9_-]+)`).FindStringSubmatch(r[1].Body.String())
@@ -91,11 +91,11 @@ func TestMVPAdapterEquivalence(t *testing.T) {
 		t.Fatalf("invitation link missing: %s", trunc(r[1].Body.String()))
 	}
 	p.web.ids["invitation"] = match[1]
-	p.step(adapterStep{key: "API-061-accept", who: "invitee", apiMethod: "POST", apiPath: "/invitations/{invitation}/accept", webMethod: "POST", webPath: "/join/{invitation}", apiStatus: 201,
+	p.step(adapterStep{operation: "API-061-accept", who: "invitee", apiMethod: "POST", apiPath: "/invitations/{invitation}/accept", webMethod: "POST", webPath: "/join/{invitation}", apiStatus: 201,
 		json: m{"display_name": "Invited member"}, form: map[string]string{"display_name": "Invited member"}})
 	read("API-062-admin-audit", "admin", "/admin/audit-events", "{base}/admin/audit")
 	read("API-062a-member-audit", "alice", "/audit-events", "{base}/audit")
-	r = p.step(adapterStep{key: "API-063-check", who: "admin", apiMethod: "POST", apiPath: "/admin/consistency-checks", webMethod: "POST", webPath: "{base}/admin/check", apiStatus: 201, webStatus: 200})
+	r = p.step(adapterStep{operation: "API-063-check", who: "admin", apiMethod: "POST", apiPath: "/admin/consistency-checks", webMethod: "POST", webPath: "{base}/admin/check", apiStatus: 201, webStatus: 200})
 	check := get[idOnly](t, r[0]).ID
 	t.Run("API-063-unpaired-result", func(t *testing.T) {
 		p.api.t = t
@@ -114,25 +114,25 @@ func TestMVPAdapterEquivalence(t *testing.T) {
 		}
 	})
 	p.api.t = t
-	p.step(adapterStep{key: "API-064-publish", who: "admin", apiMethod: "POST", apiPath: "/admin/announcements", webMethod: "POST", webPath: "{base}/admin/announcements", apiStatus: 201,
+	p.step(adapterStep{operation: "API-064-publish", who: "admin", apiMethod: "POST", apiPath: "/admin/announcements", webMethod: "POST", webPath: "{base}/admin/announcements", apiStatus: 201,
 		json: m{"title": "Working party", "body": "Saturday in the garden"}, form: map[string]string{"title": "Working party", "body": "Saturday in the garden"}})
 	read("API-064-admin-list", "admin", "/admin/announcements", "{base}/admin/announcements")
 	read("API-064-member-list", "alice", "/network/announcements", "{base}/")
 	p.remember("announcement", "announcements", "title=?", "Working party")
-	p.step(adapterStep{key: "API-064-retract", who: "admin", apiMethod: "DELETE", apiPath: "/admin/announcements/{announcement}", webMethod: "POST", webPath: "{base}/admin/announcements/{announcement}/delete", apiStatus: 204})
+	p.step(adapterStep{operation: "API-064-retract", who: "admin", apiMethod: "DELETE", apiPath: "/admin/announcements/{announcement}", webMethod: "POST", webPath: "{base}/admin/announcements/{announcement}/delete", apiStatus: 204})
 	for _, scope := range []string{"mine", "ledger"} {
 		who, wp := "alice", "{base}/export"
 		if scope == "ledger" {
 			who, wp = "admin", "{base}/admin/exports"
 		}
-		r = p.step(adapterStep{key: "API-065-export-" + scope, who: who, apiMethod: "POST", apiPath: "/exports", webMethod: "POST", webPath: wp, apiStatus: 201, webStatus: 200,
+		r = p.step(adapterStep{operation: "API-065-export-" + scope, who: who, apiMethod: "POST", apiPath: "/exports", webMethod: "POST", webPath: wp, apiStatus: 201, webStatus: 200,
 			json: m{"scope": scope, "format": "json"}, form: map[string]string{"scope": scope, "format": "json"}})
 		t.Run("API-065-unpaired-lifecycle-"+scope, func(t *testing.T) { p.api.t = t; assertExportLifecycle(t, p.api, who, r[0], r[1]) })
 		p.api.t = t
 	}
-	p.step(adapterStep{key: "API-067-departure", who: "dave", apiMethod: "POST", apiPath: "/me/membership/departure", webMethod: "POST", webPath: "{base}/leave",
+	p.step(adapterStep{operation: "API-067-departure", who: "dave", apiMethod: "POST", apiPath: "/me/membership/departure", webMethod: "POST", webPath: "{base}/leave",
 		json: m{"reason": "Moving away"}, form: map[string]string{"reason": "Moving away", "confirm": "1"}})
-	p.step(adapterStep{key: "API-067a-password", who: "dave", apiMethod: "POST", apiPath: "/me/password", webMethod: "POST", webPath: "/account/password", apiStatus: 204,
+	p.step(adapterStep{operation: "API-067a-password", who: "dave", apiMethod: "POST", apiPath: "/me/password", webMethod: "POST", webPath: "/account/password", apiStatus: 204,
 		json: m{"current_password": equivalencePassword, "new_password": "a different strong password"}, form: map[string]string{"current_password": equivalencePassword, "password": "a different strong password", "password2": "a different strong password"}})
 	t.Run("API-066-unpaired-token-lifecycle", func(t *testing.T) { p.api.t = t; assertTokenLifecycle(t, p.api) })
 	p.api.t = t

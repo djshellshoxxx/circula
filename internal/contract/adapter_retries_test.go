@@ -14,14 +14,14 @@ import (
 // same key after the cause is removed, and preserve an already successful retry.
 func TestAdapterEquivalenceCreditAndRetries(t *testing.T) {
 	p := newAdapterPair(t)
-	proposal := adapterStep{key: "credit-proposal", who: "bob", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
+	proposal := adapterStep{operation: "credit-proposal", who: "bob", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
 		json: m{"counterparty_member_id": "{alice}", "direction": "receive", "amount_minor": "9000", "description": "credit race"},
 		form: map[string]string{"counterparty_id": "{alice}", "direction": "request", "amount": "90.00", "note": "credit race"}}
 	p.step(proposal)
 	p.remember("trade", "transactions", "note=?", "credit race")
 	// Replay proposal through the exact same service key. The web review's
 	// generated idem token must be retained, so use one prepared submission.
-	retry := adapterStep{key: "retry-proposal", who: "alice", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
+	retry := adapterStep{operation: "retry-proposal", who: "alice", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
 		json: m{"counterparty_member_id": "{bob}", "direction": "pay", "amount_minor": "100", "description": "replay once"},
 		form: map[string]string{"counterparty_id": "{bob}", "direction": "pay", "amount": "1.00", "note": "replay once"}}
 	av, wv := p.api.prepare(retry), p.web.prepare(retry)
@@ -67,11 +67,11 @@ func TestAdapterEquivalenceCreditAndRetries(t *testing.T) {
 		}
 	}
 	limit := func(key, minor, decimal string) {
-		p.step(adapterStep{key: key, who: "admin", apiMethod: "PUT", apiPath: "/admin/accounts/{alice}/credit-limit", webMethod: "POST", webPath: "{base}/admin/members/{alice}/limit",
+		p.step(adapterStep{operation: key, who: "admin", apiMethod: "PUT", apiPath: "/admin/accounts/{alice}/credit-limit", webMethod: "POST", webPath: "{base}/admin/members/{alice}/limit",
 			json: m{"credit_limit_minor": minor, "reason": "Changed circumstances"}, form: map[string]string{"amount": decimal, "reason": "Changed circumstances"}})
 	}
 	limit("lower-limit", "5000", "50.00")
-	accept := adapterStep{key: "accept-after-limit-change", who: "alice", apiMethod: "POST", apiPath: "/transactions/{trade}/accept", webMethod: "POST", webPath: "{base}/trades/{trade}/accept", apiStatus: 422, webStatus: 422}
+	accept := adapterStep{operation: "accept-after-limit-change", who: "alice", apiMethod: "POST", apiPath: "/transactions/{trade}/accept", webMethod: "POST", webPath: "{base}/trades/{trade}/accept", apiStatus: 422, webStatus: 422}
 	beforeA, beforeW := p.api.normalize(p.api.ledger()), p.web.normalize(p.web.ledger())
 	p.step(accept)
 	if beforeA != p.api.normalize(p.api.ledger()) || beforeW != p.web.normalize(p.web.ledger()) {
@@ -96,12 +96,12 @@ func TestAdapterEquivalenceCreditAndRetries(t *testing.T) {
 func TestAdapterEquivalenceConcurrentAcceptances(t *testing.T) {
 	p := newAdapterPair(t)
 	limit := func(key, minor, decimal string) {
-		p.step(adapterStep{key: key, who: "admin", apiMethod: "PUT", apiPath: "/admin/accounts/{alice}/credit-limit", webMethod: "POST", webPath: "{base}/admin/members/{alice}/limit",
+		p.step(adapterStep{operation: key, who: "admin", apiMethod: "PUT", apiPath: "/admin/accounts/{alice}/credit-limit", webMethod: "POST", webPath: "{base}/admin/members/{alice}/limit",
 			json: m{"credit_limit_minor": minor, "reason": "Concurrent acceptance test"}, form: map[string]string{"amount": decimal, "reason": "Concurrent acceptance test"}})
 	}
 	limit("concurrent-initial-limit", "20000", "200.00")
 	for i := 0; i < 2; i++ {
-		p.step(adapterStep{key: fmt.Sprintf("concurrent-proposal-%d", i), who: "bob", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
+		p.step(adapterStep{operation: fmt.Sprintf("concurrent-proposal-%d", i), who: "bob", apiMethod: "POST", apiPath: "/transactions", webMethod: "POST", webPath: "{base}/trades/new", apiStatus: 201, review: true,
 			json: m{"counterparty_member_id": "{alice}", "direction": "receive", "amount_minor": "8000", "description": "concurrent"}, form: map[string]string{"counterparty_id": "{alice}", "direction": "request", "amount": "80.00", "note": "concurrent"}})
 	}
 	limit("concurrent-current-limit", "10000", "100.00")
