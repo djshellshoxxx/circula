@@ -20,7 +20,9 @@ func TestExpiredExportLookupReleasesFile(t *testing.T) {
 	if got := w.do("GET", "/api/v1/exports/"+d.ID, ""); got.Code != 404 {
 		t.Fatalf("expired export: %d", got.Code)
 	}
-	if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) {
+	// ReadAt reports ErrClosed on both Unix and Windows; Stat may return the
+	// Windows-specific invalid-handle error for an already closed file.
+	if _, err := e.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) {
 		t.Fatalf("expired archive remains open: %v", err)
 	}
 	if w.h.jobs.bytes != 0 {
@@ -39,7 +41,7 @@ func TestExportTimerReleasesFileWithoutTraffic(t *testing.T) {
 		gone := len(w.h.jobs.exps) == 0 && w.h.jobs.bytes == 0
 		w.h.jobs.mu.Unlock()
 		if gone {
-			if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) {
+			if _, err := e.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) {
 				t.Fatalf("timer left file open: %v", err)
 			}
 			return
@@ -87,7 +89,7 @@ func TestExportExpiryDoesNotTruncateAdmittedDownload(t *testing.T) {
 	if rec.Code != 200 || int64(rec.Body.Len()) != d.Bytes || hex.EncodeToString(sum[:]) != *d.SHA256 {
 		t.Fatalf("truncated download: status %d, bytes %d/%d", rec.Code, rec.Body.Len(), d.Bytes)
 	}
-	if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 {
+	if _, err := e.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 {
 		t.Fatalf("completed expired download not released: %v, bytes %d", err, w.h.jobs.bytes)
 	}
 }
@@ -123,7 +125,7 @@ func TestCloseHandlerReleasesExportsAndRejectsRunningCommit(t *testing.T) {
 	if tk.commit(&exportEntry{dto: exportDTO{ID: "late"}}) {
 		t.Fatal("closed handler accepted a running export")
 	}
-	if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 {
+	if _, err := e.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 {
 		t.Fatalf("shutdown retained archive: %v", err)
 	}
 	if tk, why := w.h.jobs.beginExport(w.netID, "other", false); why == "" || tk != nil {

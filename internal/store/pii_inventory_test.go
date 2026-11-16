@@ -46,6 +46,7 @@ func readInventory(t *testing.T) inventory {
 	inv := inventory{personal: map[string][]string{}, other: map[string][]string{}}
 	section := ""
 	for _, line := range strings.Split(string(b), "\n") {
+		line = strings.TrimSuffix(line, "\r") // normalize CRLF before stripping table delimiters
 		if strings.HasPrefix(line, "## ") {
 			section = strings.TrimSpace(strings.TrimPrefix(line, "## "))
 			continue
