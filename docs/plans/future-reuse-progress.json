@@ -1,11 +1,12 @@
 {
   "updated": "2026-11-16",
   "integration": "HOLD",
+  "execution": "unavailable",
   "features": {
     "pwa": {
-      "sha": "b34b392e5989a40dd9f2f9de51f49c85bfc8c342",
-      "tree": "180463b845dfb36de8a2e6bd16fd914b4c43acac",
-      "phase": "document pinned upstream research and adaptation plan",
+      "sha": "344b87bdbc2f03d4b7bd43f090e027b490f2e907",
+      "tree": "9f3754fec342b21cd2cd0ec8ab17a95267d1ddef",
+      "phase": "implement isolated upstream-backed PWA; browser qualification pending",
       "branch": "future/fux-101-pwa-20261116"
     },
     "qr": {
@@ -91,6 +92,13 @@
       "tree": "368ce1616f8b4a3b29b6c24809632b03c96e7048",
       "phase": "document pinned upstream research and adaptation plan",
       "branch": "future/fnet-209-federation-20261116"
+    },
+    "catalog": {
+      "sha": "6c162edc62def8182feb44796600e2a30e0c5f06",
+      "tree": "8fa0d922f24585f5c77ec0133f1fa89c0ed83f72",
+      "phase": "publish upstream research catalog and phase workflow",
+      "branch": "future/module-catalog-20261116"
     }
-  }
+  },
+  "recovery": "EXECUTION-RECOVERY-20261116.md"
 }
