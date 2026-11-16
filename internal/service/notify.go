@@ -15,6 +15,7 @@ const (
 	NotifTradeAccepted   = "trade.accepted"
 	NotifTradeDeclined   = "trade.declined"
 	NotifTradeCancelled  = "trade.cancelled"
+	NotifTradeExpired    = "trade.expired"
 	NotifDisputeOpened   = "dispute.opened"
 	NotifDisputeReview   = "dispute.under_review"
 	NotifDisputeResponse = "dispute.responded"
