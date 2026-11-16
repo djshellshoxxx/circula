@@ -25,7 +25,7 @@ Summary: built 5, not built 1, partial 6.
 | VIS-005 | P0 | built | Policy stored per network; bounds tested; prospective versions |
 | VIS-006 | P0 | not built | Completeness gate not met: P0/P1 gaps listed in 04 and 09-11 status tables |
 | VIS-007 | P0 | partial | One artefact per target from package-release.sh; clean-machine install not tested |
-| VIS-008 | P1 | partial | Structural accessibility tests only; WCAG tooling not run |
+| VIS-008 | P1 | partial | Structural accessibility tests only; WCAG tooling not run. [Refreshed 2026-11-16: axe-core and contrast/target-size/greyscale specs exist in `e2e/tests`; this note is stale.] |
 | VIS-009 | P1 | partial | Export round trip implemented; import (needed for round trip) deferred |
 | VIS-010 | P1 | partial | Entity list in 06 exists; no personal-data inventory document |
 | VIS-011 | P1 | built | No billing or payment-provider code; "payment" is trade wording only |

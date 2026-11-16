@@ -29,7 +29,7 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-006 | P0 | built | Per-account serialisation via write gate and BEGIN IMMEDIATE |
 | ARC-007 | P0 | built | Network scoping in queries and tests |
 | ARC-008 | P0 | partial | No operator API route; host-level CLI restore and SQL access remain outside service |
-| ARC-009 | P1 | not built | Break-glass access not built |
+| ARC-009 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Break-glass built: reason, time limit (hard maximum 4 h), audit, admin-visible list (`internal/service/breakglass.go`, `internal/web/h_breakglass.go`, `internal/service/breakglass_test.go`). Read-only default and the administrator notification step UNVERIFIED |
 | ARC-010 | P0 | partial | Input limits and tests exist; trust-boundary checklist and fuzzing not run |
 | ARC-011 | P0 | built | One writer per database file; lock refuses second holder |
 | ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
@@ -37,7 +37,7 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
 | ARC-015 | P0 | built | Explicit admin checks are recorded; scheduled checks are read-only and report through operational metrics/logs (DEC-031) |
 | ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace default 10 s (shutdown-grace) |
-| ARC-017 | P0 | partial | Semantic server-rendered HTML; no automated WCAG tool in CI |
+| ARC-017 | P0 | partial | Semantic server-rendered HTML. [Refreshed 2026-11-16: the note "no automated WCAG tool in CI" is stale; axe-core runs in `make e2e`.] |
 | ARC-018 | P1 | built | Layering enforced by depguard rules in .golangci.yml |
 | ARC-019 | P0 | built | CI builds all five targets from one commit |
 | ARC-020 | P0 | partial | Export through service; documented reference parser absent |

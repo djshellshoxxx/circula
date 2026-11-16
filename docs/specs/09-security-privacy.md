@@ -24,30 +24,30 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-002 | P0 | partial | Length 12 enforced; breached-password check not wired (PasswordDenied unset) |
 | SEC-003 | P0 | partial | Server sessions, cookie attributes, password change revokes; role-specific timeouts not built |
 | SEC-004 | P0 | partial | CSRF tokens on unsafe methods; token bound to random cookie, not to session |
-| SEC-005 | P0 | partial | Login and sign-up responses uniform; recovery not built |
+| SEC-005 | P0 | partial | Login and sign-up responses uniform; [Refreshed 2026-11-16: "recovery not built" is stale; channel-free recovery is built, see SEC-008] |
 | SEC-006 | P0 | partial | Atomic per-login throttle and per-address limiter via trusted proxies; no per-network or invitation limits |
-| SEC-007 | P1 | not built | MFA not built |
-| SEC-008 | P0 | not built | Account recovery not built |
+| SEC-007 | P1 | partial | [Refreshed 2026-11-16; was "not built".] TOTP and recovery codes built (addenda/SEC-007.md; `internal/service/totp.go`, `internal/service/mfa.go`; matrix A9). Mandatory second factor for privileged roles is a platform setting, default off, not per network; the requirement is DEC-007, still open |
+| SEC-008 | P0 | partial | [Refreshed 2026-11-16; was "not built".] Channel-free recovery built (addenda/SEC-008.md; `internal/service/recovery.go`; matrix A9). The addendum lists deviations from this requirement, which keep it partial |
 | SEC-009 | P0 | built | Default deny; authorisation matrix test |
 | SEC-010 | P0 | built | Self-approval, conflicts, last-admin and operator-grant refusals |
-| SEC-011 | P1 | not built | No dual control; adjustments post at once |
+| SEC-011 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Dual control built for administrator adjustments (addenda/SEC-011.md; `internal/service/dualcontrol.go`, `dualcontrol_test.go`). Write-offs and credit-limit changes not covered; wider scope is the open owner decision in addenda/SEC-011-owner-decision.md |
 | SEC-012 | P0 | built | Audit in same unit for admin actions; fixed-text in-app notice to the affected member on suspend, reinstate, removal, role change, credit-limit change, adjustment and reversal |
-| SEC-013 | P0 | partial | No operator role reads network data in product; break-glass not built |
+| SEC-013 | P0 | partial | No operator role reads network data in product; [Refreshed 2026-11-16; "break-glass not built" is stale.] Break-glass built: reason required, time-boxed to a hard maximum of four hours, audited, readable by network administrators (addenda/SEC-013.md; `internal/service/breakglass.go`, `internal/web/h_breakglass.go`). Break-glass scope is owner gate A3-F02 (matrix) |
 | SEC-014 | P0 | partial | Minimal profile fields; data inventory document absent |
 | SEC-015 | P0 | built | Network-scoped queries and cross-network tests |
 | SEC-016 | P0 | partial | Members-only directory; no-index directive absent |
 | SEC-017 | P0 | built | Member and admin scopes; CSV formula neutralisation; 24h download expiry |
-| SEC-018 | P0 | not built | No pseudonymisation or erasure on departure |
-| SEC-019 | P0 | partial | Audit excludes secrets; admin-only read path; member read in service only |
+| SEC-018 | P0 | partial | [Refreshed 2026-11-16; was "not built".] Erasure and anonymisation for departed members built (addenda/SEC-018.md; `internal/service/erasure.go`, `erasure_test.go`). Owner decisions listed in the addendum remain open |
+| SEC-019 | P0 | partial | Audit excludes secrets; admin-only read path; [Refreshed 2026-11-16: "member read in service only" is stale; member read is served by `GET /api/v1/audit-events` and the web audit page (FR-082, matrix W6)] |
 | SEC-020 | P0 | partial | RedactSecrets and route templates in logs; no log-wide canary scan |
 | SEC-021 | P1 | partial | `log-retention` setting and `circula prune-logs`; documented in ops monitoring guide |
 | SEC-022 | P0 | built | Refuses plain HTTP on non-loopback unless explicit; Secure cookies forced |
 | SEC-023 | P0 | built | CSP, frame-ancestors, no-store, same-origin scripts |
 | SEC-024 | P0 | built | Safe next parsing; html/template; integer amounts |
-| SEC-025 | P1 | not built | Abuse reporting not built |
+| SEC-025 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Listing and member reports built (FR-024; `internal/service/reports.go`, `internal/api/routes.go:98`). Transaction reports are not built (`ReportListing` and `ReportMember` only), and the link to disputes is UNVERIFIED |
 | SEC-026 | P1 | not built | Velocity and reciprocal signals not built |
 | SEC-027 | P0 | partial | Secrets from env or files; rotation procedure not documented for session key |
-| SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600 |
+| SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600. [Refreshed 2026-11-16: optional encryption at rest is built, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md; the note above describes the default, unencrypted state] |
 | SEC-029 | P1 | partial | Module versions pinned; govulncheck and SBOM module list in CI; dependency checksum failure test not present |
 | SEC-030 | P0 | partial | Incident contacts and failure table in docs/ops; drills not recorded |
 | SEC-031 | P1 | built | SECURITY.md with private reporting channel; owner approval of contact pending (DEC-026) |

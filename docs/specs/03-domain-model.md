@@ -46,7 +46,7 @@ Summary for the historical implementation snapshot: built 33, required unimpleme
 | DOM-022 | P0 | built | Adjustment: reason, system counter-entry, own-account refused |
 | DOM-023 | P0 | built | No edit or delete of completed records; corrections are new transactions |
 | DOM-024 | P0 | built | Departure preconditions, retain and settle-to-zero rules |
-| DOM-025 | P1 | partial | Default flag built (no ledger effect); limit-warning job (DOM-025.1) not built |
+| DOM-025 | P1 | partial | Default flag built (no ledger effect); [Refreshed 2026-11-16: "limit-warning job (DOM-025.1) not built" is stale. The hourly job sends limit warnings: `cmd/circula/jobs_limits.go`, `TestPurgeAndWarnSendsLimitWarning` in `cmd/circula/jobs_limits_test.go`. Once-per-period and admin-only visibility UNVERIFIED] |
 | DOM-026 | P0 | built | One system account per network; exempt from limit |
 | DOM-027 | P1 | built | Sign-up grant posted from system account on activation; off by default (DEC-051) |
 | DOM-028 | P0 | built | No configuration key for invariants |
