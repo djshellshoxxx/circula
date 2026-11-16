@@ -67,11 +67,20 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
+			args = []any{"12.50", "credits"}
+		case "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger":
+			args = []any{"example"}
+		case "reversal.by":
+			args = []any{"ledger reference 12345", "12.50", "credits"}
 		case "queue.party_proposal":
 			args = []any{"Ana", "Ben", "1.00", "credit"}
 		case "overview.stale", "overview.invites":
 			args = []any{2, 48}
 		default:
+			if strings.HasPrefix(key, "financial.row.") {
+				args = []any{"Ana", "12.50", "credits"}
+			}
 			if e.One != "" {
 				args = []any{2}
 			}

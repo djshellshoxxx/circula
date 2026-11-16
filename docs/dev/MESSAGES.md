@@ -34,3 +34,9 @@ Verification: `go test -race ./internal/web/messages` exercises singular, zero,
 plural and grouped counts, positional arguments, exact large amounts, Unicode,
 literal percent signs, escaping and missing keys. `TestAdminOverviewPage` and
 `TestAdminStaleProposalQueue` exercise the actual handler/template integration.
+
+## Financial-message continuation
+
+The candidate financial-message change extends the catalogue to balance state and spoken descriptions, credit-limit usage, neutral member names, transaction statuses/explanations, reversal links and full row sentences for trade/reversal/adjustment/grant kinds. It preserves exact fixed-point amount strings and formats ledger references as unchanged identifier strings rather than grouped quantities. Zero-balance speech reuses the existing unit inflector, avoiding an extra suffix for names such as `Hours`.
+
+`TestBalanceCatalogueMessages` and `TestTransactionCatalogueRows` are new regression checks, and the catalogue completeness test supplies the new interpolation arguments. These checks have not run locally because the execution environment is unavailable; candidate CI is authoritative. This is still a partial UX-047 migration, not a locale-scope decision or completion of all UI text.
