@@ -110,7 +110,9 @@ func snapshotBalances(t *testing.T, w *world, seq int64) map[string]int64 {
 func reconcileExport(t *testing.T, w *world, sink *service.MemSink, man *service.Manifest, memberID string) []string {
 	t.Helper()
 	var diffs []string
-	bad := func(f string, a ...any) { diffs = append(diffs, fmt.Sprintf(string(man.Scope)+"/"+string(man.Format)+": "+f, a...)) }
+	bad := func(f string, a ...any) {
+		diffs = append(diffs, fmt.Sprintf(string(man.Scope)+"/"+string(man.Format)+": "+f, a...))
+	}
 	tables := exportedTables(t, sink, man)
 	entries := tables["entries"]
 	var sum int64

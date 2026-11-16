@@ -6,16 +6,30 @@ import (
 )
 
 // jobStore holds consistency-check results and export artefacts: the service
-// has no persistent job tables. Artefacts are spooled to temporary files when
-// possible (FR-095) and otherwise kept in memory. Entries expire after 24 h
-// and the store is size-bounded, so memory and disk use are bounded.
+// has no persistent job tables. Artefacts are spooled to files in dir
+// (FR-095), never held in memory. Entries expire after 24 h and the store is
+// bounded: running exports count against the same caps as stored ones, and
+// every byte an export writes is reserved against capBytes before it
+// reaches the disk, so parallel exports cannot exceed the cap (BR-06).
 type jobStore struct {
 	now    func() time.Time
 	mu     sync.Mutex
 	checks map[string]checkEntry
 	exps   map[string]*exportEntry
-	bytes  int64
-	// dir is where export artefacts are spooled; "" is os.TempDir().
+	bytes  int64 // sizes of the stored artefacts
+	// capBytes bounds stored plus running artefacts: maxExpBytes, lowered
+	// only by tests.
+	capBytes int64
+	// Running exports (BR-06): how many, per person and in total, and the
+	// bytes they have reserved so far.
+	running  map[string]int
+	nRunning int
+	inflight int64
+	// erasures counts member erasures per network, so that an admin-scope
+	// export running across one is not stored (BR-04).
+	erasures map[string]uint64
+	// dir is where export artefacts are spooled (Options.ExportSpoolDir);
+	// "" is os.TempDir().
 	dir string
 }
 
@@ -33,10 +47,14 @@ const (
 	// maxExportsPerPerson caps the live artefacts one person can hold, so a
 	// single member cannot fill the shared store for everyone (SA-11).
 	maxExportsPerPerson = 5
+	// maxExportsRunning caps the exports in progress at once in the process;
+	// each holds a read transaction and a compressor (BR-06).
+	maxExportsRunning = 4
 )
 
 func newJobStore(now func() time.Time) *jobStore {
-	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{}}
+	return &jobStore{now: now, checks: map[string]checkEntry{}, exps: map[string]*exportEntry{},
+		running: map[string]int{}, erasures: map[string]uint64{}, capBytes: maxExpBytes}
 }
 
 // dropLocked removes one export and releases its artefact.
@@ -46,12 +64,19 @@ func (j *jobStore) dropLocked(id string, e *exportEntry) {
 	e.release()
 }
 
-// dropPerson removes the export artefacts and check results of one person.
-func (j *jobStore) dropPerson(person string) {
+// dropErased removes what the store keeps for an erased member: the export
+// artefacts and check results of the person, and every admin-scope export of
+// the member's network, since those may hold the member's data (BR-04).
+// Admin-scope exports of that network still running are not stored when they
+// finish.
+func (j *jobStore) dropErased(net, person string) {
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	if net != "" {
+		j.erasures[net]++
+	}
 	for k, e := range j.exps {
-		if e.person == person {
+		if e.person == person || (net != "" && e.net == net && e.dto.Scope != "mine") {
 			j.dropLocked(k, e)
 		}
 	}
@@ -94,17 +119,30 @@ func (j *jobStore) getCheck(net, id string) (checkDTO, bool) {
 	return e.d, true
 }
 
-// exportSlot says why a new export cannot be stored: "" when it can,
-// "person" when the caller holds too many, "full" when the store is full.
-func (j *jobStore) exportSlot(person string) string {
+// beginExport admits a new export and reserves its slot, or says why it
+// cannot run: "person" when the caller holds too many exports, "full" when
+// the store is full, "busy" when too many exports are running. adminScope
+// marks an export of network-wide data (BR-04). The caller must end the
+// ticket with commit or abort.
+func (j *jobStore) beginExport(net, person string, adminScope bool) (*exportTicket, string) {
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	return j.slotLocked(person, 0)
+	if j.nRunning >= maxExportsRunning {
+		return nil, "busy"
+	}
+	if why := j.slotLocked(person); why != "" {
+		return nil, why
+	}
+	j.running[person]++
+	j.nRunning++
+	return &exportTicket{j: j, net: net, person: person, admin: adminScope, gen: j.erasures[net]}, ""
 }
 
-func (j *jobStore) slotLocked(person string, size int64) string {
+// slotLocked drops expired exports and says why one more cannot start.
+// Running exports count as held.
+func (j *jobStore) slotLocked(person string) string {
 	now := j.now()
-	own := 0
+	own := j.running[person]
 	for k, x := range j.exps {
 		if now.Sub(x.at) > jobTTL {
 			j.dropLocked(k, x)
@@ -117,17 +155,69 @@ func (j *jobStore) slotLocked(person string, size int64) string {
 	switch {
 	case own >= maxExportsPerPerson:
 		return "person"
-	case len(j.exps) >= maxExports || j.bytes+size > maxExpBytes:
+	case len(j.exps)+j.nRunning >= maxExports || j.bytes+j.inflight >= j.capBytes:
 		return "full"
 	}
 	return ""
 }
 
-// putExport stores e; on false the caller still owns (and releases) it.
-func (j *jobStore) putExport(e *exportEntry) bool {
+// exportTicket is one running export's slot and byte reservation (BR-06).
+type exportTicket struct {
+	j           *jobStore
+	net, person string
+	admin       bool
+	gen         uint64 // the network's erasure count when the export began
+	reserved    int64
+	done        bool
+}
+
+// reserve claims n more bytes of the shared cap before they are written. It
+// fails, claiming nothing, when stored and running artefacts would exceed
+// the cap.
+func (t *exportTicket) reserve(n int64) bool {
+	j := t.j
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	if j.slotLocked(e.person, e.size()) != "" {
+	if t.done || j.bytes+j.inflight+n > j.capBytes {
+		return false
+	}
+	j.inflight += n
+	t.reserved += n
+	return true
+}
+
+func (t *exportTicket) endLocked() {
+	j := t.j
+	t.done = true
+	j.inflight -= t.reserved
+	j.nRunning--
+	if j.running[t.person]--; j.running[t.person] <= 0 {
+		delete(j.running, t.person)
+	}
+}
+
+// abort ends the export without storing anything; after commit it does
+// nothing.
+func (t *exportTicket) abort() {
+	t.j.mu.Lock()
+	defer t.j.mu.Unlock()
+	if !t.done {
+		t.endLocked()
+	}
+}
+
+// commit stores e, whose artefact is the bytes reserved through t. It refuses
+// an admin-scope export when a member of its network was erased while the
+// export ran (BR-04). On false the caller still owns (and releases) e.
+func (t *exportTicket) commit(e *exportEntry) bool {
+	j := t.j
+	j.mu.Lock()
+	defer j.mu.Unlock()
+	if t.done {
+		return false
+	}
+	t.endLocked()
+	if t.admin && j.erasures[t.net] != t.gen {
 		return false
 	}
 	j.exps[e.dto.ID] = e

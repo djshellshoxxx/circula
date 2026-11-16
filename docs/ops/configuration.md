@@ -68,6 +68,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `audit-anchor-with-backups` | `CIRCULA_AUDIT_ANCHOR_WITH_BACKUPS` | `true` | no | Write `<backup>.anchor.json` beside each scheduled backup. Removed together with the backup it belongs to. |
 | `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Append every audit event (chain metadata only) to this JSONL file after commit (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
+| `export-spool-dir` | `CIRCULA_EXPORT_SPOOL_DIR` | `<state-dir>/export-spool` | no | Where API export archives are written and kept until they expire. Created `0700` when missing; `serve` refuses to start if it cannot write there. See [Export spool](#export-spool-fr-095-br-06). |
 
 ## Secrets
 
@@ -219,6 +220,25 @@ the database without the writer lock, so they work beside `serve`. With `audit-a
 HMAC-SHA-256 and `verify` rejects an edited, unsigned or wrongly keyed file; the key should not live only on the database
 host. Scheduled backups write `<backup>.anchor.json` beside the backup unless `audit-anchor-with-backups=false`; copy those
 off-host with the backups. Limit: an anchor proves history up to its time. Events after the newest anchor are not covered.
+
+## Export spool (FR-095, BR-06)
+
+`POST /api/v1/exports` streams each archive into a private file (`0600`) in `export-spool-dir` and keeps it there for 24
+hours, until the person who made it or (for administrator scopes) any member of the network is erased, or until the
+process stops. On Linux and macOS the file is unlinked as soon as it is created, so it never shows in a directory
+listing and nothing is left behind after a crash; the disk space is still used while the export lives. On other
+platforms the files stay named `circula-export-*.zip` and `serve` deletes leftovers at start.
+
+Bounds, fixed in this build: at most 64 MiB of archives in total, stored and still being written together. Every chunk
+is reserved against that cap before it is written, so parallel exports stop with `503 unavailable` instead of filling
+the disk. At most 50 exports are held, 5 per person, and 4 run at once; running exports count as held. Plan for
+64 MiB of free space in this directory. A tmpfs mount works but its contents count against memory.
+
+The setting fails closed. `serve` creates the directory (`0700`) when it is missing, and refuses to start when the path
+is not a directory or a file cannot be created in it. If the directory becomes unusable while the service runs, each
+export answers `503 unavailable` and the log records `export spool directory unusable; export refused` with the path.
+Archives are never kept in memory instead. Put it on a local disk owned by the service account, and back it up never:
+it holds only short-lived copies of data that is in the database.
 
 ## Audit mirror (RB-012)
 

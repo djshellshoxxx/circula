@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"encoding/json"
 	"os"
 	"os/exec"
 	"regexp"
@@ -68,6 +69,57 @@ func TestReferenceReader(t *testing.T) {
 			if err == nil || !strings.Contains(string(out), "FAIL") {
 				t.Fatalf("tampered package passed:\n%s", out)
 			}
+		}
+	}
+}
+
+// manifestKeys lists the keys of a decoded manifest, nested objects as
+// "parent.child"; the files array's items are documented in prose.
+func manifestKeys(prefix string, m map[string]any, out map[string]bool) {
+	for k, v := range m {
+		out[prefix+k] = true
+		if sub, ok := v.(map[string]any); ok {
+			manifestKeys(prefix+k+".", sub, out)
+		}
+	}
+}
+
+// DAT-037, GOV-022 (BR-06 c): every manifest.json field the code writes,
+// the reconciliation summary included, is documented in export-schema.md,
+// and the document lists no field the code does not write.
+func TestExportManifestFieldsDocumented(t *testing.T) {
+	doc, err := os.ReadFile("../../docs/api/export-schema.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := strings.ReplaceAll(string(doc), "\r\n", "\n")
+	start := strings.Index(text, "## manifest.json")
+	end := strings.Index(text, "## JSON document")
+	if start < 0 || end < start {
+		t.Fatal("manifest sections not found")
+	}
+	documented := map[string]bool{}
+	for _, m := range regexp.MustCompile("(?m)^\\| `([a-z_.0-9]+)` \\|").FindAllStringSubmatch(text[start:end], -1) {
+		documented[m[1]] = true
+	}
+	w := newWorld(t, nil)
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 300)
+	sink := &service.MemSink{}
+	tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, service.ExportFull, service.FormatCSV, sink))
+	var man map[string]any
+	if err := json.Unmarshal(sink.Bytes("manifest.json"), &man); err != nil {
+		t.Fatal(err)
+	}
+	written := map[string]bool{}
+	manifestKeys("", man, written)
+	for k := range written {
+		if !documented[k] {
+			t.Errorf("manifest field %q is not documented in export-schema.md", k)
+		}
+	}
+	for k := range documented {
+		if !written[k] {
+			t.Errorf("export-schema.md documents manifest field %q, which a full export does not write", k)
 		}
 	}
 }

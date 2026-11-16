@@ -78,6 +78,7 @@ var sampleValues = map[string]string{
 	"backup-require-encryption":  "f",
 	"backup-encryption-key-file": "",
 	"state-dir":                  "", // filled per test
+	"export-spool-dir":           "", // filled per test
 	"audit-anchor-key-file":      "",
 	"audit-anchor-with-backups":  "false",
 	"tls-cert-file":              "",
@@ -191,6 +192,9 @@ func TestEverySettingAcceptedByEverySource(t *testing.T) {
 		}
 		if d.key == "state-dir" {
 			v = dir
+		}
+		if d.key == "export-spool-dir" {
+			v = filepath.Join(dir, "spool")
 		}
 		if d.key == "backup-dir" {
 			v = filepath.Join(dir, "bk")

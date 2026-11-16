@@ -1,9 +1,9 @@
 package api
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"hash"
 	"io"
 	"os"
@@ -28,67 +28,61 @@ func (s *spoolFile) release() {
 	}
 }
 
-// artefactWriter receives the archive as the export produces it, hashing and
-// counting the bytes on the way. It spools to a new temporary file in dir
-// ("" is os.TempDir()); when none can be created it collects the archive in
-// memory, the DEC-047 interim behaviour.
+// errExportFull stops an export whose archive would not fit in the shared
+// byte cap (BR-06).
+var errExportFull = errors.New("export storage is full")
+
+// artefactWriter receives the archive as the export produces it, reserving
+// every chunk against the store's byte cap before writing it to the spool
+// file, and hashing and counting it on the way (BR-06). There is no in-memory
+// fallback: without a spool file the export is refused.
 type artefactWriter struct {
 	spool *spoolFile
-	mem   bytes.Buffer
+	t     *exportTicket
 	h     hash.Hash
 	n     int64
+	full  bool // a write was refused by the byte cap
 }
 
-func newArtefactWriter(dir string) *artefactWriter {
-	a := &artefactWriter{h: sha256.New()}
+// newArtefactWriter creates the spool file in dir ("" is os.TempDir()).
+func newArtefactWriter(dir string, t *exportTicket) (*artefactWriter, error) {
 	f, err := os.CreateTemp(dir, "circula-export-*.zip") // mode 0600
 	if err != nil {
-		return a
+		return nil, err
 	}
-	a.spool = &spoolFile{f: f, path: f.Name()}
+	a := &artefactWriter{spool: &spoolFile{f: f, path: f.Name()}, t: t, h: sha256.New()}
 	if os.Remove(f.Name()) == nil {
 		a.spool.path = ""
 	}
-	return a
+	return a, nil
 }
 
 func (a *artefactWriter) Write(p []byte) (int, error) {
-	var n int
-	var err error
-	if a.spool != nil {
-		n, err = a.spool.f.Write(p)
-	} else {
-		n, err = a.mem.Write(p)
+	if !a.t.reserve(int64(len(p))) {
+		a.full = true
+		return 0, errExportFull
 	}
+	n, err := a.spool.f.Write(p)
 	a.h.Write(p[:n])
 	a.n += int64(n)
 	return n, err
 }
 
 // discard releases what was written; the writer is not used again.
-func (a *artefactWriter) discard() {
-	if a.spool != nil {
-		a.spool.release()
-	}
-	a.mem = bytes.Buffer{}
-}
+func (a *artefactWriter) discard() { a.spool.release() }
 
 // finish hands the complete archive to e and returns its hex SHA-256.
 func (a *artefactWriter) finish(e *exportEntry) string {
-	if a.spool != nil {
-		a.spool.size = a.n
-		e.spool = a.spool
-	} else {
-		e.file = a.mem.Bytes()
-	}
+	a.spool.size = a.n
+	e.spool = a.spool
 	return hex.EncodeToString(a.h.Sum(nil))
 }
 
 func (e *exportEntry) size() int64 {
-	if e.spool != nil {
-		return e.spool.size
+	if e.spool == nil {
+		return 0
 	}
-	return int64(len(e.file))
+	return e.spool.size
 }
 
 // release frees the artefact once its export has left the store.
@@ -101,8 +95,5 @@ func (e *exportEntry) release() {
 // content reads the artefact from its start; each call is independent, so
 // downloads may run side by side.
 func (e *exportEntry) content() *io.SectionReader {
-	if e.spool != nil {
-		return io.NewSectionReader(e.spool.f, 0, e.spool.size)
-	}
-	return io.NewSectionReader(bytes.NewReader(e.file), 0, int64(len(e.file)))
+	return io.NewSectionReader(e.spool.f, 0, e.spool.size)
 }

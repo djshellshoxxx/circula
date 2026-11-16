@@ -110,9 +110,13 @@ type hashingWriter struct {
 	n    int64
 }
 
-func (w *hashingWriter) Header() http.Header         { return w.hdr }
-func (w *hashingWriter) WriteHeader(code int)        { w.code = code }
-func (w *hashingWriter) Write(p []byte) (int, error) { w.h.Write(p); w.n += int64(len(p)); return len(p), nil }
+func (w *hashingWriter) Header() http.Header  { return w.hdr }
+func (w *hashingWriter) WriteHeader(code int) { w.code = code }
+func (w *hashingWriter) Write(p []byte) (int, error) {
+	w.h.Write(p)
+	w.n += int64(len(p))
+	return len(p), nil
+}
 
 // FR-095: the API export streams. Creating and downloading a multi-megabyte
 // archive raises the live heap by less than the archive's own size, while

@@ -38,6 +38,11 @@ type Options struct {
 	// Edge carries the trusted-proxy, Secure and HSTS policy shared with the
 	// HTML adapter. The zero value ignores forwarding headers.
 	Edge httpx.Edge
+	// ExportSpoolDir is the directory export archives are written to and kept
+	// in until they expire (FR-095, BR-06). Default: os.TempDir(). When no
+	// file can be created there, exports are refused with 503; archives are
+	// never held in memory instead.
+	ExportSpoolDir string
 }
 
 type server struct {
@@ -89,6 +94,7 @@ func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
 	s := &server{svc: svc, opt: opt, log: opt.Logger, mux: http.NewServeMux(),
 		idem: newIdemStore(24*time.Hour, 10000), rl: newLimiter(opt.Now), jobs: newJobStore(opt.Now),
 		cursor: opt.CursorKey, csrf: httpx.CSRF{Key: opt.CSRFKey}, pwFail: newLimiter(opt.Now)}
+	s.jobs.dir = opt.ExportSpoolDir
 	s.routes()
 	s.mux.HandleFunc("/", s.notFound)
 	setErasureHook(s)
