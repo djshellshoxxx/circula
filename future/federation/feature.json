@@ -1,0 +1,10 @@
+{
+  "id": "FNET-209",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Experimental domain-separated Ed25519 discovery envelopes with pinned peer key, explicit audience, expiry, strict JSON bytes and publish/revoke kind restriction.",
+  "remaining": "Wire-format/key-rotation ADR and audit; bilateral admin trust UI; durable bounded inbox/outbox; atomic replay journal and out-of-order revocation rules; listing consent/content projection; SSRF-safe bounded transport; rate limits; partition/restart/adversarial tests. Cross-network settlement remains excluded pending separate accounting design."
+}
