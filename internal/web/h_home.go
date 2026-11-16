@@ -178,6 +178,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 		if row.Pending {
 			h.Pending = append(h.Pending, row)
 		} else {
+			row.ReversedBy = n.reversedBy(t, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals) // UX-017
 			h.Done = append(h.Done, row)
 		}
 	}

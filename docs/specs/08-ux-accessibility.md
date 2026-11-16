@@ -39,11 +39,11 @@ Summary: built 31, not built 7, partial 22.
 | UX-014 | P0 | built | Pending section excluded from balance |
 | UX-015 | P0 | built | Completed rows show posted time |
 | UX-016 | P0 | built | Status labels and explanations; accepted not shown |
-| UX-017 | P1 | partial | Reversal and adjustment rows exist; link to original not verified |
+| UX-017 | P1 | partial | Reversals are own lines with date, reason and signed effect, linked to the original; the original gains only "Reversed by" links (History, trade detail; test). Adjustments show date, reason and effect but have no original: the schema allows `original_tx_id` only on reversals, so linking them needs a schema decision |
 | UX-018 | P0 | built | Review step before accept, propose, dispute |
 | UX-019 | P0 | built | Confirmation message after posting |
 | UX-020 | P0 | built | Refusal copy names cause and that nothing changed |
-| UX-021 | P0 | partial | Error summary and field messages present; not verified against all codes |
+| UX-021 | P0 | built | Field messages name the field, describe the problem in words and suggest a correction; table tests over every domain code and every service field name |
 | UX-022 | P0 | partial | Error summary present; focus move and value retention not verified |
 | UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
 | UX-024 | P1 | not built | Member time zone not supported; times shown in server zone |
@@ -71,7 +71,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-046 | P0 | built | Document language en |
 | UX-047 | P1 | not built | Strings not externalised into catalogues |
 | UX-048 | P0 | built | Visible labels and autocomplete |
-| UX-049 | P1 | partial | Six section/viewport Help-landmark cases passed at 32a8314; broader visual/all-page review remains |
+| UX-049 | P1 | built | Go tests render every page template and every GET route (anonymous, member, admin, error pages) and pin the footer Help link; earlier six section/viewport e2e cases at 32a8314 |
 | UX-050 | P0 | built | Copy avoids money and cash wording for credits |
 | UX-051 | P0 | built | Sign-in form allows paste; no cognitive test |
 | UX-052 | P0 | partial | Recovery not built; registration response uniform |

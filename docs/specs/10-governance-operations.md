@@ -35,7 +35,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-007 | P0 | built | Corrective actions are transactions; property tests |
 | GOV-008 | P0 | built | Invite, approval, open modes; audit per decision |
 | GOV-009 | P0 | built | Append-only terms versions; acceptance recorded at join and re-required before proposing or accepting a trade after an update; reading and leaving stay open |
-| GOV-010 | P0 | partial | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page points to the self-export on History, no export is offered in the flow |
+| GOV-010 | P0 | built | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page offers the CSV/JSON self-export before the leave form, also when blocked (test) |
 | GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
 | GOV-012 | P1 | built | Optional inactivity rule (policy inactivity_days): flags, notifies, lists for administrators; never removes |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
