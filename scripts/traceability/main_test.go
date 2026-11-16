@@ -177,7 +177,7 @@ func TestScanResolvesSymbols(t *testing.T) {
 	}
 	var got []c
 	for _, x := range cites {
-		got = append(got, c{x.ID, x.Path, x.Symbol, x.Test, x.Source})
+		got = append(got, c(x))
 	}
 	want := []c{
 		{"GOV-001", "e2e/tests/a.spec.js", "", true, srcMention},

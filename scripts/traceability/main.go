@@ -93,7 +93,7 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
-	if err := os.WriteFile(outPath, res.out, 0o644); err != nil {
+	if err := os.WriteFile(outPath, res.out, 0o644); err != nil { //nolint:gosec // developer tool: -o is the path the person running it chose
 		fatal(err)
 	}
 	fmt.Fprintf(os.Stderr, "traceability: wrote %s: %d IDs, %d built without test citation, %d unknown IDs, %d duplicates, %d of %d legacy citations still resolve\n",

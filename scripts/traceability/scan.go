@@ -43,7 +43,14 @@ const selfDir = "scripts/traceability"
 func scanTree(root string) ([]Cite, map[string][]string, error) {
 	var cites []Cite
 	testFuncs := map[string][]string{}
-	err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+	// Reads go through an os.Root so a symlink swapped in during the walk
+	// cannot point a read outside the repository (gosec G122).
+	rt, err := os.OpenRoot(root)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer func() { _ = rt.Close() }()
+	err = filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -58,7 +65,7 @@ func scanTree(root string) ([]Cite, map[string][]string, error) {
 		if !d.Type().IsRegular() || !scanExts[filepath.Ext(rel)] {
 			return nil
 		}
-		src, err := os.ReadFile(p)
+		src, err := rt.ReadFile(filepath.FromSlash(rel))
 		if err != nil {
 			return err
 		}
