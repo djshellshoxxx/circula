@@ -223,24 +223,24 @@ func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.
 			return nil
 		}
 		for _, t := range props {
-		if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
-			return err
-		}
-		// GOV-010: the other party is told their open proposal ended.
-		other := t.PayerMemberID
-		if other == target.ID {
-			other = t.PayeeMemberID
-		}
-		if err := s.notify(tx, p.net.ID, other, NotifMemberLeft, "A trade was cancelled",
-			"A member left the network, so your open trade proposal with them was cancelled.", "/trades/"+t.ID, ""); err != nil {
-			return err
-		}
-		if err := s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
-			TargetType: "transaction", TargetID: t.ID, Reason: "party departed",
-			Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
-			Before:   map[string]any{"status": "proposed"}, After: map[string]any{"status": "cancelled"}}); err != nil {
-			return err
-		}
+				if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
+				return err
+			}
+			// GOV-010: the other party is told their open proposal ended.
+			other := t.PayerMemberID
+			if other == target.ID {
+				other = t.PayeeMemberID
+			}
+			if err := s.notify(tx, p.net.ID, other, NotifMemberLeft, "A trade was cancelled",
+				"A member left the network, so your open trade proposal with them was cancelled.", "/trades/"+t.ID, ""); err != nil {
+				return err
+			}
+			if err := s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
+				TargetType: "transaction", TargetID: t.ID, Reason: "party departed",
+				Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
+				Before:   map[string]any{"status": "proposed"}, After: map[string]any{"status": "cancelled"}}); err != nil {
+				return err
+			}
 		}
 	}
 }
