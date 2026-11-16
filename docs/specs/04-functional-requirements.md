@@ -16,7 +16,7 @@ Review note (2026-10-24): The build-status snapshot above is retained as histori
 
 Summary (recounted 2026-11-16): built 63 (one marked unreviewed), not built 0, partial 2. Previous recount (2026-11-12): built 60, not built 2, partial 3.
 
-Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](../plans/circula-completion-matrix.md) and the code. Changed rows are marked "[Refreshed 2026-11-16; was ...]" in their note, so the prior value stays visible. FR-024, FR-078 and FR-038 were stale in the table although their Status text already said built. FR-067 stays partial because its note was stale, not its status.
+Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](../plans/circula-completion-matrix.md) and the code. Changed rows are marked "[Refreshed 2026-11-16; was ...]" in their note, so the prior value stays visible. FR-024, FR-078 and FR-038 were stale in the table although their Status text already said built. FR-067 is now built with a bounded queue linked from its stale-proposal count.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -61,7 +61,7 @@ Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](..
 | FR-064 | P1 | built | Web admin plus PUT /admin/members/{id}/default-flag; service audit and payer restriction; API and contract regression tests. Route confirmed 2026-11-16 (`internal/api/routes.go:59`, `internal/api/default_flag_test.go`; OpenAPI operation `setDefaultFlag`); Evidence: `TestDefaultFlagAPI`, `TestAcceptRechecksDefaultFlag` (flag mutation, authorization, no ledger mutation and posting recheck). Citations are not execution results |
 | FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute; Evidence: `TestDisputeDecisionAuthorization` (reviewer role assignment and own-dispute refusal). Citations are not execution results |
 | FR-066 | P1 | built | Admin reversal via API with reason |
-| FR-067 | P1 | partial | [Refreshed 2026-11-16; "pending-member count only" is stale.] Overview shows six counts: pending members, stale proposals, open disputes, `posting_pending`, near limit, expiring invitations (`internal/web/h_admin_f2.go:55-66`, `internal/service/overview.go:20`). Gap: the stale-proposals row has no link, which the acceptance criteria require |
+| FR-067 | P1 | built | Admin overview links its aged-proposal count to `/n/{slug}/admin/proposals/stale`. SQL applies the inclusive 48-hour age and live-expiry predicates before keyset paging. `TestAdminStaleProposalsMatchesOverview` covers count agreement, boundary times, expiry, paging and authorization; `TestAdminStaleProposalQueue` follows the link and both pages for 51 proposals. Other overview counts remain covered by `TestAdminOverviewCounts` and `TestAdminOverviewPage`. |
 | FR-068 | P1 | built | Closure in web and API; announced with notice (GOV-025); refuses with dispute blockers; members notified |
 | FR-069 | P0 | built | Last-admin guard; role changes audited |
 | FR-070 | P0 | built | Open dispute within window by party on completed trade |

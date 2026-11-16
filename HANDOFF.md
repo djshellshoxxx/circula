@@ -2,6 +2,8 @@
 
 ## 2026-11-16: core completion and consolidation (current)
 
+Continuation: FR-067 now links aged proposals to a bounded administrator queue with current role checks, exact age/expiry predicates, keyset paging and neutral party descriptions. A real Linux checkpoint database-write failure regression preserves the committed WAL and proves restart, replay, checkpoint retry and reopen. Detailed remaining storage boundaries are in the storage qualification note.
+
 Merged into main by PR #56 (`304600c`) and qualification follow-up #57 (`7cdb966`).
 Fifteen included historical PR heads are accounted for: fourteen superseded PRs were closed and #55
 was automatically marked merged; branches remain preserved.

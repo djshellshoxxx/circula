@@ -39,7 +39,7 @@ func TestAdminOverviewPage(t *testing.T) {
 	adm.mustContain(p, "Needs attention", "0 membership requests are waiting.", "2 disputes are open or under review.",
 		`href="/n/town/review"`, "0 disputes are decided but the reversal is not yet posted", "0 active members are at or beyond their credit limit",
 		"1 invitation ends within 72 hours.", `href="/n/town/admin/invitations"`, "No ledger check has been recorded yet",
-		"0 open proposals have waited more than 48 hours", "12:00 UTC")
+		"0 open proposals have waited at least 48 hours", "12:00 UTC")
 	// a recorded check shows up
 	adm.post(b+"/admin/check", p, nil)
 	adm.mustContain(adm.get(b+"/admin"), "The last ledger check passed.")

@@ -148,6 +148,10 @@ func (t *txImpl) ListTransactions(netID string, f TxFilter) ([]*domain.Transacti
 		q += ` AND (t.expires_at IS NULL OR t.expires_at > ?)`
 		args = append(args, ms(f.LiveAt))
 	}
+	if !f.ProposedBefore.IsZero() {
+		q += ` AND t.proposed_at <= ?`
+		args = append(args, ms(f.ProposedBefore))
+	}
 	if f.AfterID != "" {
 		q += ` AND t.id < ?`
 		args = append(args, f.AfterID)

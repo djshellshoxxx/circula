@@ -14,6 +14,9 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Completed engineering in this consolidation
 
+- FR-067 stale-proposal attention link and paginated administrator queue, with matching count/age/expiry predicates, authorization and neutral party wording.
+- Real Linux checkpoint database-write failure preserves an already committed trade and WAL through restart, idempotent replay, successful checkpoint retry and reopen.
+
 - Optional adjustment links, including dual-control approval, immutable metadata, visible history and
   API/export support; migration 0018 preserves existing export bytes when no links exist.
 - Driver-neutral repository contracts with old-store aliases; 43 paired MVP HTML/API operations and
@@ -60,7 +63,7 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
   The 100,000-sequence execution itself is complete; it does not approve a release gate.
 - QA-042 remaining inspection/manual/external citations and full acceptance-criterion qualification.
   Source/test mappings and matching dated execution evidence do not prove untested criteria.
-- L9 read/fsync/truncate, other device/write failures, checkpoint I/O and uncertain commit outcomes
+- L9 read/fsync/truncate, other device/write failures, checkpoint sync/truncate and uncertain commit outcomes
   beyond the covered disk-full and pre-commit-marker WAL write failure; see the storage qualification note.
 - SEC-014/018 retention choices for time zone, last activity and challenge reasons remain documented questions.
 - Refresh historical spec status tables only against specific implementation and test evidence.
