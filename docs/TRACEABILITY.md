@@ -2,7 +2,7 @@
 
 Generated file (QA-042); do not edit by hand. Regenerate with `make traceability`, which runs `go run ./scripts/traceability -head "$(git rev-parse --short HEAD)" -o docs/TRACEABILITY.md`. `make traceability-check` fails when this file does not match the specs and code.
 
-Input: git HEAD `bbd2141` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
+Input: git HEAD `f35557e` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
 
 Depends on: the spec files in [specs/](specs/), [DECISIONS.md](DECISIONS.md) (DEC-028 onward count as known IDs), the source tree outside docs/, and the frozen citations in `scripts/traceability/legacy-citations.tsv`.
 
@@ -28,15 +28,15 @@ Execution evidence: not supplied. This committed inventory contains no last-run 
 
 ## Summary
 
-Requirement IDs (excluding decision-register rows): 502; built 280, partial 119, not built 10, deferred 5, no status row 88.
+Requirement IDs (excluding decision-register rows): 502; built 280, partial 120, not built 9, deferred 5, no status row 88.
 
 Decision-register IDs: 29; deferred 1, decided, built 4, no status row 2, open, not built 5, open, partly built 16, partly built 1.
 
 | Measure | Count |
 |---|---|
 | IDs in the matrix | 531 |
-| IDs with at least one code citation | 449 |
-| IDs with at least one test citation | 422 |
+| IDs with at least one code citation | 450 |
+| IDs with at least one test citation | 423 |
 | Built requirements with no test citation of any kind | 19 |
 | Built requirements with no test that names the ID (legacy and spec-note citations not counted) | 135 |
 | IDs cited in code but not defined in the specs or DECISIONS.md | 0 |
@@ -403,7 +403,7 @@ Source: [07-api-contract.md](specs/07-api-contract.md) · IDs: 85 · no status r
 
 ## 08 UX, Information Architecture and Accessibility Requirements
 
-Source: [08-ux-accessibility.md](specs/08-ux-accessibility.md) · IDs: 61 · built 36, partial 21, not built 3, no status row 1
+Source: [08-ux-accessibility.md](specs/08-ux-accessibility.md) · IDs: 61 · built 36, partial 22, not built 2, no status row 1
 
 | ID | Pri | Requirement (short) | Status | Code | Tests | Layer | Last recorded test result | Note |
 |---|---|---|---|---|---|---|---|---|
@@ -453,7 +453,7 @@ Source: [08-ux-accessibility.md](specs/08-ux-accessibility.md) · IDs: 61 · bui
 | UX-044 | P0 | Each page MUST have a unique title that includes the network name and screen name.... | built | `internal/web/templates/base.html` † | `internal/web/a11y_test.go:TestPageStructure` † | web | not recorded | Page title includes network name and screen |
 | UX-045 | P0 | Structures (lists, tables with header cells and scope, forms with labels, landmarks:... | built | `internal/web/templates/base.html` † | `internal/web/a11y_test.go:TestPageStructure` † | web | not recorded | Semantic lists, tables, landmarks |
 | UX-046 | P0 | The document language MUST be set. The MVP language is English; all strings MUST be... | built | `internal/web/templates/base.html` † | `internal/web/a11y_test.go:TestPageStructure` | web | not recorded | Document language en; Evidence: `TestPageStructure` (English document language on rendered pages; translation externalization is separately tracked by UX-047). Citations are not execution results |
-| UX-047 | P1 | The UI MUST be structured for localisation: no concatenated sentences in code, plural and... | not built | - | - | - | not recorded | Strings not externalised into catalogues |
+| UX-047 | P1 | The UI MUST be structured for localisation: no concatenated sentences in code, plural and... | partial | `internal/web/messages/messages.go` | `internal/web/messages/messages_test.go:TestOverviewMessages`<br>`internal/web/messages/messages_test.go:TestProposalMessageIsPlainText` | web | not recorded | English catalogue and CLDR plural/number formatting now serve complete administrator-overview count messages, actions/checks, and proposal-queue row/status/title text (`internal/web/messages`). No language selection or translation is enabled. Remaining templates, JavaScript and other handler copy still need migration; the whole requirement is not complete. |
 | UX-048 | P0 | Form labels MUST be visible text; the accessible name MUST contain the visible label... | built | - | `internal/web/a11y_test.go:TestFormLabelsAndAutocomplete` † | web | not recorded | Visible labels and autocomplete |
 | UX-049 | P1 | Help links MUST appear in the same location on every page of the same section. | built | `internal/web/templates/base.html` † | `e2e/tests/help-location.spec.js` (UX-049: shared Help landmark, ${section}, ${viewport.name})<br>`internal/web/ux049_help_link_test.go:TestEveryPageTemplateHasHelpLink`<br>`internal/web/ux049_help_link_test.go:TestEveryRouteHasHelpLinkInFooter` | browser, web | not recorded | Go tests render every page template and every GET route (anonymous, member, admin, error pages) and pin the footer Help link; earlier six section/viewport e2e cases at 32a8314 |
 | UX-050 | P0 | Copy MUST NOT use the words "money", "cash", "coins", "tokens" (except for the API token... | built | `internal/web/templates/help.html` † | `internal/web/a11y_test.go:checkStructure` | web | not recorded | Copy avoids money and cash wording for credits |

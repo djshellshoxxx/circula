@@ -1,0 +1,65 @@
+{
+  "overview.pending": {
+    "one": "%[1]d membership request is waiting.",
+    "other": "%[1]d membership requests are waiting."
+  },
+  "overview.stale": {
+    "one": "%[1]d open proposal has waited at least %[2]d hours for an answer.",
+    "other": "%[1]d open proposals have waited at least %[2]d hours for an answer."
+  },
+  "overview.disputes": {
+    "one": "%[1]d dispute is open or under review.",
+    "other": "%[1]d disputes are open or under review."
+  },
+  "overview.posting": {
+    "one": "%[1]d dispute is decided but the reversal is not yet posted.",
+    "other": "%[1]d disputes are decided but the reversal is not yet posted."
+  },
+  "overview.limit": {
+    "one": "%[1]d active member is at or beyond their credit limit.",
+    "other": "%[1]d active members are at or beyond their credit limit."
+  },
+  "overview.invites": {
+    "one": "%[1]d invitation ends within %[2]d hours.",
+    "other": "%[1]d invitations end within %[2]d hours."
+  },
+  "overview.review_requests": {
+    "other": "Review requests"
+  },
+  "overview.review_waiting": {
+    "other": "Review waiting proposals"
+  },
+  "overview.review_queue": {
+    "other": "Open the review queue"
+  },
+  "overview.see_posting": {
+    "other": "See them"
+  },
+  "overview.members": {
+    "other": "Open the member list"
+  },
+  "overview.invitations": {
+    "other": "Open invitations"
+  },
+  "overview.check_none": {
+    "other": "No ledger check has been recorded yet."
+  },
+  "overview.check_ok": {
+    "other": "The last ledger check passed."
+  },
+  "overview.check_failed": {
+    "other": "The last ledger check found problems."
+  },
+  "overview.title": {
+    "other": "Network admin"
+  },
+  "queue.title": {
+    "other": "Waiting proposals"
+  },
+  "queue.party_proposal": {
+    "other": "%[1]s proposes to pay %[2]s %[3]s %[4]s"
+  },
+  "queue.waiting": {
+    "other": "Waiting for an answer"
+  }
+}
