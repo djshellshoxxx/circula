@@ -2,6 +2,10 @@
 
 ## 2026-11-16: core completion and consolidation (current)
 
+Merged into main by PR #56 (`304600c`) and qualification follow-up #57 (`7cdb966`).
+Fifteen included historical PR heads are accounted for: fourteen superseded PRs were closed and #55
+was automatically marked merged; branches remain preserved.
+
 Branch `codex/circula-core-completion-20261116` continues `claude/happy-babbage-dcumwz@dc97f7d`,
 which already joined the beta follow-up (#33) with main. Documentation upkeep (#55) is merged,
 with the newer export, logging and QA evidence preserved. The 15 `future/*` modules remain
@@ -58,14 +62,18 @@ recovery-throttle erasure, reversal independence/audit history, timestamps and m
 current regressions. Real SQLite disk-full tests verify rollback, retry and reopen. Traceability now
 separates source citations from actual dated test evidence and uploads CI evidence artifacts.
 The property harness now isolates each seed, records complete failures and provides a bounded manual
-long-run workflow; its 50-sequence smoke passed. Release thresholds are still owner decisions.
+long-run workflow. The 100,000-sequence non-race run passed with 2,800,700 generated operations,
+no failed seeds and no gaps/overlaps; see [the execution evidence](docs/qa/QA001-2026-11-16.md).
+Release thresholds are still owner decisions.
 
-Validation is recorded for each candidate in [PR #56 checks](https://github.com/djshellshoxxx/circula/pull/56/checks).
-Published checkpoint `e299459` passed Linux race, build targets, lint/vulnerability, fuzz and contract/load
-checks; its browser run passed 578 and failed one stale optional-description label expectation, corrected
-in `e1b67e6`. Later changes have focused regression/race evidence and require combined validation.
-Local Chromium cannot launch in this execution environment; the browser gate runs in GitHub Actions.
-No claim of manual screen-reader testing, independent security review or tagged release is made.
+Validation: PR #56 passed seven CI jobs. PR #57 passed all nine jobs at `dc89212`, including
+native Windows, Linux/macOS race, all 579 browser/keyboard/axe tests, static/security checks,
+contract/load, fuzz, target builds and reproducibility/deployment smoke. Windows document and
+closed-file test assumptions were corrected, and every affected fixture now closes its resources.
+The new Linux WAL regression forces an actual OS write failure during COMMIT, validates the
+preserved partial WAL and verifies rollback, retry, replay and reopen. Focused normal and race checks
+also passed; read/fsync/checkpoint and uncertain-commit qualification remain open.
+No manual screen-reader pass, independent security review, tagged release or deployment is claimed.
 
 See [docs/TODO.md](docs/TODO.md) for current work. All dated sections below are historical records.
 They can contain superseded next steps, failures and merge instructions.

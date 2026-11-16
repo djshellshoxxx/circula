@@ -1,12 +1,14 @@
 # Circula current work
 
-Updated 2026-11-16 on `codex/circula-core-completion-20261116`. This list supersedes the old
+Updated 2026-11-16 after merging PRs #56 and #57. This list supersedes the old
 unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isolated.
 
 ## Integration evidence
 
-- [PR #56 checks and merge state](https://github.com/djshellshoxxx/circula/pull/56/checks) record the
-  current candidate. Race, lint, contract, browser, dependency and build checks are merge gates.
+- [PR #56](https://github.com/djshellshoxxx/circula/pull/56) merged core completion after seven passing CI jobs.
+- [PR #57](https://github.com/djshellshoxxx/circula/pull/57) merged native-platform fixes and real WAL-write recovery qualification after all nine CI jobs passed, including 579 browser checks.
+- [QA-001 execution evidence](qa/QA001-2026-11-16.md): 100,000 distinct sequences and 2,800,700 generated operations passed with no failures, gaps or overlaps.
+- Fourteen superseded PRs were closed after verifying their heads are ancestors of main; #55 was automatically marked merged. All branches remain preserved.
 - Historical reports remain evidence of their recorded revisions; current remediations and
   qualification limits are in the core audit record.
 
@@ -22,10 +24,11 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
   API query validation; required password-change navigation and suspended/departed read links.
 - Complete reversal audit targets and independence checks beyond 500 reversals; recovery-throttle
   erasure; structured timestamp markup and destructive migration guards.
-- Real SQLite disk-full rollback/retry/reopen tests and explicit qualification limits. QA-042 records
-  test layers and real dated per-test outcomes separately from deterministic requirement citations.
+- Real SQLite disk-full and Linux WAL-commit write-failure rollback/retry/reopen tests, with explicit
+  qualification limits. QA-042 records test layers and real dated per-test outcomes separately from
+  deterministic requirement citations.
 - QA-001 isolated seed replay, strict disjoint ranges, complete failure fixtures and an explicit manual
-  long-run workflow. A 50-sequence/1,315-operation smoke run passed; no 100,000-sequence claim is made.
+  long-run workflow. The full 100,000-sequence non-race run passed on the recorded source; thresholds remain unconfirmed.
 - Restore interruption guards and recovery instructions, HMAC-v2 authenticated backup summaries with legacy compatibility,
   complete reversal histories beyond 500 entries, live temporary-proposer approval, and invitation-only join privacy.
 - Freeze-safe bounded proposal/adjustment expiry, governance cursor pagination, and signed confirmation
@@ -48,16 +51,17 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
   final exports (the named regression tests in `internal/web`, `internal/store`, `internal/service`).
 - Same-network visibility and equal password-hash work; timestamp-based historical balances are implemented.
 - QA-019 decline/expiry through API and HTML forms; optional listing labels; traceability generation/check in CI.
-- CI already avoids duplicate branch/PR runs and reserves the platform matrix for main/nightly/dispatch.
+- CI avoids duplicate branch/PR runs; native platforms run on main/nightly/dispatch and opted-in PRs.
   Container evidence is recorded in `docs/ops/container-verification-2026-11-12.md`.
 
 ## Remaining specification and qualification work
 
-- QA-001 long property-run budget/thresholds (DEC-023) and actual long-run execution on recorded hardware.
+- Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.
+  The 100,000-sequence execution itself is complete; it does not approve a release gate.
 - QA-042 remaining inspection/manual/external citations and full acceptance-criterion qualification.
   Source/test mappings and matching dated execution evidence do not prove untested criteria.
-- L9 OS read/write/fsync and WAL commit/checkpoint failure coverage beyond real engine disk-full,
-  interface fault injection and process-crash tests; see the SQLite storage-failure qualification note.
+- L9 read/fsync/truncate, other device/write failures, checkpoint I/O and uncertain commit outcomes
+  beyond the covered disk-full and pre-commit-marker WAL write failure; see the storage qualification note.
 - SEC-014/018 retention choices for time zone, last activity and challenge reasons remain documented questions.
 - Refresh historical spec status tables only against specific implementation and test evidence.
 - First tagged release and deployment qualification; release thresholds and supported pilot jurisdictions.

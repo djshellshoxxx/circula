@@ -42,7 +42,7 @@ go test ./internal/service -run '^TestSQLiteWALWriteFailureRollsBackAndRecovers$
 go test -race ./internal/service -run '^TestSQLiteWALWriteFailureRollsBackAndRecovers$' -count=1
 ```
 
-Validation is pending the shared Go test lock; no executed Go-test result is yet claimed for this new regression.
+Both focused commands passed locally on Linux on 2026-11-16 with Go 1.26.11: normal in 0.098s and race in 4.068s. Execution was serialized with the shared `flock`, `GOMAXPROCS=2`, `GOMEMLIMIT=600MiB`, `-p 1` and `-timeout=2m`. The full Linux race job also passed at commit `dc89212a8bf1e1207e5443ffc719670623de70e1` in [CI run 43914378342](https://github.com/djshellshoxxx/Circula/actions/runs/43914378342). These results qualify the specific WAL-write failure above, not L9 as a whole.
 
 ## Evidence boundaries
 

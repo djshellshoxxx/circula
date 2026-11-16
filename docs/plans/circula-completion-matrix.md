@@ -1,10 +1,10 @@
 # Circula completion matrix (beta)
 
-Updated 2026-11-16 on `codex/circula-core-completion-20261116`. This beta feature matrix is
+Updated 2026-11-16 after PRs #56 and #57 merged. This beta feature matrix is
 an engineering inventory, not completion of every requirement in the larger specification.
 Current changes and regression evidence are recorded in
 [the core audit record](../audit/CORE-COMPLETION-2026-11-16.md); current combined CI results are
-[PR #56 checks](https://github.com/djshellshoxxx/circula/pull/56/checks). Historical verification
+[PR #57 checks](https://github.com/djshellshoxxx/circula/pull/57/checks). The [100,000-sequence execution](../qa/QA001-2026-11-16.md) passed separately. Historical verification
 records apply only to their recorded revisions. The 15 future modules remain isolated.
 
 States: **COMPLETE** = implemented and verified by tests named here. **PARTIAL** = implemented, missing required
@@ -23,7 +23,7 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | L6 | Suspended, departed or pending party | COMPLETE | `TestSuspension`; refusal test (suspended accept, ledger unchanged) | | P0 | | unit |
 | L7 | Idempotent submission (replay, key reuse with another body) | COMPLETE | `idempotency_test.go`; replay checks in `TestReversalAndAdjustmentFaultInjectionLeavesNoTrace` | | P0 | | unit, API |
 | L8 | Concurrent transfers cannot breach the credit limit | COMPLETE | `BEGIN IMMEDIATE` plus process write gate (`store/sqlite.go:135`); `TestParallelAcceptsNeverBreachCreditLimit` (25 parallel, exactly 7 succeed) | | P0 | | unit under `-race` |
-| L9 | Failure during posting leaves no trace | PARTIAL (qualification) | Interface fault tests plus actual engine `SQLITE_FULL` after staged posting in `service/sqlite_full_test.go`; rollback, retry, replay and reopen verified | OS read/write/fsync and WAL commit/checkpoint fault coverage remains; see [qualification limits](../qa/sqlite-storage-failure-qualification.md) | P0 | eng | unit, real SQLite failure |
+| L9 | Failure during posting leaves no trace | PARTIAL (qualification) | Interface faults, engine `SQLITE_FULL`, and actual Linux `SQLITE_IOERR_WRITE` during WAL COMMIT; rollback/restart/retry/replay/reopen verified | Read/fsync, other write/device errors, checkpoint and uncertain-commit coverage remain; see [qualification limits](../qa/sqlite-storage-failure-qualification.md) | P0 | eng | unit, real SQLite failure |
 | L10 | Reconciliation: cached = entry sum, network sum = 0 | COMPLETE | `VerifyLedger` → `store/sqlite_verify.go`; `TestVerifyDetectsBalanceCorruptionAndBalanceAt`; `TestVerifyDetectsTamperedEntry`; `circula verify-ledger` exit 3 | | P0 | | unit, CLI |
 | L11 | Reversal: compensating entries, original kept | COMPLETE | `reversal.go`; `reversal_test.go:22-94` | | P0 | | unit, e2e |
 | L12 | Immutable records, history integrity | COMPLETE | Append-only triggers (`0001_init.sql:278-351`); hash-chained audit; `TestAuditChainDetectsTampering` | Insertion order checked across ties, clock rollback, VACUUM and upgrade (`store/event_order_test.go`) | P0 | | unit |
@@ -61,7 +61,7 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | W6 | Member and reviewer audit views (DAT-033/035, FR-082) | COMPLETE | API `GET /api/v1/audit-events` (`api/routes.go:78`), web `h_audit_scoped.go` with `my_audit.html`; `api/authn_test.go`, contract walk, e2e "own account activity log". The spec rows that say "no UI or API" are stale | | P1 | | API, e2e |
 | W7 | JSON API contract | COMPLETE | `internal/contract` validates live requests/responses against OpenAPI; MVP parity inventory tests 43 paired HTML/API operations and 6 API-only lifecycle/token operations | | P1 | | contract |
 | W8 | Policy validators (ETag) | COMPLETE (fixed) | `service/policy_revision.go`, API/service revision tests; explicit policy ETags are rechecked inside the write transaction, including pending changes | | P1 | | API |
-| W9 | Accessibility (WCAG 2.2 AA in light and dark, contrast, target size, reflow, keyboard, no-script) | COMPLETE (automated) | `make e2e` (axe, keyboard, responsive and no-script); current result is in PR #56 checks, separate from historical 578-test runs | Manual screen-reader run (UX-056, QA-035) | P1 | owner | e2e |
+| W9 | Accessibility (WCAG 2.2 AA in light and dark, contrast, target size, reflow, keyboard, no-script) | COMPLETE (automated) | `make e2e` (axe, keyboard, responsive and no-script); 579 tests passed in PR #57 checks, separate from historical 578-test runs | Manual screen-reader run (UX-056, QA-035) | P1 | owner | e2e |
 | W10 | Data export (member, full) | COMPLETE | disk spool with reserved bytes and running-export slots (BR-06), `export-spool-dir` setting, manifest `reconciliation` documented; erasure drops all affected network archives and aborts in-progress downloads (BR-04); `TestParallelLargeExportsStayBounded`, `TestErasureDropsNetworkAdminExports` | ARC-020 (no CLI export), GOV-022 (import deferred), FR-095 thresholds (OQ-FR-3) | P2 | owner | unit |
 | W11 | Optional adjustment link to an original entry | COMPLETE | Migration 0018; service/API/web/store adjustment relation tests; approval propagation, immutability and exact legacy export compatibility | Link is optional; it never changes the original transaction or financial semantics | P1 | | unit, API, HTML, export |
 
@@ -75,7 +75,7 @@ external dependency. Owner: **eng** = can be done now; **owner** = repository ow
 | O1 | Health, readiness, metrics, graceful shutdown, structured logs | COMPLETE | `ops_http.go`, `serve_test.go` | | P1 | | unit |
 | O2 | systemd unit, Dockerfile, compose, reverse-proxy and TLS docs | COMPLETE (container run) | image built and run read-only, non-root, caps dropped; `/healthz`, `/readyz`, volume persistence, compose up: [../ops/container-verification-2026-11-12.md](../ops/container-verification-2026-11-12.md) | Built with the sandbox CA added; port publishing, multi-arch and TLS not exercised | P1 | eng | manual |
 | O3 | Release pipeline: SBOM, scans, release-notes gate | COMPLETE (not exercised on a tag) | `scripts/*release*`, `release.yml` | First tagged release | P1 | owner | offline packaging run |
-| O4 | CI | COMPLETE | `ci.yml`: one run per commit, Linux race/lint/govulncheck/e2e on every PR, macOS 15 and Windows on main, nightly and dispatch ([../ops/ci.md](../ops/ci.md)) | Remove macOS/Windows from required checks if set | P2 | owner | CI |
+| O4 | CI | COMPLETE | `ci.yml`: one run per commit, Linux race/lint/govulncheck/e2e on every PR, macOS 15 and Windows on main, nightly, dispatch and opted-in PRs ([../ops/ci.md](../ops/ci.md)) | Remove macOS/Windows from required checks if set | P2 | owner | CI |
 
 ## Security hardening still open
 

@@ -3,7 +3,7 @@
 Branch: `codex/circula-core-completion-20261116`. Continuation base: `dc97f7d`, which contains
 `claude/quirky-einstein-l9ni8m@4a8db9e` and main `2eacf77`. Documentation upkeep
 `claude/cool-gauss-vdxlod@64fa4f6` is merged, preserving newer implementation evidence.
-The 15 future modules remain on independent branches and are not enabled here.
+Merged by PR #56 (`304600c`) and follow-up #57 (`7cdb966`). The 15 future modules remain on independent branches and are not enabled here.
 
 This is an implementation and AI-assisted review record, not an independent security certification.
 Historical audit reports retain their original findings; the table below records specific remediations.
@@ -71,15 +71,15 @@ Historical audit reports retain their original findings; the table below records
   relationships and immutability, including REPLACE protection. Reversal references and posting
   semantics are unchanged. No-link legacy exports retain identical bytes and closure checksums.
 - Real SQLite `SQLITE_FULL` after staged posting now tests acceptance, reversal and adjustment:
-  rollback, same-connection recovery, replay and reopen all pass. This does not qualify OS
-  read/write/fsync failures or WAL commit/checkpoint faults; see the dedicated QA evidence note.
+  rollback, same-connection recovery, replay and reopen all pass. The later Linux WAL-write test
+  separately covers a real commit-write failure; read/fsync/checkpoint and other I/O faults remain open.
 - QA-042 now separates deterministic citations from recorded per-test evidence. Fifty missing
   citation rows were mapped to existing tests; remaining inspection/manual/external criteria stay
   explicit. CI records actual terminal test results, timestamps, commit and source fingerprint.
 - QA-001 gives each seed an independent database, clock and ID generator, captures failing steps and
   helper failures, and supports strict disjoint seed ranges. A manual runner preserves logs, failure
-  fixtures and checkout/toolchain metadata. The small 50-sequence/1,315-operation run passed; release
-  thresholds remain unconfirmed and no 100,000-sequence execution is claimed.
+  fixtures and checkout/toolchain metadata. The complete 100,000-sequence run passed with 2,800,700 generated operations; see
+  `docs/qa/QA001-2026-11-16.md`. Release thresholds remain unconfirmed.
 
 ## Historical-branch follow-up
 
@@ -103,17 +103,24 @@ Historical audit reports retain their original findings; the table below records
 
 ## Validation status
 
-Focused tests for the changes above passed, including negative controls for several historical defects.
-At published checkpoint `e299459`, Linux race, release-target builds, lint, vulnerability, fuzz and
-contract/load jobs passed. Its browser run passed 578 tests and failed one stale keyboard label
-expectation, corrected in `e1b67e6`. Those results are not evidence for later changes.
-The combined candidate is qualified by [PR #56 checks](https://github.com/djshellshoxxx/circula/pull/56/checks),
-with runtime requirement evidence attached to its Linux test job. Citation presence alone never
-means that a whole requirement has passed.
+PR #56 passed all seven PR jobs at `e3c60a6` ([run 43907084340](https://github.com/djshellshoxxx/circula/actions/runs/43907084340)).
+PR #57 passed all nine jobs at `dc89212` ([run 43914378342](https://github.com/djshellshoxxx/circula/actions/runs/43914378342)),
+including native Windows, Linux/macOS race, 579 browser/keyboard/axe checks, lint/vulnerability/secret
+scans, API contract/load, fuzz, release targets and reproducibility/deployment smoke. Runtime requirement
+evidence is attached to the Linux test job. Citation presence alone does not prove an entire requirement.
 
-Local Chromium launch is blocked by the execution environment's socket restriction. Playwright tests
-parse, but current browser execution must be verified in GitHub Actions. Manual screen-reader and
-independent security review are still separate gates. No new release tag or deployment was made.
+The Windows follow-up fixed CRLF assumptions, portable closed-file assertions and fixture resource
+cleanup. The Linux WAL test uses a child-only file-size limit to cause actual `SQLITE_IOERR_WRITE`
+during COMMIT after a complete posting has been staged. It verifies the original state, preserved
+partial WAL, successful retry/replay and reopen. Focused normal and race runs passed; broader I/O
+qualification remains open in the [storage evidence note](../qa/sqlite-storage-failure-qualification.md).
+
+The [QA-001 long-run record](../qa/QA001-2026-11-16.md) independently verifies 100,000 contiguous,
+distinct non-race sequences, 2,800,700 generated operations and no failures or fixtures. Both batches
+used clean `e3c60a6`; PR #57 leaves production files and that harness unchanged. This is execution
+evidence, not approval of DEC-023 thresholds or performance criteria on reference hardware.
+
+Manual screen-reader and independent security review remain separate gates. No release tag or deployment was made.
 
 ## Remaining boundaries
 
