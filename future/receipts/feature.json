@@ -1,0 +1,10 @@
+{
+  "id": "FNET-203",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Explicit-consent, active-party-only completed-trade projection with deterministic TXT and JSON exports; control-character rejection.",
+  "remaining": "Authoritative read-only snapshot adapter; no-JS download endpoints and redaction/audit; schema decision review; separately optional certificate signer/verifier, canonicalization ADR, key lifecycle/revocation and independent verifier tests. No signing algorithm is adopted by this module."
+}
