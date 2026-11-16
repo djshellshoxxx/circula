@@ -68,3 +68,45 @@ func TestConfirmScreensShowMemberRef(t *testing.T) {
 	adm.login("admin@example.org")
 	adm.mustContain(adm.get(b+"/trades/"+in.ID+"/cancel"), ref(carolM.ID), ref(w.aliceM.ID), "Reason")
 }
+
+// Review fix (SEC-016): a reference shown only on the confirmation step cannot be checked
+// against anything. The directory and the member page show it, a member sees their own to
+// pass on, and the trade form's member list tells same-named members apart by it.
+func TestMemberRefIsDiscoverable(t *testing.T) {
+	w := newWorld(t)
+	b := w.base()
+	ctx := w.env.Ctx
+	carol := w.env.Person("carol@example.org")
+	tok, _ := testutil.Must2(w.env.Svc.CreateInvitation(ctx, w.admin, w.net.ID, service.InviteInput{}))
+	carolM := testutil.Must(w.env.Svc.RedeemInvitation(ctx, carol, tok, w.bobM.DisplayName))
+	name := html.EscapeString(w.bobM.DisplayName)
+
+	al := w.browser(t)
+	al.login("alice@example.org")
+	dir := al.get(b + "/directory")
+	for _, id := range []string{w.bobM.ID, carolM.ID} {
+		al.mustContain(dir, name+"</a> (member reference "+memberRef(id)+")")
+		al.mustContain(al.get(b+"/members/"+id), "Member reference: <strong>"+memberRef(id)+"</strong>")
+		form := al.get(b + "/trades/new")
+		al.mustContain(form, `value="`+id+`"`, ">"+name+" (member reference "+memberRef(id)+")</option>")
+	}
+	al.mustContain(al.get(b+"/members/"+w.aliceM.ID), "Member reference: <strong>"+memberRef(w.aliceM.ID)+"</strong>", "Tell it to the members you trade with")
+	// SEC-016 acceptance: member and transaction pages carry no-index directives, and an
+	// anonymous visitor gets sign-in, not the directory or a member page.
+	tx := w.env.Trade(w.net.ID, w.alice, w.bob, w.aliceM, w.bobM, 10)
+	for _, u := range []string{b + "/directory", b + "/members/" + w.bobM.ID, b + "/trades/" + tx.ID, b + "/history"} {
+		p := al.get(u)
+		if p.Status != 200 || !strings.Contains(p.Header.Get("X-Robots-Tag"), "noindex") || !strings.Contains(p.Body, `name="robots" content="noindex`) {
+			t.Errorf("%s: status %d, no no-index directive", u, p.Status)
+		}
+		if a := w.browser(t).get(u); !strings.Contains(a.URL, "/login") || strings.Contains(a.Body, name+"</a> (member reference") {
+			t.Errorf("anonymous %s: ended at %s (%d)", u, a.URL, a.Status)
+		}
+	}
+	// A unique name keeps its plain label in the trade form.
+	cb := w.browser(t)
+	cb.login("carol@example.org")
+	if f := cb.get(b + "/trades/new"); !strings.Contains(f.Body, ">"+html.EscapeString(w.aliceM.DisplayName)+"</option>") {
+		t.Errorf("a unique name gained a reference in the member list: %s", snippet(f.Body))
+	}
+}

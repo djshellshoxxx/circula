@@ -87,9 +87,19 @@ func (c *rc) counterpartyOptions() []option {
 	if err != nil {
 		return nil
 	}
+	seen := map[string]int{}
 	for _, e := range all {
 		if e.MemberID != c.Me.ID {
-			o = append(o, option{e.MemberID, e.DisplayName})
+			seen[e.DisplayName]++
+		}
+	}
+	for _, e := range all {
+		if e.MemberID != c.Me.ID {
+			label := e.DisplayName
+			if seen[label] > 1 { // SEC-016: same-named members differ by their member reference
+				label += " (member reference " + memberRef(e.MemberID) + ")"
+			}
+			o = append(o, option{e.MemberID, label})
 		}
 	}
 	return o
