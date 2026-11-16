@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Dual control for administrator adjustments (SEC-011, DEC-013). A request

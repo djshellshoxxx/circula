@@ -84,6 +84,10 @@ var sampleValues = map[string]string{
 	"tls-cert-file":              "",
 	"tls-key-file":               "",
 	"audit-mirror-file":          "",
+
+	"auth-throttle-attempts":        "4",
+	"auth-throttle-global-attempts": "20",
+	"auth-throttle-lock":            "30m",
 }
 
 // baseEnv returns a lookup that supplies the two required settings.

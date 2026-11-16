@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // ReplayPermission names the current authority required to disclose a cached

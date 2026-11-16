@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // unusablePasswordHash is not a PHC string, so verifyPassword always refuses it.
@@ -210,8 +210,12 @@ func (s *Service) erasePersonIfUnused(tx store.Tx, target *domain.Member) (bool,
 	if err := tx.AnonymisePerson(person.ID, "erased-"+person.ID, unusablePasswordHash); err != nil {
 		return false, err
 	}
-	if _, err := tx.DeleteThrottleFamily(person.Login); err != nil {
-		return false, err
+	// Both sign-in and recovery keys contain the login, including their
+	// address-specific buckets. Person-ID keys contain no erased login.
+	for _, key := range []string{person.Login, recoverKey(person.Login)} {
+		if _, err := tx.DeleteThrottleFamily(key); err != nil {
+			return false, err
+		}
 	}
 	if err := tx.RevokeSessionsOf(person.ID, now); err != nil {
 		return false, err

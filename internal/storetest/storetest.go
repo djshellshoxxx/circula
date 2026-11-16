@@ -1,5 +1,5 @@
 // Package storetest is the repository contract suite (ARC-004, ARC-R2). It
-// states, against the store.Store and store.Tx interfaces only, the behaviour
+// states, against driver-neutral repository.Store and repository.Tx, the behaviour
 // the service layer relies on from any storage implementation: atomic units of
 // work, read-only views, coded not-found and conflict errors, per-network
 // scoping (ARC-007), the ledger posting guards (LED-1, LED-2, DAT-007),
@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Factory returns a new, empty store at the current schema. It registers its

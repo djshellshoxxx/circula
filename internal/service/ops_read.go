@@ -2,11 +2,10 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Read-only methods for operator tooling (ARC-002): the CLI and its jobs ask
@@ -43,19 +42,16 @@ func (s *Service) OperatorNetworks(ctx context.Context, actor domain.Actor, filt
 	return out, err
 }
 
-// sqlBacked is implemented by stores built on database/sql (the SQLite store).
-type sqlBacked interface{ DB() *sql.DB }
-
 // errStorageUncheckable is returned when the store exposes no settings to check.
 var errStorageUncheckable = errors.New("storage settings cannot be checked for this store")
 
-// CheckStorage verifies the storage settings the design depends on (OPS-011):
-// WAL journal mode and foreign-key enforcement. It reads settings only. A
-// store whose settings cannot be read fails the check rather than passing it.
+// CheckStorage asks the driver-neutral optional capability to verify the
+// storage settings its implementation depends on (OPS-011 / ARC-004). A store
+// without that capability fails closed; the service never obtains a SQL handle.
 func (s *Service) CheckStorage(ctx context.Context) error {
-	b, ok := s.st.(sqlBacked)
+	checker, ok := s.st.(store.StorageChecker)
 	if !ok {
 		return errStorageUncheckable
 	}
-	return store.CheckPragmas(ctx, b.DB())
+	return checker.CheckStorage(ctx)
 }

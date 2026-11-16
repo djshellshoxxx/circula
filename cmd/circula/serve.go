@@ -46,6 +46,9 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 		IdempotencyTTL: cfg.IdempotencyTTL,
 		MinPasswordLen: cfg.MinPasswordLength,
 
+		AuthThrottleAttempts: cfg.AuthThrottleAttempts, AuthThrottleGlobalAttempts: cfg.AuthThrottleGlobalAttempts,
+		AuthThrottleLock: cfg.AuthThrottleLock,
+
 		AdminSessionIdle: cfg.SessionIdleAdmin, AdminSessionMax: cfg.SessionMaxAdmin, // SEC-003
 		ReviewerSessionIdle: cfg.SessionIdleReviewer, ReviewerSessionMax: cfg.SessionMaxReviewer,
 		MaxSignupGrant:   cfg.SignupGrantCap,                                                     // SEC-032
@@ -456,7 +459,9 @@ func (j *jobRunner) purge(ctx context.Context) error {
 }
 
 func (j *jobRunner) verify(ctx context.Context) error {
-	checks, err := verifyNetworks(ctx, j.svc, "job-verify", "", true)
+	// OPS-016 / DEC-031: automatic checks report through metrics and logs;
+	// only explicit administrator checks persist a consistency run.
+	checks, err := verifyAllNetworks(ctx, j.svc, "job-verify", "")
 	if err != nil {
 		return err
 	}

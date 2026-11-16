@@ -21,9 +21,9 @@ func TestAdaptersDoNotImportStorage(t *testing.T) {
 		deny   []string
 		exempt map[string]bool
 	}{
-		{".", []string{mod + "internal/store", "modernc.org/sqlite", "database/sql"}, nil},
-		{filepath.Join("..", "web"), []string{mod + "internal/store", "modernc.org/sqlite", "database/sql"}, nil},
-		{filepath.Join("..", "..", "cmd", "circula"), []string{mod + "internal/store", "modernc.org/sqlite"},
+		{".", []string{mod + "internal/store", mod + "internal/repository", "modernc.org/sqlite", "database/sql"}, nil},
+		{filepath.Join("..", "web"), []string{mod + "internal/store", mod + "internal/repository", "modernc.org/sqlite", "database/sql"}, nil},
+		{filepath.Join("..", "..", "cmd", "circula"), []string{mod + "internal/store", mod + "internal/repository", "modernc.org/sqlite"},
 			map[string]bool{"schema.go": true, "serve.go": true}},
 	}
 	for _, c := range cases {

@@ -37,6 +37,10 @@ func (s *server) home(w http.ResponseWriter, r *http.Request) {
 		s.toLogin(w, r)
 		return
 	}
+	if a.MustChangePassword { // SEC-008 also applies before choosing a network.
+		s.mustChange(w, r)
+		return
+	}
 	mems, err := s.svc.MyMemberships(r.Context(), a)
 	if err != nil {
 		s.fail(w, r, err)

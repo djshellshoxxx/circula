@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Challenges (GOV-016). A member can challenge a membership removal, a

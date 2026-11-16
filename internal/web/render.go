@@ -54,6 +54,8 @@ type page struct {
 	Warn string
 	// SecUnseen counts unacknowledged security notices (SEC-012), shown in the header.
 	SecUnseen int
+	// FrozenSince is separate from notice text so its time element stays markup.
+	FrozenSince template.HTML
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -181,6 +183,9 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
 		p.Nav = c.nav(r.URL.Path)
 		p.Notice = c.notice()
+		if fi, ok := c.s.svc.FrozenInfo(c.Net.ID); ok {
+			p.FrozenSince = c.when(fi.Since)
+		}
 		p.Unread = c.unreadCount()
 	}
 	if p.Authed {
@@ -214,8 +219,11 @@ func (c *rc) nav(cur string) []navItem {
 			navItem{Label: "Directory", Href: b + "/directory"}, navItem{Label: "Listings", Href: b + "/listings"},
 			navItem{Label: "History", Href: b + "/history"}, navItem{Label: "Disputes", Href: b + "/disputes"},
 			navItem{Label: "Rules", Href: b + "/policy"})
-	case domain.MemberSuspended:
-		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"})
+	case domain.MemberSuspended, domain.MemberDeparted:
+		// Me is resolved by GetNetworkAccess for this request. These members
+		// retain their own records and rules even though they cannot trade.
+		items = append(items, navItem{Label: "Trades", Href: b + "/trades"}, navItem{Label: "History", Href: b + "/history"},
+			navItem{Label: "Disputes", Href: b + "/disputes"}, navItem{Label: "Rules", Href: b + "/policy"})
 	default:
 		items = append(items, navItem{Label: "History", Href: b + "/history"})
 	}
@@ -233,9 +241,6 @@ func (c *rc) nav(cur string) []navItem {
 }
 
 func (c *rc) notice() string {
-	if n := c.frozenNotice(); n != "" {
-		return n
-	}
 	switch c.Me.Status {
 	case domain.MemberSuspended:
 		return "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
@@ -334,15 +339,4 @@ func (s *server) notFoundOrRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.home(w, r)
-}
-
-// frozenNotice is the read-only notice for a frozen network, shown on every page of it so
-// forms that change anything are not a surprise. Members see no reason.
-func (c *rc) frozenNotice() string {
-	fi, ok := c.s.svc.FrozenInfo(c.Net.ID)
-	if !ok {
-		return ""
-	}
-	return "This network is read-only while its ledger is being checked, since " + string(c.when(fi.Since)) +
-		". You can read balances and history; anything that would change them is refused until the check passes."
 }

@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Operator break-glass (SEC-013, DEC-014, TA-5).

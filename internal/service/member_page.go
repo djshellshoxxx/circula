@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // MemberPageQuery requests one keyset page of members, ordered by id. Set AfterID to page

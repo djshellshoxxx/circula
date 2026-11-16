@@ -11,7 +11,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Account recovery without email (SEC-008). See docs/dev/recovery.md.
@@ -45,7 +45,7 @@ func recgenKey(personID string) string { return "recgen: " + personID }
 // reserveAttempt is the Login pattern: refuse while locked, otherwise count
 // the attempt up front so parallel guesses cannot beat the limit.
 func (s *Service) reserveAttempt(tx store.Tx, key string) error {
-	f, until, _, err := tx.GetThrottle(key)
+	f, until, err := s.readThrottle(tx, key, s.cfg.AuthThrottleAttempts)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (s *Service) reserveAttempt(tx store.Tx, key string) error {
 		return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
 	}
 	n := f + 1
-	return tx.PutThrottle(key, n, now.Add(lockFor(n)))
+	return tx.PutThrottle(key, n, now.Add(s.lockAfter(n, s.cfg.AuthThrottleAttempts)))
 }
 
 // normalizeRecoveryCode upper-cases and strips separators. ok is false when

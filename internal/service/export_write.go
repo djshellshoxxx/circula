@@ -7,7 +7,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // csvCell renders one value. Text starting with a formula trigger gets a

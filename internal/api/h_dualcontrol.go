@@ -37,7 +37,7 @@ func toPending(p *domain.PendingAdjustment) pendingDTO {
 // dualControlRoutes registers the SEC-011 endpoints (extension to API-057).
 func (s *server) dualControlRoutes(R func(string, handlerFunc, ...func(*route))) {
 	R("GET "+v1+"/admin/adjustments", s.listPendingAdjustments)
-	R("GET "+v1+"/admin/adjustments/{id}", s.getPendingAdjustment)
+	R("GET "+v1+"/admin/adjustments/{id}", s.getPendingAdjustment, queryParams())
 	R("POST "+v1+"/admin/adjustments/{id}/approve", s.approveAdjustment)
 	R("POST "+v1+"/admin/adjustments/{id}/reject", s.rejectAdjustment)
 	R("POST "+v1+"/admin/adjustments/{id}/cancel", s.cancelAdjustment)

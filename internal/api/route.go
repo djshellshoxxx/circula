@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/google/uuid"
 )
 
 type idemMode int
@@ -85,6 +86,18 @@ func (s *server) serve(c *reqCtx, rt route) error {
 			if err := s.resolveNetwork(r, c); err != nil {
 				return err
 			}
+		}
+	}
+	// SEC-024: reject malformed record IDs before any resource lookup or
+	// idempotent action. Keep authentication/CSRF/network failures unchanged.
+	// Only {id} is a UUID: invitation {token} and {role} have other formats.
+	// UUIDv4 adapter jobs and UUIDv7 domain records both remain supported.
+	if id := r.PathValue("id"); id != "" {
+		if len(id) != 36 {
+			return notFoundErr()
+		}
+		if _, err := uuid.Parse(id); err != nil {
+			return notFoundErr()
 		}
 	}
 	if rt.idem == idemNone {

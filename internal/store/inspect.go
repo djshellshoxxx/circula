@@ -163,3 +163,9 @@ func IntegrityCheck(ctx context.Context, path string) (string, error) {
 	}
 	return res, nil
 }
+
+// CheckStorage implements the optional driver-neutral storage check. The
+// SQLite-specific pragma requirements stay inside the SQLite adapter.
+func (s *SQLite) CheckStorage(ctx context.Context) error {
+	return CheckPragmas(ctx, s.db)
+}

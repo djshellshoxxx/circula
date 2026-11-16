@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Notification kinds (FR-038). Titles are fixed text; bodies never carry

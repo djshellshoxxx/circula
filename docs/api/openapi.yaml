@@ -280,6 +280,7 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/Me'}
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '413': {$ref: '#/components/responses/PayloadTooLarge'}
         '429': {$ref: '#/components/responses/RateLimited'}
@@ -1416,6 +1417,7 @@ paths:
                 additionalProperties: false
                 properties:
                   unread: {type: integer, minimum: 0}
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
         '404': {$ref: '#/components/responses/NotFound'}
@@ -2495,6 +2497,7 @@ paths:
                   open_proposals: {type: integer, minimum: 0}
                   closure:
                     oneOf: [{$ref: '#/components/schemas/Closure'}, {type: 'null'}]
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
         '413': {$ref: '#/components/responses/PayloadTooLarge'}
@@ -2959,6 +2962,7 @@ paths:
           content:
             application/json:
               schema: {$ref: '#/components/schemas/TokenPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
         '413': {$ref: '#/components/responses/PayloadTooLarge'}

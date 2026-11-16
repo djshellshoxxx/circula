@@ -1,10 +1,10 @@
 package service
 
-import "github.com/djshellshoxxx/circula/internal/store"
+import store "github.com/djshellshoxxx/circula/internal/repository"
 
 // Records the service returns as stored. The adapters name them through these
-// aliases so that internal/api and internal/web never import internal/store
-// (ARC-002; depguard rule "adapters" in .golangci.yml). They are value types
+// aliases so that internal/api and internal/web never import persistence
+// packages (ARC-002; depguard rule "adapters" in .golangci.yml). They are value types
 // only: reading or changing them goes through the service methods.
 type (
 	// Challenge is a member's challenge to an administrator decision (GOV-016).

@@ -29,9 +29,10 @@ type attentionRow struct {
 }
 
 type overviewData struct {
-	Rows  []attentionRow
-	AsOf  template.HTML
-	Check string
+	Rows    []attentionRow
+	AsOf    template.HTML
+	Check   string
+	CheckAt template.HTML
 	// Frozen is set while the network is read-only; FrozenReason is the administrator-only cause.
 	Frozen       bool
 	FrozenSince  template.HTML
@@ -76,7 +77,7 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 		d.Check = "The last ledger check found problems."
 	}
 	if ov.LastCheck != nil {
-		d.Check += " " + string(c.when(ov.LastCheck.At))
+		d.CheckAt = c.when(ov.LastCheck.At)
 	}
 	s.render(w, r, c, "admin_home", 200, &page{Title: "Network admin", D: d})
 }

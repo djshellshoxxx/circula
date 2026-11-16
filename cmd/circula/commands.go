@@ -514,7 +514,7 @@ func cmdAdmin(ctx context.Context, args []string, stdout, stderr io.Writer) int 
 		return exitFailure
 	}
 	defer func() { _ = st.Close() }()
-	p, err := svc.RegisterPerson(ctx, service.RegisterInput{Login: login, Password: password, RevealDuplicate: true})
+	p, err := svc.RegisterPersonAsOperator(ctx, domain.SystemActor("cli-create-operator"), service.RegisterInput{Login: login, Password: password})
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: admin create-operator: %v\n", err)
 		return exitFailure

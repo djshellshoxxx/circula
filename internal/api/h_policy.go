@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -182,6 +184,18 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 	if err := c.requireIfMatch(cur); err != nil {
 		return err
 	}
+	expected := &service.PolicyRevision{Version: n.PolicyVersion}
+	if pending != nil {
+		expected.PendingVersion = pending.Version
+	}
+	// Wildcard If-Match checks existence only. Explicit ETags also bind the
+	// service write transaction, including changes made outside this adapter.
+	for _, tag := range strings.Split(c.r.Header.Get("If-Match"), ",") {
+		if strings.TrimSpace(tag) == "*" {
+			expected = nil
+			break
+		}
+	}
 	base, _ := json.Marshal(toPolicy(n.Policy))
 	merged := map[string]json.RawMessage{}
 	_ = json.Unmarshal(base, &merged)
@@ -208,7 +222,10 @@ func (s *server) patchPolicy(c *reqCtx) error { // API-058
 		key = "policy:" + cur + ":" + etagOf(string(b))
 	}
 	u, err := s.svc.UpdatePolicy(c.r.Context(), c.actor, c.netID, service.PolicyChange{Policy: pol, Reason: reason, NoticeDays: notice, NoticeReason: noticeReason,
-		ConfirmOpenGrantRisk: confirmRisk, IdempotencyKey: key})
+		ConfirmOpenGrantRisk: confirmRisk, IdempotencyKey: key, ExpectedRevision: expected})
+	if errors.Is(err, service.ErrPolicyChanged) {
+		return &apiError{status: 412, code: "precondition-failed", detail: "If-Match does not match the current version"}
+	}
 	if err != nil {
 		return err
 	}

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 const (
@@ -63,7 +63,7 @@ func (s *Service) mfaReserve(tx store.Tx, personID string) error {
 // out grants half the allowance again, so one failure timed at expiry cannot
 // re-arm it (A3-02, A3-F16).
 func (s *Service) reserveFactorAttempt(tx store.Tx, key string) error {
-	f, until, err := s.readThrottle(tx, key, throttleAfter)
+	f, until, err := s.readThrottle(tx, key, s.cfg.AuthThrottleAttempts)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func (s *Service) reserveFactorAttempt(tx store.Tx, key string) error {
 		return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
 	}
 	n := f + 1
-	return tx.PutThrottle(key, n, now.Add(lockFor(n)))
+	return tx.PutThrottle(key, n, now.Add(s.lockAfter(n, s.cfg.AuthThrottleAttempts)))
 }
 
 // reserveMFAManage counts a second-factor attempt made from a session
@@ -82,7 +82,7 @@ func (s *Service) reserveFactorAttempt(tx store.Tx, key string) error {
 // mfaManageKey only: failures here never lock CompleteMFA (A3-F16).
 func (s *Service) reserveMFAManage(ctx context.Context, personID string) error {
 	return s.update(ctx, func(tx store.Tx) error {
-		_, until, err := s.readThrottle(tx, mfaKey(personID), throttleAfter)
+		_, until, err := s.readThrottle(tx, mfaKey(personID), s.cfg.AuthThrottleAttempts)
 		if err != nil {
 			return err
 		}

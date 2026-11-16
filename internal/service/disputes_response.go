@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Re-review outcomes beyond the dispute outcomes upheld / partially_upheld.
@@ -284,7 +284,7 @@ func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInp
 		if t.Status == domain.TxDisputed {
 			return "", domain.InvalidState("another dispute on this trade is still undecided; decide or withdraw it before a re-review can reverse the trade")
 		}
-		if _, err := s.reverse(tx, p.net, t, amount, "re-review of dispute "+d.ID, p.member.ID, p.actor.RequestID); err != nil {
+		if _, err := s.reverseDispute(tx, p, t, amount, "re-review of dispute "+d.ID, d.ID, in.IdempotencyKey); err != nil {
 			return "", err
 		}
 	}

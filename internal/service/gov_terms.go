@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Notification kinds for governance notices (GOV-003, GOV-009, GOV-010, GOV-011).

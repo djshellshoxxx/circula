@@ -231,8 +231,13 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 
 func (s *server) joinInviteForm(w http.ResponseWriter, r *http.Request) {
 	tok := r.PathValue("token")
-	if _, _, ok := s.authenticate(r); !ok {
+	a, _, ok := s.authenticate(r)
+	if !ok {
 		s.render(w, r, nil, "join_anon", 200, &page{Title: "Accept your invitation", Next: "/join/" + tok})
+		return
+	}
+	if a.MustChangePassword { // Anonymous invitation information stays public.
+		s.mustChange(w, r)
 		return
 	}
 	s.render(w, r, nil, "join", 200, &page{Title: "Accept your invitation", D: s.inviteData(r, tok)})

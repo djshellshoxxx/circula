@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // envPrefix is prepended to every upper-cased setting key to form its
@@ -55,6 +56,9 @@ var settingDefs = []settingDef{
 	{key: "session-max-admin", help: "absolute session lifetime for administrators (SEC-003); default: session-max; not longer than it (DEC-005 recommends 12h, not applied)"},
 	{key: "session-idle-reviewer", help: "idle session timeout for a person who is a dispute reviewer in any network (SEC-003); default: session-idle; not longer than it (DEC-005 recommends 1h, not applied)"},
 	{key: "session-max-reviewer", help: "absolute session lifetime for dispute reviewers (SEC-003); default: session-max; not longer than it (DEC-005 recommends 12h, not applied)"},
+	{key: "auth-throttle-attempts", def: strconv.Itoa(service.DefaultAuthThrottleAttempts), help: "database authentication attempt budget per login/address or sensitive account operation; 4 to 5 (SEC-006)"},
+	{key: "auth-throttle-global-attempts", def: strconv.Itoa(service.DefaultAuthThrottleGlobalAttempts), help: "database login/recovery attempt budget across client addresses; auth-throttle-attempts to 100 (SEC-006)"},
+	{key: "auth-throttle-lock", def: "15m", help: "database authentication lock duration; whole seconds from 15m to 24h; cannot disable throttling (SEC-006)"},
 	{key: "rate-signin-address", def: "20/1m", help: "web: failed sign-in, recovery and second-factor attempts per client address, as count/window (SEC-006)"},
 	{key: "rate-signin-account", def: "5/1m", help: "web: failed sign-ins and recoveries per client address and login, as count/window (SEC-006)"},
 	{key: "rate-password-check", def: "5/10m", help: "web: wrong current passwords and second-factor codes entered by a signed-in person (password change, recovery codes, two-step settings), as count/window (SEC-006)"},
@@ -159,6 +163,9 @@ type Config struct {
 	// SessionMax unless set shorter.
 	SessionIdleAdmin, SessionMaxAdmin       time.Duration
 	SessionIdleReviewer, SessionMaxReviewer time.Duration
+	// Persistent authentication throttles (SEC-006 / OPS-008).
+	AuthThrottleAttempts, AuthThrottleGlobalAttempts int
+	AuthThrottleLock                                 time.Duration
 	// Rate limits (SEC-006). NetworkJoinLimit.N == 0 means off.
 	RateSigninAddress, RateSigninAccount, RatePasswordCheck rateSpec
 	RateRegister, RateSetup, RateJoin                       rateSpec
@@ -386,6 +393,15 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 	cfg.SessionMaxAdmin = roleLife("session-max-admin", "session-max", cfg.SessionMax)
 	cfg.SessionIdleReviewer = roleLife("session-idle-reviewer", "session-idle", cfg.SessionIdle)
 	cfg.SessionMaxReviewer = roleLife("session-max-reviewer", "session-max", cfg.SessionMax)
+	cfg.AuthThrottleAttempts = parseInt(get("auth-throttle-attempts"), "auth-throttle-attempts", fail,
+		service.MinAuthThrottleAttempts, service.DefaultAuthThrottleAttempts)
+	cfg.AuthThrottleGlobalAttempts = parseInt(get("auth-throttle-global-attempts"), "auth-throttle-global-attempts", fail,
+		cfg.AuthThrottleAttempts, service.DefaultAuthThrottleGlobalAttempts)
+	cfg.AuthThrottleLock = parseDuration(get("auth-throttle-lock"), "auth-throttle-lock", fail,
+		service.DefaultAuthThrottleLock, service.MaxAuthThrottleLock)
+	if cfg.AuthThrottleLock%time.Second != 0 {
+		fail("auth-throttle-lock", "must be a whole number of seconds")
+	}
 	cfg.RateSigninAddress = parseRate(get("rate-signin-address"), "rate-signin-address", fail, false)
 	cfg.RateSigninAccount = parseRate(get("rate-signin-account"), "rate-signin-account", fail, false)
 	cfg.RatePasswordCheck = parseRate(get("rate-password-check"), "rate-password-check", fail, false)

@@ -10,7 +10,7 @@ import (
 	"unicode"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // RegisterInput creates a global identity. Adapters decide who may call
@@ -49,6 +49,21 @@ func validLogin(l string) error {
 // branch on the outcome, and should tell the user to sign in with the details
 // they chose. RegisterInput.RevealDuplicate restores the conflict for the CLI.
 func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain.Person, error) {
+	return s.registerPerson(ctx, in, nil)
+}
+
+// RegisterPersonAsOperator records host-controlled provisioning distinctly
+// from self-registration. The operator is the actor; the new person is only
+// the target and gains no platform or network authority from this operation.
+func (s *Service) RegisterPersonAsOperator(ctx context.Context, actor domain.Actor, in RegisterInput) (*domain.Person, error) {
+	if err := requireSystem(actor); err != nil {
+		return nil, err
+	}
+	in.RevealDuplicate = true
+	return s.registerPerson(ctx, in, &actor)
+}
+
+func (s *Service) registerPerson(ctx context.Context, in RegisterInput, operator *domain.Actor) (*domain.Person, error) {
 	login := normalizeLogin(in.Login)
 	if err := validLogin(login); err != nil {
 		return nil, err
@@ -76,8 +91,12 @@ func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain
 			return s.auditPlatform(tx, domain.Actor{PersonID: existing.ID}, auditEntry{
 				Action: domain.ActRegisterDuplicate, TargetType: "person", TargetID: existing.ID})
 		}
-		return s.auditPlatform(tx, domain.Actor{PersonID: p.ID}, auditEntry{
-			Action: domain.ActPersonRegistered, TargetType: "person", TargetID: p.ID})
+		actor := domain.Actor{PersonID: p.ID}
+		event := auditEntry{Action: domain.ActPersonRegistered, TargetType: "person", TargetID: p.ID}
+		if operator != nil {
+			actor, event.Type = *operator, domain.ActorOperator
+		}
+		return s.auditPlatform(tx, actor, event)
 	})
 	if err != nil {
 		return nil, err

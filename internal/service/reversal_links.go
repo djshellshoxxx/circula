@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // maxReversalLinks is the store page size, not the total reversal count.

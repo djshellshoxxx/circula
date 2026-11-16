@@ -7,7 +7,7 @@ import (
 	_ "time/tzdata" // the zone database is embedded so validation does not depend on the host
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // ValidTimeZone reports whether name is an IANA zone such as "Europe/Berlin" or

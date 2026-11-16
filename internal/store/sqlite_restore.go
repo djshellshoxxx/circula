@@ -3,16 +3,12 @@ package store
 import (
 	"fmt"
 	"time"
+
+	"github.com/djshellshoxxx/circula/internal/repository"
 )
 
-// RestoredCredentialCounts records authority invalidated after restoring a snapshot.
-// Break-glass grants remain append-only history; closing their sessions ends them.
-type RestoredCredentialCounts struct {
-	Sessions           int64
-	Tokens             int64
-	MFAChallenges      int64
-	BreakGlassSessions int64
-}
+// RestoredCredentialCounts retains the old public name with exact type identity.
+type RestoredCredentialCounts = repository.RestoredCredentialCounts
 
 // InvalidateRestoredCredentials is called inside one service write unit on a
 // staging copy. Revocation does not depend on expiry timestamps: clock rollback

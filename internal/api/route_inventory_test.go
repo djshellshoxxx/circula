@@ -610,7 +610,7 @@ func TestRouteAuthorizationMatrix(t *testing.T) {
 	// that takes an object id; each answer must equal the answer for an id
 	// that never existed.
 	foreignIDs := map[string]string{"member": bobM.ID, "account": bobM.AccountID, "trade": trade.ID}
-	const missingID = "no-such-object"
+	const missingID = "018f0000-0000-7000-8000-ffffffffffff" // Valid format, absent from either network.
 	n := 0
 	send := func(r authzRow, id string) *httptest.ResponseRecorder {
 		n++
