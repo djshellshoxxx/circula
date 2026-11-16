@@ -390,7 +390,7 @@ func TestQA028CorruptedBackupRefusedAndPostingsFrozen(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		checks, err := verifyAllNetworks(ctx, svc, st.DB(), "startup", "")
+		checks, err := verifyAllNetworks(ctx, svc, "startup", "")
 		if err != nil {
 			t.Fatal(err)
 		}
