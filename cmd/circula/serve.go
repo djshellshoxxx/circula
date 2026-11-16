@@ -297,8 +297,16 @@ func newHandlers(svc *service.Service, cfg *Config, logger *slog.Logger) (apiH, 
 		PublicHTTPS:    strings.HasPrefix(cfg.PublicBaseURL, "https://"),
 		TrustedProxies: cfg.TrustedProxies,
 	}
+	spool := cfg.ExportSpoolDir
+	if spool == "" {
+		spool = filepath.Join(stateDir, "export-spool")
+	}
+	if err := prepareExportSpool(spool); err != nil { // BR-06: fail closed at start
+		return nil, nil, fmt.Errorf("export-spool-dir: %w", err)
+	}
 	apiH = api.NewHandlerWithOptions(svc, api.Options{Logger: logger, CSRFKey: key, Edge: edge,
-		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress}) // SEC-006
+		PrincipalPerMinute: cfg.APIRatePrincipal, IPPerMinute: cfg.APIRateAddress, // SEC-006
+		ExportSpoolDir: spool})
 	webH = web.NewHandlerWith(svc, web.Options{
 		SetupSecret: cfg.SetupSecret, Edge: edge, PublicBaseURL: cfg.PublicBaseURL, CSRFKey: key,
 		SessionIdle: cfg.SessionIdle, SessionMax: cfg.SessionMax, Logger: logger,

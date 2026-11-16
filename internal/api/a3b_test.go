@@ -45,9 +45,9 @@ func TestA3_06_ErasureDropsReplayCacheAndExports(t *testing.T) {
 		t.Fatal("test premise: no replay record cached")
 	}
 	// An export artefact of the same person.
-	h.jobs.putExport(&exportEntry{net: net.ID, person: alice.PersonID, at: time.Now(), dto: exportDTO{ID: "exp1"}, file: []byte("data")})
-	// And one of somebody else, which must survive.
-	h.jobs.putExport(&exportEntry{net: net.ID, person: admin.PersonID, at: time.Now(), dto: exportDTO{ID: "exp2"}, file: []byte("other")})
+	storeExport(t, h.jobs, &exportEntry{net: net.ID, person: alice.PersonID, at: time.Now(), dto: exportDTO{ID: "exp1", Scope: "mine"}}, []byte("data"))
+	// And somebody else's own export, which must survive.
+	storeExport(t, h.jobs, &exportEntry{net: net.ID, person: admin.PersonID, at: time.Now(), dto: exportDTO{ID: "exp2", Scope: "mine"}}, []byte("other"))
 
 	txs, err := env.Svc.ListTransactions(ctx, alice, net.ID, nil, service.Page{})
 	if err != nil || len(txs) == 0 {

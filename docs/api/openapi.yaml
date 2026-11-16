@@ -2615,9 +2615,14 @@ paths:
       summary: Create an export (API-065)
       description: |
         Runs synchronously. The 201 response already has status complete, with a SHA-256 and the artefact
-        URL. The artefact is a ZIP (application/zip) of CSV or JSON files. Artefacts live in memory for 24 hours.
-        Limits as built: 5 live exports per person (429 rate-limited with Retry-After 3600), 50 in total and
-        64 MiB (503 unavailable with Retry-After 60). Idempotency-Key is optional.
+        URL. The artefact is a ZIP (application/zip) of CSV or JSON files (layout and manifest, including the
+        reconciliation summary: docs/api/export-schema.md). Artefacts are streamed to files in the operator's
+        export-spool-dir and kept for 24 hours; they are never held in memory, and they are dropped when a member
+        of the network is erased (admin scopes) or the exporting person is erased.
+        Limits as built, counting running exports as held: 5 live exports per person (429 rate-limited with
+        Retry-After 3600), 50 in total and 64 MiB in total, reserved while the archive is written (503 unavailable
+        with Retry-After 60), and 4 running at once (503 unavailable with Retry-After 10). An unusable spool
+        directory or a member erasure during an admin-scope export is also 503 unavailable. Idempotency-Key is optional.
         As built: no queued, running or failed states are exposed.
       security:
         - cookieAuth: []

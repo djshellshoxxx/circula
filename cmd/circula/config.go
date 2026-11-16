@@ -86,6 +86,7 @@ var settingDefs = []settingDef{
 	{key: "backup-encryption-key-file", help: "file holding the key that encrypts backups at rest (OPS-019); 32 random bytes in base64 (`circula keygen`) or a passphrase of 16+ characters; or env " + envPrefix + "BACKUP_ENCRYPTION_KEY"},
 	{key: "backup-require-encryption", def: "auto", help: "refuse to restore a plaintext backup and refuse to start without backup-encryption-key (OPS-019); auto (default) means true whenever a backup-encryption-key is set (SA2-11), false/true force it"},
 	{key: "state-dir", help: "directory for runtime state such as the web signing key (default: the database directory)"},
+	{key: "export-spool-dir", help: "directory API export archives are written to and kept in until they expire, at most 64 MiB in all (FR-095, BR-06); must be writable or serve refuses to start (default: <state-dir>/export-spool)"},
 	{key: "audit-anchor-key-file", help: "file holding the key that HMACs audit anchors (RB-010); keep a copy off the database host; or env " + envPrefix + "AUDIT_ANCHOR_KEY"},
 	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
 	{key: "tls-cert-file", help: "PEM certificate chain: serve HTTPS directly (RB-013); requires tls-key-file; reloaded on SIGHUP"},
@@ -152,6 +153,8 @@ type Config struct {
 	backupRequireAuto       bool // backup-require-encryption=auto: follows the presence of the key
 	// StateDir holds runtime state such as the web signing key (SEC-027).
 	StateDir string
+	// ExportSpoolDir holds API export archives until they expire (BR-06).
+	ExportSpoolDir string
 	// Role-specific session lifetimes (SEC-003); equal to SessionIdle /
 	// SessionMax unless set shorter.
 	SessionIdleAdmin, SessionMaxAdmin       time.Duration
@@ -481,6 +484,11 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
 		cfg.StateDir = filepath.Clean(raw.value)
 	} else if cfg.Database != "" {
 		cfg.StateDir = filepath.Dir(cfg.Database)
+	}
+	if raw, ok := vals["export-spool-dir"]; ok && raw.value != "" {
+		cfg.ExportSpoolDir = filepath.Clean(raw.value)
+	} else if cfg.StateDir != "" {
+		cfg.ExportSpoolDir = filepath.Join(cfg.StateDir, "export-spool")
 	}
 
 	if len(errs) > 0 {
