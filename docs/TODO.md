@@ -5,6 +5,8 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Integration evidence
 
+- PR #60 merged after all seven PR jobs passed at `96059bb4` in [CI run 43942206927](https://github.com/djshellshoxxx/circula/actions/runs/43942206927).
+
 - PR #59 merged as `672cddbcc397136b845012836e1190c9c6a89b63` after all seven PR jobs passed at `12175ec348d5234c27e1c72dc8df96a091cd111c`; see [CI run 43930580504](https://github.com/djshellshoxxx/circula/actions/runs/43930580504).
 
 - [PR #56](https://github.com/djshellshoxxx/circula/pull/56) merged core completion after seven passing CI jobs.
@@ -64,7 +66,7 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 ## Remaining specification and qualification work
 
 - SEC-026 is an outstanding implementation: network-configurable proposal-velocity and reciprocal-trade signals, one signal per window, visible only to same-network administrators/reviewers, with no automatic trade blocking. Existing throttles are not this feature.
-- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. The rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
+- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. The financial-message candidate additionally migrates balance/spoken and transaction-row/status/explanation text, pending CI; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
 - GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
 
 - Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.

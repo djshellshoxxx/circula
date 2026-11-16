@@ -1,13 +1,13 @@
 package web
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // balanceVM presents a balance with sign, word and spoken text (UX-004..006).
@@ -36,11 +36,11 @@ func makeBalance(v int64, dec int, unit string) balanceVM {
 	n := domain.FormatAmount(abs64(v), dec)
 	switch {
 	case v > 0:
-		return balanceVM{"+" + n, "In credit", fmt.Sprintf("In credit by %s %s", n, u)}
+		return balanceVM{"+" + n, messages.Text("balance.credit"), messages.Text("balance.spoken_credit", n, u)}
 	case v < 0:
-		return balanceVM{"−" + n, "In debt", fmt.Sprintf("In debt by %s %s", n, u)}
+		return balanceVM{"−" + n, messages.Text("balance.debt"), messages.Text("balance.spoken_debt", n, u)}
 	}
-	return balanceVM{n, "Level", fmt.Sprintf("Level, zero %s", unit+"s")}
+	return balanceVM{n, messages.Text("balance.level"), messages.Text("balance.spoken_level", u)}
 }
 
 // balanceCard is the Home balance card data (UX-009..011).
@@ -64,7 +64,7 @@ func makeCard(b *service.BalanceView, unit string) *balanceCard {
 		Awaiting: plainAmt(b.AwaitingFromOthers, d), Unit: unitFor(unit, 0, d)}
 	if b.Balance < 0 {
 		c.InDebt = true
-		c.Used = fmt.Sprintf("You are using %s of your %s credit limit.", plainAmt(-b.Balance, d), plainAmt(b.CreditLimit, d))
+		c.Used = messages.Text("balance.limit_used", plainAmt(-b.Balance, d), plainAmt(b.CreditLimit, d))
 		if b.CreditLimit > 0 {
 			c.UsedPct = int(min64(100, (-b.Balance*100)/b.CreditLimit))
 		}
@@ -121,9 +121,9 @@ func (n names) of(id string) string {
 		return v
 	}
 	if id == "" {
-		return "the network"
+		return messages.Text("member.network")
 	}
-	return "another member"
+	return messages.Text("member.hidden")
 }
 
 // lookup returns the display name for id when the caller may see it.
@@ -169,11 +169,11 @@ func (n names) reversedBy(t *domain.Transaction, unit string, dec int) []txLink 
 	}
 	var out []txLink
 	for _, rev := range n.reversals(t.ID) {
-		by := "a later posting"
+		by := messages.Text("reversal.later")
 		if rev.LedgerSeq > 0 {
-			by = fmt.Sprintf("ledger reference %d", rev.LedgerSeq)
+			by = messages.Text("reversal.ledger", strconv.FormatInt(rev.LedgerSeq, 10))
 		}
-		out = append(out, txLink{ID: rev.ID, Text: fmt.Sprintf("Reversed by %s (%s %s)", by,
+		out = append(out, txLink{ID: rev.ID, Text: messages.Text("reversal.by", by,
 			domain.FormatAmount(rev.Amount, dec), unitFor(unit, rev.Amount, dec))})
 	}
 	return out
@@ -211,21 +211,21 @@ func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label strin
 			if other == me.ID {
 				other = t.PayerMemberID
 			}
-			return "Waiting for " + n.of(other) + " to respond", false
+			return messages.Text("status.waiting_other", n.of(other)), false
 		}
-		return "Waiting for you to respond", true
+		return messages.Text("status.waiting_you"), true
 	case domain.TxCompleted, domain.TxAccepted:
-		return "Completed", false
+		return messages.Text("status.completed"), false
 	case domain.TxDeclined:
-		return "Declined", false
+		return messages.Text("status.declined"), false
 	case domain.TxCancelled:
-		return "Cancelled", false
+		return messages.Text("status.cancelled"), false
 	case domain.TxExpired:
-		return "Expired", false
+		return messages.Text("status.expired"), false
 	case domain.TxDisputed:
-		return "Disputed", false
+		return messages.Text("status.disputed"), false
 	case domain.TxReversed:
-		return "Reversed", false
+		return messages.Text("status.reversed"), false
 	}
 	return string(t.Status), false
 }
@@ -233,19 +233,19 @@ func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label strin
 func statusExplain(s domain.TxStatus) string {
 	switch s {
 	case domain.TxProposed:
-		return "Nothing has been posted yet. The amount is held aside from the payer's available credit until it is accepted, declined, cancelled or expires."
+		return messages.Text("status.explanation_1")
 	case domain.TxCompleted, domain.TxAccepted:
-		return "Posted to both accounts."
+		return messages.Text("status.explanation_2")
 	case domain.TxDeclined:
-		return "The other party declined. Nothing was posted."
+		return messages.Text("status.explanation_3")
 	case domain.TxCancelled:
-		return "Withdrawn before it was accepted. Nothing was posted."
+		return messages.Text("status.explanation_4")
 	case domain.TxExpired:
-		return "Not answered in time. Nothing was posted."
+		return messages.Text("status.explanation_5")
 	case domain.TxDisputed:
-		return "A dispute is open. Postings stay as they were until a reviewer decides."
+		return messages.Text("status.explanation_6")
 	case domain.TxReversed:
-		return "Fully reversed by a later posting."
+		return messages.Text("status.explanation_7")
 	}
 	return ""
 }
@@ -258,18 +258,18 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 		r.When = *t.CompletedAt
 	}
 	if t.LedgerSeq > 0 && (t.Status == domain.TxCompleted || t.Status == domain.TxDisputed || t.Status == domain.TxReversed) {
-		r.Ledger = fmt.Sprintf("Ledger reference %d", t.LedgerSeq)
+		r.Ledger = messages.Text("row.ledger", strconv.FormatInt(t.LedgerSeq, 10))
 	}
 	amt := domain.FormatAmount(t.Amount, dec)
 	u := unitFor(unit, t.Amount, dec)
-	prefix := ""
+	kind := "trade"
 	switch t.Kind {
 	case domain.KindReversal:
-		prefix = "Reversal: "
+		kind = "reversal"
 	case domain.KindAdjustment:
-		prefix = "Adjustment: "
+		kind = "adjustment"
 	case domain.KindGrant:
-		prefix = "Sign-up grant: "
+		kind = "grant"
 	}
 	if t.Kind == domain.KindReversal || t.Kind == domain.KindAdjustment {
 		r.Reason = t.Reason
@@ -282,17 +282,17 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 	}
 	if t.PayerMemberID == me.ID {
 		r.Counter = n.of(t.PayeeMemberID)
-		r.Text = fmt.Sprintf("%sYou paid %s %s %s", prefix, r.Counter, amt, u)
+		r.Text = messages.Text("financial.row."+kind+".paid", r.Counter, amt, u)
 		r.Signed = "−" + amt
 		if t.Status == domain.TxProposed {
-			r.Text = fmt.Sprintf("%sYou pay %s %s %s", prefix, r.Counter, amt, u)
+			r.Text = messages.Text("financial.row."+kind+".pay", r.Counter, amt, u)
 		}
 	} else {
 		r.Counter = n.of(t.PayerMemberID)
-		r.Text = fmt.Sprintf("%sYou received %s %s from %s", prefix, amt, u, r.Counter)
+		r.Text = messages.Text("financial.row."+kind+".received", r.Counter, amt, u)
 		r.Signed = "+" + amt
 		if t.Status == domain.TxProposed {
-			r.Text = fmt.Sprintf("%sYou will receive %s %s from %s", prefix, amt, u, r.Counter)
+			r.Text = messages.Text("financial.row."+kind+".receive", r.Counter, amt, u)
 		}
 	}
 	return r

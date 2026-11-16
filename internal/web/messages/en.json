@@ -61,5 +61,137 @@
   },
   "queue.waiting": {
     "other": "Waiting for an answer"
+  },
+  "balance.credit": {
+    "other": "In credit"
+  },
+  "balance.debt": {
+    "other": "In debt"
+  },
+  "balance.level": {
+    "other": "Level"
+  },
+  "balance.spoken_credit": {
+    "other": "In credit by %[1]s %[2]s"
+  },
+  "balance.spoken_debt": {
+    "other": "In debt by %[1]s %[2]s"
+  },
+  "balance.spoken_level": {
+    "other": "Level, zero %[1]s"
+  },
+  "balance.limit_used": {
+    "other": "You are using %[1]s of your %[2]s credit limit."
+  },
+  "member.network": {
+    "other": "the network"
+  },
+  "member.hidden": {
+    "other": "another member"
+  },
+  "reversal.later": {
+    "other": "a later posting"
+  },
+  "reversal.ledger": {
+    "other": "ledger reference %[1]s"
+  },
+  "reversal.by": {
+    "other": "Reversed by %[1]s (%[2]s %[3]s)"
+  },
+  "row.ledger": {
+    "other": "Ledger reference %[1]s"
+  },
+  "status.waiting_other": {
+    "other": "Waiting for %[1]s to respond"
+  },
+  "status.waiting_you": {
+    "other": "Waiting for you to respond"
+  },
+  "status.completed": {
+    "other": "Completed"
+  },
+  "status.declined": {
+    "other": "Declined"
+  },
+  "status.cancelled": {
+    "other": "Cancelled"
+  },
+  "status.expired": {
+    "other": "Expired"
+  },
+  "status.disputed": {
+    "other": "Disputed"
+  },
+  "status.reversed": {
+    "other": "Reversed"
+  },
+  "status.explanation_1": {
+    "other": "Nothing has been posted yet. The amount is held aside from the payer's available credit until it is accepted, declined, cancelled or expires."
+  },
+  "status.explanation_2": {
+    "other": "Posted to both accounts."
+  },
+  "status.explanation_3": {
+    "other": "The other party declined. Nothing was posted."
+  },
+  "status.explanation_4": {
+    "other": "Withdrawn before it was accepted. Nothing was posted."
+  },
+  "status.explanation_5": {
+    "other": "Not answered in time. Nothing was posted."
+  },
+  "status.explanation_6": {
+    "other": "A dispute is open. Postings stay as they were until a reviewer decides."
+  },
+  "status.explanation_7": {
+    "other": "Fully reversed by a later posting."
+  },
+  "financial.row.trade.paid": {
+    "other": "You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.trade.pay": {
+    "other": "You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.trade.received": {
+    "other": "You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.trade.receive": {
+    "other": "You will receive %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.reversal.paid": {
+    "other": "Reversal: You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.reversal.pay": {
+    "other": "Reversal: You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.reversal.received": {
+    "other": "Reversal: You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.reversal.receive": {
+    "other": "Reversal: You will receive %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.adjustment.paid": {
+    "other": "Adjustment: You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.adjustment.pay": {
+    "other": "Adjustment: You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.adjustment.received": {
+    "other": "Adjustment: You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.adjustment.receive": {
+    "other": "Adjustment: You will receive %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.grant.paid": {
+    "other": "Sign-up grant: You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.grant.pay": {
+    "other": "Sign-up grant: You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.grant.received": {
+    "other": "Sign-up grant: You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.grant.receive": {
+    "other": "Sign-up grant: You will receive %[2]s %[3]s from %[1]s"
   }
 }
