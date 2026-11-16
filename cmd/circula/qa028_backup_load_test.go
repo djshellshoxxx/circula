@@ -57,6 +57,7 @@ func qa28Seed(t *testing.T, dir string) *qa28Instance {
 	if in.st, err = store.Open(ctx, in.path); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { _ = in.st.Close() })
 	if in.svc, err = service.New(in.st, service.Config{Argon: qa28Argon}); err != nil {
 		t.Fatal(err)
 	}
@@ -386,6 +387,7 @@ func TestQA028CorruptedBackupRefusedAndPostingsFrozen(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { _ = st.Close() })
 		svc, err := newService(st, tcfg)
 		if err != nil {
 			t.Fatal(err)

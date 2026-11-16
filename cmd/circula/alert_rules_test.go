@@ -273,7 +273,8 @@ func readDoc(t *testing.T, path string) string {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return string(b)
+	// Git may check out the same Markdown with CRLF on Windows.
+	return strings.ReplaceAll(string(b), "\r\n", "\n")
 }
 
 // incidentLevels reads the level names from the severity table of the

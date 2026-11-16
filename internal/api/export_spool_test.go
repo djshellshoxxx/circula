@@ -138,7 +138,7 @@ func TestExportArtefactIsSpooled(t *testing.T) {
 	}
 	// Erasure drops the export and closes its file.
 	w.h.jobs.dropErased("", w.person)
-	if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) {
+	if _, err := e.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) {
 		t.Errorf("spool file still open after drop: %v", err)
 	}
 	if w.h.jobs.bytes != 0 || dirEntries(t, dir) != 0 {
@@ -157,7 +157,7 @@ func TestExportArtefactIsSpooled(t *testing.T) {
 		t.Fatalf("slot after expiry: %q", why)
 	}
 	tk.abort()
-	if _, err := e2.spool.f.Stat(); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 || dirEntries(t, dir) != 0 {
+	if _, err := e2.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) || w.h.jobs.bytes != 0 || dirEntries(t, dir) != 0 {
 		t.Errorf("expired artefact not released: %v, %d bytes", err, w.h.jobs.bytes)
 	}
 }
@@ -384,7 +384,7 @@ func TestErasureDropsNetworkExports(t *testing.T) {
 		if w.h.jobs.getExport(w.netID, w.person, e.dto.ID) != nil {
 			t.Errorf("%s export holding the erased member survives", e.dto.Scope)
 		}
-		if _, err := e.spool.f.Stat(); !errors.Is(err, os.ErrClosed) {
+		if _, err := e.spool.f.ReadAt(make([]byte, 1), 0); !errors.Is(err, os.ErrClosed) {
 			t.Errorf("%s export file still open: %v", e.dto.Scope, err)
 		}
 	}

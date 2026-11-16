@@ -30,7 +30,9 @@ func TestParallelLargeExportsStayBounded(t *testing.T) {
 	body := map[string]any{"scope": "ledger", "format": "csv"}
 
 	// The archive's size, from a handler of its own.
-	w := &world{t: t, env: env, h: api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey, ExportSpoolDir: t.TempDir()})}
+	initial := api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey, ExportSpoolDir: t.TempDir()})
+	t.Cleanup(func() { api.CloseHandler(initial) })
+	w := &world{t: t, env: env, h: initial}
 	adminT := w.token(admin, domain.ScopeRead, domain.ScopeWrite)
 	rec := w.post(adminT, "/exports", body, "")
 	wantStatus(t, rec, 201)
@@ -42,6 +44,7 @@ func TestParallelLargeExportsStayBounded(t *testing.T) {
 	}
 
 	h := api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: testCSRFKey, ExportSpoolDir: t.TempDir()})
+	t.Cleanup(func() { api.CloseHandler(h) })
 	w.h = h
 	capBytes := size * 3 / 2
 	api.SetExportByteCap(h, capBytes)
