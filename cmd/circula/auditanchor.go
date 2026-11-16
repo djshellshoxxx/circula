@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"time"
 )
@@ -104,19 +103,9 @@ func buildAnchor(ctx context.Context, db *sql.DB, key []byte, now time.Time) (*a
 
 // writeAnchorFile writes the anchor atomically with owner-only permissions.
 func writeAnchorFile(path string, a *auditAnchor) error {
-	b, err := json.MarshalIndent(a, "", "  ")
-	if err != nil {
-		return err
-	}
-	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, append(b, '\n'), 0o600); err != nil { //nolint:gosec // G703: operator-supplied path
-		return err
-	}
-	if err := os.Rename(tmp, path); err != nil { //nolint:gosec // G703: operator-supplied path
-		_ = os.Remove(tmp) //nolint:gosec // G703: operator-supplied path
-		return err
-	}
-	return nil
+ b, err := json.MarshalIndent(a, "", "  ")
+ if err != nil { return err }
+ return writeAtomicPrivateFile(path, append(b, '\n'))
 }
 
 // verifyAnchor compares the live chain with an anchor and returns one finding
