@@ -35,7 +35,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-013 | P0 | partial | No operator role reads network data in product; break-glass not built |
 | SEC-014 | P0 | partial | Minimal profile fields; data inventory document absent |
 | SEC-015 | P0 | built | Network-scoped queries and cross-network tests |
-| SEC-016 | P0 | partial | Members-only directory; no-index directive absent |
+| SEC-016 | P0 | built | Members-only directory; no-index header and meta on every page; stable member reference on trade confirmation steps, directory, member page and same-name entries of the trade form (tests) |
 | SEC-017 | P0 | built | Member and admin scopes; CSV formula neutralisation; 24h download expiry |
 | SEC-018 | P0 | not built | No pseudonymisation or erasure on departure |
 | SEC-019 | P0 | partial | Audit excludes secrets; admin-only read path; member read in service only |
