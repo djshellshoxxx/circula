@@ -30,6 +30,8 @@
 </div>{{end}}
 <main id="main" tabindex="-1">
   <h1 id="page-title">{{.Title}}</h1>
+  {{if .SnapshotAt}}<p id="figure-freshness">Page generated {{.SnapshotAt}}. Figures are a snapshot and do not update automatically.</p>
+  <p id="figure-stale" class="notice" role="status" hidden></p>{{end}}
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
   {{if .FrozenSince}}<div class="notice" role="note"><strong>Notice:</strong> This network is read-only while its ledger is being checked, since {{.FrozenSince}}. You can read balances and history; anything that would change them is refused until the check passes.</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>Notice:</strong> {{.}}</div>{{end}}{{end}}
   {{with .Warn}}<div class="notice" role="note"><strong>Credit limit notice:</strong> {{.}}</div>{{end}}

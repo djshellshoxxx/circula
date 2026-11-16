@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -12,6 +13,7 @@ import (
 
 func (s *server) adminOverviewRoutes() {
 	s.adminNetworkRoutes()
+	s.mux.HandleFunc("GET /n/{slug}/admin/proposals/stale", s.adminH(s.staleProposals))
 	s.mux.HandleFunc("GET /n/{slug}/admin/reverse", s.adminH(s.reverseForm))
 	s.mux.HandleFunc("POST /n/{slug}/admin/reverse", s.adminH(s.reversePost))
 	s.mux.HandleFunc("GET /n/{slug}/admin/announcements", s.adminH(s.announcementsPage))
@@ -59,7 +61,7 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 	soon := int(ov.InviteWithin / time.Hour)
 	d := &overviewData{AsOf: c.when(ov.AsOf), Rows: []attentionRow{
 		{ov.PendingMembers, plural(ov.PendingMembers, "membership request is waiting", "membership requests are waiting"), b + "/members?status=pending", "Review requests"},
-		{ov.StaleProposals, plural(ov.StaleProposals, "open proposal has", "open proposals have") + " waited more than " + itoa(stale) + " hours for an answer", "", ""},
+		{ov.StaleProposals, plural(ov.StaleProposals, "open proposal has", "open proposals have") + " waited at least " + itoa(stale) + " hours for an answer", b + "/proposals/stale", "Review waiting proposals"},
 		{ov.OpenDisputes, plural(ov.OpenDisputes, "dispute is", "disputes are") + " open or under review", c.base() + "/review", "Open the review queue"},
 		{ov.PostingPending, plural(ov.PostingPending, "dispute is", "disputes are") + " decided but the reversal is not yet posted", c.base() + "/review?status=posting_pending", "See them"},
 		{ov.NearLimit, plural(ov.NearLimit, "active member is", "active members are") + " at or beyond their credit limit", b + "/members?status=active", "Open the member list"},
@@ -80,6 +82,34 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 		d.CheckAt = c.when(ov.LastCheck.At)
 	}
 	s.render(w, r, c, "admin_home", 200, &page{Title: "Network admin", D: d})
+}
+
+func (s *server) staleProposals(w http.ResponseWriter, r *http.Request, c *rc) {
+	txs, err := s.svc.AdminStaleProposals(r.Context(), c.actor, c.netID(), service.Page{AfterID: r.URL.Query().Get("after"), Limit: 50})
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	d := struct {
+		Rows  []txRow
+		Next  string
+		Hours int
+		AsOf  template.HTML
+	}{Hours: int(service.OverviewStaleAfter / time.Hour), AsOf: c.when(s.opts.Clock.Now())}
+	n := c.memberNames()
+	for _, tx := range txs {
+		row := c.row(tx, n)
+		amount := domain.FormatAmount(tx.Amount, c.Net.Policy.Decimals)
+		// This is a network-wide queue: the viewer need not be either party.
+		row.Text = fmt.Sprintf("%s proposes to pay %s %s %s", n.of(tx.PayerMemberID), n.of(tx.PayeeMemberID), amount, unitFor(c.Net.Policy.CurrencyName, tx.Amount, c.Net.Policy.Decimals))
+		row.Signed = amount
+		row.Status = "Waiting for an answer"
+		d.Rows = append(d.Rows, row)
+	}
+	if len(txs) == 50 {
+		d.Next = txs[len(txs)-1].ID
+	}
+	s.render(w, r, c, "admin_stale_proposals", 200, &page{Title: "Waiting proposals", D: d})
 }
 
 // ---- administrative reversal (FR-066) ----

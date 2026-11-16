@@ -175,15 +175,16 @@ type InvitationRepo interface {
 
 // TxFilter selects transactions of a network.
 type TxFilter struct {
-	MemberID     string // either party
-	Statuses     []domain.TxStatus
-	Kind         domain.TxKind
-	OriginalTxID string
-	AfterID      string // keyset: ids strictly below (newest first)
-	Limit        int
-	CreatedBy    string    // proposer member id
-	NotCreatedBy string    // proposals made by the other party
-	LiveAt       time.Time // when set, hides proposals whose expiry is at or before it
+	MemberID       string // either party
+	Statuses       []domain.TxStatus
+	Kind           domain.TxKind
+	OriginalTxID   string
+	AfterID        string // keyset: ids strictly below (newest first)
+	Limit          int
+	CreatedBy      string    // proposer member id
+	NotCreatedBy   string    // proposals made by the other party
+	LiveAt         time.Time // when set, hides proposals whose expiry is at or before it
+	ProposedBefore time.Time // inclusive age cutoff; zero leaves proposal age unrestricted
 }
 
 // TxnRepo covers transactions, status history and ledger entries.

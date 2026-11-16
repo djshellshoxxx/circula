@@ -59,7 +59,7 @@ Summary: built 31, not built 7, partial 22.
 | UX-034 | P0 | partial | 20 enlargement/spacing probes passed at d75f31e, including own-trade/onboarding paths; wider functionality/native coverage remains |
 | UX-035 | P0 | partial | Target sizes not measured. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/target-size.spec.js` exists. Its result is UNVERIFIED in this refresh] |
 | UX-036 | P0 | partial | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |
-| UX-037 | P1 | not built | Stacked rows for wide tables not built |
+| UX-037 | P1 | built | Wide tables already use `table.stack` and per-cell `data-label`; the narrow-width media rule stacks cells and renders those labels. `e2e/tests/stacked-tables.spec.js` checks administrator/member audit tables at 1280px and 320px, with unchanged record values and visible cell labels. Browser execution is recorded in current PR checks. |
 | UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
 | UX-039 | P0 | partial | Reading order by template; not automated |
 | UX-040 | P0 | partial | 18 no-script key-only entry-screen focus probes passed at d75f31e; transition/manual/native review remains |

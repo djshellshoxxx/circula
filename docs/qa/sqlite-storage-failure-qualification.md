@@ -1,6 +1,6 @@
 # SQLite storage-failure qualification
 
-L9 has real SQLite engine-capacity and Linux WAL-write failure regressions in addition to store-interface faults and process crashes. **Read, fsync, checkpoint and general device-failure qualification remain open.** `SQLITE_FULL` and `SQLITE_IOERR_WRITE` exercise different boundaries; neither regression exhausts the host filesystem.
+L9 has real SQLite engine-capacity and Linux WAL-write failure regressions in addition to store-interface faults and process crashes. **Read, fsync and general device-failure qualification remain open; checkpoint coverage is limited to the specific write failure below.** `SQLITE_FULL` and `SQLITE_IOERR_WRITE` exercise different boundaries; neither regression exhausts the host filesystem.
 
 ## Covered failure
 
@@ -44,6 +44,16 @@ go test -race ./internal/service -run '^TestSQLiteWALWriteFailureRollsBackAndRec
 
 Both focused commands passed locally on Linux on 2026-11-16 with Go 1.26.11: normal in 0.098s and race in 4.068s. Execution was serialized with the shared `flock`, `GOMAXPROCS=2`, `GOMEMLIMIT=600MiB`, `-p 1` and `-timeout=2m`. The full Linux race job also passed at commit `dc89212a8bf1e1207e5443ffc719670623de70e1` in [CI run 43914378342](https://github.com/djshellshoxxx/Circula/actions/runs/43914378342). These results qualify the specific WAL-write failure above, not L9 as a whole.
 
+## Linux checkpoint database write failure
+
+`internal/service/sqlite_checkpoint_linux_test.go:TestSQLiteCheckpointWriteFailurePreservesCommittedTrade` commits a trade through the production service, with a test-only idempotency trigger adding a 1 MiB payload in the same transaction. Automatic checkpointing is disabled on the single pinned connection. The fixture verifies that database growth remains in the WAL and that the trade has already emitted exactly one posting metric and audit-sink event.
+
+A separate Linux child lowers only its soft `RLIMIT_FSIZE` to the pre-posting database size, ignores `SIGXFSZ`, and calls `PRAGMA wal_checkpoint(TRUNCATE)`. The real database-file write fails with `EFBIG`, which the driver returns as `SQLITE_IOERR_WRITE`. The limit and signal disposition are restored immediately after the call. No wrapper fabricates an error.
+
+The regression requires unchanged committed live SQL state, unchanged WAL bytes and no additional posting effects. It exits without closing the database, preserving the failed checkpoint files. The parent verifies the WAL byte-for-byte before reopening, requires the complete committed snapshot, replays the same idempotency key without another posting, retries the checkpoint to an empty WAL, and reopens again with unchanged state, passing ledger/audit verification and `integrity_check=ok`.
+
+Focused normal and race runs passed locally on Linux with Go 1.26.11 on 2026-11-16. This establishes recovery for a committed WAL after this checkpoint write failure. It does not cover checkpoint sync/truncate failures, arbitrary device faults or power-loss durability.
+
 ## Evidence boundaries
 
 | Mechanism | Evidence | Boundary |
@@ -53,7 +63,8 @@ Both focused commands passed locally on Linux on 2026-11-16 with Go 1.26.11: nor
 | SQLite page-allocation exhaustion | `sqlite_full_test.go` | Exercises the real engine's `SQLITE_FULL` handling late in the posting unit and subsequent connection/file recovery. |
 | Linux file-size-limit write failure during WAL commit | `sqlite_ioerr_linux_test.go` | Actual `EFBIG` produces `SQLITE_IOERR_WRITE` during a partial WAL-frame append. Covers this specific pre-commit-marker write failure and restart/retry recovery. |
 | OS read/fsync/truncate and other write/device errors | Not covered by these tests | Still needs a writable VFS fault harness or an isolated filesystem/device fault environment. |
-| Checkpoint I/O and uncertain commit outcomes | Not covered by these tests | No claim is made about checkpoint database writes, sync failures, errors after a complete commit frame or power-loss durability. |
+| Linux checkpoint database-growth write failure | `sqlite_checkpoint_linux_test.go` | Actual `EFBIG` produces `SQLITE_IOERR_WRITE` after the trade has committed. Committed WAL preservation, restart, idempotent replay, checkpoint retry and reopen are checked. |
+| Other checkpoint I/O and uncertain commit outcomes | Not covered by these tests | No claim is made about sync/truncate failures, errors after a complete commit frame or power-loss durability. |
 
 ## Driver source inspected
 

@@ -137,6 +137,7 @@ web  POST   /n/{slug}/admin/adjust                       admin
 web  GET    /n/{slug}/admin/adjustments/pending          admin
 web  POST   /n/{slug}/admin/adjustments/{id}/{action}    admin
 web  GET    /n/{slug}/admin/announcements                admin
+web  GET    /n/{slug}/admin/proposals/stale              admin
 web  POST   /n/{slug}/admin/announcements                admin
 web  POST   /n/{slug}/admin/announcements/{id}/delete    admin
 web  GET    /n/{slug}/admin/audit                        admin

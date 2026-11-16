@@ -56,6 +56,8 @@ type page struct {
 	SecUnseen int
 	// FrozenSince is separate from notice text so its time element stays markup.
 	FrozenSince template.HTML
+	// SnapshotAt labels network figures even when scripting or connectivity fails (PER-022).
+	SnapshotAt template.HTML
 }
 
 func (p *page) Val(k string) string { return p.V[k] }
@@ -187,6 +189,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 			p.FrozenSince = c.when(fi.Since)
 		}
 		p.Unread = c.unreadCount()
+		p.SnapshotAt = c.when(s.opts.Clock.Now())
 	}
 	if p.Authed {
 		if at, ext, ok := s.expiry(r); ok {
