@@ -49,7 +49,7 @@ Summary: built 9, deferred 1, not built 6, partial 28.
 | QA-027 | P0 | partial | Migration tests on current schemas; fixture per released version absent |
 | QA-028 | P0 | partial | Restore integrity tested; backup under concurrent load not run |
 | QA-029 | P0 | not built | No restore drill records |
-| QA-030 | P0 | partial | Export totals tested; independent reconciliation script not present |
+| QA-030 | P0 | built | Reconciliation recomputed independently by the tests over a seeded corpus (ledger, full, each member's own; CSV and JSON) and during concurrent postings: `TestExportReconcilesAcrossCorpus`, `TestExportDuringConcurrentPostingsReconciles` |
 | QA-031 | P0 | built | Member scope and canary checks in export tests |
 | QA-032 | P0 | built | Formula neutralisation test |
 | QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI |
