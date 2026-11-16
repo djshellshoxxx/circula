@@ -1,0 +1,10 @@
+{
+  "id": "FUX-101",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Public-asset caching allowlist; reject navigations, private endpoints, query tokens and foreign origins.",
+  "remaining": "Service worker and manifest; fingerprint build validation; no-store response checks; icons, install guidance, sign-out cleanup; offline page; Android/iOS installation and back-navigation privacy tests."
+}
