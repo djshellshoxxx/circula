@@ -3,6 +3,7 @@ package web
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -38,21 +39,44 @@ func label(f string) string {
 
 // choiceFixes are the corrections for fields filled from a fixed list (UX-021).
 var choiceFixes = map[string]string{
-	"counterparty_id": "Choose another active member from the list.",
-	"direction":       "Choose whether you pay or are paid.",
-	"category":        "Choose one of the listed categories.",
-	"outcome":         "Choose one of the listed outcomes.",
-	"type":            "Choose one of the listed types.",
-	"status":          "Choose one of the listed statuses.",
-	"format":          "Choose CSV or JSON.",
-	"listing_id":      "Start again from the other member's listing, or propose without one.",
-	"terms_version":   "Read the terms shown, tick the box to accept them and try again.",
+	"counterparty_id":         "Choose another active member from the list.",
+	"direction":               "Choose whether you pay or are paid.",
+	"category":                "Choose one of the listed categories.",
+	"outcome":                 "Choose one of the listed outcomes.",
+	"type":                    "Choose one of the listed types.",
+	"status":                  "Choose one of the listed statuses.",
+	"format":                  "Choose CSV or JSON.",
+	"listing_id":              "Start again from the other member's listing, or propose without one.",
+	"terms_version":           "Read the terms shown, tick the box to accept them and try again.",
+	"reason_code":             "Choose one of the listed reasons.",
+	"confirm_open_grant_risk": "Tick the box to confirm the risk, or choose another join mode or no sign-up grant, then try again.",
+}
+
+// machineChoices matches a service detail that lists a choice field's stored values
+// ("required, one of rule_breach, confirmed_fraud", "must be pay or request").
+var machineChoices = regexp.MustCompile(`^(required, )?(must be )?(one of )?[a-z_]+((, | or )[a-z_]+)+$`)
+
+// fieldDetail is the problem description shown for f. For a field filled from a list, a
+// detail that only lists the stored values is put in plain words instead, so the member
+// never sees values such as "rule_breach" (UX-020, UX-021).
+func fieldDetail(f domain.FieldError) string {
+	if _, choice := choiceFixes[f.Field]; choice && machineChoices.MatchString(f.Detail) {
+		if strings.HasPrefix(f.Detail, "required") {
+			return "nothing was chosen"
+		}
+		return "that choice is not on the list"
+	}
+	return f.Detail
 }
 
 // fieldFix suggests how to correct one field error (UX-021: identify the field, describe the
 // problem, suggest a correction). The service detail describes the problem; this says what to
-// do about it, from the kind of problem first and then from the field.
+// do about it, from the kind of problem first and then from the field. A field filled from a
+// list (choiceFixes) always gets its own correction: "fill it in" does not fit a list.
 func (c *rc) fieldFix(f domain.FieldError) string {
+	if fix, ok := choiceFixes[f.Field]; ok {
+		return fix
+	}
 	d := strings.ToLower(f.Detail)
 	switch {
 	case strings.HasPrefix(d, "required"):
@@ -72,9 +96,6 @@ func (c *rc) fieldFix(f domain.FieldError) string {
 	case d == "too large":
 		return "Enter a smaller amount and try again."
 	}
-	if fix, ok := choiceFixes[f.Field]; ok {
-		return fix
-	}
 	return "Check the value and try again."
 }
 
@@ -88,7 +109,7 @@ func (c *rc) refuse(err error) (summary string, fields []fieldErr, ok bool) {
 	switch de.Code {
 	case domain.CodeValidation:
 		for _, f := range de.Fields {
-			fields = append(fields, fieldErr{Field: f.Field, Text: fmt.Sprintf("%s: %s. %s", label(f.Field), f.Detail, c.fieldFix(f))})
+			fields = append(fields, fieldErr{Field: f.Field, Text: fmt.Sprintf("%s: %s. %s", label(f.Field), fieldDetail(f), c.fieldFix(f))})
 		}
 		if len(fields) == 0 { // no field to point at, for example an amount the accounts cannot record
 			if strings.Contains(de.Msg, "overflows") {

@@ -275,13 +275,20 @@ func TestValidationMessagesNameFieldAndFix(t *testing.T) {
 		{"amount", "not a number", true, "Amount: not a number. Check the value and try again."},
 		{"amount", "too large", false, "Amount: too large. Enter a smaller amount and try again."},
 		{"reason", "required", false, "Reason: required. Fill it in and try again."},
-		{"category", "required, one of not_delivered, other", false, "Category: required, one of not_delivered, other. Fill it in and try again."},
+		// Review fix: a list field never shows its stored values and never says "fill it in".
+		{"category", "required, one of not_delivered, other", false, "Category: nothing was chosen. Choose one of the listed categories."},
+		{"category", "must be one of not_delivered, quality, wrong_amount, unauthorised, other", false, "Category: that choice is not on the list. Choose one of the listed categories."},
+		{"reason_code", "required, one of rule_breach, confirmed_fraud, dispute_non_response", false, "Reason for removal: nothing was chosen. Choose one of the listed reasons."},
+		{"outcome", "must be dismissed, upheld or partially_upheld", false, "Outcome: that choice is not on the list. Choose one of the listed outcomes."},
+		{"format", "required", false, "File format: required. Choose CSV or JSON."},
+		{"confirm_open_grant_risk", "open join mode with a sign-up grant lets anyone collect the grant with new accounts; confirm the risk to save it", false,
+			"Open joining with a sign-up grant: open join mode with a sign-up grant lets anyone collect the grant with new accounts; confirm the risk to save it. Tick the box to confirm the risk, or choose another join mode or no sign-up grant, then try again."},
 		{"note", "too long", false, "Note: too long. Shorten it and try again."},
 		{"password", "is too common; choose another", true, "Password: is too common; choose another. Choose a different one and try again."},
 		{"password", "is not correct", true, "Password: is not correct. Type it again carefully and try again."},
 		{"display_name", "must not contain control characters", false, "Display name: must not contain control characters. Remove hidden or special characters and try again."},
 		{"counterparty_id", "cannot trade with yourself", false, "Counterparty: cannot trade with yourself. Choose another active member from the list."},
-		{"direction", "must be pay or request", false, "Direction: must be pay or request. Choose whether you pay or are paid."},
+		{"direction", "must be pay or request", false, "Direction: that choice is not on the list. Choose whether you pay or are paid."},
 		{"terms_version", "accept the network's current terms (version 2)", false, "Terms: accept the network's current terms (version 2). Read the terms shown, tick the box to accept them and try again."},
 		{"title", "must be 1 to 120 characters", false, "Title: must be 1 to 120 characters. Check the value and try again."},
 		{"time_zone", "must be an IANA time zone such as Europe/Berlin, or empty for UTC", true, "Time zone: must be an IANA time zone such as Europe/Berlin, or empty for UTC. Check the value and try again."},
@@ -336,7 +343,7 @@ func TestRemoveAboveDualControlThresholdRefusesOnForm(t *testing.T) {
 	adm := w.browser(t)
 	adm.login("admin@example.org")
 	f := adm.get(b + "/admin/members/" + w.bobM.ID + "/remove")
-	p := adm.post(b+"/admin/members/"+w.bobM.ID+"/remove", f, url.Values{"reason": {"breach of network rules"}})
+	p := adm.post(b+"/admin/members/"+w.bobM.ID+"/remove", f, url.Values{"reason_code": {"rule_breach"}, "reason": {"breach of network rules"}})
 	if p.Status != http.StatusUnprocessableEntity {
 		t.Errorf("status %d, want 422", p.Status)
 	}
@@ -349,5 +356,24 @@ func TestRemoveAboveDualControlThresholdRefusesOnForm(t *testing.T) {
 	}
 	if got := testutil.Must(w.env.Svc.GetBalance(ctx, w.bob, w.net.ID)).Balance; got != 2000 {
 		t.Errorf("bob's balance = %d after a refused removal", got)
+	}
+}
+
+// Review fix (UX-021): a removal without a listed reason says so in words and suggests
+// choosing one; it does not show the stored reason values or say "fill it in".
+func TestRemovalReasonRefusalIsPlain(t *testing.T) {
+	w := newWorld(t)
+	b := w.base()
+	adm := w.browser(t)
+	adm.login("admin@example.org")
+	f := adm.get(b + "/admin/members/" + w.bobM.ID + "/remove")
+	p := adm.post(b+"/admin/members/"+w.bobM.ID+"/remove", f, url.Values{"reason": {"no reason code"}})
+	adm.mustContain(p, `id="error-summary"`, "Reason for removal: nothing was chosen. Choose one of the listed reasons.")
+	i := strings.Index(p.Body, `id="e-reason_code"`)
+	if i < 0 {
+		t.Fatalf("no field error: %s", snippet(p.Body))
+	}
+	if msg := p.Body[i : i+strings.Index(p.Body[i:], "</p>")]; strings.Contains(msg, "rule_breach") || strings.Contains(msg, "Fill it in") {
+		t.Errorf("field error shows stored values or wrong advice: %s", msg)
 	}
 }
