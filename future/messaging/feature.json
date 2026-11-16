@@ -1,0 +1,10 @@
+{
+  "id": "FUX-105",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Participant and tenant access policy, block/closed-thread enforcement, bounded UTF-8 text, maximum 30-day inactivity retention.",
+  "remaining": "Durable ordered threads/messages/read positions; atomic idempotency; fresh membership and block reads; moderation/reporting; legal holds and per-participant deletion; quotas; escaped no-JS UI; restart/concurrency and retention tests. Server-readable, no E2EE claim."
+}
