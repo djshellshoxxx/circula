@@ -159,6 +159,25 @@ func (n names) reversals(id string) []*domain.Transaction {
 	return revs
 }
 
+// reversedBy returns the "Reversed by …" links of t, oldest first (UX-017). Only the pages
+// that show them call it (History and trade detail), so other lists do not pay for one
+// service lookup per reversed row.
+func (n names) reversedBy(t *domain.Transaction, unit string, dec int) []txLink {
+	if t.ReversedTotal <= 0 {
+		return nil
+	}
+	var out []txLink
+	for _, rev := range n.reversals(t.ID) {
+		by := "a later posting"
+		if rev.LedgerSeq > 0 {
+			by = fmt.Sprintf("ledger reference %d", rev.LedgerSeq)
+		}
+		out = append(out, txLink{ID: rev.ID, Text: fmt.Sprintf("Reversed by %s (%s %s)", by,
+			domain.FormatAmount(rev.Amount, dec), unitFor(unit, rev.Amount, dec))})
+	}
+	return out
+}
+
 // memberRef is the stable member reference shown beside a display name in confirmation
 // steps (SEC-016): display names are not unique, member ids are and never change. It is the
 // last eight letters or digits of the id, upper-cased and split in two ("0A1B-2C3D"), or ""
@@ -256,16 +275,6 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 	}
 	if t.Kind == domain.KindReversal {
 		r.Original = t.OriginalTxID
-	}
-	if t.ReversedTotal > 0 {
-		for _, rev := range n.reversals(t.ID) {
-			by := "a later posting"
-			if rev.LedgerSeq > 0 {
-				by = fmt.Sprintf("ledger reference %d", rev.LedgerSeq)
-			}
-			r.ReversedBy = append(r.ReversedBy, txLink{ID: rev.ID, Text: fmt.Sprintf("Reversed by %s (%s %s)", by,
-				domain.FormatAmount(rev.Amount, dec), unitFor(unit, rev.Amount, dec))})
-		}
 	}
 	if t.PayerMemberID == me.ID {
 		r.Counter = n.of(t.PayeeMemberID)

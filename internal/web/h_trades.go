@@ -242,6 +242,7 @@ func (s *server) tradeDetail(w http.ResponseWriter, r *http.Request, c *rc) {
 	} else {
 		d.Row.Status, _ = statusLabel(t, c.Me, n)
 	}
+	d.Row.ReversedBy = n.reversedBy(t, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals) // UX-017, also for a non-party administrator
 	for _, h := range v.History {
 		d.History = append(d.History, histRow{Label: historyWord(h.From, h.To), At: c.when(h.OccurredAt)})
 	}

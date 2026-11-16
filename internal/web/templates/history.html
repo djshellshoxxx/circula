@@ -38,7 +38,7 @@
   <p><a href="{{$.Base}}/trades/{{.ID}}">{{.Text}}</a></p>
   <p><span class="num">{{.Signed}}</span> &middot; <span class="tag">{{.Status}}</span> &middot; {{time .When}}{{if .Ledger}} &middot; {{.Ledger}}{{end}}</p>
   {{with .Reason}}<p>Reason: {{.}}</p>{{end}}
-  {{if .Original}}<p>Reverses <a href="{{$.Base}}/trades/{{.Original}}">the original trade</a></p>{{end}}
+  {{if .Original}}<p>Reverses <a href="{{$.Base}}/trades/{{.Original}}">the original entry</a></p>{{end}}
   {{range .ReversedBy}}<p><a href="{{$.Base}}/trades/{{.ID}}">{{.Text}}</a></p>{{end}}
 </li>{{end}}
 </ul>{{end}}
