@@ -1,0 +1,10 @@
+{
+  "id": "FUX-103",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Bounded category/area/text filtering with deterministic keyset ordering over an authorized snapshot.",
+  "remaining": "Taxonomy administration; moderated tags; bounded photo upload/decode/re-encode/EXIF stripping; retention; availability/expiry; transactional snapshot pagination and signed cursors; accessible gallery and search adapters."
+}
