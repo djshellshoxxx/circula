@@ -1,0 +1,10 @@
+{
+  "id": "FNET-201",
+  "status": "initial-core-tested-feature-incomplete",
+  "integration": "HOLD",
+  "enabled": false,
+  "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+  "depends_on_future_features": [],
+  "scope": "Deterministic opt-in offer/request category pairing with bounded candidate count, bilateral exclusion checks and reason codes.",
+  "remaining": "Persistent preferences/dismissals; authorized snapshot provider; normalized term scoring; per-member caps; optional three-way cycle detection; rescore/invalidation; explanation UI and no-JS adapter. Current algorithm only matches categories."
+}
