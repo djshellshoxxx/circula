@@ -142,11 +142,11 @@ func TestMetricsExposeRequiredSeriesWithRouteTemplates(t *testing.T) {
 func TestRequestIDAndRoutesMounted(t *testing.T) {
 	ops, _ := testOps(t)
 	h := ops.routes(stubHandler("api"), stubHandler("web"))
-	rec := do(t, h, http.MethodGet, "/api/v1/ping", "127.0.0.1:1", map[string]string{"X-Request-Id": "abc-123"})
+	rec := do(t, h, http.MethodGet, "/api/v1/ping", "127.0.0.1:1", map[string]string{"X-Request-Id": "abc-1234"})
 	if rec.Body.String() != "api /api/v1/ping" {
 		t.Errorf("api mount = %q", rec.Body.String())
 	}
-	if rec.Header().Get("X-Request-Id") != "abc-123" {
+	if rec.Header().Get("X-Request-Id") != "abc-1234" {
 		t.Errorf("request id not echoed: %q", rec.Header().Get("X-Request-Id"))
 	}
 	rec = do(t, h, http.MethodGet, "/trades", "127.0.0.1:1", map[string]string{"X-Request-Id": "bad id\x01"})
