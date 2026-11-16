@@ -14,6 +14,8 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Completed engineering in this consolidation
 
+- PER-022 financial-page snapshot timestamps are present without JavaScript; offline or restored-history notices preserve the earlier time and never clear merely because connectivity returns.
+
 - FR-067 stale-proposal attention link and paginated administrator queue, with matching count/age/expiry predicates, authorization and neutral party wording.
 - Real Linux checkpoint database-write failure preserves an already committed trade and WAL through restart, idempotent replay, successful checkpoint retry and reopen.
 

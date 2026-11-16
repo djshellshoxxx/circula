@@ -2,7 +2,7 @@
 
 Generated file (QA-042); do not edit by hand. Regenerate with `make traceability`, which runs `go run ./scripts/traceability -head "$(git rev-parse --short HEAD)" -o docs/TRACEABILITY.md`. `make traceability-check` fails when this file does not match the specs and code.
 
-Input: git HEAD `c7411b6` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
+Input: git HEAD `ccaebfb` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
 
 Depends on: the spec files in [specs/](specs/), [DECISIONS.md](DECISIONS.md) (DEC-028 onward count as known IDs), the source tree outside docs/, and the frozen citations in `scripts/traceability/legacy-citations.tsv`.
 
@@ -28,15 +28,15 @@ Execution evidence: not supplied. This committed inventory contains no last-run 
 
 ## Summary
 
-Requirement IDs (excluding decision-register rows): 502; built 278, partial 118, not built 13, deferred 5, no status row 88.
+Requirement IDs (excluding decision-register rows): 502; built 279, partial 118, not built 12, deferred 5, no status row 88.
 
 Decision-register IDs: 29; deferred 1, decided, built 4, no status row 2, open, not built 5, open, partly built 16, partly built 1.
 
 | Measure | Count |
 |---|---|
 | IDs in the matrix | 531 |
-| IDs with at least one code citation | 448 |
-| IDs with at least one test citation | 420 |
+| IDs with at least one code citation | 449 |
+| IDs with at least one test citation | 421 |
 | Built requirements with no test citation of any kind | 19 |
 | Built requirements with no test that names the ID (legacy and spec-note citations not counted) | 135 |
 | IDs cited in code but not defined in the specs or DECISIONS.md | 0 |
@@ -81,7 +81,7 @@ Source: [01-vision-scope.md](specs/01-vision-scope.md) · IDs: 12 · built 5, pa
 
 ## 02 Personas, Roles and Core Journeys
 
-Source: [02-personas-journeys.md](specs/02-personas-journeys.md) · IDs: 15 · built 4, partial 10, not built 1
+Source: [02-personas-journeys.md](specs/02-personas-journeys.md) · IDs: 15 · built 5, partial 10
 
 | ID | Pri | Requirement (short) | Status | Code | Tests | Layer | Last recorded test result | Note |
 |---|---|---|---|---|---|---|---|---|
@@ -92,14 +92,14 @@ Source: [02-personas-journeys.md](specs/02-personas-journeys.md) · IDs: 15 · b
 | PER-010 | P0 | J1 Join a network | partial | `internal/service/join.go` (DecideJoinRequest) †<br>`internal/service/join.go` (JoinNetwork) †<br>`internal/service/join.go` (RedeemInvitation) † | `internal/service/membership_test.go:TestJoinModes` † | service | not recorded | Invite, approval and open joins built; onboarding terms (GOV-009) not built |
 | PER-011 | P0 | J2 Offer or request goods and services | built | `internal/service/listings.go` (CreateListing) †<br>`internal/service/listings.go` (ListListings) †<br>`internal/service/listings.go` (UpdateListing) † | `internal/service/trades_test.go:TestListingsDoNotTouchLedger`<br>`internal/web/admin_test.go:TestListingsDirectoryExports` | service, web | not recorded | Create, edit, pause, archive listing; browse by type and text; Evidence: `TestListingsDirectoryExports`, `TestListingsDoNotTouchLedger` (create, filter, pause, authorization and ledger isolation). Citations are not execution results |
 | PER-012 | P0 | J3 Propose and accept a trade | built | `internal/service/transactions.go` (AcceptTransaction) †<br>`internal/service/transactions.go` (ProposeTransaction) † | `internal/api/trade_test.go:TestFullTradeFlow` † | api | not recorded | Propose, accept, decline, cancel; review step; idempotent commands |
-| PER-013 | P0 | J4 Review balance and history | partial | `internal/service/accounts.go` (GetBalance) †<br>`internal/service/tx_queries.go` (ListTransactions) † | `internal/web/hardening_test.go:TestDashboardShowsOldProposalBehindManyTrades` † | web | not recorded | Balance and history views built; stale-data indicator (PER-022) not built |
+| PER-013 | P0 | J4 Review balance and history | partial | `internal/service/accounts.go` (GetBalance) †<br>`internal/service/tx_queries.go` (ListTransactions) † | `internal/web/hardening_test.go:TestDashboardShowsOldProposalBehindManyTrades` † | web | not recorded | Balance/history views and snapshot-time/offline indicators built; see PER-022 |
 | PER-014 | P0 | J5 Raise a dispute | partial | `internal/service/disputes.go` (OpenDispute) †<br>`internal/service/disputes_decide.go` (ResolveDispute) † | `internal/service/dispute_test.go:TestOpenDisputeRules` † | service | not recorded | Dispute open, review, other-party response (FR-076) and decision built |
 | PER-015 | P0 | J6 Administer network rules | partial | `internal/service/adjustments.go` (CreateAdjustment) †<br>`internal/service/membership.go` (SetCreditLimit) †<br>`internal/service/membership.go` (SuspendMember) †<br>`internal/service/networks.go` (UpdatePolicy) † | - | - | not recorded | Admin controls built; limit warnings, dual control and network suspension not built |
 | PER-016 | P1 | J7 Leave a network or be offboarded | partial | `internal/service/departure.go` (DepartMember) † | `internal/service/admin_test.go:TestDepartureBlockersAndAdminOffboarding` † | service | not recorded | Departure with blockers built; counterparty notices and self-export offer not built |
 | PER-017 | P1 | J8 Close a network | partial | `internal/service/closure_schedule.go` (ScheduleClosure) † | `internal/service/closure_test.go` † | service | not recorded | [Refreshed 2026-11-16; "CloseNetwork in service only; no web or API route calls it" is stale.] Closure routes exist: `POST /api/v1/admin/network/close` and the cancel route (`internal/api/routes.go:84-85`), plus the web form; FR-068 is built. Acceptance (closed network refuses postings; read and export still work) UNVERIFIED |
 | PER-020 | P0 | Error states are specific and safe | built | - | `internal/service/authz_test.go:TestCrossNetworkIdsAreNotFound` † | service | not recorded | Not-found is uniform for other-network and missing ids |
 | PER-021 | P0 | Empty states explain the next step | partial | `internal/web/templates/history.html` † | - | - | not recorded | Empty-state copy in templates; no UX test run |
-| PER-022 | P1 | Loading and stale data | not built | - | - | - | not recorded | No stale-data indicator on balance views |
+| PER-022 | P1 | Loading and stale data | built | `internal/web/render.go` (page)<br>`internal/web/static/app.js` | `e2e/tests/freshness.spec.js`<br>`internal/web/freshness_test.go:TestFinancialPagesStateSnapshotTime` | browser, web | not recorded | Every network page states its generated time and that figures do not update automatically, including without scripting. Offline and restored-history events retain the timestamp and show a persistent stale notice; reconnection alone never clears it. `TestFinancialPagesStateSnapshotTime` covers server markup; `e2e/tests/freshness.spec.js` covers offline/reconnection and restored-page notices. Current browser execution is tracked in the PR checks. |
 
 ## 03 Domain Model and Mutual-Credit Rules
 

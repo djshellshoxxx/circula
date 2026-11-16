@@ -25,14 +25,14 @@ Summary: built 4, not built 1, partial 10.
 | PER-010 | P0 | partial | Invite, approval and open joins built; onboarding terms (GOV-009) not built |
 | PER-011 | P0 | built | Create, edit, pause, archive listing; browse by type and text; Evidence: `TestListingsDirectoryExports`, `TestListingsDoNotTouchLedger` (create, filter, pause, authorization and ledger isolation). Citations are not execution results |
 | PER-012 | P0 | built | Propose, accept, decline, cancel; review step; idempotent commands |
-| PER-013 | P0 | partial | Balance and history views built; stale-data indicator (PER-022) not built |
+| PER-013 | P0 | partial | Balance/history views and snapshot-time/offline indicators built; see PER-022 |
 | PER-014 | P0 | partial | Dispute open, review, other-party response (FR-076) and decision built |
 | PER-015 | P0 | partial | Admin controls built; limit warnings, dual control and network suspension not built |
 | PER-016 | P1 | partial | Departure with blockers built; counterparty notices and self-export offer not built |
 | PER-017 | P1 | partial | [Refreshed 2026-11-16; "CloseNetwork in service only; no web or API route calls it" is stale.] Closure routes exist: `POST /api/v1/admin/network/close` and the cancel route (`internal/api/routes.go:84-85`), plus the web form; FR-068 is built. Acceptance (closed network refuses postings; read and export still work) UNVERIFIED |
 | PER-020 | P0 | built | Not-found is uniform for other-network and missing ids |
 | PER-021 | P0 | partial | Empty-state copy in templates; no UX test run |
-| PER-022 | P1 | not built | No stale-data indicator on balance views |
+| PER-022 | P1 | built | Every network page states its generated time and that figures do not update automatically, including without scripting. Offline and restored-history events retain the timestamp and show a persistent stale notice; reconnection alone never clears it. `TestFinancialPagesStateSnapshotTime` covers server markup; `e2e/tests/freshness.spec.js` covers offline/reconnection and restored-page notices. Current browser execution is tracked in the PR checks. |
 
 ## 1. Roles
 
