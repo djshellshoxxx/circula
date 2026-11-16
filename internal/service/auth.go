@@ -130,7 +130,7 @@ func (s *Service) LoginStep(ctx context.Context, login, password string) (*Login
 	}
 	ok := false
 	if person != nil {
-		ok = verifyPassword(password, hash)
+		ok = s.verifyLoginPassword(password, hash) // hashes even an unusable stored hash (BR-05)
 	} else {
 		verifyPassword(password, s.dummyHash) // equalise effort
 	}
