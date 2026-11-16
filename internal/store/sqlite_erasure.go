@@ -92,9 +92,9 @@ func (t *txImpl) GetErasure(netID, memberID string) (*domain.ErasureRecord, erro
 
 // RedactNotificationNames blanks inbox bodies that name the member (fixed text
 // plus the display name, see migration 0008) and the member's own inbox.
-func (t *txImpl) RedactNotificationNames(netID, memberID, name string) (int64, error) {
+func (t *txImpl) RedactNotificationNames(netID, memberID, _ string) (int64, error) {
 	res, err := t.exec(`UPDATE notifications SET body = '' WHERE network_id = ? AND body <> ''
-		AND (member_id = ? OR (? <> '' AND instr(body, ?) > 0))`, netID, memberID, name, name)
+		AND member_id = ?`, netID, memberID)
 	if err != nil {
 		return 0, err
 	}

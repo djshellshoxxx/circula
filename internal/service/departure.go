@@ -211,31 +211,38 @@ func openCases(tx store.Tx, netID, memberID string) ([]*domain.Transaction, erro
 }
 
 func (s *Service) cancelOpenProposals(tx store.Tx, p *principal, target *domain.Member) error {
-	props, err := tx.ListTransactions(p.net.ID, store.TxFilter{MemberID: target.ID, Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500})
-	if err != nil {
-		return err
+	// Re-query the first page after each batch. Cancelled proposals disappear
+	// from the proposed-only filter, so this drains arbitrarily large queues
+	// without offset pagination skipping rows that were just updated.
+	for {
+		props, err := tx.ListTransactions(p.net.ID, store.TxFilter{MemberID: target.ID, Statuses: []domain.TxStatus{domain.TxProposed}, Limit: 500})
+		if err != nil {
+			return err
+		}
+		if len(props) == 0 {
+			return nil
+		}
+		for _, t := range props {
+			if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
+				return err
+			}
+			// GOV-010: the other party is told their open proposal ended.
+			other := t.PayerMemberID
+			if other == target.ID {
+				other = t.PayeeMemberID
+			}
+			if err := s.notify(tx, p.net.ID, other, NotifMemberLeft, "A trade was cancelled",
+				"A member left the network, so your open trade proposal with them was cancelled.", "/trades/"+t.ID, ""); err != nil {
+				return err
+			}
+			if err := s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
+				TargetType: "transaction", TargetID: t.ID, Reason: "party departed",
+				Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
+				Before:   map[string]any{"status": "proposed"}, After: map[string]any{"status": "cancelled"}}); err != nil {
+				return err
+			}
+		}
 	}
-	for _, t := range props {
-		if err := s.transition(tx, p.net.ID, t, domain.CmdCancel, "", p.actor.RequestID); err != nil {
-			return err
-		}
-		// GOV-010: the other party is told their open proposal ended.
-		other := t.PayerMemberID
-		if other == target.ID {
-			other = t.PayeeMemberID
-		}
-		if err := s.notify(tx, p.net.ID, other, NotifMemberLeft, "A trade was cancelled",
-			"A member left the network, so your open trade proposal with them was cancelled.", "/trades/"+t.ID, ""); err != nil {
-			return err
-		}
-		if err := s.emit(tx, p.net.ID, "", p.actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: domain.ActTxCancelled,
-			TargetType: "transaction", TargetID: t.ID, Reason: "party departed",
-			Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
-			Before:   map[string]any{"status": "proposed"}, After: map[string]any{"status": "cancelled"}}); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Member, adminAction bool) error {

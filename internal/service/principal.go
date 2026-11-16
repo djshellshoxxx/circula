@@ -149,6 +149,9 @@ func (p *principal) requireAdmin() error {
 
 // requireDecider: admin or reviewer.
 func (p *principal) requireDecider() error {
+	if p.mfaMissing {
+		return domain.Forbidden("mfa-enrolment-required")
+	}
 	if err := p.requireActive(); err != nil {
 		return err
 	}

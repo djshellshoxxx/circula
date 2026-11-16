@@ -363,11 +363,7 @@ func writeManifest(path string, m *Manifest) error {
 		return err
 	}
 	b = append(b, '\n')
-	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, b, 0o600); err != nil {
-		return err
-	}
-	return os.Rename(tmp, path)
+	return writeAtomicPrivateFile(path, b)
 }
 
 // readManifest loads and validates the manifest for a backup file.

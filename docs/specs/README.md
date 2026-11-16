@@ -39,6 +39,17 @@ Start with [00](00-conventions.md) (conventions, glossary, invariants LED-1..LED
 - Legal, tax, money-services, consumer-protection, privacy and financial-regulatory questions are unresolved and reserved for qualified counsel. No document in this set asserts legal or regulatory compliance.
 - Decisions that are not yet made are recorded in [13](13-assumptions-risks-decisions.md) with recommended defaults. A default is not a decision.
 
+## Future feature specifications (not in the current release)
+
+These documents describe optional capabilities proposed for later development. They are not MVP requirements, do not authorize implementation, and must not be used to change current release scope or readiness.
+
+| Document | Purpose | Status |
+|---|---|---|
+| [FNET-203 Optional Digital Trade Receipts and Cryptographic Certificates](future/FNET-203-optional-trade-receipts-certificates.md) | Product requirements for user-requested receipts, optional certificates, privacy, Tor Browser/JavaScript warning, authorization, and historical reversal semantics | Proposed; future-only; not approved for implementation |
+| [FNET-203 Engineering Design](future/FNET-203-engineering.md) | Modular engineering architecture, data contract, signing/key lifecycle, privacy threat model, API concepts, test plan, and implementation gates | Proposed design draft; future-only; not approved for implementation |
+
+The engineering document is subordinate to the product specification and to the current authoritative core specs. Any future implementation requires a separate owner-approved milestone and security/privacy review.
+
 ## Implementation addenda
 
 These addenda record implementation details or owner questions raised during build and review work. They are supporting evidence, not replacements for the authoritative requirements in 00–13 and do not themselves settle an open product or owner decision. The owner of each core spec decides whether and how to reconcile an addendum; update that core spec and its decision log when adopting a change. Until then, follow the core spec and record any known implementation divergence in the current checkpoint evidence.
