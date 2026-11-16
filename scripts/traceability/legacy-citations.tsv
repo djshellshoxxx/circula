@@ -1,0 +1,909 @@
+# Code and test citations from the hand-made docs/TRACEABILITY.md (snapshot HEAD 925f637, 2026-10-21).
+# Frozen input: the generator keeps a row only while its file (and Go symbol) still exists. Do not add rows;
+# cite a requirement ID in a code comment or test name instead. Columns: id, kind (code|test), path, symbol.
+LED-1	code	internal/service/posting.go	postTx
+LED-1	code	internal/store/migrations/0001_init.sql	
+LED-1	code	internal/service/verify.go	VerifyLedger
+LED-1	test	internal/service/trades_test.go	TestTradeScenarioBalances
+LED-1	test	internal/service/property_test.go	TestRandomisedLedgerInvariants
+LED-2	code	internal/store/migrations/0001_init.sql	
+LED-2	test	internal/store/sqlite_test.go	TestTriggersBlockUpdateDeleteOnAppendOnlyTables
+LED-2	test	internal/service/audit_test.go	TestAppendOnlyThroughRawAccess
+LED-3	code	internal/store/sqlite_account.go	AddBalance
+LED-3	code	internal/service/verify.go	VerifyLedger
+LED-3	test	internal/service/audit_test.go	TestVerifyDetectsBalanceCorruptionAndBalanceAt
+LED-4	code	internal/service/idempotency.go	idempotent
+LED-4	test	internal/service/idempotency_test.go	TestIdempotentRetryReturnsOriginal
+LED-4	test	internal/service/atomicity_test.go	TestAcceptFaultInjectionLeavesNoTrace
+LED-5	code	internal/service/posting.go	checkCapacity
+LED-5	test	internal/service/concurrency_test.go	TestParallelAcceptsNeverBreachCreditLimit
+LED-5	test	internal/service/trades_test.go	TestAcceptRechecksLimit
+LED-6	code	internal/service/audit.go	audit
+LED-6	test	internal/service/atomicity_test.go	TestEveryCommandWritesAuditEvent
+LED-6	test	internal/service/atomicity_test.go	TestAuditFailureRollsBackStateChange
+LED-7	code	internal/domain/money.go	AddChecked
+LED-7	code	internal/domain/policy.go	MaxPolicyAmount
+LED-7	test	internal/domain/domain_test.go	TestNoFloatsInMoneyPackages
+LED-7	test	internal/domain/domain_test.go	TestParseAmount
+DEC-001	code	internal/store/sqlite.go	Open
+DEC-001	code	internal/store/sqlite.go	SQLite
+DEC-001	code	internal/store/migrate.go	migrate
+DEC-001	code	scripts/package-release.sh	
+DEC-002	code	internal/web/web.go	NewHandlerWith
+DEC-002	code	internal/api/api.go	NewHandlerWithOptions
+DEC-002	code	internal/api/routes.go	
+DEC-002	test	internal/api/trade_test.go	TestFullTradeFlow
+DEC-003	code	scripts/package-release.sh	
+DEC-003	code	.github/workflows/ci.yml	
+DEC-004	code	SECURITY.md	
+VIS-001	code	internal/web/templates/help.html	
+VIS-001	code	internal/web/templates/dashboard.html	
+VIS-002	code	internal/web/templates/help.html	
+VIS-003	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+VIS-003	test	internal/api/authn_test.go	TestAuthorisation
+VIS-004	test	internal/service/property_test.go	TestRandomisedLedgerInvariants
+VIS-004	test	internal/service/trades_test.go	TestTradeScenarioBalances
+VIS-004	test	internal/service/audit_test.go	TestAuditChainDetectsTampering
+VIS-005	code	internal/service/networks.go	UpdatePolicy
+VIS-005	test	internal/domain/statemachine_test.go	TestPolicyBounds
+VIS-005	test	internal/service/admin_test.go	TestPolicyChanges
+VIS-007	code	scripts/package-release.sh	
+VIS-007	code	.github/workflows/ci.yml	
+VIS-008	test	internal/web/a11y_test.go	TestPageStructure
+VIS-008	test	internal/web/a11y_test.go	TestFormLabelsAndAutocomplete
+VIS-009	code	internal/service/export.go	Export
+VIS-009	test	internal/service/export_test.go	TestFullExportJSON
+VIS-009	test	internal/service/export_test.go	TestLedgerExportCSV
+VIS-010	code	internal/testutil/testutil.go	Member
+VIS-010	code	internal/testutil/testutil.go	Person
+VIS-011	code	internal/service/transactions.go	ProposeTransaction
+VIS-012	code	internal/api/routes.go	
+PER-001	code	internal/service/accounts.go	GetBalance
+PER-001	code	internal/service/transactions.go	ProposeTransaction
+PER-001	code	internal/service/reads.go	ListEntries
+PER-002	code	internal/service/membership.go	AssignRole
+PER-002	test	internal/service/membership_test.go	TestAdministratorSuccession
+PER-002	test	internal/service/reversal_test.go	TestReversalAuthorization
+PER-003	code	internal/service/disputes_decide.go	ResolveDispute
+PER-003	test	internal/service/dispute_test.go	TestDisputeDecisionAuthorization
+PER-003	test	internal/service/dispute_test.go	TestDisputeVisibility
+PER-004	code	cmd/circula/commands.go	cmdAdmin
+PER-010	code	internal/service/join.go	RedeemInvitation
+PER-010	code	internal/service/join.go	JoinNetwork
+PER-010	code	internal/service/join.go	DecideJoinRequest
+PER-010	test	internal/service/membership_test.go	TestJoinModes
+PER-011	code	internal/service/listings.go	CreateListing
+PER-011	code	internal/service/listings.go	UpdateListing
+PER-011	code	internal/service/listings.go	ListListings
+PER-012	code	internal/service/transactions.go	ProposeTransaction
+PER-012	code	internal/service/transactions.go	AcceptTransaction
+PER-012	test	internal/api/trade_test.go	TestFullTradeFlow
+PER-013	code	internal/service/accounts.go	GetBalance
+PER-013	code	internal/service/tx_queries.go	ListTransactions
+PER-013	test	internal/web/hardening_test.go	TestDashboardShowsOldProposalBehindManyTrades
+PER-014	code	internal/service/disputes.go	OpenDispute
+PER-014	code	internal/service/disputes_decide.go	ResolveDispute
+PER-014	test	internal/service/dispute_test.go	TestOpenDisputeRules
+PER-015	code	internal/service/membership.go	SuspendMember
+PER-015	code	internal/service/adjustments.go	CreateAdjustment
+PER-015	code	internal/service/membership.go	SetCreditLimit
+PER-015	code	internal/service/networks.go	UpdatePolicy
+PER-016	code	internal/service/departure.go	DepartMember
+PER-016	test	internal/service/admin_test.go	TestDepartureBlockersAndAdminOffboarding
+PER-017	code	internal/service/closure_schedule.go	ScheduleClosure
+PER-017	test	internal/service/closure_test.go	
+PER-020	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+PER-021	code	internal/web/templates/history.html	
+DOM-001	test	internal/store/sqlite_test.go	TestCrossNetworkReferencesRejected
+DOM-001	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+DOM-002	code	internal/service/join.go	JoinNetwork
+DOM-002	test	internal/service/hardening_test.go	TestRejoinSemantics
+DOM-003	test	internal/domain/statemachine_test.go	TestMemberTransitionsExhaustive
+DOM-004	test	internal/domain/statemachine_test.go	TestAccountStateDerivedFromMembership
+DOM-005	code	internal/domain/money.go	ParseAmount
+DOM-005	test	internal/domain/domain_test.go	TestAmountRoundTripProperty
+DOM-005	test	internal/domain/domain_test.go	TestNoFloatsInMoneyPackages
+DOM-006	code	internal/service/accounts.go	GetBalance
+DOM-006	code	internal/web/format.go	balanceVM
+DOM-006	code	internal/web/format.go	makeBalance
+DOM-007	code	internal/service/membership.go	SetCreditLimit
+DOM-007	test	internal/domain/statemachine_test.go	TestEffectiveLimit
+DOM-008	code	internal/store/sqlite_account.go	ReservedOutgoing
+DOM-008	test	internal/service/trades_test.go	TestAvailableCreditTable
+DOM-009	code	internal/domain/types.go	TxKind
+DOM-009	test	internal/domain/statemachine_test.go	TestTxStateMachineExhaustive
+DOM-010	code	internal/domain/statemachine.go	NextTxStatus
+DOM-010	test	internal/domain/statemachine_test.go	TestTxStateMachineExhaustive
+DOM-011	test	internal/service/trades_test.go	TestConsentBothDirections
+DOM-011	test	internal/service/hardening_test.go	TestUnsolicitedRequestsDoNotFreezeCredit
+DOM-012	code	internal/service/transactions.go	ProposeTransaction
+DOM-012	test	internal/service/trades_test.go	TestReservationAndRelease
+DOM-012	test	internal/service/hardening_test.go	TestRequestExposureAndCounts
+DOM-013	code	internal/service/transactions.go	ExpireProposals
+DOM-013	test	internal/service/trades_test.go	TestExpiry
+DOM-014	code	internal/service/transactions.go	AcceptTransaction
+DOM-014	test	internal/service/concurrency_test.go	TestParallelDoubleAcceptSingleSuccess
+DOM-015	code	internal/service/posting.go	postTx
+DOM-015	test	internal/service/trades_test.go	TestTradeScenarioBalances
+DOM-016	code	internal/service/idempotency.go	idempotent
+DOM-016	test	internal/service/idempotency_test.go	TestIdempotencyKeyReusedWithDifferentPayload
+DOM-017	code	internal/service/disputes.go	OpenDispute
+DOM-017	test	internal/service/dispute_test.go	TestOpenDisputeWindowAndNoPostings
+DOM-018	code	internal/service/disputes_decide.go	ResolveDispute
+DOM-018	test	internal/domain/statemachine_test.go	TestDisputeStateMachineExhaustive
+DOM-018	test	internal/service/dispute_test.go	TestResolveOutcomes
+DOM-019	code	internal/service/reversal.go	ReverseTransaction
+DOM-019	test	internal/service/reversal_test.go	TestFullReversal
+DOM-020	test	internal/service/reversal_test.go	TestPartialReversalCumulativeCap
+DOM-021	code	internal/service/disputes_decide.go	RetryDisputePosting
+DOM-021	test	internal/service/dispute_test.go	TestUpheldReversalBlockedThenOverride
+DOM-022	code	internal/service/adjustments.go	CreateAdjustment
+DOM-022	test	internal/service/admin_test.go	TestAdjustments
+DOM-023	test	internal/service/audit_test.go	TestAppendOnlyThroughRawAccess
+DOM-024	code	internal/service/departure.go	DepartMember
+DOM-024	test	internal/service/admin_test.go	TestDepartureRetain
+DOM-024	test	internal/service/admin_test.go	TestDepartureSettleToZero
+DOM-025	code	internal/service/membership.go	SetDefaultFlag
+DOM-025	test	internal/service/hardening_test.go	TestAcceptRechecksDefaultFlag
+DOM-026	code	internal/store/sqlite_account.go	GetSystemAccount
+DOM-026	test	internal/service/trades_test.go	TestTradeScenarioBalances
+DOM-027	code	internal/service/adjustments.go	postSignupGrant
+DOM-027	test	internal/service/admin_test.go	TestSignupGrant
+DOM-028	test	internal/domain/statemachine_test.go	TestPolicyBounds
+DOM-029	code	internal/domain/policy.go	Validate
+DOM-029	code	internal/domain/policy.go	DefaultPolicy
+DOM-029	test	internal/domain/statemachine_test.go	TestPolicyBounds
+DOM-030	code	internal/store/sqlite_network.go	AppendPolicy
+DOM-030	code	internal/service/networks.go	UpdatePolicy
+DOM-030	test	internal/service/admin_test.go	TestPolicyChanges
+DOM-031	code	internal/service/networks.go	UpdatePolicy
+DOM-031	test	internal/service/admin_test.go	TestPolicyChanges
+DOM-031	test	internal/service/decimals_test.go	TestDecimalsFixedFromCreation
+DOM-031	test	internal/service/decimals_test.go	TestDecimalsLockUnderConcurrentWrites
+DOM-032	test	internal/service/trades_test.go	TestLimitReductionDoesNotPost
+DOM-032	test	internal/service/trades_test.go	TestAcceptRechecksLimit
+DOM-035	code	internal/service/audit.go	audit
+DOM-035	test	internal/service/atomicity_test.go	TestEveryCommandWritesAuditEvent
+DOM-036	code	internal/service/reversal.go	ReverseTransaction
+DOM-036	test	internal/service/reversal_test.go	TestReversalAuthorization
+DOM-036	test	internal/service/reversal_test.go	TestReversalBlockedByLimit
+DOM-037	test	internal/service/reversal_test.go	TestReversalAuthorization
+DOM-037	test	internal/service/membership_test.go	TestAdministratorSuccession
+DOM-038	code	internal/service/disputes_decide.go	ResolveDispute
+DOM-038	test	internal/service/dispute_test.go	TestDisputeDecisionAuthorization
+DOM-039	test	internal/service/membership_test.go	TestSuspension
+DOM-039	test	internal/service/trades_test.go	TestDeclineCancelExitRules
+DOM-040	test	internal/service/trades_test.go	TestListingsDoNotTouchLedger
+FR-001	code	internal/service/networks.go	CreateNetwork
+FR-001	code	internal/web/h_auth.go	setupPost
+FR-001	test	internal/service/admin_test.go	TestNetworkLifecycle
+FR-002	code	internal/web/h_auth.go	setupPost
+FR-002	code	internal/web/h_auth.go	secretEqual
+FR-002	test	internal/web/hardening_test.go	TestSetupSecretEnforced
+FR-003	code	internal/service/networks.go	UpdatePolicy
+FR-003	code	internal/web/h_admin2.go	policyPost
+FR-003	test	internal/service/admin_test.go	TestPolicyChanges
+FR-004	code	internal/service/networks.go	ActivateNetwork
+FR-004	test	internal/service/admin_test.go	TestNetworkLifecycle
+FR-005	code	internal/service/networks.go	UpdatePolicy
+FR-005	test	internal/service/admin_test.go	TestPolicyChanges
+FR-005	test	internal/service/decimals_test.go	TestDecimalsFixedFromCreation
+FR-005	test	internal/service/decimals_test.go	TestDecimalsLockUnderConcurrentWrites
+FR-006	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+FR-006	test	internal/api/authn_test.go	TestAuthorisation
+FR-010	code	internal/service/join.go	CreateInvitation
+FR-010	code	internal/service/join.go	RedeemInvitation
+FR-010	code	internal/web/h_admin.go	invitationCreate
+FR-010	code	internal/web/h_auth.go	joinInvitePost
+FR-010	test	internal/service/membership_test.go	TestInvitations
+FR-011	code	internal/service/join.go	DecideJoinRequest
+FR-011	code	internal/web/h_admin.go	memberActionPost
+FR-011	test	internal/api/hardening_test.go	TestAPIDenyJoinRequest
+FR-012	code	internal/service/join.go	JoinNetwork
+FR-012	code	internal/web/h_auth.go	joinNetPost
+FR-012	test	internal/service/membership_test.go	TestJoinModes
+FR-013	test	internal/domain/statemachine_test.go	TestMemberTransitionsExhaustive
+FR-014	code	internal/service/departure.go	DepartMember, PreviewDeparture
+FR-014	code	internal/web/h_gov.go	leaveForm, leavePost
+FR-014	test	internal/service/admin_test.go	TestDepartureBlockersAndAdminOffboarding
+FR-014	test	internal/web/gov_h1_test.go	TestLeavePages
+FR-015	code	internal/web/h_admin.go	memberActionPost
+FR-015	test	internal/service/admin_test.go	TestDepartureBlockersAndAdminOffboarding
+FR-016	code	internal/service/auth.go	RegisterPerson
+FR-017	code	internal/service/join.go	JoinNetwork
+FR-017	test	internal/service/hardening_test.go	TestRejoinSemantics
+FR-020	code	internal/service/membership.go	ListDirectory
+FR-020	code	internal/service/member_page.go	ListDirectoryPage
+FR-020	test	internal/service/membership_test.go	TestJoinModes
+FR-021	code	internal/service/listings.go	CreateListing
+FR-021	test	internal/service/trades_test.go	TestListingsDoNotTouchLedger
+FR-022	code	internal/service/listings.go	UpdateListing
+FR-022	code	internal/web/h_home.go	listingEdit
+FR-022	test	internal/api/more_test.go	TestPolicyAndListingETags
+FR-023	code	internal/service/listings.go	ListListings
+FR-023	code	internal/web/h_home.go	listings
+FR-023	test	internal/api/more_test.go	TestCursorPagination
+FR-025	code	internal/api/route.go	wrap
+FR-030	code	internal/service/transactions.go	ProposeTransaction
+FR-030	code	internal/web/h_trades.go	proposePost
+FR-031	code	internal/service/transactions.go	ProposeTransaction
+FR-031	code	internal/web/templates/propose_review.html	
+FR-032	code	internal/service/transactions.go	AcceptTransaction
+FR-032	test	internal/service/concurrency_test.go	TestParallelAcceptsNeverBreachCreditLimit
+FR-033	code	internal/service/transactions.go	DeclineTransaction
+FR-033	code	internal/service/transactions.go	CancelTransaction
+FR-034	code	internal/service/transactions.go	ExpireProposals
+FR-034	code	cmd/circula/serve.go	expire
+FR-034	test	internal/service/trades_test.go	TestExpiry
+FR-035	code	internal/service/idempotency.go	idempotent
+FR-035	test	internal/service/concurrency_test.go	TestIdempotentConcurrentPropose
+FR-036	test	internal/service/concurrency_test.go	TestParallelDoubleAcceptSingleSuccess
+FR-036	test	internal/service/concurrency_test.go	TestParallelAcceptsNeverBreachCreditLimit
+FR-037	code	internal/service/transactions.go	ProposeTransaction
+FR-038	code	internal/web/templates/dashboard.html	
+FR-038	code	internal/service/reads.go	ListPendingForActor
+FR-050	code	internal/service/accounts.go	GetBalance
+FR-050	code	internal/web/format.go	makeCard
+FR-051	code	internal/service/tx_queries.go	ListTransactions
+FR-051	code	internal/web/templates/history.html	
+FR-052	code	internal/service/verify.go	VerifyLedger
+FR-052	code	internal/web/h_admin2.go	ledgerCheck
+FR-052	code	cmd/circula/commands.go	cmdVerifyLedger
+FR-052	test	internal/service/hardening_test.go	TestVerifyLedgerIsReadOnly
+FR-053	code	internal/service/reads.go	ListPendingForActor
+FR-053	test	internal/service/hardening_test.go	TestListPendingForActorPagesBeyondOneHundred
+FR-054	code	internal/service/histbal.go	HistoricalBalance
+FR-054	code	internal/store/sqlite_tx.go	SumEntriesAsOf
+FR-054	code	internal/api/h_histbal.go	
+FR-054	code	internal/web/histbal_view.go	
+FR-054	test	internal/api/histbal_route_test.go	TestHistBalanceRouteEndToEnd
+FR-054	test	internal/web/histbal_page_test.go	TestHistoryPageHistoricalBalance
+FR-054	test	internal/contract/contract_test.go	TestAPIMatchesOpenAPI
+FR-054	test	e2e/tests/a11y.spec.js	historical balance lookup
+FR-060	code	internal/service/membership.go	SetCreditLimit
+FR-060	code	internal/api/h_accounts.go	putCreditLimit
+FR-060	test	internal/api/more_test.go	TestCreditLimitAndMemberAdmin
+FR-061	code	internal/service/membership.go	SuspendMember
+FR-061	code	internal/service/membership.go	RestoreMember
+FR-061	code	internal/web/h_admin.go	memberActionPost
+FR-061	test	internal/service/membership_test.go	TestSuspension
+FR-062	code	internal/service/adjustments.go	CreateAdjustment
+FR-062	code	internal/web/h_admin2.go	adjustPost
+FR-062	test	internal/service/admin_test.go	TestAdjustments
+FR-063	code	internal/service/join.go	ListInvitations
+FR-063	code	internal/service/join.go	RevokeInvitation
+FR-063	code	internal/web/h_admin.go	invitationRevoke
+FR-064	code	internal/service/membership.go	SetDefaultFlag
+FR-064	code	internal/web/h_admin.go	memberActionPost
+FR-065	code	internal/service/membership.go	AssignRole
+FR-065	code	internal/api/h_admin.go	roleAction
+FR-065	code	internal/service/membership.go	changeRole
+FR-066	code	internal/service/reversal.go	ReverseTransaction
+FR-066	code	internal/api/h_admin.go	adminReverse
+FR-066	test	internal/service/reversal_test.go	TestReversalAuthorization
+FR-067	code	internal/web/h_admin.go	adminHome
+FR-068	code	internal/service/closure_schedule.go	ScheduleClosure
+FR-068	test	internal/service/closure_test.go	TestClosureBlockersPreviewAndNotice
+FR-069	code	internal/service/membership.go	changeRole
+FR-069	test	internal/service/membership_test.go	TestAdministratorSuccession
+FR-070	code	internal/service/disputes.go	OpenDispute
+FR-070	code	internal/web/h_disputes.go	disputePost
+FR-070	test	internal/service/dispute_test.go	TestOpenDisputeRules
+FR-071	test	internal/service/dispute_test.go	TestOpenDisputeWindowAndNoPostings
+FR-071	test	internal/service/dispute_test.go	TestWithdrawDispute
+FR-072	test	internal/service/dispute_test.go	TestDisputeDecisionAuthorization
+FR-073	code	internal/service/disputes_decide.go	ResolveDispute
+FR-073	code	internal/web/h_disputes.go	disputeAct
+FR-073	test	internal/service/dispute_test.go	TestResolveOutcomes
+FR-074	code	internal/service/disputes_decide.go	RetryDisputePosting
+FR-074	test	internal/service/dispute_test.go	TestUpheldReversalBlockedThenOverride
+FR-075	code	internal/service/disputes.go	WithdrawDispute
+FR-075	test	internal/service/dispute_test.go	TestWithdrawDispute
+FR-077	code	internal/service/disputes.go	OpenDispute
+FR-077	test	internal/service/dispute_test.go	TestOpenDisputeRules
+FR-080	test	internal/service/atomicity_test.go	TestEveryCommandWritesAuditEvent
+FR-081	code	internal/service/audit.go	audit
+FR-081	test	internal/service/audit_test.go	TestAuditEventContent
+FR-082	code	internal/service/audit_read.go	ListAudit
+FR-082	code	internal/web/h_admin2.go	auditPage
+FR-082	test	internal/service/audit_test.go	TestAuditVisibilityForMembers
+FR-083	test	internal/service/audit_test.go	TestAppendOnlyThroughRawAccess
+FR-084	code	internal/service/audit_read.go	ListAudit
+FR-084	code	internal/web/h_admin2.go	auditPage
+FR-084	code	internal/api/h_ops.go	
+FR-085	code	internal/service/audit.go	AuditHash
+FR-085	test	internal/service/audit_test.go	TestAuditChainDetectsTampering
+FR-085	test	internal/service/hardening_test.go	TestAuditTailTruncationDetected
+FR-090	code	internal/service/export.go	Export
+FR-090	code	internal/web/h_admin2.go	exportMine
+FR-090	test	internal/service/export_test.go	TestMemberExportIsScoped
+FR-091	code	internal/service/export.go	Export
+FR-091	code	internal/web/h_admin2.go	exportsPost
+FR-091	test	internal/service/export_test.go	TestLedgerExportCSV
+FR-092	code	internal/service/export.go	ExportMembers
+FR-092	code	internal/service/export.go	Export
+FR-093	code	internal/service/export.go	ExportAudit
+FR-093	code	internal/service/export.go	Export
+FR-094	code	internal/service/export.go	ExportFull
+FR-094	code	internal/service/export.go	Export
+FR-094	test	internal/service/export_test.go	TestFullExportJSON
+FR-095	code	internal/service/export.go	MemSink
+FR-095	code	internal/api/h_export.go	createExport
+ARC-001	code	scripts/package-release.sh	
+ARC-001	code	cmd/circula/main.go	main
+ARC-002	code	internal/service/service.go	Service
+ARC-002	code	internal/store/sqlite.go	Update
+ARC-002	code	cmd/circula/commands.go	cmdAdmin
+ARC-003	code	internal/service/verify.go	VerifyLedger
+ARC-003	code	internal/service/posting.go	checkCapacity
+ARC-004	code	internal/store/sqlite.go	Open
+ARC-004	code	internal/store/iface.go	
+ARC-005	code	internal/service/posting.go	postTx
+ARC-005	code	internal/store/sqlite_account.go	AddBalance
+ARC-006	code	internal/service/posting.go	checkCapacity
+ARC-006	test	internal/service/concurrency_test.go	TestParallelAcceptsNeverBreachCreditLimit
+ARC-007	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+ARC-008	code	cmd/circula/commands.go	cmdRestore
+ARC-008	code	cmd/circula/commands.go	cmdAdmin
+ARC-010	test	cmd/circula/ops_test.go	TestBodyLimitApplied
+ARC-010	test	internal/api/strict_test.go	TestStrictBodyHandling
+ARC-011	code	cmd/circula/lock_other.go	acquireLock
+ARC-011	test	cmd/circula/backup_test.go	TestLockRefusesSecondHolder
+ARC-011	test	cmd/circula/hardening_test.go	TestOperatorCommandsTakeTheLock
+ARC-012	code	cmd/circula/serve.go	expire
+ARC-012	code	cmd/circula/serve.go	purge
+ARC-012	test	cmd/circula/jobs_regress_test.go	TestJobExpiryMovesOnlyElapsedProposals
+ARC-012	test	internal/service/hardening_test.go	TestPurge
+ARC-013	code	cmd/circula/serve.go	runServe
+ARC-014	code	cmd/circula/lock_other.go	acquireLock
+ARC-015	code	internal/service/verify.go	VerifyLedger
+ARC-015	code	internal/service/verify.go	VerifyAndRecordLedger
+ARC-015	test	internal/service/audit_test.go	TestVerifyDetectsBalanceCorruptionAndBalanceAt
+ARC-016	code	cmd/circula/snapshot.go	snapshot
+ARC-016	code	cmd/circula/serve.go	shutdownGracePeriod
+ARC-016	test	cmd/circula/backup_test.go	TestSnapshotWritesVerifiedManifestAndRestores
+ARC-017	test	internal/web/a11y_test.go	TestPageStructure
+ARC-017	test	internal/web/a11y_test.go	TestFormLabelsAndAutocomplete
+ARC-018	code	.github/workflows/ci.yml	
+ARC-019	code	scripts/package-release.sh	
+ARC-019	code	.github/workflows/ci.yml	
+ARC-020	code	internal/service/export.go	Export
+ARC-020	code	internal/service/export.go	ExportFull
+ARC-021	code	internal/domain/types.go	IDGen
+ARC-021	code	internal/domain/types.go	Clock
+ARC-022	code	cmd/circula/metrics.go	newMetrics
+ARC-022	code	internal/service/purge.go	RedactSecrets
+ARC-022	test	cmd/circula/ops_test.go	TestRequestIDAndRoutesMounted
+ARC-023	code	cmd/circula/config.go	loadSecrets
+ARC-023	test	cmd/circula/config_test.go	TestPrecedence
+ARC-023	test	cmd/circula/hardening_test.go	TestSecretsLoadingAndRedaction
+ARC-024	code	go.mod	
+ARC-025	code	internal/api/routes.go	
+DAT-001	code	internal/domain/types.go	IDGen
+DAT-002	code	internal/domain/types.go	IDGen
+DAT-003	code	internal/domain/types.go	IDGen
+DAT-004	code	internal/httpx/httpx.go	SessionToken
+DAT-004	code	internal/service/purge.go	RedactSecrets
+DAT-005	code	internal/store/migrations/0001_init.sql	
+DAT-005	test	internal/store/sqlite_test.go	TestCrossNetworkReferencesRejected
+DAT-006	code	internal/store/sqlite_tx.go	InsertEntry
+DAT-006	test	internal/store/sqlite_test.go	TestTransactionIntegrityTriggers
+DAT-007	code	internal/service/posting.go	postTx
+DAT-007	test	internal/store/sqlite_test.go	TestTransactionIntegrityTriggers
+DAT-008	code	internal/store/migrations/0001_init.sql	
+DAT-008	test	internal/domain/domain_test.go	TestMigrationsAvoidFloatColumns
+DAT-009	code	internal/service/verify.go	VerifyLedger
+DAT-009	code	internal/store/sqlite_verify.go	BalanceMismatches
+DAT-009	code	internal/store/sqlite_verify.go	Totals
+DAT-010	test	internal/store/sqlite_test.go	TestTriggersBlockUpdateDeleteOnAppendOnlyTables
+DAT-011	test	internal/service/audit_test.go	TestAppendOnlyThroughRawAccess
+DAT-012	code	internal/service/reversal.go	ReverseTransaction
+DAT-012	code	internal/store/sqlite_verify.go	ReversalMismatches
+DAT-013	code	internal/service/adjustments.go	CreateAdjustment
+DAT-014	code	internal/service/posting.go	postTx
+DAT-014	test	internal/store/sqlite_test.go	TestUpdateRollsBackOnError
+DAT-015	code	internal/service/posting.go	checkCapacity
+DAT-016	code	internal/service/reads.go	ListEntries
+DAT-016	code	internal/store/sqlite_network.go	NextLedgerSeq
+DAT-016	test	internal/api/hardening_test.go	TestEntriesOrderedByLedgerSeq
+DAT-017	code	internal/store/sqlite.go	fromMS
+DAT-017	code	internal/store/sqlite.go	msPtr
+DAT-018	code	internal/store/sqlite_account.go	ReservedOutgoing
+DAT-018	code	internal/store/sqlite_account.go	sumProposed
+DAT-019	code	internal/store/sqlite_account.go	AddBalance
+DAT-020	code	internal/service/verify.go	VerifyLedger
+DAT-020	code	internal/store/sqlite_verify.go	BalanceMismatches
+DAT-020	code	internal/store/sqlite_verify.go	TxProblems
+DAT-021	code	internal/service/accounts.go	BalanceAt
+DAT-022	code	internal/service/reversal.go	ReverseTransaction
+DAT-022	test	internal/service/reversal_test.go	TestFullReversal
+DAT-023	code	internal/service/adjustments.go	CreateAdjustment
+DAT-024	code	internal/service/membership.go	SetCreditLimit
+DAT-024	test	internal/service/trades_test.go	TestLimitOverrideExpires
+DAT-025	code	internal/service/idempotency.go	idempotent
+DAT-025	code	internal/store/sqlite_audit.go	PutIdem
+DAT-026	code	internal/store/sqlite_audit.go	GetIdem
+DAT-026	code	internal/service/idempotency.go	idempotent
+DAT-027	code	internal/service/idempotency.go	idempotent
+DAT-027	test	internal/service/idempotency_test.go	TestIdempotencyKeyReusedWithDifferentPayload
+DAT-028	code	internal/store/sqlite_audit.go	DeleteExpiredIdem
+DAT-028	test	internal/service/idempotency_test.go	TestIdempotencyRecordExpires
+DAT-029	code	internal/service/audit.go	audit
+DAT-030	code	internal/service/audit.go	AuditHash
+DAT-030	test	internal/service/audit_test.go	TestAuditChainDetectsTampering
+DAT-031	test	internal/service/audit_test.go	TestAuditEventContent
+DAT-032	code	internal/service/export.go	ExportAudit
+DAT-033	code	internal/service/audit_read.go	ListAudit
+DAT-033	test	internal/service/audit_test.go	TestAuditVisibilityForMembers
+DAT-034	code	internal/service/audit_read.go	ListAudit
+DAT-034	test	internal/service/authz_test.go	TestAdminBalanceViewIsAudited
+DAT-035	code	internal/service/audit_read.go	ListAudit
+DAT-036	code	internal/service/audit_read.go	ListAudit
+DAT-037	code	internal/service/export.go	ManifestFile
+DAT-037	test	internal/service/export_test.go	TestLedgerExportCSV
+DAT-038	code	internal/store/sqlite_export.go	exportQuery
+DAT-038	code	internal/store/sqlite_export.go	StreamTable
+DAT-039	code	internal/service/export.go	Export
+DAT-039	code	internal/service/export.go	ManifestFile
+DAT-040	code	internal/service/export.go	ManifestFile
+DAT-042	code	internal/store/migrate.go	loadMigrations
+DAT-042	code	internal/store/migrate.go	migrate
+DAT-042	test	internal/store/sqlite_test.go	TestMigrationsIdempotentAndVersioned
+DAT-043	code	cmd/circula/serve.go	preMigrationBackup
+DAT-044	code	cmd/circula/serve.go	checkPragmas
+DAT-044	code	internal/service/verify.go	VerifyLedger
+DAT-044	code	cmd/circula/commands.go	cmdMigrate
+DAT-045	code	internal/store/migrate.go	loadMigrations
+DAT-046	code	internal/store/migrations/0002_hardening.sql	
+DAT-046	test	internal/store/hardening_test.go	TestMigration0002BackfillsAuditHeads
+API-001	code	internal/api/h_tx.go	propose
+API-001	code	internal/api/h_tx.go	acceptTx
+API-001	code	internal/service/transactions.go	ProposeTransaction
+API-002	code	internal/api/routes.go	v1
+API-002	code	internal/api/routes.go	
+API-003	test	internal/api/strict_test.go	TestStrictBodyHandling
+API-004	code	internal/api/decode.go	parseMinor
+API-004	test	internal/api/strict_test.go	TestStrictBodyHandling
+API-005	test	internal/api/more_test.go	TestCursorPagination
+API-006	code	internal/api/routes.go	
+API-007	code	internal/api/dto.go	
+API-008	test	internal/api/hardening_test.go	TestWebSessionWorksForAPI
+API-008	test	internal/api/hardening_test.go	TestSecureSessionCookieWorksForAPI
+API-009	code	internal/api/authn_test.go	
+API-009	test	internal/api/authn_test.go	TestTokenScopesAndRevocation
+API-010	code	internal/api/h_core.go	notImpl
+API-010	test	internal/api/authn_test.go	TestTokenScopesAndRevocation
+API-011	code	internal/api/h_tokens.go	createToken
+API-011	code	internal/api/routes.go	
+API-012	test	internal/api/authn_test.go	TestCredentialsInQueryRejected
+API-013	test	internal/api/authn_test.go	TestUnauthenticatedIs401WithChallenge
+API-014	test	internal/api/authn_test.go	TestCookieSessionNeedsCSRF
+API-015	code	internal/web/middleware.go	
+API-016	test	internal/api/authn_test.go	TestAuthorisation
+API-017	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+API-018	code	internal/api/h_disputes.go	resolveDispute
+API-018	code	internal/api/h_disputes.go	reviewDispute
+API-019	code	internal/api/routes.go	
+API-020	code	internal/api/idem.go	
+API-020	test	internal/service/idempotency_test.go	TestIdempotencyKeyRequiredAndScoped
+API-021	code	internal/api/idem.go	
+API-021	test	internal/api/hardening_test.go	TestIdempotencyKeyHeaderCode
+API-022	test	internal/service/idempotency_test.go	TestIdempotentRetryReturnsOriginal
+API-023	test	internal/service/idempotency_test.go	TestIdempotencyKeyReusedWithDifferentPayload
+API-024	code	internal/api/idem.go	
+API-024	test	internal/api/internal_test.go	TestPanicReleasesIdempotencyKey
+API-025	test	internal/service/idempotency_test.go	TestFailedCommandDoesNotConsumeKey
+API-026	code	internal/web/h_admin.go	
+API-026	code	internal/api/decode.go	
+API-027	code	internal/api/decode.go	
+API-027	code	internal/api/h_admin.go	memberAction
+API-028	test	internal/domain/statemachine_test.go	TestTxStateMachineExhaustive
+API-029	code	internal/api/respond.go	
+API-029	test	internal/api/hardening_test.go	TestInvalidHeaderTitleIsJSON
+API-030	code	internal/api/respond.go	
+API-030	test	cmd/circula/ops_test.go	TestRequestIDAndRoutesMounted
+API-031	code	internal/api/respond.go	
+API-032	test	cmd/circula/ops_test.go	TestPanicRecoveredAsInternalError
+API-033	code	internal/api/respond.go	
+API-034	code	internal/api/cursor.go	
+API-034	test	internal/api/more_test.go	TestCursorPagination
+API-035	test	internal/api/hardening_test.go	TestEntriesOrderedByLedgerSeq
+API-036	code	internal/api/cursor.go	
+API-036	code	internal/store/sqlite.go	limitOf
+API-037	code	internal/api/decode.go	
+API-037	test	internal/api/strict_test.go	TestBodySizeLimit
+API-038	code	internal/api/middleware.go	newLimiter
+API-038	test	internal/api/strict_test.go	TestRateLimit
+API-039	code	internal/web/middleware.go	
+API-040	code	internal/api/h_core.go	getNetwork
+API-041	code	internal/api/h_core.go	getMe
+API-041	test	internal/api/more_test.go	TestInvitationsDisputesDepartureExport
+API-042	code	internal/api/h_core.go	listMembers
+API-042	code	internal/service/member_page.go	ListDirectoryPage
+API-043	code	internal/api/h_core.go	getMember
+API-043	test	internal/api/hardening_test.go	TestSingleReadsByID
+API-044	code	internal/api/h_core.go	getAccount
+API-045	code	internal/api/h_core.go	listEntries
+API-045	test	internal/api/hardening_test.go	TestEntriesOrderedByLedgerSeq
+API-046	code	internal/api/h_listings.go	listListings
+API-046	code	internal/api/h_listings.go	createListing
+API-047	code	internal/api/h_listings.go	patchListing
+API-047	test	internal/api/strict_test.go	TestPatchRequiresMergePatchType
+API-048	code	internal/api/h_tx.go	propose
+API-048	test	internal/api/trade_test.go	TestFullTradeFlow
+API-049	code	internal/api/h_tx.go	getTx
+API-049	code	internal/api/h_tx.go	listTx
+API-050	code	internal/api/h_tx.go	txEvents
+API-051	code	internal/api/h_tx.go	acceptTx
+API-051	test	internal/api/trade_test.go	TestFullTradeFlow
+API-052	code	internal/api/h_tx.go	declineTx
+API-053	code	internal/api/h_tx.go	cancelTx
+API-054	code	internal/api/h_disputes.go	openDispute
+API-054	code	internal/api/h_disputes.go	listDisputes
+API-054	code	internal/api/h_disputes.go	getDispute
+API-055	code	internal/api/h_disputes.go	resolveDispute
+API-056	code	internal/api/h_admin.go	adminReverse
+API-057	code	internal/api/h_admin.go	adminAdjust
+API-058	code	internal/api/h_policy.go	getPolicy
+API-058	code	internal/api/h_policy.go	patchPolicy
+API-058	test	internal/api/more_test.go	TestPolicyAndListingETags
+API-059	code	internal/api/h_admin.go	adminListMembers
+API-059	code	internal/api/h_admin.go	memberAction
+API-060	code	internal/api/h_accounts.go	putCreditLimit
+API-060	test	internal/api/more_test.go	TestCreditLimitAndMemberAdmin
+API-061	code	internal/api/h_ops.go	createInvitation
+API-061	code	internal/api/h_ops.go	acceptInvitation
+API-061	test	internal/service/membership_test.go	TestInvitations
+API-062	code	internal/api/h_ops.go	listAudit
+API-063	code	internal/api/h_ops.go	runCheck
+API-063	code	internal/api/h_ops.go	getCheck
+API-064	code	internal/api/h_core.go	notImpl
+API-065	code	internal/api/h_export.go	createExport
+API-065	code	internal/api/h_export.go	getArtefact
+API-065	test	internal/api/hardening_test.go	TestExportCapPerPerson
+API-066	code	internal/api/h_tokens.go	listTokens
+API-066	code	internal/api/h_tokens.go	createToken
+API-066	code	internal/api/h_tokens.go	revokeToken
+API-066	test	internal/service/auth_test.go	TestAPITokens
+API-067	code	internal/api/h_core.go	depart
+API-068	code	internal/api/h_tx.go	acceptTx
+API-069	code	internal/api/h_tx.go	acceptTx
+API-070	test	internal/api/strict_test.go	TestStrictBodyHandling
+API-071	test	internal/api/trade_test.go	TestFullTradeFlow
+API-072	code	internal/api/respond.go	
+API-073	code	internal/api/routes.go	v1
+API-077	code	docs/api/openapi.yaml	
+UX-001	code	internal/web/templates/base.html	
+UX-001	test	internal/web/security_test.go	TestAuthorisationAndIsolation
+UX-002	code	internal/web/templates/dashboard.html	
+UX-002	code	internal/web/templates/base.html	
+UX-003	code	internal/web/templates/networks.html	
+UX-003	test	internal/web/flow_test.go	TestLoginTradeFlow
+UX-004	code	internal/web/format.go	balanceVM
+UX-004	code	internal/web/format.go	makeBalance
+UX-004	test	internal/web/format_test.go	TestUnitForPlural
+UX-005	code	internal/web/format.go	
+UX-006	code	internal/web/format.go	
+UX-006	code	internal/web/format.go	balanceVM
+UX-007	code	internal/web/templates/help.html	
+UX-008	code	internal/web/format.go	unitFor
+UX-008	test	internal/web/format_test.go	TestUnitForPlural
+UX-009	code	internal/web/format.go	makeCard
+UX-009	code	internal/web/templates/dashboard.html	
+UX-010	code	internal/web/templates/dashboard.html	
+UX-011	code	internal/web/format.go	
+UX-011	code	internal/web/format.go	makeCard
+UX-013	code	internal/web/format.go	statusLabel
+UX-013	code	internal/web/format.go	
+UX-014	code	internal/web/templates/dashboard.html	
+UX-015	code	internal/web/templates/history.html	
+UX-016	code	internal/web/format.go	statusLabel
+UX-016	code	internal/web/format.go	statusExplain
+UX-017	code	internal/web/templates/history.html	
+UX-018	code	internal/web/templates/propose_review.html	
+UX-018	code	internal/web/templates/trade_confirm.html	
+UX-019	code	internal/web/session.go	setFlash
+UX-019	code	internal/web/h_trade_act.go	tradeActionPost
+UX-020	code	internal/web/refusal.go	
+UX-021	code	internal/web/refusal.go	
+UX-022	code	internal/web/refusal.go	
+UX-023	code	internal/web/templates/propose.html	
+UX-023	test	internal/web/a11y_test.go	TestFormLabelsAndAutocomplete
+UX-024	code	internal/web/render.go	
+UX-025	test	internal/web/security_test.go	TestErrorPagesHideInternals
+UX-026	code	internal/web/templates/base.html	
+UX-027	code	internal/web/templates/propose.html	
+UX-028	code	internal/web/templates/history.html	
+UX-028	code	internal/web/templates/error.html	
+UX-029	code	internal/web/refusal.go	
+UX-029	code	internal/web/templates/error.html	
+UX-030	code	internal/web/h_account.go	sessionExtend
+UX-030	code	internal/web/static/app.js	
+UX-030	test	internal/web/hardening_test.go	TestSessionExpiryWarning
+UX-031	code	internal/web/templates/dashboard.html	
+UX-032	code	internal/web/h_admin.go	memberActionForm
+UX-032	code	internal/web/h_trade_act.go	tradeActionForm
+UX-033	code	internal/web/static/style.css	
+UX-033	code	docs/qa/LIGHT-QA.md	
+UX-034	code	internal/web/static/style.css	
+UX-035	code	internal/web/static/style.css	
+UX-036	code	internal/web/static/style.css	
+UX-037	code	internal/web/static/style.css	
+UX-038	code	docs/qa/LIGHT-QA.md	
+UX-039	code	internal/web/templates/base.html	
+UX-040	code	internal/web/static/style.css	
+UX-041	code	internal/web/templates/base.html	
+UX-041	test	internal/web/a11y_test.go	TestPageStructure
+UX-042	code	internal/web/static/app.js	
+UX-043	code	internal/web/templates/propose.html	
+UX-044	code	internal/web/templates/base.html	
+UX-044	test	internal/web/a11y_test.go	TestPageStructure
+UX-045	code	internal/web/templates/base.html	
+UX-045	test	internal/web/a11y_test.go	TestPageStructure
+UX-046	code	internal/web/templates/base.html	
+UX-048	test	internal/web/a11y_test.go	TestFormLabelsAndAutocomplete
+UX-049	code	internal/web/templates/base.html	
+UX-050	code	internal/web/templates/help.html	
+UX-051	code	internal/web/templates/login.html	
+UX-052	test	internal/service/hardening_test.go	TestRegisterIsUniform
+UX-054	code	internal/web/a11y_test.go	
+UX-055	code	docs/qa/LIGHT-QA.md	
+UX-056	code	docs/qa/LIGHT-QA.md	
+UX-057	code	internal/web/static/style.css	
+UX-058	code	internal/web/static/style.css	
+UX-059	code	internal/web/h_account.go	sessionExtend
+UX-059	code	internal/web/static/app.js	
+SEC-001	code	internal/service/password.go	DefaultArgon2Params
+SEC-001	code	internal/service/service.go	MinPasswordLen
+SEC-001	test	internal/service/auth_test.go	TestPasswordStorage
+SEC-002	code	internal/service/password.go	validatePassword
+SEC-002	test	internal/service/auth_test.go	TestPasswordPolicy
+SEC-003	code	internal/service/auth.go	Authenticate
+SEC-003	code	internal/service/auth.go	Logout
+SEC-003	code	internal/service/auth.go	ChangePassword
+SEC-003	test	internal/service/auth_test.go	TestLoginSessionLifecycle
+SEC-003	test	internal/service/auth_test.go	TestChangePasswordRevokesSessions
+SEC-004	code	internal/httpx/httpx.go	CSRF
+SEC-004	test	internal/web/security_test.go	TestCSRFRejections
+SEC-004	test	internal/httpx/httpx_test.go	TestCSRFScheme
+SEC-005	code	internal/service/auth.go	Login
+SEC-005	test	internal/service/hardening_test.go	TestRegisterIsUniform
+SEC-005	test	internal/service/auth_test.go	TestLoginDoesNotRevealExistence
+SEC-006	code	internal/service/auth.go	Login
+SEC-006	test	internal/service/hardening_test.go	TestLoginThrottleIsAtomicUnderConcurrency
+SEC-006	test	cmd/circula/hardening_test.go	TestTrustedProxiesSetting
+SEC-009	test	internal/service/authz_test.go	TestAuthorizationMatrix
+SEC-009	test	internal/api/authn_test.go	TestAuthorisation
+SEC-010	test	internal/service/dispute_test.go	TestDisputeDecisionAuthorization
+SEC-010	test	internal/service/membership_test.go	TestAdministratorSuccession
+SEC-010	test	internal/service/reversal_test.go	TestReversalAuthorization
+SEC-011	code	internal/service/adjustments.go	CreateAdjustment
+SEC-012	code	internal/service/audit.go	audit
+SEC-012	test	internal/service/atomicity_test.go	TestEveryCommandWritesAuditEvent
+SEC-013	code	cmd/circula/commands.go	cmdAdmin
+SEC-014	code	internal/service/auth.go	RegisterPerson
+SEC-015	test	internal/service/authz_test.go	TestCrossNetworkIdsAreNotFound
+SEC-015	test	internal/store/sqlite_test.go	TestCrossNetworkReferencesRejected
+SEC-016	code	internal/service/membership.go	ListDirectory
+SEC-017	code	internal/api/jobs.go	jobTTL
+SEC-017	test	internal/service/export_test.go	TestCSVFormulaNeutralisation
+SEC-017	test	internal/service/export_test.go	TestMemberExportIsScoped
+SEC-018	code	internal/service/departure.go	DepartMember
+SEC-019	code	internal/service/audit_read.go	ListAudit
+SEC-019	test	internal/service/audit_test.go	TestAuditEventContent
+SEC-020	code	internal/service/purge.go	RedactSecrets
+SEC-020	code	cmd/circula/ops_http.go	routeOf
+SEC-020	test	internal/service/hardening_test.go	TestRedactSecrets
+SEC-022	code	cmd/circula/config.go	checkTransport
+SEC-022	test	cmd/circula/hardening_test.go	TestPlainHTTPRefusedUnlessExplicit
+SEC-022	test	internal/web/hardening_test.go	TestSecureCookiesAndHSTS
+SEC-023	test	internal/web/security_test.go	TestHeadersAndCookies
+SEC-023	test	internal/httpx/httpx_test.go	TestSecureAndHSTS
+SEC-024	code	internal/httpx/httpx.go	SafeNext
+SEC-024	test	internal/web/hardening_test.go	TestSafeNextRejectsBrowserTricks
+SEC-024	test	internal/domain/domain_test.go	TestParseAmount
+SEC-027	code	cmd/circula/config.go	loadSecrets
+SEC-027	code	cmd/circula/config.go	readSecretFile
+SEC-027	test	cmd/circula/hardening_test.go	TestSecretsLoadingAndRedaction
+SEC-028	code	cmd/circula/snapshot.go	manifestMAC
+SEC-028	code	cmd/circula/snapshot.go	checkManifestAuth
+SEC-028	test	cmd/circula/hardening_test.go	TestSignedBackupManifest
+SEC-028	test	cmd/circula/perm_unix_test.go	TestFilesAreOwnerOnly
+SEC-029	code	.github/workflows/ci.yml	
+SEC-029	code	scripts/package-release.sh	
+SEC-030	code	docs/ops/monitoring.md	
+SEC-030	code	docs/ops/runbook.md	
+SEC-031	code	SECURITY.md	
+SEC-032	code	internal/service/adjustments.go	postSignupGrant
+SEC-034	code	internal/service/audit.go	AuditHash
+GOV-001	code	internal/store/sqlite_network.go	AppendPolicy
+GOV-001	test	internal/service/admin_test.go	TestPolicyChanges
+GOV-002	code	internal/service/networks.go	UpdatePolicy
+GOV-002	code	internal/service/gov_terms.go	PolicyLog
+GOV-002	code	internal/web/h_gov.go	rulesPage
+GOV-002	test	internal/service/gov_h1_test.go	TestPolicyNoticePeriod
+GOV-002	test	internal/web/gov_h1_test.go	TestPolicyNoticePages
+GOV-003	code	internal/service/networks.go	UpdatePolicy, noticeDays
+GOV-003	code	internal/domain/terms.go	Adverse
+GOV-003	code	internal/store/sqlite_gov.go	
+GOV-003	test	internal/service/gov_h1_test.go	TestPolicyNoticePeriod
+GOV-003	test	internal/service/gov_h1_test.go	TestPolicyNoticeCancel
+GOV-004	code	internal/service/networks.go	UpdatePolicy
+GOV-004	test	internal/service/admin_test.go	TestPolicyChanges
+GOV-005	code	internal/domain/policy.go	Validate
+GOV-005	test	internal/domain/statemachine_test.go	TestPolicyBounds
+GOV-006	code	internal/service/networks.go	UpdatePolicy
+GOV-007	test	internal/service/property_test.go	TestRandomisedLedgerInvariants
+GOV-008	test	internal/service/membership_test.go	TestJoinModes
+GOV-008	test	internal/service/membership_test.go	TestInvitations
+GOV-009	code	internal/service/gov_terms.go	
+GOV-009	code	internal/service/join.go	RedeemInvitationTerms, JoinNetworkTerms
+GOV-009	code	internal/web/h_gov.go	
+GOV-009	test	internal/service/gov_h1_test.go	TestTermsGovernance
+GOV-009	test	internal/web/gov_h1_test.go	TestTermsPages
+GOV-010	code	internal/service/departure.go	DepartMember
+GOV-010	test	internal/service/admin_test.go	TestDepartureRetain
+GOV-010	test	internal/service/gov_h1_test.go	TestDeparturePreviewAndNotices
+GOV-011	code	internal/web/h_admin.go	memberActionPost
+GOV-011	test	internal/service/admin_test.go	TestDepartureBlockersAndAdminOffboarding
+GOV-011	test	internal/service/gov_h1_test.go	TestDeparturePreviewAndNotices
+GOV-013	code	internal/service/disputes.go	OpenDispute
+GOV-013	test	internal/service/dispute_test.go	TestOpenDisputeRules
+GOV-014	code	internal/service/disputes_decide.go	ResolveDispute
+GOV-014	code	internal/service/disputes_deadlines.go	RemindOverdueDisputes
+GOV-014	test	internal/service/closure_test.go	TestDisputeDeadlinesAndReminders
+GOV-015	code	internal/service/reversal.go	ReverseTransaction
+GOV-015	code	internal/service/adjustments.go	CreateAdjustment
+GOV-015	test	internal/service/reversal_test.go	TestFullReversal
+GOV-016	code	internal/service/challenges.go	
+GOV-016	code	internal/service/disputes_response.go	RequestReReview
+GOV-016	test	internal/service/closure_test.go	TestChallengeRemovalAndLimit
+GOV-016	test	internal/service/disputes_response_test.go	TestReReviewWindow
+GOV-017	code	internal/api/routes.go	
+GOV-018	code	internal/service/adjustments.go	CreateAdjustment
+GOV-019	test	internal/service/trades_test.go	TestLimitReductionDoesNotPost
+GOV-019	test	internal/service/trades_test.go	TestAcceptRechecksLimit
+GOV-020	code	internal/service/closure_schedule.go	lifecycle
+GOV-020	code	internal/service/principal.go	networkOpenErr
+GOV-020	test	internal/service/membership_test.go	TestAdministratorSuccession
+GOV-020	test	internal/service/closure_test.go	TestAdminRequiredReadOnly
+GOV-022	code	internal/service/export.go	Export
+GOV-022	test	internal/service/export_test.go	TestFullExportJSON
+GOV-023	code	internal/domain/types.go	NetworkStatus
+GOV-025	code	internal/service/closure_schedule.go	
+GOV-025	test	internal/service/closure_test.go	
+GOV-027	code	docs/ops/runbook.md	
+OPS-001	code	scripts/package-release.sh	
+OPS-001	code	cmd/circula/serve.go	runServe
+OPS-002	code	cmd/circula/serve.go	runServe
+OPS-002	test	cmd/circula/jobs_regress_test.go	TestServeStartsAndStopsCleanly
+OPS-003	code	scripts/package-release.sh	
+OPS-004	code	README.md	
+OPS-005	code	internal/store/sqlite.go	Open
+OPS-006	code	cmd/circula/commands.go	resolveFlags
+OPS-006	test	cmd/circula/config_test.go	TestPrecedence
+OPS-006	test	cmd/circula/config_test.go	TestEverySettingAcceptedByEverySource
+OPS-007	code	cmd/circula/config.go	buildConfig
+OPS-007	test	cmd/circula/config_test.go	TestInvalidValuesNameEachSetting
+OPS-007	test	cmd/circula/config_test.go	TestCheckConfigDoesNotCreateDatabase
+OPS-008	code	cmd/circula/config.go	settingDefs
+OPS-008	test	cmd/circula/config_test.go	TestRequiredSettingsAreNamed
+OPS-009	code	cmd/circula/config.go	readSecretFile
+OPS-009	code	cmd/circula/config.go	secretDefs
+OPS-009	test	cmd/circula/hardening_test.go	TestSecretsLoadingAndRedaction
+OPS-010	code	docs/ops/backup-restore.md	
+OPS-011	code	internal/store/sqlite.go	Open
+OPS-011	code	cmd/circula/serve.go	checkPragmas
+OPS-011	code	internal/store/sqlite.go	DefaultBusyTimeout
+OPS-012	test	internal/web/hardening_test.go	TestBusyDatabaseIs503
+OPS-012	test	internal/store/hardening_test.go	TestBusyDatabaseIsRetryable
+OPS-013	code	cmd/circula/ops_http.go	healthz
+OPS-013	code	cmd/circula/ops_http.go	readyz
+OPS-013	code	cmd/circula/ops_http.go	metricsAccess
+OPS-013	test	cmd/circula/ops_test.go	TestHealthzReportsCoarseStatusOnly
+OPS-013	test	cmd/circula/hardening_test.go	TestMetricsGate
+OPS-014	code	cmd/circula/metrics.go	newMetrics
+OPS-014	test	cmd/circula/ops_test.go	TestMetricsExposeRequiredSeriesWithRouteTemplates
+OPS-015	code	docs/ops/monitoring.md	
+OPS-016	code	internal/service/verify.go	VerifyLedger
+OPS-016	code	cmd/circula/commands.go	cmdVerifyLedger
+OPS-016	test	cmd/circula/cli_regress_test.go	TestVerifyLedgerLeavesDatabaseChecksumUnchanged
+OPS-017	code	cmd/circula/snapshot.go	snapshot
+OPS-017	test	cmd/circula/backup_test.go	TestSnapshotWritesVerifiedManifestAndRestores
+OPS-018	code	cmd/circula/snapshot.go	pruneBackups
+OPS-018	test	cmd/circula/backup_test.go	TestPruneKeepsDailyAndNewestPerMonth
+OPS-018	test	cmd/circula/jobs_regress_test.go	TestJobScheduledBackupAndRetention
+OPS-019	code	docs/ops/backup-restore.md	
+OPS-019	test	cmd/circula/perm_unix_test.go	TestFilesAreOwnerOnly
+OPS-020	code	cmd/circula/commands.go	cmdRestore
+OPS-020	code	cmd/circula/commands.go	swapDatabase
+OPS-020	code	cmd/circula/commands.go	writeRestoreRecord
+OPS-020	test	cmd/circula/hardening_test.go	TestRestoreRefusesBackupFailingEmbeddedChecks
+OPS-021	code	docs/ops/backup-restore.md	
+OPS-022	code	internal/store/migrate.go	loadMigrations
+OPS-022	code	cmd/circula/schema.go	checkSchemaNotNewer
+OPS-022	test	internal/store/sqlite_test.go	TestMigrationsIdempotentAndVersioned
+OPS-023	code	cmd/circula/commands.go	cmdMigrate
+OPS-023	code	cmd/circula/serve.go	preMigrationBackup
+OPS-024	code	docs/ops/upgrade.md	
+OPS-025	test	cmd/circula/serve_test.go	TestServeRefusesPendingMigrationsInExplicitMode
+OPS-026	code	docs/releases/TEMPLATE.md	
+OPS-026	code	cmd/circula/main.go	version
+OPS-027	code	cmd/circula/serve.go	jobRunner
+OPS-027	code	cmd/circula/serve.go	expire
+OPS-027	code	cmd/circula/serve.go	purge
+OPS-027	code	cmd/circula/serve.go	verify
+OPS-027	code	cmd/circula/serve.go	backups
+OPS-027	test	cmd/circula/jobs_regress_test.go	TestJobRunStartsAllJobsAndStops
+OPS-028	code	internal/service/transactions.go	ExpireProposals
+OPS-028	test	internal/service/trades_test.go	TestExpiry
+OPS-030	code	docs/ops/runbook.md	
+OPS-031	code	docs/ops/runbook.md	
+OPS-032	code	cmd/circula/serve.go	newLogger
+OPS-033	code	docs/ops/monitoring.md	
+OPS-033	code	cmd/circula/serve.go	runServe
+OPS-035	code	scripts/package-release.sh	
+QA-001	test	internal/service/property_test.go	TestRandomisedLedgerInvariants
+QA-002	code	internal/service/verify.go	VerifyLedger
+QA-002	test	internal/service/property_test.go	TestRandomisedLedgerInvariants
+QA-003	test	internal/store/sqlite_test.go	TestTransactionIntegrityTriggers
+QA-003	test	internal/service/trades_test.go	TestTradeScenarioBalances
+QA-004	test	internal/service/trades_test.go	TestAcceptRechecksLimit
+QA-005	test	internal/domain/domain_test.go	TestNoFloatsInMoneyPackages
+QA-005	test	internal/domain/domain_test.go	TestAddChecked
+QA-006	test	internal/service/atomicity_test.go	TestAcceptFaultInjectionLeavesNoTrace
+QA-006	test	internal/service/atomicity_test.go	TestAuditFailureRollsBackStateChange
+QA-007	test	internal/service/concurrency_test.go	TestParallelAcceptsNeverBreachCreditLimit
+QA-009	test	internal/service/idempotency_test.go	TestIdempotentRetryReturnsOriginal
+QA-009	test	internal/service/idempotency_test.go	TestIdempotencyRecordExpires
+QA-010	code	internal/testutil/testutil.go	
+QA-010	code	internal/testutil/fault.go	
+QA-011	test	internal/store/hardening_test.go	TestBusyDatabaseIsRetryable
+QA-012	test	internal/service/authz_test.go	TestAuthorizationMatrix
+QA-013	test	internal/domain/statemachine_test.go	TestDisputeStateMachineExhaustive
+QA-014	test	internal/service/reversal_test.go	TestFullReversal
+QA-015	test	internal/domain/statemachine_test.go	TestPolicyBounds
+QA-015	test	internal/domain/statemachine_test.go	TestMemberTransitionsExhaustive
+QA-016	test	internal/service/dispute_test.go	TestDisputeDecisionAuthorization
+QA-016	test	internal/service/membership_test.go	TestAdministratorSuccession
+QA-017	test	internal/web/flow_test.go	TestJoinByInvitationLink
+QA-018	test	internal/api/trade_test.go	TestFullTradeFlow
+QA-018	test	internal/web/flow_test.go	TestLoginTradeFlow
+QA-019	test	internal/service/trades_test.go	TestDeclineCancelExitRules
+QA-019	test	internal/service/trades_test.go	TestExpiry
+QA-020	test	internal/service/trades_test.go	TestAcceptRechecksLimit
+QA-021	test	internal/service/dispute_test.go	TestUpheldReversalBlockedThenOverride
+QA-021	test	internal/service/reversal_test.go	TestFullReversal
+QA-022	test	internal/service/trades_test.go	TestLimitReductionDoesNotPost
+QA-023	test	internal/service/admin_test.go	TestDepartureRetain
+QA-024	test	cmd/circula/backup_test.go	TestSnapshotWritesVerifiedManifestAndRestores
+QA-026	test	cmd/circula/hardening_test.go	TestSwapDatabaseRollsBack
+QA-027	test	internal/store/sqlite_test.go	TestMigrationsIdempotentAndVersioned
+QA-028	test	cmd/circula/hardening_test.go	TestBackupEqualsSource
+QA-030	test	internal/service/export_test.go	TestLedgerExportCSV
+QA-030	test	internal/service/export_test.go	TestFullExportJSON
+QA-031	test	internal/service/export_test.go	TestMemberExportIsScoped
+QA-032	test	internal/service/export_test.go	TestCSVFormulaNeutralisation
+QA-033	code	internal/web/a11y_test.go	
+QA-033	test	internal/web/a11y_test.go	TestPageStructure
+QA-034	code	docs/qa/LIGHT-QA.md	
+QA-035	code	docs/qa/LIGHT-QA.md	
+QA-036	code	internal/web/format.go	balanceVM
+QA-036	test	internal/web/format_test.go	TestUnitForPlural
+QA-037	code	.github/workflows/ci.yml	
+QA-038	code	.github/workflows/ci.yml	
+QA-041	code	internal/testutil/testutil.go	
+QA-043	code	internal/testutil/testutil.go	
+DEC-005	code	internal/service/auth.go	Authenticate
+DEC-006	code	internal/service/password.go	DefaultArgon2Params
+DEC-008	code	internal/store/sqlite.go	Open
+DEC-010	code	internal/service/departure.go	DepartMember
+DEC-011	code	internal/service/adjustments.go	postSignupGrant
+DEC-015	code	internal/service/audit.go	AuditHash
+DEC-017	code	cmd/circula/commands.go	resolveFlags
+DEC-017	code	cmd/circula/config.go	settingDefs
+DEC-018	code	cmd/circula/ops_http.go	metricsAccess
+DEC-021	code	internal/service/networks.go	UpdatePolicy
+DEC-025	code	internal/domain/closure.go	
+DEC-025	test	internal/service/closure_test.go	
+DEC-026	code	SECURITY.md	
