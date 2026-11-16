@@ -1,0 +1,2370 @@
+From 027ef9b9756af51ace3fcd1e2dc4db8fcee92933 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:47:38 +0000
+Subject: [PATCH 1/4] test(store): enforce expand-then-contract on migrations
+ (DAT-045)
+
+TestMigrationsExpandThenContract scans every migration (comments and
+quoted text blanked) and fails on DROP or RENAME unless the file is listed
+in contractSteps with the migration that moved the reads. The list is
+empty: 0001..0015 contain none. TestContractScannerForms pins the
+detector (all DROP/RENAME forms caught, comments/strings/identifiers not).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/store/expand_contract_test.go | 154 +++++++++++++++++++++++++
+ 1 file changed, 154 insertions(+)
+ create mode 100644 internal/store/expand_contract_test.go
+
+diff --git a/internal/store/expand_contract_test.go b/internal/store/expand_contract_test.go
+new file mode 100644
+index 0000000..a8e8efd
+--- /dev/null
++++ b/internal/store/expand_contract_test.go
+@@ -0,0 +1,154 @@
++package store_test
++
++import (
++	"os"
++	"path/filepath"
++	"regexp"
++	"sort"
++	"strconv"
++	"strings"
++	"testing"
++)
++
++// DAT-045: schema changes follow expand-then-contract. A migration may add
++// structures; removing or renaming one (the contract step) is only allowed in
++// a later release, after the reads moved off it. Every migration that drops or
++// renames anything must therefore be listed here, with the earlier migration
++// and release after which nothing reads the old structure. Any other DROP or
++// RENAME fails the build. Migrations 0001..0015 contain none.
++var contractSteps = map[string]string{
++	// "00NN_name.sql": "reads moved to <new structure> in 00MM (release vX.Y); <what is dropped or renamed>",
++}
++
++// contractRE matches the statements that remove or rename schema objects:
++// DROP TABLE/INDEX/TRIGGER/VIEW, ALTER TABLE ... DROP COLUMN and
++// ALTER TABLE ... RENAME [COLUMN] ... TO.
++var contractRE = regexp.MustCompile(`(?i)\b(drop|rename)\b`)
++
++// sqlCode blanks comments and quoted strings or identifiers, keeping newlines,
++// so a keyword in a comment or a RAISE message is not taken for a statement.
++func sqlCode(src string) string {
++	b := []byte(src)
++	blank := func(i int) {
++		if b[i] != '\n' {
++			b[i] = ' '
++		}
++	}
++	for i := 0; i < len(b); i++ {
++		switch {
++		case b[i] == '-' && i+1 < len(b) && b[i+1] == '-':
++			for ; i < len(b) && b[i] != '\n'; i++ {
++				blank(i)
++			}
++		case b[i] == '/' && i+1 < len(b) && b[i+1] == '*':
++			for ; i < len(b); i++ {
++				end := b[i] == '*' && i+1 < len(b) && b[i+1] == '/'
++				blank(i)
++				if end {
++					i++
++					blank(i)
++					break
++				}
++			}
++		case b[i] == '\'' || b[i] == '"' || b[i] == '`':
++			q := b[i]
++			blank(i)
++			for i++; i < len(b); i++ {
++				if b[i] == q {
++					if i+1 < len(b) && b[i+1] == q { // doubled quote escapes itself
++						blank(i)
++						i++
++						blank(i)
++						continue
++					}
++					blank(i)
++					break
++				}
++				blank(i)
++			}
++		}
++	}
++	return string(b)
++}
++
++// contractStatements returns "line N: <source line>" for every DROP or RENAME
++// outside comments and strings.
++func contractStatements(src string) []string {
++	code := sqlCode(src)
++	lines := strings.Split(src, "\n")
++	var out []string
++	for i, l := range strings.Split(code, "\n") {
++		if contractRE.MatchString(l) {
++			out = append(out, "line "+strconv.Itoa(i+1)+": "+strings.TrimSpace(lines[i]))
++		}
++	}
++	return out
++}
++
++func TestMigrationsExpandThenContract(t *testing.T) {
++	files, err := filepath.Glob(filepath.Join("migrations", "*.sql"))
++	if err != nil || len(files) == 0 {
++		t.Fatalf("no migrations found: %v", err)
++	}
++	sort.Strings(files)
++	seen := map[string]bool{}
++	for _, f := range files {
++		name := filepath.Base(f)
++		seen[name] = true
++		src, err := os.ReadFile(f)
++		if err != nil {
++			t.Fatal(err)
++		}
++		found := contractStatements(string(src))
++		_, allowed := contractSteps[name]
++		switch {
++		case len(found) > 0 && !allowed:
++			t.Errorf("%s drops or renames schema objects without a contract-step entry (DAT-045: expand, backfill, switch reads, "+
++				"then contract in a later release; list it in contractSteps with the migration that moved the reads):\n  %s",
++				name, strings.Join(found, "\n  "))
++		case len(found) == 0 && allowed:
++			t.Errorf("contractSteps lists %s but it neither drops nor renames anything; remove the entry", name)
++		}
++	}
++	for name := range contractSteps {
++		if !seen[name] {
++			t.Errorf("contractSteps lists %s, which is not a migration", name)
++		}
++	}
++}
++
++// The scanner itself: every contract form is caught, and keywords inside
++// comments, strings or longer identifiers are not.
++func TestContractScannerForms(t *testing.T) {
++	caught := []string{
++		"DROP TABLE accounts;",
++		"drop index idx_x;",
++		"DROP TRIGGER IF EXISTS entries_no_update;",
++		"DROP VIEW v;",
++		"ALTER TABLE persons DROP COLUMN login;",
++		"ALTER TABLE persons RENAME TO people;",
++		"ALTER TABLE persons RENAME COLUMN login TO handle;",
++		"CREATE TABLE t (a INT); /* c */ Drop Table t;",
++	}
++	for _, s := range caught {
++		if len(contractStatements(s)) == 0 {
++			t.Errorf("not caught: %q", s)
++		}
++	}
++	ignored := []string{
++		"-- we never DROP or RENAME anything here",
++		"/* DROP TABLE x;\n RENAME */ CREATE TABLE y (a INT);",
++		"SELECT RAISE(ABORT, 'cannot drop: append-only');",
++		`CREATE TABLE "drop" (a INT);`,
++		"CREATE TABLE t (dropped_at INTEGER, drop_reason TEXT, renamed INTEGER);",
++		"SELECT 'it''s DROP';",
++	}
++	for _, s := range ignored {
++		if got := contractStatements(s); len(got) != 0 {
++			t.Errorf("false positive for %q: %v", s, got)
++		}
++	}
++	if got := contractStatements("CREATE TABLE a (x INT);\n-- note\nDROP TABLE a;"); len(got) != 1 || !strings.HasPrefix(got[0], "line 3:") {
++		t.Errorf("line reporting = %v", got)
++	}
++}
+-- 
+2.43.0
+
+
+From a42d597606143a63e7787e6162205840f880d306 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:47:39 +0000
+Subject: [PATCH 2/4] test(storetest): repository contract suite run against
+ SQLite (ARC-004)
+
+New package internal/storetest states, against store.Store/store.Tx only,
+what the service relies on from any store: atomic units (commit, rollback
+on error/panic/cancelled context), read-only View, coded not-found and
+conflict errors, network scoping (ARC-007), posting guards (LED-1,
+DAT-007, DOM-013), the +-2^62 balance bound, serialised check-then-write
+units (ARC-006), audit head, idempotency records, UTC millisecond times.
+internal/store/contract_test.go runs it against the SQLite store and a
+pass-through wrapper.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/store/contract_test.go |  30 ++
+ internal/storetest/storetest.go | 708 ++++++++++++++++++++++++++++++++
+ 2 files changed, 738 insertions(+)
+ create mode 100644 internal/store/contract_test.go
+ create mode 100644 internal/storetest/storetest.go
+
+diff --git a/internal/store/contract_test.go b/internal/store/contract_test.go
+new file mode 100644
+index 0000000..26793f9
+--- /dev/null
++++ b/internal/store/contract_test.go
+@@ -0,0 +1,30 @@
++package store_test
++
++import (
++	"context"
++	"path/filepath"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/store"
++	"github.com/djshellshoxxx/circula/internal/storetest"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// ARC-004: the repository contract suite, written against store.Store and
++// store.Tx only, holds for the SQLite store.
++func TestRepositoryContractSQLite(t *testing.T) {
++	storetest.Run(t, func(t *testing.T) store.Store { return openStore(t) })
++}
++
++// A pass-through wrapper (the fault injector with nothing armed) keeps the
++// contract: the suite is not tied to the concrete *store.SQLite type.
++func TestRepositoryContractWrapped(t *testing.T) {
++	storetest.Run(t, func(t *testing.T) store.Store {
++		s, err := store.Open(context.Background(), filepath.Join(t.TempDir(), "w.db"))
++		if err != nil {
++			t.Fatal(err)
++		}
++		t.Cleanup(func() { _ = s.Close() })
++		return testutil.NewFaultStore(s)
++	})
++}
+diff --git a/internal/storetest/storetest.go b/internal/storetest/storetest.go
+new file mode 100644
+index 0000000..0dc6b41
+--- /dev/null
++++ b/internal/storetest/storetest.go
+@@ -0,0 +1,708 @@
++// Package storetest is the repository contract suite (ARC-004, ARC-R2). It
++// states, against the store.Store and store.Tx interfaces only, the behaviour
++// the service layer relies on from any storage implementation: atomic units of
++// work, read-only views, coded not-found and conflict errors, per-network
++// scoping (ARC-007), the ledger posting guards (LED-1, LED-2, DAT-007),
++// integer balances within their bound, serialised check-then-write units
++// (ARC-006) and millisecond UTC timestamps (DAT-017).
++//
++// The SQLite store runs it in internal/store; a later adapter (for example
++// PostgreSQL, DEC-001) is acceptable when Run passes against it. The package
++// must not import a driver: depguard enforces that.
++package storetest
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/store"
++)
++
++// Factory returns a new, empty store at the current schema. It registers its
++// own cleanup (t.Cleanup) to close the store.
++type Factory func(t *testing.T) store.Store
++
++// Run runs every contract as a subtest; each opens a fresh store.
++func Run(t *testing.T, open Factory) {
++	t.Helper()
++	for _, c := range []struct {
++		name string
++		fn   func(*testing.T, store.Store)
++	}{
++		{"UpdateCommits", updateCommits},
++		{"UpdateRollsBackOnError", updateRollsBackOnError},
++		{"UpdateRollsBackOnPanic", updateRollsBackOnPanic},
++		{"UpdateHonoursCancelledContext", updateHonoursCancelledContext},
++		{"ViewIsReadOnly", viewIsReadOnly},
++		{"MissingRowsAreNotFound", missingRowsAreNotFound},
++		{"DuplicatesAreConflicts", duplicatesAreConflicts},
++		{"NetworkScoping", networkScoping},
++		{"LedgerSequencePerNetwork", ledgerSequencePerNetwork},
++		{"PostingGuards", postingGuards},
++		{"BalanceBound", balanceBound},
++		{"AuditAppendAndHead", auditAppendAndHead},
++		{"IdempotencyRecords", idempotencyRecords},
++		{"ConcurrentUnitsSerialise", concurrentUnitsSerialise},
++		{"TimestampsAreUTCMillis", timestampsAreUTCMillis},
++	} {
++		t.Run(c.name, func(t *testing.T) { c.fn(t, open(t)) })
++	}
++}
++
++var (
++	ctx = context.Background()
++	t0  = time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
++	// errAbort is returned by units that must roll back.
++	errAbort = errors.New("storetest: abort")
++)
++
++// fixture names the rows seed creates in one network.
++type fixture struct {
++	net, sys, accA, accB, memA, memB, tx string
++}
++
++// seed creates, in its own unit, network <p>n with a system account, two
++// active members (persons <p>pa, <p>pb) with accounts, and one proposed trade
++// of 100 from A to B. p keeps fixtures of several networks apart.
++func seed(t *testing.T, s store.Store, p string) fixture {
++	t.Helper()
++	f := fixture{net: p + "n", sys: p + "sys", accA: p + "acA", accB: p + "acB", memA: p + "mA", memB: p + "mB", tx: p + "t1"}
++	must(t, s.Update(ctx, func(tx store.Tx) error {
++		if err := tx.InsertNetwork(&domain.Network{ID: f.net, Name: "Net " + p, Slug: p + "-slug", Status: domain.NetworkActive, CreatedAt: t0}); err != nil {
++			return err
++		}
++		if err := tx.AppendPolicy(f.net, 1, domain.DefaultPolicy(), "", "", t0); err != nil {
++			return err
++		}
++		if err := tx.InsertAccount(&domain.Account{ID: f.sys, NetworkID: f.net, IsSystem: true}); err != nil {
++			return err
++		}
++		for _, x := range []struct{ person, member, acc string }{{p + "pa", f.memA, f.accA}, {p + "pb", f.memB, f.accB}} {
++			if err := tx.InsertPerson(&domain.Person{ID: x.person, Login: x.person, CreatedAt: t0}, "hash"); err != nil {
++				return err
++			}
++			if err := tx.InsertMember(&domain.Member{ID: x.member, NetworkID: f.net, PersonID: x.person, DisplayName: x.person,
++				Status: domain.MemberActive, JoinMethod: "founder", JoinedAt: t0}); err != nil {
++				return err
++			}
++			if err := tx.InsertAccount(&domain.Account{ID: x.acc, NetworkID: f.net, MemberID: x.member}); err != nil {
++				return err
++			}
++		}
++		exp := t0.Add(time.Hour)
++		return tx.InsertTransaction(&domain.Transaction{ID: f.tx, NetworkID: f.net, Kind: domain.KindTrade,
++			PayerAccountID: f.accA, PayeeAccountID: f.accB, Amount: 100, CreatedBy: f.memA, ProposedAt: t0, ExpiresAt: &exp})
++	}))
++	return f
++}
++
++func must(t *testing.T, err error) {
++	t.Helper()
++	if err != nil {
++		t.Fatal(err)
++	}
++}
++
++func wantCode(t *testing.T, what string, err error, code domain.Code) {
++	t.Helper()
++	if got := domain.CodeOf(err); got != code {
++		t.Errorf("%s: code = %q (err %v), want %q", what, got, err, code)
++	}
++}
++
++func view(t *testing.T, s store.Store, fn func(store.Tx) error) {
++	t.Helper()
++	must(t, s.View(ctx, fn))
++}
++
++func balance(t *testing.T, s store.Store, netID, accID string) int64 {
++	t.Helper()
++	var b int64
++	view(t, s, func(tx store.Tx) error {
++		a, err := tx.GetAccount(netID, accID)
++		if err != nil {
++			return err
++		}
++		b = a.Balance
++		return nil
++	})
++	return b
++}
++
++func networkExists(t *testing.T, s store.Store, id string) bool {
++	t.Helper()
++	var found bool
++	view(t, s, func(tx store.Tx) error {
++		_, err := tx.GetNetwork(id)
++		switch domain.CodeOf(err) {
++		case "":
++			found = true
++		case domain.CodeNotFound:
++		default:
++			return err
++		}
++		return nil
++	})
++	return found
++}
++
++// writeNetwork inserts a bare network with its first policy.
++func writeNetwork(tx store.Tx, id string) error {
++	if err := tx.InsertNetwork(&domain.Network{ID: id, Name: id, Slug: id, Status: domain.NetworkActive, CreatedAt: t0}); err != nil {
++		return err
++	}
++	return tx.AppendPolicy(id, 1, domain.DefaultPolicy(), "", "", t0)
++}
++
++func updateCommits(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	view(t, s, func(tx store.Tx) error {
++		n, err := tx.GetNetworkBySlug("a-slug")
++		if err != nil {
++			return err
++		}
++		if n.ID != f.net || n.Status != domain.NetworkActive || n.PolicyVersion != 1 || n.SystemAccountID != f.sys {
++			t.Errorf("network read back = %+v", n)
++		}
++		x, err := tx.GetTransaction(f.net, f.tx)
++		if err != nil {
++			return err
++		}
++		if x.Status != domain.TxProposed || x.Amount != 100 || x.PayerMemberID != f.memA || x.PayeeMemberID != f.memB {
++			t.Errorf("transaction read back = %+v", x)
++		}
++		return nil
++	})
++}
++
++func updateRollsBackOnError(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	err := s.Update(ctx, func(tx store.Tx) error {
++		if err := writeNetwork(tx, "late"); err != nil {
++			return err
++		}
++		if err := tx.AddBalance(f.net, f.accA, -5); err != nil {
++			return err
++		}
++		if err := tx.SetNetworkStatus(f.net, domain.NetworkClosed); err != nil {
++			return err
++		}
++		return errAbort
++	})
++	if !errors.Is(err, errAbort) {
++		t.Fatalf("Update returned %v, want the unit's own error", err)
++	}
++	if networkExists(t, s, "late") {
++		t.Error("insert of a failed unit is visible")
++	}
++	if b := balance(t, s, f.net, f.accA); b != 0 {
++		t.Errorf("balance after a failed unit = %d, want 0", b)
++	}
++	view(t, s, func(tx store.Tx) error {
++		n, err := tx.GetNetwork(f.net)
++		if err == nil && n.Status != domain.NetworkActive {
++			t.Errorf("status change of a failed unit is visible: %s", n.Status)
++		}
++		return err
++	})
++}
++
++func updateRollsBackOnPanic(t *testing.T, s store.Store) {
++	func() {
++		defer func() {
++			if recover() == nil {
++				t.Error("a panic inside Update was swallowed")
++			}
++		}()
++		_ = s.Update(ctx, func(tx store.Tx) error {
++			if err := writeNetwork(tx, "boom"); err != nil {
++				return err
++			}
++			panic("storetest: panic inside a unit")
++		})
++	}()
++	if networkExists(t, s, "boom") {
++		t.Error("write of a panicking unit is visible")
++	}
++	// The store stays usable.
++	must(t, s.Update(ctx, func(tx store.Tx) error { return writeNetwork(tx, "after") }))
++}
++
++func updateHonoursCancelledContext(t *testing.T, s store.Store) {
++	c, cancel := context.WithCancel(ctx)
++	cancel()
++	err := s.Update(c, func(tx store.Tx) error { return writeNetwork(tx, "cancelled") })
++	if !errors.Is(err, context.Canceled) {
++		t.Errorf("Update with a cancelled context = %v, want context.Canceled", err)
++	}
++	if networkExists(t, s, "cancelled") {
++		t.Error("write under a cancelled context is visible")
++	}
++}
++
++func viewIsReadOnly(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	err := s.View(ctx, func(tx store.Tx) error {
++		if err := writeNetwork(tx, "viewed"); err != nil {
++			return err
++		}
++		return tx.AddBalance(f.net, f.accA, 1)
++	})
++	if err == nil {
++		t.Error("a write inside View succeeded")
++	}
++	if networkExists(t, s, "viewed") {
++		t.Error("write through View is visible")
++	}
++	if b := balance(t, s, f.net, f.accA); b != 0 {
++		t.Errorf("balance after a write through View = %d", b)
++	}
++}
++
++func missingRowsAreNotFound(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	view(t, s, func(tx store.Tx) error {
++		_, err := tx.GetNetwork("nope")
++		wantCode(t, "GetNetwork", err, domain.CodeNotFound)
++		_, err = tx.GetNetworkBySlug("nope")
++		wantCode(t, "GetNetworkBySlug", err, domain.CodeNotFound)
++		_, _, err = tx.GetPerson("nope")
++		wantCode(t, "GetPerson", err, domain.CodeNotFound)
++		_, _, err = tx.GetPersonByLogin("nope")
++		wantCode(t, "GetPersonByLogin", err, domain.CodeNotFound)
++		_, err = tx.GetMember(f.net, "nope")
++		wantCode(t, "GetMember", err, domain.CodeNotFound)
++		_, err = tx.GetMemberByPerson(f.net, "nope")
++		wantCode(t, "GetMemberByPerson", err, domain.CodeNotFound)
++		_, err = tx.GetAccount(f.net, "nope")
++		wantCode(t, "GetAccount", err, domain.CodeNotFound)
++		_, err = tx.GetAccountByMember(f.net, "nope")
++		wantCode(t, "GetAccountByMember", err, domain.CodeNotFound)
++		_, err = tx.GetTransaction(f.net, "nope")
++		wantCode(t, "GetTransaction", err, domain.CodeNotFound)
++		_, err = tx.GetListing(f.net, "nope")
++		wantCode(t, "GetListing", err, domain.CodeNotFound)
++		_, err = tx.GetDispute(f.net, "nope")
++		wantCode(t, "GetDispute", err, domain.CodeNotFound)
++		_, err = tx.LedgerSeq("nope")
++		wantCode(t, "LedgerSeq", err, domain.CodeNotFound)
++		return nil
++	})
++	err := s.Update(ctx, func(tx store.Tx) error { return tx.AddBalance(f.net, "nope", 1) })
++	wantCode(t, "AddBalance", err, domain.CodeNotFound)
++	err = s.Update(ctx, func(tx store.Tx) error { _, err := tx.NextLedgerSeq("nope"); return err })
++	wantCode(t, "NextLedgerSeq", err, domain.CodeNotFound)
++}
++
++func duplicatesAreConflicts(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	cases := []struct {
++		what string
++		fn   func(store.Tx) error
++	}{
++		{"network id", func(tx store.Tx) error {
++			return tx.InsertNetwork(&domain.Network{ID: f.net, Name: "x", Slug: "fresh", Status: domain.NetworkActive, CreatedAt: t0})
++		}},
++		{"network slug", func(tx store.Tx) error {
++			return tx.InsertNetwork(&domain.Network{ID: "fresh", Name: "x", Slug: "a-slug", Status: domain.NetworkActive, CreatedAt: t0})
++		}},
++		{"person login", func(tx store.Tx) error {
++			return tx.InsertPerson(&domain.Person{ID: "fresh", Login: "apa", CreatedAt: t0}, "h")
++		}},
++		{"membership of a person", func(tx store.Tx) error {
++			return tx.InsertMember(&domain.Member{ID: "fresh", NetworkID: f.net, PersonID: "apa", DisplayName: "x",
++				Status: domain.MemberActive, JoinMethod: "founder", JoinedAt: t0})
++		}},
++		{"transaction id", func(tx store.Tx) error {
++			return tx.InsertTransaction(&domain.Transaction{ID: f.tx, NetworkID: f.net, Kind: domain.KindTrade,
++				PayerAccountID: f.accA, PayeeAccountID: f.accB, Amount: 1, ProposedAt: t0})
++		}},
++	}
++	for _, c := range cases {
++		wantCode(t, "duplicate "+c.what, s.Update(ctx, c.fn), domain.CodeConflict)
++	}
++}
++
++func networkScoping(t *testing.T, s store.Store) {
++	a := seed(t, s, "a")
++	b := seed(t, s, "b")
++	view(t, s, func(tx store.Tx) error {
++		_, err := tx.GetMember(b.net, a.memA)
++		wantCode(t, "member of A through B", err, domain.CodeNotFound)
++		_, err = tx.GetAccount(b.net, a.accA)
++		wantCode(t, "account of A through B", err, domain.CodeNotFound)
++		_, err = tx.GetTransaction(b.net, a.tx)
++		wantCode(t, "transaction of A through B", err, domain.CodeNotFound)
++		ms, err := tx.ListMembers(b.net, store.MemberFilter{})
++		if err != nil {
++			return err
++		}
++		for _, m := range ms {
++			if m.NetworkID != b.net {
++				t.Errorf("ListMembers(B) returned %s of %s", m.ID, m.NetworkID)
++			}
++		}
++		if len(ms) != 2 {
++			t.Errorf("ListMembers(B) = %d members, want 2", len(ms))
++		}
++		txs, err := tx.ListTransactions(b.net, store.TxFilter{})
++		if err != nil {
++			return err
++		}
++		if len(txs) != 1 || txs[0].ID != b.tx {
++			t.Errorf("ListTransactions(B) = %v, want only %s", txs, b.tx)
++		}
++		return nil
++	})
++	err := s.Update(ctx, func(tx store.Tx) error { return tx.AddBalance(b.net, a.accA, 1) })
++	wantCode(t, "AddBalance of A through B", err, domain.CodeNotFound)
++	if got := balance(t, s, a.net, a.accA); got != 0 {
++		t.Errorf("balance of A changed through B: %d", got)
++	}
++	// A transaction may not join accounts of two networks (DOM-001).
++	err = s.Update(ctx, func(tx store.Tx) error {
++		return tx.InsertTransaction(&domain.Transaction{ID: "cross", NetworkID: a.net, Kind: domain.KindTrade,
++			PayerAccountID: a.accA, PayeeAccountID: b.accB, Amount: 1, ProposedAt: t0})
++	})
++	if err == nil {
++		t.Error("cross-network transaction stored")
++	}
++}
++
++func ledgerSequencePerNetwork(t *testing.T, s store.Store) {
++	a := seed(t, s, "a")
++	b := seed(t, s, "b")
++	next := func(netID string) int64 {
++		t.Helper()
++		var v int64
++		must(t, s.Update(ctx, func(tx store.Tx) error {
++			var err error
++			v, err = tx.NextLedgerSeq(netID)
++			return err
++		}))
++		return v
++	}
++	for want := int64(1); want <= 3; want++ {
++		if got := next(a.net); got != want {
++			t.Fatalf("NextLedgerSeq(A) = %d, want %d", got, want)
++		}
++	}
++	if got := next(b.net); got != 1 {
++		t.Errorf("NextLedgerSeq(B) = %d, want 1: counters are per network (DAT-016)", got)
++	}
++	_ = s.Update(ctx, func(tx store.Tx) error {
++		if _, err := tx.NextLedgerSeq(a.net); err != nil {
++			return err
++		}
++		return errAbort
++	})
++	view(t, s, func(tx store.Tx) error {
++		v, err := tx.LedgerSeq(a.net)
++		if err == nil && v != 3 {
++			t.Errorf("LedgerSeq(A) = %d after a rolled-back increment, want 3", v)
++		}
++		return err
++	})
++}
++
++// postingGuards: the ledger rules the store itself refuses to break, whatever
++// the caller does (LED-1, DAT-007, DOM-009, DOM-013).
++func postingGuards(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	entry := func(id, acc string, amt int64) *domain.Entry {
++		return &domain.Entry{ID: id, NetworkID: f.net, TxID: f.tx, AccountID: acc, Amount: amt, LedgerSeq: 1, PostedAt: t0}
++	}
++	complete := func(tx store.Tx) error {
++		x, err := tx.GetTransaction(f.net, f.tx)
++		if err != nil {
++			return err
++		}
++		x.Status = domain.TxCompleted
++		done := t0
++		x.CompletedAt, x.LedgerSeq = &done, 1
++		return tx.UpdateTransaction(x)
++	}
++	if err := s.Update(ctx, complete); err == nil {
++		t.Error("a transaction completed without entries")
++	}
++	if err := s.Update(ctx, func(tx store.Tx) error { return tx.InsertEntry(entry("e0", f.accA, -99)) }); err == nil {
++		t.Error("an entry that does not match the transaction amount was stored")
++	}
++	if err := s.Update(ctx, func(tx store.Tx) error {
++		if err := tx.InsertEntry(entry("e1", f.accA, -100)); err != nil {
++			return err
++		}
++		return complete(tx)
++	}); err == nil {
++		t.Error("a transaction completed with one entry")
++	}
++	if err := s.Update(ctx, func(tx store.Tx) error {
++		x, err := tx.GetTransaction(f.net, f.tx)
++		if err != nil {
++			return err
++		}
++		x.Status = domain.TxReversed
++		return tx.UpdateTransaction(x)
++	}); err == nil {
++		t.Error("illegal transition proposed -> reversed stored")
++	}
++	// A balanced pair completes it; the terms stay as proposed.
++	must(t, s.Update(ctx, func(tx store.Tx) error {
++		if err := tx.InsertEntry(entry("e1", f.accA, -100)); err != nil {
++			return err
++		}
++		if err := tx.InsertEntry(entry("e2", f.accB, 100)); err != nil {
++			return err
++		}
++		return complete(tx)
++	}))
++	// Rewriting the terms is either refused or ignored; it never sticks.
++	_ = s.Update(ctx, func(tx store.Tx) error {
++		x, err := tx.GetTransaction(f.net, f.tx)
++		if err != nil {
++			return err
++		}
++		x.Amount, x.PayerAccountID = 1, f.accB
++		return tx.UpdateTransaction(x)
++	})
++	view(t, s, func(tx store.Tx) error {
++		x, err := tx.GetTransaction(f.net, f.tx)
++		if err != nil {
++			return err
++		}
++		if x.Status != domain.TxCompleted || x.Amount != 100 || x.PayerAccountID != f.accA {
++			t.Errorf("after posting and a terms rewrite: %+v (terms are immutable, DOM-013)", x)
++		}
++		es, err := tx.ListEntries(f.net, f.tx)
++		if err != nil {
++			return err
++		}
++		var sum int64
++		for _, e := range es {
++			sum += e.Amount
++		}
++		if len(es) != 2 || sum != 0 {
++			t.Errorf("entries = %d summing %d, want 2 summing 0 (LED-1)", len(es), sum)
++		}
++		for acc, want := range map[string]int64{f.accA: -100, f.accB: 100} {
++			got, err := tx.SumEntries(acc, 0)
++			if err != nil {
++				return err
++			}
++			if got != want {
++				t.Errorf("SumEntries(%s) = %d, want %d", acc, got, want)
++			}
++		}
++		return nil
++	})
++	// A transaction is always inserted as proposed, whatever the caller set.
++	must(t, s.Update(ctx, func(tx store.Tx) error {
++		return tx.InsertTransaction(&domain.Transaction{ID: "t2", NetworkID: f.net, Kind: domain.KindTrade, Status: domain.TxCompleted,
++			PayerAccountID: f.accA, PayeeAccountID: f.accB, Amount: 7, CreatedBy: f.memA, ProposedAt: t0})
++	}))
++	view(t, s, func(tx store.Tx) error {
++		x, err := tx.GetTransaction(f.net, "t2")
++		if err == nil && x.Status != domain.TxProposed {
++			t.Errorf("inserted transaction status = %s, want proposed", x.Status)
++		}
++		return err
++	})
++}
++
++// balanceBound: cached balances are integers held within +-2^62 (A3-03), so
++// network totals cannot overflow int64.
++func balanceBound(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	const bound = int64(1) << 62
++	must(t, s.Update(ctx, func(tx store.Tx) error { return tx.AddBalance(f.net, f.accA, bound) }))
++	if err := s.Update(ctx, func(tx store.Tx) error { return tx.AddBalance(f.net, f.accA, 1) }); err == nil {
++		t.Error("balance above +2^62 stored")
++	}
++	if err := s.Update(ctx, func(tx store.Tx) error { return tx.AddBalance(f.net, f.accB, -bound-1) }); err == nil {
++		t.Error("balance below -2^62 stored")
++	}
++	if got := balance(t, s, f.net, f.accA); got != bound {
++		t.Errorf("balance = %d, want %d", got, bound)
++	}
++	if got := balance(t, s, f.net, f.accB); got != 0 {
++		t.Errorf("balance = %d, want 0", got)
++	}
++}
++
++func audit(netID string, seq int64) *domain.AuditEvent {
++	return &domain.AuditEvent{ID: fmt.Sprintf("%s-au%d", netID, seq), NetworkID: netID, Seq: seq, OccurredAt: t0,
++		ActorType: domain.ActorSystem, Action: "storetest", TargetType: "network", TargetID: netID,
++		PrevHash: fmt.Sprintf("h%d", seq-1), Hash: fmt.Sprintf("h%d", seq)}
++}
++
++func auditAppendAndHead(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	view(t, s, func(tx store.Tx) error {
++		seq, _, err := tx.LastAudit(f.net)
++		if err == nil && seq != 0 {
++			t.Errorf("LastAudit of an empty chain = %d", seq)
++		}
++		_, _, found, err2 := tx.AuditHead(f.net)
++		if err2 == nil && found {
++			t.Error("AuditHead found on an empty chain")
++		}
++		return errors.Join(err, err2)
++	})
++	for seq := int64(1); seq <= 2; seq++ {
++		must(t, s.Update(ctx, func(tx store.Tx) error { return tx.InsertAudit(audit(f.net, seq)) }))
++	}
++	dup := audit(f.net, 2)
++	dup.ID = "other-id"
++	if err := s.Update(ctx, func(tx store.Tx) error { return tx.InsertAudit(dup) }); err == nil {
++		t.Error("a second event with an existing sequence number was stored")
++	}
++	view(t, s, func(tx store.Tx) error {
++		seq, hash, err := tx.LastAudit(f.net)
++		if err != nil {
++			return err
++		}
++		hs, hh, found, err := tx.AuditHead(f.net)
++		if err != nil {
++			return err
++		}
++		if seq != 2 || hash != "h2" || !found || hs != 2 || hh != "h2" {
++			t.Errorf("last = (%d,%s), head = (%d,%s,%v), want 2/h2 for both (SA-09)", seq, hash, hs, hh, found)
++		}
++		evs, err := tx.ListAudit(f.net, store.AuditFilter{})
++		if err != nil {
++			return err
++		}
++		if len(evs) != 2 || evs[0].Seq >= evs[1].Seq {
++			t.Errorf("ListAudit = %d events (want 2, ascending seq)", len(evs))
++		}
++		return nil
++	})
++}
++
++func idempotencyRecords(t *testing.T, s store.Store) {
++	a := seed(t, s, "a")
++	b := seed(t, s, "b")
++	rec := store.IdemRecord{NetworkID: a.net, ActorID: a.memA, Operation: "propose", Key: "k1",
++		Fingerprint: "fp", ResultRef: "r1", CreatedAt: t0, ExpiresAt: t0.Add(24 * time.Hour)}
++	view(t, s, func(tx store.Tx) error {
++		r, err := tx.GetIdem(a.net, a.memA, "propose", "k1")
++		if err == nil && r != nil {
++			t.Error("GetIdem of an absent key returned a record")
++		}
++		return err
++	})
++	must(t, s.Update(ctx, func(tx store.Tx) error { return tx.PutIdem(rec) }))
++	again := rec
++	again.ResultRef = "r2"
++	wantCode(t, "second PutIdem", s.Update(ctx, func(tx store.Tx) error { return tx.PutIdem(again) }), domain.CodeConflict)
++	view(t, s, func(tx store.Tx) error {
++		r, err := tx.GetIdem(a.net, a.memA, "propose", "k1")
++		if err != nil {
++			return err
++		}
++		if r == nil || r.ResultRef != "r1" || r.Fingerprint != "fp" || !r.ExpiresAt.Equal(rec.ExpiresAt) {
++			t.Errorf("GetIdem = %+v, want the first record", r)
++		}
++		other, err := tx.GetIdem(b.net, a.memA, "propose", "k1")
++		if err == nil && other != nil {
++			t.Error("an idempotency record is visible from another network")
++		}
++		return err
++	})
++	must(t, s.Update(ctx, func(tx store.Tx) error { return tx.DeleteIdem(a.net, a.memA, "propose", "k1") }))
++	view(t, s, func(tx store.Tx) error {
++		r, err := tx.GetIdem(a.net, a.memA, "propose", "k1")
++		if err == nil && r != nil {
++			t.Error("deleted idempotency record still returned")
++		}
++		return err
++	})
++}
++
++// concurrentUnitsSerialise: N concurrent read-check-write units against one
++// account whose bound admits only k of them commit exactly k (ARC-006), and
++// concurrent counter increments never repeat a value.
++func concurrentUnitsSerialise(t *testing.T, s store.Store) {
++	f := seed(t, s, "a")
++	const n, step, floor = 50, 10, -100 // floor/step = 10 may pass
++	var wg sync.WaitGroup
++	var mu sync.Mutex
++	committed, seqs := 0, map[int64]bool{}
++	errs := make(chan error, n)
++	for i := 0; i < n; i++ {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			var seq int64
++			err := s.Update(ctx, func(tx store.Tx) error {
++				acc, err := tx.GetAccount(f.net, f.accA)
++				if err != nil {
++					return err
++				}
++				if acc.Balance-step < floor {
++					return errAbort
++				}
++				if seq, err = tx.NextLedgerSeq(f.net); err != nil {
++					return err
++				}
++				if err := tx.AddBalance(f.net, f.accA, -step); err != nil {
++					return err
++				}
++				return tx.AddBalance(f.net, f.sys, step)
++			})
++			switch {
++			case err == nil:
++				mu.Lock()
++				committed++
++				if seqs[seq] {
++					errs <- fmt.Errorf("ledger sequence %d handed out twice", seq)
++				}
++				seqs[seq] = true
++				mu.Unlock()
++			case errors.Is(err, errAbort):
++			default:
++				errs <- err
++			}
++		}()
++	}
++	wg.Wait()
++	close(errs)
++	for err := range errs {
++		t.Error(err)
++	}
++	if want := -floor / step; committed != want {
++		t.Errorf("committed %d units, want exactly %d", committed, want)
++	}
++	if got := balance(t, s, f.net, f.accA); got != floor {
++		t.Errorf("balance = %d, want %d", got, floor)
++	}
++	if got := balance(t, s, f.net, f.sys); got != -floor {
++		t.Errorf("system balance = %d, want %d (postings are equal and opposite)", got, -floor)
++	}
++}
++
++func timestampsAreUTCMillis(t *testing.T, s store.Store) {
++	at := time.Date(2026, 3, 29, 1, 30, 0, 123456789, time.FixedZone("CET", 3600))
++	must(t, s.Update(ctx, func(tx store.Tx) error {
++		if err := tx.InsertNetwork(&domain.Network{ID: "tz", Name: "tz", Slug: "tz", Status: domain.NetworkActive, CreatedAt: at}); err != nil {
++			return err
++		}
++		return tx.AppendPolicy("tz", 1, domain.DefaultPolicy(), "", "", at)
++	}))
++	view(t, s, func(tx store.Tx) error {
++		n, err := tx.GetNetwork("tz")
++		if err != nil {
++			return err
++		}
++		want := at.UTC().Truncate(time.Millisecond)
++		if !n.CreatedAt.Equal(want) || n.CreatedAt.Location() != time.UTC {
++			t.Errorf("CreatedAt = %v, want %v in UTC (DAT-017)", n.CreatedAt, want)
++		}
++		return nil
++	})
++}
+-- 
+2.43.0
+
+
+From a649c1c25ba6ffb208001e2e801954fd3868e049 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:47:39 +0000
+Subject: [PATCH 3/4] refactor(cmd): reach the store only through service and
+ schema.go (ARC-002)
+
+- service.OperatorNetworks (system actor only) and service.CheckStorage
+  (OPS-011 pragmas; fails for a store it cannot inspect) replace the CLI's
+  store.ListNetworks and store.CheckPragmas calls in commands.go/serve.go.
+- cmd/circula/schema.go is the storage boundary: openStore, openDatabase,
+  storeOptions, schema version helpers, sync constants. commands.go,
+  config.go, ops_http.go and util.go no longer import internal/store.
+- depguard: "adapters" denies internal/store, modernc.org/sqlite and
+  database/sql in internal/api and internal/web (five documented
+  value-type exceptions); "cmd" denies internal/store and the driver
+  except schema.go, serve.go and snapshot.go; "storetest" keeps the
+  contract suite driver-free.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ .golangci.yml                     | 38 ++++++++++++++++++
+ cmd/circula/commands.go           | 53 +++++++------------------
+ cmd/circula/config.go             |  8 ++--
+ cmd/circula/ops_http.go           | 10 ++---
+ cmd/circula/schema.go             | 63 ++++++++++++++++++++++++++++-
+ cmd/circula/serve.go              |  8 ++--
+ cmd/circula/util.go               |  7 ----
+ internal/service/ops_read.go      | 61 ++++++++++++++++++++++++++++
+ internal/service/ops_read_test.go | 66 +++++++++++++++++++++++++++++++
+ 9 files changed, 251 insertions(+), 63 deletions(-)
+ create mode 100644 internal/service/ops_read.go
+ create mode 100644 internal/service/ops_read_test.go
+
+diff --git a/.golangci.yml b/.golangci.yml
+index fe47ccf..6ea637a 100644
+--- a/.golangci.yml
++++ b/.golangci.yml
+@@ -31,6 +31,44 @@ linters:
+           deny:
+             - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: service must not depend on the transport layers}
+             - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: service must not depend on the transport layers}
++        # ARC-002: the HTML and JSON adapters reach state only through internal/service.
++        adapters:
++          files:
++            - "**/internal/api/**"
++            - "**/internal/web/**"
++            - "!$test"
++            # Documented exceptions, value types only: these files name store.Challenge,
++            # store.DisputeResponse, store.ReReview*, store.Notification and store.Report,
++            # which the service returns as-is. They read and write nothing. Remove each line
++            # once those types move to internal/domain.
++            - "!**/internal/api/h_closure.go"
++            - "!**/internal/api/h_dispute_review.go"
++            - "!**/internal/api/h_notify.go"
++            - "!**/internal/api/h_reports.go"
++            - "!**/internal/web/h_dispute_review.go"
++          deny:
++            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: adapters call internal/service only (ARC-002)}
++            - {pkg: modernc.org/sqlite, desc: adapters call internal/service only (ARC-002)}
++            - {pkg: database/sql, desc: adapters call internal/service only (ARC-002)}
++        # ARC-002: operator tooling reads and writes through internal/service. Only the
++        # composition root and the storage boundary may name the store package.
++        cmd:
++          files:
++            - "**/cmd/**"
++            - "!$test"
++            - "!**/cmd/circula/schema.go"   # storage boundary: open and wire the store, schema inspection, raw handle for snapshots
++            - "!**/cmd/circula/serve.go"    # composition root: store, audit sink and job runner wiring
++            - "!**/cmd/circula/snapshot.go" # backup tooling; its store.ListNetworks call is to move to service.OperatorNetworks
++          deny:
++            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: "operator tooling goes through internal/service or the helpers in cmd/circula/schema.go (ARC-002)"}
++            - {pkg: modernc.org/sqlite, desc: "operator tooling goes through internal/service or the helpers in cmd/circula/schema.go (ARC-002)"}
++        # ARC-004: the repository contract suite is written against store.Store and store.Tx only.
++        storetest:
++          files: ["**/internal/storetest/**"]
++          deny:
++            - {pkg: modernc.org/sqlite, desc: the contract suite must not depend on a storage driver (ARC-004)}
++            - {pkg: database/sql, desc: the contract suite must not depend on a storage driver (ARC-004)}
++            - {pkg: github.com/djshellshoxxx/circula/internal/service, desc: the contract suite tests repositories, not services (ARC-004)}
+ 
+     errcheck:
+       # Best-effort operator output; a failed write to stdout or stderr has no recovery path.
+diff --git a/cmd/circula/commands.go b/cmd/circula/commands.go
+index 5767c33..da27778 100644
+--- a/cmd/circula/commands.go
++++ b/cmd/circula/commands.go
+@@ -15,41 +15,12 @@ import (
+ 
+ 	"github.com/djshellshoxxx/circula/internal/domain"
+ 	"github.com/djshellshoxxx/circula/internal/service"
+-	"github.com/djshellshoxxx/circula/internal/store"
+ )
+ 
+ // operatorPasswordEnv carries the operator password for admin create-operator.
+ // The password is never accepted as a command-line argument.
+ const operatorPasswordEnv = envPrefix + "OPERATOR_PASSWORD"
+ 
+-// openDatabase opens the configured database after checking that it exists
+-// and has no pending migrations. Commands that must not migrate use it.
+-func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Service, error) {
+-	state, err := inspectSchema(ctx, cfg.Database)
+-	if err != nil {
+-		return nil, nil, err
+-	}
+-	if !state.Exists {
+-		return nil, nil, fmt.Errorf("database %s does not exist", cfg.Database)
+-	}
+-	if err := state.CheckNotNewer(); err != nil {
+-		return nil, nil, err
+-	}
+-	if state.Pending() > 0 {
+-		return nil, nil, fmt.Errorf("database has %d pending migration(s); run `circula migrate` first", state.Pending())
+-	}
+-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
+-	if err != nil {
+-		return nil, nil, err
+-	}
+-	svc, err := newService(st, cfg)
+-	if err != nil {
+-		_ = st.Close()
+-		return nil, nil, err
+-	}
+-	return st, svc, nil
+-}
+-
+ // resolveFlags parses a command's flags with the shared settings and returns
+ // the configuration. done reports that the caller must return code.
+ func resolveFlags(name string, args []string, stderr io.Writer, extra func(*flag.FlagSet)) (cfg *Config, rest []string, code int, done bool) {
+@@ -136,22 +107,22 @@ func cmdMigrate(ctx context.Context, args []string, stdout, stderr io.Writer) in
+ 		fmt.Fprintf(stderr, "circula: migrate: %v\n", err)
+ 		return exitFailure
+ 	}
+-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
++	st, err := openStore(ctx, cfg.Database, cfg)
+ 	if err != nil {
+ 		fmt.Fprintf(stderr, "circula: migrate failed (database left at its previous version): %v\n", err)
+ 		return exitFailure
+ 	}
+ 	defer func() { _ = st.Close() }()
+-	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
++	svc, err := newService(st, cfg)
++	if err != nil {
+ 		fmt.Fprintf(stderr, "circula: %v\n", err)
+ 		return exitFailure
+ 	}
+-	fmt.Fprintf(stdout, "migrated to v%d\n", store.SchemaVersion())
+-	svc, err := newService(st, cfg)
+-	if err != nil {
++	if err := svc.CheckStorage(ctx); err != nil {
+ 		fmt.Fprintf(stderr, "circula: %v\n", err)
+ 		return exitFailure
+ 	}
++	fmt.Fprintf(stdout, "migrated to v%d\n", binarySchemaVersion())
+ 	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "migrate-verify", "")
+ 	if err != nil {
+ 		fmt.Fprintf(stderr, "circula: verify after migration: %v\n", err)
+@@ -260,8 +231,8 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
+ 			"or pass -allow-unsigned if you made and stored this file yourself (SA2-11)")
+ 		return exitFailure
+ 	}
+-	if m.SchemaVersion > store.SchemaVersion() {
+-		fmt.Fprintf(stderr, "circula: restore refused: backup schema v%d is newer than this binary (v%d)\n", m.SchemaVersion, store.SchemaVersion())
++	if m.SchemaVersion > binarySchemaVersion() {
++		fmt.Fprintf(stderr, "circula: restore refused: backup schema v%d is newer than this binary (v%d)\n", m.SchemaVersion, binarySchemaVersion())
+ 		return exitFailure
+ 	}
+ 
+@@ -346,11 +317,15 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
+ 	// Swap with a way back (CMD-08): the current database is moved aside, not
+ 	// deleted, until the restored one has opened and passed its checks.
+ 	if err := swapDatabase(ctx, cfg.Database, partial, state.Exists, func(ctx context.Context) error {
+-		st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
++		st, err := openStore(ctx, cfg.Database, cfg)
+ 		if err != nil {
+ 			return fmt.Errorf("opening the restored database: %w", err)
+ 		}
+-		if err := store.CheckPragmas(ctx, st.DB()); err != nil {
++		svc, err := newService(st, cfg)
++		if err == nil {
++			err = svc.CheckStorage(ctx)
++		}
++		if err != nil {
+ 			_ = st.Close()
+ 			return fmt.Errorf("checking the restored database: %w", err)
+ 		}
+@@ -447,7 +422,7 @@ func recordRestoreAudit(ctx context.Context, cfg *Config, m *Manifest) error {
+ 		return err
+ 	}
+ 	defer func() { _ = st.Close() }()
+-	nets, err := store.ListNetworks(ctx, st.DB(), "")
++	nets, err := svc.OperatorNetworks(ctx, domain.SystemActor("restore"), "")
+ 	if err != nil {
+ 		return err
+ 	}
+diff --git a/cmd/circula/config.go b/cmd/circula/config.go
+index 9832928..5a8abc1 100644
+--- a/cmd/circula/config.go
++++ b/cmd/circula/config.go
+@@ -18,8 +18,6 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"time"
+-
+-	"github.com/djshellshoxxx/circula/internal/store"
+ )
+ 
+ // envPrefix is prepended to every upper-cased setting key to form its
+@@ -114,7 +112,7 @@ type Config struct {
+ 	RequireMFAAdmins    bool
+ 	MaxBodyBytes        int64
+ 	RequestTimeout      time.Duration
+-	Synchronous         string // store.SyncNormal or store.SyncFull
++	Synchronous         string // syncNormal or syncFull
+ 	LogLevel            slog.Level
+ 	LogFormat           string
+ 	CookieSecure        bool
+@@ -342,9 +340,9 @@ func buildConfig(vals map[string]resolved, forServe bool) (*Config, error) {
+ 	cfg.RequestTimeout = parseDuration(get("request-timeout"), "request-timeout", fail, time.Second, 10*time.Minute)
+ 	switch strings.ToLower(get("db-synchronous")) {
+ 	case "normal":
+-		cfg.Synchronous = store.SyncNormal
++		cfg.Synchronous = syncNormal
+ 	case "full":
+-		cfg.Synchronous = store.SyncFull
++		cfg.Synchronous = syncFull
+ 	default:
+ 		fail("db-synchronous", "must be normal or full")
+ 	}
+diff --git a/cmd/circula/ops_http.go b/cmd/circula/ops_http.go
+index 0b3f05f..790d477 100644
+--- a/cmd/circula/ops_http.go
++++ b/cmd/circula/ops_http.go
+@@ -17,8 +17,6 @@ import (
+ 	"strings"
+ 	"sync/atomic"
+ 	"time"
+-
+-	"github.com/djshellshoxxx/circula/internal/store"
+ )
+ 
+ // opsServer wires the HTTP edge: request policy (ID, body limit, deadline),
+@@ -149,11 +147,11 @@ func (o *opsServer) probeDB(ctx context.Context) error {
+ 	if err := o.db.PingContext(ctx); err != nil {
+ 		return err
+ 	}
+-	cur, err := store.AppliedVersion(ctx, o.db)
++	cur, err := appliedSchemaVersion(ctx, o.db)
+ 	if err != nil {
+ 		return err
+ 	}
+-	if cur != store.SchemaVersion() {
++	if cur != binarySchemaVersion() {
+ 		return errSchemaMismatch
+ 	}
+ 	return nil
+@@ -239,11 +237,11 @@ func (o *opsServer) serveMetrics(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	now := time.Now().UTC()
+-	cur, _ := store.AppliedVersion(r.Context(), o.db)
++	cur, _ := appliedSchemaVersion(r.Context(), o.db)
+ 	dyn := dynamicMetrics{
+ 		version:    version,
+ 		schemaCur:  cur,
+-		schemaPend: store.SchemaVersion() - cur,
++		schemaPend: binarySchemaVersion() - cur,
+ 		dbBytes:    fileSize(o.cfg.Database),
+ 		walBytes:   fileSize(o.cfg.Database + "-wal"),
+ 		now:        now,
+diff --git a/cmd/circula/schema.go b/cmd/circula/schema.go
+index 38ba827..9fc6c49 100644
+--- a/cmd/circula/schema.go
++++ b/cmd/circula/schema.go
+@@ -3,16 +3,28 @@ package main
+ import (
+ 	"context"
+ 	"database/sql"
++	"fmt"
+ 
++	"github.com/djshellshoxxx/circula/internal/service"
+ 	"github.com/djshellshoxxx/circula/internal/store"
+ )
+ 
+-// All SQLite-specific inspection lives in internal/store (CMD-03); these are
+-// the names the commands use.
++// This file is the storage boundary of the command (CMD-03, ARC-002). All
++// SQLite-specific inspection lives in internal/store; these are the names the
++// commands use. Besides serve.go (composition root) and snapshot.go (backup
++// tooling), it is the only file here allowed to import internal/store
++// (depguard rule "cmd" in .golangci.yml). Everything else the commands read or
++// change goes through internal/service.
+ 
+ // schemaState describes the on-disk schema relative to this binary.
+ type schemaState = store.SchemaState
+ 
++// Synchronous levels accepted by the db-synchronous setting (SA2-20).
++const (
++	syncNormal = store.SyncNormal
++	syncFull   = store.SyncFull
++)
++
+ // inspectSchema reads the schema state of the file at path without migrating.
+ func inspectSchema(ctx context.Context, path string) (schemaState, error) {
+ 	return store.InspectSchema(ctx, path)
+@@ -21,3 +33,50 @@ func inspectSchema(ctx context.Context, path string) (schemaState, error) {
+ // openRaw opens a SQLite file without applying migrations (inspection and
+ // online snapshots only).
+ func openRaw(path string) (*sql.DB, error) { return store.OpenRaw(path) }
++
++// binarySchemaVersion is the highest schema version this binary knows.
++func binarySchemaVersion() int { return store.SchemaVersion() }
++
++// appliedSchemaVersion reads the schema version recorded in db.
++func appliedSchemaVersion(ctx context.Context, db *sql.DB) (int, error) {
++	return store.AppliedVersion(ctx, db)
++}
++
++// storeOptions maps the configuration to store.Options (SA2-20).
++func storeOptions(cfg *Config) store.Options {
++	return store.Options{Synchronous: cfg.Synchronous}
++}
++
++// openStore opens the database at path, applying pending migrations (the
++// storage migration tool, ARC-002), with the configured options.
++func openStore(ctx context.Context, path string, cfg *Config) (*store.SQLite, error) {
++	return store.OpenWith(ctx, path, storeOptions(cfg))
++}
++
++// openDatabase opens the configured database after checking that it exists
++// and has no pending migrations. Commands that must not migrate use it.
++func openDatabase(ctx context.Context, cfg *Config) (*store.SQLite, *service.Service, error) {
++	state, err := inspectSchema(ctx, cfg.Database)
++	if err != nil {
++		return nil, nil, err
++	}
++	if !state.Exists {
++		return nil, nil, fmt.Errorf("database %s does not exist", cfg.Database)
++	}
++	if err := state.CheckNotNewer(); err != nil {
++		return nil, nil, err
++	}
++	if state.Pending() > 0 {
++		return nil, nil, fmt.Errorf("database has %d pending migration(s); run `circula migrate` first", state.Pending())
++	}
++	st, err := openStore(ctx, cfg.Database, cfg)
++	if err != nil {
++		return nil, nil, err
++	}
++	svc, err := newService(st, cfg)
++	if err != nil {
++		_ = st.Close()
++		return nil, nil, err
++	}
++	return st, svc, nil
++}
+diff --git a/cmd/circula/serve.go b/cmd/circula/serve.go
+index 02b48da..84de22d 100644
+--- a/cmd/circula/serve.go
++++ b/cmd/circula/serve.go
+@@ -129,7 +129,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
+ 	} else if tightened {
+ 		logger.Warn("database file was readable by group or others; permissions restricted to the owner", "file", cfg.Database)
+ 	}
+-	st, err := store.OpenWith(ctx, cfg.Database, storeOptions(cfg))
++	st, err := openStore(ctx, cfg.Database, cfg)
+ 	if err != nil {
+ 		m.migrationRan("failed")
+ 		return err
+@@ -147,13 +147,13 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
+ 		m.migrationRan("applied")
+ 		logger.Info("migrations applied", "from", state.Applied, "to", state.Known)
+ 	}
+-	if err := store.CheckPragmas(ctx, st.DB()); err != nil {
+-		return err
+-	}
+ 	svc, err := newService(st, cfg)
+ 	if err != nil {
+ 		return err
+ 	}
++	if err := svc.CheckStorage(ctx); err != nil {
++		return err
++	}
+ 	svc.SetObserver(m)
+ 
+ 	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "startup-verify", "")
+diff --git a/cmd/circula/util.go b/cmd/circula/util.go
+index 38a3814..78038f0 100644
+--- a/cmd/circula/util.go
++++ b/cmd/circula/util.go
+@@ -10,8 +10,6 @@ import (
+ 	"os/signal"
+ 	"runtime"
+ 	"syscall"
+-
+-	"github.com/djshellshoxxx/circula/internal/store"
+ )
+ 
+ // copyFileSync copies src to dst and flushes dst to stable storage before returning.
+@@ -103,8 +101,3 @@ func secureDatabase(path string) (tightened bool, err error) {
+ 	}
+ 	return tightened, nil
+ }
+-
+-// storeOptions maps the configuration to store.Options (SA2-20).
+-func storeOptions(cfg *Config) store.Options {
+-	return store.Options{Synchronous: cfg.Synchronous}
+-}
+diff --git a/internal/service/ops_read.go b/internal/service/ops_read.go
+new file mode 100644
+index 0000000..f7b701d
+--- /dev/null
++++ b/internal/service/ops_read.go
+@@ -0,0 +1,61 @@
++package service
++
++import (
++	"context"
++	"database/sql"
++	"errors"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/store"
++)
++
++// Read-only methods for operator tooling (ARC-002): the CLI and its jobs ask
++// the service instead of querying the database themselves.
++
++// NetworkRef identifies a network to operator tooling.
++type NetworkRef struct{ ID, Slug string }
++
++// OperatorNetworks lists every network in id order, or only the network whose
++// id or slug equals filter when filter is not empty. It is reserved to the
++// system actor (operator CLI and scheduled jobs) and returns ids and slugs
++// only, so tooling can address each network through the service.
++func (s *Service) OperatorNetworks(ctx context.Context, actor domain.Actor, filter string) ([]NetworkRef, error) {
++	if err := requireSystem(actor); err != nil {
++		return nil, err
++	}
++	var out []NetworkRef
++	err := s.st.View(ctx, func(tx store.Tx) error {
++		ids, err := tx.ListNetworkIDs()
++		if err != nil {
++			return err
++		}
++		for _, id := range ids {
++			n, err := tx.GetNetwork(id)
++			if err != nil {
++				return err
++			}
++			if filter == "" || filter == n.ID || filter == n.Slug {
++				out = append(out, NetworkRef{ID: n.ID, Slug: n.Slug})
++			}
++		}
++		return nil
++	})
++	return out, err
++}
++
++// sqlBacked is implemented by stores built on database/sql (the SQLite store).
++type sqlBacked interface{ DB() *sql.DB }
++
++// errStorageUncheckable is returned when the store exposes no settings to check.
++var errStorageUncheckable = errors.New("storage settings cannot be checked for this store")
++
++// CheckStorage verifies the storage settings the design depends on (OPS-011):
++// WAL journal mode and foreign-key enforcement. It reads settings only. A
++// store whose settings cannot be read fails the check rather than passing it.
++func (s *Service) CheckStorage(ctx context.Context) error {
++	b, ok := s.st.(sqlBacked)
++	if !ok {
++		return errStorageUncheckable
++	}
++	return store.CheckPragmas(ctx, b.DB())
++}
+diff --git a/internal/service/ops_read_test.go b/internal/service/ops_read_test.go
+new file mode 100644
+index 0000000..0d0b689
+--- /dev/null
++++ b/internal/service/ops_read_test.go
+@@ -0,0 +1,66 @@
++package service_test
++
++import (
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// ARC-002: the operator CLI lists networks through the service, not by
++// querying the database; only the system actor may.
++func TestOperatorNetworks(t *testing.T) {
++	e := tu.NewEnv(t)
++	founder := e.Person("founder")
++	a, _ := e.Network(founder, "alpha", nil)
++	b, _ := e.Network(founder, "beta", nil)
++	sys := domain.SystemActor("test")
++
++	all, err := e.Svc.OperatorNetworks(e.Ctx, sys, "")
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := []service.NetworkRef{{ID: a.ID, Slug: "alpha"}, {ID: b.ID, Slug: "beta"}}
++	if a.ID > b.ID {
++		want[0], want[1] = want[1], want[0]
++	}
++	if len(all) != 2 || all[0] != want[0] || all[1] != want[1] {
++		t.Fatalf("OperatorNetworks = %+v, want %+v (id order)", all, want)
++	}
++	for _, f := range []string{"beta", b.ID} {
++		got, err := e.Svc.OperatorNetworks(e.Ctx, sys, f)
++		if err != nil || len(got) != 1 || got[0].ID != b.ID {
++			t.Errorf("filter %q = %+v, %v; want only beta", f, got, err)
++		}
++	}
++	if got, err := e.Svc.OperatorNetworks(e.Ctx, sys, "nope"); err != nil || len(got) != 0 {
++		t.Errorf("unknown filter = %+v, %v; want none", got, err)
++	}
++	if _, err := e.Svc.OperatorNetworks(e.Ctx, founder, ""); domain.CodeOf(err) != domain.CodeForbidden {
++		t.Errorf("member actor: err = %v, want forbidden", err)
++	}
++}
++
++// ARC-002 / OPS-011: the storage settings check runs through the service.
++func TestCheckStorage(t *testing.T) {
++	e := tu.NewEnv(t)
++	if err := e.Svc.CheckStorage(e.Ctx); err != nil {
++		t.Fatalf("CheckStorage on a WAL store: %v", err)
++	}
++	// Foreign keys off on every pooled connection: the check fails.
++	db := e.Store.DB()
++	db.SetMaxOpenConns(1)
++	if _, err := db.ExecContext(e.Ctx, "PRAGMA foreign_keys = OFF"); err != nil {
++		t.Fatal(err)
++	}
++	if err := e.Svc.CheckStorage(e.Ctx); err == nil {
++		t.Error("CheckStorage passed with foreign keys off")
++	}
++	// A store that cannot be inspected is refused, not waved through.
++	opaque := tu.NewEnvWith(t, func(s store.Store) store.Store { return tu.NewFaultStore(s) })
++	if err := opaque.Svc.CheckStorage(opaque.Ctx); err == nil {
++		t.Error("CheckStorage passed for a store whose settings cannot be read")
++	}
++}
+-- 
+2.43.0
+
+
+From cf627917522cab7cb17c43f1b517f0017eb1b65b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 08:55:46 +0000
+Subject: [PATCH 4/4] test(api): route inventory equals a reviewed
+ authorization table (QA-012, ARC-008)
+
+internal/api/testdata/route_authz.txt lists every HTTP route (86 API,
+107 HTML, 5 operational) with its gate: public, person, member,
+reviewer, admin (ops: mount, health). There is no operator gate.
+
+- TestRouteInventoryMatchesAuthorizationTable reads the registrations
+  from source (api R(...), web s.mux.HandleFunc, cmd/circula ops mux);
+  a route missing from the table, an unregistered row, a non-constant
+  pattern or a gate the registration contradicts (web auth/netH/adminH,
+  api noNet, /api/v1/admin/* = admin) fails.
+- TestRouteAuthorizationMatrix sends every row as anonymous (API 401,
+  web 303 /login), as a person of no network (404 not-found) and as a
+  plain member on reviewer/admin rows (API 4xx, web 403); every API row
+  must resolve to its own mux pattern; no 5xx.
+- TestNoOperatorScopedHTTPRoute: api/web never build a system actor or
+  set Actor.System, ops_http.go does not import the service, tokens and
+  sessions authenticate as the person.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KtKj8muU2spQUTuUvETLSD
+---
+ internal/api/route_inventory_test.go  | 587 ++++++++++++++++++++++++++
+ internal/api/testdata/route_authz.txt | 224 ++++++++++
+ 2 files changed, 811 insertions(+)
+ create mode 100644 internal/api/route_inventory_test.go
+ create mode 100644 internal/api/testdata/route_authz.txt
+
+diff --git a/internal/api/route_inventory_test.go b/internal/api/route_inventory_test.go
+new file mode 100644
+index 0000000..4850708
+--- /dev/null
++++ b/internal/api/route_inventory_test.go
+@@ -0,0 +1,587 @@
++package api
++
++import (
++	"bufio"
++	"go/ast"
++	"go/parser"
++	"go/token"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"sort"
++	"strconv"
++	"strings"
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/httpx"
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/testutil"
++	"github.com/djshellshoxxx/circula/internal/web"
++)
++
++// QA-012 / ARC-008 / SEC-009: every HTTP route the binary serves is listed in
++// the reviewed authorization table testdata/route_authz.txt with the least
++// principal allowed through. The inventory is read from the registration
++// calls in the source (JSON API, HTML interface and the operational mux in
++// cmd/circula); a route missing from the table, a table row that is not
++// registered, or a gate that disagrees with the registration fails the build.
++// TestRouteAuthorizationMatrix then sends every route as anonymous, as a
++// person of no network and as a plain member, and fails on any unexpected
++// allow.
++
++const authzTablePath = "testdata/route_authz.txt"
++
++// Gates of the table, per surface. There is deliberately no operator gate:
++// the platform operator has no HTTP route (ARC-008, API-019).
++var authzGates = map[string]map[string]bool{
++	"api": {"public": true, "person": true, "member": true, "reviewer": true, "admin": true},
++	"web": {"public": true, "person": true, "member": true, "reviewer": true, "admin": true},
++	"ops": {"mount": true, "health": true},
++}
++
++// routeKey identifies a route: surface, method ("*" for any) and path pattern.
++type routeKey struct{ surface, method, path string }
++
++func (k routeKey) String() string { return k.surface + " " + k.method + " " + k.path }
++
++// scannedRoute is one registration found in the source.
++type scannedRoute struct {
++	routeKey
++	derived string // gate implied by the registration itself
++	pos     string
++}
++
++type authzRow struct {
++	routeKey
++	gate string
++	line int
++}
++
++func splitRoutePattern(p string) (method, path string) {
++	if m, rest, ok := strings.Cut(p, " "); ok && !strings.HasPrefix(p, "/") {
++		return m, strings.TrimSpace(rest)
++	}
++	return "*", p
++}
++
++// constStringExpr evaluates a string constant expression: literals, "+" and
++// package-level string constants.
++func constStringExpr(e ast.Expr, consts map[string]string) (string, bool) {
++	switch x := e.(type) {
++	case *ast.BasicLit:
++		if x.Kind != token.STRING {
++			return "", false
++		}
++		s, err := strconv.Unquote(x.Value)
++		return s, err == nil
++	case *ast.Ident:
++		s, ok := consts[x.Name]
++		return s, ok
++	case *ast.ParenExpr:
++		return constStringExpr(x.X, consts)
++	case *ast.BinaryExpr:
++		if x.Op != token.ADD {
++			return "", false
++		}
++		a, ok1 := constStringExpr(x.X, consts)
++		b, ok2 := constStringExpr(x.Y, consts)
++		return a + b, ok1 && ok2
++	}
++	return "", false
++}
++
++// parseGoDir parses the non-test Go files of dir and collects its package-level
++// string constants.
++func parseGoDir(t *testing.T, fset *token.FileSet, dir string) ([]*ast.File, map[string]string) {
++	t.Helper()
++	paths, err := filepath.Glob(filepath.Join(dir, "*.go"))
++	if err != nil || len(paths) == 0 {
++		t.Fatalf("no Go files in %s: %v", dir, err)
++	}
++	var files []*ast.File
++	consts := map[string]string{}
++	for _, p := range paths {
++		if strings.HasSuffix(p, "_test.go") {
++			continue
++		}
++		f, err := parser.ParseFile(fset, p, nil, parser.SkipObjectResolution)
++		if err != nil {
++			t.Fatal(err)
++		}
++		files = append(files, f)
++		for _, d := range f.Decls {
++			g, ok := d.(*ast.GenDecl)
++			if !ok || g.Tok != token.CONST {
++				continue
++			}
++			for _, sp := range g.Specs {
++				vs := sp.(*ast.ValueSpec)
++				for i, n := range vs.Names {
++					if i < len(vs.Values) {
++						if s, ok := constStringExpr(vs.Values[i], consts); ok {
++							consts[n.Name] = s
++						}
++					}
++				}
++			}
++		}
++	}
++	return files, consts
++}
++
++func routeCallee(fun ast.Expr) (recv, name string) {
++	switch f := fun.(type) {
++	case *ast.Ident:
++		return "", f.Name
++	case *ast.SelectorExpr:
++		switch x := f.X.(type) {
++		case *ast.Ident:
++			return x.Name, f.Sel.Name
++		case *ast.SelectorExpr:
++			return x.Sel.Name, f.Sel.Name
++		}
++		return "?", f.Sel.Name
++	}
++	return "", ""
++}
++
++// routePlumbing are the registration calls that forward a pattern held in a
++// variable; every other registration must use a constant pattern.
++var routePlumbing = map[string]bool{
++	"api/route.go:add":     true, // s.mux.HandleFunc(rt.pattern, s.wrap(rt))
++	"api/routes.go:routes": true, // R's body: s.add(rt)
++}
++
++// scanRoutes lists the routes registered by the non-test files of dir.
++func scanRoutes(t *testing.T, surface, dir string) []scannedRoute {
++	t.Helper()
++	fset := token.NewFileSet()
++	files, consts := parseGoDir(t, fset, dir)
++	var out []scannedRoute
++	for _, f := range files {
++		file := filepath.Base(fset.Position(f.Pos()).Filename)
++		for _, d := range f.Decls {
++			site := surface + "/" + file + ":" // package-level declarations (function literals in vars)
++			if fd, ok := d.(*ast.FuncDecl); ok {
++				site += fd.Name.Name
++			}
++			ast.Inspect(d, func(n ast.Node) bool {
++				call, ok := n.(*ast.CallExpr)
++				if !ok || len(call.Args) == 0 {
++					return true
++				}
++				recv, name := routeCallee(call.Fun)
++				isReg := false
++				switch name {
++				case "HandleFunc", "Handle":
++					isReg = true
++					if recv != "mux" {
++						t.Errorf("%s: route registered on %q, not on a mux the inventory reads", fset.Position(call.Pos()), recv)
++						return true
++					}
++				case "R":
++					isReg = recv == "" && surface == "api"
++				case "add":
++					isReg = recv == "s" && surface == "api"
++				}
++				if !isReg {
++					return true
++				}
++				arg := call.Args[0]
++				if cl, ok := arg.(*ast.CompositeLit); ok && name == "add" {
++					arg = nil
++					for _, el := range cl.Elts {
++						if kv, ok := el.(*ast.KeyValueExpr); ok {
++							if k, ok := kv.Key.(*ast.Ident); ok && k.Name == "pattern" {
++								arg = kv.Value
++							}
++						}
++					}
++					if arg == nil {
++						t.Errorf("%s: route literal without a pattern", fset.Position(call.Pos()))
++						return true
++					}
++				}
++				pat, ok := constStringExpr(arg, consts)
++				if !ok {
++					if !routePlumbing[site] {
++						t.Errorf("%s: route pattern is not a constant; the inventory cannot read it (register with a constant pattern)",
++							fset.Position(call.Pos()))
++					}
++					return true
++				}
++				m, p := splitRoutePattern(pat)
++				out = append(out, scannedRoute{routeKey{surface, m, p}, derivedGate(surface, name, p, call), fset.Position(call.Pos()).String()})
++				return true
++			})
++		}
++	}
++	return out
++}
++
++// derivedGate reads the gate the registration itself enforces.
++func derivedGate(surface, name, path string, call *ast.CallExpr) string {
++	switch surface {
++	case "api":
++		if name != "R" {
++			return "public" // the not-found fallback
++		}
++		gate := "member"
++		for _, a := range call.Args[2:] {
++			if id, ok := a.(*ast.Ident); ok {
++				switch id.Name {
++				case "noNet":
++					gate = "person"
++				case "public":
++					return "public"
++				}
++			}
++		}
++		return gate
++	case "web":
++		if len(call.Args) < 2 {
++			return "public"
++		}
++		if c, ok := call.Args[1].(*ast.CallExpr); ok {
++			if _, n := routeCallee(c.Fun); n != "" {
++				switch n {
++				case "auth":
++					return "person"
++				case "netH":
++					return "member"
++				case "adminH":
++					return "admin"
++				}
++			}
++		}
++		return "public"
++	default: // ops
++		if path == "/" || path == "/api/" {
++			return "mount"
++		}
++		return "health"
++	}
++}
++
++// gateMatches reports whether the table's gate is compatible with what the
++// registration enforces. Roles finer than membership are decided by the
++// service (api) or the handler (web reviewer pages).
++func gateMatches(surface, derived, table, path string) bool {
++	if surface == "api" && strings.HasPrefix(path, v1+"/admin/") && table != "admin" {
++		return false
++	}
++	switch derived {
++	case "member":
++		return table == "member" || table == "reviewer" || (table == "admin" && surface == "api")
++	default:
++		return table == derived
++	}
++}
++
++func readAuthzTable(t *testing.T) []authzRow {
++	t.Helper()
++	f, err := os.Open(authzTablePath)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer func() { _ = f.Close() }()
++	var rows []authzRow
++	sc := bufio.NewScanner(f)
++	for n := 1; sc.Scan(); n++ {
++		line := sc.Text()
++		if i := strings.Index(line, "#"); i >= 0 {
++			line = line[:i]
++		}
++		fs := strings.Fields(line)
++		if len(fs) == 0 {
++			continue
++		}
++		if len(fs) != 4 {
++			t.Fatalf("%s:%d: want 4 fields (surface method path gate), got %q", authzTablePath, n, sc.Text())
++		}
++		rows = append(rows, authzRow{routeKey{fs[0], fs[1], fs[2]}, fs[3], n})
++	}
++	if err := sc.Err(); err != nil {
++		t.Fatal(err)
++	}
++	return rows
++}
++
++func routeInventory(t *testing.T) []scannedRoute {
++	t.Helper()
++	var all []scannedRoute
++	all = append(all, scanRoutes(t, "api", ".")...)
++	all = append(all, scanRoutes(t, "web", filepath.Join("..", "web"))...)
++	all = append(all, scanRoutes(t, "ops", filepath.Join("..", "..", "cmd", "circula"))...)
++	return all
++}
++
++func TestRouteInventoryMatchesAuthorizationTable(t *testing.T) {
++	inv := routeInventory(t)
++	rows := readAuthzTable(t)
++	table := map[routeKey]authzRow{}
++	for _, r := range rows {
++		if prev, dup := table[r.routeKey]; dup {
++			t.Errorf("%s:%d: %s already listed on line %d", authzTablePath, r.line, r.routeKey, prev.line)
++		}
++		if !authzGates[r.surface][r.gate] {
++			t.Errorf("%s:%d: %s has gate %q; allowed for %s: %v (there is no operator gate, ARC-008)",
++				authzTablePath, r.line, r.routeKey, r.gate, r.surface, sortedGates(authzGates[r.surface]))
++		}
++		table[r.routeKey] = r
++	}
++	seen := map[routeKey]bool{}
++	for _, s := range inv {
++		if seen[s.routeKey] {
++			t.Errorf("%s: %s registered twice", s.pos, s.routeKey)
++		}
++		seen[s.routeKey] = true
++		r, ok := table[s.routeKey]
++		if !ok {
++			t.Errorf("%s: route %s is missing from %s; add it with its gate after review (QA-012)", s.pos, s.routeKey, authzTablePath)
++			continue
++		}
++		if !gateMatches(s.surface, s.derived, r.gate, s.path) {
++			t.Errorf("%s:%d: %s is listed as %q but its registration enforces %q", authzTablePath, r.line, s.routeKey, r.gate, s.derived)
++		}
++	}
++	for _, r := range rows {
++		if !seen[r.routeKey] {
++			t.Errorf("%s:%d: %s is not registered; remove the row", authzTablePath, r.line, r.routeKey)
++		}
++	}
++	if len(inv) < 150 {
++		t.Errorf("inventory found only %d routes; the scanner is missing registrations", len(inv))
++	}
++}
++
++func sortedGates(m map[string]bool) []string {
++	var out []string
++	for k := range m {
++		out = append(out, k)
++	}
++	sort.Strings(out)
++	return out
++}
++
++// ARC-008: no HTTP route can act as the platform operator. The operator is
++// the system actor (domain.Actor.System), so neither adapter may construct
++// one; and the operational endpoints in cmd/circula cannot reach the service
++// at all, so they can read or change no network data.
++func TestNoOperatorScopedHTTPRoute(t *testing.T) {
++	for _, dir := range []string{".", filepath.Join("..", "web")} {
++		fset := token.NewFileSet()
++		files, _ := parseGoDir(t, fset, dir)
++		for _, f := range files {
++			ast.Inspect(f, func(n ast.Node) bool {
++				switch x := n.(type) {
++				case *ast.SelectorExpr:
++					if x.Sel.Name == "SystemActor" {
++						t.Errorf("%s: an HTTP adapter builds the system (operator) actor", fset.Position(x.Pos()))
++					}
++				case *ast.KeyValueExpr:
++					if k, ok := x.Key.(*ast.Ident); ok && k.Name == "System" {
++						t.Errorf("%s: an HTTP adapter sets Actor.System", fset.Position(x.Pos()))
++					}
++				case *ast.AssignStmt:
++					for _, l := range x.Lhs {
++						if s, ok := l.(*ast.SelectorExpr); ok && s.Sel.Name == "System" {
++							t.Errorf("%s: an HTTP adapter sets Actor.System", fset.Position(x.Pos()))
++						}
++					}
++				}
++				return true
++			})
++		}
++	}
++	fset := token.NewFileSet()
++	f, err := parser.ParseFile(fset, filepath.Join("..", "..", "cmd", "circula", "ops_http.go"), nil, parser.ImportsOnly)
++	if err != nil {
++		t.Fatal(err)
++	}
++	for _, im := range f.Imports {
++		if p, _ := strconv.Unquote(im.Path.Value); strings.HasSuffix(p, "/internal/service") {
++			t.Errorf("cmd/circula/ops_http.go imports %s: the operational endpoints must not reach network data", p)
++		}
++	}
++	for _, r := range readAuthzTable(t) {
++		if r.gate == "health" && r.method != "*" && r.method != http.MethodGet {
++			t.Errorf("%s:%d: operational route %s is not read-only", authzTablePath, r.line, r.routeKey)
++		}
++	}
++	// Every authenticated API caller is a person; tokens and sessions never
++	// yield the system actor.
++	env := testutil.NewEnv(t)
++	who := env.Person("someone")
++	tok, _, err := env.Svc.CreateAPIToken(env.Ctx, who, service.TokenInput{Name: "t", Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}})
++	if err != nil {
++		t.Fatal(err)
++	}
++	a, err := env.Svc.AuthenticateToken(env.Ctx, tok)
++	if err != nil || a.System || a.PersonID != who.PersonID {
++		t.Errorf("token actor = %+v, %v; want the person, never the system actor", a, err)
++	}
++	sess, _, err := env.Svc.Login(env.Ctx, "someone", "correct horse battery")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if a, err := env.Svc.Authenticate(env.Ctx, sess); err != nil || a.System || a.PersonID != who.PersonID {
++		t.Errorf("session actor = %+v, %v; want the person, never the system actor", a, err)
++	}
++}
++
++// concretePath turns a route pattern into a request path.
++func concretePath(path string, vals map[string]string) string {
++	path = strings.ReplaceAll(path, "{$}", "")
++	var b strings.Builder
++	for {
++		i := strings.Index(path, "{")
++		if i < 0 {
++			b.WriteString(path)
++			return b.String()
++		}
++		j := strings.Index(path[i:], "}")
++		b.WriteString(path[:i])
++		name := strings.TrimSuffix(path[i+1:i+j], "...")
++		if v, ok := vals[name]; ok {
++			b.WriteString(v)
++		} else {
++			b.WriteString("x")
++		}
++		path = path[i+j+1:]
++	}
++}
++
++// routeProbe is one principal's expectation for a gate.
++type routeProbe struct {
++	who  string
++	deny func(status int) bool
++	want string
++}
++
++// TestRouteAuthorizationMatrix: anonymous callers, people of no network and
++// plain members are refused on every route the table closes to them, and a
++// refusal for a network the caller does not belong to looks like not-found
++// (QA-012, SEC-009, API-017). Nothing is ever a 5xx.
++func TestRouteAuthorizationMatrix(t *testing.T) {
++	key := []byte("0123456789abcdef0123456789abcdef")
++	env := testutil.NewEnv(t)
++	admin := env.Person("admin")
++	net, _ := env.Network(admin, "acme", nil)
++	alice, _ := env.Member(admin, net, "alice")
++	_, bobM := env.Member(admin, net, "bob")
++	outsider := env.Person("outsider")
++	apiH := NewHandlerWithOptions(env.Svc, Options{CSRFKey: key})
++	webH := web.NewHandlerWith(env.Svc, web.Options{CSRFKey: key})
++	srv := apiH.(*server)
++
++	token := func(a domain.Actor) string {
++		raw, _, err := env.Svc.CreateAPIToken(env.Ctx, a, service.TokenInput{Name: "t", Scopes: []domain.Scope{domain.ScopeRead, domain.ScopeWrite}})
++		if err != nil {
++			t.Fatal(err)
++		}
++		return raw
++	}
++	login := func(name string) string {
++		s, _, err := env.Svc.Login(env.Ctx, name, "correct horse battery")
++		if err != nil {
++			t.Fatal(err)
++		}
++		return s
++	}
++	tokens := map[string]string{"alice": token(alice), "outsider": token(outsider)}
++	sessions := map[string]string{"alice": login("alice"), "outsider": login("outsider")}
++	apiVals := map[string]string{"role": "reviewer"}
++	webVals := map[string]string{"slug": net.Slug}
++
++	is4xx := func(s int) bool { return s >= 400 && s < 500 }
++	api := map[string][]routeProbe{
++		"person":   {{"anonymous", func(s int) bool { return s == 401 }, "401"}},
++		"member":   {{"anonymous", func(s int) bool { return s == 401 }, "401"}, {"outsider", func(s int) bool { return s == 404 }, "404 not-found"}},
++		"reviewer": {{"anonymous", func(s int) bool { return s == 401 }, "401"}, {"outsider", func(s int) bool { return s == 404 }, "404 not-found"}, {"alice", is4xx, "a 4xx refusal"}},
++		"admin":    {{"anonymous", func(s int) bool { return s == 401 }, "401"}, {"outsider", func(s int) bool { return s == 404 }, "404 not-found"}, {"alice", is4xx, "a 4xx refusal"}},
++	}
++	toLogin := func(s int) bool { return s == http.StatusSeeOther }
++	webP := map[string][]routeProbe{
++		"person":   {{"anonymous", toLogin, "303 to /login"}},
++		"member":   {{"anonymous", toLogin, "303 to /login"}, {"outsider", func(s int) bool { return s == 404 }, "404"}},
++		"reviewer": {{"anonymous", toLogin, "303 to /login"}, {"outsider", func(s int) bool { return s == 404 }, "404"}, {"alice", func(s int) bool { return s == 403 }, "403"}},
++		"admin":    {{"anonymous", toLogin, "303 to /login"}, {"outsider", func(s int) bool { return s == 404 }, "404"}, {"alice", func(s int) bool { return s == 403 }, "403"}},
++	}
++	csrf := httpx.CSRF{Key: key}
++	anonSecret := strings.Repeat("a", 32)
++
++	for _, r := range readAuthzTable(t) {
++		switch r.surface {
++		case "api":
++			vals := apiVals
++			if strings.Contains(r.path, "/members/{id}") || strings.Contains(r.path, "/accounts/{id}") {
++				vals = map[string]string{"id": bobM.ID, "role": "reviewer"} // a real member: the refusal must come from the role check
++			}
++			p := concretePath(r.path, vals)
++			if r.method != "*" {
++				hr := httptest.NewRequest(r.method, p, nil)
++				if _, pat := srv.mux.Handler(hr); pat != r.method+" "+r.path {
++					t.Errorf("%s: %s %s resolves to %q, want the listed pattern", r.routeKey, r.method, p, pat)
++				}
++			}
++			for _, pr := range api[r.gate] {
++				if r.method == "*" {
++					continue
++				}
++				hr := httptest.NewRequest(r.method, p, nil)
++				if isUnsafe(r.method) && r.method != http.MethodDelete {
++					hr = httptest.NewRequest(r.method, p, strings.NewReader("{}"))
++					hr.Header.Set("Content-Type", "application/json")
++					if r.method == http.MethodPatch {
++						hr.Header.Set("Content-Type", "application/merge-patch+json")
++					}
++				}
++				hr.Header.Set("Idempotency-Key", "route-matrix-"+pr.who+"-"+strconv.Itoa(r.line))
++				if pr.who != "anonymous" {
++					hr.Header.Set("Authorization", "Bearer "+tokens[pr.who])
++				}
++				probeRoute(t, r, pr, apiH, hr)
++			}
++		case "web":
++			if r.method == "*" {
++				continue
++			}
++			p := concretePath(r.path, webVals)
++			for _, pr := range webP[r.gate] {
++				hr := httptest.NewRequest(r.method, p, nil)
++				if pr.who == "anonymous" {
++					hr.AddCookie(&http.Cookie{Name: httpx.CSRFCookie, Value: anonSecret})
++					hr.Header.Set("X-CSRF-Token", csrf.Token(anonSecret))
++				} else {
++					hr.AddCookie(&http.Cookie{Name: httpx.SessionCookie, Value: sessions[pr.who]})
++					hr.Header.Set("X-CSRF-Token", csrf.Token(sessions[pr.who]))
++				}
++				rec := probeRoute(t, r, pr, webH, hr)
++				if pr.who == "anonymous" && rec.Code == http.StatusSeeOther && !strings.HasPrefix(rec.Header().Get("Location"), "/login") {
++					t.Errorf("%s as anonymous: redirected to %q, want /login", r.routeKey, rec.Header().Get("Location"))
++				}
++			}
++		}
++	}
++}
++
++func probeRoute(t *testing.T, r authzRow, pr routeProbe, h http.Handler, hr *http.Request) *httptest.ResponseRecorder {
++	t.Helper()
++	rec := httptest.NewRecorder()
++	h.ServeHTTP(rec, hr)
++	if !pr.deny(rec.Code) || rec.Code >= 500 {
++		what := "unexpected response"
++		if rec.Code < 400 && rec.Code != http.StatusSeeOther {
++			what = "unexpected allow"
++		}
++		t.Errorf("%s (gate %s) as %s: status %d, want %s (%s; %s:%d)", r.routeKey, r.gate, pr.who, rec.Code, pr.want,
++			what, authzTablePath, r.line)
++	}
++	if pr.who == "outsider" && r.surface == "api" && rec.Code == 404 && !strings.Contains(rec.Body.String(), `"code":"not-found"`) {
++		t.Errorf("%s as outsider: 404 body %s is not the plain not-found problem", r.routeKey, rec.Body.String())
++	}
++	return rec
++}
+diff --git a/internal/api/testdata/route_authz.txt b/internal/api/testdata/route_authz.txt
+new file mode 100644
+index 0000000..78b7bf4
+--- /dev/null
++++ b/internal/api/testdata/route_authz.txt
+@@ -0,0 +1,224 @@
++# Authorization table of every HTTP route (QA-012, SEC-009, ARC-008, API-019).
++# Reviewed by hand; TestRouteInventoryMatchesAuthorizationTable fails when a
++# registered route is missing here, a row is not registered, or a gate
++# disagrees with the registration. TestRouteAuthorizationMatrix sends every
++# row as anonymous, as a person of no network and as a plain member.
++#
++# Columns: surface method path gate. method "*" matches any method.
++#
++# Gates (least principal let through):
++#   public    no sign-in needed
++#   person    any signed-in person; no network membership needed
++#   member    a member of the network in the path (web) or X-Network / only
++#             membership (api); status and party rules are the service's
++#   reviewer  dispute reviewer or administrator who is not a party
++#   admin     network administrator
++#   mount     (ops) the API and HTML trees, gated row by row above
++#   health    (ops) health and metrics: GET/HEAD only, no network data
++#             (OPS-013); /metrics only from metrics-allow ranges
++# There is no operator gate: the platform operator acts through the CLI
++# only and has no HTTP route (ARC-008).
++
++# JSON API (internal/api)
++api  *      /                                            public
++api  GET    /api/v1/accounts/me                          member
++api  GET    /api/v1/accounts/me/entries                  member
++api  GET    /api/v1/admin/accounts/{id}                  admin
++api  PUT    /api/v1/admin/accounts/{id}/credit-limit     admin
++api  GET    /api/v1/admin/adjustments                    admin
++api  POST   /api/v1/admin/adjustments                    admin
++api  GET    /api/v1/admin/adjustments/{id}               admin
++api  POST   /api/v1/admin/adjustments/{id}/approve       admin
++api  POST   /api/v1/admin/adjustments/{id}/cancel        admin
++api  POST   /api/v1/admin/adjustments/{id}/reject        admin
++api  GET    /api/v1/admin/announcements                  admin
++api  POST   /api/v1/admin/announcements                  admin
++api  DELETE /api/v1/admin/announcements/{id}             admin
++api  GET    /api/v1/admin/audit-events                   admin
++api  POST   /api/v1/admin/consistency-checks             admin
++api  GET    /api/v1/admin/consistency-checks/{id}        admin
++api  POST   /api/v1/admin/invitations                    admin
++api  GET    /api/v1/admin/members                        admin
++api  POST   /api/v1/admin/members/{id}/approve           admin
++api  PUT    /api/v1/admin/members/{id}/default-flag      admin
++api  POST   /api/v1/admin/members/{id}/deny              admin
++api  POST   /api/v1/admin/members/{id}/reinstate         admin
++api  POST   /api/v1/admin/members/{id}/remove            admin
++api  PUT    /api/v1/admin/members/{id}/roles/{role}      admin
++api  DELETE /api/v1/admin/members/{id}/roles/{role}      admin
++api  POST   /api/v1/admin/members/{id}/suspend           admin
++api  POST   /api/v1/admin/network/close                  admin
++api  POST   /api/v1/admin/network/close/cancel           admin
++api  GET    /api/v1/admin/network/closure                admin
++api  POST   /api/v1/admin/network/closure/verify         admin
++api  POST   /api/v1/admin/network/resume                 admin
++api  POST   /api/v1/admin/network/suspend                admin
++api  GET    /api/v1/admin/policy                         admin
++api  PATCH  /api/v1/admin/policy                         admin
++api  GET    /api/v1/admin/reports                        admin
++api  POST   /api/v1/admin/reports/{id}/handle            admin
++api  POST   /api/v1/admin/terms                          admin
++api  POST   /api/v1/admin/transactions/{id}/reversal     admin
++api  GET    /api/v1/audit-events                         member
++api  GET    /api/v1/challenges                           member
++api  POST   /api/v1/challenges                           member
++api  POST   /api/v1/challenges/{id}/decision             reviewer
++api  GET    /api/v1/disputes                             member
++api  POST   /api/v1/disputes                             member
++api  GET    /api/v1/disputes/{id}                        member
++api  POST   /api/v1/disputes/{id}/re-review              member
++api  POST   /api/v1/disputes/{id}/re-review/decision     reviewer
++api  POST   /api/v1/disputes/{id}/resolve                reviewer
++api  POST   /api/v1/disputes/{id}/response               member
++api  POST   /api/v1/disputes/{id}/retry-posting          reviewer
++api  POST   /api/v1/disputes/{id}/review                 reviewer
++api  POST   /api/v1/disputes/{id}/withdraw               member
++api  POST   /api/v1/exports                              member
++api  GET    /api/v1/exports/{id}                         member
++api  GET    /api/v1/exports/{id}/artefact                member
++api  POST   /api/v1/invitations/{token}/accept           person
++api  GET    /api/v1/listings                             member
++api  POST   /api/v1/listings                             member
++api  GET    /api/v1/listings/{id}                        member
++api  PATCH  /api/v1/listings/{id}                        member
++api  GET    /api/v1/me                                   person
++api  PATCH  /api/v1/me                                   person
++api  POST   /api/v1/me/membership/departure              member
++api  POST   /api/v1/me/password                          person
++api  POST   /api/v1/me/terms/accept                      member
++api  GET    /api/v1/members                              member
++api  GET    /api/v1/members/{id}                         member
++api  GET    /api/v1/network                              member
++api  GET    /api/v1/network/announcements                member
++api  GET    /api/v1/network/policy-log                   member
++api  GET    /api/v1/network/terms                        member
++api  GET    /api/v1/notifications                        member
++api  POST   /api/v1/notifications/read                   member
++api  GET    /api/v1/notifications/unread-count           member
++api  POST   /api/v1/reports                              member
++api  GET    /api/v1/tokens                               person
++api  POST   /api/v1/tokens                               person
++api  DELETE /api/v1/tokens/{id}                          person
++api  GET    /api/v1/transactions                         member
++api  POST   /api/v1/transactions                         member
++api  GET    /api/v1/transactions/{id}                    member
++api  POST   /api/v1/transactions/{id}/accept             member
++api  POST   /api/v1/transactions/{id}/cancel             member
++api  POST   /api/v1/transactions/{id}/decline            member
++api  GET    /api/v1/transactions/{id}/events             member
++
++# HTML interface (internal/web)
++web  *      /                                            public
++web  GET    /account/password                            person
++web  POST   /account/password                            person
++web  GET    /account/recovery-codes                      person
++web  POST   /account/recovery-codes                      person
++web  GET    /account/security                            person
++web  POST   /account/security/ack                        person
++web  POST   /account/security/mfa/disable                person
++web  GET    /account/security/mfa/enrol                  person
++web  POST   /account/security/mfa/enrol                  person
++web  POST   /account/security/mfa/enrol/confirm          person
++web  POST   /account/security/mfa/recovery               person
++web  GET    /account/time-zone                           person
++web  POST   /account/time-zone                           person
++web  GET    /favicon.ico                                 public
++web  GET    /help                                        public
++web  GET    /join/{token}                                public
++web  POST   /join/{token}                                person
++web  GET    /login                                       public
++web  POST   /login                                       public
++web  GET    /login/mfa                                   public
++web  POST   /login/mfa                                   public
++web  POST   /logout                                      public
++web  GET    /n/{slug}/admin                              admin
++web  GET    /n/{slug}/admin/adjust                       admin
++web  POST   /n/{slug}/admin/adjust                       admin
++web  GET    /n/{slug}/admin/adjustments/pending          admin
++web  POST   /n/{slug}/admin/adjustments/{id}/{action}    admin
++web  GET    /n/{slug}/admin/announcements                admin
++web  POST   /n/{slug}/admin/announcements                admin
++web  POST   /n/{slug}/admin/announcements/{id}/delete    admin
++web  GET    /n/{slug}/admin/audit                        admin
++web  GET    /n/{slug}/admin/break-glass                  admin
++web  POST   /n/{slug}/admin/check                        admin
++web  GET    /n/{slug}/admin/exports                      admin
++web  POST   /n/{slug}/admin/exports                      admin
++web  GET    /n/{slug}/admin/inactive                     admin
++web  GET    /n/{slug}/admin/invitations                  admin
++web  POST   /n/{slug}/admin/invitations                  admin
++web  POST   /n/{slug}/admin/invitations/{id}/revoke      admin
++web  GET    /n/{slug}/admin/members                      admin
++web  GET    /n/{slug}/admin/members/{id}/erase           admin
++web  POST   /n/{slug}/admin/members/{id}/erase           admin
++web  GET    /n/{slug}/admin/members/{id}/reset-password  admin
++web  POST   /n/{slug}/admin/members/{id}/reset-password  admin
++web  GET    /n/{slug}/admin/members/{id}/{action}        admin
++web  POST   /n/{slug}/admin/members/{id}/{action}        admin
++web  GET    /n/{slug}/admin/network                      admin
++web  POST   /n/{slug}/admin/network/close                admin
++web  POST   /n/{slug}/admin/network/close/cancel         admin
++web  POST   /n/{slug}/admin/network/resume               admin
++web  POST   /n/{slug}/admin/network/suspend              admin
++web  GET    /n/{slug}/admin/policy                       admin
++web  POST   /n/{slug}/admin/policy                       admin
++web  POST   /n/{slug}/admin/policy/cancel                admin
++web  GET    /n/{slug}/admin/reports                      admin
++web  POST   /n/{slug}/admin/reports/{id}/handle          admin
++web  GET    /n/{slug}/admin/reverse                      admin
++web  POST   /n/{slug}/admin/reverse                      admin
++web  GET    /n/{slug}/admin/terms                        admin
++web  POST   /n/{slug}/admin/terms                        admin
++web  GET    /n/{slug}/audit                              member
++web  GET    /n/{slug}/directory                          member
++web  GET    /n/{slug}/disputes                           member
++web  GET    /n/{slug}/disputes/{id}                      member
++web  POST   /n/{slug}/disputes/{id}/{act}                member
++web  GET    /n/{slug}/erase-my-data                      member
++web  POST   /n/{slug}/erase-my-data                      member
++web  POST   /n/{slug}/export                             member
++web  GET    /n/{slug}/history                            member
++web  GET    /n/{slug}/inbox                              member
++web  POST   /n/{slug}/inbox/read                         member
++web  GET    /n/{slug}/join                               person
++web  POST   /n/{slug}/join                               person
++web  GET    /n/{slug}/leave                              member
++web  POST   /n/{slug}/leave                              member
++web  GET    /n/{slug}/listings                           member
++web  GET    /n/{slug}/listings/new                       member
++web  POST   /n/{slug}/listings/new                       member
++web  GET    /n/{slug}/listings/{id}/edit                 member
++web  POST   /n/{slug}/listings/{id}/edit                 member
++web  GET    /n/{slug}/members/{id}                       member
++web  GET    /n/{slug}/policy                             member
++web  GET    /n/{slug}/report                             member
++web  POST   /n/{slug}/report                             member
++web  GET    /n/{slug}/review                             reviewer
++web  GET    /n/{slug}/terms                              member
++web  POST   /n/{slug}/terms                              member
++web  GET    /n/{slug}/trades                             member
++web  GET    /n/{slug}/trades/new                         member
++web  POST   /n/{slug}/trades/new                         member
++web  GET    /n/{slug}/trades/{id}                        member
++web  GET    /n/{slug}/trades/{id}/dispute                member
++web  POST   /n/{slug}/trades/{id}/dispute                member
++web  GET    /n/{slug}/trades/{id}/{action}               member
++web  POST   /n/{slug}/trades/{id}/{action}               member
++web  GET    /n/{slug}/{$}                                member
++web  GET    /recover                                     public
++web  POST   /recover                                     public
++web  GET    /register                                    public
++web  POST   /register                                    public
++web  GET    /robots.txt                                  public
++web  POST   /session/extend                              person
++web  GET    /setup                                       person
++web  POST   /setup                                       person
++web  GET    /static/                                     public
++web  GET    /{$}                                         public
++
++# Operational mux (cmd/circula/ops_http.go)
++ops  *      /                                            mount
++ops  *      /api/                                        mount
++ops  *      /healthz                                     health
++ops  *      /metrics                                     health
++ops  *      /readyz                                      health
+-- 
+2.43.0
+

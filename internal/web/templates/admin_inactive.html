@@ -1,0 +1,19 @@
+{{define "content"}}
+{{if not .D.Days}}
+<p>This network has no inactivity rule. You can set one in the <a href="/n/{{.Slug}}/admin/policy">policy</a>.</p>
+{{else}}
+<p>Members with no sign-in and no trade for {{.D.Days}} days. They have been told in their inbox. They are still members: nothing is removed or suspended automatically. Decide on each one yourself.</p>
+{{if .D.Rows}}
+<div class="scroll" role="region" aria-label="Inactive members table" tabindex="0">
+<table class="stack">
+<caption>Inactive members of {{.NetName}}</caption>
+<thead><tr><th scope="col">Name</th><th scope="col">Joined</th><th scope="col">Actions</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr>
+  <th scope="row" data-label="Name">{{.DisplayName}}</th>
+  <td data-label="Joined">{{.JoinedAt.Format "2006-01-02"}}</td>
+  <td data-label="Actions">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}">{{.Label}}<span class="sr"> {{$m.DisplayName}}</span></a> {{end}}</td>
+</tr>{{end}}</tbody></table></div>
+{{else}}<p>No member is flagged as inactive.</p>{{end}}
+{{end}}
+<p><a href="/n/{{.Slug}}/admin/members">Back to members</a></p>
+{{end}}

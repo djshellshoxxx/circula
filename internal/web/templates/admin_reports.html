@@ -1,0 +1,28 @@
+{{define "content"}}
+{{with .D}}
+<p>Reports from members about listings and members. Handling a report here only records that you looked at it; use the member and policy tools to act. The reporter is shown to administrators only.</p>
+<nav aria-label="Report filter"><ul class="nav">
+  <li><a href="/n/{{$.Slug}}/admin/reports"{{if eq .Filter "open"}} aria-current="page"{{end}}>Open</a></li>
+  <li><a href="/n/{{$.Slug}}/admin/reports?status=handled"{{if eq .Filter "handled"}} aria-current="page"{{end}}>Handled</a></li>
+  <li><a href="/n/{{$.Slug}}/admin/reports?status=all"{{if eq .Filter "all"}} aria-current="page"{{end}}>All</a></li>
+</ul></nav>
+{{if .Rows}}
+<ul class="rows">
+{{range .Rows}}<li>
+  <p><span class="tag">{{if .Open}}Open{{else}}Handled{{end}}</span> {{.Category}} about {{.TargetType}}
+    {{if .TargetHref}}<a href="{{.TargetHref}}">{{.Target}}</a>{{else}}<strong>{{.Target}}</strong>{{end}}</p>
+  <p>Reported by {{.Reporter}} &middot; {{.Created}}</p>
+  {{if .Note}}<p>{{.Note}}</p>{{end}}
+  {{if .Open}}
+  <form method="post" action="/n/{{$.Slug}}/admin/reports/{{.ID}}/handle">
+    {{template "csrf" $}}
+    <div class="field"><label for="n-{{.ID}}">Note (optional, administrators only)</label><input id="n-{{.ID}}" name="note" maxlength="500"></div>
+    <div class="actions"><button type="submit">Mark handled<span class="sr">: report from {{.Reporter}}</span></button></div>
+  </form>
+  {{else if .HandlingNote}}<p>Note: {{.HandlingNote}}</p>{{end}}
+</li>{{end}}
+</ul>
+{{else}}<p>No reports to show.</p>{{end}}
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/admin/reports?status=%s&after=" $.Slug .Filter)}}
+{{end}}
+{{end}}

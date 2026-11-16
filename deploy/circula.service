@@ -1,0 +1,69 @@
+# Hardened systemd unit for Circula (docs/ops/hardening.md).
+# Install: /etc/systemd/system/circula.service, binary at /usr/local/bin/circula.
+# Settings come from the environment (docs/ops/configuration.md). Secrets are never put in this file:
+# add LoadCredential= lines and CIRCULA_*_FILE=%d/<name> in a drop-in (see hardening.md).
+[Unit]
+Description=Circula mutual-credit ledger
+Documentation=https://github.com/djshellshoxxx/circula/blob/main/docs/ops/hardening.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=circula
+Group=circula
+# Creates /var/lib/circula (state, database, backups) owned by circula, mode 0700.
+StateDirectory=circula
+StateDirectoryMode=0700
+
+# Change public-base-url to the address users open. Loopback listener: put a TLS proxy in front.
+Environment=CIRCULA_LISTEN=127.0.0.1:8080
+Environment=CIRCULA_PUBLIC_BASE_URL=https://circula.example.org
+Environment=CIRCULA_DATABASE=/var/lib/circula/circula.db
+Environment=CIRCULA_BACKUP_DIR=/var/lib/circula/backups
+Environment=CIRCULA_STATE_DIR=/var/lib/circula
+Environment=CIRCULA_TRUSTED_PROXIES=127.0.0.1/32
+# Other settings and secrets: drop-in at /etc/systemd/system/circula.service.d/local.conf
+ExecStart=/usr/local/bin/circula serve
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+LimitNOFILE=4096
+TasksMax=256
+
+# --- sandbox ---
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RemoveIPC=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+# The only writable path. Backups live under it; to move them set CIRCULA_BACKUP_DIR and list the path here.
+ReadWritePaths=/var/lib/circula
+# The service makes no outbound connections. Remove these two lines if the listener is on a LAN address
+# (use firewall rules instead).
+IPAddressDeny=any
+IPAddressAllow=localhost
+
+[Install]
+WantedBy=multi-user.target

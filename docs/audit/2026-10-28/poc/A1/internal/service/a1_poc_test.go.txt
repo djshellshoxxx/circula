@@ -1,0 +1,447 @@
+//go:build a1poc
+
+// Auditor A1 proof-of-concept tests (throwaway evidence, not product tests).
+// Each test asserts the behaviour the accepted spec requires; a FAIL at the
+// audited SHA confirms the finding named in the test. Run with:
+//
+//	go test -tags a1poc -count=1 -run TestA1PoC -v ./internal/service/
+package service_test
+
+import (
+	"context"
+	"errors"
+	"testing"
+	"time"
+
+	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/store"
+	tu "github.com/djshellshoxxx/circula/internal/testutil"
+)
+
+func a1LedgerOK(t *testing.T, w *world) {
+	t.Helper()
+	rep := tu.Must(w.Svc.VerifyLedger(w.Ctx, w.admin, w.net.ID))
+	if !rep.OK {
+		t.Fatalf("ledger not consistent: %v", rep.Findings)
+	}
+}
+
+func a1Seq(t *testing.T, w *world) int64 {
+	t.Helper()
+	var seq int64
+	if err := w.Store.DB().QueryRow(`SELECT ledger_seq FROM networks WHERE id = ?`, w.net.ID).Scan(&seq); err != nil {
+		t.Fatal(err)
+	}
+	return seq
+}
+
+// A1-01 (FR-068, GOV-025 b): after a network is closed, a voluntary departure
+// under settle-to-zero still posts an adjustment and changes the ledger the
+// final closure export certified.
+func TestA1PoC_01_SettleToZeroPostsAfterClosure(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500) // a = -500, b = +500
+	tu.Must(w.schedule("end of pilot", 0))
+	w.Clock.Advance(30*24*time.Hour + time.Hour)
+	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 1 {
+		t.Fatalf("finalised %d", n)
+	}
+	if st := w.netNow().Status; st != domain.NetworkClosed {
+		t.Fatalf("status %s", st)
+	}
+	chk := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID))
+	if !chk.Match {
+		t.Fatal("precondition: final export should match right after closure")
+	}
+	seqBefore := a1Seq(t, w)
+
+	// Control: the admin adjustment path refuses on a closed network.
+	_, err := w.adjust(w.admin, w.aM, 1, service.AdjustCredit, "after closure")
+	t.Logf("control: CreateAdjustment on closed network -> %v", err)
+
+	// The member leaves voluntarily: settle-to-zero must not post after closure.
+	_, err = w.Svc.DepartMember(w.Ctx, w.a, w.net.ID, service.DepartInput{})
+	seqAfter := a1Seq(t, w)
+	bal := w.balance(w.a).Balance
+	chk2 := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID))
+	t.Logf("DepartMember err=%v ledger_seq %d -> %d, departed balance=%d, closure export match=%v",
+		err, seqBefore, seqAfter, bal, chk2.Match)
+	if err == nil || seqAfter != seqBefore {
+		t.Fatalf("FR-068/GOV-025: closed network accepted a posting (ledger_seq %d -> %d, closure checksum match=%v)",
+			seqBefore, seqAfter, chk2.Match)
+	}
+}
+
+// A1-01 (GOV-023): a suspended network must not accept postings, but a
+// settle-to-zero departure posts one.
+func TestA1PoC_01b_SettleToZeroPostsWhileSuspended(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
+	tu.Must(0, w.Svc.SuspendNetwork(w.Ctx, w.admin, w.net.ID, "security review"))
+	_, err := w.adjust(w.admin, w.aM, 1, service.AdjustCredit, "during suspension")
+	t.Logf("control: CreateAdjustment while suspended -> %v", err)
+	seqBefore := a1Seq(t, w)
+	_, err = w.Svc.DepartMember(w.Ctx, w.a, w.net.ID, service.DepartInput{})
+	seqAfter := a1Seq(t, w)
+	t.Logf("DepartMember while suspended err=%v ledger_seq %d -> %d", err, seqBefore, seqAfter)
+	a1LedgerOK(t, w)
+	if err == nil || seqAfter != seqBefore {
+		t.Fatalf("GOV-023: suspended network accepted a posting (ledger_seq %d -> %d)", seqBefore, seqAfter)
+	}
+}
+
+// A1-01 (GOV-020): same root cause in the administrator-required state.
+func TestA1PoC_01c_SettleToZeroPostsWhenAdminRequired(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.DepartureRule = domain.DepartSettleToZero })
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
+	if _, err := w.Store.DB().Exec(`UPDATE members SET status='suspended' WHERE id = ?`, w.adminM.ID); err != nil {
+		t.Fatal(err)
+	}
+	seqBefore := a1Seq(t, w)
+	_, err := w.Svc.DepartMember(w.Ctx, w.a, w.net.ID, service.DepartInput{})
+	seqAfter := a1Seq(t, w)
+	t.Logf("DepartMember in admin-required network err=%v ledger_seq %d -> %d", err, seqBefore, seqAfter)
+	if err == nil || seqAfter != seqBefore {
+		t.Fatalf("GOV-020: value moved in an administrator-required network (ledger_seq %d -> %d)", seqBefore, seqAfter)
+	}
+}
+
+// A1-04 (GOV-020): a network with no active administrator is read-only and
+// "no value-moving action is allowed", yet a reviewer's upheld dispute posts
+// a reversal (ResolveDispute does not apply the administrator-required gate,
+// while DecideReReview does).
+func TestA1PoC_04_ReversalPostsInAdminRequiredNetwork(t *testing.T) {
+	w := newWorld(t, nil)
+	rev, _ := w.reviewer()
+	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
+	d := tu.Must(w.open(w.a, tx.ID))
+	// Same technique as TestAdminRequiredReadOnly: the only administrator is no longer active.
+	if _, err := w.Store.DB().Exec(`UPDATE members SET status='suspended' WHERE id = ?`, w.adminM.ID); err != nil {
+		t.Fatal(err)
+	}
+	if !tu.Must(w.Svc.GetNetwork(w.Ctx, w.a, w.net.ID)).AdminRequired {
+		t.Fatal("precondition: administrator-required state")
+	}
+	_, err := w.propose(w.a, w.bM, service.ProposerPays, 10)
+	t.Logf("control: propose in admin-required network -> %v", err)
+	seqBefore := a1Seq(t, w)
+	r, err := w.resolve(rev, d.ID, domain.OutcomeUpheld, 0, "not delivered")
+	seqAfter := a1Seq(t, w)
+	if err == nil {
+		t.Logf("ResolveDispute upheld -> status %s, ledger_seq %d -> %d, payer balance %d",
+			r.Status, seqBefore, seqAfter, w.balance(w.a).Balance)
+	}
+	if err == nil && seqAfter != seqBefore {
+		t.Fatalf("GOV-020: value moved in an administrator-required network (ledger_seq %d -> %d)", seqBefore, seqAfter)
+	}
+}
+
+// A1-02 (FR-005 as built "decimals fixed after first posting", GOV-004,
+// DOM-031): a decimals change scheduled with a notice period passes the
+// LedgerSeq==0 guard at scheduling time and takes effect after postings exist.
+func TestA1PoC_02_ScheduledDecimalChangeAfterPosting(t *testing.T) {
+	w := newWorld(t, nil) // decimals 2, no posting yet
+	if s := a1Seq(t, w); s != 0 {
+		t.Fatalf("precondition ledger_seq %d", s)
+	}
+	n := tu.Must(w.setPolicy(func(p *domain.Policy) { p.Decimals = 0 }, iptr(14), ""))
+	t.Logf("scheduled: effective decimals still %d", n.Policy.Decimals)
+	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 2500) // 25.00 credits at decimals 2
+	_ = tx
+	// Control: an immediate decimals change is refused once a posting exists.
+	_, ctlErr := w.Svc.UpdatePolicy(w.Ctx, w.admin, w.net.ID, service.PolicyChange{Policy: func() domain.Policy {
+		p := w.netNow().Policy
+		p.Decimals = 4
+		return p
+	}(), Reason: "x", IdempotencyKey: w.Key()})
+	t.Logf("control: immediate decimals change after posting -> %v", ctlErr)
+	w.Clock.Advance(15 * 24 * time.Hour)
+	after := w.netNow()
+	b := w.balance(w.b)
+	t.Logf("after notice: decimals=%d ledger_seq=%d; payee balance %d minor units now reads %s credits (was 25.00)",
+		after.Policy.Decimals, after.LedgerSeq, b.Balance, domain.FormatAmount(b.Balance, after.Policy.Decimals))
+	if after.Policy.Decimals != 2 {
+		t.Fatalf("decimal scale changed from 2 to %d after %d posting(s): persisted amounts reinterpreted x100",
+			after.Policy.Decimals, after.LedgerSeq)
+	}
+}
+
+// A1-05 (FR-034, DOM-013): ExpireProposals takes the oldest `limit` expired
+// proposals across all networks and skips frozen ones without widening the
+// window, so a frozen network holding >= limit expired proposals starves
+// expiry everywhere (the job loop stops when a run expires < limit).
+func TestA1PoC_05_ExpiryStarvedByFrozenNetwork(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.ProposalExpiryDays = 1 })
+	tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 10))
+	tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 11))
+	// A second, healthy network.
+	adm2 := w.Person("admin2@example.org")
+	net2, _ := w.Network(adm2, "other", nil)
+	x, _ := w.Member(adm2, net2, "x@example.org")
+	_, yM := w.Member(adm2, net2, "y@example.org")
+	p2 := tu.Must(w.Svc.ProposeTransaction(w.Ctx, x, net2.ID, service.ProposeInput{CounterpartyID: yM.ID,
+		Direction: service.ProposerPays, Amount: 5, IdempotencyKey: w.Key()}))
+	w.Clock.Advance(2 * 24 * time.Hour)
+	w.Svc.FreezeNetwork(w.net.ID, "verification failed")
+	const limit = 2 // production job uses 500 (cmd/circula/serve.go)
+	for i := 0; i < 3; i++ {
+		n := tu.Must(w.Svc.ExpireProposals(w.Ctx, sysJob, limit))
+		t.Logf("run %d expired %d", i, n)
+	}
+	got := tu.Must(w.Svc.GetTransaction(w.Ctx, x, net2.ID, p2.ID)).Tx.Status
+	if got != domain.TxExpired {
+		t.Fatalf("healthy network's elapsed proposal is still %s: expiry starved by the frozen network", got)
+	}
+}
+
+// A1-03 (DOM-018, DOM-020, DOM-021, DOM-024): a second dispute on the same
+// trade can sit in posting_pending with ReversalAmount fixed at decision time;
+// a re-review of the first dispute reverses part of the trade meanwhile, so
+// RetryDisputePosting can never succeed (amount > remaining) and nothing else
+// can close the dispute. The trade stays `disputed` forever and blocks the
+// parties' departure and network closure.
+func TestA1PoC_03_PostingPendingStuckAfterReReview(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.ReReviewWindowDays = 14 })
+	r1, _ := w.reviewer()
+	r2, _ := w.reviewerAs("rev2@example.org")
+	c, cM := w.Member2(w.admin, "carol@example.org")
+	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000) // a=-1000 b=+1000
+	d1 := tu.Must(w.open(w.a, tx.ID))
+	tu.Must(w.resolve(r1, d1.ID, domain.OutcomeDismissed, 0, "no evidence"))
+	w.Trade(w.net.ID, w.b, c, w.bM, cM, 10500) // b=-9500 (limit 10000)
+	d2 := tu.Must(w.open(w.a, tx.ID))          // a second dispute on the same completed trade is accepted
+	d2r := tu.Must(w.resolve(r1, d2.ID, domain.OutcomeUpheld, 0, "upheld"))
+	if d2r.Status != domain.DisputePostingPending || d2r.ReversalAmount != 1000 {
+		t.Fatalf("precondition: d2 = %s amount %d", d2r.Status, d2r.ReversalAmount)
+	}
+	if err := w.rereview(w.a, d1.ID, "please look again"); err != nil {
+		t.Fatalf("re-review request: %v", err)
+	}
+	if err := w.decideRR(r2, d1.ID, string(domain.OutcomePartiallyUpheld), 500); err != nil {
+		t.Fatalf("re-review decision: %v", err)
+	}
+	// Give the payee all the room in the world, then retry the pending posting.
+	lim := int64(1_000_000)
+	tu.Must(0, w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.bM.ID, Limit: &lim, Reason: "resolve dispute"}))
+	_, err := w.Svc.RetryDisputePosting(w.Ctx, r1, w.net.ID, d2.ID)
+	t.Logf("RetryDisputePosting -> %v", err)
+	_, rerr := w.resolve(r1, d2.ID, domain.OutcomeDismissed, 0, "give up")
+	t.Logf("ResolveDispute on posting_pending -> %v", rerr)
+	_, derr := w.Svc.DepartMember(w.Ctx, w.b, w.net.ID, service.DepartInput{})
+	t.Logf("payee departure -> %v; trade status %s", derr, w.txStatus(tx.ID).Status)
+	if err != nil {
+		t.Fatalf("posting_pending dispute cannot be completed by any path (retry error: %v)", err)
+	}
+}
+
+// A1-03 (FR-068, DOM-024, DEC-052): same root cause. A re-review of an
+// earlier dispute fully reverses a trade while a second dispute on it is open;
+// the trade leaves `disputed`, so the open dispute no longer blocks closure.
+func TestA1PoC_03b_OpenDisputeOnReversedTradeDoesNotBlockClosure(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.ReReviewWindowDays = 14 })
+	r1, _ := w.reviewer()
+	r2, _ := w.reviewerAs("rev2@example.org")
+	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000)
+	d1 := tu.Must(w.open(w.a, tx.ID))
+	tu.Must(w.resolve(r1, d1.ID, domain.OutcomeDismissed, 0, "no evidence"))
+	d2 := tu.Must(w.open(w.a, tx.ID))
+	if err := w.rereview(w.a, d1.ID, "look again"); err != nil {
+		t.Fatal(err)
+	}
+	// The re-review posts against a trade that another live dispute holds as `disputed`.
+	if err := w.decideRR(r2, d1.ID, string(domain.OutcomeUpheld), 0); err != nil {
+		t.Fatalf("re-review upheld: %v", err)
+	}
+	st := w.txStatus(tx.ID).Status
+	d2now := tu.Must(w.Svc.GetDispute(w.Ctx, w.admin, w.net.ID, d2.ID)).Dispute.Status
+	_, werr := w.Svc.WithdrawDispute(w.Ctx, w.a, w.net.ID, d2.ID)
+	_, cerr := w.schedule("end", 0)
+	t.Logf("trade=%s d2=%s; opener withdraw -> %v; ScheduleClosure -> %v", st, d2now, werr, cerr)
+	if cerr == nil {
+		t.Fatalf("FR-068: closure scheduled while dispute %s is still %s", d2.ID, d2now)
+	}
+}
+
+// A1-06 (DOM-024, FR-014): departure cancels at most 500 open proposals; the
+// rest stay `proposed` with a departed party.
+func TestA1PoC_06_DepartureLeavesProposalsBeyond500(t *testing.T) {
+	e := tu.NewEnvConfig(t, nil, func(c *service.Config) { c.MaxOpenProposalsPerMember = -1 })
+	w := &world{Env: e}
+	w.admin = e.Person("admin@example.org")
+	w.net, w.adminM = e.Network(w.admin, "demo", func(p *domain.Policy) { p.DefaultCreditLimit = 1_000_000 })
+	w.a, w.aM = e.Member(w.admin, w.net, "ana@example.org")
+	w.b, w.bM = e.Member(w.admin, w.net, "ben@example.org")
+	for i := 0; i < 501; i++ {
+		tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 1))
+	}
+	tu.Must(w.Svc.DepartMember(w.Ctx, w.b, w.net.ID, service.DepartInput{}))
+	var left int
+	if err := w.Store.DB().QueryRow(`SELECT COUNT(*) FROM transactions WHERE network_id = ? AND status = 'proposed'`, w.net.ID).Scan(&left); err != nil {
+		t.Fatal(err)
+	}
+	bv := w.balance(w.a)
+	t.Logf("after departure: %d proposals still `proposed`; payer reserved %d", left, bv.ReservedOutgoing)
+	if left != 0 {
+		t.Fatalf("DOM-024: %d proposal(s) with a departed party left open", left)
+	}
+}
+
+// A1-07 (GOV-025 e): if the final export fails once (crash, busy database),
+// the closure is already complete and FinaliseClosures never retries the final
+// export, so no checksum or reconciliation summary is ever recorded.
+type a1FailExportAudit struct {
+	store.Store
+	arm *bool
+}
+
+type a1Tx struct {
+	store.Tx
+	arm *bool
+}
+
+func (s *a1FailExportAudit) Update(ctx context.Context, fn func(store.Tx) error) error {
+	return s.Store.Update(ctx, func(tx store.Tx) error { return fn(&a1Tx{Tx: tx, arm: s.arm}) })
+}
+
+func (t *a1Tx) InsertAudit(e *domain.AuditEvent) error {
+	if *t.arm && e.Action == domain.ActExport {
+		return errors.New("injected: export audit failed")
+	}
+	return t.Tx.InsertAudit(e)
+}
+
+func TestA1PoC_07_FinalExportNeverRetried(t *testing.T) {
+	arm := false
+	e := tu.NewEnvWith(t, func(s store.Store) store.Store { return &a1FailExportAudit{Store: s, arm: &arm} })
+	w := &world{Env: e}
+	w.admin = e.Person("admin@example.org")
+	w.net, w.adminM = e.Network(w.admin, "demo", nil)
+	w.a, w.aM = e.Member(w.admin, w.net, "ana@example.org")
+	w.b, w.bM = e.Member(w.admin, w.net, "ben@example.org")
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
+	tu.Must(w.schedule("end", 0))
+	w.Clock.Advance(31 * 24 * time.Hour)
+	arm = true
+	n, err := w.Svc.FinaliseClosures(w.Ctx, sysJob)
+	t.Logf("first run: finalised=%d err=%v status=%s", n, err, w.netNow().Status)
+	arm = false
+	n, err = w.Svc.FinaliseClosures(w.Ctx, sysJob)
+	t.Logf("second run: finalised=%d err=%v", n, err)
+	_, verr := w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID)
+	t.Logf("VerifyClosureExport -> %v", verr)
+	if verr != nil {
+		t.Fatalf("GOV-025 e: closed network has no final export checksum and no retry path: %v", verr)
+	}
+}
+
+// ---- Passing checks (support "OK" conformance verdicts where existing tests
+// do not pin the exact boundary). These are expected to PASS at the audited SHA.
+
+// FR-034 / DOM-013: accepted at expiry minus 1 ms, refused exactly at expiry.
+func TestA1Check_ExpiryAcceptBoundary(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.ProposalExpiryDays = 1 })
+	p1 := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 10))
+	p2 := tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 10))
+	w.Clock.Advance(24*time.Hour - time.Millisecond)
+	if _, err := w.accept(w.b, p1.ID); err != nil {
+		t.Fatalf("accept at T-1ms refused: %v", err)
+	}
+	w.Clock.Advance(time.Millisecond)
+	_, err := w.accept(w.b, p2.ID)
+	wantCode(t, err, domain.ErrInvalidState)
+	a1LedgerOK(t, w)
+}
+
+// DOM-017 (as built): open at exactly completion+window succeeds, 1 ms later refused.
+func TestA1Check_DisputeWindowBoundary(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.DisputeWindowDays = 3 })
+	t1 := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 10)
+	t2 := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 10)
+	w.Clock.Advance(3 * 24 * time.Hour)
+	if _, err := w.open(w.a, t1.ID); err != nil {
+		t.Fatalf("open at deadline refused: %v", err)
+	}
+	w.Clock.Advance(time.Millisecond)
+	_, err := w.open(w.a, t2.ID)
+	wantCode(t, err, domain.ErrInvalidState)
+}
+
+// LED-5 / DOM-032: a debit is refused when the account is already below a newly
+// lowered limit even for 1 minor unit; a credit that improves it is allowed;
+// the system account (adjustments) is exempt.
+func TestA1Check_BelowLimitRules(t *testing.T) {
+	w := newWorld(t, func(p *domain.Policy) { p.DefaultCreditLimit = 1000 })
+	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 1000) // a at -limit
+	low := int64(500)
+	tu.Must(0, w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.aM.ID, Limit: &low, Reason: "risk"}))
+	_, err := w.adjust(w.admin, w.aM, 1, service.AdjustDebit, "debit while below limit")
+	wantCode(t, err, domain.ErrInsufficientCredit)
+	tu.Must(w.adjust(w.admin, w.aM, 1, service.AdjustCredit, "credit while below limit"))
+	// System account: a large credit adjustment drives it far negative with no limit.
+	tu.Must(w.adjust(w.admin, w.bM, 50_000_000, service.AdjustCredit, "system exempt"))
+	a1LedgerOK(t, w)
+}
+
+// A1-08 (SEC-011 operator path, GOV-003): OperatorSetDualControl appends policy
+// version effective+1, which collides with a scheduled (future-effective)
+// version, so the operator cannot change the threshold while any policy change
+// is pending; and nothing reconciles the two version streams.
+func TestA1PoC_08_OperatorDualControlBlockedByScheduledChange(t *testing.T) {
+	w := newWorld(t, nil)
+	admin2, m2 := w.Member2(w.admin, "admin2@example.org")
+	_ = admin2
+	tu.Must(0, w.Svc.AssignRole(w.Ctx, w.admin, w.net.ID, m2.ID, domain.RoleAdmin))
+	// An adverse change (lower default limit) is scheduled with the default 14-day notice.
+	tu.Must(w.setPolicy(func(p *domain.Policy) { p.DefaultCreditLimit = 5000 }, nil, ""))
+	err := w.Svc.OperatorSetDualControl(w.Ctx, domain.SystemActor("op"), w.net.ID, 1000, "enable dual control")
+	t.Logf("OperatorSetDualControl while a change is scheduled -> %v", err)
+	if err != nil {
+		t.Fatalf("operator dual-control change refused because a policy change is scheduled: %v", err)
+	}
+}
+
+// A1-09 (DOM-035, FR-081 target id): the reversal transaction posted by a
+// dispute decision gets no audit event of its own; only the dispute is the
+// target, so the audit trail cannot be joined to the reversal's id (the admin
+// reversal path does write transaction.reversed with the reversal id).
+func TestA1PoC_09_DisputeReversalHasNoAuditEventOfItsOwn(t *testing.T) {
+	w := newWorld(t, nil)
+	rev, _ := w.reviewer()
+	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
+	d := tu.Must(w.open(w.a, tx.ID))
+	tu.Must(w.resolve(rev, d.ID, domain.OutcomeUpheld, 0, "not delivered"))
+	var revID string
+	if err := w.Store.DB().QueryRow(`SELECT id FROM transactions WHERE original_tx_id = ?`, tx.ID).Scan(&revID); err != nil {
+		t.Fatal(err)
+	}
+	var n int
+	if err := w.Store.DB().QueryRow(`SELECT COUNT(*) FROM audit_events WHERE target_id = ?`, revID).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("reversal %s: %d audit events target it", revID, n)
+	if n == 0 {
+		t.Fatalf("no audit event names the dispute reversal transaction %s", revID)
+	}
+}
+
+// A1-10 (CMD-07/OPS-033 freeze rule): ExpirePendingAdjustments writes status
+// changes and audit events into a frozen network; ExpireProposals and
+// FinaliseClosures skip frozen networks.
+func TestA1PoC_10_PendingExpiryWritesToFrozenNetwork(t *testing.T) {
+	d := newDC(t)
+	pa := d.pending(5000)
+	d.Clock.Advance(8 * 24 * time.Hour)
+	d.Svc.FreezeNetwork(d.net.ID, "verification failed")
+	before := countRows(t, d.Env, "audit_events")
+	n := tu.Must(d.Svc.ExpirePendingAdjustments(d.Ctx, sysJob, 100))
+	after := countRows(t, d.Env, "audit_events")
+	var st string
+	if err := d.Store.DB().QueryRow(`SELECT status FROM pending_adjustments WHERE id = ?`, pa.ID).Scan(&st); err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("frozen network: expired %d request(s), status=%s, audit rows %d -> %d", n, st, before, after)
+	if n != 0 || after != before {
+		t.Fatalf("frozen network received writes from the pending-adjustment expiry job")
+	}
+}

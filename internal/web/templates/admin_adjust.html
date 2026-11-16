@@ -1,0 +1,16 @@
+{{define "content"}}
+<p>An adjustment is an audited correction against the network's system account. Every adjustment needs a reason. You will review the effect before it is posted.</p>
+<form method="post" action="/n/{{.Slug}}/admin/adjust" novalidate>
+  {{template "csrf" .}}{{template "idem" .}}
+  <input type="hidden" name="step" value="review">
+  {{template "select" dict "P" . "Name" "member_id" "Label" "Member" "Opts" .D.Members}}
+  <fieldset class="radio"><legend>Direction</legend>
+    {{with .Err "direction"}}<p class="error" id="e-direction">{{.}}</p>{{end}}
+    <label><input type="radio" name="direction" id="f-direction" value="credit"{{if ne (.Val "direction") "debit"}} checked{{end}}> Credit: the member's balance goes up</label>
+    <label><input type="radio" name="direction" value="debit"{{if eq (.Val "direction") "debit"}} checked{{end}}> Debit: the member's balance goes down</label>
+  </fieldset>
+  {{template "field" dict "P" . "Name" "amount" "Label" "Amount" "Hint" (printf "Amount in credits, up to %d decimal places." .Dec) "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "reason" "Label" "Reason" "Hint" "Required. Recorded in the audit log." "Type" "textarea" "Max" 500 "Req" true}}
+  <div class="actions"><button type="submit">Review adjustment</button></div>
+</form>
+{{end}}

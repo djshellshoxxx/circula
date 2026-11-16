@@ -1,0 +1,34 @@
+{{define "content"}}
+{{if .D.Threshold}}<p>Adjustments above {{.D.Threshold}} {{.Unit}}s need approval from a second administrator before anything is posted. A request that is not decided in time expires and posts nothing.</p>
+{{else}}<p>Dual control is off for this network, so adjustments post at once. Requests made earlier are listed here.</p>{{end}}
+<form method="get" action="/n/{{.Slug}}/admin/adjustments/pending">
+  <div class="field"><label for="f-status">Show requests</label>
+  <select id="f-status" name="status">
+    <option value="pending"{{if eq (.Val "status") "pending"}} selected{{end}}>Waiting for approval</option>
+    <option value="approved"{{if eq (.Val "status") "approved"}} selected{{end}}>Approved</option>
+    <option value="rejected"{{if eq (.Val "status") "rejected"}} selected{{end}}>Rejected</option>
+    <option value="cancelled"{{if eq (.Val "status") "cancelled"}} selected{{end}}>Cancelled</option>
+    <option value="expired"{{if eq (.Val "status") "expired"}} selected{{end}}>Expired</option></select></div>
+  <div class="actions"><button type="submit" class="secondary">Apply filter</button></div>
+</form>
+{{if .D.Rows}}
+<div class="scroll" role="region" aria-label="Adjustment requests table" tabindex="0">
+<table class="stack">
+<caption>Adjustment requests in {{.NetName}}</caption>
+<thead><tr><th scope="col">Member</th><th scope="col">Adjustment</th><th scope="col">Reason</th><th scope="col">Requested by</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr>
+  <th scope="row" data-label="Member">{{.Target}}</th>
+  <td data-label="Adjustment">{{.Dir}}: {{.Amount}} {{$.Unit}}s</td>
+  <td data-label="Reason">{{.Reason}}</td>
+  <td data-label="Requested by">{{.Proposer}}, {{time .Created}}</td>
+  <td data-label="Status">{{.Status}}{{if .Decider}} by {{.Decider}}{{end}}{{if eq .Status "pending"}}{{if .Expired}}: expired, nothing will be posted{{else}}; expires {{time .Expires}}{{end}}{{end}}</td>
+  <td data-label="Actions">
+    {{if .CanApprove}}<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/approve" class="inline">{{template "csrf" $}}<button type="submit" class="danger">Approve and post<span class="sr"> adjustment for {{.Target}}</span></button></form>
+    <form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/reject" class="inline">{{template "csrf" $}}<button type="submit" class="secondary">Reject<span class="sr"> adjustment for {{.Target}}</span></button></form>{{end}}
+    {{if .CanCancel}}<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/cancel" class="inline">{{template "csrf" $}}<button type="submit" class="secondary">Cancel request<span class="sr"> for {{.Target}}</span></button></form>{{end}}
+    {{if and (eq .Status "pending") (not .CanApprove) (not .CanCancel) (not .Expired)}}<span>Another administrator must decide this.</span>{{end}}
+  </td>
+</tr>{{end}}</tbody></table></div>
+{{template "pager" dict "Next" .D.Next "Href" (printf "/n/%s/admin/adjustments/pending?status=%s&after=" .Slug (.Val "status"))}}
+{{else}}<p>No requests match this filter.</p>{{end}}
+{{end}}

@@ -1,0 +1,23 @@
+{{define "content"}}
+<p>Leaving ends your membership in {{.NetName}}. Please read what happens first.</p>
+{{if .D.Blockers}}
+<div class="notice" role="note"><strong>You cannot leave yet:</strong>
+  <ul>{{range .D.Blockers}}<li>{{.}}</li>{{end}}</ul>
+  <p>Resolve these first (for example, ask for the dispute to be decided, or make another member an administrator), then come back.</p></div>
+{{end}}
+<ul>
+  <li>{{if .D.OpenProposals}}{{.D.OpenProposals}} open trade proposal(s) involving you will be cancelled, and the other members are told.{{else}}You have no open trade proposals.{{end}}</li>
+  <li>Your balance is {{amt .D.Balance .D.Decimals}}. {{if eq (printf "%s" .D.Rule) "settle-to-zero"}}When you leave, your balance is settled to zero by a recorded adjustment.{{else}}It stays on your closed account and your history is kept.{{end}}</li>
+  <li>You keep read-only access to your own history and can download your data from the History page. Past trades are never changed.</li>
+  <li>You cannot rejoin this network with the same account afterwards.</li>
+</ul>
+{{if not .D.Blockers}}
+<form method="post" action="/n/{{.Slug}}/leave" novalidate>
+  {{template "csrf" .}}
+  {{template "field" dict "P" . "Name" "reason" "Label" "Reason (optional)" "Hint" "Kept in the audit log. Up to 500 characters." "Max" 500}}
+  {{with .Err "confirm"}}<p class="error" id="e-confirm"><span class="sr">Error: </span>{{.}}</p>{{end}}
+  <div class="field" id="f-confirm"><label><input type="checkbox" name="confirm" value="1"> I understand and want to leave {{.NetName}}</label></div>
+  <div class="actions"><button type="submit">Leave this network</button> <a href="/n/{{.Slug}}">Cancel</a></div>
+</form>
+{{end}}
+{{end}}

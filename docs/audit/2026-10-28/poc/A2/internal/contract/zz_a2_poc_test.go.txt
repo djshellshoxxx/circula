@@ -1,0 +1,80 @@
+package contract
+
+// Auditor A2 proof-of-concept (throwaway evidence, 2026-10-28). Asserts the
+// CURRENT behaviour: runtime responses that openapi.yaml does not document.
+//   go test ./internal/contract -run TestA2 -v
+
+import (
+	"bytes"
+	"context"
+	"net/http/httptest"
+	"strings"
+	"testing"
+
+	"github.com/getkin/kin-openapi/openapi3filter"
+
+	"github.com/djshellshoxxx/circula/internal/api"
+	"github.com/djshellshoxxx/circula/internal/domain"
+)
+
+func TestA2_UndocumentedRuntimeStatuses(t *testing.T) {
+	h := newHarness(t)
+	env := h.env
+	admin := env.Person("admin")
+	net, _ := env.Network(admin, "acme", nil)
+	alice, _ := env.Member(admin, net, "alice")
+	aliceT := h.token(alice, domain.ScopeRead, domain.ScopeWrite)
+
+	check := func(label, method, path, body string, hdr map[string]string, hh *harness) (int, error) {
+		r := httptest.NewRequest(method, "/api/v1"+path, strings.NewReader(body))
+		if body != "" {
+			r.Header.Set("Content-Type", "application/json; charset=utf-8")
+		}
+		r.Header.Set("Authorization", "Bearer "+aliceT)
+		for k, v := range hdr {
+			r.Header.Set(k, v)
+		}
+		rec := httptest.NewRecorder()
+		hh.h.ServeHTTP(rec, r)
+		vr := httptest.NewRequest(method, "/api/v1"+path, bytes.NewReader([]byte(body)))
+		vr.Header = r.Header.Clone()
+		route, params, err := hh.router.FindRoute(vr)
+		if err != nil {
+			t.Fatal(err)
+		}
+		noAuth := func(context.Context, *openapi3filter.AuthenticationInput) error { return nil }
+		rin := &openapi3filter.RequestValidationInput{Request: vr, PathParams: params, Route: route,
+			Options: &openapi3filter.Options{AuthenticationFunc: noAuth}}
+		out := &openapi3filter.ResponseValidationInput{RequestValidationInput: rin, Status: rec.Code,
+			Header: rec.Header(), Options: &openapi3filter.Options{IncludeResponseStatus: true}}
+		out.SetBodyBytes(rec.Body.Bytes())
+		verr := openapi3filter.ValidateResponse(context.Background(), out)
+		t.Logf("%s: %s %s -> %d; openapi validation error: %v", label, method, path, rec.Code, short0(verr))
+		return rec.Code, verr
+	}
+
+	// 423 network-frozen on a write in a frozen network.
+	env.Svc.FreezeNetwork(net.ID, "hash mismatch")
+	code, verr := check("frozen write", "POST", "/listings", `{"kind":"offer","title":"bike"}`,
+		map[string]string{"Idempotency-Key": "k-frozen-0001"}, h)
+	if code != 423 || verr == nil {
+		t.Fatalf("expected an undocumented 423, got %d err=%v", code, verr)
+	}
+	env.Svc.UnfreezeNetwork(net.ID)
+
+	// 429 from the per-principal limiter on a route that documents no 429.
+	h2 := *h
+	h2.h = api.NewHandlerWithOptions(env.Svc, api.Options{CSRFKey: csrfKey, IPPerMinute: -1, PrincipalPerMinute: 1})
+	_, _ = check("rate warm-up", "GET", "/network", "", nil, &h2)
+	code, verr = check("rate limited", "GET", "/network", "", nil, &h2)
+	if code != 429 || verr == nil {
+		t.Fatalf("expected an undocumented 429, got %d err=%v", code, verr)
+	}
+}
+
+func short0(err error) string {
+	if err == nil {
+		return "<nil>"
+	}
+	return short(err)
+}

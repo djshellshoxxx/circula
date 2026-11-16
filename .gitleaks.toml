@@ -1,0 +1,14 @@
+# ARC-023: repository secret scan configuration (run by the "secret scan" step in ci.yml).
+title = "circula"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Throwaway TOTP seed for the end-to-end test fixture; never used outside tests"
+paths = ['''^e2e/secfixture\.js$''']
+
+[[allowlists]]
+description = "Synthetic canary values (marker Zq81canary) used by the SEC-020 log-redaction test; never real credentials"
+regexTarget = "match"
+regexes = ['''Zq81(?i:canary)''']

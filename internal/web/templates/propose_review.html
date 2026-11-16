@@ -1,0 +1,29 @@
+{{define "content"}}
+{{with .D}}
+<p class="big">{{.Sentence}}</p>
+{{if .TooMuch}}<div class="notice" role="note">This is more than your available to spend ({{.AvailNow}}). It will be refused if you send it. Go back and enter a smaller amount.</div>{{end}}
+<dl class="kv">
+  <dt>With</dt><dd>{{.Counter}}</dd>
+  <dt>Amount</dt><dd>{{.Amount}} {{.Unit}}</dd>
+  <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>Your balance if accepted</dt><dd>{{template "balance" .After}}</dd>
+  <dt>Available to spend now</dt><dd>{{.AvailNow}}</dd>
+  <dt>Available to spend after sending</dt><dd>{{if .Reserve}}{{.AvailAfter}} (the amount is set aside while the trade is pending){{else}}{{.AvailNow}} (it rises only once the trade is accepted){{end}}</dd>
+  <dt>Expires</dt><dd>after {{.Expires}} days if not answered</dd>
+</dl>
+{{end}}
+{{if $.Val "note"}}<p>Note: {{$.Val "note"}}</p>{{end}}
+<p>Nothing is posted until the other member accepts.</p>
+<form method="post" action="/n/{{.Slug}}/trades/new">
+  {{template "csrf" .}}{{template "idem" .}}
+  <input type="hidden" name="counterparty_id" value="{{.Val "counterparty_id"}}">
+  <input type="hidden" name="direction" value="{{.Val "direction"}}">
+  <input type="hidden" name="amount" value="{{.Val "amount"}}">
+  <input type="hidden" name="note" value="{{.Val "note"}}">
+  <input type="hidden" name="listing_id" value="{{.Val "listing_id"}}">
+  <div class="actions">
+    <button type="submit" name="step" value="confirm">Send trade</button>
+    <button type="submit" name="step" value="back" class="secondary">Go back and edit</button>
+  </div>
+</form>
+{{end}}

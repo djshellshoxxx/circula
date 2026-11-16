@@ -1,0 +1,11 @@
+{{define "content"}}
+{{with .D}}
+<p class="big">{{.Sentence}}</p>
+<p>{{.Consequence}}</p>
+<form method="post" action="/n/{{$.Slug}}/trades/{{.Tx.ID}}/{{.Action}}">
+  {{template "csrf" $}}{{template "idem" $}}
+  {{if .AskReason}}{{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" "Required when you cancel a trade you are not part of." "Req" true}}{{end}}
+  <div class="actions"><button type="submit" class="danger">{{.Verb}} this trade</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}">Go back</a></div>
+</form>
+{{end}}
+{{end}}
