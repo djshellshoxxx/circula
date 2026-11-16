@@ -50,16 +50,29 @@ func writeJSONFile(path string, v any) error {
 // writeAtomicPrivateFile writes through an unpredictable, exclusively created file
 // in the destination directory, avoiding predictable .tmp symlink attacks.
 func writeAtomicPrivateFile(path string, data []byte) error {
- dir := filepath.Dir(path)
- f, err := os.CreateTemp(dir, "."+filepath.Base(path)+".tmp-*")
- if err != nil { return err }
- tmp := f.Name()
- defer func() { _ = os.Remove(tmp) }()
- if err := f.Chmod(0o600); err != nil { _ = f.Close(); return err }
- if _, err := f.Write(data); err != nil { _ = f.Close(); return err }
- if err := f.Sync(); err != nil { _ = f.Close(); return err }
- if err := f.Close(); err != nil { return err }
- return os.Rename(tmp, path)
+	dir := filepath.Dir(path)
+	f, err := os.CreateTemp(dir, "."+filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	tmp := f.Name()
+	defer func() { _ = os.Remove(tmp) }()
+	if err := f.Chmod(0o600); err != nil {
+		_ = f.Close()
+		return err
+	}
+	if _, err := f.Write(data); err != nil {
+		_ = f.Close()
+		return err
+	}
+	if err := f.Sync(); err != nil {
+		_ = f.Close()
+		return err
+	}
+	if err := f.Close(); err != nil {
+		return err
+	}
+	return os.Rename(tmp, path)
 }
 
 // signalContext returns a context cancelled on Ctrl-C or SIGTERM.
