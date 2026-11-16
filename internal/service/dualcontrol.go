@@ -92,7 +92,15 @@ func (s *Service) ApproveAdjustment(ctx context.Context, actor domain.Actor, net
 			return err
 		}
 		proposer, err := tx.GetMember(netID, pa.Proposer)
-		if err != nil || proposer.Status != domain.MemberActive || !proposer.HasRole(domain.RoleAdmin) {
+		if err != nil {
+			return err
+		}
+		// Resolve the proposer's temporary authority in this same write unit,
+		// just as openPending resolves the approving administrator's authority.
+		if err := s.applyBreakGlassRoles(tx, proposer); err != nil {
+			return err
+		}
+		if proposer.Status != domain.MemberActive || !proposer.HasRole(domain.RoleAdmin) {
 			return domain.InvalidState("the administrator who requested this adjustment is no longer an active administrator")
 		}
 		dir := AdjustDirection(pa.Direction)

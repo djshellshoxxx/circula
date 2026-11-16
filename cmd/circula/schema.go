@@ -26,12 +26,20 @@ const (
 
 // inspectSchema reads the schema state of the file at path without migrating.
 func inspectSchema(ctx context.Context, path string) (schemaState, error) {
+	if err := checkInterruptedRestore(ctx, path); err != nil {
+		return schemaState{}, err
+	}
 	return store.InspectSchema(ctx, path)
 }
 
 // openRaw opens a SQLite file without applying migrations (inspection and
 // online snapshots only).
-func openRaw(path string) (*sql.DB, error) { return store.OpenRaw(path) }
+func openRaw(path string) (*sql.DB, error) {
+	if err := checkInterruptedRestore(context.Background(), path); err != nil {
+		return nil, err
+	}
+	return store.OpenRaw(path)
+}
 
 // binarySchemaVersion is the highest schema version this binary knows.
 func binarySchemaVersion() int { return store.SchemaVersion() }
@@ -49,6 +57,9 @@ func storeOptions(cfg *Config) store.Options {
 // openStore opens the database at path, applying pending migrations (the
 // storage migration tool, ARC-002), with the configured options.
 func openStore(ctx context.Context, path string, cfg *Config) (*store.SQLite, error) {
+	if err := checkInterruptedRestore(ctx, path); err != nil {
+		return nil, err
+	}
 	return store.OpenWith(ctx, path, storeOptions(cfg))
 }
 

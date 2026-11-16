@@ -337,8 +337,23 @@ func (s *server) afterJoin(w http.ResponseWriter, r *http.Request, c *rc, m *dom
 	http.Redirect(w, r, "/n/"+n.Slug, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix plus validated slug
 }
 
-func (s *server) joinNetForm(w http.ResponseWriter, r *http.Request, c *rc) {
+// networkForJoin keeps private network names behind the same membership read
+// gate as normal network pages. Invitation links have their own token flow.
+func (s *server) networkForJoin(r *http.Request, c *rc) (*service.NetworkInfo, error) {
 	info, err := s.svc.NetworkBySlug(r.Context(), r.PathValue("slug"))
+	if err != nil {
+		return nil, err
+	}
+	if info.JoinMode == domain.JoinInvite {
+		if _, err := s.svc.GetNetwork(r.Context(), c.actor, info.ID); err != nil {
+			return nil, err
+		}
+	}
+	return info, nil
+}
+
+func (s *server) joinNetForm(w http.ResponseWriter, r *http.Request, c *rc) {
+	info, err := s.networkForJoin(r, c)
 	if err != nil {
 		s.fail(w, r, err)
 		return
@@ -347,7 +362,7 @@ func (s *server) joinNetForm(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
-	info, err := s.svc.NetworkBySlug(r.Context(), r.PathValue("slug"))
+	info, err := s.networkForJoin(r, c)
 	if err != nil {
 		s.fail(w, r, err)
 		return

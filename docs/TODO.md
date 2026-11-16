@@ -11,6 +11,8 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Completed engineering in this consolidation
 
+- Restore interruption guards and recovery instructions, HMAC-v2 authenticated backup summaries with legacy compatibility,
+  complete reversal histories beyond 500 entries, live temporary-proposer approval, and invitation-only join privacy.
 - Freeze-safe bounded proposal/adjustment expiry, governance cursor pagination, and signed confirmation
   flows for re-review decisions and adjustment approval.
 - Effective administrator read/navigation authorization, scoped-token confinement, exact JSON field names,

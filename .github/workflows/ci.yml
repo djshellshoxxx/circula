@@ -80,7 +80,7 @@ jobs:
           go-version-file: go.mod
           cache: true
       - name: test with race detector
-        run: go test -race -count=1 ./...
+        run: go test -race -count=1 -timeout 20m ./...
 
   test-cross:
     # Not run on pull requests (macOS race ~8 min, Windows slow). Runs on main pushes, nightly, manual dispatch.

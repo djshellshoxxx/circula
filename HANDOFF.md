@@ -42,6 +42,12 @@ Additional audit completion:
 - Export byte order remains backwards-compatible with pre-migration closure checksums. Only history
   presentation uses migration 0017's insertion sequence.
 
+Final historical-branch follow-up: restored the tested >500 reversal-history pagination from
+`claude/cool-ramanujan-n2peag`; fixed RESTORE-01 with durable interruption markers and seven
+subprocess crash tests; added versioned HMAC coverage for backup verification summaries (CRYPTO-02),
+keeping legacy manifests readable. Temporary-admin adjustment proposals remain approvable while
+the grant is live. Invitation-only join pages hide network existence from nonmembers.
+
 Validation: full `go test -count=1 ./...` passed after the export/erasure/migration fixes;
 focused replay and QA-019 tests passed after the next changes. Export lifecycle race tests passed.
 The final consolidated checks are still pending. Local Chromium cannot launch because this execution

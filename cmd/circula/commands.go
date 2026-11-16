@@ -7,7 +7,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -346,8 +345,12 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 		}
 		return st.Close()
 	}); err != nil {
-		removeDBFiles(partial)
-		fmt.Fprintf(stderr, "circula: restore failed: %v; the previous database was put back\n", err)
+		// Incomplete rollback/cleanup retains the staged file as recovery evidence.
+		// A completed rollback removes its marker and permits ordinary cleanup.
+		if checkInterruptedRestore(ctx, cfg.Database) == nil {
+			removeDBFiles(partial)
+		}
+		fmt.Fprintf(stderr, "circula: restore failed: %v\n", err)
 		return exitFailure
 	}
 	restoredAt := time.Now().UTC().Truncate(time.Second)
@@ -385,47 +388,6 @@ func checkEncryptionPolicy(src string, m *Manifest, cfg *Config) error {
 		return errors.New("the backup is encrypted; configure backup-encryption-key (or backup-encryption-key-file) with the key it was written under")
 	case !m.Encrypted && cfg.BackupRequireEncryption:
 		return errors.New("the backup is not encrypted and backup-require-encryption is set")
-	}
-	return nil
-}
-
-// swapDatabase replaces the database at path with the verified file new. When
-// a database exists it is moved aside (with its WAL files) first; check runs
-// on the new database, and if the move, the rename or check fails the previous
-// database is put back unchanged. On success the old one is deleted.
-func swapDatabase(ctx context.Context, path, newFile string, hadDB bool, check func(context.Context) error) error {
-	aside := path + ".pre-restore-swap"
-	suffixes := []string{"", "-wal", "-shm"}
-	putBack := func() {
-		removeDBFiles(path)
-		_ = os.Remove(path + "-journal")
-		if hadDB {
-			for _, sfx := range suffixes {
-				_ = os.Rename(aside+sfx, path+sfx)
-			}
-		}
-	}
-	if hadDB {
-		removeDBFiles(aside)
-		for _, sfx := range suffixes {
-			if err := os.Rename(path+sfx, aside+sfx); err != nil && !errors.Is(err, fs.ErrNotExist) {
-				for _, back := range suffixes {
-					_ = os.Rename(aside+back, path+back)
-				}
-				return fmt.Errorf("moving the current database aside: %w", err)
-			}
-		}
-	}
-	if err := os.Rename(newFile, path); err != nil {
-		putBack()
-		return fmt.Errorf("replacing the database: %w", err)
-	}
-	if err := check(ctx); err != nil {
-		putBack()
-		return err
-	}
-	if hadDB {
-		removeDBFiles(aside)
 	}
 	return nil
 }

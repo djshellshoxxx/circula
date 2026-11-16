@@ -2951,7 +2951,7 @@ paths:
       operationId: listTokens
       tags: [Tokens]
       summary: Caller's API tokens (API-066)
-      description: noNet. Requires read scope. Not paginated; at most 100 rows (API-036). Token values are never returned here.
+      description: noNet. Requires read scope and an unrestricted credential. Network-scoped tokens receive 403. Not paginated; at most 100 rows (API-036). Token values are never returned here.
       security: *secSafe
       responses:
         '200':
@@ -2972,12 +2972,11 @@ paths:
       description: |
         Session cookie only (cookieOnly; bearer gets 403). noNet. The token value (prefix cir_) is shown once.
         Scopes read and write only; admin returns 501 not-implemented. Default and maximum expiry 365 days.
-        Idempotency-Key is optional.
+        Idempotency-Key is not supported: token values are not retained in the response cache.
+        If the creation response is lost, inspect token metadata and revoke the unused token before creating another.
       security:
         - cookieAuth: []
           csrfToken: []
-      parameters:
-        - $ref: '#/components/parameters/IdempotencyKeyOptional'
       requestBody:
         required: true
         content:
@@ -3008,7 +3007,7 @@ paths:
       operationId: revokeToken
       tags: [Tokens]
       summary: Revoke an API token (API-066)
-      description: noNet. Requires write scope. Revocation is immediate; the revoked token then fails with 401.
+      description: noNet. Requires write scope and an unrestricted credential. Network-scoped tokens receive 403. Revocation is immediate; the revoked token then fails with 401.
       security:
         - cookieAuth: []
           csrfToken: []

@@ -36,6 +36,26 @@ Historical audit reports retain their original findings; the table below records
 | QA-019 | Decline/expiry status, balances, reservations and notices exercised through API/HTML forms | `api/qa019_expiry_test.go`, `web/qa019_expiry_test.go` |
 | Export reconciliation | Standalone CSV/JSON reader validates summary/account/transaction integrity | `scripts/test_read_export.py`, `service/export_schema_test.go` |
 
+## Historical-branch follow-up
+
+- Selectively ported reversal-history pagination and its 501-entry regression from
+  `claude/cool-ramanujan-n2peag` (`888b4f2` / `6631d8b`). Older incompatible export configuration
+  and duplicate implementations were not merged over the newer code.
+- PR #42's newer audit notes identified RESTORE-01 and CRYPTO-02. Restore now uses a durable marker;
+  every command-owned database open refuses interrupted/legacy restore remnants before SQLite can
+  create an empty database. Seven subprocess interruption points preserve recovery evidence.
+  A scoped, expiring validation exception exists only during the swap callback. Windows test-binary
+  cross-compilation and focused race tests passed; see `restore_swap_crash_test.go` and the recovery runbook.
+- New HMAC-v2 manifests sign verification summaries and other attestation fields; historical signatures
+  remain verifiable. Unknown versions and version-stripping downgrade attempts reject. See
+  `manifest_signature_version_test.go`. Renaming a backup remains supported.
+- Temporary administrator proposers use current effective authority inside approval; expired/closed
+  grants and grants from other networks cannot post (`dualcontrol_proposer_grant_test.go`).
+- Invitation-only join GET/POST hide network details from nonmembers while preserving token invitations
+  and public join modes (`web/join_privacy_test.go`).
+- The token-creation contract no longer advertises idempotency that the one-time-secret route does not provide.
+- Linux race tests have an explicit 20-minute per-package budget, within the existing 30-minute CI job budget.
+
 ## Validation status
 
 Focused tests for the changes above passed, including negative controls for several historical defects.
