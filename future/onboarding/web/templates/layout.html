@@ -1,0 +1,45 @@
+{{define "head"}}<!doctype html>
+<html lang="{{.Lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>{{if .Practice}}{{.T.pr_banner}} | {{end}}{{.Title}}</title>
+<link rel="stylesheet" href="{{.CSS}}">
+</head>
+<body{{if .Practice}} class="onb-practice-mode" data-practice="true"{{end}}>
+<a class="onb-skip-link" href="#main">{{.T.skip_link}}</a>
+{{if .Practice}}{{template "warning" .}}{{end}}
+<div class="onb-wrap">
+<main id="main" tabindex="-1">
+{{end}}
+
+{{define "foot"}}
+</main>
+{{if .Practice}}<footer><p class="onb-hint">{{.T.pr_banner}}</p></footer>{{end}}
+</div>
+</body>
+</html>
+{{end}}
+
+{{define "warning"}}<div class="onb-warning" id="practice-banner">
+<div class="onb-warning__inner">
+<span class="onb-warning__icon" aria-hidden="true">!</span>
+<strong class="onb-warning__text"><span class="onb-visually-hidden">{{.T.pr_warning}}</span>
+{{.T.pr_banner}}</strong>
+</div>
+</div>{{end}}
+
+{{define "errsummary"}}{{if .Errors}}<div class="onb-error-summary" role="alert" aria-labelledby="error-summary-title">
+<h2 id="error-summary-title">{{.T.err_h}}</h2>
+<ul>{{range .Errors}}<li>{{if .Field}}<a href="#{{.Field}}">{{.Msg}}</a>{{else}}{{.Msg}}{{end}}</li>{{end}}</ul>
+</div>{{end}}{{end}}
+
+{{define "hidden"}}<input type="hidden" name="csrf" value="{{.CSRF}}">{{end}}
+
+{{define "error"}}{{template "head" .}}
+<h1>{{.Heading}}</h1>
+<p>{{.Message}}</p>
+{{if .BackHref}}<p><a href="{{.BackHref}}">{{.BackText}}</a></p>{{end}}
+{{template "foot" .}}{{end}}

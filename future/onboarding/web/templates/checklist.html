@@ -1,0 +1,85 @@
+{{define "checklist"}}{{template "head" .}}
+<h1>{{.T.cl_title}}</h1>
+{{if .Intro}}<p class="onb-copy" id="community-intro">{{.Intro}}</p>{{else}}<p>{{.T.cl_intro}}</p>{{end}}
+{{if or .GovernanceURL .TermsURL}}
+<h2 id="community-links">{{.T.cl_community_h}}</h2>
+<ul aria-labelledby="community-links">
+{{if .GovernanceURL}}<li><a href="{{.GovernanceURL}}">{{.T.link_governance}}</a></li>{{end}}
+{{if .TermsURL}}<li><a href="{{.TermsURL}}">{{.T.link_terms}}</a></li>{{end}}
+</ul>
+{{end}}
+{{if .Dismissed}}
+<p>{{.T.cl_dismissed}}</p>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="curriculum" value="{{.Curriculum}}">
+<button class="onb-button" type="submit" name="action" value="restore">{{.T.btn_restore}}</button></form>
+{{else}}
+<p class="onb-status-text" id="progress-summary">{{.ProgressText}}</p>
+<ul class="onb-task-list" id="onb-task-list" aria-label="{{.T.cl_steps_label}}">
+{{range .Steps}}<li class="onb-task-list__item{{if .Next}} onb-task-list__item--next{{end}}{{if .Href}} onb-task-list__item--with-link{{end}}" id="step-{{.Key}}">
+<div class="onb-task-list__name-and-hint">
+{{if .Href}}<a class="onb-task-list__link" href="{{.Href}}" aria-describedby="{{.HintID}} {{.StatusID}}">{{.Name}}</a>{{else}}<div>{{.Name}}</div>{{end}}
+<div id="{{.HintID}}" class="onb-task-list__hint">{{.Hint}}</div>
+</div>
+<div class="onb-task-list__status{{if .Muted}} onb-task-list__status--muted{{end}}" id="{{.StatusID}}">{{.Status}}</div>
+<div class="onb-task-list__actions">
+<form method="post" action="{{$.ActionURL}}">{{template "hidden" $}}<input type="hidden" name="curriculum" value="{{$.Curriculum}}"><input type="hidden" name="step" value="{{.Key}}">
+{{if not .Completed}}<button class="onb-button onb-button--secondary" type="submit" name="action" value="complete">{{$.T.btn_done}}<span class="onb-visually-hidden">: {{.Name}}</span></button>
+{{if .Skipped}}<button class="onb-button onb-button--secondary" type="submit" name="action" value="resume">{{$.T.btn_resume}}<span class="onb-visually-hidden">: {{.Name}}</span></button>
+{{else}}<button class="onb-button onb-button--secondary" type="submit" name="action" value="skip">{{$.T.btn_skip}}<span class="onb-visually-hidden">: {{.Name}}</span></button>{{end}}{{end}}
+</form>
+</div>
+</li>
+{{end}}</ul>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="curriculum" value="{{.Curriculum}}">
+<button class="onb-button onb-button--secondary" type="submit" name="action" value="dismiss">{{.T.btn_dismiss}}</button></form>
+{{end}}
+
+<h2 id="share-heading">{{.T.share_h}}</h2>
+<p id="share-help">{{.T.share_help}}</p>
+<p class="onb-status-text" id="share-state">{{if .Share}}{{.T.share_state_on}}{{else}}{{.T.share_state_off}}{{end}}</p>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="curriculum" value="{{.Curriculum}}">
+{{if .Share}}<button class="onb-button onb-button--secondary" type="submit" name="action" value="unshare" aria-describedby="share-help">{{.T.btn_share_off}}</button>
+{{else}}<button class="onb-button onb-button--secondary" type="submit" name="action" value="share" aria-describedby="share-help">{{.T.btn_share_on}}</button>{{end}}
+</form>
+
+{{if .PracticeURL}}<h2>{{.T.pr_title}}</h2>
+<p id="practice-help">{{.T.practice_help}}</p>
+<p><a href="{{.PracticeURL}}" aria-describedby="practice-help">{{.T.link_practice}}</a></p>{{end}}
+{{if .AdminURL}}<p><a href="{{.AdminURL}}">{{.T.link_admin}}</a></p>{{end}}
+{{template "foot" .}}{{end}}
+
+{{define "admin"}}{{template "head" .}}
+{{template "errsummary" .}}
+<h1>{{.T.ad_title}}</h1>
+{{if .Saved}}<p class="onb-success" role="status">{{.T.ad_saved}}</p>{{end}}
+<form method="post" action="{{.CopyURL}}">{{template "hidden" .}}<input type="hidden" name="revision" value="{{.Revision}}">
+<div class="onb-field{{if .IntroErr}} onb-field--error{{end}}">
+<label for="intro">{{.T.ad_intro_label}}</label>
+<p class="onb-hint" id="intro-hint">{{.T.ad_intro_hint}}</p>
+<textarea class="onb-textarea" id="intro" name="intro" rows="6" maxlength="4000" aria-describedby="intro-hint">{{.Intro}}</textarea>
+</div>
+<div class="onb-field{{if .GovErr}} onb-field--error{{end}}">
+<label for="governance">{{.T.ad_gov_label}}</label>
+<p class="onb-hint" id="governance-hint">{{.T.ad_link_hint}}</p>
+<input class="onb-input" id="governance" name="governance" type="text" inputmode="url" autocomplete="off" spellcheck="false" maxlength="512" value="{{.GovernanceURL}}" aria-describedby="governance-hint">
+</div>
+<div class="onb-field{{if .TermsErr}} onb-field--error{{end}}">
+<label for="terms">{{.T.ad_terms_label}}</label>
+<p class="onb-hint" id="terms-hint">{{.T.ad_link_hint}}</p>
+<input class="onb-input" id="terms" name="terms" type="text" inputmode="url" autocomplete="off" spellcheck="false" maxlength="512" value="{{.TermsURL}}" aria-describedby="terms-hint">
+</div>
+<button class="onb-button" type="submit">{{.T.ad_save}}</button>
+</form>
+
+<h2 id="metrics-heading">{{.T.ad_metrics_h}}</h2>
+<p id="metrics-help">{{.MetricsHelp}}</p>
+<p class="onb-status-text" id="metrics-state">{{if .MetricsOn}}{{.T.ad_metrics_state_on}}{{else}}{{.T.ad_metrics_state_off}}{{end}}</p>
+<form method="post" action="{{.MetricsURL}}">{{template "hidden" .}}
+{{if .MetricsOn}}<button class="onb-button onb-button--secondary" type="submit" name="enabled" value="0" aria-describedby="metrics-help">{{.T.ad_metrics_turn_off}}</button>
+{{else}}<button class="onb-button onb-button--secondary" type="submit" name="enabled" value="1" aria-describedby="metrics-help">{{.T.ad_metrics_turn_on}}</button>{{end}}
+</form>
+{{if .Counts}}<div class="onb-table-wrap"><table class="onb-table"><caption>{{.T.ad_counts_caption}}</caption>
+<thead><tr><th scope="col">{{.T.ad_counts_step}}</th><th scope="col" class="onb-num">{{.T.ad_counts_done}}</th></tr></thead>
+<tbody>{{range .Counts}}<tr><th scope="row">{{.Name}}</th><td class="onb-num">{{.Value}}</td></tr>{{end}}</tbody></table></div>{{end}}
+<p><a href="{{.BackURL}}">{{.T.back_checklist}}</a></p>
+{{template "foot" .}}{{end}}

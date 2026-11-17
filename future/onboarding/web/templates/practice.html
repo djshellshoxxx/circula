@@ -1,0 +1,125 @@
+{{define "p_balances"}}<div class="onb-table-wrap"><table class="onb-table" id="balances"><caption>{{.T.pr_balances_caption}}</caption>
+<thead><tr><th scope="col">{{.T.pr_col_member}}</th><th scope="col" class="onb-num">{{.T.pr_col_balance}}</th><th scope="col" class="onb-num">{{.T.pr_col_limit}}</th><th scope="col" class="onb-num">{{.T.pr_col_reserved}}</th><th scope="col" class="onb-num">{{.T.pr_col_available}}</th></tr></thead>
+<tbody>{{range .Members}}<tr><th scope="row">{{.Name}}</th><td class="onb-num{{if .Negative}} onb-neg{{end}}">{{.Balance}}</td><td class="onb-num">{{.Limit}}</td><td class="onb-num">{{.Reserved}}</td><td class="onb-num">{{.Available}}</td></tr>{{end}}</tbody></table></div>{{end}}
+
+{{define "p_nav"}}<ul class="onb-nav"><li><a href="{{.HomeURL}}">{{.T.pr_home}}</a></li></ul>{{end}}
+
+{{define "practice_landing"}}{{template "head" .}}
+<h1>{{.T.pr_title}}</h1>
+<p>{{.T.pr_intro}}</p>
+<form method="post" action="{{.StartURL}}"><button class="onb-button" type="submit">{{.T.pr_start}}</button></form>
+{{if .ExitURL}}<p><a href="{{.ExitURL}}">{{.T.pr_exit_link}}</a></p>{{end}}
+{{template "foot" .}}{{end}}
+
+{{define "practice_home"}}{{template "head" .}}
+<h1>{{.T.pr_title}}</h1>
+<p>{{.T.pr_intro}}</p>
+{{if .AllDone}}<div class="onb-success" role="status"><strong>{{.T.pr_all_done_h}}</strong> {{.T.pr_all_done_p}}</div>{{end}}
+<ul class="onb-task-list" aria-label="{{.T.pr_steps_label}}">
+{{range .Steps}}<li class="onb-task-list__item onb-task-list__item--with-link{{if .Next}} onb-task-list__item--next{{end}}" id="step-{{.Key}}">
+<div class="onb-task-list__name-and-hint"><a class="onb-task-list__link" href="{{.Href}}" aria-describedby="{{.HintID}} {{.StatusID}}">{{.Name}}</a>
+<div id="{{.HintID}}" class="onb-task-list__hint">{{.Hint}}</div></div>
+<div class="onb-task-list__status{{if .Muted}} onb-task-list__status--muted{{end}}" id="{{.StatusID}}">{{.Status}}</div></li>
+{{end}}</ul>
+<h2>{{.T.pr_balances_h}}</h2>
+{{template "p_balances" .}}
+<h2>{{.T.pr_events_h}}</h2>
+<ol class="onb-events">{{range .Events}}<li>{{.}}</li>{{end}}</ol>
+<h2>{{.T.pr_exports}}</h2>
+<ul><li><a href="{{.JSONURL}}">{{.T.pr_export_json}}</a></li><li><a href="{{.CSVURL}}">{{.T.pr_export_csv}}</a></li></ul>
+<h2>{{.T.pr_reset}}</h2>
+<p id="reset-help">{{.T.pr_reset_help}}</p>
+<form method="post" action="{{.ResetURL}}">{{template "hidden" .}}<button class="onb-button onb-button--secondary" type="submit" aria-describedby="reset-help">{{.T.pr_reset}}</button></form>
+<h2>{{.T.pr_exit}}</h2>
+<p id="exit-help">{{.T.pr_exit_help}}</p>
+<form method="post" action="{{.ExitPostURL}}">{{template "hidden" .}}<button class="onb-button onb-button--secondary" type="submit" aria-describedby="exit-help">{{.T.pr_exit}}</button></form>
+{{if .ExitURL}}<p><a href="{{.ExitURL}}">{{.T.pr_exit_link}}</a></p>{{end}}
+{{template "foot" .}}{{end}}
+
+{{define "practice_terms"}}{{template "head" .}}{{template "p_nav" .}}
+<h1>{{.T.pr_terms_h}}</h1>
+<p>{{.T.pr_terms_p1}}</p>
+<p>{{.T.pr_terms_p2}}</p>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="cmd" value="{{.Cmd}}"><button class="onb-button" type="submit">{{.T.pr_terms_btn}}</button></form>
+{{template "foot" .}}{{end}}
+
+{{define "practice_credit"}}{{template "head" .}}{{template "p_nav" .}}
+<h1>{{.T.pr_credit_h}}</h1>
+<p>{{.T.pr_credit_p1}}</p>
+<p>{{.T.pr_credit_p2}}</p>
+<p>{{.T.pr_credit_p3}}</p>
+{{template "p_balances" .}}
+<p>{{.T.pr_credit_example}}</p>
+<p>{{.T.pr_negative_quiz}}</p>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="cmd" value="{{.Cmd}}"><button class="onb-button" type="submit">{{.T.pr_credit_btn}}</button></form>
+{{template "foot" .}}{{end}}
+
+{{define "p_listings"}}<h2>{{.T.pr_listings_h}}</h2>
+<div class="onb-table-wrap"><table class="onb-table"><thead><tr><th scope="col">{{.T.pr_listing_title}}</th><th scope="col">{{.T.pr_listing_kind}}</th><th scope="col">{{.T.pr_col_member}}</th><th scope="col" class="onb-num">{{.T.pr_listing_amount}}</th></tr></thead>
+<tbody>{{range .Listings}}<tr><th scope="row">{{.Title}}</th><td>{{.Kind}}</td><td>{{.Owner}}</td><td class="onb-num">{{.Amount}}</td></tr>{{end}}</tbody></table></div>{{end}}
+
+{{define "practice_listing"}}{{template "head" .}}{{template "p_nav" .}}
+{{template "errsummary" .}}
+<h1>{{.T.pr_listing_h}}</h1>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="cmd" value="{{.Cmd}}">
+<fieldset class="onb-radios" id="kind"><legend class="onb-field"><strong>{{.T.pr_listing_kind}}</strong></legend>
+<div class="onb-radio"><input type="radio" id="kind-offer" name="kind" value="offer"{{if ne .Kind "request"}} checked{{end}}><label for="kind-offer">{{.T.pr_kind_offer}}</label></div>
+<div class="onb-radio"><input type="radio" id="kind-request" name="kind" value="request"{{if eq .Kind "request"}} checked{{end}}><label for="kind-request">{{.T.pr_kind_request}}</label></div>
+</fieldset>
+<div class="onb-field{{if .TitleErr}} onb-field--error{{end}}"><label for="title">{{.T.pr_listing_title}}</label>
+<p class="onb-hint" id="title-hint">{{.T.pr_listing_title_hint}}</p>
+{{if .TitleErr}}<p class="onb-error-message" id="title-error"><span class="onb-visually-hidden">{{.T.err_h}}: </span>{{.TitleErr}}</p>{{end}}
+<input class="onb-input" id="title" name="title" type="text" maxlength="200" autocomplete="off" value="{{.Title2}}" aria-describedby="title-hint{{if .TitleErr}} title-error{{end}}"></div>
+<div class="onb-field{{if .AmountErr}} onb-field--error{{end}}"><label for="amount">{{.T.pr_listing_amount}}</label>
+<p class="onb-hint" id="amount-hint">{{.T.pr_listing_amount_hint}}</p>
+{{if .AmountErr}}<p class="onb-error-message" id="amount-error"><span class="onb-visually-hidden">{{.T.err_h}}: </span>{{.AmountErr}}</p>{{end}}
+<input class="onb-input" id="amount" name="amount" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" value="{{.Amount}}" aria-describedby="amount-hint{{if .AmountErr}} amount-error{{end}}"></div>
+<button class="onb-button" type="submit">{{.T.pr_listing_btn}}</button></form>
+{{template "p_listings" .}}
+{{template "foot" .}}{{end}}
+
+{{define "practice_partner"}}{{template "head" .}}{{template "p_nav" .}}
+{{template "errsummary" .}}
+<h1>{{.T.pr_partner_h}}</h1>
+<form method="post" action="{{.ActionURL}}">{{template "hidden" .}}<input type="hidden" name="cmd" value="{{.Cmd}}">
+<fieldset class="onb-radios" id="partner"><legend><strong>{{.T.pr_partner_legend}}</strong></legend>
+{{range .Partners}}<div class="onb-radio"><input type="radio" id="partner-{{.ID}}" name="partner" value="{{.ID}}"{{if .Checked}} checked{{end}}><label for="partner-{{.ID}}">{{.Name}}</label></div>
+{{end}}</fieldset>
+<button class="onb-button" type="submit">{{.T.pr_partner_btn}}</button></form>
+{{template "p_listings" .}}
+{{template "foot" .}}{{end}}
+
+{{define "practice_trade"}}{{template "head" .}}{{template "p_nav" .}}
+{{template "errsummary" .}}
+<h1>{{.T.pr_trade_h}}</h1>
+{{if .Proposals}}<h2>{{.T.pr_proposals_h}}</h2>
+{{range .Proposals}}<div class="onb-stack" id="proposal-{{.ID}}">
+{{if eq .State "pending"}}<h3>{{$.T.pr_pending_h}}</h3><p>{{.Text}}</p>
+<form class="onb-inline-form" method="post" action="{{.RespondURL}}">{{template "hidden" $}}<input type="hidden" name="cmd" value="{{.Cmd1}}"><input type="hidden" name="accept" value="1"><button class="onb-button" type="submit">{{$.T.pr_reply_accept}}</button></form>
+<form class="onb-inline-form" method="post" action="{{.RespondURL}}">{{template "hidden" $}}<input type="hidden" name="cmd" value="{{.Cmd2}}"><input type="hidden" name="accept" value="0"><button class="onb-button onb-button--secondary" type="submit">{{$.T.pr_reply_decline}}</button></form>
+<form class="onb-inline-form" method="post" action="{{.CancelURL}}">{{template "hidden" $}}<input type="hidden" name="cmd" value="{{.Cmd3}}"><button class="onb-button onb-button--secondary" type="submit">{{$.T.pr_cancel}}</button></form>
+{{else if eq .State "accepted"}}<h3>{{$.T.pr_accepted_h}}</h3><p>{{$.T.pr_accepted_p}}</p><p>{{.Text}}</p>
+{{else if eq .State "declined"}}<h3>{{$.T.pr_declined_h}}</h3><p>{{$.T.pr_declined_p}}</p>
+{{else}}<h3>{{$.T.pr_cancelled_h}}</h3><p>{{$.T.pr_cancelled_p}}</p>{{end}}
+</div>{{end}}{{end}}
+<h2>{{.T.pr_trade_pick}}</h2>
+<form method="get" action="{{.ActionURL}}">
+<fieldset class="onb-radios" id="listing"><legend><strong>{{.T.pr_trade_pick}}</strong></legend>
+{{range .Choices}}<div class="onb-radio"><input type="radio" id="listing-{{.ID}}" name="listing" value="{{.ID}}"{{if .Checked}} checked{{end}}><label for="listing-{{.ID}}">{{.Label}}</label></div>
+{{end}}</fieldset>
+<button class="onb-button onb-button--secondary" type="submit">{{.T.pr_trade_pick_btn}}</button></form>
+{{if .Preview}}<h2 id="preview-heading">{{.T.pr_trade_preview_h}}</h2>
+<p>{{.T.pr_trade_preview_note}}</p>
+<div class="onb-table-wrap"><table class="onb-table" aria-labelledby="preview-heading"><tbody>
+<tr><th scope="row">{{.T.pr_trade_you_before}}</th><td class="onb-num">{{.Preview.YouBefore}}</td></tr>
+<tr><th scope="row">{{.T.pr_trade_you_after}}</th><td class="onb-num{{if .Preview.Negative}} onb-neg{{end}}">{{.Preview.YouAfter}}</td></tr>
+<tr><th scope="row">{{.T.pr_trade_partner_before}}</th><td class="onb-num">{{.Preview.PartnerBefore}}</td></tr>
+<tr><th scope="row">{{.T.pr_trade_partner_after}}</th><td class="onb-num">{{.Preview.PartnerAfter}}</td></tr>
+<tr><th scope="row">{{.T.pr_trade_limit}}</th><td class="onb-num">{{.Preview.Limit}}</td></tr>
+</tbody></table></div>
+{{if .Preview.Negative}}<p>{{.T.pr_trade_negative}}</p>{{end}}
+<p>{{.Preview.ReservedText}}</p>
+<form method="post" action="{{.ProposeURL}}">{{template "hidden" .}}<input type="hidden" name="cmd" value="{{.Cmd}}"><input type="hidden" name="listing" value="{{.Preview.Listing}}"><button class="onb-button" type="submit">{{.T.pr_trade_send}}</button></form>
+{{end}}
+{{template "p_balances" .}}
+{{template "foot" .}}{{end}}

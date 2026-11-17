@@ -1,0 +1,158 @@
+/*
+ * Circula onboarding styles. Locally namespaced (onb-). No external resources.
+ *
+ * The task-list and warning-text blocks are a minimal derivative of
+ * alphagov/govuk-frontend (MIT, Crown Copyright 2017) at commit
+ * a11bd3316363ab4702fcef81d6ce06a947c464ef, files
+ *   packages/govuk-frontend/src/govuk/components/task-list/_mixin.scss
+ *   packages/govuk-frontend/src/govuk/components/warning-text/_mixin.scss
+ * See third_party/govuk-frontend/ and third_party/PROVENANCE.md for the
+ * licence notice and the list of local modifications. No GOV.UK fonts, logos
+ * or branding are included.
+ */
+:root {
+  --onb-text: #0b0c0c;
+  --onb-text-secondary: #505a5f;
+  --onb-bg: #ffffff;
+  --onb-surface: #f3f2f1;
+  --onb-border: #b1b4b6;
+  --onb-control-border: #505a5f;
+  --onb-link: #1d70b8;
+  --onb-link-hover: #003078;
+  --onb-focus: #0b0c0c;
+  --onb-focus-bg: #ffdd00;
+  --onb-button-bg: #00703c;
+  --onb-button-text: #ffffff;
+  --onb-secondary-bg: #f3f2f1;
+  --onb-secondary-text: #0b0c0c;
+  --onb-error: #ca3535;
+  --onb-warn-bg: #ffdd00;
+  --onb-warn-text: #0b0c0c;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --onb-text: #f3f2f1;
+    --onb-text-secondary: #b1b4b6;
+    --onb-bg: #0b0c0c;
+    --onb-surface: #1d1f20;
+    --onb-border: #6f777b;
+    --onb-control-border: #b1b4b6;
+    --onb-link: #5694ca;
+    --onb-link-hover: #99c4ec;
+    --onb-focus: #ffdd00;
+    --onb-focus-bg: #ffdd00;
+    --onb-button-bg: #1a8a50;
+    --onb-button-text: #ffffff;
+    --onb-secondary-bg: #2b2e30;
+    --onb-secondary-text: #f3f2f1;
+    --onb-error: #ff7b7b;
+  }
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--onb-bg);
+  color: var(--onb-text);
+  font: 1.1875rem/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.onb-skip-link {
+  position: absolute; left: 0; top: -4rem; padding: .5rem 1rem;
+  background: var(--onb-focus-bg); color: #0b0c0c; z-index: 10;
+}
+.onb-skip-link:focus { top: 0; }
+.onb-visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; margin: 0; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.onb-wrap { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+.onb-practice-mode { border-top: 12px dashed var(--onb-warn-bg); }
+h1 { font-size: 2rem; line-height: 1.15; margin: 1rem 0; overflow-wrap: anywhere; }
+h2 { font-size: 1.5rem; line-height: 1.2; margin: 2rem 0 .75rem; }
+h3 { font-size: 1.1875rem; margin: 1.25rem 0 .5rem; }
+p, li, dd, dt, td, th, label, legend { overflow-wrap: anywhere; }
+a { color: var(--onb-link); text-underline-offset: .15em; }
+a:hover { color: var(--onb-link-hover); }
+:focus-visible { outline: 3px solid var(--onb-focus); outline-offset: 2px; box-shadow: 0 0 0 3px var(--onb-focus-bg); }
+.onb-hint { color: var(--onb-text-secondary); margin: .25rem 0 0; }
+.onb-copy { white-space: pre-line; margin: 0 0 1rem; padding: .75rem 1rem; background: var(--onb-surface); border-left: 6px solid var(--onb-border); }
+.onb-status-text { margin: .5rem 0; }
+
+/* Task list (derivative of govuk-task-list; flex instead of table layout so it reflows at 320px). */
+.onb-task-list { list-style: none; margin: 0 0 1.5rem; padding: 0; }
+.onb-task-list__item {
+  display: flex; flex-wrap: wrap; gap: .5rem 1rem; position: relative;
+  padding: .75rem 0; border-bottom: 1px solid var(--onb-border);
+}
+.onb-task-list__item:first-child { border-top: 1px solid var(--onb-border); }
+.onb-task-list__name-and-hint { flex: 1 1 14rem; min-width: 0; color: var(--onb-text); }
+.onb-task-list__status { flex: 0 1 auto; color: var(--onb-text); font-weight: 700; text-align: right; }
+.onb-task-list__status--muted { color: var(--onb-text-secondary); font-weight: 400; }
+.onb-task-list__hint { margin-top: .25rem; color: var(--onb-text-secondary); }
+.onb-task-list__actions { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: .5rem; }
+.onb-task-list__actions form { margin: 0; }
+.onb-task-list__item--next { background: var(--onb-surface); }
+
+/* Warning text (derivative of govuk-warning-text). The icon is decorative; the words carry the meaning. */
+.onb-warning {
+  position: relative; margin: 0 0 1.5rem; padding: .5rem 0; font-weight: 700;
+  background: var(--onb-warn-bg); color: var(--onb-warn-text);
+}
+.onb-warning__inner { max-width: 40rem; margin: 0 auto; padding: .25rem 1rem .25rem 1rem; display: flex; gap: .75rem; align-items: center; }
+.onb-warning__icon {
+  flex: 0 0 auto; display: inline-block; min-width: 35px; min-height: 35px;
+  border: 3px solid #0b0c0c; border-radius: 50%; background: #0b0c0c; color: #ffdd00;
+  font-size: 30px; line-height: 29px; text-align: center; user-select: none; forced-color-adjust: none;
+}
+@media screen and (forced-colors: active) {
+  .onb-warning__icon { border-color: windowText; color: windowText; background: transparent; }
+}
+.onb-warning__text { display: block; font-weight: inherit; }
+
+/* Forms and buttons: targets are at least 44px tall. */
+.onb-button {
+  display: inline-block; min-height: 44px; min-width: 44px; padding: .5rem 1rem; margin: 0;
+  font: inherit; font-weight: 600; line-height: 1.25; cursor: pointer; text-align: center;
+  color: var(--onb-button-text); background: var(--onb-button-bg); border: 2px solid transparent; border-radius: 0;
+}
+.onb-button--secondary { color: var(--onb-secondary-text); background: var(--onb-secondary-bg); border-color: var(--onb-control-border); }
+.onb-button:hover { filter: brightness(1.1); }
+.onb-field { margin: 0 0 1.5rem; }
+.onb-field label, .onb-field legend { display: block; font-weight: 700; margin-bottom: .25rem; }
+.onb-input, .onb-select, .onb-textarea {
+  display: block; width: 100%; min-height: 44px; padding: .5rem; font: inherit; color: var(--onb-text);
+  background: var(--onb-bg); border: 2px solid var(--onb-control-border); border-radius: 0;
+}
+.onb-textarea { min-height: 9rem; }
+.onb-radios { border: 0; margin: 0 0 1.5rem; padding: 0; }
+.onb-radio { display: flex; gap: .75rem; align-items: flex-start; min-height: 44px; padding: .25rem 0; }
+.onb-radio input { flex: 0 0 auto; width: 24px; height: 24px; margin: 8px 0 0; }
+.onb-radio label { font-weight: 400; margin: 0; padding: 6px 0; }
+.onb-error-summary { border: 5px solid var(--onb-error); padding: 1rem; margin: 0 0 1.5rem; }
+.onb-error-summary h2 { margin: 0 0 .5rem; font-size: 1.5rem; }
+.onb-field--error { border-left: 5px solid var(--onb-error); padding-left: 1rem; }
+.onb-error-message { color: var(--onb-error); font-weight: 700; margin: 0 0 .5rem; }
+.onb-success { border: 5px solid var(--onb-button-bg); padding: .75rem 1rem; margin: 0 0 1.5rem; font-weight: 700; }
+
+/* Tables */
+.onb-table-wrap { overflow-x: auto; max-width: 100%; }
+.onb-table { border-collapse: collapse; width: 100%; margin: 0 0 1.5rem; }
+.onb-table caption { text-align: left; font-weight: 700; padding-bottom: .5rem; }
+.onb-table th, .onb-table td { padding: .5rem .75rem .5rem 0; border-bottom: 1px solid var(--onb-border); text-align: left; vertical-align: top; }
+.onb-num { text-align: right !important; font-variant-numeric: tabular-nums; }
+.onb-neg { font-weight: 700; }
+
+.onb-inline-form { display: inline; margin: 0 .5rem .5rem 0; }
+.onb-nav { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin: 1rem 0; padding: 0; list-style: none; }
+.onb-events { padding-left: 1.25rem; }
+.onb-stack > * + * { margin-top: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print { .onb-skip-link, .onb-button { display: none; } }
+@media (forced-colors: active) {
+  .onb-button { border-color: ButtonText; }
+  :focus-visible { outline-color: Highlight; }
+}
