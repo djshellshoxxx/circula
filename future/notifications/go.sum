@@ -3,6 +3,8 @@ github.com/SherClockHolmes/webpush-go v1.4.1-0.20260422052225-76cc00f5ac2d/go.mo
 github.com/golang-jwt/jwt/v5 v5.2.2 h1:Rl4B7itRWVtYIHFrSNd7vhTiz9UpLdi6gZhZ3wEeDy8=
 github.com/golang-jwt/jwt/v5 v5.2.2/go.mod h1:pqrtFR0X4osieyHYxtmOUWsAWrfe1Q5UVIyoH402zdk=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/mattn/go-sqlite3 v1.14.53 h1:mnTM0owzUMrKuLo+0w51NUiB0ir2Fo7kFXlPt/l3BGs=
+github.com/mattn/go-sqlite3 v1.14.53/go.mod h1:6JTjA44L93a0QCyJef5YvlPoKXntQPjzWv5gtm9sB6w=
 github.com/wneessen/go-mail v0.8.2 h1:JVeSmRX9oPjYFH77irWIFy8t1vJRDU/+ri4H38FMAK8=
 github.com/wneessen/go-mail v0.8.2/go.mod h1:rJb+LDvSMcOzSeNZ4rFyS7PLMy0DEFz/uU3A0T5JY50=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=

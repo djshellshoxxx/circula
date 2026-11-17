@@ -275,3 +275,16 @@ func (s *Service) Purge(ctx context.Context, retention time.Duration) (int, erro
 	})
 	return int(n), err
 }
+
+// EnqueueTestTx queues an operator diagnostic message for one member's channel
+// inside q. It is subject to every gate a real notification passes: the member
+// must be active and have opted in to at least one kind on the channel, and a
+// confirmed target must exist, so the diagnostic can never reach someone who
+// did not opt in.
+func (s *Service) EnqueueTestTx(ctx context.Context, q DBTX, networkID, memberID, channel, eventID string) (Enqueued, error) {
+	if !ValidChannel(channel) || networkID == "" || memberID == "" || eventID == "" || len(eventID) > 256 {
+		return Enqueued{}, invalid("test notification")
+	}
+	now := s.now()
+	return s.insertDelivery(ctx, q, now, Event{NetworkID: networkID, EventID: "test:" + eventID, MemberID: memberID, Kind: KindTest, ExpiresAt: now.Add(time.Hour)}, channel, "")
+}

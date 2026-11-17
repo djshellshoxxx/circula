@@ -330,7 +330,7 @@ func (s *Service) AddEmailTarget(ctx context.Context, a Actor, address string) (
 				return err
 			}
 		}
-		ev := Event{NetworkID: a.NetworkID, EventID: fmt.Sprintf("verify:%s:%d", id, now.UnixNano()), MemberID: a.MemberID, Kind: KindEmailVerification, ExpiresAt: now.Add(verifyTTL)}
+		ev := Event{NetworkID: a.NetworkID, EventID: "verify:"+id+":"+newID(), MemberID: a.MemberID, Kind: KindEmailVerification, ExpiresAt: now.Add(verifyTTL)}
 		if _, err := s.insertDelivery(ctx, q, now, ev, ChannelEmail, id); err != nil {
 			return err
 		}
@@ -529,4 +529,65 @@ func (s *Service) bounceTx(ctx context.Context, q DBTX, ab *auditBatch, networkI
 	}
 	_, err = q.ExecContext(ctx, `UPDATE notification_email_targets SET soft_bounces=? WHERE id=?`, soft, targetID)
 	return err
+}
+
+// RotateKeys re-seals every stored target under the keyring's active key so
+// retired keys can be removed from the keyring. Rows that cannot be opened with
+// any retained key are reported in the error and left untouched. It returns
+// the number of rows re-sealed.
+func (s *Service) RotateKeys(ctx context.Context) (int, error) {
+	type item struct {
+		table, id, network, member, aadKind string
+		sealed                              []byte
+	}
+	var items []item
+	changed, unreadable := 0, 0
+	err := s.st.Update(ctx, func(ctx context.Context, q DBTX) error {
+		for _, t := range []struct{ table, kind string }{{"notification_email_targets", "email"}, {"push_subscriptions", "push"}} {
+			rows, err := q.QueryContext(ctx, `SELECT id,network_id,member_id,sealed FROM `+t.table)
+			if err != nil {
+				return err
+			}
+			for rows.Next() {
+				it := item{table: t.table, aadKind: t.kind}
+				if err := rows.Scan(&it.id, &it.network, &it.member, &it.sealed); err != nil {
+					rows.Close()
+					return err
+				}
+				items = append(items, it)
+			}
+			if err := rows.Err(); err != nil {
+				rows.Close()
+				return err
+			}
+			rows.Close()
+		}
+		for _, it := range items {
+			aad := sealAAD(it.aadKind, it.network, it.member, it.id)
+			plain, keyID, err := s.cfg.Secrets.Keyring.Open(it.sealed, aad)
+			if err != nil {
+				unreadable++
+				continue
+			}
+			if keyID == s.cfg.Secrets.Keyring.ActiveID() {
+				continue
+			}
+			sealed, err := s.cfg.Secrets.Keyring.Seal(plain, aad)
+			if err != nil {
+				return err
+			}
+			if _, err := q.ExecContext(ctx, `UPDATE `+it.table+` SET sealed=? WHERE id=?`, sealed, it.id); err != nil {
+				return err
+			}
+			changed++
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+	if unreadable > 0 {
+		return changed, fmt.Errorf("notifications: %d sealed rows could not be opened with the retained keys", unreadable)
+	}
+	return changed, nil
 }
