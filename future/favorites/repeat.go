@@ -58,6 +58,9 @@ type Draft struct {
 	RequestKey string
 	// TradeID is the source trade, empty for a draft started from a favorite.
 	TradeID string
+	// RecipientName is the recipient's current public display name, for
+	// presentation only. Service fills it from the live Policy snapshot.
+	RecipientName string
 }
 
 // Repeat deliberately leaves Amount nil and never copies an old intent key.

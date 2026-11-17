@@ -48,7 +48,9 @@ func (s *Service) RepeatTrade(ctx context.Context, a Actor, tradeID, requestKey 
 	if err != nil {
 		return Draft{}, err
 	}
-	return s.storeDraft(ctx, a, key, d)
+	d, err = s.storeDraft(ctx, a, key, d)
+	d.RecipientName = target.DisplayName
+	return d, err
 }
 
 // DraftFromFavorite starts an unpriced draft toward a current favorite, with
@@ -86,7 +88,9 @@ func (s *Service) DraftFromFavorite(ctx context.Context, a Actor, target, reques
 	if err != nil {
 		return Draft{}, err
 	}
-	return s.storeDraft(ctx, a, key, Draft{Network: a.Network, Recipient: target, Intent: intent})
+	d, err := s.storeDraft(ctx, a, key, Draft{Network: a.Network, Recipient: target, Intent: intent})
+	d.RecipientName = t.DisplayName
+	return d, err
 }
 
 // GetDraft re-reads a stored draft by its RequestKey, after re-validating the
@@ -121,7 +125,9 @@ func (s *Service) GetDraft(ctx context.Context, a Actor, requestKey string) (Dra
 	if _, err := Save(owner, t, ""); err != nil {
 		return Draft{}, err
 	}
-	return draftOf(in), nil
+	d := draftOf(in)
+	d.RecipientName = t.DisplayName
+	return d, nil
 }
 
 func (s *Service) resolveKey(k string) (string, error) {
