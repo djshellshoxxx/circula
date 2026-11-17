@@ -1,22 +1,11 @@
 import {PrecacheController} from 'workbox-precaching/PrecacheController.js';
-import {requestAllowed, responseAllowed, offlineHTML} from './policy.mjs';
+import {requestAllowed, offlineHTML} from './policy.mjs';
+import {precachePlugins} from './precache.mjs';
 // Injected by the Go handler only from validated build metadata and base path.
 const config = __CIRCULA_CONFIG__;
 const origin = self.location.origin;
 const assets = new Map(config.assets.map(a => [new URL(a.url, origin).href, a]));
-const controller = new PrecacheController({cacheName: config.cacheName, plugins: [{
-  async requestWillFetch({request}) {
-    if (!assets.has(request.url)) throw new Error('Non-public precache request');
-    return new Request(request, {credentials: 'omit', cache: 'reload', redirect: 'error'});
-  },
-  async cacheWillUpdate({request, response}) {
-    const asset = assets.get(request.url);
-    if (!asset || !responseAllowed(response, asset.type)) return null;
-    const digest = await crypto.subtle.digest('SHA-256', await response.clone().arrayBuffer());
-    const actual = btoa(String.fromCharCode(...new Uint8Array(digest)));
-    return actual === asset.sha256 ? response : null;
-  }
-}]});
+const controller = new PrecacheController({cacheName: config.cacheName, plugins: precachePlugins(assets)});
 controller.addToCacheList(config.assets.map(a => ({url: a.url, revision: null, integrity: `sha256-${a.sha256}`})));
 self.addEventListener('install', event => {event.waitUntil(controller.install(event));});
 self.addEventListener('activate', event => {event.waitUntil((async () => {

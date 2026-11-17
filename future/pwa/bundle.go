@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"html/template"
+	"io/fs"
 	"net"
 	"net/http"
 	"net/url"
@@ -28,10 +29,23 @@ type Config struct {
 	// the production adapter must supply its actual route mapping.
 	Find, Trade, Balance, Inbox string
 }
+
+// MaxAssetBytes bounds every precached asset. The worker enforces the same
+// ceiling on streamed response reads so a hostile or misbehaving origin cannot
+// make it buffer unbounded data. MaxAssets bounds the precache list.
+const (
+	MaxAssetBytes = 1 << 20
+	MaxAssets     = 32
+)
+
+// assetTypes pins the only MIME type permitted for each fingerprinted extension.
+var assetTypes = map[string]string{".css": "text/css", ".js": "application/javascript", ".png": "image/png"}
+
 type asset struct {
 	File   string `json:"file"`
 	SHA256 string `json:"sha256"`
 	Type   string `json:"type"`
+	Size   int    `json:"size"`
 }
 type catalog struct {
 	Version string  `json:"version"`
@@ -44,13 +58,17 @@ type Bundle struct {
 	worker        []byte
 	style, client string
 	icons         map[int]string
+	bytes         map[string][]byte
 }
 
 var basePattern = regexp.MustCompile(`^/(?:[A-Za-z0-9_-]+/)*$`)
+var catalogVersion = regexp.MustCompile(`^[0-9a-f]{16}$`)
 var fingerprint = regexp.MustCompile(`\.[0-9a-f]{16}\.(?:css|js|png)$`)
 
-func New(config Config) (*Bundle, error) {
-	b := &Bundle{config: config, assets: map[string]asset{}, icons: map[int]string{}}
+func New(config Config) (*Bundle, error) { return newBundle(config, files, "public/") }
+
+func newBundle(config Config, fsys fs.FS, dir string) (*Bundle, error) {
+	b := &Bundle{config: config, assets: map[string]asset{}, icons: map[int]string{}, bytes: map[string][]byte{}}
 	if !config.Enabled {
 		return b, nil
 	}
@@ -80,21 +98,36 @@ func New(config Config) (*Bundle, error) {
 		}
 	}
 	b.config = config
-	raw, _ := files.ReadFile("public/catalog.json")
+	raw, err := fs.ReadFile(fsys, dir+"catalog.json")
+	if err != nil {
+		return nil, err
+	}
 	if e = json.Unmarshal(raw, &b.catalog); e != nil {
 		return nil, e
 	}
+	if !catalogVersion.MatchString(b.catalog.Version) || len(b.catalog.Assets) == 0 || len(b.catalog.Assets) > MaxAssets {
+		return nil, errors.New("invalid build catalog size")
+	}
+	seen := map[string]bool{}
 	for _, a := range b.catalog.Assets {
-		data, err := files.ReadFile("public/" + a.File)
+		if !fingerprint.MatchString(a.File) || strings.ContainsAny(a.File, "/\\") || seen[a.File] {
+			return nil, errors.New("invalid build asset name")
+		}
+		seen[a.File] = true
+		data, err := fs.ReadFile(fsys, dir+a.File)
 		if err != nil {
 			return nil, err
 		}
+		if len(data) > MaxAssetBytes || a.Size != len(data) || assetTypes[a.File[strings.LastIndex(a.File, "."):]] != a.Type {
+			return nil, errors.New("invalid build asset size or type")
+		}
 		h := sha256.Sum256(data)
-		if !fingerprint.MatchString(a.File) || a.SHA256 != base64.StdEncoding.EncodeToString(h[:]) || !strings.Contains(a.File, "."+hex.EncodeToString(h[:8])+".") {
+		if a.SHA256 != base64.StdEncoding.EncodeToString(h[:]) || !strings.Contains(a.File, "."+hex.EncodeToString(h[:8])+".") {
 			return nil, errors.New("invalid build integrity")
 		}
 		path := config.BasePath + "static/" + a.File
 		b.assets[path] = a
+		b.bytes[path] = data
 		switch {
 		case strings.HasPrefix(a.File, "style."):
 			b.style = path
@@ -115,10 +148,11 @@ func New(config Config) (*Bundle, error) {
 		URL    string `json:"url"`
 		SHA256 string `json:"sha256"`
 		Type   string `json:"type"`
+		Size   int    `json:"size"`
 	}
 	entries := []entry{}
 	for _, a := range b.catalog.Assets {
-		entries = append(entries, entry{config.BasePath + "static/" + a.File, a.SHA256, a.Type})
+		entries = append(entries, entry{config.BasePath + "static/" + a.File, a.SHA256, a.Type, a.Size})
 	}
 	data, _ := json.Marshal(struct {
 		Base   string  `json:"base"`
@@ -126,7 +160,10 @@ func New(config Config) (*Bundle, error) {
 		Name   string  `json:"cacheName"`
 		Assets []entry `json:"assets"`
 	}{config.BasePath, prefix, prefix + b.catalog.Version, entries})
-	worker, _ := files.ReadFile("public/worker.js")
+	worker, err := fs.ReadFile(fsys, dir+"worker.js")
+	if err != nil {
+		return nil, err
+	}
 	if strings.Count(string(worker), "__CIRCULA_CONFIG__") != 1 {
 		return nil, errors.New("invalid worker build")
 	}
@@ -160,9 +197,8 @@ func (b *Bundle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if a, ok := b.assets[path]; ok {
 		w.Header().Set("Content-Type", a.Type)
 		w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-		data, _ := files.ReadFile("public/" + a.File)
 		if r.Method != "HEAD" {
-			_, _ = w.Write(data)
+			_, _ = w.Write(b.bytes[path])
 		}
 		return
 	}

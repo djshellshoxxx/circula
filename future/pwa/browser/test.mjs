@@ -31,5 +31,15 @@ await page.evaluate(()=>window.dispatchEvent(new Event('circula:session-ended'))
 await page.goto(origin+'/app/');await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));assert.equal(await page.locator('[data-private]').textContent(),'');
 assert.deepEqual(errors,[]);await context.close();
 const plain=await browser.newContext({javaScriptEnabled:false,viewport:{width:320,height:720}});const p=await plain.newPage();await p.goto(origin+'/app/');await p.selectOption('select','A');await p.getByRole('button',{name:'Sign in',exact:true}).click();await p.getByText('Private synthetic balance for A: 100').waitFor();await p.getByRole('button',{name:'Send synthetic trade'}).click();await p.getByText('Private synthetic balance for A: 100').waitFor();await p.getByRole('button',{name:'Sign out',exact:true}).click();await p.getByRole('heading',{name:'Install Circula'}).waitFor();await plain.close();
-console.log('PASS: real Chromium install/CacheStorage, privacy, offline POST/no replay, account switch/back, DOM scrub, 320px and no-JS flows');
+// Audit fix: private-view lifecycle must not depend on service-worker or BroadcastChannel support.
+for(const [label,init] of [['no service worker API',()=>{Object.defineProperty(navigator,'serviceWorker',{value:undefined,configurable:true});}],['no BroadcastChannel',()=>{delete window.BroadcastChannel;}],['throwing BroadcastChannel',()=>{window.BroadcastChannel=function(){throw new Error('denied');};}],['workers blocked and no channel',()=>{delete window.BroadcastChannel;}]]){
+const ctx=await browser.newContext({viewport:{width:320,height:720},serviceWorkers:label.startsWith('workers')?'block':'allow'});await ctx.addInitScript(init);const q=await ctx.newPage();const qerrors=[];q.on('pageerror',e=>qerrors.push(e.message));
+await q.goto(origin+'/app/');await q.selectOption('select','A');await q.getByRole('button',{name:'Sign in',exact:true}).click();await q.getByText('Private synthetic balance for A: 100').waitFor();
+await q.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));assert.equal(await q.locator('[data-private]').textContent(),'',label+': pagehide scrub');
+await q.reload();await q.getByText('Private synthetic balance for A: 100').waitFor();
+await q.evaluate(()=>window.dispatchEvent(new Event('circula:session-ended')));assert.equal(await q.locator('[data-private]').textContent(),'',label+': session-ended scrub');assert.match(await q.locator('[data-session-notice]').textContent(),/Session changed/,label+': notice');
+await q.reload();await q.getByText('Private synthetic balance for A: 100').waitFor();
+await q.getByRole('button',{name:'Sign out',exact:true}).click();await q.getByRole('heading',{name:'Install Circula'}).waitFor();
+assert.deepEqual(qerrors,[],label);await ctx.close();}
+console.log('PASS: real Chromium install/CacheStorage, privacy, offline POST/no replay, account switch/back, DOM scrub (also without SW/BroadcastChannel), 320px and no-JS flows');
 }finally{await browser.close();}
