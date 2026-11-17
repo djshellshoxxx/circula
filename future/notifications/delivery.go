@@ -34,6 +34,36 @@ func (p Preference) Allowed(now time.Time) (bool, error) {
 	quiet := s < e2 && m >= s && m < e2 || s > e2 && (m >= s || m < e2)
 	return !quiet, nil
 }
+
+// NextAllowed returns the earliest instant at or after now at which Allowed
+// would be true. It is used to defer, not fail, a delivery that falls inside the
+// member's quiet hours. A zero QuietStart==QuietEnd means "no quiet hours"
+// (both endpoints equal is treated as an empty window, never as 24h). It works
+// in the member's zone so DST gaps and folds are resolved by the time package.
+func (p Preference) NextAllowed(now time.Time) (time.Time, error) {
+	ok, err := p.Allowed(now)
+	if err != nil {
+		return time.Time{}, err
+	}
+	if ok {
+		return now, nil
+	}
+	if !p.Enabled || !p.Active {
+		return time.Time{}, nil // never deliverable; the zero time says "not by waiting"
+	}
+	loc, _ := time.LoadLocation(p.Timezone)
+	n := now.In(loc)
+	for dayOff := 0; dayOff <= 2; dayOff++ {
+		cand := time.Date(n.Year(), n.Month(), n.Day()+dayOff, p.QuietEnd/60, p.QuietEnd%60, 0, 0, loc)
+		if cand.After(now) {
+			if ok, _ := p.Allowed(cand); ok {
+				return cand, nil
+			}
+		}
+	}
+	return now.Add(time.Hour), nil
+}
+
 func DedupeKey(network, event, member, channel, kind string) (string, error) {
 	if network == "" || event == "" || member == "" || kind == "" || (channel != "email" && channel != "push") {
 		return "", errors.New("invalid event")
