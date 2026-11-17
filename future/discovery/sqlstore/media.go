@@ -58,7 +58,7 @@ func (s *Store) ReserveMedia(ctx context.Context, m d.MediaInfo, q d.MediaQuota)
 		if err != nil {
 			return err
 		}
-		return &d.Error{Kind: d.ErrQuota, Field: "file", Detail: "photo limit for this listing reached"}
+		return &d.Error{Kind: d.ErrQuota, Field: "file", Detail: "photo count or size limit for this listing reached"}
 	})
 }
 

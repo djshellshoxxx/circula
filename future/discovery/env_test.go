@@ -3,6 +3,7 @@ package discovery_test
 import (
 	"context"
 	"database/sql"
+	"io/fs"
 	"path/filepath"
 	"testing"
 	"time"
@@ -125,4 +126,22 @@ func eq(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+func countFiles(t *testing.T, root string) int {
+	t.Helper()
+	n := 0
+	err := filepath.WalkDir(root, func(p string, de fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !de.IsDir() {
+			n++
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return n
 }
