@@ -1,0 +1,149 @@
+# FUX-102 PROPOSED API contract fragment (module-local; NOT merged into docs/api/openapi.yaml).
+# Implemented by future/qr/web (JSON handlers) and exercised in web/web_test.go. Nothing is registered.
+# Conventions to be re-checked against the core at integration time: RFC 9457 problems, X-Network scoping
+# (resolved by the host Authenticator), cookie CSRF (X-CSRF-Token), 64 KiB bodies, no-store, Idempotency-Key.
+openapi: 3.1.0
+info:
+  title: Circula QR (proposed, HOLD)
+  version: 0.1.0-proposed
+servers: [{ url: /api/v1 }]
+components:
+  securitySchemes:
+    session: { type: apiKey, in: cookie, name: session, description: "Cookie sessions require X-CSRF-Token on unsafe methods." }
+    bearer: { type: http, scheme: bearer }
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: { type: string, pattern: '^[A-Za-z0-9._~:-]{1,128}$' }
+      description: Same key + same input returns the first result; same key + different input is 422 idempotency.
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status, code]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        code: { type: string, enum: [invalid_request, not_found, forbidden, expired, revoked, claimed, idempotency, rate_limited, insufficient, counterparty, unauthenticated, csrf, internal, payload_too_large, unsupported_media] }
+    Alias:
+      type: object
+      properties:
+        generation: { type: integer }
+        url: { type: string, description: "https://<trusted-origin>/qr/v1/a/<22-char code>; no amount, no balance" }
+        compact_code: { type: string, description: "a.<22-char code> for manual entry" }
+        created_at: { type: string, format: date-time }
+        revoked: { type: boolean }
+    Request:
+      type: object
+      properties:
+        id: { type: string, pattern: '^qrr_[0-9a-f]{32}$' }
+        status: { type: string, enum: [open, expired, revoked, pending, completed, closed], description: "pending = proposal created, awaiting acceptance; only completed means posted" }
+        amount_minor: { type: integer, minimum: 1 }
+        note: { type: string }
+        created_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+        revoked_at: { type: string, format: date-time }
+        claimed: { type: boolean }
+        transaction_id: { type: string }
+        completed: { type: boolean }
+    Preview:
+      type: object
+      description: Server-authoritative confirmation data; scanning is not acceptance or payment.
+      properties:
+        kind: { type: string, enum: [request, alias] }
+        network: { type: string }
+        payer: { type: string }
+        payee: { type: string }
+        amount_minor: { type: integer, description: "absent for aliases; the payer chooses" }
+        note: { type: string }
+        expires_at: { type: string, format: date-time }
+        request_id: { type: string }
+        estimated_available_credit_minor: { type: integer }
+        sufficient: { type: boolean }
+        own: { type: boolean }
+        claimed: { type: boolean }
+        claimed_by_you: { type: boolean }
+        status: { type: string }
+        notice: { type: string }
+    Claim:
+      type: object
+      properties:
+        transaction_id: { type: string }
+        status: { type: string, enum: [pending, completed, closed] }
+        request_id: { type: string }
+        replayed: { type: boolean }
+paths:
+  /me/qr:
+    get: { summary: "Own static alias (created on first use)", responses: { "200": { description: "{alias, png_path}" } } }
+  /me/qr.png:
+    get: { summary: "Printable black-on-white PNG, attachment, fixed filename", responses: { "200": { description: image/png } } }
+  /me/qr/rotate:
+    post:
+      summary: Rotate alias (idempotent); the old code is revoked permanently
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      responses: { "200": { description: "{alias, png_path}" } }
+  /qr-requests:
+    post:
+      summary: Create a one-time request payable to the caller
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [amount_minor]
+              properties:
+                amount_minor: { type: integer, minimum: 1 }
+                note: { type: string, maxLength: 140 }
+                expires_in_seconds: { type: integer, minimum: 0, description: "0 = default 24h; allowed 60..604800" }
+      responses:
+        "201": { description: "{request, token, url, compact_code, png_base64}. The token is shown ONCE and never stored." }
+        "200": { description: "Idempotent replay: {request, token_available:false}. The token is unrecoverable." }
+    get:
+      summary: List own requests (keyset cursor)
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100 } }
+        - { name: cursor, in: query, schema: { type: string } }
+      responses: { "200": { description: "{items: [Request], next_cursor}" } }
+  /qr-requests/{ref}:
+    get:
+      summary: "ref = request id (own or claimed) -> Request; ref = one-time token -> Preview (read-only, never claims). Tokens in paths are bearer-like: access logs must use qr.RedactPath."
+      parameters: [{ name: ref, in: path, required: true, schema: { type: string } }]
+      responses: { "200": { description: "Request or Preview" } }
+  /qr-requests/{id}/revoke:
+    post: { summary: "Revoke an unclaimed own request (idempotent); claimed -> 409", responses: { "200": { description: Request } } }
+  /qr-aliases/{code}:
+    get: { summary: "Preview a static alias in the caller's network", responses: { "200": { description: Preview } } }
+  /qr-resolve:
+    post:
+      summary: "Preview any scanned/pasted link or compact code without putting it in a URL"
+      requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: false, required: [code], properties: { code: { type: string, maxLength: 2048 } } } } } }
+      responses: { "200": { description: Preview } }
+  /qr-claims:
+    post:
+      summary: "Confirm: atomically claim a one-time request (or propose to an alias with a payer-chosen amount) and create the ORDINARY proposal 'caller pays recipient'. Returns pending; completion needs the payee's normal acceptance."
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [code]
+              properties:
+                code: { type: string }
+                amount_minor: { type: integer, description: "alias only; refused for one-time requests" }
+                note: { type: string, description: "alias only" }
+      responses:
+        "201": { description: Claim }
+        "200": { description: "Replay (same key or same intent): same transaction, replayed=true" }
+        "409": { description: "claimed by someone else / counterparty inactive" }
+        "410": { description: "expired or revoked" }
+        "422": { description: "idempotency key reuse / insufficient credit" }
+# Not covered here on purpose: acceptance. It remains the existing POST /api/v1/transactions/{id}/accept.

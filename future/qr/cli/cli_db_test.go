@@ -1,4 +1,4 @@
-//go:build sqlite_cgo_test
+//go:build sqlite_cgo_test || sqlite_modernc_test
 
 package cli_test
 
@@ -11,8 +11,6 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
-
 	qr "github.com/djshellshoxxx/circula/future/qr"
 	"github.com/djshellshoxxx/circula/future/qr/cli"
 	"github.com/djshellshoxxx/circula/future/qr/qrfixture"
@@ -20,7 +18,7 @@ import (
 
 func newService(t *testing.T) (*qr.Service, *sql.DB) {
 	t.Helper()
-	db, err := sql.Open("sqlite3", "file:"+filepath.Join(t.TempDir(), "c.db")+"?_busy_timeout=5000&_journal_mode=WAL")
+	db, err := sql.Open(driverName, "file:"+filepath.Join(t.TempDir(), "c.db")+dsnOpts)
 	if err != nil {
 		t.Fatal(err)
 	}

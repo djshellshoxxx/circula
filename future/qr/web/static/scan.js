@@ -64,7 +64,7 @@
     var mod = await import("/qr/static/vendor/qr-scanner/qr-scanner.min.js");
     var QrScanner = mod.default;
     scanner = new QrScanner(video, function (r) { deliver(r && r.data); },
-      { returnDetailedScanResult: true, preferredCamera: "environment", highlightScanRegion: true, maxScansPerSecond: 8 });
+      { returnDetailedScanResult: true, preferredCamera: "environment", maxScansPerSecond: 8 });
     await scanner.start();
     running = true;
   }
@@ -77,10 +77,10 @@
     startBtn.hidden = true;
     stopBtn.hidden = false;
     video.hidden = false;
-    say("Starting camera. Point it at the QR code.");
+    say("Starting camera. Center the QR code in the picture.");
     try {
       if ("BarcodeDetector" in window) { await nativeScan(); } else { await libScan(); }
-      say("Camera on. Point it at the QR code.");
+      say("Camera on. Center the QR code in the picture.");
     } catch (e) {
       stop();
       say("The camera is not available or permission was denied. Enter the code by hand instead.");

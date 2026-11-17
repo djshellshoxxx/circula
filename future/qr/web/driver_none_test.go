@@ -1,4 +1,4 @@
-//go:build !sqlite_cgo_test
+//go:build !sqlite_cgo_test && !sqlite_modernc_test
 
 package web_test
 
