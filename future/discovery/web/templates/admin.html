@@ -1,0 +1,46 @@
+{{define "admin"}}{{template "header" .}}
+<h1>Categories, areas and tags</h1>
+{{template "errors" .}}
+<section aria-labelledby="cat-h"><h2 id="cat-h">Categories</h2>
+<table><caption>Network categories</caption>
+<thead><tr><th scope="col">Name</th><th scope="col">Kind</th><th scope="col">Listings</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+<tbody>{{range .Categories}}<tr><th scope="row">{{.Name}}</th><td>{{.Kind}}</td><td>{{.Listings}}</td><td>{{if .Enabled}}Enabled{{else}}Disabled{{end}}</td>
+<td><form method="post" action="{{$.Base}}/admin/categories/{{.ID}}"><input type="hidden" name="csrf" value="{{$.CSRF}}">
+<label for="cn-{{.ID}}">New name for {{.Name}}</label><input id="cn-{{.ID}}" name="name" type="text" value="{{.Name}}" maxlength="40">
+<button type="submit" name="op" value="rename">Rename {{.Name}}</button>
+<button type="submit" name="op" value="{{if .Enabled}}disable{{else}}enable{{end}}" class="secondary">{{if .Enabled}}Disable{{else}}Enable{{end}} {{.Name}}</button></form></td></tr>
+{{else}}<tr><td colspan="5">No categories yet.</td></tr>{{end}}</tbody></table>
+<form method="post" action="{{.Base}}/admin/categories"><input type="hidden" name="csrf" value="{{.CSRF}}">
+<fieldset><legend>Add a category</legend>
+<label for="c-name">Name</label><input id="c-name" name="name" type="text" maxlength="40" required>
+<label for="c-kind">Kind</label><select id="c-kind" name="kind"><option value="any">Goods or services</option><option value="goods">Goods</option><option value="service">Services</option></select>
+<p><button type="submit">Add category</button></p></fieldset></form>
+<form method="post" action="{{.Base}}/admin/categories"><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="seed" value="1">
+<p><button type="submit" class="secondary">Add the default categories</button></p></form>
+</section>
+
+<section aria-labelledby="area-h"><h2 id="area-h">Coarse areas</h2>
+<table><caption>Network areas</caption>
+<thead><tr><th scope="col">Name</th><th scope="col">Coarse centre</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead>
+<tbody>{{range .Areas}}<tr><th scope="row">{{.Name}}</th><td>{{if .Cell}}{{.CellLabel}}{{else}}None{{end}}</td><td>{{if .Enabled}}Enabled{{else}}Disabled{{end}}</td>
+<td><form method="post" action="{{$.Base}}/admin/areas/{{.ID}}"><input type="hidden" name="csrf" value="{{$.CSRF}}">
+<button type="submit" name="op" value="{{if .Enabled}}disable{{else}}enable{{end}}" class="secondary">{{if .Enabled}}Disable{{else}}Enable{{end}} {{.Name}}</button></form></td></tr>
+{{else}}<tr><td colspan="4">No areas yet.</td></tr>{{end}}</tbody></table>
+<form method="post" action="{{.Base}}/admin/areas"><input type="hidden" name="csrf" value="{{.CSRF}}">
+<fieldset><legend>Add an area</legend>
+<label for="a-name">Name</label><input id="a-name" name="name" type="text" maxlength="60" required>
+<label for="a-lat">Centre latitude (optional, degrees)</label><input id="a-lat" name="lat" type="text" inputmode="decimal" aria-describedby="a-hint">
+<label for="a-lon">Centre longitude (optional, degrees)</label><input id="a-lon" name="lon" type="text" inputmode="decimal" aria-describedby="a-hint">
+<p id="a-hint" class="hint">Coordinates are rounded to 0.1 degree (about 11 km) and used only to compute distances between areas. Never enter a home address.</p>
+<p><button type="submit">Add area</button></p></fieldset></form>
+</section>
+
+<section aria-labelledby="tag-h"><h2 id="tag-h">Tags</h2>
+<table><caption>Tags awaiting or past review</caption>
+<thead><tr><th scope="col">Tag</th><th scope="col">Status</th><th scope="col">Listings</th><th scope="col">Actions</th></tr></thead>
+<tbody>{{range .Tags}}<tr><th scope="row">{{.Name}}</th><td>{{.Status}}</td><td>{{.Listings}}</td>
+<td><form method="post" action="{{$.Base}}/admin/tags/{{.Name}}"><input type="hidden" name="csrf" value="{{$.CSRF}}">
+<button type="submit" name="status" value="approved">Approve {{.Name}}</button>
+<button type="submit" name="status" value="rejected" class="danger">Reject {{.Name}}</button></form></td></tr>
+{{else}}<tr><td colspan="4">No tags yet.</td></tr>{{end}}</tbody></table></section>
+{{template "footer" .}}{{end}}

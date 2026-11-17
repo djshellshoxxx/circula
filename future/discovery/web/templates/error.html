@@ -1,0 +1,5 @@
+{{define "error"}}{{template "header" .}}
+<h1>{{.Heading}}</h1>
+<p>{{.Message}}</p>
+<p><a href="{{.Base}}/listings">Back to listings</a></p>
+{{template "footer" .}}{{end}}

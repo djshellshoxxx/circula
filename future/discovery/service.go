@@ -40,6 +40,9 @@ func NewService(repo Repository, blobs BlobStore, cfg Config, img imgsan.Limits)
 	return &Service{repo: repo, blobs: blobs, san: imgsan.New(img), cfg: cfg, cur: cur, rl: map[string][]time.Time{}}, nil
 }
 
+// ImageLimits returns the effective image budgets.
+func (s *Service) ImageLimits() imgsan.Limits { return s.san.Limits() }
+
 // Config returns the effective configuration.
 func (s *Service) Config() Config { return s.cfg }
 

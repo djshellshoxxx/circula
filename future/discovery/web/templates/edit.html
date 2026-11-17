@@ -1,0 +1,69 @@
+{{define "edit"}}{{template "header" .}}
+<h1>Edit discovery details</h1>
+<p>{{.V.Title}} (<a href="{{.Base}}/listings/{{.V.ID}}">view listing</a>)</p>
+{{template "errors" .}}
+<form method="post" action="{{.Base}}/listings/{{.V.ID}}/edit" novalidate>
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<input type="hidden" name="version" value="{{.Form.Version}}">
+<fieldset><legend>Classification</legend>
+<label for="f-category">Category</label>
+<select id="f-category" name="category"{{if .Err "category"}} aria-invalid="true" aria-describedby="e-category"{{end}}><option value="">Uncategorized</option>{{range .Categories}}<option value="{{.ID}}"{{if eq .ID $.Form.Category}} selected{{end}}>{{.Name}}</option>{{end}}</select>
+{{if .Err "category"}}<p class="field-error" id="e-category">{{.Err "category"}}</p>{{end}}
+<div class="radios" role="radiogroup" aria-labelledby="type-l"><span id="type-l" class="label" style="font-weight:600;display:block;margin-top:.75rem">Goods or service</span>
+<label><input type="radio" name="type" value=""{{if eq .Form.Type ""}} checked{{end}}> Not set</label>
+<label><input type="radio" name="type" value="goods"{{if eq .Form.Type "goods"}} checked{{end}}> Goods</label>
+<label><input type="radio" name="type" value="service"{{if eq .Form.Type "service"}} checked{{end}}> Service</label></div>
+{{if .Err "type"}}<p class="field-error" id="f-type">{{.Err "type"}}</p>{{end}}
+<label for="f-condition">Condition (goods only)</label>
+<select id="f-condition" name="condition"{{if .Err "condition"}} aria-invalid="true" aria-describedby="e-condition"{{end}}><option value="">Not set</option>{{range .Conditions}}<option value="{{.Value}}"{{if eq .Value $.Form.Condition}} selected{{end}}>{{.Label}}</option>{{end}}</select>
+{{if .Err "condition"}}<p class="field-error" id="e-condition">{{.Err "condition"}}</p>{{end}}
+<label for="f-area">Approximate area</label>
+<select id="f-area" name="area" aria-describedby="area-hint"><option value="">No location</option>{{range .Areas}}<option value="{{.ID}}"{{if eq .ID $.Form.Area}} selected{{end}}>{{.Name}}</option>{{end}}</select>
+<p id="area-hint" class="hint">Listings have no location by default. Areas are broad regions chosen by your network; never enter an address.</p>
+{{if .Err "area"}}<p class="field-error" id="e-area">{{.Err "area"}}</p>{{end}}
+<label for="f-tags">Tags</label>
+<input id="f-tags" name="tags" type="text" value="{{.Form.Tags}}" aria-describedby="tags-hint"{{if .Err "tags"}} aria-invalid="true"{{end}}>
+<p id="tags-hint" class="hint">Separate with commas, up to {{.MaxTags}}. New tags are reviewed by network administrators before they are searchable.</p>
+{{if .Err "tags"}}<p class="field-error" id="e-tags">{{.Err "tags"}}</p>{{end}}
+</fieldset>
+<fieldset><legend>Availability</legend>
+<label for="f-availability">Availability</label>
+<select id="f-availability" name="availability"><option value="">Not set</option><option value="available"{{if eq .Form.Availability "available"}} selected{{end}}>Available</option><option value="limited"{{if eq .Form.Availability "limited"}} selected{{end}}>Limited</option><option value="unavailable"{{if eq .Form.Availability "unavailable"}} selected{{end}}>Unavailable</option></select>
+<label for="f-available_from">Available from (date, UTC)</label>
+<input id="f-available_from" name="available_from" type="date" value="{{.Form.AvailableFrom}}"{{if .Err "available_from"}} aria-invalid="true" aria-describedby="e-available_from"{{end}}>
+{{if .Err "available_from"}}<p class="field-error" id="e-available_from">{{.Err "available_from"}}</p>{{end}}
+<label for="f-expires_at">Expires on (date, UTC)</label>
+<input id="f-expires_at" name="expires_at" type="date" value="{{.Form.ExpiresAt}}" aria-describedby="exp-hint"{{if .Err "expires_at"}} aria-invalid="true"{{end}}>
+<p id="exp-hint" class="hint">Leave empty for no expiry. After this date only you and administrators can see the listing until you renew it.</p>
+{{if .Err "expires_at"}}<p class="field-error" id="e-expires_at">{{.Err "expires_at"}}</p>{{end}}
+</fieldset>
+<p><button type="submit">Save details</button></p>
+</form>
+
+<section aria-labelledby="renew-h"><h2 id="renew-h">Renew listing</h2>
+<p>{{if .V.ExpiresAt.IsZero}}This listing does not expire.{{else}}{{if .V.Expired}}Expired on{{else}}Expires on{{end}} {{.V.ExpiresAt.Format "2 January 2006"}}.{{end}} Renewing keeps the same listing and all trade history.</p>
+<form method="post" action="{{.Base}}/listings/{{.V.ID}}/renew">
+<input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="version" value="{{.Form.Version}}">
+<button type="submit" class="secondary">Renew for {{.RenewDays}} days</button></form></section>
+
+<section aria-labelledby="photos-h"><h2 id="photos-h">Photos ({{len .V.Media}} of {{.MaxPhotos}})</h2>
+{{if .V.Media}}<ul class="gallery">
+{{range $i, $m := .V.Media}}<li><figure><img src="{{$.ThumbURL $m}}" alt="{{$m.Alt}}" width="{{$m.ThumbWidth}}" height="{{$m.ThumbHeight}}" loading="lazy">
+<figcaption>Photo {{inc $i}}: {{$m.Alt}}</figcaption></figure>
+<form method="post" action="{{$.Base}}/listings/{{$.V.ID}}/photos/{{$m.ID}}/remove"><input type="hidden" name="csrf" value="{{$.CSRF}}">
+<button type="submit" class="danger">Remove photo {{inc $i}}<span class="sr-only"> ({{$m.Alt}})</span></button></form></li>{{end}}
+</ul>{{else}}<p>No photos yet.</p>{{end}}
+{{if lt (len .V.Media) .MaxPhotos}}
+<form method="post" action="{{.Base}}/listings/{{.V.ID}}/photos" enctype="multipart/form-data">
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<fieldset><legend>Add a photo</legend>
+<label for="f-file">Photo file (JPEG or PNG)</label>
+<input id="f-file" name="file" type="file" accept="image/jpeg,image/png" required aria-describedby="file-hint">
+<p id="file-hint" class="hint">Up to {{.MaxFileMB}} MB. Photos are re-encoded; camera details and GPS data are removed. SVG, GIF and other formats are not accepted.</p>
+<label for="f-alt">Describe the photo for people who cannot see it</label>
+<input id="f-alt" name="alt" type="text" maxlength="250" required>
+<p><button type="submit">Upload photo</button></p>
+</fieldset></form>
+{{else}}<p>The photo limit has been reached. Remove a photo to add another.</p>{{end}}
+</section>
+{{template "footer" .}}{{end}}

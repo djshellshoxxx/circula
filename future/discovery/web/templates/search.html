@@ -1,0 +1,58 @@
+{{define "search"}}{{template "header" .}}
+<h1>{{.Heading}}</h1>
+{{template "errors" .}}
+<form method="get" action="{{.Base}}/listings" role="search" aria-label="Search and filter listings">
+<div class="filters">
+<div><label for="q">Search words</label><input id="q" name="q" type="search" value="{{.F.Q}}" maxlength="200" autocomplete="off"></div>
+<div><label for="category">Category</label>
+<select id="category" name="category"><option value="">Any category</option>{{range .Categories}}<option value="{{.ID}}"{{if eq .ID $.F.Category}} selected{{end}}>{{.Name}}{{if not .Enabled}} (disabled){{end}}</option>{{end}}</select></div>
+<div><label for="type">Goods or services</label>
+<select id="type" name="type"><option value="">Goods and services</option><option value="goods"{{if eq .F.Type "goods"}} selected{{end}}>Goods</option><option value="service"{{if eq .F.Type "service"}} selected{{end}}>Services</option></select></div>
+<div><label for="kind">Offers or requests</label>
+<select id="kind" name="kind"><option value="">Offers and requests</option><option value="offer"{{if eq .F.Kind "offer"}} selected{{end}}>Offers</option><option value="request"{{if eq .F.Kind "request"}} selected{{end}}>Requests</option></select></div>
+<div><label for="condition">Condition</label>
+<select id="condition" name="condition"><option value="">Any condition</option>{{range .Conditions}}<option value="{{.Value}}"{{if eq .Value $.F.Condition}} selected{{end}}>{{.Label}}</option>{{end}}</select></div>
+<div><label for="availability">Availability</label>
+<select id="availability" name="availability"><option value="">Any availability</option><option value="available"{{if eq .F.Availability "available"}} selected{{end}}>Available</option><option value="limited"{{if eq .F.Availability "limited"}} selected{{end}}>Limited</option><option value="unavailable"{{if eq .F.Availability "unavailable"}} selected{{end}}>Unavailable</option></select></div>
+<div><label for="area">Area</label>
+<select id="area" name="area"><option value="">Any area</option>{{range .Areas}}<option value="{{.ID}}"{{if eq .ID $.F.Area}} selected{{end}}>{{.Name}}</option>{{end}}</select></div>
+<div><label for="near">Near area</label>
+<select id="near" name="near" aria-describedby="near-hint"><option value="">Not used</option>{{range .Areas}}{{if .Cell}}<option value="{{.ID}}"{{if eq .ID $.F.NearArea}} selected{{end}}>{{.Name}}</option>{{end}}{{end}}</select></div>
+<div><label for="within_km">Within (km)</label><input id="within_km" name="within_km" type="number" min="1" max="{{.MaxKM}}" inputmode="numeric" value="{{if .F.WithinKM}}{{.F.WithinKM}}{{end}}"></div>
+<div><label for="tag">Tag</label><input id="tag" name="tag" type="text" value="{{.F.Tag}}" maxlength="48"></div>
+<div><label for="sort">Sort by</label>
+<select id="sort" name="sort"><option value="relevance"{{if eq .F.Sort "relevance"}} selected{{end}}>Most relevant</option><option value="recent"{{if eq .F.Sort "recent"}} selected{{end}}>Recently updated</option></select></div>
+<div><label for="limit">Results per page</label>
+<select id="limit" name="limit">{{range .Limits}}<option value="{{.}}"{{if eq . $.F.Limit}} selected{{end}}>{{.}}</option>{{end}}</select></div>
+{{if .F.Scope}}<input type="hidden" name="scope" value="{{.F.Scope}}">{{end}}
+</div>
+<p id="near-hint" class="hint">Distance uses coarse area centres set by your network's administrators. It never uses member locations. Choose both "Near area" and a distance.</p>
+<p><button type="submit">Search</button> <a class="btn secondary" href="{{.Base}}/listings{{if .F.Scope}}?scope={{.F.Scope}}{{end}}">Clear filters</a></p>
+</form>
+
+{{if not .BadRequest}}
+<section aria-labelledby="results-h">
+<h2 id="results-h">Results</h2>
+<p role="status" aria-live="polite">{{if .Items}}Showing {{len .Items}} listing{{if ne (len .Items) 1}}s{{end}}{{if .HasNext}}; more are available{{end}}.{{else}}No listings found.{{end}}</p>
+{{if .Items}}
+<ul class="cards">
+{{range .Items}}<li>
+{{if .CoverURL}}<img class="thumb" src="{{.CoverURL}}" alt="{{.CoverAlt}}" width="{{.CoverW}}" height="{{.CoverH}}" loading="lazy">{{else}}<div class="nophoto" aria-hidden="true">No photo</div>{{end}}
+<div class="body">
+<h2><a href="{{.URL}}">{{.Title}}</a></h2>
+<ul class="meta" aria-label="Details for {{.Title}}">{{range .Meta}}<li>{{.}}</li>{{end}}</ul>
+{{if .Tags}}<ul class="tags" aria-label="Tags for {{.Title}}">{{range .Tags}}<li>{{.}}</li>{{end}}</ul>{{end}}
+{{range .Badges}}<span class="badge">{{.}}</span> {{end}}
+</div></li>{{end}}
+</ul>
+{{else}}
+<div class="notice"><p>Nothing matches these filters yet.</p><ul><li>Remove a filter or check your spelling.</li><li>Accents and capital letters are ignored.</li><li><a href="{{.Base}}/listings">Show all listings</a></li></ul></div>
+{{end}}
+<nav aria-label="Pagination" class="pager">
+{{if .HasCursor}}<a class="btn secondary" href="{{.FirstURL}}">Back to first page</a>{{end}}
+{{if .HasNext}}<a class="btn" href="{{.NextURL}}" rel="next">Next page</a>{{end}}
+</nav>
+<p class="hint">Link to this search (contains no personal data): <a href="{{.SavedURL}}">{{.SavedURL}}</a></p>
+</section>
+{{end}}
+{{template "footer" .}}{{end}}

@@ -1,0 +1,30 @@
+{{define "detail"}}{{template "header" .}}
+<h1>{{.V.Title}}</h1>
+{{if .Hidden}}<p class="notice" role="status">Only the owner and network administrators can see this listing{{if .V.Expired}} because it has expired{{else}} because it is {{.V.Status}}{{end}}.</p>{{end}}
+<p><span class="badge">{{.KindLabel}}</span>{{if .V.Unclassified}} <span class="badge">Unclassified</span>{{end}}</p>
+{{if .V.Description}}<p>{{.V.Description}}</p>{{end}}
+<h2>Details</h2>
+<dl class="details">
+<dt>Category</dt><dd>{{or .CategoryName "Not set"}}</dd>
+<dt>Type</dt><dd>{{or .TypeLabel "Not set"}}</dd>
+<dt>Condition</dt><dd>{{or .ConditionLabel "Not set"}}</dd>
+<dt>Area</dt><dd>{{or .AreaName "Not set"}}</dd>
+<dt>Availability</dt><dd>{{or .AvailabilityLabel "Not set"}}</dd>
+{{if not .V.AvailableFrom.IsZero}}<dt>Available from</dt><dd><time datetime="{{.V.AvailableFrom.Format "2006-01-02"}}">{{.V.AvailableFrom.Format "2 January 2006"}}</time></dd>{{end}}
+{{if not .V.ExpiresAt.IsZero}}<dt>Expires</dt><dd><time datetime="{{.V.ExpiresAt.Format "2006-01-02"}}">{{.V.ExpiresAt.Format "2 January 2006"}}</time>{{if .V.Expired}} (expired){{end}}</dd>{{end}}
+<dt>Tags</dt><dd>{{if .V.Tags}}<ul class="tags" aria-label="Tags">{{range .V.Tags}}<li>{{.Name}}{{if ne .Status "approved"}} ({{.Status}}, visible only to you and administrators){{end}}</li>{{end}}</ul>{{else}}None{{end}}</dd>
+</dl>
+<section aria-labelledby="gallery-h">
+<h2 id="gallery-h">Photos{{if .V.Media}} ({{len .V.Media}}){{end}}</h2>
+{{if .V.Media}}
+<ul class="gallery">
+{{range $i, $m := .V.Media}}<li><figure>
+<a href="{{$.FullURL $m}}"><img src="{{$.ThumbURL $m}}" alt="{{$m.Alt}}" width="{{$m.ThumbWidth}}" height="{{$m.ThumbHeight}}" loading="lazy"></a>
+<figcaption>Photo {{inc $i}} of {{len $.V.Media}}. Select the photo to view it full size.</figcaption>
+</figure></li>{{end}}
+</ul>
+{{else}}<p>This listing has no photos.</p>{{end}}
+</section>
+{{if .V.CanEdit}}<p><a class="btn" href="{{.Base}}/listings/{{.V.ID}}/edit">Edit category, tags, photos and availability</a></p>{{end}}
+<p><a href="{{.Base}}/listings">Back to listings</a></p>
+{{template "footer" .}}{{end}}

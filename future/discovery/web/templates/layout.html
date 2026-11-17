@@ -1,0 +1,32 @@
+{{define "header"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{.PageTitle}} - Circula marketplace</title>
+<link rel="stylesheet" href="{{.Base}}/static/discovery.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="site"><div class="wrap">
+<nav aria-label="Marketplace">
+<ul>
+<li><a href="{{.Base}}/listings"{{if eq .Nav "browse"}} aria-current="page"{{end}}>Browse listings</a></li>
+<li><a href="{{.Base}}/listings?scope=mine"{{if eq .Nav "mine"}} aria-current="page"{{end}}>My listings</a></li>
+{{if .IsAdmin}}<li><a href="{{.Base}}/admin/taxonomy"{{if eq .Nav "admin"}} aria-current="page"{{end}}>Categories, areas and tags</a></li>{{end}}
+</ul>
+</nav>
+</div></header>
+<main id="main" class="wrap" tabindex="-1">
+{{if .Notice}}<p class="notice" role="status">{{.Notice}}</p>{{end}}
+{{end}}
+{{define "footer"}}</main>
+<footer class="wrap"><p class="hint">Photos are re-encoded on upload; location data is never stored on listings. This feature is in isolated development.</p></footer>
+</body>
+</html>
+{{end}}
+{{define "errors"}}{{if .Errors}}<div class="error" role="alert" tabindex="-1" id="error-summary">
+<h2>Please fix the following</h2>
+<ul>{{range .Errors}}<li>{{if .Field}}<a href="#f-{{.Field}}">{{.Message}}</a>{{else}}{{.Message}}{{end}}</li>{{end}}</ul>
+</div>{{end}}{{end}}
