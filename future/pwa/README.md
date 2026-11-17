@@ -22,7 +22,8 @@ The owner authorized independent future-feature development on 2026-11-16, while
 - Constant public offline-unavailable navigation response. Private requests and unsafe methods use the network without storage/queueing.
 - Private DOM scrub on pagehide/visibility loss; authenticated reload on resume; session-ended/POST sign-out locking and cross-tab BroadcastChannel. No credential or private HTML local storage.
 - Native navigation and install guidance, safe-area/reduced-motion styles and no-JS synthetic online flows.
-- Loopback-only synthetic demo plus Go, Node policy, and browser acceptance suites. The browser suite exists but has not passed in this execution environment.
+- Audit fixes (re-implemented 2026-11-17 from the recovery notes): private-view lifecycle initializes independently of service-worker/BroadcastChannel support; precache responses are read through a streaming size bound with exact build-recorded sizes and a 1 MiB ceiling, and the Go loader validates catalog size/MIME/names. See `AUDIT.md`.
+- Loopback-only synthetic demo plus Go, Node, and browser acceptance suites. The browser suite passed on real Chromium 153 on 2026-11-17 (see `VALIDATION.md`).
 
 ## Build and validate
 
@@ -37,11 +38,11 @@ npm audit
 
 The nested Go module remains dependency-free; browser dependencies are npm-pinned and bundled. No node_modules or package caches are committed. `BUILD-SHA256SUMS` records distributable bytes; `THIRD_PARTY_NOTICES.md` records reuse and licenses.
 
-Run the synthetic harness with `go run ./cmd/demo -port 18761`, then open `http://127.0.0.1:18761/app/`. With Playwright available: `PWA_TEST_ORIGIN=http://127.0.0.1:18761 npm run test:browser`. The test uses `/usr/bin/chromium` by default (`CHROMIUM` overrides it). The A/B demo cookies are fixtures, never production authentication.
+Run the synthetic harness with `go run ./cmd/demo -port 18761`, then open `http://127.0.0.1:18761/app/`. With Playwright available: `CHROMIUM=/path/to/chrome PWA_TEST_ORIGIN=http://127.0.0.1:18761 npm run test:browser` (default `/usr/bin/chromium`). The A/B demo cookies are fixtures, never production authentication.
 
 ## Remaining acceptance gates
 
-See `COMPLETION.md` for requirement-by-requirement evidence. Real Chromium CacheStorage/lifecycle/browser-flow acceptance is blocked by this runtime's browser launch failure; the alternate headless-shell download was invalid. Android/iOS installation/resume, cross-browser behavior, screen-reader/zoom qualification, actual cross-tab and BFCache privacy, and production adapter integration/regression remain pending. **The feature is not complete or release-qualified.**
+See `AUDIT.md` (requirement checklist) and `COMPLETION.md`. Chromium-only browser acceptance passes. Still open: Android/iOS installation and resume, real BFCache restore (Chromium does not BFCache no-store pages, so it was not exercised), Safari/Firefox, OS task-switcher snapshots, manual screen-reader and real zoom qualification, WCAG 2.2 AA automation, an independent third-party audit, and production adapter/tenant/CSRF/idempotency/ledger regression. No persistence is implemented by design (the spec allows none beyond optional presentation preferences, which are intentionally omitted). **The feature is not complete or release-qualified.**
 
 The future integration contract and actual core seams are documented in `INTEGRATION.md` and `UPSTREAM-RESEARCH.md`. No root application behavior or core release status changed.
 

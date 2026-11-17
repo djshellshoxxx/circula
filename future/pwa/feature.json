@@ -1,12 +1,12 @@
 {
   "id": "FUX-101",
-  "status": "isolated-implementation-tested-browser-and-platform-qualification-pending",
+  "status": "isolated-implementation-tested-chromium-passed-platform-qualification-pending",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
   "scope": "Pinned locally bundled Workbox PWA: manifest/icons/install help, strict public-asset integrity cache, network-only private/unsafe requests, offline-unavailable fallback, DOM/session lifecycle, opt-in Go adapter and synthetic demo.",
-  "remaining": "Real browser suite blocked by runtime launch/download failures; Android/iOS installation, BFCache/cross-tab/resume privacy, screen-reader/zoom and production adapter/ledger qualification pending. Integration remains HOLD.",
+  "remaining": "Real Chromium 153 suite passes; Android/iOS installation, real BFCache (Chromium excludes no-store pages), Safari/Firefox, cross-tab/resume privacy on devices, screen-reader/zoom, WCAG automation and production adapter/ledger qualification pending. No persistence is implemented by design. Self-audit in AUDIT.md; independent audit still pending. Integration remains HOLD.",
   "upstream": {
     "project": "GoogleChrome/workbox",
     "version": "7.4.1",

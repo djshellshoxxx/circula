@@ -1,7 +1,7 @@
-# Independent audit recovery notice
+# Independent audit status
 
-Integration remains HOLD. The shared workspace became unavailable before the independent auditor could commit its fixes. This branch's published implementation predates reported fixes for privacy lifecycle initialization when service workers/BroadcastChannel are unavailable, and bounded precache response reads.
+Integration remains HOLD. The earlier independent auditor's worktree was lost before commit. Its two reported findings (privacy lifecycle initialization depending on service worker/BroadcastChannel; unbounded precache response reads) were **re-implemented from the recovery description** on 2026-11-17 and are tested; see [AUDIT.md](AUDIT.md). The original audit diff and any further findings it contained were never published and are not recovered.
 
-Do not treat the existing tests or implementation as feature completion. Recover and publish the audited worktree before considering integration. No browser/mobile/BFCache/accessibility acceptance was established.
+A fresh independent reviewer is still required. No mobile/BFCache/screen-reader acceptance is established.
 
-See [the durable recovery checkpoint](https://github.com/djshellshoxxx/Circula/blob/future/module-catalog-20261116/docs/plans/EXECUTION-RECOVERY-20261116.md) for exact evidence, locations and continuation steps.
+See [the durable recovery checkpoint](https://github.com/djshellshoxxx/Circula/blob/future/module-catalog-20261116/docs/plans/EXECUTION-RECOVERY-20261116.md) for the original evidence.

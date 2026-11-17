@@ -1,26 +1,43 @@
-# PWA implementation validation — 2026-11-16
+# PWA implementation validation — 2026-11-17
 
-## Passed
-
-- `GOTOOLCHAIN=go1.26.11 go test -race -cover ./...`: library PASS, 93.4% statements. `cmd/demo` has no Go unit test coverage and is not qualified production code.
-- `go vet ./...`: exit 0, no diagnostics.
-- `npm test`: 4 Node tests pass (strict request admission; public response MIME/cache policy; nonprivate inactive offline page; redirect/cookie response rejection).
-- `npm run build`: pinned Workbox/esbuild build succeeds. Two consecutive builds produced byte-identical SHA-256 sums. `BUILD-SHA256SUMS` records distributed files.
-- `npm audit --omit=dev`: 0 known vulnerabilities reported. Full `npm audit` after pinning Playwright also reports 0 known vulnerabilities. These are point-in-time registry advisory results, not a security guarantee.
-
-## Blocked, not passed
-
-Attempted real browser suite with Playwright and `/usr/bin/chromium`. Chromium exited before page creation:
+All results below were observed in this run (Go 1.26.11 via `GOTOOLCHAIN=go1.26.11`, Node 22.23.4, npm 10.9.9, Chrome for Testing 153.0.8010.12 at `/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`, Playwright 1.62.1). The module has no SQL/cgo dependency, so no cgo/SQLite test tag applies.
 
 ```
-FATAL:chrome/browser/process_singleton_posix.cc:297
-socket() failed: Operation not permitted (1)
+$ GOTOOLCHAIN=go1.26.11 GOMAXPROCS=2 go test -p 1 -race -count=1 -cover ./...
+ok  	github.com/djshellshoxxx/circula/future/pwa	1.074s	coverage: 97.5% of statements
+	github.com/djshellshoxxx/circula/future/pwa/cmd/demo		coverage: 0.0% of statements
+$ go vet ./...
+exit=0
+$ gofmt -l .
+(no output)
+$ npm test
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+$ npm audit
+found 0 vulnerabilities
+$ npm run build twice; sha256sum public/* | diff - BUILD-SHA256SUMS
+identical
+$ CHROMIUM=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome PWA_TEST_ORIGIN=http://127.0.0.1:18761 npm run test:browser
+PASS: real Chromium install/CacheStorage, privacy, offline POST/no replay, account switch/back, DOM scrub (also without SW/BroadcastChannel), oversize/tampered precache rejection, 320px/400%-zoom reflow, skip link and no-JS flows
 ```
 
-Attempted Playwright chromium-headless-shell fallback; all download retries returned invalid/truncated ZIP data (`End of central directory record signature not found`). No browser assertion ran successfully. No Chromium, mobile, BFCache, cross-tab, no-JS UI or accessibility pass is claimed.
+Prerequisite for the browser run: `npm ci --ignore-scripts` then `npm run build`, then `go run ./cmd/demo -port 18761` in another shell. A 15 s native fuzz of `Cacheable` (`go test -run xxx -fuzz FuzzCacheable -fuzztime 15s .`) executed 324,457 inputs with no failure (invariants: only GET, https, no `?`/`#`, no `..`, configured prefix).
 
-The authored suite checks public CacheStorage entries, old-cache cleanup while preserving unrelated caches, manifest, 320px reflow, private response exclusion, offline POST failure/no replay, account-switch/back privacy, session/pagehide DOM scrub, and native no-JS flows. Run it against the loopback harness in a browser-capable environment; a fresh auditor must inspect and execute it. Tests disabling BFCache by browser automation defaults are not sufficient for real BFCache qualification.
+## What the tests cover
 
-## Scope and remaining tests
+- Go: config boundaries, default-disabled 404, headers/manifest/scope, HEAD parity, concurrent serving (8 goroutines, race detector), hostile build catalogs (17 mutation cases: size, MIME, hash, duplicate, traversal, version injection, too many/oversize assets, missing files), policy and fuzz.
+- Node (22 tests): strict request/response admission; offline page; bounded streaming reads (oversize `Content-Length`, endless stream with cancel, lying/malformed lengths, stream errors, invalid bounds); large base64; verified-response rebuild; plugin URL/credential rules; privacy lifecycle on a DOM double with and without service worker / BroadcastChannel / valid base / throwing channel.
+- Browser (real Chromium 153): install and CacheStorage contents, obsolete-cache cleanup preserving unrelated caches, manifest, offline POST failure and no replay, account switch/back, private DOM scrub, session-ended/pagehide, privacy lifecycle with service-worker API removed / BroadcastChannel removed / throwing / workers blocked, oversize (3 MiB) and tampered stylesheet leave worker inactive and cache empty (identical-bytes control installs 4 entries), 320 px and 320x256 reflow, keyboard skip link, no-JS flows.
 
-No production Circula file changed and no root application test/qualification was performed by this implementation agent. The private-view wrapper and sign-out placement contract needs real auth-adapter testing. Native iOS/Android install/reopen, OS task-switcher snapshots, manual screen reader/zoom, supported browsers and full tenant/session/ledger regression remain pending. See COMPLETION.md and INTEGRATION.md.
+## Mutation check
+
+The pre-fix `client.mjs` was temporarily restored and rebuilt: the browser suite failed with `no service worker API: pagehide scrub`. The fixed client was restored and the build re-verified identical to `BUILD-SHA256SUMS`.
+
+## Not passed / not established
+
+- Real BFCache restore: with `--enable-features=BackForwardCache` and the Playwright BFCache-disabling default removed, Chromium still reloaded the page on Back (page-state marker lost), because `Cache-Control: no-store` documents are not BFCache-eligible there. The BFCache privacy path is therefore covered only by the DOM-double unit test and simulated `pagehide`; no real BFCache restore is claimed.
+- Android/iOS install and reopen, OS app-switcher snapshots, Safari/Firefox, manual screen reader, WCAG 2.2 AA automation, real OS zoom, tenant/CSRF/idempotency/ledger regression against the real core: all OPEN (see AUDIT.md, COMPLETION.md).
+- `cmd/demo` is covered only by the browser suite, not Go unit tests.
+- npm audit is a point-in-time registry result, not a security guarantee.
