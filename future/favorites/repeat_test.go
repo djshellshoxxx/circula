@@ -3,9 +3,9 @@ package favorites
 import "testing"
 
 func TestFreshUnpricedRepeats(t *testing.T) {
-	a := Member{"a", "n", true, true, false}
-	b := Member{"b", "n", true, true, false}
-	h := HistoricalTrade{"n", "a", "b", "bike", true}
+	a := Member{ID: "a", Network: "n", Active: true, Visible: true}
+	b := Member{ID: "b", Network: "n", Active: true, Visible: true}
+	h := HistoricalTrade{Network: "n", Payer: "a", Payee: "b", Description: "bike", Completed: true}
 	x, e := Repeat(a, b, h)
 	if e != nil {
 		t.Fatal(e)
