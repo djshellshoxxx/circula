@@ -160,3 +160,21 @@ func (s *Store) DeleteMediaRow(ctx context.Context, id string) error {
 		return err
 	})
 }
+
+// AllMedia pages through every media row (operator tooling: integrity checks).
+func (s *Store) AllMedia(ctx context.Context, afterID string, limit int) ([]d.MediaInfo, error) {
+	rows, err := s.db.QueryContext(ctx, mediaSelect+` WHERE id > ? ORDER BY id LIMIT ?`, afterID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []d.MediaInfo
+	for rows.Next() {
+		m, err := scanMedia(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, m)
+	}
+	return out, rows.Err()
+}

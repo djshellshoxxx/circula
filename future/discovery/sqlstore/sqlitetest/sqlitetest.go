@@ -8,9 +8,10 @@ package sqlitetest
 
 import (
 	"database/sql"
-	"net/url"
 	"path/filepath"
 	"testing"
+
+	"github.com/djshellshoxxx/circula/future/discovery/sqlstore"
 )
 
 var (
@@ -25,14 +26,7 @@ func Available() bool { return available }
 func DriverName() string { return driverName }
 
 // DSN builds a connection string with WAL, a busy timeout and full sync.
-func DSN(path string) string {
-	q := url.Values{}
-	q.Set("_busy_timeout", "10000")
-	q.Set("_journal_mode", "WAL")
-	q.Set("_synchronous", "FULL")
-	q.Set("_foreign_keys", "on")
-	return "file:" + path + "?" + q.Encode()
-}
+func DSN(path string) string { return sqlstore.DSN(path) }
 
 // OpenFile opens (creating if needed) a database at path.
 func OpenFile(path string) (*sql.DB, error) {

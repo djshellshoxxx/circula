@@ -11,6 +11,7 @@ import (
 	"database/sql"
 	"embed"
 	"fmt"
+	"net/url"
 	"sort"
 	"strconv"
 	"strings"
@@ -60,6 +61,18 @@ func loadMigrations() ([]migration, error) {
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].version < out[j].version })
 	return out, nil
+}
+
+// DSN builds an SQLite connection string with WAL, a busy timeout and full
+// synchronous mode. Parameter names follow mattn/go-sqlite3; a host using
+// another driver must set equivalent pragmas itself.
+func DSN(path string) string {
+	q := url.Values{}
+	q.Set("_busy_timeout", "10000")
+	q.Set("_journal_mode", "WAL")
+	q.Set("_synchronous", "FULL")
+	q.Set("_foreign_keys", "on")
+	return "file:" + path + "?" + q.Encode()
 }
 
 const migTable = `CREATE TABLE IF NOT EXISTS discovery_migrations (version INTEGER PRIMARY KEY, applied_at INTEGER NOT NULL)`
