@@ -113,7 +113,7 @@ func run(args []string) int {
 		return cli.ExitFailure
 	}
 	p := policy{&dir}
-	svc, err := favorites.NewService(favorites.Config{Store: sqlstore.New(db), Policy: p, Trades: p})
+	svc, err := favorites.NewService(favorites.Config{Store: sqlstore.New(db), Policy: p, Enabled: func(context.Context, favorites.Actor) (bool, error) { return true, nil }, Trades: p})
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		return cli.ExitFailure

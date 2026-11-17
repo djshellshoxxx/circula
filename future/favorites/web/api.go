@@ -43,6 +43,13 @@ func (h *Handler) jsonAPI(unsafe bool, fn apiFn) http.HandlerFunc {
 			writeProblem(w, http.StatusUnauthorized, "authentication required")
 			return
 		}
+		if on, err := h.svc.Enabled(r.Context(), s.Actor); err != nil {
+			writeProblem(w, http.StatusServiceUnavailable, "temporarily unavailable")
+			return
+		} else if !on {
+			writeProblem(w, http.StatusNotFound, "not found")
+			return
+		}
 		// X-Network scopes the request; it can only confirm the session's
 		// network, never select another one.
 		if n := r.Header.Get("X-Network"); n != "" && n != s.Actor.Network {
@@ -137,7 +144,7 @@ func fail(w http.ResponseWriter, err error, ownerOnly bool) {
 		} else {
 			writeProblem(w, http.StatusUnprocessableEntity, "that member cannot be saved")
 		}
-	case errors.Is(err, favorites.ErrNotFound):
+	case errors.Is(err, favorites.ErrNotFound), errors.Is(err, favorites.ErrDisabled):
 		writeProblem(w, http.StatusNotFound, "not found")
 	case errors.Is(err, favorites.ErrExists), errors.Is(err, favorites.ErrStale), errors.Is(err, favorites.ErrKeyReuse), errors.Is(err, favorites.ErrLimit):
 		writeProblem(w, http.StatusConflict, err.Error())

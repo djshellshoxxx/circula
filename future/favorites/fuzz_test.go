@@ -58,7 +58,7 @@ func FuzzListCursorAndIDs(f *testing.F) {
 	for _, id := range []string{"alice", "bob", "carol"} {
 		dir.Add("n1", id)
 	}
-	svc, _ := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: dir, Trades: dir})
+	svc, _ := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: dir, Enabled: dir.Enabled, Trades: dir})
 	_, _, _ = svc.Add(ctx, alice, favorites.AddRequest{Target: "bob"})
 	_, _, _ = svc.Add(ctx, bob, favorites.AddRequest{Target: "carol"})
 	f.Fuzz(func(t *testing.T, cursor, id string) {

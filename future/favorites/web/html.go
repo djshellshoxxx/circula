@@ -32,6 +32,15 @@ func (h *Handler) page(unsafe bool, fn pageFn) http.HandlerFunc {
 			http.Error(w, "Sign in required.", http.StatusUnauthorized)
 			return
 		}
+		// The opt-in gate comes first: where the feature is off, nothing about it
+		// (not even CSRF behavior) is observable.
+		if on, err := h.svc.Enabled(r.Context(), s.Actor); err != nil {
+			http.Error(w, "Temporarily unavailable.", http.StatusServiceUnavailable)
+			return
+		} else if !on {
+			http.NotFound(w, r)
+			return
+		}
 		if unsafe {
 			if !sameOrigin(r) {
 				http.Error(w, "Cross-site request refused.", http.StatusForbidden)
@@ -116,7 +125,7 @@ var tpl = template.Must(template.New("").Funcs(template.FuncMap{"esc": url.PathE
 <input type="hidden" name="csrf_token" value="{{.CSRF}}">
 <label for="target">Member ID</label><p class="hint" id="target-h">Copy it from the member's profile in the directory.</p>
 <input type="text" id="target" name="target" value="{{.AddTarget}}" aria-describedby="target-h" autocomplete="off" autocapitalize="none" spellcheck="false" required>
-<label for="nickname" style="margin-top:.8rem">Nickname (optional)</label><p class="hint" id="nickname-h">Only you can see this. Up to 80 characters.</p>
+<label for="nickname" class="gap">Nickname (optional)</label><p class="hint" id="nickname-h">Only you can see this. Up to 80 characters.</p>
 <input type="text" id="nickname" name="nickname" value="{{.AddNickname}}" maxlength="80" aria-describedby="nickname-h" autocomplete="off">
 <div class="check"><input type="checkbox" id="pinned" name="pinned" value="1"{{if .AddPinned}} checked{{end}}><label for="pinned">Pin to the top of my list</label></div>
 <div class="row"><button type="submit">Save trading partner</button></div>
@@ -136,9 +145,9 @@ var tpl = template.Must(template.New("").Funcs(template.FuncMap{"esc": url.PathE
 <input type="hidden" name="{{.P.CSRF}}" value="{{.CSRF}}">
 <input type="hidden" name="{{.P.Recipient}}" value="{{.D.Recipient}}">
 <input type="hidden" name="{{.P.IdempotencyKey}}" value="{{.D.Intent}}">
-<p style="margin-top:1rem"><label for="amount">Amount</label></p><p class="hint" id="amount-h">Enter the amount for this new proposal.</p>
+<p class="gap"><label for="amount">Amount</label></p><p class="hint" id="amount-h">Enter the amount for this new proposal.</p>
 <input type="text" id="amount" name="{{.P.Amount}}" value="" inputmode="decimal" autocomplete="off" aria-describedby="amount-h" required>
-<p style="margin-top:.8rem"><label for="description">Description (optional)</label></p><p class="hint" id="description-h">Copied from your earlier trade. You can change it. Up to 2000 characters.</p>
+<p class="gap"><label for="description">Description (optional)</label></p><p class="hint" id="description-h">Copied from your earlier trade. You can change it. Up to 2000 characters.</p>
 <textarea id="description" name="{{.P.Description}}" rows="4" maxlength="2000" aria-describedby="description-h">{{.D.Description}}</textarea>
 <div class="row"><button type="submit">Continue to review proposal</button></div>
 </form>
@@ -209,6 +218,8 @@ func listError(err error) (int, string) {
 		return http.StatusServiceUnavailable, "Saved trading partners are temporarily unavailable. Try again later."
 	case errors.Is(err, favorites.ErrUnavailable):
 		return http.StatusForbidden, "Saved trading partners are not available to your account."
+	case errors.Is(err, favorites.ErrDisabled):
+		return http.StatusNotFound, "Not found."
 	}
 	var ie *favorites.InputError
 	if errors.As(err, &ie) {

@@ -14,6 +14,8 @@ h1{font-size:1.75rem;margin:.5rem 0 1rem}h2{font-size:1.3rem;margin:1.5rem 0 .5r
 a{color:var(--link)}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 5px var(--fg)}
 .skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;background:var(--bg);padding:.5rem;z-index:2}
 .vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.gap{margin-top:1rem}
+main p>a:only-child,nav.pager a,.fav-picker p>a{display:inline-block;min-height:2.75rem;padding:.6rem 0}
 .hint{color:var(--mut);margin:.1rem 0 .4rem}
 label{display:block;font-weight:600}
 input[type=text],textarea{width:100%;min-height:2.75rem;padding:.5rem;border:2px solid var(--fg);border-radius:0;background:var(--bg);color:var(--fg);font:inherit}

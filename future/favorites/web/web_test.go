@@ -43,7 +43,7 @@ func newEnv(t *testing.T) *env {
 		}
 	}
 	dir.AddTrade("t1", favorites.HistoricalTrade{Network: "n1", Payer: "alice", Payee: "bob", Description: "bike <b>repair</b>", Completed: true})
-	svc, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: dir, Trades: dir})
+	svc, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: dir, Enabled: dir.Enabled, Trades: dir})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -252,7 +252,7 @@ func TestCSRFAndOriginProtection(t *testing.T) {
 	// another user's token does not work
 	wantStatus(t, e.do(t, "alice", "POST", "/favorites/add", "target=bob&csrf_token=csrf-bob", ct), 403)
 	// cross-site browser signals are refused even with a right token
-	for _, h := range []map[string]string{{"Origin": "https://evil.example"}, {"Sec-Fetch-Site": "cross-site"}, {"Sec-Fetch-Site": "same-site"}} {
+	for _, h := range []map[string]string{{"Origin": "https://evil.example"}, {"Origin": "null"}, {"Sec-Fetch-Site": "cross-site"}, {"Sec-Fetch-Site": "same-site"}, {"Sec-Fetch-Site": "cross-site", "Origin": "null"}} {
 		hh := map[string]string{"Content-Type": ct["Content-Type"]}
 		for k, v := range h {
 			hh[k] = v
@@ -266,6 +266,9 @@ func TestCSRFAndOriginProtection(t *testing.T) {
 	// same-origin passes
 	u, _ := url.Parse(e.srv.URL)
 	wantStatus(t, e.do(t, "alice", "POST", "/favorites/add", "target=bob&csrf_token=csrf-alice", map[string]string{"Content-Type": ct["Content-Type"], "Origin": "http://" + u.Host, "Sec-Fetch-Site": "same-origin"}), 303)
+	// browsers send Origin: null on same-origin posts under Referrer-Policy: no-referrer;
+	// Fetch Metadata proves same-origin, so the request is accepted
+	wantStatus(t, e.do(t, "alice", "POST", "/favorites/add", "target=carol&csrf_token=csrf-alice", map[string]string{"Content-Type": ct["Content-Type"], "Origin": "null", "Sec-Fetch-Site": "same-origin"}), 303)
 	// GET never mutates
 	for _, p := range []string{"/favorites/bob/remove", "/favorites/bob/pin", "/favorites/add"} {
 		if r := e.get(t, "alice", p); r.StatusCode != 404 && r.StatusCode != 405 {
@@ -540,5 +543,33 @@ func TestNewValidatesConfig(t *testing.T) {
 		if _, err := web.New(c); err == nil {
 			t.Errorf("%s accepted", name)
 		}
+	}
+}
+
+func TestDisabledFeatureIs404EverywhereAndChangesNothing(t *testing.T) {
+	e := newEnv(t)
+	e.add(t, "alice", "bob", "")
+	e.dir.Disable("n1/alice")
+	for _, c := range [][2]string{{"GET", "/favorites"}, {"GET", "/favorites/drafts/k"}, {"GET", "/api/v1/me/favorites"}} {
+		if r := e.do(t, "alice", c[0], c[1], "", nil); r.StatusCode != 404 {
+			t.Errorf("%v: %d", c, r.StatusCode)
+		}
+	}
+	// even without a CSRF token the answer is 404, not 403: nothing about the feature is observable
+	wantStatus(t, e.do(t, "alice", "POST", "/favorites/add", "target=carol", map[string]string{"Content-Type": "application/x-www-form-urlencoded"}), 404)
+	wantStatus(t, e.form(t, "alice", "/favorites/bob/remove"), 404)
+	wantStatus(t, e.api(t, "alice", "POST", "/api/v1/me/favorites", map[string]any{"member_id": "carol"}), 404)
+	e.dir.GateErr.Store(true)
+	wantStatus(t, e.get(t, "alice", "/favorites"), 503)
+	wantStatus(t, e.api(t, "alice", "GET", "/api/v1/me/favorites", nil), 503)
+	e.dir.GateErr.Store(false)
+	if len(string(e.h.Picker(httptest.NewRequest("GET", "/x", nil)))) == 0 {
+		t.Fatal("picker")
+	}
+	e.dir.Disable("n1")
+	r := httptest.NewRequest("GET", "/trades/new", nil)
+	r.AddCookie(&http.Cookie{Name: "sid", Value: "bob"})
+	if f := string(e.h.Picker(r)); strings.Contains(f, "Member") || !strings.Contains(f, "/directory") {
+		t.Errorf("disabled picker must show only the directory link: %s", f)
 	}
 }

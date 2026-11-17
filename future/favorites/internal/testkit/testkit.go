@@ -16,12 +16,14 @@ type Directory struct {
 	members map[string]favorites.Member // key network + "/" + id
 	blocks  map[[3]string]bool          // viewer-relative block: network, viewer, other
 	trades  map[string]favorites.HistoricalTrade
+	off     map[string]bool // disabled networks ("n") and owners ("n/id")
 	Fail    atomic.Bool
+	GateErr atomic.Bool
 	Calls   atomic.Int64
 }
 
 func NewDirectory() *Directory {
-	return &Directory{members: map[string]favorites.Member{}, blocks: map[[3]string]bool{}, trades: map[string]favorites.HistoricalTrade{}}
+	return &Directory{members: map[string]favorites.Member{}, blocks: map[[3]string]bool{}, trades: map[string]favorites.HistoricalTrade{}, off: map[string]bool{}}
 }
 
 // Add registers an active, visible member.
@@ -91,4 +93,21 @@ func (d *Directory) Trade(_ context.Context, viewer favorites.Actor, id string) 
 		return favorites.HistoricalTrade{}, favorites.ErrTradeNotFound
 	}
 	return t, nil
+}
+
+// Disable switches the feature off for a network ("n1") or one owner ("n1/alice").
+func (d *Directory) Disable(key string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.off[key] = true
+}
+
+// Enabled is the opt-in gate: on unless disabled for the network or owner.
+func (d *Directory) Enabled(_ context.Context, a favorites.Actor) (bool, error) {
+	if d.GateErr.Load() {
+		return false, errors.New("gate backend down")
+	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return !d.off[a.Network] && !d.off[a.Network+"/"+a.Member], nil
 }

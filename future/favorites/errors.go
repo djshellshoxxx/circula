@@ -33,6 +33,9 @@ var (
 	// ErrPolicy wraps failures of the injected authorization provider.
 	// Callers must treat it as a refusal (fail closed).
 	ErrPolicy = errors.New("authorization lookup failed")
+	// ErrDisabled means the feature is not enabled for this network or owner.
+	// Hosts should render it as "not found".
+	ErrDisabled = errors.New("saved trading partners are not enabled")
 	// ErrTradeNotFound is what a TradeSource returns for an unknown or
 	// not-permitted trade.
 	ErrTradeNotFound = errors.New("trade not found")

@@ -165,11 +165,16 @@ func (h *Handler) secureHeaders(w http.ResponseWriter, html bool) {
 	}
 }
 
-// sameOrigin rejects cross-site browser requests. Requests with neither
-// Origin nor Sec-Fetch-Site (non-browser clients) rely on the CSRF token.
+// sameOrigin rejects cross-site browser requests. Fetch Metadata is
+// authoritative when present: browsers set Sec-Fetch-Site themselves and pages
+// cannot forge it. It must be consulted first because the page's
+// "Referrer-Policy: no-referrer" makes browsers send "Origin: null" on
+// same-origin form posts (found in a real Chromium run). Without Fetch
+// Metadata an Origin header, if any, must match Host and "null" is refused.
+// Requests with neither header (non-browser clients) rely on the CSRF token.
 func sameOrigin(r *http.Request) bool {
-	if sfs := r.Header.Get("Sec-Fetch-Site"); sfs != "" && sfs != "same-origin" && sfs != "none" {
-		return false
+	if sfs := r.Header.Get("Sec-Fetch-Site"); sfs != "" {
+		return sfs == "same-origin" || sfs == "none"
 	}
 	if o := r.Header.Get("Origin"); o != "" {
 		u, err := url.Parse(o)

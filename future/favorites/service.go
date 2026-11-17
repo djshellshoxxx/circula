@@ -20,13 +20,17 @@ const (
 	MaxPageLimit        = 200
 )
 
-// Config wires a Service. Store and Policy are required. Trades may be nil, in
-// which case trade-based quick repeat is unavailable.
+// Config wires a Service. Store, Policy and Enabled are required. Trades may be
+// nil, in which case trade-based quick repeat is unavailable.
 type Config struct {
 	Store  Store
 	Policy Policy
-	Trades TradeSource
-	Clock  func() time.Time
+	// Enabled is the explicit per-network/per-owner opt-in gate. There is
+	// deliberately no default: the host must decide, and a false or failing
+	// answer disables every actor operation (ErrDisabled or ErrPolicy).
+	Enabled func(ctx context.Context, a Actor) (bool, error)
+	Trades  TradeSource
+	Clock   func() time.Time
 	// MaxFavorites caps stored favorites per owner and network (default 200, max 1000).
 	MaxFavorites int
 	// MaxDrafts caps unexpired quick-repeat drafts per owner (default 100).
@@ -41,6 +45,7 @@ type Config struct {
 type Service struct {
 	store                   Store
 	policy                  Policy
+	enabled                 func(context.Context, Actor) (bool, error)
 	trades                  TradeSource
 	now                     func() time.Time
 	maxFavorites, maxDrafts int
@@ -49,10 +54,10 @@ type Service struct {
 
 // NewService validates cfg and returns a Service.
 func NewService(cfg Config) (*Service, error) {
-	if cfg.Store == nil || cfg.Policy == nil {
-		return nil, errors.New("favorites: Store and Policy are required")
+	if cfg.Store == nil || cfg.Policy == nil || cfg.Enabled == nil {
+		return nil, errors.New("favorites: Store, Policy and Enabled are required")
 	}
-	s := &Service{store: cfg.Store, policy: cfg.Policy, trades: cfg.Trades, now: cfg.Clock,
+	s := &Service{store: cfg.Store, policy: cfg.Policy, enabled: cfg.Enabled, trades: cfg.Trades, now: cfg.Clock,
 		maxFavorites: cfg.MaxFavorites, maxDrafts: cfg.MaxDrafts, draftTTL: cfg.DraftTTL}
 	if s.now == nil {
 		s.now = time.Now
@@ -112,9 +117,30 @@ type ReorderRequest struct {
 	Targets  []string
 }
 
-func (s *Service) checkActor(a Actor) error {
+// Enabled reports whether the feature is switched on for a. A failing gate
+// is a policy failure (fail closed).
+func (s *Service) Enabled(ctx context.Context, a Actor) (bool, error) {
+	if !validID(a.Network) || !validID(a.Member) {
+		return false, nil
+	}
+	ok, err := s.enabled(ctx, a)
+	if err != nil {
+		return false, fmt.Errorf("%w: %v", ErrPolicy, err)
+	}
+	return ok, nil
+}
+
+// checkActor validates the identity and applies the opt-in gate.
+func (s *Service) checkActor(ctx context.Context, a Actor) error {
 	if !validID(a.Network) || !validID(a.Member) {
 		return ErrUnavailable
+	}
+	ok, err := s.Enabled(ctx, a)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return ErrDisabled
 	}
 	return nil
 }
@@ -149,7 +175,7 @@ func (s *Service) lookup(ctx context.Context, a Actor, ids []string) (map[string
 
 // owner returns the fresh snapshot of the acting member or ErrUnavailable.
 func (s *Service) owner(ctx context.Context, a Actor, extra ...string) (Member, map[string]Member, error) {
-	if err := s.checkActor(a); err != nil {
+	if err := s.checkActor(ctx, a); err != nil {
 		return Member{}, nil, err
 	}
 	ids := append([]string{a.Member}, extra...)
@@ -332,7 +358,7 @@ func (s *Service) List(ctx context.Context, a Actor, opt ListOptions) (Page, err
 		}
 		cur = &c
 	}
-	if err := s.checkActor(a); err != nil {
+	if err := s.checkActor(ctx, a); err != nil {
 		return Page{}, err
 	}
 	var entries []Entry

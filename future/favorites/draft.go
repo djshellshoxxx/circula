@@ -23,7 +23,7 @@ func (s *Service) RepeatTrade(ctx context.Context, a Actor, tradeID, requestKey 
 	if err != nil {
 		return Draft{}, err
 	}
-	if err := s.checkActor(a); err != nil {
+	if err := s.checkActor(ctx, a); err != nil {
 		return Draft{}, err
 	}
 	trade, err := s.trades.Trade(ctx, a, tradeID)
@@ -100,7 +100,7 @@ func (s *Service) GetDraft(ctx context.Context, a Actor, requestKey string) (Dra
 	if !validKey(requestKey) {
 		return Draft{}, ErrNotFound
 	}
-	if err := s.checkActor(a); err != nil {
+	if err := s.checkActor(ctx, a); err != nil {
 		return Draft{}, err
 	}
 	var in Intent

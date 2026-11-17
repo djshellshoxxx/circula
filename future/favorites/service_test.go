@@ -47,7 +47,7 @@ func newFixture(t *testing.T, f storeFactory, mod ...func(*favorites.Config)) *f
 		}
 	}
 	clk := &clock{t: time.Date(2026, 11, 16, 12, 0, 0, 0, time.UTC)}
-	cfg := favorites.Config{Store: f.new(t), Policy: dir, Trades: dir, Clock: clk.Now}
+	cfg := favorites.Config{Store: f.new(t), Policy: dir, Enabled: dir.Enabled, Trades: dir, Clock: clk.Now}
 	for _, m := range mod {
 		m(&cfg)
 	}
@@ -438,7 +438,7 @@ func TestLimitAndPruneOfDepartedTargets(t *testing.T) {
 		if !reflect.DeepEqual(targets(p), []string{"bob", "dave", "erin"}) {
 			t.Fatalf("%v", targets(p))
 		}
-		if _, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: fx.dir, MaxFavorites: favorites.HardMaxFavorites + 1}); err == nil {
+		if _, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: fx.dir, Enabled: fx.dir.Enabled, MaxFavorites: favorites.HardMaxFavorites + 1}); err == nil {
 			t.Fatal("hard cap")
 		}
 	})
@@ -562,6 +562,43 @@ func TestConcurrentReorderOnlyOneWinsPerRevision(t *testing.T) {
 		wg.Wait()
 		if ok != 1 || stale != 5 {
 			t.Fatalf("ok=%d stale=%d", ok, stale)
+		}
+	})
+}
+
+func TestOptInGateIsExplicitAndFailsClosed(t *testing.T) {
+	if _, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: testkit.NewDirectory()}); err == nil {
+		t.Fatal("a Service without an explicit Enabled gate must not construct")
+	}
+	eachStore(t, func(t *testing.T, f storeFactory) {
+		fx := newFixture(t, f)
+		mustAdd(t, fx.svc, alice, "bob", "")
+		bobN2 := favorites.Actor{Network: "n2", Member: "alice"}
+		fx.dir.Disable("n2") // network not opted in
+		fx.dir.Disable("n1/bob")
+		calls := map[string]func() error{
+			"list":      func() error { _, err := fx.svc.List(ctx, bobN2, favorites.ListOptions{}); return err },
+			"add":       func() error { _, _, err := fx.svc.Add(ctx, bobN2, favorites.AddRequest{Target: "carol"}); return err },
+			"pin":       func() error { return fx.svc.SetPinned(ctx, bobN2, "carol", true) },
+			"remove":    func() error { _, err := fx.svc.Remove(ctx, bobN2, "carol"); return err },
+			"reorder":   func() error { _, err := fx.svc.Reorder(ctx, bobN2, favorites.ReorderRequest{}); return err },
+			"draft":     func() error { _, err := fx.svc.DraftFromFavorite(ctx, bobN2, "carol", ""); return err },
+			"repeat":    func() error { _, err := fx.svc.RepeatTrade(ctx, bobN2, "t1", ""); return err },
+			"getdraft":  func() error { _, err := fx.svc.GetDraft(ctx, bobN2, "k"); return err },
+			"owner off": func() error { _, err := fx.svc.List(ctx, bob, favorites.ListOptions{}); return err },
+		}
+		for name, c := range calls {
+			if err := c(); !errors.Is(err, favorites.ErrDisabled) {
+				t.Errorf("%s: want ErrDisabled got %v", name, err)
+			}
+		}
+		// still enabled for others
+		if p, err := fx.svc.List(ctx, alice, favorites.ListOptions{}); err != nil || len(p.Items) != 1 {
+			t.Fatalf("%v %v", p, err)
+		}
+		fx.dir.GateErr.Store(true)
+		if _, err := fx.svc.List(ctx, alice, favorites.ListOptions{}); !errors.Is(err, favorites.ErrPolicy) {
+			t.Fatalf("gate failure must fail closed: %v", err)
 		}
 	})
 }

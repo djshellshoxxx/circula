@@ -19,7 +19,7 @@ func setup(t *testing.T) (*testkit.Directory, func(args ...string) (int, string,
 		dir.Add("n1", id)
 	}
 	dir.AddTrade("t1", favorites.HistoricalTrade{Network: "n1", Payer: "alice", Payee: "bob", Description: "bike", Completed: true})
-	svc, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: dir, Trades: dir})
+	svc, err := favorites.NewService(favorites.Config{Store: memstore.New(), Policy: dir, Enabled: dir.Enabled, Trades: dir})
 	if err != nil {
 		t.Fatal(err)
 	}

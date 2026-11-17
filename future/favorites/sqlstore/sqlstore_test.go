@@ -124,7 +124,7 @@ func TestSchemaConstraintsRejectCorruptRows(t *testing.T) {
 }
 
 func newService(t testing.TB, db *sql.DB, dir *testkit.Directory) *favorites.Service {
-	s, err := favorites.NewService(favorites.Config{Store: sqlstore.New(db), Policy: dir, Trades: dir})
+	s, err := favorites.NewService(favorites.Config{Store: sqlstore.New(db), Policy: dir, Enabled: dir.Enabled, Trades: dir})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -211,7 +211,7 @@ func TestConcurrentWritersOnOneFile(t *testing.T) {
 	var svcs []*favorites.Service
 	for i := 0; i < 3; i++ {
 		db := sqlitefixture.Open(t, p)
-		s, err := favorites.NewService(favorites.Config{Store: sqlstore.New(db), Policy: dir, Trades: dir, MaxFavorites: 5})
+		s, err := favorites.NewService(favorites.Config{Store: sqlstore.New(db), Policy: dir, Enabled: dir.Enabled, Trades: dir, MaxFavorites: 5})
 		if err != nil {
 			t.Fatal(err)
 		}
