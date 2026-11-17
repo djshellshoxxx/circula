@@ -74,7 +74,7 @@ func setup(t *testing.T) *fixture {
 	must(t, qrfixture.AddMember(ctx, db, "n2", "x", "Xena", 1000))
 	f.store = qr.NewStore(db)
 	must(t, f.store.Migrate(ctx))
-	f.svc, err = qr.NewService(qr.Config{Origin: origin, AliasSecret: secret}, f.store, f.fx)
+	f.svc, err = qr.NewService(qr.Config{Origin: origin, AliasSecret: secret, NetworkEnabled: func(context.Context, qr.DBTX, string) (bool, error) { return true, nil }}, f.store, f.fx)
 	must(t, err)
 	f.h, err = web.NewHandler(web.Config{Service: f.svc, Auth: auth{}, LoginURL: "/login",
 		OnError: func(p string, err error) { f.mu.Lock(); f.errs = append(f.errs, p+" :: "+err.Error()); f.mu.Unlock() }})
@@ -581,7 +581,7 @@ func (failCore) Propose(context.Context, qr.DBTX, qr.ProposalInput) (qr.Proposal
 
 func TestInternalErrorsAreOpaqueAndLogsAreRedacted(t *testing.T) {
 	f := setup(t)
-	svc, err := qr.NewService(qr.Config{Origin: origin, AliasSecret: secret}, f.store, failCore{f.fx})
+	svc, err := qr.NewService(qr.Config{Origin: origin, AliasSecret: secret, NetworkEnabled: func(context.Context, qr.DBTX, string) (bool, error) { return true, nil }}, f.store, failCore{f.fx})
 	must(t, err)
 	var logged []string
 	h, err := web.NewHandler(web.Config{Service: svc, Auth: auth{}, OnError: func(p string, err error) { logged = append(logged, p+" "+err.Error()) }})
@@ -682,4 +682,18 @@ func a11y(t *testing.T, name string, w *httptest.ResponseRecorder) {
 		must1(strings.Contains(b, "<caption>") && strings.Contains(b, `<th scope="col">`), "table caption/scope")
 	}
 	_ = time.Now
+}
+
+func TestNotesAreEscapedInHTML(t *testing.T) {
+	f := setup(t)
+	evil := `<img src=x onerror=alert(1)>"'&`
+	c := f.form("/qr/requests", "a", url.Values{"amount": {"5"}, "note": {evil}, "ttl": {"3600"}, "idempotency_key": {"form-xss-00001"}})
+	wantStatus(t, c, 201)
+	link := regexp.MustCompile(`value="(https://circula\.example/qr/v1/[A-Za-z0-9_-]{22})"`).FindStringSubmatch(c.Body.String())[1]
+	for _, w := range []*httptest.ResponseRecorder{c, f.do(req{method: "GET", path: strings.TrimPrefix(link, origin), member: "b"})} {
+		b := w.Body.String()
+		if strings.Contains(b, "<img src=x") || strings.Contains(b, "onerror=alert(1)>") || !strings.Contains(b, "&lt;img src=x onerror=alert(1)&gt;") {
+			t.Fatalf("note not escaped: %s", b)
+		}
+	}
 }

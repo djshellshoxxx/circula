@@ -116,6 +116,19 @@ func (s *Service) active(ctx context.Context, q DBTX, network, member string) (M
 	return m, nil
 }
 
+// gate enforces the explicit per-network opt-in: a network that has not
+// enabled the feature sees it as absent (ErrNotFound) and nothing is written.
+func (s *Service) gate(ctx context.Context, q DBTX, network string) error {
+	ok, err := s.cfg.NetworkEnabled(ctx, q, network)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return ErrNotFound
+	}
+	return nil
+}
+
 // ---- static aliases ----------------------------------------------------
 
 // AliasInfo describes a member's static alias. Code is a public merchant
@@ -152,6 +165,9 @@ func (s *Service) MyAlias(ctx context.Context, p Principal) (AliasInfo, error) {
 	}
 	var out AliasInfo
 	err := s.store.Update(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		if _, err := s.active(ctx, q, p.NetworkID, p.MemberID); err != nil {
 			return err
 		}
@@ -194,6 +210,9 @@ func (s *Service) RotateAlias(ctx context.Context, p Principal, key string) (Ali
 	fp := fingerprint("alias.rotate", p.NetworkID, p.MemberID)
 	var out AliasInfo
 	err := s.store.Update(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		if _, err := s.active(ctx, q, p.NetworkID, p.MemberID); err != nil {
 			return err
 		}
@@ -402,6 +421,9 @@ func (s *Service) CreateRequest(ctx context.Context, p Principal, key string, in
 	fp := fingerprint("request.create", p.NetworkID, p.MemberID, itoa(in.AmountMinor), note, itoa(int64(ttl/time.Millisecond)))
 	var out CreatedRequest
 	err = s.store.Update(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		if _, err := s.active(ctx, q, p.NetworkID, p.MemberID); err != nil {
 			return err
 		}
@@ -503,6 +525,9 @@ func (s *Service) PreviewRequest(ctx context.Context, p Principal, token string)
 	}
 	var out Preview
 	err := s.store.View(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		r, err := s.requestByToken(ctx, q, p.NetworkID, token)
 		if err != nil {
 			return err
@@ -551,6 +576,9 @@ func (s *Service) ResolveAlias(ctx context.Context, p Principal, code string) (P
 	}
 	var out Preview
 	err := s.store.View(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		recipient, err := s.aliasOwner(ctx, q, p.NetworkID, code)
 		if err != nil {
 			return err
@@ -620,6 +648,9 @@ func (s *Service) ClaimRequest(ctx context.Context, p Principal, token, key stri
 	}
 	var out ClaimResult
 	err := s.store.Update(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		if _, err := s.active(ctx, q, p.NetworkID, p.MemberID); err != nil {
 			return err
 		}
@@ -720,6 +751,9 @@ func (s *Service) ProposeToAlias(ctx context.Context, p Principal, code string, 
 	fp := fingerprint("claim.alias", p.NetworkID, p.MemberID, string(h[:]), itoa(amount), note)
 	var out ClaimResult
 	err = s.store.Update(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		if _, err := s.active(ctx, q, p.NetworkID, p.MemberID); err != nil {
 			return err
 		}
@@ -774,6 +808,9 @@ func (s *Service) RevokeRequest(ctx context.Context, p Principal, id string) (Re
 	}
 	var out RequestView
 	err := s.store.Update(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		var r reqRow
 		if err := r.scan(q.QueryRowContext(ctx, `SELECT `+reqCols+` FROM qr_trade_request WHERE network_id=? AND id=? AND recipient_id=?`, p.NetworkID, id, p.MemberID)); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
@@ -809,6 +846,9 @@ func (s *Service) GetRequest(ctx context.Context, p Principal, id string) (Reque
 	}
 	var out RequestView
 	err := s.store.View(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		var r reqRow
 		if err := r.scan(q.QueryRowContext(ctx, `SELECT `+reqCols+` FROM qr_trade_request WHERE network_id=? AND id=? AND (recipient_id=? OR claimed_by=?)`,
 			p.NetworkID, id, p.MemberID, p.MemberID)); err != nil {
@@ -852,6 +892,9 @@ func (s *Service) ListRequests(ctx context.Context, p Principal, limit int, curs
 	var out []RequestView
 	var next string
 	err := s.store.View(ctx, func(ctx context.Context, q DBTX) error {
+		if err := s.gate(ctx, q, p.NetworkID); err != nil {
+			return err
+		}
 		rows, err := q.QueryContext(ctx, `SELECT `+reqCols+` FROM qr_trade_request WHERE network_id=? AND recipient_id=? AND (created_at<? OR (created_at=? AND id<?))
 			ORDER BY created_at DESC, id DESC LIMIT ?`, p.NetworkID, p.MemberID, curMS, curMS, curID, limit+1)
 		if err != nil {

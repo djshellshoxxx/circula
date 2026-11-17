@@ -1,6 +1,6 @@
 # Third-party notices for future/qr (FUX-102)
 
-Circula currently has no approved product license. Nothing below changes that; owner/license review must precede any release or redistribution (see README "Open gates"). No third-party source is copied except the two Nimiq browser assets and one test-only decoder listed in section 2. Everything else is imported as a pinned Go module (`go.mod`/`go.sum`).
+Circula currently has no approved product license. Nothing below changes that; owner/license review must precede any release or redistribution (see README "Open gates"). No third-party source is copied except the two Nimiq browser assets and one test-only decoder listed in section 2. Everything else is imported as a pinned Go module (`go.mod`/`go.sum`). The `go` directive is 1.26.0 because modernc.org/sqlite v1.60.1 requires it.
 
 ## 1. Go modules linked into the library
 
@@ -33,6 +33,23 @@ The upstream MIT notice text must accompany redistribution of the encoder: "Perm
 ## 3. Test-only dependency
 
 - `github.com/mattn/go-sqlite3` `v1.14.53` (commit `93c7e0a2ec6762a38ab371755d49a2b3f4a12e67`), MIT, Copyright (c) 2014 Yasuhiro Matsumoto; it embeds the public-domain SQLite amalgamation. It is imported only from `_test.go` files and the `tools/browser-qualification` main under build tag `sqlite_cgo_test`; it is never linked into a normal build. It exercises real SQLite but does not qualify Circula's production driver.
+
+### Test-only pure-Go driver graph (build tag `sqlite_modernc_test`)
+
+`modernc.org/sqlite v1.60.1` is the SQLite driver Circula's core uses. It is imported only from `_test.go` files under the tag and never linked into a normal build; it is listed in `go.mod` so the tagged tests are reproducible. Licenses were read from each module's LICENSE in the module cache (heads only; full SCA is an open gate):
+
+| Module | Pin | License |
+|---|---|---|
+| `modernc.org/sqlite` | v1.60.1 | BSD-3-Clause, Copyright (c) 2017 The Sqlite Authors |
+| `modernc.org/libc` | v1.77.1 | BSD-3-Clause, The Libc Authors |
+| `modernc.org/mathutil` | v1.7.1 | BSD-3-Clause, The mathutil Authors |
+| `modernc.org/memory` | v1.12.1 | BSD-3-Clause, The Memory Authors |
+| `github.com/dustin/go-humanize` | v1.0.1 | MIT |
+| `github.com/google/uuid` | v1.6.0 | BSD-3-Clause, Google Inc. |
+| `github.com/mattn/go-isatty` | v0.0.24 | MIT |
+| `github.com/ncruces/go-strftime` | v1.0.0 | MIT |
+| `github.com/remyoudompheng/bigfft` | v0.0.0-20230129092748-24d4a6f8daec | BSD-3-Clause, The Go Authors |
+| `golang.org/x/sys` | v0.48.0 | BSD-3-Clause, The Go Authors |
 
 ## 4. Pattern reference and tooling that are NOT included
 

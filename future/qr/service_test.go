@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -602,10 +603,11 @@ func TestInvalidPrincipalAndConfig(t *testing.T) {
 		t.Fatal("unknown member", err)
 	}
 	for name, cfg := range map[string]qr.Config{
-		"http origin":  {Origin: "http://c.test", AliasSecret: secret},
-		"path origin":  {Origin: "https://c.test/x", AliasSecret: secret},
-		"short secret": {Origin: "https://c.test", AliasSecret: []byte("short")},
-		"png":          {Origin: "https://c.test", AliasSecret: secret, PNGPixels: 10},
+		"http origin":    {Origin: "http://c.test", AliasSecret: secret, NetworkEnabled: allEnabled},
+		"path origin":    {Origin: "https://c.test/x", AliasSecret: secret, NetworkEnabled: allEnabled},
+		"short secret":   {Origin: "https://c.test", AliasSecret: []byte("short"), NetworkEnabled: allEnabled},
+		"png":            {Origin: "https://c.test", AliasSecret: secret, PNGPixels: 10, NetworkEnabled: allEnabled},
+		"no opt-in gate": {Origin: "https://c.test", AliasSecret: secret},
 	} {
 		if _, err := qr.NewService(cfg, e.store, e.fx); err == nil {
 			t.Fatal(name)
@@ -613,5 +615,69 @@ func TestInvalidPrincipalAndConfig(t *testing.T) {
 	}
 	if _, err := qr.NewService(e.cfg, nil, e.fx); err == nil {
 		t.Fatal("nil store")
+	}
+}
+
+func TestExplicitPerNetworkOptIn(t *testing.T) {
+	enabled := map[string]bool{"n1": true}
+	var mu sync.Mutex
+	e := newEnv(t, func(c *qr.Config) {
+		c.NetworkEnabled = func(_ context.Context, q qr.DBTX, n string) (bool, error) {
+			mu.Lock()
+			defer mu.Unlock()
+			return enabled[n], nil
+		}
+	})
+	if _, err := e.svc.MyAlias(bg, p("n1", "a")); err != nil {
+		t.Fatal(err)
+	}
+	cr, err := e.svc.CreateRequest(bg, p("n1", "a"), "create-0001", qr.CreateRequestInput{AmountMinor: 5})
+	must(t, err)
+	// n2 never opted in: every operation reads as absent and nothing is written.
+	ops := map[string]func() error{
+		"alias":  func() error { _, err := e.svc.MyAlias(bg, p("n2", "x")); return err },
+		"rotate": func() error { _, err := e.svc.RotateAlias(bg, p("n2", "x"), "rot-key-0001"); return err },
+		"create": func() error {
+			_, err := e.svc.CreateRequest(bg, p("n2", "x"), "create-0001", qr.CreateRequestInput{AmountMinor: 5})
+			return err
+		},
+		"preview": func() error { _, err := e.svc.PreviewRequest(bg, p("n2", "x"), cr.Token); return err },
+		"resolve": func() error { _, err := e.svc.ResolveAlias(bg, p("n2", "x"), cr.Token); return err },
+		"claim":   func() error { _, err := e.svc.ClaimRequest(bg, p("n2", "x"), cr.Token, ""); return err },
+		"alias claim": func() error {
+			_, err := e.svc.ProposeToAlias(bg, p("n2", "x"), cr.Token, 5, "", "alias-key-001")
+			return err
+		},
+		"revoke": func() error { _, err := e.svc.RevokeRequest(bg, p("n2", "x"), cr.View.ID); return err },
+		"get":    func() error { _, err := e.svc.GetRequest(bg, p("n2", "x"), cr.View.ID); return err },
+		"list":   func() error { _, _, err := e.svc.ListRequests(bg, p("n2", "x"), 10, ""); return err },
+	}
+	for name, op := range ops {
+		if err := op(); !errors.Is(err, qr.ErrNotFound) {
+			t.Errorf("%s on a non-enabled network: %v", name, err)
+		}
+	}
+	if e.scalar(`SELECT COUNT(*) FROM qr_member_alias WHERE network_id='n2'`)+e.scalar(`SELECT COUNT(*) FROM qr_trade_request WHERE network_id='n2'`)+e.scalar(`SELECT COUNT(*) FROM qr_idempotency WHERE network_id='n2'`) != 0 {
+		t.Fatal("rows written for a non-enabled network")
+	}
+	// Disabling n1 later hides it again; re-enabling restores it with data intact.
+	mu.Lock()
+	enabled["n1"] = false
+	mu.Unlock()
+	if _, err := e.svc.PreviewRequest(bg, p("n1", "b"), cr.Token); !errors.Is(err, qr.ErrNotFound) {
+		t.Fatal(err)
+	}
+	mu.Lock()
+	enabled["n1"], enabled["n2"] = true, true
+	mu.Unlock()
+	if _, err := e.svc.PreviewRequest(bg, p("n1", "b"), cr.Token); err != nil {
+		t.Fatal(err)
+	}
+	// a failing gate fails closed
+	e2 := newEnv(t, func(c *qr.Config) {
+		c.NetworkEnabled = func(context.Context, qr.DBTX, string) (bool, error) { return false, errors.New("config unavailable") }
+	})
+	if _, err := e2.svc.MyAlias(bg, p("n1", "a")); err == nil {
+		t.Fatal("gate error ignored")
 	}
 }

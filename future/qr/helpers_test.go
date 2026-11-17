@@ -75,7 +75,7 @@ func newEnv(t *testing.T, mod ...func(*qr.Config)) *env {
 	must(t, qrfixture.AddMember(ctx, e.db, "n2", "x", "Xena", 1000))
 	e.store = qr.NewStore(e.db)
 	must(t, e.store.Migrate(ctx))
-	e.cfg = qr.Config{Origin: origin, AliasSecret: secret, Now: e.clk.Now}
+	e.cfg = qr.Config{Origin: origin, AliasSecret: secret, Now: e.clk.Now, NetworkEnabled: allEnabled}
 	for _, f := range mod {
 		f(&e.cfg)
 	}
@@ -120,3 +120,5 @@ func (e *env) scalar(query string, args ...any) int64 {
 	must(e.t, e.db.QueryRow(query, args...).Scan(&n))
 	return n
 }
+
+func allEnabled(context.Context, qr.DBTX, string) (bool, error) { return true, nil }

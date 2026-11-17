@@ -34,7 +34,7 @@ func newService(t *testing.T) (*qr.Service, *sql.DB) {
 	if err := st.Migrate(ctx); err != nil {
 		t.Fatal(err)
 	}
-	svc, err := qr.NewService(qr.Config{Origin: origin, AliasSecret: []byte("0123456789abcdef0123456789abcdef-cli"), Now: func() time.Time { return time.Date(2026, 11, 20, 12, 0, 0, 0, time.UTC) }}, st, &qrfixture.Fixture{})
+	svc, err := qr.NewService(qr.Config{Origin: origin, AliasSecret: []byte("0123456789abcdef0123456789abcdef-cli"), NetworkEnabled: func(context.Context, qr.DBTX, string) (bool, error) { return true, nil }, Now: func() time.Time { return time.Date(2026, 11, 20, 12, 0, 0, 0, time.UTC) }}, st, &qrfixture.Fixture{})
 	if err != nil {
 		t.Fatal(err)
 	}

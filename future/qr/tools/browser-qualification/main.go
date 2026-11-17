@@ -54,7 +54,7 @@ func main() {
 	must(qrfixture.AddMember(ctx, db, "n1", "b", "Bob", 1000))
 	st := qr.NewStore(db)
 	must(st.Migrate(ctx))
-	svc, err := qr.NewService(qr.Config{Origin: "https://circula.example", AliasSecret: []byte("0123456789abcdef0123456789abcdef-browser")}, st, &qrfixture.Fixture{})
+	svc, err := qr.NewService(qr.Config{Origin: "https://circula.example", NetworkEnabled: func(context.Context, qr.DBTX, string) (bool, error) { return true, nil }, AliasSecret: []byte("0123456789abcdef0123456789abcdef-browser")}, st, &qrfixture.Fixture{})
 	must(err)
 	h, err := web.NewHandler(web.Config{Service: svc, Auth: auth{}})
 	must(err)

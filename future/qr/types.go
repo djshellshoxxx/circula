@@ -101,6 +101,11 @@ type Core interface {
 type Config struct {
 	// Origin is the configured trusted public origin, e.g. "https://circula.example".
 	Origin string
+	// NetworkEnabled is the explicit per-network opt-in and is REQUIRED (there
+	// is no default-on). It runs inside every operation's transaction handle, so
+	// a host can read its own enablement setting there. A false result makes
+	// the feature look absent (ErrNotFound) for that network.
+	NetworkEnabled func(ctx context.Context, q DBTX, networkID string) (bool, error)
 	// AliasSecret (>=32 bytes) derives static aliases so the QR can be
 	// re-rendered while only hashes are stored. Keep it with other server secrets.
 	AliasSecret []byte
@@ -124,6 +129,9 @@ func (c *Config) withDefaults() (Config, error) {
 	o := *c
 	if err := ValidateOrigin(o.Origin); err != nil {
 		return o, fmt.Errorf("qr: invalid trusted origin: %w", err)
+	}
+	if o.NetworkEnabled == nil {
+		return o, errors.New("qr: NetworkEnabled is required (explicit per-network opt-in)")
 	}
 	if len(o.AliasSecret) < 32 {
 		return o, errors.New("qr: AliasSecret must be at least 32 bytes")
