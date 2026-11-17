@@ -1,0 +1,32 @@
+{{define "content"}}
+<h1>Confirm before sending</h1>
+<p class="notice" role="note">Scanning only shows these details. Nothing is paid until you confirm below <strong>and</strong> {{.P.PayeeName}} accepts.</p>
+{{if .Err}}{{template "errsummary" .}}{{end}}
+<dl class="facts">
+<div><dt>Network</dt><dd>{{.P.NetworkName}}</dd></div>
+<div><dt>Payer (you)</dt><dd>{{.P.PayerName}}</dd></div>
+<div><dt>Payee</dt><dd>{{.P.PayeeName}}</dd></div>
+{{if eq .P.Kind "request"}}
+<div><dt>Amount</dt><dd><strong>{{.Amount .P.AmountMinor}}</strong></dd></div>
+{{if .P.Note}}<div><dt>Note</dt><dd>{{.P.Note}}</dd></div>{{end}}
+<div><dt>Valid until</dt><dd><time datetime="{{.P.ExpiresAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.P.ExpiresAt.Format "2006-01-02 15:04 MST"}}</time></dd></div>
+{{end}}
+<div><dt>Your estimated available credit</dt><dd>{{.Amount .P.AvailableCredit}} <span class="hint">(estimate; checked again when you confirm)</span></dd></div>
+</dl>
+{{if and (eq .P.Kind "request") (not .P.Sufficient)}}<p class="warn" role="alert">Your available credit looks too low for this amount. Confirming may be refused.</p>{{end}}
+<form method="post" action="/qr/confirm" novalidate>
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<input type="hidden" name="idempotency_key" value="{{.FormKey "claim"}}">
+<input type="hidden" name="kind" value="{{.P.Kind}}">
+<input type="hidden" name="code" value="{{.Code}}">
+{{if eq .P.Kind "alias"}}
+<p><label for="amount">Amount in minor units (whole number)</label>
+<input id="amount" name="amount" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-describedby="amount-hint">
+<span id="amount-hint" class="hint">Digits only, for example 2500.</span></p>
+<p><label for="note">Note (optional, up to {{.MaxNote}} characters)</label>
+<input id="note" name="note" type="text" maxlength="{{.MaxNote}}" autocomplete="off"></p>
+{{end}}
+<button type="submit">Send trade proposal to {{.P.PayeeName}}</button>
+<a class="button-link" href="/qr/scan">Cancel</a>
+</form>
+{{end}}

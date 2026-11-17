@@ -1,0 +1,58 @@
+{{define "content"}}
+<h1>My QR and requests</h1>
+{{if .Notice}}<p class="notice" role="status">{{.Notice}}</p>{{end}}
+
+<section aria-labelledby="my-qr">
+<h2 id="my-qr">My static QR code</h2>
+<p>Others scan this to pay you. It carries no amount: they choose one and you still have to accept.</p>
+<figure>
+<img class="qr" src="/qr/me.png" width="{{.PNGSize}}" height="{{.PNGSize}}" alt="QR code for {{.Name}} in {{.NetworkLabel}}. Equivalent text code: {{.Alias.Compact}}">
+<figcaption>Text code (if scanning is not possible): <code>{{.Alias.Compact}}</code></figcaption>
+</figure>
+<ul class="actions">
+<li><a href="/qr/me.png?download=1" download>Download PNG</a></li>
+<li><a href="/qr/print">Open printable page</a></li>
+</ul>
+<form method="post" action="/qr/rotate">
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<input type="hidden" name="idempotency_key" value="{{.FormKey "rot"}}">
+<p id="rotate-hint">Rotating makes a new code and permanently disables the old one, including printed copies.</p>
+<button type="submit" aria-describedby="rotate-hint">Rotate my QR code</button>
+</form>
+</section>
+
+<section aria-labelledby="new-request">
+<h2 id="new-request">Ask for a fixed amount</h2>
+<form method="post" action="/qr/requests" novalidate>
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<input type="hidden" name="idempotency_key" value="{{.FormKey "req"}}">
+<p><label for="amount">Amount in minor units (whole number)</label>
+<input id="amount" name="amount" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-describedby="amount-hint">
+<span id="amount-hint" class="hint">Digits only, for example 2500.</span></p>
+<p><label for="note">Note (optional, up to {{.MaxNote}} characters)</label>
+<input id="note" name="note" type="text" maxlength="{{.MaxNote}}" autocomplete="off"></p>
+<p><label for="ttl">Valid for</label>
+<select id="ttl" name="ttl">
+<option value="900">15 minutes</option>
+<option value="3600">1 hour</option>
+<option value="86400" selected>24 hours</option>
+<option value="604800">7 days</option>
+</select></p>
+<button type="submit">Create one-time request</button>
+</form>
+</section>
+
+<section aria-labelledby="mine">
+<h2 id="mine">My recent requests</h2>
+{{if .Requests}}
+<table>
+<caption>Requests I created, newest first</caption>
+<thead><tr><th scope="col">Amount</th><th scope="col">Status</th><th scope="col">Expires</th><th scope="col">Details</th></tr></thead>
+<tbody>
+{{range .Requests}}<tr><td>{{$.Amount .AmountMinor}}</td><td>{{$.StatusText .Status}}</td><td><time datetime="{{.ExpiresAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.ExpiresAt.Format "2006-01-02 15:04 MST"}}</time></td><td><a href="/qr/requests/{{.ID}}">Open<span class="sr"> request for {{$.Amount .AmountMinor}}</span></a></td></tr>
+{{end}}
+</tbody>
+</table>
+{{else}}<p>You have no requests yet.</p>{{end}}
+</section>
+{{end}}

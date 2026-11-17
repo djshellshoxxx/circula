@@ -1,0 +1,8 @@
+{{define "content"}}
+<h1>{{.Name}}</h1>
+<p class="print-lead">Scan to pay {{.Name}} in {{.NetworkLabel}}</p>
+<img class="qr qr-print" src="{{.PNG}}" width="{{.PNGSize}}" height="{{.PNGSize}}" alt="QR code for {{.Name}}. Equivalent text code: {{.Alias.Compact}}">
+<p class="print-code">Code: <code>{{.Alias.Compact}}</code></p>
+<p class="no-print">Use your browser's print command. The code is black on white for reliable scanning.</p>
+<p class="no-print"><a href="/qr">Back</a></p>
+{{end}}

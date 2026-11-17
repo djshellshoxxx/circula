@@ -38,6 +38,9 @@ func NewService(cfg Config, store *Store, core Core) (*Service, error) {
 	return &Service{cfg: c, store: store, core: core}, nil
 }
 
+// MaxNoteRunes is the configured note length limit (for form maxlength).
+func (s *Service) MaxNoteRunes() int { return s.cfg.MaxNoteRunes }
+
 // Origin returns the trusted public origin links are built on.
 func (s *Service) Origin() string { return s.cfg.Origin }
 

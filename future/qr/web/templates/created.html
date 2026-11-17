@@ -1,0 +1,20 @@
+{{define "content"}}
+<h1>One-time request created</h1>
+<p class="status status-open" role="status"><strong>Open: not paid.</strong> It becomes a trade only after someone scans it, confirms, and you accept.</p>
+<dl class="facts">
+<div><dt>Amount</dt><dd><strong>{{.Amount .V.AmountMinor}}</strong></dd></div>
+{{if .V.Note}}<div><dt>Note</dt><dd>{{.V.Note}}</dd></div>{{end}}
+<div><dt>Valid until</dt><dd><time datetime="{{.V.ExpiresAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.V.ExpiresAt.Format "2006-01-02 15:04 MST"}}</time></dd></div>
+</dl>
+{{if .PNG}}
+<figure>
+<img class="qr" src="{{.PNG}}" width="{{.PNGSize}}" height="{{.PNGSize}}" alt="QR code for a one-time request of {{.Amount .V.AmountMinor}}. Equivalent text code: {{.Compact}}">
+<figcaption>Text code: <code>{{.Compact}}</code></figcaption>
+</figure>
+<p><a href="{{.PNG}}" download="circula-request.png">Download printable PNG</a></p>
+{{end}}
+<p><label for="link">Link</label>
+<input id="link" type="text" readonly value="{{.URL}}" size="60"></p>
+<p>This link and code are shown only now. If you lose them, revoke this request and create a new one.</p>
+<p><a href="/qr/requests/{{.V.ID}}">Track this request</a> | <a href="/qr">Back</a></p>
+{{end}}

@@ -1,0 +1,6 @@
+{{define "content"}}
+<h1>{{.ErrTitle}}</h1>
+<p role="alert">{{.ErrDetail}}</p>
+<p><a href="/qr">Back to my QR and requests</a> | <a href="/qr/scan">Scan or enter a code</a></p>
+{{end}}
+{{define "errsummary"}}<div class="errsummary" role="alert" tabindex="-1"><h2>There is a problem</h2><p>{{.Err}}</p></div>{{end}}

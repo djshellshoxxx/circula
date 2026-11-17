@@ -1,0 +1,19 @@
+{{define "content"}}
+<h1>Request status</h1>
+{{if .Notice}}<p class="notice" role="status">{{.Notice}}</p>{{end}}
+<p class="status status-{{.V.Status}}" role="status"><strong>{{.StatusText .V.Status}}</strong></p>
+<dl class="facts">
+<div><dt>Amount</dt><dd>{{.Amount .V.AmountMinor}}</dd></div>
+{{if .V.Note}}<div><dt>Note</dt><dd>{{.V.Note}}</dd></div>{{end}}
+<div><dt>Created</dt><dd><time datetime="{{.V.CreatedAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.V.CreatedAt.Format "2006-01-02 15:04 MST"}}</time></dd></div>
+<div><dt>Expires</dt><dd><time datetime="{{.V.ExpiresAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.V.ExpiresAt.Format "2006-01-02 15:04 MST"}}</time></dd></div>
+{{if .V.TransactionID}}<div><dt>Transaction</dt><dd><code>{{.V.TransactionID}}</code></dd></div>{{end}}
+</dl>
+{{if eq (print .V.Status) "open"}}
+<form method="post" action="/qr/requests/{{.V.ID}}/revoke">
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<button type="submit">Revoke this request</button>
+</form>
+{{end}}
+<p><a href="/qr">Back to my QR and requests</a></p>
+{{end}}

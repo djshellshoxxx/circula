@@ -1,0 +1,29 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>{{.Title}} - Circula QR</title>
+<link rel="stylesheet" href="/qr/static/qr.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header>
+<p class="brand">Circula QR</p>
+<nav aria-label="QR sections">
+<ul>
+<li><a href="/qr"{{if eq .Nav "home"}} aria-current="page"{{end}}>My QR and requests</a></li>
+<li><a href="/qr/scan"{{if eq .Nav "scan"}} aria-current="page"{{end}}>Scan or enter a code</a></li>
+</ul>
+</nav>
+</header>
+<main id="main" tabindex="-1">
+{{template "content" .}}
+</main>
+<footer>
+<p>Scanning a code never pays by itself. A trade completes only after both members agree.</p>
+</footer>
+{{block "scripts" .}}{{end}}
+</body>
+</html>{{end}}

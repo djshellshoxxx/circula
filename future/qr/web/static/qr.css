@@ -1,0 +1,41 @@
+/* Circula QR: high-contrast, no external resources. */
+:root { color-scheme: light dark; --fg:#111; --bg:#fff; --muted:#444; --link:#0b3d91; --accent:#0b3d91; --warn:#8a1c00; --border:#222; --focus:#b35c00; }
+@media (prefers-color-scheme: dark) {
+  :root { --fg:#f4f4f4; --bg:#101010; --muted:#cfcfcf; --link:#9ec5ff; --accent:#9ec5ff; --warn:#ffb4a0; --border:#ddd; --focus:#ffcc66; }
+}
+* { box-sizing: border-box; }
+body { margin:0; font:1.125rem/1.5 system-ui, sans-serif; color:var(--fg); background:var(--bg); }
+header, main, footer { max-width:48rem; margin:0 auto; padding:1rem; }
+header ul { display:flex; flex-wrap:wrap; gap:1rem; list-style:none; margin:0; padding:0; }
+.brand { font-weight:700; margin:0 0 .5rem; }
+a { color:var(--link); text-decoration:underline; }
+a[aria-current="page"] { font-weight:700; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, main:focus-visible, .errsummary:focus-visible { outline:3px solid var(--focus); outline-offset:2px; }
+.skip { position:absolute; left:-999px; top:0; background:var(--bg); padding:.5rem; }
+.skip:focus { left:0; z-index:10; }
+label { display:block; font-weight:600; margin-bottom:.25rem; }
+input[type=text], select { width:100%; min-height:44px; padding:.5rem; font:inherit; color:var(--fg); background:var(--bg); border:2px solid var(--border); border-radius:4px; }
+button, .button-link { min-height:44px; min-width:44px; padding:.5rem 1rem; font:inherit; font-weight:600; color:var(--bg); background:var(--accent); border:2px solid var(--accent); border-radius:4px; cursor:pointer; }
+.button-link { display:inline-block; color:var(--link); background:transparent; border-color:var(--link); margin-left:.5rem; text-decoration:none; }
+.hint { display:block; color:var(--muted); font-size:.95rem; }
+.notice, .status { padding:.75rem 1rem; border:2px solid var(--border); border-radius:4px; }
+.warn, .errsummary { padding:.75rem 1rem; border:3px solid var(--warn); color:var(--warn); border-radius:4px; }
+.errsummary h2 { margin-top:0; font-size:1.1rem; }
+.facts div { display:flex; flex-wrap:wrap; gap:.25rem 1rem; padding:.4rem 0; border-bottom:1px solid var(--muted); }
+.facts dt { font-weight:700; min-width:14rem; }
+.facts dd { margin:0; }
+table { border-collapse:collapse; width:100%; }
+caption { text-align:left; font-weight:700; padding:.25rem 0; }
+th, td { text-align:left; padding:.5rem; border-bottom:1px solid var(--muted); vertical-align:top; }
+.qr { background:#fff; image-rendering:pixelated; max-width:100%; height:auto; border:1px solid var(--border); }
+.actions { list-style:none; padding:0; display:flex; gap:1rem; flex-wrap:wrap; }
+.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+#camera-video { max-width:100%; width:24rem; background:#000; }
+code { font-family:ui-monospace, monospace; word-break:break-all; }
+@media print {
+  header, footer, .no-print, .skip { display:none !important; }
+  body { background:#fff; color:#000; font-size:14pt; }
+  .qr-print { width:12cm; height:12cm; border:0; }
+  .print-lead, .print-code { text-align:center; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }

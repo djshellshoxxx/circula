@@ -1,0 +1,26 @@
+{{define "content"}}
+<h1>Scan or enter a code</h1>
+{{if .Err}}{{template "errsummary" .}}{{end}}
+<section aria-labelledby="manual">
+<h2 id="manual">Enter a code</h2>
+<form method="post" action="/qr/manual" id="manual-form" novalidate>
+<input type="hidden" name="csrf" value="{{.CSRF}}">
+<p><label for="code">Paste the link or type the code printed under the QR</label>
+<input id="code" name="code" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="2048" aria-describedby="code-hint">
+<span id="code-hint" class="hint">For example a link starting with your Circula address, or a short code like r.AbCd...</span></p>
+<button type="submit">Continue</button>
+</form>
+</section>
+<section aria-labelledby="camera" id="camera-section" hidden>
+<h2 id="camera">Use the camera (optional)</h2>
+<p id="camera-help">The camera reads the code on this device only. Nothing is stored or uploaded, and reading a code never pays.</p>
+<p><button type="button" id="camera-start" aria-describedby="camera-help">Start camera</button>
+<button type="button" id="camera-stop" hidden>Stop camera</button></p>
+<video id="camera-video" playsinline muted hidden aria-label="Camera preview"></video>
+<p><label for="camera-file">Or choose a photo of the code</label>
+<input id="camera-file" type="file" accept="image/*" capture="environment"></p>
+<p id="camera-status" role="status" aria-live="polite"></p>
+</section>
+<noscript><p>The camera needs JavaScript. Entering the code above works without it.</p></noscript>
+{{end}}
+{{define "scripts"}}<script src="/qr/static/scan.js" defer></script>{{end}}

@@ -1,0 +1,9 @@
+{{define "content"}}
+<h1>{{if .Replayed}}Proposal already sent{{else}}Proposal sent{{end}}</h1>
+<p class="status status-{{.State}}" role="status"><strong>{{.StateText}}</strong></p>
+<dl class="facts">
+<div><dt>Reference</dt><dd><code>{{.TxID}}</code></dd></div>
+</dl>
+<p>This is a proposal only. The other member must accept it in the usual way before any credit moves. Opening this page again will not send it twice.</p>
+<p><a href="/qr">Back to my QR and requests</a></p>
+{{end}}
