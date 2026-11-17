@@ -41,5 +41,19 @@ await q.evaluate(()=>window.dispatchEvent(new Event('circula:session-ended')));a
 await q.reload();await q.getByText('Private synthetic balance for A: 100').waitFor();
 await q.getByRole('button',{name:'Sign out',exact:true}).click();await q.getByRole('heading',{name:'Install Circula'}).waitFor();
 assert.deepEqual(qerrors,[],label);await ctx.close();}
-console.log('PASS: real Chromium install/CacheStorage, privacy, offline POST/no replay, account switch/back, DOM scrub (also without SW/BroadcastChannel), 320px and no-JS flows');
+// Audit fix: precache install must fail closed on oversized or tampered public assets (control: identical bytes install).
+for(const mode of ['identical','oversize','tampered']){
+const ctx=await browser.newContext();
+await ctx.route('**/app/static/style.*.css',async route=>{const r=await route.fetch();const real=await r.body();const body=mode==='oversize'?Buffer.alloc(3<<20,97):mode==='tampered'?Buffer.concat([real,Buffer.from(' ')]):real;await route.fulfill({status:200,headers:{'Content-Type':'text/css','Cache-Control':'public, max-age=31536000, immutable'},body});});
+const t=await ctx.newPage();await t.goto(origin+'/app/install');await t.waitForTimeout(3000);
+const st=await t.evaluate(async()=>{const reg=await navigator.serviceWorker.getRegistration();let n=0;for(const k of await caches.keys())n+=(await(await caches.open(k)).keys()).length;return {active:!!reg?.active,entries:n};});
+if(mode==='identical'){assert.equal(st.active,true,'control installs');assert.equal(st.entries,4);}else{assert.equal(st.active,false,mode+' must not activate');assert.equal(st.entries,0,mode+' must not cache');}
+await ctx.close();}
+// Accessibility basics: 400% zoom equivalent (320x256 CSS px) reflow without horizontal scroll, keyboard skip link, labelled landmarks.
+{const ctx=await browser.newContext({viewport:{width:320,height:256},serviceWorkers:'block'});const z=await ctx.newPage();
+for(const path of ['/app/install','/app/']){await z.goto(origin+path);assert.equal(await z.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,path+' reflow at 400% zoom');}
+await z.goto(origin+'/app/install');await z.keyboard.press('Tab');assert.equal(await z.evaluate(()=>document.activeElement.textContent),'Skip to content');await z.keyboard.press('Enter');assert.equal(new URL(z.url()).hash,'#main');
+assert.equal(await z.locator('nav[aria-label="Main"] a').count(),4);assert.equal(await z.locator('html[lang]').count(),1);
+await ctx.close();}
+console.log('PASS: real Chromium install/CacheStorage, privacy, offline POST/no replay, account switch/back, DOM scrub (also without SW/BroadcastChannel), oversize/tampered precache rejection, 320px/400%-zoom reflow, skip link and no-JS flows');
 }finally{await browser.close();}
