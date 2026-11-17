@@ -37,3 +37,19 @@ func TestDashboardCatalogueAndUnitNames(t *testing.T) {
 		})
 	}
 }
+
+func TestDashboardInflectsEachAmountAndCapsDebtMeter(t *testing.T) {
+	p := &page{D: &dash{Card: makeCard(&service.BalanceView{
+		Decimals: 2, CreditLimit: 100, ReservedOutgoing: 200, Available: -100,
+		AwaitingFromOthers: 0, Balance: -(1 << 62),
+	}, "credit")}}
+	var b bytes.Buffer
+	if err := mustLoadTemplates()["dashboard"].ExecuteTemplate(&b, "content", p); err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{"1.00 credit</dd>", "2.00 credits</dd>", "−1.00 credit</strong>", "0.00 credits</dd>", "value=\"100\""} {
+		if !strings.Contains(b.String(), want) {
+			t.Errorf("missing dashboard value %q", want)
+		}
+	}
+}

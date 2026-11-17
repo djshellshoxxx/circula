@@ -1,6 +1,6 @@
 # Circula current work
 
-Updated 2026-11-16 after merging PRs #56–#61; common-UI catalogue work is a separate candidate. This list supersedes the old
+Updated 2026-11-17 after merging PRs #56–#65; the dashboard-unit fix (#63) and dependency bumps (#48–#50) are consolidated in one candidate PR. This list supersedes the old
 unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isolated.
 
 ## Integration evidence

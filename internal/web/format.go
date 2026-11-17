@@ -54,29 +54,25 @@ type balanceCard struct {
 	Used      string // text for credit in use
 	UsedPct   int
 	InDebt    bool
-	Unit      string
 }
 
 func makeCard(b *service.BalanceView, unit string) *balanceCard {
 	d := b.Decimals
-	c := &balanceCard{Balance: makeBalance(b.Balance, d, unit), Limit: plainAmt(b.CreditLimit, d),
-		Reserved: plainAmt(b.ReservedOutgoing, d), Available: minus(plainAmt(b.Available, d)),
-		Awaiting: plainAmt(b.AwaitingFromOthers, d), Unit: unitFor(unit, 0, d)}
+	amount := func(v int64) string {
+		return minus(plainAmt(v, d)) + " " + unitFor(unit, v, d)
+	}
+	c := &balanceCard{Balance: makeBalance(b.Balance, d, unit), Limit: amount(b.CreditLimit),
+		Reserved: amount(b.ReservedOutgoing), Available: amount(b.Available), Awaiting: amount(b.AwaitingFromOthers)}
 	if b.Balance < 0 {
 		c.InDebt = true
 		c.Used = messages.Text("balance.limit_used", plainAmt(-b.Balance, d), plainAmt(b.CreditLimit, d))
 		if b.CreditLimit > 0 {
-			c.UsedPct = int(min64(100, (-b.Balance*100)/b.CreditLimit))
+			// Credit limits are bounded by MaxPolicyAmount. Clamp the potentially
+			// much larger balance before scaling to avoid int64 overflow.
+			c.UsedPct = int(min(-b.Balance, b.CreditLimit) * 100 / b.CreditLimit)
 		}
 	}
 	return c
-}
-
-func min64(a, b int64) int64 {
-	if a < b {
-		return a
-	}
-	return b
 }
 
 // txRow is one transaction line from the viewer's side (UX-013..016).

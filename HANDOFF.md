@@ -1,6 +1,14 @@
 # Circula handoff
 
-## 2026-11-16: core completion and consolidation (current)
+## 2026-11-17: consolidation pickup (current)
+
+Branch `claude/compassionate-cannon-txdlz1` from `main@b7c27b4`. Folds three open items into one PR:
+- PR #63 dashboard fix (`d53196c`): per-amount unit inflection and debt meter clamped to credit limit before scaling.
+- Dependabot #48/#49/#50 (x/text 0.44.0, modernc sqlite 1.62.0 + libc 1.80.1, x/crypto 0.59.0), applied with `go get` + `go mod tidy` because the three bumps conflict in `go.mod`.
+- Local `go build`, `go vet`, `gofmt -l` clean; `go test -count=1 ./...` passes in every package. Race, e2e, govulncheck left to CI.
+Merging this PR supersedes #63, #48, #49, #50. No future-module work. No new features.
+
+## 2026-11-16: core completion and consolidation
 
 PR #61 merged as `7e97504c84209027972561b96c8b89084d9cc898` after all seven PR jobs passed at `cf5abf5c` in [CI run 43952719310](https://github.com/djshellshoxxx/circula/actions/runs/43952719310). The common-UI continuation on `codex/circula-common-ui-catalog-20261116` migrates shared shell/dashboard labels, main navigation, persistent network notices and unread/new counts to the catalogue. Dashboard amounts reuse the already-inflected card unit, fixing `Hourss` in visible values as well as speech. This is still partial UX-047; dynamic timestamp-rich notices, remaining templates/handlers and JavaScript are not fully migrated. Candidate validation belongs to its own PR checks.
 

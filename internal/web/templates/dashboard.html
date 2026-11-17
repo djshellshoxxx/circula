@@ -8,10 +8,10 @@
   <h2 id="bal-h">{{msg "dashboard.balance"}}</h2>
   <p class="big">{{template "balance" .Card.Balance}}</p>
   <dl class="kv">
-    <dt>{{msg "dashboard.limit"}}</dt><dd>{{.Card.Limit}} {{.Card.Unit}}</dd>
-    <dt>{{msg "dashboard.reserved"}}</dt><dd>{{.Card.Reserved}} {{.Card.Unit}}</dd>
-    <dt>{{msg "dashboard.available"}}</dt><dd><strong>{{.Card.Available}} {{.Card.Unit}}</strong></dd>
-    <dt>{{msg "dashboard.awaiting"}}</dt><dd>{{.Card.Awaiting}} {{.Card.Unit}}</dd>
+    <dt>{{msg "dashboard.limit"}}</dt><dd>{{.Card.Limit}}</dd>
+    <dt>{{msg "dashboard.reserved"}}</dt><dd>{{.Card.Reserved}}</dd>
+    <dt>{{msg "dashboard.available"}}</dt><dd><strong>{{.Card.Available}}</strong></dd>
+    <dt>{{msg "dashboard.awaiting"}}</dt><dd>{{.Card.Awaiting}}</dd>
   </dl>
   {{if .Card.InDebt}}<p>{{.Card.Used}}</p>
   {{if .Card.UsedPct}}<meter class="meter" min="0" max="100" value="{{.Card.UsedPct}}" aria-label="{{msg "dashboard.used"}}">{{.Card.UsedPct}}%</meter>{{end}}{{end}}
