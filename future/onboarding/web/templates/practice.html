@@ -95,10 +95,10 @@
 {{if .Proposals}}<h2>{{.T.pr_proposals_h}}</h2>
 {{range .Proposals}}<div class="onb-stack" id="proposal-{{.ID}}">
 {{if eq .State "pending"}}<h3>{{$.T.pr_pending_h}}</h3><p>{{.Text}}</p>
-<form class="onb-inline-form" method="post" action="{{.RespondURL}}">{{template "hidden" $}}<input type="hidden" name="cmd" value="{{.Cmd1}}"><input type="hidden" name="accept" value="1"><button class="onb-button" type="submit">{{$.T.pr_reply_accept}}</button></form>
-<form class="onb-inline-form" method="post" action="{{.RespondURL}}">{{template "hidden" $}}<input type="hidden" name="cmd" value="{{.Cmd2}}"><input type="hidden" name="accept" value="0"><button class="onb-button onb-button--secondary" type="submit">{{$.T.pr_reply_decline}}</button></form>
-<form class="onb-inline-form" method="post" action="{{.CancelURL}}">{{template "hidden" $}}<input type="hidden" name="cmd" value="{{.Cmd3}}"><button class="onb-button onb-button--secondary" type="submit">{{$.T.pr_cancel}}</button></form>
-{{else if eq .State "accepted"}}<h3>{{$.T.pr_accepted_h}}</h3><p>{{$.T.pr_accepted_p}}</p><p>{{.Text}}</p>
+<form class="onb-inline-form" method="post" action="{{.RespondURL}}">{{template "hidden" $}}<input type="hidden" name="proposal" value="{{.ID}}"><input type="hidden" name="cmd" value="{{.Cmd1}}"><input type="hidden" name="accept" value="1"><button class="onb-button" type="submit">{{$.T.pr_reply_accept}}</button></form>
+<form class="onb-inline-form" method="post" action="{{.RespondURL}}">{{template "hidden" $}}<input type="hidden" name="proposal" value="{{.ID}}"><input type="hidden" name="cmd" value="{{.Cmd2}}"><input type="hidden" name="accept" value="0"><button class="onb-button onb-button--secondary" type="submit">{{$.T.pr_reply_decline}}</button></form>
+<form class="onb-inline-form" method="post" action="{{.CancelURL}}">{{template "hidden" $}}<input type="hidden" name="proposal" value="{{.ID}}"><input type="hidden" name="cmd" value="{{.Cmd3}}"><button class="onb-button onb-button--secondary" type="submit">{{$.T.pr_cancel}}</button></form>
+{{else if eq .State "accepted"}}<h3>{{$.T.pr_accepted_h}}</h3><p>{{$.T.pr_accepted_p}}</p>
 {{else if eq .State "declined"}}<h3>{{$.T.pr_declined_h}}</h3><p>{{$.T.pr_declined_p}}</p>
 {{else}}<h3>{{$.T.pr_cancelled_h}}</h3><p>{{$.T.pr_cancelled_p}}</p>{{end}}
 </div>{{end}}{{end}}

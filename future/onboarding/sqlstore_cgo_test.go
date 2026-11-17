@@ -8,9 +8,13 @@ package onboarding
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"errors"
+	"net/url"
+	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -227,4 +231,66 @@ func TestSQLInjectionIdentifiersRejected(t *testing.T) {
 			t.Errorf("%q: %v", bad, err)
 		}
 	}
+}
+
+// Acceptance (automated part): running the whole practice flow leaves a real
+// host database file byte-identical. The practice server holds no handle to it,
+// so this is a regression net for accidental coupling, not proof about the real
+// Circula ledger and audit log, which stays an integration-time gate.
+func TestPracticeFlowLeavesHostDatabaseByteIdentical(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "host.db")
+	db, err := sql.Open("sqlite3", "file:"+path+"?_journal_mode=DELETE&_busy_timeout=10000")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`CREATE TABLE ledger_entries (id INTEGER PRIMARY KEY, account TEXT, amount INTEGER);
+		CREATE TABLE admin_audit (id INTEGER PRIMARY KEY, event TEXT);
+		INSERT INTO ledger_entries VALUES (1,'a',100),(2,'b',-100);
+		INSERT INTO admin_audit VALUES (1,'created');`); err != nil {
+		t.Fatal(err)
+	}
+	if err := Migrate(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	st, _ := NewSQLStore(db)
+	if _, err := st.SaveProgress(ctx, Key{"n", "m"}, 0, Progress{Version: 1, Completed: 1}, nil, t0); err != nil {
+		t.Fatal(err)
+	}
+	db.Close()
+	before := fileSum(t, path)
+
+	s := newPracticeServer(t, nil)
+	c := newClient(t, s)
+	c.start()
+	c.postStep("/step/terms", "/step/terms", nil)
+	c.postStep("/step/credit", "/step/credit", nil)
+	c.postStep("/step/listing", "/step/listing", url.Values{"kind": {"offer"}, "title": {"Tutoring"}, "amount": {"20"}})
+	c.postStep("/step/partner", "/step/partner", url.Values{"partner": {"practice-bo"}})
+	doc := c.get("/step/trade?listing=practice-listing-1").Body.String()
+	c.do("POST", "/step/trade/propose", c.hidden(doc))
+	doc = c.get("/step/trade").Body.String()
+	for _, form := range strings.Split(doc, "<form") {
+		if strings.Contains(form, `name="accept" value="1"`) {
+			c.do("POST", "/proposal/respond", c.hidden("<form"+form))
+		}
+	}
+	if l := s.sessions[c.cookie.Value].world.Snapshot().Learner(); l.Balance != -30 {
+		t.Fatalf("practice flow did not complete: %+v", l)
+	}
+	c.get("/export.json")
+	c.get("/export.csv")
+
+	if after := fileSum(t, path); after != before {
+		t.Fatal("host database changed during practice flow")
+	}
+}
+
+func fileSum(t *testing.T, path string) [32]byte {
+	t.Helper()
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return sha256.Sum256(b)
 }
