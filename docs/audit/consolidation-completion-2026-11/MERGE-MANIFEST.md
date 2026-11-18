@@ -3,9 +3,13 @@
 Each merge was made only after these checks:
 
 - `main` was re-fetched, and the PR head SHA matched `expectedHeadSha`.
-- Every CI job passed on that exact head.
-- The tree produced by the merge was compared with a tree qualified locally, or was qualified locally on the
-  current `main`.
+- Every required CI job passed on that exact head.
+
+Local qualification is specific to each row below. In particular, #77 has local diff review and CI evidence;
+this manifest does not claim a separate local test run for that tree. Other rows identify the exact tree and
+the local checks reported for it. These merge commits were observed by the parallel integration coordinator,
+which did not issue those merge calls. Local-check entries here are author-reported; the Git merge/tree and
+CI receipts are independently inspectable.
 
 Merge method: merge commit, as in the repository's history.
 
@@ -25,10 +29,17 @@ Merge method: merge commit, as in the repository's history.
 |---|---|---|
 | [#78](https://github.com/djshellshoxxx/circula/pull/78) | Draft, docs only | This record; merges last |
 | [#80](https://github.com/djshellshoxxx/circula/pull/80) | Draft, future module only | Stays out of `main`. Base-branch CI fails on stale core code (`cmd/circula/auditanchor.go: undefined: os`), not on this change |
-| [#82](https://github.com/djshellshoxxx/circula/pull/82) | Draft, AUD4-F06/F04 | Current-head CI, including `-race` |
+| [#82](https://github.com/djshellshoxxx/circula/pull/82) | Open, AUD4-F06/F04 plus password-proof follow-up at `e127acc` | Current-head provider CI pending; independent review, focused regressions and local combined race/lint qualification at `17152dad` passed |
 | [#83](https://github.com/djshellshoxxx/circula/pull/83) | Draft, AUD4-F02 | Owner decision; not to be merged without one |
 | [#67](https://github.com/djshellshoxxx/circula/pull/67) | Draft, future module | Unchanged; #80 stacks on it |
-| [#84](https://github.com/djshellshoxxx/circula/pull/84) | Draft, another worker | Not reviewed in this pass |
+| [#84](https://github.com/djshellshoxxx/circula/pull/84) | Open, ready for review; another worker; head `eb4bb08` | Current-head provider CI pending; included in the separately qualified local combined candidate `17152dad` |
 | [#85](https://github.com/djshellshoxxx/circula/pull/85) | Draft, GOV-021 | Owner gates (see BLOCKERS) |
 | [#86](https://github.com/djshellshoxxx/circula/pull/86) | Draft, SEC-026, stacked on #85 | Owner gates (see BLOCKERS) |
-| [#87](https://github.com/djshellshoxxx/circula/pull/87) | Draft, AUD4-F03 (partial) | Current-head CI and combined qualification |
+| [#87](https://github.com/djshellshoxxx/circula/pull/87) | Open, ready for review; AUD4-F03 (partial); head `679a301` | Current-head provider CI pending; local combined race/lint qualification at `17152dad` passed; timestamp residuals remain |
+
+At 2026-11-18T10:07:00.462200Z, the single full local race invocation completed successfully on
+`17152dadad91d4e1c994ea807e7d6e2497513aa8`, tree `1e47c9c30165ca27866887533586c90323e1630e`.
+This is the unmerged #82/#84/#87 candidate; the latest recorded `main` remains `b4398074`. The provider
+snapshot at 10:07:24Z still has all seven required jobs queued, zero assigned runners and zero executed
+steps for each of the three PRs. Their local qualification does not substitute for current-head CI or a
+merge receipt. See [TEST-EVIDENCE](TEST-EVIDENCE.md).

@@ -2,11 +2,22 @@
 
 This ledger extends [BRANCH-CONSOLIDATION-2026-11-17.md](../../plans/BRANCH-CONSOLIDATION-2026-11-17.md) and
 [PR-CONSOLIDATION-2026-11-17.md](../../plans/PR-CONSOLIDATION-2026-11-17.md). Those files still hold the
-dispositions of the 88 branches and 68 PRs reviewed on 2026-11-17. Their live tips were re-checked against
-`origin` on 2026-11-18. All are unchanged, including the 15 `future/*` branches and `future/module-catalog-20261116`,
-with one exception: `claude/sharp-archimedes-tu76rh` (historical PR #70) has advanced and now carries another
-worker's open PR #84 (tip `eb4bb08` at 2026-11-18T09:35Z). Frozen historical PR heads (`refs/pull/N/head`) are
-recorded separately from live branch heads.
+dispositions of the 88 branches and 68 PRs reviewed on 2026-11-17. The live tips were re-checked against
+`origin`; the 2026-11-18T09:35Z snapshot has three differences from that historical branch ledger:
+
+- `main` advanced normally from `b53f7576` to `b4398074` through the reviewed merges below.
+- `claude/quirky-babbage-y9fpmm` is `af69702be08aaf14cbe9a705ddf7f08796d5e976`, while closed PR #39
+  remains frozen at `92d204dc027320b1b26a05fd86e58232d89394ca`. This live-ref difference already existed
+  at the start of the integration review. Its additional Python traceability tooling was reviewed and is
+  superseded by the current Go implementation in `scripts/traceability` and CI; PR #39 stays closed and
+  its branch is preserved. The historical baseline is not evidence that this live tip equals the frozen PR head.
+- `claude/sharp-archimedes-tu76rh`, recorded as `fe111799` in the old ledger and later used by PR #70,
+  advanced to `eb4bb08` and now carries another worker's open PR #84.
+
+The other 85 historical branch tips match, including the 15 `future/*` branches and
+`future/module-catalog-20261116`. Frozen historical PR heads (`refs/pull/N/head`) are recorded separately
+from live branch heads. The baseline and 09:35Z inventory remain dated snapshots, not a claim that later
+PRs or branch updates cannot occur.
 
 Method, as in the earlier ledger:
 
@@ -43,6 +54,15 @@ That is the 96 at baseline plus 9 created in this pass, for PRs #78–#83 and #8
 | `claude/fnet-204-signed-cursors` | `0952c94` | #80 | FNET-204 cursor hardening, future only | open draft against #67's branch; never into `main` |
 | `claude/sharp-archimedes-tu76rh` | `eb4bb08` (advanced; historical #70 branch) | #84 | 2026-10-28 Low/Info triage | another worker's open draft; not reviewed here |
 | `claude/circula-consolidation-audit-0sydm1` | this PR | #78 | this record | open draft |
+
+After the 09:35Z snapshot, #82 advanced normally from `6785863` to
+`e127acc9877edebeca818b75a5d48ce12511eca8` to include the reproduced MFA/account-recovery password-proof
+repair. Its independent review and focused regressions pass. The full local combined race suite and pinned
+lint subsequently passed on candidate `17152dadad91d4e1c994ea807e7d6e2497513aa8`, tree
+`1e47c9c30165ca27866887533586c90323e1630e`, which also includes #84 at `eb4bb08` and #87 at `679a301`.
+This is a candidate qualification, while `main` remains `b4398074`: #82/#84/#87 were still unmerged with
+seven of seven provider jobs queued per PR at 2026-11-18T10:07:24Z. This follow-up does not change the
+historical 105-branch snapshot. See [TEST-EVIDENCE](TEST-EVIDENCE.md).
 
 ## Pull requests
 

@@ -20,8 +20,8 @@ identifiers per finding.
 |---|---|---|---|---|
 | E-02 | Low | 1188 | Fixed and verified ([#71](https://github.com/djshellshoxxx/circula/pull/71), `28ed716`) | `trusted_schema(0)` on every normal and raw connection; `TestSQLiteDistrustsSchemaOnEveryConnection`, `TestSQLiteRefusesSchemaFunctionCalls` |
 | NEW-01 | Low | 377 | Fixed and verified ([#72](https://github.com/djshellshoxxx/circula/pull/72), `a62071d`) | Leased private staging and `O_EXCL` copies |
-| AUD4-D01 | Low | 116 | Fixed; verification pending in [#81](https://github.com/djshellshoxxx/circula/pull/81) CI | SQLite URI path escaping; [AUD4-D01-D02](AUD4-D01-D02-BACKUP-PATHS.md) |
-| AUD4-D02 | Low | 367/59 | Fixed; verification pending in [#81](https://github.com/djshellshoxxx/circula/pull/81) CI | Identity re-checks, owner/sticky parent rule, Unix-scoped no-follow; review findings G03/G04 resolved |
+| AUD4-D01 | Low | 116 | Fixed and merged in [#81](https://github.com/djshellshoxxx/circula/pull/81), `b439807`; [exact-head CI](https://github.com/djshellshoxxx/circula/actions/runs/44264463917) passed 9/9 required jobs | SQLite URI path escaping; [AUD4-D01-D02](AUD4-D01-D02-BACKUP-PATHS.md); head `09ef8a5`, including native Windows and macOS qualification |
+| AUD4-D02 | Low | 367/59 | Fixed and merged in [#81](https://github.com/djshellshoxxx/circula/pull/81), `b439807`; [exact-head CI](https://github.com/djshellshoxxx/circula/actions/runs/44264463917) passed 9/9 required jobs | Identity re-checks, owner/sticky parent rule, Unix-scoped no-follow; G03/G04 resolved. The foreign-owner test requires root and was skipped by CI and the parallel reviewer; its unretained author run is attributed separately in [TEST-EVIDENCE](TEST-EVIDENCE.md) |
 | AUD4-F06 | Medium | 367 | Fixed; verification pending in [#82](https://github.com/djshellshoxxx/circula/pull/82) CI | Sign-in re-checks the hash inside the session-issuing unit; `ChangePassword` uses compare-and-swap; [AUD4-AUTH-FIXES](AUD4-AUTH-FIXES.md) |
 | AUD4-F04 | Low | 307 | Fixed; verification pending in [#82](https://github.com/djshellshoxxx/circula/pull/82) CI | Durable `recgen` throttle on change-password |
 | AUD4-F03 | Medium | 840 | Mitigated with documented residual risk; verification pending ([#87](https://github.com/djshellshoxxx/circula/pull/87) CI) | The response and re-review periods are now read from the policy in force at opening. Residual: a same-millisecond policy version, or one written after a host clock rollback, still applies (reproduced by the independent review); a durable binding at opening is outstanding |
@@ -34,6 +34,15 @@ identifiers per finding.
 | PRIV-03 | Info/Low | 226 | Mitigated with residual risk (design) | No WAL checkpoint after erasure; deleted text can stay in the WAL until checkpoint |
 | PRIV-04 | Policy | n/a | Blocked on owner decision (DEC-020) | Retention periods |
 | PRIV-05 | Policy | n/a | Blocked on owner decision | Free-text audit reasons are kept in the hash chain |
+
+The later password-proof follow-up in [CODE-AUDIT, C2](CODE-AUDIT.md) was reproduced and repaired in open
+PR #82 at `e127acc`: 12 baseline cases fail and pass after the fix, and all 21 selected top-level race tests
+pass. Independent review is recorded in [#82](https://github.com/djshellshoxxx/circula/pull/82#pullrequestreview-5954151240).
+This additional finding does not change the original 55-finding ledger. The full local combined race suite
+passed at 2026-11-18T10:07:00.462200Z on candidate `17152dadad91d4e1c994ea807e7d6e2497513aa8`,
+tree `1e47c9c30165ca27866887533586c90323e1630e`; pinned lint also passed with zero issues. This candidate
+includes #82/#84/#87. At 10:07:24Z all three PRs remained unmerged, with their seven required provider
+jobs each queued, so the repaired code is not yet on `main`. See [TEST-EVIDENCE](TEST-EVIDENCE.md).
 
 ## Withdrawn after attempted falsification
 
