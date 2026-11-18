@@ -93,10 +93,13 @@ for (const [name, who, pathOf, states] of SCREENS) {
     for (const [mode, apply] of Object.entries(MODES)) {
       const p = await as(who); // a fresh page, so no emulation carries over from the previous mode
       await p.goto(pathOf(st));
+      // Compare one server snapshot before/after its colour change. Separate page
+      // requests can legitimately have different generation timestamps.
+      const before = await readScreen(p);
       await apply(p);
       const s = await readScreen(p);
       const where = `${name}, ${mode}`;
-      expect(s.text, `${where}: the same words as in colour`).toBe(normal.text);
+      expect(s.text, `${where}: the same words as in colour`).toBe(before.text);
       for (const b of s.balances) {
         const m = b.visible.match(BALANCE);
         expect(m, `${where}: balance "${b.visible}" shows a sign and a word`).not.toBeNull();
