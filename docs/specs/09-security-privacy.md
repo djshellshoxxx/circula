@@ -184,6 +184,18 @@ The table lists the practical threats for the MVP. Each row names the requiremen
   - Throttled responses use a standard retry-after indication (API test).
   - An account is never disabled permanently by failed attempts alone (test).
 
+Implementation/deviation note (2026-11-18): the current authentication lock has a
+fixed duration (15 minutes by default, within the bounded operator settings in
+[SEC-007](addenda/SEC-007.md)); it does not implement the increasing-delay
+recommendation above. The merged A3-02 and
+[A3-F16 fixes](../audit/2026-10-28/REMEDIATION-2026-11-04.md#a3-f16-a-stolen-session-keeps-the-owner-out-of-mfa-sign-in-confirmed)
+restore part of the attempt allowance after expiry and separate MFA sign-in
+from session-management counters to prevent the reproduced lock-renewal attacks.
+Those engineering fixes do not approve a replacement for the recommendation;
+policy confirmation remains outstanding. This note leaves the normative text
+unchanged and does not claim complete SEC-006 conformance. See also
+[A3-F21](../audit/A3-F21-THROTTLE-DOCS-2026-11-17.md).
+
 **SEC-007** · P1 · Multi-factor authentication for privileged roles
 - Requirement: Network administrators and dispute reviewers MUST be able to enable a second factor (time-based one-time passwords or an equivalent standard), and the platform MUST support it for members. Whether it is mandatory for privileged roles is decided by DEC-007 (recommended default: mandatory for network administrators and platform operators, optional for members and dispute reviewers). Every second-factor method offered MUST have at least one option that does not require transcribing or solving a cognitive challenge, as [08](08-ux-accessibility.md) UX-053 requires. Recovery codes MUST be single use and stored hashed.
 - Rationale: Administrator accounts control network rules and adjustments (T-16); password-only protection is weak for them.
