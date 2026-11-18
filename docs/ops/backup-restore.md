@@ -55,11 +55,14 @@ truncation (also exactly at a chunk boundary) and a wrong key all fail with a cl
 as a database.
 
 How a backup is made. `VACUUM INTO` writes the plaintext snapshot into a private `0700` work directory
-(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there, the snapshot is
-encrypted to `*.db.enc.partial`, decrypted again in memory and compared with the verified plaintext, and only then renamed.
-The work directory is overwritten and removed on success and on every failure. If the process is killed, the next backup
-in that directory removes work directories older than an hour. Overwriting is best effort on copy-on-write file systems
-and SSDs: keep the host disk encrypted too.
+(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there. When a key is set,
+the snapshot is encrypted inside the same work directory, decrypted again and compared with the verified plaintext,
+and only then renamed to the destination. The work directory holds a process lease, is overwritten and removed on
+success and on every failure. If the process is killed, the next backup into a private destination directory removes
+unleased work directories older than an hour. Cleanup never follows a symlink or overwrites a file with another hard
+link. A destination directory that other users can write is refused unless it is sticky (such as `/tmp`), and work
+directories are never swept from a shared directory. Overwriting is best effort on copy-on-write file systems and
+SSDs: keep the host disk encrypted too.
 
 Restore decrypts transparently when the key is configured (`CIRCULA_BACKUP_ENCRYPTION_KEY` or
 `backup-encryption-key-file`). `restore` refuses, before changing anything: an encrypted backup with no key, a wrong key,

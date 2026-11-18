@@ -82,7 +82,7 @@ and the squash-merged fix PRs #45, #51, #52, #53 and #54.
   `TestAdjustmentExpirySkipsFrozenNetworksWithoutStarvation` (A1-10). Minor residuals:
   CRYPTO-01 (see NEW-01), A3-F09 (passwords, recovery codes and revoked invitations keep their backup state after
   a restore), BACKUP-01. The remaining PR #42 findings are in the table below.
-- Still open on `main` (6 PR #42 IDs, plus E-02 and NEW-01):
+- Open, and recently fixed, on `main` (6 PR #42 IDs; E-02, NEW-01, AUD4-D01 and AUD4-D02 are fixed):
 
 | ID | Severity | State | Note |
 |---|---|---|---|
@@ -90,8 +90,10 @@ and the squash-merged fix PRs #45, #51, #52, #53 and #54.
 | PRIV-01, PRIV-02 | Low | Open, owner decision (SEC-014/018) | `person_activity.last_seen_at`, `person_prefs.time_zone` and `challenges.reason` survive erasure |
 | PRIV-03 / A3-F07 | Info/Low | Open, design | After a delete and a PASSIVE checkpoint the deleted text can remain in the WAL file. `TestSecureDeleteLeavesNoCanary` passes because it forces a TRUNCATE checkpoint |
 | PRIV-04, PRIV-05 | Policy/process | Open | Retention policy (DEC-020); free-text audit reasons |
-| E-02 (from `docs/audit/SECURITY-AUDIT-3.md`, not PR #42) | Low | Open, mitigated | The database opens without `trusted_schema(OFF)`; unsigned restores are refused by default |
-| NEW-01 (new in this re-check) | Low | Open, hardening; not reproduced | Unencrypted `snapshotWith` (`cmd/circula/snapshot.go`) builds a predictable `<dest>.partial` in the backup directory, and `copyFileSync` (`cmd/circula/util.go`) opens without `O_EXCL`. Someone who can write to the backup directory and swaps the file between `VACUUM INTO` and the first hash could get a forged backup signed. Suggested fix: use the private `os.MkdirTemp` directory that the encrypted path already uses, and `O_EXCL` |
+| E-02 (from `docs/audit/SECURITY-AUDIT-3.md`, not PR #42) | Low | Fixed (PR #71); path escaping completed by AUD4-D01 | Every normal and raw connection opens with `trusted_schema(0)` (`TestSQLiteDistrustsSchemaOnEveryConnection`, `TestSQLiteRefusesSchemaFunctionCalls`). No schema fingerprint: built-in-only triggers in a database restored with `-allow-unsigned` still run |
+| NEW-01 (new in this re-check) | Low | Fixed (PR #72); cleanup race closed by AUD4-D02 | Snapshot, ciphertext and verification copies are staged in a leased private `os.MkdirTemp` directory and `copyFileSync` uses `O_EXCL` (`cmd/circula/backup_private_staging_test.go`, `backup_work_lease_test.go`) |
+| AUD4-D01 (2026-11-18 audit) | Low | Fixed, regression-tested | Paths were placed in the SQLite `file:` URI unescaped; a `backup-dir` or `circula backup` directory containing `?`, `#` or `%` opened a different file and could drop `trusted_schema(0)`/`foreign_keys(1)`. `internal/store/uri.go` escapes them. See [AUD4-D01-D02](../audit/consolidation-completion-2026-11/AUD4-D01-D02-BACKUP-PATHS.md) |
+| AUD4-D02 (2026-11-18 audit) | Low | Fixed, regression-tested | Backup cleanup checked entries by name and then wrote through them; in a destination writable by other users a planted or swapped entry could make cleanup zero or delete data elsewhere. Cleanup now re-checks identity on the open handle, never follows symlinks or zeroes multi-link files, sweeps only private directories, and staging refuses shared non-sticky directories |
 
 Older open items are unchanged and remain owner decisions: SA2-12 (SEC-011), A3-04b, A3-07, A3-10/11, A3-F18, SA2-21.
 A3-F20 and A3-F21 were not re-verified.

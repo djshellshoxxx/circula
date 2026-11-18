@@ -12,6 +12,9 @@ const backupWorkLease = "active.lock"
 // staging directory. Directory age alone cannot distinguish a slow backup from
 // a crashed one. The operating system releases the lease after a process crash.
 func newBackupWork(parent string) (string, func(), error) {
+	if err := checkStagingParent(parent); err != nil {
+		return "", nil, err
+	}
 	work, err := os.MkdirTemp(parent, tempDirPrefix)
 	if err != nil {
 		return "", nil, err
