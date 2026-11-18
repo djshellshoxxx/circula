@@ -413,7 +413,7 @@ func isEncryptedBackup(path string) bool {
 // guarantee the old blocks are gone; the file is in a 0700 directory and the
 // disk should be encrypted too (docs/ops/backup-restore.md).
 func secureRemove(path string) {
-	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() {
+	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() { // #nosec G703 -- operator-controlled backup/restore staging or owned work entries; Lstat does not follow symlinks.
 		if f, err := os.OpenFile(path, os.O_WRONLY, 0); err == nil {
 			zero := make([]byte, 64<<10)
 			for left := fi.Size(); left > 0; {
@@ -430,7 +430,7 @@ func secureRemove(path string) {
 			_ = f.Close()
 		}
 	}
-	_ = os.Remove(path)
+	_ = os.Remove(path) // #nosec G703 -- removes the operator-controlled staging file or owned directory entry inspected above; Remove unlinks a final symlink itself.
 }
 
 // secureRemoveAll securely removes every file under dir and then dir itself.
@@ -446,5 +446,5 @@ func secureRemoveAll(dir string) {
 			}
 		}
 	}
-	_ = os.Remove(dir)
+	_ = os.Remove(dir) // #nosec G703 -- dir is private backup work or a descendant obtained from ReadDir; Remove only removes the emptied directory.
 }
