@@ -122,6 +122,13 @@ func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor,
 		codes[i], hashes[i], ids[i] = formatRecoveryCode(norm), recoveryHash(actor.PersonID, norm), s.id()
 	}
 	err = s.update(ctx, func(tx store.Tx) error {
+		// A password change/reset during verification invalidates this proof;
+		// it must not be followed by fresh recovery material for the old password.
+		if _, currentHash, err := tx.GetPerson(actor.PersonID); err != nil {
+			return authnErr(err)
+		} else if currentHash != hash {
+			return domain.ErrUnauthenticated
+		}
 		if err := tx.ReplaceAccountRecoveryCodes(actor.PersonID, ids, hashes, s.now()); err != nil {
 			return err
 		}
