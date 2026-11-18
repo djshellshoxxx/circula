@@ -7,6 +7,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // Account security pages: second factor (SEC-007) and security notices
@@ -29,14 +30,14 @@ func init() {
 }
 
 var noticeText = map[string]string{
-	domain.NoticePasswordChanged:  "Your password was changed and you were signed out everywhere.",
-	domain.NoticeMFAEnabled:       "Two-step sign-in was turned on.",
-	domain.NoticeMFADisabled:      "Two-step sign-in was turned off.",
-	domain.NoticeRecoveryRegen:    "Your recovery codes were replaced. Older codes no longer work.",
-	domain.NoticeRecoveryCodeUsed: "A recovery code was used to sign in.",
-	domain.NoticeTokenCreated:     "An API token was created.",
-	domain.NoticeTokenRevoked:     "An API token was revoked.",
-	domain.NoticeAdminGranted:     "A new administrator was appointed in one of your networks.",
+	domain.NoticePasswordChanged:  messages.Text("security.notice.password_changed"),
+	domain.NoticeMFAEnabled:       messages.Text("security.notice.mfa_enabled"),
+	domain.NoticeMFADisabled:      messages.Text("security.notice.mfa_disabled"),
+	domain.NoticeRecoveryRegen:    messages.Text("security.notice.recovery_regen"),
+	domain.NoticeRecoveryCodeUsed: messages.Text("security.notice.recovery_used"),
+	domain.NoticeTokenCreated:     messages.Text("security.notice.token_created"),
+	domain.NoticeTokenRevoked:     messages.Text("security.notice.token_revoked"),
+	domain.NoticeAdminGranted:     messages.Text("security.notice.admin_granted"),
 }
 
 type noticeView struct {
@@ -76,14 +77,14 @@ func (s *server) renderSecurity(w http.ResponseWriter, r *http.Request, c *rc, s
 	for _, n := range ns {
 		t := noticeText[n.Kind]
 		if t == "" {
-			t = "A security-related change was made to your account."
+			t = messages.Text("security.notice.other")
 		}
 		d.Notices = append(d.Notices, noticeView{Text: t, Detail: n.Detail, When: n.CreatedAt, New: n.SeenAt == nil})
 		if n.SeenAt == nil {
 			d.Unseen++
 		}
 	}
-	p.Title, p.D = "Account security", d
+	p.Title, p.D = messages.Text("auth.title.security"), d
 	s.render(w, r, nil, "security", status, p)
 }
 
@@ -96,7 +97,7 @@ func (s *server) securityAck(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Notices marked as read.")
+	s.setFlash(w, r, messages.Text("auth.flash.notices_read"))
 	http.Redirect(w, r, "/account/security", http.StatusSeeOther)
 }
 
@@ -111,19 +112,18 @@ func mfaRefusal(err error, codeField string) (status int, summary string, fe []f
 		for _, f := range de.Fields {
 			switch f.Field {
 			case "password":
-				fe = append(fe, fieldErr{"password", "Password: not correct. Check it and try again."})
+				fe = append(fe, fieldErr{"password", messages.Text("auth.field.password_wrong")})
 			default:
-				fe = append(fe, fieldErr{codeField, "Code: not correct. Use the current 6-digit code from your authenticator app" +
-					" (or an unused recovery code where allowed). Codes work once."})
+				fe = append(fe, fieldErr{codeField, messages.Text("auth.field.code_wrong")})
 			}
 		}
-		return 422, "Not saved. Fix the problems below. Nothing changed.", fe, true
+		return 422, messages.Text("auth.not_saved"), fe, true
 	case domain.CodeRateLimited:
-		return 429, "Too many attempts. Wait a few minutes and try again. Nothing changed.", nil, true
+		return 429, messages.Text("auth.throttle.few_minutes"), nil, true
 	case domain.CodeInvalidState:
-		return 409, "Not done. Two-step sign-in is not in a state that allows that (for example the setup expired, or it is not turned on). Nothing changed.", nil, true
+		return 409, messages.Text("auth.mfa.invalid_state"), nil, true
 	case domain.CodeConflict:
-		return 409, "Not done. Two-step sign-in is already turned on. Nothing changed.", nil, true
+		return 409, messages.Text("auth.mfa.already_on"), nil, true
 	}
 	return 0, "", nil, false
 }
@@ -134,7 +134,7 @@ func (s *server) mfaEnrolPage(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, nil, "mfa_enrol", 200, &page{Title: "Turn on two-step sign-in", D: &enrolData{Status: st}})
+	s.render(w, r, nil, "mfa_enrol", 200, &page{Title: messages.Text("auth.title.mfa_enrol"), D: &enrolData{Status: st}})
 }
 
 type enrolData struct {
@@ -160,7 +160,7 @@ func (s *server) showEnrol(w http.ResponseWriter, r *http.Request, c *rc, status
 			return
 		}
 	}
-	p.Title, p.D = "Turn on two-step sign-in", d
+	p.Title, p.D = messages.Text("auth.title.mfa_enrol"), d
 	s.render(w, r, nil, "mfa_enrol", status, p)
 }
 
@@ -170,8 +170,8 @@ func (s *server) enrolBlocked(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, nil, "mfa_enrol", 429, &page{Title: "Turn on two-step sign-in", D: &enrolData{Status: st},
-		Summary: "Too many attempts. Wait a few minutes and try again. Nothing changed."})
+	s.render(w, r, nil, "mfa_enrol", 429, &page{Title: messages.Text("auth.title.mfa_enrol"), D: &enrolData{Status: st},
+		Summary: messages.Text("auth.throttle.few_minutes")})
 }
 
 func (s *server) mfaEnrolBegin(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -204,13 +204,13 @@ func (s *server) mfaEnrolConfirm(w http.ResponseWriter, r *http.Request, c *rc) 
 		return
 	}
 	s.pwFail.reset(key)
-	s.render(w, r, nil, "mfa_recovery", 200, &page{Title: "Save your recovery codes", D: codes})
+	s.render(w, r, nil, "mfa_recovery", 200, &page{Title: messages.Text("auth.title.mfa_save"), D: codes})
 }
 
 func (s *server) mfaDisable(w http.ResponseWriter, r *http.Request, c *rc) {
 	key := "mfa|" + c.actor.PersonID
 	if s.pwFail.blocked(key) {
-		s.renderSecurity(w, r, c, 429, &page{Summary: "Too many attempts. Wait a few minutes and try again. Nothing changed."})
+		s.renderSecurity(w, r, c, 429, &page{Summary: messages.Text("auth.throttle.few_minutes")})
 		return
 	}
 	err := s.svc.DisableMFA(r.Context(), c.actor, r.PostFormValue("password"), r.PostFormValue("code"))
@@ -226,14 +226,14 @@ func (s *server) mfaDisable(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	s.pwFail.reset(key)
-	s.setFlash(w, r, "Two-step sign-in is turned off.")
+	s.setFlash(w, r, messages.Text("auth.flash.mfa_off"))
 	http.Redirect(w, r, "/account/security", http.StatusSeeOther)
 }
 
 func (s *server) mfaRecovery(w http.ResponseWriter, r *http.Request, c *rc) {
 	key := "mfa|" + c.actor.PersonID
 	if s.pwFail.blocked(key) {
-		s.renderSecurity(w, r, c, 429, &page{Summary: "Too many attempts. Wait a few minutes and try again. Nothing changed."})
+		s.renderSecurity(w, r, c, 429, &page{Summary: messages.Text("auth.throttle.few_minutes")})
 		return
 	}
 	codes, err := s.svc.RegenerateRecoveryCodes(r.Context(), c.actor, r.PostFormValue("code"))
@@ -249,15 +249,15 @@ func (s *server) mfaRecovery(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	s.pwFail.reset(key)
-	s.render(w, r, nil, "mfa_recovery", 200, &page{Title: "Save your new recovery codes", D: codes})
+	s.render(w, r, nil, "mfa_recovery", 200, &page{Title: messages.Text("auth.title.mfa_save_new"), D: codes})
 }
 
 // renderMFAStep shows the second step of sign-in. The challenge is a
 // single-use, five-minute value that only exists in this form.
 func (s *server) renderMFAStep(w http.ResponseWriter, r *http.Request, status int, challenge, next, summary string) {
-	p := &page{Title: "Enter your authentication code", D: challenge, Next: next, Summary: summary}
+	p := &page{Title: messages.Text("auth.title.mfa_challenge"), D: challenge, Next: next, Summary: summary}
 	if status == 401 {
-		p.Errors = []fieldErr{{"code", "Code: not correct, or the sign-in timed out. Check the code and try again, or sign in again."}}
+		p.Errors = []fieldErr{{"code", messages.Text("auth.mfa.step_failed_field")}}
 	}
 	s.render(w, r, nil, "login_mfa", status, p)
 }
@@ -266,7 +266,7 @@ func (s *server) loginMFAPost(w http.ResponseWriter, r *http.Request) {
 	challenge, next := r.PostFormValue("challenge"), safeNext(r.PostFormValue("next"))
 	ip := s.clientIP(r)
 	if s.ipFail.blocked(ip) {
-		s.renderMFAStep(w, r, 429, challenge, next, "Too many attempts. Wait a minute and try again. Nothing changed.")
+		s.renderMFAStep(w, r, 429, challenge, next, messages.Text("auth.throttle.minute"))
 		return
 	}
 	tok, _, err := s.svc.CompleteMFA(r.Context(), challenge, r.PostFormValue("code"))
@@ -280,9 +280,9 @@ func (s *server) loginMFAPost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, dest, http.StatusSeeOther) //nolint:gosec // G710: dest comes from safeNext (local paths only)
 	case domain.CodeUnauthenticated, domain.CodeValidation:
 		s.ipFail.fail(ip)
-		s.renderMFAStep(w, r, 401, challenge, next, "The code is not correct, or the sign-in timed out. Nothing changed.")
+		s.renderMFAStep(w, r, 401, challenge, next, messages.Text("auth.mfa.step_failed"))
 	case domain.CodeRateLimited:
-		s.renderMFAStep(w, r, 429, challenge, next, "Too many attempts for this account. Wait a few minutes and try again.")
+		s.renderMFAStep(w, r, 429, challenge, next, messages.Text("auth.throttle.account"))
 	default:
 		s.fail(w, r, err)
 	}

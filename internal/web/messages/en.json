@@ -499,5 +499,370 @@
   },
   "admin_recovery.event.admin_recovery.superseded": {
     "other": "Closed because another request was applied"
+  },
+  "auth.title.sign_in": {
+    "other": "Sign in"
+  },
+  "auth.title.register": {
+    "other": "Create an account"
+  },
+  "auth.title.recover": {
+    "other": "Recover your account"
+  },
+  "auth.title.recovery_codes": {
+    "other": "Recovery codes"
+  },
+  "auth.title.mfa_challenge": {
+    "other": "Enter your authentication code"
+  },
+  "auth.title.security": {
+    "other": "Account security"
+  },
+  "auth.title.mfa_enrol": {
+    "other": "Turn on two-step sign-in"
+  },
+  "auth.title.mfa_save": {
+    "other": "Save your recovery codes"
+  },
+  "auth.title.mfa_save_new": {
+    "other": "Save your new recovery codes"
+  },
+  "auth.title.password": {
+    "other": "Change your password"
+  },
+  "auth.throttle.minute": {
+    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
+  },
+  "auth.throttle.few_minutes": {
+    "other": "Too many attempts. Wait a few minutes and try again. Nothing changed."
+  },
+  "auth.throttle.login": {
+    "other": "Too many attempts for this login. Wait a few minutes and try again."
+  },
+  "auth.throttle.login_nothing": {
+    "other": "Too many attempts for this login. Wait a few minutes and try again. Nothing changed."
+  },
+  "auth.throttle.account": {
+    "other": "Too many attempts for this account. Wait a few minutes and try again."
+  },
+  "auth.not_saved": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "auth.mismatch.confirm": {
+    "other": "Confirm password: the two passwords do not match. Type the same password in both fields."
+  },
+  "auth.mismatch.confirm_new": {
+    "other": "Confirm new password: the two passwords do not match. Type the same password in both fields."
+  },
+  "auth.login.failed": {
+    "other": "The login or password is not correct. Check both and try again."
+  },
+  "auth.login.failed_field": {
+    "other": "Login or password: check both and try again."
+  },
+  "auth.flash.registered": {
+    "other": "Thank you. If that login was available the account now exists. Sign in with it and your password."
+  },
+  "auth.flash.signed_out": {
+    "other": "You are signed out."
+  },
+  "auth.flash.recovered": {
+    "other": "Your password was changed and you were signed out everywhere. Sign in with the new password. Make new recovery codes after you sign in."
+  },
+  "auth.flash.password_changed": {
+    "other": "Password changed. You were signed out everywhere. Sign in with the new password."
+  },
+  "auth.flash.must_change": {
+    "other": "Your password was reset for you. Choose a new password to continue. Your current password is the temporary one you were given."
+  },
+  "auth.flash.mfa_off": {
+    "other": "Two-step sign-in is turned off."
+  },
+  "auth.flash.notices_read": {
+    "other": "Notices marked as read."
+  },
+  "auth.recover.failed": {
+    "other": "The login or recovery code is not correct, or the code was already used. Check both and try again. Nothing changed."
+  },
+  "auth.field.current_password_wrong": {
+    "other": "Current password: not correct. Check it and try again."
+  },
+  "auth.field.password_wrong": {
+    "other": "Password: not correct. Check it and try again."
+  },
+  "auth.field.code_wrong": {
+    "other": "Code: not correct. Use the current 6-digit code from your authenticator app (or an unused recovery code where allowed). Codes work once."
+  },
+  "auth.mfa.invalid_state": {
+    "other": "Not done. Two-step sign-in is not in a state that allows that (for example the setup expired, or it is not turned on). Nothing changed."
+  },
+  "auth.mfa.already_on": {
+    "other": "Not done. Two-step sign-in is already turned on. Nothing changed."
+  },
+  "auth.mfa.step_failed": {
+    "other": "The code is not correct, or the sign-in timed out. Nothing changed."
+  },
+  "auth.mfa.step_failed_field": {
+    "other": "Code: not correct, or the sign-in timed out. Check the code and try again, or sign in again."
+  },
+  "security.notice.password_changed": {
+    "other": "Your password was changed and you were signed out everywhere."
+  },
+  "security.notice.mfa_enabled": {
+    "other": "Two-step sign-in was turned on."
+  },
+  "security.notice.mfa_disabled": {
+    "other": "Two-step sign-in was turned off."
+  },
+  "security.notice.recovery_regen": {
+    "other": "Your recovery codes were replaced. Older codes no longer work."
+  },
+  "security.notice.recovery_used": {
+    "other": "A recovery code was used to sign in."
+  },
+  "security.notice.token_created": {
+    "other": "An API token was created."
+  },
+  "security.notice.token_revoked": {
+    "other": "An API token was revoked."
+  },
+  "security.notice.admin_granted": {
+    "other": "A new administrator was appointed in one of your networks."
+  },
+  "security.notice.other": {
+    "other": "A security-related change was made to your account."
+  },
+  "auth.label.login": {
+    "other": "Login"
+  },
+  "auth.label.password": {
+    "other": "Password"
+  },
+  "auth.label.confirm_password": {
+    "other": "Confirm password"
+  },
+  "auth.label.new_password": {
+    "other": "New password"
+  },
+  "auth.label.confirm_new_password": {
+    "other": "Confirm new password"
+  },
+  "auth.label.current_password": {
+    "other": "Current password"
+  },
+  "auth.label.recovery_code": {
+    "other": "Recovery code"
+  },
+  "auth.label.signin_code": {
+    "other": "Authentication or recovery code"
+  },
+  "auth.label.app_code": {
+    "other": "Code from your authenticator app"
+  },
+  "auth.label.app_code_short": {
+    "other": "Code from your app"
+  },
+  "auth.label.disable_code": {
+    "other": "Authenticator code or recovery code"
+  },
+  "auth.hint.login_new": {
+    "other": "At least 3 characters, no spaces. An email address works well."
+  },
+  "auth.hint.password_rules": {
+    "other": "At least 12 characters. A password manager is fine; pasting is allowed."
+  },
+  "auth.hint.signin_code": {
+    "other": "For example 123456, or ABCDE-FGHIJ. Each code works once."
+  },
+  "auth.hint.recovery_format": {
+    "other": "Looks like ABCD-EFGH-IJKL-MNOP. Capital letters and dashes are optional."
+  },
+  "auth.hint.older_codes": {
+    "other": "Older recovery codes stop working."
+  },
+  "auth.login.submit": {
+    "other": "Sign in"
+  },
+  "auth.login.new_here": {
+    "other": "New here?"
+  },
+  "auth.login.create_link": {
+    "other": "Create an account"
+  },
+  "auth.login.join_info": {
+    "other": "To join a network you need an invitation link from its administrator, or the network's join page."
+  },
+  "auth.login.forgot": {
+    "other": "Forgot your password?"
+  },
+  "auth.login.recover_link": {
+    "other": "Recover your account"
+  },
+  "auth.login.recover_tail": {
+    "other": "with one of your recovery codes."
+  },
+  "auth.mfa_step.intro": {
+    "other": "Your password was correct. Enter the 6-digit code from your authenticator app, or one unused recovery code. This step expires in 5 minutes."
+  },
+  "auth.mfa_step.submit": {
+    "other": "Continue"
+  },
+  "auth.mfa_step.restart": {
+    "other": "Start again"
+  },
+  "auth.register.submit": {
+    "other": "Create account"
+  },
+  "auth.register.have_account": {
+    "other": "Already have an account?"
+  },
+  "auth.register.sign_in_link": {
+    "other": "Sign in"
+  },
+  "auth.recover.intro": {
+    "other": "Lost your password? Enter your login, one of your recovery codes and a new password. Each code works once. If you have no codes left, ask your network administrator to reset your password."
+  },
+  "auth.recover.submit": {
+    "other": "Set new password"
+  },
+  "auth.recover.back": {
+    "other": "Back to sign in"
+  },
+  "auth.codes.new_heading": {
+    "other": "Your new recovery codes"
+  },
+  "auth.codes.shown_once": {
+    "other": "This is the only time they are shown."
+  },
+  "auth.codes.keep_safe": {
+    "other": "Write them down or print them and keep them somewhere safe and separate from your password manager. Each code works once. Any codes you had before no longer work."
+  },
+  "auth.codes.saved": {
+    "other": "I have saved them"
+  },
+  "auth.codes.purpose": {
+    "other": "Recovery codes let you set a new password if you forget it, without email."
+  },
+  "auth.codes.have": {
+    "other": "You have"
+  },
+  "auth.codes.replace_note": {
+    "other": "Making new codes replaces all the old ones. You need your current password."
+  },
+  "auth.codes.submit": {
+    "other": "Make new recovery codes"
+  },
+  "security.mfa.heading": {
+    "other": "Two-step sign-in"
+  },
+  "security.mfa.state_is": {
+    "other": "Two-step sign-in is"
+  },
+  "security.mfa.on": {
+    "other": "on"
+  },
+  "security.mfa.off": {
+    "other": "off"
+  },
+  "security.mfa.replace_heading": {
+    "other": "Replace recovery codes"
+  },
+  "security.mfa.turn_off_heading": {
+    "other": "Turn off"
+  },
+  "security.mfa.turn_off": {
+    "other": "Turn off two-step sign-in"
+  },
+  "security.mfa.off_explain": {
+    "other": "Turn it on to protect your account if your password is stolen. Administrators may be required to use it."
+  },
+  "security.mfa.turn_on": {
+    "other": "Turn on two-step sign-in"
+  },
+  "security.codes.heading": {
+    "other": "Password recovery codes"
+  },
+  "security.codes.explain": {
+    "other": "A recovery code lets you set a new password without email if you forget it."
+  },
+  "security.codes.link": {
+    "other": "Make or replace password recovery codes"
+  },
+  "security.notices.heading": {
+    "other": "Security notices"
+  },
+  "security.notices.unseen": {
+    "other": "%[1]d new."
+  },
+  "security.notices.mark_read": {
+    "other": "Mark all as read"
+  },
+  "security.notices.new": {
+    "other": "New:"
+  },
+  "security.notices.advice": {
+    "other": "If you do not recognise a change, change your password and turn on two-step sign-in."
+  },
+  "security.notices.none": {
+    "other": "No security notices yet."
+  },
+  "auth.enrol.already_on": {
+    "other": "Two-step sign-in is already on. Manage it on the"
+  },
+  "auth.enrol.security_link": {
+    "other": "account security"
+  },
+  "auth.enrol.page_word": {
+    "other": "page."
+  },
+  "auth.enrol.intro": {
+    "other": "Two-step sign-in asks for a code from an authenticator app each time you sign in, in addition to your password."
+  },
+  "auth.enrol.need_password": {
+    "other": "For your security, enter your password to start."
+  },
+  "auth.enrol.start": {
+    "other": "Start setup"
+  },
+  "auth.enrol.cancel": {
+    "other": "Cancel"
+  },
+  "auth.enrol.step_key": {
+    "other": "In your authenticator app choose to add an account by entering a key, and type this setup key. Choose time-based, 6 digits, 30 seconds."
+  },
+  "auth.enrol.uri_note": {
+    "other": "Apps that import links can use this address instead:"
+  },
+  "auth.enrol.step_confirm": {
+    "other": "Enter the 6-digit code the app shows to confirm."
+  },
+  "auth.enrol.confirm": {
+    "other": "Turn on two-step sign-in"
+  },
+  "auth.enrol.expiry": {
+    "other": "This setup key is shown only while setup is in progress and expires after 15 minutes."
+  },
+  "auth.enrol.back": {
+    "other": "Back to account security"
+  },
+  "auth.save.lead": {
+    "other": "Save these codes now."
+  },
+  "auth.save.body": {
+    "other": "They are shown only once and cannot be shown again. Each code works one time if you lose access to your authenticator app. Keep them somewhere safe, such as a password manager or a printed copy."
+  },
+  "auth.password.intro": {
+    "other": "Changing your password signs you out on every device. API tokens you created keep working until you revoke them."
+  },
+  "auth.password.submit": {
+    "other": "Change password"
+  },
+  "security.mfa.recovery_left": {
+    "one": "You have %[1]d unused recovery code.",
+    "other": "You have %[1]d unused recovery codes."
+  },
+  "auth.codes.unused": {
+    "one": "unused code",
+    "other": "unused codes"
   }
 }
