@@ -10,3 +10,5 @@ against `bb5a36f9`, stored with a `.txt` suffix so tooling ignores it.
 | `departure.patch.txt` | A1-01 (network-state gate on settlement), A1-06 (cancel all open proposals) |
 | `decimals.patch.txt` | A1-02, A1-11 (decimal scale fixed at creation) |
 | `disputes.patch.txt` | A1-04, A1-09 (fixer stopped before reporting; treat as incomplete) |
+| `sweeps.patch.txt` | A1-05 (expiry sweep starved by frozen networks), A1-10 (pending-adjustment expiry writes into frozen networks); fixer finished, not reviewed |
+| `closure-export.patch.txt` | A1-07 (retry the final closure export); fixer stopped before its final checks: incomplete |
