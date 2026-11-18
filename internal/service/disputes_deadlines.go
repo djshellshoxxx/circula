@@ -17,9 +17,15 @@ const NotifDisputeOverdue = "dispute.overdue"
 // prospectively (GOV-001; 10 section 2), so a later change to the response
 // period or the re-review window, shorter or longer, applies only to disputes
 // opened once it is in force (AUD4-F03); the dispute window is fixed earlier,
-// at completion (DOM-017). Policy versions are append-only, so the answer for
-// a dispute never changes. A version in force from the very millisecond d was
+// at completion (DOM-017). A version in force from the very millisecond d was
 // opened counts, as it does for GetNetwork.
+//
+// Limits (AUD4-F03, partial remediation): the version is reconstructed from
+// effective_at timestamps, not stored on the dispute. A later version whose
+// effective_at equals OpenedAt (same millisecond), or is earlier because the
+// host clock stepped backward, is selected and changes this dispute's
+// timelines. Closing that needs a durable binding of the policy version at
+// opening (a schema change), recorded as an outstanding design item.
 func disputePolicy(tx store.Tx, d *domain.Dispute) (domain.Policy, error) {
 	p, _, err := tx.PolicyInForceAt(d.NetworkID, d.OpenedAt)
 	if domain.CodeOf(err) == domain.CodeNotFound {

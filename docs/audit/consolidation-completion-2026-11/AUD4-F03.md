@@ -21,9 +21,16 @@ A dispute keeps the response period and re-review window of the policy version i
 - Service: `disputePolicy` and `disputeDeadlines` (`internal/service/disputes_deadlines.go`) are the only source of these two values for an existing dispute. The decision gate, `RequestReReview`, `GetDispute` (and so the API and web page) and `RemindOverdueDisputes` all use them. If no version was in force at opening, the read fails with an internal error and never falls back to the current policy (the same rule migration 0016 follows). `OpenDispute` does not create that state: it reads the policy in force at the same clock instant it records as the opening time.
 - Web: the re-review date and form use `DisputeView.Deadlines.ReReviewCloses`. The adapter no longer computes the deadline from the current policy, and its inclusive end matches the service.
 
-No migration is needed. `network_policies` is append-only (triggers since 0001), and every new version takes effect at or after the moment it is written. The version in force at a past instant therefore never changes, so it can be derived from the history and does not need to be stored on the dispute. Neither the dispute window (DOM-017) nor any other policy rule changes.
+No migration was added. The version in force at opening is reconstructed from `network_policies` (append-only, triggers since 0001), using `effective_at` and the version number. This holds only while wall-clock time moves forward and a later version never shares the opening millisecond. Neither the dispute window (DOM-017) nor any other policy rule changes.
 
-Residual: if a policy change and the opening of a dispute fall in the same millisecond, the change counts as in force at opening (ties go to the higher version, as in `GetNetwork`). Storing the version on the dispute would close this gap, but it would need a migration. Nobody can control that timing, so this note records it and stores nothing.
+**Status: partial remediation.** Ordinary forward-time policy changes no longer affect existing disputes. The independent review reproduced two remaining boundaries with test-only clock variants of `TestDisputeTimelinesFixedAtOpen`:
+
+- **Same millisecond.** A policy update whose `effective_at` equals the dispute's `OpenedAt` wins, because ties go to the higher version, as in `GetNetwork`.
+- **Clock rollback.** After the host clock steps backward, a later update has an earlier `effective_at` than the opening.
+
+In both variants the shown response deadline shrinks, an overdue notice fires, a decision succeeds without a response or waiver, and the re-review window is removed. An administrator cannot pick the millisecond or move the host clock through the product. An operator or a host time error can still produce the second case.
+
+**Outstanding design item:** bind the policy version (or the two deadlines) on the dispute row at opening. This needs a schema migration and a backfill rule for existing disputes, in the same way migration 0016 stored `dispute_policy_version` at completion. It has to be coordinated with the migration numbers used by the open GOV-021 and SEC-026 drafts.
 
 ## Tests
 
