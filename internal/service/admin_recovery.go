@@ -116,7 +116,9 @@ type AdminRecoveryListInput struct {
 //   - FirstOperator, FirstApprovedAt: whether this is the first or the second
 //     approval, and that the second operator is a different one.
 //
-// No login, person id, contact detail, balance or other member data is read.
+// No login, person id, contact detail, balance or other member data is
+// returned. The eligibility check reads the member row (including its person
+// id) internally to evaluate the second-factor requirement.
 type AdminRecoveryOperatorView struct {
 	ID              string
 	NetworkSlug     string
