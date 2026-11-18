@@ -4,6 +4,10 @@ Platform staff have no routine access to a network. When they must act (support,
 time-boxed break-glass session. The network's administrators can read the record. Decisions and open points:
 [`docs/specs/addenda/SEC-013.md`](../specs/addenda/SEC-013.md).
 
+Appointing a lasting administrator for a network that has none is not a break-glass action: it is the separate,
+dual-approved, member-initiated process in [`docs/ops/admin-recovery.md`](../ops/admin-recovery.md) (GOV-021), which
+uses no session or grant. Ordinary break-glass below is unchanged by it; its second approver remains open (DEC-014).
+
 ## Operator commands
 
 All take the usual `-config`/`-database` flags and the single-writer lock, so stop `serve` first (like

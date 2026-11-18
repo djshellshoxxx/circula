@@ -182,13 +182,8 @@ func (s *Service) changeRole(ctx context.Context, actor domain.Actor, netID, mem
 			if m.HasRole(role) {
 				return domain.InvalidState("member already holds %s", role)
 			}
-			if err := tx.GrantRole(s.id(), netID, m.ID, role, p.memberID(), now); err != nil {
+			if _, err := s.grantRoleTx(tx, p, m, role, p.memberID(), now); err != nil {
 				return err
-			}
-			if role == domain.RoleAdmin {
-				if err := s.noticeAdminGranted(tx, netID, m, p); err != nil { // A3-01
-					return err
-				}
 			}
 		} else {
 			if !m.HasRole(role) {
@@ -327,6 +322,23 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 	return p, m, s.audit(tx, p, auditEntry{Type: domain.ActorAdmin, Action: domain.ActLimitChanged, TargetType: "account", TargetID: acc.ID,
 		Reason: in.Reason, Subjects: []string{m.ID}, Before: map[string]any{"effective_limit": before},
 		After: map[string]any{"effective_limit": after, "override": in.Limit != nil, "expires": in.ExpiresAt != nil}})
+}
+
+// grantRoleTx records a permanent role assignment in the caller's unit of work
+// and, for the admin role, tells the network's other active administrators
+// (A3-01). It is the single role-assignment path: AssignRole and the GOV-021
+// recovery appointment both use it. It returns the role_assignments id.
+func (s *Service) grantRoleTx(tx store.Tx, p *principal, m *domain.Member, role domain.Role, grantedBy string, now time.Time) (string, error) {
+	id := s.id()
+	if err := tx.GrantRole(id, p.net.ID, m.ID, role, grantedBy, now); err != nil {
+		return "", err
+	}
+	if role == domain.RoleAdmin {
+		if err := s.noticeAdminGranted(tx, p.net.ID, m, p); err != nil { // A3-01
+			return "", err
+		}
+	}
+	return id, nil
 }
 
 // noticeAdminGranted tells every other active administrator of the network

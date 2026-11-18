@@ -71,6 +71,12 @@ at platform scope and to the network's audit log, where its administrators can r
 cannot lift a platform suspension, and lifting it does not lift an administrator suspension. DEC-014 allows withholding
 the notice where law prohibits it; this build always sends it.
 
+## A network has no administrator (GOV-021)
+
+A member of the network asks for recovery in the product; two different operators then approve with
+`circula admin-recovery approve`. The operator never starts it, never appoints alone and never changes balances. Procedure,
+results and residual risk: [admin-recovery.md](admin-recovery.md).
+
 ## Restoring after a fault
 
 See [backup-restore.md](backup-restore.md#restoring). Stop the service first. `restore` needs `backup-key` (and

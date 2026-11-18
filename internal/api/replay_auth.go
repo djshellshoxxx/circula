@@ -12,7 +12,8 @@ import (
 func replayPermission(pattern string) service.ReplayPermission {
 	switch pattern {
 	case "POST " + v1 + "/listings", "POST " + v1 + "/disputes",
-		"POST " + v1 + "/disputes/{id}/re-review", "POST " + v1 + "/reports":
+		"POST " + v1 + "/disputes/{id}/re-review", "POST " + v1 + "/reports",
+		"POST " + v1 + "/admin-recovery/requests": // GOV-021: the response holds only the caller's own request
 		return service.ReplayActiveMember
 	case "POST " + v1 + "/transactions", "POST " + v1 + "/transactions/{id}/accept":
 		return service.ReplayTrade

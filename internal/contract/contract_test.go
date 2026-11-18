@@ -553,6 +553,28 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "POST", path: "/challenges/" + chID + "/decision", token: adm2T, idem: true, body: m{"outcome": "rejected", "reason": "the limit stands"}})
 	h.do(409, call{method: "POST", path: "/challenges/" + chID + "/decision", token: adm2T, idem: true, body: m{"outcome": "upheld", "reason": "again"}})
 
+	// Administrator recovery (GOV-021): a separate network whose only administrator is suspended.
+	founder2 := env.Person("founder2")
+	orphan, orphanFounder := env.Network(founder2, "orphan", nil)
+	carl, _ := env.Member(founder2, orphan, "carl")
+	carlT := h.token(carl, rw...)
+	if _, err := env.Store.DB().Exec(`UPDATE members SET status = 'suspended' WHERE id = ?`, orphanFounder.ID); err != nil {
+		t.Fatal(err)
+	}
+	carlSess, _, err := env.Svc.Login(context.Background(), "carl", "correct horse battery")
+	if err != nil {
+		t.Fatal(err)
+	}
+	carlCookie := m2("Cookie", (&http.Cookie{Name: "circula_session", Value: carlSess}).String(), "X-CSRF-Token", httpx.CSRF{Key: csrfKey}.Token(carlSess))
+	h.do(403, call{method: "POST", path: "/admin-recovery/requests", token: carlT, idem: true}) // session only
+	h.do(201, call{method: "POST", path: "/admin-recovery/requests", hdr: carlCookie, idem: true})
+	h.do(409, call{method: "POST", path: "/admin-recovery/requests", hdr: carlCookie, idem: true}) // one open request
+	h.do(200, call{method: "GET", path: "/admin-recovery/requests", token: carlT})
+	h.do(200, call{method: "GET", path: "/admin-recovery/requests?limit=1", token: carlT})
+	h.do(200, call{method: "GET", path: "/admin-recovery/events", token: carlT})
+	h.do(404, call{method: "GET", path: "/admin-recovery/events", token: outsiderT})
+	h.do(400, call{method: "GET", path: "/admin-recovery/events?limit=0", token: carlT, skipRequest: true})
+
 	// Generic problems.
 	h.do(401, call{method: "GET", path: "/accounts/me", token: "cir_bogus"})
 	h.do(400, call{method: "GET", path: "/accounts/me?access_token=x", token: aliceT, skipRequest: true})
