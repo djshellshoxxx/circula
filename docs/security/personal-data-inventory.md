@@ -100,10 +100,17 @@ it grants no additional access. Pending requests remain administrator-only and a
 references appear in network exports and the adjusted member's own history/export, with the relation also retained
 in append-only audit summaries. Standalone adjustments leave the reference empty.
 
+`activity_signals` (SEC-026) are append-only review prompts for a network's administrators and dispute reviewers:
+the member (or ordered pair of members) concerned, the kind, the period, the observed count and the threshold. They
+hold no free text, are not exported, are never shown to the members they name, and stay unchanged after erasure; the
+reviewer page then shows the anonymised name. Retention is the lifetime of the network (no automatic period; DEC-020
+open).
+
 | Table | Columns |
 |---|---|
 | `account_recovery_codes` | `id`, `person_id`, `created_at`, `used_at` |
 | `accounts` | `id`, `network_id`, `member_id`, `is_system`, `balance`, `limit_override`, `limit_override_until` |
+| `activity_signals` | `id`, `network_id`, `kind`, `member_id`, `other_member_id`, `period_start`, `window_ms`, `observed`, `threshold`, `raised_at` |
 | `announcements` | `id`, `network_id`, `created_by`, `published_at`, `effective_at`, `deleted_at`, `deleted_by`, `supersedes_id` |
 | `api_tokens` | `id`, `person_id`, `network_id`, `scopes`, `created_at`, `expires_at`, `revoked_at` |
 | `audit_events` | `id`, `network_id`, `seq`, `occurred_at`, `actor_type`, `actor_id`, `action`, `target_type`, `target_id`, `request_id`, `idem_ref`, `summary_before`, `summary_after`, `prev_hash`, `hash` |

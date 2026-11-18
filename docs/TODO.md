@@ -78,7 +78,7 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 
 ## Remaining specification and qualification work
 
-- SEC-026 is an outstanding implementation: network-configurable proposal-velocity and reciprocal-trade signals, one signal per window, visible only to same-network administrators/reviewers, with no automatic trade blocking. Existing throttles are not this feature.
+- SEC-026 is implemented on `claude/sec-026-abuse-signals` (see `docs/audit/consolidation-completion-2026-11/SEC-026.md`): network-configurable proposal-velocity and reciprocal-trade signals, one per window, visible only to same-network administrators/reviewers, never blocking a trade. Owner to confirm the provisional default thresholds (09 open question 10; none are set in 12) and whether signal settings stay out of the members' rules log.
 - UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. PR #62 migrated shell/dashboard labels, navigation, persistent network notices and badge counts; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
 - GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
 

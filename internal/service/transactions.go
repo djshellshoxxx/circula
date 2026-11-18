@@ -56,7 +56,12 @@ func (s *Service) ProposeTransaction(ctx context.Context, actor domain.Actor, ne
 			return err
 		}
 		out, err = idempotent(s, tx, netID, actor, "tx.propose", in.IdempotencyKey, in, func() (string, error) {
-			return s.propose(tx, p, in)
+			id, err := s.propose(tx, p, in)
+			if err != nil {
+				return "", err
+			}
+			s.velocitySignal(tx, p, p.member.ID) // SEC-026: never fails or blocks the proposal
+			return id, nil
 		}, func(id string) (*domain.Transaction, error) { return tx.GetTransaction(netID, id) })
 		return err
 	})
@@ -256,9 +261,13 @@ func (s *Service) AcceptTransaction(ctx context.Context, actor domain.Actor, net
 				p.member.DisplayName+" accepted the trade of "+fmtAmt(p.net, t.Amount)+" "+p.net.Policy.CurrencyName+".", "/trades/"+t.ID, ""); err != nil {
 				return "", err
 			}
-			return t.ID, s.audit(tx, p, auditEntry{Action: domain.ActTxCompleted, TargetType: "transaction", TargetID: t.ID,
+			if err := s.audit(tx, p, auditEntry{Action: domain.ActTxCompleted, TargetType: "transaction", TargetID: t.ID,
 				IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
-				Before: map[string]any{"status": "proposed"}, After: map[string]any{"status": "completed", "amount": t.Amount, "ledger_seq": t.LedgerSeq}})
+				Before: map[string]any{"status": "proposed"}, After: map[string]any{"status": "completed", "amount": t.Amount, "ledger_seq": t.LedgerSeq}}); err != nil {
+				return "", err
+			}
+			s.reciprocalSignal(tx, p, t) // SEC-026: never fails, blocks or changes the posted trade
+			return t.ID, nil
 		}, func(id string) (*domain.Transaction, error) { return tx.GetTransaction(netID, id) })
 		return err
 	})

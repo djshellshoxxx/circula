@@ -1324,6 +1324,36 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
 
+  /api/v1/activity-signals:
+    get:
+      operationId: listActivitySignals
+      tags: [Admin]
+      summary: Activity signals (SEC-026)
+      description: Network administrators and dispute reviewers only (403 for other members; 404 outside the network). Newest first. A velocity signal names one member who created more than the threshold of trade proposals in the window before raised_at; a reciprocal signal names two members who completed more than the threshold of trades with each other, in both directions, in that window. At most one signal per kind and member (or pair) is raised in each fixed period of the window length (period_start to period_end, aligned to the Unix epoch). Signals never block a trade and are not shown to the members they concern, including when such a member is a reviewer or administrator. The read changes nothing.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: kind
+          in: query
+          required: false
+          schema: {type: string, enum: [velocity, reciprocal]}
+      responses:
+        '200':
+          description: One page of activity signals.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ActivitySignalPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
   /api/v1/admin/reports/{id}/handle:
     post:
       operationId: handleReport
@@ -3772,6 +3802,30 @@ components:
         - type: object
           properties:
             data: {type: array, items: {$ref: '#/components/schemas/Report'}}
+    ActivitySignal:
+      type: object
+      description: SEC-026 velocity or reciprocal-pattern signal. Member ids and counts only; display names are the current ones (anonymised after erasure).
+      required: [id, kind, member_id, member_display_name, other_member_id, other_member_display_name, observed_count, threshold, window_minutes, period_start, period_end, raised_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        kind: {type: string, enum: [velocity, reciprocal]}
+        member_id: {$ref: '#/components/schemas/Id'}
+        member_display_name: {type: string}
+        other_member_id: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}], description: The second member of a reciprocal pair; null for velocity.}
+        other_member_display_name: {type: [string, 'null']}
+        observed_count: {type: integer, minimum: 2, description: Proposals (velocity) or completed trades in both directions (reciprocal) in the window that ended at raised_at.}
+        threshold: {type: integer, minimum: 1, description: The threshold in force when the signal was raised; observed_count exceeds it.}
+        window_minutes: {type: integer, minimum: 1}
+        period_start: {$ref: '#/components/schemas/Timestamp'}
+        period_end: {$ref: '#/components/schemas/Timestamp'}
+        raised_at: {$ref: '#/components/schemas/Timestamp'}
+    ActivitySignalPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/ActivitySignal'}}
     Notification:
       type: object
       required: [id, kind, title, body, link, read, created_at, read_at]
@@ -3843,7 +3897,7 @@ components:
           $ref: '#/components/schemas/PolicyLogEntry'
     Policy:
       type: object
-      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor, response_period_days, re_review_window_days, limit_warning_percent, inactivity_days]
+      required: [currency_name, decimals, default_credit_limit_minor, max_tx_amount_minor, proposal_expiry_days, dispute_window_days, join_mode, departure_rule, signup_grant_minor, limit_warning_days, default_flag_blocks_payer, directory_visibility, dual_control_threshold_minor, response_period_days, re_review_window_days, limit_warning_percent, inactivity_days, activity_signals_enabled, velocity_signal_proposals, velocity_signal_window_minutes, reciprocal_signal_trades, reciprocal_signal_window_days]
       additionalProperties: false
       properties:
         currency_name: {type: string}
@@ -3865,6 +3919,11 @@ components:
         re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
         inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
+        activity_signals_enabled: {type: boolean, description: "SEC-026. Raise activity signals for administrators and dispute reviewers. A signal never blocks a trade and the members concerned are not told. Default true (provisional, owner to confirm). The signal settings are left out of the members' policy log."}
+        velocity_signal_proposals: {type: integer, minimum: 1, maximum: 1000, description: "SEC-026. A velocity signal is raised when one member creates more than this many trade proposals within velocity_signal_window_minutes. Default 20 (provisional, owner to confirm)."}
+        velocity_signal_window_minutes: {type: integer, minimum: 1, maximum: 10080, description: "SEC-026. Velocity window in minutes. Default 60 (provisional, owner to confirm)."}
+        reciprocal_signal_trades: {type: integer, minimum: 1, maximum: 1000, description: "SEC-026. A reciprocal signal is raised when two members complete more than this many trades with each other, with at least one in each direction, within reciprocal_signal_window_days. Default 10 (provisional, owner to confirm)."}
+        reciprocal_signal_window_days: {type: integer, minimum: 1, maximum: 365, description: "SEC-026. Reciprocal window in days. Default 30 (provisional, owner to confirm)."}
     PolicyPatch:
       type: object
       required: [reason]
@@ -3888,6 +3947,11 @@ components:
         re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
         inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
+        activity_signals_enabled: {type: boolean, description: "SEC-026. Raise activity signals for administrators and dispute reviewers. A signal never blocks a trade and the members concerned are not told. Default true (provisional, owner to confirm). The signal settings are left out of the members' policy log."}
+        velocity_signal_proposals: {type: integer, minimum: 1, maximum: 1000, description: "SEC-026. A velocity signal is raised when one member creates more than this many trade proposals within velocity_signal_window_minutes. Default 20 (provisional, owner to confirm)."}
+        velocity_signal_window_minutes: {type: integer, minimum: 1, maximum: 10080, description: "SEC-026. Velocity window in minutes. Default 60 (provisional, owner to confirm)."}
+        reciprocal_signal_trades: {type: integer, minimum: 1, maximum: 1000, description: "SEC-026. A reciprocal signal is raised when two members complete more than this many trades with each other, with at least one in each direction, within reciprocal_signal_window_days. Default 10 (provisional, owner to confirm)."}
+        reciprocal_signal_window_days: {type: integer, minimum: 1, maximum: 365, description: "SEC-026. Reciprocal window in days. Default 30 (provisional, owner to confirm)."}
         reason: {type: string, maxLength: 500}
         notice_days: {type: integer, minimum: 0, maximum: 90, description: 'Notice before the change takes effect (GOV-003). Default 14 for a change that reduces default credit, shortens the dispute window, changes the departure rule, makes the directory less restrictive or the join mode more open; 0 otherwise. Fewer than 14 for such a change needs notice_reason. While a change is scheduled only a PATCH that restores the values in force (a cancellation) is accepted; others get 409.'}
         notice_reason: {type: string, maxLength: 500}

@@ -343,6 +343,11 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 					return "", err
 				}
 			}
+			if signalSettingsChanged(p.net.Policy, in.Policy) { // SEC-026
+				if err := s.noticeSignalSettings(tx, netID, p.memberID()); err != nil {
+					return "", err
+				}
+			}
 			return netID, nil
 		}, func(id string) (*domain.Network, error) { return tx.GetNetwork(id) })
 		return err
@@ -374,7 +379,25 @@ func policyMap(p domain.Policy) map[string]any {
 		"departure_rule": string(p.DepartureRule), "signup_grant": p.SignupGrant, "dual_control_threshold": p.DualControlThreshold,
 		"limit_warning_days": p.LimitWarningDays, "response_period_days": p.ResponsePeriodDays,
 		"re_review_window_days": p.ReReviewWindowDays, "limit_warning_percent": p.LimitWarningPercent, "inactivity_days": p.InactivityDays, "default_flag_blocks_payer": p.DefaultFlagBlocksPayer,
-		"directory_visibility": p.DirectoryVisibility,
+		"directory_visibility":     p.DirectoryVisibility,
+		"activity_signals_enabled": p.ActivitySignalsEnabled, "velocity_signal_proposals": p.VelocitySignalProposals, // SEC-026
+		"velocity_signal_window_minutes": p.VelocitySignalWindowMinutes, "reciprocal_signal_trades": p.ReciprocalSignalTrades,
+		"reciprocal_signal_window_days": p.ReciprocalSignalWindowDays,
+	}
+}
+
+// reviewOnlyPolicyKeys are policy keys left out of the rules log: settings
+// whose values would teach a member how to stay below a control (the
+// dual-control threshold, SEC-011, and the activity signal thresholds,
+// SEC-026). Their changes are still audited (GOV-002) and shown to
+// administrators on the policy page.
+var reviewOnlyPolicyKeys = []string{"dual_control_threshold", "activity_signals_enabled", "velocity_signal_proposals",
+	"velocity_signal_window_minutes", "reciprocal_signal_trades", "reciprocal_signal_window_days"}
+
+func hideReviewOnlyKeys(e *PolicyLogEntry) {
+	for _, k := range reviewOnlyPolicyKeys {
+		delete(e.Changes, k)
+		delete(e.Previous, k)
 	}
 }
 

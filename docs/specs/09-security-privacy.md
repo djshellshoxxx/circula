@@ -16,7 +16,7 @@ This document does not claim anonymity, cryptographic guarantees for ledger cont
 
 This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release/security approval. The audit itself identifies an AI-assisted review and pending independent professional review ([SECURITY-AUDIT-3](../audit/SECURITY-AUDIT-3.md)). Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate or independent security review is claimed here.
 
-Summary: built 8, deferred 1, not built 7, partial 18.
+Summary: built 9, deferred 1, not built 6, partial 18 (SEC-026 refreshed 2026-11-18).
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -45,7 +45,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-023 | P0 | built | CSP, frame-ancestors, no-store, same-origin scripts |
 | SEC-024 | P0 | built | Safe next parsing; html/template; integer amounts |
 | SEC-025 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Listing and member reports built (FR-024; `internal/service/reports.go`, `internal/api/routes.go:98`). Transaction reports are not built (`ReportListing` and `ReportMember` only), and the link to disputes is UNVERIFIED |
-| SEC-026 | P1 | not built | Velocity and reciprocal signals not built |
+| SEC-026 | P1 | built | [Refreshed 2026-11-18; was "not built".] Velocity and reciprocal signals built (`internal/service/signals.go`, `internal/domain/signals.go`, migration `0019_activity_signals.sql`; reviewer page `/n/{slug}/review/activity-signals`, `GET /api/v1/activity-signals`). Acceptance tests: one signal per window with an injected clock (`TestSEC026VelocityBurstRaisesOneSignalPerWindow`), reciprocal signal without ledger change (`TestSEC026ReciprocalPatternRaisesSignalWithoutLedgerChange`), same-network administrators and reviewers only (`TestSEC026SignalsVisibleOnlyToSameNetworkReviewers`). The thresholds use provisional defaults because [12](12-quality-test-plan.md) sets none (open question 10, owner to confirm); see [SEC-026 note](../audit/consolidation-completion-2026-11/SEC-026.md). Advanced analytics deferred |
 | SEC-027 | P0 | partial | Secrets from env or files; rotation procedure not documented for session key |
 | SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600. [Refreshed 2026-11-16: optional encryption at rest is built, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md; the note above describes the default, unencrypted state] |
 | SEC-029 | P1 | partial | Module versions pinned; govulncheck and SBOM module list in CI; dependency checksum failure test not present |

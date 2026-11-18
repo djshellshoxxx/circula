@@ -98,6 +98,9 @@ type Service struct {
 	frozen frozenSet // networks refusing writes after a ledger failure (freeze.go)
 	obs    Observer  // optional metrics observer (observe.go)
 	unit   unitStats // counters of the write unit in progress (serialised by the store gate)
+	// onSignalFailure reports activity signal evaluations that failed in a
+	// committed unit (SEC-026, signals.go); nil ignores them.
+	onSignalFailure func(netID, kind string, err error)
 }
 
 // New builds a Service over st, filling defaults.
@@ -193,25 +196,30 @@ func randToken(n int) (string, error) {
 
 // update and view are thin wrappers so call sites read uniformly.
 func (s *Service) update(ctx context.Context, fn func(store.Tx) error) error {
-	if s.obs == nil {
-		return s.st.Update(ctx, s.asOf(fn))
-	}
-	var posts, replays int
+	var stats unitStats
 	err := s.st.Update(ctx, s.asOf(func(tx store.Tx) error {
 		s.unit = unitStats{}
 		ferr := fn(tx)
-		posts, replays = s.unit.posts, s.unit.replays
+		stats = s.unit
 		return ferr
 	}))
-	if err == nil {
-		if posts > 0 {
-			s.obs.Posted(posts)
+	if err != nil { // rolled back: nothing happened, nothing to report
+		return err
+	}
+	if s.obs != nil {
+		if stats.posts > 0 {
+			s.obs.Posted(stats.posts)
 		}
-		if replays > 0 {
-			s.obs.Replayed(replays)
+		if stats.replays > 0 {
+			s.obs.Replayed(stats.replays)
 		}
 	}
-	return err
+	if h := s.onSignalFailure; h != nil {
+		for _, f := range stats.signalFailures {
+			h(f.netID, f.kind, f.err)
+		}
+	}
+	return nil
 }
 
 func (s *Service) view(ctx context.Context, fn func(store.Tx) error) error {

@@ -16,4 +16,7 @@ func (s *Service) SetObserver(o Observer) { s.obs = o }
 
 // unitStats counts events inside one write unit. Units are serialised by the
 // store's write gate, so the fields are only touched by one unit at a time.
-type unitStats struct{ posts, replays int }
+type unitStats struct {
+	posts, replays int
+	signalFailures []signalFailure // rolled-back activity signal evaluations (SEC-026)
+}
