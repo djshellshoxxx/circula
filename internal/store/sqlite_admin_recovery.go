@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -94,7 +95,16 @@ func (t *txImpl) CloseAdminRecovery(id string, from, to domain.AdminRecoveryStat
 	return n > 0, nil
 }
 
-func (t *txImpl) ExpiredOpenAdminRecovery(now time.Time, limit int) ([]*domain.AdminRecoveryRequest, error) {
+func (t *txImpl) GetOpenAdminRecovery(netID, memberID string) (*domain.AdminRecoveryRequest, error) {
+	a, err := scanAdminRecovery(t.row(`SELECT `+arCols+` FROM admin_recovery_requests
+		WHERE network_id = ? AND requester_member_id = ? AND status IN ('requested','approved')`, netID, memberID))
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	return a, mapErr(err)
+}
+
+func (t *txImpl) ExpiredOpenAdminRecovery(now time.Time, afterID string, limit int) ([]*domain.AdminRecoveryRequest, error) {
 	return t.listAdminRecovery(`SELECT `+arCols+` FROM admin_recovery_requests
-		WHERE status IN ('requested','approved') AND expires_at <= ? ORDER BY id LIMIT ?`, ms(now), limitOf(limit))
+		WHERE status IN ('requested','approved') AND expires_at <= ? AND id > ? ORDER BY id LIMIT ?`, ms(now), afterID, limitOf(limit))
 }

@@ -47,6 +47,7 @@ const (
 	ActAdminRecoveryRefused    = "admin_recovery.refused"
 	ActAdminRecoveryExpired    = "admin_recovery.expired"
 	ActAdminRecoverySuperseded = "admin_recovery.superseded"
+	ActAdminRecoveryListed     = "admin_recovery.listed" // an operator read requests (SEC-013 a, b)
 )
 
 // AdminRecoveryRequest is one member's request to be appointed administrator

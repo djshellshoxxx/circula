@@ -3,6 +3,7 @@ package web
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -36,7 +37,16 @@ type adminRecoveryData struct {
 	CanRequest    bool
 	Rows          []adminRecoveryRow
 	Events        []adminRecoveryEventRow
+	// RowsNext and EventsNext continue the two lists (keyset: request id,
+	// audit sequence); empty when the list ended on this page.
+	RowsNext, EventsNext string
 }
+
+// Page sizes of the two lists; the pager links continue them.
+const (
+	recoveryRowsPage   = 50
+	recoveryEventsPage = 100
+)
 
 func (s *server) adminRecoveryPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	s.adminRecoveryRender(w, r, c, http.StatusOK, &page{})
@@ -44,12 +54,14 @@ func (s *server) adminRecoveryPage(w http.ResponseWriter, r *http.Request, c *rc
 
 func (s *server) adminRecoveryRender(w http.ResponseWriter, r *http.Request, c *rc, status int, p *page) {
 	ctx := r.Context()
-	views, err := s.svc.ListAdminRecoveryRequests(ctx, c.actor, c.netID(), service.Page{Limit: 50})
+	q := r.URL.Query()
+	views, err := s.svc.ListAdminRecoveryRequests(ctx, c.actor, c.netID(), service.Page{AfterID: q.Get("after"), Limit: recoveryRowsPage})
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	evs, err := s.svc.ListAdminRecoveryEvents(ctx, c.actor, c.netID(), service.AuditQuery{Limit: 200})
+	eventsAfter, _ := strconv.ParseInt(q.Get("events_after"), 10, 64)
+	evs, err := s.svc.ListAdminRecoveryEvents(ctx, c.actor, c.netID(), service.AuditQuery{AfterSeq: eventsAfter, Limit: recoveryEventsPage})
 	if err != nil {
 		s.fail(w, r, err)
 		return
@@ -84,6 +96,12 @@ func (s *server) adminRecoveryRender(w http.ResponseWriter, r *http.Request, c *
 			by = messages.Text("admin_recovery.by_system")
 		}
 		d.Events = append(d.Events, adminRecoveryEventRow{When: c.when(e.OccurredAt), Step: messages.Text("admin_recovery.event." + e.Action), By: by})
+	}
+	if len(views) == recoveryRowsPage {
+		d.RowsNext = views[len(views)-1].ID
+	}
+	if len(evs) == recoveryEventsPage {
+		d.EventsNext = strconv.FormatInt(evs[len(evs)-1].Seq, 10)
 	}
 	p.Title = messages.Text("admin_recovery.title")
 	p.D = d
