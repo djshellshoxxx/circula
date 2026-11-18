@@ -1,4 +1,4 @@
-# AUD4-F06, AUD4-F04, AUD4-F02: authentication fixes
+# AUD4-F06 and AUD4-F04: authentication fixes (AUD4-F02 pending owner decision)
 
 Found by this pass's independent ledger and authorization audit, against `main@ffa2758`. Fixed on `main@28ed716`.
 
@@ -34,24 +34,28 @@ Fix: count the attempt with `reserveAttempt(recgenKey(person))` before comparing
 
 Regression: `TestChangePasswordGuessesAreThrottled`.
 
-## AUD4-F02: administrator takes over a reviewer account (Medium, CWE-284/639)
+## AUD4-F02: administrator takes over a reviewer account (Medium, CWE-284/639): owner decision required
 
-The SA2-01 guard stopped network administrators resetting another administrator's password, but not a reviewer's.
-An administrator who was a party to a dispute could reset a reviewer who had no second factor, sign in with the
-temporary password, and decide their own dispute. That defeats reviewer independence (DOM-038) for disputes and
-GOV-016 challenges.
+The SA2-01 guard stops network administrators resetting another administrator's password, but not a reviewer's. An
+administrator who is a party to a dispute can reset a reviewer who has no second factor, sign in with the temporary
+password, and decide their own dispute (probe `TestAUD4_F02_AdminResetsReviewerThenDecidesOwnDispute`: outcome
+"upheld"; the administrator's balance went from -5000 to 0). That defeats reviewer independence (DOM-038) for
+disputes and GOV-016 challenges.
 
-Fix (`internal/service/recovery.go`): a reviewer's password, like an administrator's, can only be reset by the
-platform operator (`circula reset-password`). Ordinary members are unchanged.
+This finding is **not fixed in this PR**. The independent consolidation review noted two things:
 
-Regression: `TestAdminCannotResetReviewerPassword`.
+- Extending the operator-only recovery rule (SA2-01, SEC-008 addendum) to reviewers is a new recovery-policy choice.
+  DOM-038 and SEC-010 do not select it.
+- A current-role guard alone is incomplete. An administrator can revoke the reviewer role, reset the now-ordinary
+  account, then grant the role again. This was found by reading the source and has not been executed.
 
-**Owner note:** this widens the SA2-01 operator-only rule to reviewers. It is the conservative, reversible choice.
-Requiring a second factor for reviewers is an alternative the owner may prefer.
+Candidate policies for the owner: operator-only resets for reviewers (a draft change is kept in a separate
+policy-pending PR); a required second factor for reviewers; or making a reviewer whose password an administrator
+reset ineligible for decisions in which that administrator is a party.
 
 ## Fail-before evidence
 
-With the `auth.go` and `recovery.go` changes stashed, all four new tests fail. With the fix applied, they pass.
+With the `auth.go` changes stashed, all three new tests fail. With the fix applied, they pass.
 
 ## Not fixed here (owner decisions)
 
