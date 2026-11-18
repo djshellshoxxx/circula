@@ -300,8 +300,9 @@ On every `serve` start, in this order (before the port opens):
 
 1. Configuration validation, including the transport rule for `public-base-url` (SEC-022).
 2. Acquire `<database>.lock`. A second `serve` or `migrate` or `restore` on the same file refuses to start.
-3. Read the schema version without migrating. In `explicit` mode, pending migrations stop the start. In `auto` mode, a
-   pre-migration backup is taken first and migration is refused if the backup fails.
+3. Read the schema version without migrating. In `explicit` mode, pending migrations on an existing database stop the
+   start. In `auto` mode, a pre-migration backup is taken first and migration is refused if the backup fails. In both
+   modes a database file that does not exist yet is created at the current schema.
 4. Open the database. Check WAL journal mode and foreign-key enforcement.
 5. Verify the ledger for every network. A network that fails is **frozen** (CMD-07, OPS-033): its writes are refused with
    `network-frozen` (API `423`, web page "Network read-only"), reads still work, and every other network serves. The

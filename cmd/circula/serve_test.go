@@ -4,9 +4,12 @@ import (
 	"context"
 	"io"
 	"log/slog"
+	"net"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 // TestServeRefusesPendingMigrationsInExplicitMode simulates a database whose
@@ -68,6 +71,7 @@ func TestStartupMigrationGate(t *testing.T) {
 		{"pending, auto", schemaState{Exists: true, Applied: k - 1, Known: k}, "auto", true, false},
 		{"empty file, explicit", schemaState{Exists: true, Applied: 0, Known: k}, "explicit", false, true},
 		{"empty file, auto", schemaState{Exists: true, Applied: 0, Known: k}, "auto", true, false},
+		{"newer schema, auto", schemaState{Exists: true, Applied: k + 1, Known: k}, "auto", false, false},
 	}
 	for _, c := range cases {
 		backup, err := startupMigrationGate(c.state, c.mode)
@@ -77,5 +81,66 @@ func TestStartupMigrationGate(t *testing.T) {
 		if c.fail && (err == nil || !strings.Contains(err.Error(), "pending migration")) {
 			t.Errorf("%s: refusal must name the pending migrations: %v", c.name, err)
 		}
+	}
+}
+
+// OPS-025 through runServe: in the default explicit mode, a database path
+// that does not exist yet is created at the current schema and served, with
+// no pre-migration backup. Guards the call site of startupMigrationGate, not
+// only the helper.
+func TestServeCreatesNewDatabaseInExplicitMode(t *testing.T) {
+	dir := t.TempDir()
+	db := filepath.Join(dir, "new.db")
+	cfg := testConfigFor(db)
+	cfg.MigrateMode = "explicit"
+	cfg.BackupInterval = 0
+	cfg.PublicBaseURL = "https://x.test"
+	probe, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg.Listen = probe.Addr().String()
+	_ = probe.Close()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	errc := make(chan error, 1)
+	go func() { errc <- runServe(ctx, cfg, discardLogger()) }()
+
+	client := &http.Client{Timeout: time.Second}
+	deadline := time.Now().Add(60 * time.Second)
+	for ready := false; !ready; {
+		if time.Now().After(deadline) {
+			cancel()
+			t.Fatal("serve never became ready on a new database in explicit mode")
+		}
+		select {
+		case err := <-errc:
+			t.Fatalf("explicit mode refused a new database: %v", err)
+		case <-time.After(50 * time.Millisecond):
+		}
+		if resp, err := client.Get("http://" + cfg.Listen + "/readyz"); err == nil {
+			ready = resp.StatusCode == http.StatusOK
+			_ = resp.Body.Close()
+		}
+	}
+	cancel()
+	select {
+	case err := <-errc:
+		if err != nil {
+			t.Fatalf("runServe after shutdown: %v", err)
+		}
+	case <-time.After(45 * time.Second):
+		t.Fatal("serve did not stop after cancel")
+	}
+	state, err := inspectSchema(context.Background(), db)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !state.Exists || state.Applied != binarySchemaVersion() || state.Pending() != 0 {
+		t.Fatalf("new database schema: exists=%v applied=%d, want current v%d", state.Exists, state.Applied, binarySchemaVersion())
+	}
+	if n := countBackups(t, cfg.BackupDir); n != 0 {
+		t.Errorf("a new database took %d pre-migration backup(s); there is nothing to protect", n)
 	}
 }

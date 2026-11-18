@@ -640,7 +640,7 @@ func webLimits(cfg *Config) web.Limits {
 // existing database with pending migrations is refused in explicit mode and
 // backed up first in auto mode.
 func startupMigrationGate(state schemaState, mode string) (backup bool, err error) {
-	if state.Pending() == 0 || !state.Exists {
+	if state.Pending() <= 0 || !state.Exists { // a newer schema is refused earlier by CheckNotNewer
 		return false, nil
 	}
 	if mode == "explicit" {
