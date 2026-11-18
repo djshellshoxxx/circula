@@ -430,7 +430,7 @@ func secureRemove(path string) {
 			_ = f.Close()
 		}
 	}
-	_ = os.Remove(path)
+	_ = os.Remove(path) // #nosec G703 -- removes the operator-controlled staging file or owned directory entry inspected above; Remove unlinks a final symlink itself.
 }
 
 // secureRemoveAll securely removes every file under dir and then dir itself.
@@ -446,5 +446,5 @@ func secureRemoveAll(dir string) {
 			}
 		}
 	}
-	_ = os.Remove(dir)
+	_ = os.Remove(dir) // #nosec G703 -- dir is private backup work or a descendant obtained from ReadDir; Remove only removes the emptied directory.
 }

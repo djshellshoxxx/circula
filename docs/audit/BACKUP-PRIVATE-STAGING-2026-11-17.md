@@ -135,6 +135,19 @@ source-local `#nosec G703` explanations:
   parent is made private automatically. The existing filesystem ownership and
   concurrent-writer limitations above still apply.
 
-Only the three reported sinks have an annotation. Scanner configuration and all
-other security checks remain enabled. The runtime cleanup, lease and path
-validation behavior is unchanged by this lint correction.
+The next lint run at `cac2e0e148abde6c7666c4064f792e3acdaf1eb3` exposed two
+additional G703 reports at the final `os.Remove` calls in `secureRemove` and
+`secureRemoveAll`. They have the same traced provenance: an operator-controlled
+staging file or an entry enumerated inside owned backup work. `os.Remove`
+unlinks a final symlink rather than following its target and removes a directory
+only when empty. Those two individual sinks also carry provenance comments.
+
+Only these five reported sinks have an annotation. Scanner configuration and
+all other security checks remain enabled. The runtime cleanup, lease and path
+validation behavior is unchanged by these lint corrections.
+
+Validation used the CI-pinned golangci-lint v2.15.0 with Go 1.26.11 against the
+complete repository and the existing configuration:
+`golangci-lint run --max-same-issues=0 --max-issues-per-linter=0 ./...`.
+The result was `0 issues.` (exit 0). The command-line flags remove output caps
+for this verification run; they do not disable checks or change configuration.
