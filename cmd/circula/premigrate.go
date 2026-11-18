@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"path/filepath"
 )
 
@@ -62,11 +61,11 @@ func verifyPreMigrationBackup(ctx context.Context, cfg *Config, path string, sta
 	}
 	check := path
 	if m.Encrypted {
-		work, err := os.MkdirTemp(filepath.Dir(path), tempDirPrefix)
+		work, cleanup, err := newBackupWork(filepath.Dir(path))
 		if err != nil {
 			return fmt.Errorf("private work directory: %w", err)
 		}
-		defer secureRemoveAll(work)
+		defer cleanup()
 		plain := filepath.Join(work, "verify.db")
 		sum, size, err := decryptFile(path, plain, cfg.BackupEncryptionKey)
 		if err != nil {

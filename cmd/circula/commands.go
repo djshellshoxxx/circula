@@ -272,7 +272,8 @@ func cmdRestore(ctx context.Context, args []string, stdout, stderr io.Writer) in
 			return exitFailure
 		}
 	} else if err := copyFileSync(src, partial); err != nil {
-		removeDBFiles(partial)
+		// copyFileSync removes only files it created. A destination that
+		// appeared concurrently and caused O_EXCL to fail is not ours.
 		fmt.Fprintf(stderr, "circula: restore: copy failed: %v\n", err)
 		return exitFailure
 	}
