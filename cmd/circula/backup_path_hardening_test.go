@@ -172,3 +172,59 @@ func TestBackupStagingRequiresPrivateOrStickyParent(t *testing.T) {
 		t.Fatalf("orphan not swept from a private directory: %v", err)
 	}
 }
+
+// AUD4-D02 (review G03): if the leased work directory is renamed and its old
+// name replaced with a symlink, cleanup must not follow the name into the
+// symlink target.
+func TestLeasedWorkCleanupRefusesSubstitutedDirectory(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("symlink creation needs privileges on Windows")
+	}
+	parent := t.TempDir()
+	unrelated := filepath.Join(t.TempDir(), "unrelated")
+	if err := os.Mkdir(unrelated, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	keep := filepath.Join(unrelated, "keep")
+	if err := os.WriteFile(keep, []byte("keep this data"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	work, cleanup, err := newBackupWork(parent)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Rename(work, work+".moved"); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(unrelated, work); err != nil {
+		t.Fatal(err)
+	}
+	cleanup()
+	if b, err := os.ReadFile(keep); err != nil || string(b) != "keep this data" {
+		t.Fatalf("cleanup followed the substituted name: %q %v", b, err)
+	}
+}
+
+// AUD4-D02 (review G03): the owner of the destination directory can rename
+// any entry in it, sticky or not, so it must be this user or root.
+func TestBackupStagingRefusesForeignOwnedParent(t *testing.T) {
+	if runtime.GOOS == "windows" || os.Geteuid() != 0 {
+		t.Skip("needs root on Unix to create a directory owned by another user")
+	}
+	parent := t.TempDir()
+	if err := os.Chown(parent, 65534, 65534); err != nil {
+		t.Skipf("chown unavailable: %v", err)
+	}
+	if err := os.Chmod(parent, os.ModeSticky|0o777); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := newBackupWork(parent); err == nil {
+		t.Fatal("private work created in a sticky directory owned by another user")
+	}
+	if err := os.Chmod(parent, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := newBackupWork(parent); err == nil {
+		t.Fatal("private work created in a directory owned by another user")
+	}
+}

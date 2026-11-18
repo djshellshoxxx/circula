@@ -17,14 +17,21 @@ func privateParent(fi os.FileInfo) bool {
 	return ok && fi.IsDir() && int(st.Uid) == os.Geteuid() && fi.Mode().Perm()&0o022 == 0
 }
 
-// checkStagingParent refuses a backup destination directory in which other
-// users could rename this process's private work directory and substitute
-// their own (AUD4-D02). A sticky shared directory such as /tmp is accepted:
-// there, only the owner of an entry may rename or remove it.
+// checkStagingParent refuses a backup destination directory in which another
+// user could rename this process's private work directory and substitute
+// their own (AUD4-D02). The directory's owner can always rename its entries,
+// so it must be this user or root. Other users may write to it only if it is
+// sticky (such as /tmp): there, only an entry's owner, or the directory's
+// owner, may rename or remove it. Only the immediate directory is checked;
+// its ancestors must be trusted by the operator.
 func checkStagingParent(dir string) error {
-	fi, err := os.Stat(dir) // #nosec G703 -- dir is the operator-chosen backup destination; only its mode is read.
+	fi, err := os.Stat(dir) // #nosec G703 -- dir is the operator-chosen backup destination; only its owner and mode are read.
 	if err != nil {
 		return err
+	}
+	st, ok := fi.Sys().(*syscall.Stat_t)
+	if !ok || (int(st.Uid) != os.Geteuid() && st.Uid != 0) {
+		return fmt.Errorf("backup destination directory %s is owned by another user; use a directory owned by this user", dir)
 	}
 	if fi.Mode().Perm()&0o022 != 0 && fi.Mode()&os.ModeSticky == 0 {
 		return fmt.Errorf("backup destination directory %s is writable by other users; use a private directory", dir)

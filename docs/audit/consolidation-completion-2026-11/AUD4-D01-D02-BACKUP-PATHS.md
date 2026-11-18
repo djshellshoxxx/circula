@@ -46,8 +46,20 @@ Fix (`cmd/circula/backupcrypt.go`, `snapshot.go`, `backup_work.go`, `fileident_{
   single-link file that was inspected.
 - `secureRemoveAll` unlinks a directory that has been replaced by a symlink and never descends into it.
 - `sweepStaleTemp` sweeps only a directory owned by the effective user with no group/other write bit.
-- `newBackupWork` refuses a destination that others can write unless it is sticky (such as `/tmp`). In a sticky
-  directory, other users cannot rename this process's private work directory.
+- `newBackupWork` refuses a destination owned by anyone other than the effective user or root. It also refuses
+  one that others can write, unless it is sticky (such as `/tmp`). Only the directory's owner, or the owner of an
+  entry, can rename that entry.
+- Cleanup records the work directory's identity at creation. If the name now refers to something else, cleanup
+  does not follow it and only releases the lease.
+
+Review follow-up (independent review on PR #81, findings G03/G04):
+
+- G03: a sticky directory owned by another unprivileged user was still accepted. That user could rename the work
+  directory and replace its name with a symlink, and cleanup would then delete files outside the work area. Fixed
+  by the owner rule and the identity re-check. Regressions: `TestLeasedWorkCleanupRefusesSubstitutedDirectory` and
+  `TestBackupStagingRefusesForeignOwnedParent`, which runs only as root on Unix. Both fail before the fix.
+- G04: the runbook and the security register now say which checks are Unix-only and state the Windows ACL
+  boundary.
 
 Regressions: `TestZeroFileRefusesReplacedName`, `TestSecureRemoveLeavesHardLinkedDataIntact`,
 `TestSecureRemoveAllDoesNotFollowDirectorySymlink`, `TestBackupStagingRequiresPrivateOrStickyParent`.
@@ -64,8 +76,11 @@ With the production changes removed and the new tests kept:
 
 ## Residual limits
 
-- Windows: there is no link-count or owner/mode check. NTFS ACLs, the identity re-check on the open handle and
-  Windows' symlink-creation privilege are relied on instead.
+- Windows: there are no `O_NOFOLLOW`, link-count or owner/mode checks. Protection relies on NTFS ACLs on the
+  destination directory, the identity re-checks, and the privilege Windows requires to create symlinks.
+- Only the immediate destination directory is checked. A writable ancestor directory lets its owner replace the
+  whole destination. Between the identity re-check and `ReadDir`, a race remains that only the directory's owner
+  (this user or root) can win.
 - An attacker running as the same user as the operator is out of scope: they can read the database directly (TA-5).
 - Overwriting before unlinking does not guarantee physical erasure on SSD or copy-on-write file systems
   (see `docs/ops/backup-restore.md`).
