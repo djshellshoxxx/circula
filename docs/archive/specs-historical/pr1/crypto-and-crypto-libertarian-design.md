@@ -7,11 +7,11 @@
 
 # Crypto and crypto-libertarian design options
 
-**Status:** Conceptual explanation and future options; no cryptographic architecture selected  
-**Owner:** Circula project owner  
-**Last updated:** 2026-10-20  
-**Scope:** Distinguish mutual credit, cryptocurrency, cryptography, and the project’s decentralization goals  
-**Dependencies:** [Domain model](../specs/03-domain-model.md), [architecture](../specs/05-architecture.md), [security baseline](../specs/09-security-privacy.md)  
+**Status:** Conceptual explanation and future options; no cryptographic architecture selected\
+**Owner:** Circula project owner\
+**Last updated:** 2026-10-20\
+**Scope:** Distinguish mutual credit, cryptocurrency, cryptography, and the project’s decentralization goals\
+**Dependencies:** [Domain model](../specs/03-domain-model.md), [architecture](../specs/05-architecture.md), [security baseline](../specs/09-security-privacy.md)\
 **Open questions:** Which trust problem, if any, justifies each cryptographic feature? What key recovery model is usable for ordinary members?
 
 ## What “crypto” means here

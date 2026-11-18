@@ -7,11 +7,11 @@
 
 # Circula business model options
 
-**Status:** Exploration; no model selected  
-**Owner:** Circula project owner  
-**Last updated:** 2026-10-20  
-**Scope:** Commercial paths that could capture value from Circula software, services, and adoption  
-**Dependencies:** Product vision, deployment and operations, governance, and future brainstorming specifications  
+**Status:** Exploration; no model selected\
+**Owner:** Circula project owner\
+**Last updated:** 2026-10-20\
+**Scope:** Commercial paths that could capture value from Circula software, services, and adoption\
+**Dependencies:** Product vision, deployment and operations, governance, and future brainstorming specifications\
 **Open questions:** License, company structure, target buyer, hosting model, pricing, and jurisdiction-specific review.
 
 ## Business thesis
