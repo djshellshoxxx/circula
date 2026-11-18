@@ -1,0 +1,16 @@
+=== RUN   TestDisputeTimelinesFixedAtOpen
+--- PASS: TestDisputeTimelinesFixedAtOpen (0.67s)
+=== RUN   TestDisputeTimelineChangesApplyToLaterDisputes
+--- PASS: TestDisputeTimelineChangesApplyToLaterDisputes (0.87s)
+=== RUN   TestScheduledDisputeTimelineChangeWaitsForItsDate
+--- PASS: TestScheduledDisputeTimelineChangeWaitsForItsDate (0.68s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	3.235s
+=== RUN   TestPolicyInForceAtReadsLegacyVersionsWithDefaults
+--- PASS: TestPolicyInForceAtReadsLegacyVersionsWithDefaults (0.35s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	1.369s
+=== RUN   TestDisputePageReReviewDeadlineFixedAtOpen
+--- PASS: TestDisputePageReReviewDeadlineFixedAtOpen (0.72s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/web	1.737s

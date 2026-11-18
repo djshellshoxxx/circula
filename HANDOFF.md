@@ -1,6 +1,22 @@
 # Circula handoff
 
-## 2026-11-18: PR and branch consolidation (current)
+<!-- executed-consolidation:start -->
+## 2026-11-18 Pacific: consolidation checkpoint; remaining CI pending (current)
+
+PRs #69, #70, #71, #72, #73, #74, #75, #76, #77, #79, #81 are merged. The [execution record](docs/audit/consolidation-2026-11-17/README.md) contains exact heads, merge commits, CI results, initial/final branch inventories, all historical PR dispositions and the security classification.
+
+The PR #69 consolidation, PR #70 audit preservation and eight historical PR closures are complete; reviewed concurrent PRs #78, #80, #82, #83, #84, #85, #86, #87, #88 remain open under their recorded ownership and dispositions. Their unfinished work is not counted as integrated. The remaining open PRs are #67, #78, #80, #82, #83, #84, #85, #86, #87, #88.
+
+- Recovered startup migration and administrator MFA/dispute reversal entry-point regressions, historical specifications and audit evidence. PR #70 is documentation preservation, not executable remediation.
+- Fixed SQLite schema trust on all connections, private backup staging/exclusive copies with lease-aware orphan cleanup, and administrator notices beyond 500 members. Corrected the release-threshold validator, factual security documentation and the probabilistic privacy-erasure test. Corrected the browser freshness assertion across clock boundaries.
+- Closed #1, #2, #13, #16, #20, #29, #35 and #42 after verifying preservation. The earlier ten superseded PRs stay closed; #67 stays draft and future-only. All branches remain preserved.
+- The combined candidate has one successful full race run for all 14 test-bearing packages. It includes unmerged #82, #84, #87; their current-head provider gates remain incomplete at the recorded checkpoint (4 passed, 2 running and 15 queued required jobs). Their local pass is not a main-branch or provider-gate pass. Merged PRs have the required current-head CI and native qualification recorded individually.
+- A3-F02 / DEC-014 remains unresolved. Retention, token-hash design, WAL sanitization, limit-notice and external release gates are not silently approved. The 15 future modules remain isolated. No deployment, tag, release, branch deletion or remote history rewrite occurred.
+
+The sections below are dated historical records; their old pending-merge statements are superseded by the execution record above.
+<!-- executed-consolidation:end -->
+
+## 2026-11-18: PR and branch consolidation (historical preparation)
 
 Branch `claude/circula-pr-consolidation-q6q18n` from `main@b53f757`. It gives every PR and remote branch a
 verified disposition. Records:

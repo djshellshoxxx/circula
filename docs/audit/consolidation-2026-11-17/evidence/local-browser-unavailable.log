@@ -1,0 +1,34 @@
+Error: browserType.launch: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --disable-gpu --user-data-dir=/tmp/playwright_chromiumdev_profile-VmrJJC --remote-debugging-pipe --no-startup-window
+<launched> pid=29
+[pid=29][err] /usr/bin/chromium: 9: [: 5225713664: unexpected operator
+[pid=29][err] [29:29:1117/225234.775600:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)
+[pid=29][err] [1117/225234.775752:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+Call log:
+  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --no-sandbox --disable-gpu --user-data-dir=/tmp/playwright_chromiumdev_profile-VmrJJC --remote-debugging-pipe --no-startup-window
+  - <launched> pid=29
+  - [pid=29][err] /usr/bin/chromium: 9: [: 5225713664: unexpected operator
+  - [pid=29][err] [29:29:1117/225234.775600:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)
+  - [pid=29][err] [1117/225234.775752:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)
+  - [pid=29] <gracefully close start>
+  - [pid=29] <kill>
+  - [pid=29] <will force kill>
+  - [pid=29] <process did exit: exitCode=null, signal=SIGABRT>
+  - [pid=29] starting temporary directories cleanup
+  - [pid=29] finished temporary directories cleanup
+  - [pid=29] <gracefully close end>
+
+
+   at ../global-setup.js:169
+
+  167 | async function seed(base) {
+  168 |   const { chromiumExecutable } = require('./launch');
+> 169 |   const browser = await chromium.launch({ executablePath: chromiumExecutable(), args: ['--no-sandbox', '--disable-gpu'] });
+      |                                  ^
+  170 |   const ctx = (opts = {}) => browser.newContext({ baseURL: base, ...opts });
+  171 |   const state = { users: { admin: 'admin@example.org', alice: 'alice@example.org', bob: 'bob@example.org', carol: 'carol@example.org' } };
+  172 |   try {
+    at seed (/workspace/scratch/9ceb45b04668/audit-root-browser/e2e/global-setup.js:169:34)
+    at globalSetup (/workspace/scratch/9ceb45b04668/audit-root-browser/e2e/global-setup.js:151:25)

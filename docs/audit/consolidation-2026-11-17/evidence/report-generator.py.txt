@@ -1,0 +1,508 @@
+from pathlib import Path
+import collections
+import datetime
+import hashlib
+import json
+import re
+import shutil
+import subprocess
+from zoneinfo import ZoneInfo
+
+ROOT = Path('/workspace/scratch/9ceb45b04668')
+REPO = ROOT / 'circula-integration'
+DOC_REPO = ROOT / 'final-evidence-delivery'
+OUT = DOC_REPO / 'docs/audit/consolidation-2026-11-17'
+STATE = json.loads((ROOT / 'consolidation-state.json').read_text())
+API = json.loads((ROOT / 'final-api-snapshot.json').read_text())
+outcome = STATE.get('execution_outcome', 'completed')
+assert outcome in {'completed', 'blocked_required_ci'}, 'Unknown execution outcome'
+ci_blocked = outcome == 'blocked_required_ci'
+
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=REPO, text=True).rstrip('\n')
+
+
+def doc_git(*args):
+    return subprocess.check_output(['git', *args], cwd=DOC_REPO, text=True).rstrip('\n')
+
+
+def write_json(path, value):
+    path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + '\n')
+
+
+def pr_span(numbers):
+    ordered = sorted(numbers)
+    if len(ordered) > 1 and ordered == list(range(ordered[0], ordered[-1] + 1)):
+        return f'#{ordered[0]}–#{ordered[-1]}'
+    return ', '.join(f'#{number}' for number in ordered)
+
+
+def api_pr_head(pr):
+    head = pr.get('head')
+    return head.get('sha') if isinstance(head, dict) else head
+
+
+def api_pr_branch(pr):
+    head = pr.get('head')
+    return pr.get('branch') or (head.get('ref') if isinstance(head, dict) else None)
+
+
+def api_pr_base(pr):
+    base = pr.get('base')
+    return base.get('ref') if isinstance(base, dict) else base
+
+
+integration_prs = sorted(STATE['prs'], key=lambda p: p['number'])
+integration_numbers = [p['number'] for p in integration_prs]
+assert integration_numbers and len(integration_numbers) == len(set(integration_numbers)), 'Invalid integration PR inventory'
+assert {69, 70}.issubset(integration_numbers), 'Required consolidation merge receipts are missing'
+assert 67 not in integration_numbers, 'The isolated future PR is not a core integration'
+integration_number_set = set(integration_numbers)
+reviewed_pr_numbers = STATE['reviewed_pr_numbers']
+assert reviewed_pr_numbers and len(reviewed_pr_numbers) == len(set(reviewed_pr_numbers)), 'Invalid reviewed PR inventory'
+reviewed_pr_number_set = set(reviewed_pr_numbers)
+assert integration_number_set.issubset(reviewed_pr_number_set), 'An integration PR was not explicitly reviewed'
+concurrent_work = STATE.get('concurrent_work', [])
+assert len(concurrent_work) == len({p['number'] for p in concurrent_work}), 'Duplicate concurrent PR record'
+assert {p['number'] for p in concurrent_work}.issubset(reviewed_pr_number_set), 'Concurrent work is outside the reviewed inventory'
+# A concurrent slice may later be independently qualified and moved into prs.
+# Its integration receipt then governs state and branch ownership at this endpoint.
+concurrent_work = sorted((p for p in concurrent_work if p['number'] not in integration_number_set), key=lambda p: p['number'])
+assert all(p.get('expected_state') in {'open', 'closed'} and p.get('disposition') for p in concurrent_work), 'Concurrent work lacks an explicit state or disposition'
+expected_open_pr_numbers = {67} | {p['number'] for p in concurrent_work if p['expected_state'] == 'open'}
+concurrent_open_numbers = sorted(expected_open_pr_numbers - {67})
+open_pr_text = pr_span(expected_open_pr_numbers)
+open_pr_summary = ('The remaining open PR is ' if len(expected_open_pr_numbers) == 1 else 'The remaining open PRs are ') + open_pr_text + '.'
+concurrent_summary = (
+    f'The PR #69 consolidation, PR #70 audit preservation and eight historical PR closures are complete; reviewed concurrent PRs {pr_span(concurrent_open_numbers)} remain open under their recorded ownership and dispositions. Their unfinished work is not counted as integrated.'
+    if concurrent_open_numbers else
+    'The PR #69 consolidation, PR #70 audit preservation and eight historical PR closures are complete; no additional reviewed concurrent PR remains open. PR #67 remains isolated future work.'
+)
+last_functional_pr = max(integration_numbers)
+integration_range = pr_span(integration_numbers)
+followups = [p for p in integration_prs if p['number'] > 70]
+followup_count = len(followups)
+browser_assertion_followup = any(p['number'] == 77 for p in followups)
+assert all(p.get('required_successes') in {7, 9} for p in integration_prs), 'Unknown CI qualification lane'
+native_pr_numbers = [p['number'] for p in integration_prs if p['required_successes'] == 9]
+linux_pr_numbers = [p['number'] for p in integration_prs if p['required_successes'] == 7]
+qualification_summary = ' '.join(filter(None, (
+    f'PRs {pr_span(native_pr_numbers)} have native qualification.' if native_pr_numbers else '',
+    f'PRs {pr_span(linux_pr_numbers)} passed the seven-job Linux gate.' if linux_pr_numbers else '',
+)))
+
+# A declared run number or aggregate success flag cannot substitute for the
+# exact named job outcomes retained from the provider at the reviewed head.
+linux_gate_names = {
+    'fuzz smoke (RB-017)', 'test (ubuntu-24.04)',
+    'vet, gofmt, golangci-lint, govulncheck',
+    'reproducible build (two builds, same sha256)',
+    'e2e (Playwright, axe, keyboard)', 'build release targets',
+    'API contract and load smoke',
+}
+native_gate_names = linux_gate_names | {'test (windows-2022)', 'test (macos-15-intel)'}
+retained_records = {p['retained_path']: p for p in json.loads((OUT / 'evidence-manifest.json').read_text())['files']}
+ci_proofs = []
+for ci_path in sorted((OUT / 'evidence/final-ci').glob('*-verified.json')):
+    rel = ci_path.relative_to(OUT).as_posix()
+    assert rel in retained_records, 'Provider proof is absent from the retained manifest: ' + rel
+    assert hashlib.sha256(ci_path.read_bytes()).hexdigest() == retained_records[rel]['sha256'], 'Provider proof hash changed: ' + rel
+    ci_proofs.append((rel, json.loads(ci_path.read_text())))
+for pr in integration_prs:
+    required_names = native_gate_names if pr['required_successes'] == 9 else linux_gate_names
+    valid_proofs = []
+    for rel, proof in ci_proofs:
+        run = proof.get('run', {})
+        if proof.get('pr') != pr['number'] or run.get('id') not in pr['runs']:
+            continue
+        if not (proof.get('expected_head') == proof.get('current_head') == run.get('head_sha') == pr['head']):
+            continue
+        if proof.get('base') != 'main' or run.get('status') != 'completed' or run.get('conclusion') != 'success':
+            continue
+        jobs = proof.get('jobs', [])
+        names = [job.get('name') for job in jobs]
+        if len(names) != len(set(names)):
+            continue
+        by_name = {job['name']: job for job in jobs}
+        if all(name in by_name and by_name[name].get('status') == 'completed' and by_name[name].get('conclusion') == 'success' for name in required_names):
+            valid_proofs.append(rel)
+    assert valid_proofs, 'Exact-head provider job proof is missing or incomplete: #' + str(pr['number'])
+    pr['ci_evidence'] = valid_proofs
+
+assert STATE['aggregate_result'] == 'passed'
+assert git('rev-parse', STATE['aggregate_head'] + '^{tree}') == STATE['aggregate_tree'], 'Qualification commit label does not resolve to the recorded tree'
+assert all(p.get('merge') for p in integration_prs), 'A focused PR is not merged'
+assert all(p.get('runs') for p in integration_prs), 'Successful CI run references are missing'
+main = git('rev-parse', 'origin/main')
+tree = git('rev-parse', main + '^{tree}')
+if not ci_blocked:
+    assert tree == STATE['aggregate_tree'], 'Main differs from the complete qualified tree'
+else:
+    # An external CI blockage is an incomplete execution checkpoint. Keep the
+    # integrated main and locally qualified, still-unmerged candidate separate.
+    # This mode cannot promote a queued run or a candidate finding to merged.
+    blocker = STATE['ci_blocker']
+    queue_rel = blocker['evidence']
+    assert queue_rel in retained_records, 'Queue proof is not retained'
+    queue_path = OUT / queue_rel
+    assert hashlib.sha256(queue_path.read_bytes()).hexdigest() == retained_records[queue_rel]['sha256'], 'Queue proof hash changed'
+    queue = json.loads(queue_path.read_text())
+    queue_time = datetime.datetime.fromisoformat(queue['observed_at'].replace('Z', '+00:00'))
+    assert datetime.timedelta(0) <= datetime.datetime.now(datetime.timezone.utc) - queue_time <= datetime.timedelta(minutes=15), 'Refresh the queue proof before publishing'
+    queued_prs = set(blocker['pr_numbers'])
+    assert queued_prs and queued_prs.isdisjoint(integration_number_set), 'Blocked candidates cannot also be merged receipts'
+    pending = {p['number']: p for p in concurrent_work}
+    by_pr = {item['pr']: item for item in queue['items']}
+    assert queued_prs.issubset(pending) and queued_prs.issubset(by_pr), 'Missing explicitly reviewed blocked candidate'
+    pending_job_totals = {'passed': 0, 'running': 0, 'queued': 0}
+    for number in queued_prs:
+        item, candidate = by_pr[number], pending[number]
+        assert candidate['expected_state'] == 'open' and candidate['base'] == 'main'
+        assert item['expected_head'] == item['run_head'] == candidate['head'], 'Queued run does not match the reviewed head'
+        assert item['run_id'] in candidate['runs'] and item['run_status'] in {'queued', 'in_progress'} and item['run_conclusion'] is None
+        assert len([j['name'] for j in item['jobs']]) == len({j['name'] for j in item['jobs']}), 'Duplicate named jobs in pending CI evidence'
+        jobs = {j['name']: j for j in item['jobs']}
+        assert linux_gate_names.issubset(jobs), 'A required queued job is missing'
+        # Job-level status is authoritative here: the provider can leave its
+        # run summary at "queued" while individual jobs are already running.
+        # Any failed/cancelled/skipped required job needs a new disposition;
+        # this incomplete-gate checkpoint must not hide an actionable failure.
+        incomplete = False
+        for name in linux_gate_names:
+            job = jobs[name]
+            if job['status'] == 'completed':
+                assert job['conclusion'] == 'success', 'A required job failed or was skipped; handle it before publishing a pending-CI checkpoint'
+                pending_job_totals['passed'] += 1
+            else:
+                assert job['status'] in {'queued', 'in_progress'} and job['conclusion'] is None, 'Unknown required-job outcome'
+                incomplete = True
+                pending_job_totals['queued' if job['status'] == 'queued' else 'running'] += 1
+        assert incomplete, 'A candidate now has complete gates; review it for its authorized merge'
+    qualification_rel = STATE['aggregate_metadata']
+    log_rel = STATE['aggregate_log']
+    for rel in (qualification_rel, log_rel):
+        assert rel in retained_records, 'Candidate qualification evidence is not retained'
+        assert hashlib.sha256((OUT / rel).read_bytes()).hexdigest() == retained_records[rel]['sha256'], 'Candidate qualification evidence changed'
+    qualification = json.loads((OUT / qualification_rel).read_text())
+    producer_rel = qualification['producer_receipt_binding']['retained_path']
+    assert producer_rel in retained_records, 'Original aggregate producer receipt is not retained'
+    producer_bytes = (OUT / producer_rel).read_bytes()
+    producer_record = retained_records[producer_rel]
+    assert hashlib.sha256(producer_bytes).hexdigest() == producer_record['sha256'], 'Original aggregate receipt changed'
+    assert qualification['producer_receipt_binding']['source_sha256'] == producer_record.get('source_sha256', producer_record['sha256'])
+    producer_receipt = json.loads(producer_bytes)
+    assert all(key in qualification and qualification[key] == value for key, value in producer_receipt.items()), 'Paired receipt altered producer fields'
+    assert qualification['status'] == 'passed' and qualification['exit_code'] == 0
+    assert qualification['head'] == qualification['post_head'] == STATE['aggregate_head']
+    assert qualification['tree'] == qualification['post_tree'] == STATE['aggregate_tree'] and qualification['post_status'] == ''
+    assert qualification['command'] == ['go', 'test', '-race', '-count=1', '-p', '1', '-timeout=25m', './...']
+    log_record = retained_records[log_rel]
+    source_log_hash = log_record.get('source_sha256', log_record['sha256'])
+    assert qualification['log_binding']['source_sha256'] == source_log_hash, 'Aggregate receipt and log are not paired'
+    assert qualification['log_binding']['source_filename'] in log_record['source_paths'], 'Aggregate log provenance differs from the paired receipt'
+    log = (OUT / log_rel).read_text()
+    successful_packages = re.findall(r'^ok\s+(\S+)\s', log, re.M)
+    helpers = re.findall(r'^\?\s+(\S+)\s+\[no test files\]', log, re.M)
+    module = 'github.com/djshellshoxxx/circula/'
+    expected_test_packages = {module + p for p in ('cmd/circula', 'internal/api', 'internal/contract', 'internal/domain', 'internal/histbal', 'internal/httpx', 'internal/logx', 'internal/repository', 'internal/service', 'internal/store', 'internal/web', 'internal/web/messages', 'scripts/sbom', 'scripts/traceability')}
+    expected_helper_packages = {module + p for p in ('internal/storetest', 'internal/testutil')}
+    assert len(successful_packages) == len(set(successful_packages)) == 14 and set(successful_packages) == expected_test_packages
+    assert len(helpers) == len(set(helpers)) == 2 and set(helpers) == expected_helper_packages
+    assert not re.search(r'^FAIL|WARNING: DATA RACE', log, re.M), 'The candidate aggregate contains a failure'
+    assert subprocess.run(['git', 'merge-base', '--is-ancestor', main, STATE['aggregate_head']], cwd=REPO).returncode == 0, 'Qualified candidate does not preserve current main'
+    qualified_constituents = []
+    for number in sorted(queued_prs):
+        candidate = pending[number]
+        published = candidate['head']
+        included = subprocess.run(['git', 'merge-base', '--is-ancestor', published, STATE['aggregate_head']], cwd=REPO).returncode == 0
+        constituent = {'pr': number, 'published_head': published}
+        if included:
+            constituent['basis'] = 'published head is an ancestor of the qualified candidate'
+        else:
+            local = candidate.get('local_head')
+            assert local and candidate.get('publication', {}).get('tree_matches_reviewed_local_commit'), 'Queued head is not included in the qualified candidate'
+            assert git('rev-parse', published + '^{tree}') == git('rev-parse', local + '^{tree}') == candidate['tree'], 'Published/local constituent trees differ'
+            assert git('show', '-s', '--format=%P', published) == git('show', '-s', '--format=%P', local), 'Published/local constituent parents differ'
+            assert subprocess.run(['git', 'merge-base', '--is-ancestor', local, STATE['aggregate_head']], cwd=REPO).returncode == 0, 'Equivalent authoring commit is not included in the qualified candidate'
+            constituent.update({'basis': 'identical reviewed local/published trees and ordered parents; local commit is an ancestor of the qualified candidate', 'local_head': local, 'shared_tree': candidate['tree']})
+        qualified_constituents.append(constituent)
+    STATE['qualified_candidate_constituents'] = qualified_constituents
+    STATE['ci_blocker']['observed_at'] = queue['observed_at']
+    STATE['ci_blocker']['required_job_totals'] = pending_job_totals
+assert API['main_sha'] == main, 'API and fetched main disagree'
+assert API['default_branch'] == 'main'
+assert doc_git('rev-parse', 'HEAD') == main, 'Evidence worktree must start at the exact functional main endpoint'
+allowed_existing_paths = {
+    'HANDOFF.md', 'docs/TODO.md', 'docs/security/security-review.md',
+    'docs/plans/BRANCH-CONSOLIDATION-2026-11-17.md',
+    'docs/plans/PR-CONSOLIDATION-2026-11-17.md', '.github/workflows/ci.yml',
+}
+evidence_prefix = 'docs/audit/consolidation-2026-11-17/'
+publication_paths = doc_git('diff', '--name-only', 'HEAD').splitlines() + doc_git('ls-files', '--others', '--exclude-standard').splitlines()
+assert all(path in allowed_existing_paths or path.startswith(evidence_prefix) for path in publication_paths), 'Evidence publication includes an unreviewed path'
+workflow_diff = doc_git('diff', '--unified=0', 'HEAD', '--', '.github/workflows/ci.yml')
+for line in workflow_diff.splitlines():
+    if line.startswith(('+', '-')) and not line.startswith(('+++', '---')):
+        assert line[1:].lstrip().startswith('#'), 'Evidence PR changes executable CI configuration'
+api_prs = {p['number']: p for p in API['pull_requests']}
+assert len(api_prs) == len(API['pull_requests']), 'Duplicate API PR record'
+assert set(api_prs) == reviewed_pr_number_set, 'Unexpected PR inventory; refresh explicit review records and capture the endpoint before creating the evidence-only PR'
+assert {p['number'] for p in API['pull_requests'] if p['state'] == 'open'} == expected_open_pr_numbers, 'Open PR state differs from the explicitly reviewed concurrent work'
+for p in integration_prs:
+    observed = api_prs[p['number']]
+    assert observed['state'] == 'closed' and observed.get('merged_at'), 'Integration PR is not merged in the API: #' + str(p['number'])
+    assert observed.get('merge_commit_sha') == p['merge'], 'Integration merge receipt changed: #' + str(p['number'])
+    assert api_pr_head(observed) == p['head'] and api_pr_branch(observed) == p['branch'], 'Reviewed integration source changed: #' + str(p['number'])
+    assert api_pr_base(observed) == 'main', 'Core integration PR targets another branch: #' + str(p['number'])
+    assert subprocess.run(['git', 'merge-base', '--is-ancestor', p['merge'], main], cwd=REPO).returncode == 0, 'Integration merge is not retained in main: #' + str(p['number'])
+for p in concurrent_work:
+    observed = api_prs[p['number']]
+    assert observed['state'] == p['expected_state'], 'Concurrent PR state changed: #' + str(p['number'])
+    assert api_pr_head(observed) == p['head'] and api_pr_branch(observed) == p['branch'], 'Concurrent source changed: #' + str(p['number'])
+    assert p.get('base') and api_pr_base(observed) == p['base'], 'Concurrent PR base changed or was not explicitly reviewed: #' + str(p['number'])
+completed_at = datetime.datetime.now(datetime.timezone.utc)
+stamp = completed_at.isoformat()
+pacific_date = completed_at.astimezone(ZoneInfo('America/Los_Angeles')).date().isoformat()
+utc_date = completed_at.date().isoformat()
+initial = json.loads((OUT / 'branch-inventory-initial.json').read_text())
+original = {b['branch']: b for b in initial['branches']}
+concurrent_branches = {p['branch']: p for p in concurrent_work}
+assert len(concurrent_branches) == len(concurrent_work), 'Concurrent branches have ambiguous ownership'
+ref_overrides = STATE.get('branch_ref_overrides', [])
+assert len(ref_overrides) == len({p['branch'] for p in ref_overrides}), 'Duplicate branch-ref advance record'
+ref_overrides = {p['branch']: p for p in ref_overrides}
+for override in ref_overrides.values():
+    evidence = override.get('evidence', '')
+    evidence_path = (OUT / evidence).resolve()
+    assert evidence in retained_records and OUT.resolve() in evidence_path.parents and evidence_path.is_file(), 'Branch-advance evidence is not retained in the manifest'
+    assert hashlib.sha256(evidence_path.read_bytes()).hexdigest() == retained_records[evidence]['sha256'], 'Branch-advance evidence hash changed'
+branch_records = collections.defaultdict(list)
+for p in integration_prs + concurrent_work:
+    branch_records[p['branch']].append(p)
+branch_pins = {}
+for name, records in branch_records.items():
+    if len(records) == 1:
+        branch_pins[name] = records[0]
+        continue
+    override = ref_overrides.get(name)
+    assert override and override.get('reason') and override.get('evidence'), 'Reused PR branch lacks a reviewed forward-advance record: ' + name
+    selected = [p for p in records if p['number'] == override['pr'] and p['head'] == override['head']]
+    assert len(selected) == 1, 'Live reused branch pin does not identify one reviewed PR: ' + name
+    branch_pins[name] = selected[0]
+    for p in records:
+        assert subprocess.run(['git', 'merge-base', '--is-ancestor', p['head'], selected[0]['head']], cwd=REPO).returncode == 0, 'Reused branch does not preserve an earlier reviewed head: ' + name
+historical_ref_advances = []
+branches = []
+ref_snapshot = git('for-each-ref', '--format=%(refname:short)%09%(objectname)%09%(symref)', 'refs/remotes/origin').splitlines()
+for line in ref_snapshot:
+    ref, sha, symbolic = line.split('\t')
+    if symbolic:
+        continue
+    name = ref.removeprefix('origin/')
+    if name == 'main':
+        assert sha == main, 'Main advanced while capturing the immutable ref snapshot'
+    old = original.get(name)
+    if old and name != 'main':
+        if old['head_sha'] != sha:
+            override = ref_overrides.get(name)
+            assert override and override.get('previous_head') == old['head_sha'] and override.get('head') == sha and override.get('reason') and override.get('evidence'), 'Historical branch changed without a reviewed advance: ' + name
+            assert name in branch_pins and branch_pins[name]['number'] == override['pr'], 'Historical ref advance lacks a current reviewed PR: ' + name
+            assert subprocess.run(['git', 'merge-base', '--is-ancestor', old['head_sha'], sha], cwd=REPO).returncode == 0, 'Historical ref advance rewrote the reviewed history: ' + name
+            historical_ref_advances.append(override)
+    elif not old:
+        assert name in branch_pins, 'Unreviewed new branch: ' + name
+    if name in branch_pins:
+        assert branch_pins[name]['head'] == sha, 'Pinned branch head changed: ' + name
+    base = git('merge-base', main, sha)
+    bases = git('merge-base', '--all', main, sha).splitlines()
+    behind, ahead = map(int, git('rev-list', '--left-right', '--count', main + '...' + sha).split())
+    ancestor = subprocess.run(['git', 'merge-base', '--is-ancestor', sha, main], cwd=REPO).returncode == 0
+    commits = []
+    for row in git('log', '--format=%H%x09%cI%x09%s', main + '..' + sha).splitlines():
+        commit, date, subject = row.split('\t', 2)
+        commits.append({'sha': commit, 'committer_date': date, 'subject': subject})
+    cherry = []
+    for row in git('cherry', '-v', main, sha).splitlines():
+        sign, commit, subject = row.split(' ', 2)
+        cherry.append({'patch_equivalent': sign == '-', 'sha': commit, 'subject': subject})
+    # Pin the chosen comparison base explicitly when history has more than one
+    # best common ancestor; record every base instead of silently implying one.
+    changed = [row.split('\t') for row in git('diff', '--name-status', base, sha).splitlines()]
+    if ancestor:
+        disposition = 'contained'
+    elif name in concurrent_branches:
+        disposition = concurrent_branches[name]['disposition']
+    elif old:
+        disposition = old['disposition']
+    else:
+        disposition = 'integrated by verified PR merge; source head is not an ancestor'
+    if name in concurrent_branches:
+        record = concurrent_branches[name]
+        evidence = {'pr': record['number'], 'reviewed_head': record['head'], 'expected_state': record['expected_state'], 'disposition': record['disposition']}
+    elif old:
+        evidence = old.get('evidence')
+    else:
+        record = branch_pins[name]
+        evidence = {'pr': record['number'], 'reviewed_head': record['head'], 'merge_commit': record['merge']}
+    branches.append({
+        'branch': name, 'head_sha': sha, 'merge_base': base, 'merge_bases': bases,
+        'changed_files_basis': 'explicit selected merge_base to branch head; all best common ancestors retained in merge_bases',
+        'ahead': ahead, 'behind': behind,
+        'ancestor_of_main': ancestor, 'unique_commits': commits, 'cherry': cherry,
+        'patch_equivalent_count': sum(c['patch_equivalent'] for c in cherry),
+        'non_patch_equivalent_count': sum(not c['patch_equivalent'] for c in cherry),
+        'changed_files': changed,
+        'disposition': disposition,
+        'initial_disposition': old['disposition'] if old else None,
+        'evidence': evidence,
+        'future_scope_violations': old.get('future_scope_violations', []) if old else [],
+    })
+branch_report = {
+    'schema_version': 1, 'captured_at': stamp, 'scope': 'Verified integration checkpoint including explicitly reviewed concurrent work, before this evidence-only PR creates its own branch.',
+    'main_sha': main, 'main_tree': tree, 'history_shallow': git('rev-parse', '--is-shallow-repository'),
+    'branch_count': len(branches), 'ancestors': sum(b['ancestor_of_main'] for b in branches),
+    'non_ancestors': sum(not b['ancestor_of_main'] for b in branches),
+    'historical_branch_head_changes_except_main': historical_ref_advances, 'concurrent_work': concurrent_work,
+    'reviewed_pr_numbers': sorted(reviewed_pr_number_set), 'open_pr_numbers': sorted(expected_open_pr_numbers), 'branches': branches,
+}
+assert set(original).issubset({b['branch'] for b in branches}), 'A historical branch disappeared'
+assert set(branch_pins).issubset({b['branch'] for b in branches}), 'A reviewed integration or concurrent branch disappeared'
+assert branch_report['history_shallow'] == 'false'
+api_branches = {b['name']: b['commit']['sha'] for b in API['branches']}
+assert len(api_branches) == len(API['branches']), 'Duplicate API branch record'
+assert api_branches == {b['branch']: b['head_sha'] for b in branches}, 'API and captured immutable branch inventory disagree'
+write_json(OUT / 'branch-inventory-final.json', branch_report)
+write_json(OUT / 'pr-state-final.json', API)
+STATE['functional_endpoint'] = {'head': main, 'tree': tree, 'captured_at': stamp, 'execution_outcome': outcome, 'reviewed_pr_numbers': sorted(reviewed_pr_number_set), 'open_pr_numbers': sorted(expected_open_pr_numbers)}
+write_json(OUT / 'integration-receipts.json', STATE)
+
+readme = OUT / 'README.md'
+text = readme.read_text()
+if ci_blocked:
+    job_progress = f'{pending_job_totals["passed"]} passed, {pending_job_totals["running"]} running and {pending_job_totals["queued"]} queued required jobs'
+    status_text = f'**Execution checkpoint — required CI pending:** PRs {integration_range} are merged, and eight superseded historical PRs are closed with preservation evidence. Each merged change passed independent review and its required current-head CI gates. The locally qualified combined candidate also includes still-unmerged PRs {pr_span(queued_prs)}; their provider gates remain incomplete at {queue["observed_at"]} ({job_progress} across those three PRs). This is an incomplete execution checkpoint, not a claim that those fixes are in main. {concurrent_summary} The evidence-only PR adds this record without changing runtime behavior.'
+else:
+    status_text = f'**Execution completed:** PRs {integration_range} are merged. Eight superseded historical PRs are closed with preservation evidence. All {followup_count} focused changes passed independent review and their current-head CI gates, and their combined tree has complete race qualification with the execution environment and any unsuccessful attempts identified below. {concurrent_summary} The evidence-only PR adds this record without changing runtime behavior.'
+text, replaced = re.subn(r'\*\*(?:Draft execution status|Execution completed|Execution checkpoint — required CI blocked|Execution checkpoint — required CI pending):\*\*.*?\n\n', status_text + '\n\n', text, count=1)
+assert replaced == 1, 'Execution status block is missing'
+assert STATE.get('aggregate_verification_summary'), 'Final combined qualification narrative is missing'
+if ci_blocked:
+    qualification_text = f"Verified main is `{main}` (tree `{tree}`). The locally qualified candidate is `{STATE['aggregate_head']}` (tree `{STATE['aggregate_tree']}`) and additionally contains the reviewed, still-unmerged PRs {pr_span(queued_prs)}. Its test pass does not replace their required provider gates or qualify those changes as merged. " + STATE['aggregate_verification_summary'] + f" The [provider queue snapshot]({queue_rel}) records the remaining execution blocker; its cause is not established."
+else:
+    qualification_text = f"At the final functional endpoint, local qualification commit `{STATE['aggregate_head']}` has tree `{STATE['aggregate_tree']}`, exactly matching fetched main. " + STATE['aggregate_verification_summary']
+text, replaced = re.subn(r'<!-- current-qualification:start -->.*?<!-- current-qualification:end -->',
+    '<!-- current-qualification:start -->\n' + qualification_text + '\n<!-- current-qualification:end -->', text, count=1, flags=re.S)
+assert replaced == 1, 'Current qualification block is missing'
+text = text.replace('The complete unchanged suite is being rerun with two packages at a time; every test and the race detector remain enabled. This rerun has not yet completed and is not counted as a successful final-tree qualification in this draft.',
+    'The complete unchanged suite passed when rerun with two packages at a time; every test and the race detector remained enabled. The successful result referenced above is this bounded-concurrency run. The terminated attempt remains recorded as a failure.')
+text = text.replace('Exact provider failures are retained separately; successful final-head qualification remains required before merge.',
+    'Exact provider failures and subsequent successful final-head qualification are retained separately.')
+counts = collections.Counter(p['state'] for p in API['pull_requests'])
+merged = sum(bool(p.get('merged_at')) for p in API['pull_requests'])
+snapshot_text = f"At the functional integration endpoint `{main}` (tree `{tree}`), the refreshed inventory contains **{len(branches)} remote branches: {branch_report['ancestors']} ancestors and {branch_report['non_ancestors']} non-ancestors**, and **{len(API['pull_requests'])} PRs: {counts['open']} open and {counts['closed']} closed, including {merged} merged**. This snapshot includes reviewed concurrent PRs but precedes this evidence-only PR and its own branch, avoiding a self-referential commit record. {open_pr_summary} {concurrent_summary} See [final branch inventory](branch-inventory-final.json), [final PR state](pr-state-final.json) and [exact integration receipts](integration-receipts.json)."
+text, replaced = re.subn(r'<!-- inventory-endpoint:start -->.*?<!-- inventory-endpoint:end -->', '<!-- inventory-endpoint:start -->\n' + snapshot_text + '\n<!-- inventory-endpoint:end -->', text, count=1, flags=re.S)
+assert replaced == 1, 'README inventory marker is missing'
+rows = ['| PR | Purpose | Reviewed remote head | Merge commit | Successful CI |', '|---|---|---|---|---|']
+for p in integration_prs:
+    ci = ', '.join(f'[run {r}](https://github.com/djshellshoxxx/circula/actions/runs/{r})' for r in p['runs'])
+    rows.append(f"| [#{p['number']}](https://github.com/djshellshoxxx/circula/pull/{p['number']}) | {p['summary']} | `{p['head']}` | [`{p['merge']}`](https://github.com/djshellshoxxx/circula/commit/{p['merge']}) | {ci} |")
+text = re.sub(r'<!-- integration-table:start -->.*?<!-- integration-table:end -->',
+    '<!-- integration-table:start -->\n' + '\n'.join(rows) + '\n<!-- integration-table:end -->', text, flags=re.S)
+text, replaced = re.subn(r'<!-- receipt-gates:start -->.*?<!-- receipt-gates:end -->', '<!-- receipt-gates:start -->\n' + f'The table records exact reviewed heads, merge commits and successful CI runs. {qualification_summary} Detailed check/job records retain failures and retries rather than relabeling older attempts.' + '\n<!-- receipt-gates:end -->', text, count=1, flags=re.S)
+assert replaced == 1, 'README qualification-lane marker is missing'
+retry = STATE.get('pr73_retry')
+assert retry and retry.get('conclusion') == 'success', 'PR73 provider retry is not successful'
+text = text.replace('GitHub refused the first retry request while the workflow was still running; the required provider result is **PENDING**. It is not counted as successful here.',
+    f"GitHub refused the first retry request while the workflow was still running; after it completed, one unchanged-head retry of job {retry['original_job_id']} succeeded as job {retry['job_id']}. The other required jobs also passed. No test, corpus, timeout or workflow was changed to obtain that result; the original failure and successful retry remain in the evidence.")
+assert 'PENDING' not in text and 'Draft execution status' not in text
+readme.write_text(text)
+
+security_path = OUT / 'security-disposition.json'
+security = json.loads(security_path.read_text())
+security['reviewed_combined_head'] = STATE['aggregate_head']
+security['reviewed_combined_tree'] = STATE['aggregate_tree']
+security['integrated_main_head'] = main
+security['integrated_main_tree'] = tree
+for finding in security['additional_integration_findings']:
+    assert finding.get('reviewed_disposition') in {'fixed', 'partial'}, 'Finding lacks an explicit reviewed closure classification'
+    if finding['pr'] in integration_number_set:
+        finding['status'] = 'fixed and merged' if finding['reviewed_disposition'] == 'fixed' else 'partly fixed and merged; residual remains open'
+        finding['merge_commit'] = next(p['merge'] for p in STATE['prs'] if p['number'] == finding['pr'])
+    else:
+        assert ci_blocked and finding['pr'] in queued_prs, 'An unmerged finding is outside the blocked candidate set'
+        finding['status'] = 'fixed in independently reviewed candidate; not merged; required CI incomplete' if finding['reviewed_disposition'] == 'fixed' else 'partial repair in independently reviewed candidate; not merged; residual remains open'
+        finding['head'] = pending[finding['pr']]['head']
+        finding.pop('merge_commit', None)
+security['execution_outcome'] = outcome
+write_json(security_path, security)
+security_md = OUT / 'SECURITY-DISPOSITIONS.md'
+security_scope = f"Scope: integrated main `{main}` (tree `{tree}`). Reviewed candidate `{STATE['aggregate_head']}` (tree `{STATE['aggregate_tree']}`) is separate; unmerged fixes retain that status." if ci_blocked else f"Scope: the combined reviewed integration tree `{STATE['aggregate_tree']}`."
+security_text = re.sub(r'^Scope:.*$', security_scope + ' Exact integration is recorded in [the execution report](README.md).', security_md.read_text(), count=1, flags=re.M)
+if ci_blocked:
+    security_text = security_text.replace('Aggregate qualification for the exact integrated tree is described in the execution report, with original and concurrent runs, provider checks and local process terminations distinguished explicitly.', 'Qualification of merged PRs and the separate, still-unmerged combined candidate is described in the execution report. Original and concurrent runs, provider checks and local process terminations retain their exact source identities; the candidate pass is not attributed to the current main tree.')
+security_md.write_text(security_text)
+
+handoff = DOC_REPO / 'HANDOFF.md'
+h = handoff.read_text()
+h = h.replace('## 2026-11-18: PR and branch consolidation (current)', '## 2026-11-18: PR and branch consolidation (historical preparation)', 1)
+qualification_handoff = (
+    f'The combined candidate has one successful full race run for all 14 test-bearing packages. It includes unmerged {pr_span(queued_prs)}; their current-head provider gates remain incomplete at the recorded checkpoint ({job_progress}). Their local pass is not a main-branch or provider-gate pass. Merged PRs have the required current-head CI and native qualification recorded individually.'
+    if ci_blocked else
+    'The combined integration tree has successful race qualification for all 14 test-bearing packages. Required current-head CI and native filesystem qualification passed. Original and concurrent qualification, static checks and any terminated attempts are distinguished explicitly in the execution record.'
+)
+checkpoint_label = 'consolidation checkpoint; remaining CI pending' if ci_blocked else 'consolidation executed'
+entry = f'''<!-- executed-consolidation:start -->
+## {pacific_date} Pacific: {checkpoint_label} (current)
+
+PRs {integration_range} are merged. The [execution record](docs/audit/consolidation-2026-11-17/README.md) contains exact heads, merge commits, CI results, initial/final branch inventories, all historical PR dispositions and the security classification.
+
+{concurrent_summary} {open_pr_summary}
+
+- Recovered startup migration and administrator MFA/dispute reversal entry-point regressions, historical specifications and audit evidence. PR #70 is documentation preservation, not executable remediation.
+- Fixed SQLite schema trust on all connections, private backup staging/exclusive copies with lease-aware orphan cleanup, and administrator notices beyond 500 members. Corrected the release-threshold validator, factual security documentation and the probabilistic privacy-erasure test.{' Corrected the browser freshness assertion across clock boundaries.' if browser_assertion_followup else ''}
+- Closed #1, #2, #13, #16, #20, #29, #35 and #42 after verifying preservation. The earlier ten superseded PRs stay closed; #67 stays draft and future-only. All branches remain preserved.
+- {qualification_handoff}
+- A3-F02 / DEC-014 remains unresolved. Retention, token-hash design, WAL sanitization, limit-notice and external release gates are not silently approved. The 15 future modules remain isolated. No deployment, tag, release, branch deletion or remote history rewrite occurred.
+
+The sections below are dated historical records; their old pending-merge statements are superseded by the execution record above.
+<!-- executed-consolidation:end -->
+
+'''
+if '<!-- executed-consolidation:start -->' in h:
+    h = re.sub(r'<!-- executed-consolidation:start -->.*?<!-- executed-consolidation:end -->\n*', entry, h, count=1, flags=re.S)
+else:
+    h = h.replace('# Circula handoff\n\n', '# Circula handoff\n\n' + entry, 1)
+handoff.write_text(h)
+
+todo = DOC_REPO / 'docs/TODO.md'
+t = todo.read_text()
+t = re.sub(r'Updated \d{4}-\d{2}-\d{2}.*?Scope: core Circula; the 15 future modules remain isolated\.',
+    f'Updated {utc_date} UTC ({pacific_date} Pacific) after executed consolidation through PR #{last_functional_pr}. The [execution record](audit/consolidation-2026-11-17/README.md) supersedes pending-merge statements in historical ledgers and records exact verification evidence. Scope: core Circula; the 15 future modules remain isolated.', t, count=1, flags=re.S)
+todo_receipts = f'<!-- executed-consolidation:start -->\n- PRs {integration_range} merged after current-head gates and independent review. {qualification_handoff} [Merge receipts and qualification limits](audit/consolidation-2026-11-17/README.md#integration-receipts).\n- {concurrent_summary} {open_pr_summary}\n<!-- executed-consolidation:end -->\n\n'
+if '<!-- executed-consolidation:start -->' in t:
+    t = re.sub(r'<!-- executed-consolidation:start -->.*?<!-- executed-consolidation:end -->\n*', todo_receipts, t, count=1, flags=re.S)
+else:
+    t = t.replace('## Integration evidence\n\n', '## Integration evidence\n\n' + todo_receipts, 1)
+t = t.replace('- NEW-01 (Low hardening, `docs/security/security-review.md`): build unencrypted snapshots in a private\n  `os.MkdirTemp` directory and open copies with `O_EXCL`.', '- NEW-01 and E-02 are completed by #72 and #71: private leased staging, exclusive copies and untrusted SQLite schema connections. Administrator-notice pagination, threshold validation, security documentation and deterministic erasure coverage are also complete (#73–#76).' + (' The browser freshness assertion also handles clock boundaries (#77).' if browser_assertion_followup else '') + ' [Current security dispositions](audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md).')
+todo.write_text(t)
+
+for name in ('BRANCH-CONSOLIDATION-2026-11-17.md', 'PR-CONSOLIDATION-2026-11-17.md'):
+    p = DOC_REPO / 'docs/plans' / name
+    t = p.read_text(); heading, rest = t.split('\n', 1)
+    notice = '\n\n> Historical preparation snapshot. Its counts, branch heads and pending-merge statements describe that earlier review. The [executed consolidation record](../audit/consolidation-2026-11-17/README.md) provides refreshed inventories, exact merges and completed closures.\n'
+    if '> Historical preparation snapshot.' not in t:
+        p.write_text(heading + notice + rest)
+
+p = DOC_REPO / 'docs/security/security-review.md'
+t = p.read_text(); heading, rest = t.split('\n', 1)
+notice = '\n\n> Current execution follow-up: the [55-finding disposition](../audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md) and [merge/qualification record](../audit/consolidation-2026-11-17/README.md) supersede pending statuses in the historical reviews below. E-02, NEW-01 and A3-F21 are addressed; A3-F02 / DEC-014 and the documented retention/design residuals remain unresolved.\n'
+if '> Current execution follow-up:' not in t:
+    p.write_text(heading + notice + rest)
+
+manifest = json.loads((OUT / 'evidence-manifest.json').read_text())
+for item in manifest['files']:
+    payload = (OUT / item['retained_path']).read_bytes()
+    assert hashlib.sha256(payload).hexdigest() == item['sha256'], 'Retained evidence was modified'
+write_json(ROOT / 'consolidation-state.json', STATE)
+print(json.dumps({'main': main, 'tree': tree, 'branches': branch_report['branch_count'], 'ancestors': branch_report['ancestors'], 'non_ancestors': branch_report['non_ancestors'], 'prs': len(API['pull_requests']), 'open': counts['open'], 'merged': merged, 'written_at': stamp}))

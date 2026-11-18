@@ -1,0 +1,21 @@
+{
+  "observed_at": "2026-11-18T07:39:42.208Z",
+  "pr": 77,
+  "head": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+  "run": 44256413287,
+  "job": 134639181468,
+  "conclusion": "success",
+  "summary": [
+    "2026-11-18T07:33:14.2448739Z Running 584 tests using 1 worker",
+    "2026-11-18T07:34:21.4925894Z   ✓  109 tests/greyscale.spec.js:93:3 › UX-005: dashboard, in debt is understandable without colour (1.0s)",
+    "2026-11-18T07:34:22.4723752Z   ✓  110 tests/greyscale.spec.js:93:3 › UX-005: dashboard, in credit, with a trade waiting is understandable without colour (973ms)",
+    "2026-11-18T07:34:23.4701121Z   ✓  111 tests/greyscale.spec.js:93:3 › UX-005: dashboard, level is understandable without colour (988ms)",
+    "2026-11-18T07:34:24.4735565Z   ✓  112 tests/greyscale.spec.js:93:3 › UX-005: history is understandable without colour (992ms)",
+    "2026-11-18T07:34:25.4378126Z   ✓  113 tests/greyscale.spec.js:93:3 › UX-005: trades is understandable without colour (960ms)",
+    "2026-11-18T07:34:26.4104718Z   ✓  114 tests/greyscale.spec.js:93:3 › UX-005: trade detail, pending is understandable without colour (962ms)",
+    "2026-11-18T07:34:27.3733852Z   ✓  115 tests/greyscale.spec.js:93:3 › UX-005: accept review, balance before and after is understandable without colour (955ms)",
+    "2026-11-18T07:34:27.6210644Z   ✓  116 tests/greyscale.spec.js:138:1 › UX-005 guard: a colour-only balance fails the sign-and-word check (240ms)",
+    "2026-11-18T07:39:20.8173908Z   584 passed (6.5m)"
+  ],
+  "full_log": "pr77-2f6b3e4-browser-passed.log"
+}

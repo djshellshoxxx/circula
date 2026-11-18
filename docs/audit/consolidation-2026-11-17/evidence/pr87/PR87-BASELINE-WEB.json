@@ -1,0 +1,31 @@
+{
+  "name": "PR87-BASELINE-WEB",
+  "snapshot": "pr87-baseline-web",
+  "command": [
+    "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+    "test",
+    "-mod=readonly",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=10m",
+    "-v",
+    "-run",
+    "^TestDisputePageReReviewDeadlineFixedAtOpen$",
+    "./internal/web"
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "CGO_ENABLED": "1",
+    "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB"
+  },
+  "started_at": "2026-11-18T09:18:33.536603+00:00",
+  "finished_at": "2026-11-18T09:18:40.486880+00:00",
+  "elapsed_seconds": 6.95,
+  "exit_code": 1,
+  "log": "PR87-BASELINE-WEB.log"
+}

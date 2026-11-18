@@ -1,0 +1,595 @@
+{
+  "observed_window": {
+    "status_inventory": "2026-11-18T08:36:42.089Z",
+    "job_inventory": "2026-11-18T08:39:22.396Z",
+    "remark": "Independent read-only API calls; not an atomic snapshot. in_progress collection was refreshed after initial response reported inconsistent total_count and returned length."
+  },
+  "source_ref": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+  "workflow": "https://github.com/djshellshoxxx/circula/blob/09ef8a5aa25f11ee4d96f043e7d686e97598b7e3/.github/workflows/ci.yml",
+  "concurrency": {
+    "group_expression": "ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name == 'pull_request' }}",
+    "cancel_in_progress_expression": "${{ github.event_name == 'pull_request' }}",
+    "queue_property": null,
+    "derived_main_group": "ci-refs/heads/main-false",
+    "derived_pr81_group": "ci-81-true",
+    "derived_pr82_group": "ci-82-true"
+  },
+  "inventory_counts": {
+    "queued": {
+      "total_count": 6,
+      "returned": 6
+    },
+    "in_progress": {
+      "total_count": 1,
+      "returned": 1
+    },
+    "pending": {
+      "total_count": 2,
+      "returned": 2
+    },
+    "waiting": {
+      "total_count": 0,
+      "returned": 0
+    },
+    "requested": {
+      "total_count": 0,
+      "returned": 0
+    },
+    "action_required": {
+      "total_count": 0,
+      "returned": 0
+    }
+  },
+  "active_runs": [
+    {
+      "id": 44267193015,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+      "branch": "claude/sharp-archimedes-tu76rh",
+      "status": "queued",
+      "created_at": "2026-11-18T08:27:54Z",
+      "updated_at": "2026-11-18T08:27:54Z",
+      "jobs": [
+        {
+          "id": 134674544270,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674544496,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674544638,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674544679,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674544702,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674544723,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674544771,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674547137,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44267147628,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "b20c118b59d43836bd357788914542b904f13872",
+      "branch": "claude/gov-021-admin-recovery",
+      "status": "queued",
+      "created_at": "2026-11-18T08:27:35Z",
+      "updated_at": "2026-11-18T08:27:35Z",
+      "jobs": [
+        {
+          "id": 134674390934,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674391202,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674391340,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674391363,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674391375,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674391403,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674391457,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134674393493,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44266705370,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "4808477b3f1d016c14606a3a9abc6a4d9e9a5ed3",
+      "branch": "claude/circula-consolidation-audit-0sydm1",
+      "status": "queued",
+      "created_at": "2026-11-18T08:24:29Z",
+      "updated_at": "2026-11-18T08:24:29Z",
+      "jobs": [
+        {
+          "id": 134672915289,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672915787,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672915819,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672915883,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672915912,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672916118,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672916131,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134672918153,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44265609316,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "cb95bb1894cd3b178f99ff3c54e0b04651d68cff",
+      "branch": "claude/aud4-f02-reviewer-reset-policy",
+      "status": "queued",
+      "created_at": "2026-11-18T08:16:43Z",
+      "updated_at": "2026-11-18T08:16:43Z",
+      "jobs": [
+        {
+          "id": 134669246743,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669247006,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669247011,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669247073,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669247142,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669247282,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669247299,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134669250281,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44265254304,
+      "name": "scorecard",
+      "event": "push",
+      "head_sha": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "branch": "main",
+      "status": "queued",
+      "created_at": "2026-11-18T08:14:15Z",
+      "updated_at": "2026-11-18T08:14:15Z",
+      "jobs": [
+        {
+          "id": 134668066638,
+          "name": "scorecard analysis",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44264463917,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "branch": "claude/backup-path-hardening",
+      "status": "queued",
+      "created_at": "2026-11-18T08:08:36Z",
+      "updated_at": "2026-11-18T08:08:41Z",
+      "jobs": [
+        {
+          "id": 134665456373,
+          "name": "build release targets",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134665456868,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134665456909,
+          "name": "API contract and load smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134665456937,
+          "name": "test (windows-2022)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134665456947,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134665456955,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134665457021,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134665457072,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134665457090,
+          "name": "test (macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44262124202,
+      "name": "ci",
+      "event": "push",
+      "head_sha": "28ed7166a14616163bf49ed248dcce0a01414850",
+      "branch": "main",
+      "status": "in_progress",
+      "created_at": "2026-11-18T07:51:17Z",
+      "updated_at": "2026-11-18T08:22:52Z",
+      "jobs": [
+        {
+          "id": 134659549608,
+          "name": "fuzz smoke (RB-017)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659549723,
+          "name": "test (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659549782,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659549807,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659549950,
+          "name": "test (macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null,
+          "active_step": "test with race detector (macOS Intel, bounded parallelism)"
+        },
+        {
+          "id": 134659550003,
+          "name": "build release targets",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659550068,
+          "name": "test (windows-2022)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659550075,
+          "name": "API contract and load smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        },
+        {
+          "id": 134659550208,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "completed",
+          "conclusion": "success",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44265484103,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "5c39abdb89faa505533e51d3878b3b119957ff32",
+      "branch": "claude/aud4-auth-fixes",
+      "status": "pending",
+      "created_at": "2026-11-18T08:15:51Z",
+      "updated_at": "2026-11-18T08:15:53Z",
+      "jobs": [
+        {
+          "id": 134668836150,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668836558,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668836592,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668836612,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668836700,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668836753,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668836775,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "active_step": null
+        },
+        {
+          "id": 134668838064,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "active_step": null
+        }
+      ]
+    },
+    {
+      "id": 44265254428,
+      "name": "ci",
+      "event": "push",
+      "head_sha": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "branch": "main",
+      "status": "pending",
+      "created_at": "2026-11-18T08:14:15Z",
+      "updated_at": "2026-11-18T08:14:16Z",
+      "jobs": []
+    }
+  ],
+  "pending_deployments": {
+    "pr81": [],
+    "pr82": []
+  },
+  "findings": [
+    "No waiting, requested, or action_required runs were returned. PR81 and PR82 pending_deployments endpoints each returned an empty array. The inspected CI workflow declares no job environment approval gate.",
+    "Main CI run 44262124202 at 28ed7166 has eight successful jobs and its macOS Intel race job still running; latest main CI run 44265254428 at cdc8112c is pending with no instantiated jobs. Their shared workflow concurrency group explains the latter main-run wait.",
+    "PR81 has its own group and five successful jobs, including both native jobs and three Linux jobs; four Linux jobs remain queued. PR82 has its own group and all seven configured Linux jobs queued. The main concurrency group does not by itself explain those distinct PR queues.",
+    "Across the observed instantiated job rows, 40 are queued and one is running. Twenty-eight queued jobs belong to four other PR runs, seven to PR82, four to PR81, and one to scorecard. No repository Linux job was reported in_progress in this snapshot.",
+    "No account/organization concurrency metrics, billing diagnostics, or runner-availability explanation were exposed by these observations. Runner capacity or billing cannot be asserted as the cause.",
+    "cancel-in-progress:false protects a currently running main workflow. With no queue property, the documented default still permits only one pending run; a later pending run replaces an earlier pending run. Thus the workflow comment that every back-to-back main push keeps a cross-OS run overstates the configuration."
+  ],
+  "primary_reference": {
+    "url": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency",
+    "accessed": "2026-11-18T08:41:16.433Z",
+    "claim": "Default concurrency queue is single: one running and one pending; new pending replaces older pending. cancel-in-progress false preserves the running run."
+  },
+  "limits": [
+    "No remote mutation was performed.",
+    "No speculative account capacity or billing cause.",
+    "No assertion that every historical cancellation was caused by concurrency without an individual cancellation reason."
+  ],
+  "target_final_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+  "latest_main_push": {
+    "sha": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+    "tree": "f41365f8ee4f42f4cbd33fb4e1a78cad85caedd1",
+    "run": 44265254428,
+    "status": "pending",
+    "target_tree_equal": false
+  }
+}

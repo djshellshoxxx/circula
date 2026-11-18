@@ -15,8 +15,9 @@ permissions:
   contents: read
 
 concurrency:
-  # One group per PR (or per ref for push/schedule/dispatch). Only superseded PR runs are cancelled,
-  # so back-to-back main pushes each keep their cross-OS run.
+  # One group per PR (or per ref for push/schedule/dispatch). Superseded PR runs are cancelled.
+  # Running main workflows continue; GitHub may replace an older pending run in the same group.
+  # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
   group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name == 'pull_request' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 

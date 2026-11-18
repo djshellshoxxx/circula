@@ -1,0 +1,29 @@
+{
+  "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+  "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+  "command": [
+    "go",
+    "test",
+    "-v",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=25m",
+    "./cmd/circula"
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB",
+    "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+    "CGO_ENABLED": "1"
+  },
+  "started_at": "2026-11-18T09:00:49.224801+00:00",
+  "scope": "Full unchanged CLI package in repaired cache environment. The prior full tmpfs caused a separately observed build-cache ENOSPC error; no cause is asserted for earlier signal:killed results.",
+  "exit_code": 0,
+  "elapsed_seconds": 183.03,
+  "max_child_rss_kib": 643488,
+  "finished_at": "2026-11-18T09:03:52.255174+00:00"
+}

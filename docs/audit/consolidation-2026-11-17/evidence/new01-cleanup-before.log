@@ -1,0 +1,9 @@
+=== RUN   TestPlainSnapshotSweepsOnlyStaleBackupWork
+    backup_private_staging_test.go:201: old backup work directory was not removed: <nil>
+--- FAIL: TestPlainSnapshotSweepsOnlyStaleBackupWork (0.43s)
+=== RUN   TestCopyFileSyncRemovesOnlyItsFailedCopy
+    backup_private_staging_test.go:218: failed copy left its newly created destination: <nil>
+--- FAIL: TestCopyFileSyncRemovesOnlyItsFailedCopy (0.00s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.445s
+FAIL
