@@ -332,17 +332,28 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 // noticeAdminGranted tells every other active administrator of the network
 // that a new one was appointed, so a rogue appointment is visible (A3-01).
 func (s *Service) noticeAdminGranted(tx store.Tx, netID string, grantee *domain.Member, p *principal) error {
-	ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, Limit: 500})
-	if err != nil {
-		return err
-	}
-	for _, o := range ms {
-		if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
-			continue
-		}
-		if err := s.secNotice(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed"); err != nil {
+	const pageSize = 500
+	cursor := ""
+	for {
+		ms, err := tx.ListMembers(netID, store.MemberFilter{
+			Statuses: []domain.MemberStatus{domain.MemberActive}, AfterID: cursor, Limit: pageSize,
+		})
+		if err != nil {
 			return err
 		}
+		for _, o := range ms {
+			if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
+				continue
+			}
+			if err := s.secNotice(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed"); err != nil {
+				return err
+			}
+		}
+		if len(ms) < pageSize {
+			return nil
+		}
+		// ListMembers orders IDs ascending. Continue inside the same write
+		// transaction so role assignment and every notice commit together.
+		cursor = ms[len(ms)-1].ID
 	}
-	return nil
 }
