@@ -1,7 +1,7 @@
 # Audit 2026-10-28 Low and Info findings: triage and remediation, integrated on e67bad5
 
 Integrated in a detached worktree at `e67bad5` (main after PR #69 and the handoff PR #70; `1ee699f` is an ancestor).
-Triage, both fixes and both reviews ran at `1ee699f`. The two approved patches were applied here, in order, with `git apply --3way` and committed as `bf494d0` (A2-08) and `155caab` (A3-F10). This file was added in `8bd8e45`, the commit after them. Nothing was pushed and GitHub was not used.
+Triage, both fixes and both reviews ran at `1ee699f`. The two approved patches were applied here, in order, with `git apply --3way` and committed as `bf494d0` (A2-08) and `155caab` (A3-F10). This file was added in `8bd8e45`, the commit after them. A follow-up fixer then fixed the A3-F10 logging half (OPS-033) in `4bbc871`, on `da04d45`, and the commit after `4bbc871` updated this file. Nothing was pushed and GitHub was not used.
 Toolchain: go1.26.11 (`go.mod` requires `go 1.26.11`; the auto toolchain selects it). Prefixes: S/=internal/service, C/=cmd/circula, A/=internal/api, W/=internal/web, T/=internal/store.
 File and line references in the table are the triage's, at `1ee699f`. In `cmd/` and `internal/` only C/serve.go, C/config.go, C/serve_test.go and one new service test changed between `1ee699f` and `e67bad5` (PR #69).
 
@@ -43,7 +43,7 @@ Scope: every Low and Info finding of the three reports (A1: 8, A2: 21, A3: 20), 
 | A3-F05 | Low | owner decision (triage: fix; overridden) | PRIV-02; see [Overridden triage verdicts](#overridden-triage-verdicts). The recover-key throttle half is fixed on main (S/erasure.go:216-222); `challenges.reason` still survives erasure (T/sqlite_erasure.go:33-58). The stopped fixer's unreviewed patch is kept, not applied: [wip-fixes/challenge-reason-erasure.patch.txt](wip-fixes/challenge-reason-erasure.patch.txt) |
 | A3-F06 | Low | already fixed | T/sqlite_person.go:66-76 compares characters on both sides (`substr(login, 1, length(?) + 1) = ?`). internal/store/throttle_family_test.go |
 | A3-F09 | Low | already fixed | C/restore_security.go:13-24 invalidates the staging copy's credentials before the swap: T/sqlite_restore.go:16-50 revokes every session and API token, deletes MFA challenges, closes open break-glass sessions and fails if any remain. C/restore_credentials_test.go, S/restore_credentials_test.go |
-| A3-F10 | Low | **fixed here** (retention half); the logging half is not fixed in these commits and is unblocked | `155caab`; see the A3-F10 section below |
+| A3-F10 | Low | **fixed here** (retention and logging) | Retention: `155caab`. Logging the clock anomaly (OPS-033): `4bbc871`, `TestJobUntilNextBackupLogsFutureDatedBackups` and `TestJobBackupLoopLogsFutureDatedBackupEachEvaluation`. See the A3-F10 section below |
 | A3-F11 | Low | already fixed | The A1-08 change (S/dualcontrol_operator.go:42-81). S/operator_policy_regression_test.go |
 | A3-F13 | Low | already fixed | C/revoke_sessions.go:19-71 adds the audited `circula revoke-sessions`; docs/ops/configuration.md:125-136 documents it. Cosmetic: docs/specs/addenda/SEC-027-keys.md:13 could link to it |
 | A3-F14 | Low | already fixed | scripts/check-hygiene.sh:36-41 runs scripts/check_migrations.py and its unit tests. It flags DROP TABLE, COLUMN and TRIGGER, and UPDATE, REPLACE INTO and upsert on protected tables, unless the statement is marked allow-destructive |
@@ -88,11 +88,11 @@ Method. The triage re-checked each finding at `1ee699f` against the source, the 
   3. The `password-change-required` row: SEC-008 addendum decision 5 also lets signing out through. "Every write except changing the password and signing out" would be more exact.
   4. The `network-frozen` row: as built (C/serve.go `applyFreeze`), the freeze lifts at the next passing verification run after an operator repair or restore.
 
-## A3-F10: a future-dated backup name pushes real backups out of retention. FIXED (retention half, `155caab`)
+## A3-F10: a future-dated backup name pushes real backups out of retention. FIXED (retention `155caab`, logging `4bbc871`)
 
 - **Evidence at `1ee699f`** (triage and fixer).
   - The cadence half was already fixed: C/serve.go `untilNextBackupAt` skips entries dated after now (`TestJobUntilNextBackupIgnoresFutureFiles`).
-  - Still present: C/snapshot.go `listBackups` sorts by the time in the file name with no upper bound, and `pruneBackups` filled the keep-daily and keep-monthly slots in that order. So a future-dated file always took a daily slot and a month slot. No retention test covered future-dated files, and nothing logs the anomaly.
+  - Still present: C/snapshot.go `listBackups` sorts by the time in the file name with no upper bound, and `pruneBackups` filled the keep-daily and keep-monthly slots in that order. So a future-dated file always took a daily slot and a month slot. No retention test covered future-dated files, and nothing logged the anomaly (the logging half, fixed later in `4bbc871`; see below).
   - Reproduction, with the new tests and a test-only shim that gives the old behaviour:
     - 50 years ahead with the default counts 30/12: the 30th newest real backup and the 12th real month were removed.
     - One hour ahead with counts 1/1: the newest real backup was removed, so no real backup was left.
@@ -100,12 +100,12 @@ Method. The triage re-checked each finding at `1ee699f` against the source, the 
     - Several future-dated files: two of them were deleted, and so was the newest real backup.
     - Through `backupNow` with counts 2/1: one real backup was kept instead of two.
 - **Refutation attempt failed.** At `bb5a36f` the verifier called the retention claim overstated, because backups stopped altogether. On main the cadence fix keeps backups running, so `pruneBackups` runs at every interval and a future-dated file holds one daily and one monthly slot for good. With keep-daily 1 (the allowed minimum, C/config.go:367), each new backup was deleted right after it was written. OPS-018 says expired backups are removed according to the configured count, and DEC-059 sets 30 daily backups plus the newest of each of 12 months.
-- **Owner gate?** Not for retention. The fix only ever keeps more files and changes no count, period or approval rule; DEC-020 is untouched. The logging half was deferred because of file ownership, not because it needs a decision.
+- **Owner gate?** Not for retention. The fix only ever keeps more files and changes no count, period or approval rule; DEC-020 is untouched. The logging half was deferred because of file ownership, not because it needs a decision. Its fix (`4bbc871`) adds one warning and no setting, threshold or policy.
 - **Fix** (C/snapshot.go, `pruneBackups` and the new `pruneBackupsAt` only).
   - `pruneBackups` keeps its signature and returns `pruneBackupsAt(dir, keepDaily, keepMonthly, time.Now())`. This follows the existing clock-injection pattern of `untilNextBackupAt(now)` and `pruneLogs(dir, age, now)`.
   - `pruneBackupsAt` keeps every entry with `at.After(now)` without counting it, then fills the daily and monthly slots from the other entries in the same order. The boundary is the strict `After(now)` of `untilNextBackupAt`, so a backup dated exactly now counts.
   - Real backups always sort after future-dated ones, so every real backup the old code kept is still kept. The fixer's differential test over 3000 random directories found no case where the new code removed a file the old code keeps, or removed a future-dated file. The directories mixed plain, encrypted and legacy names, with keep-daily 1-40 and keep-monthly 0-14.
-  - C/serve.go is unchanged; its only caller passes `time.Now()`. The functions that PR #72 changes are untouched.
+  - `155caab` leaves C/serve.go unchanged; its only caller passes `time.Now()`. The functions that PR #72 changes are untouched.
   - docs/specs/11-deployment-operations.md: the OPS-018 row stays `built` and gets a dated note; the OPS-033 row stays `partial`. docs/TRACEABILITY.md was regenerated with `make traceability`: the OPS-018 row now cites `pruneBackupsAt` and both tests, and the header records `bf494d0`.
 - **Regression tests.**
   - C/backup_test.go `TestPruneKeepsFutureDatedBackupsOutOfCounts`, with subtests `50_years_ahead,_default_counts`, `an_hour_ahead_in_the_current_month`, `backup_at_now_counts` and `several_future-dated_files`. They assert the exact set of removed files, check manifests and anchors, and check that the future file's bytes are unchanged.
@@ -117,11 +117,23 @@ Method. The triage re-checked each finding at `1ee699f` against the source, the 
     - `TestJobRetentionDoesNotCountFutureDatedBackup` fails at jobs_regress_test.go:506: it kept only the year-2076 file and the new backup, not yesterday's real backup.
     - With the shim deleted and snapshot.go restored, both tests pass. So do `TestPruneKeepsDailyAndNewestPerMonth`, `TestBackupNamesPreserveSubsecondTimeAndLegacyRetention`, `TestPruneAndListHandleEncryptedBackups`, `TestJobScheduledBackupAndRetention`, `TestJobUntilNextBackup` and `TestJobUntilNextBackupIgnoresFutureFiles`.
   - The retention part of the auditor PoC `TestA3Audit_FutureDatedBackupStopsSchedule` only logs, so the PoC passes either way. The fixer saw `real backups kept: 1` before the fix (keep-daily 2) and `real backups kept: 2` after.
-- **Not fixed in these commits; unblocked: the OPS-033 half.** OPS-033 says a clock anomaly must be logged, and nothing logs a future-dated backup name. The log line belongs in the caller in C/serve.go: `backupNow` (C/serve.go:552, which calls `pruneBackups` at :569) or `untilNextBackupAt` (:524). The fixer deferred it because serve.go belonged to PR #69. PR #69 has merged, and none of the open PRs #71-#75 changes C/serve.go or C/config.go, so it is unblocked. The parent session may add it as a follow-up commit and update this row.
-- **Review: approved.** Three minor points, not changed here:
+- **The OPS-033 logging half: FIXED in `4bbc871`** (a follow-up on `da04d45`; the commit after it updated this file).
+  - Why later: the retention fixer deferred it because C/serve.go belonged to PR #69. PR #69 has merged, and none of the open PRs #71-#75 changes C/serve.go or C/config.go.
+  - Evidence at `da04d45`. OPS-033, "Clock error on host": time-based expiry and deadlines use the server clock and are re-evaluated on restart, and "the anomaly is logged". The detection in docs/ops/monitoring.md was "Logs and timestamps out of order". C/snapshot.go `pruneBackupsAt` kept a backup named after now without counting it, and C/serve.go `untilNextBackupAt` ignored it for scheduling, but nothing logged it.
+  - Reproduction at `da04d45`, with the two new tests added: `TestJobUntilNextBackupLogsFutureDatedBackups` failed in its three future-dated subtests with `evaluation 1: 0 log entries, want 1 (one per evaluation):`, followed by an empty log. Its three subtests without such a file passed, and every returned wait matched. `TestJobBackupLoopLogsFutureDatedBackupEachEvaluation` saw the first scheduled backup (the file does not hold the schedule back), then failed with `timed out waiting for a warning at start-up and another after the first backup`.
+  - **Fix** (C/serve.go, `untilNextBackupAt` only). The backup job runs it at start-up and on each backup cycle. After listing the backups it counts those with `at.After(now)`, the same strict boundary as scheduling and retention. If there is at least one, it writes one `Warn` through `j.logger`, the logx-wrapped serve logger: msg `backups named after the current time (host clock error or misplaced file): kept, but ignored by scheduling and retention (OPS-033)`, with `count`, `file` (`filepath.Base` of the newest such file, the first entry because `listBackups` is newest first), `name_time` and `now`, both in UTC. It writes one line per evaluation, never one per file. The wait loop below it is unchanged, so the returned durations are the same. No setting, threshold or policy was added.
+  - Logger: the only production caller is `runServe`, which passes the `newLogger` logger and cannot pass nil, so the code has no nil check. The one test fixture without a logger, in `TestJobUntilNextBackupIgnoresFutureFiles`, now gets `discardLogger()`; its assertions are unchanged.
+  - Docs. docs/ops/monitoring.md, row "Clock error on host": the detection cell names the warning, when it is logged and its fields. Spec 11, OPS-018 row: the note says that the backup job logs the anomaly and cites `TestJobUntilNextBackupLogsFutureDatedBackups`. No status changed; OPS-033 stays `partial`, because its other failure modes are unchanged. docs/TRACEABILITY.md was regenerated with `make traceability`: the OPS-033 row now cites `untilNextBackupAt` and both new tests, the OPS-018 row cites the unit test, and the header records `da04d45`.
+  - **Regression tests** (C/jobs_regress_test.go, no build tag).
+    - `TestJobUntilNextBackupLogsFutureDatedBackups`, six subtests, through the production `newLogger` in JSON. Each subtest evaluates twice with a `now` in UTC+14 and checks one new entry per evaluation, the exact level, msg and fields (and no other field), and the returned wait. With no backups, a recent backup or a backup dated exactly now, nothing is logged. A backup 50 years ahead, one 1 ns ahead, and three future-dated files (plain, encrypted and legacy names) beside an overdue backup each give one line per evaluation naming the newest file, with `now` in UTC.
+    - `TestJobBackupLoopLogsFutureDatedBackupEachEvaluation`: the real `backups` loop, with a future-dated file, backs up at once and logs exactly two warnings, one at start-up and one after that backup.
+  - **Fail-before**, done once, on the working tree that became `4bbc871` (the same code and tests): the serve.go diff reverse-applied with `git apply -R` (serve.go then matched `da04d45`), then `go test -count=1 -run 'TestJobUntilNextBackupLogsFutureDatedBackups|TestJobBackupLoopLogsFutureDatedBackupEachEvaluation' -v ./cmd/circula`. FAIL: `future_only`, `one_nanosecond_ahead` and `several_future-dated_files` with `jobs_regress_test.go:534: evaluation 1: 0 log entries, want 1 (one per evaluation):`, and the loop test at jobs_regress_test.go:575 with `timed out waiting for a warning at start-up and another after the first backup`. With the change re-applied both pass, and so does `TestJobUntilNextBackupIgnoresFutureFiles`.
+  - **Owner gate?** No. OPS-033 already requires the anomaly to be logged.
+  - **Review:** not yet reviewed independently.
+- **Review of the retention fix (`155caab`): approved.** Three minor points, not changed here:
   1. The `pruneBackups` doc comment still says it keeps the newest keepDaily backups. The future-dated rule appears only in the inline comment.
   2. A future-dated file is now kept for as long as its name is in the future, even when there are more such files than keep-daily (the old code deleted the extras). This only keeps more files and decides no count or period. But OPS-018 ties retention to personal-data exposure, so the retention owner may want to confirm this case.
-  3. docs/ops/backup-restore.md:86-87 says that only the names of pruned backups are logged, but `backupNow` logs only a count. This predates the change and belongs with the OPS-033 follow-up.
+  3. docs/ops/backup-restore.md:86-87 says that only the names of pruned backups are logged, but `backupNow` logs only a count. This predates the change and belongs with the OPS-033 follow-up. Still open: `4bbc871` logs the clock anomaly only, and leaves the prune log line and backup-restore.md as they were.
 
 ## Overridden triage verdicts
 
@@ -148,20 +160,21 @@ The triage evidence and fix sketches, at `1ee699f`, kept for the decisions. None
 | A3-F18 | The owner's policy on notice timing for member-limit cuts (A3 spec gap 3; docs/TODO.md:101) | Financial policy. Open PR #73 changes `noticeAdminGranted` (S/membership.go:334-348), directly below `setCreditLimit` (:287-330), which an A3-F18 change would edit |
 | A2-20, A2-21 | The owner, only if wanted | Not worth fixing as they stand. A2-20: server-only audit request ids would be a spec change. A2-21: whether to record API-009 (unkeyed hash) as a 07 section 12.3 deviation |
 | A3-F21 | Open PR #75 | Not duplicated here |
-| A3-F10, OPS-033 logging half | Nothing: unblocked | Not fixed in these commits. It needs a log line in C/serve.go (`backupNow` or `untilNextBackupAt`), and no open PR edits C/serve.go or C/config.go. The parent session may add it as a follow-up commit and update this row |
+
+The A3-F10 OPS-033 logging half, listed here as unblocked until the follow-up, is fixed in `4bbc871` (see the A3-F10 section). The A3-F10 review points stay under open item 8.
 
 Not decided here and not touched: A3-F02 and anything that depends on DEC-014 (break-glass scope; see [REMEDIATION-2026-11-04.md](REMEDIATION-2026-11-04.md)); the A1 report spec gaps G1-G8; the owner-pending A3-04, A3-07, A3-10 and A3-11; the SEC-011 questions; DEC-020 retention; DEC-076, which the `network-frozen` row cites.
 
 ## Open consolidation PRs
 
-No file or region that these PRs change was edited here. The adjacency was checked with `git merge-tree --write-tree` of `155caab` against each PR head, which writes no working tree.
+No file or region that these PRs change was edited here. The adjacency was checked with `git merge-tree --write-tree` of `155caab` against each PR head, which writes no working tree. The same check of `4bbc871`, against the same local PR heads, gives the same result: #71, #72, #73 and #75 merge cleanly, and #74 conflicts only on the TRACEABILITY.md header line. None of the PR branches changes C/serve.go, C/jobs_regress_test.go, docs/ops/monitoring.md or spec 11.
 
 | PR | Branch (head) | What it changes | Adjacency with these commits |
 |---|---|---|---|
 | #71 | `integration/store-untrusted-schema-20261117` (`1a02020`) | SQLite `trusted_schema` in the connection strings (T/sqlite.go, T/inspect.go), a test, an audit note | None; merges cleanly |
 | #72 | `integration/backup-private-staging-20261117` (`9460895`) | NEW-01 private backup staging: in C/snapshot.go `verifyFile`, `verifyCopy`, `snapshot`, `snapshotWith`, `backupFileNameFor` and `sweepStaleTemp` (hunks at lines 202-464); C/util.go; new C/backup_work.go; C/commands.go; C/premigrate.go; tests; an audit note | Same file as `155caab`, different functions: the A3-F10 hunk is `pruneBackups`/`pruneBackupsAt` (C/snapshot.go:517-551). snapshot.go merges automatically and keeps both changes |
 | #73 | `integration/admin-grant-notice-pagination-20261117` (`cb25b41`) | S/membership.go: `noticeAdminGranted` pages past 500 members; a test; an audit note | None for these commits; merges cleanly. See A3-F18 above |
-| #74 | `integration/release-threshold-check-20261117` (`ec98cab`) | scripts/check_thresholds.py and its tests, scripts/release-gate.sh, .github/workflows/ci.yml, docs/TRACEABILITY.md (header line, QA-040 and DEC-023 rows), an audit note | docs/TRACEABILITY.md: both sides change the generated header line (`Input: git HEAD` is `bf494d0` here and `ef54238` there), so merge-tree reports a conflict on that line only. The rows do not overlap (OPS-018 here). Whichever branch merges second regenerates the file with `make traceability`, not by hand |
+| #74 | `integration/release-threshold-check-20261117` (`ec98cab`) | scripts/check_thresholds.py and its tests, scripts/release-gate.sh, .github/workflows/ci.yml, docs/TRACEABILITY.md (header line, QA-040 and DEC-023 rows), an audit note | docs/TRACEABILITY.md: both sides change the generated header line (`Input: git HEAD` is `bf494d0` here, `da04d45` since `4bbc871`, and `ef54238` there), so merge-tree reports a conflict on that line only. The rows do not overlap (OPS-018 here). Whichever branch merges second regenerates the file with `make traceability`, not by hand |
 | #75 | `integration/throttle-documentation-20261117` (`83de536`) | docs/DECISIONS.md, docs/dev/recovery.md, spec 09, the SEC-007, SEC-008, SEC-013 and SEC-018 addenda, audit notes | No shared files; merges cleanly. Covers A3-F21 |
 
 ## New observations (not triaged)
@@ -177,8 +190,10 @@ The openapi-contract fixer found these at `1ee699f`, outside this triage. They a
 - `155caab` (A3-F10): cmd/circula/snapshot.go; cmd/circula/backup_test.go; cmd/circula/jobs_regress_test.go; docs/specs/11-deployment-operations.md (OPS-018 row); docs/TRACEABILITY.md (regenerated with `make traceability`).
 - `8bd8e45` (this record): this file; docs/audit/2026-10-28/wip-fixes/challenge-reason-erasure.patch.txt, a byte copy of the stopped A3-F05 fixer's patch (sha256 `6642a7f2322548f35bbc2ad4d9a607141bf25bbed32fe073beb4772d968eaa24`); one row in docs/audit/2026-10-28/wip-fixes/README.md.
 - The commit after `8bd8e45`: this file only, to add the validation results for `8bd8e45` under [Tests run](#tests-run) and correct the race-timeout note.
+- `4bbc871` (A3-F10 logging half, OPS-033): cmd/circula/serve.go (`untilNextBackupAt` only); cmd/circula/jobs_regress_test.go (two new tests, and a logger for the `TestJobUntilNextBackupIgnoresFutureFiles` fixture); docs/ops/monitoring.md (the "Clock error on host" row); docs/specs/11-deployment-operations.md (the OPS-018 row note); docs/TRACEABILITY.md (regenerated with `make traceability`).
+- The commit after `4bbc871`: this file only, to record the follow-up.
 
-Not touched: cmd/circula/serve.go, cmd/circula/config.go, migrations, e2e/, .github/, archive PR #13 and every open PR branch. No existing test was changed, skipped or weakened.
+Only `4bbc871` touches cmd/circula/serve.go, and only `untilNextBackupAt` in it. Not touched by any of these commits: cmd/circula/config.go, migrations, e2e/, .github/, archive PR #13, every open PR branch, and what PR #72 owns (C/snapshot.go `snapshotWith`, `verifyFile`, `verifyCopy`, `backupFileNameFor` and `sweepStaleTemp`, C/util.go `copyFileSync`, and the new C/backup_work.go). No existing test was skipped or weakened, and no assertion was relaxed. The only change to an existing test is the logger that `4bbc871` gives the `TestJobUntilNextBackupIgnoresFutureFiles` fixture.
 
 ## Integration checks
 
@@ -188,6 +203,7 @@ Not touched: cmd/circula/serve.go, cmd/circula/config.go, migrations, e2e/, .git
   - Both commit messages end with the two trailer lines.
   - The worktree had no uncommitted, untracked, ignored or stashed leftovers.
 - `make traceability-check` passes. The generator reads the specs, docs/DECISIONS.md and the source outside docs/, so this file does not change docs/TRACEABILITY.md.
+- The OPS-033 follow-up was made in a new detached worktree at `da04d45`; the main clone's working tree was not touched. The `4bbc871` message ends with the two trailer lines, and its validation is under [Tests run](#tests-run).
 
 ## Tests run
 
@@ -211,13 +227,30 @@ The first set ran on the tree of `155caab`, which has the same code as `8bd8e45`
 
 Not run: the macOS and Windows CI jobs, govulncheck, the licence check and the release workflow.
 
+The OPS-033 follow-up ran the set below on `4bbc871`. The commit after it changes only this file, so it has the same code and tests.
+
+| Command | On `4bbc871` |
+|---|---|
+| Fail-before, with the serve.go change reversed as described in the A3-F10 section (once, on the tree that became `4bbc871`) | FAIL in 3 subtests and in the loop test. Re-applied: PASS |
+| `gofmt -l .` | clean |
+| `go vet ./...` | ok |
+| `make traceability-check` | up to date |
+| `scripts/check-hygiene.sh` | ok |
+| `scripts/check-action-pins.sh` | ok |
+| `GOTOOLCHAIN=go1.26.10 go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact` | no leaks found (9.17 MB scanned) |
+| `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0 run` | 0 issues |
+| `go test -count=1 ./...` | every package ok (cmd/circula 61.8 s, internal/service 67.9 s) |
+| `CGO_ENABLED=1 go test -race -count=1 ./cmd/circula` | ok (286.8 s); no data race |
+
+Not run on `4bbc871`: the race tests of internal/... (it changes no file there), e2e/ (it changes no UI or API code), and the jobs listed as not run above.
+
 ## Open items for the owner or integrator
 
 1. PRIV-02 (A3-F05): empty `challenges.reason` on erasure or document a retention exception (SEC-014/018). The reference patch is in wip-fixes/.
 2. PRIV-03 (A3-F07): WAL checkpoint design.
 3. A1-04-G2: rule on spec gap G2 (dispute reversals while the network is `closing`).
 4. A3-F18: notice timing for member-limit cuts.
-5. A3-F10, OPS-033 logging half: unblocked; a follow-up commit in C/serve.go.
-6. PR #74 or this branch, whichever merges second: regenerate docs/TRACEABILITY.md with `make traceability`.
-7. The new observations above (`maintenance` problem code; `mfa-required` in the enum).
+5. PR #74 or this branch, whichever merges second: regenerate docs/TRACEABILITY.md with `make traceability`.
+6. The new observations above (`maintenance` problem code; `mfa-required` in the enum).
+7. An independent review of `4bbc871`, the A3-F10 logging half (OPS-033), which this list carried as unblocked until the follow-up fixed it.
 8. Optional nits from the triage and the reviews: an as-built note on the API-066 row (A2-19); a link from SEC-027-keys.md:13 to `revoke-sessions` (A3-F13); the unused `RecordScheduledConsistencyRun` branch (A3-F15); the A1-07 residual (one failing export delays later networks in a run); the review points in the A2-08 and A3-F10 sections.
