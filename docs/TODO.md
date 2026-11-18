@@ -1,6 +1,6 @@
 # Circula current work
 
-Updated 2026-11-17 after merging PRs #56–#65; the dashboard-unit fix (#63) and dependency bumps (#48–#50) are consolidated in one candidate PR. This list supersedes the old
+Updated 2026-11-18 after the PR and branch consolidation ([PR ledger](plans/PR-CONSOLIDATION-2026-11-17.md)); PRs #56–#65 and #68 (dashboard-unit fix #63, dependency bumps #48–#50) are merged. This list supersedes the old
 unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isolated.
 
 ## Integration evidence
@@ -65,10 +65,21 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 - CI avoids duplicate branch/PR runs; native platforms run on main/nightly/dispatch and opted-in PRs.
   Container evidence is recorded in `docs/ops/container-verification-2026-11-12.md`.
 
+## PR consolidation follow-ups (2026-11-18)
+
+- FNET-204 (draft PR #67, future module only): wire signed cursors into `Page()`, add expiry, key ID/verify set
+  and actor/filter binding, round-trip and tamper tests, gofmt; see the [#67 review](plans/PR-CONSOLIDATION-2026-11-17.md#pr-67-review).
+  Key custody, TTL, mute semantics and persistent joins need owner decisions.
+- NEW-01 (Low hardening, `docs/security/security-review.md`): build unencrypted snapshots in a private
+  `os.MkdirTemp` directory and open copies with `O_EXCL`.
+- Owner decisions from the archived spec drafts are listed in `docs/archive/specs-historical/README.md`;
+  candidate QA backlog there: race matrix R1–R18 and cross-parameter policy rules R1–R13 (from PR #2).
+- `future/module-catalog-20261116` has stale per-branch SHAs; refresh it on that branch if it is kept.
+
 ## Remaining specification and qualification work
 
 - SEC-026 is an outstanding implementation: network-configurable proposal-velocity and reciprocal-trade signals, one signal per window, visible only to same-network administrators/reviewers, with no automatic trade blocking. Existing throttles are not this feature.
-- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. The common-UI candidate migrates shell/dashboard labels, navigation, persistent network notices and badge counts; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
+- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. PR #62 migrated shell/dashboard labels, navigation, persistent network notices and badge counts; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
 - GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
 
 - Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.

@@ -24,7 +24,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `backup-interval` | `CIRCULA_BACKUP_INTERVAL` | `24h` | no | Time between scheduled backups. `0` disables them. |
 | `backup-retain-daily` | `CIRCULA_BACKUP_RETAIN_DAILY` | `30` | no | Newest backups kept (1 to 10000). |
 | `backup-retain-monthly` | `CIRCULA_BACKUP_RETAIN_MONTHLY` | `12` | no | Months for which the newest backup is also kept. `0` disables. |
-| `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start with pending migrations. `auto`: back up, then migrate at start-up. |
+| `migrate-mode` | `CIRCULA_MIGRATE_MODE` | `explicit` | no | `explicit`: `serve` refuses to start when an existing database has pending migrations. `auto`: back up, then migrate at start-up. In both modes a database file that does not exist yet is created at the current schema (there is no data to protect). |
 | `session-idle` | `CIRCULA_SESSION_IDLE` | `720h` | no | Idle session timeout (DEC-005). |
 | `session-max` | `CIRCULA_SESSION_MAX` | `2160h` | no | Absolute session lifetime. Must not be shorter than `session-idle`. |
 | `session-idle-admin` | `CIRCULA_SESSION_IDLE_ADMIN` | value of `session-idle` | no | Idle timeout for a person who holds the administrator role in any network they belong to (SEC-003). Not longer than `session-idle`. See [Role-specific session timeouts](#role-specific-session-timeouts-sec-003). |
@@ -300,8 +300,9 @@ On every `serve` start, in this order (before the port opens):
 
 1. Configuration validation, including the transport rule for `public-base-url` (SEC-022).
 2. Acquire `<database>.lock`. A second `serve` or `migrate` or `restore` on the same file refuses to start.
-3. Read the schema version without migrating. In `explicit` mode, pending migrations stop the start. In `auto` mode, a
-   pre-migration backup is taken first and migration is refused if the backup fails.
+3. Read the schema version without migrating. In `explicit` mode, pending migrations on an existing database stop the
+   start. In `auto` mode, a pre-migration backup is taken first and migration is refused if the backup fails. In both
+   modes a database file that does not exist yet is created at the current schema.
 4. Open the database. Check WAL journal mode and foreign-key enforcement.
 5. Verify the ledger for every network. A network that fails is **frozen** (CMD-07, OPS-033): its writes are refused with
    `network-frozen` (API `423`, web page "Network read-only"), reads still work, and every other network serves. The

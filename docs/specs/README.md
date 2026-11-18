@@ -6,6 +6,10 @@ Status refreshed 2026-11-16 against docs/plans/circula-completion-matrix.md (lin
 
 Circula is software for running community mutual-credit networks. It is not a guarantee that credits have monetary value or that members will accept them. Read the glossary and invariants in [00](00-conventions.md) first; every other document uses those terms.
 
+Competing specification drafts from PRs #1, #2, #29 and #38 are archived under
+[docs/archive/specs-historical/](../archive/specs-historical/README.md). Their IDs reuse these prefixes with
+different meanings; do not cite them.
+
 ## Reading order
 
 Start with [00](00-conventions.md) (conventions, glossary, invariants LED-1..LED-7, DEC-001..DEC-004). Then read the domain and ledger documents (03, 06), followed by the requirements that use them (04, 07, 08), and then the cross-cutting documents (09 to 12). Read [13](13-assumptions-risks-decisions.md) for open decisions and [DECISIONS.md](../DECISIONS.md) for decisions recorded during the build, before planning any milestone. Treat build-status sections in the specs as historical evidence for the snapshot each section names; they do not establish current branch status. The current checkpoint's evidence and limits are in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md).

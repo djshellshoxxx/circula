@@ -1,3 +1,7 @@
+> **Historical (banner added 2026-11-18).** This file describes repository state before the product was merged into
+> `main` (for example "main is prompt-only", PR #19 or #20 unmerged). Current state: `HANDOFF.md`, `docs/TODO.md`
+> and `docs/plans/PR-CONSOLIDATION-2026-11-17.md`.
+
 # ChatGPT zero-Codex Circula continuation — 2026-11-10
 
 Status: **qualification checkpoint only**; no runtime code change, merge, deployment or release. This checkpoint belongs to the isolated branch `chatgpt/zero-codex/qualify-pr19-20261110-a`, based on PR #19's exact application head. The companion coordination policy is **draft PR #20**, not merged into `main`.

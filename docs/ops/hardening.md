@@ -17,8 +17,8 @@ sudo -u circula env CIRCULA_DATABASE=/var/lib/circula/circula.db /usr/local/bin/
 systemctl enable --now circula
 ```
 
-`migrate-mode` is `explicit` by default, so run `circula migrate` once before the first start and on every upgrade
-([upgrade.md](upgrade.md)).
+`migrate-mode` is `explicit` by default, so run `circula migrate` on every upgrade ([upgrade.md](upgrade.md)). A first
+start on a database file that does not exist yet creates it at the current schema without `migrate`.
 
 Secrets go in a drop-in, never in the unit, using credentials (files are mode 0400, owned by the service user, and
 visible only to the service, which satisfies the "not readable by group or others" check):
