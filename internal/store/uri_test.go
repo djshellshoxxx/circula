@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -16,6 +18,9 @@ import (
 // store sets, including the E-02 schema boundary.
 func TestSQLiteOpensExactPathWithURIMetacharacters(t *testing.T) {
 	for _, sub := range []string{"plain", "a?b", "a#b", "a%41b", "a%", "a?&_fk=0&x=", "a?&_pragma=trusted_schema(1)&x="} {
+		if runtime.GOOS == "windows" && strings.Contains(sub, "?") {
+			continue // Windows file names cannot contain '?'; TestFileURIEscaping covers the encoding
+		}
 		for _, raw := range []bool{false, true} {
 			dir := filepath.Join(t.TempDir(), sub)
 			if err := os.MkdirAll(dir, 0o700); err != nil {

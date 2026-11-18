@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -17,6 +18,9 @@ import (
 // itself, not on a different file named by the truncated URI.
 func TestBackupDirectoryWithURIMetacharacters(t *testing.T) {
 	for _, name := range []string{"bk#x", "bk?x", "bk%41x"} {
+		if runtime.GOOS == "windows" && strings.Contains(name, "?") {
+			continue // not a valid Windows file name
+		}
 		t.Run(name, func(t *testing.T) {
 			dir := t.TempDir()
 			cfg := testConfigFor(seedDatabase(t, dir))
