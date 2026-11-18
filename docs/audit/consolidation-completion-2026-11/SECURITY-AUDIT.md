@@ -14,6 +14,27 @@ tests where a fix landed. A parallel integration pass reviewed every fix PR inde
 G03 and G04 on #81 were reproduced and fixed. Standards used: OWASP ASVS categories V2/V3/V4/V8/V12, with CWE
 identifiers per finding.
 
+## Verified original-ledger update: 2026-11-18T10:37:58Z
+
+PR #84 is now [merged as `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625),
+tree `717b32995b82772e3d6ff644297b7d05a74464b5`. It completes the previously outstanding portions of
+**A2-08** (the problem-code catalogue) and **A3-F10** (future-dated backup retention and clock-anomaly
+logging). Both are addressed on `main`; neither remains classified as a partial implementation/documentation
+fix in the original ledger. That original **55-finding ledger now has 50 addressed and five policy/design
+items remaining**. The additional AUD4 findings below are separate from that denominator.
+
+Verification is pinned to reviewed source `eb4bb08b15d41295aa2c4b9f93040124ce4d66e9`,
+[all seven required jobs in run 44272452596](https://github.com/djshellshoxxx/circula/actions/runs/44272452596),
+[review 5954934747](https://github.com/djshellshoxxx/circula/pull/84#pullrequestreview-5954934747), and the
+expected merge-tree check in [MERGE-MANIFEST](MERGE-MANIFEST.md). The merged
+[remediation record](https://github.com/djshellshoxxx/circula/blob/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625/docs/audit/2026-10-28/REMEDIATION-2026-11-18.md)
+provides the implementation context. The separate full local combined candidate `17152dad` retains its
+successful race/lint qualification; it is not the same tree as this merge.
+
+PRs #82 and #87 remain unmerged with provider CI pending at this update. **AUD4-F03 remains partial**,
+including its same-millisecond and host-clock-rollback residuals. **A3-F02 / DEC-014 remains unresolved**;
+the five original policy/design dispositions were not approved by this merge.
+
 ## Findings and dispositions
 
 | ID | Severity | CWE | State | Evidence or fix |

@@ -64,7 +64,15 @@ This is a candidate qualification, while `main` remains `b4398074`: #82/#84/#87 
 seven of seven provider jobs queued per PR at 2026-11-18T10:07:24Z. This follow-up does not change the
 historical 105-branch snapshot. See [TEST-EVIDENCE](TEST-EVIDENCE.md).
 
-## Pull requests
+Subsequent verified update at **2026-11-18T10:37:58Z**: the integration coordinator merged #84 as
+`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`, tree `717b32995b82772e3d6ff644297b7d05a74464b5`,
+after its seven required provider jobs passed. [MERGE-MANIFEST](MERGE-MANIFEST.md) pins the source,
+CI run, review, parents and actual merge receipt; [SECURITY-AUDIT](SECURITY-AUDIT.md) records completion
+of A2-08 and A3-F10. The 09:35Z branch inventory and 10:07Z candidate checkpoint above remain dated
+historical observations. No new repository-wide branch or PR count is asserted here. #82/#87 remain
+unmerged with provider CI pending at this update.
+
+## Pull requests (earlier pass snapshot)
 
 | PR | Before | After |
 |---|---|---|

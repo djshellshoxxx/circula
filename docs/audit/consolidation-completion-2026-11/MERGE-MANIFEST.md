@@ -7,9 +7,10 @@ Each merge was made only after these checks:
 
 Local qualification is specific to each row below. In particular, #77 has local diff review and CI evidence;
 this manifest does not claim a separate local test run for that tree. Other rows identify the exact tree and
-the local checks reported for it. These merge commits were observed by the parallel integration coordinator,
-which did not issue those merge calls. Local-check entries here are author-reported; the Git merge/tree and
-CI receipts are independently inspectable.
+the local checks reported for it. The first five merge commits listed below were observed by the parallel
+integration coordinator, which did not issue those merge calls. Local-check entries for those rows are
+author-reported; the Git merge/tree and CI receipts are independently inspectable. The coordinator performed
+the later PR #84 merge, which is identified separately in the dated update below.
 
 Merge method: merge commit, as in the repository's history.
 
@@ -23,7 +24,33 @@ Merge method: merge commit, as in the repository's history.
 
 `main` was `ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4` at baseline. It is `b4398074ae4ca72559235ca50242cfcb7a934eec` after merge 5 (as of 2026-11-18T09:41Z). The final `main` is recorded in HANDOFF when this PR merges last.
 
-## Open, not merged
+## Verified update: PR #84 merged at 2026-11-18T10:37:58Z
+
+The integration coordinator performed the [PR #84 merge](https://github.com/djshellshoxxx/circula/pull/84)
+after [run 44272452596](https://github.com/djshellshoxxx/circula/actions/runs/44272452596) passed all seven
+required jobs on source `eb4bb08b15d41295aa2c4b9f93040124ce4d66e9` and
+[review 5954934747](https://github.com/djshellshoxxx/circula/pull/84#pullrequestreview-5954934747)
+accepted the source and merge-content evidence.
+
+| Receipt | Exact value |
+|---|---|
+| Merge commit / `main` at this update | [`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625) |
+| Merge tree | `717b32995b82772e3d6ff644297b7d05a74464b5` |
+| Parents | `b4398074ae4ca72559235ca50242cfcb7a934eec`, `eb4bb08b15d41295aa2c4b9f93040124ce4d66e9` |
+| Merge time | `2026-11-18T10:37:58Z` |
+| Expected-tree verification | The coordinator verified the computed merge tree against the actual Git merge |
+
+The provider source checkout predates PR #81. Its successful CI therefore qualifies that source checkout;
+the coordinator separately reviewed the merge composition and verified the expected resulting tree.
+The completed full race/lint qualification remains pinned to combined candidate `17152dad`, tree
+`1e47c9c30165ca27866887533586c90323e1630e`, which also contains unmerged #82 and #87. That result is
+not relabeled as a full-suite execution on merge tree `717b3299`. See [TEST-EVIDENCE](TEST-EVIDENCE.md).
+
+PR #84 completes A2-08 and A3-F10 in the original 55-finding ledger: **50 addressed and five remaining
+policy/design items**. [SECURITY-AUDIT](SECURITY-AUDIT.md) records the scope. PRs #82 (`e127acc`) and
+#87 (`679a301`) remain unmerged with provider CI pending at this update; AUD4-F03 remains partial.
+
+## Open, not merged (updated at the PR #84 merge)
 
 | PR | State | Gate |
 |---|---|---|
@@ -32,14 +59,13 @@ Merge method: merge commit, as in the repository's history.
 | [#82](https://github.com/djshellshoxxx/circula/pull/82) | Open, AUD4-F06/F04 plus password-proof follow-up at `e127acc` | Current-head provider CI pending; independent review, focused regressions and local combined race/lint qualification at `17152dad` passed |
 | [#83](https://github.com/djshellshoxxx/circula/pull/83) | Draft, AUD4-F02 | Owner decision; not to be merged without one |
 | [#67](https://github.com/djshellshoxxx/circula/pull/67) | Draft, future module | Unchanged; #80 stacks on it |
-| [#84](https://github.com/djshellshoxxx/circula/pull/84) | Open, ready for review; another worker; head `eb4bb08` | Current-head provider CI pending; included in the separately qualified local combined candidate `17152dad` |
 | [#85](https://github.com/djshellshoxxx/circula/pull/85) | Draft, GOV-021 | Owner gates (see BLOCKERS) |
 | [#86](https://github.com/djshellshoxxx/circula/pull/86) | Draft, SEC-026, stacked on #85 | Owner gates (see BLOCKERS) |
 | [#87](https://github.com/djshellshoxxx/circula/pull/87) | Open, ready for review; AUD4-F03 (partial); head `679a301` | Current-head provider CI pending; local combined race/lint qualification at `17152dad` passed; timestamp residuals remain |
 
 At 2026-11-18T10:07:00.462200Z, the single full local race invocation completed successfully on
 `17152dadad91d4e1c994ea807e7d6e2497513aa8`, tree `1e47c9c30165ca27866887533586c90323e1630e`.
-This is the unmerged #82/#84/#87 candidate; the latest recorded `main` remains `b4398074`. The provider
-snapshot at 10:07:24Z still has all seven required jobs queued, zero assigned runners and zero executed
-steps for each of the three PRs. Their local qualification does not substitute for current-head CI or a
-merge receipt. See [TEST-EVIDENCE](TEST-EVIDENCE.md).
+At that earlier checkpoint it was the unmerged #82/#84/#87 candidate, and `main` was `b4398074`.
+The 10:07:24Z provider snapshot recorded all seven required jobs queued, zero assigned runners and zero
+executed steps for each of the three PRs. Those dated observations remain historical; the later successful
+CI and merge receipt for #84 are recorded above. See [TEST-EVIDENCE](TEST-EVIDENCE.md).
