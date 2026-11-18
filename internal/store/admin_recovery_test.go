@@ -162,12 +162,21 @@ func TestGOV021RecoveryRepository(t *testing.T) {
 		if err != nil || len(page) != 1 || page[0].ID != "ra" {
 			t.Errorf("page after rb = %v, %v", page, err)
 		}
-		exp, err := tx.ExpiredOpenAdminRecovery(now.Add(2*time.Hour), 10)
+		exp, err := tx.ExpiredOpenAdminRecovery(now.Add(2*time.Hour), "", 10)
 		if err != nil || len(exp) != 1 || exp[0].ID != "rb" {
 			t.Errorf("expired = %v, %v", exp, err)
 		}
-		if exp, _ := tx.ExpiredOpenAdminRecovery(now.Add(2*time.Hour-time.Millisecond), 10); len(exp) != 0 {
+		if exp, _ := tx.ExpiredOpenAdminRecovery(now.Add(2*time.Hour), "rb", 10); len(exp) != 0 {
+			t.Errorf("expired after the keyset cursor: %v", exp)
+		}
+		if exp, _ := tx.ExpiredOpenAdminRecovery(now.Add(2*time.Hour-time.Millisecond), "", 10); len(exp) != 0 {
 			t.Errorf("expired before the expiry instant: %v", exp)
+		}
+		if o, err := tx.GetOpenAdminRecovery(netID, "mp2"); err != nil || o == nil || o.ID != "rb" {
+			t.Errorf("open request of mp2 = %v, %v", o, err)
+		}
+		if o, err := tx.GetOpenAdminRecovery(netID, "mp1"); err != nil || o != nil {
+			t.Errorf("mp1 has only a refused request, got %v, %v", o, err)
 		}
 		if _, err := tx.GetAdminRecovery("missing"); !errors.Is(err, domain.ErrNotFound) || !strings.Contains(err.Error(), "recovery request") {
 			t.Errorf("missing request: %v", err)
@@ -176,5 +185,24 @@ func TestGOV021RecoveryRepository(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatal(err)
+	}
+	// The open-request lookup is an index probe, not a scan of a page of rows.
+	rows, err := s.DB().Query(`EXPLAIN QUERY PLAN SELECT id FROM admin_recovery_requests
+		WHERE network_id = 'n1' AND requester_member_id = 'mp1' AND status IN ('requested','approved')`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	plan := ""
+	for rows.Next() {
+		var id, parent, unused int
+		var detail string
+		if err := rows.Scan(&id, &parent, &unused, &detail); err != nil {
+			t.Fatal(err)
+		}
+		plan += detail + ";"
+	}
+	_ = rows.Close()
+	if !strings.Contains(plan, "admin_recovery_open_member") {
+		t.Errorf("open-request lookup plan = %q, want the partial unique index", plan)
 	}
 }

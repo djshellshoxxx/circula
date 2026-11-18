@@ -23,6 +23,11 @@ type AdminRecoveryRepo interface {
 	// CloseAdminRecovery moves a request from status from to the final status
 	// to; false when it was not in from. roleAssignmentID is set only for applied.
 	CloseAdminRecovery(id string, from, to domain.AdminRecoveryStatus, by, reason string, at time.Time, roleAssignmentID string) (bool, error)
-	// ExpiredOpenAdminRecovery lists open requests of any network whose expiry is at or before now.
-	ExpiredOpenAdminRecovery(now time.Time, limit int) ([]*domain.AdminRecoveryRequest, error)
+	// GetOpenAdminRecovery returns the member's open (requested or approved)
+	// request in the network, or nil when there is none. The schema allows at
+	// most one; the lookup uses that partial unique index, never a page scan.
+	GetOpenAdminRecovery(netID, memberID string) (*domain.AdminRecoveryRequest, error)
+	// ExpiredOpenAdminRecovery lists open requests of any network whose expiry
+	// is at or before now, ascending by id strictly after afterID (keyset).
+	ExpiredOpenAdminRecovery(now time.Time, afterID string, limit int) ([]*domain.AdminRecoveryRequest, error)
 }

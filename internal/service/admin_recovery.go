@@ -91,16 +91,44 @@ type AdminRecoveryView struct {
 	Mine            bool
 }
 
-// AdminRecoveryOperatorView is a request as the operator CLI lists it, with the
-// facts an operator checks before approving.
+// AdminRecoveryListInput is an operator's audited read of recovery requests
+// (SEC-013 a, b): a label and a documented reason are mandatory.
+type AdminRecoveryListInput struct {
+	Network  string // slug or id; "" lists every network
+	OpenOnly bool   // only requests that can still be decided
+	Operator string // label of the reading operator
+	Reason   string // documented reason; shown to the administrators of every network listed
+	Page     Page   // keyset: requests strictly before Page.AfterID, newest first
+}
+
+// AdminRecoveryOperatorView is the minimum an operator needs to decide a
+// request. Each field and why it is there:
+//   - ID, NetworkSlug: the arguments of approve and refuse;
+//   - Status (as of now), ExpiresAt: whether and until when it can be decided;
+//   - AdminRequired: false means approval will be refused (an administrator is active);
+//   - Eligible: the requester is an active member (with a second factor when
+//     required) now; false means approval will be refused. A yes/no instead of
+//     the raw membership status;
+//   - RequesterID, RequesterName: to match the request to the out-of-band
+//     confirmation (ticket) of the person;
+//   - MemberSince (a date, no time): a membership opened just before the
+//     request, for example in an open network, is the main takeover signal;
+//   - FirstOperator, FirstApprovedAt: whether this is the first or the second
+//     approval, and that the second operator is a different one.
+//
+// No login, person id, contact detail, balance or other member data is read.
 type AdminRecoveryOperatorView struct {
-	Request         *domain.AdminRecoveryRequest
-	Status          domain.AdminRecoveryStatus // as of now
+	ID              string
 	NetworkSlug     string
+	Status          domain.AdminRecoveryStatus
+	ExpiresAt       time.Time
+	AdminRequired   bool
+	Eligible        bool
+	RequesterID     string
 	RequesterName   string
-	RequesterStatus domain.MemberStatus
-	RequesterJoined time.Time
-	AdminRequired   bool // the network has no active administrator now
+	MemberSince     time.Time // UTC date
+	FirstOperator   string
+	FirstApprovedAt *time.Time
 }
 
 func errRecoveryExpired() error {
@@ -188,15 +216,14 @@ func (s *Service) requestable(tx store.Tx, p *principal) error {
 	if err := recoveryNetworkErr(p.net); err != nil {
 		return err
 	}
-	open, err := tx.ListAdminRecovery(p.net.ID, true, "", 500)
+	// The member's own open request, through the one-open-request index: no
+	// page of other members' requests can hide it.
+	r, err := tx.GetOpenAdminRecovery(p.net.ID, p.member.ID)
 	if err != nil {
 		return err
 	}
-	now := s.now()
-	for _, r := range open {
-		if r.RequesterID == p.member.ID && now.Before(r.ExpiresAt) {
-			return domain.Errf(domain.CodeConflict, "you already have an open administrator recovery request")
-		}
+	if r != nil && s.now().Before(r.ExpiresAt) {
+		return domain.Errf(domain.CodeConflict, "you already have an open administrator recovery request")
 	}
 	return nil
 }
@@ -341,31 +368,40 @@ func (s *Service) ListAdminRecoveryEvents(ctx context.Context, actor domain.Acto
 }
 
 // ListAdminRecoveryOperator lists requests for the operator CLI: one network
-// (slug or id) or, with network "", every network; openOnly keeps requests
-// that can still be decided. System actor only.
-func (s *Service) ListAdminRecoveryOperator(ctx context.Context, actor domain.Actor, network string, openOnly bool, pg Page) ([]AdminRecoveryOperatorView, error) {
-	if err := requireSystem(actor); err != nil {
+// (slug or id) or, with Network "", every network, newest first, one keyset
+// page at a time. It is operator access to member data, so it needs a label
+// and a documented reason and is audited as admin_recovery.listed: once at
+// platform scope and once in each network whose requests were shown, with the
+// shown requesters as subjects (SEC-013 a, b, decision 5). It shows only the
+// fields of AdminRecoveryOperatorView. System actor only.
+func (s *Service) ListAdminRecoveryOperator(ctx context.Context, actor domain.Actor, in AdminRecoveryListInput) ([]AdminRecoveryOperatorView, error) {
+	op, reason, err := recoveryDecision(actor, AdminRecoveryDecision{Operator: in.Operator, Reason: in.Reason})
+	if err != nil {
+		return nil, err
+	}
+	if err := validatePageIDs(in.Page.AfterID); err != nil {
 		return nil, err
 	}
 	var out []AdminRecoveryOperatorView
-	err := s.view(ctx, func(tx store.Tx) error {
+	err = s.update(ctx, func(tx store.Tx) error {
 		netID := ""
-		if network != "" {
-			net, err := resolveNetwork(tx, network)
+		if in.Network != "" {
+			net, err := resolveNetwork(tx, in.Network)
 			if err != nil {
 				return err
 			}
 			netID = net.ID
 		}
-		if err := validatePageIDs(pg.AfterID); err != nil {
-			return err
-		}
-		rs, err := tx.ListAdminRecovery(netID, openOnly, pg.AfterID, clampPage(pg))
+		rs, err := tx.ListAdminRecovery(netID, in.OpenOnly, in.Page.AfterID, clampPage(in.Page))
 		if err != nil {
 			return err
 		}
 		now := s.now()
 		nets := map[string]*domain.Network{}
+		var order []string                // networks in the order first shown
+		shown := map[string][]string{}    // network -> requests shown
+		subjects := map[string][]string{} // network -> requesters shown
+		out = make([]AdminRecoveryOperatorView, 0, len(rs))
 		for _, r := range rs {
 			n, ok := nets[r.NetworkID]
 			if !ok {
@@ -376,17 +412,42 @@ func (s *Service) ListAdminRecoveryOperator(ctx context.Context, actor domain.Ac
 					return err
 				}
 				nets[r.NetworkID] = n
+				order = append(order, r.NetworkID)
 			}
-			v := AdminRecoveryOperatorView{Request: r, Status: r.StatusAt(now), NetworkSlug: n.Slug,
-				AdminRequired: n.Status == domain.NetworkActive && n.AdminRequired}
+			v := AdminRecoveryOperatorView{ID: r.ID, NetworkSlug: n.Slug, Status: r.StatusAt(now), ExpiresAt: r.ExpiresAt,
+				AdminRequired: n.Status == domain.NetworkActive && n.AdminRequired, RequesterID: r.RequesterID,
+				FirstOperator: r.FirstOperator, FirstApprovedAt: r.FirstApprovedAt}
 			if m, err := tx.GetMember(r.NetworkID, r.RequesterID); err == nil {
-				v.RequesterName, v.RequesterStatus, v.RequesterJoined = m.DisplayName, m.Status, m.JoinedAt
+				v.RequesterName = m.DisplayName
+				v.MemberSince = m.JoinedAt.UTC().Truncate(24 * time.Hour)
+				v.Eligible = s.recoveryRequesterErr(tx, m) == nil
 			}
+			shown[r.NetworkID] = append(shown[r.NetworkID], r.ID)
+			subjects[r.NetworkID] = append(subjects[r.NetworkID], r.RequesterID)
 			out = append(out, v)
+		}
+		scope := in.Network
+		if scope == "" {
+			scope = "all networks"
+		}
+		if err := s.emit(tx, "", "", actor.RequestID, auditEntry{Type: domain.ActorOperator, Action: domain.ActAdminRecoveryListed,
+			TargetType: "admin_recovery", TargetID: netID, Reason: reason,
+			After: map[string]any{"operator": op, "scope": scope, "open_only": in.OpenOnly, "requests": len(out), "networks": len(order)}}); err != nil {
+			return err
+		}
+		for _, id := range order {
+			if err := s.emit(tx, id, "", actor.RequestID, auditEntry{Type: domain.ActorOperator, Action: domain.ActAdminRecoveryListed,
+				TargetType: "admin_recovery", TargetID: id, Reason: reason, Subjects: subjects[id],
+				After: map[string]any{"operator": op, "requests": len(shown[id])}}); err != nil {
+				return err
+			}
 		}
 		return nil
 	})
-	return out, err
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // recoveryDecision validates the operator inputs shared by approval and refusal.
@@ -439,26 +500,14 @@ func (s *Service) expireOne(tx store.Tx, actor domain.Actor, r *domain.AdminReco
 	return true, s.notifyCurrentMembers(tx, r.NetworkID, NotifAdminRecoveryExpired)
 }
 
-// closeExpiredRecovery expires the open requests of one member of a network.
-func (s *Service) closeExpiredRecovery(tx store.Tx, actor domain.Actor, netID, memberID string) (int, error) {
-	open, err := tx.ListAdminRecovery(netID, true, "", 500)
-	if err != nil {
-		return 0, err
+// closeExpiredRecovery expires the member's own open request in the network,
+// if it is past its expiry, found through the one-open-request index.
+func (s *Service) closeExpiredRecovery(tx store.Tx, actor domain.Actor, netID, memberID string) (bool, error) {
+	r, err := tx.GetOpenAdminRecovery(netID, memberID)
+	if err != nil || r == nil {
+		return false, err
 	}
-	n := 0
-	for _, r := range open {
-		if r.RequesterID != memberID {
-			continue
-		}
-		done, err := s.expireOne(tx, actor, r)
-		if err != nil {
-			return n, err
-		}
-		if done {
-			n++
-		}
-	}
-	return n, nil
+	return s.expireOne(tx, actor, r)
 }
 
 // ExpireAdminRecovery closes open requests past their expiry, auditing each and
@@ -467,13 +516,16 @@ func (s *Service) ExpireAdminRecovery(ctx context.Context, actor domain.Actor) (
 	if err := requireSystem(actor); err != nil {
 		return 0, err
 	}
+	// One short write unit per batch, walking the expired rows by ascending id
+	// (keyset), so every expired request is reached even if one in a batch
+	// could not be closed, and no unit grows with the backlog.
 	const batch = 100
-	total := 0
+	total, after := 0, ""
 	for {
-		n, full := 0, false
+		n, last, full := 0, "", false
 		err := s.update(ctx, func(tx store.Tx) error {
 			n = 0
-			rs, err := tx.ExpiredOpenAdminRecovery(s.now(), batch)
+			rs, err := tx.ExpiredOpenAdminRecovery(s.now(), after, batch)
 			if err != nil {
 				return err
 			}
@@ -486,6 +538,7 @@ func (s *Service) ExpireAdminRecovery(ctx context.Context, actor domain.Actor) (
 				if done {
 					n++
 				}
+				last = r.ID
 			}
 			return nil
 		})
@@ -493,9 +546,10 @@ func (s *Service) ExpireAdminRecovery(ctx context.Context, actor domain.Actor) (
 			return total, err
 		}
 		total += n
-		if !full || n == 0 {
+		if !full {
 			return total, nil
 		}
+		after = last
 	}
 }
 
@@ -611,12 +665,13 @@ func (s *Service) ApproveAdminRecovery(ctx context.Context, actor domain.Actor, 
 // supersedeRecovery closes every other open request of the network once one
 // has been applied, so a later loss of administrators cannot revive them.
 func (s *Service) supersedeRecovery(tx store.Tx, actor domain.Actor, netID, appliedID string) error {
+	const pageSize = 500
+	after := "" // keyset over the network's open requests, id descending
 	for {
-		open, err := tx.ListAdminRecovery(netID, true, "", 500)
+		open, err := tx.ListAdminRecovery(netID, true, after, pageSize)
 		if err != nil {
 			return err
 		}
-		n := 0
 		for _, o := range open {
 			if o.ID == appliedID {
 				continue
@@ -628,16 +683,16 @@ func (s *Service) supersedeRecovery(tx store.Tx, actor domain.Actor, netID, appl
 			if !ok {
 				continue
 			}
-			n++
 			if err := s.auditRecovery(tx, actor, netID, domain.ActorSystem, auditEntry{Action: domain.ActAdminRecoverySuperseded, TargetType: "admin_recovery",
 				TargetID: o.ID, Subjects: []string{o.RequesterID}, Before: map[string]any{"status": string(o.Status)},
 				After: map[string]any{"status": string(domain.AdminRecoverySuperseded), "applied": appliedID}}); err != nil {
 				return err
 			}
 		}
-		if n == 0 {
+		if len(open) < pageSize {
 			return nil
 		}
+		after = open[len(open)-1].ID
 	}
 }
 

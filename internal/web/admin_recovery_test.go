@@ -1,7 +1,9 @@
 package web
 
 import (
+	"html"
 	"net/url"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -82,4 +84,60 @@ func TestGOV021AdminRecoveryPage(t *testing.T) {
 	if strings.Contains(alice.get(w.base()+"/").Body, "Ask for administrator recovery") {
 		t.Error("recovery link still shown after an administrator was appointed")
 	}
+}
+
+// GOV-021: the members' page continues both lists past their first page
+// (50 requests, 100 recorded steps), so no request or step is out of reach.
+func TestGOV021AdminRecoveryPagePaging(t *testing.T) {
+	w := newWorld(t)
+	if _, err := w.env.Store.DB().Exec(`UPDATE members SET status = 'suspended' WHERE id = ?`, w.adminM.ID); err != nil {
+		t.Fatal(err)
+	}
+	op := domain.SystemActor("cli-admin-recovery")
+	const cycles = 51 // 51 requests and 102 recorded steps
+	var firstID string
+	for i := 0; i < cycles; i++ {
+		r := testutil.Must(w.env.Svc.RequestAdminRecovery(w.env.Ctx, w.alice, w.net.ID, service.AdminRecoveryInput{IdempotencyKey: w.env.Key()}))
+		if i == 0 {
+			firstID = r.ID
+		}
+		testutil.Must(w.env.Svc.RefuseAdminRecovery(w.env.Ctx, op, service.AdminRecoveryDecision{Network: "town", RequestID: r.ID,
+			Operator: "Olga", Reason: "ticket"}))
+	}
+	bob := w.browser(t)
+	bob.login("bob@example.org")
+	first := bob.get(w.base() + "/admin-recovery")
+	checkPage(t, "admin recovery first page", first)
+	rows := strings.Count(first.Body, `data-label="Requested by"`)
+	steps := strings.Count(first.Body, `data-label="When"`)
+	if rows != 50 || steps != 100 {
+		t.Fatalf("first page: %d requests, %d steps", rows, steps)
+	}
+	nextRows := regexpFind(first.Body, `href="(/n/town/admin-recovery\?after=[^"]+)"`)
+	nextSteps := regexpFind(first.Body, `href="(/n/town/admin-recovery\?events_after=[0-9]+)"`)
+	if nextRows == "" || nextSteps == "" {
+		t.Fatalf("no continuation links: %q %q", nextRows, nextSteps)
+	}
+	more := bob.get(nextRows)
+	if n := strings.Count(more.Body, `data-label="Requested by"`); n != 1 || !strings.Contains(more.Body, "Refused") {
+		t.Fatalf("second requests page: %d rows", n)
+	}
+	if strings.Contains(more.Body, `admin-recovery?after=`) {
+		t.Error("continuation offered after the last request")
+	}
+	if got := testutil.Must(w.env.Svc.ListAdminRecoveryRequests(w.env.Ctx, w.bob, w.net.ID, service.Page{AfterID: strings.TrimPrefix(nextRows, "/n/town/admin-recovery?after="), Limit: 50})); len(got) != 1 || got[0].ID != firstID {
+		t.Fatalf("the oldest request is not on the second page: %+v", got)
+	}
+	tail := bob.get(nextSteps)
+	if n := strings.Count(tail.Body, `data-label="When"`); n != 2 {
+		t.Fatalf("second steps page: %d steps, want 2", n)
+	}
+}
+
+func regexpFind(body, pattern string) string {
+	m := regexp.MustCompile(pattern).FindStringSubmatch(body)
+	if m == nil {
+		return ""
+	}
+	return html.UnescapeString(m[1])
 }

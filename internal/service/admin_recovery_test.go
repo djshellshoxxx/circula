@@ -406,16 +406,8 @@ func TestGOV021RechecksAtEachApproval(t *testing.T) {
 			t.Fatal("departed requester appointed")
 		}
 	})
-	t.Run("network closing", func(t *testing.T) {
-		w := newWorld(t, nil)
-		tu.Must(w.schedule("end", 0))
-		w.orphan()
-		req := tu.Must(w.askRecovery(w.a))
-		tu.Must(w.approveRecovery(req.ID, "Olga"))
-		w.Clock.Advance(31 * 24 * time.Hour)
-		_, err := w.approveRecovery(req.ID, "Piet")
-		wantCode(t, err, domain.ErrInvalidState)
-	})
+	// The closing-network case is TestGOV021ClosingNetworkRefusesAppointment:
+	// it keeps the request unexpired, so the lifecycle guard itself is tested.
 	t.Run("MFA required for administrators", func(t *testing.T) {
 		e := tu.NewEnvConfig(t, nil, func(c *service.Config) { c.RequireMFAForAdmins = true })
 		w := &world{Env: e}

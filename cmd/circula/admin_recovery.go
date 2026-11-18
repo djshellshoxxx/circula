@@ -18,12 +18,16 @@ func init() {
 }
 
 const adminRecoveryUsage = `usage:
-  circula admin-recovery list [-network SLUG] [-all]
+  circula admin-recovery list -operator NAME -reason TEXT [-network SLUG] [-all] [-limit N] [-after ID]
   circula admin-recovery approve -network SLUG -request ID -operator NAME -reason TEXT
   circula admin-recovery refuse  -network SLUG -request ID -operator NAME -reason TEXT
 A request is made by a member of the network. The first approval only records it; a second
 approval by a different operator applies it. No command appoints an administrator otherwise.
+Listing reads member data: it is audited, and the reason is shown to the networks listed.
 `
+
+// adminRecoveryListMax bounds one listing page; -after continues it.
+const adminRecoveryListMax = 500
 
 // cmdAdminRecovery is the operator side of GOV-021. It never starts a request
 // and never appoints anyone without a member's request and two approvals.
@@ -34,20 +38,31 @@ func cmdAdminRecovery(ctx context.Context, args []string, stdout, stderr io.Writ
 	}
 	sub, rest := args[0], args[1:]
 	name := "admin-recovery " + sub
-	var network, request, operator, reason string
+	var network, request, operator, reason, after string
 	var all bool
+	var limit int
 	cfg, _, code, done := resolveFlags(name, rest, stderr, func(fs *flag.FlagSet) {
 		fs.StringVar(&network, "network", "", "network slug")
 		fs.StringVar(&request, "request", "", "recovery request id")
-		fs.StringVar(&operator, "operator", "", "name of the operator deciding (approvals need two different names)")
+		fs.StringVar(&operator, "operator", "", "name of the operator (approvals need two different names)")
 		fs.StringVar(&reason, "reason", "", "documented reason; shown to the network's administrators")
 		fs.BoolVar(&all, "all", false, "list: include decided requests, not only open ones")
+		fs.IntVar(&limit, "limit", 50, "list: requests per page, 1 to 500")
+		fs.StringVar(&after, "after", "", "list: continue after this request id (printed at the end of a full page)")
 	})
 	if done {
 		return code
 	}
 	switch sub {
 	case "list":
+		if operator == "" || reason == "" {
+			fmt.Fprintf(stderr, "circula: %s: -operator and -reason are required (listing reads member data and is audited)\n", name)
+			return exitUsage
+		}
+		if limit < 1 || limit > adminRecoveryListMax {
+			fmt.Fprintf(stderr, "circula: %s: -limit must be 1 to %d\n", name, adminRecoveryListMax)
+			return exitUsage
+		}
 	case "approve", "refuse":
 		if network == "" || request == "" || operator == "" || reason == "" {
 			fmt.Fprintf(stderr, "circula: %s: -network, -request, -operator and -reason are required\n", name)
@@ -72,23 +87,29 @@ func cmdAdminRecovery(ctx context.Context, args []string, stdout, stderr io.Writ
 	in := service.AdminRecoveryDecision{Network: network, RequestID: request, Operator: operator, Reason: reason}
 	switch sub {
 	case "list":
-		rs, err := svc.ListAdminRecoveryOperator(ctx, actor, network, !all, service.Page{Limit: 200})
+		rs, err := svc.ListAdminRecoveryOperator(ctx, actor, service.AdminRecoveryListInput{Network: network, OpenOnly: !all,
+			Operator: operator, Reason: reason, Page: service.Page{AfterID: after, Limit: limit}})
 		if err != nil {
 			return fail(err)
 		}
 		tw := tabwriter.NewWriter(stdout, 0, 4, 2, ' ', 0)
-		fmt.Fprintln(tw, "ID\tNETWORK\tSTATUS\tNO ADMIN\tREQUESTER\tNAME\tMEMBER STATUS\tJOINED\tREQUESTED\tEXPIRES\tFIRST APPROVAL")
+		fmt.Fprintln(tw, "ID\tNETWORK\tSTATUS\tNO ADMIN\tELIGIBLE\tREQUESTER\tNAME\tMEMBER SINCE\tEXPIRES\tFIRST APPROVAL")
 		for _, v := range rs {
-			r := v.Request
 			first := "-"
-			if r.FirstApprovedAt != nil {
-				first = r.FirstOperator + " " + r.FirstApprovedAt.Format(time.RFC3339)
+			if v.FirstApprovedAt != nil {
+				first = v.FirstOperator + " " + v.FirstApprovedAt.Format(time.RFC3339)
 			}
-			fmt.Fprintf(tw, "%s\t%s\t%s\t%t\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", r.ID, v.NetworkSlug, v.Status, v.AdminRequired, r.RequesterID,
-				v.RequesterName, v.RequesterStatus, v.RequesterJoined.Format("2006-01-02"), r.RequestedAt.Format(time.RFC3339),
-				r.ExpiresAt.Format(time.RFC3339), first)
+			since := "-"
+			if !v.MemberSince.IsZero() {
+				since = v.MemberSince.Format("2006-01-02")
+			}
+			fmt.Fprintf(tw, "%s\t%s\t%s\t%t\t%t\t%s\t%s\t%s\t%s\t%s\n", v.ID, v.NetworkSlug, v.Status, v.AdminRequired, v.Eligible,
+				v.RequesterID, v.RequesterName, since, v.ExpiresAt.Format(time.RFC3339), first)
 		}
 		_ = tw.Flush()
+		if len(rs) == limit {
+			fmt.Fprintf(stdout, "more may follow: repeat with -after %s\n", rs[len(rs)-1].ID)
+		}
 	case "approve":
 		out, err := svc.ApproveAdminRecovery(ctx, actor, in)
 		if err != nil {

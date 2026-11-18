@@ -68,10 +68,15 @@ func seedOrphanedNetwork(t *testing.T) (string, string) {
 // operator alone cannot apply a request, and every step is audited.
 func TestGOV021AdminRecoveryCLI(t *testing.T) {
 	db, id := seedOrphanedNetwork(t)
-	code, out, errOut := runCLI("admin-recovery", "list", "-database", db)
+	code, out, errOut := runCLI("admin-recovery", "list", "-database", db, "-operator", "Olga", "-reason", "ticket 12: review")
 	if code != exitOK || !strings.Contains(out, id) || !strings.Contains(out, "requested") || !strings.Contains(out, "Ana") ||
-		!strings.Contains(out, "test-net") {
+		!strings.Contains(out, "test-net") || !strings.Contains(out, "ELIGIBLE") || strings.Contains(out, "more may follow") {
 		t.Fatalf("list: %d %s %s", code, out, errOut)
+	}
+	for _, hidden := range []string{"ana01", "founder01"} { // logins are not shown
+		if strings.Contains(out, hidden) {
+			t.Errorf("list shows %q", hidden)
+		}
 	}
 	approve := func(op string) (int, string, string) {
 		return runCLI("admin-recovery", "approve", "-database", db, "-network", "test-net", "-request", id,
@@ -115,17 +120,63 @@ func TestGOV021AdminRecoveryCLI(t *testing.T) {
 	if code != exitFailure || !strings.Contains(errOut, "applied") {
 		t.Fatalf("refuse after apply: %d %s", code, errOut)
 	}
-	code, out, _ = runCLI("admin-recovery", "list", "-database", db, "-network", "test-net", "-all")
+	code, out, _ = runCLI("admin-recovery", "list", "-database", db, "-network", "test-net", "-all", "-operator", "Piet", "-reason", "ticket 12: check")
 	if code != exitOK || !strings.Contains(out, "applied") || !strings.Contains(out, "Olga") {
 		t.Fatalf("list -all: %d %s", code, out)
 	}
-	var platform, network int
-	if err := raw.QueryRow(`SELECT COUNT(*) FILTER (WHERE network_id = ''), COUNT(*) FILTER (WHERE network_id <> '')
-		FROM audit_events WHERE action LIKE 'admin_recovery.%' AND actor_type = 'platform_operator'`).Scan(&platform, &network); err != nil {
+	count := func(action string) (platform, network int) {
+		t.Helper()
+		if err := raw.QueryRow(`SELECT COUNT(*) FILTER (WHERE network_id = ''), COUNT(*) FILTER (WHERE network_id <> '')
+			FROM audit_events WHERE action = ? AND actor_type = 'platform_operator'`, action).Scan(&platform, &network); err != nil {
+			t.Fatal(err)
+		}
+		return
+	}
+	for _, act := range []string{domain.ActAdminRecoveryApproved, domain.ActAdminRecoveryApplied} {
+		if p, n := count(act); p != 1 || n != 1 {
+			t.Errorf("%s audit rows: platform %d network %d, want 1 and 1", act, p, n)
+		}
+	}
+	if p, n := count(domain.ActAdminRecoveryListed); p != 2 || n != 2 {
+		t.Errorf("list audit rows: platform %d network %d, want 2 and 2", p, n)
+	}
+	var reason string
+	if err := raw.QueryRow(`SELECT reason FROM audit_events WHERE action = ? AND network_id <> '' ORDER BY seq DESC LIMIT 1`,
+		domain.ActAdminRecoveryListed).Scan(&reason); err != nil || reason != "ticket 12: check" {
+		t.Errorf("network-scope list event reason %q, %v", reason, err)
+	}
+}
+
+// GOV-021 / SEC-013: listing needs a label and a reason and pages with -after.
+func TestGOV021AdminRecoveryCLIListPaging(t *testing.T) {
+	db, id := seedOrphanedNetwork(t)
+	for _, args := range [][]string{
+		{"admin-recovery", "list", "-database", db},
+		{"admin-recovery", "list", "-database", db, "-operator", "Olga"},
+		{"admin-recovery", "list", "-database", db, "-reason", "r"},
+		{"admin-recovery", "list", "-database", db, "-operator", "Olga", "-reason", "r", "-limit", "0"},
+		{"admin-recovery", "list", "-database", db, "-operator", "Olga", "-reason", "r", "-limit", "501"},
+	} {
+		if code, _, _ := runCLI(args...); code != exitUsage {
+			t.Errorf("%v: code %d, want usage", args, code)
+		}
+	}
+	raw, err := sql.Open("sqlite", db)
+	if err != nil {
 		t.Fatal(err)
 	}
-	if platform != 2 || network != 2 {
-		t.Fatalf("operator audit rows: platform %d network %d, want 2 and 2", platform, network)
+	defer func() { _ = raw.Close() }()
+	var n int
+	if err := raw.QueryRow(`SELECT COUNT(*) FROM audit_events WHERE action = ?`, domain.ActAdminRecoveryListed).Scan(&n); err != nil || n != 0 {
+		t.Fatalf("refused listings wrote %d audit rows, %v", n, err)
+	}
+	code, out, errOut := runCLI("admin-recovery", "list", "-database", db, "-operator", "Olga", "-reason", "r", "-limit", "1")
+	if code != exitOK || !strings.Contains(out, id) || !strings.Contains(out, "repeat with -after "+id) {
+		t.Fatalf("first page: %d %s %s", code, out, errOut)
+	}
+	code, out, _ = runCLI("admin-recovery", "list", "-database", db, "-operator", "Olga", "-reason", "r", "-limit", "1", "-after", id)
+	if code != exitOK || strings.Contains(out, id) || strings.Contains(out, "more may follow") {
+		t.Fatalf("page after the last request: %d %s", code, out)
 	}
 }
 

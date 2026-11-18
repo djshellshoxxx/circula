@@ -21,15 +21,28 @@ state. Do not use break-glass to appoint a lasting administrator.
 
 ## Before you approve
 
-1. List the open requests:
+1. List the open requests. Listing reads member data, so it is operator access (SEC-013): it needs your name and a
+   documented reason, and it is audited as `admin_recovery.listed` at platform scope and in every network whose
+   requests it showed, with the shown requesters as subjects. The network's administrators read the event with your
+   name and reason; members see on the recovery page that a platform operator viewed the requests.
 
-       circula admin-recovery list -config /etc/circula/circula.json
-       circula admin-recovery list -config /etc/circula/circula.json -network <slug> -all   # history of one network
+       circula admin-recovery list -config /etc/circula/circula.json -operator "<your name>" -reason "ticket 42: review"
+       circula admin-recovery list ... -network <slug> -all          # history of one network
+       circula admin-recovery list ... -limit 50 -after <last id>    # next page (printed after a full page)
 
-   Columns: request id, network, status as of now, `NO ADMIN` (true while the network has no active administrator),
-   requester member id, display name, membership status and join date, request and expiry times, first approval.
-2. Check that `NO ADMIN` is `true` and the requester's membership status is `active`. The service checks both again at
-   each approval and refuses otherwise; a member who was suspended, left or was erased can no longer be appointed.
+   Columns, and why each is shown (nothing else is read: no login, contact detail or balance):
+
+   | Column | Why |
+   |---|---|
+   | `ID`, `NETWORK` | the arguments of `approve` and `refuse` |
+   | `STATUS`, `EXPIRES` | whether and until when the request can be decided (`approved` means the next approval applies it) |
+   | `NO ADMIN` | `false` means approval will be refused: the network has an active administrator |
+   | `ELIGIBLE` | `false` means approval will be refused: the requester is no longer an active member (or lacks a required second factor) |
+   | `REQUESTER`, `NAME` | to match the request to the person's out-of-band confirmation (ticket) |
+   | `MEMBER SINCE` | a date only; a membership opened just before the request (for example in an open network) is the main takeover signal |
+   | `FIRST APPROVAL` | the first approver's name and time: the second approver must be someone else |
+2. Check that `NO ADMIN` and `ELIGIBLE` are `true`. The service checks both again at each approval and refuses
+   otherwise; a member who was suspended, left or was erased can no longer be appointed.
 3. Confirm the request out of band through the support channel your organisation uses for the network (for example a
    ticket raised by the member). The product has already matched the signed-in account against the network's recorded
    membership; it does not hold contact details.
@@ -79,6 +92,7 @@ notifies the members; an approval attempt on an expired request does the same an
 | Refusal | `admin_recovery.refused` | platform and network | platform_operator |
 | Expiry | `admin_recovery.expired` | platform and network | system |
 | Other open request closed | `admin_recovery.superseded` | platform and network | system |
+| Operator lists requests | `admin_recovery.listed` (reason, operator name, counts; subjects: the requesters shown) | platform, and each network shown | platform_operator |
 
 Members see these steps on the *Administrator recovery* page and through `GET /api/v1/admin-recovery/events` without
 operator names or reasons; the appointed administrator sees the full events in the audit log. Table:

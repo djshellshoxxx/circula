@@ -500,6 +500,9 @@
   "admin_recovery.event.admin_recovery.superseded": {
     "other": "Closed because another request was applied"
   },
+  "admin_recovery.event.admin_recovery.listed": {
+    "other": "A platform operator viewed the requests"
+  },
   "auth.title.sign_in": {
     "other": "Sign in"
   },
