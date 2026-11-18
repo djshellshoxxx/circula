@@ -22,8 +22,10 @@ estimates do not. Outside the rows below, the core baseline is the 45-row beta m
 
 ## Core work not started in this pass
 
-QA-042 (remaining manual and external citations), L9 storage fault qualification (read, fsync, truncate,
-checkpoint and uncertain-commit cases beyond the existing disk-full and WAL-commit coverage), the SEC-014/018
+QA-042 (remaining manual and external citations), L9 storage fault qualification. Existing coverage is the real
+SQLite disk-full tests, the Linux WAL-commit write failure and the Linux checkpoint database-write failure with
+restart, replay, checkpoint retry and reopen. Still missing are read, fsync and truncate failures, other device
+errors, checkpoint sync/truncate failures, and uncertain commit outcomes. the SEC-014/018
 retention questions (PRIV-01..05), and the release thresholds (DEC-023). See [BLOCKERS](BLOCKERS.md).
 
 ## Future modules (isolated; `enabled:false`, `integration:HOLD`)

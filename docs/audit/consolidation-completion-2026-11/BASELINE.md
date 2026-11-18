@@ -1,4 +1,4 @@
-# Consolidation baseline (2026-11-18)
+# Consolidation baseline (historical snapshot, captured 2026-11-18 at session start, about 07:10–07:30Z)
 
 Captured at session start, before any change. Clone unshallowed (`git fetch --unshallow`) and all
 `refs/pull/*/head` fetched before ancestry analysis.
