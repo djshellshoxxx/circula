@@ -1,10 +1,10 @@
 {
   "id": "FNET-204",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "core-and-signed-cursors-tested-feature-incomplete",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Listing/announcement-only projection, read-time permission callback, source deduplication and stable keyset ordering.",
-  "remaining": "Database snapshot and source joins; authenticated HMAC cursors; preferences/mute/follow; committed source IDs; expiry/moderation; no-JS paging and deletion/revocation race tests. No trade events."
+  "scope": "Listing/announcement-only projection, read-time permission callback, source deduplication, stable keyset ordering, and HMAC cursors bound to network, viewer and filter digest with key IDs and expiry.",
+  "remaining": "Database snapshot and source joins; preferences/mute/follow; committed source IDs; feed-item expiry/moderation; no-JS paging and deletion/revocation race tests. Owner decisions: cursor key custody/rotation cadence, cursor TTL (1h provisional), mute/follow semantics, persistent source joins. No trade events."
 }

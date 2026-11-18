@@ -6,7 +6,7 @@ The owner authorized independent future-feature development on 2026-11-16, while
 
 ## Isolation contract
 
-- Branch: `future/fnet-204-feed-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
+- Branch: `future/fnet-204-feed-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`. The signed-cursor work (PR #67 follow-up) is on `claude/fnet-204-signed-cursors`, branched from PR #67's head `7a528c61`; it changes only `future/feed/`.
 - Only `future/feed/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
 - This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
@@ -16,7 +16,29 @@ The owner authorized independent future-feature development on 2026-11-16, while
 
 ## Implemented milestone
 
-Listing/announcement-only projection, read-time permission callback, source deduplication and stable keyset ordering.
+Listing/announcement-only projection, read-time permission callback, source deduplication and stable keyset ordering, and signed, viewer-bound pagination cursors wired into `Page()`.
+
+## Signed cursor contract
+
+`Page(codec, Query{Network, Viewer, Filter, Limit, Cursor}, rows, allowed)` takes the previous page's `Result.Next` as an opaque token and returns the next one. There is no unsigned path: the raw keyset position (`Cursor`) is internal, and `Page` fails closed without a codec or authorization callback. The design follows `internal/api/cursor.go` (API-034, API-035) without importing or changing it.
+
+- **Format (v2):** `<key id>.<base64url payload>.<base64url HMAC-SHA256>`. Strict base64url only; any other character, padding, line break or non-canonical encoding is refused. Tokens are at most 2,048 bytes.
+- **Binding:** the MAC covers network, viewer (actor) and a canonical filter digest (SHA-256 over the sorted, de-duplicated kinds plus `Filter.PreferenceRevision`). A cursor from member A fails for member B, from network X for network Y, and from filter X for filter Y. Filters that select the same items (`nil` and both kinds; reordered or repeated kinds) share a digest. `Limit` is not bound.
+- **Readable metadata:** network, viewer and filter are **not** in the token; they enter only the MAC input. The token reveals the key ID, the issue time and the position (kind, ID and time of the last item on the page the viewer was just shown). Hiding the position would need encryption or server-side state, and it tells the holder nothing they were not shown.
+- **Domain separation:** the MAC input is length-prefixed `label, key id, network, viewer, filter digest, payload` with label `circula/future/feed-cursor/v2`. Core cursors MAC raw JSON, so a feed MAC can never be a core MAC even under one shared secret, and field boundaries cannot be shifted.
+- **Expiry:** the payload carries the issue time (`iat`, Unix seconds) from an injected clock. A cursor opens while `iat - 1 min <= now < iat + TTL`. TTL is `CodecOptions.TTL` (1 s to 24 h); zero selects `DefaultCursorTTL` = **1 hour, provisional, owner to confirm**. The verifier's TTL applies to cursors already issued. The 1-minute allowance tolerates a verifier clock behind the signer's. The row time (`t`) is only the position.
+- **Key ID and rotation:** `KeySet` signs with `SigningKey()` and verifies with `VerificationKey(id)`, so a rotated-out key keeps verifying while it is in the set. `NewKeyRing` is an immutable in-memory implementation (keys at least 32 bytes, IDs `[A-Za-z0-9_-]{1,32}`, keys copied). The key ID is MAC input, so relabelling to an aliased key fails. An unknown key ID still costs one MAC under a placeholder key.
+- **Uniform refusal:** `Open` returns exactly `ErrInvalidCursor` for every failure (malformed, tampered, unknown key, expired, wrong binding), with a zero `Cursor`. The MAC is compared with `hmac.Equal` before the payload is parsed. `Page` returns `ErrInvalidQuery` for a malformed query and `ErrInvalidSource` for an adapter row that cannot be paged.
+
+## Owner decisions (not made here)
+
+These are documented, not decided. The module supplies mechanisms only.
+
+1. **Signing-key custody and persistence:** where keys live (secret store, file, environment), how they survive restarts and who can read them. A future adapter implements `KeySet`.
+2. **Rotation cadence and retirement:** how often the signing key changes and how long a retired key stays verifiable. The mechanism requires at least one TTL of overlap.
+3. **Cursor TTL value:** `DefaultCursorTTL` = 1 h is provisional. An expired cursor means the reader restarts at the first page. The 1-minute clock allowance is a fixed constant and could be confirmed with it.
+4. **Mute/follow/category semantics:** what `Filter.PreferenceRevision` covers, its retention, and moderation. Changing it invalidates outstanding cursors by design.
+5. **Persistent source joins:** the core schema, adapter and high-water snapshot anchor for durable feed items. A module-local SQL draft is possible; a core schema or adapter change needs owner approval.
 
 ## Existing application seams inspected
 
@@ -24,14 +46,17 @@ Listing/announcement-only projection, read-time permission callback, source dedu
 
 ## Remaining feature work
 
-Database snapshot and source joins; authenticated HMAC cursors; preferences/mute/follow; committed source IDs; expiry/moderation; no-JS paging and deletion/revocation race tests. No trade events.
+Database snapshot and source joins (with a high-water mark bound into the cursor); preferences/mute/follow; committed source IDs; feed-item expiry/moderation; no-JS paging, browser/CLI harness and deletion/revocation race tests against a real store. No trade events. Signed cursors are done (see above); key custody, rotation cadence and TTL await the owner.
 
 ## Standalone validation
 
 ```sh
 cd future/feed
-go test -race -cover ./...
+gofmt -l .                       # must print nothing
 go vet ./...
+go test -count=1 -cover ./...
+CGO_ENABLED=1 go test -race -count=1 ./...
+go test -run='^$' -fuzz=FuzzOpenCursor -fuzztime=60s
 ```
 
 Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. These tests qualify the stated core milestone, not the full roadmap feature, production behavior, browser accessibility, or Circula's release.
