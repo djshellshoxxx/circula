@@ -49,7 +49,7 @@ var settingDefs = []settingDef{
 	{key: "backup-interval", def: "24h", help: "time between scheduled backups; 0 disables them"},
 	{key: "backup-retain-daily", def: "30", help: "newest backups kept"},
 	{key: "backup-retain-monthly", def: "12", help: "months for which the newest backup of each month is also kept; 0 disables"},
-	{key: "migrate-mode", def: "explicit", help: "explicit: refuse to serve with pending migrations; auto: back up and migrate at start-up"},
+	{key: "migrate-mode", def: "explicit", help: "explicit: refuse to serve an existing database with pending migrations (a new database is created at the current schema); auto: back up and migrate at start-up"},
 	{key: "session-idle", def: "720h", help: "idle session timeout (DEC-005)"},
 	{key: "session-max", def: "2160h", help: "absolute session lifetime (DEC-005)"},
 	{key: "session-idle-admin", help: "idle session timeout for a person who is an administrator in any network (SEC-003); default: session-idle; not longer than it (DEC-005 recommends 1h, not applied)"},
