@@ -1,6 +1,27 @@
 # Circula handoff
 
-## 2026-11-17: consolidation pickup (current)
+## 2026-11-18: PR and branch consolidation (current)
+
+Branch `claude/circula-pr-consolidation-q6q18n` from `main@b53f757`. It gives every PR and remote branch a
+verified disposition. Records:
+[PR ledger](docs/plans/PR-CONSOLIDATION-2026-11-17.md) and [branch ledger](docs/plans/BRANCH-CONSOLIDATION-2026-11-17.md).
+
+- 68 PRs and 88 remote branches checked by ancestry, patch IDs and content. Of the 19 open PRs, 11 hold no
+  work missing from `main`, 7 had their unique material recovered or archived here, and #67 (future module
+  FNET-204) stays open. Branches are preserved; nothing was merged into `main`.
+- Core recovery: `cb79676` pins the OPS-025 start-up migration gate (from #35 `ebb4e298`) and corrects docs
+  that said `migrate` must run before a first start. `91a26f2` adds service entry-point regressions for the
+  #51/#52 fixes (A1-04, A3-F03).
+- Archives: the competing spec drafts (#1, #2, #29, #38) are under `docs/archive/specs-historical/` with an
+  "IDs not citable" banner; the canonical specs are unchanged. Two research notes moved to `docs/research/`.
+  PR #42's audit notes are in `docs/audits/`; each finding's status on `main` is in
+  `docs/security/security-review.md` (open: A3-F02, PRIV-01..05, E-02, new Low NEW-01).
+- `docs/future-features/README.md` lists the 15 isolated module branches (all `enabled:false`, HOLD).
+- Clone pitfall: cloud clones can be shallow. Run `git fetch --unshallow` before any ancestry analysis.
+- Next: owner reviews and merges the consolidation PR; FNET-204 engineering items in the PR ledger's #67 review;
+  owner decisions listed at the end of the PR ledger.
+
+## 2026-11-17: consolidation pickup (merged as #68, `b53f757`)
 
 Branch `claude/compassionate-cannon-txdlz1` from `main@b7c27b4`. Folds three open items into one PR:
 - PR #63 dashboard fix (`d53196c`): per-amount unit inflection and debt meter clamped to credit limit before scaling.
