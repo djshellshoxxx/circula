@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"log/slog"
 	"net"
@@ -457,7 +458,7 @@ func TestJobUntilNextBackupIgnoresFutureFiles(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			j := &jobRunner{cfg: &Config{BackupDir: dir, BackupInterval: 24 * time.Hour}}
+			j := &jobRunner{cfg: &Config{BackupDir: dir, BackupInterval: 24 * time.Hour}, logger: discardLogger()}
 			if got := j.untilNextBackupAt(now); got != tc.wait {
 				t.Errorf("wait = %v, want %v", got, tc.wait)
 			}
@@ -466,6 +467,123 @@ func TestJobUntilNextBackupIgnoresFutureFiles(t *testing.T) {
 				t.Errorf("future backup changed: %q, %v", got, err)
 			}
 		})
+	}
+}
+
+// A3-F10, OPS-033: a backup named after the current time is evidence of a host
+// clock error or a misplaced file, and the anomaly is logged. Each scheduling
+// evaluation logs exactly one warning, however many such files there are, with
+// their count, the newest one's base name, its name time and now, in UTC. The
+// wait is unchanged (the values of TestJobUntilNextBackupIgnoresFutureFiles),
+// and nothing is logged when no backup is named after now.
+func TestJobUntilNextBackupLogsFutureDatedBackups(t *testing.T) {
+	const msg = "backups named after the current time (host clock error or misplaced file): kept, but ignored by scheduling and retention (OPS-033)"
+	now := time.Date(2026, 11, 16, 12, 30, 0, 123456789, time.UTC)
+	far := now.AddDate(50, 0, 0)
+	legacy := backupPrefix + now.AddDate(1, 0, 0).Format(legacyBackupTimeLayout) + backupSuffix
+	for _, tc := range []struct {
+		name   string
+		files  []string
+		count  int       // backups named after now
+		newest string    // the newest of them
+		at     time.Time // its name time
+		wait   time.Duration
+	}{
+		{name: "no backups"},
+		{name: "recent backup", files: []string{backupFileName(now.Add(-time.Hour))}, wait: 23 * time.Hour},
+		{name: "backup at now", files: []string{backupFileName(now)}, wait: 24 * time.Hour},
+		{name: "future only", files: []string{encryptedBackupFileName(far)},
+			count: 1, newest: encryptedBackupFileName(far), at: far},
+		{name: "one nanosecond ahead", files: []string{backupFileName(now.Add(time.Nanosecond)), backupFileName(now.Add(-time.Hour))},
+			count: 1, newest: backupFileName(now.Add(time.Nanosecond)), at: now.Add(time.Nanosecond), wait: 23 * time.Hour},
+		{name: "several future-dated files", files: []string{backupFileName(now.Add(time.Hour)), encryptedBackupFileName(far), legacy,
+			backupFileName(now.Add(-48 * time.Hour))}, count: 3, newest: encryptedBackupFileName(far), at: far},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			for _, name := range tc.files {
+				if err := os.WriteFile(filepath.Join(dir, name), []byte("backup"), 0o600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			var logs bytes.Buffer
+			j := &jobRunner{cfg: &Config{BackupDir: dir, BackupInterval: 24 * time.Hour},
+				logger: newLogger(&Config{LogFormat: "json"}, &logs)}
+			// The production caller passes time.Now(), which is in local time.
+			local := now.In(time.FixedZone("UTC+14", 14*60*60))
+			for eval := 1; eval <= 2; eval++ {
+				if got := j.untilNextBackupAt(local); got != tc.wait {
+					t.Errorf("evaluation %d: wait = %v, want %v", eval, got, tc.wait)
+				}
+				var recs []map[string]any
+				for _, line := range strings.Split(logs.String(), "\n") {
+					if line == "" {
+						continue
+					}
+					var rec map[string]any
+					if err := json.Unmarshal([]byte(line), &rec); err != nil {
+						t.Fatalf("log line is not JSON: %v\n%s", err, line)
+					}
+					recs = append(recs, rec)
+				}
+				want := 0
+				if tc.count > 0 {
+					want = eval
+				}
+				if len(recs) != want {
+					t.Fatalf("evaluation %d: %d log entries, want %d (one per evaluation):\n%s", eval, len(recs), want, logs.String())
+				}
+				if want == 0 {
+					continue
+				}
+				rec := recs[want-1]
+				fields := map[string]any{"level": "WARN", "msg": msg, "count": float64(tc.count), "file": tc.newest,
+					"name_time": tc.at.Format(time.RFC3339Nano), "now": now.Format(time.RFC3339Nano)}
+				for k, v := range fields {
+					if rec[k] != v {
+						t.Errorf("evaluation %d: %s = %v, want %v", eval, k, rec[k], v)
+					}
+				}
+				if _, ok := rec["time"]; !ok || len(rec) != len(fields)+1 {
+					t.Errorf("evaluation %d: entry %v, want the time and exactly the fields %v", eval, rec, fields)
+				}
+			}
+		})
+	}
+}
+
+// OPS-033: the backup loop evaluates its schedule at start-up and again after
+// each backup it takes, and each evaluation logs a future-dated backup once.
+// The file does not hold the schedule back: the first backup is taken at once.
+func TestJobBackupLoopLogsFutureDatedBackupEachEvaluation(t *testing.T) {
+	f := newJobFixture(t)
+	if err := os.MkdirAll(f.cfg.BackupDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	future := encryptedBackupFileName(time.Now().AddDate(50, 0, 0))
+	if err := os.WriteFile(filepath.Join(f.cfg.BackupDir, future), []byte("future backup retained"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(f.ctx)
+	defer cancel()
+	done := make(chan struct{})
+	go func() { f.runner.backups(ctx); close(done) }()
+	warnings := func() int {
+		return strings.Count(f.logs.String(), `level=WARN msg="backups named after the current time`)
+	}
+	waitFor(t, "first scheduled backup", func() bool { return jobRuns(f.runner.metrics, "backup", "ok") == 1 })
+	waitFor(t, "a warning at start-up and another after the first backup", func() bool { return warnings() == 2 })
+	cancel()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("backup loop did not stop on cancel")
+	}
+	if n := jobRuns(f.runner.metrics, "backup", "ok"); n != 1 {
+		t.Errorf("backups taken = %d, want 1", n)
+	}
+	if n, logs := warnings(), f.logs.String(); n != 2 || strings.Count(logs, "count=1 file="+future+" ") != 2 {
+		t.Errorf("want two warnings (one per evaluation) naming %s with count=1:\n%s", future, logs)
 	}
 }
 
