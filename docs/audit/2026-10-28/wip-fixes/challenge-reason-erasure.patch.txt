@@ -1,0 +1,156 @@
+diff --git a/docs/dev/erasure.md b/docs/dev/erasure.md
+index 82c1e98..92ad925 100644
+--- a/docs/dev/erasure.md
++++ b/docs/dev/erasure.md
+@@ -25,6 +25,7 @@ The action cannot be undone.
+ | `transactions.note` of transactions the member proposed | empty |
+ | `disputes.statement` of disputes the member opened | empty |
+ | the member's dispute response, re-review reason and abuse-report notes (`dispute_responses.body`, `dispute_rereviews.reason`, `reports.note`) | empty |
++| the reason of every challenge the member filed, decided or not (`challenges.reason`; since 2026-11-18, A3-F05) | empty; the challenge row and the decider's rationale stay |
+ | inbox bodies that name the member, and the member's own inbox bodies (`notifications.body`) | empty |
+ | person login | `erased-<person id>`, only if the person has no other non-departed membership |
+ | person password hash, sessions, API tokens | unusable hash, all revoked, tokens renamed (same condition) |
+diff --git a/docs/security/personal-data-inventory.md b/docs/security/personal-data-inventory.md
+index 50a118e..5143e6a 100644
+--- a/docs/security/personal-data-inventory.md
++++ b/docs/security/personal-data-inventory.md
+@@ -69,7 +69,7 @@ and administrators are told not to write personal data into reasons ([erasure.md
+ | `dispute_rereviews.rationale` | free text | Re-review decision rationale | Lifetime of the network | Not exported | Kept: the reviewer's record |
+ | `reports.note` | free text | Abuse report written by a member | Lifetime of the network | Not exported | Emptied for reports the member filed |
+ | `reports.handling_note` | free text | Administrator's handling note | Lifetime of the network | Not exported | Kept: an administrator's record |
+-| `challenges.reason` | free text | A member's challenge of a governance decision (GOV-016) | Lifetime of the network | Not exported | Kept (gap, see [Findings](#findings)) |
++| `challenges.reason` | free text | A member's challenge of a governance decision (GOV-016) | Lifetime of the network | Not exported | Emptied for challenges the member filed (since 2026-11-18, A3-F05; was kept, see [Findings](#findings) 2) |
+ | `challenges.rationale` | free text | Decision on the challenge | Lifetime of the network | Not exported | Kept: the decider's record |
+ | `notifications.body` | free text | Inbox text; can contain display names | Read notifications deleted after 90 days; unread kept | Not exported | Emptied when it names the member, and the member's own inbox |
+ | `announcements.title` | free text | Administrator announcement title | Lifetime of the network (append-only) | Not exported | Kept: an administrator's record |
+@@ -166,5 +166,6 @@ Found while building this inventory; recorded for the owner, not changed here.
+    (`erasePersonIfUnused` in `internal/service/erasure.go`). Neither identifies the person on its own once the login is
+    erased, but they stay linked to the person id.
+ 2. `challenges.reason`, written by the member who opened a governance challenge, is not emptied by erasure, unlike the
+-   other member-written free text.
++   other member-written free text. Fixed 2026-11-18 (audit finding A3-F05): erasure now empties it for every challenge
++   the member filed (`RedactDisputeStatements`, test `TestErasureClearsMemberChallengeReasons`).
+ 3. No retention period is applied automatically to member or person data (SEC-018 addendum, open point 5; DEC-020).
+diff --git a/docs/specs/addenda/SEC-018.md b/docs/specs/addenda/SEC-018.md
+index a35da68..67ebac4 100644
+--- a/docs/specs/addenda/SEC-018.md
++++ b/docs/specs/addenda/SEC-018.md
+@@ -24,6 +24,7 @@ How to use and operate: [`docs/dev/erasure.md`](../../dev/erasure.md). Spec text
+ | Criterion | Test |
+ |---|---|
+ | Name, login, memo, listing text, dispute statement are found nowhere in the database after erasure (every column of every table, including audit) | `TestAnonymiseMemberKeepsLedger` |
++| The reasons of challenges the member filed (`challenges.reason`) are found nowhere after erasure; other members' challenges are unchanged (row added 2026-11-18, A3-F05) | `TestErasureClearsMemberChallengeReasons` |
+ | Exports show the anonymised name only | `TestAnonymiseMemberKeepsLedger` (full JSON export) |
+ | Balances, amounts, entries unchanged; `VerifyLedger` passes before and after (audit chain valid) | `TestAnonymiseMemberKeepsLedger`, `TestAnonymiseMemberLiveDisputeBlocks` |
+ | `member.anonymised` audited, reason mandatory | `TestAnonymiseMemberKeepsLedger`, `TestEraseMyData` |
+diff --git a/internal/repository/breakglass_iface.go b/internal/repository/breakglass_iface.go
+index 5514351..0dacc1e 100644
+--- a/internal/repository/breakglass_iface.go
++++ b/internal/repository/breakglass_iface.go
+@@ -32,7 +32,9 @@ type ErasureRepo interface {
+ 	AnonymiseListings(netID, memberID, title string, at time.Time) (int64, error)
+ 	// RedactTransactionNotes clears the free-text memo of transactions the member proposed.
+ 	RedactTransactionNotes(netID, memberID string) (int64, error)
+-	// RedactDisputeStatements clears the statements of disputes the member opened.
++	// RedactDisputeStatements clears the statements of disputes the member opened
++	// and the other free text the member wrote: dispute responses, re-review
++	// reasons, abuse-report notes and challenge reasons.
+ 	RedactDisputeStatements(netID, memberID string) (int64, error)
+ 	// AnonymisePerson replaces the login and sets an unusable password hash.
+ 	AnonymisePerson(personID, login, unusableHash string) error
+diff --git a/internal/service/erasure_challenge_test.go b/internal/service/erasure_challenge_test.go
+new file mode 100644
+index 0000000..6890d89
+--- /dev/null
++++ b/internal/service/erasure_challenge_test.go
+@@ -0,0 +1,71 @@
++package service_test
++
++import (
++	"testing"
++
++	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
++	tu "github.com/djshellshoxxx/circula/internal/testutil"
++)
++
++// A3-F05: erasure empties the reason of every challenge the member filed,
++// decided or still waiting, like the member's other free text
++// (docs/dev/erasure.md, "Adding personal data to the model"). The challenge
++// rows, the decider's rationale and other members' challenges stay as they are.
++func TestErasureClearsMemberChallengeReasons(t *testing.T) {
++	w, _ := erasureWorld(t)
++	rev, _ := w.reviewer()
++	const (
++		decidedText   = "Ana was removed unfairly, call 555-0100"
++		waitingText   = "please reconsider, write to ana.private@example.net"
++		otherText     = "my limit was cut without notice"
++		rationaleText = "no grounds were recorded"
++	)
++	// Another member's challenge, which the erasure must leave alone.
++	lim := int64(100)
++	tu.Must(0, w.Svc.SetCreditLimit(w.Ctx, w.admin, w.net.ID, service.SetLimitInput{MemberID: w.bM.ID, Limit: &lim, Reason: "risk"}))
++	other := tu.Must(w.Svc.OpenChallenge(w.Ctx, w.b, w.net.ID, service.ChallengeInput{Kind: service.ChallengeCreditLimit, Reason: otherText}))
++	// Ana is removed and challenges the removal twice: one challenge is decided, one still waits.
++	w.depart(w.admin, w.aM)
++	decided := tu.Must(w.Svc.OpenChallenge(w.Ctx, w.a, w.net.ID, service.ChallengeInput{Kind: service.ChallengeRemoval, Reason: decidedText}))
++	tu.Must(w.Svc.DecideChallenge(w.Ctx, rev, w.net.ID, service.ChallengeDecision{ID: decided.ID, Outcome: service.ChallengeRejected, Rationale: rationaleText}))
++	waiting := tu.Must(w.Svc.OpenChallenge(w.Ctx, w.a, w.net.ID, service.ChallengeInput{Kind: service.ChallengeRemoval, Reason: waitingText}))
++	for _, needle := range []string{"555-0100", "ana.private@example.net"} {
++		if len(dbMatches(t, w.Store.DB(), needle)) == 0 {
++			t.Fatalf("test premise: %q should be stored before erasure", needle)
++		}
++	}
++
++	rep := tu.Must(w.Svc.EraseMyData(w.Ctx, w.a, w.net.ID, ""))
++	if !rep.PersonErased {
++		t.Fatalf("person not erased: %+v", rep)
++	}
++	// The withdrawn dispute's statement and the two challenge reasons.
++	if rep.DisputeStatements != 3 {
++		t.Errorf("free-text fields cleared = %d, want 3", rep.DisputeStatements)
++	}
++	for _, needle := range []string{"555-0100", "ana.private@example.net", "unfairly", "reconsider", anaLogin, "Ana"} {
++		if hits := dbMatches(t, w.Store.DB(), needle); len(hits) > 0 {
++			t.Errorf("%q still found in %v", needle, hits)
++		}
++	}
++
++	// The challenges stay on record; only the member's own text is gone.
++	got := map[string]store.Challenge{}
++	for _, c := range tu.Must(w.Svc.ListChallenges(w.Ctx, rev, w.net.ID, "")) {
++		got[c.ID] = c
++	}
++	if c := got[decided.ID]; c.MemberID != w.aM.ID || c.Kind != service.ChallengeRemoval || c.Reason != "" ||
++		c.Status != "decided" || c.Outcome != service.ChallengeRejected || c.Rationale != rationaleText {
++		t.Errorf("decided challenge after erasure: %+v", c)
++	}
++	if c := got[waiting.ID]; c.MemberID != w.aM.ID || c.Kind != service.ChallengeRemoval || c.Reason != "" || c.Status != "requested" {
++		t.Errorf("waiting challenge after erasure: %+v", c)
++	}
++	if c := got[other.ID]; c.MemberID != w.bM.ID || c.Kind != service.ChallengeCreditLimit || c.Reason != otherText || c.Status != "requested" {
++		t.Errorf("another member's challenge changed: %+v", c)
++	}
++	if rep := tu.Must(w.Svc.VerifyLedger(w.Ctx, w.admin, w.net.ID)); !rep.OK {
++		t.Fatal(rep.Findings)
++	}
++}
+diff --git a/internal/store/sqlite_erasure.go b/internal/store/sqlite_erasure.go
+index fe452fc..f204790 100644
+--- a/internal/store/sqlite_erasure.go
++++ b/internal/store/sqlite_erasure.go
+@@ -39,11 +39,13 @@ func (t *txImpl) RedactDisputeStatements(netID, memberID string) (int64, error)
+ 		return 0, err
+ 	}
+ 	// Free text the member wrote in later features (migration 0008): the
+-	// response to a dispute, a re-review reason and abuse-report notes.
++	// response to a dispute, a re-review reason and abuse-report notes; and
++	// (migration 0014) the reason of each challenge the member filed.
+ 	for _, q := range []string{
+ 		`UPDATE dispute_responses SET body = '' WHERE network_id = ? AND responder_id = ? AND body <> ''`,
+ 		`UPDATE dispute_rereviews SET reason = '' WHERE network_id = ? AND requested_by = ? AND reason <> ''`,
+ 		`UPDATE reports SET note = '' WHERE network_id = ? AND reporter_id = ? AND note <> ''`,
++		`UPDATE challenges SET reason = '' WHERE network_id = ? AND member_id = ? AND reason <> ''`,
+ 	} {
+ 		r, err := t.exec(q, netID, memberID)
+ 		if err != nil {

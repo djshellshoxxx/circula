@@ -136,6 +136,10 @@ The catalogue below is the stable set. New codes MAY be added in a minor revisio
 | `network-required` | 400 | Added as built. Caller belongs to several networks and sent no `X-Network` header |
 | `blocked` | 409 | Added as built. Action refused by a rule with a `blockers` list (departure or removal with a disputed transaction or as last active administrator; see D-06) |
 | `conflict` | 409 | Added as built. Store-level duplicate or conflicting state that the service maps to 409 |
+| `network-frozen` | 423 | Added as built (API-074; recorded 2026-11-18, A2-08). The network's ledger failed verification and the network is read-only until an operator resolves it (OPS-033): the write was refused and nothing changed; reads still work |
+| `approval-required` | 403 | Added as built (API-074; recorded 2026-11-18, A2-08); code and status from the SEC-011 addendum, D8. The amount is above the network's dual-control threshold, so it needs a second administrator; nothing changed. As built the API sends it only for an administrator removal (`POST /admin/members/{id}/remove`) whose `settle-to-zero` settlement exceeds the threshold (same addendum, Audit 2 hardening). Other credit-position actions are an open owner decision (SEC-011 owner-decision addendum) |
+| `password-change-required` | 403 | Added as built (API-074; recorded 2026-11-18, A2-08). After an administrator or operator password reset, every write is refused until the person sets a new password (`POST /me/password`, API-067a); reads still work (SEC-008 addendum, decision 5) |
+| `terms-acceptance-required` | 409 | Added as built (API-074; recorded 2026-11-18, A2-08). The member has not accepted the network's current terms, so cannot propose or accept a trade until they accept them (`POST /me/terms/accept`); reading and leaving stay open (GOV-009) |
 
 ### 7.3 Pagination
 
@@ -211,7 +215,7 @@ Each operation has one ID. Columns: method and path; minimum role; idempotency r
 | API-074 · P0 | Non-breaking changes within v1 are: adding optional request fields, adding response fields, adding endpoints, adding error codes, adding enumeration values that clients are documented to ignore when unknown. Clients MUST ignore unknown response fields. |
 | API-075 · P0 | Breaking changes include: removing or renaming fields, changing types or the meaning of a field, changing ledger semantics, changing money representation, changing idempotency or status rules in a way that alters outcomes, and removing enum values. |
 | API-076 · P1 | When a v1 operation is deprecated, responses MUST include `Deprecation` (RFC 9745) and `Sunset` (RFC 8594) headers. Deprecation MUST be announced with the notice period in 10 (recommended: at least 6 months for self-hosted operators, product decision). |
-| API-077 · P1 | The API MUST publish a machine-readable description (OpenAPI 3.1 recommended) per release, and contract tests MUST validate responses against it. **As built:** the description is published as [docs/api/openapi.yaml](../api/openapi.yaml) (OpenAPI 3.1; checkpoint `d39bfef` declares 85 operations on 74 paths). This count does not itself establish route parity with `internal/api/routes.go`. No contract test yet validates live responses against it (gap G-2). Not yet released as a versioned artefact. |
+| API-077 · P1 | The API MUST publish a machine-readable description (OpenAPI 3.1 recommended) per release, and contract tests MUST validate responses against it. **As built:** the description is published as [docs/api/openapi.yaml](../api/openapi.yaml) (OpenAPI 3.1; checkpoint `d39bfef` declares 85 operations on 74 paths). This count does not itself establish route parity with `internal/api/routes.go`. Contract tests in `internal/contract` validate the responses they exercise against it (refreshed 2026-11-18, A2-08; see G-2). Not yet released as a versioned artefact. |
 | API-078 · P1 | Backward-compatibility tests MUST run each release against recorded requests from the previous release (fixtures from 12). |
 
 ## 11. Out of MVP scope and open questions
@@ -265,7 +269,7 @@ This section records an earlier implementation review against `internal/api` on 
 - **API-021 (`invalid-header`).** Malformed `Idempotency-Key` returns 400 `invalid-header`.
 - **API-010 (501).** The `admin` token scope returns 501 `not-implemented`. Announcements (API-064) are implemented.
 - **API-077.** OpenAPI 3.1 description published (see G-2 for validation).
-- **Error catalogue (7.2).** Added as-built codes `method-not-allowed`, `not-implemented`, `network-required`, `blocked`, `conflict`. `member-has-open-balance` is reserved and not emitted.
+- **Error catalogue (7.2).** Added as-built codes `method-not-allowed`, `not-implemented`, `network-required`, `blocked`, `conflict`. Added 2026-11-18 (A2-08): `network-frozen` (423), `approval-required` (403), `password-change-required` (403) and `terms-acceptance-required` (409), which the API already sent and `openapi.yaml` already listed in its `ErrorCode` enum. `internal/api/problem_catalogue_test.go` fails when `internal/api` can send a code that 7.2 does not list with the same status. `member-has-open-balance` is reserved and not emitted.
 
 ### 12.3 Deviations (open)
 
@@ -291,7 +295,7 @@ This section records an earlier implementation review against `internal/api` on 
 | ID | Gap | Note |
 |---|---|---|
 | G-1 | Closed: `GET /listings/{id}` returns the listing with its ETag and answers `If-None-Match` with 304. | `h_f2.go` | None. |
-| G-2 | No contract test validates live responses against `docs/api/openapi.yaml` (API-077) and no fixtures cover the previous release (API-078). | Add a schema check to the contract test set in 12. |
+| G-2 | Partly closed 2026-11-18 (A2-08). Live-response validation (API-077) is closed: `internal/contract/contract_test.go` (`TestAPIMatchesOpenAPI`) validates the status, documented required headers and body of every response it produces against `docs/api/openapi.yaml`, and fails when a documented operation is never exercised; `internal/contract/middleware_responses_test.go` (`TestCommonErrorResponsesDeclared`, `TestCommonErrorResponsesMatchOpenAPI`) requires the shared 413, 415, 423, 429 and 503 responses on the operations that can return them and exercises each. Still open for API-078: no fixtures cover the previous release. | Schema check done. Remaining: the previous-release fixtures of API-078 in the contract test set in 12. |
 | G-3 | Error `errors[].code` is an open set in the code; section 7.1 implied a closed set. | Keep open and amend API-030 (done as built in 7.1). |
 
 Cross-references: domain rules [03-domain-model.md](03-domain-model.md); ledger data [06-data-ledger-audit.md](06-data-ledger-audit.md); UX [08-ux-accessibility.md](08-ux-accessibility.md); security [09-security-privacy.md](09-security-privacy.md); operations [11-deployment-operations.md](11-deployment-operations.md); test plan [12-quality-test-plan.md](12-quality-test-plan.md); decisions [13-assumptions-risks-decisions.md](13-assumptions-risks-decisions.md).
