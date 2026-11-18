@@ -64,6 +64,21 @@ func (t *txImpl) GetNetworkBySlug(slug string) (*domain.Network, error) {
 	return t.scanNetwork(t.row(networkSelect+` WHERE n.slug = ?`, t.asOf, t.asOf, slug))
 }
 
+func (t *txImpl) PolicyInForceAt(netID string, at time.Time) (domain.Policy, int, error) {
+	var v int
+	var pj string
+	err := t.row(`SELECT version, policy_json FROM network_policies
+		WHERE network_id = ? AND effective_at <= ? ORDER BY version DESC LIMIT 1`, netID, ms(at)).Scan(&v, &pj)
+	if err != nil {
+		return domain.Policy{}, 0, notFound(err, "policy")
+	}
+	p := domain.DefaultPolicy() // fields absent from older versions keep their defaults, as in scanNetwork
+	if err := json.Unmarshal([]byte(pj), &p); err != nil {
+		return domain.Policy{}, 0, err
+	}
+	return p, v, nil
+}
+
 func (t *txImpl) SetNetworkStatus(id string, s domain.NetworkStatus) error {
 	_, err := t.exec(`UPDATE networks SET status = ? WHERE id = ?`, string(s), id)
 	return err

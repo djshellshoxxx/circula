@@ -91,6 +91,7 @@ Each policy below has a class, a default, and a change rule. The default for eac
   - Acceptance rechecks the then-current available posting capacity; it does not rely on capacity observed when the proposal was created (test).
   - Changing a policy after posting does not rewrite the posted transaction terms or ledger entries (test).
   - Each policy with creation-time or action-time semantics identifies that rule in its own requirement and has a regression test; recording a policy version is metadata and does not imply a blanket policy snapshot.
+- Implementation note (2026-11-18, audit AUD4-F03): dispute timelines (section 2, "Prospective") are read from the policy version in force when the dispute was opened, through the repository read `PolicyInForceAt` (the rule `GetNetwork` applies at an instant). A later change to `response_period_days` or `re_review_window_days`, shorter or longer, applies only to disputes opened after it takes effect; the rule is stated in FR-076 and FR-078. Tests: `TestDisputeTimelinesFixedAtOpen`, `TestDisputeTimelineChangesApplyToLaterDisputes`, `TestScheduledDisputeTimelineChangeWaitsForItsDate`, `TestDisputePageReReviewDeadlineFixedAtOpen`, `TestPolicyInForceAtReadsLegacyVersionsWithDefaults` and the `PolicyInForceAt` repository contract.
 
 **GOV-002** · P0 · Recording policy changes
 - Requirement: Every policy change MUST be recorded as an audit event (SEC-012) with the actor, the previous and new value, the effective time and an optional reason, and MUST be shown to members in a readable change log within the network.

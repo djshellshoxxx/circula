@@ -1,8 +1,6 @@
 package web
 
 import (
-	"time"
-
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
@@ -31,10 +29,11 @@ func (s *server) reviewData(c *rc, v *service.DisputeView, out *disputeData) {
 			out.ReReviewText = reReviewWords(rr.Outcome, domain.FormatAmount(rr.ReversalAmount, c.Net.Policy.Decimals), c.Net.Policy.CurrencyName)
 		}
 	}
-	if d.Status == domain.DisputeResolved && d.DecidedAt != nil {
-		until := d.DecidedAt.Add(time.Duration(c.Net.Policy.ReReviewWindowDays) * 24 * time.Hour)
+	if until := v.Deadlines.ReReviewCloses; d.Status == domain.DisputeResolved && !until.IsZero() {
+		// The service's date: the window of the policy in force when the
+		// dispute was opened (GOV-001), inclusive, as RequestReReview enforces it.
 		out.ReReviewUntil = fmtTime(until)
-		out.CanReReview = rr == nil && party && c.isActive() && s.opts.Clock.Now().Before(until)
+		out.CanReReview = rr == nil && party && c.isActive() && !s.opts.Clock.Now().After(until)
 	}
 	out.DecideReRev = rr != nil && rr.Status == service.ReReviewRequested && (c.isReviewer() || c.isAdmin()) && !party &&
 		c.Me.ID != d.ReviewerID

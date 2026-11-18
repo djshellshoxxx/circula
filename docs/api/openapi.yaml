@@ -1133,8 +1133,8 @@ paths:
         while the dispute is open or under review. Visible to the opener, reviewer and administrators in
         GET /disputes/{id}. A second response is 409 invalid-transaction-state; the opener gets 403.
         A suspended party may respond. A decision (POST /disputes/{id}/resolve) is refused with 409
-        invalid-transaction-state until a response is submitted, the network's response_period_days has
-        elapsed since the dispute was opened, or the reviewer waives the response with a reason.
+        invalid-transaction-state until a response is submitted, the response_period_days of the policy in
+        force when the dispute was opened has elapsed since then, or the reviewer waives the response with a reason.
       security:
         - cookieAuth: []
           csrfToken: []
@@ -3672,7 +3672,7 @@ components:
       additionalProperties: false
       properties:
         <<: *disputeProps
-        response_deadline: {type: string, format: date-time, description: 'Opened at plus the network response period (GOV-014). A missed deadline decides nothing; the case stays open for reviewer assessment.'}
+        response_deadline: {type: string, format: date-time, description: 'Opened at plus the response period of the network policy in force when the dispute was opened (GOV-014, GOV-001). A missed deadline decides nothing; the case stays open for reviewer assessment.'}
         decision_target: {type: string, format: date-time, description: 'Response deadline plus 14 days (DEC-012).'}
         response_overdue: {type: boolean}
         decision_overdue: {type: boolean}
@@ -3861,8 +3861,8 @@ components:
         dual_control_threshold_minor:
           description: Adjustments above this amount need a second administrator (SEC-011). 0 turns it off. Needs two or more active administrators to set.
           $ref: '#/components/schemas/Money'
-        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
-        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
+        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7. A change applies to disputes opened after it takes effect (GOV-001)."}
+        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14. A change applies to disputes opened after it takes effect (GOV-001)."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
         inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
     PolicyPatch:
@@ -3884,8 +3884,8 @@ components:
         default_flag_blocks_payer: {type: boolean}
         directory_visibility: {type: string}
         dual_control_threshold_minor: {$ref: '#/components/schemas/Money'}
-        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
-        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
+        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7. A change applies to disputes opened after it takes effect (GOV-001)."}
+        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14. A change applies to disputes opened after it takes effect (GOV-001)."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
         inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
         reason: {type: string, maxLength: 500}
