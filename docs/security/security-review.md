@@ -28,7 +28,7 @@ with its [remediation](../audit/2026-10-28/REMEDIATION-2026-11-04.md), and the C
 | BR-01 | Medium | Governance / financial fairness | `service/disputes.go` `OpenDispute` (before `e127db8`) | An administrator changes `dispute_window_days` | **Fixed** | The deadline is fixed at completion and stored immutably (DOM-017/DAT-051, migration 0016, triggers) | Before the fix, an administrator could shorten the window and strip members of the right to dispute trades already completed, or lengthen it and revive expired disputes. `TestDisputeDeadlineFixedAtCompletion` fails against the old logic and passes now. Backfill tests in `internal/store` |
 | BR-02 | Low | API concurrency control | `api/h_policy.go` `policyETag` (before `addc229`) | Two administrators edit policy at once | **Fixed** | The validator includes the pending policy version | The stale `If-Match` reached the service; only the one-scheduled-change rule stopped a lost update (409 instead of 412). `TestPendingCurrencyNamePolicyPatchChangesETag`; contract walk updated |
 | BR-03 | Low | Release supply chain | `.github/workflows/release.yml` | A tag is pushed | **Fixed** | The release workflow runs `check-release-notes.sh` and `verify-release.sh` (the scan included) | YAML parses; `check-action-pins.sh` ok; not yet exercised on a real tag |
-| BR-04 | Low | Privacy | `api/erasure_hook.go`, `api/jobs.go` `dropErased` (before branch `wk/export`) | An admin made a `full` export, then a member is erased | **Fixed** | Member erasure drops every admin-scope (`full`, `ledger`, `members`, `audit`) export artefact of the network and closes its spool file; an admin-scope export still running across the erasure is not stored (503, retry). The person's own exports and every affected network member archive are dropped too, since counterpart names/notes are personal data. Active downloads are revoked; unrelated networks remain isolated | `TestErasureDropsNetworkAdminExports` (erases a member through `EraseMyData`) fails without the fix (all four admin-scope artefacts survive; the running export is stored) and passes now; `TestA3_06_ErasureDropsReplayCacheAndExports` still passes |
+| BR-04 | Low | Privacy | `api/erasure_hook.go`, `api/jobs.go` `dropErased` (before branch `wk/export`) | An admin made a `full` export, then a member is erased | **Fixed** | Member erasure drops every admin-scope (`full`, `ledger`, `members`, `audit`) export artefact of the network and closes its spool file; an admin-scope export still running across the erasure is not stored (503, retry). The person's own exports and every affected network member archive are dropped too, since counterpart names/notes are personal data. Active downloads are revoked; unrelated networks remain isolated | `TestErasureDropsNetworkExports` (`internal/api/export_spool_test.go`; erases a member through `EraseMyData`) fails without the fix (all four admin-scope artefacts survive; the running export is stored) and passes now; `TestA3_06_ErasureDropsReplayCacheAndExports` still passes |
 | BR-05 | Low | Enumeration | sign-in and recovery; `service/auth.go` `LoginStep`, `service/password.go` | Timing measurement | **Fixed** (residual noted) | Unknown, malformed and wrong-password sign-ins already ran one Argon2id evaluation (dummy hash). The gap: an account whose stored hash cannot be evaluated (the erased marker, a damaged row) skipped Argon2id, so it answered faster. `verifyLoginPassword` now runs the dummy hash for it too. Recovery refusals (unknown login, wrong, used or malformed code) run no Argon2id on any path (A3-04) | Deterministic: an Argon2id observer seam counts evaluations and their parameters, and a store wrapper records the statements in order. `TestLoginRefusalsDoEqualWork` (fails without the fix) and `TestRecoveryRefusalsDoEqualWork`. Statistical: `CIRCULA_TIMING_TEST=1 go test ./internal/service -run TestLoginTimingStatistical` (median difference 2.9% with default parameters in this container; provisional 10% limit, threshold pending DEC-023 / QA-040). Residual: a hash stored with older Argon2id parameters costs what those parameters cost; no rehash on sign-in yet |
 | BR-06 | Medium | Resource exhaustion | export spool (`api/jobs.go`, `api/export_spool.go`, `api/h_export.go`), branch `wk/export` | Parallel large exports | **Fixed** | (a) A running export holds its slot (5 per person, 50 in total, new cap of 4 running) and reserves every archive chunk against the 64 MiB cap before writing it; over the cap it stops with 503 and frees its file and reservation. (b) New setting `export-spool-dir` / `CIRCULA_EXPORT_SPOOL_DIR`, default `<state-dir>/export-spool`, created `0700`; `serve` refuses to start when it is unusable; at run time an unusable directory answers 503 and logs the path. The in-memory fallback is removed. (c) The manifest field `reconciliation` is documented in `docs/api/export-schema.md`; the openapi `createExport` text is updated (the manifest is not an API schema) | `TestParallelExportWritesStayWithinCap` (disk use measured from the spool files) and `TestParallelLargeExportsStayBounded` (8 parallel 8.8 MiB exports under a 13.1 MiB cap: peak held 13.1 MiB, heap growth 5.1 MiB) fail without the reservation; `TestRunningExportsHoldTheirSlot`, `TestExportRefusedLeavesNoSpool`, `TestExportRefusedWithoutSpoolDir`, `TestExportSpoolPreparedOrStartRefused`, `TestExportSpoolDirSetting`, `TestExportManifestFieldsDocumented`; contract test passes |
 
@@ -60,6 +60,38 @@ with its [remediation](../audit/2026-10-28/REMEDIATION-2026-11-04.md), and the C
 - The 31 Low and 18 Info findings of that audit were not part of the 2026-11-04 remediation. Their status is not
   re-verified here.
 - Owner questions listed in `HANDOFF.md`: GOV-011, DOM-031, SEC-032 and SEC-006.
+
+## Consolidation re-check (2026-11-18)
+
+AI-assisted re-check during the PR consolidation of `main@b53f757`
+([record](../plans/PR-CONSOLIDATION-2026-11-17.md)). It is not an independent review and does not
+satisfy SEC-033. Scope: the 25 findings in the draft PR #42 audit notes (archived as
+[docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md](../audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md)),
+and the squash-merged fix PRs #45, #51, #52, #53 and #54.
+
+- Fix PRs: each fix is on `main` and its regression test passes. Removing each fix on a scratch copy turned its
+  test red. #53's query was later replaced by #56 (`TestNotificationErasureUsesResourceRelations`).
+- #51 and #52 had helper-level tests only. Service entry-point regressions are added in
+  `internal/service/ledger_auth_integration_regression_test.go`
+  (`TestResolveDisputeRefusesReversalWhenAdministratorRequired`, `TestDeciderEntryPointsRequireAdministratorMFA`).
+  Both fail when the fix is removed.
+- PR #42 findings fixed on `main`, each with a named regression test: A1-01 to A1-11, A3-F03, A3-F09, A3-F10,
+  A3-F16, A3-F24 (BR-04), A3-F25, CRYPTO-01 (A3-F17), CRYPTO-02, RESTORE-01 and BACKUP-01. Minor residuals:
+  CRYPTO-01 (see NEW-01), A3-F09 (passwords, recovery codes and revoked invitations keep their backup state after
+  a restore), BACKUP-01. The remaining PR #42 findings are in the table below.
+- Still open on `main`:
+
+| ID | Severity | State | Note |
+|---|---|---|---|
+| A3-F02 | Medium | Open, owner decision (DEC-014, SEC-013 addendum) | A break-glass administrator can still make lasting changes: `CreateAdjustment` and `SetCreditLimit` do not call `principal.requireLasting`, and `dualcontrol.go:requireIndependentApprover` accepts a break-glass administrator (`bgAdmin`). Reproduced with a throwaway probe |
+| PRIV-01, PRIV-02 | Low | Open, owner decision (SEC-014/018) | `person_activity.last_seen_at`, `person_prefs.time_zone` and `challenges.reason` survive erasure |
+| PRIV-03 / A3-F07 | Info/Low | Open, design | After a delete and a PASSIVE checkpoint the deleted text can remain in the WAL file. `TestSecureDeleteLeavesNoCanary` passes because it forces a TRUNCATE checkpoint |
+| PRIV-04, PRIV-05 | Policy/process | Open | Retention policy (DEC-020); free-text audit reasons |
+| E-02 | Low | Open, mitigated | The database opens without `trusted_schema(OFF)`; unsigned restores are refused by default |
+| NEW-01 | Low | Open, hardening; not reproduced | Unencrypted `snapshotWith` (`cmd/circula/snapshot.go`) builds a predictable `<dest>.partial` in the backup directory, and `copyFileSync` (`cmd/circula/util.go`) opens without `O_EXCL`. Someone who can write to the backup directory and swaps the file between `VACUUM INTO` and the first hash could get a forged backup signed. Suggested fix: use the private `os.MkdirTemp` directory that the encrypted path already uses, and `O_EXCL` |
+
+Older open items are unchanged and remain owner decisions: SA2-12 (SEC-011), A3-04b, A3-07, A3-10/11, A3-F18, SA2-21.
+A3-F20 and A3-F21 were not re-verified.
 
 ## Not covered
 
