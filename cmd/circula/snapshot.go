@@ -202,9 +202,12 @@ func verifyFile(ctx context.Context, path string, cfg *Config) (LedgerSummary, e
 
 // verifyCopy verifies a throw-away copy of path, leaving path untouched.
 func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
-	scratch := path + ".verify"
-	removeDBFiles(scratch)
-	defer removeDBFiles(scratch)
+	work, err := os.MkdirTemp(filepath.Dir(path), tempDirPrefix)
+	if err != nil {
+		return nil, fmt.Errorf("private verification directory: %w", err)
+	}
+	defer secureRemoveAll(work)
+	scratch := filepath.Join(work, "verify.db")
 	if err := copyFileSync(path, scratch); err != nil {
 		return nil, err
 	}
@@ -213,7 +216,7 @@ func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, 
 
 // snapshot writes a consistent online copy of the database behind db to dest,
 // verifies it, and writes dest + ".manifest.json". The copy is built under a
-// .partial name and renamed only after every check passed, so an interrupted
+// private temporary directory and renamed only after every check passed, so an interrupted
 // backup never looks complete. VACUUM INTO reads a snapshot and does not hold
 // the write lock (OPS-017). The ledger check runs on a throw-away copy, because
 // verification records its run in the database it checks: the backup must stay
@@ -226,9 +229,9 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 
 // snapshotKeys are the secrets a snapshot may use: Sign signs the manifest
 // (SA-07) and Encrypt, when set, writes the backup as an encrypted container
-// (OPS-019). With Encrypt the plaintext copy lives only in a private temporary
-// directory next to dest and is overwritten and removed before returning,
-// whether the backup succeeded or not.
+// (OPS-019). Plaintext and verification copies always live in a private temporary
+// directory next to dest. Remaining temporary files are overwritten and removed
+// before returning, whether the backup succeeded or not.
 type snapshotKeys struct{ Sign, Encrypt []byte }
 
 func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc, keys snapshotKeys) (*Manifest, error) {
@@ -237,30 +240,22 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 		return nil, fmt.Errorf("backup destination %s already exists", dest)
 	}
 	encrypting := len(keys.Encrypt) > 0
-	partial := dest + ".partial"
-	if encrypting {
-		sweepStaleTemp(filepath.Dir(dest))
-		work, err := os.MkdirTemp(filepath.Dir(dest), tempDirPrefix)
-		if err != nil {
-			return nil, fmt.Errorf("private work directory: %w", err)
-		}
-		defer secureRemoveAll(work)
-		partial = filepath.Join(work, "snapshot.db")
+	sweepStaleTemp(filepath.Dir(dest))
+	work, err := os.MkdirTemp(filepath.Dir(dest), tempDirPrefix)
+	if err != nil {
+		return nil, fmt.Errorf("private work directory: %w", err)
 	}
+	defer secureRemoveAll(work)
+	partial := filepath.Join(work, "snapshot.db")
 	rm := removeDBFiles
 	if encrypting {
 		rm = secureRemoveDB // plaintext copies are overwritten, not just unlinked
 	}
-	removeDBFiles(partial)
 	if err := vacuumInto(ctx, db, partial); err != nil {
-		removeDBFiles(partial)
 		return nil, fmt.Errorf("online snapshot: %w", err)
 	}
 	fail := func(err error) (*Manifest, error) {
-		removeDBFiles(partial)
-		if encrypting {
-			_ = os.Remove(dest + ".partial")
-		}
+		// The deferred cleanup owns only this invocation's private directory.
 		return nil, err
 	}
 	if err := os.Chmod(partial, 0o600); err != nil && runtime.GOOS != "windows" {
@@ -282,7 +277,6 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 	ledgerSum := LedgerSummary{Status: "not-run", Reason: "snapshot schema is older than this binary (pre-migration copy)"}
 	if schema.Pending() == 0 && ledger != nil {
 		scratch := partial + ".verify"
-		removeDBFiles(scratch)
 		if err := copyFileSync(partial, scratch); err != nil {
 			rm(scratch)
 			return fail(fmt.Errorf("verify snapshot: %w", err))
@@ -306,8 +300,7 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 	if encrypting {
 		// Encrypt, then prove the ciphertext decrypts back to exactly the
 		// verified plaintext before it replaces anything (OPS-019).
-		encPartial := dest + ".partial"
-		_ = os.Remove(encPartial)
+		encPartial := filepath.Join(work, "snapshot.db.enc")
 		onDisk, onDiskSize, err = encryptFile(partial, encPartial, keys.Encrypt)
 		if err != nil {
 			return fail(fmt.Errorf("encrypt backup: %w", err))
