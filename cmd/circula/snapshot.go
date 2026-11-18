@@ -449,6 +449,11 @@ func backupFileNameFor(cfg *Config, t time.Time) string {
 // age, protects work that is still active. Legacy unleased orphan directories
 // remain eligible for cleanup.
 func sweepStaleTemp(dir string) {
+	// Names and contents are trusted only where no other user can plant or
+	// swap them (AUD4-D02). Orphans in a shared directory are left in place.
+	if fi, err := os.Stat(dir); err != nil || !privateParent(fi) {
+		return
+	}
 	ents, err := os.ReadDir(dir)
 	if err != nil {
 		return
