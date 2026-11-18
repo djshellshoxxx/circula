@@ -17,7 +17,7 @@ verified disposition. Records:
   "IDs not citable" banner, and #38 is indexed there; canonical spec content is unchanged (the specs index gains
   a pointer). Two research notes moved to `docs/research/`.
   PR #42's audit notes are in `docs/audits/`; each finding's status on `main` is in
-  `docs/security/security-review.md` (open: A3-F02, PRIV-01..05, E-02, new Low NEW-01).
+  `docs/security/security-review.md` (open: A3-F02, PRIV-01..05; E-02 and NEW-01 are fixed).
 - `docs/future-features/README.md` lists the 15 isolated module branches (all `enabled:false`, HOLD).
 - Clone pitfall: cloud clones can be shallow. Run `git fetch --unshallow` before any ancestry analysis.
 - Next: owner reviews and merges the consolidation PR; FNET-204 engineering items in the PR ledger's #67 review;

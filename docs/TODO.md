@@ -70,8 +70,7 @@ unmerged-slice checklist. Scope: core Circula; the 15 future modules remain isol
 - FNET-204 (draft PR #67, future module only): wire signed cursors into `Page()`, add expiry, key ID/verify set
   and actor/filter binding, round-trip and tamper tests, gofmt; see the [#67 review](plans/PR-CONSOLIDATION-2026-11-17.md#pr-67-review).
   Key custody, TTL, mute semantics and persistent joins need owner decisions.
-- NEW-01 (Low hardening, `docs/security/security-review.md`): build unencrypted snapshots in a private
-  `os.MkdirTemp` directory and open copies with `O_EXCL`.
+- NEW-01 (Low hardening) is done: unencrypted snapshots are staged in a leased private `os.MkdirTemp` directory and copies use `O_EXCL` (`cmd/circula/backup_work.go`; status in `docs/security/security-review.md`).
 - Owner decisions from the archived spec drafts are listed in `docs/archive/specs-historical/README.md`;
   candidate QA backlog there: race matrix R1–R18 and cross-parameter policy rules R1–R13 (from PR #2).
 - `future/module-catalog-20261116` has stale per-branch SHAs; refresh it on that branch if it is kept.
