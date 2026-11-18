@@ -318,7 +318,7 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 // Guards: administrator role (or System actor); the target must be an active
 // member of THIS network (anyone else is NotFound, so another network's
 // administrator learns nothing); never one's own account (including through a
-// second membership); the target must not hold the administrator role here nor
+// second membership); the target must not hold the administrator or reviewer role here nor
 // an active membership in any other network (SA2-01: those need the operator
 // CLI, since a reset hands over the person's whole identity); a reason is mandatory; at most adminResetsPerHour
 // successful resets per administrator per hour. Resetting another
@@ -365,7 +365,10 @@ func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, ne
 			// network administrator may only reset an account that exists in this
 			// network alone and holds no administrator role here. Anything else
 			// needs the platform operator (`circula reset-password`).
-			if m.HasRole(domain.RoleAdmin) {
+			// AUD4-F02: a reviewer decides disputes and challenges independently
+			// of the administrators (DOM-038). An administrator who could take
+			// over a reviewer account could decide their own dispute.
+			if m.HasRole(domain.RoleAdmin) || m.HasRole(domain.RoleReviewer) {
 				return domain.Forbidden("this account can only be reset by the platform operator")
 			}
 			others, err := tx.ListMembershipsOfPerson(person.ID)
