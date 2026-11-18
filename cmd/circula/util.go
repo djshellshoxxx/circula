@@ -13,26 +13,36 @@ import (
 	"syscall"
 )
 
-// copyFileSync copies src to dst and flushes dst to stable storage before returning.
+// copyFileSync copies src to a new dst and flushes dst to stable storage before
+// returning. Exclusive creation refuses existing files and planted symlinks.
 func copyFileSync(src, dst string) error {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer func() { _ = in.Close() }()
-	out, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	out, err := os.OpenFile(dst, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
 	if err != nil {
 		return err
 	}
+	complete := false
+	defer func() {
+		if !complete {
+			_ = out.Close()
+			_ = os.Remove(dst)
+		}
+	}()
 	if _, err := io.Copy(out, in); err != nil {
-		_ = out.Close()
 		return err
 	}
 	if err := out.Sync(); err != nil {
-		_ = out.Close()
 		return err
 	}
-	return out.Close()
+	if err := out.Close(); err != nil {
+		return err
+	}
+	complete = true
+	return nil
 }
 
 // writeJSONFile writes v as indented JSON atomically.

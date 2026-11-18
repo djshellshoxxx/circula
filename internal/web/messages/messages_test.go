@@ -95,7 +95,7 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"ledger reference 12345", "12.50", "credits"}
 		case "queue.party_proposal":
 			args = []any{"Ana", "Ben", "1.00", "credit"}
-		case "common.unread", "common.new":
+		case "common.unread", "common.new", "security.notices.unseen":
 			args = []any{1000}
 		case "overview.stale", "overview.invites":
 			args = []any{2, 48}

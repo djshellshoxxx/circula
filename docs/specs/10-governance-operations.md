@@ -46,7 +46,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-018 | P0 | partial | Trades continue within limits; write-off by approved adjustment not built (SEC-011) |
 | GOV-019 | P0 | built | Limit reduction posts nothing; increases refused |
 | GOV-020 | P0 | built | Last-admin guard; a network with no active administrator is read-only (administrator required) and visible to members |
-| GOV-021 | P0 | not built | Platform-assisted recovery not built |
+| GOV-021 | P0 | built | A recorded, active member of a network without an active administrator requests recovery (web, session-only API); two operators with different labels approve in the operator CLI, the second approval applying an ordinary admin role assignment; rechecked at each step; 7-day expiry; audited at network and platform scope; every current member notified; no ledger change. Operator identity is a typed label (residual risk, docs/ops/admin-recovery.md). Tests: TestGOV021AppointmentNeedsSecondApproval, TestGOV021RecoveryAuditVisibleToNetwork, TestGOV021RecoveryChangesNoBalanceOrEntry |
 | GOV-022 | P0 | partial | Member, network and full exports built; reconciliation summary in manifest; import not built |
 | GOV-023 | P0 | built | Administrator suspension overlay: postings, acceptances and joins refused; reads and exports kept; members notified; audited |
 | GOV-024 | P0 | built | Operator command with mandatory category; administrators notified; audit visible to the network |

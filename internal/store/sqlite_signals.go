@@ -8,7 +8,7 @@ import (
 )
 
 // Activity signals (SEC-026). The table, its uniqueness and its append-only
-// guards are in migration 0019.
+// guards are in migration 0020.
 
 func (t *txImpl) CountProposalsSince(netID, memberID string, since time.Time) (int, error) {
 	var n int

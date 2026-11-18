@@ -78,13 +78,16 @@ func (s *server) serve(c *reqCtx, rt route) error {
 		if err := s.checkCSRF(r, c); err != nil {
 			return err
 		}
-		if rt.cookieOnly && !c.cookie {
-			return domain.Forbidden("session authentication is required for this operation")
-		}
+		// A network route resolves membership first, so a session-only
+		// route of a network the caller does not belong to still reads as
+		// not-found (API-017). noNet routes are unaffected by the order.
 		if !rt.noNet {
 			if err := s.resolveNetwork(r, c); err != nil {
 				return err
 			}
+		}
+		if rt.cookieOnly && !c.cookie {
+			return domain.Forbidden("session authentication is required for this operation")
 		}
 	}
 	// SEC-024: reject malformed record IDs before any resource lookup or

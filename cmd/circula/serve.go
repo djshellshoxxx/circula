@@ -453,7 +453,10 @@ func (j *jobRunner) expire(ctx context.Context) error {
 	if _, err := j.svc.ExpirePendingAdjustments(ctx, domain.SystemActor("job-expiry"), 500); err != nil { // SEC-011
 		return err
 	}
-	_, err := j.svc.ExpireBreakGlass(ctx, domain.SystemActor("job-break-glass")) // SEC-013
+	if _, err := j.svc.ExpireBreakGlass(ctx, domain.SystemActor("job-break-glass")); err != nil { // SEC-013
+		return err
+	}
+	_, err := j.svc.ExpireAdminRecovery(ctx, domain.SystemActor("job-admin-recovery")) // GOV-021
 	return err
 }
 

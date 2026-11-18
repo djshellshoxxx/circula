@@ -44,6 +44,7 @@ type Tx interface {
 	InactivityRepo
 	ClosureRepo
 	SignalRepo
+	AdminRecoveryRepo
 }
 
 // NetworkRepo covers networks, versioned policies and the ledger counter.
