@@ -104,6 +104,9 @@ func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, 
 		return nil, fmt.Errorf("store: unsupported synchronous level %q (want NORMAL or FULL)", opt.Synchronous)
 	}
 	q := url.Values{}
+	// Treat views, triggers and expressions from the database as untrusted
+	// (E-02). The DSN applies this to every connection the pool opens.
+	q.Add("_pragma", "trusted_schema(0)")
 	q.Add("_pragma", fmt.Sprintf("busy_timeout(%d)", busy.Milliseconds()))
 	q.Add("_pragma", "journal_mode(WAL)")
 	q.Add("_pragma", "synchronous("+level+")")
