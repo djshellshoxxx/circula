@@ -6,14 +6,16 @@ Branch `claude/circula-pr-consolidation-q6q18n` from `main@b53f757`. It gives ev
 verified disposition. Records:
 [PR ledger](docs/plans/PR-CONSOLIDATION-2026-11-17.md) and [branch ledger](docs/plans/BRANCH-CONSOLIDATION-2026-11-17.md).
 
-- 68 PRs and 88 remote branches checked by ancestry, patch IDs and content. Of the 19 open PRs, 11 hold no
-  work missing from `main`, 7 had their unique material recovered or archived here, and #67 (future module
-  FNET-204) stays open. Branches are preserved; nothing was merged into `main`.
-- Core recovery: `cb79676` pins the OPS-025 start-up migration gate (from #35 `ebb4e298`) and corrects docs
-  that said `migrate` must run before a first start. `91a26f2` adds service entry-point regressions for the
+- 68 PRs and 88 remote branches checked by ancestry, patch IDs and content. Of the 19 open PRs, 10 hold no
+  work missing from `main` and were closed as superseded; 8 (#1, #2, #13, #16, #20, #29, #35, #42) had their
+  unique material recovered or archived in PR #69 and close when it merges; #67 (future module FNET-204) stays
+  open. Branches are preserved; nothing was merged into `main`.
+- Core recovery: `cb79676` and its review follow-up pin the OPS-025 start-up migration gate (from #35
+  `ebb4e298`) at helper and `runServe` level, and correct docs that said `migrate` must run before a first start. `91a26f2` adds service entry-point regressions for the
   #51/#52 fixes (A1-04, A3-F03).
-- Archives: the competing spec drafts (#1, #2, #29, #38) are under `docs/archive/specs-historical/` with an
-  "IDs not citable" banner; the canonical specs are unchanged. Two research notes moved to `docs/research/`.
+- Archives: the competing spec drafts of #1, #2 and #29 are under `docs/archive/specs-historical/` with an
+  "IDs not citable" banner, and #38 is indexed there; canonical spec content is unchanged (the specs index gains
+  a pointer). Two research notes moved to `docs/research/`.
   PR #42's audit notes are in `docs/audits/`; each finding's status on `main` is in
   `docs/security/security-review.md` (open: A3-F02, PRIV-01..05, E-02, new Low NEW-01).
 - `docs/future-features/README.md` lists the 15 isolated module branches (all `enabled:false`, HOLD).

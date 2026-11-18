@@ -2,7 +2,7 @@
 > [PR #1](https://github.com/djshellshoxxx/circula/pull/1), branch `docs/foundational-specifications` at `22e9202f`, originally
 > `docs/brainstorming/business-model-options.md`. Requirement and decision IDs in this file come from a competing draft and do **not** match
 > the IDs in `docs/specs/`; do not cite them. Canonical requirements: `docs/specs/`; decisions:
-> `docs/DECISIONS.md`. See [the archive index](README.md) for which items are unique, conflicting
+> `docs/DECISIONS.md`. See [the archive index](../README.md) for which items are unique, conflicting
 > or out of scope.
 
 # Circula business model options

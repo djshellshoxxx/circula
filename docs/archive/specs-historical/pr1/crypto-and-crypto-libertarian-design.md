@@ -2,7 +2,7 @@
 > [PR #1](https://github.com/djshellshoxxx/circula/pull/1), branch `docs/foundational-specifications` at `22e9202f`, originally
 > `docs/brainstorming/crypto-and-crypto-libertarian-design.md`. Requirement and decision IDs in this file come from a competing draft and do **not** match
 > the IDs in `docs/specs/`; do not cite them. Canonical requirements: `docs/specs/`; decisions:
-> `docs/DECISIONS.md`. See [the archive index](README.md) for which items are unique, conflicting
+> `docs/DECISIONS.md`. See [the archive index](../README.md) for which items are unique, conflicting
 > or out of scope.
 
 # Crypto and crypto-libertarian design options
@@ -11,7 +11,7 @@
 **Owner:** Circula project owner\
 **Last updated:** 2026-10-20\
 **Scope:** Distinguish mutual credit, cryptocurrency, cryptography, and the project’s decentralization goals\
-**Dependencies:** [Domain model](../specs/03-domain-model.md), [architecture](../specs/05-architecture.md), [security baseline](../specs/09-security-privacy.md)\
+**Dependencies:** [Domain model](https://github.com/djshellshoxxx/circula/blob/22e9202f19f55aa46be4b115edbe84178e9cee0b/docs/specs/03-domain-model.md), [architecture](https://github.com/djshellshoxxx/circula/blob/22e9202f19f55aa46be4b115edbe84178e9cee0b/docs/specs/05-architecture.md), [security baseline](https://github.com/djshellshoxxx/circula/blob/22e9202f19f55aa46be4b115edbe84178e9cee0b/docs/specs/09-security-privacy.md)\
 **Open questions:** Which trust problem, if any, justifies each cryptographic feature? What key recovery model is usable for ordinary members?
 
 ## What “crypto” means here

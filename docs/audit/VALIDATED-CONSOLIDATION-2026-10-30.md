@@ -87,7 +87,7 @@ decisions, thresholds and external-target integration remain separate.
 
 ## Restart
 
-Use [the bounded continuation prompt](../../prompts/next-milestone-circula.md).
+Use [the bounded continuation prompt](https://github.com/djshellshoxxx/circula/blob/127943ba7aa2cb154d3e65d13279e739b901416f/prompts/next-milestone-circula.md).
 Reverify refs and actor-specific access. This receipt is published only on
 `codex/circula-integration-plan-20261030` in draft PR #16; resolve its document
 commit separately from the validated application commit. Do not merge routine

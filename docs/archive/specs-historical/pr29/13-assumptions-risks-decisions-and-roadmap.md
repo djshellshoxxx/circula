@@ -47,7 +47,7 @@ Unused numbers inside a range are reserved for later entries of that topic.
 
 ## 2. Assumptions
 
-Each assumption is a premise the specifications treat as true without proof. Basis is one of: **repo evidence** (stated in a specification or the authoring brief), **prompt** (stated in [the authoring brief](../../prompts/create-foundational-specs.md)), or **engineering judgment**.
+Each assumption is a premise the specifications treat as true without proof. Basis is one of: **repo evidence** (stated in a specification or the authoring brief), **prompt** (stated in [the authoring brief](https://github.com/djshellshoxxx/circula/blob/2da1a293ebf2f28f349fcae9bf32184737bc8619/prompts/create-foundational-specs.md)), or **engineering judgment**.
 
 | ID | Assumption (short form) | Basis | Validated by |
 |---|---|---|---|

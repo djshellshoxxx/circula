@@ -2,7 +2,7 @@
 > [PR #2](https://github.com/djshellshoxxx/circula/pull/2), branch `claude/sweet-turing-m3ftja` at `01b6e5c7`, originally
 > `docs/specs/16-network-policy-catalog.md`. Requirement and decision IDs in this file come from a competing draft and do **not** match
 > the IDs in `docs/specs/`; do not cite them. Canonical requirements: `docs/specs/`; decisions:
-> `docs/DECISIONS.md`. See [the archive index](README.md) for which items are unique, conflicting
+> `docs/DECISIONS.md`. See [the archive index](../README.md) for which items are unique, conflicting
 > or out of scope.
 
 # 16 — Network Policy Catalog
@@ -12,21 +12,21 @@
 | Status | Draft |
 | Owner role | Governance and community-operations lead (catalog); Domain architect (bounds) |
 | Last updated | 2026-10-21 |
-| Scope | Every Network policy parameter named in [canon 5.6](00-conventions.md): name, type, unit, allowed range, defaults (platform and per archetype), mutability, who may change, effect on existing data, validation, audit and announcement behaviour, dependent requirements; the policy document format, versioning and effective-dating rules; cross-parameter validation; safety-fix eligibility; archetype presets with example JSON |
-| Depends on | [00 — Conventions and canon](00-conventions.md), [03 — Domain model](03-domain-model-and-mutual-credit-rules.md), [10 — Governance](10-governance-and-network-operations.md), [15 — Lifecycle state machines](15-lifecycle-state-machines.md) |
-| Open questions | See section 9; consolidated in [13 — Assumptions, risks, decisions](13-assumptions-risks-decisions-roadmap.md) |
+| Scope | Every Network policy parameter named in [canon 5.6](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md): name, type, unit, allowed range, defaults (platform and per archetype), mutability, who may change, effect on existing data, validation, audit and announcement behaviour, dependent requirements; the policy document format, versioning and effective-dating rules; cross-parameter validation; safety-fix eligibility; archetype presets with example JSON |
+| Depends on | [00 — Conventions and canon](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md), [03 — Domain model](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md), [10 — Governance](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md), [15 — Lifecycle state machines](15-lifecycle-state-machines.md) |
+| Open questions | See section 9; consolidated in [13 — Assumptions, risks, decisions](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md) |
 
 ## 1. Purpose and scope
 
-[03 section 9](03-domain-model-and-mutual-credit-rules.md) states which rules are configurable and which are fixed. [10](10-governance-and-network-operations.md) specifies the human procedure for changing them. This document is the **single authoritative home for the parameters themselves**: what values are legal, what each does to data that already exists, and how a policy change is stored, dated and resolved at any moment in time.
+[03 section 9](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md) states which rules are configurable and which are fixed. [10](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md) specifies the human procedure for changing them. This document is the **single authoritative home for the parameters themselves**: what values are legal, what each does to data that already exists, and how a policy change is stored, dated and resolved at any moment in time.
 
-The catalog contains exactly the 18 parameters of canon 5.6: three **Network identity parameters** (`unit_name`, `unit_symbol`, `unit_scale`, section 4.2; stored on the Network record, not in versioned policy, [canon 5.8](00-conventions.md) item 5) and 15 versioned policy parameters. No additional *policy* parameter is introduced; the few non-policy **Network settings** that other documents need (invitations by Members, `neutral_subjects`, Broadcast controls) are listed separately in section 4.10 and are not part of any policy version; values that other documents leave as `[DECISION NEEDED]` platform constants (for example invitation validity or the settlement window) are listed in section 6.4 as *not* Network-configurable in MVP.
+The catalog contains exactly the 18 parameters of canon 5.6: three **Network identity parameters** (`unit_name`, `unit_symbol`, `unit_scale`, section 4.2; stored on the Network record, not in versioned policy, [canon 5.8](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) item 5) and 15 versioned policy parameters. No additional *policy* parameter is introduced; the few non-policy **Network settings** that other documents need (invitations by Members, `neutral_subjects`, Broadcast controls) are listed separately in section 4.10 and are not part of any policy version; values that other documents leave as `[DECISION NEEDED]` platform constants (for example invitation validity or the settlement window) are listed in section 6.4 as *not* Network-configurable in MVP.
 
-Nothing here lets a policy weaken an invariant (INV-001..INV-014, [03 section 4](03-domain-model-and-mutual-credit-rules.md)). Where a legal question arises from a value (for example whether a credit limit amounts to lending) it is routed to [19](19-legal-and-regulatory-open-questions.md) as a question for counsel; no value is asserted to be lawful.
+Nothing here lets a policy weaken an invariant (INV-001..INV-014, [03 section 4](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md)). Where a legal question arises from a value (for example whether a credit limit amounts to lending) it is routed to [19](19-legal-and-regulatory-open-questions.md) as a question for counsel; no value is asserted to be lawful.
 
 ## 2. Definitions used here
 
-Terms as in [00 section 5.1](00-conventions.md), [14](14-glossary.md) and [10 section 2](10-governance-and-network-operations.md). Additional terms:
+Terms as in [00 section 5.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md), [14](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md) and [10 section 2](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md). Additional terms:
 
 | Term | Meaning |
 |---|---|
@@ -35,7 +35,7 @@ Terms as in [00 section 5.1](00-conventions.md), [14](14-glossary.md) and [10 se
 | **Minor units** | Integer amounts of the Network's credit unit scaled by `unit_scale`; all amount parameters are stored in minor units (DOM-008). |
 | **Whole-unit notation** | Decimal text used in this document and in UI, for example `50.00` for 5000 minor units at `unit_scale` 2. |
 | **In force** | A policy version is in force at time *t* if it is the version with the greatest `effective_at` not later than *t* among versions that reached effect (section 5.4). |
-| **Sensitive parameter** | One whose change needs `admin_quorum` approvals and step-up authentication (marked in 4.1, rule in 6.2; the step-up recency is owned by [09](09-security-privacy-and-abuse.md) SEC-009). |
+| **Sensitive parameter** | One whose change needs `admin_quorum` approvals and step-up authentication (marked in 4.1, rule in 6.2; the step-up recency is owned by [09](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md) SEC-009). |
 | **Safety-eligible change** | A change in a tightening direction that may skip the notice period under a recorded safety fix (section 6.3). |
 | **Over limit / over cap** | Account states of DOM-012 and DOM-013. |
 | **Platform constant** | A value fixed by the Platform in MVP and not a Network policy (section 6.4). |
@@ -50,7 +50,7 @@ Terms as in [00 section 5.1](00-conventions.md), [14](14-glossary.md) and [10 se
 | **N** | With notice | Scheduled policy version, effective at least `policy_notice_days` after approval (D-11); prospective only. |
 | **N+S** | With notice; safety-eligible | As N, and a defined tightening direction may be applied as a safety fix without notice (6.3). |
 
-Exception for all classes: while the Network is in operating status `setup` ([10 section 11.1](10-governance-and-network-operations.md)), every parameter change takes effect immediately, because no Member or ledger can be affected. The transition `setup` → `open` publishes the first policy version as `active`.
+Exception for all classes: while the Network is in operating status `setup` ([10 section 11.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md)), every parameter change takes effect immediately, because no Member or ledger can be affected. The transition `setup` → `open` publishes the first policy version as `active`.
 
 ### 3.2 Who may change
 
@@ -59,7 +59,7 @@ Exception for all classes: while the Network is in operating status `setup` ([10
 | **A** | Any single `network_admin`, with reason; not a sensitive parameter. |
 | **Q** | `admin_quorum` approvals from distinct `network_admin`s and step-up authentication (FR-ADM-002, FR-ADM-018), with reason. When `admin_quorum` is 1, Q still requires step-up. |
 
-The Platform Operator MUST NOT be able to change any parameter. Member voting is not a software mechanism in MVP ([10 section 5.2](10-governance-and-network-operations.md)).
+The Platform Operator MUST NOT be able to change any parameter. Member voting is not a software mechanism in MVP ([10 section 5.2](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md)).
 
 ### 3.3 Effect on existing data
 
@@ -74,17 +74,17 @@ No parameter has a retroactive effect on posted ledger data (DOM-049).
 
 ### 3.4 Catalog conventions
 
-- Defaults are given as: **Platform** default (used when a Network is created without a preset) and three archetype presets: **LETS** (small neighbourhood), **TB** (time bank), **BIZ** (small-business trade network). Rationale for the presets is in [10 section 13](10-governance-and-network-operations.md).
+- Defaults are given as: **Platform** default (used when a Network is created without a preset) and three archetype presets: **LETS** (small neighbourhood), **TB** (time bank), **BIZ** (small-business trade network). Rationale for the presets is in [10 section 13](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md).
 - Amounts are written in whole-unit notation; stored values are minor units.
 - A range stated "N..M" is inclusive. "null" means the feature is off.
 
 | ID | Pri | Requirement | Rationale | Verification |
 |---|---|---|---|---|
 | POL-001 | P0 | The Platform MUST accept only the 15 policy parameters of canon 5.6 in a policy set (and the three identity parameters only on the Network record), MUST reject unknown keys, and MUST validate every value against the type, range and cross-parameter rules of this document before accepting a draft. | A closed schema keeps governance inside platform bounds. | Test: unknown key rejected; boundary values accepted and rejected as stated |
-| POL-002 | P0 | Every amount parameter MUST be an integer in minor units with no floating-point representation, within `0..9007199254740991` (2^53 − 1) so that JSON consumers can represent it exactly; the representation used on the wire (number or decimal string) is owned by [07](07-api-and-integration-contract.md). | DOM-008; interoperability. | Test: 9007199254740992 rejected; round-trip through JSON parser |
+| POL-002 | P0 | Every amount parameter MUST be an integer in minor units with no floating-point representation, within `0..9007199254740991` (2^53 − 1) so that JSON consumers can represent it exactly; the representation used on the wire (number or decimal string) is owned by [07](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md). | DOM-008; interoperability. | Test: 9007199254740992 rejected; round-trip through JSON parser |
 | POL-003 | P0 | The admin interface and API MUST, for each parameter shown or edited, expose: current value, scheduled values with dates, allowed range, default, mutability class, who may change, effect on existing data, and a plain-language impact preview computed from current data where computable. | JRN-006 step 1 and 2; FR-ADM-001. | Demo for all 18 parameters |
 | POL-004 | P0 | Every accepted change MUST generate Audit Events (INV-010) naming actor, time, reason, target Network, parameter, old value and new value; for scheduled changes events are generated at proposal, approval, activation, lapse and withdrawal. | Governance accountability. | Test: event set per lifecycle path |
-| POL-005 | P0 | Every policy change MUST be announced to all Members under [10 GOV-010](10-governance-and-network-operations.md); a policy version MUST NOT reach `scheduled` without a recorded announcement. | FR-ADM-014. | Test: announcement absence blocks scheduling |
+| POL-005 | P0 | Every policy change MUST be announced to all Members under [10 GOV-010](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md); a policy version MUST NOT reach `scheduled` without a recorded announcement. | FR-ADM-014. | Test: announcement absence blocks scheduling |
 | POL-006 | P0 | The impact preview MUST be computed and stored with the version at approval time (counts and lists of affected Members are stored as counts only plus a re-computable query definition, to avoid duplicating personal data). | Reviewable record without data duplication. | Inspection |
 
 ## 4. The catalog
@@ -116,7 +116,7 @@ Archetype presets are in section 7. Rows 1 to 3 are the Network identity paramet
 
 ### 4.2 Network identity parameters (parameters 1 to 3)
 
-These three are stored on the Network record, not in a policy version ([06](06-data-ledger-and-audit.md) A-DAT-2, DAT-037; canon 5.8 item 5), so no policy version can change them and they are not rolled back with policy. `unit_name` carries singular and plural forms: `unit_name_singular` and `unit_name_plural` (each 1..40 characters, same character rules as `unit_name`); `unit_name` is the canonical label, and when a form is omitted it defaults to `unit_name`. UI copy chooses the form by quantity (locale rules for plurals are a UX matter, [08](08-ux-and-accessibility.md)). All forms freeze with `unit_name` (INV-013).
+These three are stored on the Network record, not in a policy version ([06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md) A-DAT-2, DAT-037; canon 5.8 item 5), so no policy version can change them and they are not rolled back with policy. `unit_name` carries singular and plural forms: `unit_name_singular` and `unit_name_plural` (each 1..40 characters, same character rules as `unit_name`); `unit_name` is the canonical label, and when a form is omitted it defaults to `unit_name`. UI copy chooses the form by quantity (locale rules for plurals are a UX matter, [08](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md)). All forms freeze with `unit_name` (INV-013).
 
 | Aspect | `unit_name` | `unit_symbol` | `unit_scale` |
 |---|---|---|---|
@@ -203,7 +203,7 @@ These three are stored on the Network record, not in a policy version ([06](06-d
 | Aspect | `balance_visibility` | `directory_visibility` |
 |---|---|---|
 | Type | Enum: `self` (a Member sees only their own balance and history), `admins` (also Network Administrators), `members` (all Members) | Enum: `members` (Listings and directory visible to Members only), `public_listings` (published Listings visible to non-members; Member identity limited to fields the owner chose to make public) |
-| Default | Platform `admins` (**proposed default**: [canon 5.6](00-conventions.md) lists the options but defines no default; [09](09-security-privacy-and-abuse.md) SEC-OD-14 and SEC-101 recommend the most restrictive value that keeps administrator duties, which is `admins`; recorded for [13](13-assumptions-risks-decisions-roadmap.md)); LETS `members`; TB `admins`; BIZ `admins` | Platform `members`; all presets `members` |
+| Default | Platform `admins` (**proposed default**: [canon 5.6](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) lists the options but defines no default; [09](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md) SEC-OD-14 and SEC-101 recommend the most restrictive value that keeps administrator duties, which is `admins`; recorded for [13](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md)); LETS `members`; TB `admins`; BIZ `admins` | Platform `members`; all presets `members` |
 | Mutability / who | N+S; Q. Safety direction: more private (`members` → `admins` → `self`) | N+S; Q. Safety direction: `public_listings` → `members` |
 | Effect on existing data | V: the value in force at each read decides what is shown; no stored record changes. A Member always sees their own balance and history and every Adjustment or Reversal touching them (DOM-031). Under `self`, administrators still see aggregate and flag-level information (PER-030, FR-BAL-008) | V: from `effective_at`, non-members can see published Listings; before it they cannot. Moving to `members` hides them immediately at `effective_at`; caches and search-engine copies outside the Platform cannot be recalled |
 | Validation | Loosening (`self` → `admins` → `members`) is not safety-eligible and MUST show a warning that existing balances become visible to more people. Whether loosening requires fresh Member consent is a question for counsel (LEG-Q-25) | Moving to `public_listings` MUST require that the Network has a published privacy description (FR-NET-006) |
@@ -221,7 +221,7 @@ These three are stored on the Network record, not in a policy version ([06](06-d
 | Mutability / who | N; A | N; Q |
 | Effect on existing data | P: the derived inactive flag is recomputed from `effective_at` using the new threshold; no balance, limit or state changes (DOM-044) | P-S: snapshotted into the Membership when it enters `departing` (DOM-039); changes never alter a Membership already `departing`, except by the quorum decision of DOM-037 |
 | Validation | Integer in range or null | Enum; the change preview MUST state that `write_off` and `community_fund` absorb negative balances at the Network level, and that no mode redeems a positive balance (DOM-038) |
-| Audit / announce | Audit Event; Members notified | Audit Event; Members notified; Charter section 10 link shown ([10 Appendix A](10-governance-and-network-operations.md)) |
+| Audit / announce | Audit Event; Members notified | Audit Event; Members notified; Charter section 10 link shown ([10 Appendix A](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md)) |
 | Dependent requirements | DOM-043, DOM-044 | DOM-036..DOM-040, MB6, MB7, LIF-030, GOV-016 |
 | Impact preview | "n Members would be flagged inactive" | "Members who depart after the date use the new mode; n `departing` are unaffected" |
 
@@ -249,22 +249,22 @@ These three are stored on the Network record, not in a policy version ([06](06-d
 | POL-012 | P0 | `min_trade_amount` and `max_trade_amount` MUST be evaluated at acceptance against the policy in force at commit (DOM-014); a `proposed` Trade outside the bounds MUST remain `proposed` and unacceptable until it ends. | Policy may change during a proposal's life. | Test |
 | POL-013 | P0 | `max_balance`, when not null, MUST be at least `min_trade_amount`; the Platform SHOULD warn when it is below `max_trade_amount`. | Prevents a cap that makes the minimum Trade impossible. | Test |
 | POL-014 | P0 | `proposal_expiry_days` changes MUST NOT change the `expires_at` of any existing Trade (DOM-021). | Determinism. | Test |
-| POL-015 | P0 | Each Trade MUST record the `policy_version` in force at its completion, and `dispute_window_days` for that Trade and for the joint Reversal path MUST be taken from that version. | Fairness: rules known at the time of the Trade. Adopted: stamp stored as `Trade.policy_version_id` ([06](06-data-ledger-and-audit.md) DAT-093; DOM-052). | Test: change the window after a Trade completes; the Trade keeps its window |
+| POL-015 | P0 | Each Trade MUST record the `policy_version` in force at its completion, and `dispute_window_days` for that Trade and for the joint Reversal path MUST be taken from that version. | Fairness: rules known at the time of the Trade. Adopted: stamp stored as `Trade.policy_version_id` ([06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md) DAT-093; DOM-052). | Test: change the window after a Trade completes; the Trade keeps its window |
 | POL-016 | P0 | `dispute_review_sla_days` MUST be snapshotted onto a Dispute at `raise` and all SLA, reminder, response-period and escalation computations for it MUST use the snapshot (LIF-024). | Fairness to disputants. | Test |
 | POL-017 | P0 | `balance_visibility` and `directory_visibility` MUST be evaluated on every read against the policy in force at the time of the read (LIF-046). Loosening MUST NOT be safety-eligible. | Visibility is a view, not a record. | Test; negative test for safety flag |
 | POL-018 | P1 | Moving `directory_visibility` to `public_listings` SHOULD require the Network's privacy description to be published, and the question whether visibility loosening needs fresh consent is a question for counsel (LEG-Q-25). | Privacy by default; no legal conclusion. | Test; cross-reference |
 | POL-019 | P0 | `inactivity_threshold_days` MUST affect only the derived inactive flag and its notifications; it MUST NOT trigger any state change or posting (DOM-044). | No automatic consequences. | 5-year idle simulation |
 | POL-020 | P0 | `departure_settlement_mode` in force at the transition to `departing` MUST be stored on the Membership and MUST be the mode used at finalisation unless a recorded quorum decision (DOM-037) overrides it. | DOM-039; LIF-030. | Test |
 | POL-021 | P0 | `policy_notice_days` MUST be at least the platform minimum of 7 days outside `setup` (the minimum is a platform constant; a Network MAY choose up to 90) and the default is 14 (D-11); a policy change that alters `policy_notice_days` MUST use as its own notice the larger of the old and new values. | Prevents notice-shortening bypass. | Test |
-| POL-022 | P0 | `admin_quorum` MUST satisfy `1 ≤ admin_quorum ≤` number of `active` `network_admin` Memberships when set; a role change that would reduce `active` administrators below `admin_quorum` MUST be rejected, except by the closure and recovery procedures of [10](10-governance-and-network-operations.md). | Avoids deadlock and bypass (FR-ADM-003). | Test |
+| POL-022 | P0 | `admin_quorum` MUST satisfy `1 ≤ admin_quorum ≤` number of `active` `network_admin` Memberships when set; a role change that would reduce `active` administrators below `admin_quorum` MUST be rejected, except by the closure and recovery procedures of [10](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md). | Avoids deadlock and bypass (FR-ADM-003). | Test |
 
 ### 4.10 Network settings outside the policy set
 
-These settings are stored on the Network record (not in a policy version), changed with an Audit Event, take effect when saved unless stated, and are not subject to `policy_notice_days` because they do not alter Member rights over balances. Members are informed of changes to the invitation and Broadcast settings through the ordinary announcement channel. They are not canon 5.6 parameters; [00 section 5.6](00-conventions.md) is unchanged.
+These settings are stored on the Network record (not in a policy version), changed with an Audit Event, take effect when saved unless stated, and are not subject to `policy_notice_days` because they do not alter Member rights over balances. Members are informed of changes to the invitation and Broadcast settings through the ordinary announcement channel. They are not canon 5.6 parameters; [00 section 5.6](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) is unchanged.
 
 | Setting | Type, range | Default | Who | Used by |
 |---|---|---|---|---|
-| `member_invitations_enabled` | bool; effective only when `membership_mode` = `invite` (an invite-only Network MAY let Members, not only administrators, create invitations) | false (administrators only) | Q (sensitive: it widens who can admit people) | FR-MEM-007, FR-MEM-008 in [04](04-functional-requirements.md); API `create_invitation` |
+| `member_invitations_enabled` | bool; effective only when `membership_mode` = `invite` (an invite-only Network MAY let Members, not only administrators, create invitations) | false (administrators only) | Q (sensitive: it widens who can admit people) | FR-MEM-007, FR-MEM-008 in [04](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md); API `create_invitation` |
 | `member_invitation_quota` | integer 1..10, open (unused, unexpired) invitations per Member | 3 | A | FR-MEM-008 (resolves DEC-031 on the MVP side: Member invitation is supported as an option, off by default) |
 | `neutral_subjects` | bool | false (Network name appears in email subjects) | A | NTF-023 in [17](17-notifications-and-communications.md) |
 | `broadcasts_enabled` | bool (per-Network switch; when false, Broadcasts and Broadcast banners are unavailable) | true | A | NTF-085 |
@@ -278,7 +278,7 @@ These settings are stored on the Network record (not in a policy version), chang
 
 ### 4.11 Platform-fixed boundaries (from doc 03 section 9)
 
-A policy value is valid only inside these bounds ([03 section 9](03-domain-model-and-mutual-credit-rules.md), DOM-049); none can be configured away.
+A policy value is valid only inside these bounds ([03 section 9](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md), DOM-049); none can be configured away.
 
 | Parameter | Bound (owner) |
 |---|---|
@@ -305,7 +305,7 @@ A policy value is valid only inside these bounds ([03 section 9](03-domain-model
 
 ### 5.1 Document format
 
-A policy version is a JSON document with the following members. Field names are normative; the transport and schema versioning of the API are owned by [07](07-api-and-integration-contract.md), and storage by [06](06-data-ledger-and-audit.md).
+A policy version is a JSON document with the following members. Field names are normative; the transport and schema versioning of the API are owned by [07](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md), and storage by [06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md).
 
 | Member | Type | Meaning |
 |---|---|---|
@@ -432,7 +432,7 @@ A policy cannot be rolled back; the previous values are re-applied by a new vers
 |---|---|---|---|
 | `proposal_expiry_days` | Trade `propose` (TR1) | Trade (`expires_at`) | No |
 | `min_trade_amount`, `max_trade_amount`, `default_credit_limit` (effective limit), `max_credit_limit`, `max_balance` | Trade `accept` commit (TR2) | Evaluated, not stored | Yes: next event uses the new policy |
-| `dispute_window_days` | Trade completion | Trade (`policy_version_id`, [06](06-data-ledger-and-audit.md) DAT-093); `dispute_window_ends_at` snapshotted | No |
+| `dispute_window_days` | Trade completion | Trade (`policy_version_id`, [06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md) DAT-093); `dispute_window_ends_at` snapshotted | No |
 | `dispute_review_sla_days` | Dispute `raise` (DS1) | Dispute | No |
 | `departure_settlement_mode` | Membership `request_departure`/`remove` (MB6) | Membership (`departure_mode_snapshot`) | No (except DOM-037 quorum decision) |
 | `membership_mode` | `apply`/`accept_invite` (MB1) | Evaluated, not stored | Yes for later applicants |
@@ -470,7 +470,7 @@ Errors block submission; warnings require an explicit acknowledgement recorded i
 
 #### Degraded quorum
 
-If the number of `active` `network_admin` Memberships is smaller than `admin_quorum` (for example after a lock-out), the effective quorum is the number of active administrators (minimum 1) and every administrator sees a "degraded quorum" banner; the state also appears in the policy history. This rule exists so that the recovery procedure of [10 section 8.3](10-governance-and-network-operations.md) can restore function; the 72-hour restrictions of GOV-053 apply to recovery-granted administrators. [DECISION NEEDED: degraded quorum behaviour; alternative: block all sensitive actions until the quorum is restored by recovery.]
+If the number of `active` `network_admin` Memberships is smaller than `admin_quorum` (for example after a lock-out), the effective quorum is the number of active administrators (minimum 1) and every administrator sees a "degraded quorum" banner; the state also appears in the policy history. This rule exists so that the recovery procedure of [10 section 8.3](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md) can restore function; the 72-hour restrictions of GOV-053 apply to recovery-granted administrators. [DECISION NEEDED: degraded quorum behaviour; alternative: block all sensitive actions until the quorum is restored by recovery.]
 
 | ID | Pri | Requirement | Rationale | Verification |
 |---|---|---|---|---|
@@ -483,7 +483,7 @@ If the number of `active` `network_admin` Memberships is smaller than `admin_quo
 Sensitive (Q): `unit_name`, `unit_symbol`, `unit_scale`, `membership_mode`, `default_credit_limit`, `max_credit_limit`, `max_balance`, `min_trade_amount`, `max_trade_amount`, `dispute_window_days`, `balance_visibility`, `directory_visibility`, `departure_settlement_mode`, `policy_notice_days`, `admin_quorum`.
 Not sensitive (A): `proposal_expiry_days`, `dispute_review_sla_days`, `inactivity_threshold_days`.
 
-A version containing at least one sensitive change needs Q for the whole version, including step-up authentication within the window owned by SEC-009 ([09](09-security-privacy-and-abuse.md)). Approval always requires a mandatory reason. The Network settings of 4.10 are not policy parameters; those marked sensitive there also need Q.
+A version containing at least one sensitive change needs Q for the whole version, including step-up authentication within the window owned by SEC-009 ([09](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md)). Approval always requires a mandatory reason. The Network settings of 4.10 are not policy parameters; those marked sensitive there also need Q.
 
 ### 6.3 Safety-eligible changes
 
@@ -514,21 +514,21 @@ These values are used by the lifecycle and governance documents. They are not pa
 |---|---|---|
 | Max open proposals per Member | 20 | [15 section 11](15-lifecycle-state-machines.md) |
 | Max Listings per Member | 50 | [15](15-lifecycle-state-machines.md) |
-| Trade description length | 500 characters | [03 section 10](03-domain-model-and-mutual-credit-rules.md) |
+| Trade description length | 500 characters | [03 section 10](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md) |
 | Expiry sweep latency | 5 minutes | [15](15-lifecycle-state-machines.md) |
 | Invitation validity | 14 days | [15](15-lifecycle-state-machines.md) |
-| Settlement window for `departing` | 30 days | [03](03-domain-model-and-mutual-credit-rules.md), [15](15-lifecycle-state-machines.md) |
+| Settlement window for `departing` | 30 days | [03](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md), [15](15-lifecycle-state-machines.md) |
 | Applicant review reminder | 7 days | [15](15-lifecycle-state-machines.md) |
 | Pending Adjustment/Reversal lifetime | 7 days | [15](15-lifecycle-state-machines.md) |
 | Dispute automatic escalation | 2 x `dispute_review_sla_days` | [15](15-lifecycle-state-machines.md) |
-| Step-up authentication window | Single constant owned by SEC-009 | [09](09-security-privacy-and-abuse.md) (cited by FR-ADM-018 and [07](07-api-and-integration-contract.md)) |
-| Policy approval timeout | 7 days | [04](04-functional-requirements.md) (FR-ADM-002), GOV-013 |
-| Appeal windows, due times, recovery thresholds, closure notice | See [10 sections 6, 8.3, 11.4](10-governance-and-network-operations.md) | [10](10-governance-and-network-operations.md) |
+| Step-up authentication window | Single constant owned by SEC-009 | [09](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md) (cited by FR-ADM-018 and [07](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md)) |
+| Policy approval timeout | 7 days | [04](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md) (FR-ADM-002), GOV-013 |
+| Appeal windows, due times, recovery thresholds, closure notice | See [10 sections 6, 8.3, 11.4](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md) | [10](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md) |
 | Platform notice floor | 7 days | This document (`policy_notice_days`) |
 
 ## 7. Archetype presets
 
-Presets are starting policy sets for a Network's first version. They are recommendations, not requirements; every value remains a `[DECISION NEEDED: archetype preset values]` and is unit-relative (the unit has no assumed money value, INV-014). Rationale: [10 section 13](10-governance-and-network-operations.md).
+Presets are starting policy sets for a Network's first version. They are recommendations, not requirements; every value remains a `[DECISION NEEDED: archetype preset values]` and is unit-relative (the unit has no assumed money value, INV-014). Rationale: [10 section 13](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md).
 
 ### 7.1 Comparison
 
@@ -613,13 +613,13 @@ Each preset satisfies rules R1 to R13 except that the BIZ preset requires at lea
 
 | Need | Owner | What is needed |
 |---|---|---|
-| Entity for policy version, `policy_version_id` stamp on Trade, Audit Event kinds `policy.*`, Network identity attributes | [06](06-data-ledger-and-audit.md) | Fields in 5.1; stamp per POL-015 and DAT-093 |
-| Wire representation of amounts and policy endpoints | [07](07-api-and-integration-contract.md) | Per POL-002 and section 5 |
-| UI for impact previews, warnings and acknowledgement | [08](08-ux-and-accessibility.md) | POL-003, POL-035 |
+| Entity for policy version, `policy_version_id` stamp on Trade, Audit Event kinds `policy.*`, Network identity attributes | [06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md) | Fields in 5.1; stamp per POL-015 and DAT-093 |
+| Wire representation of amounts and policy endpoints | [07](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md) | Per POL-002 and section 5 |
+| UI for impact previews, warnings and acknowledgement | [08](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md) | POL-003, POL-035 |
 | Notices | [17](17-notifications-and-communications.md) | Policy notice content (GOV-010), clamp notices, degraded quorum notice |
-| Test of snapshots and boundary timing | [12](12-quality-strategy-and-test-plan.md) | POL-030, POL-033 |
-| Network status `setup` and `open` | [10](10-governance-and-network-operations.md) | Section 11.1 |
-| Degraded quorum | [03](03-domain-model-and-mutual-credit-rules.md), [04](04-functional-requirements.md) | Awareness: DOM-032 and FR-ADM-003 assume quorum ≤ active admins |
+| Test of snapshots and boundary timing | [12](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md) | POL-030, POL-033 |
+| Network status `setup` and `open` | [10](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md) | Section 11.1 |
+| Degraded quorum | [03](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md), [04](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md) | Awareness: DOM-032 and FR-ADM-003 assume quorum ≤ active admins |
 
 ## 9. Assumptions and open decisions
 
@@ -631,9 +631,9 @@ Each preset satisfies rules R1 to R13 except that the BIZ preset requires at lea
 | POL-A2 | Overrides above a lowered `max_credit_limit` are clamped at activation and not restored. Alternative: block the change until overrides are lowered; or keep overrides and cap at read. | Clamp / block / cap-at-read | Clamp |
 | POL-A3 | A Trade carries the `policy_version` at completion, used for `dispute_window_days`. Alternative: use the version in force when the Dispute is raised. | Stamp / current | Stamp (needs 06) |
 | POL-A4 | Degraded quorum (6.1). | Degrade / block | Degrade |
-| POL-A5 | `min_trade_amount` is classed sensitive (Q) because it can exclude small contributors; this matches [10 section 4.1](10-governance-and-network-operations.md). | A / Q | Q |
+| POL-A5 | `min_trade_amount` is classed sensitive (Q) because it can exclude small contributors; this matches [10 section 4.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md). | A / Q | Q |
 | POL-A6 | Reserved-term check on `unit_name` is a warning with acknowledgement, because genuine local units are named after places or traditions; hard-reject only for `unit_symbol`. | Warn / reject | Warn |
-| POL-A7 | Platform default `balance_visibility` is `admins`. The canon has no default; this is a **proposed default** recommended by [09](09-security-privacy-and-abuse.md) (SEC-OD-14) and GOV-A8. | `self` / `admins` / `members` | `admins` |
+| POL-A7 | Platform default `balance_visibility` is `admins`. The canon has no default; this is a **proposed default** recommended by [09](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md) (SEC-OD-14) and GOV-A8. | `self` / `admins` / `members` | `admins` |
 | POL-A8 | A single `dispute_window_days` lower bound of 7 days. | 3 / 7 / 14 | 7 |
 | POL-A9 | Presets are unit-relative; no equivalence to money is stated. Limits expressed as multiples of typical activity are a human choice. | — | Accept |
 
@@ -643,12 +643,12 @@ Legal and regulatory: whether any limit value amounts to lending or credit provi
 
 ## 10. References
 
-- [00 — Conventions and canon](00-conventions.md) (sections 5.2, 5.3, 5.5 D-10 and D-11, 5.6)
-- [03 — Domain model and mutual-credit rules](03-domain-model-and-mutual-credit-rules.md) (section 9, DOM-007, DOM-011..DOM-014, DOM-039, DOM-049, DOM-050)
-- [04 — Functional requirements](04-functional-requirements.md) (FR-ADM-001..004, FR-NET-003)
-- [10 — Governance and network operations](10-governance-and-network-operations.md)
+- [00 — Conventions and canon](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) (sections 5.2, 5.3, 5.5 D-10 and D-11, 5.6)
+- [03 — Domain model and mutual-credit rules](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md) (section 9, DOM-007, DOM-011..DOM-014, DOM-039, DOM-049, DOM-050)
+- [04 — Functional requirements](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md) (FR-ADM-001..004, FR-NET-003)
+- [10 — Governance and network operations](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md)
 - [15 — Lifecycle state machines](15-lifecycle-state-machines.md) (TR1, TR2, MB1, MB6, DS1, LIF-007, LIF-024, LIF-055)
 - [19 — Legal and regulatory open questions](19-legal-and-regulatory-open-questions.md)
-- Prior-art research (accessed 2026-10-21; items there marked unverified are not relied on): [research-prior-art-mutual-credit](../notes/research-prior-art-mutual-credit.md), section 2.1 (credit-limit patterns; no single typical default was found, so the presets above are unit-relative starting points, not benchmarks) and section 3 (recommendations 2 and 4: policy as versioned configuration, asymmetric limits)
-- Regulatory and privacy research: [research-regulatory-privacy-questions](../notes/research-regulatory-privacy-questions.md)
+- Prior-art research (accessed 2026-10-21; items there marked unverified are not relied on): [research-prior-art-mutual-credit](../../../research/PRIOR-ART-MUTUAL-CREDIT.md), section 2.1 (credit-limit patterns; no single typical default was found, so the presets above are unit-relative starting points, not benchmarks) and section 3 (recommendations 2 and 4: policy as versioned configuration, asymmetric limits)
+- Regulatory and privacy research: [research-regulatory-privacy-questions](../../../research/REGULATORY-PRIVACY-QUESTIONS.md)
 - ISO 4217 currency codes (referenced for the `unit_symbol` rule): <https://www.iso.org/iso-4217-currency-codes.html> (accessed 2026-10-21)

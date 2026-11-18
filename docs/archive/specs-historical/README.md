@@ -14,16 +14,19 @@ accepted requirements.
 
 ## Sources
 
+Archived files keep their text. Relative links that would not resolve here were rewritten to point at the
+source commit on GitHub (`blob/<sha>/<path>`), or to the new location of a note moved to `docs/research/`.
+
 Draft PR branches are preserved on the remote. Each PR head also stays readable through
 `refs/pull/<N>/head`. To read a file: `git show <sha>:<path>`.
 
 | PR | Branch | Head | Content | Disposition |
 |---|---|---|---|---|
 | [#1](https://github.com/djshellshoxxx/circula/pull/1) | `docs/foundational-specifications` | `22e9202f` | 13 short spec drafts, 3 brainstorm notes, early wiki | Brainstorms archived in [`pr1/`](pr1/); specs superseded |
-| [#2](https://github.com/djshellshoxxx/circula/pull/2) | `claude/sweet-turing-m3ftja` | `01b6e5c7` | 20 spec drafts, research notes, plans, ADR template, Python scripts | Docs 15, 16, 17 and 19 archived in [`pr2/`](pr2/). Two research notes moved to `docs/research/`. Rest superseded |
+| [#2](https://github.com/djshellshoxxx/circula/pull/2) | `claude/sweet-turing-m3ftja` | `01b6e5c7` | 20 spec drafts, research notes, plans, ADR template, Python scripts | Docs 15, 16, 17, 19 and the technical-standards research note archived in [`pr2/`](pr2/). Two research notes moved to `docs/research/`. Rest superseded |
 | [#3](https://github.com/djshellshoxxx/circula/pull/3) | `docs/foundational-spec-shells` | `d96f2e75` | Empty spec shells | Superseded; nothing unique |
 | [#5](https://github.com/djshellshoxxx/circula/pull/5) | `docs/readme-and-wiki` | `db782649` | README/wiki stub saying "no code yet" | Superseded; obsolete |
-| [#29](https://github.com/djshellshoxxx/circula/pull/29) | `claude/relaxed-hopper-8q4vhq` | `2da1a293` | Full rewrite of 14 specs (1,069 unique `<a id>` anchors) and `tools/check_specs.py` | All 15 Markdown files archived in [`pr29/`](pr29/); the Python tool was not. Most of its themes are already canonical (review estimate) |
+| [#29](https://github.com/djshellshoxxx/circula/pull/29) | `claude/relaxed-hopper-8q4vhq` | `2da1a293` | Full rewrite of 14 specs (1,093 unique `<a id>` anchors) and `tools/check_specs.py` | All 15 Markdown files archived in [`pr29/`](pr29/); the Python tool was not. Most of its themes are already canonical (review estimate) |
 | [#38](https://github.com/djshellshoxxx/circula/pull/38) | `claude/lucid-archimedes-upisa8` | `d2c1c609` | 13 condensed specs plus index | Superseded; one unique item listed below |
 | none | `planning/future-cli-specs-20261110` | `8e2372c0` | Future CLI specification | Index only; conflicts listed below |
 
@@ -78,4 +81,4 @@ Federation is handled only as isolated future module FNET-209.
 
 `tools/check_specs.py` from #29 was not imported. Its ID rules expect `<a id>` anchors and an owner map;
 canonical specs use `### FR-001 ·` headings and status tables. Its only transferable check (relative
-links and heading anchors) found no broken relative links or anchors in `main` docs in the 2026-11-18 review (not added to CI).
+links and heading anchors) found no broken relative links in `main` docs before this archive was added; it is not in CI.

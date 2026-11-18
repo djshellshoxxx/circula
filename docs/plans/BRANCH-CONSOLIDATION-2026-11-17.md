@@ -33,7 +33,7 @@ in the PR ledger). Merge commits on those branches carry no merge-only hunks (`g
 | of which archived as historical documentation | 7 |
 | of which blocked by an owner decision (no PR) | 1 (`planning/future-cli-specs-20261110`) |
 | Commits recovered into core code | 1 (`ebb4e298` → `cb79676`) |
-| Regression tests added | 2 (`91a26f2`, from the PR #42 audit follow-up) plus `TestStartupMigrationGate` |
+| Regression tests added | 2 (`91a26f2`, from the PR #42 audit follow-up) plus `TestStartupMigrationGate` and `TestServeCreatesNewDatabaseInExplicitMode` |
 
 No branch was deleted, rebased or force-pushed.
 
@@ -114,7 +114,7 @@ No branch was deleted, rebased or force-pushed.
 
 | Destination | Source | Notes |
 |---|---|---|
-| `cb79676` | `claude/cool-ramanujan-n2peag@ebb4e298` (PR #35) | OPS-025 start-up migration gate pinned by test; docs corrected. Adapted, not cherry-picked: the branch version hard-coded schema 16 |
+| `cb79676` and review follow-up | `claude/cool-ramanujan-n2peag@ebb4e298` (PR #35) | OPS-025 start-up migration gate pinned by helper and `runServe` tests; docs corrected. Adapted, not cherry-picked: the branch version hard-coded schema 16 |
 | `91a26f2` | Audit follow-up in `chatgpt/circula-security-audit-20261115@36a80335` (PR #42) | New tests only; production fixes were already on `main` from #51 and #52 |
 | `ec44a2c`, `a2b9680`, `c327f0b`, `78a9372`, `dca5ea9`, `3be5b7f` | Branches of #1, #2, #13, #16, #20, #29, #38, #42, future modules | Documentation archive and status; see the PR ledger |
 

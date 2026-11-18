@@ -2,7 +2,7 @@
 > [PR #2](https://github.com/djshellshoxxx/circula/pull/2), branch `claude/sweet-turing-m3ftja` at `01b6e5c7`, originally
 > `docs/specs/19-legal-and-regulatory-open-questions.md`. Requirement and decision IDs in this file come from a competing draft and do **not** match
 > the IDs in `docs/specs/`; do not cite them. Canonical requirements: `docs/specs/`; decisions:
-> `docs/DECISIONS.md`. See [the archive index](README.md) for which items are unique, conflicting
+> `docs/DECISIONS.md`. See [the archive index](../README.md) for which items are unique, conflicting
 > or out of scope.
 
 # 19 — Legal and Regulatory Open Questions
@@ -13,20 +13,20 @@
 | Owner role | Product architect (with the Platform Operator lead as counsel liaison) |
 | Last updated | 2026-10-21 |
 | Scope | Register of questions for qualified counsel (`LEG-Q-nn`); design guardrails that keep the product inside the facts those questions assume (`LEG-G-nn`); launch gating; counsel engagement checklist; unverified-claim register |
-| Depends on | [00 — Conventions](00-conventions.md) (canon INV-014, D-08, D-09), [03 — Domain model](03-domain-model-and-mutual-credit-rules.md), [13 — Assumptions, risks, decisions](13-assumptions-risks-decisions-roadmap.md) |
+| Depends on | [00 — Conventions](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) (canon INV-014, D-08, D-09), [03 — Domain model](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md), [13 — Assumptions, risks, decisions](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md) |
 | Open questions | All `LEG-Q-nn` rows in §3 (status Open) |
 
 ## 1. Purpose and scope
 
-1.1 This document is **not legal advice** and asserts no legal, tax or regulatory conclusion. It lists the questions that qualified counsel in each relevant jurisdiction needs to answer, records which product behaviours trigger each question, and defines testable product constraints (guardrails) that keep the product within the facts the questions assume. Per [00 §4](00-conventions.md), legal/tax/regulatory matters are routed here rather than asserted elsewhere.
+1.1 This document is **not legal advice** and asserts no legal, tax or regulatory conclusion. It lists the questions that qualified counsel in each relevant jurisdiction needs to answer, records which product behaviours trigger each question, and defines testable product constraints (guardrails) that keep the product within the facts the questions assume. Per [00 §4](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md), legal/tax/regulatory matters are routed here rather than asserted elsewhere.
 
-1.2 The questions and guardrails derive from the research note [research-regulatory-privacy-questions](../notes/research-regulatory-privacy-questions.md) (accessed 2026-10-21). Most statutory references in that note are `[U]` (unverified, written from background knowledge). This document keeps those flags (§9). Nothing here may be cited as evidence that Circula complies with, or is exempt from, any law.
+1.2 The questions and guardrails derive from the research note [research-regulatory-privacy-questions](../../../research/REGULATORY-PRIVACY-QUESTIONS.md) (accessed 2026-10-21). Most statutory references in that note are `[U]` (unverified, written from background knowledge). This document keeps those flags (§9). Nothing here may be cited as evidence that Circula complies with, or is exempt from, any law.
 
-1.3 Normative keywords in §5 apply to product behaviour only. They are not statements about legal status. "Resolved" means counsel has answered in writing and the answer is recorded as a `DEC-` entry in [13](13-assumptions-risks-decisions-roadmap.md); until then every status is **Open**.
+1.3 Normative keywords in §5 apply to product behaviour only. They are not statements about legal status. "Resolved" means counsel has answered in writing and the answer is recorded as a `DEC-` entry in [13](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md); until then every status is **Open**.
 
 ## 2. Definitions used here
 
-Terms (Network, Credit unit, Member, Network Administrator, Platform Operator, Trade, Adjustment, Reversal, Journal Entry) are as in [00 §5.1](00-conventions.md) and the glossary [14](14-glossary.md). Additional shorthand:
+Terms (Network, Credit unit, Member, Network Administrator, Platform Operator, Trade, Adjustment, Reversal, Journal Entry) are as in [00 §5.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) and the glossary [14](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md). Additional shorthand:
 
 | Term | Meaning |
 |---|---|
@@ -84,7 +84,7 @@ Source short names (IRS-1, FIN-1, etc.) are listed in §10. Canon links: INV-014
 | LEG-Q-25 | Lawful basis and transparency; privacy notice templates | Member profile, ledger visibility, directory | EU, UK | Y | Product architect | H | Open | D-08, `balance_visibility`, `directory_visibility` |
 | LEG-Q-26 | DPIA requirement and template | Trust scores, credit-limit logic, large Networks | EU, UK | N | Product architect | H | Open | D-08 |
 | LEG-Q-27 | Erasure/rectification vs append-only ledger and audit retention; pseudonymous IDs; anonymisation procedure | Immutable entries; Audit Events | EU, UK, CA, others | Y | Product architect | H | Open | D-09, INV-003, INV-004, INV-010 |
-| LEG-Q-28 | Subject access and portability exports exposing counterparty data; redaction rules | Member data export | EU, UK, CA | Y | Product architect | H | Open | D-09, [18](18-data-export-and-portability.md) |
+| LEG-Q-28 | Subject access and portability exports exposing counterparty data; redaction rules | Member data export | EU, UK, CA | Y | Product architect | H | Open | D-09, [18](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md) |
 | LEG-Q-29 | CCPA/CPRA and other US state privacy laws | Hosted operator with California (etc.) Members | US states | by-model (depends on thresholds) | Platform Operator lead | H | Open | D-08 |
 | LEG-Q-30 | Children and minors; minimum age; guardian sub-accounts | Family/youth accounts in timebank-style Networks | EU, UK, US, others | Y (minimum-age rule) | Product architect | H | Open | D-07, LEG-G-13 |
 | LEG-Q-31 | Cross-border transfers; hosting regions; sub-processors | Hosting region; support access | EU, UK, CA, AU, NZ | Y | Platform Operator lead | H | Open | D-01, D-08 |
@@ -116,7 +116,7 @@ Order of engagement:
 
 1. **Closed-loop posture (money/credit/securities):** LEG-Q-06, 07, 08, 09, 16, 18, 23. These all depend on the facts held fixed by INV-014 and guardrails LEG-G-01..09. Ask counsel to confirm those facts are sufficient, or to name what must change.
 2. **Jurisdiction-specific money regimes for launch jurisdictions only:** LEG-Q-10, 12, 13, 14, 15 (and 11 as a status check). A jurisdiction without an answer is geofenced (LEG-G-16), not launched.
-3. **Data protection foundation:** LEG-Q-24, 25, 27, 28, 30, 31, 32, 33. These shape architecture (see §6) and must precede data-model freeze in [06](06-data-ledger-and-audit.md).
+3. **Data protection foundation:** LEG-Q-24, 25, 27, 28, 30, 31, 32, 33. These shape architecture (see §6) and must precede data-model freeze in [06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md).
 4. **Contract and governance:** LEG-Q-20, 22.
 5. **Screening:** LEG-Q-35.
 6. **Disclosure and reporting (may ship with recorded risk acceptance):** LEG-Q-01 to 05, 21, 26, 29, 34.
@@ -134,7 +134,7 @@ Hosted subscriptions are out of MVP scope (D-01). Before any exist: LEG-Q-17 (st
 
 ## 5. Design guardrails (`LEG-G-nn`)
 
-Guardrails are product constraints that reduce regulatory exposure. They do not remove the need for counsel and do not assert exemption. Each is **P0** (MVP launch-blocking per [00 §2](00-conventions.md)) unless stated, and carries a verification method so it can be tested or inspected. Stage-1 verification applies to the specification set and Stage-2 to the implementation.
+Guardrails are product constraints that reduce regulatory exposure. They do not remove the need for counsel and do not assert exemption. Each is **P0** (MVP launch-blocking per [00 §2](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md)) unless stated, and carries a verification method so it can be tested or inspected. Stage-1 verification applies to the specification set and Stage-2 to the implementation.
 
 | ID | Pri | Guardrail | Verification | Canon / INV / D | Related questions |
 |---|---|---|---|---|---|
@@ -145,18 +145,18 @@ Guardrails are product constraints that reduce regulatory exposure. They do not 
 | LEG-G-05 | P0 | The Platform Operator **MUST NOT** hold or move Member funds; no escrow or pooled-funds feature. Any subscription (post-MVP) **MUST** use a third-party processor and **MUST NOT** store card data. | Architecture review; data inventory shows no card data and no funds balance | INV-014, D-01 | LEG-Q-06, 07, 17 |
 | LEG-G-06 | P0 | Units **MUST** be usable only between Members of the same Network; there is no merchant onboarding for non-members and no cross-Network posting. | Test: posting between accounts of different Networks is rejected | INV-011, INV-014 | LEG-Q-10, 12, 13, 14, 15 |
 | LEG-G-07 | P0 | Credit limits **MUST** be Network policy (`default_credit_limit`, `max_credit_limit`); the product **MUST NOT** enforce, collect or report negative balances as a debt in national currency, and **MUST NOT** apply a rate to them. | Inspection of exports, notifications and wind-up flows for currency-denominated demand language | INV-005, INV-014 | LEG-Q-08, 23 |
-| LEG-G-08 | P0 | User-facing text, API names, schema and code comments **MUST** use the canon vocabulary ([00 §5.1](00-conventions.md)) and **MUST NOT** use "coin", "token", "mint", "stake", "invest", "yield", "airdrop", "loan", "deposit", or bank-sense "wallet". | Automated lint over strings/identifiers/docs with an allow-list for quoted legal terms in this document | INV-014, [00 §4](00-conventions.md) | LEG-Q-18, 19 |
+| LEG-G-08 | P0 | User-facing text, API names, schema and code comments **MUST** use the canon vocabulary ([00 §5.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md)) and **MUST NOT** use "coin", "token", "mint", "stake", "invest", "yield", "airdrop", "loan", "deposit", or bank-sense "wallet". | Automated lint over strings/identifiers/docs with an allow-list for quoted legal terms in this document | INV-014, [00 §4](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) | LEG-Q-18, 19 |
 | LEG-G-09 | P0 | The product and its marketing copy **MUST NOT** imply appreciation, resale value or investment return, **MUST NOT** offer pre-sales, and **MUST NOT** support unit-to-unit exchange rates between Networks. | Copy review checklist; test that no exchange-rate data exists | INV-011, INV-014 | LEG-Q-18 |
 | LEG-G-10 | P0 | The ledger **MUST** be a conventional append-only store; no distributed-ledger anchoring and no on-chain personal data in MVP. | Architecture decision record; inspection | D-04, D-02, INV-003 | LEG-Q-19, 27 |
 | LEG-G-11 | P0 | Ledger rows **MUST** reference accounts by opaque identifier only; personal profile data **MUST** be separable from ledger rows and removable/anonymisable without altering any Journal Entry amounts or balances. | Test: anonymise a Member on closure; INV-007/INV-008 checks still pass; ledger contains no name/contact fields | D-09, D-03, INV-003, INV-008 | LEG-Q-24, 27, 28 |
-| LEG-G-12 | P0 | Network creation **MUST** record the controller/processor allocation acknowledgement (DPA acceptance, when counsel supplies the template); a sub-processor list **SHOULD** be published. Platform Operator access to Network content **MUST NOT** be granted by default. | Test: Network cannot be activated in hosted mode without recorded acceptance; role matrix check | D-08, [00 §5.1](00-conventions.md) (Platform Operator) | LEG-Q-24, 31 |
+| LEG-G-12 | P0 | Network creation **MUST** record the controller/processor allocation acknowledgement (DPA acceptance, when counsel supplies the template); a sub-processor list **SHOULD** be published. Platform Operator access to Network content **MUST NOT** be granted by default. | Test: Network cannot be activated in hosted mode without recorded acceptance; role matrix check | D-08, [00 §5.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md) (Platform Operator) | LEG-Q-24, 31 |
 | LEG-G-13 | P0 | Onboarding **MUST** capture a minimum-age confirmation (default 18) and the product **MUST NOT** ship guardian or youth sub-accounts until counsel review closes LEG-Q-30. | UI test; absence of sub-account type | D-07 | LEG-Q-30 |
 | LEG-G-14 | P1 | The product **SHOULD** provide per-Member and per-Network transaction exports without computing or asserting tax values, and **SHOULD** show a plain-language notice that Trades may be taxable and that Circula does not provide tax advice. | Export content inspection; UI copy check | INV-014 | LEG-Q-01, 02, 03, 05, 28 |
 | LEG-G-15 | P0 | Value changes by an administrator **MUST** be Adjustments only, visible to the affected Member, with reason and Audit Event; no administrator-created Trade without the Member's acceptance. | Test per INV-010 and INV-012 | INV-010, INV-012, D-06 | LEG-Q-22 |
 | LEG-G-16 | P1 | The deployment **SHOULD** support disabling hosted onboarding or specific features per jurisdiction by configuration (feature flags), without code forks. | Configuration test: flag off removes the feature for the named jurisdiction | D-01, D-10 | LEG-Q-07, 13, 14, 15, 35 |
-| LEG-G-17 | P0 | The UI **MUST** meet WCAG 2.2 Level AA as the engineering target, verified in CI plus manual keyboard/screen-reader tests; an accessibility statement **SHOULD** be published. | Per [08](08-ux-and-accessibility.md) and [12](12-quality-strategy-and-test-plan.md) | D-14 | LEG-Q-34 |
+| LEG-G-17 | P0 | The UI **MUST** meet WCAG 2.2 Level AA as the engineering target, verified in CI plus manual keyboard/screen-reader tests; an accessibility statement **SHOULD** be published. | Per [08](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md) and [12](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md) | D-14 | LEG-Q-34 |
 | LEG-G-18 | P1 | Retention periods **SHOULD** be configurable per data category (ledger, identity, support logs, backups, tombstones), with a documented anonymisation procedure for departed Members. | Configuration and runbook inspection; backup-expiry test | D-09 | LEG-Q-27, 33 |
-| LEG-G-19 | P1 | An incident procedure **SHOULD** escalate security incidents to affected Network Administrators within 24 hours of the operator becoming aware, so controllers can meet their own clocks. | Runbook inspection; tabletop exercise record in [11](11-deployment-operations-and-support.md) | D-08 | LEG-Q-32 |
+| LEG-G-19 | P1 | An incident procedure **SHOULD** escalate security incidents to affected Network Administrators within 24 hours of the operator becoming aware, so controllers can meet their own clocks. | Runbook inspection; tabletop exercise record in [11](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md) | D-08 | LEG-Q-32 |
 | LEG-G-20 | P0 | Licence text and deployment docs **MUST** state that deployers are responsible for local compliance and that the software gives no legal, tax or regulatory assurance. | Documentation inspection | D-01 | LEG-Q-24, 36 (if added) |
 
 Where a guardrail's verification references another document, that document owns the detailed requirement; this document owns only the legal-driven constraint and its traceability.
@@ -170,7 +170,7 @@ Two questions can force a change to data design if counsel's answer differs from
 - **Baseline (D-08):** the Network, acting through its administrators, is controller for Member data it collects; the Platform Operator is processor for hosted service, and controller for its own account, billing, security and analytics data. Alternative: joint controllers.
 - **What changes if counsel advises otherwise:**
   - Joint controllership, especially if cross-Network directory or search is added, would alter tenant isolation (INV-011), data-sharing flows and the Operator's visibility into Network content, and would require a joint arrangement and shared data-subject-request handling.
-  - Operator-as-controller for Member data would affect the "no default access to Network content" rule for the Platform Operator ([00 §5.1](00-conventions.md)).
+  - Operator-as-controller for Member data would affect the "no default access to Network content" rule for the Platform Operator ([00 §5.1](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md)).
   - A DPA acceptance step at Network creation (LEG-G-12) and published sub-processor list become data-model and onboarding requirements.
 - **Design constraint now:** keep Operator-owned data (account, billing, security logs) logically separable from Network-owned data, so either allocation can be implemented. Cross-Network features **MUST NOT** be added to MVP without reopening LEG-Q-24.
 
@@ -180,7 +180,7 @@ Two questions can force a change to data design if counsel's answer differs from
 - **Tension:** INV-003 (append-only) and INV-004 (corrections via new entries) must hold while personal data can be removed. Whether a pseudonymised record remains personal data (for example if the controller can re-identify) is an open legal question `[U]`.
 - **What changes if counsel advises otherwise:**
   - A fixed identity-retention period would require a retention schedule per category, scheduled anonymisation jobs, and restricted-access storage for retained identity data.
-  - If counterparty details in exports (LEG-Q-28) need redaction, [18](18-data-export-and-portability.md) must specify redaction rules.
+  - If counterparty details in exports (LEG-Q-28) need redaction, [18](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md) must specify redaction rules.
   - Audit Events (INV-010) name actors; counsel must advise how long actor identity may be retained after closure.
 - **Design constraint now:** LEG-G-11 (opaque IDs, separable profile data) keeps both outcomes achievable.
 
@@ -222,7 +222,7 @@ Bring to each engagement. Items are inputs for counsel, not outputs of this docu
 ## 8. Assumptions and open decisions
 
 - Statuses in §3 are all **Open**; no question is resolved by this document.
-- Baselines D-01, D-08, D-09 and others cited above are *Proposed defaults* (see [00 §5.5](00-conventions.md); register in [13](13-assumptions-risks-decisions-roadmap.md)). Specific `ASM-`/`DEC-` numbers for the items below are to be assigned in 13; this document does not invent them:
+- Baselines D-01, D-08, D-09 and others cited above are *Proposed defaults* (see [00 §5.5](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md); register in [13](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md)). Specific `ASM-`/`DEC-` numbers for the items below are to be assigned in 13; this document does not invent them:
   - Which launch jurisdictions are in scope for Gate H.
   - Licence selection is `LEG-Q-37`; researcher safe harbour is `LEG-Q-36`; credit-unit and sensitive-state copy review is `LEG-Q-38`.
   - Whether a DPIA template and DPA template ship with the platform (LEG-Q-24, 26).
@@ -243,7 +243,7 @@ The research note's `[U]` flags are retained. Specifically, treat the following 
 
 ## 10. References
 
-Internal: [00 — Conventions](00-conventions.md), [03 — Domain model](03-domain-model-and-mutual-credit-rules.md), [06](06-data-ledger-and-audit.md), [08](08-ux-and-accessibility.md), [11](11-deployment-operations-and-support.md), [12](12-quality-strategy-and-test-plan.md), [13](13-assumptions-risks-decisions-roadmap.md), [16](16-network-policy-catalog.md), [18](18-data-export-and-portability.md); research note [research-regulatory-privacy-questions](../notes/research-regulatory-privacy-questions.md).
+Internal: [00 — Conventions](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md), [03 — Domain model](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md), [06](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md), [08](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md), [11](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md), [12](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md), [13](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md), [16](16-network-policy-catalog.md), [18](https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md); research note [research-regulatory-privacy-questions](../../../research/REGULATORY-PRIVACY-QUESTIONS.md).
 
 External sources (from the research note; all accessed 2026-10-21; "search" = surfaced in a search result but not opened; "not opened" = listed for counsel to check):
 

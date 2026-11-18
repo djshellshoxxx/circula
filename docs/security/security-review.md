@@ -65,7 +65,7 @@ with its [remediation](../audit/2026-10-28/REMEDIATION-2026-11-04.md), and the C
 
 AI-assisted re-check during the PR consolidation of `main@b53f757`
 ([record](../plans/PR-CONSOLIDATION-2026-11-17.md)). It is not an independent review and does not
-satisfy SEC-033. Scope: the 25 findings in the draft PR #42 audit notes (archived as
+satisfy SEC-033. Scope: the findings in the draft PR #42 audit notes (archived as
 [docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md](../audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md)),
 and the squash-merged fix PRs #45, #51, #52, #53 and #54.
 
@@ -76,10 +76,13 @@ and the squash-merged fix PRs #45, #51, #52, #53 and #54.
   (`TestResolveDisputeRefusesReversalWhenAdministratorRequired`, `TestDeciderEntryPointsRequireAdministratorMFA`).
   Both fail when the fix is removed.
 - PR #42 findings fixed on `main`, each with a named regression test: A1-01 to A1-11, A3-F03, A3-F09, A3-F10,
-  A3-F16, A3-F24 (BR-04), A3-F25, CRYPTO-01 (A3-F17), CRYPTO-02, RESTORE-01 and BACKUP-01. Minor residuals:
+  A3-F16, A3-F24 (BR-04), A3-F25, CRYPTO-01 (A3-F17), CRYPTO-02, RESTORE-01 and BACKUP-01 (21 IDs). The PR #42 notes
+  left A1-08 to A1-10 unchecked; their tests on `main` are `TestOperatorDualControlPreservesScheduledPolicy` and
+  `TestOperatorDualControlAfterCancelledPolicy` (A1-08), `TestDisputeReversalAuditTargetsAndAtomicity` (A1-09) and
+  `TestAdjustmentExpirySkipsFrozenNetworksWithoutStarvation` (A1-10). Minor residuals:
   CRYPTO-01 (see NEW-01), A3-F09 (passwords, recovery codes and revoked invitations keep their backup state after
   a restore), BACKUP-01. The remaining PR #42 findings are in the table below.
-- Still open on `main`:
+- Still open on `main` (6 PR #42 IDs, plus E-02 and NEW-01):
 
 | ID | Severity | State | Note |
 |---|---|---|---|
@@ -87,8 +90,8 @@ and the squash-merged fix PRs #45, #51, #52, #53 and #54.
 | PRIV-01, PRIV-02 | Low | Open, owner decision (SEC-014/018) | `person_activity.last_seen_at`, `person_prefs.time_zone` and `challenges.reason` survive erasure |
 | PRIV-03 / A3-F07 | Info/Low | Open, design | After a delete and a PASSIVE checkpoint the deleted text can remain in the WAL file. `TestSecureDeleteLeavesNoCanary` passes because it forces a TRUNCATE checkpoint |
 | PRIV-04, PRIV-05 | Policy/process | Open | Retention policy (DEC-020); free-text audit reasons |
-| E-02 | Low | Open, mitigated | The database opens without `trusted_schema(OFF)`; unsigned restores are refused by default |
-| NEW-01 | Low | Open, hardening; not reproduced | Unencrypted `snapshotWith` (`cmd/circula/snapshot.go`) builds a predictable `<dest>.partial` in the backup directory, and `copyFileSync` (`cmd/circula/util.go`) opens without `O_EXCL`. Someone who can write to the backup directory and swaps the file between `VACUUM INTO` and the first hash could get a forged backup signed. Suggested fix: use the private `os.MkdirTemp` directory that the encrypted path already uses, and `O_EXCL` |
+| E-02 (from `docs/audit/SECURITY-AUDIT-3.md`, not PR #42) | Low | Open, mitigated | The database opens without `trusted_schema(OFF)`; unsigned restores are refused by default |
+| NEW-01 (new in this re-check) | Low | Open, hardening; not reproduced | Unencrypted `snapshotWith` (`cmd/circula/snapshot.go`) builds a predictable `<dest>.partial` in the backup directory, and `copyFileSync` (`cmd/circula/util.go`) opens without `O_EXCL`. Someone who can write to the backup directory and swaps the file between `VACUUM INTO` and the first hash could get a forged backup signed. Suggested fix: use the private `os.MkdirTemp` directory that the encrypted path already uses, and `O_EXCL` |
 
 Older open items are unchanged and remain owner decisions: SA2-12 (SEC-011), A3-04b, A3-07, A3-10/11, A3-F18, SA2-21.
 A3-F20 and A3-F21 were not re-verified.
