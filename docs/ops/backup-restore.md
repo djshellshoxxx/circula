@@ -55,11 +55,26 @@ truncation (also exactly at a chunk boundary) and a wrong key all fail with a cl
 as a database.
 
 How a backup is made. `VACUUM INTO` writes the plaintext snapshot into a private `0700` work directory
-(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there, the snapshot is
-encrypted to `*.db.enc.partial`, decrypted again in memory and compared with the verified plaintext, and only then renamed.
-The work directory is overwritten and removed on success and on every failure. If the process is killed, the next backup
-in that directory removes work directories older than an hour. Overwriting is best effort on copy-on-write file systems
-and SSDs: keep the host disk encrypted too.
+(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there. When a key is set,
+the snapshot is encrypted inside the same work directory, decrypted again and compared with the verified plaintext,
+and only then renamed to the destination. The work directory holds a process lease, is overwritten and removed on
+success and on every failure. If the process is killed, the next backup into a private destination directory removes
+unleased work directories older than an hour. Cleanup re-checks the work directory's identity before removing it and
+re-checks each file's identity on the open handle before overwriting it.
+
+On Linux, macOS and other Unix systems, also:
+- cleanup never follows a final symlink (`O_NOFOLLOW`) or overwrites a file that has another hard link;
+- the destination directory must be owned by the service user or root;
+- a destination that other users can write is refused unless it is sticky (such as `/tmp`);
+- work directories are swept only from a directory owned by the service user with no group or other write
+  permission.
+
+Only the destination directory itself is checked. Its parent directories must not be writable by other users.
+
+On Windows these owner, mode and link-count checks do not exist. Protection there relies on the directory's NTFS
+ACLs, so keep `backup-dir` and manual destinations in a directory only the service account can modify.
+
+Overwriting is best effort on copy-on-write file systems and SSDs: keep the host disk encrypted too.
 
 Restore decrypts transparently when the key is configured (`CIRCULA_BACKUP_ENCRYPTION_KEY` or
 `backup-encryption-key-file`). `restore` refuses, before changing anything: an encrypted backup with no key, a wrong key,
