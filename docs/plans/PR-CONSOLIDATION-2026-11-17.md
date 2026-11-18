@@ -175,3 +175,26 @@ branch. The items marked "yes" are the next engineering step for that module, on
 
 No branch was deleted, no history rewritten, nothing force-pushed, nothing merged into `main`, no release or
 deployment. Closed PRs can be reopened; their branches and `refs/pull/<N>/head` remain.
+
+## Closure log
+
+Closed on 2026-11-18 with an evidence comment (the work is already on `main`, independent of PR #69):
+
+| PR | Comment |
+|---|---|
+| #3 | [issuecomment-6967545132](https://github.com/djshellshoxxx/circula/pull/3#issuecomment-6967545132) |
+| #5 | [issuecomment-6967545682](https://github.com/djshellshoxxx/circula/pull/5#issuecomment-6967545682) |
+| #7 | [issuecomment-6967542630](https://github.com/djshellshoxxx/circula/pull/7#issuecomment-6967542630) |
+| #30 | [issuecomment-6967540339](https://github.com/djshellshoxxx/circula/pull/30#issuecomment-6967540339) |
+| #32 | [issuecomment-6967539743](https://github.com/djshellshoxxx/circula/pull/32#issuecomment-6967539743) |
+| #34 | [issuecomment-6967541363](https://github.com/djshellshoxxx/circula/pull/34#issuecomment-6967541363) |
+| #36 | [issuecomment-6967541999](https://github.com/djshellshoxxx/circula/pull/36#issuecomment-6967541999) |
+| #37 | [issuecomment-6967546150](https://github.com/djshellshoxxx/circula/pull/37#issuecomment-6967546150) |
+| #38 | [issuecomment-6967546950](https://github.com/djshellshoxxx/circula/pull/38#issuecomment-6967546950) |
+| #39 | [issuecomment-6967547465](https://github.com/djshellshoxxx/circula/pull/39#issuecomment-6967547465) |
+
+To close once [PR #69](https://github.com/djshellshoxxx/circula/pull/69) is merged (each with a comment naming
+the archive or recovered commit listed above, now on `main`): #1, #2, #13, #16, #20, #29, #35, #42. If #69 is
+not merged, they stay open; their branches are untouched either way.
+
+Kept open: #67 (FNET-204, future module).
