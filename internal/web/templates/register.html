@@ -2,10 +2,10 @@
 <form method="post" action="/register" novalidate>
   {{template "csrf" .}}
   <input type="hidden" name="next" value="{{.Next}}">
-  {{template "field" dict "P" . "Name" "login" "Label" "Login" "Hint" "At least 3 characters, no spaces. An email address works well." "Auto" "username" "Req" true}}
-  {{template "field" dict "P" . "Name" "password" "Label" "Password" "Hint" "At least 12 characters. A password manager is fine; pasting is allowed." "Type" "password" "Auto" "new-password" "Req" true}}
-  {{template "field" dict "P" . "Name" "password2" "Label" "Confirm password" "Type" "password" "Auto" "new-password" "Req" true}}
-  <div class="actions"><button type="submit">Create account</button></div>
+  {{template "field" dict "P" . "Name" "login" "Label" (msg "auth.label.login") "Hint" (msg "auth.hint.login_new") "Auto" "username" "Req" true}}
+  {{template "field" dict "P" . "Name" "password" "Label" (msg "auth.label.password") "Hint" (msg "auth.hint.password_rules") "Type" "password" "Auto" "new-password" "Req" true}}
+  {{template "field" dict "P" . "Name" "password2" "Label" (msg "auth.label.confirm_password") "Type" "password" "Auto" "new-password" "Req" true}}
+  <div class="actions"><button type="submit">{{msg "auth.register.submit"}}</button></div>
 </form>
-<p>Already have an account? <a href="/login{{if .Next}}?next={{.Next}}{{end}}">Sign in</a>.</p>
+<p>{{msg "auth.register.have_account"}} <a href="/login{{if .Next}}?next={{.Next}}{{end}}">{{msg "auth.register.sign_in_link"}}</a>.</p>
 {{end}}

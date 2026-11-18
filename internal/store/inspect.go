@@ -72,7 +72,9 @@ func AppliedVersion(ctx context.Context, db *sql.DB) (int, error) {
 // migrations. It is used only for read-only inspection and for online
 // snapshots (VACUUM INTO).
 func OpenRaw(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "file:"+path+"?_pragma=busy_timeout(10000)")
+	// Raw inspection also opens restored or otherwise untrusted databases.
+	// Apply the schema boundary before any inspection query, on every connection.
+	db, err := sql.Open("sqlite", "file:"+path+"?_pragma=trusted_schema(0)&_pragma=busy_timeout(10000)")
 	if err != nil {
 		return nil, fmt.Errorf("open %s: %w", path, err)
 	}

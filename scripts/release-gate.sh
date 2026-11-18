@@ -58,7 +58,11 @@ run drill drillrun
 # Documentation checks.
 open_blockers="$(grep -cE '^\| DEF-[0-9]+ .*\| A-block \| open ' docs/qa/DEFECTS.md || true)"
 if [ "${open_blockers:-0}" -eq 0 ]; then record defects PASS "no open A-block defects"; else record defects FAIL "$open_blockers open A-block defects"; fi
-if grep -q UNCONFIRMED docs/qa/THRESHOLDS.md; then record thresholds FAIL "DEC-023 values unconfirmed (QA-040)"; else record thresholds PASS "confirmed"; fi
+if python3 scripts/check_thresholds.py docs/qa/THRESHOLDS.md; then
+  record thresholds PASS "confirmed decision rows"
+else
+  record thresholds FAIL "DEC-023 decisions unconfirmed or invalid (QA-040)"
+fi
 
 # Items that need a human or another environment. Never auto-pass.
 record screen-reader MANUAL "docs/qa/SCREEN-READER.md script; link the signed run record"
