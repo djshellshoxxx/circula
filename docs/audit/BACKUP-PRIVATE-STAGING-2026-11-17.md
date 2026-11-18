@@ -113,3 +113,28 @@ orphan cleanup tests remain. Execution is on Linux; Windows and macOS runtime
 qualification remains the native CI gate. The filesystem ownership boundary
 above still applies, and legacy directories from older binaries do not acquire
 leases retroactively.
+
+## CI lint qualification
+
+The PR #72 lint job at published head
+`946089539c57469241ab294e16377086e0add6b4` reported one unchecked test cleanup
+and three G703 taint-analysis findings. The test now reports an error if closing
+its database fails.
+
+The three filesystem findings were independently traced before adding
+source-local `#nosec G703` explanations:
+
+- The two removals in `removeLeasedBackupWork` receive either a private
+  `MkdirTemp` result or a backup-directory entry selected by prefix, directory
+  identity and an acquired lease. The lease filename is a constant.
+- `secureRemove` receives these owned work entries, exclusive-created decrypt
+  outputs, or the fixed restore-staging path derived from the operator's
+  database configuration. Its `Lstat` inspection does not follow symlinks.
+- HTTP/member input and backup-manifest filenames do not choose these cleanup
+  destinations. Manual backup parents remain operator-selected; not every
+  parent is made private automatically. The existing filesystem ownership and
+  concurrent-writer limitations above still apply.
+
+Only the three reported sinks have an annotation. Scanner configuration and all
+other security checks remain enabled. The runtime cleanup, lease and path
+validation behavior is unchanged by this lint correction.

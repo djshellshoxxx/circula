@@ -23,7 +23,11 @@ func TestAuditGActiveBackupSurvivesStaleSweep(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer raw.Close()
+	defer func() {
+		if err := raw.Close(); err != nil {
+			t.Errorf("close database: %v", err)
+		}
+	}()
 	dir := t.TempDir()
 	first := filepath.Join(dir, "first.db")
 	second := filepath.Join(dir, "second.db")

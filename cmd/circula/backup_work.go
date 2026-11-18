@@ -42,8 +42,8 @@ func removeLeasedBackupWork(work string, lease *dbLock) {
 		}
 	}
 	_ = lease.Release()
-	_ = os.Remove(filepath.Join(work, backupWorkLease))
-	_ = os.Remove(work)
+	_ = os.Remove(filepath.Join(work, backupWorkLease)) // #nosec G703 -- constant lease name inside owned MkdirTemp work or an identity-checked, leased backup-directory entry.
+	_ = os.Remove(work)                                 // #nosec G703 -- work has the same checked provenance; this removes only the now-empty owned directory.
 }
 
 // trySweepBackupWork also handles legacy orphan directories without a lease

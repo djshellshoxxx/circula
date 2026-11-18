@@ -413,7 +413,7 @@ func isEncryptedBackup(path string) bool {
 // guarantee the old blocks are gone; the file is in a 0700 directory and the
 // disk should be encrypted too (docs/ops/backup-restore.md).
 func secureRemove(path string) {
-	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() {
+	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() { // #nosec G703 -- operator-controlled backup/restore staging or owned work entries; Lstat does not follow symlinks.
 		if f, err := os.OpenFile(path, os.O_WRONLY, 0); err == nil {
 			zero := make([]byte, 64<<10)
 			for left := fi.Size(); left > 0; {
