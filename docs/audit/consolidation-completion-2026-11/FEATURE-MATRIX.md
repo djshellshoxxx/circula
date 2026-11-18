@@ -15,7 +15,7 @@ estimates do not. Outside the rows below, the core baseline is the 45-row beta m
 | E-02 schema trust | open | fixed | #71 | none (no schema fingerprint, by design) |
 | NEW-01 backup staging | open | fixed | #72 + #81 | Windows relies on NTFS ACLs; ancestor directories are not checked |
 | SEC-003 password change invalidates sessions | built, but racy | fixed, pending CI | [#82](https://github.com/djshellshoxxx/circula/pull/82) (AUD4-F06) | — |
-| GOV-001 prospective dispute timelines | violated (AUD4-F03) | fixed, pending CI | [#87](https://github.com/djshellshoxxx/circula/pull/87) | Policy changes in the same millisecond as an opening (residual) |
+| GOV-001 prospective dispute timelines | violated (AUD4-F03) | **partially remediated**, pending CI | [#87](https://github.com/djshellshoxxx/circula/pull/87): ordinary forward-time changes no longer affect existing disputes | A later version with the same millisecond as the opening, or written after a host clock rollback, still changes the timelines (independently reproduced). Needs a durable policy-version binding at opening: a schema migration plus a backfill rule |
 | DOM-038 reviewer independence | gap (AUD4-F02) | owner decision | [#83](https://github.com/djshellshoxxx/circula/pull/83) draft | Recovery-policy choice |
 | SEC-011 dual control | gap (AUD4-F01) | owner decision | [SECURITY-AUDIT](SECURITY-AUDIT.md) | Quorum, operator-rooted approver, or proposer delay |
 | SEC-013 / DEC-014 break-glass scope | open (A3-F02) | open | Still reproducible, with more affected actions listed | Owner decision |

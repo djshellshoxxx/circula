@@ -21,7 +21,7 @@ as a pass.
 | #82 AUD4-F06/F04 | New tests fail before the fix and pass after it. `go test ./...` passes. `-race ./internal/service` passes with `-timeout 40m` (777 s); with the default 10-minute timeout the race run hit the limit. Traceability and hygiene pass after regeneration |
 | #85 GOV-021 | Merged with main at the time (`b20c118`): golangci-lint reports 0 issues; `go test ./...` passes; `-race` passes for service (958 s), api (603 s), web (490 s), store (321 s) and cmd (367 s). Review fixes at `e11d292`: the agent ran the same suite and it passed |
 | #86 SEC-026 | Stacked tree `2e2e6f0`: golangci-lint reports 0 issues; `go test ./...` passes; `-race` passes for service (628 s), api (311 s), web (232 s) and store (124 s). At `4d349c4`: focused SEC026/GOV021/migration/contract/catalogue tests, traceability and hygiene pass |
-| #87 AUD4-F03 | Author run: lint, `go test ./...`, race for service/store/api/web, traceability and hygiene pass. After merging main: `go test` passes for service, web, store, repository and api |
+| #87 AUD4-F03 (partial) | Author run: lint, `go test ./...`, race for service/store/api/web, traceability and hygiene pass. After merging main: `go test` passes for service, web, store, repository and api |
 | #80 FNET-204 (future) | Module: `go test`, `-race` and vet pass; coverage 98.8%; `FuzzOpenCursor` ran 60 s (1,361,653 executions, 178 new inputs, no failures). Root CI fails on the stale base (`auditanchor.go: undefined: os`), not on this change |
 
 ## Fail-before evidence for fixes
@@ -29,9 +29,9 @@ as a pass.
 | Finding | Regression tests | Fail-before result |
 |---|---|---|
 | AUD4-D01 | `TestSQLiteOpensExactPathWithURIMetacharacters`, `TestBackupDirectoryWithURIMetacharacters`, `TestFileURIEscaping` | The store test failed; the backup subtests `bk?x` and `bk%41x` failed. `bk#x` did not reproduce through `backupTo`; the store-level `#` case covers it |
-| AUD4-D02 | `TestSecureRemoveLeavesHardLinkedDataIntact`, `TestSecureRemoveAllDoesNotFollowDirectorySymlink`, `TestBackupStagingRequiresPrivateOrStickyParent`, `TestLeasedWorkCleanupRefusesSubstitutedDirectory`, `TestBackupStagingRefusesForeignOwnedParent` (root only) | All failed. `TestZeroFileRefusesReplacedName` tests a new helper, so it has no fail-before run |
+| AUD4-D02 | `TestSecureRemoveLeavesHardLinkedDataIntact`, `TestSecureRemoveAllDoesNotFollowDirectorySymlink`, `TestBackupStagingRequiresPrivateOrStickyParent`, `TestLeasedWorkCleanupRefusesSubstitutedDirectory`, `TestBackupStagingRefusesForeignOwnedParent` (root only) | All failed. The root-only test's fail-before and pass-after runs were made by the coordinator, as root (UID 0) in this session's Linux container, with no pinned log. The hosted #81 Linux job and the parallel reviewer ran as non-root, so they skipped it; it has no independent or CI execution. `TestZeroFileRefusesReplacedName` tests a new helper, so it has no fail-before run |
 | AUD4-F06/F04 | `TestLoginStraddlingPasswordChangeGetsNoSession`, `TestChangePasswordReplacesOnlyTheVerifiedHash`, `TestChangePasswordGuessesAreThrottled` | All failed, including the subtests. The parallel reviewer reproduced this independently through a Go overlay |
-| AUD4-F03 | `TestDisputeTimelinesFixedAtOpen` and three related tests | All failed with the observed behaviour |
+| AUD4-F03 (partial) | `TestDisputeTimelinesFixedAtOpen` and three related tests | All failed with the observed behaviour. Test-only same-millisecond and clock-rollback variants still fail on the fix (independent review); see the residual |
 | AUD4-F02 (draft) | `TestAdminCannotResetReviewerPassword` | Failed on `main` |
 
 ## Not run

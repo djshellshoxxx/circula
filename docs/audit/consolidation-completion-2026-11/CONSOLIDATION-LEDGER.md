@@ -2,8 +2,11 @@
 
 This ledger extends [BRANCH-CONSOLIDATION-2026-11-17.md](../../plans/BRANCH-CONSOLIDATION-2026-11-17.md) and
 [PR-CONSOLIDATION-2026-11-17.md](../../plans/PR-CONSOLIDATION-2026-11-17.md). Those files still hold the
-dispositions of the 88 branches and 68 PRs reviewed on 2026-11-17. Their tips were re-checked against
-`origin` on 2026-11-18 and none has moved, including all 15 `future/*` branches and `future/module-catalog-20261116`.
+dispositions of the 88 branches and 68 PRs reviewed on 2026-11-17. Their live tips were re-checked against
+`origin` on 2026-11-18. All are unchanged, including the 15 `future/*` branches and `future/module-catalog-20261116`,
+with one exception: `claude/sharp-archimedes-tu76rh` (historical PR #70) has advanced and now carries another
+worker's open PR #84 (tip `eb4bb08` at 2026-11-18T09:35Z). Frozen historical PR heads (`refs/pull/N/head`) are
+recorded separately from live branch heads.
 
 Method, as in the earlier ledger:
 
@@ -16,7 +19,9 @@ No branch was deleted. No history was rewritten. Nothing was force-pushed.
 
 ## Branches added since the 2026-11-17 ledger
 
-There are 104 remote branches: 96 at baseline plus 8 created in this pass.
+Snapshot at 2026-11-18T09:35Z (`git ls-remote --heads origin`): **105 remote branches**, not counting `origin/HEAD`.
+That is the 96 at baseline plus 9 created in this pass, for PRs #78–#83 and #85–#87. PR #84 reuses the historical
+#70 branch.
 
 | Branch | Tip | PR | Unique work | Disposition |
 |---|---|---|---|---|
@@ -31,12 +36,12 @@ There are 104 remote branches: 96 at baseline plus 8 created in this pass.
 | `claude/ux-047-auth-catalogue` | `dd3e82e` | #79 | UX-047 authentication slice | **merged** `cdc8112` |
 | `claude/backup-path-hardening` | `09ef8a5` | #81 | AUD4-D01/D02 | **merged** `b439807` |
 | `claude/aud4-auth-fixes` | `6785863` | #82 | AUD4-F06/F04 | open; CI on the combined tree |
-| `claude/aud4-f03-dispute-timelines` | `1a3ef0f` | #87 | AUD4-F03 | open; CI |
+| `claude/aud4-f03-dispute-timelines` | `679a301` | #87 | AUD4-F03 (partial) | open; CI |
 | `claude/aud4-f02-reviewer-reset-policy` | `af54887` | #83 | AUD4-F02 candidate | open draft; **owner decision** |
-| `claude/gov-021-admin-recovery` | `e11d292` | #85 | GOV-021 | open draft; **owner gates** (SEC-013 decision 7, operator identity, objection period, expiry) |
+| `claude/gov-021-admin-recovery` | `59cf699` | #85 | GOV-021 | open draft; **owner gates** (SEC-013 decision 7, operator identity, objection period, expiry) |
 | `claude/sec-026-abuse-signals` | `4d349c4` | #86 | SEC-026, stacked on #85 | open draft; **owner gates** (defaults, GOV-002 exception, subject hiding, retention) |
 | `claude/fnet-204-signed-cursors` | `0952c94` | #80 | FNET-204 cursor hardening, future only | open draft against #67's branch; never into `main` |
-| `claude/sharp-archimedes-tu76rh` | `da04d45` | #84 | 2026-10-28 Low/Info triage | another worker's open draft; not reviewed here |
+| `claude/sharp-archimedes-tu76rh` | `eb4bb08` (advanced; historical #70 branch) | #84 | 2026-10-28 Low/Info triage | another worker's open draft; not reviewed here |
 | `claude/circula-consolidation-audit-0sydm1` | this PR | #78 | this record | open draft |
 
 ## Pull requests

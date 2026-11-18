@@ -8,7 +8,7 @@ Captured at session start, before any change. Clone unshallowed (`git fetch --un
 | Item | Value |
 |---|---|
 | `main` | `ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4` (2026-11-17T23:01:50-08:00, "Merge PR #75") |
-| Remote branches | 96 (excluding `HEAD`) |
+| Remote branches | 96 (excluding `HEAD`; verified again at 2026-11-18T09:35Z: all 96 still exist) |
 | Go toolchain | go1.26.11 (`go.mod`, CI and `deploy/Dockerfile` agree) |
 | Direct deps | kin-openapi v0.153.0, google/uuid v1.6.0, x/crypto v0.59.0, x/text v0.44.0, modernc sqlite v1.62.0 |
 | Workflows | `ci.yml`, `qa001-manual.yml`, `release.yml`, `scorecard.yml` |
@@ -36,7 +36,7 @@ All other branches match [BRANCH-CONSOLIDATION-2026-11-17.md](../../plans/BRANCH
 | `integration/store-untrusted-schema-20261117` | `b1cd8f3` | 4 | open PR #71 |
 | `integration/backup-private-staging-20261117` | `faed490` | 7 | open PR #72 |
 | `integration/browser-parity-clock-20261117` | `2f6b3e4` | 2 | open PR #77 |
-| `claude/circula-consolidation-audit-0sydm1` | `ffa2758` | 0 | this session's branch |
+| `claude/circula-consolidation-audit-0sydm1` | — | — | not on the remote at baseline: the clone had a local ref only. First pushed in this pass (PR #78) and not counted in the 96 |
 
 ## Open security findings at capture (from `docs/security/security-review.md`)
 
