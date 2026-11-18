@@ -1,6 +1,6 @@
 # AUD4-F06 and AUD4-F04: authentication fixes (AUD4-F02 pending owner decision)
 
-Found by this pass's independent ledger and authorization audit, against `main@ffa2758`. Fixed on `main@28ed716`.
+Found by this pass's independent ledger and authorization audit, against `main@ffa2758`. The fix was written against `main@28ed716`; the merge commit is recorded in the merge manifest.
 
 ## AUD4-F06: sign-in that straddles a password change (Medium, CWE-367)
 
