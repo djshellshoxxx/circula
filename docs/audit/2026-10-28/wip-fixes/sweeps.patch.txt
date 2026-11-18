@@ -1,0 +1,418 @@
+diff --git a/internal/service/dualcontrol.go b/internal/service/dualcontrol.go
+index 1141637..8f4ae8a 100644
+--- a/internal/service/dualcontrol.go
++++ b/internal/service/dualcontrol.go
+@@ -279,6 +279,11 @@ func (s *Service) DecidableAdjustments(ctx context.Context, actor domain.Actor,
+ // ExpirePendingAdjustments closes open requests past their expiry, with an
+ // audit event each and no posting (SEC-011). System actors only. Idempotent.
+ // Returns the number closed in this run (at most limit, default 100).
++//
++// Frozen networks take no writes (CMD-07, OPS-033), so their requests are left
++// out of the page, as in ExpireProposals, and close on a run after the thaw.
++// Nothing can post meanwhile: decisions are refused while frozen, and after the
++// thaw a decision on an expired request closes it instead (SEC-011 D5).
+ func (s *Service) ExpirePendingAdjustments(ctx context.Context, actor domain.Actor, limit int) (int, error) {
+ 	if !actor.System {
+ 		return 0, domain.Forbidden("system actor required")
+@@ -288,11 +293,14 @@ func (s *Service) ExpirePendingAdjustments(ctx context.Context, actor domain.Act
+ 	}
+ 	n := 0
+ 	err := s.update(ctx, func(tx store.Tx) error {
+-		rows, err := tx.ListExpiredPendingAdjustments(s.now(), limit)
++		rows, err := tx.ListExpiredPendingAdjustments(s.now(), s.FrozenNetworks(), limit)
+ 		if err != nil {
+ 			return err
+ 		}
+ 		for _, pa := range rows {
++			if s.IsFrozen(pa.NetworkID) {
++				continue // frozen after the page was read
++			}
+ 			if err := s.expirePending(tx, pa, actor.RequestID); err != nil {
+ 				return err
+ 			}
+diff --git a/internal/service/freeze.go b/internal/service/freeze.go
+index ea2c06d..dadb97c 100644
+--- a/internal/service/freeze.go
++++ b/internal/service/freeze.go
+@@ -12,7 +12,8 @@ import (
+ 
+ // frozenSet is the in-memory set of networks whose ledger failed verification
+ // (CMD-07, OPS-033). A frozen network refuses every write that goes through
+-// Service.open with write scope, plus member creation and proposal expiry;
++// Service.open with write scope, plus member creation and the proposal and
++// adjustment-request expiry sweeps (which leave it out of their pages);
+ // reads and ledger verification still work so an administrator can see the
+ // state and the operator can investigate. Other networks are unaffected.
+ //
+diff --git a/internal/service/freeze_test.go b/internal/service/freeze_test.go
+index 2882223..823db7f 100644
+--- a/internal/service/freeze_test.go
++++ b/internal/service/freeze_test.go
+@@ -1,11 +1,15 @@
+ package service_test
+ 
+ import (
++	"context"
++	"slices"
+ 	"sync/atomic"
+ 	"testing"
++	"time"
+ 
+ 	"github.com/djshellshoxxx/circula/internal/domain"
+ 	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
+ 	tu "github.com/djshellshoxxx/circula/internal/testutil"
+ )
+ 
+@@ -54,6 +58,243 @@ func TestFrozenNetworkRefusesWritesOnly(t *testing.T) {
+ 	}
+ }
+ 
++// sweepAll runs an expiry sweep the way the job does (cmd/circula/serve.go):
++// again after every run that fills its page. It returns each run's count.
++func sweepAll(t *testing.T, limit int, run func(limit int) (int, error)) []int {
++	t.Helper()
++	var got []int
++	for len(got) < 10 {
++		n := tu.Must(run(limit))
++		got = append(got, n)
++		if n < limit {
++			return got
++		}
++	}
++	t.Fatalf("sweep never finished: %v", got)
++	return nil
++}
++
++// A1-05 (FR-034, DOM-013, CMD-07): a frozen network's elapsed proposals are
++// left out of the expiry sweep's page. However many of the oldest it holds,
++// the other networks' elapsed proposals expire, the run-again-while-full loop
++// drains them, and the frozen network gets no write until it thaws.
++func TestExpirySweepNotStarvedByFrozenNetwork(t *testing.T) {
++	const limit = 3
++	w := newWorld(t, func(p *domain.Policy) { p.ProposalExpiryDays = 1 })
++	var frozen []*domain.Transaction
++	for i := range 2 * limit { // two full pages of the oldest elapsed proposals
++		frozen = append(frozen, tu.Must(w.propose(w.a, w.bM, service.ProposerPays, int64(10+i))))
++	}
++	w.Clock.Advance(time.Minute)
++	adm2 := w.Person("admin2@example.org")
++	net2, _ := w.Network(adm2, "other", func(p *domain.Policy) { p.ProposalExpiryDays = 1 })
++	x, _ := w.Member(adm2, net2, "x@example.org")
++	_, yM := w.Member(adm2, net2, "y@example.org")
++	propose2 := func() *domain.Transaction {
++		return tu.Must(w.Svc.ProposeTransaction(w.Ctx, x, net2.ID, service.ProposeInput{CounterpartyID: yM.ID,
++			Direction: service.ProposerPays, Amount: 5, IdempotencyKey: w.Key()}))
++	}
++	var healthy []*domain.Transaction
++	for range limit + 1 { // a full page and one more
++		healthy = append(healthy, propose2())
++	}
++	w.Clock.Advance(2 * 24 * time.Hour)
++	live := propose2() // not elapsed yet
++	w.Svc.FreezeNetwork(w.net.ID, "verification failed")
++	rows := func(table string) int { // the frozen network's rows in table
++		return count(t, w.Env, `SELECT COUNT(*) FROM `+table+` WHERE network_id = ?`, w.net.ID)
++	}
++	audits, events := rows("audit_events"), rows("transaction_status_events")
++	status := func(by domain.Actor, netID, id string) domain.TxStatus {
++		return tu.Must(w.Svc.GetTransaction(w.Ctx, by, netID, id)).Tx.Status
++	}
++	expire := func(n int) (int, error) { return w.Svc.ExpireProposals(w.Ctx, sysJob, n) }
++
++	if got := sweepAll(t, limit, expire); !slices.Equal(got, []int{limit, 1}) {
++		t.Fatalf("runs expired %v, want [%d 1]: the frozen network's proposals took places in the page", got, limit)
++	}
++	for _, p := range healthy {
++		if st := status(x, net2.ID, p.ID); st != domain.TxExpired {
++			t.Errorf("healthy network's elapsed proposal is %s", st)
++		}
++	}
++	if st := status(x, net2.ID, live.ID); st != domain.TxProposed {
++		t.Errorf("proposal that has not elapsed is %s", st)
++	}
++	for _, p := range frozen {
++		if st := status(w.a, w.net.ID, p.ID); st != domain.TxProposed {
++			t.Errorf("frozen network's proposal is %s", st)
++		}
++	}
++	if a, e := rows("audit_events"), rows("transaction_status_events"); a != audits || e != events {
++		t.Fatalf("frozen network written to: audit events %d -> %d, status events %d -> %d", audits, a, events, e)
++	}
++
++	// After the thaw the same sweep expires them.
++	w.Svc.UnfreezeNetwork(w.net.ID)
++	if got := sweepAll(t, limit, expire); !slices.Equal(got, []int{limit, limit, 0}) {
++		t.Fatalf("after the thaw runs expired %v, want [%d %d 0]", got, limit, limit)
++	}
++	for _, p := range frozen {
++		if st := status(w.a, w.net.ID, p.ID); st != domain.TxExpired {
++			t.Errorf("thawed network's elapsed proposal is %s", st)
++		}
++	}
++	if st := status(x, net2.ID, live.ID); st != domain.TxProposed {
++		t.Errorf("proposal that has not elapsed is %s", st)
++	}
++}
++
++// A1-10 (CMD-07, OPS-033, SEC-011 D5): the adjustment-request expiry job
++// writes nothing to a frozen network, and the frozen network's expired
++// requests never take places in its page, so other networks' requests still
++// expire. After the thaw the job closes them as before.
++func TestPendingAdjustmentExpirySkipsFrozenNetwork(t *testing.T) {
++	w := dcSybil(t)
++	frozen := []*domain.PendingAdjustment{w.bigRequest(w.admin), w.bigRequest(w.admin)}
++	w.Clock.Advance(time.Minute) // the frozen network's requests expire first
++	adm2 := w.Person("admin2@example.org")
++	net2, _ := w.Network(adm2, "other", nil)
++	_, xM := w.Member(adm2, net2, "x@example.org")
++	_, yM := w.Member(adm2, net2, "y@example.org")
++	tu.Must(0, w.Svc.AssignRole(w.Ctx, adm2, net2.ID, xM.ID, domain.RoleAdmin)) // dual control needs two administrators
++	pol := tu.Must(w.Svc.GetNetwork(w.Ctx, adm2, net2.ID)).Policy
++	pol.DualControlThreshold = 1000
++	tu.Must(w.Svc.UpdatePolicy(w.Ctx, adm2, net2.ID, service.PolicyChange{Policy: pol, Reason: "dc", IdempotencyKey: w.Key()}))
++	request2 := func() *domain.PendingAdjustment {
++		r := tu.Must(w.Svc.CreateAdjustmentRequest(w.Ctx, adm2, net2.ID, service.AdjustInput{MemberID: yM.ID, Amount: 5000,
++			Direction: service.AdjustCredit, Reason: "x", IdempotencyKey: w.Key()}))
++		if r.Pending == nil {
++			t.Fatal("expected a pending request in the healthy network")
++		}
++		return r.Pending
++	}
++	healthy := request2()
++	w.Clock.Advance(8 * 24 * time.Hour) // past the 7-day request TTL
++	live := request2()                  // not expired yet
++	w.Svc.FreezeNetwork(w.net.ID, "verification failed")
++	audits := func() int { // the frozen network's audit events
++		return count(t, w.Env, `SELECT COUNT(*) FROM audit_events WHERE network_id = ?`, w.net.ID)
++	}
++	before := audits()
++	status2 := func(id string) domain.PendingStatus {
++		return tu.Must(w.Svc.GetPendingAdjustment(w.Ctx, adm2, net2.ID, id)).Status
++	}
++	expire := func() int { return tu.Must(w.Svc.ExpirePendingAdjustments(w.Ctx, sysJob, len(frozen))) }
++
++	// A page of len(frozen) would hold only the frozen network's requests.
++	if n := expire(); n != 1 {
++		t.Fatalf("expired %d, want the healthy network's 1", n)
++	}
++	if st := status2(healthy.ID); st != domain.PendingExpired {
++		t.Errorf("healthy network's expired request is %s", st)
++	}
++	if n := expire(); n != 0 {
++		t.Errorf("second run expired %d", n)
++	}
++	if st := status2(live.ID); st != domain.PendingOpen {
++		t.Errorf("request that has not expired is %s", st)
++	}
++	if a := audits(); a != before {
++		t.Fatalf("frozen network's audit log grew %d -> %d", before, a)
++	}
++
++	w.Svc.UnfreezeNetwork(w.net.ID)
++	for _, pa := range frozen { // a read does not close an expired request
++		if got := tu.Must(w.Svc.GetPendingAdjustment(w.Ctx, w.admin, w.net.ID, pa.ID)); got.Status != domain.PendingOpen {
++			t.Fatalf("frozen network's request is %s before any run after the thaw", got.Status)
++		}
++	}
++	if n := expire(); n != len(frozen) {
++		t.Fatalf("after the thaw expired %d, want %d", n, len(frozen))
++	}
++	for _, pa := range frozen {
++		if got := tu.Must(w.Svc.GetPendingAdjustment(w.Ctx, w.admin, w.net.ID, pa.ID)); got.Status != domain.PendingExpired {
++			t.Errorf("thawed network's request is %s", got.Status)
++		}
++	}
++	if a := audits(); a != before+len(frozen) {
++		t.Errorf("thawed network's audit events %d -> %d, want one per expired request", before, a)
++	}
++	if st := status2(live.ID); st != domain.PendingOpen {
++		t.Errorf("request that has not expired is %s", st)
++	}
++}
++
++// hookAfterPage runs hook after an expiry sweep reads its page and before it
++// writes: the window in which the verification job may freeze a network.
++type hookAfterPage struct {
++	store.Store
++	hook func()
++}
++
++func (s *hookAfterPage) Update(ctx context.Context, fn func(store.Tx) error) error {
++	if s.hook == nil {
++		return s.Store.Update(ctx, fn)
++	}
++	return s.Store.Update(ctx, func(tx store.Tx) error { return fn(hookAfterPageTx{tx, s.hook}) })
++}
++
++type hookAfterPageTx struct {
++	store.Tx
++	hook func()
++}
++
++func (t hookAfterPageTx) ListExpiredProposals(now time.Time, skip []string, limit int) ([]*domain.Transaction, error) {
++	defer t.hook()
++	return t.Tx.ListExpiredProposals(now, skip, limit)
++}
++
++func (t hookAfterPageTx) ListExpiredPendingAdjustments(now time.Time, skip []string, limit int) ([]*domain.PendingAdjustment, error) {
++	defer t.hook()
++	return t.Tx.ListExpiredPendingAdjustments(now, skip, limit)
++}
++
++// CMD-07: a network frozen after a sweep has read its page, while the sweep's
++// unit is still open, gets no write from that run; both sweeps check each row
++// again before writing it.
++func TestExpirySweepsSkipNetworkFrozenAfterPageRead(t *testing.T) {
++	hs := &hookAfterPage{}
++	e := tu.NewEnvWith(t, func(s store.Store) store.Store { hs.Store = s; return hs })
++	admin := e.Person("admin@example.org")
++	net, _ := e.Network(admin, "demo", func(p *domain.Policy) { p.ProposalExpiryDays = 1 })
++	a, aM := e.Member(admin, net, "ana@example.org")
++	_, bM := e.Member(admin, net, "ben@example.org")
++	tu.Must(0, e.Svc.AssignRole(e.Ctx, admin, net.ID, aM.ID, domain.RoleAdmin)) // dual control needs two administrators
++	pol := tu.Must(e.Svc.GetNetwork(e.Ctx, admin, net.ID)).Policy
++	pol.DualControlThreshold = 1000
++	tu.Must(e.Svc.UpdatePolicy(e.Ctx, admin, net.ID, service.PolicyChange{Policy: pol, Reason: "dc", IdempotencyKey: e.Key()}))
++	p := tu.Must(e.Svc.ProposeTransaction(e.Ctx, a, net.ID, service.ProposeInput{CounterpartyID: bM.ID,
++		Direction: service.ProposerPays, Amount: 10, IdempotencyKey: e.Key()}))
++	r := tu.Must(e.Svc.CreateAdjustmentRequest(e.Ctx, admin, net.ID, service.AdjustInput{MemberID: bM.ID, Amount: 5000,
++		Direction: service.AdjustCredit, Reason: "x", IdempotencyKey: e.Key()})).Pending
++	if r == nil {
++		t.Fatal("expected a pending request")
++	}
++	e.Clock.Advance(8 * 24 * time.Hour) // the proposal and the request have both expired
++	audits := count(t, e, `SELECT COUNT(*) FROM audit_events WHERE network_id = ?`, net.ID)
++
++	hs.hook = func() { e.Svc.FreezeNetwork(net.ID, "verification failed") }
++	if n := tu.Must(e.Svc.ExpireProposals(e.Ctx, sysJob, 10)); n != 0 {
++		t.Errorf("proposal sweep expired %d", n)
++	}
++	e.Svc.UnfreezeNetwork(net.ID) // so the request sweep reads the request into its page
++	if n := tu.Must(e.Svc.ExpirePendingAdjustments(e.Ctx, sysJob, 10)); n != 0 {
++		t.Errorf("request sweep expired %d", n)
++	}
++	hs.hook = nil
++	e.Svc.UnfreezeNetwork(net.ID)
++	if st := tu.Must(e.Svc.GetTransaction(e.Ctx, a, net.ID, p.ID)).Tx.Status; st != domain.TxProposed {
++		t.Errorf("proposal is %s", st)
++	}
++	if st := tu.Must(e.Svc.GetPendingAdjustment(e.Ctx, admin, net.ID, r.ID)).Status; st != domain.PendingOpen {
++		t.Errorf("request is %s", st)
++	}
++	if got := count(t, e, `SELECT COUNT(*) FROM audit_events WHERE network_id = ?`, net.ID); got != audits {
++		t.Errorf("audit events %d -> %d", audits, got)
++	}
++}
++
+ type countObs struct{ posted, replayed atomic.Int64 }
+ 
+ func (c *countObs) Posted(n int)   { c.posted.Add(int64(n)) }
+diff --git a/internal/service/transactions.go b/internal/service/transactions.go
+index 9718930..44628d1 100644
+--- a/internal/service/transactions.go
++++ b/internal/service/transactions.go
+@@ -360,19 +360,24 @@ func (s *Service) transition(tx store.Tx, netID string, t *domain.Transaction, c
+ // releasing their reservations (DOM-013, FR-034). System actors only. It is
+ // idempotent by construction: re-running changes nothing. Returns the count
+ // expired in this run (at most limit, default 100).
++//
++// Frozen networks take no writes (CMD-07). Their proposals are left out of the
++// page, not skipped inside it, so a frozen network's backlog never fills a
++// page and the caller's run-again-while-full loop keeps draining the other
++// networks, however many elapsed proposals frozen ones hold (A1-05).
+ func (s *Service) ExpireProposals(ctx context.Context, actor domain.Actor, limit int) (int, error) {
+ 	if !actor.System {
+ 		return 0, domain.Forbidden("system actor required")
+ 	}
+ 	n := 0
+ 	err := s.update(ctx, func(tx store.Tx) error {
+-		ts, err := tx.ListExpiredProposals(s.now(), limit)
++		ts, err := tx.ListExpiredProposals(s.now(), s.FrozenNetworks(), limit)
+ 		if err != nil {
+ 			return err
+ 		}
+ 		for _, t := range ts {
+ 			if s.IsFrozen(t.NetworkID) {
+-				continue // frozen networks take no writes (CMD-07)
++				continue // frozen after the page was read
+ 			}
+ 			if err := s.transition(tx, t.NetworkID, t, domain.CmdExpire, "", actor.RequestID); err != nil {
+ 				return err
+diff --git a/internal/store/iface.go b/internal/store/iface.go
+index da3f9c3..606ef25 100644
+--- a/internal/store/iface.go
++++ b/internal/store/iface.go
+@@ -185,8 +185,9 @@ type TxnRepo interface {
+ 	InsertStatusEvent(e *domain.StatusEvent) error
+ 	ListStatusEvents(netID, txID string) ([]*domain.StatusEvent, error)
+ 	ListTransactions(netID string, f TxFilter) ([]*domain.Transaction, error)
+-	// ListExpiredProposals spans all networks (system sweep).
+-	ListExpiredProposals(now time.Time, limit int) ([]*domain.Transaction, error)
++	// ListExpiredProposals spans all networks except skipNetworks (system sweep), oldest expiry
++	// first. Rows of skipNetworks are filtered in the query, so they never take a place in the page.
++	ListExpiredProposals(now time.Time, skipNetworks []string, limit int) ([]*domain.Transaction, error)
+ 	InsertEntry(e *domain.Entry) error
+ 	ListEntries(netID, txID string) ([]*domain.Entry, error)
+ 	SumEntries(accountID string, uptoSeq int64) (int64, error)
+diff --git a/internal/store/pending_adjustment_iface.go b/internal/store/pending_adjustment_iface.go
+index 6f94032..9dd783a 100644
+--- a/internal/store/pending_adjustment_iface.go
++++ b/internal/store/pending_adjustment_iface.go
+@@ -17,6 +17,8 @@ type PendingAdjustmentRepo interface {
+ 	// DecidePendingAdjustment moves a pending request to a final status. It reports false when the
+ 	// request was no longer pending (a concurrent decision won), so exactly one decision applies.
+ 	DecidePendingAdjustment(netID, id string, to domain.PendingStatus, by string, at time.Time, txID string) (bool, error)
+-	// ListExpiredPendingAdjustments returns up to limit open requests whose expiry is at or before now.
+-	ListExpiredPendingAdjustments(now time.Time, limit int) ([]*domain.PendingAdjustment, error)
++	// ListExpiredPendingAdjustments returns up to limit open requests whose expiry is at or before now,
++	// oldest expiry first, across all networks except skipNetworks. Rows of skipNetworks are filtered
++	// in the query, so they never take a place in the page.
++	ListExpiredPendingAdjustments(now time.Time, skipNetworks []string, limit int) ([]*domain.PendingAdjustment, error)
+ }
+diff --git a/internal/store/sqlite_pending_adjustment.go b/internal/store/sqlite_pending_adjustment.go
+index 3d57437..e9db59e 100644
+--- a/internal/store/sqlite_pending_adjustment.go
++++ b/internal/store/sqlite_pending_adjustment.go
+@@ -87,7 +87,14 @@ func (t *txImpl) DecidePendingAdjustment(netID, id string, to domain.PendingStat
+ 	return n == 1, nil
+ }
+ 
+-func (t *txImpl) ListExpiredPendingAdjustments(now time.Time, limit int) ([]*domain.PendingAdjustment, error) {
+-	return t.listPending(`SELECT `+pendCols+` FROM pending_adjustments WHERE status = 'pending' AND expires_at <= ?
+-		ORDER BY expires_at, id LIMIT ?`, []any{ms(now), limit})
++func (t *txImpl) ListExpiredPendingAdjustments(now time.Time, skipNetworks []string, limit int) ([]*domain.PendingAdjustment, error) {
++	q := `SELECT ` + pendCols + ` FROM pending_adjustments WHERE status = 'pending' AND expires_at <= ?`
++	args := []any{ms(now)}
++	if len(skipNetworks) > 0 {
++		in, a := inClause(skipNetworks)
++		q += ` AND network_id NOT IN ` + in
++		args = append(args, a...)
++	}
++	q += ` ORDER BY expires_at, id LIMIT ?`
++	return t.listPending(q, append(args, limit))
+ }
+diff --git a/internal/store/sqlite_tx.go b/internal/store/sqlite_tx.go
+index ec648a0..71751e8 100644
+--- a/internal/store/sqlite_tx.go
++++ b/internal/store/sqlite_tx.go
+@@ -153,9 +153,16 @@ func (t *txImpl) ListTransactions(netID string, f TxFilter) ([]*domain.Transacti
+ 	return t.queryTxs(q, args)
+ }
+ 
+-func (t *txImpl) ListExpiredProposals(now time.Time, limit int) ([]*domain.Transaction, error) {
+-	return t.queryTxs(`SELECT `+txCols+txFrom+` WHERE t.status = 'proposed' AND t.expires_at <= ?
+-		ORDER BY t.expires_at, t.id LIMIT ?`, []any{ms(now), limitOf(limit)})
++func (t *txImpl) ListExpiredProposals(now time.Time, skipNetworks []string, limit int) ([]*domain.Transaction, error) {
++	q := `SELECT ` + txCols + txFrom + ` WHERE t.status = 'proposed' AND t.expires_at <= ?`
++	args := []any{ms(now)}
++	if len(skipNetworks) > 0 {
++		in, a := inClause(skipNetworks)
++		q += ` AND t.network_id NOT IN ` + in
++		args = append(args, a...)
++	}
++	q += ` ORDER BY t.expires_at, t.id LIMIT ?`
++	return t.queryTxs(q, append(args, limitOf(limit)))
+ }
+ 
+ func (t *txImpl) InsertEntry(e *domain.Entry) error {

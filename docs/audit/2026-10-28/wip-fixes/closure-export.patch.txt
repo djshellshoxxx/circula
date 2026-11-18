@@ -1,0 +1,431 @@
+diff --git a/internal/service/closure_schedule.go b/internal/service/closure_schedule.go
+index 3a8d11f..78b1eb0 100644
+--- a/internal/service/closure_schedule.go
++++ b/internal/service/closure_schedule.go
+@@ -165,8 +165,14 @@ func (s *Service) CancelClosure(ctx context.Context, actor domain.Actor, netID,
+ // FinaliseClosures completes every closure whose date has passed (GOV-025
+ // b, c, e). It is the body of a scheduled job and is idempotent. System actors
+ // only. A network with an unresolved dispute stays "closing" (frozen) and its
+-// administrators are told once; the next run retries. Returns the number of
+-// closures completed.
++// administrators are told once; the next run retries.
++//
++// The final export is recorded in units of its own after the closure has
++// completed, so a failure there (a crash, a busy database) leaves a closed
++// network without its checksum. Such a closure stays listed until the export
++// is recorded: later runs retry the export alone, and the closure itself is
++// never repeated (A1-07). Returns the number of closures finished in this run,
++// a closure being finished once its final export is recorded.
+ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int, error) {
+ 	if !actor.System {
+ 		return 0, domain.Forbidden("system actor required")
+@@ -183,17 +189,22 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
+ 		if !c.Due(s.now()) || s.IsFrozen(c.NetworkID) {
+ 			continue
+ 		}
+-		closed, err := s.finaliseOne(ctx, actor, c.NetworkID)
++		if !c.Done() {
++			closed, err := s.finaliseOne(ctx, actor, c.NetworkID)
++			if err != nil {
++				return done, err
++			}
++			if !closed {
++				continue
++			}
++		}
++		recorded, err := s.recordFinalExport(ctx, actor, c.NetworkID)
+ 		if err != nil {
+ 			return done, err
+ 		}
+-		if !closed {
+-			continue
+-		}
+-		if err := s.recordFinalExport(ctx, actor, c.NetworkID); err != nil {
+-			return done, err
++		if recorded {
++			done++
+ 		}
+-		done++
+ 	}
+ 	return done, nil
+ }
+@@ -291,14 +302,25 @@ func ManifestChecksum(m *Manifest) string {
+ 
+ // recordFinalExport generates the ledger export of the closed network and
+ // stores its checksum with the reconciliation summary (sum of entries and
+-// balance totals, both zero in a sound ledger).
+-func (s *Service) recordFinalExport(ctx context.Context, actor domain.Actor, netID string) error {
++// balance totals, both zero in a sound ledger). The record is written once,
++// for a completed closure: the unit that writes it reads the closure again,
++// and if another run recorded the export since the closure was listed it
++// changes nothing. It reports whether this call wrote the record.
++func (s *Service) recordFinalExport(ctx context.Context, actor domain.Actor, netID string) (bool, error) {
+ 	man, err := s.Export(ctx, actor, netID, ExportLedger, FormatJSON, &MemSink{})
+ 	if err != nil {
+-		return err
++		return false, err
+ 	}
+ 	sum := ManifestChecksum(man)
+-	return s.update(ctx, func(tx store.Tx) error {
++	recorded := false
++	err = s.update(ctx, func(tx store.Tx) error {
++		c, err := tx.GetClosure(netID)
++		if err != nil {
++			return err
++		}
++		if c == nil || !c.Done() || c.FinalSHA256 != "" {
++			return nil
++		}
+ 		bal, ent, err := tx.Totals(netID)
+ 		if err != nil {
+ 			return err
+@@ -306,9 +328,14 @@ func (s *Service) recordFinalExport(ctx context.Context, actor domain.Actor, net
+ 		if err := tx.SetClosureFinal(netID, man.LedgerSeq, sum, bal, ent); err != nil {
+ 			return err
+ 		}
+-		return s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: ActClosureExported, TargetType: "network",
+-			TargetID: netID, After: map[string]any{"sha256": sum, "ledger_seq": man.LedgerSeq, "entries_sum": ent, "balance_total": bal}})
++		if err := s.emit(tx, netID, "", actor.RequestID, auditEntry{Type: domain.ActorSystem, Action: ActClosureExported, TargetType: "network",
++			TargetID: netID, After: map[string]any{"sha256": sum, "ledger_seq": man.LedgerSeq, "entries_sum": ent, "balance_total": bal}}); err != nil {
++			return err
++		}
++		recorded = true
++		return nil
+ 	})
++	return recorded, err
+ }
+ 
+ // ClosureCheck compares the stored final checksum with one recomputed now.
+diff --git a/internal/service/closure_test.go b/internal/service/closure_test.go
+index 4f8297b..9edd89a 100644
+--- a/internal/service/closure_test.go
++++ b/internal/service/closure_test.go
+@@ -1,12 +1,15 @@
+ package service_test
+ 
+ import (
++	"context"
++	"errors"
+ 	"strings"
+ 	"testing"
+ 	"time"
+ 
+ 	"github.com/djshellshoxxx/circula/internal/domain"
+ 	"github.com/djshellshoxxx/circula/internal/service"
++	"github.com/djshellshoxxx/circula/internal/store"
+ 	tu "github.com/djshellshoxxx/circula/internal/testutil"
+ )
+ 
+@@ -108,6 +111,214 @@ func TestClosureFinalExportChecksum(t *testing.T) {
+ 	}
+ }
+ 
++// exportFaults wraps the store for the final export tests. While failAction is
++// set, writing an audit event with that action fails and rolls its unit back:
++// domain.ActExport fails the export itself, service.ActClosureExported the unit
++// that records it. afterView, when set, runs once right after the next read
++// unit, standing in for another job run that interleaves with the current one.
++type exportFaults struct {
++	store.Store
++	failAction string
++	afterView  func()
++}
++
++func (f *exportFaults) Update(ctx context.Context, fn func(store.Tx) error) error {
++	return f.Store.Update(ctx, func(tx store.Tx) error { return fn(&exportFaultTx{Tx: tx, f: f}) })
++}
++
++func (f *exportFaults) View(ctx context.Context, fn func(store.Tx) error) error {
++	err := f.Store.View(ctx, fn)
++	if hook := f.afterView; hook != nil {
++		f.afterView = nil
++		hook()
++	}
++	return err
++}
++
++type exportFaultTx struct {
++	store.Tx
++	f *exportFaults
++}
++
++func (t *exportFaultTx) InsertAudit(e *domain.AuditEvent) error {
++	if t.f.failAction != "" && e.Action == t.f.failAction {
++		return tu.ErrInjected
++	}
++	return t.Tx.InsertAudit(e)
++}
++
++// closedWithoutExport builds a world over exportFaults with one trade and a
++// closure whose date has passed, then runs the job with the audit write of
++// failAt failing. The closure completes on its date and its final export is
++// lost, as after a crash or a busy database between the two steps.
++func closedWithoutExport(t *testing.T, failAt string) (*world, *exportFaults) {
++	t.Helper()
++	f := &exportFaults{}
++	e := tu.NewEnvWith(t, func(s store.Store) store.Store { f.Store = s; return f })
++	w := &world{Env: e}
++	w.admin = e.Person("admin@example.org")
++	w.net, w.adminM = e.Network(w.admin, "demo", nil)
++	w.a, w.aM = e.Member(w.admin, w.net, "ana@example.org")
++	w.b, w.bM = e.Member(w.admin, w.net, "ben@example.org")
++	w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
++	tu.Must(w.schedule("end", 0))
++	w.Clock.Advance(31 * 24 * time.Hour)
++	f.failAction = failAt
++	n, err := w.Svc.FinaliseClosures(w.Ctx, sysJob)
++	f.failAction = ""
++	if n != 0 || !errors.Is(err, tu.ErrInjected) {
++		t.Fatalf("failing run: finalised %d, err %v", n, err)
++	}
++	if net := w.netNow(); net.Status != domain.NetworkClosed || !net.Closure.Done() || net.Closure.FinalSHA256 != "" {
++		t.Fatalf("after the failure: status %s, closure %+v", net.Status, net.Closure)
++	}
++	return w, f
++}
++
++// networkAudits counts the network's audit events with action ("" for all).
++func networkAudits(t *testing.T, w *world, action string) int {
++	t.Helper()
++	return count(t, w.Env, `SELECT COUNT(*) FROM audit_events WHERE network_id = ? AND (? = '' OR action = ?)`, w.net.ID, action, action)
++}
++
++// GOV-025 e, A1-07: a final export that fails after the closure completed, in
++// the export's own unit or in the unit recording it, is retried alone by the
++// next run, which records the checksum and reconciliation once without
++// repeating the closure. Once it is recorded, runs change nothing.
++func TestClosureFinalExportRetriedAfterFailure(t *testing.T) {
++	for _, failAt := range []string{domain.ActExport, service.ActClosureExported} {
++		t.Run(failAt, func(t *testing.T) {
++			w, _ := closedWithoutExport(t, failAt)
++			closedAt := w.netNow().Closure.ClosedAt
++			_, err := w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID)
++			wantCode(t, err, domain.ErrInvalidState)
++			if got := networkAudits(t, w, service.ActClosureExported); got != 0 {
++				t.Fatalf("%d closure_exported event(s) after the failure", got)
++			}
++
++			w.Clock.Advance(time.Hour) // the next run of the hourly job
++			if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 1 {
++				t.Fatalf("retry finalised %d", n)
++			}
++			net := w.netNow()
++			c := net.Closure
++			if !c.ClosedAt.Equal(closedAt) || len(c.FinalSHA256) != 64 || c.FinalLedgerSeq != net.LedgerSeq ||
++				c.FinalEntriesSum != 0 || c.FinalBalanceTotal != 0 {
++				t.Fatalf("after the retry: closure %+v, ledger_seq %d", c, net.LedgerSeq)
++			}
++			if chk := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID)); !chk.Match || chk.Stored != c.FinalSHA256 {
++				t.Fatalf("check = %+v", chk)
++			}
++			if closed, exported := networkAudits(t, w, domain.ActNetworkClosed), networkAudits(t, w, service.ActClosureExported); closed != 1 || exported != 1 {
++				t.Fatalf("network.closed %d, network.closure_exported %d; want one each", closed, exported)
++			}
++
++			before := networkAudits(t, w, "")
++			w.Clock.Advance(time.Hour)
++			if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 0 {
++				t.Fatalf("run after the retry finalised %d", n)
++			}
++			if got := networkAudits(t, w, ""); got != before {
++				t.Fatalf("run after the retry wrote audit events: %d -> %d", before, got)
++			}
++		})
++	}
++}
++
++// A1-07, CMD-07: the retry writes nothing into a frozen network (no export,
++// no record) and records the final export on the first run after the thaw.
++func TestClosureFinalExportRetryWaitsForThaw(t *testing.T) {
++	w, _ := closedWithoutExport(t, domain.ActExport)
++	w.Svc.FreezeNetwork(w.net.ID, "1 ledger finding(s)")
++	before := networkAudits(t, w, "")
++	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 0 {
++		t.Fatalf("frozen network finalised %d", n)
++	}
++	if got, c := networkAudits(t, w, ""), w.netNow().Closure; got != before || c.FinalSHA256 != "" {
++		t.Fatalf("frozen network written: audit events %d -> %d, closure %+v", before, got, c)
++	}
++	w.Svc.UnfreezeNetwork(w.net.ID)
++	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 1 {
++		t.Fatalf("after the thaw finalised %d", n)
++	}
++	if chk := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID)); !chk.Match {
++		t.Fatalf("check = %+v", chk)
++	}
++}
++
++// GOV-025 e, f, A1-07: the retry has no deadline. If the export is still
++// missing when the read-only period has ended and the members were erased, the
++// next run records it then.
++func TestClosureFinalExportRetriedAfterErasure(t *testing.T) {
++	w, _ := closedWithoutExport(t, domain.ActExport)
++	w.Clock.Advance(91 * 24 * time.Hour)
++	if n := tu.Must(w.Svc.EraseClosedNetworks(w.Ctx, sysJob)); n != 1 {
++		t.Fatalf("erased %d networks", n)
++	}
++	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 1 {
++		t.Fatalf("finalised %d", n)
++	}
++	// The administrator was erased with the other members.
++	if chk := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, sysJob, w.net.ID)); !chk.Match || !chk.Erased {
++		t.Fatalf("check = %+v", chk)
++	}
++}
++
++// GOV-025 e, A1-07: only a completed closure is exported. Before the date, and
++// while a dispute keeps the network closing, runs export nothing; the run that
++// completes the closure records the final export once.
++func TestClosureFinalExportOnlyAfterCompletion(t *testing.T) {
++	w := newWorld(t, nil)
++	tx := w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 500)
++	tu.Must(w.schedule("end", 0))
++	d := tu.Must(w.open(w.a, tx.ID))
++	for _, step := range []time.Duration{0, 31 * 24 * time.Hour, time.Hour} {
++		w.Clock.Advance(step)
++		if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 0 {
++			t.Fatalf("finalised %d with the closure incomplete", n)
++		}
++		if got := networkAudits(t, w, domain.ActExport); got != 0 {
++			t.Fatalf("%d export(s) of an incomplete closure", got)
++		}
++	}
++	if c := w.netNow().Closure; c.Done() || c.FinalSHA256 != "" {
++		t.Fatalf("closure = %+v", c)
++	}
++	tu.Must(w.Svc.WithdrawDispute(w.Ctx, w.a, w.net.ID, d.ID))
++	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, sysJob)); n != 1 {
++		t.Fatalf("finalised %d", n)
++	}
++	if exports, recorded := networkAudits(t, w, domain.ActExport), networkAudits(t, w, service.ActClosureExported); exports != 1 || recorded != 1 {
++		t.Fatalf("exports %d, closure_exported %d; want one each", exports, recorded)
++	}
++}
++
++// A1-07: the final export is recorded once. A run that listed the closure
++// before another run recorded its export finds the record when it comes to
++// write it, and writes nothing to the closure.
++func TestClosureFinalExportRecordedOnce(t *testing.T) {
++	w, f := closedWithoutExport(t, domain.ActExport)
++	f.afterView = func() {
++		if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, domain.SystemActor("job-b"))); n != 1 {
++			t.Errorf("interleaved run finalised %d", n)
++		}
++	}
++	if n := tu.Must(w.Svc.FinaliseClosures(w.Ctx, domain.SystemActor("job-a"))); n != 0 {
++		t.Fatalf("run that lost the race finalised %d", n)
++	}
++	if got := networkAudits(t, w, service.ActClosureExported); got != 1 {
++		t.Fatalf("%d closure_exported events, want 1", got)
++	}
++	var by string
++	if err := w.Store.DB().QueryRow(`SELECT request_id FROM audit_events WHERE network_id = ? AND action = ?`,
++		w.net.ID, service.ActClosureExported).Scan(&by); err != nil || by != "job-b" {
++		t.Fatalf("closure_exported by %q (%v), want the run that recorded it first", by, err)
++	}
++	if chk := tu.Must(w.Svc.VerifyClosureExport(w.Ctx, w.admin, w.net.ID)); !chk.Match {
++		t.Fatalf("check = %+v", chk)
++	}
++}
++
+ // GOV-025: the admin can cancel before the date, not after it.
+ func TestClosureCancel(t *testing.T) {
+ 	w := newWorld(t, nil)
+diff --git a/internal/store/closure_iface.go b/internal/store/closure_iface.go
+index 2bf4b37..c6be866 100644
+--- a/internal/store/closure_iface.go
++++ b/internal/store/closure_iface.go
+@@ -31,7 +31,8 @@ type ClosureRepo interface {
+ 	SetClosureDone(netID string, at time.Time) error
+ 	SetClosureFinal(netID string, ledgerSeq int64, sha string, balanceTotal, entriesSum int64) error
+ 	SetClosureErased(netID string, at time.Time) error
+-	// ListClosures returns closures: pending (not completed) or completed and not yet erased.
++	// ListClosures returns closures: pending (not completed, or completed with no final
++	// export recorded yet, GOV-025 e) or completed and not yet erased.
+ 	ListClosures(pending bool) ([]domain.Closure, error)
+ 
+ 	InsertChallenge(c Challenge) error
+diff --git a/internal/store/closure_test.go b/internal/store/closure_test.go
+new file mode 100644
+index 0000000..20f153a
+--- /dev/null
++++ b/internal/store/closure_test.go
+@@ -0,0 +1,65 @@
++package store_test
++
++import (
++	"context"
++	"slices"
++	"testing"
++	"time"
++
++	"github.com/djshellshoxxx/circula/internal/domain"
++	"github.com/djshellshoxxx/circula/internal/store"
++)
++
++// GOV-025 e, A1-07: a completed closure stays pending until its final export
++// is recorded, so the closure job retries the export; the listing of
++// completed closures for the erasure is unchanged.
++func TestListClosuresPendingUntilFinalExport(t *testing.T) {
++	s := openStore(t)
++	netID, _, _, _ := seed(t, s)
++	ctx := context.Background()
++	now := time.Date(2026, 3, 1, 0, 0, 0, 0, time.UTC)
++	step := func(fn func(store.Tx) error) {
++		t.Helper()
++		if err := s.Update(ctx, fn); err != nil {
++			t.Fatal(err)
++		}
++	}
++	want := func(state string, pending, completed []string) {
++		t.Helper()
++		err := s.View(ctx, func(tx store.Tx) error {
++			for _, l := range []struct {
++				pending bool
++				want    []string
++			}{{true, pending}, {false, completed}} {
++				cs, err := tx.ListClosures(l.pending)
++				if err != nil {
++					return err
++				}
++				var got []string
++				for _, c := range cs {
++					got = append(got, c.NetworkID)
++				}
++				if !slices.Equal(got, l.want) {
++					t.Errorf("%s: ListClosures(%v) = %v, want %v", state, l.pending, got, l.want)
++				}
++			}
++			return nil
++		})
++		if err != nil {
++			t.Fatal(err)
++		}
++	}
++
++	step(func(tx store.Tx) error {
++		_, err := tx.PutClosure(domain.Closure{NetworkID: netID, Reason: "end", ScheduledAt: now,
++			ClosingAt: now.AddDate(0, 0, 30), NoticeDays: 30, ReadOnlyDays: 90})
++		return err
++	})
++	want("scheduled", []string{netID}, nil)
++	step(func(tx store.Tx) error { return tx.SetClosureDone(netID, now.AddDate(0, 0, 30)) })
++	want("completed, final export missing", []string{netID}, []string{netID})
++	step(func(tx store.Tx) error { return tx.SetClosureFinal(netID, 1, "checksum", 0, 0) })
++	want("final export recorded", nil, []string{netID})
++	step(func(tx store.Tx) error { return tx.SetClosureErased(netID, now.AddDate(0, 0, 120)) })
++	want("erased", nil, nil)
++}
+diff --git a/internal/store/sqlite_closure.go b/internal/store/sqlite_closure.go
+index 81cc721..b6e3064 100644
+--- a/internal/store/sqlite_closure.go
++++ b/internal/store/sqlite_closure.go
+@@ -73,7 +73,7 @@ func (t *txImpl) SetClosureErased(netID string, at time.Time) error {
+ }
+ 
+ func (t *txImpl) ListClosures(pending bool) ([]domain.Closure, error) {
+-	q := `SELECT ` + closureCols + ` FROM network_closures WHERE closed_at = 0 ORDER BY network_id`
++	q := `SELECT ` + closureCols + ` FROM network_closures WHERE closed_at = 0 OR final_sha256 = '' ORDER BY network_id`
+ 	if !pending {
+ 		q = `SELECT ` + closureCols + ` FROM network_closures WHERE closed_at <> 0 AND erased_at = 0 ORDER BY network_id`
+ 	}
