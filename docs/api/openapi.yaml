@@ -2627,6 +2627,121 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
 
+  /api/v1/admin-recovery/requests:
+    get:
+      operationId: listAdminRecoveryRequests
+      tags: [Network]
+      summary: Administrator recovery requests of the network (GOV-021)
+      description: |
+        Any member of the network who is not pending sees every request, newest first by id: who asked
+        (requester_member_id), the status as of now (an open request past its expiry reads expired), and
+        when each step happened. Operator labels and reasons are not shown here; they are in the
+        administrators' audit log. Cursor-paged, default 25, maximum 100.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: The requests.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, next_cursor]
+                additionalProperties: false
+                properties:
+                  data: {type: array, items: {$ref: '#/components/schemas/AdminRecoveryRequest'}}
+                  next_cursor: {type: ['string', 'null']}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+    post:
+      operationId: requestAdminRecovery
+      tags: [Network]
+      summary: Ask to be appointed administrator of a network that has none (GOV-021)
+      description: |
+        Session cookie only (cookieOnly; a bearer token gets 403 forbidden). The caller is the nominee:
+        an active member of an active network with no active administrator (GOV-020). Refused with 409
+        invalid-transaction-state while an administrator is active, 409 conflict while the caller already
+        has an open request, 403 for a suspended, departed or pending member and, when administrators
+        must use a second factor, for a caller without one. The request appoints nobody: two different
+        platform operators must approve it in the operator CLI, and the second approval applies it as an
+        ordinary administrator role. Every current member is notified at each step. Requests expire after
+        7 days. No body is needed. Recorded as admin_recovery.requested.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: {type: object, additionalProperties: false}
+      responses:
+        '201':
+          description: Request recorded.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/AdminRecoveryRequest'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '415': {$ref: '#/components/responses/UnsupportedMediaType'}
+        '422': {$ref: '#/components/responses/Unprocessable'}
+        '423': {$ref: '#/components/responses/NetworkFrozen'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/admin-recovery/events:
+    get:
+      operationId: listAdminRecoveryEvents
+      tags: [Network]
+      summary: Audit events of administrator recovery, visible to the network (GOV-021)
+      description: |
+        The network-scope audit events of administrator recovery (target_type admin_recovery: requested,
+        approved, applied, refused, expired, superseded), in chain order, for any member of the network who
+        is not pending. As in the members' own audit view, actor_id is empty unless it is the caller,
+        reasons of other people, hashes and request ids are removed, and summaries keep only safe keys
+        (status). The full events are in the administrators' audit log. Cursor-paged, default 25, maximum 100.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: The events.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, next_cursor]
+                additionalProperties: false
+                properties:
+                  data: {type: array, items: {$ref: '#/components/schemas/AuditEvent'}}
+                  next_cursor: {type: ['string', 'null']}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
   /api/v1/challenges:
     get:
       operationId: listChallenges
@@ -3434,6 +3549,20 @@ components:
         rationale: {type: string}
         created_at: {type: string, format: date-time}
         decided_at: {type: ['string', 'null'], format: date-time}
+    AdminRecoveryRequest:
+      description: A member's request to be appointed administrator of a network that has none (GOV-021).
+      type: object
+      required: [id, requester_member_id, status, requested_at, expires_at, first_approved_at, closed_at, mine]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        requester_member_id: {$ref: '#/components/schemas/Id'}
+        status: {type: string, enum: [requested, approved, applied, refused, expired, superseded]}
+        requested_at: {type: string, format: date-time}
+        expires_at: {type: string, format: date-time}
+        first_approved_at: {type: ['string', 'null'], format: date-time}
+        closed_at: {type: ['string', 'null'], format: date-time}
+        mine: {type: boolean, description: The caller made this request.}
     ReasonRequest:
       type: object
       required: [reason]

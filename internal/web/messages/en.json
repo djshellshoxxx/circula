@@ -368,6 +368,141 @@
   "notice.trading_paused": {
     "other": "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
   },
+  "notice.admin_recovery_link": {
+    "other": "Ask for administrator recovery"
+  },
+  "admin_recovery.title": {
+    "other": "Administrator recovery"
+  },
+  "admin_recovery.intro": {
+    "other": "When a network has no active administrator, a member can ask the platform operator to appoint them as administrator. Two different operators must approve the request, every member is told at each step, and this process never changes balances or history. A request that is not approved within 7 days expires."
+  },
+  "admin_recovery.has_admin": {
+    "other": "This network has an active administrator, so administrator recovery is not available. Ask an administrator for help."
+  },
+  "admin_recovery.ask_heading": {
+    "other": "Ask to become administrator"
+  },
+  "admin_recovery.ask_text": {
+    "other": "Asking does not make you an administrator. The platform operator checks that you are a recorded, active member of this network, and two different operators must approve. Everyone in the network is told."
+  },
+  "admin_recovery.confirm": {
+    "other": "I ask to be appointed administrator of this network"
+  },
+  "admin_recovery.submit": {
+    "other": "Send request"
+  },
+  "admin_recovery.cannot_ask": {
+    "other": "You cannot send a request now: only an active member without an open request can ask, while the network has no active administrator."
+  },
+  "admin_recovery.sent": {
+    "other": "Your request was sent and every member was told. You will be notified of each step."
+  },
+  "admin_recovery.not_confirmed": {
+    "other": "Not sent. Tick the box to confirm your request. Nothing changed."
+  },
+  "admin_recovery.confirm_error": {
+    "other": "Confirm: tick the box to ask to be appointed administrator."
+  },
+  "admin_recovery.requests_heading": {
+    "other": "Requests"
+  },
+  "admin_recovery.requests_caption": {
+    "other": "Administrator recovery requests, newest first"
+  },
+  "admin_recovery.none": {
+    "other": "No administrator recovery has been requested in this network."
+  },
+  "admin_recovery.col_requester": {
+    "other": "Requested by"
+  },
+  "admin_recovery.col_status": {
+    "other": "Status"
+  },
+  "admin_recovery.col_requested": {
+    "other": "Requested"
+  },
+  "admin_recovery.col_expires": {
+    "other": "Expires"
+  },
+  "admin_recovery.col_first": {
+    "other": "First approval"
+  },
+  "admin_recovery.col_closed": {
+    "other": "Closed"
+  },
+  "admin_recovery.not_yet": {
+    "other": "Not yet"
+  },
+  "admin_recovery.you": {
+    "other": "You"
+  },
+  "admin_recovery.history_heading": {
+    "other": "Recorded steps"
+  },
+  "admin_recovery.history_caption": {
+    "other": "Recorded steps of administrator recovery, oldest first"
+  },
+  "admin_recovery.history_none": {
+    "other": "No steps have been recorded yet."
+  },
+  "admin_recovery.col_when": {
+    "other": "When"
+  },
+  "admin_recovery.col_step": {
+    "other": "Step"
+  },
+  "admin_recovery.col_by": {
+    "other": "By"
+  },
+  "admin_recovery.by_member": {
+    "other": "A member"
+  },
+  "admin_recovery.by_operator": {
+    "other": "Platform operator"
+  },
+  "admin_recovery.by_system": {
+    "other": "Automatic"
+  },
+  "admin_recovery.status.requested": {
+    "other": "Waiting for a first approval"
+  },
+  "admin_recovery.status.approved": {
+    "other": "First approval given; waiting for a second, different operator"
+  },
+  "admin_recovery.status.applied": {
+    "other": "Approved twice: the member is now an administrator"
+  },
+  "admin_recovery.status.refused": {
+    "other": "Refused"
+  },
+  "admin_recovery.status.expired": {
+    "other": "Expired"
+  },
+  "admin_recovery.status.superseded": {
+    "other": "Closed: another request was applied"
+  },
+  "admin_recovery.event.admin_recovery.requested": {
+    "other": "A member asked to be appointed administrator"
+  },
+  "admin_recovery.event.admin_recovery.approved": {
+    "other": "First approval"
+  },
+  "admin_recovery.event.admin_recovery.applied": {
+    "other": "Second approval by a different operator; administrator appointed"
+  },
+  "admin_recovery.event.admin_recovery.refused": {
+    "other": "Refused"
+  },
+  "admin_recovery.event.admin_recovery.expired": {
+    "other": "Expired without enough approvals"
+  },
+  "admin_recovery.event.admin_recovery.superseded": {
+    "other": "Closed because another request was applied"
+  },
+  "admin_recovery.event.admin_recovery.listed": {
+    "other": "A platform operator viewed the requests"
+  },
   "auth.title.sign_in": {
     "other": "Sign in"
   },

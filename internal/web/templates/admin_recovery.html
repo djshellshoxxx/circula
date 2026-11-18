@@ -1,0 +1,32 @@
+{{define "content"}}
+<p>{{msg "admin_recovery.intro"}}</p>
+{{if not .D.AdminRequired}}<p>{{msg "admin_recovery.has_admin"}}</p>{{end}}
+{{if .D.CanRequest}}
+<section aria-labelledby="ar-ask-h"><h2 id="ar-ask-h">{{msg "admin_recovery.ask_heading"}}</h2>
+<p>{{msg "admin_recovery.ask_text"}}</p>
+<form method="post" action="/n/{{.Slug}}/admin-recovery" novalidate>
+  {{template "csrf" .}}{{template "idem" .}}
+  {{with .Err "confirm"}}<p class="error" id="e-confirm"><span class="sr">Error: </span>{{.}}</p>{{end}}
+  <div class="field" id="f-confirm"><label><input type="checkbox" name="confirm" value="1"> {{msg "admin_recovery.confirm"}}</label></div>
+  <div class="actions"><button type="submit">{{msg "admin_recovery.submit"}}</button> <a href="/n/{{.Slug}}">Cancel</a></div>
+</form></section>
+{{else if .D.AdminRequired}}<p>{{msg "admin_recovery.cannot_ask"}}</p>{{end}}
+<section aria-labelledby="ar-req-h"><h2 id="ar-req-h">{{msg "admin_recovery.requests_heading"}}</h2>
+{{if .D.Rows}}
+<div class="scroll" role="region" aria-label="{{msg "admin_recovery.requests_caption"}}" tabindex="0">
+<table class="stack"><caption>{{msg "admin_recovery.requests_caption"}}</caption>
+<thead><tr><th scope="col">{{msg "admin_recovery.col_requester"}}</th><th scope="col">{{msg "admin_recovery.col_status"}}</th><th scope="col">{{msg "admin_recovery.col_requested"}}</th><th scope="col">{{msg "admin_recovery.col_expires"}}</th><th scope="col">{{msg "admin_recovery.col_first"}}</th><th scope="col">{{msg "admin_recovery.col_closed"}}</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr><th scope="row" data-label="{{msg "admin_recovery.col_requester"}}">{{.Requester}}</th><td data-label="{{msg "admin_recovery.col_status"}}">{{.Status}}</td><td data-label="{{msg "admin_recovery.col_requested"}}">{{.Requested}}</td><td data-label="{{msg "admin_recovery.col_expires"}}">{{.Expires}}</td><td data-label="{{msg "admin_recovery.col_first"}}">{{if .HasFirst}}{{.First}}{{else}}{{msg "admin_recovery.not_yet"}}{{end}}</td><td data-label="{{msg "admin_recovery.col_closed"}}">{{if .HasClosed}}{{.Closed}}{{else}}{{msg "admin_recovery.not_yet"}}{{end}}</td></tr>{{end}}</tbody></table></div>
+{{template "pager" dict "Next" .D.RowsNext "Href" (printf "/n/%s/admin-recovery?after=" .Slug)}}
+{{else}}<p>{{msg "admin_recovery.none"}}</p>{{end}}
+</section>
+<section aria-labelledby="ar-hist-h"><h2 id="ar-hist-h">{{msg "admin_recovery.history_heading"}}</h2>
+{{if .D.Events}}
+<div class="scroll" role="region" aria-label="{{msg "admin_recovery.history_caption"}}" tabindex="0">
+<table class="stack"><caption>{{msg "admin_recovery.history_caption"}}</caption>
+<thead><tr><th scope="col">{{msg "admin_recovery.col_when"}}</th><th scope="col">{{msg "admin_recovery.col_step"}}</th><th scope="col">{{msg "admin_recovery.col_by"}}</th></tr></thead>
+<tbody>{{range .D.Events}}<tr><th scope="row" data-label="{{msg "admin_recovery.col_when"}}">{{.When}}</th><td data-label="{{msg "admin_recovery.col_step"}}">{{.Step}}</td><td data-label="{{msg "admin_recovery.col_by"}}">{{.By}}</td></tr>{{end}}</tbody></table></div>
+{{template "pager" dict "Next" .D.EventsNext "Href" (printf "/n/%s/admin-recovery?events_after=" .Slug)}}
+{{else}}<p>{{msg "admin_recovery.history_none"}}</p>{{end}}
+</section>
+{{end}}

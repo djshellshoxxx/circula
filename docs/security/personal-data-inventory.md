@@ -83,6 +83,10 @@ and administrators are told not to write personal data into reasons ([erasure.md
 | `break_glass_sessions.operator_label` | identifier | Operator staff member who opened a break-glass session (SEC-013) | Lifetime of the network (append-only) | Not exported; the audit trail shows the access to the network's administrators | Not applicable: operator staff, not a member |
 | `break_glass_sessions.reason` | free text | Documented reason of the break-glass access | Lifetime of the network (append-only) | Not exported; the audit trail shows the access to the network's administrators | Kept: an operator record |
 | `break_glass_sessions.closed_reason` | free text | Why the session ended | As `break_glass_sessions.reason` | Not exported | Kept: an operator record |
+| `admin_recovery_requests.first_operator` | identifier | Operator staff member who gave the first approval of an administrator recovery request (GOV-021) | Lifetime of the network (append-only) | Not exported; the audit trail shows it to the network's administrators | Not applicable: operator staff, not a member |
+| `admin_recovery_requests.first_reason` | free text | Documented reason of the first approval | As `admin_recovery_requests.first_operator` | Not exported; the audit trail shows it to the network's administrators | Kept: an operator record |
+| `admin_recovery_requests.closed_by` | identifier | Operator staff member who applied (second approval) or refused the request; empty when the system closed it | As `admin_recovery_requests.first_operator` | Not exported; the audit trail shows it to the network's administrators | Not applicable: operator staff, not a member |
+| `admin_recovery_requests.closed_reason` | free text | Documented reason of the second approval or refusal, or the fixed system reason | As `admin_recovery_requests.first_operator` | Not exported | Kept: an operator record |
 | `audit_events.reason` | free text | Reason recorded with an audited action | Lifetime of the network; hash-chained, never changed | Network export | Kept: changing it would break the audit chain ([erasure.md](../dev/erasure.md#the-audit-chain)) |
 
 ## Other columns
@@ -92,6 +96,10 @@ transactions, statuses, amounts, hashes and timestamps. Ledger and audit records
 reference unchanged; once the member's name and login are erased the reference is pseudonymous (SEC-018, LED-2).
 `audit_events.summary_before` and `summary_after` are structured values; the code never writes a name, login or contact
 detail into them.
+
+`admin_recovery_requests` (GOV-021) holds no member-written text: the requester is a member reference, kept after
+erasure like the other member-linked rows (an erased member is departed, so an open request of theirs can no longer be
+approved, and it expires). Members see a request through the live directory name, which erasure replaces.
 
 `pending_adjustments.related_tx_id` and `transactions.related_tx_id` retain optional adjustment context for the
 lifetime of the network, like the existing transaction reference columns. They hold only a transaction ID and remain
@@ -103,6 +111,7 @@ in append-only audit summaries. Standalone adjustments leave the reference empty
 | Table | Columns |
 |---|---|
 | `account_recovery_codes` | `id`, `person_id`, `created_at`, `used_at` |
+| `admin_recovery_requests` | `id`, `network_id`, `requester_member_id`, `status`, `requested_at`, `expires_at`, `first_approved_at`, `closed_at`, `role_assignment_id` |
 | `accounts` | `id`, `network_id`, `member_id`, `is_system`, `balance`, `limit_override`, `limit_override_until` |
 | `announcements` | `id`, `network_id`, `created_by`, `published_at`, `effective_at`, `deleted_at`, `deleted_by`, `supersedes_id` |
 | `api_tokens` | `id`, `person_id`, `network_id`, `scopes`, `created_at`, `expires_at`, `revoked_at` |

@@ -36,16 +36,18 @@ type page struct {
 	Flash   string
 	ReqID   string
 	Notice  string // persistent notice (suspended, departed)
-	Summary string // error summary lead text
-	Errors  []fieldErr
-	V       map[string]string // submitted form values
-	D       any               // screen data
-	Dec     int
-	Unit    string
-	Idem    string
-	Next    string
-	Status  int
-	Text    string
+	// NoticeHref links the administrator-required notice to the recovery page (GOV-021).
+	NoticeHref string
+	Summary    string // error summary lead text
+	Errors     []fieldErr
+	V          map[string]string // submitted form values
+	D          any               // screen data
+	Dec        int
+	Unit       string
+	Idem       string
+	Next       string
+	Status     int
+	Text       string
 	// Session expiry warning (UX-030): Unix time and whether activity extends it.
 	ExpiresAt  int64
 	Extendable bool
@@ -187,6 +189,9 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 		p.Dec, p.Unit = c.Net.Policy.Decimals, c.Net.Policy.CurrencyName
 		p.Nav = c.nav(r.URL.Path)
 		p.Notice = c.notice()
+		if p.Notice != "" && p.Notice == messages.Text("notice.admin_required") {
+			p.NoticeHref = c.base() + "/admin-recovery"
+		}
 		if fi, ok := c.s.svc.FrozenInfo(c.Net.ID); ok {
 			p.FrozenSince = c.when(fi.Since)
 		}
