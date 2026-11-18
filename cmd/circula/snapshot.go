@@ -202,11 +202,11 @@ func verifyFile(ctx context.Context, path string, cfg *Config) (LedgerSummary, e
 
 // verifyCopy verifies a throw-away copy of path, leaving path untouched.
 func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
-	work, err := os.MkdirTemp(filepath.Dir(path), tempDirPrefix)
+	work, cleanup, err := newBackupWork(filepath.Dir(path))
 	if err != nil {
 		return nil, fmt.Errorf("private verification directory: %w", err)
 	}
-	defer secureRemoveAll(work)
+	defer cleanup()
 	scratch := filepath.Join(work, "verify.db")
 	if err := copyFileSync(path, scratch); err != nil {
 		return nil, err
@@ -241,11 +241,11 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 	}
 	encrypting := len(keys.Encrypt) > 0
 	sweepStaleTemp(filepath.Dir(dest))
-	work, err := os.MkdirTemp(filepath.Dir(dest), tempDirPrefix)
+	work, cleanup, err := newBackupWork(filepath.Dir(dest))
 	if err != nil {
 		return nil, fmt.Errorf("private work directory: %w", err)
 	}
-	defer secureRemoveAll(work)
+	defer cleanup()
 	partial := filepath.Join(work, "snapshot.db")
 	rm := removeDBFiles
 	if encrypting {
@@ -445,8 +445,9 @@ func backupFileNameFor(cfg *Config, t time.Time) string {
 }
 
 // sweepStaleTemp removes plaintext work directories that a crashed backup
-// left behind. Only directories older than an hour are touched, so a backup
-// running in another process is never disturbed.
+// left behind. An age threshold limits scans; a process-held lease, rather than
+// age, protects work that is still active. Legacy unleased orphan directories
+// remain eligible for cleanup.
 func sweepStaleTemp(dir string) {
 	ents, err := os.ReadDir(dir)
 	if err != nil {
@@ -457,7 +458,7 @@ func sweepStaleTemp(dir string) {
 			continue
 		}
 		if fi, err := e.Info(); err == nil && time.Since(fi.ModTime()) > time.Hour {
-			secureRemoveAll(filepath.Join(dir, e.Name()))
+			trySweepBackupWork(filepath.Join(dir, e.Name()), fi)
 		}
 	}
 }

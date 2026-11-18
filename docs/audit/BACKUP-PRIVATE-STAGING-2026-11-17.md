@@ -40,10 +40,11 @@ private-directory approach protects the throw-away copies used during restore
 verification. Normal return and verification failure remove this invocation's
 temporary directory without touching legacy predictable names.
 
-All backup modes use the existing age-bounded stale-directory sweep. Directories
-with the backup prefix older than one hour are eligible; fresh directories and
-directories without that prefix remain untouched. This preserves the existing
-backup-work ownership convention.
+All backup modes use the stale-directory sweep. Directories with the backup
+prefix older than one hour are considered only after obtaining an exclusive
+process-held lease; age alone does not establish that a directory is abandoned.
+Fresh directories, active leases and directories without that prefix remain
+untouched. Legacy orphan directories without lease files are still reclaimed.
 
 `copyFileSync` uses `O_EXCL` and removes an incomplete output only after it has
 successfully created that output. Restore no longer deletes the destination
@@ -81,3 +82,34 @@ administrator, a hostile process under the same operating-system account, or
 an attacker allowed to rename the private directory through a writable parent.
 It does not prove forensic erasure on copy-on-write storage. A3-F02 / DEC-014 and
 the privacy-retention policy questions remain unresolved.
+
+## Independent review correction: active backup leases
+
+Reviewer G identified a regression in `cdbfefc`: a backup running for more than
+one hour could lose its private directory when another backup swept old
+directories. `TestAuditGActiveBackupSurvivesStaleSweep` deterministically ages an
+active backup directory and starts a second backup. It failed before this
+follow-up because the second backup removed the first backup's verification
+file and snapshot.
+
+All private backup directories now acquire the existing native `acquireLock`
+lease immediately after creation and retain it through snapshot, verification,
+or encrypted pre-migration work. The sweeper must obtain the same nonblocking
+lease before deleting an old directory. A process crash releases the native
+lock, so its orphan remains reclaimable. Legacy directories without a lease
+file retain the original age-based eligibility.
+
+Cleanup holds the lease while removing snapshot contents. It then releases the
+handle before removing the lease file and empty directory, because Windows
+disallows deleting the exclusively opened lease file. Sweep candidates whose
+directory identity changed or whose lease path is a symlink/nonregular file are
+left untouched. No new permanent process registry or timestamp heartbeat is
+required.
+
+Follow-up regressions cover the originally reported active-backup failure, a
+real subprocess holding an aged directory, reclamation after killing that
+process, and directory/lease symlinks. The existing fresh-directory and legacy
+orphan cleanup tests remain. Execution is on Linux; Windows and macOS runtime
+qualification remains the native CI gate. The filesystem ownership boundary
+above still applies, and legacy directories from older binaries do not acquire
+leases retroactively.
