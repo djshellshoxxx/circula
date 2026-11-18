@@ -253,10 +253,12 @@ func (s *Service) CanRequestAdminRecovery(ctx context.Context, actor domain.Acto
 		if err != nil {
 			return err
 		}
-		if actor.MustChangePassword || !actor.Can(domain.ScopeWrite) || s.checkNotFrozen(netID) != nil {
-			return nil
+		// A request needs write scope, no forced password change and a network
+		// that is not frozen; without them the form is simply not offered.
+		writable := !actor.MustChangePassword && actor.Can(domain.ScopeWrite)
+		if writable && s.checkNotFrozen(netID) == nil {
+			can = s.requestable(tx, p) == nil
 		}
-		can = s.requestable(tx, p) == nil
 		return nil
 	})
 	return can, err
