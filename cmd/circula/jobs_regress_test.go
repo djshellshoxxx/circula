@@ -469,6 +469,50 @@ func TestJobUntilNextBackupIgnoresFutureFiles(t *testing.T) {
 	}
 }
 
+// A3-F10, OPS-018: the scheduled backup's retention (backupNow, which prunes
+// at the current time) keeps a future-dated backup, and the configured counts
+// still apply to the real backups: the new one and the newest older one stay.
+func TestJobRetentionDoesNotCountFutureDatedBackup(t *testing.T) {
+	f := newJobFixture(t)
+	if err := os.MkdirAll(f.cfg.BackupDir, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now().UTC()
+	future := filepath.Join(f.cfg.BackupDir, encryptedBackupFileName(now.AddDate(50, 0, 0)))
+	original := []byte("future backup retained")
+	if err := os.WriteFile(future, original, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	old := []time.Time{now.AddDate(0, 0, -1), now.AddDate(0, 0, -2), now.AddDate(0, 0, -3)}
+	for _, ts := range old {
+		if err := os.WriteFile(filepath.Join(f.cfg.BackupDir, backupFileName(ts)), []byte("stale"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	f.cfg.BackupRetainDaily = 2
+	f.cfg.BackupRetainMonthly = 1
+	if err := f.runner.backupNow(f.ctx); err != nil {
+		t.Fatalf("backupNow: %v", err)
+	}
+	left, err := listBackups(f.cfg.BackupDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var names []string
+	for _, e := range left {
+		names = append(names, filepath.Base(e.path))
+	}
+	if len(left) != 3 || left[0].path != future || filepath.Base(left[2].path) != backupFileName(old[0]) {
+		t.Fatalf("kept %v, want the future-dated file, the new backup and %s", names, backupFileName(old[0]))
+	}
+	if err := verifyBackupFile(left[1].path, mustManifest(t, left[1].path)); err != nil {
+		t.Errorf("new backup does not match its manifest: %v", err)
+	}
+	if got, err := os.ReadFile(future); err != nil || !bytes.Equal(got, original) {
+		t.Errorf("future backup changed: %q, %v", got, err)
+	}
+}
+
 // The backup loop takes a backup straight away when none exists, then sleeps
 // for the interval and returns when shut down.
 func TestJobBackupLoopRunsOnceThenStops(t *testing.T) {

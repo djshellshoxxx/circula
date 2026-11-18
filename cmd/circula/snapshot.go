@@ -517,18 +517,35 @@ func listBackups(dir string) ([]backupEntry, error) {
 // keepMonthly calendar months that has backups, the newest backup of that
 // month. It returns the names of removed backup files.
 func pruneBackups(dir string, keepDaily, keepMonthly int) ([]string, error) {
+	return pruneBackupsAt(dir, keepDaily, keepMonthly, time.Now())
+}
+
+// pruneBackupsAt is pruneBackups evaluated at now (OPS-018).
+func pruneBackupsAt(dir string, keepDaily, keepMonthly int, now time.Time) ([]string, error) {
 	entries, err := listBackups(dir)
 	if err != nil {
 		return nil, err
 	}
 	keep := map[string]bool{}
-	for i, e := range entries {
+	var past []backupEntry
+	for _, e := range entries {
+		// A backup named after now (the clock ran ahead when it was written,
+		// or a misplaced file) is kept, but it takes no daily or monthly slot,
+		// so it cannot push real backups out early. Scheduling ignores it in
+		// the same way (untilNextBackupAt).
+		if e.at.After(now) {
+			keep[e.path] = true
+			continue
+		}
+		past = append(past, e)
+	}
+	for i, e := range past {
 		if i < keepDaily {
 			keep[e.path] = true
 		}
 	}
 	months := map[string]bool{}
-	for _, e := range entries {
+	for _, e := range past {
 		key := e.at.Format("2006-01")
 		if months[key] || len(months) >= keepMonthly {
 			continue

@@ -37,7 +37,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-015 | P0 | partial | Alert table in docs/ops/monitoring.md; alerts not configured or tested in staging |
 | OPS-016 | P0 | built | Read-only verify with checksum test; CLI and admin entry points |
 | OPS-017 | P0 | built | Online snapshot with manifest and checksum; load test not run |
-| OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention |
+| OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention [2026-11-18: a backup whose name is dated after the current time (clock fault, misplaced file) is kept but fills no daily or monthly slot, as scheduling already ignores it (A3-F10; `TestPruneKeepsFutureDatedBackupsOutOfCounts`). Logging that clock anomaly (OPS-033) is still open] |
 | OPS-019 | P0 | partial | [Refreshed 2026-11-16: encryption at rest is built as an option, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md (status implemented).] Off-host copy is an operator procedure |
 | OPS-020 | P0 | built | Restore verifies, refuses while serving, writes a local record and a database.restored audit event |
 | OPS-021 | P0 | built | Drill procedure + checklist in docs/ops/backup-restore.md; scripts/restore-drill.sh records drills |
