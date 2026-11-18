@@ -9,6 +9,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) authRoutes() {
@@ -39,14 +40,14 @@ func formValues(r *http.Request) map[string]string {
 }
 
 func (s *server) loginForm(w http.ResponseWriter, r *http.Request) {
-	s.render(w, r, nil, "login", 200, &page{Title: "Sign in", Next: safeNext(r.URL.Query().Get("next"))})
+	s.render(w, r, nil, "login", 200, &page{Title: messages.Text("auth.title.sign_in"), Next: safeNext(r.URL.Query().Get("next"))})
 }
 
 func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
-	p := &page{Title: "Sign in", V: formValues(r), Next: safeNext(r.PostFormValue("next"))}
+	p := &page{Title: messages.Text("auth.title.sign_in"), V: formValues(r), Next: safeNext(r.PostFormValue("next"))}
 	ip, acct := s.clientIP(r), acctKey(s.clientIP(r), r.PostFormValue("login"))
 	if s.ipFail.blocked(ip) || s.acctFail.blocked(acct) {
-		p.Summary = "Too many attempts. Wait a minute and try again. Nothing changed."
+		p.Summary = messages.Text("auth.throttle.minute")
 		s.render(w, r, nil, "login", 429, p)
 		return
 	}
@@ -58,12 +59,12 @@ func (s *server) loginPost(w http.ResponseWriter, r *http.Request) {
 		}
 		switch domain.CodeOf(err) {
 		case domain.CodeRateLimited:
-			p.Summary = "Too many attempts for this login. Wait a few minutes and try again."
+			p.Summary = messages.Text("auth.throttle.login")
 			s.render(w, r, nil, "login", 429, p)
 		case domain.CodeValidation, domain.CodeUnauthenticated:
 			// One message for unknown login and wrong password (UX-052).
-			p.Summary = "The login or password is not correct. Check both and try again."
-			p.Errors = []fieldErr{{"login", "Login or password: check both and try again."}}
+			p.Summary = messages.Text("auth.login.failed")
+			p.Errors = []fieldErr{{"login", messages.Text("auth.login.failed_field")}}
 			s.render(w, r, nil, "login", 401, p)
 		default:
 			s.fail(w, r, err)
@@ -97,25 +98,25 @@ func (s *server) logout(w http.ResponseWriter, r *http.Request) {
 	}
 	s.clearSession(w, r)
 	s.rotateCSRF(w, r)
-	s.setFlash(w, r, "You are signed out.")
+	s.setFlash(w, r, messages.Text("auth.flash.signed_out"))
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func (s *server) registerForm(w http.ResponseWriter, r *http.Request) {
-	s.render(w, r, nil, "register", 200, &page{Title: "Create an account", Next: safeNext(r.URL.Query().Get("next"))})
+	s.render(w, r, nil, "register", 200, &page{Title: messages.Text("auth.title.register"), Next: safeNext(r.URL.Query().Get("next"))})
 }
 
 func (s *server) registerPost(w http.ResponseWriter, r *http.Request) {
-	p := &page{Title: "Create an account", V: formValues(r), Next: safeNext(r.PostFormValue("next"))}
+	p := &page{Title: messages.Text("auth.title.register"), V: formValues(r), Next: safeNext(r.PostFormValue("next"))}
 	if !s.reg.allow(s.clientIP(r)) {
-		p.Summary = "Too many attempts. Wait a minute and try again. Nothing changed."
+		p.Summary = messages.Text("auth.throttle.minute")
 		s.render(w, r, nil, "register", 429, p)
 		return
 	}
 	pw := r.PostFormValue("password")
 	if pw != r.PostFormValue("password2") {
-		p.Errors = []fieldErr{{"password2", "Confirm password: the two passwords do not match. Type the same password in both fields."}}
-		p.Summary = "Not saved. Fix the problems below. Nothing changed."
+		p.Errors = []fieldErr{{"password2", messages.Text("auth.mismatch.confirm")}}
+		p.Summary = messages.Text("auth.not_saved")
 		s.render(w, r, nil, "register", 422, p)
 		return
 	}
@@ -124,7 +125,7 @@ func (s *server) registerPost(w http.ResponseWriter, r *http.Request) {
 	// person to the sign-in form, which works only with the right password.
 	_, err := s.svc.RegisterPerson(r.Context(), service.RegisterInput{Login: r.PostFormValue("login"), Password: pw})
 	if err == nil {
-		s.setFlash(w, r, "Thank you. If that login was available the account now exists. Sign in with it and your password.")
+		s.setFlash(w, r, messages.Text("auth.flash.registered"))
 		to := "/login"
 		if p.Next != "" {
 			to += "?next=" + url.QueryEscape(p.Next)

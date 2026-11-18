@@ -78,7 +78,14 @@ async function readScreen(page) {
       contrast: Math.min(contrast(li.querySelector('.num')), li.querySelector('.tag') ? contrast(li.querySelector('.tag')) : 21),
     }));
     const tags = [...document.querySelectorAll('main .tag')].map((t) => ({ text: t.innerText.trim(), shown: shown(t), contrast: contrast(t) }));
-    return { balances, rows, tags, text: document.querySelector('main').innerText.replace(/\s+/g, ' ').trim() };
+    const words = (text) => text.replace(/\s+/g, ' ').trim();
+    const text = words(document.querySelector('main').innerText);
+    const freshness = document.querySelector('main #figure-freshness');
+    const time = freshness?.querySelector('time');
+    if (!time || !words(time.innerText)) throw new Error('expected a nonempty generation time on the network page');
+    const freshnessText = words(freshness.innerText);
+    const crossText = text.replace(freshnessText, freshnessText.replace(words(time.innerText), '[generation time]'));
+    return { balances, rows, tags, text, crossText };
   });
 }
 
@@ -93,10 +100,14 @@ for (const [name, who, pathOf, states] of SCREENS) {
     for (const [mode, apply] of Object.entries(MODES)) {
       const p = await as(who); // a fresh page, so no emulation carries over from the previous mode
       await p.goto(pathOf(st));
+      // Compare one server snapshot before/after its colour change. Separate page
+      // requests can legitimately have different generation timestamps.
+      const before = await readScreen(p);
+      expect(before.crossText, `${name}: the fresh page has the same content`).toBe(normal.crossText);
       await apply(p);
       const s = await readScreen(p);
       const where = `${name}, ${mode}`;
-      expect(s.text, `${where}: the same words as in colour`).toBe(normal.text);
+      expect(s.text, `${where}: the same words as in colour`).toBe(before.text);
       for (const b of s.balances) {
         const m = b.visible.match(BALANCE);
         expect(m, `${where}: balance "${b.visible}" shows a sign and a word`).not.toBeNull();
