@@ -1,7 +1,7 @@
 # Audit 2026-10-28 Low and Info findings: triage and remediation, integrated on e67bad5
 
 Integrated in a detached worktree at `e67bad5` (main after PR #69 and the handoff PR #70; `1ee699f` is an ancestor).
-Triage, both fixes and both reviews ran at `1ee699f`. The two approved patches were applied here, in order, with `git apply --3way` and committed as `bf494d0` (A2-08) and `155caab` (A3-F10). This file is added in the commit after them. Nothing was pushed and GitHub was not used.
+Triage, both fixes and both reviews ran at `1ee699f`. The two approved patches were applied here, in order, with `git apply --3way` and committed as `bf494d0` (A2-08) and `155caab` (A3-F10). This file was added in `8bd8e45`, the commit after them. Nothing was pushed and GitHub was not used.
 Toolchain: go1.26.11 (`go.mod` requires `go 1.26.11`; the auto toolchain selects it). Prefixes: S/=internal/service, C/=cmd/circula, A/=internal/api, W/=internal/web, T/=internal/store.
 File and line references in the table are the triage's, at `1ee699f`. In `cmd/` and `internal/` only C/serve.go, C/config.go, C/serve_test.go and one new service test changed between `1ee699f` and `e67bad5` (PR #69).
 
@@ -175,7 +175,8 @@ The openapi-contract fixer found these at `1ee699f`, outside this triage. They a
 
 - `bf494d0` (A2-08): docs/specs/07-api-contract.md; new internal/api/problem_catalogue_test.go.
 - `155caab` (A3-F10): cmd/circula/snapshot.go; cmd/circula/backup_test.go; cmd/circula/jobs_regress_test.go; docs/specs/11-deployment-operations.md (OPS-018 row); docs/TRACEABILITY.md (regenerated with `make traceability`).
-- This commit: this file; docs/audit/2026-10-28/wip-fixes/challenge-reason-erasure.patch.txt, a byte copy of the stopped A3-F05 fixer's patch (sha256 `6642a7f2322548f35bbc2ad4d9a607141bf25bbed32fe073beb4772d968eaa24`); one row in docs/audit/2026-10-28/wip-fixes/README.md.
+- `8bd8e45` (this record): this file; docs/audit/2026-10-28/wip-fixes/challenge-reason-erasure.patch.txt, a byte copy of the stopped A3-F05 fixer's patch (sha256 `6642a7f2322548f35bbc2ad4d9a607141bf25bbed32fe073beb4772d968eaa24`); one row in docs/audit/2026-10-28/wip-fixes/README.md.
+- The commit after `8bd8e45`: this file only, to add the validation results for `8bd8e45` under [Tests run](#tests-run) and correct the race-timeout note.
 
 Not touched: cmd/circula/serve.go, cmd/circula/config.go, migrations, e2e/, .github/, archive PR #13 and every open PR branch. No existing test was changed, skipped or weakened.
 
@@ -190,21 +191,23 @@ Not touched: cmd/circula/serve.go, cmd/circula/config.go, migrations, e2e/, .git
 
 ## Tests run
 
-These ran on the tree of `155caab`, which has the same code as this commit; this commit adds only files under docs/audit/2026-10-28/. The integrator repeated the full set on this commit, and those results are in the integration report.
+The first set ran on the tree of `155caab`, which has the same code as `8bd8e45`, the commit that added this file (it added only files under docs/audit/2026-10-28/). The integrator then repeated the full set on `8bd8e45`. The commit after `8bd8e45` adds those results here and changes nothing else.
 
-| Command | Result |
-|---|---|
-| Fail-before, both fixes reversed as described above | A2-08: FAIL with the 4 missing codes. A3-F10: FAIL in 4 subtests and the job test. Restored: PASS |
-| `gofmt -l .` | clean |
-| `go vet ./...` | ok |
-| `make traceability-check` | up to date |
-| `scripts/check-hygiene.sh` | ok |
-| `scripts/check-action-pins.sh` | ok |
-| `GOTOOLCHAIN=go1.26.10 go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact` | no leaks found |
-| `go test -count=1 ./...` | every package ok |
-| `CGO_ENABLED=1 go test -race -count=1 ./internal/...` | internal/service hit Go's default 10-minute package timeout (600.04 s). The test running at that moment, `TestConfiguredAuthenticationThrottleLoginAndGlobal`, had run for 1 s, and api, web and store were running their race suites in parallel on this 4-CPU machine. No test failed and no data race was reported. Every other package was ok (api 302.8 s, contract 29.1 s, store 118.8 s, web 227.3 s). CI bounds this run with `-timeout 20m` (.github/workflows/ci.yml); the integrator repeated it with that bound on this commit, and the result is in the integration report |
-| `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0 run` (go1.26.11, the version CI's setup-go takes from go.mod) | 0 issues. The same command with `GOTOOLCHAIN=go1.26.10` cannot load the packages: `go.mod requires go >= 1.26.11 (running go 1.26.10; GOTOOLCHAIN=go1.26.10)` |
-| `make build`, then in e2e/ `npm ci` and `npx playwright test` (Chromium at /opt/pw-browsers/chromium) | 584 passed (7.5 min, 1 worker) |
+| Command | On the `155caab` tree | On `8bd8e45` |
+|---|---|---|
+| Fail-before, both fixes reversed as described above | A2-08: FAIL with the 4 missing codes. A3-F10: FAIL in 4 subtests and the job test. Restored: PASS | not repeated |
+| `gofmt -l .` | clean | clean |
+| `go vet ./...` | ok | ok |
+| `make traceability-check` | up to date | up to date |
+| `scripts/check-hygiene.sh` | ok | ok |
+| `scripts/check-action-pins.sh` | ok | ok |
+| `GOTOOLCHAIN=go1.26.10 go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact` | no leaks found (9.11 MB scanned) | no leaks found (9.16 MB, including this file and the reference patch) |
+| `go test -count=1 ./...` | every package ok | every package ok |
+| `CGO_ENABLED=1 go test -race -count=1 ./internal/...` | internal/service hit Go's default 10-minute package timeout (600.04 s); the test running at that moment, `TestConfiguredAuthenticationThrottleLoginAndGlobal`, had run for 1 s. No test failed and no data race was reported. Every other package was ok (api 302.8 s, contract 29.1 s, store 118.8 s, web 227.3 s) | not repeated in this form; see the next two rows |
+| `CGO_ENABLED=1 go test -race -count=1 ./internal/service`, alone, default timeout | not run | timed out the same way (600.03 s; `TestLoginCounterDecays` had run for 0 s). So the package's race run needs more than 10 minutes on this 4-CPU machine even with nothing running beside it. These commits change no file in internal/service or in the packages it uses, so the timeout is not caused by them |
+| `CGO_ENABLED=1 go test -race -count=1 -timeout 20m ./internal/...`, the bound CI uses (.github/workflows/ci.yml) | not run | every package ok (api 306.8 s, contract 29.1 s, service 624.3 s, store 121.9 s, web 228.5 s); no data race |
+| `go run github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0 run` (go1.26.11, the version CI's setup-go takes from go.mod) | 0 issues. The same command with `GOTOOLCHAIN=go1.26.10` cannot load the packages: `go.mod requires go >= 1.26.11 (running go 1.26.10; GOTOOLCHAIN=go1.26.10)` | the same |
+| `make build`, then in e2e/ `npm ci` and `npx playwright test` (Chromium at /opt/pw-browsers/chromium) | 584 passed (7.5 min, 1 worker) | 584 passed (7.7 min, 1 worker) |
 
 Not run: the macOS and Windows CI jobs, govulncheck, the licence check and the release workflow.
 
