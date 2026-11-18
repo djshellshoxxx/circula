@@ -23,7 +23,7 @@ Draft PR branches are preserved on the remote. Each PR head also stays readable 
 | [#2](https://github.com/djshellshoxxx/circula/pull/2) | `claude/sweet-turing-m3ftja` | `01b6e5c7` | 20 spec drafts, research notes, plans, ADR template, Python scripts | Docs 15, 16, 17 and 19 archived in [`pr2/`](pr2/). Two research notes moved to `docs/research/`. Rest superseded |
 | [#3](https://github.com/djshellshoxxx/circula/pull/3) | `docs/foundational-spec-shells` | `d96f2e75` | Empty spec shells | Superseded; nothing unique |
 | [#5](https://github.com/djshellshoxxx/circula/pull/5) | `docs/readme-and-wiki` | `db782649` | README/wiki stub saying "no code yet" | Superseded; obsolete |
-| [#29](https://github.com/djshellshoxxx/circula/pull/29) | `claude/relaxed-hopper-8q4vhq` | `2da1a293` | Full rewrite of 14 specs (about 914 anchored requirements) and `tools/check_specs.py` | Index only (below). Most of its themes are already canonical (review estimate) |
+| [#29](https://github.com/djshellshoxxx/circula/pull/29) | `claude/relaxed-hopper-8q4vhq` | `2da1a293` | Full rewrite of 14 specs (about 914 anchored requirements) and `tools/check_specs.py` | All 15 Markdown files archived in [`pr29/`](pr29/); the Python tool was not. Most of its themes are already canonical (review estimate) |
 | [#38](https://github.com/djshellshoxxx/circula/pull/38) | `claude/lucid-archimedes-upisa8` | `d2c1c609` | 13 condensed specs plus index | Superseded; one unique item listed below |
 | none | `planning/future-cli-specs-20261110` | `8e2372c0` | Future CLI specification | Index only; conflicts listed below |
 
