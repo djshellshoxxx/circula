@@ -1,0 +1,9 @@
+{
+  "module": "messaging",
+  "workflow_path": "/workspace/scratch/f47ceab29930/circula-messaging-recovery/.github/workflows/future-messaging.yml",
+  "sha256": "01198f097b895606d955f87778207a987d09e49a92fcdc3bbb54e13018b71af0",
+  "yaml_bash_python_syntax": "pass",
+  "permissions_and_action_pins": "pass",
+  "full_real_sqlite_native_matrix": true,
+  "current_source_tests": "not run yet"
+}

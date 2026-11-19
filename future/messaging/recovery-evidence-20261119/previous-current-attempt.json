@@ -1,0 +1,24 @@
+{
+  "scope": "Preserved prior current-source attempt, distinct from the unchanged archive baseline and later successful checks.",
+  "source_receipt": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/three-recovery-qualification/qualification.json",
+  "source_receipt_sha256": "fe20e8c46ba0a2030cc067ddc168dc2f9431de446be9a959c37ebca303b62f5e",
+  "started_utc": "2026-11-19T12:42:40.983084+00:00",
+  "finished_utc": null,
+  "toolchain": "go version go1.26.11 linux/amd64",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "TMPDIR": "/tmp/circula-recovered-qualification-8lm6pgwy/tmp"
+  },
+  "module": "messaging",
+  "checks": [],
+  "interruption": "Executor reattachment lost session 90410. Root independently confirmed no old runner, compiler or test process. No unreported result is counted as a pass.",
+  "disposition": "Module was not reached before interruption."
+}

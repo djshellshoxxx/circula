@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T05:07:07.116460061-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/messaging","Output":"PASS\n"}
+{"Time":"2026-11-19T05:07:07.12134683-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/messaging","Output":"coverage: 76.6% of statements\n"}
+{"Time":"2026-11-19T05:07:08.144814055-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/messaging","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/messaging\t8.026s\tcoverage: 76.6% of statements\n"}
+{"Time":"2026-11-19T05:07:08.147175373-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/messaging","Elapsed":8.031}
+{"Time":"2026-11-19T05:07:09.909168138-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages","Output":"PASS\n"}
+{"Time":"2026-11-19T05:07:09.910562833-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages","Output":"coverage: 80.9% of statements\n"}
+{"Time":"2026-11-19T05:07:10.92300489-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\t1.260s\tcoverage: 80.9% of statements\n"}
+{"Time":"2026-11-19T05:07:10.925475258-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages","Elapsed":1.263}

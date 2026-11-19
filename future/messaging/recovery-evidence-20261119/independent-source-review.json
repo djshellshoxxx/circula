@@ -1,0 +1,69 @@
+{
+  "observed_utc": "2026-11-19T13:05:36.768841+00:00",
+  "reviewer": "/root/independent_triage",
+  "read_only": true,
+  "go_processes_started": false,
+  "disposition": "No blocking source or dedicated-workflow finding in the reviewed recovery deltas; original runtime/provider/integration gates remain separate.",
+  "scope": {
+    "source": "Complete new production deltas and regression tests, relevant parser/CLI callers, original fuzz inputs, dedicated workflows, preservation of every archived path/blob, all original tests and module metadata, accepted-main Core baseline blobs.",
+    "execution": "Read-only Git/Python/YAML/shell syntax verification. This reviewer did not start Go builds, tests, vet, fuzz, native jobs, or provider runs during this review.",
+    "not_claimed": [
+      "Full independent security audit of every unchanged archived production file",
+      "Current full Core qualification",
+      "Native macOS or Windows result",
+      "Feature activation, integration, merge or deployment approval"
+    ]
+  },
+  "reviewed_semantics": {
+    "duplicate_fields": "Minimum-rune traversal of each unicode.SimpleFold cycle matches Go JSON case-insensitive field equivalence. It is used only as a comparison key, preserves single aliases, applies per nested object and does not expand sharp-s or ligatures.",
+    "regression_proof": "Tests call the actual production parser; ordinary encoding/json controls demonstrate that duplicate aliases assign the same typed field. Five new areas, six governance and six messaging parser failures were observed before repair. Messaging additionally observed eighteen malformed stdin cases, with tests requiring zero transport calls/output. Valid Unicode and literal U+FFFD controls are retained.",
+    "messaging_stdin": "Existing bounded read completes before utf8.Valid checks for send/report content and search query. Invalid raw bytes fail before string conversion, JSON marshaling or HTTP transport. Existing byte limits, HTTPS behavior, response cap and authorization adapter semantics are unchanged.",
+    "workflow": "Native Linux/macOS race and Windows ordinary suites remain required; immutable action pins, contents:read, disabled persisted checkout credentials, exact original dependency allowlist, HOLD/disabled and boundary guards, module verification, bounded tests/fuzz and explicit source metadata remain in place. Areas/governance source-file fuzz uses actual production parser and original fuzz source; full real-driver qualification remains separate.",
+    "windows": "Messaging Open rejects mode bits 0077. Pinned Go Windows fileStat.mode reports regular files as 0666 or 0444, both rejected. Recovery docs correctly label an expected source-based Windows gate and preserve the fail-closed check. No Windows result or permission workaround is approved."
+  },
+  "source_receipt": "/workspace/scratch/f47ceab29930/evidence/three-recovery-independent-review/review.json",
+  "source_receipt_sha256": "9fcc5f545f5023cee65f5f24eb39ef3eedbf5d750ba7ae0f31d4ed2007faecd3",
+  "module_review": {
+    "module": "messaging",
+    "base": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+    "archive": "5375bdf6ad5c48d2913c0581c4f8755b7c0f573a",
+    "head": "7e9708d8e50a1959af399aa5956fb2a54ab880b6",
+    "tree": "a5556af33aca22f91ee5371d1d979217bf4936b8",
+    "archive_file_count": 65,
+    "preserved_all_archive_paths": true,
+    "modified_archive_paths": [
+      "future/messaging/README.md",
+      "future/messaging/cmd/circula-messages/main.go",
+      "future/messaging/http.go"
+    ],
+    "original_tests_retained_exact": 9,
+    "module_and_manifest_files_unchanged": true,
+    "outside_module_paths": [
+      ".github/workflows/future-messaging.yml",
+      "cmd/circula/auditanchor.go",
+      "internal/service/departure_pagination_regression_test.go"
+    ],
+    "accepted_main_blobs": {
+      "cmd/circula/auditanchor.go": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "internal/service/departure_pagination_regression_test.go": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+    },
+    "source_map_mismatches": [],
+    "workflow_blob": "fad6b5695ab691af4dded346d76af982b9a899c1",
+    "workflow_checks": {
+      "yaml_parser_available": true,
+      "yaml_permissions_pins_native_matrix": "pass",
+      "shell_syntax": "pass",
+      "embedded_python_syntax": "pass",
+      "dependency_allowlist_matches_archive_go_mod": "pass"
+    },
+    "fail_before": {
+      "log_hash_matches": true,
+      "reported_resource_or_compile_failure": false,
+      "actual_failure_tests": 26,
+      "actual_negative_subcases": 24,
+      "ancillary_build_diagnostics": []
+    }
+  },
+  "pending_findings": [],
+  "closed_findings": []
+}

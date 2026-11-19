@@ -1,0 +1,21 @@
+{
+  "main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "restorations": [
+    {
+      "module": "messaging",
+      "path": "cmd/circula/auditanchor.go",
+      "main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+      "main_blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "introducing_commit": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+      "classification": "exact already-merged main baseline restoration"
+    },
+    {
+      "module": "messaging",
+      "path": "internal/service/departure_pagination_regression_test.go",
+      "main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+      "main_blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595",
+      "introducing_commit": "7457b618057a8b1757ec643806e9afbfc5ba907e",
+      "classification": "exact already-merged main baseline restoration"
+    }
+  ]
+}

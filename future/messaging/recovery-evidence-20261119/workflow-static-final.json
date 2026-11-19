@@ -1,0 +1,14 @@
+{
+  "recorded_utc": "2026-11-19T13:17:04.471572+00:00",
+  "workflow_path": ".github/workflows/future-messaging.yml",
+  "git_blob": "fad6b5695ab691af4dded346d76af982b9a899c1",
+  "sha256": "350469106890c386f560cbafcf3162bb6ad80ddc92657ce932670b9123c5605b",
+  "identical_to_independently_reviewed_workflow": true,
+  "yaml_bash_embedded_python_syntax": "pass",
+  "immutable_actions_permissions_and_matrix": "pass",
+  "dependency_enumeration_only_disables_vcs_stamping": true,
+  "separate_git_source_identity_step": true,
+  "no_go_commands_executed_by_this_static_check": true,
+  "provider_result": "Not observed for a final publication head; native workflow remains a separate gate.",
+  "initial_static_receipt_preserved": "workflow-static.json"
+}

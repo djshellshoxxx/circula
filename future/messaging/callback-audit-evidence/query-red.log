@@ -1,0 +1,5 @@
+--- FAIL: TestCallbackAuditQueryBoundaryBeforeResolve (0.00s)
+    callback_audit_test.go:155: invalid query reached host: method=GET status=403 calls=1
+FAIL
+FAIL	github.com/djshellshoxxx/circula/future/messaging	0.007s
+FAIL
