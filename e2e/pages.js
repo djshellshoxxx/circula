@@ -73,6 +73,7 @@ const PAGES = [
   ['admin pause or close the network', 'admin', (st) => `${n(st)}/admin/network`, 'admin_network'],
   ['admin overview (needs attention)', 'admin', (st) => `${n(st)}/admin`, 'admin_home'],
   ['review queue', 'admin', (st) => `${n(st)}/review`, 'review_queue'],
+  ['activity signals (SEC-026)', 'admin', (st) => `${n(st)}/review/activity-signals`, 'review_signals'],
   ['dispute detail (reviewer)', 'admin', (st) => st.disputePath, 'dispute_view'],
   ['dispute detail (re-review waiting, first reviewer)', 'admin', (st) => st.disputeReReview, 'dispute_view'],
 ];

@@ -53,6 +53,16 @@ type Policy struct {
 	// flagged for the administrators and notified (GOV-012). 0 = no rule (the
 	// recommended default). The product never removes a member for inactivity.
 	InactivityDays int `json:"inactivity_days"`
+	// Activity signals (SEC-026, signals.go). Review prompts for administrators
+	// and dispute reviewers; they never block a trade. The thresholds stay
+	// within bounds while signals are switched off. Older stored versions
+	// without these keys read with the defaults (off). Evaluated against the
+	// policy in force when the proposal is made or the trade completes.
+	ActivitySignalsEnabled      bool `json:"activity_signals_enabled"`
+	VelocitySignalProposals     int  `json:"velocity_signal_proposals"`
+	VelocitySignalWindowMinutes int  `json:"velocity_signal_window_minutes"`
+	ReciprocalSignalTrades      int  `json:"reciprocal_signal_trades"`
+	ReciprocalSignalWindowDays  int  `json:"reciprocal_signal_window_days"`
 }
 
 // Platform bounds for open questions OQ-DOM-5/6.
@@ -83,6 +93,12 @@ func DefaultPolicy() Policy {
 		JoinMode:            JoinInvite,
 		DepartureRule:       DepartRetain,
 		DirectoryVisibility: "members-only",
+
+		ActivitySignalsEnabled:      false,
+		VelocitySignalProposals:     DefaultVelocitySignalProposals,
+		VelocitySignalWindowMinutes: DefaultVelocitySignalWindowMinutes,
+		ReciprocalSignalTrades:      DefaultReciprocalSignalTrades,
+		ReciprocalSignalWindowDays:  DefaultReciprocalSignalWindowDays,
 	}
 }
 
@@ -139,6 +155,20 @@ func (p Policy) Validate() error {
 	}
 	if p.InactivityDays != 0 && (p.InactivityDays < MinInactivityDays || p.InactivityDays > MaxInactivityDays) {
 		add("inactivity_days", fmt.Sprintf("must be 0 (no rule) or %d to %d", MinInactivityDays, MaxInactivityDays))
+	}
+	for _, b := range []struct {
+		field    string
+		v        int
+		min, max int
+	}{
+		{"velocity_signal_proposals", p.VelocitySignalProposals, MinSignalThreshold, MaxSignalThreshold},
+		{"velocity_signal_window_minutes", p.VelocitySignalWindowMinutes, MinVelocityWindowMinutes, MaxVelocityWindowMinutes},
+		{"reciprocal_signal_trades", p.ReciprocalSignalTrades, MinSignalThreshold, MaxSignalThreshold},
+		{"reciprocal_signal_window_days", p.ReciprocalSignalWindowDays, MinReciprocalWindowDays, MaxReciprocalWindowDays},
+	} {
+		if b.v < b.min || b.v > b.max { // SEC-026
+			add(b.field, fmt.Sprintf("must be %d to %d", b.min, b.max))
+		}
 	}
 	if p.DirectoryVisibility != "members-only" {
 		add("directory_visibility", "only members-only is supported")

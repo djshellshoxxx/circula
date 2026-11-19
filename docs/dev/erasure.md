@@ -30,7 +30,8 @@ The action cannot be undone.
 | person password hash, sessions, API tokens | unusable hash, all revoked, tokens renamed (same condition) |
 
 Unchanged: all ids, accounts, balances, entries, transaction rows and amounts, status events, dispute rows (category,
-outcome, rationale), `audit_events` and their hashes, `audit_subjects`. `VerifyLedger` passes after erasure.
+outcome, rationale), `audit_events` and their hashes, `audit_subjects`, `activity_signals` (SEC-026: member ids and
+counts only; the reviewer page shows the anonymised name). `VerifyLedger` passes after erasure.
 `member_erasures` records that it happened (no personal data).
 
 ## The audit chain

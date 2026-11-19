@@ -23,6 +23,7 @@
 api  *      /                                            public
 api  GET    /api/v1/accounts/me                          member
 api  GET    /api/v1/accounts/me/entries                  member
+api  GET    /api/v1/activity-signals                     reviewer
 api  GET    /api/v1/admin/accounts/{id}                  admin
 api  PUT    /api/v1/admin/accounts/{id}/credit-limit     admin
 api  GET    /api/v1/admin/adjustments                    admin
@@ -200,6 +201,7 @@ web  GET    /n/{slug}/policy                             member
 web  GET    /n/{slug}/report                             member
 web  POST   /n/{slug}/report                             member
 web  GET    /n/{slug}/review                             reviewer
+web  GET    /n/{slug}/review/activity-signals            reviewer
 web  GET    /n/{slug}/terms                              member
 web  POST   /n/{slug}/terms                              member
 web  GET    /n/{slug}/trades                             member

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"sync"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/store"
@@ -104,4 +105,36 @@ func (t *faultTx) PutIdem(r store.IdemRecord) error {
 		return err
 	}
 	return t.Tx.PutIdem(r)
+}
+
+// Activity signal steps (SEC-026): a failure here must not affect the trade
+// whose evaluation it belongs to. InsertNotification is counted per unit, so
+// arming its Nth call selects one notice among those a unit writes.
+
+func (t *faultTx) CountProposalsSince(netID, memberID string, since, through time.Time) (int, error) {
+	if err := t.hit("CountProposalsSince"); err != nil {
+		return 0, err
+	}
+	return t.Tx.CountProposalsSince(netID, memberID, since, through)
+}
+
+func (t *faultTx) CountCompletedTradesBetween(netID, a, b string, since, through time.Time) (int, int, error) {
+	if err := t.hit("CountCompletedTradesBetween"); err != nil {
+		return 0, 0, err
+	}
+	return t.Tx.CountCompletedTradesBetween(netID, a, b, since, through)
+}
+
+func (t *faultTx) InsertActivitySignal(s store.ActivitySignal) (bool, error) {
+	if err := t.hit("InsertActivitySignal"); err != nil {
+		return false, err
+	}
+	return t.Tx.InsertActivitySignal(s)
+}
+
+func (t *faultTx) InsertNotification(n store.Notification) (bool, error) {
+	if err := t.hit("InsertNotification"); err != nil {
+		return false, err
+	}
+	return t.Tx.InsertNotification(n)
 }

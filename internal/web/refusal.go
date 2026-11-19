@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // fieldLabels turn service field names into words for error text.
@@ -30,6 +31,12 @@ var fieldLabels = map[string]string{
 	"dual_control_threshold": "Dual-control threshold", "threshold": "Dual-control threshold", "report": "Ledger report",
 	"page": "Page", "idempotency_key": "Form key", "operator": "Operator", "directory_visibility": "Directory visibility",
 	"ids": "Notices",
+	// SEC-026 activity signal settings.
+	"activity_signals_enabled":       messages.Text("policy.signals_enabled"),
+	"velocity_signal_proposals":      messages.Text("policy.velocity_proposals"),
+	"velocity_signal_window_minutes": messages.Text("policy.velocity_window"),
+	"reciprocal_signal_trades":       messages.Text("policy.reciprocal_trades"),
+	"reciprocal_signal_window_days":  messages.Text("policy.reciprocal_window"),
 }
 
 func label(f string) string {

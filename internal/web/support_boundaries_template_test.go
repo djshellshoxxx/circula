@@ -7,6 +7,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 type supportBoundaryPageData struct {
@@ -21,7 +23,8 @@ func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 		t.Fatal("runtime.Caller could not locate the test source")
 	}
 	path := filepath.Join(filepath.Dir(source), "templates", name)
-	tmpl, err := template.ParseFiles(path)
+	// The page templates may use the catalogue helper (UX-047).
+	tmpl, err := template.New(name).Funcs(template.FuncMap{"msg": messages.Text}).ParseFiles(path)
 	if err != nil {
 		t.Fatalf("parse %s: %v", name, err)
 	}
