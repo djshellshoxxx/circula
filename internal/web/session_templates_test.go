@@ -26,8 +26,10 @@ func TestSessionTemplatesRender(t *testing.T) {
 		errors         []fieldErr
 		want           []string
 	}{
-		{"list", "sessions", []service.SessionInfo{current, other}, nil,
+		{"list", "sessions", service.SessionPage{Rows: []service.SessionInfo{current, other}}, nil,
 			[]string{"This session", "Other session", "Sign out here", "/account/sessions/" + other.ID + "/revoke"}},
+		{"empty continuation", "sessions", service.SessionPage{Next: "1763553600000:" + other.ID}, nil,
+			[]string{"There are no active sessions on this page.", "Next page", "/account/sessions?after="}},
 		{"current confirmation", "session_revoke", &current, nil,
 			[]string{"You will be signed out here", `for="f-confirm"`, `name="csrf"`, `value="yes"`}},
 		{"other confirmation", "session_revoke", &other, nil,

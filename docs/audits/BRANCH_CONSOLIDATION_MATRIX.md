@@ -185,3 +185,7 @@ Every tip below is an ancestor of the starting main SHA. Its complete history is
 5. Refresh this snapshot through the final report after authorized integrations. Preserve all original branches, including those whose useful content was recovered previously.
 
 The retained source branch itself is the archive for material that is deliberately not imported. This inventory makes no recommendation to delete it.
+
+## Subsequent repair checkpoint
+
+The 107 rows above retain their starting SHAs. PR #91 was normally merged into the original GOV-021 topic as `0d480a5b348f3d385df0dc9c9a3e43a0b03a8332` after seven configured jobs passed; its tree equals the qualified source tree. GOV-021 remains policy-held for main adoption. PR #90 preserves five original source heads and adds the independently reviewed migration-0020 bounded session/token correction, which requires fresh provider qualification. PRs #92 (feed), #93 (notifications) and #95 (PWA browser qualification) target only their isolated future branches; #94 remains an independent, default-off SEC-026 draft with a policy hold. None of these pending candidates is counted as a main merge.
