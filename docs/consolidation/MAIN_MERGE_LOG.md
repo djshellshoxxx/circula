@@ -1,7 +1,5 @@
 # Main integration log
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
-
 The owner authorizes qualified, compatible Core merges. This log records only
 observed merges, never plans or pending checks.
 
@@ -21,3 +19,11 @@ combined integration tree. Do not force-push main or bypass checks.
 
 API-036/#90 and #96 remain active independent work. FNET-204/#92 targets its
 future-module branch and must not be merged into main under this scope.
+
+## Continuation snapshot — 2026-11-19 12:06 UTC
+
+Main remains `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`. PR #101 merged into
+PR #90's integration branch, not main. Current #90/#99/#102/#104 CI runs each
+have nine queued jobs. No main merge, release or deployment is recorded. The
+owned catalogue/security/qualification continuation targets #90; see
+[CONTINUATION_20261119.md](CONTINUATION_20261119.md).

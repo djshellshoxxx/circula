@@ -7,6 +7,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) disputeRoutes() {
@@ -19,8 +20,8 @@ func (s *server) disputeRoutes() {
 }
 
 var categories = []option{
-	{"not_delivered", "Not delivered"}, {"quality", "Not as described or poor quality"},
-	{"wrong_amount", "Wrong amount"}, {"unauthorised", "I did not agree to this trade"}, {"other", "Something else"},
+	{"not_delivered", messages.Text("dispute.category.not_delivered")}, {"quality", messages.Text("dispute.category.quality")},
+	{"wrong_amount", messages.Text("dispute.category.wrong_amount")}, {"unauthorised", messages.Text("dispute.category.unauthorised")}, {"other", messages.Text("dispute.category.other")},
 }
 
 func categoryLabel(v string) string {
@@ -40,15 +41,15 @@ type disputeRow struct {
 func statusWords(s domain.DisputeStatus) string {
 	switch s {
 	case domain.DisputeOpen:
-		return "Open, waiting for a reviewer"
+		return messages.Text("dispute.status.open")
 	case domain.DisputeUnderReview:
-		return "Under review"
+		return messages.Text("dispute.status.under_review")
 	case domain.DisputePostingPending:
-		return "Decided, reversal not yet posted"
+		return messages.Text("dispute.status.posting_pending")
 	case domain.DisputeResolved:
-		return "Resolved"
+		return messages.Text("dispute.status.resolved")
 	case domain.DisputeWithdrawn:
-		return "Withdrawn"
+		return messages.Text("dispute.status.withdrawn")
 	}
 	return string(s)
 }
@@ -92,12 +93,12 @@ func (s *server) disputes(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "disputes", 200, &page{Title: "Disputes", D: d})
+	s.render(w, r, c, "disputes", 200, &page{Title: messages.Text("dispute.list_title"), D: d})
 }
 
 var queueFilters = []option{
-	{"", "All needing action"}, {string(domain.DisputeOpen), "Waiting for a reviewer"},
-	{string(domain.DisputeUnderReview), "Under review"}, {string(domain.DisputePostingPending), "Decided, reversal not yet posted"},
+	{"", messages.Text("dispute.queue.all")}, {string(domain.DisputeOpen), messages.Text("dispute.queue.waiting")},
+	{string(domain.DisputeUnderReview), messages.Text("dispute.status.under_review")}, {string(domain.DisputePostingPending), messages.Text("dispute.status.posting_pending")},
 }
 
 type queueData struct {
@@ -123,7 +124,7 @@ func (s *server) reviewQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	d.Filter = f
-	s.render(w, r, c, "review_queue", 200, &page{Title: "Dispute review queue", D: &queueData{d, queueFilters}, V: map[string]string{"status": f}})
+	s.render(w, r, c, "review_queue", 200, &page{Title: messages.Text("dispute.queue_title"), D: &queueData{d, queueFilters}, V: map[string]string{"status": f}})
 }
 
 type disputeForm struct {
@@ -160,7 +161,7 @@ func (s *server) disputeForm(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "dispute_form", 200, &page{Title: "Raise a dispute", D: d, V: map[string]string{"category": "not_delivered"}})
+	s.render(w, r, c, "dispute_form", 200, &page{Title: messages.Text("dispute.open_title"), D: d, V: map[string]string{"category": "not_delivered"}})
 }
 
 func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -170,7 +171,7 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	v := formValues(r)
-	p := &page{Title: "Raise a dispute", D: d, V: v}
+	p := &page{Title: messages.Text("dispute.open_title"), D: d, V: v}
 	step := r.PostFormValue("step")
 	if step == "back" {
 		s.render(w, r, c, "dispute_form", 200, p)
@@ -178,22 +179,22 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	st := strings.TrimSpace(v["statement"])
 	if st == "" || len(st) > 2000 || categoryLabel(v["category"]) == v["category"] {
-		p.Summary = "Not sent. Fix the problems below. Nothing changed."
+		p.Summary = messages.Text("dispute.invalid")
 		if st == "" {
-			p.Errors = append(p.Errors, fieldErr{"statement", "Statement: write what went wrong, in up to 2000 characters."})
+			p.Errors = append(p.Errors, fieldErr{"statement", messages.Text("dispute.statement.required")})
 		}
 		if len(st) > 2000 {
-			p.Errors = append(p.Errors, fieldErr{"statement", "Statement: this is too long. Shorten it to 2000 characters or fewer."})
+			p.Errors = append(p.Errors, fieldErr{"statement", messages.Text("dispute.statement.too_long")})
 		}
 		if categoryLabel(v["category"]) == v["category"] {
-			p.Errors = append(p.Errors, fieldErr{"category", "Reason: choose one of the reasons."})
+			p.Errors = append(p.Errors, fieldErr{"category", messages.Text("dispute.category.required")})
 		}
 		s.render(w, r, c, "dispute_form", 422, p)
 		return
 	}
 	if step != "confirm" {
 		d.Confirm = true
-		p.Title = "Review your dispute"
+		p.Title = messages.Text("dispute.review_title")
 		p.D = d
 		s.render(w, r, c, "dispute_form", 200, p)
 		return
@@ -202,13 +203,13 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		Category: v["category"], Statement: st, IdempotencyKey: idemKey(r)})
 	if err != nil {
 		d.Confirm = true
-		p.Title = "Review your dispute"
+		p.Title = messages.Text("dispute.review_title")
 		if sum, fe, ok := c.refuse(err); ok {
 			p.Summary, p.Errors = sum, fe
 			if domain.CodeOf(err) == domain.CodeForbidden || domain.CodeOf(err) == domain.CodeInvalidState {
-				p.Summary = "Not sent. This trade cannot be disputed now: it must be completed, the dispute deadline must not have passed, and you must be a party to it. Nothing changed."
+				p.Summary = messages.Text("dispute.not_eligible")
 				if d.DeadlineText != "" {
-					p.Summary = "Not sent. This trade cannot be disputed now: it must be completed, on or before its dispute deadline (" + d.DeadlineText + "), and you must be a party to it. Nothing changed."
+					p.Summary = messages.Text("dispute.not_eligible_deadline", d.DeadlineText)
 				}
 			}
 			s.render(w, r, c, "dispute_form", 422, p)
@@ -217,7 +218,7 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Dispute opened. The trade is marked Disputed. Your balance has not changed.")
+	s.setFlash(w, r, messages.Text("dispute.opened"))
 	http.Redirect(w, r, c.base()+"/disputes/"+dp.ID, http.StatusSeeOther)
 }
 
@@ -234,6 +235,7 @@ type disputeData struct {
 	Retry    bool
 	Events   []evRow
 	Amount   string
+	Unit     string
 	// FR-076 response and FR-078 re-review.
 	Response      string // response text, "" until submitted
 	ResponseBy    string
@@ -261,18 +263,38 @@ type evRow struct {
 func outcomeWords(d *domain.Dispute, amt string, unit string) string {
 	switch d.Outcome {
 	case domain.OutcomeDismissed:
-		return "Dismissed: the balance stands as before."
-	case domain.OutcomeUpheld, domain.OutcomePartiallyUpheld:
-		word := "Upheld"
-		if d.Outcome == domain.OutcomePartiallyUpheld {
-			word = "Partly upheld"
-		}
+		return messages.Text("dispute.outcome.dismissed")
+	case domain.OutcomeUpheld:
 		if d.Status == domain.DisputePostingPending {
-			return word + ": a reversal of " + amt + " " + unit + " is decided but not yet posted."
+			return messages.Text("dispute.outcome.upheld_pending", amt, unit)
 		}
-		return word + ": a reversal of " + amt + " " + unit + " has been posted."
+		return messages.Text("dispute.outcome.upheld_posted", amt, unit)
+	case domain.OutcomePartiallyUpheld:
+		if d.Status == domain.DisputePostingPending {
+			return messages.Text("dispute.outcome.partial_pending", amt, unit)
+		}
+		return messages.Text("dispute.outcome.partial_posted", amt, unit)
 	}
 	return ""
+}
+
+// Known stored event values have catalogue labels. Unknown values remain plain
+// data: they are never used as catalogue keys or interpreted as formatting.
+func disputeEventWords(action, outcome string) string {
+	label := action
+	switch action {
+	case "opened", "under_review", "posting_pending", "resolved", "withdrawn", "responded",
+		"rereview_requested", "rereview_confirmed", "rereview_upheld", "rereview_partially_upheld":
+		label = messages.Text("dispute.event." + action)
+	}
+	if outcome == "" {
+		return label
+	}
+	switch outcome {
+	case "dismissed", "upheld", "partially_upheld":
+		outcome = messages.Text("dispute.event_outcome." + outcome)
+	}
+	return messages.Text("dispute.event_with_outcome", label, outcome)
 }
 
 func (s *server) disputeView(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -289,6 +311,7 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 	pol := c.Net.Policy
 	out := &disputeData{V: v, Category: categoryLabel(d.Category), Status: statusWords(d.Status), Party: v.Tx.IsParty(c.Me.ID)}
 	out.Amount = domain.FormatAmount(v.Tx.Amount, pol.Decimals)
+	out.Unit = unitFor(pol.CurrencyName, v.Tx.Amount, pol.Decimals)
 	out.OpenedAt = c.when(d.OpenedAt)
 	if d.Status == domain.DisputeOpen || d.Status == domain.DisputeUnderReview {
 		out.Deadlines, out.ResponseDue, out.DecisionBy = true, c.when(v.Deadlines.ResponseDeadline), c.when(v.Deadlines.DecisionTarget)
@@ -310,13 +333,9 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 	out.Retry = reviewer && d.Status == domain.DisputePostingPending
 	s.reviewData(c, v, out)
 	for _, e := range v.Events {
-		t := strings.ReplaceAll(e.Action, "_", " ")
-		if e.Outcome != "" {
-			t += " (" + strings.ReplaceAll(e.Outcome, "_", " ") + ")"
-		}
-		out.Events = append(out.Events, evRow{Text: strings.ToUpper(t[:1]) + t[1:], At: c.when(e.OccurredAt)})
+		out.Events = append(out.Events, evRow{Text: disputeEventWords(e.Action, e.Outcome), At: c.when(e.OccurredAt)})
 	}
-	p.Title, p.D = "Dispute", out
+	p.Title, p.D = messages.Text("dispute.title"), out
 	s.render(w, r, c, "dispute_view", status, p)
 }
 
@@ -327,21 +346,21 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 	switch act {
 	case "withdraw":
 		_, err = s.svc.WithdrawDispute(r.Context(), c.actor, c.netID(), id)
-		msg = "Dispute withdrawn. The trade is Completed again and nothing was posted."
+		msg = messages.Text("dispute.withdrawn")
 	case "start-review":
 		_, err = s.svc.StartDisputeReview(r.Context(), c.actor, c.netID(), id)
-		msg = "Review started."
+		msg = messages.Text("dispute.review_started")
 	case "retry":
 		_, err = s.svc.RetryDisputePosting(r.Context(), c.actor, c.netID(), id)
-		msg = "Posting retried."
+		msg = messages.Text("dispute.posting_retried")
 	case "respond":
 		_, err = s.svc.RespondToDispute(r.Context(), c.actor, c.netID(), service.RespondInput{DisputeID: id,
 			Response: r.PostFormValue("response"), IdempotencyKey: idemKey(r)})
-		msg = "Your response was added. The reviewer and the other party can read it."
+		msg = messages.Text("dispute.responded")
 	case "rereview":
 		_, err = s.svc.RequestReReview(r.Context(), c.actor, c.netID(), service.ReReviewRequestInput{DisputeID: id,
 			Reason: r.PostFormValue("reason"), IdempotencyKey: idemKey(r)})
-		msg = "Re-review requested. A different reviewer will look at the decision. This can only be done once."
+		msg = messages.Text("dispute.rereview_requested")
 	case "rereview-decide":
 		if r.PostFormValue("step") == "back" {
 			s.showDispute(w, r, c, id, &page{V: formValues(r)}, 200)
@@ -367,7 +386,7 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 			return
 		}
 		_, err = s.svc.DecideReReview(r.Context(), c.actor, c.netID(), in)
-		msg = "Re-review decision recorded."
+		msg = messages.Text("dispute.rereview_recorded")
 	case "resolve":
 		in := service.ResolveInput{DisputeID: id, Outcome: domain.DisputeOutcome(r.PostFormValue("outcome")),
 			Rationale: r.PostFormValue("rationale"), WaiveResponse: r.PostFormValue("waive_response") == "1",
@@ -392,7 +411,7 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 			return
 		}
 		_, err = s.svc.ResolveDispute(r.Context(), c.actor, c.netID(), in)
-		msg = "Decision recorded."
+		msg = messages.Text("dispute.decision_recorded")
 	default:
 		s.fail(w, r, domain.NotFound("page"))
 		return

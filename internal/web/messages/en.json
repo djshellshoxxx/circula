@@ -733,225 +733,6 @@
     "one": "unused code",
     "other": "unused codes"
   },
-  "setup.title": {
-    "other": "Create a network"
-  },
-  "setup.intro": {
-    "other": "You will be the first administrator. You can change most of these settings later, except the number of decimal places."
-  },
-  "setup.secret.label": {
-    "other": "Setup secret"
-  },
-  "setup.secret.hint": {
-    "other": "Given to you by the person who runs this service."
-  },
-  "setup.name.label": {
-    "other": "Network name"
-  },
-  "setup.slug.label": {
-    "other": "Web address name"
-  },
-  "setup.slug.hint": {
-    "other": "Lower-case letters, numbers and hyphens, for example town-swap."
-  },
-  "setup.display_name.label": {
-    "other": "Your display name in this network"
-  },
-  "setup.currency.label": {
-    "other": "Credit unit name"
-  },
-  "setup.currency.hint": {
-    "other": "A singular word, for example credit or hour."
-  },
-  "setup.decimals.label": {
-    "other": "Decimal places"
-  },
-  "setup.decimals.whole": {
-    "other": "0 (whole units)"
-  },
-  "setup.decimals.invalid": {
-    "other": "Decimal places: choose a value from 0 to 4."
-  },
-  "setup.limit.label": {
-    "other": "Default credit limit per member"
-  },
-  "setup.limit.error_label": {
-    "other": "Default credit limit"
-  },
-  "setup.limit.hint": {
-    "other": "How far below zero a member's balance may go. Amount in credits, using the decimal places chosen above."
-  },
-  "setup.grant.label": {
-    "other": "Sign-up grant"
-  },
-  "setup.grant.hint": {
-    "other": "Credits given to each new member. Use 0 for none."
-  },
-  "setup.join_mode.label": {
-    "other": "How people join"
-  },
-  "setup.join_mode.invite": {
-    "other": "By invitation only"
-  },
-  "setup.join_mode.approval": {
-    "other": "Request, then an administrator approves"
-  },
-  "setup.join_mode.open": {
-    "other": "Open to any signed-in person"
-  },
-  "setup.grant.risk": {
-    "other": "I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination."
-  },
-  "setup.submit": {
-    "other": "Create network"
-  },
-  "setup.secret.used": {
-    "other": "Not saved. The setup secret has already been used. Ask the person who runs this service to reset it. Nothing changed."
-  },
-  "setup.throttle": {
-    "other": "Too many attempts. Wait and try again. Nothing changed."
-  },
-  "setup.invalid": {
-    "other": "Not saved. Fix the problems below. Nothing changed."
-  },
-  "setup.secret.invalid": {
-    "other": "Setup secret: not correct. Ask the person who runs this service."
-  },
-  "setup.amount.invalid": {
-    "other": "%[1]s: enter a number with up to %[2]d decimal places, for example %[3]s."
-  },
-  "setup.slug.unavailable": {
-    "other": "Web address name: already in use. Choose a different one."
-  },
-  "setup.flash.created": {
-    "other": "Network created and open. You are its first administrator."
-  },
-  "join.invitation.title": {
-    "other": "Accept your invitation"
-  },
-  "join.invitation.intro": {
-    "other": "You have been invited to join a network. To accept, sign in or create an account first. You will come back to this page afterwards."
-  },
-  "join.display_name.label": {
-    "other": "Your display name"
-  },
-  "join.display_name.hint": {
-    "other": "Other members see this name."
-  },
-  "join.rules": {
-    "other": "By joining you agree to follow this network's rules. Credits are accounting units inside the network."
-  },
-  "join.invitation.submit": {
-    "other": "Join the network"
-  },
-  "join.invitation.invalid": {
-    "other": "This invitation is expired, already used or not valid. Ask the network administrator for a new invitation link. Nothing changed."
-  },
-  "join.network.title": {
-    "other": "Join %[1]s"
-  },
-  "join.network.invite_only": {
-    "other": "%[1]s is invitation only. Ask an administrator for an invitation link."
-  },
-  "join.network.approval": {
-    "other": "Your request will wait for an administrator to approve it."
-  },
-  "join.network.open": {
-    "other": "You will join straight away."
-  },
-  "join.network.request": {
-    "other": "Request to join"
-  },
-  "join.network.submit": {
-    "other": "Join"
-  },
-  "join.network.full": {
-    "other": "Not sent. This network is not accepting new members right now. Try again later. Nothing changed."
-  },
-  "join.network.closed": {
-    "other": "Not sent. This network does not accept requests to join. Ask an administrator for an invitation link. Nothing changed."
-  },
-  "join.throttle.ten_minutes": {
-    "other": "Not sent. Too many join attempts. Wait ten minutes and try again. Nothing changed."
-  },
-  "join.throttle.other": {
-    "other": "Not sent. Too many join attempts. Wait a while and try again. Nothing changed."
-  },
-  "join.flash.pending": {
-    "other": "Request sent. Your membership is pending until an administrator decides."
-  },
-  "join.flash.joined": {
-    "other": "You have joined %[1]s."
-  },
-  "join.terms.heading": {
-    "other": "Network terms (version %[1]s)"
-  },
-  "sessions.title": {
-    "other": "Active sessions"
-  },
-  "sessions.explain": {
-    "other": "These are your active sign-ins. You can end any session you no longer use. Times reflect the current session limits; activity can extend the idle timeout."
-  },
-  "sessions.current": {
-    "other": "This session"
-  },
-  "sessions.other": {
-    "other": "Other session"
-  },
-  "sessions.started": {
-    "other": "Signed in"
-  },
-  "sessions.last_active": {
-    "other": "Last active"
-  },
-  "sessions.expires": {
-    "other": "Ends by"
-  },
-  "sessions.sign_out_here": {
-    "other": "Sign out here"
-  },
-  "sessions.sign_out_other": {
-    "other": "Sign out this session"
-  },
-  "sessions.none": {
-    "other": "There are no active sessions on this page."
-  },
-  "sessions.back_security": {
-    "other": "Back to account security"
-  },
-  "sessions.confirm_title": {
-    "other": "End this session?"
-  },
-  "sessions.current_consequence": {
-    "other": "You will be signed out here and must sign in again to continue. Your other sessions and API tokens will keep working."
-  },
-  "sessions.other_consequence": {
-    "other": "This sign-in will stop working immediately. You will stay signed in here. Your other sessions and API tokens will keep working."
-  },
-  "sessions.confirm_label": {
-    "other": "I want to end this session."
-  },
-  "sessions.confirm_required": {
-    "other": "Not signed out. Confirm that you want to end this session. Nothing changed."
-  },
-  "sessions.confirm_button": {
-    "other": "End session"
-  },
-  "sessions.cancel": {
-    "other": "Keep session"
-  },
-  "sessions.current_ended": {
-    "other": "This session has ended. Sign in again to continue."
-  },
-  "sessions.other_ended": {
-    "other": "The selected session has ended. You are still signed in here."
-  },
-  "sessions.security_intro": {
-    "other": "Review your sign-ins and end sessions you no longer use."
-  },
-  "sessions.manage_link": {
-    "other": "Manage active sessions"
-  },
   "validation.label.cursor": {
     "other": "Page position"
   },
@@ -1539,8 +1320,705 @@
   "session_warning.failed": {
     "other": "Could not extend the session. Sign in again."
   },
-  "admin.reset.forbidden": {
-    "other": "Not done. This password cannot be reset here. Use Change password for your own account, or ask the platform operator for help. Nothing changed."
+  "inbox.title": {
+    "other": "Inbox"
+  },
+  "inbox.waiting_title": {
+    "other": "Waiting for your action"
+  },
+  "inbox.waiting_empty": {
+    "other": "Nothing is waiting for you. Trade proposals sent to you and disputes you can answer will appear here."
+  },
+  "inbox.dispute_opened": {
+    "other": "A dispute was opened on a trade with you (%[1]s)"
+  },
+  "inbox.dispute_response": {
+    "other": "Opened %[1]s. You can add your response."
+  },
+  "inbox.notifications_title": {
+    "other": "Notifications"
+  },
+  "inbox.unread_count": {
+    "other": "%[1]d unread."
+  },
+  "inbox.no_unread": {
+    "other": "No unread notifications."
+  },
+  "inbox.show_all": {
+    "other": "Show all"
+  },
+  "inbox.show_unread": {
+    "other": "Show unread only"
+  },
+  "inbox.mark_all": {
+    "other": "Mark all as read"
+  },
+  "inbox.unread": {
+    "other": "Unread"
+  },
+  "inbox.read": {
+    "other": "Read"
+  },
+  "inbox.mark_read": {
+    "other": "Mark as read"
+  },
+  "inbox.mark_read_named": {
+    "other": "Mark as read: %[1]s"
+  },
+  "inbox.empty": {
+    "other": "No notifications to show."
+  },
+  "inbox.all_read": {
+    "other": "All notifications are marked as read."
+  },
+  "report.title": {
+    "other": "Report a problem"
+  },
+  "report.target_listing": {
+    "other": "Listing: %[1]s"
+  },
+  "report.target_member": {
+    "other": "Member: %[1]s"
+  },
+  "report.category.spam": {
+    "other": "Spam or advertising"
+  },
+  "report.category.scam": {
+    "other": "Looks like a scam"
+  },
+  "report.category.inappropriate": {
+    "other": "Inappropriate content"
+  },
+  "report.category.harassment": {
+    "other": "Harassment or abuse"
+  },
+  "report.category.other": {
+    "other": "Something else"
+  },
+  "report.duplicate": {
+    "other": "Not sent. You already have an open report about this. An administrator will look at it. Nothing changed."
+  },
+  "report.throttled": {
+    "other": "Not sent. You have sent many reports today. Try again tomorrow. Nothing changed."
+  },
+  "report.sent": {
+    "other": "Report sent. Administrators will review it. It does not change anything for the person you reported, and they are not told who reported."
+  },
+  "report.queue_title": {
+    "other": "Reports"
+  },
+  "report.handled": {
+    "other": "Report marked as handled. The reporter was told it was reviewed."
+  },
+  "report.subject": {
+    "other": "You are reporting: %[1]s."
+  },
+  "report.explanation": {
+    "other": "A report goes to the network administrators. It does not hide, suspend or change anything by itself, and the person you report is not told who reported."
+  },
+  "report.category_label": {
+    "other": "What is the problem?"
+  },
+  "report.note_label": {
+    "other": "Details (optional)"
+  },
+  "report.note_hint": {
+    "other": "Up to 500 characters."
+  },
+  "report.send": {
+    "other": "Send report"
+  },
+  "report.cancel": {
+    "other": "Cancel"
+  },
+  "report.queue_explanation": {
+    "other": "Reports from members about listings and members. Handling a report here only records that you looked at it; use the member and policy tools to act. The reporter is shown to administrators only."
+  },
+  "report.filter_label": {
+    "other": "Report filter"
+  },
+  "report.status.open": {
+    "other": "Open"
+  },
+  "report.status.handled": {
+    "other": "Handled"
+  },
+  "report.filter_all": {
+    "other": "All"
+  },
+  "report.about": {
+    "other": "%[1]s about %[2]s %[3]s"
+  },
+  "report.target_type.listing": {
+    "other": "listing"
+  },
+  "report.target_type.member": {
+    "other": "member"
+  },
+  "report.reported_by": {
+    "other": "Reported by %[1]s"
+  },
+  "report.handling_note_label": {
+    "other": "Note (optional, administrators only)"
+  },
+  "report.mark_handled": {
+    "other": "Mark handled"
+  },
+  "report.mark_handled_named": {
+    "other": "Mark handled: report from %[1]s"
+  },
+  "report.handling_note": {
+    "other": "Note: %[1]s"
+  },
+  "report.empty": {
+    "other": "No reports to show."
+  },
+  "trade.title": {
+    "other": "Trades"
+  },
+  "trade.propose.title": {
+    "other": "Propose a trade"
+  },
+  "trade.review.title": {
+    "other": "Review your trade"
+  },
+  "trade.detail.title": {
+    "other": "Trade detail"
+  },
+  "trade.history.title": {
+    "other": "History"
+  },
+  "trade.member_with_reference": {
+    "other": "%[1]s (member reference %[2]s)"
+  },
+  "trade.propose.choose_member": {
+    "other": "Choose a member"
+  },
+  "trade.propose.counterparty": {
+    "other": "Who is the trade with?"
+  },
+  "trade.propose.direction": {
+    "other": "Direction"
+  },
+  "trade.propose.pay": {
+    "other": "I pay them"
+  },
+  "trade.propose.receive": {
+    "other": "They pay me"
+  },
+  "trade.amount": {
+    "other": "Amount"
+  },
+  "trade.amount_value": {
+    "other": "%[1]s %[2]s"
+  },
+  "trade.propose.amount_hint": {
+    "one": "Amount in credits, up to %[1]d decimal place.",
+    "other": "Amount in credits, up to %[1]d decimal places."
+  },
+  "trade.propose.amount_help": {
+    "one": "Amount: enter a number with up to %[1]d decimal place, for example %[2]s.",
+    "other": "Amount: enter a number with up to %[1]d decimal places, for example %[2]s."
+  },
+  "trade.propose.amount_decimals": {
+    "one": "Amount: this network allows at most %[1]d decimal place. Remove the extra digits.",
+    "other": "Amount: this network allows at most %[1]d decimal places. Remove the extra digits."
+  },
+  "trade.propose.note": {
+    "other": "What is it for? (optional)"
+  },
+  "trade.propose.review": {
+    "other": "Review trade"
+  },
+  "trade.cancel": {
+    "other": "Cancel"
+  },
+  "trade.propose.counterparty_required": {
+    "other": "Counterparty: choose another active member from the list."
+  },
+  "trade.propose.direction_required": {
+    "other": "Direction: choose whether you pay or are paid."
+  },
+  "trade.propose.invalid": {
+    "other": "Not sent. Fix the problems below. Nothing changed."
+  },
+  "trade.propose.sent": {
+    "other": "Trade sent to %[1]s. It is pending until they respond; pending trades are not part of your balance."
+  },
+  "trade.sentence.pay": {
+    "other": "You pay %[1]s %[2]s %[3]s"
+  },
+  "trade.sentence.receive": {
+    "other": "%[1]s pays you %[2]s %[3]s"
+  },
+  "trade.sentence.other": {
+    "other": "%[1]s pays %[2]s %[3]s %[4]s"
+  },
+  "trade.review.too_much": {
+    "other": "This is more than your available to spend (%[1]s). It will be refused if you send it. Go back and enter a smaller amount."
+  },
+  "trade.review.with": {
+    "other": "With"
+  },
+  "trade.balance.now": {
+    "other": "Your balance now"
+  },
+  "trade.balance.if_accepted": {
+    "other": "Your balance if accepted"
+  },
+  "trade.balance.after_posting": {
+    "other": "Your balance after posting"
+  },
+  "trade.available.now": {
+    "other": "Available to spend now"
+  },
+  "trade.available.after_sending": {
+    "other": "Available to spend after sending"
+  },
+  "trade.available.after_posting": {
+    "other": "Available to spend after posting"
+  },
+  "trade.review.reserved": {
+    "other": "%[1]s (the amount is set aside while the trade is pending)"
+  },
+  "trade.review.awaiting": {
+    "other": "%[1]s (it rises only once the trade is accepted)"
+  },
+  "trade.expires": {
+    "other": "Expires"
+  },
+  "trade.review.expiry": {
+    "one": "after %[1]d day if not answered",
+    "other": "after %[1]d days if not answered"
+  },
+  "trade.note": {
+    "other": "Note"
+  },
+  "trade.note_value": {
+    "other": "Note: %[1]s"
+  },
+  "trade.review.pending_notice": {
+    "other": "Nothing is posted until the other member accepts."
+  },
+  "trade.review.send": {
+    "other": "Send trade"
+  },
+  "trade.review.edit": {
+    "other": "Go back and edit"
+  },
+  "trade.payer": {
+    "other": "Payer"
+  },
+  "trade.payee": {
+    "other": "Payee"
+  },
+  "trade.accept.notice": {
+    "other": "Accepting posts this trade to both accounts straight away."
+  },
+  "trade.accept.confirm": {
+    "other": "Confirm and accept"
+  },
+  "trade.back": {
+    "other": "Go back"
+  },
+  "trade.reason": {
+    "other": "Reason"
+  },
+  "trade.action.reason_hint": {
+    "other": "Required when you cancel a trade you are not part of."
+  },
+  "trade.action.confirm": {
+    "other": "%[1]s this trade"
+  },
+  "trade.action.title": {
+    "other": "%[1]s this trade?"
+  },
+  "trade.action.accept": {
+    "other": "Accept"
+  },
+  "trade.action.decline": {
+    "other": "Decline"
+  },
+  "trade.action.cancel": {
+    "other": "Cancel"
+  },
+  "trade.action.release": {
+    "other": "Nothing is posted and the amount set aside for this trade is released."
+  },
+  "trade.accept.title": {
+    "other": "Review before accepting"
+  },
+  "trade.action.completed": {
+    "other": "Trade completed."
+  },
+  "trade.action.declined": {
+    "other": "Trade declined. Nothing was posted."
+  },
+  "trade.action.cancelled": {
+    "other": "Trade cancelled. Nothing was posted."
+  },
+  "trade.action.completed_balance": {
+    "other": "Trade completed. Your balance is now %[1]s · %[2]s."
+  },
+  "trade.status.label": {
+    "other": "Status"
+  },
+  "trade.status.pending": {
+    "other": "Pending"
+  },
+  "trade.status.completed": {
+    "other": "Completed"
+  },
+  "trade.status.declined": {
+    "other": "Declined"
+  },
+  "trade.status.cancelled": {
+    "other": "Cancelled"
+  },
+  "trade.status.expired": {
+    "other": "Expired"
+  },
+  "trade.status.disputed": {
+    "other": "Disputed"
+  },
+  "trade.status.reversed": {
+    "other": "Reversed"
+  },
+  "trade.history.proposed": {
+    "other": "Proposed"
+  },
+  "trade.detail.suspended_accept": {
+    "other": "Accept is not available while your membership is suspended. You can still decline."
+  },
+  "trade.detail.inactive_dispute": {
+    "other": "Raising a dispute is not available while your membership is not active."
+  },
+  "trade.posted": {
+    "other": "Posted"
+  },
+  "trade.ledger_reference": {
+    "other": "Ledger reference"
+  },
+  "trade.reverses": {
+    "other": "Reverses"
+  },
+  "trade.adjusts": {
+    "other": "Adjusts"
+  },
+  "trade.reversals": {
+    "other": "Reversals"
+  },
+  "trade.original_entry": {
+    "other": "The original entry"
+  },
+  "trade.detail.accept": {
+    "other": "Review and accept"
+  },
+  "trade.detail.cancel": {
+    "other": "Cancel this proposal"
+  },
+  "trade.detail.dispute": {
+    "other": "Raise a dispute"
+  },
+  "trade.detail.view_dispute": {
+    "other": "View the dispute"
+  },
+  "trade.detail.reverse": {
+    "other": "Reverse this trade (administrator)"
+  },
+  "trade.detail.timeline": {
+    "other": "Timeline"
+  },
+  "trade.detail.no_changes": {
+    "other": "No status changes recorded yet."
+  },
+  "trade.detail.back": {
+    "other": "Back to trades"
+  },
+  "trade.list.waiting": {
+    "other": "Waiting for you"
+  },
+  "trade.list.waiting_empty": {
+    "other": "Nothing is waiting for you."
+  },
+  "trade.list.pending_empty": {
+    "other": "No trades are waiting for someone else."
+  },
+  "trade.list.past": {
+    "other": "Past trades"
+  },
+  "trade.filter.show": {
+    "other": "Show"
+  },
+  "trade.filter.all": {
+    "other": "All statuses"
+  },
+  "trade.filter.apply": {
+    "other": "Apply filter"
+  },
+  "trade.list.past_empty": {
+    "other": "No past trades yet. Completed and closed trades appear here."
+  },
+  "trade.history.pending_notice": {
+    "other": "Pending trades are not part of your balance."
+  },
+  "trade.history.pending_empty": {
+    "other": "No pending trades."
+  },
+  "trade.history.closed": {
+    "other": "Posted and closed"
+  },
+  "trade.history.empty": {
+    "other": "Nothing here yet. Once you trade, each entry shows who paid whom, the signed amount, its status and ledger reference."
+  },
+  "trade.history.activity_log": {
+    "other": "Account activity log"
+  },
+  "trade.history.download": {
+    "other": "Download your data"
+  },
+  "trade.history.file_format": {
+    "other": "File format"
+  },
+  "trade.history.format_csv": {
+    "other": "CSV (spreadsheet)"
+  },
+  "trade.history.format_json": {
+    "other": "JSON"
+  },
+  "trade.history.export": {
+    "other": "Download my transactions"
+  },
+  "trade.history.reason": {
+    "other": "Reason: %[1]s"
+  },
+  "trade.history.reverses": {
+    "other": "Reverses %[1]s"
+  },
+  "trade.history.adjusts": {
+    "other": "Adjusts %[1]s"
+  },
+  "trade.history.original_entry": {
+    "other": "the original entry"
+  },
+  "setup.title": {
+    "other": "Create a network"
+  },
+  "setup.intro": {
+    "other": "You will be the first administrator. You can change most of these settings later, except the number of decimal places."
+  },
+  "setup.secret.label": {
+    "other": "Setup secret"
+  },
+  "setup.secret.hint": {
+    "other": "Given to you by the person who runs this service."
+  },
+  "setup.name.label": {
+    "other": "Network name"
+  },
+  "setup.slug.label": {
+    "other": "Web address name"
+  },
+  "setup.slug.hint": {
+    "other": "Lower-case letters, numbers and hyphens, for example town-swap."
+  },
+  "setup.display_name.label": {
+    "other": "Your display name in this network"
+  },
+  "setup.currency.label": {
+    "other": "Credit unit name"
+  },
+  "setup.currency.hint": {
+    "other": "A singular word, for example credit or hour."
+  },
+  "setup.decimals.label": {
+    "other": "Decimal places"
+  },
+  "setup.decimals.whole": {
+    "other": "0 (whole units)"
+  },
+  "setup.decimals.invalid": {
+    "other": "Decimal places: choose a value from 0 to 4."
+  },
+  "setup.limit.label": {
+    "other": "Default credit limit per member"
+  },
+  "setup.limit.error_label": {
+    "other": "Default credit limit"
+  },
+  "setup.limit.hint": {
+    "other": "How far below zero a member's balance may go. Amount in credits, using the decimal places chosen above."
+  },
+  "setup.grant.label": {
+    "other": "Sign-up grant"
+  },
+  "setup.grant.hint": {
+    "other": "Credits given to each new member. Use 0 for none."
+  },
+  "setup.join_mode.label": {
+    "other": "How people join"
+  },
+  "setup.join_mode.invite": {
+    "other": "By invitation only"
+  },
+  "setup.join_mode.approval": {
+    "other": "Request, then an administrator approves"
+  },
+  "setup.join_mode.open": {
+    "other": "Open to any signed-in person"
+  },
+  "setup.grant.risk": {
+    "other": "I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination."
+  },
+  "setup.submit": {
+    "other": "Create network"
+  },
+  "setup.secret.used": {
+    "other": "Not saved. The setup secret has already been used. Ask the person who runs this service to reset it. Nothing changed."
+  },
+  "setup.throttle": {
+    "other": "Too many attempts. Wait and try again. Nothing changed."
+  },
+  "setup.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "setup.secret.invalid": {
+    "other": "Setup secret: not correct. Ask the person who runs this service."
+  },
+  "setup.amount.invalid": {
+    "other": "%[1]s: enter a number with up to %[2]d decimal places, for example %[3]s."
+  },
+  "setup.slug.unavailable": {
+    "other": "Web address name: already in use. Choose a different one."
+  },
+  "setup.flash.created": {
+    "other": "Network created and open. You are its first administrator."
+  },
+  "join.invitation.title": {
+    "other": "Accept your invitation"
+  },
+  "join.invitation.intro": {
+    "other": "You have been invited to join a network. To accept, sign in or create an account first. You will come back to this page afterwards."
+  },
+  "join.display_name.label": {
+    "other": "Your display name"
+  },
+  "join.display_name.hint": {
+    "other": "Other members see this name."
+  },
+  "join.rules": {
+    "other": "By joining you agree to follow this network's rules. Credits are accounting units inside the network."
+  },
+  "join.invitation.submit": {
+    "other": "Join the network"
+  },
+  "join.invitation.invalid": {
+    "other": "This invitation is expired, already used or not valid. Ask the network administrator for a new invitation link. Nothing changed."
+  },
+  "join.network.title": {
+    "other": "Join %[1]s"
+  },
+  "join.network.invite_only": {
+    "other": "%[1]s is invitation only. Ask an administrator for an invitation link."
+  },
+  "join.network.approval": {
+    "other": "Your request will wait for an administrator to approve it."
+  },
+  "join.network.open": {
+    "other": "You will join straight away."
+  },
+  "join.network.request": {
+    "other": "Request to join"
+  },
+  "join.network.submit": {
+    "other": "Join"
+  },
+  "join.network.full": {
+    "other": "Not sent. This network is not accepting new members right now. Try again later. Nothing changed."
+  },
+  "join.network.closed": {
+    "other": "Not sent. This network does not accept requests to join. Ask an administrator for an invitation link. Nothing changed."
+  },
+  "join.throttle.ten_minutes": {
+    "other": "Not sent. Too many join attempts. Wait ten minutes and try again. Nothing changed."
+  },
+  "join.throttle.other": {
+    "other": "Not sent. Too many join attempts. Wait a while and try again. Nothing changed."
+  },
+  "join.flash.pending": {
+    "other": "Request sent. Your membership is pending until an administrator decides."
+  },
+  "join.flash.joined": {
+    "other": "You have joined %[1]s."
+  },
+  "join.terms.heading": {
+    "other": "Network terms (version %[1]s)"
+  },
+  "sessions.title": {
+    "other": "Active sessions"
+  },
+  "sessions.explain": {
+    "other": "These are your active sign-ins. You can end any session you no longer use. Times reflect the current session limits; activity can extend the idle timeout."
+  },
+  "sessions.current": {
+    "other": "This session"
+  },
+  "sessions.other": {
+    "other": "Other session"
+  },
+  "sessions.started": {
+    "other": "Signed in"
+  },
+  "sessions.last_active": {
+    "other": "Last active"
+  },
+  "sessions.expires": {
+    "other": "Ends by"
+  },
+  "sessions.sign_out_here": {
+    "other": "Sign out here"
+  },
+  "sessions.sign_out_other": {
+    "other": "Sign out this session"
+  },
+  "sessions.none": {
+    "other": "There are no active sessions on this page."
+  },
+  "sessions.back_security": {
+    "other": "Back to account security"
+  },
+  "sessions.confirm_title": {
+    "other": "End this session?"
+  },
+  "sessions.current_consequence": {
+    "other": "You will be signed out here and must sign in again to continue. Your other sessions and API tokens will keep working."
+  },
+  "sessions.other_consequence": {
+    "other": "This sign-in will stop working immediately. You will stay signed in here. Your other sessions and API tokens will keep working."
+  },
+  "sessions.confirm_label": {
+    "other": "I want to end this session."
+  },
+  "sessions.confirm_required": {
+    "other": "Not signed out. Confirm that you want to end this session. Nothing changed."
+  },
+  "sessions.confirm_button": {
+    "other": "End session"
+  },
+  "sessions.cancel": {
+    "other": "Keep session"
+  },
+  "sessions.current_ended": {
+    "other": "This session has ended. Sign in again to continue."
+  },
+  "sessions.other_ended": {
+    "other": "The selected session has ended. You are still signed in here."
+  },
+  "sessions.security_intro": {
+    "other": "Review your sign-ins and end sessions you no longer use."
+  },
+  "sessions.manage_link": {
+    "other": "Manage active sessions"
   },
   "sessions.pagination": {
     "other": "Session list pages"
@@ -1583,5 +2061,906 @@
   },
   "sessions.help_bulk": {
     "other": "Sign out other sessions ends all your other sign-ins after confirmation and keeps this browser signed in. It also cancels sign-ins waiting for a two-step code. Session actions do not revoke API tokens. If a sign-in has already expired or ended, refresh the inventory."
+  },
+  "onboarding.networks.title": {
+    "other": "Your networks"
+  },
+  "onboarding.networks.empty": {
+    "other": "You are not a member of any network yet. Open an invitation link from a network administrator to join one, or start your own."
+  },
+  "onboarding.networks.create": {
+    "other": "Create a network"
+  },
+  "onboarding.networks.status.pending": {
+    "other": "pending"
+  },
+  "onboarding.networks.status.active": {
+    "other": "active"
+  },
+  "onboarding.networks.status.suspended": {
+    "other": "suspended"
+  },
+  "onboarding.networks.status.departed": {
+    "other": "departed"
+  },
+  "admin.audit.title": {
+    "other": "Audit and checks"
+  },
+  "admin.audit.system": {
+    "other": "System"
+  },
+  "admin.audit.filter_label": {
+    "other": "Filter by action"
+  },
+  "admin.audit.filter_hint": {
+    "other": "For example trade.completed. Leave empty for everything."
+  },
+  "admin.audit.filter": {
+    "other": "Filter"
+  },
+  "admin.audit.region": {
+    "other": "Audit log table"
+  },
+  "admin.audit.caption": {
+    "other": "Audit log"
+  },
+  "admin.audit.column.number": {
+    "other": "No."
+  },
+  "admin.audit.column.when": {
+    "other": "When"
+  },
+  "admin.audit.column.who": {
+    "other": "Who"
+  },
+  "admin.audit.column.action": {
+    "other": "Action"
+  },
+  "admin.audit.column.target": {
+    "other": "Target"
+  },
+  "admin.audit.column.reason": {
+    "other": "Reason"
+  },
+  "admin.audit.empty": {
+    "other": "No audit events match."
+  },
+  "admin.audit.check_title": {
+    "other": "Consistency check"
+  },
+  "admin.audit.check_explanation": {
+    "other": "Recomputes balances and checks the audit chain. The run is recorded."
+  },
+  "admin.audit.check_run": {
+    "other": "Run consistency check"
+  },
+  "admin.check.title": {
+    "other": "Consistency check result"
+  },
+  "admin.check.passed": {
+    "other": "Check passed: no problems found."
+  },
+  "admin.check.failed": {
+    "other": "Check failed: problems found."
+  },
+  "admin.check.back": {
+    "other": "Back to audit and checks"
+  },
+  "admin.exports.title": {
+    "other": "Exports"
+  },
+  "admin.exports.explanation": {
+    "other": "Exports are recorded in the audit log and download as one zip file."
+  },
+  "admin.exports.scope_label": {
+    "other": "What to export"
+  },
+  "admin.exports.scope.ledger": {
+    "other": "Ledger: accounts, trades, entries"
+  },
+  "admin.exports.scope.members": {
+    "other": "Members and roles"
+  },
+  "admin.exports.scope.audit": {
+    "other": "Audit history"
+  },
+  "admin.exports.scope.full": {
+    "other": "Everything"
+  },
+  "admin.exports.format_label": {
+    "other": "File format"
+  },
+  "admin.exports.format.csv": {
+    "other": "CSV"
+  },
+  "admin.exports.format.json": {
+    "other": "JSON"
+  },
+  "admin.exports.download": {
+    "other": "Download export"
+  },
+  "my_audit.title": {
+    "other": "Account activity log"
+  },
+  "my_audit.staff": {
+    "other": "Network staff"
+  },
+  "my_audit.system": {
+    "other": "System"
+  },
+  "my_audit.explanation": {
+    "other": "Events recorded about your account. Other people's names and details are left out."
+  },
+  "my_audit.filter_label": {
+    "other": "Filter by action"
+  },
+  "my_audit.filter_hint": {
+    "other": "For example trade.completed. Leave empty for everything."
+  },
+  "my_audit.filter": {
+    "other": "Filter"
+  },
+  "my_audit.region": {
+    "other": "Activity log table"
+  },
+  "my_audit.caption": {
+    "other": "Activity log"
+  },
+  "my_audit.column.number": {
+    "other": "No."
+  },
+  "my_audit.column.when": {
+    "other": "When"
+  },
+  "my_audit.column.who": {
+    "other": "Who"
+  },
+  "my_audit.column.action": {
+    "other": "Action"
+  },
+  "my_audit.column.about": {
+    "other": "About"
+  },
+  "my_audit.column.reason": {
+    "other": "Reason"
+  },
+  "my_audit.empty": {
+    "other": "No events match."
+  },
+  "admin.check.summary": {
+    "one": "Ledger sequence %[2]s; %[1]d audit event checked.",
+    "other": "Ledger sequence %[2]s; %[1]d audit events checked."
+  },
+  "admin.adjust.title": {
+    "other": "Adjustments"
+  },
+  "admin.adjust.choose_member": {
+    "other": "Choose a member"
+  },
+  "admin.adjust.member_required": {
+    "other": "Member: choose a member other than yourself."
+  },
+  "admin.adjust.direction_required": {
+    "other": "Direction: choose credit or debit."
+  },
+  "admin.adjust.reason_required": {
+    "other": "Reason: a reason is required for every adjustment. Write why it is needed."
+  },
+  "admin.adjust.related_required": {
+    "other": "Choose a posted transaction involving the adjusted member."
+  },
+  "admin.adjust.invalid": {
+    "other": "Not posted. Fix the problems below. Nothing changed."
+  },
+  "admin.adjust.credit": {
+    "other": "Credit (balance goes up)"
+  },
+  "admin.adjust.debit": {
+    "other": "Debit (balance goes down)"
+  },
+  "admin.adjust.review_title": {
+    "other": "Review adjustment"
+  },
+  "admin.adjust.queued": {
+    "other": "Adjustment for %[1]s is above the dual-control threshold. Nothing is posted yet: another administrator must approve it before it expires."
+  },
+  "admin.adjust.posted": {
+    "other": "Adjustment posted for %[1]s. Their balance is now %[2]s · %[3]s."
+  },
+  "admin.adjust.intro": {
+    "other": "An adjustment is an audited correction against the network's system account. Every adjustment needs a reason. You will review the effect before it is posted."
+  },
+  "admin.adjust.member": {
+    "other": "Member"
+  },
+  "admin.adjust.direction": {
+    "other": "Direction"
+  },
+  "admin.adjust.credit_choice": {
+    "other": "Credit: the member's balance goes up"
+  },
+  "admin.adjust.debit_choice": {
+    "other": "Debit: the member's balance goes down"
+  },
+  "admin.adjust.amount": {
+    "other": "Amount"
+  },
+  "admin.adjust.amount_value": {
+    "other": "%[1]s %[2]s"
+  },
+  "admin.adjust.amount_hint": {
+    "one": "Amount in credits, up to %[1]d decimal place.",
+    "other": "Amount in credits, up to %[1]d decimal places."
+  },
+  "admin.adjust.reason": {
+    "other": "Reason"
+  },
+  "admin.adjust.reason_hint": {
+    "other": "Required. Recorded in the audit log."
+  },
+  "admin.adjust.related_optional": {
+    "other": "Related transaction (optional)"
+  },
+  "admin.adjust.related_hint": {
+    "other": "Transaction ID of a posted entry involving this member. Leave blank for a standalone correction."
+  },
+  "admin.adjust.related": {
+    "other": "Related transaction"
+  },
+  "admin.adjust.original_entry": {
+    "other": "The original entry"
+  },
+  "admin.adjust.balance_now": {
+    "other": "Their balance now"
+  },
+  "admin.adjust.balance_after": {
+    "other": "Their balance after"
+  },
+  "admin.adjust.post": {
+    "other": "Post adjustment"
+  },
+  "admin.adjust.edit": {
+    "other": "Go back and edit"
+  },
+  "admin.adjust.approval_title": {
+    "other": "Review adjustment approval"
+  },
+  "admin.adjust.approval_notice": {
+    "other": "Nothing is posted until you confirm approval."
+  },
+  "admin.adjust.requested_by": {
+    "other": "Requested by"
+  },
+  "admin.adjust.approval_recheck": {
+    "other": "The request, permissions and available credit are checked again when you confirm. Balances may change while you review."
+  },
+  "admin.adjust.approve": {
+    "other": "Approve and post"
+  },
+  "admin.adjust.back_without": {
+    "other": "Go back without approving"
+  },
+  "admin.adjust.pending_title": {
+    "other": "Adjustments awaiting approval"
+  },
+  "admin.adjust.threshold": {
+    "other": "Adjustments above %[1]s %[2]s need approval from a second administrator before anything is posted. A request that is not decided in time expires and posts nothing."
+  },
+  "admin.adjust.dual_off": {
+    "other": "Dual control is off for this network, so adjustments post at once. Requests made earlier are listed here."
+  },
+  "admin.adjust.filter_label": {
+    "other": "Show requests"
+  },
+  "admin.adjust.filter_pending": {
+    "other": "Waiting for approval"
+  },
+  "admin.adjust.filter_approved": {
+    "other": "Approved"
+  },
+  "admin.adjust.filter_rejected": {
+    "other": "Rejected"
+  },
+  "admin.adjust.filter_cancelled": {
+    "other": "Cancelled"
+  },
+  "admin.adjust.filter_expired": {
+    "other": "Expired"
+  },
+  "admin.adjust.apply_filter": {
+    "other": "Apply filter"
+  },
+  "admin.adjust.table_label": {
+    "other": "Adjustment requests table"
+  },
+  "admin.adjust.caption": {
+    "other": "Adjustment requests in %[1]s"
+  },
+  "admin.adjust.adjustment": {
+    "other": "Adjustment"
+  },
+  "admin.adjust.status": {
+    "other": "Status"
+  },
+  "admin.adjust.actions": {
+    "other": "Actions"
+  },
+  "admin.adjust.row_amount": {
+    "other": "%[1]s: %[2]s %[3]s"
+  },
+  "admin.adjust.related_sentence": {
+    "other": "Adjusts %[1]s"
+  },
+  "admin.adjust.original_entry_lower": {
+    "other": "the original entry"
+  },
+  "admin.adjust.status_by": {
+    "other": "%[1]s by %[2]s"
+  },
+  "admin.adjust.expired_suffix": {
+    "other": ": expired, nothing will be posted"
+  },
+  "admin.adjust.expires_suffix": {
+    "other": "; expires %[1]s"
+  },
+  "admin.adjust.review_named": {
+    "other": "Review approval for %[1]s"
+  },
+  "admin.adjust.review_approval": {
+    "other": "Review approval"
+  },
+  "admin.adjust.reject_named": {
+    "other": "Reject adjustment for %[1]s"
+  },
+  "admin.adjust.reject": {
+    "other": "Reject"
+  },
+  "admin.adjust.cancel_named": {
+    "other": "Cancel request for %[1]s"
+  },
+  "admin.adjust.cancel_request": {
+    "other": "Cancel request"
+  },
+  "admin.adjust.another_admin": {
+    "other": "Another administrator must decide this."
+  },
+  "admin.adjust.empty": {
+    "other": "No requests match this filter."
+  },
+  "admin.adjust.status.pending": {
+    "other": "pending"
+  },
+  "admin.adjust.status.approved": {
+    "other": "approved"
+  },
+  "admin.adjust.status.rejected": {
+    "other": "rejected"
+  },
+  "admin.adjust.status.cancelled": {
+    "other": "cancelled"
+  },
+  "admin.adjust.status.expired": {
+    "other": "expired"
+  },
+  "admin.adjust.request_approved": {
+    "other": "Adjustment request approved."
+  },
+  "admin.adjust.request_rejected": {
+    "other": "Adjustment request rejected."
+  },
+  "admin.adjust.request_cancelled": {
+    "other": "Adjustment request cancelled."
+  },
+  "admin.adjust.review_again": {
+    "other": "review this adjustment again before confirming; nothing changed"
+  },
+  "admin.adjust.forbidden": {
+    "other": "Not done. You cannot decide this request: it needs a different administrator, and never the member it adjusts. Nothing changed."
+  },
+  "admin.adjust.closed": {
+    "other": "Not done. This request has expired or was already decided. Nothing changed. The list below shows its current state."
+  },
+  "admin.adjust.closed_detail": {
+    "other": "this request has expired or was already decided"
+  },
+  "admin.adjust.independent_detail": {
+    "other": "a different independent administrator must decide this request"
+  },
+  "admin.adjust.range_detail": {
+    "other": "the resulting balance would exceed the supported range"
+  },
+  "admin.reverse.title": {
+    "other": "Reverse a trade"
+  },
+  "admin.reverse.reference_required": {
+    "other": "Trade reference: enter the reference of the completed trade to reverse. You can copy it from the trade page address."
+  },
+  "admin.reverse.reference_missing": {
+    "other": "Trade reference: no trade with this reference was found in this network."
+  },
+  "admin.reverse.reference_party": {
+    "other": "Trade reference: you took part in this trade, so you cannot reverse it. Ask another administrator."
+  },
+  "admin.reverse.reference_reversal": {
+    "other": "Trade reference: this is itself a reversal, and a reversal cannot be reversed."
+  },
+  "admin.reverse.reference_disputed": {
+    "other": "Trade reference: this trade is under dispute. A reviewer decides disputed trades from the review queue."
+  },
+  "admin.reverse.reference_empty": {
+    "other": "Trade reference: nothing is left to reverse on this trade."
+  },
+  "admin.reverse.reference_status": {
+    "other": "Trade reference: only a completed trade can be reversed. This one is %[1]s."
+  },
+  "admin.reverse.unavailable": {
+    "other": "This trade cannot be reversed."
+  },
+  "admin.reverse.amount_help": {
+    "one": "Amount: enter a number with up to %[1]d decimal place, for example %[2]s. Leave it empty to reverse everything that is left.",
+    "other": "Amount: enter a number with up to %[1]d decimal places, for example %[2]s. Leave it empty to reverse everything that is left."
+  },
+  "admin.reverse.amount_max": {
+    "other": "Amount: at most %[1]s is left to reverse on this trade."
+  },
+  "admin.reverse.reason_required": {
+    "other": "Reason: a reason is required for every reversal. Write why it is needed."
+  },
+  "admin.reverse.reason_long": {
+    "other": "Reason: this is too long. Use 500 characters or fewer."
+  },
+  "admin.reverse.invalid": {
+    "other": "Not reversed. Fix the problems below. Nothing changed."
+  },
+  "admin.reverse.review_title": {
+    "other": "Review reversal"
+  },
+  "admin.reverse.insufficient_credit": {
+    "other": "Not reversed. %[1]s does not have enough available credit to give this amount back. Nothing changed."
+  },
+  "admin.reverse.posted": {
+    "other": "Reversal posted: %[1]s %[2]s went back from %[3]s to %[4]s."
+  },
+  "admin.reverse.intro": {
+    "other": "A reversal gives credit back from the receiver of a completed trade to the payer. It is posted as a new entry, the original trade stays on record, and every reversal needs a reason. You cannot reverse a trade you took part in. Disputed trades are decided from the review queue."
+  },
+  "admin.reverse.payer": {
+    "other": "Payer"
+  },
+  "admin.reverse.payee": {
+    "other": "Payee"
+  },
+  "admin.reverse.amount": {
+    "other": "Amount"
+  },
+  "admin.reverse.amount_value": {
+    "other": "%[1]s %[2]s"
+  },
+  "admin.reverse.already_reversed": {
+    "other": "Already reversed"
+  },
+  "admin.reverse.remaining": {
+    "other": "Left to reverse"
+  },
+  "admin.reverse.reference": {
+    "other": "Trade reference"
+  },
+  "admin.reverse.reference_hint": {
+    "other": "The reference of the completed trade, as in the address of its page."
+  },
+  "admin.reverse.amount_to_reverse": {
+    "other": "Amount to reverse"
+  },
+  "admin.reverse.amount_hint": {
+    "one": "Optional. Up to %[1]d decimal place. Leave empty to reverse everything that is left.",
+    "other": "Optional. Up to %[1]d decimal places. Leave empty to reverse everything that is left."
+  },
+  "admin.reverse.reason": {
+    "other": "Reason"
+  },
+  "admin.reverse.reason_hint": {
+    "other": "Required. Recorded in the audit log and shown on the reversal."
+  },
+  "admin.reverse.confirmation_notice": {
+    "other": "Nothing is posted until you confirm. A posted reversal cannot be undone."
+  },
+  "admin.reverse.trade_label": {
+    "other": "Trade"
+  },
+  "admin.reverse.trade_sentence": {
+    "other": "%[1]s paid %[2]s %[3]s %[4]s"
+  },
+  "admin.reverse.reversal_label": {
+    "other": "Reversal"
+  },
+  "admin.reverse.full_sentence": {
+    "other": "%[1]s %[2]s go back from %[3]s to %[4]s. This reverses everything that is left, so the trade becomes Reversed."
+  },
+  "admin.reverse.partial_sentence": {
+    "other": "%[1]s %[2]s go back from %[3]s to %[4]s. This is a partial reversal; the trade stays Completed."
+  },
+  "admin.reverse.balance_now": {
+    "other": "%[1]s now"
+  },
+  "admin.reverse.balance_after": {
+    "other": "%[1]s after"
+  },
+  "admin.reverse.post": {
+    "other": "Post reversal"
+  },
+  "admin.reverse.edit": {
+    "other": "Go back and edit"
+  },
+  "admin.reset.forbidden": {
+    "other": "Not done. This password cannot be reset here. Use Change password for your own account, or ask the platform operator for help. Nothing changed."
+  },
+  "time_zone.display": {
+    "other": "Pages show times in your time zone. The API and the audit log always use UTC. Now it is %[1]s in %[2]s."
+  },
+  "time_zone.hint": {
+    "other": "An IANA name such as Europe/Berlin, Asia/Kolkata or America/Argentina/Buenos_Aires. Leave empty for UTC."
+  },
+  "time_zone.save": {
+    "other": "Save time zone"
+  },
+  "time_zone.invalid_summary": {
+    "other": "Not saved. Fix the problem below. Nothing changed."
+  },
+  "time_zone.invalid_field": {
+    "other": "Time zone: enter a name such as Europe/Berlin or America/Mexico_City, or leave it empty for UTC."
+  },
+  "time_zone.saved": {
+    "other": "Time zone saved."
+  },
+  "dispute.category.not_delivered": {
+    "other": "Not delivered"
+  },
+  "dispute.category.quality": {
+    "other": "Not as described or poor quality"
+  },
+  "dispute.category.wrong_amount": {
+    "other": "Wrong amount"
+  },
+  "dispute.category.unauthorised": {
+    "other": "I did not agree to this trade"
+  },
+  "dispute.category.other": {
+    "other": "Something else"
+  },
+  "dispute.status.open": {
+    "other": "Open, waiting for a reviewer"
+  },
+  "dispute.status.under_review": {
+    "other": "Under review"
+  },
+  "dispute.status.posting_pending": {
+    "other": "Decided, reversal not yet posted"
+  },
+  "dispute.status.resolved": {
+    "other": "Resolved"
+  },
+  "dispute.status.withdrawn": {
+    "other": "Withdrawn"
+  },
+  "dispute.title": {
+    "other": "Dispute"
+  },
+  "dispute.list_title": {
+    "other": "Disputes"
+  },
+  "dispute.queue_title": {
+    "other": "Dispute review queue"
+  },
+  "dispute.queue.all": {
+    "other": "All needing action"
+  },
+  "dispute.queue.waiting": {
+    "other": "Waiting for a reviewer"
+  },
+  "dispute.open_title": {
+    "other": "Raise a dispute"
+  },
+  "dispute.review_title": {
+    "other": "Review your dispute"
+  },
+  "dispute.invalid": {
+    "other": "Not sent. Fix the problems below. Nothing changed."
+  },
+  "dispute.statement.required": {
+    "other": "Statement: write what went wrong, in up to 2000 characters."
+  },
+  "dispute.statement.too_long": {
+    "other": "Statement: this is too long. Shorten it to 2000 characters or fewer."
+  },
+  "dispute.category.required": {
+    "other": "Reason: choose one of the reasons."
+  },
+  "dispute.not_eligible": {
+    "other": "Not sent. This trade cannot be disputed now: it must be completed, the dispute deadline must not have passed, and you must be a party to it. Nothing changed."
+  },
+  "dispute.opened": {
+    "other": "Dispute opened. The trade is marked Disputed. Your balance has not changed."
+  },
+  "dispute.withdrawn": {
+    "other": "Dispute withdrawn. The trade is Completed again and nothing was posted."
+  },
+  "dispute.review_started": {
+    "other": "Review started."
+  },
+  "dispute.posting_retried": {
+    "other": "Posting retried."
+  },
+  "dispute.responded": {
+    "other": "Your response was added. The reviewer and the other party can read it."
+  },
+  "dispute.rereview_requested": {
+    "other": "Re-review requested. A different reviewer will look at the decision. This can only be done once."
+  },
+  "dispute.rereview_recorded": {
+    "other": "Re-review decision recorded."
+  },
+  "dispute.decision_recorded": {
+    "other": "Decision recorded."
+  },
+  "dispute.not_eligible_deadline": {
+    "other": "Not sent. This trade cannot be disputed now: it must be completed, on or before its dispute deadline (%s), and you must be a party to it. Nothing changed."
+  },
+  "dispute.outcome.dismissed": {
+    "other": "Dismissed: the balance stands as before."
+  },
+  "dispute.outcome.upheld_pending": {
+    "other": "Upheld: a reversal of %s %s is decided but not yet posted."
+  },
+  "dispute.outcome.upheld_posted": {
+    "other": "Upheld: a reversal of %s %s has been posted."
+  },
+  "dispute.outcome.partial_pending": {
+    "other": "Partly upheld: a reversal of %s %s is decided but not yet posted."
+  },
+  "dispute.outcome.partial_posted": {
+    "other": "Partly upheld: a reversal of %s %s has been posted."
+  },
+  "dispute.event.opened": {
+    "other": "Opened"
+  },
+  "dispute.event.under_review": {
+    "other": "Under review"
+  },
+  "dispute.event.posting_pending": {
+    "other": "Posting pending"
+  },
+  "dispute.event.resolved": {
+    "other": "Resolved"
+  },
+  "dispute.event.withdrawn": {
+    "other": "Withdrawn"
+  },
+  "dispute.event.responded": {
+    "other": "Responded"
+  },
+  "dispute.event.rereview_requested": {
+    "other": "Rereview requested"
+  },
+  "dispute.event.rereview_confirmed": {
+    "other": "Rereview confirmed"
+  },
+  "dispute.event.rereview_upheld": {
+    "other": "Rereview upheld"
+  },
+  "dispute.event.rereview_partially_upheld": {
+    "other": "Rereview partially upheld"
+  },
+  "dispute.event_outcome.dismissed": {
+    "other": "dismissed"
+  },
+  "dispute.event_outcome.upheld": {
+    "other": "upheld"
+  },
+  "dispute.event_outcome.partially_upheld": {
+    "other": "partially upheld"
+  },
+  "dispute.event_with_outcome": {
+    "other": "%s (%s)"
+  },
+  "dispute.form.trade": {
+    "other": "Trade: %s (%s)."
+  },
+  "dispute.form.deadline": {
+    "other": "You can open a dispute on this trade until %s."
+  },
+  "dispute.form.completed_only": {
+    "other": "Only a completed trade can be disputed."
+  },
+  "dispute.form.no_balance_change": {
+    "other": "Opening a dispute does not change any balance."
+  },
+  "dispute.form.effect": {
+    "other": "The trade will be marked Disputed. Your balance and available credit do not change until a reviewer decides."
+  },
+  "dispute.trade_sentence": {
+    "other": "%s paid %s %s %s"
+  },
+  "dispute.opened_at": {
+    "other": "Opened %s."
+  },
+  "dispute.response_late": {
+    "other": "(no response yet; a reviewer will assess the case, silence decides nothing)"
+  },
+  "dispute.overdue": {
+    "other": "(overdue)"
+  },
+  "dispute.response_from": {
+    "other": "Response from %s"
+  },
+  "dispute.request_reason": {
+    "other": "Reason for the request: %s"
+  },
+  "dispute.rationale_value": {
+    "other": "Rationale: %s"
+  },
+  "dispute.rereview_explanation": {
+    "other": "You can ask once for a different reviewer to look at this decision, until %s. The original decision is kept; the re-review is recorded next to it."
+  },
+  "dispute.row": {
+    "other": "Dispute: %s"
+  },
+  "dispute.trades": {
+    "other": "trades"
+  },
+  "dispute.empty": {
+    "other": "You have no disputes. To contest a completed trade, open it from your %s and choose Raise a dispute."
+  },
+  "dispute.reason": {
+    "other": "Reason"
+  },
+  "dispute.your_statement": {
+    "other": "Your statement"
+  },
+  "dispute.effect": {
+    "other": "Effect"
+  },
+  "dispute.open_action": {
+    "other": "Open dispute"
+  },
+  "dispute.back_edit": {
+    "other": "Go back and edit"
+  },
+  "dispute.review_action": {
+    "other": "Review dispute"
+  },
+  "dispute.cancel": {
+    "other": "Cancel"
+  },
+  "dispute.waive_response": {
+    "other": "Decide without waiting for the other party's response"
+  },
+  "dispute.statement_label": {
+    "other": "What went wrong?"
+  },
+  "dispute.statement_hint": {
+    "other": "Up to 2000 characters. The other party and the reviewer will read this."
+  },
+  "dispute.statement": {
+    "other": "Statement"
+  },
+  "dispute.status": {
+    "other": "Status"
+  },
+  "dispute.trade": {
+    "other": "Trade"
+  },
+  "dispute.opened_by": {
+    "other": "Opened by"
+  },
+  "dispute.response_due": {
+    "other": "Response due"
+  },
+  "dispute.decision_target": {
+    "other": "Decision target"
+  },
+  "dispute.decision": {
+    "other": "Decision"
+  },
+  "dispute.rationale": {
+    "other": "Rationale"
+  },
+  "dispute.rereview": {
+    "other": "Re-review"
+  },
+  "dispute.timeline": {
+    "other": "Timeline"
+  },
+  "dispute.withdraw_action": {
+    "other": "Withdraw this dispute"
+  },
+  "dispute.start_review": {
+    "other": "Start review"
+  },
+  "dispute.retry_action": {
+    "other": "Retry posting the reversal"
+  },
+  "dispute.response_heading": {
+    "other": "Add your response"
+  },
+  "dispute.respond_action": {
+    "other": "Send response"
+  },
+  "dispute.rereview_heading": {
+    "other": "Ask for a re-review"
+  },
+  "dispute.request_rereview": {
+    "other": "Request re-review"
+  },
+  "dispute.rereview_decision_heading": {
+    "other": "Record the re-review decision"
+  },
+  "dispute.rereview_independent": {
+    "other": "You are not the reviewer who made the original decision."
+  },
+  "dispute.outcome": {
+    "other": "Outcome"
+  },
+  "dispute.confirmed_option": {
+    "other": "Confirmed: the original decision stands"
+  },
+  "dispute.rereview_upheld_option": {
+    "other": "Upheld: reverse what is still reversible"
+  },
+  "dispute.partial_option": {
+    "other": "Partly upheld: reverse part"
+  },
+  "dispute.rereview_review_action": {
+    "other": "Review re-review decision"
+  },
+  "dispute.decision_heading": {
+    "other": "Record a decision"
+  },
+  "dispute.dismissed_option": {
+    "other": "Dismissed: the balance stands"
+  },
+  "dispute.upheld_option": {
+    "other": "Upheld: reverse the whole trade"
+  },
+  "dispute.review_decision": {
+    "other": "Review decision"
+  },
+  "dispute.back": {
+    "other": "Back to disputes"
+  },
+  "dispute.response_label": {
+    "other": "Your response"
+  },
+  "dispute.response_hint": {
+    "other": "Up to 2000 characters. You can respond once. The reviewer and the person who opened the dispute will read it."
+  },
+  "dispute.rereview_reason_label": {
+    "other": "Why should it be looked at again?"
+  },
+  "dispute.short_hint": {
+    "other": "Up to 500 characters."
+  },
+  "dispute.amount_label": {
+    "other": "Amount to reverse (partly upheld only)"
+  },
+  "dispute.rationale_hint": {
+    "other": "Required. Both parties will see it."
+  },
+  "dispute.waive_reason": {
+    "other": "Reason for not waiting"
+  },
+  "dispute.waive_hint": {
+    "other": "Needed only if the response period has not ended and no response was given. It is recorded in the audit trail."
+  },
+  "dispute.amount_hint": {
+    "other": "Amount in credits, up to %d decimal places."
+  },
+  "dispute.show": {
+    "other": "Show"
+  },
+  "dispute.queue.independence": {
+    "other": "You cannot decide a dispute on a trade you took part in."
+  },
+  "dispute.queue.empty": {
+    "other": "The queue is empty. Disputes that need a decision appear here."
   }
 }

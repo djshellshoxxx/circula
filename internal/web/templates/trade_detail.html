@@ -2,31 +2,31 @@
 {{with .D}}
 {{if .Party}}<p class="big">{{.Row.Text}}</p>{{end}}
 <dl class="kv">
-  <dt>Status</dt><dd><span class="tag">{{.Row.Status}}</span> {{.Explain}}</dd>
-  <dt>Payer</dt><dd>{{.Payer}}</dd>
-  <dt>Payee</dt><dd>{{.Payee}}</dd>
-  <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
-  {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
-  {{if .Tx.Reason}}<dt>Reason</dt><dd>{{.Tx.Reason}}</dd>{{end}}
-  <dt>Proposed</dt><dd>{{.Proposed}}</dd>
-  {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>Expires</dt><dd>{{.Expires}}</dd>{{end}}{{end}}
-  {{if .Tx.CompletedAt}}<dt>Posted</dt><dd>{{.Posted}}</dd>{{end}}
-  {{if .Row.Ledger}}<dt>Ledger reference</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
-  {{if .Tx.OriginalTxID}}<dt>Reverses</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.OriginalTxID}}">The original entry</a></dd>{{end}}
-  {{if .Tx.RelatedTxID}}<dt>Adjusts</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.RelatedTxID}}">The original entry</a></dd>{{end}}
-  {{if .Row.ReversedBy}}<dt>Reversals</dt><dd><ul>{{range .Row.ReversedBy}}<li><a href="/n/{{$.Slug}}/trades/{{.ID}}">{{.Text}}</a></li>{{end}}</ul></dd>{{end}}
+  <dt>{{msg "trade.status.label"}}</dt><dd><span class="tag">{{.Row.Status}}</span> {{.Explain}}</dd>
+  <dt>{{msg "trade.payer"}}</dt><dd>{{.Payer}}</dd>
+  <dt>{{msg "trade.payee"}}</dt><dd>{{.Payee}}</dd>
+  <dt>{{msg "trade.amount"}}</dt><dd>{{msg "trade.amount_value" (plain .Tx.Amount $.Dec) (unit $.Unit .Tx.Amount $.Dec)}}</dd>
+  {{if .Tx.Note}}<dt>{{msg "trade.note"}}</dt><dd>{{.Tx.Note}}</dd>{{end}}
+  {{if .Tx.Reason}}<dt>{{msg "trade.reason"}}</dt><dd>{{.Tx.Reason}}</dd>{{end}}
+  <dt>{{msg "trade.history.proposed"}}</dt><dd>{{.Proposed}}</dd>
+  {{if .Tx.ExpiresAt}}{{if eq (printf "%s" .Tx.Status) "proposed"}}<dt>{{msg "trade.expires"}}</dt><dd>{{.Expires}}</dd>{{end}}{{end}}
+  {{if .Tx.CompletedAt}}<dt>{{msg "trade.posted"}}</dt><dd>{{.Posted}}</dd>{{end}}
+  {{if .Row.Ledger}}<dt>{{msg "trade.ledger_reference"}}</dt><dd>{{.Tx.LedgerSeq}}</dd>{{end}}
+  {{if .Tx.OriginalTxID}}<dt>{{msg "trade.reverses"}}</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.OriginalTxID}}">{{msg "trade.original_entry"}}</a></dd>{{end}}
+  {{if .Tx.RelatedTxID}}<dt>{{msg "trade.adjusts"}}</dt><dd><a href="/n/{{$.Slug}}/trades/{{.Tx.RelatedTxID}}">{{msg "trade.original_entry"}}</a></dd>{{end}}
+  {{if .Row.ReversedBy}}<dt>{{msg "trade.reversals"}}</dt><dd><ul>{{range .Row.ReversedBy}}<li><a href="/n/{{$.Slug}}/trades/{{.ID}}">{{.Text}}</a></li>{{end}}</ul></dd>{{end}}
 </dl>
 <div class="actions">
-  {{if .Accept}}<a class="btn" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">Review and accept</a>{{end}}
-  {{if .Decline}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/decline">Decline</a>{{end}}
-  {{if .Cancel}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/cancel">Cancel this proposal</a>{{end}}
-  {{if .Dispute}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/dispute">Raise a dispute</a>{{end}}
-  {{if .DisputeID}}<a class="btn secondary" href="/n/{{$.Slug}}/disputes/{{.DisputeID}}">View the dispute</a>{{end}}
-  {{if .Reverse}}<a class="btn secondary" href="/n/{{$.Slug}}/admin/reverse?tx={{.Tx.ID}}">Reverse this trade (administrator)</a>{{end}}
+  {{if .Accept}}<a class="btn" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/accept">{{msg "trade.detail.accept"}}</a>{{end}}
+  {{if .Decline}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/decline">{{msg "trade.action.decline"}}</a>{{end}}
+  {{if .Cancel}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/cancel">{{msg "trade.detail.cancel"}}</a>{{end}}
+  {{if .Dispute}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/dispute">{{msg "trade.detail.dispute"}}</a>{{end}}
+  {{if .DisputeID}}<a class="btn secondary" href="/n/{{$.Slug}}/disputes/{{.DisputeID}}">{{msg "trade.detail.view_dispute"}}</a>{{end}}
+  {{if .Reverse}}<a class="btn secondary" href="/n/{{$.Slug}}/admin/reverse?tx={{.Tx.ID}}">{{msg "trade.detail.reverse"}}</a>{{end}}
 </div>
 {{if .WhyNot}}<p>{{.WhyNot}}</p>{{end}}
-<h2>Timeline</h2>
-{{if .History}}<ol>{{range .History}}<li>{{.Label}}: {{.At}}</li>{{end}}</ol>{{else}}<p>No status changes recorded yet.</p>{{end}}
+<h2>{{msg "trade.detail.timeline"}}</h2>
+{{if .History}}<ol>{{range .History}}<li>{{.Label}}: {{.At}}</li>{{end}}</ol>{{else}}<p>{{msg "trade.detail.no_changes"}}</p>{{end}}
 {{end}}
-<p><a href="/n/{{.Slug}}/trades">Back to trades</a></p>
+<p><a href="/n/{{.Slug}}/trades">{{msg "trade.detail.back"}}</a></p>
 {{end}}

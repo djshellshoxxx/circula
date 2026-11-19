@@ -1,6 +1,13 @@
 # Core consolidation security review
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
+## Current continuation
+
+Current integration authority, completed source, exact verification results,
+remaining work and next actions are recorded in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
+Main remains `ead63b5`; this owned continuation targets PR #90 at `9924785`.
+The snapshot below is the historical initial recovery record.
+
+## Historical initial-recovery checkpoint
 
 Baseline: `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`.
 Candidate: `integration/core-recovery-20261119`.

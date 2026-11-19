@@ -7,6 +7,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // myAuditPage shows the role-scoped audit view: a member sees events about their
@@ -23,11 +24,11 @@ func (s *server) myAuditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	n := c.memberNames()
 	var rows []auditRow
 	for _, e := range evs {
-		who := "Network staff"
+		who := messages.Text("my_audit.staff")
 		if nm, ok := n.lookup(e.ActorID); ok {
 			who = nm
 		} else if e.ActorType == domain.ActorSystem {
-			who = "System"
+			who = messages.Text("my_audit.system")
 		}
 		rows = append(rows, auditRow{Seq: e.Seq, When: c.when(e.OccurredAt), Actor: who, Action: e.Action, Target: e.TargetType, Reason: e.Reason})
 	}
@@ -35,6 +36,6 @@ func (s *server) myAuditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	if len(evs) == 50 {
 		next = strconv.FormatInt(evs[49].Seq, 10)
 	}
-	s.render(w, r, c, "my_audit", 200, &page{Title: "Account activity log", D: map[string]any{"Rows": rows, "Next": next},
+	s.render(w, r, c, "my_audit", 200, &page{Title: messages.Text("my_audit.title"), D: map[string]any{"Rows": rows, "Next": next},
 		V: map[string]string{"action": q.Get("action")}})
 }

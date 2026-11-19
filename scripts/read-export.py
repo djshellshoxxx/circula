@@ -92,6 +92,15 @@ def open_package(path):
             complete.file_size = MAX_EXPORT_FILE + 1
             with z.open(complete) as f:
                 data = read_member(f)
+                if info.compress_type != zipfile.ZIP_STORED:
+                    # ZipExtFile can stop at the compressed byte count before
+                    # its decoder reaches the stream end. Its public API has
+                    # no completion signal, so this small adapter deliberately
+                    # uses private state. Fail closed if Python changes it;
+                    # valid bytes and CRC alone do not prove stream completion.
+                    decoder = getattr(f, "_decompressor", None)
+                    if getattr(decoder, "eof", None) is not True:
+                        raise ValueError("ZIP member compression stream is incomplete or completion state is unavailable")
             if len(data) != info.file_size:
                 raise ValueError("ZIP member size does not match its complete contents")
             return data

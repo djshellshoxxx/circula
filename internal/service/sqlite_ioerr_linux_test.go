@@ -215,6 +215,17 @@ func walWriteFailureChild(t *testing.T, raw string) {
 	if busy != 0 || logFrames != 0 || checkpointed != 0 {
 		t.Fatal("fixture WAL checkpoint did not truncate")
 	}
+	// Failed rollback cleanup may discard the production connection. Keep a
+	// separate query-only connection open so closing that writer is not SQLite's
+	// last-close checkpoint: the parent must still inspect the partial WAL.
+	// This witness neither holds a transaction nor changes the production pool.
+	witnessDB := tu.Must(store.OpenRaw(f.Path))
+	defer func() { _ = witnessDB.Close() }()
+	witness := tu.Must(witnessDB.Conn(ctx))
+	defer func() { _ = witness.Close() }()
+	tu.Must(witness.ExecContext(ctx, "PRAGMA query_only=ON"))
+	var schemaObjects int
+	tu.Must(0, witness.QueryRowContext(ctx, "SELECT COUNT(*) FROM sqlite_schema").Scan(&schemaObjects))
 	before := tu.Snapshot(t, db)
 	e := &tu.Env{T: t, Ctx: ctx, Store: st}
 	probe := &walFaultStore{Store: st, t: t, f: f, before: snapLedger(t, e, f.Network)}

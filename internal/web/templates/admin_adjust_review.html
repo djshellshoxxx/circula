@@ -1,13 +1,13 @@
 {{define "content"}}
 {{with .D}}
 <dl class="kv">
-  <dt>Member</dt><dd>{{.Name}}</dd>
-  <dt>Direction</dt><dd>{{.Dir}}</dd>
-  <dt>Amount</dt><dd>{{.Amount}} {{$.Unit}}s</dd>
-  <dt>Reason</dt><dd>{{.Reason}}</dd>
-  {{if .RelatedTxID}}<dt>Related transaction</dt><dd><a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">The original entry</a></dd>{{end}}
-  <dt>Their balance now</dt><dd>{{template "balance" .Before}}</dd>
-  <dt>Their balance after</dt><dd>{{template "balance" .After}}</dd>
+  <dt>{{msg "admin.adjust.member"}}</dt><dd>{{.Name}}</dd>
+  <dt>{{msg "admin.adjust.direction"}}</dt><dd>{{.Dir}}</dd>
+  <dt>{{msg "admin.adjust.amount"}}</dt><dd>{{msg "admin.adjust.amount_value" .Amount (unit $.Unit .AmountMinor $.Dec)}}</dd>
+  <dt>{{msg "admin.adjust.reason"}}</dt><dd>{{.Reason}}</dd>
+  {{if .RelatedTxID}}<dt>{{msg "admin.adjust.related"}}</dt><dd><a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">{{msg "admin.adjust.original_entry"}}</a></dd>{{end}}
+  <dt>{{msg "admin.adjust.balance_now"}}</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>{{msg "admin.adjust.balance_after"}}</dt><dd>{{template "balance" .After}}</dd>
 </dl>
 {{end}}
 <form method="post" action="/n/{{.Slug}}/admin/adjust">
@@ -15,6 +15,6 @@
   <input type="hidden" name="member_id" value="{{.Val "member_id"}}"><input type="hidden" name="direction" value="{{.Val "direction"}}">
   <input type="hidden" name="related_transaction_id" value="{{.Val "related_transaction_id"}}">
   <input type="hidden" name="amount" value="{{.Val "amount"}}"><input type="hidden" name="reason" value="{{.Val "reason"}}">
-  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Post adjustment</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">{{msg "admin.adjust.post"}}</button> <button type="submit" name="step" value="back" class="secondary">{{msg "admin.adjust.edit"}}</button></div>
 </form>
 {{end}}

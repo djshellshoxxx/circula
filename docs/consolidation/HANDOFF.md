@@ -1,6 +1,13 @@
 # Core consolidation handoff
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
+## Current continuation
+
+Current integration authority, completed source, exact verification results,
+remaining work and next actions are recorded in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
+Main remains `ead63b5`; this owned continuation targets PR #90 at `9924785`.
+The snapshot below is the historical initial recovery record.
+
+## Historical initial-recovery checkpoint
 
 ## Resume point
 
@@ -57,3 +64,8 @@ retain those failures and obtain a real replacement result or explicit blocker. 
 worker or persistent execution mechanism exists. No main merge, release, or
 deployment is recorded at this checkpoint; update MAIN_MERGE_LOG.md only after
 observing the result.
+
+The peer consolidation report is preserved at
+`docs/audits/CONSOLIDATION_CONTINUATION_2026-11-19.md`. Its immutable 0a73ee4
+source is now reconciled into this owned continuation; neither active source
+ref was modified. The original branch inventory remains byte-for-byte intact.

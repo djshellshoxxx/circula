@@ -61,7 +61,7 @@ func (s *server) home(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/n/"+links[0].Slug, http.StatusSeeOther)
 		return
 	}
-	s.render(w, r, nil, "networks", 200, &page{Title: "Your networks", D: links})
+	s.render(w, r, nil, "networks", 200, &page{Title: messages.Text("onboarding.networks.title"), D: links})
 }
 
 type dash struct {
@@ -189,7 +189,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 	if len(txs) == 50 {
 		h.Next = txs[len(txs)-1].ID
 	}
-	s.render(w, r, c, "history", 200, &page{Title: "History", D: h, V: map[string]string{"status": f}})
+	s.render(w, r, c, "history", 200, &page{Title: messages.Text("trade.history.title"), D: h, V: map[string]string{"status": f}})
 }
 
 // activeMembers returns every active member, paging through the directory without a cap.

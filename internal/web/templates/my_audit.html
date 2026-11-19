@@ -1,14 +1,14 @@
 {{define "content"}}
-<p>Events recorded about your account. Other people's names and details are left out.</p>
+<p>{{msg "my_audit.explanation"}}</p>
 <form method="get" action="/n/{{.Slug}}/audit">
-  {{template "field" dict "P" . "Name" "action" "Label" "Filter by action" "Hint" "For example trade.completed. Leave empty for everything."}}
-  <div class="actions"><button type="submit" class="secondary">Filter</button></div>
+  {{template "field" dict "P" . "Name" "action" "Label" (msg "my_audit.filter_label") "Hint" (msg "my_audit.filter_hint")}}
+  <div class="actions"><button type="submit" class="secondary">{{msg "my_audit.filter"}}</button></div>
 </form>
 {{if .D.Rows}}
-<div class="scroll" role="region" aria-label="Activity log table" tabindex="0">
-<table class="stack"><caption>Activity log</caption>
-<thead><tr><th scope="col">No.</th><th scope="col">When</th><th scope="col">Who</th><th scope="col">Action</th><th scope="col">About</th><th scope="col">Reason</th></tr></thead>
-<tbody>{{range .D.Rows}}<tr><th scope="row" data-label="No.">{{.Seq}}</th><td data-label="When">{{.When}}</td><td data-label="Who">{{.Actor}}</td><td data-label="Action">{{.Action}}</td><td data-label="About">{{.Target}}</td><td data-label="Reason">{{.Reason}}</td></tr>{{end}}</tbody></table></div>
+<div class="scroll" role="region" aria-label="{{msg "my_audit.region"}}" tabindex="0">
+<table class="stack"><caption>{{msg "my_audit.caption"}}</caption>
+<thead><tr><th scope="col">{{msg "my_audit.column.number"}}</th><th scope="col">{{msg "my_audit.column.when"}}</th><th scope="col">{{msg "my_audit.column.who"}}</th><th scope="col">{{msg "my_audit.column.action"}}</th><th scope="col">{{msg "my_audit.column.about"}}</th><th scope="col">{{msg "my_audit.column.reason"}}</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr><th scope="row" data-label="{{msg "my_audit.column.number"}}">{{.Seq}}</th><td data-label="{{msg "my_audit.column.when"}}">{{.When}}</td><td data-label="{{msg "my_audit.column.who"}}">{{.Actor}}</td><td data-label="{{msg "my_audit.column.action"}}">{{.Action}}</td><td data-label="{{msg "my_audit.column.about"}}">{{.Target}}</td><td data-label="{{msg "my_audit.column.reason"}}">{{.Reason}}</td></tr>{{end}}</tbody></table></div>
 {{template "pager" dict "Next" .D.Next "Href" (printf "/n/%s/audit?action=%s&after=" .Slug (.Val "action"))}}
-{{else}}<p>No events match.</p>{{end}}
+{{else}}<p>{{msg "my_audit.empty"}}</p>{{end}}
 {{end}}

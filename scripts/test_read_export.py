@@ -14,6 +14,7 @@ import struct
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import warnings
 import zipfile
 import zlib
@@ -383,6 +384,94 @@ class ReferenceExportTests(unittest.TestCase):
                     path.write_bytes(data)
                 with self.subTest(compression=compression, mismatch=mismatch):
                     self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+
+    def recompress_package(self, path, compression, incomplete=None):
+        """Keep every data byte/checksum while removing stream completion."""
+        with zipfile.ZipFile(path) as package:
+            files = [(info.filename, package.read(info)) for info in package.infolist()]
+        try:
+            rewritten = zipfile.ZipFile(path, "w", compression=compression)
+        except RuntimeError as exc:
+            self.skipTest("stdlib compression method %d unavailable: %s" % (compression, exc))
+        with rewritten as package:
+            for name, data in files:
+                package.writestr(name, data)
+        if incomplete is None:
+            return
+        with zipfile.ZipFile(path) as package:
+            info = package.getinfo(incomplete)
+            central = package.start_dir
+        raw = bytearray(path.read_bytes())
+        local = info.header_offset
+        name_size, extra_size = struct.unpack_from("<HH", raw, local + 26)
+        start = local + 30 + name_size + extra_size
+        if compression == zipfile.ZIP_DEFLATED:
+            # This small fixture has one final block. Clear BFINAL: its data
+            # and CRC stay intact, but a further block is now required.
+            self.assertEqual(raw[start] & 1, 1)
+            raw[start] &= 0xfe
+        else:
+            # Remove the final compressed byte from this member's declared
+            # extent. Its old byte becomes padding, preserving other offsets.
+            while True:
+                self.assertEqual(raw[central:central + 4], b"PK\x01\x02")
+                name_size, extra_size, comment_size = struct.unpack_from("<HHH", raw, central + 28)
+                name = raw[central + 46:central + 46 + name_size].decode()
+                if name == incomplete:
+                    break
+                central += 46 + name_size + extra_size + comment_size
+            struct.pack_into("<I", raw, local + 18, info.compress_size - 1)
+            struct.pack_into("<I", raw, central + 20, info.compress_size - 1)
+        path.write_bytes(raw)
+
+    def test_zip_compression_valid_streams(self):
+        for compression in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED, zipfile.ZIP_BZIP2, zipfile.ZIP_LZMA):
+            with self.subTest(compression=compression):
+                def transform(path):
+                    self.recompress_package(path, compression)
+                self.assert_valid(*fixture("members"), zipped=True, transform_package=transform)
+
+    def test_zip_compression_requires_complete_streams(self):
+        for compression in (zipfile.ZIP_DEFLATED, zipfile.ZIP_BZIP2, zipfile.ZIP_LZMA):
+            for target in ("members.json", "manifest.json"):
+                with self.subTest(compression=compression, target=target):
+                    def transform(path):
+                        self.recompress_package(path, compression, target)
+                    self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+
+    def test_zip_compression_completion_state_must_be_available(self):
+        spec = importlib.util.spec_from_file_location("export_reader_completion", READER)
+        reader = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(reader)
+
+        # Simulate a stdlib reader that still returns valid bytes and checks
+        # CRC, but no longer exposes its decompressor's completion state.
+        class CompletionBlindReader:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def read(self, size=-1):
+                return self.stream.read(size)
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                self.stream.close()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "complete.zip"
+            with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as package:
+                package.writestr("members.json", b'{"tables":{"members":[]}}')
+            real_open = zipfile.ZipFile.open
+
+            def open_without_completion(package, *args, **kwargs):
+                return CompletionBlindReader(real_open(package, *args, **kwargs))
+
+            with mock.patch.object(zipfile.ZipFile, "open", open_without_completion):
+                with reader.open_package(path) as (read, _):
+                    with self.assertRaisesRegex(ValueError, "completion state"):
+                        read("members.json")
 
 
 if __name__ == "__main__":

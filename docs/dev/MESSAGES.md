@@ -196,3 +196,271 @@ all six new message attributes. It is not a full web-package or browser run.
 Combined-candidate web and browser checks remain integration work. This
 continuation does not complete the remaining UX-047 flows or approve new
 languages.
+
+## Inbox and report continuation
+
+This continuation adds 51 entries under `inbox.*` and `report.*`. It covers
+inbox headings, read actions and feedback, counts and empty states, dispute
+links and their response sentence, report form labels and explanations,
+category labels, duplicate/throttled summaries, success notices and the
+administrator report queue. Notification titles and bodies already stored by
+the service remain ordinary data; service/API messages and the unrelated
+credit-limit notice in `h_notify.go` are outside this slice.
+
+Complete accessible names for marking a notification read or a report handled
+now come from catalogue-backed `aria-label` values. Their visible button labels
+and spoken wording are unchanged. Inbox counts use the catalogue's English
+integer formatting, including `1,000 unread.`; zero still says
+`No unread notifications.`. Report privacy, the distinction between review and
+action, routes, filter/category values, pagination, status codes, CSRF,
+idempotency and policy are unchanged.
+
+The inbox dispute timestamp and report form target retain their existing
+markup through `messages.Around`. Its narrow extension accepts preceding
+trusted catalogue labels and reserves the final string argument for exactly
+one template-owned element. The report queue passes only labels selected from
+the five report categories and the two known target types. Target names never
+enter the helper: the template escapes them inside the existing link or strong
+element. An unknown category or type uses a complete plain-text row instead,
+so arbitrary stored values, including NUL and `%!`, cannot trip the helper's
+sentinel or formatting-error guard. Both surrounding strings remain ordinary
+text and are still escaped by `html/template`.
+
+`TestInboxReportMessages` checks complete messages, counts, positional names
+and the unchanged reporting/privacy explanations. The catalogue completeness
+check supplies every new interpolation argument. `TestReportAroundUsesKnownLabelsAndOneElementSlot`
+and the existing slot-rejection tests preserve the exactly-one-element rule.
+The focused `inbox_report_catalog_test.go` rendering tests cover empty and
+populated inboxes, read/unread state, filter/cursor links, report form values,
+known category choices, open/handled queues, target/timestamp markup, CSRF and
+idempotency fields, escaping and complete accessible names. The enum-provenance
+regression includes NUL and `%!` in target names and unknown category/type
+values. Existing `TestInboxAndBadge` and `TestReportPages` retain the HTTP and
+authorization checks for the combined candidate.
+
+Fail-before evidence was observed on base `5da8bc7`: the message regression
+failed on the absent `inbox.unread_count` entry, and the isolated production-file
+inbox render failed on the ungrouped large count and missing complete
+`aria-label`. A runtime restart then cleared the raw temporary logs; a receipt
+was retained from the observed output. Post-change checks passed with Go
+1.26.11: the complete messages package with `-race -p 1 -count=1` (1.063s), and
+all five new rendering/category/provenance tests with the same flags (4.137s).
+The latter was a file-list run of every production web Go file plus only
+`inbox_report_catalog_test.go`, without SQLite-backed test fixtures. Formatting,
+catalogue JSON/duplicate-key validation and `git diff --check` also passed.
+Full web-package, HTTP, browser and combined-candidate validation remain
+integration work. This is a partial UX-047 continuation and introduces no new
+languages.
+
+## Trade and history continuation
+
+This continuation adds 108 `trade.*` entries for trade lists, proposals,
+proposal review, acceptance, decline/cancellation confirmation, trade detail
+and account history. It includes the handlers' titles, validation text,
+payment descriptions, action notices and timeline status labels. Complete
+messages preserve interpolated member names, stable member references,
+available-credit amounts, notes and final balance descriptions. History's
+reversal and adjustment sentences use `msgAround` to retain their existing
+links while keeping catalogue text subject to HTML escaping.
+
+Both trade amount displays now use the existing per-amount unit inflector:
+one credit remains singular, and a unit already named `Hours` does not gain
+another `s`. Amounts still come from the domain's fixed minor-unit formatter;
+ledger and member references retain their identifier formatting. Decimal-place
+and proposal-expiry messages select the singular wording for one. No arithmetic,
+posting rules, authorization, action eligibility, status codes, CSRF,
+idempotency, routes, submitted form values or pagination behavior changes.
+The historical-balance lookup fragment remains a separate, unmigrated flow.
+
+`TestTradeMessages` and `TestTradeMessagesRemainPlainText` cover complete
+messages, singular/plural forms, exact large amounts, Unicode, literal percent
+signs, references and hostile interpolated text. `trade_catalog_test.go`
+renders all seven production page templates. It checks both amount-unit
+regressions, proposal/review form controls, both directions, confirmation
+references, the administrator-only reason field, independently gated detail
+actions, history links, time markup, export controls and contextual escaping.
+It also checks existing status mappings/fallback and amount-help precision.
+
+Local evidence on 2026-11-19 with Go 1.26.11: against the original production
+sources, the message regression failed on the absent `trade.sentence.pay` key,
+and the amount regression failed in both templates for singular, already-plural,
+zero-decimal and HTML-sensitive units. Both controls compiled successfully.
+After implementation, the complete message package passed with `-race -count=1`
+(1.034s), and a file-list race run of every production web Go file plus
+`trade_catalog_test.go` passed (11.536s). Formatting, catalogue key coverage and
+unchanged pager expressions also passed. The selective render run excludes
+unrelated SQLite-backed fixtures; it is not a complete web-package, HTTP,
+browser or accessibility-suite qualification. Combined-candidate tests and
+current-revision CI remain integration work. This is further partial UX-047
+completion and adds no language scope.
+## Network-picker continuation and onboarding ownership
+
+The onboarding slice was compared against immutable active heads
+`47446b33b01f4993a1caa406516746858bbf0a11` (#99) and
+`baedf4b6670f6bf39ec593978ce38780c5640215` (#101), using base `03fc500`.
+Both heads already catalogue the setup/invitation/join sections of `h_auth.go`
+and `setup.html`, `join.html`, `join_anon.html` and `joinnet.html` under
+`setup.*` and `join.*`. They also validate the setup decimal scale before
+formatting amount-error examples. Those sections, their behavior and their
+regressions remain with the active work; this continuation does not duplicate
+or replace them. Help, session, authentication/proof, terms/version checks,
+setup-secret handling, rate limits and amount parsing are untouched.
+
+The complete `home()` function and `networks.html` were byte-identical at the
+base and both compared heads. This disjoint continuation adds seven entries
+under `onboarding.networks.*` for the picker title, complete empty-state
+guidance, creation link and the four existing membership labels. It preserves
+their lowercase English spelling, membership filtering, single-network
+redirect, local links and network-name display. Unknown status values retain
+the existing plain-text fallback. Names, unknown statuses and catalogue text
+remain subject to `html/template` escaping.
+
+Before implementation, `TestNetworkPickerMessages` failed on a missing
+catalogue entry and `TestNetworkPickerCatalogueTextIsEscaped` failed because
+the creation label did not use the catalogue. After implementation, the full
+messages package passed with `-race -p 1 -count=1` (1.052s), and both new picker
+rendering tests passed with those flags (2.072s). The render command used all
+production web Go files plus only `network_picker_catalog_test.go`; it did not
+include SQLite-backed fixtures. The tests cover empty and populated states,
+all four status labels, exact links and escaping of names, unknown status
+values and substituted catalogue text. Formatting, JSON/duplicate-key checks
+and `git diff --check` also passed. These are local checks with Go 1.26.11,
+not full HTTP/browser or combined-candidate qualification. UX-047 remains a
+partial migration and this change introduces no new language scope.
+
+## Audit, consistency-check and export continuation
+
+This continuation adds 49 entries under `admin.audit.*`, `admin.check.*`,
+`admin.exports.*` and `my_audit.*`. It covers the administrator and member audit
+page titles, fixed actor labels, filter controls, table headings and responsive
+labels, empty states, consistency-check explanation/results, and the export
+form. Audit action names, target references, actor names, reasons and
+service-generated findings/remediation remain ordinary data. No service/API
+messages are translated in this slice.
+
+The consistency summary is one complete positional message. The audit-event
+total uses English count formatting and the singular `1 audit event`; the
+ledger sequence is passed as an exact decimal string so it is never grouped or
+converted through floating point. Audit row sequences, target IDs and amounts
+inside findings are unchanged, including values above 2^53. Timestamps and
+links remain template-owned markup, and every catalogue result and data value
+keeps contextual HTML escaping.
+
+Authorization, role scoping, service calls, filters, pagination, status codes,
+CSRF fields, export scope/format values and download behavior are unchanged.
+The policy/adjustment block and the complete ZIP/export-post section of
+`h_admin2.go` were checked byte-for-byte against base `03fc500`; both are
+unchanged. The existing interrupted-download handling is preserved.
+
+The tests were committed first as `175324b`, retaining a reproducible test-only
+baseline. With Go 1.26.11, the new summary message test failed before the change
+on the absent `admin.check.summary` key. The production-template render run
+failed on `1 audit event` and `1,000 audit events`; its audit-data/control and
+export-form checks already passed. After the change, the complete message
+package passed with `-race -p 1 -count=1` (1.060s), and all three new production
+render tests passed with the same flags (2.984s). The latter was a file-list run
+of every production web Go file plus `audit_export_catalog_test.go`; it did not
+compile unrelated SQLite-backed test fixtures. Catalogue duplicate-key and
+namespace checks, formatting and `git diff --check` also passed.
+
+This is further partial UX-047 completion. Full web-package, HTTP, browser and
+combined-candidate validation remain integration work. Other administrator
+flows, policy, service-generated remediation wording and additional languages
+remain outside this slice.
+
+## Administrator adjustment and reversal continuation
+
+This continuation adds 119 `admin.adjust.*` and `admin.reverse.*` entries for
+adjustment entry/review, pending requests, approval confirmation and
+administrative reversal entry/review. It covers the existing required-reason,
+dual-control, refusal, expiry and irreversible-action notices, full payment and
+reversal descriptions, titles, labels and result messages. Pending-list buttons
+retain their visible labels and full spoken names through catalogue-backed
+`aria-label` values. Their existing approve/reject and cancellation gates stay
+unchanged.
+
+Exact integer minor-unit values accompany the existing formatted strings only
+to select the existing unit inflector. Adjustment amounts, the dual-control
+threshold, original trade amounts, previously reversed amounts and remaining
+amounts now inflect independently. One credit stays singular, and `Hours` does
+not gain another `s`. Displayed amounts and balance calculations retain their
+existing fixed-point formatting and arithmetic. Required fields, review/back
+steps, stored-request approval proofs, CSRF/idempotency controls, routes,
+filters, pagination and service calls are unchanged.
+
+The pending table retains its existing status punctuation and timestamp
+markup. Only the timestamp slot and related-entry link use `msgAround`;
+member names, deciders and unknown status strings remain ordinary escaped
+text. Known status display labels do not replace the stored status codes used
+for eligibility. The policy form, export handling, member administration and
+service/API error catalogues remain outside this slice.
+
+Before editing, immutable heads for active #99 (`0a73ee4`) and #101 (`f7ac6d2`)
+were compared with their #90 base (`f25d10b`). The only selected-file overlap
+was #99's later export block in `h_admin2.go`; that block is unchanged here.
+The adjustment presentation code lives in `h_admin2.go`, so `h_admin.go` is
+also unchanged.
+
+`TestAdminAmountMessages` and `TestAdminAmountMessagesRemainPlainText` check
+exact large amounts, positional sentences, precision plurals and escaping.
+`admin_amount_catalog_test.go` renders all six production templates, checking
+singular/custom/already-plural units, independently inflected reversal amounts,
+both adjustment directions, complete full/partial reversal consequences,
+review proofs, required reasons, retained values, individual action gates,
+timestamp/link markup and malicious names/status text (including NUL and `%!`).
+
+Local evidence on 2026-11-19 with Go 1.26.11: the message control failed on the
+absent `admin.adjust.amount_value` key. The compile-valid template control
+restored the six original templates while retaining the additive view fields;
+it failed on singular/already-plural unit rendering, independent reversal
+amounts and complete accessible labels (3.340s). The original catalogue was
+restored independently for the message control, and the source checkpoint was
+committed before either restoration.
+
+After implementation, the complete message package passed with
+`-race -p 1 -count=1` (1.044s). A file-list race run containing all production
+web Go files and only `admin_amount_catalog_test.go` passed (14.837s).
+Formatting, catalogue key coverage, unchanged pager expressions and the
+untouched audit/export block also passed static checks. This selective render
+run excludes unrelated SQLite-backed fixtures and does not constitute full
+web-package, HTTP, browser or accessibility qualification. Combined tests and
+current-revision CI remain integration work. UX-047 and language scope remain
+open beyond this bounded continuation.
+
+## Account time-zone continuation
+
+This continuation adds six `time_zone.*` messages for the complete display
+paragraph, field hint, save button, validation summary/correction and saved
+notice. The page title and field label reuse `account.time_zone`. The selected
+files, `h_account_f2.go` and `time_zone.html`, were byte-identical between base
+`0fb5304a2caeb375d1791bf583744ce2a81cc3ba` and the available immutable active
+heads `0a73ee42b96255601cf2227b1ddf6599ec07a0ef` (#99) and
+`f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0` (#101).
+
+The display paragraph retains its existing `time` element and emphasized zone
+ID. `messages.AroundTwo` accepts only a catalogue key and returns three
+ordinary strings around exactly two ordered element slots. It rejects missing,
+repeated, reversed, unexpected or invalidly formatted markers. No user value
+enters that formatter, and no catalogue output becomes trusted HTML. The
+template inserts the existing timestamp and escapes the zone ID separately.
+
+Service validation, IANA identifiers, trimming, empty-value UTC behavior,
+the existing text input and 64-character limit, raw retained invalid values,
+CSRF, authentication, response status codes and redirect remain unchanged.
+The API and audit timestamp behavior is unchanged. No other account,
+membership, governance or session flow is migrated by this slice.
+
+Before implementation, the message check failed on the missing
+`time_zone.display` entry; a compile-valid production-file rendering control
+failed because the label, hint and button ignored catalogue text (0.150s).
+After implementation, the complete messages package passed with
+`-p 1 -count=1` (0.012s), including the two-slot negative guards. All three
+`TestTimeZoneCatalogue*` tests passed with those flags in a file-list run of
+the production web Go files and only `time_zone_catalog_test.go` (0.288s).
+They cover UTC and Asia/Kolkata display, unchanged machine-readable UTC time,
+retained invalid input, error-summary/field/hint associations, CSRF, and
+escaping of catalogue text and zone values containing quotes, HTML, NUL and
+`%!`. Formatting, JSON/duplicate-key checks and `git diff --check` passed.
+These Go 1.26.11 checks used the existing caches and did not run the race,
+SQLite-backed, full web, HTTP or browser suites. Existing `TestTimeZoneDisplay`
+and combined-candidate qualification remain integration checks.
