@@ -215,6 +215,18 @@ func walWriteFailureChild(t *testing.T, raw string) {
 	if busy != 0 || logFrames != 0 || checkpointed != 0 {
 		t.Fatal("fixture WAL checkpoint did not truncate")
 	}
+	// Keep an independent read transaction open so discarding the failed
+	// writer cannot become SQLite's last-connection checkpoint and erase the
+	// partial WAL before the parent inspects it. A separate pool leaves the
+	// production connection free to COMMIT, fail, and be discarded normally.
+	walReader := tu.Must(store.OpenRaw(f.Path))
+	walReadTx := tu.Must(walReader.BeginTx(ctx, nil))
+	defer func() { _ = walReadTx.Rollback(); _ = walReader.Close() }()
+	var readerVersion int
+	tu.Must(0, walReadTx.QueryRowContext(ctx, "SELECT MAX(version) FROM schema_migrations").Scan(&readerVersion))
+	if readerVersion != store.SchemaVersion() {
+		t.Fatal("WAL observer did not establish the current database snapshot")
+	}
 	before := tu.Snapshot(t, db)
 	e := &tu.Env{T: t, Ctx: ctx, Store: st}
 	probe := &walFaultStore{Store: st, t: t, f: f, before: snapLedger(t, e, f.Network)}
