@@ -114,6 +114,9 @@ const sessionListFirstSQL = `SELECT ` + sessionColumns + ` FROM sessions
 const sessionListAfterSQL = `SELECT ` + sessionColumns + ` FROM sessions
 	WHERE person_id = ? AND (created_at,public_id) < (?,?)
 	ORDER BY created_at DESC,public_id DESC LIMIT ?`
+const sessionListBeforeSQL = `SELECT ` + sessionColumns + ` FROM sessions
+	WHERE person_id = ? AND (created_at,public_id) > (?,?)
+	ORDER BY created_at ASC,public_id ASC LIMIT ?`
 
 func scanSession(r rowScanner) (*domain.Session, error) {
 	var s domain.Session
@@ -147,6 +150,9 @@ func (t *txImpl) ListSessions(personID string, before *SessionPosition, limit in
 	query, args := sessionListFirstSQL, []any{personID, limit}
 	if before != nil {
 		query, args = sessionListAfterSQL, []any{personID, ms(before.CreatedAt), before.PublicID, limit}
+		if before.Reverse {
+			query = sessionListBeforeSQL
+		}
 	}
 	rows, err := t.query(query, args...)
 	if err != nil {

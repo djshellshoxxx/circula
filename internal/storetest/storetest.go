@@ -45,6 +45,7 @@ func Run(t *testing.T, open Factory) {
 		{"NetworkScoping", networkScoping},
 		{"SessionOwnership", sessionOwnership},
 		{"SessionPagination", sessionPagination},
+		{"OtherSessionRevocation", otherSessionRevocation},
 		{"TokenInventoryBound", tokenInventoryBound},
 		{"LedgerSequencePerNetwork", ledgerSequencePerNetwork},
 		{"PolicyInForceAt", policyInForceAt},

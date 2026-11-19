@@ -951,5 +951,47 @@
   },
   "sessions.manage_link": {
     "other": "Manage active sessions"
+  },
+  "sessions.pagination": {
+    "other": "Session list pages"
+  },
+  "sessions.bulk_link": {
+    "other": "Sign out other sessions"
+  },
+  "sessions.bulk_title": {
+    "other": "Sign out other sessions?"
+  },
+  "sessions.bulk_consequence": {
+    "other": "Your other sign-ins will stop working immediately, and any sign-in waiting for a two-step code will need to start again. You will stay signed in here. Your API tokens will keep working."
+  },
+  "sessions.bulk_confirm": {
+    "other": "I want to end all my other sessions."
+  },
+  "sessions.bulk_required": {
+    "other": "Not signed out. Confirm that you want to end your other sessions. Nothing changed."
+  },
+  "sessions.bulk_ended": {
+    "other": "Your other sessions have ended. You are still signed in here."
+  },
+  "sessions.bulk_cancel": {
+    "other": "Keep all sessions"
+  },
+  "sessions.help_link": {
+    "other": "Help with sessions"
+  },
+  "sessions.help_title": {
+    "other": "Review and end your sign-ins"
+  },
+  "sessions.help_inventory": {
+    "other": "Open Security, then Manage active sessions. This session identifies the browser you are using. Signed in, Last active, and Ends by show the recorded times; staying active can extend an idle timeout, but the maximum session lifetime still applies."
+  },
+  "sessions.help_paging": {
+    "other": "Use Next page for older sign-ins, Previous page for newer sign-ins, and First page to refresh the newest page. A page can contain no active sessions while more pages remain, because expired and ended sign-ins are skipped in bounded groups. New sign-ins or revocations can change a page while you browse. If the requested newer page is no longer available, the newest page is shown."
+  },
+  "sessions.help_revoke": {
+    "other": "Choose Sign out this session beside a sign-in, review its times, tick the confirmation, and choose End session. Opening the confirmation page changes nothing. Sign out here ends the browser you are using and returns you to sign-in."
+  },
+  "sessions.help_bulk": {
+    "other": "Sign out other sessions ends all your other sign-ins after confirmation and keeps this browser signed in. It also cancels sign-ins waiting for a two-step code. Session actions do not revoke API tokens. If a sign-in has already expired or ended, refresh the inventory."
   }
 }

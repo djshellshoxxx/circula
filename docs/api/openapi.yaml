@@ -394,6 +394,34 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
 
+  /api/v1/me/sessions/revoke-others:
+    post:
+      operationId: revokeOtherOwnSessions
+      tags: [Identity]
+      summary: End the caller's other sign-ins while keeping this session
+      description: |
+        Session cookie and CSRF token required. Does not resolve a network. Revalidates
+        the current session inside the write transaction, then revokes the caller's
+        other retained sign-ins and removes pending second-factor sign-in challenges.
+        The current session, other people's sessions, and API tokens remain usable.
+        A pending forced password change blocks this write. Repeating the operation
+        succeeds when nothing remains to revoke. Each successful command is audited;
+        records contain aggregate results, never session credentials or selectors.
+        No Idempotency-Key or request body is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        '204': {description: Other sign-ins have ended; the current session remains active.}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '423': {$ref: '#/components/responses/NetworkFrozen'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
   /api/v1/me/sessions/{session}:
     delete:
       operationId: revokeOwnSession
@@ -3165,8 +3193,8 @@ components:
       name: cursor
       in: query
       required: false
-      description: Opaque cursor from next_cursor. Bound to route, network, caller and filters; reuse with other filters is 400 invalid-cursor (API-035).
-      schema: {type: string}
+      description: Opaque cursor from next_cursor. At most 4096 characters, using canonical unpadded base64url for its signed components. Bound to route, network, caller and filters; malformed, oversized, noncanonical or mismatched cursors receive 400 invalid-cursor (API-035).
+      schema: {type: string, maxLength: 4096}
     PathId:
       name: id
       in: path

@@ -26,7 +26,9 @@ func TestSessionQueriesUseIndexedKeysetSeeks(t *testing.T) {
 	}{
 		{"first", sessionListFirstSQL, "USING INDEX sessions_owner_page (person_id=?)", []any{"owner", 100}},
 		{"continuation", sessionListAfterSQL, "USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))", []any{"owner", 350, strings.Repeat("a", 64), 100}},
+		{"previous", sessionListBeforeSQL, "USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)>(?,?))", []any{"owner", 350, strings.Repeat("a", 64), 100}},
 		{"owned", sessionOwnedSQL, "USING INDEX sessions_public_id (public_id=?)", []any{strings.Repeat("a", 64), "owner"}},
+		{"bulk-revoke", sessionRevokeOthersSQL, "USING INDEX sessions_owner_unrevoked (person_id=?)", []any{1000, "owner", "private-1", "private-1", "owner"}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rows, err := s.DB().Query("EXPLAIN QUERY PLAN "+tc.query, tc.args...)

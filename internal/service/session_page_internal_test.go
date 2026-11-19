@@ -59,6 +59,19 @@ func (p *sessionPageProbe) ListSessions(owner string, before *store.SessionPosit
 		p.firstBefore = before
 	}
 	p.calls++
+	if before != nil && before.Reverse {
+		end := sort.Search(len(p.rows), func(i int) bool {
+			row := p.rows[i]
+			return row.CreatedAt.Before(before.CreatedAt) || row.CreatedAt.Equal(before.CreatedAt) && row.PublicID <= before.PublicID
+		})
+		start := max(0, end-limit)
+		out := make([]*domain.Session, 0, end-start)
+		for i := end - 1; i >= start; i-- {
+			out = append(out, p.rows[i])
+		}
+		p.fetched += len(out)
+		return out, nil
+	}
 	start := 0
 	if before != nil {
 		start = sort.Search(len(p.rows), func(i int) bool {
@@ -69,6 +82,150 @@ func (p *sessionPageProbe) ListSessions(owner string, before *store.SessionPosit
 	end := min(start+limit, len(p.rows))
 	p.fetched += end - start
 	return p.rows[start:end], nil
+}
+
+func TestOwnSessionPreviousRoundTrip(t *testing.T) {
+	s, actor, p := sessionPageFixture(60, false)
+	first, err := s.ListOwnSessions(context.Background(), actor, Page{Limit: 7})
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: first.Next, Limit: 7})
+	if err != nil || second.Previous == "" {
+		t.Fatalf("second page missing previous: %+v %v", second, err)
+	}
+	p.calls, p.fetched = 0, 0
+	previous, err := s.ListOwnSessions(context.Background(), actor, Page{BeforeID: second.Previous, Limit: 7})
+	if err != nil || len(previous.Rows) != len(first.Rows) || previous.Previous != "" || p.calls > 20 || p.fetched > 2000 {
+		t.Fatalf("previous page: %+v %v calls=%d rows=%d", previous, err, p.calls, p.fetched)
+	}
+	for i := range first.Rows {
+		if first.Rows[i].ID != previous.Rows[i].ID {
+			t.Fatal("previous page skipped or repeated an equal-time row")
+		}
+	}
+	back, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: previous.Next, Limit: 7})
+	if err != nil || len(back.Rows) != len(second.Rows) {
+		t.Fatalf("next after previous: %+v %v", back, err)
+	}
+	for i := range second.Rows {
+		if second.Rows[i].ID != back.Rows[i].ID {
+			t.Fatal("next after previous changed the second page")
+		}
+	}
+}
+
+func TestOwnSessionPreviousCrossesEmptyBoundedWindow(t *testing.T) {
+	s, actor, p := sessionPageFixture(4000, true)
+	// Keep the newest row live, with the current session below 3,999 dead rows.
+	p.rows[0].ExpiresAt = p.current.ExpiresAt
+	anchor := sessionPosition(p.current.CreatedAt, p.current.PublicID)
+	page, err := s.ListOwnSessions(context.Background(), actor, Page{BeforeID: anchor})
+	if err != nil || len(page.Rows) != 0 || page.Previous == "" || page.Next == "" || p.calls != 20 || p.fetched != 2000 {
+		t.Fatalf("reverse work-cap page: %+v %v calls=%d rows=%d", page, err, p.calls, p.fetched)
+	}
+	// The opposite cursor must include the original live boundary again.
+	back, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: page.Next})
+	if err != nil || len(back.Rows) != 1 || !back.Rows[0].Current {
+		t.Fatalf("empty reverse page skipped its original boundary: %+v %v", back, err)
+	}
+	p.calls, p.fetched = 0, 0
+	newer, err := s.ListOwnSessions(context.Background(), actor, Page{BeforeID: page.Previous})
+	if err != nil || len(newer.Rows) != 1 || newer.Rows[0].ID != p.rows[0].PublicID || p.calls > 20 || p.fetched > 2000 {
+		t.Fatalf("reverse continuation: %+v %v calls=%d rows=%d", newer, err, p.calls, p.fetched)
+	}
+	if _, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: anchor, BeforeID: anchor}); domain.CodeOf(err) != domain.CodeValidation {
+		t.Fatalf("ambiguous page accepted: %v", err)
+	}
+}
+
+func TestOwnSessionEmptyForwardPageCanReturnToLiveBoundary(t *testing.T) {
+	s, actor, p := sessionPageFixture(4001, true)
+	p.rows[0].ExpiresAt = p.current.ExpiresAt
+	anchor := sessionPosition(p.rows[0].CreatedAt, p.rows[0].PublicID)
+	page, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: anchor})
+	if err != nil || len(page.Rows) != 0 || page.Previous == "" || page.Next == "" || p.calls != 20 || p.fetched != 2000 {
+		t.Fatalf("forward work-cap page: %+v %v calls=%d rows=%d", page, err, p.calls, p.fetched)
+	}
+	back, err := s.ListOwnSessions(context.Background(), actor, Page{BeforeID: page.Previous})
+	if err != nil || len(back.Rows) != 1 || back.Rows[0].ID != p.rows[0].PublicID {
+		t.Fatalf("empty forward page skipped its original boundary: %+v %v", back, err)
+	}
+}
+
+func TestOwnSessionDisappearedNewerSideRefreshesAtLiveBoundary(t *testing.T) {
+	s, actor, p := sessionPageFixture(60, false)
+	boundary := p.rows[7]
+	anchor := sessionPosition(boundary.CreatedAt, boundary.PublicID)
+	// A previous-page link was issued before every newer retained row was
+	// removed. Its initiating boundary still exists and remains active.
+	p.rows = p.rows[7:]
+	page, err := s.ListOwnSessions(context.Background(), actor, Page{BeforeID: anchor, Limit: 7})
+	if err != nil || len(page.Rows) != 7 || page.Rows[0].ID != boundary.PublicID || page.Previous != "" {
+		t.Fatalf("disappeared newer side did not refresh at the live boundary: %+v %v", page, err)
+	}
+	if p.calls != 2 || p.fetched > 2000 {
+		t.Fatalf("refresh work: calls=%d fetched=%d", p.calls, p.fetched)
+	}
+}
+
+func TestOwnSessionDisappearedOlderSideTerminatesWithoutWrapping(t *testing.T) {
+	s, actor, p := sessionPageFixture(60, false)
+	// Keep authentication on a surviving newer row while older history is
+	// removed. Forward API traversal must end rather than wrap to earlier rows.
+	p.current = p.rows[0]
+	actor.SessionID = p.current.IDHash
+	boundary := p.rows[39]
+	anchor := sessionPosition(boundary.CreatedAt, boundary.PublicID)
+	p.rows = p.rows[:40]
+	page, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: anchor, Limit: 7})
+	if err != nil || len(page.Rows) != 0 || page.Next != "" || page.Previous != anchor {
+		t.Fatalf("disappeared older side wrapped instead of ending: %+v %v", page, err)
+	}
+	if p.calls != 1 || p.fetched != 0 {
+		t.Fatalf("empty terminal page work: calls=%d fetched=%d", p.calls, p.fetched)
+	}
+	// The live-view grouping may shift, but Previous followed by Next still
+	// reaches the surviving initiating boundary.
+	previous, err := s.ListOwnSessions(context.Background(), actor, Page{BeforeID: page.Previous, Limit: 7})
+	if err != nil || len(previous.Rows) != 7 || previous.Next == "" {
+		t.Fatalf("previous from terminal page: %+v %v", previous, err)
+	}
+	back, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: previous.Next, Limit: 7})
+	if err != nil || len(back.Rows) != 1 || back.Rows[0].ID != boundary.PublicID || back.Next != "" {
+		t.Fatalf("previous/next skipped surviving boundary: %+v %v", back, err)
+	}
+}
+
+func TestOwnSessionEmptyReverseSideRefreshSharesScanBudget(t *testing.T) {
+	s, actor, p := sessionPageFixture(3000, true)
+	pg := Page{BeforeID: sessionPosition(p.rows[0].CreatedAt, p.rows[0].PublicID)}
+	page, err := s.ListOwnSessions(context.Background(), actor, pg)
+	if err != nil || len(page.Rows) != 0 || page.Previous != "" || page.Next == "" || p.calls != 20 || p.fetched != 1900 {
+		t.Fatalf("refresh exceeded or failed to use the shared work budget: %+v %v calls=%d fetched=%d", page, err, p.calls, p.fetched)
+	}
+	want := p.rows[1899]
+	if page.Next != sessionPosition(want.CreatedAt, want.PublicID) {
+		t.Fatal("refreshed continuation did not follow the last inspected row")
+	}
+}
+
+func TestOwnSessionExactWorkCapExhaustionTerminates(t *testing.T) {
+	s, actor, p := sessionPageFixture(2000, true)
+	expires := p.current.ExpiresAt
+	p.current = p.rows[0]
+	p.current.ExpiresAt = expires
+	actor.SessionID = p.current.IDHash
+	p.rows = p.rows[:2000]
+	page, err := s.ListOwnSessions(context.Background(), actor, Page{})
+	if err != nil || len(page.Rows) != 1 || page.Next == "" || p.calls != 20 || p.fetched != 2000 {
+		t.Fatalf("exact-cap first page: %+v %v calls=%d fetched=%d", page, err, p.calls, p.fetched)
+	}
+	p.calls, p.fetched = 0, 0
+	last, err := s.ListOwnSessions(context.Background(), actor, Page{AfterID: page.Next})
+	if err != nil || len(last.Rows) != 0 || last.Next != "" || p.calls != 1 || p.fetched != 0 {
+		t.Fatalf("exact-cap continuation wrapped instead of terminating: %+v %v calls=%d fetched=%d", last, err, p.calls, p.fetched)
+	}
 }
 
 func sessionPageFixture(n int, dead bool) (*Service, domain.Actor, *sessionPageProbe) {
