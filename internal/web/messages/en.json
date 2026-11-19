@@ -951,5 +951,47 @@
   },
   "sessions.manage_link": {
     "other": "Manage active sessions"
+  },
+  "auth.admin_reset.action": {
+    "other": "Reset password"
+  },
+  "auth.admin_reset.title": {
+    "other": "Reset password: %[1]s?"
+  },
+  "auth.admin_reset.subject": {
+    "other": "Reset password: %[1]s"
+  },
+  "auth.admin_reset.consequence": {
+    "other": "A one-time temporary password is created and shown to you once. The member's sessions and API tokens end, their recovery codes stop working, and they must choose a new password at next sign-in. Give them the temporary password in person or by a channel you trust."
+  },
+  "auth.admin_reset.reason.label": {
+    "other": "Reason"
+  },
+  "auth.admin_reset.reason.hint": {
+    "other": "Required. It is recorded in the audit log."
+  },
+  "auth.admin_reset.back": {
+    "other": "Go back"
+  },
+  "auth.admin_reset.forbidden": {
+    "other": "Not done. This password cannot be reset here. Use Change password for your own account, or ask the platform operator for help. Nothing changed."
+  },
+  "auth.admin_reset.rate_limited": {
+    "other": "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."
+  },
+  "auth.admin_reset.done.title": {
+    "other": "Temporary password"
+  },
+  "auth.admin_reset.done.subject": {
+    "other": "Temporary password for %[1]s"
+  },
+  "auth.admin_reset.done.once": {
+    "other": "This is the only time it is shown."
+  },
+  "auth.admin_reset.done.explain": {
+    "other": "Give it to %[1]s in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended."
+  },
+  "auth.admin_reset.done.back": {
+    "other": "Back to members"
   }
 }
