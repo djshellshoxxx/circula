@@ -7,7 +7,7 @@ The owner authorized independent future-feature development on 2026-11-16, while
 ## Isolation contract
 
 - Branch: `future/fnet-209-federation-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
-- Only `future/federation/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
+- Implementation changes stay under `future/federation/`; `.github/workflows/future-federation.yml` adds standalone checks for this module. No application imports, routes, migrations, root dependencies, feature flags or runtime configuration are changed.
 - This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
 - Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
