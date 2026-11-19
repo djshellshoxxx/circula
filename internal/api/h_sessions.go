@@ -1,6 +1,9 @@
 package api
 
-import "github.com/djshellshoxxx/circula/internal/service"
+import (
+	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
+)
 
 type sessionDTO struct {
 	ID         string `json:"id"`
@@ -24,6 +27,14 @@ func (s *server) revokeOwnSession(c *reqCtx) error {
 	return nil
 }
 
+func (s *server) revokeOtherOwnSessions(c *reqCtx) error {
+	if _, err := s.svc.RevokeOtherOwnSessions(c.r.Context(), c.actor); err != nil {
+		return err
+	}
+	c.w.WriteHeader(204)
+	return nil
+}
+
 func (s *server) listOwnSessions(c *reqCtx) error {
 	// The persisted public selector has a different ordering from the former
 	// derived selector. Old signed positions must not resume in that new order.
@@ -33,6 +44,9 @@ func (s *server) listOwnSessions(c *reqCtx) error {
 	}
 	page, err := s.svc.ListOwnSessions(c.r.Context(), c.actor, service.Page{AfterID: p.after, Limit: p.limit})
 	if err != nil {
+		if p.after != "" && domain.CodeOf(err) == domain.CodeValidation {
+			return &apiError{status: 400, code: "invalid-cursor", detail: "cursor is not valid for this request"}
+		}
 		return err
 	}
 	var next *string

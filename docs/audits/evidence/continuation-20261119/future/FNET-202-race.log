@@ -1,0 +1,319 @@
+{"Time":"2026-11-19T02:12:32.754912398-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites"}
+{"Time":"2026-11-19T02:12:32.998779279-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestVisibleFavoritesIsolationAndOrder"}
+{"Time":"2026-11-19T02:12:32.998892822-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestVisibleFavoritesIsolationAndOrder","Output":"=== RUN   TestVisibleFavoritesIsolationAndOrder\n"}
+{"Time":"2026-11-19T02:12:32.998997077-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestVisibleFavoritesIsolationAndOrder","Output":"--- PASS: TestVisibleFavoritesIsolationAndOrder (0.00s)\n"}
+{"Time":"2026-11-19T02:12:32.999005704-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestVisibleFavoritesIsolationAndOrder","Elapsed":0}
+{"Time":"2026-11-19T02:12:32.999012917-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRemoveFavoriteOnlyWithinOwnerNetwork"}
+{"Time":"2026-11-19T02:12:32.999017145-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRemoveFavoriteOnlyWithinOwnerNetwork","Output":"=== RUN   TestRemoveFavoriteOnlyWithinOwnerNetwork\n"}
+{"Time":"2026-11-19T02:12:32.999029138-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRemoveFavoriteOnlyWithinOwnerNetwork","Output":"--- PASS: TestRemoveFavoriteOnlyWithinOwnerNetwork (0.00s)\n"}
+{"Time":"2026-11-19T02:12:32.999033636-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRemoveFavoriteOnlyWithinOwnerNetwork","Elapsed":0}
+{"Time":"2026-11-19T02:12:32.999039908-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestFreshUnpricedRepeats"}
+{"Time":"2026-11-19T02:12:32.999045238-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestFreshUnpricedRepeats","Output":"=== RUN   TestFreshUnpricedRepeats\n"}
+{"Time":"2026-11-19T02:12:32.999437655-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestFreshUnpricedRepeats","Output":"--- PASS: TestFreshUnpricedRepeats (0.00s)\n"}
+{"Time":"2026-11-19T02:12:32.999461079-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestFreshUnpricedRepeats","Elapsed":0}
+{"Time":"2026-11-19T02:12:32.999468853-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents"}
+{"Time":"2026-11-19T02:12:32.999472861-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents","Output":"=== RUN   TestTwoRepeatsAreTwoIndependentIntents\n"}
+{"Time":"2026-11-19T02:12:33.004329504-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents/mem"}
+{"Time":"2026-11-19T02:12:33.00436473-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents/mem","Output":"=== RUN   TestTwoRepeatsAreTwoIndependentIntents/mem\n"}
+{"Time":"2026-11-19T02:12:33.00437549-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents/mem","Output":"--- PASS: TestTwoRepeatsAreTwoIndependentIntents/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.004383585-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.004394476-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents","Output":"--- PASS: TestTwoRepeatsAreTwoIndependentIntents (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.004398793-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestTwoRepeatsAreTwoIndependentIntents","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.004419392-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals"}
+{"Time":"2026-11-19T02:12:33.004423901-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals","Output":"=== RUN   TestRepeatRefusals\n"}
+{"Time":"2026-11-19T02:12:33.00442865-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals/mem"}
+{"Time":"2026-11-19T02:12:33.004431755-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals/mem","Output":"=== RUN   TestRepeatRefusals/mem\n"}
+{"Time":"2026-11-19T02:12:33.004436735-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals/mem","Output":"--- PASS: TestRepeatRefusals/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.004441263-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.004445832-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals","Output":"--- PASS: TestRepeatRefusals (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.00444984-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestRepeatRefusals","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.004453707-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped"}
+{"Time":"2026-11-19T02:12:33.004457243-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped","Output":"=== RUN   TestDraftsExpireAndAreCapped\n"}
+{"Time":"2026-11-19T02:12:33.004461241-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped/mem"}
+{"Time":"2026-11-19T02:12:33.004464677-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped/mem","Output":"=== RUN   TestDraftsExpireAndAreCapped/mem\n"}
+{"Time":"2026-11-19T02:12:33.022459393-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped/mem","Output":"--- PASS: TestDraftsExpireAndAreCapped/mem (0.02s)\n"}
+{"Time":"2026-11-19T02:12:33.022507142-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped/mem","Elapsed":0.02}
+{"Time":"2026-11-19T02:12:33.022555443-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped","Output":"--- PASS: TestDraftsExpireAndAreCapped (0.02s)\n"}
+{"Time":"2026-11-19T02:12:33.02256476-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftsExpireAndAreCapped","Elapsed":0.02}
+{"Time":"2026-11-19T02:12:33.022571944-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated"}
+{"Time":"2026-11-19T02:12:33.022576322-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated","Output":"=== RUN   TestGetDraftScopedAndRevalidated\n"}
+{"Time":"2026-11-19T02:12:33.022581983-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated/mem"}
+{"Time":"2026-11-19T02:12:33.022586471-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated/mem","Output":"=== RUN   TestGetDraftScopedAndRevalidated/mem\n"}
+{"Time":"2026-11-19T02:12:33.022593604-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated/mem","Output":"--- PASS: TestGetDraftScopedAndRevalidated/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.022606128-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.022613411-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated","Output":"--- PASS: TestGetDraftScopedAndRevalidated (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.022618231-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestGetDraftScopedAndRevalidated","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.022623651-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite"}
+{"Time":"2026-11-19T02:12:33.02262853-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite","Output":"=== RUN   TestDraftFromFavorite\n"}
+{"Time":"2026-11-19T02:12:33.022633569-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite/mem"}
+{"Time":"2026-11-19T02:12:33.022638068-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite/mem","Output":"=== RUN   TestDraftFromFavorite/mem\n"}
+{"Time":"2026-11-19T02:12:33.022643648-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite/mem","Output":"--- PASS: TestDraftFromFavorite/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.022797868-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.022807917-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite","Output":"--- PASS: TestDraftFromFavorite (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.022813507-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestDraftFromFavorite","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.022818126-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent"}
+{"Time":"2026-11-19T02:12:33.022822114-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent","Output":"=== RUN   TestConcurrentSameKeyYieldsOneIntent\n"}
+{"Time":"2026-11-19T02:12:33.022827263-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent/mem"}
+{"Time":"2026-11-19T02:12:33.02283091-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent/mem","Output":"=== RUN   TestConcurrentSameKeyYieldsOneIntent/mem\n"}
+{"Time":"2026-11-19T02:12:33.052401767-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent/mem","Output":"--- PASS: TestConcurrentSameKeyYieldsOneIntent/mem (0.03s)\n"}
+{"Time":"2026-11-19T02:12:33.052443425-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent/mem","Elapsed":0.03}
+{"Time":"2026-11-19T02:12:33.052560875-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent","Output":"--- PASS: TestConcurrentSameKeyYieldsOneIntent (0.03s)\n"}
+{"Time":"2026-11-19T02:12:33.052581013-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentSameKeyYieldsOneIntent","Elapsed":0.03}
+{"Time":"2026-11-19T02:12:33.052708683-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestSourceIsolation"}
+{"Time":"2026-11-19T02:12:33.05272308-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestSourceIsolation","Output":"=== RUN   TestSourceIsolation\n"}
+{"Time":"2026-11-19T02:12:33.742761189-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestSourceIsolation","Output":"--- PASS: TestSourceIsolation (0.68s)\n"}
+{"Time":"2026-11-19T02:12:33.742827223-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestSourceIsolation","Elapsed":0.68}
+{"Time":"2026-11-19T02:12:33.742836311-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove"}
+{"Time":"2026-11-19T02:12:33.74284145-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove","Output":"=== RUN   TestAddListPinRenameRemove\n"}
+{"Time":"2026-11-19T02:12:33.742845999-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove/mem"}
+{"Time":"2026-11-19T02:12:33.742850076-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove/mem","Output":"=== RUN   TestAddListPinRenameRemove/mem\n"}
+{"Time":"2026-11-19T02:12:33.742859825-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove/mem","Output":"--- PASS: TestAddListPinRenameRemove/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.742866026-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.742871627-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove","Output":"--- PASS: TestAddListPinRenameRemove (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.742876426-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddListPinRenameRemove","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.742881615-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform"}
+{"Time":"2026-11-19T02:12:33.742886214-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform","Output":"=== RUN   TestAddRefusalsAreUniform\n"}
+{"Time":"2026-11-19T02:12:33.742893187-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform/mem"}
+{"Time":"2026-11-19T02:12:33.742898637-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform/mem","Output":"=== RUN   TestAddRefusalsAreUniform/mem\n"}
+{"Time":"2026-11-19T02:12:33.742904178-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform/mem","Output":"--- PASS: TestAddRefusalsAreUniform/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.742909107-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.7429159-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform","Output":"--- PASS: TestAddRefusalsAreUniform (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.742922142-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddRefusalsAreUniform","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.742927872-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation"}
+{"Time":"2026-11-19T02:12:33.742934204-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation","Output":"=== RUN   TestNicknameValidation\n"}
+{"Time":"2026-11-19T02:12:33.742938813-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation/mem"}
+{"Time":"2026-11-19T02:12:33.742950795-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation/mem","Output":"=== RUN   TestNicknameValidation/mem\n"}
+{"Time":"2026-11-19T02:12:33.752806118-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation/mem","Output":"--- PASS: TestNicknameValidation/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.752848848-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.75286064-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation","Output":"--- PASS: TestNicknameValidation (0.02s)\n"}
+{"Time":"2026-11-19T02:12:33.752865269-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestNicknameValidation","Elapsed":0.02}
+{"Time":"2026-11-19T02:12:33.752870929-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict"}
+{"Time":"2026-11-19T02:12:33.752874296-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict","Output":"=== RUN   TestAddIdempotentAndConflict\n"}
+{"Time":"2026-11-19T02:12:33.752886108-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict/mem"}
+{"Time":"2026-11-19T02:12:33.752890015-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict/mem","Output":"=== RUN   TestAddIdempotentAndConflict/mem\n"}
+{"Time":"2026-11-19T02:12:33.752895585-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict/mem","Output":"--- PASS: TestAddIdempotentAndConflict/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.752900194-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.752907608-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict","Output":"--- PASS: TestAddIdempotentAndConflict (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.752911946-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestAddIdempotentAndConflict","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.752915453-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation"}
+{"Time":"2026-11-19T02:12:33.752919029-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation","Output":"=== RUN   TestOwnerAndNetworkIsolation\n"}
+{"Time":"2026-11-19T02:12:33.752922496-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation/mem"}
+{"Time":"2026-11-19T02:12:33.752925642-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation/mem","Output":"=== RUN   TestOwnerAndNetworkIsolation/mem\n"}
+{"Time":"2026-11-19T02:12:33.752932214-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation/mem","Output":"--- PASS: TestOwnerAndNetworkIsolation/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.752935981-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.752940009-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation","Output":"--- PASS: TestOwnerAndNetworkIsolation (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.752944067-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOwnerAndNetworkIsolation","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.75296209-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites"}
+{"Time":"2026-11-19T02:12:33.752965747-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites","Output":"=== RUN   TestLiveAuthorizationOverridesStoredFavorites\n"}
+{"Time":"2026-11-19T02:12:33.753158969-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites/mem"}
+{"Time":"2026-11-19T02:12:33.753173897-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites/mem","Output":"=== RUN   TestLiveAuthorizationOverridesStoredFavorites/mem\n"}
+{"Time":"2026-11-19T02:12:33.753485142-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites/mem","Output":"--- PASS: TestLiveAuthorizationOverridesStoredFavorites/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.753501082-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.753596561-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites","Output":"--- PASS: TestLiveAuthorizationOverridesStoredFavorites (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.753606569-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLiveAuthorizationOverridesStoredFavorites","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.753661483-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed"}
+{"Time":"2026-11-19T02:12:33.753669027-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed","Output":"=== RUN   TestPolicyFailureFailsClosed\n"}
+{"Time":"2026-11-19T02:12:33.753716426-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed/mem"}
+{"Time":"2026-11-19T02:12:33.753724601-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed/mem","Output":"=== RUN   TestPolicyFailureFailsClosed/mem\n"}
+{"Time":"2026-11-19T02:12:33.753994728-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed/mem","Output":"--- PASS: TestPolicyFailureFailsClosed/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.754007541-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.754013994-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed","Output":"--- PASS: TestPolicyFailureFailsClosed (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.754018582-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPolicyFailureFailsClosed","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.754025134-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded"}
+{"Time":"2026-11-19T02:12:33.754028902-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded","Output":"=== RUN   TestPaginationStableAndBounded\n"}
+{"Time":"2026-11-19T02:12:33.754074718-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded/mem"}
+{"Time":"2026-11-19T02:12:33.75408084-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded/mem","Output":"=== RUN   TestPaginationStableAndBounded/mem\n"}
+{"Time":"2026-11-19T02:12:33.769704075-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded/mem","Output":"--- PASS: TestPaginationStableAndBounded/mem (0.01s)\n"}
+{"Time":"2026-11-19T02:12:33.769747136-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded/mem","Elapsed":0.01}
+{"Time":"2026-11-19T02:12:33.769759038-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded","Output":"--- PASS: TestPaginationStableAndBounded (0.01s)\n"}
+{"Time":"2026-11-19T02:12:33.769764909-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestPaginationStableAndBounded","Elapsed":0.01}
+{"Time":"2026-11-19T02:12:33.769772413-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder"}
+{"Time":"2026-11-19T02:12:33.769778555-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder","Output":"=== RUN   TestReorder\n"}
+{"Time":"2026-11-19T02:12:33.769783755-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder/mem"}
+{"Time":"2026-11-19T02:12:33.769788263-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder/mem","Output":"=== RUN   TestReorder/mem\n"}
+{"Time":"2026-11-19T02:12:33.769794324-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder/mem","Output":"--- PASS: TestReorder/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.769799734-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.769806026-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder","Output":"--- PASS: TestReorder (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.769811136-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestReorder","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.769816356-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets"}
+{"Time":"2026-11-19T02:12:33.769820944-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets","Output":"=== RUN   TestLimitAndPruneOfDepartedTargets\n"}
+{"Time":"2026-11-19T02:12:33.769826785-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets/mem"}
+{"Time":"2026-11-19T02:12:33.769831394-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets/mem","Output":"=== RUN   TestLimitAndPruneOfDepartedTargets/mem\n"}
+{"Time":"2026-11-19T02:12:33.769837245-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets/mem","Output":"--- PASS: TestLimitAndPruneOfDepartedTargets/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.769842405-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.769847234-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets","Output":"--- PASS: TestLimitAndPruneOfDepartedTargets (0.00s)\n"}
+{"Time":"2026-11-19T02:12:33.769851802-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestLimitAndPruneOfDepartedTargets","Elapsed":0}
+{"Time":"2026-11-19T02:12:33.76985589-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage"}
+{"Time":"2026-11-19T02:12:33.769864937-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage","Output":"=== RUN   TestMemberDepartedCleanupBeyondOnePage\n"}
+{"Time":"2026-11-19T02:12:33.769869305-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage/mem"}
+{"Time":"2026-11-19T02:12:33.769872902-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage/mem","Output":"=== RUN   TestMemberDepartedCleanupBeyondOnePage/mem\n"}
+{"Time":"2026-11-19T02:12:34.085335747-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage/mem","Output":"--- PASS: TestMemberDepartedCleanupBeyondOnePage/mem (0.32s)\n"}
+{"Time":"2026-11-19T02:12:34.085474447-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage/mem","Elapsed":0.32}
+{"Time":"2026-11-19T02:12:34.085549708-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage","Output":"--- PASS: TestMemberDepartedCleanupBeyondOnePage (0.32s)\n"}
+{"Time":"2026-11-19T02:12:34.085690402-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestMemberDepartedCleanupBeyondOnePage","Elapsed":0.32}
+{"Time":"2026-11-19T02:12:34.085834693-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap"}
+{"Time":"2026-11-19T02:12:34.085839171-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap","Output":"=== RUN   TestConcurrentAddsRespectUniquenessAndCap\n"}
+{"Time":"2026-11-19T02:12:34.085862765-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap/mem"}
+{"Time":"2026-11-19T02:12:34.085866132-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap/mem","Output":"=== RUN   TestConcurrentAddsRespectUniquenessAndCap/mem\n"}
+{"Time":"2026-11-19T02:12:34.088271295-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap/mem","Output":"--- PASS: TestConcurrentAddsRespectUniquenessAndCap/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.099492521-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.099815847-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap","Output":"--- PASS: TestConcurrentAddsRespectUniquenessAndCap (0.01s)\n"}
+{"Time":"2026-11-19T02:12:34.099836435-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentAddsRespectUniquenessAndCap","Elapsed":0.01}
+{"Time":"2026-11-19T02:12:34.099847055-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision"}
+{"Time":"2026-11-19T02:12:34.099853297-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision","Output":"=== RUN   TestConcurrentReorderOnlyOneWinsPerRevision\n"}
+{"Time":"2026-11-19T02:12:34.099858917-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision/mem"}
+{"Time":"2026-11-19T02:12:34.099980216-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision/mem","Output":"=== RUN   TestConcurrentReorderOnlyOneWinsPerRevision/mem\n"}
+{"Time":"2026-11-19T02:12:34.10016916-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision/mem","Output":"--- PASS: TestConcurrentReorderOnlyOneWinsPerRevision/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.10033973-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.100355159-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision","Output":"--- PASS: TestConcurrentReorderOnlyOneWinsPerRevision (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.100358485-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestConcurrentReorderOnlyOneWinsPerRevision","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.1003609-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed"}
+{"Time":"2026-11-19T02:12:34.100367662-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed","Output":"=== RUN   TestOptInGateIsExplicitAndFailsClosed\n"}
+{"Time":"2026-11-19T02:12:34.100895092-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed/mem"}
+{"Time":"2026-11-19T02:12:34.100910972-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed/mem","Output":"=== RUN   TestOptInGateIsExplicitAndFailsClosed/mem\n"}
+{"Time":"2026-11-19T02:12:34.100918617-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed/mem","Output":"--- PASS: TestOptInGateIsExplicitAndFailsClosed/mem (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.100921582-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed/mem","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.100925249-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed","Output":"--- PASS: TestOptInGateIsExplicitAndFailsClosed (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.100927904-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"TestOptInGateIsExplicitAndFailsClosed","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.100930819-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname"}
+{"Time":"2026-11-19T02:12:34.100933394-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname","Output":"=== RUN   FuzzCleanNickname\n"}
+{"Time":"2026-11-19T02:12:34.10093674-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#0"}
+{"Time":"2026-11-19T02:12:34.100938974-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#0","Output":"=== RUN   FuzzCleanNickname/seed#0\n"}
+{"Time":"2026-11-19T02:12:34.10094207-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#0","Output":"--- PASS: FuzzCleanNickname/seed#0 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.100944625-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#0","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.100946739-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#1"}
+{"Time":"2026-11-19T02:12:34.100948953-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#1","Output":"=== RUN   FuzzCleanNickname/seed#1\n"}
+{"Time":"2026-11-19T02:12:34.101095909-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#1","Output":"--- PASS: FuzzCleanNickname/seed#1 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.101104245-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#1","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.101109565-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#2"}
+{"Time":"2026-11-19T02:12:34.101111929-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#2","Output":"=== RUN   FuzzCleanNickname/seed#2\n"}
+{"Time":"2026-11-19T02:12:34.103709974-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#2","Output":"--- PASS: FuzzCleanNickname/seed#2 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.103734901-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#2","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.10374012-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#3"}
+{"Time":"2026-11-19T02:12:34.103742966-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#3","Output":"=== RUN   FuzzCleanNickname/seed#3\n"}
+{"Time":"2026-11-19T02:12:34.103747063-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#3","Output":"--- PASS: FuzzCleanNickname/seed#3 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.103749808-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#3","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.103752303-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#4"}
+{"Time":"2026-11-19T02:12:34.103760228-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#4","Output":"=== RUN   FuzzCleanNickname/seed#4\n"}
+{"Time":"2026-11-19T02:12:34.103762963-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#4","Output":"--- PASS: FuzzCleanNickname/seed#4 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.103765148-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#4","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.103767632-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#5"}
+{"Time":"2026-11-19T02:12:34.103769536-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#5","Output":"=== RUN   FuzzCleanNickname/seed#5\n"}
+{"Time":"2026-11-19T02:12:34.103772501-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#5","Output":"--- PASS: FuzzCleanNickname/seed#5 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.103774675-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#5","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.10377734-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#6"}
+{"Time":"2026-11-19T02:12:34.103779274-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#6","Output":"=== RUN   FuzzCleanNickname/seed#6\n"}
+{"Time":"2026-11-19T02:12:34.103782009-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#6","Output":"--- PASS: FuzzCleanNickname/seed#6 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.103790836-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#6","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.10379335-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#7"}
+{"Time":"2026-11-19T02:12:34.103795334-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#7","Output":"=== RUN   FuzzCleanNickname/seed#7\n"}
+{"Time":"2026-11-19T02:12:34.103797849-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#7","Output":"--- PASS: FuzzCleanNickname/seed#7 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.10381987-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname/seed#7","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.103823466-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname","Output":"--- PASS: FuzzCleanNickname (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.103826492-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanNickname","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.103828666-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription"}
+{"Time":"2026-11-19T02:12:34.10383079-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription","Output":"=== RUN   FuzzCleanDescription\n"}
+{"Time":"2026-11-19T02:12:34.107286866-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#0"}
+{"Time":"2026-11-19T02:12:34.107317824-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#0","Output":"=== RUN   FuzzCleanDescription/seed#0\n"}
+{"Time":"2026-11-19T02:12:34.10732621-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#0","Output":"--- PASS: FuzzCleanDescription/seed#0 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.107329596-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#0","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.107333513-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#1"}
+{"Time":"2026-11-19T02:12:34.10733726-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#1","Output":"=== RUN   FuzzCleanDescription/seed#1\n"}
+{"Time":"2026-11-19T02:12:34.107340396-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#1","Output":"--- PASS: FuzzCleanDescription/seed#1 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.107342891-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#1","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.107345325-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#2"}
+{"Time":"2026-11-19T02:12:34.10734751-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#2","Output":"=== RUN   FuzzCleanDescription/seed#2\n"}
+{"Time":"2026-11-19T02:12:34.107350275-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#2","Output":"--- PASS: FuzzCleanDescription/seed#2 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.107352609-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#2","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.107354603-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#3"}
+{"Time":"2026-11-19T02:12:34.107362888-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#3","Output":"=== RUN   FuzzCleanDescription/seed#3\n"}
+{"Time":"2026-11-19T02:12:34.107365714-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#3","Output":"--- PASS: FuzzCleanDescription/seed#3 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.107367948-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription/seed#3","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.117078909-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription","Output":"--- PASS: FuzzCleanDescription (0.01s)\n"}
+{"Time":"2026-11-19T02:12:34.117114456-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzCleanDescription","Elapsed":0.01}
+{"Time":"2026-11-19T02:12:34.117121449-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs"}
+{"Time":"2026-11-19T02:12:34.117124445-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs","Output":"=== RUN   FuzzListCursorAndIDs\n"}
+{"Time":"2026-11-19T02:12:34.117127641-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#0"}
+{"Time":"2026-11-19T02:12:34.117130216-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#0","Output":"=== RUN   FuzzListCursorAndIDs/seed#0\n"}
+{"Time":"2026-11-19T02:12:34.117133552-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#0","Output":"--- PASS: FuzzListCursorAndIDs/seed#0 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.117138602-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#0","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.117141287-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#1"}
+{"Time":"2026-11-19T02:12:34.117152137-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#1","Output":"=== RUN   FuzzListCursorAndIDs/seed#1\n"}
+{"Time":"2026-11-19T02:12:34.117155012-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#1","Output":"--- PASS: FuzzListCursorAndIDs/seed#1 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.117157337-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#1","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.117159571-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#2"}
+{"Time":"2026-11-19T02:12:34.117161574-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#2","Output":"=== RUN   FuzzListCursorAndIDs/seed#2\n"}
+{"Time":"2026-11-19T02:12:34.117163929-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#2","Output":"--- PASS: FuzzListCursorAndIDs/seed#2 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.117166073-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#2","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.117168157-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#3"}
+{"Time":"2026-11-19T02:12:34.11717007-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#3","Output":"=== RUN   FuzzListCursorAndIDs/seed#3\n"}
+{"Time":"2026-11-19T02:12:34.117172445-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#3","Output":"--- PASS: FuzzListCursorAndIDs/seed#3 (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.117180701-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs/seed#3","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.117183426-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs","Output":"--- PASS: FuzzListCursorAndIDs (0.00s)\n"}
+{"Time":"2026-11-19T02:12:34.11718584-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Test":"FuzzListCursorAndIDs","Elapsed":0}
+{"Time":"2026-11-19T02:12:34.117187934-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Output":"PASS\n"}
+{"Time":"2026-11-19T02:12:35.12249528-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/favorites\t2.356s\n"}
+{"Time":"2026-11-19T02:12:35.122579879-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites","Elapsed":2.368}
+{"Time":"2026-11-19T02:12:41.041920873-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/cli"}
+{"Time":"2026-11-19T02:12:41.089468465-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIHelpAndUsage"}
+{"Time":"2026-11-19T02:12:41.089547933-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIHelpAndUsage","Output":"=== RUN   TestCLIHelpAndUsage\n"}
+{"Time":"2026-11-19T02:12:41.09502991-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIHelpAndUsage","Output":"--- PASS: TestCLIHelpAndUsage (0.00s)\n"}
+{"Time":"2026-11-19T02:12:41.095124287-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIHelpAndUsage","Elapsed":0}
+{"Time":"2026-11-19T02:12:41.095136821-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIWorkflow"}
+{"Time":"2026-11-19T02:12:41.095142531-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIWorkflow","Output":"=== RUN   TestCLIWorkflow\n"}
+{"Time":"2026-11-19T02:12:41.095149464-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIWorkflow","Output":"--- PASS: TestCLIWorkflow (0.00s)\n"}
+{"Time":"2026-11-19T02:12:41.095154594-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Test":"TestCLIWorkflow","Elapsed":0}
+{"Time":"2026-11-19T02:12:41.095159673-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Output":"PASS\n"}
+{"Time":"2026-11-19T02:12:42.107581109-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.063s\n"}
+{"Time":"2026-11-19T02:12:42.10765629-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/cli","Elapsed":1.066}
+{"Time":"2026-11-19T02:12:54.814003532-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl"}
+{"Time":"2026-11-19T02:12:54.899145894-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestHelpAndMissingFlags"}
+{"Time":"2026-11-19T02:12:54.899196889-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestHelpAndMissingFlags","Output":"=== RUN   TestHelpAndMissingFlags\n"}
+{"Time":"2026-11-19T02:12:54.899230623-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestHelpAndMissingFlags","Output":"--db and --members are required\n"}
+{"Time":"2026-11-19T02:12:54.899251131-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestHelpAndMissingFlags","Output":"--- PASS: TestHelpAndMissingFlags (0.00s)\n"}
+{"Time":"2026-11-19T02:12:54.899262192-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestHelpAndMissingFlags","Elapsed":0}
+{"Time":"2026-11-19T02:12:54.899269786-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestEndToEndAcrossInvocations"}
+{"Time":"2026-11-19T02:12:54.899274124-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestEndToEndAcrossInvocations","Output":"=== RUN   TestEndToEndAcrossInvocations\n"}
+{"Time":"2026-11-19T02:12:54.899278342-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestEndToEndAcrossInvocations","Output":"    main_test.go:42: built without -tags sqlite_cgo_test: no SQLite driver linked\n"}
+{"Time":"2026-11-19T02:12:54.899286177-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestEndToEndAcrossInvocations","Output":"--- SKIP: TestEndToEndAcrossInvocations (0.00s)\n"}
+{"Time":"2026-11-19T02:12:54.89929302-08:00","Action":"skip","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Test":"TestEndToEndAcrossInvocations","Elapsed":0}
+{"Time":"2026-11-19T02:12:54.899297989-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Output":"PASS\n"}
+{"Time":"2026-11-19T02:12:55.900500981-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.086s\n"}
+{"Time":"2026-11-19T02:12:55.900587484-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl","Elapsed":1.087}
+{"Time":"2026-11-19T02:12:56.356605359-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/internal/storetest"}
+{"Time":"2026-11-19T02:12:56.356645864-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/internal/storetest","Output":"?   \tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t[no test files]\n"}
+{"Time":"2026-11-19T02:12:56.356654911-08:00","Action":"skip","Package":"github.com/djshellshoxxx/circula/future/favorites/internal/storetest","Elapsed":0}
+{"Time":"2026-11-19T02:12:56.356667795-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/internal/testkit"}
+{"Time":"2026-11-19T02:12:56.356671723-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/internal/testkit","Output":"?   \tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t[no test files]\n"}
+{"Time":"2026-11-19T02:12:56.356674789-08:00","Action":"skip","Package":"github.com/djshellshoxxx/circula/future/favorites/internal/testkit","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.791084848-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore"}
+{"Time":"2026-11-19T02:12:58.850711427-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance"}
+{"Time":"2026-11-19T02:12:58.850761551-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance","Output":"=== RUN   TestConformance\n"}
+{"Time":"2026-11-19T02:12:58.850826072-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/crud_scoping_order"}
+{"Time":"2026-11-19T02:12:58.850833385-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/crud_scoping_order","Output":"=== RUN   TestConformance/crud_scoping_order\n"}
+{"Time":"2026-11-19T02:12:58.850854024-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/crud_scoping_order","Output":"--- PASS: TestConformance/crud_scoping_order (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850860536-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/crud_scoping_order","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.85086782-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/rollback_and_readonly"}
+{"Time":"2026-11-19T02:12:58.850871778-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/rollback_and_readonly","Output":"=== RUN   TestConformance/rollback_and_readonly\n"}
+{"Time":"2026-11-19T02:12:58.850877218-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/rollback_and_readonly","Output":"--- PASS: TestConformance/rollback_and_readonly (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850881576-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/rollback_and_readonly","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.850887708-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/revisions"}
+{"Time":"2026-11-19T02:12:58.850891645-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/revisions","Output":"=== RUN   TestConformance/revisions\n"}
+{"Time":"2026-11-19T02:12:58.850897015-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/revisions","Output":"--- PASS: TestConformance/revisions (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850901193-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/revisions","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.85090515-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/intents"}
+{"Time":"2026-11-19T02:12:58.850908817-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/intents","Output":"=== RUN   TestConformance/intents\n"}
+{"Time":"2026-11-19T02:12:58.850913356-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/intents","Output":"--- PASS: TestConformance/intents (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850919136-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/intents","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.850923545-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member"}
+{"Time":"2026-11-19T02:12:58.850927382-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member","Output":"=== RUN   TestConformance/purge_member\n"}
+{"Time":"2026-11-19T02:12:58.850932071-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member","Output":"--- PASS: TestConformance/purge_member (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850936389-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.850941058-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance","Output":"--- PASS: TestConformance (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850945356-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.850952299-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Output":"PASS\n"}
+{"Time":"2026-11-19T02:12:59.910743203-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.079s\n"}
+{"Time":"2026-11-19T02:12:59.912642228-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Elapsed":1.1219999999999999}
+{"Time":"2026-11-19T02:12:59.967063081-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/sqlstore"}
+{"Time":"2026-11-19T02:12:59.983340389-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/sqlstore","Output":"?   \tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t[no test files]\n"}
+{"Time":"2026-11-19T02:12:59.983366739-08:00","Action":"skip","Package":"github.com/djshellshoxxx/circula/future/favorites/sqlstore","Elapsed":0.016}

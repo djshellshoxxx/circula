@@ -102,10 +102,6 @@ func TestSQLiteFullDuringPostingRollsBackAndRecovers(t *testing.T) {
 				  INSERT INTO l9_full_payload VALUES (zeroblob(%d));
 				END`, fullPostingKey, (limit+16)*pageSize)))
 			var applied int64
-			tu.Must(0, db.QueryRow(fmt.Sprintf("PRAGMA max_page_count=%d", limit)).Scan(&applied))
-			if applied != limit {
-				t.Fatalf("page cap = %d, want %d", applied, limit)
-			}
 
 			before := tu.Snapshot(t, db)
 			ledgerBefore := snapLedger(t, w.Env, w.net.ID)
@@ -117,6 +113,13 @@ func TestSQLiteFullDuringPostingRollsBackAndRecovers(t *testing.T) {
 			sinkCalls := 0
 			w.Store.SetAuditSink(func(*domain.AuditEvent) { sinkCalls++ })
 			for attempt := 0; attempt < 2; attempt++ {
+				// SQLITE_FULL can auto-roll back. If explicit rollback then
+				// fails, the store discards that connection conservatively.
+				// Re-arm this connection-local test limit for every attempt.
+				tu.Must(0, db.QueryRow(fmt.Sprintf("PRAGMA max_page_count=%d", limit)).Scan(&applied))
+				if applied != limit {
+					t.Fatalf("page cap = %d, want %d", applied, limit)
+				}
 				probe.reached = false
 				_, err := call()
 				var sqliteErr *sqlite.Error
@@ -136,7 +139,7 @@ func TestSQLiteFullDuringPostingRollsBackAndRecovers(t *testing.T) {
 			}
 
 			// Lift the real limit and remove only the test trigger. The same
-			// live connection and identical request/key must now post once.
+			// request and idempotency key must now post once.
 			tu.Must(0, db.QueryRow(fmt.Sprintf("PRAGMA max_page_count=%d", originalLimit)).Scan(&applied))
 			tu.Must(db.Exec("DROP TRIGGER l9_full_after_idem"))
 			result := tu.Must(call())
