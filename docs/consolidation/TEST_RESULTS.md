@@ -17,7 +17,11 @@ race attempts are excluded.
 | Traceability vet, formatting, repository freshness | PASS on the isolated traceability repair | `evidence/traceability-duplicate-recovery.md` |
 | Broader export race regressions, including admission, erasure and retained-history controls | PASS, 83.094s | `evidence/export-race.log` |
 | Marketplace message package and actual production-template regressions with race detector | PASS, 1.074s / 10.473s; expected failures captured before the repair | `evidence/marketplace-*-before.log`, `evidence/marketplace-*-after.log` |
-| Full candidate Go/race suite, fuzz, contract, browser and static/security checks | Pending | Must qualify the actual published candidate |
+| Real TCP client, committed CSV/JSON export interruption | Baseline FAIL / repaired PASS (0.864s / 0.488s) | `evidence/committed-http-before.log`, `evidence/committed-http-after.log` |
+| Amount parser fuzz | PASS, 100,000 executions / 4.476s | Tool receipt reproduced in `evidence/fuzz-amount-receipt.md` |
+| Full candidate race run on local 5da8bc7 | Interrupted by executor restart; no result receipt | `evidence/verification-attempts.json` |
+| CGO-disabled browser binary build and dependency audit | Both killed by the executor; not passing | `evidence/verification-attempts.json` |
+| Full candidate Go/race, contract, browser and static/security gates | Still required | Exact published candidate must qualify |
 
 The first web after-run exposed a test expectation error: the existing exporter
 wraps a read failure as `export members.csv: ...` or `export full.json: ...`.

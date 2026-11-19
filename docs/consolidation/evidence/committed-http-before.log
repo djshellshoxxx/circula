@@ -1,0 +1,11 @@
+=== RUN   TestWebExportCommittedReadFailureAbortsHTTP
+=== RUN   TestWebExportCommittedReadFailureAbortsHTTP/csv
+    export_http_interruption_test.go:140: interrupted HTTP body read = <nil>, want unexpected EOF
+=== RUN   TestWebExportCommittedReadFailureAbortsHTTP/json
+    export_http_interruption_test.go:140: interrupted HTTP body read = <nil>, want unexpected EOF
+--- FAIL: TestWebExportCommittedReadFailureAbortsHTTP (0.83s)
+    --- FAIL: TestWebExportCommittedReadFailureAbortsHTTP/csv (0.34s)
+    --- FAIL: TestWebExportCommittedReadFailureAbortsHTTP/json (0.49s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.864s
+FAIL

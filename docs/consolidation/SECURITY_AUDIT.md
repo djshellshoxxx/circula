@@ -70,3 +70,18 @@ policy HOLDs were disabled. No production data was used. Full candidate race,
 dependency/security, browser, and integration outcomes are tracked separately
 in TEST_RESULTS.md. This AI-assisted review does not close SEC-033's independent
 external review gate.
+
+## Committed-response verification and concurrent security work
+
+The follow-up `TestWebExportCommittedReadFailureAbortsHTTP` uses the complete
+operations/web middleware chain and a real TCP client. In each CSV/JSON case,
+the client receives 4 KiB before releasing a controlled repository read fault.
+The original main revision reports a normal completed body; the repair yields
+`io.ErrUnexpectedEOF` and an invalid ZIP. This verifies transport interruption,
+not only an in-process panic sentinel.
+
+The #99 source review (5973679547) records a separate live-session authority
+gap in #90's token mutation path. That repair is in #99, not this independent
+export candidate. #90 must not merge alone before the repair. None of these
+source reviews replaces the pending combined current-head security/regression
+checks or the independent external security review requirement.

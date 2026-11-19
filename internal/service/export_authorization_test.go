@@ -166,4 +166,3 @@ func TestExportOwnHistorySurvivesMembershipChangeAtSnapshot(t *testing.T) {
 		})
 	}
 }
-
