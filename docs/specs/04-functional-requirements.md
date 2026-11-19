@@ -14,12 +14,16 @@ Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read
 
 Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). FR-054 below clarifies the required contract; it does not claim that the API or UI is implemented.
 
-Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, partial 3.
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
+Summary (recounted 2026-11-16): built 63 (one marked unreviewed), not built 0, partial 2. Previous recount (2026-11-12): built 60, not built 2, partial 3.
+
+Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](../plans/circula-completion-matrix.md) and the code. Changed rows are marked "[Refreshed 2026-11-16; was ...]" in their note, so the prior value stays visible. FR-024, FR-078 and FR-038 were stale in the table although their Status text already said built. FR-067 is now built with a bounded queue linked from its stale-proposal count.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | FR-001 | P0 | built | Create network with policy; system account; audit |
-| FR-002 | P0 | built | One-time setup secret; the used flag is stored, so a restart does not re-enable it (`TestSetupSecretUsedSurvivesRestart`). Re-checked 2026-11-12 |
+| FR-002 | P0 | built | One-time setup secret; the used flag is stored, so a restart does not re-enable it (`TestSetupSecretUsedSurvivesRestart`, `internal/web/setup_state_test.go`). Re-checked 2026-11-12. Confirmed 2026-11-16 against the completion matrix (setup secret built) |
 | FR-003 | P0 | built | Policy change within bounds, versioned and audited |
 | FR-004 | P0 | built | Setup to active once an admin exists |
 | FR-005 | P0 | built | Decimal scale fixed at network creation; every later change refused, immediate or with notice, before or after the first posting |
@@ -30,36 +34,36 @@ Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, p
 | FR-013 | P0 | built | Membership transitions table-tested |
 | FR-014 | P0 | built | Departure in service, JSON API and a web "Leave this network" form that shows blockers and consequences |
 | FR-015 | P0 | built | Admin removal with mandatory reason; last-admin guard |
-| FR-016 | P1 | built | Display name is the only required profile field |
+| FR-016 | P1 | built | Display name is the only required profile field; Evidence: `TestJoinModes` exercises joining with a display name and no additional profile fields; full minimum-profile validation remains an inspection item. No execution result is implied |
 | FR-017 | P0 | built | Duplicate join returns existing membership |
 | FR-020 | P0 | built | Directory returns active members only; keyset paging and exact counts since 925f637 |
 | FR-021 | P0 | built | Create offer or request listing; no entries |
 | FR-022 | P0 | built | Edit, pause, resume, archive own listing |
 | FR-023 | P0 | built | Filter by type and text; paginated |
-| FR-024 | P1 | not built | Member reports not built |
+| FR-024 | P1 | built | [Refreshed 2026-11-16; was "not built".] Reports of listings and members: `POST /api/v1/reports` (`internal/api/routes.go:98`), admin queue `GET /api/v1/admin/reports` (`routes.go:99`), `internal/service/reports.go:44`, tests `internal/service/reports_test.go` (`TestReports`, `TestReportRateLimit`). Transaction reports are not in this requirement; see SEC-025 |
 | FR-025 | P1 | built | Members-only pages require session; X-Robots-Tag, robots meta and robots.txt disallow |
-| FR-030 | P0 | built | Propose to active member in same network |
-| FR-031 | P0 | built | Amount, limit and effect preview on review page |
+| FR-030 | P0 | built | Propose to active member in same network; Evidence: `TestProposalValidation`, `TestConsentBothDirections` (proposal validation and both directions of consent). Citations are not execution results |
+| FR-031 | P0 | built | Amount, limit and effect preview on review page; Evidence: `TestLoginTradeFlow`, `TestValidationErrorSummary` (review effects and validation errors). Citations are not execution results |
 | FR-032 | P0 | built | Accept posts both entries atomically; limit re-checked |
-| FR-033 | P0 | built | Decline and withdraw release reservation |
+| FR-033 | P0 | built | Decline and withdraw release reservation; Evidence: `TestDeclineCancelExitRules`, `TestReservationAndRelease` (exit authorization and released reservations). Citations are not execution results |
 | FR-034 | P0 | built | Scheduled expiry, idempotent, injected clock |
 | FR-035 | P0 | built | Idempotency on propose, accept, decline, cancel, reverse |
 | FR-036 | P0 | built | Concurrent accepts for last credit: one succeeds |
-| FR-037 | P1 | built | Plain-text note and listing reference on proposal |
-| FR-038 | P1 | partial | Dashboard lists pending items; no inbox, unread state or outcome notices |
-| FR-050 | P0 | built | Balance, limit, available, reserved and time shown |
-| FR-051 | P0 | built | Reverse-chronological history with status and counterparty |
+| FR-037 | P1 | built | Plain-text note and listing reference on proposal; Evidence: `TestProposeListingValidation`, `TestLoginTradeFlow` (listing scope validation and note preservation through review). Citations are not execution results |
+| FR-038 | P1 | built | [Refreshed 2026-11-16; was "partial: no inbox, unread state or outcome notices", which the Status text below already contradicts.] In-app inbox and unread count: `ListNotifications` (`internal/service/notify.go:92`), `GET /api/v1/notifications` (`internal/api/routes.go:101`), web inbox. Remaining gap: old read entries are not purged (per the Status text below) |
+| FR-050 | P0 | built | Balance, limit, available, reserved and time shown; Evidence: `TestAvailableCreditTable`, `TestLoginTradeFlow` (balance arithmetic, reserved amount and labelled home values). Citations are not execution results |
+| FR-051 | P0 | built | Reverse-chronological history with status and counterparty; Evidence: `TestListEntriesOrderedByLedgerSeq`, `TestLoginTradeFlow` (ordered entries and viewer-specific history). Citations are not execution results |
 | FR-052 | P0 | built | Read-only ledger verification from admin page and CLI |
 | FR-053 | P1 | built | Pending view paged; dashboard shows 100 newest pending |
 | FR-054 | P1 | built (2026-10-28, unreviewed) | Timestamp read `Service.HistoricalBalance` (one snapshot, inclusive `posted_at`); API-083 `GET /accounts/me?at=`; UX-061 History lookup. Not independently reviewed |
 | FR-060 | P0 | built | Set or remove override with reason; audited |
 | FR-061 | P0 | built | Suspend and restore with reason; audited |
 | FR-062 | P0 | built | Admin adjustment with reason; two entries |
-| FR-063 | P0 | built | List, revoke invitations; approve or deny join requests |
-| FR-064 | P1 | built | Web admin plus PUT /admin/members/{id}/default-flag; service audit and payer restriction; API and contract regression tests |
-| FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute |
+| FR-063 | P0 | built | List, revoke invitations; approve or deny join requests; Evidence: `TestInvitations`, `TestJoinModes`, `TestInvitationsAndApprovalJoin` (invitation revocation and approval-mode joins). Citations are not execution results |
+| FR-064 | P1 | built | Web admin plus PUT /admin/members/{id}/default-flag; service audit and payer restriction; API and contract regression tests. Route confirmed 2026-11-16 (`internal/api/routes.go:59`, `internal/api/default_flag_test.go`; OpenAPI operation `setDefaultFlag`); Evidence: `TestDefaultFlagAPI`, `TestAcceptRechecksDefaultFlag` (flag mutation, authorization, no ledger mutation and posting recheck). Citations are not execution results |
+| FR-065 | P1 | built | Assign or remove reviewer; reviewer cannot review own dispute; Evidence: `TestDisputeDecisionAuthorization` (reviewer role assignment and own-dispute refusal). Citations are not execution results |
 | FR-066 | P1 | built | Admin reversal via API with reason |
-| FR-067 | P1 | partial | Admin home shows pending-member count only |
+| FR-067 | P1 | built | Admin overview links its aged-proposal count to `/n/{slug}/admin/proposals/stale`. SQL applies the inclusive 48-hour age and live-expiry predicates before keyset paging. `TestAdminStaleProposalsMatchesOverview` covers count agreement, boundary times, expiry, paging and authorization; `TestAdminStaleProposalQueue` follows the link and both pages for 51 proposals. Other overview counts remain covered by `TestAdminOverviewCounts` and `TestAdminOverviewPage`. |
 | FR-068 | P1 | built | Closure in web and API; announced with notice (GOV-025); refuses with dispute blockers; members notified |
 | FR-069 | P0 | built | Last-admin guard; role changes audited |
 | FR-070 | P0 | built | Open dispute within window by party on completed trade |
@@ -70,19 +74,19 @@ Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, p
 | FR-075 | P1 | built | Opener withdraws before decision |
 | FR-076 | P1 | built | Response by other party; response-period policy (default 7 days) holds a decision unless a response exists or the reviewer waives it |
 | FR-077 | P0 | built | Window measured from completion with server clock |
-| FR-078 | P1 | not built | Re-review of a decision not built |
+| FR-078 | P1 | built | [Refreshed 2026-11-16; was "not built".] Re-review request and decision: `POST /api/v1/disputes/{id}/re-review` and `.../re-review/decision` (`internal/api/routes.go:96-97`), `RequestReReview` and `DecideReReview` (`internal/service/disputes_response.go:102,201`), test `internal/service/disputes_response_test.go` |
 | FR-080 | P0 | built | Sweep: every command writes one audit event |
 | FR-081 | P0 | built | Audit event carries required fields |
-| FR-082 | P0 | built | Admin full audit; member and reviewer scoped views in API `GET /api/v1/audit-events` and web `h_audit_scoped.go` / `my_audit.html`. Re-checked 2026-11-12 |
+| FR-082 | P0 | built | Admin full audit; member and reviewer scoped views in API `GET /api/v1/audit-events` and web `h_audit_scoped.go` / `my_audit.html`. Re-checked 2026-11-12. Confirmed 2026-11-16 (`internal/api/routes.go:78`; matrix W6) |
 | FR-083 | P0 | built | No update or delete path; triggers |
-| FR-084 | P1 | built | Admin audit filters by action, actor, target, dates; paged |
+| FR-084 | P1 | built | Admin audit filters by action, actor, target, dates; paged; Evidence: `TestAuditEventContent` (target/action/actor filtering and sequence pagination; date-range coverage is not established by this citation). Citations are not execution results |
 | FR-085 | P2 | built | Hash chain built ahead of P2 deferral (DEC-044); not keyed |
 | FR-090 | P0 | built | Member exports own history as CSV or JSON |
 | FR-091 | P0 | built | Admin ledger export with manifest and checksums |
-| FR-092 | P0 | built | Members export scope with role and limit fields |
+| FR-092 | P0 | built | Members export scope with role and limit fields; Evidence: `TestFullExportJSON`, `TestCSVFormulaNeutralisation` (member-table inclusion and CSV member export; this does not independently assert every role/limit field). Citations are not execution results |
 | FR-093 | P0 | built | Audit export scope with manifest |
 | FR-094 | P1 | built | Full export scope incl. closed networks |
-| FR-095 | P1 | partial | Export buffered in memory by API adapter; no streaming or size gates |
+| FR-095 | P1 | partial | Source refresh 2026-11-19: service rows stream through `ZipSink` to the API's disk spool (`internal/service/export_write.go`, `internal/api/h_export.go`, `export_spool.go`); stored and in-flight bytes are capped. `TestExportStreamsWithBoundedMemory` records peak heap against a buffering control and `TestParallelLargeExportsStayBounded` checks concurrent caps. Product size/duration thresholds remain open under OQ-FR-3; these citations are not current execution receipts |
 
 ## 0. How to read this file
 
@@ -457,7 +461,7 @@ Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, p
 - **Acceptance.**
   - The other party can submit a bounded response before a decision; the response is visible to the reviewer and to the opener.
   - A decision cannot be recorded before the response period in the network's policy has ended, or before the response is submitted or waived. The response period is a network policy (OQ-FR-2).
-- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Network policy `response_period_days` (default 7, 0 to 90; 0 means no waiting period; DEC-012 recommendation). `ResolveDispute` is refused with invalid-transaction-state until a response exists, the period since the dispute was opened has elapsed, or the reviewer sets `waive_response` with a `waive_reason` (audited). Silence never decides the case. OQ-FR-2 stays open for counsel review of the default.
+- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Network policy `response_period_days` (default 7, 0 to 90; 0 means no waiting period; DEC-012 recommendation). `ResolveDispute` is refused with invalid-transaction-state until a response exists, the period since the dispute was opened has elapsed, or the reviewer sets `waive_response` with a `waive_reason` (audited). Silence never decides the case. OQ-FR-2 stays open for counsel review of the default. Effective-time rule (GOV-001, AUD4-F03): a dispute's response period is the one of the policy version in force when the dispute was opened; a later change, shorter or longer, applies only to disputes opened after it takes effect. The decision gate, the `response_deadline` shown in the API and web page, and the overdue reminder use the same value (`TestDisputeTimelinesFixedAtOpen`, `TestDisputeTimelineChangesApplyToLaterDisputes`, `TestScheduledDisputeTimelineChangeWaitsForItsDate`).
 
 ### FR-077 · P0 · Dispute window enforcement and deadlines
 - **Rationale.** DOM-017.
@@ -470,7 +474,7 @@ Summary (recounted 2026-11-12): built 60 (one marked unreviewed), not built 2, p
 - **Acceptance.**
   - A party can request one re-review of a decided dispute within a stated period.
   - The re-review is assigned to a different reviewer than the original and is recorded as a new decision linked to the first. The original decision is never edited.
-- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within `re_review_window_days` of the decision (network policy, default 14, 1 to 365). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
+- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within `re_review_window_days` of the decision (network policy, default 14, 1 to 365), taken from the policy version in force when the dispute was opened (GOV-001, AUD4-F03; the web page shows that date, `TestDisputePageReReviewDeadlineFixedAtOpen`). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
 
 ---
 

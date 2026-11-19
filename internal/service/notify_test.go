@@ -63,8 +63,8 @@ func TestNotificationsMarkRead(t *testing.T) {
 	if len(all) != 2 || all[0].ReadAt != nil {
 		t.Fatalf("inbox = %+v", all)
 	}
-	// someone else's ids and junk are ignored
-	if n := tu.Must(w.Svc.MarkNotificationsRead(w.Ctx, w.a, w.net.ID, []string{all[0].ID, "nope"})); n != 0 {
+	// Someone else's ids and well-formed unknown ids are ignored.
+	if n := tu.Must(w.Svc.MarkNotificationsRead(w.Ctx, w.a, w.net.ID, []string{all[0].ID, "018f0000-0000-7000-8000-ffffffffffff"})); n != 0 {
 		t.Errorf("a marked b's notification: %d", n)
 	}
 	if n := tu.Must(w.Svc.CountUnreadNotifications(w.Ctx, w.b, w.net.ID)); n != 2 {

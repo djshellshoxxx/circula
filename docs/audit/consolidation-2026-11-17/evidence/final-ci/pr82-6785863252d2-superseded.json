@@ -1,0 +1,86 @@
+{
+  "observed_at": "2026-11-18T09:52:00.863Z",
+  "pr": 82,
+  "head": "6785863252d2910553b1f4a26396f14b4405d6fa",
+  "expected_tree": "f097b872f69b4b2c241da7499161ecbcf971c623",
+  "run": 44274174998,
+  "required": 7,
+  "superseded_by": "e127acc9877edebeca818b75a5d48ce12511eca8",
+  "replacement_run": 44279484396,
+  "reason": "Parent reproduced and independently reviewed additional MFA/account-recovery password-proof races; normal leased fast-forward preserves previous changes.",
+  "jobs": [
+    {
+      "id": 134697976655,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134697977032,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134697977093,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134697977128,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134697977173,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134697977205,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134697977356,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134698062679,
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44274174998,
+      "logs_url": null,
+      "steps": null
+    }
+  ],
+  "f_remote_actions": "None"
+}

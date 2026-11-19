@@ -2,7 +2,13 @@
 
 Status: Draft v0.3 · Owner/role: Product architect · Last updated: 2026-10-24 · Scope: index of the foundational specifications in this directory, implementation addenda, and status evidence · Dependencies: none · Open questions: see [13](13-assumptions-risks-decisions.md) and [DECISIONS.md](../DECISIONS.md)
 
+Status refreshed 2026-11-16 against docs/plans/circula-completion-matrix.md (link: [completion matrix](../plans/circula-completion-matrix.md)). That matrix is the status source for the beta branch; the build-status tables in these files are historical snapshots, and rows changed in the refresh say "[Refreshed 2026-11-16; was ...]".
+
 Circula is software for running community mutual-credit networks. It is not a guarantee that credits have monetary value or that members will accept them. Read the glossary and invariants in [00](00-conventions.md) first; every other document uses those terms.
+
+Competing specification drafts from PRs #1, #2, #29 and #38 are archived under
+[docs/archive/specs-historical/](../archive/specs-historical/README.md). Their IDs reuse these prefixes with
+different meanings; do not cite them.
 
 ## Reading order
 
@@ -41,7 +47,7 @@ Start with [00](00-conventions.md) (conventions, glossary, invariants LED-1..LED
 
 ## Future feature specifications (not in the current release)
 
-These documents describe optional capabilities proposed for later development. They are not MVP requirements, do not authorize implementation, and must not be used to change current release scope or readiness.
+Pending, unimplemented: everything in `future/` is a proposal. No code for FNET-203 was found in `internal/` or `cmd/` on 2026-11-16, and the completion matrix does not list it. These documents describe optional capabilities proposed for later development. They are not MVP requirements, do not authorize implementation, and must not be used to change current release scope or readiness.
 
 | Document | Purpose | Status |
 |---|---|---|

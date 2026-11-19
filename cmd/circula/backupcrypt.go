@@ -413,28 +413,48 @@ func isEncryptedBackup(path string) bool {
 // guarantee the old blocks are gone; the file is in a 0700 directory and the
 // disk should be encrypted too (docs/ops/backup-restore.md).
 func secureRemove(path string) {
-	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() {
-		if f, err := os.OpenFile(path, os.O_WRONLY, 0); err == nil {
-			zero := make([]byte, 64<<10)
-			for left := fi.Size(); left > 0; {
-				n := int64(len(zero))
-				if left < n {
-					n = left
-				}
-				if _, err := f.Write(zero[:n]); err != nil {
-					break
-				}
-				left -= n
-			}
-			_ = f.Sync()
-			_ = f.Close()
-		}
+	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() && singleLink(fi) { // #nosec G703 -- operator-controlled backup/restore staging or owned work entries; Lstat does not follow symlinks.
+		zeroFile(path, fi)
 	}
-	_ = os.Remove(path)
+	_ = os.Remove(path) // #nosec G703 -- removes the operator-controlled staging file or owned directory entry inspected above; Remove unlinks a final symlink itself.
+}
+
+// zeroFile overwrites path with want.Size() zero bytes, but only while path
+// still names the file that was inspected (want). A name replaced by a
+// symlink, FIFO or another file between inspection and open is left
+// untouched, so cleanup never writes through a substituted name (AUD4-D02).
+func zeroFile(path string, want os.FileInfo) {
+	f, err := os.OpenFile(path, os.O_WRONLY|overwriteOpenFlags, 0) // #nosec G304 G703 -- path was inspected with Lstat by the caller; identity is re-checked on the open handle below.
+	if err != nil {
+		return
+	}
+	defer func() { _ = f.Close() }()
+	got, err := f.Stat()
+	if err != nil || !got.Mode().IsRegular() || !os.SameFile(want, got) || !singleLink(got) {
+		return
+	}
+	zero := make([]byte, 64<<10)
+	for left := want.Size(); left > 0; {
+		n := int64(len(zero))
+		if left < n {
+			n = left
+		}
+		if _, err := f.Write(zero[:n]); err != nil {
+			break
+		}
+		left -= n
+	}
+	_ = f.Sync()
 }
 
 // secureRemoveAll securely removes every file under dir and then dir itself.
 func secureRemoveAll(dir string) {
+	// ReadDir follows symlinks. A directory replaced by a symlink is only
+	// unlinked, never descended into (AUD4-D02).
+	if fi, err := os.Lstat(dir); err != nil || !fi.IsDir() { // #nosec G703 -- dir is private backup work or a ReadDir descendant; Lstat does not follow symlinks.
+		_ = os.Remove(dir) // #nosec G703 -- unlinks the non-directory name itself; Remove does not follow a final symlink.
+		return
+	}
 	ents, err := os.ReadDir(dir)
 	if err == nil {
 		for _, e := range ents {
@@ -446,5 +466,5 @@ func secureRemoveAll(dir string) {
 			}
 		}
 	}
-	_ = os.Remove(dir)
+	_ = os.Remove(dir) // #nosec G703 -- dir is private backup work or a descendant obtained from ReadDir; Remove only removes the emptied directory.
 }

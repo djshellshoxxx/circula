@@ -1,0 +1,2188 @@
+{
+  "scope": "Retained workstream records are byte-identical except for 22 explicitly annotated whitespace-only normalizations and 7 documented reversible patch wrappers or Git-object JSON annotations. Original and retained SHA-256 values are recorded for every changed representation. The transformation entry describes how to recover exact patch bytes or original JSON data; source JSON formatting remains identified by its original byte hash. Generated final reports and transformed API summaries are documented separately.",
+  "files": [
+    {
+      "retained_path": "HISTORICAL-PR-DISPOSITIONS.md",
+      "source_paths": [
+        "audit-b/historical-final.md"
+      ],
+      "sha256": "013a73b11958f02b11b885651e531c02440650d7fb9535141c39cab862bcafe9",
+      "bytes": 4953
+    },
+    {
+      "retained_path": "branch-inventory-initial.json",
+      "source_paths": [
+        "audit-a/branch-inventory.json"
+      ],
+      "sha256": "8abfe06d1ee0d73ae16f931d0ee98f14592ca302a96a3101b760288eaa7d5965",
+      "bytes": 428208
+    },
+    {
+      "retained_path": "evidence/a3-f20-zip-scan.json",
+      "source_paths": [
+        "audit-d/a3-f20-zip-scan.json"
+      ],
+      "sha256": "1de44ffa7d95bdea58e8395b04ba2e30e3b2e9498ec92bb403cd5ef4fbdca49f",
+      "bytes": 320
+    },
+    {
+      "retained_path": "evidence/admin-notice-aggregate.log",
+      "source_paths": [
+        "audit-c/admin-notice-aggregate.log"
+      ],
+      "sha256": "9f20bae6366e6d558bc9d76ad37bdd1c04e643a5f85a8bce083815201a1a99aa",
+      "bytes": 1005
+    },
+    {
+      "retained_path": "evidence/admin-notice-race.log",
+      "source_paths": [
+        "audit-c/admin-notice-race.log"
+      ],
+      "sha256": "25d5b68391b193c83807c599425ae22f0e95843648e22c123638646582b2f17b",
+      "bytes": 62
+    },
+    {
+      "retained_path": "evidence/admin-notice-regression-after.log",
+      "source_paths": [
+        "audit-c/admin-notice-regression-after.log"
+      ],
+      "sha256": "1c22a59448d8ad92f90e3e1630e989285d242a77fe471a3bd4daa65a2a553c9e",
+      "bytes": 62
+    },
+    {
+      "retained_path": "evidence/admin-notice-regression-before.log",
+      "source_paths": [
+        "audit-c/admin-notice-regression-before.log"
+      ],
+      "sha256": "fa1cc8f5b9fd8cf619ac3614910181d69e92cec4f450eeef1803a907309c22e5",
+      "bytes": 247
+    },
+    {
+      "retained_path": "evidence/admin-notice-review-race.log",
+      "source_paths": [
+        "audit-g/admin-notice-review-race.log"
+      ],
+      "sha256": "134ddd0ed4173a8940f7b273733ecd75655523c84da84f6821426e54947f8890",
+      "bytes": 62
+    },
+    {
+      "retained_path": "evidence/aggregate-concurrent-auth-cli-bounded-race.json",
+      "source_paths": [
+        "aggregate-concurrent-auth-cli-bounded-race.json"
+      ],
+      "sha256": "530ca0197f11e3d26a8d97966f01a8ddb26e4f7eefc2a08757b72ffa4927a577",
+      "bytes": 720
+    },
+    {
+      "retained_path": "evidence/aggregate-concurrent-auth-cli-bounded-race.log",
+      "source_paths": [
+        "aggregate-concurrent-auth-cli-bounded-race.log"
+      ],
+      "sha256": "86f963de9ad1d89e8922d5c887ff00797359ac3397f119006e2d8633c82245e5",
+      "bytes": 16022
+    },
+    {
+      "retained_path": "evidence/aggregate-concurrent-auth-cli-workspace-cache-race.json",
+      "source_paths": [
+        "aggregate-concurrent-auth-cli-workspace-cache-race.json"
+      ],
+      "sha256": "73239b06e361294ba9834a225905985cfe44c58a7344de38b3d632524e590bc9",
+      "bytes": 860
+    },
+    {
+      "retained_path": "evidence/aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "source_paths": [
+        "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      ],
+      "sha256": "f2fd53b13e64d03cc4154ba114d2f501024cac1a34cedbb1dc8d80afe171dfd6",
+      "bytes": 31762,
+      "source_sha256": "b1ea5b242bd430de3132aeed605f3d43f502144999dcc43e705c6344b198cb5b",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/aggregate-concurrent-auth-isolated-race.log",
+      "source_paths": [
+        "aggregate-concurrent-auth-isolated-race.log"
+      ],
+      "sha256": "b293da2184594fc7efee21add034e62812c5f5f4b77f07e86fda1d9f18403032",
+      "bytes": 138
+    },
+    {
+      "retained_path": "evidence/aggregate-concurrent-auth-race.log",
+      "source_paths": [
+        "aggregate-concurrent-auth-race.log"
+      ],
+      "sha256": "c92230a091cb5b38247e5cfa5f70c0dc058bdd15499b0c78878c5885709acc99",
+      "bytes": 1120
+    },
+    {
+      "retained_path": "evidence/aggregate-initial-erasure-flake.log",
+      "source_paths": [
+        "backup-full-race.log"
+      ],
+      "sha256": "658f0af25425958b55200f71110591b62948f06bd8fd66e05505500f8bbbfa18",
+      "bytes": 1140
+    },
+    {
+      "retained_path": "evidence/aggregate-lint-bounded-terminated-attempt.log",
+      "source_paths": [
+        "aggregate-final-lint-limited.log"
+      ],
+      "sha256": "fdb9687a696049222d1e198909220e60909ccb6f7c745129aca22ff9d22b0f0d",
+      "bytes": 15
+    },
+    {
+      "retained_path": "evidence/aggregate-lint-terminated-attempt.log",
+      "source_paths": [
+        "aggregate-final-lint.log"
+      ],
+      "sha256": "fdb9687a696049222d1e198909220e60909ccb6f7c745129aca22ff9d22b0f0d",
+      "bytes": 15
+    },
+    {
+      "retained_path": "evidence/aggregate-predecessor-race.log",
+      "source_paths": [
+        "aggregate-final-race.log"
+      ],
+      "sha256": "24587a1133dc0482982ddd5f132099229f5b8dc00c0a16b3b04714476a100d34",
+      "bytes": 1011
+    },
+    {
+      "retained_path": "evidence/aggregate-terminated-attempt.log",
+      "source_paths": [
+        "aggregate-final-race-v2.log"
+      ],
+      "sha256": "34a379c35f88139a8873c45588d5e22503c7c1bee4ae0c53c76842fcd435d810",
+      "bytes": 1030
+    },
+    {
+      "retained_path": "evidence/archive-link-verification.json",
+      "source_paths": [
+        "audit-b/archive-link-verification.json"
+      ],
+      "sha256": "96a2cb7d952a5621ab48b428c0a88ce304f325ca9e8b2dda55b27fc9ebbcd797",
+      "bytes": 65880
+    },
+    {
+      "retained_path": "evidence/archive-provenance.json",
+      "source_paths": [
+        "audit-b/archive-provenance.json"
+      ],
+      "sha256": "c6b7f2ff7cb861febe5fdf144ba29808b73dffbcbd95a96cd08a81a6587bb377",
+      "bytes": 10361
+    },
+    {
+      "retained_path": "evidence/auth82-compatible-followup.json",
+      "source_paths": [
+        "audit-a/AUTH82-FOLLOWUP-5c39abd.json"
+      ],
+      "sha256": "e6632703b8b1b4a58e4ca2c08b3c69e7f66305269ddfe938d770bc6f6bd7cf2a",
+      "bytes": 1749,
+      "source_sha256": "75b5819cecc7518a9e63d978c9ddc49095138358d00312b93299ce1ec256cb55",
+      "transformation": {
+        "kind": "typed_digest_values",
+        "decode": "Recursively replace sole-key git_object_sha1 and sha256_digest objects with their string values to reconstruct the original JSON data. All 26 SHA-1 values in these three reviewed inputs were verified to resolve to Git objects. SHA-256 values retain their source-declared checksum meaning. Original byte hashes are retained separately; no scanner exception is introduced."
+      }
+    },
+    {
+      "retained_path": "evidence/auth82-control-compile-terminated.log",
+      "source_paths": [
+        "audit-c/PR82-auth-regressions-after.log"
+      ],
+      "sha256": "0312f80f8f664ee06ded6c17fd4dbf64cc93b08dcbf73dd3d5c9612f079aa9d1",
+      "bytes": 221
+    },
+    {
+      "retained_path": "evidence/auth82-initial-review.json",
+      "source_paths": [
+        "audit-a/AUTH82-REVIEW.json"
+      ],
+      "sha256": "8ea1cb76edc2839c7cef1788f20c5256ad5dfc555ad654aaa72ef39820ce1fa0",
+      "bytes": 17842
+    },
+    {
+      "retained_path": "evidence/auth82-regressions-before.log",
+      "source_paths": [
+        "audit-c/PR82-auth-regressions-before.log"
+      ],
+      "sha256": "e571eb0a1746e593ad73b3fd54be993dbaab7050dca7b4f96fd0181491bf8bd0",
+      "bytes": 1108
+    },
+    {
+      "retained_path": "evidence/backup-active-lease-after.log",
+      "source_paths": [
+        "audit-d/backup-active-lease-after.log"
+      ],
+      "sha256": "50d63d9ac1729be94bb238a9bb5d6c24b6551bb96bca4f1803616a97776e0d87",
+      "bytes": 1675
+    },
+    {
+      "retained_path": "evidence/backup-active-lease-before.log",
+      "source_paths": [
+        "audit-d/backup-active-lease-before.log"
+      ],
+      "sha256": "3d76a94b91d72eebff9f83e6fb07b81fe711cfac66660a963527609390874309",
+      "bytes": 599
+    },
+    {
+      "retained_path": "evidence/backup-active-sweep-baseline.log",
+      "source_paths": [
+        "audit-g/backup-active-sweep-baseline.log"
+      ],
+      "sha256": "487269dd0a19d59925b84c36e8936bfc35ab7102e94232052f46433821237fdd",
+      "bytes": 57
+    },
+    {
+      "retained_path": "evidence/backup-active-sweep.log",
+      "source_paths": [
+        "audit-g/backup-active-sweep.log"
+      ],
+      "sha256": "0fd869940f760e710970435dbd53f19fe7a50370432c8f4b77d5695ffe0a7fe4",
+      "bytes": 556
+    },
+    {
+      "retained_path": "evidence/backup-cleanup-followup-failure.log",
+      "source_paths": [
+        "audit-g/backup-path-lease-substitution-5776be1.log"
+      ],
+      "sha256": "bedeb7ff68129b18a986075779a9c9e2a0bbd27a9a7d7b32e22a6a8c81001e53",
+      "bytes": 383
+    },
+    {
+      "retained_path": "evidence/backup-cleanup-initial-failure.log",
+      "source_paths": [
+        "audit-g/backup-path-lease-substitution.log"
+      ],
+      "sha256": "47c7532b4db981c469f20ad852cad76b2fe908ce3c7e4cab56c6b28ac2f3175b",
+      "bytes": 383
+    },
+    {
+      "retained_path": "evidence/backup-golangci-final.log",
+      "source_paths": [
+        "audit-d/backup-golangci-final.log"
+      ],
+      "sha256": "e92606b0bf483111dff0a120c315ea165821348f31365020e2468a0059095c47",
+      "bytes": 10
+    },
+    {
+      "retained_path": "evidence/backup-lease-corrected-review-race.log",
+      "source_paths": [
+        "audit-g/backup-lease-corrected-review-race.log"
+      ],
+      "sha256": "a9829d9c11ff9c6c35784bfbb211fbadd56924d1a0ff8634beee1f0e3b256424",
+      "bytes": 57
+    },
+    {
+      "retained_path": "evidence/blob-equivalence.json",
+      "source_paths": [
+        "audit-a/blob-equivalence.json"
+      ],
+      "sha256": "95a338c048f434e8afba4c8f3f4ff9633591e1da8efe5431afadbd63032b6a65",
+      "bytes": 6145
+    },
+    {
+      "retained_path": "evidence/ci-provider-initial.json",
+      "source_paths": [
+        "audit-f/ci-provider-evidence.json"
+      ],
+      "sha256": "69b7684e2e39e166019b697d1910870170370fe3b72bb4521e2e049d016ffb40",
+      "bytes": 67858
+    },
+    {
+      "retained_path": "evidence/concurrent-branches-initial.json",
+      "source_paths": [
+        "audit-a/supplemental-new-branches.json"
+      ],
+      "sha256": "37188cb6a497bc4198e15bb670548b3728761115f0f46c327ea6766e753bcd03",
+      "bytes": 9701
+    },
+    {
+      "retained_path": "evidence/concurrent-first-aggregate-failed.log",
+      "source_paths": [
+        "aggregate-concurrent-race.log"
+      ],
+      "sha256": "e44a2970e1786c3167ed361c3178df8e312b2dd18593025e38dd1688b03cd24c",
+      "bytes": 1042
+    },
+    {
+      "retained_path": "evidence/concurrent-forward-refresh.json",
+      "source_paths": [
+        "audit-root/CONCURRENT-FORWARD-REFRESH.json"
+      ],
+      "sha256": "e7009e65745dd1ec8f100d66feaa047f3323b0a6a0cd23f770f57e6df311e121",
+      "bytes": 1388
+    },
+    {
+      "retained_path": "evidence/concurrent-hygiene-checks.log",
+      "source_paths": [
+        "concurrent-hygiene-checks.log"
+      ],
+      "sha256": "dd956fc67002441ffadc7d846b74e65101eb6bccdd32502c73112c0340045494",
+      "bytes": 153
+    },
+    {
+      "retained_path": "evidence/concurrent-python-checks.json",
+      "source_paths": [
+        "concurrent-python-checks.json"
+      ],
+      "sha256": "9614dded321312f54962cecdd68e9cfabae0b2faa146853787e34bcc000edbcc",
+      "bytes": 900
+    },
+    {
+      "retained_path": "evidence/concurrent-qualification.json",
+      "source_paths": [
+        "audit-root/CONCURRENT-QUALIFICATION.json"
+      ],
+      "sha256": "60dad9310596d4c92dcd49dbd79e4e5e4da37b368c5a238e536960f00830e3de",
+      "bytes": 39614
+    },
+    {
+      "retained_path": "evidence/concurrent-shell-format-checks.json",
+      "source_paths": [
+        "concurrent-shell-format-checks.json"
+      ],
+      "sha256": "5688ad19b77cc57d35aca3873d6c2cb9cb4a76080bff8a7a8dcf0c8507f098a6",
+      "bytes": 1333
+    },
+    {
+      "retained_path": "evidence/current-policy-residuals.log",
+      "source_paths": [
+        "audit-d/current-policy-residuals.log"
+      ],
+      "sha256": "f601cd768eb264c214723318dc06aa303739324df3bb8438aea0f0c0e6f85283",
+      "bytes": 2452
+    },
+    {
+      "retained_path": "evidence/e02-aggregate.log",
+      "source_paths": [
+        "audit-c/e02-aggregate.log"
+      ],
+      "sha256": "879be72f9198a1958083575cc457fea1532e70bb8feec87227b10886161fa059",
+      "bytes": 1005
+    },
+    {
+      "retained_path": "evidence/e02-race.log",
+      "source_paths": [
+        "audit-c/e02-race.log"
+      ],
+      "sha256": "afb29562888fdf249eba990a526cadc2e12e33d128fa221226980c352aab5805",
+      "bytes": 60
+    },
+    {
+      "retained_path": "evidence/e02-regression-after.log",
+      "source_paths": [
+        "audit-c/e02-regression-after.log"
+      ],
+      "sha256": "1658cf0a74ce8cdfea37cc2568ae14f3591201e066ab3d2e90450c8cf8925e25",
+      "bytes": 60
+    },
+    {
+      "retained_path": "evidence/e02-regression-before.log",
+      "source_paths": [
+        "audit-c/e02-regression-before.log"
+      ],
+      "sha256": "666e14e8856e0d3fbc4ee07b434f7fa0bfd8b080f3af3a0bcc05cf0043518b36",
+      "bytes": 1418
+    },
+    {
+      "retained_path": "evidence/erasure-fixture-review-race.log",
+      "source_paths": [
+        "audit-g/erasure-fixture-review-race.log"
+      ],
+      "sha256": "15c271ee8323dd25dcbfc2eb2f93d7034f7963c056cb3a0f161b656dfd52940e",
+      "bytes": 62
+    },
+    {
+      "retained_path": "evidence/erasure-mutations.log",
+      "source_paths": [
+        "audit-c/erasure-mutations.log"
+      ],
+      "sha256": "ca0e411689f400f8a6b3e051c516f7a1d3b1f9e4450a9c543cb43c14337777db",
+      "bytes": 823
+    },
+    {
+      "retained_path": "evidence/erasure-race.log",
+      "source_paths": [
+        "audit-c/erasure-race.log"
+      ],
+      "sha256": "e604f1b9f739b3201d6d2430637dbaa2744c4042f2e9710b3652d06498fe5188",
+      "bytes": 63
+    },
+    {
+      "retained_path": "evidence/erasure-regression-after.log",
+      "source_paths": [
+        "audit-c/erasure-regression-after.log"
+      ],
+      "sha256": "82602dfe0de09a4168302b73d6af8403e12929cd0cc5ff3c087210deb48fbb54",
+      "bytes": 62
+    },
+    {
+      "retained_path": "evidence/erasure-regression-before.log",
+      "source_paths": [
+        "audit-c/erasure-regression-before.log"
+      ],
+      "sha256": "04e45109f4ca5006fd5ad8ef6542d5dde32af0846501947f813f180843d5612a",
+      "bytes": 191
+    },
+    {
+      "retained_path": "evidence/evidence-retention.py.txt",
+      "source_paths": [
+        "refresh_consolidation_evidence.py"
+      ],
+      "sha256": "96a3bb256dcce9dbd61fe0f2588b0e6a2c5c70941012da7208f8de336f8f81d7",
+      "bytes": 21097
+    },
+    {
+      "retained_path": "evidence/evidence-secret-scan.log",
+      "source_paths": [
+        "final-evidence-gitleaks.log"
+      ],
+      "sha256": "a44ea2109839edaaee1c18ffae7d61a2ae2d06d6f34a7fa805a903dbae39dd06",
+      "bytes": 83
+    },
+    {
+      "retained_path": "evidence/final-candidate-original-receipt.json",
+      "source_paths": [
+        "aggregate-final-password-proof-race.json"
+      ],
+      "sha256": "0e526c1773640dc42684b07d575ffb222484ae828ec352d6f402a41af519d0c3",
+      "bytes": 1386
+    },
+    {
+      "retained_path": "evidence/final-candidate-qualification.json",
+      "source_paths": [
+        "audit-root/FINAL-CANDIDATE-QUALIFICATION.json"
+      ],
+      "sha256": "e187b605902f6e0f188ef6a12d782455f6dbb7cbf1bf850d3aa89f62bd43b9a4",
+      "bytes": 2033
+    },
+    {
+      "retained_path": "evidence/final-candidate-race.log",
+      "source_paths": [
+        "aggregate-final-password-proof-race.log"
+      ],
+      "sha256": "4dc27ca06074b9bf74cbb9d5ea34f15c2929bd519112561bf72ee09cbfd0b4dd",
+      "bytes": 1011
+    },
+    {
+      "retained_path": "evidence/final-candidate-static-checks.json",
+      "source_paths": [
+        "final-password-proof-static-checks.json"
+      ],
+      "sha256": "0818c582104408fcb9f93ff28ed4bfa85e4b4d8e45ecc58ac5232f01b52a4691",
+      "bytes": 1007
+    },
+    {
+      "retained_path": "evidence/final-ci/pr69-final-ci-verified.json",
+      "source_paths": [
+        "audit-root/pr69-final-ci-verified.json"
+      ],
+      "sha256": "91de05e718789860a795bf3879da8a575b6d92a4457d559e1947d68747de61f2",
+      "bytes": 16837
+    },
+    {
+      "retained_path": "evidence/final-ci/pr70-final-ci-verified.json",
+      "source_paths": [
+        "audit-root/pr70-final-ci-verified.json"
+      ],
+      "sha256": "b1c5615d7cd5bd92ed4dfaff13c59ba406ae2dbfd37631535418c9f93938283c",
+      "bytes": 13865
+    },
+    {
+      "retained_path": "evidence/final-ci/pr71-1a0202001e42-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr71-1a0202001e42-superseded.json"
+      ],
+      "sha256": "97d3124a5603a3efac4288b6f12bd504e991bf027e058237f7d36344b35b13ff",
+      "bytes": 405
+    },
+    {
+      "retained_path": "evidence/final-ci/pr71-b1cd8f38450a-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr71-b1cd8f38450a-verified.json"
+      ],
+      "sha256": "12659f94a46f0de8094978557a446e02fc0115f2f0d85aa820713b22755d3dbe",
+      "bytes": 21193
+    },
+    {
+      "retained_path": "evidence/final-ci/pr72-946089539c57-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr72-946089539c57-superseded.json"
+      ],
+      "sha256": "b6b3f6063758eba360aaaa90561b3066009774c48bf833130e84d300a7051a70",
+      "bytes": 15590
+    },
+    {
+      "retained_path": "evidence/final-ci/pr72-cac2e0e148ab-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr72-cac2e0e148ab-superseded.json"
+      ],
+      "sha256": "2ef6c8760a64fa7cc407aaac81b6869f7330ef1bbc6419f2bf6a744940c878c7",
+      "bytes": 15777
+    },
+    {
+      "retained_path": "evidence/final-ci/pr72-faed4906f541-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr72-faed4906f541-verified.json"
+      ],
+      "sha256": "aeafae4f8eacc2320abed38127b27f3852048aacb56fc4a76a5c364939edb03a",
+      "bytes": 21247
+    },
+    {
+      "retained_path": "evidence/final-ci/pr73-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr73-verified.json"
+      ],
+      "sha256": "b977de0914f0abdc03edf7418ce8eba0b6c4e994a6b2cf1c237f046bc970986a",
+      "bytes": 17315
+    },
+    {
+      "retained_path": "evidence/final-ci/pr74-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr74-verified.json"
+      ],
+      "sha256": "0e9f73e79f3f76d3ead0033723494cb96b8c2a1c66296396e59dce2491172862",
+      "bytes": 17315
+    },
+    {
+      "retained_path": "evidence/final-ci/pr75-83de536ee373-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr75-83de536ee373-verified.json"
+      ],
+      "sha256": "fbf9e7faec9de2227d25427ed9cefcda5ed0d9ffb5e673b40ab0e231559a5cd2",
+      "bytes": 17578
+    },
+    {
+      "retained_path": "evidence/final-ci/pr76-fc31dc9a6b8c-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr76-fc31dc9a6b8c-verified.json"
+      ],
+      "sha256": "a50bf35ed1795059ec53d7bc0f6608741122460ba359e29e39ab08702264444f",
+      "bytes": 17578
+    },
+    {
+      "retained_path": "evidence/final-ci/pr77-15b0c176e5a4-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr77-15b0c176e5a4-superseded.json"
+      ],
+      "sha256": "e6d1274b5f6cb304d1e2e43ed3036bf0f3aa01f297e3ea64c72d539a11dbe3d4",
+      "bytes": 3384
+    },
+    {
+      "retained_path": "evidence/final-ci/pr77-2f6b3e4f1b70-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr77-2f6b3e4f1b70-verified.json"
+      ],
+      "sha256": "87ba673b84f8a787277c31a353db13c6f1a7422a420005cde493b19e921ce88d",
+      "bytes": 17578
+    },
+    {
+      "retained_path": "evidence/final-ci/pr78-bcacd848dea6-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr78-bcacd848dea6-superseded.json"
+      ],
+      "sha256": "776bfb4bc08a44ccc71de6e4c19630b2935097b99483038b905c59ee1d790e7b",
+      "bytes": 9361
+    },
+    {
+      "retained_path": "evidence/final-ci/pr78-c7-ci-claim-verification.json",
+      "source_paths": [
+        "audit-f/final-ci/pr78-c7-ci-claim-verification.json"
+      ],
+      "sha256": "f497f0aa80f5eac6fe2cc113a0e40e34f0affdb7d4a8cb4bd61345023df909d9",
+      "bytes": 17717
+    },
+    {
+      "retained_path": "evidence/final-ci/pr79-dd3e82e27ddb-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr79-dd3e82e27ddb-verified.json"
+      ],
+      "sha256": "977b0f1d98e6d9d1dc03e55ba3bf246119fe7a9fb30a956e25686baf6ad8b561",
+      "bytes": 17775
+    },
+    {
+      "retained_path": "evidence/final-ci/pr79-linux-race-summary.json",
+      "source_paths": [
+        "audit-f/final-ci/pr79-linux-race-summary.json"
+      ],
+      "sha256": "c976c9ab696078b55bdb37dfd7b7ab710af7421784c43c11e923483f870fd498",
+      "bytes": 3570
+    },
+    {
+      "retained_path": "evidence/final-ci/pr79-linux-traceability-results.json",
+      "source_paths": [
+        "audit-f/final-ci/pr79-linux-traceability-results.json"
+      ],
+      "sha256": "d292121221365d97e419f6269db57571ed0b01a3cd97dbe0e6b1ba5262cb2728",
+      "bytes": 410794
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-browser-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-browser-passed.log"
+      ],
+      "sha256": "2a2b25e8181d936adb6f326f6492214e1411cc6817975c8a8dede8852f932304",
+      "bytes": 128818,
+      "source_sha256": "bbc28265fb1fdcb4fc6b129d590f3d726a90d9ff3699492e57591135c2e6cf64",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-linux-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-linux-passed.log"
+      ],
+      "sha256": "b0ca03364ca2b50dea63b0033656b2f17f5907cb121f26c61aba3b6c4d668957",
+      "bytes": 24421,
+      "source_sha256": "89a489f542e6cc8cddd94f3c7ada2ba2c101f0b0f60d8047c60d8aae0d2f494c",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-linux-race-summary.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-linux-race-summary.json"
+      ],
+      "sha256": "4b62fbb090eb72eccca5247441e00c4c038c998a6eee496bdf89771333888a38",
+      "bytes": 3937
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-linux-traceability-results.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-linux-traceability-results.json"
+      ],
+      "sha256": "a56a6cde47557d43ca1a5d8873aefc6bec253af24f74fd728de26ac48a194bdc",
+      "bytes": 416736
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-macos-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-macos-passed.log"
+      ],
+      "sha256": "00a0fe1b8b5ef8adcdbd62362675f4aa14de69818c7a33300313846550bc71f5",
+      "bytes": 23102,
+      "source_sha256": "aa857d65c7dfcd88a81dbe40cdf6c154291fa3cf8c1daf45ca2e2a1f3607c79d",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-macos-summary.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-macos-summary.json"
+      ],
+      "sha256": "552325663a4d5ba1ad789858b22a3840beceabf1a7b4523abc59d35f96e8a36d",
+      "bytes": 2302
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-windows-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-windows-passed.log"
+      ],
+      "sha256": "b0b6964b17cedf370ed4f0153e7844d0ec700a859388de4b83c38652dfbb28db",
+      "bytes": 22399,
+      "source_sha256": "172e78df986c8e06e9eccd0fd3514ba75387c11c9eec5870259c6f5657af85e8",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5-windows-summary.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5-windows-summary.json"
+      ],
+      "sha256": "3644561231d1de18bcf54efe18ea0d2995446fe7e02fa05a321a4bdf4b18e206",
+      "bytes": 2311
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-09ef8a5aa25f-verified.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-09ef8a5aa25f-verified.json"
+      ],
+      "sha256": "80468fe132cee7a281580ab10df2aae7928512e0c2bba064e2f5ee9e0167db19",
+      "bytes": 21268
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-5776be13613d-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-5776be13613d-superseded.json"
+      ],
+      "sha256": "aac51678ce3246de32b0621b26ec527bb0a88f0b02e7605bad719a633839443a",
+      "bytes": 3758
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-browser-summary.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-browser-summary.json"
+      ],
+      "sha256": "d9da7bd73856a85b62719921ea8906bffe46b0e220efc1b5ab1523ec1d4b1093",
+      "bytes": 264
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-new-regression-terminal-results.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-new-regression-terminal-results.json"
+      ],
+      "sha256": "ccb410769b8b101c98e1c4980a41542611560165e809bb591e31804c612c5fde",
+      "bytes": 2575
+    },
+    {
+      "retained_path": "evidence/final-ci/pr81-observed-merge.json",
+      "source_paths": [
+        "audit-f/final-ci/pr81-observed-merge.json"
+      ],
+      "sha256": "ace29a8b67abd1278e1a78b4d1ba66248129443aae46add54a7b98e4dc048bea",
+      "bytes": 462
+    },
+    {
+      "retained_path": "evidence/final-ci/pr82-0a7ef6ee8efb-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr82-0a7ef6ee8efb-superseded.json"
+      ],
+      "sha256": "77362ad4797dda34b5cb277a48e82b3ce0aa1589d313d99590b9d52f13dfb8f4",
+      "bytes": 770
+    },
+    {
+      "retained_path": "evidence/final-ci/pr82-5c39abdb89fa-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr82-5c39abdb89fa-superseded.json"
+      ],
+      "sha256": "4de59f150f32ba5370ed88645f01907e2901f48db9242ba80465829a879fdc92",
+      "bytes": 2357
+    },
+    {
+      "retained_path": "evidence/final-ci/pr82-6785863252d2-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr82-6785863252d2-superseded.json"
+      ],
+      "sha256": "3d59cf9b4598653784bc6e22fc6041fac6579bb481dc3965b4d540f247de4df2",
+      "bytes": 2284
+    },
+    {
+      "retained_path": "evidence/final-ci/pr82-925547-traceability-review.json",
+      "source_paths": [
+        "audit-f/final-ci/pr82-925547-traceability-review.json"
+      ],
+      "sha256": "e969819ffd885c5d3ccca5e15f7076aab509a3cead86cd7f17c712560d9effe6",
+      "bytes": 6430
+    },
+    {
+      "retained_path": "evidence/final-ci/pr82-925547b2f4a2-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr82-925547b2f4a2-superseded.json"
+      ],
+      "sha256": "fd586e1eefac2a5526087bb1c67b4b738495ec0202237f6666b352aac0081ca3",
+      "bytes": 2165
+    },
+    {
+      "retained_path": "evidence/final-ci/pr83-cb95bb1-traceability-failed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr83-cb95bb1-traceability-failed.log"
+      ],
+      "sha256": "aba0de8f21b88f54361f6552f487b963ec8f868f649d234e2190cb3175d3ee5a",
+      "bytes": 28834,
+      "source_sha256": "a7977b7c17d9a3ca61b888284cff88d768257e98686ccd08d29b6275be2f8dc3",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/final-ci/pr83-cb95bb1-traceability-failure.json",
+      "source_paths": [
+        "audit-f/final-ci/pr83-cb95bb1-traceability-failure.json"
+      ],
+      "sha256": "a7d7390eb0f6c79a1de13449d33e75d2015dbe745f0f8d75e68945ef235b7cc3",
+      "bytes": 6160
+    },
+    {
+      "retained_path": "evidence/final-ci/pr87-1a3ef0fad836-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr87-1a3ef0fad836-superseded.json"
+      ],
+      "sha256": "1e8b8c13e81e3d3125994d9d0a976b9e97e6a5bd3832e571a45bbd2dd67eb3a1",
+      "bytes": 2206
+    },
+    {
+      "retained_path": "evidence/final-ci/pr88-f4cbaddd4d40-superseded.json",
+      "source_paths": [
+        "audit-f/final-ci/pr88-f4cbaddd4d40-superseded.json"
+      ],
+      "sha256": "8a312bb3ecccf9d37d60d7f886742edc11ee598dc80dbfe0a1f21cb5c10b191f",
+      "bytes": 8955
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-current-20261118T100724.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-current-20261118T100724.json"
+      ],
+      "sha256": "2ea6640edb11b3bb0255531d2b7427199b469b62035cfb8f26e31c1d9632dbf4",
+      "bytes": 21175
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-current-20261118T101229.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-current-20261118T101229.json"
+      ],
+      "sha256": "49b0c16efa924bc4ab5508dfeb2178dbc6991cc7ed6f2bea18a89ff2a3086159",
+      "bytes": 21710
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-current-20261118T102432.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-current-20261118T102432.json"
+      ],
+      "sha256": "70489a0aa1f71f8ebf951231a0337003395767e716bc6d97de4ec541a3983ef0",
+      "bytes": 39871
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-inventory-20261118-0842.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-inventory-20261118-0842.json"
+      ],
+      "sha256": "277c136435233cdb0591c25c4b62055fe1f08dad99b884d02f94fbcf75134ff4",
+      "bytes": 18288,
+      "source_sha256": "f447bee12a86493eecd6328e6cc2a7f9cbfd9fb9e5fe2240cb815682e7c990b5",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-provider-status.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-provider-status.json"
+      ],
+      "sha256": "86cf5a9c6cccaa713a9d7d69b6d387186ec5d0005fcdda54bf0393b7a7f96cd8",
+      "bytes": 417
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-runner-snapshot-20261118-0849.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-runner-snapshot-20261118-0849.json"
+      ],
+      "sha256": "13021f109113ab4c7ff122649d4bda390a20a7577f2dca89a9dceafcb97613ea",
+      "bytes": 14524
+    },
+    {
+      "retained_path": "evidence/final-ci/queue-status-inventory-20261118T100538.json",
+      "source_paths": [
+        "audit-f/final-ci/queue-status-inventory-20261118T100538.json"
+      ],
+      "sha256": "112a9974cec486c0ee2bd8014176363346ccb11bb7ae282b66486facaa274112",
+      "bytes": 6835
+    },
+    {
+      "retained_path": "evidence/final-evidence-representation-addendum.json",
+      "source_paths": [
+        "audit-c/FINAL-EVIDENCE-REPRESENTATION-ADDENDUM.json"
+      ],
+      "sha256": "ec5f7582491f1fc7f500aaf5f960e971420f1a11e8412e3921a31c549384188f",
+      "bytes": 5668
+    },
+    {
+      "retained_path": "evidence/final-generated-checkpoint-review.json",
+      "source_paths": [
+        "audit-c/FINAL-GENERATED-CHECKPOINT-REVIEW.json"
+      ],
+      "sha256": "b20bdd4a1508baf895075c5a5e1ac7e855e566bde5df907992e506f6c272b5bc",
+      "bytes": 4231
+    },
+    {
+      "retained_path": "evidence/final-password-proof-lint.json",
+      "source_paths": [
+        "final-password-proof-lint.json"
+      ],
+      "sha256": "6b41d7a4f07f8e2c26b50265bb5ca6c1d84033d60daaf4a7f07d89bd7b657ac9",
+      "bytes": 638
+    },
+    {
+      "retained_path": "evidence/final-password-proof-lint.log",
+      "source_paths": [
+        "final-password-proof-lint.log"
+      ],
+      "sha256": "e92606b0bf483111dff0a120c315ea165821348f31365020e2468a0059095c47",
+      "bytes": 10
+    },
+    {
+      "retained_path": "evidence/final-reference-archives.json",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-ARCHIVES.json"
+      ],
+      "sha256": "c85a7b2a4659ddeabbdb14c3f332e764270af0feba5470ed820e62c941948a0e",
+      "bytes": 16614
+    },
+    {
+      "retained_path": "evidence/final-reference-closure-comparison.json",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-CLOSURE-COMPARISON.json"
+      ],
+      "sha256": "0f5eb08ca52a48b5a662fa76e6a6a9f28c62af4b24b3210ca6c938b930350ef0",
+      "bytes": 9232
+    },
+    {
+      "retained_path": "evidence/final-reference-historical-branches.json",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-HISTORICAL-BRANCHES.json"
+      ],
+      "sha256": "439e0c66f509a26f906f7bee045d3a32c0d53354995e73b8ce30f2bf99b434de",
+      "bytes": 1527
+    },
+    {
+      "retained_path": "evidence/final-reference-historical-heads.json",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-HISTORICAL-HEADS.json"
+      ],
+      "sha256": "ff064a1a45386592fc4640045bfe98591cac4d2a7862bad3ee86828cf6bf5915",
+      "bytes": 4355
+    },
+    {
+      "retained_path": "evidence/final-reference-link-check.json",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-LINK-CHECK.json"
+      ],
+      "sha256": "40dede50a1b77a8a86a52097d4263f419a83b84772a6751208fb2ca1e77247e2",
+      "bytes": 2453
+    },
+    {
+      "retained_path": "evidence/final-reference-preservation.json",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-PRESERVATION.json"
+      ],
+      "sha256": "0d149d50385e4a3f9a31ab386d49ead6e0b67f8eb504b2172542d689f425d55a",
+      "bytes": 8551
+    },
+    {
+      "retained_path": "evidence/greyscale-first-draft-rejection.json",
+      "source_paths": [
+        "audit-g/greyscale-later-page-probe.json"
+      ],
+      "sha256": "257dc6dbf6e70eb087f214e01dc569b27f9791c820746ffb819a222f6723ff5d",
+      "bytes": 749
+    },
+    {
+      "retained_path": "evidence/greyscale-independent-probe.cjs.txt",
+      "source_paths": [
+        "audit-g/greyscale-final-review-probe.cjs"
+      ],
+      "sha256": "5502081ba3e005a7da78d74b95c88700bbebc985dc7297333d29e9763475d57a",
+      "bytes": 4315
+    },
+    {
+      "retained_path": "evidence/greyscale-independent-probe.json",
+      "source_paths": [
+        "audit-g/greyscale-final-review-probe.json"
+      ],
+      "sha256": "48b5af84a67c94d3039f771326a6594deba221ef2926043ed983123f6567a361",
+      "bytes": 3283
+    },
+    {
+      "retained_path": "evidence/greyscale-original.js.txt",
+      "source_paths": [
+        "audit-ui/greyscale-original.js.txt"
+      ],
+      "sha256": "9af9e226bade355f1591e9a8ee2e8f7c407eac6b0cd772e08a8dbe55664acc44",
+      "bytes": 7627
+    },
+    {
+      "retained_path": "evidence/greyscale-root-probe.cjs.txt",
+      "source_paths": [
+        "audit-ui/greyscale-clock-probe.cjs"
+      ],
+      "sha256": "924b6c43ef895632549a2443481ae705f17c64a3142e6fa725f4fc57921f438d",
+      "bytes": 5668
+    },
+    {
+      "retained_path": "evidence/greyscale-root-probe.json",
+      "source_paths": [
+        "audit-ui/clock-assertion-probe.json"
+      ],
+      "sha256": "1484835111f0939652ecd67dee9aff14d3c78922d21f7c3a520fdcdef065b711",
+      "bytes": 3693
+    },
+    {
+      "retained_path": "evidence/historical-closure-comments.json",
+      "source_paths": [
+        "audit-b/proposed-closure-comments.json"
+      ],
+      "sha256": "b8067082acfa61a590a3e722eaf27909525aa82923368d911f6feefb5ed996d4",
+      "bytes": 7738
+    },
+    {
+      "retained_path": "evidence/historical-closure-receipts.json",
+      "source_paths": [
+        "closure-receipts.json"
+      ],
+      "sha256": "3c7faf4666d6913f9a4ef6d59c405161072db674d07085f9fc78a722b25ab3e6",
+      "bytes": 1233
+    },
+    {
+      "retained_path": "evidence/integration-refresh-remote.json",
+      "source_paths": [
+        "audit-g/integration-refresh-remote.json"
+      ],
+      "sha256": "7301c25c5ec0ccc54b1a033184a5ec3f290331a6da4d786a4c9c9b0ee108e800",
+      "bytes": 2066
+    },
+    {
+      "retained_path": "evidence/integration-refresh-review.json",
+      "source_paths": [
+        "audit-g/integration-refresh-review.json"
+      ],
+      "sha256": "0ebae90f00c70608e3461ebde53d569c7bbdd1890881fd7fea23a15c68b0eb9e",
+      "bytes": 9383
+    },
+    {
+      "retained_path": "evidence/local-browser-unavailable.log",
+      "source_paths": [
+        "audit-ui/local-browser-unavailable.log"
+      ],
+      "sha256": "c6e85bf1cd8f5dbdbfd1e4758e34fa6b69b555fbb7008875dd0ebb2ffbfe9a74",
+      "bytes": 5344,
+      "source_sha256": "1119dc33304ab79b7dac680272380636089a4d45c11d12443f6be7641f29366b",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/mfa-password-independent-review.json",
+      "source_paths": [
+        "audit-b/MFA-PASSWORD-INDEPENDENT-REVIEW.json"
+      ],
+      "sha256": "c74c1595cfddc2fbe3c9b5afc8e9e3f12e36c5d1a6d65252548b3332cd65d2f5",
+      "bytes": 6899
+    },
+    {
+      "retained_path": "evidence/mfa-password-proof-after.log",
+      "source_paths": [
+        "audit-c/MFA-PASSWORD-PROOF-after.log"
+      ],
+      "sha256": "926068faf0e7f02be6761b0d37676ecb9ee916fc04a8e38cbee27611f886faa0",
+      "bytes": 2633
+    },
+    {
+      "retained_path": "evidence/mfa-password-proof-before.log",
+      "source_paths": [
+        "audit-c/MFA-PASSWORD-PROOF-before.log"
+      ],
+      "sha256": "2f46843747cc9e7232c77adb58d4ebb51c13d077747137c580030249a6c480fb",
+      "bytes": 5780
+    },
+    {
+      "retained_path": "evidence/mfa-password-proof-evidence.json",
+      "source_paths": [
+        "audit-c/MFA-PASSWORD-PROOF-EVIDENCE.json"
+      ],
+      "sha256": "949b156b40322f10fc44a05b97148b4162eb162aecac2684a51c1c0446ee2e54",
+      "bytes": 4214,
+      "source_sha256": "0eb804f284edb890d603c7ca5541f287d7b8be3036616fe47aa8d609902eb32f",
+      "transformation": {
+        "kind": "typed_digest_values",
+        "decode": "Recursively replace sole-key git_object_sha1 and sha256_digest objects with their string values to reconstruct the original JSON data. All 26 SHA-1 values in these three reviewed inputs were verified to resolve to Git objects. SHA-256 values retain their source-declared checksum meaning. Original byte hashes are retained separately; no scanner exception is introduced."
+      }
+    },
+    {
+      "retained_path": "evidence/mfa-password-proof-related-race.log",
+      "source_paths": [
+        "audit-c/MFA-PASSWORD-PROOF-related-race.log"
+      ],
+      "sha256": "131a2f968f47eb6b61cc0b0476f4ede29786f1b033857833736b45c0846b696d",
+      "bytes": 4810
+    },
+    {
+      "retained_path": "evidence/new01-before.log",
+      "source_paths": [
+        "audit-d/new01-before.log"
+      ],
+      "sha256": "d50e6f02f050cb198dc176d448fc5d5ae3d5846829d8217667ed7658cc38b8da",
+      "bytes": 4241
+    },
+    {
+      "retained_path": "evidence/new01-cleanup-before.log",
+      "source_paths": [
+        "audit-d/new01-cleanup-before.log"
+      ],
+      "sha256": "3b354d8fc4d6317dc044a68bcd8c9f58d92119b3f0b1f53d9c324402061a7464",
+      "bytes": 474
+    },
+    {
+      "retained_path": "evidence/original-aggregate-race-passed.log",
+      "source_paths": [
+        "aggregate-final-race-v3.log"
+      ],
+      "sha256": "9c92fc6ace0ca9ebeaf0243a595d3bb9a6eb35db86bfe1a53c58799f14186b7f",
+      "bytes": 1011
+    },
+    {
+      "retained_path": "evidence/policy83-inventory.json",
+      "source_paths": [
+        "audit-a/POLICY83-INVENTORY.json"
+      ],
+      "sha256": "39f110bfe42bed558cfdd936c23abc76265afebe94092a4870203ae4179fe32f",
+      "bytes": 3075
+    },
+    {
+      "retained_path": "evidence/pr69-focused.log",
+      "source_paths": [
+        "audit-d/pr69-focused.log"
+      ],
+      "sha256": "49b50d447d98ca93200887630c18613b151ad2ebd0bca1093607b890269e5866",
+      "bytes": 1066
+    },
+    {
+      "retained_path": "evidence/pr69-mutation-gate.log",
+      "source_paths": [
+        "audit-d/pr69-mutation-gate.log"
+      ],
+      "sha256": "cfea500631f2f54efb92869887c3cccb42c2f6adcd46e650ed6c2ed4641ec3dd",
+      "bytes": 755
+    },
+    {
+      "retained_path": "evidence/pr69-mutation-mfa.log",
+      "source_paths": [
+        "audit-d/pr69-mutation-mfa.log"
+      ],
+      "sha256": "c02713aa7b04ae244629944b7f3602966d2302876b028560d3f49e9bc9ca58e2",
+      "bytes": 298
+    },
+    {
+      "retained_path": "evidence/pr69-mutation-reversal.log",
+      "source_paths": [
+        "audit-d/pr69-mutation-reversal.log"
+      ],
+      "sha256": "52e41dcd4dddaa1f84b949ea4c0d21ce6bc9df68f423cc496691563b6be60b1d",
+      "bytes": 324
+    },
+    {
+      "retained_path": "evidence/pr71-native-macos-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr71-macos-passed.log"
+      ],
+      "sha256": "e5a4775f9a0ee21072bb742151e40e8389842f71a6c836fe8b173cba418a320d",
+      "bytes": 23019,
+      "source_sha256": "9df3622e3503331fbfcf0ff8745b3e9f55ede087e8913d6acb1dcf2b02867919",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr71-native-windows-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr71-windows-passed.log"
+      ],
+      "sha256": "8bfec0438f214bcdaca1783e947c6d616bd09ed0a5b87cbce7366d0a581cc31b",
+      "bytes": 22410,
+      "source_sha256": "a6ccf68107cbb1d4ee7bdbe69e6f962a6e711c9b84c8156f80f2d890899a4089",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr71-original-checks.json",
+      "source_paths": [
+        "audit-f/final-ci/pr71-original-completed.json"
+      ],
+      "sha256": "2b5d79bd0223df458dda566c341c902ddff8a93f7e1a717f4d85af3989745a86",
+      "bytes": 17154
+    },
+    {
+      "retained_path": "evidence/pr71-original-e2e-failure.log",
+      "source_paths": [
+        "audit-f/final-ci/pr71-e2e-failed.log"
+      ],
+      "sha256": "ba505de3ad1b4e48728ef82456444ad52585d5421d9a72fa8cbd8611b5a96a17",
+      "bytes": 135867,
+      "source_sha256": "d3053cf38e15b2564d54271d4bb1f50aabdfd350b1f4b505ea198e19946f1afc",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr71-original-text-comparison.json",
+      "source_paths": [
+        "audit-f/final-ci/pr71-text-comparison.json"
+      ],
+      "sha256": "bf2a65bae457d5126f3fd5907571a3e930023c0a06475ca6453d590ba2961659",
+      "bytes": 183
+    },
+    {
+      "retained_path": "evidence/pr71-through-pr77-complete.json",
+      "source_paths": [
+        "audit-f/final-ci/pr71-through-pr77-complete.json"
+      ],
+      "sha256": "f8536924c50ab4eb69bcbd1ea93aa3c31137b882a093953edee0ec419c0e12a0",
+      "bytes": 1731
+    },
+    {
+      "retained_path": "evidence/pr72-final-provider-lint-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr72-faed490-lint-passed.log"
+      ],
+      "sha256": "c06791d9d66e9e6f0d34bf5fc9faca5edd99f7cd605a01460bbcaa03b4f7d55f",
+      "bytes": 34185,
+      "source_sha256": "852edfacdd23cf3c280434d517d9d01142c10b1de898489741b23f98b61295a8",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr72-first-lint-failure.log",
+      "source_paths": [
+        "audit-f/final-ci/pr72-lint-failed.log"
+      ],
+      "sha256": "80ac28d76f9d188cef6f93b4a9377e3117873f957ded1896ac700d29fda2c61c",
+      "bytes": 33829,
+      "source_sha256": "7e850fc23edf46832c2a640215b440c1eabcb280a1232019d60f851904d864ed",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr72-second-lint-failure.log",
+      "source_paths": [
+        "audit-f/final-ci/pr72-cac2e0e-lint-failed.log"
+      ],
+      "sha256": "4c12063ea279e508cfa0980d008cc134b1edd4ad7f886e4ad2946b33ab079ff7",
+      "bytes": 33381,
+      "source_sha256": "d105c4c10a2fc922eebfd9285773cb9d2bbf706371feeda7a02b0efead17e5f8",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr73-fuzz-local.log",
+      "source_paths": [
+        "audit-f/pr73-fuzz-local.log"
+      ],
+      "sha256": "56b2668149a27b1c6ec6bf4c510a6542921ec3d7144b8416ce8dc12b55722c0b",
+      "bytes": 542
+    },
+    {
+      "retained_path": "evidence/pr73-fuzz-provider-failure.log",
+      "source_paths": [
+        "audit-f/pr73-fuzz-job.log"
+      ],
+      "sha256": "e3531e7f24ffb3ac9b6b74d57bdab107702668fdb0fbdbff16f61d286c416f96",
+      "bytes": 23208,
+      "source_sha256": "452d7d254836fb3f2bb6cd5d2d78fcf7cbe3670210f8475d90d8ec4226b5073c",
+      "normalization": "Only trailing spaces/tabs and surplus final blank lines removed; all diagnostic and report text preserved."
+    },
+    {
+      "retained_path": "evidence/pr73-fuzz-retry-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr73-fuzz-retry-passed.log"
+      ],
+      "sha256": "18b31f2e88a83aafd35ddd04917ebd606fcec34a68bb64bb1f354e527b73bb89",
+      "bytes": 24685,
+      "source_sha256": "ce659ce912f29fe963003e6333917247940cf26d17120f44a79adc405479ba26",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr73-original-checks.json",
+      "source_paths": [
+        "audit-f/final-ci/pr73-original-attempt.json"
+      ],
+      "sha256": "353cf425d216f0758da785f49d491b35b2eeb8fab6f464f70168d28cb9bb8fa9",
+      "bytes": 13948
+    },
+    {
+      "retained_path": "evidence/pr73-single-retry-request.json",
+      "source_paths": [
+        "audit-f/final-ci/pr73-retry-request.json"
+      ],
+      "sha256": "b11a9921a214aa4d3ed9b75c16e28138fbf6e09ecf7eaa1f537b6eb3d6189cc4",
+      "bytes": 363
+    },
+    {
+      "retained_path": "evidence/pr77-final-browser-passed.log",
+      "source_paths": [
+        "audit-f/final-ci/pr77-2f6b3e4-browser-passed.log"
+      ],
+      "sha256": "f7e85408dc7be969f96ba25e949753eeb39d8af136708f0ae710ad02719de761",
+      "bytes": 129134,
+      "source_sha256": "785723dd33292547ef943ae62464bb720c92929894bb9edb09dfcebfb53b510c",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr77-final-browser-summary.json",
+      "source_paths": [
+        "audit-f/final-ci/pr77-browser-summary.json"
+      ],
+      "sha256": "19f3bc3e337fd43cb91edfe25d63f1102150b8d2f67ea0ef2c2afcbace5d4057",
+      "bytes": 1592
+    },
+    {
+      "retained_path": "evidence/pr78-docs-followup.json",
+      "source_paths": [
+        "audit-b/PR78-DOCS-FOLLOWUP-bcacd848.json"
+      ],
+      "sha256": "970ca816cb340941674727d87ca5a1647475fc02c72b80e212074202ad9c507e",
+      "bytes": 7791
+    },
+    {
+      "retained_path": "evidence/pr78-docs-initial-review.json",
+      "source_paths": [
+        "audit-b/PR78-DOCS-READINESS-1d84c6d.json"
+      ],
+      "sha256": "636b8fc710d289449b250281f5d86a56bca473ad7bf40dbdcc755f700a4b55d5",
+      "bytes": 23206
+    },
+    {
+      "retained_path": "evidence/pr78-qualification-update.json",
+      "source_paths": [
+        "audit-b/PR78-QUALIFICATION-UPDATE-2b3a2aa.json"
+      ],
+      "sha256": "ffbdc5d99d0359ce416fde02e7bb792f0c658ca3356470a2ab91d24a263f7ec6",
+      "bytes": 6080
+    },
+    {
+      "retained_path": "evidence/pr79-catalogue-completeness.json",
+      "source_paths": [
+        "audit-g/pr79-catalogue-completeness.json"
+      ],
+      "sha256": "742f5375a504f6c6aaf432c301ad1478940190be0b87db29a84276e13309e520",
+      "bytes": 18964
+    },
+    {
+      "retained_path": "evidence/pr79-independent-race-passed.log",
+      "source_paths": [
+        "audit-g/pr79-review-race.log"
+      ],
+      "sha256": "592259331b5797acd2deb2f988b6468e5f918a9172f696d1eb725829c5dbb373",
+      "bytes": 125
+    },
+    {
+      "retained_path": "evidence/pr79-template-equivalence.json",
+      "source_paths": [
+        "audit-g/pr79-template-equivalence.json"
+      ],
+      "sha256": "b166c4961c4c63deb9318b995605ebb22141ac581017997bc2c21f899230cf0f",
+      "bytes": 1398
+    },
+    {
+      "retained_path": "evidence/pr81-focused-cleanup-passed.log",
+      "source_paths": [
+        "audit-c/PR81-09ef8a5-new-regressions-race.log"
+      ],
+      "sha256": "d5d4972247cad4b5124ab97da2811300e00d51d7ea35bfa1abdafa7f5b79fe0b",
+      "bytes": 526
+    },
+    {
+      "retained_path": "evidence/pr81-focused-store-passed.log",
+      "source_paths": [
+        "audit-c/PR81-09ef8a5-store.log"
+      ],
+      "sha256": "f2e825f0693f6fcec44dd6891a10e4179c8ebeda6138eda8b6f037a9b194791c",
+      "bytes": 961
+    },
+    {
+      "retained_path": "evidence/pr81-optional-backup-terminated.log",
+      "source_paths": [
+        "audit-c/PR81-09ef8a5-backup-race.log"
+      ],
+      "sha256": "01d33f17b10738170605d670fced2b72f390b55b64e646712bc0a1254987827b",
+      "bytes": 1827
+    },
+    {
+      "retained_path": "evidence/pr84-a2-08-original-evidence.txt",
+      "source_paths": [
+        "audit-c/PR84-A2-08-original-evidence.txt"
+      ],
+      "sha256": "2137450d569c729d49f602929006c94eefec877dded4c104c7bacfd9fdcace46",
+      "bytes": 1811,
+      "source_sha256": "a8aec292e0ed6a45c0edc5bf0ad5bcf6c222dd73ad49590957843837bc5d4c3c",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr84-ancestry-and-overlap.json",
+      "source_paths": [
+        "audit-a/PR84-ANCESTRY-AND-OVERLAP.json"
+      ],
+      "sha256": "37854109a6ffe142a10db8edb88491f1197b4a30df935d4b101c26e2933395ae",
+      "bytes": 6193
+    },
+    {
+      "retained_path": "evidence/pr84-api-after.log",
+      "source_paths": [
+        "audit-c/PR84-api-after.log"
+      ],
+      "sha256": "72249f15489ccf98f7b9d124644d34562ea60cd55a555be3ca22caca4f3d5fcf",
+      "bytes": 159
+    },
+    {
+      "retained_path": "evidence/pr84-api-before.log",
+      "source_paths": [
+        "audit-c/PR84-api-before.log"
+      ],
+      "sha256": "17b8e6f4d5a49ac2ceb3b5ec6b7ee84c657dafa2ac4ae7fa78faaec44ca9f214",
+      "bytes": 656
+    },
+    {
+      "retained_path": "evidence/pr84-disk-after-cache-clean.txt",
+      "source_paths": [
+        "audit-c/PR84-disk-after-cache-clean.txt"
+      ],
+      "sha256": "22abe7f04f3a849023c10c998a9a184586f64fa4499d5b5fe4c57c5a66342486",
+      "bytes": 336
+    },
+    {
+      "retained_path": "evidence/pr84-disk-before-cache-clean.txt",
+      "source_paths": [
+        "audit-c/PR84-disk-before-cache-clean.txt"
+      ],
+      "sha256": "356459a1243746df1ffbbff70b3d857dcf4c72dc1fec798d5f5f6e3c0f2072b3",
+      "bytes": 336
+    },
+    {
+      "retained_path": "evidence/pr84-initial-review.json",
+      "source_paths": [
+        "audit-a/PR84-SOURCE-REVIEW-7f98b3d.json"
+      ],
+      "sha256": "db5ddf394a530be56a0317a7658d100779f5598ef22aa514e1b4c6c9dd0a3630",
+      "bytes": 1563
+    },
+    {
+      "retained_path": "evidence/pr84-logging-after-race.log",
+      "source_paths": [
+        "audit-c/PR84-logging-after-race.log"
+      ],
+      "sha256": "62188964c4d9ee440ae7f3bbfa391eb2e6ad8a0399d89da7694c0e27c51ba11a",
+      "bytes": 1244
+    },
+    {
+      "retained_path": "evidence/pr84-logging-before.log",
+      "source_paths": [
+        "audit-c/PR84-logging-before.log"
+      ],
+      "sha256": "c558e6c9ff7e9095abffbeba86d2bbea28e1d4acbab436e3e19d79a0dc162fc2",
+      "bytes": 1624
+    },
+    {
+      "retained_path": "evidence/pr84-logging-snapshot.json",
+      "source_paths": [
+        "audit-c/PR84-logging-snapshot.json"
+      ],
+      "sha256": "21210c23fb3a480d05262870687fa79ceca80521d70070492775d59aed2214ac",
+      "bytes": 1693
+    },
+    {
+      "retained_path": "evidence/pr84-old-cache-clean.log",
+      "source_paths": [
+        "audit-c/PR84-old-cache-clean.log"
+      ],
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "retained_path": "evidence/pr84-original-branches-preserved.json",
+      "source_paths": [
+        "audit-a/PR84-ORIGINAL89-PRESERVATION.json"
+      ],
+      "sha256": "65d4eec2e50e3f34dad65f26b0a120ba4b6701f4639997f41074571e19014dc9",
+      "bytes": 2760
+    },
+    {
+      "retained_path": "evidence/pr84-regression-snapshots.json",
+      "source_paths": [
+        "audit-c/PR84-regression-snapshots.json"
+      ],
+      "sha256": "c82b786995215965ba2e13b4e274a9039c5e6b61b1c3c8473f35c3a5998d490f",
+      "bytes": 3679,
+      "source_sha256": "fadc1a2aa738e63474d5064aea0fb32402fd9579831dfa540b267d54e13e8dc7",
+      "transformation": {
+        "kind": "typed_digest_values",
+        "decode": "Recursively replace sole-key git_object_sha1 and sha256_digest objects with their string values to reconstruct the original JSON data. All 26 SHA-1 values in these three reviewed inputs were verified to resolve to Git objects. SHA-256 values retain their source-declared checksum meaning. Original byte hashes are retained separately; no scanner exception is introduced."
+      }
+    },
+    {
+      "retained_path": "evidence/pr84-retention-after.log",
+      "source_paths": [
+        "audit-c/PR84-retention-after.log"
+      ],
+      "sha256": "db8ebe6fef08ac51f2d90890b7f8d4f8408ad744eeb145449708294573b1e9ce",
+      "bytes": 1006
+    },
+    {
+      "retained_path": "evidence/pr84-retention-before-mutation.log",
+      "source_paths": [
+        "audit-c/PR84-retention-before-mutation.log"
+      ],
+      "sha256": "178e9b8de63a801ad76f25d5c152f56f1e1de2aceb6e2e56e67b49d3d4b990e1",
+      "bytes": 5816
+    },
+    {
+      "retained_path": "evidence/pr84-retention-cache-setup-failure.log",
+      "source_paths": [
+        "audit-c/PR84-retention-cache-setup-failure.log"
+      ],
+      "sha256": "e90347fe730180f1a9448efe9acf88757915de6438e2fc3c0b217986fe35ad69",
+      "bytes": 184
+    },
+    {
+      "retained_path": "evidence/pr84-retention-prior-algorithm.diff.json",
+      "source_paths": [
+        "audit-c/PR84-retention-prior-algorithm.diff"
+      ],
+      "sha256": "6c60a5a41842596c0c4ffd6610ac61c6cadd800f3f46e7d25635eacbe86114e9",
+      "bytes": 511,
+      "source_sha256": "62a4b20a205235b5234f9da9f26a0929aace5158f589a03a360fd217317fb0cb",
+      "transformation": {
+        "kind": "utf8_patch_json_wrapper",
+        "decode": "Read original_utf8 and encode as UTF-8 to recover the exact original patch bytes."
+      }
+    },
+    {
+      "retained_path": "evidence/pr86-exact-inventory.json",
+      "source_paths": [
+        "audit-a/PR86-EXACT-INVENTORY-2e2e6f0.json"
+      ],
+      "sha256": "60cc0f36bc3435bdc2df54f04fbcf5934fde01f80fa9540ab84d79778cc7a862",
+      "bytes": 6570
+    },
+    {
+      "retained_path": "evidence/pr86-migration-blob-comparison.json",
+      "source_paths": [
+        "audit-a/PR86-BLOB-COMPARISON.json"
+      ],
+      "sha256": "932924bfc22e074b01bc0ccc51556016752be55f9dbf0a63db47c27779c5adf8",
+      "bytes": 2489
+    },
+    {
+      "retained_path": "evidence/pr87-initial-review.json",
+      "source_paths": [
+        "audit-b/PR87-SOURCE-REVIEW.json"
+      ],
+      "sha256": "e199e804a578ef74a7df5ce77093ffe732be024e47851fba669a41247cb3db94",
+      "bytes": 21403
+    },
+    {
+      "retained_path": "evidence/pr87-scope-followup.json",
+      "source_paths": [
+        "audit-b/PR87-FOLLOWUP-679a301.json"
+      ],
+      "sha256": "7a4d5f459f1625ac0f0d0240506d11b67a9ca6d756b37d29b19fd3e1bd798efa",
+      "bytes": 4382
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-BASELINE-WEB.json",
+      "source_paths": [
+        "audit-b/PR87-BASELINE-WEB.json"
+      ],
+      "sha256": "982949a2c9277d2a94d4ada451dfae146f0a40bd68e3373a6221a1bc62e51a95",
+      "bytes": 750
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-BASELINE-WEB.log",
+      "source_paths": [
+        "audit-b/PR87-BASELINE-WEB.log"
+      ],
+      "sha256": "21b3d0a09e1f52a14ca0d7f3999bfe2562b9d62d7316e2eb26265b45fece051f",
+      "bytes": 5952,
+      "source_sha256": "7b9f6c1b54ed07b46a27d3c77562fadc67d487b795aa9b02c2c6ed220f4e9373",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CLOCK-ROLLBACK.diff.json",
+      "source_paths": [
+        "audit-b/PR87-CLOCK-ROLLBACK.diff"
+      ],
+      "sha256": "3eaba094e4b471a26d78777f1c1f84e6bf96ecf8653a22269a95b788b1b9e8b9",
+      "bytes": 1385,
+      "source_sha256": "46ffd89b03827ac154ae4b2d065686e520c16ff763d711733fad155c9513b3f4",
+      "transformation": {
+        "kind": "utf8_patch_json_wrapper",
+        "decode": "Read original_utf8 and encode as UTF-8 to recover the exact original patch bytes."
+      }
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CLOCK-ROLLBACK.json",
+      "source_paths": [
+        "audit-b/PR87-CLOCK-ROLLBACK.json"
+      ],
+      "sha256": "1d37a0207d995b9fa531d41a1771157a0926ef2fe699807328c6e7e2d67ec194",
+      "bytes": 751
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CLOCK-ROLLBACK.log",
+      "source_paths": [
+        "audit-b/PR87-CLOCK-ROLLBACK.log"
+      ],
+      "sha256": "e667ab4346ca2b59a56ccdc4c394b56e10afe15c09b2e999f2d98fb846df1b5d",
+      "bytes": 1032
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CURRENT-POLICY-CONTROL.diff.json",
+      "source_paths": [
+        "audit-b/PR87-CURRENT-POLICY-CONTROL.diff"
+      ],
+      "sha256": "17cd8197ef3007f4c8863d48d04d79c45c028b6d4932cb2dfb40780dc28317b9",
+      "bytes": 1188,
+      "source_sha256": "b86f413d688e9622120d3ac3c0650a8869f1933293c503a61c29546143466051",
+      "transformation": {
+        "kind": "utf8_patch_json_wrapper",
+        "decode": "Read original_utf8 and encode as UTF-8 to recover the exact original patch bytes."
+      }
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CURRENT-POLICY-CONTROL.json",
+      "source_paths": [
+        "audit-b/PR87-CURRENT-POLICY-CONTROL.json"
+      ],
+      "sha256": "43e6d2dff366e75aa86b6db82705897efc087982234c8f9d9155102fcc052a41",
+      "bytes": 874
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CURRENT-POLICY-CONTROL.log",
+      "source_paths": [
+        "audit-b/PR87-CURRENT-POLICY-CONTROL.log"
+      ],
+      "sha256": "0f9c0c787946e71b0953492f5ec34dbaabcf84bd05d4d29582b4f24c95739681",
+      "bytes": 2108
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-EXISTING-GUARDS.json",
+      "source_paths": [
+        "audit-b/PR87-EXISTING-GUARDS.json"
+      ],
+      "sha256": "cf92ef4c9dfb6a73d3facf19b9c9f03ad59e257051288d0dbbd54beb88c10b92",
+      "bytes": 874
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-EXISTING-GUARDS.log",
+      "source_paths": [
+        "audit-b/PR87-EXISTING-GUARDS.log"
+      ],
+      "sha256": "96df6bbdb6e7f8263e05fab4e35b9a5f90748ff82fc95792b7c267959bfe0a3c",
+      "bytes": 5977
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-FIXED-POLICY-CONTRACT.json",
+      "source_paths": [
+        "audit-b/PR87-FIXED-POLICY-CONTRACT.json"
+      ],
+      "sha256": "e17b4471cf2789758ae8ad49e8edad556ab010f10559b3857f12e8e46c486612",
+      "bytes": 777
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-FIXED-POLICY-CONTRACT.log",
+      "source_paths": [
+        "audit-b/PR87-FIXED-POLICY-CONTRACT.log"
+      ],
+      "sha256": "fb6f7c7080bb49fa7c90006764c69b61c982c33e270966f33485b6b2fa9bb29a",
+      "bytes": 485
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-FIXED-REGRESSIONS.json",
+      "source_paths": [
+        "audit-b/PR87-FIXED-REGRESSIONS.json"
+      ],
+      "sha256": "a1ecf809226ed2e34870c4306ab2149be00c70bff5e6be5ba6e048c3991d86df",
+      "bytes": 987
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-FIXED-REGRESSIONS.log",
+      "source_paths": [
+        "audit-b/PR87-FIXED-REGRESSIONS.log"
+      ],
+      "sha256": "a8e6b5bf3ea78967b206281b63e22de229406d5d8477388a281a5667a566743d",
+      "bytes": 781
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-FOLLOWUP-679a301.json",
+      "source_paths": [
+        "audit-b/PR87-FOLLOWUP-679a301.json"
+      ],
+      "sha256": "7a4d5f459f1625ac0f0d0240506d11b67a9ca6d756b37d29b19fd3e1bd798efa",
+      "bytes": 4382
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-SAME-MS.diff.json",
+      "source_paths": [
+        "audit-b/PR87-SAME-MS.diff"
+      ],
+      "sha256": "f27b5f60faa2d2ab886c66ed3b3f9cc348ec48a7e6f4492924f477750f64faa2",
+      "bytes": 938,
+      "source_sha256": "4976e84b7b71b0094951b5bb64a1d3d2a453d2376233e8c687fffe78bd21daba",
+      "transformation": {
+        "kind": "utf8_patch_json_wrapper",
+        "decode": "Read original_utf8 and encode as UTF-8 to recover the exact original patch bytes."
+      }
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-SAME-MS.json",
+      "source_paths": [
+        "audit-b/PR87-SAME-MS.json"
+      ],
+      "sha256": "5acd3c423f000d0db9c831e7a76363aad8d856065a193a3556f881b2f549bf18",
+      "bytes": 730
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-SAME-MS.log",
+      "source_paths": [
+        "audit-b/PR87-SAME-MS.log"
+      ],
+      "sha256": "c10df52671468f6ce69a8cbde7b4b28bc0797065196e9542c569621cd95bb5b8",
+      "bytes": 1032
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-SNAPSHOT-PROVENANCE.json",
+      "source_paths": [
+        "audit-b/PR87-SNAPSHOT-PROVENANCE.json"
+      ],
+      "sha256": "cc7128b9fdb5024f4d7a75e9a5913ddc813b04f4149d668f616eeb480362a701",
+      "bytes": 1626
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-SOURCE-INTEGRITY.json",
+      "source_paths": [
+        "audit-b/PR87-SOURCE-INTEGRITY.json"
+      ],
+      "sha256": "8d8d4b64309411ffa568d40c9342d5fa74edd64cfcdb4ff6dde73a86d0ceaa91",
+      "bytes": 367
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-TIMESTAMP-VARIANT-PROVENANCE.json",
+      "source_paths": [
+        "audit-b/PR87-TIMESTAMP-VARIANT-PROVENANCE.json"
+      ],
+      "sha256": "8f8718c75e339051fcd0bee0dc05342e47a0a0ff7cf0fa2db6629e88e2a7add7",
+      "bytes": 866
+    },
+    {
+      "retained_path": "evidence/pr88-initial-api-evidence.json",
+      "source_paths": [
+        "audit-c/PR88-API-EVIDENCE.json"
+      ],
+      "sha256": "52719d08807e5c5eb061adf58ede9e0d4b61f473df7b449104ecae3b37ddbd44",
+      "bytes": 4576
+    },
+    {
+      "retained_path": "evidence/pre-mfa-complete-aggregate.json",
+      "source_paths": [
+        "aggregate-final-core-race.json"
+      ],
+      "sha256": "df01c6b300fec1258cd0bd1d9cc40675fb77848367befb7f9451095b9c6c89ff",
+      "bytes": 1279
+    },
+    {
+      "retained_path": "evidence/pre-mfa-complete-aggregate.log",
+      "source_paths": [
+        "aggregate-final-core-race.log"
+      ],
+      "sha256": "03f03974103a6f55f904e8a81cd93e0ea89235a5adcf63dd4d6ea9e099fa108d",
+      "bytes": 1011
+    },
+    {
+      "retained_path": "evidence/pre-mfa-static-checks.json",
+      "source_paths": [
+        "final-core-static-checks.json"
+      ],
+      "sha256": "c317cf403441edc9deade0d6a6f5577f621df000d93fc15a743dbe3385008038",
+      "bytes": 822
+    },
+    {
+      "retained_path": "evidence/publication-first-checks.json",
+      "source_paths": [
+        "audit-root/FINAL-PUBLICATION-CHECKS.json"
+      ],
+      "sha256": "a64fac8866d1bc01a30dc244e175e91bce31baa107060266ea39d07ccf4bbd1e",
+      "bytes": 5732
+    },
+    {
+      "retained_path": "evidence/publication-first-secret-scan.log",
+      "source_paths": [
+        "audit-root/final-publication-secret.log"
+      ],
+      "sha256": "7384363e95d3f9c2599c3ab237b671bfd7819ac3fc4f695dd89e44ad7e61dfdd",
+      "bytes": 2274
+    },
+    {
+      "retained_path": "evidence/publication-first-whitespace-check.log",
+      "source_paths": [
+        "audit-root/final-publication---check.log"
+      ],
+      "sha256": "d530883ce3eaf5a32e3b21470fbd3d450f377b611212cabb5bc9b415daf17d58",
+      "bytes": 3814
+    },
+    {
+      "retained_path": "evidence/publication-secret-scan-after-format-repairs.log",
+      "source_paths": [
+        "audit-root/final-publication-secret-after.log"
+      ],
+      "sha256": "ad14248beb78ff0908bb11d3b6980423f75bd0194830bec80235c6bdcad0edc8",
+      "bytes": 81
+    },
+    {
+      "retained_path": "evidence/release-checker-corrected-tests.log",
+      "source_paths": [
+        "audit-g/release-checker-corrected-tests.log"
+      ],
+      "sha256": "6bbae528fcdf612f0d2e3225189832cdd7eb23bd2f0693b1bf800d5c6e99b353",
+      "bytes": 125
+    },
+    {
+      "retained_path": "evidence/report-generator.py.txt",
+      "source_paths": [
+        "finalize_consolidation_evidence.py"
+      ],
+      "sha256": "cd788d2eb58139405c0e7ba82356074f7247eb9bd56346faf51f34b208b8bd7c",
+      "bytes": 41642
+    },
+    {
+      "retained_path": "evidence/required-thresholds-after.log",
+      "source_paths": [
+        "audit-f/required-thresholds-after.log"
+      ],
+      "sha256": "cb21b5e7427b3dc9abfe4904d7683aa08eaa74d945b391a124f99c3ba62ecc34",
+      "bytes": 125
+    },
+    {
+      "retained_path": "evidence/required-thresholds-before.log",
+      "source_paths": [
+        "audit-f/required-thresholds-before.log"
+      ],
+      "sha256": "1ef2e6a801a95022f51290cd158570f15b7b761d42a28ebdd13ea4479592dbf5",
+      "bytes": 10330
+    },
+    {
+      "retained_path": "evidence/schema-review-race.log",
+      "source_paths": [
+        "audit-g/schema-review-race.log"
+      ],
+      "sha256": "20ced29383a1e824b51cdf60026a0a98aca37f8e58c2d1bbe1bb5ad54407ed8f",
+      "bytes": 60
+    },
+    {
+      "retained_path": "evidence/threshold-parser-after.json",
+      "source_paths": [
+        "audit-g/release-parser-corrected-probe.json"
+      ],
+      "sha256": "323b4b800730300cf873db3580596ae5e9e13475c187836f07adbd3091ab7c22",
+      "bytes": 4188
+    },
+    {
+      "retained_path": "evidence/threshold-parser-before.json",
+      "source_paths": [
+        "audit-g/release-parser-probe.json"
+      ],
+      "sha256": "433511df47676792c93f13f6ac901e52db6c5f6c916f5970caf0b1b18570adfa",
+      "bytes": 1763
+    },
+    {
+      "retained_path": "evidence/uri-path-after.log",
+      "source_paths": [
+        "audit-c/AUD4-D01-concurrent-fix-probe.log"
+      ],
+      "sha256": "bbf242035cf2f50dfa48ee437a4f3e82fb1d3ebcef36ca6e1cbb353d4f1f2a00",
+      "bytes": 6431
+    },
+    {
+      "retained_path": "evidence/uri-path-before.log",
+      "source_paths": [
+        "audit-c/AUD4-D01-current-main-probe.log"
+      ],
+      "sha256": "26eb89b4d49718e50935cc24686837334627018e9fada2f2798afb5a5d1e6baa",
+      "bytes": 6747
+    },
+    {
+      "retained_path": "pr-disposition-final-historical.json",
+      "source_paths": [
+        "audit-b/pr-disposition-final-historical.json"
+      ],
+      "sha256": "efe35bb5ee37a0ddfc2e6ba0932461a895f11e09cb4e2a8177763de52f7eb17d",
+      "bytes": 625299
+    },
+    {
+      "retained_path": "pr-disposition-initial.json",
+      "source_paths": [
+        "audit-b/pr-disposition-ledger.json"
+      ],
+      "sha256": "42f6f614446ec76832643a783666ea30ea38416aa4aa00528c9f2f766a343ee8",
+      "bytes": 54179
+    },
+    {
+      "retained_path": "security-disposition-initial.json",
+      "source_paths": [
+        "audit-d/security-status.json"
+      ],
+      "sha256": "3b61418ae8fae1fe582e66a535439c446984a5a1f810a507bf1734826e153637",
+      "bytes": 41537
+    },
+    {
+      "retained_path": "source-reviews/ANCESTRY-INITIAL.md",
+      "source_paths": [
+        "audit-a/ANCESTRY-AUDIT.md"
+      ],
+      "sha256": "ef4775a7671430ddd7db04de43f06af14250a34a159415e0741da22590c9a0f4",
+      "bytes": 23404
+    },
+    {
+      "retained_path": "source-reviews/AUD4-D01-INVESTIGATION.md",
+      "source_paths": [
+        "audit-c/AUD4-D01-INVESTIGATION.md"
+      ],
+      "sha256": "29555b912faec868ab7401d6cf4b209e56669615d914a0b3737085a0e6beeec7",
+      "bytes": 6349
+    },
+    {
+      "retained_path": "source-reviews/AUD4-D02-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-g/AUD4-D02-REVIEW.md"
+      ],
+      "sha256": "0c16c6c0f588752bb2a3d1b1ac5c93901dc4d6b71a4cf78b34942538d79604f3",
+      "bytes": 6790
+    },
+    {
+      "retained_path": "source-reviews/AUTH82-COMPATIBLE-FOLLOWUP.md",
+      "source_paths": [
+        "audit-a/AUTH82-FOLLOWUP-5c39abd.md"
+      ],
+      "sha256": "66bb49fd73e63c819658881b8db5708fb3aeec9faeb37be3dc7bc1979c4a6572",
+      "bytes": 2981
+    },
+    {
+      "retained_path": "source-reviews/AUTH82-FAIL-BEFORE-EVIDENCE.md",
+      "source_paths": [
+        "audit-c/PR82-FAIL-BEFORE-EVIDENCE.md"
+      ],
+      "sha256": "698b6e325a1628f23eb7c82ed9d1c23729646531671193fc7e690f7379994662",
+      "bytes": 3987
+    },
+    {
+      "retained_path": "source-reviews/AUTH82-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-a/AUTH82-REVIEW.md"
+      ],
+      "sha256": "4df9aae01f9f377111fb92bfad685a857d586ffb2d7b2a008030887c0f22de3e",
+      "bytes": 5310
+    },
+    {
+      "retained_path": "source-reviews/CI-QUALIFICATION.md",
+      "source_paths": [
+        "audit-f/CI-QUALIFICATION-REVIEW.md"
+      ],
+      "sha256": "ac09c009e5efc22299b8c4198f0f4aa031e43e6e213beddb2525a92214a90331",
+      "bytes": 5593,
+      "source_sha256": "c0e5fdd4331caf92997a1b82fa4b8f0b2e5fb7c8f698444d0a25e522f6786bdc",
+      "normalization": "Only trailing spaces/tabs and surplus final blank lines removed; all diagnostic and report text preserved."
+    },
+    {
+      "retained_path": "source-reviews/CONCURRENT-BRANCHES-INITIAL.md",
+      "source_paths": [
+        "audit-a/SUPPLEMENTAL-CONCURRENT-BRANCH-AUDIT.md"
+      ],
+      "sha256": "d22c8f1f93278e024c11b6420e2257dc117bae0f9d57ac1c48da03bce522fdf7",
+      "bytes": 4437
+    },
+    {
+      "retained_path": "source-reviews/CONCURRENT-INTEGRATION-REVIEW.md",
+      "source_paths": [
+        "audit-root/CONCURRENT-INTEGRATION-REVIEW.md"
+      ],
+      "sha256": "f527f42d82cbcd0bf50354dd63b1209151d3ca871378574e84d9a33570d93560",
+      "bytes": 11572
+    },
+    {
+      "retained_path": "source-reviews/CONCURRENT-QUALIFICATION.md",
+      "source_paths": [
+        "audit-root/CONCURRENT-QUALIFICATION.md"
+      ],
+      "sha256": "b4ab1cbbb54ca2d2153c03f983cd31166d25ef58a17b81e867b217f2ceeb5451",
+      "bytes": 10130
+    },
+    {
+      "retained_path": "source-reviews/CORE-IMPLEMENTATION.md",
+      "source_paths": [
+        "audit-c/CORE-AUDIT.md"
+      ],
+      "sha256": "35e35a3eb6697a56ce2f0da2d6b40afc8f31d51af3b859a85a419a4f597e5818",
+      "bytes": 8544
+    },
+    {
+      "retained_path": "source-reviews/DOCUMENTATION.md",
+      "source_paths": [
+        "audit-e/DOCUMENTATION-RECONCILIATION.md"
+      ],
+      "sha256": "ef6618de9a8080dad0019dfe7a3d526978c954e9914b8542c7657b82275624b9",
+      "bytes": 7538
+    },
+    {
+      "retained_path": "source-reviews/FINAL-EVIDENCE-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-b/FINAL-EVIDENCE-REVIEW.md"
+      ],
+      "sha256": "6ec7cbc2b6641615f96a61a59dffad45c6327fb2007b869ed020a06a8bc700f7",
+      "bytes": 7733
+    },
+    {
+      "retained_path": "source-reviews/FINAL-EVIDENCE-REPRESENTATION-ADDENDUM.md",
+      "source_paths": [
+        "audit-c/FINAL-EVIDENCE-REPRESENTATION-ADDENDUM.md"
+      ],
+      "sha256": "22d63524b9b63822f4c2619679f9891b23e5ac0c004406525cf23320ce1be915",
+      "bytes": 1914
+    },
+    {
+      "retained_path": "source-reviews/FINAL-GENERATED-CHECKPOINT-REVIEW.md",
+      "source_paths": [
+        "audit-c/FINAL-GENERATED-CHECKPOINT-REVIEW.md"
+      ],
+      "sha256": "6d37eb193f981712b35152ebc65377b9da0bf31cbf7e2325749a01988d7c33a0",
+      "bytes": 5020
+    },
+    {
+      "retained_path": "source-reviews/FINAL-REFERENCE-REVIEW.md",
+      "source_paths": [
+        "audit-b/FINAL-REFERENCE-REVIEW.md"
+      ],
+      "sha256": "8a2d2e4f898c3d2c040318a6087c170d115718d013157660a756e85710235f35",
+      "bytes": 5476
+    },
+    {
+      "retained_path": "source-reviews/FINALIZER-BLOCKED-CI-REVIEW.md",
+      "source_paths": [
+        "audit-c/FINALIZER-BLOCKED-CI-REVIEW.md"
+      ],
+      "sha256": "bfdbdc7f7d7da6246c9aae8b1aa9ebbf569012e035c054d2012ab9a43cbf1e26",
+      "bytes": 8132
+    },
+    {
+      "retained_path": "source-reviews/FINALIZER-CI-PROGRESS-ADDENDUM.md",
+      "source_paths": [
+        "audit-c/FINALIZER-CI-PROGRESS-ADDENDUM.md"
+      ],
+      "sha256": "ab6a394430789856843bc39c9f298fa39b68bf433c8902f0d563e5fcafe696ba",
+      "bytes": 2245
+    },
+    {
+      "retained_path": "source-reviews/INDEPENDENT-REVIEW.md",
+      "source_paths": [
+        "audit-g/INDEPENDENT-REVIEW.md"
+      ],
+      "sha256": "72ffbde390e1a3e47793468f8feb6332c5ecf8a27cc1fbba471cb416d1fdcd2c",
+      "bytes": 33229
+    },
+    {
+      "retained_path": "source-reviews/MFA-PASSWORD-FOCUSED-NOTE.md",
+      "source_paths": [
+        "audit-c-mfa-password/docs/audit/PASSWORD-PROOF-BINDING-2026-11-18.md"
+      ],
+      "sha256": "abb6e235ae93b79bef287b96208dd7ecd054da3856458740b660df19c5048be8",
+      "bytes": 3294
+    },
+    {
+      "retained_path": "source-reviews/MFA-PASSWORD-INDEPENDENT-REVIEW.md",
+      "source_paths": [
+        "audit-b/MFA-PASSWORD-INDEPENDENT-REVIEW.md"
+      ],
+      "sha256": "779f0d13f77d83fb832b7881a60ccca710842230809cfe8b30840eb36d3b1426",
+      "bytes": 6648
+    },
+    {
+      "retained_path": "source-reviews/PR-RECONCILIATION-INITIAL.md",
+      "source_paths": [
+        "audit-b/PR-RECONCILIATION-REVIEW.md"
+      ],
+      "sha256": "2891d0efbc1d7a702fdd768ea2293759c10259a067d8b0cadb8120b7f3f6c6dd",
+      "bytes": 18493
+    },
+    {
+      "retained_path": "source-reviews/PR73-FUZZ-INVESTIGATION.md",
+      "source_paths": [
+        "audit-f/PR73-FUZZ-INVESTIGATION.md"
+      ],
+      "sha256": "37c12e6ebcbaf8564f2bb363db91a7b14361fca69613c4a1d16d307cfe06c89c",
+      "bytes": 3440
+    },
+    {
+      "retained_path": "source-reviews/PR78-DOCS-FOLLOWUP.md",
+      "source_paths": [
+        "audit-b/PR78-DOCS-FOLLOWUP-bcacd848.md"
+      ],
+      "sha256": "d038649383045fada28c6075cc0c6e3838253fbfb42598322679dd928d99264f",
+      "bytes": 5309
+    },
+    {
+      "retained_path": "source-reviews/PR78-DOCS-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-b/PR78-DOCS-READINESS-1d84c6d.md"
+      ],
+      "sha256": "e22ac3b25d84d88f338b54da6b22bd2d01dc77dbb6fa4e6b9b9edb830c18ca8e",
+      "bytes": 6762
+    },
+    {
+      "retained_path": "source-reviews/PR78-QUALIFICATION-UPDATE.md",
+      "source_paths": [
+        "audit-b/PR78-QUALIFICATION-UPDATE-2b3a2aa.md"
+      ],
+      "sha256": "6e2e25fd6f2b48b56e0ba8d3fcfdc12bee77bce952cc25a34bda3c8cc82ffbc9",
+      "bytes": 2094
+    },
+    {
+      "retained_path": "source-reviews/PR81-COMPATIBILITY-REVIEW.md",
+      "source_paths": [
+        "audit-c/PR81-09ef8a5-COMPATIBILITY-REVIEW.md"
+      ],
+      "sha256": "c024a96b7da138b0f6b00383ef43d696d7466a68a204c19e93ba01257bb179d7",
+      "bytes": 4223
+    },
+    {
+      "retained_path": "source-reviews/PR84-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-a/PR84-SOURCE-REVIEW-7f98b3d.md"
+      ],
+      "sha256": "505ecc666691a3f041e27ffe4e76f171c9394266976833bb90fdf2f0fee2745f",
+      "bytes": 11007,
+      "source_sha256": "ea282c2102dcc3b65a89ce35884f5cbcccb214ad07fa9338c75d378728a9fe9c",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "source-reviews/PR84-LOGGING-FOLLOWUP-REVIEW.md",
+      "source_paths": [
+        "audit-c/PR84-LOGGING-FOLLOWUP-REVIEW.md"
+      ],
+      "sha256": "3034dca9697ce1535d5dc0cbc8c30be572a26a3103c8a382f9bb00b382e43164",
+      "bytes": 9098
+    },
+    {
+      "retained_path": "source-reviews/PR84-REGRESSION-VERIFICATION.md",
+      "source_paths": [
+        "audit-c/PR84-REGRESSION-VERIFICATION.md"
+      ],
+      "sha256": "54882c2bc7fbb7466d869285f0010894afbed4e943c11efa57b432bcdbb0f959",
+      "bytes": 7931
+    },
+    {
+      "retained_path": "source-reviews/PR85-INITIAL-READINESS.md",
+      "source_paths": [
+        "audit-c/PR85-GOV021-READINESS.md"
+      ],
+      "sha256": "3fcabca89348fd34b7671c40c0142a1f42f66787f99108bea62b24787c884679",
+      "bytes": 16110
+    },
+    {
+      "retained_path": "source-reviews/PR85-READINESS-UPDATE.md",
+      "source_paths": [
+        "audit-c/PR85-E11D292-READINESS-UPDATE.md"
+      ],
+      "sha256": "fe18a2f81df8f0a8efed1dc7266e8c2f6f2875effacaa5283e475acc2c3d2378",
+      "bytes": 11291
+    },
+    {
+      "retained_path": "source-reviews/PR86-SOURCE-POLICY-REVIEW.md",
+      "source_paths": [
+        "audit-a/PR86-SOURCE-POLICY-REVIEW-2e2e6f0.md"
+      ],
+      "sha256": "7f57fa20a151fe4af2ee013f6320473d114440600ee60d38f57378327a41f121",
+      "bytes": 14504,
+      "source_sha256": "4f0f858b6fcf6dd923584c22ae344af9de8a5b1b93620e501745a284f93d53b7",
+      "normalization": "Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged."
+    },
+    {
+      "retained_path": "source-reviews/PR87-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-b/PR87-SOURCE-REVIEW.md"
+      ],
+      "sha256": "65999b418d409ee57e130e0a4b325a395d14de009b8be6156e326bba57f393ac",
+      "bytes": 11414
+    },
+    {
+      "retained_path": "source-reviews/PR87-SCOPE-FOLLOWUP.md",
+      "source_paths": [
+        "audit-b/PR87-FOLLOWUP-679a301.md"
+      ],
+      "sha256": "2f014e03b39c832354689b1078e3892e1bbace2b8637df7bdcaafc6d42a797a7",
+      "bytes": 3822
+    },
+    {
+      "retained_path": "source-reviews/PR88-INITIAL-REVIEW.md",
+      "source_paths": [
+        "audit-c/PR88-READONLY-REVIEW.md"
+      ],
+      "sha256": "8587796c6b6123c7d2b14ea307f4e01c9c7466e8cdf9a7b6b73c2ce6944aa44d",
+      "bytes": 4869
+    },
+    {
+      "retained_path": "source-reviews/SECURITY-INITIAL.md",
+      "source_paths": [
+        "audit-d/security-status.md"
+      ],
+      "sha256": "f9142015b87d86372b3cc0c98ba854f621475c9798dc1dc697955a46933adfe9",
+      "bytes": 14063
+    }
+  ]
+}

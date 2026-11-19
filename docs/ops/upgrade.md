@@ -128,7 +128,8 @@ runs `circula migrate` and checks the data, SQLite integrity and foreign keys, a
 
 ## Migration mode
 
-- `explicit` (default, recommended, and required for hosted deployments): migrations run only through `circula migrate`.
+- `explicit` (default, recommended, and required for hosted deployments): migrations of an existing database run only
+  through `circula migrate`. A database file that does not exist yet is created at the current schema by `serve`.
 - `auto`: `serve` takes a `pre-migration` backup and then migrates at start-up. Use it only where a backup is already taken
   before every start.
 

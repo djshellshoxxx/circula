@@ -40,7 +40,7 @@ Production data must never be copied to development or CI.
   `Strict-Transport-Security` when `public-base-url` is `https://`. The current `serve` command passes
   `cookie-secure` through a shared `httpx.Edge` policy to both API and web handlers; browser regression
   `TestSecureDeploymentIgnoresPlainCookies` and edge regression `TestHostPrefixOnlyWhenSecure` cover this path.
-  The application and these tests are present in unmerged draft PR #19, not a published release.
+  The application and these tests were merged to `main` in PR #19 (2026-11-16). No release is published yet.
 - Set `public-base-url` to the exact address users type. Invitation links use it, and form posts are accepted only with
   that `Origin`.
 - Files: the process sets umask `077`. The database, its WAL files, backups, manifests and the lock file are owner-only

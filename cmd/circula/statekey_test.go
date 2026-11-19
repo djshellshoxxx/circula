@@ -205,7 +205,7 @@ func TestSetupResetCommand(t *testing.T) {
 		t.Fatalf("after reset used=%v err=%v", used, err)
 	}
 	// The reset is in the audit log and the chain still verifies.
-	checks, err := verifyAllNetworks(ctx, svc, st.DB(), "t", "")
+	checks, err := verifyAllNetworks(ctx, svc, "t", "")
 	if err != nil || !printChecks(&out, checks) {
 		t.Fatalf("verify after reset: %v", err)
 	}

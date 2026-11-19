@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"time"
+	"unicode/utf8"
 )
 
 // Event is the source event a host service commits. NetworkID, EventID and
@@ -33,11 +34,11 @@ func (e Event) validate() error {
 		return invalid("kind")
 	}
 	for _, v := range []string{e.NetworkID, e.MemberID} {
-		if v == "" || len(v) > 128 {
+		if v == "" || len(v) > 128 || !utf8.ValidString(v) {
 			return invalid("event ids")
 		}
 	}
-	if e.EventID == "" || len(e.EventID) > 256 {
+	if e.EventID == "" || len(e.EventID) > 256 || !utf8.ValidString(e.EventID) {
 		return invalid("event id")
 	}
 	return nil

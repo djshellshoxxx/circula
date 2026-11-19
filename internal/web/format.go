@@ -1,13 +1,13 @@
 package web
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // balanceVM presents a balance with sign, word and spoken text (UX-004..006).
@@ -36,11 +36,11 @@ func makeBalance(v int64, dec int, unit string) balanceVM {
 	n := domain.FormatAmount(abs64(v), dec)
 	switch {
 	case v > 0:
-		return balanceVM{"+" + n, "In credit", fmt.Sprintf("In credit by %s %s", n, u)}
+		return balanceVM{"+" + n, messages.Text("balance.credit"), messages.Text("balance.spoken_credit", n, u)}
 	case v < 0:
-		return balanceVM{"−" + n, "In debt", fmt.Sprintf("In debt by %s %s", n, u)}
+		return balanceVM{"−" + n, messages.Text("balance.debt"), messages.Text("balance.spoken_debt", n, u)}
 	}
-	return balanceVM{n, "Level", fmt.Sprintf("Level, zero %s", unit+"s")}
+	return balanceVM{n, messages.Text("balance.level"), messages.Text("balance.spoken_level", u)}
 }
 
 // balanceCard is the Home balance card data (UX-009..011).
@@ -54,29 +54,25 @@ type balanceCard struct {
 	Used      string // text for credit in use
 	UsedPct   int
 	InDebt    bool
-	Unit      string
 }
 
 func makeCard(b *service.BalanceView, unit string) *balanceCard {
 	d := b.Decimals
-	c := &balanceCard{Balance: makeBalance(b.Balance, d, unit), Limit: plainAmt(b.CreditLimit, d),
-		Reserved: plainAmt(b.ReservedOutgoing, d), Available: minus(plainAmt(b.Available, d)),
-		Awaiting: plainAmt(b.AwaitingFromOthers, d), Unit: unitFor(unit, 0, d)}
+	amount := func(v int64) string {
+		return minus(plainAmt(v, d)) + " " + unitFor(unit, v, d)
+	}
+	c := &balanceCard{Balance: makeBalance(b.Balance, d, unit), Limit: amount(b.CreditLimit),
+		Reserved: amount(b.ReservedOutgoing), Available: amount(b.Available), Awaiting: amount(b.AwaitingFromOthers)}
 	if b.Balance < 0 {
 		c.InDebt = true
-		c.Used = fmt.Sprintf("You are using %s of your %s credit limit.", plainAmt(-b.Balance, d), plainAmt(b.CreditLimit, d))
+		c.Used = messages.Text("balance.limit_used", plainAmt(-b.Balance, d), plainAmt(b.CreditLimit, d))
 		if b.CreditLimit > 0 {
-			c.UsedPct = int(min64(100, (-b.Balance*100)/b.CreditLimit))
+			// Credit limits are bounded by MaxPolicyAmount. Clamp the potentially
+			// much larger balance before scaling to avoid int64 overflow.
+			c.UsedPct = int(min(-b.Balance, b.CreditLimit) * 100 / b.CreditLimit)
 		}
 	}
 	return c
-}
-
-func min64(a, b int64) int64 {
-	if a < b {
-		return a
-	}
-	return b
 }
 
 // txRow is one transaction line from the viewer's side (UX-013..016).
@@ -92,6 +88,19 @@ type txRow struct {
 	Ledger    string
 	Kind      string
 	Counter   string
+	// UX-017: a reversal or adjustment line shows its own reason; a reversal links to the
+	// line it reverses (Original); an original links to each reversal posted against it
+	// ("Reversed by …"), oldest first.
+	Reason     string
+	Original   string
+	Related    string
+	ReversedBy []txLink
+}
+
+// txLink is a link from one transaction line to a related one.
+type txLink struct {
+	ID   string
+	Text string
 }
 
 // names resolves member display names for one request. Names the request already holds are
@@ -108,9 +117,9 @@ func (n names) of(id string) string {
 		return v
 	}
 	if id == "" {
-		return "the network"
+		return messages.Text("member.network")
 	}
-	return "another member"
+	return messages.Text("member.hidden")
 }
 
 // lookup returns the display name for id when the caller may see it.
@@ -134,6 +143,62 @@ func (n names) lookup(id string) (string, bool) {
 	return name, true
 }
 
+// reversals returns the reversals posted against transaction id, oldest first, under the
+// service's visibility rules. A failed lookup shows no links rather than failing the page.
+func (n names) reversals(id string) []*domain.Transaction {
+	if n.c == nil {
+		return nil
+	}
+	revs, err := n.c.s.svc.ReversalsOf(n.c.ctx, n.c.actor, n.c.netID(), id)
+	if err != nil {
+		return nil
+	}
+	return revs
+}
+
+// reversedBy returns the "Reversed by …" links of t, oldest first (UX-017). Only the pages
+// that show them call it (History and trade detail), so other lists do not pay for one
+// service lookup per reversed row.
+func (n names) reversedBy(t *domain.Transaction, unit string, dec int) []txLink {
+	if t.ReversedTotal <= 0 {
+		return nil
+	}
+	var out []txLink
+	for _, rev := range n.reversals(t.ID) {
+		by := messages.Text("reversal.later")
+		if rev.LedgerSeq > 0 {
+			by = messages.Text("reversal.ledger", strconv.FormatInt(rev.LedgerSeq, 10))
+		}
+		out = append(out, txLink{ID: rev.ID, Text: messages.Text("reversal.by", by,
+			domain.FormatAmount(rev.Amount, dec), unitFor(unit, rev.Amount, dec))})
+	}
+	return out
+}
+
+// memberRef is the stable member reference shown beside a display name in confirmation
+// steps (SEC-016): display names are not unique, member ids are and never change. It is the
+// last eight letters or digits of the id, upper-cased and split in two ("0A1B-2C3D"), or ""
+// when there is no member (the network's own account).
+func memberRef(id string) string {
+	var b []byte
+	for i := 0; i < len(id); i++ {
+		if ch := id[i]; ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' {
+			b = append(b, ch)
+		}
+	}
+	if len(b) > 8 {
+		b = b[len(b)-8:]
+	}
+	ref := strings.ToUpper(string(b))
+	if len(ref) == 8 {
+		ref = ref[:4] + "-" + ref[4:]
+	}
+	return ref
+}
+
+// MemberRef gives templates memberRef for a member id.
+func (p *page) MemberRef(id string) string { return memberRef(id) }
+
 func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label string, needsMe bool) {
 	switch t.Status {
 	case domain.TxProposed:
@@ -142,21 +207,21 @@ func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label strin
 			if other == me.ID {
 				other = t.PayerMemberID
 			}
-			return "Waiting for " + n.of(other) + " to respond", false
+			return messages.Text("status.waiting_other", n.of(other)), false
 		}
-		return "Waiting for you to respond", true
+		return messages.Text("status.waiting_you"), true
 	case domain.TxCompleted, domain.TxAccepted:
-		return "Completed", false
+		return messages.Text("status.completed"), false
 	case domain.TxDeclined:
-		return "Declined", false
+		return messages.Text("status.declined"), false
 	case domain.TxCancelled:
-		return "Cancelled", false
+		return messages.Text("status.cancelled"), false
 	case domain.TxExpired:
-		return "Expired", false
+		return messages.Text("status.expired"), false
 	case domain.TxDisputed:
-		return "Disputed", false
+		return messages.Text("status.disputed"), false
 	case domain.TxReversed:
-		return "Reversed", false
+		return messages.Text("status.reversed"), false
 	}
 	return string(t.Status), false
 }
@@ -164,19 +229,19 @@ func statusLabel(t *domain.Transaction, me *domain.Member, n names) (label strin
 func statusExplain(s domain.TxStatus) string {
 	switch s {
 	case domain.TxProposed:
-		return "Nothing has been posted yet. The amount is held aside from the payer's available credit until it is accepted, declined, cancelled or expires."
+		return messages.Text("status.explanation_1")
 	case domain.TxCompleted, domain.TxAccepted:
-		return "Posted to both accounts."
+		return messages.Text("status.explanation_2")
 	case domain.TxDeclined:
-		return "The other party declined. Nothing was posted."
+		return messages.Text("status.explanation_3")
 	case domain.TxCancelled:
-		return "Withdrawn before it was accepted. Nothing was posted."
+		return messages.Text("status.explanation_4")
 	case domain.TxExpired:
-		return "Not answered in time. Nothing was posted."
+		return messages.Text("status.explanation_5")
 	case domain.TxDisputed:
-		return "A dispute is open. Postings stay as they were until a reviewer decides."
+		return messages.Text("status.explanation_6")
 	case domain.TxReversed:
-		return "Fully reversed by a later posting."
+		return messages.Text("status.explanation_7")
 	}
 	return ""
 }
@@ -189,32 +254,41 @@ func makeRow(t *domain.Transaction, me *domain.Member, n names, unit string, dec
 		r.When = *t.CompletedAt
 	}
 	if t.LedgerSeq > 0 && (t.Status == domain.TxCompleted || t.Status == domain.TxDisputed || t.Status == domain.TxReversed) {
-		r.Ledger = fmt.Sprintf("Ledger reference %d", t.LedgerSeq)
+		r.Ledger = messages.Text("row.ledger", strconv.FormatInt(t.LedgerSeq, 10))
 	}
 	amt := domain.FormatAmount(t.Amount, dec)
 	u := unitFor(unit, t.Amount, dec)
-	prefix := ""
+	kind := "trade"
 	switch t.Kind {
 	case domain.KindReversal:
-		prefix = "Reversal: "
+		kind = "reversal"
 	case domain.KindAdjustment:
-		prefix = "Adjustment: "
+		kind = "adjustment"
 	case domain.KindGrant:
-		prefix = "Sign-up grant: "
+		kind = "grant"
+	}
+	if t.Kind == domain.KindReversal || t.Kind == domain.KindAdjustment {
+		r.Reason = t.Reason
+	}
+	if t.Kind == domain.KindReversal {
+		r.Original = t.OriginalTxID
+	}
+	if t.Kind == domain.KindAdjustment {
+		r.Related = t.RelatedTxID
 	}
 	if t.PayerMemberID == me.ID {
 		r.Counter = n.of(t.PayeeMemberID)
-		r.Text = fmt.Sprintf("%sYou paid %s %s %s", prefix, r.Counter, amt, u)
+		r.Text = messages.Text("financial.row."+kind+".paid", r.Counter, amt, u)
 		r.Signed = "−" + amt
 		if t.Status == domain.TxProposed {
-			r.Text = fmt.Sprintf("%sYou pay %s %s %s", prefix, r.Counter, amt, u)
+			r.Text = messages.Text("financial.row."+kind+".pay", r.Counter, amt, u)
 		}
 	} else {
 		r.Counter = n.of(t.PayerMemberID)
-		r.Text = fmt.Sprintf("%sYou received %s %s from %s", prefix, amt, u, r.Counter)
+		r.Text = messages.Text("financial.row."+kind+".received", r.Counter, amt, u)
 		r.Signed = "+" + amt
 		if t.Status == domain.TxProposed {
-			r.Text = fmt.Sprintf("%sYou will receive %s %s from %s", prefix, amt, u, r.Counter)
+			r.Text = messages.Text("financial.row."+kind+".receive", r.Counter, amt, u)
 		}
 	}
 	return r

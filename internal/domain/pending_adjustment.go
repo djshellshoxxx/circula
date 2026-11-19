@@ -17,17 +17,18 @@ const (
 // PendingAdjustment is an administrator adjustment waiting for a second
 // administrator. Nothing is posted until it is approved.
 type PendingAdjustment struct {
-	ID        string
-	NetworkID string
-	Proposer  string // member id
-	Target    string // member id
-	Amount    int64  // minor units, > 0
-	Direction string // credit | debit
-	Reason    string
-	Status    PendingStatus
-	CreatedAt time.Time
-	ExpiresAt time.Time
-	DecidedBy string // member id; "" while pending or when closed by the system
-	DecidedAt *time.Time
-	TxID      string // the posted adjustment, once approved
+	ID          string
+	NetworkID   string
+	Proposer    string // member id
+	Target      string // member id
+	Amount      int64  // minor units, > 0
+	Direction   string // credit | debit
+	Reason      string
+	RelatedTxID string // optional posted transaction involving Target
+	Status      PendingStatus
+	CreatedAt   time.Time
+	ExpiresAt   time.Time
+	DecidedBy   string // member id; "" while pending or when closed by the system
+	DecidedAt   *time.Time
+	TxID        string // the posted adjustment, once approved
 }

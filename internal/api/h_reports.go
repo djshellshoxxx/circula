@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // reportDTO is a report. Reporter fields are filled only for administrators
@@ -23,7 +22,7 @@ type reportDTO struct {
 	HandlingNote     string  `json:"handling_note"`
 }
 
-func toReport(r *store.Report) reportDTO {
+func toReport(r *service.Report) reportDTO {
 	return reportDTO{ID: r.ID, TargetType: r.TargetType, TargetID: r.TargetID, Category: r.Category, Description: r.Note,
 		Status: r.Status, CreatedAt: ts(r.CreatedAt), ReporterMemberID: r.ReporterID, HandledBy: strPtr(r.HandledBy),
 		HandledAt: tsPtr(r.HandledAt), HandlingNote: r.HandlingNote}

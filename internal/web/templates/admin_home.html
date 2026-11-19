@@ -10,8 +10,8 @@
   <h2 id="att-h">Needs attention</h2>
   <p>Counted from the ledger and the dispute records when this page loaded, {{.AsOf}}.</p>
   <ul class="rows">{{range .Rows}}
-    <li>{{.Count}} {{.Text}}.{{if and .Href .Count}} <a href="{{.Href}}">{{.Label}}</a>{{end}}</li>{{end}}
-    <li>{{.Check}} <a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></li>
+    <li>{{.Text}}{{if and .Href .Count}} <a href="{{.Href}}">{{.Label}}</a>{{end}}</li>{{end}}
+    <li>{{.Check}}{{with .CheckAt}} {{.}}{{end}} <a href="/n/{{$.Slug}}/admin/audit">Audit and checks</a></li>
   </ul>
 </section>
 {{end}}

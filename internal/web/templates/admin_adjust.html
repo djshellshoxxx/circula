@@ -11,6 +11,7 @@
   </fieldset>
   {{template "field" dict "P" . "Name" "amount" "Label" "Amount" "Hint" (printf "Amount in credits, up to %d decimal places." .Dec) "Mode" "decimal" "Req" true}}
   {{template "field" dict "P" . "Name" "reason" "Label" "Reason" "Hint" "Required. Recorded in the audit log." "Type" "textarea" "Max" 500 "Req" true}}
+  {{template "field" dict "P" . "Name" "related_transaction_id" "Label" "Related transaction (optional)" "Hint" "Transaction ID of a posted entry involving this member. Leave blank for a standalone correction."}}
   <div class="actions"><button type="submit">Review adjustment</button></div>
 </form>
 {{end}}

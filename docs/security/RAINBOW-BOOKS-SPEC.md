@@ -112,7 +112,7 @@ Swarm column: the overlap with the security swarm areas (auth, MFA, recovery, du
 
 - Source: TCSEC I&A and audit categories (Orange); Red (network I&A).
 - Requirement: bound online guessing per account and per source. Make the bound observable in audit.
-- Circula: **Partial, built**. Exponential throttle after 5 failures, base 15 minutes, cap 24 hours (`internal/service/auth.go`, lines 89 to 103). Whether the counter is per account, per IP or both is UNVERIFIED in this pass.
+- Circula: **Partial, built**. Fixed 15-minute lock after 5 consecutive failures per (login, client address, IPv6 reduced to /64), and a login-wide lock after 100 failures; counters idle for 24 hours are forgotten (`internal/service/throttle.go`, `internal/service/auth.go` `LoginStep`). Both the per-account-and-address key and the login-wide key apply. The state is stored in SQLite (`GetThrottle`). Earlier text described an exponential throttle with a 24-hour cap; that no longer matches the code.
 - Recommendation: throttle on both account and source key. Emit an audit event on threshold crossing. Make the throttle state survive restart (it is in SQLite, verify).
 - Priority: P1. Swarm: **Overlaps auth**.
 - Verification: test that N+1 failures from one IP across several accounts is throttled, and that the throttle emits an audit event.

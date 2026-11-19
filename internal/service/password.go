@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"unicode"
 	"unicode/utf8"
 
@@ -41,39 +42,77 @@ func hashPassword(pw string, p Argon2Params) (string, error) {
 	if _, err := rand.Read(salt); err != nil {
 		return "", err
 	}
-	key := argon2.IDKey([]byte(pw), salt, p.Time, p.MemoryKiB, p.Threads, p.KeyLen)
+	key := argon2id([]byte(pw), salt, p)
 	return fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, p.MemoryKiB, p.Time,
 		p.Threads, phc64.EncodeToString(salt), phc64.EncodeToString(key)), nil
 }
 
-// verifyPassword checks pw against a PHC string using the parameters stored in
-// the hash, in constant time.
-func verifyPassword(pw, encoded string) bool {
+// argonObserver, when set, is told the parameters of every Argon2id
+// evaluation. Only tests set it (see ObserveArgon2 in the package's internal
+// tests), to prove that two code paths do the same hashing work (SEC-005,
+// BR-05) without relying on wall-clock time.
+var argonObserver atomic.Pointer[func(Argon2Params)]
+
+// argon2id is the single place the product evaluates Argon2id.
+func argon2id(pw, salt []byte, p Argon2Params) []byte {
+	if f := argonObserver.Load(); f != nil {
+		(*f)(p)
+	}
+	return argon2.IDKey(pw, salt, p.Time, p.MemoryKiB, p.Threads, p.KeyLen)
+}
+
+// parsePHC decodes an Argon2id PHC string. ok is false for anything that is
+// not a usable hash: another algorithm, a damaged row, the erased marker, or
+// parameters outside the bounds below.
+func parsePHC(encoded string) (p Argon2Params, salt, want []byte, ok bool) {
 	parts := strings.Split(encoded, "$")
 	if len(parts) != 6 || parts[1] != "argon2id" {
-		return false
+		return p, nil, nil, false
 	}
 	var ver int
-	var p Argon2Params
 	var th uint
 	if _, err := fmt.Sscanf(parts[2], "v=%d", &ver); err != nil || ver != argon2.Version {
-		return false
+		return p, nil, nil, false
 	}
 	if _, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.MemoryKiB, &p.Time, &th); err != nil {
-		return false
+		return p, nil, nil, false
 	}
 	// argon2.IDKey panics when t < 1; cap t so a damaged row cannot stall a login.
 	if th == 0 || th > 255 || p.Time == 0 || p.Time > 64 {
-		return false
+		return p, nil, nil, false
 	}
 	p.Threads = uint8(th) //nolint:gosec // bounded above
 	salt, err1 := phc64.DecodeString(parts[4])
 	want, err2 := phc64.DecodeString(parts[5])
 	if err1 != nil || err2 != nil || len(want) == 0 || p.Threads == 0 || p.MemoryKiB > 1<<21 {
+		return p, nil, nil, false
+	}
+	p.KeyLen, p.SaltLen = uint32(len(want)), uint32(len(salt)) //nolint:gosec // short decoded values
+	return p, salt, want, true
+}
+
+// verifyPassword checks pw against a PHC string using the parameters stored in
+// the hash, in constant time. It does no hashing work for an unusable hash;
+// sign-in uses Service.verifyLoginPassword, which does.
+func verifyPassword(pw, encoded string) bool {
+	p, salt, want, ok := parsePHC(encoded)
+	if !ok {
 		return false
 	}
-	got := argon2.IDKey([]byte(pw), salt, p.Time, p.MemoryKiB, p.Threads, uint32(len(want))) //nolint:gosec // want is a short decoded hash
+	got := argon2id([]byte(pw), salt, p)
 	return subtle.ConstantTimeCompare(got, want) == 1
+}
+
+// verifyLoginPassword is verifyPassword for sign-in. A stored hash that cannot
+// be evaluated (an erased person's marker, a damaged row) still costs one
+// Argon2id evaluation with the current parameters, exactly like an unknown
+// login, so response time does not single such an account out (SEC-005, BR-05).
+func (s *Service) verifyLoginPassword(pw, encoded string) bool {
+	if _, _, _, ok := parsePHC(encoded); !ok {
+		verifyPassword(pw, s.dummyHash) // equalise effort
+		return false
+	}
+	return verifyPassword(pw, encoded)
 }
 
 //go:embed commonpw.txt

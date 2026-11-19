@@ -1,0 +1,70 @@
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/Australia/Sydney
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/Australia/Sydney
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/Australia/Sydney
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/Australia/Sydney
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/Australia/Sydney
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/Australia/Sydney
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/UTC
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/Europe/Berlin
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/America/New_York
+=== RUN   TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/Australia/Sydney
+--- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary (19.17s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/UTC (0.72s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/Europe/Berlin (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/America/New_York (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_spring_forward/Australia/Sydney (0.71s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/UTC (0.66s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/Europe/Berlin (0.66s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/America/New_York (0.72s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_spring_forward/Australia/Sydney (0.68s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/UTC (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/Europe/Berlin (0.71s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/America/New_York (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/EU_fall_back/Australia/Sydney (0.66s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/UTC (0.70s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/Europe/Berlin (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/America/New_York (0.68s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/US_fall_back/Australia/Sydney (0.72s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/UTC (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/Europe/Berlin (0.66s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/America/New_York (0.71s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/decision_target_crosses_new_year/Australia/Sydney (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/UTC (0.68s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/Europe/Berlin (0.72s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/America/New_York (0.68s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/response_deadline_crosses_new_year/Australia/Sydney (0.68s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/UTC (0.71s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/Europe/Berlin (0.67s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/America/New_York (0.66s)
+    --- PASS: TestDisputeDeadlinesAcrossDSTAndYearBoundary/last_millisecond_of_the_year/Australia/Sydney (0.70s)
+=== RUN   TestDisputeDecisionAuthorization
+--- PASS: TestDisputeDecisionAuthorization (0.67s)
+=== RUN   TestDisputeVisibility
+--- PASS: TestDisputeVisibility (0.58s)
+=== RUN   TestRespondToDispute
+--- PASS: TestRespondToDispute (0.68s)
+=== RUN   TestReReviewHappyPath
+--- PASS: TestReReviewHappyPath (0.72s)
+=== RUN   TestReReviewWindow
+--- PASS: TestReReviewWindow (0.56s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	23.417s

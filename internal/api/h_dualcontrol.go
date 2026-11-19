@@ -19,12 +19,13 @@ type pendingDTO struct {
 	DecidedByMemberID *string `json:"decided_by_member_id"`
 	DecidedAt         *string `json:"decided_at"`
 	TransactionID     *string `json:"transaction_id"`
+	RelatedTxID       *string `json:"related_transaction_id,omitempty"`
 }
 
 func toPending(p *domain.PendingAdjustment) pendingDTO {
 	d := pendingDTO{ID: p.ID, MemberID: p.Target, ProposerMemberID: p.Proposer, Direction: p.Direction,
 		AmountMinor: minor(p.Amount), Reason: p.Reason, Status: string(p.Status), CreatedAt: ts(p.CreatedAt),
-		ExpiresAt: ts(p.ExpiresAt), DecidedAt: tsPtr(p.DecidedAt)}
+		ExpiresAt: ts(p.ExpiresAt), DecidedAt: tsPtr(p.DecidedAt), RelatedTxID: strPtr(p.RelatedTxID)}
 	if p.DecidedBy != "" {
 		d.DecidedByMemberID = &p.DecidedBy
 	}
@@ -37,7 +38,7 @@ func toPending(p *domain.PendingAdjustment) pendingDTO {
 // dualControlRoutes registers the SEC-011 endpoints (extension to API-057).
 func (s *server) dualControlRoutes(R func(string, handlerFunc, ...func(*route))) {
 	R("GET "+v1+"/admin/adjustments", s.listPendingAdjustments)
-	R("GET "+v1+"/admin/adjustments/{id}", s.getPendingAdjustment)
+	R("GET "+v1+"/admin/adjustments/{id}", s.getPendingAdjustment, queryParams())
 	R("POST "+v1+"/admin/adjustments/{id}/approve", s.approveAdjustment)
 	R("POST "+v1+"/admin/adjustments/{id}/reject", s.rejectAdjustment)
 	R("POST "+v1+"/admin/adjustments/{id}/cancel", s.cancelAdjustment)

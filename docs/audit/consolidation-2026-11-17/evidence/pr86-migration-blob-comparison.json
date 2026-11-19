@@ -1,0 +1,75 @@
+[
+  {
+    "file": "internal/service/signals.go",
+    "initial_blob": "8035228dc4fa91d498aecaff7c5f56df0f98d93f",
+    "latest_blob": "8035228dc4fa91d498aecaff7c5f56df0f98d93f",
+    "same": true
+  },
+  {
+    "file": "internal/domain/signals.go",
+    "initial_blob": "832d1574aa72687cfa2b4c03218b78e7c120214a",
+    "latest_blob": "832d1574aa72687cfa2b4c03218b78e7c120214a",
+    "same": true
+  },
+  {
+    "file": "internal/domain/policy.go",
+    "initial_blob": "db914895bc85bfd6214454983b73b8e14c16dd75",
+    "latest_blob": "db914895bc85bfd6214454983b73b8e14c16dd75",
+    "same": true
+  },
+  {
+    "file": "internal/repository/iface_signals.go",
+    "initial_blob": "6c8e6d785c6894b751d645213f8403ea20f65b5c",
+    "latest_blob": "6c8e6d785c6894b751d645213f8403ea20f65b5c",
+    "same": true
+  },
+  {
+    "file": "internal/api/h_signals.go",
+    "initial_blob": "002d731919fc0e78b48dcc71fad3a6c79ea0227f",
+    "latest_blob": "002d731919fc0e78b48dcc71fad3a6c79ea0227f",
+    "same": true
+  },
+  {
+    "file": "internal/web/h_signals.go",
+    "initial_blob": "174ff7fd5008f167c6d13cb09b35f72d14b4f619",
+    "latest_blob": "174ff7fd5008f167c6d13cb09b35f72d14b4f619",
+    "same": true
+  },
+  {
+    "file": "internal/service/gov_terms.go",
+    "initial_blob": "20a11227cc70b383df78018868c1d42cfb55e1a6",
+    "latest_blob": "20a11227cc70b383df78018868c1d42cfb55e1a6",
+    "same": true
+  },
+  {
+    "file": "internal/service/signals_test.go",
+    "initial_blob": "9f5baa6a9ad2317b31dab10dba035e93fc69df8f",
+    "latest_blob": "9f5baa6a9ad2317b31dab10dba035e93fc69df8f",
+    "same": true
+  },
+  {
+    "file": "internal/store/activity_signals_test.go",
+    "initial_blob": "1cc4bb3329ffd2999515d1f2f259e259c031fb3b",
+    "latest_blob": "4a02cb23844ed374815ce70fca1bed4c8b1f919f",
+    "same": false
+  },
+  {
+    "file": "docs/security/personal-data-inventory.md",
+    "initial_blob": "6b67d91d89e74b4690285bb6b341d47f679cd36f",
+    "latest_blob": "f3cab6b1fa66d195049fb5b3b3f59e6132ac6e0d",
+    "same": false
+  },
+  {
+    "file": "docs/dev/erasure.md",
+    "initial_blob": "4bc305357d0c1c10b1c67c2828f08bb9100d11aa",
+    "latest_blob": "4bc305357d0c1c10b1c67c2828f08bb9100d11aa",
+    "same": true
+  },
+  {
+    "initial_file": "internal/store/migrations/0019_activity_signals.sql",
+    "latest_file": "internal/store/migrations/0020_activity_signals.sql",
+    "initial_blob": "7957ef1114867d753737259c8c6eb7ea769e48e3",
+    "latest_blob": "7957ef1114867d753737259c8c6eb7ea769e48e3",
+    "same": true
+  }
+]

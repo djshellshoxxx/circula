@@ -1,5 +1,9 @@
 # Branch consolidation report (beta)
 
+> **Historical (2026-11-11).** Superseded by [BRANCH-CONSOLIDATION-2026-11-17.md](BRANCH-CONSOLIDATION-2026-11-17.md)
+> and [PR-CONSOLIDATION-2026-11-17.md](PR-CONSOLIDATION-2026-11-17.md), which record the outcome for every PR and
+> branch listed below, including the "not integrated" and "unresolved" rows.
+
 Date: 2026-11-11. Integration branch: `claude/circula-beta-completion-1npjw6`. The session that did this work may
 push only to that branch, so it is the integration branch; the repository has no `integration/*` convention.
 Base: `main@4b422ad`, which holds only `prompts/create-foundational-specs.md`. Every product commit is on unmerged

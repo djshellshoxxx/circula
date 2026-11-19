@@ -18,6 +18,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // Secret holds a credential (SMTP password, VAPID private key). Every textual
@@ -320,6 +321,14 @@ type tokenPayload struct {
 }
 
 func signToken(key []byte, p tokenPayload) string {
+	// A signed identity must survive JSON encoding unchanged. In particular,
+	// do not mint a token for the replacement character when an adapter passed
+	// invalid UTF-8 bytes as a different identity.
+	for _, field := range []string{p.P, p.N, p.M, p.C, p.T} {
+		if !utf8.ValidString(field) {
+			return ""
+		}
+	}
 	body, _ := json.Marshal(p)
 	b := base64.RawURLEncoding.EncodeToString(body)
 	m := hmac.New(sha256.New, key)

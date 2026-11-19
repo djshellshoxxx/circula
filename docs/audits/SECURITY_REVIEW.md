@@ -1,0 +1,52 @@
+# Security and integrity review
+
+Review date: **2026-11-18 Pacific / 2026-11-19 UTC**. Baseline `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`; core candidate [PR #90](https://github.com/djshellshoxxx/circula/pull/90). This is an engineering review with independent AI-assisted reviewers, not the external SEC-033 release assessment.
+
+## Findings repaired in the core candidate
+
+“Repaired” below describes the source change. Final qualification is the current-head result in [CONSOLIDATION_FINAL_REPORT.md](CONSOLIDATION_FINAL_REPORT.md); a pending runtime gate is never represented as passed.
+
+| ID | Finding and practical effect | Repair and regression | Independent review |
+|---|---|---|---|
+| CORE-01 | Reconstructing dispute policy by wall time lets a same-millisecond or backward-clock policy revision change an existing dispute's response/re-review deadlines. PR #87 fixed ordinary forward time only. | Persist `disputes.policy_version` in the serialized opening transaction; exact-version reads; migration 0019 with mapping failure rollback and immutable update/REPLACE guards. `TestDisputeTimelinesSurviveEqualOrReversedPolicyClocks` plus migration/contract/guard tests. | Ledger reviewer approved the actual diff and legacy-default behavior; SQL migration/trigger checks executed. Full Go runtime gate required. |
+| CORE-02 | The overflow fallback for network totals stopped accumulating after an overflowing prefix. Valid individually bounded positive/negative balances could cancel to zero yet be reported corrupt, potentially freezing a healthy network. | Exact `big.Int` accumulation on the exceptional path, final-only int64 clamp, row-error check. Eleven signed-order/residual/boundary cases; `TestVerifyLedgerAcceptsLargeBalancedTotals`. SQL reproduction demonstrated zero/one exact totals despite SQL prefix overflow. | Security reviewer approved source and real-ledger fixture. Monetary float guard is retained and narrowed to exact integer APIs. Runtime gate required. |
+| CORE-03 | The web password form reported durable service throttling as validation HTTP 422. The durable budget can exhaust before the adapter budget. | Explicit `CodeRateLimited` → HTTP 429. `TestPasswordChangeDurableThrottleStatus` covers the lower service budget, unchanged password, finite expiry and subsequent success. | Security reviewer checked the branch, budget ordering and clock/session lifetime. |
+| CORE-04 | Successful reset/recovery left the old password's exhausted proof-attempt budget intact, blocking the mandatory password change for the recovered user. | Clear `recgen` only inside successful administrator/operator/code-recovery transactions. Regression covers all three modes, denied-reset lock retention, forced-change flag and revoked sessions. | Ledger reviewer verified authorization, atomicity and unchanged unrelated HTTP budgets. |
+| CORE-05 | Historical policy-log readers decoded old JSON into zero values while execution readers seeded defaults, displaying false changes and inconsistent effective settings. | Seed `domain.DefaultPolicy()` for both current and previous log entries. Regression upgrades a v18 fixture, compares full/paged logs with network reads, preserves explicit zero and checks unchanged stored JSON. | Security reviewer checked page/predecessor semantics and no data rewrite. |
+| CORE-06 | Network setup used unvalidated decimal precision when formatting a rejected amount's example. A large authenticated input could control `strings.Repeat` allocation; malformed integer input was silently converted to zero. | Check integer parsing and `0..MaxDecimals` before any amount formatting; accessible select error. Regression uses safe moderate `4096` and malformed/negative/out-of-range/overflow inputs and asserts no network creation. | Ledger reviewer approved guard placement, bounded regression and ARIA references. |
+
+The candidate also preserves PR #82's credential-proof protections: password changes are durably throttled; login/session issuance, MFA enrollment/disable/code replacement and password-recovery code generation recheck the password material in their serialized mutation. A password change/reset that wins the race invalidates the old proof. The complete inherited source and its original review remain in [AUD4-AUTH-FIXES.md](../audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md).
+
+## Separate future-module and topic repairs
+
+| ID | Scope | Finding / correction | Qualification boundary |
+|---|---|---|---|
+| FUT-01 | FNET-204 feed | Nil/zero cursor codec could panic. Refuse unavailable codec safely; preserve signature, rotation, expiry and actor/filter binding. | Isolated module race suite independently rerun, 98.8% statement coverage; no core activation. |
+| FUT-02 | FNET-204 feed | Conflicting duplicate source records made cursor pagination depend on input order. Reject conflicting records in either order. | Fail-before regression, repaired race suite and 20-second `FuzzOpenCursor` (66,869 executions) passed. |
+| FUT-03 | FUX-104 notifications | Pipe-joined encryption context allowed distinct accepted `(network, member)` tuples to share authenticated data. | Use unambiguous versioned encoding for ambiguous tuples, preserve safe legacy rows, never fall back to ambiguous legacy context. Security reviewer approved actual code/tests; module qualification recorded separately. |
+| FUT-04 | FUX-104 notifications | Invalid UTF-8 identities could normalize through JSON and collide in deduplication/signed-unsubscribe representations. | Reject invalid UTF-8 at relevant identity boundaries; tests cover all tuple components and valid Unicode. Isolated module only. |
+| TOPIC-01 | SEC-026 | Default-enabled provisional thresholds, hidden member policy changes, undersized checkbox and future-dated records counted after clock rollback. | Independent branch defaults off, shows settings in member history, uses existing 44-pixel control layout and counts only `(since, now]`. Reviewed; unresolved subject-visibility policy prevents main integration. |
+| TOPIC-02 | GOV-021 | Existing administrator-recovery page absent from the browser accessibility fixture registry. | Add the existing page fixture on the GOV-021 branch only. This does not resolve the recovery authority conflict. |
+
+## Existing protections preserved and checked
+
+The review traced same-network lookups and not-found behavior; session/API-token scope separation; current authorization for replayed cached responses; CSRF on unsafe cookie routes; strict JSON/query validation; contextual template escaping; generic sign-in/recovery failures; immutable ledger/history triggers; serialized capacity checks and atomic posting/audit/idempotency; bounded input and pagination; private temporary files; authenticated backups; export staging, expiry, revocation and erasure invalidation. Relevant regression families are indexed in [TRACEABILITY.md](../TRACEABILITY.md) and the current CI suite. Inspection of these controls is not a penetration-test certificate.
+
+No exploit against a live deployment was attempted. All new fixtures are synthetic. No historical financial rows, passwords, personal records, production configuration or release artifacts were modified. Repository hygiene and redacted secret scanning remain CI gates; the baseline provider vulnerability/secret checks passed on the baseline, not automatically on this new candidate.
+
+## Unresolved decisions with security consequences
+
+1. **Reviewer recovery (AUD4-F02 / #83):** choose and enforce an invariant that survives role removal and regrant. A present-role-only reset guard is insufficient. Options already recorded include operator-only recovery, required reviewer MFA or decision ineligibility after administrator reset.
+2. **Dual-control independence (AUD4-F01 / SEC-011):** independent account names do not establish independent people when an administrator can appoint the approving identity. Select a quorum/rooted-approver/delay mechanism and test appointment/reset/regrant sequences.
+3. **Break-glass scope (A3-F02 / DEC-014):** accepted temporary session-bound rights and proposed broader authority need reconciliation before adopting permanent administrator recovery or extending privileged actions.
+4. **GOV-021:** authenticate two independent approving operators, settle expiry/objection rules and reconcile the permanent role with SEC-013 decision 7. The topic fixture repair cannot stand in for these decisions.
+5. **SEC-026:** decide subject visibility, threshold/disable authority and retention. Default-off repair prevents automatic adoption of provisional behavior but does not approve the feature.
+6. **Privacy and operations:** retention of last activity/time zone/challenge reasons and WAL erasure behavior remain recorded questions. Manual screen-reader qualification, reference-hardware thresholds and professional external review remain release gates.
+
+## Historical dispute migration limit
+
+For pre-0019 disputes, backfill freezes the policy selected by the prior timestamp reconstruction. If no applicable version exists, the migration aborts transactionally rather than guessing. If several historical versions are ambiguous because of equal or reversed clocks, the database cannot prove which version the original operation actually observed. Preserve the evidence and use the documented operator review process; do not rewrite ledger balances, outcomes or audit history to manufacture certainty.
+
+## Review process and residual risk
+
+Implementers worked in separate branches/worktrees. Critical ledger and security diffs were read by a different worker; reviewers inspected source and tests rather than accepting implementation summaries. Git data publication compared exact tree IDs with the reviewed local tree. Review does not replace compilation, race tests, migration fixtures, contract validation or browser execution. [REMAINING_BLOCKERS.md](REMAINING_BLOCKERS.md) lists the concrete qualification gaps and responsible next actions.

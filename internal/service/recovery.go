@@ -11,7 +11,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Account recovery without email (SEC-008). See docs/dev/recovery.md.
@@ -45,7 +45,7 @@ func recgenKey(personID string) string { return "recgen: " + personID }
 // reserveAttempt is the Login pattern: refuse while locked, otherwise count
 // the attempt up front so parallel guesses cannot beat the limit.
 func (s *Service) reserveAttempt(tx store.Tx, key string) error {
-	f, until, _, err := tx.GetThrottle(key)
+	f, until, err := s.readThrottle(tx, key, s.cfg.AuthThrottleAttempts)
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (s *Service) reserveAttempt(tx store.Tx, key string) error {
 		return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
 	}
 	n := f + 1
-	return tx.PutThrottle(key, n, now.Add(lockFor(n)))
+	return tx.PutThrottle(key, n, now.Add(s.lockAfter(n, s.cfg.AuthThrottleAttempts)))
 }
 
 // normalizeRecoveryCode upper-cases and strips separators. ok is false when
@@ -122,6 +122,13 @@ func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor,
 		codes[i], hashes[i], ids[i] = formatRecoveryCode(norm), recoveryHash(actor.PersonID, norm), s.id()
 	}
 	err = s.update(ctx, func(tx store.Tx) error {
+		// A password change/reset during verification invalidates this proof;
+		// it must not be followed by fresh recovery material for the old password.
+		if _, currentHash, err := tx.GetPerson(actor.PersonID); err != nil {
+			return authnErr(err)
+		} else if currentHash != hash {
+			return domain.ErrUnauthenticated
+		}
 		if err := tx.ReplaceAccountRecoveryCodes(actor.PersonID, ids, hashes, s.now()); err != nil {
 			return err
 		}
@@ -239,6 +246,11 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.DeleteMFAChallengesOf(pid); err != nil { // SA2-13
 			return err
 		}
+		// The password has changed and old sessions are revoked. Guesses of
+		// that old password must not lock management of the recovered account.
+		if err := tx.DeleteThrottle(recgenKey(pid)); err != nil {
+			return err
+		}
 		for _, k := range []string{recoverKey(login), login} {
 			if _, err := tx.DeleteThrottleFamily(k); err != nil {
 				return err
@@ -296,6 +308,12 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 		return err
 	}
 	if err := tx.DeleteAccountRecoveryCodes(personID); err != nil {
+		return err
+	}
+	// AUD4-F04: ChangePassword shares this durable proof budget. Resetting
+	// it lets the temporary-password owner complete the forced change even
+	// if guesses through an old session exhausted the previous budget.
+	if err := tx.DeleteThrottle(recgenKey(personID)); err != nil {
 		return err
 	}
 	for _, k := range []string{login, recoverKey(login)} {

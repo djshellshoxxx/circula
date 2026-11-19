@@ -7,7 +7,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // ListingInput creates a listing (FR-021). Price is optional minor units.
@@ -135,6 +135,9 @@ func (s *Service) UpdateListing(ctx context.Context, actor domain.Actor, netID s
 		if err := p.requireActive(); err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(in.ListingID) {
+			return domain.NotFound("listing")
+		}
 		l, err := tx.GetListing(netID, in.ListingID)
 		if err != nil || l.MemberID != p.member.ID {
 			return domain.NotFound("listing")
@@ -205,9 +208,15 @@ func (s *Service) ListListings(ctx context.Context, actor domain.Actor, netID st
 		if err := p.requireActive(); err != nil {
 			return err
 		}
+		if q.MemberID != "" && !domain.ValidRecordID(q.MemberID) {
+			return domain.Invalid("member_id", "must be a record identifier")
+		}
 		f := store.ListingFilter{Type: q.Type, Query: q.Query, MemberID: q.MemberID, AfterID: q.Page.AfterID, Limit: clampPage(q.Page)}
 		if q.MemberID != p.member.ID {
 			f.Status, f.ActiveOwnersOnly = domain.ListingActive, true
+		}
+		if err := validatePageIDs(q.Page.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListListings(netID, f)
 		return err

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Notification kinds (FR-038). Titles are fixed text; bodies never carry
@@ -15,6 +15,7 @@ const (
 	NotifTradeAccepted   = "trade.accepted"
 	NotifTradeDeclined   = "trade.declined"
 	NotifTradeCancelled  = "trade.cancelled"
+	NotifTradeExpired    = "trade.expired"
 	NotifDisputeOpened   = "dispute.opened"
 	NotifDisputeReview   = "dispute.under_review"
 	NotifDisputeResponse = "dispute.responded"
@@ -100,6 +101,9 @@ func (s *Service) ListNotifications(ctx context.Context, actor domain.Actor, net
 		if err != nil {
 			return err
 		}
+		if err := validatePageIDs(q.Page.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListNotifications(netID, m.ID, store.NotificationFilter{UnreadOnly: q.UnreadOnly,
 			AfterID: q.Page.AfterID, Limit: clampPage(q.Page)})
 		return err
@@ -142,6 +146,11 @@ func (s *Service) MarkNotificationsRead(ctx context.Context, actor domain.Actor,
 		m, err := p.inboxMember()
 		if err != nil {
 			return err
+		}
+		for _, id := range ids {
+			if !domain.ValidRecordID(id) {
+				return domain.Invalid("ids", "must contain record identifiers")
+			}
 		}
 		n, err = tx.MarkNotificationsRead(netID, m.ID, ids, s.now())
 		return err

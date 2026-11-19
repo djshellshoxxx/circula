@@ -1,0 +1,4 @@
+{
+  "media_type": "text/x-diff",
+  "original_utf8": "--- PR84/cmd/circula/snapshot.go\n+++ behavior-restoring-mutation/cmd/circula/snapshot.go\n@@ -527,10 +527,6 @@\n \t\t// or a misplaced file) is kept, but it takes no daily or monthly slot,\n \t\t// so it cannot push real backups out early. Scheduling ignores it in\n \t\t// the same way (untilNextBackupAt).\n-\t\tif e.at.After(now) {\n-\t\t\tkeep[e.path] = true\n-\t\t\tcontinue\n-\t\t}\n \t\tpast = append(past, e)\n \t}\n \tfor i, e := range past {\n"
+}

@@ -1,0 +1,51 @@
+{
+  "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+  "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+  "command": [
+    "go",
+    "test",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=25m",
+    "./..."
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB",
+    "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+    "CGO_ENABLED": "1"
+  },
+  "go_version": "go version go1.26.11 linux/amd64",
+  "started_at": "2026-11-18T09:49:16.576031+00:00",
+  "status": "passed",
+  "source_heads": {
+    "82_authoring": "d3fcc6831f81eea3344a03113e27532a07996bcf",
+    "82_published": "e127acc9877edebeca818b75a5d48ce12511eca8",
+    "82_shared_tree": "84ea230a25cf30a56f4f43b1a401abea6dc1b7fb",
+    "84": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+    "87": "679a3016d77c3cf34e218ecb296f1d42cc0969c8"
+  },
+  "scope": "Fresh full combined race suite after all four MFA/account-recovery password-proof guards. Prior full pass remains attributed to8865 before this fix. No future or owner-policy feature included.",
+  "exit_code": 0,
+  "elapsed_seconds": 1063.886,
+  "finished_at": "2026-11-18T10:07:00.462200+00:00",
+  "max_child_rss_kib": 676336,
+  "post_head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+  "post_tree": "1e47c9c30165ca27866887533586c90323e1630e",
+  "post_status": "",
+  "producer_receipt_binding": {
+    "retained_path": "evidence/final-candidate-original-receipt.json",
+    "source_filename": "aggregate-final-password-proof-race.json",
+    "source_sha256": "0e526c1773640dc42684b07d575ffb222484ae828ec352d6f402a41af519d0c3"
+  },
+  "log_binding": {
+    "source_filename": "aggregate-final-password-proof-race.log",
+    "source_sha256": "4dc27ca06074b9bf74cbb9d5ea34f15c2929bd519112561bf72ee09cbfd0b4dd",
+    "recorded_at": "2026-11-18T10:08:13.142724+00:00",
+    "method": "Coordinator recorded this hash after the completed execution; original producer receipt remains unchanged and is retained separately."
+  }
+}

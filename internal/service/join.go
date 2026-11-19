@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 const inviteTokenPrefix = "inv_"
@@ -64,6 +64,9 @@ func (s *Service) RevokeInvitation(ctx context.Context, actor domain.Actor, netI
 		}
 		if err := p.requireAdmin(); err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(invID) {
+			return domain.NotFound("invitation")
 		}
 		ok, err := tx.RevokeInvitation(netID, invID, s.now())
 		if err != nil {
@@ -298,6 +301,9 @@ func (s *Service) DecideJoinRequest(ctx context.Context, actor domain.Actor, net
 		}
 		if err := boundedText("reason", reason, maxReasonLen); err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
 		}
 		m, err := tx.GetMember(netID, memberID)
 		if err != nil {

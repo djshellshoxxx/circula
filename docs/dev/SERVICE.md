@@ -193,6 +193,12 @@ func (s *Service) RevokeAllSessions(ctx context.Context, actor domain.Actor, in 
 func (s *Service) Logout(ctx context.Context, token string) error
 // Logout revokes the session behind token.
 
+func (s *Service) ListOwnSessions(ctx context.Context, actor domain.Actor) ([]SessionInfo, error)
+// Account-security inventory (spec 08): live session authentication is required. Returns only the caller's active sessions, using the same current role-specific idle/absolute limits as Authenticate. Each selector is a domain-separated hash of the stored session hash; neither bearer values nor stored hashes leave the service. Lists are newest first, with a public-selector tie-breaker. No IP, device fingerprint or new personal data is collected.
+
+func (s *Service) RevokeOwnSession(ctx context.Context, actor domain.Actor, id string) error
+// Ends one session of the caller in the same write as a session.revoked audit. The current session is rechecked inside the transaction, foreign/unknown selectors are not-found, and a repeated revocation has no extra audit while the row is retained. API tokens and system actors cannot call it; forced password changes block this write. The audit identifies the person and current-session flag without any session identifier (DAT-031). Other sessions, API tokens and ledger data are unchanged.
+
 func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW, newPW string) error
 // ChangePassword verifies the old password, sets the new one and revokes every session of the person, including the caller's (SEC-003).
 ```
@@ -233,16 +239,16 @@ func (s *Service) ListDisputes(ctx context.Context, actor domain.Actor, netID st
 // ListDisputes lists disputes: all for reviewers and administrators, own for members.
 ```
 
-`DisputeView` also carries `Response *store.DisputeResponse` (FR-076) and `ReReview *store.ReReview` (FR-078).
+`DisputeView` also carries `Response *store.DisputeResponse` (FR-076), `ReReview *store.ReReview` (FR-078) and `Deadlines` (response deadline, decision target, `ReReviewCloses`), computed from the immutable policy version stored when the dispute was opened (GOV-001, AUD4-F03; migration 0019), the same values the decision gate and `RequestReReview` enforce.
 
 #### disputes_response.go (FR-076, FR-078; migration 0008)
 
 ```go
 func (s *Service) RespondToDispute(ctx, actor, netID string, in RespondInput) (*store.DisputeResponse, error)
-// The party who did not open the dispute answers once (up to 2000 characters) while it is open or under review. Suspended parties may answer. Idempotent. A decision waits for a response, the network policy response_period_days, or a reviewer waiver (ResolveInput.WaiveResponse with WaiveReason) (FR-076).
+// The party who did not open the dispute answers once (up to 2000 characters) while it is open or under review. Suspended parties may answer. Idempotent. A decision waits for a response, the response_period_days of the network policy in force when the dispute was opened, or a reviewer waiver (ResolveInput.WaiveResponse with WaiveReason) (FR-076, GOV-001).
 
 func (s *Service) RequestReReview(ctx, actor, netID string, in ReReviewRequestInput) (*store.ReReview, error)
-// Either party, once per dispute (UNIQUE in the database), within ReReviewWindowDays (14, platform constant) of the decision. Own record linked to the dispute; the original decision is never edited.
+// Either party, once per dispute (UNIQUE in the database), within the ReReviewWindowDays (network policy, default 14) of the policy in force when the dispute was opened, counted from the decision (GOV-001). Own record linked to the dispute; the original decision is never edited.
 
 func (s *Service) DecideReReview(ctx, actor, netID string, in ReReviewDecideInput) (*store.ReReview, error)
 // Outcome confirmed | upheld | partially_upheld. Decider must not be the original reviewer and must pass the DOM-038 independence test. upheld / partially_upheld post a further reversal of at most the amount still reversible; an LED-5 block fails with insufficient-available-credit and changes nothing (no posting_pending state for re-reviews).

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
+	"unicode/utf8"
 )
 
 const GenericBody = "You have new Circula activity. Sign in to view it."
@@ -67,6 +68,13 @@ func (p Preference) NextAllowed(now time.Time) (time.Time, error) {
 func DedupeKey(network, event, member, channel, kind string) (string, error) {
 	if network == "" || event == "" || member == "" || kind == "" || (channel != "email" && channel != "push") {
 		return "", errors.New("invalid event")
+	}
+	// JSON replaces invalid UTF-8 with U+FFFD. Refuse those identifiers before
+	// encoding so distinct byte strings cannot acquire the same event key.
+	for _, part := range []string{network, event, member, channel, kind} {
+		if !utf8.ValidString(part) {
+			return "", errors.New("invalid event")
+		}
 	}
 	b, _ := json.Marshal([5]string{network, event, member, channel, kind})
 	h := sha256.Sum256(b)

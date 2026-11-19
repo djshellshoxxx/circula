@@ -3,7 +3,8 @@
 #  * QA-043: no real-looking personal data in tests, fixtures or e2e (email addresses must use a reserved domain,
 #    no phone-number or IBAN-like patterns).
 #  * QA-037: migrations are numbered 0001.. without gaps or duplicates, and never edited destructively
-#    (no DROP TABLE / DROP COLUMN / DELETE FROM without a `-- allow-destructive: reason` comment on the same line).
+#    (no destructive statements or append-only updates without a reviewed
+#    `-- allow-destructive: reason` comment on a statement line).
 #  * Generated root executables from `go build ./cmd/circula` are not tracked.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -32,9 +33,10 @@ for f in $(ls internal/store/migrations/*.sql | sort); do
   n=$((n+1)); want="$(printf '%04d_' "$n")"
   case "$(basename "$f")" in "$want"*) ;; *) echo "QA-037: expected migration $want*, found $(basename "$f")"; fail=1 ;; esac
 done
-if grep -nEi 'drop[[:space:]]+(table|column)|delete[[:space:]]+from' internal/store/migrations/*.sql | grep -vi 'allow-destructive' | grep -q .; then
-  echo "QA-037: destructive statement without '-- allow-destructive: reason':"
-  grep -nEi 'drop[[:space:]]+(table|column)|delete[[:space:]]+from' internal/store/migrations/*.sql | grep -vi 'allow-destructive'
+if ! python3 scripts/check_migrations.py internal/store/migrations/*.sql; then
+  fail=1
+fi
+if ! python3 -m unittest discover -s scripts -p 'test_check_migrations.py'; then
   fail=1
 fi
 # --- GOV-026 ----------------------------------------------------------------------------------------------------

@@ -1,0 +1,131 @@
+{
+  "main": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "live_head": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+  "live_tree": "c7077653183021a006821c71926be3a089da502b",
+  "live_merge_base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "counts_behind_ahead": [
+    0,
+    5
+  ],
+  "pr70_frozen_head": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+  "pr70_merge_commit": "e67bad5e2dbee95cff05536aa79f53f3afbccc84",
+  "pr70_merge_parents": [
+    "ef54238ee9ebc2184919b6a8ec30c3398df55ed5",
+    "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d"
+  ],
+  "ancestry_proofs": [
+    {
+      "ancestor": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "descendant": "e67bad5e2dbee95cff05536aa79f53f3afbccc84",
+      "git_merge_base_is_ancestor_exit": 0
+    },
+    {
+      "ancestor": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "descendant": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "git_merge_base_is_ancestor_exit": 0
+    },
+    {
+      "ancestor": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "descendant": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+      "git_merge_base_is_ancestor_exit": 0
+    },
+    {
+      "ancestor": "e67bad5e2dbee95cff05536aa79f53f3afbccc84",
+      "descendant": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "git_merge_base_is_ancestor_exit": 0
+    },
+    {
+      "ancestor": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "descendant": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+      "git_merge_base_is_ancestor_exit": 0
+    }
+  ],
+  "old_handoff_files": [
+    {
+      "path": "docs/audit/2026-10-28/coverage-gaps-circula.md",
+      "old_blob": "2139ed2f7b824a215ed0d4fabc33877014b8721f",
+      "main_blob": "2139ed2f7b824a215ed0d4fabc33877014b8721f",
+      "live_blob": "2139ed2f7b824a215ed0d4fabc33877014b8721f",
+      "same_in_main": true,
+      "same_in_live": true
+    },
+    {
+      "path": "docs/audit/2026-10-28/interim-verification-circula.json",
+      "old_blob": "9af7e4ae14796d46fe53b3b06f61ab6a614e27ae",
+      "main_blob": "9af7e4ae14796d46fe53b3b06f61ab6a614e27ae",
+      "live_blob": "9af7e4ae14796d46fe53b3b06f61ab6a614e27ae",
+      "same_in_main": true,
+      "same_in_live": true
+    },
+    {
+      "path": "docs/audit/2026-10-28/interim-verification-circula.md",
+      "old_blob": "c291cd23c37d51bcd403a574a1fc259dcf1f7980",
+      "main_blob": "c291cd23c37d51bcd403a574a1fc259dcf1f7980",
+      "live_blob": "c291cd23c37d51bcd403a574a1fc259dcf1f7980",
+      "same_in_main": true,
+      "same_in_live": true
+    },
+    {
+      "path": "docs/audit/2026-10-28/wip-fixes/README.md",
+      "old_blob": "071c9d726dce4757357c1b78437b1f20ebf1caa1",
+      "main_blob": "071c9d726dce4757357c1b78437b1f20ebf1caa1",
+      "live_blob": "eaf227fd9b630976d9f9f755f0cb08e99a00e5d3",
+      "same_in_main": true,
+      "same_in_live": false,
+      "live_diff": "diff --git a/docs/audit/2026-10-28/wip-fixes/README.md b/docs/audit/2026-10-28/wip-fixes/README.md\nindex 071c9d7..eaf227f 100644\n--- a/docs/audit/2026-10-28/wip-fixes/README.md\n+++ b/docs/audit/2026-10-28/wip-fixes/README.md\n@@ -12,3 +12,4 @@ against `bb5a36f9`, stored with a `.txt` suffix so tooling ignores it.\n | `disputes.patch.txt` | A1-04, A1-09 (fixer stopped before reporting; treat as incomplete) |\n | `sweeps.patch.txt` | A1-05 (expiry sweep starved by frozen networks), A1-10 (pending-adjustment expiry writes into frozen networks); fixer finished, not reviewed |\n | `closure-export.patch.txt` | A1-07 (retry the final closure export); fixer stopped before its final checks: incomplete |\n+| `challenge-reason-erasure.patch.txt` | A3-F05 (erasure leaves `challenges.reason`). Added 2026-11-18: the stopped A3-F05 fixer's patch, a `git diff` against `1ee699f` (not `bb5a36f9`). Unreviewed and not applied: it is kept only as a reference for the PRIV-02 owner decision (SEC-014/018), see [REMEDIATION-2026-11-18.md](../REMEDIATION-2026-11-18.md) |"
+    },
+    {
+      "path": "docs/audit/2026-10-28/wip-fixes/closure-export.patch.txt",
+      "old_blob": "a9ac6c59e17e2c36e6b3758bbd5a6d71cb87a1e5",
+      "main_blob": "a9ac6c59e17e2c36e6b3758bbd5a6d71cb87a1e5",
+      "live_blob": "a9ac6c59e17e2c36e6b3758bbd5a6d71cb87a1e5",
+      "same_in_main": true,
+      "same_in_live": true
+    },
+    {
+      "path": "docs/audit/2026-10-28/wip-fixes/sweeps.patch.txt",
+      "old_blob": "bf93d0c337e7f3449b0890f98b6409183d6480de",
+      "main_blob": "bf93d0c337e7f3449b0890f98b6409183d6480de",
+      "live_blob": "bf93d0c337e7f3449b0890f98b6409183d6480de",
+      "same_in_main": true,
+      "same_in_live": true
+    }
+  ],
+  "comparisons": {
+    "pr81": {
+      "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "shared_changed_files": [
+        "cmd/circula/snapshot.go"
+      ],
+      "merge_tree_exit": 0,
+      "merge_tree_output": "ab8fe1d653705d2aba3a14dddcadcce0bc7382c5",
+      "stderr": ""
+    },
+    "pr82": {
+      "head": "5c39abdb89faa505533e51d3878b3b119957ff32",
+      "shared_changed_files": [],
+      "merge_tree_exit": 0,
+      "merge_tree_output": "75a332396acd61754d879b4a40e3a8722167daab",
+      "stderr": ""
+    }
+  },
+  "unique_changed_files": [
+    "M\tcmd/circula/backup_test.go",
+    "M\tcmd/circula/jobs_regress_test.go",
+    "M\tcmd/circula/snapshot.go",
+    "M\tdocs/TRACEABILITY.md",
+    "A\tdocs/audit/2026-10-28/REMEDIATION-2026-11-18.md",
+    "M\tdocs/audit/2026-10-28/wip-fixes/README.md",
+    "A\tdocs/audit/2026-10-28/wip-fixes/challenge-reason-erasure.patch.txt",
+    "M\tdocs/specs/07-api-contract.md",
+    "M\tdocs/specs/11-deployment-operations.md",
+    "A\tinternal/api/problem_catalogue_test.go"
+  ],
+  "unique_commits": [
+    "7f98b3db8d032fc107599a3da4a6e1747c3e00aa Merge main into the Low/Info remediation branch",
+    "da04d4506b0951f24bba5c77e96d7fb9a64cdbfa docs(audit): record the final validation and correct the race note (A2-08, A3-F10)",
+    "8bd8e45b62b491bb4856aa5bee67dd2584c8a52e docs(audit): record the Low and Info triage and remediation (A2-08, A3-F10)",
+    "155caabccef1afbee32fc025f9acd9b673234faa fix(backup): keep future-dated backups out of the retention counts (A3-F10)",
+    "bf494d01c50afe43216e51557828413e49b9312b fix(api): list the as-built problem codes in the spec 07 catalogue (A2-08)"
+  ]
+}

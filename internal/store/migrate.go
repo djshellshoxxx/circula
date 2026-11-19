@@ -98,6 +98,9 @@ func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
 		return err
 	}
 	for v, n := range applied {
+		if v < 1 {
+			return fmt.Errorf("store: invalid recorded migration version %d (must be positive)", v)
+		}
 		if v > len(all) {
 			return fmt.Errorf("store: database schema v%d is newer than this binary (v%d)", v, len(all))
 		}
