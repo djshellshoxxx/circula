@@ -1,10 +1,28 @@
 # Comprehensive repository audit
 
-> Current composition: [combined core review and qualification checkpoint](CORE_COMPOSITION_20261119.md) records the reconciled PR90/96/99/101/102/104 source, focused passing checks, unchanged main and pending full provider gates. The [bounded branch refresh](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) records 123 retained refs at 11:27:08 UTC. Earlier sections and receipts keep their named source and observation time.
+> Closing publication: [the final addendum](CONSOLIDATION_FINAL_REPORT.md#closing-publication-checkpoint-2026-11-19) records Core992, isolated follow-ups, the timestamped 125-ref snapshot and pending gates. The [combined core review](CORE_COMPOSITION_20261119.md), [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) and earlier execution receipts retain their original scope. Current PR heads and checks govern subsequent qualification.
 
 Audit opened **2026-11-18 Pacific / 2026-11-19 UTC**. Repository: [djshellshoxxx/circula](https://github.com/djshellshoxxx/circula).
 
 This is the current implementation and consolidation record. Earlier files under `docs/audit/`, including the November 17 execution archive and November 18 audit, remain evidence for their named revisions. Their pending-PR counts and test results are not current-head qualification.
+
+## Closing publication addendum
+
+Reviewed Core source was published as `992478594e5902f57a39f3772739bee6ab495d24`
+in [PR #90](https://github.com/djshellshoxxx/circula/pull/90). Its 1,470-leaf
+tree matches the reviewed source. At 11:59:01 UTC its nine configured CI jobs
+were all queued, with no completed pass or failure. Main remains
+`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`.
+
+The closing 12:10:21.881995 UTC read observed 125 live refs and retained all
+107 original branch names and tips through identity or ancestry. Nine
+coordinator-created PRs produced two qualified original-topic merges and
+two integration-only source inclusions; none merged into main. Feed, PWA
+and notification source compositions retain disabled/HOLD boundaries;
+signals #94 and GOV-021 #107 remain policy-held. Federation #105's independently
+reproduced UTF-8 false-signing-success defect is repaired without a demonstrated
+verifier bypass; #106 corrects its README only. Exact heads, counts, source-bound
+results and remaining external gates are in the linked closing addendum.
 
 ## Scope, baseline and evidence rules
 
