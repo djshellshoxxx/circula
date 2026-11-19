@@ -357,6 +357,104 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
 
+  /api/v1/me/sessions:
+    get:
+      operationId: listOwnSessions
+      tags: [Identity]
+      summary: List the caller's active sign-ins (account-security extension)
+      description: |
+        Session cookie only; bearer API tokens receive 403. Does not resolve a network.
+        Returns the caller's active sessions, newest first, using current role-specific
+        idle and absolute timeouts. Each ID is a random persisted public selector, never a bearer
+        value or the stored session hash. expires_at is the current earliest expiry;
+        later activity can extend an idle timeout. No device or IP information is collected.
+        Pagination remains valid when the session at the page boundary is revoked.
+        Pages default to 25 and allow at most 100 active sessions. Each request uses at most
+        20 indexed keyset reads of 100 retained rows before applying the existing expiry
+        rules. An empty data array may therefore have a non-null next_cursor; continue until
+        next_cursor is null. This work bound does not impose a per-person session-count limit.
+        Cursors issued before the persisted-selector migration receive 400 invalid-cursor;
+        restart the listing without a cursor. Session credentials and their lifetimes are unchanged.
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Active sessions belonging to the caller.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SessionPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/me/sessions/revoke-others:
+    post:
+      operationId: revokeOtherOwnSessions
+      tags: [Identity]
+      summary: End the caller's other sign-ins while keeping this session
+      description: |
+        Session cookie and CSRF token required. Does not resolve a network. Revalidates
+        the current session inside the write transaction, then revokes the caller's
+        other retained sign-ins and removes pending second-factor sign-in challenges.
+        The current session, other people's sessions, and API tokens remain usable.
+        A pending forced password change blocks this write. Repeating the operation
+        succeeds when nothing remains to revoke. Each successful command is audited;
+        records contain aggregate results, never session credentials or selectors.
+        No Idempotency-Key or request body is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        '204': {description: Other sign-ins have ended; the current session remains active.}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '423': {$ref: '#/components/responses/NetworkFrozen'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/me/sessions/{session}:
+    delete:
+      operationId: revokeOwnSession
+      tags: [Identity]
+      summary: End one of the caller's sign-ins (account-security extension)
+      description: |
+        Session cookie and CSRF token required. Does not resolve a network. Only an owner
+        can revoke a selector returned by their session list. Foreign and unknown selectors
+        both receive 404. Repeating a revocation is 204 while the row is retained, with no
+        duplicate audit event. Ending the current session makes its next request fail 401.
+        Other sessions and API tokens keep working. A pending forced password change blocks
+        this write. Audit records identify the person and whether the session was current,
+        without a session identifier. No Idempotency-Key or request body is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - name: session
+          in: path
+          required: true
+          schema: {$ref: '#/components/schemas/SessionSelector'}
+      responses:
+        '204': {description: The selected session has ended.}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '423': {$ref: '#/components/responses/NetworkFrozen'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
   /api/v1/members:
     get:
       operationId: listMembers
@@ -1133,8 +1231,8 @@ paths:
         while the dispute is open or under review. Visible to the opener, reviewer and administrators in
         GET /disputes/{id}. A second response is 409 invalid-transaction-state; the opener gets 403.
         A suspended party may respond. A decision (POST /disputes/{id}/resolve) is refused with 409
-        invalid-transaction-state until a response is submitted, the network's response_period_days has
-        elapsed since the dispute was opened, or the reviewer waives the response with a reason.
+        invalid-transaction-state until a response is submitted, the response_period_days of the policy in
+        force when the dispute was opened has elapsed since then, or the reviewer waives the response with a reason.
       security:
         - cookieAuth: []
           csrfToken: []
@@ -3210,8 +3308,8 @@ components:
       name: cursor
       in: query
       required: false
-      description: Opaque cursor from next_cursor. Bound to route, network, caller and filters; reuse with other filters is 400 invalid-cursor (API-035).
-      schema: {type: string}
+      description: Opaque cursor from next_cursor. At most 4096 characters, using canonical unpadded base64url for its signed components. Bound to route, network, caller and filters; malformed, oversized, noncanonical or mismatched cursors receive 400 invalid-cursor (API-035).
+      schema: {type: string, maxLength: 4096}
     PathId:
       name: id
       in: path
@@ -3432,7 +3530,7 @@ components:
       pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$'
     Id:
       type: string
-      description: Identifier. UUIDv7 for domain records (API-005); export and consistency-run identifiers are generated as UUIDv4 as built.
+      description: UUIDv7 identifier for newly allocated records and adapter jobs (API-005). Existing identifiers, including legacy UUIDv4 jobs, remain valid and are not rewritten.
     NetworkStatus: {type: string, enum: [setup, active, closing, closed], description: 'closing is derived: the closure date has passed and the closure is finishing (GOV-025). Trading is already frozen.'}
     JoinMode: {type: string, enum: [invite, approval, open]}
     DepartureRule: {type: string, enum: [retain, settle-to-zero]}
@@ -3801,7 +3899,7 @@ components:
       additionalProperties: false
       properties:
         <<: *disputeProps
-        response_deadline: {type: string, format: date-time, description: 'Opened at plus the network response period (GOV-014). A missed deadline decides nothing; the case stays open for reviewer assessment.'}
+        response_deadline: {type: string, format: date-time, description: 'Opened at plus the response period of the network policy in force when the dispute was opened (GOV-014, GOV-001). A missed deadline decides nothing; the case stays open for reviewer assessment.'}
         decision_target: {type: string, format: date-time, description: 'Response deadline plus 14 days (DEC-012).'}
         response_overdue: {type: boolean}
         decision_overdue: {type: boolean}
@@ -3990,8 +4088,8 @@ components:
         dual_control_threshold_minor:
           description: Adjustments above this amount need a second administrator (SEC-011). 0 turns it off. Needs two or more active administrators to set.
           $ref: '#/components/schemas/Money'
-        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
-        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
+        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7. A change applies to disputes opened after it takes effect (GOV-001)."}
+        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14. A change applies to disputes opened after it takes effect (GOV-001)."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
         inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
     PolicyPatch:
@@ -4013,8 +4111,8 @@ components:
         default_flag_blocks_payer: {type: boolean}
         directory_visibility: {type: string}
         dual_control_threshold_minor: {$ref: '#/components/schemas/Money'}
-        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7."}
-        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14."}
+        response_period_days: {type: integer, minimum: 0, maximum: 90, description: "Days the other party has to answer a dispute before a decision may be recorded without a response (FR-076). 0 means no waiting period. Default 7. A change applies to disputes opened after it takes effect (GOV-001)."}
+        re_review_window_days: {type: integer, minimum: 1, maximum: 365, description: "Days after a decision in which one re-review may be requested (FR-078). Default 14. A change applies to disputes opened after it takes effect (GOV-001)."}
         limit_warning_percent: {type: integer, minimum: 1, maximum: 100, description: "Share of the credit limit in use at which a member is warned (UX-012). Default 80."}
         inactivity_days: {type: integer, minimum: 0, maximum: 3650, description: "Members with no sign-in and no trade for this many days are flagged for administrators and notified (GOV-012). 0 means no rule (default); otherwise 30 to 3650. Members are never removed automatically."}
         reason: {type: string, maxLength: 500}
@@ -4056,7 +4154,7 @@ components:
       required: [id, scope, format, status, created_at, expires_at, sha256, bytes, artefact_url, error]
       additionalProperties: false
       properties:
-        id: {type: string, description: UUIDv4 as built.}
+        id: {$ref: '#/components/schemas/Id'}
         scope: {type: string, enum: [mine, ledger, members, audit, full]}
         format: {type: string, enum: [csv, json]}
         status: {type: string, enum: [complete], description: "Only complete as built. Spec 065 also lists queued, running and failed (see spec 07 section 12)."}
@@ -4066,6 +4164,20 @@ components:
         bytes: {type: integer, minimum: 0}
         artefact_url: {oneOf: [{type: string}, {type: 'null'}]}
         error: {oneOf: [{type: string}, {type: 'null'}]}
+    SessionSelector:
+      type: string
+      pattern: '^[0-9a-f]{64}$'
+      description: Random persisted owner-scoped session selector; never a bearer credential or its stored hash.
+    Session:
+      type: object
+      required: [id, current, created_at, last_seen_at, expires_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/SessionSelector'}
+        current: {type: boolean}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        last_seen_at: {$ref: '#/components/schemas/Timestamp'}
+        expires_at: {$ref: '#/components/schemas/Timestamp'}
     Token:
       type: object
       required: [id, name, scopes, network_id, created_at, last_used_at, expires_at, revoked_at]
@@ -4353,6 +4465,12 @@ components:
         - type: object
           properties:
             data: {type: array, items: {$ref: '#/components/schemas/AuditEvent'}}
+    SessionPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Session'}, maxItems: 100}
     TokenPage:
       allOf:
         - $ref: '#/components/schemas/Page'

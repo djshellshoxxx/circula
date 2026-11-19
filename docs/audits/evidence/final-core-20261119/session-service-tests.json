@@ -1,0 +1,8 @@
+{
+  "source": "baedf4b6670f6bf39ec593978ce38780c5640215",
+  "scope": "Production service files plus session_page_internal_test.go and session_position_security_test.go; no SQLite adapter",
+  "exit_code": 0,
+  "elapsed_seconds": 9.36,
+  "stdout": "ok  \tcommand-line-arguments\t1.794s\n",
+  "stderr": ""
+}

@@ -1,0 +1,4 @@
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	61.597s
+ok  	github.com/djshellshoxxx/circula/internal/web	146.700s
+FAIL

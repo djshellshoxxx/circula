@@ -1,0 +1,526 @@
+{
+  "observed_at": "2026-11-18T09:34:40.686Z",
+  "pr78_head": "1d84c6d5b849af1e1ad19e71f95462873f96973f",
+  "claim_under_review": "CODE-AUDIT C7 asserts PR82/83 failed CI for traceability.",
+  "pr82": {
+    "query": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs?branch=claude%2Faud4-auth-fixes&per_page=100",
+    "total_count": 5,
+    "runs": [
+      {
+        "id": 44274174998,
+        "head_sha": "6785863252d2910553b1f4a26396f14b4405d6fa",
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "attempt": 1,
+        "created_at": "2026-11-18T09:15:13Z"
+      },
+      {
+        "id": 44274123377,
+        "head_sha": "ca0a134b5c9b99f225fe8edfb2305ce56d0ad2dd",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "attempt": 1,
+        "created_at": "2026-11-18T09:14:54Z"
+      },
+      {
+        "id": 44273216945,
+        "head_sha": "925547b2f4a2e5ecf0d4c699f7cf906949099c8b",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "attempt": 1,
+        "created_at": "2026-11-18T09:09:05Z"
+      },
+      {
+        "id": 44265484103,
+        "head_sha": "5c39abdb89faa505533e51d3878b3b119957ff32",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "attempt": 1,
+        "created_at": "2026-11-18T08:15:51Z"
+      },
+      {
+        "id": 44264673171,
+        "head_sha": "0a7ef6ee8efbec15c4603bd9fbb14492c7e4ddbf",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "attempt": 1,
+        "created_at": "2026-11-18T08:10:06Z"
+      }
+    ],
+    "past_jobs": [
+      {
+        "run_id": 44264673171,
+        "jobs": [
+          {
+            "id": 134666122759,
+            "name": "vet, gofmt, golangci-lint, govulncheck",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666123174,
+            "name": "fuzz smoke (RB-017)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666123261,
+            "name": "API contract and load smoke",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666123268,
+            "name": "reproducible build (two builds, same sha256)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666123306,
+            "name": "build release targets",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666123492,
+            "name": "test (ubuntu-24.04)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666123535,
+            "name": "e2e (Playwright, axe, keyboard)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          },
+          {
+            "id": 134666125251,
+            "name": "test (${{ matrix.os }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "runner_id": null,
+            "runner_name": null,
+            "created_at": "2026-11-18T08:10:07Z",
+            "started_at": "2026-11-18T08:10:07Z",
+            "completed_at": "2026-11-18T08:10:06Z",
+            "steps": []
+          }
+        ]
+      },
+      {
+        "run_id": 44265484103,
+        "jobs": [
+          {
+            "id": 134668836150,
+            "name": "API contract and load smoke",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668836558,
+            "name": "reproducible build (two builds, same sha256)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668836592,
+            "name": "e2e (Playwright, axe, keyboard)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668836612,
+            "name": "test (ubuntu-24.04)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668836700,
+            "name": "vet, gofmt, golangci-lint, govulncheck",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668836753,
+            "name": "build release targets",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668836775,
+            "name": "fuzz smoke (RB-017)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          },
+          {
+            "id": 134668838064,
+            "name": "test (${{ matrix.os }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "runner_id": null,
+            "runner_name": null,
+            "created_at": "2026-11-18T08:15:52Z",
+            "started_at": "2026-11-18T08:15:52Z",
+            "completed_at": "2026-11-18T08:15:52Z",
+            "steps": []
+          }
+        ]
+      },
+      {
+        "run_id": 44273216945,
+        "jobs": [
+          {
+            "id": 134694765704,
+            "name": "build release targets",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694766118,
+            "name": "e2e (Playwright, axe, keyboard)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694766137,
+            "name": "fuzz smoke (RB-017)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694766147,
+            "name": "API contract and load smoke",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694766252,
+            "name": "test (ubuntu-24.04)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694766326,
+            "name": "vet, gofmt, golangci-lint, govulncheck",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694766553,
+            "name": "reproducible build (two builds, same sha256)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:09:06Z",
+            "started_at": "2026-11-18T09:09:06Z",
+            "completed_at": "2026-11-18T09:14:55Z",
+            "steps": []
+          },
+          {
+            "id": 134694768410,
+            "name": "test (${{ matrix.os }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "runner_id": null,
+            "runner_name": null,
+            "created_at": "2026-11-18T09:09:07Z",
+            "started_at": "2026-11-18T09:09:07Z",
+            "completed_at": "2026-11-18T09:09:06Z",
+            "steps": []
+          }
+        ]
+      },
+      {
+        "run_id": 44274123377,
+        "jobs": [
+          {
+            "id": 134697813400,
+            "name": "fuzz smoke (RB-017)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697813872,
+            "name": "build release targets",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697813888,
+            "name": "vet, gofmt, golangci-lint, govulncheck",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697813939,
+            "name": "reproducible build (two builds, same sha256)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697813992,
+            "name": "e2e (Playwright, axe, keyboard)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697814111,
+            "name": "test (ubuntu-24.04)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697814246,
+            "name": "API contract and load smoke",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "runner_id": 0,
+            "runner_name": "",
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:15:13Z",
+            "steps": []
+          },
+          {
+            "id": 134697815545,
+            "name": "test (${{ matrix.os }})",
+            "status": "completed",
+            "conclusion": "skipped",
+            "runner_id": null,
+            "runner_name": null,
+            "created_at": "2026-11-18T09:14:56Z",
+            "started_at": "2026-11-18T09:14:56Z",
+            "completed_at": "2026-11-18T09:14:56Z",
+            "steps": []
+          }
+        ]
+      }
+    ],
+    "finding": "Four superseded runs were cancelled. Their required jobs had no assigned runner or executed steps, and no failed lint or other CI result is recorded. The fifth current run was queued."
+  },
+  "pr83_retained_only": {
+    "observed_at": "2026-11-18T08:39:22.396Z",
+    "head_sha": "cb95bb1894cd3b178f99ff3c54e0b04651d68cff",
+    "run_id": 44265609316,
+    "jobs": [
+      {
+        "id": 134669246743,
+        "name": "vet, gofmt, golangci-lint, govulncheck",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669247006,
+        "name": "build release targets",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669247011,
+        "name": "reproducible build (two builds, same sha256)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669247073,
+        "name": "fuzz smoke (RB-017)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669247142,
+        "name": "e2e (Playwright, axe, keyboard)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669247282,
+        "name": "API contract and load smoke",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669247299,
+        "name": "test (ubuntu-24.04)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 134669250281,
+        "name": "test (${{ matrix.os }})",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ],
+    "finding": "The retained snapshot shows seven queued required jobs, not a failure. This is not a complete refreshed PR83 history."
+  },
+  "wording_recommendation": "Describe the traceability regeneration as such. Attribute any claimed local command failure to the author and its command/log. A GitHub CI failure claim requires a corresponding failed run or job, which is absent from the verified PR82 history and unestablished by the retained PR83 snapshot.",
+  "pr78_run": {
+    "id": 44274774152,
+    "head": "1d84c6d5b849af1e1ad19e71f95462873f96973f",
+    "observed_status": "queued",
+    "qualification_state": "Source claims awaiting correction; not added to merge-qualification watch yet."
+  }
+}

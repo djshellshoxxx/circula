@@ -14,6 +14,8 @@ Terms such as *network*, *member*, *credit*, *transaction* and *system account* 
 
 Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read at `31b1015` and re-checked at `925f637` (see TRACEABILITY.md). **built** = behaviour exists in code; **partial** = exists with the gaps stated, or the required verification was not run; **not built**; **deferred** = out of MVP by this spec or a recorded decision. Code paths and test names: [TRACEABILITY.md](../TRACEABILITY.md). Open owner decisions and resolved questions: [DECISIONS.md](../DECISIONS.md). Status is implementation status, not a compliance claim; no release gate has been run.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary: built 5, not built 1, partial 6.
 
 | ID | Priority | Status | Note |
@@ -27,7 +29,7 @@ Summary: built 5, not built 1, partial 6.
 | VIS-007 | P0 | partial | One artefact per target from package-release.sh; clean-machine install not tested |
 | VIS-008 | P1 | partial | Structural accessibility tests only; WCAG tooling not run. [Refreshed 2026-11-16: axe-core and contrast/target-size/greyscale specs exist in `e2e/tests`; this note is stale.] |
 | VIS-009 | P1 | partial | Export round trip implemented; import (needed for round trip) deferred |
-| VIS-010 | P1 | partial | Entity list in 06 exists; no personal-data inventory document |
+| VIS-010 | P1 | partial | Source refresh 2026-11-19: [personal-data inventory](../security/personal-data-inventory.md) records purpose, retention, export and erasure; `TestPersonalDataInventoryCoversSchema` and `TestPersonalDataInventoryRowsComplete` check coverage and populated cells. Retention decisions and the inventory's stated gaps remain open; this is not a current execution or compliance claim |
 | VIS-011 | P1 | built | No billing or payment-provider code; "payment" is trade wording only; Inspection target: `cmd/circula` and `go.mod`; repository-wide absence of monetization is not established by an automated requirement test. No execution result is implied |
 | VIS-012 | P2 | built | No route for deferred capabilities in routes.go |
 

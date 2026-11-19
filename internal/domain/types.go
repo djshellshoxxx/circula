@@ -271,10 +271,12 @@ type Invitation struct {
 	CreatedAt time.Time
 }
 
-// Session is a server-side revocable login session. ID is the SHA-256 hex of
-// the bearer token; the token itself is never stored.
+// Session is a server-side revocable login session. IDHash is the SHA-256 hex
+// of the bearer token; the token itself is never stored. PublicID is an
+// independent, immutable noncredential selector assigned by the repository.
 type Session struct {
 	IDHash     string
+	PublicID   string
 	PersonID   string
 	CreatedAt  time.Time
 	LastSeenAt time.Time

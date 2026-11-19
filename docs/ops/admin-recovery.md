@@ -1,5 +1,10 @@
 # Administrator recovery (GOV-021)
 
+This procedure documents an isolated implementation under a policy hold. Adoption requires the recorded decisions on
+permanent operator-mediated authority, authenticated approvers, waiting/objection policy and the provisional expiry;
+see [the owner gate](../audit/consolidation-completion-2026-11/GOV-021.md#owner-gate-not-decided-by-this-change).
+The technical core refresh and its CI qualification do not decide those items.
+
 Use this when a network has **no active administrator** (GOV-020: the network is read-only, "administrator required")
 and one of its members has asked to be appointed. It is the only way the platform operator takes part in appointing an
 administrator, and it is deliberately narrow (T-17):

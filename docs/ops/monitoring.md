@@ -86,7 +86,7 @@ the level of the incident procedure, [incident-response.md](incident-response.md
 | Ledger verification failure | Alert above; start-up or hourly verification log line "network frozen" | The failing network is frozen automatically: writes get `network-frozen` (423), reads work, other networks serve. Optionally put the whole instance in maintenance mode (`circula maintenance on`). Capture findings. | Follow SEC-030 ([incident-response.md](incident-response.md)). Do not auto-correct. Restore only after the product architect agrees. A network thaws on the next passing verification (hourly job or restart). | Platform operator; product architect |
 | Mail outage | Not applicable: mail is not implemented | None | None | |
 | Suspected secret exposure | Report, or alert | Rotate the secret (OPS-010). Sign everyone out with `circula revoke-sessions -reason ... -rotate-web-key` ([runbook](runbook.md#signing-everyone-out-emergency-revocation-sec-027-ops-010)). | Confirm the impact with the security owner. | Security owner |
-| Clock error on host | Logs and timestamps out of order | Fix the clock. Expiry runs on the server clock and recovers on restart. | Restart if needed. Check proposal expiry through the audit trail. | Platform operator |
+| Clock error on host | Logs and timestamps out of order. While a backup in `backup-dir` is named after the current time, the scheduled backup job logs the warning "backups named after the current time" at start-up and on each backup cycle, with `count`, `file` (the newest such backup), its `name_time` and `now` (UTC) | Fix the clock. Expiry runs on the server clock and recovers on restart. | Restart if needed. Check proposal expiry through the audit trail. | Platform operator |
 
 ## Scheduled jobs (OPS-027, OPS-028)
 

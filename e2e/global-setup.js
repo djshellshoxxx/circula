@@ -341,6 +341,14 @@ async function seed(base) {
     await pa.getByLabel('Why should it be looked at again?').fill('The chat shows a lower amount was agreed.');
     await submit(pa, 'Request re-review');
 
+    // Owner-only session metadata and a read-only confirmation page. The
+    // selector is not a bearer credential; keep the seeded sign-in active.
+    await pa.goto('/account/sessions');
+    state.sessionRevoke = await pa.getByRole('link', { name: 'Sign out here', exact: true }).getAttribute('href');
+    if (!/^\/account\/sessions\/[0-9a-f]{64}\/revoke$/.test(state.sessionRevoke || '')) {
+      throw new Error('active-session list did not link the current sign-in');
+    }
+
     await ca.close();
     await cb.close();
     await cc.close();

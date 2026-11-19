@@ -16,7 +16,9 @@ This document does not claim anonymity, cryptographic guarantees for ledger cont
 
 This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release/security approval. The audit itself identifies an AI-assisted review and pending independent professional review ([SECURITY-AUDIT-3](../audit/SECURITY-AUDIT-3.md)). Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate or independent security review is claimed here.
 
-Summary: built 8, deferred 1, not built 7, partial 18.
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. That refresh preserved the historical status labels and summary counts; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md). A separate **evidence correction dated 2026-11-19** changes only SEC-031 from built to partial because its approved-contact acceptance gate remains unresolved; all other status labels retain their historical provenance. See [the requirement evidence review](../audit/consolidation-2026-11-17/source-reviews/BUILT-REQUIREMENT-EVIDENCE.md).
+
+Previously recorded historical summary: built 8, deferred 1, not built 7, partial 18. Those recorded totals were already inconsistent with the listed rows before the SEC-031 correction. Counting the 34 rows below after that dated correction gives: built 10, deferred 1, not built 1, partial 22. This reconciles the table's counts; it does not requalify the other historical status declarations.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -33,7 +35,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-011 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Dual control built for administrator adjustments (addenda/SEC-011.md; `internal/service/dualcontrol.go`, `dualcontrol_test.go`). Write-offs and credit-limit changes not covered; wider scope is the open owner decision in addenda/SEC-011-owner-decision.md |
 | SEC-012 | P0 | built | Audit in same unit for admin actions; fixed-text in-app notice to the affected member on suspend, reinstate, removal, role change, credit-limit change, adjustment and reversal |
 | SEC-013 | P0 | partial | No operator role reads network data in product; [Refreshed 2026-11-16; "break-glass not built" is stale.] Break-glass built: reason required, time-boxed to a hard maximum of four hours, audited, readable by network administrators (addenda/SEC-013.md; `internal/service/breakglass.go`, `internal/web/h_breakglass.go`). Break-glass scope is owner gate A3-F02 (matrix) |
-| SEC-014 | P0 | partial | Minimal profile fields; data inventory document absent |
+| SEC-014 | P0 | partial | Source refresh 2026-11-19: [personal-data inventory](../security/personal-data-inventory.md) exists and is checked against migrated schema columns by `internal/store/pii_inventory_test.go`, including forbidden field names and complete purpose/retention cells. `TestOverLengthFreeTextRejectedPerField` checks member-editable text limits. The inventory explicitly retains unresolved retention/erasure gaps; current runtime qualification and counsel decisions are separate |
 | SEC-015 | P0 | built | Network-scoped queries and cross-network tests |
 | SEC-016 | P0 | built | Members-only directory; no-index header and meta on every page; stable member reference on trade confirmation steps, directory, member page and same-name entries of the trade form (tests) |
 | SEC-017 | P0 | built | Member and admin scopes; CSV formula neutralisation; 24h download expiry |
@@ -50,7 +52,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600. [Refreshed 2026-11-16: optional encryption at rest is built, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md; the note above describes the default, unencrypted state] |
 | SEC-029 | P1 | partial | Module versions pinned; govulncheck and SBOM module list in CI; dependency checksum failure test not present |
 | SEC-030 | P0 | partial | Incident contacts and failure table in docs/ops; drills not recorded |
-| SEC-031 | P1 | built | SECURITY.md with private reporting channel; owner approval of contact pending (DEC-026); Source: `SECURITY.md`; private reporting policy exists, but contact/key placeholders and owner approval remain DEC-026; policy text is not a passing test. No execution result is implied |
+| SEC-031 | P1 | partial | Evidence correction 2026-11-19: `SECURITY.md` defines scope, private reporting and response targets, but fallback contact/key placeholders and confirmation that repository private reporting is enabled remain unresolved. An owner-approved contact channel is an explicit acceptance criterion (DEC-026), so policy text alone does not establish completion. Documentation inspection only; no test execution or owner approval is implied |
 | SEC-032 | P1 | partial | Grant defaults to zero; cap and open-mode confirmation not built |
 | SEC-033 | P1 | partial | Tests cover most P0 SEC items; independent review not performed |
 | SEC-034 | P2 | deferred | Tamper-evident option deferred; unkeyed chain already present (DEC-044) |

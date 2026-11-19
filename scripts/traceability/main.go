@@ -95,6 +95,15 @@ func main() {
 		if err != nil {
 			fatal(err)
 		}
+		// A regenerated report can still contain conflicting definitions. Keep
+		// generation diagnostic, but never qualify an ambiguous requirement set.
+		if len(res.dups) > 0 {
+			ids := make([]string, len(res.dups))
+			for i, duplicate := range res.dups {
+				ids[i] = duplicate.ID
+			}
+			fatal(fmt.Errorf("duplicate requirement definitions: %s", strings.Join(ids, ", ")))
+		}
 		if !bytes.Equal(old, res.out) {
 			fmt.Fprintf(os.Stderr, "traceability: %s is out of date (%s); run make traceability\n", out, firstDiff(old, res.out))
 			os.Exit(1)

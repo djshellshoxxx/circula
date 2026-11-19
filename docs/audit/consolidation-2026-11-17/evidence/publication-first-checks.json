@@ -1,0 +1,55 @@
+{
+  "base": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+  "staged_tree": "3c16c7f19c605c9e59321955767459e87b3e4fb8",
+  "started_at": "2026-11-18T10:17:13.388717+00:00",
+  "checks": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 2,
+      "elapsed_seconds": 0.015,
+      "log": "audit-root/final-publication---check.log",
+      "output_summary": ":12: space before tab in indent.\n+ \tnoErr(t, w.respond(w.b, decided.ID, \"it was delivered\"))\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:13: space before tab in indent.\n+ \tdecided = tu.Must(w.resolve(rev, decided.ID, domain.OutcomeDismissed, 0, \"delivered\"))\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:17: space before tab in indent.\n+ \ttu.Must(w.setPolicy(func(p *domain.Policy) { p.ResponsePeriodDays = 0; p.ReReviewWindowDays = 1 }, nil, \"\"))\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:18: space before tab in indent.\n+ \tif p := w.netNow().Policy; p.ResponsePeriodDays != 0 || p.ReReviewWindowDays != 1 {\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:19: space before tab in indent.\n+ \t\tt.Fatalf(\"precondition: the change is in force at once: %d/%d\", p.ResponsePeriodDays, p.ReReviewWindowDays)\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CURRENT-POLICY-CONTROL.diff:15: space before tab in indent.\n+ \t}\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:4: space before tab in indent.\n+ \tnoErr(t, w.respond(w.b, decided.ID, \"it was delivered\"))\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:5: space before tab in indent.\n+ \tdecided = tu.Must(w.resolve(rev, decided.ID, domain.OutcomeDismissed, 0, \"delivered\"))\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:9: space before tab in indent.\n+ \ttu.Must(w.setPolicy(func(p *domain.Policy) { p.ResponsePeriodDays = 0; p.ReReviewWindowDays = 1 }, nil, \"\"))\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:10: space before tab in indent.\n+ \tif p := w.netNow().Policy; p.ResponsePeriodDays != 0 || p.ReReviewWindowDays != 1 {\ndocs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:11: space before tab in indent.\n+ \t\tt.Fatalf(\"precondition: the change is in force at once: %d/%d\", p.ResponsePeriodDays, p.ReReviewWindowDays)\n"
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/check-hygiene.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.157,
+      "log": "audit-root/final-publication-scripts_check-hygiene.sh.log",
+      "output_summary": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\nhygiene checks: ok\n"
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/check-action-pins.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.085,
+      "log": "audit-root/final-publication-scripts_check-action-pins.sh.log",
+      "output_summary": "action pins and permissions: ok\n"
+    },
+    {
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/gitleaks/bin/gitleaks",
+        "dir",
+        ".",
+        "--no-banner",
+        "--redact",
+        "--verbose"
+      ],
+      "exit_code": 1,
+      "elapsed_seconds": 2.552,
+      "log": "audit-root/final-publication-secret.log",
+      "output_summary": "ion-2026-11-17/evidence/auth82-compatible-followup.json:generic-api-key:8\n\nFinding:     \"internal/service/password_proof_test.go\": \"\u001b[1;3;mREDACTED\u001b[0m\"\nSecret:      \u001b[1;3;mREDACTED\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.558695\nFile:        docs/audit/consolidation-2026-11-17/evidence/mfa-password-proof-evidence.json\nLine:        13\nFingerprint: docs/audit/consolidation-2026-11-17/evidence/mfa-password-proof-evidence.json:generic-api-key:13\n\nFinding:     \"docs/specs/07-api-contract.md\": \"\u001b[1;3;mREDACTED\u001b[0m\"\nSecret:      \u001b[1;3;mREDACTED\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.841732\nFile:        docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json\nLine:        16\nFingerprint: docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json:generic-api-key:16\n\nFinding:     \"docs/specs/07-api-contract.md\": \"\u001b[1;3;mREDACTED\u001b[0m\"\nSecret:      \u001b[1;3;mREDACTED\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.916027\nFile:        docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json\nLine:        23\nFingerprint: docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json:generic-api-key:23\n\nFinding:     \"docs/specs/07-api-contract.md\": \"\u001b[1;3;mREDACTED\u001b[0m\"\nSecret:      \u001b[1;3;mREDACTED\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.841732\nFile:        docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json\nLine:        30\nFingerprint: docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json:generic-api-key:30\n\nFinding:     \"docs/specs/07-api-contract.md\": \"\u001b[1;3;mREDACTED\u001b[0m\"\nSecret:      \u001b[1;3;mREDACTED\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.793943\nFile:        docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json\nLine:        38\nFingerprint: docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json:generic-api-key:38\n\n2:17AM INF scanned ~14719953 bytes (14.72 MB) in 2.49s\n2:17AM WRN leaks found: 6\n"
+    }
+  ],
+  "finished_at": "2026-11-18T10:17:16.198354+00:00",
+  "status": "failed"
+}

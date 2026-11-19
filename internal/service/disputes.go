@@ -60,8 +60,15 @@ func (s *Service) OpenDispute(ctx context.Context, actor domain.Actor, netID str
 			if now.After(closes) {
 				return "", domain.InvalidState("the dispute window closed on %s", closes.Format("2006-01-02"))
 			}
+			// Bind the exact version in the same serialized write as opening.
+			// Reconstructing it later from wall time permits retroactive changes
+			// when a later update shares this millisecond or the clock rolls back.
+			_, policyVersion, err := tx.PolicyInForceAt(netID, now)
+			if err != nil {
+				return "", err
+			}
 			d := &domain.Dispute{ID: s.id(), NetworkID: netID, TxID: t.ID, OpenedBy: p.member.ID, Category: in.Category,
-				Statement: in.Statement, Status: domain.DisputeOpen, OpenedAt: now}
+				Statement: in.Statement, Status: domain.DisputeOpen, OpenedAt: now, PolicyVersion: policyVersion}
 			if err := tx.InsertDispute(d); err != nil {
 				if domain.CodeOf(err) == domain.CodeConflict {
 					return "", domain.InvalidState("a dispute is already open on this transaction")
@@ -80,7 +87,7 @@ func (s *Service) OpenDispute(ctx context.Context, actor domain.Actor, netID str
 			}
 			return d.ID, s.audit(tx, p, auditEntry{Action: domain.ActDisputeOpened, TargetType: "dispute", TargetID: d.ID,
 				IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
-				After: map[string]any{"transaction": t.ID, "category": in.Category, "status": "open"}})
+				After: map[string]any{"transaction": t.ID, "category": in.Category, "status": "open", "policy_version": policyVersion}})
 		}, func(id string) (*domain.Dispute, error) { return tx.GetDispute(netID, id) })
 		return err
 	})

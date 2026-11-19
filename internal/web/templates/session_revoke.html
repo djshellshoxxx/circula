@@ -1,0 +1,16 @@
+{{define "content"}}
+<h2>{{if .D.Current}}{{msg "sessions.current"}}{{else}}{{msg "sessions.other"}}{{end}}</h2>
+<dl>
+  <dt>{{msg "sessions.started"}}</dt><dd>{{time .D.CreatedAt}}</dd>
+  <dt>{{msg "sessions.last_active"}}</dt><dd>{{time .D.LastSeenAt}}</dd>
+</dl>
+<p>{{if .D.Current}}{{msg "sessions.current_consequence"}}{{else}}{{msg "sessions.other_consequence"}}{{end}}</p>
+<form method="post" action="/account/sessions/{{.D.ID}}/revoke" novalidate>
+  {{template "csrf" .}}
+  <div class="field radio">
+    <label for="f-confirm"><input type="checkbox" id="f-confirm" name="confirm" value="yes" required{{if .Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> {{msg "sessions.confirm_label"}}</label>
+    {{if .Err "confirm"}}<p class="field-error" id="e-confirm">{{.Err "confirm"}}</p>{{end}}
+  </div>
+  <div class="actions"><button type="submit">{{msg "sessions.confirm_button"}}</button> <a href="/account/sessions">{{msg "sessions.cancel"}}</a></div>
+</form>
+{{end}}

@@ -105,32 +105,40 @@ var scopeTables = map[ExportScope][]store.ExportTable{
 }
 
 // AuthorizeExportDownload re-checks, at download time, that actor may still
-// obtain an export of scope from netID (SA2-17): a member who was demoted,
-// suspended, departed or erased since the export was made must not fetch a
-// stored artefact. Members may fetch ExportMine; every other scope needs an
-// active administrator. It writes nothing.
+// obtain an export of scope from netID (SA2-17). Network-wide scopes need an
+// active administrator; suspended and departed members may still fetch their
+// own retained history unless the membership has been erased. It writes nothing.
 func (s *Service) AuthorizeExportDownload(ctx context.Context, actor domain.Actor, netID string, scope ExportScope) error {
 	if _, ok := scopeTables[scope]; !ok {
 		return domain.Invalid("scope", "unknown export scope")
 	}
 	return s.view(ctx, func(tx store.Tx) error {
-		p, err := s.open(tx, actor, netID, domain.ScopeRead)
-		if err != nil {
-			return err
-		}
-		if scope == ExportMine {
-			if p.member == nil || p.member.Status == domain.MemberPending {
-				return domain.Forbidden("no data to export")
-			}
-			if done, err := tx.GetErasure(netID, p.member.ID); err != nil {
-				return err
-			} else if done != nil {
-				return domain.Forbidden("no data to export")
-			}
-			return nil
-		}
-		return p.requireAdmin()
+		_, err := s.authorizeExport(tx, actor, netID, scope)
+		return err
 	})
+}
+
+// authorizeExport resolves authority inside the caller's transaction. Creation
+// and download share the same rules; admission alone never authorizes a later
+// data snapshot. Callers validate scope against scopeTables first.
+func (s *Service) authorizeExport(tx store.Tx, actor domain.Actor, netID string, scope ExportScope) (*principal, error) {
+	p, err := s.open(tx, actor, netID, domain.ScopeRead)
+	if err != nil {
+		return nil, err
+	}
+	if scope == ExportMine {
+		if p.member == nil || p.member.Status == domain.MemberPending {
+			return nil, domain.Forbidden("no data to export")
+		}
+		if done, err := tx.GetErasure(netID, p.member.ID); err != nil {
+			return nil, err
+		} else if done != nil {
+			return nil, domain.Forbidden("no data to export")
+		}
+	} else if err := p.requireAdmin(); err != nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 // Export streams an export package to sink and returns its manifest. Members
@@ -147,18 +155,9 @@ func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string, 
 	if format != FormatCSV && format != FormatJSON {
 		return nil, domain.Invalid("format", "must be csv or json")
 	}
-	var memberID string
 	err := s.update(ctx, func(tx store.Tx) error {
-		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		p, err := s.authorizeExport(tx, actor, netID, scope)
 		if err != nil {
-			return err
-		}
-		if scope == ExportMine {
-			if p.member == nil || p.member.Status == domain.MemberPending {
-				return domain.Forbidden("no data to export")
-			}
-			memberID = p.member.ID
-		} else if err := p.requireAdmin(); err != nil {
 			return err
 		}
 		// SA-11: per-actor quota, checked before anything is written, so a flood
@@ -180,9 +179,17 @@ func (s *Service) Export(ctx context.Context, actor domain.Actor, netID string, 
 	}
 	var man *Manifest
 	err = s.view(ctx, func(tx store.Tx) error {
-		net, err := tx.GetNetwork(netID)
+		// A role, membership or erasure can change after the audit unit
+		// commits. Recheck before creating any file, in the same snapshot
+		// that supplies every exported row (SEC-009, SA2-17, DAT-037).
+		p, err := s.authorizeExport(tx, actor, netID, scope)
 		if err != nil {
-			return domain.NotFound("network")
+			return err
+		}
+		net := p.net
+		var memberID string
+		if scope == ExportMine {
+			memberID = p.member.ID
 		}
 		seq, err := tx.LedgerSeq(netID)
 		if err != nil {

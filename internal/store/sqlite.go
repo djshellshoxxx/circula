@@ -114,7 +114,7 @@ func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, 
 	// Freed pages are overwritten with zeros so deleted text does not linger
 	// in the file (RB-003).
 	q.Add("_pragma", "secure_delete(1)")
-	dsn := "file:" + path + "?" + q.Encode()
+	dsn := fileURI(path) + "?" + q.Encode()
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("store: open: %w", err)
@@ -209,7 +209,7 @@ func (s *SQLite) run(ctx context.Context, begin string, readOnly bool, fn func(T
 			return
 		}
 		// Roll back on error or panic, even if ctx is already cancelled.
-		_, _ = conn.ExecContext(context.Background(), "ROLLBACK")
+		rollbackOrDiscard(conn)
 		if r := recover(); r != nil {
 			panic(r)
 		}
@@ -228,6 +228,15 @@ func (s *SQLite) run(ctx context.Context, begin string, readOnly bool, fn func(T
 		}
 	}
 	return nil
+}
+
+// rollbackOrDiscard leaves no uncertain transaction available to the next
+// pooled request, even if cleanup fails or the caller's context was cancelled.
+// The original operation error or panic remains the caller's result.
+func rollbackOrDiscard(conn *sql.Conn) {
+	if _, err := conn.ExecContext(context.Background(), "ROLLBACK"); err != nil {
+		_ = conn.Raw(func(any) error { return driver.ErrBadConn })
+	}
 }
 
 type querier interface {

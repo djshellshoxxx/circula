@@ -1,0 +1,73 @@
+{
+  "pr_head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+  "compared_base": "a62071d2c4e65027f4918c90d63e804b1deceb60",
+  "actual_checkout": "f2dd3bdde47208d2d7132b76ae7cf2e00dd5b1fd",
+  "new_top_level_tests": [
+    "TestBackupDirectoryWithURIMetacharacters",
+    "TestBackupStagingRefusesForeignOwnedParent",
+    "TestBackupStagingRequiresPrivateOrStickyParent",
+    "TestFileURIEscaping",
+    "TestLeasedWorkCleanupRefusesSubstitutedDirectory",
+    "TestSQLiteOpensExactPathWithURIMetacharacters",
+    "TestSecureRemoveAllDoesNotFollowDirectorySymlink",
+    "TestSecureRemoveLeavesHardLinkedDataIntact",
+    "TestZeroFileRefusesReplacedName"
+  ],
+  "matching_terminal_results": [
+    {
+      "Time": "2026-11-18T08:56:37.963706929Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestBackupDirectoryWithURIMetacharacters"
+    },
+    {
+      "Time": "2026-11-18T08:56:37.965654258Z",
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestBackupStagingRefusesForeignOwnedParent"
+    },
+    {
+      "Time": "2026-11-18T08:56:37.964664738Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestBackupStagingRequiresPrivateOrStickyParent"
+    },
+    {
+      "Time": "2026-11-18T08:56:37.96564072Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestLeasedWorkCleanupRefusesSubstitutedDirectory"
+    },
+    {
+      "Time": "2026-11-18T08:56:37.964648935Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestSecureRemoveAllDoesNotFollowDirectorySymlink"
+    },
+    {
+      "Time": "2026-11-18T08:56:37.963726127Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestSecureRemoveLeavesHardLinkedDataIntact"
+    },
+    {
+      "Time": "2026-11-18T08:56:37.963716211Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestZeroFileRefusesReplacedName"
+    },
+    {
+      "Time": "2026-11-18T08:56:45.990426176Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Test": "TestFileURIEscaping"
+    },
+    {
+      "Time": "2026-11-18T08:59:10.851064072Z",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Test": "TestSQLiteOpensExactPathWithURIMetacharacters"
+    }
+  ],
+  "missing": []
+}

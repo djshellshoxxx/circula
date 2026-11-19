@@ -1,0 +1,4 @@
+=== RUN   TestProblemCodesHaveCatalogueRows
+--- PASS: TestProblemCodesHaveCatalogueRows (0.01s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	0.014s

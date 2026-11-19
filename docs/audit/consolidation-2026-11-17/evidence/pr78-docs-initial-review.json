@@ -1,0 +1,597 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-18T09:37:43.650510+00:00",
+  "pr": 78,
+  "head": "1d84c6d5b849af1e1ad19e71f95462873f96973f",
+  "tree": "bb2a1f320164098f25d2ce2ac822020a115d98c9",
+  "merge_base_with_fetched_main": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "fetched_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+  "changed_files": [
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BASELINE.md",
+      "blob": "c9f65a087fb0cdc491207bcbc16579254501a294",
+      "sha256": "fdf595064d93381a8d155d9349a0c460f628a9ccbe29d2de9e4a17fe7ee88d45",
+      "bytes": 2833,
+      "unique_value": "Keep as a distinct author-session historical snapshot: main ffa2758,96 remote branches and then-open PRs. Do not replace it with the coordinator initial 89-branch snapshot."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "blob": "c261eb6b266ea31ba3155ce5bedda50ddadd313d",
+      "sha256": "fb86948aa03674e943ac773bb166932ce9e8b90173873bfaa8e2641ca8baa5fb",
+      "bytes": 2565,
+      "unique_value": "Useful owner-decision and external-gate register; replace links to policy-held branch-only files with commit-pinned external links."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/CODE-AUDIT.md",
+      "blob": "f50fda27520fdca1d2a8d18366902e4ec019192a",
+      "sha256": "0fab94c74cc2892f96b36464fde01f5e7073cf422a7fc69f308eebcd11ee4d02",
+      "bytes": 3162,
+      "unique_value": "Useful maintainability/process follow-ups, migration coordination and platform limits; correct C2, C5, C7 factual claims."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/CONSOLIDATION-LEDGER.md",
+      "blob": "b4239d1b7276e1c78409e24f3c24c35fd163724d",
+      "sha256": "7da936b32bb15d4edb87121c72cabe658075d5450fd5da7e5a054b85f497f910",
+      "bytes": 3440,
+      "unique_value": "Useful incremental mapping of newly created/reused branches, PR ownership and held work; correct current counts/head-advance claims and timestamp its table."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/FEATURE-MATRIX.md",
+      "blob": "4f3aafa8994849e0586bfb373796ae7b0acda2ba",
+      "sha256": "6e1b3737f27786bfff615a4bc89da183c8caf3639c055e31524fe42857832b77",
+      "bytes": 5199,
+      "unique_value": "Useful cross-requirement completion/owner-gate matrix and isolated15-module inventory; correct F03 partial scope and precision of existing L9 coverage."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/MERGE-MANIFEST.md",
+      "blob": "1292fe1f143d703e0bad0c74df705c1c87bd928b",
+      "sha256": "98f15d4341e2485206fb580c99c5d5aa49f79ddcdb1b141e32fc0d8d6a6198c3",
+      "bytes": 3188,
+      "unique_value": "Useful exact merge/CI records for 77/71/72/79 and author-local qualification attribution; mark the four-merge checkpoint and refresh/append later states."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/SECURITY-AUDIT.md",
+      "blob": "4a48ec98d5e47c1d3d30041c5311a804d3152d29",
+      "sha256": "9cb843a887d1047ae2133d17a84f69494682c77ac7859e150293a8ffbcc67d40",
+      "bytes": 6072,
+      "unique_value": "Useful separate AUD4 findings, withdrawn hypotheses, reviewed areas and explicit unreviewed areas; preserve DEC014 and external SEC033; align F03 and verification statuses."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/TEST-EVIDENCE.md",
+      "blob": "4126e0927c8d2b98b99654ebbda16f51e6034a9c",
+      "sha256": "a08062b7588c62eec9962b7f18d20e487f1c700764e42bac768e90f39aea29a8",
+      "bytes": 4613,
+      "unique_value": "Useful author-environment run summaries, exact CI references and before-controls; preserve attribution, exact head/environment and skipped/privileged distinctions."
+    }
+  ],
+  "remote_branch_count_observed": 105,
+  "remote_branch_refs": [
+    {
+      "branch": "chatgpt/circula-consolidation-review-20261111",
+      "head": "02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e"
+    },
+    {
+      "branch": "chatgpt/circula-departure-pagination-20261115",
+      "head": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab"
+    },
+    {
+      "branch": "chatgpt/circula-erasure-notification-20261115",
+      "head": "26b57163d96534e79e3d35d471573d609af8a415"
+    },
+    {
+      "branch": "chatgpt/circula-expiry-starvation-20261115",
+      "head": "2eacf7718f5bb3da3be5a288024af879076a9597"
+    },
+    {
+      "branch": "chatgpt/circula-ledger-auth-guard-20261115",
+      "head": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca"
+    },
+    {
+      "branch": "chatgpt/circula-mfa-decider-20261115",
+      "head": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd"
+    },
+    {
+      "branch": "chatgpt/circula-qa042-traceability-audit-20261114",
+      "head": "fe832faced826ed2234fcd9ba0ce7f7321f04df5"
+    },
+    {
+      "branch": "chatgpt/circula-secure-json-write-20261115",
+      "head": "e02085a6aa1a1394f874b304fdf0961cc0888423"
+    },
+    {
+      "branch": "chatgpt/circula-security-audit-20261115",
+      "head": "36a80335abf54ec8d965cb350b157443ef7f2fec"
+    },
+    {
+      "branch": "chatgpt/consolidation-delta-qualification-20261114",
+      "head": "8f742877fb53cc39aea5e189a5452d924d8c08c8"
+    },
+    {
+      "branch": "chatgpt/favorites-owner-scoped-collection-20261116",
+      "head": "372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d"
+    },
+    {
+      "branch": "chatgpt/feed-signed-cursors-20261116",
+      "head": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036"
+    },
+    {
+      "branch": "chatgpt/zero-codex-continuation-spec-20261109",
+      "head": "3d9c56196625fc0c158b4652cbe2b9716c7af97b"
+    },
+    {
+      "branch": "chatgpt/zero-codex/audit-20261110-a",
+      "head": "2e729346d6297075b6ff1f7828d48681d48320b6"
+    },
+    {
+      "branch": "chatgpt/zero-codex/ci-macos-race-budget-20261110",
+      "head": "2078bf0964353892e80214b4601211e36818b889"
+    },
+    {
+      "branch": "chatgpt/zero-codex/ci-macos15-retirement-20261110",
+      "head": "1760551f5b03a89ec64d09269d631e72f2e95959"
+    },
+    {
+      "branch": "chatgpt/zero-codex/cookie-policy-adapter-20261110-b",
+      "head": "7e8481004801c01aea5d22f4720e1ead7381c4f7"
+    },
+    {
+      "branch": "chatgpt/zero-codex/decidable-expiry-20261110-a",
+      "head": "b61a8e719030ff56044d71fee632b5ba824d7698"
+    },
+    {
+      "branch": "chatgpt/zero-codex/docs-20261110-a",
+      "head": "a376a4ed592451d90d2ff7b4d3db1489a2231f96"
+    },
+    {
+      "branch": "chatgpt/zero-codex/qualify-pr19-20261110-a",
+      "head": "63b033d842a2fa40b56ff9d79e69c259db951c83"
+    },
+    {
+      "branch": "chatgpt/zero-codex/terms-return-20261110-b",
+      "head": "7620d7f51913363dd013b80cc682eb670eeff3a5"
+    },
+    {
+      "branch": "checkpoint/circula-handoff-20261025",
+      "head": "3d0080a9c43680f69f81217af3b42374e7160bf8"
+    },
+    {
+      "branch": "claude/aud4-auth-fixes",
+      "head": "6785863252d2910553b1f4a26396f14b4405d6fa"
+    },
+    {
+      "branch": "claude/aud4-f02-reviewer-reset-policy",
+      "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca"
+    },
+    {
+      "branch": "claude/aud4-f03-dispute-timelines",
+      "head": "679a3016d77c3cf34e218ecb296f1d42cc0969c8"
+    },
+    {
+      "branch": "claude/awesome-darwin-y6eaiz",
+      "head": "827e651fe151f49659cc20aefe85d4af67bdaa97"
+    },
+    {
+      "branch": "claude/backup-path-hardening",
+      "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3"
+    },
+    {
+      "branch": "claude/charming-gauss-19fbfa",
+      "head": "8b4c8ba23c99d4418348d76ff8cb38a72e7b958d"
+    },
+    {
+      "branch": "claude/circula-beta-completion-1npjw6",
+      "head": "bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b"
+    },
+    {
+      "branch": "claude/circula-build",
+      "head": "fc488445af5f43165a7103f1c1fd12483b39d448"
+    },
+    {
+      "branch": "claude/circula-completeness",
+      "head": "fcd9fc5878482e1e4d340a3448a0d2294a33eb5b"
+    },
+    {
+      "branch": "claude/circula-consolidation-audit-0sydm1",
+      "head": "1d84c6d5b849af1e1ad19e71f95462873f96973f"
+    },
+    {
+      "branch": "claude/circula-finish",
+      "head": "d350474e49522c34213d90a66904b296b9509f6c"
+    },
+    {
+      "branch": "claude/circula-pr-consolidation-q6q18n",
+      "head": "163fe1596bd7cfb8c2a22891629fc4459e6b639c"
+    },
+    {
+      "branch": "claude/circula-security-features",
+      "head": "f8278a047392541a077d57c560823471053d1e1d"
+    },
+    {
+      "branch": "claude/compassionate-cannon-txdlz1",
+      "head": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a"
+    },
+    {
+      "branch": "claude/cool-gauss-vdxlod",
+      "head": "64fa4f685780b93a349a862e3741df5b4db067cc"
+    },
+    {
+      "branch": "claude/cool-ramanujan-n2peag",
+      "head": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e"
+    },
+    {
+      "branch": "claude/fnet-204-signed-cursors",
+      "head": "0952c94a5dbab4044d7673ce9d51cec9063ab97f"
+    },
+    {
+      "branch": "claude/gov-021-admin-recovery",
+      "head": "59cf6997928330d5ec76c6bbbc81705d0d691eb4"
+    },
+    {
+      "branch": "claude/gracious-ptolemy-dscc7v",
+      "head": "1d165989e2176e214536dd22b05f7b3a4cb2f48f"
+    },
+    {
+      "branch": "claude/happy-babbage-dcumwz",
+      "head": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d"
+    },
+    {
+      "branch": "claude/happy-noether-444cum",
+      "head": "34ccb81a54ab63875d4a5305076437d6b3221049"
+    },
+    {
+      "branch": "claude/kind-einstein-v5ycss",
+      "head": "3bfb2f78fb0aad03ec3533af5985c394d64c1898"
+    },
+    {
+      "branch": "claude/lucid-archimedes-upisa8",
+      "head": "d2c1c6090a053b62dc75002464dc96bb542d6c78"
+    },
+    {
+      "branch": "claude/quirky-babbage-y9fpmm",
+      "head": "af69702be08aaf14cbe9a705ddf7f08796d5e976"
+    },
+    {
+      "branch": "claude/quirky-einstein-l9ni8m",
+      "head": "4a8db9e80509d23d3937c68575c632f4650576aa"
+    },
+    {
+      "branch": "claude/relaxed-hopper-8q4vhq",
+      "head": "2da1a293ebf2f28f349fcae9bf32184737bc8619"
+    },
+    {
+      "branch": "claude/sec-026-abuse-signals",
+      "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45"
+    },
+    {
+      "branch": "claude/sharp-archimedes-tu76rh",
+      "head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9"
+    },
+    {
+      "branch": "claude/sweet-turing-m3ftja",
+      "head": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904"
+    },
+    {
+      "branch": "claude/ux-047-auth-catalogue",
+      "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db"
+    },
+    {
+      "branch": "claude/vibrant-brahmagupta-3uofnj",
+      "head": "33b200e00c088c86ffb0d0d8176f1575376a9b49"
+    },
+    {
+      "branch": "codex/circula-checkpoint-recovery-20261116",
+      "head": "12175ec348d5234c27e1c72dc8df96a091cd111c"
+    },
+    {
+      "branch": "codex/circula-common-ui-catalog-20261116",
+      "head": "a112c979932bc7b9e209455d3df14dfebc60243a"
+    },
+    {
+      "branch": "codex/circula-consolidate-20261030",
+      "head": "7643fb616208cc318939ded809e6cada66bb7415"
+    },
+    {
+      "branch": "codex/circula-core-checkpoint-20261116",
+      "head": "15375a8dc87544849b4a85fa128ce77be1103814"
+    },
+    {
+      "branch": "codex/circula-core-completion-20261116",
+      "head": "e3c60a62c065567ff67fc2e219a724b6fd91ca76"
+    },
+    {
+      "branch": "codex/circula-evidence-20261116",
+      "head": "f6ea3213e663c7e37d678b018861b6703947e3e0"
+    },
+    {
+      "branch": "codex/circula-financial-messages-20261116",
+      "head": "cf5abf5cfb00638e1772a7e34014a352048d6b35"
+    },
+    {
+      "branch": "codex/circula-integration-plan-20261030",
+      "head": "127943ba7aa2cb154d3e65d13279e739b901416f"
+    },
+    {
+      "branch": "codex/circula-message-catalogs-20261116",
+      "head": "96059bb4b8ae23ad6e4e45428bf69288bec4c182"
+    },
+    {
+      "branch": "codex/circula-noscript-qa",
+      "head": "ba57512918195423b25bc7958ff0b8af6df7ed7a"
+    },
+    {
+      "branch": "codex/circula-qualification-20261116",
+      "head": "dc89212a8bf1e1207e5443ffc719670623de70e1"
+    },
+    {
+      "branch": "codex/circula-responsive-qa",
+      "head": "04e11989b811b4541a20b4e06e7a020beabb6af3"
+    },
+    {
+      "branch": "codex/circula-resume-20261024",
+      "head": "f4bfe6bc3f81c94b859abeae902ae862ea6e143e"
+    },
+    {
+      "branch": "codex/circula-staging-refresh-docs",
+      "head": "9c0bc500cb19f11f18694c76d134f4bfebf896e7"
+    },
+    {
+      "branch": "codex/circula-support-boundaries-20261028",
+      "head": "837d51b0d5374822b28f1b3a9206f9e2d23bd60c"
+    },
+    {
+      "branch": "codex/dashboard-amounts-meter-20261116",
+      "head": "d53196cc6907f27222661246a7767bb0aa123a76"
+    },
+    {
+      "branch": "consolidation/http-persistence-regressions-20261116",
+      "head": "050798c9cf94598efd0fff15f7a8a74bb3c4f4a1"
+    },
+    {
+      "branch": "consolidation/recover-future-specifications",
+      "head": "3a776e6304551c21ff372a8ae962606108dde4ff"
+    },
+    {
+      "branch": "dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "head": "3fa76cdb590182eaff42fc4044cf3538275eea6b"
+    },
+    {
+      "branch": "dependabot/go_modules/golang.org/x/text-0.44.0",
+      "head": "4a6ea9ab3dff3bdf1f3597e98abd449b203afb11"
+    },
+    {
+      "branch": "docs/fnet-203-optional-trade-receipts",
+      "head": "3d6ed55b2e44d31f7350814d87ba44564e8344c0"
+    },
+    {
+      "branch": "docs/foundational-spec-shells",
+      "head": "d96f2e75634bff074d26965ae93c2fe00c6f7f24"
+    },
+    {
+      "branch": "docs/foundational-specifications",
+      "head": "22e9202f19f55aa46be4b115edbe84178e9cee0b"
+    },
+    {
+      "branch": "docs/future-usability-network-specs-20261111",
+      "head": "f4a051c1c1af815e7bb6a902929108e155145c97"
+    },
+    {
+      "branch": "docs/readme-and-wiki",
+      "head": "db7826495ec2e8bd3f5459afa5f619cdc8fe8def"
+    },
+    {
+      "branch": "future/fnet-201-matching-20261116",
+      "head": "12850290c6bca7720853c33689662d751aced160"
+    },
+    {
+      "branch": "future/fnet-202-favorites-20261116",
+      "head": "efc9d696eea2dd3260ecb6c5091802ef31e20572"
+    },
+    {
+      "branch": "future/fnet-203-receipts-20261116",
+      "head": "bd2fbdbd3adf77b27fa12335ff2827359423aea3"
+    },
+    {
+      "branch": "future/fnet-204-feed-20261116",
+      "head": "5d3819c3b3af031b75eceb5251da0226a4ecee77"
+    },
+    {
+      "branch": "future/fnet-205-analytics-20261116",
+      "head": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f"
+    },
+    {
+      "branch": "future/fnet-206-areas-20261116",
+      "head": "8b444b20139e3e687db494b3fe36bb3643148e5b"
+    },
+    {
+      "branch": "future/fnet-207-recurring-20261116",
+      "head": "0437e54897c6d9cfb3f2577807b82dd038493850"
+    },
+    {
+      "branch": "future/fnet-208-governance-20261116",
+      "head": "b4f511372ec26dc63d005bb50d87c56e18fc1a88"
+    },
+    {
+      "branch": "future/fnet-209-federation-20261116",
+      "head": "1b3c92e03007e35e3f190e719a1ea78a807d4102"
+    },
+    {
+      "branch": "future/fux-101-pwa-20261116",
+      "head": "a6326b8725fe6d7270997b4a284cbbc129022dd1"
+    },
+    {
+      "branch": "future/fux-102-qr-20261116",
+      "head": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401"
+    },
+    {
+      "branch": "future/fux-103-discovery-20261116",
+      "head": "34d0f889631e2d133149a89a276cf9c71fd261a9"
+    },
+    {
+      "branch": "future/fux-104-notifications-20261116",
+      "head": "3bdf8e92d84af2c660c615bcf956cf76752e86ae"
+    },
+    {
+      "branch": "future/fux-105-messaging-20261116",
+      "head": "7f92251cdb0d6ed5d9559730045a021a173a278b"
+    },
+    {
+      "branch": "future/fux-106-onboarding-20261116",
+      "head": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9"
+    },
+    {
+      "branch": "future/module-catalog-20261116",
+      "head": "dfa4779d05a47bc0397110ecfbb14659ce3884d7"
+    },
+    {
+      "branch": "haiku/circula-consolidation",
+      "head": "6fbfa13fb696d38e8e120377c0eee09af1ac44f0"
+    },
+    {
+      "branch": "integration/admin-grant-notice-pagination-20261117",
+      "head": "cb25b41febd43273cd4aa856072406b210089d81"
+    },
+    {
+      "branch": "integration/backup-private-staging-20261117",
+      "head": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b"
+    },
+    {
+      "branch": "integration/browser-parity-clock-20261117",
+      "head": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+    },
+    {
+      "branch": "integration/erasure-fixture-stability-20261117",
+      "head": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f"
+    },
+    {
+      "branch": "integration/release-threshold-check-20261117",
+      "head": "ec98caba7328790ef36f0f2c144644bc05155d6b"
+    },
+    {
+      "branch": "integration/store-untrusted-schema-20261117",
+      "head": "b1cd8f38450ae966cfea99d59a131175d7b798dd"
+    },
+    {
+      "branch": "integration/throttle-documentation-20261117",
+      "head": "83de536ee373a7c4997222cf58ff563c53c8cbbc"
+    },
+    {
+      "branch": "main",
+      "head": "b4398074ae4ca72559235ca50242cfcb7a934eec"
+    },
+    {
+      "branch": "planning/future-cli-specs-20261110",
+      "head": "8e2372c064258fb8c53554ae8f6b81957932e885"
+    },
+    {
+      "branch": "work/spec-completion",
+      "head": "d39bfef12d4ac1430815fa49ad799fb1c4bf9964"
+    }
+  ],
+  "reused_pr70_84_branch": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+  "findings": [
+    {
+      "id": "78-R1",
+      "location": "CONSOLIDATION-LEDGER.md:5-6,19",
+      "severity": "required accuracy correction",
+      "problem": "Current count 104 = 96 + 8 is wrong; the fetched inventory has 105 branches, including nine additions after the 96-branch baseline. The unchanged-tip claim conflates frozen PR heads and live refs, including the reused PR70/84 branch.",
+      "fix": "Use a timestamped 105 = 96 + 9 inventory. Preserve the historical baseline and record the explicit forward branch advance separately from frozen PR70 and ordinary main movement."
+    },
+    {
+      "id": "78-R2",
+      "location": "FEATURE-MATRIX.md:18; CODE-AUDIT.md:10; SECURITY-AUDIT.md:27",
+      "severity": "required security-scope correction",
+      "problem": "F03 is called fixed or described as durably bound; the remaining-work column mentions only the same-millisecond case. Historical lookup also retains the independently reproduced clock-rollback defect.",
+      "fix": "Classify AUD4-F03 as partial, reference corrected PR87 head679a3016, and retain both residuals plus the outstanding durable-binding/backfill design. This does not approve an owner policy."
+    },
+    {
+      "id": "78-R3",
+      "location": "CODE-AUDIT.md:9",
+      "severity": "required source-accuracy correction",
+      "problem": "The claim that checkCurrentPassword callers only read is false: MFA enrolment/confirmation later write MFA records, recovery codes and session revocations.",
+      "fix": "Remove the reassurance and track separate review of these paths. This source observation is not an independently reproduced exploit."
+    },
+    {
+      "id": "78-R4",
+      "location": "CODE-AUDIT.md:12",
+      "severity": "required CI-accuracy correction",
+      "problem": "Neither Makefile nor CI already uses 40m as claimed. Makefile test-race adds no timeout; Linux CI race uses20m, macOS25m, and the Windows ordinary command adds none.",
+      "fix": "Attribute 40m to the author local override and quote actual workflow commands; do not change gates to fit the document."
+    },
+    {
+      "id": "78-R5",
+      "location": "CODE-AUDIT.md:14",
+      "severity": "required CI-evidence correction",
+      "problem": "Four superseded PR82 runs were cancelled before any runner or step executed. The retained PR83 snapshot is queued and does not establish a traceability failure.",
+      "fix": "Describe the actual regeneration. Attribute any local failure to an author/log; require a failed CI run/job before asserting a CI failure."
+    },
+    {
+      "id": "78-R6",
+      "location": "BLOCKERS.md:12-13",
+      "severity": "required link correction",
+      "problem": "GOV-021.md and SEC-026.md are absent from the proposed main tree while PR85/86 remain held.",
+      "fix": "Replace these links with commit-pinned external links. Verify AUD4-AUTH-FIXES links after the planned PR82 merge."
+    },
+    {
+      "id": "78-R7",
+      "location": "MERGE-MANIFEST.md:3-8,19,27; SECURITY-AUDIT.md:23-24; TEST-EVIDENCE.md:32",
+      "severity": "required scope/attribution clarification",
+      "problem": "The four-merge manifest describes main cdc8112 and PR81 open while other current tables record PR81 merged. Its universal local-qualification premise exceeds its PR77 row. Root-only D02 fail-before evidence is not independently retained here.",
+      "fix": "Label the historical checkpoint or append current receipts; scope qualification claims per row. Attribute author runs explicitly. Request SHA, command, UID/platform and terminal before/after results for the privileged test, or label it unverified author evidence. Our UID1000 skip does not prove the author claim false."
+    },
+    {
+      "id": "78-R8",
+      "location": "FEATURE-MATRIX.md:25-26",
+      "severity": "qualification wording correction",
+      "problem": "The remaining L9 wording omits the existing Linux checkpoint-write/restart/replay regression.",
+      "fix": "Identify TestSQLiteCheckpointWriteFailurePreservesCommittedTrade and cite its execution where available; distinguish broader read, fsync, truncate, other checkpoint and uncertain-commit qualification still outstanding."
+    }
+  ],
+  "unresolved_relative_links_before_planned82merge": [
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "line": 10,
+      "target": "docs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+      "href": "AUD4-AUTH-FIXES.md"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "line": 11,
+      "target": "docs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+      "href": "AUD4-AUTH-FIXES.md"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "line": 12,
+      "target": "docs/audit/consolidation-completion-2026-11/GOV-021.md",
+      "href": "GOV-021.md"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "line": 13,
+      "target": "docs/audit/consolidation-completion-2026-11/SEC-026.md",
+      "href": "SEC-026.md"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/SECURITY-AUDIT.md",
+      "line": 25,
+      "target": "docs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+      "href": "AUD4-AUTH-FIXES.md"
+    }
+  ],
+  "c7_verification": {
+    "path": "audit-f/final-ci/pr78-c7-ci-claim-verification.json",
+    "sha256": "f497f0aa80f5eac6fe2cc113a0e40e34f0affdb7d4a8cb4bd61345023df909d9",
+    "observed_at": "2026-11-18T09:34:40.686Z",
+    "pr82_past_runs": [
+      44264673171,
+      44265484103,
+      44273216945,
+      44274123377
+    ],
+    "required_cancelled_jobs": 28,
+    "executed_steps": 0,
+    "pr83_scope": "Only retainedqueued snapshot; no expandedhistory claim."
+  },
+  "readiness": "Preserve all eight documents; merge after factual, scope and link corrections, exact-head refresh and required CI. Do not discard useful material as duplicate.",
+  "constraints": "Read-only Git, source and evidence inspection; no tests, Go execution, tracked source edits or remote writes."
+}

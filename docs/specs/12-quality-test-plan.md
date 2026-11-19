@@ -16,11 +16,13 @@ Normative terms follow [00 section 1](00-conventions.md#1-normative-terms). Test
 
 The table records the historical implementation snapshot at HEAD `925f637` on branch `claude/circula-build`; it is not an assessment of the current branch. Statuses were first read at `31b1015` and re-checked at `925f637` (see [TRACEABILITY.md](../TRACEABILITY.md)). **built** means behaviour exists in that snapshot; **partial** means behaviour exists with the stated gaps, or required verification was not run; **not built** and **deferred** retain their meanings in that snapshot. Code paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md). Current checkpoint evidence and limitations are in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). Neither this snapshot nor the current checkpoint is a compliance claim or release attestation.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary: built 14, deferred 1, not built 6, partial 23.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| QA-001 | P0 | partial | `TestQA001InvariantSequences`: 13-operation list covered and asserted, two or three networks, LED-1/2/3/5/7, GOV-007 and status chain checked after every operation, failing seed saved as JSON fixture; short run 250 sequences (1000 recommended, about 2 min on 4 CPUs); 100,000-sequence long run not wired into CI |
+| QA-001 | P0 | partial | Source refresh 2026-11-19: `TestQA001InvariantSequences` checks the operation sequences and saves failure seeds/fixtures; defaults are 250 sequences, or 50 with race instrumentation. `.github/workflows/qa001-manual.yml` invokes the tested `scripts/run_qa001.py` runner with an explicit default workload of 100,000 and uploads evidence. This manual workflow is not an approved automatic merge/release long-run gate; DEC-023 and actual qualification remain separate |
 | QA-002 | P0 | built | Cached balance agreement checked after random operations |
 | QA-003 | P0 | built | Two-entry and zero-sum checks |
 | QA-004 | P0 | partial | Limit boundary covered by acceptance tests; zero and one-unit boundary cases not named |
@@ -37,8 +39,8 @@ Summary: built 14, deferred 1, not built 6, partial 23.
 | QA-015 | P0 | partial | Policy bound and lifecycle tests; notice and objection not built |
 | QA-016 | P0 | partial | Self-approval, conflict and last-admin tests; approval expiry not built |
 | QA-017 | P0 | partial | Invitation join tested at HTTP level; terms acceptance not built |
-| QA-018 | P0 | partial | Trade flow tested over HTTP and API; no browser end-to-end suite. [Refreshed 2026-11-16: the "no browser end-to-end suite" note is stale; `e2e/` holds a Playwright suite (matrix W9: 578/578). Whether a trade-flow spec is in it is UNVERIFIED] |
-| QA-019 | P0 | partial | `TestQA019DeclineAndExpiryScenario`: no entries, statuses, audit events and notices (expiry notice `trade.expired` added) at service level; expiry not run in a browser or over the API |
+| QA-018 | P0 | partial | Source refresh 2026-11-19: `e2e/tests/keyboard.spec.js` drives proposal and acceptance to completion in Chromium; `zz-noscript.spec.js` also checks completed history and the balance view without scripting. API/HTTP flow tests remain. These browser cases do not by themselves establish the whole listing-to-trade scenario or every ledger/audit assertion; current-head execution must be read from CI receipts |
+| QA-019 | P0 | partial | Source refresh 2026-11-19: `TestQA019DeclineAndExpiryAPI` and `TestQA019DeclineAndExpiryPages` exercise real API requests and server-rendered HTTP forms with injected-clock expiry, unchanged balances/entries, terminal states and once-only notices. They complement `TestQA019DeclineAndExpiryScenario`; a real-browser expiry run is not claimed |
 | QA-020 | P0 | partial | Limit boundary scenario tested at service level; browser flow not run [Refreshed 2026-11-16: an e2e suite now exists; a limit-boundary spec was not located, UNVERIFIED] |
 | QA-021 | P0 | partial | Dispute and reversal tested; party notices not built |
 | QA-022 | P0 | partial | Limit reduction tested; notice not built |
@@ -52,7 +54,7 @@ Summary: built 14, deferred 1, not built 6, partial 23.
 | QA-030 | P0 | built | Reconciliation recomputed independently by the tests over a seeded corpus (ledger, full, each member's own; CSV and JSON) and during concurrent postings: `TestExportReconcilesAcrossCorpus`, `TestExportDuringConcurrentPostingsReconciles` |
 | QA-031 | P0 | built | Member scope and canary checks in export tests |
 | QA-032 | P0 | built | Formula neutralisation test |
-| QA-033 | P0 | partial | Structural checks in Go tests; no automated WCAG checker in CI. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); axe-core in `e2e/tests/a11y.spec.js`], so the "no automated WCAG checker" note is stale |
+| QA-033 | P0 | partial | Source refresh 2026-11-19: the CI Playwright job runs `e2e/tests/a11y.spec.js` with axe-core WCAG 2.0/2.1 A/AA and 2.2 AA tags in light and dark schemes, including a page-template coverage check. Structural Go tests remain. Automation covers only rules the tool can test; current-head results, full state coverage and manual accessibility review remain separate qualification |
 | QA-034 | P0 | partial | Five no-script journeys/validation cases and 18 focus probes passed at d75f31e, including direct onboarding; original return-link regression fails; manual review remains |
 | QA-035 | P0 | not built | Manual screen-reader review not recorded |
 | QA-036 | P0 | partial | Balance text tested; contrast not checked. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/contrast.spec.js`], so the "contrast not checked" note is stale |

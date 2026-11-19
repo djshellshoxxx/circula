@@ -1,0 +1,18 @@
+=== RUN   TestFileURIEscaping
+--- PASS: TestFileURIEscaping (0.00s)
+=== RUN   TestSQLiteDistrustsSchemaOnEveryConnection
+=== RUN   TestSQLiteDistrustsSchemaOnEveryConnection/normal
+=== RUN   TestSQLiteDistrustsSchemaOnEveryConnection/raw
+--- PASS: TestSQLiteDistrustsSchemaOnEveryConnection (0.02s)
+    --- PASS: TestSQLiteDistrustsSchemaOnEveryConnection/normal (0.02s)
+    --- PASS: TestSQLiteDistrustsSchemaOnEveryConnection/raw (0.00s)
+=== RUN   TestSQLiteRefusesSchemaFunctionCalls
+=== RUN   TestSQLiteRefusesSchemaFunctionCalls/normal
+=== RUN   TestSQLiteRefusesSchemaFunctionCalls/raw
+--- PASS: TestSQLiteRefusesSchemaFunctionCalls (0.01s)
+    --- PASS: TestSQLiteRefusesSchemaFunctionCalls/normal (0.01s)
+    --- PASS: TestSQLiteRefusesSchemaFunctionCalls/raw (0.00s)
+=== RUN   TestSQLiteOpensExactPathWithURIMetacharacters
+--- PASS: TestSQLiteOpensExactPathWithURIMetacharacters (0.07s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	0.105s

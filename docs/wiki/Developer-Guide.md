@@ -111,10 +111,10 @@ Run `make help` for the authoritative target list.
 
 ## Continuous integration
 
-[`.github/workflows/ci.yml`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/.github/workflows/ci.yml) defines:
+On `main` at revision `b4398074`, [`.github/workflows/ci.yml`](https://github.com/djshellshoxxx/circula/blob/b4398074ae4ca72559235ca50242cfcb7a934eec/.github/workflows/ci.yml) defines:
 
 - **Every pull request:** the Linux gate. Lint (vet, gofmt, golangci-lint, govulncheck, action-pin check, repository hygiene, dependency licence check against the approved list, secret scan), race tests, build, reproducible build, fuzz smoke, API contract and load smoke, and the e2e job (Playwright, axe, keyboard).
-- **Main pushes, nightly and manual runs:** `test-cross`, the Go test suite on macOS Intel (race) and Windows. Not run on pull requests.
+- **Main pushes, nightly and manual runs:** `test-cross`, the Go test suite on macOS Intel (race) and Windows. On pull requests it runs only when the PR carries the `ci:cross-platform` label (see `docs/ops/ci.md`).
 
 Run results are on the Actions tab. This page does not record them (UNVERIFIED for this update). Use the run for the exact commit you are testing; a later head is not tested by an earlier run.
 

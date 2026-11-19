@@ -14,6 +14,8 @@ Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read
 
 Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). FR-054 below clarifies the required contract; it does not claim that the API or UI is implemented.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary (recounted 2026-11-16): built 63 (one marked unreviewed), not built 0, partial 2. Previous recount (2026-11-12): built 60, not built 2, partial 3.
 
 Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](../plans/circula-completion-matrix.md) and the code. Changed rows are marked "[Refreshed 2026-11-16; was ...]" in their note, so the prior value stays visible. FR-024, FR-078 and FR-038 were stale in the table although their Status text already said built. FR-067 is now built with a bounded queue linked from its stale-proposal count.
@@ -84,7 +86,7 @@ Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](..
 | FR-092 | P0 | built | Members export scope with role and limit fields; Evidence: `TestFullExportJSON`, `TestCSVFormulaNeutralisation` (member-table inclusion and CSV member export; this does not independently assert every role/limit field). Citations are not execution results |
 | FR-093 | P0 | built | Audit export scope with manifest |
 | FR-094 | P1 | built | Full export scope incl. closed networks |
-| FR-095 | P1 | partial | Export buffered in memory by API adapter; no streaming or size gates |
+| FR-095 | P1 | partial | Source refresh 2026-11-19: service rows stream through `ZipSink` to the API's disk spool (`internal/service/export_write.go`, `internal/api/h_export.go`, `export_spool.go`); stored and in-flight bytes are capped. `TestExportStreamsWithBoundedMemory` records peak heap against a buffering control and `TestParallelLargeExportsStayBounded` checks concurrent caps. Product size/duration thresholds remain open under OQ-FR-3; these citations are not current execution receipts |
 
 ## 0. How to read this file
 
@@ -459,7 +461,7 @@ Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](..
 - **Acceptance.**
   - The other party can submit a bounded response before a decision; the response is visible to the reviewer and to the opener.
   - A decision cannot be recorded before the response period in the network's policy has ended, or before the response is submitted or waived. The response period is a network policy (OQ-FR-2).
-- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Network policy `response_period_days` (default 7, 0 to 90; 0 means no waiting period; DEC-012 recommendation). `ResolveDispute` is refused with invalid-transaction-state until a response exists, the period since the dispute was opened has elapsed, or the reviewer sets `waive_response` with a `waive_reason` (audited). Silence never decides the case. OQ-FR-2 stays open for counsel review of the default.
+- **Status (as built).** Built (service `RespondToDispute`, API `POST /disputes/{id}/response`, web dispute page). One response of up to 2000 characters; visible to opener, reviewer and administrators. Network policy `response_period_days` (default 7, 0 to 90; 0 means no waiting period; DEC-012 recommendation). `ResolveDispute` is refused with invalid-transaction-state until a response exists, the period since the dispute was opened has elapsed, or the reviewer sets `waive_response` with a `waive_reason` (audited). Silence never decides the case. OQ-FR-2 stays open for counsel review of the default. Effective-time rule (GOV-001, AUD4-F03): a dispute's response period is the one of the policy version in force when the dispute was opened; a later change, shorter or longer, applies only to disputes opened after it takes effect. The decision gate, the `response_deadline` shown in the API and web page, and the overdue reminder use the same value (`TestDisputeTimelinesFixedAtOpen`, `TestDisputeTimelineChangesApplyToLaterDisputes`, `TestScheduledDisputeTimelineChangeWaitsForItsDate`).
 
 ### FR-077 · P0 · Dispute window enforcement and deadlines
 - **Rationale.** DOM-017.
@@ -472,7 +474,7 @@ Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](..
 - **Acceptance.**
   - A party can request one re-review of a decided dispute within a stated period.
   - The re-review is assigned to a different reviewer than the original and is recorded as a new decision linked to the first. The original decision is never edited.
-- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within `re_review_window_days` of the decision (network policy, default 14, 1 to 365). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
+- **Status (as built).** Built (service `RequestReReview` / `DecideReReview`, API `POST /disputes/{id}/re-review[/decision]`, web). Either party, once (database-enforced), within `re_review_window_days` of the decision (network policy, default 14, 1 to 365), taken from the policy version in force when the dispute was opened (GOV-001, AUD4-F03; the web page shows that date, `TestDisputePageReReviewDeadlineFixedAtOpen`). A different reviewer decides, recorded as a linked record; the original decision is not edited. Outcomes: confirmed, upheld, partially_upheld (a further reversal of at most what is still reversible; refused if LED-5 would be breached).
 
 ---
 

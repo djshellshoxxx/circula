@@ -1,0 +1,691 @@
+{
+  "source_commit": "12af2112fb968f1c72e874e3c18b66e9e2626208",
+  "source_tree": "8e80f4f081936b35f9945900a23f094e56d7dc0a",
+  "source_worktree_clean": true,
+  "catalogue_preflight": {
+    "entries": 525,
+    "exact_union": true,
+    "preserved_root_entries": 329,
+    "preserved_candidate_entries": 438
+  },
+  "cwd": "/workspace/scratch/bfba682cba37/circula-core",
+  "argv": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-race",
+    "-p",
+    "1",
+    "-count",
+    "1",
+    "-json",
+    "./internal/web/messages",
+    "./scripts/traceability"
+  ],
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "512MiB",
+    "GOGC": "20",
+    "PATH": "/workspace/scratch/beb70d57deba/toolchain/go/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+  },
+  "timeout_seconds": 120,
+  "scope": "Actual internal/web/messages and scripts/traceability packages with race detection. No SQLite or full-repository test invocation.",
+  "files_sha256": {
+    "go.mod": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58",
+    "go.sum": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb",
+    "internal/web/messages/auth_test.go": "0483dec14f87928801c3de47352683fac000d3fbf15508afc8dbaa57cf22f272",
+    "internal/web/messages/en.json": "dad9dd17aacf4f8b5dae884c8a38fd5a9ecdf790c310f3e2c0f57603a31c90ff",
+    "internal/web/messages/marketplace_test.go": "63e2277118315a98049f2c20c12f01a9d95cff2e130f9a0010c08fca2dc9b595",
+    "internal/web/messages/messages.go": "a1e44182435645529262c5f03a96df92bc01d478bc86d273d47a89cd9830e5d5",
+    "internal/web/messages/messages_test.go": "f372b7d9bdc2f00a19ca0244fd7fab5d23d0026be71c4655905ff17b659d75f5",
+    "internal/web/messages/onboarding_test.go": "2c12149af362bd8b949120f501deae5fad66250bd01cb78c7191f7f0a6a29aa7",
+    "internal/web/messages/progressive_test.go": "3f288e26c82fd66a7263a7007e887aa59387b43269a74dae0297c8ccde3d3241",
+    "internal/web/messages/sessions_test.go": "c4bc609a1fbbf0fc9b24fe6b666eecdb8eb7b77801e67a09da2815b3cf1e6718",
+    "internal/web/messages/validation_test.go": "03e3bff1a36f359e41074d68247c14332c79f6fad848e945c3df75bc8b1fd829",
+    "scripts/traceability/README.md": "29b7d4412d0e4b7388f83bb1a534ade4a2e7303490a0a97f8cec3e6468e4d867",
+    "scripts/traceability/check_test.go": "f432b4330a9d95ceabea89fb724094b928c3b32ad7d0adbede5f782d1a7cfddb",
+    "scripts/traceability/evidence.go": "a534e74f497d7efe23d43209111b74324f2ec6c8068db12bf66bc22b08c5dc7f",
+    "scripts/traceability/evidence_test.go": "1b6aa382ed50db19d5082ad68e19092795d7fb6bc7df0914e499ab713e212fe7",
+    "scripts/traceability/legacy-citations.tsv": "e85f9491e98f43e0bec8cb2d82ece185d2036366b992d03e4107fb01f4dbeb1b",
+    "scripts/traceability/main.go": "b4e9966a719999e74b3edeff284b5a95f50a0dbb11fdf9ef35c15457e51c5c97",
+    "scripts/traceability/main_test.go": "7391453b29c392cf73f7af29c09bc335b5eee3d4c7929e32ccb5121f6be37ddd",
+    "scripts/traceability/parse.go": "ccd79a9dbd26533fd8b84f9f85d7c69fce78cf92c31a348ba44cd17be87cf4fc",
+    "scripts/traceability/scan.go": "716d8039fafde87c39ba1c1abd31fdd3639f7f52342b2893f3f30ebaadb46831"
+  },
+  "started_at_utc": "2026-11-19T11:08:37.882261+00:00",
+  "status": "passed",
+  "finished_at_utc": "2026-11-19T11:09:23.699261+00:00",
+  "elapsed_seconds": 45.816592,
+  "exit_code": 0,
+  "timed_out": false,
+  "completion_counts": {
+    "top_level_tests": {
+      "pass": 28
+    },
+    "subtests": {
+      "pass": 69
+    },
+    "packages": {
+      "pass": 2
+    }
+  },
+  "counts_by_package": {
+    "github.com/djshellshoxxx/circula/internal/web/messages": {
+      "top_level_tests": {
+        "pass": 12
+      },
+      "subtests": {
+        "pass": 63
+      },
+      "packages": {
+        "pass": 1
+      }
+    },
+    "github.com/djshellshoxxx/circula/scripts/traceability": {
+      "top_level_tests": {
+        "pass": 16
+      },
+      "subtests": {
+        "pass": 6
+      },
+      "packages": {
+        "pass": 1
+      }
+    }
+  },
+  "completion_events": [
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAuthenticationMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/directory.results/0_members_found.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/directory.results/1_member_found.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/directory.results/1,000_members_found.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/directory.member_reference/(member_reference_1234-5678)",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/directory.propose_with/Propose_a_trade_with_Zo\u00eb_100%",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.owner_price/By_Zo\u00eb_<hours>_100%_\u00b7_price_90071992547409.93_Hours",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.by_owner/By_Zo\u00eb",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.price/price_1.00_credit",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.price_help/Price:_enter_a_positive_amount_with_up_to_1_decimal_place,_for_example_125.0.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.price_help/Price:_enter_a_positive_amount_with_up_to_2_decimal_places,_for_example_12.50.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.edit_named/Edit_Repair_&_care",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.report_named/Report_Repair_&_care",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/listing.propose_about/Propose_a_trade_about_Repair_&_care",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/profile.listings_by/Listings_by_Zo\u00eb_100%",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/profile.empty/Zo\u00eb_has_no_active_listings.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/profile.propose_with/Propose_a_trade_with_Zo\u00eb",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages/profile.report/Report_Zo\u00eb",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestMarketplaceMessages",
+      "Elapsed": 0.01
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/2_open_proposals_have_waited_at_least_72_hours_for_an_answer",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/2_disputes_are_decided_but_the_reversal_is_not_yet_posted",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1_open_proposal_has_waited_at_least_48_hours_for_an_answer",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1,000_membership_requests_are_waiting",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1_membership_request_is_waiting",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/0_membership_requests_are_waiting",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/2_active_members_are_at_or_beyond_their_credit_limit",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1_dispute_is_open_or_under_review",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1_dispute_is_decided_but_the_reversal_is_not_yet_posted",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1_active_member_is_at_or_beyond_their_credit_limit",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/0_disputes_are_open_or_under_review",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/2_invitations_end_within_48_hours",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages/1_invitation_ends_within_72_hours",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOverviewMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProposalMessageIsPlainText",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestUnknownMessageFailsVisibly",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestEveryCatalogueEntryFormats",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestOnboardingMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProgressiveMessages/freshness.snapshot",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProgressiveMessages/freshness.offline",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProgressiveMessages/freshness.history",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProgressiveMessages/session_warning.extendable",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProgressiveMessages/session_warning.fixed",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestProgressiveMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots/No_placeholder.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots/One_\\x00_and_another_\\x00.",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots/Invalid_%!d(string=\\x00).",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots/common.skip",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots/queue.party_proposal",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots/overview.pending",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAroundRejectsMissingRepeatedOrInvalidSlots",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestSessionMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.label.related_transaction_id",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.detail.choice_required",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.detail.choice_invalid",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.choice.related_transaction_id",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.field.message",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.field.message#01",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.fix.decimals",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.fix.decimals#01",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.fix.number",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.refusal.insufficient_credit",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.refusal.insufficient_credit_available",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.refusal.amount_exceeds",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.refusal.blocked",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages/validation.refusal.fields",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestValidationMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.action",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.confirm_title",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.member_action.heading",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.for_member",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.instructions",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.self_refused",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.throttled",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages/admin.reset.shown_once",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Test": "TestAdminResetMessages",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Elapsed": 1.058
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestTraceabilityCLIProcess",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestCheckRejectsRegeneratedDuplicateStatusIDs/same_status_table",
+      "Elapsed": 1.11
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestCheckRejectsRegeneratedDuplicateStatusIDs/separate_specification_files",
+      "Elapsed": 1.09
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestCheckRejectsRegeneratedDuplicateStatusIDs",
+      "Elapsed": 2.2
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestCheckAllowsSharedIDsAndConsecutiveRuleRows",
+      "Elapsed": 2.05
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestTerminalEventsRejectMalformedAndRepeatedResults/no_terminal_event",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestTerminalEventsRejectMalformedAndRepeatedResults/malformed",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestTerminalEventsRejectMalformedAndRepeatedResults/missing_time",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestTerminalEventsRejectMalformedAndRepeatedResults/duplicate",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestTerminalEventsRejectMalformedAndRepeatedResults",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestEvidenceRecorderUsesActualResultsAndRejectsStaleTree",
+      "Elapsed": 1.19
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestEvidenceRecorderRejectsSourceChangeDuringRun",
+      "Elapsed": 0.58
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestEvidenceLayerClassification",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestFailedExecutionKeepsDiagnosticOutput",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestIDPattern",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestParseSpecStatusTableAndBlocks",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestBuildReqsMergesAndFindsDuplicates",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestIDLessAndStatusClass",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestScanResolvesSymbols",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestResolveLegacyDropsMissingTargets",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestGenerateIsDeterministicAndFlags",
+      "Elapsed": 0.01
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Test": "TestSpecNoteRequiresExistingTestDeclaration",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Elapsed": 7.115
+    }
+  ],
+  "final_worktree_status": ""
+}

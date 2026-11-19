@@ -69,7 +69,11 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 		switch key {
 		case "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
 			args = []any{"12.50", "credits"}
-		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger":
+		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger", "join.network.title", "join.network.invite_only", "join.flash.joined", "join.terms.heading":
+			args = []any{"example"}
+		case "setup.amount.invalid":
+			args = []any{"Default credit limit", 2, "12.50"}
+		case "freshness.snapshot", "freshness.offline", "freshness.history", "session_warning.extendable", "session_warning.fixed":
 			args = []any{"example"}
 		case "reversal.by":
 			args = []any{"ledger reference 12345", "12.50", "credits"}
@@ -79,6 +83,26 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{1000}
 		case "overview.stale", "overview.invites":
 			args = []any{2, 48}
+		case "validation.fix.decimals":
+			args = []any{2}
+		case "validation.fix.number", "validation.refusal.insufficient_credit_available", "validation.refusal.amount_exceeds":
+			args = []any{"90071992547409.93"}
+		case "validation.refusal.blocked", "admin.reset.confirm_title", "admin.reset.for_member", "admin.reset.instructions":
+			args = []any{"example"}
+		case "validation.field.message":
+			args = []any{"Amount", "not a number", "Enter digits only, for example 12.50."}
+		case "admin.member_action.heading":
+			args = []any{"Reset password", "Zoë"}
+		case "listing.owner_price":
+			args = []any{"Zoë", "90071992547409.93", "Hours"}
+		case "listing.price":
+			args = []any{"1.00", "credit"}
+		case "listing.price_help":
+			args = []any{2, "12.50"}
+		case "listing.by_owner", "listing.edit_named", "listing.report_named", "listing.propose_about",
+			"profile.listings_by", "profile.empty", "profile.propose_with", "profile.report",
+			"directory.member_reference", "directory.propose_with":
+			args = []any{"Zoë"}
 		default:
 			if strings.HasPrefix(key, "financial.row.") {
 				args = []any{"Ana", "12.50", "credits"}

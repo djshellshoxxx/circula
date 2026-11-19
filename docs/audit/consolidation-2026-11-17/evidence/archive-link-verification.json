@@ -1,0 +1,1175 @@
+{
+  "changes": [
+    {
+      "archive": "docs/archive/specs-historical/pr1/crypto-and-crypto-libertarian-design.md",
+      "old": "../specs/03-domain-model.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/22e9202f19f55aa46be4b115edbe84178e9cee0b/docs/specs/03-domain-model.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr1/crypto-and-crypto-libertarian-design.md",
+      "old": "../specs/05-architecture.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/22e9202f19f55aa46be4b115edbe84178e9cee0b/docs/specs/05-architecture.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr1/crypto-and-crypto-libertarian-design.md",
+      "old": "../specs/09-security-privacy.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/22e9202f19f55aa46be4b115edbe84178e9cee0b/docs/specs/09-security-privacy.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "14-glossary.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "14-glossary.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "../notes/research-prior-art-mutual-credit.md",
+      "new": "../../../research/PRIOR-ART-MUTUAL-CREDIT.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "old": "../notes/research-regulatory-privacy-questions.md",
+      "new": "../../../research/REGULATORY-PRIVACY-QUESTIONS.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "05-architecture-and-trust-boundaries.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/05-architecture-and-trust-boundaries.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "05-architecture-and-trust-boundaries.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/05-architecture-and-trust-boundaries.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "14-glossary.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "05-architecture-and-trust-boundaries.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/05-architecture-and-trust-boundaries.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "02-personas-roles-and-journeys.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/02-personas-roles-and-journeys.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "14-glossary.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "../plans/traceability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/plans/traceability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "02-personas-roles-and-journeys.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/02-personas-roles-and-journeys.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "04-functional-requirements.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/04-functional-requirements.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "05-architecture-and-trust-boundaries.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/05-architecture-and-trust-boundaries.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "07-api-and-integration-contract.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/07-api-and-integration-contract.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "09-security-privacy-and-abuse.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/09-security-privacy-and-abuse.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "10-governance-and-network-operations.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/10-governance-and-network-operations.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "14-glossary.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "../notes/research-technical-standards.md",
+      "new": "research-technical-standards.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "../notes/research-regulatory-privacy-questions.md",
+      "new": "../../../research/REGULATORY-PRIVACY-QUESTIONS.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "old": "../notes/research-prior-art-mutual-credit.md",
+      "new": "../../../research/PRIOR-ART-MUTUAL-CREDIT.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "../notes/research-regulatory-privacy-questions.md",
+      "new": "../../../research/REGULATORY-PRIVACY-QUESTIONS.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "14-glossary.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/14-glossary.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "00-conventions.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/00-conventions.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "03-domain-model-and-mutual-credit-rules.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "06-data-ledger-and-audit.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/06-data-ledger-and-audit.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "08-ux-and-accessibility.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/08-ux-and-accessibility.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "11-deployment-operations-and-support.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/11-deployment-operations-and-support.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "12-quality-strategy-and-test-plan.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/12-quality-strategy-and-test-plan.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "13-assumptions-risks-decisions-roadmap.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/13-assumptions-risks-decisions-roadmap.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "18-data-export-and-portability.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904/docs/specs/18-data-export-and-portability.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "old": "../notes/research-regulatory-privacy-questions.md",
+      "new": "../../../research/REGULATORY-PRIVACY-QUESTIONS.md",
+      "verification": "relocated-source-link"
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/13-assumptions-risks-decisions-and-roadmap.md",
+      "old": "../../prompts/create-foundational-specs.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/2da1a293ebf2f28f349fcae9bf32184737bc8619/prompts/create-foundational-specs.md",
+      "verification": "source-commit-link"
+    },
+    {
+      "archive": "docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+      "old": "../../prompts/next-milestone-circula.md",
+      "new": "https://github.com/djshellshoxxx/circula/blob/127943ba7aa2cb154d3e65d13279e739b901416f/prompts/next-milestone-circula.md",
+      "verification": "source-commit-link"
+    }
+  ],
+  "unverified": []
+}

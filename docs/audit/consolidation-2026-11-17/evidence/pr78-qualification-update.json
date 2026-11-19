@@ -1,0 +1,178 @@
+{
+  "recorded_at_utc": "2026-11-18T10:10:51.991531+00:00",
+  "scope": "Documentation-only forward follow-up; no Go execution or remote mutation by this reviewer.",
+  "pr": 78,
+  "source_reviewed_head": "bcacd848dea66cac8b7909aa1e9e9dac7fdf84e4",
+  "correction_parent": "6b0fb7816faec6a7c93fa7e483ee6805ce54ebf1",
+  "final_local_head": "2b3a2aac4b909785e692779d60db65f9ddb5cc77",
+  "final_local_tree": "dbb05541930c79cd3091513ca4ffa3e215d9eb6d",
+  "worktree": "/workspace/scratch/9ceb45b04668/audit-b-pr78-docs",
+  "worktree_clean": true,
+  "files": [
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/CODE-AUDIT.md",
+      "blob": "f6663f1789bb0fc3c9b57eabd73666a80d514111",
+      "sha256": "0d9ea929132b34d2a3b5247ff2e204673c8b06822e7d678b4d1a19fd1a8651b0",
+      "bytes": 5963
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/CONSOLIDATION-LEDGER.md",
+      "blob": "5c1186fe46a1c91547b441a58e68d7b55223d4c6",
+      "sha256": "dc42a40597bea565196d7c4898f931ff9d368f3c82afb5c247e3f43cd27aba04",
+      "bytes": 5514
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/MERGE-MANIFEST.md",
+      "blob": "e4dcc6fb486c654b004e7ecbd614904af8e43f86",
+      "sha256": "c29e42cac4c60ea2ab1c15ca85c690e06a676a7aaa3f93812e2fbf80372609c4",
+      "bytes": 5343
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/SECURITY-AUDIT.md",
+      "blob": "9cfb18675e33ef216758c85cace46329ac7a69a2",
+      "sha256": "14014fb553c5f31d3920e4bd63b05d87e09fcf784514f39ac20270f2a5086232",
+      "bytes": 7569
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/TEST-EVIDENCE.md",
+      "blob": "ac496da983946a7b91942ef37d8155401630a350",
+      "sha256": "61fc3f3262f12f5534307d9a5c799f17440c4b90c8d806a1b6891c1b66bfea0f",
+      "bytes": 9245
+    }
+  ],
+  "baseline_unchanged": true,
+  "qualified_functional_candidate": {
+    "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "source_heads": {
+      "82_authoring": "d3fcc6831f81eea3344a03113e27532a07996bcf",
+      "82_published": "e127acc9877edebeca818b75a5d48ce12511eca8",
+      "82_shared_tree": "84ea230a25cf30a56f4f43b1a401abea6dc1b7fb",
+      "84": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "87": "679a3016d77c3cf34e218ecb296f1d42cc0969c8"
+    },
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-p",
+      "1",
+      "-timeout=25m",
+      "./..."
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOMAXPROCS": "2",
+      "GOGC": "50",
+      "GOMEMLIMIT": "512MiB",
+      "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+      "CGO_ENABLED": "1"
+    },
+    "exit_code": 0,
+    "elapsed_seconds": 1063.886,
+    "started_at": "2026-11-18T09:49:16.576031+00:00",
+    "finished_at": "2026-11-18T10:07:00.462200+00:00",
+    "test_bearing_packages_passed": 14,
+    "helpers_without_tests": 2,
+    "one_complete_invocation": true,
+    "pre_post_head_tree_match": true,
+    "post_status": ""
+  },
+  "pinned_lint": {
+    "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "command": [
+      "go",
+      "run",
+      "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0",
+      "run",
+      "--max-issues-per-linter=0",
+      "--max-same-issues=0",
+      "--timeout=10m",
+      "./..."
+    ],
+    "exit_code": 0,
+    "issues": 0,
+    "elapsed_seconds": 40.92,
+    "pre_post_head_tree_match": true,
+    "post_status": ""
+  },
+  "provider_snapshot": {
+    "observed_at": "2026-11-18T10:07:24.719Z",
+    "items": [
+      {
+        "pr": 82,
+        "current_pr_head": "e127acc9877edebeca818b75a5d48ce12511eca8",
+        "run_id": 44279484396,
+        "pr_state": "open",
+        "merged": false,
+        "run_status": "queued",
+        "required": 7,
+        "successful": 0,
+        "queued": 7,
+        "assigned_runners": 0,
+        "executed_steps": 0
+      },
+      {
+        "pr": 84,
+        "current_pr_head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+        "run_id": 44272452596,
+        "pr_state": "open",
+        "merged": false,
+        "run_status": "queued",
+        "required": 7,
+        "successful": 0,
+        "queued": 7,
+        "assigned_runners": 0,
+        "executed_steps": 0
+      },
+      {
+        "pr": 87,
+        "current_pr_head": "679a3016d77c3cf34e218ecb296f1d42cc0969c8",
+        "run_id": 44275665191,
+        "pr_state": "open",
+        "merged": false,
+        "run_status": "queued",
+        "required": 7,
+        "successful": 0,
+        "queued": 7,
+        "assigned_runners": 0,
+        "executed_steps": 0
+      }
+    ]
+  },
+  "sources": [
+    {
+      "path": "aggregate-final-password-proof-race.json",
+      "sha256": "0e526c1773640dc42684b07d575ffb222484ae828ec352d6f402a41af519d0c3",
+      "bytes": 1386
+    },
+    {
+      "path": "aggregate-final-password-proof-race.log",
+      "sha256": "4dc27ca06074b9bf74cbb9d5ea34f15c2929bd519112561bf72ee09cbfd0b4dd",
+      "bytes": 1011
+    },
+    {
+      "path": "final-password-proof-lint.json",
+      "sha256": "6b41d7a4f07f8e2c26b50265bb5ca6c1d84033d60daaf4a7f07d89bd7b657ac9",
+      "bytes": 638
+    },
+    {
+      "path": "final-password-proof-lint.log",
+      "sha256": "e92606b0bf483111dff0a120c315ea165821348f31365020e2468a0059095c47",
+      "bytes": 10
+    },
+    {
+      "path": "audit-f/final-ci/queue-current-20261118T100724.json",
+      "sha256": "2ea6640edb11b3bb0255531d2b7427199b469b62035cfb8f26e31c1d9632dbf4",
+      "bytes": 21175
+    }
+  ],
+  "limits": [
+    "The passing functional candidate is 17152/1e47; neither the PR78 documentation tree nor then-current main b439 is mislabeled as that tested tree.",
+    "Provider CI remains separate and all three PRs were unmerged at the pinned observation.",
+    "Privileged-test, manual, native and deployment/release limits remain unchanged.",
+    "Parent must review the forward diff and refresh the actual PR78 head before publication; no remote action has been performed here."
+  ]
+}

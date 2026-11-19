@@ -1,0 +1,131 @@
+{
+  "recorded_at": "2026-11-18T07:08:06.381Z",
+  "jobs_observed_at": "2026-11-18T07:07:16.952Z",
+  "pr": 77,
+  "head": "15b0c176e5a4d0af74022f9f7b0554b44288a39b",
+  "run": 44255552485,
+  "superseded_by": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+  "jobs": [
+    {
+      "id": 134636272418,
+      "name": "test (ubuntu-24.04)",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "test with race detector",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 4
+        },
+        {
+          "name": "Match requirement citations to recorded test results",
+          "status": "pending",
+          "conclusion": null,
+          "number": 5
+        },
+        {
+          "name": "Upload test evidence and property failure fixtures",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "pending",
+          "conclusion": null,
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "pending",
+          "conclusion": null,
+          "number": 12
+        }
+      ]
+    },
+    {
+      "id": 134636272731,
+      "name": "build release targets",
+      "status": "queued",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134636272767,
+      "name": "API contract and load smoke",
+      "status": "queued",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134636272807,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "queued",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134636272926,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "queued",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134636272946,
+      "name": "fuzz smoke (RB-017)",
+      "status": "queued",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134636272975,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "queued",
+      "conclusion": null,
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134636274601,
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44255552485,
+      "logs_url": null,
+      "steps": null
+    }
+  ]
+}

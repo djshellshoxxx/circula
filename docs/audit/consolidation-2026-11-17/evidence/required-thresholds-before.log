@@ -1,0 +1,185 @@
+...FFFFF..FFFFF.
+======================================================================
+FAIL: test_full_gate_refuses_hidden_or_replaced_decisions (test_check_thresholds.ThresholdDecisionsTest.test_full_gate_refuses_hidden_or_replaced_decisions) (name='owner rows deleted')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 138, in test_full_gate_refuses_hidden_or_replaced_decisions
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : [SKIPPED] fmt skipped by -s
+[SKIPPED] vet skipped by -s
+[SKIPPED] race skipped by -s
+[SKIPPED] lint skipped by -s
+[SKIPPED] contract skipped by -s
+[SKIPPED] golden skipped by -s
+[SKIPPED] e2e skipped by -s
+[SKIPPED] load skipped by -s
+[SKIPPED] vuln skipped by -s
+[SKIPPED] pins skipped by -s
+[SKIPPED] hygiene skipped by -s
+[SKIPPED] drill skipped by -s
+[PASS] defects no open A-block defects
+[PASS] thresholds confirmed decision rows
+[MANUAL] screen-reader docs/qa/SCREEN-READER.md script; link the signed run record
+[MANUAL] exploratory L14 session records
+[MANUAL] security-review SEC-033 independent review record
+[MANUAL] run-smoke L13 smoke on each DEC-003 target, or documented reason
+[MANUAL] release-notes docs/releases/<version>.md (OPS-026)
+evidence: /tmp/tmpptvcpzgu/evidence/gate-20261118T055803Z.md (FAIL=0)
+
+
+======================================================================
+FAIL: test_full_gate_refuses_hidden_or_replaced_decisions (test_check_thresholds.ThresholdDecisionsTest.test_full_gate_refuses_hidden_or_replaced_decisions) (name='owner rows hidden as prose')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 138, in test_full_gate_refuses_hidden_or_replaced_decisions
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : [SKIPPED] fmt skipped by -s
+[SKIPPED] vet skipped by -s
+[SKIPPED] race skipped by -s
+[SKIPPED] lint skipped by -s
+[SKIPPED] contract skipped by -s
+[SKIPPED] golden skipped by -s
+[SKIPPED] e2e skipped by -s
+[SKIPPED] load skipped by -s
+[SKIPPED] vuln skipped by -s
+[SKIPPED] pins skipped by -s
+[SKIPPED] hygiene skipped by -s
+[SKIPPED] drill skipped by -s
+[PASS] defects no open A-block defects
+[PASS] thresholds confirmed decision rows
+[MANUAL] screen-reader docs/qa/SCREEN-READER.md script; link the signed run record
+[MANUAL] exploratory L14 session records
+[MANUAL] security-review SEC-033 independent review record
+[MANUAL] run-smoke L13 smoke on each DEC-003 target, or documented reason
+[MANUAL] release-notes docs/releases/<version>.md (OPS-026)
+evidence: /tmp/tmpth5ev4tw/evidence/gate-20261118T055803Z.md (FAIL=0)
+
+
+======================================================================
+FAIL: test_full_gate_refuses_hidden_or_replaced_decisions (test_check_thresholds.ThresholdDecisionsTest.test_full_gate_refuses_hidden_or_replaced_decisions) (name='unknown absolute only')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 138, in test_full_gate_refuses_hidden_or_replaced_decisions
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : [SKIPPED] fmt skipped by -s
+[SKIPPED] vet skipped by -s
+[SKIPPED] race skipped by -s
+[SKIPPED] lint skipped by -s
+[SKIPPED] contract skipped by -s
+[SKIPPED] golden skipped by -s
+[SKIPPED] e2e skipped by -s
+[SKIPPED] load skipped by -s
+[SKIPPED] vuln skipped by -s
+[SKIPPED] pins skipped by -s
+[SKIPPED] hygiene skipped by -s
+[SKIPPED] drill skipped by -s
+[PASS] defects no open A-block defects
+[PASS] thresholds confirmed decision rows
+[MANUAL] screen-reader docs/qa/SCREEN-READER.md script; link the signed run record
+[MANUAL] exploratory L14 session records
+[MANUAL] security-review SEC-033 independent review record
+[MANUAL] run-smoke L13 smoke on each DEC-003 target, or documented reason
+[MANUAL] release-notes docs/releases/<version>.md (OPS-026)
+evidence: /tmp/tmp_kh45lkt/evidence/gate-20261118T055804Z.md (FAIL=0)
+
+
+======================================================================
+FAIL: test_full_gate_refuses_hidden_or_replaced_decisions (test_check_thresholds.ThresholdDecisionsTest.test_full_gate_refuses_hidden_or_replaced_decisions) (name='unknown absolute appended')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 138, in test_full_gate_refuses_hidden_or_replaced_decisions
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : [SKIPPED] fmt skipped by -s
+[SKIPPED] vet skipped by -s
+[SKIPPED] race skipped by -s
+[SKIPPED] lint skipped by -s
+[SKIPPED] contract skipped by -s
+[SKIPPED] golden skipped by -s
+[SKIPPED] e2e skipped by -s
+[SKIPPED] load skipped by -s
+[SKIPPED] vuln skipped by -s
+[SKIPPED] pins skipped by -s
+[SKIPPED] hygiene skipped by -s
+[SKIPPED] drill skipped by -s
+[PASS] defects no open A-block defects
+[PASS] thresholds confirmed decision rows
+[MANUAL] screen-reader docs/qa/SCREEN-READER.md script; link the signed run record
+[MANUAL] exploratory L14 session records
+[MANUAL] security-review SEC-033 independent review record
+[MANUAL] run-smoke L13 smoke on each DEC-003 target, or documented reason
+[MANUAL] release-notes docs/releases/<version>.md (OPS-026)
+evidence: /tmp/tmpj2jfou_t/evidence/gate-20261118T055804Z.md (FAIL=0)
+
+
+======================================================================
+FAIL: test_full_gate_refuses_hidden_or_replaced_decisions (test_check_thresholds.ThresholdDecisionsTest.test_full_gate_refuses_hidden_or_replaced_decisions) (name='one required row deleted')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 138, in test_full_gate_refuses_hidden_or_replaced_decisions
+    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+AssertionError: 0 != 1 : [SKIPPED] fmt skipped by -s
+[SKIPPED] vet skipped by -s
+[SKIPPED] race skipped by -s
+[SKIPPED] lint skipped by -s
+[SKIPPED] contract skipped by -s
+[SKIPPED] golden skipped by -s
+[SKIPPED] e2e skipped by -s
+[SKIPPED] load skipped by -s
+[SKIPPED] vuln skipped by -s
+[SKIPPED] pins skipped by -s
+[SKIPPED] hygiene skipped by -s
+[SKIPPED] drill skipped by -s
+[PASS] defects no open A-block defects
+[PASS] thresholds confirmed decision rows
+[MANUAL] screen-reader docs/qa/SCREEN-READER.md script; link the signed run record
+[MANUAL] exploratory L14 session records
+[MANUAL] security-review SEC-033 independent review record
+[MANUAL] run-smoke L13 smoke on each DEC-003 target, or documented reason
+[MANUAL] release-notes docs/releases/<version>.md (OPS-026)
+evidence: /tmp/tmp7idxn297/evidence/gate-20261118T055804Z.md (FAIL=0)
+
+
+======================================================================
+FAIL: test_required_rows_cannot_be_hidden_or_replaced (test_check_thresholds.ThresholdDecisionsTest.test_required_rows_cannot_be_hidden_or_replaced) (name='owner rows deleted')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 93, in test_required_rows_cannot_be_hidden_or_replaced
+    self.assertTrue(check_thresholds(candidate))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_required_rows_cannot_be_hidden_or_replaced (test_check_thresholds.ThresholdDecisionsTest.test_required_rows_cannot_be_hidden_or_replaced) (name='owner rows hidden as prose')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 93, in test_required_rows_cannot_be_hidden_or_replaced
+    self.assertTrue(check_thresholds(candidate))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_required_rows_cannot_be_hidden_or_replaced (test_check_thresholds.ThresholdDecisionsTest.test_required_rows_cannot_be_hidden_or_replaced) (name='unknown absolute only')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 93, in test_required_rows_cannot_be_hidden_or_replaced
+    self.assertTrue(check_thresholds(candidate))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_required_rows_cannot_be_hidden_or_replaced (test_check_thresholds.ThresholdDecisionsTest.test_required_rows_cannot_be_hidden_or_replaced) (name='unknown absolute appended')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 93, in test_required_rows_cannot_be_hidden_or_replaced
+    self.assertTrue(check_thresholds(candidate))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_required_rows_cannot_be_hidden_or_replaced (test_check_thresholds.ThresholdDecisionsTest.test_required_rows_cannot_be_hidden_or_replaced) (name='one required row deleted')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/9ceb45b04668/audit-f-worktree/scripts/test_check_thresholds.py", line 93, in test_required_rows_cannot_be_hidden_or_replaced
+    self.assertTrue(check_thresholds(candidate))
+AssertionError: [] is not true
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.237s
+
+FAILED (failures=10)

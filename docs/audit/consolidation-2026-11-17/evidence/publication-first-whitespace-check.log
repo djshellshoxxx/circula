@@ -1,0 +1,44 @@
+docs/audit/consolidation-2026-11-17/evidence/pr84-retention-prior-algorithm.diff:4: space before tab in indent.
++ 		// or a misplaced file) is kept, but it takes no daily or monthly slot,
+docs/audit/consolidation-2026-11-17/evidence/pr84-retention-prior-algorithm.diff:5: space before tab in indent.
++ 		// so it cannot push real backups out early. Scheduling ignores it in
+docs/audit/consolidation-2026-11-17/evidence/pr84-retention-prior-algorithm.diff:6: space before tab in indent.
++ 		// the same way (untilNextBackupAt).
+docs/audit/consolidation-2026-11-17/evidence/pr84-retention-prior-algorithm.diff:11: space before tab in indent.
++ 		past = append(past, e)
+docs/audit/consolidation-2026-11-17/evidence/pr84-retention-prior-algorithm.diff:12: space before tab in indent.
++ 	}
+docs/audit/consolidation-2026-11-17/evidence/pr84-retention-prior-algorithm.diff:13: space before tab in indent.
++ 	for i, e := range past {
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:5: space before tab in indent.
++ 	w := newWorld(t, timelines7And14)
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:6: space before tab in indent.
++ 	rev, _ := w.reviewerAs("rita@example.org")
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:8: space before tab in indent.
++ 	pending := tu.Must(w.open(w.a, w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 5000).ID))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:9: space before tab in indent.
++ 	decided := tu.Must(w.open(w.a, w.Trade(w.net.ID, w.a, w.b, w.aM, w.bM, 3000).ID))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:10: space before tab in indent.
++ 	opened := pending.OpenedAt
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:12: space before tab in indent.
++ 	noErr(t, w.respond(w.b, decided.ID, "it was delivered"))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:13: space before tab in indent.
++ 	decided = tu.Must(w.resolve(rev, decided.ID, domain.OutcomeDismissed, 0, "delivered"))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:17: space before tab in indent.
++ 	tu.Must(w.setPolicy(func(p *domain.Policy) { p.ResponsePeriodDays = 0; p.ReReviewWindowDays = 1 }, nil, ""))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:18: space before tab in indent.
++ 	if p := w.netNow().Policy; p.ResponsePeriodDays != 0 || p.ReReviewWindowDays != 1 {
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CLOCK-ROLLBACK.diff:19: space before tab in indent.
++ 		t.Fatalf("precondition: the change is in force at once: %d/%d", p.ResponsePeriodDays, p.ReReviewWindowDays)
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-CURRENT-POLICY-CONTROL.diff:15: space before tab in indent.
++ 	}
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:4: space before tab in indent.
++ 	noErr(t, w.respond(w.b, decided.ID, "it was delivered"))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:5: space before tab in indent.
++ 	decided = tu.Must(w.resolve(rev, decided.ID, domain.OutcomeDismissed, 0, "delivered"))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:9: space before tab in indent.
++ 	tu.Must(w.setPolicy(func(p *domain.Policy) { p.ResponsePeriodDays = 0; p.ReReviewWindowDays = 1 }, nil, ""))
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:10: space before tab in indent.
++ 	if p := w.netNow().Policy; p.ResponsePeriodDays != 0 || p.ReReviewWindowDays != 1 {
+docs/audit/consolidation-2026-11-17/evidence/pr87/PR87-SAME-MS.diff:11: space before tab in indent.
++ 		t.Fatalf("precondition: the change is in force at once: %d/%d", p.ResponsePeriodDays, p.ReReviewWindowDays)

@@ -1,0 +1,936 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-18T09:14:28.264867+00:00",
+  "repository": "https://github.com/djshellshoxxx/circula",
+  "qualification_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+  "qualification_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+  "conclusion": "All 14 test-bearing Go packages have successful race results across multiple invocations on the unchanged recorded tree. No single aggregate invocation passed. Two helper packages have no tests. Privileged ownership coverage remains skipped.",
+  "qualification_kind": "package-complete across same-tree invocations",
+  "single_invocation_aggregate_pass": false,
+  "test_bearing_packages": 14,
+  "qualified_packages": 14,
+  "helpers_without_tests": 2,
+  "provenance": {
+    "repository_path": "/workspace/scratch/9ceb45b04668/circula-integration",
+    "observed_worktree_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+    "observed_worktree_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+    "observed_worktree_clean": true,
+    "qualified_commit_parents": [
+      "ba788ac2f09dcdce4c4dbf3bfbdc12f858a9c6c7",
+      "5c39abdb89faa505533e51d3878b3b119957ff32"
+    ],
+    "qualified_commit_time": "2026-11-18T00:17:36-08:00",
+    "source_heads": [
+      {
+        "pr": 79,
+        "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+        "ancestor_of_qualified_head": true
+      },
+      {
+        "pr": 81,
+        "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+        "ancestor_of_qualified_head": true
+      },
+      {
+        "pr": 82,
+        "head": "5c39abdb89faa505533e51d3878b3b119957ff32",
+        "ancestor_of_qualified_head": true
+      }
+    ],
+    "reviewer_uid": 1000,
+    "toolchain_version_file": "/workspace/scratch/b4e4b2242853/toolchain/go/VERSION",
+    "toolchain_version_text": "go1.26.11\ntime 2026-11-02T20:36:21Z",
+    "provenance_limit": "Primary/isolated plain logs do not embed a commit or command; their exact-tree mapping comes from the retained coordinator concurrent_qualification record, checked against Git and the separately head/tree-pinned CLI metadata. Current clean worktree is an observation, not an independently recorded pre/post-worktree snapshot for each historical invocation.",
+    "coordinator_state_sha256_at_review": "fa81f1c5936f117f84814181100c3ad5d471c5b461438ecfbfb288432f0ecb48",
+    "coordinator_qualification_snapshot": {
+      "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+      "base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "pr_heads": {
+        "79": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+        "81": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+        "82": "5c39abdb89faa505533e51d3878b3b119957ff32"
+      },
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "log": "aggregate-concurrent-auth-race.log",
+      "status": "all 14 test-bearing packages passed under race on this exact unchanged tree across recorded invocations; failed invocations remain failed",
+      "started_at": "2026-11-18T08:17:48.054867+00:00",
+      "test_bearing_packages_passed": 12,
+      "helper_packages_without_tests": 2,
+      "terminated_packages": [
+        {
+          "package": "cmd/circula",
+          "diagnostic": "signal: killed",
+          "elapsed_seconds": 2.704,
+          "cause": "not established"
+        },
+        {
+          "package": "internal/web",
+          "diagnostic": "signal: killed",
+          "elapsed_seconds": 87.904,
+          "cause": "not established"
+        }
+      ],
+      "isolated_retry": {
+        "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 1 -timeout=25m ./cmd/circula ./internal/web",
+        "log": "aggregate-concurrent-auth-isolated-race.log",
+        "status": "failed",
+        "scope": "Only the two terminated packages; unchanged exact head and tree; all tests and race instrumentation enabled",
+        "test_bearing_packages_passed": [
+          "internal/web"
+        ],
+        "terminated_packages": [
+          {
+            "package": "cmd/circula",
+            "diagnostic": "signal: killed",
+            "elapsed_seconds": 61.597,
+            "cause": "not established"
+          }
+        ]
+      },
+      "cli_diagnostic": {
+        "status": "failed",
+        "command": "GOMAXPROCS=2 GOGC=20 GOMEMLIMIT=512MiB CGO_ENABLED=1 go test -v -race -count=1 -p 1 -timeout=25m ./cmd/circula",
+        "log": "aggregate-concurrent-auth-cli-bounded-race.log",
+        "metadata": "aggregate-concurrent-auth-cli-bounded-race.json",
+        "exit_code": 1,
+        "elapsed_seconds": 74.893,
+        "max_child_rss_kib": 676264,
+        "last_test_started": "TestServeStartsWithFailingNetwork",
+        "cause": "not established"
+      },
+      "cli_cache_corrected": {
+        "status": "passed",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log",
+        "metadata": "aggregate-concurrent-auth-cli-workspace-cache-race.json",
+        "cache": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "reason": "A separate focused test exposed an actual ENOSPC failure in full home tmpfs. Cache was preserved in workspace and only generated old cache cleared; no source/test change.",
+        "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+        "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+        "command": [
+          "go",
+          "test",
+          "-v",
+          "-race",
+          "-count=1",
+          "-p",
+          "1",
+          "-timeout=25m",
+          "./cmd/circula"
+        ],
+        "environment": {
+          "GOTOOLCHAIN": "local",
+          "GOMAXPROCS": "2",
+          "GOGC": "50",
+          "GOMEMLIMIT": "512MiB",
+          "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+          "CGO_ENABLED": "1"
+        },
+        "started_at": "2026-11-18T09:00:49.224801+00:00",
+        "scope": "Full unchanged CLI package in repaired cache environment. The prior full tmpfs caused a separately observed build-cache ENOSPC error; no cause is asserted for earlier signal:killed results.",
+        "exit_code": 0,
+        "elapsed_seconds": 183.03,
+        "max_child_rss_kib": 643488,
+        "finished_at": "2026-11-18T09:03:52.255174+00:00"
+      },
+      "primary_invocation_result": "failed",
+      "complete_package_pass_count": 14
+    }
+  },
+  "package_qualification": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "relative_package": "cmd/circula",
+      "result": "pass",
+      "package_runtime_seconds": 181.148,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t181.148s",
+      "invocation": "workspace_cache_cli",
+      "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "command": [
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=25m",
+        "./cmd/circula"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "CGO_ENABLED": "1"
+      },
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/api",
+      "relative_package": "internal/api",
+      "result": "pass",
+      "package_runtime_seconds": 188.648,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t188.648s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/contract",
+      "relative_package": "internal/contract",
+      "result": "pass",
+      "package_runtime_seconds": 18.463,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t18.463s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/domain",
+      "relative_package": "internal/domain",
+      "result": "pass",
+      "package_runtime_seconds": 1.418,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t1.418s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "relative_package": "internal/histbal",
+      "result": "pass",
+      "package_runtime_seconds": 1.009,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.009s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "relative_package": "internal/httpx",
+      "result": "pass",
+      "package_runtime_seconds": 1.011,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.011s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/logx",
+      "relative_package": "internal/logx",
+      "result": "pass",
+      "package_runtime_seconds": 1.03,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.030s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/repository",
+      "relative_package": "internal/repository",
+      "result": "pass",
+      "package_runtime_seconds": 1.092,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.092s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "relative_package": "internal/service",
+      "result": "pass",
+      "package_runtime_seconds": 433.795,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t433.795s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/store",
+      "relative_package": "internal/store",
+      "result": "pass",
+      "package_runtime_seconds": 74.275,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t74.275s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web",
+      "relative_package": "internal/web",
+      "result": "pass",
+      "package_runtime_seconds": 146.7,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t146.700s",
+      "invocation": "isolated_cli_web",
+      "log": "aggregate-concurrent-auth-isolated-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 1 -timeout=25m ./cmd/circula ./internal/web",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "relative_package": "internal/web/messages",
+      "result": "pass",
+      "package_runtime_seconds": 1.062,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.062s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "relative_package": "scripts/sbom",
+      "result": "pass",
+      "package_runtime_seconds": 1.081,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.081s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "relative_package": "scripts/traceability",
+      "result": "pass",
+      "package_runtime_seconds": 2.078,
+      "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t2.078s",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "environment": null,
+      "qualifying_head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "qualifying_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe"
+    }
+  ],
+  "helper_packages": [
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "relative_package": "internal/storetest",
+      "result": "no_test_files",
+      "package_runtime_seconds": null,
+      "terminal_line": "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "relative_package": "internal/testutil",
+      "result": "no_test_files",
+      "package_runtime_seconds": null,
+      "terminal_line": "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]",
+      "invocation": "primary",
+      "log": "aggregate-concurrent-auth-race.log"
+    }
+  ],
+  "invocations": [
+    {
+      "id": "primary",
+      "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+      "log": "aggregate-concurrent-auth-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "result": "failed",
+      "process_exit_code": 1,
+      "exit_code_provenance": "coordinator execution receipt; terminal FAIL also retained",
+      "wall_runtime_seconds": null,
+      "started_at": "2026-11-18T08:17:48.054867+00:00",
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/cmd/circula",
+          "relative_package": "cmd/circula",
+          "result": "fail",
+          "package_runtime_seconds": 2.704,
+          "terminal_line": "FAIL\tgithub.com/djshellshoxxx/circula/cmd/circula\t2.704s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/api",
+          "relative_package": "internal/api",
+          "result": "pass",
+          "package_runtime_seconds": 188.648,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t188.648s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/contract",
+          "relative_package": "internal/contract",
+          "result": "pass",
+          "package_runtime_seconds": 18.463,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t18.463s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/domain",
+          "relative_package": "internal/domain",
+          "result": "pass",
+          "package_runtime_seconds": 1.418,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t1.418s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/histbal",
+          "relative_package": "internal/histbal",
+          "result": "pass",
+          "package_runtime_seconds": 1.009,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.009s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/httpx",
+          "relative_package": "internal/httpx",
+          "result": "pass",
+          "package_runtime_seconds": 1.011,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.011s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/logx",
+          "relative_package": "internal/logx",
+          "result": "pass",
+          "package_runtime_seconds": 1.03,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.030s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/repository",
+          "relative_package": "internal/repository",
+          "result": "pass",
+          "package_runtime_seconds": 1.092,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.092s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/service",
+          "relative_package": "internal/service",
+          "result": "pass",
+          "package_runtime_seconds": 433.795,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t433.795s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/store",
+          "relative_package": "internal/store",
+          "result": "pass",
+          "package_runtime_seconds": 74.275,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t74.275s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/storetest",
+          "relative_package": "internal/storetest",
+          "result": "no_test_files",
+          "package_runtime_seconds": null,
+          "terminal_line": "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/testutil",
+          "relative_package": "internal/testutil",
+          "result": "no_test_files",
+          "package_runtime_seconds": null,
+          "terminal_line": "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/web",
+          "relative_package": "internal/web",
+          "result": "fail",
+          "package_runtime_seconds": 87.904,
+          "terminal_line": "FAIL\tgithub.com/djshellshoxxx/circula/internal/web\t87.904s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/web/messages",
+          "relative_package": "internal/web/messages",
+          "result": "pass",
+          "package_runtime_seconds": 1.062,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.062s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/scripts/sbom",
+          "relative_package": "scripts/sbom",
+          "result": "pass",
+          "package_runtime_seconds": 1.081,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.081s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/scripts/traceability",
+          "relative_package": "scripts/traceability",
+          "result": "pass",
+          "package_runtime_seconds": 2.078,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t2.078s"
+        }
+      ],
+      "cause": "CLI and web reported signal: killed; causes not established."
+    },
+    {
+      "id": "isolated_cli_web",
+      "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+      "log": "aggregate-concurrent-auth-isolated-race.log",
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 1 -timeout=25m ./cmd/circula ./internal/web",
+      "result": "failed",
+      "process_exit_code": null,
+      "exit_code_provenance": "numeric process status not retained in the supplied source record; terminal FAIL and failed CLI package establish failed invocation",
+      "wall_runtime_seconds": null,
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/cmd/circula",
+          "relative_package": "cmd/circula",
+          "result": "fail",
+          "package_runtime_seconds": 61.597,
+          "terminal_line": "FAIL\tgithub.com/djshellshoxxx/circula/cmd/circula\t61.597s"
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/internal/web",
+          "relative_package": "internal/web",
+          "result": "pass",
+          "package_runtime_seconds": 146.7,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t146.700s"
+        }
+      ],
+      "cause": "CLI reported signal: killed; cause not established."
+    },
+    {
+      "id": "bounded_cli",
+      "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+      "log": "aggregate-concurrent-auth-cli-bounded-race.log",
+      "metadata": "aggregate-concurrent-auth-cli-bounded-race.json",
+      "command": [
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=25m",
+        "./cmd/circula"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "GOGC": "20",
+        "GOMEMLIMIT": "512MiB",
+        "CGO_ENABLED": "1"
+      },
+      "result": "failed",
+      "process_exit_code": 1,
+      "wall_runtime_seconds": 74.893,
+      "started_at": "2026-11-18T08:34:09.640141+00:00",
+      "finished_at": "2026-11-18T08:35:24.533543+00:00",
+      "max_child_rss_kib": 676264,
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/cmd/circula",
+          "relative_package": "cmd/circula",
+          "result": "fail",
+          "package_runtime_seconds": 73.639,
+          "terminal_line": "FAIL\tgithub.com/djshellshoxxx/circula/cmd/circula\t73.639s"
+        }
+      ],
+      "cause": "CLI reported signal: killed during TestServeStartsWithFailingNetwork; cause not established."
+    },
+    {
+      "id": "workspace_cache_cli",
+      "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+      "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "metadata": "aggregate-concurrent-auth-cli-workspace-cache-race.json",
+      "command": [
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=25m",
+        "./cmd/circula"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "CGO_ENABLED": "1"
+      },
+      "result": "passed",
+      "process_exit_code": 0,
+      "wall_runtime_seconds": 183.03,
+      "started_at": "2026-11-18T09:00:49.224801+00:00",
+      "finished_at": "2026-11-18T09:03:52.255174+00:00",
+      "max_child_rss_kib": 643488,
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/cmd/circula",
+          "relative_package": "cmd/circula",
+          "result": "pass",
+          "package_runtime_seconds": 181.148,
+          "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t181.148s"
+        }
+      ],
+      "scope": "Full unchanged CLI package in repaired cache environment. The prior full tmpfs caused a separately observed build-cache ENOSPC error; no cause is asserted for earlier signal:killed results."
+    }
+  ],
+  "prior_different_tree_attempt": {
+    "head": "a04ff2323f84eeb4a46e3c462ad312dd6596a72a",
+    "tree": "1e2923efdff1adcf60c2718fe2a6a56edb3c1ed9",
+    "log": "aggregate-concurrent-race.log",
+    "command": "CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+    "result": "failed",
+    "process_exit_code": null,
+    "package_results": [
+      {
+        "package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "relative_package": "cmd/circula",
+        "result": "fail",
+        "package_runtime_seconds": 2.9,
+        "terminal_line": "FAIL\tgithub.com/djshellshoxxx/circula/cmd/circula\t2.900s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/api",
+        "relative_package": "internal/api",
+        "result": "pass",
+        "package_runtime_seconds": 198.876,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t198.876s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/contract",
+        "relative_package": "internal/contract",
+        "result": "pass",
+        "package_runtime_seconds": 19.835,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t19.835s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/domain",
+        "relative_package": "internal/domain",
+        "result": "pass",
+        "package_runtime_seconds": 1.469,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t1.469s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/histbal",
+        "relative_package": "internal/histbal",
+        "result": "pass",
+        "package_runtime_seconds": 1.013,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.013s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/httpx",
+        "relative_package": "internal/httpx",
+        "result": "pass",
+        "package_runtime_seconds": 1.014,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.014s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/logx",
+        "relative_package": "internal/logx",
+        "result": "pass",
+        "package_runtime_seconds": 1.026,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.026s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/repository",
+        "relative_package": "internal/repository",
+        "result": "pass",
+        "package_runtime_seconds": 1.09,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.090s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/service",
+        "relative_package": "internal/service",
+        "result": "fail",
+        "package_runtime_seconds": 4.915,
+        "terminal_line": "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t4.915s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/store",
+        "relative_package": "internal/store",
+        "result": "pass",
+        "package_runtime_seconds": 77.755,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t77.755s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/storetest",
+        "relative_package": "internal/storetest",
+        "result": "no_test_files",
+        "package_runtime_seconds": null,
+        "terminal_line": "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/testutil",
+        "relative_package": "internal/testutil",
+        "result": "no_test_files",
+        "package_runtime_seconds": null,
+        "terminal_line": "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/web",
+        "relative_package": "internal/web",
+        "result": "pass",
+        "package_runtime_seconds": 142.51,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t142.510s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/internal/web/messages",
+        "relative_package": "internal/web/messages",
+        "result": "pass",
+        "package_runtime_seconds": 1.013,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.013s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/scripts/sbom",
+        "relative_package": "scripts/sbom",
+        "result": "pass",
+        "package_runtime_seconds": 1.047,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.047s"
+      },
+      {
+        "package": "github.com/djshellshoxxx/circula/scripts/traceability",
+        "relative_package": "scripts/traceability",
+        "result": "pass",
+        "package_runtime_seconds": 1.618,
+        "terminal_line": "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t1.618s"
+      }
+    ],
+    "counted_toward_current_qualification": false,
+    "cause": "CLI and service reported signal: killed; causes not established."
+  },
+  "skipped_cli_tests": [
+    {
+      "test": "TestBackupStagingRefusesForeignOwnedParent",
+      "result": "skip",
+      "reason": "backup_path_hardening_test.go:212: needs root on Unix to create a directory owned by another user",
+      "runtime_seconds": 0.0
+    },
+    {
+      "test": "TestBackupWorkLeaseChild",
+      "result": "skip",
+      "reason": "backup_work_lease_test.go:58: subprocess helper",
+      "runtime_seconds": 0.0
+    },
+    {
+      "test": "TestRestoreSwapCrashChild",
+      "result": "skip",
+      "reason": "restore_swap_crash_test.go:27: subprocess helper",
+      "runtime_seconds": 0.0
+    }
+  ],
+  "pr81_new_regression_evidence": {
+    "provider_record": "audit-f/final-ci/pr81-new-regression-terminal-results.json",
+    "reviewed_pr_head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+    "provider_actual_checkout": "f2dd3bdde47208d2d7132b76ae7cf2e00dd5b1fd",
+    "terminal_counts": {
+      "pass": 8,
+      "skip": 1
+    },
+    "terminal_results": [
+      {
+        "Time": "2026-11-18T08:56:37.963706929Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestBackupDirectoryWithURIMetacharacters"
+      },
+      {
+        "Time": "2026-11-18T08:56:37.965654258Z",
+        "Action": "skip",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestBackupStagingRefusesForeignOwnedParent"
+      },
+      {
+        "Time": "2026-11-18T08:56:37.964664738Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestBackupStagingRequiresPrivateOrStickyParent"
+      },
+      {
+        "Time": "2026-11-18T08:56:37.96564072Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestLeasedWorkCleanupRefusesSubstitutedDirectory"
+      },
+      {
+        "Time": "2026-11-18T08:56:37.964648935Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestSecureRemoveAllDoesNotFollowDirectorySymlink"
+      },
+      {
+        "Time": "2026-11-18T08:56:37.963726127Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestSecureRemoveLeavesHardLinkedDataIntact"
+      },
+      {
+        "Time": "2026-11-18T08:56:37.963716211Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Test": "TestZeroFileRefusesReplacedName"
+      },
+      {
+        "Time": "2026-11-18T08:56:45.990426176Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/internal/store",
+        "Test": "TestFileURIEscaping"
+      },
+      {
+        "Time": "2026-11-18T08:59:10.851064072Z",
+        "Action": "pass",
+        "Package": "github.com/djshellshoxxx/circula/internal/store",
+        "Test": "TestSQLiteOpensExactPathWithURIMetacharacters"
+      }
+    ],
+    "local_exact_tree_cli_confirmation": [
+      {
+        "test": "TestBackupDirectoryWithURIMetacharacters",
+        "result": "pass",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      },
+      {
+        "test": "TestBackupStagingRefusesForeignOwnedParent",
+        "result": "skip",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      },
+      {
+        "test": "TestBackupStagingRequiresPrivateOrStickyParent",
+        "result": "pass",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      },
+      {
+        "test": "TestLeasedWorkCleanupRefusesSubstitutedDirectory",
+        "result": "pass",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      },
+      {
+        "test": "TestSecureRemoveAllDoesNotFollowDirectorySymlink",
+        "result": "pass",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      },
+      {
+        "test": "TestSecureRemoveLeavesHardLinkedDataIntact",
+        "result": "pass",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      },
+      {
+        "test": "TestZeroFileRefusesReplacedName",
+        "result": "pass",
+        "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log"
+      }
+    ],
+    "qualification_limit": "Foreign-owned-parent test requires Unix root; this local environment is UID1000 and skips it. Eight other new PR81 tests have provider pass records. Two skipped CLI helper entry points are subprocess scaffolding, distinct from the unexecuted ownership test."
+  },
+  "cache_failure": {
+    "observed": "A separate PR84-focused build failed writing the Go build cache with no space left on device; df recorded the home tmpfs at100% with0available.",
+    "affected_pr84_source_head": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+    "failure_log": "audit-c/PR84-retention-cache-setup-failure.log",
+    "disk_before": "audit-c/PR84-disk-before-cache-clean.txt",
+    "disk_after": "audit-c/PR84-disk-after-cache-clean.txt",
+    "cleanup_log": "audit-c/PR84-old-cache-clean.log",
+    "after": "The preserved workspace cache remained3.3G; home cache decreased to264K and home tmpfs availability became3.3G. Final CLI metadata selects the workspace cache.",
+    "attribution_limit": "This establishes the separate cache ENOSPC failure. It does not establish the cause of any earlier signal:killed result; no OOM attribution is made."
+  },
+  "source_records": [
+    {
+      "path": "aggregate-concurrent-auth-race.log",
+      "sha256": "c92230a091cb5b38247e5cfa5f70c0dc058bdd15499b0c78878c5885709acc99",
+      "bytes": 1120
+    },
+    {
+      "path": "aggregate-concurrent-auth-isolated-race.log",
+      "sha256": "b293da2184594fc7efee21add034e62812c5f5f4b77f07e86fda1d9f18403032",
+      "bytes": 138
+    },
+    {
+      "path": "aggregate-concurrent-auth-cli-bounded-race.log",
+      "sha256": "86f963de9ad1d89e8922d5c887ff00797359ac3397f119006e2d8633c82245e5",
+      "bytes": 16022
+    },
+    {
+      "path": "aggregate-concurrent-auth-cli-bounded-race.json",
+      "sha256": "530ca0197f11e3d26a8d97966f01a8ddb26e4f7eefc2a08757b72ffa4927a577",
+      "bytes": 720
+    },
+    {
+      "path": "aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "sha256": "b1ea5b242bd430de3132aeed605f3d43f502144999dcc43e705c6344b198cb5b",
+      "bytes": 31770
+    },
+    {
+      "path": "aggregate-concurrent-auth-cli-workspace-cache-race.json",
+      "sha256": "73239b06e361294ba9834a225905985cfe44c58a7344de38b3d632524e590bc9",
+      "bytes": 860
+    },
+    {
+      "path": "aggregate-concurrent-race.log",
+      "sha256": "e44a2970e1786c3167ed361c3178df8e312b2dd18593025e38dd1688b03cd24c",
+      "bytes": 1042
+    },
+    {
+      "path": "audit-f/final-ci/pr81-new-regression-terminal-results.json",
+      "sha256": "ccb410769b8b101c98e1c4980a41542611560165e809bb591e31804c612c5fde",
+      "bytes": 2575
+    },
+    {
+      "path": "audit-f/final-ci/pr81-09ef8a5-linux-race-summary.json",
+      "sha256": "4b62fbb090eb72eccca5247441e00c4c038c998a6eee496bdf89771333888a38",
+      "bytes": 3937
+    },
+    {
+      "path": "audit-c/PR81-09ef8a5-COMPATIBILITY-REVIEW.md",
+      "sha256": "c024a96b7da138b0f6b00383ef43d696d7466a68a204c19e93ba01257bb179d7",
+      "bytes": 4223
+    },
+    {
+      "path": "audit-c/PR84-retention-cache-setup-failure.log",
+      "sha256": "e90347fe730180f1a9448efe9acf88757915de6438e2fc3c0b217986fe35ad69",
+      "bytes": 184
+    },
+    {
+      "path": "audit-c/PR84-disk-before-cache-clean.txt",
+      "sha256": "356459a1243746df1ffbbff70b3d857dcf4c72dc1fec798d5f5f6e3c0f2072b3",
+      "bytes": 336
+    },
+    {
+      "path": "audit-c/PR84-disk-after-cache-clean.txt",
+      "sha256": "22abe7f04f3a849023c10c998a9a184586f64fa4499d5b5fe4c57c5a66342486",
+      "bytes": 336
+    },
+    {
+      "path": "audit-c/PR84-old-cache-clean.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "audit-c/PR84-regression-snapshots.json",
+      "sha256": "fadc1a2aa738e63474d5064aea0fb32402fd9579831dfa540b267d54e13e8dc7",
+      "bytes": 2844
+    }
+  ],
+  "review_actions": "Read existing artifacts and Git metadata; no tests executed, no source/ref/remote mutations."
+}

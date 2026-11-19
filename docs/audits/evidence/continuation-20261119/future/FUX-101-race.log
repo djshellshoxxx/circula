@@ -1,0 +1,143 @@
+{"Time":"2026-11-19T02:19:36.552550287-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/pwa"}
+{"Time":"2026-11-19T02:19:36.660940969-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleDefaultDisabled"}
+{"Time":"2026-11-19T02:19:36.660990962-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleDefaultDisabled","Output":"=== RUN   TestBundleDefaultDisabled\n"}
+{"Time":"2026-11-19T02:19:36.661033382-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleDefaultDisabled","Output":"--- PASS: TestBundleDefaultDisabled (0.00s)\n"}
+{"Time":"2026-11-19T02:19:36.66103777-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleDefaultDisabled","Elapsed":0}
+{"Time":"2026-11-19T02:19:36.663019125-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfigBoundaries"}
+{"Time":"2026-11-19T02:19:36.663028172-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfigBoundaries","Output":"=== RUN   TestConfigBoundaries\n"}
+{"Time":"2026-11-19T02:19:36.663033652-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfigBoundaries","Output":"--- PASS: TestConfigBoundaries (0.00s)\n"}
+{"Time":"2026-11-19T02:19:36.664512675-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfigBoundaries","Elapsed":0}
+{"Time":"2026-11-19T02:19:36.664610088-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleHeadersManifestAndScope"}
+{"Time":"2026-11-19T02:19:36.664613705-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleHeadersManifestAndScope","Output":"=== RUN   TestBundleHeadersManifestAndScope\n"}
+{"Time":"2026-11-19T02:19:36.673313949-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleHeadersManifestAndScope","Output":"--- PASS: TestBundleHeadersManifestAndScope (0.00s)\n"}
+{"Time":"2026-11-19T02:19:36.673349676-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBundleHeadersManifestAndScope","Elapsed":0}
+{"Time":"2026-11-19T02:19:36.673355146-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConcurrentServeIsRaceFreeAndStable"}
+{"Time":"2026-11-19T02:19:36.673357881-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConcurrentServeIsRaceFreeAndStable","Output":"=== RUN   TestConcurrentServeIsRaceFreeAndStable\n"}
+{"Time":"2026-11-19T02:19:37.094247882-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConcurrentServeIsRaceFreeAndStable","Output":"--- PASS: TestConcurrentServeIsRaceFreeAndStable (0.42s)\n"}
+{"Time":"2026-11-19T02:19:37.094394156-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConcurrentServeIsRaceFreeAndStable","Elapsed":0.42}
+{"Time":"2026-11-19T02:19:37.105730652-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestHeadMatchesGetHeadersWithoutBody"}
+{"Time":"2026-11-19T02:19:37.105753375-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestHeadMatchesGetHeadersWithoutBody","Output":"=== RUN   TestHeadMatchesGetHeadersWithoutBody\n"}
+{"Time":"2026-11-19T02:19:37.107390765-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestHeadMatchesGetHeadersWithoutBody","Output":"--- PASS: TestHeadMatchesGetHeadersWithoutBody (0.02s)\n"}
+{"Time":"2026-11-19T02:19:37.107419199-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestHeadMatchesGetHeadersWithoutBody","Elapsed":0.02}
+{"Time":"2026-11-19T02:19:37.107486625-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBuiltCatalogRecordsExactSizes"}
+{"Time":"2026-11-19T02:19:37.107503426-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBuiltCatalogRecordsExactSizes","Output":"=== RUN   TestBuiltCatalogRecordsExactSizes\n"}
+{"Time":"2026-11-19T02:19:37.120511287-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBuiltCatalogRecordsExactSizes","Output":"--- PASS: TestBuiltCatalogRecordsExactSizes (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.120588952-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestBuiltCatalogRecordsExactSizes","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.120596216-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestWorkerConfigCarriesBoundedSizes"}
+{"Time":"2026-11-19T02:19:37.120599583-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestWorkerConfigCarriesBoundedSizes","Output":"=== RUN   TestWorkerConfigCarriesBoundedSizes\n"}
+{"Time":"2026-11-19T02:19:37.120611505-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestWorkerConfigCarriesBoundedSizes","Output":"--- PASS: TestWorkerConfigCarriesBoundedSizes (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.120615622-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestWorkerConfigCarriesBoundedSizes","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.120622645-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata"}
+{"Time":"2026-11-19T02:19:37.120627034-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata","Output":"=== RUN   TestCatalogRejectsHostileMetadata\n"}
+{"Time":"2026-11-19T02:19:37.120630911-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_understated"}
+{"Time":"2026-11-19T02:19:37.120634688-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_understated","Output":"=== RUN   TestCatalogRejectsHostileMetadata/size_understated\n"}
+{"Time":"2026-11-19T02:19:37.120642072-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_understated","Output":"--- PASS: TestCatalogRejectsHostileMetadata/size_understated (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.120647392-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_understated","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.120650949-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_negative"}
+{"Time":"2026-11-19T02:19:37.120654265-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_negative","Output":"=== RUN   TestCatalogRejectsHostileMetadata/size_negative\n"}
+{"Time":"2026-11-19T02:19:37.120659044-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_negative","Output":"--- PASS: TestCatalogRejectsHostileMetadata/size_negative (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.120664775-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_negative","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.120668662-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_mime"}
+{"Time":"2026-11-19T02:19:37.120672048-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_mime","Output":"=== RUN   TestCatalogRejectsHostileMetadata/empty_mime\n"}
+{"Time":"2026-11-19T02:19:37.120675825-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_mime","Output":"--- PASS: TestCatalogRejectsHostileMetadata/empty_mime (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.120686986-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_mime","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.120690914-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/bad_version"}
+{"Time":"2026-11-19T02:19:37.120693899-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/bad_version","Output":"=== RUN   TestCatalogRejectsHostileMetadata/bad_version\n"}
+{"Time":"2026-11-19T02:19:37.120698147-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/bad_version","Output":"--- PASS: TestCatalogRejectsHostileMetadata/bad_version (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.120701744-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/bad_version","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.120705301-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/oversize_asset"}
+{"Time":"2026-11-19T02:19:37.120708507-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/oversize_asset","Output":"=== RUN   TestCatalogRejectsHostileMetadata/oversize_asset\n"}
+{"Time":"2026-11-19T02:19:37.196174529-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/oversize_asset","Output":"--- PASS: TestCatalogRejectsHostileMetadata/oversize_asset (0.07s)\n"}
+{"Time":"2026-11-19T02:19:37.198689685-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/oversize_asset","Elapsed":0.07}
+{"Time":"2026-11-19T02:19:37.204572556-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_missing"}
+{"Time":"2026-11-19T02:19:37.204593645-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_missing","Output":"=== RUN   TestCatalogRejectsHostileMetadata/size_missing\n"}
+{"Time":"2026-11-19T02:19:37.204605839-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_missing","Output":"--- PASS: TestCatalogRejectsHostileMetadata/size_missing (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.204610728-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_missing","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.20461716-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/wrong_mime"}
+{"Time":"2026-11-19T02:19:37.204621067-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/wrong_mime","Output":"=== RUN   TestCatalogRejectsHostileMetadata/wrong_mime\n"}
+{"Time":"2026-11-19T02:19:37.204626117-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/wrong_mime","Output":"--- PASS: TestCatalogRejectsHostileMetadata/wrong_mime (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.204630605-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/wrong_mime","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.204634903-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_catalog"}
+{"Time":"2026-11-19T02:19:37.20463868-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_catalog","Output":"=== RUN   TestCatalogRejectsHostileMetadata/empty_catalog\n"}
+{"Time":"2026-11-19T02:19:37.219414175-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_catalog","Output":"--- PASS: TestCatalogRejectsHostileMetadata/empty_catalog (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.263687139-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_catalog","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.263729258-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_version"}
+{"Time":"2026-11-19T02:19:37.263737173-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_version","Output":"=== RUN   TestCatalogRejectsHostileMetadata/empty_version\n"}
+{"Time":"2026-11-19T02:19:37.263748144-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_version","Output":"--- PASS: TestCatalogRejectsHostileMetadata/empty_version (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.263755257-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/empty_version","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.263761699-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/subdirectory"}
+{"Time":"2026-11-19T02:19:37.26376787-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/subdirectory","Output":"=== RUN   TestCatalogRejectsHostileMetadata/subdirectory\n"}
+{"Time":"2026-11-19T02:19:37.263792797-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/subdirectory","Output":"--- PASS: TestCatalogRejectsHostileMetadata/subdirectory (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.263800151-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/subdirectory","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.263808818-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/too_many_assets"}
+{"Time":"2026-11-19T02:19:37.263813396-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/too_many_assets","Output":"=== RUN   TestCatalogRejectsHostileMetadata/too_many_assets\n"}
+{"Time":"2026-11-19T02:19:37.263818766-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/too_many_assets","Output":"--- PASS: TestCatalogRejectsHostileMetadata/too_many_assets (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.263824016-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/too_many_assets","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.263828043-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/duplicate_asset"}
+{"Time":"2026-11-19T02:19:37.2638317-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/duplicate_asset","Output":"=== RUN   TestCatalogRejectsHostileMetadata/duplicate_asset\n"}
+{"Time":"2026-11-19T02:19:37.26384254-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/duplicate_asset","Output":"--- PASS: TestCatalogRejectsHostileMetadata/duplicate_asset (0.01s)\n"}
+{"Time":"2026-11-19T02:19:37.26384736-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/duplicate_asset","Elapsed":0.01}
+{"Time":"2026-11-19T02:19:37.382275309-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/path_traversal"}
+{"Time":"2026-11-19T02:19:37.458137505-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/path_traversal","Output":"=== RUN   TestCatalogRejectsHostileMetadata/path_traversal\n"}
+{"Time":"2026-11-19T02:19:37.458318925-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/path_traversal","Output":"--- PASS: TestCatalogRejectsHostileMetadata/path_traversal (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.45832663-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/path_traversal","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458332771-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unfingerprinted"}
+{"Time":"2026-11-19T02:19:37.458336027-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unfingerprinted","Output":"=== RUN   TestCatalogRejectsHostileMetadata/unfingerprinted\n"}
+{"Time":"2026-11-19T02:19:37.458339323-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unfingerprinted","Output":"--- PASS: TestCatalogRejectsHostileMetadata/unfingerprinted (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458342139-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unfingerprinted","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458344764-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unknown_ext"}
+{"Time":"2026-11-19T02:19:37.458346998-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unknown_ext","Output":"=== RUN   TestCatalogRejectsHostileMetadata/unknown_ext\n"}
+{"Time":"2026-11-19T02:19:37.458349893-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unknown_ext","Output":"--- PASS: TestCatalogRejectsHostileMetadata/unknown_ext (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458352498-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/unknown_ext","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458355013-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_overstated"}
+{"Time":"2026-11-19T02:19:37.458356927-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_overstated","Output":"=== RUN   TestCatalogRejectsHostileMetadata/size_overstated\n"}
+{"Time":"2026-11-19T02:19:37.458359722-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_overstated","Output":"--- PASS: TestCatalogRejectsHostileMetadata/size_overstated (0.01s)\n"}
+{"Time":"2026-11-19T02:19:37.458361986-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/size_overstated","Elapsed":0.01}
+{"Time":"2026-11-19T02:19:37.458376503-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/hash_mismatch"}
+{"Time":"2026-11-19T02:19:37.458378637-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/hash_mismatch","Output":"=== RUN   TestCatalogRejectsHostileMetadata/hash_mismatch\n"}
+{"Time":"2026-11-19T02:19:37.458381312-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/hash_mismatch","Output":"--- PASS: TestCatalogRejectsHostileMetadata/hash_mismatch (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458390119-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata/hash_mismatch","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458393214-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata","Output":"--- PASS: TestCatalogRejectsHostileMetadata (0.12s)\n"}
+{"Time":"2026-11-19T02:19:37.458395719-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogRejectsHostileMetadata","Elapsed":0.12}
+{"Time":"2026-11-19T02:19:37.458398134-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogAtExactBoundaryIsAccepted"}
+{"Time":"2026-11-19T02:19:37.458400077-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogAtExactBoundaryIsAccepted","Output":"=== RUN   TestCatalogAtExactBoundaryIsAccepted\n"}
+{"Time":"2026-11-19T02:19:37.458413823-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogAtExactBoundaryIsAccepted","Output":"--- PASS: TestCatalogAtExactBoundaryIsAccepted (0.12s)\n"}
+{"Time":"2026-11-19T02:19:37.458416588-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestCatalogAtExactBoundaryIsAccepted","Elapsed":0.12}
+{"Time":"2026-11-19T02:19:37.458418853-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestMissingBuildFilesFailClosed"}
+{"Time":"2026-11-19T02:19:37.458421598-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestMissingBuildFilesFailClosed","Output":"=== RUN   TestMissingBuildFilesFailClosed\n"}
+{"Time":"2026-11-19T02:19:37.458424453-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestMissingBuildFilesFailClosed","Output":"--- PASS: TestMissingBuildFilesFailClosed (0.04s)\n"}
+{"Time":"2026-11-19T02:19:37.458427338-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestMissingBuildFilesFailClosed","Elapsed":0.04}
+{"Time":"2026-11-19T02:19:37.458430394-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestNeverCachePrivate"}
+{"Time":"2026-11-19T02:19:37.458432238-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestNeverCachePrivate","Output":"=== RUN   TestNeverCachePrivate\n"}
+{"Time":"2026-11-19T02:19:37.458435153-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestNeverCachePrivate","Output":"--- PASS: TestNeverCachePrivate (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458437377-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestNeverCachePrivate","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458439421-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfiguredStaticPrefix"}
+{"Time":"2026-11-19T02:19:37.458441204-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfiguredStaticPrefix","Output":"=== RUN   TestConfiguredStaticPrefix\n"}
+{"Time":"2026-11-19T02:19:37.458443519-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfiguredStaticPrefix","Output":"--- PASS: TestConfiguredStaticPrefix (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458445663-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"TestConfiguredStaticPrefix","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458448117-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable"}
+{"Time":"2026-11-19T02:19:37.458450472-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable","Output":"=== RUN   FuzzCacheable\n"}
+{"Time":"2026-11-19T02:19:37.458452896-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#0"}
+{"Time":"2026-11-19T02:19:37.458456784-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#0","Output":"=== RUN   FuzzCacheable/seed#0\n"}
+{"Time":"2026-11-19T02:19:37.458466191-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#0","Output":"--- PASS: FuzzCacheable/seed#0 (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458470419-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#0","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458473064-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#1"}
+{"Time":"2026-11-19T02:19:37.458475519-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#1","Output":"=== RUN   FuzzCacheable/seed#1\n"}
+{"Time":"2026-11-19T02:19:37.458479456-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#1","Output":"--- PASS: FuzzCacheable/seed#1 (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.45848181-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#1","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458484185-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#2"}
+{"Time":"2026-11-19T02:19:37.458486109-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#2","Output":"=== RUN   FuzzCacheable/seed#2\n"}
+{"Time":"2026-11-19T02:19:37.458488563-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#2","Output":"--- PASS: FuzzCacheable/seed#2 (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458490737-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#2","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458492821-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#3"}
+{"Time":"2026-11-19T02:19:37.458494775-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#3","Output":"=== RUN   FuzzCacheable/seed#3\n"}
+{"Time":"2026-11-19T02:19:37.458497339-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#3","Output":"--- PASS: FuzzCacheable/seed#3 (0.00s)\n"}
+{"Time":"2026-11-19T02:19:37.458499694-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable/seed#3","Elapsed":0}
+{"Time":"2026-11-19T02:19:37.458502299-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable","Output":"--- PASS: FuzzCacheable (0.01s)\n"}
+{"Time":"2026-11-19T02:19:37.458504423-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Test":"FuzzCacheable","Elapsed":0.01}
+{"Time":"2026-11-19T02:19:37.458506597-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Output":"PASS\n"}
+{"Time":"2026-11-19T02:19:38.514149741-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/pwa\t1.947s\n"}
+{"Time":"2026-11-19T02:19:38.516129312-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/pwa","Elapsed":1.964}
+{"Time":"2026-11-19T02:19:41.588099457-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/pwa/cmd/demo"}
+{"Time":"2026-11-19T02:19:41.643242641-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/pwa/cmd/demo","Output":"?   \tgithub.com/djshellshoxxx/circula/future/pwa/cmd/demo\t[no test files]\n"}
+{"Time":"2026-11-19T02:19:41.643281313-08:00","Action":"skip","Package":"github.com/djshellshoxxx/circula/future/pwa/cmd/demo","Elapsed":0.055}

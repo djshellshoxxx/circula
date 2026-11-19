@@ -24,14 +24,18 @@
   <form method="post" action="/logout" class="signout">{{template "csrf" .}}<button type="submit" class="link">{{msg "account.sign_out"}}</button></form>
   {{end}}
 </header>
-{{if and .Authed .ExpiresAt}}<div id="session-warning" class="notice" role="alert" tabindex="-1" hidden data-expires="{{.ExpiresAt}}" data-extendable="{{.Extendable}}">
+{{if and .Authed .ExpiresAt}}<div id="session-warning" class="notice" role="alert" tabindex="-1" hidden data-expires="{{.ExpiresAt}}" data-extendable="{{.Extendable}}"
+  data-extendable-message="{{msg "session_warning.extendable" "{time}"}}"
+  data-fixed-message="{{msg "session_warning.fixed" "{time}"}}"
+  data-ended-message="{{msg "session_warning.ended"}}"
+  data-failed-message="{{msg "session_warning.failed"}}">
   <p><strong>{{msg "session.ending"}}</strong> <span id="session-msg"></span></p>
   <p><button type="button" id="session-extend">{{msg "session.extend"}}</button> <a id="session-login" href="/login">{{msg "session.sign_in"}}</a> <button type="button" id="session-dismiss" class="link">{{msg "session.dismiss"}}</button></p>
 </div>{{end}}
 <main id="main" tabindex="-1">
   <h1 id="page-title">{{.Title}}</h1>
-  {{if .SnapshotAt}}<p id="figure-freshness">Page generated {{.SnapshotAt}}. Figures are a snapshot and do not update automatically.</p>
-  <p id="figure-stale" class="notice" role="status" hidden></p>{{end}}
+  {{if .SnapshotAt}}{{$fresh := msgAround "freshness.snapshot"}}<p id="figure-freshness">{{$fresh.Before}}{{.SnapshotAt}}{{$fresh.After}}</p>
+  <p id="figure-stale" class="notice" role="status" hidden data-offline-message="{{msg "freshness.offline" "{snapshot}"}}" data-history-message="{{msg "freshness.history" "{snapshot}"}}"></p>{{end}}
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
   {{if .FrozenSince}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> This network is read-only while its ledger is being checked, since {{.FrozenSince}}. You can read balances and history; anything that would change them is refused until the check passes.</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{.}}{{if $.NoticeHref}} <a href="{{$.NoticeHref}}">{{msg "notice.admin_recovery_link"}}</a>{{end}}</div>{{end}}{{end}}
   {{with .Warn}}<div class="notice" role="note"><strong>{{msg "balance.limit_notice"}}</strong> {{.}}</div>{{end}}
@@ -84,7 +88,7 @@
 {{define "pager"}}{{if .Next}}<p><a href="{{.Href}}{{.Next}}">{{msg "pager.next"}}</a></p>{{end}}{{end}}
 
 {{define "termsbox"}}{{with .D.Terms}}
-<section aria-labelledby="terms-h"><h2 id="terms-h">Network terms (version {{.Version}})</h2>
+<section aria-labelledby="terms-h"><h2 id="terms-h">{{msg "join.terms.heading" (printf "%d" .Version)}}</h2>
 {{range $.D.Paras}}<p>{{.}}</p>{{end}}</section>
 {{with $.Err "terms_version"}}<p class="error" id="e-terms_version"><span class="sr">{{msg "form.error_prefix"}}</span>{{.}}</p>{{end}}
 <div class="field" id="f-terms_version"><input type="hidden" name="terms_version" value="{{.Version}}">
