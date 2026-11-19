@@ -49,7 +49,7 @@ test('UX-038: create and then edit a listing using only the keyboard', async ({ 
   await tabTo(page, /^Offer: something I provide$/);
   await page.keyboard.press('ArrowDown');
   await expect(page.getByLabel('Request: something I want', { exact: true })).toBeChecked();
-  await kbSubmit(page, [[/^Title$/, 'Keyboard-made shelf'], [/^Description$/, 'Wanted: a small wall shelf.'], [/^Price \(optional\)$/, '3.00']], /^Publish listing$/);
+  await kbSubmit(page, [[/^Title$/, 'Keyboard-made shelf'], [/^Description \(optional\)$/, 'Wanted: a small wall shelf.'], [/^Price \(optional\)$/, '3.00']], /^Publish listing$/);
   await expect(page.locator('#flash')).toContainText('Listing published.');
   const created = page.locator('main li').filter({ hasText: 'Keyboard-made shelf' });
   await expect(created).toContainText('Request:');

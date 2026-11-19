@@ -1,0 +1,84 @@
+{
+  "observed_at": "2026-11-18T09:17:59.231Z",
+  "pr": 82,
+  "head": "925547b2f4a2e5ecf0d4c699f7cf906949099c8b",
+  "run": 44273216945,
+  "required": 7,
+  "superseded_by": "6785863252d2910553b1f4a26396f14b4405d6fa",
+  "replacement_run": 44274174998,
+  "note": "Normal forward refresh includes accepted PR81 main via ca0a134 and a following audit-wording clarification. No F remote mutation.",
+  "jobs": [
+    {
+      "id": 134694765704,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694766118,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694766137,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694766147,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694766252,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694766326,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694766553,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134694768410,
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44273216945,
+      "logs_url": null,
+      "steps": null
+    }
+  ]
+}

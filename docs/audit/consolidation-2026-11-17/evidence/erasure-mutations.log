@@ -1,0 +1,12 @@
+baseline test SHA256: ae914cecfa657eb75f6e5d6848761ee8a2c119b9c1c96ecb60519ef2a4b1652d
+name: detected (still found in [members.display_name])
+login: detected (still found in [persons.login])
+memo: detected (still found in [transactions.note])
+memo-name-fragment: detected (still found in [transactions.note])
+memo-crop-fragment: detected (still found in [transactions.note])
+listing-title: detected (still found in [listings.title])
+listing-description: detected (still found in [listings.description])
+statement: detected (still found in [disputes.statement])
+target-password: detected (erased person's original password hash still found in [persons.password_hash])
+unrelated-password: detected (unrelated person's credential changed)
+restored test SHA256: ae914cecfa657eb75f6e5d6848761ee8a2c119b9c1c96ecb60519ef2a4b1652d

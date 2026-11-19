@@ -1,0 +1,77 @@
+name: future notifications module
+
+# Isolated development only. This workflow does not start a dispatcher or use
+# production SMTP, Web Push, credentials or a Circula database.
+on:
+  push:
+    paths:
+      - "future/notifications/**"
+      - ".github/workflows/future-notifications.yml"
+  pull_request:
+    paths:
+      - "future/notifications/**"
+      - ".github/workflows/future-notifications.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-notifications-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  module:
+    name: isolated notifications with SQLite
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      CGO_ENABLED: "1"
+      GOMAXPROCS: "2"
+      GOTOOLCHAIN: local
+    defaults:
+      run:
+        working-directory: future/notifications
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod # Match the pinned core toolchain, not an older module minimum.
+          cache: true
+          cache-dependency-path: future/notifications/go.sum
+      - name: Check isolated HOLD boundary
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          manifest = json.loads(Path("feature.json").read_text())
+          if manifest.get("enabled") is not False or manifest.get("integration") != "HOLD":
+              raise SystemExit("This workflow qualifies an isolated, disabled HOLD module only")
+          expected = "github.com/djshellshoxxx/circula/future/notifications"
+          main = subprocess.check_output(["go", "list", "-m"], text=True).strip()
+          if main != expected:
+              raise SystemExit("Unexpected nested module identity")
+          modules = subprocess.check_output(["go", "list", "-m", "-f", "{{.Path}}", "all"], text=True).splitlines()
+          for module in modules:
+              if module == "github.com/djshellshoxxx/circula" or (module.startswith("github.com/djshellshoxxx/circula/") and module != expected):
+                  raise SystemExit("Notifications may not import core or another future module")
+          PY
+      - name: Verify module checksums
+        run: go mod verify
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+      - name: Vet including SQLite tests
+        run: go vet -mod=readonly -tags=sqlite_cgo_test ./...
+      - name: Race and SQLite regression tests
+        run: go test -mod=readonly -race -p=1 -count=1 -tags=sqlite_cgo_test -cover -timeout=3m ./...
+      - name: Dependency vulnerability check
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...

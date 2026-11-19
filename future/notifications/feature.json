@@ -1,10 +1,10 @@
 {
   "id": "FUX-104",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "isolated-service-and-transports-implemented-feature-incomplete",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Opt-in/active-member delivery policy, IANA-zone quiet hours, structured dedupe keys and capped exponential retries.",
-  "remaining": "Transactional durable outbox; SMTP/Web Push transport and explicit SSRF-safe egress policy; encrypted subscription storage; VAPID/SMTP secrets; unsubscribe/bounce handling; retry worker/CLI; crash recovery and opt-out races."
+  "scope": "SQL preferences and encrypted targets, confirmation/unsubscribe tokens, transactional idempotent outbox, quiet-hour/retry dispatch, current-directory checks, key rotation, SMTP/Web Push adapters, unambiguous target AAD and valid-UTF-8 identity binding.",
+  "remaining": "Production transaction/current-authorization adapters, worker crash/restart qualification, real transport and egress acceptance, bounce handling, operator CLI, accessible/no-JS preferences, credential custody/rotation, backup/restore and browser opt-in/logout acceptance."
 }

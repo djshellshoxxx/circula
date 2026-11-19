@@ -1,0 +1,19 @@
+{{define "content"}}
+<p>{{msg "sessions.explain"}}</p>
+{{if .D}}
+<ul class="rows">
+{{range .D}}
+  <li>
+    <h2>{{if .Current}}{{msg "sessions.current"}}{{else}}{{msg "sessions.other"}}{{end}}</h2>
+    <dl>
+      <dt>{{msg "sessions.started"}}</dt><dd>{{time .CreatedAt}}</dd>
+      <dt>{{msg "sessions.last_active"}}</dt><dd>{{time .LastSeenAt}}</dd>
+      <dt>{{msg "sessions.expires"}}</dt><dd>{{time .ExpiresAt}}</dd>
+    </dl>
+    <p><a href="/account/sessions/{{.ID}}/revoke">{{if .Current}}{{msg "sessions.sign_out_here"}}{{else}}{{msg "sessions.sign_out_other"}}{{end}}</a></p>
+  </li>
+{{end}}
+</ul>
+{{else}}<p>{{msg "sessions.none"}}</p>{{end}}
+<p><a href="/account/security">{{msg "sessions.back_security"}}</a></p>
+{{end}}

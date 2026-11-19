@@ -2,56 +2,79 @@
 
 [Home](Home) · [Developer Guide](Developer-Guide)
 
-**Status:** This guide describes functionality observed in **draft PR #19** at `d98734cf1b2cc9a826397a6e43f7902de2304109`, not an installed public service or stable release. For full instructions, see the [canonical member guide](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/guides/user-guide.md) and [network-administrator guide](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/guides/admin-guide.md). Features labelled *draft*, *blocked* or *future-only* must not be treated as deployed.
+**Status:** This page summarises the member and administrator web interface on branch `claude/cool-gauss-vdxlod`. It is not an installed public service, and it is not a release. There is no public instance implied by the repository: ask your network operator for the HTTPS address of their Circula instance.
 
-## Overview and capabilities
+The full guides are the source of truth: [member guide](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/guides/user-guide.md) and [network administrator guide](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/guides/admin-guide.md). Section numbers below refer to the member guide.
 
-Circula lets members of one network record exchanges in a shared mutual-credit ledger. A posted transaction produces corresponding ledger entries; members can read their own balance and activity. The draft build includes accounts, invitations, trades, proposals/acceptance, listings, disputes, exports, audit logs, optional second-factor authentication, recovery and administrator governance. **Credits are accounting units, not fiat balances, bank deposits, tradable tokens or custody assets.** Networks control their rules.
+## What Circula is
+
+A network is a shared record of who has given and received value. The unit is an accounting unit that exists only inside that network, with no value outside it. Nobody has to accept it. **Circula records entries; it does not move money, hold deposits or custody assets.** Network members decide the rules, obligations and enforcement.
+
+| Term | Meaning |
+|---|---|
+| Balance | Credits received minus credits paid, as posted |
+| Credit limit | How far below zero your balance may go |
+| Reserved | Set aside for your pending outgoing trades |
+| Available to spend | Balance plus credit limit minus reserved. Not the same as balance |
+| Awaiting from others | Pending trades where someone is to pay you. Not available until posted |
 
 ## Getting started
 
-1. Ask your network operator for the HTTPS URL of a deployed Circula instance; **no public instance is implied by this repository**. If none exists, the operator must first install and configure a development or staging instance (see [Developer Guide](Developer-Guide)).
-2. Open `/register` and create an account, or use `/login` if you already have one. Account creation alone does not enroll you in a network.
-3. Join using an administrator-issued one-time invitation `/join/<token>`, or `/n/<slug>/join` if that network permits self-service join requests. Review and explicitly accept published terms when required.
-4. Sign in, view the dashboard, directory and balance. Use a password manager; enable MFA on `/account/security` if supported by the instance and keep the **one-time recovery codes** offline.
+1. **Create an account** at `/register`. Creating an account does not make you a member of any network.
+2. **Sign in** at `/login`. Turn on a second factor at `/account/security` (an authenticator app, TOTP) if your network offers it. Keep the ten recovery codes offline.
+3. **Join a network**:
+   - with an invitation link from an administrator (`/join/…`). Links work once and expire;
+   - or from the network's join page (`/n/<name>/join`), if the network allows requests. Depending on the network, you join at once or wait for approval.
+   - If the network has published terms, you must accept that version before joining completes.
+4. **Start your own network** from `/setup`. You become its first administrator. The service may require a setup secret from its operator.
 
-The implementation has a verified invitation return-link fix in draft PR #19. See [PR #19](https://github.com/djshellshoxxx/circula/pull/19) for the current work and remaining approval gates.
+Recovery codes are created at `/account/recovery-codes`. If you forget your password, use `/recover` with your login, one unused code and a new password. Recovery does not sign you in. It signs out your sessions and revokes your API tokens. Without a code, ask a network administrator for a temporary password. Details: member guide section 2.
 
-## Account recovery (draft functionality)
+## Main pages
 
-From a signed-in account, open `/account/recovery-codes` and enter your current password to generate **10 one-time recovery codes**. Save them securely: the application displays them only once. Generating a new set invalidates every previously generated code.
+The header shows **Home**, **Trades**, **Directory**, **Listings**, **History**, **Disputes**, and for reviewers and administrators **Review queue** and **Network admin**. Under your name: **Inbox**, **Time zone**, **Password**.
 
-If you lose your password, open `/recover` without signing in, enter your login and one unused recovery code, and choose a new password. A successful recovery **does not sign you in**: return to `/login`. Recovery changes the password, invalidates other recovery codes, and revokes existing sessions and API tokens. If no usable code remains, contact a network administrator; administrator resets have restrictions and provide a one-time temporary password that must be changed at next sign-in. A platform operator may be required for accounts with multiple network memberships or elevated roles.
-
-This code-based workflow does not use email and is not an invitation to share codes with an administrator. It is implemented in the unmerged application draft and has source-level tests, but it is **not a released service or independently approved security feature**.
+| Page | Path (under `/n/<network>/`) | Use |
+|---|---|---|
+| Home | `/n/<network>/` | Balance card, announcements, trades waiting for you, latest activity |
+| Trades | `/n/<network>/trades` | Pending, accepted and closed trades |
+| Propose | `/n/<network>/trades/new` | Start a trade |
+| History | `/n/<network>/history` | Every trade and its status; download your transactions |
+| Directory | `/n/<network>/directory` | Active members by display name |
+| Listings | `/n/<network>/listings` | Offers and requests |
+| Disputes | `/n/<network>/disputes` | Your disputes and their status |
+| Inbox | `/n/<network>/inbox` | Notifications (on-screen only) |
 
 ## Common workflows
 
-- **Propose a trade:** open a member or listing, select the counterparty and direction, enter amount and optional note, review, then explicitly send. A proposal is not a completed posting.
-- **Respond:** open Trades, review the amount/direction/available credit and accept or decline. Accepted trades post; declined, cancelled and expired proposals do not post.
-- **Track balances:** Dashboard shows posted balance, credit limit, reserved funds and available credit distinctly. History shows entries, not only pending proposals.
-- **Disputes:** open a dispute on an eligible completed trade and follow the reviewer process. A ledger correction creates new entries; past posted entries are not silently edited.
-- **Download data:** use History and available export functions. Keep downloads private, since they may include transaction data.
-- **Network administrators:** use Network admin for invitations, membership, policy, audited adjustments and ledger consistency. High-impact changes may require independent approval.
+- **Propose a trade.** Choose the other member, direction (*I pay them* or *They pay me*), amount and an optional note. Review, then **Send trade**. Nothing is created until you send it. A double click creates one trade. An unanswered proposal expires after the network's period (7 days by default).
+- **Respond to a trade.** Open it from Home or Trades, review it, then **Confirm and accept** or decline. Acceptance re-checks the payer's available credit at that moment, so it can be refused. Declined, cancelled and expired proposals post nothing.
+- **Dispute a completed trade** (section 6). Only the two people in the trade can open one, within the network's dispute window (30 days after completion by default). Opening a dispute does not change balances. A reviewer who is not a party decides it: dismissed, upheld or partly upheld. Reversals post as new entries; past entries are never edited.
+- **Check balances.** The dashboard shows balance, credit limit, reserved, available to spend and awaiting from others as separate figures.
+- **Download data.** **Download my transactions** on History gives a zip with CSV or JSON. Keep downloads private: they can include names, amounts and notes.
+- **Administrators** use **Network admin** for invitations, membership, policy, audited adjustments, reversals, audit log and checks. Large adjustments may need a second administrator's approval.
 
-See the [member guide](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/guides/user-guide.md) and [admin guide](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/guides/admin-guide.md) for full click-by-click instructions and current limitations.
+## Troubleshooting
 
-## Troubleshooting and FAQ
+**An invitation link does not work.** It may be used, expired or revoked. Ask an administrator for a new one. Do not post invitation links publicly.
 
-**An invitation doesn't work.** Check whether the link was already used, expired or revoked; request a new link from an administrator. Do not post invitation tokens publicly.
+**My trade was refused.** Check your available credit, the other member's status, the network's maximum trade amount, and whether you have accepted the latest terms. A refusal posts nothing.
 
-**My trade was rejected.** Check your available credit, the member's status, maximum trade amount, whether you accepted the latest terms, and the network's posting restrictions. A refusal need not indicate a missing entry.
+**I cannot sign in.** Check your credentials. After several failed attempts you must wait a short while. Use your own recovery code or the operator's recovery process. Never send a recovery code to another person.
 
-**I cannot sign in.** Check credentials and temporary rate limits. Use previously stored recovery codes or the operator-approved recovery process; never send a recovery code to another person.
+**Balance and available credit differ.** Available credit includes your permitted negative balance and subtracts reserved outgoing credit. It is not your ledger balance.
 
-**Why is my posted balance different from available credit?** Available credit accounts for the permitted negative balance and pending reserved outgoing credit; it is not the ledger balance.
+**Does Circula send money or guarantee repayment?** No. The network sets the unit and the obligations. Circula does not hold, transfer or guarantee anything.
 
-**Does Circula send money or guarantee repayment?** No. Network members determine the unit, rules, obligations and enforcement; this software records entries. Do not represent its credits as monetary custody.
+**Does it work without JavaScript?** The interface has no-script routes for the main flows. Automated browser checks exist. A manual screen-reader review is still pending (see [Home](Home)).
 
-**Does the app work without JavaScript?** The draft includes no-script HTML routes and automated browser checks, but manual assistive-technology review remains an unmet release gate.
+**What is not in this build?** Member statements, e-mail or push notifications, messages between members, hardware keys or passkeys, and deleting the account itself. Full list: member guide section 11.
 
-## Privacy, security and safe use
+## Privacy and safe use
 
-Self-hosting puts data retention, logs, backups and access controls under the chosen operator. A network administrator and platform operator have distinct roles; do not assume that all metadata are private from either. Trade notes, member identities, exports and invitation links can disclose information. Choose an operator you trust, verify HTTPS before entering credentials, avoid including secrets in trade descriptions and save your own export and recovery records securely.
+- The operator of the instance controls retention, logs, backups and access. The network administrator and the platform operator are different roles. Do not assume either cannot see your data.
+- Trade notes, member names, exports and invitation links can reveal information. Do not put secrets in notes.
+- Verify HTTPS before entering credentials.
+- Save your recovery codes and exports securely.
 
-The draft is **not independently security-approved or released**. Manual screen-reader tests, legal/regulatory choices, licence and release thresholds remain pending. Report potential vulnerabilities **privately**, following [SECURITY.md](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/SECURITY.md), not public Issues or Discussions.
+The software is **not independently security-approved** and not released. Report suspected vulnerabilities privately, following the [security policy](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/SECURITY.md).

@@ -55,11 +55,26 @@ truncation (also exactly at a chunk boundary) and a wrong key all fail with a cl
 as a database.
 
 How a backup is made. `VACUUM INTO` writes the plaintext snapshot into a private `0700` work directory
-(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there, the snapshot is
-encrypted to `*.db.enc.partial`, decrypted again in memory and compared with the verified plaintext, and only then renamed.
-The work directory is overwritten and removed on success and on every failure. If the process is killed, the next backup
-in that directory removes work directories older than an hour. Overwriting is best effort on copy-on-write file systems
-and SSDs: keep the host disk encrypted too.
+(`.circula-bk-*`) next to the destination. The integrity check and ledger verification run there. When a key is set,
+the snapshot is encrypted inside the same work directory, decrypted again and compared with the verified plaintext,
+and only then renamed to the destination. The work directory holds a process lease, is overwritten and removed on
+success and on every failure. If the process is killed, the next backup into a private destination directory removes
+unleased work directories older than an hour. Cleanup re-checks the work directory's identity before removing it and
+re-checks each file's identity on the open handle before overwriting it.
+
+On Linux, macOS and other Unix systems, also:
+- cleanup never follows a final symlink (`O_NOFOLLOW`) or overwrites a file that has another hard link;
+- the destination directory must be owned by the service user or root;
+- a destination that other users can write is refused unless it is sticky (such as `/tmp`);
+- work directories are swept only from a directory owned by the service user with no group or other write
+  permission.
+
+Only the destination directory itself is checked. Its parent directories must not be writable by other users.
+
+On Windows these owner, mode and link-count checks do not exist. Protection there relies on the directory's NTFS
+ACLs, so keep `backup-dir` and manual destinations in a directory only the service account can modify.
+
+Overwriting is best effort on copy-on-write file systems and SSDs: keep the host disk encrypted too.
 
 Restore decrypts transparently when the key is configured (`CIRCULA_BACKUP_ENCRYPTION_KEY` or
 `backup-encryption-key-file`). `restore` refuses, before changing anything: an encrypted backup with no key, a wrong key,
@@ -84,7 +99,13 @@ The command exits with code `3` when the snapshot's ledger verification failed. 
 Scheduled: `serve` takes a backup every `backup-interval` (default 24 hours) into `backup-dir` and then applies retention.
 Retention keeps the newest `backup-retain-daily` backups (default 30) and, for each of the newest
 `backup-retain-monthly` months (default 12), the newest backup of that month. Pruned backups are removed with their
-manifests and only their names are logged.
+manifests. When backups are pruned, the scheduled job writes an INFO record, `expired backups removed`, with their
+`count`; it does not log the names of the pruned files.
+
+Backups whose names are dated after the current time are kept, fill no retention slot and do not delay scheduling.
+At each scheduling evaluation, their presence produces a separate WARN record with their count, the newest such
+file's base name, its name timestamp and the current time in UTC (OPS-033). That warning describes retained future-dated
+backups, not files removed by pruning.
 
 Before any migration of an existing database, a backup is taken with reason `pre-migration`.
 
@@ -204,3 +225,57 @@ Copy each backup and its manifest off the host, and copy the restore record too.
 operator roles that need them. Hosted deployments keep one copy outside the primary failure domain (OPS-019). With
 `backup-encryption-key` set the copies are encrypted; never store the key beside them. Without it, the copy location must
 itself be encrypted.
+
+## Interrupted restore recovery
+
+A restore writes `<database>.restore-in-progress` before moving the existing database or its WAL files.
+The marker is flushed to disk; directory renames are synced on Unix. Windows uses file flushing and
+retains the same process-crash guard, but the directory-sync helper is a no-op there: power-loss
+persistence remains dependent on the operating system and filesystem.
+
+The marker remains until the replacement has passed checks and the saved files have been cleaned up,
+or until a failed replacement has completely rolled back. `serve`, `migrate`, backup and operator
+commands refuse to open a database with this marker. They also refuse legacy
+`<database>.pre-restore-swap`, `-wal`, `-shm` or `-journal` remnants from older builds. A corrupt or empty
+marker still blocks startup. This avoids silently creating an empty database after interruption
+between renames. An interrupted restore is not automatically completed or rolled back on startup.
+
+Recovery procedure:
+
+1. Keep Circula stopped. Copy the complete database directory to a separate protected recovery
+   directory before changing anything. Preserve the configured database, its `-wal`, `-shm` and
+   `-journal`, the `.restore-partial` file and its sidecars, every `.pre-restore-swap` file and sidecar,
+   and the marker. The marker records the absolute target, staging and saved-file paths; preserve
+   files at those paths too if they are outside the database directory. Keep the original source
+   backup, its manifest and the pre-restore backup.
+2. Choose the intended recovery point explicitly. The pre-restore backup represents the previous
+   instance; the requested source backup represents the requested rollback. Do not infer the choice
+   from whichever filename exists. Do not attach an arbitrary WAL to either database: interruption
+   can leave the original main file under the saved name while its WAL still has the original name.
+3. Restore the selected authenticated backup into a **new, unused database path**. Use the matching
+   binary/schema and configured signing/encryption keys. For example, with a configured backup key:
+
+   ```sh
+   circula restore -config /etc/circula/circula.json -database /var/lib/circula-recovery/recovered.db /protected/selected-backup.db
+   circula verify-ledger -config /etc/circula/circula.json -database /var/lib/circula-recovery/recovered.db
+   ```
+
+   Create the recovery directory with owner-only access first. Do not use `-overwrite` on the
+   interrupted database. Successful restore invalidates the copied bearer credentials as described
+   above; verify the expected network/member/ledger state against the selected recovery point.
+4. Point the stopped service's database setting at the verified recovered path, then start it and
+   check readiness and the expected network state. Retain the quarantined original files and marker
+   until the incident review and backup-retention process permit their removal. Restoring into a new
+   path does not require deleting the original marker.
+
+If no usable backup is available, retain all evidence and reconstruct a coherent SQLite database/WAL
+set on **copies**, then verify the result before replacing the configured path. Never delete the marker
+merely to make startup proceed, and never start against a missing/empty database after a failed restore.
+
+## Backup signature versions
+
+New signed backups use `hmac_version: 2`. The signature covers integrity/ledger verification summaries
+and all other manifest attestation fields; the filename remains renameable. This binary still verifies
+historical manifests with no HMAC version field. Use the current or a compatible newer binary to verify
+new signatures: older binaries cannot authenticate HMAC-v2 manifests. Restore still verifies database
+contents independently of the recorded summaries.

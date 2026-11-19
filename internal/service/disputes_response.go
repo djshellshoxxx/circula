@@ -3,10 +3,9 @@ package service
 import (
 	"context"
 	"strings"
-	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Re-review outcomes beyond the dispute outcomes upheld / partially_upheld.
@@ -24,7 +23,8 @@ type RespondInput struct {
 // visible to the opener, the reviewer and administrators through GetDispute.
 // Suspended parties may respond: answering adds no obligation (DOM-039). Only
 // one response is accepted. A decision waits for the response or the
-// network policy ResponsePeriodDays unless the reviewer waives it (FR-076).
+// ResponsePeriodDays of the network policy in force when the dispute was
+// opened (GOV-001) unless the reviewer waives it (FR-076).
 func (s *Service) RespondToDispute(ctx context.Context, actor domain.Actor, netID string, in RespondInput) (*store.DisputeResponse, error) {
 	var out *store.DisputeResponse
 	err := s.update(ctx, func(tx store.Tx) error {
@@ -36,6 +36,9 @@ func (s *Service) RespondToDispute(ctx context.Context, actor domain.Actor, netI
 			return domain.Forbidden("membership cannot perform this action")
 		}
 		out, err = idempotent(s, tx, netID, actor, "dispute.respond", in.IdempotencyKey, in, func() (string, error) {
+			if !domain.ValidRecordID(in.DisputeID) {
+				return "", domain.NotFound("dispute")
+			}
 			d, err := tx.GetDispute(netID, in.DisputeID)
 			if err != nil {
 				return "", domain.NotFound("dispute")
@@ -95,7 +98,8 @@ type ReReviewRequestInput struct {
 }
 
 // RequestReReview lets either party to a decided dispute ask, once, within
-// the network policy ReReviewWindowDays of the decision, for a different reviewer to look again.
+// the ReReviewWindowDays after the decision set by the network policy in force
+// when the dispute was opened (GOV-001), for a different reviewer to look again.
 // The request is stored as its own record; the original decision is untouched.
 // A second request on the same dispute is refused even if the first was
 // decided (the database also enforces it).
@@ -113,6 +117,9 @@ func (s *Service) RequestReReview(ctx context.Context, actor domain.Actor, netID
 			if err := p.requireNetworkActive(); err != nil {
 				return "", err
 			}
+			if !domain.ValidRecordID(in.DisputeID) {
+				return "", domain.NotFound("dispute")
+			}
 			d, err := tx.GetDispute(netID, in.DisputeID)
 			if err != nil {
 				return "", domain.NotFound("dispute")
@@ -127,7 +134,11 @@ func (s *Service) RequestReReview(ctx context.Context, actor domain.Actor, netID
 			if d.Status != domain.DisputeResolved || d.DecidedAt == nil {
 				return "", domain.InvalidState("dispute is %s; only a decided dispute can be re-reviewed", d.Status)
 			}
-			closes := d.DecidedAt.Add(time.Duration(p.net.Policy.ReReviewWindowDays) * 24 * time.Hour)
+			pol, err := disputePolicy(tx, d) // the window in force when it was opened (GOV-001)
+			if err != nil {
+				return "", err
+			}
+			closes := domain.ReReviewCloses(d, pol)
 			if s.now().After(closes) {
 				return "", domain.InvalidState("the re-review period closed on %s", closes.Format("2006-01-02"))
 			}
@@ -218,6 +229,9 @@ func (s *Service) DecideReReview(ctx context.Context, actor domain.Actor, netID 
 
 func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInput) (string, error) {
 	netID := p.net.ID
+	if !domain.ValidRecordID(in.DisputeID) {
+		return "", domain.NotFound("dispute")
+	}
 	d, err := tx.GetDispute(netID, in.DisputeID)
 	if err != nil {
 		return "", domain.NotFound("dispute")
@@ -284,7 +298,7 @@ func (s *Service) decideReReview(tx store.Tx, p *principal, in ReReviewDecideInp
 		if t.Status == domain.TxDisputed {
 			return "", domain.InvalidState("another dispute on this trade is still undecided; decide or withdraw it before a re-review can reverse the trade")
 		}
-		if _, err := s.reverse(tx, p.net, t, amount, "re-review of dispute "+d.ID, p.member.ID, p.actor.RequestID); err != nil {
+		if _, err := s.reverseDispute(tx, p, t, amount, "re-review of dispute "+d.ID, d.ID, in.IdempotencyKey); err != nil {
 			return "", err
 		}
 	}

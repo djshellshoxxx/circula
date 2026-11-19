@@ -388,7 +388,7 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/notifications?unread=true", token: bobT})
 	h.do(200, call{method: "GET", path: "/notifications/unread-count", token: bobT})
 	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"all": true}})
-	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"ids": []string{"nope"}}})
+	h.do(200, call{method: "POST", path: "/notifications/read", token: bobT, body: m{"ids": []string{"018f0000-0000-7000-8000-ffffffffffff"}}})
 	h.do(422, call{method: "POST", path: "/notifications/read", token: bobT, body: m{}, skipRequest: true})
 
 	// Reversal (admin) on a fresh trade.
@@ -422,6 +422,32 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/tokens", token: aliceT})
 	h.do(204, call{method: "DELETE", path: "/tokens/" + tokID, token: aliceT})
 	h.do(404, call{method: "DELETE", path: "/tokens/" + tokID, token: aliceT})
+	// Account session listing/revocation is owner-scoped and cookie-only.
+	if _, _, err := env.Svc.Login(env.Ctx, "alice", "correct horse battery"); err != nil {
+		t.Fatal(err)
+	}
+	h.do(403, call{method: "GET", path: "/me/sessions", token: aliceT})
+	rec = h.do(200, call{method: "GET", path: "/me/sessions", hdr: cookie})
+	var sessions struct {
+		Data []struct {
+			ID      string `json:"id"`
+			Current bool   `json:"current"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &sessions); err != nil {
+		t.Fatal(err)
+	}
+	otherSession := ""
+	for _, row := range sessions.Data {
+		if !row.Current {
+			otherSession = row.ID
+			break
+		}
+	}
+	if otherSession == "" {
+		t.Fatal("session list omitted the second sign-in")
+	}
+	h.do(204, call{method: "DELETE", path: "/me/sessions/" + otherSession, hdr: cookie})
 	h.do(403, call{method: "POST", path: "/me/password", token: aliceT, body: m{"current_password": "a", "new_password": "bbbbbbbbbbbb"}})
 	h.do(422, call{method: "POST", path: "/me/password", hdr: cookie, body: m{"current_password": "wrong wrong wrong", "new_password": "another long password"}})
 	h.do(204, call{method: "POST", path: "/me/password", hdr: cookie, body: m{"current_password": "correct horse battery", "new_password": "another long password"}})

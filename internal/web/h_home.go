@@ -37,6 +37,10 @@ func (s *server) home(w http.ResponseWriter, r *http.Request) {
 		s.toLogin(w, r)
 		return
 	}
+	if a.MustChangePassword { // SEC-008 also applies before choosing a network.
+		s.mustChange(w, r)
+		return
+	}
 	mems, err := s.svc.MyMemberships(r.Context(), a)
 	if err != nil {
 		s.fail(w, r, err)
@@ -178,6 +182,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 		if row.Pending {
 			h.Pending = append(h.Pending, row)
 		} else {
+			row.ReversedBy = n.reversedBy(t, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals) // UX-017
 			h.Done = append(h.Done, row)
 		}
 	}

@@ -1,0 +1,45 @@
+{
+  "commit": "ef8c3a609f74fd9b7e2a0b1f7452b8f078b35009",
+  "cases": {
+    "original": {
+      "checker_errors": [
+        "line 12: 'Property-test long run (merge/release)' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 13: 'Interleavings per CI configuration' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 14: '100 disjoint concurrent trades finish within' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 15: 'Branch coverage, posting/balance/credit-limit code' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 16: 'Throughput / latency targets' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 17: 'Login timing difference, existing vs missing account' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 18: 'Migration of fixture with >10,000 entries' has no dated DEC-023 decision ('UNCONFIRMED')"
+      ],
+      "gate_returncode": 1,
+      "threshold_rows": [
+        "| thresholds | FAIL | DEC-023 decisions unconfirmed or invalid (QA-040) |"
+      ],
+      "retained_unconfirmed": true
+    },
+    "owner_rows_deleted": {
+      "checker_errors": [],
+      "gate_returncode": 0,
+      "threshold_rows": [
+        "| thresholds | PASS | confirmed decision rows |"
+      ],
+      "retained_unconfirmed": true
+    },
+    "owner_rows_converted_to_prose": {
+      "checker_errors": [],
+      "gate_returncode": 0,
+      "threshold_rows": [
+        "| thresholds | PASS | confirmed decision rows |"
+      ],
+      "retained_unconfirmed": true
+    },
+    "single_arbitrary_absolute": {
+      "checker_errors": [],
+      "gate_returncode": 0,
+      "threshold_rows": [
+        "| thresholds | PASS | confirmed decision rows |"
+      ],
+      "retained_unconfirmed": false
+    }
+  }
+}

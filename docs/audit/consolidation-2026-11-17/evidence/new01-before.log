@@ -1,0 +1,36 @@
+=== RUN   TestCopyFileSyncRefusesExistingDestination
+=== RUN   TestCopyFileSyncRefusesExistingDestination/regular_file
+    backup_private_staging_test.go:45: copy to an existing destination: <nil>, want file-exists refusal
+    backup_private_staging_test.go:48: existing data was modified: "replacement data", err=<nil>
+=== RUN   TestCopyFileSyncRefusesExistingDestination/symlink
+    backup_private_staging_test.go:45: copy to an existing destination: <nil>, want file-exists refusal
+    backup_private_staging_test.go:48: existing data was modified: "replacement data", err=<nil>
+--- FAIL: TestCopyFileSyncRefusesExistingDestination (0.00s)
+    --- FAIL: TestCopyFileSyncRefusesExistingDestination/regular_file (0.00s)
+    --- FAIL: TestCopyFileSyncRefusesExistingDestination/symlink (0.00s)
+=== RUN   TestSnapshotUsesPrivateStaging
+=== RUN   TestSnapshotUsesPrivateStaging/plaintext
+    backup_private_staging_test.go:92: verification file outside private staging directory: /tmp/TestSnapshotUsesPrivateStagingplaintext4131477215/001/backup.db.partial.verify
+    backup_private_staging_test.go:103: permissions on /tmp/TestSnapshotUsesPrivateStagingplaintext4131477215/001: 755, want 700
+    backup_private_staging_test.go:133: snapshot changed an unowned temporary path /tmp/TestSnapshotUsesPrivateStagingplaintext4131477215/001/backup.db.partial: "", open /tmp/TestSnapshotUsesPrivateStagingplaintext4131477215/001/backup.db.partial: no such file or directory
+    backup_private_staging_test.go:133: snapshot changed an unowned temporary path /tmp/TestSnapshotUsesPrivateStagingplaintext4131477215/001/backup.db.partial.verify: "", open /tmp/TestSnapshotUsesPrivateStagingplaintext4131477215/001/backup.db.partial.verify: no such file or directory
+=== RUN   TestSnapshotUsesPrivateStaging/plaintext/verification_failure
+    backup_private_staging_test.go:92: verification file outside private staging directory: /tmp/TestSnapshotUsesPrivateStagingplaintextverification_failure897084630/001/backup.db.partial.verify
+    backup_private_staging_test.go:103: permissions on /tmp/TestSnapshotUsesPrivateStagingplaintextverification_failure897084630/001: 755, want 700
+    backup_private_staging_test.go:133: snapshot changed an unowned temporary path /tmp/TestSnapshotUsesPrivateStagingplaintextverification_failure897084630/001/backup.db.partial: "", open /tmp/TestSnapshotUsesPrivateStagingplaintextverification_failure897084630/001/backup.db.partial: no such file or directory
+    backup_private_staging_test.go:133: snapshot changed an unowned temporary path /tmp/TestSnapshotUsesPrivateStagingplaintextverification_failure897084630/001/backup.db.partial.verify: "", open /tmp/TestSnapshotUsesPrivateStagingplaintextverification_failure897084630/001/backup.db.partial.verify: no such file or directory
+=== RUN   TestSnapshotUsesPrivateStaging/encrypted
+    backup_private_staging_test.go:133: snapshot changed an unowned temporary path /tmp/TestSnapshotUsesPrivateStagingencrypted3043137098/001/backup.db.partial: "", open /tmp/TestSnapshotUsesPrivateStagingencrypted3043137098/001/backup.db.partial: no such file or directory
+=== RUN   TestSnapshotUsesPrivateStaging/encrypted/verification_failure
+    backup_private_staging_test.go:133: snapshot changed an unowned temporary path /tmp/TestSnapshotUsesPrivateStagingencryptedverification_failure4061868485/001/backup.db.partial: "", open /tmp/TestSnapshotUsesPrivateStagingencryptedverification_failure4061868485/001/backup.db.partial: no such file or directory
+--- FAIL: TestSnapshotUsesPrivateStaging (0.54s)
+    --- FAIL: TestSnapshotUsesPrivateStaging/plaintext (0.06s)
+    --- FAIL: TestSnapshotUsesPrivateStaging/plaintext/verification_failure (0.01s)
+    --- FAIL: TestSnapshotUsesPrivateStaging/encrypted (0.18s)
+    --- FAIL: TestSnapshotUsesPrivateStaging/encrypted/verification_failure (0.01s)
+=== RUN   TestVerifyCopyLeavesPredictablePathUntouched
+    backup_private_staging_test.go:164: verification changed an unowned path: "", open /tmp/TestVerifyCopyLeavesPredictablePathUntouched4175099711/001/circula.db.verify: no such file or directory
+--- FAIL: TestVerifyCopyLeavesPredictablePathUntouched (0.17s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.712s
+FAIL

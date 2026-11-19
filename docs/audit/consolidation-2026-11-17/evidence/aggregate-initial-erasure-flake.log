@@ -1,0 +1,20 @@
+ok  	github.com/djshellshoxxx/circula/cmd/circula	180.390s
+ok  	github.com/djshellshoxxx/circula/internal/api	219.923s
+ok  	github.com/djshellshoxxx/circula/internal/contract	29.752s
+ok  	github.com/djshellshoxxx/circula/internal/domain	1.427s
+ok  	github.com/djshellshoxxx/circula/internal/histbal	1.013s
+ok  	github.com/djshellshoxxx/circula/internal/httpx	1.012s
+ok  	github.com/djshellshoxxx/circula/internal/logx	1.044s
+ok  	github.com/djshellshoxxx/circula/internal/repository	1.048s
+--- FAIL: TestAnonymiseMemberKeepsLedger (1.20s)
+    erasure_test.go:135: "Ana" still found in [persons.password_hash]
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	423.877s
+ok  	github.com/djshellshoxxx/circula/internal/store	85.945s
+?   	github.com/djshellshoxxx/circula/internal/storetest	[no test files]
+?   	github.com/djshellshoxxx/circula/internal/testutil	[no test files]
+ok  	github.com/djshellshoxxx/circula/internal/web	169.556s
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	1.023s
+ok  	github.com/djshellshoxxx/circula/scripts/sbom	1.060s
+ok  	github.com/djshellshoxxx/circula/scripts/traceability	1.919s
+FAIL

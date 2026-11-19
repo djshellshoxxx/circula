@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Thresholds behind the overview's "older than" and "ending soon" counts (FR-067).
@@ -45,6 +45,32 @@ type AdminOverview struct {
 type CheckSummary struct {
 	At time.Time
 	OK bool
+}
+
+// AdminStaleProposals lists the live proposals counted by AdminOverview (FR-067).
+// The age and expiry predicates apply before keyset paging, so a page cannot
+// silently miss older proposals behind recent or expired transactions.
+func (s *Service) AdminStaleProposals(ctx context.Context, actor domain.Actor, netID string, pg Page) ([]*domain.Transaction, error) {
+	var out []*domain.Transaction
+	err := s.view(ctx, func(tx store.Tx) error {
+		p, err := s.open(tx, actor, netID, domain.ScopeRead)
+		if err != nil {
+			return err
+		}
+		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
+		now := s.now()
+		out, err = tx.ListTransactions(netID, store.TxFilter{
+			Kind: domain.KindTrade, Statuses: []domain.TxStatus{domain.TxProposed},
+			LiveAt: now, ProposedBefore: now.Add(-OverviewStaleAfter), AfterID: pg.AfterID, Limit: clampPage(pg),
+		})
+		return err
+	})
+	return out, err
 }
 
 // AdminOverview returns the administrator overview counts (FR-067).

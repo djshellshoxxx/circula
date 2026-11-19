@@ -1,0 +1,160 @@
+{
+  "reviewed_at_utc": "2026-11-18T10:06:02.626013+00:00",
+  "reviewer": "/root/pr_reconciliation",
+  "pr": 78,
+  "reviewed_remote_head": "bcacd848dea66cac8b7909aa1e9e9dac7fdf84e4",
+  "reviewed_remote_tree": "1408a8f38b20edb29b1201b6d32284b4258b61b7",
+  "previous_reviewed_head": "1d84c6d5b849af1e1ad19e71f95462873f96973f",
+  "current_main_at_review": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+  "candidate_head": "6b0fb7816faec6a7c93fa7e483ee6805ce54ebf1",
+  "candidate_tree": "3a50bdaa564ac2a3d80ffcf35c59227ee9cf3176",
+  "candidate_parent": "bcacd848dea66cac8b7909aa1e9e9dac7fdf84e4",
+  "branch": "integration/audit78-accuracy-20261118",
+  "worktree": "/workspace/scratch/9ceb45b04668/audit-b-pr78-docs",
+  "clean": true,
+  "changed_paths": [
+    "docs/audit/consolidation-completion-2026-11/CODE-AUDIT.md",
+    "docs/audit/consolidation-completion-2026-11/CONSOLIDATION-LEDGER.md",
+    "docs/audit/consolidation-completion-2026-11/MERGE-MANIFEST.md",
+    "docs/audit/consolidation-completion-2026-11/SECURITY-AUDIT.md",
+    "docs/audit/consolidation-completion-2026-11/TEST-EVIDENCE.md"
+  ],
+  "all_eight_documents": [
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BASELINE.md",
+      "blob": "6e0750d9ff914adffad6e012ded886bd2d99c937",
+      "sha256": "8aaad69556f75affb96e4b10aa585fcfe4349e6515d84a0fda0cf9a88481be40",
+      "bytes": 3057,
+      "changed_from_bcacd848": false,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "blob": "810f626ccec1a2d7ae87cebea7385c4e43c2da23",
+      "sha256": "b3a3f872d9eee221bd1a0b2824659f12221cfcb34e8f3002e172afed6c4b1282",
+      "bytes": 2809,
+      "changed_from_bcacd848": false,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/CODE-AUDIT.md",
+      "blob": "cbbfb82b423ed8a3a145a5ee3e2da237a1783a41",
+      "sha256": "90b997c6871b14b9b08986802bae3eb790a5f1e13350c6fc67bc6a3412ac30fe",
+      "bytes": 5478,
+      "changed_from_bcacd848": true,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/CONSOLIDATION-LEDGER.md",
+      "blob": "f3a85211598f5cf94a5a144c6aac1f596b10150b",
+      "sha256": "1d003bec74c650b9ba7379b558003c31f2323e5627c93136fe13a3a23da1a33f",
+      "bytes": 5155,
+      "changed_from_bcacd848": true,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/FEATURE-MATRIX.md",
+      "blob": "787f5d87bc2722026b28a08c9fe06196c645e8e7",
+      "sha256": "397650842643342bd39aedbfafbe9b66ad1da388dfe6ef326b986a3f67f27f64",
+      "bytes": 5676,
+      "changed_from_bcacd848": false,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/MERGE-MANIFEST.md",
+      "blob": "79e15cef622daf3a83390b1d163c63d92bf474e9",
+      "sha256": "f33607e0b5e6a57dd008f450e11c903c2bd49789a7a9acceeb6c67ffdcea1d58",
+      "bytes": 4546,
+      "changed_from_bcacd848": true,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/SECURITY-AUDIT.md",
+      "blob": "01aa0e1ff4f97418afdddea649bd9602f7a4545a",
+      "sha256": "e39751c197b0a0be755c045a4b8d5d8929044dc78545d0b41cd6693a6905d7d0",
+      "bytes": 7232,
+      "changed_from_bcacd848": true,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/TEST-EVIDENCE.md",
+      "blob": "7877c63361b511b65202da54e838bc6d329da717",
+      "sha256": "2b6ed58f54c7bdfc64a4dfadbc49e39081158e377f49c7057f24a7b50d8446c1",
+      "bytes": 6786,
+      "changed_from_bcacd848": true,
+      "mode": "100644"
+    }
+  ],
+  "scope": "Normal-forward local documentation commit; exactly five Markdown files. No production/test/workflow edits, no Go execution, no remote action. BASELINE byte-preserved.",
+  "original_to_current_production_delta": "PR78 merged current main/#81; its actual base diff is eight Markdown additions only. Production differences from prior1d84 are inherited main changes, not new PR78 runtime work.",
+  "prior_correction_status": {
+    "78-R1": "Historical105/09:35 snapshot preserved; all three live-ref differences now explicit (main, quirky-babbage, reused70/84);85other historical branch pins match.",
+    "78-R2": "Resolved by author: AUD4-F03 partial with same-millisecond and rollback residuals.",
+    "78-R3": "Author removed false read-only reassurance; follow-up now records subsequently reproduced and reviewed e127 MFA/account-recovery repair with pending integration gates.",
+    "78-R4": "Windows command corrected; Linux20m/macOS25m/local40m/Makefile default remain distinct.",
+    "78-R5": "Resolved:82local/cancelled attribution retained;83namedjob traceability failure independently verified byF, citation unchanged.",
+    "78-R6": "Held85/86 links pinned to existing source blobs; three82relative references resolve when82merges before78.",
+    "78-R7": "Manifest includes merged81; D01/D02 status corrected to9required jobs success, privileged-test limitation retained; per-row local evidence and external merge actions distinguished.",
+    "78-R8": "Author now credits existing Linux checkpoint write/restart/replay coverage; broader fault qualification remains outstanding."
+  },
+  "required_remaining_doc_corrections": [],
+  "publication_and_merge_conditions": [
+    "Parent must review this local correction and freshly verify PR78 actual head before publishing the normal-forward commit.",
+    "PR82 must merge before PR78, or its three relative documentation links must be pinned externally.",
+    "Require current-head CI and existing aggregate/integration gates; no current82/84/87CI or combined17152pass inferred by this review."
+  ],
+  "new_runtime_changes_discovered": false,
+  "historical_snapshot_preserved": {
+    "baseline_byte_identical": true,
+    "count": 105,
+    "time": "2026-11-18T09:35Z",
+    "later_pr88": "Outside that historical snapshot; root/C own its separate review."
+  },
+  "relative_links_pending_planned82merge": [
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "line": 10,
+      "target": "docs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+      "resolved_by": "PR82 e127acc9877edebeca818b75a5d48ce12511eca8 before planned PR78 merge"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/BLOCKERS.md",
+      "line": 11,
+      "target": "docs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+      "resolved_by": "PR82 e127acc9877edebeca818b75a5d48ce12511eca8 before planned PR78 merge"
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/SECURITY-AUDIT.md",
+      "line": 25,
+      "target": "docs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+      "resolved_by": "PR82 e127acc9877edebeca818b75a5d48ce12511eca8 before planned PR78 merge"
+    }
+  ],
+  "supporting_evidence": [
+    {
+      "path": "audit-f/final-ci/pr83-cb95bb1-traceability-failure.json",
+      "sha256": "a7d7390eb0f6c79a1de13449d33e75d2015dbe745f0f8d75e68945ef235b7cc3",
+      "bytes": 6160
+    },
+    {
+      "path": "audit-f/final-ci/pr83-cb95bb1-traceability-failed.log",
+      "sha256": "a7977b7c17d9a3ca61b888284cff88d768257e98686ccd08d29b6275be2f8dc3",
+      "bytes": 28844
+    },
+    {
+      "path": "audit-b/MFA-PASSWORD-INDEPENDENT-REVIEW.json",
+      "sha256": "c74c1595cfddc2fbe3c9b5afc8e9e3f12e36c5d1a6d65252548b3332cd65d2f5",
+      "bytes": 6899
+    },
+    {
+      "path": "audit-c/MFA-PASSWORD-PROOF-EVIDENCE.json",
+      "sha256": "0eb804f284edb890d603c7ca5541f287d7b8be3036616fe47aa8d609902eb32f",
+      "bytes": 3795
+    },
+    {
+      "path": "audit-a/ANCESTRY-AUDIT.md",
+      "sha256": "ef4775a7671430ddd7db04de43f06af14250a34a159415e0741da22590c9a0f4",
+      "bytes": 23404
+    }
+  ]
+}

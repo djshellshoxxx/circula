@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // finalExportDTO is the final export record of a completed closure (GOV-025 e).
@@ -97,7 +96,7 @@ type challengeDTO struct {
 	DecidedAt *string `json:"decided_at"`
 }
 
-func toChallenge(ch store.Challenge) challengeDTO {
+func toChallenge(ch service.Challenge) challengeDTO {
 	d := challengeDTO{ID: ch.ID, MemberID: ch.MemberID, Kind: ch.Kind, SubjectID: strPtr(ch.SubjectID), Reason: ch.Reason,
 		Status: ch.Status, Outcome: strPtr(ch.Outcome), DecidedBy: strPtr(ch.DecidedBy), Rationale: ch.Rationale, CreatedAt: ts(ch.CreatedAt)}
 	if !ch.DecidedAt.IsZero() {
@@ -125,7 +124,20 @@ func (s *server) openChallenge(c *reqCtx) error {
 }
 
 func (s *server) listChallenges(c *reqCtx) error {
-	rows, err := s.svc.ListChallenges(c.r.Context(), c.actor, c.netID, c.query.Get("status"))
+	if err := c.only("limit", "cursor", "status"); err != nil {
+		return err
+	}
+	status := c.query.Get("status")
+	if status != "" && status != "requested" && status != "decided" {
+		return invalidQuery("status must be requested or decided")
+	}
+	p, err := c.page(status)
+	if err != nil {
+		return err
+	}
+	rows, next, err := collect(c, p, func(pg service.Page) ([]service.Challenge, error) {
+		return s.svc.ListChallengesPage(c.r.Context(), c.actor, c.netID, status, pg)
+	}, func(ch service.Challenge) string { return ch.ID }, nil)
 	if err != nil {
 		return err
 	}
@@ -133,7 +145,7 @@ func (s *server) listChallenges(c *reqCtx) error {
 	for _, r := range rows {
 		out = append(out, toChallenge(r))
 	}
-	return listOK(c, out, nil)
+	return listOK(c, out, next)
 }
 
 func (s *server) decideChallenge(c *reqCtx) error {

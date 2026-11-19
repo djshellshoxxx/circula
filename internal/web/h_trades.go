@@ -87,9 +87,19 @@ func (c *rc) counterpartyOptions() []option {
 	if err != nil {
 		return nil
 	}
+	seen := map[string]int{}
 	for _, e := range all {
 		if e.MemberID != c.Me.ID {
-			o = append(o, option{e.MemberID, e.DisplayName})
+			seen[e.DisplayName]++
+		}
+	}
+	for _, e := range all {
+		if e.MemberID != c.Me.ID {
+			label := e.DisplayName
+			if seen[label] > 1 { // SEC-016: same-named members differ by their member reference
+				label += " (member reference " + memberRef(e.MemberID) + ")"
+			}
+			o = append(o, option{e.MemberID, label})
 		}
 	}
 	return o
@@ -242,6 +252,7 @@ func (s *server) tradeDetail(w http.ResponseWriter, r *http.Request, c *rc) {
 	} else {
 		d.Row.Status, _ = statusLabel(t, c.Me, n)
 	}
+	d.Row.ReversedBy = n.reversedBy(t, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals) // UX-017, also for a non-party administrator
 	for _, h := range v.History {
 		d.History = append(d.History, histRow{Label: historyWord(h.From, h.To), At: c.when(h.OccurredAt)})
 	}

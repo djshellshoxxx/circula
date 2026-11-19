@@ -104,6 +104,9 @@ func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, 
 		return nil, fmt.Errorf("store: unsupported synchronous level %q (want NORMAL or FULL)", opt.Synchronous)
 	}
 	q := url.Values{}
+	// Treat views, triggers and expressions from the database as untrusted
+	// (E-02). The DSN applies this to every connection the pool opens.
+	q.Add("_pragma", "trusted_schema(0)")
 	q.Add("_pragma", fmt.Sprintf("busy_timeout(%d)", busy.Milliseconds()))
 	q.Add("_pragma", "journal_mode(WAL)")
 	q.Add("_pragma", "synchronous("+level+")")
@@ -111,7 +114,7 @@ func openAt(ctx context.Context, path string, opt Options, limit int) (*SQLite, 
 	// Freed pages are overwritten with zeros so deleted text does not linger
 	// in the file (RB-003).
 	q.Add("_pragma", "secure_delete(1)")
-	dsn := "file:" + path + "?" + q.Encode()
+	dsn := fileURI(path) + "?" + q.Encode()
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("store: open: %w", err)

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 func (s *server) accountRoutes() {
@@ -18,35 +19,41 @@ func (s *server) accountRoutes() {
 }
 
 func (s *server) passwordForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, nil, "password", 200, &page{Title: "Change your password"})
+	s.render(w, r, nil, "password", 200, &page{Title: messages.Text("auth.title.password")})
 }
 
 // passwordPost changes the password (AUTH-03, SEC-003). The service revokes
 // every session of the person, including this one, so the person signs in again.
 func (s *server) passwordPost(w http.ResponseWriter, r *http.Request, c *rc) {
-	p := &page{Title: "Change your password"}
+	p := &page{Title: messages.Text("auth.title.password")}
 	show := func(st int, sum string, fe []fieldErr) {
 		p.Summary, p.Errors = sum, fe
 		s.render(w, r, nil, "password", st, p)
 	}
 	key := "pw|" + c.actor.PersonID
 	if s.pwFail.blocked(key) {
-		show(429, "Too many attempts. Wait a few minutes and try again. Nothing changed.", nil)
+		show(429, messages.Text("auth.throttle.few_minutes"), nil)
 		return
 	}
 	oldPW, newPW := r.PostFormValue("current_password"), r.PostFormValue("password")
 	if newPW != r.PostFormValue("password2") {
-		show(422, "Not saved. Fix the problems below. Nothing changed.",
-			[]fieldErr{{"password2", "Confirm new password: the two passwords do not match. Type the same password in both fields."}})
+		show(422, messages.Text("auth.not_saved"),
+			[]fieldErr{{"password2", messages.Text("auth.mismatch.confirm_new")}})
 		return
 	}
 	err := s.svc.ChangePassword(r.Context(), c.actor, oldPW, newPW)
 	switch {
 	case err == nil:
+	case domain.CodeOf(err) == domain.CodeRateLimited:
+		// The durable password-proof budget is shared with MFA/recovery and
+		// survives a handler restart. It can run out before pwFail's local
+		// allowance, so preserve its rate-limited status at this boundary.
+		show(http.StatusTooManyRequests, messages.Text("auth.throttle.few_minutes"), nil)
+		return
 	case domain.CodeOf(err) == domain.CodeUnauthenticated:
 		s.pwFail.fail(key)
-		show(422, "Not saved. Fix the problems below. Nothing changed.",
-			[]fieldErr{{"current_password", "Current password: not correct. Check it and try again."}})
+		show(422, messages.Text("auth.not_saved"),
+			[]fieldErr{{"current_password", messages.Text("auth.field.current_password_wrong")}})
 		return
 	default:
 		cc := &rc{s: s, ctx: r.Context(), actor: c.actor, Net: &domain.Network{}}
@@ -60,7 +67,7 @@ func (s *server) passwordPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	s.pwFail.reset(key)
 	s.clearSession(w, r)
 	s.rotateCSRF(w, r)
-	s.setFlash(w, r, "Password changed. You were signed out everywhere. Sign in with the new password.")
+	s.setFlash(w, r, messages.Text("auth.flash.password_changed"))
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 

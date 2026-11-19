@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdh"
 	"database/sql"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -32,7 +33,28 @@ type pushSecret struct {
 }
 
 func sealAAD(kind, network, member, id string) []byte {
-	return []byte("ntf/v1|" + kind + "|" + network + "|" + member + "|" + id)
+	parts := [4]string{kind, network, member, id}
+	legacy := true
+	for _, part := range parts {
+		if strings.Contains(part, "|") {
+			legacy = false
+			break
+		}
+	}
+	if legacy {
+		// Preserve existing unambiguous targets. With pipe-free fields this
+		// representation has exactly four delimiters and is injective.
+		return []byte("ntf/v1|" + kind + "|" + network + "|" + member + "|" + id)
+	}
+	// Accepted identifiers may contain pipes. Bind their raw bytes with
+	// explicit lengths, in a namespace disjoint from legacy target AAD.
+	// Never fall back to ambiguous legacy AAD when opening such a target.
+	aad := []byte("ntf/v2")
+	for _, part := range parts {
+		aad = binary.BigEndian.AppendUint64(aad, uint64(len(part)))
+		aad = append(aad, part...)
+	}
+	return aad
 }
 
 // ---- push subscriptions ----
@@ -330,7 +352,7 @@ func (s *Service) AddEmailTarget(ctx context.Context, a Actor, address string) (
 				return err
 			}
 		}
-		ev := Event{NetworkID: a.NetworkID, EventID: "verify:"+id+":"+newID(), MemberID: a.MemberID, Kind: KindEmailVerification, ExpiresAt: now.Add(verifyTTL)}
+		ev := Event{NetworkID: a.NetworkID, EventID: "verify:" + id + ":" + newID(), MemberID: a.MemberID, Kind: KindEmailVerification, ExpiresAt: now.Add(verifyTTL)}
 		if _, err := s.insertDelivery(ctx, q, now, ev, ChannelEmail, id); err != nil {
 			return err
 		}

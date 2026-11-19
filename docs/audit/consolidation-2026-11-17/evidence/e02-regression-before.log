@@ -1,0 +1,21 @@
+--- FAIL: TestSQLiteDistrustsSchemaOnEveryConnection (0.03s)
+    --- FAIL: TestSQLiteDistrustsSchemaOnEveryConnection/normal (0.03s)
+        trusted_schema_test.go:38: connection 0: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 1: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 2: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 3: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 4: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 5: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 6: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 7: trusted_schema = 1, want 0
+    --- FAIL: TestSQLiteDistrustsSchemaOnEveryConnection/raw (0.00s)
+        trusted_schema_test.go:38: connection 0: trusted_schema = 1, want 0
+        trusted_schema_test.go:38: connection 1: trusted_schema = 1, want 0
+--- FAIL: TestSQLiteRefusesSchemaFunctionCalls (0.01s)
+    --- FAIL: TestSQLiteRefusesSchemaFunctionCalls/normal (0.01s)
+        trusted_schema_test.go:65: schema function: result="cafe" err=<nil>, want unsafe-use refusal
+    --- FAIL: TestSQLiteRefusesSchemaFunctionCalls/raw (0.00s)
+        trusted_schema_test.go:65: schema function: result="cafe" err=<nil>, want unsafe-use refusal
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/store	0.046s
+FAIL

@@ -1,0 +1,9 @@
+{
+  "recorded_at": "2026-11-18T07:11:53.264Z",
+  "pr": 71,
+  "head": "1a0202001e422a3aefb09139f1237fc0b19b5747",
+  "run": 44247112400,
+  "superseded_by": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+  "original_evidence": "pr71-original-completed.json",
+  "note": "Original 8/9 completed run retained; no retry requested. New integration head is separately qualified; root requires PR77 to merge first."
+}

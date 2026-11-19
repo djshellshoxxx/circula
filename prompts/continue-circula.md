@@ -1,3 +1,7 @@
+> **Historical (banner added 2026-11-18).** This file describes repository state before the product was merged into
+> `main` (for example "main is prompt-only", PR #19 or #20 unmerged). Current state: `HANDOFF.md`, `docs/TODO.md`
+> and `docs/plans/PR-CONSOLIDATION-2026-11-17.md`.
+
 # Circula: consolidate preserved work and continue development
 
 Use this as the next coding agent's task for `djshellshoxxx/circula` only. Continue

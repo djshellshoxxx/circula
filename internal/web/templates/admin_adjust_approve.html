@@ -1,0 +1,21 @@
+{{define "content"}}
+{{with .D}}
+<p>Nothing is posted until you confirm approval.</p>
+<dl class="kv">
+  <dt>Member</dt><dd>{{.Name}}</dd>
+  <dt>Requested by</dt><dd>{{.Proposer}}</dd>
+  <dt>Direction</dt><dd>{{.Dir}}</dd>
+  <dt>Amount</dt><dd>{{.Amount}} {{$.Unit}}s</dd>
+  <dt>Reason</dt><dd>{{.Reason}}</dd>
+  {{if .RelatedTxID}}<dt>Related transaction</dt><dd><a href="/n/{{$.Slug}}/trades/{{.RelatedTxID}}">The original entry</a></dd>{{end}}
+  <dt>Their balance now</dt><dd>{{template "balance" .Before}}</dd>
+  <dt>Their balance after</dt><dd>{{template "balance" .After}}</dd>
+</dl>
+<p>The request, permissions and available credit are checked again when you confirm. Balances may change while you review.</p>
+<form method="post" action="/n/{{$.Slug}}/admin/adjustments/{{.ID}}/approve">
+  {{template "csrf" $}}
+  <input type="hidden" name="review_proof" value="{{.Proof}}">
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Approve and post</button> <button type="submit" name="step" value="back" class="secondary">Go back without approving</button></div>
+</form>
+{{end}}
+{{end}}

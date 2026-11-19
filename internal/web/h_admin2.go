@@ -120,8 +120,8 @@ type adjustData struct {
 }
 
 type adjustReview struct {
-	Name, Dir, Amount, Reason string
-	Before, After             balanceVM
+	Name, Dir, Amount, Reason, RelatedTxID string
+	Before, After                          balanceVM
 }
 
 // activeMemberOptions lists every active member except the caller, paging without a cap.
@@ -186,6 +186,12 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	if reason == "" {
 		fe = append(fe, fieldErr{"reason", "Reason: a reason is required for every adjustment. Write why it is needed."})
 	}
+	if id := v["related_transaction_id"]; id != "" {
+		related, err := s.svc.GetTransaction(r.Context(), c.actor, c.netID(), id)
+		if err != nil || !related.Tx.IsPosted() || !related.Tx.IsParty(v["member_id"]) {
+			fe = append(fe, fieldErr{"related_transaction_id", "Choose a posted transaction involving the adjusted member."})
+		}
+	}
 	if len(fe) > 0 {
 		p.Summary, p.Errors = "Not posted. Fix the problems below. Nothing changed.", fe
 		s.renderAdjust(w, r, c, 422, p)
@@ -196,7 +202,7 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	rv := &adjustReview{Name: name, Amount: domain.FormatAmount(amt, dec), Reason: reason,
+	rv := &adjustReview{Name: name, Amount: domain.FormatAmount(amt, dec), Reason: reason, RelatedTxID: v["related_transaction_id"],
 		Before: makeBalance(b.Balance, dec, c.Net.Policy.CurrencyName)}
 	after := b.Balance + amt
 	rv.Dir = "Credit (balance goes up)"
@@ -210,7 +216,7 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	res, err := s.svc.CreateAdjustmentRequest(r.Context(), c.actor, c.netID(), service.AdjustInput{MemberID: v["member_id"], Amount: amt,
-		Direction: dir, Reason: reason, IdempotencyKey: idemKey(r)})
+		Direction: dir, Reason: reason, RelatedTxID: v["related_transaction_id"], IdempotencyKey: idemKey(r)})
 	if err != nil {
 		if sum, f, ok := c.refuse(err); ok {
 			p.Summary, p.Errors, p.Title, p.D = sum, f, "Review adjustment", rv

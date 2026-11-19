@@ -10,7 +10,7 @@ import (
 	"unicode"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // RegisterInput creates a global identity. Adapters decide who may call
@@ -49,6 +49,21 @@ func validLogin(l string) error {
 // branch on the outcome, and should tell the user to sign in with the details
 // they chose. RegisterInput.RevealDuplicate restores the conflict for the CLI.
 func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain.Person, error) {
+	return s.registerPerson(ctx, in, nil)
+}
+
+// RegisterPersonAsOperator records host-controlled provisioning distinctly
+// from self-registration. The operator is the actor; the new person is only
+// the target and gains no platform or network authority from this operation.
+func (s *Service) RegisterPersonAsOperator(ctx context.Context, actor domain.Actor, in RegisterInput) (*domain.Person, error) {
+	if err := requireSystem(actor); err != nil {
+		return nil, err
+	}
+	in.RevealDuplicate = true
+	return s.registerPerson(ctx, in, &actor)
+}
+
+func (s *Service) registerPerson(ctx context.Context, in RegisterInput, operator *domain.Actor) (*domain.Person, error) {
 	login := normalizeLogin(in.Login)
 	if err := validLogin(login); err != nil {
 		return nil, err
@@ -76,8 +91,12 @@ func (s *Service) RegisterPerson(ctx context.Context, in RegisterInput) (*domain
 			return s.auditPlatform(tx, domain.Actor{PersonID: existing.ID}, auditEntry{
 				Action: domain.ActRegisterDuplicate, TargetType: "person", TargetID: existing.ID})
 		}
-		return s.auditPlatform(tx, domain.Actor{PersonID: p.ID}, auditEntry{
-			Action: domain.ActPersonRegistered, TargetType: "person", TargetID: p.ID})
+		actor := domain.Actor{PersonID: p.ID}
+		event := auditEntry{Action: domain.ActPersonRegistered, TargetType: "person", TargetID: p.ID}
+		if operator != nil {
+			actor, event.Type = *operator, domain.ActorOperator
+		}
+		return s.auditPlatform(tx, actor, event)
 	})
 	if err != nil {
 		return nil, err
@@ -130,7 +149,7 @@ func (s *Service) LoginStep(ctx context.Context, login, password string) (*Login
 	}
 	ok := false
 	if person != nil {
-		ok = verifyPassword(password, hash)
+		ok = s.verifyLoginPassword(password, hash) // hashes even an unusable stored hash (BR-05)
 	} else {
 		verifyPassword(password, s.dummyHash) // equalise effort
 	}
@@ -144,6 +163,18 @@ func (s *Service) LoginStep(ctx context.Context, login, password string) (*Login
 	now := s.now()
 	var challenge string
 	err = s.update(ctx, func(tx store.Tx) error {
+		// AUD4-F06: Argon2 ran outside any write unit. A password change,
+		// recovery or reset that committed meanwhile revoked every session and
+		// challenge; issuing one now for the superseded password would survive
+		// it. Write units are serialized, so re-reading here closes the window.
+		p, h, err := tx.GetPersonByLogin(login)
+		if err != nil {
+			return authnErr(err)
+		}
+		if p.ID != person.ID || h != hash {
+			return domain.ErrUnauthenticated
+		}
+		person = p
 		if err := s.clearThrottle(ctx, tx, login); err != nil {
 			return err
 		}
@@ -228,11 +259,11 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 	if !scoped.Can(domain.ScopeWrite) || actor.PersonID == "" {
 		return domain.ErrForbidden
 	}
-	var hash, login string
+	var login string
 	if err := s.view(ctx, func(tx store.Tx) error {
-		p, h, err := tx.GetPerson(actor.PersonID)
+		p, _, err := tx.GetPerson(actor.PersonID)
 		if err == nil {
-			hash, login = h, p.Login
+			login = p.Login
 		}
 		return err
 	}); err != nil {
@@ -241,18 +272,49 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 	if err := s.validatePassword(newPW, login); err != nil {
 		return err
 	}
+	// AUD4-F04: current-password guesses are counted durably before the
+	// comparison, sharing the recgen budget with the other re-authentication
+	// checks (checkCurrentPassword), so a stolen session cannot guess the
+	// password faster than the configured throttle, and a restart does not
+	// reset the count.
+	var hash string
+	if err := s.update(ctx, func(tx store.Tx) error {
+		if err := s.reserveAttempt(tx, recgenKey(actor.PersonID)); err != nil {
+			return err
+		}
+		_, h, err := tx.GetPerson(actor.PersonID)
+		hash = h
+		return authnErr(err)
+	}); err != nil {
+		return err
+	}
 	if !verifyPassword(oldPW, hash) {
-		return domain.ErrUnauthenticated
+		return domain.ErrUnauthenticated // the attempt was counted above
 	}
 	nh, err := hashPassword(newPW, s.cfg.Argon)
 	if err != nil {
 		return err
 	}
 	return s.update(ctx, func(tx store.Tx) error {
+		// AUD4-F06: replace only the hash that was verified. A concurrent
+		// change, recovery or reset already superseded the old password.
+		if _, cur, err := tx.GetPerson(actor.PersonID); err != nil {
+			return authnErr(err)
+		} else if cur != hash {
+			return domain.ErrUnauthenticated
+		}
 		if err := tx.SetPasswordHash(actor.PersonID, nh); err != nil {
 			return err
 		}
 		if err := tx.RevokeSessionsOf(actor.PersonID, s.now()); err != nil {
+			return err
+		}
+		// SA2-13, as for recovery and resets: a second-factor challenge issued
+		// for the old password must not complete after the change.
+		if err := tx.DeleteMFAChallengesOf(actor.PersonID); err != nil {
+			return err
+		}
+		if err := tx.DeleteThrottle(recgenKey(actor.PersonID)); err != nil {
 			return err
 		}
 		if err := s.secNotice(tx, actor.PersonID, domain.NoticePasswordChanged, ""); err != nil {

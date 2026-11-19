@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // Actor is a TRUSTED snapshot from the host adapter's session/authorization
@@ -22,11 +23,11 @@ type Actor struct {
 
 func (a Actor) validate() error {
 	for _, v := range []string{a.NetworkID, a.MemberID} {
-		if v == "" || len(v) > 128 || strings.ContainsAny(v, "\x00\r\n") {
+		if v == "" || len(v) > 128 || !utf8.ValidString(v) || strings.ContainsAny(v, "\x00\r\n") {
 			return invalid("actor")
 		}
 	}
-	if len(a.SessionID) > 256 || strings.ContainsAny(a.SessionID, "\x00\r\n") {
+	if len(a.SessionID) > 256 || !utf8.ValidString(a.SessionID) || strings.ContainsAny(a.SessionID, "\x00\r\n") {
 		return invalid("actor")
 	}
 	return nil

@@ -41,6 +41,7 @@ func (t *txImpl) ListPolicyVersions(netID string) ([]PolicyVersionRow, error) {
 		if err := rows.Scan(&r.Version, &pj, &r.ChangedBy, &r.Reason, &eff, &ann, &r.NoticeDays, &r.NoticeReason); err != nil {
 			return nil, err
 		}
+		r.Policy = domain.DefaultPolicy() // match effective reads for fields absent from older JSON
 		if err := json.Unmarshal([]byte(pj), &r.Policy); err != nil {
 			return nil, err
 		}
@@ -48,6 +49,53 @@ func (t *txImpl) ListPolicyVersions(netID string) ([]PolicyVersionRow, error) {
 		r.AnnouncedAt = r.EffectiveAt
 		if ann != 0 {
 			r.AnnouncedAt = fromMS(ann)
+		}
+		out = append(out, r)
+	}
+	return out, mapErr(rows.Err())
+}
+
+func (t *txImpl) ListPolicyLogPage(netID string, beforeVersion, limit int) ([]PolicyLogRow, error) {
+	rows, err := t.query(`SELECT p.version, p.policy_json, p.changed_by, p.reason, p.effective_at,
+		p.announced_at, p.notice_days, p.notice_reason,
+		EXISTS (SELECT 1 FROM network_policies later WHERE later.network_id = p.network_id
+			AND later.version > p.version AND later.effective_at <= p.effective_at),
+		(SELECT earlier.policy_json FROM network_policies earlier
+			WHERE earlier.network_id = p.network_id AND earlier.version < p.version
+			AND NOT EXISTS (SELECT 1 FROM network_policies later WHERE later.network_id = earlier.network_id
+				AND later.version > earlier.version AND later.effective_at <= earlier.effective_at)
+			ORDER BY earlier.version DESC LIMIT 1)
+		FROM network_policies p WHERE p.network_id = ? AND (? = 0 OR p.version < ?)
+		ORDER BY p.version DESC LIMIT ?`, netID, beforeVersion, beforeVersion, limitOf(limit))
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+	var out []PolicyLogRow
+	for rows.Next() {
+		var r PolicyLogRow
+		var pj string
+		var previous sql.NullString
+		var effective, announced int64
+		if err := rows.Scan(&r.Version, &pj, &r.ChangedBy, &r.Reason, &effective, &announced,
+			&r.NoticeDays, &r.NoticeReason, &r.Withdrawn, &previous); err != nil {
+			return nil, err
+		}
+		r.Policy = domain.DefaultPolicy()
+		if err := json.Unmarshal([]byte(pj), &r.Policy); err != nil {
+			return nil, err
+		}
+		if previous.Valid {
+			p := domain.DefaultPolicy()
+			r.Previous = &p
+			if err := json.Unmarshal([]byte(previous.String), r.Previous); err != nil {
+				return nil, err
+			}
+		}
+		r.EffectiveAt = fromMS(effective)
+		r.AnnouncedAt = r.EffectiveAt
+		if announced != 0 {
+			r.AnnouncedAt = fromMS(announced)
 		}
 		out = append(out, r)
 	}

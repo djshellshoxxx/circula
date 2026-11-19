@@ -343,15 +343,28 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 			Reason: r.PostFormValue("reason"), IdempotencyKey: idemKey(r)})
 		msg = "Re-review requested. A different reviewer will look at the decision. This can only be done once."
 	case "rereview-decide":
+		if r.PostFormValue("step") == "back" {
+			s.showDispute(w, r, c, id, &page{V: formValues(r)}, 200)
+			return
+		}
 		in := service.ReReviewDecideInput{DisputeID: id, Outcome: r.PostFormValue("outcome"),
-			Rationale: r.PostFormValue("rationale"), IdempotencyKey: idemKey(r)}
-		if in.Outcome == string(domain.OutcomePartiallyUpheld) {
+			Rationale: strings.TrimSpace(r.PostFormValue("rationale")), IdempotencyKey: idemKey(r)}
+		confirm := r.PostFormValue("step") == "confirm"
+		if in.Outcome == string(domain.OutcomePartiallyUpheld) || confirm {
 			amt, perr := domain.ParseAmount(r.PostFormValue("amount"), c.Net.Policy.Decimals)
-			if perr != nil || amt <= 0 {
+			if perr != nil || (in.Outcome != service.ReReviewConfirmed && amt <= 0) {
 				s.disputeFail(w, r, c, id, domain.Invalid("amount", "enter the amount to reverse, with up to "+itoa(c.Net.Policy.Decimals)+" decimal places"))
 				return
 			}
 			in.Amount = amt
+		}
+		if !confirm {
+			s.reReviewDecisionReview(w, r, c, id, in)
+			return
+		}
+		if !secretEqual(r.PostFormValue("review_proof"), s.reReviewProof(c, in)) {
+			s.disputeFail(w, r, c, id, domain.Invalid("outcome", "review this decision again before confirming; nothing changed"))
+			return
 		}
 		_, err = s.svc.DecideReReview(r.Context(), c.actor, c.netID(), in)
 		msg = "Re-review decision recorded."
