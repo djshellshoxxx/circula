@@ -72,9 +72,10 @@ jobs:
           assert {item['Path']: item['Version'] for item in module.get('Require', [])} == expected
           assert not module.get('Replace')
           assert not module.get('Exclude')
-          imports = subprocess.check_output(['go', 'list', '-deps', '-test', '-buildvcs=false', '-f', '{{.ImportPath}}', './...'], text=True).splitlines()
+          modules = set(subprocess.check_output(['go', 'list', '-deps', '-test', '-buildvcs=false', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'], text=True).split())
           owned = 'github.com/djshellshoxxx/circula/future/receipts'
-          assert all(not value.startswith('github.com/djshellshoxxx/circula/') or value == owned or value.startswith(owned + '/') for value in imports)
+          allowed = {owned} | set(expected)
+          assert modules <= allowed, modules - allowed
           print('disabled/HOLD, exact declared dependencies and module boundary: PASS')
           PY
       - name: Verify pinned module checksums
