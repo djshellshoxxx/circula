@@ -13,7 +13,7 @@ The owner authorized independent future-feature development on 2026-11-16, while
 ## Isolation contract
 
 - Current successor branch: `codex/future-analytics-master-20261116`. Recovered predecessor: `243f7fc181a14cecb124c4b9733b86c010d53993`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
-- Runtime and documentation changes are confined to `future/analytics/`. The recovery also adds the dedicated `.github/workflows/future-analytics.yml` qualification workflow. No application imports, routes, migrations, root dependencies, feature flags, background jobs or runtime configuration are changed.
+- Recovered feature runtime and documentation are confined to `future/analytics/`, with the dedicated `.github/workflows/future-analytics.yml` qualification workflow. The candidate also restores two exact files already accepted on main: the audit-anchor command's missing `os` import and the departure regression's test-only proposal cap. No future-feature imports, routes, migrations, root dependencies, feature flags, background jobs or runtime configuration are added.
 - This nested Go module has explicit pinned dependencies where listed in go.mod and no cross-feature imports. It has no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
 - Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
