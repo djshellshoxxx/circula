@@ -1,0 +1,297 @@
+From b96100d2a53cf696f16b8c34305eb132c673863c Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 19 Nov 2026 04:36:56 -0800
+Subject: [PATCH] fix(notifications): reject malformed UTF-8 before identity
+ encoding
+
+---
+ .../archive_identity_utf8_test.go             | 212 ++++++++++++++++++
+ future/notifications/delivery.go              |  15 ++
+ future/notifications/store.go                 |   2 +-
+ future/notifications/unsubscribe.go           |   3 +
+ 4 files changed, 231 insertions(+), 1 deletion(-)
+ create mode 100644 future/notifications/archive_identity_utf8_test.go
+
+diff --git a/future/notifications/archive_identity_utf8_test.go b/future/notifications/archive_identity_utf8_test.go
+new file mode 100644
+index 0000000..7c2cb74
+--- /dev/null
++++ b/future/notifications/archive_identity_utf8_test.go
+@@ -0,0 +1,212 @@
++package notifications
++
++import (
++	"bytes"
++	"context"
++	"crypto/ecdh"
++	"crypto/rand"
++	"encoding/base64"
++	"encoding/json"
++	"path/filepath"
++	"testing"
++	"time"
++)
++
++func archiveIdentityRepository(t *testing.T) *Repository {
++	t.Helper()
++	// The host accepts the supplied identity here so the module's own encoding
++	// boundary is exercised; this is not a production authorization adapter.
++	return openTest(t, filepath.Join(t.TempDir(), "identity.db"),
++		func(context.Context, string, string) error { return nil })
++}
++
++func archiveIdentityPushTarget(t *testing.T) Target {
++	t.Helper()
++	key, err := ecdh.P256().NewPrivateKey(bytes.Repeat([]byte{1}, 32))
++	if err != nil {
++		t.Fatal(err)
++	}
++	return Target{
++		Endpoint: "https://push.example/token",
++		P256dh:   base64.RawURLEncoding.EncodeToString(key.PublicKey().Bytes()),
++		Auth:     base64.RawURLEncoding.EncodeToString(bytes.Repeat([]byte{2}, 16)),
++	}
++}
++
++func TestArchiveIdentityDedupeRejectsMalformedUTF8(t *testing.T) {
++	base := [5]string{"network", "event", "member", "email", "proposal_received"}
++	fields := []string{"network", "event", "member", "channel", "kind"}
++	for i, field := range fields {
++		t.Run(field, func(t *testing.T) {
++			for _, suffix := range []string{"\xff", "\xfe"} {
++				parts := base
++				parts[i] += suffix
++				key, err := DedupeKey(parts[0], parts[1], parts[2], parts[3], parts[4])
++				if err == nil || key != "" {
++					t.Errorf("malformed %s produced a dedupe key: error=%v", field, err)
++				}
++			}
++		})
++	}
++}
++
++func TestArchiveIdentityEnqueueRejectsMalformedUTF8(t *testing.T) {
++	ctx := context.Background()
++	for _, field := range []string{"network", "event", "member"} {
++		t.Run(field, func(t *testing.T) {
++			r := archiveIdentityRepository(t)
++			event := Event{"network", "event", "member", "proposal_received", "email", testNow.Add(time.Hour)}
++			switch field {
++			case "network":
++				event.Network += "\xff"
++			case "event":
++				event.Event += "\xff"
++			case "member":
++				event.Member += "\xff"
++			}
++			tx, err := r.DB.BeginTx(ctx, nil)
++			if err != nil {
++				t.Fatal(err)
++			}
++			defer tx.Rollback()
++			id, err := EnqueueTx(ctx, tx, event, testNow)
++			if err == nil || id != "" {
++				t.Errorf("malformed %s was enqueued: error=%v", field, err)
++			}
++			var count int
++			if err := tx.QueryRowContext(ctx, `SELECT count(*) FROM notification_outbox`).Scan(&count); err != nil || count != 0 {
++				t.Errorf("invalid identity wrote outbox rows: count=%d error=%v", count, err)
++			}
++		})
++	}
++}
++
++func TestArchiveIdentitySetTargetRejectsMalformedUTF8(t *testing.T) {
++	ctx := context.Background()
++	for _, field := range []string{"network", "member", "endpoint"} {
++		t.Run(field, func(t *testing.T) {
++			r := archiveIdentityRepository(t)
++			network, member, channel := "network", "member", "email"
++			target := Target{Email: "owner@example.test"}
++			switch field {
++			case "network":
++				network += "\xff"
++			case "member":
++				member += "\xff"
++			case "endpoint":
++				channel = "push"
++				target = archiveIdentityPushTarget(t)
++				target.Endpoint += "\xff"
++			}
++			if err := validateTarget(channel, target); err != nil {
++				t.Fatalf("fixture did not reach the JSON encoding boundary: %v", err)
++			}
++			if err := r.SetTarget(ctx, network, member, channel, target); err == nil {
++				t.Errorf("malformed %s was sealed and stored", field)
++			}
++			var count int
++			if err := r.DB.QueryRowContext(ctx, `SELECT count(*) FROM notification_targets`).Scan(&count); err != nil || count != 0 {
++				t.Errorf("invalid input wrote targets: count=%d error=%v", count, err)
++			}
++		})
++	}
++}
++
++func TestArchiveIdentityUnsubscribeTokenRejectsMalformedUTF8(t *testing.T) {
++	ctx := context.Background()
++	for _, field := range []string{"network", "member"} {
++		t.Run(field, func(t *testing.T) {
++			r := archiveIdentityRepository(t)
++			network, member := "network", "member"
++			if field == "network" {
++				network += "\xff"
++			} else {
++				member += "\xff"
++			}
++			// Seed an existing target in the archived format so capability
++			// validation is tested independently of new-target rejection.
++			plain, err := json.Marshal(Target{Email: "owner@example.test"})
++			if err != nil {
++				t.Fatal(err)
++			}
++			nonce := make([]byte, r.cipher.NonceSize())
++			if _, err := rand.Read(nonce); err != nil {
++				t.Fatal(err)
++			}
++			sealed := r.cipher.Seal(nonce, nonce, plain, aad(network, member, "email"))
++			if _, err := r.DB.ExecContext(ctx, `INSERT INTO notification_targets VALUES(?,?,?,?)`, network, member, "email", sealed); err != nil {
++				t.Fatal(err)
++			}
++			token, err := r.UnsubscribeToken(ctx, network, member, "email", testNow)
++			if err == nil || token != "" {
++				t.Errorf("malformed %s minted a capability: error=%v", field, err)
++			}
++		})
++	}
++}
++
++func TestArchiveIdentityPreservesValidUnicode(t *testing.T) {
++	ctx := context.Background()
++	for _, network := range []string{"network|\ufffd", "réseau|雪"} {
++		t.Run(network, func(t *testing.T) {
++			r := archiveIdentityRepository(t)
++			member, eventID := "membre|é\ufffd", "event|雪\ufffd"
++			key, err := DedupeKey(network, eventID, member, "email", "proposal_received")
++			if err != nil || key == "" {
++				t.Fatalf("valid Unicode dedupe: %v", err)
++			}
++			target := Target{Email: "owner@example.test"}
++			if err := r.SetTarget(ctx, network, member, "email", target); err != nil {
++				t.Fatal(err)
++			}
++			if got, err := r.target(ctx, network, member, "email"); err != nil || got != target {
++				t.Fatalf("valid Unicode target changed: got=%+v error=%v", got, err)
++			}
++			tx, err := r.DB.BeginTx(ctx, nil)
++			if err != nil {
++				t.Fatal(err)
++			}
++			defer tx.Rollback()
++			id, err := EnqueueTx(ctx, tx, Event{network, eventID, member, "proposal_received", "email", testNow.Add(time.Hour)}, testNow)
++			if err != nil || id != key {
++				t.Fatalf("valid Unicode enqueue: id=%q error=%v", id, err)
++			}
++			if err := tx.Commit(); err != nil {
++				t.Fatal(err)
++			}
++			var storedNetwork, storedMember, storedEvent string
++			if err := r.DB.QueryRowContext(ctx, `SELECT network,member,event FROM notification_outbox WHERE id=?`, id).Scan(&storedNetwork, &storedMember, &storedEvent); err != nil {
++				t.Fatal(err)
++			}
++			if storedNetwork != network || storedMember != member || storedEvent != eventID {
++				t.Fatal("valid Unicode identity changed in storage")
++			}
++			token, err := r.UnsubscribeToken(ctx, network, member, "email", testNow)
++			if err != nil || token == "" {
++				t.Fatalf("valid Unicode capability: %v", err)
++			}
++			if err := r.Unsubscribe(ctx, token, testNow); err != nil {
++				t.Fatalf("valid Unicode capability did not resolve its owner: %v", err)
++			}
++			var count int
++			if err := r.DB.QueryRowContext(ctx, `SELECT count(*) FROM notification_targets`).Scan(&count); err != nil || count != 0 {
++				t.Fatalf("valid Unicode target not revoked: count=%d error=%v", count, err)
++			}
++		})
++	}
++}
++
++func TestArchiveIdentitySetTargetPreservesUnicodePath(t *testing.T) {
++	ctx := context.Background()
++	r := archiveIdentityRepository(t)
++	for _, endpoint := range []string{"https://push.example/雪/\ufffd", "https://push.example/%ff"} {
++		target := archiveIdentityPushTarget(t)
++		target.Endpoint = endpoint
++		if err := r.SetTarget(ctx, "network", "member", "push", target); err != nil {
++			t.Fatal(err)
++		}
++		if got, err := r.target(ctx, "network", "member", "push"); err != nil || got != target {
++			t.Fatalf("valid target representation changed: got=%+v error=%v", got, err)
++		}
++	}
++}
+diff --git a/future/notifications/delivery.go b/future/notifications/delivery.go
+index 78418a2..d422e12 100644
+--- a/future/notifications/delivery.go
++++ b/future/notifications/delivery.go
+@@ -8,6 +8,7 @@ import (
+ 	"encoding/json"
+ 	"errors"
+ 	"time"
++	"unicode/utf8"
+ )
+ 
+ const GenericBody = "You have new Circula activity. Sign in to view it."
+@@ -39,11 +40,25 @@ func DedupeKey(network, event, member, channel, kind string) (string, error) {
+ 	if network == "" || event == "" || member == "" || kind == "" || (channel != "email" && channel != "push") {
+ 		return "", errors.New("invalid event")
+ 	}
++	if !validUTF8Strings(network, event, member, channel, kind) {
++		return "", errors.New("invalid event")
++	}
+ 	b, _ := json.Marshal([5]string{network, event, member, channel, kind})
+ 	h := sha256.Sum256(b)
+ 	return hex.EncodeToString(h[:]), nil
+ }
+ 
++// JSON replaces malformed UTF-8. Reject it before encoding identities or
++// private target values, while preserving every valid Unicode string.
++func validUTF8Strings(parts ...string) bool {
++	for _, part := range parts {
++		if !utf8.ValidString(part) {
++			return false
++		}
++	}
++	return true
++}
++
+ // Retry schedules at most six attempts; expiration always wins. Attempts counts
+ // completed failures. Delivery is at-least-once, never exactly-once SMTP.
+ func Retry(now, expires time.Time, attempts int) (time.Time, bool) {
+diff --git a/future/notifications/store.go b/future/notifications/store.go
+index b0b6e2e..13ae892 100644
+--- a/future/notifications/store.go
++++ b/future/notifications/store.go
+@@ -127,7 +127,7 @@ type Target struct {
+ 
+ func aad(n, m, c string) []byte { b, _ := json.Marshal([3]string{n, m, c}); return b }
+ func (r *Repository) SetTarget(ctx context.Context, n, m, c string, t Target) error {
+-	if n == "" || m == "" || (c != "email" && c != "push") {
++	if n == "" || m == "" || (c != "email" && c != "push") || !validUTF8Strings(n, m, t.Endpoint) {
+ 		return ErrInvalid
+ 	}
+ 	if e := validateTarget(c, t); e != nil {
+diff --git a/future/notifications/unsubscribe.go b/future/notifications/unsubscribe.go
+index aaa9d46..c4c14bc 100644
+--- a/future/notifications/unsubscribe.go
++++ b/future/notifications/unsubscribe.go
+@@ -19,6 +19,9 @@ type unsubscribeGrant struct {
+ // UnsubscribeToken produces a confidential, authenticated, target-version-bound capability.
+ // Deliver this only to its owner. A changed subscription invalidates old unsubscribe links.
+ func (r *Repository) UnsubscribeToken(ctx context.Context, n, m, c string, now time.Time) (string, error) {
++	if !validUTF8Strings(n, m, c) {
++		return "", ErrInvalid
++	}
+ 	r.gate.Lock()
+ 	defer r.gate.Unlock()
+ 	if r.Authorize(ctx, n, m) != nil {

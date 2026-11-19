@@ -1,0 +1,50 @@
+{
+  "observed_utc": "2026-11-19T14:04:43.919657+00:00",
+  "head": "7a33e6e1ce18c04f0b0713a4895934f547e45bb9",
+  "tree": "e2259c2a13ad546ee0f0f817e886e0e3e61ae451",
+  "module_tree": "5d20dc7389f8e04da147b866f21fac96b9bed65c",
+  "parent": "2ee089e36c9f2036c797d2be5bcce5a0650f78cb",
+  "base": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+  "worktree": "/workspace/scratch/f47ceab29930/circula-qr-camera",
+  "branch": "master/fux102-camera-lifecycle-20261119",
+  "clean": true,
+  "changed_paths": [
+    {
+      "path": ".github/workflows/future-qr-camera.yml",
+      "blob": "d399dd31146f9ffdf5f9e89154e95ce22cb1dfd6",
+      "sha256": "38cebc737fd272d005c8863bd31f1232a90d6a11f142768a92484ca6338f74bb"
+    },
+    {
+      "path": "future/qr/CAMERA-LIFECYCLE-20261119.md",
+      "blob": "ebaf7c7114056f1c788e50aa9c23ae4ed5aa22af",
+      "sha256": "431b7cf1aea1df5a9d0588ba54737e2a64bbe89d86956606adbfcd5ed22ae55e"
+    },
+    {
+      "path": "future/qr/web/scan_lifecycle_test.mjs",
+      "blob": "83cf88cac5f04245efbf887d03abd669cfd45a18",
+      "sha256": "d930e295869c3b527bf26bdb3fd0990bc8e83aa6fc9e57586b3aa05b0a8a8e3e"
+    },
+    {
+      "path": "future/qr/web/static/scan.js",
+      "blob": "681afec0e64057a21980a1d91257d004fe4d8dc0",
+      "sha256": "85577866e38f6c31a5c7bbb46b3792864ac1a1ffff8f0468001278b13871d0d7"
+    }
+  ],
+  "local_node_evidence": {
+    "red": "followup-red.json",
+    "green": "followup-green.json",
+    "red_pass": 24,
+    "red_fail": 3,
+    "green_pass": 27,
+    "green_fail": 0,
+    "green_skipped": 0,
+    "node": "v24.22.3",
+    "test_file_unchanged_between_red_and_green": true
+  },
+  "limits": [
+    "Native provider Linux/macOS/Windows results remain unobserved for this final head",
+    "No new Go, real browser/camera, host-session, CSP or ledger qualification",
+    "Module stays disabled/HOLD; no merge or activation"
+  ],
+  "outage": "Temporary executor interruption; frozen source verified intact at reattachment; follow-up executed on actual files."
+}

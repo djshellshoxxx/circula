@@ -1,0 +1,65 @@
+{
+  "observed_utc": "2026-11-19T14:07:08.329168+00:00",
+  "candidate_head": "7a33e6e1ce18c04f0b0713a4895934f547e45bb9",
+  "candidate_tree": "e2259c2a13ad546ee0f0f817e886e0e3e61ae451",
+  "original_base": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+  "changed_paths": [
+    ".github/workflows/future-qr-camera.yml",
+    "future/qr/CAMERA-LIFECYCLE-20261119.md",
+    "future/qr/web/scan_lifecycle_test.mjs",
+    "future/qr/web/static/scan.js"
+  ],
+  "source_sha256": "85577866e38f6c31a5c7bbb46b3792864ac1a1ffff8f0468001278b13871d0d7",
+  "command": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-name-pattern=invalid replacement file|manual preview submission cancels",
+    "--test-timeout=5000",
+    "/workspace/scratch/f47ceab29930/evidence/qr-camera-independent-review/invalid-replacement-final-probe.mjs",
+    "/workspace/scratch/f47ceab29930/evidence/qr-camera-independent-review/manual-submission-final-probe.mjs"
+  ],
+  "exit_code": 0,
+  "log_sha256": "f7a8b5770586b08f2878673e4b8f794da2a91984cf290350049188df056f11bc",
+  "review": "Complete original four-file change and exact follow-up delta read. Both independent findings closed by selected-file invalidation before size validation and submit-event cancellation without preventDefault. No-selection control preserves existing behavior.",
+  "tests": "This reviewer replayed both independently added regressions against frozen final application source. The author separately reports the exact same expanded27-test file red24pass/3fail, then green27pass/0skip.",
+  "limits": [
+    "Synthetic DOM/media promise tests; no native camera/browser/Go qualification.",
+    "No vendor, dependency, feature or API change.",
+    "Current-head provider and normal approval gates remain."
+  ],
+  "accepted_main_followup": {
+    "observed_utc": "2026-11-19T14:10:34.008615+00:00",
+    "head": "3c1ce7a7dc190271a9a830abc924f4f938049801",
+    "tree": "6c5f55e7fe658d5144c3c09c010f74923397c7df",
+    "paths": [
+      "cmd/circula/auditanchor.go",
+      "future/qr/CAMERA-LIFECYCLE-20261119.md",
+      "internal/service/departure_pagination_regression_test.go"
+    ],
+    "total_paths": [
+      ".github/workflows/future-qr-camera.yml",
+      "cmd/circula/auditanchor.go",
+      "future/qr/CAMERA-LIFECYCLE-20261119.md",
+      "future/qr/web/scan_lifecycle_test.mjs",
+      "future/qr/web/static/scan.js",
+      "internal/service/departure_pagination_regression_test.go"
+    ],
+    "accepted_main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "exact_main_files": [
+      {
+        "path": "cmd/circula/auditanchor.go",
+        "blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+        "introducing_commit": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d"
+      },
+      {
+        "path": "internal/service/departure_pagination_regression_test.go",
+        "blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595",
+        "introducing_commit": "7457b618057a8b1757ec643806e9afbfc5ba907e"
+      }
+    ],
+    "camera_runtime_test_workflow_unchanged": true,
+    "status": "source-approved",
+    "new_runtime_tests": "none; exact previously qualified camera source retained"
+  }
+}

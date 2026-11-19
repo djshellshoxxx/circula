@@ -1,0 +1,79 @@
+{
+  "observed_utc": "2026-11-19T13:19:42.695442+00:00",
+  "reviewer": "/root",
+  "author": "/root/branch_recovery",
+  "candidates": [
+    {
+      "module": "areas",
+      "head": "3275ac6016ca7426427da92e7bfa9f620e3b55ad",
+      "tree": "f5de54ced2f6fd363372a4588c292ab900eeef65",
+      "previous_independent_review_head": "0ad43e4a414945e1351e7509dce7f214516d199b",
+      "followup_paths": [
+        "future/areas/README.md",
+        "future/areas/RECOVERY-20261119.md",
+        "future/areas/recovery-evidence-20261119/current-logs/attempt1-gofmt.log",
+        "future/areas/recovery-evidence-20261119/current-logs/attempt1-mod_verify.log",
+        "future/areas/recovery-evidence-20261119/current-logs/attempt1-race.excerpt.log",
+        "future/areas/recovery-evidence-20261119/current-logs/attempt1-vet.log",
+        "future/areas/recovery-evidence-20261119/current-logs/attempt2-isolation.log",
+        "future/areas/recovery-evidence-20261119/current-logs/attempt2-parser_fuzz.log",
+        "future/areas/recovery-evidence-20261119/current-source-qualification.json",
+        "future/areas/recovery-evidence-20261119/independent-source-review.json",
+        "future/areas/recovery-evidence-20261119/previous-attempt-logs/attempt1-fuzz_json.log",
+        "future/areas/recovery-evidence-20261119/previous-attempt-logs/attempt1-isolation.log",
+        "future/areas/recovery-evidence-20261119/previous-current-attempt.json",
+        "future/areas/recovery-evidence-20261119/source-blobs.json",
+        "future/areas/recovery-evidence-20261119/workflow-static-final.json"
+      ],
+      "source_workflow_dependency_identity": true,
+      "result": "No blocking documentation/evidence finding. Current Linux outcomes, earlier mixed/interrupted attempts, limited parser fuzz, historical authorization wording and pending native/provider/HOLD gates are accurately separated."
+    },
+    {
+      "module": "governance",
+      "head": "7ec8147db9fb06674d20983dfcd3b7ac765717ed",
+      "tree": "36ca2f142be776095a97d51cf1caee15d04926e6",
+      "previous_independent_review_head": "8f7457836e05c9ffc7ae85e9c4ad48977403140b",
+      "followup_paths": [
+        "future/governance/README.md",
+        "future/governance/RECOVERY-20261119.md",
+        "future/governance/recovery-evidence-20261119/current-logs/attempt2-gofmt.log",
+        "future/governance/recovery-evidence-20261119/current-logs/attempt2-isolation.log",
+        "future/governance/recovery-evidence-20261119/current-logs/attempt2-mod_verify.log",
+        "future/governance/recovery-evidence-20261119/current-logs/attempt2-parser_fuzz.log",
+        "future/governance/recovery-evidence-20261119/current-logs/attempt2-race.excerpt.log",
+        "future/governance/recovery-evidence-20261119/current-logs/attempt2-vet.log",
+        "future/governance/recovery-evidence-20261119/current-source-qualification.json",
+        "future/governance/recovery-evidence-20261119/independent-source-review.json",
+        "future/governance/recovery-evidence-20261119/previous-attempt-logs/attempt1-isolation.log",
+        "future/governance/recovery-evidence-20261119/previous-current-attempt.json",
+        "future/governance/recovery-evidence-20261119/source-blobs.json",
+        "future/governance/recovery-evidence-20261119/workflow-static-final.json"
+      ],
+      "source_workflow_dependency_identity": true,
+      "result": "No blocking documentation/evidence finding. Current Linux outcomes, earlier mixed/interrupted attempts, limited parser fuzz, historical authorization wording and pending native/provider/HOLD gates are accurately separated."
+    },
+    {
+      "module": "messaging",
+      "head": "d0e28040c27f3d336076fdaee51b84869f5f4153",
+      "tree": "951e68d1316d0efd8503408d15a3fc555dd4848e",
+      "previous_independent_review_head": "7e9708d8e50a1959af399aa5956fb2a54ab880b6",
+      "followup_paths": [
+        "future/messaging/README.md",
+        "future/messaging/RECOVERY-20261119.md",
+        "future/messaging/recovery-evidence-20261119/current-logs/attempt2-gofmt.log",
+        "future/messaging/recovery-evidence-20261119/current-logs/attempt2-isolation.log",
+        "future/messaging/recovery-evidence-20261119/current-logs/attempt2-mod_verify.log",
+        "future/messaging/recovery-evidence-20261119/current-logs/attempt2-race.excerpt.log",
+        "future/messaging/recovery-evidence-20261119/current-logs/attempt2-vet.log",
+        "future/messaging/recovery-evidence-20261119/current-source-qualification.json",
+        "future/messaging/recovery-evidence-20261119/independent-source-review.json",
+        "future/messaging/recovery-evidence-20261119/previous-current-attempt.json",
+        "future/messaging/recovery-evidence-20261119/source-blobs.json",
+        "future/messaging/recovery-evidence-20261119/workflow-static-final.json"
+      ],
+      "source_workflow_dependency_identity": true,
+      "result": "No blocking documentation/evidence finding. Current Linux outcomes, earlier mixed/interrupted attempts, limited parser fuzz, historical authorization wording and pending native/provider/HOLD gates are accurately separated."
+    }
+  ],
+  "review_scope": "Final documentation/evidence deltas, exact identity of prior independently reviewed runtime/tests/dependencies/workflows and accepted-main baselines. No new runtime execution claimed by this review."
+}

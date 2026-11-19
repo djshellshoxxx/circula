@@ -1,0 +1,39 @@
+{
+  "observed_utc": "2026-11-19T13:30:30.529459+00:00",
+  "reviewer": "/root",
+  "author": "/root/recurring_module",
+  "candidates": [
+    {
+      "module": "recurring",
+      "tested_head": "e79cd7a3d8bc1830aeb5ee255c044ddfef72f278",
+      "final_head": "2389be3631f632c037f85fe23a691edd6475d630",
+      "tree": "d41e47b2a4961983f8881e5162096c588973158c",
+      "changed_paths": [
+        ".github/workflows/future-recurring.yml",
+        "future/recurring/RECOVERY-PROVENANCE.md",
+        "future/recurring/RECOVERY-QUALIFICATION-20261119.json",
+        "future/recurring/RECOVERY-QUALIFICATION-20261119.md",
+        "future/recurring/VALIDATION.md",
+        "future/recurring/feature.json"
+      ],
+      "result": "No blocking final source/documentation/routing finding. Runtime/tests/dependencies unchanged; only explicit stacked PR routing and descriptive status/qualification provenance changed. Feature identity, disabled/HOLD, dependencies, scope and remaining gates preserved.",
+      "manifest_execution_or_policy_changes": false
+    },
+    {
+      "module": "federation",
+      "tested_head": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+      "final_head": "879676cf7ba143f8bb33647cb6221653b7bac70d",
+      "tree": "0873c4516d633cc56304c6d35a54fe1e812ab71d",
+      "changed_paths": [
+        ".github/workflows/future-federation.yml",
+        "future/federation/RECOVERY-20261119.md",
+        "future/federation/RECOVERY-QUALIFICATION-20261119.json",
+        "future/federation/RECOVERY-QUALIFICATION-20261119.md",
+        "future/federation/VALIDATION.md",
+        "future/federation/feature.json"
+      ],
+      "result": "No blocking final source/documentation/routing finding. Runtime/tests/dependencies unchanged; only explicit stacked PR routing and descriptive status/qualification provenance changed. Feature identity, disabled/HOLD, dependencies, scope and remaining gates preserved.",
+      "manifest_execution_or_policy_changes": false
+    }
+  ]
+}

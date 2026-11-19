@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-19 11:24:00 UTC",
+  "repository": "djshellshoxxx/circula",
+  "scope": "FNET-209 isolated signer input-fidelity repair; no verifier bypass, integration, activation or settlement.",
+  "ownership_preflight": {
+    "remote_target": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+    "open_federation_prs_before_publication": 0,
+    "external_repository_families_checked": 2,
+    "external_worktrees_checked": 32,
+    "federation_branch_or_dirty_path_conflicts": [],
+    "checked_before_edits": true
+  },
+  "source": {
+    "local_worktree": "/workspace/scratch/f47ceab29930/circula-federation",
+    "local_branch": "master/fnet209-utf8-20261119",
+    "local_commit": "db21ea0a0008309d6e8d116ccb00eb77ac6873d9",
+    "remote_commit": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+    "tree": "4d9f608041e65a2a1a297f17614438790240bc04",
+    "sole_parent": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+    "files": [
+      {
+        "path": ".github/workflows/future-federation.yml",
+        "blob_sha": "05b4ec53399f9d28eaf469c323070e87ec02cfbc"
+      },
+      {
+        "path": "future/federation/envelope.go",
+        "blob_sha": "1c690abbd7ccd8ac3f15a45ef657f55199e92a2d"
+      },
+      {
+        "path": "future/federation/envelope_utf8_test.go",
+        "blob_sha": "8a8c9fde3c7cbd13bfdc466a195018410a07fb96"
+      }
+    ],
+    "local_tree_clean": true,
+    "published_blobs_and_whole_tree_equal": true,
+    "independent_remote_review": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/federation-published-review.json"
+  },
+  "pr": {
+    "number": 105,
+    "url": "https://github.com/djshellshoxxx/circula/pull/105",
+    "draft": true,
+    "target": "future/fnet-209-federation-20261116",
+    "target_head": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+    "head": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+    "changed_files": 3,
+    "body_exact_readback": true
+  },
+  "behavior": {
+    "before": "Sign returned success for malformed UTF-8 and emitted JSON replacement escapes. Verify already rejected the resulting noncanonical representations.",
+    "after": "Sign rejects invalid UTF-8 in ID, Issuer, Audience, Kind and Listing before marshaling and returns ErrInvalid with an empty envelope.",
+    "preserved": [
+      "Exact bytes for valid strings",
+      "Literal U+FFFD and decomposed Unicode",
+      "Draft domain prefix",
+      "Key length handling",
+      "All Verify code and policy",
+      "Disabled/HOLD manifest",
+      "No third-party module dependencies"
+    ]
+  },
+  "environment": {
+    "go": "go1.26.11 linux/amd64",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB",
+    "GOCACHE": "/workspace/scratch/f47ceab29930/go-build-cache",
+    "GOMODCACHE": "/workspace/scratch/f47ceab29930/go-mod-cache"
+  },
+  "tests": [
+    {
+      "name": "baseline malformed-string regression",
+      "command": "go test -run '^TestSignRejectsMalformedUTF8$' -count=1 -timeout=30s ./...",
+      "production_source": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "result": "EXPECTED_FAIL",
+      "exit_code": 1,
+      "observed": "All 30 cases accepted by Sign; Verify rejected every returned envelope. No acceptance bypass reproduced."
+    },
+    {
+      "name": "committed-head race and coverage",
+      "command": "go test -race -count=1 -cover -timeout=30s ./...",
+      "source": "db21ea0a0008309d6e8d116ccb00eb77ac6873d9",
+      "result": "PASS",
+      "exit_code": 0,
+      "output": "ok github.com/djshellshoxxx/circula/future/federation 1.071s coverage: 87.5% of statements"
+    },
+    {
+      "name": "vet",
+      "command": "go vet ./...",
+      "source_tree": "4d9f608041e65a2a1a297f17614438790240bc04",
+      "result": "PASS",
+      "exit_code": 0
+    },
+    {
+      "name": "bounded string-fidelity fuzz",
+      "command": "timeout --kill-after=10s 150s go test -run '^$' -fuzz '^FuzzSignPreservesEventStrings$' -fuzztime=100000x -parallel=2 -timeout=120s ./...",
+      "source_tree": "4d9f608041e65a2a1a297f17614438790240bc04",
+      "result": "PASS",
+      "exit_code": 0,
+      "seed_cases": 55,
+      "executions": 100000,
+      "seconds": 5.682
+    },
+    {
+      "name": "format and whitespace",
+      "command": "gofmt -l envelope.go envelope_utf8_test.go; git diff --check",
+      "result": "PASS",
+      "note": "Executed as separate commands; no formatting output or whitespace errors."
+    },
+    {
+      "name": "workflow static and isolation",
+      "result": "PASS",
+      "checks": [
+        "YAML parse",
+        "bash -n for every run script",
+        "embedded Python compile",
+        "explicit OS matrix",
+        "read-only contents",
+        "immutable action references",
+        "disabled/HOLD/stdlib assertions"
+      ]
+    },
+    {
+      "name": "repository action-pin and permission gate",
+      "command": "bash scripts/check-action-pins.sh",
+      "result": "PASS",
+      "exit_code": 0,
+      "output": "action pins and permissions: ok"
+    }
+  ],
+  "review": {
+    "local_complete_three_file_review": "No blocking findings; independent branch_recovery agent",
+    "remote_complete_path_and_blob_review": "All three remote blobs and complete PR changed-path set match reviewed local source",
+    "external_human_security_audit_claimed": false
+  },
+  "provider": {
+    "observed_at_utc": "2026-11-19 11:24:00 UTC",
+    "core": {
+      "run_id": 44513782075,
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44513782075",
+      "status": "queued",
+      "conclusion": null
+    },
+    "dedicated_federation": {
+      "status": "No PR-triggered run returned by connector at this observation",
+      "passed": false,
+      "expected_jobs": [
+        "Ubuntu 24.04 race/vet/format/HOLD and 100000x bounded fuzz",
+        "macOS 15 Intel race/vet/format/HOLD",
+        "Windows 2022 ordinary tests/vet/format/HOLD; no race claim"
+      ]
+    },
+    "local_pass_does_not_qualify_provider_head": true
+  },
+  "remaining": [
+    "Current-head dedicated provider execution and required Core checks",
+    "Normal review/merge gates",
+    "Discovery wire-format/trust/key lifecycle contract",
+    "Bilateral consent and listing content projection",
+    "Durable bounded inbox/outbox and atomic replay/equivocation state",
+    "Revision/tombstone ordering, retention and restart tests",
+    "SSRF-safe transport, retry/rate and partition qualification",
+    "Production Core adapter and individual activation authorization"
+  ],
+  "disposition": "DRAFT / INTEGRATION HOLD. No merge, activation, deployment or release performed."
+}

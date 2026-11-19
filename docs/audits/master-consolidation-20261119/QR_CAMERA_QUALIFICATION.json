@@ -1,0 +1,65 @@
+{
+  "observed_utc": "2026-11-19 14:15:23 UTC",
+  "local_source": "3c1ce7a7dc190271a9a830abc924f4f938049801",
+  "qualified_camera_source": "7a33e6e1ce18c04f0b0713a4895934f547e45bb9",
+  "remote_source": "2f0c83bc34a52551281769ec17561b18920bd2cf",
+  "tree": "6c5f55e7fe658d5144c3c09c010f74923397c7df",
+  "base": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+  "paths": [
+    {
+      "path": ".github/workflows/future-qr-camera.yml",
+      "blob": "d399dd31146f9ffdf5f9e89154e95ce22cb1dfd6"
+    },
+    {
+      "path": "cmd/circula/auditanchor.go",
+      "blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587"
+    },
+    {
+      "path": "future/qr/CAMERA-LIFECYCLE-20261119.md",
+      "blob": "c5e5d60fbdb404a6c849e9f42d8d347104502cbc"
+    },
+    {
+      "path": "future/qr/web/scan_lifecycle_test.mjs",
+      "blob": "83cf88cac5f04245efbf887d03abd669cfd45a18"
+    },
+    {
+      "path": "future/qr/web/static/scan.js",
+      "blob": "681afec0e64057a21980a1d91257d004fe4d8dc0"
+    },
+    {
+      "path": "internal/service/departure_pagination_regression_test.go",
+      "blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+    }
+  ],
+  "initial_regression": {
+    "cases": 23,
+    "passed": 2,
+    "failed": 21
+  },
+  "expanded_regression": {
+    "cases": 27,
+    "passed": 24,
+    "failed": 3
+  },
+  "final_local": {
+    "cases": 27,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0,
+    "author_wall_seconds": 0.371,
+    "independent_wall_seconds": 0.3184084710010211
+  },
+  "independent_focused": {
+    "cases": 2,
+    "passed": 2,
+    "failed": 0
+  },
+  "source_and_baseline_review": "PASS; complete six paths; unchanged qualified camera script/test/workflow; exact two accepted-main blobs restored.",
+  "provider": "Pending at publication; no native pass claimed.",
+  "limitations": [
+    "Synthetic DOM/media and actual bundled Nimiq lifecycle tests; not real browser/camera/CSP or host integration.",
+    "Preview navigation defect, not a demonstrated payment or authorization bypass.",
+    "All QR Go/dependency/vendor/manifest/API paths unchanged. Two completed-main Core baseline files explicitly documented.",
+    "Disabled/HOLD retained."
+  ]
+}

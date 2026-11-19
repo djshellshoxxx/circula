@@ -1,0 +1,77 @@
+{
+  "observed_utc": "2026-11-19T12:18:39.626218+00:00",
+  "readable_report": "RECONCILIATION.md",
+  "provenance": "source-provenance.json",
+  "changed_paths": "module-name-status.txt",
+  "disposition": "Preserve both implemented runtime designs; no folder replacement, activation, or implicit policy selection.",
+  "source_changes": false,
+  "new_builds_or_probes": false,
+  "useful_recovery": [
+    "Explicit scoped HTTP/no-JS preference adapter and callback/input-order tests",
+    "Strict JSON/Unicode/depth checks and parser fuzz corpus, after resolving the known Unicode duplicate-alias discrepancy",
+    "Consent write-postcondition and rollback tests",
+    "Rotation, closed backup/restore, departure, generation-bound feedback and retention scenarios",
+    "Private unsubscribe confirmation behavior subject to token/delivery policy decision",
+    "Read-only operator CLI and path/scope/redaction tests",
+    "Additional exact-driver persistence/lease/restart acceptance scenarios"
+  ],
+  "must_preserve": [
+    "PR93 unambiguous AAD and safe legacy compatibility tests",
+    "Actor/Event/DedupeKey/signed-token UTF-8 validation",
+    "Session-specific push subscriptions, logout and current session checks",
+    "All four exact PR103 adapter source/test blobs and supporting interfaces, egress, secret handling and fixtures"
+  ],
+  "source_findings": [
+    {
+      "id": "archive_identity_utf8",
+      "status": "Source-level reachable normalization discrepancy; no demonstrated authorization/replay bypass",
+      "public_symbols": [
+        "DedupeKey",
+        "EnqueueTx",
+        "Repository.SetTarget",
+        "Repository.UnsubscribeToken"
+      ],
+      "qualification": "Host Authorize/Actor callbacks may reject malformed IDs, but the module does not enforce that. Existing stored identities also need consideration. New helper execution deferred while serial SQLite runner owns the slot.",
+      "follow_up": "Parent authorized a separate isolated archival repair with actual fail-before tests; it is not part of this report."
+    },
+    {
+      "id": "archive_strict_json_simple_fold",
+      "status": "Source-level parser contract discrepancy; no archived handler execution during this review",
+      "symbols": [
+        "uniqueJSON",
+        "decode",
+        "Handler.ServeHTTP"
+      ],
+      "example_keys": [
+        [
+          "Kind",
+          "\u212aind"
+        ],
+        [
+          "QuietStart",
+          "Quiet\u017ftart"
+        ]
+      ],
+      "qualification": "Membership/CSRF checks remain; this is not an authorization bypass. Not in the identity-only patch scope."
+    }
+  ],
+  "unresolved_contracts": [
+    "Repository vs Service/DBTX API and table schema",
+    "Five vs six event kinds",
+    "Multiple session-bound targets vs one target per channel",
+    "Local verified-email flow vs host-verified address adapter",
+    "Versioned keyring/AAD compatibility vs a single cipher/JSON tuple",
+    "Evergreen delivered unsubscribe links vs seven-day target-version capability without delivery",
+    "Append-only audit vs audit pruning and permanent tombstones",
+    "JSON vs plain-text push payload and transport/configuration support",
+    "Tagged cgo qualification vs default modernc CLI/test dependency"
+  ],
+  "ordered_port_plan": [
+    "Pin both histories and exact evidence",
+    "Prepare isolated archival UTF-8 patch with fail-before and review",
+    "Resolve API/data/token/retention decisions explicitly before runtime composition",
+    "Preserve PR93 binding/session invariants and all four PR103 transport blobs plus support",
+    "Adapt recovered API/CLI and lifecycle scenarios in small units to the chosen interfaces",
+    "Qualify the exact composed tree and retain disabled/HOLD pending host/browser/provider/operations gates"
+  ]
+}

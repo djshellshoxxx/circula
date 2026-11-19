@@ -1,0 +1,61 @@
+FFFF
+======================================================================
+FAIL: test_zip_sizes_match_the_complete_member (test_read_export.ReferenceExportTests.test_zip_sizes_match_the_complete_member) (compression=0, mismatch='understated_prefix_crc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 385, in test_zip_sizes_match_the_complete_member
+    self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 108, in assert_invalid
+    self.assertEqual(code, 1, output)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_zip_sizes_match_the_complete_member (test_read_export.ReferenceExportTests.test_zip_sizes_match_the_complete_member) (compression=0, mismatch='overstated')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 385, in test_zip_sizes_match_the_complete_member
+    self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 108, in assert_invalid
+    self.assertEqual(code, 1, output)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_zip_sizes_match_the_complete_member (test_read_export.ReferenceExportTests.test_zip_sizes_match_the_complete_member) (compression=8, mismatch='understated_prefix_crc')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 385, in test_zip_sizes_match_the_complete_member
+    self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 108, in assert_invalid
+    self.assertEqual(code, 1, output)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_zip_sizes_match_the_complete_member (test_read_export.ReferenceExportTests.test_zip_sizes_match_the_complete_member) (compression=8, mismatch='overstated')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 385, in test_zip_sizes_match_the_complete_member
+    self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 108, in assert_invalid
+    self.assertEqual(code, 1, output)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.350s
+
+FAILED (failures=4)

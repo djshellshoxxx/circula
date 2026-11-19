@@ -1,0 +1,1169 @@
+{
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "CGO_ENABLED": "1",
+    "GOMAXPROCS": "1",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB",
+    "CGO_CFLAGS": "-O0 -g0",
+    "GOFLAGS": "-p=1"
+  },
+  "modules": [
+    {
+      "module": "matching",
+      "branch": "future/fnet-201-matching-20261116",
+      "sha": "12850290c6bca7720853c33689662d751aced160",
+      "manifest": {
+        "id": "FNET-201",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Deterministic opt-in offer/request category pairing with bounded candidate count, bilateral exclusion checks and reason codes.",
+        "remaining": "Persistent preferences/dismissals; authorized snapshot provider; normalized term scoring; per-member caps; optional three-way cycle detection; rescore/invalidation; explanation UI and no-JS adapter. Current algorithm only matches categories."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 19.883,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/matching\t1.083s\tcoverage: 91.7% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 3.774,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.053,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.09,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "favorites",
+      "branch": "future/fnet-202-favorites-20261116",
+      "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "manifest": {
+        "id": "FNET-202",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Network-scoped favorite validation and quick-repeat drafts with blank amount and fresh random intent; blocked/inactive target rejection.",
+        "remaining": "Owner-private persistent favorites; pin/reorder/delete; departure cleanup; current authorization adapter; confirmation form; idempotency persistence; account/network switching UI tests."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 108.454,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/favorites\t1.622s\tcoverage: 90.1% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.041s\tcoverage: 87.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.062s\tcoverage: 19.6% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.039s\tcoverage: 92.5% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/web\t2.246s\tcoverage: 88.3% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 39.343,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 4.455,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.07,
+          "output": ""
+        },
+        {
+          "name": "sqlite-race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 44.26,
+          "output": "go: downloading github.com/mattn/go-sqlite3 v1.14.53\nok  \tgithub.com/djshellshoxxx/circula/future/favorites\t2.930s\tcoverage: 90.1% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.031s\tcoverage: 87.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.032s\tcoverage: 69.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/sqlitefixture\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.066s\tcoverage: 92.5% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t1.122s\tcoverage: 81.8% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/web\t2.236s\tcoverage: 88.3% of statements\n"
+        },
+        {
+          "name": "sqlite-vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "-tags=sqlite_cgo_test",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 48.462,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "receipts",
+      "branch": "future/fnet-203-receipts-20261116",
+      "sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "manifest": {
+        "id": "FNET-203",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Explicit-consent, active-party-only completed-trade projection with deterministic TXT and JSON exports; control-character rejection.",
+        "remaining": "Authoritative read-only snapshot adapter; no-JS download endpoints and redaction/audit; schema decision review; separately optional certificate signer/verifier, canonicalization ADR, key lifecycle/revocation and independent verifier tests. No signing algorithm is adopted by this module."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 3.569,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/receipts\t1.020s\tcoverage: 92.9% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.945,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.008,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.009,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "feed",
+      "branch": "audit/future-feed-cursors-20261119",
+      "sha": "8638f3d30f27f4882c4c6424d4c8b248208b6f3d",
+      "manifest": {
+        "id": "FNET-204",
+        "status": "core-and-signed-cursors-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Listing/announcement-only projection, read-time permission callback, source deduplication, stable keyset ordering, and HMAC cursors bound to network, viewer and filter digest with key IDs and expiry.",
+        "remaining": "Database snapshot and source joins; preferences/mute/follow; committed source IDs; feed-item expiry/moderation; no-JS paging and deletion/revocation race tests. Owner decisions: cursor key custody/rotation cadence, cursor TTL (1h provisional), mute/follow semantics, persistent source joins. No trade events."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 3.708,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/feed\t1.507s\tcoverage: 98.8% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.524,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.012,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.04,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "analytics",
+      "branch": "future/fnet-205-analytics-20261116",
+      "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "manifest": {
+        "id": "FNET-205",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Overflow-checked gross historical completed-transfer volume, distinct trader counts, half-open periods and full small-cohort suppression.",
+        "remaining": "Ledger-backed isolated snapshots including reversal accounting; stock versus flow views; fixed periods and anti-differencing privacy policy; admin authorization; own-member trends; dormant offers; accessible tables/charts and exports. Existing core is gross volume only, not the complete analytics feature."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 1.954,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/analytics\t1.083s\tcoverage: 94.7% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.265,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.008,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.004,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "areas",
+      "branch": "future/fnet-206-areas-20261116",
+      "sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "manifest": {
+        "id": "FNET-206",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Validated named-area catalog, deterministic sorting and optional area resolution restricted to the selected network. No coordinates.",
+        "remaining": "Admin-authorized durable area CRUD; listing association constraints; disabled/deleted area semantics; accessible selection/filtering; export privacy; optional broad geometry/map policy. No GPS/geocoder required."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 1.872,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/areas\t1.032s\tcoverage: 74.3% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.266,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.008,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.004,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "governance",
+      "branch": "future/fnet-208-governance-20261116",
+      "sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "manifest": {
+        "id": "FNET-208",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Eligibility/current-activity checks, duplicate/late/wrong-network ballot rejection and deterministic advisory yes/no/abstain tally.",
+        "remaining": "Persistent eligibility snapshots and unique ballots; proposal creation/moderation/withdrawal; current-membership adapter; outcome certification; privacy disclosures; admin policy-link audit; no-JS ballot UI; concurrent/restart tests. Never applies policy automatically."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 1.91,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/governance\t1.031s\tcoverage: 87.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.319,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.008,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.01,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "federation",
+      "branch": "future/fnet-209-federation-20261116",
+      "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "manifest": {
+        "id": "FNET-209",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Experimental domain-separated Ed25519 discovery envelopes with pinned peer key, explicit audience, expiry, strict JSON bytes and publish/revoke kind restriction.",
+        "remaining": "Wire-format/key-rotation ADR and audit; bilateral admin trust UI; durable bounded inbox/outbox; atomic replay journal and out-of-order revocation rules; listing consent/content projection; SSRF-safe bounded transport; rate limits; partition/restart/adversarial tests. Cross-network settlement remains excluded pending separate accounting design."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 2.512,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/federation\t1.046s\tcoverage: 81.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.434,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.016,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.004,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "pwa",
+      "branch": "audit/future-pwa-browser-20261119",
+      "sha": "f25d037c3cc53fbf1ebbf687831300be9bdb749f",
+      "manifest": {
+        "id": "FUX-101",
+        "status": "isolated-implementation-tested-chromium-passed-platform-qualification-pending",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Pinned locally bundled Workbox PWA: manifest/icons/install help, strict public-asset integrity cache, network-only private/unsafe requests, offline-unavailable fallback, DOM/session lifecycle, opt-in Go adapter and synthetic demo.",
+        "remaining": "Real Chromium 153 suite passes; Android/iOS installation, real BFCache (Chromium excludes no-store pages), Safari/Firefox, cross-tab/resume privacy on devices, screen-reader/zoom, WCAG automation and production adapter/ledger qualification pending. No persistence is implemented by design. Self-audit in AUDIT.md; independent audit still pending. Integration remains HOLD.",
+        "upstream": {
+          "project": "GoogleChrome/workbox",
+          "version": "7.4.1",
+          "commit": "62b9d8ba8eb3c1a2ab8aac9d84c90cda7865d6a3",
+          "license": "MIT-style",
+          "adoption": "locally bundled dependency"
+        }
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 5.997,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/pwa\t1.228s\tcoverage: 97.5% of statements\n\tgithub.com/djshellshoxxx/circula/future/pwa/cmd/demo\t\tcoverage: 0.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 2.129,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.034,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.016,
+          "output": ""
+        },
+        {
+          "name": "node",
+          "command": [
+            "node",
+            "--test",
+            "src/policy.test.mjs",
+            "src/precache.test.mjs",
+            "src/privacy.test.mjs"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.469,
+          "output": "\u2714 strict requests (2.829546ms)\n\u2714 strict responses (4.299372ms)\n\u2714 offline page has no actions or private facts (0.493586ms)\n\u2714 reject redirects and cookie-bearing responses (0.56038ms)\n\u2714 readBounded returns exact body within bound (7.312282ms)\n\u2714 readBounded rejects oversize declared Content-Length without reading (6.425681ms)\n\u2714 readBounded stops and cancels an unbounded stream with no Content-Length (2.109326ms)\n\u2714 readBounded rejects lying and malformed Content-Length (15.156501ms)\n\u2714 readBounded rejects invalid bounds and stream errors (1.493441ms)\n\u2714 toBase64 handles inputs larger than argument spread limits (50.719833ms)\n\u2714 verifiedResponse accepts exact bytes and stores canonical headers (7.476301ms)\n\u2714 verifiedResponse rejects wrong hash, size, headers and bad metadata (4.297709ms)\n\u2714 verifiedResponse never buffers an oversized body (0.666951ms)\n\u2714 precache plugins: only catalog URLs, no credentials, bounded cache update (5.757106ms)\n\u2714 pagehide, freeze and hidden visibility scrub private DOM (2.547748ms)\n\u2714 lifecycle works without service worker, BroadcastChannel, or a valid base (0.958126ms)\n\u2714 a throwing channel does not disable other handlers (0.410711ms)\n\u2714 restored (persisted) pages scrub and reload; fresh loads do not (0.493666ms)\n\u2714 returning visible after a scrub reloads; untouched page does not (0.61829ms)\n\u2714 sign-out and session-ended lock locally and notify other tabs; peers lock on message (1.401287ms)\n\u2714 channel carries no account data (0.286318ms)\n\u2714 validBase and registerWorker are strict and optional (0.92245ms)\n\u2139 tests 22\n\u2139 suites 0\n\u2139 pass 22\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 299.556818\n"
+        }
+      ]
+    },
+    {
+      "module": "qr",
+      "branch": "future/fux-102-qr-20261116",
+      "sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "manifest": {
+        "id": "FUX-102",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "128-bit random opaque tokens, hashed token storage input, trusted-origin URL parser, expiry/revocation/claimed-intent preflight.",
+        "remaining": "Static aliases and rotation; QR renderer/scanner/manual-entry UI; durable hashed requests; atomic request claim plus existing proposal creation; idempotent retries; current membership/limit authorization and concurrent/restart tests."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 37.704,
+          "output": "go: downloading github.com/yeqown/go-qrcode/v2 v2.3.1-0.20260806012459-d822f086bffb\ngo: downloading github.com/yeqown/reedsolomon v1.0.1-0.20260308105121-c5f4bc9af094\ngo: downloading golang.org/x/text v0.22.0\nok  \tgithub.com/djshellshoxxx/circula/future/qr\t3.261s\tcoverage: 13.6% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/cli\t1.223s\tcoverage: 29.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/cmd/circula-qr\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/qrfixture\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/web\t2.428s\tcoverage: 0.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 12.654,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 5.585,
+          "output": "go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/mattn/go-isatty: no space left on device\ngo: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/ncruces: no space left on device\nall modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.116,
+          "output": ""
+        },
+        {
+          "name": "sqlite-race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 17.323,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/qr\t3.422s\tcoverage: 84.5% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/cli\t1.446s\tcoverage: 82.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/cmd/circula-qr\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/qrfixture\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/tools/browser-qualification\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/web\t2.218s\tcoverage: 84.1% of statements\n"
+        },
+        {
+          "name": "sqlite-vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "-tags=sqlite_cgo_test",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 4.407,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "discovery",
+      "branch": "future/fux-103-discovery-20261116",
+      "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "manifest": {
+        "id": "FUX-103",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Bounded category/area/text filtering with deterministic keyset ordering over an authorized snapshot.",
+        "remaining": "Taxonomy administration; moderated tags; bounded photo upload/decode/re-encode/EXIF stripping; retention; availability/expiry; transactional snapshot pagination and signed cursors; accessible gallery and search adapters."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 32.239,
+          "output": "go: downloading golang.org/x/image v0.48.0\nok  \tgithub.com/djshellshoxxx/circula/future/discovery\t1.046s\tcoverage: 26.8% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/cli\t1.187s\tcoverage: 42.3% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/cmd/discovery\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/imgsan\t2.228s\tcoverage: 87.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore\t1.028s\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore/sqlitetest\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/web\t1.020s\tcoverage: 0.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 11.371,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 1.627,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.116,
+          "output": ""
+        },
+        {
+          "name": "sqlite-race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 24.295,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/discovery\t5.944s\tcoverage: 85.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/cli\t1.234s\tcoverage: 84.2% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/cmd/discovery\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/imgsan\t2.251s\tcoverage: 87.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore\t1.111s\tcoverage: 28.1% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore/sqlitetest\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/web\t3.577s\tcoverage: 88.5% of statements\n"
+        },
+        {
+          "name": "sqlite-vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "-tags=sqlite_cgo_test",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 3.235,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "notifications",
+      "branch": "audit/future-notifications-binding-20261119",
+      "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "manifest": {
+        "id": "FUX-104",
+        "status": "isolated-service-and-transports-implemented-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "SQL preferences and encrypted targets, confirmation/unsubscribe tokens, transactional idempotent outbox, quiet-hour/retry dispatch, current-directory checks, key rotation, SMTP/Web Push adapters, unambiguous target AAD and valid-UTF-8 identity binding.",
+        "remaining": "Production transaction/current-authorization adapters, worker crash/restart qualification, real transport and egress acceptance, bounce handling, operator CLI, accessible/no-JS preferences, credential custody/rotation, backup/restore and browser opt-in/logout acceptance."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 89.801,
+          "output": "go: downloading github.com/wneessen/go-mail v0.8.2\ngo: downloading golang.org/x/text v0.43.0\nok  \tgithub.com/djshellshoxxx/circula/future/notifications\t1.052s\tcoverage: 7.2% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 13.21,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 5.763,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.066,
+          "output": ""
+        },
+        {
+          "name": "sqlite-race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 5.004,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t1.360s\tcoverage: 71.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+        },
+        {
+          "name": "sqlite-vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "-tags=sqlite_cgo_test",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 4.23,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "messaging",
+      "branch": "future/fux-105-messaging-20261116",
+      "sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "manifest": {
+        "id": "FUX-105",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Participant and tenant access policy, block/closed-thread enforcement, bounded UTF-8 text, maximum 30-day inactivity retention.",
+        "remaining": "Durable ordered threads/messages/read positions; atomic idempotency; fresh membership and block reads; moderation/reporting; legal holds and per-participant deletion; quotas; escaped no-JS UI; restart/concurrency and retention tests. Server-readable, no E2EE claim."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 2.908,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/messaging\t1.019s\tcoverage: 100.0% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.323,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.025,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.014,
+          "output": ""
+        }
+      ]
+    },
+    {
+      "module": "onboarding",
+      "branch": "future/fux-106-onboarding-20261116",
+      "sha": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+      "manifest": {
+        "id": "FUX-106",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Versioned idempotent checklist transitions and checked integer synthetic balance previews with credit/reservation limits.",
+        "remaining": "Persist per-network/member checklist; separate practice origin/database with canned fixtures and distinct credentials; guided skip/resume templates; admin copy; accessibility and production-ledger isolation acceptance tests."
+      },
+      "checks": [
+        {
+          "name": "race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 27.464,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/onboarding\t22.734s\tcoverage: 82.3% of statements\n"
+        },
+        {
+          "name": "vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 3.33,
+          "output": ""
+        },
+        {
+          "name": "checksums",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.325,
+          "output": "all modules verified\n"
+        },
+        {
+          "name": "format",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 0.065,
+          "output": ""
+        },
+        {
+          "name": "sqlite-race",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 38.865,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/onboarding\t31.601s\tcoverage: 90.1% of statements\n"
+        },
+        {
+          "name": "sqlite-vet",
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "-tags=sqlite_cgo_test",
+            "./..."
+          ],
+          "exit_code": 0,
+          "result": "PASS",
+          "seconds": 5.654,
+          "output": ""
+        }
+      ]
+    }
+  ]
+}

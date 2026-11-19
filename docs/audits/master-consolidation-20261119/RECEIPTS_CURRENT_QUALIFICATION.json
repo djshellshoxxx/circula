@@ -1,0 +1,158 @@
+{
+  "started_utc": "2026-11-19T13:16:48.835619+00:00",
+  "source_head": "3466df2fe5a73de17e25c5a68315eead0e3ac926",
+  "tree": "957855342ac07e600f3922c9ef6fe8da5b86fed0",
+  "published_head": "3cc55f7966a6321c9fa4e587596ea7daf0f9d152",
+  "full_tree_equality": true,
+  "go_version": "go version go1.26.11 linux/amd64",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache",
+    "TMPDIR": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/receipts-current-a7qi6mhg"
+  },
+  "source_sha256": {
+    "audit_regression_test.go": "deb02180607f10fe39ed11ff40d39d0bf3763af71dfa07dd8b5310270084d129",
+    "canonical.go": "47ad75a55e8161ffba879d052a07a973227bfe34d79d4eb914657a63009a6b1f",
+    "canonical_numeric_fidelity_test.go": "2213ecae059b3c4d0cdc35ce3f92efaffb87c00a7d734e13e80241bf9a63807d",
+    "canonical_test.go": "f1f11ddb791b8797167d7a7c75b351c65bdd4d48bd6abd89442ec512d3d62869",
+    "certificate.go": "7f6a786959f7c710dc95b6ec53abc2ce6e2ecd1819c657b7e62dcc54e5bc5e65",
+    "certificate_test.go": "d42e9e9ac7595a3105c3248f2183e448bcf75c874fb0d70c5ed5e689b2e2d06a",
+    "cli.go": "3fbc60c5fb7fa359922478be00dc6ba40e80e4a700c970399449f661df71b8fe",
+    "go.mod": "662d77bdddc2e85fb1361ea9f8dd4418be5ff4008757d3158b7488b577850368",
+    "go.sum": "2a102a5cf14868d15d365b1c0c1a1ddd712f67e6effed93412587b1ada49a886",
+    "health.go": "e95a2b29ccb30ab16fce0e95101bbd0be311411d34b89717a95c74dbe0676f0d",
+    "http.go": "b8cfa29b8608259d48a5135cc8ae8859cf30a13a8ed93d166ecd5f03f28ed8ad",
+    "query_regression_test.go": "22ea098eacc08d5c2c61952b7d0292e81535f1e23a4b8930b87f04e4fc90d099",
+    "receipt.go": "ee6c110b91d3dcc31a36881de9a2526949db149d7fcd8d859bfbf5ff25c70bfc",
+    "receipt_test.go": "7f5c55e244a460bd862eeacce122e690fa6d34146796d93ad6c88c7288b316d9",
+    "service.go": "b886a8c98e03e2755f4a749ebc5412cb8d3f7b3ac95134330451480e5bef362f",
+    "service_test.go": "2664bfd236077f6365fb5db31a8941b46f051056ab2f792d1b038372aefb9f85",
+    "trust.go": "d790c456996c8712c4bef7e619b7e9c26f05098ccd12ecd4dd4056f8bac34678"
+  },
+  "state": "completed",
+  "steps": [
+    {
+      "name": "race",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-count=1",
+        "-cover",
+        "-timeout=120s",
+        "./..."
+      ],
+      "started_utc": "2026-11-19T13:16:48.846326+00:00",
+      "finished_utc": "2026-11-19T13:16:54.195372+00:00",
+      "outer_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 5.349,
+      "log": "race.log",
+      "log_sha256": "bccf94f4eea8a63f57a5ae4c09a84c3a35720c1eb366a070d8325b5ca0eede25",
+      "status": "pass",
+      "test_pass_events": 118,
+      "top_level_test_passes": 40,
+      "skipped_tests": [],
+      "package_results": [
+        {
+          "Time": "2026-11-19T05:16:54.157138765-08:00",
+          "Action": "pass",
+          "Package": "github.com/djshellshoxxx/circula/future/receipts",
+          "Elapsed": 1.279
+        }
+      ],
+      "coverage_lines": [
+        "coverage: 84.6% of statements",
+        "ok  \tgithub.com/djshellshoxxx/circula/future/receipts\t1.279s\tcoverage: 84.6% of statements"
+      ]
+    },
+    {
+      "name": "fuzz-create",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzCreateReceipt$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "./..."
+      ],
+      "started_utc": "2026-11-19T13:16:54.197864+00:00",
+      "finished_utc": "2026-11-19T13:18:00.736343+00:00",
+      "outer_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 66.539,
+      "log": "fuzz-create.log",
+      "log_sha256": "af0f814da7b699359dd1c27abf694692e5bf6eaf735045ad0d58eb203d37c8ea",
+      "status": "pass",
+      "output": "fuzz: elapsed: 0s, gathering baseline coverage: 0/2 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 1 workers\nfuzz: elapsed: 3s, execs: 17572 (5857/sec), new interesting: 31 (total: 33)\nfuzz: elapsed: 6s, execs: 36399 (6276/sec), new interesting: 40 (total: 42)\nfuzz: elapsed: 9s, execs: 51856 (5151/sec), new interesting: 46 (total: 48)\nfuzz: elapsed: 12s, execs: 69213 (5786/sec), new interesting: 48 (total: 50)\nfuzz: elapsed: 15s, execs: 89799 (6863/sec), new interesting: 50 (total: 52)\nfuzz: elapsed: 17s, execs: 100000 (6506/sec), new interesting: 51 (total: 53)\nPASS\nok  \tgithub.com/djshellshoxxx/circula/future/receipts\t16.576s\n"
+    },
+    {
+      "name": "fuzz-decode",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzDecodeDocument$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "./..."
+      ],
+      "started_utc": "2026-11-19T13:18:00.737660+00:00",
+      "finished_utc": "2026-11-19T13:18:14.282784+00:00",
+      "outer_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 13.546,
+      "log": "fuzz-decode.log",
+      "log_sha256": "1600940c9e46f65f39602db504fc227bc1944001ba691558be9df7f1c94d3101",
+      "status": "pass",
+      "output": "fuzz: elapsed: 0s, gathering baseline coverage: 0/2 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 1 workers\nfuzz: elapsed: 3s, execs: 3 (1/sec), new interesting: 0 (total: 2)\nfuzz: elapsed: 6s, execs: 3 (0/sec), new interesting: 0 (total: 2)\nfuzz: elapsed: 9s, execs: 3 (0/sec), new interesting: 0 (total: 2)\nfuzz: elapsed: 11s, execs: 100000 (42476/sec), new interesting: 3 (total: 5)\nPASS\nok  \tgithub.com/djshellshoxxx/circula/future/receipts\t11.367s\n"
+    },
+    {
+      "name": "fuzz-certificate",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzVerifyCertificate$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "./..."
+      ],
+      "started_utc": "2026-11-19T13:18:14.291981+00:00",
+      "finished_utc": "2026-11-19T13:18:25.714220+00:00",
+      "outer_timeout_seconds": 240,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 11.422,
+      "log": "fuzz-certificate.log",
+      "log_sha256": "26f8323f2e56533ac2634f911129bb76cbb8d14d9e68464b9d325c4d982d2e6d",
+      "status": "pass",
+      "output": "fuzz: elapsed: 0s, gathering baseline coverage: 0/2 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 1 workers\nfuzz: elapsed: 3s, execs: 3 (1/sec), new interesting: 0 (total: 2)\nfuzz: elapsed: 6s, execs: 3 (0/sec), new interesting: 0 (total: 2)\nfuzz: elapsed: 9s, execs: 3 (0/sec), new interesting: 0 (total: 2)\nfuzz: elapsed: 10s, execs: 100000 (99595/sec), new interesting: 1 (total: 3)\nPASS\nok  \tgithub.com/djshellshoxxx/circula/future/receipts\t10.020s\n"
+    }
+  ],
+  "source_unchanged": true,
+  "finished_utc": "2026-11-19T13:18:25.715500+00:00",
+  "all_attempted_passed": true,
+  "all_planned_completed": true
+}

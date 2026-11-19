@@ -1,0 +1,2509 @@
+{
+  "schema_version": 1,
+  "repository": "djshellshoxxx/circula",
+  "reviewer": "Independent branch-recovery and source-review agent",
+  "recorded_utc": "2026-11-19 11:07:07 UTC",
+  "verdict": "Reviewed source candidates have no unresolved blocking source finding in their stated scope. They are not approved for merge while current-head CI, traceability ownership and normal repository gates remain outstanding.",
+  "core": {
+    "pr": 104,
+    "url": "https://github.com/djshellshoxxx/circula/pull/104",
+    "base": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "published_head": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+    "local_head": "6e8f5f1473084e7a14beccb92d3db9ea547554d4",
+    "tree": "f97a12c04853c298b56dec0bfde72fd0b500b722",
+    "files": [
+      {
+        "path": "cmd/circula/verify_export.go",
+        "blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae",
+        "reviewed_author_sha": "bf02b29b514a5fd0f7c8cc33aaf5d0ddb352f5ff",
+        "published_blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae"
+      },
+      {
+        "path": "cmd/circula/verify_export_ambiguity_test.go",
+        "blob": "8d3e9d71e108035c693f04588db99291fbc61dc4",
+        "reviewed_author_sha": "bf02b29b514a5fd0f7c8cc33aaf5d0ddb352f5ff",
+        "published_blob": "8d3e9d71e108035c693f04588db99291fbc61dc4"
+      },
+      {
+        "path": "cmd/circula/verify_export_boundary_test.go",
+        "blob": "9ce07c566ab4130f22b05f53100eb749ff763955",
+        "reviewed_author_sha": "bf02b29b514a5fd0f7c8cc33aaf5d0ddb352f5ff",
+        "published_blob": "9ce07c566ab4130f22b05f53100eb749ff763955"
+      },
+      {
+        "path": "scripts/read-export.py",
+        "blob": "d6d97a0c19c8a4c30bd97845bdcd4d23346f4dac",
+        "reviewed_author_sha": "9b97bf94e5bf820bd0013939e1d487635ea5ce35",
+        "published_blob": "d6d97a0c19c8a4c30bd97845bdcd4d23346f4dac"
+      },
+      {
+        "path": "scripts/test_read_export.py",
+        "blob": "afd4ceaae544a44f1515d2752e52fc48a985dff5",
+        "reviewed_author_sha": "9b97bf94e5bf820bd0013939e1d487635ea5ce35",
+        "published_blob": "afd4ceaae544a44f1515d2752e52fc48a985dff5"
+      }
+    ],
+    "review_result": "No blocking source finding remains in the exact five-file diff.",
+    "complete_diff_read": true,
+    "changed_path_and_blob_equality_verified": true,
+    "tree_equality_basis": "Same base, exact changed-path equality and all five matching Git blobs.",
+    "author_sources": {
+      "go": "bf02b29b514a5fd0f7c8cc33aaf5d0ddb352f5ff",
+      "python": "9b97bf94e5bf820bd0013939e1d487635ea5ce35"
+    },
+    "local_integration_commits": [
+      "6e8f5f1473084e7a14beccb92d3db9ea547554d4 fix(export): verify complete ZIP member sizes before acceptance",
+      "72ab32aec9e9f1c4a2fe15c43e5aad8c9e25165b fix(export): validate manifest schema and reject oversized members",
+      "a8c5810479e45ec7ea719e4090564169a9eb3d53 fix(export): validate reference package identities and bounded reads",
+      "54d9e94911cfbbd43907e62d2c385558240c2f14 fix(export): reject ambiguous package members"
+    ]
+  },
+  "python_complete_member_review": {
+    "source_head": "9b97bf94e5bf820bd0013939e1d487635ea5ce35",
+    "source_sha256": "651a77376a32346c5422be6f13d9ccec58a9963bb12fcb60aa59288beab9fa0b",
+    "all_six_independent_probes_pass": true,
+    "probes": [
+      {
+        "case": "deflated-size-overstated.zip",
+        "expected_acceptance": false,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "FAIL export verification failed: ZIP member size does not match its complete contents\n",
+        "pass": true
+      },
+      {
+        "case": "deflated-size-understated.zip",
+        "expected_acceptance": false,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "FAIL export verification failed: Bad CRC-32 for file 'members.json'\n",
+        "pass": true
+      },
+      {
+        "case": "deflated-valid.zip",
+        "expected_acceptance": true,
+        "exit_code": 0,
+        "stdout": "members                      0 rows\nexport ok: scope members, ledger_seq 0, 1 file(s)\n",
+        "stderr": "",
+        "pass": true
+      },
+      {
+        "case": "stored-size-overstated.zip",
+        "expected_acceptance": false,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "FAIL export verification failed: ZIP member size does not match its complete contents\n",
+        "pass": true
+      },
+      {
+        "case": "stored-size-understated.zip",
+        "expected_acceptance": false,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "FAIL export verification failed: Bad CRC-32 for file 'members.json'\n",
+        "pass": true
+      },
+      {
+        "case": "stored-valid.zip",
+        "expected_acceptance": true,
+        "exit_code": 0,
+        "stdout": "members                      0 rows\nexport ok: scope members, ledger_seq 0, 1 file(s)\n",
+        "stderr": "",
+        "pass": true
+      }
+    ],
+    "fix_review": "Reviewed the copied ZipInfo bounded read and explicit comparison with the original declared size, plus real-archive regressions for prefix CRC, complete-data CRC and overstated lengths under stored/deflated compression."
+  },
+  "recurring": {
+    "remote_base": "0437e54897c6d9cfb3f2577807b82dd038493850",
+    "remote_head": "73a911a9bec387381633c031d8a4083c9fc724ad",
+    "previous_remote_head": "b92a7aa4211d9d99d028572ab908469b83a4bda2",
+    "local_commit": "cdcd2cb38b3af0275e5ceb58242384cfa916be45",
+    "local_tree": "c6a4c5dabdbc482967a44353f14926a24066ad56",
+    "changed_files": [
+      {
+        "path": ".github/workflows/future-recurring.yml",
+        "sha": "b51529f55a41fc61ab5c31919f09fc2fe9fef457"
+      },
+      {
+        "path": "future/recurring/README.md",
+        "sha": "b22645a800c0f1c38ced355b293ee53971d763c7"
+      },
+      {
+        "path": "future/recurring/UPSTREAM-RESEARCH.md",
+        "sha": "e04fc1f9d085dfdcfdbc67c1ba0ce2b128810a08"
+      },
+      {
+        "path": "future/recurring/VALIDATION.md",
+        "sha": "5f1d0cfbb8078cb763a5c1554c1ff80a12a0a12c"
+      },
+      {
+        "path": "future/recurring/calendar_test.go",
+        "sha": "489690531ee9817d4a422dc5d122ec80add1c552"
+      },
+      {
+        "path": "future/recurring/feature.json",
+        "sha": "ff5e5c9c5cc5ec062841f3f38781588f9bd437cb"
+      },
+      {
+        "path": "future/recurring/schedule.go",
+        "sha": "46126d32581263bb9af8fc86a1274e22d270bef5"
+      },
+      {
+        "path": "future/recurring/schedule_regression_test.go",
+        "sha": "08e767f7b1f505d5ac58401ce0ca42a07e755ab4"
+      }
+    ],
+    "new_commit_changed_paths": [
+      ".github/workflows/future-recurring.yml"
+    ],
+    "review_result": "No blocking source or workflow findings. The native matrix has Linux/macOS race tests and ordinary Windows tests, with Linux-only bounded fuzzing. Current-head provider results and normal repository gates remain required.",
+    "scope": "Full source diff against 0437e548, all eight published paths and every blob, plus the dedicated three-platform workflow. Runtime remains disabled/HOLD and feature incomplete.",
+    "is_merge_approval": false,
+    "pr": 97,
+    "url": "https://github.com/djshellshoxxx/circula/pull/97",
+    "published_tree": "c6a4c5dabdbc482967a44353f14926a24066ad56",
+    "all_changed_blobs_match": true,
+    "merge_approval": false
+  },
+  "notifications": {
+    "pr": 103,
+    "url": "https://github.com/djshellshoxxx/circula/pull/103",
+    "published_base": "797dddf21adddfb34a49e7bda1871a202968dcda",
+    "local_base": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+    "published_head": "13669485b641475fce526633f47055ef31997098",
+    "local_head": "4a59bd1e740c2fcf5877de2a90594439cb9cd570",
+    "tree": "198d2e6d9e40922080eb91f3ab73d011808feea9",
+    "base_tree": "d551498bd5c3c144acedf72f9320704ba55c3404",
+    "files": [
+      {
+        "path": "future/notifications/pushsend/pushsend.go",
+        "sha": "cf4e6d876137f5756d0bba6a57536596f5541025"
+      },
+      {
+        "path": "future/notifications/pushsend/pushsend_test.go",
+        "sha": "e4e82c4be240f8c5314e855ae710bf395f9f8c85"
+      },
+      {
+        "path": "future/notifications/smtpsend/smtpsend.go",
+        "sha": "e4a473915835db4d219a2118a6fa448f91921537"
+      },
+      {
+        "path": "future/notifications/smtpsend/smtpsend_test.go",
+        "sha": "356b32bce1661324e7f2cb721d05b18589fa750a"
+      }
+    ],
+    "base_equivalence": {
+      "repository_full_name": "djshellshoxxx/circula",
+      "base": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "head": "797dddf21adddfb34a49e7bda1871a202968dcda",
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1,
+      "too_large": null,
+      "base_commit": {
+        "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+        "url": "https://api.github.com/repos/djshellshoxxx/circula/commits/9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+        "html_url": "https://github.com/djshellshoxxx/circula/commit/9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae"
+      },
+      "merge_base_commit": {
+        "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+        "url": "https://api.github.com/repos/djshellshoxxx/circula/commits/9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+        "html_url": "https://github.com/djshellshoxxx/circula/commit/9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae"
+      },
+      "files": []
+    },
+    "all_changed_blobs_match": true,
+    "review_result": "No blocking finding in the exact four-file transport change.",
+    "review_scope": [
+      "Full production diff and both new test files",
+      "Synthetic SMTP and independent Web Push decryption fixtures",
+      "Existing egress validation, DNS address pinning, redirect refusal and error hygiene",
+      "Pinned go-mail v0.8.2 custom dial, TLS handshake/state and authentication paths"
+    ],
+    "tls_conclusion": "The custom implicit-TLS wrapper completes verified TLS before returning the connection. TLSOpportunistic is used only so the pinned library observes the already-encrypted state; the wrapper returns no plaintext fallback.",
+    "integration": "disabled/HOLD; future module only",
+    "merge_approval": false
+  },
+  "resolved_review_findings": [
+    {
+      "id": "EXPORT-REVIEW-01",
+      "severity": "medium",
+      "scope": "Python ZIP names",
+      "finding": "ZipInfo.filename normalized a raw NUL-containing name before validation.",
+      "resolution": "Validate orig_filename and require it to equal filename; real local/central ZIP-name regressions are present."
+    },
+    {
+      "id": "EXPORT-REVIEW-02",
+      "severity": "medium",
+      "scope": "Both readers' ZIP types",
+      "finding": "A DOS directory attribute could disagree with the creator/Unix regular-file metadata.",
+      "resolution": "Reject the DOS directory bit for all tested creators; tests cover creators 0, 3, 10, 14 and 19."
+    },
+    {
+      "id": "EXPORT-REVIEW-03",
+      "severity": "medium",
+      "scope": "Manifest schema",
+      "finding": "Missing/unsupported schema and missing/null files arrays could be accepted by Go; Python treated boolean true as schema version 1.",
+      "resolution": "Validate supported schema, require Go's files array to be non-nil, preserve an explicit empty array, and require Python's schema version to have exact integer type."
+    },
+    {
+      "id": "EXPORT-REVIEW-04",
+      "severity": "medium",
+      "scope": "Bounded reads",
+      "finding": "A read capped at the allowed size could accept a verified prefix without detecting a following byte.",
+      "resolution": "Metadata preflight plus a one-byte-over-limit read rejects oversized data and discards partial bytes associated with I/O errors; tiny-budget tests avoid multi-gigabyte allocation."
+    },
+    {
+      "id": "EXPORT-REVIEW-05",
+      "severity": "medium",
+      "scope": "Python actual ZIP member size",
+      "finding": "At 778d534, stored and deflated ZIPs with understated lengths and prefix CRCs passed while concealing a 25-byte suffix. Overstated lengths also passed.",
+      "resolution": "At 9b97bf94, read the complete bounded decompressed member independently of the declared file size and compare actual size with the original metadata. All four malformed fixtures now fail and both valid controls pass."
+    },
+    {
+      "id": "EXPORT-REVIEW-06",
+      "severity": "medium",
+      "scope": "Python manifest typing and shadowed values",
+      "finding": "Known typed manifest values could be accepted despite Go decoder type/range/time errors, including invalid earlier duplicates.",
+      "resolution": "Ordered original object pairs validate each known occurrence and final file counts use exact signed integers. Fixed by56c09536 with retained valid/null/unknown-field controls."
+    },
+    {
+      "id": "EXPORT-REVIEW-07",
+      "severity": "medium",
+      "scope": "Python known-field aliases",
+      "finding": "At56c0953, Go-recognized uppercase/long-s field aliases bypassed Python checks, and a later ROWS value did not affect verification. Actual ZIPs falsely printed success.",
+      "resolution": "Resolve known field names with the pinned Go simple-fold equivalences and original member ordering; preserve nullable semantics and unknown ligature controls. Fixed by9e95b738, independently replayed."
+    },
+    {
+      "id": "EXPORT-REVIEW-08",
+      "severity": "medium",
+      "scope": "Python nonstandard JSON constants",
+      "finding": "NaN and positive/negative Infinity inside ignored manifest metadata produced successful verification even though Go rejects these JSON tokens.",
+      "resolution": "Reject nonstandard constants at both JSON decode sites, with unknown valid-value and literal-string controls. Fixed by9e95b738, independently replayed."
+    }
+  ],
+  "independent_verification": {
+    "code_and_tests_read": true,
+    "remote_blobs_verified_for_prs": [
+      97,
+      103,
+      104,
+      105
+    ],
+    "python_adversarial_archive_runs": "Executed independently at reader 9b97bf94; six existing fixtures, no assertion failures and no tracebacks.",
+    "go_zip_size_crosscheck": "A separate Go author independently read the same four malformed fixtures through archive/zip: understated sizes fail with ErrFormat and overstated sizes with unexpected EOF. This is an author-reported crosscheck, not a reviewer rerun.",
+    "large_suites_repeated_by_reviewer": false
+  },
+  "reported_validation_not_substituted_for_provider_ci": {
+    "core_full_ordinary_suite": {
+      "status": "failed",
+      "source": "Parent report",
+      "detail": "The full final Core ordinary test attempt failed: the CLI test process was killed, the API linker was killed, and the service test compiler was killed. Contract/store/web/domain/tooling selections passed; this does not establish a full Core pass."
+    },
+    "core_python": {
+      "status": "pass",
+      "source": "Parent report on final combined source",
+      "tests": 22,
+      "seconds": 9.901
+    },
+    "go_export_focused": {
+      "status": "pass",
+      "source": "Go author report",
+      "head": "bf02b29b514a5fd0f7c8cc33aaf5d0ddb352f5ff",
+      "seconds": 0.03,
+      "qualification": "Focused real cmd tests used -vet=off after a separate compiler-memory failure; this is not a full-package or full-repository pass."
+    },
+    "recurring": {
+      "status": "pass reported",
+      "source": "Recurring author",
+      "details": "Linux race/vet and 100,000 fuzz executions passed on the final runtime/test contents. The native matrix is separately pending; no Windows/macOS pass is inferred."
+    },
+    "notifications": {
+      "status": "pass reported",
+      "source": "Transport author and parent",
+      "details": "Both adapter race/coverage runs and vet passed. The exact-current full tagged module race suite and full tagged vet also passed, as separately reported by the author and parent. 10,000 Retry-After fuzz inputs passed in 2.567 seconds after an explicitly recorded interruption. These are synthetic/local results."
+    },
+    "federation": {
+      "source": "Author report, not independently rerun by this reviewer",
+      "race": {
+        "status": "PASS",
+        "seconds": 1.071,
+        "coverage_percent": 87.5
+      },
+      "vet": "PASS",
+      "fuzz": {
+        "status": "PASS",
+        "executions": 100000,
+        "seconds": 5.682
+      },
+      "baseline_regression": "Expected FAIL on all 30 signing cases; existing Verify rejected each returned envelope."
+    },
+    "core_python_manifest_followup": {
+      "source": "Author and parent reports; independent adversarial replays separately recorded",
+      "reviewed_commit": "9e95b73861be23d0f46121f534e6c3e46d83bc1a",
+      "author_tests": 38,
+      "author_seconds": 23.95,
+      "composed_commit": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+      "parent_tests": 38,
+      "parent_seconds": 17.805
+    }
+  },
+  "provider_workflow_observations": {
+    "scope": "Read-only connector results at the exact code-stage heads. The connector returns the first page of PR-triggered runs only; an absent run is never a pass.",
+    "observations": [
+      {
+        "pr": 97,
+        "head": "73a911a9bec387381633c031d8a4083c9fc724ad",
+        "workflow_runs": [
+          {
+            "id": 44508676983,
+            "name": "future recurring module",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 2,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676983/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676983/logs",
+            "workflow_id": 423701357
+          },
+          {
+            "id": 44508676822,
+            "name": "ci",
+            "status": "pending",
+            "conclusion": null,
+            "run_number": 525,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676822/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676822/logs",
+            "workflow_id": 391555428
+          }
+        ]
+      },
+      {
+        "pr": 103,
+        "head": "13669485b641475fce526633f47055ef31997098",
+        "workflow_runs": [
+          {
+            "id": 44511002032,
+            "name": "ci",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 531,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002032/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002032/logs",
+            "workflow_id": 391555428
+          },
+          {
+            "id": 44511002005,
+            "name": "future notifications module",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 8,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002005/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002005/logs",
+            "workflow_id": 423591810
+          }
+        ]
+      },
+      {
+        "pr": 104,
+        "head": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+        "workflow_runs": [
+          {
+            "id": 44511241324,
+            "name": "ci",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 532,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511241324/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511241324/logs",
+            "workflow_id": 391555428
+          }
+        ]
+      },
+      {
+        "pr": 105,
+        "head": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+        "observed_utc": "2026-11-19 11:20:38 UTC",
+        "workflow_runs": [
+          {
+            "id": 44513782075,
+            "name": "ci",
+            "status": "queued",
+            "conclusion": null,
+            "run_number": 537,
+            "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782075/jobs",
+            "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782075/logs",
+            "workflow_id": 391555428
+          }
+        ],
+        "qualification": "First-page PR-triggered connector observation at the published head. Only the Core workflow run was listed at lookup; a missing dedicated workflow run is not a pass."
+      }
+    ]
+  },
+  "traceability_handoff": {
+    "path": "pending-traceability.patch",
+    "sha256": "59a9258c670952bb2faed2aa45ab30b76bf7d73824c034bb4ab775d9661f37ea",
+    "reviewed": true,
+    "shared_file": "docs/TRACEABILITY.md",
+    "shared_file_modified": false,
+    "expected_changes": [
+      "Generated input-head provenance marker changes from 4efed38 to 6e8f5f1.",
+      "DAT-040 adds TestVerifyExportRejectsDuplicateZIPMembers and preserves all existing citations."
+    ],
+    "gate_status": "traceability-check remains failed until the shared-document owner incorporates the legitimate generated mapping and reruns qualification.",
+    "handoff": "Regenerate at the eventual combined head with the active owner; do not remove the test/citation or blindly apply a stale shared-file patch."
+  },
+  "normal_approval_bypass": false,
+  "limitations": [
+    "This is an engineering source review, not a GitHub approval or protection-rule bypass.",
+    "No future module is enabled or integrated into Core by these isolated source reviews.",
+    "The original shared CI fuzz configuration and generated traceability document remain with their active owners.",
+    "No release/deployment, real provider delivery, production authorization adapter, browser or full cross-platform qualification is claimed.",
+    "Later commits require a new head check. Documentation-only follow-ups must retain these reviewed source blobs and still receive their required current-head checks."
+  ],
+  "federation": {
+    "recorded_utc": "2026-11-19 11:20:38 UTC",
+    "pr": 105,
+    "url": "https://github.com/djshellshoxxx/circula/pull/105",
+    "branch": "master/fnet209-utf8-20261119",
+    "base": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+    "target": "future/fnet-209-federation-20261116",
+    "local_commit": "db21ea0a0008309d6e8d116ccb00eb77ac6873d9",
+    "published_commit": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+    "tree": "4d9f608041e65a2a1a297f17614438790240bc04",
+    "files": [
+      {
+        "path": ".github/workflows/future-federation.yml",
+        "blob": "05b4ec53399f9d28eaf469c323070e87ec02cfbc"
+      },
+      {
+        "path": "future/federation/envelope.go",
+        "blob": "1c690abbd7ccd8ac3f15a45ef657f55199e92a2d"
+      },
+      {
+        "path": "future/federation/envelope_utf8_test.go",
+        "blob": "8a8c9fde3c7cbd13bfdc466a195018410a07fb96"
+      }
+    ],
+    "changed_path_set_and_all_blobs_match": true,
+    "tree_equality_basis": "Same exact base and complete changed-path/blob equality.",
+    "review_result": "No blocking source or dedicated-workflow finding in the complete three-file change.",
+    "finding_scope": "Sign previously accepted malformed UTF-8 and returned an unusable normalized envelope. Verify already rejected those envelopes through exact JSON re-encoding. No signature-verification or replay-identity bypass was reproduced.",
+    "source_review": [
+      "All five signed strings are validated before marshaling; malformed input returns ErrInvalid and an empty envelope.",
+      "Valid payload encoding, domain-separation prefix, private-key handling and Verify remain unchanged.",
+      "Regression tests include 30 malformed-string cases and exact valid Unicode, literal U+FFFD, decomposed text and escaped-character encoding.",
+      "Independently signed invalid bytes, unpaired-surrogate and escaped-replacement payloads preserve the existing verifier rejection behavior.",
+      "Bounded property tests check exact string round-trip, canonical payload bytes and Ed25519 authentication of the original domain-prefixed payload.",
+      "The dedicated workflow preserves read-only contents, immutable repository action pins, no persisted checkout credentials, explicit deadlines and disabled/HOLD/stdlib checks.",
+      "Linux/macOS use race tests; native Windows uses ordinary tests with CGO disabled; bounded fuzzing runs on Linux only."
+    ],
+    "integration": "disabled/HOLD; no Core activation or policy adoption",
+    "root_toolchain_pin": "go 1.26.11",
+    "reported_local_validation": {
+      "source": "Author report, not independently rerun by this reviewer",
+      "race": {
+        "status": "PASS",
+        "seconds": 1.071,
+        "coverage_percent": 87.5
+      },
+      "vet": "PASS",
+      "fuzz": {
+        "status": "PASS",
+        "executions": 100000,
+        "seconds": 5.682
+      },
+      "baseline_regression": "Expected FAIL on all 30 signing cases; existing Verify rejected each returned envelope."
+    },
+    "provider_workflows_observed": [
+      {
+        "id": 44513782075,
+        "name": "ci",
+        "status": "queued",
+        "conclusion": null,
+        "run_number": 537,
+        "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782075/jobs",
+        "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782075/logs",
+        "workflow_id": 391555428
+      }
+    ],
+    "workflow_scope": "First-page PR-triggered connector observation at the published head. Only the Core workflow run was listed at lookup; a missing dedicated workflow run is not a pass.",
+    "merge_approval": false,
+    "outstanding_gates": [
+      "Current-head provider qualification, including the dedicated federation workflow",
+      "Normal repository approvals and protection rules",
+      "Full product acceptance and policy/adapter work remain separate"
+    ]
+  },
+  "last_updated_utc": "2026-11-19T13:39:56.542823+00:00",
+  "python_manifest_followup": {
+    "reviewed_utc": "2026-11-19T12:07:11.117783+00:00",
+    "base_commit": "6e8f5f1473084e7a14beccb92d3db9ea547554d4",
+    "first_followup_commit": "56c09536a01fe6658ee98fe573029eac77c6ae82",
+    "reviewed_commit": "9e95b73861be23d0f46121f534e6c3e46d83bc1a",
+    "reviewed_tree": "ca441d471000c1ae24ca87c28255a0c467c6e2f9",
+    "complete_changed_paths": [
+      "scripts/read-export.py",
+      "scripts/test_read_export.py"
+    ],
+    "blobs": {
+      "scripts/read-export.py": "bde02445e22e837370fe5911cdee29d2fae3a234",
+      "scripts/test_read_export.py": "af5d950d72b4e8f2d209bb31e393b98f619cac5d"
+    },
+    "source_review_verdict": "No remaining blocking finding in the repaired typed-manifest, field-folding, constant-parsing and complete-ZIP-member scope. Normal repository gates remain required.",
+    "checks": [
+      "Known manifest scalar/container types are validated before shadowed occurrences are lost. Signed integers reject bool, float and out-of-range tokens.",
+      "Known ASCII field names use Go-compatible ASCII folding plus long-s/Kelvin equivalents; ligatures and Turkish dotted/dotless i remain unknown extensions.",
+      "Known aliases resolve in input order; scalar nulls preserve an already decoded value and collection/pointer null behavior remains explicit.",
+      "Timestamp validation preserves the pinned Go decoder legacy allowances, year zero and fractional precision.",
+      "Nonstandard NaN/Infinity/-Infinity tokens are rejected in both manifest and member JSON, including unknown fields; ordinary valid unknown extensions are retained.",
+      "No new required metadata, blanket duplicate ban, source-directory change or Go production modification was introduced by this follow-up."
+    ],
+    "independent_replays": {
+      "alias_and_constants": {
+        "observed_utc": "2026-11-19T12:03:27.531317+00:00",
+        "reviewed_sha": "9e95b73861be23d0f46121f534e6c3e46d83bc1a",
+        "reader_sha256": "91721f3c6e210e1b12e9cc0591ab6b11b0fe33f62aad45699d1d417778397478",
+        "all_eight_results_match": true,
+        "results": [
+          {
+            "case": "upper-ledger-bool-before",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: manifest.json.LEDGER_SEQ must be an integer in the signed 64-bit range\n",
+            "matches": true
+          },
+          {
+            "case": "upper-schema-bool-before",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: manifest.json.SCHEMA_VERSION must be an integer in the signed 64-bit range\n",
+            "matches": true
+          },
+          {
+            "case": "long-s-scope-bool-before",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: manifest.json.ſcope must be a string\n",
+            "matches": true
+          },
+          {
+            "case": "unknown-ligature-files-control",
+            "expected_exit": 0,
+            "actual_exit": 0,
+            "stdout": "members                      0 rows\nrole_assignments             0 rows\nexport ok: scope members, ledger_seq 0, 2 file(s)\n",
+            "stderr": "",
+            "matches": true
+          },
+          {
+            "case": "upper-rows-later-mismatch",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "FAIL members.csv: rows 0 != 1\nmembers                      0 rows\nrole_assignments             0 rows\nexport verification failed: 1 problem(s)\n",
+            "stderr": "",
+            "matches": true
+          },
+          {
+            "case": "unknown-nan",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: invalid JSON constant NaN\n",
+            "matches": true
+          },
+          {
+            "case": "unknown-infinity",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: invalid JSON constant Infinity\n",
+            "matches": true
+          },
+          {
+            "case": "unknown-negative-infinity",
+            "expected_exit": 1,
+            "actual_exit": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: invalid JSON constant -Infinity\n",
+            "matches": true
+          }
+        ]
+      },
+      "complete_zip_sizes": {
+        "observed_utc": "2026-11-19T12:03:34.033800+00:00",
+        "source_sha": "9e95b73861be23d0f46121f534e6c3e46d83bc1a",
+        "results": [
+          {
+            "case": "deflated-size-overstated.zip",
+            "expected_acceptance": false,
+            "exit_code": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: ZIP member size does not match its complete contents\n",
+            "pass": true
+          },
+          {
+            "case": "deflated-size-understated.zip",
+            "expected_acceptance": false,
+            "exit_code": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: Bad CRC-32 for file 'members.json'\n",
+            "pass": true
+          },
+          {
+            "case": "deflated-valid.zip",
+            "expected_acceptance": true,
+            "exit_code": 0,
+            "stdout": "members                      0 rows\nexport ok: scope members, ledger_seq 0, 1 file(s)\n",
+            "stderr": "",
+            "pass": true
+          },
+          {
+            "case": "stored-size-overstated.zip",
+            "expected_acceptance": false,
+            "exit_code": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: ZIP member size does not match its complete contents\n",
+            "pass": true
+          },
+          {
+            "case": "stored-size-understated.zip",
+            "expected_acceptance": false,
+            "exit_code": 1,
+            "stdout": "",
+            "stderr": "FAIL export verification failed: Bad CRC-32 for file 'members.json'\n",
+            "pass": true
+          },
+          {
+            "case": "stored-valid.zip",
+            "expected_acceptance": true,
+            "exit_code": 0,
+            "stdout": "members                      0 rows\nexport ok: scope members, ledger_seq 0, 1 file(s)\n",
+            "stderr": "",
+            "pass": true
+          }
+        ],
+        "all_pass": true
+      }
+    },
+    "author_validation": {
+      "whole_reader_suite": "38 tests PASS in23.950s at9e95b738; reported by author",
+      "type_guard_fail_before": "48 selected subcase failures against6e8f5f1; author record",
+      "alias_constant_fail_before": "48 selected subcase failures against56c0953; author record",
+      "exact_go_manifest_decoder_probe": "/workspace/scratch/f47ceab29930/evidence/export-manifest-parity-6e8f5f1/go-manifest-alias-probe-results.json",
+      "go_probe_scope": "Exact struct declarations and stdlib json.Unmarshal, not the complete CLI command. Reviewer read the receipt; six malformed alias/syntax cases reject, the unknown ligature accepts, and late ROWS decodes1 while the payload contains0 rows."
+    },
+    "integration_provenance_reported_by_parent": {
+      "local_commit": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+      "tree": "ca441d471000c1ae24ca87c28255a0c467c6e2f9",
+      "go_blobs_unchanged_from": "6e8f5f1473084e7a14beccb92d3db9ea547554d4",
+      "python_blobs_equal_reviewed_commit": true,
+      "fresh_reader_suite": "38 tests PASS17.805s; parent record",
+      "provider_publication": "Not yet independently verified at this follow-up observation."
+    }
+  },
+  "archive_recovery_scope": {
+    "report": "ARCHIVE_RECOVERY.json",
+    "meaning": "Broader recovered source is separate from the narrow isolated PR reviews above. The archive retains old recurring schedule and federation v1 envelope helpers that require the new fixes to be preserved; no whole archived implementation is approved by the earlier receipts."
+  },
+  "analytics_recovery": {
+    "initial_reviewed_local": "e1f81f989c24ec3eaea73594083c8d1d2957a6e3",
+    "final_documentary_head": "06a14e4bc6e5bca8bb0d9b857d26f1d280821aba",
+    "tree": "5bee54b3ed39c4fe680f02dfc2b3bc48c64c36d6",
+    "archive": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+    "original_target": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+    "review_scope": "Dedicated workflow, complete restoration/provenance comparison and evidence boundaries. Parent independently reviewed recovered production/test source.",
+    "changed_path_count": 36,
+    "archive_file_count": 30,
+    "identical_archive_files": 29,
+    "all_eight_go_files_and_go_mod_identical": true,
+    "workflow_blob": "9bb3afcabb8be7480c2e70e63e09a4166d02c115",
+    "verdict": "No blocking finding in the assigned scope. Exact remote tree and all changed-path boundaries independently verified; provider runs are queued.",
+    "fresh_reviewer_qualification": {
+      "race": "PASS",
+      "test_pass_events": 19,
+      "test_skip_events": 0,
+      "package_seconds": 1.044,
+      "statement_coverage_percent": 86.4,
+      "vet": "PASS",
+      "format": "PASS",
+      "mod_verify": "PASS",
+      "source_unchanged": true
+    },
+    "root_reported_fuzz": {
+      "iterations": 100000,
+      "result": "PASS",
+      "package_seconds": 13.74,
+      "wall_seconds": 156.507,
+      "source_unchanged": true
+    },
+    "evidence": "../../../../evidence/branch-inventory/analytics-recovery-local-review.json",
+    "normal_approval_bypass": false,
+    "remote_publication_review": {
+      "recorded_utc": "2026-11-19T12:20:09.361Z",
+      "pr": 108,
+      "url": "https://github.com/djshellshoxxx/circula/pull/108",
+      "head": "29a0312c5c4d446eb47c4f1d4555b58ff52c99b8",
+      "branch": "master/recover-analytics-20261119",
+      "base": "future/fnet-205-analytics-20261116",
+      "base_sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "draft": true,
+      "state": "open",
+      "remote_tree": "5bee54b3ed39c4fe680f02dfc2b3bc48c64c36d6",
+      "remote_parents": [
+        "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f"
+      ],
+      "reviewed_local": "06a14e4bc6e5bca8bb0d9b857d26f1d280821aba",
+      "full_tree_identity_verified": true,
+      "changed_paths": [
+        ".github/workflows/future-analytics.yml",
+        "future/analytics/AUDIT.md",
+        "future/analytics/COMPLETION.md",
+        "future/analytics/CONTRACT.md",
+        "future/analytics/FINAL-HANDOFF.md",
+        "future/analytics/HANDOFF-MILESTONE-MASTER1.md",
+        "future/analytics/INTEGRATION.md",
+        "future/analytics/README.md",
+        "future/analytics/RECOVERY-20261119.md",
+        "future/analytics/SECURITY-AUDIT.md",
+        "future/analytics/THIRD_PARTY_NOTICES.md",
+        "future/analytics/UPSTREAM-REUSE-MATRIX.md",
+        "future/analytics/VALIDATION.md",
+        "future/analytics/aggregate.go",
+        "future/analytics/audit_test.go",
+        "future/analytics/dashboard.go",
+        "future/analytics/dashboard_test.go",
+        "future/analytics/feature.json",
+        "future/analytics/interface.go",
+        "future/analytics/interface_test.go",
+        "future/analytics/master-evidence/SHA256SUMS",
+        "future/analytics/master-evidence/benchmark.log",
+        "future/analytics/master-evidence/focused.log",
+        "future/analytics/master-evidence/modules.log",
+        "future/analytics/master-evidence/race.log",
+        "future/analytics/master-evidence/toolchain.log",
+        "future/analytics/master-evidence/vet.log",
+        "future/analytics/performance_test.go",
+        "future/analytics/recovery-evidence-20261119/archive-qualification.json",
+        "future/analytics/recovery-evidence-20261119/fuzz.json",
+        "future/analytics/recovery-evidence-20261119/fuzz.log",
+        "future/analytics/recovery-evidence-20261119/gofmt.log",
+        "future/analytics/recovery-evidence-20261119/mod_verify.log",
+        "future/analytics/recovery-evidence-20261119/race.log",
+        "future/analytics/recovery-evidence-20261119/source-blobs.json",
+        "future/analytics/recovery-evidence-20261119/vet.log"
+      ],
+      "path_count": 36,
+      "boundary_verified": true,
+      "workflow_runs": [
+        {
+          "id": 44522482254,
+          "name": "future analytics module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44522482254/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44522482254/logs",
+          "workflow_id": 423797992
+        },
+        {
+          "id": 44522482048,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 546,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44522482048/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44522482048/logs",
+          "workflow_id": 391555428
+        }
+      ],
+      "provider_pass_claimed": false,
+      "normal_approval_bypass": false
+    }
+  },
+  "recurring_recovery_composition": {
+    "local_head": "048c7156133bef0b6a7d394c4e7814a975f1d8b2",
+    "tree": "e074e3a49b7a6271483831e576d9ef2f4df90f8e",
+    "base": "cdcd2cb38b3af0275e5ceb58242384cfa916be45",
+    "archive": "a755732a02dfe0eaa884691d59a6f748f96039e7",
+    "module_tree": "f24dfcdbf115f65ad662df59ac02c624defc21ce",
+    "preserved_reviewed_files": [
+      {
+        "old_path": "schedule.go",
+        "new_path": "schedule.go",
+        "old_blob": "46126d32581263bb9af8fc86a1274e22d270bef5",
+        "new_blob": "46126d32581263bb9af8fc86a1274e22d270bef5",
+        "identical": true
+      },
+      {
+        "old_path": "schedule_regression_test.go",
+        "new_path": "schedule_regression_test.go",
+        "old_blob": "08e767f7b1f505d5ac58401ce0ca42a07e755ab4",
+        "new_blob": "08e767f7b1f505d5ac58401ce0ca42a07e755ab4",
+        "identical": true
+      },
+      {
+        "old_path": "calendar_test.go",
+        "new_path": "due_with_schedule_test.go",
+        "old_blob": "489690531ee9817d4a422dc5d122ec80add1c552",
+        "new_blob": "489690531ee9817d4a422dc5d122ec80add1c552",
+        "identical": true
+      },
+      {
+        "old_path": "schedule_test.go",
+        "new_path": "schedule_test.go",
+        "old_blob": "bbb2fd93a0b1fda4acee7b2ef43909db13e84662",
+        "new_blob": "bbb2fd93a0b1fda4acee7b2ef43909db13e84662",
+        "identical": true
+      }
+    ],
+    "calendar_sha256": "a7e9c4c414dfea08757a7907ee2a8e095f5074a032c4fc22ead758008234b830",
+    "reviewed_utc": "2026-11-19T12:18:10.647418+00:00",
+    "scope": "Full archive-to-composed Calendar delta and new tests; byte identity of retained helper/tests; dedicated workflow; dependency/HOLD boundary and provenance/evidence. Parent separately reviews recovered service/store/HTTP/CLI production paths.",
+    "verdict": "No remaining blocking finding in the assigned Calendar/workflow/provenance delta. Full composed-module qualification and the separately identified Cleanup timestamp repair remain pending.",
+    "read_files": [
+      "future/recurring/calendar.go",
+      "future/recurring/calendar_recovery_test.go",
+      "future/recurring/calendar_fuzz_test.go",
+      "future/recurring/README.md",
+      "future/recurring/VALIDATION.md",
+      "future/recurring/RECOVERY-PROVENANCE.md",
+      "future/recurring/feature.json",
+      "future/recurring/go.mod",
+      ".github/workflows/future-recurring.yml"
+    ],
+    "calendar_findings_resolved": [
+      {
+        "issue": "Malformed UTF-8 direct Calendar identities normalize during JSON key construction.",
+        "repair": "Reject invalid network/id before key construction.",
+        "impact_limit": "The service already validates these identities; no service authorization bypass was reproduced."
+      },
+      {
+        "issue": "Historical second-offset local times are missed or skipped by minute-based cron iteration.",
+        "repair": "Window reuses the retained exact zone-interval resolver; Next uses cron only to enumerate Gregorian dates at UTC noon, then resolves exact local time with a five-date bound.",
+        "review_evidence": "The initial current-date-only Next preflight failed the added after-target-plus-61-second cases; final regression covers both immediate-after and later-after boundaries."
+      }
+    ],
+    "test_review": {
+      "identity_negative_cases": 24,
+      "historical_schedule_cases": 12,
+      "modern_window_oracle_comparisons": 10368,
+      "explicit_next_date_cases": 12,
+      "preserved_original_oracle_comparisons": 3456,
+      "oracle_independence": "UTC-minute enumeration is independent of both interval traversal and cron; historical second-offset expectations use fixed literal offset arithmetic.",
+      "source_only_reviewer_rerun": false,
+      "reported_narrow_race_pass_seconds": 3.343,
+      "reported_narrow_race_wall_seconds": 4.866,
+      "full_sql_suite_qualified": false
+    },
+    "workflow_review": {
+      "three_os_matrix_preserved": true,
+      "linux_macos_race_windows_ordinary": true,
+      "exact_dependency_allowlist_and_import_boundary": true,
+      "real_pinned_sqlite_required": true,
+      "two_parser_only_fuzz_commands": true,
+      "fuzz_iterations_each": 100000,
+      "explicit_timeout_and_read_only_permissions": true,
+      "no_shared_workflow_or_core_path_changes": true,
+      "provider_result_claimed": false
+    },
+    "unresolved_separate_findings": [
+      "Root identified lexical RFC3339Nano timestamp ordering in recovered Cleanup; a separate production/test follow-up is being prepared and is not approved by this receipt."
+    ],
+    "normal_approval_bypass": false,
+    "changed_path_count": 84,
+    "archive_file_count": 82,
+    "identical_archive_file_count": 75
+  },
+  "federation_recovery_composition": {
+    "observed_at": "2026-11-19T12:32:29.974607+00:00",
+    "head": "bcaf407bfeccb3946d72b298c502bb081c29ba24",
+    "tree": "b246abf02b0e35914b4874ce830d7b41685848c0",
+    "parent": "db21ea0a0008309d6e8d116ccb00eb77ac6873d9",
+    "archive_head": "dc59d9b8349cebefb35278bd37ae5e4f207dd833",
+    "archive_files": 70,
+    "archive_files_mapped_exact": 65,
+    "archive_mapped_deltas": [
+      {
+        "path": "future/federation/COMPLETION.md",
+        "archive_blob": "63fd34cc75406dd333a63518e315da2c33516999",
+        "candidate_blob": "def4f6a791adb77e3be65b7488c15529e80e13e3"
+      },
+      {
+        "path": "future/federation/UPSTREAM-RESEARCH.md",
+        "archive_blob": "be6bde69c3efd445f22fd3317ecde2de65d54f61",
+        "candidate_blob": "1aaef23ed62e02c379a6fc67539fc73241bfa533"
+      },
+      {
+        "path": "future/federation/VALIDATION.md",
+        "archive_blob": "7583f146c2dd88f235d8586967066c1153b64b64",
+        "candidate_blob": "13632385fa6a110b4611485b9e568fa081762693"
+      },
+      {
+        "path": "future/federation/envelope.go",
+        "archive_blob": "980edd73a435cfced86d0be8197983bd9feed3b0",
+        "candidate_blob": "c13fcbb9597cf333c84ff448f459e11bc26dd295"
+      },
+      {
+        "path": "future/federation/feature.json",
+        "archive_blob": "64fda8f63443ef77185366ee7df909c4a49556c1",
+        "candidate_blob": "d49ab3d92e1df39681adc8d226083ef4481f39b7"
+      }
+    ],
+    "new_files": [
+      "future/federation/RECOVERED-README-20261116.md",
+      "future/federation/RECOVERY-20261119.md",
+      "future/federation/SIGNING-VALIDATION-20261119.json",
+      "future/federation/SIGNING-VALIDATION-20261119.md",
+      "future/federation/envelope_utf8_test.go",
+      "future/federation/protocol_recovery_test.go"
+    ],
+    "changed_paths": [
+      ".github/workflows/future-federation.yml",
+      "future/federation/ACCEPTANCE.md",
+      "future/federation/ADR-0001.md",
+      "future/federation/AUDIT.md",
+      "future/federation/COMPLETION.md",
+      "future/federation/FINAL-HANDOFF.md",
+      "future/federation/HANDOFF-MILESTONE-M.md",
+      "future/federation/INTEGRATION.md",
+      "future/federation/RECOVERED-README-20261116.md",
+      "future/federation/RECOVERY-20261119.md",
+      "future/federation/SECURITY-AUDIT.md",
+      "future/federation/SIGNING-VALIDATION-20261119.json",
+      "future/federation/SIGNING-VALIDATION-20261119.md",
+      "future/federation/THIRD_PARTY_NOTICES.md",
+      "future/federation/UPSTREAM-RESEARCH.md",
+      "future/federation/UPSTREAM-REUSE-MATRIX.md",
+      "future/federation/VALIDATION.md",
+      "future/federation/audit_test.go",
+      "future/federation/envelope.go",
+      "future/federation/feature.json",
+      "future/federation/go.mod",
+      "future/federation/go.sum",
+      "future/federation/interface.go",
+      "future/federation/master_interface_test.go",
+      "future/federation/members.go",
+      "future/federation/operations.go",
+      "future/federation/outbox.go",
+      "future/federation/protocol.go",
+      "future/federation/protocol_negative_test.go",
+      "future/federation/protocol_recovery_test.go",
+      "future/federation/recovery-evidence/SHA256.json",
+      "future/federation/recovery-evidence/focused-initial.log",
+      "future/federation/recovery-evidence/focused.log",
+      "future/federation/recovery-evidence/modules.log",
+      "future/federation/recovery-evidence/race.log",
+      "future/federation/recovery-evidence/vet.log",
+      "future/federation/store.go",
+      "future/federation/store_test.go",
+      "future/federation/third_party/github.com_dustin_go-humanize-v1.0.1-LICENSE",
+      "future/federation/third_party/github.com_go-jose_go-jose_v4-v4.1.9-LICENSE",
+      "future/federation/third_party/github.com_google_pprof-v0.0.0-20260802141513-ef3492d7dac3-LICENSE",
+      "future/federation/third_party/github.com_google_uuid-v1.6.0-LICENSE",
+      "future/federation/third_party/github.com_hashicorp_golang-lru_v2-v2.0.7-LICENSE",
+      "future/federation/third_party/github.com_mattn_go-isatty-v0.0.24-LICENSE",
+      "future/federation/third_party/github.com_ncruces_go-strftime-v1.0.0-LICENSE",
+      "future/federation/third_party/github.com_remyoudompheng_bigfft-v0.0.0-20230129092748-24d4a6f8daec-LICENSE",
+      "future/federation/third_party/golang.org_x_mod-v0.41.0-LICENSE",
+      "future/federation/third_party/golang.org_x_sync-v0.23.0-LICENSE",
+      "future/federation/third_party/golang.org_x_sys-v0.48.0-LICENSE",
+      "future/federation/third_party/golang.org_x_tools-v0.50.0-LICENSE",
+      "future/federation/third_party/modernc.org_cc_v4-v4.29.7-LICENSE",
+      "future/federation/third_party/modernc.org_ccgo_v4-v4.36.1-LICENSE",
+      "future/federation/third_party/modernc.org_fileutil-v1.4.0-LICENSE",
+      "future/federation/third_party/modernc.org_gc_v2-v2.6.5-LICENSE",
+      "future/federation/third_party/modernc.org_gc_v3-v3.1.5-LICENSE",
+      "future/federation/third_party/modernc.org_goabi0-v0.2.0-LICENSE",
+      "future/federation/third_party/modernc.org_libc-v1.77.1-LICENSE",
+      "future/federation/third_party/modernc.org_libc-v1.77.1-LICENSE-3RD-PARTY.md",
+      "future/federation/third_party/modernc.org_mathutil-v1.7.1-LICENSE",
+      "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE",
+      "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE-GO",
+      "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE-LOGO",
+      "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE-MMAP-GO",
+      "future/federation/third_party/modernc.org_opt-v0.2.0-LICENSE",
+      "future/federation/third_party/modernc.org_sortutil-v1.2.1-LICENSE",
+      "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE",
+      "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE-3RD-PARTY.md",
+      "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE-SQLITE",
+      "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE-SQLITE_VEC",
+      "future/federation/third_party/modernc.org_strutil-v1.2.1-LICENSE",
+      "future/federation/third_party/modernc.org_token-v1.1.0-LICENSE",
+      "future/federation/transport.go",
+      "future/federation/transport_test.go"
+    ],
+    "legacy_exact": {
+      "envelope_test.go": true,
+      "envelope_utf8_test.go": true,
+      "README.md": true
+    },
+    "legacy_production_body_exact": true,
+    "readme_handoff_preserved": true,
+    "scope_check": "PASS",
+    "independent_review_scope": [
+      "full composition changed-path/blob comparison",
+      "complete workflow source",
+      "new protocol_recovery_test.go",
+      "protocol.go signed-byte validation",
+      "recovery/validation/feature provenance"
+    ],
+    "finding": "No blocking issue in assigned composition/test/workflow delta. Full recovered service source review and current candidate qualification remain separate.",
+    "tests_run_by_reviewer": [],
+    "accepted_main_followup": {
+      "head": "5cf90f4ea3f9bcd17d4c7eaa611759080895c4dc",
+      "tree": "efc696eca11420d14ab526433af267eb6068347c",
+      "changed_paths": [
+        "cmd/circula/auditanchor.go",
+        "internal/service/departure_pagination_regression_test.go",
+        "future/federation/RECOVERY-20261119.md",
+        "future/federation/VALIDATION.md"
+      ],
+      "main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+      "core_blobs": [
+        "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+        "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+      ],
+      "module_runtime_tests_dependencies_workflow_readme_unchanged": true,
+      "review": "No blocking issue in exact accepted-main and scope-document delta."
+    }
+  },
+  "archived_notification_identity": {
+    "reviewed_at": "2026-11-19T12:45:16.415074+00:00",
+    "head": "b96100d2a53cf696f16b8c34305eb132c673863c",
+    "tree": "36122c54a1a11333f36700d448a41aedafa7d631",
+    "base": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+    "changed_paths": [
+      "future/notifications/delivery.go",
+      "future/notifications/store.go",
+      "future/notifications/unsubscribe.go",
+      "future/notifications/archive_identity_utf8_test.go"
+    ],
+    "scope": "Complete four-file diff and affected marshal/hash/AAD/token call paths, existing mail/base64 validation, and new regressions.",
+    "finding": "No blocking issue in narrow fail-fast malformed UTF-8 repair. No authorization or replay bypass is claimed. Existing valid strings remain unchanged.",
+    "author_evidence": "Actual real-driver fail-before, whole ordinary module tests and vet; initial linker kill retained, successful run uses -ldflags=-w.",
+    "limitation": "No current race pass; later JSON repair and archive/current-runtime composition are separate. PR103 source was not modified.",
+    "normal_gates_bypassed": false
+  },
+  "archived_notification_json": {
+    "reviewed_at": "2026-11-19T12:45:16.415074+00:00",
+    "head": "3c734042159899c9d1dc737f70c535e82010c40f",
+    "tree": "f3668a89acb046d159525cddf8cd5192467a26de",
+    "base": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+    "changed_paths": [
+      "future/notifications/strictjson.go",
+      "future/notifications/archive_json_simplefold_test.go"
+    ],
+    "scope": "Complete two-file diff, Unicode simple-fold orbit comparison and regression controls.",
+    "finding": "No blocking issue; case aliases rejected without rewriting single aliases or applying multi-rune expansions. Existing other parser limits remain.",
+    "author_evidence": "Seven malformed alias subcases failed before; actual production source-file race and vet passed after.",
+    "limitation": "Source-file scope does not qualify the full SQLite module or composed runtime.",
+    "normal_gates_bypassed": false
+  },
+  "subsequent_core_checkpoint": {
+    "observed_at": "2026-11-19T13:06:28.121Z",
+    "pr": 104,
+    "remote_head": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+    "remote_tree": "7ccb0188df8416eb8fa57b8740eba400a5e01363",
+    "remote_parent": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+    "local_equivalent": "87cc4b229d39dbc8c00785048024f0e7296c015e",
+    "base": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "state": "open",
+    "draft": true,
+    "full_tree_match": true,
+    "reviewed_go_source": "6e8f5f1473084e7a14beccb92d3db9ea547554d4",
+    "reviewed_python_source": "9e95b73861be23d0f46121f534e6c3e46d83bc1a",
+    "all_five_runtime_test_blobs_match_reviewed_sources": true,
+    "local_equivalence_receipt": "core-checkpoint-local-equivalence.json",
+    "scope": "Direct remote commit/tree/parent and PR metadata; full local five-file blob equivalence to independently reviewed sources. Workflow review is separately preserved in the published checkpoint.",
+    "provider_scope": "Prior provider run44511241324 belongs to c3c991aa, not this new published head. Current-head provider results must be checked separately.",
+    "normal_approval_bypassed": false,
+    "prior_provider_checkpoint": {
+      "source_head": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "tested_merge": "ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc",
+      "run_id": 44511241324,
+      "status": "completed",
+      "conclusion": "failure",
+      "observed_utc": "2026-11-19T13:01:10.237958+00:00",
+      "jobs": [
+        {
+          "name": "e2e (Playwright, axe, keyboard)",
+          "conclusion": "failure"
+        },
+        {
+          "name": "build release targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "conclusion": "failure"
+        },
+        {
+          "name": "API contract and load smoke",
+          "conclusion": "success"
+        },
+        {
+          "name": "fuzz smoke (RB-017)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (windows-2022)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (macos-15-intel)",
+          "conclusion": "success"
+        },
+        {
+          "name": "reproducible build (two builds, same sha256)",
+          "conclusion": "success"
+        },
+        {
+          "name": "test (ubuntu-24.04)",
+          "conclusion": "success"
+        }
+      ],
+      "receipt": "CORE_PROVIDER_CHECKPOINT.json",
+      "receipt_sha256": "e5a85bb277ec4ab4d6234e96676c9e7cb120109cb4bb59d37bad4e0fa57635ab"
+    }
+  },
+  "federation_wire_fuzz_extraction": {
+    "parent": "5cf90f4ea3f9bcd17d4c7eaa611759080895c4dc",
+    "old_path": "future/federation/store_test.go",
+    "new_path": "future/federation/protocol_fuzz_test.go",
+    "target": "FuzzDiscoveryWire",
+    "body_equal": true,
+    "body_sha256": "7370e8f6ad71f002eb91fef6d4763250aa1eda9772bdf89fa9b2534d985c8acf",
+    "fixture_declaration_equal": true,
+    "fixture_declaration": "var fixtureNow = time.Unix(1800000000, 0)",
+    "fixture_sha256": "1ff96fc233ddbff8364f9070a70de1ea7c52ef9c271e021c2f468edd574cc063",
+    "new_command": "timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzDiscoveryWire$' -fuzztime=100000x -parallel=2 -timeout=150s envelope.go protocol.go protocol_fuzz_test.go",
+    "go_executed": false,
+    "remaining_gates": [
+      "full current-source race/vet/checksums",
+      "bounded actual protocol fuzz execution",
+      "provider exact-head native jobs"
+    ],
+    "head": "18978139341a1d066f58d632de757bbdb4d00999",
+    "tree": "0586f86d213b6ccfefdf12fd645ceacef1122219",
+    "changed_paths": [
+      ".github/workflows/future-federation.yml",
+      "future/federation/RECOVERY-20261119.md",
+      "future/federation/VALIDATION.md",
+      "future/federation/protocol_fuzz_test.go",
+      "future/federation/store_test.go"
+    ],
+    "production_and_dependencies_unchanged": true,
+    "independent_review": "The complete five-path delta was independently read; target body, seed literals and fixture are byte-identical. Production, dependencies and externally reserved README are unchanged. No blocker in this extraction/workflow delta.",
+    "receipt_sha256": "075ffb5eed7f673a407668b30c4b8f15b32b737fa7f99ce892a78c9d47366634"
+  },
+  "recurring_federation_combined_followup": [
+    {
+      "module": "recurring",
+      "tested_commit": "e79cd7a3d8bc1830aeb5ee255c044ddfef72f278",
+      "tested_tree": "707f6fb5db85808a86a7fae87c716b6ebecfec66",
+      "module_tree": "3c0580c334255092bba0fc2f4d0ea144f021e816",
+      "recorded_start": "2026-11-19T13:10:57.761281+00:00",
+      "recorded_finish": "2026-11-19T13:11:43.120252+00:00",
+      "state": "passed",
+      "source_unchanged": true,
+      "qualification_owner": "/root/recurring_module",
+      "independently_rerun": false,
+      "top_level_tests_passed": 48,
+      "steps": [
+        {
+          "name": "toolchain",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.008,
+          "source_unchanged": true
+        },
+        {
+          "name": "isolation",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.217,
+          "source_unchanged": true
+        },
+        {
+          "name": "format",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.033,
+          "source_unchanged": true
+        },
+        {
+          "name": "race",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 11.363,
+          "source_unchanged": true,
+          "skips": [],
+          "coverage": [
+            "80.0",
+            "80.0"
+          ]
+        },
+        {
+          "name": "vet",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 1.068,
+          "source_unchanged": true
+        },
+        {
+          "name": "checksums",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 2.259,
+          "source_unchanged": true
+        },
+        {
+          "name": "fuzz-schedule",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 10.008,
+          "source_unchanged": true,
+          "executions": [
+            17809,
+            100000
+          ]
+        },
+        {
+          "name": "fuzz-calendar",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 10.341,
+          "source_unchanged": true,
+          "executions": [
+            63069,
+            100000
+          ]
+        },
+        {
+          "name": "dependencies",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 9.91,
+          "source_unchanged": true
+        }
+      ],
+      "source_receipt": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/receipt.json",
+      "source_receipt_sha256": "9801da323e983e23c346cb7cd19f744fcb3cc2ec35d0013e1fdc0f9921f86f90",
+      "subsequent_routing_head": "45af2b2e31fa9bde532e6952c0b02da6d6e6a231",
+      "subsequent_routing_scope": "One owned workflow pull_request.branches entry adds the existing owned primitive PR source branch as an allowed base for the stacked recovery. Commands, actions, permissions and runtime remain unchanged.",
+      "metadata_review": "The complete two-file dependency-list VCS workaround/documentation delta was independently read. Only go list enumeration disables stamping; source identity recording and real test/vet flags remain separate.",
+      "provider_result": "No exact publication-head provider result claimed."
+    },
+    {
+      "module": "federation",
+      "tested_commit": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+      "tested_tree": "2b1400be19b42ee63c86980666a71d1c88e07811",
+      "module_tree": "81a58c2b2b05972f977e1997ed0ce978f6ca4a12",
+      "recorded_start": "2026-11-19T13:12:06.816985+00:00",
+      "recorded_finish": "2026-11-19T13:13:58.772468+00:00",
+      "state": "passed",
+      "source_unchanged": true,
+      "qualification_owner": "/root/recurring_module",
+      "independently_rerun": false,
+      "top_level_tests_passed": 36,
+      "steps": [
+        {
+          "name": "toolchain",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.008,
+          "source_unchanged": true
+        },
+        {
+          "name": "isolation",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.266,
+          "source_unchanged": true
+        },
+        {
+          "name": "format",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.066,
+          "source_unchanged": true
+        },
+        {
+          "name": "race",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 34.537,
+          "source_unchanged": true,
+          "skips": [],
+          "coverage": [
+            "74.5",
+            "74.5"
+          ]
+        },
+        {
+          "name": "vet",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.873,
+          "source_unchanged": true
+        },
+        {
+          "name": "checksums",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 2.127,
+          "source_unchanged": true
+        },
+        {
+          "name": "fuzz-legacy",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 14.379,
+          "source_unchanged": true,
+          "executions": [
+            46084,
+            64674,
+            100000
+          ]
+        },
+        {
+          "name": "fuzz-v2-strings",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 53.114,
+          "source_unchanged": true,
+          "executions": [
+            6761,
+            14508,
+            100000
+          ]
+        },
+        {
+          "name": "fuzz-wire",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 6.394,
+          "source_unchanged": true,
+          "executions": [
+            48688,
+            100000
+          ]
+        },
+        {
+          "name": "dependencies",
+          "exit_code": 0,
+          "outer_timeout_reached": false,
+          "wall_seconds": 0.018,
+          "source_unchanged": true
+        }
+      ],
+      "source_receipt": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/receipt.json",
+      "source_receipt_sha256": "ee9a61947ead62d9c1531a81a697345cfb30e221f9fe47e844c8f1bde35e29d6",
+      "subsequent_routing_head": "175283209e930d4bc4baeeaa8d66b7d489dd4229",
+      "subsequent_routing_scope": "One owned workflow pull_request.branches entry adds the existing owned primitive PR source branch as an allowed base for the stacked recovery. Commands, actions, permissions and runtime remain unchanged.",
+      "metadata_review": "The complete two-file dependency-list VCS workaround/documentation delta was independently read. Only go list enumeration disables stamping; source identity recording and real test/vet flags remain separate.",
+      "provider_result": "No exact publication-head provider result claimed."
+    }
+  ],
+  "areas_governance_messaging_recovery": {
+    "recorded_utc": "2026-11-19T13:20:15.785316+00:00",
+    "candidates": [
+      {
+        "module": "areas",
+        "branch": "master/recover-areas-20261119",
+        "base": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+        "archive": "999dcbf12ffcf2bdcd1764393c5f470fe3c6fbc3",
+        "reviewed_source_head": "0ad43e4a414945e1351e7509dce7f214516d199b",
+        "final_head": "3275ac6016ca7426427da92e7bfa9f620e3b55ad",
+        "final_tree": "f5de54ced2f6fd363372a4588c292ab900eeef65",
+        "module_tree": "a9fdafde883d2f707265a59a8373d35058c3e6a4",
+        "runtime_tests_dependencies_workflow_unchanged_from_reviewed_head": true,
+        "final_commit_scope": "Documentation and portable evidence only",
+        "changed_path_count": 104,
+        "outside_module_paths": [
+          ".github/workflows/future-areas.yml",
+          "cmd/circula/auditanchor.go",
+          "internal/service/departure_pagination_regression_test.go"
+        ],
+        "unexecuted_fuzz_gates": null,
+        "native_windows_gate": null,
+        "core_activation": "disabled/HOLD",
+        "author": "/root/branch_recovery",
+        "independent_reviewer": "/root/independent_triage",
+        "independent_review_scope": {
+          "source": "Complete new production deltas and regression tests, relevant parser/CLI callers, original fuzz inputs, dedicated workflows, preservation of every archived path/blob, all original tests and module metadata, accepted-main Core baseline blobs.",
+          "execution": "Read-only Git/Python/YAML/shell syntax verification. This reviewer did not start Go builds, tests, vet, fuzz, native jobs, or provider runs during this review.",
+          "not_claimed": [
+            "Full independent security audit of every unchanged archived production file",
+            "Current full Core qualification",
+            "Native macOS or Windows result",
+            "Feature activation, integration, merge or deployment approval"
+          ]
+        },
+        "independent_review_disposition": "No blocking source or dedicated-workflow finding in the reviewed recovery deltas; original runtime/provider/integration gates remain separate.",
+        "archive_file_count": 76,
+        "original_tests_retained_exact": 7,
+        "current_linux_checks": [
+          {
+            "kind": "isolation",
+            "elapsed_seconds": 22.307,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "parser_fuzz",
+            "elapsed_seconds": 64.137,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "gofmt",
+            "elapsed_seconds": 0.033,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass",
+            "carried_forward_from": "1868a8f0cde9f1f384dd9119d26ae72059471085",
+            "complete_source_hash_dictionary_identical": true
+          },
+          {
+            "kind": "race",
+            "elapsed_seconds": 10.626,
+            "passed_test_events": 68,
+            "skipped_test_events": [],
+            "coverage_output": [
+              "coverage: 72.1% of statements",
+              "ok  \tgithub.com/djshellshoxxx/circula/future/areas\t6.234s\tcoverage: 72.1% of statements"
+            ],
+            "status": "pass",
+            "carried_forward_from": "1868a8f0cde9f1f384dd9119d26ae72059471085",
+            "complete_source_hash_dictionary_identical": true
+          },
+          {
+            "kind": "vet",
+            "elapsed_seconds": 0.869,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass",
+            "carried_forward_from": "1868a8f0cde9f1f384dd9119d26ae72059471085",
+            "complete_source_hash_dictionary_identical": true
+          },
+          {
+            "kind": "mod_verify",
+            "elapsed_seconds": 0.519,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass",
+            "carried_forward_from": "1868a8f0cde9f1f384dd9119d26ae72059471085",
+            "complete_source_hash_dictionary_identical": true
+          }
+        ],
+        "current_receipt_sha256": "9b85df56b1ce489282fcb137e79cb9a671acc7397ce52ae94c13bc3b75482e5f",
+        "review_receipt": "future/areas/recovery-evidence-20261119/independent-source-review.json",
+        "qualification_receipt": "future/areas/recovery-evidence-20261119/current-source-qualification.json",
+        "publication_state": "Locally frozen; root owns any later draft publication and exact-tree check."
+      },
+      {
+        "module": "governance",
+        "branch": "master/recover-governance-20261119",
+        "base": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+        "archive": "6a5af100877aa0117bb43a35eb625dab38ee67f2",
+        "reviewed_source_head": "8f7457836e05c9ffc7ae85e9c4ad48977403140b",
+        "final_head": "7ec8147db9fb06674d20983dfcd3b7ac765717ed",
+        "final_tree": "36ca2f142be776095a97d51cf1caee15d04926e6",
+        "module_tree": "0eeb9363737160dfe3f886bb5ba31fe8befd7690",
+        "runtime_tests_dependencies_workflow_unchanged_from_reviewed_head": true,
+        "final_commit_scope": "Documentation and portable evidence only",
+        "changed_path_count": 73,
+        "outside_module_paths": [
+          ".github/workflows/future-governance.yml",
+          "cmd/circula/auditanchor.go",
+          "internal/service/departure_pagination_regression_test.go"
+        ],
+        "unexecuted_fuzz_gates": null,
+        "native_windows_gate": null,
+        "core_activation": "disabled/HOLD",
+        "author": "/root/branch_recovery",
+        "independent_reviewer": "/root/independent_triage",
+        "independent_review_scope": {
+          "source": "Complete new production deltas and regression tests, relevant parser/CLI callers, original fuzz inputs, dedicated workflows, preservation of every archived path/blob, all original tests and module metadata, accepted-main Core baseline blobs.",
+          "execution": "Read-only Git/Python/YAML/shell syntax verification. This reviewer did not start Go builds, tests, vet, fuzz, native jobs, or provider runs during this review.",
+          "not_claimed": [
+            "Full independent security audit of every unchanged archived production file",
+            "Current full Core qualification",
+            "Native macOS or Windows result",
+            "Feature activation, integration, merge or deployment approval"
+          ]
+        },
+        "independent_review_disposition": "No blocking source or dedicated-workflow finding in the reviewed recovery deltas; original runtime/provider/integration gates remain separate.",
+        "archive_file_count": 48,
+        "original_tests_retained_exact": 6,
+        "current_linux_checks": [
+          {
+            "kind": "gofmt",
+            "elapsed_seconds": 0.033,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "isolation",
+            "elapsed_seconds": 0.215,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "race",
+            "elapsed_seconds": 264.115,
+            "passed_test_events": 59,
+            "skipped_test_events": [],
+            "coverage_output": [
+              "coverage: 75.7% of statements",
+              "ok  \tgithub.com/djshellshoxxx/circula/future/governance\t6.326s\tcoverage: 75.7% of statements"
+            ],
+            "status": "pass"
+          },
+          {
+            "kind": "vet",
+            "elapsed_seconds": 117.645,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "mod_verify",
+            "elapsed_seconds": 7.003,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "parser_fuzz",
+            "elapsed_seconds": 6.019,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          }
+        ],
+        "current_receipt_sha256": "ed2ca63e5852d603419ee1f38542427f025bb07df79eb974e494fed284f1c481",
+        "review_receipt": "future/governance/recovery-evidence-20261119/independent-source-review.json",
+        "qualification_receipt": "future/governance/recovery-evidence-20261119/current-source-qualification.json",
+        "publication_state": "Locally frozen; root owns any later draft publication and exact-tree check."
+      },
+      {
+        "module": "messaging",
+        "branch": "master/recover-messaging-20261119",
+        "base": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+        "archive": "5375bdf6ad5c48d2913c0581c4f8755b7c0f573a",
+        "reviewed_source_head": "7e9708d8e50a1959af399aa5956fb2a54ab880b6",
+        "final_head": "d0e28040c27f3d336076fdaee51b84869f5f4153",
+        "final_tree": "951e68d1316d0efd8503408d15a3fc555dd4848e",
+        "module_tree": "e4d95267d0d860ff017a5b60d79538b7fa49ae93",
+        "runtime_tests_dependencies_workflow_unchanged_from_reviewed_head": true,
+        "final_commit_scope": "Documentation and portable evidence only",
+        "changed_path_count": 90,
+        "outside_module_paths": [
+          ".github/workflows/future-messaging.yml",
+          "cmd/circula/auditanchor.go",
+          "internal/service/departure_pagination_regression_test.go"
+        ],
+        "unexecuted_fuzz_gates": {
+          "status": "unqualified",
+          "reason": "The full-package fuzz graph instruments the same pinned SQLite source that was killed/deadlined in the first areas attempt. No repeat of the unchanged resource profile or parser substitution. Current full real-driver regression tests are separate.",
+          "affected_targets": [
+            "FuzzStrictJSONDecode",
+            "FuzzPrepare"
+          ],
+          "prior_diagnostic": "../three-recovery-qualification/areas-fuzz_json.log"
+        },
+        "native_windows_gate": "Messaging Open rejects mode bits 0077. Pinned Go Windows fileStat.mode reports regular files as 0666 or 0444, both rejected. Recovery docs correctly label an expected source-based Windows gate and preserve the fail-closed check. No Windows result or permission workaround is approved.",
+        "core_activation": "disabled/HOLD",
+        "author": "/root/branch_recovery",
+        "independent_reviewer": "/root/independent_triage",
+        "independent_review_scope": {
+          "source": "Complete new production deltas and regression tests, relevant parser/CLI callers, original fuzz inputs, dedicated workflows, preservation of every archived path/blob, all original tests and module metadata, accepted-main Core baseline blobs.",
+          "execution": "Read-only Git/Python/YAML/shell syntax verification. This reviewer did not start Go builds, tests, vet, fuzz, native jobs, or provider runs during this review.",
+          "not_claimed": [
+            "Full independent security audit of every unchanged archived production file",
+            "Current full Core qualification",
+            "Native macOS or Windows result",
+            "Feature activation, integration, merge or deployment approval"
+          ]
+        },
+        "independent_review_disposition": "No blocking source or dedicated-workflow finding in the reviewed recovery deltas; original runtime/provider/integration gates remain separate.",
+        "archive_file_count": 65,
+        "original_tests_retained_exact": 9,
+        "current_linux_checks": [
+          {
+            "kind": "gofmt",
+            "elapsed_seconds": 0.033,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "isolation",
+            "elapsed_seconds": 0.219,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "race",
+            "elapsed_seconds": 17.027,
+            "passed_test_events": 107,
+            "skipped_test_events": [],
+            "coverage_output": [
+              "coverage: 76.6% of statements",
+              "ok  \tgithub.com/djshellshoxxx/circula/future/messaging\t8.026s\tcoverage: 76.6% of statements",
+              "coverage: 80.9% of statements",
+              "ok  \tgithub.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\t1.260s\tcoverage: 80.9% of statements"
+            ],
+            "status": "pass"
+          },
+          {
+            "kind": "vet",
+            "elapsed_seconds": 0.822,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          },
+          {
+            "kind": "mod_verify",
+            "elapsed_seconds": 2.206,
+            "passed_test_events": 0,
+            "skipped_test_events": [],
+            "coverage_output": [],
+            "status": "pass"
+          }
+        ],
+        "current_receipt_sha256": "b97a9ae4545996934dd68a04596be67fa46275c7e227b9662759d6752948a97d",
+        "review_receipt": "future/messaging/recovery-evidence-20261119/independent-source-review.json",
+        "qualification_receipt": "future/messaging/recovery-evidence-20261119/current-source-qualification.json",
+        "publication_state": "Locally frozen; root owns any later draft publication and exact-tree check."
+      }
+    ],
+    "independent_review_receipt_sha256": "9fcc5f545f5023cee65f5f24eb39ef3eedbf5d750ba7ae0f31d4ed2007faecd3",
+    "full_path_manifest": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/three-recovery-final-handoff.json",
+    "full_path_manifest_sha256": "4d96886d160cfacfd75a07cd4f1e3ba568a3a12ebc6db385dae6b887ec7d6e65",
+    "earlier_failed_interrupted_attempts_preserved": true,
+    "manifest_bytes_unchanged": true,
+    "authorization_note": "The current master directive permits reviewed isolated publication and normal gated module-target merges. Old publication prohibitions in preserved manifests are historical. Core activation remains HOLD.",
+    "normal_approval_bypassed": false,
+    "remote_publication_readback": {
+      "observed_utc": "2026-11-19T13:29:11.900Z",
+      "repository": "djshellshoxxx/circula",
+      "candidates": [
+        {
+          "module": "areas",
+          "pr": 115,
+          "metadata": {
+            "number": 115,
+            "url": "https://github.com/djshellshoxxx/circula/pull/115",
+            "state": "open",
+            "draft": true,
+            "merged": false,
+            "base": "future/fnet-206-areas-20261116",
+            "base_sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+            "head": "master/recover-areas-20261119",
+            "head_sha": "684ca5132690e24104aa389aac16870c18bbc7fd",
+            "title": "FNET-206: recover named areas and reject ambiguous Unicode JSON fields",
+            "updated_at": "2026-11-19T13:24:47Z",
+            "created_at": "2026-11-19T13:24:47Z",
+            "changed_files": 104
+          },
+          "git": {
+            "sha": "684ca5132690e24104aa389aac16870c18bbc7fd",
+            "tree": "f5de54ced2f6fd363372a4588c292ab900eeef65",
+            "parents": [
+              "8b444b20139e3e687db494b3fe36bb3643148e5b"
+            ]
+          },
+          "complete_changed_paths": [
+            ".github/workflows/future-areas.yml",
+            "cmd/circula/auditanchor.go",
+            "future/areas/ACCEPTANCE.md",
+            "future/areas/AUDIT.md",
+            "future/areas/COMPLETION.md",
+            "future/areas/CONTRACT.md",
+            "future/areas/FINAL-HANDOFF.md",
+            "future/areas/HANDOFF-MILESTONE-F.md",
+            "future/areas/HANDOFF-MILESTONE-FORM-CACHE.md",
+            "future/areas/INTEGRATION.md",
+            "future/areas/OPERATIONS.md",
+            "future/areas/README.md",
+            "future/areas/RECOVERY-20261119.md",
+            "future/areas/SECURITY-AUDIT.md",
+            "future/areas/THIRD_PARTY_NOTICES.md",
+            "future/areas/UPSTREAM-REUSE-MATRIX.md",
+            "future/areas/VALIDATION.md",
+            "future/areas/areas.go",
+            "future/areas/audit_test.go",
+            "future/areas/feature.json",
+            "future/areas/form_cache_test.go",
+            "future/areas/fuzz_test.go",
+            "future/areas/go.mod",
+            "future/areas/go.sum",
+            "future/areas/hardening.go",
+            "future/areas/interface.go",
+            "future/areas/json.go",
+            "future/areas/json_fuzz_test.go",
+            "future/areas/json_recovery_test.go",
+            "future/areas/master_regression_test.go",
+            "future/areas/paging.go",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/00-gofmt.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/01-race.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/02-vet.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/03-mod_verify.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/04-race.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/05-vet.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-logs/06-mod_verify.log",
+            "future/areas/recovery-evidence-20261119/archive-baseline-qualification.json",
+            "future/areas/recovery-evidence-20261119/core-baseline-restoration.json",
+            "future/areas/recovery-evidence-20261119/current-logs/attempt1-gofmt.log",
+            "future/areas/recovery-evidence-20261119/current-logs/attempt1-mod_verify.log",
+            "future/areas/recovery-evidence-20261119/current-logs/attempt1-race.excerpt.log",
+            "future/areas/recovery-evidence-20261119/current-logs/attempt1-vet.log",
+            "future/areas/recovery-evidence-20261119/current-logs/attempt2-isolation.log",
+            "future/areas/recovery-evidence-20261119/current-logs/attempt2-parser_fuzz.log",
+            "future/areas/recovery-evidence-20261119/current-source-qualification.json",
+            "future/areas/recovery-evidence-20261119/fail-before-original-receipt.json",
+            "future/areas/recovery-evidence-20261119/fail-before.json",
+            "future/areas/recovery-evidence-20261119/fail-before.log",
+            "future/areas/recovery-evidence-20261119/independent-source-review.json",
+            "future/areas/recovery-evidence-20261119/previous-attempt-logs/attempt1-fuzz_json.log",
+            "future/areas/recovery-evidence-20261119/previous-attempt-logs/attempt1-isolation.log",
+            "future/areas/recovery-evidence-20261119/previous-current-attempt.json",
+            "future/areas/recovery-evidence-20261119/source-blobs.json",
+            "future/areas/recovery-evidence-20261119/workflow-static-final.json",
+            "future/areas/recovery-evidence-20261119/workflow-static.json",
+            "future/areas/recovery-evidence/SHA256SUMS",
+            "future/areas/recovery-evidence/focused.log",
+            "future/areas/recovery-evidence/form-cache-green.log",
+            "future/areas/recovery-evidence/form-cache-modules.log",
+            "future/areas/recovery-evidence/form-cache-race.log",
+            "future/areas/recovery-evidence/form-cache-red.log",
+            "future/areas/recovery-evidence/form-cache-vet.log",
+            "future/areas/recovery-evidence/modules.log",
+            "future/areas/recovery-evidence/race.log",
+            "future/areas/recovery-evidence/vet.log",
+            "future/areas/service.go",
+            "future/areas/service_test.go",
+            "future/areas/third_party/README.md",
+            "future/areas/third_party/dependencies.json",
+            "future/areas/third_party/licenses/github.com_dustin_go-humanize@v1.0.1/LICENSE",
+            "future/areas/third_party/licenses/github.com_google_pprof@v0.0.0-20260802141513-ef3492d7dac3/LICENSE",
+            "future/areas/third_party/licenses/github.com_google_uuid@v1.6.0/LICENSE",
+            "future/areas/third_party/licenses/github.com_hashicorp_golang-lru_v2@v2.0.7/LICENSE",
+            "future/areas/third_party/licenses/github.com_mattn_go-isatty@v0.0.24/LICENSE",
+            "future/areas/third_party/licenses/github.com_ncruces_go-strftime@v1.0.0/LICENSE",
+            "future/areas/third_party/licenses/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE",
+            "future/areas/third_party/licenses/golang.org_x_mod@v0.41.0/LICENSE",
+            "future/areas/third_party/licenses/golang.org_x_sync@v0.23.0/LICENSE",
+            "future/areas/third_party/licenses/golang.org_x_sys@v0.48.0/LICENSE",
+            "future/areas/third_party/licenses/golang.org_x_tools@v0.50.0/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_cc_v4@v4.29.7/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_ccgo_v4@v4.36.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_fileutil@v1.4.0/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_gc_v2@v2.6.5/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_gc_v3@v3.1.5/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_goabi0@v0.2.0/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_libc@v1.77.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md",
+            "future/areas/third_party/licenses/modernc.org_mathutil@v1.7.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-GO",
+            "future/areas/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-LOGO",
+            "future/areas/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO",
+            "future/areas/third_party/licenses/modernc.org_opt@v0.2.0/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_sortutil@v1.2.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md",
+            "future/areas/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE",
+            "future/areas/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC",
+            "future/areas/third_party/licenses/modernc.org_strutil@v1.2.1/LICENSE",
+            "future/areas/third_party/licenses/modernc.org_token@v1.1.0/LICENSE",
+            "internal/service/departure_pagination_regression_test.go"
+          ],
+          "local_equivalent": "3275ac6016ca7426427da92e7bfa9f620e3b55ad",
+          "complete_tree_parent_and_path_set_verified": true,
+          "outside_module_paths": [
+            ".github/workflows/future-areas.yml",
+            "cmd/circula/auditanchor.go",
+            "internal/service/departure_pagination_regression_test.go"
+          ]
+        },
+        {
+          "module": "governance",
+          "pr": 114,
+          "metadata": {
+            "number": 114,
+            "url": "https://github.com/djshellshoxxx/circula/pull/114",
+            "state": "open",
+            "draft": true,
+            "merged": false,
+            "base": "future/fnet-208-governance-20261116",
+            "base_sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+            "head": "master/recover-governance-20261119",
+            "head_sha": "fbd92a22f06af7bcd96957397958b33e2706807a",
+            "title": "FNET-208: recover advisory governance and strict JSON field handling",
+            "updated_at": "2026-11-19T13:24:45Z",
+            "created_at": "2026-11-19T13:24:45Z",
+            "changed_files": 73
+          },
+          "git": {
+            "sha": "fbd92a22f06af7bcd96957397958b33e2706807a",
+            "tree": "36ca2f142be776095a97d51cf1caee15d04926e6",
+            "parents": [
+              "b4f511372ec26dc63d005bb50d87c56e18fc1a88"
+            ]
+          },
+          "complete_changed_paths": [
+            ".github/workflows/future-governance.yml",
+            "cmd/circula/auditanchor.go",
+            "future/governance/ACCEPTANCE.md",
+            "future/governance/AUDIT.md",
+            "future/governance/COMPLETION.md",
+            "future/governance/CONTRACT.md",
+            "future/governance/FINAL-HANDOFF.md",
+            "future/governance/HANDOFF-MILESTONE-MASTER-1.md",
+            "future/governance/INTEGRATION.md",
+            "future/governance/OPERATIONS.md",
+            "future/governance/README.md",
+            "future/governance/RECOVERY-20261119.md",
+            "future/governance/SECURITY-AUDIT.md",
+            "future/governance/THIRD_PARTY_NOTICES.md",
+            "future/governance/UPSTREAM-REUSE-MATRIX.md",
+            "future/governance/VALIDATION.md",
+            "future/governance/audit_helpers.go",
+            "future/governance/audit_test.go",
+            "future/governance/cli.go",
+            "future/governance/feature.json",
+            "future/governance/go.mod",
+            "future/governance/go.sum",
+            "future/governance/json_recovery_test.go",
+            "future/governance/master_regression_test.go",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/00-gofmt.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/01-race.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/02-vet.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/03-mod_verify.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/04-race.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/05-vet.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-logs/06-mod_verify.log",
+            "future/governance/recovery-evidence-20261119/archive-baseline-qualification.json",
+            "future/governance/recovery-evidence-20261119/core-baseline-restoration.json",
+            "future/governance/recovery-evidence-20261119/current-logs/attempt2-gofmt.log",
+            "future/governance/recovery-evidence-20261119/current-logs/attempt2-isolation.log",
+            "future/governance/recovery-evidence-20261119/current-logs/attempt2-mod_verify.log",
+            "future/governance/recovery-evidence-20261119/current-logs/attempt2-parser_fuzz.log",
+            "future/governance/recovery-evidence-20261119/current-logs/attempt2-race.excerpt.log",
+            "future/governance/recovery-evidence-20261119/current-logs/attempt2-vet.log",
+            "future/governance/recovery-evidence-20261119/current-source-qualification.json",
+            "future/governance/recovery-evidence-20261119/fail-before.json",
+            "future/governance/recovery-evidence-20261119/fail-before.log",
+            "future/governance/recovery-evidence-20261119/independent-source-review.json",
+            "future/governance/recovery-evidence-20261119/previous-attempt-logs/attempt1-isolation.log",
+            "future/governance/recovery-evidence-20261119/previous-current-attempt.json",
+            "future/governance/recovery-evidence-20261119/source-blobs.json",
+            "future/governance/recovery-evidence-20261119/workflow-static-final.json",
+            "future/governance/recovery-evidence-20261119/workflow-static.json",
+            "future/governance/service.go",
+            "future/governance/service_test.go",
+            "future/governance/strict.go",
+            "future/governance/strict_fuzz_test.go",
+            "future/governance/third_party/PROVENANCE.md",
+            "future/governance/third_party/dependency-notices/README.md",
+            "future/governance/third_party/dependency-notices/github.com_dustin_go-humanize@v1.0.1/LICENSE",
+            "future/governance/third_party/dependency-notices/github.com_google_uuid@v1.6.0/LICENSE",
+            "future/governance/third_party/dependency-notices/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE",
+            "future/governance/third_party/dependency-notices/golang.org_x_sys@v0.48.0/LICENSE",
+            "future/governance/third_party/dependency-notices/modernc.org_libc@v1.77.1/LICENSE",
+            "future/governance/third_party/dependency-notices/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md",
+            "future/governance/third_party/dependency-notices/modernc.org_mathutil@v1.7.1/LICENSE",
+            "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE",
+            "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE-GO",
+            "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE-LOGO",
+            "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO",
+            "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE",
+            "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md",
+            "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE",
+            "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC",
+            "future/governance/third_party/govuk-frontend/LICENSE.txt",
+            "future/governance/web.go",
+            "future/governance/web_test.go",
+            "internal/service/departure_pagination_regression_test.go"
+          ],
+          "local_equivalent": "7ec8147db9fb06674d20983dfcd3b7ac765717ed",
+          "complete_tree_parent_and_path_set_verified": true,
+          "outside_module_paths": [
+            ".github/workflows/future-governance.yml",
+            "cmd/circula/auditanchor.go",
+            "internal/service/departure_pagination_regression_test.go"
+          ]
+        },
+        {
+          "module": "messaging",
+          "pr": 116,
+          "metadata": {
+            "number": 116,
+            "url": "https://github.com/djshellshoxxx/circula/pull/116",
+            "state": "open",
+            "draft": true,
+            "merged": false,
+            "base": "future/fux-105-messaging-20261116",
+            "base_sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+            "head": "master/recover-messaging-20261119",
+            "head_sha": "62623635d9711fbafc9b9660ac8860f1eb916dbb",
+            "title": "FUX-105: recover private messaging and preserve strict input fidelity",
+            "updated_at": "2026-11-19T13:24:49Z",
+            "created_at": "2026-11-19T13:24:49Z",
+            "changed_files": 90
+          },
+          "git": {
+            "sha": "62623635d9711fbafc9b9660ac8860f1eb916dbb",
+            "tree": "951e68d1316d0efd8503408d15a3fc555dd4848e",
+            "parents": [
+              "7f92251cdb0d6ed5d9559730045a021a173a278b"
+            ]
+          },
+          "complete_changed_paths": [
+            ".github/workflows/future-messaging.yml",
+            "cmd/circula/auditanchor.go",
+            "future/messaging/AUDIT.md",
+            "future/messaging/COMPLETION.md",
+            "future/messaging/CONTRACT.md",
+            "future/messaging/FINAL-HANDOFF.md",
+            "future/messaging/HANDOFF-MILESTONE-D.md",
+            "future/messaging/HANDOFF-MILESTONE-E.md",
+            "future/messaging/HANDOFF-MILESTONE-F.md",
+            "future/messaging/HELP.md",
+            "future/messaging/INTEGRATION.md",
+            "future/messaging/MIGRATION-PLAN.md",
+            "future/messaging/README.md",
+            "future/messaging/RECOVERY-20261119.md",
+            "future/messaging/SECURITY-AUDIT.md",
+            "future/messaging/THIRD_PARTY_NOTICES.md",
+            "future/messaging/UPSTREAM-REUSE-MATRIX.md",
+            "future/messaging/VALIDATION.md",
+            "future/messaging/admin_http.go",
+            "future/messaging/audit_store_test.go",
+            "future/messaging/audit_test.go",
+            "future/messaging/callback-audit-evidence/SHA256SUMS",
+            "future/messaging/callback-audit-evidence/final-green.log",
+            "future/messaging/callback-audit-evidence/final-modules.log",
+            "future/messaging/callback-audit-evidence/final-race.log",
+            "future/messaging/callback-audit-evidence/final-vet.log",
+            "future/messaging/callback-audit-evidence/green.log",
+            "future/messaging/callback-audit-evidence/modules.log",
+            "future/messaging/callback-audit-evidence/query-red.log",
+            "future/messaging/callback-audit-evidence/race.log",
+            "future/messaging/callback-audit-evidence/red.log",
+            "future/messaging/callback-audit-evidence/vet.log",
+            "future/messaging/callback_audit_test.go",
+            "future/messaging/cmd/circula-messages/main.go",
+            "future/messaging/cmd/circula-messages/main_test.go",
+            "future/messaging/cmd/circula-messages/unicode_recovery_test.go",
+            "future/messaging/feature.json",
+            "future/messaging/go.mod",
+            "future/messaging/go.sum",
+            "future/messaging/http.go",
+            "future/messaging/http_test.go",
+            "future/messaging/json_recovery_test.go",
+            "future/messaging/migrations/001_messaging.sql",
+            "future/messaging/openapi.json",
+            "future/messaging/policy.go",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/00-gofmt.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/01-race.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/02-vet.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/03-mod_verify.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/04-race.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/05-vet.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-logs/06-mod_verify.log",
+            "future/messaging/recovery-evidence-20261119/archive-baseline-qualification.json",
+            "future/messaging/recovery-evidence-20261119/core-baseline-restoration.json",
+            "future/messaging/recovery-evidence-20261119/current-logs/attempt2-gofmt.log",
+            "future/messaging/recovery-evidence-20261119/current-logs/attempt2-isolation.log",
+            "future/messaging/recovery-evidence-20261119/current-logs/attempt2-mod_verify.log",
+            "future/messaging/recovery-evidence-20261119/current-logs/attempt2-race.excerpt.log",
+            "future/messaging/recovery-evidence-20261119/current-logs/attempt2-vet.log",
+            "future/messaging/recovery-evidence-20261119/current-source-qualification.json",
+            "future/messaging/recovery-evidence-20261119/fail-before.json",
+            "future/messaging/recovery-evidence-20261119/fail-before.log",
+            "future/messaging/recovery-evidence-20261119/independent-source-review.json",
+            "future/messaging/recovery-evidence-20261119/previous-current-attempt.json",
+            "future/messaging/recovery-evidence-20261119/source-blobs.json",
+            "future/messaging/recovery-evidence-20261119/workflow-static-final.json",
+            "future/messaging/recovery-evidence-20261119/workflow-static.json",
+            "future/messaging/search.go",
+            "future/messaging/search_benchmark_test.go",
+            "future/messaging/search_http.go",
+            "future/messaging/search_test.go",
+            "future/messaging/store.go",
+            "future/messaging/store_test.go",
+            "future/messaging/third_party/licenses/github.com_dustin_go-humanize@v1.0.1/LICENSE",
+            "future/messaging/third_party/licenses/github.com_google_uuid@v1.6.0/LICENSE",
+            "future/messaging/third_party/licenses/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE",
+            "future/messaging/third_party/licenses/golang.org_x_sys@v0.48.0/LICENSE",
+            "future/messaging/third_party/licenses/modernc-sqlite.txt",
+            "future/messaging/third_party/licenses/modernc.org_libc@v1.77.1/LICENSE",
+            "future/messaging/third_party/licenses/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md",
+            "future/messaging/third_party/licenses/modernc.org_mathutil@v1.7.1/LICENSE",
+            "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE",
+            "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-GO",
+            "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-LOGO",
+            "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO",
+            "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE",
+            "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md",
+            "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE",
+            "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC",
+            "internal/service/departure_pagination_regression_test.go"
+          ],
+          "local_equivalent": "d0e28040c27f3d336076fdaee51b84869f5f4153",
+          "complete_tree_parent_and_path_set_verified": true,
+          "outside_module_paths": [
+            ".github/workflows/future-messaging.yml",
+            "cmd/circula/auditanchor.go",
+            "internal/service/departure_pagination_regression_test.go"
+          ]
+        }
+      ],
+      "external_pr112": {
+        "metadata": {
+          "number": 112,
+          "url": "https://github.com/djshellshoxxx/circula/pull/112",
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "base": "feature/core-catalogue-continuation-20261119",
+          "base_sha": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+          "head": "integration/core-ui-completion-20261119",
+          "head_sha": "08d4b0078e8c308ae7f353849783913f4302882a",
+          "title": "Complete remaining Core administration and shared UI messages",
+          "updated_at": "2026-11-19T13:04:05Z",
+          "created_at": "2026-11-19T13:03:58Z",
+          "changed_files": 84
+        },
+        "complete_changed_paths": [
+          "docs/TRACEABILITY.md",
+          "docs/consolidation/CONTINUATION_20261119.md",
+          "docs/consolidation/CORE_UI_COMPLETION_20261119.md",
+          "docs/consolidation/FEATURE_MATRIX.md",
+          "docs/consolidation/HANDOFF.md",
+          "docs/consolidation/RECOVERED_WORK.md",
+          "docs/consolidation/REMAINING_WORK.md",
+          "docs/consolidation/SECURITY_AUDIT.md",
+          "docs/consolidation/TEST_RESULTS.md",
+          "docs/consolidation/evidence/continuation/admin-history-messages-after.log",
+          "docs/consolidation/evidence/continuation/admin-history-messages-before.log",
+          "docs/consolidation/evidence/continuation/admin-history-render-after.log",
+          "docs/consolidation/evidence/continuation/admin-history-render-before.log",
+          "docs/consolidation/evidence/continuation/final-continuation-race-summary.json",
+          "docs/consolidation/evidence/continuation/final-continuation-race-terminals.jsonl.gz",
+          "docs/consolidation/evidence/continuation/precision-remediation-messages-after.log",
+          "docs/consolidation/evidence/continuation/precision-remediation-messages-before.log",
+          "docs/consolidation/evidence/continuation/precision-remediation-refuse-after.log",
+          "docs/consolidation/evidence/continuation/precision-remediation-refuse-before.log",
+          "docs/consolidation/evidence/continuation/sqlite-race-build-recovery-receipt.json",
+          "docs/consolidation/evidence/continuation/sqlite-race-build-recovery-source.json",
+          "docs/consolidation/evidence/continuation/sqlite-race-build-recovery.log",
+          "docs/consolidation/evidence/dispute-validation-after.log",
+          "docs/consolidation/evidence/dispute-validation-before.log",
+          "docs/consolidation/evidence/dispute-validation-catalogue.md",
+          "docs/consolidation/evidence/member-policy-erasure-review-20261119.md",
+          "docs/consolidation/evidence/shared-pages-after.log",
+          "docs/consolidation/evidence/shared-pages-before.log",
+          "docs/consolidation/evidence/shared-pages-catalogue.md",
+          "docs/consolidation/evidence/shared-pages-http-loader.log",
+          "docs/consolidation/evidence/shared-pages-positional-review.md",
+          "docs/consolidation/evidence/shared-pages-receipt.json",
+          "docs/dev/MESSAGES.md",
+          "docs/qa/dispute-precision-remediation-qualification.md",
+          "internal/web/admin_history_catalog_test.go",
+          "internal/web/erasure_catalog_test.go",
+          "internal/web/f2_test.go",
+          "internal/web/h_admin.go",
+          "internal/web/h_admin2.go",
+          "internal/web/h_admin_f2.go",
+          "internal/web/h_admin_network.go",
+          "internal/web/h_auth.go",
+          "internal/web/h_breakglass.go",
+          "internal/web/h_disputes.go",
+          "internal/web/h_erasure.go",
+          "internal/web/h_home.go",
+          "internal/web/h_inactive.go",
+          "internal/web/h_notify.go",
+          "internal/web/histbal_catalog_test.go",
+          "internal/web/histbal_view.go",
+          "internal/web/member_invitation_catalog_test.go",
+          "internal/web/messages/admin_history_test.go",
+          "internal/web/messages/dispute_test.go",
+          "internal/web/messages/en.json",
+          "internal/web/messages/erasure_test.go",
+          "internal/web/messages/member_invitation_test.go",
+          "internal/web/messages/messages.go",
+          "internal/web/messages/messages_test.go",
+          "internal/web/messages/policy_network_test.go",
+          "internal/web/messages/shared_pages_test.go",
+          "internal/web/messages/validation_test.go",
+          "internal/web/money_confirmation_test.go",
+          "internal/web/policy_network_catalog_test.go",
+          "internal/web/refusal.go",
+          "internal/web/refusal_precision_catalog_test.go",
+          "internal/web/render.go",
+          "internal/web/session.go",
+          "internal/web/shared_pages_catalog_test.go",
+          "internal/web/support_boundaries_template_test.go",
+          "internal/web/templates/admin_announcements.html",
+          "internal/web/templates/admin_break_glass.html",
+          "internal/web/templates/admin_home.html",
+          "internal/web/templates/admin_inactive.html",
+          "internal/web/templates/admin_invites.html",
+          "internal/web/templates/admin_member_act.html",
+          "internal/web/templates/admin_members.html",
+          "internal/web/templates/admin_network.html",
+          "internal/web/templates/admin_policy.html",
+          "internal/web/templates/admin_stale_proposals.html",
+          "internal/web/templates/base.html",
+          "internal/web/templates/erase_confirm.html",
+          "internal/web/templates/error.html",
+          "internal/web/templates/help.html",
+          "internal/web/templates/pending.html"
+        ],
+        "ownership": "Active external Core administration/UI/shared messages; target PR109; reserved, no source integration or worker handoff inferred."
+      },
+      "normal_approval_bypassed": false
+    }
+  },
+  "archive_notification_terminal_race": {
+    "archive_head": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+    "module_tree": "be42783f6bbb7cc1fdc443cbcff15fa54e540fc3",
+    "actual_result": "pass",
+    "elapsed_seconds": 176.503,
+    "top_level_tests": 35,
+    "passed_test_events": 58,
+    "failures": 0,
+    "skips": 0,
+    "coverage": [
+      "coverage: 71.0% of statements",
+      "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t2.459s\tcoverage: 71.0% of statements",
+      "coverage: 83.8% of statements",
+      "ok  \tgithub.com/djshellshoxxx/circula/future/notifications/cmd/notifications-status\t1.056s\tcoverage: 83.8% of statements"
+    ],
+    "source_files_verified_unchanged": 89,
+    "aggregate_existing_linux_suites": {
+      "passed": 15,
+      "total": 15,
+      "sha256": "bd61aa1480b29e6dff2653268b184dea82f2f54855aed73db98d6ecbabfd345b"
+    },
+    "receipt_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/receipt.json",
+    "receipt_sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+    "prior_14_of_15_snapshot_preserved": true,
+    "scope": "Exact unchanged archive only; does not qualify later notification identity/parser repairs or transport composition, new fuzz campaigns, native/provider checks, full feature completion or Core activation."
+  },
+  "recurring_federation_stacked_remote_readback": {
+    "observed_utc": "2026-11-19T13:39:05.942Z",
+    "repository": "djshellshoxxx/circula",
+    "candidates": [
+      {
+        "module": "federation",
+        "pr": 117,
+        "metadata": {
+          "number": 117,
+          "url": "https://github.com/djshellshoxxx/circula/pull/117",
+          "title": "FNET-209: recover discovery trust, replay, outbox and bounded transport",
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "head": "master/recover-federation-20261119",
+          "head_sha": "f50aaa4b599c2c0272d37cdc910f567b76c451f8",
+          "base": "master/fnet209-utf8-20261119",
+          "base_sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+          "updated_at": "2026-11-19T13:35:36Z",
+          "changed_files": 78
+        },
+        "git": {
+          "sha": "f50aaa4b599c2c0272d37cdc910f567b76c451f8",
+          "tree": "0873c4516d633cc56304c6d35a54fe1e812ab71d",
+          "parents": [
+            "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115"
+          ]
+        },
+        "complete_changed_paths": [
+          ".github/workflows/future-federation.yml",
+          "cmd/circula/auditanchor.go",
+          "future/federation/ACCEPTANCE.md",
+          "future/federation/ADR-0001.md",
+          "future/federation/AUDIT.md",
+          "future/federation/COMPLETION.md",
+          "future/federation/FINAL-HANDOFF.md",
+          "future/federation/HANDOFF-MILESTONE-M.md",
+          "future/federation/INTEGRATION.md",
+          "future/federation/RECOVERED-README-20261116.md",
+          "future/federation/RECOVERY-20261119.md",
+          "future/federation/RECOVERY-QUALIFICATION-20261119.json",
+          "future/federation/RECOVERY-QUALIFICATION-20261119.md",
+          "future/federation/SECURITY-AUDIT.md",
+          "future/federation/SIGNING-VALIDATION-20261119.json",
+          "future/federation/SIGNING-VALIDATION-20261119.md",
+          "future/federation/THIRD_PARTY_NOTICES.md",
+          "future/federation/UPSTREAM-RESEARCH.md",
+          "future/federation/UPSTREAM-REUSE-MATRIX.md",
+          "future/federation/VALIDATION.md",
+          "future/federation/audit_test.go",
+          "future/federation/envelope.go",
+          "future/federation/feature.json",
+          "future/federation/go.mod",
+          "future/federation/go.sum",
+          "future/federation/interface.go",
+          "future/federation/master_interface_test.go",
+          "future/federation/members.go",
+          "future/federation/operations.go",
+          "future/federation/outbox.go",
+          "future/federation/protocol.go",
+          "future/federation/protocol_fuzz_test.go",
+          "future/federation/protocol_negative_test.go",
+          "future/federation/protocol_recovery_test.go",
+          "future/federation/recovery-evidence/SHA256.json",
+          "future/federation/recovery-evidence/focused-initial.log",
+          "future/federation/recovery-evidence/focused.log",
+          "future/federation/recovery-evidence/modules.log",
+          "future/federation/recovery-evidence/race.log",
+          "future/federation/recovery-evidence/vet.log",
+          "future/federation/store.go",
+          "future/federation/store_test.go",
+          "future/federation/third_party/github.com_dustin_go-humanize-v1.0.1-LICENSE",
+          "future/federation/third_party/github.com_go-jose_go-jose_v4-v4.1.9-LICENSE",
+          "future/federation/third_party/github.com_google_pprof-v0.0.0-20260802141513-ef3492d7dac3-LICENSE",
+          "future/federation/third_party/github.com_google_uuid-v1.6.0-LICENSE",
+          "future/federation/third_party/github.com_hashicorp_golang-lru_v2-v2.0.7-LICENSE",
+          "future/federation/third_party/github.com_mattn_go-isatty-v0.0.24-LICENSE",
+          "future/federation/third_party/github.com_ncruces_go-strftime-v1.0.0-LICENSE",
+          "future/federation/third_party/github.com_remyoudompheng_bigfft-v0.0.0-20230129092748-24d4a6f8daec-LICENSE",
+          "future/federation/third_party/golang.org_x_mod-v0.41.0-LICENSE",
+          "future/federation/third_party/golang.org_x_sync-v0.23.0-LICENSE",
+          "future/federation/third_party/golang.org_x_sys-v0.48.0-LICENSE",
+          "future/federation/third_party/golang.org_x_tools-v0.50.0-LICENSE",
+          "future/federation/third_party/modernc.org_cc_v4-v4.29.7-LICENSE",
+          "future/federation/third_party/modernc.org_ccgo_v4-v4.36.1-LICENSE",
+          "future/federation/third_party/modernc.org_fileutil-v1.4.0-LICENSE",
+          "future/federation/third_party/modernc.org_gc_v2-v2.6.5-LICENSE",
+          "future/federation/third_party/modernc.org_gc_v3-v3.1.5-LICENSE",
+          "future/federation/third_party/modernc.org_goabi0-v0.2.0-LICENSE",
+          "future/federation/third_party/modernc.org_libc-v1.77.1-LICENSE",
+          "future/federation/third_party/modernc.org_libc-v1.77.1-LICENSE-3RD-PARTY.md",
+          "future/federation/third_party/modernc.org_mathutil-v1.7.1-LICENSE",
+          "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE",
+          "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE-GO",
+          "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE-LOGO",
+          "future/federation/third_party/modernc.org_memory-v1.12.1-LICENSE-MMAP-GO",
+          "future/federation/third_party/modernc.org_opt-v0.2.0-LICENSE",
+          "future/federation/third_party/modernc.org_sortutil-v1.2.1-LICENSE",
+          "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE",
+          "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE-3RD-PARTY.md",
+          "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE-SQLITE",
+          "future/federation/third_party/modernc.org_sqlite-v1.60.1-LICENSE-SQLITE_VEC",
+          "future/federation/third_party/modernc.org_strutil-v1.2.1-LICENSE",
+          "future/federation/third_party/modernc.org_token-v1.1.0-LICENSE",
+          "future/federation/transport.go",
+          "future/federation/transport_test.go",
+          "internal/service/departure_pagination_regression_test.go"
+        ],
+        "local_equivalent": "879676cf7ba143f8bb33647cb6221653b7bac70d",
+        "local_base_equivalent": "db21ea0a0008309d6e8d116ccb00eb77ac6873d9",
+        "tested_source": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+        "complete_tree_parent_and_path_set_verified": true,
+        "runtime_tests_dependencies_unchanged_from_tested_source": true,
+        "later_changed_paths": [
+          ".github/workflows/future-federation.yml",
+          "future/federation/RECOVERY-20261119.md",
+          "future/federation/RECOVERY-QUALIFICATION-20261119.json",
+          "future/federation/RECOVERY-QUALIFICATION-20261119.md",
+          "future/federation/VALIDATION.md",
+          "future/federation/feature.json"
+        ],
+        "feature_manifest_changed_fields": [
+          "qualification",
+          "audit",
+          "status"
+        ],
+        "protected_manifest_fields_unchanged": [
+          "id",
+          "enabled",
+          "integration",
+          "depends_on_future_features",
+          "scope",
+          "remaining"
+        ],
+        "outside_module_paths": [
+          ".github/workflows/future-federation.yml",
+          "cmd/circula/auditanchor.go",
+          "internal/service/departure_pagination_regression_test.go"
+        ]
+      },
+      {
+        "module": "recurring",
+        "pr": 118,
+        "metadata": {
+          "number": 118,
+          "url": "https://github.com/djshellshoxxx/circula/pull/118",
+          "title": "FNET-207: recover durable recurrence and repair calendar/retention ordering",
+          "state": "open",
+          "draft": true,
+          "merged": false,
+          "head": "master/recover-recurring-20261119",
+          "head_sha": "035dd1c0d7c3de901cb1d2e1854ac4fde4cbdad4",
+          "base": "master/fnet207-recurring-remote-20261119",
+          "base_sha": "73a911a9bec387381633c031d8a4083c9fc724ad",
+          "updated_at": "2026-11-19T13:35:37Z",
+          "changed_files": 88
+        },
+        "git": {
+          "sha": "035dd1c0d7c3de901cb1d2e1854ac4fde4cbdad4",
+          "tree": "d41e47b2a4961983f8881e5162096c588973158c",
+          "parents": [
+            "73a911a9bec387381633c031d8a4083c9fc724ad"
+          ]
+        },
+        "complete_changed_paths": [
+          ".github/workflows/future-recurring.yml",
+          "future/recurring/AUDIT.md",
+          "future/recurring/CALENDAR-VALIDATION-20261119.md",
+          "future/recurring/COMPLETION.md",
+          "future/recurring/FINAL-HANDOFF.md",
+          "future/recurring/GUIDE.md",
+          "future/recurring/HANDOFF-MILESTONE-F.md",
+          "future/recurring/HANDOFF-MILESTONE-FORM-CACHE.md",
+          "future/recurring/INTEGRATION.md",
+          "future/recurring/README.md",
+          "future/recurring/RECOVERY-PROVENANCE.md",
+          "future/recurring/RECOVERY-QUALIFICATION-20261119.json",
+          "future/recurring/RECOVERY-QUALIFICATION-20261119.md",
+          "future/recurring/SECURITY-AUDIT.md",
+          "future/recurring/THIRD_PARTY_NOTICES.md",
+          "future/recurring/UPSTREAM-RESEARCH.md",
+          "future/recurring/UPSTREAM-REUSE-MATRIX.md",
+          "future/recurring/VALIDATION.md",
+          "future/recurring/audit_test.go",
+          "future/recurring/calendar.go",
+          "future/recurring/calendar_fuzz_test.go",
+          "future/recurring/calendar_recovery_test.go",
+          "future/recurring/calendar_test.go",
+          "future/recurring/cleanup_recovery_test.go",
+          "future/recurring/cli.go",
+          "future/recurring/due_with_schedule_test.go",
+          "future/recurring/feature.json",
+          "future/recurring/firing.go",
+          "future/recurring/form-audit-evidence/SHA256SUMS",
+          "future/recurring/form-audit-evidence/focused.log",
+          "future/recurring/form-audit-evidence/mod-verify.log",
+          "future/recurring/form-audit-evidence/race.log",
+          "future/recurring/form-audit-evidence/red.log",
+          "future/recurring/form-audit-evidence/results.json",
+          "future/recurring/form-audit-evidence/vet.log",
+          "future/recurring/form_cache_test.go",
+          "future/recurring/go.mod",
+          "future/recurring/go.sum",
+          "future/recurring/http.go",
+          "future/recurring/http_test.go",
+          "future/recurring/invariants.go",
+          "future/recurring/json.go",
+          "future/recurring/json_recovery_test.go",
+          "future/recurring/master-evidence/SHA256SUMS",
+          "future/recurring/master-evidence/focused.log",
+          "future/recurring/master-evidence/fuzz.log",
+          "future/recurring/master-evidence/go-version.log",
+          "future/recurring/master-evidence/mod-verify.log",
+          "future/recurring/master-evidence/race.log",
+          "future/recurring/master-evidence/results.json",
+          "future/recurring/master-evidence/vet.log",
+          "future/recurring/master_query_test.go",
+          "future/recurring/openapi.yaml",
+          "future/recurring/store.go",
+          "future/recurring/store_test.go",
+          "future/recurring/third_party/github_com_dustin_go-humanize/LICENSE",
+          "future/recurring/third_party/github_com_google_pprof/LICENSE",
+          "future/recurring/third_party/github_com_google_uuid/LICENSE",
+          "future/recurring/third_party/github_com_hashicorp_golang-lru_v2/LICENSE",
+          "future/recurring/third_party/github_com_mattn_go-isatty/LICENSE",
+          "future/recurring/third_party/github_com_ncruces_go-strftime/LICENSE",
+          "future/recurring/third_party/github_com_remyoudompheng_bigfft/LICENSE",
+          "future/recurring/third_party/github_com_robfig_cron_v3/LICENSE",
+          "future/recurring/third_party/golang_org_x_mod/LICENSE",
+          "future/recurring/third_party/golang_org_x_sync/LICENSE",
+          "future/recurring/third_party/golang_org_x_sys/LICENSE",
+          "future/recurring/third_party/golang_org_x_tools/LICENSE",
+          "future/recurring/third_party/modernc_org_cc_v4/LICENSE",
+          "future/recurring/third_party/modernc_org_ccgo_v4/LICENSE",
+          "future/recurring/third_party/modernc_org_fileutil/LICENSE",
+          "future/recurring/third_party/modernc_org_gc_v2/LICENSE",
+          "future/recurring/third_party/modernc_org_gc_v3/LICENSE",
+          "future/recurring/third_party/modernc_org_goabi0/LICENSE",
+          "future/recurring/third_party/modernc_org_libc/LICENSE",
+          "future/recurring/third_party/modernc_org_libc/LICENSE-3RD-PARTY.md",
+          "future/recurring/third_party/modernc_org_mathutil/LICENSE",
+          "future/recurring/third_party/modernc_org_memory/LICENSE",
+          "future/recurring/third_party/modernc_org_memory/LICENSE-GO",
+          "future/recurring/third_party/modernc_org_memory/LICENSE-LOGO",
+          "future/recurring/third_party/modernc_org_memory/LICENSE-MMAP-GO",
+          "future/recurring/third_party/modernc_org_opt/LICENSE",
+          "future/recurring/third_party/modernc_org_sortutil/LICENSE",
+          "future/recurring/third_party/modernc_org_sqlite/LICENSE",
+          "future/recurring/third_party/modernc_org_sqlite/LICENSE-3RD-PARTY.md",
+          "future/recurring/third_party/modernc_org_sqlite/LICENSE-SQLITE",
+          "future/recurring/third_party/modernc_org_sqlite/LICENSE-SQLITE_VEC",
+          "future/recurring/third_party/modernc_org_strutil/LICENSE",
+          "future/recurring/third_party/modernc_org_token/LICENSE"
+        ],
+        "local_equivalent": "2389be3631f632c037f85fe23a691edd6475d630",
+        "local_base_equivalent": "cdcd2cb38b3af0275e5ceb58242384cfa916be45",
+        "tested_source": "e79cd7a3d8bc1830aeb5ee255c044ddfef72f278",
+        "complete_tree_parent_and_path_set_verified": true,
+        "runtime_tests_dependencies_unchanged_from_tested_source": true,
+        "later_changed_paths": [
+          ".github/workflows/future-recurring.yml",
+          "future/recurring/RECOVERY-PROVENANCE.md",
+          "future/recurring/RECOVERY-QUALIFICATION-20261119.json",
+          "future/recurring/RECOVERY-QUALIFICATION-20261119.md",
+          "future/recurring/VALIDATION.md",
+          "future/recurring/feature.json"
+        ],
+        "feature_manifest_changed_fields": [
+          "qualification",
+          "audit",
+          "status"
+        ],
+        "protected_manifest_fields_unchanged": [
+          "id",
+          "enabled",
+          "integration",
+          "depends_on_future_features",
+          "scope",
+          "remaining"
+        ],
+        "outside_module_paths": [
+          ".github/workflows/future-recurring.yml"
+        ]
+      }
+    ],
+    "normal_approval_bypassed": false
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "observed_utc": "2026-11-19T12:31:28.289413+00:00",
+  "phase": "green-full-dwarf-disabled",
+  "base_sha": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "head": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "tracked_changes": [
+    "future/notifications/delivery.go",
+    "future/notifications/store.go",
+    "future/notifications/unsubscribe.go"
+  ],
+  "command": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-p",
+    "1",
+    "-ldflags=-w",
+    "-count=1",
+    "-timeout=90s",
+    "./..."
+  ],
+  "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-identity/future/notifications",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOFLAGS": "-mod=readonly -p=1"
+  },
+  "private_temporary_directory": "created and removed for this command",
+  "exit_code": 0,
+  "elapsed_seconds": 8.517,
+  "files_sha256": {
+    "delivery.go": "716a5911044c183a9538e0f70f6236c09128888fcff8d3700ee3aa38a8dc9b3f",
+    "store.go": "c10a4efb96f904263c26d940ea5459074e2be0923e48b2827009c0a22057f728",
+    "unsubscribe.go": "035e5940ce21297770b56edd9f6a1b176674b5d4bdc6ebe8731b7c7dee076424",
+    "archive_identity_utf8_test.go": "7814be435335cebf3f904d78da8d2373ba266324b636ea44c66a6ee657c2975d",
+    "go.mod": "13e194ae4d1cda164a7b053b8eb6ecd93d10faaa41169bb09580f92fd8bf86b7",
+    "go.sum": "7f8b05f3bece142a2908d922054a4377a6a681da328e03b7b7af051a69fb7f7b"
+  },
+  "log": "green-full-dwarf-disabled.txt",
+  "driver": "unchanged archived modernc SQLite; no alternate test tag or dependency substitution"
+}

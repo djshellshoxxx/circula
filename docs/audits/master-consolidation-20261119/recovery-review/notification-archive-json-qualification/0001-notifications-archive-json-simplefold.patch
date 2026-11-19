@@ -1,0 +1,149 @@
+From 3c734042159899c9d1dc737f70c535e82010c40f Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Thu, 19 Nov 2026 04:41:39 -0800
+Subject: [PATCH] fix(notifications): match Go simple-fold aliases in strict
+ JSON
+
+---
+ .../archive_json_simplefold_test.go           | 86 +++++++++++++++++++
+ future/notifications/strictjson.go            | 22 +++--
+ 2 files changed, 102 insertions(+), 6 deletions(-)
+ create mode 100644 future/notifications/archive_json_simplefold_test.go
+
+diff --git a/future/notifications/archive_json_simplefold_test.go b/future/notifications/archive_json_simplefold_test.go
+new file mode 100644
+index 0000000..0410dd4
+--- /dev/null
++++ b/future/notifications/archive_json_simplefold_test.go
+@@ -0,0 +1,86 @@
++package notifications
++
++import (
++	"encoding/json"
++	"errors"
++	"testing"
++)
++
++func TestArchiveJSONRejectsSimpleFoldAliases(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		body string
++	}{
++		{"ascii", `{"Kind":"proposal_received","kind":"dispute"}`},
++		{"kelvin", `{"Kind":"proposal_received","Kind":"dispute"}`},
++		{"escaped_kelvin", `{"KIND":"proposal_received","\u212aind":"dispute"}`},
++		{"long_s", `{"QuietStart":1,"Quietſtart":2}`},
++		{"escaped_long_s", `{"quietstart":1,"Quiet\u017ftart":2}`},
++		{"final_sigma", `{"Σ":1,"ς":2}`},
++		{"sigma_variants", `{"σ":1,"ς":2}`},
++		{"nested", `{"targets":[{"Kind":"proposal_received","Kind":"dispute"}]}`},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if !json.Valid([]byte(tc.body)) {
++				t.Fatal("fixture is not valid JSON")
++			}
++			if err := uniqueJSON([]byte(tc.body)); !errors.Is(err, ErrInvalid) {
++				t.Fatalf("duplicate field alias was not rejected: %v", err)
++			}
++		})
++	}
++}
++
++func TestArchiveJSONPreservesSingleFieldAliases(t *testing.T) {
++	for _, tc := range []struct {
++		name       string
++		body       string
++		kind       string
++		quietStart int
++		sigma      int
++	}{
++		{"kelvin", `{"Kind":"dispute"}`, "dispute", 0, 0},
++		{"escaped_kelvin", `{"\u212aind":"dispute"}`, "dispute", 0, 0},
++		{"long_s", `{"Quietſtart":17}`, "", 17, 0},
++		{"escaped_long_s", `{"Quiet\u017ftart":17}`, "", 17, 0},
++		{"final_sigma", `{"ς":3}`, "", 0, 3},
++		{"unicode_value", `{"Kind":"雪|é|\ufffd"}`, "雪|é|\ufffd", 0, 0},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if err := uniqueJSON([]byte(tc.body)); err != nil {
++				t.Fatalf("single field alias rejected: %v", err)
++			}
++			var got struct {
++				Kind       string
++				QuietStart int
++				Sigma      int `json:"Σ"`
++			}
++			if err := json.Unmarshal([]byte(tc.body), &got); err != nil {
++				t.Fatal(err)
++			}
++			if got.Kind != tc.kind || got.QuietStart != tc.quietStart || got.Sigma != tc.sigma {
++				t.Fatalf("Go field decoding changed: %+v", got)
++			}
++		})
++	}
++}
++
++func TestArchiveJSONPreservesDistinctUnicodeFields(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		body string
++	}{
++		{"sharp_s_no_expansion", `{"Straße":1,"STRASSE":2}`},
++		{"ligature_no_expansion", `{"ﬁeld":1,"field":2}`},
++		{"dotted_i", `{"İ":1,"i":2}`},
++		{"dotless_i", `{"ı":1,"I":2}`},
++		{"unicode", `{"雪":1,"\ufffd":2}`},
++		{"separate_objects", `[{"Kind":"proposal_received"},{"Kind":"dispute"}]`},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if err := uniqueJSON([]byte(tc.body)); err != nil {
++				t.Fatalf("distinct fields rejected: %v", err)
++			}
++		})
++	}
++}
+diff --git a/future/notifications/strictjson.go b/future/notifications/strictjson.go
+index 0443fbd..a1298f4 100644
+--- a/future/notifications/strictjson.go
++++ b/future/notifications/strictjson.go
+@@ -4,6 +4,8 @@ import (
+ 	"bytes"
+ 	"encoding/json"
+ 	"io"
++	"strings"
++	"unicode"
+ )
+ 
+ // uniqueJSON rejects duplicate object fields (including alternate casing) and
+@@ -35,17 +37,25 @@ func uniqueJSON(data []byte) error {
+ 				if !ok {
+ 					return ErrInvalid
+ 				}
+-				folded := ""
++				var folded strings.Builder
+ 				for _, r := range s {
+-					if r >= 'A' && r <= 'Z' {
+-						r += 'a' - 'A'
++					// Match encoding/json's simple-fold field aliases without
++					// expanding Unicode characters into multiple runes.
++					for {
++						next := unicode.SimpleFold(r)
++						if next <= r {
++							r = next
++							break
++						}
++						r = next
+ 					}
+-					folded += string(r)
++					folded.WriteRune(r)
+ 				}
+-				if seen[folded] {
++				name := folded.String()
++				if seen[name] {
+ 					return ErrInvalid
+ 				}
+-				seen[folded] = true
++				seen[name] = true
+ 				if e = value(depth + 1); e != nil {
+ 					return e
+ 				}

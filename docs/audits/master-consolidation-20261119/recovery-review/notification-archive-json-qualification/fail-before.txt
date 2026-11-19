@@ -1,0 +1,18 @@
+--- FAIL: TestArchiveJSONRejectsSimpleFoldAliases (0.00s)
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/kelvin (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/escaped_kelvin (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/long_s (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/escaped_long_s (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/final_sigma (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/sigma_variants (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+    --- FAIL: TestArchiveJSONRejectsSimpleFoldAliases/nested (0.00s)
+        archive_json_simplefold_test.go:28: duplicate field alias was not rejected: <nil>
+FAIL
+FAIL	command-line-arguments	0.011s
+FAIL

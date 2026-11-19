@@ -1,0 +1,41 @@
+--- FAIL: TestArchiveIdentityDedupeRejectsMalformedUTF8 (0.00s)
+    --- FAIL: TestArchiveIdentityDedupeRejectsMalformedUTF8/network (0.00s)
+        archive_identity_utf8_test.go:46: malformed network produced a dedupe key: error=<nil>
+        archive_identity_utf8_test.go:46: malformed network produced a dedupe key: error=<nil>
+    --- FAIL: TestArchiveIdentityDedupeRejectsMalformedUTF8/event (0.00s)
+        archive_identity_utf8_test.go:46: malformed event produced a dedupe key: error=<nil>
+        archive_identity_utf8_test.go:46: malformed event produced a dedupe key: error=<nil>
+    --- FAIL: TestArchiveIdentityDedupeRejectsMalformedUTF8/member (0.00s)
+        archive_identity_utf8_test.go:46: malformed member produced a dedupe key: error=<nil>
+        archive_identity_utf8_test.go:46: malformed member produced a dedupe key: error=<nil>
+    --- FAIL: TestArchiveIdentityDedupeRejectsMalformedUTF8/kind (0.00s)
+        archive_identity_utf8_test.go:46: malformed kind produced a dedupe key: error=<nil>
+        archive_identity_utf8_test.go:46: malformed kind produced a dedupe key: error=<nil>
+--- FAIL: TestArchiveIdentityEnqueueRejectsMalformedUTF8 (0.02s)
+    --- FAIL: TestArchiveIdentityEnqueueRejectsMalformedUTF8/network (0.01s)
+        archive_identity_utf8_test.go:74: malformed network was enqueued: error=<nil>
+        archive_identity_utf8_test.go:78: invalid identity wrote outbox rows: count=1 error=<nil>
+    --- FAIL: TestArchiveIdentityEnqueueRejectsMalformedUTF8/event (0.00s)
+        archive_identity_utf8_test.go:74: malformed event was enqueued: error=<nil>
+        archive_identity_utf8_test.go:78: invalid identity wrote outbox rows: count=1 error=<nil>
+    --- FAIL: TestArchiveIdentityEnqueueRejectsMalformedUTF8/member (0.00s)
+        archive_identity_utf8_test.go:74: malformed member was enqueued: error=<nil>
+        archive_identity_utf8_test.go:78: invalid identity wrote outbox rows: count=1 error=<nil>
+--- FAIL: TestArchiveIdentitySetTargetRejectsMalformedUTF8 (0.01s)
+    --- FAIL: TestArchiveIdentitySetTargetRejectsMalformedUTF8/network (0.00s)
+        archive_identity_utf8_test.go:105: malformed network was sealed and stored
+        archive_identity_utf8_test.go:109: invalid input wrote targets: count=1 error=<nil>
+    --- FAIL: TestArchiveIdentitySetTargetRejectsMalformedUTF8/member (0.00s)
+        archive_identity_utf8_test.go:105: malformed member was sealed and stored
+        archive_identity_utf8_test.go:109: invalid input wrote targets: count=1 error=<nil>
+    --- FAIL: TestArchiveIdentitySetTargetRejectsMalformedUTF8/endpoint (0.00s)
+        archive_identity_utf8_test.go:105: malformed endpoint was sealed and stored
+        archive_identity_utf8_test.go:109: invalid input wrote targets: count=1 error=<nil>
+--- FAIL: TestArchiveIdentityUnsubscribeTokenRejectsMalformedUTF8 (0.00s)
+    --- FAIL: TestArchiveIdentityUnsubscribeTokenRejectsMalformedUTF8/network (0.00s)
+        archive_identity_utf8_test.go:142: malformed network minted a capability: error=<nil>
+    --- FAIL: TestArchiveIdentityUnsubscribeTokenRejectsMalformedUTF8/member (0.00s)
+        archive_identity_utf8_test.go:142: malformed member minted a capability: error=<nil>
+FAIL
+FAIL	github.com/djshellshoxxx/circula/future/notifications	0.084s
+FAIL

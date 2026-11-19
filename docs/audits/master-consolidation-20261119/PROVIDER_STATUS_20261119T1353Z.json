@@ -1,0 +1,1626 @@
+{
+  "observed_utc": "2026-11-19 13:53 UTC",
+  "scope": "Exact live-head provider checkpoint; not final qualification or merge approval.",
+  "prs": [
+    {
+      "pr": 97,
+      "head": "73a911a9bec387381633c031d8a4083c9fc724ad",
+      "base": "future/fnet-207-recurring-20261116",
+      "base_sha": "0437e54897c6d9cfb3f2577807b82dd038493850",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44508676983,
+          "name": "future recurring module",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 2,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676983/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676983/logs",
+          "workflow_id": 423701357
+        },
+        {
+          "id": 44508676822,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_number": 525,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676822/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44508676822/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 103,
+      "head": "13669485b641475fce526633f47055ef31997098",
+      "base": "future/fux-104-notifications-20261116",
+      "base_sha": "797dddf21adddfb34a49e7bda1871a202968dcda",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "clean",
+      "runs": [
+        {
+          "id": 44511002005,
+          "name": "future notifications module",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 8,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002005/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002005/logs",
+          "workflow_id": 423591810
+        },
+        {
+          "id": 44511002032,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 531,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002032/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44511002032/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 104,
+      "head": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+      "base": "main",
+      "base_sha": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44529700909,
+          "name": "Native export reader",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44529700909/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44529700909/logs",
+          "workflow_id": 423845915
+        },
+        {
+          "id": 44529700745,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 554,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44529700745/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44529700745/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 105,
+      "head": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "base": "future/fnet-209-federation-20261116",
+      "base_sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44513782271,
+          "name": "future federation module",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782271/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782271/logs",
+          "workflow_id": 423741270
+        },
+        {
+          "id": 44513782075,
+          "name": "ci",
+          "status": "completed",
+          "conclusion": "failure",
+          "run_number": 537,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782075/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44513782075/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 106,
+      "head": "d55554408ef591371768259905c70ca58d68facb",
+      "base": "master/fnet209-utf8-20261119",
+      "base_sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44517329467,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 540,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44517329467/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44517329467/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 108,
+      "head": "38b9bcd0e049d97167d793baba933d5e79d8030d",
+      "base": "future/fnet-205-analytics-20261116",
+      "base_sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44526962148,
+          "name": "future analytics module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 2,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44526962148/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44526962148/logs",
+          "workflow_id": 423797992
+        },
+        {
+          "id": 44526962125,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 552,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44526962125/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44526962125/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 110,
+      "head": "aeb70db0255d482eb45aa6e0515f09fc32518d81",
+      "base": "master/fnet207-recurring-remote-20261119",
+      "base_sha": "73a911a9bec387381633c031d8a4083c9fc724ad",
+      "draft": false,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44524017877,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 549,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44524017877/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44524017877/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 113,
+      "head": "3cc55f7966a6321c9fa4e587596ea7daf0f9d152",
+      "base": "future/fnet-203-receipts-20261116",
+      "base_sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44531463172,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 556,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44531463172/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44531463172/logs",
+          "workflow_id": 391555428
+        },
+        {
+          "id": 44531463364,
+          "name": "future receipts module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44531463364/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44531463364/logs",
+          "workflow_id": 423856980
+        }
+      ]
+    },
+    {
+      "pr": 114,
+      "head": "fbd92a22f06af7bcd96957397958b33e2706807a",
+      "base": "future/fnet-208-governance-20261116",
+      "base_sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44533192264,
+          "name": "future governance module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533192264/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533192264/logs",
+          "workflow_id": 423867735
+        },
+        {
+          "id": 44533192063,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 557,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533192063/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533192063/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 115,
+      "head": "684ca5132690e24104aa389aac16870c18bbc7fd",
+      "base": "future/fnet-206-areas-20261116",
+      "base_sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44533196467,
+          "name": "future areas module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533196467/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533196467/logs",
+          "workflow_id": 423867763
+        },
+        {
+          "id": 44533196569,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 558,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533196569/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533196569/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 116,
+      "head": "62623635d9711fbafc9b9660ac8860f1eb916dbb",
+      "base": "future/fux-105-messaging-20261116",
+      "base_sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44533203800,
+          "name": "future messaging module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 1,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533203800/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533203800/logs",
+          "workflow_id": 423867804
+        },
+        {
+          "id": 44533203828,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 559,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533203828/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44533203828/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 117,
+      "head": "f50aaa4b599c2c0272d37cdc910f567b76c451f8",
+      "base": "master/fnet209-utf8-20261119",
+      "base_sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44535006622,
+          "name": "future federation module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 2,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535006622/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535006622/logs",
+          "workflow_id": 423741270
+        },
+        {
+          "id": 44535006667,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 560,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535006667/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535006667/logs",
+          "workflow_id": 391555428
+        }
+      ]
+    },
+    {
+      "pr": 118,
+      "head": "035dd1c0d7c3de901cb1d2e1854ac4fde4cbdad4",
+      "base": "master/fnet207-recurring-remote-20261119",
+      "base_sha": "73a911a9bec387381633c031d8a4083c9fc724ad",
+      "draft": true,
+      "state": "open",
+      "mergeable_state": "unstable",
+      "runs": [
+        {
+          "id": 44535010810,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 561,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535010810/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535010810/logs",
+          "workflow_id": 391555428
+        },
+        {
+          "id": 44535010971,
+          "name": "future recurring module",
+          "status": "queued",
+          "conclusion": null,
+          "run_number": 3,
+          "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535010971/jobs",
+          "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44535010971/logs",
+          "workflow_id": 423701357
+        }
+      ]
+    }
+  ],
+  "notification_core_jobs": [
+    {
+      "id": 135514904768,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "seed corpora of every fuzz target (also part of go test ./...)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "fuzz amount parser for 1000000 executions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "fuzz strict JSON decoder for 100000 executions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 135514904892,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "cross-build all OPS-003 targets from this commit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "upload packaged artifacts for inspection",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 135514904925,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "test with race detector",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Match requirement citations to recorded test results",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Upload test evidence and property failure fixtures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 135514904978,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Check workflow action pins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Dependency licences against the approved list (ARC-024)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Secret scan (ARC-023, SEC-027)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "gofmt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "go vet",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Requirement traceability is current",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Export reader and property-runner tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "Post golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        }
+      ]
+    },
+    {
+      "id": 135514905012,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "contract (JSON API against docs/api/openapi.yaml)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "load smoke (small, QA-008 and QA-040 evidence)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 135514905025,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "build twice (different directory and cache) and compare",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 135514905198,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "make e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "upload failure screenshots",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 135514906589,
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44511002032,
+      "logs_url": null,
+      "steps": null
+    }
+  ],
+  "federation_core_jobs": [
+    {
+      "id": 135524416644,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "build twice (different directory and cache) and compare",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4
+        },
+        {
+          "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 135524417085,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "cross-build all OPS-003 targets from this commit",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4
+        },
+        {
+          "name": "upload packaged artifacts for inspection",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 135524417127,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "make e2e",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 5
+        },
+        {
+          "name": "upload failure screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 135524417158,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "test with race detector",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        }
+      ]
+    },
+    {
+      "id": 135524417189,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Check workflow action pins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Dependency licences against the approved list (ARC-024)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Secret scan (ARC-023, SEC-027)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "gofmt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "go vet",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 9
+        },
+        {
+          "name": "golangci-lint",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10
+        },
+        {
+          "name": "govulncheck",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 21
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        }
+      ]
+    },
+    {
+      "id": 135524417239,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "seed corpora of every fuzz target (also part of go test ./...)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "fuzz amount parser for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "fuzz strict JSON decoder for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        }
+      ]
+    },
+    {
+      "id": 135524417471,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "contract (JSON API against docs/api/openapi.yaml)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "load smoke (small, QA-008 and QA-040 evidence)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 135524419020,
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44513782075,
+      "logs_url": null,
+      "steps": null
+    }
+  ],
+  "federation_module_jobs": [
+    {
+      "id": 135524417247,
+      "name": "isolated federation envelopes (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44513782271,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Keep repository line endings stable",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Record source and toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check module remains isolated and disabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Check Go formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Vet isolated module",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Race and signed-string regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Native Windows signed-string regressions",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10
+        },
+        {
+          "name": "Bounded signed-string invariant fuzzing",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        }
+      ]
+    },
+    {
+      "id": 135524417726,
+      "name": "isolated federation envelopes (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44513782271,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Keep repository line endings stable",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Record source and toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check module remains isolated and disabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Check Go formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Vet isolated module",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Race and signed-string regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Native Windows signed-string regressions",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10
+        },
+        {
+          "name": "Bounded signed-string invariant fuzzing",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        }
+      ]
+    },
+    {
+      "id": 135524417735,
+      "name": "isolated federation envelopes (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44513782271,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Keep repository line endings stable",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Record source and toolchain",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Check module remains isolated and disabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Check Go formatting",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Vet isolated module",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Race and signed-string regressions",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Native Windows signed-string regressions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Bounded signed-string invariant fuzzing",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "The optional notification Core native matrix was skipped, not passed.",
+    "Empty legacy status contexts are not evidence that required checks passed.",
+    "All future modules remain disabled/HOLD."
+  ]
+}

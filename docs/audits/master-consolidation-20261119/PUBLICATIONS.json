@@ -1,0 +1,211 @@
+{
+  "observed_utc": "2026-11-19 14:15:23 UTC",
+  "scope": "Verified publication checkpoint. Target baseline and actual commit parents are distinct. Refresh live heads, bases, configured jobs and normal reviews before integration.",
+  "publications": [
+    {
+      "module": "core",
+      "pr": 104,
+      "url": "https://github.com/djshellshoxxx/circula/pull/104",
+      "remote_head": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+      "reviewed_local_head": "87cc4b229d39dbc8c00785048024f0e7296c015e",
+      "exact_shared_tree": "7ccb0188df8416eb8fa57b8740eba400a5e01363",
+      "target": "main",
+      "branch": "integration/circula-master-consolidation-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+      "commit_parents": [
+        "c3c991aa3c12a11edce2874e9444b9d2a99f746c"
+      ]
+    },
+    {
+      "module": "recurring_calendar",
+      "pr": 97,
+      "url": "https://github.com/djshellshoxxx/circula/pull/97",
+      "remote_head": "73a911a9bec387381633c031d8a4083c9fc724ad",
+      "reviewed_local_head": "cdcd2cb38b3af0275e5ceb58242384cfa916be45",
+      "exact_shared_tree": "c6a4c5dabdbc482967a44353f14926a24066ad56",
+      "target": "future/fnet-207-recurring-20261116",
+      "branch": "master/fnet207-recurring-remote-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "0437e54897c6d9cfb3f2577807b82dd038493850",
+      "commit_parents": [
+        "b92a7aa4211d9d99d028572ab908469b83a4bda2"
+      ]
+    },
+    {
+      "module": "notification_transport",
+      "pr": 103,
+      "url": "https://github.com/djshellshoxxx/circula/pull/103",
+      "remote_head": "f831c45de9137b20abe3d31590433bda6348112b",
+      "reviewed_local_head": "f4555898e832c94c19fb69139327230af44af3ba",
+      "exact_shared_tree": "d95dd114d7c39914c39d81ad8e79be033c9f8446",
+      "target": "future/fux-104-notifications-20261116",
+      "branch": "master/notification-transport-tests-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "797dddf21adddfb34a49e7bda1871a202968dcda",
+      "commit_parents": [
+        "13669485b641475fce526633f47055ef31997098"
+      ],
+      "previous_publications": [
+        {
+          "remote_head": "13669485b641475fce526633f47055ef31997098",
+          "reviewed_local_head": "4a59bd1e740c2fcf5877de2a90594439cb9cd570",
+          "exact_shared_tree": "198d2e6d9e40922080eb91f3ab73d011808feea9",
+          "commit_parents": [
+            "797dddf21adddfb34a49e7bda1871a202968dcda"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "federation_signing",
+      "pr": 105,
+      "url": "https://github.com/djshellshoxxx/circula/pull/105",
+      "remote_head": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "reviewed_local_head": "db21ea0a0008309d6e8d116ccb00eb77ac6873d9",
+      "exact_shared_tree": "4d9f608041e65a2a1a297f17614438790240bc04",
+      "target": "future/fnet-209-federation-20261116",
+      "branch": "master/fnet209-utf8-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "commit_parents": [
+        "1b3c92e03007e35e3f190e719a1ea78a807d4102"
+      ]
+    },
+    {
+      "module": "analytics",
+      "pr": 108,
+      "url": "https://github.com/djshellshoxxx/circula/pull/108",
+      "remote_head": "38b9bcd0e049d97167d793baba933d5e79d8030d",
+      "reviewed_local_head": "150ab4ed3c2f9911f45fd07e8676edd03aa31179",
+      "exact_shared_tree": "926205aae18016ef55f882fda6415e1ac2b7fd94",
+      "target": "future/fnet-205-analytics-20261116",
+      "branch": "master/recover-analytics-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "commit_parents": [
+        "29a0312c5c4d446eb47c4f1d4555b58ff52c99b8"
+      ]
+    },
+    {
+      "module": "receipts",
+      "pr": 113,
+      "url": "https://github.com/djshellshoxxx/circula/pull/113",
+      "remote_head": "3cc55f7966a6321c9fa4e587596ea7daf0f9d152",
+      "reviewed_local_head": "3466df2fe5a73de17e25c5a68315eead0e3ac926",
+      "exact_shared_tree": "957855342ac07e600f3922c9ef6fe8da5b86fed0",
+      "target": "future/fnet-203-receipts-20261116",
+      "branch": "master/recover-receipts-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "commit_parents": [
+        "bd2fbdbd3adf77b27fa12335ff2827359423aea3"
+      ]
+    },
+    {
+      "module": "areas",
+      "pr": 115,
+      "url": "https://github.com/djshellshoxxx/circula/pull/115",
+      "remote_head": "684ca5132690e24104aa389aac16870c18bbc7fd",
+      "reviewed_local_head": "3275ac6016ca7426427da92e7bfa9f620e3b55ad",
+      "exact_shared_tree": "f5de54ced2f6fd363372a4588c292ab900eeef65",
+      "target": "future/fnet-206-areas-20261116",
+      "branch": "master/recover-areas-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "commit_parents": [
+        "8b444b20139e3e687db494b3fe36bb3643148e5b"
+      ]
+    },
+    {
+      "module": "governance",
+      "pr": 114,
+      "url": "https://github.com/djshellshoxxx/circula/pull/114",
+      "remote_head": "fbd92a22f06af7bcd96957397958b33e2706807a",
+      "reviewed_local_head": "7ec8147db9fb06674d20983dfcd3b7ac765717ed",
+      "exact_shared_tree": "36ca2f142be776095a97d51cf1caee15d04926e6",
+      "target": "future/fnet-208-governance-20261116",
+      "branch": "master/recover-governance-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "commit_parents": [
+        "b4f511372ec26dc63d005bb50d87c56e18fc1a88"
+      ]
+    },
+    {
+      "module": "messaging",
+      "pr": 116,
+      "url": "https://github.com/djshellshoxxx/circula/pull/116",
+      "remote_head": "62623635d9711fbafc9b9660ac8860f1eb916dbb",
+      "reviewed_local_head": "d0e28040c27f3d336076fdaee51b84869f5f4153",
+      "exact_shared_tree": "951e68d1316d0efd8503408d15a3fc555dd4848e",
+      "target": "future/fux-105-messaging-20261116",
+      "branch": "master/recover-messaging-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "commit_parents": [
+        "7f92251cdb0d6ed5d9559730045a021a173a278b"
+      ]
+    },
+    {
+      "module": "recurring_recovery",
+      "pr": 118,
+      "url": "https://github.com/djshellshoxxx/circula/pull/118",
+      "remote_head": "035dd1c0d7c3de901cb1d2e1854ac4fde4cbdad4",
+      "reviewed_local_head": "2389be3631f632c037f85fe23a691edd6475d630",
+      "exact_shared_tree": "d41e47b2a4961983f8881e5162096c588973158c",
+      "target": "master/fnet207-recurring-remote-20261119",
+      "branch": "master/recover-recurring-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "73a911a9bec387381633c031d8a4083c9fc724ad",
+      "commit_parents": [
+        "73a911a9bec387381633c031d8a4083c9fc724ad"
+      ]
+    },
+    {
+      "module": "federation_recovery",
+      "pr": 117,
+      "url": "https://github.com/djshellshoxxx/circula/pull/117",
+      "remote_head": "f50aaa4b599c2c0272d37cdc910f567b76c451f8",
+      "reviewed_local_head": "879676cf7ba143f8bb33647cb6221653b7bac70d",
+      "exact_shared_tree": "0873c4516d633cc56304c6d35a54fe1e812ab71d",
+      "target": "master/fnet209-utf8-20261119",
+      "branch": "master/recover-federation-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "target_head_at_initial_publication": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "commit_parents": [
+        "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115"
+      ]
+    },
+    {
+      "module": "qr_camera",
+      "pr": 120,
+      "url": "https://github.com/djshellshoxxx/circula/pull/120",
+      "remote_head": "2f0c83bc34a52551281769ec17561b18920bd2cf",
+      "reviewed_local_head": "3c1ce7a7dc190271a9a830abc924f4f938049801",
+      "exact_shared_tree": "6c5f55e7fe658d5144c3c09c010f74923397c7df",
+      "target": "future/fux-102-qr-20261116",
+      "target_head_at_initial_publication": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "commit_parents": [
+        "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401"
+      ],
+      "branch": "master/fux102-camera-lifecycle-20261119",
+      "draft": true,
+      "tree_equality_verified": true,
+      "changed_paths_verified": 6
+    }
+  ],
+  "merge_status": "No main/module-target merge by this workstream; exact-head configured jobs, normal reviews and active handoffs remain required.",
+  "feature_state": "All future modules disabled/HOLD."
+}

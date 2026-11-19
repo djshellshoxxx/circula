@@ -1,0 +1,40 @@
+{
+  "phase": "initial attempt blocked at link; no regression assertions ran",
+  "base_sha": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "production_unchanged_from_base": true,
+  "command": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-p",
+    "1",
+    "-count=1",
+    "-timeout=90s",
+    "-run",
+    "^TestArchiveIdentity",
+    "."
+  ],
+  "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-identity/future/notifications",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOFLAGS": "-mod=readonly -p=1"
+  },
+  "private_temporary_directory": "created and removed for this command",
+  "exit_code": 1,
+  "elapsed_seconds": 40.227,
+  "files_sha256": {
+    "delivery.go": "63115f5f3ff2daa2a9f5e5592f30c0eed91f8d4814878a123de4ba15e9abbcc7",
+    "store.go": "7b6c57921e3a6e90ee704f1cb93d9b1a7c8c3ac06d479e789a84c0cc6f4eacb1",
+    "unsubscribe.go": "33def46e0c43b8a2f922637ab70930be202cb52d75026a098906b4d9c1792aae",
+    "archive_identity_utf8_test.go": "7814be435335cebf3f904d78da8d2373ba266324b636ea44c66a6ee657c2975d",
+    "go.mod": "13e194ae4d1cda164a7b053b8eb6ecd93d10faaa41169bb09580f92fd8bf86b7",
+    "go.sum": "7f8b05f3bece142a2908d922054a4377a6a681da328e03b7b7af051a69fb7f7b"
+  },
+  "log": "initial-linker-killed.txt",
+  "scope": "actual archived module with its default modernc SQLite driver; ordinary targeted tests, not race"
+}

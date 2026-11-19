@@ -1,0 +1,54 @@
+{
+  "observed_utc": "2026-11-19 14:15:23 UTC",
+  "head": "f831c45de9137b20abe3d31590433bda6348112b",
+  "local_head": "f4555898e832c94c19fb69139327230af44af3ba",
+  "tree": "d95dd114d7c39914c39d81ad8e79be033c9f8446",
+  "parent": "13669485b641475fce526633f47055ef31997098",
+  "paths": [
+    {
+      "path": ".github/workflows/notification-transport-native.yml",
+      "blob": "9f606d47052ff309be0e03e4426b5fa40eb78974"
+    },
+    {
+      "path": "future/notifications/TRANSPORT-QUALIFICATION-20261119.md",
+      "blob": "a99fa01fc0e33859c6c86c870c2003f4cdbb8dda"
+    }
+  ],
+  "source_review": "PASS; YAML/Bash/Python syntax and action pins; existing four runtime/test and module-dependency blobs unchanged.",
+  "prior_complete_provider_checkpoint": "PROVIDER_STATUS_20261119T1353Z.json",
+  "current_runs": [
+    {
+      "id": 44540239868,
+      "name": "Native notification transports",
+      "status": "queued",
+      "conclusion": null,
+      "run_number": 1,
+      "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44540239868/jobs",
+      "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44540239868/logs",
+      "workflow_id": 423912893
+    },
+    {
+      "id": 44540239409,
+      "name": "ci",
+      "status": "queued",
+      "conclusion": null,
+      "run_number": 564,
+      "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44540239409/jobs",
+      "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44540239409/logs",
+      "workflow_id": 391555428
+    },
+    {
+      "id": 44540239544,
+      "name": "future notifications module",
+      "status": "queued",
+      "conclusion": null,
+      "run_number": 12,
+      "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44540239544/jobs",
+      "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44540239544/logs",
+      "workflow_id": 423591810
+    }
+  ],
+  "current_status": "Queued is not passed; ordinary current-head requirements remain.",
+  "label": "ci:cross-platform",
+  "boundary": "Original isolated notifications target; disabled/HOLD. No shared workflow edit or unfinished #100 source copied."
+}

@@ -1,0 +1,636 @@
+{
+  "observed_utc": "2026-11-19T14:03:13.060634+00:00",
+  "base_head": "13669485b641475fce526633f47055ef31997098",
+  "workflow_blob": "9f606d47052ff309be0e03e4426b5fa40eb78974",
+  "initial_note_blob": "5ae910985f275de6d86b983b593d243536a2c529",
+  "static_checks": [
+    {
+      "step": "Record source and toolchain",
+      "bash_syntax": "pass"
+    },
+    {
+      "step": "Verify disabled module and dependency boundary",
+      "bash_syntax": "pass",
+      "python_syntax": "pass"
+    },
+    {
+      "step": "Download and verify pinned dependencies",
+      "bash_syntax": "pass"
+    },
+    {
+      "step": "Vet transport packages",
+      "bash_syntax": "pass"
+    },
+    {
+      "step": "Race-test loopback transports on Linux and macOS",
+      "bash_syntax": "pass"
+    },
+    {
+      "step": "Test loopback transports on Windows",
+      "bash_syntax": "pass"
+    }
+  ],
+  "workflow_source_review": "No blocking source finding in the complete workflow; YAML, all Bash bodies, embedded Python syntax, action pins and native command split verified. No Go command or workflow executed by this review.",
+  "note_status": "Factual correction closed. Final complete note agrees with source repair and independently fetched provider jobs/logs.",
+  "provider_jobs": [
+    {
+      "jobs": [
+        {
+          "id": 135514904109,
+          "name": "isolated notifications with SQLite",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002005,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Check isolated HOLD boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify module checksums",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "gofmt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Vet including SQLite tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Race and SQLite regression tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Dependency vulnerability check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "jobs": [
+        {
+          "id": 135514904768,
+          "name": "fuzz smoke (RB-017)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "seed corpora of every fuzz target (also part of go test ./...)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "fuzz amount parser for 1000000 executions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "fuzz strict JSON decoder for 100000 executions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 135514904892,
+          "name": "build release targets",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "cross-build all OPS-003 targets from this commit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "upload packaged artifacts for inspection",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            }
+          ]
+        },
+        {
+          "id": 135514904925,
+          "name": "test (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "test with race detector",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Match requirement citations to recorded test results",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Upload test evidence and property failure fixtures",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 135514904978,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Check workflow action pins",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Dependency licences against the approved list (ARC-024)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Secret scan (ARC-023, SEC-027)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "gofmt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "go vet",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Requirement traceability is current",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Export reader and property-runner tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "golangci-lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "govulncheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            },
+            {
+              "name": "Post golangci-lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 24
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 26
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27
+            }
+          ]
+        },
+        {
+          "id": 135514905012,
+          "name": "API contract and load smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "contract (JSON API against docs/api/openapi.yaml)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "load smoke (small, QA-008 and QA-040 evidence)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            }
+          ]
+        },
+        {
+          "id": 135514905025,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "build twice (different directory and cache) and compare",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            }
+          ]
+        },
+        {
+          "id": 135514905198,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "make e2e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "upload failure screenshots",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 135514906589,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        }
+      ]
+    }
+  ],
+  "provider_log_sha256": "3105e4bdfdfd209f725e21efef4afa1b81cf6f7d84d0346b99367c50ed16f9a7",
+  "limits": [
+    "Current provider runs apply to original head13669485 and its merge test ref.",
+    "New workflow requires completed current-head provider jobs and normal approval.",
+    "Windows ordinary transport tests do not qualify the SQLite persistence layer."
+  ],
+  "final_observed_utc": "2026-11-19T14:04:31.625777+00:00",
+  "final_note_blob": "a99fa01fc0e33859c6c86c870c2003f4cdbb8dda",
+  "status": "source-approved; provider and normal merge gates remain",
+  "local_materialization_equals_remote_blobs": true,
+  "unchanged_runtime_test_blobs": {
+    "pushsend/pushsend.go": "cf4e6d876137f5756d0bba6a57536596f5541025",
+    "pushsend/pushsend_test.go": "e4e82c4be240f8c5314e855ae710bf395f9f8c85",
+    "smtpsend/smtpsend.go": "e4a473915835db4d219a2118a6fa448f91921537",
+    "smtpsend/smtpsend_test.go": "356b32bce1661324e7f2cb721d05b18589fa750a"
+  },
+  "dependency_files_unchanged": true,
+  "finding": {
+    "severity": "documentation accuracy",
+    "initial": "Runtime note described an unchanged nil-HTTP-response guard instead of the actual typed-nil error repair.",
+    "resolution": "Final note accurately describes nil error for successful HTTP responses and labels the nil-response guard as pre-existing."
+  }
+}

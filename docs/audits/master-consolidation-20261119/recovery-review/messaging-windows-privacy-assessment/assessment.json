@@ -1,0 +1,151 @@
+{
+  "observed_utc": "2026-11-19T13:13:07.153820+00:00",
+  "reviewer": "/root/independent_triage",
+  "head": "7e9708d8e50a1959af399aa5956fb2a54ab880b6",
+  "tree": "a5556af33aca22f91ee5371d1d979217bf4936b8",
+  "read_only": true,
+  "go_jobs_started": false,
+  "working_tree_clean": true,
+  "source_files": {
+    "future/messaging/store.go": {
+      "blob": "43f8eeace045166eeb4f59f10983d2539a4fee6f",
+      "sha256": "369a18bcc7118f7968b46a62051aa509bcb220dacf898d3a6125a4dbd287fca1"
+    },
+    "future/messaging/CONTRACT.md": {
+      "blob": "a246c7bf85ab58644dae6caadc877be355930d21",
+      "sha256": "14804481912c0c97956bbff6a4065fe0d6bd172cc89cc05399b98bad2c4ea42c"
+    },
+    "future/messaging/MIGRATION-PLAN.md": {
+      "blob": "b77f8eff7d491e21b9ccd96902ba7872c158e1b8",
+      "sha256": "52ed5354114ca9c740b9ca1a539c6af8bc949cf15ae1c6132b38ad1216eb1572"
+    },
+    "future/messaging/SPEC-SNAPSHOT.md": {
+      "blob": "4149d2587271e8c948b656292644842239a1796f",
+      "sha256": "c9a0905a846f3463932250575a5452fded6de9d83b63886d779d37331cb4f927"
+    },
+    "future/messaging/INTEGRATION.md": {
+      "blob": "5203d56114890d42d7db0af8c80e2d7b03dbae2c",
+      "sha256": "64058b6c03f414084f6eb9da85a0108397fc0d34bbcb4b72c585c6d8b7c23aa7"
+    },
+    "future/messaging/http_test.go": {
+      "blob": "9cba9bb7ffa23833202969873c16e09ed806c908",
+      "sha256": "dab5f43341fcede9ec44c7fa6526da0acad49afe24aed5b7eef58454dc2489f2"
+    },
+    "future/messaging/store_test.go": {
+      "blob": "4079c6dffd3370c2bce478d5e2644642a23df6f0",
+      "sha256": "5880f746f244535bba43c07acbc50ad7e3f413a080767d7a1d4979be9ab2ff00"
+    },
+    "future/messaging/go.mod": {
+      "blob": "b63fec9da5bbe4563e2991084c138ba0f177bff8",
+      "sha256": "83bdb8edaf3a97e4c2dee18d286cb9219003f6946501628c421253aebcfc4b26"
+    },
+    "future/messaging/feature.json": {
+      "blob": "f1f385d7de5516c094dad9d3a70ea3dc30174259",
+      "sha256": "7c5426b1dc206d3c3b278ac0743daf7f73c7d5d54f166f92790acc4cfcdfbb7d"
+    }
+  },
+  "pinned_implementation_sources": {
+    "/workspace/scratch/beb70d57deba/toolchain/go/src/os/types_windows.go": "32bdbb028336c434525559642424295c71c0dd6e4fef7cec1fd0739ec80feffb",
+    "/workspace/scratch/beb70d57deba/toolchain/go/src/os/file.go": "85a4adcd383c9947d6133b65ccd01e95b68ce1d07b8474b7b7aad8ca9f3b8139",
+    "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache/modernc.org/sqlite@v1.60.1/lib/sqlite_windows.go": "4bd37c8278b040a0e02f2c80714af515482c6b4447d1c18788211295e039ee3e",
+    "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache/golang.org/x/sys@v0.48.0/windows/security_windows.go": "a81ceadb4023d6712587d1d9d0b5a51948dfbfb8a5786811d3020fe55182b6c6"
+  },
+  "primary_sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/fileio/file-security-and-access-rights",
+      "ref": "turn576623810search0",
+      "supports": "File security descriptors and parent ACL inheritance; directory descriptor alone does not control existing child access."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/secauthz/security-descriptors-for-new-objects",
+      "ref": "turn576623810search1",
+      "supports": "Explicit creation security and SE_DACL_PROTECTED to prevent ACE inheritance."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea",
+      "ref": "turn576623810search3",
+      "supports": "CreateFile ignores creation security descriptor when opening an existing file."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/desktop/FileIO/creating-and-opening-files",
+      "ref": "turn576623810search5",
+      "supports": "Security requires a supporting filesystem; creation/open semantics differ."
+    },
+    {
+      "url": "https://www.sqlite.org/wal.html",
+      "ref": "turn576623810search6",
+      "supports": "WAL and SHM files are separate paths; WAL forms part of persistent database state."
+    }
+  ],
+  "finding_scope": "Source-based Windows portability/acceptance assessment. Current Open rejects Windows files before SQLite initialization. No actual Windows execution, disclosure, authorization bypass or exploit was demonstrated.",
+  "contract_determination": {
+    "privacy_invariant_clear": true,
+    "privacy_invariant": "Private regular database; new files 0600; unsafe existing files rejected; private backup/restore.",
+    "unambiguous_windows_acl_profile_present": false,
+    "missing_platform_details": [
+      "Execution identity/SID and permitted additional ACE principals",
+      "Private directory and inherited sidecar ACL requirements",
+      "Existing database and sidecar rejection versus remediation",
+      "Backup/restore ACL semantics and native acceptance",
+      "Supported filesystem and path/handle protection boundaries"
+    ],
+    "conclusion": "A narrow platform-contract extension and native acceptance are required before claiming Windows support. A conservative single execution-identity profile is technically actionable without choosing new network governance, message-retention or E2EE policy; it should be explicitly adopted and reviewed as a separate patch."
+  },
+  "concrete_source_observations": [
+    {
+      "path": "future/messaging/store.go",
+      "symbol": "Open",
+      "detail": "os.OpenFile(...,0600), regular-file check and mode &0077 rejection occur before sql.Open; PRAGMA journal_mode=WAL creates a sidecar obligation."
+    },
+    {
+      "path": "Go1.26.11/src/os/types_windows.go",
+      "symbol": "fileStat.mode",
+      "detail": "Regular-file permission bits are synthesized as 0666 or 0444, so the current POSIX mask rejects both."
+    },
+    {
+      "path": "Go1.26.11/src/os/file.go",
+      "symbol": "Chmod contract",
+      "detail": "On Windows only owner-writable bit affects the read-only attribute; other permission bits do not set a DACL."
+    },
+    {
+      "path": "modernc.org/sqlite@v1.60.1/lib/sqlite_windows.go",
+      "symbol": "_winOpen",
+      "detail": "CreateFileW/A call passes a zero security-attributes pointer; main/journal/WAL creation uses default security."
+    },
+    {
+      "path": "modernc.org/sqlite@v1.60.1/lib/sqlite_windows.go",
+      "symbol": "_winHandleOpen",
+      "detail": "SHM-file CreateFileW/A call also passes a zero security-attributes pointer."
+    },
+    {
+      "path": "future/messaging/http_test.go",
+      "symbol": "TestMigrationBackupRestoreAndEmptyHide",
+      "detail": "VACUUM INTO snapshot followed by os.Chmod(0600) is a valid POSIX fixture but does not establish Windows backup ACL privacy."
+    }
+  ],
+  "minimal_proposed_profile": [
+    "Preserve POSIX behavior in a non-Windows helper. Add a separate Windows helper, with no changes to authorization, SQL schema, retention, message format or driver version.",
+    "Document one execution identity as the standalone storage owner; recommend the process-token user SID with a protected owner-only DACL and no implicit broader read/write grants. Any service/group/SYSTEM/Administrators exception must be explicit, not guessed.",
+    "Use an explicitly private directory with inheritable owner-only child ACLs so SQLite-created WAL/SHM inherit privacy. Do not silently alter an arbitrary caller directory; require/provision a dedicated directory through an explicit helper or documented setup.",
+    "Create a new database with its restrictive security descriptor atomically; validate owner/DACL/regular-file identity through handles for existing DB and sidecars before SQLite writes. Reject missing/null/permissive or unsupported ACL forms without silently chmodding existing data.",
+    "Protect the path namespace against check/use replacement, including link/reparse cases; inspect an ACL-supporting filesystem and fail closed when privacy cannot be established.",
+    "Use the same documented ACL setup/validation for backup destinations and restore; do not treat Chmod(0600) as ACL validation. Preserve actual SQLite backup/reopen tests.",
+    "Reuse pinned golang.org/x/sys/windows v0.48.0 APIs; direct import would require an explicit directness declaration and matching module-boundary guard update, with no version replacement."
+  ],
+  "required_meaningful_tests": [
+    "Native fail-before reproduction of current Open rejecting a legitimate private Windows fixture; then fresh-file create/migrate/write/read/close/reopen with the unchanged real driver.",
+    "Inspect actual resulting owner and DACL on DB, live WAL and SHM after writes under an inheritable private-directory fixture.",
+    "Reject Everyone/Users/Authenticated Users or unrelated SID access, null/missing DACL, unsafe inherited grants, foreign ownership and unsupported ACE forms; confirm rejection preserves existing bytes and ACLs.",
+    "Reject unsafe directories, relevant reparse/path replacement cases and unsupported security capability; exercise atomic creation collisions without truncating existing data.",
+    "Run actual VACUUM INTO backup/restore with Windows ACL preparation/validation, and verify message/own-view restoration plus private backup and sidecars.",
+    "Where a Windows harness can safely provide a second unprivileged token, prove the selected owner can read/write and that other ordinary principals cannot; descriptor parsing alone is not a substitute for native behavior.",
+    "Run complete current Windows ordinary suite and Linux/macOS regression/race gates without skips or replacing constructor tests with the borrowed-pool path."
+  ],
+  "not_sufficient": [
+    "Skipping the 0077 mask on Windows",
+    "Treating os.Chmod(0600) as a Windows ACL",
+    "Restricting only the main SQLite file while ignoring actual sidecar/backup security",
+    "Changing tests to call NewStore only to avoid the standalone constructor",
+    "Claiming native success from source inspection or cross-compilation"
+  ]
+}

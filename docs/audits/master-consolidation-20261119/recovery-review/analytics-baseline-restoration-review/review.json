@@ -1,0 +1,45 @@
+{
+  "observed_utc": "2026-11-19T12:40:57.716340+00:00",
+  "reviewer": "/root/independent_triage",
+  "status": "source review approved in six-file follow-up scope",
+  "base": "06a14e4bc6e5bca8bb0d9b857d26f1d280821aba",
+  "head": "150ab4ed3c2f9911f45fd07e8676edd03aa31179",
+  "tree": "926205aae18016ef55f882fda6415e1ac2b7fd94",
+  "changed_paths": [
+    "cmd/circula/auditanchor.go",
+    "future/analytics/README.md",
+    "future/analytics/RECOVERY-20261119.md",
+    "future/analytics/recovery-evidence-20261119/accepted-core-baseline.json",
+    "future/analytics/recovery-evidence-20261119/source-blobs.json",
+    "internal/service/departure_pagination_regression_test.go"
+  ],
+  "main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "accepted_main_blobs": {
+    "cmd/circula/auditanchor.go": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+    "internal/service/departure_pagination_regression_test.go": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+  },
+  "unchanged_go_module_workflow_blobs": {
+    "future/analytics/aggregate.go": "e1baffbd0a168153f4de048a3d5db26076d980c5",
+    "future/analytics/aggregate_test.go": "b63a0cb81859b79f9d1b1c8a515fc5ff1e89883a",
+    "future/analytics/audit_test.go": "15af2172d08891b6d04c2bb871e5efd36a2032ca",
+    "future/analytics/dashboard.go": "6758ed08780e6fd3ed5e24d1685fb194ff36bb41",
+    "future/analytics/dashboard_test.go": "f80fabb95b0521cf98dc2f26c02870f32d3c7256",
+    "future/analytics/go.mod": "72a443fddee07393b09238291b948b82a9670f5f",
+    "future/analytics/interface.go": "40c0e44f884a08fa9d4e4d2ff37e408b43042a21",
+    "future/analytics/interface_test.go": "29012e655ab7fb1afe57c740588ad0aaffb7dffa",
+    "future/analytics/performance_test.go": "40c801db8dadded62ccab631870fcb440eb48160",
+    ".github/workflows/future-analytics.yml": "9bb3afcabb8be7480c2e70e63e09a4166d02c115"
+  },
+  "readme_hash_receipt_matches": true,
+  "worktree_clean": true,
+  "blocking_findings": [],
+  "checks": [
+    "Read full six-path diff",
+    "Verified two complete Core files equal accepted main",
+    "Verified eight Go files, go.mod and dedicated workflow equal prior approved candidate",
+    "Verified README candidate hash receipt against actual object",
+    "Verified docs explicitly distinguish inherited Core restoration and require fresh combined provider checks"
+  ],
+  "runtime_qualification": "No new test run; prior module qualification not asserted as current whole-Core pass",
+  "recommendation": "Guarded fast-forward publication may proceed under parent authorization after rechecking remote expected head. Normal current-head gates remain required."
+}

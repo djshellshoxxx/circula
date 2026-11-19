@@ -1,0 +1,400 @@
+{
+  "observed_utc": "2026-11-19T12:42:40.178Z",
+  "runs": [
+    {
+      "name": "run_44511002005",
+      "id": 44511002005,
+      "head": "13669485b641475fce526633f47055ef31997098",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "updated_at": "2026-11-19T12:19:19Z",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002005"
+    },
+    {
+      "name": "run_44510880533",
+      "id": 44510880533,
+      "head": "13669485b641475fce526633f47055ef31997098",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "updated_at": "2026-11-19T12:26:25Z",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44510880533"
+    },
+    {
+      "name": "run_44511002032",
+      "id": 44511002032,
+      "head": "13669485b641475fce526633f47055ef31997098",
+      "event": "pull_request",
+      "status": "queued",
+      "conclusion": null,
+      "updated_at": "2026-11-19T11:01:26Z",
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032"
+    }
+  ],
+  "pr": {
+    "name": "pr103",
+    "head": "13669485b641475fce526633f47055ef31997098",
+    "base": "797dddf21adddfb34a49e7bda1871a202968dcda",
+    "state": "open",
+    "merged": false
+  },
+  "jobs": [
+    {
+      "run": 44511002005,
+      "jobs": [
+        {
+          "id": 135514904109,
+          "name": "isolated notifications with SQLite",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002005,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Check isolated HOLD boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify module checksums",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "gofmt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Vet including SQLite tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Race and SQLite regression tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Dependency vulnerability check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 44510880533,
+      "jobs": [
+        {
+          "id": 135514506227,
+          "name": "isolated notifications with SQLite",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44510880533,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Check isolated HOLD boundary",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Verify module checksums",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "gofmt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Vet including SQLite tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Race and SQLite regression tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Dependency vulnerability check",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Post Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17
+            },
+            {
+              "name": "Post Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 18
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run": 44511002032,
+      "jobs": [
+        {
+          "id": 135514904768,
+          "name": "fuzz smoke (RB-017)",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "seed corpora of every fuzz target (also part of go test ./...)",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "fuzz amount parser for 1000000 executions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "fuzz strict JSON decoder for 100000 executions",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13
+            }
+          ]
+        },
+        {
+          "id": 135514904892,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135514904925,
+          "name": "test (ubuntu-24.04)",
+          "status": "in_progress",
+          "conclusion": null,
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "test with race detector",
+              "status": "in_progress",
+              "conclusion": null,
+              "number": 4
+            },
+            {
+              "name": "Match requirement citations to recorded test results",
+              "status": "pending",
+              "conclusion": null,
+              "number": 5
+            },
+            {
+              "name": "Upload test evidence and property failure fixtures",
+              "status": "pending",
+              "conclusion": null,
+              "number": 6
+            },
+            {
+              "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+              "status": "pending",
+              "conclusion": null,
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "pending",
+              "conclusion": null,
+              "number": 12
+            }
+          ]
+        },
+        {
+          "id": 135514904978,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135514905012,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135514905025,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135514905198,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135514906589,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "run_id": 44511002032,
+          "logs_url": null,
+          "steps": null
+        }
+      ]
+    }
+  ],
+  "dedicated_pr_log": "﻿2026-11-19T12:18:43.7342862Z Current runner version: '2.338.2'\n2026-11-19T12:18:43.7359462Z ##[group]Runner Image Provisioner\n2026-11-19T12:18:43.7360092Z Hosted Compute Agent\n2026-11-19T12:18:43.7360567Z Version: 20261111.635\n2026-11-19T12:18:43.7361011Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed\n2026-11-19T12:18:43.7361509Z Build Date: 2026-11-11T01:49:01Z\n2026-11-19T12:18:43.7361997Z Worker ID: {9022bbe8-1d3c-4582-9e73-212f8a130ef7}\n2026-11-19T12:18:43.7362486Z Region: us-west-2\n2026-11-19T12:18:43.7362873Z Cloud: AWS\n2026-11-19T12:18:43.7363261Z ##[endgroup]\n2026-11-19T12:18:43.7364119Z ##[group]Operating System\n2026-11-19T12:18:43.7364567Z Ubuntu\n2026-11-19T12:18:43.7364924Z 24.04.5\n2026-11-19T12:18:43.7365279Z LTS\n2026-11-19T12:18:43.7365662Z ##[endgroup]\n2026-11-19T12:18:43.7366036Z ##[group]Runner Image\n2026-11-19T12:18:43.7366449Z Image: ubuntu-24.04\n2026-11-19T12:18:43.7366830Z Version: 20261116.133.1\n2026-11-19T12:18:43.7367975Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261116.133/images/ubuntu/Ubuntu2404-Readme.md\n2026-11-19T12:18:43.7369143Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261116.133\n2026-11-19T12:18:43.7369824Z ##[endgroup]\n2026-11-19T12:18:43.7370589Z ##[group]GITHUB_TOKEN Permissions\n2026-11-19T12:18:43.7372092Z Contents: read\n2026-11-19T12:18:43.7372490Z Metadata: read\n2026-11-19T12:18:43.7372906Z ##[endgroup]\n2026-11-19T12:18:43.7374305Z Secret source: Actions\n2026-11-19T12:18:43.7374925Z Cache mode: write\n2026-11-19T12:18:43.7375420Z Prepare workflow directory\n2026-11-19T12:18:43.7648533Z Prepare all required actions\n2026-11-19T12:18:43.7684523Z Getting action download info\n2026-11-19T12:18:44.1311468Z Download action repository 'actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)\n2026-11-19T12:18:46.1721110Z Download action repository 'actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff' (SHA:40f1582b2485089dde7abd97c1529aa768e1baff)\n2026-11-19T12:18:46.6435287Z Complete job name: isolated notifications with SQLite\n2026-11-19T12:18:46.6997303Z ##[group]Run actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5\n2026-11-19T12:18:46.6998275Z with:\n2026-11-19T12:18:46.6998566Z   persist-credentials: false\n2026-11-19T12:18:46.6998923Z   repository: djshellshoxxx/circula\n2026-11-19T12:18:46.7000848Z   token: ***\n2026-11-19T12:18:46.7001128Z   ssh-strict: true\n2026-11-19T12:18:46.7001389Z   ssh-user: git\n2026-11-19T12:18:46.7001639Z   clean: true\n2026-11-19T12:18:46.7001919Z   sparse-checkout-cone-mode: true\n2026-11-19T12:18:46.7002238Z   fetch-depth: 1\n2026-11-19T12:18:46.7002507Z   fetch-tags: false\n2026-11-19T12:18:46.7002771Z   show-progress: true\n2026-11-19T12:18:46.7003030Z   lfs: false\n2026-11-19T12:18:46.7003287Z   submodules: false\n2026-11-19T12:18:46.7003548Z   set-safe-directory: true\n2026-11-19T12:18:46.7003942Z env:\n2026-11-19T12:18:46.7004196Z   CGO_ENABLED: 1\n2026-11-19T12:18:46.7004450Z   GOMAXPROCS: 2\n2026-11-19T12:18:46.7004697Z   GOTOOLCHAIN: local\n2026-11-19T12:18:46.7005001Z ##[endgroup]\n2026-11-19T12:18:51.3713687Z Syncing repository: djshellshoxxx/circula\n2026-11-19T12:18:51.3714903Z ##[group]Getting Git version info\n2026-11-19T12:18:51.3715211Z Working directory is '/home/runner/work/circula/circula'\n2026-11-19T12:18:51.3715658Z [command]/usr/bin/git version\n2026-11-19T12:18:51.6068612Z git version 2.56.1\n2026-11-19T12:18:51.6082831Z ##[endgroup]\n2026-11-19T12:18:51.6093055Z Temporarily overriding HOME='/home/runner/work/_temp/396e1b3a-2d7d-413e-9b08-931ed03dc76b' before making global git config changes\n2026-11-19T12:18:51.6094081Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-19T12:18:51.6097011Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/circula/circula\n2026-11-19T12:18:51.6147175Z Deleting the contents of '/home/runner/work/circula/circula'\n2026-11-19T12:18:51.6149762Z ##[group]Initializing the repository\n2026-11-19T12:18:51.6153652Z [command]/usr/bin/git init /home/runner/work/circula/circula\n2026-11-19T12:18:51.6681180Z hint: Using 'master' as the name for the initial branch. This default branch name\n2026-11-19T12:18:51.6681645Z hint: will change to \"main\" in Git 3.0. To configure the initial branch name\n2026-11-19T12:18:51.6682058Z hint: to use in all of your new repositories, which will suppress this warning,\n2026-11-19T12:18:51.6682395Z hint: call:\n2026-11-19T12:18:51.6682579Z hint:\n2026-11-19T12:18:51.6682858Z hint: \tgit config --global init.defaultBranch <name>\n2026-11-19T12:18:51.6683118Z hint:\n2026-11-19T12:18:51.6683370Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and\n2026-11-19T12:18:51.6683752Z hint: 'development'. The just-created branch can be renamed via this command:\n2026-11-19T12:18:51.6684120Z hint:\n2026-11-19T12:18:51.6684346Z hint: \tgit branch -m <name>\n2026-11-19T12:18:51.6692339Z hint:\n2026-11-19T12:18:51.6692726Z hint: Disable this message with \"git config set advice.defaultBranchName false\"\n2026-11-19T12:18:51.6693192Z Initialized empty Git repository in /home/runner/work/circula/circula/.git/\n2026-11-19T12:18:51.6700285Z [command]/usr/bin/git remote add origin https://github.com/djshellshoxxx/circula\n2026-11-19T12:18:51.6753339Z ##[endgroup]\n2026-11-19T12:18:51.6753861Z ##[group]Disabling automatic garbage collection\n2026-11-19T12:18:51.6756712Z [command]/usr/bin/git config --local gc.auto 0\n2026-11-19T12:18:51.6778514Z ##[endgroup]\n2026-11-19T12:18:51.6778862Z ##[group]Setting up auth\n2026-11-19T12:18:51.6783225Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-19T12:18:51.6810622Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-19T12:18:51.9689021Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-19T12:18:51.9710221Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-19T12:18:51.9857171Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-19T12:18:51.9880315Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-19T12:18:52.0024153Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***\n2026-11-19T12:18:52.0048176Z ##[endgroup]\n2026-11-19T12:18:52.0048548Z ##[group]Fetching the repository\n2026-11-19T12:18:52.0060931Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +83e6becbe8c8c06fab7f141ae14a41555021e74b:refs/remotes/pull/103/merge\n2026-11-19T12:18:52.9936764Z From https://github.com/djshellshoxxx/circula\n2026-11-19T12:18:52.9937307Z  * [new ref]         83e6becbe8c8c06fab7f141ae14a41555021e74b -> pull/103/merge\n2026-11-19T12:18:52.9940768Z ##[endgroup]\n2026-11-19T12:18:52.9941259Z ##[group]Determining the checkout info\n2026-11-19T12:18:52.9942889Z ##[endgroup]\n2026-11-19T12:18:52.9947580Z [command]/usr/bin/git sparse-checkout disable\n2026-11-19T12:18:53.0029200Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig\n2026-11-19T12:18:53.0069309Z ##[group]Checking out the ref\n2026-11-19T12:18:53.0072657Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/103/merge\n2026-11-19T12:18:53.0787125Z Note: switching to 'refs/remotes/pull/103/merge'.\n2026-11-19T12:18:53.0787413Z \n2026-11-19T12:18:53.0787607Z You are in 'detached HEAD' state. You can look around, make experimental\n2026-11-19T12:18:53.0788132Z changes and commit them, and you can discard any commits you make in this\n2026-11-19T12:18:53.0788463Z state without impacting any branches by switching back to a branch.\n2026-11-19T12:18:53.0788663Z \n2026-11-19T12:18:53.0788791Z If you want to create a new branch to retain commits you create, you may\n2026-11-19T12:18:53.0789290Z do so (now or later) by using -c with the switch command. Example:\n2026-11-19T12:18:53.0789473Z \n2026-11-19T12:18:53.0789563Z   git switch -c <new-branch-name>\n2026-11-19T12:18:53.0789684Z \n2026-11-19T12:18:53.0789765Z Or undo this operation with:\n2026-11-19T12:18:53.0789914Z \n2026-11-19T12:18:53.0789997Z   git switch -\n2026-11-19T12:18:53.0790085Z \n2026-11-19T12:18:53.0790263Z Turn off this advice by setting config variable advice.detachedHead to false\n2026-11-19T12:18:53.0790526Z \n2026-11-19T12:18:53.0790760Z HEAD is now at 83e6bec Merge 13669485b641475fce526633f47055ef31997098 into 797dddf21adddfb34a49e7bda1871a202968dcda\n2026-11-19T12:18:53.0801218Z ##[endgroup]\n2026-11-19T12:18:53.0838630Z [command]/usr/bin/git log -1 --format=%H\n2026-11-19T12:18:53.0855474Z 83e6becbe8c8c06fab7f141ae14a41555021e74b\n2026-11-19T12:18:53.0864397Z ##[group]Removing auth\n2026-11-19T12:18:53.0865322Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-19T12:18:53.0887062Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-19T12:18:53.1038598Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-19T12:18:53.1059861Z http.https://github.com/.extraheader\n2026-11-19T12:18:53.1063561Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader\n2026-11-19T12:18:53.1087054Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-19T12:18:53.1232555Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-19T12:18:53.1253136Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-19T12:18:53.1399557Z ##[endgroup]\n2026-11-19T12:18:53.1575236Z ##[group]Run actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff\n2026-11-19T12:18:53.1575517Z with:\n2026-11-19T12:18:53.1575670Z   go-version-file: go.mod\n2026-11-19T12:18:53.1575834Z   cache: true\n2026-11-19T12:18:53.1576018Z   cache-dependency-path: future/notifications/go.sum\n2026-11-19T12:18:53.1576244Z   check-latest: false\n2026-11-19T12:18:53.1578310Z   token: ***\n2026-11-19T12:18:53.1578456Z env:\n2026-11-19T12:18:53.1578592Z   CGO_ENABLED: 1\n2026-11-19T12:18:53.1578816Z   GOMAXPROCS: 2\n2026-11-19T12:18:53.1578984Z   GOTOOLCHAIN: local\n2026-11-19T12:18:53.1579133Z ##[endgroup]\n2026-11-19T12:18:53.2554104Z Setup go version spec 1.26.11\n2026-11-19T12:18:53.3619521Z Found in cache @ /opt/hostedtoolcache/go/1.26.11/x64\n2026-11-19T12:18:53.3620050Z (node:2334) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n2026-11-19T12:18:53.3620533Z (Use `node --trace-deprecation ...` to show where the warning was created)\n2026-11-19T12:18:53.3622329Z Added go to the path\n2026-11-19T12:18:53.3624594Z Successfully set up Go version 1.26.11\n2026-11-19T12:18:54.3953124Z [command]/opt/hostedtoolcache/go/1.26.11/x64/bin/go env GOMODCACHE\n2026-11-19T12:18:54.3977506Z [command]/opt/hostedtoolcache/go/1.26.11/x64/bin/go env GOCACHE\n2026-11-19T12:18:54.3996193Z /home/runner/go/pkg/mod\n2026-11-19T12:18:54.4010714Z /home/runner/.cache/go-build\n2026-11-19T12:18:54.7939603Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.26.11-15d6e168f3b506e3041e1622bddbb914691899eab9dcd579d7ea49effe9c3361\n2026-11-19T12:18:54.8018525Z (node:2334) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.\n2026-11-19T12:18:56.1310376Z Received 0 of 122517335 (0.0%), 0.0 MBs/sec\n2026-11-19T12:18:57.1312782Z Received 75497472 of 122517335 (61.6%), 36.0 MBs/sec\n2026-11-19T12:18:57.4675856Z Received 122517335 of 122517335 (100.0%), 50.0 MBs/sec\n2026-11-19T12:18:57.4676452Z Cache Size: ~117 MB (122517335 B)\n2026-11-19T12:18:57.4725902Z [command]/usr/bin/tar -xf /home/runner/work/_temp/9625bfd7-ac8b-4dbb-bbea-63115b1072a4/cache.tzst -P -C /home/runner/work/circula/circula --use-compress-program unzstd\n2026-11-19T12:18:57.9656672Z Cache restored successfully\n2026-11-19T12:18:57.9699194Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.26.11-15d6e168f3b506e3041e1622bddbb914691899eab9dcd579d7ea49effe9c3361\n2026-11-19T12:18:57.9722518Z go version go1.26.11 linux/amd64\n2026-11-19T12:18:57.9722746Z \n2026-11-19T12:18:57.9723094Z ##[group]go env\n2026-11-19T12:18:58.0702087Z AR='ar'\n2026-11-19T12:18:58.0702328Z CC='gcc'\n2026-11-19T12:18:58.0702505Z CGO_CFLAGS='-O2 -g'\n2026-11-19T12:18:58.0702691Z CGO_CPPFLAGS=''\n2026-11-19T12:18:58.0702856Z CGO_CXXFLAGS='-O2 -g'\n2026-11-19T12:18:58.0703031Z CGO_ENABLED='1'\n2026-11-19T12:18:58.0703215Z CGO_FFLAGS='-O2 -g'\n2026-11-19T12:18:58.0703409Z CGO_LDFLAGS='-O2 -g'\n2026-11-19T12:18:58.0703580Z CXX='g++'\n2026-11-19T12:18:58.0703723Z GCCGO='gccgo'\n2026-11-19T12:18:58.0703876Z GO111MODULE=''\n2026-11-19T12:18:58.0704022Z GOAMD64='v1'\n2026-11-19T12:18:58.0704162Z GOARCH='amd64'\n2026-11-19T12:18:58.0704305Z GOAUTH='netrc'\n2026-11-19T12:18:58.0704455Z GOBIN=''\n2026-11-19T12:18:58.0704621Z GOCACHE='/home/runner/.cache/go-build'\n2026-11-19T12:18:58.0704825Z GOCACHEPROG=''\n2026-11-19T12:18:58.0704971Z GODEBUG=''\n2026-11-19T12:18:58.0705130Z GOENV='/home/runner/.config/go/env'\n2026-11-19T12:18:58.0705321Z GOEXE=''\n2026-11-19T12:18:58.0705462Z GOEXPERIMENT=''\n2026-11-19T12:18:58.0705614Z GOFIPS140='off'\n2026-11-19T12:18:58.0705759Z GOFLAGS=''\n2026-11-19T12:18:58.0706253Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build1832441537=/tmp/go-build -gno-record-gcc-switches'\n2026-11-19T12:18:58.0706716Z GOHOSTARCH='amd64'\n2026-11-19T12:18:58.0706870Z GOHOSTOS='linux'\n2026-11-19T12:18:58.0707020Z GOINSECURE=''\n2026-11-19T12:18:58.0707395Z GOMOD='/home/runner/work/circula/circula/go.mod'\n2026-11-19T12:18:58.0707803Z GOMODCACHE='/home/runner/go/pkg/mod'\n2026-11-19T12:18:58.0708013Z GONOPROXY=''\n2026-11-19T12:18:58.0708160Z GONOSUMDB=''\n2026-11-19T12:18:58.0708311Z GOOS='linux'\n2026-11-19T12:18:58.0708466Z GOPATH='/home/runner/go'\n2026-11-19T12:18:58.0708634Z GOPRIVATE=''\n2026-11-19T12:18:58.0708832Z GOPROXY='https://proxy.golang.org,direct'\n2026-11-19T12:18:58.0709070Z GOROOT='/opt/hostedtoolcache/go/1.26.11/x64'\n2026-11-19T12:18:58.0709292Z GOSUMDB='sum.golang.org'\n2026-11-19T12:18:58.0709460Z GOTELEMETRY='local'\n2026-11-19T12:18:58.0709654Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'\n2026-11-19T12:18:58.0709876Z GOTMPDIR=''\n2026-11-19T12:18:58.0710029Z GOTOOLCHAIN='local'\n2026-11-19T12:18:58.0710261Z GOTOOLDIR='/opt/hostedtoolcache/go/1.26.11/x64/pkg/tool/linux_amd64'\n2026-11-19T12:18:58.0710521Z GOVCS=''\n2026-11-19T12:18:58.0710665Z GOVERSION='go1.26.11'\n2026-11-19T12:18:58.0710832Z GOWORK=''\n2026-11-19T12:18:58.0711008Z PKG_CONFIG='pkg-config'\n2026-11-19T12:18:58.0711112Z \n2026-11-19T12:18:58.0711466Z ##[endgroup]\n2026-11-19T12:18:58.0851608Z ##[group]Run python3 - <<'PY'\n2026-11-19T12:18:58.0851893Z \u001b[36;1mpython3 - <<'PY'\u001b[0m\n2026-11-19T12:18:58.0852081Z \u001b[36;1mimport json\u001b[0m\n2026-11-19T12:18:58.0852254Z \u001b[36;1mimport subprocess\u001b[0m\n2026-11-19T12:18:58.0852445Z \u001b[36;1mfrom pathlib import Path\u001b[0m\n2026-11-19T12:18:58.0852631Z \u001b[36;1m\u001b[0m\n2026-11-19T12:18:58.0852859Z \u001b[36;1mmanifest = json.loads(Path(\"feature.json\").read_text())\u001b[0m\n2026-11-19T12:18:58.0853223Z \u001b[36;1mif manifest.get(\"enabled\") is not False or manifest.get(\"integration\") != \"HOLD\":\u001b[0m\n2026-11-19T12:18:58.0853636Z \u001b[36;1m    raise SystemExit(\"This workflow qualifies an isolated, disabled HOLD module only\")\u001b[0m\n2026-11-19T12:18:58.0854037Z \u001b[36;1mexpected = \"github.com/djshellshoxxx/circula/future/notifications\"\u001b[0m\n2026-11-19T12:18:58.0854397Z \u001b[36;1mmain = subprocess.check_output([\"go\", \"list\", \"-m\"], text=True).strip()\u001b[0m\n2026-11-19T12:18:58.0854811Z \u001b[36;1mif main != expected:\u001b[0m\n2026-11-19T12:18:58.0855095Z \u001b[36;1m    raise SystemExit(\"Unexpected nested module identity\")\u001b[0m\n2026-11-19T12:18:58.0855485Z \u001b[36;1mmodules = subprocess.check_output([\"go\", \"list\", \"-m\", \"-f\", \"{{.Path}}\", \"all\"], text=True).splitlines()\u001b[0m\n2026-11-19T12:18:58.0855834Z \u001b[36;1mfor module in modules:\u001b[0m\n2026-11-19T12:18:58.0856262Z \u001b[36;1m    if module == \"github.com/djshellshoxxx/circula\" or (module.startswith(\"github.com/djshellshoxxx/circula/\") and module != expected):\u001b[0m\n2026-11-19T12:18:58.0856810Z \u001b[36;1m        raise SystemExit(\"Notifications may not import core or another future module\")\u001b[0m\n2026-11-19T12:18:58.0857118Z \u001b[36;1mPY\u001b[0m\n2026-11-19T12:18:58.3160292Z shell: /usr/bin/bash -e {0}\n2026-11-19T12:18:58.3160508Z env:\n2026-11-19T12:18:58.3160660Z   CGO_ENABLED: 1\n2026-11-19T12:18:58.3160816Z   GOMAXPROCS: 2\n2026-11-19T12:18:58.3160982Z   GOTOOLCHAIN: local\n2026-11-19T12:18:58.3161143Z ##[endgroup]\n2026-11-19T12:18:58.3624284Z ##[group]Run go mod verify\n2026-11-19T12:18:58.3624506Z \u001b[36;1mgo mod verify\u001b[0m\n2026-11-19T12:18:58.3644211Z shell: /usr/bin/bash -e {0}\n2026-11-19T12:18:58.3644408Z env:\n2026-11-19T12:18:58.3644560Z   CGO_ENABLED: 1\n2026-11-19T12:18:58.3644726Z   GOMAXPROCS: 2\n2026-11-19T12:18:58.3644881Z   GOTOOLCHAIN: local\n2026-11-19T12:18:58.3645087Z ##[endgroup]\n2026-11-19T12:18:58.5840706Z all modules verified\n2026-11-19T12:18:58.5864773Z ##[group]Run unformatted=\"$(gofmt -l .)\"\n2026-11-19T12:18:58.5865117Z \u001b[36;1munformatted=\"$(gofmt -l .)\"\u001b[0m\n2026-11-19T12:18:58.5865331Z \u001b[36;1mif [ -n \"$unformatted\" ]; then\u001b[0m\n2026-11-19T12:18:58.5865538Z \u001b[36;1m  printf '%s\\n' \"$unformatted\"\u001b[0m\n2026-11-19T12:18:58.5865734Z \u001b[36;1m  exit 1\u001b[0m\n2026-11-19T12:18:58.5865884Z \u001b[36;1mfi\u001b[0m\n2026-11-19T12:18:58.5885220Z shell: /usr/bin/bash -e {0}\n2026-11-19T12:18:58.5885410Z env:\n2026-11-19T12:18:58.5885559Z   CGO_ENABLED: 1\n2026-11-19T12:18:58.5885763Z   GOMAXPROCS: 2\n2026-11-19T12:18:58.5885921Z   GOTOOLCHAIN: local\n2026-11-19T12:18:58.5886087Z ##[endgroup]\n2026-11-19T12:18:58.7431593Z ##[group]Run go vet -mod=readonly -tags=sqlite_cgo_test ./...\n2026-11-19T12:18:58.7431961Z \u001b[36;1mgo vet -mod=readonly -tags=sqlite_cgo_test ./...\u001b[0m\n2026-11-19T12:18:58.7451586Z shell: /usr/bin/bash -e {0}\n2026-11-19T12:18:58.7451782Z env:\n2026-11-19T12:18:58.7451928Z   CGO_ENABLED: 1\n2026-11-19T12:18:58.7452086Z   GOMAXPROCS: 2\n2026-11-19T12:18:58.7452247Z   GOTOOLCHAIN: local\n2026-11-19T12:18:58.7452402Z ##[endgroup]\n2026-11-19T12:19:05.1405877Z ##[group]Run go test -mod=readonly -race -p=1 -count=1 -tags=sqlite_cgo_test -cover -timeout=3m ./...\n2026-11-19T12:19:05.1406376Z \u001b[36;1mgo test -mod=readonly -race -p=1 -count=1 -tags=sqlite_cgo_test -cover -timeout=3m ./...\u001b[0m\n2026-11-19T12:19:05.1433151Z shell: /usr/bin/bash -e {0}\n2026-11-19T12:19:05.1433359Z env:\n2026-11-19T12:19:05.1433517Z   CGO_ENABLED: 1\n2026-11-19T12:19:05.1433670Z   GOMAXPROCS: 2\n2026-11-19T12:19:05.1433827Z   GOTOOLCHAIN: local\n2026-11-19T12:19:05.1433987Z ##[endgroup]\n2026-11-19T12:19:09.1944813Z ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t1.325s\tcoverage: 71.0% of statements\n2026-11-19T12:19:09.6282958Z \tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n2026-11-19T12:19:11.4656045Z ok  \tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t1.031s\tcoverage: 85.3% of statements\n2026-11-19T12:19:12.9749027Z ok  \tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t1.086s\tcoverage: 84.2% of statements\n2026-11-19T12:19:12.9825664Z ##[group]Run go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...\n2026-11-19T12:19:12.9826029Z \u001b[36;1mgo run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...\u001b[0m\n2026-11-19T12:19:12.9852696Z shell: /usr/bin/bash -e {0}\n2026-11-19T12:19:12.9852911Z env:\n2026-11-19T12:19:12.9853059Z   CGO_ENABLED: 1\n2026-11-19T12:19:12.9853213Z   GOMAXPROCS: 2\n2026-11-19T12:19:12.9853373Z   GOTOOLCHAIN: local\n2026-11-19T12:19:12.9853536Z ##[endgroup]\n2026-11-19T12:19:15.4739459Z === Symbol Results ===\n2026-11-19T12:19:15.4740166Z \n2026-11-19T12:19:15.4740282Z No vulnerabilities found.\n2026-11-19T12:19:15.4740429Z \n2026-11-19T12:19:15.4740552Z Your code is affected by 0 vulnerabilities.\n2026-11-19T12:19:15.4740924Z This scan also found 0 vulnerabilities in packages you import and 1\n2026-11-19T12:19:15.4741394Z vulnerability in modules you require, but your code doesn't appear to call these\n2026-11-19T12:19:15.4741776Z vulnerabilities.\n2026-11-19T12:19:15.4741995Z Use '-show verbose' for more details.\n2026-11-19T12:19:15.5059950Z Post job cleanup.\n2026-11-19T12:19:15.5997090Z (node:2675) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.\n2026-11-19T12:19:15.5997799Z (Use `node --trace-deprecation ...` to show where the warning was created)\n2026-11-19T12:19:15.6050862Z [command]/opt/hostedtoolcache/go/1.26.11/x64/bin/go env GOMODCACHE\n2026-11-19T12:19:15.6079467Z [command]/opt/hostedtoolcache/go/1.26.11/x64/bin/go env GOCACHE\n2026-11-19T12:19:15.6099991Z /home/runner/go/pkg/mod\n2026-11-19T12:19:15.6118233Z /home/runner/.cache/go-build\n2026-11-19T12:19:15.6121690Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.26.11-15d6e168f3b506e3041e1622bddbb914691899eab9dcd579d7ea49effe9c3361, not saving cache.\n2026-11-19T12:19:15.6224208Z Post job cleanup.\n2026-11-19T12:19:15.6872021Z [command]/usr/bin/git version\n2026-11-19T12:19:15.6898023Z git version 2.56.1\n2026-11-19T12:19:15.6922473Z Temporarily overriding HOME='/home/runner/work/_temp/8af01da0-5bde-44d0-95d7-1c0943c6bd6a' before making global git config changes\n2026-11-19T12:19:15.6923792Z Adding repository directory to the temporary git global config as a safe directory\n2026-11-19T12:19:15.6924848Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/circula/circula\n2026-11-19T12:19:15.6956323Z [command]/usr/bin/git config --local --name-only --get-regexp core\\.sshCommand\n2026-11-19T12:19:15.6973847Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'core\\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\"\n2026-11-19T12:19:15.7129280Z [command]/usr/bin/git config --local --name-only --get-regexp http\\.https\\:\\/\\/github\\.com\\/\\.extraheader\n2026-11-19T12:19:15.7151107Z [command]/usr/bin/git submodule foreach --recursive sh -c \"git config --local --name-only --get-regexp 'http\\.https\\:\\/\\/github\\.com\\/\\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\"\n2026-11-19T12:19:15.7313209Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\\.gitdir:\n2026-11-19T12:19:15.7332780Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url\n2026-11-19T12:19:15.7594171Z Cleaning up orphan processes\n2026-11-19T12:19:15.7841207Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5, actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/\n"
+}

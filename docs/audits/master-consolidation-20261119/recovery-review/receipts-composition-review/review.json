@@ -1,0 +1,372 @@
+{
+  "observed_utc": "2026-11-19T13:10:13.974642+00:00",
+  "reviewer": "/root/independent_triage",
+  "scope": "Root documentation, provenance, workflow and final restoration composition only. Numeric implementation author performs blob identity verification, not self-approval; separate root-review.json is the code approval.",
+  "head": "3466df2fe5a73de17e25c5a68315eead0e3ac926",
+  "tree": "957855342ac07e600f3922c9ef6fe8da5b86fed0",
+  "working_tree_clean": true,
+  "base": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+  "archive": "91529c5a3a4268ecf3a919e099ab9aca779aab2d",
+  "archive_module_tree": "f1ee3e37b71632fbf25205a8fc0aed641df22e2d",
+  "numeric_repair_head": "abaa1e8942f0997f86ce9e3bbc6d80b2dd65d056",
+  "independent_numeric_reviewer": "/root",
+  "approved_numeric_blobs_unchanged": {
+    "future/receipts/canonical.go": "637f1d3dac5b698a151d447b7073021a7a02daf8",
+    "future/receipts/canonical_numeric_fidelity_test.go": "1e624f2935011df0b51d190851c37807f978d188"
+  },
+  "all_archived_files_retained": 44,
+  "archived_files_byte_identical": 42,
+  "original_go_files": 14,
+  "original_go_files_byte_identical": 13,
+  "original_test_files_byte_identical": 6,
+  "module_and_manifest_files_unchanged": true,
+  "archive_mapping": {
+    "future/receipts/AUDIT.md": {
+      "archive_blob": "64184de75494bad82d2109e17a68d7fdb9caea37",
+      "candidate_blob": "64184de75494bad82d2109e17a68d7fdb9caea37",
+      "identical": true
+    },
+    "future/receipts/CANDIDATE-ADR-001.md": {
+      "archive_blob": "b82fe2775fbf43a08e06b20b8c26b1774df0359d",
+      "candidate_blob": "b82fe2775fbf43a08e06b20b8c26b1774df0359d",
+      "identical": true
+    },
+    "future/receipts/CERTIFICATE-OPERATIONS.md": {
+      "archive_blob": "f9cd284550a37998d725650413ecd101b07938c6",
+      "candidate_blob": "f9cd284550a37998d725650413ecd101b07938c6",
+      "identical": true
+    },
+    "future/receipts/COMPLETION.md": {
+      "archive_blob": "30ba77518ec59cd00bdeb2eef84af3f5edcfab45",
+      "candidate_blob": "30ba77518ec59cd00bdeb2eef84af3f5edcfab45",
+      "identical": true
+    },
+    "future/receipts/FINAL-HANDOFF.md": {
+      "archive_blob": "b6085a83a5e1e43fb230e3359db26d5bade38703",
+      "candidate_blob": "b6085a83a5e1e43fb230e3359db26d5bade38703",
+      "identical": true
+    },
+    "future/receipts/HANDOFF-MILESTONE-AUDIT.md": {
+      "archive_blob": "b6085a83a5e1e43fb230e3359db26d5bade38703",
+      "candidate_blob": "b6085a83a5e1e43fb230e3359db26d5bade38703",
+      "identical": true
+    },
+    "future/receipts/HANDOFF-MILESTONE-MASTER.md": {
+      "archive_blob": "a2b8c63b2845fb60d54a326e6765f24d699bceb6",
+      "candidate_blob": "a2b8c63b2845fb60d54a326e6765f24d699bceb6",
+      "identical": true
+    },
+    "future/receipts/IMPLEMENTATION.md": {
+      "archive_blob": "25a6668257be96c849a4b80303a96e23a3a23868",
+      "candidate_blob": "25a6668257be96c849a4b80303a96e23a3a23868",
+      "identical": true
+    },
+    "future/receipts/INTEGRATION.md": {
+      "archive_blob": "b030e00fdfd721282b90e347688218368c5991f9",
+      "candidate_blob": "b030e00fdfd721282b90e347688218368c5991f9",
+      "identical": true
+    },
+    "future/receipts/README.md": {
+      "archive_blob": "7cdcebac5ed0c135bb6c8824d3879ae459948493",
+      "candidate_blob": "1bb7db7acbed63ce80418eb635954c54d0cbfdcb",
+      "identical": false
+    },
+    "future/receipts/RECEIPT-ENGINEERING-SNAPSHOT.md": {
+      "archive_blob": "4df582e295e46929aaa15b046b1f93db0813d4c4",
+      "candidate_blob": "4df582e295e46929aaa15b046b1f93db0813d4c4",
+      "identical": true
+    },
+    "future/receipts/RECEIPT-SPEC-SNAPSHOT.md": {
+      "archive_blob": "1e43a99a05e96bdb1e0745ba8304a0c7f7e02a02",
+      "candidate_blob": "1e43a99a05e96bdb1e0745ba8304a0c7f7e02a02",
+      "identical": true
+    },
+    "future/receipts/SECURITY-AUDIT.md": {
+      "archive_blob": "fbe95053d012cd29d7697e0da136ec82a2fb0e33",
+      "candidate_blob": "fbe95053d012cd29d7697e0da136ec82a2fb0e33",
+      "identical": true
+    },
+    "future/receipts/SPEC-SNAPSHOT.md": {
+      "archive_blob": "e1171c05bba413ea0767e62ef679e87c4c406412",
+      "candidate_blob": "e1171c05bba413ea0767e62ef679e87c4c406412",
+      "identical": true
+    },
+    "future/receipts/THIRD-PARTY.md": {
+      "archive_blob": "7f2139f109b2fbd7029cb4d37faeac6fb8a43405",
+      "candidate_blob": "7f2139f109b2fbd7029cb4d37faeac6fb8a43405",
+      "identical": true
+    },
+    "future/receipts/THIRD_PARTY_NOTICES.md": {
+      "archive_blob": "7f2139f109b2fbd7029cb4d37faeac6fb8a43405",
+      "candidate_blob": "7f2139f109b2fbd7029cb4d37faeac6fb8a43405",
+      "identical": true
+    },
+    "future/receipts/UPSTREAM-RESEARCH.md": {
+      "archive_blob": "c4b4dcc2955f4e11185f64b782108576b2e8f2b8",
+      "candidate_blob": "c4b4dcc2955f4e11185f64b782108576b2e8f2b8",
+      "identical": true
+    },
+    "future/receipts/UPSTREAM-REUSE-MATRIX.md": {
+      "archive_blob": "bf506b9759cdae52f39ad9b70a34c5785a04443c",
+      "candidate_blob": "bf506b9759cdae52f39ad9b70a34c5785a04443c",
+      "identical": true
+    },
+    "future/receipts/VALIDATION.md": {
+      "archive_blob": "0958a20207bb0e8ea25e09e14bbcf227e6af83c4",
+      "candidate_blob": "0958a20207bb0e8ea25e09e14bbcf227e6af83c4",
+      "identical": true
+    },
+    "future/receipts/audit_regression_test.go": {
+      "archive_blob": "217c0cede257f542b70862b6a83fdbd90f44af88",
+      "candidate_blob": "217c0cede257f542b70862b6a83fdbd90f44af88",
+      "identical": true
+    },
+    "future/receipts/canonical.go": {
+      "archive_blob": "98492f7b0adc30fcb6932eb9da129584489aad35",
+      "candidate_blob": "637f1d3dac5b698a151d447b7073021a7a02daf8",
+      "identical": false
+    },
+    "future/receipts/canonical_test.go": {
+      "archive_blob": "ff367636722a95f06011592df9693eeb44a48783",
+      "candidate_blob": "ff367636722a95f06011592df9693eeb44a48783",
+      "identical": true
+    },
+    "future/receipts/certificate.go": {
+      "archive_blob": "2bb2732f23ff703102f7a97965a3a777d2186a1c",
+      "candidate_blob": "2bb2732f23ff703102f7a97965a3a777d2186a1c",
+      "identical": true
+    },
+    "future/receipts/certificate_test.go": {
+      "archive_blob": "020eaef77ecb6e1d4148488167306622b9bb4d05",
+      "candidate_blob": "020eaef77ecb6e1d4148488167306622b9bb4d05",
+      "identical": true
+    },
+    "future/receipts/cli.go": {
+      "archive_blob": "ba5d2408a810f06dfcb1c944297d71f037e795fc",
+      "candidate_blob": "ba5d2408a810f06dfcb1c944297d71f037e795fc",
+      "identical": true
+    },
+    "future/receipts/feature.json": {
+      "archive_blob": "d8096428f13dac807f88c3b6ac5468176889f9ea",
+      "candidate_blob": "d8096428f13dac807f88c3b6ac5468176889f9ea",
+      "identical": true
+    },
+    "future/receipts/go.mod": {
+      "archive_blob": "b20d53da1648d646667a88e342fd9ff97ceb17ab",
+      "candidate_blob": "b20d53da1648d646667a88e342fd9ff97ceb17ab",
+      "identical": true
+    },
+    "future/receipts/go.sum": {
+      "archive_blob": "3ed0482bb2e0c085c34ec5c30dd15c8a9a3dfd13",
+      "candidate_blob": "3ed0482bb2e0c085c34ec5c30dd15c8a9a3dfd13",
+      "identical": true
+    },
+    "future/receipts/health.go": {
+      "archive_blob": "4241ad15cdd7e5cb2548fdcf20784789bc80ffdb",
+      "candidate_blob": "4241ad15cdd7e5cb2548fdcf20784789bc80ffdb",
+      "identical": true
+    },
+    "future/receipts/http.go": {
+      "archive_blob": "0a7a1dbea065ef1c7e6e80741ec7144c515a2d7b",
+      "candidate_blob": "0a7a1dbea065ef1c7e6e80741ec7144c515a2d7b",
+      "identical": true
+    },
+    "future/receipts/query_regression_test.go": {
+      "archive_blob": "ee30c75bd15e9a0e6ef9afae0f9f7582e4a5bd16",
+      "candidate_blob": "ee30c75bd15e9a0e6ef9afae0f9f7582e4a5bd16",
+      "identical": true
+    },
+    "future/receipts/receipt.go": {
+      "archive_blob": "64cc5c0216c0612390c89f25bcabee32683a47fd",
+      "candidate_blob": "64cc5c0216c0612390c89f25bcabee32683a47fd",
+      "identical": true
+    },
+    "future/receipts/receipt_test.go": {
+      "archive_blob": "ef889d3ebd6ee5558dc00ba75764c6f18fe2cc6b",
+      "candidate_blob": "ef889d3ebd6ee5558dc00ba75764c6f18fe2cc6b",
+      "identical": true
+    },
+    "future/receipts/recovery-evidence/SHA256SUMS": {
+      "archive_blob": "2db378fc977363de6304bfb039443460ab237016",
+      "candidate_blob": "2db378fc977363de6304bfb039443460ab237016",
+      "identical": true
+    },
+    "future/receipts/recovery-evidence/host-form-green.log": {
+      "archive_blob": "79c75883b4696361080e461afac02c5b48108cc3",
+      "candidate_blob": "79c75883b4696361080e461afac02c5b48108cc3",
+      "identical": true
+    },
+    "future/receipts/recovery-evidence/host-form-red.log": {
+      "archive_blob": "7d33706d5056ea1b374493aed609205af1a39f70",
+      "candidate_blob": "7d33706d5056ea1b374493aed609205af1a39f70",
+      "identical": true
+    },
+    "future/receipts/recovery-evidence/modules.log": {
+      "archive_blob": "4eeadaa953aec6ec52958ead96faefdfeffd806e",
+      "candidate_blob": "4eeadaa953aec6ec52958ead96faefdfeffd806e",
+      "identical": true
+    },
+    "future/receipts/recovery-evidence/race.log": {
+      "archive_blob": "f3b4168fc3d18001f0f8b5cc6a8b6d4fdf92ebdd",
+      "candidate_blob": "f3b4168fc3d18001f0f8b5cc6a8b6d4fdf92ebdd",
+      "identical": true
+    },
+    "future/receipts/recovery-evidence/vet.log": {
+      "archive_blob": "55126a5a78cba73bfd17557f375cd9bb81b93dca",
+      "candidate_blob": "55126a5a78cba73bfd17557f375cd9bb81b93dca",
+      "identical": true
+    },
+    "future/receipts/service.go": {
+      "archive_blob": "3ed3ff195e5fa4a2db19c2ed7fd8862a5b44d4ca",
+      "candidate_blob": "3ed3ff195e5fa4a2db19c2ed7fd8862a5b44d4ca",
+      "identical": true
+    },
+    "future/receipts/service_test.go": {
+      "archive_blob": "b6721e294918355c36ea78333731ff3d7f800219",
+      "candidate_blob": "b6721e294918355c36ea78333731ff3d7f800219",
+      "identical": true
+    },
+    "future/receipts/third_party/go-jose-LICENSE": {
+      "archive_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "candidate_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "identical": true
+    },
+    "future/receipts/third_party/jcs-LICENSE": {
+      "archive_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "candidate_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "identical": true
+    },
+    "future/receipts/trust.go": {
+      "archive_blob": "8bc396cc875e5355d13019df9fa7e0b1c5fd5ca1",
+      "candidate_blob": "8bc396cc875e5355d13019df9fa7e0b1c5fd5ca1",
+      "identical": true
+    }
+  },
+  "full_changed_paths": [
+    ".github/workflows/future-receipts.yml",
+    "cmd/circula/auditanchor.go",
+    "future/receipts/AUDIT.md",
+    "future/receipts/CANDIDATE-ADR-001.md",
+    "future/receipts/CERTIFICATE-OPERATIONS.md",
+    "future/receipts/COMPLETION.md",
+    "future/receipts/FINAL-HANDOFF.md",
+    "future/receipts/HANDOFF-MILESTONE-AUDIT.md",
+    "future/receipts/HANDOFF-MILESTONE-MASTER.md",
+    "future/receipts/IMPLEMENTATION.md",
+    "future/receipts/INTEGRATION.md",
+    "future/receipts/README.md",
+    "future/receipts/RECOVERY-20261119.md",
+    "future/receipts/SECURITY-AUDIT.md",
+    "future/receipts/THIRD-PARTY.md",
+    "future/receipts/THIRD_PARTY_NOTICES.md",
+    "future/receipts/UPSTREAM-REUSE-MATRIX.md",
+    "future/receipts/VALIDATION.md",
+    "future/receipts/audit_regression_test.go",
+    "future/receipts/canonical.go",
+    "future/receipts/canonical_numeric_fidelity_test.go",
+    "future/receipts/canonical_test.go",
+    "future/receipts/certificate.go",
+    "future/receipts/certificate_test.go",
+    "future/receipts/cli.go",
+    "future/receipts/feature.json",
+    "future/receipts/go.mod",
+    "future/receipts/go.sum",
+    "future/receipts/health.go",
+    "future/receipts/http.go",
+    "future/receipts/query_regression_test.go",
+    "future/receipts/receipt.go",
+    "future/receipts/recovery-evidence-20261119/accepted-core-baseline.json",
+    "future/receipts/recovery-evidence-20261119/archive-qualification.json",
+    "future/receipts/recovery-evidence-20261119/gofmt.log",
+    "future/receipts/recovery-evidence-20261119/mod_verify-attempt2.log",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/checksums.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/checksums.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/environment.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/fail-before.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/fail-before.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-full.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-full.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-vet.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-vet.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/qualification.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/qualification.md",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/root-review.json",
+    "future/receipts/recovery-evidence-20261119/race-attempt2.log",
+    "future/receipts/recovery-evidence-20261119/source-blobs.json",
+    "future/receipts/recovery-evidence-20261119/vet-attempt2.log",
+    "future/receipts/recovery-evidence/SHA256SUMS",
+    "future/receipts/recovery-evidence/host-form-green.log",
+    "future/receipts/recovery-evidence/host-form-red.log",
+    "future/receipts/recovery-evidence/modules.log",
+    "future/receipts/recovery-evidence/race.log",
+    "future/receipts/recovery-evidence/vet.log",
+    "future/receipts/service.go",
+    "future/receipts/service_test.go",
+    "future/receipts/third_party/go-jose-LICENSE",
+    "future/receipts/third_party/jcs-LICENSE",
+    "future/receipts/trust.go",
+    "internal/service/departure_pagination_regression_test.go"
+  ],
+  "outside_module_paths": [
+    ".github/workflows/future-receipts.yml",
+    "cmd/circula/auditanchor.go",
+    "internal/service/departure_pagination_regression_test.go"
+  ],
+  "accepted_main_blobs": {
+    "cmd/circula/auditanchor.go": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+    "internal/service/departure_pagination_regression_test.go": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+  },
+  "root_composition_changed_paths": [
+    "future/receipts/README.md",
+    "future/receipts/RECOVERY-20261119.md",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/checksums.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/checksums.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/environment.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/fail-before.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/fail-before.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-full.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-full.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-vet.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/green-vet.txt",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/qualification.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/qualification.md",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/root-review.json",
+    "future/receipts/recovery-evidence-20261119/source-blobs.json"
+  ],
+  "source_map_matches_git": true,
+  "author_evidence_copies_byte_identical": {
+    "checksums.json": "c22731a77e6779d12e4aa810190acc77f19a4f06b0eb1c34809a48e1d2679b49",
+    "checksums.txt": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+    "environment.json": "05de8f93871aa3bebc6404f47fffccc33381341c7da39726798a1076fccb011e",
+    "fail-before.json": "d5cae01b0ccbf19108e5a19ec26ff0e6d94ee75e9265ae1f2bd228ed315e0f0b",
+    "fail-before.txt": "5bc54b91b8c6741ef9ca466cee376060e84950fa7352bb6d02d9562e51119a72",
+    "green-full.json": "cc94dbbf3252aad24ce4ec1aca04c19f21b3af5dafc25b319d41a81df83da092",
+    "green-full.txt": "b16505aa311ea09541bc69cc900ac696bb0ae5e8981e9770d93c9759d6ad9410",
+    "green-vet.json": "00770c346f6d5c07f505073b1c6a5c8bf87ea01d14005cd5bc1007bc907d773a",
+    "green-vet.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "qualification.json": "8852444025761e3afde466da3ea451529cf43c9119fce2610a0354f555f9020d",
+    "qualification.md": "f574e04ccf9b7f4847b21eea2066bd7a245064a4eb92925b8fd4b1178713cb4f"
+  },
+  "green_working_source_hashes_match_final_candidate": true,
+  "workflow_blob": "177f978ef6d947a1897105695b423c2a308e30f7",
+  "workflow_static_checks": {
+    "yaml": true,
+    "action_pins": true,
+    "readonly_permissions": true,
+    "unpersisted_checkout_credentials": true,
+    "native_matrix": true,
+    "bash_syntax": true,
+    "embedded_python_syntax": true,
+    "exact_dependency_allowlist": true,
+    "required_native_commands_and_fuzz_bounds": true
+  },
+  "numeric_code_independent_approval": {
+    "path": "future/receipts/recovery-evidence-20261119/numeric-repair/root-review.json",
+    "blob": "a1bf69683281a545b7624f83e5057d405f483a1e",
+    "reviewer": "/root",
+    "head": "abaa1e8942f0997f86ce9e3bbc6d80b2dd65d056"
+  },
+  "qualification_scope": "No Go/runtime/provider command executed in this composition review. Original archive race evidence remains original-source only; author repaired-source ordinary tests/vet/checksum are tied by exact file hashes, not represented as a current-provider pass.",
+  "disposition": "No blocking composition/docs/provenance/workflow finding. Suitable for isolated draft publication subject to existing current-source/provider and integration gates.",
+  "nonblocking_provenance_note": "Preserved author qualification.json/md retain their original pre-review status and local patch reference. The later root-review.json and current RECOVERY text record the subsequent approval; the Git commit contains the approved source."
+}

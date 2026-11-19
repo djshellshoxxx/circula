@@ -1,0 +1,124 @@
+{
+  "observed_at_utc": "2026-11-19 11:02:29 UTC",
+  "repository": "djshellshoxxx/circula",
+  "pr": {
+    "number": 97,
+    "url": "https://github.com/djshellshoxxx/circula/pull/97",
+    "head": "master/fnet207-recurring-remote-20261119",
+    "head_sha": "73a911a9bec387381633c031d8a4083c9fc724ad",
+    "draft": true,
+    "base": "future/fnet-207-recurring-20261116",
+    "base_sha": "0437e54897c6d9cfb3f2577807b82dd038493850"
+  },
+  "main_sha": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "publication_tree": "c6a4c5dabdbc482967a44353f14926a24066ad56",
+  "equivalent_local_commit": "cdcd2cb38b3af0275e5ceb58242384cfa916be45",
+  "source_reconstruction_used": false,
+  "tested_target_base": "0437e54897c6d9cfb3f2577807b82dd038493850",
+  "target_matches_tested_base": true,
+  "independent_review": "Complete eight-file remote blob/path review and native-matrix delta: no blocking findings.",
+  "module": {
+    "run_id": 44508676983,
+    "url": "https://github.com/djshellshoxxx/circula/actions/runs/44508676983",
+    "jobs": [
+      {
+        "id": 135506874095,
+        "name": "isolated recurring calendar (windows-2022)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 135506874340,
+        "name": "isolated recurring calendar (ubuntu-24.04)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874382,
+        "name": "isolated recurring calendar (macos-15-intel)",
+        "status": "queued",
+        "conclusion": null
+      }
+    ]
+  },
+  "core": {
+    "run_id": 44508676822,
+    "url": "https://github.com/djshellshoxxx/circula/actions/runs/44508676822",
+    "jobs": [
+      {
+        "id": 135506873913,
+        "name": "test (ubuntu-24.04)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874364,
+        "name": "reproducible build (two builds, same sha256)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874507,
+        "name": "vet, gofmt, golangci-lint, govulncheck",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874581,
+        "name": "fuzz smoke (RB-017)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874602,
+        "name": "build release targets",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874644,
+        "name": "e2e (Playwright, axe, keyboard)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506874670,
+        "name": "API contract and load smoke",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 135506876589,
+        "name": "test (${{ matrix.os }})",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ]
+  },
+  "verified_windows_log": {
+    "job_id": 135506874095,
+    "toolchain": "go1.26.11 windows/amd64",
+    "checkout_merge_sha": "19846dfdbf5cb1151d12dd02790dc15b6e5304b3",
+    "module_tree": "59b4a2d33825b22ac1ee33ffe03b48c175ffd911",
+    "command": "go test -count=1 -cover -timeout=2m ./...",
+    "result": "PASS",
+    "duration": "0.178s",
+    "coverage_percent": 94.4,
+    "manifest": "PASS",
+    "format": "PASS",
+    "vet": "PASS",
+    "race": "not run on Windows",
+    "fuzz": "Linux-only"
+  },
+  "local_linux": {
+    "command": "go test -race -count=1 -cover -timeout=30s ./...",
+    "result": "PASS",
+    "coverage_percent": 94.4,
+    "duration": "1.830s",
+    "vet": "PASS",
+    "fuzz_executions": 100000,
+    "fuzz_result": "PASS on unchanged production/test contents",
+    "provider_substitute": false
+  },
+  "disposition": "Draft and integration HOLD. Required queued current-head jobs are not passes; no merge, activation or release performed."
+}

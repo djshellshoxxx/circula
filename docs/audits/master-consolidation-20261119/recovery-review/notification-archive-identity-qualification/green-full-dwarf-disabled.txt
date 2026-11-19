@@ -1,0 +1,2 @@
+ok  	github.com/djshellshoxxx/circula/future/notifications	0.604s
+ok  	github.com/djshellshoxxx/circula/future/notifications/cmd/notifications-status	0.008s

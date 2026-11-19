@@ -1,0 +1,88 @@
+{
+  "observed_utc": "2026-11-19T12:37:21.654438+00:00",
+  "status": "independent source review approved; archival patch only; not published or integrated",
+  "base": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "head": "b96100d2a53cf696f16b8c34305eb132c673863c",
+  "tree": "36122c54a1a11333f36700d448a41aedafa7d631",
+  "branch": "master/notifications-archive-identity-20261119",
+  "worktree": "/workspace/scratch/f47ceab29930/circula-notifications-archive-identity",
+  "paths": [
+    "future/notifications/archive_identity_utf8_test.go",
+    "future/notifications/delivery.go",
+    "future/notifications/store.go",
+    "future/notifications/unsubscribe.go"
+  ],
+  "blobs": {
+    "future/notifications/archive_identity_utf8_test.go": "7c2cb746f6b7b0377a2d2b8b0be80f03275aa18d",
+    "future/notifications/delivery.go": "d422e124a8ed12b246c16f765c949ba9694b372c",
+    "future/notifications/store.go": "13ae8929f9ca429fcca3fdc1e1102a3b59ad8f2b",
+    "future/notifications/unsubscribe.go": "c4c14bcfdb884b0548d2f163a194a4e13ab7e868"
+  },
+  "source_sha256": {
+    "future/notifications/archive_identity_utf8_test.go": "7814be435335cebf3f904d78da8d2373ba266324b636ea44c66a6ee657c2975d",
+    "future/notifications/delivery.go": "716a5911044c183a9538e0f70f6236c09128888fcff8d3700ee3aa38a8dc9b3f",
+    "future/notifications/store.go": "c10a4efb96f904263c26d940ea5459074e2be0923e48b2827009c0a22057f728",
+    "future/notifications/unsubscribe.go": "035e5940ce21297770b56edd9f6a1b176674b5d4bdc6ebe8731b7c7dee076424"
+  },
+  "patch": "0001-notifications-archive-identity-utf8.patch",
+  "patch_sha256": "275427a6ed56cbbeb84820aa02e3bfd83a91b0f6523915dd2c8862e6b30d617b",
+  "dependency_files_unchanged": true,
+  "fail_before": {
+    "receipt": "fail-before-dwarf-disabled.json",
+    "actual_assertion_failure": true,
+    "failed_negative_methods": 4,
+    "failing_subcases": 12,
+    "valid_unicode_controls_passed": true
+  },
+  "validation": {
+    "full_module": "green-full-dwarf-disabled.json",
+    "vet": "green-vet.json",
+    "first_attempt": "initial-linker-killed.json",
+    "current_source_equals_tested_source": true,
+    "driver": "original archived modernc SQLite and pinned dependency graph",
+    "race": "No pass claimed: original archive full race failed before assertions from compiler/libc vet resource kills; not repeated."
+  },
+  "review": {
+    "status": "approved in narrow source scope",
+    "reviewer": "/root/branch_recovery",
+    "reviewed_commit": "b96100d2a53cf696f16b8c34305eb132c673863c",
+    "observed_utc": "2026-11-19T12:39:21.625204+00:00",
+    "notes": "No blocking finding. Public call paths, existing net/mail malformed UTF-8 guards, canonical ASCII target base64, real-driver regression assertions and valid Unicode/percent-escaped endpoint preservation reviewed. No full race pass claimed."
+  },
+  "scope": [
+    "DedupeKey rejects invalid UTF-8 before JSON hashing; EnqueueTx reaches this guard before SQL",
+    "SetTarget rejects invalid identity and raw endpoint bytes before JSON/AAD encoding",
+    "UnsubscribeToken rejects invalid identity bytes before target-bound capability encoding",
+    "Valid Unicode including literal U+FFFD and percent-escaped endpoint bytes preserved"
+  ],
+  "limitations": [
+    "No authorization or replay bypass demonstrated",
+    "Existing malformed stored rows are not migrated",
+    "No event, schema, retention, unsubscribe, or runtime-composition choice",
+    "Current reviewed PR103, PR100, Core and workflows untouched"
+  ],
+  "portable_patch_checks": [
+    {
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-identity",
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/f47ceab29930/evidence/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch"
+      ],
+      "exit": 0,
+      "mutated_files": false
+    },
+    {
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-json",
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/f47ceab29930/evidence/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch"
+      ],
+      "exit": 0,
+      "mutated_files": false
+    }
+  ]
+}

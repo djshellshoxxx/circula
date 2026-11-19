@@ -1,0 +1,18 @@
+{
+  "observed_utc": "2026-11-19T14:03:55.267014+00:00",
+  "head": "2ee089e36c9f2036c797d2be5bcce5a0650f78cb",
+  "working_tree_note": "Only test harness and four new regressions changed; production remains exact frozen 2ee089e.",
+  "command": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-timeout=15000",
+    "web/scan_lifecycle_test.mjs"
+  ],
+  "exit_code": 1,
+  "wall_seconds": 0.3152211429987801,
+  "node": "v24.22.3",
+  "source_sha256": "0a46e29a281fdb52c0413900855e524141f43c1a7c484f0f282f015b1d541e73",
+  "test_sha256": "d930e295869c3b527bf26bdb3fd0990bc8e83aa6fc9e57586b3aa05b0a8a8e3e",
+  "log_sha256": "f4c50c7ac06f9ea20695d40765b6b38e1b40542a86ae61dbc66df5abb3ee97c7"
+}

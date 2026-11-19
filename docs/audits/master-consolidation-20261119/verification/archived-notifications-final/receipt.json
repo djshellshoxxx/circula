@@ -1,0 +1,803 @@
+{
+  "module": "notifications",
+  "archive_head": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "archive_module_tree": "be42783f6bbb7cc1fdc443cbcff15fa54e540fc3",
+  "scope": "One resource-profile retry of the complete unchanged archived module race suite.",
+  "prior_aggregate": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION.json",
+  "prior_aggregate_sha256": "d52ea13975c26520236e551edc4326cb09fa1ea7c0a0f8c45ceda26ae62408b7",
+  "prior_aggregate_unchanged_by_this_runner": true,
+  "started_utc": "2026-11-19T13:28:15.579340+00:00",
+  "command": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-json",
+    "-race",
+    "-count=1",
+    "-cover",
+    "-ldflags=-w",
+    "-timeout=90s",
+    "./..."
+  ],
+  "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOMAXPROCS": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache",
+    "TMPDIR": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/archive-notifications-race-3catjox1"
+  },
+  "toolchain": "go version go1.26.11 linux/amd64",
+  "original_build_tags": [],
+  "dependency_policy": "Exact original go.mod/go.sum; no replacement, driver substitution or test filtering. Includes x/sys v0.49.0, SQLite v1.60.1 and libc v1.77.1.",
+  "source_sha256_before": {
+    "AUDIT.md": "e77d8a349f594f14c327e8f60dd6e689c0e1a3543825ec48b68c1e536625b908",
+    "COMPLETION.md": "29754e40f6c4962fa1aab910c827951404cfbc79b4f4f3f6c9713ded0a4b5e81",
+    "COVERAGE.md": "10a35ed2147d2a9fd8031c0edc9e1866036f82adad8a37a8dcd541212822dc3b",
+    "FINAL-HANDOFF.md": "fd2c1a565b7d0b654ed3263372418d4d92800c18e3d67c1ee6b8acfad47902d8",
+    "HANDOFF-MILESTONE-F.md": "fd2c1a565b7d0b654ed3263372418d4d92800c18e3d67c1ee6b8acfad47902d8",
+    "INTEGRATION.md": "706ebb66f6bf9e6e6096a1491f52a7da1049b09b546e2e8f8c716d11ab2c881f",
+    "MIGRATION-PLAN.md": "1a5fa7875c26c89178014e3dec54827f1022b1c4ef5fde9ba5a70b5d0c7e89dd",
+    "OPERATIONS.md": "f5945a3654a4d4eeb59190953d147c9636a96a2f3700ecab795ae8acee5ace51",
+    "README.md": "81e174f5fc9fa24998aa94e86ac1b7c88830b997f12291b20e6cca0116a33c03",
+    "SECURITY-AUDIT.md": "86dfe352ed9bddd2e3588f98c167a6b7ff640759da31a2f0283be4aa2c6eee78",
+    "SPEC-SNAPSHOT.md": "021563da8d928ebefcf8ca6d88e9464342f0df1a6946e92d8c6b3b51ab4037aa",
+    "THIRD-PARTY-NOTICES/github.com_SherClockHolmes_webpush-go@v1.4.1-0.20260422052225-76cc00f5ac2d/LICENSE": "0c065563a77bd48b5ba9094cb935b3f8cc7c6b026130986dd028202c4210e46e",
+    "THIRD-PARTY-NOTICES/github.com_dustin_go-humanize@v1.0.1/LICENSE": "a973b4498c13eb74baa2a8e5c351426a6826f2fcdd909916dbe53ee2e755fd71",
+    "THIRD-PARTY-NOTICES/github.com_golang-jwt_jwt_v5@v5.2.2/LICENSE": "fe26ca41577b9b2b4448050a24b25e5753af66b5d5945d5d36094e7790bfcb2f",
+    "THIRD-PARTY-NOTICES/github.com_google_go-cmp@v0.6.0/LICENSE": "17b5d209ba8f9684257ecfcff87df6ceda6194143a8fbd074f29727cff6f0c40",
+    "THIRD-PARTY-NOTICES/github.com_google_pprof@v0.0.0-20260802141513-ef3492d7dac3/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "THIRD-PARTY-NOTICES/github.com_google_uuid@v1.6.0/LICENSE": "0a8d61ed3cbfd5312326e8126c31ce9c627a283adc99131b56896d29ada04b2d",
+    "THIRD-PARTY-NOTICES/github.com_hashicorp_golang-lru_v2@v2.0.7/LICENSE": "6c7088eb877b5d7e6e0e9d27e822ea25fcda2e83f9eba59bb5f1418a656796e0",
+    "THIRD-PARTY-NOTICES/github.com_mattn_go-isatty@v0.0.24/LICENSE": "08eab1118c80885fa1fa6a6dd7303f65a379fcb3733e063d20d1bbc2c76e6fa1",
+    "THIRD-PARTY-NOTICES/github.com_ncruces_go-strftime@v1.0.0/LICENSE": "38ae43959daf953a393a585b2988672cb65a5a541aca0d0be5e72595a0a16883",
+    "THIRD-PARTY-NOTICES/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE": "dd26a7abddd02e2d0aba97805b31f248ef7835d9e10da289b22e3b8ab78b324d",
+    "THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/LICENSE": "2927707b5b4e9d569831dfcb81b43a53da5a2d57fc6564e3f43b4580ae05a692",
+    "THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/smtp_LICENSE": "4214d8afcc3620b7fb7aa9c7695e8f659a90011a830caf0e0c72a385d7d3b2a5",
+    "THIRD-PARTY-NOTICES/github.com_yuin_goldmark@v1.4.13/LICENSE": "c1d6f653c38c80294dc7994647ba0dcc508ce64a86996303c804efa2f7982bff",
+    "THIRD-PARTY-NOTICES/golang.org_x_crypto@v0.58.1-0.20261009181718-2f1f834330b2/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_mod@v0.41.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_net@v0.60.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_sync@v0.24.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_sys@v0.49.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_telemetry@v0.0.0-20240228155512-f48c80bd79b2/LICENSE": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "THIRD-PARTY-NOTICES/golang.org_x_term@v0.47.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_text@v0.43.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_tools@v0.51.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_xerrors@v0.0.0-20190717185122-a985d3407aa7/LICENSE": "84d554e7a5d139b7c7b5d6ef0670ae556c4cdcfa354eaad72a1c07c08012c96f",
+    "THIRD-PARTY-NOTICES/modernc.org_cc_v4@v4.29.7/LICENSE": "1c77905db36f407e0fdb513f97f1f2a3f2282049ca273637841face982d5d003",
+    "THIRD-PARTY-NOTICES/modernc.org_ccgo_v4@v4.36.1/LICENSE": "343748b20da2ceb739c1ab7b85fe16f6fe4b67fad88fea40c5835a08383d8ffe",
+    "THIRD-PARTY-NOTICES/modernc.org_fileutil@v1.4.0/LICENSE": "7dc07397727fc500d5ce768d724e4d555eee8fb7687f421fd40d72249868b0ca",
+    "THIRD-PARTY-NOTICES/modernc.org_gc_v2@v2.6.5/LICENSE": "4719790df5e9d33b1cef3a67df8264fb1e3e7f54f3ca900c562e84a951de62d9",
+    "THIRD-PARTY-NOTICES/modernc.org_gc_v3@v3.1.5/LICENSE": "4719790df5e9d33b1cef3a67df8264fb1e3e7f54f3ca900c562e84a951de62d9",
+    "THIRD-PARTY-NOTICES/modernc.org_goabi0@v0.2.0/LICENSE": "6d33428c98f9d7113dfc86e17fca00f81aeaac33e02f79c8a5afafb0a5fd33c6",
+    "THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE": "95ff867eb55a56935fa7492406cfa953fb7c13ca73f4c0a86ae05756b4605600",
+    "THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md": "f597097efe3d97021f89170746bd3a0fb9a8b6fb26b82043ed68a4e0283bee6c",
+    "THIRD-PARTY-NOTICES/modernc.org_mathutil@v1.7.1/LICENSE": "bfa9bf72a72ca009fd62a8f84fca3dca67e51d93af96352723646599898b6cf5",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE": "59895e669f48f168b6b858358f6005779cdf40a265f7828813061b56af67b496",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-GO": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-LOGO": "5ae5bee3072a841376451b48d8cfcec7188e10543926d5870828d36c8a750dc5",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO": "c2eba69f20d05414538c3a5df7694dde392e065ff70882e1625e90f5d6659fff",
+    "THIRD-PARTY-NOTICES/modernc.org_opt@v0.2.0/LICENSE": "7a0dd90f1d1c8fa80d03c1806bdd8e4dca7285fae9b4a34f2c4a8a2552fdd77c",
+    "THIRD-PARTY-NOTICES/modernc.org_sortutil@v1.2.1/LICENSE": "7bc9df688c16dd8e64463ec0ad66728730a0e1a70a1dbda3dcbcd8a9b45bfaab",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE": "c6fe05491a60ae13bcd223088d2705e36dede24e5587226231d2459ada5c4822",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md": "b4366b9c27a9364633e015011a231913ed19bf1228f335bf617e50a6f7b168a6",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE": "8438c9c89b849131ead81d5435cb97fcf052df5b0b286dda8a2d4c29e6cb3fd0",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC": "6ce72bbe12d975bd5286e5ab0a064c069693300c47bccbc57bec18485f1621ea",
+    "THIRD-PARTY-NOTICES/modernc.org_strutil@v1.2.1/LICENSE": "0f594b710bedb0335b15155204150cb1aac98e76144b52b852b43ce6a65eaaad",
+    "THIRD-PARTY-NOTICES/modernc.org_token@v1.1.0/LICENSE": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "THIRD-PARTY.md": "d9a3e10cdccd9abbf99f3cea2b5a68fb4e63f669a36a815efb8243d340e5eabe",
+    "THIRD_PARTY_NOTICES.md": "fdfbfa96ab9fce7613ab72f08dbbbd503e5f1d410c543519587ba31a9660168e",
+    "UPSTREAM-RESEARCH.md": "dd56b291edc1746c9c171cdea70072dc3f02a73df73315b8696156b7f75a8eab",
+    "UPSTREAM-REUSE-MATRIX.md": "0c3f1c4da2f9987f92220c6d5f13e64966605bf020e629727019708d6a002049",
+    "VALIDATION.md": "538afd82526a06e35bbbbc583f6c5b3ada227b9ec1b4352f94e1768a84e84b9a",
+    "api.go": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+    "api_test.go": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+    "audit_test.go": "1a20c26f785d0d9ec58f5a36ccb464752ec3c99dcff33a6e95cdc80352d32681",
+    "cmd/notifications-status/main.go": "10ad590aaa6d56ce1384e48d395363b5d215650b8f7448ee7cbac6f17c8c14c4",
+    "cmd/notifications-status/main_test.go": "28e837e575ea284ce1fd6cbcd1761ba4485ce9e931ae874ccc8f7ee5d2587bc7",
+    "consent_lifecycle_test.go": "99307afef540833a82ec713c75e2d959f7fed8a88e09802afc6662b60c67df28",
+    "delivery.go": "63115f5f3ff2daa2a9f5e5592f30c0eed91f8d4814878a123de4ba15e9abbcc7",
+    "delivery_test.go": "837a4e8e8ecaca878d10c646757a0d5f3ccf7e9a772ed5107f3e53b618417df4",
+    "errors.go": "a8659d4caeb975985d43130e7fb22e0fbd1511ec5aa6ba49811d2d73e6aede59",
+    "feature.json": "4186ef9727c721e4b711fe5727e4adc1212ef55720894e5a10bf028150ba8798",
+    "go.mod": "13e194ae4d1cda164a7b053b8eb6ecd93d10faaa41169bb09580f92fd8bf86b7",
+    "go.sum": "7f8b05f3bece142a2908d922054a4377a6a681da328e03b7b7af051a69fb7f7b",
+    "master_audit_test.go": "bd63e768bfe15e4c1e2d3a676091793a3537e247c529c7a496e2120140164983",
+    "operations.go": "0506c4bb692092b49fc58d981ed433f63256f8d04161e942c0ec5a29cb4ede9e",
+    "recovery-evidence/SHA256SUMS": "de8973bea03c4c55e3c94d5a9286d6f92a36ac293f9bf03f39487eec0e0f9813",
+    "recovery-evidence/master-green.log": "be35c1c6c50523c6dce7c70f9ba7551c587962df738ac53fa0016b624ce08deb",
+    "recovery-evidence/master-modules.log": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+    "recovery-evidence/master-race.log": "d9f74ba1d01b2f470250bac1b71b21ea3931b260a2caf848e3f72b9c776d6070",
+    "recovery-evidence/master-red.log": "18871e3b8f9c87341b0724ac23693b3892c2073f666d04503c9038e0bfb22904",
+    "recovery-evidence/master-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "store.go": "7b6c57921e3a6e90ee704f1cb93d9b1a7c8c3ac06d479e789a84c0cc6f4eacb1",
+    "store_test.go": "a1e6f8e52071a016b10615981a7e52f936cddba80151d1c4d35262752109e723",
+    "strictjson.go": "fdd5b40c928c5ea4213a9f0811623662067a66172491f45190b180b8b775a247",
+    "strictjson_fuzz_test.go": "49331aa11b6e82954303d4515a428bcf831ebb416615c74434010b110acfbc7e",
+    "transport.go": "169597391c80ae837f73eaa82cc47c05f4069f3a17d500066dfd656922d8d3bb",
+    "transport_test.go": "e795627d410a554f1d45608fc8692f88abdb72a7ed2538567ce1feb7719ed1d3",
+    "unsubscribe.go": "33def46e0c43b8a2f922637ab70930be202cb52d75026a098906b4d9c1792aae",
+    "unsubscribe_http.go": "4b8316db0574b4bbde62f2d4f5ad7ba6bab3ba711594d03e4134cff50cddd3a4",
+    "worker.go": "21f04c8ebb7764fcb27298ac0467e04d37b66a23b770f5ab196acc1a679dba07"
+  },
+  "source_population_verified_against_archive_git_blobs": 89,
+  "outer_timeout_seconds": 480,
+  "storage_stop_thresholds": {
+    "tmp_free_bytes": 134217728,
+    "workspace_free_bytes": 67108864
+  },
+  "initial_free_bytes": {
+    "tmp": 821063680,
+    "workspace": 306319360
+  },
+  "state": "pass",
+  "log": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/race.log",
+  "samples": [
+    {
+      "elapsed_seconds": 0.001,
+      "tmp_free": 821063680,
+      "workspace_free": 306302976
+    },
+    {
+      "elapsed_seconds": 2.003,
+      "tmp_free": 819757056,
+      "workspace_free": 306298880
+    },
+    {
+      "elapsed_seconds": 4.006,
+      "tmp_free": 822595584,
+      "workspace_free": 306249728
+    },
+    {
+      "elapsed_seconds": 6.007,
+      "tmp_free": 821850112,
+      "workspace_free": 306188288
+    },
+    {
+      "elapsed_seconds": 8.012,
+      "tmp_free": 821583872,
+      "workspace_free": 306188288
+    },
+    {
+      "elapsed_seconds": 10.039,
+      "tmp_free": 788037632,
+      "workspace_free": 306188288
+    },
+    {
+      "elapsed_seconds": 12.047,
+      "tmp_free": 754380800,
+      "workspace_free": 305750016
+    },
+    {
+      "elapsed_seconds": 14.048,
+      "tmp_free": 747741184,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 16.049,
+      "tmp_free": 747593728,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 18.056,
+      "tmp_free": 737247232,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 20.061,
+      "tmp_free": 737042432,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 22.074,
+      "tmp_free": 736440320,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 24.083,
+      "tmp_free": 737992704,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 26.084,
+      "tmp_free": 736440320,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 28.091,
+      "tmp_free": 736514048,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 30.127,
+      "tmp_free": 736325632,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 32.184,
+      "tmp_free": 737042432,
+      "workspace_free": 305668096
+    },
+    {
+      "elapsed_seconds": 34.186,
+      "tmp_free": 737099776,
+      "workspace_free": 305664000
+    },
+    {
+      "elapsed_seconds": 36.194,
+      "tmp_free": 737042432,
+      "workspace_free": 305639424
+    },
+    {
+      "elapsed_seconds": 38.196,
+      "tmp_free": 736514048,
+      "workspace_free": 305614848
+    },
+    {
+      "elapsed_seconds": 40.199,
+      "tmp_free": 737988608,
+      "workspace_free": 305594368
+    },
+    {
+      "elapsed_seconds": 42.2,
+      "tmp_free": 738734080,
+      "workspace_free": 318373888
+    },
+    {
+      "elapsed_seconds": 44.202,
+      "tmp_free": 738582528,
+      "workspace_free": 316100608
+    },
+    {
+      "elapsed_seconds": 46.213,
+      "tmp_free": 737497088,
+      "workspace_free": 316100608
+    },
+    {
+      "elapsed_seconds": 48.23,
+      "tmp_free": 738406400,
+      "workspace_free": 316100608
+    },
+    {
+      "elapsed_seconds": 50.252,
+      "tmp_free": 738349056,
+      "workspace_free": 316100608
+    },
+    {
+      "elapsed_seconds": 52.272,
+      "tmp_free": 738287616,
+      "workspace_free": 316100608
+    },
+    {
+      "elapsed_seconds": 54.274,
+      "tmp_free": 732811264,
+      "workspace_free": 316088320
+    },
+    {
+      "elapsed_seconds": 56.275,
+      "tmp_free": 684048384,
+      "workspace_free": 316088320
+    },
+    {
+      "elapsed_seconds": 58.278,
+      "tmp_free": 680312832,
+      "workspace_free": 315576320
+    },
+    {
+      "elapsed_seconds": 60.279,
+      "tmp_free": 684859392,
+      "workspace_free": 315555840
+    },
+    {
+      "elapsed_seconds": 62.281,
+      "tmp_free": 684281856,
+      "workspace_free": 315555840
+    },
+    {
+      "elapsed_seconds": 64.282,
+      "tmp_free": 684548096,
+      "workspace_free": 315543552
+    },
+    {
+      "elapsed_seconds": 66.284,
+      "tmp_free": 680411136,
+      "workspace_free": 315543552
+    },
+    {
+      "elapsed_seconds": 68.287,
+      "tmp_free": 680132608,
+      "workspace_free": 315539456
+    },
+    {
+      "elapsed_seconds": 70.288,
+      "tmp_free": 679919616,
+      "workspace_free": 315539456
+    },
+    {
+      "elapsed_seconds": 72.292,
+      "tmp_free": 679636992,
+      "workspace_free": 315539456
+    },
+    {
+      "elapsed_seconds": 74.293,
+      "tmp_free": 679432192,
+      "workspace_free": 315535360
+    },
+    {
+      "elapsed_seconds": 76.297,
+      "tmp_free": 679129088,
+      "workspace_free": 315535360
+    },
+    {
+      "elapsed_seconds": 78.297,
+      "tmp_free": 678879232,
+      "workspace_free": 315535360
+    },
+    {
+      "elapsed_seconds": 80.299,
+      "tmp_free": 678748160,
+      "workspace_free": 315535360
+    },
+    {
+      "elapsed_seconds": 82.303,
+      "tmp_free": 678572032,
+      "workspace_free": 315461632
+    },
+    {
+      "elapsed_seconds": 84.304,
+      "tmp_free": 678326272,
+      "workspace_free": 315441152
+    },
+    {
+      "elapsed_seconds": 86.305,
+      "tmp_free": 678182912,
+      "workspace_free": 314970112
+    },
+    {
+      "elapsed_seconds": 88.307,
+      "tmp_free": 677949440,
+      "workspace_free": 315584512
+    },
+    {
+      "elapsed_seconds": 90.311,
+      "tmp_free": 677638144,
+      "workspace_free": 315584512
+    },
+    {
+      "elapsed_seconds": 92.315,
+      "tmp_free": 677416960,
+      "workspace_free": 315576320
+    },
+    {
+      "elapsed_seconds": 94.321,
+      "tmp_free": 677122048,
+      "workspace_free": 315576320
+    },
+    {
+      "elapsed_seconds": 96.322,
+      "tmp_free": 676818944,
+      "workspace_free": 315576320
+    },
+    {
+      "elapsed_seconds": 98.327,
+      "tmp_free": 684314624,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 100.329,
+      "tmp_free": 682975232,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 102.331,
+      "tmp_free": 684777472,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 104.342,
+      "tmp_free": 684314624,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 106.343,
+      "tmp_free": 684519424,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 108.344,
+      "tmp_free": 684965888,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 110.346,
+      "tmp_free": 684314624,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 112.348,
+      "tmp_free": 685264896,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 114.351,
+      "tmp_free": 685264896,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 116.353,
+      "tmp_free": 684253184,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 118.356,
+      "tmp_free": 684912640,
+      "workspace_free": 315478016
+    },
+    {
+      "elapsed_seconds": 120.357,
+      "tmp_free": 684912640,
+      "workspace_free": 315396096
+    },
+    {
+      "elapsed_seconds": 122.359,
+      "tmp_free": 684859392,
+      "workspace_free": 315015168
+    },
+    {
+      "elapsed_seconds": 124.36,
+      "tmp_free": 685264896,
+      "workspace_free": 315015168
+    },
+    {
+      "elapsed_seconds": 126.363,
+      "tmp_free": 684720128,
+      "workspace_free": 315015168
+    },
+    {
+      "elapsed_seconds": 128.366,
+      "tmp_free": 674639872,
+      "workspace_free": 315015168
+    },
+    {
+      "elapsed_seconds": 130.368,
+      "tmp_free": 638799872,
+      "workspace_free": 315015168
+    },
+    {
+      "elapsed_seconds": 132.376,
+      "tmp_free": 630321152,
+      "workspace_free": 315015168
+    },
+    {
+      "elapsed_seconds": 134.387,
+      "tmp_free": 626253824,
+      "workspace_free": 314998784
+    },
+    {
+      "elapsed_seconds": 136.393,
+      "tmp_free": 621875200,
+      "workspace_free": 314961920
+    },
+    {
+      "elapsed_seconds": 138.395,
+      "tmp_free": 616873984,
+      "workspace_free": 314961920
+    },
+    {
+      "elapsed_seconds": 140.405,
+      "tmp_free": 614584320,
+      "workspace_free": 314937344
+    },
+    {
+      "elapsed_seconds": 142.424,
+      "tmp_free": 608071680,
+      "workspace_free": 314937344
+    },
+    {
+      "elapsed_seconds": 144.442,
+      "tmp_free": 606994432,
+      "workspace_free": 314937344
+    },
+    {
+      "elapsed_seconds": 146.444,
+      "tmp_free": 603557888,
+      "workspace_free": 314937344
+    },
+    {
+      "elapsed_seconds": 148.447,
+      "tmp_free": 576442368,
+      "workspace_free": 314937344
+    },
+    {
+      "elapsed_seconds": 150.452,
+      "tmp_free": 576647168,
+      "workspace_free": 314916864
+    },
+    {
+      "elapsed_seconds": 152.454,
+      "tmp_free": 576614400,
+      "workspace_free": 314916864
+    },
+    {
+      "elapsed_seconds": 154.471,
+      "tmp_free": 577392640,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 156.472,
+      "tmp_free": 576360448,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 158.474,
+      "tmp_free": 576626688,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 160.481,
+      "tmp_free": 577343488,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 162.488,
+      "tmp_free": 576020480,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 164.489,
+      "tmp_free": 576393216,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 166.491,
+      "tmp_free": 576565248,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 168.495,
+      "tmp_free": 576598016,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 170.496,
+      "tmp_free": 573267968,
+      "workspace_free": 314368000
+    },
+    {
+      "elapsed_seconds": 172.499,
+      "tmp_free": 576831488,
+      "workspace_free": 314335232
+    },
+    {
+      "elapsed_seconds": 174.501,
+      "tmp_free": 597848064,
+      "workspace_free": 314318848
+    }
+  ],
+  "pid": 9,
+  "exit_code": 0,
+  "elapsed_seconds": 176.503,
+  "finished_utc": "2026-11-19T13:31:12.095417+00:00",
+  "source_sha256_after": {
+    "AUDIT.md": "e77d8a349f594f14c327e8f60dd6e689c0e1a3543825ec48b68c1e536625b908",
+    "COMPLETION.md": "29754e40f6c4962fa1aab910c827951404cfbc79b4f4f3f6c9713ded0a4b5e81",
+    "COVERAGE.md": "10a35ed2147d2a9fd8031c0edc9e1866036f82adad8a37a8dcd541212822dc3b",
+    "FINAL-HANDOFF.md": "fd2c1a565b7d0b654ed3263372418d4d92800c18e3d67c1ee6b8acfad47902d8",
+    "HANDOFF-MILESTONE-F.md": "fd2c1a565b7d0b654ed3263372418d4d92800c18e3d67c1ee6b8acfad47902d8",
+    "INTEGRATION.md": "706ebb66f6bf9e6e6096a1491f52a7da1049b09b546e2e8f8c716d11ab2c881f",
+    "MIGRATION-PLAN.md": "1a5fa7875c26c89178014e3dec54827f1022b1c4ef5fde9ba5a70b5d0c7e89dd",
+    "OPERATIONS.md": "f5945a3654a4d4eeb59190953d147c9636a96a2f3700ecab795ae8acee5ace51",
+    "README.md": "81e174f5fc9fa24998aa94e86ac1b7c88830b997f12291b20e6cca0116a33c03",
+    "SECURITY-AUDIT.md": "86dfe352ed9bddd2e3588f98c167a6b7ff640759da31a2f0283be4aa2c6eee78",
+    "SPEC-SNAPSHOT.md": "021563da8d928ebefcf8ca6d88e9464342f0df1a6946e92d8c6b3b51ab4037aa",
+    "THIRD-PARTY-NOTICES/github.com_SherClockHolmes_webpush-go@v1.4.1-0.20260422052225-76cc00f5ac2d/LICENSE": "0c065563a77bd48b5ba9094cb935b3f8cc7c6b026130986dd028202c4210e46e",
+    "THIRD-PARTY-NOTICES/github.com_dustin_go-humanize@v1.0.1/LICENSE": "a973b4498c13eb74baa2a8e5c351426a6826f2fcdd909916dbe53ee2e755fd71",
+    "THIRD-PARTY-NOTICES/github.com_golang-jwt_jwt_v5@v5.2.2/LICENSE": "fe26ca41577b9b2b4448050a24b25e5753af66b5d5945d5d36094e7790bfcb2f",
+    "THIRD-PARTY-NOTICES/github.com_google_go-cmp@v0.6.0/LICENSE": "17b5d209ba8f9684257ecfcff87df6ceda6194143a8fbd074f29727cff6f0c40",
+    "THIRD-PARTY-NOTICES/github.com_google_pprof@v0.0.0-20260802141513-ef3492d7dac3/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "THIRD-PARTY-NOTICES/github.com_google_uuid@v1.6.0/LICENSE": "0a8d61ed3cbfd5312326e8126c31ce9c627a283adc99131b56896d29ada04b2d",
+    "THIRD-PARTY-NOTICES/github.com_hashicorp_golang-lru_v2@v2.0.7/LICENSE": "6c7088eb877b5d7e6e0e9d27e822ea25fcda2e83f9eba59bb5f1418a656796e0",
+    "THIRD-PARTY-NOTICES/github.com_mattn_go-isatty@v0.0.24/LICENSE": "08eab1118c80885fa1fa6a6dd7303f65a379fcb3733e063d20d1bbc2c76e6fa1",
+    "THIRD-PARTY-NOTICES/github.com_ncruces_go-strftime@v1.0.0/LICENSE": "38ae43959daf953a393a585b2988672cb65a5a541aca0d0be5e72595a0a16883",
+    "THIRD-PARTY-NOTICES/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE": "dd26a7abddd02e2d0aba97805b31f248ef7835d9e10da289b22e3b8ab78b324d",
+    "THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/LICENSE": "2927707b5b4e9d569831dfcb81b43a53da5a2d57fc6564e3f43b4580ae05a692",
+    "THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/smtp_LICENSE": "4214d8afcc3620b7fb7aa9c7695e8f659a90011a830caf0e0c72a385d7d3b2a5",
+    "THIRD-PARTY-NOTICES/github.com_yuin_goldmark@v1.4.13/LICENSE": "c1d6f653c38c80294dc7994647ba0dcc508ce64a86996303c804efa2f7982bff",
+    "THIRD-PARTY-NOTICES/golang.org_x_crypto@v0.58.1-0.20261009181718-2f1f834330b2/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_mod@v0.41.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_net@v0.60.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_sync@v0.24.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_sys@v0.49.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_telemetry@v0.0.0-20240228155512-f48c80bd79b2/LICENSE": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "THIRD-PARTY-NOTICES/golang.org_x_term@v0.47.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_text@v0.43.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_tools@v0.51.0/LICENSE": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "THIRD-PARTY-NOTICES/golang.org_x_xerrors@v0.0.0-20190717185122-a985d3407aa7/LICENSE": "84d554e7a5d139b7c7b5d6ef0670ae556c4cdcfa354eaad72a1c07c08012c96f",
+    "THIRD-PARTY-NOTICES/modernc.org_cc_v4@v4.29.7/LICENSE": "1c77905db36f407e0fdb513f97f1f2a3f2282049ca273637841face982d5d003",
+    "THIRD-PARTY-NOTICES/modernc.org_ccgo_v4@v4.36.1/LICENSE": "343748b20da2ceb739c1ab7b85fe16f6fe4b67fad88fea40c5835a08383d8ffe",
+    "THIRD-PARTY-NOTICES/modernc.org_fileutil@v1.4.0/LICENSE": "7dc07397727fc500d5ce768d724e4d555eee8fb7687f421fd40d72249868b0ca",
+    "THIRD-PARTY-NOTICES/modernc.org_gc_v2@v2.6.5/LICENSE": "4719790df5e9d33b1cef3a67df8264fb1e3e7f54f3ca900c562e84a951de62d9",
+    "THIRD-PARTY-NOTICES/modernc.org_gc_v3@v3.1.5/LICENSE": "4719790df5e9d33b1cef3a67df8264fb1e3e7f54f3ca900c562e84a951de62d9",
+    "THIRD-PARTY-NOTICES/modernc.org_goabi0@v0.2.0/LICENSE": "6d33428c98f9d7113dfc86e17fca00f81aeaac33e02f79c8a5afafb0a5fd33c6",
+    "THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE": "95ff867eb55a56935fa7492406cfa953fb7c13ca73f4c0a86ae05756b4605600",
+    "THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md": "f597097efe3d97021f89170746bd3a0fb9a8b6fb26b82043ed68a4e0283bee6c",
+    "THIRD-PARTY-NOTICES/modernc.org_mathutil@v1.7.1/LICENSE": "bfa9bf72a72ca009fd62a8f84fca3dca67e51d93af96352723646599898b6cf5",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE": "59895e669f48f168b6b858358f6005779cdf40a265f7828813061b56af67b496",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-GO": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-LOGO": "5ae5bee3072a841376451b48d8cfcec7188e10543926d5870828d36c8a750dc5",
+    "THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO": "c2eba69f20d05414538c3a5df7694dde392e065ff70882e1625e90f5d6659fff",
+    "THIRD-PARTY-NOTICES/modernc.org_opt@v0.2.0/LICENSE": "7a0dd90f1d1c8fa80d03c1806bdd8e4dca7285fae9b4a34f2c4a8a2552fdd77c",
+    "THIRD-PARTY-NOTICES/modernc.org_sortutil@v1.2.1/LICENSE": "7bc9df688c16dd8e64463ec0ad66728730a0e1a70a1dbda3dcbcd8a9b45bfaab",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE": "c6fe05491a60ae13bcd223088d2705e36dede24e5587226231d2459ada5c4822",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md": "b4366b9c27a9364633e015011a231913ed19bf1228f335bf617e50a6f7b168a6",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE": "8438c9c89b849131ead81d5435cb97fcf052df5b0b286dda8a2d4c29e6cb3fd0",
+    "THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC": "6ce72bbe12d975bd5286e5ab0a064c069693300c47bccbc57bec18485f1621ea",
+    "THIRD-PARTY-NOTICES/modernc.org_strutil@v1.2.1/LICENSE": "0f594b710bedb0335b15155204150cb1aac98e76144b52b852b43ce6a65eaaad",
+    "THIRD-PARTY-NOTICES/modernc.org_token@v1.1.0/LICENSE": "2d36597f7117c38b006835ae7f537487207d8ec407aa9d9980794b2030cbc067",
+    "THIRD-PARTY.md": "d9a3e10cdccd9abbf99f3cea2b5a68fb4e63f669a36a815efb8243d340e5eabe",
+    "THIRD_PARTY_NOTICES.md": "fdfbfa96ab9fce7613ab72f08dbbbd503e5f1d410c543519587ba31a9660168e",
+    "UPSTREAM-RESEARCH.md": "dd56b291edc1746c9c171cdea70072dc3f02a73df73315b8696156b7f75a8eab",
+    "UPSTREAM-REUSE-MATRIX.md": "0c3f1c4da2f9987f92220c6d5f13e64966605bf020e629727019708d6a002049",
+    "VALIDATION.md": "538afd82526a06e35bbbbc583f6c5b3ada227b9ec1b4352f94e1768a84e84b9a",
+    "api.go": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+    "api_test.go": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+    "audit_test.go": "1a20c26f785d0d9ec58f5a36ccb464752ec3c99dcff33a6e95cdc80352d32681",
+    "cmd/notifications-status/main.go": "10ad590aaa6d56ce1384e48d395363b5d215650b8f7448ee7cbac6f17c8c14c4",
+    "cmd/notifications-status/main_test.go": "28e837e575ea284ce1fd6cbcd1761ba4485ce9e931ae874ccc8f7ee5d2587bc7",
+    "consent_lifecycle_test.go": "99307afef540833a82ec713c75e2d959f7fed8a88e09802afc6662b60c67df28",
+    "delivery.go": "63115f5f3ff2daa2a9f5e5592f30c0eed91f8d4814878a123de4ba15e9abbcc7",
+    "delivery_test.go": "837a4e8e8ecaca878d10c646757a0d5f3ccf7e9a772ed5107f3e53b618417df4",
+    "errors.go": "a8659d4caeb975985d43130e7fb22e0fbd1511ec5aa6ba49811d2d73e6aede59",
+    "feature.json": "4186ef9727c721e4b711fe5727e4adc1212ef55720894e5a10bf028150ba8798",
+    "go.mod": "13e194ae4d1cda164a7b053b8eb6ecd93d10faaa41169bb09580f92fd8bf86b7",
+    "go.sum": "7f8b05f3bece142a2908d922054a4377a6a681da328e03b7b7af051a69fb7f7b",
+    "master_audit_test.go": "bd63e768bfe15e4c1e2d3a676091793a3537e247c529c7a496e2120140164983",
+    "operations.go": "0506c4bb692092b49fc58d981ed433f63256f8d04161e942c0ec5a29cb4ede9e",
+    "recovery-evidence/SHA256SUMS": "de8973bea03c4c55e3c94d5a9286d6f92a36ac293f9bf03f39487eec0e0f9813",
+    "recovery-evidence/master-green.log": "be35c1c6c50523c6dce7c70f9ba7551c587962df738ac53fa0016b624ce08deb",
+    "recovery-evidence/master-modules.log": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+    "recovery-evidence/master-race.log": "d9f74ba1d01b2f470250bac1b71b21ea3931b260a2caf848e3f72b9c776d6070",
+    "recovery-evidence/master-red.log": "18871e3b8f9c87341b0724ac23693b3892c2073f666d04503c9038e0bfb22904",
+    "recovery-evidence/master-vet.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "store.go": "7b6c57921e3a6e90ee704f1cb93d9b1a7c8c3ac06d479e789a84c0cc6f4eacb1",
+    "store_test.go": "a1e6f8e52071a016b10615981a7e52f936cddba80151d1c4d35262752109e723",
+    "strictjson.go": "fdd5b40c928c5ea4213a9f0811623662067a66172491f45190b180b8b775a247",
+    "strictjson_fuzz_test.go": "49331aa11b6e82954303d4515a428bcf831ebb416615c74434010b110acfbc7e",
+    "transport.go": "169597391c80ae837f73eaa82cc47c05f4069f3a17d500066dfd656922d8d3bb",
+    "transport_test.go": "e795627d410a554f1d45608fc8692f88abdb72a7ed2538567ce1feb7719ed1d3",
+    "unsubscribe.go": "33def46e0c43b8a2f922637ab70930be202cb52d75026a098906b4d9c1792aae",
+    "unsubscribe_http.go": "4b8316db0574b4bbde62f2d4f5ad7ba6bab3ba711594d03e4134cff50cddd3a4",
+    "worker.go": "21f04c8ebb7764fcb27298ac0467e04d37b66a23b770f5ab196acc1a679dba07"
+  },
+  "source_unchanged": true,
+  "log_sha256": "d91472bb47c0d7d9dc9f6717ccf2a39d4ac3a6405a10578e54df1c8d480bcf61",
+  "passed_test_events": [
+    "TestHandlerAuthCSRFSizeAndIsolation",
+    "TestFormEscaping",
+    "TestUnsubscribeExpiryTamperAndTargetVersion",
+    "TestAtomicMigrationAndSilentPreferenceRollback",
+    "TestStrictJSONNetworkAndNoJS",
+    "TestKeyRotationRollbackFeedbackDepartureAndRetention",
+    "TestRotationFailureAndConcurrentCapabilities",
+    "TestCapabilityConfirmationEndpointAndUnicode",
+    "TestInvalidPushKeyRejectedBeforePersistence",
+    "TestPreferenceFormLocalActionOnly",
+    "TestRotatedSecretClosedBackupRestore",
+    "TestUnsubscribeAuditFailureRollsBackConsentAndTarget",
+    "TestRevokedConsentDoesNotResurrectPendingDelivery/preference",
+    "TestRevokedConsentDoesNotResurrectPendingDelivery/target",
+    "TestRevokedConsentDoesNotResurrectPendingDelivery",
+    "TestRevocationCancellationFailureRollsBackTarget",
+    "TestSilentRevocationFailureRollsBack/preference",
+    "TestSilentRevocationFailureRollsBack/target-cancellation",
+    "TestSilentRevocationFailureRollsBack/target-delete",
+    "TestSilentRevocationFailureRollsBack",
+    "TestQuietAndOptOut",
+    "TestDedupeAndRetry",
+    "TestMasterQueryValidationBeforeHost",
+    "TestMasterCallbacksRequireCurrentSession/read/revoke",
+    "TestMasterCallbacksRequireCurrentSession/read/replace",
+    "TestMasterCallbacksRequireCurrentSession/read/cancel",
+    "TestMasterCallbacksRequireCurrentSession/read/unchanged",
+    "TestMasterCallbacksRequireCurrentSession/write/revoke",
+    "TestMasterCallbacksRequireCurrentSession/write/replace",
+    "TestMasterCallbacksRequireCurrentSession/write/cancel",
+    "TestMasterCallbacksRequireCurrentSession/write/unchanged",
+    "TestMasterCallbacksRequireCurrentSession",
+    "TestMasterRevocationScopeAndRestart/preference",
+    "TestMasterRevocationScopeAndRestart/target",
+    "TestMasterRevocationScopeAndRestart",
+    "TestMasterMalformedFormCannotBeCachedByActor",
+    "TestMasterOptInDoesNotResurrectDisabledInterval/absent",
+    "TestMasterOptInDoesNotResurrectDisabledInterval/disabled",
+    "TestMasterOptInDoesNotResurrectDisabledInterval/already-enabled",
+    "TestMasterOptInDoesNotResurrectDisabledInterval",
+    "TestDurableDedupeRollbackPrivacy",
+    "TestConsentAndAuthorization",
+    "TestRetryCapAndCrashLease",
+    "TestConcurrencyAndRevokeGate",
+    "TestTargetTamperAndScope",
+    "TestEndpointPolicy",
+    "TestCrashOnFinalAttemptIsTerminal",
+    "TestQuietHoursDoNotSpendAttempts",
+    "TestPermanentFailureRevokesTarget",
+    "TestSMTPRequiresTLS",
+    "TestPushEncryptionAndTransportStatus",
+    "FuzzStrictPreferenceJSON/seed#0",
+    "FuzzStrictPreferenceJSON/seed#1",
+    "FuzzStrictPreferenceJSON/seed#2",
+    "FuzzStrictPreferenceJSON/seed#3",
+    "FuzzStrictPreferenceJSON",
+    "TestDiagnosticsScopeRedactionAndReadOnly",
+    "TestDiagnosticsUsage"
+  ],
+  "top_level_tests_passed": [
+    "TestHandlerAuthCSRFSizeAndIsolation",
+    "TestFormEscaping",
+    "TestUnsubscribeExpiryTamperAndTargetVersion",
+    "TestAtomicMigrationAndSilentPreferenceRollback",
+    "TestStrictJSONNetworkAndNoJS",
+    "TestKeyRotationRollbackFeedbackDepartureAndRetention",
+    "TestRotationFailureAndConcurrentCapabilities",
+    "TestCapabilityConfirmationEndpointAndUnicode",
+    "TestInvalidPushKeyRejectedBeforePersistence",
+    "TestPreferenceFormLocalActionOnly",
+    "TestRotatedSecretClosedBackupRestore",
+    "TestUnsubscribeAuditFailureRollsBackConsentAndTarget",
+    "TestRevokedConsentDoesNotResurrectPendingDelivery",
+    "TestRevocationCancellationFailureRollsBackTarget",
+    "TestSilentRevocationFailureRollsBack",
+    "TestQuietAndOptOut",
+    "TestDedupeAndRetry",
+    "TestMasterQueryValidationBeforeHost",
+    "TestMasterCallbacksRequireCurrentSession",
+    "TestMasterRevocationScopeAndRestart",
+    "TestMasterMalformedFormCannotBeCachedByActor",
+    "TestMasterOptInDoesNotResurrectDisabledInterval",
+    "TestDurableDedupeRollbackPrivacy",
+    "TestConsentAndAuthorization",
+    "TestRetryCapAndCrashLease",
+    "TestConcurrencyAndRevokeGate",
+    "TestTargetTamperAndScope",
+    "TestEndpointPolicy",
+    "TestCrashOnFinalAttemptIsTerminal",
+    "TestQuietHoursDoNotSpendAttempts",
+    "TestPermanentFailureRevokesTarget",
+    "TestSMTPRequiresTLS",
+    "TestPushEncryptionAndTransportStatus",
+    "TestDiagnosticsScopeRedactionAndReadOnly",
+    "TestDiagnosticsUsage"
+  ],
+  "failed_test_events": [],
+  "skipped_test_events": [],
+  "package_results": [
+    {
+      "Time": "2026-11-19T05:31:09.61612483-08:00",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/future/notifications",
+      "Elapsed": 2.464
+    },
+    {
+      "Time": "2026-11-19T05:31:11.928033201-08:00",
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/future/notifications/cmd/notifications-status",
+      "Elapsed": 1.057
+    }
+  ],
+  "coverage": [
+    "coverage: 71.0% of statements",
+    "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t2.459s\tcoverage: 71.0% of statements",
+    "coverage: 83.8% of statements",
+    "ok  \tgithub.com/djshellshoxxx/circula/future/notifications/cmd/notifications-status\t1.056s\tcoverage: 83.8% of statements"
+  ],
+  "resource_diagnostic": false,
+  "final_free_bytes": {
+    "tmp": 685907968,
+    "workspace": 314318848
+  }
+}

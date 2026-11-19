@@ -1,0 +1,59 @@
+{
+  "observed_utc": "2026-11-19T14:05:41.688933+00:00",
+  "head": "7a33e6e1ce18c04f0b0713a4895934f547e45bb9",
+  "tree": "e2259c2a13ad546ee0f0f817e886e0e3e61ae451",
+  "reviewer": "root independent of implementation",
+  "source_review": "Complete initial four-file change and final three-file follow-up; actual bundled Nimiq lifecycle and current template/CSS references inspected. Both independently reproduced replacement-image/manual-submit findings resolved without route or dependency changes.",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "web/static/scan.js"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.14627178000228014,
+      "log": "root-final-0.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "web/scan_lifecycle_test.mjs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.08660398399661062,
+      "log": "root-final-1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--experimental-vm-modules",
+        "--test",
+        "--test-timeout=15000",
+        "web/scan_lifecycle_test.mjs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.3184084710010211,
+      "log": "root-final-2.log",
+      "sha256": "0a4cf38c4843877a4735c97181b7f246146f5d089ef69ac46f9ac934c0ebd1c5"
+    }
+  ],
+  "tests": 27,
+  "passed": 27,
+  "skipped": 0,
+  "changed_paths": [
+    ".github/workflows/future-qr-camera.yml",
+    "future/qr/CAMERA-LIFECYCLE-20261119.md",
+    "future/qr/web/scan_lifecycle_test.mjs",
+    "future/qr/web/static/scan.js"
+  ],
+  "clean_after": true,
+  "limits": [
+    "Synthetic DOM/media tests; not real camera/mobile/CSP/accessibility or host-session integration.",
+    "No Go/runtime/dependency/vendor/manifest changes or new Go qualification claimed.",
+    "Native provider results required at final published head."
+  ]
+}

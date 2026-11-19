@@ -1,0 +1,1517 @@
+{
+  "observed_utc": "2026-11-19T12:11:46.481192+00:00",
+  "scope": "Read-only source reconciliation. No source/ref/PR/workflow change and no fresh build or runtime probe. Both designs remain preserved and HOLD.",
+  "object_store": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recovered.git",
+  "read_only_alternate": "/workspace/scratch/f47ceab29930/circula/.git/objects",
+  "current": {
+    "local_sha": "4a59bd1e740c2fcf5877de2a90594439cb9cd570",
+    "published_pr": 103,
+    "published_sha": "13669485b641475fce526633f47055ef31997098",
+    "full_tree": "198d2e6d9e40922080eb91f3ab73d011808feea9",
+    "module_tree": "32ebe377c0710d2e6528628e35cf6e0c02028ed8",
+    "files": {
+      "future/notifications/README.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "78c5566d1eab3cbfdb46deb81e01e5f7c4b626ee"
+      },
+      "future/notifications/SPEC-SNAPSHOT.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4fa31254e72aa84531398b9be2b9f5cc6acda6a"
+      },
+      "future/notifications/UPSTREAM-RESEARCH.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7100051e35f3fb3fac4ce399062bc8da400b2f3b"
+      },
+      "future/notifications/VALIDATION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "00511faee935ef50859517302df7799d9542049d"
+      },
+      "future/notifications/delivery.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e51316f11aa969d7f8dc5e14445fa794930d867a"
+      },
+      "future/notifications/delivery_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "24a211374a96a731b05624363c9fe6a022e3b05c"
+      },
+      "future/notifications/dispatch.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b3f244bb2c964f1942bc07004105d7218ddf9e79"
+      },
+      "future/notifications/dispatch_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ee6dcfa5296678ab125b644bdd7eb2f8dcbc7f82"
+      },
+      "future/notifications/driver_cgo_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "686255a134257ca0f37eaf7e079046e1fb8a7274"
+      },
+      "future/notifications/driver_none_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9851dc659eecaa2f7602ab9a94feb6688aba0593"
+      },
+      "future/notifications/egress.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f82ff7ce96e53d4f02b7456754ac41b7ea4c0a33"
+      },
+      "future/notifications/feature.json": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "15827422569370ec231e6bfc11814c7c3991d274"
+      },
+      "future/notifications/go.mod": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "782f5ff5d5da7b3f876bcbbd2de92dd0affbcaf5"
+      },
+      "future/notifications/go.sum": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "85934a6da6ab987034670d95a8f6f9346516c8a7"
+      },
+      "future/notifications/helpers_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e01ebfea6bfe3672ac2af74cfabe0c44adcba7ca"
+      },
+      "future/notifications/identity_encoding_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2d2de618602cf1e5b8984ca9f3d572b8acd95f21"
+      },
+      "future/notifications/kinds.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a297ba0fe8d491fdf5399f8355e535e15612b018"
+      },
+      "future/notifications/metrics.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4ab325194aa80540d8ed529d7815d91ca979189"
+      },
+      "future/notifications/notifytest/notifytest.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4312d8c888f3aecac5a4579e2305741e5a7df329"
+      },
+      "future/notifications/notifytest/push.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "085bfa464d23697d47d59b34c9cd4fbee73cf8a2"
+      },
+      "future/notifications/notifytest/smtp.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c8bbf7e2aaf282a763cb6dc20a076cfbd544bca2"
+      },
+      "future/notifications/outbox.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5c67ab836f9d5f7bb80a1362a8057dcd40d70403"
+      },
+      "future/notifications/outbox_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cab33a9c4a2c6ce8adabc0a1f7f8f63b137bae7c"
+      },
+      "future/notifications/prefs.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "150395401ad93a2c385e596ccd6002f7d28d6e84"
+      },
+      "future/notifications/prefs_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "40afbdb2f3c0179f07ce8062ef27c944bef3d356"
+      },
+      "future/notifications/pushsend/b64.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0698866380c0c89db10747871475c7786292ebd0"
+      },
+      "future/notifications/pushsend/pushsend.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cf4e6d876137f5756d0bba6a57536596f5541025"
+      },
+      "future/notifications/pushsend/pushsend_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4e82c4be240f8c5314e855ae710bf395f9f8c85"
+      },
+      "future/notifications/secrets.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "83d7863e9c26bf2a5f39c1f1360ca23b499d455d"
+      },
+      "future/notifications/service.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "bd09f84ea76a5e565863975a7f1387b06f9534eb"
+      },
+      "future/notifications/smtpsend/smtpsend.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4a473915835db4d219a2118a6fa448f91921537"
+      },
+      "future/notifications/smtpsend/smtpsend_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "356b32bce1661324e7f2cb721d05b18589fa750a"
+      },
+      "future/notifications/sql/0001_notifications_init.down.sql": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a4cce2fbade57caa9828276a67b7c8c2e0820601"
+      },
+      "future/notifications/sql/0001_notifications_init.up.sql": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "716cd40d0363e6ca9216f76ceb6ce8e23db70b5f"
+      },
+      "future/notifications/store.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3f5a56b5336bb4b94a04188614d6bf61ee1c6deb"
+      },
+      "future/notifications/target_binding_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5768fd343acd68ec745e703099f535c13d982944"
+      },
+      "future/notifications/targets.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2ce90f3c8b533f3eb520670742c51883ab078a22"
+      },
+      "future/notifications/transport.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "740fa503a266385dde367054a2c3a6b35e5fb7c9"
+      }
+    }
+  },
+  "archive": {
+    "sha": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+    "full_tree": "14fa7ab8962fa2282c3877027aae08d19df47b73",
+    "module_tree": "be42783f6bbb7cc1fdc443cbcff15fa54e540fc3",
+    "recorded_tested_runtime": "9f4c4da33eba7a668fb8e8ddbe7f2a7718d0bc5e",
+    "files": {
+      "future/notifications/AUDIT.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5cddfe72c8df72b6a4cc1ff1cdbebc8d9e7a824d"
+      },
+      "future/notifications/COMPLETION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2b85bac0ceb35c89674701b45b98fac0bc8ee231"
+      },
+      "future/notifications/COVERAGE.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "748765a311d1e44a8d3b380c289e2e037394d945"
+      },
+      "future/notifications/FINAL-HANDOFF.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "356978dcb327960bcdd24e4a5e70112f00be949e"
+      },
+      "future/notifications/HANDOFF-MILESTONE-F.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "356978dcb327960bcdd24e4a5e70112f00be949e"
+      },
+      "future/notifications/INTEGRATION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d27e38eef0a27a0db3b3f29b400a9df00b9acb28"
+      },
+      "future/notifications/MIGRATION-PLAN.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "dcb4e5915010c14dd3de260961de2d4dda22284c"
+      },
+      "future/notifications/OPERATIONS.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "33cf3d98b80b01d5bd2b32567666331899e74558"
+      },
+      "future/notifications/README.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5da726d6bc1ee3888043ebdc40fd6b9ceb3b6782"
+      },
+      "future/notifications/SECURITY-AUDIT.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8a653b605c7be94a3ded2564157514a08227b2b9"
+      },
+      "future/notifications/SPEC-SNAPSHOT.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4fa31254e72aa84531398b9be2b9f5cc6acda6a"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_SherClockHolmes_webpush-go@v1.4.1-0.20260422052225-76cc00f5ac2d/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "161eac777d374951c7d91a3a48b0c81289739324"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_dustin_go-humanize@v1.0.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8d9a94a90680d9fc114a1b3a2b4123c233c324af"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_golang-jwt_jwt_v5@v5.2.2/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "35dbc252041eae41edbf286d56d48371bc670d39"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_google_go-cmp@v0.6.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "32017f8fa1d8aa18d984b7d56d8354273659a50a"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_google_pprof@v0.0.0-20260802141513-ef3492d7dac3/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_google_uuid@v1.6.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5dc68268d900581915a7bfdc1f2be75cd503dd9e"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_hashicorp_golang-lru_v2@v2.0.7/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0e5d580e0e9643a332da623d3b9976c8569b8c5e"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_mattn_go-isatty@v0.0.24/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "65dc692b6b171e95c7e7698674ebaf8524dcd0d6"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_ncruces_go-strftime@v1.0.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7f0f5534ca24fd8d76c33badeb08f7510e22907c"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "74487567632c8f137ef3971b0f5912ca50bebcda"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c64411f92130bb55fdffecc58e3cb2c526bc9e87"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/smtp_LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ea5ea898692544921f259985e2fc4c2a916472c2"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/github.com_yuin_goldmark@v1.4.13/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "dc5b2a6906a4c3ce57b21c447542a5889f0a8221"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_crypto@v0.58.1-0.20261009181718-2f1f834330b2/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_mod@v0.41.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_net@v0.60.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_sync@v0.24.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_sys@v0.49.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_telemetry@v0.0.0-20240228155512-f48c80bd79b2/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6a66aea5eafe0ca6a688840c47219556c552488e"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_term@v0.47.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_text@v0.43.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_tools@v0.51.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_xerrors@v0.0.0-20190717185122-a985d3407aa7/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e4a47e17f143b5b29fb29b6c23421ac67e4a6154"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_cc_v4@v4.29.7/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "81fdfc37fa0ac0b10d219a0696547206a4c23fbd"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_ccgo_v4@v4.36.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "06f07c13176975e0d99c10b2572e7b3b5856b96f"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_fileutil@v1.4.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "50bbdd2410fcfb58a61c4dbad080b09a15f39c45"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_gc_v2@v2.6.5/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4bc6276f612095588217a80ec870e5b656ec2284"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_gc_v3@v3.1.5/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4bc6276f612095588217a80ec870e5b656ec2284"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_goabi0@v0.2.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "fedcf6bdd4b7c3dbab8f1e0e830963dae8b00ace"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0c6500bc3615df5cf4cd5c43e0598af481e03534"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "04bebedb828e3ef89f3f2d3f0bee41a27559be55"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_mathutil@v1.7.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "128a1b64a48e5ea03d9006ef189997c3e8f81938"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "967339afcfed0f64afb32d81359930c6a6b06ed6"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-GO": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6a66aea5eafe0ca6a688840c47219556c552488e"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-LOGO": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ec496d173f9901c973e910eb117532ac6acf65b9"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_opt@v0.2.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "11a2e914caca431104f46a0710c748fb68b4a6a8"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sortutil@v1.2.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "67983e0e6187033949ca851f23104aa389674db2"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "867b0f379ccb95a39757d032d3391f7f01848fe1"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "859dac18fa138c1b0df20700f83f3b0b9ce1d341"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cc4c78e3d9dce881feda49f98043a92994439fd9"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "9c106bc48c760f7ed9f5b8255dea7adeef029cbe"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_strutil@v1.2.1/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2fdd92cf71397b10c54e5ca8b625311695ea909e"
+      },
+      "future/notifications/THIRD-PARTY-NOTICES/modernc.org_token@v1.1.0/LICENSE": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6a66aea5eafe0ca6a688840c47219556c552488e"
+      },
+      "future/notifications/THIRD-PARTY.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2d7b4d4697a2f51c3997bd123e66bccf6fd08e65"
+      },
+      "future/notifications/THIRD_PARTY_NOTICES.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4685647281f762205975d7db6e060290e2b8ba9f"
+      },
+      "future/notifications/UPSTREAM-RESEARCH.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7100051e35f3fb3fac4ce399062bc8da400b2f3b"
+      },
+      "future/notifications/UPSTREAM-REUSE-MATRIX.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "6a36f0ff29c0590376b9101ab65fe12239bb83ba"
+      },
+      "future/notifications/VALIDATION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "107f8e568e8ccba7693403ea4e97cc64b758fdc3"
+      },
+      "future/notifications/api.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "7417a41627379758ab5d8cfe2eeed4c230107fec"
+      },
+      "future/notifications/api_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f11510d2222799289223c488ea4017399b17bcf2"
+      },
+      "future/notifications/audit_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "997d77a3c3140f6c2a9fba46d9efc10416d3ce29"
+      },
+      "future/notifications/cmd/notifications-status/main.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "011d75f4a88b8474cd21bec8d181fdb497768cbc"
+      },
+      "future/notifications/cmd/notifications-status/main_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "306e2d2ecd3d8d61e086ed03ccee50b175d30478"
+      },
+      "future/notifications/consent_lifecycle_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "8091287c016d41e3017ff4351ae08f0dc81b1b6b"
+      },
+      "future/notifications/delivery.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "78418a2bafc2562f0a112e4a3170b12d6792e626"
+      },
+      "future/notifications/delivery_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "24a211374a96a731b05624363c9fe6a022e3b05c"
+      },
+      "future/notifications/errors.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "3786f3d7ccfd176c115df3ccf71e809ca9ffee0e"
+      },
+      "future/notifications/feature.json": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5db915fb54e9b9bf61010717acd9cdaed5eba191"
+      },
+      "future/notifications/go.mod": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1403a93235d55a51396c0b9ea9f11a0f1f9f631a"
+      },
+      "future/notifications/go.sum": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e8ac581ca5f9073c8151fb0cf127ec926ef62125"
+      },
+      "future/notifications/master_audit_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "a8ceae10f269f869241812865cb1eb13fb9208f6"
+      },
+      "future/notifications/operations.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e7fe5d1b0ff95b913882b71a93e8b84b6ad4fb21"
+      },
+      "future/notifications/recovery-evidence/SHA256SUMS": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "1d428c88556577598f1524225b6f7ba23374a21f"
+      },
+      "future/notifications/recovery-evidence/master-green.log": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "cd54626da2d7294b340b3d3766ebb14474b4fbf6"
+      },
+      "future/notifications/recovery-evidence/master-modules.log": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f"
+      },
+      "future/notifications/recovery-evidence/master-race.log": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2fb0c1c53ff57987df6baa7b6d8809ea35cd3441"
+      },
+      "future/notifications/recovery-evidence/master-red.log": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "502529a2bd3b541fc6bce30d18d4f8d76e2831e9"
+      },
+      "future/notifications/recovery-evidence/master-vet.log": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+      },
+      "future/notifications/store.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b0b6e2e08eb0f69b88e93c68df263bc0826b396a"
+      },
+      "future/notifications/store_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "004cb74ad925eb0bbc1b19c8430b5b2e6c13c2bd"
+      },
+      "future/notifications/strictjson.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "0443fbd44627fda37e0e56f379b4e936aea689cd"
+      },
+      "future/notifications/strictjson_fuzz_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "dbdefec3155b636c0a54400336d8922af6d860ee"
+      },
+      "future/notifications/transport.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "283455ef8f44924a354f9a483d61fb349c537cfe"
+      },
+      "future/notifications/transport_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "243e42d4b08cff7bf3e1fd8a27b2d944588943ee"
+      },
+      "future/notifications/unsubscribe.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "aaa9d46ddf88a3ed7a85d8feba1d7a5b03cb3f52"
+      },
+      "future/notifications/unsubscribe_http.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f78f8cc1dd1ddded5ef207860841c642d4d6fdd1"
+      },
+      "future/notifications/worker.go": {
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b7497fa1d52d2fe03c653e8714bf57f04b3fe792"
+      }
+    },
+    "source_copy_checks": [
+      {
+        "path": "future/notifications/api.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/api.go",
+        "blob": "7417a41627379758ab5d8cfe2eeed4c230107fec",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/api_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/api_test.go",
+        "blob": "f11510d2222799289223c488ea4017399b17bcf2",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/audit_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/audit_test.go",
+        "blob": "997d77a3c3140f6c2a9fba46d9efc10416d3ce29",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/cmd/notifications-status/main.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/cmd/notifications-status/main.go",
+        "blob": "011d75f4a88b8474cd21bec8d181fdb497768cbc",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/cmd/notifications-status/main_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/cmd/notifications-status/main_test.go",
+        "blob": "306e2d2ecd3d8d61e086ed03ccee50b175d30478",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/consent_lifecycle_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/consent_lifecycle_test.go",
+        "blob": "8091287c016d41e3017ff4351ae08f0dc81b1b6b",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/delivery.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/delivery.go",
+        "blob": "78418a2bafc2562f0a112e4a3170b12d6792e626",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/delivery_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/delivery_test.go",
+        "blob": "24a211374a96a731b05624363c9fe6a022e3b05c",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/errors.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/errors.go",
+        "blob": "3786f3d7ccfd176c115df3ccf71e809ca9ffee0e",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/master_audit_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/master_audit_test.go",
+        "blob": "a8ceae10f269f869241812865cb1eb13fb9208f6",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/operations.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/operations.go",
+        "blob": "e7fe5d1b0ff95b913882b71a93e8b84b6ad4fb21",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/store.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/store.go",
+        "blob": "b0b6e2e08eb0f69b88e93c68df263bc0826b396a",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/store_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/store_test.go",
+        "blob": "004cb74ad925eb0bbc1b19c8430b5b2e6c13c2bd",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/strictjson.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/strictjson.go",
+        "blob": "0443fbd44627fda37e0e56f379b4e936aea689cd",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/strictjson_fuzz_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/strictjson_fuzz_test.go",
+        "blob": "dbdefec3155b636c0a54400336d8922af6d860ee",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/transport.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/transport.go",
+        "blob": "283455ef8f44924a354f9a483d61fb349c537cfe",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/transport_test.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/transport_test.go",
+        "blob": "243e42d4b08cff7bf3e1fd8a27b2d944588943ee",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/unsubscribe.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/unsubscribe.go",
+        "blob": "aaa9d46ddf88a3ed7a85d8feba1d7a5b03cb3f52",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/unsubscribe_http.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/unsubscribe_http.go",
+        "blob": "f78f8cc1dd1ddded5ef207860841c642d4d6fdd1",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      },
+      {
+        "path": "future/notifications/worker.go",
+        "readable_copy": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/notifications/worker.go",
+        "blob": "b7497fa1d52d2fe03c653e8714bf57f04b3fe792",
+        "copy_matches_archive": true,
+        "matches_historical_tested_runtime": true
+      }
+    ]
+  },
+  "merge_base": "5290916d116387a283a9ec344df112f00bccf7c9",
+  "diff_counts": {
+    "A": 78,
+    "M": 8,
+    "D": 27
+  },
+  "go_diff_counts": {
+    "A": 16,
+    "M": 3,
+    "D": 25
+  },
+  "changes": [
+    {
+      "status": "A",
+      "path": "future/notifications/AUDIT.md",
+      "current_blob": null,
+      "archive_blob": "5cddfe72c8df72b6a4cc1ff1cdbebc8d9e7a824d"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/COMPLETION.md",
+      "current_blob": null,
+      "archive_blob": "2b85bac0ceb35c89674701b45b98fac0bc8ee231"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/COVERAGE.md",
+      "current_blob": null,
+      "archive_blob": "748765a311d1e44a8d3b380c289e2e037394d945"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/FINAL-HANDOFF.md",
+      "current_blob": null,
+      "archive_blob": "356978dcb327960bcdd24e4a5e70112f00be949e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/HANDOFF-MILESTONE-F.md",
+      "current_blob": null,
+      "archive_blob": "356978dcb327960bcdd24e4a5e70112f00be949e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/INTEGRATION.md",
+      "current_blob": null,
+      "archive_blob": "d27e38eef0a27a0db3b3f29b400a9df00b9acb28"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/MIGRATION-PLAN.md",
+      "current_blob": null,
+      "archive_blob": "dcb4e5915010c14dd3de260961de2d4dda22284c"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/OPERATIONS.md",
+      "current_blob": null,
+      "archive_blob": "33cf3d98b80b01d5bd2b32567666331899e74558"
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/README.md",
+      "current_blob": "78c5566d1eab3cbfdb46deb81e01e5f7c4b626ee",
+      "archive_blob": "5da726d6bc1ee3888043ebdc40fd6b9ceb3b6782"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/SECURITY-AUDIT.md",
+      "current_blob": null,
+      "archive_blob": "8a653b605c7be94a3ded2564157514a08227b2b9"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_SherClockHolmes_webpush-go@v1.4.1-0.20260422052225-76cc00f5ac2d/LICENSE",
+      "current_blob": null,
+      "archive_blob": "161eac777d374951c7d91a3a48b0c81289739324"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_dustin_go-humanize@v1.0.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "8d9a94a90680d9fc114a1b3a2b4123c233c324af"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_golang-jwt_jwt_v5@v5.2.2/LICENSE",
+      "current_blob": null,
+      "archive_blob": "35dbc252041eae41edbf286d56d48371bc670d39"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_google_go-cmp@v0.6.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "32017f8fa1d8aa18d984b7d56d8354273659a50a"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_google_pprof@v0.0.0-20260802141513-ef3492d7dac3/LICENSE",
+      "current_blob": null,
+      "archive_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_google_uuid@v1.6.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "5dc68268d900581915a7bfdc1f2be75cd503dd9e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_hashicorp_golang-lru_v2@v2.0.7/LICENSE",
+      "current_blob": null,
+      "archive_blob": "0e5d580e0e9643a332da623d3b9976c8569b8c5e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_mattn_go-isatty@v0.0.24/LICENSE",
+      "current_blob": null,
+      "archive_blob": "65dc692b6b171e95c7e7698674ebaf8524dcd0d6"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_ncruces_go-strftime@v1.0.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "7f0f5534ca24fd8d76c33badeb08f7510e22907c"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE",
+      "current_blob": null,
+      "archive_blob": "74487567632c8f137ef3971b0f5912ca50bebcda"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/LICENSE",
+      "current_blob": null,
+      "archive_blob": "c64411f92130bb55fdffecc58e3cb2c526bc9e87"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_wneessen_go-mail@v0.8.2/smtp_LICENSE",
+      "current_blob": null,
+      "archive_blob": "ea5ea898692544921f259985e2fc4c2a916472c2"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/github.com_yuin_goldmark@v1.4.13/LICENSE",
+      "current_blob": null,
+      "archive_blob": "dc5b2a6906a4c3ce57b21c447542a5889f0a8221"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_crypto@v0.58.1-0.20261009181718-2f1f834330b2/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_mod@v0.41.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_net@v0.60.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_sync@v0.24.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_sys@v0.49.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_telemetry@v0.0.0-20240228155512-f48c80bd79b2/LICENSE",
+      "current_blob": null,
+      "archive_blob": "6a66aea5eafe0ca6a688840c47219556c552488e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_term@v0.47.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_text@v0.43.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_tools@v0.51.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/golang.org_x_xerrors@v0.0.0-20190717185122-a985d3407aa7/LICENSE",
+      "current_blob": null,
+      "archive_blob": "e4a47e17f143b5b29fb29b6c23421ac67e4a6154"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_cc_v4@v4.29.7/LICENSE",
+      "current_blob": null,
+      "archive_blob": "81fdfc37fa0ac0b10d219a0696547206a4c23fbd"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_ccgo_v4@v4.36.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "06f07c13176975e0d99c10b2572e7b3b5856b96f"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_fileutil@v1.4.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "50bbdd2410fcfb58a61c4dbad080b09a15f39c45"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_gc_v2@v2.6.5/LICENSE",
+      "current_blob": null,
+      "archive_blob": "4bc6276f612095588217a80ec870e5b656ec2284"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_gc_v3@v3.1.5/LICENSE",
+      "current_blob": null,
+      "archive_blob": "4bc6276f612095588217a80ec870e5b656ec2284"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_goabi0@v0.2.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "fedcf6bdd4b7c3dbab8f1e0e830963dae8b00ace"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "0c6500bc3615df5cf4cd5c43e0598af481e03534"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md",
+      "current_blob": null,
+      "archive_blob": "04bebedb828e3ef89f3f2d3f0bee41a27559be55"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_mathutil@v1.7.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "128a1b64a48e5ea03d9006ef189997c3e8f81938"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "967339afcfed0f64afb32d81359930c6a6b06ed6"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-GO",
+      "current_blob": null,
+      "archive_blob": "6a66aea5eafe0ca6a688840c47219556c552488e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-LOGO",
+      "current_blob": null,
+      "archive_blob": "ec496d173f9901c973e910eb117532ac6acf65b9"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO",
+      "current_blob": null,
+      "archive_blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_opt@v0.2.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "11a2e914caca431104f46a0710c748fb68b4a6a8"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sortutil@v1.2.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "67983e0e6187033949ca851f23104aa389674db2"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md",
+      "current_blob": null,
+      "archive_blob": "859dac18fa138c1b0df20700f83f3b0b9ce1d341"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE",
+      "current_blob": null,
+      "archive_blob": "cc4c78e3d9dce881feda49f98043a92994439fd9"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC",
+      "current_blob": null,
+      "archive_blob": "9c106bc48c760f7ed9f5b8255dea7adeef029cbe"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_strutil@v1.2.1/LICENSE",
+      "current_blob": null,
+      "archive_blob": "2fdd92cf71397b10c54e5ca8b625311695ea909e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY-NOTICES/modernc.org_token@v1.1.0/LICENSE",
+      "current_blob": null,
+      "archive_blob": "6a66aea5eafe0ca6a688840c47219556c552488e"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD-PARTY.md",
+      "current_blob": null,
+      "archive_blob": "2d7b4d4697a2f51c3997bd123e66bccf6fd08e65"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/THIRD_PARTY_NOTICES.md",
+      "current_blob": null,
+      "archive_blob": "4685647281f762205975d7db6e060290e2b8ba9f"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/UPSTREAM-REUSE-MATRIX.md",
+      "current_blob": null,
+      "archive_blob": "6a36f0ff29c0590376b9101ab65fe12239bb83ba"
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/VALIDATION.md",
+      "current_blob": "00511faee935ef50859517302df7799d9542049d",
+      "archive_blob": "107f8e568e8ccba7693403ea4e97cc64b758fdc3"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/api.go",
+      "current_blob": null,
+      "archive_blob": "7417a41627379758ab5d8cfe2eeed4c230107fec"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/api_test.go",
+      "current_blob": null,
+      "archive_blob": "f11510d2222799289223c488ea4017399b17bcf2"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/audit_test.go",
+      "current_blob": null,
+      "archive_blob": "997d77a3c3140f6c2a9fba46d9efc10416d3ce29"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/cmd/notifications-status/main.go",
+      "current_blob": null,
+      "archive_blob": "011d75f4a88b8474cd21bec8d181fdb497768cbc"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/cmd/notifications-status/main_test.go",
+      "current_blob": null,
+      "archive_blob": "306e2d2ecd3d8d61e086ed03ccee50b175d30478"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/consent_lifecycle_test.go",
+      "current_blob": null,
+      "archive_blob": "8091287c016d41e3017ff4351ae08f0dc81b1b6b"
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/delivery.go",
+      "current_blob": "e51316f11aa969d7f8dc5e14445fa794930d867a",
+      "archive_blob": "78418a2bafc2562f0a112e4a3170b12d6792e626"
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/dispatch.go",
+      "current_blob": "b3f244bb2c964f1942bc07004105d7218ddf9e79",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/dispatch_test.go",
+      "current_blob": "ee6dcfa5296678ab125b644bdd7eb2f8dcbc7f82",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/driver_cgo_test.go",
+      "current_blob": "686255a134257ca0f37eaf7e079046e1fb8a7274",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/driver_none_test.go",
+      "current_blob": "9851dc659eecaa2f7602ab9a94feb6688aba0593",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/egress.go",
+      "current_blob": "f82ff7ce96e53d4f02b7456754ac41b7ea4c0a33",
+      "archive_blob": null
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/errors.go",
+      "current_blob": null,
+      "archive_blob": "3786f3d7ccfd176c115df3ccf71e809ca9ffee0e"
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/feature.json",
+      "current_blob": "15827422569370ec231e6bfc11814c7c3991d274",
+      "archive_blob": "5db915fb54e9b9bf61010717acd9cdaed5eba191"
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/go.mod",
+      "current_blob": "782f5ff5d5da7b3f876bcbbd2de92dd0affbcaf5",
+      "archive_blob": "1403a93235d55a51396c0b9ea9f11a0f1f9f631a"
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/go.sum",
+      "current_blob": "85934a6da6ab987034670d95a8f6f9346516c8a7",
+      "archive_blob": "e8ac581ca5f9073c8151fb0cf127ec926ef62125"
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/helpers_test.go",
+      "current_blob": "e01ebfea6bfe3672ac2af74cfabe0c44adcba7ca",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/identity_encoding_test.go",
+      "current_blob": "2d2de618602cf1e5b8984ca9f3d572b8acd95f21",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/kinds.go",
+      "current_blob": "a297ba0fe8d491fdf5399f8355e535e15612b018",
+      "archive_blob": null
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/master_audit_test.go",
+      "current_blob": null,
+      "archive_blob": "a8ceae10f269f869241812865cb1eb13fb9208f6"
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/metrics.go",
+      "current_blob": "e4ab325194aa80540d8ed529d7815d91ca979189",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/notifytest/notifytest.go",
+      "current_blob": "4312d8c888f3aecac5a4579e2305741e5a7df329",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/notifytest/push.go",
+      "current_blob": "085bfa464d23697d47d59b34c9cd4fbee73cf8a2",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/notifytest/smtp.go",
+      "current_blob": "c8bbf7e2aaf282a763cb6dc20a076cfbd544bca2",
+      "archive_blob": null
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/operations.go",
+      "current_blob": null,
+      "archive_blob": "e7fe5d1b0ff95b913882b71a93e8b84b6ad4fb21"
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/outbox.go",
+      "current_blob": "5c67ab836f9d5f7bb80a1362a8057dcd40d70403",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/outbox_test.go",
+      "current_blob": "cab33a9c4a2c6ce8adabc0a1f7f8f63b137bae7c",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/prefs.go",
+      "current_blob": "150395401ad93a2c385e596ccd6002f7d28d6e84",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/prefs_test.go",
+      "current_blob": "40afbdb2f3c0179f07ce8062ef27c944bef3d356",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/pushsend/b64.go",
+      "current_blob": "0698866380c0c89db10747871475c7786292ebd0",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/pushsend/pushsend.go",
+      "current_blob": "cf4e6d876137f5756d0bba6a57536596f5541025",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/pushsend/pushsend_test.go",
+      "current_blob": "e4e82c4be240f8c5314e855ae710bf395f9f8c85",
+      "archive_blob": null
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/recovery-evidence/SHA256SUMS",
+      "current_blob": null,
+      "archive_blob": "1d428c88556577598f1524225b6f7ba23374a21f"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/recovery-evidence/master-green.log",
+      "current_blob": null,
+      "archive_blob": "cd54626da2d7294b340b3d3766ebb14474b4fbf6"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/recovery-evidence/master-modules.log",
+      "current_blob": null,
+      "archive_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/recovery-evidence/master-race.log",
+      "current_blob": null,
+      "archive_blob": "2fb0c1c53ff57987df6baa7b6d8809ea35cd3441"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/recovery-evidence/master-red.log",
+      "current_blob": null,
+      "archive_blob": "502529a2bd3b541fc6bce30d18d4f8d76e2831e9"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/recovery-evidence/master-vet.log",
+      "current_blob": null,
+      "archive_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/secrets.go",
+      "current_blob": "83d7863e9c26bf2a5f39c1f1360ca23b499d455d",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/service.go",
+      "current_blob": "bd09f84ea76a5e565863975a7f1387b06f9534eb",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/smtpsend/smtpsend.go",
+      "current_blob": "e4a473915835db4d219a2118a6fa448f91921537",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/smtpsend/smtpsend_test.go",
+      "current_blob": "356b32bce1661324e7f2cb721d05b18589fa750a",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/sql/0001_notifications_init.down.sql",
+      "current_blob": "a4cce2fbade57caa9828276a67b7c8c2e0820601",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/sql/0001_notifications_init.up.sql",
+      "current_blob": "716cd40d0363e6ca9216f76ceb6ce8e23db70b5f",
+      "archive_blob": null
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/store.go",
+      "current_blob": "3f5a56b5336bb4b94a04188614d6bf61ee1c6deb",
+      "archive_blob": "b0b6e2e08eb0f69b88e93c68df263bc0826b396a"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/store_test.go",
+      "current_blob": null,
+      "archive_blob": "004cb74ad925eb0bbc1b19c8430b5b2e6c13c2bd"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/strictjson.go",
+      "current_blob": null,
+      "archive_blob": "0443fbd44627fda37e0e56f379b4e936aea689cd"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/strictjson_fuzz_test.go",
+      "current_blob": null,
+      "archive_blob": "dbdefec3155b636c0a54400336d8922af6d860ee"
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/target_binding_test.go",
+      "current_blob": "5768fd343acd68ec745e703099f535c13d982944",
+      "archive_blob": null
+    },
+    {
+      "status": "D",
+      "path": "future/notifications/targets.go",
+      "current_blob": "2ce90f3c8b533f3eb520670742c51883ab078a22",
+      "archive_blob": null
+    },
+    {
+      "status": "M",
+      "path": "future/notifications/transport.go",
+      "current_blob": "740fa503a266385dde367054a2c3a6b35e5fb7c9",
+      "archive_blob": "283455ef8f44924a354f9a483d61fb349c537cfe"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/transport_test.go",
+      "current_blob": null,
+      "archive_blob": "243e42d4b08cff7bf3e1fd8a27b2d944588943ee"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/unsubscribe.go",
+      "current_blob": null,
+      "archive_blob": "aaa9d46ddf88a3ed7a85d8feba1d7a5b03cb3f52"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/unsubscribe_http.go",
+      "current_blob": null,
+      "archive_blob": "f78f8cc1dd1ddded5ef207860841c642d4d6fdd1"
+    },
+    {
+      "status": "A",
+      "path": "future/notifications/worker.go",
+      "current_blob": null,
+      "archive_blob": "b7497fa1d52d2fe03c653e8714bf57f04b3fe792"
+    }
+  ],
+  "protected_pr103_blobs": {
+    "future/notifications/pushsend/pushsend.go": "cf4e6d876137f5756d0bba6a57536596f5541025",
+    "future/notifications/pushsend/pushsend_test.go": "e4e82c4be240f8c5314e855ae710bf395f9f8c85",
+    "future/notifications/smtpsend/smtpsend.go": "e4a473915835db4d219a2118a6fa448f91921537",
+    "future/notifications/smtpsend/smtpsend_test.go": "356b32bce1661324e7f2cb721d05b18589fa750a"
+  },
+  "preserved_prior_comparison": {
+    "file": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/module-comparisons.json",
+    "file_sha256": "25eca344351c67a9f1ea3d724d8541df7190e8735e55c7afd26715462589b835",
+    "target": {
+      "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "branch": "audit/future-notifications-binding-20261119",
+      "receipt": "MODULE_QUALIFICATION.json"
+    },
+    "diff_summary": {
+      "changed_paths": 111,
+      "added": 78,
+      "modified": 8,
+      "deleted": 25,
+      "insertions": 6544,
+      "deletions": 5816
+    },
+    "historical_evidence_only": true,
+    "explanation": "Existing 5/15 recovery-source inventory is unchanged. This report compares the later reviewed local transport head, so two additional transport test paths are deleted by an archive replacement."
+  },
+  "runtime_evidence": "Archive documented passes at9f4c4da remain historical; fresh archive qualification is owned by the separate serial runner. Current PR103 evidence is retained in ../notification-transport-qualification.json. No pass is transferred from one runtime design to the other."
+}

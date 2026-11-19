@@ -1,0 +1,45 @@
+{
+  "observed_utc": "2026-11-19T14:04:07.749987+00:00",
+  "parent_head": "2ee089e36c9f2036c797d2be5bcce5a0650f78cb",
+  "working_tree_note": "Actual follow-up source; exact same 27-test harness as retained red run.",
+  "node": "v24.22.3",
+  "source_sha256": "85577866e38f6c31a5c7bbb46b3792864ac1a1ffff8f0468001278b13871d0d7",
+  "test_sha256": "d930e295869c3b527bf26bdb3fd0990bc8e83aa6fc9e57586b3aa05b0a8a8e3e",
+  "results": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "web/static/scan.js"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.08480996399885044,
+      "log": "followup-syntax-script.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "web/scan_lifecycle_test.mjs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.114325225003995,
+      "log": "followup-syntax-test.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--experimental-vm-modules",
+        "--test",
+        "--test-timeout=15000",
+        "web/scan_lifecycle_test.mjs"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 0.3706635440030368,
+      "log": "followup-green.log",
+      "log_sha256": "4f86d7cf2ee99ef8f4218174209e35cbfa622c2daa4c439e8550ee5a7124fdd0"
+    }
+  ]
+}

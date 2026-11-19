@@ -1,0 +1,102 @@
+[
+  {
+    "file": "verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json",
+    "bytes": 478767,
+    "sha256": "d52ea13975c26520236e551edc4326cb09fa1ea7c0a0f8c45ceda26ae62408b7"
+  },
+  {
+    "file": "verification/archived-notifications-final/race.log",
+    "bytes": 52746,
+    "sha256": "d91472bb47c0d7d9dc9f6717ccf2a39d4ac3a6405a10578e54df1c8d480bcf61"
+  },
+  {
+    "file": "verification/archived-notifications-final/receipt.json",
+    "bytes": 37748,
+    "sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a"
+  },
+  {
+    "file": "verification/core-final-full-test.log",
+    "bytes": 1648,
+    "sha256": "872395d0c5fe29ea09fd95f5b3106758bc3de35294da3b1cbeae4ea3c27d00d7"
+  },
+  {
+    "file": "verification/core-integration-first-test.log",
+    "bytes": 2379,
+    "sha256": "787ff0a0bee9495668df2fba54c13eb84fde818a50571a4dd435fd36e2a688f0"
+  },
+  {
+    "file": "verification/federation-core-tests-failure.log",
+    "bytes": 20221,
+    "sha256": "2a227c4ecf8e7e1d2942fad69ecd01b5722cf8865670f20dbbc91f7e56c187dc"
+  },
+  {
+    "file": "verification/federation-core-vet-failure.log",
+    "bytes": 24628,
+    "sha256": "05791c9fbbfd5332436135f776949707c014206937533791ed2aac8ddf1a8178"
+  },
+  {
+    "file": "verification/python-export-before.log",
+    "bytes": 18229,
+    "sha256": "dd6e13e76c1191bc1b1ace4feee48d755c8e3aad8611e80e53c2ad7192c95785"
+  },
+  {
+    "file": "verification/python-export-complete-size.log",
+    "bytes": 122,
+    "sha256": "d93dfe0310559cae7e5e827dc356ee3d92077ad87ca254e70489712bb6879174"
+  },
+  {
+    "file": "verification/python-export-final-current.log",
+    "bytes": 121,
+    "sha256": "b6f599fe7944fb71d1339f8ffef05120bf446c2b47e96db168d8700a51f96bb0"
+  },
+  {
+    "file": "verification/python-export-manifest-final-composed.json",
+    "bytes": 656,
+    "sha256": "9fc974243caad494c51eafa10339c17a4f8452c7f119e1c0ec42be15cbfc42fb"
+  },
+  {
+    "file": "verification/python-export-manifest-final-composed.log",
+    "bytes": 138,
+    "sha256": "7aa7f486108fb06a775544c02ca1b807a03a5cb64be85cafba729a97cdcbe1e8"
+  },
+  {
+    "file": "verification/python-export-reviewed.log",
+    "bytes": 121,
+    "sha256": "d192da07ae6cda1ebbb68673b2d1079cd25ba32ef9b0efe84789facb3932fce9"
+  },
+  {
+    "file": "verification/python-native-local.json",
+    "bytes": 888,
+    "sha256": "ad3217dc86de7395a3d51d71c6048f1743b0341f6e761d6c7b23a7e06dc0240a"
+  },
+  {
+    "file": "verification/python-native-local.log",
+    "bytes": 138,
+    "sha256": "dd5689ebf9794c988e774801c89286ae3984b3182d6eebcbc18c3de18facd1ac"
+  },
+  {
+    "file": "verification/python-native-workflow-review.json",
+    "bytes": 4036,
+    "sha256": "9e3f37d4a7bbcfb2fb1077759cee876349d427890779474003d2b42b89ed9ae9"
+  },
+  {
+    "file": "verification/python-native-workflow-review.md",
+    "bytes": 2038,
+    "sha256": "9c9bacefcf3632f13dcceb75ac7a09f45ef332882c4411a0ac569d0d7c76fa7b"
+  },
+  {
+    "file": "verification/python-zip-size-before.log",
+    "bytes": 4034,
+    "sha256": "4a7b13ea5334054a54982384e71808a870288ead58f5620fce99c08f319f75b7"
+  },
+  {
+    "file": "verification/qualification-evidence-20261119.manifest.json",
+    "bytes": 41803,
+    "sha256": "3592091bfac5373e843121ee1a478ddb37dc4793f5936075a7ce94ee0efa805a"
+  },
+  {
+    "file": "verification/qualification-evidence-20261119.zip",
+    "bytes": 522344,
+    "sha256": "ba01ee9653a3bfbc07734348594f878b45cbd5ca87ad797bff64fb09930f5d3f"
+  }
+]

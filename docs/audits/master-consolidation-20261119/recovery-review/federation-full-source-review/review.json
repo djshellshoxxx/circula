@@ -1,0 +1,297 @@
+{
+  "observed_utc": "2026-11-19T12:49:33.465752+00:00",
+  "reviewer": "/root/independent_triage",
+  "status": "No blocking source finding in complete isolated production-source review",
+  "head": "5cf90f4ea3f9bcd17d4c7eaa611759080895c4dc",
+  "tree": "efc696eca11420d14ab526433af267eb6068347c",
+  "worktree_clean": true,
+  "production_files": [
+    {
+      "path": "future/federation/envelope.go",
+      "blob": "c13fcbb9597cf333c84ff448f459e11bc26dd295",
+      "sha256": "84140982f4ffb1ce0051c2e64299604c86d1a082815dc7f6ce1f114406778f12",
+      "lines": 82,
+      "symbols": [
+        {
+          "line": 38,
+          "declaration": "func message(b []byte) []byte { return append([]byte(\"circula.discovery.v1\\x00\"), b...) }"
+        },
+        {
+          "line": 39,
+          "declaration": "func Sign(e Event, key ed25519.PrivateKey) (Envelope, error) {"
+        },
+        {
+          "line": 60,
+          "declaration": "func Verify(p Peer, env Envelope, now time.Time) (Event, error) {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/interface.go",
+      "blob": "df59e9675225f5a2b683638a27f6606399d22553",
+      "sha256": "cf53f195a55d62dafffd9bd49d2224634c69dc87b1ebd9c75221cd5c0e17d20c",
+      "lines": 365,
+      "symbols": [
+        {
+          "line": 31,
+          "declaration": "func (h *Ingress) ServeHTTP(w http.ResponseWriter, r *http.Request) {"
+        },
+        {
+          "line": 91,
+          "declaration": "func (s Store) Status(ctx context.Context, a Actor) ([]PeerStatus, []QueueStatus, error) {"
+        },
+        {
+          "line": 135,
+          "declaration": "func RenderListings(w io.Writer, listings []RemoteListing) error {"
+        },
+        {
+          "line": 138,
+          "declaration": "func (h Admin) ServeHTTP(w http.ResponseWriter, r *http.Request) {"
+        },
+        {
+          "line": 229,
+          "declaration": "func RunCLI(ctx context.Context, s Store, a Actor, args []string, w io.Writer) error {"
+        },
+        {
+          "line": 318,
+          "declaration": "func ParsePage(r *http.Request) (string, string, int, error) {"
+        },
+        {
+          "line": 347,
+          "declaration": "func strictForm(r *http.Request, fields ...string) error {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/members.go",
+      "blob": "8fbdf00cab5975aeed77f9d4bf50707d77176687",
+      "sha256": "64b9e95f2cb8391ada5d9555a00ef13c4eb743615ea72932de90f872760833de",
+      "lines": 110,
+      "symbols": [
+        {
+          "line": 21,
+          "declaration": "func (h Members) ServeHTTP(w http.ResponseWriter, r *http.Request) {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/operations.go",
+      "blob": "e76d00d532e558b5dcecfaaac4df2717a198cbe5",
+      "sha256": "9ad88c3417cb75bd46b64b03f6a2d5a20a55809b68da9826eaeb0cf1d58c3f46",
+      "lines": 241,
+      "symbols": [
+        {
+          "line": 14,
+          "declaration": "func (s Store) Maintenance(ctx context.Context, a Actor) error {"
+        },
+        {
+          "line": 39,
+          "declaration": "func (s Store) Depart(ctx context.Context, a Actor, member string) error {"
+        },
+        {
+          "line": 87,
+          "declaration": "func (s Store) Retry(ctx context.Context, a Actor, remote, id string) error {"
+        },
+        {
+          "line": 119,
+          "declaration": "func (s Store) queueWithdrawalTx(ctx context.Context, c *sql.Conn, local, remote, listing, owner string, now time.Time) error {"
+        },
+        {
+          "line": 163,
+          "declaration": "func (s Store) Pending(ctx context.Context, a Actor, afterRemote, afterID string, limit int) ([]QueueStatus, error) {"
+        },
+        {
+          "line": 197,
+          "declaration": "func (s Store) WithdrawListing(ctx context.Context, a Actor, listing string) error {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/outbox.go",
+      "blob": "e526e7af283f5fbfc7bbfdb23ec2510fc90a0b29",
+      "sha256": "59525036397e7bf2e8c7537fcb1b1bba934bf8bc9e460d691010d377609de1ff",
+      "lines": 255,
+      "symbols": [
+        {
+          "line": 14,
+          "declaration": "func (s Store) Queue(ctx context.Context, a Actor, remote, listing, eventID string, revoke bool) (string, error) {"
+        },
+        {
+          "line": 130,
+          "declaration": "func (s Store) Dispatch(ctx context.Context, local, remote, id string, delivery Delivery) error {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/protocol.go",
+      "blob": "fa911231b2a5e3d7174d4f8ef3dbef3bc07dfbe9",
+      "sha256": "78357d5a4cb746bc2b02f27a2e7bd266ba588df419c4118f5c412cd58093fd86",
+      "lines": 155,
+      "symbols": [
+        {
+          "line": 40,
+          "declaration": "func identifier(s string) bool {"
+        },
+        {
+          "line": 51,
+          "declaration": "func publicText(s string, max int) bool {"
+        },
+        {
+          "line": 62,
+          "declaration": "func validShared(c SharedListing) bool {"
+        },
+        {
+          "line": 65,
+          "declaration": "func validDiscovery(e Discovery, local, remote string, now time.Time) bool {"
+        },
+        {
+          "line": 80,
+          "declaration": "func SignDiscovery(e Discovery, kid string, key ed25519.PrivateKey) (string, error) {"
+        },
+        {
+          "line": 101,
+          "declaration": "func WireKeyID(wire string) (string, error) {"
+        },
+        {
+          "line": 133,
+          "declaration": "func VerifyDiscovery(wire, local, remote, kid string, key ed25519.PublicKey, now time.Time) (Discovery, error) {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/store.go",
+      "blob": "46ce287d2dd6a7c1c84daf9e7097103969ac557d",
+      "sha256": "73abc289f8018abe7a604482fface3a393596cbf7d5ae39d0fb398977f4062ad",
+      "lines": 442,
+      "symbols": [
+        {
+          "line": 46,
+          "declaration": "func (s Store) now() (time.Time, error) {"
+        },
+        {
+          "line": 56,
+          "declaration": "func (s Store) transaction(ctx context.Context, fn func(*sql.Conn) error) error {"
+        },
+        {
+          "line": 75,
+          "declaration": "func (s Store) Migrate(ctx context.Context) error {"
+        },
+        {
+          "line": 101,
+          "declaration": "func (s Store) auth(ctx context.Context, c *sql.Conn, a Actor, admin bool) error {"
+        },
+        {
+          "line": 107,
+          "declaration": "func (s Store) audit(ctx context.Context, c *sql.Conn, a Actor, action, remote string) error {"
+        },
+        {
+          "line": 115,
+          "declaration": "func (s Store) EnableNetwork(ctx context.Context, a Actor, enabled bool) error {"
+        },
+        {
+          "line": 131,
+          "declaration": "func (s Store) ApprovePeer(ctx context.Context, a Actor, peer PeerConfig, key TrustedKey) error {"
+        },
+        {
+          "line": 167,
+          "declaration": "func (s Store) RevokePeer(ctx context.Context, a Actor, remote string) error {"
+        },
+        {
+          "line": 188,
+          "declaration": "func (s Store) RevokeKey(ctx context.Context, a Actor, remote, kid string) error {"
+        },
+        {
+          "line": 202,
+          "declaration": "func (s Store) Consent(ctx context.Context, a Actor, remote, listing string, enabled bool) error {"
+        },
+        {
+          "line": 259,
+          "declaration": "func peerEnabled(ctx context.Context, c *sql.Conn, local, remote string) (string, error) {"
+        },
+        {
+          "line": 267,
+          "declaration": "func (s Store) Receive(ctx context.Context, local, remote, wire string) (bool, error) {"
+        },
+        {
+          "line": 358,
+          "declaration": "func (s Store) Browse(ctx context.Context, a Actor) ([]RemoteListing, error) {"
+        },
+        {
+          "line": 364,
+          "declaration": "func (s Store) BrowsePage(ctx context.Context, a Actor, afterPeer, afterListing string, limit int) ([]RemoteListing, error) {"
+        },
+        {
+          "line": 403,
+          "declaration": "func validateSchemaObject(ctx context.Context, c *sql.Conn, query string) error {"
+        },
+        {
+          "line": 429,
+          "declaration": "func execOne(ctx context.Context, c *sql.Conn, q string, args ...any) error {"
+        }
+      ]
+    },
+    {
+      "path": "future/federation/transport.go",
+      "blob": "f0332fedd0e42707c4a21b4450e5e56e4246d3d0",
+      "sha256": "86de5c5215fe621e5fdd584115d166f9834cfb8321e5042f511e784abc8afd49",
+      "lines": 137,
+      "symbols": [
+        {
+          "line": 21,
+          "declaration": "func ValidateEndpoint(raw string) error {"
+        },
+        {
+          "line": 37,
+          "declaration": "func PublicAddress(a netip.Addr) bool {"
+        },
+        {
+          "line": 61,
+          "declaration": "func (h HTTPSDelivery) Send(ctx context.Context, endpoint, wire string) error {"
+        },
+        {
+          "line": 69,
+          "declaration": "func (h HTTPSDelivery) client(endpoint string) *http.Client {"
+        },
+        {
+          "line": 96,
+          "declaration": "func sendBounded(ctx context.Context, endpoint, wire string, client *http.Client) error {"
+        },
+        {
+          "line": 116,
+          "declaration": "func decodeOutgoing(wire string) (Discovery, error) {"
+        }
+      ]
+    }
+  ],
+  "lines_read": 1787,
+  "runtime_checks": "None run by this reviewer; current full module/provider qualification is separately owned and must not be inferred from source signoff.",
+  "supporting_read": [
+    "future/federation/ADR-0001.md",
+    "future/federation/INTEGRATION.md",
+    "future/federation/RECOVERY-20261119.md",
+    "future/federation/SECURITY-AUDIT.md",
+    "future/federation/audit_test.go",
+    "future/federation/store_test.go relevant protocol/consent/replay/lease/key/withdrawal tests",
+    "future/federation/transport_test.go",
+    "future/federation/master_interface_test.go inventory"
+  ],
+  "findings": [],
+  "verified_boundaries": [
+    "v1 remains separate from compact JWS v2 ingress",
+    "Locally configured peer/key/issuer/audience scope, canonical header/payload, algorithm and validity checks precede inbox writes",
+    "Same immediate transaction couples enabled peer/key state, signed event verification, scoped replay hash and monotonic projection update",
+    "Current host authorization, owned active projection and per-peer consent checked before publication creation and delivery lease",
+    "Lease attempt comparison prevents stale sender completion overwriting a later attempt or cancellation; network I/O occurs outside writer transaction",
+    "Withdrawal reserve and unsealed intent survive missing signer/source/owner membership without publishing content",
+    "Pinned HTTPS endpoint, all DNS answers validated, direct checked IP dial, default certificate/hostname verification, no proxies/redirects, bounded time/header/body",
+    "Strict HTTP query/body validation and same-actor recheck after CSRF callback before private reads; HTML templates escape public content"
+  ],
+  "limits": [
+    "Trusted host auth/project/key callbacks and actual Core transaction/departure adapters remain unimplemented integration requirements",
+    "In-flight sends cannot be recalled; at-least-once delivery requires receiver idempotency",
+    "Signing-key custody/distribution and live peer/TLS interoperability remain unqualified",
+    "Lifetime replay/outbox capacity is deliberately fail-closed; compaction/epoch/retention redesign is not authorized by this review",
+    "No external security certification, deployment/merge approval or current-head runtime pass is implied",
+    "README remains owned by PR106; recurring restoration PR110 remains untouched"
+  ]
+}

@@ -1,0 +1,402 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-19T12:42:40.178Z",
+  "scope": {
+    "module": "github.com/djshellshoxxx/circula/future/notifications",
+    "feature": "FUX-104",
+    "enabled": false,
+    "integration": "HOLD",
+    "worktree": "/workspace/scratch/f47ceab29930/circula-notification-transports",
+    "changed_paths": [
+      "future/notifications/pushsend/pushsend.go",
+      "future/notifications/pushsend/pushsend_test.go",
+      "future/notifications/smtpsend/smtpsend.go",
+      "future/notifications/smtpsend/smtpsend_test.go"
+    ]
+  },
+  "publication": {
+    "repository": "djshellshoxxx/circula",
+    "pull_request": 103,
+    "url": "https://github.com/djshellshoxxx/circula/pull/103",
+    "draft": true,
+    "branch": "master/notification-transport-tests-20261119",
+    "target_branch": "future/fux-104-notifications-20261116",
+    "local_commit": "4a59bd1e740c2fcf5877de2a90594439cb9cd570",
+    "local_parent": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+    "remote_commit": "13669485b641475fce526633f47055ef31997098",
+    "remote_parent": "797dddf21adddfb34a49e7bda1871a202968dcda",
+    "local_tree": "198d2e6d9e40922080eb91f3ab73d011808feea9",
+    "remote_tree": "198d2e6d9e40922080eb91f3ab73d011808feea9",
+    "local_parent_tree": "d551498bd5c3c144acedf72f9320704ba55c3404",
+    "remote_parent_tree": "d551498bd5c3c144acedf72f9320704ba55c3404",
+    "exact_full_tree_equality": true,
+    "exact_base_tree_equality": true,
+    "remote_comparison": {
+      "ahead_by": 1,
+      "behind_by": 0,
+      "total_commits": 1,
+      "changed_files": 4,
+      "additions": 618,
+      "deletions": 5
+    },
+    "files": [
+      {
+        "path": "future/notifications/pushsend/pushsend.go",
+        "mode": "100644",
+        "local_blob": "cf4e6d876137f5756d0bba6a57536596f5541025",
+        "remote_blob": "cf4e6d876137f5756d0bba6a57536596f5541025",
+        "base_blob": "e2bb8469f57554011e4c7343ae413dfe9703c481",
+        "status": "modified"
+      },
+      {
+        "path": "future/notifications/pushsend/pushsend_test.go",
+        "mode": "100644",
+        "local_blob": "e4e82c4be240f8c5314e855ae710bf395f9f8c85",
+        "remote_blob": "e4e82c4be240f8c5314e855ae710bf395f9f8c85",
+        "base_blob": null,
+        "status": "added"
+      },
+      {
+        "path": "future/notifications/smtpsend/smtpsend.go",
+        "mode": "100644",
+        "local_blob": "e4a473915835db4d219a2118a6fa448f91921537",
+        "remote_blob": "e4a473915835db4d219a2118a6fa448f91921537",
+        "base_blob": "586f0c1e24d84424fe0f0e6bc60d4f8b1a7909bc",
+        "status": "modified"
+      },
+      {
+        "path": "future/notifications/smtpsend/smtpsend_test.go",
+        "mode": "100644",
+        "local_blob": "356b32bce1661324e7f2cb721d05b18589fa750a",
+        "remote_blob": "356b32bce1661324e7f2cb721d05b18589fa750a",
+        "base_blob": null,
+        "status": "added"
+      }
+    ]
+  },
+  "defects": [
+    {
+      "id": "push-success-typed-nil",
+      "before": "HTTP 200/201/204 returned a nonnil error interface holding nil *notifications.SendError.",
+      "repair": "classifyStatus returns error; successful responses return a true nil interface.",
+      "regression": "TestSendPushSuccessReturnsNilError"
+    },
+    {
+      "id": "retry-after-overflow",
+      "before": "9223372036854775807 produced -1s; uint64-max and longer decimal values produced 0s instead of the existing one-hour cap.",
+      "repair": "Validate decimal digits and clamp unsigned seconds before duration multiplication.",
+      "regression": "TestRetryAfterCannotOverflow"
+    },
+    {
+      "id": "implicit-smtp-custom-dialer",
+      "before": "Injected raw TCP dialer bypassed go-mail implicit TLS setup and timed out with a real synthetic implicit TLS server.",
+      "repair": "Verify the TLS handshake before returning an injected connection; let go-mail inspect the already-secure connection state for authentication.",
+      "regression": "TestSendEmailOverVerifiedTLS/implicit"
+    }
+  ],
+  "toolchain": {
+    "version": "go1.26.11 linux/amd64",
+    "go_binary": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/workspace/scratch/f47ceab29930/go-build-cache",
+      "GOMODCACHE": "/workspace/scratch/f47ceab29930/go-mod-cache",
+      "GOMAXPROCS": "1",
+      "CGO_ENABLED": "1",
+      "GOGC": "25",
+      "GOMEMLIMIT": "512MiB"
+    },
+    "full_sqlite_environment": {
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/workspace/scratch/f47ceab29930/go-build-cache",
+      "GOMODCACHE": "/workspace/scratch/f47ceab29930/go-mod-cache",
+      "GOMAXPROCS": "1",
+      "CGO_ENABLED": "1",
+      "GOGC": "25",
+      "GOMEMLIMIT": "512MiB",
+      "CGO_CFLAGS": "-O0 -g0",
+      "GOTMPDIR": "/tmp/circula-notification-fuzz-20261119"
+    }
+  },
+  "verification": {
+    "fail_before": {
+      "kind": "focused-fail-before-overlay",
+      "base_source": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "test_source": "4a59bd1e740c2fcf5877de2a90594439cb9cd570",
+      "source_paths": [
+        "future/notifications/pushsend/pushsend.go",
+        "future/notifications/smtpsend/smtpsend.go"
+      ],
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notification-transports/future/notifications",
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -overlay=/tmp/circula-notification-before-yqj8pl0n/overlay.json -vet=off -p 1 ./pushsend ./smtpsend -run '^(TestSendPushSuccessReturnsNilError|TestRetryAfterCannotOverflow|TestSendEmailOverVerifiedTLS)$' -count=1 -timeout=30s",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-overlay=/tmp/circula-notification-before-yqj8pl0n/overlay.json",
+        "-vet=off",
+        "-p",
+        "1",
+        "./pushsend",
+        "./smtpsend",
+        "-run",
+        "^(TestSendPushSuccessReturnsNilError|TestRetryAfterCannotOverflow|TestSendEmailOverVerifiedTLS)$",
+        "-count=1",
+        "-timeout=30s"
+      ],
+      "started_at": "2026-11-19T11:05:16.480384+00:00",
+      "elapsed_seconds": 5.314,
+      "exit_code": 1,
+      "stdout": "--- FAIL: TestSendPushSuccessReturnsNilError (0.00s)\n    --- FAIL: TestSendPushSuccessReturnsNilError/OK (0.00s)\n        pushsend_test.go:63: successful HTTP 200 returned a nonnil error (*notifications.SendError)\n    --- FAIL: TestSendPushSuccessReturnsNilError/Created (0.00s)\n        pushsend_test.go:63: successful HTTP 201 returned a nonnil error (*notifications.SendError)\n    --- FAIL: TestSendPushSuccessReturnsNilError/No_Content (0.00s)\n        pushsend_test.go:63: successful HTTP 204 returned a nonnil error (*notifications.SendError)\n--- FAIL: TestRetryAfterCannotOverflow (0.00s)\n    --- FAIL: TestRetryAfterCannotOverflow/9223372036854775807 (0.00s)\n        pushsend_test.go:77: Retry-After \"9223372036854775807\": got -1s, want capped 1h0m0s\n    --- FAIL: TestRetryAfterCannotOverflow/18446744073709551615 (0.00s)\n        pushsend_test.go:77: Retry-After \"18446744073709551615\": got 0s, want capped 1h0m0s\n    --- FAIL: TestRetryAfterCannotOverflow/99999999999999999999999999999999 (0.00s)\n        pushsend_test.go:77: Retry-After \"99999999999999999999999999999999\": got 0s, want capped 1h0m0s\nFAIL\nFAIL\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t0.015s\n--- FAIL: TestSendEmailOverVerifiedTLS (2.01s)\n    --- FAIL: TestSendEmailOverVerifiedTLS/implicit (2.00s)\n        smtpsend_test.go:68: send failed: transient: network\nFAIL\nFAIL\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t2.014s\nFAIL\n",
+      "stderr": "",
+      "expected_failure": true
+    },
+    "narrow_race": {
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -race -p 1 ./pushsend ./smtpsend -count=1 -cover -timeout=90s",
+      "exit_code": 0,
+      "stdout": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t1.064s\tcoverage: 85.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t1.196s\tcoverage: 84.2% of statements\n"
+    },
+    "narrow_vet": {
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p 1 ./pushsend ./smtpsend",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "format": {
+      "commands": [
+        "gofmt -l future/notifications/pushsend/pushsend.go future/notifications/pushsend/pushsend_test.go future/notifications/smtpsend/smtpsend.go future/notifications/smtpsend/smtpsend_test.go",
+        "git diff --check",
+        "git diff --cached --check"
+      ],
+      "result": "clean"
+    },
+    "fuzz_initial": {
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 ./pushsend -run '^$' -fuzz '^FuzzRetryAfter$' -fuzztime=10000x -parallel=1 -timeout=30s",
+      "exit_code": 130,
+      "result": "interrupted before result when shared workspace filled; not a pass"
+    },
+    "fuzz_final": {
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 ./pushsend -run '^$' -fuzz '^FuzzRetryAfter$' -fuzztime=10000x -parallel=1 -timeout=30s",
+      "exit_code": 0,
+      "gotmpdir": "/tmp/circula-notification-fuzz-20261119",
+      "baseline_inputs": 6,
+      "executions": 10000,
+      "new_interesting": 18,
+      "package_seconds": 2.567,
+      "stdout": "fuzz: elapsed: 0s, gathering baseline coverage: 0/6 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 6/6 completed, now fuzzing with 1 workers\nfuzz: elapsed: 3s, execs: 10000 (3908/sec), new interesting: 18 (total: 24)\nPASS\nok  \tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t2.567s\n"
+    },
+    "full_module_sqlite_race": {
+      "kind": "full-module-sqlite-race",
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -race -tags sqlite_cgo_test -p 1 ./... -count=1 -timeout=5m",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-race",
+        "-tags",
+        "sqlite_cgo_test",
+        "-p",
+        "1",
+        "./...",
+        "-count=1",
+        "-timeout=5m"
+      ],
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notification-transports/future/notifications",
+      "started_at": "2026-11-19T11:05:55.254376+00:00",
+      "elapsed_seconds": 16.055,
+      "exit_code": 0,
+      "stdout": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t1.480s\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t[no test files]\nok  \tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t1.848s\nok  \tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t1.201s\n",
+      "stderr": ""
+    },
+    "full_module_sqlite_vet_initial": {
+      "kind": "full-module-sqlite-vet",
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -tags sqlite_cgo_test -p 1 ./...",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-tags",
+        "sqlite_cgo_test",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notification-transports/future/notifications",
+      "started_at": "2026-11-19T11:06:40.585907+00:00",
+      "elapsed_seconds": 0.045,
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "failed to initialize build cache at /workspace/scratch/f47ceab29930/go-build-cache: mkdir /workspace/scratch/f47ceab29930/go-build-cache: file exists\n"
+    },
+    "full_module_sqlite_vet_retry": {
+      "kind": "full-module-sqlite-vet",
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -tags sqlite_cgo_test -p 1 ./...",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-tags",
+        "sqlite_cgo_test",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notification-transports/future/notifications",
+      "cache": "/tmp/circula-notification-vet-3b8at3ps/cache",
+      "gotmpdir": "/tmp/circula-notification-vet-3b8at3ps/build",
+      "started_at": "2026-11-19T11:07:35.639701+00:00",
+      "elapsed_seconds": 110.903,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "status": "passed"
+    }
+  },
+  "review": {
+    "reviewer": "/root/branch_recovery",
+    "reviewed_local_commit": "4a59bd1e740c2fcf5877de2a90594439cb9cd570",
+    "conclusion": "No blocking source finding. Verified implicit TLS has no plaintext fallback; success nil and retry clamp repairs are sound; synthetic tests cover stated transport boundaries.",
+    "scope": "Full production diff, both new test files, existing synthetic fixtures, egress implementation, pinned go-mail v0.8.2 dial/TLS/auth paths.",
+    "remote_review_status": "completed: no blocking source finding; full path set, all four blobs, full tree and base tree independently confirmed",
+    "remote_receipt": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/notification-published-review.json",
+    "remote_merge_approval": false
+  },
+  "provider": {
+    "head": "13669485b641475fce526633f47055ef31997098",
+    "dedicated_runs": [
+      44511002005,
+      44510880533
+    ],
+    "core_run": 44511002032,
+    "checks": [
+      {
+        "name": "isolated notifications with SQLite",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002005/job/135514904109"
+      },
+      {
+        "name": "isolated notifications with SQLite",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44510880533/job/135514506227"
+      },
+      {
+        "name": "fuzz smoke (RB-017)",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514904768"
+      },
+      {
+        "name": "build release targets",
+        "status": "queued",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514904892"
+      },
+      {
+        "name": "test (ubuntu-24.04)",
+        "status": "in_progress",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514904925"
+      },
+      {
+        "name": "vet, gofmt, golangci-lint, govulncheck",
+        "status": "queued",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514904978"
+      },
+      {
+        "name": "API contract and load smoke",
+        "status": "queued",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514905012"
+      },
+      {
+        "name": "reproducible build (two builds, same sha256)",
+        "status": "queued",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514905025"
+      },
+      {
+        "name": "e2e (Playwright, axe, keyboard)",
+        "status": "queued",
+        "conclusion": null,
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514905198"
+      },
+      {
+        "name": "test (${{ matrix.os }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032/job/135514906589"
+      }
+    ],
+    "all_required_complete": false,
+    "workflow_runs": [
+      {
+        "id": 44511002005,
+        "head_sha": "13669485b641475fce526633f47055ef31997098",
+        "status": "completed",
+        "conclusion": "success",
+        "event": "pull_request",
+        "updated_at": "2026-11-19T12:19:19Z",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002005"
+      },
+      {
+        "id": 44510880533,
+        "head_sha": "13669485b641475fce526633f47055ef31997098",
+        "status": "completed",
+        "conclusion": "success",
+        "event": "push",
+        "updated_at": "2026-11-19T12:26:25Z",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44510880533"
+      },
+      {
+        "id": 44511002032,
+        "head_sha": "13669485b641475fce526633f47055ef31997098",
+        "status": "queued",
+        "conclusion": null,
+        "event": "pull_request",
+        "updated_at": "2026-11-19T11:01:26Z",
+        "url": "https://github.com/djshellshoxxx/circula/actions/runs/44511002032"
+      }
+    ],
+    "last_refresh_utc": "2026-11-19T12:42:40.178Z",
+    "receipt": "evidence/notification-provider-current-20261119.json",
+    "core_note": "Incomplete: freshest job read shows fuzz passed, Linux race in progress, remaining jobs queued and optional native placeholder skipped; preceding workflow metadata still reported queued.",
+    "dedicated_validation": {
+      "pull_request_run": 44511002005,
+      "push_run": 44510880533,
+      "both": "completed success",
+      "command": "go test -mod=readonly -race -p=1 -count=1 -tags=sqlite_cgo_test -cover -timeout=3m ./...",
+      "pull_request_packages": [
+        "notifications PASS1.325s/71.0%",
+        "pushsend PASS1.031s/85.3%",
+        "smtpsend PASS1.086s/84.2%"
+      ],
+      "steps": "HOLD isolation, checksums, formatting, vet, tagged SQLite race and default govulncheck passed",
+      "govuln": "zero called vulnerabilities; zero imported-package findings; one required-module finding without printed ID/call path; no additional risk conclusion inferred"
+    }
+  },
+  "additional_monitoring": {
+    "pr97_head": "73a911a9bec387381633c031d8a4083c9fc724ad",
+    "module_run": 44508676983,
+    "module_result": "success on all three native jobs",
+    "core_run": 44508676822,
+    "core_result": "failure; detailed actual causes, accepted-main comparison and separate PR110 restoration recorded read-only",
+    "receipt": "evidence/pr97-current-core-failures/classification.json"
+  },
+  "dependency_review": {
+    "current_pr": 100,
+    "current_head": "be0c071ebb3d26527d81a0c5b015effe07d5b1b2",
+    "current_run_status": "All three exact-head runs queued; verbose scan not yet available.",
+    "baseline_head": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+    "baseline_run": 44491239025,
+    "baseline_job": 135447099448,
+    "source": "https://github.com/djshellshoxxx/circula/actions/runs/44491239025/job/135447099448",
+    "observed_scan": "0 vulnerabilities affecting called code; 0 in imported packages; 1 in required modules without an identified call. Baseline log omitted the advisory ID and requested -show verbose.",
+    "advisory_id": null,
+    "conclusion": "No specific dependency risk asserted without the verbose result; no dependency or workflow changes."
+  },
+  "limitations": [
+    "Local acceptance uses synthetic loopback servers and synthetic credentials; a real provider/browser matrix is not established.",
+    "Published commit has a new SHA but the entire reviewed/tested tree is identical.",
+    "No merge, module activation, deployment, or changes to PR100 were performed.",
+    "Provider workflows must complete on the exact head before any merge gate is claimed."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+  "tree": "ca441d471000c1ae24ca87c28255a0c467c6e2f9",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts",
+    "-p",
+    "test_read_export.py"
+  ],
+  "started_utc": "2026-11-19T12:04:53.850643+00:00",
+  "go_verifier_blobs_unchanged_from": "6e8f5f1473084e7a14beccb92d3db9ea547554d4",
+  "python_blobs_equal_reviewed_author": "9e95b73861be23d0f46121f534e6c3e46d83bc1a",
+  "exit_code": 0,
+  "elapsed_seconds": 17.995,
+  "finished_utc": "2026-11-19T12:05:11.845844+00:00",
+  "output_sha256": "7aa7f486108fb06a775544c02ca1b807a03a5cb64be85cafba729a97cdcbe1e8"
+}

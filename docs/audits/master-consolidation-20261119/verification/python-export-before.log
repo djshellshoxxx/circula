@@ -1,0 +1,247 @@
+...FFF..FFFFF...FFFFFFFFFFFFF..
+======================================================================
+FAIL: test_malformed_manifest_is_reported_without_traceback (test_read_export.ReferenceExportTests.test_malformed_manifest_is_reported_without_traceback) (value=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 275, in test_malformed_manifest_is_reported_without_traceback
+    self.assertIn("export verification failed", result.stderr)
+AssertionError: 'export verification failed' not found in 'Traceback (most recent call last):\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 196, in <module>\n    sys.exit(main(sys.argv))\n             ^^^^^^^^^^^^^^\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 189, in main\n    return verify(argv)\n           ^^^^^^^^^^^^\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 130, in verify\n    if man.get("schema_version") != 1:\n       ^^^^^^^\nAttributeError: \'NoneType\' object has no attribute \'get\'\n'
+
+======================================================================
+FAIL: test_malformed_manifest_is_reported_without_traceback (test_read_export.ReferenceExportTests.test_malformed_manifest_is_reported_without_traceback) (value=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 275, in test_malformed_manifest_is_reported_without_traceback
+    self.assertIn("export verification failed", result.stderr)
+AssertionError: 'export verification failed' not found in 'Traceback (most recent call last):\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 196, in <module>\n    sys.exit(main(sys.argv))\n             ^^^^^^^^^^^^^^\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 189, in main\n    return verify(argv)\n           ^^^^^^^^^^^^\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 130, in verify\n    if man.get("schema_version") != 1:\n       ^^^^^^^\nAttributeError: \'list\' object has no attribute \'get\'\n'
+
+======================================================================
+FAIL: test_malformed_manifest_is_reported_without_traceback (test_read_export.ReferenceExportTests.test_malformed_manifest_is_reported_without_traceback) (value='manifest')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 275, in test_malformed_manifest_is_reported_without_traceback
+    self.assertIn("export verification failed", result.stderr)
+AssertionError: 'export verification failed' not found in 'Traceback (most recent call last):\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 196, in <module>\n    sys.exit(main(sys.argv))\n             ^^^^^^^^^^^^^^\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 189, in main\n    return verify(argv)\n           ^^^^^^^^^^^^\n  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/read-export.py", line 130, in verify\n    if man.get("schema_version") != 1:\n       ^^^^^^^\nAttributeError: \'str\' object has no attribute \'get\'\n'
+
+======================================================================
+FAIL: test_rejects_duplicate_manifest_declarations (test_read_export.ReferenceExportTests.test_rejects_duplicate_manifest_declarations) (zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 248, in test_rejects_duplicate_manifest_declarations
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+members                      0 rows
+export ok: scope members, ledger_seq 1, 2 file(s)
+
+
+======================================================================
+FAIL: test_rejects_duplicate_manifest_declarations (test_read_export.ReferenceExportTests.test_rejects_duplicate_manifest_declarations) (zipped=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 248, in test_rejects_duplicate_manifest_declarations
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+members                      0 rows
+export ok: scope members, ledger_seq 1, 2 file(s)
+
+
+======================================================================
+FAIL: test_rejects_duplicate_zip_members (test_read_export.ReferenceExportTests.test_rejects_duplicate_zip_members) (name='members.json', data=b'{"tables": {"members": []}}')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 224, in test_rejects_duplicate_zip_members
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_duplicate_zip_members (test_read_export.ReferenceExportTests.test_rejects_duplicate_zip_members) (name='members.json', data=b'conflicting payload')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 224, in test_rejects_duplicate_zip_members
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_duplicate_zip_members (test_read_export.ReferenceExportTests.test_rejects_duplicate_zip_members) (name='manifest.json', data=b'{}')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 224, in test_rejects_duplicate_zip_members
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_nonregular_zip_members (test_read_export.ReferenceExportTests.test_rejects_nonregular_zip_members) (name='notes/')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 263, in test_rejects_nonregular_zip_members
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_nonregular_zip_members (test_read_export.ReferenceExportTests.test_rejects_nonregular_zip_members) (name='outside')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 263, in test_rejects_nonregular_zip_members
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_nonregular_zip_members (test_read_export.ReferenceExportTests.test_rejects_nonregular_zip_members) (name='pipe')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 263, in test_rejects_nonregular_zip_members
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_unlisted_package_members (test_read_export.ReferenceExportTests.test_rejects_unlisted_package_members) (zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 255, in test_rejects_unlisted_package_members
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_unlisted_package_members (test_read_export.ReferenceExportTests.test_rejects_unlisted_package_members) (zipped=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 255, in test_rejects_unlisted_package_members
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_unsafe_manifest_names (test_read_export.ReferenceExportTests.test_rejects_unsafe_manifest_names) (name='../members.json', zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 241, in test_rejects_unsafe_manifest_names
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_unsafe_manifest_names (test_read_export.ReferenceExportTests.test_rejects_unsafe_manifest_names) (name='nested/members.json', zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 241, in test_rejects_unsafe_manifest_names
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_unsafe_manifest_names (test_read_export.ReferenceExportTests.test_rejects_unsafe_manifest_names) (name='/members.json', zipped=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 241, in test_rejects_unsafe_manifest_names
+    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) (name='nested/members.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 231, in test_rejects_zip_path_aliases
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) (name='nested/manifest.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 231, in test_rejects_zip_path_aliases
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) (name='../members.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 231, in test_rejects_zip_path_aliases
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) (name='nested\\members.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 231, in test_rejects_zip_path_aliases
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+======================================================================
+FAIL: test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) (name='C:members.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 231, in test_rejects_zip_path_aliases
+    self.assert_invalid(*fixture("members"), zipped=True,
+  File "/workspace/scratch/f47ceab29930/circula-export-reader/scripts/test_read_export.py", line 102, in assert_invalid
+    self.assertEqual(code, 1, output)
+AssertionError: 0 != 1 : members                      0 rows
+export ok: scope members, ledger_seq 1, 1 file(s)
+
+
+----------------------------------------------------------------------
+Ran 17 tests in 57.666s
+
+FAILED (failures=21)

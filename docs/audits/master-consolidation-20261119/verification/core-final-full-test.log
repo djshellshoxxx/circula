@@ -1,0 +1,26 @@
+go: downloading github.com/getkin/kin-openapi v0.153.0
+go: downloading github.com/go-openapi/jsonpointer v0.22.5
+go: downloading github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
+go: downloading go.yaml.in/yaml/v4 v4.0.0
+go: downloading github.com/gorilla/mux v1.8.0
+go: downloading github.com/go-openapi/swag/jsonname v0.25.5
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.687s
+github.com/djshellshoxxx/circula/internal/api.test: /workspace/scratch/beb70d57deba/toolchain/go/pkg/tool/linux_amd64/link: signal: killed
+FAIL	github.com/djshellshoxxx/circula/internal/api [build failed]
+ok  	github.com/djshellshoxxx/circula/internal/contract	5.008s
+ok  	github.com/djshellshoxxx/circula/internal/domain	0.155s
+ok  	github.com/djshellshoxxx/circula/internal/histbal	0.005s
+ok  	github.com/djshellshoxxx/circula/internal/httpx	0.005s
+ok  	github.com/djshellshoxxx/circula/internal/logx	0.009s
+ok  	github.com/djshellshoxxx/circula/internal/repository	0.398s
+github.com/djshellshoxxx/circula/internal/service_test: /workspace/scratch/beb70d57deba/toolchain/go/pkg/tool/linux_amd64/compile: signal: killed
+FAIL	github.com/djshellshoxxx/circula/internal/service [build failed]
+ok  	github.com/djshellshoxxx/circula/internal/store	9.092s
+?   	github.com/djshellshoxxx/circula/internal/storetest	[no test files]
+?   	github.com/djshellshoxxx/circula/internal/testutil	[no test files]
+ok  	github.com/djshellshoxxx/circula/internal/web	36.955s
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	0.005s
+ok  	github.com/djshellshoxxx/circula/scripts/sbom	0.054s
+ok  	github.com/djshellshoxxx/circula/scripts/traceability	2.861s
+FAIL

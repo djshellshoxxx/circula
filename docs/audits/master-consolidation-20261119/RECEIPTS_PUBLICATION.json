@@ -1,0 +1,337 @@
+{
+  "repository": "djshellshoxxx/circula",
+  "pr": 113,
+  "url": "https://github.com/djshellshoxxx/circula/pull/113",
+  "head": "3cc55f7966a6321c9fa4e587596ea7daf0f9d152",
+  "local_head": "3466df2fe5a73de17e25c5a68315eead0e3ac926",
+  "exact_tree": "957855342ac07e600f3922c9ef6fe8da5b86fed0",
+  "base": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+  "branch": "master/recover-receipts-20261119",
+  "target": "future/fnet-203-receipts-20261116",
+  "draft": true,
+  "all_changed_blobs_verified": true,
+  "changed_paths": [
+    {
+      "path": ".github/workflows/future-receipts.yml",
+      "mode": "100644",
+      "sha": "177f978ef6d947a1897105695b423c2a308e30f7"
+    },
+    {
+      "path": "cmd/circula/auditanchor.go",
+      "mode": "100644",
+      "sha": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587"
+    },
+    {
+      "path": "future/receipts/AUDIT.md",
+      "mode": "100644",
+      "sha": "64184de75494bad82d2109e17a68d7fdb9caea37"
+    },
+    {
+      "path": "future/receipts/CANDIDATE-ADR-001.md",
+      "mode": "100644",
+      "sha": "b82fe2775fbf43a08e06b20b8c26b1774df0359d"
+    },
+    {
+      "path": "future/receipts/CERTIFICATE-OPERATIONS.md",
+      "mode": "100644",
+      "sha": "f9cd284550a37998d725650413ecd101b07938c6"
+    },
+    {
+      "path": "future/receipts/COMPLETION.md",
+      "mode": "100644",
+      "sha": "30ba77518ec59cd00bdeb2eef84af3f5edcfab45"
+    },
+    {
+      "path": "future/receipts/FINAL-HANDOFF.md",
+      "mode": "100644",
+      "sha": "b6085a83a5e1e43fb230e3359db26d5bade38703"
+    },
+    {
+      "path": "future/receipts/HANDOFF-MILESTONE-AUDIT.md",
+      "mode": "100644",
+      "sha": "b6085a83a5e1e43fb230e3359db26d5bade38703"
+    },
+    {
+      "path": "future/receipts/HANDOFF-MILESTONE-MASTER.md",
+      "mode": "100644",
+      "sha": "a2b8c63b2845fb60d54a326e6765f24d699bceb6"
+    },
+    {
+      "path": "future/receipts/IMPLEMENTATION.md",
+      "mode": "100644",
+      "sha": "25a6668257be96c849a4b80303a96e23a3a23868"
+    },
+    {
+      "path": "future/receipts/INTEGRATION.md",
+      "mode": "100644",
+      "sha": "b030e00fdfd721282b90e347688218368c5991f9"
+    },
+    {
+      "path": "future/receipts/README.md",
+      "mode": "100644",
+      "sha": "1bb7db7acbed63ce80418eb635954c54d0cbfdcb"
+    },
+    {
+      "path": "future/receipts/RECOVERY-20261119.md",
+      "mode": "100644",
+      "sha": "dbe66d4da5076ef8068385bcea1dffc16e07683d"
+    },
+    {
+      "path": "future/receipts/SECURITY-AUDIT.md",
+      "mode": "100644",
+      "sha": "fbe95053d012cd29d7697e0da136ec82a2fb0e33"
+    },
+    {
+      "path": "future/receipts/THIRD-PARTY.md",
+      "mode": "100644",
+      "sha": "7f2139f109b2fbd7029cb4d37faeac6fb8a43405"
+    },
+    {
+      "path": "future/receipts/THIRD_PARTY_NOTICES.md",
+      "mode": "100644",
+      "sha": "7f2139f109b2fbd7029cb4d37faeac6fb8a43405"
+    },
+    {
+      "path": "future/receipts/UPSTREAM-REUSE-MATRIX.md",
+      "mode": "100644",
+      "sha": "bf506b9759cdae52f39ad9b70a34c5785a04443c"
+    },
+    {
+      "path": "future/receipts/VALIDATION.md",
+      "mode": "100644",
+      "sha": "0958a20207bb0e8ea25e09e14bbcf227e6af83c4"
+    },
+    {
+      "path": "future/receipts/audit_regression_test.go",
+      "mode": "100644",
+      "sha": "217c0cede257f542b70862b6a83fdbd90f44af88"
+    },
+    {
+      "path": "future/receipts/canonical.go",
+      "mode": "100644",
+      "sha": "637f1d3dac5b698a151d447b7073021a7a02daf8"
+    },
+    {
+      "path": "future/receipts/canonical_numeric_fidelity_test.go",
+      "mode": "100644",
+      "sha": "1e624f2935011df0b51d190851c37807f978d188"
+    },
+    {
+      "path": "future/receipts/canonical_test.go",
+      "mode": "100644",
+      "sha": "ff367636722a95f06011592df9693eeb44a48783"
+    },
+    {
+      "path": "future/receipts/certificate.go",
+      "mode": "100644",
+      "sha": "2bb2732f23ff703102f7a97965a3a777d2186a1c"
+    },
+    {
+      "path": "future/receipts/certificate_test.go",
+      "mode": "100644",
+      "sha": "020eaef77ecb6e1d4148488167306622b9bb4d05"
+    },
+    {
+      "path": "future/receipts/cli.go",
+      "mode": "100644",
+      "sha": "ba5d2408a810f06dfcb1c944297d71f037e795fc"
+    },
+    {
+      "path": "future/receipts/feature.json",
+      "mode": "100644",
+      "sha": "d8096428f13dac807f88c3b6ac5468176889f9ea"
+    },
+    {
+      "path": "future/receipts/go.mod",
+      "mode": "100644",
+      "sha": "b20d53da1648d646667a88e342fd9ff97ceb17ab"
+    },
+    {
+      "path": "future/receipts/go.sum",
+      "mode": "100644",
+      "sha": "3ed0482bb2e0c085c34ec5c30dd15c8a9a3dfd13"
+    },
+    {
+      "path": "future/receipts/health.go",
+      "mode": "100644",
+      "sha": "4241ad15cdd7e5cb2548fdcf20784789bc80ffdb"
+    },
+    {
+      "path": "future/receipts/http.go",
+      "mode": "100644",
+      "sha": "0a7a1dbea065ef1c7e6e80741ec7144c515a2d7b"
+    },
+    {
+      "path": "future/receipts/query_regression_test.go",
+      "mode": "100644",
+      "sha": "ee30c75bd15e9a0e6ef9afae0f9f7582e4a5bd16"
+    },
+    {
+      "path": "future/receipts/receipt.go",
+      "mode": "100644",
+      "sha": "64cc5c0216c0612390c89f25bcabee32683a47fd"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/accepted-core-baseline.json",
+      "mode": "100644",
+      "sha": "343d3131b4248e674ee597ef9e1ef5c6a4d0400d"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/archive-qualification.json",
+      "mode": "100644",
+      "sha": "ca758f3c37daa69bab706f2c2c2bb953c9c2f737"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/gofmt.log",
+      "mode": "100644",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/mod_verify-attempt2.log",
+      "mode": "100644",
+      "sha": "f893de6834c1db0d439c2e9faed96a7b20a8e97f"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/checksums.json",
+      "mode": "100644",
+      "sha": "8034b406776653f7c5af316ef71f953326f72307"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/checksums.txt",
+      "mode": "100644",
+      "sha": "f893de6834c1db0d439c2e9faed96a7b20a8e97f"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/environment.json",
+      "mode": "100644",
+      "sha": "2d115edac44ab83afd89d315b2d3b041368cc896"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/fail-before.json",
+      "mode": "100644",
+      "sha": "5fc400d55ec3e1368d46910925f0438e6f31717f"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/fail-before.txt",
+      "mode": "100644",
+      "sha": "dfb1892ea5f86f6e03ce66c730daf045b1bf331e"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/green-full.json",
+      "mode": "100644",
+      "sha": "cc769fa9a2eac155d2ac859736fda02795d91ca9"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/green-full.txt",
+      "mode": "100644",
+      "sha": "adeb03d1e7e52ef3d11b9631d05f0033346155e6"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/green-vet.json",
+      "mode": "100644",
+      "sha": "bc65d063d161183af36399378e5dc9c1cedc3d26"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/green-vet.txt",
+      "mode": "100644",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/qualification.json",
+      "mode": "100644",
+      "sha": "cdbb45e3a7bec407f4367d2d1bbe037ba490aa8f"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/qualification.md",
+      "mode": "100644",
+      "sha": "8b77f56a0702fabf1519d3160aa6e830938f7be9"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/numeric-repair/root-review.json",
+      "mode": "100644",
+      "sha": "a1bf69683281a545b7624f83e5057d405f483a1e"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/race-attempt2.log",
+      "mode": "100644",
+      "sha": "aa6a27aae9fef6c1d3d9fc409cbfe09fecf8e0e3"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/source-blobs.json",
+      "mode": "100644",
+      "sha": "4bd8a2e10240aa6645cbe4473f4daeb3d1a704be"
+    },
+    {
+      "path": "future/receipts/recovery-evidence-20261119/vet-attempt2.log",
+      "mode": "100644",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "future/receipts/recovery-evidence/SHA256SUMS",
+      "mode": "100644",
+      "sha": "2db378fc977363de6304bfb039443460ab237016"
+    },
+    {
+      "path": "future/receipts/recovery-evidence/host-form-green.log",
+      "mode": "100644",
+      "sha": "79c75883b4696361080e461afac02c5b48108cc3"
+    },
+    {
+      "path": "future/receipts/recovery-evidence/host-form-red.log",
+      "mode": "100644",
+      "sha": "7d33706d5056ea1b374493aed609205af1a39f70"
+    },
+    {
+      "path": "future/receipts/recovery-evidence/modules.log",
+      "mode": "100644",
+      "sha": "4eeadaa953aec6ec52958ead96faefdfeffd806e"
+    },
+    {
+      "path": "future/receipts/recovery-evidence/race.log",
+      "mode": "100644",
+      "sha": "f3b4168fc3d18001f0f8b5cc6a8b6d4fdf92ebdd"
+    },
+    {
+      "path": "future/receipts/recovery-evidence/vet.log",
+      "mode": "100644",
+      "sha": "55126a5a78cba73bfd17557f375cd9bb81b93dca"
+    },
+    {
+      "path": "future/receipts/service.go",
+      "mode": "100644",
+      "sha": "3ed3ff195e5fa4a2db19c2ed7fd8862a5b44d4ca"
+    },
+    {
+      "path": "future/receipts/service_test.go",
+      "mode": "100644",
+      "sha": "b6721e294918355c36ea78333731ff3d7f800219"
+    },
+    {
+      "path": "future/receipts/third_party/go-jose-LICENSE",
+      "mode": "100644",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "future/receipts/third_party/jcs-LICENSE",
+      "mode": "100644",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "future/receipts/trust.go",
+      "mode": "100644",
+      "sha": "8bc396cc875e5355d13019df9fa7e0b1c5fd5ca1"
+    },
+    {
+      "path": "internal/service/departure_pagination_regression_test.go",
+      "mode": "100644",
+      "sha": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+    }
+  ],
+  "source_review": [
+    "evidence/receipts-composition-review/review.json",
+    "future/receipts/recovery-evidence-20261119/numeric-repair/root-review.json"
+  ],
+  "local_current_race_fuzz": "running; no result claimed at publication",
+  "provider": "current-head checks pending",
+  "runtime_state": "disabled/HOLD"
+}

@@ -1,0 +1,30 @@
+{
+  "observed_utc": "2026-11-19T13:17:05.320459+00:00",
+  "reviewer": "/root",
+  "author": "/root/recurring_module",
+  "candidates": [
+    {
+      "module": "recurring",
+      "head": "e79cd7a3d8bc1830aeb5ee255c044ddfef72f278",
+      "tree": "707f6fb5db85808a86a7fae87c716b6ebecfec66",
+      "paths": [
+        ".github/workflows/future-recurring.yml",
+        "future/recurring/VALIDATION.md"
+      ],
+      "result": "No blocking finding; source reviewed. Only dependency-enumeration VCS stamping is disabled; explicit Git identity and actual test/vet commands are retained. The validation paragraph records the actual earlier local metadata error without claiming a runtime result.",
+      "runtime_test_dependency_changes": []
+    },
+    {
+      "module": "federation",
+      "head": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+      "tree": "2b1400be19b42ee63c86980666a71d1c88e07811",
+      "paths": [
+        ".github/workflows/future-federation.yml",
+        "future/federation/VALIDATION.md"
+      ],
+      "result": "No blocking finding; source reviewed. Only dependency-enumeration VCS stamping is disabled; explicit Git identity and actual test/vet commands are retained. The validation paragraph records the actual earlier local metadata error without claiming a runtime result.",
+      "runtime_test_dependency_changes": []
+    }
+  ],
+  "execution": "No additional runtime rerun by this review; separately recorded current full combined checks identify these exact heads."
+}

@@ -1,0 +1,66 @@
+{
+  "observed_utc": "2026-11-19T12:41:39.512796+00:00",
+  "status": "independent source review approved; archival patch only; no publication or integration",
+  "base": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "head": "3c734042159899c9d1dc737f70c535e82010c40f",
+  "tree": "f3668a89acb046d159525cddf8cd5192467a26de",
+  "branch": "master/notifications-archive-json-20261119",
+  "worktree": "/workspace/scratch/f47ceab29930/circula-notifications-archive-json",
+  "paths": [
+    "future/notifications/archive_json_simplefold_test.go",
+    "future/notifications/strictjson.go"
+  ],
+  "blobs": {
+    "future/notifications/archive_json_simplefold_test.go": "0410dd4d198f7f79a0e3b581baf8504dabdaf125",
+    "future/notifications/strictjson.go": "a1298f44de59f6e04498632b763a0c39d11afe5d"
+  },
+  "patch": "0001-notifications-archive-json-simplefold.patch",
+  "patch_sha256": "aa359ad53b71fd7d78a78578302bc5d1387299bc5513990f120d59d19c1d62a3",
+  "source_matches_checks": true,
+  "dependency_files_unchanged": true,
+  "fail_before": {
+    "receipt": "fail-before.json",
+    "failing_subcases": 7,
+    "production_unchanged": true,
+    "already_rejected_ascii_control": true,
+    "valid_single_alias_and_nonexpanding_controls_passed": true
+  },
+  "validation": {
+    "race": "green-race.json",
+    "vet": "green-vet.json",
+    "scope": "Actual strictjson.go and errors.go with dedicated stdlib-only regression file; does not qualify full module, SQLite or composition with identity patch."
+  },
+  "review": {
+    "status": "approved in narrow two-file source scope",
+    "reviewer": "/root/branch_recovery",
+    "reviewed_commit": "3c734042159899c9d1dc737f70c535e82010c40f",
+    "observed_utc": "2026-11-19T12:44:07.980866+00:00",
+    "notes": "No blocking finding. Reviewed full diff, exact SimpleFold cycle representative, duplicate/single-alias and nonexpanding Unicode controls. Qualification remains source-file race/vet; no full archive-module/composed-runtime pass claimed."
+  },
+  "behavior": "Use minimum rune in unicode.SimpleFold orbit for duplicate-object-field comparison, matching encoding/json field equivalence; no Unicode expansion, normalization or new unknown-field policy. Existing duplicate ban remains the policy.",
+  "integration_boundary": "Separate from identity patch b96100d2a53cf696f16b8c34305eb132c673863c, both independently based on archived ba454e1. Neither replaces current PR103 runtime, changes PR100 or chooses API/schema/event/retention policy.",
+  "portable_patch_checks": [
+    {
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-identity",
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/f47ceab29930/evidence/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch"
+      ],
+      "exit": 0,
+      "mutated_files": false
+    },
+    {
+      "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-json",
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "/workspace/scratch/f47ceab29930/evidence/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch"
+      ],
+      "exit": 0,
+      "mutated_files": false
+    }
+  ]
+}

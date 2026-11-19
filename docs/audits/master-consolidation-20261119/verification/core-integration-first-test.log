@@ -1,0 +1,28 @@
+go: downloading github.com/getkin/kin-openapi v0.153.0
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/getkin: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/go-openapi: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/go-openapi: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/gorilla: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/mattn/go-isatty: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/ncruces: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/santhosh-tekuri: no space left on device
+go: writing go.mod cache: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/go.yaml.in: no space left on device
+# github.com/djshellshoxxx/circula/internal/contract
+internal/contract/contract_test.go:21:2: mkdir /workspace/scratch/f47ceab29930/go-mod-cache/cache/download/github.com/getkin: no space left on device
+FAIL	github.com/djshellshoxxx/circula/internal/contract [setup failed]
+ok  	github.com/djshellshoxxx/circula/cmd/circula	169.608s
+ok  	github.com/djshellshoxxx/circula/internal/api	41.449s
+ok  	github.com/djshellshoxxx/circula/internal/domain	0.162s
+ok  	github.com/djshellshoxxx/circula/internal/histbal	0.006s
+ok  	github.com/djshellshoxxx/circula/internal/httpx	0.010s
+ok  	github.com/djshellshoxxx/circula/internal/logx	0.007s
+ok  	github.com/djshellshoxxx/circula/internal/repository	0.689s
+ok  	github.com/djshellshoxxx/circula/internal/service	103.995s
+ok  	github.com/djshellshoxxx/circula/internal/store	9.549s
+?   	github.com/djshellshoxxx/circula/internal/storetest	[no test files]
+?   	github.com/djshellshoxxx/circula/internal/testutil	[no test files]
+ok  	github.com/djshellshoxxx/circula/internal/web	40.876s
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	0.012s
+ok  	github.com/djshellshoxxx/circula/scripts/sbom	0.039s
+ok  	github.com/djshellshoxxx/circula/scripts/traceability	2.803s
+FAIL

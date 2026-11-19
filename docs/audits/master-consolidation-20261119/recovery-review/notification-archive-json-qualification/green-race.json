@@ -1,0 +1,44 @@
+{
+  "observed_utc": "2026-11-19T12:40:34.883292+00:00",
+  "phase": "green-race",
+  "base_sha": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "head": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+  "tracked_changes": [
+    "future/notifications/strictjson.go"
+  ],
+  "command": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-race",
+    "-p",
+    "1",
+    "-count=1",
+    "-timeout=45s",
+    "strictjson.go",
+    "errors.go",
+    "archive_json_simplefold_test.go"
+  ],
+  "cwd": "/workspace/scratch/f47ceab29930/circula-notifications-archive-json/future/notifications",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOFLAGS": "-mod=readonly -p=1"
+  },
+  "private_temporary_directory": "created and removed for this command",
+  "exit_code": 0,
+  "elapsed_seconds": 2.646,
+  "files_sha256": {
+    "strictjson.go": "986146be5b306494fe53208478e437d0a65ef903cbad590cfbbb907235d56376",
+    "errors.go": "a8659d4caeb975985d43130e7fb22e0fbd1511ec5aa6ba49811d2d73e6aede59",
+    "archive_json_simplefold_test.go": "22c1aaf91c68f364518acae4932fe0b208a0f144057674c8a5a23078acd6936a",
+    "go.mod": "13e194ae4d1cda164a7b053b8eb6ecd93d10faaa41169bb09580f92fd8bf86b7",
+    "go.sum": "7f8b05f3bece142a2908d922054a4377a6a681da328e03b7b7af051a69fb7f7b"
+  },
+  "log": "green-race.txt",
+  "scope": "actual production strictjson.go and errors.go with stdlib-only dedicated test; not a full module or SQLite qualification"
+}

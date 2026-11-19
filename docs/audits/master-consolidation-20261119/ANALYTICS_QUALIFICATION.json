@@ -1,0 +1,287 @@
+{
+  "pr": 108,
+  "url": "https://github.com/djshellshoxxx/circula/pull/108",
+  "draft": true,
+  "target": "future/fnet-205-analytics-20261116",
+  "target_sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+  "archive_source": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+  "reviewed_local_head": "150ab4ed3c2f9911f45fd07e8676edd03aa31179",
+  "published_head": "38b9bcd0e049d97167d793baba933d5e79d8030d",
+  "exact_shared_tree": "926205aae18016ef55f882fda6415e1ac2b7fd94",
+  "published_blobs_verified": 36,
+  "archive_files_retained": 30,
+  "archive_files_byte_identical": 29,
+  "runtime_test_and_dependency_blobs_unchanged": true,
+  "runtime_review": "Root independently read all3recovered production files and all8Go source/test files. Separate branch_recovery reviewed workflow/provenance/current evidence and the final two documentary line corrections.",
+  "native_provider_status": "pending; no native Windows/macOS pass or whole-Core pass inferred",
+  "new_workflow": ".github/workflows/future-analytics.yml",
+  "isolation": {
+    "enabled": false,
+    "integration": "HOLD",
+    "external_module_dependencies": []
+  },
+  "archive_qualification": {
+    "module": "analytics",
+    "sha": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+    "module_tree": "759a1357efb8a432bb989da5514655e5fb078e00",
+    "source": {
+      "module": "analytics",
+      "sha": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+      "tree": "759a1357efb8a432bb989da5514655e5fb078e00",
+      "module_path": "future/analytics",
+      "extracted_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/analytics",
+      "file_count": 30,
+      "bytes": 103217,
+      "all_git_blobs_verified": true
+    },
+    "started_utc": "2026-11-19T11:44:10.508067+00:00",
+    "go_mod": "module github.com/djshellshoxxx/circula/future/analytics\n\ngo 1.25.0\n",
+    "go_mod_sha256_before": "4a039b800afe689fba4bc65942d743afc711682b3489b5f8dfb28cce6b60f775",
+    "go_sum_sha256_before": null,
+    "build_tags": [],
+    "sqlite_driver_evidence": [],
+    "manifest": {
+      "id": "FNET-205",
+      "status": "partial-master-scope-privacy-and-qualification-pending",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Ledger-verified ordinary trade/reversal flow with partial/later reversals; grants/adjustments excluded from turnover and included in own historical opening/closing; explicit scoped account/offer facts, member-dominance/complementary suppression, fixed calendar periods and public-only revision fingerprints; exact monetary strings; read-only HTTP/no-JS/CSV/CLI.",
+      "remaining": "Standalone immutable-release persistence, query-budget and correction policy; production performance budgets; browser/WCAG/screen-reader acceptance. Actual authenticated historical-source adapter, core API/CLI wiring and full-ledger regression remain separately authorized integration work.",
+      "completion_percent": 78.5,
+      "tested_source": "5c239f0494ff9ee69c4e84f985ec15d638140bbd"
+    },
+    "checks": [
+      {
+        "kind": "gofmt",
+        "argv": [
+          "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+          "-l",
+          "aggregate.go",
+          "aggregate_test.go",
+          "audit_test.go",
+          "dashboard.go",
+          "dashboard_test.go",
+          "interface.go",
+          "interface_test.go",
+          "performance_test.go"
+        ],
+        "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt -l aggregate.go aggregate_test.go audit_test.go dashboard.go dashboard_test.go interface.go interface_test.go performance_test.go",
+        "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/analytics",
+        "started_utc": "2026-11-19T11:44:10.509553+00:00",
+        "outer_timeout_seconds": 30,
+        "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/analytics/gofmt.log",
+        "tmp_free_before_bytes": 1451315200,
+        "timed_out": false,
+        "exit_code": 0,
+        "elapsed_seconds": 0.032,
+        "finished_utc": "2026-11-19T11:44:10.541950+00:00",
+        "tmp_free_after_bytes": 1451274240,
+        "output_tail": "",
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "status": "pass"
+      },
+      {
+        "kind": "race",
+        "argv": [
+          "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+          "test",
+          "-json",
+          "-race",
+          "-p=1",
+          "-count=1",
+          "-cover",
+          "-timeout=90s",
+          "./..."
+        ],
+        "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+        "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/analytics",
+        "started_utc": "2026-11-19T11:44:10.544755+00:00",
+        "outer_timeout_seconds": 420,
+        "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/analytics/race.log",
+        "tmp_free_before_bytes": 1451274240,
+        "timed_out": false,
+        "exit_code": 0,
+        "elapsed_seconds": 108.778,
+        "finished_utc": "2026-11-19T11:45:59.322943+00:00",
+        "tmp_free_after_bytes": 1266106368,
+        "output_tail": "on\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAggregationSuppressionAndOverflow\",\"Output\":\"--- PASS: TestAggregationSuppressionAndOverflow (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.225941139-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAggregationSuppressionAndOverflow\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.22594666-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceCannotBeSplitAndStockComplement\"}\n{\"Time\":\"2026-11-19T03:45:58.225949164-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceCannotBeSplitAndStockComplement\",\"Output\":\"=== RUN   TestAuditDominanceCannotBeSplitAndStockComplement\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.227101926-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceCannotBeSplitAndStockComplement\",\"Output\":\"--- PASS: TestAuditDominanceCannotBeSplitAndStockComplement (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.227265081-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceCannotBeSplitAndStockComplement\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.227276963-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditRevisionOnlyUsesReleasedData\"}\n{\"Time\":\"2026-11-19T03:45:58.227281492-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditRevisionOnlyUsesReleasedData\",\"Output\":\"=== RUN   TestAuditRevisionOnlyUsesReleasedData\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.228564652-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditRevisionOnlyUsesReleasedData\",\"Output\":\"--- PASS: TestAuditRevisionOnlyUsesReleasedData (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.228581234-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditRevisionOnlyUsesReleasedData\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.228585411-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditScopedOffersAndBalancesAndCancellation\"}\n{\"Time\":\"2026-11-19T03:45:58.228588027-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditScopedOffersAndBalancesAndCancellation\",\"Output\":\"=== RUN   TestAuditScopedOffersAndBalancesAndCancellation\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.229850323-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditScopedOffersAndBalancesAndCancellation\",\"Output\":\"--- PASS: TestAuditScopedOffersAndBalancesAndCancellation (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.229863748-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditScopedOffersAndBalancesAndCancellation\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.229867616-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPartialReversalsAdjustmentsAndOwnOpening\"}\n{\"Time\":\"2026-11-19T03:45:58.229870461-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPartialReversalsAdjustmentsAndOwnOpening\",\"Output\":\"=== RUN   TestAuditPartialReversalsAdjustmentsAndOwnOpening\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.230303463-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPartialReversalsAdjustmentsAndOwnOpening\",\"Output\":\"--- PASS: TestAuditPartialReversalsAdjustmentsAndOwnOpening (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.230326056-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPartialReversalsAdjustmentsAndOwnOpening\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.230330013-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditExactIntegerOutputAndNoJSOwn\"}\n{\"Time\":\"2026-11-19T03:45:58.230332588-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditExactIntegerOutputAndNoJSOwn\",\"Output\":\"=== RUN   TestAuditExactIntegerOutputAndNoJSOwn\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.231771054-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditExactIntegerOutputAndNoJSOwn\",\"Output\":\"--- PASS: TestAuditExactIntegerOutputAndNoJSOwn (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.231787706-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditExactIntegerOutputAndNoJSOwn\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.231793376-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditOrdinarySystemAccountAndNoPostingDistinction\"}\n{\"Time\":\"2026-11-19T03:45:58.231796953-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditOrdinarySystemAccountAndNoPostingDistinction\",\"Output\":\"=== RUN   TestAuditOrdinarySystemAccountAndNoPostingDistinction\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.232275044-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditOrdinarySystemAccountAndNoPostingDistinction\",\"Output\":\"--- PASS: TestAuditOrdinarySystemAccountAndNoPostingDistinction (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.232288389-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditOrdinarySystemAccountAndNoPostingDistinction\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.23229418-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPermutationOverflowAndReadConcurrency\"}\n{\"Time\":\"2026-11-19T03:45:58.232297166-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPermutationOverflowAndReadConcurrency\",\"Output\":\"=== RUN   TestAuditPermutationOverflowAndReadConcurrency\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.234712955-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPermutationOverflowAndReadConcurrency\",\"Output\":\"--- PASS: TestAuditPermutationOverflowAndReadConcurrency (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.234724447-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditPermutationOverflowAndReadConcurrency\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.234748031-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditLaterPartialReversalPeriod\"}\n{\"Time\":\"2026-11-19T03:45:58.234754182-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditLaterPartialReversalPeriod\",\"Output\":\"=== RUN   TestAuditLaterPartialReversalPeriod\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.235107525-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditLaterPartialReversalPeriod\",\"Output\":\"--- PASS: TestAuditLaterPartialReversalPeriod (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.235115089-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditLaterPartialReversalPeriod\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.235119668-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceThresholdDoesNotRoundUp\"}\n{\"Time\":\"2026-11-19T03:45:58.235121822-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceThresholdDoesNotRoundUp\",\"Output\":\"=== RUN   TestAuditDominanceThresholdDoesNotRoundUp\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.235184098-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceThresholdDoesNotRoundUp\",\"Output\":\"--- PASS: TestAuditDominanceThresholdDoesNotRoundUp (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.235189849-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditDominanceThresholdDoesNotRoundUp\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.235193205-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditCSVMetadataFormulaAndWriterFailure\"}\n{\"Time\":\"2026-11-19T03:45:58.235197403-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditCSVMetadataFormulaAndWriterFailure\",\"Output\":\"=== RUN   TestAuditCSVMetadataFormulaAndWriterFailure\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.235334801-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditCSVMetadataFormulaAndWriterFailure\",\"Output\":\"--- PASS: TestAuditCSVMetadataFormulaAndWriterFailure (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.235340041-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuditCSVMetadataFormulaAndWriterFailure\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.235343437-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestDashboardLedgerStockFlowAndOwn\"}\n{\"Time\":\"2026-11-19T03:45:58.235345581-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestDashboardLedgerStockFlowAndOwn\",\"Output\":\"=== RUN   TestDashboardLedgerStockFlowAndOwn\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.236162583-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestDashboardLedgerStockFlowAndOwn\",\"Output\":\"--- PASS: TestDashboardLedgerStockFlowAndOwn (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.236172501-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestDashboardLedgerStockFlowAndOwn\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.236178853-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReversalAndSuppression\"}\n{\"Time\":\"2026-11-19T03:45:58.23618244-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReversalAndSuppression\",\"Output\":\"=== RUN   TestReversalAndSuppression\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.23662476-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReversalAndSuppression\",\"Output\":\"--- PASS: TestReversalAndSuppression (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.236635159-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReversalAndSuppression\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.236639096-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuthLedgerAndPeriodFailures\"}\n{\"Time\":\"2026-11-19T03:45:58.2366412-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuthLedgerAndPeriodFailures\",\"Output\":\"=== RUN   TestAuthLedgerAndPeriodFailures\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.237395635-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuthLedgerAndPeriodFailures\",\"Output\":\"--- PASS: TestAuthLedgerAndPeriodFailures (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.237401987-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestAuthLedgerAndPeriodFailures\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.237405994-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReadOnlyInterface\"}\n{\"Time\":\"2026-11-19T03:45:58.237408158-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReadOnlyInterface\",\"Output\":\"=== RUN   TestReadOnlyInterface\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.239225195-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReadOnlyInterface\",\"Output\":\"--- PASS: TestReadOnlyInterface (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.239242748-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestReadOnlyInterface\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.239246175-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestQueryLimitPrecedesHostCallbacks\"}\n{\"Time\":\"2026-11-19T03:45:58.239248339-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestQueryLimitPrecedesHostCallbacks\",\"Output\":\"=== RUN   TestQueryLimitPrecedesHostCallbacks\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.239697211-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestQueryLimitPrecedesHostCallbacks\",\"Output\":\"--- PASS: TestQueryLimitPrecedesHostCallbacks (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.239712319-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestQueryLimitPrecedesHostCallbacks\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.239716737-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestPerformanceFixtureAccounting\"}\n{\"Time\":\"2026-11-19T03:45:58.239719121-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestPerformanceFixtureAccounting\",\"Output\":\"=== RUN   TestPerformanceFixtureAccounting\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.244538397-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestPerformanceFixtureAccounting\",\"Output\":\"--- PASS: TestPerformanceFixtureAccounting (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.244563243-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"TestPerformanceFixtureAccounting\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.244616122-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods\"}\n{\"Time\":\"2026-11-19T03:45:58.244622093-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods\",\"Output\":\"=== RUN   FuzzClosedPeriods\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.244808693-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods/seed#0\"}\n{\"Time\":\"2026-11-19T03:45:58.244819283-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods/seed#0\",\"Output\":\"=== RUN   FuzzClosedPeriods/seed#0\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.244889816-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods/seed#0\",\"Output\":\"--- PASS: FuzzClosedPeriods/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.244896478-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.244922226-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods\",\"Output\":\"--- PASS: FuzzClosedPeriods (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.244927737-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Test\":\"FuzzClosedPeriods\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T03:45:58.24494537-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-11-19T03:45:58.246919431-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Output\":\"coverage: 86.4% of statements\\n\"}\n{\"Time\":\"2026-11-19T03:45:59.259213543-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/future/analytics\\t1.044s\\tcoverage: 86.4% of statements\\n\"}\n{\"Time\":\"2026-11-19T03:45:59.259690978-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/analytics\",\"Elapsed\":1.049}\n",
+        "output_sha256": "04b8b96483e6fb12c0dcdc50c71f60076530fe4a8513092efa9f68b20dcdb312",
+        "status": "pass",
+        "executed_test_pass_events": 19,
+        "skipped_test_events": [],
+        "package_results": [
+          {
+            "package": "github.com/djshellshoxxx/circula/future/analytics",
+            "action": "pass",
+            "elapsed_seconds": 1.049
+          }
+        ],
+        "coverage_output": [
+          "coverage: 86.4% of statements",
+          "ok  \tgithub.com/djshellshoxxx/circula/future/analytics\t1.044s\tcoverage: 86.4% of statements"
+        ]
+      },
+      {
+        "kind": "vet",
+        "argv": [
+          "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+        "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/analytics",
+        "started_utc": "2026-11-19T11:45:59.329769+00:00",
+        "outer_timeout_seconds": 240,
+        "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/analytics/vet.log",
+        "tmp_free_before_bytes": 1266106368,
+        "timed_out": false,
+        "exit_code": 0,
+        "elapsed_seconds": 97.172,
+        "finished_utc": "2026-11-19T11:47:36.501394+00:00",
+        "tmp_free_after_bytes": 1079853056,
+        "output_tail": "",
+        "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "status": "pass"
+      },
+      {
+        "kind": "mod_verify",
+        "argv": [
+          "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+          "mod",
+          "verify"
+        ],
+        "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+        "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/analytics",
+        "started_utc": "2026-11-19T11:47:36.505825+00:00",
+        "outer_timeout_seconds": 90,
+        "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/analytics/mod_verify.log",
+        "tmp_free_before_bytes": 1079853056,
+        "timed_out": false,
+        "exit_code": 0,
+        "elapsed_seconds": 0.017,
+        "finished_utc": "2026-11-19T11:47:36.522927+00:00",
+        "tmp_free_after_bytes": 1079746560,
+        "output_tail": "all modules verified\n",
+        "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+        "status": "pass"
+      }
+    ],
+    "state": "completed",
+    "source_files_changed": [],
+    "go_mod_sha256_after": "4a039b800afe689fba4bc65942d743afc711682b3489b5f8dfb28cce6b60f775",
+    "go_sum_sha256_after": null,
+    "source_unchanged": true,
+    "finished_utc": "2026-11-19T11:47:36.543069+00:00",
+    "all_attempted_checks_passed": true
+  },
+  "fuzz": {
+    "archive_source": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+    "cwd": "/workspace/scratch/f47ceab29930/circula-analytics-recovery/future/analytics",
+    "command": [
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-fuzz",
+      "^FuzzClosedPeriods$",
+      "-fuzztime=100000x",
+      "-parallel=1",
+      "-timeout=150s",
+      "./..."
+    ],
+    "started_utc": "2026-11-19T11:59:37.665867+00:00",
+    "outer_timeout_seconds": 240,
+    "go_version": "go version go1.26.11 linux/amd64",
+    "free_tmp_before": 247635968,
+    "source_sha256": {
+      "aggregate.go": "31c5e0fc79a9fd796dcb50c04e9956f2faca990e7f6ad915ae00501f4119b7d4",
+      "aggregate_test.go": "4302ba15b8c407c09eeaba74bbd88f96e09959ef117a7417557f92ad3effbcf9",
+      "audit_test.go": "97f580a07a9e4de2117b4e5c53af679f6e790c6c3852bdc863f2aa7ba1722e6f",
+      "dashboard.go": "241a247e7650ae36d38bb953bbdb60112d5b7c1048fdc26a547c9244f45c2a17",
+      "dashboard_test.go": "f94778501af64cf8aaa627e5911c82c72674098a70280603a5233bb1b7c93083",
+      "interface.go": "be90924008f209b4d0a0d11e82f1dc1ecfaa0c654288cca0cfcbba3337927811",
+      "interface_test.go": "51898a061f9ace0ac884667887de2a72353f5e02b9aea69ac3f6cd74271177a8",
+      "performance_test.go": "1562dccf24508e735b0188ab1deb52659518f5f59d9bfc53abfc3e1362317a2b"
+    },
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 156.507,
+    "finished_utc": "2026-11-19T12:02:14.181452+00:00",
+    "free_tmp_after": 661966848,
+    "output_sha256": "c2559e0fdedcf20d2589aea2467a00a9f6f1b8b60ab8c01b3107c023d042d6bb",
+    "source_unchanged": true,
+    "status": "pass"
+  },
+  "preceding_publication": {
+    "reviewed_local_head": "06a14e4bc6e5bca8bb0d9b857d26f1d280821aba",
+    "published_head": "29a0312c5c4d446eb47c4f1d4555b58ff52c99b8",
+    "exact_shared_tree": "5bee54b3ed39c4fe680f02dfc2b3bc48c64c36d6"
+  },
+  "accepted_main_baseline": {
+    "source_main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "introducing_commits": [
+      "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+      "7457b618057a8b1757ec643806e9afbfc5ba907e"
+    ],
+    "files": [
+      {
+        "path": "cmd/circula/auditanchor.go",
+        "blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587"
+      },
+      {
+        "path": "internal/service/departure_pagination_regression_test.go",
+        "blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+      }
+    ],
+    "scope": "Only accepted-main os import and501-proposal test fixture cap; no unfinished worker source, production defaults, migrations or shared CI changed."
+  },
+  "followup_independent_review": {
+    "observed_utc": "2026-11-19T12:40:57.716340+00:00",
+    "reviewer": "/root/independent_triage",
+    "status": "source review approved in six-file follow-up scope",
+    "base": "06a14e4bc6e5bca8bb0d9b857d26f1d280821aba",
+    "head": "150ab4ed3c2f9911f45fd07e8676edd03aa31179",
+    "tree": "926205aae18016ef55f882fda6415e1ac2b7fd94",
+    "changed_paths": [
+      "cmd/circula/auditanchor.go",
+      "future/analytics/README.md",
+      "future/analytics/RECOVERY-20261119.md",
+      "future/analytics/recovery-evidence-20261119/accepted-core-baseline.json",
+      "future/analytics/recovery-evidence-20261119/source-blobs.json",
+      "internal/service/departure_pagination_regression_test.go"
+    ],
+    "main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "accepted_main_blobs": {
+      "cmd/circula/auditanchor.go": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "internal/service/departure_pagination_regression_test.go": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+    },
+    "unchanged_go_module_workflow_blobs": {
+      "future/analytics/aggregate.go": "e1baffbd0a168153f4de048a3d5db26076d980c5",
+      "future/analytics/aggregate_test.go": "b63a0cb81859b79f9d1b1c8a515fc5ff1e89883a",
+      "future/analytics/audit_test.go": "15af2172d08891b6d04c2bb871e5efd36a2032ca",
+      "future/analytics/dashboard.go": "6758ed08780e6fd3ed5e24d1685fb194ff36bb41",
+      "future/analytics/dashboard_test.go": "f80fabb95b0521cf98dc2f26c02870f32d3c7256",
+      "future/analytics/go.mod": "72a443fddee07393b09238291b948b82a9670f5f",
+      "future/analytics/interface.go": "40c0e44f884a08fa9d4e4d2ff37e408b43042a21",
+      "future/analytics/interface_test.go": "29012e655ab7fb1afe57c740588ad0aaffb7dffa",
+      "future/analytics/performance_test.go": "40c801db8dadded62ccab631870fcb440eb48160",
+      ".github/workflows/future-analytics.yml": "9bb3afcabb8be7480c2e70e63e09a4166d02c115"
+    },
+    "readme_hash_receipt_matches": true,
+    "worktree_clean": true,
+    "blocking_findings": [],
+    "checks": [
+      "Read full six-path diff",
+      "Verified two complete Core files equal accepted main",
+      "Verified eight Go files, go.mod and dedicated workflow equal prior approved candidate",
+      "Verified README candidate hash receipt against actual object",
+      "Verified docs explicitly distinguish inherited Core restoration and require fresh combined provider checks"
+    ],
+    "runtime_qualification": "No new test run; prior module qualification not asserted as current whole-Core pass",
+    "recommendation": "Guarded fast-forward publication may proceed under parent authorization after rechecking remote expected head. Normal current-head gates remain required."
+  },
+  "provider_scope": "Current-head provider checks pending at publication. The original8Go files/go.mod and native workflow are unchanged by the six-file accepted-baseline/documentation follow-up."
+}
