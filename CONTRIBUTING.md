@@ -35,6 +35,8 @@ lock handling) is covered in `cmd/circula`.
   a missing `# vX.Y.Z` comment, any action not on its allowlist, and `cache: true` in the release workflow. To adopt or
   bump an action, resolve the tag to its commit with `git ls-remote https://github.com/<owner>/<repo> 'refs/tags/<tag>*'`
   (for an annotated tag use the `^{}` line), add it to the allowlist in the same change, and let Dependabot propose updates.
+- `actions/setup-node` is adopted for isolated PWA browser qualification. Its reviewed v6.0.0 pin is
+  `2028fbc5c25fe9cf00d9f06a71cc4710d4507903`; `.github/workflows/future-pwa.yml` uses it to select Node 24.22.3.
 - Do not use `write-all` or `pull_request_target` without a security review.
 
 ## Releases

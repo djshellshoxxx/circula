@@ -13,6 +13,7 @@ cd "$(dirname "$0")/.."
 allowed=(
   "actions/checkout"
   "actions/setup-go"
+  "actions/setup-node"
   "actions/upload-artifact"
   "actions/download-artifact"
   "golangci/golangci-lint-action"
