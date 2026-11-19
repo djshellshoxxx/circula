@@ -99,7 +99,13 @@ The command exits with code `3` when the snapshot's ledger verification failed. 
 Scheduled: `serve` takes a backup every `backup-interval` (default 24 hours) into `backup-dir` and then applies retention.
 Retention keeps the newest `backup-retain-daily` backups (default 30) and, for each of the newest
 `backup-retain-monthly` months (default 12), the newest backup of that month. Pruned backups are removed with their
-manifests and only their names are logged.
+manifests. When backups are pruned, the scheduled job writes an INFO record, `expired backups removed`, with their
+`count`; it does not log the names of the pruned files.
+
+Backups whose names are dated after the current time are kept, fill no retention slot and do not delay scheduling.
+At each scheduling evaluation, their presence produces a separate WARN record with their count, the newest such
+file's base name, its name timestamp and the current time in UTC (OPS-033). That warning describes retained future-dated
+backups, not files removed by pruning.
 
 Before any migration of an existing database, a backup is taken with reason `pre-migration`.
 

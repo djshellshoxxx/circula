@@ -3,8 +3,6 @@ package api
 import (
 	"time"
 
-	"github.com/google/uuid"
-
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -107,9 +105,9 @@ func (s *server) runCheck(c *reqCtx) error { // API-063
 	if err != nil {
 		return err
 	}
-	id := rep.RunID // the consistency_runs id
-	if id == "" {
-		id = uuid.NewString()
+	id, err := jobID(rep.RunID) // preserve the recorded consistency_runs id
+	if err != nil {
+		return err
 	}
 	d := checkDTO{ID: id, Status: "complete", OK: rep.OK, Findings: append([]string{}, rep.Findings...),
 		LedgerSeq: rep.LedgerSeq, AuditEvents: rep.AuditEvents, CreatedAt: ts(s.opt.Now())}

@@ -1,0 +1,1101 @@
+{
+  "repository": "djshellshoxxx/circula",
+  "client_date": "2026-11-17",
+  "baseline": "b53f757682bff5f488be9c2686c2e8aa8ad4054a",
+  "aggregate_head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+  "aggregate_tree": "1e47c9c30165ca27866887533586c90323e1630e",
+  "aggregate_result": "passed",
+  "prs": [
+    {
+      "number": 69,
+      "summary": "Historical core recovery, regressions and specification archives",
+      "head": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "merge": "ef54238ee9ebc2184919b6a8ec30c3398df55ed5",
+      "runs": [
+        44226365456,
+        44228060824
+      ],
+      "required_successes": 9,
+      "branch": "claude/circula-pr-consolidation-q6q18n",
+      "ci_evidence": [
+        "evidence/final-ci/pr69-final-ci-verified.json"
+      ]
+    },
+    {
+      "number": 70,
+      "summary": "Historical security audit evidence; no executable remediation",
+      "head": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "merge": "e67bad5e2dbee95cff05536aa79f53f3afbccc84",
+      "runs": [
+        44244948992
+      ],
+      "required_successes": 7,
+      "branch": "claude/sharp-archimedes-tu76rh",
+      "ci_evidence": [
+        "evidence/final-ci/pr70-final-ci-verified.json"
+      ]
+    },
+    {
+      "number": 71,
+      "summary": "SQLite untrusted schema on every connection",
+      "local_head": "813faddb47c0c0c080f8c9479b8ef7105cf18746",
+      "head": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "tree": "756fed2f703fd9ec882b0ed3d92ef3dab99b2ffc",
+      "runs": [
+        44256822964
+      ],
+      "required_successes": 9,
+      "branch": "integration/store-untrusted-schema-20261117",
+      "review_id": 5952208767,
+      "superseded_heads": [
+        "1a0202001e422a3aefb09139f1237fc0b19b5747"
+      ],
+      "refresh_parents": [
+        "1a0202001e422a3aefb09139f1237fc0b19b5747",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "required_dependency": 77,
+      "merge": "28ed7166a14616163bf49ed248dcce0a01414850",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "merge_observation": {
+        "performed_by_this_agent": false,
+        "merged_by_account": "djshellshoxxx",
+        "merged_at": "2026-11-18T07:51:15Z",
+        "tree": "756fed2f703fd9ec882b0ed3d92ef3dab99b2ffc",
+        "parents": [
+          "78c695f202e4b9440a4d78ac3b4b181aa81cabac",
+          "b1cd8f38450ae966cfea99d59a131175d7b798dd"
+        ],
+        "verification": "Published merge tree exactly equals independently reviewed refreshed candidate."
+      },
+      "ci_evidence": [
+        "evidence/final-ci/pr71-b1cd8f38450a-verified.json"
+      ]
+    },
+    {
+      "number": 72,
+      "summary": "Private backup staging, exclusive copies and live-work leases",
+      "local_head": "2f9da51c6bde79b1031ebd2ab0701f649ff39a3e",
+      "head": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "tree": "b10a55a019ab37b149d33649fba1f6615acfeac4",
+      "runs": [
+        44256964805
+      ],
+      "required_successes": 9,
+      "branch": "integration/backup-private-staging-20261117",
+      "review_id": 5952209018,
+      "superseded_heads": [
+        "946089539c57469241ab294e16377086e0add6b4",
+        "cac2e0e148abde6c7666c4064f792e3acdaf1eb3"
+      ],
+      "refresh_parents": [
+        "6dd208660969f02100b2b5bbed04dcb6780c0b99",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "required_dependency": 77,
+      "lint_followup": {
+        "local_head": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+        "head": "6dd208660969f02100b2b5bbed04dcb6780c0b99",
+        "tree": "399e1e7854e2342bc851b64f6a320b2211dc2edc"
+      },
+      "merge": "a62071d2c4e65027f4918c90d63e804b1deceb60",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "merge_observation": {
+        "performed_by_this_agent": false,
+        "merged_by_account": "djshellshoxxx",
+        "merged_at": "2026-11-18T07:59:07Z",
+        "tree": "bddf803524faffc69b9d22e78cf6751b626ad449",
+        "parents": [
+          "28ed7166a14616163bf49ed248dcce0a01414850",
+          "faed4906f5419f573181bd7cf3ffdf0bdfb9992b"
+        ],
+        "verification": "Exact original combined functional tree, independently race-qualified on all14packages."
+      },
+      "ci_evidence": [
+        "evidence/final-ci/pr72-faed4906f541-verified.json"
+      ]
+    },
+    {
+      "number": 73,
+      "summary": "Administrator grant notifications beyond the first 500 members",
+      "local_head": "4c26a7ed443d47e339d3bdac7b8f17d3b4e6fe58",
+      "head": "cb25b41febd43273cd4aa856072406b210089d81",
+      "tree": "aa7dd4e4520ac5c293f80f5b6f1acdb79fc2c409",
+      "runs": [
+        44247617122
+      ],
+      "required_successes": 7,
+      "branch": "integration/admin-grant-notice-pagination-20261117",
+      "review_id": 5951794432,
+      "merge": "53e8d5f536af74663262e7a4604adf4b41de03e9",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 2,
+      "gate_comment_id": 6971333605,
+      "ci_evidence": [
+        "evidence/final-ci/pr73-verified.json"
+      ]
+    },
+    {
+      "number": 74,
+      "summary": "Complete, fail-closed release-threshold decision validation",
+      "local_head": "284d756a28d2b0a0e453da650446cd5b844c39db",
+      "head": "ec98caba7328790ef36f0f2c144644bc05155d6b",
+      "tree": "549b97f5b6184cc3630e98e3f149202868c1c880",
+      "runs": [
+        44248576511
+      ],
+      "required_successes": 7,
+      "branch": "integration/release-threshold-check-20261117",
+      "review_id": 5951794708,
+      "merge": "90a7930d81bca55f249594959e7fef8cb14a0ff2",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "gate_comment_id": 6971371677,
+      "ci_evidence": [
+        "evidence/final-ci/pr74-verified.json"
+      ]
+    },
+    {
+      "number": 75,
+      "summary": "Authentication, erasure and operator-control documentation reconciliation",
+      "local_head": "24b5a9e6c052e961725ac8d8953f26a8cc3ee9bb",
+      "head": "83de536ee373a7c4997222cf58ff563c53c8cbbc",
+      "tree": "23cb7472fcda3b046043076ccacd5a2567fb4a8b",
+      "runs": [
+        44248706120
+      ],
+      "required_successes": 7,
+      "branch": "integration/throttle-documentation-20261117",
+      "review_id": 5951794908,
+      "merge": "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "gate_comment_id": 6971573385,
+      "ci_evidence": [
+        "evidence/final-ci/pr75-83de536ee373-verified.json"
+      ]
+    },
+    {
+      "number": 76,
+      "summary": "Deterministic privacy erasure regression with stronger credential checks",
+      "local_head": "9193b320701690182970ed33757aac4031af9895",
+      "head": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "tree": "dee891846f7e558437bdea1fd70937ea5fdf9b16",
+      "runs": [
+        44249505223
+      ],
+      "required_successes": 7,
+      "branch": "integration/erasure-fixture-stability-20261117",
+      "review_id": 5951795119,
+      "merge": "9c1b38d566305e0b577ff0555cdda6498eebed18",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "gate_comment_id": 6971373904,
+      "ci_evidence": [
+        "evidence/final-ci/pr76-fc31dc9a6b8c-verified.json"
+      ]
+    },
+    {
+      "number": 77,
+      "summary": "Colour-mode browser assertions remain exact across request clock boundaries",
+      "local_head": "80ef09389238189b2b738f7805844aa9d913b5af",
+      "head": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+      "tree": "04b19d714cb1e89c1d3827469fc285a4cf1b6878",
+      "runs": [
+        44256413287
+      ],
+      "required_successes": 7,
+      "branch": "integration/browser-parity-clock-20261117",
+      "superseded_heads": [
+        "15b0c176e5a4d0af74022f9f7b0554b44288a39b"
+      ],
+      "review_id": 5952122571,
+      "merge": "78c695f202e4b9440a4d78ac3b4b181aa81cabac",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "gate_comment_id": 6972419440,
+      "merge_observation": {
+        "performed_by_this_agent": false,
+        "merged_by_account": "djshellshoxxx",
+        "merged_at": "2026-11-18T07:44:16Z",
+        "tree": "3d08d20811b7ba812241636debb32ec81780e4ae",
+        "parents": [
+          "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+          "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+        ],
+        "verification": "Exact local merge-tree equals published tree; only reviewed two-file change."
+      },
+      "ci_evidence": [
+        "evidence/final-ci/pr77-2f6b3e4f1b70-verified.json"
+      ]
+    },
+    {
+      "number": 79,
+      "summary": "Authentication and account-security text catalogue with unchanged visible behavior",
+      "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "tree": "e6d94f9fbc59016bfe7350ef6d9a8334031ef725",
+      "local_head": "7f62a5d333a4f1a3f43e3099b9e013298b2f44f6",
+      "runs": [
+        44260832164
+      ],
+      "required_successes": 7,
+      "branch": "claude/ux-047-auth-catalogue",
+      "review_id": 5952714711,
+      "merge": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "merge_observation": {
+        "performed_by_this_agent": false,
+        "merged_by_account": "djshellshoxxx",
+        "merged_at": "2026-11-18T08:14:12Z",
+        "tree": "f41365f8ee4f42f4cbd33fb4e1a78cad85caedd1",
+        "parents": [
+          "a62071d2c4e65027f4918c90d63e804b1deceb60",
+          "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db"
+        ],
+        "verification": "Exact published merge tree equals independently assembled catalogue-on-qualified-main candidate. Complete combined race qualification tracked separately."
+      },
+      "ci_evidence": [
+        "evidence/final-ci/pr79-dd3e82e27ddb-verified.json"
+      ]
+    },
+    {
+      "number": 81,
+      "summary": "Literal SQLite paths and identity-checked backup cleanup",
+      "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "tree": "36326959c19c93fdcc8a415d3152e1cc4f183138",
+      "runs": [
+        44264463917
+      ],
+      "required_successes": 9,
+      "branch": "claude/backup-path-hardening",
+      "review_id": 5952897986,
+      "merge": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "ci_conclusion": "success",
+      "ci_run_attempt": 1,
+      "merge_observation": {
+        "performed_by_this_agent": false,
+        "merged_by_account": "djshellshoxxx",
+        "merged_at": "2026-11-18T09:14:36Z",
+        "tree": "1e2923efdff1adcf60c2718fe2a6a56edb3c1ed9",
+        "parents": [
+          "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+          "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3"
+        ],
+        "verification": "Root git merge-tree matches published tree; all9current-headgates passed. Full combined79+81+82localrace evidence recorded separately."
+      },
+      "ci_evidence": [
+        "evidence/final-ci/pr81-09ef8a5aa25f-verified.json"
+      ]
+    }
+  ],
+  "pr73_retry": {
+    "original_job_id": 134610272040,
+    "job_id": 134629292139,
+    "conclusion": "success",
+    "run_attempt": 2
+  },
+  "previous_aggregate": {
+    "head": "3e819cc9d7a21036e682a57547d665f50f6e9a25",
+    "tree": "3d9a975d727bb277455f5436b709147dadfb31d9",
+    "result": "passed",
+    "log": "aggregate-final-race.log"
+  },
+  "aggregate_log": "evidence/final-candidate-race.log",
+  "aggregate_attempts": [
+    {
+      "head": "c07838eff847dbf915b28a880487d8705fcdbec0",
+      "tree": "bddf803524faffc69b9d22e78cf6751b626ad449",
+      "command": "CGO_ENABLED=1 go test -race -count=1 -timeout=25m ./...",
+      "log": "aggregate-final-race-v2.log",
+      "result": "failed",
+      "reason": "cmd/circula reported signal: killed at 11.510s; 13 other test-bearing packages passed; no assertion traceback or cgroup event evidence available."
+    },
+    {
+      "head": "c07838eff847dbf915b28a880487d8705fcdbec0",
+      "tree": "bddf803524faffc69b9d22e78cf6751b626ad449",
+      "command": "CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "log": "aggregate-final-race-v3.log",
+      "result": "passed",
+      "test_bearing_packages": 14,
+      "helper_packages_without_tests": 2
+    }
+  ],
+  "aggregate_command": "GOMAXPROCS=2 GOGC=50 GOMEMLIMIT=512MiB CGO_ENABLED=1 go test -race -count=1 -p 1 -timeout=25m ./...",
+  "combined_local_lint_attempts": [
+    {
+      "result": "terminated",
+      "log": "aggregate-final-lint.log",
+      "gomaxprocs": "not explicitly set",
+      "diagnostics": "signal: killed; no issue report"
+    },
+    {
+      "result": "terminated",
+      "log": "aggregate-final-lint-limited.log",
+      "gomaxprocs": 4,
+      "diagnostics": "signal: killed; no issue report"
+    }
+  ],
+  "static_analysis_qualification": "Original c078 combined local attempts terminated without a result; required PR provider checks passed. Latest combined17152 full pinned golangci-lint2.15 with outputcaps removed passed0issues, recorded separately.",
+  "concurrent_branch_refresh": {
+    "observed_main": "78c695f202e4b9440a4d78ac3b4b181aa81cabac",
+    "new_branches": [
+      "claude/circula-consolidation-audit-0sydm1",
+      "claude/fnet-204-signed-cursors",
+      "claude/ux-047-auth-catalogue",
+      "claude/backup-path-hardening"
+    ],
+    "status": "original consolidation merged; active new core candidates under independent review",
+    "coordination_comment": {
+      "pr": 78,
+      "id": 6972529619
+    }
+  },
+  "original_consolidation_endpoint": {
+    "head": "a62071d2c4e65027f4918c90d63e804b1deceb60",
+    "tree": "bddf803524faffc69b9d22e78cf6751b626ad449",
+    "qualification_head": "c07838eff847dbf915b28a880487d8705fcdbec0"
+  },
+  "concurrent_qualification": {
+    "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+    "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+    "base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+    "pr_heads": {
+      "79": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "81": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "82": "5c39abdb89faa505533e51d3878b3b119957ff32"
+    },
+    "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+    "log": "aggregate-concurrent-auth-race.log",
+    "status": "all 14 test-bearing packages passed under race on this exact unchanged tree across recorded invocations; failed invocations remain failed",
+    "started_at": "2026-11-18T08:17:48.054867+00:00",
+    "test_bearing_packages_passed": 12,
+    "helper_packages_without_tests": 2,
+    "terminated_packages": [
+      {
+        "package": "cmd/circula",
+        "diagnostic": "signal: killed",
+        "elapsed_seconds": 2.704,
+        "cause": "not established"
+      },
+      {
+        "package": "internal/web",
+        "diagnostic": "signal: killed",
+        "elapsed_seconds": 87.904,
+        "cause": "not established"
+      }
+    ],
+    "isolated_retry": {
+      "command": "GOMAXPROCS=2 CGO_ENABLED=1 go test -race -count=1 -p 1 -timeout=25m ./cmd/circula ./internal/web",
+      "log": "aggregate-concurrent-auth-isolated-race.log",
+      "status": "failed",
+      "scope": "Only the two terminated packages; unchanged exact head and tree; all tests and race instrumentation enabled",
+      "test_bearing_packages_passed": [
+        "internal/web"
+      ],
+      "terminated_packages": [
+        {
+          "package": "cmd/circula",
+          "diagnostic": "signal: killed",
+          "elapsed_seconds": 61.597,
+          "cause": "not established"
+        }
+      ]
+    },
+    "cli_diagnostic": {
+      "status": "failed",
+      "command": "GOMAXPROCS=2 GOGC=20 GOMEMLIMIT=512MiB CGO_ENABLED=1 go test -v -race -count=1 -p 1 -timeout=25m ./cmd/circula",
+      "log": "aggregate-concurrent-auth-cli-bounded-race.log",
+      "metadata": "aggregate-concurrent-auth-cli-bounded-race.json",
+      "exit_code": 1,
+      "elapsed_seconds": 74.893,
+      "max_child_rss_kib": 676264,
+      "last_test_started": "TestServeStartsWithFailingNetwork",
+      "cause": "not established"
+    },
+    "cli_cache_corrected": {
+      "status": "passed",
+      "log": "aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "metadata": "aggregate-concurrent-auth-cli-workspace-cache-race.json",
+      "cache": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+      "reason": "A separate focused test exposed an actual ENOSPC failure in full home tmpfs. Cache was preserved in workspace and only generated old cache cleared; no source/test change.",
+      "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+      "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+      "command": [
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=25m",
+        "./cmd/circula"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "CGO_ENABLED": "1"
+      },
+      "started_at": "2026-11-18T09:00:49.224801+00:00",
+      "scope": "Full unchanged CLI package in repaired cache environment. The prior full tmpfs caused a separately observed build-cache ENOSPC error; no cause is asserted for earlier signal:killed results.",
+      "exit_code": 0,
+      "elapsed_seconds": 183.03,
+      "max_child_rss_kib": 643488,
+      "finished_at": "2026-11-18T09:03:52.255174+00:00"
+    },
+    "primary_invocation_result": "failed",
+    "complete_package_pass_count": 14
+  },
+  "reviewed_pr_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88
+  ],
+  "concurrent_work": [
+    {
+      "number": 78,
+      "branch": "claude/circula-consolidation-audit-0sydm1",
+      "head": "20d42bb6980d3d0e2c5bab7085e9b01a211dfaa8",
+      "expected_state": "open",
+      "disposition": "Source-reviewed audit documentation with factual corrections and exact completed candidate qualification. Preserved historical baseline; stays draft until core82/87document dependenciesmerge anditscurrent-headCIpasses.",
+      "base": "main",
+      "superseded_heads": [
+        "4808477b3f1d016c14606a3a9abc6a4d9e9a5ed3",
+        "1d84c6d5b849af1e1ad19e71f95462873f96973f",
+        "bcacd848dea66cac8b7909aa1e9e9dac7fdf84e4"
+      ],
+      "tree": "f0c3f6d17cf87c0f19825ada2608acbea1f457ea",
+      "review_id": 5954546973,
+      "runs": [
+        44283037811
+      ],
+      "local_head": "1651712b3ed3370898991a56e5a71437e1128f5e",
+      "publication": {
+        "performed_by_root": true,
+        "method": "normal forward commit with expected prior head and force=false; preserves final reviewed file tree from three local authoring commits",
+        "parent": "bcacd848dea66cac8b7909aa1e9e9dac7fdf84e4",
+        "files": 5,
+        "tree_matches_reviewed_local_commit": true
+      }
+    },
+    {
+      "number": 79,
+      "branch": "claude/ux-047-auth-catalogue",
+      "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "expected_state": "closed",
+      "disposition": "merged through concurrent owner account after seven current-head CI jobs; exact merge tree verified by root",
+      "review_id": 5952714711,
+      "runs": [
+        44260832164
+      ],
+      "base": "main"
+    },
+    {
+      "number": 80,
+      "branch": "claude/fnet-204-signed-cursors",
+      "head": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+      "expected_state": "open",
+      "disposition": "future-only signed cursor hardening stacked on PR67; keep enabled=false and HOLD; no core integration",
+      "base": "chatgpt/feed-signed-cursors-20261116"
+    },
+    {
+      "number": 81,
+      "branch": "claude/backup-path-hardening",
+      "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "expected_state": "closed",
+      "disposition": "merged by concurrent owner account; root independently verified9current-headgates, exactparents/tree and retained skippedroot-onlyownershiptest limitation",
+      "blocking_review_id": 5952773175,
+      "runs": [
+        44264463917
+      ],
+      "review_id": 5952897986,
+      "tree": "36326959c19c93fdcc8a415d3152e1cc4f183138",
+      "base": "main"
+    },
+    {
+      "number": 82,
+      "branch": "claude/aud4-auth-fixes",
+      "head": "e127acc9877edebeca818b75a5d48ce12511eca8",
+      "expected_state": "open",
+      "disposition": "Compatible auth and MFA/account-recovery password-proof guards;12fail-before/pass-aftercases,21relatedracetests,independentreview,andcompletecombinedrace/pinnedlintpass. Current-headproviderCIqueued;notmerged.",
+      "review_id": 5954151240,
+      "superseded_heads": [
+        "0a7ef6ee8efbec15c4603bd9fbb14492c7e4ddbf",
+        "5c39abdb89faa505533e51d3878b3b119957ff32",
+        "925547b2f4a2e5ecf0d4c699f7cf906949099c8b",
+        "6785863252d2910553b1f4a26396f14b4405d6fa"
+      ],
+      "tree": "84ea230a25cf30a56f4f43b1a401abea6dc1b7fb",
+      "runs": [
+        44279484396
+      ],
+      "base": "main",
+      "head_followup": "Normal forward commit adds independently reviewed MFA/account-recovery verified-password-hash guards and their regression/audit note; no reset authority, throttle policy, schema or ledger change.",
+      "superseded_runs": [
+        44265484103,
+        44274174998
+      ],
+      "local_head": "d3fcc6831f81eea3344a03113e27532a07996bcf",
+      "publication": {
+        "method": "normal fast-forward with expected prior head and force=false",
+        "parent": "6785863252d2910553b1f4a26396f14b4405d6fa",
+        "performed_by_root": true,
+        "files": 4,
+        "tree_matches_reviewed_local_commit": true
+      }
+    },
+    {
+      "number": 83,
+      "branch": "claude/aud4-f02-reviewer-reset-policy",
+      "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "expected_state": "open",
+      "disposition": "policy-pending reviewer password-reset proposal separated from PR82; preserve draft and branch; no integration without owner decision",
+      "base": "main",
+      "superseded_heads": [
+        "cb95bb1894cd3b178f99ff3c54e0b04651d68cff"
+      ],
+      "head_followup": "Normal forward commit changes only docs/TRACEABILITY.md; production, tests, policy and workflows are unchanged from the reviewed parent."
+    },
+    {
+      "number": 84,
+      "branch": "claude/sharp-archimedes-tu76rh",
+      "head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "expected_state": "open",
+      "disposition": "independently verified catalogue/retention/logging remediation; complete current-head gates pending; original70history preserved",
+      "base": "main",
+      "review_id": 5953697985,
+      "superseded_heads": [
+        "7f98b3db8d032fc107599a3da4a6e1747c3e00aa"
+      ],
+      "tree": "f6d1abf5be0935f5bca5c7f1e3cda56918565693",
+      "runs": [
+        44272452596
+      ]
+    },
+    {
+      "number": 85,
+      "branch": "claude/gov-021-admin-recovery",
+      "head": "59cf6997928330d5ec76c6bbbc81705d0d691eb4",
+      "expected_state": "open",
+      "disposition": "GOV021 draft; operator-reason/audit/restrictedDTO, indexedeligibility/keysetjobs/paging and closingtest corrected in source, not independently runtime-qualified. Permanent authority/typedstaff and break-glass/time-boundaccess/notice/waiting/expiry owner-policy holds persist. SEC026 migration numbering resolved to0020.",
+      "base": "main",
+      "review_id": 5953791244,
+      "tree": "5beb78d382dc5abfa83e0fd42a07104346958be8",
+      "superseded_heads": [
+        "b20c118b59d43836bd357788914542b904f13872",
+        "e11d2920a325b910bf75c1e431208b94ebb6045b"
+      ],
+      "head_followup": "59cf699 corrects only code-comment/audit wording from not-read to not-returned; executable bytes unchanged from source-reviewed e11d292; policy holds persist"
+    },
+    {
+      "number": 86,
+      "branch": "claude/sec-026-abuse-signals",
+      "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "tree": "fd50572cde5b2296615b4fb1e3f8b6eb9d346231",
+      "base": "claude/gov-021-admin-recovery",
+      "expected_state": "open",
+      "review_id": 5953349277,
+      "disposition": "active SEC026 draft stacked on85; numbering resolved to0020. Enabled defaults/thresholds, member-policy visibility exception, reviewer subject visibility and retention need owner decisions; do not bypass85 dependency or exact-head qualification.",
+      "superseded_heads": [
+        "2e2e6f0eba6bed29bed8f2dd5d60699f372760a6"
+      ],
+      "head_followup": "Normal merge of reviewed85e11d292, with only generated traceability conflict resolution, then clean exact merge of main81. Signal runtime/policy source unchanged; base feature and owner-policy holds persist.",
+      "source_dependency_head": "e11d2920a325b910bf75c1e431208b94ebb6045b"
+    },
+    {
+      "number": 87,
+      "branch": "claude/aud4-f03-dispute-timelines",
+      "head": "679a3016d77c3cf34e218ecb296f1d42cc0969c8",
+      "base": "main",
+      "expected_state": "open",
+      "review_id": 5953922142,
+      "runs": [
+        44275665191
+      ],
+      "disposition": "Source-approved partial prospective-dispute repair, preserving independently reproduced same-ms/clock-rollback residual. Corrected scope and completecombinedrace/pinnedlintpass;current-headproviderCIqueued;notmerged.",
+      "superseded_heads": [
+        "1a3ef0fad836067b71857d961659459d976e7e15"
+      ],
+      "tree": "d88d4da959d34989248c3d172da56dabf24a272e"
+    },
+    {
+      "number": 88,
+      "branch": "nodata/doc-sweep-20261118",
+      "head": "c774d5e412e039d514c37c7b69826d5306d7930c",
+      "tree": "ac4fd86166e89ec55b8526cabc01eeab481a0981",
+      "base": "main",
+      "expected_state": "open",
+      "disposition": "Source-reviewed documentation corrections for already-merged E02/NEW01 and existing native-CI label gate; old conflicting source citation corrected in a normal forward update. No runtime/policy change. Current-head CI pending.",
+      "superseded_heads": [
+        "f4cbaddd4d40f690529ab33c88f302be9d0a1752"
+      ],
+      "local_head": "6a9e9775fb46ca44b4500c28e1b4d1565b1e78f6",
+      "runs": [
+        44281537794
+      ],
+      "publication": {
+        "performed_by_root": true,
+        "method": "normal fast-forward with expected prior head and force=false",
+        "parent": "f4cbaddd4d40f690529ab33c88f302be9d0a1752",
+        "files": 1,
+        "tree_matches_reviewed_local_commit": true
+      },
+      "review_id": 5954388234
+    }
+  ],
+  "concurrent_qualification_attempts": [
+    {
+      "head": "a04ff2323f84eeb4a46e3c462ad312dd6596a72a",
+      "tree": "1e2923efdff1adcf60c2718fe2a6a56edb3c1ed9",
+      "base": "a62071d2c4e65027f4918c90d63e804b1deceb60",
+      "pr_heads": {
+        "79": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+        "81": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3"
+      },
+      "command": "CGO_ENABLED=1 go test -race -count=1 -p 2 -timeout=25m ./...",
+      "log": "aggregate-concurrent-race.log",
+      "status": "failed",
+      "started_at": "2026-11-18T08:11:17.593411+00:00",
+      "terminated_packages": [
+        {
+          "package": "cmd/circula",
+          "diagnostic": "signal: killed",
+          "elapsed_seconds": 2.9,
+          "cause": "not established"
+        },
+        {
+          "package": "internal/service",
+          "diagnostic": "signal: killed",
+          "elapsed_seconds": 4.915,
+          "cause": "not established"
+        }
+      ],
+      "test_bearing_packages_passed": 12,
+      "helper_packages_without_tests": 2
+    }
+  ],
+  "combined_local_qualification_limit": "The latest candidate now has one complete successful full race invocation, separate from the earlier unchanged-tree package coverage and terminated attempts. Root-only foreign-owner regression remains skipped at UID1000; no privileged or current-candidate native-platform runtime claim.",
+  "branch_ref_overrides": [
+    {
+      "branch": "claude/sharp-archimedes-tu76rh",
+      "previous_head": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "pr": 84,
+      "reason": "Historical PR70 remains frozen and merged; a distinct concurrent worker advanced the preserved branch for new remediation PR84. Both oldhead-to-main and oldhead-to-live-head ancestry are verified.",
+      "evidence": "source-reviews/PR84-LOGGING-FOLLOWUP-REVIEW.md"
+    }
+  ],
+  "aggregate_verification_summary": "The full suite passed in one invocation: all 14 test-bearing packages and two helper packages, exit 0, 1063.886 seconds (09:49:16–10:07:00 UTC on November 18). The receipt records Go 1.26.11, race instrumentation, unchanged pre/post source identities and a clean worktree. [Paired receipt](evidence/final-candidate-qualification.json), [unaltered producer receipt](evidence/final-candidate-original-receipt.json) and [complete log](evidence/final-candidate-race.log) are retained. Full uncapped golangci-lint 2.15 also passed with zero issues on this exact candidate; its receipt and log are separate. Earlier failures remain failures, with causes of signal:killed unproven. The foreign-owner regression remains skipped at UID1000; candidate success does not imply privileged or native-platform coverage.",
+  "final_core_candidate": {
+    "head": "8865b3c3c5e10b3e2df13e2d4c95dfbe123bfbaa",
+    "tree": "0b936c0f1a8658d6aea048cf1568e3269ff03479",
+    "qualification_status": "passed; predecessor before latest MFA fix",
+    "metadata": "aggregate-final-core-race.json",
+    "log": "aggregate-final-core-race.log",
+    "contains_pr_heads": {
+      "82": "6785863252d2910553b1f4a26396f14b4405d6fa",
+      "84": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "87": "1a3ef0fad836067b71857d961659459d976e7e15"
+    },
+    "generated_conflicts": "Only docs/TRACEABILITY.md; regenerated from combined source. No future or policy-held features included."
+  },
+  "mfa_followup": {
+    "status": "confirmed, fixed, independently reviewed and published normally in82; full combined race and pinnedlint pass; current-headproviderCIqueued",
+    "owned_paths": [
+      "internal/service/mfa.go",
+      "internal/service/recovery.go (GenerateRecoveryCodes only)",
+      "internal/service/password_proof_test.go",
+      "docs/audit/PASSWORD-PROOF-BINDING-2026-11-18.md"
+    ],
+    "coordination_comment": 6974663186,
+    "scope": "Reproduced stale authenticated requests continuing after self-service password change or administrator reset. Four protected writes now compare the verified password hash. Confirmation/disabling use valid factors; no factor-bypass claim. Existing errors, throttles and authority remain unchanged.",
+    "local_head": "d3fcc6831f81eea3344a03113e27532a07996bcf",
+    "published_head": "e127acc9877edebeca818b75a5d48ce12511eca8",
+    "tree": "84ea230a25cf30a56f4f43b1a401abea6dc1b7fb",
+    "test_cases": 12,
+    "focused_race_top_level_tests": 21,
+    "review_id": 5954151240
+  },
+  "pre_mfa_complete_aggregate": {
+    "head": "8865b3c3c5e10b3e2df13e2d4c95dfbe123bfbaa",
+    "tree": "0b936c0f1a8658d6aea048cf1568e3269ff03479",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-p",
+      "1",
+      "-timeout=25m",
+      "./..."
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOMAXPROCS": "2",
+      "GOGC": "50",
+      "GOMEMLIMIT": "512MiB",
+      "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+      "CGO_ENABLED": "1"
+    },
+    "go_version": "go version go1.26.11 linux/amd64",
+    "source_heads": {
+      "82": "6785863252d2910553b1f4a26396f14b4405d6fa",
+      "84": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "87": "1a3ef0fad836067b71857d961659459d976e7e15"
+    },
+    "started_at": "2026-11-18T09:23:19.176651+00:00",
+    "status": "passed",
+    "scope": "Full combined core suite. Generated TRACEABILITY conflicts were resolved by regenerating from the combined source. No future or owner-policy feature branch included; PR87 clock-ordering residual remains explicitly unresolved.",
+    "exit_code": 0,
+    "elapsed_seconds": 1054.173,
+    "finished_at": "2026-11-18T09:40:53.350240+00:00",
+    "max_child_rss_kib": 672728,
+    "post_head": "8865b3c3c5e10b3e2df13e2d4c95dfbe123bfbaa",
+    "post_tree": "0b936c0f1a8658d6aea048cf1568e3269ff03479",
+    "post_status": ""
+  },
+  "latest_candidate_qualification": {
+    "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-p",
+      "1",
+      "-timeout=25m",
+      "./..."
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOMAXPROCS": "2",
+      "GOGC": "50",
+      "GOMEMLIMIT": "512MiB",
+      "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+      "CGO_ENABLED": "1"
+    },
+    "go_version": "go version go1.26.11 linux/amd64",
+    "started_at": "2026-11-18T09:49:16.576031+00:00",
+    "status": "passed",
+    "source_heads": {
+      "82_authoring": "d3fcc6831f81eea3344a03113e27532a07996bcf",
+      "82_published": "e127acc9877edebeca818b75a5d48ce12511eca8",
+      "82_shared_tree": "84ea230a25cf30a56f4f43b1a401abea6dc1b7fb",
+      "84": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "87": "679a3016d77c3cf34e218ecb296f1d42cc0969c8"
+    },
+    "scope": "Fresh full combined race suite after all four MFA/account-recovery password-proof guards. Prior full pass remains attributed to8865 before this fix. No future or owner-policy feature included.",
+    "exit_code": 0,
+    "elapsed_seconds": 1063.886,
+    "finished_at": "2026-11-18T10:07:00.462200+00:00",
+    "max_child_rss_kib": 676336,
+    "post_head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "post_tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "post_status": ""
+  },
+  "latest_candidate_static_analysis": {
+    "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "command": [
+      "go",
+      "run",
+      "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0",
+      "run",
+      "--max-issues-per-linter=0",
+      "--max-same-issues=0",
+      "--timeout=10m",
+      "./..."
+    ],
+    "started_at": "2026-11-18T09:47:25.118558+00:00",
+    "status": "passed",
+    "exit_code": 0,
+    "elapsed_seconds": 40.92,
+    "finished_at": "2026-11-18T09:48:06.039522+00:00",
+    "post_head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "post_tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "post_status": ""
+  },
+  "execution_outcome": "blocked_required_ci",
+  "aggregate_metadata": "evidence/final-candidate-qualification.json",
+  "ci_blocker": {
+    "pr_numbers": [
+      82,
+      84,
+      87
+    ],
+    "evidence": "evidence/final-ci/queue-current-20261118T102432.json",
+    "classification": "Required current-head provider gates are incomplete. Job-level progress is retained; local candidate qualification is separate. No failing required job is hidden or bypassed.",
+    "observed_at": "2026-11-18T10:24:32.909Z",
+    "required_job_totals": {
+      "passed": 4,
+      "running": 2,
+      "queued": 15
+    }
+  },
+  "latest_candidate_static_checks": {
+    "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "started_at": "2026-11-18T10:09:38.975417+00:00",
+    "checks": [
+      {
+        "command": [
+          "go",
+          "mod",
+          "verify"
+        ],
+        "exit_code": 0,
+        "output": "all modules verified\n",
+        "elapsed_seconds": 1.278
+      },
+      {
+        "command": [
+          "go",
+          "vet",
+          "-p",
+          "1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "output": "",
+        "elapsed_seconds": 2.287
+      },
+      {
+        "command": [
+          "go",
+          "run",
+          "./scripts/traceability",
+          "-check"
+        ],
+        "exit_code": 0,
+        "output": "traceability: docs/TRACEABILITY.md is up to date\n",
+        "elapsed_seconds": 0.436
+      }
+    ],
+    "finished_at": "2026-11-18T10:09:42.976861+00:00",
+    "post_head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+    "post_tree": "1e47c9c30165ca27866887533586c90323e1630e",
+    "post_status": "",
+    "status": "passed"
+  },
+  "qualified_candidate_constituents": [
+    {
+      "pr": 82,
+      "published_head": "e127acc9877edebeca818b75a5d48ce12511eca8",
+      "basis": "identical reviewed local/published trees and ordered parents; local commit is an ancestor of the qualified candidate",
+      "local_head": "d3fcc6831f81eea3344a03113e27532a07996bcf",
+      "shared_tree": "84ea230a25cf30a56f4f43b1a401abea6dc1b7fb"
+    },
+    {
+      "pr": 84,
+      "published_head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "basis": "published head is an ancestor of the qualified candidate"
+    },
+    {
+      "pr": 87,
+      "published_head": "679a3016d77c3cf34e218ecb296f1d42cc0969c8",
+      "basis": "published head is an ancestor of the qualified candidate"
+    }
+  ],
+  "functional_endpoint": {
+    "head": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+    "tree": "1e2923efdff1adcf60c2718fe2a6a56edb3c1ed9",
+    "captured_at": "2026-11-18T10:25:40.921074+00:00",
+    "execution_outcome": "blocked_required_ci",
+    "reviewed_pr_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88
+    ],
+    "open_pr_numbers": [
+      67,
+      78,
+      80,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88
+    ]
+  }
+}

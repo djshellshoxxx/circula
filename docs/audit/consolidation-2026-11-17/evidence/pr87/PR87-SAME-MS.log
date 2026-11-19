@@ -1,0 +1,11 @@
+=== RUN   TestDisputeTimelinesFixedAtOpen
+    dispute_timelines_test.go:56: (a) shown response deadline 2026-03-01 12:00:00 +0000 UTC overdue=true, want 2026-03-08 12:00:00 +0000 UTC (7 days after opening, as enforced)
+    dispute_timelines_test.go:60: (a) 1 overdue reminders sent 2 days into a 7-day response period
+    dispute_timelines_test.go:63: (a) response period removed for an open dispute: decided with no response and no waiver
+    dispute_timelines_test.go:69: (b) shown re-review deadline 2026-03-02 12:00:00 +0000 UTC, want 2026-03-15 12:00:00 +0000 UTC (14 days after the decision, as enforced)
+    dispute_timelines_test.go:72: (b) re-review right stripped retroactively: invalid-transaction-state: the re-review period closed on 2026-03-02
+    dispute_timelines_test.go:82: not decidable when its own response period ended: invalid-transaction-state: dispute is resolved; resolve not allowed
+--- FAIL: TestDisputeTimelinesFixedAtOpen (0.65s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.666s
+FAIL

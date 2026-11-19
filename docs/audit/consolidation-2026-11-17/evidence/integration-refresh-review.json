@@ -1,0 +1,206 @@
+{
+  "scope": "Complete tracked-tree comparison against accepted main plus exact approved security/UI blobs; source review, not CI qualification.",
+  "results": [
+    {
+      "pr": 71,
+      "base": "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+      "local_head": "813faddb47c0c0c080f8c9479b8ef7105cf18746",
+      "local_tree": "756fed2f703fd9ec882b0ed3d92ef3dab99b2ffc",
+      "published_head_from_coordinator": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "remote_object_available_locally": false,
+      "remote_tree": "756fed2f703fd9ec882b0ed3d92ef3dab99b2ffc",
+      "remote_tree_matches": true,
+      "candidate_parents": [
+        "1a0202001e422a3aefb09139f1237fc0b19b5747",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "ancestor_checks": {
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4": true,
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002": true,
+        "1a0202001e422a3aefb09139f1237fc0b19b5747": true
+      },
+      "changed_path_count": 6,
+      "changed_paths": [
+        "docs/audit/BROWSER-PARITY-CLOCK-2026-11-18.md",
+        "docs/audit/E02-TRUSTED-SCHEMA-2026-11-18.md",
+        "e2e/tests/greyscale.spec.js",
+        "internal/store/inspect.go",
+        "internal/store/sqlite.go",
+        "internal/store/trusted_schema_test.go"
+      ],
+      "approved_blob_checks": [
+        {
+          "path": "docs/audit/E02-TRUSTED-SCHEMA-2026-11-18.md",
+          "approved_source": "66a0d4a94e3b2650a444037c7e6874d172d7a11d",
+          "approved_entry": "100644 blob 13d9228462841db5644cf65edabede7c9605b7e4",
+          "candidate_entry": "100644 blob 13d9228462841db5644cf65edabede7c9605b7e4",
+          "matches": true
+        },
+        {
+          "path": "internal/store/inspect.go",
+          "approved_source": "66a0d4a94e3b2650a444037c7e6874d172d7a11d",
+          "approved_entry": "100644 blob b1af2b43f541d9eb7b37f95139a0d057e45b446f",
+          "candidate_entry": "100644 blob b1af2b43f541d9eb7b37f95139a0d057e45b446f",
+          "matches": true
+        },
+        {
+          "path": "internal/store/sqlite.go",
+          "approved_source": "66a0d4a94e3b2650a444037c7e6874d172d7a11d",
+          "approved_entry": "100644 blob c445f8099360df506945f8500c085fd289ba95b8",
+          "candidate_entry": "100644 blob c445f8099360df506945f8500c085fd289ba95b8",
+          "matches": true
+        },
+        {
+          "path": "internal/store/trusted_schema_test.go",
+          "approved_source": "66a0d4a94e3b2650a444037c7e6874d172d7a11d",
+          "approved_entry": "100644 blob 9b8055f69f3430203c6d6249348f1469adb6db11",
+          "candidate_entry": "100644 blob 9b8055f69f3430203c6d6249348f1469adb6db11",
+          "matches": true
+        },
+        {
+          "path": "docs/audit/BROWSER-PARITY-CLOCK-2026-11-18.md",
+          "approved_source": "80ef09389238189b2b738f7805844aa9d913b5af",
+          "approved_entry": "100644 blob ca0e165c1f720565248326da6658fd1a3f0c5520",
+          "candidate_entry": "100644 blob ca0e165c1f720565248326da6658fd1a3f0c5520",
+          "matches": true
+        },
+        {
+          "path": "e2e/tests/greyscale.spec.js",
+          "approved_source": "80ef09389238189b2b738f7805844aa9d913b5af",
+          "approved_entry": "100644 blob 5494214521b0110fd37ad8f4ac97fb12e966f641",
+          "candidate_entry": "100644 blob 5494214521b0110fd37ad8f4ac97fb12e966f641",
+          "matches": true
+        }
+      ],
+      "unexpected_tree_differences": [],
+      "remote_verification_basis": "Independent GitHub connector GET; integration-refresh-remote.json",
+      "remote_parents": [
+        "1a0202001e422a3aefb09139f1237fc0b19b5747",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ]
+    },
+    {
+      "pr": 72,
+      "base": "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+      "local_head": "2f9da51c6bde79b1031ebd2ab0701f649ff39a3e",
+      "local_tree": "b10a55a019ab37b149d33649fba1f6615acfeac4",
+      "published_head_from_coordinator": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "remote_object_available_locally": false,
+      "remote_tree": "b10a55a019ab37b149d33649fba1f6615acfeac4",
+      "remote_tree_matches": true,
+      "candidate_parents": [
+        "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "ancestor_checks": {
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4": true,
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002": true,
+        "c357ae3d6c4f7e513c08284e8378e4edf2ff695d": true
+      },
+      "changed_path_count": 11,
+      "changed_paths": [
+        "cmd/circula/backup_private_staging_test.go",
+        "cmd/circula/backup_work.go",
+        "cmd/circula/backup_work_lease_test.go",
+        "cmd/circula/backupcrypt.go",
+        "cmd/circula/commands.go",
+        "cmd/circula/premigrate.go",
+        "cmd/circula/snapshot.go",
+        "cmd/circula/util.go",
+        "docs/audit/BACKUP-PRIVATE-STAGING-2026-11-17.md",
+        "docs/audit/BROWSER-PARITY-CLOCK-2026-11-18.md",
+        "e2e/tests/greyscale.spec.js"
+      ],
+      "approved_blob_checks": [
+        {
+          "path": "cmd/circula/backup_private_staging_test.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 5f4c95c6570d4049c317b2aee5e58fd682687c13",
+          "candidate_entry": "100644 blob 5f4c95c6570d4049c317b2aee5e58fd682687c13",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/backup_work.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 8f663096b41a51ee2a220e5bd49305f74ff9ea70",
+          "candidate_entry": "100644 blob 8f663096b41a51ee2a220e5bd49305f74ff9ea70",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/backup_work_lease_test.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 2c93588035ef24c972829a8c1e99688fb3cbcdc8",
+          "candidate_entry": "100644 blob 2c93588035ef24c972829a8c1e99688fb3cbcdc8",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/backupcrypt.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 9492072b30764af9590342c16df76d1d7f2ce844",
+          "candidate_entry": "100644 blob 9492072b30764af9590342c16df76d1d7f2ce844",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/commands.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob e7046a2bcaac6885174162d3eef5cbd14c9758db",
+          "candidate_entry": "100644 blob e7046a2bcaac6885174162d3eef5cbd14c9758db",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/premigrate.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob b1fa938e26c57b2f0fab55924ba51a470400e404",
+          "candidate_entry": "100644 blob b1fa938e26c57b2f0fab55924ba51a470400e404",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/snapshot.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 25bf6cfb22f0f22ae56318147012565680d0c611",
+          "candidate_entry": "100644 blob 25bf6cfb22f0f22ae56318147012565680d0c611",
+          "matches": true
+        },
+        {
+          "path": "cmd/circula/util.go",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 724cc448487d4506f34ba290aab7284e6f43274e",
+          "candidate_entry": "100644 blob 724cc448487d4506f34ba290aab7284e6f43274e",
+          "matches": true
+        },
+        {
+          "path": "docs/audit/BACKUP-PRIVATE-STAGING-2026-11-17.md",
+          "approved_source": "c357ae3d6c4f7e513c08284e8378e4edf2ff695d",
+          "approved_entry": "100644 blob 3ec9190d803c6882b0ad7d19bbcdf2ed40b02316",
+          "candidate_entry": "100644 blob 3ec9190d803c6882b0ad7d19bbcdf2ed40b02316",
+          "matches": true
+        },
+        {
+          "path": "docs/audit/BROWSER-PARITY-CLOCK-2026-11-18.md",
+          "approved_source": "80ef09389238189b2b738f7805844aa9d913b5af",
+          "approved_entry": "100644 blob ca0e165c1f720565248326da6658fd1a3f0c5520",
+          "candidate_entry": "100644 blob ca0e165c1f720565248326da6658fd1a3f0c5520",
+          "matches": true
+        },
+        {
+          "path": "e2e/tests/greyscale.spec.js",
+          "approved_source": "80ef09389238189b2b738f7805844aa9d913b5af",
+          "approved_entry": "100644 blob 5494214521b0110fd37ad8f4ac97fb12e966f641",
+          "candidate_entry": "100644 blob 5494214521b0110fd37ad8f4ac97fb12e966f641",
+          "matches": true
+        }
+      ],
+      "unexpected_tree_differences": [],
+      "remote_verification_basis": "Independent GitHub connector GET; integration-refresh-remote.json",
+      "remote_parents": [
+        "6dd208660969f02100b2b5bbed04dcb6780c0b99",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "remote_security_parent_tree_matches_approved_local": true
+    }
+  ]
+}

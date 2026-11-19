@@ -91,7 +91,6 @@ func TestAddChecked(t *testing.T) {
 
 // DOM-005 QA gate: no floating-point type anywhere in money-handling packages.
 func TestNoFloatsInMoneyPackages(t *testing.T) {
-	re := regexp.MustCompile(`\bfloat(32|64)\b|strconv\.(ParseFloat|FormatFloat)|math/big`)
 	for _, dir := range []string{".", "../store", "../service"} {
 		files, _ := filepath.Glob(filepath.Join(dir, "*.go"))
 		for _, f := range files {
@@ -102,8 +101,12 @@ func TestNoFloatsInMoneyPackages(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if loc := re.Find(b); loc != nil {
-				t.Errorf("%s uses %q; money must be integer minor units", f, loc)
+			use, err := nonIntegerMoneyArithmetic(b)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if use != "" {
+				t.Errorf("%s uses %q; money must be integer minor units", f, use)
 			}
 		}
 	}

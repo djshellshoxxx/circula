@@ -1,0 +1,640 @@
+[
+  {
+    "branch": "future/fnet-201-matching-20261116",
+    "sha": "12850290c6bca7720853c33689662d751aced160",
+    "module": "FNET-201",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.022,
+        "log": "FNET-201-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 35.375,
+        "log": "FNET-201-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 8.655,
+        "log": "FNET-201-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-202-favorites-20261116",
+    "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+    "module": "FNET-202",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.066,
+        "log": "FNET-202-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 86.406,
+        "log": "FNET-202-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 124,
+        "seconds": 180.018,
+        "log": "FNET-202-race.log",
+        "test_counts": {
+          "pass": 72,
+          "fail": 0,
+          "skip": 1
+        },
+        "package_counts": {
+          "pass": 4,
+          "fail": 0,
+          "skip": 3
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-203-receipts-20261116",
+    "sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+    "module": "FNET-203",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.058,
+        "log": "FNET-203-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 3.28,
+        "log": "FNET-203-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 8.277,
+        "log": "FNET-203-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-204-feed-20261116",
+    "sha": "5d3819c3b3af031b75eceb5251da0226a4ecee77",
+    "module": "FNET-204",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.047,
+        "log": "FNET-204-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 1.88,
+        "log": "FNET-204-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 8.488,
+        "log": "FNET-204-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-205-analytics-20261116",
+    "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+    "module": "FNET-205",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.048,
+        "log": "FNET-205-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 1.365,
+        "log": "FNET-205-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 6.422,
+        "log": "FNET-205-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-206-areas-20261116",
+    "sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+    "module": "FNET-206",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.039,
+        "log": "FNET-206-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 1.932,
+        "log": "FNET-206-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 6.239,
+        "log": "FNET-206-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-207-recurring-20261116",
+    "sha": "0437e54897c6d9cfb3f2577807b82dd038493850",
+    "module": "FNET-207",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.035,
+        "log": "FNET-207-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 1.943,
+        "log": "FNET-207-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 7.933,
+        "log": "FNET-207-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-208-governance-20261116",
+    "sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+    "module": "FNET-208",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.047,
+        "log": "FNET-208-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 1.531,
+        "log": "FNET-208-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 6.62,
+        "log": "FNET-208-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fnet-209-federation-20261116",
+    "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+    "module": "FNET-209",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.043,
+        "log": "FNET-209-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 4.585,
+        "log": "FNET-209-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 10.404,
+        "log": "FNET-209-race.log",
+        "test_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fux-101-pwa-20261116",
+    "sha": "a6326b8725fe6d7270997b4a284cbbc129022dd1",
+    "module": "FUX-101",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.11,
+        "log": "FUX-101-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 36.83,
+        "log": "FUX-101-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 152.441,
+        "log": "FUX-101-race.log",
+        "test_counts": {
+          "pass": 34,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 1,
+          "fail": 0,
+          "skip": 1
+        }
+      }
+    ]
+  },
+  {
+    "branch": "future/fux-102-qr-20261116",
+    "sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+    "module": "FUX-102",
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "gofmt",
+          "-l",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.355,
+        "log": "FUX-102-format.log",
+        "clean": true,
+        "unformatted": []
+      },
+      {
+        "name": "vet",
+        "command": [
+          "go",
+          "vet",
+          "-p=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "seconds": 77.9,
+        "log": "FUX-102-vet.log"
+      },
+      {
+        "name": "race",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-p=1",
+          "-json",
+          "-count=1",
+          "-timeout=90s",
+          "./..."
+        ],
+        "exit_code": 124,
+        "seconds": 180.17,
+        "log": "FUX-102-race.log",
+        "test_counts": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        },
+        "package_counts": {
+          "pass": 0,
+          "fail": 0,
+          "skip": 0
+        }
+      }
+    ]
+  }
+]

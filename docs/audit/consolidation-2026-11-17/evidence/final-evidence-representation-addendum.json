@@ -1,0 +1,120 @@
+{
+  "scope": "Independent read-only representation-transform and PR84 prose addendum; no scanner or Go rerun",
+  "manifest_records": 246,
+  "normalizations": 22,
+  "representation_transforms": 7,
+  "roundtrips": [
+    {
+      "retained_path": "evidence/auth82-compatible-followup.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-a/AUTH82-FOLLOWUP-5c39abd.json",
+      "source_sha256": "75b5819cecc7518a9e63d978c9ddc49095138358d00312b93299ce1ec256cb55",
+      "retained_sha256": "e6632703b8b1b4a58e4ca2c08b3c69e7f66305269ddfe938d770bc6f6bd7cf2a",
+      "roundtrip": "original JSON data (original formatting separately hashed)"
+    },
+    {
+      "retained_path": "evidence/mfa-password-proof-evidence.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-c/MFA-PASSWORD-PROOF-EVIDENCE.json",
+      "source_sha256": "0eb804f284edb890d603c7ca5541f287d7b8be3036616fe47aa8d609902eb32f",
+      "retained_sha256": "949b156b40322f10fc44a05b97148b4162eb162aecac2684a51c1c0446ee2e54",
+      "roundtrip": "original JSON data (original formatting separately hashed)"
+    },
+    {
+      "retained_path": "evidence/pr84-regression-snapshots.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-c/PR84-regression-snapshots.json",
+      "source_sha256": "fadc1a2aa738e63474d5064aea0fb32402fd9579831dfa540b267d54e13e8dc7",
+      "retained_sha256": "c82b786995215965ba2e13b4e274a9039c5e6b61b1c3c8473f35c3a5998d490f",
+      "roundtrip": "original JSON data (original formatting separately hashed)"
+    },
+    {
+      "retained_path": "evidence/pr84-retention-prior-algorithm.diff.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-c/PR84-retention-prior-algorithm.diff",
+      "source_sha256": "62a4b20a205235b5234f9da9f26a0929aace5158f589a03a360fd217317fb0cb",
+      "retained_sha256": "6c60a5a41842596c0c4ffd6610ac61c6cadd800f3f46e7d25635eacbe86114e9",
+      "roundtrip": "exact original patch bytes"
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CLOCK-ROLLBACK.diff.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-b/PR87-CLOCK-ROLLBACK.diff",
+      "source_sha256": "46ffd89b03827ac154ae4b2d065686e520c16ff763d711733fad155c9513b3f4",
+      "retained_sha256": "3eaba094e4b471a26d78777f1c1f84e6bf96ecf8653a22269a95b788b1b9e8b9",
+      "roundtrip": "exact original patch bytes"
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-CURRENT-POLICY-CONTROL.diff.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-b/PR87-CURRENT-POLICY-CONTROL.diff",
+      "source_sha256": "b86f413d688e9622120d3ac3c0650a8869f1933293c503a61c29546143466051",
+      "retained_sha256": "17cd8197ef3007f4c8863d48d04d79c45c028b6d4932cb2dfb40780dc28317b9",
+      "roundtrip": "exact original patch bytes"
+    },
+    {
+      "retained_path": "evidence/pr87/PR87-SAME-MS.diff.json",
+      "source": "/workspace/scratch/9ceb45b04668/audit-b/PR87-SAME-MS.diff",
+      "source_sha256": "4976e84b7b71b0094951b5bb64a1d3d2a453d2376233e8c687fffe78bd21daba",
+      "retained_sha256": "f27b5f60faa2d2ab886c66ed3b3f9cc348ec48a7e6f4492924f477750f64faa2",
+      "roundtrip": "exact original patch bytes"
+    }
+  ],
+  "git_sha1_occurrences_checked": 26,
+  "git_sha1_unique_values": 23,
+  "git_object_type_occurrences": {
+    "commit": 7,
+    "tree": 5,
+    "blob": 14
+  },
+  "flagged_checksum_classifications": [
+    {
+      "reported_file": "docs/audit/consolidation-2026-11-17/evidence/auth82-compatible-followup.json",
+      "reported_line": 8,
+      "checksum": "97316e591698792ad3bece18063e4883aac4e3c2",
+      "kind": "Git blob identity",
+      "type": "blob"
+    },
+    {
+      "reported_file": "docs/audit/consolidation-2026-11-17/evidence/mfa-password-proof-evidence.json",
+      "reported_line": 13,
+      "checksum": "c5f258fd4305e682285e58a7ebe575af817da8c5",
+      "kind": "Git blob identity",
+      "type": "blob"
+    },
+    {
+      "reported_file": "docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json",
+      "reported_line": 16,
+      "checksum": "9cea7782e198a07330dce365209185e05168e6ba1bc58690fcc65d1ea994f06e",
+      "kind": "SHA-256 of source files",
+      "verified_paths": [
+        "/workspace/scratch/9ceb45b04668/audit-c-pr84/fixed/docs/specs/07-api-contract.md",
+        "/workspace/scratch/9ceb45b04668/audit-c-pr84/retention-prior-algorithm/docs/specs/07-api-contract.md"
+      ]
+    },
+    {
+      "reported_file": "docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json",
+      "reported_line": 23,
+      "checksum": "102bfa506e890233ef6d25b777ecb21b2cf428de97b25111a60a389f40af3dba",
+      "kind": "SHA-256 of source files",
+      "verified_paths": [
+        "/workspace/scratch/9ceb45b04668/audit-c-pr84/api-baseline/docs/specs/07-api-contract.md"
+      ]
+    },
+    {
+      "reported_file": "docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json",
+      "reported_line": 30,
+      "checksum": "9cea7782e198a07330dce365209185e05168e6ba1bc58690fcc65d1ea994f06e",
+      "kind": "SHA-256 of source files",
+      "verified_paths": [
+        "/workspace/scratch/9ceb45b04668/audit-c-pr84/fixed/docs/specs/07-api-contract.md",
+        "/workspace/scratch/9ceb45b04668/audit-c-pr84/retention-prior-algorithm/docs/specs/07-api-contract.md"
+      ]
+    },
+    {
+      "reported_file": "docs/audit/consolidation-2026-11-17/evidence/pr84-regression-snapshots.json",
+      "reported_line": 38,
+      "checksum": "4f6b1a626efbd72d72a083e1e987ce26ca063474",
+      "kind": "Git blob identity",
+      "type": "blob"
+    }
+  ],
+  "snapshot_file_hashes_verified": 15,
+  "mfa_log_hashes_verified": 3,
+  "old_diff_markdown_links": [],
+  "pr84_prose_corrected": true
+}

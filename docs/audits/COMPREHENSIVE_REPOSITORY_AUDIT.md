@@ -1,0 +1,68 @@
+# Comprehensive repository audit
+
+> Continuation: [2026-11-19 consolidation recovery and verification](CONSOLIDATION_CONTINUATION_2026-11-19.md) records later source changes, the complete 113-branch inventory, and current evidence boundaries. The findings below retain their original source and test scope.
+
+Audit opened **2026-11-18 Pacific / 2026-11-19 UTC**. Repository: [djshellshoxxx/circula](https://github.com/djshellshoxxx/circula).
+
+This is the current implementation and consolidation record. Earlier files under `docs/audit/`, including the November 17 execution archive and November 18 audit, remain evidence for their named revisions. Their pending-PR counts and test results are not current-head qualification.
+
+## Scope, baseline and evidence rules
+
+Starting main: [`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625). The initial repository inventory contains **107 real remote branches**, **89 pull requests** (10 open, 79 closed), and **zero standalone issues**. The issues endpoint returned the same 89 PR records. Branch pages were exhausted at 100 + 7; PR pages at 89 + 0. The complete, non-shallow Git history and all remote tips were inspected. The workflow inventory reported 545 runs; the latest 100 and the relevant failing/source-head runs were investigated, not all 545 logs.
+
+The branch-by-branch record is [BRANCH_CONSOLIDATION_MATRIX.md](BRANCH_CONSOLIDATION_MATRIX.md). It distinguishes ancestry, patch equivalence, recovered behavior, obsolete documentation, actual conflicts and dependency holds. Age alone was never a reason to discard a branch. All original remote branches are retained.
+
+The canonical requirement inventory is [TRACEABILITY.md](../TRACEABILITY.md): 531 IDs, including 502 requirements and 29 decision-register entries. Its starting declarations were 280 built, 120 partial, 9 not built, 5 deferred and 88 without a status row. These are **specification declarations**, not audited completion percentages. Some notes explicitly predate implemented behavior. There were 19 requirements declared built without a test citation, no unknown IDs and no duplicate IDs. [FEATURE_COMPLETION_STATUS.md](FEATURE_COMPLETION_STATUS.md) records the checked current interpretation and the 15 separate future modules.
+
+## Actual architecture
+
+The inspected core is a Go 1.26.11 application, delivered as a self-hosted binary. `cmd/circula` owns startup, jobs and operator commands. `internal/domain` defines integer money and state rules; `internal/service` provides authorization and transactional commands; `internal/repository` defines persistence contracts; `internal/store` implements SQLite using the pinned pure-Go driver. Server-rendered `html/template` pages in `internal/web` and the versioned JSON API in `internal/api` call the service layer. Playwright/axe tests live in `e2e`; contract and property tests are separate layers. There is no newly introduced frontend framework or replacement persistence engine.
+
+Future implementations live on their own `future/*` branches and in nested Go modules. A root `go test ./...` does **not** qualify those nested modules. Their `enabled:false` / `integration:HOLD` boundaries are retained. Passing a module test is not evidence that its adapters, migrations, permissions, operations or product policy are ready for core adoption.
+
+## Baseline and qualification limits
+
+The starting-main scheduled run [44296161788](https://github.com/djshellshoxxx/circula/actions/runs/44296161788) had eight successful jobs and one failed fuzz job. Native Windows tests, native macOS race tests, Linux race tests, browser tests, lint/vulnerability checks, contract/load, release-target build and reproducibility checks succeeded on that baseline. Strict-JSON fuzzing completed 41,458 executions and ended with `context deadline exceeded`; the log contained no assertion failure or reproducer. The amount fuzzer completed 678,832 executions in that run.
+
+The pinned Go fuzz implementation matches the timer-completion defect described in [Go issue 75804](https://github.com/golang/go/issues/75804) and its [upstream correction](https://go.googlesource.com/go/+/5a957dc766aed011cdfe7c953987a2ff86c0829c%5E!/). CI now uses execution budgets of 1,000,000 amount cases and 100,000 strict-JSON cases, each with an independent three-minute hard timeout. Fuzzer errors are not suppressed. The amount budget passed locally with exactly 1,000,000 executions in 68.601 seconds; the strict-JSON budget also passed locally (100,000 executions in 18.770 seconds) using the actual production API files and original fuzz test, excluding unrelated SQLite-dependent test fixtures. The normal package CI gate remains required.
+
+Go 1.26.11 was installed from the official archive and its published SHA-256 verified. The host's `/usr/bin/go` is an unrelated program; recorded commands use the installed toolchain explicitly. Repeated normal, serialized, low-GC and unoptimized local core builds were killed compiling `modernc.org/sqlite/lib`. Those are **environment build failures**, not passing or failing product tests. No production dependency was replaced to get a green result. A temporary workspace-wide execution stall also delayed simple reads; commands later resumed. The final report records actual provider results separately from these local limitations.
+
+Local lightweight verification includes the message-package race suite, the million-case amount fuzzer, 10 export-reader tests, 4 QA-001 runner tests, 8 threshold-checker tests, action-pin/permission checks and the repository hygiene gate (including 4 migration-checker tests). Expanded future-module results are recorded separately. AI-assisted source review does not satisfy the repository's professional external security-review or manual accessibility gates.
+
+## Component review and concrete outcomes
+
+| Area | Inspected paths / existing safeguards | Outcome of this pass |
+|---|---|---|
+| Money, balances and reconciliation | `internal/domain/money.go`, posting/verification services, `sqlite_verify.go`, property and concurrency suites | Found false corruption reports caused by premature saturation. Exceptional aggregate sums now accumulate exactly and clamp only the final total; eleven order/boundary cases and a real persisted balanced-ledger regression added. No historical balance or entry rewritten. |
+| Transaction concurrency and idempotency | `posting.go`, `transactions.go`, `idempotency.go`, `atomicity_test.go`, `concurrency_test.go`, QA-001 generator | Existing serialized writes, checked capacity, balanced entries, same-unit audit/idempotency and rollback tests retained. Current combined race/property gates remain required. No claim that source inspection proves every interleaving. |
+| Password proof and recovery | PR #82, `auth.go`, `mfa.go`, `recovery.go`, web password handler | Consolidated password-proof binding and durable throttling. Fixed HTTP 422 instead of 429 on the durable throttle and stale password-attempt locks after successful recovery. Denied recovery retains its lock; independent rate budgets remain intact. |
+| Disputes and prospective rules | PR #87; dispute services, policy readers and migration 0019 | Completed exact policy-version binding at opening, same-tick/clock-rollback protection, immutable database guards, legacy backfill and missing-mapping rollback. Historical timestamp ambiguity is explicitly preserved as an evidence limitation. |
+| Policy history and compatibility | `sqlite_gov.go`, current and historical policy readers | Historical readable logs now seed the same defaults as execution readers, while preserving explicitly stored zero and byte-identical policy JSON. |
+| SQLite migrations and contracts | migrations 0001–0020; migration/contract fixtures; privacy inventory | Forward migrations add immutable dispute binding and independent public session selectors without rewriting financial history or bearer hashes. Indexed session keyset reads and owner lookups bound retained-row work; the token owner/ID index supports its existing first-100 contract. SQL migration/guard/seek checks passed; full current-head Go migration gates remain required. |
+| API token inventory | existing /api/v1/tokens contract, repository query and owner index | Fixed the existing response-only cap with a database LIMIT 100 and owner/ID index; preserves ID ordering, owner scope, retained metadata and direct management outside the listing cap. Repository/API regressions added. |
+| Setup and untrusted input | `/setup`, amount parser/formatter, rendered select errors | Found attacker-controlled precision reaching formatter allocation in an error path. Added early integer/range validation and accessible errors; malformed, negative, excessive and overflowing values covered without executing an unsafe allocation. |
+| HTML/API security | authentication middleware, scope and role checks, raw-query/JSON validation, CSRF, contextual escaping, parity and entry-point tests | Existing safeguards retained. New changes require current-head API/HTML contract and browser qualification; no blanket absence-of-vulnerabilities claim. |
+| UI feature completeness | account/security inventory, message catalogue, setup/invitation/open/approval joining | Additional onboarding catalogue flow completed with 51 messages, complete throttle sentences and escaping tests. Owner-scoped session list/revocation now uses bounded repository work, direct target lookup and HTML/API continuation, including empty filtered pages. Service/template source checks passed; full current-head qualification is pending. Full UX-047 remains partial. |
+| Backup, restore, export and jobs | operator commands, leased private staging, erasure invalidation, export spooling, retention, checkpoint recovery | Existing #84 fixes and prior verified repairs preserved; stale current-status text corrected. Uncovered read/fsync/truncate and uncertain-commit fault cases remain explicit qualification work. |
+| Operations and CI | all workflows; action pins, release gates, packaging, reproducibility, thresholds | Repaired fuzz termination; retained every hard failure gate and optional native PR qualification via `ci:cross-platform`. No release tag, deployment or branch-protection bypass. |
+| Historical work | all 107 refs, 89 PRs, branch merge simulations and source comparisons | Five source PR heads preserved in the core integration ancestry; three non-ancestor branches were confirmed zero-tree-change merges and retained without inventing new functionality. |
+| Future modules | all 15 module tips, default and explicit SQLite suites | Default race/vet suites run separately. Repaired feed nil/zero-codec panic and duplicate-source ordering; notifications context-binding/identity defects repaired separately. Expanded implementations and coverage limitations documented instead of trusting stale manifests. |
+
+## Core consolidation and provenance
+
+[PR #90](https://github.com/djshellshoxxx/circula/pull/90) collects reviewed #82, completed #87, factual documentation #88, historical audit #78 and the #89 execution archive. The initial API publication commit `354ab550166de10d1727a9990d8e08dc981545b8` has those five exact remote heads as additional parents. Its tree exactly matched local source tree `621ada23969d9fdb3abb17ac6179de8b2b48551d`.
+
+The next publication `9b1fc6a0bb4ae4ad95c4f505929ce8088f10bf2c` added recovery-lock, aggregate-total and historical-policy repairs and matched tree `6694ae050b395f94b5be4e43aba1a906d0d52017`. Local commit authorship/source SHAs are recorded in publication commit messages. Shell push was unavailable because that client had no credentials; the connected Git data API published the exact compared trees using expected-head, non-force ref updates. This was not a main-branch write or an alternative to PR gates.
+
+The candidate is broader than each source PR, so their seven successful executed checks do not qualify the combined tree. PR #90 requests native-platform jobs as well as the normal Linux gate. Required review/protection settings that the connector cannot read remain enforced by normal merge APIs. A 403 reading legacy branch protection is not evidence that no protection exists.
+
+## Deliberately separate work
+
+PR #83 remains a recovery-policy candidate: blocking a reset only while someone currently holds a reviewer role does not close revoke/reset/regrant. PR #85's permanent operator-mediated administrator appointment conflicts with the accepted temporary session-bound authority model; two typed operator labels are not authenticated independent approvals. Its browser fixture omission is repaired on a topic branch. PR #86 is recovered independently of #85, defaults off, preserves readable member policy history, repairs mobile touch size and bounds counters to `(since, now]`; subject visibility and activation policy remain unresolved.
+
+Feed PRs #67/#80 are combined only on an isolated future branch, with nested-module CI and a current-core refresh. Notifications fixes remain on their own module branch. No future module is inserted into main, enabled, deployed or labelled production-ready by this audit.
+
+## Completion boundary
+
+See [SECURITY_REVIEW.md](SECURITY_REVIEW.md) for finding-specific evidence and reviews, [REMAINING_BLOCKERS.md](REMAINING_BLOCKERS.md) for exact next actions, and [CONSOLIDATION_FINAL_REPORT.md](CONSOLIDATION_FINAL_REPORT.md) for observed ending heads, PR outcomes and current-head verification. This record does not claim all 531 requirements are complete, all historical tests were rerun, every latent bug was found or a release gate was passed.

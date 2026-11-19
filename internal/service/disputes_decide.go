@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"strings"
-	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	store "github.com/djshellshoxxx/circula/internal/repository"
@@ -73,7 +72,7 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
 	if err := boundedText("rationale", in.Rationale, maxTextLen); err != nil {
 		return "", err
 	}
-	waived, err := s.responseGate(tx, p, d, in)
+	waived, err := s.responseGate(tx, d, in)
 	if err != nil {
 		return "", err
 	}
@@ -128,14 +127,19 @@ func (s *Service) resolve(tx store.Tx, p *principal, in ResolveInput) (string, e
 }
 
 // responseGate enforces FR-076: a decision needs a submitted response, an
-// elapsed response period (network policy), or a reviewer waiver with a reason.
-// It returns the waiver reason actually relied on ("" when none was needed).
-func (s *Service) responseGate(tx store.Tx, p *principal, d *domain.Dispute, in ResolveInput) (string, error) {
+// elapsed response period (of the network policy in force when the dispute was
+// opened, GOV-001), or a reviewer waiver with a reason. It returns the waiver
+// reason actually relied on ("" when none was needed).
+func (s *Service) responseGate(tx store.Tx, d *domain.Dispute, in ResolveInput) (string, error) {
 	resp, err := tx.GetDisputeResponse(d.NetworkID, d.ID)
 	if err != nil {
 		return "", err
 	}
-	closes := d.OpenedAt.Add(time.Duration(p.net.Policy.ResponsePeriodDays) * 24 * time.Hour)
+	dl, err := s.disputeDeadlines(tx, d, resp != nil)
+	if err != nil {
+		return "", err
+	}
+	closes := dl.ResponseDeadline
 	if resp != nil || !s.now().Before(closes) {
 		return "", nil
 	}
@@ -213,7 +217,9 @@ type DisputeView struct {
 	Events    []store.DisputeEvent
 	Response  *store.DisputeResponse // the other party's response, nil until submitted (FR-076)
 	ReReview  *store.ReReview        // the one re-review, nil until requested (FR-078)
-	// Deadlines are the response deadline and decision target (GOV-014).
+	// Deadlines are the response deadline and decision target (GOV-014) and
+	// the end of the re-review window (FR-078), under the policy in force when
+	// the dispute was opened (GOV-001): the dates the service enforces.
 	Deadlines domain.DisputeDeadlines
 }
 
@@ -239,7 +245,9 @@ func (s *Service) disputeView(tx store.Tx, net *domain.Network, d *domain.Disput
 	if v.ReReview, err = tx.GetReReview(netID, d.ID); err != nil {
 		return nil, err
 	}
-	v.Deadlines = domain.DeadlinesOf(d, net.Policy.ResponsePeriodDays, v.Response != nil, s.now())
+	if v.Deadlines, err = s.disputeDeadlines(tx, d, v.Response != nil); err != nil {
+		return nil, err
+	}
 	return v, nil
 }
 

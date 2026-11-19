@@ -112,7 +112,7 @@ Each entity is listed with its owning context and key attributes. Types are conc
 | Transaction | Ledger | id, network id, kind (trade, adjustment, reversal), status, payer account id, payee account id, amount_minor (> 0), currency decimals (from policy at creation), listing id (optional), description, reason (mandatory for adjustment), original transaction id (for reversal), proposed_at, expires_at, completed_at, dispute_deadline_at and dispute-window policy version (set at completion), idempotency key reference | Immutable identity and terms; mutable only through status transitions recorded in TransactionStatusEvent |
 | TransactionStatusEvent | Ledger | id, transaction id, from status, to status, actor, occurred_at, request id | Append-only |
 | LedgerEntry (posting) | Ledger | id, network id, transaction id, account id, signed_amount_minor (non-zero integer), ledger_seq, posted_at | Append-only (DAT-010) |
-| Dispute | Disputes | id, network id, transaction id, raised_by (member), reason category, description, status (open, under_review, resolved, withdrawn), opened_at, decided_at | Status changes are events |
+| Dispute | Disputes | id, network id, transaction id, raised_by (member), reason category, description, status (open, under_review, resolved, withdrawn), opened_at, immutable policy_version for response and re-review periods, decided_at | Status changes are events |
 | DisputeEvent | Disputes | id, dispute id, actor, action, outcome (if any), occurred_at | Append-only |
 | AuditEvent | Audit | see section 7 | Append-only |
 | IdempotencyRecord | Platform | network id (or platform), actor id, operation, key, request fingerprint, response status, response reference, created_at, expires_at | Retained per section 9 |

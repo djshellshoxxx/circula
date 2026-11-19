@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:10:53.486381921-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/matching"}
+{"Time":"2026-11-19T02:10:53.530053943-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/matching","Test":"TestOptInScopeAndBlocks"}
+{"Time":"2026-11-19T02:10:53.530188165-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/matching","Test":"TestOptInScopeAndBlocks","Output":"=== RUN   TestOptInScopeAndBlocks\n"}
+{"Time":"2026-11-19T02:10:53.530205467-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/matching","Test":"TestOptInScopeAndBlocks","Output":"--- PASS: TestOptInScopeAndBlocks (0.00s)\n"}
+{"Time":"2026-11-19T02:10:53.530209746-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/matching","Test":"TestOptInScopeAndBlocks","Elapsed":0}
+{"Time":"2026-11-19T02:10:53.530215025-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/matching","Output":"PASS\n"}
+{"Time":"2026-11-19T02:10:54.531823912-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/matching","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/matching\t1.045s\n"}
+{"Time":"2026-11-19T02:10:54.531876019-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/matching","Elapsed":1.046}

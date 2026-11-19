@@ -13,6 +13,10 @@ Short procedures for the common tasks. The details are in the linked documents.
 6. Check `/healthz`, `/readyz`, and that `/metrics` is refused from outside the allowed range.
 7. Take a first backup: `circula backup <backup-dir>`, and copy it off the host.
 
+## Account session management
+
+For owner self-service inventory, individual sign-out, keeping the current browser while ending other sign-ins, cursor behavior and migration handling, see [sessions.md](sessions.md). The account page is available at **Security → Manage active sessions**. The emergency operator command below remains separate.
+
 ## Daily checks
 
 - `/readyz` returns ready.

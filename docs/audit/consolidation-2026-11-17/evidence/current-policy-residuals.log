@@ -1,0 +1,29 @@
+=== RUN   TestA3Audit_BreakGlassLastingChanges
+=== RUN   TestA3Audit_BreakGlassLastingChanges/adjustment_posts_ledger_entries
+    audit_d_current_residual_poc_test.go:36: break-glass admin posted a permanent adjustment 018f0000-0000-7000-8000-00000000001f (amount 5000) to ben
+=== RUN   TestA3Audit_BreakGlassLastingChanges/credit_limit_override
+    audit_d_current_residual_poc_test.go:43: break-glass admin set ben's credit limit to 1125899906842624 with no expiry
+=== RUN   TestA3Audit_BreakGlassLastingChanges/password_reset_takeover
+    audit_d_current_residual_poc_test.go:53: break-glass admin reset ben's password; the temporary password still signs in after the session expired
+=== RUN   TestA3Audit_BreakGlassLastingChanges/reversal_of_completed_trade
+    audit_d_current_residual_poc_test.go:65: break-glass admin reversed completed trade 018f0000-0000-7000-8000-000000000018 (reversal 018f0000-0000-7000-8000-000000000027)
+--- FAIL: TestA3Audit_BreakGlassLastingChanges (0.06s)
+    --- FAIL: TestA3Audit_BreakGlassLastingChanges/adjustment_posts_ledger_entries (0.02s)
+    --- FAIL: TestA3Audit_BreakGlassLastingChanges/credit_limit_override (0.02s)
+    --- FAIL: TestA3Audit_BreakGlassLastingChanges/password_reset_takeover (0.01s)
+    --- FAIL: TestA3Audit_BreakGlassLastingChanges/reversal_of_completed_trade (0.02s)
+=== RUN   TestA3Audit_BreakGlassApprovesImmediately
+    audit_d_current_residual_poc_test.go:88: break-glass admin approved the founder's 50,000.00 request seconds after the grant (tx 018f0000-0000-7000-8000-00000000002d); a System-granted admin must wait 24h0m0s
+--- FAIL: TestA3Audit_BreakGlassApprovesImmediately (0.02s)
+=== RUN   TestA3Audit_ErasureLeftovers
+    audit_d_current_residual_poc_test.go:145: member-written challenge text survives erasure in [challenges.reason]
+--- FAIL: TestA3Audit_ErasureLeftovers (0.02s)
+=== RUN   TestA3Audit_ErasureWALRemnant
+    audit_d_current_residual_poc_test.go:210: erased display name is still readable in circula.db-wal (1763392 bytes)
+--- FAIL: TestA3Audit_ErasureWALRemnant (0.02s)
+=== RUN   TestA3Audit_PerMemberLimitCutSkipsNotice
+    audit_d_current_residual_poc_test.go:273: ana's available credit fell from 100.00 to 0 immediately, with no notice period: next payment refused (insufficient-available-credit: payer has 0.00 available)
+--- FAIL: TestA3Audit_PerMemberLimitCutSkipsNotice (0.01s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.140s
+FAIL

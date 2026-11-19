@@ -27,7 +27,7 @@ func TestEventOrderIgnoresClockAndIDs(t *testing.T) {
 	ids := []string{"z-first", "a-second", "m-third"}
 	err := s.Update(context.Background(), func(tx store.Tx) error {
 		if err := tx.InsertDispute(&domain.Dispute{ID: "d", NetworkID: net, TxID: trade,
-			OpenedBy: "mp1", Category: "other", Status: domain.DisputeOpen, OpenedAt: now}); err != nil {
+			OpenedBy: "mp1", Category: "other", Status: domain.DisputeOpen, OpenedAt: now, PolicyVersion: 1}); err != nil {
 			return err
 		}
 		for i, id := range ids {

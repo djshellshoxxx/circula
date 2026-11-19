@@ -1,5 +1,7 @@
 # Security review: beta consolidation
 
+> Current execution follow-up: the [55-finding disposition](../audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md) and [merge/qualification record](../audit/consolidation-2026-11-17/README.md) supersede pending statuses in the historical reviews below. E-02, NEW-01 and A3-F21 are addressed; A3-F02 / DEC-014 and the documented retention/design residuals remain unresolved.
+
 Date: 2026-11-11. Revision: branch `claude/circula-beta-completion-1npjw6`. The final commit SHA is in
 [../releases/beta-readiness-report.md](../releases/beta-readiness-report.md).
 
@@ -75,8 +77,10 @@ and the squash-merged fix PRs #45, #51, #52, #53 and #54.
   `internal/service/ledger_auth_integration_regression_test.go`
   (`TestResolveDisputeRefusesReversalWhenAdministratorRequired`, `TestDeciderEntryPointsRequireAdministratorMFA`).
   Both fail when the fix is removed.
-- PR #42 findings fixed on `main`, each with a named regression test: A1-01 to A1-11, A3-F03, A3-F09, A3-F10,
-  A3-F16, A3-F24 (BR-04), A3-F25, CRYPTO-01 (A3-F17), CRYPTO-02, RESTORE-01 and BACKUP-01 (21 IDs). The PR #42 notes
+- A3-F10 is fixed by merged PR #84: future-dated backups do not suppress cadence or consume retention slots, and the scheduler logs a clock-anomaly warning. The [earlier disposition](../audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md) records its pre-merge state.
+- A2-08 is fixed by merged PR #84: the four missing problem-code catalogue rows and their regression are included in starting `main@ead63b5`.
+- PR #42 findings fixed on `main`, each with a named regression test: A1-01 to A1-11, A3-F03, A3-F09,
+  A3-F16, A3-F24 (BR-04), A3-F25, CRYPTO-01 (A3-F17), CRYPTO-02, RESTORE-01 and BACKUP-01 (20 IDs). The PR #42 notes
   left A1-08 to A1-10 unchecked; their tests on `main` are `TestOperatorDualControlPreservesScheduledPolicy` and
   `TestOperatorDualControlAfterCancelledPolicy` (A1-08), `TestDisputeReversalAuditTargetsAndAtomicity` (A1-09) and
   `TestAdjustmentExpirySkipsFrozenNetworksWithoutStarvation` (A1-10). Minor residuals:

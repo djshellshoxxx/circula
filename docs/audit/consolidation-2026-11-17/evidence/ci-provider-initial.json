@@ -1,0 +1,1983 @@
+{
+  "runs": [
+    {
+      "id": 44226365456,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-18T02:52:14Z",
+      "updated_at": "2026-11-18T03:04:50Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456"
+    },
+    {
+      "id": 44228060824,
+      "name": "ci",
+      "event": "workflow_dispatch",
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-18T03:06:38Z",
+      "updated_at": "2026-11-18T03:49:32Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824"
+    },
+    {
+      "id": 44244948992,
+      "name": "ci",
+      "event": "pull_request",
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-11-18T05:32:21Z",
+      "updated_at": "2026-11-18T05:32:21Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992"
+    },
+    {
+      "id": 44246219216,
+      "name": "ci",
+      "event": "push",
+      "head_sha": "ef54238ee9ebc2184919b6a8ec30c3398df55ed5",
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-11-18T05:43:28Z",
+      "updated_at": "2026-11-18T05:43:28Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44246219216"
+    },
+    {
+      "id": 44246219158,
+      "name": "scorecard",
+      "event": "push",
+      "head_sha": "ef54238ee9ebc2184919b6a8ec30c3398df55ed5",
+      "status": "queued",
+      "conclusion": null,
+      "created_at": "2026-11-18T05:43:28Z",
+      "updated_at": "2026-11-18T05:43:28Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44246219158"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 134540510761,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:35Z",
+      "completed_at": "2026-11-18T02:52:47Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540510761",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:36Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:38Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:38Z",
+          "completed_at": "2026-11-18T02:52:40Z"
+        },
+        {
+          "name": "contract (JSON API against docs/api/openapi.yaml)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:40Z",
+          "completed_at": "2026-11-18T02:52:41Z"
+        },
+        {
+          "name": "load smoke (small, QA-008 and QA-040 evidence)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T02:52:41Z",
+          "completed_at": "2026-11-18T02:52:46Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T02:52:46Z",
+          "completed_at": "2026-11-18T02:52:46Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T02:52:46Z",
+          "completed_at": "2026-11-18T02:52:46Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T02:52:46Z",
+          "completed_at": "2026-11-18T02:52:46Z"
+        }
+      ]
+    },
+    {
+      "id": 134540510900,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:36Z",
+      "completed_at": "2026-11-18T02:59:29Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540510900",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:38Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:38Z",
+          "completed_at": "2026-11-18T02:52:39Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:39Z",
+          "completed_at": "2026-11-18T02:52:42Z"
+        },
+        {
+          "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:42Z",
+          "completed_at": "2026-11-18T02:53:04Z"
+        },
+        {
+          "name": "make e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T02:53:04Z",
+          "completed_at": "2026-11-18T02:59:26Z"
+        },
+        {
+          "name": "upload failure screenshots",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-18T02:59:26Z",
+          "completed_at": "2026-11-18T02:59:26Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T02:59:26Z",
+          "completed_at": "2026-11-18T02:59:26Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T02:59:26Z",
+          "completed_at": "2026-11-18T02:59:26Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T02:59:26Z",
+          "completed_at": "2026-11-18T02:59:26Z"
+        }
+      ]
+    },
+    {
+      "id": 134540510901,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:35Z",
+      "completed_at": "2026-11-18T02:54:14Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540510901",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:37Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:37Z",
+          "completed_at": "2026-11-18T02:52:39Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:39Z",
+          "completed_at": "2026-11-18T02:52:42Z"
+        },
+        {
+          "name": "seed corpora of every fuzz target (also part of go test ./...)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:42Z",
+          "completed_at": "2026-11-18T02:52:54Z"
+        },
+        {
+          "name": "fuzz amount parser for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T02:52:54Z",
+          "completed_at": "2026-11-18T02:53:15Z"
+        },
+        {
+          "name": "fuzz strict JSON decoder for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T02:53:15Z",
+          "completed_at": "2026-11-18T02:54:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T02:54:13Z",
+          "completed_at": "2026-11-18T02:54:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T02:54:13Z",
+          "completed_at": "2026-11-18T02:54:13Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T02:54:13Z",
+          "completed_at": "2026-11-18T02:54:13Z"
+        }
+      ]
+    },
+    {
+      "id": 134540510946,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:35Z",
+      "completed_at": "2026-11-18T03:04:50Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540510946",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:37Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:37Z",
+          "completed_at": "2026-11-18T02:52:38Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:38Z",
+          "completed_at": "2026-11-18T02:52:40Z"
+        },
+        {
+          "name": "test with race detector",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:40Z",
+          "completed_at": "2026-11-18T03:04:46Z"
+        },
+        {
+          "name": "Match requirement citations to recorded test results",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:04:46Z",
+          "completed_at": "2026-11-18T03:04:47Z"
+        },
+        {
+          "name": "Upload test evidence and property failure fixtures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T03:04:47Z",
+          "completed_at": "2026-11-18T03:04:48Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:04:48Z",
+          "completed_at": "2026-11-18T03:04:48Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T03:04:48Z",
+          "completed_at": "2026-11-18T03:04:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T03:04:48Z",
+          "completed_at": "2026-11-18T03:04:48Z"
+        }
+      ]
+    },
+    {
+      "id": 134540510968,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:35Z",
+      "completed_at": "2026-11-18T02:54:15Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540510968",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:37Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:37Z",
+          "completed_at": "2026-11-18T02:52:38Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:38Z",
+          "completed_at": "2026-11-18T02:52:41Z"
+        },
+        {
+          "name": "cross-build all OPS-003 targets from this commit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:41Z",
+          "completed_at": "2026-11-18T02:54:11Z"
+        },
+        {
+          "name": "upload packaged artifacts for inspection",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T02:54:11Z",
+          "completed_at": "2026-11-18T02:54:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T02:54:13Z",
+          "completed_at": "2026-11-18T02:54:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T02:54:13Z",
+          "completed_at": "2026-11-18T02:54:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T02:54:14Z",
+          "completed_at": "2026-11-18T02:54:14Z"
+        }
+      ]
+    },
+    {
+      "id": 134540510982,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:36Z",
+      "completed_at": "2026-11-18T02:53:57Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540510982",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:38Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:38Z",
+          "completed_at": "2026-11-18T02:52:40Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:40Z",
+          "completed_at": "2026-11-18T02:52:44Z"
+        },
+        {
+          "name": "Check workflow action pins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:44Z",
+          "completed_at": "2026-11-18T02:52:44Z"
+        },
+        {
+          "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T02:52:44Z",
+          "completed_at": "2026-11-18T02:52:44Z"
+        },
+        {
+          "name": "Dependency licences against the approved list (ARC-024)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T02:52:44Z",
+          "completed_at": "2026-11-18T02:52:48Z"
+        },
+        {
+          "name": "Secret scan (ARC-023, SEC-027)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-18T02:52:48Z",
+          "completed_at": "2026-11-18T02:53:11Z"
+        },
+        {
+          "name": "gofmt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-18T02:53:11Z",
+          "completed_at": "2026-11-18T02:53:11Z"
+        },
+        {
+          "name": "go vet",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T02:53:11Z",
+          "completed_at": "2026-11-18T02:53:25Z"
+        },
+        {
+          "name": "Requirement traceability is current",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T02:53:25Z",
+          "completed_at": "2026-11-18T02:53:26Z"
+        },
+        {
+          "name": "Export reader and property-runner tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T02:53:26Z",
+          "completed_at": "2026-11-18T02:53:29Z"
+        },
+        {
+          "name": "golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T02:53:29Z",
+          "completed_at": "2026-11-18T02:53:42Z"
+        },
+        {
+          "name": "govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T02:53:42Z",
+          "completed_at": "2026-11-18T02:53:54Z"
+        },
+        {
+          "name": "Post golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-18T02:53:54Z",
+          "completed_at": "2026-11-18T02:53:54Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-18T02:53:54Z",
+          "completed_at": "2026-11-18T02:53:55Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-18T02:53:55Z",
+          "completed_at": "2026-11-18T02:53:55Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-18T02:53:55Z",
+          "completed_at": "2026-11-18T02:53:55Z"
+        }
+      ]
+    },
+    {
+      "id": 134540511016,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T02:52:36Z",
+      "completed_at": "2026-11-18T02:53:51Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540511016",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T02:52:36Z",
+          "completed_at": "2026-11-18T02:52:38Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T02:52:38Z",
+          "completed_at": "2026-11-18T02:52:43Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T02:52:43Z",
+          "completed_at": "2026-11-18T02:52:46Z"
+        },
+        {
+          "name": "build twice (different directory and cache) and compare",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T02:52:46Z",
+          "completed_at": "2026-11-18T02:53:30Z"
+        },
+        {
+          "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T02:53:30Z",
+          "completed_at": "2026-11-18T02:53:49Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T02:53:49Z",
+          "completed_at": "2026-11-18T02:53:49Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T02:53:49Z",
+          "completed_at": "2026-11-18T02:53:49Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T02:53:49Z",
+          "completed_at": "2026-11-18T02:53:49Z"
+        }
+      ]
+    },
+    {
+      "id": 134540511664,
+      "run_id": 44226365456,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-18T02:52:33Z",
+      "completed_at": "2026-11-18T02:52:33Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44226365456/job/134540511664",
+      "steps": []
+    },
+    {
+      "id": 134546021540,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:07:16Z",
+      "completed_at": "2026-11-18T03:18:24Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546021540",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:07:17Z",
+          "completed_at": "2026-11-18T03:07:21Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:07:21Z",
+          "completed_at": "2026-11-18T03:07:27Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:07:27Z",
+          "completed_at": "2026-11-18T03:07:33Z"
+        },
+        {
+          "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:07:33Z",
+          "completed_at": "2026-11-18T03:11:23Z"
+        },
+        {
+          "name": "make e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:11:23Z",
+          "completed_at": "2026-11-18T03:18:20Z"
+        },
+        {
+          "name": "upload failure screenshots",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-18T03:18:20Z",
+          "completed_at": "2026-11-18T03:18:20Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:18:20Z",
+          "completed_at": "2026-11-18T03:18:20Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T03:18:20Z",
+          "completed_at": "2026-11-18T03:18:20Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T03:18:20Z",
+          "completed_at": "2026-11-18T03:18:20Z"
+        }
+      ]
+    },
+    {
+      "id": 134546021913,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:11:11Z",
+      "completed_at": "2026-11-18T03:12:33Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546021913",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:11:11Z",
+          "completed_at": "2026-11-18T03:11:12Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:11:12Z",
+          "completed_at": "2026-11-18T03:11:14Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:11:14Z",
+          "completed_at": "2026-11-18T03:11:17Z"
+        },
+        {
+          "name": "seed corpora of every fuzz target (also part of go test ./...)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:11:17Z",
+          "completed_at": "2026-11-18T03:11:30Z"
+        },
+        {
+          "name": "fuzz amount parser for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:11:30Z",
+          "completed_at": "2026-11-18T03:11:47Z"
+        },
+        {
+          "name": "fuzz strict JSON decoder for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T03:11:47Z",
+          "completed_at": "2026-11-18T03:12:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:12:30Z",
+          "completed_at": "2026-11-18T03:12:31Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T03:12:31Z",
+          "completed_at": "2026-11-18T03:12:31Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T03:12:31Z",
+          "completed_at": "2026-11-18T03:12:31Z"
+        }
+      ]
+    },
+    {
+      "id": 134546021922,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:08:11Z",
+      "completed_at": "2026-11-18T03:18:47Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546021922",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:08:11Z",
+          "completed_at": "2026-11-18T03:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:08:14Z",
+          "completed_at": "2026-11-18T03:08:18Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:08:18Z",
+          "completed_at": "2026-11-18T03:08:21Z"
+        },
+        {
+          "name": "test with race detector",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:08:21Z",
+          "completed_at": "2026-11-18T03:18:44Z"
+        },
+        {
+          "name": "Match requirement citations to recorded test results",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:18:44Z",
+          "completed_at": "2026-11-18T03:18:45Z"
+        },
+        {
+          "name": "Upload test evidence and property failure fixtures",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T03:18:45Z",
+          "completed_at": "2026-11-18T03:18:46Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:18:46Z",
+          "completed_at": "2026-11-18T03:18:46Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T03:18:46Z",
+          "completed_at": "2026-11-18T03:18:46Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T03:18:46Z",
+          "completed_at": "2026-11-18T03:18:46Z"
+        }
+      ]
+    },
+    {
+      "id": 134546021941,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "test (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:11:17Z",
+      "completed_at": "2026-11-18T03:17:15Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546021941",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:11:18Z",
+          "completed_at": "2026-11-18T03:11:19Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:11:19Z",
+          "completed_at": "2026-11-18T03:11:26Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:11:26Z",
+          "completed_at": "2026-11-18T03:11:47Z"
+        },
+        {
+          "name": "test with race detector (macOS Intel, bounded parallelism)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-18T03:11:47Z",
+          "completed_at": "2026-11-18T03:11:47Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:11:47Z",
+          "completed_at": "2026-11-18T03:17:11Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T03:17:11Z",
+          "completed_at": "2026-11-18T03:17:12Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T03:17:12Z",
+          "completed_at": "2026-11-18T03:17:13Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:17:13Z",
+          "completed_at": "2026-11-18T03:17:13Z"
+        }
+      ]
+    },
+    {
+      "id": 134546021947,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:09:31Z",
+      "completed_at": "2026-11-18T03:11:08Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546021947",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:09:32Z",
+          "completed_at": "2026-11-18T03:09:33Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:09:33Z",
+          "completed_at": "2026-11-18T03:09:34Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:09:34Z",
+          "completed_at": "2026-11-18T03:09:34Z"
+        },
+        {
+          "name": "build twice (different directory and cache) and compare",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:09:34Z",
+          "completed_at": "2026-11-18T03:10:37Z"
+        },
+        {
+          "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:10:37Z",
+          "completed_at": "2026-11-18T03:11:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T03:11:07Z",
+          "completed_at": "2026-11-18T03:11:07Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T03:11:07Z",
+          "completed_at": "2026-11-18T03:11:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:11:07Z",
+          "completed_at": "2026-11-18T03:11:07Z"
+        }
+      ]
+    },
+    {
+      "id": 134546021993,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:17:38Z",
+      "completed_at": "2026-11-18T03:18:36Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546021993",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:17:38Z",
+          "completed_at": "2026-11-18T03:17:40Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:17:40Z",
+          "completed_at": "2026-11-18T03:17:45Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:17:45Z",
+          "completed_at": "2026-11-18T03:17:49Z"
+        },
+        {
+          "name": "Check workflow action pins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:17:49Z",
+          "completed_at": "2026-11-18T03:17:49Z"
+        },
+        {
+          "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:17:49Z",
+          "completed_at": "2026-11-18T03:17:49Z"
+        },
+        {
+          "name": "Dependency licences against the approved list (ARC-024)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T03:17:49Z",
+          "completed_at": "2026-11-18T03:17:51Z"
+        },
+        {
+          "name": "Secret scan (ARC-023, SEC-027)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-18T03:17:51Z",
+          "completed_at": "2026-11-18T03:18:05Z"
+        },
+        {
+          "name": "gofmt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-18T03:18:05Z",
+          "completed_at": "2026-11-18T03:18:05Z"
+        },
+        {
+          "name": "go vet",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T03:18:05Z",
+          "completed_at": "2026-11-18T03:18:14Z"
+        },
+        {
+          "name": "Requirement traceability is current",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T03:18:14Z",
+          "completed_at": "2026-11-18T03:18:15Z"
+        },
+        {
+          "name": "Export reader and property-runner tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:18:15Z",
+          "completed_at": "2026-11-18T03:18:18Z"
+        },
+        {
+          "name": "golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T03:18:18Z",
+          "completed_at": "2026-11-18T03:18:27Z"
+        },
+        {
+          "name": "govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T03:18:27Z",
+          "completed_at": "2026-11-18T03:18:34Z"
+        },
+        {
+          "name": "Post golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-18T03:18:34Z",
+          "completed_at": "2026-11-18T03:18:34Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-18T03:18:34Z",
+          "completed_at": "2026-11-18T03:18:35Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-18T03:18:35Z",
+          "completed_at": "2026-11-18T03:18:35Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-18T03:18:35Z",
+          "completed_at": "2026-11-18T03:18:35Z"
+        }
+      ]
+    },
+    {
+      "id": 134546022004,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:16:08Z",
+      "completed_at": "2026-11-18T03:16:38Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546022004",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:16:08Z",
+          "completed_at": "2026-11-18T03:16:12Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:16:12Z",
+          "completed_at": "2026-11-18T03:16:19Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:16:19Z",
+          "completed_at": "2026-11-18T03:16:25Z"
+        },
+        {
+          "name": "contract (JSON API against docs/api/openapi.yaml)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:16:25Z",
+          "completed_at": "2026-11-18T03:16:32Z"
+        },
+        {
+          "name": "load smoke (small, QA-008 and QA-040 evidence)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:16:32Z",
+          "completed_at": "2026-11-18T03:16:35Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T03:16:35Z",
+          "completed_at": "2026-11-18T03:16:36Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T03:16:36Z",
+          "completed_at": "2026-11-18T03:16:36Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:16:36Z",
+          "completed_at": "2026-11-18T03:16:36Z"
+        }
+      ]
+    },
+    {
+      "id": 134546022026,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "test (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:20:30Z",
+      "completed_at": "2026-11-18T03:49:32Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546022026",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:20:31Z",
+          "completed_at": "2026-11-18T03:20:33Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:20:33Z",
+          "completed_at": "2026-11-18T03:20:40Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:20:40Z",
+          "completed_at": "2026-11-18T03:21:53Z"
+        },
+        {
+          "name": "test with race detector (macOS Intel, bounded parallelism)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:21:53Z",
+          "completed_at": "2026-11-18T03:49:23Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-18T03:49:23Z",
+          "completed_at": "2026-11-18T03:49:23Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T03:49:23Z",
+          "completed_at": "2026-11-18T03:49:24Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T03:49:24Z",
+          "completed_at": "2026-11-18T03:49:25Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:49:25Z",
+          "completed_at": "2026-11-18T03:49:25Z"
+        }
+      ]
+    },
+    {
+      "id": 134546022086,
+      "run_id": 44228060824,
+      "head_sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:18:20Z",
+      "completed_at": "2026-11-18T03:20:17Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44228060824/job/134546022086",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T03:18:21Z",
+          "completed_at": "2026-11-18T03:18:23Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T03:18:23Z",
+          "completed_at": "2026-11-18T03:18:29Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T03:18:29Z",
+          "completed_at": "2026-11-18T03:18:32Z"
+        },
+        {
+          "name": "cross-build all OPS-003 targets from this commit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T03:18:32Z",
+          "completed_at": "2026-11-18T03:20:13Z"
+        },
+        {
+          "name": "upload packaged artifacts for inspection",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T03:20:13Z",
+          "completed_at": "2026-11-18T03:20:15Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T03:20:15Z",
+          "completed_at": "2026-11-18T03:20:15Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T03:20:15Z",
+          "completed_at": "2026-11-18T03:20:15Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T03:20:15Z",
+          "completed_at": "2026-11-18T03:20:15Z"
+        }
+      ]
+    },
+    {
+      "id": 134601536958,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:37:04Z",
+      "completed_at": "2026-11-18T05:39:14Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601536958",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T05:37:05Z",
+          "completed_at": "2026-11-18T05:37:08Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T05:37:08Z",
+          "completed_at": "2026-11-18T05:37:13Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T05:37:13Z",
+          "completed_at": "2026-11-18T05:37:19Z"
+        },
+        {
+          "name": "cross-build all OPS-003 targets from this commit",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T05:37:19Z",
+          "completed_at": "2026-11-18T05:39:00Z"
+        },
+        {
+          "name": "upload packaged artifacts for inspection",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T05:39:00Z",
+          "completed_at": "2026-11-18T05:39:11Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T05:39:11Z",
+          "completed_at": "2026-11-18T05:39:11Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T05:39:11Z",
+          "completed_at": "2026-11-18T05:39:11Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T05:39:11Z",
+          "completed_at": "2026-11-18T05:39:11Z"
+        }
+      ]
+    },
+    {
+      "id": 134601537144,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:43:53Z",
+      "completed_at": "2026-11-18T05:45:16Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601537144",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T05:43:53Z",
+          "completed_at": "2026-11-18T05:43:54Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T05:43:54Z",
+          "completed_at": "2026-11-18T05:43:55Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T05:43:55Z",
+          "completed_at": "2026-11-18T05:43:58Z"
+        },
+        {
+          "name": "seed corpora of every fuzz target (also part of go test ./...)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T05:43:58Z",
+          "completed_at": "2026-11-18T05:44:10Z"
+        },
+        {
+          "name": "fuzz amount parser for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T05:44:10Z",
+          "completed_at": "2026-11-18T05:44:28Z"
+        },
+        {
+          "name": "fuzz strict JSON decoder for 10s",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T05:44:28Z",
+          "completed_at": "2026-11-18T05:45:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T05:45:14Z",
+          "completed_at": "2026-11-18T05:45:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T05:45:14Z",
+          "completed_at": "2026-11-18T05:45:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T05:45:14Z",
+          "completed_at": "2026-11-18T05:45:14Z"
+        }
+      ]
+    },
+    {
+      "id": 134601537183,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:42:56Z",
+      "completed_at": "2026-11-18T05:43:51Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601537183",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T05:42:57Z",
+          "completed_at": "2026-11-18T05:42:59Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T05:42:59Z",
+          "completed_at": "2026-11-18T05:43:04Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T05:43:04Z",
+          "completed_at": "2026-11-18T05:43:07Z"
+        },
+        {
+          "name": "Check workflow action pins",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T05:43:07Z",
+          "completed_at": "2026-11-18T05:43:07Z"
+        },
+        {
+          "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-18T05:43:07Z",
+          "completed_at": "2026-11-18T05:43:07Z"
+        },
+        {
+          "name": "Dependency licences against the approved list (ARC-024)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-18T05:43:07Z",
+          "completed_at": "2026-11-18T05:43:09Z"
+        },
+        {
+          "name": "Secret scan (ARC-023, SEC-027)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-18T05:43:09Z",
+          "completed_at": "2026-11-18T05:43:23Z"
+        },
+        {
+          "name": "gofmt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-18T05:43:23Z",
+          "completed_at": "2026-11-18T05:43:23Z"
+        },
+        {
+          "name": "go vet",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-18T05:43:23Z",
+          "completed_at": "2026-11-18T05:43:32Z"
+        },
+        {
+          "name": "Requirement traceability is current",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-18T05:43:32Z",
+          "completed_at": "2026-11-18T05:43:33Z"
+        },
+        {
+          "name": "Export reader and property-runner tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-18T05:43:33Z",
+          "completed_at": "2026-11-18T05:43:36Z"
+        },
+        {
+          "name": "golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-18T05:43:36Z",
+          "completed_at": "2026-11-18T05:43:41Z"
+        },
+        {
+          "name": "govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-18T05:43:41Z",
+          "completed_at": "2026-11-18T05:43:48Z"
+        },
+        {
+          "name": "Post golangci-lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-18T05:43:48Z",
+          "completed_at": "2026-11-18T05:43:49Z"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-18T05:43:49Z",
+          "completed_at": "2026-11-18T05:43:49Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-11-18T05:43:49Z",
+          "completed_at": "2026-11-18T05:43:49Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-11-18T05:43:49Z",
+          "completed_at": "2026-11-18T05:43:49Z"
+        }
+      ]
+    },
+    {
+      "id": 134601537194,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "API contract and load smoke",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-18T05:45:19Z",
+      "completed_at": null,
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601537194",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T05:45:19Z",
+          "completed_at": "2026-11-18T05:45:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T05:45:20Z",
+          "completed_at": "2026-11-18T05:45:22Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T05:45:22Z",
+          "completed_at": "2026-11-18T05:45:25Z"
+        },
+        {
+          "name": "contract (JSON API against docs/api/openapi.yaml)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T05:45:25Z",
+          "completed_at": "2026-11-18T05:45:27Z"
+        },
+        {
+          "name": "load smoke (small, QA-008 and QA-040 evidence)",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 5,
+          "started_at": "2026-11-18T05:45:27Z",
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "id": 134601537205,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "queued",
+      "conclusion": null,
+      "started_at": "2026-11-18T05:32:22Z",
+      "completed_at": null,
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601537205",
+      "steps": []
+    },
+    {
+      "id": 134601537236,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "test (ubuntu-24.04)",
+      "status": "queued",
+      "conclusion": null,
+      "started_at": "2026-11-18T05:32:22Z",
+      "completed_at": null,
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601537236",
+      "steps": []
+    },
+    {
+      "id": 134601537267,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "in_progress",
+      "conclusion": null,
+      "started_at": "2026-11-18T05:44:33Z",
+      "completed_at": null,
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601537267",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-18T05:44:34Z",
+          "completed_at": "2026-11-18T05:44:37Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-18T05:44:37Z",
+          "completed_at": "2026-11-18T05:44:42Z"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-18T05:44:42Z",
+          "completed_at": "2026-11-18T05:44:45Z"
+        },
+        {
+          "name": "build twice (different directory and cache) and compare",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-18T05:44:45Z",
+          "completed_at": "2026-11-18T05:45:27Z"
+        },
+        {
+          "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 5,
+          "started_at": "2026-11-18T05:45:27Z",
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10,
+          "started_at": null,
+          "completed_at": null
+        }
+      ]
+    },
+    {
+      "id": 134601539279,
+      "run_id": 44244948992,
+      "head_sha": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-18T05:32:22Z",
+      "completed_at": "2026-11-18T05:32:22Z",
+      "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44244948992/job/134601539279",
+      "steps": []
+    }
+  ],
+  "observed_by_utc": "2026-11-18T05:46:32Z"
+}

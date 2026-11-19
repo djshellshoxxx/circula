@@ -1,5 +1,7 @@
 # Branch consolidation (2026-11-17 assignment, executed 2026-11-18)
 
+> Historical preparation snapshot. Its counts, branch heads and pending-merge statements describe that earlier review. The [executed consolidation record](../audit/consolidation-2026-11-17/README.md) provides refreshed inventories, exact merges and completed closures.
+
 Companion to [PR-CONSOLIDATION-2026-11-17.md](PR-CONSOLIDATION-2026-11-17.md), which holds the per-PR
 dispositions. This file records branch ancestry, patch equivalence and recovered commits against
 `main@b53f757682bff5f488be9c2686c2e8aa8ad4054a`. It supersedes the branch tables in

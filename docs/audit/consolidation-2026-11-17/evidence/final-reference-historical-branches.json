@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-11-18T10:20:35.690Z",
+  "source": "GitHub git/ref API; read-only",
+  "branches": [
+    {
+      "number": 1,
+      "branch": "docs/foundational-specifications",
+      "head": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 2,
+      "branch": "claude/sweet-turing-m3ftja",
+      "head": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 13,
+      "branch": "checkpoint/circula-handoff-20261025",
+      "head": "3d0080a9c43680f69f81217af3b42374e7160bf8",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 16,
+      "branch": "codex/circula-integration-plan-20261030",
+      "head": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 20,
+      "branch": "chatgpt/zero-codex-continuation-spec-20261109",
+      "head": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 29,
+      "branch": "claude/relaxed-hopper-8q4vhq",
+      "head": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 35,
+      "branch": "claude/cool-ramanujan-n2peag",
+      "head": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "matches_closed_pr": true
+    },
+    {
+      "number": 42,
+      "branch": "chatgpt/circula-security-audit-20261115",
+      "head": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "matches_closed_pr": true
+    }
+  ]
+}

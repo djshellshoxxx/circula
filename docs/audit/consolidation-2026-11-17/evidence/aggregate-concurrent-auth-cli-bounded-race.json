@@ -1,0 +1,28 @@
+{
+  "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+  "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+  "command": [
+    "go",
+    "test",
+    "-v",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=25m",
+    "./cmd/circula"
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "GOGC": "20",
+    "GOMEMLIMIT": "512MiB",
+    "CGO_ENABLED": "1"
+  },
+  "started_at": "2026-11-18T08:34:09.640141+00:00",
+  "scope": "Full unchanged CLI package only; all tests and race instrumentation enabled. Diagnostic runtime heap settings, no source edits.",
+  "exit_code": 1,
+  "elapsed_seconds": 74.893,
+  "max_child_rss_kib": 676264,
+  "finished_at": "2026-11-18T08:35:24.533543+00:00"
+}

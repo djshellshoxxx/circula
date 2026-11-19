@@ -1,0 +1,25 @@
+{
+  "head": "1a3ef0fad836067b71857d961659459d976e7e15",
+  "tree": "1fc439e5a9a1bb90553d59952d02d117a4858871",
+  "base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "base_tree": "f41365f8ee4f42f4cbd33fb4e1a78cad85caedd1",
+  "fixed_snapshot": "/workspace/scratch/9ceb45b04668/audit-b/pr87-fixed",
+  "literal_baseline_web_snapshot": "/workspace/scratch/9ceb45b04668/audit-b/pr87-baseline-web",
+  "baseline_overlay": {
+    "path": "internal/web/dispute_timelines_test.go",
+    "source_head": "1a3ef0fad836067b71857d961659459d976e7e15",
+    "sha256": "57600f6e9a9c9b484091ecacbe52bde11e194d86bbec1eca8b2c51906c40b925"
+  },
+  "current_policy_control_snapshot": "/workspace/scratch/9ceb45b04668/audit-b/pr87-current-policy-control",
+  "control_mutation": {
+    "path": "internal/service/disputes_deadlines.go",
+    "scope": "Candidate snapshot retains all supplied tests/new DTO/interface seams; only disputePolicy selects tx.GetNetwork(d.NetworkID).Policy, reinstating the old current-policy selection. This is a behavioral mutation, not literal baseline service execution.",
+    "before_sha256": "81bf50cc9268f2f9a3a2208fa76539bcb83448dda93b548a80705fce20787850",
+    "after_sha256": "d2ed79fd89ebabbc5eef034178e43b1d89d8f740029ef37d5cffa400386cec4f"
+  },
+  "supplied_tests": {
+    "internal/service/dispute_timelines_test.go": "0c6f9010811ea945a76f3906f1d1ad930e2c21407721604c5e3e7943a97bb02f",
+    "internal/web/dispute_timelines_test.go": "57600f6e9a9c9b484091ecacbe52bde11e194d86bbec1eca8b2c51906c40b925",
+    "internal/store/policy_in_force_test.go": "818bcc50f7f8826bd4de4274918ea0a434742e30d37b3eeab8610209d1d0dc67"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "observed_at": "2026-11-18T09:12:22.411Z",
+  "pr": 82,
+  "head": "5c39abdb89faa505533e51d3878b3b119957ff32",
+  "run": 44265484103,
+  "required": 7,
+  "superseded_by": "925547b2f4a2e5ecf0d4c699f7cf906949099c8b",
+  "replacement_run": 44273216945,
+  "reason": "Author regenerated traceability documentation; source and tests unchanged from 5c39abdb",
+  "jobs": [
+    {
+      "id": 134668836150,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668836558,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668836592,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668836612,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668836700,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668836753,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668836775,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134668838064,
+      "name": "test (${{ matrix.os }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 44265484103,
+      "logs_url": null,
+      "steps": null
+    }
+  ],
+  "source_review": {
+    "id": 5952983151,
+    "head": "5c39abdb89faa505533e51d3878b3b119957ff32"
+  },
+  "policy_status": "A3-F02 / DEC-014 remains unresolved; recovery.go unchanged in the safe split",
+  "f_remote_actions": "None"
+}

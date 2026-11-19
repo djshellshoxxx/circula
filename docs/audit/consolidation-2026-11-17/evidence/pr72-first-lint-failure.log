@@ -1,0 +1,444 @@
+﻿2026-11-18T06:39:00.2017966Z Current runner version: '2.338.2'
+2026-11-18T06:39:00.2033488Z ##[group]Runner Image Provisioner
+2026-11-18T06:39:00.2034150Z Hosted Compute Agent
+2026-11-18T06:39:00.2034573Z Version: 20261103.629
+2026-11-18T06:39:00.2035041Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-18T06:39:00.2035918Z Build Date: 2026-11-03T17:26:59Z
+2026-11-18T06:39:00.2036413Z Worker ID: {dc16982d-3c4a-4092-8ce4-5956517c524d}
+2026-11-18T06:39:00.2036905Z Region: us-west-2
+2026-11-18T06:39:00.2037383Z Cloud: AWS
+2026-11-18T06:39:00.2037806Z ##[endgroup]
+2026-11-18T06:39:00.2038820Z ##[group]Operating System
+2026-11-18T06:39:00.2039263Z Ubuntu
+2026-11-18T06:39:00.2039617Z 24.04.5
+2026-11-18T06:39:00.2040001Z LTS
+2026-11-18T06:39:00.2040378Z ##[endgroup]
+2026-11-18T06:39:00.2040767Z ##[group]Runner Image
+2026-11-18T06:39:00.2041189Z Image: ubuntu-24.04
+2026-11-18T06:39:00.2041580Z Version: 20261111.127.1
+2026-11-18T06:39:00.2042557Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261111.127/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-18T06:39:00.2043647Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261111.127
+2026-11-18T06:39:00.2044339Z ##[endgroup]
+2026-11-18T06:39:00.2045284Z ##[group]GITHUB_TOKEN Permissions
+2026-11-18T06:39:00.2047093Z Contents: read
+2026-11-18T06:39:00.2047513Z Metadata: read
+2026-11-18T06:39:00.2047975Z ##[endgroup]
+2026-11-18T06:39:00.2049445Z Secret source: Actions
+2026-11-18T06:39:00.2050094Z Cache mode: write
+2026-11-18T06:39:00.2050702Z Prepare workflow directory
+2026-11-18T06:39:00.2274093Z Prepare all required actions
+2026-11-18T06:39:00.2310318Z Getting action download info
+2026-11-18T06:39:00.6089112Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-18T06:39:02.1131069Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+2026-11-18T06:39:02.4865025Z Download action repository 'golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a' (SHA:ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a)
+2026-11-18T06:39:02.9176454Z Complete job name: vet, gofmt, golangci-lint, govulncheck
+2026-11-18T06:39:02.9943321Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-18T06:39:02.9944847Z with:
+2026-11-18T06:39:02.9945940Z   persist-credentials: false
+2026-11-18T06:39:02.9946844Z   repository: djshellshoxxx/circula
+2026-11-18T06:39:02.9953756Z   token: ***
+2026-11-18T06:39:02.9954473Z   ssh-strict: true
+2026-11-18T06:39:02.9955374Z   ssh-user: git
+2026-11-18T06:39:02.9956120Z   clean: true
+2026-11-18T06:39:02.9956880Z   sparse-checkout-cone-mode: true
+2026-11-18T06:39:02.9957736Z   fetch-depth: 1
+2026-11-18T06:39:02.9958458Z   fetch-tags: false
+2026-11-18T06:39:02.9959298Z   show-progress: true
+2026-11-18T06:39:02.9960066Z   lfs: false
+2026-11-18T06:39:02.9960766Z   submodules: false
+2026-11-18T06:39:02.9961517Z   set-safe-directory: true
+2026-11-18T06:39:02.9962366Z   allow-unsafe-pr-checkout: false
+2026-11-18T06:39:02.9963463Z ##[endgroup]
+2026-11-18T06:39:05.9083790Z Syncing repository: djshellshoxxx/circula
+2026-11-18T06:39:05.9085317Z ##[group]Getting Git version info
+2026-11-18T06:39:05.9085721Z Working directory is '/home/runner/work/circula/circula'
+2026-11-18T06:39:05.9086219Z [command]/usr/bin/git version
+2026-11-18T06:39:06.1631461Z git version 2.56.1
+2026-11-18T06:39:06.1644498Z ##[endgroup]
+2026-11-18T06:39:06.1652541Z Temporarily overriding HOME='/home/runner/work/_temp/8a38fd9e-70a0-40d9-8662-e9e425b2c946' before making global git config changes
+2026-11-18T06:39:06.1653476Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T06:39:06.1656725Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/circula/circula
+2026-11-18T06:39:06.2045331Z Deleting the contents of '/home/runner/work/circula/circula'
+2026-11-18T06:39:06.2047557Z ##[group]Determining repository object format
+2026-11-18T06:39:06.2048416Z ##[endgroup]
+2026-11-18T06:39:06.2048774Z ##[group]Initializing the repository
+2026-11-18T06:39:06.2056652Z [command]/usr/bin/git init /home/runner/work/circula/circula
+2026-11-18T06:39:06.2530087Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-18T06:39:06.2531148Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-18T06:39:06.2531780Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-18T06:39:06.2532247Z hint: call:
+2026-11-18T06:39:06.2532566Z hint:
+2026-11-18T06:39:06.2533027Z hint: 	git config --global init.defaultBranch <name>
+2026-11-18T06:39:06.2533504Z hint:
+2026-11-18T06:39:06.2534010Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-18T06:39:06.2534681Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-18T06:39:06.2535306Z hint:
+2026-11-18T06:39:06.2535692Z hint: 	git branch -m <name>
+2026-11-18T06:39:06.2536097Z hint:
+2026-11-18T06:39:06.2536562Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-18T06:39:06.2537233Z Initialized empty Git repository in /home/runner/work/circula/circula/.git/
+2026-11-18T06:39:06.2539990Z [command]/usr/bin/git remote add origin https://github.com/djshellshoxxx/circula
+2026-11-18T06:39:06.2576808Z ##[endgroup]
+2026-11-18T06:39:06.2577445Z ##[group]Disabling automatic garbage collection
+2026-11-18T06:39:06.2579145Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-18T06:39:06.2600858Z ##[endgroup]
+2026-11-18T06:39:06.2601347Z ##[group]Setting up auth
+2026-11-18T06:39:06.2601692Z Removing SSH command configuration
+2026-11-18T06:39:06.2604650Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T06:39:06.2629951Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-18T06:39:06.5991753Z Removing HTTP extra header
+2026-11-18T06:39:06.5996494Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T06:39:06.6022670Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-18T06:39:06.6176830Z Removing includeIf entries pointing to credentials config files
+2026-11-18T06:39:06.6186054Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T06:39:06.6209480Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-18T06:39:06.6350754Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-18T06:39:06.6377000Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/circula/circula/.git.path /home/runner/work/_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:06.6398575Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/circula/circula/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:06.6420994Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:06.6443261Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:06.6462988Z ##[endgroup]
+2026-11-18T06:39:06.6463450Z ##[group]Fetching the repository
+2026-11-18T06:39:06.6468597Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3feefb51a9ea6961a77227bfe650b2efd8b9b606:refs/remotes/pull/72/merge
+2026-11-18T06:39:07.6458026Z From https://github.com/djshellshoxxx/circula
+2026-11-18T06:39:07.6458793Z  * [new ref]         3feefb51a9ea6961a77227bfe650b2efd8b9b606 -> pull/72/merge
+2026-11-18T06:39:07.6462099Z ##[endgroup]
+2026-11-18T06:39:07.6462499Z ##[group]Determining the checkout info
+2026-11-18T06:39:07.6463026Z ##[endgroup]
+2026-11-18T06:39:07.6468059Z [command]/usr/bin/git sparse-checkout disable
+2026-11-18T06:39:07.6519137Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-18T06:39:07.6541874Z ##[group]Checking out the ref
+2026-11-18T06:39:07.6544611Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/72/merge
+2026-11-18T06:39:07.7047187Z Note: switching to 'refs/remotes/pull/72/merge'.
+2026-11-18T06:39:07.7047479Z
+2026-11-18T06:39:07.7047699Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-18T06:39:07.7048174Z changes and commit them, and you can discard any commits you make in this
+2026-11-18T06:39:07.7048622Z state without impacting any branches by switching back to a branch.
+2026-11-18T06:39:07.7048899Z
+2026-11-18T06:39:07.7049150Z If you want to create a new branch to retain commits you create, you may
+2026-11-18T06:39:07.7049721Z do so (now or later) by using -c with the switch command. Example:
+2026-11-18T06:39:07.7050031Z
+2026-11-18T06:39:07.7050174Z   git switch -c <new-branch-name>
+2026-11-18T06:39:07.7050652Z
+2026-11-18T06:39:07.7050780Z Or undo this operation with:
+2026-11-18T06:39:07.7051102Z
+2026-11-18T06:39:07.7051208Z   git switch -
+2026-11-18T06:39:07.7051632Z
+2026-11-18T06:39:07.7051924Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-18T06:39:07.7052223Z
+2026-11-18T06:39:07.7052529Z HEAD is now at 3feefb5 Merge 946089539c57469241ab294e16377086e0add6b4 into e67bad5e2dbee95cff05536aa79f53f3afbccc84
+2026-11-18T06:39:07.7056480Z ##[endgroup]
+2026-11-18T06:39:07.7093676Z [command]/usr/bin/git log -1 --format=%H
+2026-11-18T06:39:07.7113523Z 3feefb51a9ea6961a77227bfe650b2efd8b9b606
+2026-11-18T06:39:07.7123621Z ##[group]Removing auth
+2026-11-18T06:39:07.7124037Z Removing SSH command configuration
+2026-11-18T06:39:07.7124382Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T06:39:07.7146113Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-18T06:39:07.7298172Z Removing HTTP extra header
+2026-11-18T06:39:07.7301380Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T06:39:07.7323715Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-18T06:39:07.7468331Z Removing includeIf entries pointing to credentials config files
+2026-11-18T06:39:07.7470998Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T06:39:07.7492204Z includeif.gitdir:/home/runner/work/circula/circula/.git.path
+2026-11-18T06:39:07.7492674Z includeif.gitdir:/home/runner/work/circula/circula/.git/worktrees/*.path
+2026-11-18T06:39:07.7493026Z includeif.gitdir:/github/workspace/.git.path
+2026-11-18T06:39:07.7493340Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-18T06:39:07.7497663Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/circula/circula/.git.path
+2026-11-18T06:39:07.7513897Z /home/runner/work/_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:07.7521656Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/circula/circula/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-772ae718\-855a\-4340\-9027\-ec8592afbc88\.config
+2026-11-18T06:39:07.7545864Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/circula/circula/.git/worktrees/*.path
+2026-11-18T06:39:07.7566285Z /home/runner/work/_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:07.7572297Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/circula/circula/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-772ae718\-855a\-4340\-9027\-ec8592afbc88\.config
+2026-11-18T06:39:07.7595782Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-18T06:39:07.7612573Z /github/runner_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:07.7617643Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-772ae718\-855a\-4340\-9027\-ec8592afbc88\.config
+2026-11-18T06:39:07.7642656Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-18T06:39:07.7659913Z /github/runner_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config
+2026-11-18T06:39:07.7664325Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-772ae718\-855a\-4340\-9027\-ec8592afbc88\.config
+2026-11-18T06:39:07.7687502Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-18T06:39:07.7829752Z Removing credentials config '/home/runner/work/_temp/git-credentials-772ae718-855a-4340-9027-ec8592afbc88.config'
+2026-11-18T06:39:07.7834433Z ##[endgroup]
+2026-11-18T06:39:07.8007929Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+2026-11-18T06:39:07.8008209Z with:
+2026-11-18T06:39:07.8008422Z   go-version-file: go.mod
+2026-11-18T06:39:07.8008606Z   cache: true
+2026-11-18T06:39:07.8008771Z   check-latest: false
+2026-11-18T06:39:07.8010702Z   token: ***
+2026-11-18T06:39:07.8010863Z ##[endgroup]
+2026-11-18T06:39:07.8871438Z Setup go version spec 1.26.11
+2026-11-18T06:39:08.0096577Z Found in cache @ /opt/hostedtoolcache/go/1.26.11/x64
+2026-11-18T06:39:08.0096965Z Added go to the path
+2026-11-18T06:39:08.0098972Z Successfully set up Go version 1.26.11
+2026-11-18T06:39:08.8423856Z [command]/opt/hostedtoolcache/go/1.26.11/x64/bin/go env GOCACHE
+2026-11-18T06:39:08.8451808Z [command]/opt/hostedtoolcache/go/1.26.11/x64/bin/go env GOMODCACHE
+2026-11-18T06:39:08.8473522Z /home/runner/.cache/go-build
+2026-11-18T06:39:08.8488405Z /home/runner/go/pkg/mod
+2026-11-18T06:39:09.1188053Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.26.11-49068034dfe0056b596c5ef832a8559817b4ea48307f3d61a7673ad16721b53e
+2026-11-18T06:39:10.5122092Z Received 0 of 168519537 (0.0%), 0.0 MBs/sec
+2026-11-18T06:39:11.5127562Z Received 54525952 of 168519537 (32.4%), 26.0 MBs/sec
+2026-11-18T06:39:12.5141367Z Received 134217728 of 168519537 (79.6%), 42.6 MBs/sec
+2026-11-18T06:39:13.0387138Z Received 168519537 of 168519537 (100.0%), 45.6 MBs/sec
+2026-11-18T06:39:13.0387558Z Cache Size: ~161 MB (168519537 B)
+2026-11-18T06:39:13.0411237Z [command]/usr/bin/tar -xf /home/runner/work/_temp/756d8463-edbd-4ec3-88a0-b4b4ebe136e5/cache.tzst -P -C /home/runner/work/circula/circula --use-compress-program unzstd
+2026-11-18T06:39:13.6636947Z Cache restored successfully
+2026-11-18T06:39:13.6694592Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.26.11-49068034dfe0056b596c5ef832a8559817b4ea48307f3d61a7673ad16721b53e
+2026-11-18T06:39:13.6714646Z go version go1.26.11 linux/amd64
+2026-11-18T06:39:13.6714838Z
+2026-11-18T06:39:13.6715315Z ##[group]go env
+2026-11-18T06:39:13.7176735Z AR='ar'
+2026-11-18T06:39:13.7176990Z CC='gcc'
+2026-11-18T06:39:13.7177183Z CGO_CFLAGS='-O2 -g'
+2026-11-18T06:39:13.7177376Z CGO_CPPFLAGS=''
+2026-11-18T06:39:13.7177629Z CGO_CXXFLAGS='-O2 -g'
+2026-11-18T06:39:13.7177829Z CGO_ENABLED='1'
+2026-11-18T06:39:13.7177992Z CGO_FFLAGS='-O2 -g'
+2026-11-18T06:39:13.7178415Z CGO_LDFLAGS='-O2 -g'
+2026-11-18T06:39:13.7178577Z CXX='g++'
+2026-11-18T06:39:13.7178731Z GCCGO='gccgo'
+2026-11-18T06:39:13.7178889Z GO111MODULE=''
+2026-11-18T06:39:13.7179042Z GOAMD64='v1'
+2026-11-18T06:39:13.7179197Z GOARCH='amd64'
+2026-11-18T06:39:13.7179347Z GOAUTH='netrc'
+2026-11-18T06:39:13.7179493Z GOBIN=''
+2026-11-18T06:39:13.7179667Z GOCACHE='/home/runner/.cache/go-build'
+2026-11-18T06:39:13.7179890Z GOCACHEPROG=''
+2026-11-18T06:39:13.7180065Z GODEBUG=''
+2026-11-18T06:39:13.7180260Z GOENV='/home/runner/.config/go/env'
+2026-11-18T06:39:13.7180466Z GOEXE=''
+2026-11-18T06:39:13.7180631Z GOEXPERIMENT=''
+2026-11-18T06:39:13.7180830Z GOFIPS140='off'
+2026-11-18T06:39:13.7181030Z GOFLAGS=''
+2026-11-18T06:39:13.7181537Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build3744373870=/tmp/go-build -gno-record-gcc-switches'
+2026-11-18T06:39:13.7182044Z GOHOSTARCH='amd64'
+2026-11-18T06:39:13.7182234Z GOHOSTOS='linux'
+2026-11-18T06:39:13.7182396Z GOINSECURE=''
+2026-11-18T06:39:13.7182619Z GOMOD='/home/runner/work/circula/circula/go.mod'
+2026-11-18T06:39:13.7182869Z GOMODCACHE='/home/runner/go/pkg/mod'
+2026-11-18T06:39:13.7183067Z GONOPROXY=''
+2026-11-18T06:39:13.7183219Z GONOSUMDB=''
+2026-11-18T06:39:13.7183374Z GOOS='linux'
+2026-11-18T06:39:13.7183539Z GOPATH='/home/runner/go'
+2026-11-18T06:39:13.7183720Z GOPRIVATE=''
+2026-11-18T06:39:13.7183926Z GOPROXY='https://proxy.golang.org,direct'
+2026-11-18T06:39:13.7184195Z GOROOT='/opt/hostedtoolcache/go/1.26.11/x64'
+2026-11-18T06:39:13.7184429Z GOSUMDB='sum.golang.org'
+2026-11-18T06:39:13.7184633Z GOTELEMETRY='local'
+2026-11-18T06:39:13.7184855Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+2026-11-18T06:39:13.7185409Z GOTMPDIR=''
+2026-11-18T06:39:13.7185600Z GOTOOLCHAIN='local'
+2026-11-18T06:39:13.7185864Z GOTOOLDIR='/opt/hostedtoolcache/go/1.26.11/x64/pkg/tool/linux_amd64'
+2026-11-18T06:39:13.7186151Z GOVCS=''
+2026-11-18T06:39:13.7186320Z GOVERSION='go1.26.11'
+2026-11-18T06:39:13.7186501Z GOWORK=''
+2026-11-18T06:39:13.7186710Z PKG_CONFIG='pkg-config'
+2026-11-18T06:39:13.7186819Z
+2026-11-18T06:39:13.7187110Z ##[endgroup]
+2026-11-18T06:39:13.7334137Z ##[group]Run scripts/check-action-pins.sh
+2026-11-18T06:39:13.7334464Z [36;1mscripts/check-action-pins.sh[0m
+2026-11-18T06:39:13.8581470Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:13.8581712Z env:
+2026-11-18T06:39:13.8581880Z   GOTOOLCHAIN: local
+2026-11-18T06:39:13.8582053Z ##[endgroup]
+2026-11-18T06:39:13.9403626Z action pins and permissions: ok
+2026-11-18T06:39:13.9434308Z ##[group]Run scripts/check-hygiene.sh
+2026-11-18T06:39:13.9434580Z [36;1mscripts/check-hygiene.sh[0m
+2026-11-18T06:39:13.9459253Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:13.9459469Z env:
+2026-11-18T06:39:13.9459632Z   GOTOOLCHAIN: local
+2026-11-18T06:39:13.9459812Z ##[endgroup]
+2026-11-18T06:39:14.1592064Z ....
+2026-11-18T06:39:14.1592693Z ----------------------------------------------------------------------
+2026-11-18T06:39:14.1593255Z Ran 4 tests in 0.000s
+2026-11-18T06:39:14.1593417Z
+2026-11-18T06:39:14.1593542Z OK
+2026-11-18T06:39:14.1729285Z hygiene checks: ok
+2026-11-18T06:39:14.1754293Z ##[group]Run scripts/licenses.sh --check
+2026-11-18T06:39:14.1754569Z [36;1mscripts/licenses.sh --check[0m
+2026-11-18T06:39:14.1780006Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:14.1780218Z env:
+2026-11-18T06:39:14.1780373Z   GOTOOLCHAIN: local
+2026-11-18T06:39:14.1780545Z ##[endgroup]
+2026-11-18T06:39:16.2295771Z dependency licences: ok
+2026-11-18T06:39:16.2329817Z ##[group]Run go run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact --verbose
+2026-11-18T06:39:16.2330371Z [36;1mgo run github.com/zricethezav/gitleaks/v8@v8.28.0 dir . --no-banner --redact --verbose[0m
+2026-11-18T06:39:16.2355321Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:16.2355538Z env:
+2026-11-18T06:39:16.2355710Z   GOTOOLCHAIN: local
+2026-11-18T06:39:16.2355889Z ##[endgroup]
+2026-11-18T06:39:16.2912685Z go: downloading github.com/zricethezav/gitleaks/v8 v8.28.0
+2026-11-18T06:39:16.5155443Z go: downloading github.com/rs/zerolog v1.33.0
+2026-11-18T06:39:16.5156099Z go: downloading github.com/spf13/cobra v1.9.1
+2026-11-18T06:39:16.5156540Z go: downloading github.com/spf13/viper v1.19.0
+2026-11-18T06:39:16.5905578Z go: downloading github.com/fsnotify/fsnotify v1.8.0
+2026-11-18T06:39:16.5910091Z go: downloading github.com/mitchellh/mapstructure v1.5.0
+2026-11-18T06:39:16.5912068Z go: downloading github.com/sagikazarmark/slog-shim v0.1.0
+2026-11-18T06:39:16.5912620Z go: downloading github.com/spf13/afero v1.12.0
+2026-11-18T06:39:16.6586968Z go: downloading github.com/spf13/cast v1.7.1
+2026-11-18T06:39:16.6590437Z go: downloading github.com/spf13/pflag v1.0.6
+2026-11-18T06:39:16.6621311Z go: downloading github.com/BobuSumisu/aho-corasick v1.0.3
+2026-11-18T06:39:16.6746761Z go: downloading golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
+2026-11-18T06:39:16.7067186Z go: downloading github.com/charmbracelet/lipgloss v0.5.0
+2026-11-18T06:39:16.7104724Z go: downloading github.com/fatih/semgroup v1.2.0
+2026-11-18T06:39:16.7487836Z go: downloading github.com/Masterminds/sprig/v3 v3.3.0
+2026-11-18T06:39:16.7504105Z go: downloading github.com/gitleaks/go-gitdiff v0.9.1
+2026-11-18T06:39:16.7677794Z go: downloading github.com/h2non/filetype v1.1.3
+2026-11-18T06:39:16.8072652Z go: downloading github.com/mholt/archives v0.1.2
+2026-11-18T06:39:16.8111277Z go: downloading github.com/mattn/go-colorable v0.1.14
+2026-11-18T06:39:16.8498915Z go: downloading golang.org/x/sys v0.30.0
+2026-11-18T06:39:16.8525640Z go: downloading github.com/subosito/gotenv v1.6.0
+2026-11-18T06:39:16.9055690Z go: downloading github.com/hashicorp/hcl v1.0.0
+2026-11-18T06:39:16.9634969Z go: downloading gopkg.in/ini.v1 v1.67.0
+2026-11-18T06:39:16.9709866Z go: downloading github.com/magiconair/properties v1.8.9
+2026-11-18T06:39:16.9800022Z go: downloading github.com/pelletier/go-toml/v2 v2.2.3
+2026-11-18T06:39:17.0055718Z go: downloading gopkg.in/yaml.v3 v3.0.1
+2026-11-18T06:39:17.0158036Z go: downloading golang.org/x/text v0.22.0
+2026-11-18T06:39:17.0620794Z go: downloading github.com/lucasb-eyer/go-colorful v1.2.0
+2026-11-18T06:39:17.1411596Z go: downloading github.com/mattn/go-runewidth v0.0.14
+2026-11-18T06:39:17.1871415Z go: downloading github.com/muesli/reflow v0.2.1-0.20210115123740-9e1d0d53df68
+2026-11-18T06:39:17.2236888Z go: downloading github.com/muesli/termenv v0.15.1
+2026-11-18T06:39:17.2731067Z go: downloading golang.org/x/sync v0.11.0
+2026-11-18T06:39:17.3082752Z go: downloading dario.cat/mergo v1.0.1
+2026-11-18T06:39:17.3627162Z go: downloading github.com/Masterminds/goutils v1.1.1
+2026-11-18T06:39:17.4106832Z go: downloading github.com/Masterminds/semver/v3 v3.3.0
+2026-11-18T06:39:17.4348072Z go: downloading github.com/huandu/xstrings v1.5.0
+2026-11-18T06:39:17.4348762Z go: downloading github.com/mitchellh/copystructure v1.2.0
+2026-11-18T06:39:17.4536566Z go: downloading github.com/shopspring/decimal v1.4.0
+2026-11-18T06:39:17.4607226Z go: downloading golang.org/x/crypto v0.35.0
+2026-11-18T06:39:17.5010036Z go: downloading github.com/STARRY-S/zip v0.2.1
+2026-11-18T06:39:17.5012484Z go: downloading github.com/andybalholm/brotli v1.1.2-0.20250424173009-453214e765f3
+2026-11-18T06:39:17.5393898Z go: downloading github.com/bodgit/sevenzip v1.6.0
+2026-11-18T06:39:17.5687350Z go: downloading github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707
+2026-11-18T06:39:17.5687926Z go: downloading github.com/klauspost/compress v1.17.11
+2026-11-18T06:39:18.1995696Z go: downloading github.com/klauspost/pgzip v1.2.6
+2026-11-18T06:39:18.1996180Z go: downloading github.com/minio/minlz v1.0.0
+2026-11-18T06:39:18.1996470Z go: downloading github.com/nwaples/rardecode/v2 v2.1.0
+2026-11-18T06:39:18.1996784Z go: downloading github.com/pierrec/lz4/v4 v4.1.21
+2026-11-18T06:39:18.2378681Z go: downloading github.com/sorairolake/lzip-go v0.3.5
+2026-11-18T06:39:18.2382942Z go: downloading github.com/therootcompany/xz v1.0.1
+2026-11-18T06:39:18.2772901Z go: downloading github.com/ulikunitz/xz v0.5.12
+2026-11-18T06:39:18.2837496Z go: downloading github.com/mattn/go-isatty v0.0.20
+2026-11-18T06:39:18.3239184Z go: downloading github.com/rivo/uniseg v0.2.0
+2026-11-18T06:39:18.3594859Z go: downloading github.com/aymanbagabas/go-osc52/v2 v2.0.1
+2026-11-18T06:39:18.4022960Z go: downloading github.com/mitchellh/reflectwalk v1.0.2
+2026-11-18T06:39:18.4371329Z go: downloading github.com/bodgit/plumbing v1.3.0
+2026-11-18T06:39:18.4728582Z go: downloading github.com/bodgit/windows v1.0.1
+2026-11-18T06:39:18.4888930Z go: downloading github.com/hashicorp/go-multierror v1.1.1
+2026-11-18T06:39:18.5060809Z go: downloading go4.org v0.0.0-20230225012048-214862532bf5
+2026-11-18T06:39:18.5334071Z go: downloading github.com/hashicorp/golang-lru/v2 v2.0.7
+2026-11-18T06:39:18.5532821Z go: downloading github.com/hashicorp/errwrap v1.1.0
+2026-11-18T06:39:29.2844380Z [90m6:39AM[0m [32mINF[0m [1mscanned ~9114484 bytes (9.11 MB) in 1.7s[0m
+2026-11-18T06:39:29.2844807Z [90m6:39AM[0m [32mINF[0m [1mno leaks found[0m
+2026-11-18T06:39:29.3063388Z ##[group]Run unformatted="$(gofmt -l .)"
+2026-11-18T06:39:29.3063689Z [36;1munformatted="$(gofmt -l .)"[0m
+2026-11-18T06:39:29.3063908Z [36;1mif [ -n "$unformatted" ]; then[0m
+2026-11-18T06:39:29.3064115Z [36;1m  echo "files need gofmt:"[0m
+2026-11-18T06:39:29.3064306Z [36;1m  echo "$unformatted"[0m
+2026-11-18T06:39:29.3064515Z [36;1m  exit 1[0m
+2026-11-18T06:39:29.3064676Z [36;1mfi[0m
+2026-11-18T06:39:29.3091722Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:29.3091951Z env:
+2026-11-18T06:39:29.3092114Z   GOTOOLCHAIN: local
+2026-11-18T06:39:29.3092277Z ##[endgroup]
+2026-11-18T06:39:29.5729294Z ##[group]Run go vet ./...
+2026-11-18T06:39:29.5729601Z [36;1mgo vet ./...[0m
+2026-11-18T06:39:29.5752827Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:29.5753087Z env:
+2026-11-18T06:39:29.5753360Z   GOTOOLCHAIN: local
+2026-11-18T06:39:29.5753594Z ##[endgroup]
+2026-11-18T06:39:37.8815836Z ##[group]Run make traceability-check
+2026-11-18T06:39:37.8816327Z [36;1mmake traceability-check[0m
+2026-11-18T06:39:37.8841174Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:37.8841479Z env:
+2026-11-18T06:39:37.8841710Z   GOTOOLCHAIN: local
+2026-11-18T06:39:37.8841961Z ##[endgroup]
+2026-11-18T06:39:37.8938935Z go run ./scripts/traceability -check -o docs/TRACEABILITY.md
+2026-11-18T06:39:38.4762085Z traceability: docs/TRACEABILITY.md is up to date
+2026-11-18T06:39:38.4812114Z ##[group]Run python3 -m unittest discover -s scripts -p 'test_read_export.py'
+2026-11-18T06:39:38.4812625Z [36;1mpython3 -m unittest discover -s scripts -p 'test_read_export.py'[0m
+2026-11-18T06:39:38.4813026Z [36;1mpython3 -m unittest discover -s scripts -p 'test_run_qa001.py'[0m
+2026-11-18T06:39:38.4838410Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:39:38.4839171Z env:
+2026-11-18T06:39:38.4839392Z   GOTOOLCHAIN: local
+2026-11-18T06:39:38.4839628Z ##[endgroup]
+2026-11-18T06:39:40.8332759Z ..........
+2026-11-18T06:39:40.8333275Z ----------------------------------------------------------------------
+2026-11-18T06:39:40.8333643Z Ran 10 tests in 2.306s
+2026-11-18T06:39:40.8333805Z
+2026-11-18T06:39:40.8333953Z OK
+2026-11-18T06:39:41.2711584Z ....
+2026-11-18T06:39:41.2712207Z ----------------------------------------------------------------------
+2026-11-18T06:39:41.2712671Z Ran 4 tests in 0.364s
+2026-11-18T06:39:41.2712808Z
+2026-11-18T06:39:41.2712975Z OK
+2026-11-18T06:39:41.2932383Z ##[group]Run golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
+2026-11-18T06:39:41.2932987Z with:
+2026-11-18T06:39:41.2933312Z   version: v2.15.0
+2026-11-18T06:39:41.2933641Z   verify: false
+2026-11-18T06:39:41.2933945Z   install-mode: binary
+2026-11-18T06:39:41.2934299Z   install-only: false
+2026-11-18T06:39:41.2937601Z   github-token: ***
+2026-11-18T06:39:41.2938031Z   only-new-issues: false
+2026-11-18T06:39:41.2938362Z   skip-cache: false
+2026-11-18T06:39:41.2938678Z   skip-save-cache: false
+2026-11-18T06:39:41.2939041Z   cache-invalidation-interval: 7
+2026-11-18T06:39:41.2939451Z   problem-matchers: false
+2026-11-18T06:39:41.2939822Z env:
+2026-11-18T06:39:41.2940099Z   GOTOOLCHAIN: local
+2026-11-18T06:39:41.2940948Z ##[endgroup]
+2026-11-18T06:39:41.3999779Z ##[group]Restore cache
+2026-11-18T06:39:41.4002051Z Checking for go.mod: go.mod
+2026-11-18T06:39:41.6579950Z Cache hit for: golangci-lint.cache-Linux-2967-136ef89b5036a271ac64699a9ed7aaa0efae9484
+2026-11-18T06:39:42.9968570Z Received 0 of 895601 (0.0%), 0.0 MBs/sec
+2026-11-18T06:39:43.0607739Z Received 895601 of 895601 (100.0%), 0.8 MBs/sec
+2026-11-18T06:39:43.0608243Z Cache Size: ~1 MB (895601 B)
+2026-11-18T06:39:43.0626783Z [command]/usr/bin/tar -xf /home/runner/work/_temp/15122511-f832-429b-9ed1-3ee3113f55ad/cache.tzst -P -C /home/runner/work/circula/circula --use-compress-program unzstd
+2026-11-18T06:39:43.1300343Z Cache restored successfully
+2026-11-18T06:39:43.1303302Z Restored cache for golangci-lint from key 'golangci-lint.cache-Linux-2967-136ef89b5036a271ac64699a9ed7aaa0efae9484' in 1730ms
+2026-11-18T06:39:43.1304389Z ##[endgroup]
+2026-11-18T06:39:43.1304877Z ##[group]Install
+2026-11-18T06:39:43.1305449Z Finding needed golangci-lint version...
+2026-11-18T06:39:43.1307638Z Installation mode: binary
+2026-11-18T06:39:43.1308086Z Installing golangci-lint binary v2.15.0...
+2026-11-18T06:39:43.1308734Z Downloading binary https://github.com/golangci/golangci-lint/releases/download/v2.15.0/golangci-lint-2.15.0-linux-amd64.tar.gz ...
+2026-11-18T06:39:43.3072733Z [command]/usr/bin/tar xz --overwrite --warning=no-unknown-keyword --overwrite -C /home/runner -f /home/runner/work/_temp/5ee805ec-c8f5-4881-aa61-6d4b02818269
+2026-11-18T06:39:43.5450622Z Installed golangci-lint into /home/runner/golangci-lint-2.15.0-linux-amd64/golangci-lint in 414ms
+2026-11-18T06:39:43.5453491Z ##[endgroup]
+2026-11-18T06:39:43.5455477Z ##[group]run golangci-lint
+2026-11-18T06:39:43.5457786Z Running [/home/runner/golangci-lint-2.15.0-linux-amd64/golangci-lint run] in [/home/runner/work/circula/circula] ...
+2026-11-18T06:39:50.9841037Z ##[error]cmd/circula/backup_work_lease_test.go:26:17: Error return value of `raw.Close` is not checked (errcheck)
+2026-11-18T06:39:50.9846193Z 	defer raw.Close()
+2026-11-18T06:39:50.9846591Z 	               ^
+2026-11-18T06:39:50.9847521Z ##[error]cmd/circula/backup_work.go:45:15: G703: Path traversal via taint analysis (gosec)
+2026-11-18T06:39:50.9848437Z 	_ = os.Remove(filepath.Join(work, backupWorkLease))
+2026-11-18T06:39:50.9848791Z 	             ^
+2026-11-18T06:39:50.9849407Z ##[error]cmd/circula/backup_work.go:46:15: G703: Path traversal via taint analysis (gosec)
+2026-11-18T06:39:50.9850161Z 	_ = os.Remove(work)
+2026-11-18T06:39:50.9850417Z 	             ^
+2026-11-18T06:39:50.9850977Z ##[error]cmd/circula/backupcrypt.go:416:24: G703: Path traversal via taint analysis (gosec)
+2026-11-18T06:39:50.9851743Z 	if fi, err := os.Lstat(path); err == nil && fi.Mode().IsRegular() {
+2026-11-18T06:39:50.9852123Z 	                      ^
+2026-11-18T06:39:50.9852386Z 4 issues:
+2026-11-18T06:39:50.9852633Z * errcheck: 1
+2026-11-18T06:39:50.9852854Z * gosec: 3
+2026-11-18T06:39:50.9852985Z
+2026-11-18T06:39:50.9860781Z ##[error]issues found
+2026-11-18T06:39:50.9861644Z Ran golangci-lint in 7436ms
+2026-11-18T06:39:50.9862139Z ##[endgroup]
+2026-11-18T06:39:50.9979004Z Post job cleanup.
+2026-11-18T06:39:51.4017256Z Cache hit occurred on the primary key golangci-lint.cache-Linux-2967-136ef89b5036a271ac64699a9ed7aaa0efae9484, not saving cache.
+2026-11-18T06:39:51.4177721Z Post job cleanup.
+2026-11-18T06:39:51.4855039Z [command]/usr/bin/git version
+2026-11-18T06:39:51.4885916Z git version 2.56.1
+2026-11-18T06:39:51.4907911Z Temporarily overriding HOME='/home/runner/work/_temp/0fdbe3e5-358f-4891-a7cd-a606a5661484' before making global git config changes
+2026-11-18T06:39:51.4909151Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T06:39:51.4911070Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/circula/circula
+2026-11-18T06:39:51.4934526Z Removing SSH command configuration
+2026-11-18T06:39:51.4939278Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T06:39:51.4962496Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-18T06:39:51.5115947Z Removing HTTP extra header
+2026-11-18T06:39:51.5119197Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T06:39:51.5142202Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-18T06:39:51.5292866Z Removing includeIf entries pointing to credentials config files
+2026-11-18T06:39:51.5297429Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T06:39:51.5318546Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-18T06:39:51.5589993Z Cleaning up orphan processes

@@ -136,7 +136,7 @@ func TestMalformedPathIDsKeepAuthenticationAndPrivacyContract(t *testing.T) {
 	token, _ := testutil.Must2(w.env.Svc.CreateInvitation(w.env.Ctx, w.admin, w.net.ID, service.InviteInput{}))
 	wantStatus(t, w.post(w.token(guest, domain.ScopeRead, domain.ScopeWrite), "/invitations/"+token+"/accept", m{"display_name": "Guest"}, w.key()), 201)
 
-	// Existing adapter jobs use UUIDv4; only the textual shape is validated.
+	// Recorded consistency jobs remain retrievable through their original ID.
 	check := w.post(w.adminT, "/admin/consistency-checks", nil, w.key())
 	wantStatus(t, check, 201)
 	wantStatus(t, w.do(req{method: "GET", path: check.Header().Get("Location"), token: w.adminT}), 200)

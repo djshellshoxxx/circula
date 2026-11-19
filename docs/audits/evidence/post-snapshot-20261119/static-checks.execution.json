@@ -1,0 +1,47 @@
+{
+  "source_commit": "12af2112fb968f1c72e874e3c18b66e9e2626208",
+  "checks": [
+    {
+      "name": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.029,
+      "output": ""
+    },
+    {
+      "name": "gofmt",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "."
+      ],
+      "exit_code": 0,
+      "seconds": 0.475,
+      "output": ""
+    },
+    {
+      "name": "workflow-pins",
+      "command": [
+        "bash",
+        "scripts/check-action-pins.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.207,
+      "output": "action pins and permissions: ok\n"
+    },
+    {
+      "name": "hygiene",
+      "command": [
+        "bash",
+        "scripts/check-hygiene.sh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.585,
+      "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\nhygiene checks: ok\n"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/50_years_ahead,_default_counts
+    backup_test.go:322: removed [circula-20251115T030000.000000000Z.db circula-20251215T030000.000000000Z.db circula-20260905T030000.000000000Z.db circula-20261008T113000.123456789Z.db circula-20261009T113000.123456789Z.db circula-20261010T113000.123456789Z.db circula-20261011T113000.123456789Z.db circula-20261012T113000.123456789Z.db circula-20261013T113000.123456789Z.db circula-20261014T113000.123456789Z.db circula-20261015T113000.123456789Z.db circula-20261016T113000.123456789Z.db circula-20261017T113000.123456789Z.db circula-20261018T113000.123456789Z.db], want [circula-20251115T030000.000000000Z.db circula-20260905T030000.000000000Z.db circula-20261008T113000.123456789Z.db circula-20261009T113000.123456789Z.db circula-20261010T113000.123456789Z.db circula-20261011T113000.123456789Z.db circula-20261012T113000.123456789Z.db circula-20261013T113000.123456789Z.db circula-20261014T113000.123456789Z.db circula-20261015T113000.123456789Z.db circula-20261016T113000.123456789Z.db circula-20261017T113000.123456789Z.db]
+    backup_test.go:334: circula-20261018T113000.123456789Z.db: present=false, want true
+    backup_test.go:334: circula-20261018T113000.123456789Z.db.manifest.json: present=false, want true
+    backup_test.go:334: circula-20261018T113000.123456789Z.db.anchor.json: present=false, want true
+    backup_test.go:334: circula-20251215T030000.000000000Z.db: present=false, want true
+    backup_test.go:334: circula-20251215T030000.000000000Z.db.manifest.json: present=false, want true
+    backup_test.go:334: circula-20251215T030000.000000000Z.db.anchor.json: present=false, want true
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/an_hour_ahead_in_the_current_month
+    backup_test.go:322: removed [circula-20261115T123000.123456789Z.db circula-20261116T122900.123456789Z.db], want [circula-20261115T123000.123456789Z.db]
+    backup_test.go:334: circula-20261116T122900.123456789Z.db: present=false, want true
+    backup_test.go:334: circula-20261116T122900.123456789Z.db.manifest.json: present=false, want true
+    backup_test.go:334: circula-20261116T122900.123456789Z.db.anchor.json: present=false, want true
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/backup_at_now_counts
+    backup_test.go:322: removed [circula-20261116T113000.123456789Z.db circula-20261116T123000.123456789Z.db], want [circula-20261116T113000.123456789Z.db]
+    backup_test.go:334: circula-20261116T123000.123456789Z.db: present=false, want true
+    backup_test.go:334: circula-20261116T123000.123456789Z.db.manifest.json: present=false, want true
+    backup_test.go:334: circula-20261116T123000.123456789Z.db.anchor.json: present=false, want true
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/several_future-dated_files
+    backup_test.go:322: removed [circula-20261114T123000.123456789Z.db circula-20261116T113000.123456789Z.db circula-20261116T123000.123456790Z.db.enc circula-20261117T123000.123456789Z.db], want [circula-20261114T123000.123456789Z.db]
+    backup_test.go:327: future-dated circula-20261117T123000.123456789Z.db changed: "", open /tmp/TestPruneKeepsFutureDatedBackupsOutOfCountsseveral_future-dated3842422943/001/circula-20261117T123000.123456789Z.db: no such file or directory
+    backup_test.go:327: future-dated circula-20261117T123000.123456789Z.db.manifest.json changed: "", open /tmp/TestPruneKeepsFutureDatedBackupsOutOfCountsseveral_future-dated3842422943/001/circula-20261117T123000.123456789Z.db.manifest.json: no such file or directory
+    backup_test.go:327: future-dated circula-20261117T123000.123456789Z.db.anchor.json changed: "", open /tmp/TestPruneKeepsFutureDatedBackupsOutOfCountsseveral_future-dated3842422943/001/circula-20261117T123000.123456789Z.db.anchor.json: no such file or directory
+    backup_test.go:327: future-dated circula-20261116T123000.123456790Z.db.enc changed: "", open /tmp/TestPruneKeepsFutureDatedBackupsOutOfCountsseveral_future-dated3842422943/001/circula-20261116T123000.123456790Z.db.enc: no such file or directory
+    backup_test.go:327: future-dated circula-20261116T123000.123456790Z.db.enc.manifest.json changed: "", open /tmp/TestPruneKeepsFutureDatedBackupsOutOfCountsseveral_future-dated3842422943/001/circula-20261116T123000.123456790Z.db.enc.manifest.json: no such file or directory
+    backup_test.go:327: future-dated circula-20261116T123000.123456790Z.db.enc.anchor.json changed: "", open /tmp/TestPruneKeepsFutureDatedBackupsOutOfCountsseveral_future-dated3842422943/001/circula-20261116T123000.123456790Z.db.enc.anchor.json: no such file or directory
+    backup_test.go:334: circula-20261116T113000.123456789Z.db: present=false, want true
+    backup_test.go:334: circula-20261116T113000.123456789Z.db.manifest.json: present=false, want true
+    backup_test.go:334: circula-20261116T113000.123456789Z.db.anchor.json: present=false, want true
+--- FAIL: TestPruneKeepsFutureDatedBackupsOutOfCounts (0.00s)
+    --- FAIL: TestPruneKeepsFutureDatedBackupsOutOfCounts/50_years_ahead,_default_counts (0.00s)
+    --- FAIL: TestPruneKeepsFutureDatedBackupsOutOfCounts/an_hour_ahead_in_the_current_month (0.00s)
+    --- FAIL: TestPruneKeepsFutureDatedBackupsOutOfCounts/backup_at_now_counts (0.00s)
+    --- FAIL: TestPruneKeepsFutureDatedBackupsOutOfCounts/several_future-dated_files (0.00s)
+=== RUN   TestJobRetentionDoesNotCountFutureDatedBackup
+    jobs_regress_test.go:506: kept [circula-20761118T085757.344800606Z.db.enc circula-20261118T085757.344889551Z.db], want the future-dated file, the new backup and circula-20261117T085757.344800606Z.db
+--- FAIL: TestJobRetentionDoesNotCountFutureDatedBackup (0.66s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.677s
+FAIL
