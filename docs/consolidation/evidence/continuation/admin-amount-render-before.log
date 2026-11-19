@@ -1,0 +1,125 @@
+--- FAIL: TestAdminAmountUnitTemplates (2.60s)
+    --- FAIL: TestAdminAmountUnitTemplates/singular (0.35s)
+        --- FAIL: TestAdminAmountUnitTemplates/singular/admin_adjust_review (0.09s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/singular/admin_adjust_approve (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/singular/admin_adjust_pending (0.08s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 1.00 credit need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 1.00 credit</td>"
+        --- FAIL: TestAdminAmountUnitTemplates/singular/admin_reverse (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/singular/admin_reverse_review (0.05s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 1.00 credit</dd>"
+    --- FAIL: TestAdminAmountUnitTemplates/already_plural_singular (0.28s)
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural_singular/admin_reverse_review (0.05s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 1.00 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural_singular/admin_adjust_review (0.04s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural_singular/admin_adjust_approve (0.05s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural_singular/admin_adjust_pending (0.06s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 1.00 Hours need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 1.00 Hours</td>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural_singular/admin_reverse (0.07s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+    --- FAIL: TestAdminAmountUnitTemplates/already_plural (0.36s)
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural/admin_adjust_review (0.08s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>2.50 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural/admin_adjust_approve (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>2.50 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural/admin_adjust_pending (0.07s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 2.50 Hours need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 2.50 Hours</td>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural/admin_reverse (0.07s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>2.50 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/already_plural/admin_reverse_review (0.08s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 2.50 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+    --- FAIL: TestAdminAmountUnitTemplates/zero_decimal (0.33s)
+        --- FAIL: TestAdminAmountUnitTemplates/zero_decimal/admin_adjust_approve (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/zero_decimal/admin_adjust_pending (0.07s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 1 credit need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 1 credit</td>"
+        --- FAIL: TestAdminAmountUnitTemplates/zero_decimal/admin_reverse (0.07s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/zero_decimal/admin_reverse_review (0.06s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 1 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/zero_decimal/admin_adjust_review (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1 credit</dd>"
+    --- FAIL: TestAdminAmountUnitTemplates/four_decimals (0.36s)
+        --- FAIL: TestAdminAmountUnitTemplates/four_decimals/admin_reverse (0.07s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.0000 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/four_decimals/admin_reverse_review (0.08s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 1.0000 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/four_decimals/admin_adjust_review (0.07s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.0000 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/four_decimals/admin_adjust_approve (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.0000 credit</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/four_decimals/admin_adjust_pending (0.07s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 1.0000 credit need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 1.0000 credit</td>"
+    --- FAIL: TestAdminAmountUnitTemplates/HTML-sensitive (0.28s)
+        --- FAIL: TestAdminAmountUnitTemplates/HTML-sensitive/admin_reverse (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 <hours>&</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/HTML-sensitive/admin_reverse_review (0.06s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 1.00 <hours>&</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/HTML-sensitive/admin_adjust_review (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 <hours>&</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/HTML-sensitive/admin_adjust_approve (0.05s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>1.00 <hours>&</dd>"
+        --- FAIL: TestAdminAmountUnitTemplates/HTML-sensitive/admin_adjust_pending (0.05s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 1.00 <hours>& need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 1.00 <hours>&</td>"
+    --- FAIL: TestAdminAmountUnitTemplates/exact_large_amount (0.33s)
+        --- FAIL: TestAdminAmountUnitTemplates/exact_large_amount/admin_adjust_review (0.06s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>90071992547409.93 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/exact_large_amount/admin_adjust_approve (0.05s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>90071992547409.93 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/exact_large_amount/admin_adjust_pending (0.05s)
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Adjustments above 90071992547409.93 Hours need approval"
+            admin_amount_catalog_test.go:66: administrator financial page lacks "Credit (balance goes up): 90071992547409.93 Hours</td>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/exact_large_amount/admin_reverse (0.04s)
+            admin_amount_catalog_test.go:70: administrator financial page lacks "<dt>Amount</dt><dd>90071992547409.93 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+        --- FAIL: TestAdminAmountUnitTemplates/exact_large_amount/admin_reverse_review (0.12s)
+            admin_amount_catalog_test.go:68: administrator financial page lacks "<dt>Trade</dt><dd>Ana paid Ben 90071992547409.93 Hours</dd>"
+            admin_amount_catalog_test.go:73: unit was double-suffixed or rendered as markup
+--- FAIL: TestAdminReversalIndependentUnitAmounts (0.18s)
+    admin_amount_catalog_test.go:88: administrator financial page lacks "<dt>Already reversed</dt><dd>1.00 credit</dd>"
+--- FAIL: TestAdminAdjustmentPendingActionTemplates (0.54s)
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/decider (0.07s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+        admin_amount_catalog_test.go:196: administrator financial page lacks "aria-label=\"Review approval for <img src=x onerror=\"alert(1)\"> & Zoë 100%\""
+        admin_amount_catalog_test.go:196: administrator financial page lacks "aria-label=\"Reject adjustment for <img src=x onerror=\"alert(1)\"> & Zoë 100%\""
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/proposer (0.08s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+        admin_amount_catalog_test.go:196: administrator financial page lacks "aria-label=\"Cancel request for <img src=x onerror=\"alert(1)\"> & Zoë 100%\""
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/ineligible (0.07s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/expired (0.06s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/decided (0.07s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/decision_gate (0.04s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+        admin_amount_catalog_test.go:196: administrator financial page lacks "aria-label=\"Review approval for <img src=x onerror=\"alert(1)\"> & Zoë 100%\""
+        admin_amount_catalog_test.go:196: administrator financial page lacks "aria-label=\"Reject adjustment for <img src=x onerror=\"alert(1)\"> & Zoë 100%\""
+    --- FAIL: TestAdminAdjustmentPendingActionTemplates/reject_flag_alone (0.04s)
+        admin_amount_catalog_test.go:177: administrator financial page lacks "Adjustments above 1.00 Hours need approval from a second administrator before anything is posted."
+FAIL
+FAIL	command-line-arguments	3.340s
+FAIL

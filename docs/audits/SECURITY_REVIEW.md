@@ -1,6 +1,6 @@
 # Security and integrity review
 
-> Current composition: [combined core review and qualification checkpoint](CORE_COMPOSITION_20261119.md) records the reconciled PR90/96/99/101/102/104 source, focused passing checks, unchanged main and pending full provider gates. The [bounded branch refresh](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) records 123 retained refs at 11:27:08 UTC. Earlier sections and receipts keep their named source and observation time.
+> Closing publication: [the final addendum](CONSOLIDATION_FINAL_REPORT.md#closing-publication-checkpoint-2026-11-19) records Core992, isolated follow-ups, the timestamped 125-ref snapshot and pending gates. The [combined core review](CORE_COMPOSITION_20261119.md), [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) and earlier execution receipts retain their original scope. Current PR heads and checks govern subsequent qualification.
 
 Review date: **2026-11-18 Pacific / 2026-11-19 UTC**. Baseline `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`; core candidate [PR #90](https://github.com/djshellshoxxx/circula/pull/90). This is an engineering review with independent AI-assisted reviewers, not the external SEC-033 release assessment.
 
@@ -73,8 +73,44 @@ external SEC-033 release review remain separate.
 | FUT-02 | FNET-204 feed | Conflicting duplicate source records made cursor pagination depend on input order. Reject conflicting records in either order. | Fail-before regression, repaired race suite and 20-second `FuzzOpenCursor` (66,869 executions) passed. |
 | FUT-03 | FUX-104 notifications | Pipe-joined encryption context allowed distinct accepted `(network, member)` tuples to share authenticated data. | Use unambiguous versioned encoding for ambiguous tuples, preserve safe legacy rows, never fall back to ambiguous legacy context. Security reviewer approved actual code/tests; module qualification recorded separately. |
 | FUT-04 | FUX-104 notifications | Invalid UTF-8 identities could normalize through JSON and collide in deduplication/signed-unsubscribe representations. | Reject invalid UTF-8 at relevant identity boundaries; tests cover all tuple components and valid Unicode. Isolated module only. |
+| FUT-05 | FNET-209 federation | `Sign` reported success after malformed UTF-8 was normalized by JSON; the returned envelope did not preserve the caller's strings. Original `Verify` already rejected it. | [#105](https://github.com/djshellshoxxx/circula/pull/105) rejects all five invalid string fields before marshaling. Independent 30-case parent-source reproduction, exact-source race (1.146s, 87.5%) and vet pass; no reproduced verifier or replay-identity bypass. |
+| FUT-06 | FUX-104 notification transports | A successful push could return a non-nil interface containing a typed nil; Retry-After arithmetic could overflow; a custom SMTP dialer needed explicit verified implicit-TLS negotiation. | Reviewed #103 implementations and real HTTP/TLS/SMTP regression source are preserved in #100 at `98852afb`. Combined-head runtime and dependency checks remain required; module adoption stays held. |
 | TOPIC-01 | SEC-026 | Default-enabled provisional thresholds, hidden member policy changes, undersized checkbox and future-dated records counted after clock rollback. | Independent branch defaults off, shows settings in member history, uses existing 44-pixel control layout and counts only `(since, now]`. Reviewed; unresolved subject-visibility policy prevents main integration. |
 | TOPIC-02 | GOV-021 | Existing administrator-recovery page absent from the browser accessibility fixture registry. | Add the existing page fixture on the GOV-021 branch only. This does not resolve the recovery authority conflict. |
+
+### Closing federation and dependency evidence
+
+The independent #105 review used exact source
+`059b0e4508a6c4f8e29f6a4cccd06f92b14ea115` (tree
+`4d9f608041e65a2a1a297f17614438790240bc04`).
+[`TestSignRejectsMalformedUTF8`](https://github.com/djshellshoxxx/circula/blob/059b0e4508a6c4f8e29f6a4cccd06f92b14ea115/future/federation/envelope_utf8_test.go)
+tests five fields against six malformed encodings. Applying these regressions
+to only the original parent `envelope.go` reproduced false `Sign` success in
+all 30 cases; each envelope was rejected by the original verifier.
+`TestVerifyRejectsMalformedUTF8Representations` also passed before the repair.
+The exact repaired source passed `go test -race -count=1 -cover -timeout=30s ./...`
+with a 1.146s package result (2.530s command wall time) at 87.5% coverage,
+plus `go vet ./...`. This independent run includes
+the valid-Unicode fixture and fuzz seeds, not another fuzz campaign. Its
+`runtime-receipt.json`, counterfactual and race/vet logs are retained in the
+checksummed handoff archive `security-federation-review-059b0e4.tar.gz`.
+[#106](https://github.com/djshellshoxxx/circula/pull/106) at `d5555440` corrects
+only the README's workflow-isolation claim. Federation remains disabled/HOLD;
+durable replay, transport, trust and core-adapter acceptance are unfinished.
+
+The official [GO-2026-5932 record](https://vuln.go.dev/ID/GO-2026-5932.json)
+affects the OpenPGP family within the unchanged `golang.org/x/crypto v0.58.0`
+requirement, not every package in that module. Its recorded `x/crypto` range
+ends at `v0.58.1-0.20261009181718-2f1f834330b2`, while the separately extracted
+`golang.org/x/crypto/openpgp` module remains affected at all versions; that
+boundary is not an OpenPGP safety fix. The
+[notification composition note](https://github.com/djshellshoxxx/circula/blob/98852afbd1cd2e31a38d6405b6eee36ad3d7e737/docs/audit/consolidation-2026-11-17/source-reviews/NOTIFICATION-TRANSPORT-COMPOSITION.md)
+preserves the scope. Historical job135447099448 reported zero called and zero
+imported-package vulnerabilities plus one unnamed required-module advisory.
+The official lookup does not retroactively identify that unnamed warning or
+certify current reachability. Offline attempts stopped before analysis on
+unavailable metadata. The current verbose provider scan remains required;
+no dependency bump or warning suppression is claimed.
 
 ## Existing protections preserved and checked
 

@@ -1,0 +1,30 @@
+test_dos_zip_file_types (test_read_export.ReferenceExportTests.test_dos_zip_file_types) ... ok
+test_empty_ledger_and_zero_balance_accounts (test_read_export.ReferenceExportTests.test_empty_ledger_and_zero_balance_accounts) ... ok
+test_integrity_checks_remain_enforced (test_read_export.ReferenceExportTests.test_integrity_checks_remain_enforced) ... ok
+test_malformed_csv_reports_failure_without_traceback (test_read_export.ReferenceExportTests.test_malformed_csv_reports_failure_without_traceback) ... ok
+test_malformed_manifest_is_reported_without_traceback (test_read_export.ReferenceExportTests.test_malformed_manifest_is_reported_without_traceback) ... ok
+test_member_budget_rejects_unchecked_suffixes (test_read_export.ReferenceExportTests.test_member_budget_rejects_unchecked_suffixes) ... ok
+test_mine_summary_rules (test_read_export.ReferenceExportTests.test_mine_summary_rules) ... ok
+test_old_packages_without_optional_summary (test_read_export.ReferenceExportTests.test_old_packages_without_optional_summary) ... ok
+test_rejects_duplicate_manifest_declarations (test_read_export.ReferenceExportTests.test_rejects_duplicate_manifest_declarations) ... ok
+test_rejects_duplicate_zip_members (test_read_export.ReferenceExportTests.test_rejects_duplicate_zip_members) ... ok
+test_rejects_inconsistent_summary_fields (test_read_export.ReferenceExportTests.test_rejects_inconsistent_summary_fields) ... ok
+test_rejects_ledger_rows_with_valid_file_checksums (test_read_export.ReferenceExportTests.test_rejects_ledger_rows_with_valid_file_checksums) ... ok
+test_rejects_malformed_summary (test_read_export.ReferenceExportTests.test_rejects_malformed_summary) ... ok
+test_rejects_nonregular_zip_members (test_read_export.ReferenceExportTests.test_rejects_nonregular_zip_members) ... ok
+test_rejects_raw_nul_zip_names_before_zipfile_normalization (test_read_export.ReferenceExportTests.test_rejects_raw_nul_zip_names_before_zipfile_normalization) ... ok
+test_rejects_unlisted_package_members (test_read_export.ReferenceExportTests.test_rejects_unlisted_package_members) ... ok
+test_rejects_unsafe_manifest_names (test_read_export.ReferenceExportTests.test_rejects_unsafe_manifest_names) ... ok
+test_rejects_zip_path_aliases (test_read_export.ReferenceExportTests.test_rejects_zip_path_aliases) ... ok
+test_schema_version_requires_an_integer (test_read_export.ReferenceExportTests.test_schema_version_requires_an_integer) ... ok
+test_unrelated_scopes_reject_summary (test_read_export.ReferenceExportTests.test_unrelated_scopes_reject_summary) ... ok
+test_valid_scopes_formats_and_package_types (test_read_export.ReferenceExportTests.test_valid_scopes_formats_and_package_types) ... ok
+test_zip_compression_completion_state_must_be_available (test_read_export.ReferenceExportTests.test_zip_compression_completion_state_must_be_available) ... ok
+test_zip_compression_requires_complete_streams (test_read_export.ReferenceExportTests.test_zip_compression_requires_complete_streams) ... ok
+test_zip_compression_valid_streams (test_read_export.ReferenceExportTests.test_zip_compression_valid_streams) ... ok
+test_zip_sizes_match_the_complete_member (test_read_export.ReferenceExportTests.test_zip_sizes_match_the_complete_member) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 9.285s
+
+OK

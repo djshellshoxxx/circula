@@ -1,0 +1,9 @@
+--- FAIL: TestFailingMigrationRollsBackAndReopensCleanly (0.03s)
+    persistence_regression_test.go:263: head migration creates 1 objects; need at least 2 to fail midway
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/store	0.042s
+--- FAIL: TestHelpDocumentsSupportBoundaries (0.00s)
+    support_boundaries_template_test.go:36: parse help.html: template: help.html:20: function "msg" not defined
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	0.020s
+FAIL

@@ -1,0 +1,121 @@
+{
+  "started_at": "2026-11-19T11:51:17.564633+00:00",
+  "head": "0fb5304a2caeb375d1791bf583744ce2a81cc3ba",
+  "tree": "eea7451ba2bb2ac31106721823fcf84411b91cbc",
+  "command": "CGO_ENABLED=1 GOMAXPROCS=1 GOMEMLIMIT=500MiB go test -json -p 1 -count=1 -timeout 20m ./...",
+  "exit_code": 1,
+  "completed_packages": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Action": "fail",
+      "Elapsed": 93.138
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/api",
+      "Action": "pass",
+      "Elapsed": 25.846
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/contract",
+      "Action": "pass",
+      "Elapsed": 4.224
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/domain",
+      "Action": "pass",
+      "Elapsed": 0.13
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "Action": "pass",
+      "Elapsed": 0.002
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "Action": "pass",
+      "Elapsed": 0.004
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/logx",
+      "Action": "pass",
+      "Elapsed": 0.007
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/repository",
+      "Action": "pass",
+      "Elapsed": 0.16
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Action": "fail",
+      "Elapsed": 96.251
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Action": "pass",
+      "Elapsed": 11.651
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Action": "pass",
+      "Elapsed": 49.801
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Action": "pass",
+      "Elapsed": 0.017
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "Action": "pass",
+      "Elapsed": 0.052
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Action": "pass",
+      "Elapsed": 1.4769999999999999
+    }
+  ],
+  "test_terminal_counts": {
+    "pass": 2749,
+    "skip": 6,
+    "fail": 2
+  },
+  "skipped_tests": [
+    "TestBackupStagingRefusesForeignOwnedParent",
+    "TestBackupWorkLeaseChild",
+    "TestRestoreSwapCrashChild",
+    "TestLoginTimingStatistical",
+    "TestLoadConcurrentTrades",
+    "TestQA010CrashChild"
+  ],
+  "failures": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": "TestRestoreDrillScript"
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Test": null
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": "TestSQLiteWALWriteFailureRollsBackAndRecovers"
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Test": null
+    }
+  ],
+  "end_head_before_reconciliation": "0fb5304a2caeb375d1791bf583744ce2a81cc3ba"
+}

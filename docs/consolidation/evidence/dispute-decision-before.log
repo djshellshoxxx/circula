@@ -1,0 +1,30 @@
+--- FAIL: TestDisputeDecisionCatalogueMessages (0.00s)
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.reversal_sentence (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.reversal_sentence
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.waiting (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.waiting
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.no_reversal (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.no_reversal
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.change_for (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.change_for
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.amount_value (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.amount_value
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.balance_after (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.balance_after
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.decision.amount_max (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.decision.amount_max
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.rereview.amount_max (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.rereview.amount_max
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.rereview.atomic_explanation (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.rereview.atomic_explanation
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.rereview.upheld_posted (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.rereview.upheld_posted
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.rereview.partial_posted (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.rereview.partial_posted
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.rereview.confirmed (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.rereview.confirmed
+    --- FAIL: TestDisputeDecisionCatalogueMessages/dispute.rereview.decided (0.00s)
+        dispute_decision_test.go:35: decision sentence is not in the catalogue: dispute.rereview.decided
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.026s
+FAIL

@@ -1,6 +1,33 @@
 # Branch consolidation matrix
 
-> Current composition: [combined core review and qualification checkpoint](CORE_COMPOSITION_20261119.md) records the reconciled PR90/96/99/101/102/104 source, focused passing checks, unchanged main and pending full provider gates. The [bounded branch refresh](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) records 123 retained refs at 11:27:08 UTC. Earlier sections and receipts keep their named source and observation time.
+> Closing publication: [the final addendum](CONSOLIDATION_FINAL_REPORT.md#closing-publication-checkpoint-2026-11-19) records Core992, isolated follow-ups, the timestamped 125-ref snapshot and pending gates. The [combined core review](CORE_COMPOSITION_20261119.md), [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) and earlier execution receipts retain their original scope. Current PR heads and checks govern subsequent qualification.
+
+## Closing branch and publication addendum
+
+A final bounded read observed **125 live refs at 2026-11-19 12:10:21.881995 UTC**.
+The two additions after the preserved 123-ref cutoff are:
+
+| Branch / PR | Exact observed head | Scope and disposition |
+|---|---|---|
+| `audit/federation-readme-20261119` / [#106](https://github.com/djshellshoxxx/circula/pull/106) | `d55554408ef591371768259905c70ca58d68facb` | README-only clarification of the isolated workflow; draft targeting #105's branch; runtime and HOLD unchanged |
+| `audit/gov021-final-core-refresh-20261119` / [#107](https://github.com/djshellshoxxx/circula/pull/107) | `b8cb63bfc6d2a969d972f55937cdc2070d5eba34` | Reviewed Core refresh and independent migration 0022 on the GOV-021 target; draft and policy-held |
+
+Comparison against the original 107-name inventory found no missing names,
+105 unchanged tips and two advances: GOV-021 `59cf6997` to `0d480a5b`, and
+notifications `3bdf8e92` to `797dddf2`. Native `merge-base --is-ancestor`
+confirmed both original tips remain ancestral. Main remains `ead63b5c`.
+
+At closing, #101 is included in Core #90 at `99247859`, and #98 is included
+in isolated feed #92 at `db80ed34`; these are integration-only closures.
+Notification transport #103 is composed into #100 at `98852afb` without a
+main merge or automatic adoption. #105 now has independent source review,
+a 30-case parent-source reproduction and passing exact-source race/vet
+evidence; its earlier pending row below remains a record of the 123-ref cutoff.
+All future modules remain on HOLD. There are nine coordinator-created PRs,
+two qualified original-topic merges (#91/#93), two integration-only inclusions
+(#101/#98), and zero main merges. The closing open-PR collection returned 23
+records. Later writes must be checked against live PR heads rather than this
+timestamped inventory.
 
 ## Later branch additions
 

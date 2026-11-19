@@ -1,8 +1,81 @@
 # Consolidation execution report
 
-> Current composition: [combined core review and qualification checkpoint](CORE_COMPOSITION_20261119.md) records the reconciled PR90/96/99/101/102/104 source, focused passing checks, unchanged main and pending full provider gates. The [bounded branch refresh](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) records 123 retained refs at 11:27:08 UTC. Earlier sections and receipts keep their named source and observation time.
+> Closing publication checkpoint: the addendum below records the published Core992 source and isolated follow-ups. The [combined core review](CORE_COMPOSITION_20261119.md) and [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) retain their original source and observation time. Current PR heads and checks govern later qualification.
 
 Audit date: **2026-11-18 Pacific / 2026-11-19 UTC**. This report records observed implementation, publication and qualification. Its current checkpoint is still pending combined provider gates; it is not a declaration that all work is merged or release-ready. The PR receipts below are authoritative for later state changes.
+
+## Closing publication checkpoint (2026-11-19)
+
+The reviewed Core composition was published in [PR #90](https://github.com/djshellshoxxx/circula/pull/90) as
+[`992478594e5902f57a39f3772739bee6ab495d24`](https://github.com/djshellshoxxx/circula/commit/992478594e5902f57a39f3772739bee6ab495d24),
+tree `3725d720ce7fc41f148b560e5f06c8f9bf5ab221`. Independent comparison of
+all 1,470 leaves matched the reviewed local tree, including every mode and
+blob SHA. Its preserved source parents are recorded in the commit and the
+[composition checkpoint](CORE_COMPOSITION_20261119.md). Main remains
+`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`; **zero main merges** occurred.
+
+The following are published-source receipts, not claims that their new CI
+has passed. The two earlier qualified topic merges, #91 and #93, remain
+recorded separately below.
+
+| Open coordinator PR | Published head at closing checkpoint | Target / boundary |
+|---|---|---|
+| [#90 core](https://github.com/djshellshoxxx/circula/pull/90) | `992478594e5902f57a39f3772739bee6ab495d24` | `main`; draft, final provider/review gate pending |
+| [#92 feed](https://github.com/djshellshoxxx/circula/pull/92) | `db80ed34af09ad6b28e533da6d4b82b8250f3711` | `future/fnet-204-feed-20261116`; draft, disabled/HOLD |
+| [#94 signals](https://github.com/djshellshoxxx/circula/pull/94) | `45b596f12876e3f91c30b996457f7096e1fffe24` | Core integration branch; draft, default off and policy-held |
+| [#95 PWA](https://github.com/djshellshoxxx/circula/pull/95) | `0b0d70624591941c0a71a225b7390903dc4ab97c` | `future/fux-101-pwa-20261116`; draft, disabled/HOLD |
+| [#100 notifications](https://github.com/djshellshoxxx/circula/pull/100) | `98852afbd1cd2e31a38d6405b6eee36ad3d7e737` | `future/fux-104-notifications-20261116`; draft, disabled/HOLD |
+| [#106 federation documentation](https://github.com/djshellshoxxx/circula/pull/106) | `d55554408ef591371768259905c70ca58d68facb` | `master/fnet209-utf8-20261119`; draft, README-only correction |
+| [#107 GOV-021 refresh](https://github.com/djshellshoxxx/circula/pull/107) | `b8cb63bfc6d2a969d972f55937cdc2070d5eba34` | `claude/gov-021-admin-recovery`; draft and policy-held |
+
+The closing bounded `git ls-remote --heads` read observed **125 live remote
+branch refs at 12:10:21.881995 UTC**. This confirms the earlier observation of
+125 distinct names: the frozen 123-ref inventory at 11:27:08 UTC plus the
+two specifically verified #106/#107 additions. Both observations retain
+their timestamps; neither is an assurance about later concurrent writes.
+All 107 original names remain: 105 original tips are unchanged, while the
+GOV-021 and notification topic tips advanced with their original commits
+still ancestral, confirmed by native Git ancestry checks. The closing
+open-PR collection returned 23 records. There are **nine coordinator-created repair/integration
+PRs: #90–95, #100, #106 and #107**. These are separate from concurrent source
+PRs and from the number of defects repaired.
+
+There are **two qualified original-topic merges**, #91 and #93, and **two
+integration-only inclusions**: #101 closed as merged into the Core integration
+branch at `99247859` (11:39:56 UTC), and #98 closed as merged into the feed
+integration branch at `db80ed34` (11:57:10 UTC). Neither inclusion is a main
+merge or a new qualification result. All original histories remain preserved.
+
+The PWA, feed and notification publications were independently checked against
+their local reviewed trees: 1,517, 1,505 and 1,510 leaves respectively, with no differences.
+PWA retains all 44 module files and its existing browser launch behavior.
+Feed retains all 21 reviewed Go source/test/dependency files from #98.
+Notifications retains all 38 module files from reviewed #103, the earlier
+AAD/UTF-8 repairs and the verbose dependency diagnostic. These compositions
+retain the critical Core992 token-authority, session and export repairs.
+Fresh combined-head CI remains required; no duplicate runtime suites were
+run merely to compose unchanged module source.
+
+At **11:59:01 UTC**, exact-Core992 run
+[44516848989](https://github.com/djshellshoxxx/circula/actions/runs/44516848989)
+had **all nine configured jobs queued, zero completed passes and zero completed
+failures**. Queue state is not a test failure or a pass. The final main gate
+remains external: current-head provider results, required reviews and normal
+merge controls must complete. Owner-policy, manual accessibility, professional
+security-review and release gates remain as described in
+[REMAINING_BLOCKERS.md](REMAINING_BLOCKERS.md).
+
+The [closing remote-head snapshot](evidence/closing-publication-20261119/remote-heads.json)
+and [original-branch preservation receipt](evidence/closing-publication-20261119/original-branch-preservation.json)
+retain the complete named observations and ancestry checks in the repository.
+
+This closing change updates only the six audit reports and those two evidence files. Non-documentation
+blobs and `docs/TRACEABILITY.md` remain exactly Core992; no runtime test or
+trace regeneration is needed for this documentation-only follow-up. Its
+publication will produce a new PR90 head. **Current PR heads and checks are
+authoritative after that publication**; the source-bound results below must
+not be relabeled as passes on the new head. The isolated branches require no
+runtime-source refresh for this documentation change.
 
 ## Starting and ending revisions
 
@@ -32,9 +105,10 @@ closed as superseded, preserving its branch and code in #101.
 [API036_COMPLETION.md](API036_COMPLETION.md) records implementation, branch
 provenance, independent reviews, real SQLite/Go stress measurements and actual
 failed/interrupted checks. [API036_DATABASE_REVIEW.md](API036_DATABASE_REVIEW.md)
-links the portable SQL probe and preserved measurement JSON. Current-head full
-Go/race/vet/check, browser, fuzz and native platform receipts on #101 govern
-qualification; earlier PR90 results do not qualify these changes. The first
+links the portable SQL probe and preserved measurement JSON. These receipts
+remain bound to their stated #101 source. Since #101 was included in the
+Core integration branch, current-head full Go/race/vet/check, browser, fuzz
+and native platform receipts on #90 govern combined qualification. The first
 full run found two fixture compatibility failures now repaired without removing
 assertions. Local Chromium aborts before assertions because socket() is denied.
 All future modules remain isolated and disabled. No main merge, release or
@@ -48,15 +122,19 @@ deployment is asserted by this continuation record.
 | Starting tips already ancestral to main | **52**, including main |
 | Starting non-ancestor tips reviewed | **55** |
 | Later remote refs preserved at bounded cutoff | **123**, observed 2026-11-19 at 11:27:08 UTC; all 107 original names retained |
+| Closing bounded live-ref snapshot | **125**, observed 2026-11-19 at 12:10:21.881995 UTC; independently confirms frozen 123 plus the two named #106/#107 additions |
+| Original-tip preservation at closing snapshot | **105 unchanged + 2 advanced with original tip ancestral**; all 107 original branch names remain |
+| Open PRs at closing snapshot | **23** returned by the bounded open-PR collection; separate from the initial 89-PR inventory |
 | Non-ancestor clean merge simulations / conflicts | **32 / 23** |
 | Non-ancestor zero-tree-change merges | **3**; retained without claiming new behavior |
 | PRs inventoried | **89**: 10 open, 79 closed; pagination exhausted |
 | Standalone issues found | **0**; issue endpoint records were all PRs |
 | Original source PR heads preserved in core candidate | **5**: #82, #87, #88, #78, #89 |
 | Additional concurrent core PR histories composed | **5**: #96, #99, #101, #102, #104; latest reviewed heads and limits in CORE_COMPOSITION_20261119.md |
-| Coordinator-published repair/integration branches at this cutoff | **7**, represented by PR #90–95 and #100; counts published branches, not source defects, feature completion or main merges |
+| Coordinator-created repair/integration PRs through closing publication | **9**: #90–95, #100, #106 and #107; excludes concurrent source PRs and does not count defects, completed features or main merges |
 | New main merges at this checkpoint | **0**; pending current-head gates |
 | Isolated topic merges observed | **2**: #91 into GOV-021 and #93 into notifications; configured active gates passed at each exact source and each resulting tree equals its qualified source tree |
+| Integration-only source inclusions | **2**: #101 into Core integration at `99247859`, #98 into feed integration at `db80ed34`; neither is a main merge |
 | Original refs deleted or force-pushed | **0**; all 107 starting refs retained |
 | Future modules inspected / qualified for core activation | **15 / 0** |
 | Default future race / vet suites passed | **15 / 15** each |
@@ -78,9 +156,11 @@ deployment is asserted by this continuation record.
 9. **Notifications module:** repaired ambiguous encrypted-target context and invalid-UTF-8 identity normalization, preserved safe legacy compatibility and documented fail-closed recovery. Explicit SQLite-tagged race suite passed at 71.0% root-package coverage.
 10. **Held topic branches:** independent SEC-026 now defaults off, exposes settings changes in member history, fixes touch sizing and excludes future-dated events after clock rollback. GOV-021's missing accessibility fixture is supplied without importing that policy-blocked feature into core.
 11. **CI and documentation:** replaced duration-only fuzz termination with execution budgets and hard deadlines; preserved the earlier audit/evidence archive, corrected stale current-status descriptions and created all six requested audit reports plus portable future-module evidence.
-12. **PWA qualification:** [PR #95](https://github.com/djshellshoxxx/circula/pull/95) adds provider execution of the existing browser suite after the local launch was blocked. Original runtime, harness, lockfile, assets and disabled/HOLD manifest are unchanged. Workflow/source/static checks and the provider browser harness passed at f25d037; later f153bf5 core-refresh checks remain separate and pending.
+12. **PWA qualification:** [PR #95](https://github.com/djshellshoxxx/circula/pull/95) adds provider execution of the existing browser suite after the local launch was blocked. Original runtime, harness, lockfile, assets and disabled/HOLD manifest are unchanged. Workflow/source/static checks and the provider browser harness passed at f25d037; the closing `0b0d7062` composition requires its own current-head checks.
 
 13. **API-token inventory:** moved the existing first-100 response contract into the repository query, with an owner/ID index, preserved ordering and owner-scoped revocation beyond the cap, plus repository and HTTP regressions.
+
+14. **Federation signing input:** independent review of #105 reproduced false signing success for all 30 malformed-UTF-8 cases against the parent source. Every returned envelope was already refused by the original verifier. The repaired exact source passed an independent race run (1.146s, 87.5% coverage) and vet; this establishes a signing-input repair, not a verifier/replay bypass. #106 corrects only the README's workflow-isolation claim. Both remain outside Core and on HOLD.
 
 Detailed finding IDs, regression names and reviewer roles are in [SECURITY_REVIEW.md](SECURITY_REVIEW.md). [FEATURE_COMPLETION_STATUS.md](FEATURE_COMPLETION_STATUS.md) separates implemented, partial, superseded and blocked work.
 
@@ -108,7 +188,7 @@ consolidation or release-readiness claim.
 | GOV-021 fixture provider gates | Original topic browser fixture was missing | **7/7 configured jobs PASS** on `d922d4f` in [44486475798](https://github.com/djshellshoxxx/circula/actions/runs/44486475798); optional native placeholder skipped. Merge `0d480a5` has the exact same tree. Original #85 retains policy and core/schema-conflict blockers. |
 | Tooling | Existing CI gates | Export reader 10 tests, QA runner 4, threshold checker 8, action-pin/permission and hygiene checks **PASS** |
 | Future modules | Stale manifests and root CI did not qualify nested modules | 15 default race/vet and 5 explicit SQLite whole-suite passes; [portable commands, outputs and attempts](FUTURE_MODULE_QUALIFICATION.json) |
-| PWA browser | Local attempt **BLOCKED before assertions** by sandbox socket denial | Historical provider run44496951525/job135466500874 **PASS** at f25d037, including 22 Node tests and the real Chromium harness; updated f153bf5 head requires its own checks |
+| PWA browser | Local attempt **BLOCKED before assertions** by sandbox socket denial | Historical provider run44496951525/job135466500874 **PASS** at f25d037, including 22 Node tests and the real Chromium harness; closing `0b0d7062` head requires its own checks |
 
 ## Main readiness and next priorities
 

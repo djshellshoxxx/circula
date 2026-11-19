@@ -77,6 +77,16 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"example"}
 		case "time_zone.display":
 			args = []any{"19 Nov 2026, 17:30 IST", "Asia/Kolkata"}
+		case "terms.accepted_flash", "terms.accept_version", "terms.accepted_version", "terms.admin.published_flash",
+			"rules.terms_link", "rules.version", "rules.announced", "rules.reason", "rules.shorter_notice",
+			"leave.left", "leave.intro", "leave.balance_settle", "leave.balance_retain", "leave.download_explanation", "leave.confirm":
+			args = []any{"1000"}
+		case "terms.published", "terms.admin.current", "rules.announced_scheduled", "rules.in_force", "rules.initial_value":
+			args = []any{"1000", "example"}
+		case "rules.change":
+			args = []any{"Default credit limit", "90071992547409.93", "0.00"}
+		case "rules.announced_scheduled_notice":
+			args = []any{14, "announced", "effective"}
 		case "inbox.dispute_opened", "inbox.dispute_response", "inbox.mark_read_named", "report.target_listing", "report.target_member",
 			"report.subject", "report.reported_by", "report.mark_handled_named", "report.handling_note":
 			args = []any{"example"}
@@ -115,6 +125,13 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"example"}
 		case "dispute.amount_hint":
 			args = []any{2}
+		case "dispute.decision.reversal_sentence":
+			args = []any{"90071992547409.93", "Hours", "Ana", "Ben"}
+		case "dispute.decision.amount_value", "dispute.rereview.upheld_posted", "dispute.rereview.partial_posted":
+			args = []any{"90071992547409.93", "Hours"}
+		case "dispute.decision.waiting", "dispute.decision.change_for", "dispute.decision.balance_now", "dispute.decision.balance_after",
+			"dispute.decision.amount_max", "dispute.rereview.amount_max":
+			args = []any{"example"}
 		case "admin.adjust.queued", "admin.adjust.caption", "admin.adjust.related_sentence", "admin.adjust.expires_suffix",
 			"admin.adjust.review_named", "admin.adjust.reject_named", "admin.adjust.cancel_named",
 			"admin.reverse.reference_status", "admin.reverse.amount_max", "admin.reverse.insufficient_credit",

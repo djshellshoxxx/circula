@@ -2962,5 +2962,322 @@
   },
   "dispute.queue.empty": {
     "other": "The queue is empty. Disputes that need a decision appear here."
+  },
+  "dispute.decision.dismissed": {
+    "other": "Dismissed: the balances stand as they are."
+  },
+  "dispute.decision.upheld": {
+    "other": "Upheld: the whole remaining trade is reversed."
+  },
+  "dispute.decision.partial": {
+    "other": "Partly upheld: part of the trade is reversed."
+  },
+  "dispute.decision.outcome_required": {
+    "other": "choose dismissed, upheld or partly upheld"
+  },
+  "dispute.decision.rationale_required": {
+    "other": "required: both parties will see it"
+  },
+  "dispute.decision.rationale_too_long": {
+    "other": "too long: use 2000 characters or fewer"
+  },
+  "dispute.decision.title": {
+    "other": "Review your decision"
+  },
+  "dispute.decision.amount_max": {
+    "other": "must be at most the remaining reversible amount %s"
+  },
+  "dispute.rereview.pending": {
+    "other": "Re-review requested, waiting for a different reviewer."
+  },
+  "dispute.rereview.confirmed": {
+    "other": "Re-review decided: the original decision stands."
+  },
+  "dispute.rereview.decided": {
+    "other": "Re-review decided."
+  },
+  "dispute.rereview.upheld_posted": {
+    "other": "Re-review decided, upheld: a further reversal of %s %s has been posted."
+  },
+  "dispute.rereview.partial_posted": {
+    "other": "Re-review decided, partly upheld: a further reversal of %s %s has been posted."
+  },
+  "dispute.rereview.independent_required": {
+    "other": "the re-review needs an independent reviewer different from the original reviewer"
+  },
+  "dispute.rereview.none_pending": {
+    "other": "this dispute has no pending re-review"
+  },
+  "dispute.rereview.confirm_option": {
+    "other": "Confirmed: the original decision stands."
+  },
+  "dispute.rereview.uphold_option": {
+    "other": "Upheld: reverse the whole remaining amount."
+  },
+  "dispute.rereview.partial_option": {
+    "other": "Partly upheld: reverse part of the remaining amount."
+  },
+  "dispute.rereview.outcome_required": {
+    "other": "choose confirmed, upheld or partly upheld"
+  },
+  "dispute.rereview.rationale_required": {
+    "other": "write a rationale in 2000 characters or fewer; both parties will see it"
+  },
+  "dispute.rereview.other_undecided": {
+    "other": "another dispute on this trade is still undecided"
+  },
+  "dispute.rereview.balance_range": {
+    "other": "the resulting balance would exceed the supported range"
+  },
+  "dispute.rereview.title": {
+    "other": "Review the re-review decision"
+  },
+  "dispute.rereview.amount_max": {
+    "other": "choose a positive amount no greater than the remaining reversible amount %s"
+  },
+  "dispute.decision.confirm_explanation": {
+    "other": "Nothing is recorded until you confirm. Once recorded, a decision cannot be changed."
+  },
+  "dispute.rereview.confirm_explanation": {
+    "other": "Nothing is recorded until you confirm. The original decision stays in the history."
+  },
+  "dispute.decision.reversal_sentence": {
+    "other": "%s %s go back from %s to %s."
+  },
+  "dispute.decision.waiting": {
+    "other": "If %s does not have the credit available, the decision is recorded and the reversal waits as \"Decided, reversal not yet posted\" until you retry it."
+  },
+  "dispute.decision.no_reversal": {
+    "other": "None. No credit moves."
+  },
+  "dispute.decision.change_for": {
+    "other": "Change for %s"
+  },
+  "dispute.decision.amount_value": {
+    "other": "%s %s"
+  },
+  "dispute.decision.balance_now": {
+    "other": "%s: balance now"
+  },
+  "dispute.decision.balance_after": {
+    "other": "%s: balance after"
+  },
+  "dispute.rereview.atomic_explanation": {
+    "other": "Balances and permissions are checked again when you confirm. If the reversal cannot be posted, nothing is recorded."
+  },
+  "dispute.decision.reversal_label": {
+    "other": "Reversal"
+  },
+  "dispute.decision.unavailable_label": {
+    "other": "If the credit cannot be taken"
+  },
+  "dispute.decision.record": {
+    "other": "Record decision"
+  },
+  "dispute.decision.original_payer": {
+    "other": "Original payer"
+  },
+  "dispute.decision.original_payee": {
+    "other": "Original payee"
+  },
+  "dispute.rereview.record": {
+    "other": "Record re-review decision"
+  },
+  "terms.title": {
+    "other": "Network rules and terms"
+  },
+  "terms.accept_required": {
+    "other": "Not saved. Tick the box to say you accept these terms. Nothing changed."
+  },
+  "terms.accept_field": {
+    "other": "Accept: tick the box to accept these terms."
+  },
+  "terms.changed": {
+    "other": "These terms changed while you were reading. Please read the new version."
+  },
+  "terms.accepted_flash": {
+    "other": "You accepted version %[1]s of the network terms."
+  },
+  "terms.published": {
+    "other": "Version %[1]s, published %[2]s."
+  },
+  "terms.text_heading": {
+    "other": "Terms text"
+  },
+  "terms.accept_version": {
+    "other": "I have read and accept version %[1]s of these terms"
+  },
+  "terms.before_trade": {
+    "other": "You can read your balance and history without accepting, but you must accept before you propose or accept a trade."
+  },
+  "terms.accept_button": {
+    "other": "Accept these terms"
+  },
+  "terms.accepted_version": {
+    "other": "You accepted version %[1]s."
+  },
+  "terms.none": {
+    "other": "This network has not published terms yet."
+  },
+  "terms.rules_link": {
+    "other": "See the rules and their change log"
+  },
+  "terms.admin.title": {
+    "other": "Network terms"
+  },
+  "terms.admin.intro": {
+    "other": "Terms are the onboarding rules new members accept when they join. Publishing a new version tells every active member, and each must accept it before their next trade. Earlier versions are kept."
+  },
+  "terms.admin.current": {
+    "other": "Current: version %[1]s, published %[2]s."
+  },
+  "terms.admin.none": {
+    "other": "No terms are published yet; joining needs no acceptance."
+  },
+  "terms.admin.body_hint": {
+    "other": "Up to 20000 characters. Leave a blank line between paragraphs."
+  },
+  "terms.admin.publish": {
+    "other": "Publish new version"
+  },
+  "terms.admin.back": {
+    "other": "Back to network admin"
+  },
+  "terms.admin.published_flash": {
+    "other": "Published version %[1]s. Members were told and must accept it before their next trade."
+  },
+  "rules.title": {
+    "other": "Network rules"
+  },
+  "rules.yes": {
+    "other": "yes"
+  },
+  "rules.no": {
+    "other": "no"
+  },
+  "rules.change": {
+    "other": "%[1]s: %[2]s to %[3]s"
+  },
+  "rules.initial_value": {
+    "other": "%[1]s: %[2]s"
+  },
+  "rules.intro": {
+    "other": "These are the rules the network's administrators set. A change that could disadvantage members is announced first and only takes effect after its notice period. Earlier trades are never changed by a new rule."
+  },
+  "rules.terms_link": {
+    "other": "Read the network terms (version %[1]s)"
+  },
+  "rules.no_terms": {
+    "other": "This network has not published terms."
+  },
+  "rules.log_title": {
+    "other": "Change log"
+  },
+  "rules.version": {
+    "other": "Version %[1]s"
+  },
+  "rules.scheduled": {
+    "other": "Scheduled"
+  },
+  "rules.withdrawn": {
+    "other": "Cancelled before it took effect"
+  },
+  "rules.initial": {
+    "other": "Initial rules when the network was created."
+  },
+  "rules.announced_scheduled": {
+    "other": "Announced %[1]s; takes effect %[2]s."
+  },
+  "rules.announced_scheduled_notice": {
+    "one": "Announced %[2]s; takes effect %[3]s (%[1]d day's notice).",
+    "other": "Announced %[2]s; takes effect %[3]s (%[1]d days' notice)."
+  },
+  "rules.announced": {
+    "other": "Announced %[1]s."
+  },
+  "rules.in_force": {
+    "other": "Announced %[1]s; in force from %[2]s."
+  },
+  "rules.reason": {
+    "other": "Reason: %[1]s"
+  },
+  "rules.shorter_notice": {
+    "other": "Shorter notice because: %[1]s"
+  },
+  "rules.cancelled_flash": {
+    "other": "The scheduled change was cancelled. The rules in force stay as they are."
+  },
+  "leave.title": {
+    "other": "Leave this network"
+  },
+  "leave.confirm_required": {
+    "other": "Not done. Tick the box to confirm that you want to leave. Nothing changed."
+  },
+  "leave.confirm_error": {
+    "other": "Confirm: tick the box to leave this network."
+  },
+  "leave.left": {
+    "other": "You have left %[1]s. You can still read your history and download your data from the History page."
+  },
+  "leave.intro": {
+    "other": "Leaving ends your membership in %[1]s. Please read what happens first."
+  },
+  "leave.blocked": {
+    "other": "You cannot leave yet:"
+  },
+  "leave.resolve": {
+    "other": "Resolve these first (for example, ask for the dispute to be decided, or make another member an administrator), then come back."
+  },
+  "leave.proposals": {
+    "one": "%[1]d open trade proposal involving you will be cancelled, and the other members are told.",
+    "other": "%[1]d open trade proposals involving you will be cancelled, and the other members are told."
+  },
+  "leave.no_proposals": {
+    "other": "You have no open trade proposals."
+  },
+  "leave.balance_settle": {
+    "other": "Your balance is %[1]s. When you leave, your balance is settled to zero by a recorded adjustment."
+  },
+  "leave.balance_retain": {
+    "other": "Your balance is %[1]s. It stays on your closed account and your history is kept."
+  },
+  "leave.history_access": {
+    "other": "You keep read-only access to your own history and can download your data from the History page. Past trades are never changed."
+  },
+  "leave.no_rejoin": {
+    "other": "You cannot rejoin this network with the same account afterwards."
+  },
+  "leave.download_heading": {
+    "other": "Download your data first"
+  },
+  "leave.download_explanation": {
+    "other": "Before you leave, download a copy of your transactions and ledger entries in this network. It contains only trades you took part in. After leaving you can still download it from the %[1]s."
+  },
+  "leave.history_link": {
+    "other": "History page"
+  },
+  "leave.format_label": {
+    "other": "File format"
+  },
+  "leave.format_csv": {
+    "other": "CSV (spreadsheet)"
+  },
+  "leave.format_json": {
+    "other": "JSON"
+  },
+  "leave.download": {
+    "other": "Download my data"
+  },
+  "leave.reason_label": {
+    "other": "Reason (optional)"
+  },
+  "leave.reason_hint": {
+    "other": "Kept in the audit log. Up to 500 characters."
+  },
+  "leave.confirm": {
+    "other": "I understand and want to leave %[1]s"
+  },
+  "leave.cancel": {
+    "other": "Cancel"
   }
 }

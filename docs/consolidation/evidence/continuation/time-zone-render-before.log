@@ -1,0 +1,7 @@
+--- FAIL: TestTimeZoneCatalogueLabelsAreEscaped (0.12s)
+    time_zone_catalog_test.go:87: label ignored the catalogue or was not escaped: "<label for=\"f-time_zone\">&#34;&gt;&lt;img src=x onerror=&#34;alert(1)&#34;&gt; &amp; catalogue</label>"
+    time_zone_catalog_test.go:87: label ignored the catalogue or was not escaped: "id=\"h-time_zone\">&#34;&gt;&lt;img src=x onerror=&#34;alert(1)&#34;&gt; &amp; catalogue</p>"
+    time_zone_catalog_test.go:87: label ignored the catalogue or was not escaped: ">&#34;&gt;&lt;img src=x onerror=&#34;alert(1)&#34;&gt; &amp; catalogue</button>"
+FAIL
+FAIL	command-line-arguments	0.150s
+FAIL

@@ -7,6 +7,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 type reReviewDecisionData struct {
@@ -35,11 +36,11 @@ func (s *server) reReviewDecisionReview(w http.ResponseWriter, r *http.Request, 
 	}
 	if (!c.isReviewer() && !c.isAdmin()) || v.Tx.IsParty(c.Me.ID) || v.Tx.CreatedBy == c.Me.ID ||
 		v.Tx.AcceptedBy == c.Me.ID || v.Dispute.ReviewerID == c.Me.ID {
-		s.fail(w, r, domain.Forbidden("the re-review needs an independent reviewer different from the original reviewer"))
+		s.fail(w, r, domain.Forbidden("%s", messages.Text("dispute.rereview.independent_required")))
 		return
 	}
 	if v.ReReview == nil || v.ReReview.Status != service.ReReviewRequested {
-		s.disputeFail(w, r, c, id, domain.InvalidState("this dispute has no pending re-review"))
+		s.disputeFail(w, r, c, id, domain.InvalidState("%s", messages.Text("dispute.rereview.none_pending")))
 		return
 	}
 	pol := c.Net.Policy
@@ -47,25 +48,25 @@ func (s *server) reReviewDecisionReview(w http.ResponseWriter, r *http.Request, 
 	var words string
 	switch in.Outcome {
 	case service.ReReviewConfirmed:
-		in.Amount, words = 0, "Confirmed: the original decision stands."
+		in.Amount, words = 0, messages.Text("dispute.rereview.confirm_option")
 	case string(domain.OutcomeUpheld):
-		in.Amount, words = remaining, "Upheld: reverse the whole remaining amount."
+		in.Amount, words = remaining, messages.Text("dispute.rereview.uphold_option")
 	case string(domain.OutcomePartiallyUpheld):
-		words = "Partly upheld: reverse part of the remaining amount."
+		words = messages.Text("dispute.rereview.partial_option")
 	default:
-		s.disputeFail(w, r, c, id, domain.Invalid("outcome", "choose confirmed, upheld or partly upheld"))
+		s.disputeFail(w, r, c, id, domain.Invalid("outcome", messages.Text("dispute.rereview.outcome_required")))
 		return
 	}
 	if in.Outcome != service.ReReviewConfirmed && (in.Amount <= 0 || in.Amount > remaining) {
-		s.disputeFail(w, r, c, id, domain.Invalid("amount", "choose a positive amount no greater than the remaining reversible amount "+domain.FormatAmount(remaining, pol.Decimals)))
+		s.disputeFail(w, r, c, id, domain.Invalid("amount", messages.Text("dispute.rereview.amount_max", domain.FormatAmount(remaining, pol.Decimals))))
 		return
 	}
 	if in.Rationale == "" || len(in.Rationale) > 2000 {
-		s.disputeFail(w, r, c, id, domain.Invalid("rationale", "write a rationale in 2000 characters or fewer; both parties will see it"))
+		s.disputeFail(w, r, c, id, domain.Invalid("rationale", messages.Text("dispute.rereview.rationale_required")))
 		return
 	}
 	if in.Amount > 0 && v.Tx.Status == domain.TxDisputed {
-		s.disputeFail(w, r, c, id, domain.InvalidState("another dispute on this trade is still undecided"))
+		s.disputeFail(w, r, c, id, domain.InvalidState("%s", messages.Text("dispute.rereview.other_undecided")))
 		return
 	}
 	d := &reReviewDecisionData{decisionData: decisionData{ID: id, Outcome: words, Amount: domain.FormatAmount(in.Amount, pol.Decimals),
@@ -89,7 +90,7 @@ func (s *server) reReviewDecisionReview(w http.ResponseWriter, r *http.Request, 
 		payerAfter, payerOK := domain.AddBounded(payer.Balance, in.Amount)
 		payeeAfter, payeeOK := domain.AddBounded(payee.Balance, -in.Amount)
 		if !payerOK || !payeeOK {
-			s.disputeFail(w, r, c, id, domain.Invalid("amount", "the resulting balance would exceed the supported range"))
+			s.disputeFail(w, r, c, id, domain.Invalid("amount", messages.Text("dispute.rereview.balance_range")))
 			return
 		}
 		d.ShowBalances = true
@@ -98,5 +99,5 @@ func (s *server) reReviewDecisionReview(w http.ResponseWriter, r *http.Request, 
 	}
 	values := formValues(r)
 	values["amount"], values["rationale"] = domain.FormatAmount(in.Amount, pol.Decimals), in.Rationale
-	s.render(w, r, c, "dispute_rereview_confirm", 200, &page{Title: "Review the re-review decision", V: values, D: d})
+	s.render(w, r, c, "dispute_rereview_confirm", 200, &page{Title: messages.Text("dispute.rereview.title"), V: values, D: d})
 }

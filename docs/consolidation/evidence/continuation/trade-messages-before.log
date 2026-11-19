@@ -1,0 +1,21 @@
+--- FAIL: TestTradeMessages (0.00s)
+    --- FAIL: TestTradeMessages/trade.sentence.pay/You_pay_Zoë_100%_<img_src=x>_90071992547409.93_Hours (0.00s)
+panic: unknown UI message: trade.sentence.pay [recovered, repanicked]
+
+goroutine 9 [running]:
+testing.tRunner.func1.2({0x68cf40, 0x10f3378bbad0})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1974 +0x232
+testing.tRunner.func1()
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1977 +0x349
+panic({0x68cf40?, 0x10f3378bbad0?})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/runtime/panic.go:860 +0x13a
+github.com/djshellshoxxx/circula/internal/web/messages.Text({0x6fa914, 0x12}, {0x10f337809020, 0x3, 0x3})
+	/workspace/scratch/93aeb012c206/trade-catalogue/internal/web/messages/messages.go:55 +0x129
+github.com/djshellshoxxx/circula/internal/web/messages.TestTradeMessages.func1(0x10f3378706c8)
+	/workspace/scratch/93aeb012c206/trade-catalogue/internal/web/messages/trade_test.go:46 +0x35
+testing.tRunner(0x10f3378706c8, 0x10f3377f8d40)
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 8
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2101 +0x4c5
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.006s
+FAIL

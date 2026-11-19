@@ -464,3 +464,56 @@ escaping of catalogue text and zone values containing quotes, HTML, NUL and
 These Go 1.26.11 checks used the existing caches and did not run the race,
 SQLite-backed, full web, HTTP or browser suites. Existing `TestTimeZoneDisplay`
 and combined-candidate qualification remain integration checks.
+
+## Terms, rules and departure continuation
+
+This bounded continuation adds 65 entries under `terms.*`, `rules.*` and
+`leave.*` for the existing `h_gov.go` flow and its four templates: `terms`,
+`admin_terms`, `rules` and `leave`. The selected paths match the available
+immutable #99 `0a73ee4` and #101 `f7ac6d2` snapshots at base `ea63ff6`.
+No service, domain or API logic changes, governance feature activation, or
+policy-form migration are included.
+
+Versions remain ungrouped decimal identifiers, including hidden acceptance
+fields and successful publication/acceptance notices. Rule-change amounts and
+departure balances remain exact strings from the existing fixed-point
+formatters. Authored terms, reasons, blocker text and network names remain
+ordinary escaped values, including retained form values. Read/accept gates,
+safe return paths, membership eligibility, departure blockers, consent fields,
+CSRF, status codes and redirects are unchanged. Self-export still precedes the
+departure form and remains available when departure is blocked. The default
+persisted cancellation reason remains unchanged; only its visible success
+notice is catalogued.
+
+Complete sentences retain timestamp and History-link markup through the
+existing plain-parts helpers. Version strings passed to `Around` come only from
+application decimal-integer formatting. `AroundTwoCount` adds a typed integer
+count before the two existing timestamp slots and uses the same strict marker
+and order guard. User-authored text never enters those marker paths. Proposal
+counts now use singular/plural English instead of `proposal(s)`; a single day
+uses `day's notice`. These grammar changes do not change departure or notice
+policy.
+
+`TestTermsRulesLeaveMessages` checks exact versions/amounts, plural counts,
+literal names and complete feedback. `TestTermsRulesMarkupSlots` checks numeric
+identifier provenance, timestamp slots, notice plurals and invalid counted
+formats. The focused rendering file covers accepted/unaccepted/missing terms,
+publication and retained editor values, all existing rule-log states, exact
+changes, both departure balance rules, blockers, zero/one/multiple proposals,
+consent/CSRF/export controls and escaping of raw authored/catalogue text.
+
+After source checkpoint `8f5e854`, restoring only the base catalogue produced
+the expected missing `terms.accepted_flash` failure. Restoring the four base
+templates produced a compile-valid negative control: all four pages ignored
+the injected catalogue labels and failed `TestTermsRulesLeaveCatalogueEscapesMessages`
+(0.283s). The committed source was restored after each control.
+
+With Go 1.26.11, the complete messages package passed with `-p 1 -count=1`
+(0.009s). The four new rendering tests passed with the same flags in a file-list
+run containing all production web Go files and only
+`terms_rules_leave_catalog_test.go` (1.224s). JSON/duplicate-key validation,
+unchanged existing catalogue entries, Go formatting and `git diff --check`
+also passed. Raw before/after receipts are retained in this worktree's `bin/`
+directory. These focused normal runs use the existing caches and exclude
+race, SQLite-backed, full web, HTTP and browser suites; combined HTTP/service
+qualification remains integration work.

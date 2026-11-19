@@ -64,8 +64,9 @@ type Parts struct{ Before, After string }
 const textSlot = "\x00"
 
 // Around reserves the final string argument for exactly one template-owned
-// element. Any preceding arguments must be trusted catalogue labels, never
-// user-controlled text: the sentinel and formatting-error guard are reserved.
+// element. Any preceding arguments must be trusted catalogue labels or decimal
+// integer identifiers formatted by the application, never arbitrary text:
+// the sentinel and formatting-error guard are reserved.
 // Both returned strings still require contextual template escaping.
 func Around(key string, labels ...string) Parts {
 	args := make([]any, len(labels)+1)
@@ -95,6 +96,12 @@ const secondTextSlot = "\x00second\x00"
 // its own elements into the two string slots; both must occur once, in order.
 func AroundTwo(key string) TwoParts {
 	return splitAroundTwo(Text(key, firstTextSlot, secondTextSlot))
+}
+
+// AroundTwoCount selects a counted message before its two template-owned
+// elements. Its integer cannot introduce formatting markers or trusted HTML.
+func AroundTwoCount(key string, count int) TwoParts {
+	return splitAroundTwo(Text(key, count, firstTextSlot, secondTextSlot))
 }
 
 func splitAroundTwo(text string) TwoParts {

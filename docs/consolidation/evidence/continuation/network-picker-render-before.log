@@ -1,0 +1,5 @@
+--- FAIL: TestNetworkPickerCatalogueTextIsEscaped (0.20s)
+    network_picker_catalog_test.go:76: picker creation label ignored the catalogue or trusted its markup
+FAIL
+FAIL	command-line-arguments	0.237s
+FAIL

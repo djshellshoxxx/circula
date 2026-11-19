@@ -1,0 +1,4 @@
+Base: 03fc500
+Compared immutable heads: 47446b33b01f4993a1caa406516746858bbf0a11, baedf4b6670f6bf39ec593978ce38780c5640215
+The home() function and networks.html are byte-identical at all three revisions.
+Both active heads change setup/join h_auth.go sections and setup.html, join.html, join_anon.html, joinnet.html: setup.* / join.* catalogue entries plus setup decimal-scale validation before amount formatting. Those sections are excluded from this slice.
