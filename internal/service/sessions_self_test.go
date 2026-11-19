@@ -29,7 +29,7 @@ func selfSessionLogin(t *testing.T, e *tu.Env, login string) (string, domain.Act
 
 func currentSessionID(t *testing.T, e *tu.Env, a domain.Actor) string {
 	t.Helper()
-	for _, row := range tu.Must(e.Svc.ListOwnSessions(e.Ctx, a)) {
+	for _, row := range tu.Must(e.Svc.ListOwnSessions(e.Ctx, a, service.Page{})).Rows {
 		if row.Current {
 			return row.ID
 		}
@@ -51,7 +51,7 @@ func TestOwnSessionsArePrivateAndIndividuallyRevocable(t *testing.T) {
 	secondID := currentSessionID(t, e, second)
 	foreignID := currentSessionID(t, e, foreign)
 	before := checksumExcept(t, e)
-	rows := tu.Must(e.Svc.ListOwnSessions(e.Ctx, a))
+	rows := tu.Must(e.Svc.ListOwnSessions(e.Ctx, a, service.Page{})).Rows
 	if len(rows) != 2 || checksumExcept(t, e) != before {
 		t.Fatal("listing changed state or returned another owner's sessions")
 	}
@@ -65,19 +65,22 @@ func TestOwnSessionsArePrivateAndIndividuallyRevocable(t *testing.T) {
 		}
 	}
 	for _, id := range []string{foreignID, a.SessionID, raw, "invalid"} {
+		if _, err := e.Svc.GetOwnSession(e.Ctx, a, id); domain.CodeOf(err) != domain.CodeNotFound {
+			t.Fatalf("foreign/invalid confirmation target: %v", err)
+		}
 		if err := e.Svc.RevokeOwnSession(e.Ctx, a, id); domain.CodeOf(err) != domain.CodeNotFound {
 			t.Fatalf("foreign/invalid selector: %v", err)
 		}
 	}
-	if _, err := e.Svc.ListOwnSessions(e.Ctx, owner); domain.CodeOf(err) != domain.CodeForbidden {
+	if _, err := e.Svc.ListOwnSessions(e.Ctx, owner, service.Page{}); domain.CodeOf(err) != domain.CodeForbidden {
 		t.Fatalf("non-session actor listed sessions: %v", err)
 	}
-	if _, err := e.Svc.ListOwnSessions(e.Ctx, domain.SystemActor("test")); domain.CodeOf(err) != domain.CodeForbidden {
+	if _, err := e.Svc.ListOwnSessions(e.Ctx, domain.SystemActor("test"), service.Page{}); domain.CodeOf(err) != domain.CodeForbidden {
 		t.Fatalf("system actor listed sessions: %v", err)
 	}
 	spoof := a
 	spoof.PersonID = foreign.PersonID
-	if _, err := e.Svc.ListOwnSessions(e.Ctx, spoof); domain.CodeOf(err) != domain.CodeUnauthenticated {
+	if _, err := e.Svc.ListOwnSessions(e.Ctx, spoof, service.Page{}); domain.CodeOf(err) != domain.CodeUnauthenticated {
 		t.Fatalf("session owner mismatch: %v", err)
 	}
 	readOnly := a
@@ -88,7 +91,7 @@ func TestOwnSessionsArePrivateAndIndividuallyRevocable(t *testing.T) {
 	if err := e.Store.Update(e.Ctx, func(tx store.Tx) error { return tx.SetMustChangePassword(a.PersonID, true) }); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := e.Svc.ListOwnSessions(e.Ctx, a); err != nil {
+	if _, err := e.Svc.ListOwnSessions(e.Ctx, a, service.Page{}); err != nil {
 		t.Fatalf("forced password change blocked an API read: %v", err)
 	}
 	if err := e.Svc.RevokeOwnSession(e.Ctx, a, secondID); domain.CodeOf(err) != domain.CodePasswordChangeRequired {
@@ -140,8 +143,11 @@ func TestOwnSessionsArePrivateAndIndividuallyRevocable(t *testing.T) {
 	if err := e.Svc.RevokeOwnSession(e.Ctx, a, currentID); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := e.Svc.ListOwnSessions(e.Ctx, a); domain.CodeOf(err) != domain.CodeUnauthenticated {
+	if _, err := e.Svc.ListOwnSessions(e.Ctx, a, service.Page{}); domain.CodeOf(err) != domain.CodeUnauthenticated {
 		t.Fatalf("stale actor listed after own revocation: %v", err)
+	}
+	if _, err := e.Svc.GetOwnSession(e.Ctx, a, currentID); domain.CodeOf(err) != domain.CodeUnauthenticated {
+		t.Fatalf("stale actor fetched a confirmation target: %v", err)
 	}
 	if err := e.Svc.RevokeOwnSession(e.Ctx, a, secondID); domain.CodeOf(err) != domain.CodeUnauthenticated {
 		t.Fatalf("stale actor wrote after own revocation: %v", err)
@@ -171,14 +177,17 @@ func TestOwnSessionsApplyExistingLifetimeRules(t *testing.T) {
 		{"stored-boundary", now, now, now, false, false},
 		{"already-revoked", now, now, now.Add(time.Hour), true, false},
 	}
+	publicIDs := map[string]string{}
 	if err := e.Store.Update(e.Ctx, func(tx store.Tx) error {
 		for _, f := range fixtures {
 			sum := sha256.Sum256([]byte(f.raw))
 			id := hex.EncodeToString(sum[:])
-			if err := tx.InsertSession(&domain.Session{IDHash: id, PersonID: owner.PersonID,
-				CreatedAt: f.created, LastSeenAt: f.seen, ExpiresAt: f.expires}); err != nil {
+			sess := &domain.Session{IDHash: id, PersonID: owner.PersonID,
+				CreatedAt: f.created, LastSeenAt: f.seen, ExpiresAt: f.expires}
+			if err := tx.InsertSession(sess); err != nil {
 				return err
 			}
+			publicIDs[f.raw] = sess.PublicID
 			if f.revoked {
 				if _, err := tx.RevokeOwnedSession(owner.PersonID, id, now); err != nil {
 					return err
@@ -189,7 +198,7 @@ func TestOwnSessionsApplyExistingLifetimeRules(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	rows := tu.Must(e.Svc.ListOwnSessions(e.Ctx, actor))
+	rows := tu.Must(e.Svc.ListOwnSessions(e.Ctx, actor, service.Page{})).Rows
 	if len(rows) != 2 {
 		t.Fatalf("dead sessions leaked into active list: %+v", rows)
 	}
@@ -203,9 +212,22 @@ func TestOwnSessionsApplyExistingLifetimeRules(t *testing.T) {
 		}
 	}
 	for _, f := range fixtures {
+		_, targetErr := e.Svc.GetOwnSession(e.Ctx, actor, publicIDs[f.raw])
+		if (targetErr == nil) != f.allowed || targetErr != nil && domain.CodeOf(targetErr) != domain.CodeNotFound {
+			t.Errorf("confirmation lifetime disagreement for %s: %v", f.raw, targetErr)
+		}
 		_, err := e.Svc.Authenticate(e.Ctx, f.raw)
 		if (err == nil) != f.allowed {
 			t.Errorf("list/auth lifetime disagreement for %s: %v", f.raw, err)
+		}
+	}
+	// The API's idempotent revoke still accepts owned retained dead rows;
+	// only the HTML confirmation read requires its target to remain active.
+	for _, id := range []string{publicIDs["stored-boundary"], publicIDs["already-revoked"]} {
+		for repeat := 0; repeat < 2; repeat++ {
+			if err := e.Svc.RevokeOwnSession(e.Ctx, actor, id); err != nil {
+				t.Fatalf("retained dead-row revoke: %v", err)
+			}
 		}
 	}
 }

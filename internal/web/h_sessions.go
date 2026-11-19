@@ -3,7 +3,6 @@ package web
 import (
 	"net/http"
 
-	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
@@ -17,7 +16,7 @@ func init() {
 }
 
 func (s *server) sessionsPage(w http.ResponseWriter, r *http.Request, c *rc) {
-	rows, err := s.svc.ListOwnSessions(r.Context(), c.actor)
+	rows, err := s.svc.ListOwnSessions(r.Context(), c.actor, service.Page{AfterID: r.URL.Query().Get("after")})
 	if err != nil {
 		s.fail(w, r, err)
 		return
@@ -26,16 +25,7 @@ func (s *server) sessionsPage(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 func (s *server) ownSessionTarget(r *http.Request, c *rc) (*service.SessionInfo, error) {
-	rows, err := s.svc.ListOwnSessions(r.Context(), c.actor)
-	if err != nil {
-		return nil, err
-	}
-	for _, row := range rows {
-		if row.ID == r.PathValue("session") {
-			return &row, nil
-		}
-	}
-	return nil, domain.NotFound("session")
+	return s.svc.GetOwnSession(r.Context(), c.actor, r.PathValue("session"))
 }
 
 func (s *server) sessionRevokePage(w http.ResponseWriter, r *http.Request, c *rc) {
