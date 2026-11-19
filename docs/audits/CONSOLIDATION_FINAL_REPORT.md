@@ -1,5 +1,7 @@
 # Consolidation execution report
 
+> Current composition: [combined core review and qualification checkpoint](CORE_COMPOSITION_20261119.md) records the reconciled PR90/96/99/101/102/104 source, focused passing checks, unchanged main and pending full provider gates. The [bounded branch refresh](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) records 123 retained refs at 11:27:08 UTC. Earlier sections and receipts keep their named source and observation time.
+
 Audit date: **2026-11-18 Pacific / 2026-11-19 UTC**. This report records observed implementation, publication and qualification. Its current checkpoint is still pending combined provider gates; it is not a declaration that all work is merged or release-ready. The PR receipts below are authoritative for later state changes.
 
 ## Starting and ending revisions
@@ -13,8 +15,30 @@ Audit date: **2026-11-18 Pacific / 2026-11-19 UTC**. This report records observe
 | Core with reviewed session footer fixture | [`244e1356201e6477eab4694d82947f2058f3b0d8`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8), tree `7ada979757198fb9c19726858d17c897dfdca1b9`; requires the subsequent API-036 bounded-session correction before merge |
 | Latest core candidate and merge receipt | [PR #90](https://github.com/djshellshoxxx/circula/pull/90); check its exact head and current checks, not an earlier successful source PR |
 | GOV-021 fixture merged into its topic | [`0d480a5b348f3d385df0dc9c9a3e43a0b03a8332`](https://github.com/djshellshoxxx/circula/commit/0d480a5b348f3d385df0dc9c9a3e43a0b03a8332), [PR #91](https://github.com/djshellshoxxx/circula/pull/91), merged 2026-11-19 at 09:20:26 UTC into `claude/gov-021-admin-recovery`; main-adoption policy hold remains |
+| Notifications repair merged into its topic | [`797dddf21adddfb34a49e7bda1871a202968dcda`](https://github.com/djshellshoxxx/circula/commit/797dddf21adddfb34a49e7bda1871a202968dcda), [PR #93](https://github.com/djshellshoxxx/circula/pull/93), merged 2026-11-19 at 10:33:33 UTC into `future/fux-104-notifications-20261116`; exact resulting tree matches qualified source and module adoption remains held |
 
 Git data publication uses the connected provider because the shell Git client had no push credentials. Every published tree is compared with the local reviewed tree before creating a commit/ref. Updates are non-force and guarded by the expected old head. Publication commits record local source SHAs; a local SHA is not falsely presented as a remotely retrievable commit. Original remote source heads remain reachable and their branches are preserved.
+
+## API-036 focused continuation, 2026-11-19
+
+The complete session-management follow-up is [PR #101](https://github.com/djshellshoxxx/circula/pull/101),
+based on concurrent PR90 head `f25d10b6b4085b80d7de53ecbb55efffeb9d8969`. Published
+implementation `6f8ead1951f2d4b72649909b2b4cc83000948afe` exactly matches local
+reviewed tree `a56e533e88275c05498c39db2c97c5f15b2af2fa`. It includes previous-page
+keyset navigation, current-preserving bulk sign-out, atomic MFA/audit handling,
+migration 0021 and cursor resource/encoding repairs. Narrower draft #96 was
+closed as superseded, preserving its branch and code in #101.
+
+[API036_COMPLETION.md](API036_COMPLETION.md) records implementation, branch
+provenance, independent reviews, real SQLite/Go stress measurements and actual
+failed/interrupted checks. [API036_DATABASE_REVIEW.md](API036_DATABASE_REVIEW.md)
+links the portable SQL probe and preserved measurement JSON. Current-head full
+Go/race/vet/check, browser, fuzz and native platform receipts on #101 govern
+qualification; earlier PR90 results do not qualify these changes. The first
+full run found two fixture compatibility failures now repaired without removing
+assertions. Local Chromium aborts before assertions because socket() is denied.
+All future modules remain isolated and disabled. No main merge, release or
+deployment is asserted by this continuation record.
 
 ## Evidence-backed counts
 
@@ -23,18 +47,21 @@ Git data publication uses the connected provider because the shell Git client ha
 | Starting real remote branch refs inspected | **107**, including main; excludes symbolic origin/HEAD |
 | Starting tips already ancestral to main | **52**, including main |
 | Starting non-ancestor tips reviewed | **55** |
+| Later remote refs preserved at bounded cutoff | **123**, observed 2026-11-19 at 11:27:08 UTC; all 107 original names retained |
 | Non-ancestor clean merge simulations / conflicts | **32 / 23** |
 | Non-ancestor zero-tree-change merges | **3**; retained without claiming new behavior |
 | PRs inventoried | **89**: 10 open, 79 closed; pagination exhausted |
 | Standalone issues found | **0**; issue endpoint records were all PRs |
 | Original source PR heads preserved in core candidate | **5**: #82, #87, #88, #78, #89 |
+| Additional concurrent core PR histories composed | **5**: #96, #99, #101, #102, #104; latest reviewed heads and limits in CORE_COMPOSITION_20261119.md |
+| Coordinator-published repair/integration branches at this cutoff | **7**, represented by PR #90–95 and #100; counts published branches, not source defects, feature completion or main merges |
 | New main merges at this checkpoint | **0**; pending current-head gates |
-| Isolated topic merges observed | **1**: #91, after all seven configured jobs passed; its merged tree equals the qualified source tree |
+| Isolated topic merges observed | **2**: #91 into GOV-021 and #93 into notifications; configured active gates passed at each exact source and each resulting tree equals its qualified source tree |
 | Original refs deleted or force-pushed | **0**; all 107 starting refs retained |
 | Future modules inspected / qualified for core activation | **15 / 0** |
 | Default future race / vet suites passed | **15 / 15** each |
 | Explicit future SQLite-tagged whole-module race suites passed | **5 / 5** |
-| PWA JavaScript tests passed | **22 / 22**; real-browser attempt separately blocked |
+| PWA JavaScript tests passed | **22 / 22**; historical provider Chromium run also passed, while the later core refresh requires new checks |
 
 “Preserved in a candidate,” “merged into main,” “repaired source,” and “runtime-qualified” are different counts. The final PR/head receipt must be checked before treating a pending candidate as merged. Repair work covers the core dispute source, both feed source PRs, notifications, independent SEC-026 and the GOV-021 fixture; it does not make their unresolved product policies approved.
 
@@ -51,11 +78,21 @@ Git data publication uses the connected provider because the shell Git client ha
 9. **Notifications module:** repaired ambiguous encrypted-target context and invalid-UTF-8 identity normalization, preserved safe legacy compatibility and documented fail-closed recovery. Explicit SQLite-tagged race suite passed at 71.0% root-package coverage.
 10. **Held topic branches:** independent SEC-026 now defaults off, exposes settings changes in member history, fixes touch sizing and excludes future-dated events after clock rollback. GOV-021's missing accessibility fixture is supplied without importing that policy-blocked feature into core.
 11. **CI and documentation:** replaced duration-only fuzz termination with execution budgets and hard deadlines; preserved the earlier audit/evidence archive, corrected stale current-status descriptions and created all six requested audit reports plus portable future-module evidence.
-12. **PWA qualification:** [PR #95](https://github.com/djshellshoxxx/circula/pull/95) adds provider execution of the existing browser suite after the local launch was blocked. Original runtime, harness, lockfile, assets and disabled/HOLD manifest are unchanged. Workflow/source/static checks passed; provider results remain pending.
+12. **PWA qualification:** [PR #95](https://github.com/djshellshoxxx/circula/pull/95) adds provider execution of the existing browser suite after the local launch was blocked. Original runtime, harness, lockfile, assets and disabled/HOLD manifest are unchanged. Workflow/source/static checks and the provider browser harness passed at f25d037; later f153bf5 core-refresh checks remain separate and pending.
 
 13. **API-token inventory:** moved the existing first-100 response contract into the repository query, with an owner/ID index, preserved ordering and owner-scoped revocation beyond the cap, plus repository and HTTP regressions.
 
 Detailed finding IDs, regression names and reviewer roles are in [SECURITY_REVIEW.md](SECURITY_REVIEW.md). [FEATURE_COMPLETION_STATUS.md](FEATURE_COMPLETION_STATUS.md) separates implemented, partial, superseded and blocked work.
+
+The later compatible core streams also close token authority inside the write
+transaction, failed-rollback connection reuse, migration cleanup, UUIDv7 job
+allocation, export snapshot authority, incomplete HTTP archives, ambiguous ZIP
+verification, listing lookahead/filter loss and duplicate requirement checking.
+The full session navigation/bulk command and reconciled 525-key catalogue are
+implemented. Independent reviewers approved the source composition; focused
+tests and exact limits are in [the composition checkpoint](CORE_COMPOSITION_20261119.md).
+Full current-head provider gates remain pending, so this is not a completed main
+consolidation or release-readiness claim.
 
 ## Before and after testing
 
@@ -71,7 +108,7 @@ Detailed finding IDs, regression names and reviewer roles are in [SECURITY_REVIE
 | GOV-021 fixture provider gates | Original topic browser fixture was missing | **7/7 configured jobs PASS** on `d922d4f` in [44486475798](https://github.com/djshellshoxxx/circula/actions/runs/44486475798); optional native placeholder skipped. Merge `0d480a5` has the exact same tree. Original #85 retains policy and core/schema-conflict blockers. |
 | Tooling | Existing CI gates | Export reader 10 tests, QA runner 4, threshold checker 8, action-pin/permission and hygiene checks **PASS** |
 | Future modules | Stale manifests and root CI did not qualify nested modules | 15 default race/vet and 5 explicit SQLite whole-suite passes; [portable commands, outputs and attempts](FUTURE_MODULE_QUALIFICATION.json) |
-| PWA browser | Prior branch claims are revision-specific | This attempt **BLOCKED before assertions** by sandbox socket denial; 22 Node tests independently pass |
+| PWA browser | Local attempt **BLOCKED before assertions** by sandbox socket denial | Historical provider run44496951525/job135466500874 **PASS** at f25d037, including 22 Node tests and the real Chromium harness; updated f153bf5 head requires its own checks |
 
 ## Main readiness and next priorities
 

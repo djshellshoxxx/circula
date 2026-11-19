@@ -1,0 +1,1619 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-19",
+  "purpose": "Bounded local execution evidence for the Circula core consolidation continuation; not final-head CI qualification.",
+  "counting_rules": [
+    "Go counts come independently from Action=pass/fail/skip events. Named test events include parent tests and subtests; package events are counted separately.",
+    "The two UUID helper runs overlap; do not add them as distinct tested features.",
+    "A nonzero timeout exit remains incomplete even when every emitted test event passed. Missing/empty logs without a successful exit receipt are not passes.",
+    "Historical module qualification and provider runs are outside this bundle. These logs qualify only the recorded source scopes."
+  ],
+  "toolchain": {
+    "go": "go1.26.11 linux/amd64",
+    "source": "coordinating workers reported the reused toolchain; it was not re-executed when assembling this bundle"
+  },
+  "core": {
+    "go_runs": [
+      {
+        "name": "core-session-bounded-service.jsonl",
+        "log": "core/core-session-bounded-service.jsonl",
+        "scope": "All production internal/service Go source files plus session_page_internal_test.go; no SQLite driver or external integration tests.",
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-race",
+          "-count=1",
+          "-p",
+          "1",
+          "<sorted internal/service/*.go excluding *_test.go>",
+          "internal/service/session_page_internal_test.go"
+        ],
+        "source_sha": null,
+        "source_note": "Intermediate core-recovery checkout; exact checkout SHA was not embedded in the log. Bounded session source derives from afe8ef8824e0a071024d0d9a5499d124ae9d9775 and 2e0a52bedb00376d562e70af6a8d26e0aa7c3936.",
+        "recorded_exit_code": 0,
+        "exit_provenance": "worker execution receipt reported in the coordinating session; raw Go JSON also has a terminal package pass",
+        "independent_go_event_counts": {
+          "named_test_events": {
+            "pass": 3,
+            "fail": 0,
+            "skip": 0
+          },
+          "top_level_test_events": {
+            "pass": 3,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_events": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "package_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "first_event_time": "2026-11-19T02:11:00.419809495-08:00",
+          "last_event_time": "2026-11-19T02:11:01.548412438-08:00",
+          "non_json_lines": 4,
+          "data_race_warning_present": false
+        }
+      },
+      {
+        "name": "core-job-identifiers.jsonl",
+        "log": "core/core-job-identifiers.jsonl",
+        "scope": "Isolated UUIDv7 job-identifier helper regression; does not build the entire API or execute API routes.",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-json",
+          "<helper source and test file arguments not preserved>"
+        ],
+        "source_sha": null,
+        "source_note": "Intermediate core-recovery checkout; exact command flags/source SHA were not embedded in this receipt.",
+        "recorded_exit_code": 0,
+        "exit_provenance": "worker execution receipt reported in the coordinating session; raw Go JSON also has a terminal package pass",
+        "independent_go_event_counts": {
+          "named_test_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "top_level_test_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_events": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "package_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "first_event_time": "2026-11-19T02:15:06.224559049-08:00",
+          "last_event_time": "2026-11-19T02:15:07.823006468-08:00",
+          "non_json_lines": 0,
+          "data_race_warning_present": false
+        }
+      },
+      {
+        "name": "core-job-identifiers-full-api-source.jsonl",
+        "log": "core/core-job-identifiers-full-api-source.jsonl",
+        "scope": "All production internal/api Go source files plus the UUIDv7 helper regression; no SQLite-backed handler/integration tests.",
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-json",
+          "<all internal/api non-test source files>",
+          "<UUIDv7 helper regression>"
+        ],
+        "source_sha": null,
+        "source_note": "Intermediate core-recovery checkout; exact command flags/source SHA were not embedded in this receipt. This repeats the same helper test as the isolated run.",
+        "recorded_exit_code": 0,
+        "exit_provenance": "worker execution receipt reported in the coordinating session; raw Go JSON also has a terminal package pass",
+        "independent_go_event_counts": {
+          "named_test_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "top_level_test_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_events": {
+            "pass": 0,
+            "fail": 0,
+            "skip": 0
+          },
+          "package_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "first_event_time": "2026-11-19T02:20:22.486396217-08:00",
+          "last_event_time": "2026-11-19T02:20:23.61260394-08:00",
+          "non_json_lines": 0,
+          "data_race_warning_present": false
+        }
+      },
+      {
+        "name": "security-token-authority-after.jsonl",
+        "log": "core/security-token-authority-after.jsonl",
+        "scope": "All production internal/service Go source files plus token_authority_internal_test.go; driver-neutral mutation probes. Does not execute the SQLite token-reset integration tests.",
+        "command": [
+          "go",
+          "test",
+          "-json",
+          "-race",
+          "-count=1",
+          "-p",
+          "1",
+          "<sorted internal/service/*.go excluding *_test.go>",
+          "internal/service/token_authority_internal_test.go"
+        ],
+        "source_sha": "fe8324fca1e106493eb3e583d7c35ac732db2824",
+        "source_note": null,
+        "recorded_exit_code": 0,
+        "exit_provenance": "worker execution receipt reported in the coordinating session; raw Go JSON also has a terminal package pass",
+        "independent_go_event_counts": {
+          "named_test_events": {
+            "pass": 19,
+            "fail": 0,
+            "skip": 0
+          },
+          "top_level_test_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "subtest_events": {
+            "pass": 18,
+            "fail": 0,
+            "skip": 0
+          },
+          "package_events": {
+            "pass": 1,
+            "fail": 0,
+            "skip": 0
+          },
+          "first_event_time": "2026-11-19T02:20:54.442345221-08:00",
+          "last_event_time": "2026-11-19T02:20:55.719617375-08:00",
+          "non_json_lines": 0,
+          "data_race_warning_present": false
+        }
+      }
+    ],
+    "lightweight_checks": {
+      "receipt": "core/core-lightweight-checks.json",
+      "source_sha": null,
+      "source_scope": "Intermediate candidate before final integrations; exact checkout hash and invocation arguments were not recorded.",
+      "checks": [
+        {
+          "check": "diff",
+          "exit_code": 0,
+          "seconds": 0.04,
+          "output": ""
+        },
+        {
+          "check": "format",
+          "exit_code": 0,
+          "seconds": 3.974,
+          "output": ""
+        },
+        {
+          "check": "pins",
+          "exit_code": 0,
+          "seconds": 0.702,
+          "output": "action pins and permissions: ok\n"
+        },
+        {
+          "check": "hygiene",
+          "exit_code": 0,
+          "seconds": 1.093,
+          "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\nhygiene checks: ok\n"
+        },
+        {
+          "check": "exports",
+          "exit_code": 0,
+          "seconds": 13.226,
+          "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 12.477s\n\nOK\n"
+        },
+        {
+          "check": "qa-runner",
+          "exit_code": 0,
+          "seconds": 1.549,
+          "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 1.010s\n\nOK\n"
+        },
+        {
+          "check": "thresholds",
+          "exit_code": 0,
+          "seconds": 2.338,
+          "output": "........\n----------------------------------------------------------------------\nRan 8 tests in 1.983s\n\nOK\n"
+        }
+      ]
+    },
+    "sql_smoke": {
+      "receipt": "core/core-inventory-sqlite-smoke.json",
+      "scope": "Python sqlite3 3.53.1 executes migration/query SQL. This does not test modernc.org/sqlite, Go repository methods, race behavior, or Go migration cleanup.",
+      "source_sha": null,
+      "source_note": "Recovered session and token query candidate; exact checkout hash was not embedded."
+    },
+    "incomplete_attempts": [
+      {
+        "log": "core/sqlite-compile.log",
+        "status": "interrupted_without_completed_receipt",
+        "exit_code": null,
+        "source_sha": null,
+        "command": null,
+        "note": "Empty output; no compilation or test success inferred."
+      },
+      {
+        "log": "core/core-amount-fuzz.log",
+        "status": "cancelled_without_completed_receipt",
+        "exit_code": null,
+        "source_sha": null,
+        "command": null,
+        "note": "Empty output; no fuzz executions or pass inferred."
+      }
+    ],
+    "coordinator_observations": [
+      {
+        "check": "production-package-build",
+        "reported_exit_code": 0,
+        "independently_attested_by_log": false,
+        "log": "core/core-production-build.log",
+        "source_sha": "655c164375a626ec41673bb88310dc45a9a68a66",
+        "command_base": [
+          "go",
+          "build"
+        ],
+        "exact_flags": null,
+        "packages": [
+          "./internal/domain",
+          "./internal/repository",
+          "./internal/service",
+          "./internal/api",
+          "./internal/web",
+          "./internal/storetest"
+        ],
+        "scope": "Intermediate production packages without modernc or CLI; before UUID/security follow-ups. Empty log alone is not build proof."
+      },
+      {
+        "check": "traceability-generate-and-check",
+        "reported_exit_code": 0,
+        "independently_attested_by_log": false,
+        "source_sha": "c1190ceb99630be4a09721cc800e0699fa10c5be",
+        "command_base": [
+          "go",
+          "run",
+          "./scripts/traceability"
+        ],
+        "exact_mode_flags": null,
+        "environment": {
+          "GOTOOLCHAIN": "local",
+          "GOMAXPROCS": "1",
+          "GOGC": "50",
+          "GOMEMLIMIT": "256MiB"
+        },
+        "reported_counts": {
+          "requirement_ids": 531,
+          "built_without_test_citation": 19,
+          "unknown": 0,
+          "duplicates": 0,
+          "legacy_reference_report": "895/906"
+        },
+        "note": "Reported by coordinator after final merge. Not rerun or promoted to independent test evidence during bundling."
+      }
+    ]
+  },
+  "future": {
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "CGO_ENABLED": "1",
+      "GOMAXPROCS": "1",
+      "GOGC": "30"
+    },
+    "timeout_seconds": {
+      "go_test_timeout": 90,
+      "runner_wall_clock_per_check": 180
+    },
+    "summary": {
+      "module_sources_preserved": 15,
+      "completed_race_runs": 9,
+      "timed_out_race_runs": 2,
+      "race_not_attempted": 4,
+      "completed_clean_format_checks": 11,
+      "completed_vet_checks": 11,
+      "named_test_events_in_completed_runs": {
+        "pass": 42,
+        "fail": 0,
+        "skip": 0
+      },
+      "named_test_events_in_timed_out_partial_runs": {
+        "pass": 72,
+        "fail": 0,
+        "skip": 1
+      },
+      "production_integrations_qualified": 0
+    },
+    "modules": [
+      {
+        "module": "FNET-201",
+        "branch": "future/fnet-201-matching-20261116",
+        "source_sha": "12850290c6bca7720853c33689662d751aced160",
+        "source_directory": "future/matching",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.022,
+            "log": "future/FNET-201-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 35.375,
+            "log": "future/FNET-201-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 8.655,
+            "log": "future/FNET-201-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:10:53.486381921-08:00",
+              "last_event_time": "2026-11-19T02:10:54.531876019-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-202",
+        "branch": "future/fnet-202-favorites-20261116",
+        "source_sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+        "source_directory": "future/favorites",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.066,
+            "log": "future/FNET-202-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 86.406,
+            "log": "future/FNET-202-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 124,
+            "seconds": 180.018,
+            "log": "future/FNET-202-race.log",
+            "status": "timed_out",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 72,
+                "fail": 0,
+                "skip": 1
+              },
+              "top_level_test_events": {
+                "pass": 31,
+                "fail": 0,
+                "skip": 1
+              },
+              "subtest_events": {
+                "pass": 41,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 4,
+                "fail": 0,
+                "skip": 3
+              },
+              "first_event_time": "2026-11-19T02:12:32.754912398-08:00",
+              "last_event_time": "2026-11-19T02:12:59.983366739-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-203",
+        "branch": "future/fnet-203-receipts-20261116",
+        "source_sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+        "source_directory": "future/receipts",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.058,
+            "log": "future/FNET-203-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 3.28,
+            "log": "future/FNET-203-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 8.277,
+            "log": "future/FNET-203-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:15:31.513193003-08:00",
+              "last_event_time": "2026-11-19T02:15:32.660572677-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-204",
+        "branch": "future/fnet-204-feed-20261116",
+        "source_sha": "5d3819c3b3af031b75eceb5251da0226a4ecee77",
+        "source_directory": "future/feed",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.047,
+            "log": "future/FNET-204-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 1.88,
+            "log": "future/FNET-204-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 8.488,
+            "log": "future/FNET-204-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:15:41.951397078-08:00",
+              "last_event_time": "2026-11-19T02:15:43.09266713-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-205",
+        "branch": "future/fnet-205-analytics-20261116",
+        "source_sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+        "source_directory": "future/analytics",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.048,
+            "log": "future/FNET-205-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 1.365,
+            "log": "future/FNET-205-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 6.422,
+            "log": "future/FNET-205-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:15:49.711849035-08:00",
+              "last_event_time": "2026-11-19T02:15:50.895200846-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-206",
+        "branch": "future/fnet-206-areas-20261116",
+        "source_sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+        "source_directory": "future/areas",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.039,
+            "log": "future/FNET-206-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 1.932,
+            "log": "future/FNET-206-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 6.239,
+            "log": "future/FNET-206-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:15:58.012456743-08:00",
+              "last_event_time": "2026-11-19T02:15:59.120860779-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-207",
+        "branch": "future/fnet-207-recurring-20261116",
+        "source_sha": "0437e54897c6d9cfb3f2577807b82dd038493850",
+        "source_directory": "future/recurring",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.035,
+            "log": "future/FNET-207-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 1.943,
+            "log": "future/FNET-207-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 7.933,
+            "log": "future/FNET-207-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:16:07.639414451-08:00",
+              "last_event_time": "2026-11-19T02:16:09.047025803-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-208",
+        "branch": "future/fnet-208-governance-20261116",
+        "source_sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+        "source_directory": "future/governance",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.047,
+            "log": "future/FNET-208-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 1.531,
+            "log": "future/FNET-208-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 6.62,
+            "log": "future/FNET-208-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:16:16.097748736-08:00",
+              "last_event_time": "2026-11-19T02:16:17.220635025-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FNET-209",
+        "branch": "future/fnet-209-federation-20261116",
+        "source_sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+        "source_directory": "future/federation",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.043,
+            "log": "future/FNET-209-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 4.585,
+            "log": "future/FNET-209-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 10.404,
+            "log": "future/FNET-209-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": "2026-11-19T02:16:31.063120614-08:00",
+              "last_event_time": "2026-11-19T02:16:32.254710372-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FUX-101",
+        "branch": "future/fux-101-pwa-20261116",
+        "source_sha": "a6326b8725fe6d7270997b4a284cbbc129022dd1",
+        "source_directory": "future/pwa",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.11,
+            "log": "future/FUX-101-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 36.83,
+            "log": "future/FUX-101-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 152.441,
+            "log": "future/FUX-101-race.log",
+            "status": "passed",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 34,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 13,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 21,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 1,
+                "fail": 0,
+                "skip": 1
+              },
+              "first_event_time": "2026-11-19T02:19:36.552550287-08:00",
+              "last_event_time": "2026-11-19T02:19:41.643281313-08:00",
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FUX-102",
+        "branch": "future/fux-102-qr-20261116",
+        "source_sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+        "source_directory": "future/qr",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.355,
+            "log": "future/FUX-102-format.log",
+            "clean": true,
+            "unformatted": [],
+            "status": "passed"
+          },
+          {
+            "name": "vet",
+            "command": [
+              "go",
+              "vet",
+              "-p=1",
+              "./..."
+            ],
+            "exit_code": 0,
+            "seconds": 77.9,
+            "log": "future/FUX-102-vet.log",
+            "status": "passed"
+          },
+          {
+            "name": "race",
+            "command": [
+              "go",
+              "test",
+              "-race",
+              "-p=1",
+              "-json",
+              "-count=1",
+              "-timeout=90s",
+              "./..."
+            ],
+            "exit_code": 124,
+            "seconds": 180.17,
+            "log": "future/FUX-102-race.log",
+            "status": "timed_out",
+            "independent_go_event_counts": {
+              "named_test_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "top_level_test_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "subtest_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "package_events": {
+                "pass": 0,
+                "fail": 0,
+                "skip": 0
+              },
+              "first_event_time": null,
+              "last_event_time": null,
+              "non_json_lines": 0,
+              "data_race_warning_present": false
+            }
+          }
+        ]
+      },
+      {
+        "module": "FUX-103",
+        "branch": "future/fux-103-discovery-20261116",
+        "source_sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+        "source_directory": "future/discovery",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [
+          {
+            "name": "format",
+            "command": [
+              "gofmt",
+              "-l",
+              "."
+            ],
+            "status": "started_without_completion_receipt",
+            "exit_code": null,
+            "log": "future/FUX-103-format.log",
+            "note": "The runner printed START but never recorded this check or module in current-results.json; an empty file is not a pass."
+          }
+        ],
+        "race_status": "not_attempted_no_receipt"
+      },
+      {
+        "module": "FUX-104",
+        "branch": "future/fux-104-notifications-20261116",
+        "source_sha": "3bdf8e92d84af2c660c615bcf956cf76752e86ae",
+        "source_directory": "future/notifications",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [],
+        "race_status": "not_attempted_no_receipt",
+        "other_checks_status": "not_attempted_no_receipt"
+      },
+      {
+        "module": "FUX-105",
+        "branch": "future/fux-105-messaging-20261116",
+        "source_sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+        "source_directory": "future/messaging",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [],
+        "race_status": "not_attempted_no_receipt",
+        "other_checks_status": "not_attempted_no_receipt"
+      },
+      {
+        "module": "FUX-106",
+        "branch": "future/fux-106-onboarding-20261116",
+        "source_sha": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+        "source_directory": "future/onboarding",
+        "integration": "HOLD",
+        "enabled": false,
+        "checks": [],
+        "race_status": "not_attempted_no_receipt",
+        "other_checks_status": "not_attempted_no_receipt"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "core/core-amount-fuzz.log",
+      "source": "evidence/core-amount-fuzz.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/core-diff.log",
+      "source": "evidence/core-diff.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/core-exports.log",
+      "source": "evidence/core-exports.log",
+      "bytes": 110,
+      "sha256": "f8aa47d6c3d26664d719ab843e422c6931dfe0223bea6da4820f3da2fb1a011b"
+    },
+    {
+      "path": "core/core-format.log",
+      "source": "evidence/core-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/core-hygiene.log",
+      "source": "evidence/core-hygiene.log",
+      "bytes": 121,
+      "sha256": "d73668eb666d28d3df07751c7dfdbb61919c3077aff0e7f8315096fbe009cb3b"
+    },
+    {
+      "path": "core/core-inventory-sqlite-smoke.json",
+      "source": "evidence/core-inventory-sqlite-smoke.json",
+      "bytes": 1720,
+      "sha256": "bd3ca45a3fda9c2cc194ce78aedda6f4f98c71aa4b0ba73829877bed5c31b543"
+    },
+    {
+      "path": "core/core-job-identifiers-full-api-source.jsonl",
+      "source": "evidence/core-job-identifiers-full-api-source.jsonl",
+      "bytes": 1241,
+      "sha256": "19a4ca39383222d4ddf1a04e9264065b89fea5aadd7237f6edffefa003a1dc93"
+    },
+    {
+      "path": "core/core-job-identifiers.jsonl",
+      "source": "evidence/core-job-identifiers.jsonl",
+      "bytes": 1241,
+      "sha256": "bbab12f44b7d9a0e4dbba57e09a2b0ecb0f9665bb4dcfa2d70063e7b3929c6e4"
+    },
+    {
+      "path": "core/core-lightweight-checks.json",
+      "source": "evidence/core-lightweight-checks.json",
+      "bytes": 1138,
+      "sha256": "d77d5ecc39faf7c423f6d64ab1a84afd333ae9207edd2a16cd1b98a6d2d28dc2"
+    },
+    {
+      "path": "core/core-pins.log",
+      "source": "evidence/core-pins.log",
+      "bytes": 32,
+      "sha256": "9353c7b345cda410e4d8d1110ace2932403381722b51df6065fea429ad158cd2"
+    },
+    {
+      "path": "core/core-production-build.log",
+      "source": "evidence/core-production-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/core-qa-runner.log",
+      "source": "evidence/core-qa-runner.log",
+      "bytes": 102,
+      "sha256": "a3213747a7b0fed3b97831e2cd7f6e1041711002ae2ed0cbbf00e68ec361731b"
+    },
+    {
+      "path": "core/core-session-bounded-service.jsonl",
+      "source": "evidence/core-session-bounded-service.jsonl",
+      "bytes": 2991,
+      "sha256": "34ce08b7ff4dec8c46e6e4e163bc16c40a1732734020b397f57d16e43fcaf653"
+    },
+    {
+      "path": "core/core-thresholds.log",
+      "source": "evidence/core-thresholds.log",
+      "bytes": 106,
+      "sha256": "c878a1b38cc432cdd060bbb0e3d4c2bdd62c98c716e49965f68016e69a3810fd"
+    },
+    {
+      "path": "core/future-current-run.log",
+      "source": "evidence/future-current-run.log",
+      "bytes": 2749,
+      "sha256": "065e1c8cbe4b8d912ab6cdef4250096c014ee9930556c8c690dea718638985c0"
+    },
+    {
+      "path": "core/sqlite-compile.log",
+      "source": "evidence/sqlite-compile.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/traceability-regenerate.log",
+      "source": "evidence/traceability-regenerate.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "core/security-token-authority-after.jsonl",
+      "source": "security-token-authority-after.json",
+      "bytes": 17215,
+      "sha256": "e8541d7b5460e3fa528d4bb39bd6fd3c984aa4f43aecb9f0d814b480f4e276e8"
+    },
+    {
+      "path": "future/current-results.json",
+      "source": "future-current/current-results.json",
+      "bytes": 12762,
+      "sha256": "f6debb10b70dc31bce9a789cc13871d40d2dc0032a06b1508f88e91f7f9bdf4b"
+    },
+    {
+      "path": "future/sources.json",
+      "source": "future-current/sources.json",
+      "bytes": 26034,
+      "sha256": "8fcf1690aa7a3c839349d97c41ebbd7c81b17d274474cdd89cda02d52f63722f"
+    },
+    {
+      "path": "future/runner.source.txt",
+      "source": "test_current_future.py",
+      "bytes": 2449,
+      "sha256": "7503d4f50d63434d491ab69a60cd2b8c0a00ea2cf028bab7242ae76f5861cda5"
+    },
+    {
+      "path": "future/FNET-201-format.log",
+      "source": "future-current/FNET-201-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-201-vet.log",
+      "source": "future-current/FNET-201-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-201-race.log",
+      "source": "future-current/FNET-201-race.log",
+      "bytes": 1356,
+      "sha256": "4fa1e4581fa24a356337e1f5ed9ff4325deb237ab1aa524a23c652623274f524"
+    },
+    {
+      "path": "future/FNET-202-format.log",
+      "source": "future-current/FNET-202-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-202-vet.log",
+      "source": "future-current/FNET-202-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-202-race.log",
+      "source": "future-current/FNET-202-race.log",
+      "bytes": 62511,
+      "sha256": "8d7880b846a09c14640f4e54d5c5e717f1338b01139483e716a2d913f38e65bb"
+    },
+    {
+      "path": "future/FNET-203-format.log",
+      "source": "future-current/FNET-203-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-203-vet.log",
+      "source": "future-current/FNET-203-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-203-race.log",
+      "source": "future-current/FNET-203-race.log",
+      "bytes": 1424,
+      "sha256": "8894312c7dd16182c124e1b92ae0754c6b026f676c216c39e0f8b585eb9b3dcb"
+    },
+    {
+      "path": "future/FNET-204-format.log",
+      "source": "future-current/FNET-204-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-204-vet.log",
+      "source": "future-current/FNET-204-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-204-race.log",
+      "source": "future-current/FNET-204-race.log",
+      "bytes": 1323,
+      "sha256": "548f2c5bca63dd00be67015e20c20320354a8abf08ccb9971b711595c3410c9f"
+    },
+    {
+      "path": "future/FNET-205-format.log",
+      "source": "future-current/FNET-205-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-205-vet.log",
+      "source": "future-current/FNET-205-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-205-race.log",
+      "source": "future-current/FNET-205-race.log",
+      "bytes": 1449,
+      "sha256": "88793553e05e16c688592614f84f445178a41bcac79db8b40de35f68aef4820b"
+    },
+    {
+      "path": "future/FNET-206-format.log",
+      "source": "future-current/FNET-206-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-206-vet.log",
+      "source": "future-current/FNET-206-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-206-race.log",
+      "source": "future-current/FNET-206-race.log",
+      "bytes": 1370,
+      "sha256": "496f16180b20639ec437f79931277f53aa577c46c00bb05e4ca2c19be44daf2b"
+    },
+    {
+      "path": "future/FNET-207-format.log",
+      "source": "future-current/FNET-207-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-207-vet.log",
+      "source": "future-current/FNET-207-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-207-race.log",
+      "source": "future-current/FNET-207-race.log",
+      "bytes": 1374,
+      "sha256": "39a8e65868bed9b452bf2e20a44ecc09362f392d7f75ffe061bc1f5b8716bf42"
+    },
+    {
+      "path": "future/FNET-208-format.log",
+      "source": "future-current/FNET-208-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-208-vet.log",
+      "source": "future-current/FNET-208-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-208-race.log",
+      "source": "future-current/FNET-208-race.log",
+      "bytes": 1356,
+      "sha256": "ad2017a54f63d48cc97999389f08addfdae5a4e429f6ec2276deb1046d7690e9"
+    },
+    {
+      "path": "future/FNET-209-format.log",
+      "source": "future-current/FNET-209-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-209-vet.log",
+      "source": "future-current/FNET-209-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FNET-209-race.log",
+      "source": "future-current/FNET-209-race.log",
+      "bytes": 1413,
+      "sha256": "374bfd3c92359d11c675c34551f246210349e24b25e82e80f7fe2927b6f3f0ed"
+    },
+    {
+      "path": "future/FUX-101-format.log",
+      "source": "future-current/FUX-101-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FUX-101-vet.log",
+      "source": "future-current/FUX-101-vet.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FUX-101-race.log",
+      "source": "future-current/FUX-101-race.log",
+      "bytes": 28613,
+      "sha256": "0a4ca68fe21b520087310f4882106914e75eac6d555fcd36a2596f9df4553075"
+    },
+    {
+      "path": "future/FUX-102-format.log",
+      "source": "future-current/FUX-102-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FUX-102-vet.log",
+      "source": "future-current/FUX-102-vet.log",
+      "bytes": 209,
+      "sha256": "3f94f04b1a402a55844be126a088fe14e842244891e75b3ee9a2c9f58ec41334"
+    },
+    {
+      "path": "future/FUX-102-race.log",
+      "source": "future-current/FUX-102-race.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "future/FUX-103-format.log",
+      "source": "future-current/FUX-103-format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

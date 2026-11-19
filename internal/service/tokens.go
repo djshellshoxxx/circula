@@ -19,6 +19,26 @@ type TokenInput struct {
 	ExpiresAt *time.Time
 }
 
+// tokenMutationAuthority checks the current credential state inside the same
+// write unit as token creation/revocation. Authentication at the HTTP edge may
+// have preceded a concurrent logout, password change or account reset.
+// Trusted non-session service callers retain their existing scope rules, but
+// cannot override a password restriction that changed after authentication.
+func (s *Service) tokenMutationAuthority(tx store.Tx, actor domain.Actor) error {
+	if actor.SessionID != "" {
+		_, _, err := s.ownSessionGate(tx, actor, domain.ScopeWrite)
+		return err
+	}
+	mustChange, err := tx.MustChangePassword(actor.PersonID)
+	if err != nil {
+		return authnErr(err)
+	}
+	if mustChange {
+		return domain.PasswordChangeRequired()
+	}
+	return nil
+}
+
 // CreateAPIToken returns the bearer value once; only its hash is stored. A
 // token can never hold a scope its creator lacks.
 func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in TokenInput) (string, *domain.APIToken, error) {
@@ -54,6 +74,9 @@ func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in Tok
 	t := &domain.APIToken{ID: s.id(), PersonID: actor.PersonID, NetworkID: in.NetworkID, Name: name,
 		TokenHash: hashToken(plain), Scopes: in.Scopes, CreatedAt: s.now(), ExpiresAt: in.ExpiresAt}
 	err = s.update(ctx, func(tx store.Tx) error {
+		if err := s.tokenMutationAuthority(tx, actor); err != nil {
+			return err
+		}
 		if in.NetworkID != "" {
 			if !domain.ValidRecordID(in.NetworkID) {
 				return domain.NotFound("network")
@@ -116,6 +139,9 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 		return domain.Forbidden("an unrestricted person is required to manage API tokens")
 	}
 	return s.update(ctx, func(tx store.Tx) error {
+		if err := s.tokenMutationAuthority(tx, actor); err != nil {
+			return err
+		}
 		if !domain.ValidRecordID(tokenID) {
 			return domain.NotFound("token")
 		}

@@ -1,0 +1,44 @@
+[
+  {
+    "check": "diff",
+    "exit_code": 0,
+    "seconds": 0.04,
+    "output": ""
+  },
+  {
+    "check": "format",
+    "exit_code": 0,
+    "seconds": 3.974,
+    "output": ""
+  },
+  {
+    "check": "pins",
+    "exit_code": 0,
+    "seconds": 0.702,
+    "output": "action pins and permissions: ok\n"
+  },
+  {
+    "check": "hygiene",
+    "exit_code": 0,
+    "seconds": 1.093,
+    "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\nhygiene checks: ok\n"
+  },
+  {
+    "check": "exports",
+    "exit_code": 0,
+    "seconds": 13.226,
+    "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 12.477s\n\nOK\n"
+  },
+  {
+    "check": "qa-runner",
+    "exit_code": 0,
+    "seconds": 1.549,
+    "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 1.010s\n\nOK\n"
+  },
+  {
+    "check": "thresholds",
+    "exit_code": 0,
+    "seconds": 2.338,
+    "output": "........\n----------------------------------------------------------------------\nRan 8 tests in 1.983s\n\nOK\n"
+  }
+]

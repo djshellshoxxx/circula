@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/djshellshoxxx/circula/internal/api"
 )
 
@@ -355,6 +357,9 @@ func TestInvitationsDisputesDepartureExport(t *testing.T) {
 	}](t, rec)
 	if ex.Status != "complete" {
 		t.Fatalf("export = %s", rec.Body.String())
+	}
+	if id, err := uuid.Parse(ex.ID); err != nil || id.Version() != 7 {
+		t.Fatalf("new export identifier is not UUIDv7: %q (%v)", ex.ID, err)
 	}
 	art := w.do(req{method: "GET", path: ex.ArtefactURL, token: w.aliceT})
 	wantStatus(t, art, 200)

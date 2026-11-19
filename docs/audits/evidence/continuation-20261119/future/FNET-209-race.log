@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:16:31.063120614-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/federation"}
+{"Time":"2026-11-19T02:16:31.187701379-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/federation","Test":"TestSignedDiscoveryBoundaries"}
+{"Time":"2026-11-19T02:16:31.187755961-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/federation","Test":"TestSignedDiscoveryBoundaries","Output":"=== RUN   TestSignedDiscoveryBoundaries\n"}
+{"Time":"2026-11-19T02:16:31.247142073-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/federation","Test":"TestSignedDiscoveryBoundaries","Output":"--- PASS: TestSignedDiscoveryBoundaries (0.06s)\n"}
+{"Time":"2026-11-19T02:16:31.247195242-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/federation","Test":"TestSignedDiscoveryBoundaries","Elapsed":0.06}
+{"Time":"2026-11-19T02:16:31.247220319-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/federation","Output":"PASS\n"}
+{"Time":"2026-11-19T02:16:32.252717575-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/federation","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/federation\t1.173s\n"}
+{"Time":"2026-11-19T02:16:32.254710372-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/federation","Elapsed":1.192}

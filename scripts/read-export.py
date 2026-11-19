@@ -9,28 +9,94 @@ Verifies size, SHA-256 and row count of every file against manifest.json, then
 checks the reconciliation summary when present. Older packages without that
 optional summary remain supported. Exit status 0 only when every check passes.
 """
+import copy
 import csv
+from contextlib import contextmanager
 import hashlib
 import io
 import json
 import os
 import re
+import stat
 import sys
 import zipfile
 
 
+MAX_EXPORT_FILE = 1 << 32
+
+
+def read_member(stream):
+    """Reject oversized data instead of accepting an unchecked prefix."""
+    with io.BytesIO() as data:
+        while True:
+            chunk = stream.read(min(1 << 20, MAX_EXPORT_FILE + 1 - data.tell()))
+            if not chunk:
+                return data.getvalue()
+            data.write(chunk)
+            if data.tell() > MAX_EXPORT_FILE:
+                raise ValueError("export member is too large")
+
+
+def package_name(name):
+    """Use one flat, portable identity for each member; never normalize paths."""
+    if (not isinstance(name, str) or name in ("", ".", "..")
+            or any(c in name for c in "/\\\x00:")):
+        raise ValueError("unsafe package member name %r" % name)
+    return name
+
+
+@contextmanager
 def open_package(path):
     if os.path.isdir(path):
-        def read(name):
-            with open(os.path.join(path, os.path.basename(name)), "rb") as f:
-                return f.read()
-        return read
-    z = zipfile.ZipFile(path)
-    names = {os.path.basename(n): n for n in z.namelist()}
+        names = set()
+        with os.scandir(path) as entries:
+            for entry in entries:
+                name = package_name(entry.name)
+                if not entry.is_file(follow_symlinks=False):
+                    raise ValueError("package member %r is not a regular file" % name)
+                names.add(name)
 
-    def read(name):
-        return z.read(names[name])
-    return read
+        def read(name):
+            if name not in names:
+                raise ValueError("package member %r is missing" % name)
+            with open(os.path.join(path, name), "rb") as f:
+                if os.fstat(f.fileno()).st_size > MAX_EXPORT_FILE:
+                    raise ValueError("export member is too large")
+                return read_member(f)
+
+        yield read, names
+        return
+    with zipfile.ZipFile(path) as z:
+        members = {}
+        for info in z.infolist():
+            name = package_name(info.orig_filename)
+            if name != info.filename:
+                raise ValueError("normalized ZIP member name %r" % name)
+            if name in members:
+                raise ValueError("duplicate ZIP member %r" % name)
+            mode = stat.S_IFMT(info.external_attr >> 16)
+            dos_directory = info.external_attr & 0x10
+            if info.is_dir() or dos_directory or mode not in (0, stat.S_IFREG):
+                raise ValueError("package member %r is not a regular file" % name)
+            members[name] = info
+
+        def read(name):
+            info = members[name]
+            if info.file_size > MAX_EXPORT_FILE:
+                raise ValueError("export member is too large")
+            # ZipExtFile otherwise truncates at the declared uncompressed size
+            # before callers can notice an understated length. Read through a
+            # bounded copy so CRC covers the complete physical member, then
+            # compare its actual length with the original declaration.
+            complete = copy.copy(info)
+            complete.file_size = MAX_EXPORT_FILE + 1
+            with z.open(complete) as f:
+                data = read_member(f)
+            if len(data) != info.file_size:
+                raise ValueError("ZIP member size does not match its complete contents")
+            return data
+
+        yield read, set(members)
 
 
 def integer(value, label, csv_cell=False):
@@ -125,11 +191,28 @@ def verify(argv):
     if len(argv) != 2:
         print(__doc__, file=sys.stderr)
         return 2
-    read = open_package(argv[1])
+    with open_package(argv[1]) as package:
+        return verify_package(*package)
+
+
+def verify_package(read, names):
     man = json.loads(read("manifest.json"))
-    if man.get("schema_version") != 1:
+    if not isinstance(man, dict):
+        raise ValueError("manifest.json must contain an object")
+    if type(man.get("schema_version")) is not int or man["schema_version"] != 1:
         print("unsupported schema_version %r" % man.get("schema_version"), file=sys.stderr)
         return 1
+    if not isinstance(man["files"], list):
+        raise ValueError("manifest files must be an array")
+    listed = {"manifest.json"}
+    for f in man["files"]:
+        name = package_name(f["name"])
+        if name in listed:
+            raise ValueError("duplicate or reserved manifest member %r" % name)
+        listed.add(name)
+    extra = sorted(names - listed)
+    if extra:
+        raise ValueError("package members not listed in manifest: %s" % ", ".join(extra))
     bad = 0
     exported = {}
     for f in man["files"]:
