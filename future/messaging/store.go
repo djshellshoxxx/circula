@@ -11,8 +11,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"strings"
+	"sync"
 	"time"
 	"unicode/utf8"
 
@@ -38,6 +38,11 @@ type Store struct {
 	db        *sql.DB
 	authorize Authorizer
 	now       func() time.Time
+	storage   io.Closer
+	storageMu sync.RWMutex
+	closed    bool
+	closeOnce sync.Once
+	closeErr  error
 }
 
 // Open explicitly opens a private SQLite file, using one connection per store.
@@ -47,38 +52,26 @@ func Open(path string, auth Authorizer) (*Store, error) {
 	if path == "" || path == ":memory:" || strings.HasPrefix(path, "file:") || strings.ContainsAny(path, "?\x00") {
 		return nil, ErrInvalid
 	}
-	// Do not let SQLite's default umask create a world-readable private inbox.
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_RDWR, 0600)
+	path, storage, err := preparePrivateDatabase(path)
 	if err != nil {
 		return nil, err
 	}
-	info, err := file.Stat()
-	closeErr := file.Close()
-	if err != nil {
-		return nil, err
-	}
-	if closeErr != nil {
-		return nil, closeErr
-	}
-	if !info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0 {
-		return nil, errors.New("messaging database must be a private regular file")
-	}
-	db, err := sql.Open("sqlite", path)
+	db, storage, err := openStorageDatabase(privateDatabaseDSN(path), storage)
 	if err != nil {
 		return nil, err
 	}
 	db.SetMaxOpenConns(1)
 	for _, q := range []string{"PRAGMA busy_timeout=10000", "PRAGMA journal_mode=WAL", "PRAGMA foreign_keys=ON", "PRAGMA secure_delete=ON"} {
 		if _, err = db.Exec(q); err != nil {
-			db.Close()
-			return nil, err
+			return nil, closeFailedStorageOpen(db, storage, err)
 		}
 	}
 	s, err := NewStore(db, auth)
 	if err != nil {
-		db.Close()
+		return nil, closeFailedStorageOpen(db, storage, err)
 	}
-	return s, err
+	s.storage = storage
+	return s, nil
 }
 
 // NewStore borrows db; the host must configure foreign_keys, serialized writes,
@@ -91,8 +84,45 @@ func NewStore(db *sql.DB, auth Authorizer) (*Store, error) {
 }
 
 // Close closes the underlying pool. Do not call when a host owns the pool.
-func (s *Store) Close() error { return s.db.Close() }
+func (s *Store) Close() error {
+	if s.storage == nil {
+		// Preserve the existing lifecycle for non-Windows and borrowed pools.
+		return s.db.Close()
+	}
+	s.closeOnce.Do(func() {
+		// DB.Close alone neither waits for leased transactions nor serializes
+		// a second Close with the first driver's shutdown. Keep the path guard
+		// until owned operations and the physical connection close both finish.
+		s.storageMu.Lock()
+		defer s.storageMu.Unlock()
+		s.closed = true
+		s.closeErr = closeStorageDatabase(s.db, s.storage)
+	})
+	return s.closeErr
+}
+
+func (s *Store) beginStorageOperation() error {
+	if s.storage == nil {
+		return nil
+	}
+	s.storageMu.RLock()
+	if s.closed {
+		s.storageMu.RUnlock()
+		return errors.New("messaging store is closed")
+	}
+	return nil
+}
+
+func (s *Store) endStorageOperation() {
+	if s.storage != nil {
+		s.storageMu.RUnlock()
+	}
+}
 func (s *Store) Migrate(ctx context.Context) error {
+	if err := s.beginStorageOperation(); err != nil {
+		return err
+	}
+	defer s.endStorageOperation()
 	tx, e := s.db.BeginTx(ctx, nil)
 	if e != nil {
 		return e
@@ -107,6 +137,10 @@ func (s *Store) unit(ctx context.Context, a Actor, action, target string, fn fun
 	if !validID(a.Network) || !validID(a.Member) {
 		return ErrDenied
 	}
+	if err := s.beginStorageOperation(); err != nil {
+		return err
+	}
+	defer s.endStorageOperation()
 	tx, e := s.db.BeginTx(ctx, nil)
 	if e != nil {
 		return e

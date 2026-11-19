@@ -162,6 +162,7 @@ func TestMigrationBackupRestoreAndEmptyHide(t *testing.T) {
 	if e := os.Chmod(backup, 0600); e != nil {
 		t.Fatal(e)
 	}
+	assertPrivateBackup(t, backup)
 	oldPath := f.path
 	f.s.Close()
 	f.path = backup

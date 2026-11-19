@@ -2,7 +2,7 @@ name: future messaging module
 
 on:
   pull_request:
-    branches: [future/fux-105-messaging-20261116]
+    branches: [future/fux-105-messaging-20261116, master/recover-messaging-20261119]
     paths:
       - 'future/messaging/**'
       - '.github/workflows/future-messaging.yml'
@@ -79,7 +79,7 @@ jobs:
               ('github.com/mattn/go-isatty', 'v0.0.24', True),
               ('github.com/ncruces/go-strftime', 'v1.0.0', True),
               ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),
-              ('golang.org/x/sys', 'v0.48.0', True),
+              ('golang.org/x/sys', 'v0.48.0', False),
               ('modernc.org/libc', 'v1.77.1', True),
               ('modernc.org/mathutil', 'v1.7.1', True),
               ('modernc.org/memory', 'v1.12.1', True),
