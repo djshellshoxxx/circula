@@ -19,6 +19,31 @@ Review date: **2026-11-18 Pacific / 2026-11-19 UTC**. Baseline `ead63b5ce24b2bcf
 
 The candidate also preserves PR #82's credential-proof protections: password changes are durably throttled; login/session issuance, MFA enrollment/disable/code replacement and password-recovery code generation recheck the password material in their serialized mutation. A password change/reset that wins the race invalidates the old proof. The complete inherited source and its original review remain in [AUD4-AUTH-FIXES.md](../audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md).
 
+## API-036 focused completion review, 2026-11-19
+
+[PR #101](https://github.com/djshellshoxxx/circula/pull/101) preserves the concurrent
+PR90 bounded inventory and HTML cursor fix, then completes selective bulk
+revocation and previous-page navigation. Independent database, security and
+adapter reviews verified published implementation `6f8ead1951f2d4b72649909b2b4cc83000948afe`
+against exact tree `a56e533e88275c05498c39db2c97c5f15b2af2fa`; no unresolved
+blocking source finding remained. The [completion record](API036_COMPLETION.md)
+contains scope, provenance, defects, measurements and qualification limits.
+
+Confirmed additional defects now have regressions: noncanonical/oversized signed
+cursors; raw numeric-position error allocations proportional to input; malformed
+HTML query escaping discarded by convenience parsing; dynamic pager context
+losing a composite cursor; and disappearing newer pages skipping a surviving
+boundary. Forward termination is explicitly preserved. Encoding aliases did not
+bypass HMAC verification or ownership.
+
+Bulk revocation rechecks the current stored session and owner within its write
+transaction, preserves that credential and foreign/API-token authority, clears
+pending owner MFA challenges, and atomically writes only person/count/current
+disposition audit data. Review covered CSRF, confirmation, effective role
+lifetimes, expired/revoked/missing targets, audit failure and concurrent
+revocation. Actual focused production tests passed; broader execution gates and
+external SEC-033 release review remain separate.
+
 ## Separate future-module and topic repairs
 
 | ID | Scope | Finding / correction | Qualification boundary |

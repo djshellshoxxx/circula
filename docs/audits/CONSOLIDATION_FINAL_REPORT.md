@@ -16,6 +16,27 @@ Audit date: **2026-11-18 Pacific / 2026-11-19 UTC**. This report records observe
 
 Git data publication uses the connected provider because the shell Git client had no push credentials. Every published tree is compared with the local reviewed tree before creating a commit/ref. Updates are non-force and guarded by the expected old head. Publication commits record local source SHAs; a local SHA is not falsely presented as a remotely retrievable commit. Original remote source heads remain reachable and their branches are preserved.
 
+## API-036 focused continuation, 2026-11-19
+
+The complete session-management follow-up is [PR #101](https://github.com/djshellshoxxx/circula/pull/101),
+based on concurrent PR90 head `f25d10b6b4085b80d7de53ecbb55efffeb9d8969`. Published
+implementation `6f8ead1951f2d4b72649909b2b4cc83000948afe` exactly matches local
+reviewed tree `a56e533e88275c05498c39db2c97c5f15b2af2fa`. It includes previous-page
+keyset navigation, current-preserving bulk sign-out, atomic MFA/audit handling,
+migration 0021 and cursor resource/encoding repairs. Narrower draft #96 was
+closed as superseded, preserving its branch and code in #101.
+
+[API036_COMPLETION.md](API036_COMPLETION.md) records implementation, branch
+provenance, independent reviews, real SQLite/Go stress measurements and actual
+failed/interrupted checks. [API036_DATABASE_REVIEW.md](API036_DATABASE_REVIEW.md)
+links the portable SQL probe and preserved measurement JSON. Current-head full
+Go/race/vet/check, browser, fuzz and native platform receipts on #101 govern
+qualification; earlier PR90 results do not qualify these changes. The first
+full run found two fixture compatibility failures now repaired without removing
+assertions. Local Chromium aborts before assertions because socket() is denied.
+All future modules remain isolated and disabled. No main merge, release or
+deployment is asserted by this continuation record.
+
 ## Evidence-backed counts
 
 | Measure | Observed count / definition |
