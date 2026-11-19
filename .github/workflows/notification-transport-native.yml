@@ -1,0 +1,97 @@
+name: Native notification transports
+
+on:
+  pull_request:
+    branches: [future/fux-104-notifications-20261116]
+    paths:
+      - 'future/notifications/pushsend/**'
+      - 'future/notifications/smtpsend/**'
+      - 'future/notifications/go.mod'
+      - 'future/notifications/go.sum'
+      - 'future/notifications/TRANSPORT-QUALIFICATION-20261119.md'
+      - '.github/workflows/notification-transport-native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notification-transport-native-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  transports:
+    name: Notification transports (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15-intel, windows-2022]
+    env:
+      GOTOOLCHAIN: local
+      GOWORK: 'off'
+      GOFLAGS: '-mod=readonly'
+      GOMAXPROCS: '2'
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/notifications
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.11'
+          cache: true
+          cache-dependency-path: future/notifications/go.sum
+      - name: Record source and toolchain
+        run: |
+          git rev-parse HEAD
+          git rev-parse HEAD:future/notifications
+          go version
+      - name: Verify disabled module and dependency boundary
+        run: |
+          if [ "$RUNNER_OS" = Windows ]; then
+            transport_python=python
+          else
+            transport_python=python3
+          fi
+          "$transport_python" - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          feature = json.loads(Path("feature.json").read_text(encoding="utf-8"))
+          if feature.get("id") != "FUX-104" or feature.get("enabled") is not False or feature.get("integration") != "HOLD":
+              raise SystemExit("Expected disabled FUX-104 on integration HOLD")
+          if feature.get("depends_on_future_features") != []:
+              raise SystemExit("Unexpected future-module dependency")
+          expected = "github.com/djshellshoxxx/circula/future/notifications"
+          if subprocess.check_output(["go", "list", "-m"], text=True).strip() != expected:
+              raise SystemExit("Unexpected module identity")
+          modules = subprocess.check_output(["go", "list", "-m", "-f", "{{.Path}}", "all"], text=True).splitlines()
+          for module in modules:
+              if module == "github.com/djshellshoxxx/circula" or (module.startswith("github.com/djshellshoxxx/circula/") and module != expected):
+                  raise SystemExit("Core or another future module is not allowed")
+          replacements = subprocess.check_output(["go", "list", "-m", "-f", "{{if .Replace}}{{.Path}}{{end}}", "all"], text=True).strip()
+          if replacements:
+              raise SystemExit("Module replacements are not allowed")
+          PY
+      - name: Download and verify pinned dependencies
+        run: |
+          go mod download
+          go mod verify
+      - name: Vet transport packages
+        run: go vet ./pushsend ./smtpsend
+      - name: Race-test loopback transports on Linux and macOS
+        if: runner.os != 'Windows'
+        env:
+          CGO_ENABLED: '1'
+        run: go test -race -p=1 -count=1 -cover -timeout=2m ./pushsend ./smtpsend
+      - name: Test loopback transports on Windows
+        if: runner.os == 'Windows'
+        env:
+          CGO_ENABLED: '0'
+        run: go test -count=1 -cover -timeout=2m ./pushsend ./smtpsend
