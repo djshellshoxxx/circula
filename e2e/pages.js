@@ -48,6 +48,7 @@ const PAGES = [
   ['report a member', 'alice', (st) => `${n(st)}/report?type=member&id=${st.bobId}`, 'report_form'],
   ['time zone', 'alice', () => '/account/time-zone', 'time_zone'],
   ['network rules and change log', 'alice', (st) => `${n(st)}/policy`, 'rules'],
+  ['administrator recovery', 'alice', (st) => `${n(st)}/admin-recovery`, 'admin_recovery'],
   ['network terms (none published)', 'alice', (st) => `${n(st)}/terms`, 'terms'],
   ['leave the network (blocked by an open dispute)', 'alice', (st) => `${n(st)}/leave`, 'leave'],
   ['join a network (invitation only)', 'carol', (st) => `${n(st)}/join`, 'joinnet'],
