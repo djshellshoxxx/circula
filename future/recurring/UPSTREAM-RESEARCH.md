@@ -2,6 +2,12 @@
 
 Research date: 2026-11-16. **Research complete; implementation and fresh-agent audit pending. Integration HOLD remains.** No upstream source or dependency was copied/installed by this phase.
 
+## Calendar implementation update — 2026-11-19
+
+The isolated calendar milestone now supports structured daily, weekly and monthly rules through the Go standard library. It resolves exact timezone intervals and preserves the documented gap-skip/fold-first and missing-month-day behavior. The proposed third-party cron parser below was not adopted for this bounded API: no arbitrary expressions are accepted, and no upstream source or dependency is included. The historical candidate review remains reference material for any later expression-parser decision.
+
+The complete durable service plan below is still unfinished. No quota, retention, production timezone-edit policy, financial authority, core integration or release decision is implied by the calendar implementation. See `README.md` and `VALIDATION.md` for its implemented boundary and test evidence.
+
 ## Decision
 
 Reuse the pure schedule parser and `Schedule.Next` API from **`github.com/robfig/cron/v3 v3.0.1`**, exact commit **`ccba498c397bb90a9c84945bbb0f7af2d72b6309`**, as a pinned dependency. It supplies mature cron/calendar calculation without introducing a mandatory service or taking authority over trades. Do not import its background runner or wrappers as a substitute for durable firing records.

@@ -1,10 +1,10 @@
 {
   "id": "FNET-207",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "calendar-core-tested-feature-incomplete",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Daily IANA-local reminder windows, stable daily dedupe keys, DST gap skipping/fold first-occurrence selection and no catch-up backlog.",
-  "remaining": "Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; quotas; weekly/monthly schedules and calendar policy; optional manually confirmed draft adapter; crash/concurrent worker tests. Current core supports daily reminders only."
+  "scope": "Daily, weekly and monthly IANA-local reminder windows, stable per-date dedupe keys, DST gap skipping/fold first-occurrence selection, exact historical second-offset handling, strict identity/timezone validation and no catch-up backlog.",
+  "remaining": "Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; explicit quotas, retention and timezone-edit policy; optional manually confirmed draft adapter; crash/concurrent worker tests; current authorization adapters; accessible HTTP/CLI/UI acceptance; and core policy approval. No production Core recurring feature is enabled."
 }
