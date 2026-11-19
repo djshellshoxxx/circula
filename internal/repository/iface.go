@@ -76,6 +76,8 @@ type NetworkRepo interface {
 type SessionPosition struct {
 	CreatedAt time.Time
 	PublicID  string
+	// Reverse seeks newer rows in ascending order for a previous page.
+	Reverse bool
 }
 
 // PersonRepo covers identities, login throttling, sessions and API tokens.
@@ -103,6 +105,7 @@ type PersonRepo interface {
 	// descending (created_at, public_id) order. It reads at most limit retained
 	// rows, including dead rows: expiry filtering must not cause an unbounded
 	// scan. Limits outside 1..100 use 100. Credential hashes stay in the service.
+	// With before.Reverse it seeks strictly newer rows in ascending order.
 	ListSessions(personID string, before *SessionPosition, limit int) ([]*domain.Session, error)
 	TouchSession(idHash string, seen time.Time) error
 	RevokeSession(idHash string, at time.Time) error
@@ -112,6 +115,10 @@ type PersonRepo interface {
 	RevokeSessionsOf(personID string, at time.Time) error
 	// RevokeOtherSessionsOf revokes every live session of the person except keepID (A3-03).
 	RevokeOtherSessionsOf(personID, keepID string, at time.Time) error
+	// RevokeOtherOwnedSessions revokes retained unrevoked rows of personID,
+	// excluding keepID, and returns the number changed. A missing, revoked,
+	// or foreign keepID matches nothing; the service also checks its expiry.
+	RevokeOtherOwnedSessions(personID, keepID string, at time.Time) (int64, error)
 	// RevokeLiveSessions revokes every session not yet revoked, of one person
 	// or, with personID "", of everyone, and returns how many it revoked
 	// (SEC-027, OPS-010).

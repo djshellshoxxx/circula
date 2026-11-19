@@ -951,5 +951,637 @@
   },
   "sessions.manage_link": {
     "other": "Manage active sessions"
+  },
+  "sessions.pagination": {
+    "other": "Session list pages"
+  },
+  "sessions.bulk_link": {
+    "other": "Sign out other sessions"
+  },
+  "sessions.bulk_title": {
+    "other": "Sign out other sessions?"
+  },
+  "sessions.bulk_consequence": {
+    "other": "Your other sign-ins will stop working immediately, and any sign-in waiting for a two-step code will need to start again. You will stay signed in here. Your API tokens will keep working."
+  },
+  "sessions.bulk_confirm": {
+    "other": "I want to end all my other sessions."
+  },
+  "sessions.bulk_required": {
+    "other": "Not signed out. Confirm that you want to end your other sessions. Nothing changed."
+  },
+  "sessions.bulk_ended": {
+    "other": "Your other sessions have ended. You are still signed in here."
+  },
+  "sessions.bulk_cancel": {
+    "other": "Keep all sessions"
+  },
+  "sessions.help_link": {
+    "other": "Help with sessions"
+  },
+  "sessions.help_title": {
+    "other": "Review and end your sign-ins"
+  },
+  "sessions.help_inventory": {
+    "other": "Open Security, then Manage active sessions. This session identifies the browser you are using. Signed in, Last active, and Ends by show the recorded times; staying active can extend an idle timeout, but the maximum session lifetime still applies."
+  },
+  "sessions.help_paging": {
+    "other": "Use Next page for older sign-ins, Previous page for newer sign-ins, and First page to refresh the newest page. A page can contain no active sessions while more pages remain, because expired and ended sign-ins are skipped in bounded groups. New sign-ins or revocations can change a page while you browse. If the requested newer page is no longer available, the newest page is shown."
+  },
+  "sessions.help_revoke": {
+    "other": "Choose Sign out this session beside a sign-in, review its times, tick the confirmation, and choose End session. Opening the confirmation page changes nothing. Sign out here ends the browser you are using and returns you to sign-in."
+  },
+  "sessions.help_bulk": {
+    "other": "Sign out other sessions ends all your other sign-ins after confirmation and keeps this browser signed in. It also cancels sign-ins waiting for a two-step code. Session actions do not revoke API tokens. If a sign-in has already expired or ended, refresh the inventory."
+  },
+  "validation.label.cursor": {
+    "other": "Page position"
+  },
+  "validation.label.login": {
+    "other": "Login"
+  },
+  "validation.label.password": {
+    "other": "Password"
+  },
+  "validation.label.display_name": {
+    "other": "Display name"
+  },
+  "validation.label.amount": {
+    "other": "Amount"
+  },
+  "validation.label.counterparty_id": {
+    "other": "Counterparty"
+  },
+  "validation.label.direction": {
+    "other": "Direction"
+  },
+  "validation.label.title": {
+    "other": "Title"
+  },
+  "validation.label.price": {
+    "other": "Price"
+  },
+  "validation.label.member_id": {
+    "other": "Member"
+  },
+  "validation.label.related_transaction_id": {
+    "other": "Related trade reference"
+  },
+  "validation.label.reason": {
+    "other": "Reason"
+  },
+  "validation.label.reason_code": {
+    "other": "Reason for removal"
+  },
+  "validation.label.transaction_id": {
+    "other": "Trade reference"
+  },
+  "validation.label.rationale": {
+    "other": "Rationale"
+  },
+  "validation.label.category": {
+    "other": "Category"
+  },
+  "validation.label.name": {
+    "other": "Name"
+  },
+  "validation.label.slug": {
+    "other": "Web address name"
+  },
+  "validation.label.limit": {
+    "other": "Credit limit"
+  },
+  "validation.label.type": {
+    "other": "Type"
+  },
+  "validation.label.outcome": {
+    "other": "Outcome"
+  },
+  "validation.label.ttl": {
+    "other": "Valid for"
+  },
+  "validation.label.status": {
+    "other": "Status"
+  },
+  "validation.label.currency_name": {
+    "other": "Credit unit name"
+  },
+  "validation.label.default_credit_limit": {
+    "other": "Default credit limit"
+  },
+  "validation.label.max_tx_amount": {
+    "other": "Largest trade"
+  },
+  "validation.label.proposal_expiry_days": {
+    "other": "Proposal expiry (days)"
+  },
+  "validation.label.dispute_window_days": {
+    "other": "Dispute window (days)"
+  },
+  "validation.label.join_mode": {
+    "other": "Join mode"
+  },
+  "validation.label.departure_rule": {
+    "other": "Departure rule"
+  },
+  "validation.label.signup_grant": {
+    "other": "Sign-up grant"
+  },
+  "validation.label.limit_warning_days": {
+    "other": "Limit warning (days)"
+  },
+  "validation.label.response_period_days": {
+    "other": "Dispute response period"
+  },
+  "validation.label.re_review_window_days": {
+    "other": "Re-review window"
+  },
+  "validation.label.limit_warning_percent": {
+    "other": "Limit warning percent"
+  },
+  "validation.label.inactivity_days": {
+    "other": "Inactivity flag"
+  },
+  "validation.label.waive_reason": {
+    "other": "Reason for not waiting"
+  },
+  "validation.label.notice_days": {
+    "other": "Notice (days)"
+  },
+  "validation.label.notice_reason": {
+    "other": "Reason for shorter notice"
+  },
+  "validation.label.terms_version": {
+    "other": "Terms"
+  },
+  "validation.label.body": {
+    "other": "Terms text"
+  },
+  "validation.label.statement": {
+    "other": "Statement"
+  },
+  "validation.label.note": {
+    "other": "Note"
+  },
+  "validation.label.expires_at": {
+    "other": "Expiry"
+  },
+  "validation.label.confirm_open_grant_risk": {
+    "other": "Open joining with a sign-up grant"
+  },
+  "validation.label.description": {
+    "other": "Description"
+  },
+  "validation.label.response": {
+    "other": "Response"
+  },
+  "validation.label.time_zone": {
+    "other": "Time zone"
+  },
+  "validation.label.version": {
+    "other": "Terms version"
+  },
+  "validation.label.effective_at": {
+    "other": "Takes effect"
+  },
+  "validation.label.supersedes_id": {
+    "other": "Replaces announcement"
+  },
+  "validation.label.listing_id": {
+    "other": "Listing"
+  },
+  "validation.label.listing": {
+    "other": "Listings"
+  },
+  "validation.label.target_type": {
+    "other": "Report about"
+  },
+  "validation.label.target_id": {
+    "other": "Reported item"
+  },
+  "validation.label.role": {
+    "other": "Role"
+  },
+  "validation.label.scopes": {
+    "other": "Token permissions"
+  },
+  "validation.label.code": {
+    "other": "Code"
+  },
+  "validation.label.format": {
+    "other": "File format"
+  },
+  "validation.label.scope": {
+    "other": "Export type"
+  },
+  "validation.label.kind": {
+    "other": "Challenge type"
+  },
+  "validation.label.decimals": {
+    "other": "Decimal places"
+  },
+  "validation.label.dual_control_threshold": {
+    "other": "Dual-control threshold"
+  },
+  "validation.label.threshold": {
+    "other": "Dual-control threshold"
+  },
+  "validation.label.report": {
+    "other": "Ledger report"
+  },
+  "validation.label.page": {
+    "other": "Page"
+  },
+  "validation.label.idempotency_key": {
+    "other": "Form key"
+  },
+  "validation.label.operator": {
+    "other": "Operator"
+  },
+  "validation.label.directory_visibility": {
+    "other": "Directory visibility"
+  },
+  "validation.label.ids": {
+    "other": "Notices"
+  },
+  "validation.choice.counterparty_id": {
+    "other": "Choose another active member from the list."
+  },
+  "validation.choice.member_id": {
+    "other": "Choose a member from the list."
+  },
+  "validation.choice.related_transaction_id": {
+    "other": "Choose a posted trade involving this member, or leave the reference empty."
+  },
+  "validation.choice.direction": {
+    "other": "Choose whether you pay or are paid."
+  },
+  "validation.choice.category": {
+    "other": "Choose one of the listed categories."
+  },
+  "validation.choice.outcome": {
+    "other": "Choose one of the listed outcomes."
+  },
+  "validation.choice.type": {
+    "other": "Choose one of the listed types."
+  },
+  "validation.choice.status": {
+    "other": "Choose one of the listed statuses."
+  },
+  "validation.choice.format": {
+    "other": "Choose CSV or JSON."
+  },
+  "validation.choice.listing_id": {
+    "other": "Start again from the other member's listing, or propose without one."
+  },
+  "validation.choice.terms_version": {
+    "other": "Read the terms shown, tick the box to accept them and try again."
+  },
+  "validation.choice.reason_code": {
+    "other": "Choose one of the listed reasons."
+  },
+  "validation.choice.confirm_open_grant_risk": {
+    "other": "Tick the box to confirm the risk, or choose another join mode or no sign-up grant, then try again."
+  },
+  "validation.detail.choice_required": {
+    "other": "nothing was chosen"
+  },
+  "validation.detail.choice_invalid": {
+    "other": "that choice is not on the list"
+  },
+  "validation.fix.required": {
+    "other": "Fill it in and try again."
+  },
+  "validation.fix.incorrect": {
+    "other": "Type it again carefully and try again."
+  },
+  "validation.fix.too_long": {
+    "other": "Shorten it and try again."
+  },
+  "validation.fix.control_characters": {
+    "other": "Remove hidden or special characters and try again."
+  },
+  "validation.fix.different": {
+    "other": "Choose a different one and try again."
+  },
+  "validation.fix.smaller": {
+    "other": "Enter a smaller amount and try again."
+  },
+  "validation.fix.check": {
+    "other": "Check the value and try again."
+  },
+  "validation.refusal.overflow": {
+    "other": "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.no_fields": {
+    "other": "Not saved. Something entered was not accepted. Check the form and try again. Nothing changed."
+  },
+  "validation.refusal.fields": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "validation.refusal.counterparty_inactive": {
+    "other": "Not sent. The other member is not active in this network, so they cannot take part in a trade. Nothing changed."
+  },
+  "validation.refusal.key_reused": {
+    "other": "Not sent. This form was already used with different details. Reload the page and start again. Nothing changed."
+  },
+  "validation.refusal.key_required": {
+    "other": "Not sent. The form is missing its safety key. Reload the page and try again. Nothing changed."
+  },
+  "validation.refusal.suspended": {
+    "other": "Not done. Trading in this network is paused (suspended). You can still read balances and history and download your data. Nothing changed."
+  },
+  "validation.refusal.invalid_state": {
+    "other": "Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed."
+  },
+  "validation.refusal.conflict": {
+    "other": "Not saved. That value is not available. Choose a different one. Nothing changed."
+  },
+  "validation.refusal.rate_limited": {
+    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
+  },
+  "validation.fix.decimals": {
+    "other": "Use at most %[1]d decimal places and try again."
+  },
+  "validation.fix.number": {
+    "other": "Enter digits only, for example %[1]s."
+  },
+  "validation.field.message": {
+    "other": "%[1]s: %[2]s. %[3]s"
+  },
+  "validation.refusal.insufficient_credit": {
+    "other": "Not sent. This trade would take your available credit below zero. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.insufficient_credit_available": {
+    "other": "Not sent. This trade would take your available credit below zero. Available to spend is %[1]s. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.amount_exceeds": {
+    "other": "Not sent. The amount is above the largest single trade this network allows (%[1]s). Nothing changed."
+  },
+  "validation.refusal.blocked": {
+    "other": "Not done. %[1]s. Nothing changed."
+  },
+  "validation.refusal.approval_required": {
+    "other": "Not done. The amount is above the dual-control threshold, so one administrator cannot move it alone. Settle it first with an adjustment that a second administrator approves (Adjustments), then try again. Nothing changed."
+  },
+  "admin.reset.action": {
+    "other": "Reset password"
+  },
+  "admin.reset.consequence": {
+    "other": "A one-time temporary password is created and shown to you once. The member's sessions and API tokens end, their recovery codes stop working, and they must choose a new password at next sign-in. Give them the temporary password in person or by a channel you trust."
+  },
+  "admin.reset.confirm_title": {
+    "other": "Reset password: %[1]s?"
+  },
+  "admin.reset.done_title": {
+    "other": "Temporary password"
+  },
+  "admin.reset.self_refused": {
+    "other": "Not done. You cannot reset your own password here; use Change password. Nothing changed."
+  },
+  "admin.reset.throttled": {
+    "other": "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."
+  },
+  "admin.reset.for_member": {
+    "other": "Temporary password for %[1]s"
+  },
+  "admin.reset.shown_once": {
+    "other": "This is the only time it is shown."
+  },
+  "admin.reset.instructions": {
+    "other": "Give it to %[1]s in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended."
+  },
+  "admin.reset.back_members": {
+    "other": "Back to members"
+  },
+  "admin.member_action.heading": {
+    "other": "%[1]s: %[2]s"
+  },
+  "admin.member_action.reason_hint": {
+    "other": "Required. It is recorded in the audit log."
+  },
+  "admin.member_action.go_back": {
+    "other": "Go back"
+  },
+  "directory.title": {
+    "other": "Directory"
+  },
+  "directory.search_label": {
+    "other": "Search by name"
+  },
+  "directory.search": {
+    "other": "Search"
+  },
+  "directory.results": {
+    "one": "%[1]d member found.",
+    "other": "%[1]d members found."
+  },
+  "directory.member_reference": {
+    "other": "(member reference %[1]s)"
+  },
+  "directory.propose": {
+    "other": "Propose a trade"
+  },
+  "directory.propose_with": {
+    "other": "Propose a trade with %[1]s"
+  },
+  "directory.empty": {
+    "other": "No members match. Try a shorter search, or clear it to see everyone."
+  },
+  "directory.pages": {
+    "other": "Directory pages"
+  },
+  "listing.title": {
+    "other": "Listings"
+  },
+  "listing.new": {
+    "other": "New listing"
+  },
+  "listing.all": {
+    "other": "All listings"
+  },
+  "listing.mine": {
+    "other": "My listings"
+  },
+  "listing.kind": {
+    "other": "Kind"
+  },
+  "listing.kind_prefix": {
+    "other": "Kind:"
+  },
+  "listing.types": {
+    "other": "Offers and requests"
+  },
+  "listing.offers": {
+    "other": "Offers"
+  },
+  "listing.requests": {
+    "other": "Requests"
+  },
+  "listing.offer": {
+    "other": "Offer"
+  },
+  "listing.request": {
+    "other": "Request"
+  },
+  "listing.offer_prefix": {
+    "other": "Offer:"
+  },
+  "listing.request_prefix": {
+    "other": "Request:"
+  },
+  "listing.search": {
+    "other": "Search"
+  },
+  "listing.filter": {
+    "other": "Filter"
+  },
+  "listing.tag.active": {
+    "other": "active"
+  },
+  "listing.tag.paused": {
+    "other": "paused"
+  },
+  "listing.tag.archived": {
+    "other": "archived"
+  },
+  "listing.by_owner": {
+    "other": "By %[1]s"
+  },
+  "listing.owner_price": {
+    "other": "By %[1]s · price %[2]s %[3]s"
+  },
+  "listing.price": {
+    "other": "price %[1]s %[2]s"
+  },
+  "listing.edit": {
+    "other": "Edit"
+  },
+  "listing.edit_named": {
+    "other": "Edit %[1]s"
+  },
+  "listing.propose": {
+    "other": "Propose a trade"
+  },
+  "listing.propose_about": {
+    "other": "Propose a trade about %[1]s"
+  },
+  "listing.report": {
+    "other": "Report"
+  },
+  "listing.report_named": {
+    "other": "Report %[1]s"
+  },
+  "listing.empty": {
+    "other": "No listings to show. Offers and requests that members publish appear here."
+  },
+  "listing.publish_first": {
+    "other": "Publish the first one."
+  },
+  "listing.offer_hint": {
+    "other": "Offer: something I provide"
+  },
+  "listing.request_hint": {
+    "other": "Request: something I want"
+  },
+  "listing.field_title": {
+    "other": "Title"
+  },
+  "listing.field_description": {
+    "other": "Description (optional)"
+  },
+  "listing.field_price": {
+    "other": "Price (optional)"
+  },
+  "listing.price_hint_new": {
+    "other": "Amount in credits, up to the network's decimal places. Leave empty if open to offers."
+  },
+  "listing.price_hint_edit": {
+    "other": "Amount in credits. Empty removes the price."
+  },
+  "listing.publish": {
+    "other": "Publish listing"
+  },
+  "listing.cancel": {
+    "other": "Cancel"
+  },
+  "listing.save": {
+    "other": "Save"
+  },
+  "listing.status_label": {
+    "other": "Status"
+  },
+  "listing.status_hint": {
+    "other": "Paused listings are hidden. Archived listings are final and cannot be reopened."
+  },
+  "listing.status.active": {
+    "other": "Active"
+  },
+  "listing.status.paused": {
+    "other": "Paused"
+  },
+  "listing.status.archived": {
+    "other": "Archived"
+  },
+  "listing.edit_title": {
+    "other": "Edit listing"
+  },
+  "listing.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "listing.published": {
+    "other": "Listing published."
+  },
+  "listing.saved": {
+    "other": "Listing saved."
+  },
+  "listing.price_help": {
+    "one": "Price: enter a positive amount with up to %[1]d decimal place, for example %[2]s.",
+    "other": "Price: enter a positive amount with up to %[1]d decimal places, for example %[2]s."
+  },
+  "profile.reference_label": {
+    "other": "Member reference:"
+  },
+  "profile.reference_note": {
+    "other": "Display names can repeat; the reference does not."
+  },
+  "profile.reference_self": {
+    "other": "Tell it to the members you trade with so they can check it is you."
+  },
+  "profile.reference_other": {
+    "other": "Every trade confirmation shows it, so you can check you are trading with this member."
+  },
+  "profile.propose_with": {
+    "other": "Propose a trade with %[1]s"
+  },
+  "profile.report": {
+    "other": "Report %[1]s"
+  },
+  "profile.listings_by": {
+    "other": "Listings by %[1]s"
+  },
+  "profile.empty": {
+    "other": "%[1]s has no active listings."
+  },
+  "freshness.snapshot": {
+    "other": "Page generated %[1]s. Figures are a snapshot and do not update automatically."
+  },
+  "freshness.offline": {
+    "other": "The browser reports that the connection is unavailable. The figures have not refreshed. %[1]s"
+  },
+  "freshness.history": {
+    "other": "This earlier page was restored from browser history. The figures have not refreshed. %[1]s"
+  },
+  "session_warning.extendable": {
+    "other": "It ends around %[1]s. Choose Stay signed in to keep working."
+  },
+  "session_warning.fixed": {
+    "other": "It ends around %[1]s and cannot be extended. Finish what you are doing, then sign in again."
+  },
+  "session_warning.ended": {
+    "other": "Your session has ended. Sign in again to continue. Your changes on this page have not been sent."
+  },
+  "session_warning.failed": {
+    "other": "Could not extend the session. Sign in again."
   }
 }

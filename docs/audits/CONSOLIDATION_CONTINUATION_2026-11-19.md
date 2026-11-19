@@ -9,6 +9,8 @@ Starting consolidation candidate: PR #90 at `244e1356201e6477eab4694d82947f2058f
 Concurrent candidates incorporated: `1e2f369a541963540d93c3b7f455b052827839c7` and its session-link correction `f25d10b6b4085b80d7de53ecbb55efffeb9d8969`.
 Continuation branch: `integration/core-consolidation-20261119`.
 
+Published review: [PR #99](https://github.com/djshellshoxxx/circula/pull/99). Initial provider commit `47446b33b01f4993a1caa406516746858bbf0a11` exactly matches local reviewed tree `8d6a20588acd22bfda183dfb53bb0a5a1a6e8ffc`; subsequent evidence and newly arrived cursor repair are qualified on the PR's final head.
+
 The final provider commit and current CI/merge receipt are recorded on the continuation pull request. Local source hashes below identify implementation provenance; GitHub publication may produce a different commit with the same tree. A source review, SQL smoke, or prior-head CI result is never substituted for final combined-head qualification.
 
 ## Discovery and disposition
@@ -39,7 +41,7 @@ Fresh merge simulations found 24 retained branches that conflict with each targe
 
 PR #49 and #50 no longer have advertised source branches, but their PR heads remain recovered and their SQLite/crypto dependency versions are already present. The generically named recovered local `audit/ledger-features-20261119` includes unapproved GOV-021 and SEC-026 implementations; it is deliberately not merged wholesale.
 
-No additional compatible core implementation was found outside PR #90 and the bounded-session recovery. Competing historical specifications, superseded source and stronger successor implementations remain linked rather than silently discarded.
+At the initial snapshot, no additional compatible core implementation was found outside PR #90 and the bounded-session recovery. Later discovery found and reviewed PRs #96, #101 and #102; their compatible Core changes are now incorporated. The frozen reconciliation covers 120 remote heads, zero tags and PR records through #102, while preserving the original 113-head evidence unchanged. Competing historical specifications, superseded source and stronger successor implementations remain linked rather than silently discarded.
 
 ### Baseline verification
 
@@ -86,13 +88,35 @@ Trusted direct service callers retain their existing scope contract and must sat
 
 Source commit `a8c1348e27f994f93d5259e5ebbae01ff42377e4` closes API-005/D-14. New export jobs and the unrecorded consistency-job fallback allocate UUIDv7 identifiers. Existing record IDs, including UUIDv4 jobs, remain unchanged and addressable. Export identifier allocation happens before export side effects. OpenAPI and API documentation describe this compatibility boundary.
 
+### Newly arrived canonical cursor repair
+
+[PR #96](https://github.com/djshellshoxxx/circula/pull/96) appeared after the discovery snapshot. Its test-first source `81f203555e562bc45d86a53341b9b5c44d0b550f` and repair `94fcd018ac4227ea5a5eb803478b3bb0a1aa3677` are merged without changing their history. The decoder caps untrusted cursors at 4,096 bytes before decoding or MAC work, rejects noncanonical payload/signature encodings, and checks escaped filter size before listing queries. Normal server-issued cursors remain usable. Tests exercise newline and spare-bit aliases, signed/unsigned oversize inputs, exact boundaries, and the largest supported escaped listing query; the cursor fuzz property now accounts for the documented bound. The complete three-file diff was independently reviewed and does not overlap the recovered session implementation.
+
+### Completed session navigation and selective sign-out
+
+[PR #101](https://github.com/djshellshoxxx/circula/pull/101), source `6f8ead1951f2d4b72649909b2b4cc83000948afe`, adds bounded Previous/First navigation and a separate confirmed sign-out-other-sessions command. Cookie-only API and server-rendered forms revalidate live authority inside the write transaction. Owner-scoped revocation, pending MFA-challenge invalidation and aggregate audit insertion are atomic; current and foreign sessions and API tokens remain valid. Migration 0021 adds a partial owner/unrevoked index, making repeated bulk requests avoid revoked history. The command introduces no recovery privilege or monetary-policy change.
+
+The merge retains all six strict production query-plan cases: first page, forward page, reverse page, owned lookup, bulk revocation and token inventory. Existing token-write authority and rollback-discard fixes remain intact. PR #101's copied PR #96 cursor patch was byte-identical and absorbed without a second implementation. New service, API, contract, browser, migration, concurrency and bounded-work tests remain subject to combined-head CI. CI adds three bounded 100,000-execution fuzz targets for signed cursors, session positions and session selectors.
+
+### Additional export, catalogue and pagination recovery
+
+[PR #102](https://github.com/djshellshoxxx/circula/pull/102), source `c97233fb5b795e85b4a81e19809bb9d9c76a15d1`, was independently reviewed by security, UI and branch workers and merged at local engineering head `12af2112fb968f1c72e874e3c18b66e9e2626208`.
+
+- Export creation rechecks current member, role, MFA, break-glass and erasure authority inside the read snapshot before writing its first file. Shared authorization preserves suspended/departed own-history access and rejects erased membership. This closes the admission-to-snapshot authority gap; it does not continuously cancel an already opened snapshot or add universal credential revalidation.
+- Web ZIP generation/finalization failures propagate the existing HTTP abort sentinel, preventing a misleading finalized partial archive or appended HTML error page. Early authorization refusals keep their ordinary response.
+- Listing pagination fetches a real lookahead row and preserves ownership, kind and search filters. Exact 50-item terminal pages no longer advertise a spurious continuation.
+- The catalogue is the lossless union of 242 baseline messages, 87 existing consolidation additions and 196 recovered additions: **525 entries**, with every earlier value retained. Validation/reset, marketplace/directory, exact price-unit inflection, and browser freshness/session warnings use escaped catalogue text. Remaining untranslated flows and additional language decisions are still separate.
+- Traceability checks now reject duplicate requirement definitions even after regeneration, while ordinary diagnostic generation and valid repeated references remain supported.
+
+The original 114-branch recovery receipt under `docs/consolidation/` remains a distinct historical snapshot. It does not replace the complete starting inventory or the later 120-head reconciliation. Four merge conflicts were resolved by preserving both documentation continuations and message argument cases, unioning the catalogue, and regenerating traceability. An extra test-file EOF blank was removed. There are no unresolved consolidation conflicts.
+
 ### Previously completed work retained
 
 The starting candidate already preserves source PRs #82, #87, #78, #88 and #89, including password-proof race fixes, immutable dispute-policy binding, exact ledger aggregate arithmetic, historical policy defaults, recovery throttle correction, setup precision validation, account session UI/API, onboarding message catalogues and bounded CI fuzz budgets. This continuation preserves that work rather than claiming to have newly authored it.
 
 ## Validation and evidence
 
-The [continuation evidence manifest](evidence/continuation-20261119/README.md) distinguishes exact commands, source scope, successes and interrupted attempts. At candidate publication:
+The [continuation evidence manifest](evidence/continuation-20261119/README.md) and [post-snapshot receipts](evidence/post-snapshot-20261119/README.md) distinguishes exact commands, source scope, successes and interrupted attempts. At candidate publication:
 
 | Verification | Executed result and scope |
 |---|---|
@@ -101,11 +125,14 @@ The [continuation evidence manifest](evidence/continuation-20261119/README.md) d
 | UUIDv7 allocation compatibility | One test passed with race detection, including a second invocation containing every production API source file. |
 | SQL migration/query smoke | Python SQLite 3.53.1 applied all 20 migrations to 20,002 session rows and 40,000 token rows; preserved credential/lifetime data, assigned legacy selectors, used indexed bounded queries, passed integrity and foreign-key checks. This is not a Go/modernc execution. |
 | Production package build | Domain, repository, service, API, web and store-contract production packages built successfully at the recorded intermediate source. |
+| Final SQL integration smoke | All 21 migrations, 11,000 session rows, 10,000 tokens and all six actual production SQL plans passed using Python SQLite. Bulk rollback, repeated-call zero changes, current/foreign/token preservation and foreign/revoked-current guards passed. This is not Go-driver or service-authorization qualification. |
+| Resolved catalogue and traceability | At combined engineering commit `12af2112fb968f1c72e874e3c18b66e9e2626208`, both actual packages passed with race detection: 28 top-level tests and 69 subtests, zero failed/skipped, no race warning. Includes the full 525-key formatting check and duplicate-definition CLI guards. |
+| Browser message logic | Seven production-script Node tests passed: zero failures, skips or cancellations. |
 | Python tooling | Export reader 10 tests, QA runner 4, thresholds 8 and hygiene 4 passed. |
 | Formatting, source diff, workflow pins | Passed on the recorded source. Final-head provider checks still apply. |
 | Full Go/SQLite, race, contract/load, browser, native platforms, lint/vulnerability, packaging and reproducibility | Required on the published combined candidate. Consult the continuation PR's exact-head results; source-PR successes do not qualify it. |
 
-Local execution disconnected twice during this continuation. Interrupted compilation, incomplete aggregate runs, cancelled baseline-proof attempts and a cancelled fuzz attempt are not passes. No assertion that a regression failed before its fix is based on those interrupted attempts.
+Local execution repeatedly disconnected during this continuation. Interrupted compilation, incomplete aggregate runs, cancelled baseline-proof attempts and a cancelled fuzz attempt are not passes. No assertion that a regression failed before its fix is based on those interrupted attempts.
 
 Migrations remain forward-only under accepted DEC-060. Transaction rollback is tested; automated schema downgrade is not supported. Operational rollback uses verified backup/restore.
 
@@ -119,9 +146,11 @@ The [PWA qualification PR #95](https://github.com/djshellshoxxx/circula/pull/95)
 
 Observed provider evidence includes:
 
-- [Feed job](https://github.com/djshellshoxxx/circula/actions/runs/44491232304/job/135447075278), repair at `8638f3d30f27f4882c4c6424d4c8b248208b6f3d`: module race suite passed at 98.8% root-package statement coverage; cursor fuzzing completed 100,000 executions. A subsequent branch advance requires its own current-head checks.
-- [Notifications job](https://github.com/djshellshoxxx/circula/actions/runs/44491239025/job/135447099448), repair at `9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae`: explicit SQLite race suite passed at 71.0% root-package statement coverage; transport packages were not exercised. Vulnerability scanning reported zero reachable/imported-package vulnerabilities and one advisory in a required module that was not shown as called.
+- [Feed job](https://github.com/djshellshoxxx/circula/actions/runs/44491232304/job/135447075278), repair at `8638f3d30f27f4882c4c6424d4c8b248208b6f3d`: module race suite passed at 98.8% root-package statement coverage; cursor fuzzing completed 100,000 executions. A subsequent branch advance requires its own current-head checks. PR #98 at `949d32907f8cc2fab30ce237d95bb361023e84ba` additionally supplies bounded SQLite scans, encrypted fixed-size private cursor frontiers, stable insertion fences and persistence/race regressions; its independent source review is approved, but current checks were still queued.
+- [Notifications job](https://github.com/djshellshoxxx/circula/actions/runs/44491239025/job/135447099448), repair at `9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae`: explicit SQLite race suite passed at 71.0% root-package statement coverage; transport packages were not exercised. PR #100 at `be0c071ebb3d26527d81a0c5b015effe07d5b1b2` preserves every notification module blob and refreshes the reviewed Core plus verbose advisory reporting; its new checks must complete before another isolated merge. Vulnerability scanning reported zero reachable/imported-package vulnerabilities and one advisory in a required module that was not shown as called.
 - [PWA job](https://github.com/djshellshoxxx/circula/actions/runs/44496951525/job/135466500874), qualification at `f25d037c3cc53fbf1ebbf687831300be9bdb749f`: 22 Node tests (zero failed/skipped), Go race tests at 97.5% root-package coverage, and the real Chromium install/cache/privacy/offline/no-JS/reflow harness passed using Chrome for Testing 151.0.7922.34. Its tested PR merge tree was `0a623e0587e8b011a816c84c93ee67fd0ec6e602`. Remaining core CI and platform/manual acceptance are distinct.
+
+PR #97 at `73a911a9bec387381633c031d8a4083c9fc724ad` adds reviewed weekly/monthly calendar rules, exact wall-time resolution and a native test matrix to the isolated recurring module. It remains disabled/HOLD and requires completed current-head checks. No future repair is copied into Core.
 
 Coverage percentages above describe specific packages and commands, not feature completion.
 
@@ -144,10 +173,10 @@ These are engineering planning ranges, not measured completion percentages or de
 | FNET-201 Matching | Bounded pure matching logic; durable interests/preferences, authorized snapshots, ranking/caps and accessible suggestions. | 8–15 engineer-days |
 | FNET-202 Favorites | Service, memory/SQL contracts, CLI/web; current core authorization, opt-in/migration/restore and browser acceptance. | 5–10 engineer-days |
 | FNET-203 Receipts | Party-scoped TXT/JSON projections; authoritative/redacted snapshots and downloads. Signing requires a separate decision. | 4–8 engineer-days unsigned; signing adds 5–10 after policy |
-| FNET-204 Feed | Permission-aware projection and repaired signed cursors; persistent snapshots/joins, preferences, moderation, no-JS UI and key lifecycle. | 12–22 engineer-days |
+| FNET-204 Feed | Permission-aware projection and repaired signed cursors; Core projection/authorization adapters, preferences, moderation, no-JS UI and key lifecycle; PR #98 supplies the bounded store and private cursor prototype. | 12–22 engineer-days |
 | FNET-205 Analytics | Checked integer aggregates and cohort suppression; reporting periods, reversals, differencing protection, authorized exports and accessible UI. | 10–18 engineer-days after privacy decisions |
 | FNET-206 Areas | Coarse labels without coordinates; durable authorized CRUD, listing association, deletion/restore and accessible selection. | 6–12 engineer-days |
-| FNET-207 Recurring reminders | Daily timezone/DST logic; durable schedules, atomic firing dedupe/restart, weekly/monthly rules and manual draft UI. | 10–18 engineer-days |
+| FNET-207 Recurring reminders | Daily timezone/DST logic plus reviewed weekly/monthly candidate in PR #97; durable schedules, atomic firing dedupe/restart, authorization and manual draft UI. | 10–18 engineer-days |
 | FNET-208 Governance | Advisory eligibility/tally primitives; durable snapshots/unique ballots, closing rules, audit/export and accessible voting. | 12–22 engineer-days after policy decisions |
 | FNET-209 Federation | Signed discovery envelopes; trust/consent/revocation, durable replay and transport, key custody and interoperability. No shared ledger. | 20–35 engineer-days after protocol decisions |
 | FUX-101 PWA | Offline public shell and verified cache policy; production route adapter, cross-browser/device installation and manual accessibility. | 5–10 engineer-days plus device access |
