@@ -42,7 +42,7 @@ and administrators are told not to write personal data into reasons ([erasure.md
 | `persons.login` | identifier | Sign-in identifier (often an email address) | Until person erasure; no automatic period (DAT 9 recommends departure plus 90 days, DEC-020 open) | Not exported | Person erasure: replaced by `erased-<person id>` |
 | `persons.password_hash` | credential | Verify the password (Argon2id hash) | Until changed or person erasure | Never | Person erasure: replaced by an unusable hash |
 | `sessions.id` | credential | SHA-256 of the session cookie value | Purged when expired, idle past `session-idle`, or 24 hours after revocation | Never | Person erasure: all sessions revoked, then purged |
-| `sessions.last_seen_at` | activity | Idle timeout of the session | As `sessions.id` | Never | As `sessions.id` |
+| `sessions.last_seen_at` | activity | Idle timeout; shown only to the owner in the active-session list | As `sessions.id` | Never in data exports; owner-only session API shows the timestamp | As `sessions.id` |
 | `person_activity.last_seen_at` | activity | Inactivity rule (GOV-012): newest sign-in time copied from expiring sessions | Until the person row goes; no automatic period | Never | Not cleared by erasure (gap, see [Findings](#findings)) |
 | `person_prefs.time_zone` | profile | Show times in the person's zone | Until changed | Not exported | Not cleared by erasure (gap, see [Findings](#findings)) |
 | `person_mfa.secret` | credential | TOTP seed (SEC-007), sealed with AES-GCM when a secret key is configured | Until MFA is disabled or reset | Never | Person erasure: row deleted |

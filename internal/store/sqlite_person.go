@@ -125,6 +125,37 @@ func (t *txImpl) TouchSession(idHash string, seen time.Time) error {
 	return err
 }
 
+func (t *txImpl) ListSessions(personID string) ([]*domain.Session, error) {
+	rows, err := t.query(`SELECT id,person_id,created_at,last_seen_at,expires_at,revoked_at
+		FROM sessions WHERE person_id = ? ORDER BY created_at DESC,id DESC`, personID)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+	var out []*domain.Session
+	for rows.Next() {
+		var s domain.Session
+		var created, seen, expires int64
+		var revoked sql.NullInt64
+		if err := rows.Scan(&s.IDHash, &s.PersonID, &created, &seen, &expires, &revoked); err != nil {
+			return nil, err
+		}
+		s.CreatedAt, s.LastSeenAt, s.ExpiresAt, s.RevokedAt = fromMS(created), fromMS(seen), fromMS(expires), ptrTime(revoked)
+		out = append(out, &s)
+	}
+	return out, mapErr(rows.Err())
+}
+
+func (t *txImpl) RevokeOwnedSession(personID, idHash string, at time.Time) (bool, error) {
+	res, err := t.exec(`UPDATE sessions SET revoked_at = ? WHERE person_id = ? AND id = ? AND revoked_at IS NULL`,
+		ms(at), personID, idHash)
+	if err != nil {
+		return false, err
+	}
+	n, err := res.RowsAffected()
+	return n != 0, err
+}
+
 func (t *txImpl) RevokeSession(idHash string, at time.Time) error {
 	_, err := t.exec(`UPDATE sessions SET revoked_at = ? WHERE id = ? AND revoked_at IS NULL`, ms(at), idHash)
 	return err

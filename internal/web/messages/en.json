@@ -732,5 +732,224 @@
   "auth.codes.unused": {
     "one": "unused code",
     "other": "unused codes"
+  },
+  "setup.title": {
+    "other": "Create a network"
+  },
+  "setup.intro": {
+    "other": "You will be the first administrator. You can change most of these settings later, except the number of decimal places."
+  },
+  "setup.secret.label": {
+    "other": "Setup secret"
+  },
+  "setup.secret.hint": {
+    "other": "Given to you by the person who runs this service."
+  },
+  "setup.name.label": {
+    "other": "Network name"
+  },
+  "setup.slug.label": {
+    "other": "Web address name"
+  },
+  "setup.slug.hint": {
+    "other": "Lower-case letters, numbers and hyphens, for example town-swap."
+  },
+  "setup.display_name.label": {
+    "other": "Your display name in this network"
+  },
+  "setup.currency.label": {
+    "other": "Credit unit name"
+  },
+  "setup.currency.hint": {
+    "other": "A singular word, for example credit or hour."
+  },
+  "setup.decimals.label": {
+    "other": "Decimal places"
+  },
+  "setup.decimals.whole": {
+    "other": "0 (whole units)"
+  },
+  "setup.decimals.invalid": {
+    "other": "Decimal places: choose a value from 0 to 4."
+  },
+  "setup.limit.label": {
+    "other": "Default credit limit per member"
+  },
+  "setup.limit.error_label": {
+    "other": "Default credit limit"
+  },
+  "setup.limit.hint": {
+    "other": "How far below zero a member's balance may go. Amount in credits, using the decimal places chosen above."
+  },
+  "setup.grant.label": {
+    "other": "Sign-up grant"
+  },
+  "setup.grant.hint": {
+    "other": "Credits given to each new member. Use 0 for none."
+  },
+  "setup.join_mode.label": {
+    "other": "How people join"
+  },
+  "setup.join_mode.invite": {
+    "other": "By invitation only"
+  },
+  "setup.join_mode.approval": {
+    "other": "Request, then an administrator approves"
+  },
+  "setup.join_mode.open": {
+    "other": "Open to any signed-in person"
+  },
+  "setup.grant.risk": {
+    "other": "I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination."
+  },
+  "setup.submit": {
+    "other": "Create network"
+  },
+  "setup.secret.used": {
+    "other": "Not saved. The setup secret has already been used. Ask the person who runs this service to reset it. Nothing changed."
+  },
+  "setup.throttle": {
+    "other": "Too many attempts. Wait and try again. Nothing changed."
+  },
+  "setup.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "setup.secret.invalid": {
+    "other": "Setup secret: not correct. Ask the person who runs this service."
+  },
+  "setup.amount.invalid": {
+    "other": "%[1]s: enter a number with up to %[2]d decimal places, for example %[3]s."
+  },
+  "setup.slug.unavailable": {
+    "other": "Web address name: already in use. Choose a different one."
+  },
+  "setup.flash.created": {
+    "other": "Network created and open. You are its first administrator."
+  },
+  "join.invitation.title": {
+    "other": "Accept your invitation"
+  },
+  "join.invitation.intro": {
+    "other": "You have been invited to join a network. To accept, sign in or create an account first. You will come back to this page afterwards."
+  },
+  "join.display_name.label": {
+    "other": "Your display name"
+  },
+  "join.display_name.hint": {
+    "other": "Other members see this name."
+  },
+  "join.rules": {
+    "other": "By joining you agree to follow this network's rules. Credits are accounting units inside the network."
+  },
+  "join.invitation.submit": {
+    "other": "Join the network"
+  },
+  "join.invitation.invalid": {
+    "other": "This invitation is expired, already used or not valid. Ask the network administrator for a new invitation link. Nothing changed."
+  },
+  "join.network.title": {
+    "other": "Join %[1]s"
+  },
+  "join.network.invite_only": {
+    "other": "%[1]s is invitation only. Ask an administrator for an invitation link."
+  },
+  "join.network.approval": {
+    "other": "Your request will wait for an administrator to approve it."
+  },
+  "join.network.open": {
+    "other": "You will join straight away."
+  },
+  "join.network.request": {
+    "other": "Request to join"
+  },
+  "join.network.submit": {
+    "other": "Join"
+  },
+  "join.network.full": {
+    "other": "Not sent. This network is not accepting new members right now. Try again later. Nothing changed."
+  },
+  "join.network.closed": {
+    "other": "Not sent. This network does not accept requests to join. Ask an administrator for an invitation link. Nothing changed."
+  },
+  "join.throttle.ten_minutes": {
+    "other": "Not sent. Too many join attempts. Wait ten minutes and try again. Nothing changed."
+  },
+  "join.throttle.other": {
+    "other": "Not sent. Too many join attempts. Wait a while and try again. Nothing changed."
+  },
+  "join.flash.pending": {
+    "other": "Request sent. Your membership is pending until an administrator decides."
+  },
+  "join.flash.joined": {
+    "other": "You have joined %[1]s."
+  },
+  "join.terms.heading": {
+    "other": "Network terms (version %[1]s)"
+  },
+  "sessions.title": {
+    "other": "Active sessions"
+  },
+  "sessions.explain": {
+    "other": "These are your active sign-ins. You can end any session you no longer use. Times reflect the current session limits; activity can extend the idle timeout."
+  },
+  "sessions.current": {
+    "other": "This session"
+  },
+  "sessions.other": {
+    "other": "Other session"
+  },
+  "sessions.started": {
+    "other": "Signed in"
+  },
+  "sessions.last_active": {
+    "other": "Last active"
+  },
+  "sessions.expires": {
+    "other": "Ends by"
+  },
+  "sessions.sign_out_here": {
+    "other": "Sign out here"
+  },
+  "sessions.sign_out_other": {
+    "other": "Sign out this session"
+  },
+  "sessions.none": {
+    "other": "There are no active sessions."
+  },
+  "sessions.back_security": {
+    "other": "Back to account security"
+  },
+  "sessions.confirm_title": {
+    "other": "End this session?"
+  },
+  "sessions.current_consequence": {
+    "other": "You will be signed out here and must sign in again to continue. Your other sessions and API tokens will keep working."
+  },
+  "sessions.other_consequence": {
+    "other": "This sign-in will stop working immediately. You will stay signed in here. Your other sessions and API tokens will keep working."
+  },
+  "sessions.confirm_label": {
+    "other": "I want to end this session."
+  },
+  "sessions.confirm_required": {
+    "other": "Not signed out. Confirm that you want to end this session. Nothing changed."
+  },
+  "sessions.confirm_button": {
+    "other": "End session"
+  },
+  "sessions.cancel": {
+    "other": "Keep session"
+  },
+  "sessions.current_ended": {
+    "other": "This session has ended. Sign in again to continue."
+  },
+  "sessions.other_ended": {
+    "other": "The selected session has ended. You are still signed in here."
+  },
+  "sessions.security_intro": {
+    "other": "Review your sign-ins and end sessions you no longer use."
+  },
+  "sessions.manage_link": {
+    "other": "Manage active sessions"
   }
 }

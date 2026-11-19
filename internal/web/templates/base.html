@@ -84,7 +84,7 @@
 {{define "pager"}}{{if .Next}}<p><a href="{{.Href}}{{.Next}}">{{msg "pager.next"}}</a></p>{{end}}{{end}}
 
 {{define "termsbox"}}{{with .D.Terms}}
-<section aria-labelledby="terms-h"><h2 id="terms-h">Network terms (version {{.Version}})</h2>
+<section aria-labelledby="terms-h"><h2 id="terms-h">{{msg "join.terms.heading" (printf "%d" .Version)}}</h2>
 {{range $.D.Paras}}<p>{{.}}</p>{{end}}</section>
 {{with $.Err "terms_version"}}<p class="error" id="e-terms_version"><span class="sr">{{msg "form.error_prefix"}}</span>{{.}}</p>{{end}}
 <div class="field" id="f-terms_version"><input type="hidden" name="terms_version" value="{{.Version}}">

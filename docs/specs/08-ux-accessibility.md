@@ -135,6 +135,8 @@ Summary: built 31, not built 7, partial 22.
 | Network admin: audit and checks | Filterable audit log; consistency check results | Filter, run check, export |
 | Errors | Not found, forbidden, expired session, server error | Return home, sign in, copy reference |
 
+Session inventory implementation (2026-11-19): `/account/sessions`, linked from account security, lists the person's active sign-ins and offers an explicit confirmation before ending one. It shows the current session and existing creation, activity and expiry timestamps. The JSON equivalents are the cookie-only `/api/v1/me/sessions` routes. This completes the session-list portion of the account screen inventory without changing timeout policy, collecting device/IP data, or exposing credentials. See [session-flow review](../audit/consolidation-2026-11-17/source-reviews/OWN-SESSIONS.md) for verification and remaining runtime gates.
+
 ## 4. Balance and transaction presentation
 
 This section is the single UI authority for balance direction. Field names match 07 section 8 (API-044) and the balance definitions in [00-conventions.md](00-conventions.md) section 3.

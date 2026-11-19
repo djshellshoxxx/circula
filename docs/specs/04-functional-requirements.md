@@ -14,6 +14,8 @@ Snapshot: HEAD `925f637` (branch claude/circula-build). Statuses were first read
 
 Review note (2026-10-24): The build-status snapshot above is retained as historical evidence and has not been re-audited as a whole at this checkpoint. See [the 2026-10-24 continuation review](../audit/RESUME-2026-10-24.md). FR-054 below clarifies the required contract; it does not claim that the API or UI is implemented.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary (recounted 2026-11-16): built 63 (one marked unreviewed), not built 0, partial 2. Previous recount (2026-11-12): built 60, not built 2, partial 3.
 
 Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](../plans/circula-completion-matrix.md) and the code. Changed rows are marked "[Refreshed 2026-11-16; was ...]" in their note, so the prior value stays visible. FR-024, FR-078 and FR-038 were stale in the table although their Status text already said built. FR-067 is now built with a bounded queue linked from its stale-proposal count.
@@ -84,7 +86,7 @@ Status refreshed 2026-11-16 against [docs/plans/circula-completion-matrix.md](..
 | FR-092 | P0 | built | Members export scope with role and limit fields; Evidence: `TestFullExportJSON`, `TestCSVFormulaNeutralisation` (member-table inclusion and CSV member export; this does not independently assert every role/limit field). Citations are not execution results |
 | FR-093 | P0 | built | Audit export scope with manifest |
 | FR-094 | P1 | built | Full export scope incl. closed networks |
-| FR-095 | P1 | partial | Export buffered in memory by API adapter; no streaming or size gates |
+| FR-095 | P1 | partial | Source refresh 2026-11-19: service rows stream through `ZipSink` to the API's disk spool (`internal/service/export_write.go`, `internal/api/h_export.go`, `export_spool.go`); stored and in-flight bytes are capped. `TestExportStreamsWithBoundedMemory` records peak heap against a buffering control and `TestParallelLargeExportsStayBounded` checks concurrent caps. Product size/duration thresholds remain open under OQ-FR-3; these citations are not current execution receipts |
 
 ## 0. How to read this file
 

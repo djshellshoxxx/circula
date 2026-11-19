@@ -88,8 +88,14 @@ type PersonRepo interface {
 
 	InsertSession(s *domain.Session) error
 	GetSession(idHash string) (*domain.Session, error)
+	// ListSessions returns only one person's sessions, including dead rows
+	// retained until maintenance. Credential hashes stay inside the service.
+	ListSessions(personID string) ([]*domain.Session, error)
 	TouchSession(idHash string, seen time.Time) error
 	RevokeSession(idHash string, at time.Time) error
+	// RevokeOwnedSession is the owner-scoped self-service mutation. It reports
+	// whether a previously unrevoked row changed; other owners never match.
+	RevokeOwnedSession(personID, idHash string, at time.Time) (bool, error)
 	RevokeSessionsOf(personID string, at time.Time) error
 	// RevokeOtherSessionsOf revokes every live session of the person except keepID (A3-03).
 	RevokeOtherSessionsOf(personID, keepID string, at time.Time) error

@@ -69,8 +69,10 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 		switch key {
 		case "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
 			args = []any{"12.50", "credits"}
-		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger":
+		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger", "join.network.title", "join.network.invite_only", "join.flash.joined", "join.terms.heading":
 			args = []any{"example"}
+		case "setup.amount.invalid":
+			args = []any{"Default credit limit", 2, "12.50"}
 		case "reversal.by":
 			args = []any{"ledger reference 12345", "12.50", "credits"}
 		case "queue.party_proposal":

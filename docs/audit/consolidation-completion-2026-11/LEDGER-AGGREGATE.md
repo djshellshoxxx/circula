@@ -43,3 +43,17 @@ Go execution is pending the shared environment's SQLite compilation:
 both concurrent and serial initial compilation were killed for memory
 pressure. This note does not claim runtime qualification until test logs
 are recorded by the integration audit.
+
+## Integer-only QA guard follow-up
+
+The first lightweight domain run caught an overbroad QA rule: it rejected
+every `math/big` import, including exact integer arithmetic. The guard now
+resolves import aliases and permits only `Int` and `NewInt` from that
+package. Dot/blank imports, Float/Rat APIs, and inferred float conversions
+remain rejected. Fourteen guard fixtures cover accepted integer uses and
+unsafe aliases/conversions. The existing ordinary float and SQL column
+guards remain in place.
+
+After this repair, `go test -buildvcs=false -p=1 -count=1 ./internal/domain`
+passed locally (0.148 seconds). This qualifies the domain and guard tests;
+the SQLite-backed ledger regressions still require integration CI.

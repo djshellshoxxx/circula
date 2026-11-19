@@ -1,13 +1,16 @@
 # Circula current work
 
-Updated 2026-11-18 UTC (2026-11-18 Pacific) after executed consolidation through PR #81. The [execution record](audit/consolidation-2026-11-17/README.md) supersedes pending-merge statements in historical ledgers and records exact verification evidence. Scope: core Circula; the 15 future modules remain isolated.
+Updated for the comprehensive audit begun 2026-11-18 Pacific, from `main@ead63b5`. The current [execution report](audits/CONSOLIDATION_FINAL_REPORT.md) records exact publication heads, provider gates and merge status. The [earlier execution archive](audit/consolidation-2026-11-17/README.md) remains historical evidence. Scope: core Circula; all 15 future modules remain isolated.
 
-## Integration evidence
+## Current integration evidence
 
-<!-- executed-consolidation:start -->
-- PRs #69, #70, #71, #72, #73, #74, #75, #76, #77, #79, #81 merged after current-head gates and independent review. The combined candidate has one successful full race run for all 14 test-bearing packages. It includes unmerged #82, #84, #87; their current-head provider gates remain incomplete at the recorded checkpoint (4 passed, 2 running and 15 queued required jobs). Their local pass is not a main-branch or provider-gate pass. Merged PRs have the required current-head CI and native qualification recorded individually. [Merge receipts and qualification limits](audit/consolidation-2026-11-17/README.md#integration-receipts).
-- The PR #69 consolidation, PR #70 audit preservation and eight historical PR closures are complete; reviewed concurrent PRs #78, #80, #82, #83, #84, #85, #86, #87, #88 remain open under their recorded ownership and dispositions. Their unfinished work is not counted as integrated. The remaining open PRs are #67, #78, #80, #82, #83, #84, #85, #86, #87, #88.
-<!-- executed-consolidation:end -->
+- [PR #90](https://github.com/djshellshoxxx/circula/pull/90) preserves source #82, #87, #88, #78 and #89, plus new reviewed repairs and completed source slices. Its final current-head gates are required; it is not a main-branch pass merely because those sources passed. PR #84 was already in the starting main.
+- Six requested reports and the 107-ref [branch matrix](audits/BRANCH_CONSOLIDATION_MATRIX.md) record every starting branch disposition. No original refs were deleted or force-pushed.
+- [Future-module qualification](audits/FUTURE_MODULE_QUALIFICATION.md): all 15 default race/vet suites and all five explicit SQLite-tagged whole-module race suites passed. PWA Node tests passed 22/22; this environment's browser attempt was blocked before assertions. These results qualify zero production integrations.
+- #83 remains an incomplete recovery-policy mechanism. #85 retains its operator-authority gate; its browser fixture is repaired separately in [#91](https://github.com/djshellshoxxx/circula/pull/91). #86 is recovered independently, default off, with visible policy settings and clock/layout fixes; subject-visibility policy and runtime qualification remain.
+- Core source repairs cover exact aggregate sums, durable dispute policy binding, recovery proof locks, password HTTP throttling, old-policy defaults and setup precision. Account-session management and setup/join catalogue completion have their own review/test evidence. See [feature status](audits/FEATURE_COMPLETION_STATUS.md); whole-spec and release completeness are not claimed.
+
+## Earlier completed consolidation evidence
 
 - PR #61 merged as `7e97504c` after all seven jobs passed at `cf5abf5c` in [CI run 43952719310](https://github.com/djshellshoxxx/circula/actions/runs/43952719310).
 
@@ -71,9 +74,7 @@ Updated 2026-11-18 UTC (2026-11-18 Pacific) after executed consolidation through
 
 ## PR consolidation follow-ups (2026-11-18)
 
-- FNET-204 (draft PR #67, future module only): wire signed cursors into `Page()`, add expiry, key ID/verify set
-  and actor/filter binding, round-trip and tamper tests, gofmt; see the [#67 review](plans/PR-CONSOLIDATION-2026-11-17.md#pr-67-review).
-  Key custody, TTL, mute semantics and persistent joins need owner decisions.
+- FNET-204 #67/#80 is combined and repaired on an isolated candidate: signed cursors, expiry/rotation and actor/filter binding are implemented; nil-codec and conflicting-duplicate regressions pass. Key custody, TTL, mute semantics, persistent joins and current-core/provider qualification still gate adoption. See [module evidence](audits/FUTURE_MODULE_QUALIFICATION.md).
 - NEW-01 and E-02 are completed by #72 and #71: private leased staging in `cmd/circula/backup_work.go`, exclusive `O_EXCL` copies and untrusted SQLite schema connections. Administrator-notice pagination, threshold validation, security documentation and deterministic erasure coverage are complete (#73–#76); browser freshness assertions handle clock boundaries (#77). The dated [security dispositions](audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md) preserve the earlier checkpoint.
 - Owner decisions from the archived spec drafts are listed in `docs/archive/specs-historical/README.md`;
   candidate QA backlog there: race matrix R1–R18 and cross-parameter policy rules R1–R13 (from PR #2).
@@ -81,8 +82,8 @@ Updated 2026-11-18 UTC (2026-11-18 Pacific) after executed consolidation through
 
 ## Remaining specification and qualification work
 
-- SEC-026 is an outstanding implementation: network-configurable proposal-velocity and reciprocal-trade signals, one signal per window, visible only to same-network administrators/reviewers, with no automatic trade blocking. Existing throttles are not this feature.
-- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. PR #62 migrated shell/dashboard labels, navigation, persistent network notices and badge counts; the rest of the handlers, templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
+- SEC-026 is implemented on an isolated repaired branch with no automatic trade blocking. It is default off and independent of GOV-021; current-head qualification, subject visibility, threshold authority and retention decisions remain. Existing login/join throttles are not this feature.
+- UX-047 catalogue migration is partial: administrator-overview counts/actions/checks and proposal-queue row/status/title text use the English catalogue with CLDR plural/number formatting. PR #61 additionally migrated balance/spoken and transaction-row/status/explanation text with passing CI. PR #62 migrated shell/dashboard labels, navigation, persistent network notices and badge counts; #79 added authentication/account-security text. This audit adds setup/invitation/open/approval joining. Shared refusal construction, administrator reset pages, remaining handlers/templates and JavaScript still need migration; translation/locale scope needs product confirmation. See `docs/dev/MESSAGES.md`.
 - GOV-021 administrator-unavailable recovery needs its specified dual approval, member-identity verification, network-wide notice and no-balance-change qualification, aligned with the unresolved break-glass scope. Do not count generic operator break-glass as this complete recovery flow.
 
 - Confirm QA-001 release budgets/thresholds (DEC-023) and reference-hardware performance criteria.

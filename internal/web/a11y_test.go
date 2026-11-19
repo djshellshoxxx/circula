@@ -142,6 +142,8 @@ func TestPageStructure(t *testing.T) {
 		b + "/disputes", b + "/disputes/" + ds[0].ID, b + "/policy", b + "/terms", b + "/leave", "/setup", b + "/join", b + "/nothing"}
 	a := w.browser(t)
 	a.login("alice@example.org")
+	_, _, sessionID := browserSession(t, a)
+	member = append(member, "/account/sessions", "/account/sessions/"+sessionID+"/revoke")
 	for _, path := range member {
 		checkStructure(t, path, a.get(path))
 	}

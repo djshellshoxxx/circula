@@ -357,6 +357,72 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
 
+  /api/v1/me/sessions:
+    get:
+      operationId: listOwnSessions
+      tags: [Identity]
+      summary: List the caller's active sign-ins (account-security extension)
+      description: |
+        Session cookie only; bearer API tokens receive 403. Does not resolve a network.
+        Returns the caller's active sessions, newest first, using current role-specific
+        idle and absolute timeouts. Each ID is a one-way public selector, never a bearer
+        value or the stored session hash. expires_at is the current earliest expiry;
+        later activity can extend an idle timeout. No device or IP information is collected.
+        Pagination remains valid when the session at the page boundary is revoked.
+        Response pages are bounded; this version scans all retained sessions of the caller
+        before filtering and paging. It does not impose a per-person session-count limit.
+      security:
+        - cookieAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Active sessions belonging to the caller.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SessionPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/me/sessions/{session}:
+    delete:
+      operationId: revokeOwnSession
+      tags: [Identity]
+      summary: End one of the caller's sign-ins (account-security extension)
+      description: |
+        Session cookie and CSRF token required. Does not resolve a network. Only an owner
+        can revoke a selector returned by their session list. Foreign and unknown selectors
+        both receive 404. Repeating a revocation is 204 while the row is retained, with no
+        duplicate audit event. Ending the current session makes its next request fail 401.
+        Other sessions and API tokens keep working. A pending forced password change blocks
+        this write. Audit records identify the person and whether the session was current,
+        without a session identifier. No Idempotency-Key or request body is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      parameters:
+        - name: session
+          in: path
+          required: true
+          schema: {$ref: '#/components/schemas/SessionSelector'}
+      responses:
+        '204': {description: The selected session has ended.}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '423': {$ref: '#/components/responses/NetworkFrozen'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
   /api/v1/members:
     get:
       operationId: listMembers
@@ -3937,6 +4003,20 @@ components:
         bytes: {type: integer, minimum: 0}
         artefact_url: {oneOf: [{type: string}, {type: 'null'}]}
         error: {oneOf: [{type: string}, {type: 'null'}]}
+    SessionSelector:
+      type: string
+      pattern: '^[0-9a-f]{64}$'
+      description: One-way owner-scoped session selector; never a bearer credential or its stored hash.
+    Session:
+      type: object
+      required: [id, current, created_at, last_seen_at, expires_at]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/SessionSelector'}
+        current: {type: boolean}
+        created_at: {$ref: '#/components/schemas/Timestamp'}
+        last_seen_at: {$ref: '#/components/schemas/Timestamp'}
+        expires_at: {$ref: '#/components/schemas/Timestamp'}
     Token:
       type: object
       required: [id, name, scopes, network_id, created_at, last_used_at, expires_at, revoked_at]
@@ -4224,6 +4304,12 @@ components:
         - type: object
           properties:
             data: {type: array, items: {$ref: '#/components/schemas/AuditEvent'}}
+    SessionPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/Session'}, maxItems: 100}
     TokenPage:
       allOf:
         - $ref: '#/components/schemas/Page'

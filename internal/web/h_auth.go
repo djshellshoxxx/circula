@@ -143,7 +143,7 @@ func (s *server) registerPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) setupForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	p := &page{Title: "Create a network", Dec: 2, V: map[string]string{"currency_name": "credit", "decimals": "2",
+	p := &page{Title: messages.Text("setup.title"), Dec: 2, V: map[string]string{"currency_name": "credit", "decimals": "2",
 		"default_credit_limit": "0.00", "join_mode": "invite", "signup_grant": "0.00"}}
 	p.D = s.opts.SetupSecret != ""
 	s.render(w, r, nil, "setup", 200, p)
@@ -151,7 +151,7 @@ func (s *server) setupForm(w http.ResponseWriter, r *http.Request, c *rc) {
 
 func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "Create a network", V: v, Dec: 2, D: s.opts.SetupSecret != ""}
+	p := &page{Title: messages.Text("setup.title"), V: v, Dec: 2, D: s.opts.SetupSecret != ""}
 	fail := func(sum string, fe []fieldErr, st int) {
 		p.Summary, p.Errors = sum, fe
 		s.render(w, r, nil, "setup", st, p)
@@ -160,7 +160,7 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		// One secret creates one network, even across restarts and concurrent posts.
 		s.setupMu.Lock()
 		defer s.setupMu.Unlock()
-		const usedMsg = "Not saved. The setup secret has already been used. Ask the person who runs this service to reset it. Nothing changed."
+		usedMsg := messages.Text("setup.secret.used")
 		if s.setupUsed.Load() {
 			fail(usedMsg, nil, 403)
 			return
@@ -177,31 +177,38 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		ip := s.clientIP(r)
 		if s.setup.blocked(ip) {
-			fail("Too many attempts. Wait and try again. Nothing changed.", nil, 429)
+			fail(messages.Text("setup.throttle"), nil, 429)
 			return
 		}
 		if !secretEqual(r.PostFormValue("setup_secret"), s.opts.SetupSecret) {
 			s.setup.fail(ip)
-			fail("Not saved. Fix the problems below. Nothing changed.", []fieldErr{{"setup_secret", "Setup secret: not correct. Ask the person who runs this service."}}, 422)
+			fail(messages.Text("setup.invalid"), []fieldErr{{"setup_secret", messages.Text("setup.secret.invalid")}}, 422)
 			return
 		}
 	}
-	dec, _ := strconv.Atoi(v["decimals"])
+	// Validate the scale before using it in an amount formatter. ParseAmount
+	// rejects invalid scales, but formatting its error example would otherwise
+	// allocate according to an attacker-controlled number of decimal places.
+	dec, err := strconv.Atoi(v["decimals"])
+	if err != nil || dec < 0 || dec > domain.MaxDecimals {
+		fail(messages.Text("setup.invalid"), []fieldErr{{"decimals", messages.Text("setup.decimals.invalid")}}, http.StatusUnprocessableEntity)
+		return
+	}
 	pol := domain.DefaultPolicy()
 	pol.CurrencyName, pol.Decimals, pol.JoinMode = v["currency_name"], dec, domain.JoinMode(v["join_mode"])
 	var fe []fieldErr
-	parse := func(field string, dst *int64) {
+	parse := func(field, labelKey string, dst *int64) {
 		n, err := domain.ParseAmount(v[field], dec)
 		if err != nil {
-			fe = append(fe, fieldErr{field, label(field) + ": enter a number with up to " + strconv.Itoa(dec) + " decimal places, for example " + domain.FormatAmount(1250, dec) + "."})
+			fe = append(fe, fieldErr{field, messages.Text("setup.amount.invalid", messages.Text(labelKey), dec, domain.FormatAmount(1250, dec))})
 			return
 		}
 		*dst = n
 	}
-	parse("default_credit_limit", &pol.DefaultCreditLimit)
-	parse("signup_grant", &pol.SignupGrant)
+	parse("default_credit_limit", "setup.limit.error_label", &pol.DefaultCreditLimit)
+	parse("signup_grant", "setup.grant.label", &pol.SignupGrant)
 	if len(fe) > 0 {
-		fail("Not saved. Fix the problems below. Nothing changed.", fe, 422)
+		fail(messages.Text("setup.invalid"), fe, 422)
 		return
 	}
 	net, _, err := s.svc.CreateNetwork(r.Context(), c.actor, service.CreateNetworkInput{Name: v["name"], Slug: v["slug"],
@@ -215,7 +222,7 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		cc := &rc{s: s, ctx: r.Context(), actor: c.actor, Net: &domain.Network{Policy: pol}}
 		if sum, f, ok := cc.refuse(err); ok {
 			if domain.CodeOf(err) == domain.CodeConflict {
-				f = []fieldErr{{"slug", "Web address name: already in use. Choose a different one."}}
+				f = []fieldErr{{"slug", messages.Text("setup.slug.unavailable")}}
 			}
 			fail(sum, f, 422)
 			return
@@ -226,7 +233,7 @@ func (s *server) setupPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	if s.opts.SetupSecret != "" {
 		s.setupUsed.Store(true) // FR-002, SEC-028: spent durably by CreateNetwork
 	}
-	s.setFlash(w, r, "Network created and open. You are its first administrator.")
+	s.setFlash(w, r, messages.Text("setup.flash.created"))
 	http.Redirect(w, r, "/n/"+net.Slug, http.StatusSeeOther)
 }
 
@@ -234,14 +241,14 @@ func (s *server) joinInviteForm(w http.ResponseWriter, r *http.Request) {
 	tok := r.PathValue("token")
 	a, _, ok := s.authenticate(r)
 	if !ok {
-		s.render(w, r, nil, "join_anon", 200, &page{Title: "Accept your invitation", Next: "/join/" + tok})
+		s.render(w, r, nil, "join_anon", 200, &page{Title: messages.Text("join.invitation.title"), Next: "/join/" + tok})
 		return
 	}
 	if a.MustChangePassword { // Anonymous invitation information stays public.
 		s.mustChange(w, r)
 		return
 	}
-	s.render(w, r, nil, "join", 200, &page{Title: "Accept your invitation", D: s.inviteData(r, tok)})
+	s.render(w, r, nil, "join", 200, &page{Title: messages.Text("join.invitation.title"), D: s.inviteData(r, tok)})
 }
 
 // joinData is the join pages' data: the invitation token or network, and the terms to show (GOV-009).
@@ -286,7 +293,7 @@ func termsVersion(r *http.Request) int {
 
 func (s *server) joinInvitePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	tok := r.PathValue("token")
-	p := &page{Title: "Accept your invitation", D: s.inviteData(r, tok), V: formValues(r)}
+	p := &page{Title: messages.Text("join.invitation.title"), D: s.inviteData(r, tok), V: formValues(r)}
 	m, err := s.svc.RedeemInvitationTerms(r.Context(), c.actor, tok, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
 		if s.networkFull(w, r, err, "join", p) {
@@ -295,7 +302,7 @@ func (s *server) joinInvitePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		cc := &rc{s: s, ctx: r.Context(), Net: &domain.Network{}}
 		switch domain.CodeOf(err) {
 		case domain.CodeNotFound, domain.CodeInvalidState, domain.CodeForbidden:
-			p.Summary = "This invitation is expired, already used or not valid. Ask the network administrator for a new invitation link. Nothing changed."
+			p.Summary = messages.Text("join.invitation.invalid")
 			s.render(w, r, nil, "join", 422, p)
 		default:
 			if sum, fe, ok := cc.refuse(err); ok {
@@ -324,7 +331,7 @@ func (s *server) networkFull(w http.ResponseWriter, r *http.Request, err error, 
 		secs = 60
 	}
 	w.Header().Set("Retry-After", strconv.Itoa(secs))
-	p.Summary = "Not sent. This network is not accepting new members right now. Try again later. Nothing changed."
+	p.Summary = messages.Text("join.network.full")
 	s.render(w, r, nil, tpl, http.StatusTooManyRequests, p)
 	return true
 }
@@ -336,9 +343,9 @@ func (s *server) afterJoin(w http.ResponseWriter, r *http.Request, c *rc, m *dom
 		return
 	}
 	if m.Status == domain.MemberPending {
-		s.setFlash(w, r, "Request sent. Your membership is pending until an administrator decides.")
+		s.setFlash(w, r, messages.Text("join.flash.pending"))
 	} else {
-		s.setFlash(w, r, "You have joined "+n.Name+".")
+		s.setFlash(w, r, messages.Text("join.flash.joined", n.Name))
 	}
 	http.Redirect(w, r, "/n/"+n.Slug, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix plus validated slug
 }
@@ -364,7 +371,7 @@ func (s *server) joinNetForm(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, nil, "joinnet", 200, &page{Title: "Join " + info.Name, D: s.netJoinData(r, info)})
+	s.render(w, r, nil, "joinnet", 200, &page{Title: messages.Text("join.network.title", info.Name), D: s.netJoinData(r, info)})
 }
 
 func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
@@ -376,18 +383,18 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	// FR-012: join attempts are rate-limited per person and per address.
 	if !s.join.allow("p:"+c.actor.PersonID) || !s.join.allow("i:"+s.clientIP(r)) {
 		w.Header().Set("Retry-After", strconv.Itoa(int(s.join.window.Seconds())))
-		wait := "Wait ten minutes and try again."
+		summary := messages.Text("join.throttle.ten_minutes")
 		if s.join.window.Minutes() != 10 {
-			wait = "Wait a while and try again."
+			summary = messages.Text("join.throttle.other")
 		}
-		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r),
-			Summary: "Not sent. Too many join attempts. " + wait + " Nothing changed."}
+		p := &page{Title: messages.Text("join.network.title", info.Name), D: s.netJoinData(r, info), V: formValues(r),
+			Summary: summary}
 		s.render(w, r, nil, "joinnet", 429, p)
 		return
 	}
 	m, err := s.svc.JoinNetworkTerms(r.Context(), c.actor, info.ID, r.PostFormValue("display_name"), termsVersion(r))
 	if err != nil {
-		p := &page{Title: "Join " + info.Name, D: s.netJoinData(r, info), V: formValues(r)}
+		p := &page{Title: messages.Text("join.network.title", info.Name), D: s.netJoinData(r, info), V: formValues(r)}
 		if s.networkFull(w, r, err, "joinnet", p) {
 			return
 		}
@@ -398,7 +405,7 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 			return
 		}
 		if domain.CodeOf(err) == domain.CodeForbidden {
-			p.Summary = "Not sent. This network does not accept requests to join. Ask an administrator for an invitation link. Nothing changed."
+			p.Summary = messages.Text("join.network.closed")
 			s.render(w, r, nil, "joinnet", 403, p)
 			return
 		}

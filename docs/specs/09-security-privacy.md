@@ -16,6 +16,8 @@ This document does not claim anonymity, cryptographic guarantees for ledger cont
 
 This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release/security approval. The audit itself identifies an AI-assisted review and pending independent professional review ([SECURITY-AUDIT-3](../audit/SECURITY-AUDIT-3.md)). Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate or independent security review is claimed here.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary: built 8, deferred 1, not built 7, partial 18.
 
 | ID | Priority | Status | Note |
@@ -33,7 +35,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-011 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Dual control built for administrator adjustments (addenda/SEC-011.md; `internal/service/dualcontrol.go`, `dualcontrol_test.go`). Write-offs and credit-limit changes not covered; wider scope is the open owner decision in addenda/SEC-011-owner-decision.md |
 | SEC-012 | P0 | built | Audit in same unit for admin actions; fixed-text in-app notice to the affected member on suspend, reinstate, removal, role change, credit-limit change, adjustment and reversal |
 | SEC-013 | P0 | partial | No operator role reads network data in product; [Refreshed 2026-11-16; "break-glass not built" is stale.] Break-glass built: reason required, time-boxed to a hard maximum of four hours, audited, readable by network administrators (addenda/SEC-013.md; `internal/service/breakglass.go`, `internal/web/h_breakglass.go`). Break-glass scope is owner gate A3-F02 (matrix) |
-| SEC-014 | P0 | partial | Minimal profile fields; data inventory document absent |
+| SEC-014 | P0 | partial | Source refresh 2026-11-19: [personal-data inventory](../security/personal-data-inventory.md) exists and is checked against migrated schema columns by `internal/store/pii_inventory_test.go`, including forbidden field names and complete purpose/retention cells. `TestOverLengthFreeTextRejectedPerField` checks member-editable text limits. The inventory explicitly retains unresolved retention/erasure gaps; current runtime qualification and counsel decisions are separate |
 | SEC-015 | P0 | built | Network-scoped queries and cross-network tests |
 | SEC-016 | P0 | built | Members-only directory; no-index header and meta on every page; stable member reference on trade confirmation steps, directory, member page and same-name entries of the trade form (tests) |
 | SEC-017 | P0 | built | Member and admin scopes; CSV formula neutralisation; 24h download expiry |

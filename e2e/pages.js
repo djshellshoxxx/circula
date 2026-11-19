@@ -13,6 +13,8 @@ const PAGES = [
   ['networks list (one network, so it opens that dashboard)', 'carol', () => '/', 'dashboard'],
   ['setup (network creation)', 'carol', () => '/setup', 'setup'],
   ['password change', 'alice', () => '/account/password', 'password'],
+  ['active sessions', 'alice', () => '/account/sessions', 'sessions'],
+  ['end current session confirmation', 'alice', (st) => st.sessionRevoke, 'session_revoke'],
   ['help (member)', 'alice', () => '/help', 'help'],
   ['invitation, signed in', 'alice', (st) => st.unusedInvite, 'join'],
 

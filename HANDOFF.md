@@ -1,5 +1,13 @@
 # Circula handoff
 
+## Current comprehensive audit
+
+The audit beginning 2026-11-18 Pacific starts at `main@ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`. [PR #90](https://github.com/djshellshoxxx/circula/pull/90) holds the reviewed core consolidation, new ledger/authentication/dispute/policy/setup repairs, account-session work and onboarding catalogue continuation. Verify its current head and gates before merging; source-PR passes and local pure-package tests are not combined-main qualification.
+
+Read [the comprehensive audit](docs/audits/COMPREHENSIVE_REPOSITORY_AUDIT.md), [execution report](docs/audits/CONSOLIDATION_FINAL_REPORT.md), [all 107 branch dispositions](docs/audits/BRANCH_CONSOLIDATION_MATRIX.md), [feature status](docs/audits/FEATURE_COMPLETION_STATUS.md), [security review](docs/audits/SECURITY_REVIEW.md), and [remaining blockers](docs/audits/REMAINING_BLOCKERS.md). The [15-module qualification](docs/audits/FUTURE_MODULE_QUALIFICATION.md) includes default and explicit SQLite suites and portable evidence. Future modules remain isolated and disabled/HOLD.
+
+GOV-021 fixture repair [#91](https://github.com/djshellshoxxx/circula/pull/91) targets its original topic branch. Reviewer recovery, permanent operator appointment and signal subject-visibility decisions remain unresolved. All original branches are retained; no deployment is part of this work. The dated sections below remain historical evidence.
+
 <!-- executed-consolidation:start -->
 ## 2026-11-18 Pacific: earlier consolidation checkpoint (historical)
 

@@ -43,6 +43,7 @@ func Run(t *testing.T, open Factory) {
 		{"MissingRowsAreNotFound", missingRowsAreNotFound},
 		{"DuplicatesAreConflicts", duplicatesAreConflicts},
 		{"NetworkScoping", networkScoping},
+		{"SessionOwnership", sessionOwnership},
 		{"LedgerSequencePerNetwork", ledgerSequencePerNetwork},
 		{"PolicyInForceAt", policyInForceAt},
 		{"DisputePolicyBinding", disputePolicyBinding},

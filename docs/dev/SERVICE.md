@@ -193,6 +193,12 @@ func (s *Service) RevokeAllSessions(ctx context.Context, actor domain.Actor, in 
 func (s *Service) Logout(ctx context.Context, token string) error
 // Logout revokes the session behind token.
 
+func (s *Service) ListOwnSessions(ctx context.Context, actor domain.Actor) ([]SessionInfo, error)
+// Account-security inventory (spec 08): live session authentication is required. Returns only the caller's active sessions, using the same current role-specific idle/absolute limits as Authenticate. Each selector is a domain-separated hash of the stored session hash; neither bearer values nor stored hashes leave the service. Lists are newest first, with a public-selector tie-breaker. No IP, device fingerprint or new personal data is collected.
+
+func (s *Service) RevokeOwnSession(ctx context.Context, actor domain.Actor, id string) error
+// Ends one session of the caller in the same write as a session.revoked audit. The current session is rechecked inside the transaction, foreign/unknown selectors are not-found, and a repeated revocation has no extra audit while the row is retained. API tokens and system actors cannot call it; forced password changes block this write. The audit identifies the person and current-session flag without any session identifier (DAT-031). Other sessions, API tokens and ledger data are unchanged.
+
 func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW, newPW string) error
 // ChangePassword verifies the old password, sets the new one and revokes every session of the person, including the caller's (SEC-003).
 ```
