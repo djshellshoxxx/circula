@@ -75,11 +75,13 @@ func (p *page) Err(k string) string {
 
 func mustLoadTemplates() map[string]*pageTemplate {
 	funcs := template.FuncMap{
-		"msg":   messages.Text,
-		"amt":   func(v int64, dec int) string { return minus(domain.FormatAmount(v, dec)) },
-		"plain": func(v int64, dec int) string { return domain.FormatAmount(abs64(v), dec) },
-		"time":  fmtTime,
-		"upper": strings.ToUpper,
+		"msg":       messages.Text,
+		"msgAround": messages.Around,
+		"amt":       func(v int64, dec int) string { return minus(domain.FormatAmount(v, dec)) },
+		"plain":     func(v int64, dec int) string { return domain.FormatAmount(abs64(v), dec) },
+		"unit":      unitFor,
+		"time":      fmtTime,
+		"upper":     strings.ToUpper,
 		"dict": func(kv ...any) map[string]any {
 			m := map[string]any{}
 			for i := 0; i+1 < len(kv); i += 2 {

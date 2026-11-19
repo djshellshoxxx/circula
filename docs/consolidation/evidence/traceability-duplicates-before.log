@@ -1,0 +1,12 @@
+--- FAIL: TestCheckRejectsRegeneratedDuplicateStatusIDs (0.07s)
+    --- FAIL: TestCheckRejectsRegeneratedDuplicateStatusIDs/separate_specification_files (0.03s)
+        check_test.go:62: check accepted a regenerated duplicate definition:
+            traceability: docs/TRACEABILITY.md is up to date
+            PASS
+    --- FAIL: TestCheckRejectsRegeneratedDuplicateStatusIDs/same_status_table (0.04s)
+        check_test.go:62: check accepted a regenerated duplicate definition:
+            traceability: docs/TRACEABILITY.md is up to date
+            PASS
+FAIL
+FAIL	github.com/djshellshoxxx/circula/scripts/traceability	0.090s
+FAIL
