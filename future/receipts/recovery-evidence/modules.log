@@ -1,0 +1,4 @@
+$ /workspace/scratch/0afb7942ff6b/toolchain/go/bin/go mod verify
+all modules verified
+
+exit=0

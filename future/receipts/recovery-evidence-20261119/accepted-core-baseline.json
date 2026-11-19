@@ -1,0 +1,18 @@
+{
+  "source_main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "introducing_commits": [
+    "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+    "7457b618057a8b1757ec643806e9afbfc5ba907e"
+  ],
+  "files": [
+    {
+      "path": "cmd/circula/auditanchor.go",
+      "blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587"
+    },
+    {
+      "path": "internal/service/departure_pagination_regression_test.go",
+      "blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+    }
+  ],
+  "scope": "Only accepted-main os import and501-proposal test fixture cap; no unfinished worker source, production defaults, migrations or shared CI changed."
+}

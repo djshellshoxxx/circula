@@ -1,0 +1,82 @@
+{
+  "observed_utc": "2026-11-19T12:58:07.337258+00:00",
+  "status": "frozen for independent root review; local only",
+  "base": "7e2df8e435f3d7000c791ad46ea6f397a98c26dd",
+  "head": "abaa1e8942f0997f86ce9e3bbc6d80b2dd65d056",
+  "tree": "4f9fa8e7a9067a3c9f4535990658d3c65f38d376",
+  "branch": "master/receipts-numeric-fidelity-20261119",
+  "worktree": "/workspace/scratch/f47ceab29930/circula-receipts-numeric",
+  "paths": [
+    "future/receipts/canonical.go",
+    "future/receipts/canonical_numeric_fidelity_test.go"
+  ],
+  "blobs": {
+    "future/receipts/canonical.go": "637f1d3dac5b698a151d447b7073021a7a02daf8",
+    "future/receipts/canonical_numeric_fidelity_test.go": "1e624f2935011df0b51d190851c37807f978d188"
+  },
+  "patch": "0001-receipts-exact-offline-numbers.patch",
+  "patch_sha256": "3e7f4c43f4b0f0a8a85438760b279d4dcaa1d8e6249e6ba0b9fd37a0efa63ae6",
+  "defect": "Plain DecodeDocument canonicalized attacker-controlled numeric tokens through IEEE-754 before integer schema decoding, allowing fractional values and underflow to become accepted integer fields.",
+  "examples": [
+    {
+      "field": "amount_minor",
+      "raw": "1125899906842624.01",
+      "previous_accepted_integer": "1125899906842624"
+    },
+    {
+      "field": "revision",
+      "raw": "1.00000000000000001",
+      "previous_accepted_integer": "1"
+    },
+    {
+      "field": "precision",
+      "raw": "-1e-400",
+      "previous_accepted_integer": "0"
+    }
+  ],
+  "repair": "Compare each original amount/precision/revision number exactly with its already bounded integer DTO value using decimal digits and exponent position. No arbitrary-size arithmetic/power allocation. Preserve exact integral decimal/exponent spellings and signed zero.",
+  "fail_before": {
+    "receipt": "fail-before.json",
+    "production_changes": [],
+    "failing_subcases": 11,
+    "positive_controls_passed": 18,
+    "package_seconds": 0.014,
+    "wall_seconds": 130.327,
+    "resource_failure": false
+  },
+  "validation": {
+    "full_module_ordinary": {
+      "receipt": "green-full.json",
+      "command": "go test -p 1 -count=1 -cover -timeout=90s ./...",
+      "result": "PASS",
+      "package_seconds": 0.044,
+      "coverage_percent": 84.6,
+      "wall_seconds": 5.148
+    },
+    "vet": {
+      "receipt": "green-vet.json",
+      "result": "PASS",
+      "wall_seconds": 13.845
+    },
+    "checksums": {
+      "receipt": "checksums.json",
+      "result": "PASS",
+      "wall_seconds": 0.117
+    },
+    "source_hashes_match_frozen_commit": true,
+    "gofmt_and_diff_check": "clean",
+    "race": "Not run for this patch; original archive race is historical unchanged-source evidence only. Current-head provider/combined gates remain required."
+  },
+  "dependencies": "Original exact JCS v1.0.3-0.20261110202536-7d2401783402 and go-jose v4.1.9, unchanged module files. Fresh cache builds, no replacement.",
+  "review": {
+    "status": "requested",
+    "reviewer": "/root"
+  },
+  "unchanged_boundaries": [
+    "Certificate issuer/verifier source and signed wire format",
+    "CanonicalJSON/JCS behavior outside the plain document parser",
+    "Amount/revision/precision bounds",
+    "Workflow, README, recovery docs, Core source, root dependencies"
+  ],
+  "finding_scope": "Offline unsigned document parsing integrity; no signature forgery, authorization bypass or production incident claimed."
+}

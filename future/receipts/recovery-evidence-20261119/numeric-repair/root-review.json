@@ -1,0 +1,27 @@
+{
+  "observed_utc": "2026-11-19T13:04:57.077134+00:00",
+  "reviewer": "/root",
+  "author": "/root/independent_triage",
+  "head": "abaa1e8942f0997f86ce9e3bbc6d80b2dd65d056",
+  "tree": "4f9fa8e7a9067a3c9f4535990658d3c65f38d376",
+  "scope": "Complete two-file numeric-fidelity change, surrounding DecodeDocument/validateDocument/project constraints, original canonical parser regressions and actual author failure/pass receipts. Full archived production source was separately reviewed.",
+  "files": {
+    "future/receipts/canonical.go": {
+      "git_blob": "637f1d3dac5b698a151d447b7073021a7a02daf8",
+      "sha256": "47ad75a55e8161ffba879d052a07a973227bfe34d79d4eb914657a63009a6b1f"
+    },
+    "future/receipts/canonical_numeric_fidelity_test.go": {
+      "git_blob": "1e624f2935011df0b51d190851c37807f978d188",
+      "sha256": "2213ecae059b3c4d0cdc35ce3f92efaffb87c00a7d734e13e80241bf9a63807d"
+    }
+  },
+  "result": "No blocking source finding; approved for isolated composition, subject to current-source race/fuzz/provider gates.",
+  "reasoning": [
+    "The three DTO integer fields are validated nonnegative and bounded before comparison. The16KiB input cap bounds all digit/string work.",
+    "For nonzero values, equal significant decimal digits plus equal trailing-zero/decimal-exponent displacement are necessary and sufficient for exact equality. No binary-float result is used by the comparison.",
+    "The required shift is bounded by input length; parsing the exponent as int64 rejects exponents unable to equal that bounded shift without allocating a power-of-ten integer. All-zero tokens retain signed-zero and arbitrary exponent compatibility.",
+    "JCS still validates complete JSON syntax and exact duplicate names. The final canonical schema reconstruction still rejects case-alias/unknown/missing-schema variations. Failure returns an empty Document.",
+    "The actual11 rejected fractional/underflow cases and18 previously valid controls exercise positive/revision bounds, decimal/exponent forms and zero. Original certificate/signature code, dependencies and all original tests are unchanged."
+  ],
+  "execution_scope": "Review does not claim a separate runtime rerun. Author full module ordinary tests/vet/checksum passed; race/fuzz for the repaired current source remain pending."
+}

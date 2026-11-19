@@ -1,0 +1,1 @@
+ok  	github.com/djshellshoxxx/circula/future/receipts	0.044s	coverage: 84.6% of statements

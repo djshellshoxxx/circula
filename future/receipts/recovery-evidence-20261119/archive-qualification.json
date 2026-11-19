@@ -1,0 +1,295 @@
+{
+  "module": "receipts",
+  "sha": "91529c5a3a4268ecf3a919e099ab9aca779aab2d",
+  "module_tree": "f1ee3e37b71632fbf25205a8fc0aed641df22e2d",
+  "source": {
+    "module": "receipts",
+    "sha": "91529c5a3a4268ecf3a919e099ab9aca779aab2d",
+    "tree": "f1ee3e37b71632fbf25205a8fc0aed641df22e2d",
+    "module_path": "future/receipts",
+    "extracted_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+    "file_count": 44,
+    "bytes": 239528,
+    "all_git_blobs_verified": true
+  },
+  "started_utc": "2026-11-19T11:51:24.491211+00:00",
+  "go_mod": "module github.com/djshellshoxxx/circula/future/receipts\n\ngo 1.25.0\n\nrequire github.com/gowebpki/jcs v1.0.3-0.20261110202536-7d2401783402\n\nrequire github.com/go-jose/go-jose/v4 v4.1.9\n",
+  "go_mod_sha256_before": "662d77bdddc2e85fb1361ea9f8dd4418be5ff4008757d3158b7488b577850368",
+  "go_sum_sha256_before": "2a102a5cf14868d15d365b1c0c1a1ddd712f67e6effed93412587b1ada49a886",
+  "build_tags": [],
+  "sqlite_driver_evidence": [],
+  "manifest": {
+    "id": "FNET-203",
+    "status": "standalone-master-delta-audited-external-qualification-pending",
+    "integration": "HOLD",
+    "enabled": false,
+    "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+    "depends_on_future_features": [],
+    "scope": "Fresh authorized read-only versioned TXT/JSON/print HTML receipt; no-JS separate receipt/certificate HTTP and CLI seams; strict JCS/digest, standard JWS EdDSA opaque signer, offline public trust lifecycle/rotation/revocation and verifier; no artifact persistence; defaults disabled.",
+    "remaining": "external verifier interoperability; actual Circula auth/read-transaction/protected-key adapters; production cryptographic/operations approval and trust distribution; human keyboard/accessibility/Tor/browser and core regression/release qualification. Integration HOLD.",
+    "completion_percent": 83.5,
+    "completion_basis": "COMPLETION.md explicit weighted acceptance evidence; mandatory external and operational gates open",
+    "tested_source": "860a55135a4d7302642829a08387a000ac1132ed"
+  },
+  "checks": [
+    {
+      "kind": "gofmt",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "audit_regression_test.go",
+        "canonical.go",
+        "canonical_test.go",
+        "certificate.go",
+        "certificate_test.go",
+        "cli.go",
+        "health.go",
+        "http.go",
+        "query_regression_test.go",
+        "receipt.go",
+        "receipt_test.go",
+        "service.go",
+        "service_test.go",
+        "trust.go"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt -l audit_regression_test.go canonical.go canonical_test.go certificate.go certificate_test.go cli.go health.go http.go query_regression_test.go receipt.go receipt_test.go service.go service_test.go trust.go",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T11:51:24.495106+00:00",
+      "outer_timeout_seconds": 30,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/gofmt.log",
+      "tmp_free_before_bytes": 1143508992,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.033,
+      "finished_utc": "2026-11-19T11:51:24.527727+00:00",
+      "tmp_free_after_bytes": 1143508992,
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T11:51:24.529617+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/race.log",
+      "tmp_free_before_bytes": 1143508992,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 7.931,
+      "finished_utc": "2026-11-19T11:51:32.460938+00:00",
+      "tmp_free_after_bytes": 1098784768,
+      "output_tail": "go: downloading github.com/go-jose/go-jose/v4 v4.1.9\ngo: downloading github.com/gowebpki/jcs v1.0.3-0.20261110202536-7d2401783402\ngo: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "5a5a6f2dc86fdd5a4f3e158ad98ce617123fd9cf2de770008849a15a7d8fab3a",
+      "status": "failed",
+      "executed_test_pass_events": 0,
+      "skipped_test_events": [],
+      "package_results": [],
+      "coverage_output": []
+    },
+    {
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T11:51:32.465056+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/vet.log",
+      "tmp_free_before_bytes": 1098784768,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 0.117,
+      "finished_utc": "2026-11-19T11:51:32.582052+00:00",
+      "tmp_free_after_bytes": 1098625024,
+      "output_tail": "go: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+      "status": "failed"
+    },
+    {
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T11:51:32.587666+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/mod_verify.log",
+      "tmp_free_before_bytes": 1098625024,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.065,
+      "finished_utc": "2026-11-19T11:51:32.652277+00:00",
+      "tmp_free_after_bytes": 1098563584,
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T12:08:19.561189+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/race-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 447238144,
+        "workspace_free_bytes": 271900672,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 10.259,
+      "finished_utc": "2026-11-19T12:08:29.820737+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 431624192,
+        "workspace_free_bytes": 271769600,
+        "private_tmp_exists": true
+      },
+      "output_tail": "x/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/cross_tenant\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.734748448-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/method\"}\n{\"Time\":\"2026-11-19T04:08:28.734753638-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/method\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/method\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.734932744-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/method\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/method (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.734939266-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/method\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.734967309-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/content\"}\n{\"Time\":\"2026-11-19T04:08:28.734970605-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/content\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/content\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.735152286-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/content\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/content (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.735161162-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/content\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.735192341-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/bad_csrf\"}\n{\"Time\":\"2026-11-19T04:08:28.735195327-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/bad_csrf\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/bad_csrf\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.735363602-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/bad_csrf\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/bad_csrf (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.735370034-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/bad_csrf\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.735406533-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/body_facts\"}\n{\"Time\":\"2026-11-19T04:08:28.735415319-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/body_facts\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/body_facts\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.735909426-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/body_facts\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/body_facts (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.735918993-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/body_facts\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.735922069-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/rate_limit\"}\n{\"Time\":\"2026-11-19T04:08:28.735924293-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/rate_limit\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/rate_limit\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.736175354-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/rate_limit\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/rate_limit (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.73618877-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/rate_limit\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.736193879-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/trailing\"}\n{\"Time\":\"2026-11-19T04:08:28.736197867-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/trailing\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/trailing\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.73635966-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/trailing\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/trailing (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.736373797-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/trailing\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.736380649-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/huge\"}\n{\"Time\":\"2026-11-19T04:08:28.736389827-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/huge\",\"Output\":\"=== RUN   TestHTTPInvalidRequests/huge\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.737017443-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/huge\",\"Output\":\"--- PASS: TestHTTPInvalidRequests/huge (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.737030497-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests/huge\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.737036047-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests\",\"Output\":\"--- PASS: TestHTTPInvalidRequests (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.737071834-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestHTTPInvalidRequests\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.73710716-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestCLIRequiresExplicitChoice\"}\n{\"Time\":\"2026-11-19T04:08:28.737111509-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestCLIRequiresExplicitChoice\",\"Output\":\"=== RUN   TestCLIRequiresExplicitChoice\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.737823374-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestCLIRequiresExplicitChoice\",\"Output\":\"--- PASS: TestCLIRequiresExplicitChoice (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.737833743-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestCLIRequiresExplicitChoice\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.737838041-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestServiceRecreationRetainsNoArtifactOrAuthorization\"}\n{\"Time\":\"2026-11-19T04:08:28.737840616-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestServiceRecreationRetainsNoArtifactOrAuthorization\",\"Output\":\"=== RUN   TestServiceRecreationRetainsNoArtifactOrAuthorization\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.738123496-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestServiceRecreationRetainsNoArtifactOrAuthorization\",\"Output\":\"--- PASS: TestServiceRecreationRetainsNoArtifactOrAuthorization (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.738133004-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestServiceRecreationRetainsNoArtifactOrAuthorization\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.738137393-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestAuditAndBadWriterFailuresAreIsolated\"}\n{\"Time\":\"2026-11-19T04:08:28.738145437-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestAuditAndBadWriterFailuresAreIsolated\",\"Output\":\"=== RUN   TestAuditAndBadWriterFailuresAreIsolated\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.739449954-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestAuditAndBadWriterFailuresAreIsolated\",\"Output\":\"--- PASS: TestAuditAndBadWriterFailuresAreIsolated (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.739469361-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"TestAuditAndBadWriterFailuresAreIsolated\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.739478889-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument\"}\n{\"Time\":\"2026-11-19T04:08:28.739483537-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument\",\"Output\":\"=== RUN   FuzzDecodeDocument\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.739488216-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#0\"}\n{\"Time\":\"2026-11-19T04:08:28.739492254-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#0\",\"Output\":\"=== RUN   FuzzDecodeDocument/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.741496938-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#0\",\"Output\":\"--- PASS: FuzzDecodeDocument/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.741540049-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.741550298-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#1\"}\n{\"Time\":\"2026-11-19T04:08:28.741554716-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#1\",\"Output\":\"=== RUN   FuzzDecodeDocument/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.741659834-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#1\",\"Output\":\"--- PASS: FuzzDecodeDocument/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.741669271-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.741703355-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument\",\"Output\":\"--- PASS: FuzzDecodeDocument (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.74172195-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzDecodeDocument\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.741758859-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate\"}\n{\"Time\":\"2026-11-19T04:08:28.741762436-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate\",\"Output\":\"=== RUN   FuzzVerifyCertificate\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.747051045-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#0\"}\n{\"Time\":\"2026-11-19T04:08:28.747068648-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#0\",\"Output\":\"=== RUN   FuzzVerifyCertificate/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.751843313-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#0\",\"Output\":\"--- PASS: FuzzVerifyCertificate/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.75186295-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.751876245-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#1\"}\n{\"Time\":\"2026-11-19T04:08:28.751879731-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#1\",\"Output\":\"=== RUN   FuzzVerifyCertificate/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752056061-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#1\",\"Output\":\"--- PASS: FuzzVerifyCertificate/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752069426-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.752077101-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate\",\"Output\":\"--- PASS: FuzzVerifyCertificate (0.01s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752080607-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzVerifyCertificate\",\"Elapsed\":0.01}\n{\"Time\":\"2026-11-19T04:08:28.752115964-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt\"}\n{\"Time\":\"2026-11-19T04:08:28.752119801-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt\",\"Output\":\"=== RUN   FuzzCreateReceipt\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752260565-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#0\"}\n{\"Time\":\"2026-11-19T04:08:28.752267829-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#0\",\"Output\":\"=== RUN   FuzzCreateReceipt/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752459368-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#0\",\"Output\":\"--- PASS: FuzzCreateReceipt/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.75246584-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.752510213-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#1\"}\n{\"Time\":\"2026-11-19T04:08:28.75255124-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#1\",\"Output\":\"=== RUN   FuzzCreateReceipt/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752647701-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#1\",\"Output\":\"--- PASS: FuzzCreateReceipt/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752673239-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.752719486-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt\",\"Output\":\"--- PASS: FuzzCreateReceipt (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.752751365-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Test\":\"FuzzCreateReceipt\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:08:28.752772054-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-11-19T04:08:28.75668877-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Output\":\"coverage: 84.1% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:08:29.776341953-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/future/receipts\\t1.262s\\tcoverage: 84.1% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:08:29.778810473-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/receipts\",\"Elapsed\":1.27}\n",
+      "output_sha256": "a5fae7b22dcf40e50184a5da3863bbcfcf7d91e40e89e6a4bdbcc8bc55952ae7",
+      "status": "pass",
+      "executed_test_pass_events": 87,
+      "skipped_test_events": [],
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/future/receipts",
+          "action": "pass",
+          "elapsed_seconds": 1.27
+        }
+      ],
+      "coverage_output": [
+        "coverage: 84.1% of statements",
+        "ok  \tgithub.com/djshellshoxxx/circula/future/receipts\t1.262s\tcoverage: 84.1% of statements"
+      ]
+    },
+    {
+      "attempt": 2,
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T12:08:29.836670+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/vet-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 431624192,
+        "workspace_free_bytes": 271708160,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 4.022,
+      "finished_utc": "2026-11-19T12:08:33.859097+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 427810816,
+        "workspace_free_bytes": 271704064,
+        "private_tmp_exists": true
+      },
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/receipts",
+      "started_utc": "2026-11-19T12:08:33.865378+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/receipts/mod_verify-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 427716608,
+        "workspace_free_bytes": 271704064,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 0.016,
+      "finished_utc": "2026-11-19T12:08:33.881974+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 429363200,
+        "workspace_free_bytes": 271699968,
+        "private_tmp_exists": true
+      },
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    }
+  ],
+  "state": "completed",
+  "source_files_changed": [],
+  "go_mod_sha256_after": "662d77bdddc2e85fb1361ea9f8dd4418be5ff4008757d3158b7488b577850368",
+  "go_sum_sha256_after": "2a102a5cf14868d15d365b1c0c1a1ddd712f67e6effed93412587b1ada49a886",
+  "source_unchanged": true,
+  "finished_utc": "2026-11-19T11:51:32.667482+00:00",
+  "all_attempted_checks_passed": false,
+  "latest_checks": {
+    "gofmt": {
+      "check_index": 0,
+      "status": "pass",
+      "attempt": 1
+    },
+    "race": {
+      "check_index": 4,
+      "status": "pass",
+      "attempt": 2
+    },
+    "vet": {
+      "check_index": 5,
+      "status": "pass",
+      "attempt": 2
+    },
+    "mod_verify": {
+      "check_index": 6,
+      "status": "pass",
+      "attempt": 2
+    }
+  },
+  "current_required_checks_passed": true,
+  "retry_finished_utc": "2026-11-19T12:08:33.896688+00:00"
+}
