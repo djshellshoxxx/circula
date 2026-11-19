@@ -46,7 +46,7 @@ var (
 )
 
 const (
-	maxPageLimit = 100
+	maxPageLimit = MaxPageSize
 	maxRows      = 10000
 )
 
@@ -59,6 +59,10 @@ const (
 // cursor. Identical source snapshots are de-duplicated; contradictory snapshots
 // of the same source fail closed, including stale visible/active copies. No event
 // body is stored here; adapters must re-read current source data.
+//
+// This legacy snapshot helper examines at most 10,000 already-loaded rows. Use
+// PageFromStore for ordinary persisted feeds and histories of arbitrary size;
+// it applies indexed database limits, an insertion fence and a scan budget.
 func Page(codec *CursorCodec, q Query, rows []Source, allowed func(Source) bool) (Result, error) {
 	b := Binding{Network: q.Network, Viewer: q.Viewer, Filter: q.Filter}
 	kinds, _, err := b.canonical()

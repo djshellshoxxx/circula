@@ -1,78 +1,86 @@
-# FNET-204: Community activity feed
+# FNET-204: isolated feed pagination and cursor security
 
-**HOLD — isolated development, incomplete feature, not approved for integration or release.**
+**Disabled. Integration HOLD. No Core routes, imports, migrations, or registration.**
 
-The owner authorized independent future-feature development on 2026-11-16, while explicitly deferring integration until Circula and the feature are complete. This authorizes this branch's standalone development; it does not authorize enabling, merging or deploying the feature. Historical implementation prohibitions in the copied planning documents are superseded only for this isolated development scope.
+This nested Go module implements listing/announcement reference projection, bounded SQLite retrieval, and authenticated pagination. The current completion effort covers the feed pagination/security task. The broader community-feed roadmap in `SPEC-SNAPSHOT.md` still requires separately authorized Core integration, product decisions, preferences, and UI work.
 
-## Isolation contract
+## Use the correct retrieval path
 
-- Original branch: `future/fnet-204-feed-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`. The consolidation branch `audit/future-feed-cursors-20261119` preserves PR #67 (`7a528c61`) and PR #80 (`0952c94a`), then repairs conflicting source snapshots and unconfigured cursor codecs.
-- The consolidation also merges core audit candidate PR #90 at `9b1fc6a0bb4ae4ad95c4f505929ce8088f10bf2c`. Core qualification remains a dependency; this refresh does not establish that the candidate passed its release gates.
-- It includes the reviewed monetary-guard follow-up `d627af48ff4042db73adac9a72f6208db268a924`, which allows exact `big.Int` aggregation while still rejecting floating-point and rational money arithmetic. This is a core regression-test dependency, not a feed behavior change.
-- The final refresh merges published core candidate `4140bc135479077f6297d53ed2e9dfcd85c056d6`, including the completed setup, catalogue and account-session work. The feed's runtime source is unchanged by that merge. Its dedicated fuzz gate uses 100,000 executions with an independent three-minute timeout; provider execution remains a separate qualification result.
-- Runtime changes are confined to `future/feed/`. The dedicated `.github/workflows/future-feed.yml` validates this disabled nested module on relevant pushes and pull requests. Application imports, routes, migrations, root dependencies, feature flags, core workflows and runtime configuration remain unchanged.
-- This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
-- No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
-- Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
-- No production persistence is provided. Pure preflight checks do not guarantee atomicity, idempotency, authorization freshness or restart durability; future adapters must supply these within existing service/store transactions.
-- Spec copies are historical reference snapshots; their original relative links refer to the source branch layout. No third-party source was copied.
+| API | Purpose | Resource bound | Cursor |
+|---|---|---|---|
+| `Page(codec, query, rows, allowed)` | Compatibility helper over an already-loaded trusted snapshot | At most 10,000 supplied rows; scans and sorts that bounded snapshot | Existing signed v2 positions |
+| `PageFromStore(ctx, codec, query, store, allowed)` | Ordinary pagination over a persisted history | At most 1,000 candidate rows per request, at most 101 per SQL query, at most 100 returned references | Encrypted/authenticated v3 traversal state |
+| `SQLStore.QueryBatch(ctx, request)` | Storage adapter primitive; not a user-facing authorization API | Indexed keyset seek plus SQL `LIMIT`, 1–101 rows | Decoded internal position only |
 
-## Implemented milestone
+`PageFromStore` is the large-history path. Do not load an entire database history and pass it to `Page`. Neither API authenticates a caller. Network/viewer identifiers and source snapshots must come from trusted adapters. `allowed` must recheck current membership, source visibility, deletion, suspension, scheduling, and applicable preferences. A callback error discards the entire page and returns a uniform error.
 
-Listing/announcement-only projection, read-time permission callback, source deduplication and stable keyset ordering, and signed, viewer-bound pagination cursors wired into `Page()`.
+### Bounded traversal contract
 
-## Signed cursor contract
+1. The first request captures the network's maximum committed insertion sequence.
+2. Results use a total order: creation time descending, then kind and source ID ascending.
+3. Source identity, insertion sequence, and creation time are immutable. Updates can change visibility/active state and owner metadata. Deletes retain a tombstone; stale creates cannot resurrect a deleted identity.
+4. Every continuation carries the original insertion fence and original issue time. New events, including backdated inserts, stay outside that traversal.
+5. Current visibility and permissions still apply. Removed/revoked events disappear. A permission grant or visibility change can affect an existing event only if its position has not already been traversed; refresh to reconsider earlier positions. This is an insertion-fenced traversal with live revocation, not a historical permissions snapshot.
+6. SQL limits candidate reads **before** checking the insertion fence or per-viewer callback. Otherwise a flood of newer/backdated rows or sparse permissions could force an unbounded scan.
+7. A request that reaches its 1,000-candidate budget can return fewer than `Limit` items, including zero, with a nonempty `Next`. Follow `Next` until it is empty. An extra empty terminal request is possible at an exact scan-budget boundary. Cursors always advance, and a lookahead row is never consumed prematurely.
+8. Cursor expiry requires restarting from the first page. Continuations do not extend the traversal lifetime.
 
-`Page(codec, Query{Network, Viewer, Filter, Limit, Cursor}, rows, allowed)` takes the previous page's `Result.Next` as an opaque token and returns the next one. There is no unsigned path: the raw keyset position (`Cursor`) is internal, and `Page` fails closed without a codec or authorization callback. The design follows `internal/api/cursor.go` (API-034, API-035) without importing or changing it.
+No private trade, balance, profile, or event-body content is stored or emitted by this package. Returned `Source` values are references; a future adapter must retrieve permitted content through existing service authorization.
 
-- **Format (v2):** `<key id>.<base64url payload>.<base64url HMAC-SHA256>`. Strict base64url only; any other character, padding, line break or non-canonical encoding is refused. Tokens are at most 2,048 bytes.
-- **Binding:** the MAC covers network, viewer (actor) and a canonical filter digest (SHA-256 over the sorted, de-duplicated kinds plus `Filter.PreferenceRevision`). A cursor from member A fails for member B, from network X for network Y, and from filter X for filter Y. Filters that select the same items (`nil` and both kinds; reordered or repeated kinds) share a digest. `Limit` is not bound.
-- **Readable metadata:** network, viewer and filter are **not** in the token; they enter only the MAC input. The token reveals the key ID, the issue time and the position (kind, ID and time of the last item on the page the viewer was just shown). Hiding the position would need encryption or server-side state, and it tells the holder nothing they were not shown.
-- **Domain separation:** the MAC input is length-prefixed `label, key id, network, viewer, filter digest, payload` with label `circula/future/feed-cursor/v2`. Core cursors MAC raw JSON, so a feed MAC can never be a core MAC even under one shared secret, and field boundaries cannot be shifted.
-- **Expiry:** the payload carries the issue time (`iat`, Unix seconds) from an injected clock. A cursor opens while `iat - 1 min <= now < iat + TTL`. TTL is `CodecOptions.TTL` (1 s to 24 h); zero selects `DefaultCursorTTL` = **1 hour, provisional, owner to confirm**. The verifier's TTL applies to cursors already issued. The 1-minute allowance tolerates a verifier clock behind the signer's. The row time (`t`) is only the position.
-- **Key ID and rotation:** `KeySet` signs with `SigningKey()` and verifies with `VerificationKey(id)`, so a rotated-out key keeps verifying while it is in the set. `NewKeyRing` is an immutable in-memory implementation (keys at least 32 bytes, IDs `[A-Za-z0-9_-]{1,32}`, keys copied). The key ID is MAC input, so relabelling to an aliased key fails. An unknown key ID still costs one MAC under a placeholder key.
-- **Uniform refusal:** `Open` returns exactly `ErrInvalidCursor` for every failure (malformed, tampered, unknown key, expired, wrong binding), with a zero `Cursor`. The MAC is compared with `hmac.Equal` before the payload is parsed. A nil or zero-value codec refuses operations without panicking; construct a usable codec with `NewCursorCodec`. `Page` returns `ErrInvalidQuery` for a malformed query and `ErrInvalidSource` for an adapter row that cannot be paged.
-- **Duplicate snapshots:** identical `(kind, ID)` references are de-duplicated. Conflicting creation time, owner, visibility or active state fails with `ErrInvalidSource`, regardless of input order. This prevents a stale visible duplicate from winning over a hidden or inactive snapshot. Rows from other networks do not affect the selected network. The caller must still supply a current, authorized snapshot from an appropriate transaction; this validation does not add persistence.
+## Cursor contracts
 
-## Owner decisions (not made here)
+### Existing signed v2 cursors
 
-These are documented, not decided. The module supplies mechanisms only.
+`Seal`/`Open` and `Page` preserve the previously emitted v2 wire format. A golden fixture verifies compatibility. The format is `<key-id>.<base64url JSON>.<base64url HMAC-SHA256>`. The MAC binds a domain label, key ID, network, viewer, canonical category digest, preference revision, and payload using length-prefixed fields. The visible payload contains only the previously returned item position and issue time. Canonical JSON and strict base64url are required. Noncanonical payloads were never emitted by the codec and are now refused.
 
-1. **Signing-key custody and persistence:** where keys live (secret store, file, environment), how they survive restarts and who can read them. A future adapter implements `KeySet`.
-2. **Rotation cadence and retirement:** how often the signing key changes and how long a retired key stays verifiable. The mechanism requires at least one TTL of overlap.
-3. **Cursor TTL value:** `DefaultCursorTTL` = 1 h is provisional. An expired cursor means the reader restarts at the first page. The 1-minute clock allowance is a fixed constant and could be confirmed with it.
-4. **Mute/follow/category semantics:** what `Filter.PreferenceRevision` covers, its retention, and moderation. Changing it invalidates outstanding cursors by design.
-5. **Persistent source joins:** the core schema, adapter and high-water snapshot anchor for durable feed items. A module-local SQL draft is possible; a core schema or adapter change needs owner approval.
+### Encrypted v3 traversal cursors
 
-## Existing application seams inspected
+`SealSnapshot`/`OpenSnapshot` and `PageFromStore` use `3.<key-id>.<base64url nonce+ciphertext+tag>`. AES-256-GCM authenticates and encrypts the scan position, insertion fence, and original issue time. A separate HMAC-derived encryption key and associated-data label separate this protocol from v2 and from Core cursors. Associated data binds key ID, network, viewer, canonical categories, and preference revision.
 
-`internal/service/announcements.go; internal/service/listings.go`. A future adapter must map these through the existing service authorization boundary. No direct import or code change is made to these seams. APIs here are provisional until that adapter is qualified.
+The encrypted plaintext is always 1,024 bytes: a two-byte JSON length, canonical JSON, and zero padding. The encrypted body is always 1,052 bytes. This conceals hidden frontier kind/ID lengths and insertion-counter magnitude. Only the version and key ID remain visible. Empty continuation counts can still reveal coarse activity volume; cursor encryption does not provide traffic-analysis or count privacy. Nonces use the cryptographic random source. Retire an encryption key before 2^32 total v3 cursor issuances across all instances sharing that key and key ID; choose a lower operational limit. Retain verification keys for the chosen TTL plus clock allowance after their last issuance. Production custody, issuance accounting, and rotation cadence remain integration decisions.
 
-## Remaining feature work
+A v2 token cannot be upgraded into an insertion fence and is refused by `OpenSnapshot`. Existing v2 consumers continue using `Page`; switching to the database API starts a new traversal. v3 tokens are refused by `Open`.
 
-Database snapshot and source joins (with a high-water mark bound into the cursor); preferences/mute/follow; committed source IDs; feed-item expiry/moderation; no-JS paging, browser/CLI harness and deletion/revocation race tests against a real store. No trade events. Signed cursors are done (see above); key custody, rotation cadence and TTL await the owner.
+### Shared validation and rotation
 
-## Standalone validation
+- Tokens are limited to 2,048 bytes, with strict unpadded base64url and bounded field sizes.
+- Key IDs are 1–32 URL-safe characters; keys are at least 32 bytes. `KeyRing` copies keys both on construction and on retrieval.
+- Configurable TTL is one second through 24 hours; zero selects the provisional one-hour default. A one-minute future-clock allowance applies. v3 preserves subsecond issue time and the original traversal lifetime.
+- Keep the old verification key during the overlap period; sign new continuations with the current key. Removing a key invalidates its tokens. Reusing a key ID for different key material invalidates old tokens under that ID.
+- Unknown, malformed, forged, cross-context, expired, and retired-key tokens all return `ErrInvalidCursor` and zero state. Unconfigured/typed-nil codecs fail closed.
+- Changing `Filter.PreferenceRevision` invalidates outstanding tokens. Its value must come from a trusted preference adapter, not an untrusted claim.
+
+## Isolated SQLite store
+
+`NewSQLStore` wraps a caller-owned `*sql.DB`; it opens no connection and performs no schema work. `InitSchema` explicitly creates only `fnet204_sources` and its indexes. This is a module-local schema, not a Core migration.
+
+The schema stores unique `(network, kind, source_id)` references and immutable insertion sequences. Negated Unix nanoseconds make every index key ascend, allowing tuple seeks through arbitrarily large timestamp ties. Separate partial indexes serve combined-kind and single-kind queries; a network/sequence index supplies the insertion fence. Reads use parameterized statements and SQL limits. Tombstones persist across restart. Source creation time changes and resurrection attempts are rejected. Database diagnostics are not returned to readers.
+
+The runtime module uses only Go's standard library (`database/sql` does not register a driver). The separate `integration/` test module pins the same SQLite driver as the inspected Core baseline. Production connection ownership, busy timeouts, transaction synchronization with authoritative sources, tombstone retention, backup/restore, schema adoption, and current authorization joins require the separate integration proposal.
+
+## Validation
+
+Run from `future/feed` with the repository's pinned Go toolchain and a race-capable C compiler:
 
 ```sh
-cd future/feed
-gofmt -l .                       # must print nothing
-go vet ./...
 go test -count=1 -cover ./...
-CGO_ENABLED=1 go test -race -count=1 ./...
-go test -run='^$' -fuzz=FuzzOpenCursor -fuzztime=60s
+go test -race -count=1 ./...
+go vet ./...
+go test -run '^$' -fuzz '^FuzzOpenCursor$' -fuzztime=100000x -timeout=3m -parallel=2
+go test -run '^$' -fuzz '^FuzzOpenSnapshotCursor$' -fuzztime=100000x -timeout=3m -parallel=2
+go test -run '^$' -fuzz '^FuzzPagePermutation$' -fuzztime=10000x -timeout=3m -parallel=2
+cd integration
+go mod download
+go mod verify
+go vet ./...
+go test -race -count=1 -timeout=8m -v ./...
+go test -run '^$' -bench . -benchmem -benchtime=100x -count=1 ./...
 ```
 
-Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. These tests qualify the stated core milestone, not the full roadmap feature, production behavior, browser accessibility, or Circula's release.
+The dedicated `.github/workflows/future-feed.yml` runs both nested modules. Root `go test ./...` does not cover either one. Synthetic fixtures cover 10,000/100,000 histories, timestamp ties, deletion/restart, concurrent readers/writers, real query plans, and full cursor traversal. See `COMPLETION-2026-11-19.md` for candidate-specific results and `TRACEABILITY.md` for the acceptance mapping. `VALIDATION.md` preserves historical results with their original attribution.
 
-## Later integration, one feature at a time
+## History and integration boundary
 
-1. Finish this module's remaining scope and acceptance tests. Audit its own code and record unresolved findings.
-2. Qualify the then-current Circula core separately. Do not infer completion from this module's tests.
-3. Rebase this branch on the qualified core; review the baseline diff and any API/schema drift. No promise of a conflict-free future merge is made.
-4. Add a narrow adapter, reviewed API contracts, additive migrations (if needed), explicit per-network opt-in, CLI and accessible/no-JS UI in a separate integration change. Keep all other future features absent.
-5. Recheck tenant/auth/CSRF/idempotency behavior, concurrency/restart, backup/restore, full ledger regression and relevant manual/browser acceptance.
-6. Obtain the owner's explicit selection of this feature for integration. Only then merge that single integration change. Never auto-merge this hold branch or batch-enable the backlog.
-7. Disable by removing routes/jobs and adapter registration; do not roll back ledger history. Any feature-data retention/migration procedure must be documented before integration.
+Starting candidate: PR #92, `8638f3d30f27f4882c4c6424d4c8b248208b6f3d`. This already preserves the original feed branch and PRs #67/#80, together with historical Core audit merges. New work stays in `future/feed/` plus its dedicated qualification workflow. Original branches are preserved, and no primary API-036 branch is merged, rebased, rewritten, or modified.
 
-No work on this branch changes Circula's core completion or release status.
+The module stays `enabled:false` and `integration:HOLD`. See `INTEGRATION-PROPOSAL.md` for the inspected interfaces and outstanding Core dependencies. Key custody, rotation cadence/volume limits, final TTL, preference semantics, source joins, browser/CLI/no-JS UI, and release approval are not inferred from isolated module tests.
