@@ -16,7 +16,7 @@
 {{end}}
 </ul>
 {{else}}<p>{{msg "sessions.none"}}</p>{{end}}
-{{template "pager" dict "Next" .Next "Href" "/account/sessions?after="}}
+{{if .Next}}<p><a href="/account/sessions?after={{.Next}}">{{msg "pager.next"}}</a></p>{{end}}
 {{end}}
 <p><a href="/account/security">{{msg "sessions.back_security"}}</a></p>
 {{end}}
