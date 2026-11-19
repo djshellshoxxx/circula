@@ -1,0 +1,70 @@
+{
+  "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+  "shell_checks": [
+    {
+      "path": "scripts/check-action-pins.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/check-hygiene.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/check-release-notes.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/check-reproducible.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/licenses.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/package-release.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/release-gate.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/restore-drill-full.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/restore-drill.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/scan-release.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/smoke-deploy.sh",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "path": "scripts/verify-release.sh",
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "format": {
+    "exit_code": 0,
+    "unformatted_paths": [],
+    "stderr": ""
+  }
+}

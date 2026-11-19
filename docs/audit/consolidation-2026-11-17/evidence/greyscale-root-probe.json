@@ -1,0 +1,53 @@
+{
+  "scope": "Actual test-body assertions with controlled page values; not browser execution.",
+  "results": {
+    "original_same_minute": {
+      "pass": true,
+      "modes": 3
+    },
+    "original_minute_boundary": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:33 UTC. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\""
+    },
+    "corrected_minute_boundary": {
+      "pass": true,
+      "modes": 3
+    },
+    "corrected_changed_amount": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 9.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\""
+    },
+    "corrected_changed_timestamp": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:35 UTC. Figures are a snapshot and do not update automatically.\""
+    },
+    "corrected_bad_contrast": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: status tag \"Waiting for Bob to respond\" visible (contrast 1)\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false"
+    },
+    "original_later_wrong_page": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:33 UTC. Figures are a snapshot and do not update automatically.\"\nReceived: \"Sign in to Circula.\""
+    },
+    "corrected_later_wrong_page": {
+      "pass": false,
+      "modes": 0,
+      "error": "expected a nonempty generation time on the network page"
+    },
+    "corrected_nonfinancial_omission": {
+      "pass": false,
+      "modes": 0,
+      "error": "trade detail, pending: the fresh page has the same content\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated [generation time]. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 5.00 hours. Waiting for Bob to respond. Page generated [generation time]. Figures are a snapshot and do not update automatically.\""
+    },
+    "corrected_missing_generation_time": {
+      "pass": false,
+      "modes": 0,
+      "error": "expected a nonempty generation time on the network page"
+    }
+  }
+}

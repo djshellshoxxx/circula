@@ -5,6 +5,27 @@
   if (el) { el.focus(); }
 })();
 
+// PER-022: retain the last server timestamp when connectivity fails or a saved
+// page returns from browser history. Coming online is not proof of a refresh.
+(function () {
+  var freshness = document.getElementById('figure-freshness');
+  var stale = document.getElementById('figure-stale');
+  if (!freshness || !stale) { return; }
+  function show(reason) {
+    stale.textContent = reason + ' The figures have not refreshed. ' + freshness.textContent;
+    stale.hidden = false;
+  }
+  window.addEventListener('offline', function () {
+    show('The browser reports that the connection is unavailable.');
+  });
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) { show('This earlier page was restored from browser history.'); }
+  });
+  if (navigator.onLine === false) {
+    show('The browser reports that the connection is unavailable.');
+  }
+})();
+
 // Session expiry warning (UX-030, WCAG 2.2.1): two minutes before the session
 // is expected to end, offer to extend it. Nothing is redirected automatically,
 // so unsent form values are not lost.

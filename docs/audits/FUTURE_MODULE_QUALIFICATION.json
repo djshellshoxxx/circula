@@ -1,0 +1,1357 @@
+{
+  "schema_version": 1,
+  "audited_at_utc": "2026-11-19T08:23:38.206622+00:00",
+  "starting_main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "toolchain": "go1.26.11 linux/amd64",
+  "default_environment": {
+    "GOTOOLCHAIN": "local",
+    "CGO_ENABLED": "1",
+    "GOMAXPROCS": "2"
+  },
+  "sqlite_environment": {
+    "GOTOOLCHAIN": "local",
+    "CGO_ENABLED": "1",
+    "GOMAXPROCS": "2",
+    "GOGC": "50",
+    "CGO_CFLAGS": "-O0 -g0"
+  },
+  "summary": {
+    "modules": 15,
+    "default_race_final_pass": 15,
+    "default_vet_pass": 15,
+    "original_gofmt_clean": 14,
+    "original_gofmt_dirty": [
+      "notifications/targets.go"
+    ],
+    "isolated_format_repair_pass": true,
+    "sqlite_tagged_modules_final_pass": 5,
+    "pwa_node_tests_pass": 22,
+    "pwa_browser": "BLOCKED: sandbox denied Chromium UNIX socket before assertions",
+    "production_integration_qualified": 0
+  },
+  "modules": [
+    {
+      "id": "FNET-201",
+      "module": "matching",
+      "source_branch": "future/fnet-201-matching-20261116",
+      "source_sha": "12850290c6bca7720853c33689662d751aced160",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/12850290c6bca7720853c33689662d751aced160/future/matching",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/matching\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-201",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Deterministic opt-in offer/request category pairing with bounded candidate count, bilateral exclusion checks and reason codes.",
+        "remaining": "Persistent preferences/dismissals; authorized snapshot provider; normalized term scoring; per-member caps; optional three-way cycle detection; rescore/invalidation; explanation UI and no-JS adapter. Current algorithm only matches categories."
+      },
+      "implementation_observed": "Category-based, bounded offer/request matching with bilateral exclusions; pure projection.",
+      "remaining_scope": "Persist interests/preferences; define ranking and per-member caps; authorize current source snapshots; add accessible suggestions and acceptance tests.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.1,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 10.945,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 83.731,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/matching\t1.108s\tcoverage: 91.7% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 91.7,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-202",
+      "module": "favorites",
+      "source_branch": "future/fnet-202-favorites-20261116",
+      "source_sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/efc9d696eea2dd3260ecb6c5091802ef31e20572/future/favorites",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/favorites\n\ngo 1.25.0\n\nrequire github.com/mattn/go-sqlite3 v1.14.53\n",
+      "original_manifest": {
+        "id": "FNET-202",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Network-scoped favorite validation and quick-repeat drafts with blank amount and fresh random intent; blocked/inactive target rejection.",
+        "remaining": "Owner-private persistent favorites; pin/reorder/delete; departure cleanup; current authorization adapter; confirmation form; idempotency persistence; account/network switching UI tests."
+      },
+      "implementation_observed": "Owner-scoped collections and removal, service, shared memory/SQL store contracts, draft/partner selection, CLI, JSON and server-rendered HTTP handlers.",
+      "remaining_scope": "Qualify a current core authorization/visibility adapter, per-network opt-in and durable migrations/restore; complete real-browser keyboard/accessibility and replay/revocation acceptance.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.607,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 23.383,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 124,
+          "seconds": 180.017,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/favorites\t6.546s\tcoverage: 90.1% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.077s\tcoverage: 87.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.114s\tcoverage: 19.6% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.086s\tcoverage: 92.5% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t\tcoverage: 0.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 90.1,
+      "sqlite_attempts": [
+        {
+          "module": "favorites",
+          "branch": "fnet-202-favorites-20261116",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "local",
+            "CGO_ENABLED": "1",
+            "GOMAXPROCS": "2",
+            "GOGC": "50",
+            "CGO_CFLAGS": "-O0 -g0"
+          },
+          "exit_code": 124,
+          "seconds": 241.629,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/favorites\t3.402s\tcoverage: 90.1% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.047s\tcoverage: 87.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.099s\tcoverage: 69.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/sqlitefixture\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.057s\tcoverage: 92.5% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t1.229s\tcoverage: 81.8% of statements\n"
+        },
+        {
+          "module": "favorites",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 14.944,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/favorites\t1.659s\tcoverage: 90.1% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.019s\tcoverage: 87.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.029s\tcoverage: 69.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/sqlitefixture\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.024s\tcoverage: 92.5% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t1.134s\tcoverage: 81.8% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/web\t2.649s\tcoverage: 88.3% of statements\n"
+        }
+      ],
+      "integration": "HOLD",
+      "enabled": false,
+      "default_recheck": {
+        "artifact": "future-favorites-race-recheck.log",
+        "sha256": "cd6f7cc63d07ff79aa948d77e9f0a4d55621a557eb57ebd0421be0be738f8d00",
+        "output": "ok  \tgithub.com/djshellshoxxx/circula/future/favorites\t1.780s\tcoverage: 90.1% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.065s\tcoverage: 87.3% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl\t1.047s\tcoverage: 19.6% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.050s\tcoverage: 92.5% of statements\n\tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/web\t2.654s\tcoverage: 88.3% of statements\n"
+      }
+    },
+    {
+      "id": "FNET-203",
+      "module": "receipts",
+      "source_branch": "future/fnet-203-receipts-20261116",
+      "source_sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/bd2fbdbd3adf77b27fa12335ff2827359423aea3/future/receipts",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/receipts\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-203",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Explicit-consent, active-party-only completed-trade projection with deterministic TXT and JSON exports; control-character rejection.",
+        "remaining": "Authoritative read-only snapshot adapter; no-JS download endpoints and redaction/audit; schema decision review; separately optional certificate signer/verifier, canonicalization ADR, key lifecycle/revocation and independent verifier tests. No signing algorithm is adopted by this module."
+      },
+      "implementation_observed": "Read-only TXT/JSON projections limited to explicit transaction parties; no signed certificate or ledger write.",
+      "remaining_scope": "Supply authoritative snapshot/redaction adapters and accessible retrieval; resolve receipt signing/verification policy before adding signatures.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.021,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 6.469,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 10.609,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/receipts\t1.114s\tcoverage: 92.9% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 92.9,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-204",
+      "module": "feed",
+      "source_branch": "future/fnet-204-feed-20261116",
+      "source_sha": "5d3819c3b3af031b75eceb5251da0226a4ecee77",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/5d3819c3b3af031b75eceb5251da0226a4ecee77/future/feed",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/feed\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-204",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Listing/announcement-only projection, read-time permission callback, source deduplication and stable keyset ordering.",
+        "remaining": "Database snapshot and source joins; authenticated HMAC cursors; preferences/mute/follow; committed source IDs; expiry/moderation; no-JS paging and deletion/revocation race tests. No trade events."
+      },
+      "implementation_observed": "Listing/announcement projection with permission callback and stable keyset order. PR67/80 consolidation adds expiry, key IDs, rotation, viewer/filter binding and HMAC cursor verification; new repairs reject conflicting source snapshots and unconfigured codecs.",
+      "remaining_scope": "Implement persistent snapshot/high-water semantics and source joins, mute/follow/preferences, moderation/deletion expiry and no-JS paging; qualify races and decide key custody/rotation/TTL. Preserve the no-trade-event scope.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.04,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 1.516,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 5.46,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/feed\t1.141s\tcoverage: 82.1% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 82.1,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-205",
+      "module": "analytics",
+      "source_branch": "future/fnet-205-analytics-20261116",
+      "source_sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f/future/analytics",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/analytics\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-205",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Overflow-checked gross historical completed-transfer volume, distinct trader counts, half-open periods and full small-cohort suppression.",
+        "remaining": "Ledger-backed isolated snapshots including reversal accounting; stock versus flow views; fixed periods and anti-differencing privacy policy; admin authorization; own-member trends; dormant offers; accessible tables/charts and exports. Existing core is gross volume only, not the complete analytics feature."
+      },
+      "implementation_observed": "Bounded aggregate computation, checked integer gross-turnover arithmetic and suppression below a minimum cohort of five.",
+      "remaining_scope": "Define fixed reporting periods, reversal accounting and differencing protections; supply authorized snapshot/export adapters and accessible reporting. A small-cohort threshold alone is not a complete privacy policy.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.016,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 1.155,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 4.399,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/analytics\t1.078s\tcoverage: 94.7% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 94.7,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-206",
+      "module": "areas",
+      "source_branch": "future/fnet-206-areas-20261116",
+      "source_sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/8b444b20139e3e687db494b3fe36bb3643148e5b/future/areas",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/areas\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-206",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Validated named-area catalog, deterministic sorting and optional area resolution restricted to the selected network. No coordinates.",
+        "remaining": "Admin-authorized durable area CRUD; listing association constraints; disabled/deleted area semantics; accessible selection/filtering; export privacy; optional broad geometry/map policy. No GPS/geocoder required."
+      },
+      "implementation_observed": "Coarse service-area labels, validation and resolution; no GPS coordinate collection.",
+      "remaining_scope": "Add durable authorized area CRUD, listing associations and accessible selection; settle visibility/coarseness policy and qualify deletion/restore behavior.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.042,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 3.649,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 4.598,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/areas\t1.156s\tcoverage: 74.3% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 74.3,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-207",
+      "module": "recurring",
+      "source_branch": "future/fnet-207-recurring-20261116",
+      "source_sha": "0437e54897c6d9cfb3f2577807b82dd038493850",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/0437e54897c6d9cfb3f2577807b82dd038493850/future/recurring",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/recurring\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-207",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Daily IANA-local reminder windows, stable daily dedupe keys, DST gap skipping/fold first-occurrence selection and no catch-up backlog.",
+        "remaining": "Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; quotas; weekly/monthly schedules and calendar policy; optional manually confirmed draft adapter; crash/concurrent worker tests. Current core supports daily reminders only."
+      },
+      "implementation_observed": "Daily reminders in an IANA timezone with DST handling, first occurrence for repeated local times and no catch-up posting.",
+      "remaining_scope": "Implement persistent schedules and atomic firing dedupe/restart tests; complete required weekly/monthly rules and reminder/draft UI. It must never automatically post ledger trades.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.036,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 0.575,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 3.647,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/recurring\t1.115s\tcoverage: 95.5% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 95.5,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-208",
+      "module": "governance",
+      "source_branch": "future/fnet-208-governance-20261116",
+      "source_sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/b4f511372ec26dc63d005bb50d87c56e18fc1a88/future/governance",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/governance\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-208",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Eligibility/current-activity checks, duplicate/late/wrong-network ballot rejection and deterministic advisory yes/no/abstain tally.",
+        "remaining": "Persistent eligibility snapshots and unique ballots; proposal creation/moderation/withdrawal; current-membership adapter; outcome certification; privacy disclosures; admin policy-link audit; no-JS ballot UI; concurrent/restart tests. Never applies policy automatically."
+      },
+      "implementation_observed": "Pure advisory ballot eligibility/tally logic; the tally does not execute policy changes.",
+      "remaining_scope": "Persist eligibility snapshots and unique ballots under concurrency; define participation/closing rules; add audit/export and accessible voting without granting ledger or administrative authority.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.048,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 0.708,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 3.373,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/governance\t1.106s\tcoverage: 87.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 87.0,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FNET-209",
+      "module": "federation",
+      "source_branch": "future/fnet-209-federation-20261116",
+      "source_sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/1b3c92e03007e35e3f190e719a1ea78a807d4102/future/federation",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/federation\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FNET-209",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Experimental domain-separated Ed25519 discovery envelopes with pinned peer key, explicit audience, expiry, strict JSON bytes and publish/revoke kind restriction.",
+        "remaining": "Wire-format/key-rotation ADR and audit; bilateral admin trust UI; durable bounded inbox/outbox; atomic replay journal and out-of-order revocation rules; listing consent/content projection; SSRF-safe bounded transport; rate limits; partition/restart/adversarial tests. Cross-network settlement remains excluded pending separate accounting design."
+      },
+      "implementation_observed": "Strict signed public-card payloads with Ed25519 domain separation, audience and expiry checks; no inter-network balance transfer.",
+      "remaining_scope": "Define consent/key trust/revocation and durable replay policy; qualify transport, key custody, current authorization and external schema interoperability. Preserve network-isolated ledgers.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.034,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 0.528,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 4.435,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/federation\t1.083s\tcoverage: 81.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 81.0,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FUX-101",
+      "module": "pwa",
+      "source_branch": "future/fux-101-pwa-20261116",
+      "source_sha": "a6326b8725fe6d7270997b4a284cbbc129022dd1",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/a6326b8725fe6d7270997b4a284cbbc129022dd1/future/pwa",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/pwa\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FUX-101",
+        "status": "isolated-implementation-tested-chromium-passed-platform-qualification-pending",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Pinned locally bundled Workbox PWA: manifest/icons/install help, strict public-asset integrity cache, network-only private/unsafe requests, offline-unavailable fallback, DOM/session lifecycle, opt-in Go adapter and synthetic demo.",
+        "remaining": "Real Chromium 153 suite passes; Android/iOS installation, real BFCache (Chromium excludes no-store pages), Safari/Firefox, cross-tab/resume privacy on devices, screen-reader/zoom, WCAG automation and production adapter/ledger qualification pending. No persistence is implemented by design. Self-audit in AUDIT.md; independent audit still pending. Integration remains HOLD.",
+        "upstream": {
+          "project": "GoogleChrome/workbox",
+          "version": "7.4.1",
+          "commit": "62b9d8ba8eb3c1a2ab8aac9d84c90cda7865d6a3",
+          "license": "MIT-style",
+          "adoption": "locally bundled dependency"
+        }
+      },
+      "implementation_observed": "Standalone install/offline shell, bounded verified static assets and strict request/response cache policy, JS unit tests and a real-browser harness.",
+      "remaining_scope": "Complete real-browser install/update/offline/cache-clear acceptance and platform matrix; qualify route adapters and prove authenticated data/actions never enter offline cache. Browser execution here was blocked before assertions.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.02,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 5.717,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 62.059,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/pwa\t6.079s\tcoverage: 97.5% of statements\n\tgithub.com/djshellshoxxx/circula/future/pwa/cmd/demo\t\tcoverage: 0.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 97.5,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FUX-102",
+      "module": "qr",
+      "source_branch": "future/fux-102-qr-20261116",
+      "source_sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/9db8a323d7dcf430d1a58a4a4d10ca3628aeb401/future/qr",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/qr\n\ngo 1.26.0\n\nrequire (\n\tgithub.com/mattn/go-sqlite3 v1.14.53\n\tgithub.com/yeqown/go-qrcode/v2 v2.3.1-0.20260806012459-d822f086bffb\n\tmodernc.org/sqlite v1.60.1\n)\n\nrequire (\n\tgithub.com/dustin/go-humanize v1.0.1 // indirect\n\tgithub.com/google/uuid v1.6.0 // indirect\n\tgithub.com/mattn/go-isatty v0.0.24 // indirect\n\tgithub.com/ncruces/go-strftime v1.0.0 // indirect\n\tgithub.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect\n\tgithub.com/yeqown/reedsolomon v1.0.1-0.20260308105121-c5f4bc9af094 // indirect\n\tgolang.org/x/sys v0.48.0 // indirect\n\tgolang.org/x/text v0.22.0 // indirect\n\tmodernc.org/libc v1.77.1 // indirect\n\tmodernc.org/mathutil v1.7.1 // indirect\n\tmodernc.org/memory v1.12.1 // indirect\n)\n",
+      "original_manifest": {
+        "id": "FUX-102",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "128-bit random opaque tokens, hashed token storage input, trusted-origin URL parser, expiry/revocation/claimed-intent preflight.",
+        "remaining": "Static aliases and rotation; QR renderer/scanner/manual-entry UI; durable hashed requests; atomic request claim plus existing proposal creation; idempotent retries; current membership/limit authorization and concurrent/restart tests."
+      },
+      "implementation_observed": "Durable token service with SQL tests, QR renderer/scanner assets, CLI, web handlers, OpenAPI and a browser-qualification harness.",
+      "remaining_scope": "Qualify real-camera and no-camera flows, browser permissions/accessibility, expiry/revocation races and production authentication/rate-limit/migration adapters; review vendored scanner and rendering dependencies.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.123,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 33.913,
+          "output": "go: downloading github.com/yeqown/go-qrcode/v2 v2.3.1-0.20260806012459-d822f086bffb\ngo: downloading github.com/yeqown/reedsolomon v1.0.1-0.20260308105121-c5f4bc9af094\ngo: downloading golang.org/x/text v0.22.0\n"
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 28.264,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/qr\t7.056s\tcoverage: 13.6% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/cli\t1.286s\tcoverage: 29.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/cmd/circula-qr\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/qrfixture\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/web\t1.140s\tcoverage: 0.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 13.6,
+      "sqlite_attempts": [
+        {
+          "module": "qr",
+          "branch": "fux-102-qr-20261116",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "local",
+            "CGO_ENABLED": "1",
+            "GOMAXPROCS": "2",
+            "GOGC": "50",
+            "CGO_CFLAGS": "-O0 -g0"
+          },
+          "exit_code": 124,
+          "seconds": 240.413,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/qr\t10.226s\tcoverage: 84.5% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/cli\t2.168s\tcoverage: 82.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/cmd/circula-qr\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/qrfixture\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/tools/browser-qualification\t\tcoverage: 0.0% of statements\n"
+        },
+        {
+          "module": "qr",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 13.287,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/qr\t4.275s\tcoverage: 84.5% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/cli\t1.926s\tcoverage: 82.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/cmd/circula-qr\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/qrfixture\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/qr/tools/browser-qualification\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/qr/web\t2.474s\tcoverage: 84.1% of statements\n"
+        }
+      ],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FUX-103",
+      "module": "discovery",
+      "source_branch": "future/fux-103-discovery-20261116",
+      "source_sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/34d0f889631e2d133149a89a276cf9c71fd261a9/future/discovery",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/discovery\n\ngo 1.26.0\n\nrequire (\n\tgithub.com/mattn/go-sqlite3 v1.14.53 // indirect\n\tgolang.org/x/image v0.48.0 // indirect\n\tgolang.org/x/text v0.44.0 // indirect\n)\n",
+      "original_manifest": {
+        "id": "FUX-103",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Bounded category/area/text filtering with deterministic keyset ordering over an authorized snapshot.",
+        "remaining": "Taxonomy administration; moderated tags; bounded photo upload/decode/re-encode/EXIF stripping; retention; availability/expiry; transactional snapshot pagination and signed cursors; accessible gallery and search adapters."
+      },
+      "implementation_observed": "Taxonomy/media service, image sanitizer, signed cursor handling, SQL store, CLI and web handlers.",
+      "remaining_scope": "Qualify current core authorization/visibility and upload/storage adapters; complete real-browser accessibility, deployment resource limits, moderation/deletion/backup lifecycle and dependency checks.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.136,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 26.086,
+          "output": "go: downloading golang.org/x/image v0.48.0\n"
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 35.31,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/discovery\t1.086s\tcoverage: 26.8% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/cli\t1.298s\tcoverage: 42.3% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/cmd/discovery\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/imgsan\t3.190s\tcoverage: 87.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore\t1.061s\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore/sqlitetest\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/web\t1.141s\tcoverage: 0.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 26.8,
+      "sqlite_attempts": [
+        {
+          "module": "discovery",
+          "branch": "fux-103-discovery-20261116",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "local",
+            "CGO_ENABLED": "1",
+            "GOMAXPROCS": "2",
+            "GOGC": "50",
+            "CGO_CFLAGS": "-O0 -g0"
+          },
+          "exit_code": 0,
+          "seconds": 32.797,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/discovery\t7.531s\tcoverage: 85.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/cli\t1.333s\tcoverage: 84.2% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/cmd/discovery\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/imgsan\t3.026s\tcoverage: 87.7% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/internal/testkit\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore\t1.068s\tcoverage: 28.1% of statements\n\tgithub.com/djshellshoxxx/circula/future/discovery/sqlstore/sqlitetest\t\tcoverage: 0.0% of statements\nok  \tgithub.com/djshellshoxxx/circula/future/discovery/web\t5.893s\tcoverage: 88.7% of statements\n"
+        }
+      ],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FUX-104",
+      "module": "notifications",
+      "source_branch": "future/fux-104-notifications-20261116",
+      "source_sha": "3bdf8e92d84af2c660c615bcf956cf76752e86ae",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/3bdf8e92d84af2c660c615bcf956cf76752e86ae/future/notifications",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/notifications\n\ngo 1.26.10\n\ntoolchain go1.26.11\n\nrequire (\n\tgithub.com/SherClockHolmes/webpush-go v1.4.1-0.20260422052225-76cc00f5ac2d\n\tgithub.com/wneessen/go-mail v0.8.2\n)\n\nrequire (\n\tgithub.com/golang-jwt/jwt/v5 v5.2.2 // indirect\n\tgithub.com/mattn/go-sqlite3 v1.14.53 // indirect\n\tgolang.org/x/crypto v0.58.0 // indirect\n\tgolang.org/x/text v0.43.0 // indirect\n)\n",
+      "original_manifest": {
+        "id": "FUX-104",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Opt-in/active-member delivery policy, IANA-zone quiet hours, structured dedupe keys and capped exponential retries.",
+        "remaining": "Transactional durable outbox; SMTP/Web Push transport and explicit SSRF-safe egress policy; encrypted subscription storage; VAPID/SMTP secrets; unsubscribe/bounce handling; retry worker/CLI; crash recovery and opt-out races."
+      },
+      "implementation_observed": "SQL preferences, encrypted targets, confirmation/unsubscribe tokens, transactional outbox, retry/quiet-hour dispatch, current-directory checks and SMTP/Web Push transports. New repairs make target AAD unambiguous and reject invalid UTF-8 identity normalization.",
+      "remaining_scope": "Qualify production source-transaction/current-session adapters, worker crash/restart, real transport/egress and credential lifecycle; complete bounce handling, operator CLI and accessible/browser preference flows. Transport packages had no executed tests.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.066,
+          "output": "targets.go\n"
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 24.702,
+          "output": "go: downloading github.com/SherClockHolmes/webpush-go v1.4.1-0.20260422052225-76cc00f5ac2d\ngo: downloading github.com/wneessen/go-mail v0.8.2\ngo: downloading golang.org/x/text v0.43.0\ngo: downloading golang.org/x/crypto v0.58.0\ngo: downloading github.com/golang-jwt/jwt/v5 v5.2.2\n"
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 22.707,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t1.083s\tcoverage: 1.9% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 1.9,
+      "sqlite_attempts": [
+        {
+          "module": "notifications",
+          "branch": "fux-104-notifications-20261116",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "local",
+            "CGO_ENABLED": "1",
+            "GOMAXPROCS": "2",
+            "GOGC": "50",
+            "CGO_CFLAGS": "-O0 -g0"
+          },
+          "exit_code": 0,
+          "seconds": 18.293,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t2.084s\tcoverage: 70.4% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+        }
+      ],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FUX-105",
+      "module": "messaging",
+      "source_branch": "future/fux-105-messaging-20261116",
+      "source_sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/7f92251cdb0d6ed5d9559730045a021a173a278b/future/messaging",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/messaging\n\ngo 1.25.0\n",
+      "original_manifest": {
+        "id": "FUX-105",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Participant and tenant access policy, block/closed-thread enforcement, bounded UTF-8 text, maximum 30-day inactivity retention.",
+        "remaining": "Durable ordered threads/messages/read positions; atomic idempotency; fresh membership and block reads; moderation/reporting; legal holds and per-participant deletion; quotas; escaped no-JS UI; restart/concurrency and retention tests. Server-readable, no E2EE claim."
+      },
+      "implementation_observed": "Participant-only access policy, bounded literal UTF-8 text and a 30-day purge-deadline primitive.",
+      "remaining_scope": "Implement durable messages and idempotency/current participant checks; define legal-hold/retention interaction and abuse controls; add accessible UI and race/backup/erasure acceptance.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.018,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 1.198,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 8.109,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/messaging\t1.156s\tcoverage: 100.0% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 100.0,
+      "sqlite_attempts": [],
+      "integration": "HOLD",
+      "enabled": false
+    },
+    {
+      "id": "FUX-106",
+      "module": "onboarding",
+      "source_branch": "future/fux-106-onboarding-20261116",
+      "source_sha": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+      "source_url": "https://github.com/djshellshoxxx/circula/tree/473cab2fb45a7b67ea0001f9fdc7833ffda45eb9/future/onboarding",
+      "source_go_mod": "module github.com/djshellshoxxx/circula/future/onboarding\n\ngo 1.26.11\n\n// Test-only: imported solely from files guarded by the sqlite_cgo_test build tag.\nrequire github.com/mattn/go-sqlite3 v1.14.53\n",
+      "original_manifest": {
+        "id": "FUX-106",
+        "status": "initial-core-tested-feature-incomplete",
+        "integration": "HOLD",
+        "enabled": false,
+        "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+        "depends_on_future_features": [],
+        "scope": "Versioned idempotent checklist transitions and checked integer synthetic balance previews with credit/reservation limits.",
+        "remaining": "Persist per-network/member checklist; separate practice origin/database with canned fixtures and distinct credentials; guided skip/resume templates; admin copy; accessibility and production-ledger isolation acceptance tests."
+      },
+      "implementation_observed": "Versioned durable checklist, memory and SQL store contracts, admin copy and aggregate metrics, server-rendered HTTP/CSRF, plus a separate-origin memory-only synthetic practice world with isolated IDs/cookies and bounded sessions.",
+      "remaining_scope": "Qualify production current-authorization/session and migration adapters; run real-browser keyboard/accessibility/practice-origin acceptance, configure distinct production/practice host and cookie settings, and qualify retention/restore. Standalone database tests include a production-database non-mutation fixture.",
+      "default_checks": [
+        {
+          "check": "gofmt",
+          "command": [
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "exit_code": 0,
+          "seconds": 0.201,
+          "output": ""
+        },
+        {
+          "check": "vet",
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 2.431,
+          "output": ""
+        },
+        {
+          "check": "race",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "seconds": 60.855,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/onboarding\t49.671s\tcoverage: 82.3% of statements\n"
+        }
+      ],
+      "default_race_final_pass": true,
+      "root_package_default_coverage_percent": 82.3,
+      "sqlite_attempts": [
+        {
+          "module": "onboarding",
+          "branch": "fux-106-onboarding-20261116",
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-p=1",
+            "-count=1",
+            "-tags=sqlite_cgo_test",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "environment": {
+            "GOTOOLCHAIN": "local",
+            "CGO_ENABLED": "1",
+            "GOMAXPROCS": "2",
+            "GOGC": "50",
+            "CGO_CFLAGS": "-O0 -g0"
+          },
+          "exit_code": 0,
+          "seconds": 31.071,
+          "output": "ok  \tgithub.com/djshellshoxxx/circula/future/onboarding\t24.965s\tcoverage: 90.1% of statements\n"
+        }
+      ],
+      "integration": "HOLD",
+      "enabled": false
+    }
+  ],
+  "repairs": {
+    "feed": {
+      "source_repair_commit": "beb47d91a8151653b476cf7b0f4535b0e9c4d450",
+      "local_refreshed_head": "6aa06e97c9ac6d8a83f60cafad34401fa999051a",
+      "core_dependency": "9b1fc6a0bb4ae4ad95c4f505929ce8088f10bf2c",
+      "independent_source_review": "approved for isolated development",
+      "race_root_package_coverage_percent": 98.8,
+      "publication_tree": "2ffab7ac14c1617b233e5baac47dd022dc2fcd5a",
+      "reviewed_core_followup": "d627af48ff4042db73adac9a72f6208db268a924"
+    },
+    "notifications": {
+      "independent_source_review": "approved for isolated development",
+      "default_root_package_coverage_percent": 7.2,
+      "sqlite_root_package_coverage_percent": 71.0,
+      "source_repair_commit": "b221e1bd1c4acc500be720d5668a4e011ac5d7e4",
+      "local_refreshed_head": "ab3f260f2067abb918688f66b11b183878597384",
+      "publication_tree": "865d6bc02d52958c41a8d4c90fb3cd2ced32bf41",
+      "core_dependency": "9b1fc6a0bb4ae4ad95c4f505929ce8088f10bf2c",
+      "reviewed_core_followup": "d627af48ff4042db73adac9a72f6208db268a924",
+      "workflow": ".github/workflows/future-notifications.yml",
+      "provider_vulnerability_check": "configured, not locally executed"
+    }
+  },
+  "extra_evidence": [
+    {
+      "artifact": "future-feed-fail-before.log",
+      "sha256": "142900466c289873d27a57c4a3d766bdea367be9c1e4213691ff2efdd81214df",
+      "output": "--- FAIL: TestPageRejectsConflictingSourceSnapshots (0.00s)\n    --- FAIL: TestPageRejectsConflictingSourceSnapshots/visibility (0.00s)\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n    --- FAIL: TestPageRejectsConflictingSourceSnapshots/active_state (0.00s)\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n    --- FAIL: TestPageRejectsConflictingSourceSnapshots/creation_time (0.00s)\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:41 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n    --- FAIL: TestPageRejectsConflictingSourceSnapshots/owner (0.00s)\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n        consistency_test.go:26: conflicting snapshots returned {Items:[{Network:n Kind:listing ID:duplicate Member:another-member Created:1969-12-31 16:01:40 -0800 PST Visible:true Active:true}] Next:}, <nil>; want no result and ErrInvalidSource\n--- FAIL: TestZeroValueCursorCodecFailsClosed (0.00s)\n    --- FAIL: TestZeroValueCursorCodecFailsClosed/seal (0.00s)\n        consistency_test.go:59: zero-value codec panicked: runtime error: invalid memory address or nil pointer dereference\n    --- FAIL: TestZeroValueCursorCodecFailsClosed/open (0.00s)\n        consistency_test.go:69: zero-value codec panicked: runtime error: invalid memory address or nil pointer dereference\n    --- FAIL: TestZeroValueCursorCodecFailsClosed/page (0.00s)\n        consistency_test.go:79: zero-value page = {Items:[{Network:n Kind:announcement ID:a000 Member:m Created:2023-11-14 14:13:20 -0800 PST Visible:true Active:true} {Network:n Kind:listing ID:l000 Member:m Created:2023-11-14 14:13:20 -0800 PST Visible:true Active:true}] Next:}, <nil>\nFAIL\nFAIL\tgithub.com/djshellshoxxx/circula/future/feed\t0.011s\nFAIL\n"
+    },
+    {
+      "artifact": "future-feed-after.log",
+      "sha256": "59e0749f7b42ce490a1466ada3d788bf6209044b283e288bc0aecc818523f6dc",
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/feed\t2.530s\tcoverage: 98.8% of statements\n"
+    },
+    {
+      "artifact": "future-feed-fuzz.log",
+      "sha256": "1fa33f44dce5b98c3c161cbb3ca71fb76523135c2af359f661b199f0008ecb6f",
+      "output": "fuzz: elapsed: 0s, gathering baseline coverage: 0/37 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 37/37 completed, now fuzzing with 2 workers\nfuzz: elapsed: 3s, execs: 733 (244/sec), new interesting: 2 (total: 39)\nfuzz: elapsed: 6s, execs: 6470 (1893/sec), new interesting: 16 (total: 53)\nfuzz: elapsed: 9s, execs: 18353 (3995/sec), new interesting: 23 (total: 60)\nfuzz: elapsed: 12s, execs: 26343 (2667/sec), new interesting: 25 (total: 62)\nfuzz: elapsed: 15s, execs: 47367 (6971/sec), new interesting: 29 (total: 66)\nfuzz: elapsed: 18s, execs: 65147 (5949/sec), new interesting: 50 (total: 87)\nfuzz: elapsed: 21s, execs: 66869 (575/sec), new interesting: 52 (total: 89)\nfuzz: elapsed: 21s, execs: 66869 (0/sec), new interesting: 52 (total: 89)\nPASS\nok  \tgithub.com/djshellshoxxx/circula/future/feed\t21.074s\n"
+    },
+    {
+      "artifact": "future-feed-refreshed-race.log",
+      "sha256": "6bfa394cb351926d3bc9dc33bbcecc722443fbf6ed720917885b29df670edb74",
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/feed\t1.862s\tcoverage: 98.8% of statements\n"
+    },
+    {
+      "artifact": "future-feed-traceability-check.log",
+      "sha256": "c8f14eb5c9cf18512a590cf73081849d1d09070b43ac1bd071b7a43f8e3ce325",
+      "output": "traceability: docs/TRACEABILITY.md is out of date (first difference at line 351, expected \"| API-034 | P0 | List operations MUST use cursor pagination. Requests take `limit` (integer 1 to 100,... | - |...\"); run make traceability\nexit status 1\n"
+    },
+    {
+      "artifact": "future-feed-traceability-after.log",
+      "sha256": "e97f9ec7fb6cd29883fc7d281fe86ca51e737dbb739ebf99d5391858a823d72f",
+      "output": "traceability: docs/TRACEABILITY.md is up to date\n"
+    },
+    {
+      "artifact": "future-notifications-binding-before.log",
+      "sha256": "b3f105306ad8491482559a8c29e5507ec1521f804e5b464a8f2c0f07e0aaa101",
+      "output": "--- FAIL: TestTargetAADSeparatesAcceptedActorScopes (0.00s)\n    --- FAIL: TestTargetAADSeparatesAcceptedActorScopes/push (0.00s)\n        target_binding_test.go:32: different accepted actor scopes share authenticated data\n    --- FAIL: TestTargetAADSeparatesAcceptedActorScopes/email (0.00s)\n        target_binding_test.go:32: different accepted actor scopes share authenticated data\n--- FAIL: TestTargetAADRejectsLegacyAmbiguousTargets (0.00s)\n    target_binding_test.go:78: ambiguous legacy binding was accepted for {NetworkID:network|extra MemberID:member SessionID:}: <nil>\nFAIL\nFAIL\tgithub.com/djshellshoxxx/circula/future/notifications\t0.017s\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t[no test files]\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t[no test files]\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t[no test files]\nFAIL\n"
+    },
+    {
+      "artifact": "future-notifications-encoding-before.log",
+      "sha256": "2e75077aca0d1af344f8d4e32dbaf8a409beec4fa345b72be2acb140cc5a9b98",
+      "output": "--- FAIL: TestDedupeKeyRejectsInvalidUTF8 (0.00s)\n    identity_encoding_test.go:15: invalid UTF-8 in field 0 produced a dedupe key\n    identity_encoding_test.go:15: invalid UTF-8 in field 1 produced a dedupe key\n    identity_encoding_test.go:15: invalid UTF-8 in field 2 produced a dedupe key\n    identity_encoding_test.go:15: invalid UTF-8 in field 4 produced a dedupe key\n--- FAIL: TestActorAndEventRejectInvalidUTF8 (0.00s)\n    identity_encoding_test.go:35: actor accepted invalid UTF-8\n    identity_encoding_test.go:35: actor accepted invalid UTF-8\n    identity_encoding_test.go:35: actor accepted invalid UTF-8\n    identity_encoding_test.go:44: event accepted invalid UTF-8\n    identity_encoding_test.go:44: event accepted invalid UTF-8\n    identity_encoding_test.go:44: event accepted invalid UTF-8\n--- FAIL: TestSignedTokenDoesNotNormalizeInvalidIdentity (0.00s)\n    identity_encoding_test.go:67: invalid UTF-8 in purpose produced a signed token\n    identity_encoding_test.go:67: invalid UTF-8 in network produced a signed token\n    identity_encoding_test.go:67: invalid UTF-8 in member produced a signed token\n    identity_encoding_test.go:67: invalid UTF-8 in channel produced a signed token\n    identity_encoding_test.go:67: invalid UTF-8 in target produced a signed token\nFAIL\nFAIL\tgithub.com/djshellshoxxx/circula/future/notifications\t0.012s\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t[no test files]\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t[no test files]\n?   \tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t[no test files]\nFAIL\n"
+    },
+    {
+      "artifact": "future-notifications-binding-after.log",
+      "sha256": "36bb37373697488eff8dafea1817c5d099584ab9b9a900221ef458171a73f536",
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t2.041s\tcoverage: 7.2% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+    },
+    {
+      "artifact": "future-notifications-vet-after.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "output": ""
+    },
+    {
+      "artifact": "future-notifications-repaired-sqlite-recheck.log",
+      "sha256": "56431e6b9bec5810aaabce6c7a42c910ffffeb440c2e9cd11a5dfe8e859dc966",
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t2.097s\tcoverage: 71.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+    },
+    {
+      "artifact": "future-favorites-sqlite-tests.log",
+      "sha256": "7735652727cd44c8bc68df81a1a2205389e2a10a9eebf1f6648294ea6f4b0ce8",
+      "output": "FAIL\tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore [build failed]\nFAIL\tgithub.com/djshellshoxxx/circula/future/favorites [build failed]\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/cli\t1.099s\nFAIL\tgithub.com/djshellshoxxx/circula/future/favorites/cmd/favoritesctl [build failed]\nFAIL\tgithub.com/djshellshoxxx/circula/future/favorites/internal/sqlitefixture [build failed]\n?   \tgithub.com/djshellshoxxx/circula/future/favorites/internal/storetest\t[no test files]\n?   \tgithub.com/djshellshoxxx/circula/future/favorites/internal/testkit\t[no test files]\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.152s\nok  \tgithub.com/djshellshoxxx/circula/future/favorites/web\t4.258s\nFAIL\n"
+    },
+    {
+      "artifact": "future-pwa-node-tests.log",
+      "sha256": "d93752e3a88c47d3df8fc0f67c484643ac69f442b0a70c868d63d8e0707bb23b",
+      "output": "\u2714 strict requests (10.800128ms)\n\u2714 strict responses (11.347104ms)\n\u2714 offline page has no actions or private facts (0.508083ms)\n\u2714 reject redirects and cookie-bearing responses (0.55958ms)\n\u2714 readBounded returns exact body within bound (33.024904ms)\n\u2714 readBounded rejects oversize declared Content-Length without reading (2.118864ms)\n\u2714 readBounded stops and cancels an unbounded stream with no Content-Length (16.174859ms)\n\u2714 readBounded rejects lying and malformed Content-Length (35.625935ms)\n\u2714 readBounded rejects invalid bounds and stream errors (2.665089ms)\n\u2714 toBase64 handles inputs larger than argument spread limits (137.238681ms)\n\u2714 verifiedResponse accepts exact bytes and stores canonical headers (22.899062ms)\n\u2714 verifiedResponse rejects wrong hash, size, headers and bad metadata (15.374418ms)\n\u2714 verifiedResponse never buffers an oversized body (0.934433ms)\n\u2714 precache plugins: only catalog URLs, no credentials, bounded cache update (13.492487ms)\n\u2714 pagehide, freeze and hidden visibility scrub private DOM (4.849436ms)\n\u2714 lifecycle works without service worker, BroadcastChannel, or a valid base (1.081609ms)\n\u2714 a throwing channel does not disable other handlers (0.623049ms)\n\u2714 restored (persisted) pages scrub and reload; fresh loads do not (0.493305ms)\n\u2714 returning visible after a scrub reloads; untouched page does not (0.377649ms)\n\u2714 sign-out and session-ended lock locally and notify other tabs; peers lock on message (1.609208ms)\n\u2714 channel carries no account data (0.294353ms)\n\u2714 validBase and registerWorker are strict and optional (2.385264ms)\n\u2139 tests 22\n\u2139 suites 0\n\u2139 pass 22\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 939.937318\n"
+    },
+    {
+      "artifact": "future-core-guard-check.log",
+      "sha256": "6d51e2b51f7d5382cdd6b24574dd151571a01e56891aeb0793b3789c6e509be8",
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t2.450s\n"
+    },
+    {
+      "artifact": "future-feed-guard-traceability-check.log",
+      "sha256": "e97f9ec7fb6cd29883fc7d281fe86ca51e737dbb739ebf99d5391858a823d72f",
+      "output": "traceability: docs/TRACEABILITY.md is up to date\n"
+    },
+    {
+      "artifact": "future-notifications-traceability-check.log",
+      "sha256": "e97f9ec7fb6cd29883fc7d281fe86ca51e737dbb739ebf99d5391858a823d72f",
+      "output": "traceability: docs/TRACEABILITY.md is up to date\n"
+    },
+    {
+      "artifact": "future-notifications-refreshed-sqlite.log",
+      "sha256": "4631959ac19b37f4f9ce2bc7d2dd5f31182370392bee9370749ee30dddd4c295",
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t1.432s\tcoverage: 71.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+    }
+  ],
+  "sqlite_rechecks": [
+    {
+      "module": "favorites-web",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-tags=sqlite_cgo_test",
+        "-cover",
+        "-timeout=90s",
+        "./web"
+      ],
+      "exit_code": 0,
+      "seconds": 6.55,
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/favorites/web\t3.059s\tcoverage: 88.3% of statements\n"
+    },
+    {
+      "module": "qr-web",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-tags=sqlite_cgo_test",
+        "-cover",
+        "-timeout=90s",
+        "./web"
+      ],
+      "exit_code": 0,
+      "seconds": 6.908,
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/qr/web\t2.713s\tcoverage: 84.1% of statements\n"
+    },
+    {
+      "module": "notifications-repaired",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-tags=sqlite_cgo_test",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "exit_code": 0,
+      "seconds": 10.615,
+      "output": "ok  \tgithub.com/djshellshoxxx/circula/future/notifications\t2.097s\tcoverage: 71.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/notifytest\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/pushsend\t\tcoverage: 0.0% of statements\n\tgithub.com/djshellshoxxx/circula/future/notifications/smtpsend\t\tcoverage: 0.0% of statements\n"
+    }
+  ],
+  "browser": {
+    "command": [
+      "node",
+      "browser/test.mjs"
+    ],
+    "node": "v24.22.3",
+    "playwright": "1.62.1",
+    "chromium": "156.0.8078.79",
+    "demo_build_command": [
+      "go",
+      "build",
+      "-buildvcs=false",
+      "-p",
+      "1",
+      "-o",
+      "<temporary-pwa-demo>",
+      "./cmd/demo"
+    ],
+    "result": "BLOCKED",
+    "exit_code": 1,
+    "diagnostic": "FATAL:chrome/browser/process_singleton_posix.cc:297 ... socket() failed: Operation not permitted (1)",
+    "raw_log_artifact": "future-pwa-browser.log",
+    "raw_log_sha256": "91b5e17a6347ef6dd12a94e17cc33903fe386bac6f4b0f769f636c19eec1e36a"
+  }
+}

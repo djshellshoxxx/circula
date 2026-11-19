@@ -6,7 +6,7 @@
     <label><input type="radio" name="type" value="request"{{if eq (.Val "type") "request"}} checked{{end}}> Request: something I want</label>
   </fieldset>
   {{template "field" dict "P" . "Name" "title" "Label" "Title" "Max" 120 "Req" true}}
-  {{template "field" dict "P" . "Name" "description" "Label" "Description" "Type" "textarea" "Max" 2000}}
+  {{template "field" dict "P" . "Name" "description" "Label" "Description (optional)" "Type" "textarea" "Max" 2000}}
   {{template "field" dict "P" . "Name" "price" "Label" "Price (optional)" "Hint" "Amount in credits, up to the network's decimal places. Leave empty if open to offers." "Mode" "decimal"}}
   <div class="actions"><button type="submit">Publish listing</button> <a class="btn secondary" href="/n/{{.Slug}}/listings">Cancel</a></div>
 </form>

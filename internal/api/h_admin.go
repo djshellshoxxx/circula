@@ -32,6 +32,7 @@ func (s *server) adminReverse(c *reqCtx) error { // API-056
 func (s *server) adminAdjust(c *reqCtx) error { // API-057
 	var in struct {
 		MemberID    string `json:"member_id"`
+		RelatedTxID string `json:"related_transaction_id"`
 		Direction   string `json:"direction"`
 		AmountMinor string `json:"amount_minor"`
 		Reason      string `json:"reason"`
@@ -44,7 +45,7 @@ func (s *server) adminAdjust(c *reqCtx) error { // API-057
 		return err
 	}
 	res, err := s.svc.CreateAdjustmentRequest(c.r.Context(), c.actor, c.netID, service.AdjustInput{MemberID: in.MemberID,
-		Amount: amt, Direction: service.AdjustDirection(in.Direction), Reason: in.Reason, IdempotencyKey: c.idemKey})
+		Amount: amt, Direction: service.AdjustDirection(in.Direction), Reason: in.Reason, RelatedTxID: in.RelatedTxID, IdempotencyKey: c.idemKey})
 	if err != nil {
 		return err
 	}

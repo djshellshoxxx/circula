@@ -45,9 +45,9 @@ func TestA3_06_ErasureDropsReplayCacheAndExports(t *testing.T) {
 		t.Fatal("test premise: no replay record cached")
 	}
 	// An export artefact of the same person.
-	h.jobs.putExport(&exportEntry{net: net.ID, person: alice.PersonID, at: time.Now(), dto: exportDTO{ID: "exp1"}, file: []byte("data")})
-	// And one of somebody else, which must survive.
-	h.jobs.putExport(&exportEntry{net: net.ID, person: admin.PersonID, at: time.Now(), dto: exportDTO{ID: "exp2"}, file: []byte("other")})
+	storeExport(t, h.jobs, &exportEntry{net: net.ID, person: alice.PersonID, at: time.Now(), dto: exportDTO{ID: "exp1", Scope: "mine"}}, []byte("data"))
+	// Somebody else's member export can contain this person's data too.
+	storeExport(t, h.jobs, &exportEntry{net: net.ID, person: admin.PersonID, at: time.Now(), dto: exportDTO{ID: "exp2", Scope: "mine"}}, []byte("other"))
 
 	txs, err := env.Svc.ListTransactions(ctx, alice, net.ID, nil, service.Page{})
 	if err != nil || len(txs) == 0 {
@@ -69,10 +69,10 @@ func TestA3_06_ErasureDropsReplayCacheAndExports(t *testing.T) {
 	if h.jobs.getExport(net.ID, alice.PersonID, "exp1") != nil {
 		t.Error("export artefact of the erased person survives")
 	}
-	if h.jobs.getExport(net.ID, admin.PersonID, "exp2") == nil {
-		t.Error("another person's export artefact was dropped")
+	if h.jobs.getExport(net.ID, admin.PersonID, "exp2") != nil {
+		t.Error("counterparty export survived erasure")
 	}
-	if h.jobs.bytes != int64(len("other")) {
+	if h.jobs.bytes != 0 {
 		t.Errorf("job store byte count = %d", h.jobs.bytes)
 	}
 }

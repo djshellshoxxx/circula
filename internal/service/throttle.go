@@ -6,25 +6,15 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Login and recovery throttling (SEC-006, SA2-10).
-//
-// A lock keyed by login alone lets anyone lock a victim out from one address.
-// With a client address (WithClientIP) every attempt is therefore counted
-// twice: against the pair (login, address), which locks after throttleAfter
-// failures, and against the login as a whole, which locks only after the much
-// higher throttleGlobalAfter failures, so guessing spread over many addresses
-// is still bounded. A lock never lasts longer than throttleMax. Counters of
-// an idle login decay after throttleDecay. Without an address (CLI, tests) the
-// login row alone applies with the low limit.
-const (
-	throttleAfter       = 5
-	throttleGlobalAfter = 100
-	throttleMax         = 15 * time.Minute
-	throttleDecay       = 24 * time.Hour
-)
+// With a client address, attempts count against both (login, address) and a
+// larger login-wide budget. Without an address, the local budget applies.
+// Operator settings may tighten the defaults; locks are always finite.
+// Inactive counters decay after a day, independently of the configured lock.
+const throttleDecay = 24 * time.Hour
 
 type clientIPKey struct{}
 
@@ -57,15 +47,11 @@ func clientIP(ctx context.Context) string {
 	return ip
 }
 
-// lockFor is the lock after the failures-th consecutive failure at the
-// per-address threshold.
-func lockFor(failures int) time.Duration { return lockAfter(failures, throttleAfter) }
-
-func lockAfter(failures, after int) time.Duration {
+func (s *Service) lockAfter(failures, after int) time.Duration {
 	if failures < after {
 		return 0
 	}
-	return throttleMax
+	return s.cfg.AuthThrottleLock
 }
 
 func ipKey(key, ip string) string { return key + " ip:" + ip }
@@ -79,7 +65,7 @@ func (s *Service) readThrottle(tx store.Tx, key string, after int) (int, time.Ti
 	if f > 0 && s.now().After(until.Add(throttleDecay)) {
 		f = 0 // idle for a day: the history is forgotten
 	}
-	if f >= after && !until.IsZero() && s.now().After(until) {
+	if f >= after && !until.IsZero() && !s.now().Before(until) {
 		// A lock that has run out grants half the allowance again, so a single
 		// attempt timed at expiry cannot re-arm it (A3-02).
 		f = after - after/2
@@ -96,11 +82,11 @@ func (s *Service) reserveAttemptCtx(ctx context.Context, tx store.Tx, key string
 		return s.reserveAttempt(tx, key)
 	}
 	pk := ipKey(key, ip)
-	pf, pu, err := s.readThrottle(tx, pk, throttleAfter)
+	pf, pu, err := s.readThrottle(tx, pk, s.cfg.AuthThrottleAttempts)
 	if err != nil {
 		return err
 	}
-	gf, gu, err := s.readThrottle(tx, key, throttleGlobalAfter)
+	gf, gu, err := s.readThrottle(tx, key, s.cfg.AuthThrottleGlobalAttempts)
 	if err != nil {
 		return err
 	}
@@ -108,10 +94,10 @@ func (s *Service) reserveAttemptCtx(ctx context.Context, tx store.Tx, key string
 	if now.Before(pu) || now.Before(gu) {
 		return domain.Errf(domain.CodeRateLimited, "too many attempts; try again later")
 	}
-	if err := tx.PutThrottle(pk, pf+1, now.Add(lockAfter(pf+1, throttleAfter))); err != nil {
+	if err := tx.PutThrottle(pk, pf+1, now.Add(s.lockAfter(pf+1, s.cfg.AuthThrottleAttempts))); err != nil {
 		return err
 	}
-	return tx.PutThrottle(key, gf+1, now.Add(lockAfter(gf+1, throttleGlobalAfter)))
+	return tx.PutThrottle(key, gf+1, now.Add(s.lockAfter(gf+1, s.cfg.AuthThrottleGlobalAttempts)))
 }
 
 // clearThrottle forgets the counters of key after a success: the caller's own

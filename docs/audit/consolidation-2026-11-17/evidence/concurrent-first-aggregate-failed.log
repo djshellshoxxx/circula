@@ -1,0 +1,19 @@
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	2.900s
+ok  	github.com/djshellshoxxx/circula/internal/api	198.876s
+ok  	github.com/djshellshoxxx/circula/internal/contract	19.835s
+ok  	github.com/djshellshoxxx/circula/internal/domain	1.469s
+ok  	github.com/djshellshoxxx/circula/internal/histbal	1.013s
+ok  	github.com/djshellshoxxx/circula/internal/httpx	1.014s
+ok  	github.com/djshellshoxxx/circula/internal/logx	1.026s
+ok  	github.com/djshellshoxxx/circula/internal/repository	1.090s
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/internal/service	4.915s
+ok  	github.com/djshellshoxxx/circula/internal/store	77.755s
+?   	github.com/djshellshoxxx/circula/internal/storetest	[no test files]
+?   	github.com/djshellshoxxx/circula/internal/testutil	[no test files]
+ok  	github.com/djshellshoxxx/circula/internal/web	142.510s
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	1.013s
+ok  	github.com/djshellshoxxx/circula/scripts/sbom	1.047s
+ok  	github.com/djshellshoxxx/circula/scripts/traceability	1.618s
+FAIL

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // checkCapacity applies LED-5 to a prospective debit of amount on payer: a
@@ -93,14 +93,14 @@ func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction
 // newInternalTx inserts a proposed transaction for kinds that complete on
 // creation (reversal, adjustment, grant) and returns it ready for postTx.
 func (s *Service) newInternalTx(tx store.Tx, net *domain.Network, kind domain.TxKind, payerAcc, payeeAcc string,
-	amount int64, reason, createdBy, originalID string) (*domain.Transaction, error) {
+	amount int64, reason, createdBy, originalID, relatedID string) (*domain.Transaction, error) {
 
 	if amount <= 0 {
 		return nil, domain.Invalid("amount", "must be greater than zero")
 	}
 	t := &domain.Transaction{ID: s.id(), NetworkID: net.ID, Kind: kind, Status: domain.TxProposed,
 		PayerAccountID: payerAcc, PayeeAccountID: payeeAcc, Amount: amount, Reason: reason,
-		CreatedBy: createdBy, OriginalTxID: originalID, ProposedAt: s.now()}
+		CreatedBy: createdBy, OriginalTxID: originalID, RelatedTxID: relatedID, ProposedAt: s.now()}
 	if err := tx.InsertTransaction(t); err != nil {
 		return nil, err
 	}

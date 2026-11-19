@@ -1,0 +1,16 @@
+[
+  {
+    "snapshot": "pr87-same-ms",
+    "path": "internal/service/dispute_timelines_test.go",
+    "base_test_sha256": "0c6f9010811ea945a76f3906f1d1ad930e2c21407721604c5e3e7943a97bb02f",
+    "variant_sha256": "da88f5cb0bdda083a07718a63a886da5d75da711635a1d1839c2ed318db8d088",
+    "scope": "Only time advancement in the existing supplied TestDisputeTimelinesFixedAtOpen is varied; candidate production source is unchanged."
+  },
+  {
+    "snapshot": "pr87-clock-rollback",
+    "path": "internal/service/dispute_timelines_test.go",
+    "base_test_sha256": "0c6f9010811ea945a76f3906f1d1ad930e2c21407721604c5e3e7943a97bb02f",
+    "variant_sha256": "affd90866a681ebdf06a46238a646fa3da3c1d441da22e9c387a75f398758292",
+    "scope": "Only time advancement in the existing supplied TestDisputeTimelinesFixedAtOpen is varied; candidate production source is unchanged."
+  }
+]

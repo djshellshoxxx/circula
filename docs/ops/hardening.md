@@ -17,8 +17,8 @@ sudo -u circula env CIRCULA_DATABASE=/var/lib/circula/circula.db /usr/local/bin/
 systemctl enable --now circula
 ```
 
-`migrate-mode` is `explicit` by default, so run `circula migrate` once before the first start and on every upgrade
-([upgrade.md](upgrade.md)).
+`migrate-mode` is `explicit` by default, so run `circula migrate` on every upgrade ([upgrade.md](upgrade.md)). A first
+start on a database file that does not exist yet creates it at the current schema without `migrate`.
 
 Secrets go in a drop-in, never in the unit, using credentials (files are mode 0400, owned by the service user, and
 visible only to the service, which satisfies the "not readable by group or others" check):
@@ -82,9 +82,11 @@ image has no tool to run one; probe `/healthz` and `/readyz` from the orchestrat
 Inside a container `CIRCULA_LISTEN` is `0.0.0.0:8080`; publish the port to loopback or an internal network only, and
 keep `/metrics` unreachable from outside (see [monitoring.md](monitoring.md)).
 
-Status: `deploy/Dockerfile` and the commands above were **not built or run** in the authoring environment (no Docker
-daemon). The binary they package is built and smoke-tested by `scripts/smoke-deploy.sh`. Before release, pin both base
-images by digest (see the comment in the Dockerfile) and run `docker run` as above once.
+Status: the image was built and run once on 2026-11-12 through `deploy/compose.yaml`, with a build deviation for the
+sandbox TLS proxy; the unmodified `deploy/Dockerfile` invocation was not run. See
+[container-verification-2026-11-12.md](container-verification-2026-11-12.md). The binary the image packages is built and
+smoke-tested by `scripts/smoke-deploy.sh`. Before release, pin both base images by digest (see the comment in the
+Dockerfile) and run `docker run` as above once.
 
 ## Reproducible builds
 

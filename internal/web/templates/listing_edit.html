@@ -3,7 +3,7 @@
   {{template "csrf" .}}
   <p>Kind: <strong>{{if eq (.Val "type") "offer"}}Offer{{else}}Request{{end}}</strong></p>
   {{template "field" dict "P" . "Name" "title" "Label" "Title" "Max" 120 "Req" true}}
-  {{template "field" dict "P" . "Name" "description" "Label" "Description" "Type" "textarea" "Max" 2000}}
+  {{template "field" dict "P" . "Name" "description" "Label" "Description (optional)" "Type" "textarea" "Max" 2000}}
   {{template "field" dict "P" . "Name" "price" "Label" "Price (optional)" "Hint" "Amount in credits. Empty removes the price." "Mode" "decimal"}}
   <div class="field"><label for="f-status">Status</label>
   <p class="hint" id="h-status">Paused listings are hidden. Archived listings are final and cannot be reopened.</p>

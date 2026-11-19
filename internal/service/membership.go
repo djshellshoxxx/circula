@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // DirectoryEntry is what ordinary members may see of one another (FR-020,
@@ -25,6 +25,9 @@ func (s *Service) ListDirectory(ctx context.Context, actor domain.Actor, netID s
 			return err
 		}
 		if err := p.requireActive(); err != nil {
+			return err
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
 			return err
 		}
 		ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, AfterID: pg.AfterID, Limit: clampPage(pg)})
@@ -47,6 +50,9 @@ func (s *Service) AdminListMembers(ctx context.Context, actor domain.Actor, netI
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListMembers(netID, store.MemberFilter{Statuses: statuses, AfterID: pg.AfterID, Limit: clampPage(pg)})
 		return err
 	})
@@ -67,6 +73,9 @@ func (s *Service) adminOnMember(tx store.Tx, actor domain.Actor, netID, memberID
 		if err := p.notSelf(memberID); err != nil {
 			return nil, nil, err
 		}
+	}
+	if !domain.ValidRecordID(memberID) {
+		return nil, nil, domain.NotFound("member")
 	}
 	m, err := tx.GetMember(netID, memberID)
 	if err != nil {
@@ -238,10 +247,13 @@ func (s *Service) SetDefaultFlag(ctx context.Context, actor domain.Actor, netID,
 
 // SetLimitInput sets or removes a per-member credit-limit override.
 type SetLimitInput struct {
-	MemberID  string
-	Limit     *int64     // nil removes the override (default applies again)
-	ExpiresAt *time.Time // optional: time-limited override (DOM-021, OQ-DOM-2)
-	Reason    string
+	// ExpectedRevision, when supplied, must match the limit configuration
+	// inside the same write transaction. Empty means an unconditional edit.
+	ExpectedRevision string `json:"-"`
+	MemberID         string
+	Limit            *int64     // nil removes the override (default applies again)
+	ExpiresAt        *time.Time // optional: time-limited override (DOM-021, OQ-DOM-2)
+	Reason           string
 }
 
 // SetCreditLimit changes a member's override. It posts nothing: lowering a
@@ -297,6 +309,9 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 		return nil, nil, err
 	}
 	now := s.now()
+	if in.ExpectedRevision != "" && in.ExpectedRevision != creditLimitRevision(netID, acc, p.net.Policy.DefaultCreditLimit, now) {
+		return nil, nil, ErrCreditLimitChanged
+	}
 	before := acc.EffectiveLimit(p.net.Policy.DefaultCreditLimit, now)
 	if err := tx.SetLimitOverride(netID, acc.ID, in.Limit, in.ExpiresAt); err != nil {
 		return nil, nil, err
@@ -317,17 +332,28 @@ func (s *Service) setCreditLimit(tx store.Tx, actor domain.Actor, netID string, 
 // noticeAdminGranted tells every other active administrator of the network
 // that a new one was appointed, so a rogue appointment is visible (A3-01).
 func (s *Service) noticeAdminGranted(tx store.Tx, netID string, grantee *domain.Member, p *principal) error {
-	ms, err := tx.ListMembers(netID, store.MemberFilter{Statuses: []domain.MemberStatus{domain.MemberActive}, Limit: 500})
-	if err != nil {
-		return err
-	}
-	for _, o := range ms {
-		if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
-			continue
-		}
-		if err := s.secNotice(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed"); err != nil {
+	const pageSize = 500
+	cursor := ""
+	for {
+		ms, err := tx.ListMembers(netID, store.MemberFilter{
+			Statuses: []domain.MemberStatus{domain.MemberActive}, AfterID: cursor, Limit: pageSize,
+		})
+		if err != nil {
 			return err
 		}
+		for _, o := range ms {
+			if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
+				continue
+			}
+			if err := s.secNotice(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed"); err != nil {
+				return err
+			}
+		}
+		if len(ms) < pageSize {
+			return nil
+		}
+		// ListMembers orders IDs ascending. Continue inside the same write
+		// transaction so role assignment and every notice commit together.
+		cursor = ms[len(ms)-1].ID
 	}
-	return nil
 }

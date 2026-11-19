@@ -9,7 +9,7 @@ unconfirmed value, so `scripts/release-gate.sh` reports "thresholds unconfirmed"
 | Ledger invariant failures in any run | 0 (absolute) | QA-040 | tests green | n/a (absolute) |
 | Authorization matrix mismatches | 0 (absolute) | QA-040 | tests green | n/a (absolute) |
 | Failing P0 tests | 0 (absolute) | QA-040 | tests green | n/a (absolute) |
-| Property-test long run (merge/release) | 100,000 sequences | QA-001 recommended | short run in CI only | UNCONFIRMED |
+| Property-test long run (merge/release) | 100,000 sequences | QA-001 recommended | [100,000 non-race sequences passed 2026-11-16](QA001-2026-11-16.md); 2,800,700 generated operations | UNCONFIRMED |
 | Interleavings per CI configuration | 100 | QA-007 recommended | not 100 yet | UNCONFIRMED |
 | 100 disjoint concurrent trades finish within | 60 s, zero deadlocks | QA-008 (test `TestQA008DisjointConcurrentTrades`) | ~6 s under -race, 4 vCPU | UNCONFIRMED |
 | Branch coverage, posting/balance/credit-limit code | >= 90 % | QA-040 recommended | not measured | UNCONFIRMED |

@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -11,7 +12,7 @@ const txCols = `t.id, t.network_id, t.kind, t.status, t.payer_account_id, t.paye
 	COALESCE(pa.member_id,''), COALESCE(pb.member_id,''), t.amount, COALESCE(t.listing_id,''),
 	t.note, t.reason, COALESCE(t.original_tx_id,''), COALESCE(t.created_by,''), COALESCE(t.accepted_by,''),
 	t.reversed_total, t.proposed_at, t.expires_at, t.completed_at, COALESCE(t.ledger_seq,0), t.dispute_deadline_at,
-	COALESCE(t.dispute_policy_version,0)`
+	COALESCE(t.dispute_policy_version,0), COALESCE(t.related_tx_id,'')`
 
 const txFrom = ` FROM transactions t
 	JOIN accounts pa ON pa.id = t.payer_account_id
@@ -19,11 +20,11 @@ const txFrom = ` FROM transactions t
 
 func (t *txImpl) InsertTransaction(x *domain.Transaction) error {
 	_, err := t.exec(`INSERT INTO transactions(id,network_id,kind,status,payer_account_id,payee_account_id,amount,
-		listing_id,note,reason,original_tx_id,created_by,reversed_total,proposed_at,expires_at)
-		VALUES (?,?,?,'proposed',?,?,?,?,?,?,?,?,0,?,?)`,
+		listing_id,note,reason,original_tx_id,created_by,reversed_total,proposed_at,expires_at,related_tx_id)
+		VALUES (?,?,?,'proposed',?,?,?,?,?,?,?,?,0,?,?,?)`,
 		x.ID, x.NetworkID, string(x.Kind), x.PayerAccountID, x.PayeeAccountID, x.Amount,
 		nullStr(x.ListingID), x.Note, x.Reason, nullStr(x.OriginalTxID), nullStr(x.CreatedBy),
-		ms(x.ProposedAt), msPtr(x.ExpiresAt))
+		ms(x.ProposedAt), msPtr(x.ExpiresAt), nullStr(x.RelatedTxID))
 	return err
 }
 
@@ -35,7 +36,7 @@ func scanTx(r rowScanner) (*domain.Transaction, error) {
 	if err := r.Scan(&x.ID, &x.NetworkID, &kind, &status, &x.PayerAccountID, &x.PayeeAccountID,
 		&x.PayerMemberID, &x.PayeeMemberID, &x.Amount, &x.ListingID, &x.Note, &x.Reason,
 		&x.OriginalTxID, &x.CreatedBy, &x.AcceptedBy, &x.ReversedTotal, &proposed, &exp, &done,
-		&x.LedgerSeq, &deadline, &x.DisputePolicyVersion); err != nil {
+		&x.LedgerSeq, &deadline, &x.DisputePolicyVersion, &x.RelatedTxID); err != nil {
 		return nil, err
 	}
 	x.Kind, x.Status = domain.TxKind(kind), domain.TxStatus(status)
@@ -77,8 +78,9 @@ func (t *txImpl) InsertStatusEvent(e *domain.StatusEvent) error {
 }
 
 func (t *txImpl) ListStatusEvents(netID, txID string) ([]*domain.StatusEvent, error) {
-	rows, err := t.query(`SELECT id,network_id,tx_id,from_status,to_status,actor_id,request_id,occurred_at
-		FROM transaction_status_events WHERE network_id = ? AND tx_id = ? ORDER BY occurred_at, id`, netID, txID)
+	rows, err := t.query(`SELECT e.id,e.network_id,e.tx_id,e.from_status,e.to_status,e.actor_id,e.request_id,e.occurred_at
+		FROM transaction_status_events e JOIN transaction_status_event_order o ON o.event_id = e.id
+		WHERE e.network_id = ? AND e.tx_id = ? ORDER BY o.seq`, netID, txID)
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +148,10 @@ func (t *txImpl) ListTransactions(netID string, f TxFilter) ([]*domain.Transacti
 		q += ` AND (t.expires_at IS NULL OR t.expires_at > ?)`
 		args = append(args, ms(f.LiveAt))
 	}
+	if !f.ProposedBefore.IsZero() {
+		q += ` AND t.proposed_at <= ?`
+		args = append(args, ms(f.ProposedBefore))
+	}
 	if f.AfterID != "" {
 		q += ` AND t.id < ?`
 		args = append(args, f.AfterID)
@@ -155,9 +161,22 @@ func (t *txImpl) ListTransactions(netID string, f TxFilter) ([]*domain.Transacti
 	return t.queryTxs(q, args)
 }
 
-func (t *txImpl) ListExpiredProposals(now time.Time, limit int) ([]*domain.Transaction, error) {
-	return t.queryTxs(`SELECT `+txCols+txFrom+` WHERE t.status = 'proposed' AND t.expires_at <= ?
-		ORDER BY t.expires_at, t.id LIMIT ?`, []any{ms(now), limitOf(limit)})
+func (t *txImpl) ListExpiredProposals(now time.Time, limit int, excludedNetworkIDs []string) ([]*domain.Transaction, error) {
+	q := `SELECT ` + txCols + txFrom + ` WHERE t.status = 'proposed' AND t.expires_at <= ?`
+	args := []any{ms(now)}
+	if len(excludedNetworkIDs) > 0 {
+		// One JSON parameter avoids SQLite's bound-variable limit when many
+		// networks are frozen. Filtering here keeps those rows out of the batch.
+		excluded, err := json.Marshal(excludedNetworkIDs)
+		if err != nil {
+			return nil, err
+		}
+		q += ` AND t.network_id NOT IN (SELECT value FROM json_each(?))`
+		args = append(args, string(excluded))
+	}
+	q += ` ORDER BY t.expires_at, t.id LIMIT ?`
+	args = append(args, limitOf(limit))
+	return t.queryTxs(q, args)
 }
 
 func (t *txImpl) InsertEntry(e *domain.Entry) error {

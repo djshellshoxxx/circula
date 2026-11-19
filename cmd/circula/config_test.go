@@ -78,11 +78,16 @@ var sampleValues = map[string]string{
 	"backup-require-encryption":  "f",
 	"backup-encryption-key-file": "",
 	"state-dir":                  "", // filled per test
+	"export-spool-dir":           "", // filled per test
 	"audit-anchor-key-file":      "",
 	"audit-anchor-with-backups":  "false",
 	"tls-cert-file":              "",
 	"tls-key-file":               "",
 	"audit-mirror-file":          "",
+
+	"auth-throttle-attempts":        "4",
+	"auth-throttle-global-attempts": "20",
+	"auth-throttle-lock":            "30m",
 }
 
 // baseEnv returns a lookup that supplies the two required settings.
@@ -191,6 +196,9 @@ func TestEverySettingAcceptedByEverySource(t *testing.T) {
 		}
 		if d.key == "state-dir" {
 			v = dir
+		}
+		if d.key == "export-spool-dir" {
+			v = filepath.Join(dir, "spool")
 		}
 		if d.key == "backup-dir" {
 			v = filepath.Join(dir, "bk")

@@ -1,0 +1,27 @@
+{{define "content"}}
+{{with .D}}
+<p>Nothing is recorded until you confirm. The original decision stays in the history.</p>
+<dl class="kv">
+  <dt>Decision</dt><dd>{{.Outcome}}</dd>
+  <dt>Original payer</dt><dd>{{.Payer}}</dd>
+  <dt>Original payee</dt><dd>{{.Payee}}</dd>
+  <dt>Reversal</dt><dd>{{if .Reverses}}{{.Amount}} {{.Unit}} go back from {{.Payee}} to {{.Payer}}.{{else}}None. No credit moves.{{end}}</dd>
+  <dt>Change for {{.Payer}}</dt><dd>{{.PayerChange}} {{.Unit}}</dd>
+  <dt>Change for {{.Payee}}</dt><dd>{{.PayeeChange}} {{.Unit}}</dd>
+  {{if .ShowBalances}}
+  <dt>{{.Payer}}: balance now</dt><dd>{{template "balance" .PayerBefore}}</dd>
+  <dt>{{.Payer}}: balance after</dt><dd>{{template "balance" .PayerAfter}}</dd>
+  <dt>{{.Payee}}: balance now</dt><dd>{{template "balance" .PayeeBefore}}</dd>
+  <dt>{{.Payee}}: balance after</dt><dd>{{template "balance" .PayeeAfter}}</dd>
+  {{end}}
+  <dt>Rationale</dt><dd>{{.Rationale}}</dd>
+</dl>
+<p>Balances and permissions are checked again when you confirm. If the reversal cannot be posted, nothing is recorded.</p>
+<form method="post" action="/n/{{$.Slug}}/disputes/{{.ID}}/rereview-decide">
+  {{template "csrf" $}}{{template "idem" $}}
+  <input type="hidden" name="outcome" value="{{$.Val "outcome"}}"><input type="hidden" name="amount" value="{{$.Val "amount"}}">
+  <input type="hidden" name="rationale" value="{{$.Val "rationale"}}"><input type="hidden" name="review_proof" value="{{.Proof}}">
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Record re-review decision</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+</form>
+{{end}}
+{{end}}

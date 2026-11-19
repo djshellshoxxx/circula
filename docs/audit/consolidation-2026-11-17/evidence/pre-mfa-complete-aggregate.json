@@ -1,0 +1,38 @@
+{
+  "head": "8865b3c3c5e10b3e2df13e2d4c95dfbe123bfbaa",
+  "tree": "0b936c0f1a8658d6aea048cf1568e3269ff03479",
+  "command": [
+    "go",
+    "test",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=25m",
+    "./..."
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB",
+    "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+    "CGO_ENABLED": "1"
+  },
+  "go_version": "go version go1.26.11 linux/amd64",
+  "source_heads": {
+    "82": "6785863252d2910553b1f4a26396f14b4405d6fa",
+    "84": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+    "87": "1a3ef0fad836067b71857d961659459d976e7e15"
+  },
+  "started_at": "2026-11-18T09:23:19.176651+00:00",
+  "status": "passed",
+  "scope": "Full combined core suite. Generated TRACEABILITY conflicts were resolved by regenerating from the combined source. No future or owner-policy feature branch included; PR87 clock-ordering residual remains explicitly unresolved.",
+  "exit_code": 0,
+  "elapsed_seconds": 1054.173,
+  "finished_at": "2026-11-18T09:40:53.350240+00:00",
+  "max_child_rss_kib": 672728,
+  "post_head": "8865b3c3c5e10b3e2df13e2d4c95dfbe123bfbaa",
+  "post_tree": "0b936c0f1a8658d6aea048cf1568e3269ff03479",
+  "post_status": ""
+}

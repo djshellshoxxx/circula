@@ -1,0 +1,544 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-18T09:25:01.611417+00:00",
+  "pr": 87,
+  "branch": "claude/aud4-f03-dispute-timelines",
+  "head": "1a3ef0fad836067b71857d961659459d976e7e15",
+  "tree": "1fc439e5a9a1bb90553d59952d02d117a4858871",
+  "base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "base_tree": "f41365f8ee4f42f4cbd33fb4e1a78cad85caedd1",
+  "changed_files": [
+    {
+      "path": "docs/TRACEABILITY.md",
+      "base_blob": "b1bee48386eeb8b880c4aa3cd49fc73a62d1f62c",
+      "head_blob": "b7dc6912ac76b60f92d8b984231ccdb3710e7758",
+      "review": "Generated citation inventory only; requirement statuses are unchanged."
+    },
+    {
+      "path": "docs/api/openapi.yaml",
+      "base_blob": "7a06b11233d9ebbc86ae06e707c49552843270ea",
+      "head_blob": "c2a33728b4ec8b74900ed4a81b1466c00d5b3f88",
+      "review": "Existing response/re-review policy descriptions aligned with the at-opening lookup; no new endpoint or authorization scope."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/AUD4-F03.md",
+      "base_blob": null,
+      "head_blob": "bdd2b9ff778eb91da9d16f8e8578f6cc9aebb1c9",
+      "review": "Finding and supplied evidence retained; unconditional history-immutability and uncontrollable-timing claims require correction."
+    },
+    {
+      "path": "docs/dev/SERVICE.md",
+      "base_blob": "3b95ff86e0b56ba7fd46736eac5093db51de68e1",
+      "head_blob": "1e3b51a859028e7fdaacca874b359593f697c92d",
+      "review": "Service timeline documentation; corrects stale platform-constant description of the configurable re-review window."
+    },
+    {
+      "path": "docs/specs/03-domain-model.md",
+      "base_blob": "e525b26b899f130e2f415cde60c6e58c29db27d7",
+      "head_blob": "596cc2dbe1b236f3ed34f8537ae7be9d42f8d76e",
+      "review": "As-built note only; DOM-017 completion-time immutable dispute window remains unchanged."
+    },
+    {
+      "path": "docs/specs/04-functional-requirements.md",
+      "base_blob": "e822492a0509e4836a4f86140afe65ec41f6cdfd",
+      "head_blob": "25a835e46a7c01a704a54b2c2f5de08e473a8865",
+      "review": "FR-076/078 as-built descriptions identify the opening policy; durations, default questions and role rules remain unchanged."
+    },
+    {
+      "path": "docs/specs/10-governance-operations.md",
+      "base_blob": "6b34bc0d7288a2f8b0902bb025e273fb043e0542",
+      "head_blob": "a883507fcc44d9cd02ca5bd244f1b27a1df9fc08",
+      "review": "Implementation note under existing GOV-001 and prospective dispute-timeline table; no new default or owner policy resolution."
+    },
+    {
+      "path": "internal/domain/closure.go",
+      "base_blob": "beff29f50cf91f0bf0f31fbfc8734b4a5731964f",
+      "head_blob": "ab6a67a09dc279733ed4b12d96e27b2f1bb13bd6",
+      "review": "One shared response/re-review deadline calculation; exact24-hour durations and inclusive re-review endpoint."
+    },
+    {
+      "path": "internal/repository/iface.go",
+      "base_blob": "3f0d969d2ddbfa268043a090fd76495acc1ee1ce",
+      "head_blob": "9bfbcc96dfa47513cf6298812465132ef8510ec5",
+      "review": "Adds tenant-scoped historical policy read contract with legacy defaults and not-found behavior."
+    },
+    {
+      "path": "internal/service/dispute_timelines_test.go",
+      "base_blob": null,
+      "head_blob": "d1aae1a107d406f749206f792997f811b3439fd2",
+      "review": "Three supplied policy-change regressions; shortening, lengthening, later disputes, scheduled dates and exact response deadline."
+    },
+    {
+      "path": "internal/service/disputes_deadlines.go",
+      "base_blob": "1e092191b11dd2e65f8a4ef1551d5cf1535f7bef",
+      "head_blob": "99dc346e45fdc1726fbd5781d6b99ab4226e3451",
+      "review": "Shared lookup/view/reminder behavior; fail closed for missing history; retained equal/backdated timestamp limitation."
+    },
+    {
+      "path": "internal/service/disputes_decide.go",
+      "base_blob": "e0cc7979f47c3735b6c6cfb186b086ca5a8a4ea4",
+      "head_blob": "1c090c88067a4b0c5ed005efbb7d7f30a0a38730",
+      "review": "Response gate and view use historical timelines; existing current authorization, independence, waiver and posting logic retained."
+    },
+    {
+      "path": "internal/service/disputes_response.go",
+      "base_blob": "cc9a97a62adc016f674c4683c3b1d218760fc196",
+      "head_blob": "3b3fdfc59d529f5fb6389429d88c5820740f5ae8",
+      "review": "Re-review eligibility uses shared historical window; party, lifecycle, uniqueness and reason checks retained."
+    },
+    {
+      "path": "internal/store/policy_in_force_test.go",
+      "base_blob": null,
+      "head_blob": "c36f4d4f8185915b67b3dc7109f47ff323d8fa8d",
+      "review": "Legacy JSON-default compatibility and parity with GetNetwork at the same instant."
+    },
+    {
+      "path": "internal/store/sqlite_network.go",
+      "base_blob": "eb14d1f778c40c012d6f8de3226786ef48422c37",
+      "head_blob": "06264e868dc23b36361dbc3f3b452644149324c6",
+      "review": "Network-scoped effective_at<=instant query, greatest version wins, same defaults as GetNetwork."
+    },
+    {
+      "path": "internal/storetest/storetest.go",
+      "base_blob": "4cb3c4a7b8c3f2688e5356bdc0d71788bd6b1547",
+      "head_blob": "9364422e1f6f3306a312dd3296e783bf0021098b",
+      "review": "Repository contracts cover scheduled/cancelled versions, equal-date version order, not-found and tenant separation."
+    },
+    {
+      "path": "internal/web/dispute_timelines_test.go",
+      "base_blob": null,
+      "head_blob": "17774ef689cb648283d5beae79549124a488575b",
+      "review": "Supplied browser-handler regression reproduces literal baseline failure and candidate success."
+    },
+    {
+      "path": "internal/web/h_dispute_review.go",
+      "base_blob": "85c9824a1d418c1806623dc4927805d41e627fa1",
+      "head_blob": "61ee70117075484c5d3d97ee39b8ce5da95226ff",
+      "review": "Uses service re-review deadline and inclusive comparison; existing party/activity/reviewer conditions retained."
+    }
+  ],
+  "readiness": "Useful partial remediation; ordinary supplied regressions and existing guards pass. Correct unconditional immutable-history claims, preserve same-ms and clock-rollback residual as open, then require root review/current-head CI and integration qualification. Not approved here as complete AUD4-F03 closure.",
+  "owner_policy_assessment": "Consistent with existing prospective dispute-timeline rule; no new durations, notice classification, ledger semantics, role permission or owner decision is introduced. DEC-012/default counsel questions and A3-F02/DEC-014 remain unresolved. A technical timestamp-history design remains necessary for full immutability; this review does not invent or approve a migration.",
+  "findings": [
+    {
+      "id": "PR87-TIMESTAMP-HISTORY",
+      "severity": "Medium retained residual / required documentation correction",
+      "locations": [
+        "internal/store/sqlite_network.go:71",
+        "internal/service/disputes_deadlines.go:20",
+        "docs/audit/consolidation-completion-2026-11/AUD4-F03.md:24",
+        "docs/audit/consolidation-completion-2026-11/AUD4-F03.md:26"
+      ],
+      "status": "independently reproduced on candidate production source",
+      "mechanism": "The greatest version with effective_at<=OpenedAt can be a policy appended after the dispute when the two operations share a millisecond or host wall time rolls backward. Append-only history does not freeze the selected row.",
+      "impact": "The existing test then shows moved deadline, premature overdue reminder, response/waiver bypass and stripped re-review window.",
+      "classification": "A remaining portion of the original current-policy bug, not evidence of a newly introduced ledger or authorization regression.",
+      "recommendation": "Qualify the source/audit immutability claim, explicitly retain both timestamp conditions as unresolved, and do not describe AUD4-F03 as completely fixed. Any later durable-version/write-order repair requires its own design, tests and review."
+    }
+  ],
+  "test_runs": [
+    {
+      "name": "PR87-FIXED-REGRESSIONS",
+      "snapshot": "pr87-fixed",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^(TestDisputeTimelinesFixedAtOpen|TestDisputeTimelineChangesApplyToLaterDisputes|TestScheduledDisputeTimelineChangeWaitsForItsDate|TestDisputePageReReviewDeadlineFixedAtOpen|TestPolicyInForceAtReadsLegacyVersionsWithDefaults)$",
+        "./internal/service",
+        "./internal/store",
+        "./internal/web"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:18:08.003431+00:00",
+      "finished_at": "2026-11-18T09:18:31.362656+00:00",
+      "elapsed_seconds": 23.359,
+      "exit_code": 0,
+      "log": "PR87-FIXED-REGRESSIONS.log",
+      "package_terminal_results": [
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t3.235s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t1.369s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t1.737s"
+      ],
+      "top_level_passes": [
+        "TestDisputeTimelinesFixedAtOpen",
+        "TestDisputeTimelineChangesApplyToLaterDisputes",
+        "TestScheduledDisputeTimelineChangeWaitsForItsDate",
+        "TestPolicyInForceAtReadsLegacyVersionsWithDefaults",
+        "TestDisputePageReReviewDeadlineFixedAtOpen"
+      ],
+      "top_level_failures": []
+    },
+    {
+      "name": "PR87-FIXED-POLICY-CONTRACT",
+      "snapshot": "pr87-fixed",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^TestRepositoryContract(SQLite|Wrapped)$/PolicyInForceAt$",
+        "./internal/store"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:18:31.363102+00:00",
+      "finished_at": "2026-11-18T09:18:33.536242+00:00",
+      "elapsed_seconds": 2.173,
+      "exit_code": 0,
+      "log": "PR87-FIXED-POLICY-CONTRACT.log",
+      "package_terminal_results": [
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t1.760s"
+      ],
+      "top_level_passes": [
+        "TestRepositoryContractSQLite",
+        "TestRepositoryContractWrapped"
+      ],
+      "top_level_failures": []
+    },
+    {
+      "name": "PR87-BASELINE-WEB",
+      "snapshot": "pr87-baseline-web",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^TestDisputePageReReviewDeadlineFixedAtOpen$",
+        "./internal/web"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:18:33.536603+00:00",
+      "finished_at": "2026-11-18T09:18:40.486880+00:00",
+      "elapsed_seconds": 6.95,
+      "exit_code": 1,
+      "log": "PR87-BASELINE-WEB.log",
+      "package_terminal_results": [
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/web\t0.717s"
+      ],
+      "top_level_passes": [],
+      "top_level_failures": [
+        "TestDisputePageReReviewDeadlineFixedAtOpen"
+      ]
+    },
+    {
+      "name": "PR87-CURRENT-POLICY-CONTROL",
+      "snapshot": "pr87-current-policy-control",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^(TestDisputeTimelinesFixedAtOpen|TestDisputeTimelineChangesApplyToLaterDisputes|TestScheduledDisputeTimelineChangeWaitsForItsDate)$",
+        "./internal/service"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:18:40.487214+00:00",
+      "finished_at": "2026-11-18T09:18:52.311047+00:00",
+      "elapsed_seconds": 11.824,
+      "exit_code": 1,
+      "log": "PR87-CURRENT-POLICY-CONTROL.log",
+      "package_terminal_results": [
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t2.179s"
+      ],
+      "top_level_passes": [],
+      "top_level_failures": [
+        "TestDisputeTimelinesFixedAtOpen",
+        "TestDisputeTimelineChangesApplyToLaterDisputes",
+        "TestScheduledDisputeTimelineChangeWaitsForItsDate"
+      ]
+    },
+    {
+      "name": "PR87-SAME-MS",
+      "snapshot": "pr87-same-ms",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^TestDisputeTimelinesFixedAtOpen$",
+        "./internal/service"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:20:58.736311+00:00",
+      "finished_at": "2026-11-18T09:21:10.000048+00:00",
+      "elapsed_seconds": 11.264,
+      "exit_code": 1,
+      "log": "PR87-SAME-MS.log",
+      "package_terminal_results": [
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t0.666s"
+      ],
+      "top_level_passes": [],
+      "top_level_failures": [
+        "TestDisputeTimelinesFixedAtOpen"
+      ]
+    },
+    {
+      "name": "PR87-CLOCK-ROLLBACK",
+      "snapshot": "pr87-clock-rollback",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^TestDisputeTimelinesFixedAtOpen$",
+        "./internal/service"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:21:10.000817+00:00",
+      "finished_at": "2026-11-18T09:21:20.860087+00:00",
+      "elapsed_seconds": 10.859,
+      "exit_code": 1,
+      "log": "PR87-CLOCK-ROLLBACK.log",
+      "package_terminal_results": [
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t0.648s"
+      ],
+      "top_level_passes": [],
+      "top_level_failures": [
+        "TestDisputeTimelinesFixedAtOpen"
+      ]
+    },
+    {
+      "name": "PR87-EXISTING-GUARDS",
+      "snapshot": "pr87-fixed",
+      "command": [
+        "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=1",
+        "-p",
+        "1",
+        "-timeout=10m",
+        "-v",
+        "-run",
+        "^(TestDisputeDecisionAuthorization|TestDisputeVisibility|TestRespondToDispute|TestReReviewHappyPath|TestReReviewWindow|TestDisputeDeadlinesAcrossDSTAndYearBoundary)$",
+        "./internal/service"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "CGO_ENABLED": "1",
+        "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+        "GOGC": "50",
+        "GOMEMLIMIT": "512MiB"
+      },
+      "started_at": "2026-11-18T09:21:20.860720+00:00",
+      "finished_at": "2026-11-18T09:21:45.060561+00:00",
+      "elapsed_seconds": 24.2,
+      "exit_code": 0,
+      "log": "PR87-EXISTING-GUARDS.log",
+      "package_terminal_results": [
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t23.417s"
+      ],
+      "top_level_passes": [
+        "TestDisputeDeadlinesAcrossDSTAndYearBoundary",
+        "TestDisputeDecisionAuthorization",
+        "TestDisputeVisibility",
+        "TestRespondToDispute",
+        "TestReReviewHappyPath",
+        "TestReReviewWindow"
+      ],
+      "top_level_failures": []
+    }
+  ],
+  "source_integrity": {
+    "head": "1a3ef0fad836067b71857d961659459d976e7e15",
+    "tree": "1fc439e5a9a1bb90553d59952d02d117a4858871",
+    "fixed_snapshot": "/workspace/scratch/9ceb45b04668/audit-b/pr87-fixed",
+    "checked_tracked_blobs": 979,
+    "mismatches": [],
+    "scope": "Post-test candidate snapshot content compared to every tracked Git blob; no candidate production/test file changed."
+  },
+  "source_records": [
+    {
+      "path": "PR87-BASELINE-WEB.json",
+      "sha256": "982949a2c9277d2a94d4ada451dfae146f0a40bd68e3373a6221a1bc62e51a95",
+      "bytes": 750
+    },
+    {
+      "path": "PR87-BASELINE-WEB.log",
+      "sha256": "7b9f6c1b54ed07b46a27d3c77562fadc67d487b795aa9b02c2c6ed220f4e9373",
+      "bytes": 6454
+    },
+    {
+      "path": "PR87-CLOCK-ROLLBACK.diff",
+      "sha256": "46ffd89b03827ac154ae4b2d065686e520c16ff763d711733fad155c9513b3f4",
+      "bytes": 1283
+    },
+    {
+      "path": "PR87-CLOCK-ROLLBACK.json",
+      "sha256": "1d37a0207d995b9fa531d41a1771157a0926ef2fe699807328c6e7e2d67ec194",
+      "bytes": 751
+    },
+    {
+      "path": "PR87-CLOCK-ROLLBACK.log",
+      "sha256": "e667ab4346ca2b59a56ccdc4c394b56e10afe15c09b2e999f2d98fb846df1b5d",
+      "bytes": 1032
+    },
+    {
+      "path": "PR87-CURRENT-POLICY-CONTROL.diff",
+      "sha256": "b86f413d688e9622120d3ac3c0650a8869f1933293c503a61c29546143466051",
+      "bytes": 1092
+    },
+    {
+      "path": "PR87-CURRENT-POLICY-CONTROL.json",
+      "sha256": "43e6d2dff366e75aa86b6db82705897efc087982234c8f9d9155102fcc052a41",
+      "bytes": 874
+    },
+    {
+      "path": "PR87-CURRENT-POLICY-CONTROL.log",
+      "sha256": "0f9c0c787946e71b0953492f5ec34dbaabcf84bd05d4d29582b4f24c95739681",
+      "bytes": 2108
+    },
+    {
+      "path": "PR87-DIFF.patch.txt",
+      "sha256": "d8e0acc8bf6bae71f57f5088803963558b89a190b90b9da6131c451896df806d",
+      "bytes": 80817
+    },
+    {
+      "path": "PR87-EXISTING-GUARDS.json",
+      "sha256": "cf92ef4c9dfb6a73d3facf19b9c9f03ad59e257051288d0dbbd54beb88c10b92",
+      "bytes": 874
+    },
+    {
+      "path": "PR87-EXISTING-GUARDS.log",
+      "sha256": "96df6bbdb6e7f8263e05fab4e35b9a5f90748ff82fc95792b7c267959bfe0a3c",
+      "bytes": 5977
+    },
+    {
+      "path": "PR87-FIXED-POLICY-CONTRACT.json",
+      "sha256": "e17b4471cf2789758ae8ad49e8edad556ab010f10559b3857f12e8e46c486612",
+      "bytes": 777
+    },
+    {
+      "path": "PR87-FIXED-POLICY-CONTRACT.log",
+      "sha256": "fb6f7c7080bb49fa7c90006764c69b61c982c33e270966f33485b6b2fa9bb29a",
+      "bytes": 485
+    },
+    {
+      "path": "PR87-FIXED-REGRESSIONS.json",
+      "sha256": "a1ecf809226ed2e34870c4306ab2149be00c70bff5e6be5ba6e048c3991d86df",
+      "bytes": 987
+    },
+    {
+      "path": "PR87-FIXED-REGRESSIONS.log",
+      "sha256": "a8e6b5bf3ea78967b206281b63e22de229406d5d8477388a281a5667a566743d",
+      "bytes": 781
+    },
+    {
+      "path": "PR87-SAME-MS.diff",
+      "sha256": "4976e84b7b71b0094951b5bb64a1d3d2a453d2376233e8c687fffe78bd21daba",
+      "bytes": 852
+    },
+    {
+      "path": "PR87-SAME-MS.json",
+      "sha256": "5acd3c423f000d0db9c831e7a76363aad8d856065a193a3556f881b2f549bf18",
+      "bytes": 730
+    },
+    {
+      "path": "PR87-SAME-MS.log",
+      "sha256": "c10df52671468f6ce69a8cbde7b4b28bc0797065196e9542c569621cd95bb5b8",
+      "bytes": 1032
+    },
+    {
+      "path": "PR87-SNAPSHOT-PROVENANCE.json",
+      "sha256": "cc7128b9fdb5024f4d7a75e9a5913ddc813b04f4149d668f616eeb480362a701",
+      "bytes": 1626
+    },
+    {
+      "path": "PR87-SOURCE-INTEGRITY.json",
+      "sha256": "8d8d4b64309411ffa568d40c9342d5fa74edd64cfcdb4ff6dde73a86d0ceaa91",
+      "bytes": 367
+    },
+    {
+      "path": "PR87-TIMESTAMP-VARIANT-PROVENANCE.json",
+      "sha256": "8f8718c75e339051fcd0bee0dc05342e47a0a0ff7cf0fa2db6629e88e2a7add7",
+      "bytes": 866
+    }
+  ],
+  "verification_limits": [
+    "No aggregate suite or remote CI/status query performed by this reviewer.",
+    "Literal baseline fail-before is established for the supplied web case. Service fail-before uses an explicit current-policy selection mutation retaining new DTO/interface seams; it is not mislabeled a literal baseline build.",
+    "Timestamp controls change only clock movement in the supplied existing regression. They demonstrate deterministic condition-specific behavior, not measured production exploit frequency.",
+    "No source fix, migration, policy decision, remote mutation or tracked-repository edit performed."
+  ]
+}

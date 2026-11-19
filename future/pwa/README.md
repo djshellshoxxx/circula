@@ -7,7 +7,8 @@ The owner authorized independent future-feature development on 2026-11-16, while
 ## Isolation contract
 
 - Branch: `future/fux-101-pwa-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
-- Only `future/pwa/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
+- The 2026-11-19 qualification candidate preserves the original PWA source at `a6326b8725fe6d7270997b4a284cbbc129022dd1` and merges the separately reviewed core candidate `244e1356201e6477eab4694d82947f2058f3b0d8`. Core qualification remains independent and pending its own gates.
+- Module changes are confined to `future/pwa/` and the dedicated `.github/workflows/future-pwa.yml` qualification workflow. The module adds no application imports, routes, migrations, root dependencies, feature flags or runtime configuration. The workflow runs the existing synthetic demo and acceptance suites; it does not enable the feature in Circula.
 - This nested Go module has no third-party Go dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
 - Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
@@ -40,9 +41,11 @@ The nested Go module remains dependency-free; browser dependencies are npm-pinne
 
 Run the synthetic harness with `go run ./cmd/demo -port 18761`, then open `http://127.0.0.1:18761/app/`. With Playwright available: `CHROMIUM=/path/to/chrome PWA_TEST_ORIGIN=http://127.0.0.1:18761 npm run test:browser` (default `/usr/bin/chromium`). The A/B demo cookies are fixtures, never production authentication.
 
+The dedicated workflow installs the Chromium revision selected by the locked Playwright package, checks the recorded public-bundle hashes, and runs the unchanged browser suite against a compiled demo bound to `127.0.0.1`. It records the actual toolchain, candidate and checked-out tree, uses bounded readiness and browser execution, terminates the demo on exit, and preserves diagnostic logs. Provider results for this refreshed candidate are **pending**, not an extension of the historical pass below. See `VALIDATION.md` for the exact scope and browser-sandbox limitation.
+
 ## Remaining acceptance gates
 
-See `AUDIT.md` (requirement checklist) and `COMPLETION.md`. Chromium-only browser acceptance passes. Still open: Android/iOS installation and resume, real BFCache restore (Chromium does not BFCache no-store pages, so it was not exercised), Safari/Firefox, OS task-switcher snapshots, manual screen-reader and real zoom qualification, WCAG 2.2 AA automation, an independent third-party audit, and production adapter/tenant/CSRF/idempotency/ledger regression. No persistence is implemented by design (the spec allows none beyond optional presentation preferences, which are intentionally omitted). **The feature is not complete or release-qualified.**
+See `AUDIT.md` (requirement checklist) and `COMPLETION.md`. The original source records a Chromium-only acceptance pass on 2026-11-17; the refreshed candidate awaits provider qualification. Still open: Android/iOS installation and resume, real BFCache restore (Chromium did not BFCache these no-store pages in the recorded run), Safari/Firefox, OS task-switcher snapshots, manual screen-reader and real zoom qualification, WCAG 2.2 AA automation, an independent third-party audit, and production adapter/tenant/CSRF/idempotency/ledger regression. No persistence is implemented by design (the spec allows none beyond optional presentation preferences, which are intentionally omitted). **The feature is not complete or release-qualified.**
 
 The future integration contract and actual core seams are documented in `INTEGRATION.md` and `UPSTREAM-RESEARCH.md`. No root application behavior or core release status changed.
 

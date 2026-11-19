@@ -100,9 +100,13 @@ func TestUpgradeFromEverySchemaVersion(t *testing.T) {
 	}
 }
 
-// seedV1Ledger inserts one completed 25.00 trade using only schema-1 columns.
+// seedV1Ledger inserts one completed 25.00 trade in any supported schema.
 func seedV1Ledger(t *testing.T, db *sql.DB) {
 	t.Helper()
+	var hasDeadline int
+	if err := db.QueryRow(`SELECT count(*) FROM pragma_table_info('transactions') WHERE name = 'dispute_deadline_at'`).Scan(&hasDeadline); err != nil {
+		t.Fatal(err)
+	}
 	for _, q := range []string{
 		`INSERT INTO persons(id,login,password_hash,created_at) VALUES ('p1','p1','h',1),('p2','p2','h',1)`,
 		`INSERT INTO networks(id,name,slug,status,ledger_seq,created_at) VALUES ('n1','N','n','active',1,1)`,
@@ -116,6 +120,9 @@ func seedV1Ledger(t *testing.T, db *sql.DB) {
 		`INSERT INTO entries(id,network_id,tx_id,account_id,amount,ledger_seq,posted_at) VALUES ('e1','n1','t1','a1',-2500,1,2),('e2','n1','t1','a2',2500,1,2)`,
 		`UPDATE transactions SET status='completed', completed_at=2, ledger_seq=1, accepted_by='m2' WHERE id='t1'`,
 	} {
+		if hasDeadline != 0 && strings.HasPrefix(q, "UPDATE transactions SET status='completed'") {
+			q = strings.Replace(q, "SET status=", "SET dispute_deadline_at=2592000002, dispute_policy_version=1, status=", 1)
+		}
 		if _, err := db.Exec(q); err != nil {
 			t.Fatalf("seed: %v\n%s", err, q)
 		}

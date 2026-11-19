@@ -1,0 +1,12 @@
+{
+  "head": "a8a677e4bd27eee64cc27ee71d693d2f5b8e1f92",
+  "tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+  "commands": [
+    "python3 -m unittest discover -s scripts -p 'test_read_export.py'",
+    "python3 -m unittest discover -s scripts -p 'test_run_qa001.py'",
+    "python3 -m unittest discover -s scripts -p 'test_check_thresholds.py'"
+  ],
+  "exit_code": 0,
+  "output": "....\n----------------------------------------------------------------------\nRan 10 tests in 2.147s\n\nOK\n....\n----------------------------------------------------------------------\nRan 4 tests in 0.130s\n\nOK\n........\n----------------------------------------------------------------------\nRan 8 tests in 0.241s\n\nOK\n",
+  "scope": "Terminal output after initial yield; initial output included source reads and progress dots. The commands ran sequentially with success required before each following command."
+}

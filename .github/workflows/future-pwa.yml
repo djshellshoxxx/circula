@@ -1,0 +1,140 @@
+name: future PWA module
+
+# Qualify the existing synthetic browser suite without enabling a core feature.
+# Proposal branches run through pull_request; the preserved future branch also
+# runs after updates. Core PR and release qualification remain in ci.yml.
+on:
+  push:
+    branches: [future/fux-101-pwa-20261116]
+    paths:
+      - "future/pwa/**"
+      - ".github/workflows/future-pwa.yml"
+  pull_request:
+    paths:
+      - "future/pwa/**"
+      - ".github/workflows/future-pwa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-pwa-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  module:
+    name: isolated PWA browser acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: "true"
+      GOTOOLCHAIN: local
+      GOMAXPROCS: "2"
+      QUALIFICATION_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/pwa
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod # Match the pinned core toolchain.
+          cache: false # This nested module has no third-party Go dependencies.
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: "24.22.3"
+      - name: Record toolchain and check isolated HOLD boundary
+        run: |
+          mkdir -p "$RUNNER_TEMP/circula-pwa-qualification"
+          {
+            printf 'Provider candidate: %s\n' "$QUALIFICATION_HEAD"
+            printf 'Checked-out commit and tree:\n'
+            git rev-parse HEAD 'HEAD^{tree}'
+            go version
+            node --version
+            npm --version
+          } | tee "$RUNNER_TEMP/circula-pwa-qualification/provenance.log"
+          python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          manifest = json.loads(Path("feature.json").read_text())
+          if manifest.get("enabled") is not False or manifest.get("integration") != "HOLD":
+              raise SystemExit("This workflow qualifies an isolated, disabled HOLD module only")
+          modules = subprocess.check_output(["go", "list", "-m", "all"], text=True).splitlines()
+          if modules != ["github.com/djshellshoxxx/circula/future/pwa"]:
+              raise SystemExit("PWA isolation requires its standard-library-only Go module boundary")
+          PY
+      - name: Install locked browser and build dependencies
+        # Keep optional platform packages: esbuild uses their pinned binaries.
+        # Dependency lifecycle scripts are not needed for this build.
+        run: npm ci --ignore-scripts --include=dev --include=optional 2>&1 | tee "$RUNNER_TEMP/circula-pwa-qualification/npm-ci.log"
+      - name: Verify deterministic public bundle
+        run: |
+          npm run build 2>&1 | tee "$RUNNER_TEMP/circula-pwa-qualification/build.log"
+          sha256sum -c BUILD-SHA256SUMS | tee "$RUNNER_TEMP/circula-pwa-qualification/build-hashes.log"
+          git diff --exit-code -- public BUILD-SHA256SUMS
+          test -z "$(git status --porcelain --untracked-files=all -- public)"
+      - name: Existing Node regression tests
+        run: npm test 2>&1 | tee "$RUNNER_TEMP/circula-pwa-qualification/node-tests.log"
+      - name: Go format, vet and race tests
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+          go vet -mod=readonly ./... 2>&1 | tee "$RUNNER_TEMP/circula-pwa-qualification/go-vet.log"
+          go test -mod=readonly -race -p=1 -count=1 -cover -timeout=3m ./... 2>&1 | tee "$RUNNER_TEMP/circula-pwa-qualification/go-tests.log"
+      - name: Install Chromium matching the pinned Playwright package
+        run: npx --no-install playwright install --with-deps chromium 2>&1 | tee "$RUNNER_TEMP/circula-pwa-qualification/browser-install.log"
+      - name: Existing Chromium acceptance suite against the synthetic demo
+        timeout-minutes: 8
+        run: |
+          log_dir="$RUNNER_TEMP/circula-pwa-qualification"
+          export PWA_TEST_ORIGIN=http://127.0.0.1:18761
+          CHROMIUM="$(node -p "require('playwright').chromium.executablePath()")"
+          export CHROMIUM
+          test -x "$CHROMIUM"
+          "$CHROMIUM" --version | tee "$log_dir/chromium-version.log"
+          go build -mod=readonly -p=1 -o "$RUNNER_TEMP/circula-pwa-demo" ./cmd/demo
+          "$RUNNER_TEMP/circula-pwa-demo" -port 18761 >"$log_dir/demo.log" 2>&1 &
+          demo_pid=$!
+          cleanup() {
+            kill "$demo_pid" 2>/dev/null || true
+            wait "$demo_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          ready=0
+          for attempt in $(seq 1 60); do
+            if ! kill -0 "$demo_pid" 2>/dev/null; then
+              cat "$log_dir/demo.log"
+              exit 1
+            fi
+            if curl --fail --silent --show-error --connect-timeout 1 --max-time 1 "$PWA_TEST_ORIGIN/app/install" >/dev/null 2>&1; then
+              ready=1
+              break
+            fi
+            sleep 0.5
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat "$log_dir/demo.log"
+            printf 'Synthetic PWA demo did not become ready\n' >&2
+            exit 1
+          fi
+          # Keep the reviewed harness and its trusted loopback fixtures unchanged.
+          # This is browser acceptance, not OS browser-sandbox qualification.
+          timeout --kill-after=10s 5m npm run test:browser 2>&1 | tee "$log_dir/browser-tests.log"
+      - name: Preserve qualification logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: future-pwa-qualification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/circula-pwa-qualification/*.log
+          if-no-files-found: warn
+          retention-days: 7

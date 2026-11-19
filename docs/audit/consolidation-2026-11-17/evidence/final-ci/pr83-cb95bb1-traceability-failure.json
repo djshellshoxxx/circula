@@ -1,0 +1,171 @@
+{
+  "observed_at": "2026-11-18T10:03:03.381Z",
+  "repository": "djshellshoxxx/circula",
+  "pr": 83,
+  "run": 44265609316,
+  "source_head": "cb95bb1894cd3b178f99ff3c54e0b04651d68cff",
+  "job": {
+    "id": 134669246743,
+    "run_id": 44265609316,
+    "workflow_name": "ci",
+    "head_branch": "claude/aud4-f02-reviewer-reset-policy",
+    "run_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44265609316",
+    "run_attempt": 1,
+    "node_id": "CR_kwDOVRni9s8AAAAfWumhFw",
+    "head_sha": "cb95bb1894cd3b178f99ff3c54e0b04651d68cff",
+    "url": "https://api.github.com/repos/djshellshoxxx/circula/actions/jobs/134669246743",
+    "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44265609316/job/134669246743",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-11-18T08:16:44Z",
+    "started_at": "2026-11-18T09:07:39Z",
+    "completed_at": "2026-11-18T09:08:18Z",
+    "name": "vet, gofmt, golangci-lint, govulncheck",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-18T09:07:39Z",
+        "completed_at": "2026-11-18T09:07:42Z"
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-18T09:07:42Z",
+        "completed_at": "2026-11-18T09:07:47Z"
+      },
+      {
+        "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-18T09:07:47Z",
+        "completed_at": "2026-11-18T09:07:50Z"
+      },
+      {
+        "name": "Check workflow action pins",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-18T09:07:50Z",
+        "completed_at": "2026-11-18T09:07:50Z"
+      },
+      {
+        "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-18T09:07:50Z",
+        "completed_at": "2026-11-18T09:07:50Z"
+      },
+      {
+        "name": "Dependency licences against the approved list (ARC-024)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-18T09:07:50Z",
+        "completed_at": "2026-11-18T09:07:53Z"
+      },
+      {
+        "name": "Secret scan (ARC-023, SEC-027)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-18T09:07:53Z",
+        "completed_at": "2026-11-18T09:08:06Z"
+      },
+      {
+        "name": "gofmt",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-18T09:08:06Z",
+        "completed_at": "2026-11-18T09:08:06Z"
+      },
+      {
+        "name": "go vet",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-18T09:08:06Z",
+        "completed_at": "2026-11-18T09:08:16Z"
+      },
+      {
+        "name": "Requirement traceability is current",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 10,
+        "started_at": "2026-11-18T09:08:16Z",
+        "completed_at": "2026-11-18T09:08:16Z"
+      },
+      {
+        "name": "Export reader and property-runner tests",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 11,
+        "started_at": "2026-11-18T09:08:16Z",
+        "completed_at": "2026-11-18T09:08:16Z"
+      },
+      {
+        "name": "golangci-lint",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 12,
+        "started_at": "2026-11-18T09:08:16Z",
+        "completed_at": "2026-11-18T09:08:16Z"
+      },
+      {
+        "name": "govulncheck",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 13,
+        "started_at": "2026-11-18T09:08:16Z",
+        "completed_at": "2026-11-18T09:08:16Z"
+      },
+      {
+        "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 25,
+        "started_at": "2026-11-18T09:08:16Z",
+        "completed_at": "2026-11-18T09:08:16Z"
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-11-18T09:08:16Z",
+        "completed_at": "2026-11-18T09:08:17Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-11-18T09:08:17Z",
+        "completed_at": "2026-11-18T09:08:17Z"
+      }
+    ],
+    "check_run_url": "https://api.github.com/repos/djshellshoxxx/circula/check-runs/134669246743",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "runner_id": 1000060825,
+    "runner_name": "GitHub Actions 1000060825",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions"
+  },
+  "diagnostic": [
+    "2026-11-18T09:08:16.9553261Z traceability: docs/TRACEABILITY.md is out of date (first difference at line 146, expected \"| DOM-038 | P0 | Reviewer independence | partial | `internal/service/departure.go`...\"); run make traceability",
+    "2026-11-18T09:08:16.9574806Z make: *** [Makefile:69: traceability-check] Error 1",
+    "2026-11-18T09:08:16.9586253Z ##[error]Process completed with exit code 2."
+  ],
+  "finding": "The named lint job executed and failed the traceability freshness step. Later golangci-lint and govulncheck steps were skipped. The earlier 08:39 queued snapshot did not describe this later terminal result.",
+  "scope": "Narrow verification of PR78 CODE-AUDIT C7 historical CI attribution; no qualification or approval of PR83 policy changes.",
+  "full_log": "pr83-cb95bb1-traceability-failed.log"
+}

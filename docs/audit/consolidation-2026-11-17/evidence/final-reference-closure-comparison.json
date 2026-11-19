@@ -1,0 +1,181 @@
+{
+  "main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+  "snapshot_source": "Fresh API PR heads through10:17:12UTC; live source refs10:20:35UTC; compared to retained final/historical/closure evidence",
+  "rows": [
+    {
+      "number": 1,
+      "head": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970260402,
+      "preservation_evidence": "Three unique brainstorming documents preserved in docs/archive/specs-historical/pr1/; short competing specifications and early wiki superseded by canonical docs/specs/ and current wiki. No application code in the PR.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 2,
+      "head": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970261449,
+      "preservation_evidence": "Unique lifecycle, network-policy, notification, legal and standards documents preserved in docs/archive/specs-historical/pr2/; prior-art and regulatory notes preserved under docs/research/. Remaining draft requirements superseded; policy conflicts and import proposal indexed without adoption. No application code.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 13,
+      "head": "3d0080a9c43680f69f81217af3b42374e7160bf8",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970262356,
+      "preservation_evidence": "TestPendingCurrencyNamePolicyPatchChangesETag retained in internal/api/more_test.go, with only equivalent if/switch formatting. Security browser fixture retains password entries and newer independent-approver rejection/acceptance coverage. Unique CI diagnostic archived in docs/qa/evidence/ci-40103567118-dual-control.md.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 16,
+      "head": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970263163,
+      "preservation_evidence": "docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md preserves CI run IDs and historical qualification. HANDOFF.md and continuation prompt have stale prompt-only-main and ownership assumptions; current handoff supersedes them.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 20,
+      "head": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970264120,
+      "preservation_evidence": "Entire sole changed document archived in docs/handoffs/archive/2026-11-09-pr20-chatgpt-zero-codex-continuation-spec.md with historical status banner.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 29,
+      "head": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970265059,
+      "preservation_evidence": "All 15 specification Markdown files archived in docs/archive/specs-historical/pr29/. Conflicting IDs and decisions documented in archive index. tools/check_specs.py expects draft anchors and owner map, incompatible with canonical requirement headings; current traceability generator serves canonical schema.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 35,
+      "head": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970265862,
+      "preservation_evidence": "Acceptance and persistence regression files byte-identical to baseline main; current QA-001/007/010/026/028, refusal, export, reversal and log coverage present. Missing startup gate regression recovered by cb79676c and strengthened at call site by 37958e97. Historical CI qualification archived.",
+      "explicit_replacement_paths": []
+    },
+    {
+      "number": 42,
+      "head": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "state": "closed",
+      "merged": false,
+      "all_recorded_heads_match": true,
+      "source_branch_matches": true,
+      "closure_comment_id": 6970266980,
+      "preservation_evidence": "Only unique file relative to PR35 is docs/security/CHATGPT_FREE_AUDIT_HANDOFF.md. Its entire body archived at docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md. Current status recorded in docs/security/security-review.md; #69 adds service-level reversal/MFA regressions. A3-F02/DEC-014 and privacy-policy decisions remain open.",
+      "explicit_replacement_paths": []
+    }
+  ],
+  "closure_targets": [
+    {
+      "pr": 1,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/archive/specs-historical/pr1",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/archive/specs-historical/pr1",
+      "exists": true
+    },
+    {
+      "pr": 1,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/archive/specs-historical/README.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/archive/specs-historical/README.md",
+      "exists": true
+    },
+    {
+      "pr": 2,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/archive/specs-historical/pr2",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/archive/specs-historical/pr2",
+      "exists": true
+    },
+    {
+      "pr": 2,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/research",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/research",
+      "exists": true
+    },
+    {
+      "pr": 2,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/archive/specs-historical/README.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/archive/specs-historical/README.md",
+      "exists": true
+    },
+    {
+      "pr": 13,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/internal/api/more_test.go",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:internal/api/more_test.go",
+      "exists": true
+    },
+    {
+      "pr": 13,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/qa/evidence/ci-40103567118-dual-control.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/qa/evidence/ci-40103567118-dual-control.md",
+      "exists": true
+    },
+    {
+      "pr": 16,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+      "exists": true
+    },
+    {
+      "pr": 20,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/handoffs/archive/2026-11-09-pr20-chatgpt-zero-codex-continuation-spec.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/handoffs/archive/2026-11-09-pr20-chatgpt-zero-codex-continuation-spec.md",
+      "exists": true
+    },
+    {
+      "pr": 29,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/archive/specs-historical/pr29",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/archive/specs-historical/pr29",
+      "exists": true
+    },
+    {
+      "pr": 29,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/archive/specs-historical/README.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/archive/specs-historical/README.md",
+      "exists": true
+    },
+    {
+      "pr": 35,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/plans/PR-CONSOLIDATION-2026-11-17.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/plans/PR-CONSOLIDATION-2026-11-17.md",
+      "exists": true
+    },
+    {
+      "pr": 42,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md",
+      "exists": true
+    },
+    {
+      "pr": 42,
+      "url": "https://github.com/djshellshoxxx/circula/blob/163fe1596bd7cfb8c2a22891629fc4459e6b639c/docs/security/security-review.md",
+      "git_target": "163fe1596bd7cfb8c2a22891629fc4459e6b639c:docs/security/security-review.md",
+      "exists": true
+    }
+  ],
+  "errors": []
+}

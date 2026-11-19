@@ -1,0 +1,17 @@
+=== RUN   TestLoginStraddlingPasswordChangeGetsNoSession
+=== RUN   TestLoginStraddlingPasswordChangeGetsNoSession/self-service_change
+    aud4_auth_test.go:41: a session issued for the superseded password survives (must_change=false)
+=== RUN   TestLoginStraddlingPasswordChangeGetsNoSession/administrator_reset
+    aud4_auth_test.go:41: a session issued for the superseded password survives (must_change=true)
+--- FAIL: TestLoginStraddlingPasswordChangeGetsNoSession (0.03s)
+    --- FAIL: TestLoginStraddlingPasswordChangeGetsNoSession/self-service_change (0.02s)
+    --- FAIL: TestLoginStraddlingPasswordChangeGetsNoSession/administrator_reset (0.01s)
+=== RUN   TestChangePasswordReplacesOnlyTheVerifiedHash
+    aud4_auth_test.go:69: a change verified against a superseded password was applied
+--- FAIL: TestChangePasswordReplacesOnlyTheVerifiedHash (0.01s)
+=== RUN   TestChangePasswordGuessesAreThrottled
+    aud4_auth_test.go:92: 30 current-password guesses were all evaluated
+--- FAIL: TestChangePasswordGuessesAreThrottled (0.02s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.073s
+FAIL

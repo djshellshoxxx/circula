@@ -11,10 +11,10 @@ file. `scripts/licenses.sh --check` (run in CI) fails when a licence is not in
 | `github.com/dustin/go-humanize` | v1.1.0 | MIT |
 | `github.com/google/uuid` | v1.6.0 | BSD-3-Clause |
 | `github.com/remyoudompheng/bigfft` | v0.0.0-20230129092748-24d4a6f8daec | BSD-3-Clause |
-| `golang.org/x/crypto` | v0.58.0 | BSD-3-Clause |
-| `golang.org/x/sys` | v0.49.0 | BSD-3-Clause |
-| `golang.org/x/text` | v0.43.0 | BSD-3-Clause |
-| `modernc.org/libc` | v1.79.0 | BSD-3-Clause |
+| `golang.org/x/crypto` | v0.59.0 | BSD-3-Clause |
+| `golang.org/x/sys` | v0.50.0 | BSD-3-Clause |
+| `golang.org/x/text` | v0.44.0 | BSD-3-Clause |
+| `modernc.org/libc` | v1.80.1 | BSD-3-Clause |
 | `modernc.org/mathutil` | v1.7.1 | BSD-3-Clause |
 | `modernc.org/memory` | v1.12.1 | BSD-3-Clause |
-| `modernc.org/sqlite` | v1.60.1 | BSD-3-Clause |
+| `modernc.org/sqlite` | v1.62.0 | BSD-3-Clause |

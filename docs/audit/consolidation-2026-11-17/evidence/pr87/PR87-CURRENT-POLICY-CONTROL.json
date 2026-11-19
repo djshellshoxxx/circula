@@ -1,0 +1,31 @@
+{
+  "name": "PR87-CURRENT-POLICY-CONTROL",
+  "snapshot": "pr87-current-policy-control",
+  "command": [
+    "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+    "test",
+    "-mod=readonly",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=10m",
+    "-v",
+    "-run",
+    "^(TestDisputeTimelinesFixedAtOpen|TestDisputeTimelineChangesApplyToLaterDisputes|TestScheduledDisputeTimelineChangeWaitsForItsDate)$",
+    "./internal/service"
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "CGO_ENABLED": "1",
+    "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB"
+  },
+  "started_at": "2026-11-18T09:18:40.487214+00:00",
+  "finished_at": "2026-11-18T09:18:52.311047+00:00",
+  "elapsed_seconds": 11.824,
+  "exit_code": 1,
+  "log": "PR87-CURRENT-POLICY-CONTROL.log"
+}
