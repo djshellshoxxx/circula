@@ -1,0 +1,9 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/37 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 37/37 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 40 (13/sec), new interesting: 0 (total: 37)
+fuzz: elapsed: 6s, execs: 67685 (22591/sec), new interesting: 2 (total: 39)
+fuzz: elapsed: 9s, execs: 92031 (8116/sec), new interesting: 13 (total: 50)
+fuzz: elapsed: 12s, execs: 95746 (1238/sec), new interesting: 16 (total: 53)
+fuzz: elapsed: 12s, execs: 100000 (44607/sec), new interesting: 17 (total: 54)
+PASS
+ok  	github.com/djshellshoxxx/circula/future/feed	12.125s

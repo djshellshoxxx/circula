@@ -26,9 +26,20 @@ use a keyset index without a temporary sort or table scan.
 
 Benchmarks exclude fixture creation. They measure database-backed page latency,
 Go allocations, and allocated bytes per 101-candidate batch, including deep seeks
-inside histories where every event has the same timestamp. The heap-bound test
-also records live Go heap before and after repeated page requests. These are
+inside histories where every event has the same timestamp. Full-page benchmarks
+include snapshot cursor decryption, authorization callbacks, and next-cursor
+encryption. The heap-bound test also records live Go heap and Linux process RSS
+before and after repeated page requests. These are
 local qualification measurements, not production service-level guarantees.
+
+Source network and member identifiers must be nonempty valid UTF-8 of at most
+256 bytes. The trusted adapter supplies the current owner/member reference.
+Source identity and creation time are immutable. A visibility or active-state
+change can be reversed by a later current snapshot; an explicit deletion leaves
+a permanent tombstone and cannot be reversed by `Upsert`, including when delete
+arrives before create. Source identifiers must never be recycled. The adapter
+must serialize authoritative current source updates; this store does not resolve
+conflicting stale snapshots or authenticate event publishers.
 
 `InitSchema` is explicit and module-local. Its tables are source-reference
 projections, not a replacement for Core's listing and announcement tables.

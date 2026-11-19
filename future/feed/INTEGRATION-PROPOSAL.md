@@ -26,6 +26,8 @@ These observations establish a structural comparison, not qualification of a mov
 | Module storage | Proposed `fnet204_sources` schema | Review additive Core migration, transaction ownership, backup/restore, tombstone retention, and connection settings separately |
 | Cursor keys | Existing deployment secret-management boundary | Persist strong keys, define key IDs/overlap/cadence, set a GCM issuance-volume limit, and confirm TTL; do not modify session credentials to do this |
 
+`SQLStore.Upsert` requires a nonempty `Source.Member`. The integration adapter must define an explicit mapping for any system-created source without a member; it must not invent a viewer or change Core authorization semantics.
+
 ## Authorization freshness
 
 The callback to `PageFromStore` must check current authoritative source data and the authenticated viewer's permissions. Cached `Visible`/`Active` flags are a query accelerator only. If source state changes after the database batch is read, the authorization check must still reject deleted, hidden, expired, superseded, suspended-owner, or unauthorized sources. A transaction-scoped adapter should provide a coherent request view. The standalone SQL store demonstrates reference durability and bounded retrieval; it is not that Core service adapter.

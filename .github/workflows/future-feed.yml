@@ -25,7 +25,7 @@ jobs:
   module:
     name: isolated feed validation
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       GOMAXPROCS: "2"
       GOTOOLCHAIN: local
@@ -81,7 +81,7 @@ jobs:
           go mod download
           go mod verify
           go vet -mod=readonly ./...
-          go test -mod=readonly -race -count=1 -timeout=8m -v ./...
+          go test -mod=readonly -race -count=1 -timeout=12m -v ./...
       - name: Large-history query and allocation benchmarks
         working-directory: future/feed/integration
         run: go test -mod=readonly -run '^$' -bench . -benchmem -benchtime=100x -count=1 -timeout=3m ./...
