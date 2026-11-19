@@ -100,7 +100,15 @@ func TestEveryRouteHasHelpLinkInFooter(t *testing.T) {
 	if len(routes) < 40 {
 		t.Fatalf("found only %d GET routes", len(routes))
 	}
-	fill := strings.NewReplacer("{slug}", w.net.Slug, "{$}", "", "{token}", "no-such-token")
+	anon := w.browser(t)
+	member := w.browser(t)
+	member.login("alice@example.org")
+	_, _, sessionID := browserSession(t, member)
+	admin := w.browser(t)
+	admin.login("admin@example.org")
+	viewers := map[string]*browser{"anonymous": anon, "member": member, "admin": admin}
+
+	fill := strings.NewReplacer("{slug}", w.net.Slug, "{$}", "", "{token}", "no-such-token", "{session}", sessionID)
 	path := func(r string) string {
 		switch {
 		case strings.HasPrefix(r, "/n/{slug}/trades/{id}"):
@@ -112,13 +120,6 @@ func TestEveryRouteHasHelpLinkInFooter(t *testing.T) {
 		}
 		return fill.Replace(r)
 	}
-
-	anon := w.browser(t)
-	member := w.browser(t)
-	member.login("alice@example.org")
-	admin := w.browser(t)
-	admin.login("admin@example.org")
-	viewers := map[string]*browser{"anonymous": anon, "member": member, "admin": admin}
 
 	sorted := make([]string, 0, len(routes))
 	for r := range routes {
