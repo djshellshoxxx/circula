@@ -10,8 +10,9 @@ Audit date: **2026-11-18 Pacific / 2026-11-19 UTC**. This report records observe
 | Main at this report checkpoint | Same starting SHA; no new main merge has yet been claimed |
 | First published combined core | [`354ab550166de10d1727a9990d8e08dc981545b8`](https://github.com/djshellshoxxx/circula/commit/354ab550166de10d1727a9990d8e08dc981545b8), exact reviewed tree `621ada23969d9fdb3abb17ac6179de8b2b48551d` |
 | Published core with ledger/recovery/policy repairs | [`9b1fc6a0bb4ae4ad95c4f505929ce8088f10bf2c`](https://github.com/djshellshoxxx/circula/commit/9b1fc6a0bb4ae4ad95c4f505929ce8088f10bf2c), exact reviewed tree `6694ae050b395f94b5be4e43aba1a906d0d52017` |
+| Core with reviewed session footer fixture | [`244e1356201e6477eab4694d82947f2058f3b0d8`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8), tree `7ada979757198fb9c19726858d17c897dfdca1b9`; requires the subsequent API-036 bounded-session correction before merge |
 | Latest core candidate and merge receipt | [PR #90](https://github.com/djshellshoxxx/circula/pull/90); check its exact head and current checks, not an earlier successful source PR |
-| GOV-021 fixture candidate | [`d922d4f880059f939aeca40cbcb77c60201ff0c7`](https://github.com/djshellshoxxx/circula/commit/d922d4f880059f939aeca40cbcb77c60201ff0c7), [PR #91](https://github.com/djshellshoxxx/circula/pull/91), target is the original GOV-021 branch |
+| GOV-021 fixture merged into its topic | [`0d480a5b348f3d385df0dc9c9a3e43a0b03a8332`](https://github.com/djshellshoxxx/circula/commit/0d480a5b348f3d385df0dc9c9a3e43a0b03a8332), [PR #91](https://github.com/djshellshoxxx/circula/pull/91), merged 2026-11-19 at 09:20:26 UTC into `claude/gov-021-admin-recovery`; main-adoption policy hold remains |
 
 Git data publication uses the connected provider because the shell Git client had no push credentials. Every published tree is compared with the local reviewed tree before creating a commit/ref. Updates are non-force and guarded by the expected old head. Publication commits record local source SHAs; a local SHA is not falsely presented as a remotely retrievable commit. Original remote source heads remain reachable and their branches are preserved.
 
@@ -28,6 +29,7 @@ Git data publication uses the connected provider because the shell Git client ha
 | Standalone issues found | **0**; issue endpoint records were all PRs |
 | Original source PR heads preserved in core candidate | **5**: #82, #87, #88, #78, #89 |
 | New main merges at this checkpoint | **0**; pending current-head gates |
+| Isolated topic merges observed | **1**: #91, after all seven configured jobs passed; its merged tree equals the qualified source tree |
 | Original refs deleted or force-pushed | **0**; all 107 starting refs retained |
 | Future modules inspected / qualified for core activation | **15 / 0** |
 | Default future race / vet suites passed | **15 / 15** each |
@@ -44,17 +46,20 @@ Git data publication uses the connected provider because the shell Git client ha
 4. **Historical policy compatibility:** readable rule logs now apply the same missing-field defaults as execution readers, preserve explicit zero and leave stored JSON intact.
 5. **Setup input handling:** validate decimal precision before formatting a rejection example; add accessible field errors and bounded malicious-input regressions.
 6. **Onboarding catalogue:** externalised 51 setup/invitation/open/approval-join messages with exact amounts, ungrouped terms IDs, complete throttle sentences and contextual escaping. Full UX-047 remains partial.
-7. **Account sessions:** the specified owner-scoped list/revoke flow is implemented and reviewed as a separate source slice; current-head qualification and its pagination scale limitation are recorded with that implementation.
+7. **Account sessions:** completed the owner-scoped list/revoke flow with migration-0020 immutable public selectors, indexed keyset reads bounded to 20 × 100 retained rows per request, direct confirmation/revocation lookup and HTML/API continuation. The required API-036 correction was independently reviewed; focused service/template and real SQLite checks passed. Fresh full provider qualification remains pending.
 8. **Feed module:** combined #67/#80 cursor work, rejected contradictory duplicate source records, and repaired nil/zero codec behavior. Independent race execution reached 98.8% coverage; cursor fuzzing passed 66,869 executions. Dedicated nested-module CI preserves the HOLD boundary.
 9. **Notifications module:** repaired ambiguous encrypted-target context and invalid-UTF-8 identity normalization, preserved safe legacy compatibility and documented fail-closed recovery. Explicit SQLite-tagged race suite passed at 71.0% root-package coverage.
 10. **Held topic branches:** independent SEC-026 now defaults off, exposes settings changes in member history, fixes touch sizing and excludes future-dated events after clock rollback. GOV-021's missing accessibility fixture is supplied without importing that policy-blocked feature into core.
 11. **CI and documentation:** replaced duration-only fuzz termination with execution budgets and hard deadlines; preserved the earlier audit/evidence archive, corrected stale current-status descriptions and created all six requested audit reports plus portable future-module evidence.
+12. **PWA qualification:** [PR #95](https://github.com/djshellshoxxx/circula/pull/95) adds provider execution of the existing browser suite after the local launch was blocked. Original runtime, harness, lockfile, assets and disabled/HOLD manifest are unchanged. Workflow/source/static checks passed; provider results remain pending.
+
+13. **API-token inventory:** moved the existing first-100 response contract into the repository query, with an owner/ID index, preserved ordering and owner-scoped revocation beyond the cap, plus repository and HTTP regressions.
 
 Detailed finding IDs, regression names and reviewer roles are in [SECURITY_REVIEW.md](SECURITY_REVIEW.md). [FEATURE_COMPLETION_STATUS.md](FEATURE_COMPLETION_STATUS.md) separates implemented, partial, superseded and blocked work.
 
 ## Before and after testing
 
-| Gate | Starting evidence | Current candidate evidence / limit |
+| Gate | Starting evidence | Recorded candidate evidence / limit |
 |---|---|---|
 | Main scheduled CI | [44296161788](https://github.com/djshellshoxxx/circula/actions/runs/44296161788): 8 successful jobs, strict-JSON fuzz deadline failure | Combined PR jobs required at final head. Initial run [44483334411](https://github.com/djshellshoxxx/circula/actions/runs/44483334411) was superseded/cancelled; [44484102222](https://github.com/djshellshoxxx/circula/actions/runs/44484102222) started qualification of `9b1fc6a0`. Neither is silently a final-head pass. |
 | Amount fuzz | Baseline 678,832 executions | **PASS, 1,000,000 executions**, 68.601 seconds locally with pinned Go and hard timeout |
@@ -62,6 +67,8 @@ Detailed finding IDs, regression names and reviewer roles are in [SECURITY_REVIE
 | Domain, message and repository race packages | Existing baseline provider coverage | **PASS** locally after exact-integer guard repair: 3.738s / 1.134s / 1.661s |
 | Actual web catalogue/template rendering | Existing authentication catalogue tests | **PASS**, 6.625s, actual production web source files plus authentication/onboarding render tests; explicitly excludes SQLite-dependent web integration fixtures |
 | Full core Go/race/migration/contract suite locally | Build attempts exceeded SQLite compiler budget | **Not qualified locally**. Source reviews/SQL trigger checks do not replace the provider runtime gate |
+| Full native core race suite | Existing baseline provider coverage | **PASS on `244e135`**, macOS job [135445609909](https://github.com/djshellshoxxx/circula/actions/runs/44490739417/job/135445609909), completed 09:31:22 UTC; API, contract, service, store and web packages passed. This predates the required bounded-session follow-up and does not qualify its future changes. |
+| GOV-021 fixture provider gates | Original topic browser fixture was missing | **7/7 configured jobs PASS** on `d922d4f` in [44486475798](https://github.com/djshellshoxxx/circula/actions/runs/44486475798); optional native placeholder skipped. Merge `0d480a5` has the exact same tree. Original #85 retains policy and core/schema-conflict blockers. |
 | Tooling | Existing CI gates | Export reader 10 tests, QA runner 4, threshold checker 8, action-pin/permission and hygiene checks **PASS** |
 | Future modules | Stale manifests and root CI did not qualify nested modules | 15 default race/vet and 5 explicit SQLite whole-suite passes; [portable commands, outputs and attempts](FUTURE_MODULE_QUALIFICATION.json) |
 | PWA browser | Prior branch claims are revision-specific | This attempt **BLOCKED before assertions** by sandbox socket denial; 22 Node tests independently pass |

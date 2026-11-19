@@ -1,8 +1,9 @@
 {{define "content"}}
 <p>{{msg "sessions.explain"}}</p>
-{{if .D}}
+{{with .D}}
+{{if .Rows}}
 <ul class="rows">
-{{range .D}}
+{{range .Rows}}
   <li>
     <h2>{{if .Current}}{{msg "sessions.current"}}{{else}}{{msg "sessions.other"}}{{end}}</h2>
     <dl>
@@ -15,5 +16,7 @@
 {{end}}
 </ul>
 {{else}}<p>{{msg "sessions.none"}}</p>{{end}}
+{{template "pager" dict "Next" .Next "Href" "/account/sessions?after="}}
+{{end}}
 <p><a href="/account/security">{{msg "sessions.back_security"}}</a></p>
 {{end}}

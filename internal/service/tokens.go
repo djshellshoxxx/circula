@@ -133,7 +133,8 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 	})
 }
 
-// ListAPITokens lists the caller's tokens (never the secret values).
+// ListAPITokens lists the caller's first 100 tokens in ascending ID order
+// (never the secret values), the existing unpaginated API-036 contract.
 // Network-scoped credentials cannot enumerate person-wide token metadata.
 func (s *Service) ListAPITokens(ctx context.Context, actor domain.Actor) ([]*domain.APIToken, error) {
 	if actor.PersonID == "" || !actor.Can(domain.ScopeRead) {

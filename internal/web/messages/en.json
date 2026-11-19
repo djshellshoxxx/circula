@@ -914,7 +914,7 @@
     "other": "Sign out this session"
   },
   "sessions.none": {
-    "other": "There are no active sessions."
+    "other": "There are no active sessions on this page."
   },
   "sessions.back_security": {
     "other": "Back to account security"

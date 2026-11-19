@@ -44,6 +44,8 @@ func Run(t *testing.T, open Factory) {
 		{"DuplicatesAreConflicts", duplicatesAreConflicts},
 		{"NetworkScoping", networkScoping},
 		{"SessionOwnership", sessionOwnership},
+		{"SessionPagination", sessionPagination},
+		{"TokenInventoryBound", tokenInventoryBound},
 		{"LedgerSequencePerNetwork", ledgerSequencePerNetwork},
 		{"PolicyInForceAt", policyInForceAt},
 		{"DisputePolicyBinding", disputePolicyBinding},
