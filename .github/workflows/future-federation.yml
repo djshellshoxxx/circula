@@ -2,7 +2,7 @@ name: future federation module
 
 on:
   pull_request:
-    branches: [future/fnet-209-federation-20261116]
+    branches: [future/fnet-209-federation-20261116, master/fnet209-utf8-20261119]
     paths:
       - 'future/federation/**'
       - '.github/workflows/future-federation.yml'
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   envelope:
-    name: isolated federation envelopes (${{ matrix.os }})
+    name: isolated federation service (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     strategy:
@@ -37,6 +37,8 @@ jobs:
     env:
       GOTOOLCHAIN: local
       GOMAXPROCS: '2'
+      GOWORK: 'off'
+      GOFLAGS: '-mod=readonly'
       CGO_ENABLED: ${{ matrix.cgo }}
     steps:
       - name: Keep repository line endings stable
@@ -68,11 +70,33 @@ jobs:
           assert feature['depends_on_future_features'] == []
           module = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))
           assert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/federation'
-          assert not module.get('Require')
+          expected = {
+              ('github.com/go-jose/go-jose/v4', 'v4.1.9', False),
+              ('modernc.org/sqlite', 'v1.60.1', False),
+              ('github.com/dustin/go-humanize', 'v1.0.1', True),
+              ('github.com/google/uuid', 'v1.6.0', True),
+              ('github.com/mattn/go-isatty', 'v0.0.24', True),
+              ('github.com/ncruces/go-strftime', 'v1.0.0', True),
+              ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),
+              ('golang.org/x/sys', 'v0.48.0', True),
+              ('modernc.org/libc', 'v1.77.1', True),
+              ('modernc.org/mathutil', 'v1.7.1', True),
+              ('modernc.org/memory', 'v1.12.1', True),
+          }
+          actual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}
+          assert actual == expected, actual
           assert not module.get('Replace')
           assert not module.get('Exclude')
-          print('disabled/HOLD and standard-library-only module boundary: PASS')
+          dependencies = set(subprocess.check_output(
+              ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],
+              text=True,
+          ).split())
+          allowed = {module['Module']['Path']} | {path for path, _, _ in expected}
+          assert dependencies <= allowed, dependencies - allowed
+          print('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')
           PY
+      - name: Verify downloaded module checksums
+        run: go mod verify
       - name: Check Go formatting
         run: |
           unformatted="$(gofmt -l .)"
@@ -82,12 +106,18 @@ jobs:
           fi
       - name: Vet isolated module
         run: go vet ./...
-      - name: Race and signed-string regressions
+      - name: Race, SQLite service, transport, and protocol regressions
         if: runner.os != 'Windows'
         run: go test -race -count=1 -cover -timeout=2m ./...
-      - name: Native Windows signed-string regressions
+      - name: Native Windows SQLite service, transport, and protocol regressions
         if: runner.os == 'Windows'
         run: go test -count=1 -cover -timeout=2m ./...
       - name: Bounded signed-string invariant fuzzing
         if: runner.os == 'Linux'
-        run: timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzSignPreservesEventStrings$' -fuzztime=100000x -parallel=2 -timeout=150s ./...
+        run: timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzSignPreservesEventStrings$' -fuzztime=100000x -parallel=2 -timeout=150s envelope.go envelope_test.go envelope_utf8_test.go
+      - name: Bounded recovered v2 string fidelity fuzzing
+        if: runner.os == 'Linux'
+        run: timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzRecoveredV2StringFidelity$' -fuzztime=100000x -parallel=2 -timeout=150s envelope.go protocol.go protocol_recovery_test.go
+      - name: Bounded recovered discovery wire fuzzing
+        if: runner.os == 'Linux'
+        run: timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzDiscoveryWire$' -fuzztime=100000x -parallel=2 -timeout=150s envelope.go protocol.go protocol_fuzz_test.go

@@ -1,10 +1,34 @@
 {
   "id": "FNET-209",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "recovered-composition-local-qualification-passed",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Experimental domain-separated Ed25519 discovery envelopes with pinned peer key, explicit audience, expiry, strict JSON bytes and publish/revoke kind restriction.",
-  "remaining": "Wire-format/key-rotation ADR and audit; bilateral admin trust UI; durable bounded inbox/outbox; atomic replay journal and out-of-order revocation rules; listing consent/content projection; SSRF-safe bounded transport; rate limits; partition/restart/adversarial tests. Cross-network settlement remains excluded pending separate accounting design."
+  "scope": "Experimental JWS/EdDSA discovery v2; transactional SQLite peer trust/key lifecycle/owner consent/replay/tombstones/outbox; bounded HTTPS egress; durable withdrawal intents; isolated auth/CSRF no-JS member/admin and CLI seams. Audited bounded/coalesced withdrawals, source-independent system deletion hook, durable-write checks and exact candidate schema/protocol validation.",
+  "remaining": "Live independent-peer protocol/TLS interoperability; browser/manual accessibility; lifetime-capacity epoch/compaction operational strategy; production key custody/distribution and final protocol approval; integrated rate policy. Actual core adapters remain separately deferred. No settlement.",
+  "archive_evidence": {
+    "head": "dc59d9b8349cebefb35278bd37ae5e4f207dd833",
+    "tested_source": "a833a8636724ac437d9680f9689f28a7257c7419",
+    "historical_completion_percent": 81.25
+  },
+  "recovery_status": "RECOVERY-20261119.md",
+  "documentation_handoff": {
+    "pull_request": 106,
+    "observed_head": "d55554408ef591371768259905c70ca58d68facb",
+    "owned_path": "future/federation/README.md",
+    "status": "Unmerged external documentation work; current published README preserved byte-for-byte."
+  },
+  "audit": "Independent production/composition and corrective-delta reviews recorded; full local real-driver qualification passed. Final documentation/workflow-routing review, native provider, external handoff and host/manual/policy gates remain.",
+  "qualification": {
+    "tested_commit": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+    "tested_tree": "2b1400be19b42ee63c86980666a71d1c88e07811",
+    "evidence": "RECOVERY-QUALIFICATION-20261119.md",
+    "full_race_top_level_tests": 36,
+    "full_race_skips": 0,
+    "statement_coverage_percent": 74.5,
+    "bounded_fuzz_targets": 3,
+    "executions_per_fuzz_target": 100000,
+    "provider": "Pending exact published-head native jobs; Windows ordinary suite is distinct from race qualification."
+  }
 }

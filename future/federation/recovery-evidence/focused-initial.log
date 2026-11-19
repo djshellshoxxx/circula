@@ -1,0 +1,4 @@
+# github.com/djshellshoxxx/circula/future/federation [github.com/djshellshoxxx/circula/future/federation.test]
+./interface.go:16:2: "strings" imported and not used
+FAIL	github.com/djshellshoxxx/circula/future/federation [build failed]
+FAIL

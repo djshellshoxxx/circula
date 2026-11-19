@@ -1,5 +1,6 @@
-// Package federation authenticates discovery-only envelopes. No HTTP transport,
-// peer discovery, balance data, settlement or ledger authority is supplied.
+// Package federation provides isolated discovery-only protocol and persistence
+// adapters without balance, settlement or ledger authority. The v1 helpers below
+// remain separate from the opt-in v2 ingress and transport.
 package federation
 
 import (

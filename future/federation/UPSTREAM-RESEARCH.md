@@ -1,5 +1,9 @@
 # FNET-209 upstream research and fresh-agent handoff
 
+## Recovery provenance — 2026-11-19
+
+This research and its selected JWS dependency belong to recovered archive `dc59d9b8349cebefb35278bd37ae5e4f207dd833`. The reviewed v1 UTF-8 signing repair from local `db21ea0a0008309d6e8d116ccb00eb77ac6873d9` remains intact alongside the archived, separately framed v2 protocol. Research plans below are historical; they are not evidence that recovered queue/store/transport code is absent. New exact-source qualification and the README handoff dependency are recorded in `RECOVERY-20261119.md`.
+
 Date: 2026-11-16. **Research complete; implementation and independent audit pending. Integration HOLD.** This research authorizes no main-branch registration, deployment or settlement behavior. Work remains confined to `future/federation/`.
 
 ## Selected reuse
