@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // MemberPageQuery requests one keyset page of members, ordered by id. Set AfterID to page
@@ -116,6 +116,9 @@ func (s *Service) countMembers(ctx context.Context, actor domain.Actor, netID st
 func pageMembers(tx store.Tx, netID string, statuses []domain.MemberStatus, q MemberPageQuery) (ms []*domain.Member, hasPrev, hasNext bool, err error) {
 	if q.AfterID != "" && q.BeforeID != "" {
 		return nil, false, false, domain.Invalid("page", "use either after or before, not both")
+	}
+	if err := validatePageIDs(q.AfterID, q.BeforeID); err != nil {
+		return nil, false, false, err
 	}
 	pager, ok := tx.(store.MemberPager)
 	if !ok {

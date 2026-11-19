@@ -1,0 +1,4 @@
+# ./cmd/circula
+write /home/agent/.cache/go-build/e4/e44b77c21b0bb06914fce225c4cc3783c99335f080f01aac9d28f863f909c7da-d: no space left on device
+FAIL	./cmd/circula [setup failed]
+FAIL

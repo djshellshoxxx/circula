@@ -1,0 +1,39 @@
+{
+  "pr85": {
+    "old_head": "e11d2920a325b910bf75c1e431208b94ebb6045b",
+    "new_head": "59cf6997928330d5ec76c6bbbc81705d0d691eb4",
+    "new_tree": "5beb78d382dc5abfa83e0fd42a07104346958be8",
+    "changed_files": [
+      "docs/audit/consolidation-completion-2026-11/GOV-021.md",
+      "internal/service/admin_recovery.go"
+    ],
+    "ordinary_comment_removed_bytes_equal": true,
+    "runtime_verification": "No tests rerun; only ordinary comments and audit wording corrected, policy holds unchanged."
+  },
+  "pr86_forward_merges": [
+    {
+      "parents": [
+        "2e2e6f0eba6bed29bed8f2dd5d60699f372760a6",
+        "e11d2920a325b910bf75c1e431208b94ebb6045b"
+      ],
+      "merge": "d9734f87c8f59181c4a82bd65b016d57bd6c9d73",
+      "actual_tree": "ccbc03e424e75f08a6c64b46ae648d60418825c0",
+      "merge_tree_exit": 1,
+      "expected_tree": "d008febd350e843976f8893f2300468369e52c55",
+      "tree_equal": false,
+      "difference": "M\tdocs/TRACEABILITY.md"
+    },
+    {
+      "parents": [
+        "d9734f87c8f59181c4a82bd65b016d57bd6c9d73",
+        "b4398074ae4ca72559235ca50242cfcb7a934eec"
+      ],
+      "merge": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "actual_tree": "fd50572cde5b2296615b4fb1e3f8b6eb9d346231",
+      "merge_tree_exit": 0,
+      "expected_tree": "fd50572cde5b2296615b4fb1e3f8b6eb9d346231",
+      "tree_equal": true,
+      "difference": ""
+    }
+  ]
+}

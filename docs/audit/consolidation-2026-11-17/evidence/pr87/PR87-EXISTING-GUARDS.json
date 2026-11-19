@@ -1,0 +1,31 @@
+{
+  "name": "PR87-EXISTING-GUARDS",
+  "snapshot": "pr87-fixed",
+  "command": [
+    "/workspace/scratch/b4e4b2242853/toolchain/go/bin/go",
+    "test",
+    "-mod=readonly",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout=10m",
+    "-v",
+    "-run",
+    "^(TestDisputeDecisionAuthorization|TestDisputeVisibility|TestRespondToDispute|TestReReviewHappyPath|TestReReviewWindow|TestDisputeDeadlinesAcrossDSTAndYearBoundary)$",
+    "./internal/service"
+  ],
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "2",
+    "CGO_ENABLED": "1",
+    "GOCACHE": "/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache",
+    "GOGC": "50",
+    "GOMEMLIMIT": "512MiB"
+  },
+  "started_at": "2026-11-18T09:21:20.860720+00:00",
+  "finished_at": "2026-11-18T09:21:45.060561+00:00",
+  "elapsed_seconds": 24.2,
+  "exit_code": 0,
+  "log": "PR87-EXISTING-GUARDS.log"
+}

@@ -1,0 +1,83 @@
+// Independent assertion/readScreen callback probe. This is not browser or DOM qualification.
+const fs = require('node:fs');
+const vm = require('node:vm');
+const crypto = require('node:crypto');
+const assert = require('node:assert/strict');
+const { expect } = require('/workspace/scratch/9ceb45b04668/audit-c-erasure-fixture/e2e/node_modules/@playwright/test');
+const source = fs.readFileSync('/workspace/scratch/9ceb45b04668/audit-root-browser/e2e/tests/greyscale.spec.js', 'utf8');
+
+async function probe(scenario) {
+  const cases = [];
+  vm.runInNewContext(source, { require: name => {
+    assert.equal(name, '../fixtures');
+    return { test: (name, fn) => cases.push({ name, fn }), expect };
+  } });
+  const testCase = cases.find(item => item.name.includes('trade detail, pending'));
+  let pages = 0, modes = 0;
+  const as = async () => {
+    const later = ++pages > 1;
+    let time = `18 Nov 2026, 06:${later ? '34' : '33'} UTC`;
+    if (scenario === 'blank_time' && later) time = ' \n\t ';
+    let body = 'Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding.';
+    if (scenario === 'body_omission' && later) body = body.replace(' Check the details before responding.', '');
+    let statement = 'Figures are a snapshot and do not update automatically.';
+    if (scenario === 'footer_word_change' && later) statement = 'Figures update automatically.';
+    const noFooter = scenario === 'missing_footer' && later;
+    const noTime = scenario === 'missing_time' && later;
+    let contrast = 21;
+    const apply = async () => {
+      modes++;
+      if (scenario === 'amount_change') body = body.replace('5.00', '9.00');
+      if (scenario === 'time_change') time = '18 Nov 2026, 06:35 UTC';
+      if (scenario === 'contrast_change') contrast = 1;
+    };
+    return {
+      goto: async () => {},
+      context: () => ({ newCDPSession: async () => ({ send: apply }) }),
+      emulateMedia: apply,
+      addStyleTag: apply,
+      evaluate: async fn => {
+        if (fn.toString().includes('matchMedia(')) return true;
+        const freshnessText = `Page generated ${time}. ${statement}`;
+        const tag = { innerText: 'Waiting for Bob to respond', parentElement: null,
+          getBoundingClientRect: () => ({ width: 10, height: 10 }) };
+        const freshness = { innerText: freshnessText, querySelector: selector => {
+          assert.equal(selector, 'time');
+          return noTime ? null : { innerText: time };
+        } };
+        const document = {
+          querySelector: selector => {
+            if (selector === 'main') return { innerText: body + (noFooter ? '' : ' ' + freshnessText) };
+            if (selector === 'main #figure-freshness') return noFooter ? null : freshness;
+            throw new Error(`Unexpected selector: ${selector}`);
+          },
+          querySelectorAll: selector => {
+            if (selector === '.bal' || selector === 'ul.rows > li') return [];
+            if (selector === 'main .tag') return [tag];
+            throw new Error(`Unexpected selector: ${selector}`);
+          },
+        };
+        return vm.runInNewContext(`(${fn.toString()})()`, { document,
+          getComputedStyle: () => ({ color: contrast === 1 ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)',
+            backgroundColor: 'rgb(255, 255, 255)', visibility: 'visible', opacity: '1' }),
+        });
+      },
+    };
+  };
+  try {
+    await testCase.fn({ as, st: { slug: 'fixture', tradePending: 'pending' } });
+    assert.equal(modes, 3);
+    return { pass: true, modes };
+  } catch (error) {
+    return { pass: false, modes, error: String(error.message).replace(/\u001b\[[0-9;]*m/g, '').slice(0, 1400) };
+  }
+}
+
+(async () => {
+  const results = {};
+  for (const scenario of ['rollover', 'missing_time', 'blank_time', 'missing_footer', 'footer_word_change', 'body_omission', 'amount_change', 'time_change', 'contrast_change']) {
+    results[scenario] = await probe(scenario);
+    assert.equal(results[scenario].pass, scenario === 'rollover', scenario);
+  }
+  console.log(JSON.stringify({ scope: 'Actual test body and readScreen callback with minimal controlled DOM objects; not browser rendering or emulation.', test_sha256: crypto.createHash('sha256').update(source).digest('hex'), results }, null, 2));
+})().catch(error => { console.error(error); process.exitCode = 1; });

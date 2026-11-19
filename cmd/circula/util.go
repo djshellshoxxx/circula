@@ -11,30 +11,38 @@ import (
 	"path/filepath"
 	"runtime"
 	"syscall"
-
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
-// copyFileSync copies src to dst and flushes dst to stable storage before returning.
+// copyFileSync copies src to a new dst and flushes dst to stable storage before
+// returning. Exclusive creation refuses existing files and planted symlinks.
 func copyFileSync(src, dst string) error {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer func() { _ = in.Close() }()
-	out, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	out, err := os.OpenFile(dst, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
 	if err != nil {
 		return err
 	}
+	complete := false
+	defer func() {
+		if !complete {
+			_ = out.Close()
+			_ = os.Remove(dst)
+		}
+	}()
 	if _, err := io.Copy(out, in); err != nil {
-		_ = out.Close()
 		return err
 	}
 	if err := out.Sync(); err != nil {
-		_ = out.Close()
 		return err
 	}
-	return out.Close()
+	if err := out.Close(); err != nil {
+		return err
+	}
+	complete = true
+	return nil
 }
 
 // writeJSONFile writes v as indented JSON atomically.
@@ -56,7 +64,7 @@ func writeAtomicPrivateFile(path string, data []byte) error {
 		return err
 	}
 	tmp := f.Name()
-	defer func() { _ = os.Remove(tmp) }()
+	defer func() { _ = os.Remove(tmp) }() // #nosec G703 -- tmp is the exclusively created temporary file, not request input.
 	if err := f.Chmod(0o600); err != nil {
 		_ = f.Close()
 		return err
@@ -72,7 +80,7 @@ func writeAtomicPrivateFile(path string, data []byte) error {
 	if err := f.Close(); err != nil {
 		return err
 	}
-	return os.Rename(tmp, path)
+	return os.Rename(tmp, path) // #nosec G703 -- destination is an operator-configured output path; tmp is created exclusively alongside it.
 }
 
 // signalContext returns a context cancelled on Ctrl-C or SIGTERM.
@@ -127,9 +135,4 @@ func secureDatabase(path string) (tightened bool, err error) {
 		}
 	}
 	return tightened, nil
-}
-
-// storeOptions maps the configuration to store.Options (SA2-20).
-func storeOptions(cfg *Config) store.Options {
-	return store.Options{Synchronous: cfg.Synchronous}
 }

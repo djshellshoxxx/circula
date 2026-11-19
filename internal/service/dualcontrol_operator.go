@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // weakensDualControl reports whether moving the dual-control threshold from
@@ -37,13 +38,52 @@ func (s *Service) OperatorSetDualControl(ctx context.Context, actor domain.Actor
 		if err := pol.Validate(); err != nil {
 			return err
 		}
+		now := s.now()
 		v := net.PolicyVersion + 1
-		if err := tx.AppendPolicy(net.ID, v, pol, "", "operator: "+reason, s.now()); err != nil {
+		var pending []store.PolicyVersionRow
+		g, hasGovernance := tx.(store.GovRepo)
+		if hasGovernance {
+			latest, err := g.LatestPolicyVersion(net.ID)
+			if err != nil {
+				return err
+			}
+			v = latest + 1
+			if latest > net.PolicyVersion {
+				rows, err := g.ListPolicyVersions(net.ID)
+				if err != nil {
+					return err
+				}
+				withdrawn := withdrawnVersions(rows)
+				for i, row := range rows {
+					if !withdrawn[i] && row.EffectiveAt.After(now) {
+						pending = append(pending, row)
+					}
+				}
+			}
+		}
+		if err := tx.AppendPolicy(net.ID, v, pol, "", "operator: "+reason, now); err != nil {
 			return err
+		}
+		// A higher immediate version supersedes older pending versions. Carry
+		// each still-live notice forward as a new immutable version, changing
+		// only the operator-controlled threshold. Otherwise this command would
+		// silently cancel its unrelated rules or let a later activation undo
+		// the operator's threshold. Original rows retain their author/reason;
+		// the replacement is explicitly attributed to the operator (A1-08).
+		preserved := make([]int, 0, len(pending))
+		for _, row := range pending {
+			v++
+			row.Policy.DualControlThreshold = threshold
+			if err := g.AppendPolicyNotice(net.ID, v, row.Policy, "",
+				"operator: "+reason+"; preserves scheduled policy version "+strconv.Itoa(row.Version),
+				row.AnnouncedAt, row.EffectiveAt, row.NoticeDays, row.NoticeReason); err != nil {
+				return err
+			}
+			preserved = append(preserved, row.Version)
 		}
 		return s.auditBreakGlass(tx, actor, net.ID, auditEntry{Type: domain.ActorSystem, Action: domain.ActPolicyChanged,
 			TargetType: "policy", TargetID: net.ID, Reason: reason,
 			Before: map[string]any{"dual_control_threshold": net.Policy.DualControlThreshold},
-			After:  map[string]any{"dual_control_threshold": threshold}})
+			After:  map[string]any{"dual_control_threshold": threshold, "preserved_scheduled_versions": preserved}})
 	})
 }

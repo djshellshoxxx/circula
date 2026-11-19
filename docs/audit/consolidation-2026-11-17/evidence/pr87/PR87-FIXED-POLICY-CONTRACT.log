@@ -1,0 +1,10 @@
+=== RUN   TestRepositoryContractSQLite
+=== RUN   TestRepositoryContractSQLite/PolicyInForceAt
+--- PASS: TestRepositoryContractSQLite (0.37s)
+    --- PASS: TestRepositoryContractSQLite/PolicyInForceAt (0.37s)
+=== RUN   TestRepositoryContractWrapped
+=== RUN   TestRepositoryContractWrapped/PolicyInForceAt
+--- PASS: TestRepositoryContractWrapped (0.38s)
+    --- PASS: TestRepositoryContractWrapped/PolicyInForceAt (0.38s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	1.760s

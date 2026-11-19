@@ -1,0 +1,148 @@
+{
+  "main": "78c695f202e4b9440a4d78ac3b4b181aa81cabac",
+  "checked_at": "2026-11-18T07:47:19.421197+00:00",
+  "branches": [
+    {
+      "branch": "claude/circula-consolidation-audit-0sydm1",
+      "sha": "bc9fc56c3ca33f6ef93df7e37410f944c1eb6147",
+      "merge_base": "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+      "ahead": 1,
+      "behind": 3,
+      "commits": [
+        "bc9fc56c3ca33f6ef93df7e37410f944c1eb6147 2026-11-18T07:30:45Z docs(audit): record 2026-11-18 consolidation baseline"
+      ],
+      "cherry": [
+        "+ bc9fc56c3ca33f6ef93df7e37410f944c1eb6147 docs(audit): record 2026-11-18 consolidation baseline"
+      ],
+      "files": [
+        "A\tdocs/audit/consolidation-completion-2026-11/BASELINE.md"
+      ],
+      "stat": ".../consolidation-completion-2026-11/BASELINE.md   | 49 ++++++++++++++++++++++\n 1 file changed, 49 insertions(+)",
+      "classification": "audit-documentation-overlap",
+      "recommendation": "One historical baseline document. Useful capture of another worker session; not missing product implementation. Preserve as dated snapshot if integrated, do not overwrite live completion status. Its claim that all other branches match historical ledger needs the known PR39 branch/source-head caveat."
+    },
+    {
+      "branch": "claude/fnet-204-signed-cursors",
+      "sha": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+      "merge_base": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "ahead": 5,
+      "behind": 125,
+      "commits": [
+        "0952c94a5dbab4044d7673ce9d51cec9063ab97f 2026-11-18T07:44:07Z feat(feed): bind signed cursors to viewer and filter, add expiry and key rotation",
+        "7a528c611bffdf92ef9f8cbddb98e8b088eb5036 2026-11-16T20:36:19-07:00 test(feed): validate HMAC cursor integrity and network isolation",
+        "39b2d7359d2a763883e58085bdfe562c07be0b76 2026-11-16T20:36:12-07:00 feat(feed): add signed network-bound pagination cursors",
+        "5d3819c3b3af031b75eceb5251da0226a4ecee77 2026-11-16T03:10:35-07:00 FNET-204: document pinned upstream research and adaptation plan; isolated feature remains on integration hold",
+        "d28879a8bf8cd679a1b757f2cb7fe7477ace35ec 2026-11-16T02:51:01-07:00 feat(fnet-204): add isolated feed core and tests; hold integration"
+      ],
+      "cherry": [
+        "+ d28879a8bf8cd679a1b757f2cb7fe7477ace35ec feat(fnet-204): add isolated feed core and tests; hold integration",
+        "+ 5d3819c3b3af031b75eceb5251da0226a4ecee77 FNET-204: document pinned upstream research and adaptation plan; isolated feature remains on integration hold",
+        "+ 39b2d7359d2a763883e58085bdfe562c07be0b76 feat(feed): add signed network-bound pagination cursors",
+        "+ 7a528c611bffdf92ef9f8cbddb98e8b088eb5036 test(feed): validate HMAC cursor integrity and network isolation",
+        "+ 0952c94a5dbab4044d7673ce9d51cec9063ab97f feat(feed): bind signed cursors to viewer and filter, add expiry and key rotation"
+      ],
+      "files": [
+        "A\tfuture/feed/README.md",
+        "A\tfuture/feed/SPEC-SNAPSHOT.md",
+        "A\tfuture/feed/UPSTREAM-RESEARCH.md",
+        "A\tfuture/feed/VALIDATION.md",
+        "A\tfuture/feed/cursor_auth.go",
+        "A\tfuture/feed/cursor_auth_test.go",
+        "A\tfuture/feed/cursor_fuzz_test.go",
+        "A\tfuture/feed/feature.json",
+        "A\tfuture/feed/feed.go",
+        "A\tfuture/feed/feed_test.go",
+        "A\tfuture/feed/go.mod"
+      ],
+      "stat": "future/feed/README.md            |  74 +++++\n future/feed/SPEC-SNAPSHOT.md     |  72 +++++\n future/feed/UPSTREAM-RESEARCH.md |  92 ++++++\n future/feed/VALIDATION.md        |  56 ++++\n future/feed/cursor_auth.go       | 367 ++++++++++++++++++++++\n future/feed/cursor_auth_test.go  | 648 +++++++++++++++++++++++++++++++++++++++\n future/feed/cursor_fuzz_test.go  | 182 +++++++++++\n future/feed/feature.json         |  10 +\n future/feed/feed.go              | 139 +++++++++\n future/feed/feed_test.go         | 266 ++++++++++++++++\n future/feed/go.mod               |   3 +\n 11 files changed, 1909 insertions(+)",
+      "classification": "future-only-valuable-isolated",
+      "recommendation": "Adds signed cursor viewer/filter binding, expiry, key IDs/rotation, integration into Page, regression and fuzz tests. All11 changed paths stay in future/feed. feature.json is enabled:false and HOLD. Do not merge into main; PR80 is stacked on old PR67 source, not core."
+    },
+    {
+      "branch": "claude/ux-047-auth-catalogue",
+      "sha": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "merge_base": "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+      "ahead": 1,
+      "behind": 3,
+      "commits": [
+        "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db 2026-11-18T07:39:52Z UX-047: migrate authentication and account-security messages to the catalogue"
+      ],
+      "cherry": [
+        "+ dd3e82e27ddb3d1cbf03460e6a5fc879f16691db UX-047: migrate authentication and account-security messages to the catalogue"
+      ],
+      "files": [
+        "M\tdocs/TRACEABILITY.md",
+        "M\tdocs/dev/MESSAGES.md",
+        "A\tinternal/web/auth_catalog_test.go",
+        "M\tinternal/web/h_account.go",
+        "M\tinternal/web/h_auth.go",
+        "M\tinternal/web/h_recover.go",
+        "M\tinternal/web/h_security.go",
+        "A\tinternal/web/messages/auth_test.go",
+        "M\tinternal/web/messages/en.json",
+        "M\tinternal/web/messages/messages_test.go",
+        "M\tinternal/web/templates/login.html",
+        "M\tinternal/web/templates/login_mfa.html",
+        "M\tinternal/web/templates/mfa_enrol.html",
+        "M\tinternal/web/templates/mfa_recovery.html",
+        "M\tinternal/web/templates/password.html",
+        "M\tinternal/web/templates/recover.html",
+        "M\tinternal/web/templates/recovery_codes.html",
+        "M\tinternal/web/templates/register.html",
+        "M\tinternal/web/templates/security.html"
+      ],
+      "stat": "docs/TRACEABILITY.md                       |   4 +-\n docs/dev/MESSAGES.md                       |  10 +\n internal/web/auth_catalog_test.go          | 132 +++++++++++\n internal/web/h_account.go                  |  17 +-\n internal/web/h_auth.go                     |  27 ++-\n internal/web/h_recover.go                  |  31 +--\n internal/web/h_security.go                 |  64 ++---\n internal/web/messages/auth_test.go         |  42 ++++\n internal/web/messages/en.json              | 365 +++++++++++++++++++++++++++++\n internal/web/messages/messages_test.go     |   2 +-\n internal/web/templates/login.html          |  10 +-\n internal/web/templates/login_mfa.html      |   8 +-\n internal/web/templates/mfa_enrol.html      |  28 +--\n internal/web/templates/mfa_recovery.html   |   4 +-\n internal/web/templates/password.html       |  10 +-\n internal/web/templates/recover.html        |  12 +-\n internal/web/templates/recovery_codes.html |  14 +-\n internal/web/templates/register.html       |  10 +-\n internal/web/templates/security.html       |  36 +--\n 19 files changed, 689 insertions(+), 137 deletions(-)",
+      "classification": "valuable-core-ready-for-qualification",
+      "recommendation": "Authentication/account-security catalogue migration,121 added auth/security entries,9 templates,4 handler files and render/catalogue tests. Four handlers are identical after replacing catalogue lookups with stored English literals. No auth-policy/status-code/CSRF/throttle/redirect changes. Template contextual escaping remains intact. Candidate for independent tests/current-head CI then merge; UX047 remains partial."
+    }
+  ],
+  "original_branch_preservation": {
+    "original_count": 89,
+    "current_count": 99,
+    "missing_original_branches": [],
+    "original_heads_changed": [
+      {
+        "branch": "main",
+        "original": "b53f757682bff5f488be9c2686c2e8aa8ad4054a",
+        "current": "78c695f202e4b9440a4d78ac3b4b181aa81cabac"
+      }
+    ],
+    "new_branches": [
+      "claude/circula-consolidation-audit-0sydm1",
+      "claude/fnet-204-signed-cursors",
+      "claude/ux-047-auth-catalogue",
+      "integration/admin-grant-notice-pagination-20261117",
+      "integration/backup-private-staging-20261117",
+      "integration/browser-parity-clock-20261117",
+      "integration/erasure-fixture-stability-20261117",
+      "integration/release-threshold-check-20261117",
+      "integration/store-untrusted-schema-20261117",
+      "integration/throttle-documentation-20261117"
+    ]
+  },
+  "source_review": {
+    "ux047_handlers_literal_equivalent": true,
+    "ux047_template_review": "Nine templates preserve form endpoints/fields, CSRF includes, password autocomplete, visible text, labels and contextual escaping. Counted sentences use catalogue plural/grouping.",
+    "runtime_tests_run_by_this_agent": {
+      "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "toolchain": "Go1.26.11",
+      "environment": "GOTOOLCHAIN=local CGO_ENABLED=1",
+      "checks": [
+        {
+          "command": "go test -mod=readonly -count=1 -v -run '^Test.*PagesCatalogue$' ./internal/web",
+          "result": "PASS",
+          "top_level_tests": 4,
+          "duration_seconds": 0.398
+        },
+        {
+          "command": "go test -mod=readonly -count=1 -v ./internal/web/messages",
+          "result": "PASS",
+          "top_level_tests": 5,
+          "duration_seconds": 0.007
+        }
+      ],
+      "limitations": "Isolated git-archive snapshot; no full web suite, race or browser qualification claimed."
+    },
+    "active_work_indications": "PR78/79/80 share Claude Code session session_01KtKj8n2B7N1ZkoQQdz85gS. PR78 body plans further SEC026/GOV021/UX047/FNET204 work; drafts have no comments/reviews at B inspection. Coordinate ownership or retain drafts until gates settle."
+  }
+}

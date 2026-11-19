@@ -3,9 +3,8 @@ package store
 import (
 	"fmt"
 	"math"
+	"math/big"
 	"strings"
-
-	"github.com/djshellshoxxx/circula/internal/domain"
 )
 
 func (t *txImpl) BalanceMismatches(netID string) ([]BalanceMismatch, error) {
@@ -63,8 +62,10 @@ func (t *txImpl) Totals(netID string) (int64, int64, error) {
 }
 
 // sumSaturating sums an int64 column of one network. It tries SQL SUM first
-// and, if that overflows (legacy or corrupt data), sums in Go
-// and saturates, so verification reports a mismatch instead of failing (A3-03).
+// and, if an intermediate sum overflows, accumulates exactly in Go. Individually
+// bounded balances can still overflow a prefix before later values cancel it.
+// Only a final total outside int64 saturates, so genuinely unbalanced data still
+// reports a mismatch instead of failing (A3-03).
 // table and col are package constants, never user input.
 func (t *txImpl) sumSaturating(table, col, netID string) (int64, error) {
 	var s int64
@@ -80,29 +81,24 @@ func (t *txImpl) sumSaturating(table, col, netID string) (int64, error) {
 		return 0, err
 	}
 	defer func() { _ = rows.Close() }()
-	var total int64
-	sat := false
+	var total, value big.Int
 	for rows.Next() {
 		var v int64
 		if err := rows.Scan(&v); err != nil {
 			return 0, err
 		}
-		if sat {
-			continue
-		}
-		next, ok := domain.AddChecked(total, v)
-		if !ok { // saturate at the end that overflowed; a mismatch is then reported
-			sat = true
-			if v > 0 {
-				total = math.MaxInt64
-			} else {
-				total = math.MinInt64
-			}
-			continue
-		}
-		total = next
+		total.Add(&total, value.SetInt64(v))
 	}
-	return total, rows.Err()
+	if err := rows.Err(); err != nil {
+		return 0, err
+	}
+	if total.IsInt64() {
+		return total.Int64(), nil
+	}
+	if total.Sign() > 0 {
+		return math.MaxInt64, nil
+	}
+	return math.MinInt64, nil
 }
 
 func (t *txImpl) ReversalMismatches(netID string) ([]string, error) {

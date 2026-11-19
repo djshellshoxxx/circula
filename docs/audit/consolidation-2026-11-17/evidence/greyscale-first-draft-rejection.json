@@ -1,0 +1,21 @@
+{
+  "scope": "Actual pinned test-body assertion wiring with controlled non-target later page; not browser or DOM execution.",
+  "baseline": "9c1b38d566305e0b577ff0555cdda6498eebed18",
+  "reviewed": "4013b4d3cdd0eca389eb3a2dd1ee8d2244822acc",
+  "original_control": {
+    "pass": true,
+    "modes": 3,
+    "pageCount": 4
+  },
+  "original_later_wrong_page": {
+    "pass": false,
+    "modes": 1,
+    "pageCount": 2,
+    "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours Waiting for Bob to respond Page generated 06:33\"\nReceived: \"Sign in\""
+  },
+  "corrected_later_wrong_page": {
+    "pass": true,
+    "modes": 3,
+    "pageCount": 4
+  }
+}

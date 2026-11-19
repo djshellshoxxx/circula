@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 var slugRE = regexp.MustCompile(`^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$`)
@@ -217,6 +217,9 @@ func (s *Service) MyMemberships(ctx context.Context, actor domain.Actor) ([]*dom
 type PolicyChange struct {
 	Policy domain.Policy
 	Reason string
+	// ExpectedRevision is checked atomically for a new command. Nil preserves
+	// unconditional writes. It is excluded from durable replay fingerprints.
+	ExpectedRevision *PolicyRevision `json:"-"`
 	// NoticeDays is the notice before the change takes effect (GOV-003). Nil
 	// means the default: 14 days for an adverse change, none otherwise. An
 	// adverse change with fewer days needs NoticeReason.
@@ -251,6 +254,9 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 		}
 		var effAt time.Time
 		out, err = idempotent(s, tx, netID, actor, "policy.update", in.IdempotencyKey, in, func() (string, error) {
+			if err := checkPolicyRevision(tx, p.net, in.ExpectedRevision); err != nil {
+				return "", err
+			}
 			if p.net.Status == domain.NetworkClosed {
 				return "", domain.InvalidState("network is closed")
 			}

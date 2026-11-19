@@ -1,0 +1,34 @@
+{
+  "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+  "tree": "e6d94f9fbc59016bfe7350ef6d9a8334031ef725",
+  "method": "Substitute new catalogue calls with their exact English literals; restore the three explicitly reviewed plural/count render expressions; compare complete template source. This checks source-equivalence, not browser rendering.",
+  "templates": {
+    "internal/web/templates/login.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/login_mfa.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/mfa_enrol.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/mfa_recovery.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/password.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/recover.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/recovery_codes.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/register.html": {
+      "equals_prior_template_after_message_expansion": true
+    },
+    "internal/web/templates/security.html": {
+      "equals_prior_template_after_message_expansion": true
+    }
+  }
+}

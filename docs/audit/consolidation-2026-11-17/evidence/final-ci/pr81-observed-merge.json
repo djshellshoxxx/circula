@@ -1,0 +1,13 @@
+{
+  "observed_at": "2026-11-18T09:15:15.904Z",
+  "pr": 81,
+  "state": "closed",
+  "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+  "merged": true,
+  "merged_at": "2026-11-18T09:14:36Z",
+  "merged_by": "djshellshoxxx",
+  "merge_commit_sha": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+  "auto_merge": null,
+  "qualification": "pr81-09ef8a5aa25f-verified.json",
+  "ci_workstream_action": "Read-only verification. No merge call or auto-merge mutation by F."
+}

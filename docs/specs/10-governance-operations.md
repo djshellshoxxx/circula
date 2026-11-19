@@ -35,14 +35,14 @@ Summary: built 11, not built 6, partial 10.
 | GOV-007 | P0 | built | Corrective actions are transactions; property tests |
 | GOV-008 | P0 | built | Invite, approval, open modes; audit per decision |
 | GOV-009 | P0 | built | Append-only terms versions; acceptance recorded at join and re-required before proposing or accepting a trade after an update; reading and leaving stay open |
-| GOV-010 | P0 | partial | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page points to the self-export on History, no export is offered in the flow |
+| GOV-010 | P0 | built | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page offers the CSV/JSON self-export before the leave form, also when blocked (test) |
 | GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
 | GOV-012 | P1 | built | Optional inactivity rule (policy inactivity_days): flags, notifies, lists for administrators; never removes |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
 | GOV-014 | P0 | built | Statement and decision with reasons; response deadline and 14-day decision target shown to parties; a missed deadline decides nothing and reviewers are reminded once |
 | GOV-015 | P0 | built | Reversal and adjustment are new transactions; originals unchanged |
 | GOV-016 | P0 | built | Challenges to removal, credit-limit and listing decisions (non-involved decider, reasons, audit, notice); dispute appeal is the one re-review with its own period; objections to policy changes not built |
-| GOV-017 | P1 | built | No dispute upload route |
+| GOV-017 | P1 | built | No dispute upload route; Inspection targets: `internal/api/routes.go`, `internal/web/routes.go` and dispute input types; absence of an upload capability is not established by a dedicated test. No execution result is implied |
 | GOV-018 | P0 | partial | Trades continue within limits; write-off by approved adjustment not built (SEC-011) |
 | GOV-019 | P0 | built | Limit reduction posts nothing; increases refused |
 | GOV-020 | P0 | built | Last-admin guard; a network with no active administrator is read-only (administrator required) and visible to members |
@@ -91,6 +91,7 @@ Each policy below has a class, a default, and a change rule. The default for eac
   - Acceptance rechecks the then-current available posting capacity; it does not rely on capacity observed when the proposal was created (test).
   - Changing a policy after posting does not rewrite the posted transaction terms or ledger entries (test).
   - Each policy with creation-time or action-time semantics identifies that rule in its own requirement and has a regression test; recording a policy version is metadata and does not imply a blanket policy snapshot.
+- Implementation note (2026-11-18, audit AUD4-F03): dispute timelines (section 2, "Prospective") are read from the policy version in force when the dispute was opened, through the exact-version repository read `GetPolicyVersion`; `OpenDispute` binds the version atomically using `PolicyInForceAt` at opening. A later change to `response_period_days` or `re_review_window_days`, shorter or longer, applies only to disputes opened after it takes effect; the rule is stated in FR-076 and FR-078. Tests: `TestDisputeTimelinesFixedAtOpen`, `TestDisputeTimelineChangesApplyToLaterDisputes`, `TestScheduledDisputeTimelineChangeWaitsForItsDate`, `TestDisputePageReReviewDeadlineFixedAtOpen`, `TestPolicyInForceAtReadsLegacyVersionsWithDefaults` and the `PolicyInForceAt` repository contract. The durable binding is enforced by migration `0019_dispute_policy_binding.sql` and `TestDisputeTimelinesSurviveEqualOrReversedPolicyClocks`. Legacy disputes retain their pre-upgrade timestamp interpretation; ambiguous pre-upgrade clock history cannot prove the originally observed version and needs operator evidence review (see the AUD4-F03 audit record).
 
 **GOV-002** · P0 · Recording policy changes
 - Requirement: Every policy change MUST be recorded as an audit event (SEC-012) with the actor, the previous and new value, the effective time and an optional reason, and MUST be shown to members in a readable change log within the network.

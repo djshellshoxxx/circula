@@ -6,7 +6,7 @@ import "github.com/djshellshoxxx/circula/internal/domain"
 // is network-wide; member scope limits to the member's own data and exposes
 // counterparties by display name only (FR-090, SEC-017). No query can reach
 // password hashes, token hashes, invitation hashes or sessions.
-func exportQuery(tbl ExportTable, netID, memberID string) (string, []any, bool) {
+func exportQuery(tbl ExportTable, netID, memberID string, withRelation bool) (string, []any, bool) {
 	own := memberID != ""
 	switch tbl {
 	case TblMembers:
@@ -37,12 +37,18 @@ func exportQuery(tbl ExportTable, netID, memberID string) (string, []any, bool) 
 		}
 		return q + ` ORDER BY id`, []any{netID}, true
 	case TblTransactions:
+		// Keep legacy export bytes (and recorded closure checksums) when the
+		// scope has no adjustment relations. The optional column is appended.
+		relation := ""
+		if withRelation {
+			relation = ", COALESCE(related_tx_id,'') AS related_tx_id"
+		}
 		if own {
 			return `SELECT t.id, t.kind, t.status,
 				CASE WHEN pa.member_id = ?1 THEN 'payer' ELSE 'payee' END AS my_role,
 				t.amount, ma.display_name AS payer_name, mb.display_name AS payee_name,
 				t.note, t.reason, COALESCE(t.original_tx_id,'') AS original_tx_id, t.proposed_at, t.completed_at,
-				COALESCE(t.ledger_seq,0) AS ledger_seq
+				COALESCE(t.ledger_seq,0) AS ledger_seq` + relation + `
 				FROM transactions t JOIN accounts pa ON pa.id = t.payer_account_id
 				JOIN accounts pb ON pb.id = t.payee_account_id
 				LEFT JOIN members ma ON ma.id = pa.member_id LEFT JOIN members mb ON mb.id = pb.member_id
@@ -52,8 +58,10 @@ func exportQuery(tbl ExportTable, netID, memberID string) (string, []any, bool) 
 		return `SELECT id, kind, status, payer_account_id, payee_account_id, amount, COALESCE(listing_id,'') AS listing_id,
 			note, reason, COALESCE(original_tx_id,'') AS original_tx_id, COALESCE(created_by,'') AS created_by,
 			COALESCE(accepted_by,'') AS accepted_by, reversed_total, proposed_at, expires_at, completed_at,
-			COALESCE(ledger_seq,0) AS ledger_seq FROM transactions WHERE network_id = ? ORDER BY id`, []any{netID}, true
+			COALESCE(ledger_seq,0) AS ledger_seq` + relation + ` FROM transactions WHERE network_id = ? ORDER BY id`, []any{netID}, true
 	case TblStatusEvents:
+		// Exports retain canonical ID order for stable closure checksums across
+		// upgrades. Display histories use the separate insertion sequence.
 		if own {
 			return `SELECT s.id, s.tx_id, s.from_status, s.to_status, s.occurred_at FROM transaction_status_events s
 				JOIN transactions t ON t.id = s.tx_id JOIN accounts pa ON pa.id = t.payer_account_id
@@ -100,7 +108,19 @@ func exportQuery(tbl ExportTable, netID, memberID string) (string, []any, bool) 
 }
 
 func (t *txImpl) StreamTable(tbl ExportTable, netID, memberID string, fn func([]string, []any) error) error {
-	q, args, ok := exportQuery(tbl, netID, memberID)
+	withRelation := false
+	if tbl == TblTransactions {
+		q := `SELECT EXISTS(SELECT 1 FROM transactions t WHERE t.network_id = ? AND t.related_tx_id IS NOT NULL`
+		args := []any{netID}
+		if memberID != "" {
+			q += ` AND EXISTS (SELECT 1 FROM accounts a WHERE a.member_id = ? AND a.id IN (t.payer_account_id,t.payee_account_id))`
+			args = append(args, memberID)
+		}
+		if err := t.row(q+`)`, args...).Scan(&withRelation); err != nil {
+			return err
+		}
+	}
+	q, args, ok := exportQuery(tbl, netID, memberID, withRelation)
 	if !ok {
 		return domain.Forbidden("table %s is not exportable in this scope", tbl)
 	}

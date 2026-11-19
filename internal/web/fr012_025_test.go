@@ -4,18 +4,21 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/djshellshoxxx/circula/internal/domain"
 )
 
 // FR-012: join attempts are rate limited and answer retry-later.
 func TestJoinRateLimited(t *testing.T) {
 	w := newWorld(t)
+	w.env.Network(w.admin, "joinable", func(p *domain.Policy) { p.JoinMode = domain.JoinOpen })
 	w.env.Person("zed@example.org")
 	z := w.browser(t)
 	z.login("zed@example.org")
-	f := z.get("/n/town/join")
+	f := z.get("/n/joinable/join")
 	var last *pg
 	for i := 0; i < 12; i++ {
-		last = z.post("/n/town/join", f, url.Values{"display_name": {""}})
+		last = z.post("/n/joinable/join", f, url.Values{"display_name": {""}})
 	}
 	if last.Status != 429 || last.Header.Get("Retry-After") == "" || !strings.Contains(last.Body, "Too many join attempts") {
 		t.Fatalf("status %d retry-after %q", last.Status, last.Header.Get("Retry-After"))

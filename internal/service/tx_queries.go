@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // TxView is a transaction with its ledger entries and status history.
@@ -39,6 +39,9 @@ func (s *Service) GetTransaction(ctx context.Context, actor domain.Actor, netID,
 		if err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(txID) {
+			return domain.NotFound("transaction")
+		}
 		t, err := tx.GetTransaction(netID, txID)
 		if err != nil {
 			return domain.NotFound("transaction")
@@ -71,6 +74,9 @@ func (s *Service) ListTransactions(ctx context.Context, actor domain.Actor, netI
 		if p.member == nil || p.member.Status == domain.MemberPending {
 			return domain.Forbidden("no history")
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListTransactions(netID, store.TxFilter{MemberID: p.member.ID, Statuses: statuses, AfterID: pg.AfterID, Limit: clampPage(pg)})
 		return err
 	})
@@ -86,6 +92,9 @@ func (s *Service) AdminListTransactions(ctx context.Context, actor domain.Actor,
 			return err
 		}
 		if err := p.requireAdmin(); err != nil {
+			return err
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
 			return err
 		}
 		out, err = tx.ListTransactions(netID, store.TxFilter{Kind: kind, Statuses: statuses, AfterID: pg.AfterID, Limit: clampPage(pg)})

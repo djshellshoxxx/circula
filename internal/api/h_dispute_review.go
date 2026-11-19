@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // disputeResponseDTO is the other party's response (FR-076).
@@ -13,7 +12,7 @@ type disputeResponseDTO struct {
 	SubmittedAt string `json:"submitted_at"`
 }
 
-func toDisputeResponse(r *store.DisputeResponse) *disputeResponseDTO {
+func toDisputeResponse(r *service.DisputeResponse) *disputeResponseDTO {
 	if r == nil {
 		return nil
 	}
@@ -34,7 +33,7 @@ type reReviewDTO struct {
 	DecidedAt           *string `json:"decided_at"`
 }
 
-func toReReview(r *store.ReReview) *reReviewDTO {
+func toReReview(r *service.ReReview) *reReviewDTO {
 	if r == nil {
 		return nil
 	}

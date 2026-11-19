@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Challenges (GOV-016). A member can challenge a membership removal, a
@@ -115,6 +115,9 @@ func (s *Service) OpenChallenge(ctx context.Context, actor domain.Actor, netID s
 				return err
 			}
 		case ChallengeListingRemoval:
+			if !domain.ValidRecordID(in.SubjectID) {
+				return domain.NotFound("listing")
+			}
 			l, err := tx.GetListing(netID, in.SubjectID)
 			if err != nil || l.MemberID != me {
 				return domain.NotFound("listing")
@@ -169,6 +172,9 @@ func (s *Service) DecideChallenge(ctx context.Context, actor domain.Actor, netID
 		if err := p.requireDecider(); err != nil {
 			return err
 		}
+		if !domain.ValidRecordID(in.ID) {
+			return domain.NotFound("challenge")
+		}
 		c, err := tx.GetChallenge(netID, in.ID)
 		if err != nil {
 			return domain.NotFound("challenge")
@@ -208,6 +214,12 @@ func (s *Service) DecideChallenge(ctx context.Context, actor domain.Actor, netID
 // ListChallenges lists the caller's own challenges; deciders and administrators
 // see all of the network's. status "" lists every status.
 func (s *Service) ListChallenges(ctx context.Context, actor domain.Actor, netID, status string) ([]store.Challenge, error) {
+	return s.ListChallengesPage(ctx, actor, netID, status, Page{Limit: 200})
+}
+
+// ListChallengesPage preserves the same visibility checks while continuing
+// after the last returned challenge in descending (created_at, id) order.
+func (s *Service) ListChallengesPage(ctx context.Context, actor domain.Actor, netID, status string, pg Page) ([]store.Challenge, error) {
 	var out []store.Challenge
 	err := s.view(ctx, func(tx store.Tx) error {
 		p, err := s.open(tx, actor, netID, domain.ScopeRead)
@@ -220,7 +232,10 @@ func (s *Service) ListChallenges(ctx context.Context, actor domain.Actor, netID,
 		} else if p.member == nil {
 			return domain.Forbidden("membership required")
 		}
-		out, err = tx.ListChallenges(netID, who, status, 200)
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
+		out, err = tx.ListChallengesPage(netID, who, status, pg.AfterID, clampPage(pg))
 		return err
 	})
 	return out, err

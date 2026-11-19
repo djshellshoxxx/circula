@@ -56,12 +56,13 @@ const (
 // closed when codec or allowed is nil.
 //
 // Page rechecks current authorization for every source, even those before the
-// cursor. No event body is stored here; adapters must re-read current source
-// data.
+// cursor. Identical source snapshots are de-duplicated; contradictory snapshots
+// of the same source fail closed, including stale visible/active copies. No event
+// body is stored here; adapters must re-read current source data.
 func Page(codec *CursorCodec, q Query, rows []Source, allowed func(Source) bool) (Result, error) {
 	b := Binding{Network: q.Network, Viewer: q.Viewer, Filter: q.Filter}
 	kinds, _, err := b.canonical()
-	if codec == nil || allowed == nil || err != nil || q.Limit < 1 || q.Limit > maxPageLimit || len(rows) > maxRows {
+	if !codec.ready() || allowed == nil || err != nil || q.Limit < 1 || q.Limit > maxPageLimit || len(rows) > maxRows {
 		return Result{}, ErrInvalidQuery
 	}
 	var after *Cursor
@@ -91,14 +92,24 @@ func Page(codec *CursorCodec, q Query, rows []Source, allowed func(Source) bool)
 func selectPage(network string, kinds []string, rows []Source, after *Cursor, limit int, allowed func(Source) bool) ([]Source, error) {
 	out := []Source{}
 	seen := map[[2]string]bool{}
+	snapshots := map[[2]string]Source{}
 	for _, s := range rows {
-		if s.Network != network || !s.Visible || !s.Active || !hasKind(kinds, s.Kind) || !allowed(s) {
+		if s.Network != network || !hasKind(kinds, s.Kind) {
+			continue
+		}
+		key := [2]string{s.Kind, s.ID}
+		if previous, exists := snapshots[key]; exists &&
+			(!previous.Created.Equal(s.Created) || previous.Member != s.Member ||
+				previous.Visible != s.Visible || previous.Active != s.Active) {
+			return nil, ErrInvalidSource
+		}
+		snapshots[key] = s
+		if !s.Visible || !s.Active || !allowed(s) {
 			continue
 		}
 		if !validPosition(positionOf(s)) {
 			return nil, ErrInvalidSource
 		}
-		key := [2]string{s.Kind, s.ID}
 		if seen[key] {
 			continue
 		}

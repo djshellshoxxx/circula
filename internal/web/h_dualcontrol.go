@@ -1,8 +1,10 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -23,6 +25,7 @@ func init() {
 type pendingRow struct {
 	ID, Target, Proposer, Decider string
 	Dir, Amount, Reason, Status   string
+	RelatedTxID                   string
 	Created, Expires              time.Time
 	Expired                       bool
 	CanApprove, CanReject         bool
@@ -73,7 +76,7 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 	}
 	for _, x := range rows {
 		row := pendingRow{ID: x.ID, Target: nm.of(x.Target), Proposer: nm.of(x.Proposer), Amount: domain.FormatAmount(x.Amount, dec),
-			Reason: x.Reason, Status: string(x.Status), Created: x.CreatedAt, Expires: x.ExpiresAt, Expired: !now.Before(x.ExpiresAt)}
+			Reason: x.Reason, RelatedTxID: x.RelatedTxID, Status: string(x.Status), Created: x.CreatedAt, Expires: x.ExpiresAt, Expired: !now.Before(x.ExpiresAt)}
 		row.Dir = "Credit (balance goes up)"
 		if x.Direction == string(service.AdjustDebit) {
 			row.Dir = "Debit (balance goes down)"
@@ -112,7 +115,25 @@ func (s *server) pendingAct(w http.ResponseWriter, r *http.Request, c *rc) {
 	var err error
 	switch action {
 	case "approve":
-		_, err = s.svc.ApproveAdjustment(r.Context(), c.actor, c.netID(), id)
+		switch r.PostFormValue("step") {
+		case "back":
+			s.renderPending(w, r, c, 200, &page{})
+			return
+		case "confirm":
+			var pa *domain.PendingAdjustment
+			pa, err = s.svc.GetPendingAdjustment(r.Context(), c.actor, c.netID(), id)
+			if err == nil && !secretEqual(r.PostFormValue("review_proof"), s.pendingApprovalProof(c, pa)) {
+				err = domain.Invalid("approval", "review this adjustment again before confirming; nothing changed")
+			}
+			if err == nil {
+				_, err = s.svc.ApproveAdjustment(r.Context(), c.actor, c.netID(), id)
+			}
+		default:
+			err = s.pendingApprovalReview(w, r, c, id)
+			if err == nil {
+				return
+			}
+		}
 	case "reject":
 		_, err = s.svc.RejectAdjustment(r.Context(), c.actor, c.netID(), id)
 	default:
@@ -137,4 +158,52 @@ func (s *server) pendingAct(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	s.setFlash(w, r, fmt.Sprintf("Adjustment request %s.", done))
 	http.Redirect(w, r, c.base()+"/admin/adjustments/pending", http.StatusSeeOther)
+}
+
+type pendingApprovalData struct {
+	adjustReview
+	ID, Proposer, Proof string
+}
+
+func (s *server) pendingApprovalProof(c *rc, pa *domain.PendingAdjustment) string {
+	b, _ := json.Marshal([]string{c.netID(), c.actor.PersonID, pa.ID, pa.Proposer, pa.Target,
+		pa.Direction, strconv.FormatInt(pa.Amount, 10), pa.Reason, pa.RelatedTxID})
+	return s.mac("adjustment-approval:" + string(b))
+}
+
+// pendingApprovalReview uses the stored request, never amounts or member IDs
+// supplied by the form. Only the later confirmed service call may post it.
+func (s *server) pendingApprovalReview(w http.ResponseWriter, r *http.Request, c *rc, id string) error {
+	pa, err := s.svc.GetPendingAdjustment(r.Context(), c.actor, c.netID(), id)
+	if err != nil {
+		return err
+	}
+	if pa.Status != domain.PendingOpen || !s.opts.Clock.Now().Before(pa.ExpiresAt) {
+		return domain.InvalidState("this request has expired or was already decided")
+	}
+	allowed, err := s.svc.DecidableAdjustments(r.Context(), c.actor, c.netID(), []string{id})
+	if err != nil {
+		return err
+	}
+	if !allowed[id] {
+		return domain.Forbidden("a different independent administrator must decide this request")
+	}
+	b, err := s.svc.AdminGetMemberBalance(r.Context(), c.actor, c.netID(), pa.Target)
+	if err != nil {
+		return err
+	}
+	delta, direction := pa.Amount, "Credit (balance goes up)"
+	if pa.Direction == string(service.AdjustDebit) {
+		delta, direction = -pa.Amount, "Debit (balance goes down)"
+	}
+	after, ok := domain.AddBounded(b.Balance, delta)
+	if !ok {
+		return domain.Invalid("amount", "the resulting balance would exceed the supported range")
+	}
+	names, pol := c.memberNames(), c.Net.Policy
+	d := &pendingApprovalData{ID: id, Proposer: names.of(pa.Proposer), Proof: s.pendingApprovalProof(c, pa),
+		adjustReview: adjustReview{Name: names.of(pa.Target), Dir: direction, Amount: domain.FormatAmount(pa.Amount, pol.Decimals), Reason: pa.Reason, RelatedTxID: pa.RelatedTxID,
+			Before: makeBalance(b.Balance, pol.Decimals, pol.CurrencyName), After: makeBalance(after, pol.Decimals, pol.CurrencyName)}}
+	s.render(w, r, c, "admin_adjust_approve", 200, &page{Title: "Review adjustment approval", D: d})
+	return nil
 }

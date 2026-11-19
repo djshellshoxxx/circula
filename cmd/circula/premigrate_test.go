@@ -39,7 +39,7 @@ func TestPreMigrationSafeguardVerifiesBackup(t *testing.T) {
 
 	// negative: backup holds a different schema than the live database
 	cfg2 := *cfg
-	cfg2.BackupDir = t.TempDir() // backup names have one-second resolution
+	cfg2.BackupDir = t.TempDir() // isolate the second migration's backup
 	_, path2, err := preMigrationSafeguard(ctx, &cfg2, state)
 	if err != nil {
 		t.Fatal(err)

@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -179,6 +180,188 @@ func TestPruneKeepsDailyAndNewestPerMonth(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(dir, backupFileName(time.Date(2026, 3, 5, 3, 0, 0, 0, time.UTC))+".manifest.json")); err == nil {
 		t.Error("manifest of pruned backup kept")
+	}
+}
+
+// OPS-017: backups taken within one second need distinct names. Both naming
+// generations remain discoverable, and retention compares their full instants.
+func TestBackupNamesPreserveSubsecondTimeAndLegacyRetention(t *testing.T) {
+	dir := t.TempDir()
+	base := time.Date(2026, 11, 16, 8, 30, 0, 0, time.FixedZone("local", -8*60*60))
+	first, second := base.Add(100*time.Nanosecond), base.Add(200*time.Nanosecond)
+	for _, name := range []func(time.Time) string{backupFileName, encryptedBackupFileName} {
+		if name(first) == name(second) {
+			t.Fatalf("same-second backups collide: %s", name(first))
+		}
+		if name(first) != name(first.UTC()) {
+			t.Fatal("backup name depends on the caller's time zone")
+		}
+	}
+	legacyPlain := "circula-20261116T163000Z.db"
+	legacyEncrypted := "circula-20261016T163000Z.db.enc"
+	names := []string{legacyPlain, legacyEncrypted, backupFileName(first), encryptedBackupFileName(second)}
+	for _, name := range names {
+		path := filepath.Join(dir, name)
+		if err := os.WriteFile(path, []byte("backup"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(path+".manifest.json", []byte("{}"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	entries, err := listBackups(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{names[3], names[2], names[0], names[1]}
+	if len(entries) != len(want) {
+		t.Fatalf("listed %d backups, want %d", len(entries), len(want))
+	}
+	for i, name := range want {
+		if filepath.Base(entries[i].path) != name {
+			t.Errorf("backup %d = %s, want %s", i, entries[i].path, name)
+		}
+	}
+	if !entries[0].at.Equal(second) || !entries[1].at.Equal(first) {
+		t.Fatal("listing discarded the subsecond timestamp")
+	}
+	removed, err := pruneBackups(dir, 1, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(removed) != 2 {
+		t.Fatalf("removed %d backups, want 2", len(removed))
+	}
+	for _, name := range []string{names[0], names[2]} {
+		for _, suffix := range []string{"", ".manifest.json"} {
+			if _, err := os.Stat(filepath.Join(dir, name+suffix)); !os.IsNotExist(err) {
+				t.Errorf("older backup or manifest still present: %s%s, %v", name, suffix, err)
+			}
+		}
+	}
+	for _, name := range []string{names[1], names[3]} {
+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+			t.Errorf("newest monthly backup was removed: %s, %v", name, err)
+		}
+	}
+}
+
+// A3-F10, OPS-018: a backup whose name is dated after now (written while the
+// clock ran ahead, or a misplaced file) is kept with its manifest and anchor,
+// but it takes neither a daily nor a monthly slot: real backups are removed
+// only as the configured counts require. Scheduling ignores such a file in the
+// same way (TestJobUntilNextBackupIgnoresFutureFiles).
+func TestPruneKeepsFutureDatedBackupsOutOfCounts(t *testing.T) {
+	now := time.Date(2026, 11, 16, 12, 30, 0, 123456789, time.UTC)
+	ahead := now.AddDate(50, 0, 0)
+	type backup struct {
+		at   time.Time
+		kept bool
+	}
+	date := func(y int, m time.Month, d int) time.Time { return time.Date(y, m, d, 3, 0, 0, 0, time.UTC) }
+	// The default counts (30 daily, 12 monthly; DEC-059) over 40 daily
+	// backups, a second September backup and one backup per month back to
+	// November 2025, the 13th month.
+	var defaults []backup
+	for i := 0; i < 40; i++ {
+		defaults = append(defaults, backup{now.Add(-time.Hour - time.Duration(i)*24*time.Hour), i < 30})
+	}
+	defaults = append(defaults, backup{date(2026, 9, 20), true}, backup{date(2026, 9, 5), false})
+	for m := time.August; m >= time.January; m-- {
+		defaults = append(defaults, backup{date(2026, m, 15), true})
+	}
+	defaults = append(defaults, backup{date(2025, 12, 15), true}, backup{date(2025, 11, 15), false})
+	for _, tc := range []struct {
+		name           string
+		daily, monthly int
+		future         []time.Time
+		past           []backup
+	}{
+		{name: "50 years ahead, default counts", daily: 30, monthly: 12, future: []time.Time{ahead}, past: defaults},
+		{name: "an hour ahead in the current month", daily: 1, monthly: 1, future: []time.Time{now.Add(time.Hour)},
+			past: []backup{{now.Add(-time.Minute), true}, {now.Add(-24 * time.Hour), false}}},
+		{name: "backup at now counts", daily: 1, future: []time.Time{ahead},
+			past: []backup{{now, true}, {now.Add(-time.Hour), false}}},
+		{name: "several future-dated files", daily: 1, monthly: 1, future: []time.Time{ahead, now.AddDate(0, 0, 1), now.Add(time.Nanosecond)},
+			past: []backup{{now.Add(-time.Hour), true}, {now.Add(-48 * time.Hour), false}}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			files := func(name string) []string { return []string{name, name + ".manifest.json", name + ".anchor.json"} }
+			write := func(name string) []byte {
+				content := []byte("backup " + name)
+				for _, p := range files(name) {
+					if err := os.WriteFile(filepath.Join(dir, p), content, 0o600); err != nil {
+						t.Fatal(err)
+					}
+				}
+				return content
+			}
+			future := map[string][]byte{}
+			for i, at := range tc.future {
+				name := backupFileName(at)
+				if i%2 == 0 {
+					name = encryptedBackupFileName(at)
+				}
+				future[name] = write(name)
+			}
+			var wantRemoved []string
+			for _, b := range tc.past {
+				write(backupFileName(b.at))
+				if !b.kept {
+					wantRemoved = append(wantRemoved, backupFileName(b.at))
+				}
+			}
+			removed, err := pruneBackupsAt(dir, tc.daily, tc.monthly, now)
+			if err != nil {
+				t.Fatal(err)
+			}
+			slices.Sort(removed)
+			slices.Sort(wantRemoved)
+			if !slices.Equal(removed, wantRemoved) {
+				t.Errorf("removed %v, want %v", removed, wantRemoved)
+			}
+			for name, content := range future {
+				for _, p := range files(name) {
+					if got, err := os.ReadFile(filepath.Join(dir, p)); err != nil || !bytes.Equal(got, content) {
+						t.Errorf("future-dated %s changed: %q, %v", p, got, err)
+					}
+				}
+			}
+			for _, b := range tc.past {
+				for _, p := range files(backupFileName(b.at)) {
+					if _, err := os.Stat(filepath.Join(dir, p)); (err == nil) != b.kept {
+						t.Errorf("%s: present=%v, want %v", p, err == nil, b.kept)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestSnapshotRefusesExistingSubsecondBackup(t *testing.T) {
+	for _, encrypted := range []bool{false, true} {
+		dir := t.TempDir()
+		at := time.Date(2026, 11, 16, 16, 30, 0, 123456789, time.UTC)
+		name := backupFileName(at)
+		keys := snapshotKeys{}
+		if encrypted {
+			name = encryptedBackupFileName(at)
+			keys.Encrypt = bytes.Repeat([]byte{1}, 32)
+		}
+		path := filepath.Join(dir, name)
+		original := []byte("existing backup must survive")
+		if err := os.WriteFile(path, original, 0o600); err != nil {
+			t.Fatal(err)
+		}
+		// A nil database also proves refusal occurs before snapshot work starts.
+		if _, err := snapshotWith(context.Background(), nil, path, "test", at, nil, keys); err == nil || !strings.Contains(err.Error(), "already exists") {
+			t.Fatalf("existing backup not refused: %v", err)
+		}
+		got, err := os.ReadFile(path)
+		if err != nil || !bytes.Equal(got, original) {
+			t.Fatalf("existing backup changed: %q, %v", got, err)
+		}
 	}
 }
 

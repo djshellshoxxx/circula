@@ -1,5 +1,7 @@
 # Security review: beta consolidation
 
+> Current execution follow-up: the [55-finding disposition](../audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md) and [merge/qualification record](../audit/consolidation-2026-11-17/README.md) supersede pending statuses in the historical reviews below. E-02, NEW-01 and A3-F21 are addressed; A3-F02 / DEC-014 and the documented retention/design residuals remain unresolved.
+
 Date: 2026-11-11. Revision: branch `claude/circula-beta-completion-1npjw6`. The final commit SHA is in
 [../releases/beta-readiness-report.md](../releases/beta-readiness-report.md).
 
@@ -28,9 +30,9 @@ with its [remediation](../audit/2026-10-28/REMEDIATION-2026-11-04.md), and the C
 | BR-01 | Medium | Governance / financial fairness | `service/disputes.go` `OpenDispute` (before `e127db8`) | An administrator changes `dispute_window_days` | **Fixed** | The deadline is fixed at completion and stored immutably (DOM-017/DAT-051, migration 0016, triggers) | Before the fix, an administrator could shorten the window and strip members of the right to dispute trades already completed, or lengthen it and revive expired disputes. `TestDisputeDeadlineFixedAtCompletion` fails against the old logic and passes now. Backfill tests in `internal/store` |
 | BR-02 | Low | API concurrency control | `api/h_policy.go` `policyETag` (before `addc229`) | Two administrators edit policy at once | **Fixed** | The validator includes the pending policy version | The stale `If-Match` reached the service; only the one-scheduled-change rule stopped a lost update (409 instead of 412). `TestPendingCurrencyNamePolicyPatchChangesETag`; contract walk updated |
 | BR-03 | Low | Release supply chain | `.github/workflows/release.yml` | A tag is pushed | **Fixed** | The release workflow runs `check-release-notes.sh` and `verify-release.sh` (the scan included) | YAML parses; `check-action-pins.sh` ok; not yet exercised on a real tag |
-| BR-04 | Low | Privacy | `api/erasure_hook.go:33` | An admin made a `full` export, then a member is erased | Open | Drop the network's admin-scope export artefacts on erasure | The export review found it (existing behaviour). Not fixed here |
-| BR-05 | Low | Enumeration | sign-in and recovery | Timing measurement | Open | Measure the timing equivalence of unknown-login and wrong-password paths | Errors and codes are already identical (tests); timing is not tested |
-| BR-06 | Medium (only if integrated) | Resource exhaustion | export spool slice (not integrated) | Parallel large exports | Not integrated | See the consolidation report; fix before integrating | Independent review 2026-11-11 |
+| BR-04 | Low | Privacy | `api/erasure_hook.go`, `api/jobs.go` `dropErased` (before branch `wk/export`) | An admin made a `full` export, then a member is erased | **Fixed** | Member erasure drops every admin-scope (`full`, `ledger`, `members`, `audit`) export artefact of the network and closes its spool file; an admin-scope export still running across the erasure is not stored (503, retry). The person's own exports and every affected network member archive are dropped too, since counterpart names/notes are personal data. Active downloads are revoked; unrelated networks remain isolated | `TestErasureDropsNetworkExports` (`internal/api/export_spool_test.go`; erases a member through `EraseMyData`) fails without the fix (all four admin-scope artefacts survive; the running export is stored) and passes now; `TestA3_06_ErasureDropsReplayCacheAndExports` still passes |
+| BR-05 | Low | Enumeration | sign-in and recovery; `service/auth.go` `LoginStep`, `service/password.go` | Timing measurement | **Fixed** (residual noted) | Unknown, malformed and wrong-password sign-ins already ran one Argon2id evaluation (dummy hash). The gap: an account whose stored hash cannot be evaluated (the erased marker, a damaged row) skipped Argon2id, so it answered faster. `verifyLoginPassword` now runs the dummy hash for it too. Recovery refusals (unknown login, wrong, used or malformed code) run no Argon2id on any path (A3-04) | Deterministic: an Argon2id observer seam counts evaluations and their parameters, and a store wrapper records the statements in order. `TestLoginRefusalsDoEqualWork` (fails without the fix) and `TestRecoveryRefusalsDoEqualWork`. Statistical: `CIRCULA_TIMING_TEST=1 go test ./internal/service -run TestLoginTimingStatistical` (median difference 2.9% with default parameters in this container; provisional 10% limit, threshold pending DEC-023 / QA-040). Residual: a hash stored with older Argon2id parameters costs what those parameters cost; no rehash on sign-in yet |
+| BR-06 | Medium | Resource exhaustion | export spool (`api/jobs.go`, `api/export_spool.go`, `api/h_export.go`), branch `wk/export` | Parallel large exports | **Fixed** | (a) A running export holds its slot (5 per person, 50 in total, new cap of 4 running) and reserves every archive chunk against the 64 MiB cap before writing it; over the cap it stops with 503 and frees its file and reservation. (b) New setting `export-spool-dir` / `CIRCULA_EXPORT_SPOOL_DIR`, default `<state-dir>/export-spool`, created `0700`; `serve` refuses to start when it is unusable; at run time an unusable directory answers 503 and logs the path. The in-memory fallback is removed. (c) The manifest field `reconciliation` is documented in `docs/api/export-schema.md`; the openapi `createExport` text is updated (the manifest is not an API schema) | `TestParallelExportWritesStayWithinCap` (disk use measured from the spool files) and `TestParallelLargeExportsStayBounded` (8 parallel 8.8 MiB exports under a 13.1 MiB cap: peak held 13.1 MiB, heap growth 5.1 MiB) fail without the reservation; `TestRunningExportsHoldTheirSlot`, `TestExportRefusedLeavesNoSpool`, `TestExportRefusedWithoutSpoolDir`, `TestExportSpoolPreparedOrStartRefused`, `TestExportSpoolDirSetting`, `TestExportManifestFieldsDocumented`; contract test passes |
 
 ## Checks run against the high-risk classes
 
@@ -60,6 +62,45 @@ with its [remediation](../audit/2026-10-28/REMEDIATION-2026-11-04.md), and the C
 - The 31 Low and 18 Info findings of that audit were not part of the 2026-11-04 remediation. Their status is not
   re-verified here.
 - Owner questions listed in `HANDOFF.md`: GOV-011, DOM-031, SEC-032 and SEC-006.
+
+## Consolidation re-check (2026-11-18)
+
+AI-assisted re-check during the PR consolidation of `main@b53f757`
+([record](../plans/PR-CONSOLIDATION-2026-11-17.md)). It is not an independent review and does not
+satisfy SEC-033. Scope: the findings in the draft PR #42 audit notes (archived as
+[docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md](../audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md)),
+and the squash-merged fix PRs #45, #51, #52, #53 and #54.
+
+- Fix PRs: each fix is on `main` and its regression test passes. Removing each fix on a scratch copy turned its
+  test red. #53's query was later replaced by #56 (`TestNotificationErasureUsesResourceRelations`).
+- #51 and #52 had helper-level tests only. Service entry-point regressions are added in
+  `internal/service/ledger_auth_integration_regression_test.go`
+  (`TestResolveDisputeRefusesReversalWhenAdministratorRequired`, `TestDeciderEntryPointsRequireAdministratorMFA`).
+  Both fail when the fix is removed.
+- A3-F10 is fixed by merged PR #84: future-dated backups do not suppress cadence or consume retention slots, and the scheduler logs a clock-anomaly warning. The [earlier disposition](../audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md) records its pre-merge state.
+- A2-08 is fixed by merged PR #84: the four missing problem-code catalogue rows and their regression are included in starting `main@ead63b5`.
+- PR #42 findings fixed on `main`, each with a named regression test: A1-01 to A1-11, A3-F03, A3-F09,
+  A3-F16, A3-F24 (BR-04), A3-F25, CRYPTO-01 (A3-F17), CRYPTO-02, RESTORE-01 and BACKUP-01 (20 IDs). The PR #42 notes
+  left A1-08 to A1-10 unchecked; their tests on `main` are `TestOperatorDualControlPreservesScheduledPolicy` and
+  `TestOperatorDualControlAfterCancelledPolicy` (A1-08), `TestDisputeReversalAuditTargetsAndAtomicity` (A1-09) and
+  `TestAdjustmentExpirySkipsFrozenNetworksWithoutStarvation` (A1-10). Minor residuals:
+  CRYPTO-01 (see NEW-01), A3-F09 (passwords, recovery codes and revoked invitations keep their backup state after
+  a restore), BACKUP-01. The remaining PR #42 findings are in the table below.
+- Open, and recently fixed, on `main` (6 PR #42 IDs; E-02, NEW-01, AUD4-D01 and AUD4-D02 are fixed):
+
+| ID | Severity | State | Note |
+|---|---|---|---|
+| A3-F02 | Medium | Open, owner decision (DEC-014, SEC-013 addendum) | A break-glass administrator can still make lasting changes: `CreateAdjustment` and `SetCreditLimit` do not call `principal.requireLasting`, and `dualcontrol.go:requireIndependentApprover` accepts a break-glass administrator (`bgAdmin`). Reproduced with a throwaway probe |
+| PRIV-01, PRIV-02 | Low | Open, owner decision (SEC-014/018) | `person_activity.last_seen_at`, `person_prefs.time_zone` and `challenges.reason` survive erasure |
+| PRIV-03 / A3-F07 | Info/Low | Open, design | After a delete and a PASSIVE checkpoint the deleted text can remain in the WAL file. `TestSecureDeleteLeavesNoCanary` passes because it forces a TRUNCATE checkpoint |
+| PRIV-04, PRIV-05 | Policy/process | Open | Retention policy (DEC-020); free-text audit reasons |
+| E-02 (from `docs/audit/SECURITY-AUDIT-3.md`, not PR #42) | Low | Fixed (PR #71); path escaping completed by AUD4-D01 | Every normal and raw connection opens with `trusted_schema(0)` (`TestSQLiteDistrustsSchemaOnEveryConnection`, `TestSQLiteRefusesSchemaFunctionCalls`). No schema fingerprint: built-in-only triggers in a database restored with `-allow-unsigned` still run |
+| NEW-01 (new in this re-check) | Low | Fixed (PR #72); cleanup race closed by AUD4-D02 | Snapshot, ciphertext and verification copies are staged in a leased private `os.MkdirTemp` directory and `copyFileSync` uses `O_EXCL` (`cmd/circula/backup_private_staging_test.go`, `backup_work_lease_test.go`) |
+| AUD4-D01 (2026-11-18 audit) | Low | Fixed, regression-tested | Paths were placed in the SQLite `file:` URI unescaped; a `backup-dir` or `circula backup` directory containing `?`, `#` or `%` opened a different file and could drop `trusted_schema(0)`/`foreign_keys(1)`. `internal/store/uri.go` escapes them. See [AUD4-D01-D02](../audit/consolidation-completion-2026-11/AUD4-D01-D02-BACKUP-PATHS.md) |
+| AUD4-D02 (2026-11-18 audit) | Low | Fixed, regression-tested | Backup cleanup checked entries by name and then wrote through them; in a destination writable by other users a planted or swapped entry could make cleanup zero or delete data elsewhere. Cleanup now re-checks the work directory's and each file's identity before following or overwriting it. On Unix only, cleanup also refuses symlinks (`O_NOFOLLOW`) and multi-link files, sweeps only private directories, and staging refuses a destination owned by another user or one that others can write without the sticky bit. Windows relies on NTFS ACLs (see `docs/ops/backup-restore.md`). Ancestor directories and same-user or administrator interference are outside the check |
+
+Older open items are unchanged and remain owner decisions: SA2-12 (SEC-011), A3-04b, A3-07, A3-10/11, A3-F18, SA2-21.
+A3-F20 and A3-F21 were not re-verified.
 
 ## Not covered
 

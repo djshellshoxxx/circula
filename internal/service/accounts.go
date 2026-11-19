@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // BalanceView is a member's position in one network (FR-050, DOM-006/008).
@@ -13,15 +13,16 @@ import (
 // after a limit reduction and is never a balance. AwaitingFromOthers is shown
 // separately and does not increase Available.
 type BalanceView struct {
-	MemberID           string
-	AccountState       domain.AccountState
-	Balance            int64
-	CreditLimit        int64
-	ReservedOutgoing   int64
-	Available          int64
-	AwaitingFromOthers int64
-	Decimals           int
-	LedgerSeq          int64
+	CreditLimitRevision string `json:"-"` // opaque limit-edit precondition, not part of the account DTO
+	MemberID            string
+	AccountState        domain.AccountState
+	Balance             int64
+	CreditLimit         int64
+	ReservedOutgoing    int64
+	Available           int64
+	AwaitingFromOthers  int64
+	Decimals            int
+	LedgerSeq           int64
 }
 
 func (s *Service) balanceView(tx store.Tx, net *domain.Network, m *domain.Member) (*BalanceView, error) {
@@ -44,7 +45,7 @@ func (s *Service) balanceView(tx store.Tx, net *domain.Network, m *domain.Member
 	}
 	lim := acc.EffectiveLimit(net.Policy.DefaultCreditLimit, now)
 	return &BalanceView{MemberID: m.ID, AccountState: domain.AccountStateFor(m.Status), Balance: acc.Balance,
-		CreditLimit: lim, ReservedOutgoing: res, Available: acc.Balance + lim - res, AwaitingFromOthers: in,
+		CreditLimit: lim, CreditLimitRevision: creditLimitRevision(net.ID, acc, net.Policy.DefaultCreditLimit, now), ReservedOutgoing: res, Available: acc.Balance + lim - res, AwaitingFromOthers: in,
 		Decimals: net.Policy.Decimals, LedgerSeq: seq}, nil
 }
 
@@ -77,6 +78,9 @@ func (s *Service) AdminGetMemberBalance(ctx context.Context, actor domain.Actor,
 		}
 		if err := p.requireAdmin(); err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
 		}
 		m, err := tx.GetMember(netID, memberID)
 		if err != nil {
@@ -128,6 +132,9 @@ func (s *Service) PeekMemberBalance(ctx context.Context, actor domain.Actor, net
 		}
 		if err := p.requireAdmin(); err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(memberID) {
+			return domain.NotFound("member")
 		}
 		m, err := tx.GetMember(netID, memberID)
 		if err != nil {

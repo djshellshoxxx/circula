@@ -122,6 +122,9 @@ func fromErr(err error) (*apiError, bool) {
 	}
 	var de *domain.Error
 	if errors.As(err, &de) {
+		if de.Code == domain.CodeNotFound { // API-017: missing, hidden and malformed IDs look alike.
+			return notFoundErr(), true
+		}
 		st, ok := codeStatus[de.Code]
 		if !ok {
 			return errInternal, false

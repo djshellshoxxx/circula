@@ -1,0 +1,71 @@
+=== RUN   TestAUD4PathProbe
+=== RUN   TestAUD4PathProbe/plain.db/raw=false
+    aud4_path_probe_test.go:58: requested="plain.db" opened="plain.db" intended_exists=true raw=false trusted_schema=0 foreign_keys=1 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+=== RUN   TestAUD4PathProbe/plain.db/raw=true
+    aud4_path_probe_test.go:58: requested="plain.db" opened="plain.db" intended_exists=true raw=true trusted_schema=0 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+=== RUN   TestAUD4PathProbe/q?mark.db/raw=false
+    aud4_path_probe_test.go:58: requested="q?mark.db" opened="q" intended_exists=false raw=false trusted_schema=1 foreign_keys=1 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/q?mark.db/raw=true
+    aud4_path_probe_test.go:58: requested="q?mark.db" opened="q" intended_exists=false raw=true trusted_schema=1 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/h#mark.db/raw=false
+    aud4_path_probe_test.go:58: requested="h#mark.db" opened="h" intended_exists=false raw=false trusted_schema=0 foreign_keys=1 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/h#mark.db/raw=true
+    aud4_path_probe_test.go:58: requested="h#mark.db" opened="h" intended_exists=false raw=true trusted_schema=0 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/p%41mark.db/raw=false
+    aud4_path_probe_test.go:58: requested="p%41mark.db" opened="pAmark.db" intended_exists=false raw=false trusted_schema=0 foreign_keys=1 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/p%41mark.db/raw=true
+    aud4_path_probe_test.go:58: requested="p%41mark.db" opened="pAmark.db" intended_exists=false raw=true trusted_schema=0 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/literal%.db/raw=false
+    aud4_path_probe_test.go:58: requested="literal%.db" opened="literal%.db" intended_exists=true raw=false trusted_schema=0 foreign_keys=1 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+=== RUN   TestAUD4PathProbe/literal%.db/raw=true
+    aud4_path_probe_test.go:58: requested="literal%.db" opened="literal%.db" intended_exists=true raw=true trusted_schema=0 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+=== RUN   TestAUD4PathProbe/q?&_fk=0&x=/raw=false
+    aud4_path_probe_test.go:58: requested="q?&_fk=0&x=" opened="q" intended_exists=false raw=false trusted_schema=1 foreign_keys=0 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/q?&_fk=0&x=/raw=true
+    aud4_path_probe_test.go:58: requested="q?&_fk=0&x=" opened="q" intended_exists=false raw=true trusted_schema=1 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/q?&_pragma=trusted_schema(1)&x=/raw=false
+    aud4_path_probe_test.go:58: requested="q?&_pragma=trusted_schema(1)&x=" opened="q" intended_exists=false raw=false trusted_schema=1 foreign_keys=1 secure_delete=1 journal=wal synchronous=1 busy_timeout=5000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+=== RUN   TestAUD4PathProbe/q?&_pragma=trusted_schema(1)&x=/raw=true
+    aud4_path_probe_test.go:58: requested="q?&_pragma=trusted_schema(1)&x=" opened="q" intended_exists=false raw=true trusted_schema=1 foreign_keys=0 secure_delete=0 journal=delete synchronous=2 busy_timeout=10000
+    aud4_path_probe_test.go:60: requested file identity or mandatory connection setting changed
+--- FAIL: TestAUD4PathProbe (0.07s)
+    --- PASS: TestAUD4PathProbe/plain.db/raw=false (0.01s)
+    --- PASS: TestAUD4PathProbe/plain.db/raw=true (0.00s)
+    --- FAIL: TestAUD4PathProbe/q?mark.db/raw=false (0.01s)
+    --- FAIL: TestAUD4PathProbe/q?mark.db/raw=true (0.00s)
+    --- FAIL: TestAUD4PathProbe/h#mark.db/raw=false (0.01s)
+    --- FAIL: TestAUD4PathProbe/h#mark.db/raw=true (0.00s)
+    --- FAIL: TestAUD4PathProbe/p%41mark.db/raw=false (0.01s)
+    --- FAIL: TestAUD4PathProbe/p%41mark.db/raw=true (0.00s)
+    --- PASS: TestAUD4PathProbe/literal%.db/raw=false (0.01s)
+    --- PASS: TestAUD4PathProbe/literal%.db/raw=true (0.00s)
+    --- FAIL: TestAUD4PathProbe/q?&_fk=0&x=/raw=false (0.01s)
+    --- FAIL: TestAUD4PathProbe/q?&_fk=0&x=/raw=true (0.00s)
+    --- FAIL: TestAUD4PathProbe/q?&_pragma=trusted_schema(1)&x=/raw=false (0.01s)
+    --- FAIL: TestAUD4PathProbe/q?&_pragma=trusted_schema(1)&x=/raw=true (0.00s)
+=== RUN   TestAUD4InspectExistingLiteralPath
+=== RUN   TestAUD4InspectExistingLiteralPath/q?mark.db
+    aud4_path_probe_test.go:92: literal_existing="q?mark.db" actual_schema=18 observed_exists=true observed_schema=0 inspect_error=<nil> integrity="ok" integrity_error=<nil>
+    aud4_path_probe_test.go:94: schema inspection did not inspect the existing literal filename
+=== RUN   TestAUD4InspectExistingLiteralPath/h#mark.db
+    aud4_path_probe_test.go:92: literal_existing="h#mark.db" actual_schema=18 observed_exists=true observed_schema=0 inspect_error=<nil> integrity="ok" integrity_error=<nil>
+    aud4_path_probe_test.go:94: schema inspection did not inspect the existing literal filename
+=== RUN   TestAUD4InspectExistingLiteralPath/p%41mark.db
+    aud4_path_probe_test.go:92: literal_existing="p%41mark.db" actual_schema=18 observed_exists=true observed_schema=0 inspect_error=<nil> integrity="ok" integrity_error=<nil>
+    aud4_path_probe_test.go:94: schema inspection did not inspect the existing literal filename
+--- FAIL: TestAUD4InspectExistingLiteralPath (0.03s)
+    --- FAIL: TestAUD4InspectExistingLiteralPath/q?mark.db (0.01s)
+    --- FAIL: TestAUD4InspectExistingLiteralPath/h#mark.db (0.01s)
+    --- FAIL: TestAUD4InspectExistingLiteralPath/p%41mark.db (0.01s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/store	0.106s
+FAIL

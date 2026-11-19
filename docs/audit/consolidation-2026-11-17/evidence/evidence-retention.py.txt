@@ -1,0 +1,267 @@
+from pathlib import Path
+import hashlib
+import json
+import re
+
+ROOT = Path('/workspace/scratch/9ceb45b04668')
+OUT = ROOT / 'final-evidence-delivery/docs/audit/consolidation-2026-11-17'
+manifest_path = OUT / 'evidence-manifest.json'
+manifest = json.loads(manifest_path.read_text())
+records = {entry['retained_path']: entry for entry in manifest['files']}
+TYPED_DIGEST_JSON = {
+    'evidence/auth82-compatible-followup.json',
+    'evidence/mfa-password-proof-evidence.json',
+    'evidence/pr84-regression-snapshots.json',
+}
+
+
+def retain(source, target):
+    original = (ROOT / source).read_bytes()
+    # Preserve log contents while making any whitespace-only normalization explicit.
+    # Work on bytes: preserve CRLF, Unicode line separators and non-ASCII
+    # whitespace. Only ASCII spaces/tabs at LF-delimited line ends and the
+    # final LF count are normalized, with both hashes retained when changed.
+    retained = b'\n'.join(line.rstrip(b' \t') for line in original.split(b'\n')).rstrip(b'\n') + b'\n' if original else b''
+    transformation = None
+    if target.endswith('.diff'):
+        # A unified diff's context marker followed by a Go indentation tab is
+        # meaningful patch data, not indentation in a new source file. Retain
+        # the exact UTF-8 patch in a reversible JSON wrapper for inspection.
+        records.pop(target, None)
+        (OUT / target).unlink(missing_ok=True)
+        target += '.json'
+        payload = {'media_type': 'text/x-diff', 'original_utf8': original.decode('utf-8')}
+        retained = (json.dumps(payload, indent=2, ensure_ascii=False) + '\n').encode('utf-8')
+        assert json.loads(retained)['original_utf8'].encode('utf-8') == original
+        transformation = {'kind': 'utf8_patch_json_wrapper', 'decode': 'Read original_utf8 and encode as UTF-8 to recover the exact original patch bytes.'}
+    elif target in TYPED_DIGEST_JSON:
+        # Public Git object identities are evidence, not credentials. Explicit
+        # typing avoids ambiguous auth/password/API key-to-hash JSON pairs;
+        # scanners and their scopes remain unchanged.
+        source_value = json.loads(original)
+        def typed(value):
+            if isinstance(value, str) and re.fullmatch(r'[0-9a-f]{40}', value):
+                return {'git_object_sha1': value}
+            if isinstance(value, str) and re.fullmatch(r'[0-9a-f]{64}', value):
+                return {'sha256_digest': value}
+            if isinstance(value, dict):
+                return {key: typed(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [typed(item) for item in value]
+            return value
+        def untyped(value):
+            if isinstance(value, dict) and set(value) == {'git_object_sha1'}:
+                return value['git_object_sha1']
+            if isinstance(value, dict) and set(value) == {'sha256_digest'}:
+                return value['sha256_digest']
+            if isinstance(value, dict):
+                return {key: untyped(item) for key, item in value.items()}
+            if isinstance(value, list):
+                return [untyped(item) for item in value]
+            return value
+        retained = (json.dumps(typed(source_value), indent=2, ensure_ascii=False) + '\n').encode('utf-8')
+        assert untyped(json.loads(retained)) == source_value
+        transformation = {'kind': 'typed_digest_values', 'decode': 'Recursively replace sole-key git_object_sha1 and sha256_digest objects with their string values to reconstruct the original JSON data. All 26 SHA-1 values in these three reviewed inputs were verified to resolve to Git objects. SHA-256 values retain their source-declared checksum meaning. Original byte hashes are retained separately; no scanner exception is introduced.'}
+    (OUT / target).parent.mkdir(parents=True, exist_ok=True)
+    (OUT / target).write_bytes(retained)
+    entry = {'retained_path': target, 'source_paths': [source],
+             'sha256': hashlib.sha256(retained).hexdigest(), 'bytes': len(retained)}
+    if retained != original:
+        entry['source_sha256'] = hashlib.sha256(original).hexdigest()
+        if transformation:
+            entry['transformation'] = transformation
+        else:
+            entry['normalization'] = 'Trailing ASCII spaces/tabs on LF-delimited lines and the final LF count only; all other bytes and line order unchanged.'
+    records[target] = entry
+
+
+sources = {
+    'audit-c/FINAL-EVIDENCE-REPRESENTATION-ADDENDUM.md': 'source-reviews/FINAL-EVIDENCE-REPRESENTATION-ADDENDUM.md',
+    'audit-c/FINAL-EVIDENCE-REPRESENTATION-ADDENDUM.json': 'evidence/final-evidence-representation-addendum.json',
+    'audit-c/FINALIZER-CI-PROGRESS-ADDENDUM.md': 'source-reviews/FINALIZER-CI-PROGRESS-ADDENDUM.md',
+    'audit-b/FINAL-REFERENCE-REVIEW.md': 'source-reviews/FINAL-REFERENCE-REVIEW.md',
+    'audit-root/final-publication-secret-after.log': 'evidence/publication-secret-scan-after-format-repairs.log',
+    'audit-b/FINAL-REFERENCE-HISTORICAL-BRANCHES.json': 'evidence/final-reference-historical-branches.json',
+    'audit-b/FINAL-REFERENCE-PRESERVATION.json': 'evidence/final-reference-preservation.json',
+    'audit-b/FINAL-REFERENCE-HISTORICAL-HEADS.json': 'evidence/final-reference-historical-heads.json',
+    'audit-b/FINAL-REFERENCE-ARCHIVES.json': 'evidence/final-reference-archives.json',
+    'audit-b/FINAL-REFERENCE-LINK-CHECK.json': 'evidence/final-reference-link-check.json',
+    'audit-b/FINAL-REFERENCE-CLOSURE-COMPARISON.json': 'evidence/final-reference-closure-comparison.json',
+    'audit-f/final-ci/queue-current-20261118T102432.json': 'evidence/final-ci/queue-current-20261118T102432.json',
+    'audit-c/FINAL-GENERATED-CHECKPOINT-REVIEW.md': 'source-reviews/FINAL-GENERATED-CHECKPOINT-REVIEW.md',
+    'audit-c/FINAL-GENERATED-CHECKPOINT-REVIEW.json': 'evidence/final-generated-checkpoint-review.json',
+    'audit-root/FINAL-PUBLICATION-CHECKS.json': 'evidence/publication-first-checks.json',
+    'audit-root/final-publication-secret.log': 'evidence/publication-first-secret-scan.log',
+    'audit-root/final-publication---check.log': 'evidence/publication-first-whitespace-check.log',
+    'audit-f/final-ci/pr83-cb95bb1-traceability-failure.json': 'evidence/final-ci/pr83-cb95bb1-traceability-failure.json',
+    'audit-f/final-ci/pr83-cb95bb1-traceability-failed.log': 'evidence/final-ci/pr83-cb95bb1-traceability-failed.log',
+    'audit-f/final-ci/queue-status-inventory-20261118T100538.json': 'evidence/final-ci/queue-status-inventory-20261118T100538.json',
+    'audit-f/final-ci/queue-current-20261118T101229.json': 'evidence/final-ci/queue-current-20261118T101229.json',
+    'finalize_consolidation_evidence.py': 'evidence/report-generator.py.txt',
+    'refresh_consolidation_evidence.py': 'evidence/evidence-retention.py.txt',
+    'audit-b/PR78-QUALIFICATION-UPDATE-2b3a2aa.md': 'source-reviews/PR78-QUALIFICATION-UPDATE.md',
+    'audit-b/PR78-QUALIFICATION-UPDATE-2b3a2aa.json': 'evidence/pr78-qualification-update.json',
+    'final-password-proof-static-checks.json': 'evidence/final-candidate-static-checks.json',
+    'aggregate-final-password-proof-race.json': 'evidence/final-candidate-original-receipt.json',
+    'aggregate-final-password-proof-race.log': 'evidence/final-candidate-race.log',
+    'audit-root/FINAL-CANDIDATE-QUALIFICATION.json': 'evidence/final-candidate-qualification.json',
+    'audit-f/final-ci/queue-current-20261118T100724.json': 'evidence/final-ci/queue-current-20261118T100724.json',
+    'audit-c/FINALIZER-BLOCKED-CI-REVIEW.md': 'source-reviews/FINALIZER-BLOCKED-CI-REVIEW.md',
+    'audit-b/PR78-DOCS-FOLLOWUP-bcacd848.md': 'source-reviews/PR78-DOCS-FOLLOWUP.md',
+    'audit-b/PR78-DOCS-FOLLOWUP-bcacd848.json': 'evidence/pr78-docs-followup.json',
+    'audit-c-mfa-password/docs/audit/PASSWORD-PROOF-BINDING-2026-11-18.md': 'source-reviews/MFA-PASSWORD-FOCUSED-NOTE.md',
+    'audit-c/PR88-READONLY-REVIEW.md': 'source-reviews/PR88-INITIAL-REVIEW.md',
+    'audit-c/PR88-API-EVIDENCE.json': 'evidence/pr88-initial-api-evidence.json',
+    'audit-root/CONCURRENT-QUALIFICATION.md': 'source-reviews/CONCURRENT-QUALIFICATION.md',
+    'aggregate-final-core-race.json': 'evidence/pre-mfa-complete-aggregate.json',
+    'aggregate-final-core-race.log': 'evidence/pre-mfa-complete-aggregate.log',
+    'final-core-static-checks.json': 'evidence/pre-mfa-static-checks.json',
+    'final-password-proof-lint.json': 'evidence/final-password-proof-lint.json',
+    'final-password-proof-lint.log': 'evidence/final-password-proof-lint.log',
+    'audit-root/CONCURRENT-FORWARD-REFRESH.json': 'evidence/concurrent-forward-refresh.json',
+    'audit-root/CONCURRENT-QUALIFICATION.json': 'evidence/concurrent-qualification.json',
+    'audit-root/pr69-final-ci-verified.json': 'evidence/final-ci/pr69-final-ci-verified.json',
+    'audit-root/pr70-final-ci-verified.json': 'evidence/final-ci/pr70-final-ci-verified.json',
+    'aggregate-concurrent-auth-race.log': 'evidence/aggregate-concurrent-auth-race.log',
+    'aggregate-concurrent-auth-isolated-race.log': 'evidence/aggregate-concurrent-auth-isolated-race.log',
+    'aggregate-concurrent-auth-cli-bounded-race.log': 'evidence/aggregate-concurrent-auth-cli-bounded-race.log',
+    'aggregate-concurrent-auth-cli-bounded-race.json': 'evidence/aggregate-concurrent-auth-cli-bounded-race.json',
+    'aggregate-concurrent-auth-cli-workspace-cache-race.log': 'evidence/aggregate-concurrent-auth-cli-workspace-cache-race.log',
+    'aggregate-concurrent-auth-cli-workspace-cache-race.json': 'evidence/aggregate-concurrent-auth-cli-workspace-cache-race.json',
+    'concurrent-python-checks.json': 'evidence/concurrent-python-checks.json',
+    'concurrent-hygiene-checks.log': 'evidence/concurrent-hygiene-checks.log',
+    'concurrent-shell-format-checks.json': 'evidence/concurrent-shell-format-checks.json',
+    'aggregate-final-race.log': 'evidence/aggregate-predecessor-race.log',
+    'aggregate-final-race-v3.log': 'evidence/original-aggregate-race-passed.log',
+    'aggregate-concurrent-race.log': 'evidence/concurrent-first-aggregate-failed.log',
+    'final-evidence-gitleaks.log': 'evidence/evidence-secret-scan.log',
+    'aggregate-final-race-v2.log': 'evidence/aggregate-terminated-attempt.log',
+    'aggregate-final-lint.log': 'evidence/aggregate-lint-terminated-attempt.log',
+    'aggregate-final-lint-limited.log': 'evidence/aggregate-lint-bounded-terminated-attempt.log',
+    'audit-g/INDEPENDENT-REVIEW.md': 'source-reviews/INDEPENDENT-REVIEW.md',
+    'audit-g/integration-refresh-review.json': 'evidence/integration-refresh-review.json',
+    'audit-g/integration-refresh-remote.json': 'evidence/integration-refresh-remote.json',
+    'audit-d/backup-golangci-final.log': 'evidence/backup-golangci-final.log',
+    'audit-ui/greyscale-clock-probe.cjs': 'evidence/greyscale-root-probe.cjs.txt',
+    'audit-ui/clock-assertion-probe.json': 'evidence/greyscale-root-probe.json',
+    'audit-ui/local-browser-unavailable.log': 'evidence/local-browser-unavailable.log',
+    'audit-ui/greyscale-original.js.txt': 'evidence/greyscale-original.js.txt',
+    'audit-g/greyscale-final-review-probe.cjs': 'evidence/greyscale-independent-probe.cjs.txt',
+    'audit-g/greyscale-final-review-probe.json': 'evidence/greyscale-independent-probe.json',
+    'audit-g/greyscale-later-page-probe.json': 'evidence/greyscale-first-draft-rejection.json',
+    'audit-f/final-ci/pr71-e2e-failed.log': 'evidence/pr71-original-e2e-failure.log',
+    'audit-f/final-ci/pr71-text-comparison.json': 'evidence/pr71-original-text-comparison.json',
+    'audit-f/final-ci/pr71-original-completed.json': 'evidence/pr71-original-checks.json',
+    'audit-f/final-ci/pr72-lint-failed.log': 'evidence/pr72-first-lint-failure.log',
+    'audit-f/final-ci/pr72-cac2e0e-lint-failed.log': 'evidence/pr72-second-lint-failure.log',
+    'audit-f/final-ci/pr72-faed490-lint-passed.log': 'evidence/pr72-final-provider-lint-passed.log',
+    'audit-f/final-ci/pr73-original-attempt.json': 'evidence/pr73-original-checks.json',
+    'audit-f/final-ci/pr73-retry-request.json': 'evidence/pr73-single-retry-request.json',
+    'audit-f/final-ci/pr73-fuzz-retry-passed.log': 'evidence/pr73-fuzz-retry-passed.log',
+    'audit-f/final-ci/pr77-2f6b3e4-browser-passed.log': 'evidence/pr77-final-browser-passed.log',
+    'audit-f/final-ci/pr77-browser-summary.json': 'evidence/pr77-final-browser-summary.json',
+    'audit-f/final-ci/pr71-windows-passed.log': 'evidence/pr71-native-windows-passed.log',
+    'audit-f/final-ci/pr71-macos-passed.log': 'evidence/pr71-native-macos-passed.log',
+    'audit-f/final-ci/pr71-through-pr77-complete.json': 'evidence/pr71-through-pr77-complete.json',
+    'audit-a/SUPPLEMENTAL-CONCURRENT-BRANCH-AUDIT.md': 'source-reviews/CONCURRENT-BRANCHES-INITIAL.md',
+    'audit-a/supplemental-new-branches.json': 'evidence/concurrent-branches-initial.json',
+    'audit-a/AUTH82-REVIEW.md': 'source-reviews/AUTH82-INITIAL-REVIEW.md',
+    'audit-a/AUTH82-REVIEW.json': 'evidence/auth82-initial-review.json',
+    'audit-a/AUTH82-FOLLOWUP-5c39abd.md': 'source-reviews/AUTH82-COMPATIBLE-FOLLOWUP.md',
+    'audit-a/AUTH82-FOLLOWUP-5c39abd.json': 'evidence/auth82-compatible-followup.json',
+    'audit-a/POLICY83-INVENTORY.json': 'evidence/policy83-inventory.json',
+    'audit-b/FINAL-EVIDENCE-REVIEW.md': 'source-reviews/FINAL-EVIDENCE-INITIAL-REVIEW.md',
+    'audit-c/AUD4-D01-INVESTIGATION.md': 'source-reviews/AUD4-D01-INVESTIGATION.md',
+    'audit-c/AUD4-D01-current-main-probe.log': 'evidence/uri-path-before.log',
+    'audit-c/AUD4-D01-concurrent-fix-probe.log': 'evidence/uri-path-after.log',
+    'audit-c/PR81-09ef8a5-COMPATIBILITY-REVIEW.md': 'source-reviews/PR81-COMPATIBILITY-REVIEW.md',
+    'audit-c/PR81-09ef8a5-store.log': 'evidence/pr81-focused-store-passed.log',
+    'audit-c/PR81-09ef8a5-new-regressions-race.log': 'evidence/pr81-focused-cleanup-passed.log',
+    'audit-c/PR81-09ef8a5-backup-race.log': 'evidence/pr81-optional-backup-terminated.log',
+    'audit-c/PR82-FAIL-BEFORE-EVIDENCE.md': 'source-reviews/AUTH82-FAIL-BEFORE-EVIDENCE.md',
+    'audit-c/PR82-auth-regressions-before.log': 'evidence/auth82-regressions-before.log',
+    'audit-c/PR82-auth-regressions-after.log': 'evidence/auth82-control-compile-terminated.log',
+    'audit-g/AUD4-D02-REVIEW.md': 'source-reviews/AUD4-D02-INITIAL-REVIEW.md',
+    'audit-g/backup-path-lease-substitution.log': 'evidence/backup-cleanup-initial-failure.log',
+    'audit-g/backup-path-lease-substitution-5776be1.log': 'evidence/backup-cleanup-followup-failure.log',
+    'audit-g/pr79-catalogue-completeness.json': 'evidence/pr79-catalogue-completeness.json',
+    'audit-g/pr79-template-equivalence.json': 'evidence/pr79-template-equivalence.json',
+    'audit-g/pr79-review-race.log': 'evidence/pr79-independent-race-passed.log',
+    'audit-root/CONCURRENT-INTEGRATION-REVIEW.md': 'source-reviews/CONCURRENT-INTEGRATION-REVIEW.md',
+    'audit-a/PR84-SOURCE-REVIEW-7f98b3d.md': 'source-reviews/PR84-INITIAL-REVIEW.md',
+    'audit-a/PR84-SOURCE-REVIEW-7f98b3d.json': 'evidence/pr84-initial-review.json',
+    'audit-a/PR84-ANCESTRY-AND-OVERLAP.json': 'evidence/pr84-ancestry-and-overlap.json',
+    'audit-a/PR84-ORIGINAL89-PRESERVATION.json': 'evidence/pr84-original-branches-preserved.json',
+    'audit-c/PR84-REGRESSION-VERIFICATION.md': 'source-reviews/PR84-REGRESSION-VERIFICATION.md',
+    'audit-c/PR84-LOGGING-FOLLOWUP-REVIEW.md': 'source-reviews/PR84-LOGGING-FOLLOWUP-REVIEW.md',
+    'audit-c/PR84-A2-08-original-evidence.txt': 'evidence/pr84-a2-08-original-evidence.txt',
+    'audit-c/PR84-api-before.log': 'evidence/pr84-api-before.log',
+    'audit-c/PR84-api-after.log': 'evidence/pr84-api-after.log',
+    'audit-c/PR84-retention-before-mutation.log': 'evidence/pr84-retention-before-mutation.log',
+    'audit-c/PR84-retention-after.log': 'evidence/pr84-retention-after.log',
+    'audit-c/PR84-retention-prior-algorithm.diff': 'evidence/pr84-retention-prior-algorithm.diff',
+    'audit-c/PR84-regression-snapshots.json': 'evidence/pr84-regression-snapshots.json',
+    'audit-c/PR84-retention-cache-setup-failure.log': 'evidence/pr84-retention-cache-setup-failure.log',
+    'audit-c/PR84-disk-before-cache-clean.txt': 'evidence/pr84-disk-before-cache-clean.txt',
+    'audit-c/PR84-disk-after-cache-clean.txt': 'evidence/pr84-disk-after-cache-clean.txt',
+    'audit-c/PR84-old-cache-clean.log': 'evidence/pr84-old-cache-clean.log',
+    'audit-c/PR84-logging-before.log': 'evidence/pr84-logging-before.log',
+    'audit-c/PR84-logging-after-race.log': 'evidence/pr84-logging-after-race.log',
+    'audit-c/PR84-logging-snapshot.json': 'evidence/pr84-logging-snapshot.json',
+    'audit-c/PR85-GOV021-READINESS.md': 'source-reviews/PR85-INITIAL-READINESS.md',
+    'audit-c/PR85-E11D292-READINESS-UPDATE.md': 'source-reviews/PR85-READINESS-UPDATE.md',
+    'audit-a/PR86-SOURCE-POLICY-REVIEW-2e2e6f0.md': 'source-reviews/PR86-SOURCE-POLICY-REVIEW.md',
+    'audit-a/PR86-EXACT-INVENTORY-2e2e6f0.json': 'evidence/pr86-exact-inventory.json',
+    'audit-a/PR86-BLOB-COMPARISON.json': 'evidence/pr86-migration-blob-comparison.json',
+    'audit-b/PR87-SOURCE-REVIEW.md': 'source-reviews/PR87-INITIAL-REVIEW.md',
+    'audit-b/PR87-SOURCE-REVIEW.json': 'evidence/pr87-initial-review.json',
+    'audit-b/PR87-FOLLOWUP-679a301.md': 'source-reviews/PR87-SCOPE-FOLLOWUP.md',
+    'audit-b/PR87-FOLLOWUP-679a301.json': 'evidence/pr87-scope-followup.json',
+    'audit-b/PR78-DOCS-READINESS-1d84c6d.md': 'source-reviews/PR78-DOCS-INITIAL-REVIEW.md',
+    'audit-b/PR78-DOCS-READINESS-1d84c6d.json': 'evidence/pr78-docs-initial-review.json',
+    'audit-b/MFA-PASSWORD-INDEPENDENT-REVIEW.md': 'source-reviews/MFA-PASSWORD-INDEPENDENT-REVIEW.md',
+    'audit-b/MFA-PASSWORD-INDEPENDENT-REVIEW.json': 'evidence/mfa-password-independent-review.json',
+    'audit-c/MFA-PASSWORD-PROOF-EVIDENCE.json': 'evidence/mfa-password-proof-evidence.json',
+    'audit-c/MFA-PASSWORD-PROOF-before.log': 'evidence/mfa-password-proof-before.log',
+    'audit-c/MFA-PASSWORD-PROOF-after.log': 'evidence/mfa-password-proof-after.log',
+    'audit-c/MFA-PASSWORD-PROOF-related-race.log': 'evidence/mfa-password-proof-related-race.log',
+}
+for source, target in sources.items():
+    retain(source, target)
+for source in (ROOT / 'audit-f/final-ci').glob('*-verified.json'):
+    retain(str(source.relative_to(ROOT)), 'evidence/final-ci/' + source.name)
+for source in (ROOT / 'audit-f/final-ci').glob('*-superseded.json'):
+    retain(str(source.relative_to(ROOT)), 'evidence/final-ci/' + source.name)
+for source in (ROOT / 'audit-b').glob('PR87-*'):
+    if source.suffix in {'.json', '.log', '.diff'} and source.name != 'PR87-SOURCE-REVIEW.json':
+        retain(str(source.relative_to(ROOT)), 'evidence/pr87/' + source.name)
+for name in (
+    'pr79-linux-race-summary.json', 'pr79-linux-traceability-results.json',
+    'pr81-09ef8a5-linux-race-summary.json', 'pr81-09ef8a5-linux-traceability-results.json',
+    'pr81-09ef8a5-linux-passed.log', 'pr81-09ef8a5-macos-summary.json',
+    'pr81-09ef8a5-macos-passed.log', 'pr81-09ef8a5-windows-summary.json',
+    'pr81-09ef8a5-windows-passed.log', 'pr81-new-regression-terminal-results.json',
+    'pr81-browser-summary.json', 'pr81-09ef8a5-browser-passed.log',
+    'pr81-observed-merge.json', 'pr82-925547-traceability-review.json',
+    'queue-inventory-20261118-0842.json', 'queue-runner-snapshot-20261118-0849.json',
+    'queue-provider-status.json',
+    'pr78-c7-ci-claim-verification.json',
+):
+    retain('audit-f/final-ci/' + name, 'evidence/final-ci/' + name)
+
+# Remove an earlier duplicate copy with an ambiguous current-aggregate name.
+# Its original source and explicitly named successful checkpoint remain retained.
+duplicate = 'evidence/aggregate-final-race.log'
+records.pop(duplicate, None)
+(OUT / duplicate).unlink(missing_ok=True)
+
+manifest['files'] = sorted(records.values(), key=lambda item: item['retained_path'])
+count = sum('normalization' in item for item in manifest['files'])
+transformed = sum('transformation' in item for item in manifest['files'])
+manifest['scope'] = f'Retained workstream records are byte-identical except for {count} explicitly annotated whitespace-only normalizations and {transformed} documented reversible patch wrappers or Git-object JSON annotations. Original and retained SHA-256 values are recorded for every changed representation. The transformation entry describes how to recover exact patch bytes or original JSON data; source JSON formatting remains identified by its original byte hash. Generated final reports and transformed API summaries are documented separately.'
+manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + '\n')
+readme = OUT / 'source-reviews/README.md'
+text = readme.read_text()
+text = text.replace('Two records have explicitly documented whitespace-only normalization, with both original and retained hashes.', 'Records with whitespace-only normalization are explicitly marked with original and retained hashes.')
+readme.write_text(text)
+print(json.dumps({'records': len(records), 'normalized': count, 'representation_transforms': transformed}))

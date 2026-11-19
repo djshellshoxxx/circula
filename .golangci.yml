@@ -11,15 +11,25 @@ linters:
     - depguard
   settings:
     depguard:
-      # ARC-018: layering domain <- store <- service <- api/web is enforced here, not by convention.
+      # ARC-018: domain <- repository <- service <- api/web; store implements repository.
       rules:
         domain:
           files: ["**/internal/domain/**", "!$test"]
           deny:
             - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: domain must not depend on other layers}
+            - {pkg: github.com/djshellshoxxx/circula/internal/repository, desc: domain must not depend on repository contracts}
             - {pkg: github.com/djshellshoxxx/circula/internal/service, desc: domain must not depend on other layers}
             - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: domain must not depend on other layers}
             - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: domain must not depend on other layers}
+        repository:
+          files: ["**/internal/repository/**", "!$test"]
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: contracts must not import the SQLite implementation (ARC-004)}
+            - {pkg: github.com/djshellshoxxx/circula/internal/service, desc: contracts must not import services}
+            - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: contracts must not import adapters}
+            - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: contracts must not import adapters}
+            - {pkg: modernc.org/sqlite, desc: contracts must compile without a driver (ARC-004)}
+            - {pkg: database/sql, desc: contracts must not expose SQL types (ARC-004)}
         store:
           files: ["**/internal/store/**", "!$test"]
           deny:
@@ -29,8 +39,44 @@ linters:
         service:
           files: ["**/internal/service/**", "!$test"]
           deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: services consume driver-neutral repository contracts (ARC-004)}
+            - {pkg: modernc.org/sqlite, desc: services must not import a storage driver (ARC-004)}
+            - {pkg: database/sql, desc: services must not use SQL handles (ARC-004)}
             - {pkg: github.com/djshellshoxxx/circula/internal/api, desc: service must not depend on the transport layers}
             - {pkg: github.com/djshellshoxxx/circula/internal/web, desc: service must not depend on the transport layers}
+        # ARC-002: the HTML and JSON adapters reach state only through internal/service.
+        adapters:
+          files:
+            - "**/internal/api/**"
+            - "**/internal/web/**"
+            - "!$test"
+            # No exceptions: records the service returns as stored are named through the
+            # aliases in internal/service/records.go.
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: adapters call internal/service only (ARC-002)}
+            - {pkg: github.com/djshellshoxxx/circula/internal/repository, desc: adapters call internal/service only (ARC-002)}
+            - {pkg: modernc.org/sqlite, desc: adapters call internal/service only (ARC-002)}
+            - {pkg: database/sql, desc: adapters call internal/service only (ARC-002)}
+        # ARC-002: operator tooling reads and writes through internal/service. Only the
+        # composition root and the storage boundary may name the store package.
+        cmd:
+          files:
+            - "**/cmd/**"
+            - "!$test"
+            - "!**/cmd/circula/schema.go"   # storage boundary: open and wire the store, schema inspection, raw handle for snapshots
+            - "!**/cmd/circula/serve.go"    # composition root: store, audit sink and job runner wiring
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: "operator tooling goes through internal/service or the helpers in cmd/circula/schema.go (ARC-002)"}
+            - {pkg: modernc.org/sqlite, desc: "operator tooling goes through internal/service or the helpers in cmd/circula/schema.go (ARC-002)"}
+            - {pkg: github.com/djshellshoxxx/circula/internal/repository, desc: "operator tooling goes through internal/service (ARC-002)"}
+        # ARC-004: the contract suite consumes repository interfaces without a driver.
+        storetest:
+          files: ["**/internal/storetest/**"]
+          deny:
+            - {pkg: github.com/djshellshoxxx/circula/internal/store, desc: the contract suite must use driver-neutral repository contracts (ARC-004)}
+            - {pkg: modernc.org/sqlite, desc: the contract suite must not depend on a storage driver (ARC-004)}
+            - {pkg: database/sql, desc: the contract suite must not depend on a storage driver (ARC-004)}
+            - {pkg: github.com/djshellshoxxx/circula/internal/service, desc: the contract suite tests repositories, not services (ARC-004)}
 
     errcheck:
       # Best-effort operator output; a failed write to stdout or stderr has no recovery path.

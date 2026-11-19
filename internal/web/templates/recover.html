@@ -1,11 +1,11 @@
 {{define "content"}}
-<p>Lost your password? Enter your login, one of your recovery codes and a new password. Each code works once. If you have no codes left, ask your network administrator to reset your password.</p>
+<p>{{msg "auth.recover.intro"}}</p>
 <form method="post" action="/recover" novalidate>
   {{template "csrf" .}}
-  {{template "field" dict "P" . "Name" "login" "Label" "Login" "Auto" "username" "Req" true}}
-  {{template "field" dict "P" . "Name" "recovery_code" "Label" "Recovery code" "Hint" "Looks like ABCD-EFGH-IJKL-MNOP. Capital letters and dashes are optional." "Auto" "off" "Req" true}}
-  {{template "field" dict "P" . "Name" "password" "Label" "New password" "Hint" "At least 12 characters. A password manager is fine; pasting is allowed." "Type" "password" "Auto" "new-password" "Req" true}}
-  {{template "field" dict "P" . "Name" "password2" "Label" "Confirm new password" "Type" "password" "Auto" "new-password" "Req" true}}
-  <div class="actions"><button type="submit">Set new password</button> <a class="btn secondary" href="/login">Back to sign in</a></div>
+  {{template "field" dict "P" . "Name" "login" "Label" (msg "auth.label.login") "Auto" "username" "Req" true}}
+  {{template "field" dict "P" . "Name" "recovery_code" "Label" (msg "auth.label.recovery_code") "Hint" (msg "auth.hint.recovery_format") "Auto" "off" "Req" true}}
+  {{template "field" dict "P" . "Name" "password" "Label" (msg "auth.label.new_password") "Hint" (msg "auth.hint.password_rules") "Type" "password" "Auto" "new-password" "Req" true}}
+  {{template "field" dict "P" . "Name" "password2" "Label" (msg "auth.label.confirm_new_password") "Type" "password" "Auto" "new-password" "Req" true}}
+  <div class="actions"><button type="submit">{{msg "auth.recover.submit"}}</button> <a class="btn secondary" href="/login">{{msg "auth.recover.back"}}</a></div>
 </form>
 {{end}}

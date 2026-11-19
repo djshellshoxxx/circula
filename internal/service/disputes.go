@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 var disputeCategories = map[string]bool{"not_delivered": true, "quality": true, "wrong_amount": true, "unauthorised": true, "other": true}
@@ -60,8 +60,15 @@ func (s *Service) OpenDispute(ctx context.Context, actor domain.Actor, netID str
 			if now.After(closes) {
 				return "", domain.InvalidState("the dispute window closed on %s", closes.Format("2006-01-02"))
 			}
+			// Bind the exact version in the same serialized write as opening.
+			// Reconstructing it later from wall time permits retroactive changes
+			// when a later update shares this millisecond or the clock rolls back.
+			_, policyVersion, err := tx.PolicyInForceAt(netID, now)
+			if err != nil {
+				return "", err
+			}
 			d := &domain.Dispute{ID: s.id(), NetworkID: netID, TxID: t.ID, OpenedBy: p.member.ID, Category: in.Category,
-				Statement: in.Statement, Status: domain.DisputeOpen, OpenedAt: now}
+				Statement: in.Statement, Status: domain.DisputeOpen, OpenedAt: now, PolicyVersion: policyVersion}
 			if err := tx.InsertDispute(d); err != nil {
 				if domain.CodeOf(err) == domain.CodeConflict {
 					return "", domain.InvalidState("a dispute is already open on this transaction")
@@ -80,7 +87,7 @@ func (s *Service) OpenDispute(ctx context.Context, actor domain.Actor, netID str
 			}
 			return d.ID, s.audit(tx, p, auditEntry{Action: domain.ActDisputeOpened, TargetType: "dispute", TargetID: d.ID,
 				IdemRef: keyRef(in.IdempotencyKey), Subjects: []string{t.PayerMemberID, t.PayeeMemberID},
-				After: map[string]any{"transaction": t.ID, "category": in.Category, "status": "open"}})
+				After: map[string]any{"transaction": t.ID, "category": in.Category, "status": "open", "policy_version": policyVersion}})
 		}, func(id string) (*domain.Dispute, error) { return tx.GetDispute(netID, id) })
 		return err
 	})
@@ -100,14 +107,15 @@ func independent(tx store.Tx, netID string, t *domain.Transaction, memberID stri
 	if t.IsParty(memberID) || t.CreatedBy == memberID || t.AcceptedBy == memberID {
 		return conflict
 	}
-	revs, err := tx.ListTransactions(netID, store.TxFilter{OriginalTxID: t.ID, Limit: 500})
+	// Search the actor's participation before applying the limit. Inspecting
+	// only the newest page lets an older reversal author regain independence
+	// after sufficiently many later reversals (DOM-038 / SEC-010).
+	revs, err := tx.ListTransactions(netID, store.TxFilter{OriginalTxID: t.ID, CreatedBy: memberID, Limit: 1})
 	if err != nil {
 		return err
 	}
-	for _, r := range revs {
-		if r.CreatedBy == memberID {
-			return conflict
-		}
+	if len(revs) != 0 {
+		return conflict
 	}
 	return nil
 }
@@ -120,6 +128,9 @@ func (s *Service) decideSetup(tx store.Tx, actor domain.Actor, netID, disputeID 
 	}
 	if err := p.requireDecider(); err != nil {
 		return nil, nil, nil, err
+	}
+	if !domain.ValidRecordID(disputeID) {
+		return nil, nil, nil, domain.NotFound("dispute")
 	}
 	d, err := tx.GetDispute(netID, disputeID)
 	if err != nil {
@@ -184,6 +195,9 @@ func (s *Service) WithdrawDispute(ctx context.Context, actor domain.Actor, netID
 		}
 		if p.member == nil || (p.member.Status != domain.MemberActive && p.member.Status != domain.MemberSuspended) {
 			return domain.Forbidden("membership cannot perform this action")
+		}
+		if !domain.ValidRecordID(disputeID) {
+			return domain.NotFound("dispute")
 		}
 		d, err := tx.GetDispute(netID, disputeID)
 		if err != nil || d.OpenedBy != p.member.ID {

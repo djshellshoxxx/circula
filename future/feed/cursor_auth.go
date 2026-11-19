@@ -142,11 +142,16 @@ type CodecOptions struct {
 }
 
 // CursorCodec seals and opens feed cursors. It is immutable and safe for
-// concurrent use when its KeySet and clock are.
+// concurrent use when its KeySet and clock are. Its zero value refuses all
+// operations; construct a usable codec with NewCursorCodec.
 type CursorCodec struct {
 	keys KeySet
 	ttl  time.Duration
 	now  func() time.Time
+}
+
+func (c *CursorCodec) ready() bool {
+	return c != nil && c.keys != nil && c.now != nil && c.ttl >= time.Second && c.ttl <= MaxCursorTTL
 }
 
 // NewCursorCodec returns a codec over keys. It fails closed: there is no
@@ -236,7 +241,7 @@ type cursorPayload struct {
 
 // Seal signs pos for b with the current signing key and the codec's clock.
 func (c *CursorCodec) Seal(b Binding, pos Cursor) (string, error) {
-	if c == nil {
+	if !c.ready() {
 		return "", errSeal
 	}
 	kid, key := c.keys.SigningKey()
@@ -268,7 +273,7 @@ var placeholderKey [MinKeyLen]byte
 // ErrInvalidCursor. The MAC is checked in constant time before the payload is
 // parsed.
 func (c *CursorCodec) Open(b Binding, token string) (Cursor, error) {
-	if c == nil || len(token) > maxTokenLen || !isTokenText(token) {
+	if !c.ready() || len(token) > maxTokenLen || !isTokenText(token) {
 		return Cursor{}, ErrInvalidCursor
 	}
 	kid, rest, _ := strings.Cut(token, ".")
