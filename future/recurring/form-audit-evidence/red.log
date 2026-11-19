@@ -1,0 +1,12 @@
+--- FAIL: TestFormParseFailureCannotBeHiddenBySession (0.02s)
+    --- FAIL: TestFormParseFailureCannotBeHiddenBySession/malformed_discarded_field (0.01s)
+        form_cache_test.go:39: invalid form reached session/mutation: status=200 want=400 session_calls=1 active=false version=2 err=<nil>
+    --- FAIL: TestFormParseFailureCannotBeHiddenBySession/oversized_trailing_field (0.00s)
+        form_cache_test.go:39: invalid form reached session/mutation: status=400 want=413 session_calls=1 active=true version=1 err=<nil>
+    --- FAIL: TestFormParseFailureCannotBeHiddenBySession/duplicate_action (0.00s)
+        form_cache_test.go:39: invalid form reached session/mutation: status=400 want=400 session_calls=1 active=true version=1 err=<nil>
+    --- FAIL: TestFormParseFailureCannotBeHiddenBySession/unknown_field (0.00s)
+        form_cache_test.go:39: invalid form reached session/mutation: status=400 want=400 session_calls=1 active=true version=1 err=<nil>
+FAIL
+FAIL	github.com/djshellshoxxx/circula/future/recurring	0.026s
+FAIL

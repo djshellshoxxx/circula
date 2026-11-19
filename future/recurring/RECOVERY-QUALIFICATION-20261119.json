@@ -1,0 +1,330 @@
+{
+  "module": "recurring",
+  "commit": "e79cd7a3d8bc1830aeb5ee255c044ddfef72f278",
+  "tree": "707f6fb5db85808a86a7fae87c716b6ebecfec66",
+  "module_tree": "3c0580c334255092bba0fc2f4d0ea144f021e816",
+  "source_sha256": {
+    "future/recurring/audit_test.go": "205589b3e12f2abdb1163d1d2b43a2b495c1ec81f3ab2699dcb5dc6bd0284023",
+    "future/recurring/calendar.go": "a7e9c4c414dfea08757a7907ee2a8e095f5074a032c4fc22ead758008234b830",
+    "future/recurring/calendar_fuzz_test.go": "9fe11281c3d1b8185130da1ff900a51557fae162e954f375b818e5dcd3bd5f4a",
+    "future/recurring/calendar_recovery_test.go": "beca09e1be63d5750ea93d7d60794e01f455a6c999dd7d98e7783369b8d2ef14",
+    "future/recurring/calendar_test.go": "4f08eb425996bd9d2ef3e0cf3aa5c05cc062660857c629cb0ec44e78e79aa674",
+    "future/recurring/cleanup_recovery_test.go": "de4609b306bc4c23501ffccf101cc77995f3e0864ea68446eb474c1072ce62f9",
+    "future/recurring/cli.go": "60c977389b86f292d5cdba01a8cf07be0641e0985f8670fb75191b4e9fa989b0",
+    "future/recurring/due_with_schedule_test.go": "941167c99fea12d1700179a85e9ec55dacb0637bc4345e23e5d88ad6e5951df8",
+    "future/recurring/firing.go": "19684b5f956926307ac91e39e72df085523f83ee4443b7f0acdf13ac441248cd",
+    "future/recurring/form_cache_test.go": "2e725af3e82186fdfc02a2887bb1e441743803784a833c78241623186a8e82ea",
+    "future/recurring/http.go": "9ce81759e1b573ef4d29ae3ed3fb2c2cab83b0b525b6acbfc30602b3f0ac1708",
+    "future/recurring/http_test.go": "b0bfa9db3cc015afe3a257e827014dd1ccac50698af76e4c230ace7bf89137e4",
+    "future/recurring/invariants.go": "5382773545c6e9b7e4999ecfe519297e37b351010b76fa001f0206aa12ce613d",
+    "future/recurring/json.go": "57c4836bd90903294cc4f7988f8b45fd064459170a4dde37f0b71ccae83d5fe2",
+    "future/recurring/json_recovery_test.go": "7f3812a3d6e8f0a372ac3bf0f519b9890956c009ef25deb3195bf5c48d8d9217",
+    "future/recurring/master_query_test.go": "3664c09cfd8e93092dd0310207889382d941c4a24572a2abde8ea7e26564b246",
+    "future/recurring/schedule.go": "b561f560549b68b1940774e3db08f6a4b9790af2f1e4b2ea7cf28e5a479e68df",
+    "future/recurring/schedule_regression_test.go": "b9437c89da933498bc1575d6091e6e6e7cb6423f0c9070f3ee2e061f4986f0bd",
+    "future/recurring/schedule_test.go": "576d6cb571a64017531e9eeb52c069ca2a5503007f574cebcedd8e06d802f714",
+    "future/recurring/store.go": "cc61f5c4a42e181f4361064059e9b313ab6a79e410a3c3909bac00441b4869d0",
+    "future/recurring/store_test.go": "f5792de111b2510d3fb10eeb99eb2725af2f99544dba9d2271378e9886bfa167",
+    "future/recurring/go.mod": "15fcfee9932fad901fa1934bbfe9eeffbd01b96d1290d55645de723efbc8ed72",
+    "future/recurring/go.sum": "37fd96edc03644960aef1452a11aa7ea4bdad56a3e4d01618794abd7155bac47",
+    "future/recurring/feature.json": "564da83a07d525d6a9ac1bce28087384563e00437d20538f25ace53a48bbf2b5",
+    ".github/workflows/future-recurring.yml": "943962ce7bce3be62099608ad528c902b491efd668437529dab1732967cad694"
+  },
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache",
+    "TMPDIR": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp"
+  },
+  "steps": [
+    {
+      "name": "toolchain",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "version"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 30,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.008,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/toolchain.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-toolchain-1795093857761769215",
+      "source_unchanged": true
+    },
+    {
+      "name": "isolation",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "python - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\n\nfeature = json.loads(Path('feature.json').read_text())\nassert feature['id'] == 'FNET-207'\nassert feature['enabled'] is False\nassert feature['integration'] == 'HOLD'\nassert feature['depends_on_future_features'] == []\nmodule = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))\nassert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/recurring'\nexpected = {\n    ('github.com/robfig/cron/v3', 'v3.0.1', False),\n    ('modernc.org/sqlite', 'v1.60.1', False),\n    ('github.com/dustin/go-humanize', 'v1.0.1', True),\n    ('github.com/google/uuid', 'v1.6.0', True),\n    ('github.com/mattn/go-isatty', 'v0.0.24', True),\n    ('github.com/ncruces/go-strftime', 'v1.0.0', True),\n    ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),\n    ('golang.org/x/sys', 'v0.48.0', True),\n    ('modernc.org/libc', 'v1.77.1', True),\n    ('modernc.org/mathutil', 'v1.7.1', True),\n    ('modernc.org/memory', 'v1.12.1', True),\n}\nactual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}\nassert actual == expected, actual\nassert not module.get('Replace')\nassert not module.get('Exclude')\ndependencies = set(subprocess.check_output(\n    ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],\n    text=True,\n).split())\nallowed = {module['Module']['Path']} | {path for path, _, _ in expected}\nassert dependencies <= allowed, dependencies - allowed\nprint('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')\nPY\n"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 120,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.217,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/isolation.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-isolation-1795093857787323692",
+      "source_unchanged": true
+    },
+    {
+      "name": "format",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "."
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 30,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.033,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/format.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-format-1795093858016747990",
+      "source_unchanged": true
+    },
+    {
+      "name": "race",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-count=1",
+        "-cover",
+        "-json",
+        "-ldflags=-w",
+        "-timeout=2m",
+        "./..."
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 300,
+      "outer_timeout_reached": false,
+      "wall_seconds": 11.363,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/race.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-race-1795093858061453780",
+      "source_unchanged": true,
+      "top_level_tests_passed": [
+        "TestAuditDraftRetryAuthorizesCachedTargetAfterEdit",
+        "TestAuditDepartureRetiresCachedPrivateResponses",
+        "TestAuditSilentWriteFailuresRollBack",
+        "TestAuditMissingLockAndCorruptRecordFailClosed",
+        "TestAuditIncompatibleSchemaRollback",
+        "TestAuditStrictJSONCaseAliasesAndSurrogates",
+        "TestAuditIgnoredDepartureRetirementRollsBack",
+        "TestAuditCachedScopeCorruptionDenied",
+        "TestAuditDirectPreviewNotHiddenBehindCancelledHistory",
+        "TestRecoveredCalendarIdentityEncoding",
+        "TestRecoveredCalendarHistoricalOffsetSeconds",
+        "TestRecoveredCalendarWindowAgainstMinuteOracle",
+        "TestRecoveredCalendarRejectsZeroClock",
+        "TestRecoveredCalendarNextEligibleDate",
+        "TestCalendarBoundaries",
+        "TestAuditNextSkipsSecondPhysicalFold",
+        "TestRecoveredCleanupChronologicalBoundaries",
+        "TestRecoveredInboxChronologicalOrder",
+        "TestWeeklyCalendarBoundaries",
+        "TestMonthlyCalendarBoundaries",
+        "TestScheduleUsesLocalCalendarDate",
+        "TestScheduleDSTPolicies",
+        "TestScheduleValidation",
+        "TestLogicalKeyCompatibilityAndScope",
+        "TestScheduleMembershipAndActivation",
+        "TestCalendarResolutionAgainstMinuteOracle",
+        "TestFormParseFailureCannotBeHiddenBySession",
+        "TestSessionCanReadPrevalidatedForm",
+        "TestHTTPNoJSAndBoundary",
+        "TestCLIAndFreshDraftDenial",
+        "TestStrictJSONAndInactiveTargetCancellation",
+        "TestAuditFormsRejectExternalActions",
+        "TestRecoveredJSONSimpleFoldDuplicates",
+        "TestRecoveredJSONSingleAliasesAndUnknownFields",
+        "TestMasterQueryRejectedBeforeSessionAndMutation",
+        "TestMasterEmptyFirstPageCursorAndNativePost",
+        "TestDueRejectsInvalidIdentityEncoding",
+        "TestDueRejectsHostLocalTimezone",
+        "TestDueHistoricalOffsetSeconds",
+        "TestDueAtZeroInstant",
+        "TestDSTAndBoundedCatchup",
+        "TestCRUDIdempotencyAuthAndDraft",
+        "TestFiringsAtomicRestartConcurrencyAndSkip",
+        "TestQuotaBoundedScanAndSuspension",
+        "TestInputAndDisabled",
+        "TestBackupRestoreRetentionAndMigrationRollback",
+        "TestTimezoneEditGuardAndDeparture",
+        "TestDowntimeBackfillIsOneCurrentWindow"
+      ],
+      "skips": [],
+      "package_results": [
+        {
+          "Time": "2026-11-19T05:11:09.397333507-08:00",
+          "Action": "pass",
+          "Package": "github.com/djshellshoxxx/circula/future/recurring",
+          "Elapsed": 6.281
+        }
+      ],
+      "coverage": [
+        "80.0",
+        "80.0"
+      ]
+    },
+    {
+      "name": "vet",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 150,
+      "outer_timeout_reached": false,
+      "wall_seconds": 1.068,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/vet.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-vet-1795093869450612880",
+      "source_unchanged": true
+    },
+    {
+      "name": "checksums",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 90,
+      "outer_timeout_reached": false,
+      "wall_seconds": 2.259,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/checksums.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-checksums-1795093870533053225",
+      "source_unchanged": true
+    },
+    {
+      "name": "fuzz-schedule",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzScheduleInvariants$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "schedule.go",
+        "schedule_test.go",
+        "schedule_regression_test.go",
+        "due_with_schedule_test.go"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 180,
+      "outer_timeout_reached": false,
+      "wall_seconds": 10.008,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/fuzz-schedule.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-fuzz-schedule-1795093872804105558",
+      "source_unchanged": true,
+      "executions": [
+        17809,
+        100000
+      ]
+    },
+    {
+      "name": "fuzz-calendar",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzCalendar$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "calendar.go",
+        "schedule.go",
+        "calendar_fuzz_test.go"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 180,
+      "outer_timeout_reached": false,
+      "wall_seconds": 10.341,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/fuzz-calendar.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-fuzz-calendar-1795093882836294631",
+      "source_unchanged": true,
+      "executions": [
+        63069,
+        100000
+      ]
+    },
+    {
+      "name": "dependencies",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "list",
+        "-m",
+        "all"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 90,
+      "outer_timeout_reached": false,
+      "wall_seconds": 9.91,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/dependencies.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/recurring-dependencies-1795093893190307568",
+      "source_unchanged": true
+    }
+  ],
+  "state": "passed",
+  "driver": "actual modernc.org/sqlite v1.60.1; no replacement or substitute tags",
+  "started_at": "2026-11-19T13:10:57.761281+00:00",
+  "provider": "separate pending exact-publication-head gate",
+  "source_unchanged": true,
+  "finished_at": "2026-11-19T13:11:43.120252+00:00",
+  "log_sha256": {
+    "toolchain": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1",
+    "isolation": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+    "format": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "race": "6eb74366ff78949717202e6b1686b9335104676194eae3574627c7996843017a",
+    "vet": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checksums": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+    "fuzz-schedule": "1456ce37d780a5a4b42d6ecdffd3403e3d153da88bd3aca225e55b73e2cbfd10",
+    "fuzz-calendar": "e9609793068ce67975c7b84f7aafe7614e93f7c45c171afc1304d8a1c4a668da",
+    "dependencies": "2b06e2bc7aa40856205c73b16ff73aa53ed72838fcc7e889ea296a7fa52076a6"
+  },
+  "evidence_scope": "Full combined nested-module local Linux qualification at the exact recorded commit; later documentation/manifest status and one workflow branch-filter follow-up preserve Go/test/dependency bytes. Native provider checks and integration gates remain separate.",
+  "post_test_workflow_routing": {
+    "commit": "45af2b2e31fa9bde532e6952c0b02da6d6e6a231",
+    "change": "Only add the owned source branch as a second explicit PR base, so a stacked recovery draft runs the same dedicated native jobs. All scripts, pins, permissions, paths and deadlines are unchanged.",
+    "added_base": "master/fnet207-recurring-remote-20261119"
+  },
+  "independent_review_scopes": [
+    {
+      "receipt": "recurring-composition-review-provenance.json",
+      "scope": "Calendar/workflow/archive and legacy-test preservation at 048c715"
+    },
+    {
+      "receipt": "recurring-recovery-root-review.json",
+      "scope": "Complete recovered service paths plus chronology/parser follow-up at 63bb886"
+    },
+    {
+      "receipt": "recurring-federation-vcs-root-review.json",
+      "scope": "Metadata-only dependency query and VALIDATION follow-up at e79cd7a"
+    }
+  ],
+  "remaining_publication_gates": [
+    "independent final documentation/workflow-routing review",
+    "provider jobs at the final published head",
+    "external handoff reconciliation before any stacked recovery merge",
+    "feature remains disabled and integration HOLD; host/manual/policy/release gates remain"
+  ]
+}

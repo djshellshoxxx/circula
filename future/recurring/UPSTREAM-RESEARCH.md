@@ -2,11 +2,11 @@
 
 Research date: 2026-11-16. **Research complete; implementation and fresh-agent audit pending. Integration HOLD remains.** No upstream source or dependency was copied/installed by this phase.
 
-## Calendar implementation update — 2026-11-19
+## Recovery reconciliation — 2026-11-19
 
-The isolated calendar milestone now supports structured daily, weekly and monthly rules through the Go standard library. It resolves exact timezone intervals and preserves the documented gap-skip/fold-first and missing-month-day behavior. The proposed third-party cron parser below was not adopted for this bounded API: no arbitrary expressions are accepted, and no upstream source or dependency is included. The historical candidate review remains reference material for any later expression-parser decision.
+The November 19 calendar-only candidate at local `cdcd2cb38b3af0275e5ceb58242384cfa916be45` implemented `Due` / `DueWithSchedule` using exact standard-library timezone intervals; it did not adopt cron or implement durable service persistence. Its source and regression tests are retained unchanged apart from the test-file rename required for composition.
 
-The complete durable service plan below is still unfinished. No quota, retention, production timezone-edit policy, financial authority, core integration or release decision is implied by the calendar implementation. See `README.md` and `VALIDATION.md` for its implemented boundary and test evidence.
+The subsequently recovered archive `a755732a02dfe0eaa884691d59a6f748f96039e7` already implements the durable service described below. Its separate `Calendar` API uses the pinned cron parser/iterator, and its SQLite fixtures use the existing exact modernc dependency. Recovering that source changes the module dependency boundary but does not add a scheduler runner or authority to trade. The dependency graph and notices are copied from the verified archive; root dependencies are untouched. Current source reconciliation and qualification are tracked in `RECOVERY-PROVENANCE.md` and `VALIDATION.md`. Statements below about planned or pending implementation are the original research snapshot, not evidence that recovered code is absent.
 
 ## Decision
 

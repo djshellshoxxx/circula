@@ -1,0 +1,13 @@
+{
+  "tested_source": "688c22ac2bb01fa66fbbb5512643c085a699d9ca",
+  "go": "go1.26.11 linux/amd64",
+  "race_coverage_percent": 78.1,
+  "focused": "PASS 0.012s",
+  "race": "PASS 2.447s",
+  "vet": "PASS exit 0 no diagnostics",
+  "modules": "all modules verified",
+  "calendar_fuzz_executions": 55117,
+  "root_changes": false,
+  "integration": "HOLD",
+  "publication": false
+}

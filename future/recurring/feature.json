@@ -1,10 +1,28 @@
 {
   "id": "FNET-207",
-  "status": "calendar-core-tested-feature-incomplete",
+  "status": "recovered-composition-local-qualification-passed",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Daily, weekly and monthly IANA-local reminder windows, stable per-date dedupe keys, DST gap skipping/fold first-occurrence selection, exact historical second-offset handling, strict identity/timezone validation and no catch-up backlog.",
-  "remaining": "Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; explicit quotas, retention and timezone-edit policy; optional manually confirmed draft adapter; crash/concurrent worker tests; current authorization adapters; accessible HTTP/CLI/UI acceptance; and core policy approval. No production Core recurring feature is enabled."
+  "scope": "Explicit SQLite private CRUD/revisions/idempotency, pinned daily/weekly/monthly calendar parser, transactional unique firings and private reminder outbox/shared-tx inbox callback, suspension/skip/pause/cancel/edit, current-policy manual drafts, no-JS HTTP and shared CLI, retention/departure and restart/concurrency/restore acceptance.",
+  "remaining": "actual Circula transaction/current auth/limits/inbox adapter and per-network opt-in; host scheduler recovery/fairness; root API/CLI/docs routing; browser/WCAG/screen-reader and full ledger regression; operational/license/release qualification.",
+  "audit": "Independent production/composition and corrective-delta reviews recorded; full local real-driver qualification passed. Final documentation/workflow-routing review, native provider, external handoff and host/manual/policy gates remain.",
+  "archive_evidence": {
+    "head": "a755732a02dfe0eaa884691d59a6f748f96039e7",
+    "tested_source": "b4b8aec884c53a78a8586e0d94fad95e9416dc53",
+    "historical_completion_percent": 84.25,
+    "historical_completion_basis": "COMPLETION.md standard weighted criteria; mandatory external/operational gates remain"
+  },
+  "qualification": {
+    "tested_commit": "e79cd7a3d8bc1830aeb5ee255c044ddfef72f278",
+    "tested_tree": "707f6fb5db85808a86a7fae87c716b6ebecfec66",
+    "evidence": "RECOVERY-QUALIFICATION-20261119.md",
+    "full_race_top_level_tests": 48,
+    "full_race_skips": 0,
+    "statement_coverage_percent": 80.0,
+    "bounded_fuzz_targets": 2,
+    "executions_per_fuzz_target": 100000,
+    "provider": "Pending exact published-head native jobs; Windows ordinary suite is distinct from race qualification."
+  }
 }

@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  title: Isolated recurring-template adapter candidate
+  version: 0.1.0
+  description: Unregistered module-only contract. Host authentication, network opt-in and cookie CSRF are required. Integration remains HOLD.
+paths:
+  /trade-templates:
+    get:
+      summary: List current owner templates and private reminder references
+      description: Query is limited to 8192 bytes before host authentication. Only single after and limit fields are accepted; an empty after selects the first page. Unknown, duplicate or malformed fields return 400.
+      parameters:
+        - in: query
+          name: after
+          schema: {type: string, maxLength: 256}
+        - in: query
+          name: limit
+          schema: {type: integer, minimum: 1, maximum: 100, default: 20}
+      responses:
+        '200': {description: Owner-scoped JSON or escaped no-JavaScript HTML; Cache-Control no-store}
+        '400': {description: Invalid bounded query; RFC 9457}
+        '403': {description: Current authentication or policy denied; RFC 9457}
+    post:
+      summary: Explicit save, pause, resume, skip, cancel or draft action
+      description: No action posts or accepts a trade. JSON uses Idempotency-Key; native forms use hidden key and CSRF token. A stale expected revision returns 409. POST rejects nonempty URL queries before authentication or mutation; generated forms target the query-free local path.
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          schema: {type: string, minLength: 1, maxLength: 256}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                Action: {type: string, enum: [save, pause, resume, skip, cancel, draft]}
+                ID: {type: string, maxLength: 256}
+                Expected: {type: integer, minimum: 0}
+                Record:
+                  type: object
+                  description: Structured template input; server-owned ownership/version/timestamps/cancelled fields must be omitted.
+              required: [Action]
+          application/x-www-form-urlencoded:
+            schema: {type: object, description: Native create/edit/state forms from the authenticated page; 64 KiB body cap.}
+      responses:
+        '200': {description: Current action result or refreshed no-JS page; no-store}
+        '400': {description: Invalid bounded input; RFC 9457}
+        '403': {description: Auth, CSRF, inactive member/target or draft policy denied; RFC 9457}
+        '409': {description: Revision or idempotency conflict; RFC 9457}
+        '413': {description: Body over 64 KiB; RFC 9457}
+        '415': {description: Unsupported content type; RFC 9457}
