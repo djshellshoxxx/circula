@@ -34,6 +34,17 @@ Fix: count the attempt with `reserveAttempt(recgenKey(person))` before comparing
 
 Regression: `TestChangePasswordGuessesAreThrottled`.
 
+Follow-up integration repair: sharing the `recgen` budget with `ChangePassword`
+also made an old password-proof lock apply to a newly reset temporary password.
+Admin/operator reset users could sign in but could not complete the mandatory
+change until that durable lock expired. `resetPerson` and successful code-based
+recovery now delete only that old current-password budget in the same transaction
+as the password replacement and credential revocation. A refused reset cannot
+clear the lock. Regression `TestPasswordRecoveryRestoresCurrentPasswordAttemptBudget`
+covers all three recovery paths, an unauthorized reset, forced-change state and
+session revocation after the replacement password is changed. HTTP request limits
+retain their independent lifetimes.
+
 ## AUD4-F02: administrator takes over a reviewer account (Medium, CWE-284/639): owner decision required
 
 The SA2-01 guard stops network administrators resetting another administrator's password, but not a reviewer's. An

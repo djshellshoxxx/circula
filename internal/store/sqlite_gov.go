@@ -41,6 +41,7 @@ func (t *txImpl) ListPolicyVersions(netID string) ([]PolicyVersionRow, error) {
 		if err := rows.Scan(&r.Version, &pj, &r.ChangedBy, &r.Reason, &eff, &ann, &r.NoticeDays, &r.NoticeReason); err != nil {
 			return nil, err
 		}
+		r.Policy = domain.DefaultPolicy() // match effective reads for fields absent from older JSON
 		if err := json.Unmarshal([]byte(pj), &r.Policy); err != nil {
 			return nil, err
 		}
@@ -80,11 +81,13 @@ func (t *txImpl) ListPolicyLogPage(netID string, beforeVersion, limit int) ([]Po
 			&r.NoticeDays, &r.NoticeReason, &r.Withdrawn, &previous); err != nil {
 			return nil, err
 		}
+		r.Policy = domain.DefaultPolicy()
 		if err := json.Unmarshal([]byte(pj), &r.Policy); err != nil {
 			return nil, err
 		}
 		if previous.Valid {
-			r.Previous = new(domain.Policy)
+			p := domain.DefaultPolicy()
+			r.Previous = &p
 			if err := json.Unmarshal([]byte(previous.String), r.Previous); err != nil {
 				return nil, err
 			}

@@ -70,6 +70,11 @@ Password, all sessions, all API tokens, all recovery codes, the login's and
 recovery throttles. Forced change flag set (admin/operator) or cleared
 (self-service recovery, `ChangePassword`).
 
+Successful administrator/operator resets and code-based recovery also clear the
+durable current-password attempt budget. Guesses made with the previous password
+must not block the replacement password's required change. A refused reset leaves
+that budget intact; unrelated HTTP request limits keep their normal expiry.
+
 ## Troubleshooting
 
 | Symptom | Cause |

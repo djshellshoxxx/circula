@@ -246,6 +246,11 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 		if err := tx.DeleteMFAChallengesOf(pid); err != nil { // SA2-13
 			return err
 		}
+		// The password has changed and old sessions are revoked. Guesses of
+		// that old password must not lock management of the recovered account.
+		if err := tx.DeleteThrottle(recgenKey(pid)); err != nil {
+			return err
+		}
 		for _, k := range []string{recoverKey(login), login} {
 			if _, err := tx.DeleteThrottleFamily(k); err != nil {
 				return err
@@ -303,6 +308,12 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 		return err
 	}
 	if err := tx.DeleteAccountRecoveryCodes(personID); err != nil {
+		return err
+	}
+	// AUD4-F04: ChangePassword shares this durable proof budget. Resetting
+	// it lets the temporary-password owner complete the forced change even
+	// if guesses through an old session exhausted the previous budget.
+	if err := tx.DeleteThrottle(recgenKey(personID)); err != nil {
 		return err
 	}
 	for _, k := range []string{login, recoverKey(login)} {
