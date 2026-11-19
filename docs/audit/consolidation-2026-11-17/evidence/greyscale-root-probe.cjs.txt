@@ -1,0 +1,111 @@
+// Runs the actual committed assertion body with deterministic page snapshots.
+// This exercises assertion wiring, not DOM rendering or browser emulation.
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const { expect } = require('/workspace/scratch/9ceb45b04668/audit-c-erasure-fixture/e2e/node_modules/@playwright/test');
+
+async function probe(source, scenario) {
+  const cases = [];
+  vm.runInNewContext(source, {
+    require: (name) => {
+      assert.equal(name, '../fixtures');
+      return { test: (name, fn) => cases.push({ name, fn }), expect };
+    },
+  });
+  const target = cases.find(c => c.name.includes('trade detail, pending'));
+  assert.ok(target, 'execute the real pending-trade case');
+  let pages = 0;
+  let modes = 0;
+  const as = async () => {
+    const pageNumber = ++pages;
+    const minute = scenario.rollover && pageNumber > 1 ? '34' : '33';
+    let timestamp = `18 Nov 2026, 06:${minute} UTC`;
+    let text = `Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated ${timestamp}. Figures are a snapshot and do not update automatically.`;
+    if (scenario.laterPage === 'wrong' && pageNumber > 1) text = 'Sign in to Circula.';
+    if (scenario.laterPage === 'omitted' && pageNumber > 1) text = text.replace('Check the details before responding. ', '');
+    let contrast = 21;
+    const apply = async () => {
+      modes++;
+      if (scenario.mutate === 'amount') text = text.replace('5.00', '9.00');
+      if (scenario.mutate === 'timestamp') {
+        text = text.replace(`06:${minute}`, '06:35');
+        timestamp = timestamp.replace(`06:${minute}`, '06:35');
+      }
+      if (scenario.mutate === 'contrast') contrast = 1;
+    };
+    return {
+      goto: async () => {},
+      context: () => ({ newCDPSession: async () => ({ send: apply }) }),
+      emulateMedia: apply,
+      addStyleTag: apply,
+      evaluate: async fn => {
+        if (fn.toString().includes('matchMedia(')) return true;
+        const tag = { innerText: 'Waiting for Bob to respond', parentElement: null,
+          getBoundingClientRect: () => ({ width: 10, height: 10 }) };
+        const freshness = {
+          get innerText() { return `Page generated ${timestamp}. Figures are a snapshot and do not update automatically.`; },
+          querySelector: selector => {
+            assert.equal(selector, 'time');
+            return scenario.missingTime || (scenario.laterPage === 'wrong' && pageNumber > 1) ? null : { innerText: timestamp };
+          },
+        };
+        const document = {
+          querySelector: selector => {
+            if (selector === 'main') return { innerText: text };
+            if (selector === 'main #figure-freshness') return freshness;
+            throw new Error(`unexpected selector: ${selector}`);
+          },
+          querySelectorAll: selector => {
+            if (selector === '.bal' || selector === 'ul.rows > li') return [];
+            if (selector === 'main .tag') return [tag];
+            throw new Error(`unexpected selector: ${selector}`);
+          },
+        };
+        return vm.runInNewContext(`(${fn.toString()})()`, {
+          document,
+          getComputedStyle: () => ({ color: contrast === 1 ? 'rgb(255, 255, 255)' : 'rgb(0, 0, 0)',
+            backgroundColor: 'rgb(255, 255, 255)', visibility: 'visible', opacity: '1' }),
+        });
+      },
+    };
+  };
+  try {
+    await target.fn({ as, st: { slug: 'fixture', tradePending: 'pending' } });
+    assert.equal(modes, 3, 'all three original colour modes executed');
+    return { pass: true, modes };
+  } catch (error) {
+    return { pass: false, modes, error: String(error.message).replace(/\u001b\[[0-9;]*m/g, '').slice(0, 1600) };
+  }
+}
+
+(async () => {
+  const original = fs.readFileSync(process.argv[2], 'utf8');
+  const corrected = fs.readFileSync(process.argv[3], 'utf8');
+  const results = {
+    original_same_minute: await probe(original, { rollover: false }),
+    original_minute_boundary: await probe(original, { rollover: true }),
+    corrected_minute_boundary: await probe(corrected, { rollover: true }),
+    corrected_changed_amount: await probe(corrected, { rollover: true, mutate: 'amount' }),
+    corrected_changed_timestamp: await probe(corrected, { rollover: true, mutate: 'timestamp' }),
+    corrected_bad_contrast: await probe(corrected, { rollover: true, mutate: 'contrast' }),
+    original_later_wrong_page: await probe(original, { rollover: false, laterPage: 'wrong' }),
+    corrected_later_wrong_page: await probe(corrected, { rollover: true, laterPage: 'wrong' }),
+    corrected_nonfinancial_omission: await probe(corrected, { rollover: true, laterPage: 'omitted' }),
+    corrected_missing_generation_time: await probe(corrected, { rollover: true, missingTime: true }),
+  };
+  assert.equal(results.original_same_minute.pass, true);
+  assert.equal(results.original_minute_boundary.pass, false);
+  assert.equal(results.corrected_minute_boundary.pass, true);
+  assert.equal(results.corrected_changed_amount.pass, false);
+  assert.equal(results.corrected_changed_timestamp.pass, false);
+  assert.equal(results.corrected_bad_contrast.pass, false);
+  assert.equal(results.original_later_wrong_page.pass, false);
+  assert.equal(results.corrected_later_wrong_page.pass, false);
+  assert.equal(results.corrected_nonfinancial_omission.pass, false);
+  assert.equal(results.corrected_missing_generation_time.pass, false);
+  console.log(JSON.stringify({
+    scope: 'Actual test-body assertions with controlled page values; not browser execution.',
+    results,
+  }, null, 2));
+})().catch(error => { console.error(error); process.exitCode = 1; });

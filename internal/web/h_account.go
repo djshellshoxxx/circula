@@ -44,6 +44,12 @@ func (s *server) passwordPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	err := s.svc.ChangePassword(r.Context(), c.actor, oldPW, newPW)
 	switch {
 	case err == nil:
+	case domain.CodeOf(err) == domain.CodeRateLimited:
+		// The durable password-proof budget is shared with MFA/recovery and
+		// survives a handler restart. It can run out before pwFail's local
+		// allowance, so preserve its rate-limited status at this boundary.
+		show(http.StatusTooManyRequests, messages.Text("auth.throttle.few_minutes"), nil)
+		return
 	case domain.CodeOf(err) == domain.CodeUnauthenticated:
 		s.pwFail.fail(key)
 		show(422, messages.Text("auth.not_saved"),

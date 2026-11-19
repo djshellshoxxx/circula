@@ -118,7 +118,7 @@ in append-only audit summaries. Standalone adjustments leave the reference empty
 | `dispute_event_order` | `seq`, `event_id` |
 | `dispute_rereviews` | `id`, `network_id`, `dispute_id`, `requested_by`, `requested_at`, `status`, `reviewer_id`, `outcome`, `reversal_amount`, `decided_at` |
 | `dispute_responses` | `id`, `network_id`, `dispute_id`, `responder_id`, `submitted_at` |
-| `disputes` | `id`, `network_id`, `tx_id`, `opened_by`, `category`, `status`, `outcome`, `reversal_amount`, `reviewer_id`, `opened_at`, `decided_at` |
+| `disputes` | `id`, `network_id`, `tx_id`, `opened_by`, `category`, `status`, `outcome`, `reversal_amount`, `reviewer_id`, `opened_at`, `decided_at`, `policy_version` |
 | `entries` | `id`, `network_id`, `tx_id`, `account_id`, `amount`, `ledger_seq`, `posted_at` |
 | `idempotency_keys` | `network_id`, `actor_id`, `operation`, `key`, `fingerprint`, `result_ref`, `created_at`, `expires_at` |
 | `invitations` | `id`, `network_id`, `created_by`, `created_at`, `expires_at`, `used_at`, `used_by`, `revoked_at` |

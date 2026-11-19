@@ -1,0 +1,10 @@
+Baseline object: cdc8112cf80ca51fdd220cd2f86c5180180cbe2a:docs/audit/2026-10-28/A2-circula-adapters.md
+Blob: f8126e266f17f936c744f694b85687e82db40518
+
+130: ### A2-08 Runtime statuses not documented in openapi.yaml (Low, CONFIRMED)
+131:
+132: - Where: `docs/api/openapi.yaml`; `codeStatus` (`internal/api/respond.go:103-111`) maps `network-frozen` to 423 and busy to 503 for any operation; the edge limiter (`middleware.go:52-57`) and the principal limiter (`route.go:73-76`) return 429 on any route.
+133: - Evidence (script tally over 85 operations): 423 documented on 0 operations (all 52 writes can return it); 429 missing on 46; 503 missing on 81; 413 missing on 22 writes; 415 missing on 18 writes. `TestA2_UndocumentedRuntimeStatuses` (kin-openapi with `IncludeResponseStatus`) -> `frozen write: POST /listings -> 423; openapi validation error: status is not supported`, `rate limited: GET /network -> 429; ... status is not supported`. The 07 error catalogue (7.2) also lacks four codes the runtime emits: `network-frozen` (423), `approval-required` (403), `password-change-required` (403), `terms-acceptance-required` (409); OpenAPI lists them only in the code enum.
+134: - Impact: generated clients and the contract test treat legitimate responses as contract violations; API-077 says contract tests MUST validate responses against the description, and the existing test only passes because these paths are never exercised.
+135: - Fix: add shared responses (423, 429 with Retry-After, 503 with Retry-After, 413, 415) to every operation (or as default responses); add the four codes to 07 section 7.2; extend the contract test with a frozen network, a busy store and a rate-limited principal.
+136: - Route parity itself is exact: 85 runtime operations = 85 documented operations (script diff, section 8).

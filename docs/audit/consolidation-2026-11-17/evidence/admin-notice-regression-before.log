@@ -1,0 +1,5 @@
+--- FAIL: TestAdminGrantNoticesBeyondFirstMemberPage (0.03s)
+    admin_notice_pagination_test.go:79: administrator after first page received 0 new admin-grant notices, want 1
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.036s
+FAIL

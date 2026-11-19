@@ -1,0 +1,8 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/21 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 21/21 completed, now fuzzing with 4 workers
+fuzz: elapsed: 3s, execs: 510223 (170015/sec), new interesting: 50 (total: 71)
+fuzz: elapsed: 6s, execs: 1033050 (174217/sec), new interesting: 62 (total: 83)
+fuzz: elapsed: 9s, execs: 1545153 (170787/sec), new interesting: 64 (total: 85)
+fuzz: elapsed: 10s, execs: 1718765 (160249/sec), new interesting: 64 (total: 85)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/domain	10.088s

@@ -1,0 +1,21 @@
+{
+  "observed_at": "2026-11-18T08:20:34.916Z",
+  "pr": 82,
+  "head": "0a7ef6ee8efbec15c4603bd9fbb14492c7e4ddbf",
+  "policy_review": 5952884296,
+  "policy_merge_authorized": false,
+  "superseded_by": "5c39abdb89faa505533e51d3878b3b119957ff32",
+  "workflow_runs": [
+    {
+      "id": 44264673171,
+      "name": "ci",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_number": 469,
+      "jobs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44264673171/jobs",
+      "logs_url": "https://api.github.com/repos/djshellshoxxx/circula/actions/runs/44264673171/logs",
+      "workflow_id": 391555428
+    }
+  ],
+  "note": "A3-F02 / DEC-014 remains unresolved; the replacement head restores recovery.go and is separately qualified."
+}

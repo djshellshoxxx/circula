@@ -1,0 +1,14 @@
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/50_years_ahead,_default_counts
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/an_hour_ahead_in_the_current_month
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/backup_at_now_counts
+=== RUN   TestPruneKeepsFutureDatedBackupsOutOfCounts/several_future-dated_files
+--- PASS: TestPruneKeepsFutureDatedBackupsOutOfCounts (0.00s)
+    --- PASS: TestPruneKeepsFutureDatedBackupsOutOfCounts/50_years_ahead,_default_counts (0.00s)
+    --- PASS: TestPruneKeepsFutureDatedBackupsOutOfCounts/an_hour_ahead_in_the_current_month (0.00s)
+    --- PASS: TestPruneKeepsFutureDatedBackupsOutOfCounts/backup_at_now_counts (0.00s)
+    --- PASS: TestPruneKeepsFutureDatedBackupsOutOfCounts/several_future-dated_files (0.00s)
+=== RUN   TestJobRetentionDoesNotCountFutureDatedBackup
+--- PASS: TestJobRetentionDoesNotCountFutureDatedBackup (0.53s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	0.539s

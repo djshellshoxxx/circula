@@ -51,6 +51,17 @@ type NetworkRepo interface {
 	AppendPolicy(netID string, version int, p domain.Policy, by, reason string, at time.Time) error
 	GetNetwork(id string) (*domain.Network, error)
 	GetNetworkBySlug(slug string) (*domain.Network, error)
+	// PolicyInForceAt returns the network's policy version in force at
+	// instant at, and its number: the highest version whose effective time is
+	// not after at, the rule GetNetwork applies under GovRepo.SetAsOf. A
+	// scheduled version is not in force before its effective time; one
+	// withdrawn by a later version with an earlier effective time never is.
+	// Fields absent from an older stored version read as in GetNetwork
+	// (domain.DefaultPolicy). Not-found when no version was in force at at.
+	PolicyInForceAt(netID string, at time.Time) (domain.Policy, int, error)
+	// GetPolicyVersion reads one immutable version, scoped to the network.
+	// Fields absent from older versions keep domain.DefaultPolicy values.
+	GetPolicyVersion(netID string, version int) (domain.Policy, error)
 	SetNetworkStatus(id string, s domain.NetworkStatus) error
 	// NextLedgerSeq increments and returns the per-network posting counter (DAT-016).
 	NextLedgerSeq(netID string) (int64, error)

@@ -1,0 +1,8 @@
+{
+  "head": "1a3ef0fad836067b71857d961659459d976e7e15",
+  "tree": "1fc439e5a9a1bb90553d59952d02d117a4858871",
+  "fixed_snapshot": "/workspace/scratch/9ceb45b04668/audit-b/pr87-fixed",
+  "checked_tracked_blobs": 979,
+  "mismatches": [],
+  "scope": "Post-test candidate snapshot content compared to every tracked Git blob; no candidate production/test file changed."
+}

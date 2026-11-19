@@ -7,12 +7,12 @@ import (
 )
 
 const disputeCols = `id,network_id,tx_id,opened_by,category,statement,status,COALESCE(outcome,''),
-	reversal_amount,COALESCE(reviewer_id,''),rationale,opened_at,decided_at`
+	reversal_amount,COALESCE(reviewer_id,''),rationale,opened_at,decided_at,policy_version`
 
 func (t *txImpl) InsertDispute(d *domain.Dispute) error {
-	_, err := t.exec(`INSERT INTO disputes(id,network_id,tx_id,opened_by,category,statement,status,opened_at)
-		VALUES (?,?,?,?,?,?,?,?)`, d.ID, d.NetworkID, d.TxID, d.OpenedBy, d.Category, d.Statement,
-		string(d.Status), ms(d.OpenedAt))
+	_, err := t.exec(`INSERT INTO disputes(id,network_id,tx_id,opened_by,category,statement,status,opened_at,policy_version)
+		VALUES (?,?,?,?,?,?,?,?,?)`, d.ID, d.NetworkID, d.TxID, d.OpenedBy, d.Category, d.Statement,
+		string(d.Status), ms(d.OpenedAt), d.PolicyVersion)
 	return err
 }
 
@@ -22,7 +22,7 @@ func scanDispute(r rowScanner) (*domain.Dispute, error) {
 	var opened int64
 	var decided sql.NullInt64
 	if err := r.Scan(&d.ID, &d.NetworkID, &d.TxID, &d.OpenedBy, &d.Category, &d.Statement, &status,
-		&outcome, &d.ReversalAmount, &d.ReviewerID, &d.Rationale, &opened, &decided); err != nil {
+		&outcome, &d.ReversalAmount, &d.ReviewerID, &d.Rationale, &opened, &decided, &d.PolicyVersion); err != nil {
 		return nil, err
 	}
 	d.Status, d.Outcome = domain.DisputeStatus(status), domain.DisputeOutcome(outcome)

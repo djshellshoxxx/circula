@@ -1,0 +1,54 @@
+{
+  "reviewed_head": {
+    "git_object_sha1": "5c39abdb89faa505533e51d3878b3b119957ff32"
+  },
+  "main": {
+    "git_object_sha1": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a"
+  },
+  "tree": {
+    "git_object_sha1": "302beed8428063a8df33ab68ba3256c7e1976f5f"
+  },
+  "merge_base": {
+    "git_object_sha1": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a"
+  },
+  "auth_go_unchanged": true,
+  "recovery_go_equals_main": true,
+  "auth_go_blob": {
+    "git_object_sha1": "97316e591698792ad3bece18063e4883aac4e3c2"
+  },
+  "recovery_go_blob": {
+    "git_object_sha1": "f3e1681c1634e2afac23f758bd3c1af0eeb0b5a2"
+  },
+  "test_file": "internal/service/aud4_auth_test.go",
+  "tests": [
+    {
+      "name": "TestLoginStraddlingPasswordChangeGetsNoSession",
+      "identical": true,
+      "sha256": {
+        "sha256_digest": "b7ece752356b054d4a5c148268ca824fafd847c35211102f218d9b165b030931"
+      }
+    },
+    {
+      "name": "TestChangePasswordReplacesOnlyTheVerifiedHash",
+      "identical": true,
+      "sha256": {
+        "sha256_digest": "4727845344ebe96f699c0f29477c668acea6adaea66b874776f969e3725aae48"
+      }
+    },
+    {
+      "name": "TestChangePasswordGuessesAreThrottled",
+      "identical": true,
+      "sha256": {
+        "sha256_digest": "073aa5a5925feef30405d88a71477a5c19b8a6b7cefae7ba819a52506a94d90f"
+      }
+    }
+  ],
+  "unique_files": [
+    "A\tdocs/audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md",
+    "A\tinternal/service/aud4_auth_test.go",
+    "M\tinternal/service/auth.go"
+  ],
+  "decision": "Compatible F04/F06 source slice approved at this exact head; F02 executable change and test removed; no new test runs required for unchanged code/test bodies. CI/aggregate gates remain root responsibility.",
+  "ahead": 4,
+  "behind": 0
+}

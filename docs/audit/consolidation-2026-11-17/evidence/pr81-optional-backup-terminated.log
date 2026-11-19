@@ -1,0 +1,31 @@
+=== RUN   TestBackupDirectoryWithURIMetacharacters
+=== RUN   TestBackupDirectoryWithURIMetacharacters/bk#x
+=== RUN   TestBackupDirectoryWithURIMetacharacters/bk?x
+=== RUN   TestBackupDirectoryWithURIMetacharacters/bk%41x
+--- PASS: TestBackupDirectoryWithURIMetacharacters (4.27s)
+    --- PASS: TestBackupDirectoryWithURIMetacharacters/bk#x (1.57s)
+    --- PASS: TestBackupDirectoryWithURIMetacharacters/bk?x (1.32s)
+    --- PASS: TestBackupDirectoryWithURIMetacharacters/bk%41x (1.38s)
+=== RUN   TestBackupStagingRequiresPrivateOrStickyParent
+--- PASS: TestBackupStagingRequiresPrivateOrStickyParent (0.00s)
+=== RUN   TestLeasedWorkCleanupRefusesSubstitutedDirectory
+--- PASS: TestLeasedWorkCleanupRefusesSubstitutedDirectory (0.00s)
+=== RUN   TestBackupStagingRefusesForeignOwnedParent
+    backup_path_hardening_test.go:212: needs root on Unix to create a directory owned by another user
+--- SKIP: TestBackupStagingRefusesForeignOwnedParent (0.00s)
+=== RUN   TestSnapshotUsesPrivateStaging
+=== RUN   TestSnapshotUsesPrivateStaging/plaintext
+=== RUN   TestSnapshotUsesPrivateStaging/plaintext/verification_failure
+=== RUN   TestSnapshotUsesPrivateStaging/encrypted
+=== RUN   TestSnapshotUsesPrivateStaging/encrypted/verification_failure
+--- PASS: TestSnapshotUsesPrivateStaging (2.95s)
+    --- PASS: TestSnapshotUsesPrivateStaging/plaintext (0.49s)
+    --- PASS: TestSnapshotUsesPrivateStaging/plaintext/verification_failure (0.20s)
+    --- PASS: TestSnapshotUsesPrivateStaging/encrypted (1.07s)
+    --- PASS: TestSnapshotUsesPrivateStaging/encrypted/verification_failure (0.21s)
+=== RUN   TestPlainSnapshotSweepsOnlyStaleBackupWork
+--- PASS: TestPlainSnapshotSweepsOnlyStaleBackupWork (1.38s)
+=== RUN   TestSnapshotWritesVerifiedManifestAndRestores
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	9.043s
+FAIL

@@ -2,9 +2,10 @@
 // states, against driver-neutral repository.Store and repository.Tx, the behaviour
 // the service layer relies on from any storage implementation: atomic units of
 // work, read-only views, coded not-found and conflict errors, per-network
-// scoping (ARC-007), the ledger posting guards (LED-1, LED-2, DAT-007),
-// integer balances within their bound, serialised check-then-write units
-// (ARC-006) and millisecond UTC timestamps (DAT-017).
+// scoping (ARC-007), the policy version in force at an instant (GOV-001), the
+// ledger posting guards (LED-1, LED-2, DAT-007), integer balances within their
+// bound, serialised check-then-write units (ARC-006) and millisecond UTC
+// timestamps (DAT-017).
 //
 // The SQLite store runs it in internal/store; a later adapter (for example
 // PostgreSQL, DEC-001) is acceptable when Run passes against it. The package
@@ -43,6 +44,8 @@ func Run(t *testing.T, open Factory) {
 		{"DuplicatesAreConflicts", duplicatesAreConflicts},
 		{"NetworkScoping", networkScoping},
 		{"LedgerSequencePerNetwork", ledgerSequencePerNetwork},
+		{"PolicyInForceAt", policyInForceAt},
+		{"DisputePolicyBinding", disputePolicyBinding},
 		{"PostingGuards", postingGuards},
 		{"BalanceBound", balanceBound},
 		{"AuditAppendAndHead", auditAppendAndHead},
@@ -405,6 +408,129 @@ func ledgerSequencePerNetwork(t *testing.T, s store.Store) {
 		v, err := tx.LedgerSeq(a.net)
 		if err == nil && v != 3 {
 			t.Errorf("LedgerSeq(A) = %d after a rolled-back increment, want 3", v)
+		}
+		return err
+	})
+}
+
+// policyInForceAt: the policy version in force at an instant is the highest
+// version whose effective time is not after it (GOV-001, GOV-003). Services
+// read it to apply a policy prospectively, for example the dispute timelines
+// in force when a dispute was opened (DEC-012).
+func policyInForceAt(t *testing.T, s store.Store) {
+	a := seed(t, s, "a") // version 1, effective t0
+	b := seed(t, s, "b")
+	pol := func(days int) domain.Policy {
+		p := domain.DefaultPolicy()
+		p.ResponsePeriodDays = days
+		return p
+	}
+	at := func(d time.Duration) time.Time { return t0.Add(d) }
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		for _, v := range []struct {
+			version int
+			eff     time.Time
+		}{
+			{2, at(10 * 24 * time.Hour)}, // scheduled ...
+			{3, at(24 * time.Hour)},      // ... and withdrawn by an earlier version 3
+			{4, at(48 * time.Hour)},      // two versions effective at the same instant:
+			{5, at(48 * time.Hour)},      // the higher one wins
+		} {
+			if err := tx.AppendPolicy(a.net, v.version, pol(v.version), "", "", v.eff); err != nil {
+				return err
+			}
+		}
+		return tx.AppendPolicy(b.net, 2, pol(42), "", "", at(time.Hour))
+	}))
+	view(t, s, func(tx store.Tx) error {
+		_, _, err := tx.PolicyInForceAt(a.net, at(-time.Millisecond))
+		wantCode(t, "before the first version", err, domain.CodeNotFound)
+		_, _, err = tx.PolicyInForceAt("nonet", at(0))
+		wantCode(t, "unknown network", err, domain.CodeNotFound)
+		for _, c := range []struct {
+			at   time.Time
+			want int
+		}{
+			{at(0), 1}, // effective time inclusive
+			{at(24*time.Hour - time.Millisecond), 1},
+			{at(24 * time.Hour), 3},
+			{at(48*time.Hour - time.Millisecond), 3},
+			{at(48 * time.Hour), 5},
+			{at(20 * 24 * time.Hour), 5}, // version 2 never comes into force
+		} {
+			p, v, err := tx.PolicyInForceAt(a.net, c.at)
+			if err != nil {
+				return err
+			}
+			days := domain.DefaultPolicy().ResponsePeriodDays
+			if c.want > 1 {
+				days = c.want
+			}
+			if v != c.want || p.ResponsePeriodDays != days {
+				t.Errorf("PolicyInForceAt(%s) = version %d (response %d days), want version %d (%d days)", c.at, v, p.ResponsePeriodDays, c.want, days)
+			}
+		}
+		if p, v, err := tx.PolicyInForceAt(b.net, at(30*24*time.Hour)); err != nil || v != 2 || p.ResponsePeriodDays != 42 {
+			t.Errorf("PolicyInForceAt(B) = version %d (%d days) %v, want B's version 2: versions are per network", v, p.ResponsePeriodDays, err)
+		}
+		return nil
+	})
+}
+
+// Dispute policy bindings name one immutable version in their own network.
+// New policy timestamps must never make that exact-version read drift.
+func disputePolicyBinding(t *testing.T, s store.Store) {
+	a := seed(t, s, "a")
+	b := seed(t, s, "b")
+	pol := domain.DefaultPolicy()
+	pol.ResponsePeriodDays = 30
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		if err := tx.AppendPolicy(a.net, 2, pol, "", "", t0); err != nil {
+			return err
+		}
+		return tx.InsertDispute(&domain.Dispute{ID: "bound", NetworkID: a.net, TxID: a.tx,
+			OpenedBy: a.memA, Category: "other", Status: domain.DisputeOpen, OpenedAt: t0, PolicyVersion: 1})
+	}))
+	view(t, s, func(tx store.Tx) error {
+		for _, c := range []struct {
+			net     string
+			version int
+		}{{a.net, 0}, {a.net, 3}, {b.net, 2}, {"missing", 1}} {
+			_, err := tx.GetPolicyVersion(c.net, c.version)
+			wantCode(t, "missing policy version", err, domain.CodeNotFound)
+		}
+		p, err := tx.GetPolicyVersion(a.net, 1)
+		if err != nil {
+			return err
+		}
+		if p != domain.DefaultPolicy() {
+			t.Error("exact version read used the newer policy")
+		}
+		d, err := tx.GetDispute(a.net, "bound")
+		if err != nil {
+			return err
+		}
+		if d.PolicyVersion != 1 {
+			t.Errorf("stored policy version = %d, want 1", d.PolicyVersion)
+		}
+		rows, err := tx.ListDisputes(a.net, store.DisputeFilter{})
+		if err == nil && (len(rows) != 1 || rows[0].PolicyVersion != 1) {
+			t.Errorf("listed dispute lost its policy binding: %+v", rows)
+		}
+		return err
+	})
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		d, err := tx.GetDispute(a.net, "bound")
+		if err != nil {
+			return err
+		}
+		d.Status, d.PolicyVersion = domain.DisputeWithdrawn, 2
+		return tx.UpdateDispute(d) // lifecycle updates never overwrite the binding
+	}))
+	view(t, s, func(tx store.Tx) error {
+		d, err := tx.GetDispute(a.net, "bound")
+		if err == nil && (d.Status != domain.DisputeWithdrawn || d.PolicyVersion != 1) {
+			t.Errorf("lifecycle update rewrote immutable policy binding: %+v", d)
 		}
 		return err
 	})

@@ -1,5 +1,7 @@
 # PR consolidation ledger (2026-11-17 assignment, executed 2026-11-18)
 
+> Historical preparation snapshot. Its counts, branch heads and pending-merge statements describe that earlier review. The [executed consolidation record](../audit/consolidation-2026-11-17/README.md) provides refreshed inventories, exact merges and completed closures.
+
 Authoritative record of the disposition of every Circula pull request. Branch-level ancestry and patch
 equivalence are in [BRANCH-CONSOLIDATION-2026-11-17.md](BRANCH-CONSOLIDATION-2026-11-17.md).
 
