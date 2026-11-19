@@ -114,6 +114,32 @@ assertions. Local Chromium aborts before assertions because socket() is denied.
 All future modules remain isolated and disabled. No main merge, release or
 deployment is asserted by this continuation record.
 
+### API-036 qualification follow-up — PR #111
+
+After Core `992478594e5902f57a39f3772739bee6ab495d24`, the integration branch
+advanced to documentation-only commit `839e86935767288e594914ad711486616a604eca`.
+Its runtime, tests, workflows, dependencies, scripts and `docs/TRACEABILITY.md`
+are unchanged from Core992. Its closing publication receipts retain their
+original timestamps and scope; they are preserved in this follow-up.
+
+Draft [PR #111](https://github.com/djshellshoxxx/circula/pull/111) publishes the
+independently approved WAL fixture repair at source
+`ab7d64c5a31653e3a2a14ddb88940e59b4d02892`, tree
+`f1fa093683ca3ec2c39bdb46fcd78e9443622e96`, identical to tested local commit
+`9edf59a626c0332a122bb618865673d8b1911a4d`. The repair adds twelve test lines and
+preserves production transaction cleanup and every original fault, durability,
+side-effect, retry and reopening assertion. Reconciliation with `839e869` changes
+only audit/evidence documents relative to that tested source.
+
+At local `9edf59a`, the full non-race command passed in 251.654s, vet passed in
+1.571s, and the focused five-package race command passed in 218.628s. The later
+whole-store race attempt was interrupted by workspace recovery; its log has no
+completion result. Full aggregate race, `make check`, lint, vulnerability, browser
+and native CI qualification remain unpassed. [API036_COMPLETION.md](API036_COMPLETION.md)
+and [API036_QUALIFICATION.json](API036_QUALIFICATION.json) preserve actual receipts
+and the required final-head gates. This continuation claims no main merge,
+release or deployment.
+
 ## Evidence-backed counts
 
 | Measure | Observed count / definition |
