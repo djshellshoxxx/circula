@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -242,6 +243,99 @@ func TestBackupNamesPreserveSubsecondTimeAndLegacyRetention(t *testing.T) {
 		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
 			t.Errorf("newest monthly backup was removed: %s, %v", name, err)
 		}
+	}
+}
+
+// A3-F10, OPS-018: a backup whose name is dated after now (written while the
+// clock ran ahead, or a misplaced file) is kept with its manifest and anchor,
+// but it takes neither a daily nor a monthly slot: real backups are removed
+// only as the configured counts require. Scheduling ignores such a file in the
+// same way (TestJobUntilNextBackupIgnoresFutureFiles).
+func TestPruneKeepsFutureDatedBackupsOutOfCounts(t *testing.T) {
+	now := time.Date(2026, 11, 16, 12, 30, 0, 123456789, time.UTC)
+	ahead := now.AddDate(50, 0, 0)
+	type backup struct {
+		at   time.Time
+		kept bool
+	}
+	date := func(y int, m time.Month, d int) time.Time { return time.Date(y, m, d, 3, 0, 0, 0, time.UTC) }
+	// The default counts (30 daily, 12 monthly; DEC-059) over 40 daily
+	// backups, a second September backup and one backup per month back to
+	// November 2025, the 13th month.
+	var defaults []backup
+	for i := 0; i < 40; i++ {
+		defaults = append(defaults, backup{now.Add(-time.Hour - time.Duration(i)*24*time.Hour), i < 30})
+	}
+	defaults = append(defaults, backup{date(2026, 9, 20), true}, backup{date(2026, 9, 5), false})
+	for m := time.August; m >= time.January; m-- {
+		defaults = append(defaults, backup{date(2026, m, 15), true})
+	}
+	defaults = append(defaults, backup{date(2025, 12, 15), true}, backup{date(2025, 11, 15), false})
+	for _, tc := range []struct {
+		name           string
+		daily, monthly int
+		future         []time.Time
+		past           []backup
+	}{
+		{name: "50 years ahead, default counts", daily: 30, monthly: 12, future: []time.Time{ahead}, past: defaults},
+		{name: "an hour ahead in the current month", daily: 1, monthly: 1, future: []time.Time{now.Add(time.Hour)},
+			past: []backup{{now.Add(-time.Minute), true}, {now.Add(-24 * time.Hour), false}}},
+		{name: "backup at now counts", daily: 1, future: []time.Time{ahead},
+			past: []backup{{now, true}, {now.Add(-time.Hour), false}}},
+		{name: "several future-dated files", daily: 1, monthly: 1, future: []time.Time{ahead, now.AddDate(0, 0, 1), now.Add(time.Nanosecond)},
+			past: []backup{{now.Add(-time.Hour), true}, {now.Add(-48 * time.Hour), false}}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			files := func(name string) []string { return []string{name, name + ".manifest.json", name + ".anchor.json"} }
+			write := func(name string) []byte {
+				content := []byte("backup " + name)
+				for _, p := range files(name) {
+					if err := os.WriteFile(filepath.Join(dir, p), content, 0o600); err != nil {
+						t.Fatal(err)
+					}
+				}
+				return content
+			}
+			future := map[string][]byte{}
+			for i, at := range tc.future {
+				name := backupFileName(at)
+				if i%2 == 0 {
+					name = encryptedBackupFileName(at)
+				}
+				future[name] = write(name)
+			}
+			var wantRemoved []string
+			for _, b := range tc.past {
+				write(backupFileName(b.at))
+				if !b.kept {
+					wantRemoved = append(wantRemoved, backupFileName(b.at))
+				}
+			}
+			removed, err := pruneBackupsAt(dir, tc.daily, tc.monthly, now)
+			if err != nil {
+				t.Fatal(err)
+			}
+			slices.Sort(removed)
+			slices.Sort(wantRemoved)
+			if !slices.Equal(removed, wantRemoved) {
+				t.Errorf("removed %v, want %v", removed, wantRemoved)
+			}
+			for name, content := range future {
+				for _, p := range files(name) {
+					if got, err := os.ReadFile(filepath.Join(dir, p)); err != nil || !bytes.Equal(got, content) {
+						t.Errorf("future-dated %s changed: %q, %v", p, got, err)
+					}
+				}
+			}
+			for _, b := range tc.past {
+				for _, p := range files(backupFileName(b.at)) {
+					if _, err := os.Stat(filepath.Join(dir, p)); (err == nil) != b.kept {
+						t.Errorf("%s: present=%v, want %v", p, err == nil, b.kept)
+					}
+				}
+			}
+		})
 	}
 }
 

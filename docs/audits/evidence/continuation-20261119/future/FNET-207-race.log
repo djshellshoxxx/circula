@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:16:07.639414451-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/recurring"}
+{"Time":"2026-11-19T02:16:07.701041591-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/recurring","Test":"TestDSTAndBoundedCatchup"}
+{"Time":"2026-11-19T02:16:07.701085513-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/recurring","Test":"TestDSTAndBoundedCatchup","Output":"=== RUN   TestDSTAndBoundedCatchup\n"}
+{"Time":"2026-11-19T02:16:08.018749685-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/recurring","Test":"TestDSTAndBoundedCatchup","Output":"--- PASS: TestDSTAndBoundedCatchup (0.31s)\n"}
+{"Time":"2026-11-19T02:16:08.018795771-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/recurring","Test":"TestDSTAndBoundedCatchup","Elapsed":0.31}
+{"Time":"2026-11-19T02:16:08.026432605-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/recurring","Output":"PASS\n"}
+{"Time":"2026-11-19T02:16:09.046978384-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/recurring","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/recurring\t1.407s\n"}
+{"Time":"2026-11-19T02:16:09.047025803-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/recurring","Elapsed":1.408}

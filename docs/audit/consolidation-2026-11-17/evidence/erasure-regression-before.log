@@ -1,0 +1,5 @@
+--- FAIL: TestAnonymiseMemberKeepsLedger (0.04s)
+    erasure_test.go:144: "Ana" still found in [persons.password_hash]
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.046s
+FAIL

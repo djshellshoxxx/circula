@@ -1,0 +1,36 @@
+{
+  "head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+  "tree": "f6d1abf5be0935f5bca5c7f1e3cda56918565693",
+  "previous_head": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+  "base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "snapshot": "/workspace/scratch/9ceb45b04668/audit-c-pr84/fixed-eb4bb08",
+  "before_overlay": "/workspace/scratch/9ceb45b04668/audit-c/PR84-logging-before-overlay.json",
+  "before_production_file": "/workspace/scratch/9ceb45b04668/audit-c/PR84-serve-7f98b3d.go",
+  "before_serve_blob": "e8ff373b13bf0cc011829a35dca21b6700a2bf8f",
+  "files": {
+    "cmd/circula/serve.go": {
+      "blob": "4791177040987b0e3cffd8de8feef47dab8ada0d",
+      "sha256": "3ff2a2709c05c37942d6de1038f1ab9735f49a72e45a2b8d764e0581d80bc885"
+    },
+    "cmd/circula/jobs_regress_test.go": {
+      "blob": "e4db2ea073cd8b6fce613f7c4770b8a080ea7a63",
+      "sha256": "b30ae936cc67deffc8311a4ab418c438745663aa73100f6de7b64786e5a95b96"
+    },
+    "cmd/circula/snapshot.go": {
+      "blob": "fcec927773bf4f965744c9e709ef0e45ddcd2b4a",
+      "sha256": "da0bc52dc4b6954a099349517bd85e13241f224303cc524bbdf8992b933c9e00"
+    },
+    "cmd/circula/backup_test.go": {
+      "blob": "4b7aa65aed259800226a512e8a68b7bb67c5ef7b",
+      "sha256": "c4625f7e5759c5741ba7f6eea714e77aa34f1a64c38832b84483e1945ccabc34"
+    },
+    "internal/api/problem_catalogue_test.go": {
+      "blob": "4eff2343bd7293754ef4a2ea00f286a081a96fde",
+      "sha256": "6e43e31fc1dfeab9753b28136569244cb5760548fe4a170950ff09e3cb84f4d7"
+    },
+    "docs/specs/07-api-contract.md": {
+      "blob": "4f6b1a626efbd72d72a083e1e987ce26ca063474",
+      "sha256": "9cea7782e198a07330dce365209185e05168e6ba1bc58690fcc65d1ea994f06e"
+    }
+  }
+}

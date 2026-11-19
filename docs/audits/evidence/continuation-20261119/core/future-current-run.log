@@ -1,0 +1,58 @@
+START FNET-201
+FNET-201 format: 0
+FNET-201 vet: 0
+FNET-201 race: 0
+START FNET-202
+FNET-202 format: 0
+FNET-202 vet: 0
+FNET-202 race: 124
+hub.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member","Output":"=== RUN   TestConformance/purge_member\n"}
+{"Time":"2026-11-19T02:12:58.850932071-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member","Output":"--- PASS: TestConformance/purge_member (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850936389-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance/purge_member","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.850941058-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance","Output":"--- PASS: TestConformance (0.00s)\n"}
+{"Time":"2026-11-19T02:12:58.850945356-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Test":"TestConformance","Elapsed":0}
+{"Time":"2026-11-19T02:12:58.850952299-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Output":"PASS\n"}
+{"Time":"2026-11-19T02:12:59.910743203-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/favorites/memstore\t1.079s\n"}
+{"Time":"2026-11-19T02:12:59.912642228-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/favorites/memstore","Elapsed":1.1219999999999999}
+{"Time":"2026-11-19T02:12:59.967063081-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/favorites/sqlstore"}
+{"Time":"2026-11-19T02:12:59.983340389-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/favorites/sqlstore","Output":"?   \tgithub.com/djshellshoxxx/circula/future/favorites/sqlstore\t[no test files]\n"}
+{"Time":"2026-11-19T02:12:59.983366739-08:00","Action":"skip","Package":"github.com/djshellshoxxx/circula/future/favorites/sqlstore","Elapsed":0.016}
+
+START FNET-203
+FNET-203 format: 0
+FNET-203 vet: 0
+FNET-203 race: 0
+START FNET-204
+FNET-204 format: 0
+FNET-204 vet: 0
+FNET-204 race: 0
+START FNET-205
+FNET-205 format: 0
+FNET-205 vet: 0
+FNET-205 race: 0
+START FNET-206
+FNET-206 format: 0
+FNET-206 vet: 0
+FNET-206 race: 0
+START FNET-207
+FNET-207 format: 0
+FNET-207 vet: 0
+FNET-207 race: 0
+START FNET-208
+FNET-208 format: 0
+FNET-208 vet: 0
+FNET-208 race: 0
+START FNET-209
+FNET-209 format: 0
+FNET-209 vet: 0
+FNET-209 race: 0
+START FUX-101
+FUX-101 format: 0
+FUX-101 vet: 0
+FUX-101 race: 0
+START FUX-102
+FUX-102 format: 0
+FUX-102 vet: 0
+FUX-102 race: 124
+
+START FUX-103

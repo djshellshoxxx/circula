@@ -1,0 +1,563 @@
+=== RUN   TestAcceptanceScenarioHTTP
+=== RUN   TestAcceptanceScenarioHTTP/01_start_with_an_initialized_sqlite_database
+=== RUN   TestAcceptanceScenarioHTTP/02_the_founder_registers,_signs_in_and_creates_the_network_through_the_setup_form
+=== RUN   TestAcceptanceScenarioHTTP/03_invite_Alice,_Bob_and_Carol_and_have_each_redeem_the_invitation
+=== RUN   TestAcceptanceScenarioHTTP/04_set_credit_limits
+=== RUN   TestAcceptanceScenarioHTTP/05_Alice_signs_in_through_the_form
+=== RUN   TestAcceptanceScenarioHTTP/06_Alice_proposes_a_trade_to_Bob_through_the_web_form
+=== RUN   TestAcceptanceScenarioHTTP/07_Bob_signs_in_and_accepts_through_the_web_form
+=== RUN   TestAcceptanceScenarioHTTP/08_the_trade_posts_exactly_once
+=== RUN   TestAcceptanceScenarioHTTP/09_both_balances_move_by_equal_and_opposite_amounts
+=== RUN   TestAcceptanceScenarioHTTP/10_the_member_balances_sum_to_zero
+=== RUN   TestAcceptanceScenarioHTTP/11_Carol_gets_403_or_404_on_Alice's_trade
+=== RUN   TestAcceptanceScenarioHTTP/12_a_repeated_acceptance_does_not_post_again
+=== RUN   TestAcceptanceScenarioHTTP/13_a_proposal_above_Alice's_available_credit_is_refused
+=== RUN   TestAcceptanceScenarioHTTP/14_an_administrator_reverses_part_of_the_posted_trade
+=== RUN   TestAcceptanceScenarioHTTP/15_a_plain_member_cannot_post_an_administrative_adjustment
+=== RUN   TestAcceptanceScenarioHTTP/16_restart_the_application
+=== RUN   TestAcceptanceScenarioHTTP/17_balances,_history_and_sign-ins_persist_across_the_restart
+=== RUN   TestAcceptanceScenarioHTTP/18_verify_the_ledger_with_the_CLI_after_the_restart
+--- PASS: TestAcceptanceScenarioHTTP (7.69s)
+    --- PASS: TestAcceptanceScenarioHTTP/01_start_with_an_initialized_sqlite_database (1.23s)
+    --- PASS: TestAcceptanceScenarioHTTP/02_the_founder_registers,_signs_in_and_creates_the_network_through_the_setup_form (1.21s)
+    --- PASS: TestAcceptanceScenarioHTTP/03_invite_Alice,_Bob_and_Carol_and_have_each_redeem_the_invitation (2.26s)
+    --- PASS: TestAcceptanceScenarioHTTP/04_set_credit_limits (0.11s)
+    --- PASS: TestAcceptanceScenarioHTTP/05_Alice_signs_in_through_the_form (0.39s)
+    --- PASS: TestAcceptanceScenarioHTTP/06_Alice_proposes_a_trade_to_Bob_through_the_web_form (0.19s)
+    --- PASS: TestAcceptanceScenarioHTTP/07_Bob_signs_in_and_accepts_through_the_web_form (0.46s)
+    --- PASS: TestAcceptanceScenarioHTTP/08_the_trade_posts_exactly_once (0.04s)
+    --- PASS: TestAcceptanceScenarioHTTP/09_both_balances_move_by_equal_and_opposite_amounts (0.02s)
+    --- PASS: TestAcceptanceScenarioHTTP/10_the_member_balances_sum_to_zero (0.05s)
+    --- PASS: TestAcceptanceScenarioHTTP/11_Carol_gets_403_or_404_on_Alice's_trade (0.39s)
+    --- PASS: TestAcceptanceScenarioHTTP/12_a_repeated_acceptance_does_not_post_again (0.14s)
+    --- PASS: TestAcceptanceScenarioHTTP/13_a_proposal_above_Alice's_available_credit_is_refused (0.13s)
+    --- PASS: TestAcceptanceScenarioHTTP/14_an_administrator_reverses_part_of_the_posted_trade (0.28s)
+    --- PASS: TestAcceptanceScenarioHTTP/15_a_plain_member_cannot_post_an_administrative_adjustment (0.11s)
+    --- PASS: TestAcceptanceScenarioHTTP/16_restart_the_application (0.31s)
+    --- PASS: TestAcceptanceScenarioHTTP/17_balances,_history_and_sign-ins_persist_across_the_restart (0.10s)
+    --- PASS: TestAcceptanceScenarioHTTP/18_verify_the_ledger_with_the_CLI_after_the_restart (0.27s)
+=== RUN   TestAcceptanceScenario
+=== RUN   TestAcceptanceScenario/01_start_with_an_initialized_sqlite_database
+=== RUN   TestAcceptanceScenario/02_create_a_mutual-credit_network
+=== RUN   TestAcceptanceScenario/03_create_or_invite_members_Alice,_Bob_and_Carol
+=== RUN   TestAcceptanceScenario/04_configure_credit_limits
+=== RUN   TestAcceptanceScenario/05_authenticate_Alice
+=== RUN   TestAcceptanceScenario/06_Alice_proposes_an_exchange_with_Bob
+=== RUN   TestAcceptanceScenario/07_Bob_authenticates_and_accepts
+=== RUN   TestAcceptanceScenario/08_the_transaction_posts_exactly_once
+=== RUN   TestAcceptanceScenario/09_both_balances_update_correctly
+=== RUN   TestAcceptanceScenario/10_sum_of_all_network_balances_is_zero
+=== RUN   TestAcceptanceScenario/11_Carol_cannot_read_Alice's_private_transaction_details
+=== RUN   TestAcceptanceScenario/12_a_duplicate_acceptance_does_not_post_twice
+=== RUN   TestAcceptanceScenario/13_a_transaction_exceeding_the_credit_limit_is_rejected
+=== RUN   TestAcceptanceScenario/14_a_valid_reversal_preserves_the_audit_trail
+=== RUN   TestAcceptanceScenario/15_an_unauthorised_administrative_adjustment_is_rejected
+=== RUN   TestAcceptanceScenario/16_restart_the_application
+=== RUN   TestAcceptanceScenario/17_balances_and_transaction_history_persist
+=== RUN   TestAcceptanceScenario/18_back_up_the_database
+=== RUN   TestAcceptanceScenario/19_restore_into_an_isolated_database
+=== RUN   TestAcceptanceScenario/20_verify_ledger_reconciliation_and_historical_integrity_on_the_restored_copy
+--- PASS: TestAcceptanceScenario (6.27s)
+    --- PASS: TestAcceptanceScenario/01_start_with_an_initialized_sqlite_database (0.64s)
+    --- PASS: TestAcceptanceScenario/02_create_a_mutual-credit_network (0.30s)
+    --- PASS: TestAcceptanceScenario/03_create_or_invite_members_Alice,_Bob_and_Carol (0.82s)
+    --- PASS: TestAcceptanceScenario/04_configure_credit_limits (0.02s)
+    --- PASS: TestAcceptanceScenario/05_authenticate_Alice (0.32s)
+    --- PASS: TestAcceptanceScenario/06_Alice_proposes_an_exchange_with_Bob (0.02s)
+    --- PASS: TestAcceptanceScenario/07_Bob_authenticates_and_accepts (0.30s)
+    --- PASS: TestAcceptanceScenario/08_the_transaction_posts_exactly_once (0.01s)
+    --- PASS: TestAcceptanceScenario/09_both_balances_update_correctly (0.02s)
+    --- PASS: TestAcceptanceScenario/10_sum_of_all_network_balances_is_zero (0.05s)
+    --- PASS: TestAcceptanceScenario/11_Carol_cannot_read_Alice's_private_transaction_details (0.29s)
+    --- PASS: TestAcceptanceScenario/12_a_duplicate_acceptance_does_not_post_twice (0.03s)
+    --- PASS: TestAcceptanceScenario/13_a_transaction_exceeding_the_credit_limit_is_rejected (0.01s)
+    --- PASS: TestAcceptanceScenario/14_a_valid_reversal_preserves_the_audit_trail (0.06s)
+    --- PASS: TestAcceptanceScenario/15_an_unauthorised_administrative_adjustment_is_rejected (0.02s)
+    --- PASS: TestAcceptanceScenario/16_restart_the_application (0.33s)
+    --- PASS: TestAcceptanceScenario/17_balances_and_transaction_history_persist (0.31s)
+    --- PASS: TestAcceptanceScenario/18_back_up_the_database (0.54s)
+    --- PASS: TestAcceptanceScenario/19_restore_into_an_isolated_database (1.48s)
+    --- PASS: TestAcceptanceScenario/20_verify_ledger_reconciliation_and_historical_integrity_on_the_restored_copy (0.68s)
+=== RUN   TestSeriesInParsesPromQL
+--- PASS: TestSeriesInParsesPromQL (0.00s)
+=== RUN   TestAlertRulesUseExportedMetrics
+--- PASS: TestAlertRulesUseExportedMetrics (0.00s)
+=== RUN   TestIncidentProcedureDocumented
+--- PASS: TestIncidentProcedureDocumented (0.00s)
+=== RUN   TestAuditAnchorWriteVerifyAndTamper
+--- PASS: TestAuditAnchorWriteVerifyAndTamper (1.69s)
+=== RUN   TestAuditAnchorMAC
+--- PASS: TestAuditAnchorMAC (1.01s)
+=== RUN   TestBackupWritesAnchorSidecar
+--- PASS: TestBackupWritesAnchorSidecar (1.46s)
+=== RUN   TestBackupDirectoryWithURIMetacharacters
+=== RUN   TestBackupDirectoryWithURIMetacharacters/bk#x
+=== RUN   TestBackupDirectoryWithURIMetacharacters/bk?x
+=== RUN   TestBackupDirectoryWithURIMetacharacters/bk%41x
+--- PASS: TestBackupDirectoryWithURIMetacharacters (4.33s)
+    --- PASS: TestBackupDirectoryWithURIMetacharacters/bk#x (1.42s)
+    --- PASS: TestBackupDirectoryWithURIMetacharacters/bk?x (1.45s)
+    --- PASS: TestBackupDirectoryWithURIMetacharacters/bk%41x (1.46s)
+=== RUN   TestZeroFileRefusesReplacedName
+--- PASS: TestZeroFileRefusesReplacedName (0.00s)
+=== RUN   TestSecureRemoveLeavesHardLinkedDataIntact
+--- PASS: TestSecureRemoveLeavesHardLinkedDataIntact (0.00s)
+=== RUN   TestSecureRemoveAllDoesNotFollowDirectorySymlink
+--- PASS: TestSecureRemoveAllDoesNotFollowDirectorySymlink (0.00s)
+=== RUN   TestBackupStagingRequiresPrivateOrStickyParent
+--- PASS: TestBackupStagingRequiresPrivateOrStickyParent (0.00s)
+=== RUN   TestLeasedWorkCleanupRefusesSubstitutedDirectory
+--- PASS: TestLeasedWorkCleanupRefusesSubstitutedDirectory (0.00s)
+=== RUN   TestBackupStagingRefusesForeignOwnedParent
+    backup_path_hardening_test.go:212: needs root on Unix to create a directory owned by another user
+--- SKIP: TestBackupStagingRefusesForeignOwnedParent (0.00s)
+=== RUN   TestCopyFileSyncRefusesExistingDestination
+=== RUN   TestCopyFileSyncRefusesExistingDestination/regular_file
+=== RUN   TestCopyFileSyncRefusesExistingDestination/symlink
+--- PASS: TestCopyFileSyncRefusesExistingDestination (0.00s)
+    --- PASS: TestCopyFileSyncRefusesExistingDestination/regular_file (0.00s)
+    --- PASS: TestCopyFileSyncRefusesExistingDestination/symlink (0.00s)
+=== RUN   TestSnapshotUsesPrivateStaging
+=== RUN   TestSnapshotUsesPrivateStaging/plaintext
+=== RUN   TestSnapshotUsesPrivateStaging/plaintext/verification_failure
+=== RUN   TestSnapshotUsesPrivateStaging/encrypted
+=== RUN   TestSnapshotUsesPrivateStaging/encrypted/verification_failure
+--- PASS: TestSnapshotUsesPrivateStaging (2.83s)
+    --- PASS: TestSnapshotUsesPrivateStaging/plaintext (0.52s)
+    --- PASS: TestSnapshotUsesPrivateStaging/plaintext/verification_failure (0.18s)
+    --- PASS: TestSnapshotUsesPrivateStaging/encrypted (1.05s)
+    --- PASS: TestSnapshotUsesPrivateStaging/encrypted/verification_failure (0.20s)
+=== RUN   TestVerifyCopyLeavesPredictablePathUntouched
+--- PASS: TestVerifyCopyLeavesPredictablePathUntouched (1.11s)
+=== RUN   TestPlainSnapshotSweepsOnlyStaleBackupWork
+--- PASS: TestPlainSnapshotSweepsOnlyStaleBackupWork (1.04s)
+=== RUN   TestCopyFileSyncRemovesOnlyItsFailedCopy
+--- PASS: TestCopyFileSyncRemovesOnlyItsFailedCopy (0.00s)
+=== RUN   TestSnapshotWritesVerifiedManifestAndRestores
+--- PASS: TestSnapshotWritesVerifiedManifestAndRestores (1.36s)
+=== RUN   TestRestoreRefusesOverwriteWithoutFlag
+--- PASS: TestRestoreRefusesOverwriteWithoutFlag (3.39s)
+=== RUN   TestPruneKeepsDailyAndNewestPerMonth
+--- PASS: TestPruneKeepsDailyAndNewestPerMonth (0.00s)
+=== RUN   TestBackupNamesPreserveSubsecondTimeAndLegacyRetention
+--- PASS: TestBackupNamesPreserveSubsecondTimeAndLegacyRetention (0.00s)
+=== RUN   TestSnapshotRefusesExistingSubsecondBackup
+--- PASS: TestSnapshotRefusesExistingSubsecondBackup (0.00s)
+=== RUN   TestLockRefusesSecondHolder
+--- PASS: TestLockRefusesSecondHolder (0.00s)
+=== RUN   TestMigrateIsNoOpWhenCurrent
+--- PASS: TestMigrateIsNoOpWhenCurrent (0.94s)
+=== RUN   TestVerifyLedgerCleanDatabase
+--- PASS: TestVerifyLedgerCleanDatabase (1.23s)
+=== RUN   TestAuditGActiveBackupSurvivesStaleSweep
+--- PASS: TestAuditGActiveBackupSurvivesStaleSweep (1.28s)
+=== RUN   TestBackupWorkLeaseChild
+    backup_work_lease_test.go:58: subprocess helper
+--- SKIP: TestBackupWorkLeaseChild (0.00s)
+=== RUN   TestBackupWorkLeaseProtectsOtherProcessAndReclaimsCrash
+--- PASS: TestBackupWorkLeaseProtectsOtherProcessAndReclaimsCrash (0.02s)
+=== RUN   TestBackupWorkSweepRejectsSymlinks
+--- PASS: TestBackupWorkSweepRejectsSymlinks (0.00s)
+=== RUN   TestBackupCryptRoundTripSizes
+--- PASS: TestBackupCryptRoundTripSizes (0.00s)
+=== RUN   TestBackupCryptPassphrase
+--- PASS: TestBackupCryptPassphrase (0.74s)
+=== RUN   TestBackupCryptLarge
+--- PASS: TestBackupCryptLarge (0.00s)
+=== RUN   TestBackupCryptWrongKey
+--- PASS: TestBackupCryptWrongKey (0.00s)
+=== RUN   TestBackupCryptBitFlipAnywhere
+--- PASS: TestBackupCryptBitFlipAnywhere (0.00s)
+=== RUN   TestBackupCryptTruncation
+--- PASS: TestBackupCryptTruncation (0.00s)
+=== RUN   TestBackupCryptReorderAndAppend
+--- PASS: TestBackupCryptReorderAndAppend (0.00s)
+=== RUN   TestBackupCryptNoncesDiffer
+--- PASS: TestBackupCryptNoncesDiffer (0.00s)
+=== RUN   TestEncryptDecryptFiles
+--- PASS: TestEncryptDecryptFiles (0.00s)
+=== RUN   TestParseBackupSecret
+--- PASS: TestParseBackupSecret (0.00s)
+=== RUN   TestEncryptedBackupAndRestoreIntegration
+--- PASS: TestEncryptedBackupAndRestoreIntegration (2.98s)
+=== RUN   TestEncryptedBackupEmptyDatabase
+--- PASS: TestEncryptedBackupEmptyDatabase (2.44s)
+=== RUN   TestPlaintextBackupRefusedWhenEncryptionRequired
+--- PASS: TestPlaintextBackupRefusedWhenEncryptionRequired (2.93s)
+=== RUN   TestManifestHMACCoversEncryption
+--- PASS: TestManifestHMACCoversEncryption (1.36s)
+=== RUN   TestFailedEncryptedBackupLeavesNothing
+--- PASS: TestFailedEncryptedBackupLeavesNothing (1.19s)
+=== RUN   TestStaleTempDirSweptAndFresh
+--- PASS: TestStaleTempDirSweptAndFresh (0.00s)
+=== RUN   TestPruneAndListHandleEncryptedBackups
+--- PASS: TestPruneAndListHandleEncryptedBackups (0.00s)
+=== RUN   TestEncryptionKeyConfig
+--- PASS: TestEncryptionKeyConfig (0.00s)
+=== RUN   TestKeygen
+--- PASS: TestKeygen (0.00s)
+=== RUN   TestBackupContainerLayoutPinned
+--- PASS: TestBackupContainerLayoutPinned (0.00s)
+=== RUN   TestBackupFreshSaltAndPrefixPerFile
+--- PASS: TestBackupFreshSaltAndPrefixPerFile (0.00s)
+=== RUN   TestBackupPassphraseKeyDerivation
+--- PASS: TestBackupPassphraseKeyDerivation (0.46s)
+=== RUN   TestBreakGlassCLI
+--- PASS: TestBreakGlassCLI (2.57s)
+=== RUN   TestBreakGlassAndEraseUsage
+--- PASS: TestBreakGlassAndEraseUsage (1.12s)
+=== RUN   TestBackupCommandPaths
+--- PASS: TestBackupCommandPaths (1.92s)
+=== RUN   TestBackupCommandSignsManifestWithKey
+--- PASS: TestBackupCommandSignsManifestWithKey (1.86s)
+=== RUN   TestLedgerFailureExitCodeThree
+--- PASS: TestLedgerFailureExitCodeThree (2.02s)
+=== RUN   TestVerifyLedgerLeavesDatabaseChecksumUnchanged
+--- PASS: TestVerifyLedgerLeavesDatabaseChecksumUnchanged (2.12s)
+=== RUN   TestAdminCreateOperatorPaths
+--- PASS: TestAdminCreateOperatorPaths (3.29s)
+=== RUN   TestAuthSettingsDefaultsKeepBehaviour
+--- PASS: TestAuthSettingsDefaultsKeepBehaviour (0.00s)
+=== RUN   TestAuthSettingsParsing
+--- PASS: TestAuthSettingsParsing (0.00s)
+=== RUN   TestDBSynchronousSetting
+--- PASS: TestDBSynchronousSetting (0.00s)
+=== RUN   TestDefaultsAndDerivedBackupDir
+--- PASS: TestDefaultsAndDerivedBackupDir (0.00s)
+=== RUN   TestPrecedence
+--- PASS: TestPrecedence (0.00s)
+=== RUN   TestEverySettingAcceptedByEverySource
+--- PASS: TestEverySettingAcceptedByEverySource (0.03s)
+=== RUN   TestRequiredSettingsAreNamed
+--- PASS: TestRequiredSettingsAreNamed (0.00s)
+=== RUN   TestInvalidValuesNameEachSetting
+--- PASS: TestInvalidValuesNameEachSetting (0.00s)
+=== RUN   TestUnknownFileKeyRejected
+--- PASS: TestUnknownFileKeyRejected (0.00s)
+=== RUN   TestEmptyEnvIsUnset
+--- PASS: TestEmptyEnvIsUnset (0.00s)
+=== RUN   TestSessionOrderingAndPasswordFloor
+--- PASS: TestSessionOrderingAndPasswordFloor (0.00s)
+=== RUN   TestMetricsAllowParsing
+--- PASS: TestMetricsAllowParsing (0.00s)
+=== RUN   TestEffectiveConfigListsEverySettingWithSource
+--- PASS: TestEffectiveConfigListsEverySettingWithSource (0.00s)
+=== RUN   TestCheckConfigDoesNotCreateDatabase
+--- PASS: TestCheckConfigDoesNotCreateDatabase (0.00s)
+=== RUN   TestPersistentAuthThrottleSettings
+--- PASS: TestPersistentAuthThrottleSettings (0.00s)
+=== RUN   TestPersistentAuthThrottleServiceWiring
+--- PASS: TestPersistentAuthThrottleServiceWiring (1.68s)
+=== RUN   TestServeCookieSecurePolicyReachesHTMLAdapter
+=== RUN   TestServeCookieSecurePolicyReachesHTMLAdapter/secure_behind_TLS_proxy
+=== RUN   TestServeCookieSecurePolicyReachesHTMLAdapter/plain_HTTP_development
+--- PASS: TestServeCookieSecurePolicyReachesHTMLAdapter (0.15s)
+    --- PASS: TestServeCookieSecurePolicyReachesHTMLAdapter/secure_behind_TLS_proxy (0.07s)
+    --- PASS: TestServeCookieSecurePolicyReachesHTMLAdapter/plain_HTTP_development (0.09s)
+=== RUN   TestExportSpoolDirSetting
+--- PASS: TestExportSpoolDirSetting (0.00s)
+=== RUN   TestExportSpoolPreparedOrStartRefused
+--- PASS: TestExportSpoolPreparedOrStartRefused (1.43s)
+=== RUN   TestApplyFreezeFreezesAndThaws
+--- PASS: TestApplyFreezeFreezesAndThaws (1.25s)
+=== RUN   TestServeStartsWithFailingNetwork
+--- PASS: TestServeStartsWithFailingNetwork (1.56s)
+=== RUN   TestPlainHTTPRefusedUnlessExplicit
+--- PASS: TestPlainHTTPRefusedUnlessExplicit (0.00s)
+=== RUN   TestTrustedProxiesSetting
+--- PASS: TestTrustedProxiesSetting (0.00s)
+=== RUN   TestSecretsLoadingAndRedaction
+--- PASS: TestSecretsLoadingAndRedaction (0.00s)
+=== RUN   TestMetricsGate
+--- PASS: TestMetricsGate (0.35s)
+=== RUN   TestServeWiresSettingsIntoAdapters
+--- PASS: TestServeWiresSettingsIntoAdapters (1.56s)
+=== RUN   TestBackupEqualsSource
+--- PASS: TestBackupEqualsSource (1.51s)
+=== RUN   TestRestoreRefusesBackupFailingEmbeddedChecks
+--- PASS: TestRestoreRefusesBackupFailingEmbeddedChecks (2.28s)
+=== RUN   TestSignedBackupManifest
+--- PASS: TestSignedBackupManifest (3.30s)
+=== RUN   TestSwapDatabaseRollsBack
+--- PASS: TestSwapDatabaseRollsBack (1.68s)
+=== RUN   TestOperatorCommandsTakeTheLock
+--- PASS: TestOperatorCommandsTakeTheLock (1.46s)
+=== RUN   TestRestoreRefusesUnsignedByDefault
+--- PASS: TestRestoreRefusesUnsignedByDefault (3.23s)
+=== RUN   TestRequireEncryptionDefaultsToKeyPresence
+--- PASS: TestRequireEncryptionDefaultsToKeyPresence (0.00s)
+=== RUN   TestPurgeAndWarnSendsLimitWarning
+--- PASS: TestPurgeAndWarnSendsLimitWarning (0.46s)
+=== RUN   TestJobScheduleConstants
+--- PASS: TestJobScheduleConstants (0.00s)
+=== RUN   TestJobExpiryMovesOnlyElapsedProposals
+--- PASS: TestJobExpiryMovesOnlyElapsedProposals (1.34s)
+=== RUN   TestJobPurgeRemovesIdleSessions
+--- PASS: TestJobPurgeRemovesIdleSessions (1.96s)
+=== RUN   TestJobVerifyReportsLedgerFault
+--- PASS: TestJobVerifyReportsLedgerFault (1.60s)
+=== RUN   TestJobEveryRepeatsUntilCancelled
+--- PASS: TestJobEveryRepeatsUntilCancelled (1.38s)
+=== RUN   TestJobAttemptRecordsFailureNotShutdown
+--- PASS: TestJobAttemptRecordsFailureNotShutdown (1.49s)
+=== RUN   TestJobScheduledBackupAndRetention
+--- PASS: TestJobScheduledBackupAndRetention (1.90s)
+=== RUN   TestJobUntilNextBackup
+--- PASS: TestJobUntilNextBackup (1.42s)
+=== RUN   TestJobUntilNextBackupIgnoresFutureFiles
+=== RUN   TestJobUntilNextBackupIgnoresFutureFiles/future_only
+=== RUN   TestJobUntilNextBackupIgnoresFutureFiles/recent_backup
+=== RUN   TestJobUntilNextBackupIgnoresFutureFiles/overdue_backup
+=== RUN   TestJobUntilNextBackupIgnoresFutureFiles/backup_at_now
+--- PASS: TestJobUntilNextBackupIgnoresFutureFiles (0.00s)
+    --- PASS: TestJobUntilNextBackupIgnoresFutureFiles/future_only (0.00s)
+    --- PASS: TestJobUntilNextBackupIgnoresFutureFiles/recent_backup (0.00s)
+    --- PASS: TestJobUntilNextBackupIgnoresFutureFiles/overdue_backup (0.00s)
+    --- PASS: TestJobUntilNextBackupIgnoresFutureFiles/backup_at_now (0.00s)
+=== RUN   TestJobBackupLoopRunsOnceThenStops
+--- PASS: TestJobBackupLoopRunsOnceThenStops (2.02s)
+=== RUN   TestJobBackupsDisabledByZeroInterval
+--- PASS: TestJobBackupsDisabledByZeroInterval (1.46s)
+=== RUN   TestJobBackupFailureIsRetriedAndStoppable
+--- PASS: TestJobBackupFailureIsRetriedAndStoppable (1.45s)
+=== RUN   TestJobRunStartsAllJobsAndStops
+--- PASS: TestJobRunStartsAllJobsAndStops (1.40s)
+=== RUN   TestBackupCadenceFollowsNewestBackup
+--- PASS: TestBackupCadenceFollowsNewestBackup (1.55s)
+=== RUN   TestServeStartsAndStopsCleanly
+--- PASS: TestServeStartsAndStopsCleanly (1.44s)
+=== RUN   TestPreMigrationBackupIsTakenBeforeMigrating
+--- PASS: TestPreMigrationBackupIsTakenBeforeMigrating (1.52s)
+=== RUN   TestClosuresJobReportsStoredScaleChange
+--- PASS: TestClosuresJobReportsStoredScaleChange (1.56s)
+=== RUN   TestPruneLogs
+--- PASS: TestPruneLogs (0.00s)
+=== RUN   TestServeLoggerEscapesRedactsAndUsesUTC
+--- PASS: TestServeLoggerEscapesRedactsAndUsesUTC (0.00s)
+=== RUN   TestAccessLogCarriesNoCredentials
+--- PASS: TestAccessLogCarriesNoCredentials (1.58s)
+=== RUN   TestRequestIDMatchesAcrossEdgeAndAdapters
+--- PASS: TestRequestIDMatchesAcrossEdgeAndAdapters (1.40s)
+=== RUN   TestMaintenanceModeServes503ExceptOps
+--- PASS: TestMaintenanceModeServes503ExceptOps (0.35s)
+=== RUN   TestMaintenanceOffPassesThrough
+--- PASS: TestMaintenanceOffPassesThrough (0.34s)
+=== RUN   TestMaintenanceFileSwitch
+--- PASS: TestMaintenanceFileSwitch (0.34s)
+=== RUN   TestManifestSignatureV2CoversAllAttestationFields
+--- PASS: TestManifestSignatureV2CoversAllAttestationFields (0.00s)
+=== RUN   TestManifestSignatureVersionCannotBeDowngraded
+--- PASS: TestManifestSignatureVersionCannotBeDowngraded (0.00s)
+=== RUN   TestManifestSignatureLegacyCompatibility
+--- PASS: TestManifestSignatureLegacyCompatibility (0.00s)
+=== RUN   TestSnapshotWritesVersionedManifestSignature
+--- PASS: TestSnapshotWritesVersionedManifestSignature (1.09s)
+=== RUN   TestMetricsPostingAndReplayCounters
+--- PASS: TestMetricsPostingAndReplayCounters (0.00s)
+=== RUN   TestServiceObserverWiredToMetrics
+--- PASS: TestServiceObserverWiredToMetrics (1.10s)
+=== RUN   TestHealthzReportsCoarseStatusOnly
+--- PASS: TestHealthzReportsCoarseStatusOnly (0.40s)
+=== RUN   TestHealthzUnhealthyWhenDatabaseClosed
+--- PASS: TestHealthzUnhealthyWhenDatabaseClosed (0.35s)
+=== RUN   TestReadyzFollowsServingState
+--- PASS: TestReadyzFollowsServingState (0.35s)
+=== RUN   TestMetricsRefusedOutsideAllowedRange
+--- PASS: TestMetricsRefusedOutsideAllowedRange (0.38s)
+=== RUN   TestMetricsExposeRequiredSeriesWithRouteTemplates
+--- PASS: TestMetricsExposeRequiredSeriesWithRouteTemplates (0.35s)
+=== RUN   TestRequestIDAndRoutesMounted
+--- PASS: TestRequestIDAndRoutesMounted (0.34s)
+=== RUN   TestBodyLimitApplied
+--- PASS: TestBodyLimitApplied (0.37s)
+=== RUN   TestPanicRecoveredAsInternalError
+--- PASS: TestPanicRecoveredAsInternalError (0.36s)
+=== RUN   TestRouteLabelsAreTemplates
+--- PASS: TestRouteLabelsAreTemplates (0.00s)
+=== RUN   TestFilesAreOwnerOnly
+--- PASS: TestFilesAreOwnerOnly (1.60s)
+=== RUN   TestMigrateWithEncryptionKey
+--- PASS: TestMigrateWithEncryptionKey (0.79s)
+=== RUN   TestPreMigrationSafeguardEncrypted
+--- PASS: TestPreMigrationSafeguardEncrypted (1.56s)
+=== RUN   TestPreMigrationSafeguardVerifiesBackup
+--- PASS: TestPreMigrationSafeguardVerifiesBackup (1.95s)
+=== RUN   TestPreMigrationSafeguardSkipsNewDatabase
+--- PASS: TestPreMigrationSafeguardSkipsNewDatabase (0.00s)
+=== RUN   TestPreMigrationSafeguardRefusesCorruptDatabase
+--- PASS: TestPreMigrationSafeguardRefusesCorruptDatabase (0.92s)
+=== RUN   TestProxyWarning
+--- PASS: TestProxyWarning (0.00s)
+=== RUN   TestQA026UpgradeWithFailedMigrationAndRollback
+=== RUN   TestQA026UpgradeWithFailedMigrationAndRollback/from-v15
+=== RUN   TestQA026UpgradeWithFailedMigrationAndRollback/from-v14
+--- PASS: TestQA026UpgradeWithFailedMigrationAndRollback (3.53s)
+    --- PASS: TestQA026UpgradeWithFailedMigrationAndRollback/from-v15 (1.75s)
+    --- PASS: TestQA026UpgradeWithFailedMigrationAndRollback/from-v14 (1.78s)
+=== RUN   TestQA028BackupUnderLoadAndRestore
+    qa028_backup_load_test.go:262: load: 40 trades before the backup, 14 while it ran, 78 in total
+    qa028_backup_load_test.go:280: QA-028 restore duration (clean instance, 78 trades, 937984 bytes): 1.677142701s
+--- PASS: TestQA028BackupUnderLoadAndRestore (7.53s)
+=== RUN   TestQA028CorruptedBackupRefusedAndPostingsFrozen
+--- PASS: TestQA028CorruptedBackupRefusedAndPostingsFrozen (4.03s)
+=== RUN   TestResetPasswordCommand
+--- PASS: TestResetPasswordCommand (2.02s)
+=== RUN   TestResetMFACommand
+--- PASS: TestResetMFACommand (2.19s)
+=== RUN   TestRestoreInvalidatesOldBearerCredentials
+--- PASS: TestRestoreInvalidatesOldBearerCredentials (3.58s)
+=== RUN   TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase
+=== RUN   TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase/ABORT,_'injected_restore_write_failure'
+=== RUN   TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase/IGNORE
+--- PASS: TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase (4.50s)
+    --- PASS: TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase/ABORT,_'injected_restore_write_failure' (2.33s)
+    --- PASS: TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase/IGNORE (2.17s)
+=== RUN   TestRestoreDrillScript
+--- PASS: TestRestoreDrillScript (5.42s)
+=== RUN   TestRestoreSwapCrashChild
+    restore_swap_crash_test.go:27: subprocess helper
+--- SKIP: TestRestoreSwapCrashChild (0.00s)
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/prepared
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/old-database
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/old-wal
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/old-shm
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/installed
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/verified
+=== RUN   TestRestoreSwapCrashRefusesStartupAndPreservesFiles/cleaned
+--- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles (2.57s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/prepared (0.02s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/old-database (0.02s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/old-wal (0.02s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/old-shm (0.02s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/installed (0.02s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/verified (0.05s)
+    --- PASS: TestRestoreSwapCrashRefusesStartupAndPreservesFiles/cleaned (0.04s)
+=== RUN   TestRestoreRefusesLegacySavedFilesAndCorruptMarker
+=== RUN   TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.restore-in-progress
+=== RUN   TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap
+=== RUN   TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap-wal
+=== RUN   TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap-shm
+=== RUN   TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap-journal
+--- PASS: TestRestoreRefusesLegacySavedFilesAndCorruptMarker (0.00s)
+    --- PASS: TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.restore-in-progress (0.00s)
+    --- PASS: TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap (0.00s)
+    --- PASS: TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap-wal (0.00s)
+    --- PASS: TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap-shm (0.00s)
+    --- PASS: TestRestoreRefusesLegacySavedFilesAndCorruptMarker/.pre-restore-swap-journal (0.00s)
+=== RUN   TestRestoreSwapRefusesExistingRecoveryFiles
+--- PASS: TestRestoreSwapRefusesExistingRecoveryFiles (1.75s)
+=== RUN   TestRestoreSwapValidationBypassIsScopedAndExpires
+--- PASS: TestRestoreSwapValidationBypassIsScopedAndExpires (1.79s)
+=== RUN   TestRestoreSwapRollbackFailureRetainsRecoveryGuard
+--- PASS: TestRestoreSwapRollbackFailureRetainsRecoveryGuard (1.93s)
+=== RUN   TestRestoreSignedSwapDuringPreRestoreBackup
+    restore_toctou_test.go:57: swapped=true code=1
+        out=pre-restore backup: /tmp/TestRestoreSignedSwapDuringPreRestoreBackup1188253563/001/backups/circula-20261118T090337.476964800Z.db (ledger: ok)
+
+        err=circula: restore refused: backup file changed after verification; the current database was not touched
+--- PASS: TestRestoreSignedSwapDuringPreRestoreBackup (1.96s)
+=== RUN   TestRevokeSessionsCommand
+--- PASS: TestRevokeSessionsCommand (2.50s)
+=== RUN   TestScheduledVerifyIsReadOnlyAndStillFreezesAndThaws
+--- PASS: TestScheduledVerifyIsReadOnlyAndStillFreezesAndThaws (1.41s)
+=== RUN   TestServeRefusesPendingMigrationsInExplicitMode
+--- PASS: TestServeRefusesPendingMigrationsInExplicitMode (0.88s)
+=== RUN   TestStartupMigrationGate
+--- PASS: TestStartupMigrationGate (0.00s)
+=== RUN   TestServeCreatesNewDatabaseInExplicitMode
+--- PASS: TestServeCreatesNewDatabaseInExplicitMode (0.83s)
+=== RUN   TestWebKeyCreatedPersistedAndPrivate
+--- PASS: TestWebKeyCreatedPersistedAndPrivate (0.00s)
+=== RUN   TestWebKeyStateDirCreatedPrivate
+--- PASS: TestWebKeyStateDirCreatedPrivate (0.00s)
+=== RUN   TestWebKeyRefusesOpenPermissions
+--- PASS: TestWebKeyRefusesOpenPermissions (0.00s)
+=== RUN   TestWebKeyRefusesCorruptOrWrongSize
+--- PASS: TestWebKeyRefusesCorruptOrWrongSize (0.00s)
+=== RUN   TestWebKeyRefusesNonRegularFile
+--- PASS: TestWebKeyRefusesNonRegularFile (0.00s)
+=== RUN   TestWebKeyConcurrentFirstStart
+--- PASS: TestWebKeyConcurrentFirstStart (0.00s)
+=== RUN   TestNewHandlersKeySurvivesRestart
+--- PASS: TestNewHandlersKeySurvivesRestart (1.34s)
+=== RUN   TestSetupResetCommand
+--- PASS: TestSetupResetCommand (2.40s)
+=== RUN   TestServeNativeTLS
+--- PASS: TestServeNativeTLS (1.22s)
+=== RUN   TestCertReloaderKeepsOldOnFailure
+--- PASS: TestCertReloaderKeepsOldOnFailure (0.00s)
+=== RUN   TestTLSSettingsValidation
+--- PASS: TestTLSSettingsValidation (0.00s)
+=== RUN   TestAuditMirrorLines
+--- PASS: TestAuditMirrorLines (0.00s)
+=== RUN   TestUnlockCommand
+--- PASS: TestUnlockCommand (1.56s)
+=== RUN   TestUpgradeFromMigration0001
+--- PASS: TestUpgradeFromMigration0001 (1.12s)
+=== RUN   TestWriteJSONFileDoesNotFollowPredictableTempSymlink
+--- PASS: TestWriteJSONFileDoesNotFollowPredictableTempSymlink (0.00s)
+=== RUN   TestManifestAndAnchorWritersDoNotFollowTempSymlinks
+=== RUN   TestManifestAndAnchorWritersDoNotFollowTempSymlinks/manifest
+=== RUN   TestManifestAndAnchorWritersDoNotFollowTempSymlinks/anchor
+--- PASS: TestManifestAndAnchorWritersDoNotFollowTempSymlinks (0.00s)
+    --- PASS: TestManifestAndAnchorWritersDoNotFollowTempSymlinks/manifest (0.00s)
+    --- PASS: TestManifestAndAnchorWritersDoNotFollowTempSymlinks/anchor (0.00s)
+=== RUN   TestVerifyExport
+--- PASS: TestVerifyExport (0.00s)
+=== RUN   FuzzDecryptContainer
+=== RUN   FuzzDecryptContainer/seed#0
+=== RUN   FuzzDecryptContainer/seed#1
+=== RUN   FuzzDecryptContainer/seed#2
+=== RUN   FuzzDecryptContainer/seed#3
+=== RUN   FuzzDecryptContainer/seed#4
+=== RUN   FuzzDecryptContainer/seed#5
+=== RUN   FuzzDecryptContainer/seed#6
+=== RUN   FuzzDecryptContainer/huge-chunk
+=== RUN   FuzzDecryptContainer/short-header
+=== RUN   FuzzDecryptContainer/zero-chunk
+--- PASS: FuzzDecryptContainer (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#0 (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#1 (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#2 (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#3 (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#4 (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#5 (0.00s)
+    --- PASS: FuzzDecryptContainer/seed#6 (0.00s)
+    --- PASS: FuzzDecryptContainer/huge-chunk (0.00s)
+    --- PASS: FuzzDecryptContainer/short-header (0.00s)
+    --- PASS: FuzzDecryptContainer/zero-chunk (0.00s)
+=== RUN   FuzzTamperRejected
+=== RUN   FuzzTamperRejected/seed#0
+=== RUN   FuzzTamperRejected/seed#1
+=== RUN   FuzzTamperRejected/seed#2
+=== RUN   FuzzTamperRejected/seed#3
+=== RUN   FuzzTamperRejected/seed#4
+--- PASS: FuzzTamperRejected (0.00s)
+    --- PASS: FuzzTamperRejected/seed#0 (0.00s)
+    --- PASS: FuzzTamperRejected/seed#1 (0.00s)
+    --- PASS: FuzzTamperRejected/seed#2 (0.00s)
+    --- PASS: FuzzTamperRejected/seed#3 (0.00s)
+    --- PASS: FuzzTamperRejected/seed#4 (0.00s)
+=== RUN   FuzzWrongKey
+=== RUN   FuzzWrongKey/seed#0
+=== RUN   FuzzWrongKey/seed#1
+--- PASS: FuzzWrongKey (0.00s)
+    --- PASS: FuzzWrongKey/seed#0 (0.00s)
+    --- PASS: FuzzWrongKey/seed#1 (0.00s)
+=== RUN   FuzzManifest
+=== RUN   FuzzManifest/seed#0
+=== RUN   FuzzManifest/seed#1
+=== RUN   FuzzManifest/seed#2
+=== RUN   FuzzManifest/seed#3
+=== RUN   FuzzManifest/seed#4
+=== RUN   FuzzManifest/odd-signature
+--- PASS: FuzzManifest (0.00s)
+    --- PASS: FuzzManifest/seed#0 (0.00s)
+    --- PASS: FuzzManifest/seed#1 (0.00s)
+    --- PASS: FuzzManifest/seed#2 (0.00s)
+    --- PASS: FuzzManifest/seed#3 (0.00s)
+    --- PASS: FuzzManifest/seed#4 (0.00s)
+    --- PASS: FuzzManifest/odd-signature (0.00s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	181.148s

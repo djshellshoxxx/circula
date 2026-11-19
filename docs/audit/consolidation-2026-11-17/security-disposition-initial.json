@@ -1,0 +1,1057 @@
+{
+  "source_head": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+  "pr70_head": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+  "verification_basis": "Source review and named committed regressions. PR69 four new tests and three guard mutations independently executed. Root aggregate suite to be cross-referenced before publishing fixed-and-verified claims. Original residual PoCs re-run separately.",
+  "findings": [
+    {
+      "id": "A1-01",
+      "severity": "Medium",
+      "status": "fixed",
+      "summary": "Settle-to-zero departure posts an adjustment without any network-state gate, even on closed, closing, suspended or administrator-required networks, breaking the certified final export checksum after closure.",
+      "current_evidence": [
+        {
+          "path": "internal/service/departure_test.go",
+          "tests": [
+            "TestDepartureSettlementRefusedAfterClosure",
+            "TestDepartureSettlementFrozenFromClosureDate",
+            "TestDepartureSettlementRefusedWhileSuspended",
+            "TestDepartureSettlementRefusedWhenAdminRequired"
+          ]
+        }
+      ],
+      "note": "Network-state gate refuses settlement postings after closure, during suspension and when an administrator is required."
+    },
+    {
+      "id": "A1-02",
+      "severity": "Medium",
+      "status": "fixed",
+      "summary": "The decimals guard (LedgerSeq > 0) is checked only when a change is requested, so a decimals change scheduled with notice takes effect after postings exist and reinterprets all persisted amounts permanently.",
+      "current_evidence": [
+        {
+          "path": "internal/service/decimals_test.go",
+          "tests": [
+            "TestDecimalsFixedFromCreation",
+            "TestDecimalsLockedWhateverIsStored",
+            "TestScheduledDecimalChangeCannotReinterpretPostings",
+            "TestNetworkCreationStoresScaleAtomically",
+            "TestDecimalsLockUnderConcurrentWrites"
+          ]
+        }
+      ],
+      "note": "Scale changes refused at creation boundary; scheduled-change bypass regression covered. Historical databases with already-scheduled scale changes still require migration policy."
+    },
+    {
+      "id": "A1-03",
+      "severity": "Medium",
+      "status": "fixed",
+      "summary": "A re-review posts a reversal on a trade that another live (serial) dispute holds as disputed, leaving a posting_pending dispute that can never post or close, or an open dispute on a reversed trade that cannot be withdrawn and no longer blocks closure or departure.",
+      "current_evidence": [
+        {
+          "path": "internal/service/dispute_rereview_test.go",
+          "tests": [
+            "TestReReviewWaitsWhileAnotherDisputeIsPostingPending",
+            "TestReReviewCannotReverseUnderAnOpenDispute"
+          ]
+        }
+      ],
+      "note": "Re-review posting refused while another live dispute owns the transaction."
+    },
+    {
+      "id": "A1-04",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "ResolveDispute and RetryDisputePosting post reversals in an administrator-required network because reverse() checks only Suspended(), unlike DecideReReview which applies the full gate.",
+      "current_evidence": [
+        {
+          "path": "internal/service/ledger_auth_integration_regression_test.go",
+          "tests": [
+            "TestResolveDisputeRefusesReversalWhenAdministratorRequired",
+            "TestDeciderEntryPointsRequireAdministratorMFA"
+          ]
+        }
+      ],
+      "note": "networkOpenErr gates reverse; PR69 adds entry-point regression, independently mutation-tested in this review."
+    },
+    {
+      "id": "A1-05",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "The expiry sweep pages the oldest N expired proposals across all networks and skips frozen ones, so 500+ elapsed proposals in frozen networks starve every other network's expiry.",
+      "current_evidence": [
+        {
+          "path": "internal/service/expiry_fairness_test.go",
+          "tests": [
+            "TestExpiryFrozenNetworkDoesNotStarveActiveProposals",
+            "TestExpiryManyFrozenNetworks"
+          ]
+        }
+      ],
+      "note": "Frozen networks excluded before the bounded sweep; healthy expiry does not starve."
+    },
+    {
+      "id": "A1-06",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Departure cancels only one page of 500 open proposals, leaving the rest proposed with a departed party and holding the counterparty's reservation until expiry.",
+      "current_evidence": [
+        {
+          "path": "internal/service/departure_pagination_regression_test.go",
+          "tests": [
+            "TestDepartureCancelsMoreThanFiveHundredProposals"
+          ]
+        }
+      ],
+      "note": "Departure cancels proposals beyond the first 500."
+    },
+    {
+      "id": "A1-07",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Closure commits closed status in one unit and writes the final export in later units; if the export fails once, the closure is never listed again so no final checksum is ever recorded.",
+      "current_evidence": [
+        {
+          "path": "internal/service/closure_retry_test.go",
+          "tests": [
+            "TestClosureFinalExportRetriesAfterFailure"
+          ]
+        }
+      ],
+      "note": "Closure with an absent final checksum remains eligible for retry."
+    },
+    {
+      "id": "A1-08",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "OperatorSetDualControl writes policy version effective+1, which collides with an already scheduled future version, so the operator cannot change the threshold while any policy change is pending.",
+      "current_evidence": [
+        {
+          "path": "internal/service/operator_policy_regression_test.go",
+          "tests": [
+            "TestOperatorDualControlPreservesScheduledPolicy",
+            "TestOperatorDualControlAfterCancelledPolicy"
+          ]
+        }
+      ],
+      "note": "Operator changes preserve scheduled policy values and allocate the next revision."
+    },
+    {
+      "id": "A1-09",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "Reversal transactions posted by a dispute decision, retry or re-review have no audit event targeting the reversal id; only the dispute is the target.",
+      "current_evidence": [
+        {
+          "path": "internal/service/dispute_reversal_audit_test.go",
+          "tests": [
+            "TestDisputeReversalAuditTargetsAndAtomicity"
+          ]
+        }
+      ],
+      "note": "Reversal-target audit events and ledger postings share the transaction."
+    },
+    {
+      "id": "A1-10",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "ExpirePendingAdjustments writes status changes and audit events into frozen networks, whereas proposal expiry and closure finalisation skip frozen networks.",
+      "current_evidence": [
+        {
+          "path": "internal/service/adjustment_expiry_fairness_test.go",
+          "tests": [
+            "TestAdjustmentExpirySkipsFrozenNetworksWithoutStarvation",
+            "TestAdjustmentExpiryManyFrozenNetworks",
+            "TestAdjustmentExpiryBoundsOversizedBatch"
+          ]
+        }
+      ],
+      "note": "Frozen pending adjustments excluded before bounded selection."
+    },
+    {
+      "id": "A1-11",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "FR-005 and GOV-004 are marked built although creation-time decimals immutability is unimplemented, and TestPolicyChanges asserts the non-conforming behaviour.",
+      "current_evidence": [
+        {
+          "path": "internal/service/decimals_test.go",
+          "tests": [
+            "TestDecimalsFixedFromCreation",
+            "TestDecimalsLockedWhateverIsStored",
+            "TestScheduledDecimalChangeCannotReinterpretPostings",
+            "TestNetworkCreationStoresScaleAtomically",
+            "TestDecimalsLockUnderConcurrentWrites"
+          ]
+        }
+      ],
+      "note": "Current tests enforce scale immutability; remediation record amended FR-005/GOV-004. DOM-031/DAT-049 remain separately qualified."
+    },
+    {
+      "id": "A2-01",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Case-variant duplicate JSON keys pass the duplicate check (last spelling wins) and wrongly-cased field names are accepted instead of refused as unknown.",
+      "current_evidence": [
+        {
+          "path": "internal/api/canonical_fields_test.go",
+          "tests": [
+            "TestCanonicalRequestFields"
+          ]
+        }
+      ],
+      "note": "Canonical JSON field names reject case aliases; strict body tests remain."
+    },
+    {
+      "id": "A2-02",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "A token restricted to one network lists the person's other tokens (with other network ids), revokes them, and changes the person-wide time zone.",
+      "current_evidence": [
+        {
+          "path": "internal/service/token_person_scope_test.go",
+          "tests": [
+            "TestNetworkScopedTokenCannotManagePersonResources"
+          ]
+        }
+      ],
+      "note": "Network-bound tokens cannot manage person-wide tokens/preferences."
+    },
+    {
+      "id": "A2-03",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "The replay cache is keyed only by person+key, so a read-only token (or demoted admin) replays a cached write response such as a plaintext invitation token.",
+      "current_evidence": [
+        {
+          "path": "internal/api/replay_permissions_test.go",
+          "tests": [
+            "TestReplayRechecksWriteScopeAndMembership",
+            "TestReplayRechecksAdministratorRole",
+            "TestReplayPreservesDepartureAndReadOnlyExport"
+          ]
+        },
+        {
+          "path": "internal/api/replay_authority_edges_test.go",
+          "tests": [
+            "TestReplayInvitationRequiresCurrentMFA",
+            "TestReplayInvitationRechecksBreakGlassExpiry",
+            "TestReplayInvitationAcceptanceUsesCachedMembership"
+          ]
+        },
+        {
+          "path": "internal/api/replay_inventory_test.go",
+          "tests": [
+            "TestCachedRouteReplayAuthorizationInventory",
+            "TestReplayInventoryModifiersFailClosed",
+            "TestQueryParamsPreservesAuthorizationMetadata",
+            "TestReplayStaleFinishDoesNotAdoptReusedKey"
+          ]
+        }
+      ],
+      "note": "Replay reauthorizes scope, role, MFA, break-glass expiry and current membership."
+    },
+    {
+      "id": "A2-04",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "A break-glass grant-admin administrator is refused by every web admin page and by API adminOnly pre-checks, while the service accepts them.",
+      "current_evidence": [
+        {
+          "path": "internal/api/adapter_auth_test.go",
+          "tests": [
+            "TestAdapterAdminReadsRequireCurrentMFA",
+            "TestAdapterAdminReadsUseLiveBreakGlass"
+          ]
+        },
+        {
+          "path": "internal/web/adapter_auth_test.go",
+          "tests": [
+            "TestWebAdminReadsAndNavigationRequireCurrentMFA",
+            "TestWebAdminReadsAndNavigationUseLiveBreakGlass"
+          ]
+        }
+      ],
+      "note": "Adapters use live effective admin authority including authorized break-glass grants."
+    },
+    {
+      "id": "A2-05",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "GET /admin/consistency-checks/{id} and GET /admin/policy are authorised only by the adapter role check, so an admin without the mandatory second factor can read them.",
+      "current_evidence": [
+        {
+          "path": "internal/api/adapter_auth_test.go",
+          "tests": [
+            "TestAdapterAdminReadsRequireCurrentMFA",
+            "TestAdapterAdminReadsUseLiveBreakGlass"
+          ]
+        },
+        {
+          "path": "internal/web/adapter_auth_test.go",
+          "tests": [
+            "TestWebAdminReadsAndNavigationRequireCurrentMFA",
+            "TestWebAdminReadsAndNavigationUseLiveBreakGlass"
+          ]
+        }
+      ],
+      "note": "Administrator reads/navigation enforce the currently required MFA."
+    },
+    {
+      "id": "A2-06",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "POST /logout ignores a failed session revocation, reports 'You are signed out.' and clears the cookie while the server session stays valid.",
+      "current_evidence": [
+        {
+          "path": "internal/web/logout_failure_test.go",
+          "tests": [
+            "TestLogoutFailurePreservesSessionForRetry"
+          ]
+        }
+      ],
+      "note": "Failed server revocation does not clear retryable session or claim success."
+    },
+    {
+      "id": "A2-07",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Credit-limit and policy ETags omit the override/expiry and scheduled policy changes, so a stale If-Match succeeds and silently undoes another admin's change.",
+      "current_evidence": [
+        {
+          "path": "internal/api/credit_limit_revision_test.go",
+          "tests": [
+            "TestCreditLimitETagTracksOverrideAndExpiry",
+            "TestCreditLimitConditionalWriteRejectsInterveningServiceEdit"
+          ]
+        },
+        {
+          "path": "internal/api/policy_revision_test.go",
+          "tests": [
+            "TestPolicyConditionalWriteRejectsInterveningChange"
+          ]
+        },
+        {
+          "path": "internal/service/credit_limit_revision_test.go",
+          "tests": [
+            "TestCreditLimitRevisionInheritedDefaultAndUnrelatedPostings"
+          ]
+        },
+        {
+          "path": "internal/service/policy_revision_test.go",
+          "tests": [
+            "TestPolicyRevisionRefusalDoesNotConsumeKey",
+            "TestPolicyRevisionPreservesDurableReplay"
+          ]
+        }
+      ],
+      "note": "Conditional writes include effective, pending, override and expiry state, with atomic service recheck."
+    },
+    {
+      "id": "A2-08",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Runtime 423 network-frozen, 429, 503 busy and some 413/415 statuses are not documented in openapi.yaml, so kin-openapi validation rejects them.",
+      "current_evidence": [
+        {
+          "path": "internal/contract/middleware_responses_test.go",
+          "tests": [
+            "TestCommonErrorResponsesDeclared",
+            "TestCommonErrorResponsesMatchOpenAPI"
+          ]
+        }
+      ],
+      "note": "Declared runtime errors are validated against actual OpenAPI responses."
+    },
+    {
+      "id": "A2-09",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "GET /network/policy-log returns every version and GET /challenges up to 200 rows, both with next_cursor null, ignoring limit, cursor and status.",
+      "current_evidence": [
+        {
+          "path": "internal/api/governance_pagination_test.go",
+          "tests": [
+            "TestGovernancePolicyLogPagination",
+            "TestGovernanceChallengePagination",
+            "TestGovernancePaginationRejectsInvalidAndReboundCursors"
+          ]
+        }
+      ],
+      "note": "Bounded signed pagination for policy logs and challenges."
+    },
+    {
+      "id": "A2-10",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "/n/{slug}/join tells any signed-in person whether a slug exists and shows the name of an invitation-only network, while other /n/{slug} pages answer 404.",
+      "current_evidence": [
+        {
+          "path": "internal/web/join_privacy_test.go",
+          "tests": [
+            "TestInvitationOnlyJoinHidesNetworkFromNonmembers",
+            "TestPublicJoinModesRemainAccessible"
+          ]
+        }
+      ],
+      "note": "Invitation-only networks remain opaque to outsiders; public join modes retained."
+    },
+    {
+      "id": "A2-11",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Sections hidden from a suspended or departed member's navigation still answer 200 by URL.",
+      "current_evidence": [
+        {
+          "path": "internal/web/navigation_access_test.go",
+          "tests": [
+            "TestNavigationMatchesCurrentReadableSections"
+          ]
+        }
+      ],
+      "note": "Navigation reflects readable suspended/departed sections."
+    },
+    {
+      "id": "A2-12",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "A re-review decision posting a reversal is recorded on first submit with no review step, and dual-control 'Approve and post' also posts without a review screen.",
+      "current_evidence": [
+        {
+          "path": "internal/web/money_confirmation_test.go",
+          "tests": [
+            "TestReReviewRequiresReviewedConfirmation",
+            "TestReReviewConfirmRechecksLiveStateAndAuthority",
+            "TestReReviewAdminPreviewIncludesProjectedBalances",
+            "TestAdjustmentApprovalRequiresReviewedConfirmation",
+            "TestAdjustmentApprovalConfirmRechecksLiveStateAndAuthority"
+          ]
+        }
+      ],
+      "note": "Re-review and dual-control approval use signed reviewed confirmation, rechecking live state."
+    },
+    {
+      "id": "A2-13",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "Frozen-network notice and admin overview last-check line display escaped <time datetime=...> markup as text.",
+      "current_evidence": [
+        {
+          "path": "internal/web/notice_times_test.go",
+          "tests": [
+            "TestFrozenAndCheckTimesRenderAsElements"
+          ]
+        }
+      ],
+      "note": "Notice times render as time elements rather than escaped markup."
+    },
+    {
+      "id": "A2-14",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Custom qs (url.QueryEscape) inside href is escaped again by html/template, so the double-encoded next fails SafeNext and invitation sign-in lands on '/'.",
+      "current_evidence": [
+        {
+          "path": "internal/web/next_link_test.go",
+          "tests": [
+            "TestReturnLinksDecodeToTheOriginalPath"
+          ]
+        }
+      ],
+      "note": "Rendered invitation/login/register links retain one correctly escaped local return path."
+    },
+    {
+      "id": "A2-15",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "/static/*, /robots.txt and /favicon.ico are Cache-Control: public yet carry a fresh Set-Cookie cm_csrf pre-login CSRF secret.",
+      "current_evidence": [
+        {
+          "path": "internal/web/static_cookie_test.go",
+          "tests": [
+            "TestPublicAssetsDoNotSetCookies"
+          ]
+        }
+      ],
+      "note": "Cacheable public assets issue no CSRF cookies."
+    },
+    {
+      "id": "A2-16",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "Path ids reach the store unvalidated; SQL is parameterised so not exploitable, but SEC-024 requires rejection before any database call.",
+      "current_evidence": [
+        {
+          "path": "internal/service/identifier_boundary_test.go",
+          "tests": [
+            "TestRecordIdentifiersRejectedBeforeRepositoryAccess",
+            "TestListingReferenceIdentifierErrorsRemainFieldScoped"
+          ]
+        },
+        {
+          "path": "internal/service/identifier_http_test.go",
+          "tests": [
+            "TestIdentifierBoundariesAcrossHTTPAdapters",
+            "TestIdentifierValidationPreservesOpaqueMissingAndNonRecordInputs"
+          ]
+        },
+        {
+          "path": "internal/api/path_id_test.go",
+          "tests": [
+            "TestPathIDsRejectedBeforeResourceLookup",
+            "TestMalformedPathIDsKeepAuthenticationAndPrivacyContract"
+          ]
+        }
+      ],
+      "note": "Record identifiers rejected before repository calls after authorization, preserving opaque failures."
+    },
+    {
+      "id": "A2-17",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "A person who must change their password can still load '/' and '/join/{token}' instead of being redirected.",
+      "current_evidence": [
+        {
+          "path": "internal/web/forced_password_pages_test.go",
+          "tests": [
+            "TestForcedPasswordGuardsHomeAndInvitation"
+          ]
+        }
+      ],
+      "note": "Home and invitation entry points enforce forced password change."
+    },
+    {
+      "id": "A2-18",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "invalid-body problem detail echoes Go internals and several reads ignore unknown query parameters.",
+      "current_evidence": [
+        {
+          "path": "internal/api/canonical_fields_test.go",
+          "tests": [
+            "TestCanonicalRequestFields"
+          ]
+        },
+        {
+          "path": "internal/api/get_query_validation_test.go",
+          "tests": [
+            "TestGetRepresentationsRejectUnknownQueryParameters",
+            "TestStrictGetQueriesPreserveHistoryAndPagination"
+          ]
+        },
+        {
+          "path": "internal/api/raw_query_validation_test.go",
+          "tests": [
+            "TestMalformedRawQueriesAreRejected",
+            "TestMalformedRawQueriesPreserveGuardsAndDoNotConsumeIdempotency"
+          ]
+        }
+      ],
+      "note": "Decoder messages hide Go internals; unknown/malformed queries refused."
+    },
+    {
+      "id": "A2-19",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "OpenAPI declares an optional Idempotency-Key on POST /tokens but the route ignores it, so a retry with the same key mints a second credential.",
+      "current_evidence": [
+        {
+          "path": "internal/api/a3b_test.go",
+          "tests": [
+            "TestA3_06_ErasureDropsReplayCacheAndExports",
+            "TestA3_06_HookWithoutHandlerIsNoop",
+            "TestA3_09_TokenNotCached"
+          ]
+        },
+        {
+          "path": "docs/api/openapi.yaml",
+          "tests": []
+        }
+      ],
+      "note": "POST/tokens correctly documents no Idempotency-Key support; token secrets are never cached. Canonical API-066 SHOULD remains design guidance, not a runtime replay promise."
+    },
+    {
+      "id": "A2-20",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "The web reference shown to users is a second random id unrelated to the access-log request_id, and the API stores a client-chosen X-Request-Id in audit events.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/log_safety_test.go",
+          "tests": [
+            "TestServeLoggerEscapesRedactsAndUsesUTC",
+            "TestAccessLogCarriesNoCredentials",
+            "TestRequestIDMatchesAcrossEdgeAndAdapters"
+          ]
+        }
+      ],
+      "note": "Edge and adapter request identifiers are correlated; untrusted client identifiers do not replace the server audit identifier."
+    },
+    {
+      "id": "A2-21",
+      "severity": "Info",
+      "status": "deferred_design",
+      "summary": "API tokens and session ids are stored as plain unsalted, unkeyed SHA-256 whereas the spec requires a salted or keyed hash.",
+      "current_evidence": [
+        {
+          "path": "internal/service/auth.go",
+          "tests": []
+        },
+        {
+          "path": "docs/specs/07-api-contract.md",
+          "tests": []
+        }
+      ],
+      "note": "hashToken still uses plain SHA-256, so API-009 salted/keyed-hash wording is unmet. Tokens contain 256 random bits; credential format migration and key/salt lookup compatibility need explicit design. No unapproved token revocation or format change."
+    },
+    {
+      "id": "A3-F01",
+      "severity": "Medium",
+      "status": "fixed",
+      "summary": "With backup-encryption-key set, the pre-migration gate runs integrity_check on the .db.enc ciphertext, so circula migrate and serve (migrate-mode=auto) can never migrate an encrypted deployment.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/premigrate_encrypted_test.go",
+          "tests": [
+            "TestMigrateWithEncryptionKey",
+            "TestPreMigrationSafeguardEncrypted"
+          ]
+        }
+      ],
+      "note": "Encrypted pre-migration backups decrypted before database integrity verification."
+    },
+    {
+      "id": "A3-F02",
+      "severity": "Medium",
+      "status": "owner_policy",
+      "summary": "Break-glass 'no lasting changes' rule (requireLasting) covers only about 10 methods, so a break-glass admin can post adjustments, approve dual-control requests immediately, raise limits, reset passwords, reverse trades and decide disputes.",
+      "current_evidence": [
+        {
+          "path": "docs/specs/addenda/SEC-013.md",
+          "tests": []
+        },
+        {
+          "path": "docs/audit/2026-10-28/REMEDIATION-2026-11-04.md",
+          "tests": []
+        }
+      ],
+      "note": "DEC-014 remains unresolved. Current original PoC re-run separately; no break-glass/governance policy changed."
+    },
+    {
+      "id": "A3-F16",
+      "severity": "Medium",
+      "status": "fixed",
+      "summary": "Second-factor throttle is renewable by one failure at expiry and is shared with session-only DisableMFA, so a stolen session keeps the owner out of MFA sign-in indefinitely.",
+      "current_evidence": [
+        {
+          "path": "internal/service/mfa_throttle_test.go",
+          "tests": [
+            "TestStolenSessionCannotLockOwnerOutOfMFA",
+            "TestMFASignInLockNotRenewableByOneFailure",
+            "TestMFASessionThrottleBoundAndUnlock"
+          ]
+        }
+      ],
+      "note": "Session-side operations cannot renew/consume the owner sign-in MFA budget."
+    },
+    {
+      "id": "A3-F03",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "require-mfa-admins is not applied to admin powers reached through requireDecider, so an admin without a second factor resolves disputes and decides challenges.",
+      "current_evidence": [
+        {
+          "path": "internal/service/ledger_auth_integration_regression_test.go",
+          "tests": [
+            "TestResolveDisputeRefusesReversalWhenAdministratorRequired",
+            "TestDeciderEntryPointsRequireAdministratorMFA"
+          ]
+        }
+      ],
+      "note": "requireDecider enforces admin MFA; PR69 service-entry regression independently mutation-tested."
+    },
+    {
+      "id": "A3-F05",
+      "severity": "Low",
+      "status": "partly_fixed_policy",
+      "summary": "Erasure leaves the member's challenge text (challenges.reason) and the login in 'recover: <login>' throttle rows.",
+      "current_evidence": [
+        {
+          "path": "internal/service/erasure_throttle_test.go",
+          "tests": [
+            "TestPersonErasureClearsLoginAndRecoveryThrottleFamilies"
+          ]
+        },
+        {
+          "path": "internal/service/erasure.go",
+          "tests": []
+        }
+      ],
+      "note": "Recovery and sign-in throttle families erased, including Unicode/IP variants. Challenge reasons still survive; SEC-014/018 retention policy unresolved."
+    },
+    {
+      "id": "A3-F06",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "DeleteThrottleFamily compares a Go byte length with SQLite character substr, so per-address throttle rows of non-ASCII logins are never removed.",
+      "current_evidence": [
+        {
+          "path": "internal/store/throttle_family_test.go",
+          "tests": [
+            "TestDeleteThrottleFamilyUnicodeAndLiteralPrefix"
+          ]
+        }
+      ],
+      "note": "SQLite character-length cleanup replaces mismatched Go-byte length and respects literal prefixes."
+    },
+    {
+      "id": "A3-F09",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Restore resurrects sessions and API tokens revoked after the backup (and, by trace, closed break-glass sessions), and the documented remedy (password change) leaves tokens valid.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/restore_credentials_test.go",
+          "tests": [
+            "TestRestoreInvalidatesOldBearerCredentials",
+            "TestRestoreCredentialInvalidationFailureKeepsCurrentDatabase"
+          ]
+        },
+        {
+          "path": "internal/service/restore_credentials_test.go",
+          "tests": [
+            "TestRestoreCredentialInvalidationAtomicAndOperatorOnly"
+          ]
+        }
+      ],
+      "note": "Restore invalidates bearer sessions/tokens and break-glass credentials before swap. Password/recovery-code/invitation state still reflects the backup; separate operational limitation."
+    },
+    {
+      "id": "A3-F10",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Backup schedule and retention trust the timestamp in backup file names, so one future-dated backup stops scheduled backups for years and is always retained.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/jobs_regress_test.go",
+          "tests": [
+            "TestJobScheduleConstants",
+            "TestJobExpiryMovesOnlyElapsedProposals",
+            "TestJobPurgeRemovesIdleSessions",
+            "TestJobVerifyReportsLedgerFault",
+            "TestJobEveryRepeatsUntilCancelled",
+            "TestJobAttemptRecordsFailureNotShutdown",
+            "TestJobScheduledBackupAndRetention",
+            "TestJobUntilNextBackup",
+            "TestJobUntilNextBackupIgnoresFutureFiles",
+            "TestJobBackupLoopRunsOnceThenStops",
+            "TestJobBackupsDisabledByZeroInterval",
+            "TestJobBackupFailureIsRetriedAndStoppable",
+            "TestJobRunStartsAllJobsAndStops",
+            "TestBackupCadenceFollowsNewestBackup",
+            "TestServeStartsAndStopsCleanly",
+            "TestPreMigrationBackupIsTakenBeforeMigrating"
+          ]
+        },
+        {
+          "path": "cmd/circula/backup_test.go",
+          "tests": [
+            "TestSnapshotWritesVerifiedManifestAndRestores",
+            "TestRestoreRefusesOverwriteWithoutFlag",
+            "TestPruneKeepsDailyAndNewestPerMonth",
+            "TestBackupNamesPreserveSubsecondTimeAndLegacyRetention",
+            "TestSnapshotRefusesExistingSubsecondBackup",
+            "TestLockRefusesSecondHolder",
+            "TestMigrateIsNoOpWhenCurrent",
+            "TestVerifyLedgerCleanDatabase"
+          ]
+        }
+      ],
+      "note": "Future-dated backup names excluded from cadence; subsecond unique names and legacy retention supported."
+    },
+    {
+      "id": "A3-F11",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "circula dual-control fails with 'conflict: duplicate record' while a policy change waits out its notice because both use version in-force+1.",
+      "current_evidence": [
+        {
+          "path": "internal/service/operator_policy_regression_test.go",
+          "tests": [
+            "TestOperatorDualControlPreservesScheduledPolicy",
+            "TestOperatorDualControlAfterCancelledPolicy"
+          ]
+        }
+      ],
+      "note": "Same correction as A1-08."
+    },
+    {
+      "id": "A3-F13",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Docs say rotating circula-web.key signs everyone out, but sessions are unsigned DB tokens that survive and no mass session revocation exists.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/revoke_sessions_test.go",
+          "tests": [
+            "TestRevokeSessionsCommand"
+          ]
+        },
+        {
+          "path": "internal/service/sessions_review_test.go",
+          "tests": [
+            "TestBreakGlassAdminGetsAdministratorSessionLifetime",
+            "TestRevokeSessionsDropsPendingSecondFactorChallenges"
+          ]
+        },
+        {
+          "path": "docs/ops/configuration.md",
+          "tests": []
+        }
+      ],
+      "note": "Explicit audited revoke-sessions command and corrected key-rotation documentation; no claim that key rotation alone revokes opaque sessions."
+    },
+    {
+      "id": "A3-F14",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Migration static check flags only DROP TABLE/COLUMN and DELETE FROM, missing UPDATE entries/audit_events and DROP TRIGGER.",
+      "current_evidence": [
+        {
+          "path": "scripts/check_migrations.py",
+          "tests": []
+        },
+        {
+          "path": "scripts/test_check_migrations.py",
+          "tests": []
+        }
+      ],
+      "note": "Protected append-only UPDATE/REPLACE/UPSERT and DROP TRIGGER checked, with lexical/comment/exemption regressions."
+    },
+    {
+      "id": "A3-F15",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Hourly scheduled verification writes a consistency_runs row every run (and audit events on failure/recovery), contrary to the accepted read-only rule.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/scheduled_verify_test.go",
+          "tests": [
+            "TestScheduledVerifyIsReadOnlyAndStillFreezesAndThaws"
+          ]
+        }
+      ],
+      "note": "Scheduled ledger verification is read-only while maintaining in-memory freeze/thaw behavior."
+    },
+    {
+      "id": "A3-F17",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Manifest/record/anchor writers use a fixed <path>.tmp with os.WriteFile which follows symlinks, allowing file clobber when backing up into a shared directory.",
+      "current_evidence": [
+        {
+          "path": "cmd/circula/util_atomic_test.go",
+          "tests": [
+            "TestWriteJSONFileDoesNotFollowPredictableTempSymlink",
+            "TestManifestAndAnchorWritersDoNotFollowTempSymlinks"
+          ]
+        },
+        {
+          "path": "cmd/circula/util.go",
+          "tests": []
+        }
+      ],
+      "note": "Manifest/record/anchor writers use unpredictable exclusively-created files. Plaintext snapshot staging residual is NEW-01, handled separately."
+    },
+    {
+      "id": "A3-F18",
+      "severity": "Low",
+      "status": "owner_policy",
+      "summary": "Per-member credit-limit cuts take effect at once although the policy table requires GOV-003 notice, sidestepping the 14-day notice on default-limit cuts.",
+      "current_evidence": [
+        {
+          "path": "internal/service/membership.go",
+          "tests": []
+        },
+        {
+          "path": "docs/TODO.md",
+          "tests": []
+        }
+      ],
+      "note": "Per-member limit cuts still apply immediately. GOV-003/default-policy notice versus per-member notice requires owner decision; no financial-rule change."
+    },
+    {
+      "id": "A3-F19",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Authentication throttling limits are constants, not operator settings, although OPS-008 lists them as required settings and it is marked built.",
+      "current_evidence": [
+        {
+          "path": "internal/service/throttle_config_test.go",
+          "tests": [
+            "TestConfiguredAuthenticationThrottleLoginAndGlobal",
+            "TestConfiguredAuthenticationThrottleRecoveryAndSensitivePassword",
+            "TestConfiguredAuthenticationThrottleMFA",
+            "TestAuthenticationThrottleRejectsUnsafeServiceConfiguration"
+          ]
+        },
+        {
+          "path": "cmd/circula/config_throttle_test.go",
+          "tests": [
+            "TestPersistentAuthThrottleSettings",
+            "TestPersistentAuthThrottleServiceWiring"
+          ]
+        }
+      ],
+      "note": "Operator authentication settings bounded, validated and wired into service."
+    },
+    {
+      "id": "A3-F25",
+      "severity": "Low",
+      "status": "fixed",
+      "summary": "Erasure blanks every inbox body in the network containing the display name as a substring, so a 1-character name wipes other members' notifications via self-service erasure.",
+      "current_evidence": [
+        {
+          "path": "internal/service/notification_erasure_test.go",
+          "tests": [
+            "TestNotificationErasureUsesResourceRelations"
+          ]
+        }
+      ],
+      "note": "Notification erasure targets exact resource relationships, preserving unrelated name substrings."
+    },
+    {
+      "id": "A3-F07",
+      "severity": "Info",
+      "status": "deferred_design",
+      "summary": "Erased values remain in -wal frames after the normal PASSIVE checkpoint; the RB-003 test passes only because it forces TRUNCATE.",
+      "current_evidence": [
+        {
+          "path": "docs/security/security-review.md",
+          "tests": []
+        },
+        {
+          "path": "internal/store/sqlite.go",
+          "tests": []
+        }
+      ],
+      "note": "PASSIVE checkpoint can retain erased plaintext in WAL frames. Forced TRUNCATE policy and concurrency/availability consequences unresolved; secure_delete alone does not prove historical-page removal."
+    },
+    {
+      "id": "A3-F12",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "A schema_migrations row with version <= 0 makes every open panic (all[v-1]) instead of failing cleanly.",
+      "current_evidence": [
+        {
+          "path": "internal/store/migrate_version_test.go",
+          "tests": [
+            "TestMigrationRejectsNonPositiveRecordedVersion"
+          ]
+        }
+      ],
+      "note": "Nonpositive migration metadata refuses cleanly instead of indexing out of bounds."
+    },
+    {
+      "id": "A3-F20",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "Forbidden-name scan runs tar -tzf on .zip archives, so the Windows archive is never inspected.",
+      "current_evidence": [
+        {
+          "path": "scripts/scan-release.sh",
+          "tests": []
+        }
+      ],
+      "note": "ZIP-specific listing/extraction implemented. This review independently ran clean and forbidden-name ZIP fixtures; exits 0 and 1 respectively."
+    },
+    {
+      "id": "A3-F21",
+      "severity": "Info",
+      "status": "documentation_open",
+      "summary": "Docs say '15 min doubling to 24 h' but code locks a fixed 15 min (throttleMax).",
+      "current_evidence": [
+        {
+          "path": "docs/specs/addenda/SEC-007.md",
+          "tests": []
+        }
+      ],
+      "note": "Line 14 still says a shared counter doubles to 24 hours; line 15 amendment correctly describes split counters and fixed 15 minute default. Correct historical wording; do not change runtime policy."
+    },
+    {
+      "id": "A3-F22",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "break-glass grant-admin -login is not normalised for case, unlike every other operator command.",
+      "current_evidence": [
+        {
+          "path": "internal/service/breakglass_login_regression_test.go",
+          "tests": [
+            "TestBreakGlassGrantNormalizesLogin"
+          ]
+        }
+      ],
+      "note": "Break-glass target login normalized consistently with sign-in."
+    },
+    {
+      "id": "A3-F23",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "admin create-operator is audited as the new person registering themself; nothing marks it as an operator action.",
+      "current_evidence": [
+        {
+          "path": "internal/service/operator_registration_test.go",
+          "tests": [
+            "TestOperatorRegistrationAudit"
+          ]
+        },
+        {
+          "path": "cmd/circula/cli_regress_test.go",
+          "tests": [
+            "TestBackupCommandPaths",
+            "TestBackupCommandSignsManifestWithKey",
+            "TestLedgerFailureExitCodeThree",
+            "TestVerifyLedgerLeavesDatabaseChecksumUnchanged",
+            "TestAdminCreateOperatorPaths"
+          ]
+        }
+      ],
+      "note": "Operator registration audited as the operator, rather than self-registration."
+    },
+    {
+      "id": "A3-F24",
+      "severity": "Info",
+      "status": "fixed",
+      "summary": "Erasure drops only the erased person's in-memory artefacts; another administrator's full export made before the erasure stays downloadable for up to 24 h.",
+      "current_evidence": [
+        {
+          "path": "internal/api/export_lifecycle_test.go",
+          "tests": [
+            "TestExpiredExportLookupReleasesFile",
+            "TestExportTimerReleasesFileWithoutTraffic",
+            "TestExportExpiryDoesNotTruncateAdmittedDownload",
+            "TestExportErasureAbortsAdmittedDownload",
+            "TestCloseHandlerReleasesExportsAndRejectsRunningCommit",
+            "TestExportErasureDuringFinalWriteAbortsResponse"
+          ]
+        },
+        {
+          "path": "internal/api/export_spool_test.go",
+          "tests": [
+            "TestExportArtefactIsSpooled",
+            "TestExportRefusedWithoutSpoolDir",
+            "TestExportRefusedLeavesNoSpool",
+            "TestParallelExportWritesStayWithinCap",
+            "TestRunningExportsHoldTheirSlot",
+            "TestErasureDropsNetworkExports"
+          ]
+        }
+      ],
+      "note": "Erasure invalidates affected archives and running exports; admitted downloads pinned/revoked safely."
+    }
+  ],
+  "additional_evidence": {
+    "policy_poc_log": "current-policy-residuals.log",
+    "policy_poc_result": "Current PoCs reproduce A3-F02 (all 4 lasting-change subcases plus immediate approval), A3-F05 challenge text only, A3-F07 WAL text and A3-F18 immediate limit cuts. No policy changes made.",
+    "zip_scan": "a3-f20-zip-scan.json",
+    "new01": "Five focused regression tests cover exclusive copies, private staging, unowned paths, stale cleanup and failure cleanup; original three fail-before and pass-after logs recorded."
+  }
+}

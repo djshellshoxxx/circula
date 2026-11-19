@@ -33,7 +33,7 @@ func (s *server) listTokens(c *reqCtx) error { // API-066
 		return err
 	}
 	if len(rows) > 100 {
-		rows = rows[:100] // API-036: unpaginated lists return at most 100 rows
+		rows = rows[:100] // Defensive response cap; the repository query is also bounded.
 	}
 	out := make([]tokenDTO, 0, len(rows))
 	for _, t := range rows {

@@ -1,0 +1,35 @@
+{
+  "job_id": 134665457090,
+  "checkout_sha": "f2dd3bdde47208d2d7132b76ae7cf2e00dd5b1fd",
+  "package_lines": [
+    "2026-11-18T08:22:27.7652390Z ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t263.328s",
+    "2026-11-18T08:24:45.4686040Z ok  \tgithub.com/djshellshoxxx/circula/internal/api\t399.605s",
+    "2026-11-18T08:24:45.4694880Z ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t44.365s",
+    "2026-11-18T08:24:45.4697010Z ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t2.168s",
+    "2026-11-18T08:24:45.4698120Z ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.031s",
+    "2026-11-18T08:24:45.4701100Z ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.164s",
+    "2026-11-18T08:24:45.4702630Z ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.154s",
+    "2026-11-18T08:24:45.4704750Z ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.329s",
+    "2026-11-18T08:35:40.6140450Z ok  \tgithub.com/djshellshoxxx/circula/internal/service\t722.788s",
+    "2026-11-18T08:35:40.6141600Z ok  \tgithub.com/djshellshoxxx/circula/internal/store\t136.479s",
+    "2026-11-18T08:35:40.6142770Z ?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]",
+    "2026-11-18T08:35:40.6143840Z ?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]",
+    "2026-11-18T08:35:40.6144680Z ok  \tgithub.com/djshellshoxxx/circula/internal/web\t253.592s",
+    "2026-11-18T08:35:40.6145600Z ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.123s",
+    "2026-11-18T08:35:40.6146370Z ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.275s",
+    "2026-11-18T08:35:40.6147100Z ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t3.468s"
+  ],
+  "commands": [
+    "2026-11-18T08:17:51.1134730Z ##[group]Run go test -race -count=1 -p 2 -timeout=25m ./..."
+  ],
+  "checkout_tree": "36326959c19c93fdcc8a415d3152e1cc4f183138",
+  "parents": [
+    "a62071d2c4e65027f4918c90d63e804b1deceb60",
+    "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3"
+  ],
+  "pr_head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+  "run_id": 44264463917,
+  "job_url": "https://github.com/djshellshoxxx/circula/actions/runs/44264463917/job/134665457090",
+  "target_tree": "e8b07dfc8a3875eb3b25dc92adb0de5a63fcbfbe",
+  "target_tree_equal": false
+}

@@ -1,0 +1,194 @@
+{
+  "observed_at": "2026-11-18T10:05:38.342Z",
+  "scope": "Read-only workflow status inventory and current core deployment-approval queues; no account/billing access or cause inference.",
+  "statuses": {
+    "queued": {
+      "total_count": 9,
+      "returned_count": 9,
+      "first_page_only": true,
+      "runs": [
+        {
+          "id": 44281537794,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "nodata/doc-sweep-20261118",
+          "head_sha": "c774d5e412e039d514c37c7b69826d5306d7930c",
+          "created_at": "2026-11-18T10:02:22Z",
+          "updated_at": "2026-11-18T10:02:23Z",
+          "run_started_at": "2026-11-18T10:02:22Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44281537794"
+        },
+        {
+          "id": 44279484396,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/aud4-auth-fixes",
+          "head_sha": "e127acc9877edebeca818b75a5d48ce12511eca8",
+          "created_at": "2026-11-18T09:49:10Z",
+          "updated_at": "2026-11-18T09:49:12Z",
+          "run_started_at": "2026-11-18T09:49:10Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44279484396"
+        },
+        {
+          "id": 44278329454,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/circula-consolidation-audit-0sydm1",
+          "head_sha": "bcacd848dea66cac8b7909aa1e9e9dac7fdf84e4",
+          "created_at": "2026-11-18T09:41:45Z",
+          "updated_at": "2026-11-18T09:41:47Z",
+          "run_started_at": "2026-11-18T09:41:45Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44278329454"
+        },
+        {
+          "id": 44275909267,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/gov-021-admin-recovery",
+          "head_sha": "59cf6997928330d5ec76c6bbbc81705d0d691eb4",
+          "created_at": "2026-11-18T09:26:19Z",
+          "updated_at": "2026-11-18T09:26:21Z",
+          "run_started_at": "2026-11-18T09:26:19Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44275909267"
+        },
+        {
+          "id": 44275665191,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/aud4-f03-dispute-timelines",
+          "head_sha": "679a3016d77c3cf34e218ecb296f1d42cc0969c8",
+          "created_at": "2026-11-18T09:24:46Z",
+          "updated_at": "2026-11-18T09:24:47Z",
+          "run_started_at": "2026-11-18T09:24:46Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44275665191"
+        },
+        {
+          "id": 44274333610,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/sec-026-abuse-signals",
+          "head_sha": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+          "created_at": "2026-11-18T09:16:11Z",
+          "updated_at": "2026-11-18T09:16:13Z",
+          "run_started_at": "2026-11-18T09:16:11Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44274333610"
+        },
+        {
+          "id": 44274085108,
+          "name": "scorecard",
+          "status": "queued",
+          "conclusion": null,
+          "event": "push",
+          "head_branch": "main",
+          "head_sha": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+          "created_at": "2026-11-18T09:14:38Z",
+          "updated_at": "2026-11-18T09:14:38Z",
+          "run_started_at": "2026-11-18T09:14:38Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44274085108"
+        },
+        {
+          "id": 44273207384,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/aud4-f02-reviewer-reset-policy",
+          "head_sha": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+          "created_at": "2026-11-18T09:09:01Z",
+          "updated_at": "2026-11-18T09:09:17Z",
+          "run_started_at": "2026-11-18T09:09:01Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44273207384"
+        },
+        {
+          "id": 44272452596,
+          "name": "ci",
+          "status": "queued",
+          "conclusion": null,
+          "event": "pull_request",
+          "head_branch": "claude/sharp-archimedes-tu76rh",
+          "head_sha": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+          "created_at": "2026-11-18T09:04:09Z",
+          "updated_at": "2026-11-18T09:04:11Z",
+          "run_started_at": "2026-11-18T09:04:09Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44272452596"
+        }
+      ]
+    },
+    "in_progress": {
+      "total_count": 1,
+      "returned_count": 1,
+      "first_page_only": true,
+      "runs": [
+        {
+          "id": 44265254428,
+          "name": "ci",
+          "status": "in_progress",
+          "conclusion": null,
+          "event": "push",
+          "head_branch": "main",
+          "head_sha": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+          "created_at": "2026-11-18T08:14:15Z",
+          "updated_at": "2026-11-18T09:58:03Z",
+          "run_started_at": "2026-11-18T08:14:15Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44265254428"
+        }
+      ]
+    },
+    "pending": {
+      "total_count": 1,
+      "returned_count": 1,
+      "first_page_only": true,
+      "runs": [
+        {
+          "id": 44274085093,
+          "name": "ci",
+          "status": "pending",
+          "conclusion": null,
+          "event": "push",
+          "head_branch": "main",
+          "head_sha": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+          "created_at": "2026-11-18T09:14:38Z",
+          "updated_at": "2026-11-18T09:14:39Z",
+          "run_started_at": "2026-11-18T09:14:38Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44274085093"
+        }
+      ]
+    },
+    "waiting": {
+      "total_count": 0,
+      "returned_count": 0,
+      "first_page_only": true,
+      "runs": []
+    },
+    "requested": {
+      "total_count": 0,
+      "returned_count": 0,
+      "first_page_only": true,
+      "runs": []
+    },
+    "action_required": {
+      "total_count": 0,
+      "returned_count": 0,
+      "first_page_only": true,
+      "runs": []
+    }
+  },
+  "pending_deployments": {
+    "82": [],
+    "84": [],
+    "87": []
+  },
+  "errors": []
+}

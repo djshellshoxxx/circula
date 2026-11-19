@@ -1,0 +1,251 @@
+[
+  {
+    "archive": "docs/archive/specs-historical/pr1/business-model-options.md",
+    "source_commit": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+    "source_path": "docs/brainstorming/business-model-options.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr1/crypto-and-crypto-libertarian-design.md",
+    "source_commit": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+    "source_path": "docs/brainstorming/crypto-and-crypto-libertarian-design.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr1/disruptive-future-ideas.md",
+    "source_commit": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+    "source_path": "docs/brainstorming/disruptive-future-ideas.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/specs/15-lifecycle-state-machines.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/specs/16-network-policy-catalog.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/specs/17-notifications-and-communications.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/specs/19-legal-and-regulatory-open-questions.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr2/research-technical-standards.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/notes/research-technical-standards.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": false,
+    "source_text_preserved": true,
+    "additional_expected_normalization": "Two bare URLs acquire https://; trailing spaces removed. No research claim altered."
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/00-conventions.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/00-conventions.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/01-product-vision-and-scope.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/01-product-vision-and-scope.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/02-personas-roles-and-journeys.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/02-personas-roles-and-journeys.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/03-domain-model-and-mutual-credit-rules.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/03-domain-model-and-mutual-credit-rules.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/04-functional-requirements.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/04-functional-requirements.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/05-system-architecture.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/05-system-architecture.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/06-data-model-ledger-and-audit.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/06-data-model-ledger-and-audit.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/07-api-and-integration-contract.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/07-api-and-integration-contract.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/08-ux-and-accessibility.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/08-ux-and-accessibility.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/09-security-privacy-and-abuse-resistance.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/09-security-privacy-and-abuse-resistance.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/10-governance-and-network-operations.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/10-governance-and-network-operations.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/11-deployment-operations-and-support.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/11-deployment-operations-and-support.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/12-quality-strategy-and-test-plan.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/12-quality-strategy-and-test-plan.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/13-assumptions-risks-decisions-and-roadmap.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/13-assumptions-risks-decisions-and-roadmap.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/archive/specs-historical/pr29/README.md",
+    "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+    "source_path": "docs/specs/README.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/audit/CI-WORKFLOW-QUALIFICATION-20261111.md",
+    "source_commit": "3bfcfe3d2920f5c480ef80d8368cf7401be94618",
+    "source_path": "docs/audit/CI-WORKFLOW-QUALIFICATION-20261111.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/audit/CONSOLIDATION-QUALIFICATION-2026-11-11.md",
+    "source_commit": "3bfcfe3d2920f5c480ef80d8368cf7401be94618",
+    "source_path": "docs/audit/CONSOLIDATION-QUALIFICATION-2026-11-11.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+    "source_commit": "127943ba7aa2cb154d3e65d13279e739b901416f",
+    "source_path": "docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+    "body_byte_identical": false,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md",
+    "source_commit": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+    "source_path": "docs/security/CHATGPT_FREE_AUDIT_HANDOFF.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/handoffs/archive/2026-11-09-pr20-chatgpt-zero-codex-continuation-spec.md",
+    "source_commit": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+    "source_path": "docs/CHATGPT_ZERO_CODEX_CONTINUATION.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/qa/evidence/ci-40103567118-dual-control.md",
+    "source_commit": "001f09aad4a014ab0c4215671be923730f1fbbe9",
+    "source_path": "docs/qa/evidence/ci-40103567118-dual-control.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/research/PRIOR-ART-MUTUAL-CREDIT.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/notes/research-prior-art-mutual-credit.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  },
+  {
+    "archive": "docs/research/REGULATORY-PRIVACY-QUESTIONS.md",
+    "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+    "source_path": "docs/notes/research-regulatory-privacy-questions.md",
+    "body_byte_identical": true,
+    "body_normalized_identical": true,
+    "source_text_preserved": true
+  }
+]

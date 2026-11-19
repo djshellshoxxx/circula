@@ -529,6 +529,20 @@ func (j *jobRunner) untilNextBackupAt(now time.Time) time.Duration {
 	if err != nil || len(entries) == 0 {
 		return 0
 	}
+	// OPS-033: a backup named after now is evidence of a host clock error or
+	// a misplaced file. Log it once per evaluation (start-up and each backup
+	// cycle), not once per file. entries is newest first, so entries[0] is
+	// the newest of them.
+	ahead := 0
+	for _, entry := range entries {
+		if entry.at.After(now) {
+			ahead++
+		}
+	}
+	if ahead > 0 {
+		j.logger.Warn("backups named after the current time (host clock error or misplaced file): kept, but ignored by scheduling and retention (OPS-033)",
+			"count", ahead, "file", filepath.Base(entries[0].path), "name_time", entries[0].at.UTC(), "now", now.UTC())
+	}
 	for _, entry := range entries {
 		// A clock correction or misplaced file must not delay future backups
 		// indefinitely. Keep the file, but base cadence on a past backup.

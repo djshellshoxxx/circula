@@ -1,0 +1,7 @@
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          63G   19G   42G  31% /workspace
+tmpfs           4.9G  4.9G     0 100% /home/agent
+tmpfs           4.9G  1.4G  3.5G  29% /tmp
+tmpfs           4.9G     0  4.9G   0% /dev/shm
+3.3G	/home/agent/.cache/go-build
+3.3G	/workspace/scratch/9ceb45b04668/audit-c-pr84/go-build-cache

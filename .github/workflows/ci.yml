@@ -15,8 +15,9 @@ permissions:
   contents: read
 
 concurrency:
-  # One group per PR (or per ref for push/schedule/dispatch). Only superseded PR runs are cancelled,
-  # so back-to-back main pushes each keep their cross-OS run.
+  # One group per PR (or per ref for push/schedule/dispatch). Superseded PR runs are cancelled.
+  # Running main workflows continue; GitHub may replace an older pending run in the same group.
+  # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
   group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name == 'pull_request' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
@@ -58,6 +59,8 @@ jobs:
           python3 -m unittest discover -s scripts -p 'test_read_export.py'
           python3 -m unittest discover -s scripts -p 'test_run_qa001.py'
           python3 -m unittest discover -s scripts -p 'test_check_thresholds.py'
+      - name: Progressive browser message tests
+        run: node --test scripts/test_app_messages.cjs
       - name: golangci-lint
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
@@ -178,7 +181,7 @@ jobs:
   fuzz:
     name: fuzz smoke (RB-017)
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -189,10 +192,20 @@ jobs:
           cache: true
       - name: seed corpora of every fuzz target (also part of go test ./...)
         run: go test -count=1 -run '^Fuzz' ./internal/...
-      - name: fuzz amount parser for 10s
-        run: go test -run '^$' -fuzz '^FuzzParseAmount$' -fuzztime 10s ./internal/domain
-      - name: fuzz strict JSON decoder for 10s
-        run: go test -run '^$' -fuzz '^FuzzStrictUnmarshal$' -fuzztime 10s ./internal/api
+      # Go 1.26.11's duration-based coordinator can report its own normal
+      # deadline as a failure (golang/go#75804). Execution budgets avoid that
+      # cancellation race without filtering errors or weakening assertions.
+      # These exceed the 678,832 / 41,458 executions in run 44296161788.
+      - name: fuzz amount parser for 1000000 executions
+        run: go test -run '^$' -fuzz '^FuzzParseAmount$' -fuzztime 1000000x -timeout 3m ./internal/domain
+      - name: fuzz strict JSON decoder for 100000 executions
+        run: go test -run '^$' -fuzz '^FuzzStrictUnmarshal$' -fuzztime 100000x -timeout 3m ./internal/api
+      - name: fuzz signed pagination cursors for 100000 executions
+        run: go test -run '^$' -fuzz '^FuzzOpenCursor$' -fuzztime 100000x -timeout 3m ./internal/api
+      - name: fuzz session keyset positions for 100000 executions
+        run: go test -run '^$' -fuzz '^FuzzSessionPosition$' -fuzztime 100000x -timeout 3m ./internal/service
+      - name: fuzz noncredential session selectors for 100000 executions
+        run: go test -run '^$' -fuzz '^FuzzSessionSelector$' -fuzztime 100000x -timeout 3m ./internal/service
 
   contract:
     name: API contract and load smoke

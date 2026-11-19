@@ -12,6 +12,33 @@ import (
 // NotifDisputeOverdue tells reviewers a dispute needs assessment (GOV-014).
 const NotifDisputeOverdue = "dispute.overdue"
 
+// disputePolicy returns the network policy whose dispute timelines (DEC-012)
+// govern d: the version bound atomically when d was opened. Dispute timelines change
+// prospectively (GOV-001; 10 section 2), so a later change to the response
+// period or the re-review window, shorter or longer, applies only to disputes
+// opened once it is in force (AUD4-F03); the dispute window is fixed earlier,
+// at completion (DOM-017). A later version cannot change the binding, even
+// when timestamps are equal or the host clock steps backward (AUD4-F03).
+func disputePolicy(tx store.Tx, d *domain.Dispute) (domain.Policy, error) {
+	p, err := tx.GetPolicyVersion(d.NetworkID, d.PolicyVersion)
+	if domain.CodeOf(err) == domain.CodeNotFound {
+		// Never substitute the current or a timestamp-reconstructed policy.
+		return domain.Policy{}, domain.Errf(domain.CodeInternal, "dispute %s has no bound policy version %d", d.ID, d.PolicyVersion)
+	}
+	return p, err
+}
+
+// disputeDeadlines are d's deadlines under the policy in force when it was
+// opened. Every reader (decision gate, re-review request, dispute view and so
+// the API and web page, reminders) uses them: what is shown is what is enforced.
+func (s *Service) disputeDeadlines(tx store.Tx, d *domain.Dispute, responded bool) (domain.DisputeDeadlines, error) {
+	p, err := disputePolicy(tx, d)
+	if err != nil {
+		return domain.DisputeDeadlines{}, err
+	}
+	return domain.DeadlinesOf(d, p, responded, s.now()), nil
+}
+
 // RemindOverdueDisputes is the body of a scheduled job (GOV-014). For every
 // unresolved dispute it sends, once each, a reminder to the reviewers and
 // administrators when (a) the response deadline passed without a response and
@@ -44,11 +71,9 @@ func (s *Service) RemindOverdueDisputes(ctx context.Context, actor domain.Actor)
 func (s *Service) remindNetwork(ctx context.Context, netID string) (int, error) {
 	sent := 0
 	err := s.update(ctx, func(tx store.Tx) error {
-		net, err := tx.GetNetwork(netID)
-		if errors.Is(err, domain.ErrNotFound) {
+		if _, err := tx.GetNetwork(netID); errors.Is(err, domain.ErrNotFound) {
 			return nil
-		}
-		if err != nil {
+		} else if err != nil {
 			return err
 		}
 		after := ""
@@ -64,7 +89,10 @@ func (s *Service) remindNetwork(ctx context.Context, netID string) (int, error) 
 				if err != nil {
 					return err
 				}
-				dl := domain.DeadlinesOf(d, net.Policy.ResponsePeriodDays, resp != nil, s.now())
+				dl, err := s.disputeDeadlines(tx, d, resp != nil)
+				if err != nil {
+					return err
+				}
 				for _, k := range []struct {
 					kind, title, body string
 					due               bool

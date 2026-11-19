@@ -17,6 +17,8 @@ This document uses the normative terms and glossary defined in [00-conventions.m
 
 The table records the historical implementation snapshot at HEAD `925f637` on branch `claude/circula-build`; it is not an assessment of the current branch. Statuses were first read at `31b1015` and re-checked at `925f637` (see [TRACEABILITY.md](../TRACEABILITY.md)). **built** means behaviour exists in that snapshot; **partial** means behaviour exists with the stated gaps, or required verification was not run; **not built** and **deferred** retain their meanings in that snapshot. Code paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md). Current checkpoint evidence and limitations are in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). Neither this snapshot nor the current checkpoint is a compliance claim or release attestation.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary: built 11, deferred 1, not built 2, partial 11.
 
 | ID | Priority | Status | Note |
@@ -24,8 +26,8 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-001 | P0 | built | One executable per target; no edition split; Source: `cmd/circula/main.go`, `scripts/package-release.sh`; release packaging/smoke evidence is separate from Go unit-test results. No execution result is implied |
 | ARC-002 | P0 | partial | Service is the write path; cmd reads SQLite directly for some checks |
 | ARC-003 | P0 | built | Adapters map and render; rules in service; Evidence: `TestAdaptersDoNotImportStorage` (adapter import boundaries; business-rule placement still requires code inspection). Citations are not execution results |
-| ARC-004 | P0 | partial | Store interface exists but lives beside SQLite; no contract suite for another store |
-| ARC-005 | P0 | built | Only postTx writes entries and balances; Source: `internal/service/posting.go:postTx`; exclusive posting ownership requires a source-boundary inspection, not a generic successful trade test. No execution result is implied |
+| ARC-004 | P0 | partial | Source refresh 2026-11-19: interfaces live in `internal/repository`; `internal/storetest` supplies the driver-neutral contract suite, run by `TestRepositoryContractSQLite` and `TestRepositoryContractWrapped`. `TestRepositoryServiceAndContractSuiteHaveNoDriverDependency` checks the production dependency graph. Cross-target builds remain a separate release qualification; no second production storage adapter is claimed |
+| ARC-005 | P0 | built | Posting ownership is inspected in `internal/service/posting.go:postTx`. `TestAcceptFaultInjectionLeavesNoTrace` and `TestReversalAndAdjustmentFaultInjectionLeavesNoTrace` assert rollback at entry, balance, status and audit write boundaries; these are direct atomic-posting evidence, not proof of exclusive call-site ownership. Source citations only; no execution result is implied |
 | ARC-006 | P0 | built | Per-account serialisation via write gate and BEGIN IMMEDIATE |
 | ARC-007 | P0 | built | Network scoping in queries and tests |
 | ARC-008 | P0 | partial | No operator API route; host-level CLI restore and SQL access remain outside service |
@@ -34,7 +36,7 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-011 | P0 | built | One writer per database file; lock refuses second holder |
 | ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
 | ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done; Source: `cmd/circula/config.go`, `scripts/package-release.sh`; hosted deployment qualification remains external. No execution result is implied |
-| ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
+| ARC-014 | P2 | built | Single-process constraint documented and enforced by the file lock. `TestLockRefusesSecondHolder` checks refusal while held and acquisition after release; `TestOperatorCommandsTakeTheLock` checks operator commands refuse a held database without changing its bytes. Startup wiring and the deferred scaling boundary also require inspection. Source citations only; no execution result is implied |
 | ARC-015 | P0 | built | Explicit admin checks are recorded; scheduled checks are read-only and report through operational metrics/logs (DEC-031) |
 | ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace default 10 s (shutdown-grace) |
 | ARC-017 | P0 | partial | Semantic server-rendered HTML. [Refreshed 2026-11-16: the note "no automated WCAG tool in CI" is stale; axe-core runs in `make e2e`.] |

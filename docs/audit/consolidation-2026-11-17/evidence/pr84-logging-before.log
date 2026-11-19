@@ -1,0 +1,23 @@
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/no_backups
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/recent_backup
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/backup_at_now
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/future_only
+    jobs_regress_test.go:534: evaluation 1: 0 log entries, want 1 (one per evaluation):
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/one_nanosecond_ahead
+    jobs_regress_test.go:534: evaluation 1: 0 log entries, want 1 (one per evaluation):
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/several_future-dated_files
+    jobs_regress_test.go:534: evaluation 1: 0 log entries, want 1 (one per evaluation):
+--- FAIL: TestJobUntilNextBackupLogsFutureDatedBackups (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/no_backups (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/recent_backup (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/backup_at_now (0.00s)
+    --- FAIL: TestJobUntilNextBackupLogsFutureDatedBackups/future_only (0.00s)
+    --- FAIL: TestJobUntilNextBackupLogsFutureDatedBackups/one_nanosecond_ahead (0.00s)
+    --- FAIL: TestJobUntilNextBackupLogsFutureDatedBackups/several_future-dated_files (0.00s)
+=== RUN   TestJobBackupLoopLogsFutureDatedBackupEachEvaluation
+    jobs_regress_test.go:575: timed out waiting for a warning at start-up and another after the first backup
+--- FAIL: TestJobBackupLoopLogsFutureDatedBackupEachEvaluation (10.58s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	10.589s
+FAIL

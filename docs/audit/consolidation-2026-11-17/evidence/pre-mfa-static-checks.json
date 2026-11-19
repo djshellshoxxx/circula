@@ -1,0 +1,38 @@
+{
+  "head": "8865b3c3c5e10b3e2df13e2d4c95dfbe123bfbaa",
+  "tree": "0b936c0f1a8658d6aea048cf1568e3269ff03479",
+  "finished_at": "2026-11-18T09:41:16.798292+00:00",
+  "results": [
+    {
+      "command": [
+        "go",
+        "mod",
+        "verify"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.917,
+      "output": "all modules verified\n"
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.307,
+      "output": ""
+    },
+    {
+      "command": [
+        "make",
+        "traceability-check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.399,
+      "output": "go run ./scripts/traceability -check -o docs/TRACEABILITY.md\ntraceability: docs/TRACEABILITY.md is up to date\n"
+    }
+  ]
+}

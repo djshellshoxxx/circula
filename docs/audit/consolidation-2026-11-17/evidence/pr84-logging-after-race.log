@@ -1,0 +1,18 @@
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/no_backups
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/recent_backup
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/backup_at_now
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/future_only
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/one_nanosecond_ahead
+=== RUN   TestJobUntilNextBackupLogsFutureDatedBackups/several_future-dated_files
+--- PASS: TestJobUntilNextBackupLogsFutureDatedBackups (0.01s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/no_backups (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/recent_backup (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/backup_at_now (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/future_only (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/one_nanosecond_ahead (0.00s)
+    --- PASS: TestJobUntilNextBackupLogsFutureDatedBackups/several_future-dated_files (0.00s)
+=== RUN   TestJobBackupLoopLogsFutureDatedBackupEachEvaluation
+--- PASS: TestJobBackupLoopLogsFutureDatedBackupEachEvaluation (2.59s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	3.622s

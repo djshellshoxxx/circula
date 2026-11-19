@@ -1,0 +1,66 @@
+{
+  "sqlite": "3.53.1",
+  "migrations": [
+    "0001_init.sql",
+    "0002_hardening.sql",
+    "0003_mfa.sql",
+    "0004_recovery.sql",
+    "0005_dualcontrol.sql",
+    "0006_breakglass.sql",
+    "0007_erasure.sql",
+    "0008_notify_reports.sql",
+    "0009_overview_announcements_tz.sql",
+    "0010_announcement_supersedes.sql",
+    "0011_terms_policy_notice.sql",
+    "0012_suspension.sql",
+    "0013_person_activity.sql",
+    "0014_closure_challenges.sql",
+    "0015_balance_bound.sql",
+    "0016_dispute_deadline.sql",
+    "0017_event_order.sql",
+    "0018_adjustment_relation.sql",
+    "0019_dispute_policy_binding.sql",
+    "0020_session_public_id.sql"
+  ],
+  "preexisting_session_preserved": true,
+  "legacy_insert_assigns_selector": true,
+  "session_rows": 20002,
+  "token_rows": 40000,
+  "queries": [
+    {
+      "query": "sessionListFirstSQL",
+      "rows": 100,
+      "vm_steps": 1216,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_owner_page (person_id=?)"
+      ]
+    },
+    {
+      "query": "sessionListAfterSQL",
+      "rows": 100,
+      "vm_steps": 1638,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))"
+      ]
+    },
+    {
+      "query": "sessionOwnedSQL",
+      "rows": 1,
+      "vm_steps": 22,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_public_id (public_id=?)"
+      ]
+    },
+    {
+      "query": "tokenListSQL",
+      "rows": 100,
+      "vm_steps": 1713,
+      "plan": [
+        "SEARCH api_tokens USING INDEX api_tokens_person_order (person_id=?)"
+      ]
+    }
+  ],
+  "integrity": "ok",
+  "foreign_key_violations": 0,
+  "scope": "SQL-level smoke only; Python sqlite3, not Go/modernc driver"
+}

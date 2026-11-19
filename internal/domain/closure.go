@@ -57,8 +57,13 @@ const (
 
 // DisputeDeadlines are the dates a dispute's parties can see.
 type DisputeDeadlines struct {
+	// ResponseDeadline ends the response period (FR-076): before it, a
+	// decision needs a response or a reviewer waiver.
 	ResponseDeadline time.Time
 	DecisionTarget   time.Time
+	// ReReviewCloses is the last instant a re-review may be requested
+	// (FR-078); zero while the dispute is undecided.
+	ReReviewCloses time.Time
 	// ResponseOverdue: no response and the deadline passed. The case stays
 	// open for reviewer assessment; silence decides nothing.
 	ResponseOverdue bool
@@ -66,12 +71,29 @@ type DisputeDeadlines struct {
 	DecisionOverdue bool
 }
 
-// DeadlinesOf computes deadlines for d. responded says a response exists.
-func DeadlinesOf(d *Dispute, responseDays int, responded bool, now time.Time) DisputeDeadlines {
-	out := DisputeDeadlines{ResponseDeadline: d.OpenedAt.AddDate(0, 0, responseDays)}
+// DeadlinesOf computes deadlines for d. atOpen must be the network policy in
+// force when d was opened: dispute timelines change prospectively (GOV-001,
+// DEC-012), so the response period and re-review window of a dispute are those
+// of that version, never of a later one, shorter or longer. Both are exact
+// multiples of 24 hours (QA-013). responded says a response exists.
+func DeadlinesOf(d *Dispute, atOpen Policy, responded bool, now time.Time) DisputeDeadlines {
+	out := DisputeDeadlines{ResponseDeadline: d.OpenedAt.Add(daysOf(atOpen.ResponsePeriodDays))}
 	out.DecisionTarget = out.ResponseDeadline.AddDate(0, 0, DecisionTargetDays)
+	out.ReReviewCloses = ReReviewCloses(d, atOpen)
 	live := d.Status == DisputeOpen || d.Status == DisputeUnderReview || d.Status == DisputePostingPending
 	out.ResponseOverdue = live && !responded && now.After(out.ResponseDeadline)
 	out.DecisionOverdue = live && now.After(out.DecisionTarget)
 	return out
 }
+
+// ReReviewCloses is the end, inclusive, of d's re-review window (FR-078):
+// atOpen's ReReviewWindowDays after the decision, atOpen being the policy in
+// force when d was opened (see DeadlinesOf). Zero while d is undecided.
+func ReReviewCloses(d *Dispute, atOpen Policy) time.Time {
+	if d.DecidedAt == nil {
+		return time.Time{}
+	}
+	return d.DecidedAt.Add(daysOf(atOpen.ReReviewWindowDays))
+}
+
+func daysOf(n int) time.Duration { return time.Duration(n) * 24 * time.Hour }

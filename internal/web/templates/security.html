@@ -1,4 +1,7 @@
 {{define "content"}}
+<h2>{{msg "sessions.title"}}</h2>
+<p>{{msg "sessions.security_intro"}} <a href="/account/sessions">{{msg "sessions.manage_link"}}</a></p>
+
 <h2>{{msg "security.mfa.heading"}}</h2>
 {{if .D.MFA.Enabled}}
   <p>{{msg "security.mfa.state_is"}} <strong>{{msg "security.mfa.on"}}</strong>. {{msg "security.mfa.recovery_left" .D.MFA.RecoveryRemaining}}</p>

@@ -1,0 +1,899 @@
+{
+  "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+  "base": "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+  "added_count": 121,
+  "duplicates": [],
+  "existing_changed_or_removed": [],
+  "unreferenced_new": [],
+  "missing_referenced": [],
+  "empty_new_other": [],
+  "unexpected_new_fields": {},
+  "new_plural_keys": [
+    "auth.codes.unused",
+    "security.mfa.recovery_left"
+  ],
+  "new_placeholder_keys": [
+    "security.mfa.recovery_left",
+    "security.notices.unseen"
+  ],
+  "references": {
+    "auth.title.password": [
+      {
+        "path": "internal/web/h_account.go",
+        "line": 22
+      },
+      {
+        "path": "internal/web/h_account.go",
+        "line": 28
+      }
+    ],
+    "auth.throttle.few_minutes": [
+      {
+        "path": "internal/web/h_account.go",
+        "line": 35
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 43
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 102
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 116
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 122
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 174
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 213
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 236
+      }
+    ],
+    "auth.not_saved": [
+      {
+        "path": "internal/web/h_account.go",
+        "line": 40
+      },
+      {
+        "path": "internal/web/h_account.go",
+        "line": 49
+      },
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 119
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 48
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 113
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 120
+      }
+    ],
+    "auth.mismatch.confirm_new": [
+      {
+        "path": "internal/web/h_account.go",
+        "line": 41
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 49
+      }
+    ],
+    "auth.field.current_password_wrong": [
+      {
+        "path": "internal/web/h_account.go",
+        "line": 50
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 114
+      }
+    ],
+    "auth.flash.password_changed": [
+      {
+        "path": "internal/web/h_account.go",
+        "line": 64
+      }
+    ],
+    "auth.title.sign_in": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 43
+      },
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 47
+      }
+    ],
+    "auth.throttle.minute": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 50
+      },
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 112
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 269
+      }
+    ],
+    "auth.throttle.login": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 62
+      }
+    ],
+    "auth.login.failed": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 66
+      }
+    ],
+    "auth.login.failed_field": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 67
+      }
+    ],
+    "auth.flash.signed_out": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 101
+      }
+    ],
+    "auth.title.register": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 106
+      },
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 110
+      }
+    ],
+    "auth.mismatch.confirm": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 118
+      }
+    ],
+    "auth.flash.registered": [
+      {
+        "path": "internal/web/h_auth.go",
+        "line": 128
+      }
+    ],
+    "auth.title.recover": [
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 31
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 36
+      }
+    ],
+    "auth.flash.recovered": [
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 56
+      }
+    ],
+    "auth.recover.failed": [
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 62
+      }
+    ],
+    "auth.throttle.login_nothing": [
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 65
+      }
+    ],
+    "auth.title.recovery_codes": [
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 89
+      },
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 93
+      }
+    ],
+    "auth.flash.must_change": [
+      {
+        "path": "internal/web/h_recover.go",
+        "line": 164
+      }
+    ],
+    "security.notice.password_changed": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 33
+      }
+    ],
+    "security.notice.mfa_enabled": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 34
+      }
+    ],
+    "security.notice.mfa_disabled": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 35
+      }
+    ],
+    "security.notice.recovery_regen": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 36
+      }
+    ],
+    "security.notice.recovery_used": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 37
+      }
+    ],
+    "security.notice.token_created": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 38
+      }
+    ],
+    "security.notice.token_revoked": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 39
+      }
+    ],
+    "security.notice.admin_granted": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 40
+      }
+    ],
+    "security.notice.other": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 80
+      }
+    ],
+    "auth.title.security": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 87
+      }
+    ],
+    "auth.flash.notices_read": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 100
+      }
+    ],
+    "auth.field.password_wrong": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 115
+      }
+    ],
+    "auth.field.code_wrong": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 117
+      }
+    ],
+    "auth.mfa.invalid_state": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 124
+      }
+    ],
+    "auth.mfa.already_on": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 126
+      }
+    ],
+    "auth.title.mfa_enrol": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 137
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 163
+      },
+      {
+        "path": "internal/web/h_security.go",
+        "line": 173
+      }
+    ],
+    "auth.title.mfa_save": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 207
+      }
+    ],
+    "auth.flash.mfa_off": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 229
+      }
+    ],
+    "auth.title.mfa_save_new": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 252
+      }
+    ],
+    "auth.title.mfa_challenge": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 258
+      }
+    ],
+    "auth.mfa.step_failed_field": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 260
+      }
+    ],
+    "auth.mfa.step_failed": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 283
+      }
+    ],
+    "auth.throttle.account": [
+      {
+        "path": "internal/web/h_security.go",
+        "line": 285
+      }
+    ],
+    "auth.label.login": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 5
+      },
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 5
+      },
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 5
+      }
+    ],
+    "auth.label.password": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 6
+      },
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 9
+      },
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 24
+      },
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 6
+      },
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 14
+      }
+    ],
+    "auth.login.submit": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 7
+      }
+    ],
+    "auth.login.new_here": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 9
+      }
+    ],
+    "auth.login.create_link": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 9
+      }
+    ],
+    "auth.login.join_info": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 9
+      }
+    ],
+    "auth.login.forgot": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 10
+      }
+    ],
+    "auth.login.recover_link": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 10
+      }
+    ],
+    "auth.login.recover_tail": [
+      {
+        "path": "internal/web/templates/login.html",
+        "line": 10
+      }
+    ],
+    "auth.mfa_step.intro": [
+      {
+        "path": "internal/web/templates/login_mfa.html",
+        "line": 2
+      }
+    ],
+    "auth.label.signin_code": [
+      {
+        "path": "internal/web/templates/login_mfa.html",
+        "line": 7
+      }
+    ],
+    "auth.hint.signin_code": [
+      {
+        "path": "internal/web/templates/login_mfa.html",
+        "line": 7
+      }
+    ],
+    "auth.mfa_step.submit": [
+      {
+        "path": "internal/web/templates/login_mfa.html",
+        "line": 8
+      }
+    ],
+    "auth.mfa_step.restart": [
+      {
+        "path": "internal/web/templates/login_mfa.html",
+        "line": 10
+      }
+    ],
+    "auth.enrol.already_on": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 3
+      }
+    ],
+    "auth.enrol.security_link": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 3
+      }
+    ],
+    "auth.enrol.page_word": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 3
+      }
+    ],
+    "auth.enrol.intro": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 5
+      }
+    ],
+    "auth.enrol.need_password": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 8
+      }
+    ],
+    "auth.enrol.start": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 10
+      }
+    ],
+    "auth.enrol.cancel": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 12
+      },
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 28
+      }
+    ],
+    "auth.enrol.step_key": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 16
+      }
+    ],
+    "auth.enrol.uri_note": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 18
+      }
+    ],
+    "auth.enrol.step_confirm": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 20
+      }
+    ],
+    "auth.label.app_code_short": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 25
+      }
+    ],
+    "auth.enrol.confirm": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 26
+      }
+    ],
+    "auth.enrol.expiry": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 28
+      }
+    ],
+    "auth.enrol.back": [
+      {
+        "path": "internal/web/templates/mfa_enrol.html",
+        "line": 30
+      },
+      {
+        "path": "internal/web/templates/mfa_recovery.html",
+        "line": 4
+      }
+    ],
+    "auth.save.lead": [
+      {
+        "path": "internal/web/templates/mfa_recovery.html",
+        "line": 2
+      }
+    ],
+    "auth.save.body": [
+      {
+        "path": "internal/web/templates/mfa_recovery.html",
+        "line": 2
+      }
+    ],
+    "auth.password.intro": [
+      {
+        "path": "internal/web/templates/password.html",
+        "line": 2
+      }
+    ],
+    "auth.label.current_password": [
+      {
+        "path": "internal/web/templates/password.html",
+        "line": 5
+      },
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 12
+      }
+    ],
+    "auth.label.new_password": [
+      {
+        "path": "internal/web/templates/password.html",
+        "line": 6
+      },
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 7
+      }
+    ],
+    "auth.hint.password_rules": [
+      {
+        "path": "internal/web/templates/password.html",
+        "line": 6
+      },
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 7
+      },
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 6
+      }
+    ],
+    "auth.label.confirm_new_password": [
+      {
+        "path": "internal/web/templates/password.html",
+        "line": 7
+      },
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 8
+      }
+    ],
+    "auth.password.submit": [
+      {
+        "path": "internal/web/templates/password.html",
+        "line": 8
+      }
+    ],
+    "auth.recover.intro": [
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 2
+      }
+    ],
+    "auth.label.recovery_code": [
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 6
+      }
+    ],
+    "auth.hint.recovery_format": [
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 6
+      }
+    ],
+    "auth.recover.submit": [
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 9
+      }
+    ],
+    "auth.recover.back": [
+      {
+        "path": "internal/web/templates/recover.html",
+        "line": 9
+      }
+    ],
+    "auth.codes.new_heading": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 3
+      }
+    ],
+    "auth.codes.shown_once": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 4
+      }
+    ],
+    "auth.codes.keep_safe": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 4
+      }
+    ],
+    "auth.codes.saved": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 6
+      }
+    ],
+    "auth.codes.purpose": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 8
+      }
+    ],
+    "auth.codes.have": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 8
+      }
+    ],
+    "auth.codes.unused": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 8
+      }
+    ],
+    "auth.codes.replace_note": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 9
+      }
+    ],
+    "auth.codes.submit": [
+      {
+        "path": "internal/web/templates/recovery_codes.html",
+        "line": 13
+      },
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 9
+      }
+    ],
+    "auth.hint.login_new": [
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 5
+      }
+    ],
+    "auth.label.confirm_password": [
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 7
+      }
+    ],
+    "auth.register.submit": [
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 8
+      }
+    ],
+    "auth.register.have_account": [
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 10
+      }
+    ],
+    "auth.register.sign_in_link": [
+      {
+        "path": "internal/web/templates/register.html",
+        "line": 10
+      }
+    ],
+    "security.mfa.heading": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 2
+      }
+    ],
+    "security.mfa.state_is": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 4
+      },
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 19
+      }
+    ],
+    "security.mfa.on": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 4
+      }
+    ],
+    "security.mfa.recovery_left": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 4
+      }
+    ],
+    "security.mfa.replace_heading": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 5
+      }
+    ],
+    "auth.label.app_code": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 8
+      }
+    ],
+    "auth.hint.older_codes": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 8
+      }
+    ],
+    "security.mfa.turn_off_heading": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 11
+      }
+    ],
+    "auth.label.disable_code": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 15
+      }
+    ],
+    "security.mfa.turn_off": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 16
+      }
+    ],
+    "security.mfa.off": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 19
+      }
+    ],
+    "security.mfa.off_explain": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 19
+      }
+    ],
+    "security.mfa.turn_on": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 20
+      }
+    ],
+    "security.codes.heading": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 23
+      }
+    ],
+    "security.codes.explain": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 24
+      }
+    ],
+    "security.codes.link": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 24
+      }
+    ],
+    "security.notices.heading": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 26
+      }
+    ],
+    "security.notices.unseen": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 28
+      }
+    ],
+    "security.notices.mark_read": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 28
+      }
+    ],
+    "security.notices.new": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 29
+      }
+    ],
+    "security.notices.advice": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 30
+      }
+    ],
+    "security.notices.none": [
+      {
+        "path": "internal/web/templates/security.html",
+        "line": 31
+      }
+    ]
+  }
+}
