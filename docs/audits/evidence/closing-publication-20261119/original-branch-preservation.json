@@ -1,0 +1,65 @@
+{
+  "observed_utc": "2026-11-19T12:10:21.881995+00:00",
+  "initial_count": 107,
+  "closing_live_ref_count": 125,
+  "missing_original_names": [],
+  "unchanged_original_tip_count": 105,
+  "advanced_original_tips": [
+    {
+      "branch": "claude/gov-021-admin-recovery",
+      "original_head": "59cf6997928330d5ec76c6bbbc81705d0d691eb4",
+      "closing_head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "original_is_ancestor": true,
+      "command": [
+        "git",
+        "-C",
+        "/workspace/scratch/beb70d57deba/circula",
+        "merge-base",
+        "--is-ancestor",
+        "59cf6997928330d5ec76c6bbbc81705d0d691eb4",
+        "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    },
+    {
+      "branch": "future/fux-104-notifications-20261116",
+      "original_head": "3bdf8e92d84af2c660c615bcf956cf76752e86ae",
+      "closing_head": "797dddf21adddfb34a49e7bda1871a202968dcda",
+      "original_is_ancestor": true,
+      "command": [
+        "git",
+        "-C",
+        "/workspace/scratch/beb70d57deba/circula",
+        "merge-base",
+        "--is-ancestor",
+        "3bdf8e92d84af2c660c615bcf956cf76752e86ae",
+        "797dddf21adddfb34a49e7bda1871a202968dcda"
+      ],
+      "exit_code": 0,
+      "stderr": ""
+    }
+  ],
+  "all_original_tips_preserved": true,
+  "new_names_since_initial": [
+    "audit/federation-readme-20261119",
+    "audit/future-feed-cursors-20261119",
+    "audit/future-notifications-binding-20261119",
+    "audit/future-notifications-bounded-core-20261119",
+    "audit/future-pwa-browser-20261119",
+    "audit/gov021-final-core-refresh-20261119",
+    "audit/gov021-fixture-20261119",
+    "audit/sec026-independent-20261119",
+    "codex/api036-completion-20261119",
+    "codex/api036-cursor-hardening-20261119",
+    "feature/fnet-204-completion-parallel",
+    "integration/circula-master-consolidation-20261119",
+    "integration/comprehensive-audit-20261119",
+    "integration/core-consolidation-20261119",
+    "integration/core-recovery-20261119",
+    "master/fnet207-recurring-remote-20261119",
+    "master/fnet209-utf8-20261119",
+    "master/notification-transport-tests-20261119"
+  ],
+  "main_unchanged": true
+}
