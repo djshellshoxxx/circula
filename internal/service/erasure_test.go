@@ -14,9 +14,11 @@ import (
 
 const (
 	anaLogin = "ana@example.org"
-	memoText = "thanks Ana for the zucchini"
-	listText = "Ana's zucchini patch"
-	stmtText = "ana says the zucchini was small"
+	anaName  = "Ana García-López"
+	cropText = "zucchini harvest"
+	memoText = "thanks " + anaName + " for the " + cropText
+	listText = anaName + "'s " + cropText
+	stmtText = anaName + " says the " + cropText + " was small"
 )
 
 type memSink struct{ files map[string]*bytes.Buffer }
@@ -61,7 +63,7 @@ func (w *world) depart(actor domain.Actor, m *domain.Member) {
 	tu.Must(w.Svc.DepartMember(w.Ctx, actor, w.net.ID, service.DepartInput{MemberID: m.ID, ReasonCode: domain.RemovalRuleBreach, Reason: "left town"}))
 }
 
-// dbCount counts rows of all text columns of all tables that contain needle.
+// dbMatches finds columns of all tables that contain needle as text.
 func dbMatches(t *testing.T, db *sql.DB, needle string) []string {
 	t.Helper()
 	rows, err := db.Query(`SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'`)
@@ -104,6 +106,26 @@ func dbMatches(t *testing.T, db *sql.DB, needle string) []string {
 // SEC-018: the whole workflow; ledger totals and the audit chain are untouched.
 func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 	w, trade := erasureWorld(t)
+	if _, err := w.Store.DB().Exec(`UPDATE members SET display_name = ? WHERE network_id = ? AND id = ?`, anaName, w.net.ID, w.aM.ID); err != nil {
+		t.Fatal(err)
+	}
+	// A valid hash for the fixture password, with a salt containing "Ana".
+	// A global LIKE '%Ana%' scan must not mistake Ben's credential for PII.
+	const benHash = "$argon2id$v=19$m=64,t=1,p=1$AnaAAAAAAAE$OD/tbp1kLxvnauojMZaQEA"
+	if _, err := w.Store.DB().Exec(`UPDATE persons SET password_hash = ? WHERE id = ?`, benHash, w.b.PersonID); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := w.Svc.Login(w.Ctx, "ben@example.org", "correct horse battery"); err != nil {
+		t.Fatalf("fixture credential must remain valid: %v", err)
+	}
+	passwordHashes := map[string]string{}
+	for _, personID := range []string{w.a.PersonID, w.b.PersonID, w.admin.PersonID} {
+		var hash string
+		if err := w.Store.DB().QueryRow(`SELECT password_hash FROM persons WHERE id = ?`, personID).Scan(&hash); err != nil {
+			t.Fatal(err)
+		}
+		passwordHashes[personID] = hash
+	}
 	tok, _ := tu.Must2(w.Svc.Login(w.Ctx, anaLogin, "correct horse battery"))
 	w.depart(w.admin, w.aM)
 	balBefore := tu.Must(w.Svc.AdminGetMemberBalance(w.Ctx, w.admin, w.net.ID, w.aM.ID)).Balance
@@ -111,8 +133,13 @@ func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 	if !repBefore.OK {
 		t.Fatal(repBefore.Findings)
 	}
-	if len(dbMatches(t, w.Store.DB(), "ana@example.org")) == 0 {
-		t.Fatal("test premise: the login should be in the database before erasure")
+	// Complete fixture values contain spaces or punctuation that cannot occur
+	// in a base64 salt or digest. Keep scanning every column, including hashes.
+	pii := []string{anaLogin, anaName, cropText, memoText, listText, stmtText}
+	for _, needle := range pii {
+		if len(dbMatches(t, w.Store.DB(), needle)) == 0 {
+			t.Fatalf("test premise: %q should be in the database before erasure", needle)
+		}
 	}
 
 	if _, err := w.Svc.AnonymiseMember(w.Ctx, w.admin, w.net.ID, w.aM.ID, ""); err == nil {
@@ -130,7 +157,7 @@ func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 		t.Fatalf("member: %+v", m)
 	}
 	// Nothing of the person is left anywhere: names, login, memo, listing text, dispute statement.
-	for _, needle := range []string{"ana@example.org", "zucchini", "Ana"} {
+	for _, needle := range pii {
 		if hits := dbMatches(t, w.Store.DB(), needle); len(hits) > 0 {
 			t.Errorf("%q still found in %v", needle, hits)
 		}
@@ -162,6 +189,22 @@ func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 	}
 
 	// Credentials are dead: login, old session, throttle.
+	for personID, before := range passwordHashes {
+		var after string
+		if err := w.Store.DB().QueryRow(`SELECT password_hash FROM persons WHERE id = ?`, personID).Scan(&after); err != nil {
+			t.Fatal(err)
+		}
+		if personID == w.a.PersonID {
+			if after != "!erased" {
+				t.Error("erased person's password hash was not replaced with the unusable marker")
+			}
+			if hits := dbMatches(t, w.Store.DB(), before); len(hits) > 0 {
+				t.Errorf("erased person's original password hash still found in %v", hits)
+			}
+		} else if after != before {
+			t.Errorf("unrelated person's credential changed: %s", personID)
+		}
+	}
 	if _, _, err := w.Svc.Login(w.Ctx, anaLogin, "correct horse battery"); err == nil {
 		t.Error("erased person can still log in")
 	}
@@ -171,13 +214,21 @@ func TestAnonymiseMemberKeepsLedger(t *testing.T) {
 	if _, _, err := w.Svc.Login(w.Ctx, "erased-"+w.aM.PersonID, "!erased"); err == nil {
 		t.Error("login to the erased person with the marker hash worked")
 	}
+	if _, _, err := w.Svc.Login(w.Ctx, "ben@example.org", "correct horse battery"); err != nil {
+		t.Errorf("unrelated person's credential stopped working: %v", err)
+	}
 
 	// Exports show the anonymised name only.
 	sink := &memSink{}
 	tu.Must(w.Svc.Export(w.Ctx, w.admin, w.net.ID, service.ExportFull, service.FormatJSON, sink))
 	out := sink.all()
-	if !strings.Contains(out, rep.DisplayName) || strings.Contains(out, "ana@example.org") || strings.Contains(out, "zucchini") {
+	if !strings.Contains(out, rep.DisplayName) {
 		t.Errorf("export after erasure: %s", out)
+	}
+	for _, needle := range pii {
+		if strings.Contains(out, needle) {
+			t.Errorf("export after erasure contains %q", needle)
+		}
 	}
 
 	// Irreversible and not repeatable.
