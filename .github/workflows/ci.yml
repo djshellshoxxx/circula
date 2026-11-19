@@ -38,6 +38,8 @@ jobs:
         run: scripts/check-action-pins.sh
       - name: Repository hygiene (fixture PII scan QA-043, migration static check QA-037)
         run: scripts/check-hygiene.sh
+      - name: Verify post-snapshot evidence SHA-256 manifest
+        run: (cd docs/audits/evidence/post-snapshot-20261119 && sha256sum --check SHA256SUMS)
       - name: Dependency licences against the approved list (ARC-024)
         run: scripts/licenses.sh --check
       - name: Secret scan (ARC-023, SEC-027)

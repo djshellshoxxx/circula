@@ -5,6 +5,7 @@ package service_test
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/binary"
 	"encoding/json"
 	"errors"
@@ -214,6 +215,17 @@ func walWriteFailureChild(t *testing.T, raw string) {
 	tu.Must(0, db.QueryRow("PRAGMA wal_checkpoint(TRUNCATE)").Scan(&busy, &logFrames, &checkpointed))
 	if busy != 0 || logFrames != 0 || checkpointed != 0 {
 		t.Fatal("fixture WAL checkpoint did not truncate")
+	}
+	// Keep a separate read snapshot alive through the failed writer close.
+	// Otherwise the discarded writer can become SQLite's last WAL connection
+	// and automatically remove the partial WAL before the parent inspects it.
+	reader := tu.Must(store.OpenRaw(f.Path))
+	reader.SetMaxOpenConns(1)
+	readTx := tu.Must(reader.BeginTx(ctx, &sql.TxOptions{ReadOnly: true}))
+	var schemaObjects int
+	tu.Must(0, readTx.QueryRowContext(ctx, "SELECT COUNT(*) FROM sqlite_master").Scan(&schemaObjects))
+	if schemaObjects == 0 {
+		t.Fatal("WAL reader failed to establish schema snapshot")
 	}
 	before := tu.Snapshot(t, db)
 	e := &tu.Env{T: t, Ctx: ctx, Store: st}

@@ -53,9 +53,19 @@ test('sessions: no-JS pagination, owner isolation, confirmation and selective si
     expect((await current.context.request.post(otherPath, {
       form: { confirm: 'yes', csrf: 'invalid' }, maxRedirects: 0,
     })).status()).toBe(403);
+    // The forged request shares the browser cookie jar; reload the form to
+    // obtain any rotated CSRF token before exercising keyboard confirmation.
+    await current.page.reload();
+    await expect(current.page.getByText('You will stay signed in here.', { exact: false })).toBeVisible();
     await current.page.getByRole('button', { name: 'End session', exact: true }).click();
     await expect(current.page.locator('#error-summary')).toBeVisible();
+    // Capture the real POST response, preserving the keyboard and navigation checks.
+    // A 403/422 must not be mistaken for a successful session revocation.
+    const confirmedPost = current.page.waitForResponse((response) =>
+      response.request().method() === 'POST' && response.url().endsWith(otherPath));
     await kbSubmit(current.page, [[/^I want to end this session\./, true]], /^End session$/);
+    const confirmationResponse = await confirmedPost;
+    expect(confirmationResponse.status(), 'keyboard confirmation must redirect after revocation').toBe(303);
     await expect(current.page).toHaveURL(instance.base + '/account/sessions');
     await other.page.goto('/account/sessions');
     await expect(other.page).toHaveURL(/\/login(?:\?|$)/);
