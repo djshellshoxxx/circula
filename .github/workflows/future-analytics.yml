@@ -1,0 +1,93 @@
+name: future analytics module
+
+on:
+  pull_request:
+    branches: [future/fnet-205-analytics-20261116]
+    paths:
+      - 'future/analytics/**'
+      - '.github/workflows/future-analytics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-analytics-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analytics:
+    name: isolated analytics recovery (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            cgo: '1'
+          - os: macos-15-intel
+            cgo: '1'
+          - os: windows-2022
+            cgo: '0'
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/analytics
+    env:
+      GOTOOLCHAIN: local
+      GOMAXPROCS: '2'
+      CGO_ENABLED: ${{ matrix.cgo }}
+    steps:
+      - name: Keep repository line endings stable
+        working-directory: ${{ github.workspace }}
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Record source and toolchain
+        run: |
+          git rev-parse HEAD
+          git rev-parse HEAD:future/analytics
+          go version
+      - name: Check module remains isolated and disabled
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          feature = json.loads(Path('feature.json').read_text())
+          assert feature['id'] == 'FNET-205'
+          assert feature['enabled'] is False
+          assert feature['integration'] == 'HOLD'
+          assert feature['depends_on_future_features'] == []
+          module = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))
+          assert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/analytics'
+          assert not module.get('Require')
+          assert not module.get('Replace')
+          assert not module.get('Exclude')
+          print('disabled/HOLD and standard-library-only module boundary: PASS')
+          PY
+      - name: Check Go formatting
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+      - name: Vet isolated module
+        run: go vet ./...
+      - name: Race and analytics regressions
+        if: runner.os != 'Windows'
+        run: go test -race -count=1 -cover -timeout=2m ./...
+      - name: Native Windows analytics regressions
+        if: runner.os == 'Windows'
+        run: go test -count=1 -cover -timeout=2m ./...
+      - name: Bounded closed-period fuzzing
+        if: runner.os == 'Linux'
+        run: timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzClosedPeriods$' -fuzztime=100000x -parallel=2 -timeout=150s ./...

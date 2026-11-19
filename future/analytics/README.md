@@ -2,21 +2,27 @@
 
 **HOLD — isolated development, incomplete feature, not approved for integration or release.**
 
+## Recovery checkpoint — 2026-11-19
+
+This candidate restores the saved implementation at `ef4bdf87d2bc915b26d84e548ea4e6a478079006` onto the published analytics branch at `0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f`. All eight Go source/test files and `go.mod` are unchanged from that saved source. A dedicated `.github/workflows/future-analytics.yml` now requests native Linux, macOS and Windows qualification without activating the module. See [RECOVERY-20261119.md](RECOVERY-20261119.md) for provenance, current checks and unresolved gates.
+
+The implementation and milestone records below were recovered from the earlier development branch. Their completion percentage, `tested_source` and historical test results are not a current-head qualification or a release-readiness claim.
+
 The owner authorized independent future-feature development on 2026-11-16, while explicitly deferring integration until Circula and the feature are complete. This authorizes this branch's standalone development; it does not authorize enabling, merging or deploying the feature. Historical implementation prohibitions in the copied planning documents are superseded only for this isolated development scope.
 
 ## Isolation contract
 
-- Branch: `future/fnet-205-analytics-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
-- Only `future/analytics/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
-- This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
+- Current successor branch: `codex/future-analytics-master-20261116`. Recovered predecessor: `243f7fc181a14cecb124c4b9733b86c010d53993`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
+- Runtime and documentation changes are confined to `future/analytics/`. The recovery also adds the dedicated `.github/workflows/future-analytics.yml` qualification workflow. No application imports, routes, migrations, root dependencies, feature flags, background jobs or runtime configuration are changed.
+- This nested Go module has explicit pinned dependencies where listed in go.mod and no cross-feature imports. It has no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
 - Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
-- No production persistence is provided. Pure preflight checks do not guarantee atomicity, idempotency, authorization freshness or restart durability; future adapters must supply these within existing service/store transactions.
+- No production adapter is registered. Module-owned explicit persistence, where present, remains isolated. Snapshot adapters must supply fresh authorization and isolated historical reads at the exact requested cutoff, and preserve published revision stability.
 - Spec copies are historical reference snapshots; their original relative links refer to the source branch layout. No third-party source was copied.
 
-## Implemented milestone
+## Implemented standalone scope
 
-Overflow-checked gross historical completed-transfer volume, distinct trader counts, half-open periods and full small-cohort suppression.
+Ledger-verified ordinary trade/reversal flow with partial/later reversals; grants/adjustments excluded from turnover and included in own historical opening/closing; explicit scoped account/offer facts, member-dominance/complementary suppression, fixed releases and public-only revision fingerprints; exact monetary strings; read-only HTTP/no-JS/CSV/CLI.
 
 ## Existing application seams inspected
 
@@ -24,7 +30,7 @@ Overflow-checked gross historical completed-transfer volume, distinct trader cou
 
 ## Remaining feature work
 
-Ledger-backed isolated snapshots including reversal accounting; stock versus flow views; fixed periods and anti-differencing privacy policy; admin authorization; own-member trends; dormant offers; accessible tables/charts and exports. Existing core is gross volume only, not the complete analytics feature.
+Actual core authenticated historical-source adapter and immutable release/query-budget/correction policy; production API/CLI wiring and full ledger regression; browser/WCAG/screen-reader and snapshot/restore operations; owner-selected integration and release approval. See AUDIT.md and CONTRACT.md for exact implemented scope and evidence.
 
 ## Standalone validation
 
@@ -47,3 +53,7 @@ Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. The
 7. Disable by removing routes/jobs and adapter registration; do not roll back ledger history. Any feature-data retention/migration procedure must be documented before integration.
 
 No work on this branch changes Circula's core completion or release status.
+
+## Master-scope continuation
+
+HTTP query bounds now precede host callbacks. Large-snapshot fixtures verify complete 12-period accounting at 10,000 and 100,000 events, including stock and participant counts. Current results are recorded in VALIDATION.md; criterion-level progress is in COMPLETION.md. Immutable release/query-budget/correction policy remains unfinished standalone privacy work, not a completed capability delegated by wording to the host.

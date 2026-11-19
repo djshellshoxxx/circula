@@ -1,0 +1,38 @@
+{
+  "archive_source": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+  "cwd": "/workspace/scratch/f47ceab29930/circula-analytics-recovery/future/analytics",
+  "command": [
+    "go",
+    "test",
+    "-run",
+    "^$",
+    "-fuzz",
+    "^FuzzClosedPeriods$",
+    "-fuzztime=100000x",
+    "-parallel=1",
+    "-timeout=150s",
+    "./..."
+  ],
+  "started_utc": "2026-11-19T11:59:37.665867+00:00",
+  "outer_timeout_seconds": 240,
+  "go_version": "go version go1.26.11 linux/amd64",
+  "free_tmp_before": 247635968,
+  "source_sha256": {
+    "aggregate.go": "31c5e0fc79a9fd796dcb50c04e9956f2faca990e7f6ad915ae00501f4119b7d4",
+    "aggregate_test.go": "4302ba15b8c407c09eeaba74bbd88f96e09959ef117a7417557f92ad3effbcf9",
+    "audit_test.go": "97f580a07a9e4de2117b4e5c53af679f6e790c6c3852bdc863f2aa7ba1722e6f",
+    "dashboard.go": "241a247e7650ae36d38bb953bbdb60112d5b7c1048fdc26a547c9244f45c2a17",
+    "dashboard_test.go": "f94778501af64cf8aaa627e5911c82c72674098a70280603a5233bb1b7c93083",
+    "interface.go": "be90924008f209b4d0a0d11e82f1dc1ecfaa0c654288cca0cfcbba3337927811",
+    "interface_test.go": "51898a061f9ace0ac884667887de2a72353f5e02b9aea69ac3f6cd74271177a8",
+    "performance_test.go": "1562dccf24508e735b0188ab1deb52659518f5f59d9bfc53abfc3e1362317a2b"
+  },
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 156.507,
+  "finished_utc": "2026-11-19T12:02:14.181452+00:00",
+  "free_tmp_after": 661966848,
+  "output_sha256": "c2559e0fdedcf20d2589aea2467a00a9f6f1b8b60ab8c01b3107c023d042d6bb",
+  "source_unchanged": true,
+  "status": "pass"
+}

@@ -16,7 +16,7 @@ type Trade struct {
 type Result struct {
 	Suppressed                bool
 	TradeCount, ActiveTraders int
-	GrossTurnover             int64
+	GrossTurnover             int64 `json:",string"`
 }
 
 // Aggregate counts each completed transfer once (not both ledger entries).
