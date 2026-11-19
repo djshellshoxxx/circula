@@ -115,6 +115,7 @@ func (s *server) routes() {
 	R("POST "+v1+"/disputes/{id}/re-review/decision", s.decideReReview, idem)
 	R("POST "+v1+"/reports", s.fileReport, idem)
 	R("GET "+v1+"/admin/reports", s.reportQueue)
+	R("GET "+v1+"/activity-signals", s.activitySignals) // SEC-026: administrators and dispute reviewers
 	R("POST "+v1+"/admin/reports/{id}/handle", s.closeReport, idem)
 	R("GET "+v1+"/notifications", s.listNotifications)
 	R("GET "+v1+"/notifications/unread-count", s.unreadCount, queryParams())

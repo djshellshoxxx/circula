@@ -82,6 +82,12 @@ var fieldLabels = map[string]string{
 	"operator":               messages.Text("validation.label.operator"),
 	"directory_visibility":   messages.Text("validation.label.directory_visibility"),
 	"ids":                    messages.Text("validation.label.ids"),
+	// SEC-026 activity signal settings.
+	"activity_signals_enabled":       messages.Text("policy.signals_enabled"),
+	"velocity_signal_proposals":      messages.Text("policy.velocity_proposals"),
+	"velocity_signal_window_minutes": messages.Text("policy.velocity_window"),
+	"reciprocal_signal_trades":       messages.Text("policy.reciprocal_trades"),
+	"reciprocal_signal_window_days":  messages.Text("policy.reciprocal_window"),
 }
 
 func label(f string) string {

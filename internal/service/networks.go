@@ -343,6 +343,11 @@ func (s *Service) UpdatePolicy(ctx context.Context, actor domain.Actor, netID st
 					return "", err
 				}
 			}
+			if signalSettingsChanged(p.net.Policy, in.Policy) { // SEC-026
+				if err := s.noticeSignalSettings(tx, netID, p.memberID()); err != nil {
+					return "", err
+				}
+			}
 			return netID, nil
 		}, func(id string) (*domain.Network, error) { return tx.GetNetwork(id) })
 		return err
@@ -374,8 +379,19 @@ func policyMap(p domain.Policy) map[string]any {
 		"departure_rule": string(p.DepartureRule), "signup_grant": p.SignupGrant, "dual_control_threshold": p.DualControlThreshold,
 		"limit_warning_days": p.LimitWarningDays, "response_period_days": p.ResponsePeriodDays,
 		"re_review_window_days": p.ReReviewWindowDays, "limit_warning_percent": p.LimitWarningPercent, "inactivity_days": p.InactivityDays, "default_flag_blocks_payer": p.DefaultFlagBlocksPayer,
-		"directory_visibility": p.DirectoryVisibility,
+		"directory_visibility":     p.DirectoryVisibility,
+		"activity_signals_enabled": p.ActivitySignalsEnabled, "velocity_signal_proposals": p.VelocitySignalProposals, // SEC-026
+		"velocity_signal_window_minutes": p.VelocitySignalWindowMinutes, "reciprocal_signal_trades": p.ReciprocalSignalTrades,
+		"reciprocal_signal_window_days": p.ReciprocalSignalWindowDays,
 	}
+}
+
+// hideReviewOnlyKeys preserves the established SEC-011 exception for the
+// dual-control threshold. Activity signal settings remain in the readable
+// member policy log as required by GOV-002.
+func hideReviewOnlyKeys(e *PolicyLogEntry) {
+	delete(e.Changes, "dual_control_threshold")
+	delete(e.Previous, "dual_control_threshold")
 }
 
 // noticeDays resolves the notice for a change (GOV-003): the default is 14

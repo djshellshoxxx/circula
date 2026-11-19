@@ -1583,5 +1583,79 @@
   },
   "sessions.help_bulk": {
     "other": "Sign out other sessions ends all your other sign-ins after confirmation and keeps this browser signed in. It also cancels sign-ins waiting for a two-step code. Session actions do not revoke API tokens. If a sign-in has already expired or ended, refresh the inventory."
+  },
+  "signals.title": {
+    "other": "Activity signals"
+  },
+  "signals.intro": {
+    "other": "Signals point administrators and dispute reviewers to unusual activity. A signal is not a finding: it did not block or change any trade, and the members involved are not told. Look at their trades before you decide anything, and use the ordinary member and dispute tools if action is needed. A signal about you is not shown to you."
+  },
+  "signals.settings": {
+    "other": "This network raises a signal when the trade proposals one member makes within a %[2]d-minute window exceed %[1]d, or when the trades two members complete with each other, in both directions, within a %[4]d-day window exceed %[3]d."
+  },
+  "signals.settings_off": {
+    "other": "Activity signals are switched off in the network policy. Signals raised earlier are still listed."
+  },
+  "signals.filter_label": {
+    "other": "Signal filter"
+  },
+  "signals.filter_all": {
+    "other": "All"
+  },
+  "signals.kind_velocity": {
+    "other": "Many proposals"
+  },
+  "signals.kind_reciprocal": {
+    "other": "Back-and-forth trades"
+  },
+  "signals.velocity": {
+    "one": "%[2]s made %[1]d trade proposal within a %[3]d-minute window, above the review threshold of %[4]d.",
+    "other": "%[2]s made %[1]d trade proposals within a %[3]d-minute window, above the review threshold of %[4]d."
+  },
+  "signals.reciprocal": {
+    "one": "%[2]s and %[3]s completed %[1]d trade with each other, in both directions, within a %[4]d-day window, above the review threshold of %[5]d.",
+    "other": "%[2]s and %[3]s completed %[1]d trades with each other, in both directions, within a %[4]d-day window, above the review threshold of %[5]d."
+  },
+  "signals.raised": {
+    "other": "Raised"
+  },
+  "signals.empty": {
+    "other": "No activity signals to show."
+  },
+  "signals.manage_hint": {
+    "other": "unusual proposal bursts and back-and-forth trading, for review"
+  },
+  "policy.signals_heading": {
+    "other": "Activity signals"
+  },
+  "policy.signals_hint": {
+    "other": "Signals point administrators and dispute reviewers to unusual activity. They never block a trade and the members involved are not told. Signals are off until an administrator enables them. Members can see setting changes in the policy log."
+  },
+  "policy.signals_enabled": {
+    "other": "Raise activity signals"
+  },
+  "policy.velocity_proposals": {
+    "other": "Many proposals: signal when one member makes more than this many"
+  },
+  "policy.velocity_proposals_hint": {
+    "other": "1 to 1,000."
+  },
+  "policy.velocity_window": {
+    "other": "Many proposals: window (minutes)"
+  },
+  "policy.velocity_window_hint": {
+    "other": "1 to 10,080 (one week)."
+  },
+  "policy.reciprocal_trades": {
+    "other": "Back-and-forth trades: signal when two members complete more than this many with each other, in both directions"
+  },
+  "policy.reciprocal_trades_hint": {
+    "other": "1 to 1,000."
+  },
+  "policy.reciprocal_window": {
+    "other": "Back-and-forth trades: window (days)"
+  },
+  "policy.reciprocal_window_hint": {
+    "other": "1 to 365."
   }
 }

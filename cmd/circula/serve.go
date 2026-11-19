@@ -60,6 +60,16 @@ func newService(st store.Store, cfg *Config) (*service.Service, error) {
 	})
 }
 
+// signalFailureLog reports an activity signal evaluation that failed and was
+// rolled back inside a committed trade (SEC-026). The trade is unaffected; the
+// entry carries the network id, the signal kind and the error, never member
+// data, and passes through the redacting logger.
+func signalFailureLog(logger *slog.Logger) func(netID, kind string, err error) {
+	return func(netID, kind string, err error) {
+		logger.Warn("activity signal not recorded; the trade was not affected", "network", netID, "kind", kind, "err", err)
+	}
+}
+
 // newLogger builds the process logger. Every handler is wrapped by logx, so
 // all serve output (access log, jobs, adapters) is redacted, control
 // characters are escaped and timestamps are UTC (SEC-020, OPS-032).
@@ -165,6 +175,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		return err
 	}
 	svc.SetObserver(m)
+	svc.SetSignalFailureHandler(signalFailureLog(logger))
 
 	checks, err := verifyAllNetworks(ctx, svc, "startup-verify", "")
 	if err != nil {

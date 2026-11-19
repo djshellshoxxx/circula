@@ -1,0 +1,19 @@
+{{define "content"}}
+{{with .D}}{{$f := .Filter}}
+<p>{{msg "signals.intro"}}</p>
+<p>{{.Settings}}</p>
+<nav aria-label="{{msg "signals.filter_label"}}"><ul class="nav">
+  {{range .Filters}}<li><a href="/n/{{$.Slug}}/review/activity-signals{{if .Value}}?kind={{.Value}}{{end}}"{{if eq .Value $f}} aria-current="page"{{end}}>{{.Label}}</a></li>{{end}}
+</ul></nav>
+{{if .Rows}}
+<ul class="rows">
+{{range .Rows}}<li>
+  <p><span class="tag">{{.Kind}}</span> {{.Text}}</p>
+  <p>{{msg "signals.raised"}} {{.Raised}}</p>
+</li>{{end}}
+</ul>
+{{else}}<p>{{msg "signals.empty"}}</p>{{end}}
+{{template "pager" dict "Next" .Next "Href" (printf "/n/%s/review/activity-signals?kind=%s&after=" $.Slug .Filter)}}
+{{end}}
+<p><a href="/n/{{.Slug}}/review">{{msg "overview.review_queue"}}</a></p>
+{{end}}

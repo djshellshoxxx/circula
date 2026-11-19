@@ -277,6 +277,23 @@ func (s *Service) HandleReport(ctx, actor, netID string, in HandleReportInput) (
 // Administrators only; open -> handled, audited, tells the reporter.
 ```
 
+#### signals.go (SEC-026)
+
+```go
+func (s *Service) ListActivitySignals(ctx, actor, netID string, q ActivitySignalQuery) ([]ActivitySignalView, error)
+// Administrators and dispute reviewers of the network (current effective roles, administrator MFA rule); newest first,
+// keyset by id, kind filter velocity|reciprocal. Signals naming the reader are left out. Plain members: forbidden.
+
+func (s *Service) SetSignalFailureHandler(f func(netID, kind string, err error))
+// Called after a committed unit for each activity signal evaluation that failed and was rolled back; serve logs it.
+```
+
+`ProposeTransaction` evaluates the proposer's velocity and `AcceptTransaction` the pair's reciprocal pattern, at the end
+of their own unit inside a savepoint (`store.Tx.Savepoint`). A signal is recorded at most once per network, kind, member
+(or pair) and period by the database (`activity_signals_once`), audited as `activity_signal.raised` without member
+subjects and announced to the other active administrators and reviewers (`review.activity_signal`). A failing evaluation
+never fails, blocks or changes the trade. Thresholds are `Policy` fields; see `domain/signals.go`.
+
 #### notify.go, notify_limits.go (FR-038, UX-012)
 
 ```go

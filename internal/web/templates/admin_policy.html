@@ -36,6 +36,15 @@
     <label><input type="checkbox" id="f-confirm_open_grant_risk" name="confirm_open_grant_risk" value="1"{{if .Val "confirm_open_grant_risk"}} checked{{end}}{{if .Err "confirm_open_grant_risk"}} aria-invalid="true" aria-describedby="e-confirm_open_grant_risk"{{end}}> I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination.</label>
   </div>
   <div class="field"><label><input type="checkbox" name="default_flag_blocks_payer" value="1"{{if .Val "default_flag_blocks_payer"}} checked{{end}}> Members marked in default cannot pay</label></div>
+  <fieldset aria-describedby="h-activity_signals"><legend>{{msg "policy.signals_heading"}}</legend>
+    <p class="hint" id="h-activity_signals">{{msg "policy.signals_hint"}}</p>
+    <input type="hidden" name="activity_signals_form" value="1">
+    <div class="field radio"><label><input type="checkbox" id="f-activity_signals_enabled" name="activity_signals_enabled" value="1"{{if .Val "activity_signals_enabled"}} checked{{end}}> {{msg "policy.signals_enabled"}}</label></div>
+    {{template "field" dict "P" . "Name" "velocity_signal_proposals" "Label" (msg "policy.velocity_proposals") "Hint" (msg "policy.velocity_proposals_hint") "Mode" "numeric" "Req" true}}
+    {{template "field" dict "P" . "Name" "velocity_signal_window_minutes" "Label" (msg "policy.velocity_window") "Hint" (msg "policy.velocity_window_hint") "Mode" "numeric" "Req" true}}
+    {{template "field" dict "P" . "Name" "reciprocal_signal_trades" "Label" (msg "policy.reciprocal_trades") "Hint" (msg "policy.reciprocal_trades_hint") "Mode" "numeric" "Req" true}}
+    {{template "field" dict "P" . "Name" "reciprocal_signal_window_days" "Label" (msg "policy.reciprocal_window") "Hint" (msg "policy.reciprocal_window_hint") "Mode" "numeric" "Req" true}}
+  </fieldset>
   {{template "field" dict "P" . "Name" "reason" "Label" "Reason for the change" "Hint" "Required. It is recorded with the new version." "Req" true}}
   {{template "field" dict "P" . "Name" "notice_days" "Label" "Notice (days)" "Hint" "Optional. Empty means 14 days for a change that could disadvantage members and none otherwise. Up to 90." "Mode" "numeric"}}
   {{template "field" dict "P" . "Name" "notice_reason" "Label" "Reason for shorter notice" "Hint" "Required only if you give fewer than 14 days for such a change. Members see it." "Max" 500}}
