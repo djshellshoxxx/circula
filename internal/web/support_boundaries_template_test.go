@@ -21,7 +21,11 @@ func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 		t.Fatal("runtime.Caller could not locate the test source")
 	}
 	path := filepath.Join(filepath.Dir(source), "templates", name)
-	tmpl, err := template.ParseFiles(path)
+	// Production registers msg before parsing; the fixture must provide the same
+	// callable so the support text is tested, not rejected at parse time.
+	tmpl, err := template.New(name).Funcs(template.FuncMap{
+		"msg": func(key string) string { return key },
+	}).ParseFiles(path)
 	if err != nil {
 		t.Fatalf("parse %s: %v", name, err)
 	}

@@ -223,8 +223,8 @@ func TestMigratingAgainIsANoOp(t *testing.T) {
 	}
 }
 
-// Migration 0015 (the head) is blocked by an object it must create. The SQL of
-// the migration creates its first trigger before the second one fails, so the
+// Migration 0015 is blocked by an object it must create. The SQL of
+// that migration creates its first trigger before the second one fails, so the
 // failure is a real mid-migration error. The open must fail, the schema must be
 // byte-for-byte what it was (no partial DDL), the previous version must still be
 // recorded, and the database must open cleanly once the blocker is removed.
@@ -232,12 +232,13 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "mig.db")
 	head := store.SchemaVersion()
-	if head < 2 {
-		t.Fatalf("need at least two migrations, have %d", head)
+	const target = 15 // exercise a known multi-object migration even after new single-object migrations
+	if head < target {
+		t.Fatalf("need migration %04d, have %d", target, head)
 	}
 
-	// Build the database at head-1 with one committed row.
-	prev, err := store.OpenAtVersion(ctx, path, head-1)
+	// Build the database at target-1 with one committed row.
+	prev, err := store.OpenAtVersion(ctx, path, target-1)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -248,19 +249,19 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Find the object the last migration creates last and make it already exist.
+	// Find the last object migration 0015 creates and make it already exist.
 	files, err := filepath.Glob("migrations/*.sql")
 	if err != nil || len(files) != head {
 		t.Fatalf("migration files: %v (%d)", err, len(files))
 	}
 	sort.Strings(files)
-	last, err := os.ReadFile(files[len(files)-1])
+	last, err := os.ReadFile(files[target-1])
 	if err != nil {
 		t.Fatal(err)
 	}
 	creates := regexp.MustCompile(`(?i)CREATE\s+(TABLE|TRIGGER|INDEX)\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)`).FindAllStringSubmatch(string(last), -1)
 	if len(creates) < 2 {
-		t.Fatalf("head migration creates %d objects; need at least 2 to fail midway", len(creates))
+		t.Fatalf("migration %04d creates %d objects; need at least 2 to fail midway", target, len(creates))
 	}
 	kind, blocked := strings.ToUpper(creates[len(creates)-1][1]), creates[len(creates)-1][2]
 
@@ -281,12 +282,12 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s, err := store.Open(ctx, path)
+	s, err := store.OpenAtVersion(ctx, path, target)
 	if err == nil {
 		_ = s.Close()
-		t.Fatal("open succeeded although the head migration must fail")
+		t.Fatal("open succeeded although migration 0015 must fail")
 	}
-	if !strings.Contains(err.Error(), fmt.Sprintf("migration %04d_", head)) {
+	if !strings.Contains(err.Error(), fmt.Sprintf("migration %04d_", target)) {
 		t.Errorf("error does not name the failing migration: %v", err)
 	}
 
@@ -297,8 +298,8 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 	if got := schemaSnapshot(t, raw); got != before {
 		t.Fatalf("failed migration left partial schema changes:\nbefore:\n%s\nafter:\n%s", before, got)
 	}
-	if v, err := store.AppliedVersion(ctx, raw); err != nil || v != head-1 {
-		t.Fatalf("applied version = %d err=%v, want %d", v, err, head-1)
+	if v, err := store.AppliedVersion(ctx, raw); err != nil || v != target-1 {
+		t.Fatalf("applied version = %d err=%v, want %d", v, err, target-1)
 	}
 	if err := raw.Close(); err != nil {
 		t.Fatal(err)
