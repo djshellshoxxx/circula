@@ -1,0 +1,4 @@
+{"Time":"2026-11-19T05:04:41.914866684-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Output":"PASS\n"}
+{"Time":"2026-11-19T05:04:41.915926051-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Output":"coverage: 75.7% of statements\n"}
+{"Time":"2026-11-19T05:04:42.918925055-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/governance\t6.326s\tcoverage: 75.7% of statements\n"}
+{"Time":"2026-11-19T05:04:42.918966713-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/governance","Elapsed":6.333}

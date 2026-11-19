@@ -1,0 +1,6 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/2 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 17967 (5989/sec), new interesting: 81 (total: 83)
+fuzz: elapsed: 5s, execs: 100000 (42881/sec), new interesting: 82 (total: 84)
+PASS
+ok  	command-line-arguments	4.928s

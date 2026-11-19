@@ -1,0 +1,78 @@
+{
+  "scope": "Preserved prior current-source attempt, distinct from the unchanged archive baseline and later successful checks.",
+  "source_receipt": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/three-recovery-qualification/qualification.json",
+  "source_receipt_sha256": "fe20e8c46ba0a2030cc067ddc168dc2f9431de446be9a959c37ebca303b62f5e",
+  "started_utc": "2026-11-19T12:42:40.983084+00:00",
+  "finished_utc": null,
+  "toolchain": "go version go1.26.11 linux/amd64",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "TMPDIR": "/tmp/circula-recovered-qualification-8lm6pgwy/tmp"
+  },
+  "module": "governance",
+  "checks": [
+    {
+      "kind": "isolation",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-c",
+        "import json\nimport subprocess\nfrom pathlib import Path\n\nfeature = json.loads(Path('feature.json').read_text())\nassert feature['id'] == 'FNET-208'\nassert feature['enabled'] is False\nassert feature['integration'] == 'HOLD'\nassert feature['depends_on_future_features'] == []\nmodule = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))\nassert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/governance'\nexpected = {\n    ('modernc.org/sqlite', 'v1.60.1', False),\n    ('github.com/dustin/go-humanize', 'v1.0.1', True),\n    ('github.com/google/uuid', 'v1.6.0', True),\n    ('github.com/mattn/go-isatty', 'v0.0.24', True),\n    ('github.com/ncruces/go-strftime', 'v1.0.0', True),\n    ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),\n    ('golang.org/x/sys', 'v0.48.0', True),\n    ('modernc.org/libc', 'v1.77.1', True),\n    ('modernc.org/mathutil', 'v1.7.1', True),\n    ('modernc.org/memory', 'v1.12.1', True),\n}\nactual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}\nassert actual == expected, actual\nassert not module.get('Replace')\nassert not module.get('Exclude')\ndependencies = set(subprocess.check_output(\n    ['go', 'list', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],\n    text=True,\n).split())\nallowed = {module['Module']['Path']} | {path for path, _, _ in expected}\nassert dependencies <= allowed, dependencies - allowed\nprint('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')"
+      ],
+      "cwd": "/workspace/scratch/f47ceab29930/circula-governance-recovery/future/governance",
+      "started_utc": "2026-11-19T12:45:53.390821+00:00",
+      "outer_timeout_seconds": 150,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/three-recovery-qualification/governance-isolation.log",
+      "tmp_free_before": 90804224,
+      "workspace_free_before": 225013760,
+      "exit_code": 1,
+      "timed_out": false,
+      "elapsed_seconds": 0.316,
+      "passed_test_events": 0,
+      "failed_test_events": [],
+      "skipped_test_events": [],
+      "package_results": [],
+      "coverage_output": [],
+      "fuzz_progress": [],
+      "source_unchanged": true,
+      "status": "failed",
+      "resource_diagnostic": false,
+      "log_sha256": "a22258a8def674b79fb9d6116c977121cb54d6d109a3cb95667aa600786690f6",
+      "portable_log": "previous-attempt-logs/attempt1-isolation.log",
+      "portable_log_scope": "Complete unchanged raw log.",
+      "portable_log_sha256": "a22258a8def674b79fb9d6116c977121cb54d6d109a3cb95667aa600786690f6"
+    }
+  ],
+  "interruption": "Executor reattachment lost session 90410. Root independently confirmed no old runner, compiler or test process. No unreported result is counted as a pass.",
+  "head": "f6fd133140ba150e9da58c84c5d97f66d6c1ea42",
+  "module_tree": "1e583d67bba1f311389d4a5b210da6cc7d24e95b",
+  "source_sha256": {
+    "ballot_test.go": "47acb3ca397385d37ad658fa109ea220d84438c119b3d79080bc1f033c749c1a",
+    "strict.go": "6cca5d14d416e688640d46c1af686af0ee4d90b9a86c3e283888026600e29a54",
+    "strict_fuzz_test.go": "4bdf7b4a967777ef1785571f8dca9770cab41ff195cdb24562142034e43ae4bc",
+    "master_regression_test.go": "4213d71889a16cee980f6f3444dd6fad5f55b5d6aea18ccbb15566833913c3aa",
+    "json_recovery_test.go": "6f45c9ab533a2ab380ba81fea090e656b16dfa703ca8f96cba9300d87dbd278d",
+    "cli.go": "7c33a7a2038716f37c4e2de0382dcf45d91f0647c76a42ce5ac6fe6b5e659cf6",
+    "web_test.go": "0369d43ff404efb87afd490ee410e1e383c8eddd9c93ca7e97300f8c7d515758",
+    "web.go": "23dbc017301f49b4298f1a3e98f8d00e07060c084b931ab1f0e5bf3f030c858b",
+    "audit_helpers.go": "5e284955bd2e7eb749d141204d28e065503106ac77a70711bdcf1c84fda8f1c8",
+    "ballot.go": "7940248b45212c949d2ae1df879cff0e4b31ae960a078b39408678ada826fc85",
+    "audit_test.go": "8f1c0259a2ea5511a9654de136ac15c581e5fe4b0e945063c4999f9ab51ed7c0",
+    "service.go": "eef398797dc7bdbac525eafe689e810ea6b6034bfd5978b94d4d61ee8afb239b",
+    "go.sum": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+    "service_test.go": "118f23bba103345b6fb48baecbbd4d3cf457dc135cd5533c6062db2a7e3561c6",
+    "go.mod": "4a2f7ee38f70fa3e0ae69cbddb62c4d7c15d65dca9f3fd89092274aac753b4bd"
+  },
+  "completed_passes_retained_in_original_receipt": [
+    "gofmt"
+  ],
+  "unreported_call": "Race was the active checkpoint without a terminal receipt; interrupted/unqualified, not a pass."
+}

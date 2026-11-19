@@ -1,0 +1,21 @@
+go: can't load test package: error obtaining VCS status: exit status 128
+	Use -buildvcs=false to disable VCS stamping.
+Traceback (most recent call last):
+  File "<string>", line 28, in <module>
+    dependencies = set(subprocess.check_output(
+                       ~~~~~~~~~~~~~~~~~~~~~~~^
+        ['go', 'list', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        text=True,
+        ^^^^^^^^^^
+    ).split())
+    ^
+  File "/usr/lib/python3.13/subprocess.py", line 472, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['go', 'list', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...']' returned non-zero exit status 1.

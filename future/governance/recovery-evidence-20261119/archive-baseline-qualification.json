@@ -1,0 +1,299 @@
+{
+  "module": "governance",
+  "sha": "6a5af100877aa0117bb43a35eb625dab38ee67f2",
+  "module_tree": "ed6ec14e67591c2409fbfcce140700179d7d1c8a",
+  "source": {
+    "module": "governance",
+    "sha": "6a5af100877aa0117bb43a35eb625dab38ee67f2",
+    "tree": "ed6ec14e67591c2409fbfcce140700179d7d1c8a",
+    "module_path": "future/governance",
+    "extracted_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+    "file_count": 48,
+    "bytes": 271119,
+    "all_git_blobs_verified": true
+  },
+  "started_utc": "2026-11-19T11:51:53.147235+00:00",
+  "go_mod": "module github.com/djshellshoxxx/circula/future/governance\n\ngo 1.26.0\n\nrequire modernc.org/sqlite v1.60.1\n\nrequire (\n\tgithub.com/dustin/go-humanize v1.0.1 // indirect\n\tgithub.com/google/uuid v1.6.0 // indirect\n\tgithub.com/mattn/go-isatty v0.0.24 // indirect\n\tgithub.com/ncruces/go-strftime v1.0.0 // indirect\n\tgithub.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect\n\tgolang.org/x/sys v0.48.0 // indirect\n\tmodernc.org/libc v1.77.1 // indirect\n\tmodernc.org/mathutil v1.7.1 // indirect\n\tmodernc.org/memory v1.12.1 // indirect\n)\n",
+  "go_mod_sha256_before": "4a2f7ee38f70fa3e0ae69cbddb62c4d7c15d65dca9f3fd89092274aac753b4bd",
+  "go_sum_sha256_before": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+  "build_tags": [],
+  "sqlite_driver_evidence": [
+    {
+      "path": "future/governance/service_test.go",
+      "matches": [
+        "\t_ \"modernc.org/sqlite\""
+      ]
+    }
+  ],
+  "manifest": {
+    "id": "FNET-208",
+    "status": "standalone-master-corrections-tested-independently-reviewed-external-gates-pending",
+    "integration": "HOLD",
+    "enabled": false,
+    "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+    "depends_on_future_features": [],
+    "scope": "Transactional proposals/frozen electorate/unique ballots/advisory outcomes, current authorization, private ballot reads, comments/moderation/process disputes, independent certification/read-only policy links, idempotency/audit, no-JS HTTP and CLI interfaces. Strict pre-host query/form validation and current-session form rendering.",
+    "remaining": "Actual Circula transactional auth/admin-MFA/store/policy-history adapter; full core/API/ledger regression; browser/screen-reader/translation qualification; host deployment/retention policy; owner-selected integration and rollout.",
+    "tested_source": "8b74e7db0e237df15acb46a27609f6015eadb4ed",
+    "completion_percent": 84
+  },
+  "checks": [
+    {
+      "kind": "gofmt",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "audit_helpers.go",
+        "audit_test.go",
+        "ballot.go",
+        "ballot_test.go",
+        "cli.go",
+        "master_regression_test.go",
+        "service.go",
+        "service_test.go",
+        "strict.go",
+        "strict_fuzz_test.go",
+        "web.go",
+        "web_test.go"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt -l audit_helpers.go audit_test.go ballot.go ballot_test.go cli.go master_regression_test.go service.go service_test.go strict.go strict_fuzz_test.go web.go web_test.go",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T11:51:53.155477+00:00",
+      "outer_timeout_seconds": 30,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/gofmt.log",
+      "tmp_free_before_bytes": 825540608,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.034,
+      "finished_utc": "2026-11-19T11:51:53.189234+00:00",
+      "tmp_free_after_bytes": 825540608,
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T11:51:53.192871+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/race.log",
+      "tmp_free_before_bytes": 825540608,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 0.116,
+      "finished_utc": "2026-11-19T11:51:53.308584+00:00",
+      "tmp_free_after_bytes": 826048512,
+      "output_tail": "go: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+      "status": "failed",
+      "executed_test_pass_events": 0,
+      "skipped_test_events": [],
+      "package_results": [],
+      "coverage_output": []
+    },
+    {
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T11:51:53.311707+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/vet.log",
+      "tmp_free_before_bytes": 826044416,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 0.334,
+      "finished_utc": "2026-11-19T11:51:53.645775+00:00",
+      "tmp_free_after_bytes": 825327616,
+      "output_tail": "go: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+      "status": "failed"
+    },
+    {
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T11:51:53.651733+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/mod_verify.log",
+      "tmp_free_before_bytes": 825327616,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 2.38,
+      "finished_utc": "2026-11-19T11:51:56.032130+00:00",
+      "tmp_free_after_bytes": 827764736,
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T12:14:48.000749+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/race-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 357670912,
+        "workspace_free_bytes": 133541888,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 11.3,
+      "finished_utc": "2026-11-19T12:14:59.300432+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 302505984,
+        "workspace_free_bytes": 133492736,
+        "private_tmp_exists": true
+      },
+      "output_tail": "rror/unchanged\"}\n{\"Time\":\"2026-11-19T04:14:57.131606482-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterCallbacksReauthorizePrivatePages/error/unchanged\",\"Output\":\"=== RUN   TestMasterCallbacksReauthorizePrivatePages/error/unchanged\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.18291572-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterCallbacksReauthorizePrivatePages/error/unchanged\",\"Output\":\"--- PASS: TestMasterCallbacksReauthorizePrivatePages/error/unchanged (0.05s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.183339599-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterCallbacksReauthorizePrivatePages/error/unchanged\",\"Elapsed\":0.05}\n{\"Time\":\"2026-11-19T04:14:57.183365699-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterCallbacksReauthorizePrivatePages\",\"Output\":\"--- PASS: TestMasterCallbacksReauthorizePrivatePages (1.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.183382961-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterCallbacksReauthorizePrivatePages\",\"Elapsed\":1}\n{\"Time\":\"2026-11-19T04:14:57.18338766-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility\"}\n{\"Time\":\"2026-11-19T04:14:57.183392018-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility\",\"Output\":\"=== RUN   TestMasterNativeFormQueryCompatibility\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.183713781-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/same\"}\n{\"Time\":\"2026-11-19T04:14:57.183722257-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/same\",\"Output\":\"=== RUN   TestMasterNativeFormQueryCompatibility/same\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.235837251-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/same\",\"Output\":\"--- PASS: TestMasterNativeFormQueryCompatibility/same (0.05s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.235878438-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/same\",\"Elapsed\":0.05}\n{\"Time\":\"2026-11-19T04:14:57.235886784-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/different\"}\n{\"Time\":\"2026-11-19T04:14:57.235889619-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/different\",\"Output\":\"=== RUN   TestMasterNativeFormQueryCompatibility/different\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.30001135-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/different\",\"Output\":\"--- PASS: TestMasterNativeFormQueryCompatibility/different (0.06s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.300052728-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/different\",\"Elapsed\":0.06}\n{\"Time\":\"2026-11-19T04:14:57.30005942-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/badcursor\"}\n{\"Time\":\"2026-11-19T04:14:57.300062275-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/badcursor\",\"Output\":\"=== RUN   TestMasterNativeFormQueryCompatibility/badcursor\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.345801803-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/badcursor\",\"Output\":\"--- PASS: TestMasterNativeFormQueryCompatibility/badcursor (0.05s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.345844874-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility/badcursor\",\"Elapsed\":0.05}\n{\"Time\":\"2026-11-19T04:14:57.415036938-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility\",\"Output\":\"--- PASS: TestMasterNativeFormQueryCompatibility (0.23s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.415078055-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterNativeFormQueryCompatibility\",\"Elapsed\":0.23}\n{\"Time\":\"2026-11-19T04:14:57.41508596-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterHostCannotHideMalformedForm\"}\n{\"Time\":\"2026-11-19T04:14:57.415097101-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterHostCannotHideMalformedForm\",\"Output\":\"=== RUN   TestMasterHostCannotHideMalformedForm\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.513947511-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterHostCannotHideMalformedForm\",\"Output\":\"--- PASS: TestMasterHostCannotHideMalformedForm (0.10s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.513990451-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMasterHostCannotHideMalformedForm\",\"Elapsed\":0.1}\n{\"Time\":\"2026-11-19T04:14:57.513996803-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestGovernanceLifecycleIdempotencyPrivacy\"}\n{\"Time\":\"2026-11-19T04:14:57.514010128-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestGovernanceLifecycleIdempotencyPrivacy\",\"Output\":\"=== RUN   TestGovernanceLifecycleIdempotencyPrivacy\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.614498513-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestGovernanceLifecycleIdempotencyPrivacy\",\"Output\":\"--- PASS: TestGovernanceLifecycleIdempotencyPrivacy (0.10s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.61458749-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestGovernanceLifecycleIdempotencyPrivacy\",\"Elapsed\":0.1}\n{\"Time\":\"2026-11-19T04:14:57.614595005-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestFrozenEligibilitySuspensionAndDraftEdits\"}\n{\"Time\":\"2026-11-19T04:14:57.61459758-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestFrozenEligibilitySuspensionAndDraftEdits\",\"Output\":\"=== RUN   TestFrozenEligibilitySuspensionAndDraftEdits\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.67359584-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestFrozenEligibilitySuspensionAndDraftEdits\",\"Output\":\"--- PASS: TestFrozenEligibilitySuspensionAndDraftEdits (0.06s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.67365447-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestFrozenEligibilitySuspensionAndDraftEdits\",\"Elapsed\":0.06}\n{\"Time\":\"2026-11-19T04:14:57.673666943-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestDisputesModerationAndIndependentCertification\"}\n{\"Time\":\"2026-11-19T04:14:57.673673566-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestDisputesModerationAndIndependentCertification\",\"Output\":\"=== RUN   TestDisputesModerationAndIndependentCertification\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.761953762-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestDisputesModerationAndIndependentCertification\",\"Output\":\"--- PASS: TestDisputesModerationAndIndependentCertification (0.09s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.762006931-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestDisputesModerationAndIndependentCertification\",\"Elapsed\":0.09}\n{\"Time\":\"2026-11-19T04:14:57.762018222-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestConcurrentVotesAndRollback\"}\n{\"Time\":\"2026-11-19T04:14:57.762023973-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestConcurrentVotesAndRollback\",\"Output\":\"=== RUN   TestConcurrentVotesAndRollback\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.868372164-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestConcurrentVotesAndRollback\",\"Output\":\"--- PASS: TestConcurrentVotesAndRollback (0.11s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.868419483-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestConcurrentVotesAndRollback\",\"Elapsed\":0.11}\n{\"Time\":\"2026-11-19T04:14:57.868436334-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestValidationAndNoJSRendering\"}\n{\"Time\":\"2026-11-19T04:14:57.868442716-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestValidationAndNoJSRendering\",\"Output\":\"=== RUN   TestValidationAndNoJSRendering\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.902330696-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestValidationAndNoJSRendering\",\"Output\":\"--- PASS: TestValidationAndNoJSRendering (0.03s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:57.902368456-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestValidationAndNoJSRendering\",\"Elapsed\":0.03}\n{\"Time\":\"2026-11-19T04:14:57.902374978-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMigrationRollbackAndBackupRestore\"}\n{\"Time\":\"2026-11-19T04:14:57.902378044-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMigrationRollbackAndBackupRestore\",\"Output\":\"=== RUN   TestMigrationRollbackAndBackupRestore\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.028225186-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMigrationRollbackAndBackupRestore\",\"Output\":\"--- PASS: TestMigrationRollbackAndBackupRestore (0.13s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.028265471-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestMigrationRollbackAndBackupRestore\",\"Elapsed\":0.13}\n{\"Time\":\"2026-11-19T04:14:58.028277273-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestEmptyOutcomeAndForgedPolicyLink\"}\n{\"Time\":\"2026-11-19T04:14:58.028280609-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestEmptyOutcomeAndForgedPolicyLink\",\"Output\":\"=== RUN   TestEmptyOutcomeAndForgedPolicyLink\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.109146362-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestEmptyOutcomeAndForgedPolicyLink\",\"Output\":\"--- PASS: TestEmptyOutcomeAndForgedPolicyLink (0.08s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.109306001-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestEmptyOutcomeAndForgedPolicyLink\",\"Elapsed\":0.08}\n{\"Time\":\"2026-11-19T04:14:58.109328253-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebCLIContracts\"}\n{\"Time\":\"2026-11-19T04:14:58.109333753-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebCLIContracts\",\"Output\":\"=== RUN   TestWebCLIContracts\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.193863451-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebCLIContracts\",\"Output\":\"--- PASS: TestWebCLIContracts (0.08s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.193923994-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebCLIContracts\",\"Elapsed\":0.08}\n{\"Time\":\"2026-11-19T04:14:58.193933151-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebBodyTenantAndDisabled\"}\n{\"Time\":\"2026-11-19T04:14:58.193942178-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebBodyTenantAndDisabled\",\"Output\":\"=== RUN   TestWebBodyTenantAndDisabled\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.220766879-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebBodyTenantAndDisabled\",\"Output\":\"--- PASS: TestWebBodyTenantAndDisabled (0.03s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221233244-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestWebBodyTenantAndDisabled\",\"Elapsed\":0.03}\n{\"Time\":\"2026-11-19T04:14:58.22127372-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON\"}\n{\"Time\":\"2026-11-19T04:14:58.221286905-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON\",\"Output\":\"=== RUN   FuzzAuditStrictJSON\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221618147-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#0\"}\n{\"Time\":\"2026-11-19T04:14:58.22163077-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#0\",\"Output\":\"=== RUN   FuzzAuditStrictJSON/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221804236-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#0\",\"Output\":\"--- PASS: FuzzAuditStrictJSON/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221810607-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:58.22181751-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#1\"}\n{\"Time\":\"2026-11-19T04:14:58.221819855-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#1\",\"Output\":\"=== RUN   FuzzAuditStrictJSON/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221892341-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#1\",\"Output\":\"--- PASS: FuzzAuditStrictJSON/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221897781-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:58.221921385-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON\",\"Output\":\"--- PASS: FuzzAuditStrictJSON (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.221927436-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"FuzzAuditStrictJSON\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:58.221944889-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-11-19T04:14:58.224497045-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Output\":\"coverage: 75.3% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:14:59.25998527-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/future/governance\\t6.516s\\tcoverage: 75.3% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:14:59.260116306-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Elapsed\":6.517}\n",
+      "output_sha256": "8f796bb5cafb395387ce7c20897d461de4847d6a5e6c2429088adff476a039c5",
+      "status": "pass",
+      "executed_test_pass_events": 49,
+      "skipped_test_events": [],
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/future/governance",
+          "action": "pass",
+          "elapsed_seconds": 6.517
+        }
+      ],
+      "coverage_output": [
+        "coverage: 75.3% of statements",
+        "ok  \tgithub.com/djshellshoxxx/circula/future/governance\t6.516s\tcoverage: 75.3% of statements"
+      ]
+    },
+    {
+      "attempt": 2,
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T12:14:59.319864+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/vet-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 302288896,
+        "workspace_free_bytes": 133439488,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 1.513,
+      "finished_utc": "2026-11-19T12:15:00.833246+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 297230336,
+        "workspace_free_bytes": 133439488,
+        "private_tmp_exists": true
+      },
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/governance",
+      "started_utc": "2026-11-19T12:15:00.840264+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/governance/mod_verify-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 297230336,
+        "workspace_free_bytes": 133431296,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 0.473,
+      "finished_utc": "2026-11-19T12:15:01.313225+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 285118464,
+        "workspace_free_bytes": 133427200,
+        "private_tmp_exists": true
+      },
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    }
+  ],
+  "state": "completed",
+  "source_files_changed": [],
+  "go_mod_sha256_after": "4a2f7ee38f70fa3e0ae69cbddb62c4d7c15d65dca9f3fd89092274aac753b4bd",
+  "go_sum_sha256_after": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+  "source_unchanged": true,
+  "finished_utc": "2026-11-19T11:51:56.052340+00:00",
+  "all_attempted_checks_passed": false,
+  "latest_checks": {
+    "gofmt": {
+      "check_index": 0,
+      "status": "pass",
+      "attempt": 1
+    },
+    "race": {
+      "check_index": 4,
+      "status": "pass",
+      "attempt": 2
+    },
+    "vet": {
+      "check_index": 5,
+      "status": "pass",
+      "attempt": 2
+    },
+    "mod_verify": {
+      "check_index": 6,
+      "status": "pass",
+      "attempt": 2
+    }
+  },
+  "current_required_checks_passed": true,
+  "retry_finished_utc": "2026-11-19T12:15:01.335297+00:00"
+}

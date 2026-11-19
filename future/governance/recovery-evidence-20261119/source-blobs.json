@@ -1,0 +1,295 @@
+{
+  "archive_head": "6a5af100877aa0117bb43a35eb625dab38ee67f2",
+  "archive_module_tree": "ed6ec14e67591c2409fbfcce140700179d7d1c8a",
+  "all_original_files_retained": true,
+  "files": [
+    {
+      "path": "future/governance/ACCEPTANCE.md",
+      "archive_blob": "9b9d7300168fe99ed50b563f8ca4ce54fac0912b",
+      "candidate_blob": "9b9d7300168fe99ed50b563f8ca4ce54fac0912b",
+      "identical": true
+    },
+    {
+      "path": "future/governance/AUDIT.md",
+      "archive_blob": "c894df5df516a7b133f212b0a315d071009de4af",
+      "candidate_blob": "c894df5df516a7b133f212b0a315d071009de4af",
+      "identical": true
+    },
+    {
+      "path": "future/governance/COMPLETION.md",
+      "archive_blob": "4dcd284343b0221c5816e19dac3457fdd4c10ef4",
+      "candidate_blob": "4dcd284343b0221c5816e19dac3457fdd4c10ef4",
+      "identical": true
+    },
+    {
+      "path": "future/governance/CONTRACT.md",
+      "archive_blob": "7e00734372728d91845219dd20d85f5cf3618595",
+      "candidate_blob": "7e00734372728d91845219dd20d85f5cf3618595",
+      "identical": true
+    },
+    {
+      "path": "future/governance/FINAL-HANDOFF.md",
+      "archive_blob": "9a7beb896a46ceaf160b12f53469c612dbab9949",
+      "candidate_blob": "9a7beb896a46ceaf160b12f53469c612dbab9949",
+      "identical": true
+    },
+    {
+      "path": "future/governance/HANDOFF-MILESTONE-MASTER-1.md",
+      "archive_blob": "9a7beb896a46ceaf160b12f53469c612dbab9949",
+      "candidate_blob": "9a7beb896a46ceaf160b12f53469c612dbab9949",
+      "identical": true
+    },
+    {
+      "path": "future/governance/INTEGRATION.md",
+      "archive_blob": "e0c9d2fa932de593ed376bb155aadda2b38b34bb",
+      "candidate_blob": "e0c9d2fa932de593ed376bb155aadda2b38b34bb",
+      "identical": true
+    },
+    {
+      "path": "future/governance/OPERATIONS.md",
+      "archive_blob": "b978a9b8639a1f5d3e1a7db2a50896f95de74d21",
+      "candidate_blob": "b978a9b8639a1f5d3e1a7db2a50896f95de74d21",
+      "identical": true
+    },
+    {
+      "path": "future/governance/README.md",
+      "archive_blob": "41966f26e6a29a3e5357cc51c05bc3580b7269a9",
+      "candidate_blob": "43112222a2bad15be77cf8c5842e298834687330",
+      "identical": false
+    },
+    {
+      "path": "future/governance/SECURITY-AUDIT.md",
+      "archive_blob": "7d841d5b864c4813307026911fd36680435b6042",
+      "candidate_blob": "7d841d5b864c4813307026911fd36680435b6042",
+      "identical": true
+    },
+    {
+      "path": "future/governance/SPEC-SNAPSHOT.md",
+      "archive_blob": "80d16cb70e9b28af744ffaa0d04f6590742498d6",
+      "candidate_blob": "80d16cb70e9b28af744ffaa0d04f6590742498d6",
+      "identical": true
+    },
+    {
+      "path": "future/governance/THIRD_PARTY_NOTICES.md",
+      "archive_blob": "1db99792d3455409ee6b23141bee79bc0b1c9b9f",
+      "candidate_blob": "1db99792d3455409ee6b23141bee79bc0b1c9b9f",
+      "identical": true
+    },
+    {
+      "path": "future/governance/UPSTREAM-RESEARCH.md",
+      "archive_blob": "a361bc880fba1c20e72cd3f0d8d277049c11623e",
+      "candidate_blob": "a361bc880fba1c20e72cd3f0d8d277049c11623e",
+      "identical": true
+    },
+    {
+      "path": "future/governance/UPSTREAM-REUSE-MATRIX.md",
+      "archive_blob": "a43f5d4ab7db6d2a38321f5aeb40d3db9f7ad8af",
+      "candidate_blob": "a43f5d4ab7db6d2a38321f5aeb40d3db9f7ad8af",
+      "identical": true
+    },
+    {
+      "path": "future/governance/VALIDATION.md",
+      "archive_blob": "67a13c404dc3f7e215a6e5dd2bf6bd30b8bdd3c8",
+      "candidate_blob": "67a13c404dc3f7e215a6e5dd2bf6bd30b8bdd3c8",
+      "identical": true
+    },
+    {
+      "path": "future/governance/audit_helpers.go",
+      "archive_blob": "4aa9a47df26e42ebb3b3980aa173c95c106e5d2d",
+      "candidate_blob": "4aa9a47df26e42ebb3b3980aa173c95c106e5d2d",
+      "identical": true
+    },
+    {
+      "path": "future/governance/audit_test.go",
+      "archive_blob": "531bb9df2d083037be8a7d4d79273f07019546bf",
+      "candidate_blob": "531bb9df2d083037be8a7d4d79273f07019546bf",
+      "identical": true
+    },
+    {
+      "path": "future/governance/ballot.go",
+      "archive_blob": "7517a714fd460f9180730a908662633cbcb859ac",
+      "candidate_blob": "7517a714fd460f9180730a908662633cbcb859ac",
+      "identical": true
+    },
+    {
+      "path": "future/governance/ballot_test.go",
+      "archive_blob": "7f1d9730f7442fc17522af62ceb3d24792d5c36f",
+      "candidate_blob": "7f1d9730f7442fc17522af62ceb3d24792d5c36f",
+      "identical": true
+    },
+    {
+      "path": "future/governance/cli.go",
+      "archive_blob": "b6b99d4ebf9acf6b8fa47706f7a100bf84e3878c",
+      "candidate_blob": "b6b99d4ebf9acf6b8fa47706f7a100bf84e3878c",
+      "identical": true
+    },
+    {
+      "path": "future/governance/feature.json",
+      "archive_blob": "44b76724eb5b0b5743e10f8565a1f3f3ca312d38",
+      "candidate_blob": "44b76724eb5b0b5743e10f8565a1f3f3ca312d38",
+      "identical": true
+    },
+    {
+      "path": "future/governance/go.mod",
+      "archive_blob": "d276c0914bc638a9c38cf2a907520ebf4a920c96",
+      "candidate_blob": "d276c0914bc638a9c38cf2a907520ebf4a920c96",
+      "identical": true
+    },
+    {
+      "path": "future/governance/go.sum",
+      "archive_blob": "8b50aa662c9c2840fd7832b09b003e4894345ee3",
+      "candidate_blob": "8b50aa662c9c2840fd7832b09b003e4894345ee3",
+      "identical": true
+    },
+    {
+      "path": "future/governance/master_regression_test.go",
+      "archive_blob": "7d170c2c00e026042b10673ca742c967613ffb9d",
+      "candidate_blob": "7d170c2c00e026042b10673ca742c967613ffb9d",
+      "identical": true
+    },
+    {
+      "path": "future/governance/service.go",
+      "archive_blob": "a1463b4f1529cc8fe79e374b5d14184543e60d8d",
+      "candidate_blob": "a1463b4f1529cc8fe79e374b5d14184543e60d8d",
+      "identical": true
+    },
+    {
+      "path": "future/governance/service_test.go",
+      "archive_blob": "38e2c14ab1fba48d320b18eb79462ef77daaa0da",
+      "candidate_blob": "38e2c14ab1fba48d320b18eb79462ef77daaa0da",
+      "identical": true
+    },
+    {
+      "path": "future/governance/strict.go",
+      "archive_blob": "6ee6a839a446a1b077f5ae810d0ccb23eb56e892",
+      "candidate_blob": "2f44e9ca70f89595440d73ebde38349544c3540c",
+      "identical": false
+    },
+    {
+      "path": "future/governance/strict_fuzz_test.go",
+      "archive_blob": "058211ce0df6ed0ea0687a0f67af876d82a26175",
+      "candidate_blob": "058211ce0df6ed0ea0687a0f67af876d82a26175",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/PROVENANCE.md",
+      "archive_blob": "838490204f949eb99ad1e6a9d792c28942098175",
+      "candidate_blob": "838490204f949eb99ad1e6a9d792c28942098175",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/README.md",
+      "archive_blob": "d26e707e3dedc8e066f8eacdc4215ca71f1b5feb",
+      "candidate_blob": "d26e707e3dedc8e066f8eacdc4215ca71f1b5feb",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/github.com_dustin_go-humanize@v1.0.1/LICENSE",
+      "archive_blob": "8d9a94a90680d9fc114a1b3a2b4123c233c324af",
+      "candidate_blob": "8d9a94a90680d9fc114a1b3a2b4123c233c324af",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/github.com_google_uuid@v1.6.0/LICENSE",
+      "archive_blob": "5dc68268d900581915a7bfdc1f2be75cd503dd9e",
+      "candidate_blob": "5dc68268d900581915a7bfdc1f2be75cd503dd9e",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE",
+      "archive_blob": "74487567632c8f137ef3971b0f5912ca50bebcda",
+      "candidate_blob": "74487567632c8f137ef3971b0f5912ca50bebcda",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/golang.org_x_sys@v0.48.0/LICENSE",
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4",
+      "candidate_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_libc@v1.77.1/LICENSE",
+      "archive_blob": "0c6500bc3615df5cf4cd5c43e0598af481e03534",
+      "candidate_blob": "0c6500bc3615df5cf4cd5c43e0598af481e03534",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md",
+      "archive_blob": "04bebedb828e3ef89f3f2d3f0bee41a27559be55",
+      "candidate_blob": "04bebedb828e3ef89f3f2d3f0bee41a27559be55",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_mathutil@v1.7.1/LICENSE",
+      "archive_blob": "128a1b64a48e5ea03d9006ef189997c3e8f81938",
+      "candidate_blob": "128a1b64a48e5ea03d9006ef189997c3e8f81938",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE",
+      "archive_blob": "967339afcfed0f64afb32d81359930c6a6b06ed6",
+      "candidate_blob": "967339afcfed0f64afb32d81359930c6a6b06ed6",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE-GO",
+      "archive_blob": "6a66aea5eafe0ca6a688840c47219556c552488e",
+      "candidate_blob": "6a66aea5eafe0ca6a688840c47219556c552488e",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE-LOGO",
+      "archive_blob": "ec496d173f9901c973e910eb117532ac6acf65b9",
+      "candidate_blob": "ec496d173f9901c973e910eb117532ac6acf65b9",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO",
+      "archive_blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa",
+      "candidate_blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE",
+      "archive_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1",
+      "candidate_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md",
+      "archive_blob": "859dac18fa138c1b0df20700f83f3b0b9ce1d341",
+      "candidate_blob": "859dac18fa138c1b0df20700f83f3b0b9ce1d341",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE",
+      "archive_blob": "cc4c78e3d9dce881feda49f98043a92994439fd9",
+      "candidate_blob": "cc4c78e3d9dce881feda49f98043a92994439fd9",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/dependency-notices/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC",
+      "archive_blob": "9c106bc48c760f7ed9f5b8255dea7adeef029cbe",
+      "candidate_blob": "9c106bc48c760f7ed9f5b8255dea7adeef029cbe",
+      "identical": true
+    },
+    {
+      "path": "future/governance/third_party/govuk-frontend/LICENSE.txt",
+      "archive_blob": "c74c0c86260796d339c46531f210a1922e47ae8a",
+      "candidate_blob": "c74c0c86260796d339c46531f210a1922e47ae8a",
+      "identical": true
+    },
+    {
+      "path": "future/governance/web.go",
+      "archive_blob": "3a3b74679b78eba125e59e97bd6573a0fb0f8ee4",
+      "candidate_blob": "3a3b74679b78eba125e59e97bd6573a0fb0f8ee4",
+      "identical": true
+    },
+    {
+      "path": "future/governance/web_test.go",
+      "archive_blob": "72f1d19ca576d067b654db4a410db767343dc6cf",
+      "candidate_blob": "72f1d19ca576d067b654db4a410db767343dc6cf",
+      "identical": true
+    }
+  ]
+}

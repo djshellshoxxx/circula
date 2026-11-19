@@ -1,0 +1,118 @@
+name: future governance module
+
+on:
+  pull_request:
+    branches: [future/fnet-208-governance-20261116]
+    paths:
+      - 'future/governance/**'
+      - '.github/workflows/future-governance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-governance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  module:
+    name: isolated governance service (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            cgo: '1'
+          - os: macos-15-intel
+            cgo: '1'
+          - os: windows-2022
+            cgo: '0'
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/governance
+    env:
+      GOTOOLCHAIN: local
+      GOMAXPROCS: '2'
+      GOWORK: 'off'
+      GOFLAGS: '-mod=readonly -p=1'
+      GOGC: '20'
+      GOMEMLIMIT: 512MiB
+      CGO_ENABLED: ${{ matrix.cgo }}
+    steps:
+      - name: Keep repository line endings stable
+        working-directory: ${{ github.workspace }}
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Record source and toolchain
+        run: |
+          git rev-parse HEAD
+          git rev-parse HEAD:future/governance
+          go version
+      - name: Check module remains isolated and disabled
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          feature = json.loads(Path('feature.json').read_text())
+          assert feature['id'] == 'FNET-208'
+          assert feature['enabled'] is False
+          assert feature['integration'] == 'HOLD'
+          assert feature['depends_on_future_features'] == []
+          module = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))
+          assert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/governance'
+          expected = {
+              ('modernc.org/sqlite', 'v1.60.1', False),
+              ('github.com/dustin/go-humanize', 'v1.0.1', True),
+              ('github.com/google/uuid', 'v1.6.0', True),
+              ('github.com/mattn/go-isatty', 'v0.0.24', True),
+              ('github.com/ncruces/go-strftime', 'v1.0.0', True),
+              ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),
+              ('golang.org/x/sys', 'v0.48.0', True),
+              ('modernc.org/libc', 'v1.77.1', True),
+              ('modernc.org/mathutil', 'v1.7.1', True),
+              ('modernc.org/memory', 'v1.12.1', True),
+          }
+          actual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}
+          assert actual == expected, actual
+          assert not module.get('Replace')
+          assert not module.get('Exclude')
+          dependencies = set(subprocess.check_output(
+              ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],
+              text=True,
+          ).split())
+          allowed = {module['Module']['Path']} | {path for path, _, _ in expected}
+          assert dependencies <= allowed, dependencies - allowed
+          print('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')
+          PY
+      - name: Verify downloaded module checksums
+        run: go mod verify
+      - name: Check Go formatting
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+      - name: Vet isolated module
+        run: go vet ./...
+      - name: Race and real SQLite module regressions
+        if: runner.os != 'Windows'
+        run: go test -race -count=1 -cover -timeout=2m ./...
+      - name: Native Windows real SQLite module regressions
+        if: runner.os == 'Windows'
+        run: go test -count=1 -cover -timeout=2m ./...
+      - name: Bounded strict JSON fuzzing
+        if: runner.os == 'Linux'
+        run: timeout --kill-after=10s 180s go test -run '^$' -fuzz '^FuzzAuditStrictJSON$' -fuzztime=100000x -parallel=2 -timeout=150s strict.go strict_fuzz_test.go
