@@ -16,7 +16,28 @@ The owner authorized independent future-feature development on 2026-11-16, while
 
 ## Implemented milestone
 
-Daily IANA-local reminder windows, stable daily dedupe keys, DST gap skipping/fold first-occurrence selection and no catch-up backlog.
+Daily, weekly and monthly IANA-local reminder windows; stable per-date dedupe keys; DST gap skipping and first-occurrence fold selection; exact historical second-offset handling; and no catch-up backlog. Invalid UTF-8 identities and the host-dependent `Local` timezone are rejected.
+
+### Structured calendar API
+
+Existing callers can continue using `Due(template, network, now)` for daily reminders. `Template` retains its existing fields. The additional API accepts an explicit rule:
+
+```go
+daily := recurring.Schedule{Frequency: recurring.Daily}
+weekly := recurring.Schedule{Frequency: recurring.Weekly, Weekday: time.Monday}
+monthly := recurring.Schedule{Frequency: recurring.Monthly, DayOfMonth: 31}
+occurrence, due, err := recurring.DueWithSchedule(template, monthly, network, now)
+```
+
+`Weekday` is meaningful only for weekly rules and must be Sunday through Saturday. `DayOfMonth` is meaningful only for monthly rules and must be 1 through 31. Unused selectors must be zero, and an empty or unknown frequency is invalid. The original `Due` wrapper supplies the explicit daily rule for existing callers.
+
+All rules operate on the current local calendar date. A missing monthly date is skipped: a day-31 schedule does not run on April 30 or May 1. Nonexistent DST minutes are skipped; repeated minutes select the first physical instant. This implements the provisional isolated-module calendar semantics recorded in `UPSTREAM-RESEARCH.md`; core policy adoption remains on HOLD. Seconds, arbitrary cron expressions and shorter-than-daily schedules are not exposed.
+
+Changing a rule or reminder time preserves the existing key for the same network, template and local date. Existing valid daily keys are unchanged. This prevents a later atomic firing adapter from interpreting a same-date edit as a new occurrence. It does not itself enforce uniqueness: timezone edits that move the current local date, pause/skip state, revisions and durable firing transactions still need an explicit adapter policy.
+
+Resolution examines timezone intervals within a fixed 72-hour UTC window. It validates exact wall-time round trips and selects the earliest matching instant. This avoids the original minute scan's error for historical timezone offsets containing seconds. It also handles extrapolated timezone rules at leap-year boundaries without relying on their sometimes stale interval end bounds. No third-party parser or source is needed for these three structured rules.
+
+Compatibility: templates using invalid UTF-8 identities or `Timezone: "Local"` now fail validation. An adapter must repair the identity or require an explicit named timezone; it must not silently normalize bytes or substitute the host timezone.
 
 ## Existing application seams inspected
 
@@ -24,7 +45,7 @@ Daily IANA-local reminder windows, stable daily dedupe keys, DST gap skipping/fo
 
 ## Remaining feature work
 
-Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; quotas; weekly/monthly schedules and calendar policy; optional manually confirmed draft adapter; crash/concurrent worker tests. Current core supports daily reminders only.
+Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; explicit quotas, retention and timezone-edit policy; optional manually confirmed draft adapter; crash/concurrent worker tests; current authorization adapters; and accessible HTTP/CLI/UI acceptance. Calendar computation is implemented, but those durable service and integration requirements remain unfinished. No production Core recurring feature is enabled.
 
 ## Standalone validation
 
@@ -32,6 +53,7 @@ Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edi
 cd future/recurring
 go test -race -cover ./...
 go vet ./...
+go test -run '^$' -fuzz '^FuzzScheduleInvariants$' -fuzztime=100000x -parallel=2 -timeout=90s ./...
 ```
 
 Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. These tests qualify the stated core milestone, not the full roadmap feature, production behavior, browser accessibility, or Circula's release.
