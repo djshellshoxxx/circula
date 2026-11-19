@@ -241,5 +241,8 @@ func (s *Service) asOf(fn func(store.Tx) error) func(store.Tx) error {
 // listing's documented order. Limit 0 means the default (100); max 500.
 type Page struct {
 	AfterID string
-	Limit   int
+	// BeforeID is supported by the session inventory to retrieve the previous
+	// page. It is mutually exclusive with AfterID.
+	BeforeID string
+	Limit    int
 }

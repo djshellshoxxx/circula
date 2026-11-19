@@ -1,0 +1,13 @@
+--- FAIL: TestMarketplacePriceUnits (0.70s)
+    --- FAIL: TestMarketplacePriceUnits/singular (0.12s)
+        marketplace_catalog_test.go:62: listings has invalid price rendering "price 1.00 credits"
+        marketplace_catalog_test.go:62: profile has invalid price rendering "price 1.00 credits"
+    --- FAIL: TestMarketplacePriceUnits/already_plural_singular (0.12s)
+        marketplace_catalog_test.go:62: listings has invalid price rendering "Hourss"
+        marketplace_catalog_test.go:62: profile has invalid price rendering "Hourss"
+    --- FAIL: TestMarketplacePriceUnits/already_plural (0.11s)
+        marketplace_catalog_test.go:62: listings has invalid price rendering "Hourss"
+        marketplace_catalog_test.go:62: profile has invalid price rendering "Hourss"
+FAIL
+FAIL	command-line-arguments	0.720s
+FAIL

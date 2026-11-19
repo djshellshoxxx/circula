@@ -1,4 +1,4 @@
--- 0020 / SEC-026: basic velocity and reciprocal-pattern signals for a network's
+-- 0022 / SEC-026: basic velocity and reciprocal-pattern signals for a network's
 -- administrators and dispute reviewers. Additive only: no existing table is
 -- altered and no existing row changes. A signal never blocks a trade.
 --

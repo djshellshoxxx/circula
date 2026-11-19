@@ -23,7 +23,10 @@ func TestSEC026SignalFailureIsLogged(t *testing.T) {
 	e := testutil.NewEnvWith(t, func(s store.Store) store.Store { fs = testutil.NewFaultStore(s); return fs })
 	e.Svc.SetSignalFailureHandler(signalFailureLog(logger))
 	admin := e.Person("admin@example.org")
-	net, _ := e.Network(admin, "town", func(p *domain.Policy) { p.VelocitySignalProposals = 1 })
+	net, _ := e.Network(admin, "town", func(p *domain.Policy) {
+		p.ActivitySignalsEnabled = true // Exercise the failure path with explicit activation.
+		p.VelocitySignalProposals = 1
+	})
 	ana, _ := e.Member(admin, net, "ana@example.org")
 	_, ben := e.Member(admin, net, "ben@example.org")
 	propose := func() error {

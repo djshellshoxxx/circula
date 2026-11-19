@@ -1,10 +1,13 @@
 package web
 
 import (
+	"html"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
@@ -25,18 +28,105 @@ func browserSession(t *testing.T, b *browser) (string, domain.Actor, string) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		rows, err := b.w.env.Svc.ListOwnSessions(b.w.env.Ctx, a)
-		if err != nil {
-			t.Fatal(err)
-		}
-		for _, row := range rows {
-			if row.Current {
-				return cookie.Value, a, row.ID
+		for after := ""; ; {
+			page, err := b.w.env.Svc.ListOwnSessions(b.w.env.Ctx, a, service.Page{AfterID: after})
+			if err != nil {
+				t.Fatal(err)
 			}
+			for _, row := range page.Rows {
+				if row.Current {
+					return cookie.Value, a, row.ID
+				}
+			}
+			if page.Next == "" {
+				break
+			}
+			if page.Next == after {
+				t.Fatal("session cursor did not advance")
+			}
+			after = page.Next
 		}
 	}
 	t.Fatal("browser has no current session")
 	return "", domain.Actor{}, ""
+}
+
+// API-036: the no-JS inventory follows bounded pages, and the confirmation
+// lookup must still reach an owned session outside the first page.
+func TestAccountSessionsPaginateAndConfirmOlderSessions(t *testing.T) {
+	w := newWorld(t)
+	current, other := w.browser(t), w.browser(t)
+	current.login("alice@example.org")
+	_, _, currentID := browserSession(t, current)
+	w.env.Clock.Advance(time.Millisecond)
+	other.login("alice@example.org")
+	otherRaw, _, otherID := browserSession(t, other)
+	for i := 0; i < 28; i++ {
+		w.env.Clock.Advance(time.Millisecond)
+		if _, _, err := w.env.Svc.Login(w.env.Ctx, "alice@example.org", testPW); err != nil {
+			t.Fatal(err)
+		}
+	}
+	rows := regexp.MustCompile(`/account/sessions/([0-9a-f]{64})/revoke`)
+	nextLink := regexp.MustCompile(`<a href="(/account/sessions\?after=[^"]+)">Next page</a>`)
+	first := current.get("/account/sessions")
+	if first.Status != http.StatusOK {
+		t.Fatalf("first page: %d", first.Status)
+	}
+	firstRows := rows.FindAllStringSubmatch(first.Body, -1)
+	if len(firstRows) != 25 || strings.Contains(first.Body, currentID) || strings.Contains(first.Body, otherID) {
+		t.Fatalf("first page did not contain exactly the 25 newer sessions: %d", len(firstRows))
+	}
+	oldPath := "/account/sessions/" + otherID + "/revoke"
+	oldConfirm := current.get(oldPath)
+	if oldConfirm.Status != http.StatusOK {
+		t.Fatalf("confirmation outside first page: %d", oldConfirm.Status)
+	}
+	current.mustContain(oldConfirm, "You will stay signed in here", "Keep session")
+	if _, err := w.env.Svc.Authenticate(w.env.Ctx, otherRaw); err != nil {
+		t.Fatalf("confirmation ended the older session: %v", err)
+	}
+	boundaryPath := "/account/sessions/" + firstRows[len(firstRows)-1][1] + "/revoke"
+	if p := current.post(boundaryPath, current.get(boundaryPath), url.Values{"confirm": {"yes"}}); p.Status != http.StatusOK {
+		t.Fatalf("boundary revocation: %d", p.Status)
+	}
+	seen := map[string]bool{}
+	for _, row := range firstRows {
+		seen[row[1]] = true
+	}
+	page := first
+	for round := 0; ; round++ {
+		link := nextLink.FindStringSubmatch(page.Body)
+		if link == nil {
+			break
+		}
+		if round >= 4 {
+			t.Fatal("session pagination did not finish")
+		}
+		page = current.get(html.UnescapeString(link[1]))
+		if page.Status != http.StatusOK {
+			t.Fatalf("continuation page: %d", page.Status)
+		}
+		for _, row := range rows.FindAllStringSubmatch(page.Body, -1) {
+			if seen[row[1]] {
+				t.Fatal("session pagination repeated a row")
+			}
+			seen[row[1]] = true
+		}
+	}
+	if len(seen) != 30 || !seen[currentID] || !seen[otherID] {
+		t.Fatalf("pagination lost older sessions after boundary revocation: %d", len(seen))
+	}
+	current.mustContain(page, "This session")
+	if p := current.post(oldPath, oldConfirm, url.Values{"confirm": {"yes"}}); p.Status != http.StatusOK {
+		t.Fatalf("older-session revocation: %d", p.Status)
+	}
+	if _, err := w.env.Svc.Authenticate(w.env.Ctx, otherRaw); domain.CodeOf(err) != domain.CodeUnauthenticated {
+		t.Fatalf("older session survived: %v", err)
+	}
+	if p := current.get("/account/sessions?after=malformed"); p.Status != http.StatusUnprocessableEntity {
+		t.Fatalf("malformed session position: %d", p.Status)
+	}
 }
 
 func TestAccountSessionsRequireOwnerCSRFAndConfirmation(t *testing.T) {

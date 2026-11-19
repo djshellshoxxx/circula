@@ -468,6 +468,19 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 		t.Fatal("session list omitted the second sign-in")
 	}
 	h.do(204, call{method: "DELETE", path: "/me/sessions/" + otherSession, hdr: cookie})
+	if _, _, err := env.Svc.Login(env.Ctx, "alice", "correct horse battery"); err != nil {
+		t.Fatal(err)
+	}
+	h.do(403, call{method: "POST", path: "/me/sessions/revoke-others", token: aliceT})
+	h.do(204, call{method: "POST", path: "/me/sessions/revoke-others", hdr: cookie})
+	h.do(204, call{method: "POST", path: "/me/sessions/revoke-others", hdr: cookie})
+	rec = h.do(200, call{method: "GET", path: "/me/sessions", hdr: cookie})
+	if err := json.Unmarshal(rec.Body.Bytes(), &sessions); err != nil {
+		t.Fatal(err)
+	}
+	if len(sessions.Data) != 1 || !sessions.Data[0].Current {
+		t.Fatal("bulk revocation did not retain exactly the current session")
+	}
 	h.do(403, call{method: "POST", path: "/me/password", token: aliceT, body: m{"current_password": "a", "new_password": "bbbbbbbbbbbb"}})
 	h.do(422, call{method: "POST", path: "/me/password", hdr: cookie, body: m{"current_password": "wrong wrong wrong", "new_password": "another long password"}})
 	h.do(204, call{method: "POST", path: "/me/password", hdr: cookie, body: m{"current_password": "correct horse battery", "new_password": "another long password"}})

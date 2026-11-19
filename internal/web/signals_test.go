@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -108,6 +109,9 @@ func TestSEC026PolicyFormSignalSettings(t *testing.T) {
 		t.Fatalf("a refused form changed the policy: %+v", p)
 	}
 	// The rendered form, box unticked and thresholds changed.
+	// Keep each successful version in force for a distinct stored instant;
+	// equal-time replacements intentionally cancel the prior version.
+	w.env.Clock.Advance(time.Millisecond)
 	saved := adm.post(b+"/admin/policy", pf, with("activity_signals_form", "1", "velocity_signal_proposals", "5",
 		"velocity_signal_window_minutes", "15", "reciprocal_signal_trades", "4", "reciprocal_signal_window_days", "7"))
 	adm.mustContain(saved, "Policy saved as a new version", `name="velocity_signal_proposals" type="text" value="5"`)
@@ -116,6 +120,7 @@ func TestSEC026PolicyFormSignalSettings(t *testing.T) {
 		t.Fatalf("saved policy %+v", p)
 	}
 	// Without the fieldset marker the signal settings stay as they are.
+	w.env.Clock.Advance(time.Millisecond)
 	pf = adm.get(b + "/admin/policy")
 	adm.mustContain(adm.post(b+"/admin/policy", pf, with("currency_name", "hours")), "Policy saved as a new version")
 	if p := policy(); p.CurrencyName != "hours" || p.ActivitySignalsEnabled || p.VelocitySignalProposals != 5 {

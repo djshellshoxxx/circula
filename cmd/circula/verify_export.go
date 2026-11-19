@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/service"
 )
@@ -63,6 +64,13 @@ type exportReader struct {
 	close func() // releases the zip handle; nil for a directory (Windows cannot delete an open file)
 }
 
+// Export packages are flat collections of regular files. Check both separator
+// spellings and drive/stream syntax explicitly instead of relying on the
+// host's filepath rules.
+func validExportName(name string) bool {
+	return name != "" && name != "." && name != ".." && !strings.ContainsAny(name, "/\\:\x00")
+}
+
 func openExport(path string) (*exportReader, error) {
 	fi, err := os.Stat(path)
 	if err != nil {
@@ -75,9 +83,20 @@ func openExport(path string) (*exportReader, error) {
 		}
 		r := &exportReader{read: func(n string) ([]byte, error) { return readCapped(filepath.Join(path, n)) }}
 		for _, e := range ents {
-			if !e.IsDir() {
-				r.names = append(r.names, e.Name())
+			if !validExportName(e.Name()) {
+				return nil, fmt.Errorf("unsafe export member name %q", e.Name())
 			}
+			info, err := e.Info()
+			if err != nil {
+				return nil, err
+			}
+			if !info.Mode().IsRegular() {
+				return nil, fmt.Errorf("export member %q is not a regular file", e.Name())
+			}
+			if info.Size() > maxExportFile {
+				return nil, fmt.Errorf("export member %q exceeds the size limit", e.Name())
+			}
+			r.names = append(r.names, e.Name())
 		}
 		return r, nil
 	}
@@ -88,6 +107,24 @@ func openExport(path string) (*exportReader, error) {
 	files := map[string]*zip.File{}
 	r := &exportReader{close: func() { _ = zr.Close() }}
 	for _, f := range zr.File {
+		if !validExportName(f.Name) {
+			r.close()
+			return nil, fmt.Errorf("unsafe export member name %q", f.Name)
+		}
+		// Reject the DOS directory bit even when Unix mode metadata claims a
+		// regular file; readers on different platforms must not disagree.
+		if !f.Mode().IsRegular() || f.ExternalAttrs&0x10 != 0 {
+			r.close()
+			return nil, fmt.Errorf("export member %q is not a regular file", f.Name)
+		}
+		if f.UncompressedSize64 > maxExportFile {
+			r.close()
+			return nil, fmt.Errorf("export member %q exceeds the size limit", f.Name)
+		}
+		if _, exists := files[f.Name]; exists {
+			r.close()
+			return nil, fmt.Errorf("duplicate export member %q", f.Name)
+		}
 		files[f.Name] = f
 		r.names = append(r.names, f.Name)
 	}
@@ -101,7 +138,7 @@ func openExport(path string) (*exportReader, error) {
 			return nil, err
 		}
 		defer func() { _ = rc.Close() }()
-		return io.ReadAll(io.LimitReader(rc, maxExportFile))
+		return readExportLimited(rc, maxExportFile)
 	}
 	return r, nil
 }
@@ -112,7 +149,34 @@ func readCapped(p string) ([]byte, error) {
 		return nil, err
 	}
 	defer func() { _ = f.Close() }()
-	return io.ReadAll(io.LimitReader(f, maxExportFile))
+	info, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+	if !info.Mode().IsRegular() {
+		return nil, errors.New("export member is not a regular file")
+	}
+	if info.Size() > maxExportFile {
+		return nil, errors.New("export member exceeds the size limit")
+	}
+	return readExportLimited(f, maxExportFile)
+}
+
+// readExportLimited checks one byte past the limit so a truncated prefix can
+// never pass checksum verification. Metadata checks avoid known oversize
+// members; this check also handles a file that grows after its size was read.
+func readExportLimited(r io.Reader, limit int64) ([]byte, error) {
+	if limit < 0 || limit > maxExportFile {
+		return nil, errors.New("invalid export read limit")
+	}
+	b, err := io.ReadAll(io.LimitReader(r, limit+1))
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(b)) > limit {
+		return nil, errors.New("export member exceeds the size limit")
+	}
+	return b, nil
 }
 
 // verifyExportPackage returns one line per problem found. An error means the
@@ -127,20 +191,30 @@ func verifyExportPackage(path string) ([]string, *service.Manifest, error) {
 	}
 	mb, err := r.read("manifest.json")
 	if err != nil {
-		return nil, nil, errors.New("manifest.json is missing from the package")
+		return nil, nil, fmt.Errorf("manifest.json is not readable: %w", err)
 	}
 	var man service.Manifest
 	if err := json.Unmarshal(mb, &man); err != nil {
 		return nil, nil, fmt.Errorf("manifest.json is not valid: %w", err)
 	}
+	if man.SchemaVersion != service.ExportSchemaVersion {
+		return nil, nil, fmt.Errorf("manifest.json has unsupported schema version %d", man.SchemaVersion)
+	}
+	if man.Files == nil {
+		return nil, nil, errors.New("manifest.json files must be an array")
+	}
 	var problems []string
 	listed := map[string]bool{"manifest.json": true}
 	for _, f := range man.Files {
-		listed[f.Name] = true
-		if filepath.Base(f.Name) != f.Name {
+		if !validExportName(f.Name) {
 			problems = append(problems, fmt.Sprintf("%s: unsafe file name in manifest", f.Name))
 			continue
 		}
+		if listed[f.Name] {
+			problems = append(problems, fmt.Sprintf("%s: duplicate or reserved file name in manifest", f.Name))
+			continue
+		}
+		listed[f.Name] = true
 		b, err := r.read(f.Name)
 		if err != nil {
 			problems = append(problems, fmt.Sprintf("%s: listed in the manifest but not readable (%v)", f.Name, err))

@@ -1,7 +1,7 @@
 package domain
 
 // ValidRecordID checks the 36-character UUID text used for record references
-// (SEC-024). UUIDv4 jobs and UUIDv7 domain records share this representation.
+// (SEC-024). Legacy UUIDv4 jobs and new UUIDv7 records share this representation.
 // It does not rewrite case or accept compact, braced or URN spellings. Tokens,
 // network slugs and numeric sequence cursors have separate input contracts.
 func ValidRecordID(id string) bool {

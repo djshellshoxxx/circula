@@ -365,12 +365,16 @@ paths:
       description: |
         Session cookie only; bearer API tokens receive 403. Does not resolve a network.
         Returns the caller's active sessions, newest first, using current role-specific
-        idle and absolute timeouts. Each ID is a one-way public selector, never a bearer
+        idle and absolute timeouts. Each ID is a random persisted public selector, never a bearer
         value or the stored session hash. expires_at is the current earliest expiry;
         later activity can extend an idle timeout. No device or IP information is collected.
         Pagination remains valid when the session at the page boundary is revoked.
-        Response pages are bounded; this version scans all retained sessions of the caller
-        before filtering and paging. It does not impose a per-person session-count limit.
+        Pages default to 25 and allow at most 100 active sessions. Each request uses at most
+        20 indexed keyset reads of 100 retained rows before applying the existing expiry
+        rules. An empty data array may therefore have a non-null next_cursor; continue until
+        next_cursor is null. This work bound does not impose a per-person session-count limit.
+        Cursors issued before the persisted-selector migration receive 400 invalid-cursor;
+        restart the listing without a cursor. Session credentials and their lifetimes are unchanged.
       security:
         - cookieAuth: []
       parameters:
@@ -386,6 +390,34 @@ paths:
         '401': {$ref: '#/components/responses/Unauthorized'}
         '403': {$ref: '#/components/responses/Forbidden'}
         '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
+  /api/v1/me/sessions/revoke-others:
+    post:
+      operationId: revokeOtherOwnSessions
+      tags: [Identity]
+      summary: End the caller's other sign-ins while keeping this session
+      description: |
+        Session cookie and CSRF token required. Does not resolve a network. Revalidates
+        the current session inside the write transaction, then revokes the caller's
+        other retained sign-ins and removes pending second-factor sign-in challenges.
+        The current session, other people's sessions, and API tokens remain usable.
+        A pending forced password change blocks this write. Repeating the operation
+        succeeds when nothing remains to revoke. Each successful command is audited;
+        records contain aggregate results, never session credentials or selectors.
+        No Idempotency-Key or request body is needed.
+      security:
+        - cookieAuth: []
+          csrfToken: []
+      responses:
+        '204': {description: Other sign-ins have ended; the current session remains active.}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '423': {$ref: '#/components/responses/NetworkFrozen'}
         '429': {$ref: '#/components/responses/RateLimited'}
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
@@ -3191,8 +3223,8 @@ components:
       name: cursor
       in: query
       required: false
-      description: Opaque cursor from next_cursor. Bound to route, network, caller and filters; reuse with other filters is 400 invalid-cursor (API-035).
-      schema: {type: string}
+      description: Opaque cursor from next_cursor. At most 4096 characters, using canonical unpadded base64url for its signed components. Bound to route, network, caller and filters; malformed, oversized, noncanonical or mismatched cursors receive 400 invalid-cursor (API-035).
+      schema: {type: string, maxLength: 4096}
     PathId:
       name: id
       in: path
@@ -3413,7 +3445,7 @@ components:
       pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$'
     Id:
       type: string
-      description: Identifier. UUIDv7 for domain records (API-005); export and consistency-run identifiers are generated as UUIDv4 as built.
+      description: UUIDv7 identifier for newly allocated records and adapter jobs (API-005). Existing identifiers, including legacy UUIDv4 jobs, remain valid and are not rewritten.
     NetworkStatus: {type: string, enum: [setup, active, closing, closed], description: 'closing is derived: the closure date has passed and the closure is finishing (GOV-025). Trading is already frozen.'}
     JoinMode: {type: string, enum: [invite, approval, open]}
     DepartureRule: {type: string, enum: [retain, settle-to-zero]}
@@ -4057,7 +4089,7 @@ components:
       required: [id, scope, format, status, created_at, expires_at, sha256, bytes, artefact_url, error]
       additionalProperties: false
       properties:
-        id: {type: string, description: UUIDv4 as built.}
+        id: {$ref: '#/components/schemas/Id'}
         scope: {type: string, enum: [mine, ledger, members, audit, full]}
         format: {type: string, enum: [csv, json]}
         status: {type: string, enum: [complete], description: "Only complete as built. Spec 065 also lists queued, running and failed (see spec 07 section 12)."}
@@ -4070,7 +4102,7 @@ components:
     SessionSelector:
       type: string
       pattern: '^[0-9a-f]{64}$'
-      description: One-way owner-scoped session selector; never a bearer credential or its stored hash.
+      description: Random persisted owner-scoped session selector; never a bearer credential or its stored hash.
     Session:
       type: object
       required: [id, current, created_at, last_seen_at, expires_at]

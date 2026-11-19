@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"golang.org/x/text/feature/plural"
 	"golang.org/x/text/language"
@@ -54,4 +55,24 @@ func Text(key string, args ...any) string {
 		panic("unknown UI message: " + key)
 	}
 	return message.NewPrinter(language.English, message.Catalog(builder)).Sprintf(key, args...)
+}
+
+// Parts keeps the text surrounding one template-owned element as ordinary
+// strings. The template, not the catalogue, supplies any trusted markup.
+type Parts struct{ Before, After string }
+
+const textSlot = "\x00"
+
+// Around formats a complete sentence containing exactly one string argument.
+// It lets a template retain its existing time element while escaping both sides.
+func Around(key string) Parts {
+	return splitAround(Text(key, textSlot))
+}
+
+func splitAround(text string) Parts {
+	if strings.Count(text, textSlot) != 1 || strings.Contains(text, "%!") {
+		panic("UI message requires exactly one string slot")
+	}
+	before, after, _ := strings.Cut(text, textSlot)
+	return Parts{Before: before, After: after}
 }

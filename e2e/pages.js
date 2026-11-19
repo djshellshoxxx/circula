@@ -15,6 +15,7 @@ const PAGES = [
   ['password change', 'alice', () => '/account/password', 'password'],
   ['active sessions', 'alice', () => '/account/sessions', 'sessions'],
   ['end current session confirmation', 'alice', (st) => st.sessionRevoke, 'session_revoke'],
+  ['end other sessions confirmation', 'alice', () => '/account/sessions/revoke-others', 'sessions_revoke_others'],
   ['help (member)', 'alice', () => '/help', 'help'],
   ['invitation, signed in', 'alice', (st) => st.unusedInvite, 'join'],
 

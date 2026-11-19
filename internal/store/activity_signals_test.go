@@ -278,7 +278,7 @@ func TestSEC026SignalCounts(t *testing.T) {
 	}
 }
 
-// SEC-026: migration 0020 is additive; a database at v18 upgrades with its
+// SEC-026: migration 0022 is additive; a database at v18 upgrades with its
 // existing rows unchanged and starts with no signals.
 func TestSEC026SignalMigrationIsAdditive(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "legacy.db")

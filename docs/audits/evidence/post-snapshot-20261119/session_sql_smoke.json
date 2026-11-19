@@ -1,0 +1,95 @@
+{
+  "scope": "Python SQLite SQL/query/transaction smoke; not Go/modernc or service authorization qualification",
+  "source_commit": "f573e6b95a44095d9b0fb7a007e2cdfe161df387",
+  "sqlite": "3.53.1",
+  "migrations": [
+    "0001_init.sql",
+    "0002_hardening.sql",
+    "0003_mfa.sql",
+    "0004_recovery.sql",
+    "0005_dualcontrol.sql",
+    "0006_breakglass.sql",
+    "0007_erasure.sql",
+    "0008_notify_reports.sql",
+    "0009_overview_announcements_tz.sql",
+    "0010_announcement_supersedes.sql",
+    "0011_terms_policy_notice.sql",
+    "0012_suspension.sql",
+    "0013_person_activity.sql",
+    "0014_closure_challenges.sql",
+    "0015_balance_bound.sql",
+    "0016_dispute_deadline.sql",
+    "0017_event_order.sql",
+    "0018_adjustment_relation.sql",
+    "0019_dispute_policy_binding.sql",
+    "0020_session_public_id.sql",
+    "0021_session_unrevoked_index.sql"
+  ],
+  "session_rows": 11000,
+  "token_rows": 10000,
+  "queries": [
+    {
+      "case": "first",
+      "production_constant": "sessionListFirstSQL",
+      "sql_sha256": "2228b3df2b6a0c473e4f8f6fe9ae3d8d316c94ffd4e877fe489308856b12da55",
+      "rows": 100,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_owner_page (person_id=?)"
+      ]
+    },
+    {
+      "case": "after",
+      "production_constant": "sessionListAfterSQL",
+      "sql_sha256": "771af5f135e4664f5a59769b6b6b4f28db0dd32cc65e7827206a519bf1183122",
+      "rows": 100,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))"
+      ]
+    },
+    {
+      "case": "before",
+      "production_constant": "sessionListBeforeSQL",
+      "sql_sha256": "4006680166b39cf576140e6be57386670f6e355e8b74b49f8bfb8d6d489ccf40",
+      "rows": 100,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)>(?,?))"
+      ]
+    },
+    {
+      "case": "owned",
+      "production_constant": "sessionOwnedSQL",
+      "sql_sha256": "2c197c14f18d5074d3cf1af538dfaea770f4eaa84c9b31dda97809209b1e30a8",
+      "rows": 1,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_public_id (public_id=?)"
+      ]
+    },
+    {
+      "case": "bulk",
+      "production_constant": "sessionRevokeOthersSQL",
+      "sql_sha256": "a30771a21e71c1559b3f3aa2bb1cdf5809c64bf84d3791eef0f651fb5521ebd3",
+      "rows": null,
+      "plan": [
+        "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+        "SCALAR SUBQUERY 1",
+        "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+      ]
+    },
+    {
+      "case": "tokens",
+      "production_constant": "tokenListSQL",
+      "sql_sha256": "c8532b0d54a49dc711bf6d45a071a82a7e1c42dfe34220a6cdd08a46f404af05",
+      "rows": 100,
+      "plan": [
+        "SEARCH api_tokens USING INDEX api_tokens_person_order (person_id=?)"
+      ]
+    }
+  ],
+  "bulk_changed": 1000,
+  "rollback_preserved_state": true,
+  "repeat_changed_zero": true,
+  "current_foreign_tokens_preserved": true,
+  "foreign_or_revoked_current_guarded": true,
+  "integrity": "ok",
+  "foreign_key_violations": 0
+}

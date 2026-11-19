@@ -1,10 +1,7 @@
 package api
 
 import (
-	"strconv"
-	"strings"
-	"time"
-
+	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -30,44 +27,36 @@ func (s *server) revokeOwnSession(c *reqCtx) error {
 	return nil
 }
 
+func (s *server) revokeOtherOwnSessions(c *reqCtx) error {
+	if _, err := s.svc.RevokeOtherOwnSessions(c.r.Context(), c.actor); err != nil {
+		return err
+	}
+	c.w.WriteHeader(204)
+	return nil
+}
+
 func (s *server) listOwnSessions(c *reqCtx) error {
-	p, err := c.page("")
+	// The persisted public selector has a different ordering from the former
+	// derived selector. Old signed positions must not resume in that new order.
+	p, err := c.page("session-public-id-v2")
 	if err != nil {
 		return err
 	}
-	var afterTime time.Time
-	var afterID string
-	if p.after != "" {
-		stamp, id, ok := strings.Cut(p.after, ":")
-		millis, err := strconv.ParseInt(stamp, 10, 64)
-		if !ok || err != nil || len(id) != 64 {
+	page, err := s.svc.ListOwnSessions(c.r.Context(), c.actor, service.Page{AfterID: p.after, Limit: p.limit})
+	if err != nil {
+		if p.after != "" && domain.CodeOf(err) == domain.CodeValidation {
 			return &apiError{status: 400, code: "invalid-cursor", detail: "cursor is not valid for this request"}
 		}
-		afterTime, afterID = time.UnixMilli(millis), id
-	}
-	rows, err := s.svc.ListOwnSessions(c.r.Context(), c.actor)
-	if err != nil {
 		return err
 	}
-	var page []service.SessionInfo
-	for _, row := range rows {
-		if afterID != "" && (row.CreatedAt.After(afterTime) || row.CreatedAt.Equal(afterTime) && row.ID >= afterID) {
-			continue
-		}
-		page = append(page, row)
-		if len(page) > p.limit {
-			break
-		}
-	}
 	var next *string
-	if len(page) > p.limit {
-		page = page[:p.limit]
-		last := page[len(page)-1]
-		token := s.sealCursor(strconv.FormatInt(last.CreatedAt.UnixMilli(), 10)+":"+last.ID, p.filter)
+	if page.Next != "" {
+		// A bounded scan may have no active rows and still need continuation.
+		token := s.sealCursor(page.Next, p.filter)
 		next = &token
 	}
-	out := make([]sessionDTO, 0, len(page))
-	for _, row := range page {
+	out := make([]sessionDTO, 0, len(page.Rows))
+	for _, row := range page.Rows {
 		out = append(out, toSession(row))
 	}
 	return listOK(c, out, next)

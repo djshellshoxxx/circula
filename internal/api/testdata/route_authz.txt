@@ -87,6 +87,7 @@ api  PATCH  /api/v1/me                                   person
 api  POST   /api/v1/me/membership/departure              member
 api  POST   /api/v1/me/password                          person
 api  GET    /api/v1/me/sessions                          person
+api  POST   /api/v1/me/sessions/revoke-others            person
 api  DELETE /api/v1/me/sessions/{session}                person
 api  POST   /api/v1/me/terms/accept                      member
 api  GET    /api/v1/members                              member
@@ -118,6 +119,8 @@ web  GET    /account/recovery-codes                      person
 web  POST   /account/recovery-codes                      person
 web  GET    /account/security                            person
 web  GET    /account/sessions                            person
+web  GET    /account/sessions/revoke-others               person
+web  POST   /account/sessions/revoke-others               person
 web  GET    /account/sessions/{session}/revoke            person
 web  POST   /account/sessions/{session}/revoke            person
 web  POST   /account/security/ack                        person

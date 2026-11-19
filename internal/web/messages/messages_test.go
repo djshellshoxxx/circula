@@ -93,6 +93,8 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"example"}
 		case "setup.amount.invalid":
 			args = []any{"Default credit limit", 2, "12.50"}
+		case "freshness.snapshot", "freshness.offline", "freshness.history", "session_warning.extendable", "session_warning.fixed":
+			args = []any{"example"}
 		case "reversal.by":
 			args = []any{"ledger reference 12345", "12.50", "credits"}
 		case "queue.party_proposal":
@@ -107,6 +109,26 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{21, "Ana", 60, 20}
 		case "signals.reciprocal":
 			args = []any{11, "Ana", "Ben", 30, 10}
+		case "validation.fix.decimals":
+			args = []any{2}
+		case "validation.fix.number", "validation.refusal.insufficient_credit_available", "validation.refusal.amount_exceeds":
+			args = []any{"90071992547409.93"}
+		case "validation.refusal.blocked", "admin.reset.confirm_title", "admin.reset.for_member", "admin.reset.instructions":
+			args = []any{"example"}
+		case "validation.field.message":
+			args = []any{"Amount", "not a number", "Enter digits only, for example 12.50."}
+		case "admin.member_action.heading":
+			args = []any{"Reset password", "Zoë"}
+		case "listing.owner_price":
+			args = []any{"Zoë", "90071992547409.93", "Hours"}
+		case "listing.price":
+			args = []any{"1.00", "credit"}
+		case "listing.price_help":
+			args = []any{2, "12.50"}
+		case "listing.by_owner", "listing.edit_named", "listing.report_named", "listing.propose_about",
+			"profile.listings_by", "profile.empty", "profile.propose_with", "profile.report",
+			"directory.member_reference", "directory.propose_with":
+			args = []any{"Zoë"}
 		default:
 			if strings.HasPrefix(key, "financial.row.") {
 				args = []any{"Ana", "12.50", "credits"}
