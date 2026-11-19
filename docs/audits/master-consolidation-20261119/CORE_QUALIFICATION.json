@@ -1,0 +1,220 @@
+{
+  "source_sha": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+  "tree_sha": "ca441d471000c1ae24ca87c28255a0c467c6e2f9",
+  "code_publication_sha": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+  "toolchain": "go1.26.11 linux/amd64",
+  "checks": [
+    {
+      "name": "previous code-stage Python reference reader",
+      "command": "/usr/bin/python3 -m unittest discover -s scripts -p 'test_read_export.py'",
+      "result": "PASS",
+      "exit_code": 0,
+      "tests": 22,
+      "seconds": 9.901,
+      "evidence": "Observed complete executor output on composed source; prior reader commit 9b97bf94 also passed22 in10.662s, preserved in verification/python-export-complete-size.log",
+      "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4"
+    },
+    {
+      "name": "full Core ordinary suite at6e8f5f1; failure retained",
+      "command": "go test -count=1 -p=1 -timeout=10m ./...",
+      "result": "FAIL",
+      "exit_code": 1,
+      "log": "verification/core-final-full-test.log",
+      "limitations": "CLI process was killed; API linker and service test compiler were killed. Contract/domain/histbal/httpx/logx/repository/store/web/messages/sbom/traceability packages passed. No whole-Core pass or race pass claimed.",
+      "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4"
+    },
+    {
+      "name": "action pins and permissions",
+      "command": "scripts/check-action-pins.sh",
+      "result": "PASS",
+      "exit_code": 0,
+      "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4"
+    },
+    {
+      "name": "repository hygiene",
+      "command": "scripts/check-hygiene.sh",
+      "result": "PASS",
+      "exit_code": 0,
+      "scope": "Source tree before final evidence additions; includes four checker tests.",
+      "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4"
+    },
+    {
+      "name": "Git whitespace",
+      "command": "git diff --check",
+      "result": "PASS",
+      "exit_code": 0,
+      "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4"
+    },
+    {
+      "name": "generated traceability freshness",
+      "command": "make traceability-check",
+      "result": "FAIL",
+      "exit_code": 2,
+      "reason": "DAT-040 must add TestVerifyExportRejectsDuplicateZIPMembers. Active-worker-owned docs/TRACEABILITY.md remains unchanged; pending-traceability.patch is unapplied.",
+      "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4"
+    },
+    {
+      "name": "final composed Python manifest/ZIP reader",
+      "source_sha": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+      "command": "python3 -m unittest discover -s scripts -p 'test_read_export.py'",
+      "result": "PASS",
+      "exit_code": 0,
+      "tests": 38,
+      "seconds": 17.805,
+      "wall_seconds": 17.995,
+      "log": "verification/python-export-manifest-final-composed.log",
+      "receipt": "verification/python-export-manifest-final-composed.json",
+      "go_source_scope": "The three Go verifier blobs are identical to6e8f5f1. This does not turn its failed full-Core command into a pass."
+    }
+  ],
+  "earlier_focused_evidence": [
+    {
+      "source": "4e4d42eadf860891b54b3d6802db013b09029f2b",
+      "command": "go test -p=1 ./cmd/circula -run '^TestVerifyExport' -count=1 -timeout=2m",
+      "result": "PASS",
+      "seconds": 0.171
+    },
+    {
+      "source": "bf02b29b514a5fd0f7c8cc33aaf5d0ddb352f5ff",
+      "result": "PASS",
+      "seconds": 0.03,
+      "scope": "Expanded verifier/open-package/read-limit regressions in actual cmd/circula package; -vet=off. Exact full invocation retained by author review."
+    },
+    {
+      "source": "72ab32aec9e9f1c4a2fe15c43e5aad8c9e25165b",
+      "result": "PASS",
+      "seconds": 0.029,
+      "scope": "Composed actual Go verifier regressions with -vet=off; Go blobs identical to final6e8f5f1. Python at this earlier source had21 tests, not22."
+    },
+    {
+      "source": "9b97bf94e5bf820bd0013939e1d487635ea5ce35",
+      "result": "PASS",
+      "tests": 22,
+      "seconds": 10.662,
+      "log": "verification/python-export-complete-size.log"
+    },
+    {
+      "source": "a8c5810",
+      "result": "FAIL",
+      "log": "verification/core-integration-first-test.log",
+      "reason": "Full ordinary suite contract setup could not cache dependencies because workspace was full; passing other packages do not make this invocation a pass."
+    }
+  ],
+  "excluded_pass_claims": [
+    "Full CLI vet/race compiler kills",
+    "Full Core storage failure",
+    "Full final Core killed processes",
+    "Interrupted executor sessions",
+    "Historical checks on superseded heads",
+    "Provider jobs without completed successful conclusion"
+  ],
+  "review": "Final9e95b73 two-script delta independently reviewed after alias/constants corrections; final composed Python blobs equal that source. Three Go blobs remain identical to reviewed6e8. See REVIEW.json/.md and MANIFEST_PARITY_QUALIFICATION.md. Provider gates and normal approvals remain required.",
+  "initial_code_stage": {
+    "source_sha": "6e8f5f1473084e7a14beccb92d3db9ea547554d4",
+    "tree_sha": "f97a12c04853c298b56dec0bfde72fd0b500b722",
+    "publication_sha": "c3c991aa3c12a11edce2874e9444b9d2a99f746c"
+  },
+  "code_publication_sha_note": "The earlier code-stage SHA is preserved; the final evidence/publication identity is recorded in PR104 after guarded publication.",
+  "native_reader_local": {
+    "started_utc": "2026-11-19T12:56:51.079850+00:00",
+    "source_head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+    "python_version": "3.12.14",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "source_sha256": {
+      "scripts/read-export.py": "91721f3c6e210e1b12e9cc0591ab6b11b0fe33f62aad45699d1d417778397478",
+      "scripts/test_read_export.py": "eda4dca97b62648adb8294b9a2e0c963248ed934f13b585ca73caadceb384884",
+      ".github/workflows/export-reader.yml": "1cdd66366750d21328733a9d4ee39bc77e073cfa7b5830220740eba43fc7862d"
+    },
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "scripts",
+      "-p",
+      "test_read_export.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 17.36,
+    "finished_utc": "2026-11-19T12:57:08.446371+00:00",
+    "log_sha256": "dd5689ebf9794c988e774801c89286ae3984b3182d6eebcbc18c3de18facd1ac",
+    "source_unchanged": true
+  },
+  "native_reader_workflow_review": {
+    "reviewed_at": "2026-11-19T12:59:05.334562+00:00",
+    "reviewer": "recurring_module",
+    "base_head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+    "observed_head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+    "scope": "new standalone workflow source review; no source or report edits by reviewer",
+    "files": {
+      ".github/workflows/export-reader.yml": {
+        "sha256": "cf621519a7a3e8321c706c24220cff72d7b135e4541a7ebd357cf9061e663499",
+        "git_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198"
+      },
+      "scripts/read-export.py": {
+        "sha256": "91721f3c6e210e1b12e9cc0591ab6b11b0fe33f62aad45699d1d417778397478",
+        "git_blob": "bde02445e22e837370fe5911cdee29d2fae3a234"
+      },
+      "scripts/test_read_export.py": {
+        "sha256": "eda4dca97b62648adb8294b9a2e0c963248ed934f13b585ca73caadceb384884",
+        "git_blob": "af5d950d72b4e8f2d209bb31e393b98f619cac5d"
+      },
+      "scripts/check-action-pins.sh": {
+        "sha256": "196585b4f88956047bc8cc27b87aa9d5cce3b4d3c5bd29c92fb5f5081eff506a",
+        "git_blob": "5fa554a2c448cbf9d0194745f0093b0cf75bcb56"
+      },
+      ".github/workflows/ci.yml": {
+        "sha256": "591b45f451be765cc091344431d0876875adb3895c91d15d630af0db894094c6",
+        "git_blob": "62a97578788d0cea1449b0518208751ab6795143"
+      }
+    },
+    "outcome": "PASS within source review scope; native provider execution remains a separate gate",
+    "findings": [],
+    "resolved_finding": {
+      "initial_workflow_sha256": "1cdd66366750d21328733a9d4ee39bc77e073cfa7b5830220740eba43fc7862d",
+      "initial_command": "bash scripts/check-action-pins.sh",
+      "initial_exit_code": 1,
+      "initial_output": ".github/workflows/export-reader.yml: action actions/setup-python is not on the allowlist",
+      "resolution": "Root removed the new setup-python action and uses each hosted image existing Python interpreter. No allowlist or permission weakening; the unchanged guard now passes."
+    },
+    "verified_source_properties": [
+      "pull_request path filters include production reader, its tests and this workflow; no pull_request_target",
+      "main push uses the same paths; workflow_dispatch permits explicit qualification",
+      "contents: read only, no persisted checkout credentials, no secrets or privileged operations",
+      "checkout pinned to already allowed immutable 3d3c42e5aac5ba805825da76410c181273ba90b1; no additional actions or dependency installs",
+      "ubuntu-24.04/macOS-15-intel invoke python3, windows-2022 invokes python; all use explicit bash, fail-fast false and a five-minute job deadline",
+      "interpreter versions come from the hosted runner image and are logged with -VV; no provider Python 3.12 pin is claimed",
+      "concurrency includes PR/ref and event; only older PR runs are canceled",
+      "records actual checkout HEAD, selected Git blobs and runtime before the suite; on pull_request this is normally the synthetic merge checkout rather than merely the PR head",
+      "all 38 unittest methods are discovered through the exact test_read_export.py filename, with no new filter or skip",
+      "test source uses pathlib, TemporaryDirectory, sys.executable and isolated subprocesses with ten-second timeouts; fixtures use standard-library ZIP/CSV/JSON/bytes APIs",
+      "non-ASCII JSON fixtures are encoded as UTF-8 or escaped JSON; CSV newline behavior is controlled; no shell-specific subprocess command or symlink privilege requirement found",
+      "ZIP type assertions use explicit archive metadata and multiple creator IDs rather than assuming POSIX host behavior",
+      "existing shared ci.yml Linux unit-test command remains unchanged"
+    ],
+    "static_checks": {
+      "YAML parse": "PASS",
+      "Python AST/compile source checks": "PASS",
+      "unittest methods": 38,
+      "repository action pin/permission guard": "PASS"
+    },
+    "tests_executed_by_reviewer": [],
+    "remaining_gates": [
+      "root local execution receipt remains separate",
+      "provider execution of all three native jobs at exact published source"
+    ],
+    "provider_execution_claim": "none; source review is not a native platform pass"
+  },
+  "provider_checkpoint": {
+    "source_head": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+    "run_id": 44511241324,
+    "receipt": "CORE_PROVIDER_CHECKPOINT.json",
+    "summary": "7 jobs pass, 2 fail: generated traceability and browser dependency installation; no new-head aggregate pass"
+  },
+  "preserved_patch_whitespace": {
+    "path": "pending-traceability.patch",
+    "sha256": "59a9258c670952bb2faed2aa45ab30b76bf7d73824c034bb4ab775d9661f37ea",
+    "classification": "git diff --check reports four context-only blank lines in the exact unapplied patch artifact. Those single spaces are required unified-diff context bytes, not authored source trailing whitespace; the patch is preserved without rewriting. All other staged paths pass the whitespace check."
+  }
+}

@@ -23,6 +23,15 @@ READER = Path(__file__).with_name("read-export.py")
 EMPTY_DIGEST = hashlib.sha256(b"").hexdigest()
 
 
+def duplicate_manifest_field(data, name, earlier, alias=None):
+    """Insert a real duplicate member before its existing final value."""
+    marker = (json.dumps(name) + ": ").encode()
+    if marker not in data:
+        raise AssertionError("manifest field %s is missing" % name)
+    earlier_marker = (json.dumps(alias or name) + ": ").encode()
+    return data.replace(marker, earlier_marker + json.dumps(earlier).encode() + b", " + marker, 1)
+
+
 def fixture(scope="ledger"):
     # Greater than 2**53: a float round-trip must not silently alter money.
     amount = 9007199254740993
@@ -50,7 +59,7 @@ def fixture(scope="ledger"):
 
 class ReferenceExportTests(unittest.TestCase):
     def verify(self, man, tables, fmt="json", zipped=False, corrupt=None,
-               extra_zip_members=None, transform_package=None):
+               extra_zip_members=None, transform_package=None, transform_manifest=None):
         man = copy.deepcopy(man)
         man["format"] = fmt
         files = {}
@@ -76,7 +85,8 @@ class ReferenceExportTests(unittest.TestCase):
                          "sha256": hashlib.sha256(data).hexdigest()} for name, data in files.items()]
         if corrupt:
             corrupt(man, files)
-        files["manifest.json"] = json.dumps(man).encode()
+        manifest = json.dumps(man).encode()
+        files["manifest.json"] = transform_manifest(manifest) if transform_manifest else manifest
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp)
             if zipped:
@@ -321,6 +331,228 @@ class ReferenceExportTests(unittest.TestCase):
             with self.subTest(version=version):
                 self.assertEqual(code, 1, output)
                 self.assertNotIn("export ok:", output)
+
+    def test_manifest_file_counts_require_integer_tokens(self):
+        for field, convert in (("rows", bool), ("rows", float), ("bytes", float)):
+            for fmt in ("json", "csv"):
+                def corrupt(man, files):
+                    entry = man["files"][0]
+                    entry[field] = convert(entry[field])
+                with self.subTest(field=field, convert=convert.__name__, fmt=fmt):
+                    self.assert_invalid(*fixture("members"), fmt=fmt, corrupt=corrupt)
+        man, tables = fixture("members")
+        tables["members"] = [{"id": "member-1"}]
+        self.assert_invalid(man, tables, corrupt=lambda m, f: m["files"][0].update(rows=True))
+
+    def test_manifest_boolean_size_does_not_match_one_byte(self):
+        def corrupt(man, files):
+            entry = man["files"][0]
+            files[entry["name"]] = b"x"  # a one-field CSV header; zero data rows
+            entry.update(bytes=True, sha256=hashlib.sha256(b"x").hexdigest())
+        self.assert_invalid(*fixture("members"), fmt="csv", zipped=True, corrupt=corrupt)
+
+    def test_manifest_metadata_rejects_wrong_types(self):
+        cases = (("ledger_seq", False), ("ledger_seq", 1.0), ("ledger_seq", 1 << 63),
+                 ("decimals", True), ("decimals", 2.0), ("decimals", 1 << 63),
+                 ("scope", False), ("format", 7), ("network_id", []), ("generated_at", 0))
+        for name, value in cases:
+            with self.subTest(name=name, value=value):
+                self.assert_invalid(*fixture("members"),
+                                    corrupt=lambda m, f: m.update({name: value}))
+
+    def test_manifest_timestamps_reject_malformed_values(self):
+        for value in ("not-a-time", "2026-02-29T00:00:00Z", "2026-13-01T00:00:00Z",
+                      "2026-11-19T24:00:00Z", "2026-11-19T00:00:60Z",
+                      "2026-11-19T00:00:00", "2026-11-19 00:00:00Z",
+                      "2026-11-19T00:00:00+25:00", "2026-11-19T00:00:00+00:61",
+                      "２０２６-11-19T00:00:00Z"):
+            with self.subTest(value=value):
+                self.assert_invalid(*fixture("members"),
+                                    corrupt=lambda m, f: m.update(generated_at=value))
+
+    def test_manifest_metadata_preserves_supported_values(self):
+        for value in ("2026-11-19T12:34:56Z", "2026-11-19T12:34:56.123456789Z",
+                      "2026-11-19T12:34:56+05:30", "2026-11-19T12:34:56-03:30",
+                      "0000-02-29T00:00:00Z",
+                      # Go's time.Time decoder also accepts these legacy spellings.
+                      "2026-11-19T1:02:03,123+24:60"):
+            man, tables = fixture("members")
+            man.update(network_id="réseau-雪", decimals=2, generated_at=value)
+            tables["members"] = [{"id": "member-1", "display_name": "Élodie 雪"}]
+            with self.subTest(value=value):
+                self.assert_valid(man, tables, zipped=True)
+
+    def test_manifest_preserves_existing_missing_and_null_behavior(self):
+        # These optional metadata fields were not required by the reader, and
+        # Go's decoder accepts null for its scalar fields. Do not add presence
+        # requirements while repairing type errors.
+        self.assert_valid(*fixture("members"))
+        self.assert_valid(*fixture("members"), corrupt=lambda m, f: m.update(
+            network_id=None, decimals=None, generated_at=None, format=None, scope=None))
+        # These nulls already failed the reader's final checks.
+        for field in ("ledger_seq", "files"):
+            with self.subTest(field=field):
+                self.assert_invalid(*fixture("members"), corrupt=lambda m, f: m.update({field: None}))
+        for field in ("rows", "bytes"):
+            with self.subTest(file_field=field):
+                self.assert_invalid(*fixture("members"),
+                                    corrupt=lambda m, f: m["files"][0].update({field: None}))
+
+    def test_manifest_rejects_shadowed_type_errors(self):
+        cases = (("schema_version", True), ("rows", False), ("rows", 1 << 63),
+                 ("bytes", 0.0), ("sha256", 7), ("files", False), ("files", [True]),
+                 ("scope", False), ("format", 7), ("network_id", []), ("decimals", False),
+                 ("ledger_seq", 1.0), ("generated_at", 0), ("generated_at", "not-a-time"),
+                 ("reconciliation", False), ("entries", True), ("entry_sum", 0.0),
+                 ("balance_total", "0"), ("accounts", []), ("nonzero", True))
+        for name, earlier in cases:
+            man, tables = fixture()
+            man.update(network_id="network", decimals=2, generated_at="2026-11-19T00:00:00Z")
+            with self.subTest(name=name, earlier=earlier):
+                self.assert_invalid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+                    data, name, earlier))
+
+    def test_manifest_valid_duplicates_keep_final_values(self):
+        cases = (("schema_version", 2), ("schema_version", None), ("rows", -1),
+                 ("bytes", 99), ("sha256", "earlier string"), ("files", None),
+                 ("generated_at", "2025-01-01T00:00:00+01:00"),
+                 ("reconciliation", None), ("entries", 99), ("accounts", None), ("nonzero", 99))
+        for name, earlier in cases:
+            man, tables = fixture()
+            man["generated_at"] = "2026-11-19T00:00:00Z"
+            with self.subTest(name=name, earlier=earlier):
+                self.assert_valid(man, tables, transform_manifest=lambda data: duplicate_manifest_field(
+                    data, name, earlier))
+
+    def test_manifest_unknown_fields_remain_ignored(self):
+        man, tables = fixture()
+        man["extension"] = {"rows": False, "schema_version": True, "files": 7,
+                            "generated_at": "not-a-time", "reconciliation": {"entries": False}}
+        man["reconciliation"]["extension"] = {"nonzero": False, "sha256": 7}
+        man["reconciliation"]["accounts"]["extension"] = {"ledger_seq": False}
+        def corrupt(man, files):
+            man["files"][0]["extension"] = {"rows": False, "bytes": 0.0}
+        self.assert_valid(man, tables, corrupt=corrupt,
+                          transform_manifest=lambda data: duplicate_manifest_field(data, "extension", False))
+
+    def test_manifest_case_aliases_reject_shadowed_type_errors(self):
+        cases = (("schema_version", "SCHEMA_VERSION", True),
+                 ("ledger_seq", "LEDGER_SEQ", False), ("scope", "ſCOPE", False),
+                 ("network_id", "networK_id", []), ("decimals", "DECIMALS", False),
+                 ("format", "FORMAT", 7), ("generated_at", "GENERATED_AT", False),
+                 ("files", "FILES", False), ("name", "NAME", 7),
+                 ("rows", "ROWſ", False), ("bytes", "BYTES", 0.0),
+                 ("sha256", "SHA256", False), ("reconciliation", "RECONCILIATION", False),
+                 ("entries", "ENTRIES", True), ("entry_sum", "ENTRY_SUM", 0.0),
+                 ("balance_total", "BALANCE_TOTAL", "0"),
+                 ("accounts", "ACCOUNTS", []), ("nonzero", "NONZERO", True))
+        for name, alias, earlier in cases:
+            man, tables = fixture()
+            man.update(network_id="network", decimals=2, generated_at="2026-11-19T00:00:00Z")
+            with self.subTest(name=name, alias=alias):
+                self.assert_invalid(man, tables, zipped=True,
+                                    transform_manifest=lambda data: duplicate_manifest_field(
+                                        data, name, earlier, alias))
+
+    def test_manifest_case_aliases_apply_later_values(self):
+        cases = (("manifest", "LEDGER_SEQ", 0),
+                 ("manifest", "ſCOPE", "mine"), ("manifest", "FILES", []),
+                 ("file", "ROWS", 1), ("file", "BYTES", 0),
+                 ("file", "SHA256", "0" * 64), ("file", "NAME", "missing.json"),
+                 ("reconciliation", "ENTRIES", 0), ("reconciliation", "ENTRY_SUM", 1),
+                 ("reconciliation", "BALANCE_TOTAL", 1),
+                 ("accounts", "NONZERO", 0), ("accounts", "SHA256", "0" * 64))
+        for target, alias, later in cases:
+            def corrupt(man, files):
+                objects = {"manifest": man, "file": man["files"][0],
+                           "reconciliation": man["reconciliation"],
+                           "accounts": man["reconciliation"]["accounts"]}
+                objects[target][alias] = later
+            with self.subTest(target=target, alias=alias):
+                self.assert_invalid(*fixture(), corrupt=corrupt)
+        # Unsupported versions have their own existing diagnostic.
+        code, output = self.verify(*fixture(), corrupt=lambda m, f: m.update(SCHEMA_VERSION=2))
+        self.assertEqual(code, 1, output)
+        self.assertIn("unsupported schema_version 2", output)
+        self.assertNotIn("export ok:", output)
+
+    def test_manifest_case_aliases_accept_valid_names(self):
+        aliases = {"schema_version": "SCHEMA_VERSION", "scope": "ſCOPE",
+                   "ledger_seq": "LEDGER_SEQ", "network_id": "networK_id",
+                   "decimals": "DECIMALS", "generated_at": "GENERATED_AT",
+                   "format": "FORMAT", "files": "FILES", "name": "NAME",
+                   "rows": "ROWſ", "bytes": "BYTES", "sha256": "SHA256",
+                   "reconciliation": "RECONCILIATION", "entries": "ENTRIES",
+                   "entry_sum": "ENTRY_SUM", "balance_total": "BALANCE_TOTAL",
+                   "accounts": "ACCOUNTS", "nonzero": "NONZERO"}
+        def transform(data):
+            for name, alias in aliases.items():
+                data = data.replace((json.dumps(name) + ":").encode(),
+                                    (json.dumps(alias) + ":").encode())
+            return data
+        man, tables = fixture()
+        man.update(network_id="réseau-雪", decimals=2, generated_at="2026-11-19T12:34:56+05:30")
+        for fmt in ("json", "csv"):
+            with self.subTest(fmt=fmt):
+                self.assert_valid(man, tables, fmt=fmt, zipped=True, transform_manifest=transform)
+
+    def test_manifest_case_aliases_preserve_null_rules(self):
+        # Go ignores scalar nulls after an existing value, including when the
+        # later spelling is an alias. Slice/pointer nulls do clear the field.
+        def scalar_nulls(man, files):
+            objects = (man, man["files"][0], man["reconciliation"],
+                       man["reconciliation"]["accounts"])
+            for obj in objects:
+                for name, value in list(obj.items()):
+                    if type(value) in (str, int):
+                        obj[name.upper()] = None
+        man, tables = fixture()
+        man.update(network_id="network", decimals=2, generated_at="2026-11-19T00:00:00Z")
+        self.assert_valid(man, tables, corrupt=scalar_nulls)
+        for name in ("FILES", "RECONCILIATION", "ACCOUNTS"):
+            def corrupt(man, files):
+                target = man["reconciliation"] if name == "ACCOUNTS" else man
+                target[name] = None
+            with self.subTest(name=name):
+                self.assert_invalid(*fixture(), corrupt=corrupt)
+
+    def test_manifest_case_aliases_do_not_fold_ligatures(self):
+        # Python full casefold/upper would treat some of these as ASCII keys;
+        # Go's simple-fold matching leaves all three as unknown extensions.
+        for alias in ("ﬁles", "fıles", "fİles"):
+            with self.subTest(alias=alias):
+                self.assert_valid(*fixture("members"),
+                                  transform_manifest=lambda data: duplicate_manifest_field(
+                                      data, "files", False, alias))
+
+    def test_json_constants_rejected_in_manifest(self):
+        for value in (float("nan"), float("inf"), float("-inf")):
+            for zipped in (False, True):
+                with self.subTest(value=value, zipped=zipped):
+                    self.assert_invalid(*fixture("members"), zipped=zipped,
+                                        corrupt=lambda m, f: m.update(extension={"nested": [value]}))
+        # Valid JSON extension values and strings with those names remain valid.
+        self.assert_valid(*fixture("members"), corrupt=lambda m, f: m.update(
+            extension={"names": ["NaN", "Infinity", "-Infinity"], "finite": 1.5, "optional": None}))
+
+    def test_json_constants_rejected_in_members(self):
+        for value in (float("nan"), float("inf"), float("-inf")):
+            for nested_row in (False, True):
+                def corrupt(man, files):
+                    entry = man["files"][0]
+                    document = json.loads(files[entry["name"]])
+                    target = document["tables"]["members"][0] if nested_row else document
+                    target["extension"] = {"nested": [value]}
+                    data = json.dumps(document).encode()
+                    files[entry["name"]] = data
+                    entry.update(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
+                man, tables = fixture("members")
+                tables["members"] = [{"id": "member-1"}]
+                with self.subTest(value=value, nested_row=nested_row):
+                    self.assert_invalid(man, tables, zipped=True, corrupt=corrupt)
+        man, tables = fixture("members")
+        tables["members"] = [{"id": "member-1", "extension": ["NaN", "Infinity", "-Infinity", 1.5, None]}]
+        self.assert_valid(man, tables, zipped=True)
 
     def test_member_budget_rejects_unchecked_suffixes(self):
         spec = importlib.util.spec_from_file_location("export_reader_budget", READER)
