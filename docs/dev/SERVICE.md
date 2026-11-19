@@ -451,7 +451,7 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 // RevokeAPIToken revokes one of the caller's own tokens.
 
 func (s *Service) ListAPITokens(ctx context.Context, actor domain.Actor) ([]*domain.APIToken, error)
-// ListAPITokens lists the caller's tokens (never the secret values).
+// ListAPITokens lists at most 100 of the caller's retained tokens ordered by ID (never the secret values). The repository enforces this unpaginated read cap with the owner/order index; the HTTP adapter does not materialize an unbounded inventory.
 ```
 
 #### transactions.go

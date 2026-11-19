@@ -90,7 +90,7 @@ func (s *server) serve(c *reqCtx, rt route) error {
 	// SEC-024: reject malformed record IDs before any resource lookup or
 	// idempotent action. Keep authentication/CSRF/network failures unchanged.
 	// Only {id} is a UUID: invitation {token} and {role} have other formats.
-	// UUIDv4 adapter jobs and UUIDv7 domain records both remain supported.
+	// Legacy UUIDv4 jobs and new UUIDv7 records both remain supported.
 	if id := r.PathValue("id"); id != "" {
 		if !domain.ValidRecordID(id) {
 			return notFoundErr()

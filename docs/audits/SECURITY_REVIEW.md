@@ -1,5 +1,7 @@
 # Security and integrity review
 
+> Continuation: [2026-11-19 consolidation recovery and verification](CONSOLIDATION_CONTINUATION_2026-11-19.md) records later source changes, the complete 113-branch inventory, and current evidence boundaries. The findings below retain their original source and test scope.
+
 Review date: **2026-11-18 Pacific / 2026-11-19 UTC**. Baseline `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`; core candidate [PR #90](https://github.com/djshellshoxxx/circula/pull/90). This is an engineering review with independent AI-assisted reviewers, not the external SEC-033 release assessment.
 
 ## Core findings and repair status

@@ -3387,7 +3387,7 @@ components:
       pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$'
     Id:
       type: string
-      description: Identifier. UUIDv7 for domain records (API-005); export and consistency-run identifiers are generated as UUIDv4 as built.
+      description: UUIDv7 identifier for newly allocated records and adapter jobs (API-005). Existing identifiers, including legacy UUIDv4 jobs, remain valid and are not rewritten.
     NetworkStatus: {type: string, enum: [setup, active, closing, closed], description: 'closing is derived: the closure date has passed and the closure is finishing (GOV-025). Trading is already frozen.'}
     JoinMode: {type: string, enum: [invite, approval, open]}
     DepartureRule: {type: string, enum: [retain, settle-to-zero]}
@@ -3997,7 +3997,7 @@ components:
       required: [id, scope, format, status, created_at, expires_at, sha256, bytes, artefact_url, error]
       additionalProperties: false
       properties:
-        id: {type: string, description: UUIDv4 as built.}
+        id: {$ref: '#/components/schemas/Id'}
         scope: {type: string, enum: [mine, ledger, members, audit, full]}
         format: {type: string, enum: [csv, json]}
         status: {type: string, enum: [complete], description: "Only complete as built. Spec 065 also lists queued, running and failed (see spec 07 section 12)."}

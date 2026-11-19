@@ -267,8 +267,10 @@ func (t *txImpl) RevokeToken(personID, id string, at time.Time) (bool, error) {
 	return n > 0, nil
 }
 
+const tokenListSQL = `SELECT ` + tokenCols + ` FROM api_tokens WHERE person_id = ? ORDER BY id LIMIT 100`
+
 func (t *txImpl) ListTokens(personID string) ([]*domain.APIToken, error) {
-	rows, err := t.query(`SELECT `+tokenCols+` FROM api_tokens WHERE person_id = ? ORDER BY id LIMIT 100`, personID)
+	rows, err := t.query(tokenListSQL, personID)
 	if err != nil {
 		return nil, err
 	}
