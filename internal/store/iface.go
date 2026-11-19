@@ -9,6 +9,7 @@ type (
 	Tx              = repository.Tx
 	NetworkRepo     = repository.NetworkRepo
 	PersonRepo      = repository.PersonRepo
+	SessionPosition = repository.SessionPosition
 	MemberFilter    = repository.MemberFilter
 	MemberRepo      = repository.MemberRepo
 	AccountRepo     = repository.AccountRepo

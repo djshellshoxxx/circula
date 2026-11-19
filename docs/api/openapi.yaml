@@ -365,12 +365,16 @@ paths:
       description: |
         Session cookie only; bearer API tokens receive 403. Does not resolve a network.
         Returns the caller's active sessions, newest first, using current role-specific
-        idle and absolute timeouts. Each ID is a one-way public selector, never a bearer
+        idle and absolute timeouts. Each ID is a random persisted public selector, never a bearer
         value or the stored session hash. expires_at is the current earliest expiry;
         later activity can extend an idle timeout. No device or IP information is collected.
         Pagination remains valid when the session at the page boundary is revoked.
-        Response pages are bounded; this version scans all retained sessions of the caller
-        before filtering and paging. It does not impose a per-person session-count limit.
+        Pages default to 25 and allow at most 100 active sessions. Each request uses at most
+        20 indexed keyset reads of 100 retained rows before applying the existing expiry
+        rules. An empty data array may therefore have a non-null next_cursor; continue until
+        next_cursor is null. This work bound does not impose a per-person session-count limit.
+        Cursors issued before the persisted-selector migration receive 400 invalid-cursor;
+        restart the listing without a cursor. Session credentials and their lifetimes are unchanged.
       security:
         - cookieAuth: []
       parameters:
@@ -4006,7 +4010,7 @@ components:
     SessionSelector:
       type: string
       pattern: '^[0-9a-f]{64}$'
-      description: One-way owner-scoped session selector; never a bearer credential or its stored hash.
+      description: Random persisted owner-scoped session selector; never a bearer credential or its stored hash.
     Session:
       type: object
       required: [id, current, created_at, last_seen_at, expires_at]

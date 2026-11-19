@@ -1,14 +1,22 @@
 package api_test
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/djshellshoxxx/circula/internal/api"
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 type ownSessionView struct {
@@ -158,4 +166,61 @@ func TestOwnSessionsAPIPaginationSurvivesBoundaryRevocation(t *testing.T) {
 	if len(seen) != 5 {
 		t.Fatalf("pagination lost sessions after boundary revocation: %d", len(seen))
 	}
+}
+
+// API-036: an empty response at the bounded scan limit is not the end of the
+// inventory. The adapter must carry the service continuation without rescanning.
+func TestOwnSessionsAPIContinuesAfterEmptyFilteredPage(t *testing.T) {
+	w := newWorld(t)
+	raw, actor := apiSession(t, w, "alice")
+	w.env.Clock.Advance(time.Millisecond)
+	created := w.env.Clock.Now()
+	if err := w.env.Store.Update(w.env.Ctx, func(tx store.Tx) error {
+		for i := 0; i < 2000; i++ {
+			if err := tx.InsertSession(&domain.Session{IDHash: fmt.Sprintf("%064x", i+1), PersonID: actor.PersonID,
+				CreatedAt: created, LastSeenAt: created, ExpiresAt: created.Add(time.Millisecond)}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
+	}
+	w.env.Clock.Advance(time.Millisecond)
+	r := sessionRequest(w, raw, "GET", "/me/sessions", false)
+	if r.Code != http.StatusOK {
+		t.Fatalf("bounded page: %d %s", r.Code, r.Body.String())
+	}
+	first := decode[ownSessionPage](t, r)
+	if len(first.Data) != 0 || first.NextCursor == nil {
+		t.Fatalf("expired scan window must retain continuation: %+v", first)
+	}
+	r = sessionRequest(w, raw, "GET", "/me/sessions?cursor="+url.QueryEscape(*first.NextCursor), false)
+	if r.Code != http.StatusOK {
+		t.Fatalf("continuation: %d %s", r.Code, r.Body.String())
+	}
+	last := decode[ownSessionPage](t, r)
+	if len(last.Data) != 1 || !last.Data[0].Current || last.NextCursor != nil {
+		t.Fatalf("older current session was lost behind expired rows: %+v", last)
+	}
+}
+
+// API-035: a correctly signed cursor for the former derived-selector order
+// must not be accepted after migration to random persisted public selectors.
+func TestOwnSessionsAPIRejectsLegacyCursorOrder(t *testing.T) {
+	key := []byte(strings.Repeat("k", 32))
+	w := newWorldOpts(t, api.Options{CSRFKey: testCSRFKey, CursorKey: key})
+	raw, actor := apiSession(t, w, "alice")
+	payload, err := json.Marshal(map[string]string{
+		"p": "0:" + strings.Repeat("a", 64),
+		"f": "/api/v1/me/sessions||" + actor.PersonID + "|",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	mac := hmac.New(sha256.New, key)
+	_, _ = mac.Write(payload)
+	token := base64.RawURLEncoding.EncodeToString(payload) + "." + base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
+	wantProblem(t, sessionRequest(w, raw, "GET", "/me/sessions?cursor="+url.QueryEscape(token), false),
+		http.StatusBadRequest, "invalid-cursor")
 }
