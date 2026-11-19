@@ -7,7 +7,7 @@ The owner authorized independent future-feature development on 2026-11-16, while
 ## Isolation contract
 
 - Branch: `future/fnet-207-recurring-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
-- Only `future/recurring/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
+- Feature implementation remains entirely inside `future/recurring/`. The dedicated `.github/workflows/future-recurring.yml` checks this isolated module. No application imports, routes, migrations, root dependencies, feature flags, existing workflows, runtime jobs or configuration are changed.
 - This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
 - No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
 - Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
@@ -57,6 +57,8 @@ go test -run '^$' -fuzz '^FuzzScheduleInvariants$' -fuzztime=100000x -parallel=2
 ```
 
 Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. These tests qualify the stated core milestone, not the full roadmap feature, production behavior, browser accessibility, or Circula's release.
+
+The dedicated provider workflow verifies the disabled/HOLD manifest, standard-library-only module boundary, Go formatting, vet, race regressions and 100,000 fuzz executions. Its job and fuzz process have hard time limits. Provider results must be checked at the exact publication head before consolidation; local results do not replace that gate.
 
 ## Later integration, one feature at a time
 

@@ -1,6 +1,6 @@
 # Validation record — 2026-11-19
 
-Source baseline: `0437e54897c6d9cfb3f2577807b82dd038493850`, branch `future/fnet-207-recurring-20261116`. The calendar completion changes are confined to `future/recurring/`. The module remains disabled and on integration HOLD; no root application file, shared migration, CI workflow or other future module was modified.
+Source baseline: `0437e54897c6d9cfb3f2577807b82dd038493850`, branch `future/fnet-207-recurring-20261116`. The calendar completion changes are confined to `future/recurring/`. A follow-up adds only the dedicated `.github/workflows/future-recurring.yml` qualification workflow. The module remains disabled and on integration HOLD; no root application file, shared migration, existing CI workflow or other future module was modified.
 
 Toolchain: `go version go1.26.11 linux/amd64`, standard library only. Commands ran inside the nested module with `GOTOOLCHAIN=local` and `GOMAXPROCS=2`.
 
@@ -16,6 +16,14 @@ Toolchain: `go version go1.26.11 linux/amd64`, standard library only. Commands r
 | Parse `feature.json` and check disabled/HOLD/no future dependencies | PASS |
 
 The measured elapsed times include this execution environment and are not throughput or latency guarantees. Fuzzing used an execution budget and hard timeout; no blocked, killed or timed-out attempt is included as a pass.
+
+### Resumed current-source verification and provider qualification
+
+The seven-file calendar implementation was committed locally as `4b26004065ff669143a985dcd0b3dab99e7099f3`, tree `6aa59de50d2f75f8182b8fa936eb48e78b0bc391`. A subsequent executor outage interrupted a repeat verification pipeline before it produced results; that attempt is not a pass. After access resumed, the actual commit and files were recovered unchanged. No source reconstruction was used.
+
+At that exact recovered commit, `go test -race -count=1 -cover -timeout=30s ./...` passed again in 1.483 seconds at 94.4% coverage, followed by a successful `go vet ./...`. The dedicated workflow and these documentation notes are the only follow-up changes. Its YAML, shell blocks and embedded Python compile checks pass, as does the repository action-pin/permission checker.
+
+The dedicated workflow retains `contents: read`, pinned existing checkout/setup-go actions, no persisted checkout credentials, a 10-minute job limit and a 100,000-execution fuzz budget with both Go and outer process deadlines. It checks the disabled/HOLD and standard-library-only boundary explicitly. All provider checks and independent review must be evaluated against the final published commit; no remote success is inferred from the local source results above.
 
 ## Regressions and calendar acceptance
 
@@ -41,7 +49,9 @@ The independent minute oracle found an intermediate resolver defect at the leap-
 
 No third-party source or dependency was added. The original `Template` layout, `Due` signature and valid daily key encoding remain unchanged. `DueWithSchedule` adds explicit daily/weekly/monthly rules. Previously accepted invalid UTF-8 identities and `Local` zones now fail validation; there is no silent normalization or host-dependent fallback.
 
-These are tests of pure calendar computation using trusted adapter snapshots. They do not establish durable firing uniqueness, fresh production authorization, quota/retention policy, atomic reminder writes, crash recovery, browser accessibility, CLI usability, source transaction integration or release readiness. Persistent service work and those acceptance gates remain open. The user must still select and approve future Core integration; `enabled: false` and `integration: HOLD` are preserved. A fresh independent source review is required before publication or consolidation.
+These are tests of pure calendar computation using trusted adapter snapshots. They do not establish durable firing uniqueness, fresh production authorization, quota/retention policy, atomic reminder writes, crash recovery, browser accessibility, CLI usability, source transaction integration or release readiness. Persistent service work and those acceptance gates remain open. The user must still select and approve future Core integration; `enabled: false` and `integration: HOLD` are preserved.
+
+An independent reviewer inspected the complete seven-file diff at `4b26004065ff669143a985dcd0b3dab99e7099f3` against `0437e54897c6d9cfb3f2577807b82dd038493850`, plus the new dedicated workflow, and found no blocking source or workflow issue. The review covered daily API/key compatibility, interval resolution, DST/calendar semantics, identity validation, oracle independence and workflow permissions/time bounds. It does not substitute for provider execution at the published head. All observed local execution is Linux-only; no Windows or macOS module pass is inferred.
 
 ## Historical validation record — 2026-11-16
 
