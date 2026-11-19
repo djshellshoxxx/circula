@@ -52,6 +52,9 @@ func (s *server) wrap(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), keyReqID, id)
 		defer func() {
 			if rec := recover(); rec != nil {
+				if rec == http.ErrAbortHandler {
+					panic(rec)
+				}
 				s.log.Error("web panic", "request_id", id, "panic", rec)
 				s.renderError(w, r.WithContext(ctx), http.StatusInternalServerError)
 			}

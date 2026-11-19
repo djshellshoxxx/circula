@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:15:49.711849035-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/analytics"}
+{"Time":"2026-11-19T02:15:49.838789302-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/analytics","Test":"TestAggregationSuppressionAndOverflow"}
+{"Time":"2026-11-19T02:15:49.838843283-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/analytics","Test":"TestAggregationSuppressionAndOverflow","Output":"=== RUN   TestAggregationSuppressionAndOverflow\n"}
+{"Time":"2026-11-19T02:15:49.838897585-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/analytics","Test":"TestAggregationSuppressionAndOverflow","Output":"--- PASS: TestAggregationSuppressionAndOverflow (0.00s)\n"}
+{"Time":"2026-11-19T02:15:49.838904528-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/analytics","Test":"TestAggregationSuppressionAndOverflow","Elapsed":0}
+{"Time":"2026-11-19T02:15:49.838914276-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/analytics","Output":"PASS\n"}
+{"Time":"2026-11-19T02:15:50.895148157-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/analytics","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/analytics\t1.174s\n"}
+{"Time":"2026-11-19T02:15:50.895200846-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/analytics","Elapsed":1.183}

@@ -14,6 +14,14 @@ import (
 // Cursors are opaque, HMAC-signed and bound to the route, network, caller and
 // filters that produced them (API-034, API-035).
 
+// Bound attacker-controlled decoding before allocating a payload or computing
+// its MAC. Position values currently contain at most 85 ASCII bytes; reserve
+// 256 encoded bytes when validating filters so every issued page can resume.
+const (
+	maxCursorBytes        = 4096
+	cursorPositionReserve = 256
+)
+
 type cursorBody struct {
 	P string `json:"p"` // position: last id or sequence
 	F string `json:"f"` // filter fingerprint
@@ -32,13 +40,17 @@ func (s *server) sealCursor(pos, filter string) string {
 
 func (s *server) openCursor(tok, filter string) (string, error) {
 	bad := &apiError{status: 400, code: "invalid-cursor", detail: "cursor is not valid for this request"}
+	if len(tok) > maxCursorBytes {
+		return "", bad
+	}
 	a, b, ok := strings.Cut(tok, ".")
-	if !ok {
+	if !ok || len(b) != base64.RawURLEncoding.EncodedLen(sha256.Size) {
 		return "", bad
 	}
 	payload, err1 := base64.RawURLEncoding.DecodeString(a)
 	sig, err2 := base64.RawURLEncoding.DecodeString(b)
-	if err1 != nil || err2 != nil || !hmac.Equal(sig, s.mac(payload)) {
+	if err1 != nil || err2 != nil || base64.RawURLEncoding.EncodeToString(payload) != a ||
+		base64.RawURLEncoding.EncodeToString(sig) != b || !hmac.Equal(sig, s.mac(payload)) {
 		return "", bad
 	}
 	var cb cursorBody
@@ -46,6 +58,17 @@ func (s *server) openCursor(tok, filter string) (string, error) {
 		return "", bad
 	}
 	return cb.P, nil
+}
+
+func cursorFilterFits(filter string) bool {
+	if len(filter) > maxCursorBytes {
+		return false
+	}
+	// JSON escaping can expand a query filter. Check its encoded size, not
+	// only its raw byte count, before the handler performs any listing query.
+	body, _ := json.Marshal(cursorBody{F: filter})
+	return base64.RawURLEncoding.EncodedLen(len(body)+cursorPositionReserve)+1+
+		base64.RawURLEncoding.EncodedLen(sha256.Size) <= maxCursorBytes
 }
 
 // pageReq is the parsed limit/cursor of a list request.
@@ -63,6 +86,9 @@ func (c *reqCtx) page(filter string) (pageReq, error) {
 		return pageReq{}, err
 	}
 	f := c.r.URL.Path + "|" + c.netID + "|" + c.actor.PersonID + "|" + filter
+	if !cursorFilterFits(f) {
+		return pageReq{}, invalidQuery("pagination filters are too long")
+	}
 	p := pageReq{limit: n, filter: f}
 	if tok := c.query.Get("cursor"); tok != "" {
 		if p.after, err = c.s.openCursor(tok, f); err != nil {

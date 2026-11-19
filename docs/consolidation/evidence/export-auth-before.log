@@ -1,0 +1,93 @@
+go: downloading golang.org/x/crypto v0.59.0
+go: downloading golang.org/x/text v0.44.0
+--- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot (1.58s)
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/demoted_to_reviewer (0.06s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 5 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/suspended (0.08s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 5 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/removed (0.07s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 5 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/demoted_to_reviewer (0.05s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/suspended (0.06s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/removed (0.05s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/demoted_to_reviewer (0.05s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 3 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/suspended (0.05s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 3 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/removed (0.04s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 3 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/members/json/demoted_to_reviewer (0.07s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/members/json/suspended (0.08s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/members/json/removed (0.10s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/demoted_to_reviewer (0.12s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/suspended (0.04s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/removed (0.07s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/demoted_to_reviewer (0.07s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/suspended (0.06s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/removed (0.05s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/demoted_to_reviewer (0.04s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 11 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/suspended (0.07s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 11 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/removed (0.08s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 11 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/full/json/demoted_to_reviewer (0.06s)
+        export_authorization_test.go:81: export after demoted to reviewer = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/full/json/suspended (0.06s)
+        export_authorization_test.go:81: export after suspended = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+    --- FAIL: TestExportRechecksNetworkAuthorityAtSnapshot/full/json/removed (0.07s)
+        export_authorization_test.go:81: export after removed = <nil>, want forbidden
+        export_authorization_test.go:84: refused export created manifest true and 2 files
+--- FAIL: TestExportRefusesErasedMembership (0.24s)
+    --- FAIL: TestExportRefusesErasedMembership/csv/before_admission (0.06s)
+        export_authorization_test.go:123: export of erased membership = <nil>, want forbidden
+        export_authorization_test.go:126: refused export created manifest true and 3 files
+        export_authorization_test.go:137: export audit events = 1, want 0
+    --- FAIL: TestExportRefusesErasedMembership/csv/before_snapshot (0.06s)
+        export_authorization_test.go:123: export of erased membership = <nil>, want forbidden
+        export_authorization_test.go:126: refused export created manifest true and 3 files
+    --- FAIL: TestExportRefusesErasedMembership/json/before_admission (0.06s)
+        export_authorization_test.go:123: export of erased membership = <nil>, want forbidden
+        export_authorization_test.go:126: refused export created manifest true and 2 files
+        export_authorization_test.go:137: export audit events = 1, want 0
+    --- FAIL: TestExportRefusesErasedMembership/json/before_snapshot (0.06s)
+        export_authorization_test.go:123: export of erased membership = <nil>, want forbidden
+        export_authorization_test.go:126: refused export created manifest true and 2 files
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	1.940s
+FAIL

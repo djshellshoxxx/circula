@@ -1,0 +1,11 @@
+{{define "content"}}
+<p>{{msg "sessions.bulk_consequence"}}</p>
+<form method="post" action="/account/sessions/revoke-others" novalidate>
+  {{template "csrf" .}}
+  <div class="field radio">
+    <label for="f-confirm"><input type="checkbox" id="f-confirm" name="confirm" value="yes" required{{if .Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> {{msg "sessions.bulk_confirm"}}</label>
+    {{if .Err "confirm"}}<p class="field-error" id="e-confirm">{{.Err "confirm"}}</p>{{end}}
+  </div>
+  <div class="actions"><button type="submit">{{msg "sessions.bulk_link"}}</button> <a href="/account/sessions">{{msg "sessions.bulk_cancel"}}</a></div>
+</form>
+{{end}}

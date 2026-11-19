@@ -5,6 +5,8 @@ Directory: `e2e/`. Runner: Playwright Test 1.63.0 with axe-core 4.13.0 (exact ve
 (`/opt/pw-browsers/chromium-1194/chrome-linux/chrome` by default; override with `CHROMIUM_PATH`). No browser is
 downloaded: `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` is set by `make e2e-install`.
 
+`tests/sessions.spec.js` runs the actual server with its own temporary database and separate owner/other/foreign browser cookies. With page JavaScript disabled, it follows Previous and Next, confirms an older session outside page one, rejects a foreign selector and invalid CSRF, exercises individual and bulk confirmation errors, signs out other browsers while preserving the current browser, and finally signs out the current browser. Session confirmation templates also participate in the shared axe and target-size inventory. Browser results are reported only after this suite executes successfully; adding the test does not establish a pass.
+
 ## Run
 
 ```
