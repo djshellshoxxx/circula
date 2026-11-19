@@ -79,9 +79,11 @@ func (c *storageFaultConn) QueryContext(ctx context.Context, query string, args 
 		fault := c.faults.migrationRead
 		c.faults.migrationRead = nil
 		c.faults.mu.Unlock()
-		if fault != nil {
-			return &storageFaultRows{Rows: rows, err: fault}, nil
+		if fault == nil {
+			return rows, nil
 		}
+		// The metadata read fault is deferred until Rows.Next, after one row.
+		return &storageFaultRows{Rows: rows, err: fault}, nil
 	}
 	return rows, nil
 }
