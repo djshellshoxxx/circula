@@ -34,3 +34,22 @@ func TestDisputeMessagesPreserveDataAndPostingState(t *testing.T) {
 		}
 	}
 }
+
+// UX-047: precision is a count, while confirmation refusal is a complete
+// message; neither changes the financial or proof-validation contract.
+func TestDisputeValidationMessages(t *testing.T) {
+	for _, tc := range []struct {
+		decimals int
+		places   string
+	}{{0, "0 decimal places"}, {1, "1 decimal place"}, {4, "4 decimal places"}} {
+		if got, want := Text("dispute.amount_invalid", tc.decimals), "enter the amount to reverse, with up to "+tc.places; got != want {
+			t.Errorf("precision %d: got %q, want %q", tc.decimals, got, want)
+		}
+		if got, want := Text("dispute.amount_hint", tc.decimals), "Amount in credits, up to "+tc.places+"."; got != want {
+			t.Errorf("hint %d: got %q, want %q", tc.decimals, got, want)
+		}
+	}
+	if got, want := Text("dispute.review_again"), "review this decision again before confirming; nothing changed"; got != want {
+		t.Errorf("confirmation refusal: got %q, want %q", got, want)
+	}
+}

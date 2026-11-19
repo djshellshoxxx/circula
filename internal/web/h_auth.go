@@ -416,7 +416,7 @@ func (s *server) joinNetPost(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 func (s *server) help(w http.ResponseWriter, r *http.Request) {
-	s.render(w, r, nil, "help", 200, &page{Title: "Help: credits, balances and statuses"})
+	s.render(w, r, nil, "help", 200, &page{Title: messages.Text("help.title")})
 }
 
 // secretEqual compares two secrets in constant time regardless of length.

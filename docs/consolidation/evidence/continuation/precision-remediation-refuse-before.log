@@ -1,0 +1,21 @@
+Baseline 0daa4d6a9553ef05854915bbf2ae1d27b39906a6 / production 0492d798
+GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40; default vet enabled
+Command: /workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/extra.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/format.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_account.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_account_f2.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin2.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin_f2.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin_network.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_audit_scoped.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_auth.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_breakglass.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_dispute_decide.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_dispute_review.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_disputes.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_dualcontrol.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_erasure.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_gov.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_home.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_inactive.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_notify.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_recover.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_rereview_decide.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_security.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_sessions.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_trade_act.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_trades.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/histbal_view.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/middleware.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/ratelimit.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/refusal.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/render.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/session.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/web.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/refusal_precision_catalog_test.go -run ^TestRefusePrecisionCatalogue$ -count=1 -v
+=== RUN   TestRefusePrecisionCatalogue
+=== RUN   TestRefusePrecisionCatalogue/0
+=== RUN   TestRefusePrecisionCatalogue/1
+    refusal_precision_catalog_test.go:27: got "Amount: enter the amount to reverse, with up to 1 decimal place. Check the value and try again.", want "Amount: enter the amount to reverse, with up to 1 decimal place. Use at most 1 decimal place and try again."
+=== RUN   TestRefusePrecisionCatalogue/4
+=== RUN   TestRefusePrecisionCatalogue/missing_context
+=== RUN   TestRefusePrecisionCatalogue/missing_network
+--- FAIL: TestRefusePrecisionCatalogue (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/0 (0.00s)
+    --- FAIL: TestRefusePrecisionCatalogue/1 (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/4 (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/missing_context (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/missing_network (0.00s)
+FAIL
+FAIL	command-line-arguments	0.010s
+FAIL
+
+Exit: 1

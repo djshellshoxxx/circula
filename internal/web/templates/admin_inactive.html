@@ -1,19 +1,19 @@
 {{define "content"}}
 {{if not .D.Days}}
-<p>This network has no inactivity rule. You can set one in the <a href="/n/{{.Slug}}/admin/policy">policy</a>.</p>
+{{$policy := msgAround "admin.inactive.no_rule"}}<p>{{$policy.Before}}<a href="/n/{{.Slug}}/admin/policy">{{msg "admin.inactive.policy"}}</a>{{$policy.After}}</p>
 {{else}}
-<p>Members with no sign-in and no trade for {{.D.Days}} days. They have been told in their inbox. They are still members: nothing is removed or suspended automatically. Decide on each one yourself.</p>
+<p>{{msg "admin.inactive.explanation" .D.Days}}</p>
 {{if .D.Rows}}
-<div class="scroll" role="region" aria-label="Inactive members table" tabindex="0">
+<div class="scroll" role="region" aria-label="{{msg "admin.inactive.table_label"}}" tabindex="0">
 <table class="stack">
-<caption>Inactive members of {{.NetName}}</caption>
-<thead><tr><th scope="col">Name</th><th scope="col">Joined</th><th scope="col">Actions</th></tr></thead>
+<caption>{{msg "admin.inactive.caption" .NetName}}</caption>
+<thead><tr><th scope="col">{{msg "validation.label.name"}}</th><th scope="col">{{msg "admin.inactive.joined"}}</th><th scope="col">{{msg "admin.members.actions"}}</th></tr></thead>
 <tbody>{{range .D.Rows}}<tr>
-  <th scope="row" data-label="Name">{{.DisplayName}}</th>
-  <td data-label="Joined">{{.JoinedAt.Format "2006-01-02"}}</td>
-  <td data-label="Actions">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}">{{.Label}}<span class="sr"> {{$m.DisplayName}}</span></a> {{end}}</td>
+  <th scope="row" data-label="{{msg "validation.label.name"}}">{{.DisplayName}}</th>
+  <td data-label="{{msg "admin.inactive.joined"}}">{{.JoinedAt.Format "2006-01-02"}}</td>
+  <td data-label="{{msg "admin.members.actions"}}">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}" aria-label="{{msg "admin.members.action_for" .Label $m.DisplayName}}">{{.Label}}</a> {{end}}</td>
 </tr>{{end}}</tbody></table></div>
-{{else}}<p>No member is flagged as inactive.</p>{{end}}
+{{else}}<p>{{msg "admin.inactive.empty"}}</p>{{end}}
 {{end}}
-<p><a href="/n/{{.Slug}}/admin/members">Back to members</a></p>
+<p><a href="/n/{{.Slug}}/admin/members">{{msg "admin.inactive.back"}}</a></p>
 {{end}}

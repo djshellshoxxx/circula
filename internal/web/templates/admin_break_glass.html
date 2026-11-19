@@ -1,10 +1,10 @@
 {{define "content"}}
-<p>Platform staff may reach this network's data or rights only through a break-glass session. Every session is listed here with its reason. A session lasts at most four hours. You cannot open or close sessions from this page.</p>
+<p>{{msg "admin.break_glass.explanation"}}</p>
 {{if .D.Rows}}
-<div class="scroll" role="region" aria-label="Operator access table" tabindex="0">
-<table class="stack"><caption>Operator access sessions, newest first</caption>
-<thead><tr><th scope="col">Operator</th><th scope="col">Status</th><th scope="col">Opened</th><th scope="col">Expires</th><th scope="col">Closed</th><th scope="col">Reason</th></tr></thead>
-<tbody>{{range .D.Rows}}<tr><th scope="row" data-label="Operator">{{.Operator}}</th><td data-label="Status">{{.Status}}</td><td data-label="Opened">{{.Opened}}</td><td data-label="Expires">{{.Expires}}</td><td data-label="Closed">{{if .Closed}}{{.Closed}}{{if .ClosedReason}} ({{.ClosedReason}}){{end}}{{else}}Not closed{{end}}</td><td data-label="Reason">{{.Reason}}</td></tr>{{end}}</tbody></table></div>
+<div class="scroll" role="region" aria-label="{{msg "admin.break_glass.table"}}" tabindex="0">
+<table class="stack"><caption>{{msg "admin.break_glass.caption"}}</caption>
+<thead><tr><th scope="col">{{msg "admin.break_glass.operator"}}</th><th scope="col">{{msg "admin.break_glass.status"}}</th><th scope="col">{{msg "admin.break_glass.opened"}}</th><th scope="col">{{msg "admin.break_glass.expires"}}</th><th scope="col">{{msg "admin.break_glass.closed"}}</th><th scope="col">{{msg "admin.break_glass.reason"}}</th></tr></thead>
+<tbody>{{range .D.Rows}}<tr><th scope="row" data-label="{{msg "admin.break_glass.operator"}}">{{.Operator}}</th><td data-label="{{msg "admin.break_glass.status"}}">{{.Status}}</td><td data-label="{{msg "admin.break_glass.opened"}}">{{.Opened}}</td><td data-label="{{msg "admin.break_glass.expires"}}">{{.Expires}}</td><td data-label="{{msg "admin.break_glass.closed"}}">{{if .Closed}}{{if .ClosedReason}}{{$closed := msgAroundTwo "admin.break_glass.closed_with_reason"}}{{$closed.Before}}{{.Closed}}{{$closed.Between}}{{.ClosedReason}}{{$closed.After}}{{else}}{{.Closed}}{{end}}{{else}}{{msg "admin.break_glass.not_closed"}}{{end}}</td><td data-label="{{msg "admin.break_glass.reason"}}">{{.Reason}}</td></tr>{{end}}</tbody></table></div>
 {{template "pager" dict "Next" .D.Next "Href" (printf "/n/%s/admin/break-glass?after=" .Slug)}}
-{{else}}<p>No operator access has been recorded for this network.</p>{{end}}
+{{else}}<p>{{msg "admin.break_glass.empty"}}</p>{{end}}
 {{end}}

@@ -126,7 +126,7 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 	d.Notices = c.announcementRows()
 	recent, rerr := s.svc.ListTransactions(r.Context(), c.actor, c.netID(), nil, service.Page{Limit: 30})
 	if perr != nil || rerr != nil {
-		d.Err = "Your recent activity could not be loaded just now. The figures above are current as of this page load; reload to try again."
+		d.Err = messages.Text("home.activity_unavailable")
 	}
 	n := c.memberNames()
 	for _, t := range pending {
@@ -143,7 +143,7 @@ func (s *server) dashboard(w http.ResponseWriter, r *http.Request, c *rc) {
 			d.Recent = append(d.Recent, row)
 		}
 	}
-	s.render(w, r, c, "dashboard", 200, &page{Title: "Home", D: d, Warn: c.limitNotice()})
+	s.render(w, r, c, "dashboard", 200, &page{Title: messages.Text("navigation.home"), D: d, Warn: c.limitNotice()})
 }
 
 type historyData struct {
@@ -173,7 +173,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if _, asked := r.URL.Query()["at"]; asked && hb.Raw == "" {
-		hb.FieldError = histbal.ReasonMissing // submitted blank: say so rather than show the bare form
+		hb.FieldError = histBalanceReason(histbal.ReasonMissing) // submitted blank: say so rather than show the bare form
 	}
 	n := c.memberNames()
 	h := &historyData{Filter: f, HistBal: hb}

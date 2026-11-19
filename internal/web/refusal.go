@@ -145,7 +145,7 @@ func (c *rc) fieldFix(f domain.FieldError) string {
 		return messages.Text("validation.fix.control_characters")
 	case strings.Contains(d, "choose another"):
 		return messages.Text("validation.fix.different")
-	case strings.Contains(d, "decimal places") && c != nil && c.Net != nil:
+	case strings.Contains(d, "decimal place") && c != nil && c.Net != nil:
 		return messages.Text("validation.fix.decimals", c.Net.Policy.Decimals)
 	case strings.Contains(d, "not a number") && c != nil && c.Net != nil:
 		return messages.Text("validation.fix.number", domain.FormatAmount(1250, c.Net.Policy.Decimals))

@@ -2,9 +2,11 @@
 
 ## Current continuation
 
-Current integration authority, completed source, exact verification results,
-remaining work and next actions are recorded in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
-Main remains `ead63b5`; this owned continuation targets PR #90 at `9924785`.
+Current integration authority, completed source, verification boundaries and next
+actions are recorded in [CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md).
+The first frozen batch is retained in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
+Main remains last observed at `ead63b5`; PR #109 at `5db3efc` targets PR #90
+at `839e869`. The separate second UI continuation preserves those source refs.
 The snapshot below is the historical initial recovery record.
 
 ## Historical initial-recovery checkpoint

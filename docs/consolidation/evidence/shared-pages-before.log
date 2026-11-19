@@ -1,0 +1,32 @@
+--- FAIL: TestSharedPagesCatalogueMessages (0.00s)
+    --- FAIL: TestSharedPagesCatalogueMessages/error.fallback.internal (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: error.fallback.internal
+    --- FAIL: TestSharedPagesCatalogueMessages/error.fallback.reference (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: error.fallback.reference
+    --- FAIL: TestSharedPagesCatalogueMessages/error.reference (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: error.reference
+    --- FAIL: TestSharedPagesCatalogueMessages/error.not_found.body (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: error.not_found.body
+    --- FAIL: TestSharedPagesCatalogueMessages/error.internal.body (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: error.internal.body
+    --- FAIL: TestSharedPagesCatalogueMessages/notice.terms_changed (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: notice.terms_changed
+    --- FAIL: TestSharedPagesCatalogueMessages/notice.membership_pending.body (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: notice.membership_pending.body
+    --- FAIL: TestSharedPagesCatalogueMessages/notice.credit_limit_used (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: notice.credit_limit_used
+    --- FAIL: TestSharedPagesCatalogueMessages/histbal.hint (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: histbal.hint
+    --- FAIL: TestSharedPagesCatalogueMessages/histbal.field_error (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: histbal.field_error
+    --- FAIL: TestSharedPagesCatalogueMessages/histbal.reason.missing (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: histbal.reason.missing
+    --- FAIL: TestSharedPagesCatalogueMessages/histbal.reason.format (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: histbal.reason.format
+    --- FAIL: TestSharedPagesCatalogueMessages/histbal.reason.precision (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: histbal.reason.precision
+    --- FAIL: TestSharedPagesCatalogueMessages/histbal.reason.future (0.00s)
+        shared_pages_test.go:44: shared-page sentence is not in the catalogue: histbal.reason.future
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.027s
+FAIL

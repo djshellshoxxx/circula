@@ -1,0 +1,52 @@
+{
+  "started_at": "2026-11-19T12:36:53.308805+00:00",
+  "head": "d11ec74ae79053dde4d21ac68fb60363fd16bdfd",
+  "tree": "5f47844504436659f87fc69ec6328cd74e897a31",
+  "command": "CGO_ENABLED=1 GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40 go test -race -json -p 1 -count=1 -timeout 20m ./...",
+  "checkout": "standalone clone; normal VCS stamping retained",
+  "observed_exit_code": 1,
+  "result": "FAIL: modernc.org/sqlite/lib compiler killed; seven dependent packages fail to build",
+  "passed_test_and_subtest_events": 467,
+  "passed_packages": [
+    "github.com/djshellshoxxx/circula/internal/domain",
+    "github.com/djshellshoxxx/circula/internal/histbal",
+    "github.com/djshellshoxxx/circula/internal/httpx",
+    "github.com/djshellshoxxx/circula/internal/logx",
+    "github.com/djshellshoxxx/circula/internal/repository",
+    "github.com/djshellshoxxx/circula/internal/web/messages",
+    "github.com/djshellshoxxx/circula/scripts/sbom",
+    "github.com/djshellshoxxx/circula/scripts/traceability"
+  ],
+  "failed_packages": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "failed_build": "modernc.org/sqlite/lib"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/api",
+      "failed_build": "modernc.org/sqlite/lib"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/contract",
+      "failed_build": "modernc.org/sqlite/lib"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "failed_build": "modernc.org/sqlite/lib"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/store",
+      "failed_build": "modernc.org/sqlite/lib"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "failed_build": "modernc.org/sqlite/lib"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/web",
+      "failed_build": "modernc.org/sqlite/lib"
+    }
+  ],
+  "last_event_time": "2026-11-19T04:39:40.10294289-08:00",
+  "note": "Command completed before subsequent executor restart; saved JSON includes compiler failure. This is not a full race pass."
+}

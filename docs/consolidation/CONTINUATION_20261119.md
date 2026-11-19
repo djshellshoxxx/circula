@@ -1,5 +1,9 @@
 # Core continuation checkpoint — 2026-11-19
 
+This record preserves the first frozen continuation. The newer second-batch
+source and current qualification work are in
+[CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md).
+
 ## Authority and scope
 
 Main remains `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625` at the

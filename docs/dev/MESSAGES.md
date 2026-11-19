@@ -517,3 +517,222 @@ also passed. Raw before/after receipts are retained in this worktree's `bin/`
 directory. These focused normal runs use the existing caches and exclude
 race, SQLite-backed, full web, HTTP and browser suites; combined HTTP/service
 qualification remains integration work.
+
+## Administrator members, invitations and inactivity continuation
+
+This bounded continuation starts at `7c21fe9` and adds 88 messages under
+`admin.members.*`, `admin.member_action.*`, `admin.invitations.*` and
+`admin.inactive.*`. It covers the remaining member/invitation presentation in
+`h_admin.go`, `h_inactive.go`, and the `admin_members`, `admin_member_act`,
+`admin_invites` and `admin_inactive` templates. The completed reset definition,
+reset-only handler/messages and erasure flow are unchanged. No policy, network,
+service, domain or API implementation is changed.
+
+The web adapter maps the four known membership statuses, two roles and three
+existing removal reason codes to display labels. Unknown values remain ordinary
+strings and are escaped by the templates. Stored/filter values, reason codes,
+role checks, permitted actions, member references, form fields, CSRF, routes,
+pagination, service calls and response behavior are retained. Submitted amounts
+and other invalid values are kept verbatim. Member-count text now uses a complete
+singular/plural sentence, correcting the former singular "member match" wording.
+
+Invitation revocation depends on an explicit boolean derived from the original
+used/revoked/expired precedence and strict expiry comparison, never the displayed
+status label. The row formatter receives only those four catalogue labels, not
+user text, before its template-owned timestamp slot. Its complete accessible
+revocation name uses ordinary text formatted in the same viewer time zone and
+layout as the visible time element. Member-action links likewise use complete
+message-backed accessible names containing their visible action labels.
+
+The focused regressions cover action eligibility, known/unknown display values,
+escaping, filters and pagination, exact retained amounts and IDs, removal codes,
+shared reset controls, inactivity empty/rule/list states, invitation expiry and
+state precedence, and revocation with deliberately misleading display labels.
+
+After source checkpoint `f522e01`, restoring the base catalogue produced the
+expected missing `admin.member_action.confirm_title` failure. Restoring the
+four base templates produced a compile-valid negative control: all four pages
+failed the injected-catalogue checks, and the invitation template failed the
+independent-state revocation check (0.287s). The committed source was restored
+after each control.
+
+With Go 1.26.11, the complete messages package passed with `-p 1 -count=1`
+(0.036s). All six tests in `member_invitation_catalog_test.go` passed in a
+production-web-file-list run (2.014s). Both render runs used
+`-vet=off -p 1 -count=1`: the frozen base inherited three nonconstant-format
+constructor calls already identified for repair by integration. These render
+results establish compiled behavior and do not claim a vet pass. The message
+run retained default vet behavior.
+
+Static checks confirmed unchanged existing catalogue entries, valid JSON,
+catalogue key coverage, Go formatting and clean whitespace. Direct comparison
+also confirmed unchanged service-call lines, routes, action eligibility/flags,
+invitation day parsing, URL generation and all four templates' form actions.
+Raw receipts remain in this worktree's `bin/member-invitation-*.log` files.
+No race, SQLite-backed, full web, HTTP or browser suite was run. Combined vet
+and full HTTP/service qualification remain integration work.
+
+## Network policy, suspension and closure continuation
+
+This bounded continuation adds 96 entries under `admin.policy.*` and
+`admin.network.*`. It covers the existing policy editor, scheduled-change
+notice and cancellation control, grant-risk consent, local validation and
+results, and the suspension/closure page and action feedback. Join/departure
+option values remain unchanged. The four documented platform suspension
+categories gain display labels; unknown category values remain verbatim,
+escaped data. Service-provided blocker descriptions and reasons stay data.
+
+Policy versions remain exact, ungrouped decimal identifiers. Amount inputs
+still use the existing fixed-point formatter and preserve retained values.
+Amount hints now use the network's existing unit inflector, including names
+such as `Hours`. Precision errors use `1 decimal place`; member, proposal and
+account counts use singular/plural English and grouped quantities. Notice
+durations, consent requirements and all other policy values are unchanged.
+No governance feature is activated by this presentation change.
+
+`AroundCount` adds only a typed integer count before one template-owned
+emphasis slot. `AroundTwoVersion` formats the existing integer version with
+`strconv.Itoa` before two template-owned timestamp slots. Both reuse the
+strict splitters and return ordinary strings; existing helper contracts stay
+unchanged. Hostile catalogue text, reasons, categories and unit names remain
+subject to contextual template escaping. Timestamps, checksums and links
+retain their existing template-owned markup.
+
+`TestPolicyNetworkMessages`, `TestPolicyNetworkMarkupSlots` and
+`TestPolicyNetworkNoticeDays` cover complete messages, exact identifiers and
+examples, zero/singular/grouped counts and malformed-slot rejection. The six
+tests in `policy_network_catalog_test.go` render the real templates and check
+scheduled/unscheduled policy controls, retained exact amounts, all nine
+suspension/closure states, category whitelist/fallback, hostile data and
+catalogue text, CSRF, idempotency, confirmation/reason fields and count markup.
+Static comparison also confirmed unchanged form/link attributes, field names,
+required/max/mode properties and CSRF/idempotency template calls.
+
+The test-only baseline `b19f701` (production `7c21fe9`) passed the unchanged
+policy and nine network-state controls. The new unit-hint and singular/grouped
+count checks failed as expected (render run: 1.015s), and the message test
+failed on the missing `admin.policy.current` key. After implementation with
+Go 1.26.11, the complete messages package passed with `-p 1 -count=1` (0.048s).
+All six new production-template tests passed in a file-list web invocation
+(1.850s). The invocation included all production web Go files and only this
+new test file, excluding unrelated SQLite fixtures. It used `-vet=off` because
+the frozen base had three independently identified printf-constructor vet
+errors in `h_rereview_decide.go`; integrated vet qualification remains a
+required separate check. No race, full web, SQLite-backed, HTTP or browser
+suite was run for this slice. Local raw receipts are
+`policy-network-{messages,render}-{before,after}.log` in the workspace root.
+
+The catalogue is additive and all 1,087 base entries are unchanged. The
+policy-values/data helpers and all adjustment/audit/export code in
+`h_admin2.go` remain byte-identical to `7c21fe9`; only `policyForm` and
+`policyPost` presentation text changes there. Authorization, status guards,
+service calls and form submission behavior are unchanged. UX-047 remains a
+partial migration, without additional language or policy scope.
+
+## Personal-data erasure continuation
+
+This continuation follows member/invitation checkpoint `5f64e92`, with the
+integration format repair `4027731` applied locally first (`8b5397f`). It adds
+20 `erasure.*` messages for the existing erasure action definition,
+`h_erasure.go` and `erase_confirm.html`. The self/admin titles, consequences,
+reason hints, consent and result messages retain their existing English.
+The optional and required reason hints are complete messages instead of a
+prefix assembled into a sentence.
+
+Both existing scopes, membership/authorization checks, reason trimming,
+`confirm=yes`, service calls, CSRF, statuses and redirects are unchanged.
+The conditional login effect, former-member identity description, retained
+ledger/audit records and blocking open items are unchanged statements. No
+privacy choice, policy, retention rule or service/domain/API change is added.
+Names and retained form/error values remain contextually escaped; the
+catalogue returns no trusted HTML. Other member/reset action definitions are
+unchanged.
+
+The message regression checks all 20 entries against the prior wording. Actual
+template checks cover self/admin ordinary and invalid forms, exact routes/IDs,
+reason requiredness, retained unsafe values, unchecked consent, CSRF, accessible
+error associations, all stated consequences and the departed-member action
+link. Injected catalogue text is checked in both scopes.
+
+After source checkpoint `8bd4042`, restoring the prior catalogue produced the
+expected missing `erasure.member_title` failure. Restoring the prior template
+produced a compile-valid negative control: the heading, full reason hint,
+consent label and submit label ignored catalogue text in both scopes (0.219s).
+The committed source was restored after each control.
+
+With Go 1.26.11 and default vet enabled, the complete messages package passed
+with `-p 1 -count=1` (0.038s). All three tests in `erasure_catalog_test.go` passed
+in a file-list run of the production web Go files with the same flags (0.572s).
+These checks used `GOMAXPROCS=1`, `GOMEMLIMIT=250MiB` and `GOGC=40`. An executor
+restart occurred before the first attempted test process began; the recorded
+receipts are the fresh runs after shared dependencies were restored.
+
+JSON/duplicate-key checks, unchanged existing entries, Go formatting and
+whitespace checks passed. Static comparison confirmed unchanged route/service
+calls, membership/consent guards, redirects, form actions and checkbox markup.
+Raw receipts remain in this worktree's `bin/erasure-*.log` files. No race,
+SQLite-backed, full web, HTTP or browser suite was run; combined qualification
+remains integration work.
+
+## Remaining administrator presentation continuation
+
+This bounded slice adds 74 entries under `admin.announcements.*`,
+`overview.*`, `queue.*` and `admin.break_glass.*`. It covers announcement
+creation/listing/deletion feedback and its template, the remaining overview
+and stale-proposal queue literals, and the read-only operator-access history.
+The existing policy, duration and access-boundary explanations retain their
+wording. No operator grant/CLI behavior or policy activation is included.
+
+Announcement start windows, replacement IDs, creation idempotency, deletion
+routes and CSRF remain unchanged. Delete buttons retain their visible label
+and complete accessible name; the latter now comes from a whole catalogue
+message in `aria-label`. Titles and body text stay escaped data. The overview
+retains all management routes, the frozen notice and zero-count action-link
+gate. The queue retains exact amount/record values and continuation paths;
+only its duration wording gains singular/plural and grouped-count formatting.
+
+Operator-access status display maps only `open`, `closed` and `expired` to
+their existing words. Unknown statuses remain verbatim and escaped. Stored
+operator labels, reasons, closure reasons, timestamps and continuation IDs
+are unchanged, and the page still offers no mutation controls. The existing
+plain-parts helpers retain template-owned links, title emphasis and timestamps;
+no shared helper API or production renderer change is needed. The small
+support-boundaries fixture loader adds the existing `msgAround` registration
+to parse the migrated overview, matching the separate shared-message batch.
+
+The tests in `admin_history_catalog_test.go` render all four real templates
+and cover empty/populated announcements, retained editor fields, scheduled
+rows, replacement/deletion controls, overview links/count gates, exact queue
+data and pagination, access-history status/fallback and stored reasons,
+read-only controls, complete delete names and hostile catalogue/data escaping.
+`TestAdminHistoryMessages` and `TestAdminHistoryMarkupSlots` cover complete
+messages, duration counts, literal hostile values and template-owned slots.
+
+The local prerequisite `ef5108d` is the existing `4027731` printf-constructor
+repair, applied before this batch so focused vet can remain enabled. It is
+not a new change for integration. Test-only snapshot `fefaf01` preserves the
+new baseline checks before implementation. After the temporary compilation
+hold was lifted and the shared caches restored, that snapshot passed the
+announcement, overview and read-only history controls and both existing
+support-boundaries tests. The new singular/grouped-hour cases and all four
+template catalogue-injection controls failed as expected (1.314s); the
+message cases failed on missing keys (0.006s).
+
+At production checkpoint `4ed93b3`, the complete messages package passed
+(0.036s). All seven new actual-template tests and both affected
+support-boundaries tests passed (1.542s). These Go 1.26.11 invocations used
+`-p 1 -count=1`, default vet, `GOMAXPROCS=1`, `GOMEMLIMIT=250MiB` and
+`GOGC=40`. The template invocation included every production web Go file and
+only `admin_history_catalog_test.go` and `support_boundaries_template_test.go`,
+excluding unrelated SQLite-backed fixtures. No source correction was needed
+after the preserved baseline. No race, full web, SQLite-backed, HTTP or
+browser suite was run for this slice; combined qualification remains separate.
+
+Static checks passed: all 1,183 base catalogue entries are unchanged, the 74
+new keys are unique, every complete literal production message reference
+resolves, form/link attributes and field/CSRF/idempotency contracts match the
+prerequisite baseline, and `git diff --check` is clean. All non-announcement
+code in `h_admin_f2.go`, including overview, stale queue, reversal and
+`atoiRange`, remains byte-identical. Raw receipts are retained under
+`docs/consolidation/evidence/continuation/admin-history-*-{before,after}.log`.
+UX-047 remains partial.

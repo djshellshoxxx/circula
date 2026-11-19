@@ -67,6 +67,11 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 	for key, e := range keys {
 		var args []any
 		switch key {
+		case "notice.credit_limit_used":
+			args = []any{"90071992547409.93", "90071992547409.94", "90"}
+		case "error.fallback.reference", "error.reference", "help.balance.credit", "help.balance.debt", "help.balance.level",
+			"notice.membership_pending.body", "notice.frozen", "histbal.hint", "histbal.field_error", "histbal.at_utc", "histbal.reason.format":
+			args = []any{"example"}
 		case "balance.spoken_credit", "balance.spoken_debt", "balance.limit_used":
 			args = []any{"12.50", "credits"}
 		case "notice.closing_date", "balance.spoken_level", "status.waiting_other", "reversal.ledger", "row.ledger", "join.network.title", "join.network.invite_only", "join.flash.joined", "join.terms.heading":
@@ -94,6 +99,31 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{1000}
 		case "admin.check.summary":
 			args = []any{1000, "9223372036854775807"}
+		case "admin.announcements.starts", "admin.announcements.since", "admin.break_glass.closed_with_reason":
+			args = []any{"example", "example"}
+		case "admin.announcements.delete_named", "overview.frozen", "overview.frozen_reason", "overview.counted",
+			"overview.manage_members", "overview.manage_invitations", "overview.manage_policy", "overview.manage_terms",
+			"overview.manage_adjust", "overview.manage_reverse", "overview.manage_announcements", "overview.manage_pending",
+			"overview.manage_network", "overview.manage_operator", "overview.manage_reports", "overview.manage_support", "queue.empty":
+			args = []any{"example"}
+		case "queue.explanation":
+			args = []any{48, "example"}
+		case "admin.policy.current":
+			args = []any{"1000", 2}
+		case "admin.policy.scheduled":
+			args = []any{"1000", "announced", "effective"}
+		case "admin.policy.amount_invalid":
+			args = []any{2, "Largest single trade", "90071992547409.93"}
+		case "admin.policy.notice", "admin.policy.amount_hint", "admin.policy.grant_hint", "admin.policy.integer_invalid",
+			"admin.network.confirm_invalid", "admin.network.category", "admin.network.closed_history_until",
+			"admin.network.checksum", "admin.network.export_explanation", "admin.network.review_explanation":
+			args = []any{"example"}
+		case "admin.network.suspension", "admin.network.closing":
+			args = []any{"example", "example"}
+		case "admin.network.count":
+			args = []any{1000}
+		case "admin.network.proposals", "admin.network.nonzero":
+			args = []any{1000, "1,000"}
 		case "report.about":
 			args = []any{"Looks like a scam", "listing", "Bike repair"}
 		case "reversal.by":
@@ -114,6 +144,12 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"Amount", "not a number", "Enter digits only, for example 12.50."}
 		case "admin.member_action.heading":
 			args = []any{"Reset password", "Zoë"}
+		case "admin.member_action.confirm_title", "admin.member_action.done", "admin.members.action_for", "admin.invitations.row":
+			args = []any{"example", "Zoë"}
+		case "admin.members.caption", "admin.inactive.caption", "admin.inactive.no_rule", "admin.invitations.revoke_named":
+			args = []any{"example"}
+		case "erasure.member_title", "erasure.member_heading":
+			args = []any{"example"}
 		case "dispute.trade_sentence":
 			args = []any{"Ana", "Ben", "90071992547409.93", "Hours"}
 		case "dispute.outcome.upheld_pending", "dispute.outcome.upheld_posted", "dispute.outcome.partial_pending", "dispute.outcome.partial_posted":

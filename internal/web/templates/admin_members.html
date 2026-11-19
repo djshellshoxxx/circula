@@ -1,26 +1,26 @@
 {{define "content"}}
 <form method="get" action="/n/{{.Slug}}/admin/members">
-  <div class="field"><label for="f-status">Show members</label>
-  <select id="f-status" name="status"><option value="">All</option>
-    <option value="pending"{{if eq (.Val "status") "pending"}} selected{{end}}>Pending approval</option>
-    <option value="active"{{if eq (.Val "status") "active"}} selected{{end}}>Active</option>
-    <option value="suspended"{{if eq (.Val "status") "suspended"}} selected{{end}}>Suspended</option>
-    <option value="departed"{{if eq (.Val "status") "departed"}} selected{{end}}>Departed</option></select></div>
-  <div class="actions"><button type="submit" class="secondary">Apply filter</button></div>
+  <div class="field"><label for="f-status">{{msg "admin.members.filter_label"}}</label>
+  <select id="f-status" name="status"><option value="">{{msg "admin.members.filter_all"}}</option>
+    <option value="pending"{{if eq (.Val "status") "pending"}} selected{{end}}>{{msg "admin.members.filter_pending"}}</option>
+    <option value="active"{{if eq (.Val "status") "active"}} selected{{end}}>{{msg "admin.members.filter_active"}}</option>
+    <option value="suspended"{{if eq (.Val "status") "suspended"}} selected{{end}}>{{msg "admin.members.filter_suspended"}}</option>
+    <option value="departed"{{if eq (.Val "status") "departed"}} selected{{end}}>{{msg "admin.members.filter_departed"}}</option></select></div>
+  <div class="actions"><button type="submit" class="secondary">{{msg "admin.members.filter_apply"}}</button></div>
 </form>
-<p><a href="/n/{{.Slug}}/admin/inactive">Inactive members</a></p>
+<p><a href="/n/{{.Slug}}/admin/inactive">{{msg "admin.inactive.title"}}</a></p>
 {{if .D.Rows}}
-<div class="scroll" role="region" aria-label="Members table" tabindex="0">
+<div class="scroll" role="region" aria-label="{{msg "admin.members.table_label"}}" tabindex="0">
 <table class="stack">
-<caption>Members of {{.NetName}}</caption>
-<thead><tr><th scope="col">Name</th><th scope="col">Status</th><th scope="col">Roles</th><th scope="col">Actions</th></tr></thead>
+<caption>{{msg "admin.members.caption" .NetName}}</caption>
+<thead><tr><th scope="col">{{msg "validation.label.name"}}</th><th scope="col">{{msg "validation.label.status"}}</th><th scope="col">{{msg "admin.members.roles"}}</th><th scope="col">{{msg "admin.members.actions"}}</th></tr></thead>
 <tbody>{{range .D.Rows}}<tr>
-  <th scope="row" data-label="Name">{{.DisplayName}}{{if .DefaultFlag}} <span class="tag">in default</span>{{end}}</th>
-  <td data-label="Status">{{.Status}}</td>
-  <td data-label="Roles">{{if .Roles}}{{.Roles}}{{else}}member{{end}}</td>
-  <td data-label="Actions">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}">{{.Label}}<span class="sr"> {{$m.DisplayName}}</span></a> {{end}}</td>
+  <th scope="row" data-label="{{msg "validation.label.name"}}">{{.DisplayName}}{{if .DefaultFlag}} <span class="tag">{{msg "admin.members.in_default"}}</span>{{end}}</th>
+  <td data-label="{{msg "validation.label.status"}}">{{.StatusLabel}}</td>
+  <td data-label="{{msg "admin.members.roles"}}">{{if .Roles}}{{.Roles}}{{else}}{{msg "admin.members.member_role"}}{{end}}</td>
+  <td data-label="{{msg "admin.members.actions"}}">{{$m := .}}{{range .Actions}}<a href="/n/{{$.Slug}}/admin/members/{{$m.ID}}/{{.Value}}" aria-label="{{msg "admin.members.action_for" .Label $m.DisplayName}}">{{.Label}}</a> {{end}}</td>
 </tr>{{end}}</tbody></table></div>
-<p>{{.D.Pages.Total}} member{{if ne .D.Pages.Total 1}}s{{end}} match this filter.</p>
-{{template "pagenav" dict "Label" "Member list pages" "Pages" .D.Pages}}
-{{else}}<p>No members match this filter.</p>{{end}}
+<p>{{msg "admin.members.matches" .D.Pages.Total}}</p>
+{{template "pagenav" dict "Label" (msg "admin.members.pages") "Pages" .D.Pages}}
+{{else}}<p>{{msg "admin.members.empty"}}</p>{{end}}
 {{end}}

@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"golang.org/x/text/feature/plural"
@@ -77,6 +78,12 @@ func Around(key string, labels ...string) Parts {
 	return splitAround(Text(key, args...))
 }
 
+// AroundCount selects a counted message around one template-owned element.
+// Its integer cannot introduce formatting markers or trusted HTML.
+func AroundCount(key string, count int) Parts {
+	return splitAround(Text(key, count, textSlot))
+}
+
 func splitAround(text string) Parts {
 	if strings.Count(text, textSlot) != 1 || strings.Contains(text, "%!") {
 		panic("UI message requires exactly one string slot")
@@ -96,6 +103,13 @@ const secondTextSlot = "\x00second\x00"
 // its own elements into the two string slots; both must occur once, in order.
 func AroundTwo(key string) TwoParts {
 	return splitAroundTwo(Text(key, firstTextSlot, secondTextSlot))
+}
+
+// AroundTwoVersion keeps a version identifier ungrouped before two
+// template-owned elements. Only the application-formatted integer enters the
+// message; arbitrary text remains in the template's escaped data slots.
+func AroundTwoVersion(key string, version int) TwoParts {
+	return splitAroundTwo(Text(key, strconv.Itoa(version), firstTextSlot, secondTextSlot))
 }
 
 // AroundTwoCount selects a counted message before its two template-owned

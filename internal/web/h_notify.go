@@ -292,6 +292,6 @@ func (c *rc) limitNotice() string {
 	if !warn {
 		return ""
 	}
-	return "You are using " + plainAmt(used, b.Decimals) + " of your " + plainAmt(b.CreditLimit, b.Decimals) +
-		" credit limit (" + itoa(c.Net.Policy.LimitWarningPercent) + " percent or more). A trade that would take you past the limit is refused."
+	return messages.Text("notice.credit_limit_used", plainAmt(used, b.Decimals), plainAmt(b.CreditLimit, b.Decimals),
+		itoa(c.Net.Policy.LimitWarningPercent))
 }

@@ -17,6 +17,7 @@ func TestValidationMessages(t *testing.T) {
 		{"validation.field.message", []any{"Amount", "not a number", "Enter digits only, for example 12.50."}, "Amount: not a number. Enter digits only, for example 12.50."},
 		{"validation.field.message", []any{"Name", "Zoë <img src=x> 100%", "Check the value and try again."}, "Name: Zoë <img src=x> 100%. Check the value and try again."},
 		{"validation.fix.decimals", []any{0}, "Use at most 0 decimal places and try again."},
+		{"validation.fix.decimals", []any{1}, "Use at most 1 decimal place and try again."},
 		{"validation.fix.decimals", []any{2}, "Use at most 2 decimal places and try again."},
 		{"validation.fix.number", []any{"90071992547409.93"}, "Enter digits only, for example 90071992547409.93."},
 		{"validation.refusal.insufficient_credit", nil, "Not sent. This trade would take your available credit below zero. Try a smaller amount. Nothing changed."},

@@ -24,7 +24,7 @@ func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 	}
 	path := filepath.Join(filepath.Dir(source), "templates", name)
 	// Use the same catalogue function as production mustLoadTemplates.
-	tmpl, err := template.New(name).Funcs(template.FuncMap{"msg": messages.Text}).ParseFiles(path)
+	tmpl, err := template.New(name).Funcs(template.FuncMap{"msg": messages.Text, "msgAround": messages.Around}).ParseFiles(path)
 	if err != nil {
 		t.Fatalf("parse %s: %v", name, err)
 	}

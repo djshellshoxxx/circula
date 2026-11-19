@@ -372,7 +372,7 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 		if in.Outcome == string(domain.OutcomePartiallyUpheld) || confirm {
 			amt, perr := domain.ParseAmount(r.PostFormValue("amount"), c.Net.Policy.Decimals)
 			if perr != nil || (in.Outcome != service.ReReviewConfirmed && amt <= 0) {
-				s.disputeFail(w, r, c, id, domain.Invalid("amount", "enter the amount to reverse, with up to "+itoa(c.Net.Policy.Decimals)+" decimal places"))
+				s.disputeFail(w, r, c, id, domain.Invalid("amount", messages.Text("dispute.amount_invalid", c.Net.Policy.Decimals)))
 				return
 			}
 			in.Amount = amt
@@ -382,7 +382,7 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 			return
 		}
 		if !secretEqual(r.PostFormValue("review_proof"), s.reReviewProof(c, in)) {
-			s.disputeFail(w, r, c, id, domain.Invalid("outcome", "review this decision again before confirming; nothing changed"))
+			s.disputeFail(w, r, c, id, domain.Invalid("outcome", messages.Text("dispute.review_again")))
 			return
 		}
 		_, err = s.svc.DecideReReview(r.Context(), c.actor, c.netID(), in)
@@ -394,7 +394,7 @@ func (s *server) disputeAct(w http.ResponseWriter, r *http.Request, c *rc) {
 		if in.Outcome == domain.OutcomePartiallyUpheld {
 			amt, perr := domain.ParseAmount(r.PostFormValue("amount"), c.Net.Policy.Decimals)
 			if perr != nil || amt <= 0 {
-				s.disputeFail(w, r, c, id, domain.Invalid("amount", "enter the amount to reverse, with up to "+itoa(c.Net.Policy.Decimals)+" decimal places"))
+				s.disputeFail(w, r, c, id, domain.Invalid("amount", messages.Text("dispute.amount_invalid", c.Net.Policy.Decimals)))
 				return
 			}
 			in.Amount = amt

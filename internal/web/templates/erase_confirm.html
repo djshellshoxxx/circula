@@ -1,22 +1,22 @@
 {{define "content"}}
 {{with .D}}
-<p class="big">{{if .Self}}Erase my personal data in this network{{else}}Erase the personal data of {{.Name}}{{end}}</p>
-<p>This cannot be undone.</p>
+<p class="big">{{if .Self}}{{msg "erasure.self_heading"}}{{else}}{{msg "erasure.member_heading" .Name}}{{end}}</p>
+<p>{{msg "erasure.irreversible"}}</p>
 <ul>
-  <li>The display name is replaced by "Former member" and a short code.</li>
-  <li>Listings are archived and their text is removed.</li>
-  <li>Notes written on trades and statements written in disputes are removed.</li>
-  <li>If this is the person's only membership, the login is erased and the password stops working.</li>
+  <li>{{msg "erasure.name_effect"}}</li>
+  <li>{{msg "erasure.listings_effect"}}</li>
+  <li>{{msg "erasure.notes_effect"}}</li>
+  <li>{{msg "erasure.login_effect"}}</li>
 </ul>
-<p>Balances, trades, amounts and the audit log stay as they are, because the network's accounts must keep adding up. Anything still open (a proposed trade or a dispute) blocks erasure until it is settled.</p>
+<p>{{msg "erasure.records_effect"}}</p>
 <form method="post" action="{{if .Self}}/n/{{$.Slug}}/erase-my-data{{else}}/n/{{$.Slug}}/admin/members/{{.MemberID}}/erase{{end}}" novalidate>
   {{template "csrf" $}}
-  {{template "field" dict "P" $ "Name" "reason" "Label" "Reason" "Hint" (printf "%s It is written to the audit log, which is never rewritten, so do not put names or contact details in it." (or (and .Self "Optional.") "Required.")) "Req" (not .Self)}}
+  {{template "field" dict "P" $ "Name" "reason" "Label" (msg "validation.label.reason") "Hint" (or (and .Self (msg "erasure.reason_optional")) (msg "erasure.reason_required")) "Req" (not .Self)}}
   <div class="field{{if $.Err "confirm"}} has-error{{end}}">
-    {{with $.Err "confirm"}}<p class="error" id="e-confirm"><span class="sr">Error: </span>{{.}}</p>{{end}}
-    <label><input type="checkbox" id="f-confirm" name="confirm" value="yes"{{if $.Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> I understand this cannot be undone</label>
+    {{with $.Err "confirm"}}<p class="error" id="e-confirm"><span class="sr">{{msg "form.error_prefix"}}</span>{{.}}</p>{{end}}
+    <label><input type="checkbox" id="f-confirm" name="confirm" value="yes"{{if $.Err "confirm"}} aria-invalid="true" aria-describedby="e-confirm"{{end}}> {{msg "erasure.confirm_label"}}</label>
   </div>
-  <div class="actions"><button type="submit" class="danger">Erase personal data</button> <a class="btn secondary" href="/n/{{$.Slug}}{{if not .Self}}/admin/members?status=departed{{end}}">Go back</a></div>
+  <div class="actions"><button type="submit" class="danger">{{msg "erasure.action"}}</button> <a class="btn secondary" href="/n/{{$.Slug}}{{if not .Self}}/admin/members?status=departed{{end}}">{{msg "erasure.go_back"}}</a></div>
 </form>
 {{end}}
 {{end}}

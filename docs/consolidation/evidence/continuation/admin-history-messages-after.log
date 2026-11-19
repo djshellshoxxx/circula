@@ -1,0 +1,6 @@
+Candidate 4ed93b3b0d148303ef2225b12088cfad3a6669e2
+GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40; default vet enabled
+Command: /workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 ./internal/web/messages -count=1
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	0.036s
+
+Exit: 0

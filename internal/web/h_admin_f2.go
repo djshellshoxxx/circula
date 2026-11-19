@@ -293,7 +293,7 @@ func (s *server) renderAnnouncements(w http.ResponseWriter, r *http.Request, c *
 		d.Options = append(d.Options, option{Value: a.ID, Label: a.Title})
 		d.Rows = append(d.Rows, annAdminRow{annRow{ID: a.ID, Title: a.Title, Body: a.Body, At: c.when(a.EffectiveAt)}, a.EffectiveAt.After(now)})
 	}
-	p.Title, p.D = "Announcements", d
+	p.Title, p.D = messages.Text("admin.announcements.title"), d
 	s.render(w, r, c, "admin_announcements", status, p)
 }
 
@@ -304,8 +304,8 @@ func (s *server) announcementCreate(w http.ResponseWriter, r *http.Request, c *r
 	if d := strings.TrimSpace(v["days"]); d != "" {
 		n, ok := atoiRange(d, 0, 365)
 		if !ok {
-			p.Summary, p.Errors = "Not published. Fix the problems below. Nothing changed.",
-				[]fieldErr{{"days", "Start in (days): enter a whole number from 0 to 365, or leave it empty to publish now."}}
+			p.Summary, p.Errors = messages.Text("admin.announcements.invalid"),
+				[]fieldErr{{"days", messages.Text("admin.announcements.days_invalid")}}
 			s.renderAnnouncements(w, r, c, 422, p)
 			return
 		}
@@ -320,7 +320,7 @@ func (s *server) announcementCreate(w http.ResponseWriter, r *http.Request, c *r
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Announcement published.")
+	s.setFlash(w, r, messages.Text("admin.announcements.published"))
 	http.Redirect(w, r, c.base()+"/admin/announcements", http.StatusSeeOther)
 }
 
@@ -329,7 +329,7 @@ func (s *server) announcementDelete(w http.ResponseWriter, r *http.Request, c *r
 		s.fail(w, r, err)
 		return
 	}
-	s.setFlash(w, r, "Announcement deleted. Members no longer see it; the audit log keeps the record.")
+	s.setFlash(w, r, messages.Text("admin.announcements.deleted"))
 	http.Redirect(w, r, c.base()+"/admin/announcements", http.StatusSeeOther)
 }
 

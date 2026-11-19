@@ -1,0 +1,38 @@
+Baseline fefaf0124dc4270205b1f38220e362868b71476d
+GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40; default vet enabled
+Command: /workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/extra.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/format.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_account.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_account_f2.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin2.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin_f2.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_admin_network.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_audit_scoped.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_auth.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_breakglass.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_dispute_decide.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_dispute_review.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_disputes.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_dualcontrol.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_erasure.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_gov.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_home.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_inactive.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_notify.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_recover.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_rereview_decide.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_security.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_sessions.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_trade_act.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/h_trades.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/histbal_view.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/middleware.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/ratelimit.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/refusal.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/render.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/session.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/web.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/admin_history_catalog_test.go /workspace/scratch/93aeb012c206/audit-export-catalogue/internal/web/support_boundaries_template_test.go -run ^(TestAnnouncementsCatalogue|TestAdminOverviewCatalogue|TestStaleQueueCatalogue|TestBreakGlassCatalogue|TestAdminHistoryCatalogue|TestAdminHomeLinksToSupportBoundaries|TestHelpDocumentsSupportBoundaries) -count=1 -v
+=== RUN   TestAnnouncementsCatalogueControls
+--- PASS: TestAnnouncementsCatalogueControls (0.16s)
+=== RUN   TestAdminOverviewCatalogueControls
+--- PASS: TestAdminOverviewCatalogueControls (0.15s)
+=== RUN   TestStaleQueueCatalogueCountsAndControls
+    admin_history_catalog_test.go:134: page lacks "Open proposals waiting at least 1 hour for an answer, as of <time datetime=\"2026-11-19T12:00:00Z\">19 Nov 2026, 12:00 UTC</time>. Expired proposals are excluded."
+    admin_history_catalog_test.go:134: page lacks "Open proposals waiting at least 1 hour for an answer, as of <time datetime=\"2026-11-19T12:00:00Z\">19 Nov 2026, 12:00 UTC</time>. Expired proposals are excluded."
+    admin_history_catalog_test.go:134: page lacks "Open proposals waiting at least 1,000 hours for an answer, as of <time datetime=\"2026-11-19T12:00:00Z\">19 Nov 2026, 12:00 UTC</time>. Expired proposals are excluded."
+    admin_history_catalog_test.go:134: page lacks "Open proposals waiting at least 1,000 hours for an answer, as of <time datetime=\"2026-11-19T12:00:00Z\">19 Nov 2026, 12:00 UTC</time>. Expired proposals are excluded."
+--- FAIL: TestStaleQueueCatalogueCountsAndControls (0.56s)
+=== RUN   TestBreakGlassCatalogueReadOnlyControls
+--- PASS: TestBreakGlassCatalogueReadOnlyControls (0.14s)
+=== RUN   TestAdminHistoryCatalogueEscapesMessages
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_announcements
+    admin_history_catalog_test.go:210: template ignored its catalogue message or trusted it as markup
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_home
+    admin_history_catalog_test.go:210: template ignored its catalogue message or trusted it as markup
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_stale_proposals
+    admin_history_catalog_test.go:210: template ignored its catalogue message or trusted it as markup
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_break_glass
+    admin_history_catalog_test.go:210: template ignored its catalogue message or trusted it as markup
+--- FAIL: TestAdminHistoryCatalogueEscapesMessages (0.29s)
+    --- FAIL: TestAdminHistoryCatalogueEscapesMessages/admin_announcements (0.08s)
+    --- FAIL: TestAdminHistoryCatalogueEscapesMessages/admin_home (0.07s)
+    --- FAIL: TestAdminHistoryCatalogueEscapesMessages/admin_stale_proposals (0.07s)
+    --- FAIL: TestAdminHistoryCatalogueEscapesMessages/admin_break_glass (0.06s)
+=== RUN   TestHelpDocumentsSupportBoundaries
+--- PASS: TestHelpDocumentsSupportBoundaries (0.00s)
+=== RUN   TestAdminHomeLinksToSupportBoundaries
+--- PASS: TestAdminHomeLinksToSupportBoundaries (0.00s)
+FAIL
+FAIL	command-line-arguments	1.314s
+FAIL
+
+Exit: 1

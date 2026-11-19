@@ -51,12 +51,12 @@ func (s *server) policyData(r *http.Request, c *rc) *policyPageData {
 }
 
 func (s *server) policyForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, c, "admin_policy", 200, &page{Title: "Network policy", V: policyValues(c.Net.Policy), D: s.policyData(r, c)})
+	s.render(w, r, c, "admin_policy", 200, &page{Title: messages.Text("admin.policy.title"), V: policyValues(c.Net.Policy), D: s.policyData(r, c)})
 }
 
 func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "Network policy", V: v, D: s.policyData(r, c)}
+	p := &page{Title: messages.Text("admin.policy.title"), V: v, D: s.policyData(r, c)}
 	pol := c.Net.Policy
 	dec := pol.Decimals
 	var fe []fieldErr
@@ -67,7 +67,7 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	for _, f := range moneyFields {
 		n, err := domain.ParseAmount(v[f], dec)
 		if err != nil {
-			fe = append(fe, fieldErr{f, fmt.Sprintf("%s: enter a number with up to %d decimal places, for example %s.", label(f), dec, domain.FormatAmount(1250, dec))})
+			fe = append(fe, fieldErr{f, messages.Text("admin.policy.amount_invalid", dec, label(f), domain.FormatAmount(1250, dec))})
 			continue
 		}
 		*dst[f] = n
@@ -81,7 +81,7 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		n, err := strconv.Atoi(t)
 		if err != nil {
-			fe = append(fe, fieldErr{f, label(f) + ": enter a whole number."})
+			fe = append(fe, fieldErr{f, messages.Text("admin.policy.integer_invalid", label(f))})
 			continue
 		}
 		*d = n
@@ -90,13 +90,13 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	if t := strings.TrimSpace(v["notice_days"]); t != "" {
 		n, err := strconv.Atoi(t)
 		if err != nil {
-			fe = append(fe, fieldErr{"notice_days", "Notice (days): enter a whole number, or leave it empty."})
+			fe = append(fe, fieldErr{"notice_days", messages.Text("admin.policy.notice_invalid")})
 		} else {
 			notice = &n
 		}
 	}
 	if len(fe) > 0 {
-		p.Summary, p.Errors = "Not saved. Fix the problems below. Nothing changed.", fe
+		p.Summary, p.Errors = messages.Text("admin.policy.invalid"), fe
 		s.render(w, r, c, "admin_policy", 422, p)
 		return
 	}
@@ -108,9 +108,9 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if d := s.policyData(r, c); d.Pending != nil {
-		s.setFlash(w, r, "Change announced to members. It takes effect after its notice period; see the scheduled change below.")
+		s.setFlash(w, r, messages.Text("admin.policy.announced"))
 	} else {
-		s.setFlash(w, r, "Policy saved as a new version.")
+		s.setFlash(w, r, messages.Text("admin.policy.saved"))
 	}
 	http.Redirect(w, r, c.base()+"/admin/policy", http.StatusSeeOther)
 }

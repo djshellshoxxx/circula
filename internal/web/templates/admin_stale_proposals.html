@@ -1,10 +1,10 @@
 {{define "content"}}
 {{with .D}}
-<p>Open proposals waiting at least {{.Hours}} hours for an answer, as of {{.AsOf}}. Expired proposals are excluded.</p>
+{{$explanation := msgAroundCount "queue.explanation" .Hours}}<p>{{$explanation.Before}}{{.AsOf}}{{$explanation.After}}</p>
 {{if .Rows}}
 {{template "txlist" dict "Rows" .Rows "Base" (printf "/n/%s" $.Slug)}}
-{{else}}<p>No proposals are waiting this long. <a href="/n/{{$.Slug}}/admin">Return to the administrator overview</a>.</p>{{end}}
+{{else}}{{$empty := msgAround "queue.empty"}}<p>{{$empty.Before}}<a href="/n/{{$.Slug}}/admin">{{msg "queue.return_overview"}}</a>{{$empty.After}}</p>{{end}}
 {{template "pager" dict "Next" .Next "Href" (printf "/n/%s/admin/proposals/stale?after=" $.Slug)}}
 {{end}}
-<p><a href="/n/{{.Slug}}/admin">Administrator overview</a></p>
+<p><a href="/n/{{.Slug}}/admin">{{msg "queue.overview"}}</a></p>
 {{end}}
