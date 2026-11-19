@@ -65,6 +65,24 @@ lifetimes, expired/revoked/missing targets, audit failure and concurrent
 revocation. Actual focused production tests passed; broader execution gates and
 external SEC-033 release review remain separate.
 
+The subsequent Core qualification exposed a WAL-test artifact-lifetime assumption,
+repaired in [PR #111](https://github.com/djshellshoxxx/circula/pull/111). Independent
+security review approved the exact fixture blob
+`d1d19fb96357b5eabab43d926e89dffbbcca23e9`. A separate real read transaction after
+the initial checkpoint preserves the failed WAL while production
+`rollbackOrDiscard` remains unchanged. The fixture still requires an actual
+COMMIT `SQLITE_IOERR_WRITE`, exactly 6,224 WAL bytes for its page size, a complete
+non-commit frame and partial second frame, restored limits, unchanged failed-operation
+state, no premature audit or metrics effects, and successful retry, replay, reopening
+and integrity verification. A BUSY error or empty WAL cannot satisfy the assertions.
+
+Final independent review found no unresolved blocking API-036 source finding and
+no confirmed reviewed defect without regression coverage. All fifteen canonical
+future-module manifests remain disabled and on HOLD; none is in the candidate's
+ancestry, and the candidate contains no `future/` files. This source review and
+the scoped passes in [the qualification record](API036_QUALIFICATION.json) do not
+replace exact-head provider results, applicable PR approvals or SEC-033 assessment.
+
 ## Separate future-module and topic repairs
 
 | ID | Scope | Finding / correction | Qualification boundary |

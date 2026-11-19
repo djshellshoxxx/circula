@@ -1,0 +1,26 @@
+{
+  "started_utc": "2026-11-19T12:56:51.079850+00:00",
+  "source_head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+  "python_version": "3.12.14",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "source_sha256": {
+    "scripts/read-export.py": "91721f3c6e210e1b12e9cc0591ab6b11b0fe33f62aad45699d1d417778397478",
+    "scripts/test_read_export.py": "eda4dca97b62648adb8294b9a2e0c963248ed934f13b585ca73caadceb384884",
+    ".github/workflows/export-reader.yml": "1cdd66366750d21328733a9d4ee39bc77e073cfa7b5830220740eba43fc7862d"
+  },
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts",
+    "-p",
+    "test_read_export.py"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 17.36,
+  "finished_utc": "2026-11-19T12:57:08.446371+00:00",
+  "log_sha256": "dd5689ebf9794c988e774801c89286ae3984b3182d6eebcbc18c3de18facd1ac",
+  "source_unchanged": true
+}

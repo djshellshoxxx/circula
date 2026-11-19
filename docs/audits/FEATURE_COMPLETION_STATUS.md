@@ -33,6 +33,23 @@ The full core requirement inventory is [TRACEABILITY.md](../TRACEABILITY.md), wi
 | Automated QA and CI | Implemented; combined candidate gate pending | Existing Linux race, native tests, browser/axe, contract/load, lint/vulnerability, packaging/reproducibility. Fuzz termination repaired with execution counts and hard deadlines. | Provider results at exact current head; manual/external release gates. |
 | Historical competing specs and old process prompts | Superseded or archived, not deleted | PR/branch source comparison and archive index preserve unique proposals and differing requirement meanings. | Explicit decisions are needed before adopting conflicting financial/governance semantics. |
 
+### API-036 qualification continuation — PR #111
+
+[PR #111](https://github.com/djshellshoxxx/circula/pull/111) carries an independently
+approved, test-only WAL fixture repair while preserving combined Core transaction
+cleanup. Published source `ab7d64c5a31653e3a2a14ddb88940e59b4d02892` has the same
+tree as tested local commit `9edf59a626c0332a122bb618865673d8b1911a4d`. At that
+source, the full non-race command passed in 251.654s, vet passed in 1.571s, and
+the focused five-package race command passed in 218.628s. The documentation-only
+`839e869` continuation is reconciled without changing those runtime or test files.
+
+Implementation remains complete with final qualification in progress. The later
+whole-store race attempt was interrupted by workspace recovery, with no completion
+result. Full aggregate race, `make check`, lint, vulnerability, browser and native
+CI qualification are not recorded as passed. [The completion record](API036_COMPLETION.md)
+and [command receipts](API036_QUALIFICATION.json) preserve exact revisions, outcomes
+and limits. Required results and approvals must cover the final integration head.
+
 ## All 15 future modules
 
 All remain isolated, disabled and on integration HOLD. The values below are **root-package statement coverage from the recorded module command**, not aggregate project coverage or readiness scores. Default suites and explicit SQLite-tagged suites are recorded separately. All 15 default race suites and all 15 vet checks passed in this audit. Original formatting was clean in 14; notifications formatting was repaired with its security fixes.

@@ -1,0 +1,15 @@
+✔ offline and history warnings use supplied sentences and preserve the last snapshot literally (6.148068ms)
+✔ an initially offline page keeps its server snapshot and a new page starts without a stale warning (3.746676ms)
+✔ session warning appears two minutes before expiry and uses the supplied time sentence (2.315993ms)
+✔ fixed sessions hide extension and retain the draft when they expire (1.697914ms)
+✔ successful extension keeps the request contract and reschedules from the server expiry (12.147829ms)
+✔ failed extension uses the supplied failure message without navigation or form loss (4.712887ms)
+✔ session return links reject a network-path reference (1.948474ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.240624

@@ -11,11 +11,19 @@ async function focused(page) {
   });
 }
 
-/** Presses Tab until the focused element's name matches; returns the Tab count. */
-async function tabTo(page, re, max = 80) {
+/** Presses Tab until the focused element matches; returns the Tab count. */
+async function tabTo(page, re, max = 80, requireCheckbox = false) {
   for (let i = 1; i <= max; i++) {
     await page.keyboard.press('Tab');
-    if (re.test(await focused(page))) return i;
+    if (!re.test(await focused(page))) continue;
+    // Validation summary links can have exactly the same name as a checkbox.
+    // Space must reach the native control, while ordinary tabTo callers may
+    // still intentionally target links, regions, radio buttons or selects.
+    if (requireCheckbox && !await page.evaluate(() => {
+      const el = document.activeElement;
+      return el && el.tagName === 'INPUT' && el.type === 'checkbox';
+    })) continue;
+    return i;
   }
   throw new Error(`could not reach an element named ${re} by Tab within ${max} presses; last focus: "${await focused(page)}"`);
 }
@@ -27,7 +35,7 @@ async function tabTo(page, re, max = 80) {
  */
 async function kbSubmit(page, fields, button) {
   for (const [re, text] of fields) {
-    await tabTo(page, re);
+    await tabTo(page, re, 80, text === true);
     if (text === true) await page.keyboard.press('Space');
     else await page.keyboard.type(text, { delay: 3 });
   }

@@ -145,11 +145,12 @@ func TestLeaveCataloguePreviewAndControls(t *testing.T) {
 				} else {
 					wantGovCatalogue(t, body, "It stays on your closed account and your history is kept.")
 				}
-				if count == 0 {
+				switch count {
+				case 0:
 					wantGovCatalogue(t, body, "You have no open trade proposals.")
-				} else if count == 1 {
+				case 1:
 					wantGovCatalogue(t, body, "1 open trade proposal involving you will be cancelled, and the other members are told.")
-				} else {
+				default:
 					wantGovCatalogue(t, body, "2 open trade proposals involving you will be cancelled, and the other members are told.")
 				}
 				leaveAt := strings.Index(body, `action="/n/town/leave"`)

@@ -323,7 +323,9 @@ func executionCell(cs []Cite, e *executionEvidence, module string, max int) stri
 // Keep CI failures diagnosable without dumping successful test JSON into the log.
 func writeFailureOutput(raw []byte, results []testEvent, dst io.Writer) {
 	failed := map[string]bool{}
+	completed := map[string]bool{}
 	for _, ev := range results {
+		completed[ev.Package+"\x00"+ev.Test] = true
 		if ev.Action == "fail" {
 			failed[ev.Package+"\x00"+ev.Test] = true
 		}
@@ -334,7 +336,11 @@ func writeFailureOutput(raw []byte, results []testEvent, dst io.Writer) {
 		if err := dec.Decode(&ev); err != nil {
 			return
 		}
-		if ev.Action == "output" && failed[ev.Package+"\x00"+ev.Test] {
+		key := ev.Package + "\x00" + ev.Test
+		// A timeout or panic may fail the package without a terminal event for
+		// the running test. Its output contains the diagnostic and stack.
+		unfinished := ev.Test != "" && !completed[key] && failed[ev.Package+"\x00"]
+		if ev.Action == "output" && (failed[key] || unfinished) {
 			_, _ = io.WriteString(dst, ev.Output)
 		}
 	}

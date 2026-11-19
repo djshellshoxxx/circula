@@ -1,0 +1,29 @@
+{
+  "observed_result_file_mtime_utc": "2026-11-19T14:03:38.892171+00:00",
+  "command": "python3 /workspace/scratch/93aeb012c206/session-fixture-review/probe_http.py",
+  "exit_code": 0,
+  "source": "e0d27cc7cb73299219439919b260991b824d594a",
+  "binary_sha256": "b93018a474007d3c2190b169ae9735121f5165632826894b94d4c6919fad3855",
+  "artifacts": {
+    "probe_http.py": {
+      "sha256": "70c6828afc6ae16641f93654a55c8290441fe0afb0b77aaf479e0fd36e812e4b",
+      "bytes": 10203
+    },
+    "http-probe-result.json": {
+      "sha256": "1e46282b03b5ddf0e8b371f9ae329ebd9e72d4cf29c05b40689df11432e904dc",
+      "bytes": 930
+    },
+    "session-revoke-error-controls.json": {
+      "sha256": "015df41da68a500be12a84cc6526e8636a9d46e10267a14438caa5b7b4d72529",
+      "bytes": 3475
+    }
+  },
+  "script_note": "Preserved executed script with capture-description-only clarification: HTMLParser does not calculate browser layout or filter hidden ancestor controls. The captured error link and confirmation checkbox are also present in the actual provider accessibility snapshot.",
+  "qualification_boundary": "A fresh local database and two real HTTP cookie jars against the existing frozen binary. No Go build, browser launch or browser after-pass.",
+  "review": {
+    "reviewer": "independent javascript_catalogue agent",
+    "test_baseline": "e0da8bb22b0499deac8f0bfcc170c6fee6696238",
+    "fix": "bf4261e1f4ead7f58675f0f95d514333c746cf4b",
+    "outcome": "No source-review findings; reviewer ran no tests, browser or HTTP probes."
+  }
+}

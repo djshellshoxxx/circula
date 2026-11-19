@@ -1,0 +1,10 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "command": [
+    "/tmp/circula-tools-93/bin/govulncheck",
+    "-mode=binary",
+    "/tmp/circula-ui-e0"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 10.54
+}

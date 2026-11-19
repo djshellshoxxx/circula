@@ -1,0 +1,561 @@
+{
+  "observed_utc": "2026-11-19T13:01:10.237958+00:00",
+  "repository": "djshellshoxxx/circula",
+  "pull_request": 104,
+  "run_id": 44511241324,
+  "source_head": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+  "base_head": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "tested_merge": "ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc",
+  "event": "pull_request",
+  "status": "completed",
+  "conclusion": "failure",
+  "updated_at": "2026-11-19T12:44:16Z",
+  "jobs": [
+    {
+      "id": 135515729249,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "install e2e dependencies and Chromium (CI only; versions pinned in e2e/package-lock.json)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "name": "make e2e",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "upload failure screenshots",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729590,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "cross-build all OPS-003 targets from this commit",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "upload packaged artifacts for inspection",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729607,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Check workflow action pins",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Repository hygiene (fixture PII scan QA-043, migration static check QA-037)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Dependency licences against the approved list (ARC-024)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Secret scan (ARC-023, SEC-027)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "gofmt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "go vet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Requirement traceability is current",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "name": "Export reader and property-runner tests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "golangci-lint",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "govulncheck",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729741,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "contract (JSON API against docs/api/openapi.yaml)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "load smoke (small, QA-008 and QA-040 evidence)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729752,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "seed corpora of every fuzz target (also part of go test ./...)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "fuzz amount parser for 10s",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "fuzz strict JSON decoder for 10s",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729790,
+      "name": "test (windows-2022)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "test with race detector (macOS Intel, bounded parallelism)",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729832,
+      "name": "test (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "test with race detector (macOS Intel, bounded parallelism)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729945,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "build twice (different directory and cache) and compare",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "deploy smoke (binary under the systemd unit's settings, minus systemd)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 135515729949,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "test with race detector",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Match requirement citations to recorded test results",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload test evidence and property failure fixtures",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "failure_classification": [
+    {
+      "job": 135515729607,
+      "category": "generated traceability freshness",
+      "finding": "DAT-040 row is stale at the exact source; shared generated traceability is actively owned. This is a real merge blocker. Later Python/golangci-lint/govulncheck steps were skipped.",
+      "excerpts": [
+        "2026-11-19T12:38:18.9727624Z ##[group]Fetching the repository",
+        "2026-11-19T12:38:18.9732002Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc:refs/remotes/pull/104/merge",
+        "2026-11-19T12:38:19.5315264Z From https://github.com/djshellshoxxx/circula",
+        "2026-11-19T12:38:19.5316103Z  * [new ref]         ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc -> pull/104/merge",
+        "2026-11-19T12:38:19.5318865Z ##[endgroup]",
+        "2026-11-19T12:38:19.5935350Z ",
+        "2026-11-19T12:38:19.5935603Z HEAD is now at ae7b54a Merge c3c991aa3c12a11edce2874e9444b9d2a99f746c into ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+        "2026-11-19T12:38:19.5944994Z ##[endgroup]",
+        "2026-11-19T12:38:19.5979801Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-19T12:38:19.5999853Z ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc",
+        "2026-11-19T12:38:19.6005505Z ##[group]Removing auth",
+        "2026-11-19T12:38:50.6968092Z go run ./scripts/traceability -check -o docs/TRACEABILITY.md",
+        "2026-11-19T12:38:51.3019620Z traceability: docs/TRACEABILITY.md is out of date (first difference at line 299, expected \"| DAT-040 | P0 | A checksum mismatch or row count mismatch detected during verification MUST fail the... | built |...\"); run make traceability",
+        "2026-11-19T12:38:51.3024908Z exit status 1",
+        "2026-11-19T12:38:51.3043988Z make: *** [Makefile:69: traceability-check] Error 1",
+        "2026-11-19T12:38:51.3058460Z ##[error]Process completed with exit code 2.",
+        "2026-11-19T12:38:51.3182998Z Post job cleanup."
+      ]
+    },
+    {
+      "job": 135515729249,
+      "category": "browser dependency installation",
+      "finding": "APT package fetching failed with HTTP503 before make e2e. Browser tests did not execute; no browser acceptance pass.",
+      "excerpts": [
+        "2026-11-19T12:20:52.4403253Z ##[group]Fetching the repository",
+        "2026-11-19T12:20:52.4407307Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc:refs/remotes/pull/104/merge",
+        "2026-11-19T12:20:53.1353758Z From https://github.com/djshellshoxxx/circula",
+        "2026-11-19T12:20:53.1354254Z  * [new ref]         ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc -> pull/104/merge",
+        "2026-11-19T12:20:53.1357390Z ##[endgroup]",
+        "2026-11-19T12:20:53.1974981Z ",
+        "2026-11-19T12:20:53.1975412Z HEAD is now at ae7b54a Merge c3c991aa3c12a11edce2874e9444b9d2a99f746c into ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+        "2026-11-19T12:20:53.1982039Z ##[endgroup]",
+        "2026-11-19T12:20:53.2012072Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-19T12:20:53.2030533Z ae7b54a77f24b7ea71099220fe6b50c17b6dc2dc",
+        "2026-11-19T12:20:53.2038743Z ##[group]Removing auth",
+        "2026-11-19T12:25:17.2278741Z   503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2342796Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/universe/f/fonts-ipafont/fonts-ipafont-gothic_00303-21ubuntu1_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2343824Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/f/fonts-freefont/fonts-freefont-ttf_20211204%2bsvn4273-2_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2344696Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/universe/f/fonts-tlwg/fonts-tlwg-loma-otf_0.7.3-1_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2345522Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/universe/u/unifont/fonts-unifont_15.1.01-1build1_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2346384Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/universe/f/fonts-wqy-zenhei/fonts-wqy-zenhei_0.9.45-8_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2347292Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/x/xfonts-encodings/xfonts-encodings_1.0.5-0ubuntu2_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2348501Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/x/xfonts-utils/xfonts-utils_7.7%2b6build3_amd64.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2349376Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/universe/x/xfonts-cyrillic/xfonts-cyrillic_1.0.5%2bnmu1_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2350309Z E: Failed to fetch https://security.ubuntu.com/ubuntu/pool/main/x/xfonts-scalable/xfonts-scalable_1.0.3-1.3_all.deb  503  Service Unavailable [IP: 52.15.107.13 80]",
+        "2026-11-19T12:25:17.2351121Z E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?",
+        "2026-11-19T12:25:17.2362901Z Failed to install browsers",
+        "2026-11-19T12:25:17.2363497Z Error: Installation process exited with code: 100",
+        "2026-11-19T12:25:17.2492915Z ##[error]Process completed with exit code 1."
+      ]
+    }
+  ],
+  "scope": "Seven successful job results apply to c3c991a and its tested merge. Later Python/workflow/evidence changes require new-head CI. No aggregate all-green result or merge approval is claimed."
+}

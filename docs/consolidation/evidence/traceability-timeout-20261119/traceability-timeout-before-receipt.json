@@ -1,0 +1,23 @@
+{
+  "base_head": "bf1ba2720c81a3d6064ba113dcb2c09bf72d57c1",
+  "command": [
+    "go",
+    "test",
+    "-v",
+    "-count=1",
+    "-p",
+    "1",
+    "-run",
+    "^TestFailedExecutionKeepsActualTimeoutDiagnostics$",
+    "./scripts/traceability"
+  ],
+  "purpose": "Before-fix control: added real go-test timeout regression with original failure-output filter.",
+  "started_at": "2026-11-19T13:59:27.261035+00:00",
+  "source_sha256": {
+    "scripts/traceability/evidence.go": "a534e74f497d7efe23d43209111b74324f2ec6c8068db12bf66bc22b08c5dc7f",
+    "scripts/traceability/evidence_test.go": "dec6c4a4e4aa98505438f9cf589cf7c89502a8ed0cad78531f5fbe9a6ee5fbc7"
+  },
+  "exit_code": 1,
+  "elapsed_seconds": 2.007,
+  "finished_at": "2026-11-19T13:59:29.268475+00:00"
+}

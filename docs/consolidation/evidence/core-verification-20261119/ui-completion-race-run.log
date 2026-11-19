@@ -1,0 +1,3 @@
+FAIL	github.com/djshellshoxxx/circula/internal/service	1200.255s
+traceability: go test exited 1; failure evidence saved to /workspace/scratch/93aeb012c206/evidence-recovered/ui-completion-race-evidence.json
+exit status 2

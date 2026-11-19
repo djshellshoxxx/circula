@@ -1,0 +1,33 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "tree": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "dirty": false,
+  "command": [
+    "go",
+    "run",
+    "./scripts/traceability",
+    "-record-results",
+    "/workspace/scratch/93aeb012c206/evidence-recovered/ui-completion-normal-evidence.json",
+    "--",
+    "-p",
+    "1",
+    "-timeout",
+    "20m",
+    "./..."
+  ],
+  "started_at": "2026-11-19T13:29:23.177508+00:00",
+  "checkout": "same immutable standalone clone; separate output and caches; ordinary VCS stamping retained",
+  "environment": {
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "400MiB",
+    "GOGC": "100",
+    "CGO_ENABLED": "1",
+    "TMPDIR": "/dev/shm/circula-normal-work-93"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 277.194,
+  "finished_at": "2026-11-19T13:34:00.230713+00:00",
+  "end_head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "end_tree": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "end_dirty": false
+}

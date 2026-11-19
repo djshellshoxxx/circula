@@ -1,0 +1,112 @@
+{
+  "argv": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-p=1",
+    "-count=1",
+    "-timeout=2m",
+    "-json",
+    "-run",
+    "^(TestCommitAcknowledgmentFailurePreservesPostingAndReplay|TestFailedRollbackDiscardsConnection|TestMigrationMetadataReadFailureStopsBeforeDDL|TestMigrationWriteFailureRollsBackAndRecovers|TestTermsPagesCatalogue|TestRulesCatalogueRowsAndStates|TestLeaveCataloguePreviewAndControls|TestTermsRulesLeaveCatalogueEscapesMessages)$",
+    "./internal/store",
+    "./internal/web"
+  ],
+  "cwd": "/workspace/scratch/93aeb012c206/inventory-refresh",
+  "source_head_before": "e77559a1942c594ea3d9b6b6d8c5171c54b7aae5",
+  "source_tree_before": "69166d097603b050f5f5a73d7c81deb030279dd1",
+  "source_status_before": "",
+  "source_fingerprints": {
+    "internal/store/recovery_internal_test.go": "19a0362d06462b0dd8d192bcf65d9f149d5af5026be0e71abde62d0f0a0fd59c",
+    "internal/web/terms_rules_leave_catalog_test.go": "a5641d406ce05d486edbb8f47178c830d0233672b5d204d24dacac2e6bfcf915",
+    ".golangci.yml": "1350da107ac6b83cfd312ba547e8297aabd3069c06a78ee59f8bf0eeee7e0c4c",
+    "go.mod": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58",
+    "go.sum": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb"
+  },
+  "environment": {
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "1GiB",
+    "GOGC": "100",
+    "GOCACHE": "/tmp/circula-go-cache-93",
+    "GOMODCACHE": "/tmp/circula-go-modcache-93",
+    "GOTMPDIR": "/dev/shm/circula-golangci-repair-93/work",
+    "TMPDIR": "/dev/shm/circula-golangci-repair-93/work",
+    "GOLANGCI_LINT_CACHE": "/dev/shm/circula-golangci-run-93/cache",
+    "GOFLAGS": "-p=1",
+    "GOTOOLCHAIN": "local",
+    "PATH": "/workspace/scratch/beb70d57deba/toolchain/go/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+  },
+  "started_utc": "2026-11-19T14:08:53Z",
+  "resources_before": {
+    "mem_available_mib": 4013,
+    "shm_free_mib": 4967,
+    "tmp_free_mib": 2199,
+    "workspace_free_mib": 241
+  },
+  "resource_samples": [
+    {
+      "elapsed_seconds": 5.0,
+      "mem_available_mib": 3960,
+      "shm_free_mib": 4952,
+      "tmp_free_mib": 2184,
+      "workspace_free_mib": 241
+    },
+    {
+      "elapsed_seconds": 10.0,
+      "mem_available_mib": 4508,
+      "shm_free_mib": 4942,
+      "tmp_free_mib": 2174,
+      "workspace_free_mib": 241
+    },
+    {
+      "elapsed_seconds": 15.0,
+      "mem_available_mib": 5290,
+      "shm_free_mib": 4942,
+      "tmp_free_mib": 2107,
+      "workspace_free_mib": 241
+    },
+    {
+      "elapsed_seconds": 20.0,
+      "mem_available_mib": 5426,
+      "shm_free_mib": 4943,
+      "tmp_free_mib": 2072,
+      "workspace_free_mib": 241
+    },
+    {
+      "elapsed_seconds": 25.0,
+      "mem_available_mib": 5559,
+      "shm_free_mib": 4911,
+      "tmp_free_mib": 2058,
+      "workspace_free_mib": 241
+    },
+    {
+      "elapsed_seconds": 29.8,
+      "mem_available_mib": 5643,
+      "shm_free_mib": 4967,
+      "tmp_free_mib": 2057,
+      "workspace_free_mib": 240
+    }
+  ],
+  "stop_request_path": "/workspace/scratch/93aeb012c206/archaeology/golangci-v2.15.0/repair-stop.request",
+  "process_group": 17,
+  "exit_code": 0,
+  "status": "passed",
+  "stop_reason": null,
+  "wall_seconds": 29.753,
+  "finished_utc": "2026-11-19T14:09:23Z",
+  "resources_after": {
+    "mem_available_mib": 5643,
+    "shm_free_mib": 4967,
+    "tmp_free_mib": 2057,
+    "workspace_free_mib": 240
+  },
+  "source_head_after": "e77559a1942c594ea3d9b6b6d8c5171c54b7aae5",
+  "source_tree_after": "69166d097603b050f5f5a73d7c81deb030279dd1",
+  "source_status_after": "",
+  "passed_top_level_tests": 8,
+  "passed_subtests": 12,
+  "passed_packages": [
+    "github.com/djshellshoxxx/circula/internal/store",
+    "github.com/djshellshoxxx/circula/internal/web"
+  ],
+  "failed_events": []
+}

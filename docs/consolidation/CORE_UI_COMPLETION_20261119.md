@@ -1,5 +1,10 @@
 # Core UI completion and qualification checkpoint
 
+The subsequent publication, full normal-suite results, security checks, recovery
+follow-ups and current gates are recorded in
+[CORE_VERIFICATION_20261119.md](CORE_VERIFICATION_20261119.md).
+The source-completion checkpoint below is preserved with its original boundary.
+
 ## Integration authority and source boundaries
 
 The owned continuation branch is

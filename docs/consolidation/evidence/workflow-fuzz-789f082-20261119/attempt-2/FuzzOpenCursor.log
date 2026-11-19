@@ -1,0 +1,21 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/25 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 25/25 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 28 (9/sec), new interesting: 0 (total: 25)
+fuzz: elapsed: 6s, execs: 28 (0/sec), new interesting: 0 (total: 25)
+fuzz: elapsed: 9s, execs: 22732 (7573/sec), new interesting: 3 (total: 28)
+fuzz: elapsed: 12s, execs: 28043 (1771/sec), new interesting: 11 (total: 36)
+fuzz: elapsed: 15s, execs: 33336 (1762/sec), new interesting: 14 (total: 39)
+fuzz: elapsed: 18s, execs: 37644 (1438/sec), new interesting: 22 (total: 47)
+fuzz: elapsed: 21s, execs: 43399 (1918/sec), new interesting: 33 (total: 58)
+fuzz: elapsed: 24s, execs: 45633 (745/sec), new interesting: 47 (total: 72)
+fuzz: elapsed: 27s, execs: 48032 (800/sec), new interesting: 55 (total: 80)
+fuzz: elapsed: 30s, execs: 54525 (2165/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 33s, execs: 54525 (0/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 36s, execs: 54525 (0/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 39s, execs: 54525 (0/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 42s, execs: 54525 (0/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 45s, execs: 54525 (0/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 48s, execs: 54525 (0/sec), new interesting: 61 (total: 86)
+fuzz: elapsed: 48s, execs: 100000 (203972/sec), new interesting: 63 (total: 88)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	48.249s

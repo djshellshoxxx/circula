@@ -9,6 +9,7 @@ Verifies size, SHA-256 and row count of every file against manifest.json, then
 checks the reconciliation summary when present. Older packages without that
 optional summary remain supported. Exit status 0 only when every check passes.
 """
+import calendar
 import copy
 import csv
 from contextlib import contextmanager
@@ -117,6 +118,99 @@ def integer(value, label, csv_cell=False):
     return value
 
 
+class ManifestObject(dict):
+    """Keep every occurrence until known fields are validated and resolved."""
+    def __init__(self, pairs):
+        super().__init__(pairs)
+        self.pairs = pairs
+
+
+MANIFEST_FIELDS = {
+    "manifest": (("schema_version", "decimals", "ledger_seq"), ("network_id", "scope", "format")),
+    "file": (("rows", "bytes"), ("name", "sha256")),
+    "reconciliation": (("entries", "entry_sum", "balance_total"), ()),
+    "accounts": (("nonzero",), ("sha256",)),
+}
+
+# All known tags are ASCII. These are the only extra Unicode equivalents in
+# Go's simple-fold comparison of ASCII letters; full casefold would also
+# expand ligatures and incorrectly turn unknown extensions into known fields.
+MANIFEST_FIELD_FOLD = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZſK", "abcdefghijklmnopqrstuvwxyzsk")
+MANIFEST_NULLABLE_FIELDS = {"manifest": ("files", "reconciliation"), "reconciliation": ("accounts",)}
+
+
+def reject_json_constant(value):
+    """Go rejects NaN and infinities even in otherwise ignored JSON fields."""
+    raise ValueError("invalid JSON constant %s" % value)
+
+
+def manifest_timestamp(value, label):
+    """Validate time.Time's RFC 3339 input without changing its precision."""
+    if not isinstance(value, str):
+        raise ValueError("%s must be a timestamp string" % label)
+    # Keep Go's existing legacy allowances: a one-digit hour, comma fraction,
+    # and timezone components of 24 hours or 60 minutes. Its strict RFC 3339
+    # checks are currently disabled; do not narrow accepted exports here.
+    match = re.fullmatch(r"([0-9]{4})-([0-9]{2})-([0-9]{2})T"
+                         r"([0-9]{1,2}):([0-9]{2}):([0-9]{2})"
+                         r"(?:[.,][0-9]+)?(?:Z|[+-]([0-9]{2}):([0-9]{2}))", value)
+    if match:
+        year, month, day, hour, minute, second = map(int, match.groups()[:6])
+        zone_hour, zone_minute = match.groups()[6:]
+        if (1 <= month <= 12 and 1 <= day <= calendar.monthrange(year, month)[1]
+                and hour < 24 and minute < 60 and second < 60
+                and (zone_hour is None or (int(zone_hour) <= 24 and int(zone_minute) <= 60))):
+            return
+    raise ValueError("%s must be an RFC 3339 timestamp" % label)
+
+
+def validate_manifest_object(value, kind="manifest", label="manifest.json"):
+    """Validate and resolve known Go fields in original JSON member order."""
+    # Go accepts null while decoding these scalar, struct, slice and pointer
+    # fields. Preserve that at this stage; existing final version/files/count/
+    # reconciliation checks still decide whether the resulting package is valid.
+    if value is None:
+        return
+    if not isinstance(value, ManifestObject):
+        raise ValueError("%s must be an object" % label)
+    integer_fields, string_fields = MANIFEST_FIELDS[kind]
+    nullable_fields = MANIFEST_NULLABLE_FIELDS.get(kind, ())
+    resolved = {}
+    for original, item in value.pairs:
+        name = original.translate(MANIFEST_FIELD_FOLD)
+        field = "%s.%s" % (label, original)
+        if name in integer_fields:
+            if item is not None:
+                integer(item, field)
+        elif name in string_fields:
+            if item is not None and not isinstance(item, str):
+                raise ValueError("%s must be a string" % field)
+        elif kind == "manifest" and name == "generated_at":
+            if item is not None:
+                manifest_timestamp(item, field)
+        elif kind == "manifest" and name == "files":
+            if item is not None:
+                if not isinstance(item, list):
+                    raise ValueError("%s must be an array" % field)
+                for index, entry in enumerate(item):
+                    validate_manifest_object(entry, "file", "%s[%d]" % (field, index))
+        elif kind == "manifest" and name == "reconciliation":
+            validate_manifest_object(item, "reconciliation", field)
+        elif kind == "reconciliation" and name == "accounts":
+            validate_manifest_object(item, "accounts", field)
+        else:
+            # Unknown additive fields stay ignored, including nested values.
+            resolved[original] = item
+            continue
+        # Scalar nulls leave an already decoded value unchanged in Go. Keep a
+        # lone null explicit for the reader's existing final presence checks;
+        # slice/pointer nulls always replace an earlier value.
+        if item is not None or name in nullable_fields or name not in resolved:
+            resolved[name] = item
+    value.clear()
+    value.update(resolved)
+
+
 def identifier(value, label):
     if not isinstance(value, str) or not value or any(c in value for c in ",\r\n"):
         raise ValueError("%s must be a nonempty identifier without commas or newlines" % label)
@@ -205,9 +299,11 @@ def verify(argv):
 
 
 def verify_package(read, names):
-    man = json.loads(read("manifest.json"))
+    man = json.loads(read("manifest.json"), object_pairs_hook=ManifestObject,
+                     parse_constant=reject_json_constant)
     if not isinstance(man, dict):
         raise ValueError("manifest.json must contain an object")
+    validate_manifest_object(man)
     if type(man.get("schema_version")) is not int or man["schema_version"] != 1:
         print("unsupported schema_version %r" % man.get("schema_version"), file=sys.stderr)
         return 1
@@ -216,6 +312,8 @@ def verify_package(read, names):
     listed = {"manifest.json"}
     for f in man["files"]:
         name = package_name(f["name"])
+        integer(f["rows"], "manifest file rows")
+        integer(f["bytes"], "manifest file bytes")
         if name in listed:
             raise ValueError("duplicate or reserved manifest member %r" % name)
         listed.add(name)
@@ -242,7 +340,7 @@ def verify_package(read, names):
                     raise ValueError("duplicate exported table %s" % table)
                 exported[table] = ([dict(zip(recs[0], row)) for row in recs[1:]], True)
         else:
-            doc = json.loads(data)
+            doc = json.loads(data, parse_constant=reject_json_constant)
             for t, items in doc["tables"].items():
                 tables[t] = len(items)
                 rows += len(items)

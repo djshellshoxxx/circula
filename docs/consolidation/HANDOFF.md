@@ -2,11 +2,17 @@
 
 ## Current continuation
 
-Current integration authority, completed source, verification boundaries and next
-actions are recorded in [CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md).
-The first frozen batch is retained in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
-Main remains last observed at `ead63b5`; PR #109 at `5db3efc` targets PR #90
-at `839e869`. The separate second UI continuation preserves those source refs.
+Current integration authority, recovered source, actual test results and next
+actions are recorded in [CORE_VERIFICATION_20261119.md](CORE_VERIFICATION_20261119.md).
+The frozen UI candidate is retained in [CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md)
+and the first batch in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
+Main remains observed at `ead63b5`; published PR #112 at `08d4b00` targets
+PR #109 at `5db3efc`, which targets active PR #90 at `839e869`.
+The frozen UI source passes the complete normal suite (3,080 test/subtest events),
+ledger load smoke, binary and package-level vulnerability checks. Its full race
+run failed in the service package; exact failures and remaining gate states are
+preserved in the current record. The follow-up also carries the reconciled 41-test export reader, passing
+COMMIT acknowledgment-loss regression and exact secret-scanner evidence repair.
 The snapshot below is the historical initial recovery record.
 
 ## Historical initial-recovery checkpoint

@@ -1,0 +1,57 @@
+{
+  "observed_utc": "2026-11-19T14:00:00Z",
+  "source": "e0d27cc7cb73299219439919b260991b824d594a",
+  "tree": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "source_clean": true,
+  "config_sha256": "1350da107ac6b83cfd312ba547e8297aabd3069c06a78ee59f8bf0eeee7e0c4c",
+  "workflow_blob": "0dd0a10dd3ec0243e816f0935da73686adc8fa84",
+  "config_schema": "2",
+  "workflow_tool_pin": "v2.15.0",
+  "workflow_action_pin": "ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a",
+  "workflow_action_version_comment": "v9.3.0",
+  "workflow_schema_network_verification": false,
+  "workflow_job_timeout_minutes": 20,
+  "standard_linters": [
+    "errcheck",
+    "govet",
+    "ineffassign",
+    "staticcheck",
+    "unused"
+  ],
+  "explicit_additions": [
+    "bodyclose",
+    "misspell",
+    "nilerr",
+    "unconvert",
+    "gosec",
+    "depguard"
+  ],
+  "configured_formatter": [
+    "gofmt"
+  ],
+  "tests_enabled_by_default": true,
+  "existing_gosec_exclusions": [
+    "G304",
+    "G306",
+    "G302",
+    "G301",
+    "G204"
+  ],
+  "existing_gosec_test_exclusion": true,
+  "existing_errcheck_output_exclusions": [
+    "fmt.Fprint",
+    "fmt.Fprintf",
+    "fmt.Fprintln"
+  ],
+  "depguard_groups": [
+    "domain",
+    "repository",
+    "store",
+    "service",
+    "adapters",
+    "cmd",
+    "storetest"
+  ],
+  "lint_run_started": false,
+  "hold": "Await root cache restoration and serialized lint authorization after executor restart; do not mutate frozen source."
+}

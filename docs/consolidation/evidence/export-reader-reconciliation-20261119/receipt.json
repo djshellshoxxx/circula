@@ -1,0 +1,351 @@
+{
+  "source": {
+    "base": "e0d27cc7cb73299219439919b260991b824d594a",
+    "peer_base": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+    "peer_head": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+    "files": [
+      {
+        "path": ".github/workflows/export-reader.yml",
+        "peer_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198",
+        "combined_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198",
+        "sha256": "cf621519a7a3e8321c706c24220cff72d7b135e4541a7ebd357cf9061e663499",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/CORE_PROVIDER_CHECKPOINT.json",
+        "peer_blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a",
+        "combined_blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a",
+        "sha256": "e5a85bb277ec4ab4d6234e96676c9e7cb120109cb4bb59d37bad4e0fa57635ab",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/CORE_QUALIFICATION.json",
+        "peer_blob": "03344d7725d359b870459b6045e4d44d7a857367",
+        "combined_blob": "03344d7725d359b870459b6045e4d44d7a857367",
+        "sha256": "62ab386ed912d8674829ad019397f2ce692211d25cc72f53c715116f686c47fa",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/EXECUTION_CHECKPOINT.md",
+        "peer_blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137",
+        "combined_blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137",
+        "sha256": "7348dd115739476f3484571c12b73faa7827ea7b19195839290cc9b51e9951f5",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_EVIDENCE.json",
+        "peer_blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6",
+        "combined_blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6",
+        "sha256": "d85a9a61272b9219bab22f3b245634445e7f3c6761b16713d02efc65cfecc8e0",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_QUALIFICATION.md",
+        "peer_blob": "34aebf4b77c273c530fc07cb118791dc53a3b503",
+        "combined_blob": "34aebf4b77c273c530fc07cb118791dc53a3b503",
+        "sha256": "fd8fe71bb7ebea3217ad6e1d3c6fd1f313e038038380ceccc9b21c1af0170a38",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/pending-traceability.patch",
+        "peer_blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c",
+        "combined_blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c",
+        "sha256": "59a9258c670952bb2faed2aa45ab30b76bf7d73824c034bb4ab775d9661f37ea",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.json",
+        "peer_blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f",
+        "combined_blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f",
+        "sha256": "ad3217dc86de7395a3d51d71c6048f1743b0341f6e761d6c7b23a7e06dc0240a",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.log",
+        "peer_blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1",
+        "combined_blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1",
+        "sha256": "dd5689ebf9794c988e774801c89286ae3984b3182d6eebcbc18c3de18facd1ac",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.json",
+        "peer_blob": "35947b9d9cc87ae28704c19a54608a44c60520e0",
+        "combined_blob": "35947b9d9cc87ae28704c19a54608a44c60520e0",
+        "sha256": "9e3f37d4a7bbcfb2fb1077759cee876349d427890779474003d2b42b89ed9ae9",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.md",
+        "peer_blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563",
+        "combined_blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563",
+        "sha256": "9c9bacefcf3632f13dcceb75ac7a09f45ef332882c4411a0ac569d0d7c76fa7b",
+        "byte_identical_to_peer": true
+      },
+      {
+        "path": "scripts/read-export.py",
+        "peer_blob": "bde02445e22e837370fe5911cdee29d2fae3a234",
+        "combined_blob": "2bbbc9d30e82538ee356509e76da8663110fcd18",
+        "sha256": "f44a4daa5bae6b8797670a3923534bf61e57b2eff48eb088998f1c00ac20414d",
+        "byte_identical_to_peer": false
+      },
+      {
+        "path": "scripts/test_read_export.py",
+        "peer_blob": "af5d950d72b4e8f2d209bb31e393b98f619cac5d",
+        "combined_blob": "b9f1cf81847091ad3eff9af19bc3c7d86c6836a5",
+        "sha256": "1b68485541037d7dbb2226465f0c6ad9ddcfe7bc7dc66d7822410604a9e7ec87",
+        "byte_identical_to_peer": false
+      }
+    ],
+    "retained_compression_methods": [
+      "recompress_package",
+      "test_zip_compression_valid_streams",
+      "test_zip_compression_requires_complete_streams",
+      "test_zip_compression_completion_state_must_be_available"
+    ],
+    "retained_open_package_exact": true,
+    "new_parity_tests": [
+      "test_json_constants_rejected_in_manifest",
+      "test_json_constants_rejected_in_members",
+      "test_manifest_boolean_size_does_not_match_one_byte",
+      "test_manifest_case_aliases_accept_valid_names",
+      "test_manifest_case_aliases_apply_later_values",
+      "test_manifest_case_aliases_do_not_fold_ligatures",
+      "test_manifest_case_aliases_preserve_null_rules",
+      "test_manifest_case_aliases_reject_shadowed_type_errors",
+      "test_manifest_file_counts_require_integer_tokens",
+      "test_manifest_metadata_preserves_supported_values",
+      "test_manifest_metadata_rejects_wrong_types",
+      "test_manifest_preserves_existing_missing_and_null_behavior",
+      "test_manifest_rejects_shadowed_type_errors",
+      "test_manifest_timestamps_reject_malformed_values",
+      "test_manifest_unknown_fields_remain_ignored",
+      "test_manifest_valid_duplicates_keep_final_values"
+    ],
+    "combined_test_method_count": 41,
+    "static_checks": [
+      {
+        "label": "full-whitespace",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 2,
+        "output": "docs/audits/master-consolidation-20261119/pending-traceability.patch:4: trailing whitespace.\n+ \ndocs/audits/master-consolidation-20261119/pending-traceability.patch:6: trailing whitespace.\n+ \ndocs/audits/master-consolidation-20261119/pending-traceability.patch:9: trailing whitespace.\n+ \ndocs/audits/master-consolidation-20261119/pending-traceability.patch:11: trailing whitespace.\n+ \n"
+      },
+      {
+        "label": "source-whitespace",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check",
+          "--",
+          ".",
+          ":!docs/audits/master-consolidation-20261119/pending-traceability.patch"
+        ],
+        "exit_code": 0,
+        "output": ""
+      },
+      {
+        "label": "historical-patch-parse",
+        "command": [
+          "git",
+          "apply",
+          "--numstat",
+          "docs/audits/master-consolidation-20261119/pending-traceability.patch"
+        ],
+        "exit_code": 0,
+        "output": "2\t2\tdocs/TRACEABILITY.md\n"
+      }
+    ],
+    "source_commit": "12cb5c5dfc0bd3356271fecd9c1ff0be6d425571",
+    "source_tree": "7c8de2054277d9100b4f39f5681f5bf3ad1b63f7",
+    "upstream_patch_sha256": "95011b9d894c928c7d0deead7d20d57f0e893fbfea7fcbd4b9da45cc59c95d95"
+  },
+  "execution": {
+    "source_commit": "12cb5c5dfc0bd3356271fecd9c1ff0be6d425571",
+    "source_tree": "7c8de2054277d9100b4f39f5681f5bf3ad1b63f7",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "baseline": {
+      "reader_git_blob": "0365197f4d34281c885c46022150589de6d92003",
+      "reader_sha256": "b0b96ff4e1885bf228e6fd965a1a9770a801346c76526b6947622f8851577847",
+      "tests_sha256": "1b68485541037d7dbb2226465f0c6ad9ddcfe7bc7dc66d7822410604a9e7ec87",
+      "preparation": "Exact frozen-reader bytes copied from git show; exact combined test file copied unchanged into an isolated ignored baseline directory. No working-tree source was restored or modified."
+    },
+    "checks": [
+      {
+        "label": "parity-before",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest",
+          "test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members",
+          "test_read_export.ReferenceExportTests.test_manifest_boolean_size_does_not_match_one_byte",
+          "test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names",
+          "test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values",
+          "test_read_export.ReferenceExportTests.test_manifest_case_aliases_do_not_fold_ligatures",
+          "test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules",
+          "test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors",
+          "test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens",
+          "test_read_export.ReferenceExportTests.test_manifest_metadata_preserves_supported_values",
+          "test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types",
+          "test_read_export.ReferenceExportTests.test_manifest_preserves_existing_missing_and_null_behavior",
+          "test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors",
+          "test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values",
+          "test_read_export.ReferenceExportTests.test_manifest_unknown_fields_remain_ignored",
+          "test_read_export.ReferenceExportTests.test_manifest_valid_duplicates_keep_final_values"
+        ],
+        "cwd": "/workspace/scratch/93aeb012c206/onboarding-catalogue/bin/pr104-baseline",
+        "exit_code": 1,
+        "elapsed_seconds": 7.06,
+        "log": "bin/pr104-parity-before.log",
+        "log_sha256": "c43fc985853faa3dc4b5e5bad5ba6b8ca24fc8c52aec911833d5b849d4cd255f",
+        "failure_events": 96,
+        "error_events": 0,
+        "summary": [
+          "Ran 16 tests in 6.778s",
+          "FAILED (failures=96)"
+        ]
+      },
+      {
+        "label": "reader-after",
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-v",
+          "-s",
+          "scripts",
+          "-p",
+          "test_read_export.py"
+        ],
+        "cwd": "/workspace/scratch/93aeb012c206/onboarding-catalogue",
+        "exit_code": 0,
+        "elapsed_seconds": 19.012,
+        "log": "bin/pr104-reader-after.log",
+        "log_sha256": "2392f524487eb66e37bb4963f270ae716bbd11ffd682b8a977dbfabca0f2b8a5",
+        "failure_events": 0,
+        "error_events": 0,
+        "summary": [
+          "Ran 41 tests in 18.657s",
+          "OK"
+        ]
+      },
+      {
+        "label": "action-pins",
+        "command": [
+          "bash",
+          "scripts/check-action-pins.sh"
+        ],
+        "cwd": "/workspace/scratch/93aeb012c206/onboarding-catalogue",
+        "exit_code": 0,
+        "elapsed_seconds": 0.267,
+        "log": "bin/pr104-action-pins.log",
+        "log_sha256": "9353c7b345cda410e4d8d1110ace2932403381722b51df6065fea429ad158cd2",
+        "failure_events": 0,
+        "error_events": 0,
+        "summary": [
+          "action pins and permissions: ok"
+        ]
+      },
+      {
+        "label": "hygiene",
+        "command": [
+          "bash",
+          "scripts/check-hygiene.sh"
+        ],
+        "cwd": "/workspace/scratch/93aeb012c206/onboarding-catalogue",
+        "exit_code": 0,
+        "elapsed_seconds": 0.57,
+        "log": "bin/pr104-hygiene.log",
+        "log_sha256": "d73668eb666d28d3df07751c7dfdbb61919c3077aff0e7f8315096fbe009cb3b",
+        "failure_events": 0,
+        "error_events": 0,
+        "summary": [
+          "Ran 4 tests in 0.001s",
+          "OK",
+          "hygiene checks: ok"
+        ]
+      }
+    ]
+  },
+  "baseline_failure_methods": {
+    "test_json_constants_rejected_in_manifest": 6,
+    "test_json_constants_rejected_in_members": 6,
+    "test_manifest_boolean_size_does_not_match_one_byte": 1,
+    "test_manifest_case_aliases_accept_valid_names": 2,
+    "test_manifest_case_aliases_apply_later_values": 13,
+    "test_manifest_case_aliases_preserve_null_rules": 3,
+    "test_manifest_case_aliases_reject_shadowed_type_errors": 18,
+    "test_manifest_file_counts_require_integer_tokens": 7,
+    "test_manifest_metadata_rejects_wrong_types": 10,
+    "test_manifest_rejects_shadowed_type_errors": 20,
+    "test_manifest_timestamps_reject_malformed_values": 10
+  },
+  "workflow_review": {
+    "upstream_commit": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+    "path": ".github/workflows/export-reader.yml",
+    "independent_reviewer": "/root/repository_archaeology",
+    "findings": [],
+    "scope": "Read-only event/permissions/pin/shell-input/release-deployment source review; no native provider execution or upstream tag-resolution claim."
+  },
+  "artifacts": [
+    {
+      "path": "parity-before.log",
+      "sha256": "c43fc985853faa3dc4b5e5bad5ba6b8ca24fc8c52aec911833d5b849d4cd255f",
+      "size_bytes": 102803
+    },
+    {
+      "path": "reader-after.log",
+      "sha256": "2392f524487eb66e37bb4963f270ae716bbd11ffd682b8a977dbfabca0f2b8a5",
+      "size_bytes": 5605
+    },
+    {
+      "path": "action-pins.log",
+      "sha256": "9353c7b345cda410e4d8d1110ace2932403381722b51df6065fea429ad158cd2",
+      "size_bytes": 32
+    },
+    {
+      "path": "hygiene.log",
+      "sha256": "d73668eb666d28d3df07751c7dfdbb61919c3077aff0e7f8315096fbe009cb3b",
+      "size_bytes": 121
+    }
+  ],
+  "receipt_whitespace_checks": [
+    {
+      "label": "combined-full-whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "e0d27cc7cb73299219439919b260991b824d594a"
+      ],
+      "exit_code": 2,
+      "output": "docs/audits/master-consolidation-20261119/pending-traceability.patch:4: trailing whitespace.\n+ \ndocs/audits/master-consolidation-20261119/pending-traceability.patch:6: trailing whitespace.\n+ \ndocs/audits/master-consolidation-20261119/pending-traceability.patch:9: trailing whitespace.\n+ \ndocs/audits/master-consolidation-20261119/pending-traceability.patch:11: trailing whitespace.\n+ \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:1: trailing whitespace.\n+test_json_constants_rejected_in_manifest (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_manifest) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:8: trailing whitespace.\n+test_json_constants_rejected_in_members (test_read_export.ReferenceExportTests.test_json_constants_rejected_in_members) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:16: trailing whitespace.\n+test_manifest_case_aliases_accept_valid_names (test_read_export.ReferenceExportTests.test_manifest_case_aliases_accept_valid_names) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:19: trailing whitespace.\n+test_manifest_case_aliases_apply_later_values (test_read_export.ReferenceExportTests.test_manifest_case_aliases_apply_later_values) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:34: trailing whitespace.\n+test_manifest_case_aliases_preserve_null_rules (test_read_export.ReferenceExportTests.test_manifest_case_aliases_preserve_null_rules) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:38: trailing whitespace.\n+test_manifest_case_aliases_reject_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_case_aliases_reject_shadowed_type_errors) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:57: trailing whitespace.\n+test_manifest_file_counts_require_integer_tokens (test_read_export.ReferenceExportTests.test_manifest_file_counts_require_integer_tokens) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:66: trailing whitespace.\n+test_manifest_metadata_rejects_wrong_types (test_read_export.ReferenceExportTests.test_manifest_metadata_rejects_wrong_types) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:78: trailing whitespace.\n+test_manifest_rejects_shadowed_type_errors (test_read_export.ReferenceExportTests.test_manifest_rejects_shadowed_type_errors) ... \ndocs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log:99: trailing whitespace.\n+test_manifest_timestamps_reject_malformed_values (test_read_export.ReferenceExportTests.test_manifest_timestamps_reject_malformed_values) ... \n"
+    },
+    {
+      "label": "combined-source-and-receipt-whitespace",
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "e0d27cc7cb73299219439919b260991b824d594a",
+        "--",
+        ".",
+        ":!docs/audits/master-consolidation-20261119/pending-traceability.patch",
+        ":!docs/consolidation/evidence/export-reader-reconciliation-20261119/parity-before.log"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ]
+}
