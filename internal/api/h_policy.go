@@ -28,6 +28,12 @@ type policyDTO struct {
 	ReReviewWindowDays        int    `json:"re_review_window_days"`
 	LimitWarningPercent       int    `json:"limit_warning_percent"`
 	InactivityDays            int    `json:"inactivity_days"`
+	// SEC-026 activity signal settings (administrator view only).
+	ActivitySignalsEnabled      bool `json:"activity_signals_enabled"`
+	VelocitySignalProposals     int  `json:"velocity_signal_proposals"`
+	VelocitySignalWindowMinutes int  `json:"velocity_signal_window_minutes"`
+	ReciprocalSignalTrades      int  `json:"reciprocal_signal_trades"`
+	ReciprocalSignalWindowDays  int  `json:"reciprocal_signal_window_days"`
 }
 
 func toPolicy(p domain.Policy) policyDTO {
@@ -37,7 +43,10 @@ func toPolicy(p domain.Policy) policyDTO {
 		LimitWarningDays: p.LimitWarningDays, DefaultFlagBlocksPayer: p.DefaultFlagBlocksPayer, DirectoryVisibility: p.DirectoryVisibility,
 		DualControlThresholdMinor: minor(p.DualControlThreshold),
 		ResponsePeriodDays:        p.ResponsePeriodDays, ReReviewWindowDays: p.ReReviewWindowDays, LimitWarningPercent: p.LimitWarningPercent,
-		InactivityDays: p.InactivityDays}
+		InactivityDays:         p.InactivityDays,
+		ActivitySignalsEnabled: p.ActivitySignalsEnabled, VelocitySignalProposals: p.VelocitySignalProposals,
+		VelocitySignalWindowMinutes: p.VelocitySignalWindowMinutes, ReciprocalSignalTrades: p.ReciprocalSignalTrades,
+		ReciprocalSignalWindowDays: p.ReciprocalSignalWindowDays}
 }
 
 func (d policyDTO) domain() (domain.Policy, error) {
@@ -60,6 +69,9 @@ func (d policyDTO) domain() (domain.Policy, error) {
 	p.LimitWarningDays, p.DefaultFlagBlocksPayer, p.DirectoryVisibility = d.LimitWarningDays, d.DefaultFlagBlocksPayer, d.DirectoryVisibility
 	p.ResponsePeriodDays, p.ReReviewWindowDays, p.LimitWarningPercent = d.ResponsePeriodDays, d.ReReviewWindowDays, d.LimitWarningPercent
 	p.InactivityDays = d.InactivityDays
+	p.ActivitySignalsEnabled, p.VelocitySignalProposals = d.ActivitySignalsEnabled, d.VelocitySignalProposals
+	p.VelocitySignalWindowMinutes, p.ReciprocalSignalTrades = d.VelocitySignalWindowMinutes, d.ReciprocalSignalTrades
+	p.ReciprocalSignalWindowDays = d.ReciprocalSignalWindowDays
 	return p, nil
 }
 

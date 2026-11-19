@@ -38,6 +38,26 @@ func TestOverviewMessages(t *testing.T) {
 	}
 }
 
+// SEC-026 / UX-047: activity signal sentences select the plural on the count,
+// reorder their arguments, group large numbers and keep names as plain text.
+func TestSEC026SignalMessages(t *testing.T) {
+	for _, tc := range []struct {
+		key  string
+		args []any
+		want string
+	}{
+		{"signals.velocity", []any{21, "Ana", 60, 20}, "Ana made 21 trade proposals within a 60-minute window, above the review threshold of 20."},
+		{"signals.velocity", []any{1, "Ana", 1, 0}, "Ana made 1 trade proposal within a 1-minute window, above the review threshold of 0."},
+		{"signals.velocity", []any{1001, "<b>Zoë</b>", 10080, 1000}, "<b>Zoë</b> made 1,001 trade proposals within a 10,080-minute window, above the review threshold of 1,000."},
+		{"signals.reciprocal", []any{11, "Ana", "Ben", 30, 10}, "Ana and Ben completed 11 trades with each other, in both directions, within a 30-day window, above the review threshold of 10."},
+		{"signals.settings", []any{20, 60, 10, 30}, "This network raises a signal when the trade proposals one member makes within a 60-minute window exceed 20, or when the trades two members complete with each other, in both directions, within a 30-day window exceed 10."},
+	} {
+		if got := Text(tc.key, tc.args...); got != tc.want {
+			t.Errorf("%s%v = %q, want %q", tc.key, tc.args, got, tc.want)
+		}
+	}
+}
+
 // UX-047: catalogue interpolation preserves exact amounts, Unicode names and
 // literal percent signs; the result remains subject to HTML escaping.
 func TestProposalMessageIsPlainText(t *testing.T) {
@@ -79,6 +99,12 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{1000}
 		case "overview.stale", "overview.invites":
 			args = []any{2, 48}
+		case "signals.settings":
+			args = []any{20, 60, 10, 30}
+		case "signals.velocity":
+			args = []any{21, "Ana", 60, 20}
+		case "signals.reciprocal":
+			args = []any{11, "Ana", "Ben", 30, 10}
 		default:
 			if strings.HasPrefix(key, "financial.row.") {
 				args = []any{"Ana", "12.50", "credits"}

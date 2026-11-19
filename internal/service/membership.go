@@ -344,6 +344,19 @@ func (s *Service) grantRoleTx(tx store.Tx, p *principal, m *domain.Member, role 
 // noticeAdminGranted tells every other active administrator of the network
 // that a new one was appointed, so a rogue appointment is visible (A3-01).
 func (s *Service) noticeAdminGranted(tx store.Tx, netID string, grantee *domain.Member, p *principal) error {
+	return s.eachActiveMember(tx, netID, func(o *domain.Member) error {
+		if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
+			return nil
+		}
+		return s.secNotice(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed")
+	})
+}
+
+// eachActiveMember calls fn for every active member of the network, paging
+// the member list by id inside the caller's unit of work, so notices to
+// administrators beyond the first page commit with the change they announce
+// (A3-01, SEC-026). It stops at the first error.
+func (s *Service) eachActiveMember(tx store.Tx, netID string, fn func(*domain.Member) error) error {
 	const pageSize = 500
 	cursor := ""
 	for {
@@ -353,11 +366,8 @@ func (s *Service) noticeAdminGranted(tx store.Tx, netID string, grantee *domain.
 		if err != nil {
 			return err
 		}
-		for _, o := range ms {
-			if o.ID == grantee.ID || !o.HasRole(domain.RoleAdmin) {
-				continue
-			}
-			if err := s.secNotice(tx, o.PersonID, domain.NoticeAdminGranted, p.net.Name+": a new administrator was appointed"); err != nil {
+		for _, m := range ms {
+			if err := fn(m); err != nil {
 				return err
 			}
 		}
@@ -365,7 +375,7 @@ func (s *Service) noticeAdminGranted(tx store.Tx, netID string, grantee *domain.
 			return nil
 		}
 		// ListMembers orders IDs ascending. Continue inside the same write
-		// transaction so role assignment and every notice commit together.
+		// transaction so the change and every notice commit together.
 		cursor = ms[len(ms)-1].ID
 	}
 }

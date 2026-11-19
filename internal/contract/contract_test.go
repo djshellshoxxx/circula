@@ -384,6 +384,22 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(403, call{method: "POST", path: "/admin/reports/" + rep + "/handle", token: aliceT, idem: true})
 	h.do(200, call{method: "POST", path: "/admin/reports/" + rep + "/handle", token: adminT, idem: true, body: m{"note": "checked"}})
 	h.do(409, call{method: "POST", path: "/admin/reports/" + rep + "/handle", token: adminT, idem: true})
+	// Activity signals (SEC-026): a burst by one member raises a velocity signal,
+	// readable by administrators and reviewers, refused to plain members.
+	sam, _ := env.Member(admin, net, "sam")
+	_, tiaM := env.Member(admin, net, "tia")
+	for i := 0; i <= domain.DefaultVelocitySignalProposals; i++ {
+		testutil.Must(env.Svc.ProposeTransaction(env.Ctx, sam, net.ID, service.ProposeInput{CounterpartyID: tiaM.ID,
+			Direction: service.ProposerPays, Amount: 1, IdempotencyKey: env.Key()}))
+	}
+	rec = h.do(200, call{method: "GET", path: "/activity-signals", token: adminT})
+	if !strings.Contains(rec.Body.String(), `"kind":"velocity"`) {
+		t.Errorf("activity signals: %s", rec.Body.String())
+	}
+	h.do(200, call{method: "GET", path: "/activity-signals?kind=reciprocal&limit=1", token: revT})
+	h.do(400, call{method: "GET", path: "/activity-signals?kind=bogus", token: adminT, skipRequest: true})
+	h.do(403, call{method: "GET", path: "/activity-signals", token: aliceT})
+	h.do(404, call{method: "GET", path: "/activity-signals", token: outsiderT})
 	h.do(200, call{method: "GET", path: "/notifications", token: aliceT})
 	h.do(200, call{method: "GET", path: "/notifications?unread=true", token: bobT})
 	h.do(200, call{method: "GET", path: "/notifications/unread-count", token: bobT})

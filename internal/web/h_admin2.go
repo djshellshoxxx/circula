@@ -26,7 +26,19 @@ func policyValues(p domain.Policy) map[string]string {
 	if p.DefaultFlagBlocksPayer {
 		v["default_flag_blocks_payer"] = "1"
 	}
+	for f, n := range signalFields(&p) {
+		v[f] = itoa(*n)
+	}
+	if p.ActivitySignalsEnabled {
+		v["activity_signals_enabled"] = "1"
+	}
 	return v
+}
+
+// signalFields are the SEC-026 thresholds of the policy form.
+func signalFields(p *domain.Policy) map[string]*int {
+	return map[string]*int{"velocity_signal_proposals": &p.VelocitySignalProposals, "velocity_signal_window_minutes": &p.VelocitySignalWindowMinutes,
+		"reciprocal_signal_trades": &p.ReciprocalSignalTrades, "reciprocal_signal_window_days": &p.ReciprocalSignalWindowDays}
 }
 
 // policyPageData is the policy form's screen data: the version in force and any scheduled change (GOV-003).
@@ -84,6 +96,20 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 			continue
 		}
 		*d = n
+	}
+	// SEC-026: the activity signal fieldset marks its presence, so a form
+	// without it (an older page or a script) leaves the settings unchanged,
+	// while the rendered form's unticked box switches signals off.
+	if v["activity_signals_form"] == "1" {
+		pol.ActivitySignalsEnabled = v["activity_signals_enabled"] == "1"
+		for f, d := range signalFields(&pol) {
+			n, err := strconv.Atoi(strings.TrimSpace(v[f]))
+			if err != nil {
+				fe = append(fe, fieldErr{f, label(f) + ": enter a whole number."})
+				continue
+			}
+			*d = n
+		}
 	}
 	var notice *int
 	if t := strings.TrimSpace(v["notice_days"]); t != "" {

@@ -303,8 +303,7 @@ func (s *Service) PolicyLog(ctx context.Context, actor domain.Actor, netID strin
 			} else {
 				e.Changes = policyMap(r.Policy)
 			}
-			delete(e.Changes, "dual_control_threshold")
-			delete(e.Previous, "dual_control_threshold")
+			hideReviewOnlyKeys(&e)
 			if !withdrawn[i] {
 				prev = i
 			}
@@ -353,8 +352,7 @@ func (s *Service) PolicyLogPage(ctx context.Context, actor domain.Actor, netID s
 			} else {
 				e.Changes = policyMap(r.Policy)
 			}
-			delete(e.Changes, "dual_control_threshold")
-			delete(e.Previous, "dual_control_threshold")
+			hideReviewOnlyKeys(&e)
 			out = append(out, e)
 		}
 		return nil
