@@ -25,13 +25,18 @@ jobs:
   module:
     name: isolated feed validation
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 25
+    env:
+      GOMAXPROCS: "2"
+      GOTOOLCHAIN: local
     defaults:
       run:
         working-directory: future/feed
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
+          # Qualify the exact candidate, independently of the moving Core base.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
@@ -66,3 +71,17 @@ jobs:
         # Fixed executions avoid the pinned Go toolchain's duration-completion
         # race; the independent hard timeout still rejects hangs or slow runs.
         run: go test -mod=readonly -run '^$' -fuzz '^FuzzOpenCursor$' -fuzztime=100000x -timeout=3m -parallel=2
+      - name: Encrypted snapshot cursor fuzz
+        run: go test -mod=readonly -run '^$' -fuzz '^FuzzOpenSnapshotCursor$' -fuzztime=100000x -timeout=3m -parallel=2
+      - name: Pagination property fuzz
+        run: go test -mod=readonly -run '^$' -fuzz '^FuzzPagePermutation$' -fuzztime=10000x -timeout=3m -parallel=2
+      - name: Real SQLite integration and race tests
+        working-directory: future/feed/integration
+        run: |
+          go mod download
+          go mod verify
+          go vet -mod=readonly ./...
+          go test -mod=readonly -race -count=1 -timeout=12m -v ./...
+      - name: Large-history query and allocation benchmarks
+        working-directory: future/feed/integration
+        run: go test -mod=readonly -run '^$' -bench . -benchmem -benchtime=100x -count=1 -timeout=3m ./...

@@ -24,9 +24,12 @@ func TestSessionQueriesUseIndexedKeysetSeeks(t *testing.T) {
 		name, query, seek string
 		args              []any
 	}{
-		{"first", sessionListFirstSQL, "USING INDEX sessions_owner_page (person_id=?)", []any{"owner", 100}},
-		{"continuation", sessionListAfterSQL, "USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))", []any{"owner", 350, strings.Repeat("a", 64), 100}},
-		{"owned", sessionOwnedSQL, "USING INDEX sessions_public_id (public_id=?)", []any{strings.Repeat("a", 64), "owner"}},
+		{"first", sessionListFirstSQL, "SEARCH sessions USING INDEX sessions_owner_page (person_id=?)", []any{"owner", 100}},
+		{"continuation", sessionListAfterSQL, "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))", []any{"owner", 350, strings.Repeat("a", 64), 100}},
+		{"previous", sessionListBeforeSQL, "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)>(?,?))", []any{"owner", 350, strings.Repeat("a", 64), 100}},
+		{"owned", sessionOwnedSQL, "SEARCH sessions USING INDEX sessions_public_id (public_id=?)", []any{strings.Repeat("a", 64), "owner"}},
+		{"bulk-revoke", sessionRevokeOthersSQL, "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)", []any{1000, "owner", "private-1", "private-1", "owner"}},
+		{"tokens", tokenListSQL, "SEARCH api_tokens USING INDEX api_tokens_person_order (person_id=?)", []any{"owner"}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			rows, err := s.DB().Query("EXPLAIN QUERY PLAN "+tc.query, tc.args...)
@@ -47,8 +50,8 @@ func TestSessionQueriesUseIndexedKeysetSeeks(t *testing.T) {
 				t.Fatal(err)
 			}
 			plan := strings.Join(details, "\n")
-			if !strings.Contains(plan, "SEARCH sessions "+tc.seek) || strings.Contains(plan, "SCAN ") || strings.Contains(plan, "TEMP B-TREE") {
-				t.Fatalf("session query does not seek directly: %s", plan)
+			if !strings.Contains(plan, tc.seek) || strings.Contains(plan, "SCAN ") || strings.Contains(plan, "TEMP B-TREE") {
+				t.Fatalf("inventory query does not seek directly: %s", plan)
 			}
 		})
 	}

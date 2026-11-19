@@ -1,0 +1,272 @@
+{
+  "combined_commit": "65242f32afab0b47e836e8fbe37cd323d3df75e7",
+  "combined_tree": "5cb5698c619f9a1028778ed241bee2d881adc07d",
+  "review_type": "Independent source preservation review; no new runtime qualification",
+  "ancestors": {
+    "47446b33b01f4993a1caa406516746858bbf0a11": true,
+    "f29ebb01ff681a1276f385b8b568e41355b83505": true,
+    "c3c991aa3c12a11edce2874e9444b9d2a99f746c": true,
+    "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0": true
+  },
+  "checks": [
+    {
+      "path": "internal/service/tokens.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "0c251c988678b3d59094d1073df9c82008f03c54",
+      "combined_blob": "0c251c988678b3d59094d1073df9c82008f03c54",
+      "same": true
+    },
+    {
+      "path": "internal/service/token_authority_internal_test.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "eced58a59d664143d8dbc883bf845b33c3d1b385",
+      "combined_blob": "eced58a59d664143d8dbc883bf845b33c3d1b385",
+      "same": true
+    },
+    {
+      "path": "internal/service/token_authority_race_test.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "541af8ccb70f260f3da57a2c82bdec9849a96bc1",
+      "combined_blob": "541af8ccb70f260f3da57a2c82bdec9849a96bc1",
+      "same": true
+    },
+    {
+      "path": "internal/store/sqlite.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "745409507cd21e858d91af5befaae81bb0553763",
+      "combined_blob": "745409507cd21e858d91af5befaae81bb0553763",
+      "same": true
+    },
+    {
+      "path": "internal/store/migrate.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "9d47fc1cf08bc0012a7a611557be196b987d9ecb",
+      "combined_blob": "9d47fc1cf08bc0012a7a611557be196b987d9ecb",
+      "same": true
+    },
+    {
+      "path": "internal/store/recovery_internal_test.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "276a01c8a72d3b4694b04d5a6c7d59a14fece0aa",
+      "combined_blob": "276a01c8a72d3b4694b04d5a6c7d59a14fece0aa",
+      "same": true
+    },
+    {
+      "path": "internal/api/route.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "109bd7bfc2d66ad20e7a832e43f4e1c996ef9865",
+      "combined_blob": "109bd7bfc2d66ad20e7a832e43f4e1c996ef9865",
+      "same": true
+    },
+    {
+      "path": "internal/api/job_id.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "2f2793737a82062a1627a29fd1aabad39ecc582a",
+      "combined_blob": "2f2793737a82062a1627a29fd1aabad39ecc582a",
+      "same": true
+    },
+    {
+      "path": "internal/api/h_export.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "2f2ddeab9de33e7e987674a4ad83be40b61d5af8",
+      "combined_blob": "2f2ddeab9de33e7e987674a4ad83be40b61d5af8",
+      "same": true
+    },
+    {
+      "path": "internal/api/h_ops.go",
+      "approved_source": "47446b33b01f4993a1caa406516746858bbf0a11",
+      "approved_blob": "f645feddc39e965362df8ca96db1b14317eb7de9",
+      "combined_blob": "f645feddc39e965362df8ca96db1b14317eb7de9",
+      "same": true
+    },
+    {
+      "path": "internal/service/export.go",
+      "approved_source": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "approved_blob": "9ae4ad67f6f327f35a392a2ff80fecc9a68dad2f",
+      "combined_blob": "9ae4ad67f6f327f35a392a2ff80fecc9a68dad2f",
+      "same": true
+    },
+    {
+      "path": "internal/service/export_authorization_test.go",
+      "approved_source": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "approved_blob": "01474c56f5553bc8b40b163d10d6184e2d1dfdb5",
+      "combined_blob": "01474c56f5553bc8b40b163d10d6184e2d1dfdb5",
+      "same": true
+    },
+    {
+      "path": "internal/web/h_admin2.go",
+      "approved_source": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "approved_blob": "ac212d6e89026e465e2bf0038a13aab287cc0f3b",
+      "combined_blob": "ac212d6e89026e465e2bf0038a13aab287cc0f3b",
+      "same": true
+    },
+    {
+      "path": "internal/web/middleware.go",
+      "approved_source": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "approved_blob": "6e6abed1c09b15b0d8749a04b1291fb167e2f168",
+      "combined_blob": "6e6abed1c09b15b0d8749a04b1291fb167e2f168",
+      "same": true
+    },
+    {
+      "path": "internal/web/export_stream_test.go",
+      "approved_source": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "approved_blob": "0cb31df5ce6c6c990b11425ce569cd2bd558aa08",
+      "combined_blob": "0cb31df5ce6c6c990b11425ce569cd2bd558aa08",
+      "same": true
+    },
+    {
+      "path": "cmd/circula/export_http_interruption_test.go",
+      "approved_source": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "approved_blob": "7448a87a7af50f3e828a226049a258f131dcb821",
+      "combined_blob": "7448a87a7af50f3e828a226049a258f131dcb821",
+      "same": true
+    },
+    {
+      "path": "cmd/circula/verify_export.go",
+      "approved_source": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "approved_blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae",
+      "combined_blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae",
+      "same": true
+    },
+    {
+      "path": "cmd/circula/verify_export_ambiguity_test.go",
+      "approved_source": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "approved_blob": "8d3e9d71e108035c693f04588db99291fbc61dc4",
+      "combined_blob": "8d3e9d71e108035c693f04588db99291fbc61dc4",
+      "same": true
+    },
+    {
+      "path": "cmd/circula/verify_export_boundary_test.go",
+      "approved_source": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "approved_blob": "9ce07c566ab4130f22b05f53100eb749ff763955",
+      "combined_blob": "9ce07c566ab4130f22b05f53100eb749ff763955",
+      "same": true
+    },
+    {
+      "path": "scripts/read-export.py",
+      "approved_source": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "approved_blob": "d6d97a0c19c8a4c30bd97845bdcd4d23346f4dac",
+      "combined_blob": "d6d97a0c19c8a4c30bd97845bdcd4d23346f4dac",
+      "same": true
+    },
+    {
+      "path": "scripts/test_read_export.py",
+      "approved_source": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "approved_blob": "afd4ceaae544a44f1515d2752e52fc48a985dff5",
+      "combined_blob": "afd4ceaae544a44f1515d2752e52fc48a985dff5",
+      "same": true
+    },
+    {
+      "path": "internal/api/h_sessions.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "7587d3fdbbb33e22efe8ff509a9d295dc978eefb",
+      "combined_blob": "7587d3fdbbb33e22efe8ff509a9d295dc978eefb",
+      "same": true
+    },
+    {
+      "path": "internal/api/routes.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "99ff9e3a2390e25c4f31fe35f5706b2762a2bcdb",
+      "combined_blob": "99ff9e3a2390e25c4f31fe35f5706b2762a2bcdb",
+      "same": true
+    },
+    {
+      "path": "internal/api/sessions_completion_test.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "d8dbfc6fe64185b08030aa2e516b49c9c4b8b814",
+      "combined_blob": "d8dbfc6fe64185b08030aa2e516b49c9c4b8b814",
+      "same": true
+    },
+    {
+      "path": "internal/service/sessions_others.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "985c25f8cccf2cc1e0dd3b2184e591e2a13a8308",
+      "combined_blob": "985c25f8cccf2cc1e0dd3b2184e591e2a13a8308",
+      "same": true
+    },
+    {
+      "path": "internal/service/sessions_others_test.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "3e1700a356a926cbdd2ab32fa47394a5aa95f110",
+      "combined_blob": "3e1700a356a926cbdd2ab32fa47394a5aa95f110",
+      "same": true
+    },
+    {
+      "path": "internal/service/sessions_self.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "383c1680702f7451abf307373e993d7f79b8a53d",
+      "combined_blob": "383c1680702f7451abf307373e993d7f79b8a53d",
+      "same": true
+    },
+    {
+      "path": "internal/service/service.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "3ccca6f5e868a438957885539f5e0ab58ccda59f",
+      "combined_blob": "3ccca6f5e868a438957885539f5e0ab58ccda59f",
+      "same": true
+    },
+    {
+      "path": "internal/repository/iface.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "fe8cccb4c1a68e0c0bfaa9ec618d80603ea630f7",
+      "combined_blob": "fe8cccb4c1a68e0c0bfaa9ec618d80603ea630f7",
+      "same": true
+    },
+    {
+      "path": "internal/web/h_sessions.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "faf17f7eca0fe76c18f6aa51ef7f6ed4e006ca81",
+      "combined_blob": "faf17f7eca0fe76c18f6aa51ef7f6ed4e006ca81",
+      "same": true
+    },
+    {
+      "path": "internal/web/sessions_completion_test.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "e758a517ed96569d13b03d435799b7a028bc13cf",
+      "combined_blob": "e758a517ed96569d13b03d435799b7a028bc13cf",
+      "same": true
+    },
+    {
+      "path": "internal/web/templates/sessions.html",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "b32608bfb68722fe907e77bc5f46b4ec233a1383",
+      "combined_blob": "b32608bfb68722fe907e77bc5f46b4ec233a1383",
+      "same": true
+    },
+    {
+      "path": "internal/web/templates/sessions_revoke_others.html",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "0aa4f08be48115f9cc7e7794316bb3a56e2b305a",
+      "combined_blob": "0aa4f08be48115f9cc7e7794316bb3a56e2b305a",
+      "same": true
+    },
+    {
+      "path": "internal/web/session_templates_test.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "8b19d8ebc575e0024acf2454312c205eb528d8bb",
+      "combined_blob": "8b19d8ebc575e0024acf2454312c205eb528d8bb",
+      "same": true
+    },
+    {
+      "path": "internal/api/cursor.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "e5ad207a5e55297e5b455667cd72992825c2e63a",
+      "combined_blob": "e5ad207a5e55297e5b455667cd72992825c2e63a",
+      "same": true
+    },
+    {
+      "path": "internal/domain/audit_sessions.go",
+      "approved_source": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "approved_blob": "ca83c5c781bc236a38eee82a4901db29e200de0f",
+      "combined_blob": "ca83c5c781bc236a38eee82a4901db29e200de0f",
+      "same": true
+    }
+  ],
+  "shared_file_review": [
+    "sqlite_person.go contains exactly the PR101 reverse query/selector additions over PR99; compared with PR101 the only extra is PR99 tokenListSQL extraction, preserving LIMIT100.",
+    "Contract/session authorization fixtures match PR101; core99 export UUID production files remain exact.",
+    "Administrator reset handlers differ from reviewed83f1d981 only in catalogue key selection; shared member/reset templates retain native forms, CSRF and contextual escaping. Broader catalogue reconciliation was independently reviewed by branch_inventory.",
+    "CI retains repaired strict JSON fuzz; adds the three expected cursor/position/selector campaigns and the separate Node message tests, with fuzz timeout expanded to20minutes."
+  ],
+  "remaining_gates": "Root focused combined checks, traceability regeneration and final published-head provider qualification."
+}

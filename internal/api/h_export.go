@@ -8,8 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/google/uuid"
-
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
@@ -68,6 +66,10 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 	if format != service.FormatJSON && format != service.FormatCSV {
 		return validation("format", "invalid-enum", "must be csv or json")
 	}
+	id, err := jobID("")
+	if err != nil {
+		return err
+	}
 	// Refuse before running: the service audits every export it performs, and
 	// one member must not be able to fill the shared store (SA-11). The slot
 	// is held while the export runs, so parallel requests cannot all pass.
@@ -94,7 +96,6 @@ func (s *server) createExport(c *reqCtx) error { // API-065
 		}
 		return err
 	}
-	id := uuid.NewString()
 	now := s.opt.Now()
 	e := &exportEntry{net: c.netID, person: c.actor.PersonID, at: now, ctype: "application/zip",
 		name: "circula-export-" + in.Scope + ".zip"}

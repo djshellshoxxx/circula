@@ -27,7 +27,7 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-002 | P0 | partial | Service is the write path; cmd reads SQLite directly for some checks |
 | ARC-003 | P0 | built | Adapters map and render; rules in service; Evidence: `TestAdaptersDoNotImportStorage` (adapter import boundaries; business-rule placement still requires code inspection). Citations are not execution results |
 | ARC-004 | P0 | partial | Source refresh 2026-11-19: interfaces live in `internal/repository`; `internal/storetest` supplies the driver-neutral contract suite, run by `TestRepositoryContractSQLite` and `TestRepositoryContractWrapped`. `TestRepositoryServiceAndContractSuiteHaveNoDriverDependency` checks the production dependency graph. Cross-target builds remain a separate release qualification; no second production storage adapter is claimed |
-| ARC-005 | P0 | built | Only postTx writes entries and balances; Source: `internal/service/posting.go:postTx`; exclusive posting ownership requires a source-boundary inspection, not a generic successful trade test. No execution result is implied |
+| ARC-005 | P0 | built | Posting ownership is inspected in `internal/service/posting.go:postTx`. `TestAcceptFaultInjectionLeavesNoTrace` and `TestReversalAndAdjustmentFaultInjectionLeavesNoTrace` assert rollback at entry, balance, status and audit write boundaries; these are direct atomic-posting evidence, not proof of exclusive call-site ownership. Source citations only; no execution result is implied |
 | ARC-006 | P0 | built | Per-account serialisation via write gate and BEGIN IMMEDIATE |
 | ARC-007 | P0 | built | Network scoping in queries and tests |
 | ARC-008 | P0 | partial | No operator API route; host-level CLI restore and SQL access remain outside service |
@@ -36,7 +36,7 @@ Summary: built 11, deferred 1, not built 2, partial 11.
 | ARC-011 | P0 | built | One writer per database file; lock refuses second holder |
 | ARC-012 | P1 | built | Expiry and purge idempotent; export artefacts not resumable |
 | ARC-013 | P0 | built | Same artefact for self-hosted and multi-network use; hosted launch not done; Source: `cmd/circula/config.go`, `scripts/package-release.sh`; hosted deployment qualification remains external. No execution result is implied |
-| ARC-014 | P2 | built | Single process constraint documented and enforced by lock (P2 item) |
+| ARC-014 | P2 | built | Single-process constraint documented and enforced by the file lock. `TestLockRefusesSecondHolder` checks refusal while held and acquisition after release; `TestOperatorCommandsTakeTheLock` checks operator commands refuse a held database without changing its bytes. Startup wiring and the deferred scaling boundary also require inspection. Source citations only; no execution result is implied |
 | ARC-015 | P0 | built | Explicit admin checks are recorded; scheduled checks are read-only and report through operational metrics/logs (DEC-031) |
 | ARC-016 | P1 | partial | Online backup and restore built; RPO and RTO not recorded (DEC-016); shutdown grace default 10 s (shutdown-grace) |
 | ARC-017 | P0 | partial | Semantic server-rendered HTML. [Refreshed 2026-11-16: the note "no automated WCAG tool in CI" is stale; axe-core runs in `make e2e`.] |

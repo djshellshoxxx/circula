@@ -1,0 +1,46 @@
+import json, os, pathlib, subprocess, time, signal
+
+base = pathlib.Path('/workspace/scratch/bfba682cba37')
+out = base / 'future-current'
+rows = json.loads((out / 'sources.json').read_text())
+toolbin = '/workspace/scratch/beb70d57deba/toolchain/go/bin'
+env = dict(os.environ, PATH=toolbin + ':' + os.environ['PATH'], GOTOOLCHAIN='local', CGO_ENABLED='1', GOMAXPROCS='1', GOGC='30')
+results = []
+for row in rows:
+    path = pathlib.Path(row['path'])
+    record = dict(branch=row['branch'], sha=row['sha'], module=row['manifest']['id'], checks=[])
+    print('START ' + record['module'], flush=True)
+    for name, cmd in [('format', ['gofmt', '-l', '.']), ('vet', ['go', 'vet', '-p=1', './...']), ('race', ['go', 'test', '-race', '-p=1', '-json', '-count=1', '-timeout=90s', './...'])]:
+        log = out / (record['module'] + '-' + name + '.log')
+        started = time.monotonic()
+        with log.open('w') as f:
+            proc = subprocess.Popen(cmd, cwd=path, env=env, stdout=f, stderr=subprocess.STDOUT, start_new_session=True)
+            try:
+                code = proc.wait(timeout=180)
+            except subprocess.TimeoutExpired:
+                os.killpg(proc.pid, signal.SIGKILL)
+                proc.wait()
+                code = 124
+        output = log.read_text()
+        check = dict(name=name, command=cmd, exit_code=code, seconds=round(time.monotonic()-started, 3), log=log.name)
+        if name == 'format':
+            check['clean'] = code == 0 and not output.strip()
+            check['unformatted'] = output.splitlines()
+        if name == 'race':
+            counts = {'pass':0, 'fail':0, 'skip':0}
+            package_counts = {'pass':0, 'fail':0, 'skip':0}
+            for line in output.splitlines():
+                try: event = json.loads(line)
+                except json.JSONDecodeError: continue
+                action = event.get('Action')
+                if action in counts:
+                    (counts if event.get('Test') else package_counts)[action] += 1
+            check['test_counts'] = counts
+            check['package_counts'] = package_counts
+        record['checks'].append(check)
+        print(record['module'] + ' ' + name + ': ' + str(code), flush=True)
+        if code != 0:
+            print(output[-2000:], flush=True)
+    results.append(record)
+    (out/'current-results.json').write_text(json.dumps(results, indent=2)+'\n')
+print('Completed ' + str(len(results)) + ' module runs', flush=True)

@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
-	"sort"
 	"strings"
 	"sync"
 	"testing"
@@ -223,11 +221,11 @@ func TestMigratingAgainIsANoOp(t *testing.T) {
 	}
 }
 
-// Migration 0015 (the head) is blocked by an object it must create. The SQL of
-// the migration creates its first trigger before the second one fails, so the
-// failure is a real mid-migration error. The open must fail, the schema must be
-// byte-for-byte what it was (no partial DDL), the previous version must still be
-// recorded, and the database must open cleanly once the blocker is removed.
+// Fail when the head migration is recorded, after its SQL has succeeded but
+// before its transaction commits. This also exercises a one-statement head
+// migration: the schema must be byte-for-byte unchanged (no partial DDL), the
+// previous version must still be recorded, and removing the blocker must allow
+// a clean reopen without losing existing data.
 func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "mig.db")
@@ -248,31 +246,16 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Find the object the last migration creates last and make it already exist.
-	files, err := filepath.Glob("migrations/*.sql")
-	if err != nil || len(files) != head {
-		t.Fatalf("migration files: %v (%d)", err, len(files))
-	}
-	sort.Strings(files)
-	last, err := os.ReadFile(files[len(files)-1])
-	if err != nil {
-		t.Fatal(err)
-	}
-	creates := regexp.MustCompile(`(?i)CREATE\s+(TABLE|TRIGGER|INDEX)\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)`).FindAllStringSubmatch(string(last), -1)
-	if len(creates) < 2 {
-		t.Fatalf("head migration creates %d objects; need at least 2 to fail midway", len(creates))
-	}
-	kind, blocked := strings.ToUpper(creates[len(creates)-1][1]), creates[len(creates)-1][2]
-
 	raw, err := store.OpenRaw(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	stmt := map[string]string{
-		"TABLE":   fmt.Sprintf(`CREATE TABLE %s (x INTEGER)`, blocked),
-		"INDEX":   fmt.Sprintf(`CREATE TABLE blocker_tbl (x INTEGER); CREATE INDEX %s ON blocker_tbl(x)`, blocked),
-		"TRIGGER": fmt.Sprintf(`CREATE TABLE blocker_tbl (x INTEGER); CREATE TRIGGER %s AFTER INSERT ON blocker_tbl BEGIN SELECT 1; END`, blocked),
-	}[kind]
+	// migrateTo executes the migration SQL before inserting its version. ABORT
+	// rejects that INSERT only; the runner must roll back the preceding DDL too.
+	const failure = "injected failure after migration SQL"
+	stmt := fmt.Sprintf(`CREATE TRIGGER test_fail_migration_record
+		AFTER INSERT ON schema_migrations WHEN NEW.version = %d
+		BEGIN SELECT RAISE(ABORT, '%s'); END`, head, failure)
 	if _, err := raw.ExecContext(ctx, stmt); err != nil {
 		t.Fatalf("plant blocker: %v", err)
 	}
@@ -288,6 +271,9 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), fmt.Sprintf("migration %04d_", head)) {
 		t.Errorf("error does not name the failing migration: %v", err)
+	}
+	if !strings.Contains(err.Error(), failure) {
+		t.Fatalf("failure did not reach the post-SQL migration record: %v", err)
 	}
 
 	raw, err = store.OpenRaw(path)
@@ -309,15 +295,7 @@ func TestFailingMigrationRollsBackAndReopensCleanly(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := raw.ExecContext(ctx, `DROP TRIGGER IF EXISTS `+blocked); err != nil {
-		t.Fatal(err)
-	}
-	if kind == "TABLE" {
-		if _, err := raw.ExecContext(ctx, `DROP TABLE `+blocked); err != nil {
-			t.Fatal(err)
-		}
-	}
-	if _, err := raw.ExecContext(ctx, `DROP TABLE IF EXISTS blocker_tbl`); err != nil {
+	if _, err := raw.ExecContext(ctx, `DROP TRIGGER test_fail_migration_record`); err != nil {
 		t.Fatal(err)
 	}
 	if err := raw.Close(); err != nil {

@@ -1,11 +1,11 @@
 package web
 
 import (
-	"github.com/djshellshoxxx/circula/internal/service"
 	"net/http"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
@@ -23,8 +23,8 @@ func init() {
 	})
 	// The generic confirm page renders this action; the dedicated route above
 	// performs it.
-	memberActions["reset-password"] = memberActionDef{"Reset password",
-		"A one-time temporary password is created and shown to you once. The member's sessions and API tokens end, their recovery codes stop working, and they must choose a new password at next sign-in. Give them the temporary password in person or by a channel you trust.", true, false}
+	memberActions["reset-password"] = memberActionDef{messages.Text("admin.reset.action"),
+		messages.Text("admin.reset.consequence"), true, false}
 }
 
 func (s *server) recoverForm(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +126,7 @@ func (s *server) resetPasswordForm(w http.ResponseWriter, r *http.Request, c *rc
 		return
 	}
 	def := memberActions["reset-password"]
-	s.render(w, r, c, "admin_member_act", 200, &page{Title: def.Verb + ": " + m.DisplayName + "?",
+	s.render(w, r, c, "admin_member_act", 200, &page{Title: messages.Text("admin.reset.confirm_title", m.DisplayName),
 		D: &memberAct{Key: "reset-password", Def: def, M: m}})
 }
 
@@ -139,22 +139,22 @@ func (s *server) resetPasswordPost(w http.ResponseWriter, r *http.Request, c *rc
 		return
 	}
 	def := memberActions["reset-password"]
-	p := &page{Title: def.Verb + ": " + m.DisplayName + "?", D: &memberAct{Key: "reset-password", Def: def, M: m}, V: formValues(r)}
+	p := &page{Title: messages.Text("admin.reset.confirm_title", m.DisplayName), D: &memberAct{Key: "reset-password", Def: def, M: m}, V: formValues(r)}
 	temp, err := s.svc.AdminResetPassword(r.Context(), c.actor, c.netID(), m.ID, strings.TrimSpace(r.PostFormValue("reason")))
 	if err != nil {
 		switch domain.CodeOf(err) {
 		case domain.CodeForbidden:
-			p.Summary = "Not done. You cannot reset your own password here; use Change password. Nothing changed."
+			p.Summary = messages.Text("admin.reset.forbidden")
 			s.render(w, r, c, "admin_member_act", 403, p)
 		case domain.CodeRateLimited:
-			p.Summary = "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."
+			p.Summary = messages.Text("admin.reset.throttled")
 			s.render(w, r, c, "admin_member_act", 429, p)
 		default:
 			s.formFail(w, r, c, "admin_member_act", p, err)
 		}
 		return
 	}
-	s.render(w, r, c, "admin_reset_done", 200, &page{Title: "Temporary password", D: &resetDone{Name: m.DisplayName, Temp: temp}})
+	s.render(w, r, c, "admin_reset_done", 200, &page{Title: messages.Text("admin.reset.done_title"), D: &resetDone{Name: m.DisplayName, Temp: temp}})
 }
 
 // mustChange sends a person whose password was reset by someone else to the

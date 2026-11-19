@@ -1,12 +1,14 @@
 package feed
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -113,21 +115,22 @@ func NewKeyRing(current string, keys map[string][]byte) (*KeyRing, error) {
 	return r, nil
 }
 
-// SigningKey returns the current key. Callers must not modify it.
+// SigningKey returns a copy of the current key. Mutating or clearing the copy
+// cannot change the ring or race with another caller.
 func (r *KeyRing) SigningKey() (string, []byte) {
 	if r == nil {
 		return "", nil
 	}
-	return r.current, r.keys[r.current]
+	return r.current, append([]byte(nil), r.keys[r.current]...)
 }
 
-// VerificationKey returns the key with this ID. Callers must not modify it.
+// VerificationKey returns a copy of the key with this ID.
 func (r *KeyRing) VerificationKey(id string) ([]byte, bool) {
 	if r == nil {
 		return nil, false
 	}
 	k, ok := r.keys[id]
-	return k, ok
+	return append([]byte(nil), k...), ok
 }
 
 // CodecOptions configures a CursorCodec.
@@ -151,7 +154,18 @@ type CursorCodec struct {
 }
 
 func (c *CursorCodec) ready() bool {
-	return c != nil && c.keys != nil && c.now != nil && c.ttl >= time.Second && c.ttl <= MaxCursorTTL
+	if c == nil || c.keys == nil || c.now == nil || c.ttl < time.Second || c.ttl > MaxCursorTTL {
+		return false
+	}
+	// An interface containing a typed nil is not itself nil. Refuse it before
+	// invoking a custom KeySet whose methods might dereference that receiver.
+	v := reflect.ValueOf(c.keys)
+	switch v.Kind() {
+	case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		return !v.IsNil()
+	default:
+		return true
+	}
 }
 
 // NewCursorCodec returns a codec over keys. It fails closed: there is no
@@ -302,6 +316,13 @@ func (c *CursorCodec) Open(b Binding, token string) (Cursor, error) {
 	}
 	var v cursorPayload
 	if json.Unmarshal(payload, &v) != nil || v.V != cursorVersion || v.T <= 0 || v.Iat <= 0 {
+		return Cursor{}, ErrInvalidCursor
+	}
+	// Require the exact representation Seal emits. encoding/json otherwise
+	// accepts duplicate or case-aliased fields and repairs invalid Unicode,
+	// which can make the decoded position differ from the authenticated bytes.
+	canonical, err := json.Marshal(v)
+	if err != nil || !bytes.Equal(payload, canonical) {
 		return Cursor{}, ErrInvalidCursor
 	}
 	pos := Cursor{Created: time.Unix(0, v.T).UTC(), Kind: v.K, ID: v.I}

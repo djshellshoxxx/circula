@@ -5,14 +5,18 @@ Run: python3 -m unittest discover -s scripts -p 'test_read_export.py'
 import copy
 import csv
 import hashlib
+import importlib.util
 import io
 import json
 from pathlib import Path
 import subprocess
+import struct
 import sys
 import tempfile
 import unittest
+import warnings
 import zipfile
+import zlib
 
 
 READER = Path(__file__).with_name("read-export.py")
@@ -45,7 +49,8 @@ def fixture(scope="ledger"):
 
 
 class ReferenceExportTests(unittest.TestCase):
-    def verify(self, man, tables, fmt="json", zipped=False, corrupt=None):
+    def verify(self, man, tables, fmt="json", zipped=False, corrupt=None,
+               extra_zip_members=None, transform_package=None):
         man = copy.deepcopy(man)
         man["format"] = fmt
         files = {}
@@ -76,12 +81,18 @@ class ReferenceExportTests(unittest.TestCase):
             path = Path(tmp)
             if zipped:
                 path /= "export.zip"
-                with zipfile.ZipFile(path, "w") as package:
-                    for name, data in files.items():
-                        package.writestr(name, data)
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", UserWarning)
+                    with zipfile.ZipFile(path, "w") as package:
+                        for name, data in extra_zip_members or []:
+                            package.writestr(name, data)
+                        for name, data in files.items():
+                            package.writestr(name, data)
             else:
                 for name, data in files.items():
                     (path / name).write_bytes(data)
+            if transform_package:
+                transform_package(path)
             result = subprocess.run([sys.executable, "-I", str(READER), str(path)],
                                     capture_output=True, text=True, timeout=10)
         self.assertNotIn("Traceback", result.stderr)
@@ -210,6 +221,168 @@ class ReferenceExportTests(unittest.TestCase):
                 man["files"][0][field] = wrong
             with self.subTest(field=field):
                 self.assert_invalid(*fixture(), corrupt=corrupt)
+
+    def test_rejects_duplicate_zip_members(self):
+        for name, data in (("members.json", b'{"tables": {"members": []}}'),
+                           ("members.json", b"conflicting payload"),
+                           ("manifest.json", b"{}")):
+            with self.subTest(name=name, data=data):
+                self.assert_invalid(*fixture("members"), zipped=True,
+                                    extra_zip_members=[(name, data)])
+
+    def test_rejects_zip_path_aliases(self):
+        for name in ("nested/members.json", "nested/manifest.json",
+                     "../members.json", "nested\\members.json", "C:members.json"):
+            with self.subTest(name=name):
+                self.assert_invalid(*fixture("members"), zipped=True,
+                                    extra_zip_members=[(name, b"unlisted")])
+
+    def test_rejects_unsafe_manifest_names(self):
+        for name in ("../members.json", "nested/members.json", "nested\\members.json",
+                     "C:members.json", "/members.json", "", ".", "..", "manifest.json"):
+            def corrupt(man, files):
+                man["files"][0]["name"] = name
+            for zipped in (False, True):
+                with self.subTest(name=name, zipped=zipped):
+                    self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+
+    def test_rejects_duplicate_manifest_declarations(self):
+        def corrupt(man, files):
+            man["files"].append(copy.deepcopy(man["files"][0]))
+        for zipped in (False, True):
+            with self.subTest(zipped=zipped):
+                self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+
+    def test_rejects_unlisted_package_members(self):
+        def corrupt(man, files):
+            files["unlisted.csv"] = b"id\nextra\n"
+        for zipped in (False, True):
+            with self.subTest(zipped=zipped):
+                self.assert_invalid(*fixture("members"), zipped=zipped, corrupt=corrupt)
+
+    def test_rejects_nonregular_zip_members(self):
+        for name, mode in (("notes/", 0o40755), ("outside", 0o120777), ("pipe", 0o10600)):
+            info = zipfile.ZipInfo(name)
+            info.create_system = 3
+            info.external_attr = mode << 16
+            with self.subTest(name=name):
+                self.assert_invalid(*fixture("members"), zipped=True,
+                                    extra_zip_members=[(info, b"target")])
+
+    def test_malformed_manifest_is_reported_without_traceback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            for value in (None, [], "manifest"):
+                (path / "manifest.json").write_text(json.dumps(value))
+                result = subprocess.run([sys.executable, "-I", str(READER), str(path)],
+                                        capture_output=True, text=True, timeout=10)
+                with self.subTest(value=value):
+                    self.assertEqual(result.returncode, 1)
+                    self.assertIn("export verification failed", result.stderr)
+                    self.assertNotIn("Traceback", result.stderr)
+
+    def test_rejects_raw_nul_zip_names_before_zipfile_normalization(self):
+        for target in ("manifest.json", "members.json"):
+            def transform(path):
+                with zipfile.ZipFile(path) as package:
+                    entries = [(info.filename, package.read(info)) for info in package.infolist()]
+                raw = io.BytesIO()
+                with zipfile.ZipFile(raw, "w") as package:
+                    for name, data in entries:
+                        package.writestr(name + "XA" if name == target else name, data)
+                # Patch both local and central names without changing lengths.
+                # ZipInfo.filename silently truncates these raw names at NUL.
+                path.write_bytes(raw.getvalue().replace((target + "XA").encode(),
+                                                        target.encode() + b"\x00A"))
+            with self.subTest(target=target):
+                self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
+
+    def test_dos_zip_file_types(self):
+        for creator in (0, 3, 10, 14, 19):
+            for directory in (False, True):
+                def transform(path):
+                    with zipfile.ZipFile(path) as package:
+                        entries = [(info.filename, package.read(info)) for info in package.infolist()]
+                    with zipfile.ZipFile(path, "w") as package:
+                        for name, data in entries:
+                            info = zipfile.ZipInfo(name)
+                            info.create_system = creator
+                            info.external_attr = 0x10 if directory else 0x20
+                            package.writestr(info, data)
+                with self.subTest(creator=creator, directory=directory):
+                    check = self.assert_invalid if directory else self.assert_valid
+                    check(*fixture("members"), zipped=True, transform_package=transform)
+
+    def test_schema_version_requires_an_integer(self):
+        for version in (True, 1.0, "1", None, 0, 2):
+            man, tables = fixture("members")
+            man["schema_version"] = version
+            code, output = self.verify(man, tables)
+            with self.subTest(version=version):
+                self.assertEqual(code, 1, output)
+                self.assertNotIn("export ok:", output)
+
+    def test_member_budget_rejects_unchecked_suffixes(self):
+        spec = importlib.util.spec_from_file_location("export_reader_budget", READER)
+        reader = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(reader)
+        # Exercise the production limit with a tiny budget; no giant allocation.
+        reader.MAX_EXPORT_FILE = 8
+        self.assertEqual(reader.read_member(io.BytesIO(b"12345678")), b"12345678")
+        with self.assertRaisesRegex(ValueError, "too large"):
+            reader.read_member(io.BytesIO(b"12345678unchecked"))
+        for zipped in (False, True):
+            with tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp)
+                if zipped:
+                    path /= "export.zip"
+                    with zipfile.ZipFile(path, "w") as package:
+                        package.writestr("members.csv", b"123456789")
+                else:
+                    (path / "members.csv").write_bytes(b"123456789")
+                with self.subTest(zipped=zipped):
+                    with reader.open_package(path) as (read, names):
+                        self.assertEqual(names, {"members.csv"})
+                        with self.assertRaisesRegex(ValueError, "too large"):
+                            read("members.csv")
+
+    def test_zip_sizes_match_the_complete_member(self):
+        for compression in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED):
+            for mismatch in ("understated_prefix_crc", "understated_full_crc", "overstated"):
+                def transform(path):
+                    with zipfile.ZipFile(path) as package:
+                        files = {info.filename: package.read(info) for info in package.infolist()}
+                    prefix = files["members.json"]
+                    payload = prefix if mismatch == "overstated" else prefix + b" \n " * 8
+                    files["members.json"] = payload
+                    if mismatch == "understated_full_crc":
+                        man = json.loads(files["manifest.json"])
+                        man["files"][0]["bytes"] = len(payload)
+                        man["files"][0]["sha256"] = hashlib.sha256(payload).hexdigest()
+                        files["manifest.json"] = json.dumps(man).encode()
+                    raw = io.BytesIO()
+                    with zipfile.ZipFile(raw, "w", compression=compression) as package:
+                        for name, data in files.items():
+                            package.writestr(name, data)
+                    with zipfile.ZipFile(io.BytesIO(raw.getvalue())) as package:
+                        local = package.getinfo("members.json").header_offset
+                        central = package.start_dir
+                    data = bytearray(raw.getvalue())
+                    self.assertEqual(data[central:central + 4], b"PK\x01\x02")
+                    name_size = struct.unpack_from("<H", data, central + 28)[0]
+                    self.assertEqual(data[central + 46:central + 46 + name_size], b"members.json")
+                    declared = len(prefix) + 1 if mismatch == "overstated" else len(prefix)
+                    crc_data = prefix if mismatch == "understated_prefix_crc" else payload
+                    crc = zlib.crc32(crc_data)
+                    # Preserve the complete physical/compressed member, but
+                    # falsify its declared uncompressed length in both headers.
+                    struct.pack_into("<I", data, local + 14, crc)
+                    struct.pack_into("<I", data, local + 22, declared)
+                    struct.pack_into("<I", data, central + 16, crc)
+                    struct.pack_into("<I", data, central + 24, declared)
+                    path.write_bytes(data)
+                with self.subTest(compression=compression, mismatch=mismatch):
+                    self.assert_invalid(*fixture("members"), zipped=True, transform_package=transform)
 
 
 if __name__ == "__main__":

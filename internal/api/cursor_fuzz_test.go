@@ -79,6 +79,11 @@ func FuzzOpenCursor(f *testing.F) {
 		if _, err := s.openCursor(minted, filter+"|x"); err == nil {
 			t.Fatal("cursor opened for a different filter")
 		}
+		if len(minted) > maxCursorBytes {
+			_, err := s.openCursor(minted, filter)
+			wantInvalidCursor(t, err)
+			return
+		}
 		if !utf8.ValidString(pos) || !utf8.ValidString(filter) {
 			return
 		}

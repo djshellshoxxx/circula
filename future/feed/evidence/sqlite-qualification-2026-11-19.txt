@@ -1,0 +1,108 @@
+2026-11-19T10:54:14.872489+00:00 RUNTIME future/feed/feed.go sha256=076ffa392a06c429822e78b3a3841b155741f9247eefd7e4415548e10495a00d
+2026-11-19T10:54:14.879294+00:00 RUNTIME future/feed/cursor_auth.go sha256=2f66b38f3cea471cb278d70300cfc1bef337fbd37f1475fde200049b121f87ce
+2026-11-19T10:54:14.886738+00:00 RUNTIME future/feed/snapshot_cursor.go sha256=e6b3fda6d44246b538d55f82443ef6e59c96545f4ef0732df08a50ceef83e15e
+2026-11-19T10:54:14.895934+00:00 RUNTIME future/feed/paging.go sha256=d355e5b71f11e051cc0736b89ae3eab2f8c75605e075fd3630da22bdf5b58b16
+2026-11-19T10:54:14.904947+00:00 RUNTIME future/feed/sqlstore.go sha256=92c9edcd6cbb577c52b51dc0163d7f985d1134313c6f3919858d0668cfe80fd9
+2026-11-19T10:54:14.916952+00:00 INPUT future/feed/go.mod sha256=6239ce09f63cf809e98f99f1c660fdd48a361fcbf495388cefb476c5080ff5c7
+2026-11-19T10:54:14.926485+00:00 INPUT future/feed/integration/go.mod sha256=4df2a1d0d883d0c8d813b74b9a5723bd14ecf1a844e3f6c28115587aed42d497
+2026-11-19T10:54:14.936318+00:00 INPUT future/feed/integration/go.sum sha256=3f6356c24b42e33571e03f826a1f71806487914b912f18d804ba6205b56ad973
+2026-11-19T10:54:14.945952+00:00 INPUT future/feed/integration/paging_test.go sha256=99642acd53380ca54abbe82560c0e5e59f18a547a2f52f02eddb35978a161f09
+2026-11-19T10:54:14.955185+00:00 INPUT future/feed/integration/sqlstore_test.go sha256=a2a705c665b738f0d9da679d831849331000f4ac596aaef7cac01f98c8bfe46f
+2026-11-19T10:54:14.955508+00:00 START go-version ["/workspace/scratch/323c59aa8380/toolchain/go/bin/go", "version"]
+2026-11-19T10:54:15.005294+00:00 go-version go version go1.26.11 linux/amd64
+2026-11-19T10:54:15.008097+00:00 END go-version exit=0 elapsed_seconds=0.053
+2026-11-19T10:54:15.008234+00:00 START compile-ordinary ["/workspace/scratch/323c59aa8380/toolchain/go/bin/go", "test", "-p=1", "-c", "-o", "/tmp/fnet204-949d329-ordinary.test", "."]
+2026-11-19T10:54:20.674347+00:00 END compile-ordinary exit=0 elapsed_seconds=5.666
+2026-11-19T10:54:20.676508+00:00 START ordinary ["/tmp/fnet204-949d329-ordinary.test", "-test.v", "-test.count=1", "-test.timeout=10m"]
+2026-11-19T10:54:20.690294+00:00 ordinary === RUN   TestSQLiteSnapshotPaginationLargeHistories
+2026-11-19T10:54:20.690485+00:00 ordinary === RUN   TestSQLiteSnapshotPaginationLargeHistories/10000
+2026-11-19T10:54:21.174749+00:00 ordinary === RUN   TestSQLiteSnapshotPaginationLargeHistories/100000
+2026-11-19T10:54:24.249701+00:00 ordinary --- PASS: TestSQLiteSnapshotPaginationLargeHistories (3.56s)
+2026-11-19T10:54:24.249765+00:00 ordinary     --- PASS: TestSQLiteSnapshotPaginationLargeHistories/10000 (0.48s)
+2026-11-19T10:54:24.249775+00:00 ordinary     --- PASS: TestSQLiteSnapshotPaginationLargeHistories/100000 (3.08s)
+2026-11-19T10:54:24.249788+00:00 ordinary === RUN   TestSQLiteBoundedBacklogSparsePermissionsAndDeletions
+2026-11-19T10:54:24.674124+00:00 ordinary --- PASS: TestSQLiteBoundedBacklogSparsePermissionsAndDeletions (0.42s)
+2026-11-19T10:54:24.674194+00:00 ordinary === RUN   TestSQLiteStoreLifecycleAndRestart
+2026-11-19T10:54:24.679050+00:00 ordinary --- PASS: TestSQLiteStoreLifecycleAndRestart (0.00s)
+2026-11-19T10:54:24.679091+00:00 ordinary === RUN   TestSQLiteLargeHistoryTraversal
+2026-11-19T10:54:24.679110+00:00 ordinary === RUN   TestSQLiteLargeHistoryTraversal/10000
+2026-11-19T10:54:24.895320+00:00 ordinary === RUN   TestSQLiteLargeHistoryTraversal/100000
+2026-11-19T10:54:28.016499+00:00 ordinary --- PASS: TestSQLiteLargeHistoryTraversal (3.34s)
+2026-11-19T10:54:28.016779+00:00 ordinary     --- PASS: TestSQLiteLargeHistoryTraversal/10000 (0.22s)
+2026-11-19T10:54:28.016787+00:00 ordinary     --- PASS: TestSQLiteLargeHistoryTraversal/100000 (3.12s)
+2026-11-19T10:54:28.016797+00:00 ordinary === RUN   TestSQLiteHighWaterAndChangesBetweenBatches
+2026-11-19T10:54:28.020689+00:00 ordinary --- PASS: TestSQLiteHighWaterAndChangesBetweenBatches (0.00s)
+2026-11-19T10:54:28.020713+00:00 ordinary === RUN   TestSQLiteQueryPlansSeekUsingBoundedIndexes
+2026-11-19T10:54:29.974480+00:00 ordinary     sqlstore_test.go:348: SEARCH fnet204_sources USING INDEX fnet204_sources_all_order (network=? AND (order_time,kind,source_id)>(?,?,?))
+2026-11-19T10:54:29.975494+00:00 ordinary     sqlstore_test.go:348: SEARCH fnet204_sources USING INDEX fnet204_sources_kind_order (network=? AND kind=? AND (order_time,source_id)>(?,?))
+2026-11-19T10:54:29.986805+00:00 ordinary --- PASS: TestSQLiteQueryPlansSeekUsingBoundedIndexes (1.96s)
+2026-11-19T10:54:29.986898+00:00 ordinary === RUN   TestSQLiteConcurrentReadersAndUpdates
+2026-11-19T10:54:30.110422+00:00 ordinary --- PASS: TestSQLiteConcurrentReadersAndUpdates (0.13s)
+2026-11-19T10:54:30.110587+00:00 ordinary === RUN   TestSQLitePageHeapBounds
+2026-11-19T10:54:30.110602+00:00 ordinary === RUN   TestSQLitePageHeapBounds/10000
+2026-11-19T10:54:30.295952+00:00 ordinary     sqlstore_test.go:462: events=10000 rows/page=101 latency=419.404µs allocated_bytes/page=43704 allocations/page=1350 heap_live_before=162880 heap_live_after=1042408 resident_before=21073920 resident_after=21069824
+2026-11-19T10:54:30.300192+00:00 ordinary === RUN   TestSQLitePageHeapBounds/100000
+2026-11-19T10:54:31.894336+00:00 ordinary     sqlstore_test.go:462: events=100000 rows/page=101 latency=345.217µs allocated_bytes/page=43704 allocations/page=1350 heap_live_before=163848 heap_live_after=855120 resident_before=21184512 resident_after=21028864
+2026-11-19T10:54:31.897661+00:00 ordinary --- PASS: TestSQLitePageHeapBounds (1.79s)
+2026-11-19T10:54:31.897805+00:00 ordinary     --- PASS: TestSQLitePageHeapBounds/10000 (0.19s)
+2026-11-19T10:54:31.897816+00:00 ordinary     --- PASS: TestSQLitePageHeapBounds/100000 (1.60s)
+2026-11-19T10:54:31.897821+00:00 ordinary PASS
+2026-11-19T10:54:31.899232+00:00 END ordinary exit=0 elapsed_seconds=11.223
+2026-11-19T10:54:31.899323+00:00 START compile-race ["/workspace/scratch/323c59aa8380/toolchain/go/bin/go", "test", "-p=1", "-race", "-c", "-o", "/tmp/fnet204-949d329-race.test", "."]
+2026-11-19T10:54:35.471674+00:00 END compile-race exit=0 elapsed_seconds=3.572
+2026-11-19T10:54:35.471996+00:00 START race ["/tmp/fnet204-949d329-race.test", "-test.v", "-test.count=1", "-test.timeout=20m"]
+2026-11-19T10:54:35.488696+00:00 race === RUN   TestSQLiteSnapshotPaginationLargeHistories
+2026-11-19T10:54:35.488774+00:00 race === RUN   TestSQLiteSnapshotPaginationLargeHistories/10000
+2026-11-19T10:54:44.351139+00:00 race === RUN   TestSQLiteSnapshotPaginationLargeHistories/100000
+2026-11-19T10:56:35.282761+00:00 race --- PASS: TestSQLiteSnapshotPaginationLargeHistories (119.79s)
+2026-11-19T10:56:35.282821+00:00 race     --- PASS: TestSQLiteSnapshotPaginationLargeHistories/10000 (8.86s)
+2026-11-19T10:56:35.282829+00:00 race     --- PASS: TestSQLiteSnapshotPaginationLargeHistories/100000 (110.93s)
+2026-11-19T10:56:35.282833+00:00 race === RUN   TestSQLiteBoundedBacklogSparsePermissionsAndDeletions
+2026-11-19T10:56:46.309751+00:00 race --- PASS: TestSQLiteBoundedBacklogSparsePermissionsAndDeletions (11.03s)
+2026-11-19T10:56:46.309803+00:00 race === RUN   TestSQLiteStoreLifecycleAndRestart
+2026-11-19T10:56:46.390636+00:00 race --- PASS: TestSQLiteStoreLifecycleAndRestart (0.08s)
+2026-11-19T10:56:46.390742+00:00 race === RUN   TestSQLiteLargeHistoryTraversal
+2026-11-19T10:56:46.390812+00:00 race === RUN   TestSQLiteLargeHistoryTraversal/10000
+2026-11-19T10:56:54.638480+00:00 race === RUN   TestSQLiteLargeHistoryTraversal/100000
+2026-11-19T10:58:43.778116+00:00 race --- PASS: TestSQLiteLargeHistoryTraversal (117.39s)
+2026-11-19T10:58:43.778165+00:00 race     --- PASS: TestSQLiteLargeHistoryTraversal/10000 (8.25s)
+2026-11-19T10:58:43.778171+00:00 race     --- PASS: TestSQLiteLargeHistoryTraversal/100000 (109.14s)
+2026-11-19T10:58:43.778186+00:00 race === RUN   TestSQLiteHighWaterAndChangesBetweenBatches
+2026-11-19T10:58:43.873145+00:00 race --- PASS: TestSQLiteHighWaterAndChangesBetweenBatches (0.09s)
+2026-11-19T10:58:43.873241+00:00 race === RUN   TestSQLiteQueryPlansSeekUsingBoundedIndexes
+2026-11-19T10:59:57.917609+00:00 race     sqlstore_test.go:348: SEARCH fnet204_sources USING INDEX fnet204_sources_all_order (network=? AND (order_time,kind,source_id)>(?,?,?))
+2026-11-19T10:59:57.950879+00:00 race     sqlstore_test.go:348: SEARCH fnet204_sources USING INDEX fnet204_sources_kind_order (network=? AND kind=? AND (order_time,source_id)>(?,?))
+2026-11-19T10:59:57.966298+00:00 race --- PASS: TestSQLiteQueryPlansSeekUsingBoundedIndexes (74.09s)
+2026-11-19T10:59:57.966362+00:00 race === RUN   TestSQLiteConcurrentReadersAndUpdates
+2026-11-19T11:00:01.213460+00:00 race --- PASS: TestSQLiteConcurrentReadersAndUpdates (3.25s)
+2026-11-19T11:00:01.214852+00:00 race === RUN   TestSQLitePageHeapBounds
+2026-11-19T11:00:01.215071+00:00 race === RUN   TestSQLitePageHeapBounds/10000
+2026-11-19T11:00:08.881366+00:00 race     sqlstore_test.go:462: events=10000 rows/page=101 latency=15.247325ms allocated_bytes/page=48264 allocations/page=1351 heap_live_before=164800 heap_live_after=1384464 resident_before=54108160 resident_after=54665216
+2026-11-19T11:00:08.895562+00:00 race === RUN   TestSQLitePageHeapBounds/100000
+2026-11-19T11:01:21.628252+00:00 race     sqlstore_test.go:462: events=100000 rows/page=101 latency=15.447821ms allocated_bytes/page=48264 allocations/page=1351 heap_live_before=165120 heap_live_after=1407376 resident_before=47292416 resident_after=53051392
+2026-11-19T11:01:21.639620+00:00 race --- PASS: TestSQLitePageHeapBounds (80.42s)
+2026-11-19T11:01:21.639740+00:00 race     --- PASS: TestSQLitePageHeapBounds/10000 (7.68s)
+2026-11-19T11:01:21.639927+00:00 race     --- PASS: TestSQLitePageHeapBounds/100000 (72.74s)
+2026-11-19T11:01:21.639947+00:00 race PASS
+2026-11-19T11:01:22.646945+00:00 END race exit=0 elapsed_seconds=407.175
+2026-11-19T11:01:22.647060+00:00 START benchmarks ["/tmp/fnet204-949d329-ordinary.test", "-test.run=^$", "-test.bench=BenchmarkSQLStorePage", "-test.benchmem", "-test.benchtime=100x", "-test.count=1"]
+2026-11-19T11:01:22.849561+00:00 benchmarks goos: linux
+2026-11-19T11:01:22.849625+00:00 benchmarks goarch: amd64
+2026-11-19T11:01:22.849636+00:00 benchmarks pkg: github.com/djshellshoxxx/circula/future/feed/integration
+2026-11-19T11:01:22.849645+00:00 benchmarks cpu: AMD EPYC 7763 64-Core Processor
+2026-11-19T11:01:23.095995+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_10000/tied_false-2         	     100	    495930 ns/op	   96644 B/op	    1638 allocs/op
+2026-11-19T11:01:23.488366+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_10000/tied_true-2          	     100	    631994 ns/op	   96287 B/op	    1638 allocs/op
+2026-11-19T11:01:27.477217+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_100000/tied_false-2        	     100	    666873 ns/op	   96650 B/op	    1638 allocs/op
+2026-11-19T11:01:31.111120+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_100000/tied_true-2         	     100	    753996 ns/op	   96231 B/op	    1638 allocs/op
+2026-11-19T11:01:31.451606+00:00 benchmarks BenchmarkSQLStorePage/events_10000/tied_false-2                  	     100	    762203 ns/op	   44440 B/op	    1357 allocs/op
+2026-11-19T11:01:31.920799+00:00 benchmarks BenchmarkSQLStorePage/events_10000/tied_true-2                   	     100	    329148 ns/op	   44040 B/op	    1357 allocs/op
+2026-11-19T11:01:35.494740+00:00 benchmarks BenchmarkSQLStorePage/events_100000/tied_false-2                 	     100	    509034 ns/op	   44441 B/op	    1357 allocs/op
+2026-11-19T11:01:40.035865+00:00 benchmarks BenchmarkSQLStorePage/events_100000/tied_true-2                  	     100	    364024 ns/op	   44041 B/op	    1357 allocs/op
+2026-11-19T11:01:40.035969+00:00 benchmarks PASS
+2026-11-19T11:01:40.037810+00:00 END benchmarks exit=0 elapsed_seconds=17.391
+2026-11-19T11:01:40.037964+00:00 START vet ["/workspace/scratch/323c59aa8380/toolchain/go/bin/go", "vet", "./..."]
+2026-11-19T11:01:41.818839+00:00 END vet exit=0 elapsed_seconds=1.781
+2026-11-19T11:01:41.818953+00:00 START verify ["/workspace/scratch/323c59aa8380/toolchain/go/bin/go", "mod", "verify"]
+2026-11-19T11:01:44.820909+00:00 verify all modules verified
+2026-11-19T11:01:44.846899+00:00 END verify exit=0 elapsed_seconds=3.028
+2026-11-19T11:01:44.941897+00:00 QUALIFIED 949d32907f8cc2fab30ce237d95bb361023e84ba ordinary/race/benchmarks/vet/module-verification PASS
