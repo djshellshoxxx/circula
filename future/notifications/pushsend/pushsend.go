@@ -128,7 +128,7 @@ func classifyErr(ctx context.Context, err error) *notifications.SendError {
 	return notifications.NewSendError(notifications.ClassPermanent, "encrypt", 0, err)
 }
 
-func classifyStatus(resp *http.Response) *notifications.SendError {
+func classifyStatus(resp *http.Response) error {
 	c := resp.StatusCode
 	switch {
 	case c >= 200 && c < 300:
@@ -156,8 +156,22 @@ func retryAfter(resp *http.Response) time.Duration {
 	if v == "" {
 		return 0
 	}
-	if n, err := strconv.Atoi(v); err == nil && n >= 0 {
-		return capDur(time.Duration(n) * time.Second)
+	numeric := true
+	for _, c := range v {
+		if c < '0' || c > '9' {
+			numeric = false
+			break
+		}
+	}
+	if numeric {
+		n, err := strconv.ParseUint(v, 10, 64)
+		// Clamp seconds before multiplying: even a valid decimal header can
+		// exceed the integer or time.Duration range. Numeric overflow caps at
+		// the existing maximum instead of becoming a negative/zero delay.
+		if err != nil || n >= uint64(notifications.MaxRetryAfter/time.Second) {
+			return notifications.MaxRetryAfter
+		}
+		return time.Duration(n) * time.Second
 	}
 	if t, err := http.ParseTime(v); err == nil {
 		if d := time.Until(t); d > 0 {
