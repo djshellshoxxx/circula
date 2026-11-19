@@ -1,0 +1,97 @@
+{
+  "observed_utc": "2026-11-19T13:05:36.768841+00:00",
+  "reviewer": "/root/independent_triage",
+  "read_only": true,
+  "go_processes_started": false,
+  "disposition": "No blocking source or dedicated-workflow finding in the reviewed recovery deltas; original runtime/provider/integration gates remain separate.",
+  "scope": {
+    "source": "Complete new production deltas and regression tests, relevant parser/CLI callers, original fuzz inputs, dedicated workflows, preservation of every archived path/blob, all original tests and module metadata, accepted-main Core baseline blobs.",
+    "execution": "Read-only Git/Python/YAML/shell syntax verification. This reviewer did not start Go builds, tests, vet, fuzz, native jobs, or provider runs during this review.",
+    "not_claimed": [
+      "Full independent security audit of every unchanged archived production file",
+      "Current full Core qualification",
+      "Native macOS or Windows result",
+      "Feature activation, integration, merge or deployment approval"
+    ]
+  },
+  "reviewed_semantics": {
+    "duplicate_fields": "Minimum-rune traversal of each unicode.SimpleFold cycle matches Go JSON case-insensitive field equivalence. It is used only as a comparison key, preserves single aliases, applies per nested object and does not expand sharp-s or ligatures.",
+    "regression_proof": "Tests call the actual production parser; ordinary encoding/json controls demonstrate that duplicate aliases assign the same typed field. Five new areas, six governance and six messaging parser failures were observed before repair. Messaging additionally observed eighteen malformed stdin cases, with tests requiring zero transport calls/output. Valid Unicode and literal U+FFFD controls are retained.",
+    "messaging_stdin": "Existing bounded read completes before utf8.Valid checks for send/report content and search query. Invalid raw bytes fail before string conversion, JSON marshaling or HTTP transport. Existing byte limits, HTTPS behavior, response cap and authorization adapter semantics are unchanged.",
+    "workflow": "Native Linux/macOS race and Windows ordinary suites remain required; immutable action pins, contents:read, disabled persisted checkout credentials, exact original dependency allowlist, HOLD/disabled and boundary guards, module verification, bounded tests/fuzz and explicit source metadata remain in place. Areas/governance source-file fuzz uses actual production parser and original fuzz source; full real-driver qualification remains separate.",
+    "windows": "Messaging Open rejects mode bits 0077. Pinned Go Windows fileStat.mode reports regular files as 0666 or 0444, both rejected. Recovery docs correctly label an expected source-based Windows gate and preserve the fail-closed check. No Windows result or permission workaround is approved."
+  },
+  "source_receipt": "/workspace/scratch/f47ceab29930/evidence/three-recovery-independent-review/review.json",
+  "source_receipt_sha256": "9fcc5f545f5023cee65f5f24eb39ef3eedbf5d750ba7ae0f31d4ed2007faecd3",
+  "module_review": {
+    "module": "areas",
+    "base": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+    "archive": "999dcbf12ffcf2bdcd1764393c5f470fe3c6fbc3",
+    "head": "0ad43e4a414945e1351e7509dce7f214516d199b",
+    "tree": "d784637417003e1a18b6ad3ee279aa8f38569fa3",
+    "archive_file_count": 76,
+    "preserved_all_archive_paths": true,
+    "modified_archive_paths": [
+      "future/areas/README.md",
+      "future/areas/json.go"
+    ],
+    "original_tests_retained_exact": 7,
+    "module_and_manifest_files_unchanged": true,
+    "outside_module_paths": [
+      ".github/workflows/future-areas.yml",
+      "cmd/circula/auditanchor.go",
+      "internal/service/departure_pagination_regression_test.go"
+    ],
+    "accepted_main_blobs": {
+      "cmd/circula/auditanchor.go": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "internal/service/departure_pagination_regression_test.go": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595"
+    },
+    "source_map_mismatches": [],
+    "workflow_blob": "70cd9a282a90f18f33f8aa6ead011508a0497d78",
+    "workflow_checks": {
+      "yaml_parser_available": true,
+      "yaml_permissions_pins_native_matrix": "pass",
+      "shell_syntax": "pass",
+      "embedded_python_syntax": "pass",
+      "dependency_allowlist_matches_archive_go_mod": "pass"
+    },
+    "fail_before": {
+      "log_hash_matches": true,
+      "reported_resource_or_compile_failure": true,
+      "actual_failure_tests": 6,
+      "actual_negative_subcases": 5,
+      "ancillary_build_diagnostics": [
+        {
+          "ImportPath": "modernc.org/sqlite/lib",
+          "Action": "build-output",
+          "Output": "modernc.org/sqlite/lib: /workspace/scratch/beb70d57deba/toolchain/go/pkg/tool/linux_amd64/vet: signal: killed\n"
+        },
+        {
+          "ImportPath": "modernc.org/sqlite/lib",
+          "Action": "build-fail"
+        }
+      ],
+      "original_reported_resource_or_compile_failure": false,
+      "classification": "mixed_assertion_and_vet_resource_failure",
+      "original_receipt_bytes_preserved": true,
+      "original_receipt_sha256": "a0d46b85cb641ee7cf2444aee162016d89e359eb0981987cf184023181e1b380",
+      "raw_log_bytes_preserved": true
+    }
+  },
+  "pending_findings": [],
+  "closed_findings": [
+    {
+      "id": "areas-red-run-classification",
+      "severity": "Evidence accuracy; no runtime defect introduced by the recovery fix",
+      "finding": "The original areas fail-before invocation executed all five intended failing parser subcases and also recorded a killed modernc.org/sqlite/lib vet subprocess and build-fail event. The original assertion-only classification was incomplete.",
+      "resolution_head": "0ad43e4a414945e1351e7509dce7f214516d199b",
+      "resolution_changed_paths": [
+        "future/areas/RECOVERY-20261119.md",
+        "future/areas/recovery-evidence-20261119/fail-before-original-receipt.json",
+        "future/areas/recovery-evidence-20261119/fail-before.json"
+      ],
+      "resolution": "Corrected receipt and RECOVERY wording describe a mixed assertion/resource failure. The complete original receipt is separately preserved byte-for-byte and its SHA-256 verified. The raw log is unchanged. Production, tests, dependencies and workflow remain unchanged from the initial reviewed head.",
+      "status": "closed after independent readback"
+    }
+  ]
+}

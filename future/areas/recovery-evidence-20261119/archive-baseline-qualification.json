@@ -1,0 +1,300 @@
+{
+  "module": "areas",
+  "sha": "999dcbf12ffcf2bdcd1764393c5f470fe3c6fbc3",
+  "module_tree": "730b855efe6fa42231fd5d6848f54512cd55c3fc",
+  "source": {
+    "module": "areas",
+    "sha": "999dcbf12ffcf2bdcd1764393c5f470fe3c6fbc3",
+    "tree": "730b855efe6fa42231fd5d6848f54512cd55c3fc",
+    "module_path": "future/areas",
+    "extracted_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+    "file_count": 76,
+    "bytes": 315455,
+    "all_git_blobs_verified": true
+  },
+  "started_utc": "2026-11-19T11:51:32.669826+00:00",
+  "go_mod": "module github.com/djshellshoxxx/circula/future/areas\n\ngo 1.26.0\n\nrequire modernc.org/sqlite v1.60.1\n\nrequire (\n\tgithub.com/dustin/go-humanize v1.0.1 // indirect\n\tgithub.com/google/uuid v1.6.0 // indirect\n\tgithub.com/mattn/go-isatty v0.0.24 // indirect\n\tgithub.com/ncruces/go-strftime v1.0.0 // indirect\n\tgithub.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect\n\tgolang.org/x/sys v0.48.0 // indirect\n\tmodernc.org/libc v1.77.1 // indirect\n\tmodernc.org/mathutil v1.7.1 // indirect\n\tmodernc.org/memory v1.12.1 // indirect\n)\n",
+  "go_mod_sha256_before": "c94ce93867e1c0161b506923ace6f0fe2051cf49cc8f788b99e9869be2b21201",
+  "go_sum_sha256_before": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+  "build_tags": [],
+  "sqlite_driver_evidence": [
+    {
+      "path": "future/areas/service_test.go",
+      "matches": [
+        "\t_ \"modernc.org/sqlite\""
+      ]
+    }
+  ],
+  "manifest": {
+    "id": "FNET-206",
+    "status": "partial-master-http-boundaries-tested-independently-reviewed",
+    "integration": "HOLD",
+    "enabled": false,
+    "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+    "depends_on_future_features": [],
+    "scope": "Durable scoped named-area taxonomy/associations, transactional current-auth/MFA ports, optimistic/idempotent lifecycle, default-off network sharing, encrypted paging, native no-JS HTTP/CLI surfaces; no coordinates or geometry. Independently audited strict schema/requests, durable safety-write verification, replay-preserving location cleanup and quota-independent sharing opt-out. Strict pre-auth route-aware queries and fresh same-session form callback reauthorization. Capped strict body parsing precedes host form helpers to prevent cached malformed-body acceptance.",
+    "remaining": "actual core principal/store/CLI/API integration; media EXIF sanitizer qualification if photos connected; host replay-preserving retention plan; browser keyboard/zoom/screen-reader acceptance; full core regression/release qualification. Geometry/map/meetup/distance optional scope not adopted.",
+    "completion_percent": 84.75,
+    "tested_source": "232fd26e0a2f905931c221a80291a9bcd4d9fe0e"
+  },
+  "checks": [
+    {
+      "kind": "gofmt",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "areas.go",
+        "areas_test.go",
+        "audit_test.go",
+        "form_cache_test.go",
+        "fuzz_test.go",
+        "hardening.go",
+        "interface.go",
+        "json.go",
+        "json_fuzz_test.go",
+        "master_regression_test.go",
+        "paging.go",
+        "service.go",
+        "service_test.go"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt -l areas.go areas_test.go audit_test.go form_cache_test.go fuzz_test.go hardening.go interface.go json.go json_fuzz_test.go master_regression_test.go paging.go service.go service_test.go",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T11:51:32.683763+00:00",
+      "outer_timeout_seconds": 30,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/gofmt.log",
+      "tmp_free_before_bytes": 1098399744,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.033,
+      "finished_utc": "2026-11-19T11:51:32.716398+00:00",
+      "tmp_free_after_bytes": 1098366976,
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T11:51:32.719042+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/race.log",
+      "tmp_free_before_bytes": 1098366976,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 17.702,
+      "finished_utc": "2026-11-19T11:51:50.421231+00:00",
+      "tmp_free_after_bytes": 825176064,
+      "output_tail": "go: downloading modernc.org/sqlite v1.60.1\ngo: downloading golang.org/x/sys v0.48.0\ngo: downloading modernc.org/libc v1.77.1\ngo: downloading github.com/dustin/go-humanize v1.0.1\ngo: downloading github.com/google/uuid v1.6.0\ngo: downloading modernc.org/mathutil v1.7.1\ngo: downloading modernc.org/memory v1.12.1\ngo: downloading github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec\ngo: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "e7dccae017c45fae692ee772cfc869c518c487a8d53ec0f302a6110ca68e9c33",
+      "status": "failed",
+      "executed_test_pass_events": 0,
+      "skipped_test_events": [],
+      "package_results": [],
+      "coverage_output": []
+    },
+    {
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T11:51:50.428901+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/vet.log",
+      "tmp_free_before_bytes": 825176064,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 0.115,
+      "finished_utc": "2026-11-19T11:51:50.543644+00:00",
+      "tmp_free_after_bytes": 825413632,
+      "output_tail": "go: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+      "status": "failed"
+    },
+    {
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T11:51:50.547140+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/mod_verify.log",
+      "tmp_free_before_bytes": 825376768,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 2.572,
+      "finished_utc": "2026-11-19T11:51:53.119124+00:00",
+      "tmp_free_after_bytes": 825528320,
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T12:14:13.388623+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/race-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 374915072,
+        "workspace_free_bytes": 135581696,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 10.826,
+      "finished_utc": "2026-11-19T12:14:24.215273+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 371691520,
+        "workspace_free_bytes": 133861376,
+        "private_tmp_exists": true
+      },
+      "output_tail": "ut\":\"--- PASS: TestMasterSingleEmptyCursorAndListingRemainValid (0.03s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.412670683-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestMasterSingleEmptyCursorAndListingRemainValid\",\"Elapsed\":0.03}\n{\"Time\":\"2026-11-19T04:14:20.412684739-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestPersistenceAssignmentsLifecyclePrivacy\"}\n{\"Time\":\"2026-11-19T04:14:20.412687995-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestPersistenceAssignmentsLifecyclePrivacy\",\"Output\":\"=== RUN   TestPersistenceAssignmentsLifecyclePrivacy\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.521963718-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestPersistenceAssignmentsLifecyclePrivacy\",\"Output\":\"--- PASS: TestPersistenceAssignmentsLifecyclePrivacy (0.11s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.522017068-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestPersistenceAssignmentsLifecyclePrivacy\",\"Elapsed\":0.11}\n{\"Time\":\"2026-11-19T04:14:20.522028409-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestFreshAuthIsolationConcurrencyAndRollback\"}\n{\"Time\":\"2026-11-19T04:14:20.522042586-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestFreshAuthIsolationConcurrencyAndRollback\",\"Output\":\"=== RUN   TestFreshAuthIsolationConcurrencyAndRollback\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.593945174-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestFreshAuthIsolationConcurrencyAndRollback\",\"Output\":\"--- PASS: TestFreshAuthIsolationConcurrencyAndRollback (0.07s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.593988955-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestFreshAuthIsolationConcurrencyAndRollback\",\"Elapsed\":0.07}\n{\"Time\":\"2026-11-19T04:14:20.593996119-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestHTTPFormsJSONCLIBoundaries\"}\n{\"Time\":\"2026-11-19T04:14:20.593999265-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestHTTPFormsJSONCLIBoundaries\",\"Output\":\"=== RUN   TestHTTPFormsJSONCLIBoundaries\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.634334951-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestHTTPFormsJSONCLIBoundaries\",\"Output\":\"--- PASS: TestHTTPFormsJSONCLIBoundaries (0.04s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.634375577-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestHTTPFormsJSONCLIBoundaries\",\"Elapsed\":0.04}\n{\"Time\":\"2026-11-19T04:14:20.634383632-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestSharingRevocationAndStrictRequestBoundary\"}\n{\"Time\":\"2026-11-19T04:14:20.634386337-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestSharingRevocationAndStrictRequestBoundary\",\"Output\":\"=== RUN   TestSharingRevocationAndStrictRequestBoundary\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.674873407-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestSharingRevocationAndStrictRequestBoundary\",\"Output\":\"--- PASS: TestSharingRevocationAndStrictRequestBoundary (0.04s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.674994064-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestSharingRevocationAndStrictRequestBoundary\",\"Elapsed\":0.04}\n{\"Time\":\"2026-11-19T04:14:20.675003351-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestEncryptedActorBoundPaging\"}\n{\"Time\":\"2026-11-19T04:14:20.675006627-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestEncryptedActorBoundPaging\",\"Output\":\"=== RUN   TestEncryptedActorBoundPaging\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.719819033-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestEncryptedActorBoundPaging\",\"Output\":\"--- PASS: TestEncryptedActorBoundPaging (0.04s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.71986006-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestEncryptedActorBoundPaging\",\"Elapsed\":0.04}\n{\"Time\":\"2026-11-19T04:14:20.719866793-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCurrentAssociationNoJSAndPagedCLI\"}\n{\"Time\":\"2026-11-19T04:14:20.719869608-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCurrentAssociationNoJSAndPagedCLI\",\"Output\":\"=== RUN   TestCurrentAssociationNoJSAndPagedCLI\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.755906515-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCurrentAssociationNoJSAndPagedCLI\",\"Output\":\"--- PASS: TestCurrentAssociationNoJSAndPagedCLI (0.04s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:20.755954495-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCurrentAssociationNoJSAndPagedCLI\",\"Elapsed\":0.04}\n{\"Time\":\"2026-11-19T04:14:20.755961298-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCleanupSurvivesRetryQuota\"}\n{\"Time\":\"2026-11-19T04:14:20.755972559-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCleanupSurvivesRetryQuota\",\"Output\":\"=== RUN   TestCleanupSurvivesRetryQuota\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.171455224-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCleanupSurvivesRetryQuota\",\"Output\":\"--- PASS: TestCleanupSurvivesRetryQuota (2.42s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.171612238-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestCleanupSurvivesRetryQuota\",\"Elapsed\":2.42}\n{\"Time\":\"2026-11-19T04:14:23.171622136-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate\"}\n{\"Time\":\"2026-11-19T04:14:23.171625262-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate\",\"Output\":\"=== RUN   FuzzValidate\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.171715872-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#0\"}\n{\"Time\":\"2026-11-19T04:14:23.171721814-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#0\",\"Output\":\"=== RUN   FuzzValidate/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.171863019-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#0\",\"Output\":\"--- PASS: FuzzValidate/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.171870673-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.171894458-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#1\"}\n{\"Time\":\"2026-11-19T04:14:23.171897253-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#1\",\"Output\":\"=== RUN   FuzzValidate/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172061781-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#1\",\"Output\":\"--- PASS: FuzzValidate/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172069686-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.172072391-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#2\"}\n{\"Time\":\"2026-11-19T04:14:23.172074335-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#2\",\"Output\":\"=== RUN   FuzzValidate/seed#2\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172209327-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#2\",\"Output\":\"--- PASS: FuzzValidate/seed#2 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172218395-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#2\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.17222141-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#3\"}\n{\"Time\":\"2026-11-19T04:14:23.172223665-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#3\",\"Output\":\"=== RUN   FuzzValidate/seed#3\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172234154-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#3\",\"Output\":\"--- PASS: FuzzValidate/seed#3 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172236609-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#3\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.172288506-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#4\"}\n{\"Time\":\"2026-11-19T04:14:23.172292404-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#4\",\"Output\":\"=== RUN   FuzzValidate/seed#4\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172357586-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#4\",\"Output\":\"--- PASS: FuzzValidate/seed#4 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172378715-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate/seed#4\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.172417899-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate\",\"Output\":\"--- PASS: FuzzValidate (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172486237-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzValidate\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.172491186-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest\"}\n{\"Time\":\"2026-11-19T04:14:23.172493431-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest\",\"Output\":\"=== RUN   FuzzStrictRequest\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172637832-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#0\"}\n{\"Time\":\"2026-11-19T04:14:23.172644334-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#0\",\"Output\":\"=== RUN   FuzzStrictRequest/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172891167-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#0\",\"Output\":\"--- PASS: FuzzStrictRequest/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.172899703-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.172952572-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#1\"}\n{\"Time\":\"2026-11-19T04:14:23.172957091-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#1\",\"Output\":\"=== RUN   FuzzStrictRequest/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173072326-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#1\",\"Output\":\"--- PASS: FuzzStrictRequest/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173077626-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.173109306-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#2\"}\n{\"Time\":\"2026-11-19T04:14:23.173112612-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#2\",\"Output\":\"=== RUN   FuzzStrictRequest/seed#2\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173176872-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#2\",\"Output\":\"--- PASS: FuzzStrictRequest/seed#2 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173221035-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#2\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.173225995-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#3\"}\n{\"Time\":\"2026-11-19T04:14:23.173228079-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#3\",\"Output\":\"=== RUN   FuzzStrictRequest/seed#3\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173391034-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#3\",\"Output\":\"--- PASS: FuzzStrictRequest/seed#3 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173424918-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#3\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.1734528-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#4\"}\n{\"Time\":\"2026-11-19T04:14:23.173461386-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#4\",\"Output\":\"=== RUN   FuzzStrictRequest/seed#4\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173654899-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#4\",\"Output\":\"--- PASS: FuzzStrictRequest/seed#4 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173682932-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#4\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.173689805-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#5\"}\n{\"Time\":\"2026-11-19T04:14:23.173694193-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#5\",\"Output\":\"=== RUN   FuzzStrictRequest/seed#5\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173745599-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#5\",\"Output\":\"--- PASS: FuzzStrictRequest/seed#5 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173749727-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest/seed#5\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.173849598-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest\",\"Output\":\"--- PASS: FuzzStrictRequest (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.173869405-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"FuzzStrictRequest\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:14:23.173873283-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-11-19T04:14:23.179546002-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Output\":\"coverage: 71.7% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:14:24.192012314-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/future/areas\\t6.297s\\tcoverage: 71.7% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:14:24.192892214-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Elapsed\":6.3}\n",
+      "output_sha256": "d252f55dab1c986f3d1dfe033b66087c322df12e87238fd4e117fc680fcaf724",
+      "status": "pass",
+      "executed_test_pass_events": 59,
+      "skipped_test_events": [],
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/future/areas",
+          "action": "pass",
+          "elapsed_seconds": 6.3
+        }
+      ],
+      "coverage_output": [
+        "coverage: 71.7% of statements",
+        "ok  \tgithub.com/djshellshoxxx/circula/future/areas\t6.297s\tcoverage: 71.7% of statements"
+      ]
+    },
+    {
+      "attempt": 2,
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T12:14:24.235389+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/vet-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 371691520,
+        "workspace_free_bytes": 133799936,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 23.25,
+      "finished_utc": "2026-11-19T12:14:47.485240+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 357670912,
+        "workspace_free_bytes": 133558272,
+        "private_tmp_exists": true
+      },
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/areas",
+      "started_utc": "2026-11-19T12:14:47.494070+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/areas/mod_verify-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 357670912,
+        "workspace_free_bytes": 133554176,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 0.466,
+      "finished_utc": "2026-11-19T12:14:47.960340+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 357670912,
+        "workspace_free_bytes": 133550080,
+        "private_tmp_exists": true
+      },
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    }
+  ],
+  "state": "completed",
+  "source_files_changed": [],
+  "go_mod_sha256_after": "c94ce93867e1c0161b506923ace6f0fe2051cf49cc8f788b99e9869be2b21201",
+  "go_sum_sha256_after": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+  "source_unchanged": true,
+  "finished_utc": "2026-11-19T11:51:53.145223+00:00",
+  "all_attempted_checks_passed": false,
+  "latest_checks": {
+    "gofmt": {
+      "check_index": 0,
+      "status": "pass",
+      "attempt": 1
+    },
+    "race": {
+      "check_index": 4,
+      "status": "pass",
+      "attempt": 2
+    },
+    "vet": {
+      "check_index": 5,
+      "status": "pass",
+      "attempt": 2
+    },
+    "mod_verify": {
+      "check_index": 6,
+      "status": "pass",
+      "attempt": 2
+    }
+  },
+  "current_required_checks_passed": true,
+  "retry_finished_utc": "2026-11-19T12:14:47.996447+00:00"
+}

@@ -1,0 +1,70 @@
+{
+  "stage": "fail-before",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "TMPDIR": "/tmp/circula-recovered-qualification-8lm6pgwy/tmp"
+  },
+  "check": {
+    "module": "areas",
+    "argv": [
+      "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+      "test",
+      "-json",
+      "-count=1",
+      "-ldflags=-w",
+      "-run",
+      "^TestRecovery",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/workspace/scratch/f47ceab29930/circula-areas-recovery/future/areas",
+    "source_sha256": {
+      "interface.go": "bda0e19e5de490fad68052d014d7cc27ac67dd57fab0b685fa5ad90099564cca",
+      "fuzz_test.go": "4bf815790c1503e3eed6239b17bece2bf0142a0a15e3ad9acdb6d24efa94cac3",
+      "master_regression_test.go": "f2b0cceb49ec72c269ff0382b6d6406f4352b7852f71729f49c69ef70cb95247",
+      "form_cache_test.go": "cc8b14e059b10034379202df9d9e42d07ea795ca78fd306dc7d77ff74131b988",
+      "json_recovery_test.go": "0987fe51d65959182d6d3a26d557444e829d9bb961b101663e1e953d7fa93c32",
+      "areas_test.go": "cb57278310463ed288cff7cc7bdf252b8bb00abdb9764452de26b78d39886870",
+      "json.go": "20df84951e6c3452449027e5793fd7ebeb1dec1628d6d03634e6d37f76ec4bce",
+      "areas.go": "d7e708ecea3288e19b0d4c9488b75f5148cbc006e02bf243b390b48b8ac6e66c",
+      "audit_test.go": "682bf09beff8bd9fc46218bfcfac365d0c6eccdf53143791b94a787fdad200fe",
+      "service.go": "04accd21f797ef3c2b40731e81252a0f551897f4a63ab7b6575c913e60c4fe42",
+      "go.sum": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+      "hardening.go": "5905a57e29bab8ef36dfc937a29449be98527ff739069bef4d06d28c53a3c3aa",
+      "json_fuzz_test.go": "9e11c6b8084cae603bc1bc4f94ed9de6b5dfde26c3156951be7b1dba54a5545f",
+      "service_test.go": "0c8f562b00de9c229c6cdb654762647bc394fde1c960c3dcf331a3d75888c72f",
+      "paging.go": "5b21c7e7a89f13208cd81873b1db98aa8f1cbfa62c9a81be1b0d251f07948be1",
+      "go.mod": "c94ce93867e1c0161b506923ace6f0fe2051cf49cc8f788b99e9869be2b21201"
+    },
+    "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/three-recovery-regressions/areas-fail-before.log",
+    "tmp_free_before": 472985600,
+    "exit_code": 1,
+    "timed_out": false,
+    "elapsed_seconds": 34.15,
+    "failed_tests": [
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Revision\":1,\"Revi\u017fion\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Revi\u017fion\":1,\"Revision\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Revision\":1,\"Revi\\u017fion\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"\u03a3\":1,\"\u03c2\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Nested\":{\"Revision\":1,\"Revi\u017fion\":2}}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields"
+    ],
+    "passed_tests": [
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"revision\":1,\"REVISION\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Key\":1,\"\u212aey\":2}",
+      "TestRecoveryJSONSingleAliasesAndDistinctUnicode"
+    ],
+    "resource_or_compile_failure": false,
+    "source_unchanged": true,
+    "log_sha256": "695d74e8a3f56ab9ec9c83afa85456074e9a1481cffb19e5828454427564fc67",
+    "output_tail": "sedJSONFields/{\\\"Nested\\\":{\\\"Revision\\\":1,\\\"Revi\u017fion\\\":2}}\",\"Output\":\"--- FAIL: TestRecoveryRejectsUnicodeAliasedJSONFields/{\\\"Nested\\\":{\\\"Revision\\\":1,\\\"Revi\u017fion\\\":2}} (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:38:44.979935439-08:00\",\"Action\":\"fail\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryRejectsUnicodeAliasedJSONFields/{\\\"Nested\\\":{\\\"Revision\\\":1,\\\"Revi\u017fion\\\":2}}\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:38:44.979943013-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryRejectsUnicodeAliasedJSONFields\",\"Output\":\"--- FAIL: TestRecoveryRejectsUnicodeAliasedJSONFields (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:38:44.979947451-08:00\",\"Action\":\"fail\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryRejectsUnicodeAliasedJSONFields\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:38:44.979951439-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\"}\n{\"Time\":\"2026-11-19T04:38:44.979956117-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\",\"Output\":\"=== RUN   TestRecoveryJSONSingleAliasesAndDistinctUnicode\\n\"}\n{\"Time\":\"2026-11-19T04:38:44.979961818-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\",\"Output\":\"--- PASS: TestRecoveryJSONSingleAliasesAndDistinctUnicode (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:38:44.979966406-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:38:44.979969963-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Output\":\"FAIL\\n\"}\n{\"Time\":\"2026-11-19T04:38:44.980295474-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Output\":\"FAIL\\tgithub.com/djshellshoxxx/circula/future/areas\\t0.013s\\n\"}\n{\"Time\":\"2026-11-19T04:38:44.980409016-08:00\",\"Action\":\"fail\",\"Package\":\"github.com/djshellshoxxx/circula/future/areas\",\"Elapsed\":0.023}\n"
+  }
+}

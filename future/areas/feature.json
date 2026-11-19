@@ -1,10 +1,12 @@
 {
   "id": "FNET-206",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "partial-master-http-boundaries-tested-independently-reviewed",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Validated named-area catalog, deterministic sorting and optional area resolution restricted to the selected network. No coordinates.",
-  "remaining": "Admin-authorized durable area CRUD; listing association constraints; disabled/deleted area semantics; accessible selection/filtering; export privacy; optional broad geometry/map policy. No GPS/geocoder required."
+  "scope": "Durable scoped named-area taxonomy/associations, transactional current-auth/MFA ports, optimistic/idempotent lifecycle, default-off network sharing, encrypted paging, native no-JS HTTP/CLI surfaces; no coordinates or geometry. Independently audited strict schema/requests, durable safety-write verification, replay-preserving location cleanup and quota-independent sharing opt-out. Strict pre-auth route-aware queries and fresh same-session form callback reauthorization. Capped strict body parsing precedes host form helpers to prevent cached malformed-body acceptance.",
+  "remaining": "actual core principal/store/CLI/API integration; media EXIF sanitizer qualification if photos connected; host replay-preserving retention plan; browser keyboard/zoom/screen-reader acceptance; full core regression/release qualification. Geometry/map/meetup/distance optional scope not adopted.",
+  "completion_percent": 84.75,
+  "tested_source": "232fd26e0a2f905931c221a80291a9bcd4d9fe0e"
 }
