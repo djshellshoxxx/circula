@@ -43,6 +43,14 @@ func privateWindowsPath(path string) (string, error) {
 	if filepath.VolumeName(path) != "" && !filepath.IsAbs(path) {
 		return "", errPrivateStorage
 	}
+	// Windows absolute-path resolution can remove trailing dots or spaces.
+	// Reject those aliases before their original spelling is lost. Exact dot
+	// navigation remains supported; the resolved destination is checked below.
+	for _, part := range strings.FieldsFunc(path, func(r rune) bool { return r == '\\' || r == '/' }) {
+		if part != "." && part != ".." && strings.TrimRight(part, ". ") != part {
+			return "", errPrivateStorage
+		}
+	}
 	full, err := filepath.Abs(path)
 	if err != nil {
 		return "", err

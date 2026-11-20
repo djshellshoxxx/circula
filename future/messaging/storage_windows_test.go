@@ -397,6 +397,21 @@ func TestWindowsPreservesValidUnicodePath(t *testing.T) {
 	assertPrivateBackup(t, path)
 }
 
+func TestWindowsPathPreservesOrdinaryNormalization(t *testing.T) {
+	dir := t.TempDir()
+	want := filepath.Join(dir, "messages.sqlite")
+	for _, path := range []string{
+		dir + `\.\messages.sqlite`,
+		dir + `\unused\..\messages.sqlite`,
+		filepath.ToSlash(dir) + "/./messages.sqlite",
+	} {
+		got, err := privateWindowsPath(path)
+		if err != nil || got != want {
+			t.Fatalf("ordinary path %q resolved to %q, %v; want %q", path, got, err, want)
+		}
+	}
+}
+
 func TestWindowsRejectsImpersonatingStorageInitialization(t *testing.T) {
 	dir := nativePrivateDirectory(t)
 	path := filepath.Join(dir, "must-not-exist.sqlite")
