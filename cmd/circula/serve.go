@@ -171,7 +171,7 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		return fmt.Errorf("startup ledger verification: %w", err)
 	}
 	sum := summarise(checks)
-	m.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
+	m.ledgerResult(sum.Status == "ok", sum.Failing, time.Now().UTC())
 	// A failing network is frozen (read-only) and every other network serves
 	// (CMD-07, OPS-033). The operator is told loudly; nothing is refused.
 	applyFreeze(svc, checks, logger)
@@ -464,7 +464,7 @@ func (j *jobRunner) verify(ctx context.Context) error {
 		return err
 	}
 	sum := summarise(checks)
-	j.metrics.ledgerResult(sum.Failing == 0, sum.Failing, time.Now().UTC())
+	j.metrics.ledgerResult(sum.Status == "ok", sum.Failing, time.Now().UTC())
 	applyFreeze(j.svc, checks, j.logger)
 	return nil
 }
@@ -474,6 +474,12 @@ func (j *jobRunner) verify(ctx context.Context) error {
 // Reasons are the finding counts only; findings stay in verify-ledger output.
 func applyFreeze(svc *service.Service, checks []networkCheck, logger *slog.Logger) {
 	for _, c := range checks {
+		if c.Platform {
+			if !c.OK {
+				logger.Error("platform audit verification failed; operator review required", "findings", len(c.Findings))
+			}
+			continue
+		}
 		switch {
 		case !c.OK && !svc.IsFrozen(c.ID):
 			svc.FreezeNetwork(c.ID, fmt.Sprintf("%d ledger finding(s)", len(c.Findings)))

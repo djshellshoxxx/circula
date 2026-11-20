@@ -143,7 +143,7 @@ func TestUpgradeFromMigration0001(t *testing.T) {
 	if err != nil {
 		t.Fatalf("verify: %v", err)
 	}
-	if len(checks) != 1 || !checks[0].OK {
+	if summarise(checks).Networks != 1 || summarise(checks).Status != "ok" {
 		t.Fatalf("ledger verification after upgrade: %+v", checks)
 	}
 

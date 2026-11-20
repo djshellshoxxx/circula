@@ -36,7 +36,7 @@ No label carries a member, network, balance or personal data.
 | `circula_http_rate_limited_total` | counter | Responses with status 429. |
 | `circula_job_runs_total{job,result}` | counter | Scheduled jobs: `expiry`, `verify`, `backup`; result `ok` or `failed`. |
 | `circula_migrations_total{result}` | counter | Migration runs at start-up (`applied`, `failed`, `refused`). |
-| `circula_ledger_verification_ok` | gauge | Last ledger verification: `1` pass, `0` fail, `-1` not run in this process. |
+| `circula_ledger_verification_ok` | gauge | Last network ledger and platform audit verification: `1` pass, `0` fail, `-1` not run in this process. |
 | `circula_ledger_verification_failing_networks` | gauge | Networks that failed the last verification. |
 | `circula_ledger_verification_timestamp_seconds` | gauge | Time of the last verification. |
 | `circula_backup_last_success_timestamp_seconds` | gauge | Time of the last successful backup in this process (`0` if none). |
@@ -66,7 +66,7 @@ the level of the incident procedure, [incident-response.md](incident-response.md
 
 | Alert | Condition | Severity | Incident level | Owner role | First response |
 |---|---|---|---|---|---|
-| `CirculaLedgerVerificationFailed` | `circula_ledger_verification_ok == 0`, or `circula_ledger_verification_failing_networks > 0`, or `circula_frozen_networks > 0` | critical | `critical` | Platform operator; product architect informed | Follow SEC-030. The failing network is already frozen (read-only); the others serve. Do not restore over the live database. Take a backup, run `circula verify-ledger` (stop `serve` first) to capture the findings, then decide with the product architect. |
+| `CirculaLedgerVerificationFailed` | `circula_ledger_verification_ok == 0`, or `circula_ledger_verification_failing_networks > 0`, or `circula_frozen_networks > 0` | critical | `critical` | Platform operator; product architect informed | Follow SEC-030. A failing financial network is frozen (read-only). A platform audit failure raises this alert without freezing unrelated networks or increasing the failing-network count. Do not restore over the live database. Take a backup, run `circula verify-ledger` (stop `serve` first) to capture the findings, then decide with the product architect. |
 | `CirculaDown` | `up{job="circula"} == 0` for 5 minutes | critical | `critical` | Platform operator | Follow SEC-030. Check the process and the start-up error: a failed or refused migration, a held lock or a configuration error stops `serve` before it listens. |
 | `CirculaHealthCheckFailing` | `/healthz` answered only `503` for 5 minutes (from `circula_http_requests_total{route="/healthz"}`; needs a prober calling `/healthz`) | critical | `critical` | Platform operator | Follow SEC-030. Check the database file and the disk; see the disk-full and corruption rows below. |
 | `CirculaMigrationFailed` | `increase(circula_migrations_total{result=~"failed\|refused"}[1h]) > 0`. Today `serve` exits on a failed or refused migration before it listens, so `CirculaDown` is the alert that fires. | critical | `critical` | Platform operator | Follow SEC-030. The database is at its previous version. Read the start-up error, then follow [upgrade.md](upgrade.md). |

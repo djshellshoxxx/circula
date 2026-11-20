@@ -24,6 +24,40 @@ type LedgerReport struct {
 	RunID string
 }
 
+// AuditReport is the read-only verification result for the platform audit
+// scope. It carries no network ledger totals or persistent consistency run.
+type AuditReport struct {
+	OK          bool
+	Findings    []string
+	AuditEvents int64
+	Started     time.Time
+	Finished    time.Time
+}
+
+// VerifyPlatformAudit checks the complete platform audit chain, including its
+// recorded head, in one read snapshot. Only the platform operator may inspect
+// this scope. Empty history is valid when no head has been recorded.
+func (s *Service) VerifyPlatformAudit(ctx context.Context, actor domain.Actor) (*AuditReport, error) {
+	if err := requireSystem(actor); err != nil {
+		return nil, err
+	}
+	rep := &LedgerReport{}
+	err := s.view(ctx, func(tx store.Tx) error {
+		rep.Started = s.now()
+		if err := s.verifyAuditChain(tx, "", rep); err != nil {
+			return err
+		}
+		rep.OK = len(rep.Findings) == 0
+		rep.Finished = s.now()
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &AuditReport{OK: rep.OK, Findings: rep.Findings, AuditEvents: rep.AuditEvents,
+		Started: rep.Started, Finished: rep.Finished}, nil
+}
+
 // VerifyLedger runs the consistency check for one network. It is READ-ONLY
 // (OPS-016, FR-052, SVC-01): it runs in one Store.View snapshot, takes no write
 // lock, writes no consistency_runs row and no audit event, and leaves the
@@ -183,6 +217,8 @@ func (s *Service) verifyAuditChain(tx store.Tx, netID string, rep *LedgerReport)
 	switch {
 	case !found && after > 0:
 		rep.Findings = append(rep.Findings, fmt.Sprintf("audit head record missing (chain ends at %d)", after))
+	case found && hs <= 0:
+		rep.Findings = append(rep.Findings, fmt.Sprintf("recorded audit head has invalid sequence %d", hs))
 	case found && (hs != after || hh != prev):
 		rep.Findings = append(rep.Findings, fmt.Sprintf(
 			"audit chain ends at event %d but the recorded head is %d: events were removed or the head was altered", after, hs))

@@ -157,7 +157,7 @@ func TestVerifyCopyLeavesPredictablePathUntouched(t *testing.T) {
 		t.Fatal(err)
 	}
 	checks, err := verifyCopy(context.Background(), db, testConfigFor(db))
-	if err != nil || len(checks) != 1 || !checks[0].OK {
+	if err != nil || summarise(checks).Networks != 1 || summarise(checks).Status != "ok" {
 		t.Fatalf("verify copy: %+v, %v", checks, err)
 	}
 	if got, err := os.ReadFile(legacy); err != nil || string(got) != "unowned file" {

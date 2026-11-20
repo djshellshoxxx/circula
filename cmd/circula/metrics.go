@@ -86,7 +86,8 @@ func (m *metrics) migrationRan(result string) {
 	m.migrations[result]++
 }
 
-// ledgerResult records the outcome of a ledger verification run.
+// ledgerResult records the overall network-ledger and platform-audit outcome.
+// The failing count includes only financial networks.
 func (m *metrics) ledgerResult(ok bool, failing int, at time.Time) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -168,7 +169,7 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 		fmt.Fprintf(&b, "circula_migrations_total{result=%q} %d\n", r, m.migrations[r])
 	}
 
-	gauge("circula_ledger_verification_ok", "Result of the last ledger verification: 1 pass, 0 fail, -1 not run.", m.ledgerOK)
+	gauge("circula_ledger_verification_ok", "Result of the last ledger and platform audit verification: 1 pass, 0 fail, -1 not run.", m.ledgerOK)
 	gauge("circula_ledger_verification_failing_networks", "Networks that failed the last ledger verification.", m.ledgerFailing)
 	gauge("circula_ledger_verification_timestamp_seconds", "Unix time of the last ledger verification.", m.ledgerCheckedAt)
 	gauge("circula_backup_last_success_timestamp_seconds", "Unix time of the last successful backup; 0 if none.", m.backupOKAt)

@@ -509,11 +509,14 @@ func (s *Service) SetObserver(o Observer)               // nil removes; call bef
 func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID string) (*LedgerReport, error)
 // READ-ONLY (OPS-016, SVC-01): runs in one Store.View snapshot, takes no write lock, writes no consistency run and no audit event; the database is unchanged afterwards. Also checks that the audit chain ends at the recorded head (SA-09).
 
+func (s *Service) VerifyPlatformAudit(ctx context.Context, actor domain.Actor) (*AuditReport, error)
+// System-only, READ-ONLY: verifies the platform scope's entire audit hash chain and recorded head in one Store.View snapshot. Empty history passes only when no head exists. Routine startup, scheduled, CLI, backup and restore checks include this result separately from network ledger results.
+
 func (s *Service) RecordConsistencyRun(ctx context.Context, actor domain.Actor, rep *LedgerReport) error
 // Appends rep (from VerifyLedger) to consistency_runs and writes ledger.verified in one short write unit. Admin/System, write scope. Sets rep.RunID.
 
 func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor, netID string) (*LedgerReport, error)
-// VerifyLedger then RecordConsistencyRun. Use for an explicit administrator-initiated check only; startup, migrate, restore, backup verification and hourly jobs use plain VerifyLedger.
+// VerifyLedger then RecordConsistencyRun. Use for an explicit administrator-initiated check only; startup, migrate, restore, backup verification and hourly jobs use read-only VerifyLedger and VerifyPlatformAudit.
 ```
 
 

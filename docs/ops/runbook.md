@@ -29,12 +29,13 @@ For owner self-service inventory, individual sign-out, keeping the current brows
 circula verify-ledger -config /etc/circula/circula.json
 ```
 
-Exit `0`: every network passed. Exit `3`: at least one network failed. Capture the output and follow SEC-030
+Exit `0`: every selected network and the platform audit chain passed. Exit `3`: a network or platform audit check failed.
+`-network` narrows the financial networks checked; the platform audit check still runs. Capture the output and follow SEC-030
 ([incident-response.md](incident-response.md)). Do not edit the database by hand.
 
 `verify-ledger` and `admin create-operator` take the single-writer lock (`<database>.lock`) and refuse with "in use by
 another circula process" while `serve` runs: stop the service first (CMD-02). Verification of a running service is done
-by the hourly job and the admin consistency check in the UI and API, which record their runs.
+by the read-only hourly job and explicit admin consistency checks in the UI and API. Only explicit admin checks record their runs.
 
 ## Audit anchor (RB-010)
 
@@ -43,6 +44,8 @@ file off the database host. To check for tampering with an older anchor: `circul
 the live audit chain no longer contains the anchored head: treat as an integrity incident, preserve the database file and the
 off-host backups, and restore a backup whose `verify` passes. After any restore, run `verify` against the latest anchor.
 See [configuration.md](configuration.md#audit-anchors-rb-010).
+Version 2 anchors include platform and network checkpoints. Legacy version 1 success is explicitly network-only and does
+not establish platform audit coverage. Pair anchor checks with `verify-ledger` to validate the complete live chains.
 
 ## Maintenance mode
 

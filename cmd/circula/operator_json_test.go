@@ -121,7 +121,9 @@ func TestAuditAnchorRequiresExactlyOneObject(t *testing.T) {
 		{"array", `[]`, exitFailure},
 		{"scalar", `true`, exitFailure},
 		{"unknown field", strings.TrimSuffix(strings.TrimSpace(string(body)), "}") + `,"extra":true}`, exitFailure},
-		{"unsupported version", `{"version":2}`, exitLedgerFailed},
+		{"unknown platform field", strings.Replace(string(body), `"platform": {`, `"platform": {"extra":true,`, 1), exitFailure},
+		{"unsupported version", `{"version":999}`, exitLedgerFailed},
+		{"missing platform coverage", `{"version":2}`, exitLedgerFailed},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			candidate := filepath.Join(t.TempDir(), "candidate.json")
