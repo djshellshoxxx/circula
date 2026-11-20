@@ -1,5 +1,6 @@
-// Package federation authenticates discovery-only envelopes. No HTTP transport,
-// peer discovery, balance data, settlement or ledger authority is supplied.
+// Package federation provides isolated discovery-only protocol and persistence
+// adapters without balance, settlement or ledger authority. The v1 helpers below
+// remain separate from the opt-in v2 ingress and transport.
 package federation
 
 import (
@@ -7,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
+	"unicode/utf8"
 )
 
 var ErrInvalid = errors.New("federation event rejected")
@@ -37,6 +39,13 @@ func message(b []byte) []byte { return append([]byte("circula.discovery.v1\x00")
 func Sign(e Event, key ed25519.PrivateKey) (Envelope, error) {
 	if len(key) != ed25519.PrivateKeySize {
 		return Envelope{}, ErrInvalid
+	}
+	// encoding/json replaces malformed UTF-8. Refuse it before signing so
+	// success always preserves the caller's strings in the signed payload.
+	for _, value := range []string{e.ID, e.Issuer, e.Audience, e.Kind, e.Listing} {
+		if !utf8.ValidString(value) {
+			return Envelope{}, ErrInvalid
+		}
 	}
 	b, err := json.Marshal(e)
 	if err != nil {

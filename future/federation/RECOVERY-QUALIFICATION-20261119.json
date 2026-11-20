@@ -1,0 +1,350 @@
+{
+  "module": "federation",
+  "commit": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+  "tree": "2b1400be19b42ee63c86980666a71d1c88e07811",
+  "module_tree": "81a58c2b2b05972f977e1997ed0ce978f6ca4a12",
+  "source_sha256": {
+    "future/federation/audit_test.go": "7c265ac1b73c0c8c4d2a7ee33604505d2999003eb8bcd2124242d2807ba5d270",
+    "future/federation/envelope.go": "84140982f4ffb1ce0051c2e64299604c86d1a082815dc7f6ce1f114406778f12",
+    "future/federation/envelope_test.go": "8d7a141b5b3dbcbd984fe0c3bba4f0095d36302a920a0802a35aa8f96bf57004",
+    "future/federation/envelope_utf8_test.go": "1b5761086812a5bbabc11a88d087b5e0e81cf624ac505fa0c21bd64230ef86ef",
+    "future/federation/interface.go": "cf53f195a55d62dafffd9bd49d2224634c69dc87b1ebd9c75221cd5c0e17d20c",
+    "future/federation/master_interface_test.go": "3272b986c1214da24460df35494fa8bbdcc87dc6d3420dfda12bf23654bc74e2",
+    "future/federation/members.go": "64b9e95f2cb8391ada5d9555a00ef13c4eb743615ea72932de90f872760833de",
+    "future/federation/operations.go": "9ad88c3417cb75bd46b64b03f6a2d5a20a55809b68da9826eaeb0cf1d58c3f46",
+    "future/federation/outbox.go": "59525036397e7bf2e8c7537fcb1b1bba934bf8bc9e460d691010d377609de1ff",
+    "future/federation/protocol.go": "78357d5a4cb746bc2b02f27a2e7bd266ba588df419c4118f5c412cd58093fd86",
+    "future/federation/protocol_fuzz_test.go": "cfed746f8d3c4aff023738308fa365933dfade267e5e0a172832e11a32160a92",
+    "future/federation/protocol_negative_test.go": "3128c4ceb346befb80099b5e4785eaa3543eb0df4676cf1ba4ee41259ff25b6d",
+    "future/federation/protocol_recovery_test.go": "3a9fe255fc5eb5bb07658556c34e02c9828e75560d07ae9e3f7c8e9f1c1aac2d",
+    "future/federation/store.go": "73abc289f8018abe7a604482fface3a393596cbf7d5ae39d0fb398977f4062ad",
+    "future/federation/store_test.go": "0480ea1586b0d43171f2482c6760d6221fbc420578f64a0b5e9aded163ea1467",
+    "future/federation/transport.go": "86de5c5215fe621e5fdd584115d166f9834cfb8321e5042f511e784abc8afd49",
+    "future/federation/transport_test.go": "1e1b6682e8037136c824ca79240c9d222469e2d95560d6f7ceca8902197f0bd7",
+    "future/federation/go.mod": "557621447a04907956a49f473d1c2b77875743b6b2d1cf3817d28c758204107c",
+    "future/federation/go.sum": "98d21c6f18d90ff7afeaa0fcbc8f815bea85fe2a3e1b922e157507a34bcefacd",
+    "future/federation/feature.json": "21cdd1ea263c83c6de9c83c44f41b9b7b3d1b717ac5f8cd4541ad12319411015",
+    ".github/workflows/future-federation.yml": "23b4b81fa496208d69ed9657be4be615819510dad82e7bcf23fe892d1f76145d"
+  },
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache",
+    "TMPDIR": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp"
+  },
+  "steps": [
+    {
+      "name": "toolchain",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "version"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 30,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.008,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/toolchain.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-toolchain-1795093926817500747",
+      "source_unchanged": true
+    },
+    {
+      "name": "isolation",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "python - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\n\nfeature = json.loads(Path('feature.json').read_text())\nassert feature['id'] == 'FNET-209'\nassert feature['enabled'] is False\nassert feature['integration'] == 'HOLD'\nassert feature['depends_on_future_features'] == []\nmodule = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))\nassert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/federation'\nexpected = {\n    ('github.com/go-jose/go-jose/v4', 'v4.1.9', False),\n    ('modernc.org/sqlite', 'v1.60.1', False),\n    ('github.com/dustin/go-humanize', 'v1.0.1', True),\n    ('github.com/google/uuid', 'v1.6.0', True),\n    ('github.com/mattn/go-isatty', 'v0.0.24', True),\n    ('github.com/ncruces/go-strftime', 'v1.0.0', True),\n    ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),\n    ('golang.org/x/sys', 'v0.48.0', True),\n    ('modernc.org/libc', 'v1.77.1', True),\n    ('modernc.org/mathutil', 'v1.7.1', True),\n    ('modernc.org/memory', 'v1.12.1', True),\n}\nactual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}\nassert actual == expected, actual\nassert not module.get('Replace')\nassert not module.get('Exclude')\ndependencies = set(subprocess.check_output(\n    ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],\n    text=True,\n).split())\nallowed = {module['Module']['Path']} | {path for path, _, _ in expected}\nassert dependencies <= allowed, dependencies - allowed\nprint('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')\nPY\n"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 120,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.266,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/isolation.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-isolation-1795093926851375620",
+      "source_unchanged": true
+    },
+    {
+      "name": "format",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "."
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 30,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.066,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/format.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-format-1795093927129065012",
+      "source_unchanged": true
+    },
+    {
+      "name": "race",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-count=1",
+        "-cover",
+        "-json",
+        "-ldflags=-w",
+        "-timeout=2m",
+        "./..."
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 300,
+      "outer_timeout_reached": false,
+      "wall_seconds": 34.537,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/race.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-race-1795093927209457644",
+      "source_unchanged": true,
+      "top_level_tests_passed": [
+        "TestAuditSafetyWritesCannotSilentlyDisappear",
+        "TestAuditSchemaMismatchRollsBackMigration",
+        "TestAuditDepartureCanWithdrawAllOrdinaryCapacity",
+        "TestAuditConsentTogglesWithoutPublicationConsumeNoReserve",
+        "TestAuditInboxPeerAndOwnerQuotaBoundaries",
+        "TestAuditCorruptProjectionFailsClosed",
+        "TestAuditConsentAndOrdinaryOutboxLimits",
+        "TestAuditCanonicalBase64Required",
+        "TestAuditMigrationRejectsViewCollision",
+        "TestAuditEndpointRejectsEmptyQuery",
+        "TestAuditDeletedListingWithdrawsWithoutSourceOrSigner",
+        "TestAuditCorruptOutboxCannotBypassProtocolBinding",
+        "TestSignedDiscoveryBoundaries",
+        "TestSignRejectsMalformedUTF8",
+        "TestSignPreservesValidUnicodeEncoding",
+        "TestVerifyRejectsMalformedUTF8Representations",
+        "TestMasterQueriesAndFormsBeforeHost",
+        "TestMasterCallbackReauthorizesBeforePrivateRead",
+        "TestMasterPaginatedNativeMemberSubmission",
+        "TestSignedButMalformedPayloadAndHeaders",
+        "TestRecoveredV2RejectsMalformedStringsBeforeSigning",
+        "TestRecoveredV2PreservesValidPublicUnicode",
+        "TestV2ProtocolFailClosed",
+        "TestInboxConcurrencyRestartAndRevocation",
+        "TestInboxAtomicRollbackAndEquivocation",
+        "TestOutboxConsentIdempotencyAndPartition",
+        "TestInterfacesAndSSRF",
+        "TestNoPrivateEgressMixedDNS",
+        "TestWithdrawalSurvivesDepartureAndSignerOutage",
+        "TestRotationRevocationAndReadPrivacy",
+        "TestMembersNoJSAndAdminControls",
+        "TestIngressResourceAndTrustBoundaries",
+        "TestDepartureAndExpiredBodies",
+        "TestQuotaAndTrustedPeerRate",
+        "TestClosedDBBackupRestore",
+        "TestTransportResourceLimitsAndRedirectPolicy"
+      ],
+      "skips": [],
+      "package_results": [
+        {
+          "Time": "2026-11-19T05:12:41.707243905-08:00",
+          "Action": "pass",
+          "Package": "github.com/djshellshoxxx/circula/future/federation",
+          "Elapsed": 24.79
+        }
+      ],
+      "coverage": [
+        "74.5",
+        "74.5"
+      ]
+    },
+    {
+      "name": "vet",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 150,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.873,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/vet.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-vet-1795093961763872200",
+      "source_unchanged": true
+    },
+    {
+      "name": "checksums",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 90,
+      "outer_timeout_reached": false,
+      "wall_seconds": 2.127,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/checksums.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-checksums-1795093962651111085",
+      "source_unchanged": true
+    },
+    {
+      "name": "fuzz-legacy",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzSignPreservesEventStrings$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "envelope.go",
+        "envelope_test.go",
+        "envelope_utf8_test.go"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 180,
+      "outer_timeout_reached": false,
+      "wall_seconds": 14.379,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-legacy.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-fuzz-legacy-1795093964792128486",
+      "source_unchanged": true,
+      "executions": [
+        46084,
+        64674,
+        100000
+      ]
+    },
+    {
+      "name": "fuzz-v2-strings",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzRecoveredV2StringFidelity$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "envelope.go",
+        "protocol.go",
+        "protocol_recovery_test.go"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 180,
+      "outer_timeout_reached": false,
+      "wall_seconds": 53.114,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-v2-strings.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-fuzz-v2-strings-1795093979183994269",
+      "source_unchanged": true,
+      "executions": [
+        6761,
+        14508,
+        100000
+      ]
+    },
+    {
+      "name": "fuzz-wire",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzDiscoveryWire$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "envelope.go",
+        "protocol.go",
+        "protocol_fuzz_test.go"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 180,
+      "outer_timeout_reached": false,
+      "wall_seconds": 6.394,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-wire.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-fuzz-wire-1795094032315596936",
+      "source_unchanged": true,
+      "executions": [
+        48688,
+        100000
+      ]
+    },
+    {
+      "name": "dependencies",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "list",
+        "-m",
+        "all"
+      ],
+      "exit_code": 0,
+      "outer_timeout_seconds": 90,
+      "outer_timeout_reached": false,
+      "wall_seconds": 0.018,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/dependencies.log",
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-dependencies-1795094038737286478",
+      "source_unchanged": true
+    }
+  ],
+  "state": "passed",
+  "driver": "actual modernc.org/sqlite v1.60.1; no replacement or substitute tags",
+  "started_at": "2026-11-19T13:12:06.816985+00:00",
+  "provider": "separate pending exact-publication-head gate",
+  "source_unchanged": true,
+  "finished_at": "2026-11-19T13:13:58.772468+00:00",
+  "log_sha256": {
+    "toolchain": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1",
+    "isolation": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+    "format": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "race": "be71d4b842446e5524d75962e2d9da39a677e1c39d7a76f7350e3875efec06b6",
+    "vet": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checksums": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+    "fuzz-legacy": "cb79ae41bca0cb70322496590197af73e92272a13c0765f9373ed950d2271741",
+    "fuzz-v2-strings": "dc7e3e71245e6f4dec0a57d3d0838a0a1a4a60eb5685a5ff323855b95b4e049c",
+    "fuzz-wire": "b2af24416f3403b2ab4acf2395513e4ed574856a6b75eb175c7e58bb7a5622ed",
+    "dependencies": "85e0295cdf2342247cb5185745a463d75f3c6a803bc4e9c4c8d690f28e8aced7"
+  },
+  "evidence_scope": "Full combined nested-module local Linux qualification at the exact recorded commit; later documentation/manifest status and one workflow branch-filter follow-up preserve Go/test/dependency bytes. Native provider checks and integration gates remain separate.",
+  "post_test_workflow_routing": {
+    "commit": "175283209e930d4bc4baeeaa8d66b7d489dd4229",
+    "change": "Only add the owned source branch as a second explicit PR base, so a stacked recovery draft runs the same dedicated native jobs. All scripts, pins, permissions, paths and deadlines are unchanged.",
+    "added_base": "master/fnet209-utf8-20261119"
+  },
+  "independent_review_scopes": [
+    {
+      "receipt": "federation-composition-review.json",
+      "scope": "Archive composition, legacy signing compatibility, v2 tests/protocol/workflow/provenance at bcaf407; accepted-main/doc follow-up at 5cf90f4"
+    },
+    {
+      "receipt": "evidence/federation-full-source-review/review.json",
+      "scope": "All eight production files, 1787 lines, at 5cf90f4; no later production delta"
+    },
+    {
+      "receipt": "federation-wire-fuzz-extraction.json",
+      "scope": "Exact target/seed/clock extraction and protocol-only command at 1897813"
+    },
+    {
+      "receipt": "recurring-federation-vcs-root-review.json",
+      "scope": "Metadata-only dependency query and VALIDATION follow-up at ca9af75"
+    }
+  ],
+  "remaining_publication_gates": [
+    "independent final documentation/workflow-routing review",
+    "provider jobs at the final published head",
+    "external handoff reconciliation before any stacked recovery merge",
+    "feature remains disabled and integration HOLD; host/manual/policy/release gates remain"
+  ]
+}
