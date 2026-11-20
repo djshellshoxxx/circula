@@ -1,6 +1,8 @@
 package store_test
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -14,12 +16,25 @@ import (
 // structures; removing or renaming one (the contract step) is only allowed in
 // a later release, after the reads moved off it. Every migration that drops or
 // renames anything must therefore be listed here, with the earlier migration
-// and release after which nothing reads the old structure. Any other DROP or
-// RENAME fails the build. Migrations 0001..0016 contain none: dropping an
+// and release after which nothing reads the old structure. A separately
+// reviewed compatible SQLite rebuild may retain the same logical table and
+// all prior columns, values, defaults, constraints and indexes while expanding
+// its accepted data. Those exact migrations are listed in compatibleRebuilds
+// with their preservation proof; they are not later-release contract steps.
+// Every other DROP or RENAME fails the build. Migrations 0001..0016 contain none: dropping an
 // object the same migration created (0016's temporary backfill check table)
 // removes nothing a release ever read, so it is not a contract step.
 var contractSteps = map[string]string{
 	// "00NN_name.sql": "reads moved to <new structure> in 00MM (release vX.Y); <what is dropped or renamed>",
+}
+
+// A byte-level digest prevents later edits from silently inheriting a review
+// of a different rebuild, even when they retain the same migration filename.
+var compatibleRebuilds = map[string]struct{ digest, reason string }{
+	"0023_transaction_reports.sql": {
+		digest: "3710e9efe663d2b4bca4bb6b2b4bcb8089a4923130938abedf569fab2c00651f",
+		reason: "same reports table, all twelve columns/values/defaults, reporter FK and three indexes retained; only target_type CHECK widened; TestTransactionReportMigrationPreservesAndRetries verifies preservation, late-DDL rollback, retry and reopen",
+	},
 }
 
 // contractRE matches the statements that remove or rename schema objects:
@@ -127,19 +142,32 @@ func TestMigrationsExpandThenContract(t *testing.T) {
 			t.Fatal(err)
 		}
 		found := contractStatements(string(src))
-		_, allowed := contractSteps[name]
+		_, contract := contractSteps[name]
+		review, rebuild := compatibleRebuilds[name]
+		allowed := contract || rebuild
+		if rebuild && fmt.Sprintf("%x", sha256.Sum256(src)) != review.digest {
+			t.Errorf("%s changed since its compatible rebuild review; review the exact SQL and preservation proof again", name)
+		}
+		if contract && rebuild {
+			t.Errorf("%s is listed as both a contract step and a compatible rebuild", name)
+		}
 		switch {
 		case len(found) > 0 && !allowed:
-			t.Errorf("%s drops or renames schema objects without a contract-step entry (DAT-045: expand, backfill, switch reads, "+
-				"then contract in a later release; list it in contractSteps with the migration that moved the reads):\n  %s",
+			t.Errorf("%s drops or renames schema objects without a reviewed entry (DAT-045: expand, backfill, switch reads, "+
+				"then contract in a later release; contractSteps records that earlier read switch, while compatibleRebuilds records only an exact atomic expansion with preservation proof):\n  %s",
 				name, strings.Join(found, "\n  "))
 		case len(found) == 0 && allowed:
-			t.Errorf("contractSteps lists %s but it neither drops nor renames anything; remove the entry", name)
+			t.Errorf("review registry lists %s but it neither drops nor renames anything; remove the entry", name)
 		}
 	}
 	for name := range contractSteps {
 		if !seen[name] {
 			t.Errorf("contractSteps lists %s, which is not a migration", name)
+		}
+	}
+	for name, review := range compatibleRebuilds {
+		if !seen[name] || strings.TrimSpace(review.reason) == "" {
+			t.Errorf("compatibleRebuilds entry %s must name an existing migration and its preservation proof", name)
 		}
 	}
 }

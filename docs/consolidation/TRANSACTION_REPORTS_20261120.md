@@ -24,7 +24,15 @@ Migration `0023_transaction_reports.sql` widens only the report target
 constraint. The table rebuild retains every report ID and all twelve columns,
 their defaults and nullability, the reporter's membership foreign key, and the
 existing duplicate-open, queue and rate indexes. Financial and audit rows are
-unchanged. The migration's existing transaction encloses copy, drop, rename,
+unchanged.
+
+The physical table rebuild is registered as a reviewed compatible expansion
+in `internal/store/expand_contract_test.go`: SQLite cannot widen this CHECK
+in place, but the logical table and every prior column, value, default, foreign
+key and index remain present. The scanner still detects all DROP/RENAME forms;
+only this named rebuild has an explicit preservation proof. Genuine schema
+contraction still requires the documented earlier read switch and later release.
+This is not an old-binary downgrade or rolling-upgrade guarantee. The migration's existing transaction encloses copy, drop, rename,
 index creation and schema-version recording.
 
 The same report subject rule applies to queue reads, audit correlations,
