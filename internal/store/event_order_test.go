@@ -186,7 +186,7 @@ func eventOrderReadLegacyNetwork(t *testing.T, db *sql.DB) *domain.Network {
 	var policy string
 	var created int64
 	err := db.QueryRow(`SELECT n.id,n.name,n.slug,n.status,n.ledger_seq,n.created_at,p.version,p.policy_json,
-		(SELECT id FROM accounts WHERE network_id=n.id AND is_system=1)
+		COALESCE((SELECT id FROM accounts WHERE network_id=n.id AND is_system=1),'')
 		FROM networks n JOIN network_policies p ON p.network_id=n.id
 		WHERE n.id='n1' AND p.version=(SELECT MAX(version) FROM network_policies WHERE network_id=n.id)`).
 		Scan(&n.ID, &n.Name, &n.Slug, &n.Status, &n.LedgerSeq, &created, &n.PolicyVersion, &policy, &n.SystemAccountID)
