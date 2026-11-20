@@ -18,10 +18,11 @@ func TestReportSubjectPrivacyAcrossAPIViews(t *testing.T) {
 			w := newWorld(t)
 			t.Cleanup(func() { api.CloseHandler(w.h) })
 			targetID := w.bobM.ID
-			if target == service.ReportListing {
+			switch target {
+			case service.ReportListing:
 				listing, _ := w.createListing(w.bobT, "Subject's listing")
 				targetID = listing.ID
-			} else if target == service.ReportTransaction {
+			case service.ReportTransaction:
 				tx := testutil.Must(w.env.Svc.ProposeTransaction(w.env.Ctx, w.alice, w.net.ID, service.ProposeInput{
 					CounterpartyID: w.bobM.ID, Direction: service.ProposerPays, Amount: 100, IdempotencyKey: w.env.Key(),
 				}))

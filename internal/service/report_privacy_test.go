@@ -14,9 +14,10 @@ func reportPrivacyWorld(t *testing.T, target string) (*world, string) {
 	w := newWorld(t, nil)
 	tu.Must(0, w.Svc.AssignRole(w.Ctx, w.admin, w.net.ID, w.bM.ID, domain.RoleAdmin))
 	id := w.bM.ID
-	if target == service.ReportListing {
+	switch target {
+	case service.ReportListing:
 		id = w.listing(w.b, "Subject's listing")
-	} else if target == service.ReportTransaction {
+	case service.ReportTransaction:
 		// The reporter is the payee here; pagination below covers a payer
 		// reporter as well, so both other-party resolutions are exercised.
 		id = tu.Must(w.propose(w.a, w.bM, service.ProposerIsPaid, 100)).ID

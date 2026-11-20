@@ -233,9 +233,10 @@ func (s *server) reportQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 		row := reportRow{ID: x.ID, Reporter: x.ReporterName, Target: x.TargetLabel, Note: x.Note,
 			Status: x.Status, HandlingNote: x.HandlingNote, Open: x.Status == "open", Created: fmtTime(x.CreatedAt)}
 		row.About, row.PlainAbout = reportAbout(x.Category, x.TargetType, x.TargetLabel)
-		if x.TargetType == service.ReportMember {
+		switch x.TargetType {
+		case service.ReportMember:
 			row.TargetHref = c.base() + "/members/" + x.TargetID
-		} else if x.TargetType == service.ReportTransaction {
+		case service.ReportTransaction:
 			row.TargetHref = c.base() + "/trades/" + x.TargetID
 			row.DisputesHref = c.base() + "/disputes?transaction_id=" + x.TargetID
 		}
