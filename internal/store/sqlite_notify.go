@@ -90,6 +90,16 @@ func (t *txImpl) UpdateReReview(r ReReview) error {
 const reportCols = `id,network_id,reporter_id,target_type,target_id,category,note,status,created_at,
 	COALESCE(handled_by,''),handled_at,handling_note`
 
+// reportIndependentOfMemberSQL resolves a report's subject in its network.
+// The report alias is r and the one argument is the reviewing member ID.
+// Unresolved subjects fail closed. Queue, audit and export admission queries
+// share this predicate so role changes cannot expose a subject's reporter.
+const reportIndependentOfMemberSQL = `COALESCE((CASE r.target_type
+	WHEN 'member' THEN (SELECT m.id FROM members m WHERE m.network_id = r.network_id AND m.id = r.target_id)
+	WHEN 'listing' THEN (SELECT m.id FROM listings l JOIN members m ON m.network_id = l.network_id AND m.id = l.member_id
+		WHERE l.network_id = r.network_id AND l.id = r.target_id)
+	END) <> ?, 0)`
+
 func (t *txImpl) InsertReport(r Report) error {
 	_, err := t.exec(`INSERT INTO reports(id,network_id,reporter_id,target_type,target_id,category,note,status,created_at)
 		VALUES (?,?,?,?,?,?,?,?,?)`, r.ID, r.NetworkID, r.ReporterID, r.TargetType, r.TargetID, r.Category, r.Note,
@@ -121,8 +131,16 @@ func (t *txImpl) UpdateReport(r Report) error {
 }
 
 func (t *txImpl) ListReports(netID string, f ReportFilter) ([]*Report, error) {
-	q := `SELECT ` + reportCols + ` FROM reports WHERE network_id = ?`
+	q := `SELECT ` + reportCols + ` FROM reports r WHERE network_id = ?`
 	args := []any{netID}
+	if f.ExcludeSubjectMemberID != "" {
+		q += ` AND ` + reportIndependentOfMemberSQL
+		args = append(args, f.ExcludeSubjectMemberID)
+	}
+	if f.ConflictMemberID != "" {
+		q += ` AND NOT ` + reportIndependentOfMemberSQL
+		args = append(args, f.ConflictMemberID)
+	}
 	if f.Status != "" {
 		q += ` AND status = ?`
 		args = append(args, f.Status)

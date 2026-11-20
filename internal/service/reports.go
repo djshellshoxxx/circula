@@ -37,8 +37,8 @@ type ReportInput struct {
 
 // CreateReport lets an active member report a listing or another member. It
 // changes nothing about the target: no hiding, suspension or flag. The reporter
-// is visible to administrators only (the queue is administrator-only and the
-// audit event is about the reporter, not the reported member). A second open
+// is visible to independent administrators only (the queue and audit read
+// exclude the reported member, even when they are an administrator). A second open
 // report by the same member about the same target is a conflict; more than
 // MaxReportsPerDay in 24 hours is rate-limited.
 func (s *Service) CreateReport(ctx context.Context, actor domain.Actor, netID string, in ReportInput) (*store.Report, error) {
@@ -129,8 +129,54 @@ type ReportView struct {
 	TargetLabel  string // member display name or listing title
 }
 
+// requireIndependentReportReader is the subject-conflict check after the
+// caller's administrator authority has been established. Listing ownership
+// and member identities are resolved from current records in this unit;
+// neither a new role nor an idempotent replay bypasses the restriction.
+// Existing system authority is unchanged. Unknown subjects fail closed.
+func requireIndependentReportReader(tx store.Tx, p *principal, r *store.Report) error {
+	if p.actor.System {
+		return nil
+	}
+	subjectID := r.TargetID
+	switch r.TargetType {
+	case ReportMember:
+	case ReportListing:
+		l, err := tx.GetListing(r.NetworkID, r.TargetID)
+		if err != nil {
+			return err
+		}
+		subjectID = l.MemberID
+	default:
+		return domain.NotFound("report")
+	}
+	subject, err := tx.GetMember(r.NetworkID, subjectID)
+	if err != nil {
+		return err
+	}
+	if p.member == nil || subject.ID == p.member.ID {
+		return domain.NotFound("report")
+	}
+	return nil
+}
+
+func loadIndependentReport(tx store.Tx, p *principal, id string) (*store.Report, error) {
+	if !domain.ValidRecordID(id) {
+		return nil, domain.NotFound("report")
+	}
+	r, err := tx.GetReport(p.net.ID, id)
+	if err != nil {
+		return nil, err
+	}
+	if err := requireIndependentReportReader(tx, p, r); err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
 // ListReports lists the report queue, newest first, to administrators only.
-// status is "open", "handled" or "" for all.
+// Reports about the caller or their listings are excluded before pagination.
+// status is "open", "handled" or "" for all visible reports.
 func (s *Service) ListReports(ctx context.Context, actor domain.Actor, netID, status string, pg Page) ([]ReportView, error) {
 	var out []ReportView
 	if status != "" && status != "open" && status != "handled" {
@@ -147,11 +193,15 @@ func (s *Service) ListReports(ctx context.Context, actor domain.Actor, netID, st
 		if err := validatePageIDs(pg.AfterID); err != nil {
 			return err
 		}
-		rs, err := tx.ListReports(netID, store.ReportFilter{Status: status, AfterID: pg.AfterID, Limit: clampPage(pg)})
+		rs, err := tx.ListReports(netID, store.ReportFilter{Status: status, AfterID: pg.AfterID, Limit: clampPage(pg),
+			ExcludeSubjectMemberID: p.memberID()})
 		if err != nil {
 			return err
 		}
 		for _, r := range rs {
+			if err := requireIndependentReportReader(tx, p, r); err != nil {
+				return err
+			}
 			v := ReportView{Report: r}
 			if m, err := tx.GetMember(netID, r.ReporterID); err == nil {
 				v.ReporterName = m.DisplayName
@@ -194,12 +244,9 @@ func (s *Service) HandleReport(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		out, err = idempotent(s, tx, netID, actor, "report.handle", in.IdempotencyKey, in, func() (string, error) {
-			if !domain.ValidRecordID(in.ReportID) {
-				return "", domain.NotFound("report")
-			}
-			r, err := tx.GetReport(netID, in.ReportID)
+			r, err := loadIndependentReport(tx, p, in.ReportID)
 			if err != nil {
-				return "", domain.NotFound("report")
+				return "", err
 			}
 			if r.Status != "open" {
 				return "", domain.InvalidState("report is already handled")
@@ -220,7 +267,7 @@ func (s *Service) HandleReport(ctx context.Context, actor domain.Actor, netID st
 			return r.ID, s.audit(tx, p, auditEntry{Type: p.actorType(domain.ActorAdmin), Action: domain.ActReportHandled,
 				TargetType: "report", TargetID: r.ID, Reason: note, IdemRef: keyRef(in.IdempotencyKey),
 				Subjects: []string{r.ReporterID}, Before: map[string]any{"status": "open"}, After: map[string]any{"status": "handled"}})
-		}, func(id string) (*store.Report, error) { return tx.GetReport(netID, id) })
+		}, func(id string) (*store.Report, error) { return loadIndependentReport(tx, p, id) })
 		return err
 	})
 	return out, err

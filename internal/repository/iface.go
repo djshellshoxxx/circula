@@ -286,9 +286,13 @@ type AuditFilter struct {
 	TargetID      string
 	TargetTypes   []string
 	SubjectMember string // member-visible subset
-	From, To      time.Time
-	AfterSeq      int64
-	Limit         int
+	// ExcludeReportSubjectMemberID omits report events concerning reports
+	// about this member or their listings, before pagination. Unresolved
+	// report subjects are also excluded; other event types are unchanged.
+	ExcludeReportSubjectMemberID string
+	From, To                     time.Time
+	AfterSeq                     int64
+	Limit                        int
 }
 
 // AuditRepo covers the append-only audit log.

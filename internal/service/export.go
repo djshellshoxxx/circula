@@ -138,6 +138,19 @@ func (s *Service) authorizeExport(tx store.Tx, actor domain.Actor, netID string,
 	} else if err := p.requireAdmin(); err != nil {
 		return nil, err
 	}
+	if !p.actor.System && (scope == ExportAudit || scope == ExportFull) {
+		// These scopes promise the complete audit history. A report subject
+		// cannot receive that history's reporter identities, including from a
+		// retained artifact. Keep exports complete for independent authority
+		// rather than silently omitting or rewriting immutable audit rows.
+		conflicts, err := tx.ListReports(netID, store.ReportFilter{ConflictMemberID: p.memberID(), Limit: 1})
+		if err != nil {
+			return nil, err
+		}
+		if len(conflicts) != 0 {
+			return nil, domain.Forbidden("export is not available")
+		}
+	}
 	return p, nil
 }
 

@@ -45,6 +45,12 @@ type ReportFilter struct {
 	Status  string // "" = all
 	AfterID string
 	Limit   int
+	// ExcludeSubjectMemberID excludes reports about this member or their
+	// listings, including unresolved subjects. Applied before pagination.
+	ExcludeSubjectMemberID string
+	// ConflictMemberID selects reports about this member or their listings,
+	// including unresolved subjects, for whole-audit access decisions.
+	ConflictMemberID string
 }
 
 // Notification is one inbox entry (FR-038).
