@@ -23,6 +23,8 @@ type storageFaultConnector struct {
 	mu     sync.Mutex
 	// rollback fails once; migrationRead fails after the first metadata row.
 	rollback, migrationRead error
+	readPrefix              string
+	readErr                 error
 	rollbackFailures        int
 	statement               string
 	statementErr            error
@@ -125,6 +127,12 @@ func (c *storageFaultConn) QueryContext(ctx context.Context, query string, args 
 			rows = &storageFaultRows{Rows: rows, err: fault}
 		}
 	}
+	c.faults.mu.Lock()
+	if c.faults.readErr != nil && strings.HasPrefix(query, c.faults.readPrefix) {
+		rows = &storageFaultRows{Rows: rows, err: c.faults.readErr}
+		c.faults.readErr = nil
+	}
+	c.faults.mu.Unlock()
 	return rows, nil
 }
 

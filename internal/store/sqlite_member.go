@@ -123,6 +123,9 @@ func (t *txImpl) listMembers(netID, q string, args []any) ([]*domain.Member, err
 	if err := rows.Close(); err != nil {
 		return nil, err
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	if netID != "" {
 		return out, t.loadRoles(netID, out)
 	}
