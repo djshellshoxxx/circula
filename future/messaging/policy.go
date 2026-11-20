@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strings"
 	"time"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -34,6 +35,11 @@ func Prepare(t Thread, a Access, body string) (string, error) {
 	}
 	if !utf8.ValidString(body) || len(body) > 4096 || strings.TrimSpace(body) == "" || strings.ContainsRune(body, 0) {
 		return "", errors.New("invalid message")
+	}
+	for _, r := range body {
+		if unicode.IsControl(r) && r != '\n' && r != '\t' && r != '\r' {
+			return "", errors.New("invalid message")
+		}
 	}
 	return body, nil
 }

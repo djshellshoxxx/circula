@@ -1,10 +1,12 @@
 {
   "id": "FUX-105",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "standalone-search-and-callback-boundaries-audited-external-qualification-pending",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Participant and tenant access policy, block/closed-thread enforcement, bounded UTF-8 text, maximum 30-day inactivity retention.",
-  "remaining": "Durable ordered threads/messages/read positions; atomic idempotency; fresh membership and block reads; moderation/reporting; legal holds and per-participant deletion; quotas; escaped no-JS UI; restart/concurrency and retention tests. Server-readable, no E2EE claim."
+  "scope": "Durable transactional SQLite messaging, participant/tenant access, fresh host authorization callbacks, idempotency, read/hide, blocks/reports, moderator holds, retention/purge/export, quotas, no-JS UI, JSON API, HTTPS CLI and restart/concurrency/restore acceptance. Audited expiry/JSON/admission/download hardening, moderator/retention no-JS and CLI parity, and authorized shortening of existing retention. Literal case-sensitive private message search with POST API/no-JS/CLI, visibility/paging/restart/expiry regressions.",
+  "remaining": "Real browser/no-JS/WCAG/manual screen-reader review; broad performance qualification including large retained conversations and contention; real core authorization/CSRF/API and retention-policy adapters, platform retention/operations and full core/ledger qualification. Integration stays HOLD; remote publication is blocked.",
+  "completion_percent": 90,
+  "tested_source": "0b1861f50ef1fcecb65eaf3e4227a647ce2dcd58"
 }

@@ -1,3 +1,17 @@
+# Recovery status — 2026-11-19
+
+**Disabled; integration HOLD. Independent recovery-delta review and Linux real-driver race/vet/checksum checks passed. Native and provider qualification remains pending.**
+
+This branch restores verified archived `messaging` work from `5375bdf6ad5c48d2913c0581c4f8755b7c0f573a`. [RECOVERY-20261119.md](RECOVERY-20261119.md) records the exact source, new parser regressions, current evidence and remaining gates. The earlier README, validation/audit claims and `feature.json` completion percentage below are preserved historical evidence; they are not current-head or cross-platform qualification.
+
+The recovery's scope is `future/messaging/`, its new `.github/workflows/future-messaging.yml`, and two explicitly authorized exact restorations from accepted main: `cmd/circula/auditanchor.go` and `internal/service/departure_pagination_regression_test.go`. No other Core runtime, dependency, migration, shared workflow or feature path changes.
+
+The current master directive authorizes reviewed isolated publication and normal gated merges into this module target. Any older publication prohibition in the preserved manifest or historical documents describes the earlier authorization state; it is not a current publication blocker. HOLD continues to prohibit Core activation.
+
+Messaging full-package fuzz remains unqualified, and the archived Unix-mode privacy guard presents a source-based native Windows portability gate. Neither is counted as a pass. See the recovery report for exact evidence and scope.
+
+---
+
 # FUX-105: Private member messaging
 
 **HOLD — isolated development, incomplete feature, not approved for integration or release.**
@@ -6,25 +20,23 @@ The owner authorized independent future-feature development on 2026-11-16, while
 
 ## Isolation contract
 
-- Branch: `future/fux-105-messaging-20261116`. Baseline: `2eacf7718f5bb3da3be5a288024af879076a9597`.
-- Only `future/messaging/` is added. No application imports, routes, migrations, root dependencies, feature flags, workflows, jobs or runtime configuration are changed.
-- This nested Go module has no third-party dependencies and no dependency on another future module. It is excluded from the root module's normal `go test ./...` and build traversal.
-- No `init`, automatic registration, background execution, DB connection, external service or ledger write is present.
-- Inputs describing authorization, active membership, visibility or transaction facts are **trusted adapter snapshots**, never client JSON. This package is not an HTTP authorization boundary.
-- No production persistence is provided. Pure preflight checks do not guarantee atomicity, idempotency, authorization freshness or restart durability; future adapters must supply these within existing service/store transactions.
-- Spec copies are historical reference snapshots; their original relative links refer to the source branch layout. No third-party source was copied.
+- Development branch: `work/requalify-messaging-20261116`, based on `origin/future/fux-105-messaging-20261116` at `7f92251`.
+- Only `future/messaging/` changes. No root routes, schema, dependencies, configuration, background workers, ledger methods or release artifacts change.
+- This independent nested module now requires Go 1.26.11 and pins the core-selected `modernc.org/sqlite v1.60.1`. Dependency checksums and runtime notices are included. There are no cross-feature dependencies.
+- The module defines no `init`; SQLite registers its driver without opening a database. No automatic migration, server listener, worker or network service starts. SQLite installs only via explicit `Migrate`. Host integration and deployment remain on HOLD.
+- Fresh actor/network/membership/role/reference decisions are mandatory through a transactional Authorizer and per-request HTTP security callbacks. These adapters are supplied by the host, never client JSON. Missing callbacks fail closed.
 
-## Implemented milestone
+## Implemented standalone scope
 
-Participant and tenant access policy, block/closed-thread enforcement, bounded UTF-8 text, maximum 30-day inactivity retention.
+Explicit private-file SQLite storage and additive migration; network-scoped conversations and optional authorized local references; immutable monotonic messages; atomic create/send idempotency with conflicting-key rejection; serialized multi-connection writes; persistent read/unread and per-participant hiding; directional blocks; close semantics; abuse reports and paginated moderator disposition; separate legal holds; default 30-day inactivity retention with authorized shortening of existing deadlines, explicit authorized purge and bounded visible JSON exports; privacy-scoped literal search through service, POST API, no-JS forms and stdin-based CLI; transactional quotas; escaped no-JavaScript member/moderator/retention forms; strict JSON HTTP service/RFC 9457 errors; HTTPS CLI reading message text from stdin; backup/restore acceptance.
 
-## Existing application seams inspected
+Messages are server-readable text, **not end-to-end encrypted**. No message operation can post or accept a trade. The optional realtime transport is omitted: normal HTTP with durable unread counts satisfies the no-JavaScript workflow without a new dependency.
 
-`internal/service/membership.go; internal/store`. A future adapter must map these through the existing service authorization boundary. No direct import or code change is made to these seams. APIs here are provisional until that adapter is qualified.
+Read [CONTRACT.md](CONTRACT.md) for authorization actions, endpoints, quotas, retention, migration and restore semantics; [HELP.md](HELP.md) for member/CLI use; [openapi.json](openapi.json) for the unregistered API fragment; [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for pinned dependency notices. The inherited spec snapshot is historical reference, not a claim that root APIs changed.
 
-## Remaining feature work
+## Qualification remaining
 
-Durable ordered threads/messages/read positions; atomic idempotency; fresh membership and block reads; moderation/reporting; legal holds and per-participant deletion; quotas; escaped no-JS UI; restart/concurrency and retention tests. Server-readable, no E2EE claim.
+The newest audited local implementation was recovered at `3b4fbe4497827072df15f75e8e518f89925d6435`; the older outage implementation is preserved separately at `1b5fe42883c29a2dcfd9e924f7d28facac9b541a`. Implementation and automated standalone acceptance are present. See COMPLETION.md for weighted criteria and explicit gates. Independent security audit and module advisory scanning are recorded in AUDIT.md. Real-browser/no-JavaScript and WCAG/screen-reader review, eventual core API adoption, real host authorization/CSRF adapter qualification and full core/ledger regression remain outstanding. Root Circula completion is independent. Do not label this production/beta-qualified or release-ready based on module tests alone.
 
 ## Standalone validation
 
@@ -32,9 +44,10 @@ Durable ordered threads/messages/read positions; atomic idempotency; fresh membe
 cd future/messaging
 go test -race -cover ./...
 go vet ./...
+go test -run=^$ -fuzz=FuzzPrepare -fuzztime=3s -parallel=1 .
 ```
 
-Tests use synthetic fixtures only. See `VALIDATION.md` for observed results. These tests qualify the stated core milestone, not the full roadmap feature, production behavior, browser accessibility, or Circula's release.
+Go 1.26.11 is required. Tests use synthetic principals/SQLite fixtures only. The HTTP test header authorizer is not a deployable authentication implementation. See `VALIDATION.md` for observed results and the acceptance matrix.
 
 ## Later integration, one feature at a time
 

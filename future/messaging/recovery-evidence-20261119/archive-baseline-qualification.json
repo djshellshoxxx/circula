@@ -1,0 +1,310 @@
+{
+  "module": "messaging",
+  "sha": "5375bdf6ad5c48d2913c0581c4f8755b7c0f573a",
+  "module_tree": "2c978152aadfccb8b3e65abb48aa7ee745d061de",
+  "source": {
+    "module": "messaging",
+    "sha": "5375bdf6ad5c48d2913c0581c4f8755b7c0f573a",
+    "tree": "2c978152aadfccb8b3e65abb48aa7ee745d061de",
+    "module_path": "future/messaging",
+    "extracted_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+    "file_count": 65,
+    "bytes": 382597,
+    "all_git_blobs_verified": true
+  },
+  "started_utc": "2026-11-19T11:51:56.055044+00:00",
+  "go_mod": "module github.com/djshellshoxxx/circula/future/messaging\n\ngo 1.26.11\n\nrequire modernc.org/sqlite v1.60.1\n\nrequire (\n\tgithub.com/dustin/go-humanize v1.0.1 // indirect\n\tgithub.com/google/uuid v1.6.0 // indirect\n\tgithub.com/mattn/go-isatty v0.0.24 // indirect\n\tgithub.com/ncruces/go-strftime v1.0.0 // indirect\n\tgithub.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect\n\tgolang.org/x/sys v0.48.0 // indirect\n\tmodernc.org/libc v1.77.1 // indirect\n\tmodernc.org/mathutil v1.7.1 // indirect\n\tmodernc.org/memory v1.12.1 // indirect\n)\n",
+  "go_mod_sha256_before": "83bdb8edaf3a97e4c2dee18d286cb9219003f6946501628c421253aebcfc4b26",
+  "go_sum_sha256_before": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+  "build_tags": [],
+  "sqlite_driver_evidence": [
+    {
+      "path": "future/messaging/store.go",
+      "matches": [
+        "\t_ \"modernc.org/sqlite\""
+      ]
+    }
+  ],
+  "manifest": {
+    "id": "FUX-105",
+    "status": "standalone-search-and-callback-boundaries-audited-external-qualification-pending",
+    "integration": "HOLD",
+    "enabled": false,
+    "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+    "depends_on_future_features": [],
+    "scope": "Durable transactional SQLite messaging, participant/tenant access, fresh host authorization callbacks, idempotency, read/hide, blocks/reports, moderator holds, retention/purge/export, quotas, no-JS UI, JSON API, HTTPS CLI and restart/concurrency/restore acceptance. Audited expiry/JSON/admission/download hardening, moderator/retention no-JS and CLI parity, and authorized shortening of existing retention. Literal case-sensitive private message search with POST API/no-JS/CLI, visibility/paging/restart/expiry regressions.",
+    "remaining": "Real browser/no-JS/WCAG/manual screen-reader review; broad performance qualification including large retained conversations and contention; real core authorization/CSRF/API and retention-policy adapters, platform retention/operations and full core/ledger qualification. Integration stays HOLD; remote publication is blocked.",
+    "completion_percent": 90,
+    "tested_source": "0b1861f50ef1fcecb65eaf3e4227a647ce2dcd58"
+  },
+  "checks": [
+    {
+      "kind": "gofmt",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "admin_http.go",
+        "audit_store_test.go",
+        "audit_test.go",
+        "callback_audit_test.go",
+        "cmd/circula-messages/main.go",
+        "cmd/circula-messages/main_test.go",
+        "http.go",
+        "http_test.go",
+        "policy.go",
+        "policy_test.go",
+        "search.go",
+        "search_benchmark_test.go",
+        "search_http.go",
+        "search_test.go",
+        "store.go",
+        "store_test.go"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt -l admin_http.go audit_store_test.go audit_test.go callback_audit_test.go cmd/circula-messages/main.go cmd/circula-messages/main_test.go http.go http_test.go policy.go policy_test.go search.go search_benchmark_test.go search_http.go search_test.go store.go store_test.go",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T11:51:56.063749+00:00",
+      "outer_timeout_seconds": 30,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/gofmt.log",
+      "tmp_free_before_bytes": 827674624,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 0.034,
+      "finished_utc": "2026-11-19T11:51:56.097766+00:00",
+      "tmp_free_after_bytes": 827613184,
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T11:51:56.100340+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/race.log",
+      "tmp_free_before_bytes": 827613184,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 4.973,
+      "finished_utc": "2026-11-19T11:52:01.073642+00:00",
+      "tmp_free_after_bytes": 827174912,
+      "output_tail": "go: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+      "status": "failed",
+      "executed_test_pass_events": 0,
+      "skipped_test_events": [],
+      "package_results": [],
+      "coverage_output": []
+    },
+    {
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T11:52:01.079777+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/vet.log",
+      "tmp_free_before_bytes": 827117568,
+      "timed_out": false,
+      "exit_code": 1,
+      "elapsed_seconds": 0.117,
+      "finished_utc": "2026-11-19T11:52:01.196991+00:00",
+      "tmp_free_after_bytes": 826904576,
+      "output_tail": "go: creating work dir: stat /tmp/circula-recovered-qualification-8lm6pgwy/tmp: no such file or directory\n",
+      "output_sha256": "4142fc6d0daedb52cd364d55f1b4e8fd3b7b2e50d1f725bcd9c9d07a794c786e",
+      "status": "failed"
+    },
+    {
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T11:52:01.200213+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/mod_verify.log",
+      "tmp_free_before_bytes": 826904576,
+      "timed_out": false,
+      "exit_code": 0,
+      "elapsed_seconds": 2.353,
+      "finished_utc": "2026-11-19T11:52:03.552966+00:00",
+      "tmp_free_after_bytes": 826134528,
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "race",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-json",
+        "-race",
+        "-p=1",
+        "-count=1",
+        "-cover",
+        "-timeout=90s",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go test -json -race -p=1 -count=1 -cover -timeout=90s ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T12:15:01.342477+00:00",
+      "outer_timeout_seconds": 420,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/race-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 285118464,
+        "workspace_free_bytes": 133423104,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 13.975,
+      "finished_utc": "2026-11-19T12:15:15.317721+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 231632896,
+        "workspace_free_bytes": 153223168,
+        "private_tmp_exists": true
+      },
+      "output_tail": "Decode/seed#0\"}\n{\"Time\":\"2026-11-19T04:15:12.004099518-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#0\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.004334759-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#0\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.004560382-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.004613211-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#1\"}\n{\"Time\":\"2026-11-19T04:15:12.004618471-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#1\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.004778551-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#1\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.004813837-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.00484739-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#2\"}\n{\"Time\":\"2026-11-19T04:15:12.004851548-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#2\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#2\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005006208-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#2\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#2 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005042176-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#2\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.005075308-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#3\"}\n{\"Time\":\"2026-11-19T04:15:12.005079265-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#3\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#3\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005175997-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#3\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#3 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005209068-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#3\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.005241529-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#4\"}\n{\"Time\":\"2026-11-19T04:15:12.005245757-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#4\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#4\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005361885-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#4\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#4 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005396329-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#4\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.005427608-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#5\"}\n{\"Time\":\"2026-11-19T04:15:12.005431426-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#5\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#5\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005554476-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#5\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#5 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005590384-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#5\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.005624838-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#6\"}\n{\"Time\":\"2026-11-19T04:15:12.005628655-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#6\",\"Output\":\"=== RUN   FuzzStrictJSONDecode/seed#6\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005715588-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#6\",\"Output\":\"--- PASS: FuzzStrictJSONDecode/seed#6 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005752518-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode/seed#6\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.005791741-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode\",\"Output\":\"--- PASS: FuzzStrictJSONDecode (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005815195-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzStrictJSONDecode\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.005837046-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare\"}\n{\"Time\":\"2026-11-19T04:15:12.005840934-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare\",\"Output\":\"=== RUN   FuzzPrepare\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.005941141-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#0\"}\n{\"Time\":\"2026-11-19T04:15:12.005948094-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#0\",\"Output\":\"=== RUN   FuzzPrepare/seed#0\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006019388-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#0\",\"Output\":\"--- PASS: FuzzPrepare/seed#0 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006048523-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#0\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.006080343-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#1\"}\n{\"Time\":\"2026-11-19T04:15:12.006084119-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#1\",\"Output\":\"=== RUN   FuzzPrepare/seed#1\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006160312-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#1\",\"Output\":\"--- PASS: FuzzPrepare/seed#1 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006189858-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#1\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.006219874-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#2\"}\n{\"Time\":\"2026-11-19T04:15:12.006223371-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#2\",\"Output\":\"=== RUN   FuzzPrepare/seed#2\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006293152-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#2\",\"Output\":\"--- PASS: FuzzPrepare/seed#2 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006322737-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#2\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.006364245-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#3\"}\n{\"Time\":\"2026-11-19T04:15:12.006368553-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#3\",\"Output\":\"=== RUN   FuzzPrepare/seed#3\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006435829-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#3\",\"Output\":\"--- PASS: FuzzPrepare/seed#3 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006466336-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#3\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.006496082-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#4\"}\n{\"Time\":\"2026-11-19T04:15:12.006499619-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#4\",\"Output\":\"=== RUN   FuzzPrepare/seed#4\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006598214-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#4\",\"Output\":\"--- PASS: FuzzPrepare/seed#4 (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.00662829-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare/seed#4\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.006739238-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare\",\"Output\":\"--- PASS: FuzzPrepare (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.006775917-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Test\":\"FuzzPrepare\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:12.006798499-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-11-19T04:15:12.009590295-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Output\":\"coverage: 76.3% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:15:13.013711652-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/future/messaging\\t7.233s\\tcoverage: 76.3% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:15:13.013751637-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging\",\"Elapsed\":7.236}\n{\"Time\":\"2026-11-19T04:15:13.981896151-08:00\",\"Action\":\"start\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\"}\n{\"Time\":\"2026-11-19T04:15:14.005014862-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIRequestAndNoCredentialRedirect\"}\n{\"Time\":\"2026-11-19T04:15:14.005044979-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIRequestAndNoCredentialRedirect\",\"Output\":\"=== RUN   TestCLIRequestAndNoCredentialRedirect\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.022737147-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIRequestAndNoCredentialRedirect\",\"Output\":\"--- PASS: TestCLIRequestAndNoCredentialRedirect (0.01s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.022775229-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIRequestAndNoCredentialRedirect\",\"Elapsed\":0.01}\n{\"Time\":\"2026-11-19T04:15:14.022782583-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIValidation\"}\n{\"Time\":\"2026-11-19T04:15:14.022785508-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIValidation\",\"Output\":\"=== RUN   TestCLIValidation\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.022794926-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIValidation\",\"Output\":\"--- PASS: TestCLIValidation (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.022810124-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIValidation\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:15:14.02281323-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLILargePageCompleteOrError\"}\n{\"Time\":\"2026-11-19T04:15:14.022815424-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLILargePageCompleteOrError\",\"Output\":\"=== RUN   TestCLILargePageCompleteOrError\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.26093201-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLILargePageCompleteOrError\",\"Output\":\"--- PASS: TestCLILargePageCompleteOrError (0.24s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.260970151-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLILargePageCompleteOrError\",\"Elapsed\":0.24}\n{\"Time\":\"2026-11-19T04:15:14.260981252-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIAdminCommandsAndConversationCursor\"}\n{\"Time\":\"2026-11-19T04:15:14.260984017-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIAdminCommandsAndConversationCursor\",\"Output\":\"=== RUN   TestCLIAdminCommandsAndConversationCursor\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.271639721-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIAdminCommandsAndConversationCursor\",\"Output\":\"--- PASS: TestCLIAdminCommandsAndConversationCursor (0.01s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.27166624-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLIAdminCommandsAndConversationCursor\",\"Elapsed\":0.01}\n{\"Time\":\"2026-11-19T04:15:14.271673674-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLISearchUsesBoundedStdinAndPOST\"}\n{\"Time\":\"2026-11-19T04:15:14.27167659-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLISearchUsesBoundedStdinAndPOST\",\"Output\":\"=== RUN   TestCLISearchUsesBoundedStdinAndPOST\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.280934933-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLISearchUsesBoundedStdinAndPOST\",\"Output\":\"--- PASS: TestCLISearchUsesBoundedStdinAndPOST (0.01s)\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.280978344-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Test\":\"TestCLISearchUsesBoundedStdinAndPOST\",\"Elapsed\":0.01}\n{\"Time\":\"2026-11-19T04:15:14.280984195-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Output\":\"PASS\\n\"}\n{\"Time\":\"2026-11-19T04:15:14.28223356-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Output\":\"coverage: 78.4% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:15:15.295407121-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\\t1.313s\\tcoverage: 78.4% of statements\\n\"}\n{\"Time\":\"2026-11-19T04:15:15.295621643-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\",\"Elapsed\":1.314}\n",
+      "output_sha256": "c2cbf4ee14bcb5fd30220aba1b01d04d647b19deea1f8ec4b2436561fad648c3",
+      "status": "pass",
+      "executed_test_pass_events": 74,
+      "skipped_test_events": [],
+      "package_results": [
+        {
+          "package": "github.com/djshellshoxxx/circula/future/messaging",
+          "action": "pass",
+          "elapsed_seconds": 7.236
+        },
+        {
+          "package": "github.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages",
+          "action": "pass",
+          "elapsed_seconds": 1.314
+        }
+      ],
+      "coverage_output": [
+        "coverage: 76.3% of statements",
+        "ok  \tgithub.com/djshellshoxxx/circula/future/messaging\t7.233s\tcoverage: 76.3% of statements",
+        "coverage: 78.4% of statements",
+        "ok  \tgithub.com/djshellshoxxx/circula/future/messaging/cmd/circula-messages\t1.313s\tcoverage: 78.4% of statements"
+      ]
+    },
+    {
+      "attempt": 2,
+      "kind": "vet",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p=1",
+        "./..."
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go vet -p=1 ./...",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T12:15:15.325824+00:00",
+      "outer_timeout_seconds": 240,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/vet-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 231632896,
+        "workspace_free_bytes": 150867968,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 0.671,
+      "finished_utc": "2026-11-19T12:15:15.997313+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 231038976,
+        "workspace_free_bytes": 133234688,
+        "private_tmp_exists": true
+      },
+      "output_tail": "",
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "pass"
+    },
+    {
+      "attempt": 2,
+      "kind": "mod_verify",
+      "argv": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "command": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go mod verify",
+      "cwd": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/messaging",
+      "started_utc": "2026-11-19T12:15:16.004587+00:00",
+      "outer_timeout_seconds": 90,
+      "log_path": "/workspace/scratch/f47ceab29930/evidence/recovered-qualification/logs/messaging/mod_verify-attempt2.log",
+      "executed": true,
+      "resource_before": {
+        "tmp_free_bytes": 231038976,
+        "workspace_free_bytes": 133230592,
+        "private_tmp_exists": true
+      },
+      "private_paths_recreated": [],
+      "exit_code": 0,
+      "elapsed_seconds": 0.466,
+      "finished_utc": "2026-11-19T12:15:16.470837+00:00",
+      "resource_after": {
+        "tmp_free_bytes": 230658048,
+        "workspace_free_bytes": 132259840,
+        "private_tmp_exists": true
+      },
+      "output_tail": "all modules verified\n",
+      "output_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "status": "pass"
+    }
+  ],
+  "state": "completed",
+  "source_files_changed": [],
+  "go_mod_sha256_after": "83bdb8edaf3a97e4c2dee18d286cb9219003f6946501628c421253aebcfc4b26",
+  "go_sum_sha256_after": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+  "source_unchanged": true,
+  "finished_utc": "2026-11-19T11:52:03.584757+00:00",
+  "all_attempted_checks_passed": false,
+  "latest_checks": {
+    "gofmt": {
+      "check_index": 0,
+      "status": "pass",
+      "attempt": 1
+    },
+    "race": {
+      "check_index": 4,
+      "status": "pass",
+      "attempt": 2
+    },
+    "vet": {
+      "check_index": 5,
+      "status": "pass",
+      "attempt": 2
+    },
+    "mod_verify": {
+      "check_index": 6,
+      "status": "pass",
+      "attempt": 2
+    }
+  },
+  "current_required_checks_passed": true,
+  "retry_finished_utc": "2026-11-19T12:15:16.494323+00:00"
+}

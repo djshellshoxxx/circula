@@ -1,0 +1,397 @@
+{
+  "archive_head": "5375bdf6ad5c48d2913c0581c4f8755b7c0f573a",
+  "archive_module_tree": "2c978152aadfccb8b3e65abb48aa7ee745d061de",
+  "all_original_files_retained": true,
+  "files": [
+    {
+      "path": "future/messaging/AUDIT.md",
+      "archive_blob": "d5d3d79385c5c958787d4baf5cb1ce631f6d666c",
+      "candidate_blob": "d5d3d79385c5c958787d4baf5cb1ce631f6d666c",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/COMPLETION.md",
+      "archive_blob": "99f2a8ac956fb4ffa768bdd078da7468886a103d",
+      "candidate_blob": "99f2a8ac956fb4ffa768bdd078da7468886a103d",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/CONTRACT.md",
+      "archive_blob": "a246c7bf85ab58644dae6caadc877be355930d21",
+      "candidate_blob": "a246c7bf85ab58644dae6caadc877be355930d21",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/FINAL-HANDOFF.md",
+      "archive_blob": "af71e4d6783f45027d9f136ec65f741d9924bef7",
+      "candidate_blob": "af71e4d6783f45027d9f136ec65f741d9924bef7",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/HANDOFF-MILESTONE-D.md",
+      "archive_blob": "b8dde306df620df3a8793ff9c626260990d1c449",
+      "candidate_blob": "b8dde306df620df3a8793ff9c626260990d1c449",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/HANDOFF-MILESTONE-E.md",
+      "archive_blob": "558699ea52f6f9d97c98e873ae80b4a44c8dfd1a",
+      "candidate_blob": "558699ea52f6f9d97c98e873ae80b4a44c8dfd1a",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/HANDOFF-MILESTONE-F.md",
+      "archive_blob": "1ddee5bc4b3de39509f1f041d6ec559ac2b49664",
+      "candidate_blob": "1ddee5bc4b3de39509f1f041d6ec559ac2b49664",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/HELP.md",
+      "archive_blob": "240d804380672417646de1ee37b50ddc1bce47d8",
+      "candidate_blob": "240d804380672417646de1ee37b50ddc1bce47d8",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/INTEGRATION.md",
+      "archive_blob": "5203d56114890d42d7db0af8c80e2d7b03dbae2c",
+      "candidate_blob": "5203d56114890d42d7db0af8c80e2d7b03dbae2c",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/MIGRATION-PLAN.md",
+      "archive_blob": "b77f8eff7d491e21b9ccd96902ba7872c158e1b8",
+      "candidate_blob": "b77f8eff7d491e21b9ccd96902ba7872c158e1b8",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/README.md",
+      "archive_blob": "58ceb9b6d6ed62ca89eb336cfbf9a86138c7aa8b",
+      "candidate_blob": "ad1804b76c0e00af77ac8aeea9a178411cafec16",
+      "identical": false
+    },
+    {
+      "path": "future/messaging/SECURITY-AUDIT.md",
+      "archive_blob": "aee9cb64dc88bed0305bf0b00a97e6735acb13c8",
+      "candidate_blob": "aee9cb64dc88bed0305bf0b00a97e6735acb13c8",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/SPEC-SNAPSHOT.md",
+      "archive_blob": "4149d2587271e8c948b656292644842239a1796f",
+      "candidate_blob": "4149d2587271e8c948b656292644842239a1796f",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/THIRD_PARTY_NOTICES.md",
+      "archive_blob": "30ff13134e884acb8fba87faa0435ffb1d2b562f",
+      "candidate_blob": "30ff13134e884acb8fba87faa0435ffb1d2b562f",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/UPSTREAM-RESEARCH.md",
+      "archive_blob": "dfed62bd3373b2c85d219f66c9258d3cc39b58a3",
+      "candidate_blob": "dfed62bd3373b2c85d219f66c9258d3cc39b58a3",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/UPSTREAM-REUSE-MATRIX.md",
+      "archive_blob": "c30f2857aac4f28f46e6765561c0e380173e15a1",
+      "candidate_blob": "c30f2857aac4f28f46e6765561c0e380173e15a1",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/VALIDATION.md",
+      "archive_blob": "d5c2a94eafc8d5ee05896ec04a128f00b50c00dd",
+      "candidate_blob": "d5c2a94eafc8d5ee05896ec04a128f00b50c00dd",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/admin_http.go",
+      "archive_blob": "7e372fe9f97f9856876333aaaa5fc8c37f42b55a",
+      "candidate_blob": "7e372fe9f97f9856876333aaaa5fc8c37f42b55a",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/audit_store_test.go",
+      "archive_blob": "f8b89bc635c7332e10bb72c60b947342ae261684",
+      "candidate_blob": "f8b89bc635c7332e10bb72c60b947342ae261684",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/audit_test.go",
+      "archive_blob": "4fe74e68f13ea77b61a418fe58d013ed75f745d8",
+      "candidate_blob": "4fe74e68f13ea77b61a418fe58d013ed75f745d8",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/SHA256SUMS",
+      "archive_blob": "cc8137aef4eaf3f590131b5343b441c7f849ef91",
+      "candidate_blob": "cc8137aef4eaf3f590131b5343b441c7f849ef91",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/final-green.log",
+      "archive_blob": "a6363f5cdf4de4f45487bfd0cff8b4fd9d5c8acf",
+      "candidate_blob": "a6363f5cdf4de4f45487bfd0cff8b4fd9d5c8acf",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/final-modules.log",
+      "archive_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f",
+      "candidate_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/final-race.log",
+      "archive_blob": "a360d707f51788783d55a6c9bbba3011d1e83d90",
+      "candidate_blob": "a360d707f51788783d55a6c9bbba3011d1e83d90",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/final-vet.log",
+      "archive_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "candidate_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/green.log",
+      "archive_blob": "9b27e2710932ace30dbfcecb0b7b3280a71ee0b4",
+      "candidate_blob": "9b27e2710932ace30dbfcecb0b7b3280a71ee0b4",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/modules.log",
+      "archive_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f",
+      "candidate_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/query-red.log",
+      "archive_blob": "886bc92051aea87198413f4df525d0fd157d3dd9",
+      "candidate_blob": "886bc92051aea87198413f4df525d0fd157d3dd9",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/race.log",
+      "archive_blob": "fedd944159e0f0700990211218c853a0d4e99de9",
+      "candidate_blob": "fedd944159e0f0700990211218c853a0d4e99de9",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/red.log",
+      "archive_blob": "61306837d8350e457ebcb1c7894012d37529f197",
+      "candidate_blob": "61306837d8350e457ebcb1c7894012d37529f197",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback-audit-evidence/vet.log",
+      "archive_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "candidate_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/callback_audit_test.go",
+      "archive_blob": "135d16b801d8ebe35325538c09162b2975b073f9",
+      "candidate_blob": "135d16b801d8ebe35325538c09162b2975b073f9",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/cmd/circula-messages/main.go",
+      "archive_blob": "457f36612bc27c68eb925d9f00ffbbebd461c750",
+      "candidate_blob": "e06ae3d5ac338fb769a377c0da02cab1d4d2eadd",
+      "identical": false
+    },
+    {
+      "path": "future/messaging/cmd/circula-messages/main_test.go",
+      "archive_blob": "98577046874ed3b75092a14b7b363df6b8487685",
+      "candidate_blob": "98577046874ed3b75092a14b7b363df6b8487685",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/feature.json",
+      "archive_blob": "f1f385d7de5516c094dad9d3a70ea3dc30174259",
+      "candidate_blob": "f1f385d7de5516c094dad9d3a70ea3dc30174259",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/go.mod",
+      "archive_blob": "b63fec9da5bbe4563e2991084c138ba0f177bff8",
+      "candidate_blob": "b63fec9da5bbe4563e2991084c138ba0f177bff8",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/go.sum",
+      "archive_blob": "8b50aa662c9c2840fd7832b09b003e4894345ee3",
+      "candidate_blob": "8b50aa662c9c2840fd7832b09b003e4894345ee3",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/http.go",
+      "archive_blob": "a07ad25b15a8853a87235c116cd5d76506ad3c73",
+      "candidate_blob": "cd6e5d9bf79e7fd60520a4ed31464133fce8b4dc",
+      "identical": false
+    },
+    {
+      "path": "future/messaging/http_test.go",
+      "archive_blob": "9cba9bb7ffa23833202969873c16e09ed806c908",
+      "candidate_blob": "9cba9bb7ffa23833202969873c16e09ed806c908",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/migrations/001_messaging.sql",
+      "archive_blob": "b03ed8d00d5bd833a17a17ccdf99bb0afc698b35",
+      "candidate_blob": "b03ed8d00d5bd833a17a17ccdf99bb0afc698b35",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/openapi.json",
+      "archive_blob": "865383f5f122e050fde9d75e94f273df2c436c85",
+      "candidate_blob": "865383f5f122e050fde9d75e94f273df2c436c85",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/policy.go",
+      "archive_blob": "69e29cf73788c53ca35816d2821fd28b4013e882",
+      "candidate_blob": "69e29cf73788c53ca35816d2821fd28b4013e882",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/policy_test.go",
+      "archive_blob": "3a8e6f22963221d11b82815858579bc3226ab678",
+      "candidate_blob": "3a8e6f22963221d11b82815858579bc3226ab678",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/search.go",
+      "archive_blob": "97eafd22f5241da9026cae7d55cb36c8c3820963",
+      "candidate_blob": "97eafd22f5241da9026cae7d55cb36c8c3820963",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/search_benchmark_test.go",
+      "archive_blob": "d8575a8c5abd96804da067fe297194b92aca040b",
+      "candidate_blob": "d8575a8c5abd96804da067fe297194b92aca040b",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/search_http.go",
+      "archive_blob": "755bc155f76c1e7dff21dbd7d389e13b88f9fff6",
+      "candidate_blob": "755bc155f76c1e7dff21dbd7d389e13b88f9fff6",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/search_test.go",
+      "archive_blob": "aedf853a05bd046ff7c053054678a1aaa29597d6",
+      "candidate_blob": "aedf853a05bd046ff7c053054678a1aaa29597d6",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/store.go",
+      "archive_blob": "43f8eeace045166eeb4f59f10983d2539a4fee6f",
+      "candidate_blob": "43f8eeace045166eeb4f59f10983d2539a4fee6f",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/store_test.go",
+      "archive_blob": "4079c6dffd3370c2bce478d5e2644642a23df6f0",
+      "candidate_blob": "4079c6dffd3370c2bce478d5e2644642a23df6f0",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/github.com_dustin_go-humanize@v1.0.1/LICENSE",
+      "archive_blob": "8d9a94a90680d9fc114a1b3a2b4123c233c324af",
+      "candidate_blob": "8d9a94a90680d9fc114a1b3a2b4123c233c324af",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/github.com_google_uuid@v1.6.0/LICENSE",
+      "archive_blob": "5dc68268d900581915a7bfdc1f2be75cd503dd9e",
+      "candidate_blob": "5dc68268d900581915a7bfdc1f2be75cd503dd9e",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/github.com_remyoudompheng_bigfft@v0.0.0-20230129092748-24d4a6f8daec/LICENSE",
+      "archive_blob": "74487567632c8f137ef3971b0f5912ca50bebcda",
+      "candidate_blob": "74487567632c8f137ef3971b0f5912ca50bebcda",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/golang.org_x_sys@v0.48.0/LICENSE",
+      "archive_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4",
+      "candidate_blob": "2a7cf70da6e498df9c11ab6a5eaa2ddd7af34da4",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc-sqlite.txt",
+      "archive_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1",
+      "candidate_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_libc@v1.77.1/LICENSE",
+      "archive_blob": "0c6500bc3615df5cf4cd5c43e0598af481e03534",
+      "candidate_blob": "0c6500bc3615df5cf4cd5c43e0598af481e03534",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_libc@v1.77.1/LICENSE-3RD-PARTY.md",
+      "archive_blob": "04bebedb828e3ef89f3f2d3f0bee41a27559be55",
+      "candidate_blob": "04bebedb828e3ef89f3f2d3f0bee41a27559be55",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_mathutil@v1.7.1/LICENSE",
+      "archive_blob": "128a1b64a48e5ea03d9006ef189997c3e8f81938",
+      "candidate_blob": "128a1b64a48e5ea03d9006ef189997c3e8f81938",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE",
+      "archive_blob": "967339afcfed0f64afb32d81359930c6a6b06ed6",
+      "candidate_blob": "967339afcfed0f64afb32d81359930c6a6b06ed6",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-GO",
+      "archive_blob": "6a66aea5eafe0ca6a688840c47219556c552488e",
+      "candidate_blob": "6a66aea5eafe0ca6a688840c47219556c552488e",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-LOGO",
+      "archive_blob": "ec496d173f9901c973e910eb117532ac6acf65b9",
+      "candidate_blob": "ec496d173f9901c973e910eb117532ac6acf65b9",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_memory@v1.12.1/LICENSE-MMAP-GO",
+      "archive_blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa",
+      "candidate_blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE",
+      "archive_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1",
+      "candidate_blob": "867b0f379ccb95a39757d032d3391f7f01848fe1",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-3RD-PARTY.md",
+      "archive_blob": "859dac18fa138c1b0df20700f83f3b0b9ce1d341",
+      "candidate_blob": "859dac18fa138c1b0df20700f83f3b0b9ce1d341",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE",
+      "archive_blob": "cc4c78e3d9dce881feda49f98043a92994439fd9",
+      "candidate_blob": "cc4c78e3d9dce881feda49f98043a92994439fd9",
+      "identical": true
+    },
+    {
+      "path": "future/messaging/third_party/licenses/modernc.org_sqlite@v1.60.1/LICENSE-SQLITE_VEC",
+      "archive_blob": "9c106bc48c760f7ed9f5b8255dea7adeef029cbe",
+      "candidate_blob": "9c106bc48c760f7ed9f5b8255dea7adeef029cbe",
+      "identical": true
+    }
+  ]
+}
