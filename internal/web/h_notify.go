@@ -2,6 +2,7 @@ package web
 
 import (
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
@@ -216,11 +217,13 @@ func (s *server) reportPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	s.setFlash(w, r, messages.Text("report.sent"))
-	next := c.base()
-	if d.CaseHref != "" {
-		next = d.CaseHref
+	if d.DisputeID != "" {
+		// Build the local destination from the authorized case identifier;
+		// the form's display link is not a redirect destination.
+		http.Redirect(w, r, c.base()+"/disputes/"+url.PathEscape(d.DisputeID), http.StatusSeeOther)
+		return
 	}
-	http.Redirect(w, r, next, http.StatusSeeOther)
+	http.Redirect(w, r, c.base(), http.StatusSeeOther)
 }
 
 type reportRow struct {

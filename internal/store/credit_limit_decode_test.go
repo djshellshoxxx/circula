@@ -43,6 +43,12 @@ func TestHistoricalCreditEvidenceDecoderRejectsUnusableInputs(t *testing.T) {
 		{name: "string-policy", columns: map[int]any{18: `"policy"`}, err: true},
 		{name: "malformed-policy", columns: map[int]any{18: "{"}, err: true},
 		{name: "null-default-limit", columns: map[int]any{18: `{"default_credit_limit":null}`}, problem: true},
+		{name: "uppercase-null-default-limit", columns: map[int]any{18: `{"DEFAULT_CREDIT_LIMIT":null}`}, problem: true},
+		{name: "mixed-case-null-default-limit", columns: map[int]any{18: `{"Default_Credit_Limit": null }`}, problem: true},
+		{name: "numeric-default-with-null-alias", columns: map[int]any{18: `{"default_credit_limit":100,"Default_Credit_Limit":null}`}, problem: true},
+		{name: "null-alias-with-numeric-default", columns: map[int]any{18: `{"Default_Credit_Limit":null,"default_credit_limit":100}`}, problem: true},
+		{name: "uppercase-numeric-default-limit", columns: map[int]any{18: `{"DEFAULT_CREDIT_LIMIT":100}`}},
+		{name: "mixed-case-numeric-default-limit", columns: map[int]any{18: `{"Default_Credit_Limit":100}`}},
 		{name: "negative-default-with-positive-override", columns: map[int]any{15: 100, 18: `{"default_credit_limit":-1}`}, problem: true},
 		{name: "out-of-range-default-with-positive-override", columns: map[int]any{15: 100, 18: fmt.Sprintf(`{"default_credit_limit":%d}`, domain.MaxPolicyAmount+1)}, problem: true},
 	}

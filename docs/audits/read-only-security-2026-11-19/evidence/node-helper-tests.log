@@ -1,0 +1,23 @@
+✔ offline and history warnings use supplied sentences and preserve the last snapshot literally (4.202199ms)
+✔ an initially offline page keeps its server snapshot and a new page starts without a stale warning (2.378804ms)
+✔ session warning appears two minutes before expiry and uses the supplied time sentence (14.975924ms)
+✔ fixed sessions hide extension and retain the draft when they expire (141.009725ms)
+✔ successful extension keeps the request contract and reschedules from the server expiry (91.530244ms)
+✔ failed extension uses the supplied failure message without navigation or form loss (8.01661ms)
+✔ session return links reject a network-path reference (0.687007ms)
+✔ checkbox confirmation skips the identically named error link: I want to end this session. (95.646428ms)
+✔ checkbox confirmation skips the identically named error link: I want to end all my other sessions. (1.278872ms)
+✔ a checkbox without an error summary retains ordinary Tab/Space/Enter behavior (1.06556ms)
+✔ a restored checked confirmation remains checked without another Space press (24.759102ms)
+✔ failed keyboard checking is rejected before submitting the form (1.56878ms)
+✔ a same-name link without the required checkbox is rejected before submission (24.593031ms)
+✔ text entry and intentional link activation retain their existing behavior (14.479453ms)
+✔ ordinary tabTo callers retain their explicit search budget (2.926651ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 846.994965

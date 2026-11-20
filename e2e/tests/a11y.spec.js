@@ -27,6 +27,15 @@ test('axe: validation error state of the sign-in form', async ({ page, st }) => 
   await expectNoAxeViolations(page, 'login error state');
 });
 
+test('axe: independent reviewer report summaries', async ({ as, st }) => {
+  const page = await as('admin');
+  const response = await page.goto(st.disputePath + '/reports');
+  expect(response.status()).toBe(200);
+  await expect(page.getByRole('heading', { name: 'Reports for this dispute', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Back to dispute', exact: true })).toHaveAttribute('href', st.disputePath);
+  await expectNoAxeViolations(page, 'independent reviewer report summaries');
+});
+
 test('axe: validation error state of the propose form', async ({ as, st }) => {
   const page = await as('alice');
   await page.goto(`${'/n/' + st.slug}/trades/new`);
@@ -201,6 +210,7 @@ const TEMPLATES_DIR = path.join(__dirname, '..', '..', 'internal', 'web', 'templ
 const LAYOUT_ONLY = ['base'];
 // template -> [spec file, label passed to expectNoAxeViolations or checkPage on a page that renders it]
 const STATE_CHECKS = {
+  dispute_reports: ['a11y.spec.js', 'independent reviewer report summaries'],
   propose_review: ['a11y.spec.js', 'propose review step'],
   admin_reverse_review: ['a11y.spec.js', 'reverse review step'],
   dispute_decide_review: ['a11y.spec.js', 'dispute decision review step'],

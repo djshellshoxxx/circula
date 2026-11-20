@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/repository"
@@ -87,7 +88,15 @@ func scanCreditLimitHistory(source rowScanner) (repository.CreditLimitHistoryRow
 				if err := json.Unmarshal([]byte(policyJSON.String), &fields); err != nil {
 					return r, fmt.Errorf("credit witness policy for entry %s: %w", r.Entry.ID, err)
 				}
-				if fields == nil || bytes.Equal(bytes.TrimSpace(fields["default_credit_limit"]), []byte("null")) {
+				invalidPolicy := fields == nil
+				for name, value := range fields {
+					// Match the case-insensitive field lookup used by the policy decoder.
+					if strings.EqualFold(name, "default_credit_limit") && bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
+						invalidPolicy = true
+						break
+					}
+				}
+				if invalidPolicy {
 					r.Problem = "credit witness policy has a missing object or invalid default limit"
 					return r, nil
 				}

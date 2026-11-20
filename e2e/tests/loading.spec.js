@@ -15,23 +15,45 @@ async function holdRequest(page, url) {
   return { release, request };
 }
 
+// Locator assertions wait for pending document navigation in Playwright 1.63.
+// That would wait for the response this test deliberately holds. Capture the
+// outgoing document's nodes first, then inspect them without a navigation wait.
+async function captureLoadingState(control) {
+  return control.evaluateHandle((node) => ({
+    control: node,
+    status: node.ownerDocument.getElementById('page-loading'),
+    main: node.ownerDocument.querySelector('main'),
+  }));
+}
+
+async function readLoadingState(state) {
+  return state.evaluate(({ control, status, main }) => ({
+    text: status.textContent,
+    role: status.getAttribute('role'),
+    busy: main.getAttribute('aria-busy'),
+    focused: control.ownerDocument.activeElement === control,
+    enabled: !control.matches(':disabled'),
+  }));
+}
+
 test('keyboard navigation announces loading without moving focus', async ({ as, st }) => {
   const page = await as('alice');
   await page.goto(`/n/${st.slug}`);
   const history = page.getByRole('link', { name: 'History', exact: true });
   await history.focus();
+  const outgoing = await captureLoadingState(history);
   const held = await holdRequest(page, `${st.base}/n/${st.slug}/history`);
   const activation = page.keyboard.press('Enter');
   try {
     await held.request;
-    await expect(page.locator('#page-loading')).toHaveText('Loading the next page. Please wait.');
-    await expect(page.locator('#page-loading')).toHaveAttribute('role', 'status');
-    await expect(page.locator('main')).toHaveAttribute('aria-busy', 'true');
-    await expect(history).toBeFocused();
+    await expect.poll(() => readLoadingState(outgoing)).toEqual({
+      text: 'Loading the next page. Please wait.', role: 'status', busy: 'true', focused: true, enabled: true,
+    });
   } finally {
     held.release();
+    await activation;
+    await outgoing.dispose();
   }
-  await activation;
   await expect(page).toHaveURL(`${st.base}/n/${st.slug}/history`);
   await expect(page.locator('#page-loading')).toBeEmpty();
   expect(await page.locator('main').getAttribute('aria-busy')).toBeNull();
@@ -46,6 +68,7 @@ test('submission feedback retains confirmation data and successful controls', as
   await page.getByRole('button', { name: 'Review trade', exact: true }).click();
   const confirm = page.getByRole('button', { name: 'Send trade', exact: true });
   await expect(confirm).toBeVisible();
+  const outgoing = await captureLoadingState(confirm);
   const held = await holdRequest(page, st.base + proposal);
   const activation = confirm.click();
   try {
@@ -57,13 +80,14 @@ test('submission feedback retains confirmation data and successful controls', as
     expect(values.get('counterparty_id')).toBe(st.bobId);
     expect(values.get('csrf')).toBeTruthy();
     expect(values.get('idem')).toBeTruthy();
-    await expect(page.locator('#page-loading')).toHaveText('Sending your request. Please wait.');
-    await expect(confirm).toBeEnabled();
-    await expect(page.locator('main')).toHaveAttribute('aria-busy', 'true');
+    await expect.poll(() => readLoadingState(outgoing)).toEqual({
+      text: 'Sending your request. Please wait.', role: 'status', busy: 'true', focused: true, enabled: true,
+    });
   } finally {
     held.release();
+    await activation;
+    await outgoing.dispose();
   }
-  await activation;
   await expect(page.locator('#flash')).toContainText('Trade sent to');
   await expect(page.locator('#page-loading')).toBeEmpty();
   expect(await page.locator('main').getAttribute('aria-busy')).toBeNull();

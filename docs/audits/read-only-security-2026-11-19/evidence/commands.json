@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "review_date_local": "2026-11-19",
+  "timezone": "America/Los_Angeles",
+  "source_sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+  "toolchain": {
+    "version": "go1.26.11",
+    "platform": "linux/amd64",
+    "archive_sha256": "9849f4e04ee35303714e34fbc3ac8ab44ea3e448a95aa182f91e3b9b79c710ec",
+    "source": "https://dl.google.com/go/go1.26.11.linux-amd64.tar.gz",
+    "checksum_source": "https://dl.google.com/go/go1.26.11.linux-amd64.tar.gz.sha256"
+  },
+  "working_tree": "detached Core candidate",
+  "application_changes": false,
+  "checks": [
+    {
+      "id": "go-small-baseline",
+      "command": "go test -mod=readonly -count=1 -timeout=3m ./internal/domain ./internal/httpx ./internal/logx",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "baseline-tests.log"
+    },
+    {
+      "id": "module-verification",
+      "command": "go mod verify",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "module-verification.log"
+    },
+    {
+      "id": "vulnerability-package",
+      "command": "go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 -scan=package ./...",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "govulncheck-package.log",
+      "limit": "Package-level root-module scan only; no completed symbol/call-graph analysis; nested future modules excluded."
+    },
+    {
+      "id": "vulnerability-source",
+      "command": "go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...",
+      "exit_code": 1,
+      "status": "incomplete-killed",
+      "log": "govulncheck.log"
+    },
+    {
+      "id": "cli-baseline",
+      "command": "go test -mod=readonly -count=1 -timeout=3m ./cmd/circula -run '^(TestBackupContainerLayoutPinned|TestBackupFreshSaltAndPrefixPerFile|TestBackupPassphraseKeyDerivation|TestBackupCryptRoundTripSizes|TestWebKeyCreatedPersistedAndPrivate|TestWebKeyStateDirCreatedPrivate|TestDefaultsAndDerivedBackupDir)$'",
+      "exit_code": 1,
+      "status": "compilation-killed-before-assertions",
+      "log": "cli-baseline-tests.log"
+    },
+    {
+      "id": "api-baseline",
+      "command": "go test ./internal/api -run '^(TestRouteInventoryMatchesAuthorizationTable|TestWebSessionWorksForAPI|TestSecureSessionCookieWorksForAPI|TestEntriesOrderedByLedgerSeq|TestSingleReadsByID)$' -count=1 -timeout=3m",
+      "status": "compilation-killed-before-assertions",
+      "receipt": "../WEB_API.md",
+      "limit": "Worker-reported command and failure; no separate raw output artifact retained."
+    },
+    {
+      "id": "python-reader",
+      "command": "python3 -m unittest discover -s scripts -p test_read_export.py",
+      "exit_code": 0,
+      "status": "passed",
+      "test_count": 41,
+      "log": "python-export-tests.log"
+    },
+    {
+      "id": "node-helpers",
+      "command": "node --test scripts/test_app_messages.cjs scripts/test_e2e_kbd.cjs",
+      "exit_code": 0,
+      "status": "passed",
+      "test_count": 15,
+      "log": "node-helper-tests.log"
+    },
+    {
+      "id": "workflow-pins",
+      "command": "bash scripts/check-action-pins.sh",
+      "exit_code": 0,
+      "status": "passed",
+      "log": "workflow-pins.log"
+    }
+  ],
+  "limits": [
+    "No live Circula deployment, production data, operator account or provider transport tested.",
+    "No new exploit, vulnerability reproduction, load or fuzz work.",
+    "No native Windows/macOS Core execution.",
+    "Killed process logs were retained; independent kernel OOM attribution was unavailable."
+  ]
+}
