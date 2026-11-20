@@ -31,7 +31,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-007 | P0 | built | Validation before serving; check-config does not create database |
 | OPS-008 | P0 | built | Settings present with documented defaults |
 | OPS-009 | P0 | partial | Secret files read; inline secret warning not separately tested |
-| OPS-010 | P1 | partial | Backup key rotation documented; session key rotation not implemented |
+| OPS-010 | P1 | partial | Source refresh 2026-11-20: `revoke-sessions -rotate-web-key` revokes sessions and atomically replaces the web signing key; the procedure and impact are in `docs/ops/configuration.md` and `docs/ops/runbook.md`, with `TestRevokeSessionsCommand`. A deployed rotation drill is separate. |
 | OPS-011 | P0 | built | WAL, foreign keys, busy timeout, startup pragma check; durability fixed (CMD-06) |
 | OPS-012 | P0 | built | Short write units; busy returns retryable 503 |
 | OPS-013 | P0 | built | healthz, readyz, metrics with allow-list and token |
@@ -54,7 +54,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-030 | P1 | built | Levels, recommended targets and channels in docs/ops/incident-response.md (targets not approved, DEC-022); runbook and monitoring use the same levels (TestIncidentProcedureDocumented) |
 | OPS-031 | P1 | partial | Support boundary documented; [Refreshed 2026-11-16: break-glass is built, see SEC-013 and ARC-009.] |
 | OPS-032 | P0 | built | Structured JSON logs; log level needs restart |
-| OPS-033 | P0 | partial | Failure table documented; per-network freeze not built [Refreshed 2026-11-16: a freeze service exists, `internal/service/freeze.go`; whether it is per network is UNVERIFIED] |
+| OPS-033 | P0 | partial | Source refresh 2026-11-20: consistency failures freeze the affected network while other networks and reads remain available (`internal/service/freeze.go`, `TestFrozenNetworkRefusesWritesOnly`); `TestFrozenNetworkVisibility` covers administrator/member visibility. The freeze timestamp is process-local; physical-device/power-loss qualification remains separate. |
 | OPS-034 | P1 | partial | RPO and RTO recorded as DEC-016 defaults in docs/ops/rpo-rto.md; owner confirmation outstanding |
 | OPS-035 | P1 | partial | Binary, checksum and module list per target; signing deferred; no secret scan in package |
 

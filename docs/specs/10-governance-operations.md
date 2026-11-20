@@ -26,7 +26,7 @@ Summary: built 11, not built 6, partial 10.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| GOV-001 | P0 | partial | Policy versions prospective; policy version stored on each transaction not verified |
+| GOV-001 | P0 | partial | Source refresh 2026-11-20: binding-event policy versions are persisted and used for dispute timing (`internal/service/posting.go`, `TestDisputeTimelinesSurviveEqualOrReversedPolicyClocks`). Prospective changes do not reinterpret existing bindings. Accepted binding rules, rather than wall-clock inference, govern their scope. |
 | GOV-002 | P0 | built | Changes audited with before and after; member-visible change log at /n/{slug}/policy and GET /network/policy-log |
 | GOV-003 | P0 | built | Adverse changes wait 14 days by default (notice_days up to 90); a shorter notice needs a reason shown in the change log; members get an inbox notice; a scheduled change can be cancelled |
 | GOV-004 | P0 | built | Decimals locked from network creation, also before the first transaction and for changes scheduled with notice; regression and concurrency tests |
@@ -36,7 +36,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-008 | P0 | built | Invite, approval, open modes; audit per decision |
 | GOV-009 | P0 | built | Append-only terms versions; acceptance recorded at join and re-required before proposing or accepting a trade after an update; reading and leaving stay open |
 | GOV-010 | P0 | built | Blockers, retain and settle rules built; counterparties of cancelled proposals are notified; the leave page offers the CSV/JSON self-export before the leave form, also when blocked (test) |
-| GOV-011 | P0 | partial | Admin removal with reason; the member gets an inbox notice; challenge not built |
+| GOV-011 | P0 | partial | Source refresh 2026-11-20: recorded removal reasons, notices and independent challenges are implemented (`internal/service/removal_test.go`, `TestChallengeRemovalAndLimit`). Existing governance/default decisions remain separate. |
 | GOV-012 | P1 | built | Optional inactivity rule (policy inactivity_days): flags, notifies, lists for administrators; never removes |
 | GOV-013 | P0 | built | Window and party rule; dispute keeps entries unchanged |
 | GOV-014 | P0 | built | Statement and decision with reasons; response deadline and 14-day decision target shown to parties; a missed deadline decides nothing and reviewers are reminded once |
@@ -52,7 +52,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-024 | P0 | built | Operator command with mandatory category; administrators notified; audit visible to the network |
 | GOV-025 | P0 | built | Closing date with 30-day minimum notice, freeze at the date, proposals cancelled, 90-day read and export period, final export checksum, erasure through AnonymiseMember afterwards |
 | GOV-026 | P1 | partial | Policy documents drafted in docs/platform, dated and versioned; counsel review and advance-notice test outstanding |
-| GOV-027 | P1 | partial | Support boundary in docs/ops; not linked from admin UI |
+| GOV-027 | P1 | partial | Source refresh 2026-11-20: the administrator overview links to `/help#support-boundaries` (`TestAdminHomeLinksToSupportBoundaries`, `TestHelpDocumentsSupportBoundaries`). Licence, support commitments and approved contact decisions remain separate. |
 
 ## 1. Roles and responsibilities
 

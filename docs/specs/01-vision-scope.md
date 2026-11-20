@@ -21,7 +21,7 @@ Summary: built 5, not built 1, partial 6.
 | ID | Priority | Status | Note |
 |---|---|---|---|
 | VIS-001 | P0 | partial | Help text and dashboard copy avoid redeemable/money wording; no review checklist run |
-| VIS-002 | P0 | partial | Help text says nobody is obliged to accept credits; no network "about" page |
+| VIS-002 | P0 | partial | Source refresh 2026-11-20: authenticated network About and README contain the acceptance statement (`internal/web/h_home.go`, `TestNetworkAboutPageAndReadAuthority`). Release-candidate/browser qualification remains separate. |
 | VIS-003 | P0 | built | Cross-network ids return not-found in service and API |
 | VIS-004 | P0 | built | LED invariant tests present; run in go test |
 | VIS-005 | P0 | built | Policy stored per network; bounds tested; prospective versions |
