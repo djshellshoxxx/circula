@@ -35,6 +35,12 @@ LINES = {
     CURSOR: [66, 67, 89, 94, 100], CATALOGUE: [36], INVENTORY: [1] * 4,
     PROSE: [133], REMOTE: [18, 36, 65, 87], SHARED: [102, 255, 298],
 }
+# Main preserves JSON-escaped digests in these immutable evidence files. The
+# scanner reads their encoded bytes, while exception controls must also exercise
+# the decoded values. Keep both representations under explicit assertions.
+ESCAPED_DOCUMENTS = frozenset((CURSOR, CATALOGUE, INVENTORY))
+RAW_LINES = {path: lines for path, lines in LINES.items() if path not in ESCAPED_DOCUMENTS}
+JSON_STRING = re.compile(r'"(?:[^"\\]|\\.)*"')
 BRANCHES = (
     "chatgpt/circula-ledger-auth-guard-20261115", "claude/aud4-auth-fixes",
     "claude/ux-047-auth-catalogue", "dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
@@ -107,8 +113,23 @@ def synthetic(label, length, hexadecimal=True):
     raise AssertionError("could not construct synthetic scanner control")
 
 
-def expected(rename=lambda name: name):
-    return Counter((rename(path), RULE, line) for path, lines in LINES.items() for line in lines)
+def expected(rename=lambda name: name, lines=LINES):
+    return Counter((rename(path), RULE, line) for path, numbers in lines.items() for line in numbers)
+
+
+def decoded_documents(documents):
+    """Decode only temporary JSON string copies without moving physical lines."""
+    decoded = dict(documents)
+    for path in ESCAPED_DOCUMENTS:
+        source = documents[path]
+        decoded[path] = JSON_STRING.sub(
+            lambda match: json.dumps(json.loads(match.group()), ensure_ascii=False), source,
+        )
+        require(json.loads(decoded[path]) == json.loads(source),
+                f"{path}: temporary normalization changed the JSON values")
+        require(decoded[path].count("\n") == source.count("\n"),
+                f"{path}: temporary normalization changed physical lines")
+    return decoded
 
 
 def scan(command, temporary, label, documents, config):
@@ -149,8 +170,21 @@ def main(command):
     baseline = check_scope(config, values)
     with tempfile.TemporaryDirectory(prefix="circula-gitleaks-controls-") as name:
         temporary = Path(name)
-        check("original documents before exceptions", scan(command, temporary, "baseline", documents, baseline), expected())
+        check("original encoded documents before exceptions",
+              scan(command, temporary, "raw-baseline", documents, baseline), expected(lines=RAW_LINES))
         check("original documents after exceptions", scan(command, temporary, "fixed", documents, config), Counter())
+
+        # Only the temporary controls are normalized. Original documents and
+        # their SHA-256 manifests remain untouched; the default scanner and
+        # exact rule/path/value allowlists are unchanged.
+        documents = decoded_documents(documents)
+        for path, observed in values.items():
+            require(all(value in documents[path] for value in observed),
+                    f"{path}: decoded controls must contain every excepted value")
+        check("decoded documents before exceptions",
+              scan(command, temporary, "decoded-baseline", documents, baseline), expected())
+        check("decoded documents after exceptions",
+              scan(command, temporary, "decoded-fixed", documents, config), Counter())
 
         changed = dict(documents)
         for path, observed in values.items():
@@ -192,7 +226,7 @@ def main(command):
         probe_documents = {path: f'api_key = "{value}"\n' for path, value in representative.items()}
         wanted = Counter((path, "scope-control", 1) for path in documents)
         check("exceptions affect only their target rule", scan(command, temporary, "rule-scope", probe_documents, probe_config), wanted)
-    print("PASS: all eight real-scanner checks; original repository documents were not modified.")
+    print("PASS: all ten real-scanner checks; original repository documents were not modified.")
 
 
 if __name__ == "__main__":
