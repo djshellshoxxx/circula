@@ -1,0 +1,11 @@
+Baseline 0daa4d6a9553ef05854915bbf2ae1d27b39906a6 / production 0492d798
+GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40; default vet enabled
+Command: /workspace/scratch/beb70d57deba/toolchain/go/bin/go test -p 1 ./internal/web/messages -run ^TestValidationMessages$ -count=1
+--- FAIL: TestValidationMessages (0.00s)
+    --- FAIL: TestValidationMessages/validation.fix.decimals#01 (0.00s)
+        validation_test.go:31: got "Use at most 1 decimal places and try again.", want "Use at most 1 decimal place and try again."
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.011s
+FAIL
+
+Exit: 1

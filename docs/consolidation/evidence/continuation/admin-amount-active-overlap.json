@@ -1,0 +1,19 @@
+{
+  "base_90": "f25d10b6b4085b80d7de53ecbb55efffeb9d8969",
+  "heads": {
+    "99": "0a73ee42b96255601cf2227b1ddf6599ec07a0ef",
+    "101": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0"
+  },
+  "paths": [
+    "internal/web/h_admin.go",
+    "internal/web/h_admin2.go",
+    "internal/web/h_admin_f2.go",
+    "internal/web/h_dualcontrol.go",
+    "internal/web/templates/admin_adjust*.html",
+    "internal/web/templates/admin_reverse*.html"
+  ],
+  "diffs": {
+    "99": "diff --git a/internal/web/h_admin2.go b/internal/web/h_admin2.go\nindex 6d3a380..ac212d6 100644\n--- a/internal/web/h_admin2.go\n+++ b/internal/web/h_admin2.go\n@@ -314,7 +314,15 @@ func (s *server) sendExport(w http.ResponseWriter, r *http.Request, c *rc, scope\n \tz := &zipSink{w: w, name: fmt.Sprintf(\"circula-%s-%s-%s.zip\", c.Net.Slug, scope, f)}\n \t_, err := s.svc.Export(r.Context(), c.actor, c.netID(), scope, f, z)\n \tif z.zw != nil {\n-\t\t_ = z.zw.Close()\n+\t\tif err == nil {\n+\t\t\terr = z.zw.Close()\n+\t\t}\n+\t\tif err != nil {\n+\t\t\ts.log.Error(\"web export interrupted\", \"request_id\", reqID(r), \"err\", err)\n+\t\t\t// The response may already contain ZIP bytes. Abort instead of\n+\t\t\t// finalizing a partial archive or appending an HTML error page.\n+\t\t\tpanic(http.ErrAbortHandler)\n+\t\t}\n \t\treturn\n \t}\n \tif err != nil {\n",
+    "101": ""
+  }
+}

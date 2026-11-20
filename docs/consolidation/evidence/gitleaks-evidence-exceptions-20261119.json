@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "base_source": "e0d27cc7cb73299219439919b260991b824d594a",
+  "scanner": {
+    "build_info": [
+      "/tmp/circula-tools-93/bin/gitleaks: go1.26.11",
+      "path\tgithub.com/zricethezav/gitleaks/v8",
+      "mod\tgithub.com/zricethezav/gitleaks/v8\tv8.28.0\th1:XXeibrt4XbdrYm3FnzXR3uUPs9HbgGduroICjBl6PMw="
+    ],
+    "binary_sha256": "c9b3bcd19d5f6d418f3f2d0dca1d1e0c121119a0027df92aef8a44e405d97a98",
+    "cli_version_note": "Go install does not inject the CLI version string; module identity is verified with go version -m."
+  },
+  "controls": {
+    "base_source": "e0d27cc7cb73299219439919b260991b824d594a",
+    "argv": [
+      "python3",
+      "scripts/check_gitleaks_config.py",
+      "--",
+      "/tmp/circula-tools-93/bin/gitleaks"
+    ],
+    "cwd": "/workspace/scratch/93aeb012c206/inventory-refresh",
+    "environment": {
+      "GOMAXPROCS": "1",
+      "GOMEMLIMIT": "250MiB",
+      "GOGC": "40",
+      "TMPDIR": "/dev/shm/circula-gitleaks-controls-93"
+    },
+    "scanner_build_info": [
+      "/tmp/circula-tools-93/bin/gitleaks: go1.26.11",
+      "path\tgithub.com/zricethezav/gitleaks/v8",
+      "mod\tgithub.com/zricethezav/gitleaks/v8\tv8.28.0\th1:XXeibrt4XbdrYm3FnzXR3uUPs9HbgGduroICjBl6PMw="
+    ],
+    "scanner_sha256": "c9b3bcd19d5f6d418f3f2d0dca1d1e0c121119a0027df92aef8a44e405d97a98",
+    "source_files_sha256": {
+      ".gitleaks.toml": "43b9c433c68a5194ec9c1e1bb40b940bb3eca61782fc34edd9982565d54f83d4",
+      "scripts/check_gitleaks_config.py": "dd966b04aca412df32dd2b7fc6e561c835e6a34083bc5b65e1dd0bb422337624",
+      ".github/workflows/ci.yml": "75e771902ac638205109f217941b810b27ae16b1ab4fea084771587c6739c234"
+    },
+    "started_utc": "2026-11-19T13:39:06Z",
+    "exit_code": 0,
+    "wall_seconds": 25.294,
+    "finished_utc": "2026-11-19T13:39:31Z"
+  },
+  "control_output": [
+    "PASS original documents before exceptions: 18 findings",
+    "PASS original documents after exceptions: 0 findings",
+    "PASS synthetic replacements in original contexts: 18 findings",
+    "PASS extended values are not excepted: 18 findings",
+    "PASS prefixed-paths: 18 findings",
+    "PASS suffixed-paths: 18 findings",
+    "PASS same-line generic and provider controls: 12 findings",
+    "PASS exceptions affect only their target rule: 6 findings",
+    "PASS: all eight real-scanner checks; original repository documents were not modified."
+  ],
+  "directory_scans": [
+    {
+      "argv": [
+        "/tmp/circula-tools-93/bin/gitleaks",
+        "dir",
+        ".",
+        "--config",
+        "/workspace/scratch/93aeb012c206/inventory-refresh/.gitleaks.toml",
+        "--no-banner",
+        "--no-color",
+        "--redact",
+        "--verbose",
+        "--report-format",
+        "json",
+        "--report-path",
+        "/workspace/scratch/93aeb012c206/archaeology/gitleaks-controls/repair-worktree-redacted.json"
+      ],
+      "cwd": "/workspace/scratch/93aeb012c206/inventory-refresh",
+      "environment": {
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "250MiB",
+        "GOGC": "40",
+        "TMPDIR": "/dev/shm/circula-gitleaks-controls-93"
+      },
+      "head_before": "e0d27cc7cb73299219439919b260991b824d594a",
+      "status_before": "M .github/workflows/ci.yml\n M .gitleaks.toml\n?? docs/consolidation/evidence/gitleaks-evidence-exceptions-20261119.md\n?? scripts/check_gitleaks_config.py",
+      "config_sha256": "43b9c433c68a5194ec9c1e1bb40b940bb3eca61782fc34edd9982565d54f83d4",
+      "started_utc": "2026-11-19T13:40:31Z",
+      "exit_code": 0,
+      "wall_seconds": 23.318,
+      "finished_utc": "2026-11-19T13:40:55Z",
+      "head_after": "e0d27cc7cb73299219439919b260991b824d594a",
+      "status_after": "M .github/workflows/ci.yml\n M .gitleaks.toml\n?? docs/consolidation/evidence/gitleaks-evidence-exceptions-20261119.md\n?? scripts/check_gitleaks_config.py",
+      "finding_count": 0,
+      "finding_metadata": []
+    },
+    {
+      "argv": [
+        "/tmp/circula-tools-93/bin/gitleaks",
+        "dir",
+        ".",
+        "--config",
+        "/workspace/scratch/93aeb012c206/inventory-refresh/.gitleaks.toml",
+        "--no-banner",
+        "--no-color",
+        "--redact",
+        "--verbose",
+        "--report-format",
+        "json",
+        "--report-path",
+        "/workspace/scratch/93aeb012c206/archaeology/gitleaks-controls/root-789f082-redacted.json"
+      ],
+      "cwd": "/workspace/scratch/93aeb012c206/circula-recovered",
+      "environment": {
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "250MiB",
+        "GOGC": "40",
+        "TMPDIR": "/dev/shm/circula-gitleaks-controls-93"
+      },
+      "head_before": "789f082a337eac18f9628976846536e6230f5975",
+      "status_before": "",
+      "config_sha256": "43b9c433c68a5194ec9c1e1bb40b940bb3eca61782fc34edd9982565d54f83d4",
+      "started_utc": "2026-11-19T13:40:31Z",
+      "exit_code": 0,
+      "wall_seconds": 25.714,
+      "finished_utc": "2026-11-19T13:40:57Z",
+      "head_after": "789f082a337eac18f9628976846536e6230f5975",
+      "status_after": "",
+      "finding_count": 0,
+      "finding_metadata": []
+    }
+  ],
+  "preserved_documents": [
+    {
+      "path": "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+      "sha256": "1bf7da88b88483c449dd944261b635af11add88b41c4b5f7c66413d8a4502b4e",
+      "unchanged_from_base": true,
+      "unchanged_from_reported_head": true
+    },
+    {
+      "path": "docs/audits/evidence/post-snapshot-20261119/core-catalogue-traceability-merged-12af211.execution.json",
+      "sha256": "a01b085423c085c2203a095da9d6ee5569b3efcbfcbe47c0bdeeccae343f851a",
+      "unchanged_from_base": true,
+      "unchanged_from_reported_head": true
+    },
+    {
+      "path": "docs/audits/BRANCH_INVENTORY_2026-11-19.json",
+      "sha256": "24df5ffe361c2a31be8b364bbe2ac5c68c1e6777d626aecf4a8e1953ce68a107",
+      "unchanged_from_base": true,
+      "unchanged_from_reported_head": true
+    },
+    {
+      "path": "docs/consolidation/BRANCH_REFRESH_20261119.md",
+      "sha256": "a5c09df8e0613899e8172150f4837fc8f8fb86802287c5e80d696b5421c5fe8a",
+      "unchanged_from_base": true,
+      "unchanged_from_reported_head": true
+    },
+    {
+      "path": "docs/consolidation/evidence/branch-inventory-20261119.json",
+      "sha256": "8989490d42896e49d05a105ee22dc76a7a4b7c76db47bee327aa8e8717f8b967",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "docs/consolidation/evidence/branch-refresh-post109-20261119.json",
+      "sha256": "3278831fbb0d67206c8790dce4fc0bf376f6eb7b5436e0efb5ea72a813571c92",
+      "unchanged_from_base": true
+    },
+    {
+      "path": "docs/audits/evidence/closing-publication-20261119/remote-heads.json",
+      "sha256": "f0281194359eaa1fac899e6961288c63c19312c49cafe5e17c07ec007886f9ea",
+      "unchanged_from_base": true,
+      "unchanged_from_root_789f082": true
+    },
+    {
+      "path": "docs/consolidation/evidence/shared-pages-receipt.json",
+      "sha256": "90f01a2787509205e0a5524751a735e4f861df6c7bac4676ab1cce392c6a17c6",
+      "unchanged_from_base": true,
+      "unchanged_from_root_789f082": true
+    }
+  ],
+  "scope": {
+    "rule": "generic-api-key",
+    "exact_document_paths": 6,
+    "distinct_verified_values": 13,
+    "path_value_pairs": 17,
+    "observed_findings": 18,
+    "runtime_source_changed": false,
+    "original_evidence_changed": false
+  },
+  "initial_draft_observation": {
+    "mechanism": "global targetRules with extend.useDefault",
+    "baseline_findings": 11,
+    "after_findings": 11,
+    "outcome": "replaced with rule-local allowlists; default matcher remains inherited"
+  },
+  "additional_full_scan_observation": {
+    "repair_base_and_integration_findings_after_initial_four_path_exceptions": 7,
+    "classification": "four previously verified Git commit IDs plus one verified source blob ID and two occurrences of a reproduced source digest"
+  }
+}

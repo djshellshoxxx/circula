@@ -1,0 +1,22 @@
+{
+  "repository": "djshellshoxxx/circula",
+  "pull_request": 99,
+  "source_head": "0a73ee42b96255601cf2227b1ddf6599ec07a0ef",
+  "run_id": 44513300863,
+  "job_id": 135522757115,
+  "job_url": "https://github.com/djshellshoxxx/circula/actions/runs/44513300863/job/135522757115",
+  "artifact_id": 14533534257,
+  "artifact_url": "https://github.com/djshellshoxxx/circula/actions/runs/44513300863/artifacts/14533534257",
+  "artifact_bytes": 200778,
+  "artifact_sha256": "eb84858ee7a7c68a2fbdeda29845a3ad3f7be23789d714d7088f9eaf8ac33576",
+  "test_outcome": {
+    "passed": 587,
+    "failed": 1,
+    "failed_test": "sessions: no-JS pagination, owner isolation, confirmation and selective sign-out",
+    "failed_assertion": "sessions.spec.js:59 expected /account/sessions but remained on /account/sessions/<selector>/revoke"
+  },
+  "snapshot_sha256": "5d421244d486bcd7813f11e9a12e84444ff94c7d71d4ce4ed62fb64e09aa1351",
+  "snapshot_observation": "The missing-confirmation alert contains link I want to end this session. before unchecked invalid checkbox with identical accessible name. It is the confirmation-validation page, not the Form expired CSRF page.",
+  "helper_source_blob": "cd69c353d8b122a879a4b30e84a150b3d7473962",
+  "preservation": "Selected failure log and exact accessibility snapshot copied. Full artifact retained in scratch; immutable provider artifact URL and verified upload digest retained here."
+}

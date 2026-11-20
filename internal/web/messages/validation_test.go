@@ -17,6 +17,7 @@ func TestValidationMessages(t *testing.T) {
 		{"validation.field.message", []any{"Amount", "not a number", "Enter digits only, for example 12.50."}, "Amount: not a number. Enter digits only, for example 12.50."},
 		{"validation.field.message", []any{"Name", "Zoë <img src=x> 100%", "Check the value and try again."}, "Name: Zoë <img src=x> 100%. Check the value and try again."},
 		{"validation.fix.decimals", []any{0}, "Use at most 0 decimal places and try again."},
+		{"validation.fix.decimals", []any{1}, "Use at most 1 decimal place and try again."},
 		{"validation.fix.decimals", []any{2}, "Use at most 2 decimal places and try again."},
 		{"validation.fix.number", []any{"90071992547409.93"}, "Enter digits only, for example 90071992547409.93."},
 		{"validation.refusal.insufficient_credit", nil, "Not sent. This trade would take your available credit below zero. Try a smaller amount. Nothing changed."},
@@ -44,7 +45,7 @@ func TestAdminResetMessages(t *testing.T) {
 		{"admin.member_action.heading", []any{"Reset password", "Zoë 100%"}, "Reset password: Zoë 100%"},
 		{"admin.reset.for_member", []any{"Zoë <img src=x>"}, "Temporary password for Zoë <img src=x>"},
 		{"admin.reset.instructions", []any{"Zoë 100%"}, "Give it to Zoë 100% in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended."},
-		{"admin.reset.self_refused", nil, "Not done. You cannot reset your own password here; use Change password. Nothing changed."},
+		{"admin.reset.forbidden", nil, "Not done. This password cannot be reset here. Use Change password for your own account, or ask the platform operator for help. Nothing changed."},
 		{"admin.reset.throttled", nil, "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."},
 		{"admin.reset.shown_once", nil, "This is the only time it is shown."},
 	} {

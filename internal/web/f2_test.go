@@ -140,7 +140,11 @@ func TestDisputeDecisionNeedsConfirmation(t *testing.T) {
 	act := b + "/disputes/" + d.ID + "/resolve"
 	// missing rationale, partial without amount, partial above remaining
 	adm.mustContain(adm.post(act, dv, url.Values{"outcome": {"upheld"}, "rationale": {" "}}), "Rationale")
-	adm.mustContain(adm.post(act, dv, url.Values{"outcome": {"partially_upheld"}, "rationale": {"r"}}), "enter the amount to reverse")
+	invalid := adm.post(act, dv, url.Values{"outcome": {"partially_upheld"}, "rationale": {"r"}})
+	if invalid.Status != 422 {
+		t.Fatalf("invalid dispute amount status = %d", invalid.Status)
+	}
+	adm.mustContain(invalid, "enter the amount to reverse, with up to 2 decimal places", `href="#f-amount"`)
 	adm.mustContain(adm.post(act, dv, url.Values{"outcome": {"partially_upheld"}, "rationale": {"r"}, "amount": {"11.00"}}), "remaining reversible amount")
 	// a post without step=confirm never records
 	for _, step := range []string{"", "review", "bogus"} {

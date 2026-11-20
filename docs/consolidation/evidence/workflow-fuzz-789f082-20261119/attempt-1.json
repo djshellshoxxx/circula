@@ -1,0 +1,164 @@
+{
+  "source_commit": "789f082a337eac18f9628976846536e6230f5975",
+  "source_tree": "8e2a6cb1fd3b83c151ec7cdc5dddedd06d5d54cf",
+  "go_version": "go version go1.26.11 linux/amd64",
+  "environment": {
+    "GOCACHE": "/dev/shm/circula-runtime-cache-93",
+    "GOMODCACHE": "/tmp/circula-go-modcache-93",
+    "TMPDIR": "/dev/shm/circula-fuzz-js-93-yf17muos",
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "250MiB",
+    "GOGC": "40",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "source_files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "blob": "0dd0a10dd3ec0243e816f0935da73686adc8fa84",
+      "sha256": "6601354d74fbd053f0acf2a09f108663627fa392c401046f2a9189186afacd05"
+    },
+    {
+      "path": "internal/domain/fuzz_test.go",
+      "blob": "51b05eb735f09f078ac51c38f8677da96c2b830a",
+      "sha256": "7d5c49670302beb05ce8f1920923e7a554d32d70472fdb37bfe43657b06ccfac"
+    },
+    {
+      "path": "internal/api/fuzz_test.go",
+      "blob": "9c85bec3786a6a3668c13b90f8cdbc2df778e4af",
+      "sha256": "e06bd9d4810baed96d24a510376a921886819f1cb5f025855ee0081eb326ba30"
+    },
+    {
+      "path": "internal/api/cursor_fuzz_test.go",
+      "blob": "89a7c688267f3eb4e50eb87bd10fbdd8333de216",
+      "sha256": "3f27b3ba1ddf1c15037c51f18cc56ec46cf9ed80808c06a2ae3fb034e41c0d01"
+    },
+    {
+      "path": "internal/service/session_position_security_test.go",
+      "blob": "bce0978606ba0fad1e26cfb0724f26666793c3fb",
+      "sha256": "07a0a5787f8b1b81cc3610a5cf22552b10a78d21b0a1c6b09a17cd6176be7675"
+    }
+  ],
+  "gates": [
+    {
+      "target": "FuzzParseAmount",
+      "budget": "1000000x",
+      "package": "./internal/domain",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p=1",
+        "-count=1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzParseAmount$",
+        "-fuzztime",
+        "1000000x",
+        "-parallel=1",
+        "-timeout",
+        "3m",
+        "./internal/domain"
+      ],
+      "started_utc": "2026-11-19T13:48:13.978304+00:00",
+      "headroom_before": {
+        "available_memory_bytes": 2363285504,
+        "dev_shm_free_bytes": 3529838592
+      },
+      "log": "FuzzParseAmount.log",
+      "exit_code": 0,
+      "elapsed_seconds": 118.045,
+      "finished_utc": "2026-11-19T13:50:12.024070+00:00",
+      "headroom_after": {
+        "available_memory_bytes": 2058002432,
+        "dev_shm_free_bytes": 3460874240
+      },
+      "log_sha256": "9a406a98b0104e1367cb5ba1274513fe6422f8676e9119f5d748b5095e5d6a04",
+      "tail": [
+        "fuzz: elapsed: 45s, execs: 789720 (18334/sec), new interesting: 60 (total: 81)",
+        "fuzz: elapsed: 48s, execs: 848937 (19738/sec), new interesting: 60 (total: 81)",
+        "fuzz: elapsed: 51s, execs: 893787 (14951/sec), new interesting: 60 (total: 81)",
+        "fuzz: elapsed: 54s, execs: 948169 (18128/sec), new interesting: 64 (total: 85)",
+        "fuzz: elapsed: 57s, execs: 995753 (15864/sec), new interesting: 64 (total: 85)",
+        "fuzz: elapsed: 57s, execs: 1000000 (49205/sec), new interesting: 64 (total: 85)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t57.093s"
+      ],
+      "source_status_after": ""
+    },
+    {
+      "target": "FuzzStrictUnmarshal",
+      "budget": "100000x",
+      "package": "./internal/api",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p=1",
+        "-count=1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzStrictUnmarshal$",
+        "-fuzztime",
+        "100000x",
+        "-parallel=1",
+        "-timeout",
+        "3m",
+        "./internal/api"
+      ],
+      "started_utc": "2026-11-19T13:50:12.055004+00:00",
+      "headroom_before": {
+        "available_memory_bytes": 2058469376,
+        "dev_shm_free_bytes": 3460874240
+      },
+      "log": "FuzzStrictUnmarshal.log",
+      "exit_code": 1,
+      "elapsed_seconds": 149.625,
+      "finished_utc": "2026-11-19T13:52:41.680218+00:00",
+      "headroom_after": {
+        "available_memory_bytes": 1739218944,
+        "dev_shm_free_bytes": 2799157248
+      },
+      "log_sha256": "fbafa851cced90908e9378d7428f10447ed673f3775a09f49d17b054eb94bba3",
+      "tail": [
+        "modernc.org/libc: /workspace/scratch/beb70d57deba/toolchain/go/pkg/tool/linux_amd64/compile: signal: killed",
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/api [build failed]"
+      ],
+      "source_status_after": ""
+    }
+  ],
+  "qualification_status": "partial: one pass, one build failure, three gates not started",
+  "planned_gates": [
+    {
+      "target": "FuzzParseAmount",
+      "budget": "1000000x",
+      "package": "./internal/domain",
+      "status": "pass",
+      "executions": 1000000
+    },
+    {
+      "target": "FuzzStrictUnmarshal",
+      "budget": "100000x",
+      "package": "./internal/api",
+      "status": "build_failed_before_fuzzing"
+    },
+    {
+      "target": "FuzzOpenCursor",
+      "budget": "100000x",
+      "package": "./internal/api",
+      "status": "not_started"
+    },
+    {
+      "target": "FuzzSessionPosition",
+      "budget": "100000x",
+      "package": "./internal/service",
+      "status": "not_started"
+    },
+    {
+      "target": "FuzzSessionSelector",
+      "budget": "100000x",
+      "package": "./internal/service",
+      "status": "not_started"
+    }
+  ],
+  "pause_reason": "Parent paused new Go work after the API compiler was killed; executor subsequently restarted. Preserve completed outcomes and await restored-cache/resource coordination before retry."
+}

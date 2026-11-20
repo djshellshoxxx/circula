@@ -1,0 +1,11 @@
+=== RUN   TestFailedExecutionKeepsActualTimeoutDiagnostics
+    evidence_test.go:197: timeout diagnostic lost "panic: test timed out after":
+        FAIL	example	0.205s
+    evidence_test.go:197: timeout diagnostic lost "TestTimeout":
+        FAIL	example	0.205s
+    evidence_test.go:197: timeout diagnostic lost "goroutine":
+        FAIL	example	0.205s
+--- FAIL: TestFailedExecutionKeepsActualTimeoutDiagnostics (0.49s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/scripts/traceability	0.494s
+FAIL

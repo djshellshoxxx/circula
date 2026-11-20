@@ -1,0 +1,44 @@
+2026-11-19T13:28:13.9191581Z   1) tests/sessions.spec.js:7:1 › sessions: no-JS pagination, owner isolation, confirmation and selective sign-out 
+2026-11-19T13:28:13.9192116Z 
+2026-11-19T13:28:13.9192505Z     Error: expect(page).toHaveURL(expected) failed
+2026-11-19T13:28:13.9192770Z 
+2026-11-19T13:28:13.9193100Z     Expected: "http://127.0.0.1:44613/account/sessions"
+2026-11-19T13:28:13.9193903Z     Received: "http://127.0.0.1:44613/account/sessions/1c1146373095640fb5cb2f9e4d90801ce3dbb931bc20aa60a08463fcb82d4238/revoke"
+2026-11-19T13:28:13.9194629Z     Timeout:  5000ms
+2026-11-19T13:28:13.9194824Z 
+2026-11-19T13:28:13.9195017Z     Call log:
+2026-11-19T13:28:13.9195404Z       - Expect "toHaveURL" with timeout 5000ms
+2026-11-19T13:28:13.9196029Z         14 × locator resolved to <html lang="en">…</html>
+2026-11-19T13:28:13.9197044Z            - unexpected value "http://127.0.0.1:44613/account/sessions/1c1146373095640fb5cb2f9e4d90801ce3dbb931bc20aa60a08463fcb82d4238/revoke"
+2026-11-19T13:28:13.9197535Z 
+2026-11-19T13:28:13.9197540Z 
+2026-11-19T13:28:13.9197904Z       57 |     await expect(current.page.locator('#error-summary')).toBeVisible();
+2026-11-19T13:28:13.9198902Z       58 |     await kbSubmit(current.page, [[/^I want to end this session\./, true]], /^End session$/);
+2026-11-19T13:28:13.9199587Z     > 59 |     await expect(current.page).toHaveURL(instance.base + '/account/sessions');
+2026-11-19T13:28:13.9200151Z          |                                ^
+2026-11-19T13:28:13.9200617Z       60 |     await other.page.goto('/account/sessions');
+2026-11-19T13:28:13.9201225Z       61 |     await expect(other.page).toHaveURL(/\/login(?:\?|$)/);
+2026-11-19T13:28:13.9201681Z       62 |
+2026-11-19T13:28:13.9202210Z         at /home/runner/work/circula/circula/e2e/tests/sessions.spec.js:59:32
+2026-11-19T13:28:13.9202581Z 
+2026-11-19T13:28:13.9203085Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9203934Z     test-results/sessions-sessions-no-JS-pa-f49cb-tion-and-selective-sign-out/test-failed-1.png
+2026-11-19T13:28:13.9204918Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9205266Z 
+2026-11-19T13:28:13.9205763Z     attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9206706Z     test-results/sessions-sessions-no-JS-pa-f49cb-tion-and-selective-sign-out/test-failed-2.png
+2026-11-19T13:28:13.9207645Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9207994Z 
+2026-11-19T13:28:13.9209026Z     attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9210102Z     test-results/sessions-sessions-no-JS-pa-f49cb-tion-and-selective-sign-out/test-failed-3.png
+2026-11-19T13:28:13.9211009Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9211417Z 
+2026-11-19T13:28:13.9212045Z     attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9212981Z     test-results/sessions-sessions-no-JS-pa-f49cb-tion-and-selective-sign-out/test-failed-4.png
+2026-11-19T13:28:13.9213874Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-19T13:28:13.9214236Z 
+2026-11-19T13:28:13.9214738Z     Error Context: test-results/sessions-sessions-no-JS-pa-f49cb-tion-and-selective-sign-out/error-context.md
+2026-11-19T13:28:13.9215265Z 
+2026-11-19T13:28:13.9215441Z   1 failed
+2026-11-19T13:28:13.9216181Z     tests/sessions.spec.js:7:1 › sessions: no-JS pagination, owner isolation, confirmation and selective sign-out 
+2026-11-19T13:28:13.9216853Z   587 passed (6.6m)

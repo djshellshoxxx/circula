@@ -1,0 +1,18 @@
+{
+  "command": [
+    "go",
+    "build",
+    "-race",
+    "-p",
+    "1",
+    "modernc.org/sqlite/lib"
+  ],
+  "started_at": "2026-11-19T12:53:17.517687+00:00",
+  "purpose": "Isolated SQLite race dependency compilation after executor restart and restored temporary-space headroom; no compiler flags or production dependency changes",
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "250MiB",
+    "GOGC": "40",
+    "CGO_ENABLED": "1"
+  }
+}

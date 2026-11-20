@@ -191,4 +191,3 @@ No estimate changes a module's HOLD status or resolves an owner decision.
 ## Final integration rule
 
 Before merging, refresh main and candidate, resolve any newly introduced conflicts, and inspect all checks on the exact published head. Use normal expected-head PR merge permission. Preserve the starting branches and recoverable PR refs. If a check or infrastructure gate remains unresolved, report that concrete blocker and retain the reviewable candidate; do not describe pending work as a completed main merge.
-

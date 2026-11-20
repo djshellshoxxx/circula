@@ -1,0 +1,208 @@
+{
+  "argv": [
+    "/tmp/circula-tools-93/bin/golangci-lint",
+    "run",
+    "--verbose",
+    "--concurrency=2",
+    "--timeout=20m",
+    "--modules-download-mode=readonly",
+    "--max-issues-per-linter=0",
+    "--max-same-issues=0",
+    "--output.json.path",
+    "/workspace/scratch/93aeb012c206/archaeology/golangci-v2.15.0/lint-report.json",
+    "./..."
+  ],
+  "cwd": "/workspace/scratch/93aeb012c206/core-qualification",
+  "source_head_before": "e0d27cc7cb73299219439919b260991b824d594a",
+  "source_tree_before": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "source_status_before": "",
+  "source_fingerprints": {
+    ".golangci.yml": "1350da107ac6b83cfd312ba547e8297aabd3069c06a78ee59f8bf0eeee7e0c4c",
+    "go.mod": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58",
+    "go.sum": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb"
+  },
+  "environment": {
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "1GiB",
+    "GOGC": "100",
+    "GOCACHE": "/tmp/circula-go-cache-93",
+    "GOMODCACHE": "/tmp/circula-go-modcache-93",
+    "GOTMPDIR": "/dev/shm/circula-golangci-run-93/work",
+    "TMPDIR": "/dev/shm/circula-golangci-run-93/work",
+    "GOLANGCI_LINT_CACHE": "/dev/shm/circula-golangci-run-93/cache",
+    "GOFLAGS": "-p=1",
+    "GOTOOLCHAIN": "local",
+    "PATH": "/workspace/scratch/beb70d57deba/toolchain/go/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback"
+  },
+  "effective_go_environment": [
+    "go1.26.11",
+    "linux",
+    "amd64",
+    "1",
+    "/tmp/circula-go-cache-93",
+    "/tmp/circula-go-modcache-93"
+  ],
+  "binary_sha256": "d9af4564c05beb2f5e130119aec45e5e89d28e5017d558d3ca382659f2427894",
+  "binary_version": "golangci-lint has version 2.15.0 built with go1.27.0 from 25c5369a on 2026-10-16T11:03:09Z",
+  "started_utc": "2026-11-19T14:02:02Z",
+  "resources_before": {
+    "mem_available_mib": 6496,
+    "shm_free_mib": 4983,
+    "tmp_free_mib": 2931,
+    "workspace_free_mib": 279
+  },
+  "resource_samples": [
+    {
+      "elapsed_seconds": 5.0,
+      "mem_available_mib": 6356,
+      "shm_free_mib": 4983,
+      "tmp_free_mib": 2931,
+      "workspace_free_mib": 279
+    },
+    {
+      "elapsed_seconds": 10.0,
+      "mem_available_mib": 6304,
+      "shm_free_mib": 4974,
+      "tmp_free_mib": 2904,
+      "workspace_free_mib": 279
+    },
+    {
+      "elapsed_seconds": 15.0,
+      "mem_available_mib": 6278,
+      "shm_free_mib": 4963,
+      "tmp_free_mib": 2892,
+      "workspace_free_mib": 279
+    },
+    {
+      "elapsed_seconds": 20.0,
+      "mem_available_mib": 6167,
+      "shm_free_mib": 4945,
+      "tmp_free_mib": 2874,
+      "workspace_free_mib": 278
+    },
+    {
+      "elapsed_seconds": 25.0,
+      "mem_available_mib": 6041,
+      "shm_free_mib": 4931,
+      "tmp_free_mib": 2848,
+      "workspace_free_mib": 278
+    },
+    {
+      "elapsed_seconds": 30.0,
+      "mem_available_mib": 6022,
+      "shm_free_mib": 4917,
+      "tmp_free_mib": 2832,
+      "workspace_free_mib": 278
+    },
+    {
+      "elapsed_seconds": 35.0,
+      "mem_available_mib": 6080,
+      "shm_free_mib": 4908,
+      "tmp_free_mib": 2822,
+      "workspace_free_mib": 278
+    },
+    {
+      "elapsed_seconds": 40.0,
+      "mem_available_mib": 6091,
+      "shm_free_mib": 4886,
+      "tmp_free_mib": 2798,
+      "workspace_free_mib": 278
+    },
+    {
+      "elapsed_seconds": 45.0,
+      "mem_available_mib": 5915,
+      "shm_free_mib": 4877,
+      "tmp_free_mib": 2790,
+      "workspace_free_mib": 278
+    },
+    {
+      "elapsed_seconds": 50.0,
+      "mem_available_mib": 6010,
+      "shm_free_mib": 4982,
+      "tmp_free_mib": 2774,
+      "workspace_free_mib": 277
+    },
+    {
+      "elapsed_seconds": 55.0,
+      "mem_available_mib": 5793,
+      "shm_free_mib": 4976,
+      "tmp_free_mib": 2773,
+      "workspace_free_mib": 277
+    },
+    {
+      "elapsed_seconds": 60.0,
+      "mem_available_mib": 5456,
+      "shm_free_mib": 4974,
+      "tmp_free_mib": 2773,
+      "workspace_free_mib": 277
+    },
+    {
+      "elapsed_seconds": 65.0,
+      "mem_available_mib": 5052,
+      "shm_free_mib": 4973,
+      "tmp_free_mib": 2773,
+      "workspace_free_mib": 277
+    },
+    {
+      "elapsed_seconds": 70.0,
+      "mem_available_mib": 5253,
+      "shm_free_mib": 4973,
+      "tmp_free_mib": 2772,
+      "workspace_free_mib": 277
+    },
+    {
+      "elapsed_seconds": 75.0,
+      "mem_available_mib": 5285,
+      "shm_free_mib": 4973,
+      "tmp_free_mib": 2772,
+      "workspace_free_mib": 277
+    },
+    {
+      "elapsed_seconds": 78.3,
+      "mem_available_mib": 6188,
+      "shm_free_mib": 4973,
+      "tmp_free_mib": 2772,
+      "workspace_free_mib": 277
+    }
+  ],
+  "stop_request_path": "/workspace/scratch/93aeb012c206/archaeology/golangci-v2.15.0/lint-stop.request",
+  "watchdog_limits_mib": {
+    "mem_available_min": 1024,
+    "shm_free_min": 256,
+    "tmp_free_min": 128,
+    "workspace_free_min": 32
+  },
+  "analysis_scope": "Unchanged repository config, default tests enabled, complete root module ./...; only resource controls, read-only module mode and expanded diagnostic limits added.",
+  "process_group": 20,
+  "exit_code": 1,
+  "status": "failed",
+  "stop_reason": null,
+  "wall_seconds": 78.301,
+  "finished_utc": "2026-11-19T14:03:21Z",
+  "resources_after": {
+    "mem_available_mib": 6188,
+    "shm_free_mib": 4973,
+    "tmp_free_mib": 2772,
+    "workspace_free_mib": 277
+  },
+  "source_head_after": "e0d27cc7cb73299219439919b260991b824d594a",
+  "source_tree_after": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "source_status_after": "",
+  "reported_issue_count": 2,
+  "reported_issues_by_linter": {
+    "nilerr": 1,
+    "staticcheck": 1
+  },
+  "issue_locations": [
+    {
+      "linter": "nilerr",
+      "file": "internal/store/recovery_internal_test.go",
+      "line": 83
+    },
+    {
+      "linter": "staticcheck",
+      "file": "internal/web/terms_rules_leave_catalog_test.go",
+      "line": 148
+    }
+  ]
+}

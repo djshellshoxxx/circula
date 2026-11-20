@@ -1,20 +1,20 @@
 {{define "content"}}
 {{with .D.Review}}
-<p>Nothing is posted until you confirm. A posted reversal cannot be undone.</p>
+<p>{{msg "admin.reverse.confirmation_notice"}}</p>
 <dl class="kv">
-  <dt>Trade</dt><dd>{{.Payer}} paid {{.Payee}} {{.Amount}} {{$.Unit}}s</dd>
-  <dt>Reversal</dt><dd>{{.Reverse}} {{.Unit}} go back from {{.Payee}} to {{.Payer}}{{if .Full}}. This reverses everything that is left, so the trade becomes Reversed.{{else}}. This is a partial reversal; the trade stays Completed.{{end}}</dd>
-  <dt>Reason</dt><dd>{{.Reason}}</dd>
-  <dt>{{.Payer}} now</dt><dd>{{template "balance" .PayerBefore}}</dd>
-  <dt>{{.Payer}} after</dt><dd>{{template "balance" .PayerAfter}}</dd>
-  <dt>{{.Payee}} now</dt><dd>{{template "balance" .PayeeBefore}}</dd>
-  <dt>{{.Payee}} after</dt><dd>{{template "balance" .PayeeAfter}}</dd>
+  <dt>{{msg "admin.reverse.trade_label"}}</dt><dd>{{msg "admin.reverse.trade_sentence" .Payer .Payee .Amount (unit $.Unit .AmountMinor $.Dec)}}</dd>
+  <dt>{{msg "admin.reverse.reversal_label"}}</dt><dd>{{if .Full}}{{msg "admin.reverse.full_sentence" .Reverse .Unit .Payee .Payer}}{{else}}{{msg "admin.reverse.partial_sentence" .Reverse .Unit .Payee .Payer}}{{end}}</dd>
+  <dt>{{msg "admin.reverse.reason"}}</dt><dd>{{.Reason}}</dd>
+  <dt>{{msg "admin.reverse.balance_now" .Payer}}</dt><dd>{{template "balance" .PayerBefore}}</dd>
+  <dt>{{msg "admin.reverse.balance_after" .Payer}}</dt><dd>{{template "balance" .PayerAfter}}</dd>
+  <dt>{{msg "admin.reverse.balance_now" .Payee}}</dt><dd>{{template "balance" .PayeeBefore}}</dd>
+  <dt>{{msg "admin.reverse.balance_after" .Payee}}</dt><dd>{{template "balance" .PayeeAfter}}</dd>
 </dl>
 {{end}}
 <form method="post" action="/n/{{.Slug}}/admin/reverse">
   {{template "csrf" .}}{{template "idem" .}}
   <input type="hidden" name="tx" value="{{.Val "tx"}}"><input type="hidden" name="amount" value="{{.Val "amount"}}">
   <input type="hidden" name="reason" value="{{.Val "reason"}}">
-  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Post reversal</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">{{msg "admin.reverse.post"}}</button> <button type="submit" name="step" value="back" class="secondary">{{msg "admin.reverse.edit"}}</button></div>
 </form>
 {{end}}

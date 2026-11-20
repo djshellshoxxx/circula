@@ -1,0 +1,21 @@
+--- FAIL: TestTermsRulesLeaveMessages (0.00s)
+    --- FAIL: TestTermsRulesLeaveMessages/terms.accepted_flash (0.00s)
+panic: unknown UI message: terms.accepted_flash [recovered, repanicked]
+
+goroutine 9 [running]:
+testing.tRunner.func1.2({0x692fe0, 0x33e8f9988fc0})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1974 +0x232
+testing.tRunner.func1()
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1977 +0x349
+panic({0x692fe0?, 0x33e8f9988fc0?})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/runtime/panic.go:860 +0x13a
+github.com/djshellshoxxx/circula/internal/web/messages.Text({0x702581, 0x14}, {0x33e8f9988ed0, 0x1, 0x1})
+	/workspace/scratch/93aeb012c206/onboarding-catalogue/internal/web/messages/messages.go:55 +0x129
+github.com/djshellshoxxx/circula/internal/web/messages.TestTermsRulesLeaveMessages.func1(0x33e8f98e06c8)
+	/workspace/scratch/93aeb012c206/onboarding-catalogue/internal/web/messages/terms_rules_leave_test.go:38 +0x35
+testing.tRunner(0x33e8f98e06c8, 0x33e8f984ef00)
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 8
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2101 +0x4c5
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.011s
+FAIL

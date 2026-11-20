@@ -1,0 +1,65 @@
+{
+  "reviewed_at": "2026-11-19T12:59:05.334562+00:00",
+  "reviewer": "recurring_module",
+  "base_head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+  "observed_head": "3cc231542e7c46793f27b2fc406b9220fabf1bff",
+  "scope": "new standalone workflow source review; no source or report edits by reviewer",
+  "files": {
+    ".github/workflows/export-reader.yml": {
+      "sha256": "cf621519a7a3e8321c706c24220cff72d7b135e4541a7ebd357cf9061e663499",
+      "git_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198"
+    },
+    "scripts/read-export.py": {
+      "sha256": "91721f3c6e210e1b12e9cc0591ab6b11b0fe33f62aad45699d1d417778397478",
+      "git_blob": "bde02445e22e837370fe5911cdee29d2fae3a234"
+    },
+    "scripts/test_read_export.py": {
+      "sha256": "eda4dca97b62648adb8294b9a2e0c963248ed934f13b585ca73caadceb384884",
+      "git_blob": "af5d950d72b4e8f2d209bb31e393b98f619cac5d"
+    },
+    "scripts/check-action-pins.sh": {
+      "sha256": "196585b4f88956047bc8cc27b87aa9d5cce3b4d3c5bd29c92fb5f5081eff506a",
+      "git_blob": "5fa554a2c448cbf9d0194745f0093b0cf75bcb56"
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "591b45f451be765cc091344431d0876875adb3895c91d15d630af0db894094c6",
+      "git_blob": "62a97578788d0cea1449b0518208751ab6795143"
+    }
+  },
+  "outcome": "PASS within source review scope; native provider execution remains a separate gate",
+  "findings": [],
+  "resolved_finding": {
+    "initial_workflow_sha256": "1cdd66366750d21328733a9d4ee39bc77e073cfa7b5830220740eba43fc7862d",
+    "initial_command": "bash scripts/check-action-pins.sh",
+    "initial_exit_code": 1,
+    "initial_output": ".github/workflows/export-reader.yml: action actions/setup-python is not on the allowlist",
+    "resolution": "Root removed the new setup-python action and uses each hosted image existing Python interpreter. No allowlist or permission weakening; the unchanged guard now passes."
+  },
+  "verified_source_properties": [
+    "pull_request path filters include production reader, its tests and this workflow; no pull_request_target",
+    "main push uses the same paths; workflow_dispatch permits explicit qualification",
+    "contents: read only, no persisted checkout credentials, no secrets or privileged operations",
+    "checkout pinned to already allowed immutable 3d3c42e5aac5ba805825da76410c181273ba90b1; no additional actions or dependency installs",
+    "ubuntu-24.04/macOS-15-intel invoke python3, windows-2022 invokes python; all use explicit bash, fail-fast false and a five-minute job deadline",
+    "interpreter versions come from the hosted runner image and are logged with -VV; no provider Python 3.12 pin is claimed",
+    "concurrency includes PR/ref and event; only older PR runs are canceled",
+    "records actual checkout HEAD, selected Git blobs and runtime before the suite; on pull_request this is normally the synthetic merge checkout rather than merely the PR head",
+    "all 38 unittest methods are discovered through the exact test_read_export.py filename, with no new filter or skip",
+    "test source uses pathlib, TemporaryDirectory, sys.executable and isolated subprocesses with ten-second timeouts; fixtures use standard-library ZIP/CSV/JSON/bytes APIs",
+    "non-ASCII JSON fixtures are encoded as UTF-8 or escaped JSON; CSV newline behavior is controlled; no shell-specific subprocess command or symlink privilege requirement found",
+    "ZIP type assertions use explicit archive metadata and multiple creator IDs rather than assuming POSIX host behavior",
+    "existing shared ci.yml Linux unit-test command remains unchanged"
+  ],
+  "static_checks": {
+    "YAML parse": "PASS",
+    "Python AST/compile source checks": "PASS",
+    "unittest methods": 38,
+    "repository action pin/permission guard": "PASS"
+  },
+  "tests_executed_by_reviewer": [],
+  "remaining_gates": [
+    "root local execution receipt remains separate",
+    "provider execution of all three native jobs at exact published source"
+  ],
+  "provider_execution_claim": "none; source review is not a native platform pass"
+}

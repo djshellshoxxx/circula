@@ -2,13 +2,13 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // Dual control of administrator adjustments (SEC-011): the pending list and
@@ -25,6 +25,7 @@ func init() {
 type pendingRow struct {
 	ID, Target, Proposer, Decider string
 	Dir, Amount, Reason, Status   string
+	AmountMinor                   int64
 	RelatedTxID                   string
 	Created, Expires              time.Time
 	Expired                       bool
@@ -33,9 +34,28 @@ type pendingRow struct {
 }
 
 type pendingData struct {
-	Rows      []pendingRow
-	Next      string
-	Threshold string // "" when dual control is off
+	Rows           []pendingRow
+	Next           string
+	Threshold      string // "" when dual control is off
+	ThresholdMinor int64
+}
+
+// StatusText is display text only; eligibility continues to use the stored code.
+func (p pendingRow) StatusText() string {
+	switch p.Status {
+	case string(domain.PendingOpen):
+		return messages.Text("admin.adjust.status.pending")
+	case string(domain.PendingApproved):
+		return messages.Text("admin.adjust.status.approved")
+	case string(domain.PendingRejected):
+		return messages.Text("admin.adjust.status.rejected")
+	case string(domain.PendingCancelled):
+		return messages.Text("admin.adjust.status.cancelled")
+	case string(domain.PendingExpired):
+		return messages.Text("admin.adjust.status.expired")
+	default:
+		return p.Status
+	}
 }
 
 var pendingFilters = map[string]domain.PendingStatus{
@@ -73,13 +93,14 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 	d := &pendingData{}
 	if t := c.Net.Policy.DualControlThreshold; t > 0 {
 		d.Threshold = domain.FormatAmount(t, dec)
+		d.ThresholdMinor = t
 	}
 	for _, x := range rows {
 		row := pendingRow{ID: x.ID, Target: nm.of(x.Target), Proposer: nm.of(x.Proposer), Amount: domain.FormatAmount(x.Amount, dec),
-			Reason: x.Reason, RelatedTxID: x.RelatedTxID, Status: string(x.Status), Created: x.CreatedAt, Expires: x.ExpiresAt, Expired: !now.Before(x.ExpiresAt)}
-		row.Dir = "Credit (balance goes up)"
+			AmountMinor: x.Amount, Reason: x.Reason, RelatedTxID: x.RelatedTxID, Status: string(x.Status), Created: x.CreatedAt, Expires: x.ExpiresAt, Expired: !now.Before(x.ExpiresAt)}
+		row.Dir = messages.Text("admin.adjust.credit")
 		if x.Direction == string(service.AdjustDebit) {
-			row.Dir = "Debit (balance goes down)"
+			row.Dir = messages.Text("admin.adjust.debit")
 		}
 		if x.DecidedBy != "" {
 			row.Decider = nm.of(x.DecidedBy)
@@ -95,7 +116,7 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 	if len(rows) == 100 {
 		d.Next = rows[99].ID
 	}
-	p.Title, p.D = "Adjustments awaiting approval", d
+	p.Title, p.D = messages.Text("admin.adjust.pending_title"), d
 	if p.V == nil {
 		p.V = map[string]string{}
 	}
@@ -103,11 +124,15 @@ func (s *server) renderPending(w http.ResponseWriter, r *http.Request, c *rc, st
 	s.render(w, r, c, "admin_adjust_pending", st, p)
 }
 
-var pendingVerbs = map[string]string{"approve": "approved", "reject": "rejected", "cancel": "cancelled"}
+var pendingMessages = map[string]string{
+	"approve": "admin.adjust.request_approved",
+	"reject":  "admin.adjust.request_rejected",
+	"cancel":  "admin.adjust.request_cancelled",
+}
 
 func (s *server) pendingAct(w http.ResponseWriter, r *http.Request, c *rc) {
 	action, id := r.PathValue("action"), r.PathValue("id")
-	done, ok := pendingVerbs[action]
+	done, ok := pendingMessages[action]
 	if !ok {
 		s.fail(w, r, domain.NotFound("page"))
 		return
@@ -123,7 +148,7 @@ func (s *server) pendingAct(w http.ResponseWriter, r *http.Request, c *rc) {
 			var pa *domain.PendingAdjustment
 			pa, err = s.svc.GetPendingAdjustment(r.Context(), c.actor, c.netID(), id)
 			if err == nil && !secretEqual(r.PostFormValue("review_proof"), s.pendingApprovalProof(c, pa)) {
-				err = domain.Invalid("approval", "review this adjustment again before confirming; nothing changed")
+				err = domain.Invalid("approval", messages.Text("admin.adjust.review_again"))
 			}
 			if err == nil {
 				_, err = s.svc.ApproveAdjustment(r.Context(), c.actor, c.netID(), id)
@@ -144,9 +169,9 @@ func (s *server) pendingAct(w http.ResponseWriter, r *http.Request, c *rc) {
 		sum, fe, handled := c.refuse(err)
 		switch domain.CodeOf(err) {
 		case domain.CodeForbidden:
-			sum, handled = "Not done. You cannot decide this request: it needs a different administrator, and never the member it adjusts. Nothing changed.", true
+			sum, handled = messages.Text("admin.adjust.forbidden"), true
 		case domain.CodeInvalidState:
-			sum, handled = "Not done. This request has expired or was already decided. Nothing changed. The list below shows its current state.", true
+			sum, handled = messages.Text("admin.adjust.closed"), true
 		}
 		if !handled {
 			s.fail(w, r, err)
@@ -156,7 +181,7 @@ func (s *server) pendingAct(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.renderPending(w, r, c, http.StatusConflict, p)
 		return
 	}
-	s.setFlash(w, r, fmt.Sprintf("Adjustment request %s.", done))
+	s.setFlash(w, r, messages.Text(done))
 	http.Redirect(w, r, c.base()+"/admin/adjustments/pending", http.StatusSeeOther)
 }
 
@@ -179,31 +204,31 @@ func (s *server) pendingApprovalReview(w http.ResponseWriter, r *http.Request, c
 		return err
 	}
 	if pa.Status != domain.PendingOpen || !s.opts.Clock.Now().Before(pa.ExpiresAt) {
-		return domain.InvalidState("this request has expired or was already decided")
+		return domain.InvalidState("%s", messages.Text("admin.adjust.closed_detail"))
 	}
 	allowed, err := s.svc.DecidableAdjustments(r.Context(), c.actor, c.netID(), []string{id})
 	if err != nil {
 		return err
 	}
 	if !allowed[id] {
-		return domain.Forbidden("a different independent administrator must decide this request")
+		return domain.Forbidden("%s", messages.Text("admin.adjust.independent_detail"))
 	}
 	b, err := s.svc.AdminGetMemberBalance(r.Context(), c.actor, c.netID(), pa.Target)
 	if err != nil {
 		return err
 	}
-	delta, direction := pa.Amount, "Credit (balance goes up)"
+	delta, direction := pa.Amount, messages.Text("admin.adjust.credit")
 	if pa.Direction == string(service.AdjustDebit) {
-		delta, direction = -pa.Amount, "Debit (balance goes down)"
+		delta, direction = -pa.Amount, messages.Text("admin.adjust.debit")
 	}
 	after, ok := domain.AddBounded(b.Balance, delta)
 	if !ok {
-		return domain.Invalid("amount", "the resulting balance would exceed the supported range")
+		return domain.Invalid("amount", messages.Text("admin.adjust.range_detail"))
 	}
 	names, pol := c.memberNames(), c.Net.Policy
 	d := &pendingApprovalData{ID: id, Proposer: names.of(pa.Proposer), Proof: s.pendingApprovalProof(c, pa),
-		adjustReview: adjustReview{Name: names.of(pa.Target), Dir: direction, Amount: domain.FormatAmount(pa.Amount, pol.Decimals), Reason: pa.Reason, RelatedTxID: pa.RelatedTxID,
+		adjustReview: adjustReview{Name: names.of(pa.Target), Dir: direction, Amount: domain.FormatAmount(pa.Amount, pol.Decimals), AmountMinor: pa.Amount, Reason: pa.Reason, RelatedTxID: pa.RelatedTxID,
 			Before: makeBalance(b.Balance, pol.Decimals, pol.CurrencyName), After: makeBalance(after, pol.Decimals, pol.CurrencyName)}}
-	s.render(w, r, c, "admin_adjust_approve", 200, &page{Title: "Review adjustment approval", D: d})
+	s.render(w, r, c, "admin_adjust_approve", 200, &page{Title: messages.Text("admin.adjust.approval_title"), D: d})
 	return nil
 }

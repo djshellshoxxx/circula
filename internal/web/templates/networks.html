@@ -1,8 +1,10 @@
 {{define "content"}}
 {{if .D}}
-<ul class="rows">{{range .D}}<li><a href="/n/{{.Slug}}">{{.Name}}</a> <span class="tag">{{.Status}}</span></li>{{end}}</ul>
+<ul class="rows">{{range .D}}<li><a href="/n/{{.Slug}}">{{.Name}}</a> <span class="tag">{{template "network-picker-status" .Status}}</span></li>{{end}}</ul>
 {{else}}
-<p>You are not a member of any network yet. Open an invitation link from a network administrator to join one, or start your own.</p>
+<p>{{msg "onboarding.networks.empty"}}</p>
 {{end}}
-<div class="actions"><a class="btn" href="/setup">Create a network</a></div>
+<div class="actions"><a class="btn" href="/setup">{{msg "onboarding.networks.create"}}</a></div>
 {{end}}
+
+{{define "network-picker-status"}}{{if eq . "pending"}}{{msg "onboarding.networks.status.pending"}}{{else if eq . "active"}}{{msg "onboarding.networks.status.active"}}{{else if eq . "suspended"}}{{msg "onboarding.networks.status.suspended"}}{{else if eq . "departed"}}{{msg "onboarding.networks.status.departed"}}{{else}}{{.}}{{end}}{{end}}

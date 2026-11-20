@@ -1,21 +1,21 @@
 {{define "content"}}
 {{with .D}}
-<p>Trade: {{.Row.Text}} ({{.Row.Status}}). {{if .Deadline}}You can open a dispute on this trade until {{.Deadline}}.{{else}}Only a completed trade can be disputed.{{end}} Opening a dispute does not change any balance.</p>
+<p>{{msg "dispute.form.trade" .Row.Text .Row.Status}} {{if .Deadline}}{{with msgAround "dispute.form.deadline"}}{{.Before}}{{$.D.Deadline}}{{.After}}{{end}}{{else}}{{msg "dispute.form.completed_only"}}{{end}} {{msg "dispute.form.no_balance_change"}}</p>
 {{if .Confirm}}
-<dl class="kv"><dt>Reason</dt><dd>{{categoryLabel ($.Val "category")}}</dd><dt>Your statement</dt><dd>{{$.Val "statement"}}</dd>
-<dt>Effect</dt><dd>The trade will be marked Disputed. Your balance and available credit do not change until a reviewer decides.</dd></dl>
+<dl class="kv"><dt>{{msg "dispute.reason"}}</dt><dd>{{categoryLabel ($.Val "category")}}</dd><dt>{{msg "dispute.your_statement"}}</dt><dd>{{$.Val "statement"}}</dd>
+<dt>{{msg "dispute.effect"}}</dt><dd>{{msg "dispute.form.effect"}}</dd></dl>
 <form method="post" action="/n/{{$.Slug}}/trades/{{.TxID}}/dispute">
   {{template "csrf" $}}{{template "idem" $}}
   <input type="hidden" name="category" value="{{$.Val "category"}}"><input type="hidden" name="statement" value="{{$.Val "statement"}}">
-  <div class="actions"><button type="submit" name="step" value="confirm">Open dispute</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+  <div class="actions"><button type="submit" name="step" value="confirm">{{msg "dispute.open_action"}}</button> <button type="submit" name="step" value="back" class="secondary">{{msg "dispute.back_edit"}}</button></div>
 </form>
 {{else}}
 <form method="post" action="/n/{{$.Slug}}/trades/{{.TxID}}/dispute" novalidate>
   {{template "csrf" $}}{{template "idem" $}}
   <input type="hidden" name="step" value="review">
-  {{template "select" dict "P" $ "Name" "category" "Label" "Reason" "Opts" .Cats}}
-  {{template "field" dict "P" $ "Name" "statement" "Label" "What went wrong?" "Hint" "Up to 2000 characters. The other party and the reviewer will read this." "Type" "textarea" "Max" 2000 "Req" true}}
-  <div class="actions"><button type="submit">Review dispute</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.TxID}}">Cancel</a></div>
+  {{template "select" dict "P" $ "Name" "category" "Label" (msg "dispute.reason") "Opts" .Cats}}
+  {{template "field" dict "P" $ "Name" "statement" "Label" (msg "dispute.statement_label") "Hint" (msg "dispute.statement_hint") "Type" "textarea" "Max" 2000 "Req" true}}
+  <div class="actions"><button type="submit">{{msg "dispute.review_action"}}</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.TxID}}">{{msg "dispute.cancel"}}</a></div>
 </form>
 {{end}}
 {{end}}

@@ -1,0 +1,12 @@
+=== RUN   TestLoadConcurrentTrades
+    loadtest_test.go:189: CONFIG workers=4 members=20 trades_per_worker=25 attempted=100
+    loadtest_test.go:190: RESULT elapsed=1.11s completed_trades=100 refused_insufficient_credit=0 committed_write_ops=200
+    loadtest_test.go:191: RESULT throughput trades/s=90.0 write_ops/s=179.9
+    loadtest_test.go:192: RESULT unavailable_errors=0 retries=0 gave_up=0 unexpected_errors=0
+    loadtest_test.go:197: RESULT latency propose                p50=18.934408ms p95=46.872425ms p99=82.178945ms max=82.178945ms
+    loadtest_test.go:197: RESULT latency accept                 p50=20.472821ms p95=39.083601ms p99=50.266664ms max=50.266664ms
+    loadtest_test.go:197: RESULT latency trade(propose+accept)  p50=40.61924ms p95=80.45132ms p99=112.561972ms max=112.561972ms
+    loadtest_test.go:199: RESULT ledger_ok=true sum_of_member_balances=0
+--- PASS: TestLoadConcurrentTrades (1.46s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	1.491s

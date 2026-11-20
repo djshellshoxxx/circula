@@ -12,3 +12,71 @@ paths = ['''^e2e/secfixture\.js$''']
 description = "Synthetic canary values (marker Zq81canary) used by the SEC-020 log-redaction test; never real credentials"
 regexTarget = "match"
 regexes = ['''Zq81(?i:canary)''']
+
+# BEGIN verified evidence exceptions (checked by scripts/check_gitleaks_config.py)
+# Keep every exception conjunctive: the exact rule, document, and value must match.
+# Provenance and preserved-document checksums: docs/consolidation/evidence/gitleaks-evidence-exceptions-20261119.md.
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "Reproduced source-file SHA-256 digests in the preserved cursor execution record"
+condition = "AND"
+paths = ['''^docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b\.execution\.json$''']
+regexTarget = "secret"
+regexes = [
+    '''^5f84e7b5b011abaa6755f172a9797ff4272240cf7ea74c09928283e846da66d7$''',
+    '''^47c4cb44b4ee0a94bc2343353a482d71fcb961cc9f97a43c7ab0d8cc27c93c02$''',
+    '''^f394f52a25896fef666fe552f478195e12339feecfa78af933167ced472edfbd$''',
+    '''^394b8a828ad79147d108e6e5dec771129c5aca0eb86827e8465fc14eb0045818$''',
+    '''^ef2dde35f33ad4579e25d58c140038a5ade6ac8a5bd7d41e9b11118fd1bad043$''',
+]
+
+[[rules.allowlists]]
+description = "Reproduced source-file SHA-256 digest in the preserved catalogue execution record"
+condition = "AND"
+paths = ['''^docs/audits/evidence/post-snapshot-20261119/core-catalogue-traceability-merged-12af211\.execution\.json$''']
+regexTarget = "secret"
+regexes = ['''^0483dec14f87928801c3de47352683fac000d3fbf15508afc8dbaa57cf22f272$''']
+
+[[rules.allowlists]]
+description = "Four resolved Git commit IDs in the preserved branch dependency map"
+condition = "AND"
+paths = ['''^docs/audits/BRANCH_INVENTORY_2026-11-19\.json$''']
+regexTarget = "secret"
+regexes = [
+    '''^29e46e5016a05a0b633a4cb23cab6a4dea38e1ca$''',
+    '''^82dc18e07f6b22b9c34ef026f833391705b30067$''',
+    '''^dd3e82e27ddb3d1cbf03460e6a5fc879f16691db$''',
+    '''^3fa76cdb590182eaff42fc4044cf3538275eea6b$''',
+]
+
+[[rules.allowlists]]
+description = "One ordinary phrase in the preserved catalogue scope table"
+condition = "AND"
+paths = ['''^docs/consolidation/BRANCH_REFRESH_20261119\.md$''']
+regexTarget = "secret"
+regexes = ['''^CSRF/idempotency$''']
+
+[[rules.allowlists]]
+description = "The same four resolved Git commit IDs in the preserved publication head snapshot"
+condition = "AND"
+paths = ['''^docs/audits/evidence/closing-publication-20261119/remote-heads\.json$''']
+regexTarget = "secret"
+regexes = [
+    '''^29e46e5016a05a0b633a4cb23cab6a4dea38e1ca$''',
+    '''^82dc18e07f6b22b9c34ef026f833391705b30067$''',
+    '''^dd3e82e27ddb3d1cbf03460e6a5fc879f16691db$''',
+    '''^3fa76cdb590182eaff42fc4044cf3538275eea6b$''',
+]
+
+[[rules.allowlists]]
+description = "Resolved baseline Git blob and reproduced source SHA-256 for h_auth.go in the preserved shared-page receipt"
+condition = "AND"
+paths = ['''^docs/consolidation/evidence/shared-pages-receipt\.json$''']
+regexTarget = "secret"
+regexes = [
+    '''^f1e82342b34a96e0855f10e8a83a052621623356$''',
+    '''^c446ae0d278b43607d8ac25fe937ec6f7a61c66b8c38210ba29979f1fda93ebd$''',
+]
+# END verified evidence exceptions

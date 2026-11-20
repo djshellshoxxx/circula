@@ -1,0 +1,140 @@
+{
+  "started_at": "2026-11-19T12:22:49.417788+00:00",
+  "head": "7c21fe9ff3de69dc5daf33f387dce8c6fdbf30ae",
+  "tree": "5dbccaf539a02f08ea100fd1f69bc544409030ae",
+  "command": "CGO_ENABLED=1 GOMAXPROCS=1 GOMEMLIMIT=250MiB GOGC=40 go test -json -p 1 -count=1 -timeout 20m ./...",
+  "checkout": "standalone clone; normal VCS stamping retained",
+  "exit_code": 1,
+  "test_terminal_counts": {
+    "pass": 2528,
+    "skip": 6
+  },
+  "packages": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Action": "pass",
+      "Elapsed": 95.017
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/api",
+      "Action": "pass",
+      "Elapsed": 24.763
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/contract",
+      "Action": "pass",
+      "Elapsed": 5.708
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/domain",
+      "Action": "pass",
+      "Elapsed": 0.113
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "Action": "pass",
+      "Elapsed": 0.003
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "Action": "pass",
+      "Elapsed": 0.004
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/logx",
+      "Action": "pass",
+      "Elapsed": 0.006
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/repository",
+      "Action": "pass",
+      "Elapsed": 0.182
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Action": "pass",
+      "Elapsed": 97.094
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Action": "pass",
+      "Elapsed": 10.79
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Action": "fail",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Action": "pass",
+      "Elapsed": 0.051
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "Action": "pass",
+      "Elapsed": 0.05
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Action": "pass",
+      "Elapsed": 2.154
+    }
+  ],
+  "skipped_tests": [
+    "TestBackupStagingRefusesForeignOwnedParent",
+    "TestBackupWorkLeaseChild",
+    "TestRestoreSwapCrashChild",
+    "TestLoginTimingStatistical",
+    "TestLoadConcurrentTrades",
+    "TestQA010CrashChild"
+  ],
+  "failures": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Test": null
+    }
+  ],
+  "build_events": [
+    {
+      "ImportPath": "github.com/djshellshoxxx/circula/internal/web [github.com/djshellshoxxx/circula/internal/web.test]",
+      "Action": "build-output",
+      "Output": "# github.com/djshellshoxxx/circula/internal/web\n"
+    },
+    {
+      "ImportPath": "github.com/djshellshoxxx/circula/internal/web [github.com/djshellshoxxx/circula/internal/web.test]",
+      "Action": "build-output",
+      "Output": "# [github.com/djshellshoxxx/circula/internal/web]\n"
+    },
+    {
+      "ImportPath": "github.com/djshellshoxxx/circula/internal/web [github.com/djshellshoxxx/circula/internal/web.test]",
+      "Action": "build-output",
+      "Output": "internal/web/h_rereview_decide.go:39:33: non-constant format string in call to github.com/djshellshoxxx/circula/internal/domain.Forbidden\n"
+    },
+    {
+      "ImportPath": "github.com/djshellshoxxx/circula/internal/web [github.com/djshellshoxxx/circula/internal/web.test]",
+      "Action": "build-output",
+      "Output": "internal/web/h_rereview_decide.go:43:50: non-constant format string in call to github.com/djshellshoxxx/circula/internal/domain.InvalidState\n"
+    },
+    {
+      "ImportPath": "github.com/djshellshoxxx/circula/internal/web [github.com/djshellshoxxx/circula/internal/web.test]",
+      "Action": "build-output",
+      "Output": "internal/web/h_rereview_decide.go:69:50: non-constant format string in call to github.com/djshellshoxxx/circula/internal/domain.InvalidState\n"
+    },
+    {
+      "ImportPath": "github.com/djshellshoxxx/circula/internal/web [github.com/djshellshoxxx/circula/internal/web.test]",
+      "Action": "build-fail"
+    }
+  ],
+  "qualification": "Thirteen test packages passed; web was blocked by three non-constant printf-format vet findings, fixed in 40277310094ac16b34969fc3b002b2182983d8b5. This complete command failed."
+}

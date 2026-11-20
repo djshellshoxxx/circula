@@ -1,32 +1,54 @@
 # Remaining Core work and integration gates
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
+## Current continuation
+
+Current integration authority, recovered source, actual test results and next
+actions are recorded in [CORE_VERIFICATION_20261119.md](CORE_VERIFICATION_20261119.md).
+The frozen UI candidate is retained in [CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md)
+and the first batch in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
+Main remains observed at `ead63b5`; published PR #112 at `08d4b00` targets
+PR #109 at `5db3efc`, which targets active PR #90 at `839e869`.
+The frozen UI source passes the complete normal suite (3,080 test/subtest events),
+ledger load smoke, binary and package-level vulnerability checks. Its full race
+run failed in the service package; exact failures and remaining gate states are
+preserved in the current record. The follow-up also carries the reconciled 41-test export reader, passing
+COMMIT acknowledgment-loss regression and exact secret-scanner evidence repair.
+The snapshot below is the historical initial recovery record.
+
+## Historical initial-recovery checkpoint
 
 ## Current candidate
 
-1. Finish broad race/regression, contract, fuzz, browser, static and dependency
-   qualification for the actual candidate tree. Preserve genuine failures and
-   fix repository defects without weakening tests.
-2. Complete the isolated listing/profile/directory and JavaScript catalogue
-   slices, review their diffs, and merge only verified compatible changes into
-   the authoritative candidate.
-3. Publish the candidate through the connected GitHub provider, open/update its
-   PR, and require exact-head CI before merging. The Git CLI can read the
-   repository but its attempted push had no CLI credentials; the authorized
-   GitHub connection supplies the write path.
-4. Refresh the 114-branch snapshot for new or moved heads and give new work an
-   explicit disposition. Preserve the initial exact snapshot as evidence.
-5. Record any actual main merge and re-evaluate pending Core branches.
+1. Complete broad race/regression, contract, fuzz, browser, static and dependency
+   qualification for the actual candidate tree. The combined race attempt on
+   local 5da8bc7 was interrupted by an executor restart; it is not a pass.
+2. Complete and integrate the isolated trade/history and inbox/report catalogue
+   continuations. Listing/profile/directory and JavaScript slices are already
+   integrated in the candidate.
+3. Keep PR #102 current and observe its exact-head CI. The Git CLI lacks write
+   credentials; the authorized connected provider is the working publication
+   path. The cross-platform label is set; the next source update must trigger
+   the full intended matrix.
+4. Keep the additive 120-branch/102-PR refresh current when heads move. Preserve
+   the initial 114-branch evidence unchanged.
+5. Merge only after qualification, record the actual main SHA, and reevaluate
+   pending Core branches. Main remains ead63b5 at this checkpoint.
 
 ## Active independent Core work
 
-- PR #90 owns the broad reviewed Core integration and API-036. It includes five
-  other source PRs plus session, financial, authentication, and dispute fixes.
-  Its head was observed moving during this continuation; always fetch again.
-- PR #96 owns the active cursor-hardening follow-up. Do not duplicate unfinished
-  implementation or merge a tests-only/unfinished state.
-- Review current migration, authorization, bounded inventory, revocation,
-  concurrency, regression and provider evidence before any eventual integration.
+- PR #90 owns API-036 and several reviewed financial/authentication repairs.
+  It must not merge alone: the live-session token-mutation authority gap
+  identified in #99's source review is repaired in descendant #99.
+- PR #101 supersedes closed, unmerged #96. Its latest observed head is
+  baedf4b6670f6bf39ec593978ce38780c5640215. It adds cursor hardening, previous
+  pages, bulk owner-session revocation, MFA challenge invalidation and migration
+  0021. Preserve its active branch and refresh it before integration.
+- PR #99 at the observed 47446b3 combines #90 with token authority, SQLite
+  rollback/migration safeguards and UUIDv7 job allocation. Its COMMENTED source
+  review is not a completed CI gate or an APPROVED review.
+- Reconcile the recorded catalogue/documentation conflicts and session query
+  plan test conflict, then qualify the combined tree. Source-head checks do
+  not qualify a later combination.
 
 ## Safely actionable work still tracked
 

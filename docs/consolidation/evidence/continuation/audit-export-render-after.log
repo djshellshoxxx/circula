@@ -1,0 +1,12 @@
+=== RUN   TestAuditCatalogueDataAndControls
+=== RUN   TestAuditCatalogueDataAndControls/admin_audit
+=== RUN   TestAuditCatalogueDataAndControls/my_audit
+--- PASS: TestAuditCatalogueDataAndControls (0.96s)
+    --- PASS: TestAuditCatalogueDataAndControls/admin_audit (0.57s)
+    --- PASS: TestAuditCatalogueDataAndControls/my_audit (0.39s)
+=== RUN   TestLedgerCheckCatalogueCountsAndFindings
+--- PASS: TestLedgerCheckCatalogueCountsAndFindings (0.73s)
+=== RUN   TestAdminExportsCatalogueControls
+--- PASS: TestAdminExportsCatalogueControls (0.22s)
+PASS
+ok  	command-line-arguments	2.984s

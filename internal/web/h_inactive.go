@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 // GOV-012: administrators see the members the network's inactivity rule flags.
@@ -23,8 +24,8 @@ func (s *server) adminInactive(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	var rows []memberRow
 	for _, m := range ms {
-		rows = append(rows, memberRow{Member: m, Actions: actionsFor(m)})
+		rows = append(rows, newMemberRow(m))
 	}
-	s.render(w, r, c, "admin_inactive", 200, &page{Title: "Inactive members",
+	s.render(w, r, c, "admin_inactive", 200, &page{Title: messages.Text("admin.inactive.title"),
 		D: map[string]any{"Rows": rows, "Days": c.Net.Policy.InactivityDays}})
 }

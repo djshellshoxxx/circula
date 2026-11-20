@@ -1,0 +1,4 @@
+=== RUN   TestSQLiteWALWriteFailureRollsBackAndRecovers
+--- PASS: TestSQLiteWALWriteFailureRollsBackAndRecovers (0.10s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	0.111s

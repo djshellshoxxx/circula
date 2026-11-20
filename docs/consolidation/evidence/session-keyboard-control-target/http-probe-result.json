@@ -1,0 +1,27 @@
+{
+  "source": "e0d27cc7cb73299219439919b260991b824d594a",
+  "binary": "/tmp/circula-ui-e0",
+  "binary_sha256": "b93018a474007d3c2190b169ae9735121f5165632826894b94d4c6919fad3855",
+  "invalid_csrf_status": 403,
+  "session_cookie_unchanged": true,
+  "csrf_cookie_unchanged": true,
+  "original_form_token_unchanged": true,
+  "invalid_response_auth_cookie_names": [],
+  "missing_confirmation_status": 422,
+  "same_name_control_indices": [
+    10,
+    11
+  ],
+  "same_name_control_types": [
+    "link",
+    "checkbox"
+  ],
+  "reload_before_missing_confirmation_preserves_collision": true,
+  "repeated_missing_confirmation_status": 422,
+  "confirmed_post_with_original_token_status": 303,
+  "confirmed_post_location": "/account/sessions",
+  "target_session_api_status": 401,
+  "current_session_api_status": 200,
+  "runtime_seconds": 1.721,
+  "scope": "HTTP and rendered control capture only; no browser, Go build or production change"
+}

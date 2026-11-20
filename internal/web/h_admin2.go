@@ -10,6 +10,7 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 var moneyFields = []string{"default_credit_limit", "max_tx_amount", "signup_grant"}
@@ -50,12 +51,12 @@ func (s *server) policyData(r *http.Request, c *rc) *policyPageData {
 }
 
 func (s *server) policyForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, c, "admin_policy", 200, &page{Title: "Network policy", V: policyValues(c.Net.Policy), D: s.policyData(r, c)})
+	s.render(w, r, c, "admin_policy", 200, &page{Title: messages.Text("admin.policy.title"), V: policyValues(c.Net.Policy), D: s.policyData(r, c)})
 }
 
 func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "Network policy", V: v, D: s.policyData(r, c)}
+	p := &page{Title: messages.Text("admin.policy.title"), V: v, D: s.policyData(r, c)}
 	pol := c.Net.Policy
 	dec := pol.Decimals
 	var fe []fieldErr
@@ -66,7 +67,7 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	for _, f := range moneyFields {
 		n, err := domain.ParseAmount(v[f], dec)
 		if err != nil {
-			fe = append(fe, fieldErr{f, fmt.Sprintf("%s: enter a number with up to %d decimal places, for example %s.", label(f), dec, domain.FormatAmount(1250, dec))})
+			fe = append(fe, fieldErr{f, messages.Text("admin.policy.amount_invalid", dec, label(f), domain.FormatAmount(1250, dec))})
 			continue
 		}
 		*dst[f] = n
@@ -80,7 +81,7 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		n, err := strconv.Atoi(t)
 		if err != nil {
-			fe = append(fe, fieldErr{f, label(f) + ": enter a whole number."})
+			fe = append(fe, fieldErr{f, messages.Text("admin.policy.integer_invalid", label(f))})
 			continue
 		}
 		*d = n
@@ -89,13 +90,13 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	if t := strings.TrimSpace(v["notice_days"]); t != "" {
 		n, err := strconv.Atoi(t)
 		if err != nil {
-			fe = append(fe, fieldErr{"notice_days", "Notice (days): enter a whole number, or leave it empty."})
+			fe = append(fe, fieldErr{"notice_days", messages.Text("admin.policy.notice_invalid")})
 		} else {
 			notice = &n
 		}
 	}
 	if len(fe) > 0 {
-		p.Summary, p.Errors = "Not saved. Fix the problems below. Nothing changed.", fe
+		p.Summary, p.Errors = messages.Text("admin.policy.invalid"), fe
 		s.render(w, r, c, "admin_policy", 422, p)
 		return
 	}
@@ -107,9 +108,9 @@ func (s *server) policyPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if d := s.policyData(r, c); d.Pending != nil {
-		s.setFlash(w, r, "Change announced to members. It takes effect after its notice period; see the scheduled change below.")
+		s.setFlash(w, r, messages.Text("admin.policy.announced"))
 	} else {
-		s.setFlash(w, r, "Policy saved as a new version.")
+		s.setFlash(w, r, messages.Text("admin.policy.saved"))
 	}
 	http.Redirect(w, r, c.base()+"/admin/policy", http.StatusSeeOther)
 }
@@ -121,12 +122,13 @@ type adjustData struct {
 
 type adjustReview struct {
 	Name, Dir, Amount, Reason, RelatedTxID string
+	AmountMinor                            int64
 	Before, After                          balanceVM
 }
 
 // activeMemberOptions lists every active member except the caller, paging without a cap.
 func (c *rc) activeMemberOptions() []option {
-	o := []option{{"", "Choose a member"}}
+	o := []option{{"", messages.Text("admin.adjust.choose_member")}}
 	after := ""
 	for {
 		pg, err := c.s.svc.AdminMemberPage(c.ctx, c.actor, c.netID(), []domain.MemberStatus{domain.MemberActive},
@@ -151,7 +153,7 @@ func (s *server) adjustForm(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 func (s *server) renderAdjust(w http.ResponseWriter, r *http.Request, c *rc, st int, p *page) {
-	p.Title = "Adjustments"
+	p.Title = messages.Text("admin.adjust.title")
 	if d, ok := p.D.(*adjustData); ok {
 		d.Members = c.activeMemberOptions()
 	} else {
@@ -172,11 +174,11 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	var fe []fieldErr
 	name, _ := c.activeOther(v["member_id"])
 	if name == "" {
-		fe = append(fe, fieldErr{"member_id", "Member: choose a member other than yourself."})
+		fe = append(fe, fieldErr{"member_id", messages.Text("admin.adjust.member_required")})
 	}
 	dir := service.AdjustDirection(v["direction"])
 	if dir != service.AdjustCredit && dir != service.AdjustDebit {
-		fe = append(fe, fieldErr{"direction", "Direction: choose credit or debit."})
+		fe = append(fe, fieldErr{"direction", messages.Text("admin.adjust.direction_required")})
 	}
 	amt, err := domain.ParseAmount(v["amount"], dec)
 	if err != nil || amt <= 0 {
@@ -184,16 +186,16 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	reason := strings.TrimSpace(v["reason"])
 	if reason == "" {
-		fe = append(fe, fieldErr{"reason", "Reason: a reason is required for every adjustment. Write why it is needed."})
+		fe = append(fe, fieldErr{"reason", messages.Text("admin.adjust.reason_required")})
 	}
 	if id := v["related_transaction_id"]; id != "" {
 		related, err := s.svc.GetTransaction(r.Context(), c.actor, c.netID(), id)
 		if err != nil || !related.Tx.IsPosted() || !related.Tx.IsParty(v["member_id"]) {
-			fe = append(fe, fieldErr{"related_transaction_id", "Choose a posted transaction involving the adjusted member."})
+			fe = append(fe, fieldErr{"related_transaction_id", messages.Text("admin.adjust.related_required")})
 		}
 	}
 	if len(fe) > 0 {
-		p.Summary, p.Errors = "Not posted. Fix the problems below. Nothing changed.", fe
+		p.Summary, p.Errors = messages.Text("admin.adjust.invalid"), fe
 		s.renderAdjust(w, r, c, 422, p)
 		return
 	}
@@ -202,16 +204,16 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	rv := &adjustReview{Name: name, Amount: domain.FormatAmount(amt, dec), Reason: reason, RelatedTxID: v["related_transaction_id"],
+	rv := &adjustReview{Name: name, Amount: domain.FormatAmount(amt, dec), AmountMinor: amt, Reason: reason, RelatedTxID: v["related_transaction_id"],
 		Before: makeBalance(b.Balance, dec, c.Net.Policy.CurrencyName)}
 	after := b.Balance + amt
-	rv.Dir = "Credit (balance goes up)"
+	rv.Dir = messages.Text("admin.adjust.credit")
 	if dir == service.AdjustDebit {
-		after, rv.Dir = b.Balance-amt, "Debit (balance goes down)"
+		after, rv.Dir = b.Balance-amt, messages.Text("admin.adjust.debit")
 	}
 	rv.After = makeBalance(after, dec, c.Net.Policy.CurrencyName)
 	if step != "confirm" {
-		p.Title, p.D = "Review adjustment", rv
+		p.Title, p.D = messages.Text("admin.adjust.review_title"), rv
 		s.render(w, r, c, "admin_adjust_review", 200, p)
 		return
 	}
@@ -219,7 +221,7 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		Direction: dir, Reason: reason, RelatedTxID: v["related_transaction_id"], IdempotencyKey: idemKey(r)})
 	if err != nil {
 		if sum, f, ok := c.refuse(err); ok {
-			p.Summary, p.Errors, p.Title, p.D = sum, f, "Review adjustment", rv
+			p.Summary, p.Errors, p.Title, p.D = sum, f, messages.Text("admin.adjust.review_title"), rv
 			s.render(w, r, c, "admin_adjust_review", 422, p)
 			return
 		}
@@ -227,11 +229,11 @@ func (s *server) adjustPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	if res.Pending != nil { // SEC-011: nothing is posted until a second administrator approves
-		s.setFlash(w, r, fmt.Sprintf("Adjustment for %s is above the dual-control threshold. Nothing is posted yet: another administrator must approve it before it expires.", name))
+		s.setFlash(w, r, messages.Text("admin.adjust.queued", name))
 		http.Redirect(w, r, c.base()+"/admin/adjustments/pending", http.StatusSeeOther)
 		return
 	}
-	s.setFlash(w, r, fmt.Sprintf("Adjustment posted for %s. Their balance is now %s · %s.", name, rv.After.Signed, rv.After.State))
+	s.setFlash(w, r, messages.Text("admin.adjust.posted", name, rv.After.Signed, rv.After.State))
 	http.Redirect(w, r, c.base()+"/admin/adjust", http.StatusSeeOther)
 }
 
@@ -256,7 +258,7 @@ func (s *server) auditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 		if nm, ok := n.lookup(e.ActorID); ok {
 			who = nm
 		} else if e.ActorType == domain.ActorSystem || who == "" {
-			who = "System"
+			who = messages.Text("admin.audit.system")
 		}
 		rows = append(rows, auditRow{e.Seq, c.when(e.OccurredAt), who, e.Action, e.TargetType + " " + e.TargetID, e.Reason, e.RequestID})
 	}
@@ -264,7 +266,7 @@ func (s *server) auditPage(w http.ResponseWriter, r *http.Request, c *rc) {
 	if len(evs) == 50 {
 		next = strconv.FormatInt(evs[49].Seq, 10)
 	}
-	s.render(w, r, c, "admin_audit", 200, &page{Title: "Audit and checks", D: map[string]any{"Rows": rows, "Next": next},
+	s.render(w, r, c, "admin_audit", 200, &page{Title: messages.Text("admin.audit.title"), D: map[string]any{"Rows": rows, "Next": next},
 		V: map[string]string{"action": q.Get("action")}})
 }
 
@@ -274,11 +276,11 @@ func (s *server) ledgerCheck(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.fail(w, r, err)
 		return
 	}
-	s.render(w, r, c, "admin_check", 200, &page{Title: "Consistency check result", D: rep})
+	s.render(w, r, c, "admin_check", 200, &page{Title: messages.Text("admin.check.title"), D: rep})
 }
 
 func (s *server) exportsPage(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, c, "admin_exports", 200, &page{Title: "Exports", V: map[string]string{"scope": "ledger", "format": "csv"}})
+	s.render(w, r, c, "admin_exports", 200, &page{Title: messages.Text("admin.exports.title"), V: map[string]string{"scope": "ledger", "format": "csv"}})
 }
 
 // zipSink streams export files into one zip response; headers are sent on the

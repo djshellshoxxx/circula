@@ -1,0 +1,10 @@
+=== RUN   TestRestoreDrillScript
+--- PASS: TestRestoreDrillScript (5.87s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	5.895s
+=== RUN   TestSQLiteWALWriteFailureRollsBackAndRecovers
+    sqlite_ioerr_linux_test.go:150: failed WAL size=0, want partial second frame at 6224
+--- FAIL: TestSQLiteWALWriteFailureRollsBackAndRecovers (0.09s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.120s
+FAIL

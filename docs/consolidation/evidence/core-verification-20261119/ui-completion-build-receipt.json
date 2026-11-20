@@ -1,0 +1,14 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "command": [
+    "go",
+    "build",
+    "-p",
+    "1",
+    "-o",
+    "/tmp/circula-ui-e0",
+    "./cmd/circula"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 2.211
+}

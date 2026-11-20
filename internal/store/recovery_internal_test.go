@@ -14,9 +14,9 @@ import (
 )
 
 // storageFaultConnector keeps the real SQLite engine and transaction handling.
-// It fails one driver operation before forwarding it, so tests can exercise
-// recovery from a failed ROLLBACK and a late migration-metadata read error
-// without pretending to qualify physical disk or fsync failures.
+// It can fail one driver operation before forwarding it, or report an error
+// after a real COMMIT succeeds. These are driver-boundary recovery checks,
+// not physical disk, fsync or power-loss qualification.
 type storageFaultConnector struct {
 	driver *sqlite.Driver
 	dsn    string
@@ -26,6 +26,8 @@ type storageFaultConnector struct {
 	rollbackFailures        int
 	statement               string
 	statementErr            error
+	commitAcknowledgmentErr error
+	stats                   CommitFaultStats
 }
 
 func (c *storageFaultConnector) Driver() driver.Driver { return c.driver }
@@ -35,6 +37,9 @@ func (c *storageFaultConnector) Connect(context.Context) (driver.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+	c.mu.Lock()
+	c.stats.Opened++
+	c.mu.Unlock()
 	return &storageFaultConn{Conn: conn, faults: c}, nil
 }
 
@@ -43,30 +48,66 @@ type storageFaultConn struct {
 	faults *storageFaultConnector
 }
 
-func (c *storageFaultConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
+func (c *storageFaultConn) Close() error {
+	err := c.Conn.Close()
 	c.faults.mu.Lock()
+	c.faults.stats.Closed++
+	c.faults.mu.Unlock()
+	return err
+}
+
+func (c *storageFaultConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
+	commit := strings.EqualFold(strings.TrimSpace(query), "COMMIT")
+	rollback := strings.EqualFold(strings.TrimSpace(query), "ROLLBACK")
+	c.faults.mu.Lock()
+	if commit {
+		c.faults.stats.CommitAttempts++
+	}
+	if rollback {
+		c.faults.stats.RollbackAttempts++
+	}
 	var statementErr error
 	if query == c.faults.statement {
 		statementErr = c.faults.statementErr
 		c.faults.statementErr = nil
 	}
+	if statementErr != nil && commit {
+		c.faults.stats.BeforeCommitErrors++
+	}
 	c.faults.mu.Unlock()
 	if statementErr != nil {
 		return nil, statementErr
 	}
-	if strings.EqualFold(strings.TrimSpace(query), "ROLLBACK") {
+	if rollback {
 		c.faults.mu.Lock()
 		err := c.faults.rollback
 		c.faults.rollback = nil
 		if err != nil {
 			c.faults.rollbackFailures++
+			c.faults.stats.RollbackErrors++
 		}
 		c.faults.mu.Unlock()
 		if err != nil {
 			return nil, err
 		}
 	}
-	return c.Conn.(driver.ExecerContext).ExecContext(ctx, query, args)
+	result, err := c.Conn.(driver.ExecerContext).ExecContext(ctx, query, args)
+	c.faults.mu.Lock()
+	defer c.faults.mu.Unlock()
+	if rollback && err != nil {
+		c.faults.stats.RollbackErrors++
+	}
+	if commit && err == nil {
+		c.faults.stats.Commits++
+		if acknowledgmentErr := c.faults.commitAcknowledgmentErr; acknowledgmentErr != nil {
+			// Consume this fault only after SQLite has actually committed. The
+			// ordinary error cannot trigger database/sql's ErrBadConn retry.
+			c.faults.commitAcknowledgmentErr = nil
+			c.faults.stats.AfterCommitErrors++
+			return result, acknowledgmentErr
+		}
+	}
+	return result, err
 }
 
 func (c *storageFaultConn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
@@ -79,11 +120,10 @@ func (c *storageFaultConn) QueryContext(ctx context.Context, query string, args 
 		fault := c.faults.migrationRead
 		c.faults.migrationRead = nil
 		c.faults.mu.Unlock()
-		if fault == nil {
-			return rows, nil
+		if fault != nil {
+			// The query succeeded; inject the read fault through Rows.Next.
+			rows = &storageFaultRows{Rows: rows, err: fault}
 		}
-		// The metadata read fault is deferred until Rows.Next, after one row.
-		return &storageFaultRows{Rows: rows, err: fault}, nil
 	}
 	return rows, nil
 }

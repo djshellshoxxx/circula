@@ -1,0 +1,70 @@
+{
+  "baseline": "0fb5304a2caeb375d1791bf583744ce2a81cc3ba",
+  "method": "Standalone temporary module with exact baseline messages implementation/catalogue and five actual templates; current regression file only. No baseline product files modified.",
+  "command": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-p=1",
+    "./internal/web/messages",
+    "-run",
+    "^TestDispute(DetailCatalogueUnitsAndEscaping|OpeningCatalogueFormControls|CatalogueListAndQueueControls)$",
+    "-count=1"
+  ],
+  "exit_code": 1,
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "400MiB"
+  },
+  "regression_sha256": "01d686dfb9434b2b7408d4c7405cdaa63fd20deb7b166aee7e03ef8340ad3504",
+  "source_blobs": {
+    "go.mod": "39a6ea3664d9c38602ca83090027994f8ed49ca5",
+    "go.sum": "e05d465e814662e651f9e159883cb15518131bff",
+    "internal/web/messages/messages.go": "1785e77b7bf59e936a04e04248666830b2bc2465",
+    "internal/web/messages/en.json": "2701cc2462605f577179e9033f6fe4724f2ca1d4",
+    "internal/web/templates/base.html": "0606ab1dd322ff2f15d0f427c387b418c45e00e5",
+    "internal/web/templates/dispute_form.html": "4944381851da9e17a7af6282ef4fee18f1a11f86",
+    "internal/web/templates/dispute_view.html": "11d94ae2c7c4b0c39de5ec597a76d0e6abcab0dd",
+    "internal/web/templates/disputes.html": "bba52dcae3be1493e2d5a082d1f9445e68889b73",
+    "internal/web/templates/review_queue.html": "2d5d2a053e5776311c9f78bbb85080b3fbdc53fb"
+  },
+  "after": {
+    "command": [
+      "go",
+      "test",
+      "-p=1",
+      "-race",
+      "./internal/web/messages",
+      "-count=1"
+    ],
+    "go": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "environment": {
+      "GOMAXPROCS": "1",
+      "GOMEMLIMIT": "400MiB"
+    },
+    "exit_code": 0,
+    "observed_package_seconds": 1.224,
+    "scope": "Complete messages package, including actual base/dispute template partials; no SQLite compilation or handler/service tests.",
+    "source_sha256": {
+      "internal/web/h_disputes.go": "2dcd55f2cc262af2ead18a27b78f4d5ae063e9033dc89b95d4a0f0f3d004b022",
+      "internal/web/dispute_catalog_test.go": "9e6df2c484a83bb394c72da61e699c1153b840af60cd89fa731997adcbcb63e1",
+      "internal/web/messages/en.json": "9d8bb2163c06d3d7cda09059f9fcd29079d6d488ed1ffe6decf2728fbb2edae2",
+      "internal/web/messages/messages_test.go": "ad03e970adb8efc76712fdaa6f3cdbe1eacc4f21eeffc409c3183c502cfe38f0",
+      "internal/web/messages/dispute_test.go": "fd05143aa6fa21631147b7bf742d538c677b5b1fd49d64c4efb7513687b4e25c",
+      "internal/web/messages/dispute_templates_test.go": "01d686dfb9434b2b7408d4c7405cdaa63fd20deb7b166aee7e03ef8340ad3504",
+      "internal/web/templates/dispute_form.html": "ffebad2f20cdaa6391fc40cb019b3fb8773ec10a3d38af3a931ffa300c95e2c8",
+      "internal/web/templates/dispute_view.html": "1e7a3ee20bb5b6cd191689b1c7d28defab14eea759dec9198db2b6a8951df7c8",
+      "internal/web/templates/disputes.html": "d9a2da2fc94a5c3c3a1996879a462d71cceaeb030410884eb4ea262d35e4e8df",
+      "internal/web/templates/review_queue.html": "10d972ed0f129ddeed83deba09a2abeb7c5b29051af2323b843b9e328c433e0e"
+    }
+  },
+  "catalogue": {
+    "baseline_keys": 859,
+    "added_keys": 117,
+    "result_keys": 976,
+    "changed_baseline_values": 0
+  },
+  "pending": [
+    "Run internal/web package regressions on the combined candidate; newly added enum/outcome tests have not been executed in this resource-constrained slice.",
+    "Regenerate traceability only after merging concurrent slices."
+  ]
+}

@@ -1,0 +1,20 @@
+level=info msg="golangci-lint has version 2.15.0 built with go1.27.0 from 25c5369a on 2026-10-16T11:03:09Z"
+level=info msg="[config_reader] Config search paths: [./ /workspace/scratch/93aeb012c206/core-qualification /workspace/scratch/93aeb012c206 /workspace/scratch /workspace / /home/agent]"
+level=info msg="[config_reader] Used config file .golangci.yml"
+level=info msg="[config_reader] Module name \"github.com/djshellshoxxx/circula\""
+level=info msg="[goenv] Read go env for 7.920412ms: map[string]string{\"GOCACHE\":\"/tmp/circula-go-cache-93\", \"GOROOT\":\"/workspace/scratch/beb70d57deba/toolchain/go\"}"
+level=info msg="[lintersdb] Active 12 linters: [bodyclose depguard errcheck gofmt gosec govet ineffassign misspell nilerr staticcheck unconvert unused]"
+level=info msg="[loader] Go packages loading at mode 8767 (types_sizes|files|name|compiled_files|deps|exports_file|imports) took 48.224124663s"
+level=info msg="[runner/filename_unadjuster] Pre-built 0 adjustments in 192.15571ms"
+level=info msg="[linters_context/goanalysis] analyzers took 1m30.394403517s with top 10 stages: gosec: 17.758458556s, buildir: 17.009812404s, buildssa: 4.546557644s, unused: 4.334754762s, printf: 3.958198869s, gofmt: 3.72870915s, S1038: 3.708794209s, unconvert: 3.688715504s, nilness: 2.67037882s, misspell: 2.417840304s"
+level=info msg="[runner/exclusion_rules] Skipped 106 issues by rules: [Path: \"_test\\\\.go\", Linters: \"gosec\"]"
+level=info msg="[runner] Issues before processing: 132, after processing: 2"
+level=info msg="[runner] Processors filtering stat (in/out): invalid_issue: 132/132, exclusion_paths: 132/132, diff: 2/2, max_from_linter: 2/2, path_shortener: 2/2, severity-rules: 2/2, sort_results: 2/2, cgo: 132/132, filename_unadjuster: 132/132, generated_file_filter: 132/132, exclusion_rules: 132/26, max_same_issues: 2/2, source_code: 2/2, path_relativity: 132/132, nolint_filter: 26/2, fixer: 2/2, uniq_by_line: 2/2, max_per_file_from_linter: 2/2, path_absoluter: 132/132, path_prettifier: 2/2"
+level=info msg="[runner] processing took 18.711699ms with stages: nolint_filter: 14.662236ms, generated_file_filter: 3.561209ms, path_relativity: 259.667µs, exclusion_rules: 132.368µs, source_code: 57.297µs, cgo: 10.69µs, invalid_issue: 9.317µs, path_absoluter: 5.79µs, uniq_by_line: 2.495µs, sort_results: 2.414µs, max_same_issues: 1.673µs, filename_unadjuster: 1.613µs, fixer: 1.033µs, exclusion_paths: 983ns, path_shortener: 841ns, diff: 781ns, max_per_file_from_linter: 450ns, path_prettifier: 352ns, max_from_linter: 260ns, severity-rules: 230ns"
+level=info msg="[runner] linters took 29.603816656s with stages: goanalysis_metalinter: 29.585009968s"
+2 issues:
+* nilerr: 1
+* staticcheck: 1
+level=info msg="File cache stats: 2 entries of total size 19.1KiB"
+level=info msg="Memory: 780 samples, avg is 340.0MB, max is 1215.5MB"
+level=info msg="Execution took 1m18.029240574s"

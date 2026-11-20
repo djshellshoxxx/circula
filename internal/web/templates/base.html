@@ -37,7 +37,7 @@
   {{if .SnapshotAt}}{{$fresh := msgAround "freshness.snapshot"}}<p id="figure-freshness">{{$fresh.Before}}{{.SnapshotAt}}{{$fresh.After}}</p>
   <p id="figure-stale" class="notice" role="status" hidden data-offline-message="{{msg "freshness.offline" "{snapshot}"}}" data-history-message="{{msg "freshness.history" "{snapshot}"}}"></p>{{end}}
   {{with .Flash}}<div class="flash" role="status" id="flash" tabindex="-1">{{.}}</div>{{end}}
-  {{if .FrozenSince}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> This network is read-only while its ledger is being checked, since {{.FrozenSince}}. You can read balances and history; anything that would change them is refused until the check passes.</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{.}}</div>{{end}}{{end}}
+  {{if .FrozenSince}}{{$frozen := msgAround "notice.frozen"}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{$frozen.Before}}{{.FrozenSince}}{{$frozen.After}}</div>{{else}}{{with .Notice}}<div class="notice" role="note"><strong>{{msg "common.notice"}}</strong> {{.}}</div>{{end}}{{end}}
   {{with .Warn}}<div class="notice" role="note"><strong>{{msg "balance.limit_notice"}}</strong> {{.}}</div>{{end}}
   {{if or .Errors .Summary}}
   <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">

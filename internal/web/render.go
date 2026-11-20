@@ -75,13 +75,17 @@ func (p *page) Err(k string) string {
 
 func mustLoadTemplates() map[string]*pageTemplate {
 	funcs := template.FuncMap{
-		"msg":       messages.Text,
-		"msgAround": messages.Around,
-		"amt":       func(v int64, dec int) string { return minus(domain.FormatAmount(v, dec)) },
-		"plain":     func(v int64, dec int) string { return domain.FormatAmount(abs64(v), dec) },
-		"unit":      unitFor,
-		"time":      fmtTime,
-		"upper":     strings.ToUpper,
+		"msg":                 messages.Text,
+		"msgAround":           messages.Around,
+		"msgAroundCount":      messages.AroundCount,
+		"msgAroundTwo":        messages.AroundTwo,
+		"msgAroundTwoVersion": messages.AroundTwoVersion,
+		"msgAroundTwoCount":   messages.AroundTwoCount,
+		"amt":                 func(v int64, dec int) string { return minus(domain.FormatAmount(v, dec)) },
+		"plain":               func(v int64, dec int) string { return domain.FormatAmount(abs64(v), dec) },
+		"unit":                unitFor,
+		"time":                fmtTime,
+		"upper":               strings.ToUpper,
 		"dict": func(kv ...any) map[string]any {
 			m := map[string]any{}
 			for i := 0; i+1 < len(kv); i += 2 {
@@ -168,7 +172,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 	t := s.pages[name]
 	if t == nil {
 		s.log.Error("web template missing", "request_id", reqID(r), "template", name)
-		http.Error(w, "internal error", 500)
+		http.Error(w, messages.Text("error.fallback.internal"), 500)
 		return
 	}
 	p.CSRF = s.csrfToken(r)
@@ -207,7 +211,7 @@ func (s *server) render(w http.ResponseWriter, r *http.Request, c *rc, name stri
 	var buf bytes.Buffer
 	if err := t.ExecuteTemplate(&buf, "base", p); err != nil {
 		s.log.Error("web render failed", "request_id", p.ReqID, "template", name, "err", err)
-		http.Error(w, "internal error, reference "+p.ReqID, 500)
+		http.Error(w, messages.Text("error.fallback.reference", p.ReqID), 500)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -279,26 +283,26 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 	switch status {
 	case errCSRF:
 		st = 403
-		p.Title, p.Text = "Form expired", "Not sent. This form could not be verified, usually because the page was open for a long time or cookies are blocked. Nothing changed. Go back, reload the page and try again."
+		p.Title, p.Text = messages.Text("error.csrf.title"), messages.Text("error.csrf.body")
 	case 403:
-		p.Title, p.Text = "No access", "You do not have access to this page."
+		p.Title, p.Text = messages.Text("error.forbidden.title"), messages.Text("error.forbidden.body")
 	case 404:
-		p.Title, p.Text = "Page not found", "We could not find that page. It may not exist, or you may not have access to it."
+		p.Title, p.Text = messages.Text("error.not_found.title"), messages.Text("error.not_found.body")
 	case 422:
-		p.Title, p.Text = "Request not accepted", "One or more values in this request are invalid. Nothing changed. Go back, check the values and try again."
+		p.Title, p.Text = messages.Text("error.invalid.title"), messages.Text("error.invalid.body")
 	case 429:
-		p.Title, p.Text = "Too many attempts", "Too many attempts. Wait a minute and try again. Nothing changed."
+		p.Title, p.Text = messages.Text("error.rate_limited.title"), messages.Text("error.rate_limited.body")
 	case 503:
 		w.Header().Set("Retry-After", "5")
-		p.Title, p.Text = "Busy, try again", "The service is busy and could not complete the request. Nothing changed. Wait a few seconds and try again."
+		p.Title, p.Text = messages.Text("error.busy.title"), messages.Text("error.busy.body")
 	case errFrozen:
 		st = 423
-		p.Title, p.Text = "Network read-only", "This network is read-only because its ledger failed an integrity check. Balances and history can still be viewed. Nothing was changed. The administrator has been alerted; try again later."
+		p.Title, p.Text = messages.Text("error.frozen.title"), messages.Text("error.frozen.body")
 	case 409:
-		p.Title, p.Text = "Conflict", "That cannot be done in the current state. Nothing changed. Reload the page to see the latest state."
+		p.Title, p.Text = messages.Text("error.conflict.title"), messages.Text("error.conflict.body")
 	default:
 		st = 500
-		p.Title, p.Text = "Something went wrong", "The server could not complete the request. Nothing is shown here about the cause. If you contact the administrator, quote the reference below."
+		p.Title, p.Text = messages.Text("error.internal.title"), messages.Text("error.internal.body")
 	}
 	p.Status = st
 	s.render(w, r, nil, "error", st, p)
@@ -320,7 +324,7 @@ func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
 		s.mustChange(w, r)
 	case domain.CodeTermsRequired: // GOV-009: show the terms, then come back
 		if slug := r.PathValue("slug"); slug != "" {
-			s.setFlash(w, r, "The network's rules and terms changed. Please read and accept them before you trade.")
+			s.setFlash(w, r, messages.Text("notice.terms_changed"))
 			http.Redirect(w, r, "/n/"+url.PathEscape(slug)+"/terms?next="+url.QueryEscape("/n/"+slug+"/trades"), http.StatusSeeOther)
 			return
 		}

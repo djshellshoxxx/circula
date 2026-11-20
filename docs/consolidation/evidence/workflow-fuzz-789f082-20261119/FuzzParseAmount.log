@@ -1,0 +1,24 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/21 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 21/21 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 50621 (16872/sec), new interesting: 32 (total: 53)
+fuzz: elapsed: 6s, execs: 108429 (19246/sec), new interesting: 40 (total: 61)
+fuzz: elapsed: 9s, execs: 153661 (15096/sec), new interesting: 47 (total: 68)
+fuzz: elapsed: 12s, execs: 198673 (15004/sec), new interesting: 48 (total: 69)
+fuzz: elapsed: 15s, execs: 259513 (20278/sec), new interesting: 49 (total: 70)
+fuzz: elapsed: 18s, execs: 321977 (20824/sec), new interesting: 49 (total: 70)
+fuzz: elapsed: 21s, execs: 400553 (26191/sec), new interesting: 51 (total: 72)
+fuzz: elapsed: 24s, execs: 452352 (17268/sec), new interesting: 52 (total: 73)
+fuzz: elapsed: 27s, execs: 500195 (15943/sec), new interesting: 52 (total: 73)
+fuzz: elapsed: 30s, execs: 543561 (14455/sec), new interesting: 54 (total: 75)
+fuzz: elapsed: 33s, execs: 586765 (14403/sec), new interesting: 54 (total: 75)
+fuzz: elapsed: 36s, execs: 637737 (16994/sec), new interesting: 54 (total: 75)
+fuzz: elapsed: 39s, execs: 685373 (15858/sec), new interesting: 54 (total: 75)
+fuzz: elapsed: 42s, execs: 734709 (16464/sec), new interesting: 55 (total: 76)
+fuzz: elapsed: 45s, execs: 789720 (18334/sec), new interesting: 60 (total: 81)
+fuzz: elapsed: 48s, execs: 848937 (19738/sec), new interesting: 60 (total: 81)
+fuzz: elapsed: 51s, execs: 893787 (14951/sec), new interesting: 60 (total: 81)
+fuzz: elapsed: 54s, execs: 948169 (18128/sec), new interesting: 64 (total: 85)
+fuzz: elapsed: 57s, execs: 995753 (15864/sec), new interesting: 64 (total: 85)
+fuzz: elapsed: 57s, execs: 1000000 (49205/sec), new interesting: 64 (total: 85)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/domain	57.093s

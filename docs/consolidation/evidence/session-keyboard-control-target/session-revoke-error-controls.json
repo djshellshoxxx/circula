@@ -1,0 +1,171 @@
+{
+  "provenance": {
+    "source": "e0d27cc7cb73299219439919b260991b824d594a",
+    "method": "Actual HTTP session-revocation validation response, status422; dynamic target selector replaced with fixture",
+    "purpose": "HTML control candidates in DOM order, including hidden ancestors; captured by HTMLParser, without browser layout or navigation"
+  },
+  "controls": [
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "class": "skip",
+        "href": "#main"
+      },
+      "text": "Skip to main content",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/"
+      },
+      "text": "Circula",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/"
+      },
+      "text": "All networks",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/account/time-zone"
+      },
+      "text": "Time zone",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/account/password"
+      },
+      "text": "Password",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/account/security"
+      },
+      "text": "Security",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "BUTTON",
+      "type": "",
+      "attributes": {
+        "type": "submit",
+        "class": "link"
+      },
+      "text": "Sign out",
+      "form": 1,
+      "label": ""
+    },
+    {
+      "tagName": "BUTTON",
+      "type": "",
+      "attributes": {
+        "type": "button",
+        "id": "session-extend"
+      },
+      "text": "Stay signed in",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "id": "session-login",
+        "href": "/login"
+      },
+      "text": "Sign in again",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "BUTTON",
+      "type": "",
+      "attributes": {
+        "type": "button",
+        "id": "session-dismiss",
+        "class": "link"
+      },
+      "text": "Dismiss",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "#f-confirm"
+      },
+      "text": "I want to end this session.",
+      "form": null,
+      "label": ""
+    },
+    {
+      "tagName": "INPUT",
+      "type": "checkbox",
+      "attributes": {
+        "type": "checkbox",
+        "id": "f-confirm",
+        "name": "confirm",
+        "value": "yes",
+        "required": null,
+        "aria-invalid": "true",
+        "aria-describedby": "e-confirm"
+      },
+      "text": "",
+      "form": 2,
+      "label": "I want to end this session."
+    },
+    {
+      "tagName": "BUTTON",
+      "type": "",
+      "attributes": {
+        "type": "submit"
+      },
+      "text": "End session",
+      "form": 2,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/account/sessions"
+      },
+      "text": "Keep session",
+      "form": 2,
+      "label": ""
+    },
+    {
+      "tagName": "A",
+      "type": "",
+      "attributes": {
+        "href": "/help"
+      },
+      "text": "Help: credits, balances and statuses",
+      "form": null,
+      "label": ""
+    }
+  ]
+}

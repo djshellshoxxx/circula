@@ -1,0 +1,28 @@
+{
+  "head_before": "e0d27cc7cb73299219439919b260991b824d594a",
+  "tree_before": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "status_before": "",
+  "command": [
+    "/tmp/circula-tools-93/bin/govulncheck",
+    "-scan=package",
+    "./..."
+  ],
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "400MiB",
+    "GOGC": "40",
+    "CGO_ENABLED": "1",
+    "GOCACHE": "/dev/shm/circula-runtime-cache-93",
+    "GOMODCACHE": "/tmp/circula-go-modcache-93",
+    "TMPDIR": "/dev/shm/circula-normal-work-93",
+    "GOFLAGS": "-p=1"
+  },
+  "start_utc": "2026-11-19T13:47:01.181600+00:00",
+  "scope": "package-level source scan; not a default symbol/call-graph scan",
+  "exit_code": 0,
+  "elapsed_seconds": 13.675,
+  "end_utc": "2026-11-19T13:47:14.856800+00:00",
+  "head_after": "e0d27cc7cb73299219439919b260991b824d594a",
+  "status_after": "",
+  "log_sha256": "3016e51e4eac0d421674d2128bbbdefb2924b4646e0c14a1ab034977ad73fae5"
+}

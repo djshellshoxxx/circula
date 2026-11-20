@@ -1,6 +1,21 @@
 # Core consolidation security review
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
+## Current continuation
+
+Current integration authority, recovered source, actual test results and next
+actions are recorded in [CORE_VERIFICATION_20261119.md](CORE_VERIFICATION_20261119.md).
+The frozen UI candidate is retained in [CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md)
+and the first batch in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
+Main remains observed at `ead63b5`; published PR #112 at `08d4b00` targets
+PR #109 at `5db3efc`, which targets active PR #90 at `839e869`.
+The frozen UI source passes the complete normal suite (3,080 test/subtest events),
+ledger load smoke, binary and package-level vulnerability checks. Its full race
+run failed in the service package; exact failures and remaining gate states are
+preserved in the current record. The follow-up also carries the reconciled 41-test export reader, passing
+COMMIT acknowledgment-loss regression and exact secret-scanner evidence repair.
+The snapshot below is the historical initial recovery record.
+
+## Historical initial-recovery checkpoint
 
 Baseline: `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`.
 Candidate: `integration/core-recovery-20261119`.
@@ -72,3 +87,18 @@ policy HOLDs were disabled. No production data was used. Full candidate race,
 dependency/security, browser, and integration outcomes are tracked separately
 in TEST_RESULTS.md. This AI-assisted review does not close SEC-033's independent
 external review gate.
+
+## Committed-response verification and concurrent security work
+
+The follow-up `TestWebExportCommittedReadFailureAbortsHTTP` uses the complete
+operations/web middleware chain and a real TCP client. In each CSV/JSON case,
+the client receives 4 KiB before releasing a controlled repository read fault.
+The original main revision reports a normal completed body; the repair yields
+`io.ErrUnexpectedEOF` and an invalid ZIP. This verifies transport interruption,
+not only an in-process panic sentinel.
+
+The #99 source review (5973679547) records a separate live-session authority
+gap in #90's token mutation path. That repair is in #99, not this independent
+export candidate. #90 must not merge alone before the repair. None of these
+source reviews replaces the pending combined current-head security/regression
+checks or the independent external security review requirement.

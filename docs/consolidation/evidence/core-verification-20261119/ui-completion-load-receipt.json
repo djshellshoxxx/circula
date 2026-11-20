@@ -1,0 +1,38 @@
+{
+  "head_before": "e0d27cc7cb73299219439919b260991b824d594a",
+  "tree_before": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "status_before": "",
+  "command": [
+    "go",
+    "test",
+    "-v",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout",
+    "3m",
+    "-run",
+    "^TestLoadConcurrentTrades$",
+    "./internal/service"
+  ],
+  "environment": {
+    "GOMAXPROCS": "2",
+    "GOMEMLIMIT": "400MiB",
+    "GOGC": "100",
+    "CGO_ENABLED": "1",
+    "GOCACHE": "/dev/shm/circula-runtime-cache-93",
+    "GOMODCACHE": "/tmp/circula-go-modcache-93",
+    "TMPDIR": "/dev/shm/circula-normal-work-93",
+    "CIRCULA_LOAD": "1",
+    "CIRCULA_LOAD_WORKERS": "4",
+    "CIRCULA_LOAD_MEMBERS": "20",
+    "CIRCULA_LOAD_TRADES": "25"
+  },
+  "start_utc": "2026-11-19T13:48:44.984992+00:00",
+  "exit_code": 0,
+  "elapsed_seconds": 4.513,
+  "end_utc": "2026-11-19T13:48:49.498420+00:00",
+  "head_after": "e0d27cc7cb73299219439919b260991b824d594a",
+  "status_after": "",
+  "log_sha256": "9967862943375198b5d375503a71b122e445a22e610ebd68ac129b6ff3d50112"
+}

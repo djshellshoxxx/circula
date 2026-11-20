@@ -1,10 +1,28 @@
 # Comprehensive repository audit
 
-> Continuation: [2026-11-19 consolidation recovery and verification](CONSOLIDATION_CONTINUATION_2026-11-19.md) records later source changes, the complete 113-branch inventory, and current evidence boundaries. The findings below retain their original source and test scope.
+> Closing publication: [the final addendum](CONSOLIDATION_FINAL_REPORT.md#closing-publication-checkpoint-2026-11-19) records Core992, isolated follow-ups, the timestamped 125-ref snapshot and pending gates. The [combined core review](CORE_COMPOSITION_20261119.md), [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) and earlier execution receipts retain their original scope. Current PR heads and checks govern subsequent qualification.
 
 Audit opened **2026-11-18 Pacific / 2026-11-19 UTC**. Repository: [djshellshoxxx/circula](https://github.com/djshellshoxxx/circula).
 
 This is the current implementation and consolidation record. Earlier files under `docs/audit/`, including the November 17 execution archive and November 18 audit, remain evidence for their named revisions. Their pending-PR counts and test results are not current-head qualification.
+
+## Closing publication addendum
+
+Reviewed Core source was published as `992478594e5902f57a39f3772739bee6ab495d24`
+in [PR #90](https://github.com/djshellshoxxx/circula/pull/90). Its 1,470-leaf
+tree matches the reviewed source. At 11:59:01 UTC its nine configured CI jobs
+were all queued, with no completed pass or failure. Main remains
+`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`.
+
+The closing 12:10:21.881995 UTC read observed 125 live refs and retained all
+107 original branch names and tips through identity or ancestry. Nine
+coordinator-created PRs produced two qualified original-topic merges and
+two integration-only source inclusions; none merged into main. Feed, PWA
+and notification source compositions retain disabled/HOLD boundaries;
+signals #94 and GOV-021 #107 remain policy-held. Federation #105's independently
+reproduced UTF-8 false-signing-success defect is repaired without a demonstrated
+verifier bypass; #106 corrects its README only. Exact heads, counts, source-bound
+results and remaining external gates are in the linked closing addendum.
 
 ## Scope, baseline and evidence rules
 
@@ -12,7 +30,7 @@ Starting main: [`ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`](https://github.com/d
 
 The branch-by-branch record is [BRANCH_CONSOLIDATION_MATRIX.md](BRANCH_CONSOLIDATION_MATRIX.md). It distinguishes ancestry, patch equivalence, recovered behavior, obsolete documentation, actual conflicts and dependency holds. Age alone was never a reason to discard a branch. All original remote branches are retained.
 
-The canonical requirement inventory is [TRACEABILITY.md](../TRACEABILITY.md): 531 IDs, including 502 requirements and 29 decision-register entries. Its starting declarations were 280 built, 120 partial, 9 not built, 5 deferred and 88 without a status row. These are **specification declarations**, not audited completion percentages. Some notes explicitly predate implemented behavior. There were 19 requirements declared built without a test citation, no unknown IDs and no duplicate IDs. [FEATURE_COMPLETION_STATUS.md](FEATURE_COMPLETION_STATUS.md) records the checked current interpretation and the 15 separate future modules.
+The canonical requirement inventory is [TRACEABILITY.md](../TRACEABILITY.md): 531 IDs, including 502 requirements and 29 decision-register entries. Its starting declarations were 280 built, 120 partial, 9 not built, 5 deferred and 88 without a status row. These are **specification declarations**, not audited completion percentages. Some notes explicitly predate implemented behavior. At the initial snapshot there were 19 requirements declared built without a test citation, no unknown IDs and no duplicate IDs. The later evidence review supplies three direct citations and corrects SEC-031 from built to partial, leaving 15 uncited built rows with explicit inspection/manual/deployment limits. [FEATURE_COMPLETION_STATUS.md](FEATURE_COMPLETION_STATUS.md) records the checked current interpretation and the 15 separate future modules.
 
 ## Actual architecture
 
@@ -39,7 +57,7 @@ Local lightweight verification includes the message-package race suite, the mill
 | Password proof and recovery | PR #82, `auth.go`, `mfa.go`, `recovery.go`, web password handler | Consolidated password-proof binding and durable throttling. Fixed HTTP 422 instead of 429 on the durable throttle and stale password-attempt locks after successful recovery. Denied recovery retains its lock; independent rate budgets remain intact. |
 | Disputes and prospective rules | PR #87; dispute services, policy readers and migration 0019 | Completed exact policy-version binding at opening, same-tick/clock-rollback protection, immutable database guards, legacy backfill and missing-mapping rollback. Historical timestamp ambiguity is explicitly preserved as an evidence limitation. |
 | Policy history and compatibility | `sqlite_gov.go`, current and historical policy readers | Historical readable logs now seed the same defaults as execution readers, while preserving explicitly stored zero and byte-identical policy JSON. |
-| SQLite migrations and contracts | migrations 0001–0020; migration/contract fixtures; privacy inventory | Forward migrations add immutable dispute binding and independent public session selectors without rewriting financial history or bearer hashes. Indexed session keyset reads and owner lookups bound retained-row work; the token owner/ID index supports its existing first-100 contract. SQL migration/guard/seek checks passed; full current-head Go migration gates remain required. |
+| SQLite migrations and contracts | migrations 0001–0021; migration/contract fixtures; privacy inventory | Forward migrations add immutable dispute binding and independent public session selectors without rewriting financial history or bearer hashes. Indexed session keyset reads and owner lookups bound retained-row work; the token owner/ID index supports its existing first-100 contract. SQL migration/guard/seek checks passed; full current-head Go migration gates remain required. |
 | API token inventory | existing /api/v1/tokens contract, repository query and owner index | Fixed the existing response-only cap with a database LIMIT 100 and owner/ID index; preserves ID ordering, owner scope, retained metadata and direct management outside the listing cap. Repository/API regressions added. |
 | Setup and untrusted input | `/setup`, amount parser/formatter, rendered select errors | Found attacker-controlled precision reaching formatter allocation in an error path. Added early integer/range validation and accessible errors; malformed, negative, excessive and overflowing values covered without executing an unsafe allocation. |
 | HTML/API security | authentication middleware, scope and role checks, raw-query/JSON validation, CSRF, contextual escaping, parity and entry-point tests | Existing safeguards retained. New changes require current-head API/HTML contract and browser qualification; no blanket absence-of-vulnerabilities claim. |

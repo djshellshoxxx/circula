@@ -1,6 +1,6 @@
 # Security and integrity review
 
-> Continuation: [2026-11-19 consolidation recovery and verification](CONSOLIDATION_CONTINUATION_2026-11-19.md) records later source changes, the complete 113-branch inventory, and current evidence boundaries. The findings below retain their original source and test scope.
+> Closing publication: [the final addendum](CONSOLIDATION_FINAL_REPORT.md#closing-publication-checkpoint-2026-11-19) records Core992, isolated follow-ups, the timestamped 125-ref snapshot and pending gates. The [combined core review](CORE_COMPOSITION_20261119.md), [frozen 123-ref snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) and earlier execution receipts retain their original scope. Current PR heads and checks govern subsequent qualification.
 
 Review date: **2026-11-18 Pacific / 2026-11-19 UTC**. Baseline `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625`; core candidate [PR #90](https://github.com/djshellshoxxx/circula/pull/90). This is an engineering review with independent AI-assisted reviewers, not the external SEC-033 release assessment.
 
@@ -21,6 +21,68 @@ Review date: **2026-11-18 Pacific / 2026-11-19 UTC**. Baseline `ead63b5ce24b2bcf
 
 The candidate also preserves PR #82's credential-proof protections: password changes are durably throttled; login/session issuance, MFA enrollment/disable/code replacement and password-recovery code generation recheck the password material in their serialized mutation. A password change/reset that wins the race invalidates the old proof. The complete inherited source and its original review remain in [AUD4-AUTH-FIXES.md](../audit/consolidation-completion-2026-11/AUD4-AUTH-FIXES.md).
 
+## Additional composed findings, 2026-11-19
+
+The following repairs are present in the reviewed composition described in
+[CORE_COMPOSITION_20261119.md](CORE_COMPOSITION_20261119.md). Their regression
+source is retained; full provider qualification of the combined head is pending.
+These are defect categories, not a count of independently exploitable vulnerabilities.
+
+| ID | Confirmed defect / effect | Repair and evidence boundary |
+|---|---|---|
+| CORE-09 | API-token mutation could rely on session/password authority checked before the write transaction. | Revalidate live mutation authority within both token create/revoke write units. Preserve the existing owner/scope contract. Security and ledger reviewers verified both calls and exact PR99 regression blobs. |
+| CORE-10 | A failed rollback could return an unusable SQLite connection to the pool. | Attempt cleanup with a background context and discard the connection via driver.ErrBadConn when rollback fails; preserve the original operation error or panic. Retain real SQLite fault regressions and their source-specific receipts. |
+| CORE-11 | Migration row iteration errors and failed COMMIT cleanup could leave incorrect completion state. | Check rows.Err and perform rollback/discard cleanup after failed commit. Current-head Go-driver and fault gates remain required. |
+| CORE-12 | New export and unrecorded consistency-job identifiers did not follow the documented UUIDv7 contract. | Allocate before export side effects and use UUIDv7 for new records; preserve existing identifiers and addressability. Source-pinned adapter tests are recorded separately from full qualification. |
+| CORE-13 | Export admission and the later data snapshot could observe different membership, role, MFA, break-glass or erasure authority. | Shared authorization runs inside the data view before the first sink write. Eligible suspended/departed own-history access remains. Revocation/erasure/retained-history regressions are preserved; no continuous post-snapshot cancellation guarantee is added. |
+| CORE-14 | An interrupted export could be finalized or followed by an HTML error, misleading a client about archive completeness. | Propagate the HTTP abort sentinel through web/operator recovery. Preserve PR102's real-client regression that receives ZIP bytes before the injected failure and then observes an incomplete response/archive. |
+| CORE-15 | Archive verification could accept ambiguous membership, unsafe metadata or data inconsistent with declared sizes. | PR104 rejects duplicate/reserved/unsafe members and declarations, validates schema and file types, caps allocation and verifies actual lengths/content. All 22 Python reader tests pass; Go verifier and combined driver/provider gates remain required. |
+| CORE-16 | Listings advertised an extra page for exact terminal batches and could lose active filters. | Fetch a real lookahead row, keep the 50-row page contract, and preserve ownership/type/trimmed encoded search in the complete escaped next URL. Focused marketplace template tests pass; current-head handler/browser tests remain required. |
+| CORE-17 | Regenerating traceability could conceal duplicate requirement definitions. | Reject duplicates during the check workflow while retaining diagnostic generation and valid repeated references. Actual traceability race tests pass at the composed source. |
+
+## API-036 focused completion review, 2026-11-19
+
+[PR #101](https://github.com/djshellshoxxx/circula/pull/101) preserves the concurrent
+PR90 bounded inventory and HTML cursor fix, then completes selective bulk
+revocation and previous-page navigation. Independent database, security and
+adapter reviews verified published implementation `6f8ead1951f2d4b72649909b2b4cc83000948afe`
+against exact tree `a56e533e88275c05498c39db2c97c5f15b2af2fa`; no unresolved
+blocking source finding remained. The [completion record](API036_COMPLETION.md)
+contains scope, provenance, defects, measurements and qualification limits.
+
+Confirmed additional defects now have regressions: noncanonical/oversized signed
+cursors; raw numeric-position error allocations proportional to input; malformed
+HTML query escaping discarded by convenience parsing; dynamic pager context
+losing a composite cursor; and disappearing newer pages skipping a surviving
+boundary. Forward termination is explicitly preserved. Encoding aliases did not
+bypass HMAC verification or ownership.
+
+Bulk revocation rechecks the current stored session and owner within its write
+transaction, preserves that credential and foreign/API-token authority, clears
+pending owner MFA challenges, and atomically writes only person/count/current
+disposition audit data. Review covered CSRF, confirmation, effective role
+lifetimes, expired/revoked/missing targets, audit failure and concurrent
+revocation. Actual focused production tests passed; broader execution gates and
+external SEC-033 release review remain separate.
+
+The subsequent Core qualification exposed a WAL-test artifact-lifetime assumption,
+repaired in [PR #111](https://github.com/djshellshoxxx/circula/pull/111). Independent
+security review approved the exact fixture blob
+`d1d19fb96357b5eabab43d926e89dffbbcca23e9`. A separate real read transaction after
+the initial checkpoint preserves the failed WAL while production
+`rollbackOrDiscard` remains unchanged. The fixture still requires an actual
+COMMIT `SQLITE_IOERR_WRITE`, exactly 6,224 WAL bytes for its page size, a complete
+non-commit frame and partial second frame, restored limits, unchanged failed-operation
+state, no premature audit or metrics effects, and successful retry, replay, reopening
+and integrity verification. A BUSY error or empty WAL cannot satisfy the assertions.
+
+Final independent review found no unresolved blocking API-036 source finding and
+no confirmed reviewed defect without regression coverage. All fifteen canonical
+future-module manifests remain disabled and on HOLD; none is in the candidate's
+ancestry, and the candidate contains no `future/` files. This source review and
+the scoped passes in [the qualification record](API036_QUALIFICATION.json) do not
+replace exact-head provider results, applicable PR approvals or SEC-033 assessment.
+
 ## Separate future-module and topic repairs
 
 | ID | Scope | Finding / correction | Qualification boundary |
@@ -29,8 +91,44 @@ The candidate also preserves PR #82's credential-proof protections: password cha
 | FUT-02 | FNET-204 feed | Conflicting duplicate source records made cursor pagination depend on input order. Reject conflicting records in either order. | Fail-before regression, repaired race suite and 20-second `FuzzOpenCursor` (66,869 executions) passed. |
 | FUT-03 | FUX-104 notifications | Pipe-joined encryption context allowed distinct accepted `(network, member)` tuples to share authenticated data. | Use unambiguous versioned encoding for ambiguous tuples, preserve safe legacy rows, never fall back to ambiguous legacy context. Security reviewer approved actual code/tests; module qualification recorded separately. |
 | FUT-04 | FUX-104 notifications | Invalid UTF-8 identities could normalize through JSON and collide in deduplication/signed-unsubscribe representations. | Reject invalid UTF-8 at relevant identity boundaries; tests cover all tuple components and valid Unicode. Isolated module only. |
+| FUT-05 | FNET-209 federation | `Sign` reported success after malformed UTF-8 was normalized by JSON; the returned envelope did not preserve the caller's strings. Original `Verify` already rejected it. | [#105](https://github.com/djshellshoxxx/circula/pull/105) rejects all five invalid string fields before marshaling. Independent 30-case parent-source reproduction, exact-source race (1.146s, 87.5%) and vet pass; no reproduced verifier or replay-identity bypass. |
+| FUT-06 | FUX-104 notification transports | A successful push could return a non-nil interface containing a typed nil; Retry-After arithmetic could overflow; a custom SMTP dialer needed explicit verified implicit-TLS negotiation. | Reviewed #103 implementations and real HTTP/TLS/SMTP regression source are preserved in #100 at `98852afb`. Combined-head runtime and dependency checks remain required; module adoption stays held. |
 | TOPIC-01 | SEC-026 | Default-enabled provisional thresholds, hidden member policy changes, undersized checkbox and future-dated records counted after clock rollback. | Independent branch defaults off, shows settings in member history, uses existing 44-pixel control layout and counts only `(since, now]`. Reviewed; unresolved subject-visibility policy prevents main integration. |
 | TOPIC-02 | GOV-021 | Existing administrator-recovery page absent from the browser accessibility fixture registry. | Add the existing page fixture on the GOV-021 branch only. This does not resolve the recovery authority conflict. |
+
+### Closing federation and dependency evidence
+
+The independent #105 review used exact source
+`059b0e4508a6c4f8e29f6a4cccd06f92b14ea115` (tree
+`4d9f608041e65a2a1a297f17614438790240bc04`).
+[`TestSignRejectsMalformedUTF8`](https://github.com/djshellshoxxx/circula/blob/059b0e4508a6c4f8e29f6a4cccd06f92b14ea115/future/federation/envelope_utf8_test.go)
+tests five fields against six malformed encodings. Applying these regressions
+to only the original parent `envelope.go` reproduced false `Sign` success in
+all 30 cases; each envelope was rejected by the original verifier.
+`TestVerifyRejectsMalformedUTF8Representations` also passed before the repair.
+The exact repaired source passed `go test -race -count=1 -cover -timeout=30s ./...`
+with a 1.146s package result (2.530s command wall time) at 87.5% coverage,
+plus `go vet ./...`. This independent run includes
+the valid-Unicode fixture and fuzz seeds, not another fuzz campaign. Its
+`runtime-receipt.json`, counterfactual and race/vet logs are retained in the
+checksummed handoff archive `security-federation-review-059b0e4.tar.gz`.
+[#106](https://github.com/djshellshoxxx/circula/pull/106) at `d5555440` corrects
+only the README's workflow-isolation claim. Federation remains disabled/HOLD;
+durable replay, transport, trust and core-adapter acceptance are unfinished.
+
+The official [GO-2026-5932 record](https://vuln.go.dev/ID/GO-2026-5932.json)
+affects the OpenPGP family within the unchanged `golang.org/x/crypto v0.58.0`
+requirement, not every package in that module. Its recorded `x/crypto` range
+ends at `v0.58.1-0.20261009181718-2f1f834330b2`, while the separately extracted
+`golang.org/x/crypto/openpgp` module remains affected at all versions; that
+boundary is not an OpenPGP safety fix. The
+[notification composition note](https://github.com/djshellshoxxx/circula/blob/98852afbd1cd2e31a38d6405b6eee36ad3d7e737/docs/audit/consolidation-2026-11-17/source-reviews/NOTIFICATION-TRANSPORT-COMPOSITION.md)
+preserves the scope. Historical job135447099448 reported zero called and zero
+imported-package vulnerabilities plus one unnamed required-module advisory.
+The official lookup does not retroactively identify that unnamed warning or
+certify current reachability. Offline attempts stopped before analysis on
+unavailable metadata. The current verbose provider scan remains required;
+no dependency bump or warning suppression is claimed.
 
 ## Existing protections preserved and checked
 

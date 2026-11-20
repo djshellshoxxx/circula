@@ -1,0 +1,21 @@
+--- FAIL: TestNetworkPickerMessages (0.00s)
+    --- FAIL: TestNetworkPickerMessages/onboarding.networks.status.departed (0.00s)
+panic: unknown UI message: onboarding.networks.status.departed [recovered, repanicked]
+
+goroutine 9 [running]:
+testing.tRunner.func1.2({0x68df80, 0x3d4a33c99950})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1974 +0x232
+testing.tRunner.func1()
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:1977 +0x349
+panic({0x68df80?, 0x3d4a33c99950?})
+	/workspace/scratch/beb70d57deba/toolchain/go/src/runtime/panic.go:860 +0x13a
+github.com/djshellshoxxx/circula/internal/web/messages.Text({0x7046e4, 0x23}, {0x0, 0x0, 0x0})
+	/workspace/scratch/93aeb012c206/onboarding-catalogue/internal/web/messages/messages.go:55 +0x129
+github.com/djshellshoxxx/circula/internal/web/messages.TestNetworkPickerMessages.func1(0x3d4a33c366c8)
+	/workspace/scratch/93aeb012c206/onboarding-catalogue/internal/web/messages/network_picker_test.go:18 +0x45
+testing.tRunner(0x3d4a33c366c8, 0x3d4a33bbd0e0)
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 8
+	/workspace/scratch/beb70d57deba/toolchain/go/src/testing/testing.go:2101 +0x4c5
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.008s
+FAIL

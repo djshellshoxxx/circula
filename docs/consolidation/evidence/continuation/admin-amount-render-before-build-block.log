@@ -1,0 +1,6 @@
+# command-line-arguments
+# [command-line-arguments]
+./h_dualcontrol.go:207:30: non-constant format string in call to github.com/djshellshoxxx/circula/internal/domain.InvalidState
+./h_dualcontrol.go:214:27: non-constant format string in call to github.com/djshellshoxxx/circula/internal/domain.Forbidden
+FAIL	command-line-arguments [build failed]
+FAIL

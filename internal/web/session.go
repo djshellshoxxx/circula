@@ -14,6 +14,7 @@ import (
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/httpx"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 const (
@@ -219,7 +220,7 @@ func (s *server) netH(h func(http.ResponseWriter, *http.Request, *rc)) http.Hand
 			c.loc = service.Location(z)
 		}
 		if c.Me.Status == domain.MemberPending {
-			s.render(w, r, c, "pending", 200, &page{Title: "Waiting for approval"})
+			s.render(w, r, c, "pending", 200, &page{Title: messages.Text("notice.membership_pending.title")})
 			return
 		}
 		h(w, r, c)

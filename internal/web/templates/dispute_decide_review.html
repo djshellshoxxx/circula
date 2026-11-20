@@ -1,18 +1,18 @@
 {{define "content"}}
 {{with .D}}
-<p>Nothing is recorded until you confirm. Once recorded, a decision cannot be changed.</p>
+<p>{{msg "dispute.decision.confirm_explanation"}}</p>
 <dl class="kv">
-  <dt>Decision</dt><dd>{{.Outcome}}</dd>
-  {{if .Reverses}}<dt>Reversal</dt><dd>{{.Amount}} {{.Unit}} go back from {{.Payee}} to {{.Payer}}.</dd>
-  <dt>If the credit cannot be taken</dt><dd>If {{.Payee}} does not have the credit available, the decision is recorded and the reversal waits as "Decided, reversal not yet posted" until you retry it.</dd>{{else}}<dt>Reversal</dt><dd>None. No credit moves.</dd>{{end}}
-  <dt>Rationale</dt><dd>{{.Rationale}}</dd>
+  <dt>{{msg "dispute.decision"}}</dt><dd>{{.Outcome}}</dd>
+  {{if .Reverses}}<dt>{{msg "dispute.decision.reversal_label"}}</dt><dd>{{msg "dispute.decision.reversal_sentence" .Amount .Unit .Payee .Payer}}</dd>
+  <dt>{{msg "dispute.decision.unavailable_label"}}</dt><dd>{{msg "dispute.decision.waiting" .Payee}}</dd>{{else}}<dt>{{msg "dispute.decision.reversal_label"}}</dt><dd>{{msg "dispute.decision.no_reversal"}}</dd>{{end}}
+  <dt>{{msg "dispute.rationale"}}</dt><dd>{{.Rationale}}</dd>
 </dl>
 <form method="post" action="/n/{{$.Slug}}/disputes/{{.ID}}/resolve">
   {{template "csrf" $}}{{template "idem" $}}
   <input type="hidden" name="outcome" value="{{$.Val "outcome"}}"><input type="hidden" name="amount" value="{{$.Val "amount"}}">
   <input type="hidden" name="rationale" value="{{$.Val "rationale"}}">
   <input type="hidden" name="waive_response" value="{{$.Val "waive_response"}}"><input type="hidden" name="waive_reason" value="{{$.Val "waive_reason"}}">
-  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">Record decision</button> <button type="submit" name="step" value="back" class="secondary">Go back and edit</button></div>
+  <div class="actions"><button type="submit" name="step" value="confirm" class="danger">{{msg "dispute.decision.record"}}</button> <button type="submit" name="step" value="back" class="secondary">{{msg "dispute.back_edit"}}</button></div>
 </form>
 {{end}}
 {{end}}

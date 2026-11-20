@@ -1,0 +1,33 @@
+{
+  "head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "tree": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "dirty": false,
+  "command": [
+    "go",
+    "run",
+    "./scripts/traceability",
+    "-record-results",
+    "/workspace/scratch/93aeb012c206/evidence-recovered/ui-completion-race-evidence.json",
+    "--",
+    "-race",
+    "-p",
+    "1",
+    "-timeout",
+    "20m",
+    "./..."
+  ],
+  "started_at": "2026-11-19T12:59:25.868367+00:00",
+  "checkout": "standalone clone; normal VCS stamping retained",
+  "environment": {
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "250MiB",
+    "GOGC": "40",
+    "CGO_ENABLED": "1"
+  },
+  "exit_code": 1,
+  "elapsed_seconds": 3241.22,
+  "finished_at": "2026-11-19T13:53:27.064666+00:00",
+  "end_head": "e0d27cc7cb73299219439919b260991b824d594a",
+  "end_tree": "9ae8efd0306da7de8984e239254aa6b01996f02e",
+  "end_dirty": false
+}

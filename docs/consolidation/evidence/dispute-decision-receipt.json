@@ -1,0 +1,128 @@
+{
+  "baseline": "4c988eeebddc6494257d5ef8b071402048665d22",
+  "before": {
+    "method": "New regression file was added to the exact baseline worktree and executed before any catalogue, handler, or template implementation change. The template-control cases passed; the 13 new message cases failed because those keys were absent.",
+    "command": [
+      "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+      "test",
+      "-p=1",
+      "./internal/web/messages",
+      "-run",
+      "^TestDisputeDecisionCatalogue",
+      "-count=1"
+    ],
+    "environment": {
+      "GOMAXPROCS": "1",
+      "GOMEMLIMIT": "400MiB"
+    },
+    "exit_code": 1,
+    "observed_package_seconds": 0.026,
+    "regression_sha256": "96a77917bb9632053accff43c6b31097dbc469e5da952637cb2aa3abd64439d8",
+    "source_blobs": {
+      "internal/web/messages/messages.go": "d4265dcfe28bee546ba64835b5b8401e83015026",
+      "internal/web/messages/en.json": "0717b9d4e3c9e12895d78c631166ccbce3981934",
+      "internal/web/messages/dispute_templates_test.go": "132fa73e27c49873dd7261d217d9de8f446355e7",
+      "internal/web/templates/base.html": "0606ab1dd322ff2f15d0f427c387b418c45e00e5",
+      "internal/web/templates/dispute_decide_review.html": "384cdd0ae4c1125e267721f2d922fe2e309fe318",
+      "internal/web/templates/dispute_rereview_confirm.html": "5e2b9f708b1979edaa6fde98cca8e7c7d8e19b56"
+    }
+  },
+  "after": {
+    "command": [
+      "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+      "test",
+      "-p=1",
+      "-race",
+      "./internal/web/messages",
+      "-count=1"
+    ],
+    "environment": {
+      "GOMAXPROCS": "1",
+      "GOMEMLIMIT": "400MiB"
+    },
+    "started_utc": "2026-11-19T12:15:00.185790+00:00",
+    "exit_code": 0,
+    "elapsed_seconds": 1.955,
+    "scope": "Complete messages package with the actual confirmation templates and actual base partials. Does not execute handlers, SQLite, or the internal/web package regression.",
+    "source_sha256": {
+      "internal/web/h_dispute_decide.go": "ee065ecabbb33ee53ad57425d57d7edc4c56f0e66b9b227062fca4022a0fdd1a",
+      "internal/web/h_dispute_review.go": "d2c4331d1fe65163b6e7ab9f2fd2f1fb6e9851732a82ddbeccb81ff799a127c3",
+      "internal/web/h_rereview_decide.go": "75e710afe7e69b8e0cdea57d494633ff8bf6cd982e728b09a1f29296a7a32c99",
+      "internal/web/dispute_decision_catalog_test.go": "9ea1ae886e052158830743e71a080687fc6e93f5f637c725f6acd2e39cf55a83",
+      "internal/web/messages/en.json": "d2ab6904051bbf45b5347039aed76f9850cec50ab0b3b832662014b58fdc88a4",
+      "internal/web/messages/messages_test.go": "7a83edc1c12f415419e052c1713f59bc3e773fb62c5e32bf188799c10af08ee9",
+      "internal/web/messages/dispute_decision_test.go": "96a77917bb9632053accff43c6b31097dbc469e5da952637cb2aa3abd64439d8",
+      "internal/web/templates/dispute_decide_review.html": "d63819eee8eba01a98774e951287d69393c7cb382942ca634aca195b6cf239fc",
+      "internal/web/templates/dispute_rereview_confirm.html": "24db7516ddeccf5ce27c6b8fb11379c45f27a78d4d5a94d8fcdbf5c50d0f8f5d"
+    },
+    "observed_package_seconds": 1.159
+  },
+  "catalogue": {
+    "baseline_keys": 982,
+    "added_keys": 40,
+    "result_keys": 1022,
+    "changed_baseline_values": 0,
+    "added": [
+      "dispute.decision.amount_max",
+      "dispute.decision.amount_value",
+      "dispute.decision.balance_after",
+      "dispute.decision.balance_now",
+      "dispute.decision.change_for",
+      "dispute.decision.confirm_explanation",
+      "dispute.decision.dismissed",
+      "dispute.decision.no_reversal",
+      "dispute.decision.original_payee",
+      "dispute.decision.original_payer",
+      "dispute.decision.outcome_required",
+      "dispute.decision.partial",
+      "dispute.decision.rationale_required",
+      "dispute.decision.rationale_too_long",
+      "dispute.decision.record",
+      "dispute.decision.reversal_label",
+      "dispute.decision.reversal_sentence",
+      "dispute.decision.title",
+      "dispute.decision.unavailable_label",
+      "dispute.decision.upheld",
+      "dispute.decision.waiting",
+      "dispute.rereview.amount_max",
+      "dispute.rereview.atomic_explanation",
+      "dispute.rereview.balance_range",
+      "dispute.rereview.confirm_explanation",
+      "dispute.rereview.confirm_option",
+      "dispute.rereview.confirmed",
+      "dispute.rereview.decided",
+      "dispute.rereview.independent_required",
+      "dispute.rereview.none_pending",
+      "dispute.rereview.other_undecided",
+      "dispute.rereview.outcome_required",
+      "dispute.rereview.partial_option",
+      "dispute.rereview.partial_posted",
+      "dispute.rereview.pending",
+      "dispute.rereview.rationale_required",
+      "dispute.rereview.record",
+      "dispute.rereview.title",
+      "dispute.rereview.upheld_posted",
+      "dispute.rereview.uphold_option"
+    ]
+  },
+  "reviewed_invariants": {
+    "review_proof_function_unchanged": true,
+    "templates": {
+      "internal/web/templates/dispute_decide_review.html": {
+        "form_input_button_open_tags_unchanged": true,
+        "csrf_idempotency_partials_unchanged": true,
+        "matched_items": 10
+      },
+      "internal/web/templates/dispute_rereview_confirm.html": {
+        "form_input_button_open_tags_unchanged": true,
+        "csrf_idempotency_partials_unchanged": true,
+        "matched_items": 9
+      }
+    },
+    "git_diff_check": "passed"
+  },
+  "pending": [
+    "Execute TestReReviewCatalogueKeepsAmountAndUnit in the combined internal/web suite. The exact domain.FormatAmount / unitFor helper regression is included but not claimed as executed here.",
+    "Run the parent combined-candidate qualification and refresh shared traceability after integration."
+  ]
+}

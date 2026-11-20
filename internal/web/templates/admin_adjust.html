@@ -1,17 +1,17 @@
 {{define "content"}}
-<p>An adjustment is an audited correction against the network's system account. Every adjustment needs a reason. You will review the effect before it is posted.</p>
+<p>{{msg "admin.adjust.intro"}}</p>
 <form method="post" action="/n/{{.Slug}}/admin/adjust" novalidate>
   {{template "csrf" .}}{{template "idem" .}}
   <input type="hidden" name="step" value="review">
-  {{template "select" dict "P" . "Name" "member_id" "Label" "Member" "Opts" .D.Members}}
-  <fieldset class="radio"><legend>Direction</legend>
+  {{template "select" dict "P" . "Name" "member_id" "Label" (msg "admin.adjust.member") "Opts" .D.Members}}
+  <fieldset class="radio"><legend>{{msg "admin.adjust.direction"}}</legend>
     {{with .Err "direction"}}<p class="error" id="e-direction">{{.}}</p>{{end}}
-    <label><input type="radio" name="direction" id="f-direction" value="credit"{{if ne (.Val "direction") "debit"}} checked{{end}}> Credit: the member's balance goes up</label>
-    <label><input type="radio" name="direction" value="debit"{{if eq (.Val "direction") "debit"}} checked{{end}}> Debit: the member's balance goes down</label>
+    <label><input type="radio" name="direction" id="f-direction" value="credit"{{if ne (.Val "direction") "debit"}} checked{{end}}> {{msg "admin.adjust.credit_choice"}}</label>
+    <label><input type="radio" name="direction" value="debit"{{if eq (.Val "direction") "debit"}} checked{{end}}> {{msg "admin.adjust.debit_choice"}}</label>
   </fieldset>
-  {{template "field" dict "P" . "Name" "amount" "Label" "Amount" "Hint" (printf "Amount in credits, up to %d decimal places." .Dec) "Mode" "decimal" "Req" true}}
-  {{template "field" dict "P" . "Name" "reason" "Label" "Reason" "Hint" "Required. Recorded in the audit log." "Type" "textarea" "Max" 500 "Req" true}}
-  {{template "field" dict "P" . "Name" "related_transaction_id" "Label" "Related transaction (optional)" "Hint" "Transaction ID of a posted entry involving this member. Leave blank for a standalone correction."}}
-  <div class="actions"><button type="submit">Review adjustment</button></div>
+  {{template "field" dict "P" . "Name" "amount" "Label" (msg "admin.adjust.amount") "Hint" (msg "admin.adjust.amount_hint" .Dec) "Mode" "decimal" "Req" true}}
+  {{template "field" dict "P" . "Name" "reason" "Label" (msg "admin.adjust.reason") "Hint" (msg "admin.adjust.reason_hint") "Type" "textarea" "Max" 500 "Req" true}}
+  {{template "field" dict "P" . "Name" "related_transaction_id" "Label" (msg "admin.adjust.related_optional") "Hint" (msg "admin.adjust.related_hint")}}
+  <div class="actions"><button type="submit">{{msg "admin.adjust.review_title"}}</button></div>
 </form>
 {{end}}

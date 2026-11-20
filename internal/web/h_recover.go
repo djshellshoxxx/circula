@@ -1,11 +1,11 @@
 package web
 
 import (
-	"github.com/djshellshoxxx/circula/internal/service"
 	"net/http"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/service"
 	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
@@ -144,7 +144,7 @@ func (s *server) resetPasswordPost(w http.ResponseWriter, r *http.Request, c *rc
 	if err != nil {
 		switch domain.CodeOf(err) {
 		case domain.CodeForbidden:
-			p.Summary = messages.Text("admin.reset.self_refused")
+			p.Summary = messages.Text("admin.reset.forbidden")
 			s.render(w, r, c, "admin_member_act", 403, p)
 		case domain.CodeRateLimited:
 			p.Summary = messages.Text("admin.reset.throttled")

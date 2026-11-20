@@ -1,0 +1,17 @@
+{
+  "test_only_baseline": "e0da8bb22b0499deac8f0bfcc170c6fee6696238",
+  "helper_blob": "66a4dc3d235a12e26e5d3088385a11fe950c82c6",
+  "test_blob": "7ed6beaf73835912e9d86295679dc56786f448e9",
+  "command": [
+    "node",
+    "--test",
+    "scripts/test_app_messages.cjs",
+    "scripts/test_e2e_kbd.cjs"
+  ],
+  "node_version": "v24.22.3",
+  "started_utc": "2026-11-19T13:59:38.645692+00:00",
+  "wall_seconds": 0.423,
+  "exit_code": 0,
+  "log_sha256": "3424ac90a18c81d2697c1f7100206bee133c212add246db2ffd622ea22f872e5",
+  "scope": "Actual keyboard helper with small page/DOM adapter plus existing progressive-enhancement checks; no browser or Go build."
+}

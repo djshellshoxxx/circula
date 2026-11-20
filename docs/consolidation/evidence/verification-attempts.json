@@ -1,0 +1,19 @@
+{
+  "source_head": "5da8bc78b28fb9c272dfa71ab5e5f496a276e098",
+  "source_tree": "69c292b9f7bed54a0534f279bda8c58f5316832c",
+  "observed_restart_utc": "2026-11-19T11:06:55Z",
+  "attempts": [
+    {
+      "command": "go run ./scripts/traceability -record-results ../evidence-recovered/full-race-results.json -- -race -p 1 -timeout 20m ./...",
+      "result": "interrupted by executor restart; no terminal receipt written; not a pass"
+    },
+    {
+      "command": "CGO_ENABLED=0 go build -trimpath -o /tmp/circula-e2e-93 ./cmd/circula",
+      "result": "modernc.org/libc compile: signal: killed; no binary produced"
+    },
+    {
+      "command": "go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...",
+      "result": "signal: killed; no audit result"
+    }
+  ]
+}

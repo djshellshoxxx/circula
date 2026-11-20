@@ -1,0 +1,1524 @@
+{
+  "schema_version": 1,
+  "collected_utc": "2026-11-19T12:51:08.384979+00:00",
+  "feature": "API-036 bounded session inventory and selective revocation",
+  "completion": "Implementation reviewed; exact integration candidate still requires CI and applicable approvals.",
+  "not_claimed": [
+    "full Definition of Done",
+    "aggregate make check pass",
+    "aggregate full race pass",
+    "completed lint or vulnerability scan",
+    "browser assertions passed",
+    "native provider qualification",
+    "main merge",
+    "deployment",
+    "release"
+  ],
+  "sources": {
+    "starting_main": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "starting_pr90": "244e1356201e6477eab4694d82947f2058f3b0d8",
+    "reconciled_feature_base": "f25d10b6b4085b80d7de53ecbb55efffeb9d8969",
+    "feature_local": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+    "feature_published": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+    "feature_tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+    "combined_core": "992478594e5902f57a39f3772739bee6ab495d24",
+    "combined_core_tree": "3725d720ce7fc41f148b560e5f06c8f9bf5ab221",
+    "combined_core_docs_followup": "839e86935767288e594914ad711486616a604eca",
+    "combined_core_docs_tree": "9d23b7b81d60b07066444232dee65b0fda071b0d",
+    "repaired_core_local": "9edf59a626c0332a122bb618865673d8b1911a4d",
+    "repaired_core_published": "ab7d64c5a31653e3a2a14ddb88940e59b4d02892",
+    "repaired_core_tree": "f1fa093683ca3ec2c39bdb46fcd78e9443622e96",
+    "reviewed_reconciliation_local": "e90433f856a7b64d3c24ad67d59c1b1ac40d9369",
+    "reviewed_reconciliation_tree": "ee976c3b2dd2cf248b4fd5d016e79b6d9876c3ac"
+  },
+  "toolchain": {
+    "go": "go1.26.11",
+    "os": "linux",
+    "arch": "amd64",
+    "compiler_parallelism": "GOFLAGS=-p=1",
+    "workload_serialization": "shared exclusive compile lock"
+  },
+  "command_receipts": [
+    {
+      "name": "vet-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:03:35.185965+00:00",
+      "argv": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 45.31,
+      "finished_utc": "2026-11-19T12:04:20.495485+00:00",
+      "source_receipt": "final-check-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "go-test-all-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:04:20.497136+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=20m",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 273.463,
+      "finished_utc": "2026-11-19T12:08:53.960183+00:00",
+      "source_receipt": "final-check-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "lint-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:08:53.960660+00:00",
+      "argv": [
+        "golangci-lint",
+        "run",
+        "--concurrency",
+        "1",
+        "--timeout",
+        "10m"
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": -9,
+      "seconds": 40.087,
+      "finished_utc": "2026-11-19T12:09:34.048074+00:00",
+      "source_receipt": "final-check-results.json",
+      "status": "failed_or_interrupted"
+    },
+    {
+      "name": "lint-limited-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:12:02.984531+00:00",
+      "argv": [
+        "golangci-lint",
+        "run",
+        "--concurrency",
+        "1",
+        "--timeout",
+        "10m"
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "512MiB",
+        "GOGC": "20",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": -9,
+      "seconds": 42.229,
+      "finished_utc": "2026-11-19T12:12:45.213905+00:00",
+      "source_receipt": "remaining-check-results.json",
+      "status": "failed_or_interrupted"
+    },
+    {
+      "name": "vuln-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:12:45.218392+00:00",
+      "argv": [
+        "go",
+        "run",
+        "golang.org/x/vuln/cmd/govulncheck@v1.1.4",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "512MiB",
+        "GOGC": "20",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 1,
+      "seconds": 69.17,
+      "finished_utc": "2026-11-19T12:13:54.388557+00:00",
+      "source_receipt": "remaining-check-results.json",
+      "status": "failed_or_interrupted"
+    },
+    {
+      "name": "static-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:13:54.391886+00:00",
+      "argv": [
+        "make",
+        "-j1",
+        "fmt-check",
+        "actions-check",
+        "hygiene",
+        "traceability-check"
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "512MiB",
+        "GOGC": "20",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 5.202,
+      "finished_utc": "2026-11-19T12:13:59.593753+00:00",
+      "source_receipt": "remaining-check-results.json",
+      "status": "passed"
+    },
+    {
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:09:34.125974+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-count=1",
+        "-timeout=20m",
+        "-run",
+        "Session",
+        "-v",
+        "./internal/service"
+      ],
+      "reason": "Full service suite exhausted its cumulative20-minute budget; qualify all named session tests separately without substituting for the full suite.",
+      "exit_code": 0,
+      "seconds": 93.712,
+      "finished_utc": "2026-11-19T12:11:07.838136+00:00",
+      "source_receipt": "session-service-race-final-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "session-store-race-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:11:07.905223+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-count=1",
+        "-timeout=20m",
+        "-run",
+        "Session|TestFailingMigrationRollsBackAndReopensCleanly",
+        "-v",
+        "./internal/store"
+      ],
+      "exit_code": 0,
+      "seconds": 22.492,
+      "finished_utc": "2026-11-19T12:11:30.397853+00:00",
+      "source_receipt": "session-store-race-final-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "session-repository-race-final",
+      "head": "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "tree": "4829b19db18835e7358c6987a2c3ea154e818e5f",
+      "started_utc": "2026-11-19T12:11:30.398275+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-count=1",
+        "-timeout=20m",
+        "-run",
+        "^TestRepositoryContract(SQLite|Wrapped)$/.*Session",
+        "-v",
+        "./internal/store"
+      ],
+      "exit_code": 0,
+      "seconds": 12.159,
+      "finished_utc": "2026-11-19T12:11:42.557640+00:00",
+      "source_receipt": "session-store-race-final-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "core-vet",
+      "head": "992478594e5902f57a39f3772739bee6ab495d24",
+      "tree": "3725d720ce7fc41f148b560e5f06c8f9bf5ab221",
+      "started_utc": "2026-11-19T12:23:43.424716+00:00",
+      "argv": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 23.322,
+      "finished_utc": "2026-11-19T12:24:06.746831+00:00",
+      "source_receipt": "core-check-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "core-test-all",
+      "head": "992478594e5902f57a39f3772739bee6ab495d24",
+      "tree": "3725d720ce7fc41f148b560e5f06c8f9bf5ab221",
+      "started_utc": "2026-11-19T12:24:06.747509+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=20m",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 1,
+      "seconds": 248.175,
+      "finished_utc": "2026-11-19T12:28:14.922917+00:00",
+      "source_receipt": "core-check-results.json",
+      "status": "failed_or_interrupted"
+    },
+    {
+      "name": "core-export-reader",
+      "head": "992478594e5902f57a39f3772739bee6ab495d24",
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_read_export.py"
+      ],
+      "exit_code": 0,
+      "seconds": 8.965,
+      "finished_utc": "2026-11-19T12:23:52.219310+00:00",
+      "source_receipt": "core-light-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "core-node-messages",
+      "head": "992478594e5902f57a39f3772739bee6ab495d24",
+      "argv": [
+        "node",
+        "--test",
+        "scripts/test_app_messages.cjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.332,
+      "finished_utc": "2026-11-19T12:23:52.551241+00:00",
+      "source_receipt": "core-light-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "core-repaired-vet",
+      "head": "9edf59a626c0332a122bb618865673d8b1911a4d",
+      "tree": "f1fa093683ca3ec2c39bdb46fcd78e9443622e96",
+      "started_utc": "2026-11-19T12:36:40.954152+00:00",
+      "argv": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 1.571,
+      "finished_utc": "2026-11-19T12:36:42.525608+00:00",
+      "source_receipt": "core-repaired-check-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "core-repaired-test-all",
+      "head": "9edf59a626c0332a122bb618865673d8b1911a4d",
+      "tree": "f1fa093683ca3ec2c39bdb46fcd78e9443622e96",
+      "started_utc": "2026-11-19T12:36:42.526388+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=20m",
+        "./..."
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 251.654,
+      "finished_utc": "2026-11-19T12:40:54.180768+00:00",
+      "source_receipt": "core-repaired-check-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "core-repaired-session-race",
+      "head": "9edf59a626c0332a122bb618865673d8b1911a4d",
+      "tree": "f1fa093683ca3ec2c39bdb46fcd78e9443622e96",
+      "started_utc": "2026-11-19T12:40:54.182025+00:00",
+      "argv": [
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=20m",
+        "-run",
+        "Session|TestAPIMatchesOpenAPI|TestFailingMigrationRollsBackAndReopensCleanly|TestSQLiteWALWriteFailureRollsBackAndRecovers",
+        "-v",
+        "./internal/service",
+        "./internal/store",
+        "./internal/api",
+        "./internal/web",
+        "./internal/contract"
+      ],
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "2",
+        "GOMEMLIMIT": "2GiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "exit_code": 0,
+      "seconds": 218.628,
+      "finished_utc": "2026-11-19T12:44:32.810012+00:00",
+      "source_receipt": "core-repaired-check-results.json",
+      "status": "passed"
+    },
+    {
+      "name": "qualification-docs-static",
+      "head": "e90433f856a7b64d3c24ad67d59c1b1ac40d9369",
+      "tree": "ee976c3b2dd2cf248b4fd5d016e79b6d9876c3ac",
+      "worktree_scope": "Pending audit/evidence changes only; all runtime/test files identical to tested9edf source.",
+      "argv": [
+        "make",
+        "-j1",
+        "fmt-check",
+        "actions-check",
+        "hygiene",
+        "traceability-check"
+      ],
+      "env": {
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "512MiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1",
+        "CGO_ENABLED": "1"
+      },
+      "started_utc": "2026-11-19T12:49:58.627024+00:00",
+      "exit_code": 0,
+      "seconds": 27.279,
+      "finished_utc": "2026-11-19T12:50:25.906216+00:00",
+      "source_receipt": "qualification-docs-static-result.json",
+      "status": "passed"
+    }
+  ],
+  "wal_fixture_tdd": {
+    "baseline": "992478594e5902f57a39f3772739bee6ab495d24",
+    "repair": "9edf59a626c0332a122bb618865673d8b1911a4d",
+    "published_equivalent": "ab7d64c5a31653e3a2a14ddb88940e59b4d02892",
+    "file": "internal/service/sqlite_ioerr_linux_test.go",
+    "file_blob": "d1d19fb96357b5eabab43d926e89dffbbcca23e9",
+    "command": "go test -p 1 -count=1 -timeout 2m -run ^TestSQLiteWALWriteFailureRollsBackAndRecovers$ -v ./internal/service",
+    "before": {
+      "status": "failed_expected",
+      "package_seconds": 0.103,
+      "diagnostic": "failed WAL size=0, want partial second frame at6224"
+    },
+    "after": {
+      "status": "passed",
+      "package_seconds": 0.172
+    },
+    "change": "12 added test lines establish an independent reader after WAL truncation; production rollbackOrDiscard remains unchanged.",
+    "assertions_preserved": [
+      "actual COMMIT SQLITE_IOERR_WRITE (not SQLITE_BUSY)",
+      "exact6224-byte partial WAL",
+      "WAL header and noncommit/partial frame structure",
+      "all staged writes",
+      "RLIMIT restoration",
+      "no partial durable state or premature audit/metrics",
+      "retry, exactly-once replay, reopening and integrity"
+    ],
+    "independent_review": "Security agent approved exact file blob; no assertion weakening."
+  },
+  "fuzz_campaigns": {
+    "source": null,
+    "production_equivalent_to": [
+      "c75a344c48e28ab679e2e5706dbc21c158454bff",
+      "9cc1fb2f23071354ecdde12d3c6d05693e713eb7",
+      "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0"
+    ],
+    "source_limit": "The retained fuzz logs do not capture an exact checkout SHA. Production files and actual fuzz targets are identical across the listed feature checkpoints; this is code-equivalence evidence, not an exact whole-checkout qualification.",
+    "invocation_prefix": "go test -p 1 -run '^$' -fuzz '^TARGET$' -fuzztime 100000x -timeout 3m",
+    "scope": "All production files in each package plus the actual named fuzz test file; unrelated integration test files excluded. No stubs or copied implementations.",
+    "file_selection": "sorted(Path(package).glob('*.go')) excluding '*_test.go', then actual fuzz target file",
+    "env": {
+      "GOMAXPROCS": "1",
+      "GOMEMLIMIT": "512MiB",
+      "GOGC": "50"
+    },
+    "campaigns": [
+      {
+        "target": "FuzzOpenCursor",
+        "package": "internal/api",
+        "production_files": 37,
+        "fuzz_file": "internal/api/cursor_fuzz_test.go",
+        "reported_executions": 100000,
+        "package_seconds": 28.992,
+        "command_seconds": 168.559,
+        "exit_code": 0
+      },
+      {
+        "target": "FuzzSessionPosition",
+        "package": "internal/service",
+        "production_files": 73,
+        "fuzz_file": "internal/service/session_position_security_test.go",
+        "reported_executions": 100000,
+        "package_seconds": 6.159,
+        "command_seconds": 21.202,
+        "exit_code": 0
+      },
+      {
+        "target": "FuzzSessionSelector",
+        "package": "internal/service",
+        "production_files": 73,
+        "fuzz_file": "internal/service/session_position_security_test.go",
+        "reported_executions": 100000,
+        "package_seconds": 6.37,
+        "command_seconds": 8.695,
+        "exit_code": 0
+      }
+    ],
+    "limit": "Go reported100000 total executions per campaign; not100000 additional mutations beyond seeds. Full-package provider fuzz remains a gate."
+  },
+  "earlier_unsuccessful_attempts": [
+    {
+      "name": "repaired Core full store race",
+      "source": "9edf59a626c0332a122bb618865673d8b1911a4d",
+      "command": "go test -race -count=1 -timeout=20m ./internal/store",
+      "env": {
+        "CGO_ENABLED": "1",
+        "GOMAXPROCS": "1",
+        "GOMEMLIMIT": "512MiB",
+        "GOGC": "50",
+        "GOFLAGS": "-p=1"
+      },
+      "started_utc": "2026-11-19T12:44:32.815312+00:00",
+      "status": "interrupted_by_environment_recovery",
+      "exit_code": null,
+      "seconds": null,
+      "diagnostic": "Workspace became unavailable; original exec session was unrecoverable. Persistent log has launch metadata only, no completion result. Recovery showed no Go process.",
+      "following_planned_static_step": "not reached; separately rerun after reconciliation",
+      "limit": "No pass, failure assertion, exit code, duration, or resource root cause is inferred."
+    },
+    {
+      "name": "initial full normal suite",
+      "source": "143de8dba59a80002e9152a86576e277849e6738",
+      "status": "failed",
+      "defects": [
+        "latest-migration test assumed at least2 objects",
+        "help test renderer omitted messages.Text"
+      ],
+      "disposition": "Both fixtures repaired with original assertions preserved; subsequent full suite passed."
+    },
+    {
+      "name": "second full normal suite",
+      "source": "c75a344c48e28ab679e2e5706dbc21c158454bff",
+      "status": "failed",
+      "exit_code": 1,
+      "seconds": 249.294,
+      "diagnostic": "cmd/circula signal:killed after60.693s; other packages passed. Root cause not established.",
+      "evidence": "Recorded by QA before temporary filesystem recovery; original raw log is no longer available."
+    },
+    {
+      "name": "aggregate full race",
+      "source": "c75a344c48e28ab679e2e5706dbc21c158454bff",
+      "command": "go test -race -count=1 -timeout=20m ./...",
+      "exit_code": 1,
+      "status": "failed",
+      "service": "Package timed out after1200.067s during TestSignupGrantCap initial schema migration; no failing assertion or race report in output.",
+      "store": "signal:killed after164.853s; no additional diagnostic; cause unknown.",
+      "passing_package_seconds": {
+        "cmd/circula": 563.958,
+        "internal/api": 680.568,
+        "internal/contract": 52.543,
+        "internal/web": 415.693
+      },
+      "limit": "Scoped race passes and absence of a race warning do not make this aggregate command a pass."
+    },
+    {
+      "name": "make check",
+      "source": "c75a344c48e28ab679e2e5706dbc21c158454bff",
+      "command": "make check",
+      "status": "failed_incomplete",
+      "exit_code": 2,
+      "seconds": 65.292,
+      "diagnostic": "Failed at go vet when modernc/sqlite compiler and modernc/libc vet processes were killed. Later targets were not reached.",
+      "evidence": "Exact observation recorded by QA before temporary filesystem recovery; original raw log unavailable."
+    },
+    {
+      "name": "browser end-to-end",
+      "command": "CIRCULA_BIN=<built-production-binary> CHROMIUM_PATH=/usr/bin/chromium npx --no-install playwright test",
+      "status": "blocked_before_assertions",
+      "diagnostic": "Chromium process_singleton_posix.cc socket() failed: Operation not permitted",
+      "browser_assertions_passed": 0,
+      "launch_configuration_changed": false
+    }
+  ],
+  "performance": {
+    "benchmark_source": "4cc0a1bcd2e5d204da9e06c6e09fc778e7cb55b5",
+    "cpu": "AMD EPYC7763",
+    "iterations": 100,
+    "fixture_construction_timed": false,
+    "store_page_size": 25,
+    "store_pages": [
+      {
+        "retained": 100,
+        "page": "first",
+        "ns_per_op": 261311,
+        "bytes_per_op": 12507,
+        "allocs_per_op": 352
+      },
+      {
+        "retained": 100,
+        "page": "deep",
+        "ns_per_op": 922698,
+        "bytes_per_op": 12712,
+        "allocs_per_op": 356
+      },
+      {
+        "retained": 10000,
+        "page": "first",
+        "ns_per_op": 510251,
+        "bytes_per_op": 12840,
+        "allocs_per_op": 377
+      },
+      {
+        "retained": 10000,
+        "page": "deep",
+        "ns_per_op": 490322,
+        "bytes_per_op": 13064,
+        "allocs_per_op": 382
+      },
+      {
+        "retained": 100000,
+        "page": "first",
+        "ns_per_op": 265151,
+        "bytes_per_op": 12840,
+        "allocs_per_op": 377
+      },
+      {
+        "retained": 100000,
+        "page": "deep",
+        "ns_per_op": 545955,
+        "bytes_per_op": 13064,
+        "allocs_per_op": 382
+      }
+    ],
+    "service_stress": {
+      "retained_rows": [
+        10001,
+        50001
+      ],
+      "queries_per_capped_request": 20,
+      "rows_per_capped_request": 2000,
+      "allocated_objects_nonrace": 30865,
+      "allocated_objects_feature_race": 30925,
+      "requests_to_traverse10001": 6
+    },
+    "oversized_input_rejection": {
+      "prefix_bytes": 1048576,
+      "raw_position": {
+        "input_bytes": 1048641,
+        "ns_per_op": 932.1,
+        "bytes_per_op": 176,
+        "allocs_per_op": 3
+      },
+      "raw_position_before": {
+        "input_bytes": 1048641,
+        "ns_per_op": 1360328,
+        "bytes_per_op": 1048800,
+        "allocs_per_op": 5,
+        "source_note": "Earlier parser before the85-byte guard; not benchmark_source4cc0a1b.",
+        "evidence_note": "Preserved tool observation; original raw red benchmark log is unavailable."
+      },
+      "api_cursor": {
+        "input_bytes": 1048620,
+        "ns_per_op": 284.4,
+        "bytes_per_op": 128,
+        "allocs_per_op": 1
+      }
+    },
+    "independent_sql_probe": {
+      "sqlite": "3.53.1",
+      "retained_rows": [
+        100,
+        10000,
+        100000
+      ],
+      "vm_steps": {
+        "first": 316,
+        "deep": 449,
+        "previous": 443,
+        "owned_lookup": 22,
+        "repeat_bulk_no_changes": 21,
+        "foreign_current_bulk_no_changes": 36
+      },
+      "initial_bulk": [
+        {
+          "changed_rows": 10,
+          "vm_steps": 391
+        },
+        {
+          "changed_rows": 1000,
+          "vm_steps": 34051
+        },
+        {
+          "changed_rows": 10000,
+          "vm_steps": 340051
+        }
+      ],
+      "query_plan": "Indexed searches; no owner-history SCAN or temporary sorting.",
+      "integrity_and_foreign_keys": "passed",
+      "measurements": "API036_SQL_MEASUREMENTS.json",
+      "measurements_sha256": "b7f340529902f2f191d1fbd7f109ec079838ef91266ed9f997176be7844859ec"
+    },
+    "limits": [
+      "25-row store benchmarks are not whole API response allocation measurements.",
+      "B-tree storage seeks remain size-dependent.",
+      "Initial bulk mutation work scales with rows changed.",
+      "Shared-host latency is not a performance SLA."
+    ]
+  },
+  "independent_review": {
+    "database": "approved",
+    "security": "approved; no unresolved blocking source finding",
+    "api_and_ui": "approved source; browser execution still blocked",
+    "qa": "receipt and integration review completed separately",
+    "future_modules": {
+      "count": 15,
+      "all_enabled": false,
+      "all_integration": "HOLD",
+      "candidate_future_files": 0
+    },
+    "scope_limit": "Engineering source review is separate from GitHub approval and SEC-033 release assessment."
+  },
+  "pull_requests": {
+    "implementation": "https://github.com/djshellshoxxx/circula/pull/101",
+    "qualification": "https://github.com/djshellshoxxx/circula/pull/111",
+    "core": "https://github.com/djshellshoxxx/circula/pull/90"
+  },
+  "concurrent_integration": {
+    "pr101": "Merged by other repository activity2026-11-19T11:39:56Z into9924785; this turn observed but did not initiate that merge.",
+    "main_observed": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+    "pr90": "draft/open/unmerged at last observation"
+  },
+  "log_receipts": [
+    {
+      "file": "go-test-all-final.log",
+      "available": true,
+      "sha256": "cf24717d47a4bbca4efbd5a9840d1611789d0cac094ca54efaf3dff5e07b8d23",
+      "bytes": 1792,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"go-test-all-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:04:20.497136+00:00\", \"argv\": [\"go\", \"test\", \"-count=1\", \"-timeout=20m\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t66.806s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t23.471s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t4.262s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t0.100s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t0.002s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t0.004s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t0.008s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t0.123s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t85.507s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t10.954s",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t31.178s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t0.006s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t0.043s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t1.257s",
+        "{\"name\": \"go-test-all-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:04:20.497136+00:00\", \"argv\": [\"go\", \"test\", \"-count=1\", \"-timeout=20m\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 273.463, \"finished_utc\": \"2026-11-19T12:08:53.960183+00:00\"}"
+      ]
+    },
+    {
+      "file": "vet-final.log",
+      "available": true,
+      "sha256": "ebd919b0382d7f1425feddf6aae9786ecceba373c4a4bbba805d4b6b684edb49",
+      "bytes": 710,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"vet-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:03:35.185965+00:00\", \"argv\": [\"go\", \"vet\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "{\"name\": \"vet-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:03:35.185965+00:00\", \"argv\": [\"go\", \"vet\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 45.31, \"finished_utc\": \"2026-11-19T12:04:20.495485+00:00\"}"
+      ]
+    },
+    {
+      "file": "session-service-race-final.log",
+      "available": true,
+      "sha256": "63b83794a8c73ae3bf7f30c132bbb57dcc60e297de6b19f1b9f9e41e1e1d63c3",
+      "bytes": 9432,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "    sessions_stress_test.go:113: 10001 and 50001 retained rows: 20 queries/2000 fetched rows per capped page; allocations/request 30925 and 30925; complete 10001-row traversal used 6 pages",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t90.947s"
+      ]
+    },
+    {
+      "file": "session-store-race-final.log",
+      "available": true,
+      "sha256": "cf7ff4dec022e21b8f9f4b4d5646bd4105d08148492a1c7f4ee8daace9a6f2ac",
+      "bytes": 2509,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t18.639s"
+      ]
+    },
+    {
+      "file": "session-repository-race-final.log",
+      "available": true,
+      "sha256": "bc7aba271c1c1926af01d1171f50ca5c41a1ded2872d8f801865732807d66903",
+      "bytes": 1819,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t10.224s"
+      ]
+    },
+    {
+      "file": "qa-insertion-race.log",
+      "available": true,
+      "sha256": "7a4b2acf1072f1159ee01361685ba434eb0ba7d6905293865e7ce0df7cdf63fd",
+      "bytes": 554,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T11:28:45.343218+00:00\", \"command\": [\"go\", \"test\", \"-p\", \"1\", \"-race\", \"-count=1\", \"-run\", \"^TestSessionKeysetContinuationAfterCommittedInserts$\", \"-timeout\", \"3m\", \"-v\", \"./internal/store\"]}",
+        "=== RUN   TestSessionKeysetContinuationAfterCommittedInserts",
+        "--- PASS: TestSessionKeysetContinuationAfterCommittedInserts (1.21s)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t2.270s",
+        "{\"exit_code\": 0, \"seconds\": 15.932}"
+      ]
+    },
+    {
+      "file": "core-test-all.log",
+      "available": true,
+      "sha256": "3819579fd76ee6892c934d9eca27f82012f4712f857f54877f607d5ab35c9daf",
+      "bytes": 1947,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"core-test-all\", \"head\": \"992478594e5902f57a39f3772739bee6ab495d24\", \"tree\": \"3725d720ce7fc41f148b560e5f06c8f9bf5ab221\", \"started_utc\": \"2026-11-19T12:24:06.747509+00:00\", \"argv\": [\"go\", \"test\", \"-count=1\", \"-timeout=20m\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t59.088s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t22.394s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t3.877s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t0.117s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t0.003s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t0.007s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t0.008s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t0.092s",
+        "--- FAIL: TestSQLiteWALWriteFailureRollsBackAndRecovers (0.10s)",
+        "    sqlite_ioerr_linux_test.go:150: failed WAL size=0, want partial second frame at 6224",
+        "FAIL",
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t85.277s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t11.566s",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t32.034s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t0.013s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t0.034s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t1.545s",
+        "FAIL",
+        "{\"name\": \"core-test-all\", \"head\": \"992478594e5902f57a39f3772739bee6ab495d24\", \"tree\": \"3725d720ce7fc41f148b560e5f06c8f9bf5ab221\", \"started_utc\": \"2026-11-19T12:24:06.747509+00:00\", \"argv\": [\"go\", \"test\", \"-count=1\", \"-timeout=20m\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 1, \"seconds\": 248.175, \"finished_utc\": \"2026-11-19T12:28:14.922917+00:00\"}"
+      ]
+    },
+    {
+      "file": "core-vet.log",
+      "available": true,
+      "sha256": "907bdea17852812ed7268fe6066d10753b6adbf342fdb8fa3a887ae2c8f2ccbd",
+      "bytes": 709,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"core-vet\", \"head\": \"992478594e5902f57a39f3772739bee6ab495d24\", \"tree\": \"3725d720ce7fc41f148b560e5f06c8f9bf5ab221\", \"started_utc\": \"2026-11-19T12:23:43.424716+00:00\", \"argv\": [\"go\", \"vet\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "{\"name\": \"core-vet\", \"head\": \"992478594e5902f57a39f3772739bee6ab495d24\", \"tree\": \"3725d720ce7fc41f148b560e5f06c8f9bf5ab221\", \"started_utc\": \"2026-11-19T12:23:43.424716+00:00\", \"argv\": [\"go\", \"vet\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 23.322, \"finished_utc\": \"2026-11-19T12:24:06.746831+00:00\"}"
+      ]
+    },
+    {
+      "file": "core-repaired-test-all.log",
+      "available": true,
+      "sha256": "ca62701b06ddab540acaab12f990d1fecd02e017d37341ce72d8eb566c2b771b",
+      "bytes": 1802,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"core-repaired-test-all\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:36:42.526388+00:00\", \"argv\": [\"go\", \"test\", \"-count=1\", \"-timeout=20m\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t55.620s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t20.332s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t5.210s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t0.296s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t0.005s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t0.006s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t0.007s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t0.423s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t96.499s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t13.046s",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t36.149s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t0.014s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t0.035s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t1.561s",
+        "{\"name\": \"core-repaired-test-all\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:36:42.526388+00:00\", \"argv\": [\"go\", \"test\", \"-count=1\", \"-timeout=20m\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 251.654, \"finished_utc\": \"2026-11-19T12:40:54.180768+00:00\"}"
+      ]
+    },
+    {
+      "file": "core-repaired-vet.log",
+      "available": true,
+      "sha256": "d47b19a28b1c1409f0fda2c8b0d7ca0b792468cf166f807d1f58e711ebf11482",
+      "bytes": 726,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"core-repaired-vet\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:36:40.954152+00:00\", \"argv\": [\"go\", \"vet\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "{\"name\": \"core-repaired-vet\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:36:40.954152+00:00\", \"argv\": [\"go\", \"vet\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 1.571, \"finished_utc\": \"2026-11-19T12:36:42.525608+00:00\"}"
+      ]
+    },
+    {
+      "file": "core-repaired-session-race.log",
+      "available": true,
+      "sha256": "76f1999baf38bc508eed9047c78ce4915e41084ebe3411b6bd8136dbf529905d",
+      "bytes": 16636,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "{\"name\": \"core-repaired-session-race\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:40:54.182025+00:00\", \"argv\": [\"go\", \"test\", \"-race\", \"-count=1\", \"-timeout=20m\", \"-run\", \"Session|TestAPIMatchesOpenAPI|TestFailingMigrationRollsBackAndReopensCleanly|TestSQLiteWALWriteFailureRollsBackAndRecovers\", \"-v\", \"./internal/service\", \"./internal/store\", \"./internal/api\", \"./internal/web\", \"./internal/contract\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "    sessions_stress_test.go:113: 10001 and 50001 retained rows: 20 queries/2000 fetched rows per capped page; allocations/request 30925 and 30925; complete 10001-row traversal used 6 pages",
+        "=== RUN   TestSQLiteWALWriteFailureRollsBackAndRecovers",
+        "--- PASS: TestSQLiteWALWriteFailureRollsBackAndRecovers (3.53s)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t87.744s",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t21.341s",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t21.550s",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t19.662s",
+        "    contract_test.go:612: operations exercised: 88; distinct (operation,status) pairs: 170",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t8.323s",
+        "{\"name\": \"core-repaired-session-race\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:40:54.182025+00:00\", \"argv\": [\"go\", \"test\", \"-race\", \"-count=1\", \"-timeout=20m\", \"-run\", \"Session|TestAPIMatchesOpenAPI|TestFailingMigrationRollsBackAndReopensCleanly|TestSQLiteWALWriteFailureRollsBackAndRecovers\", \"-v\", \"./internal/service\", \"./internal/store\", \"./internal/api\", \"./internal/web\", \"./internal/contract\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 218.628, \"finished_utc\": \"2026-11-19T12:44:32.810012+00:00\"}"
+      ]
+    },
+    {
+      "file": "core-repaired-store-race.log",
+      "available": true,
+      "sha256": "276b6fd61e389e2c4e897a2881c68916fdbe0c7968eef76a37270f9dd11b179c",
+      "bytes": 378,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"core-repaired-store-race\", \"head\": \"9edf59a626c0332a122bb618865673d8b1911a4d\", \"tree\": \"f1fa093683ca3ec2c39bdb46fcd78e9443622e96\", \"started_utc\": \"2026-11-19T12:44:32.815312+00:00\", \"argv\": [\"go\", \"test\", \"-race\", \"-count=1\", \"-timeout=20m\", \"./internal/store\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}"
+      ]
+    },
+    {
+      "file": "core-repaired-static.log",
+      "available": false
+    },
+    {
+      "file": "core-export-reader.log",
+      "available": true,
+      "sha256": "884532f13f971f1c1f0ef13f8d521f46690c729bc7653a091a4357221c0f098e",
+      "bytes": 121,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "Ran 22 tests in 8.812s",
+        "OK"
+      ]
+    },
+    {
+      "file": "core-node-messages.log",
+      "available": true,
+      "sha256": "23b1b1d4a2479024b242b3c99d61798e360143e4cd0e5caa2714a215dd28cec7",
+      "bytes": 803,
+      "receipt_kind": "selected_result_lines",
+      "output": []
+    },
+    {
+      "file": "go-test-race-all.log",
+      "available": true,
+      "sha256": "dd75457de1674ad54d29034d02f4df12d535a63d37305e798e798682a379672f",
+      "bytes": 8937,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t563.958s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t680.568s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/contract\t52.543s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t2.439s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/histbal\t1.013s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/httpx\t1.018s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/logx\t1.130s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/repository\t1.186s",
+        "panic: test timed out after 20m0s",
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t1200.067s",
+        "signal: killed",
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/store\t164.853s",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/storetest\t[no test files]",
+        "?   \tgithub.com/djshellshoxxx/circula/internal/testutil\t[no test files]",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t415.693s",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.036s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/sbom\t1.088s",
+        "ok  \tgithub.com/djshellshoxxx/circula/scripts/traceability\t2.394s",
+        "FAIL"
+      ]
+    },
+    {
+      "file": "lint-final.log",
+      "available": true,
+      "sha256": "f7fde78742ffea744716e29d6e52833cfe8b5424d084668532aec2bd927333f9",
+      "bytes": 802,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"lint-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:08:53.960660+00:00\", \"argv\": [\"golangci-lint\", \"run\", \"--concurrency\", \"1\", \"--timeout\", \"10m\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}}",
+        "{\"name\": \"lint-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:08:53.960660+00:00\", \"argv\": [\"golangci-lint\", \"run\", \"--concurrency\", \"1\", \"--timeout\", \"10m\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"2\", \"GOMEMLIMIT\": \"2GiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": -9, \"seconds\": 40.087, \"finished_utc\": \"2026-11-19T12:09:34.048074+00:00\"}"
+      ]
+    },
+    {
+      "file": "lint-limited-final.log",
+      "available": true,
+      "sha256": "0597592541e849c68383d8caff6fedab096920aab9c5245e83a832d39d74156c",
+      "bytes": 822,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"lint-limited-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:12:02.984531+00:00\", \"argv\": [\"golangci-lint\", \"run\", \"--concurrency\", \"1\", \"--timeout\", \"10m\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"20\", \"GOFLAGS\": \"-p=1\"}}",
+        "{\"name\": \"lint-limited-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:12:02.984531+00:00\", \"argv\": [\"golangci-lint\", \"run\", \"--concurrency\", \"1\", \"--timeout\", \"10m\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"20\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": -9, \"seconds\": 42.229, \"finished_utc\": \"2026-11-19T12:12:45.213905+00:00\"}"
+      ]
+    },
+    {
+      "file": "vuln-final.log",
+      "available": true,
+      "sha256": "8e7581f695c29b8ff13c0e568efb1f870fa9a1b195fa2636ead77f883b61ff85",
+      "bytes": 1019,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"vuln-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:12:45.218392+00:00\", \"argv\": [\"go\", \"run\", \"golang.org/x/vuln/cmd/govulncheck@v1.1.4\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"20\", \"GOFLAGS\": \"-p=1\"}}",
+        "go: downloading golang.org/x/telemetry v0.0.0-20240522233618-39ace7a40ae7",
+        "go: downloading golang.org/x/sync v0.10.0",
+        "go: downloading golang.org/x/mod v0.22.0",
+        "go: downloading golang.org/x/tools v0.29.0",
+        "signal: killed",
+        "{\"name\": \"vuln-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:12:45.218392+00:00\", \"argv\": [\"go\", \"run\", \"golang.org/x/vuln/cmd/govulncheck@v1.1.4\", \"./...\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"20\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 1, \"seconds\": 69.17, \"finished_utc\": \"2026-11-19T12:13:54.388557+00:00\"}"
+      ]
+    },
+    {
+      "file": "static-final.log",
+      "available": true,
+      "sha256": "5862bac03de47968a7fa0a4bffbcfe22ca8781e164e1a078fb47da4616cfeeb7",
+      "bytes": 1149,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"static-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:13:54.391886+00:00\", \"argv\": [\"make\", \"-j1\", \"fmt-check\", \"actions-check\", \"hygiene\", \"traceability-check\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"20\", \"GOFLAGS\": \"-p=1\"}}",
+        "scripts/check-action-pins.sh",
+        "action pins and permissions: ok",
+        "scripts/check-hygiene.sh",
+        "....",
+        "----------------------------------------------------------------------",
+        "Ran 4 tests in 0.001s",
+        "",
+        "OK",
+        "hygiene checks: ok",
+        "go run ./scripts/traceability -check -o docs/TRACEABILITY.md",
+        "traceability: docs/TRACEABILITY.md is up to date",
+        "{\"name\": \"static-final\", \"head\": \"9cc1fb2f23071354ecdde12d3c6d05693e713eb7\", \"tree\": \"4829b19db18835e7358c6987a2c3ea154e818e5f\", \"started_utc\": \"2026-11-19T12:13:54.391886+00:00\", \"argv\": [\"make\", \"-j1\", \"fmt-check\", \"actions-check\", \"hygiene\", \"traceability-check\"], \"env\": {\"CGO_ENABLED\": \"1\", \"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"20\", \"GOFLAGS\": \"-p=1\"}, \"exit_code\": 0, \"seconds\": 5.202, \"finished_utc\": \"2026-11-19T12:13:59.593753+00:00\"}"
+      ]
+    },
+    {
+      "file": "fuzz-production-api-cursor.log",
+      "available": true,
+      "sha256": "7223ab1d6c89e76f3cef5686060ccea65ef2ea0e4ae65a13a8e2c5decf107b59",
+      "bytes": 1038,
+      "receipt_kind": "full_output",
+      "output": [
+        "fuzz: elapsed: 0s, gathering baseline coverage: 0/25 completed",
+        "fuzz: elapsed: 0s, gathering baseline coverage: 25/25 completed, now fuzzing with 1 workers",
+        "fuzz: elapsed: 3s, execs: 16630 (5540/sec), new interesting: 24 (total: 49)",
+        "fuzz: elapsed: 6s, execs: 24690 (2688/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 9s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 12s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 15s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 18s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 21s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 24s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 27s, execs: 24690 (0/sec), new interesting: 42 (total: 67)",
+        "fuzz: elapsed: 29s, execs: 100000 (38330/sec), new interesting: 43 (total: 68)",
+        "PASS",
+        "ok  \tcommand-line-arguments\t28.992s",
+        "{\"exit_code\": 0, \"seconds\": 168.559, \"scope\": \"production API files with actual fuzz target\"}"
+      ]
+    },
+    {
+      "file": "fuzz-production-session-position.log",
+      "available": true,
+      "sha256": "566736168ebd118fcfbe45b81924061886bebc93c0dd5b3dec910de96864a188",
+      "bytes": 752,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"target\": \"FuzzSessionPosition\", \"started_utc\": \"2026-11-19T11:23:23.783713+00:00\", \"production_files\": 73, \"scope\": \"all production service files with actual session fuzz targets\"}",
+        "fuzz: elapsed: 0s, gathering baseline coverage: 0/12 completed",
+        "fuzz: elapsed: 0s, gathering baseline coverage: 12/12 completed, now fuzzing with 1 workers",
+        "fuzz: elapsed: 3s, execs: 48656 (16215/sec), new interesting: 15 (total: 27)",
+        "fuzz: elapsed: 6s, execs: 98614 (16650/sec), new interesting: 17 (total: 29)",
+        "fuzz: elapsed: 6s, execs: 100000 (9883/sec), new interesting: 17 (total: 29)",
+        "PASS",
+        "ok  \tcommand-line-arguments\t6.159s",
+        "{\"target\": \"FuzzSessionPosition\", \"exit_code\": 0, \"seconds\": 21.202, \"scope\": \"all production service files with actual session fuzz targets\"}"
+      ]
+    },
+    {
+      "file": "fuzz-production-session-selector.log",
+      "available": true,
+      "sha256": "c535082169f72b26aff32c74930f4b43de7ca44eb635abe4dc7c1e9b0a888446",
+      "bytes": 749,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"target\": \"FuzzSessionSelector\", \"started_utc\": \"2026-11-19T11:23:44.985903+00:00\", \"production_files\": 73, \"scope\": \"all production service files with actual session fuzz targets\"}",
+        "fuzz: elapsed: 0s, gathering baseline coverage: 0/9 completed",
+        "fuzz: elapsed: 0s, gathering baseline coverage: 9/9 completed, now fuzzing with 1 workers",
+        "fuzz: elapsed: 3s, execs: 53870 (17955/sec), new interesting: 12 (total: 21)",
+        "fuzz: elapsed: 6s, execs: 94615 (13582/sec), new interesting: 12 (total: 21)",
+        "fuzz: elapsed: 6s, execs: 100000 (15684/sec), new interesting: 12 (total: 21)",
+        "PASS",
+        "ok  \tcommand-line-arguments\t6.370s",
+        "{\"target\": \"FuzzSessionSelector\", \"exit_code\": 0, \"seconds\": 8.695, \"scope\": \"all production service files with actual session fuzz targets\"}"
+      ]
+    },
+    {
+      "file": "integrated-benchmarks.log",
+      "available": true,
+      "sha256": "9db429afef5781966e809c35bf8731428e6f6aa0c98f679acdfea0fdedefce69",
+      "bytes": 1460,
+      "receipt_kind": "full_output",
+      "output": [
+        "goos: linux",
+        "goarch: amd64",
+        "pkg: github.com/djshellshoxxx/circula/internal/store",
+        "cpu: AMD EPYC 7763 64-Core Processor                ",
+        "BenchmarkSessionKeyset/retained_100/first-2   \t     100\t    261311 ns/op\t   12507 B/op\t     352 allocs/op",
+        "BenchmarkSessionKeyset/retained_100/deep-2    \t     100\t    922698 ns/op\t   12712 B/op\t     356 allocs/op",
+        "BenchmarkSessionKeyset/retained_10000/first-2 \t     100\t    510251 ns/op\t   12840 B/op\t     377 allocs/op",
+        "BenchmarkSessionKeyset/retained_10000/deep-2  \t     100\t    490322 ns/op\t   13064 B/op\t     382 allocs/op",
+        "BenchmarkSessionKeyset/retained_100000/first-2         \t     100\t    265151 ns/op\t   12840 B/op\t     377 allocs/op",
+        "BenchmarkSessionKeyset/retained_100000/deep-2          \t     100\t    545955 ns/op\t   13064 B/op\t     382 allocs/op",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/store\t4.829s",
+        "goos: linux",
+        "goarch: amd64",
+        "pkg: github.com/djshellshoxxx/circula/internal/service",
+        "cpu: AMD EPYC 7763 64-Core Processor                ",
+        "BenchmarkSessionPositionRejectedOversize-2   \t     100\t       932.1 ns/op\t     176 B/op\t       3 allocs/op",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t0.030s",
+        "goos: linux",
+        "goarch: amd64",
+        "pkg: github.com/djshellshoxxx/circula/internal/api",
+        "cpu: AMD EPYC 7763 64-Core Processor                ",
+        "BenchmarkPaginationCursorRejectedOversize-2   \t     100\t       284.4 ns/op\t     128 B/op\t       1 allocs/op",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t0.033s"
+      ]
+    },
+    {
+      "file": "wal-fixture-red-992.log",
+      "available": true,
+      "sha256": "5c291a5a2c3ba1e83740b5bdd0cb74e534985300315688ca51fb3457a2c4df4e",
+      "bytes": 281,
+      "receipt_kind": "full_output",
+      "output": [
+        "=== RUN   TestSQLiteWALWriteFailureRollsBackAndRecovers",
+        "    sqlite_ioerr_linux_test.go:150: failed WAL size=0, want partial second frame at 6224",
+        "--- FAIL: TestSQLiteWALWriteFailureRollsBackAndRecovers (0.09s)",
+        "FAIL",
+        "FAIL\tgithub.com/djshellshoxxx/circula/internal/service\t0.103s",
+        "FAIL"
+      ]
+    },
+    {
+      "file": "wal-fixture-green-992.log",
+      "available": true,
+      "sha256": "c55daa67053809abc52daaf29a268b32abb631444826c98218ce5825b9102db0",
+      "bytes": 187,
+      "receipt_kind": "full_output",
+      "output": [
+        "=== RUN   TestSQLiteWALWriteFailureRollsBackAndRecovers",
+        "--- PASS: TestSQLiteWALWriteFailureRollsBackAndRecovers (0.14s)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t0.172s"
+      ]
+    },
+    {
+      "file": "qualification-docs-static.log",
+      "available": true,
+      "sha256": "6cc7b8b4f454cf6ec90c3b0484ea357704cb1be206315a5d599f6ceac8b97380",
+      "bytes": 1402,
+      "receipt_kind": "full_output",
+      "output": [
+        "{\"name\": \"qualification-docs-static\", \"head\": \"e90433f856a7b64d3c24ad67d59c1b1ac40d9369\", \"tree\": \"ee976c3b2dd2cf248b4fd5d016e79b6d9876c3ac\", \"worktree_scope\": \"Pending audit/evidence changes only; all runtime/test files identical to tested9edf source.\", \"argv\": [\"make\", \"-j1\", \"fmt-check\", \"actions-check\", \"hygiene\", \"traceability-check\"], \"env\": {\"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\", \"CGO_ENABLED\": \"1\"}, \"started_utc\": \"2026-11-19T12:49:58.627024+00:00\"}",
+        "scripts/check-action-pins.sh",
+        "action pins and permissions: ok",
+        "scripts/check-hygiene.sh",
+        "....",
+        "----------------------------------------------------------------------",
+        "Ran 4 tests in 0.001s",
+        "",
+        "OK",
+        "hygiene checks: ok",
+        "go run ./scripts/traceability -check -o docs/TRACEABILITY.md",
+        "traceability: docs/TRACEABILITY.md is up to date",
+        "{\"name\": \"qualification-docs-static\", \"head\": \"e90433f856a7b64d3c24ad67d59c1b1ac40d9369\", \"tree\": \"ee976c3b2dd2cf248b4fd5d016e79b6d9876c3ac\", \"worktree_scope\": \"Pending audit/evidence changes only; all runtime/test files identical to tested9edf source.\", \"argv\": [\"make\", \"-j1\", \"fmt-check\", \"actions-check\", \"hygiene\", \"traceability-check\"], \"env\": {\"GOMAXPROCS\": \"1\", \"GOMEMLIMIT\": \"512MiB\", \"GOGC\": \"50\", \"GOFLAGS\": \"-p=1\", \"CGO_ENABLED\": \"1\"}, \"started_utc\": \"2026-11-19T12:49:58.627024+00:00\", \"exit_code\": 0, \"seconds\": 27.279, \"finished_utc\": \"2026-11-19T12:50:25.906216+00:00\"}"
+      ]
+    },
+    {
+      "file": "playwright-all.log",
+      "available": true,
+      "sha256": "9a187801a1c9fcc8edecb47afd5076949dd26c0f40d34c023860421a3a70815e",
+      "bytes": 5422,
+      "receipt_kind": "selected_result_lines",
+      "output": [
+        "[pid=42][err] [42:42:1119/025426.756061:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)",
+        "  - [pid=42][err] [42:42:1119/025426.756061:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)"
+      ]
+    }
+  ],
+  "feature_files_changed": [
+    ".github/workflows/ci.yml",
+    "docs/TRACEABILITY.md",
+    "docs/api/openapi.yaml",
+    "docs/audit/consolidation-2026-11-17/source-reviews/OWN-SESSIONS.md",
+    "docs/audits/API036_COMPLETION.md",
+    "docs/audits/API036_DATABASE_REVIEW.md",
+    "docs/audits/API036_SQL_MEASUREMENTS.json",
+    "docs/audits/CONSOLIDATION_FINAL_REPORT.md",
+    "docs/audits/FEATURE_COMPLETION_STATUS.md",
+    "docs/audits/REMAINING_BLOCKERS.md",
+    "docs/audits/SECURITY_REVIEW.md",
+    "docs/audits/api036-session-sql-probe.py",
+    "docs/dev/MESSAGES.md",
+    "docs/dev/SERVICE.md",
+    "docs/ops/runbook.md",
+    "docs/ops/sessions.md",
+    "docs/qa/E2E.md",
+    "docs/specs/07-api-contract.md",
+    "docs/specs/08-ux-accessibility.md",
+    "e2e/pages.js",
+    "e2e/tests/sessions.spec.js",
+    "internal/api/cursor.go",
+    "internal/api/cursor_fuzz_test.go",
+    "internal/api/cursor_security_test.go",
+    "internal/api/h_sessions.go",
+    "internal/api/routes.go",
+    "internal/api/sessions_completion_test.go",
+    "internal/api/testdata/route_authz.txt",
+    "internal/contract/contract_test.go",
+    "internal/domain/audit_sessions.go",
+    "internal/repository/iface.go",
+    "internal/service/service.go",
+    "internal/service/session_page_internal_test.go",
+    "internal/service/session_position_security_test.go",
+    "internal/service/sessions_others.go",
+    "internal/service/sessions_others_test.go",
+    "internal/service/sessions_self.go",
+    "internal/service/sessions_stress_test.go",
+    "internal/store/migrations/0021_session_unrevoked_index.sql",
+    "internal/store/persistence_regression_test.go",
+    "internal/store/session_migration_rollback_test.go",
+    "internal/store/session_pagination_insert_test.go",
+    "internal/store/session_performance_test.go",
+    "internal/store/session_query_plan_test.go",
+    "internal/store/sqlite_person.go",
+    "internal/store/sqlite_session_others.go",
+    "internal/storetest/sessions.go",
+    "internal/storetest/storetest.go",
+    "internal/web/a11y_test.go",
+    "internal/web/h_sessions.go",
+    "internal/web/messages/en.json",
+    "internal/web/messages/sessions_test.go",
+    "internal/web/session_templates_test.go",
+    "internal/web/sessions_completion_test.go",
+    "internal/web/support_boundaries_template_test.go",
+    "internal/web/templates/help.html",
+    "internal/web/templates/sessions.html",
+    "internal/web/templates/sessions_revoke_others.html"
+  ],
+  "provider_snapshot": {
+    "observed_utc": "2026-11-19T12:46:13Z",
+    "pr90": {
+      "head_sha": "839e86935767288e594914ad711486616a604eca",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "run_id": 44523175368,
+      "jobs": [
+        {
+          "id": 135556802292,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802243,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802242,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802189,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802172,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802145,
+          "name": "test (windows-2022)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802063,
+          "name": "test (macos-15-intel)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556802040,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 135556801602,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    "pr111_before_qualification_commit": {
+      "head_sha": "ab7d64c5a31653e3a2a14ddb88940e59b4d02892",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "run_id": 44526199270,
+      "jobs": [
+        {
+          "id": 135567303802,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567304227,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567304265,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567304284,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567304414,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567304468,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567304722,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135567306564,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "run_id": 44526199270,
+          "logs_url": null,
+          "steps": null
+        }
+      ]
+    },
+    "historical_core992": {
+      "head_sha": "992478594e5902f57a39f3772739bee6ab495d24",
+      "run_id": 44516848989,
+      "jobs": [
+        {
+          "id": 135535167394,
+          "name": "API contract and load smoke",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535167808,
+          "name": "test (windows-2022)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535167858,
+          "name": "test (macos-15-intel)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535167904,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535167908,
+          "name": "fuzz smoke (RB-017)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535167926,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535168019,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535168212,
+          "name": "test (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        },
+        {
+          "id": 135535169192,
+          "name": "build release targets",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "run_id": 44516848989,
+          "logs_url": null,
+          "steps": null
+        }
+      ]
+    },
+    "limits": [
+      "All results are timestamped observations; no queued, cancelled or skipped job is a pass.",
+      "The next genuine qualification commit occurs after the ci:cross-platform label; inspect its own exact-head jobs on PR111.",
+      "Final publication SHA/checks cannot be self-embedded in the same commit; use the PR current-head receipt."
+    ]
+  }
+}

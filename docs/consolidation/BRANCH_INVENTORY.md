@@ -1,7 +1,5 @@
 # Circula branch inventory — 2026-11-19
 
-> Later consolidation: [combined recovery and validation status](../audits/CONSOLIDATION_CONTINUATION_2026-11-19.md). This file retains its original source snapshot and execution scope; final candidate status is recorded in PR #99.
-
 This is a source and integration snapshot, not a completion certificate. It accounts for every remote branch visible during the pass and distinguishes ancestry, behavioral recovery, and test evidence.
 
 ## Snapshot and evidence
