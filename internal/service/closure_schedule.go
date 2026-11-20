@@ -198,7 +198,7 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
 			continue
 		}
 		if !c.Done() {
-			closed, err := s.finaliseOne(ctx, actor, c.NetworkID)
+			closed, err := s.finaliseOne(ctx, actor, c)
 			if err != nil {
 				return done, err
 			}
@@ -214,7 +214,17 @@ func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int
 	return done, nil
 }
 
-func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, netID string) (bool, error) {
+// sameClosureSchedule compares the immutable announcement, not its completion
+// fields. A job's earlier list is only a candidate set: an administrator may
+// cancel or replace an announcement before the worker acquires its write unit.
+func sameClosureSchedule(a, b *domain.Closure) bool {
+	return a.NetworkID == b.NetworkID && a.Reason == b.Reason && a.ScheduledBy == b.ScheduledBy &&
+		a.ScheduledAt.Equal(b.ScheduledAt) && a.ClosingAt.Equal(b.ClosingAt) &&
+		a.NoticeDays == b.NoticeDays && a.ReadOnlyDays == b.ReadOnlyDays
+}
+
+func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, candidate domain.Closure) (bool, error) {
+	netID := candidate.NetworkID
 	closed := false
 	err := s.update(ctx, func(tx store.Tx) error {
 		n, err := tx.GetNetwork(netID)
@@ -225,6 +235,11 @@ func (s *Service) finaliseOne(ctx context.Context, actor domain.Actor, netID str
 			return err
 		}
 		if n.Status != domain.NetworkActive || n.Closure == nil || n.Closure.Done() {
+			return nil
+		}
+		// Check the current announcement and deadline inside the transaction,
+		// before proposals, notifications, audits or network status can change.
+		if !sameClosureSchedule(n.Closure, &candidate) || !n.Closure.Due(s.now()) || s.IsFrozen(netID) {
 			return nil
 		}
 		// (c) cancel open proposals, telling both parties.
