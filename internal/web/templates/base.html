@@ -95,3 +95,18 @@
 <div class="field" id="f-terms_version"><input type="hidden" name="terms_version" value="{{.Version}}">
   <label><input type="checkbox" name="accept_terms" value="1"> {{msg "terms.accept"}}</label></div>
 {{end}}{{end}}
+
+{{define "historical_limit_coverage"}}
+<section aria-labelledby="historical-limits-h">
+<h2 id="historical-limits-h">{{msg "admin.check.history.title"}}</h2>
+{{with .}}
+<p>{{if eq .Status "complete"}}{{msg "admin.check.history.complete"}}{{else if eq .Status "partial"}}{{msg "admin.check.history.partial"}}{{else}}{{msg "admin.check.history.unknown"}}{{end}}</p>
+<ul>
+  <li>{{msg "admin.check.history.checked" .CheckedDebits}}</li>
+  <li>{{msg "admin.check.history.system" .SystemDebits}}</li>
+  <li>{{msg "admin.check.history.legacy" .LegacyUnverifiedDebits}}</li>
+  <li>{{msg "admin.check.history.unverifiable" .UnverifiableDebits}}</li>
+</ul>
+{{else}}<p>{{msg "admin.check.history.unknown"}}</p>{{end}}
+</section>
+{{end}}

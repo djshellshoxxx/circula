@@ -2198,6 +2198,34 @@
   "admin.check.failed": {
     "other": "Check failed: problems found."
   },
+  "admin.check.history.title": {
+    "other": "Historical credit-limit coverage"
+  },
+  "admin.check.history.complete": {
+    "other": "Coverage is complete. The check result separately reports any problems found."
+  },
+  "admin.check.history.partial": {
+    "other": "Coverage is partial: some debits lack usable historical evidence. The check result separately reports any problems found."
+  },
+  "admin.check.history.unknown": {
+    "other": "Historical credit-limit coverage was not recorded for this check."
+  },
+  "admin.check.history.checked": {
+    "one": "%[1]d debit was checked against its historical credit limit.",
+    "other": "%[1]d debits were checked against their historical credit limits."
+  },
+  "admin.check.history.system": {
+    "one": "%[1]d system debit was exempt from credit limits.",
+    "other": "%[1]d system debits were exempt from credit limits."
+  },
+  "admin.check.history.legacy": {
+    "one": "%[1]d debit predates evidence collection and has no recorded historical limit.",
+    "other": "%[1]d debits predate evidence collection and have no recorded historical limits."
+  },
+  "admin.check.history.unverifiable": {
+    "one": "%[1]d debit has missing or unusable evidence from the period covered by historical checks.",
+    "other": "%[1]d debits have missing or unusable evidence from the period covered by historical checks."
+  },
   "admin.check.back": {
     "other": "Back to audit and checks"
   },

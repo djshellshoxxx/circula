@@ -53,12 +53,15 @@ func printChecks(w io.Writer, checks []networkCheck) bool {
 		}
 		if c.OK {
 			fmt.Fprintf(w, "%s: ok\n", label)
-			continue
+		} else {
+			ok = false
+			fmt.Fprintf(w, "%s: FAILED\n", label)
+			for _, f := range c.Findings {
+				fmt.Fprintf(w, "  - %s\n", f)
+			}
 		}
-		ok = false
-		fmt.Fprintf(w, "%s: FAILED\n", label)
-		for _, f := range c.Findings {
-			fmt.Fprintf(w, "  - %s\n", f)
+		if !c.Platform {
+			printHistoricalLimits(w, c.HistoricalLimits)
 		}
 	}
 	if networks == 0 {
@@ -186,6 +189,7 @@ func cmdBackup(ctx context.Context, args []string, stdout, stderr io.Writer) int
 	}
 	fmt.Fprintf(stdout, "backup: %s\nmanifest: %s.manifest.json\nsha256: %s\nschema: v%d\nledger: %s\nencrypted: %t\n",
 		dest, dest, mf.SHA256, mf.SchemaVersion, mf.Ledger.Status, mf.Encrypted)
+	printHistoricalLimits(stdout, mf.Ledger.HistoricalLimits)
 	if !mf.Encrypted {
 		fmt.Fprintln(stderr, "circula: WARNING: the backup is not encrypted (no backup-encryption-key configured); it holds password hashes and every member's data in the clear (OPS-019)")
 	}

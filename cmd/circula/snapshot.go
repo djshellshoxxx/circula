@@ -38,6 +38,8 @@ type LedgerSummary struct {
 	Failing       int    `json:"failing_networks"`
 	Reason        string `json:"reason,omitempty"`
 	PlatformAudit string `json:"platform_audit,omitempty"` // absent in historical manifests
+	// Omit unknown coverage to preserve older canonical bytes and signatures.
+	HistoricalLimits *service.HistoricalLimitCoverage `json:"historical_limit_coverage,omitempty"`
 }
 
 // Manifest accompanies every backup file (OPS-017).
@@ -122,11 +124,12 @@ func checkManifestAuth(m *Manifest, key []byte) (authenticated bool, err error) 
 // networkCheck is the outcome of verifying one network or the platform audit
 // scope. Platform results never contribute to network counts or freezes.
 type networkCheck struct {
-	ID       string
-	Slug     string
-	OK       bool
-	Findings []string
-	Platform bool
+	ID               string
+	Slug             string
+	OK               bool
+	Findings         []string
+	Platform         bool
+	HistoricalLimits *service.HistoricalLimitCoverage
 }
 
 // verifyAllNetworks runs the ledger verification for every network (or only
@@ -156,7 +159,8 @@ func verifyNetworks(ctx context.Context, svc *service.Service, requestID, filter
 				return out, fmt.Errorf("record run for network %s: %w", n.Slug, err)
 			}
 		}
-		out = append(out, networkCheck{ID: n.ID, Slug: n.Slug, OK: rep.OK, Findings: rep.Findings})
+		out = append(out, networkCheck{ID: n.ID, Slug: n.Slug, OK: rep.OK, Findings: rep.Findings,
+			HistoricalLimits: rep.HistoricalLimits})
 	}
 	platform, err := svc.VerifyPlatformAudit(ctx, domain.SystemActor(requestID))
 	if err != nil {
@@ -169,7 +173,7 @@ func verifyNetworks(ctx context.Context, svc *service.Service, requestID, filter
 // summarise keeps network counts separate while making a platform audit
 // failure part of the overall verification result.
 func summarise(checks []networkCheck) LedgerSummary {
-	s := LedgerSummary{Status: "ok"}
+	s := LedgerSummary{Status: "ok", HistoricalLimits: summariseHistoricalLimits(checks)}
 	for _, c := range checks {
 		if c.Platform {
 			s.PlatformAudit = "ok"

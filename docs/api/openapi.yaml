@@ -4091,6 +4091,21 @@ components:
         summary_before: {description: "JSON object summary, or null when there is no state on that side.", oneOf: [{type: object}, {type: 'null'}]}
         summary_after: {description: "JSON object summary, or null when there is no state on that side.", oneOf: [{type: object}, {type: 'null'}]}
         hash: {type: string}
+    HistoricalLimitCoverage:
+      type: object
+      description: |
+        Historical credit-limit evidence coverage, independent of the consistency result.
+        Complete coverage can contain invariant findings; partial coverage from pre-existing
+        debits alone is not an invariant failure. Omitted historical_limit_coverage means
+        unknown/not recorded, as in older check results and backup manifests.
+      required: [status, checked_debits, system_debits, legacy_unverified_debits, unverifiable_debits]
+      additionalProperties: false
+      properties:
+        status: {type: string, enum: [complete, partial]}
+        checked_debits: {type: integer, format: int64, minimum: 0, description: Non-system debits whose historical credit condition was evaluated.}
+        system_debits: {type: integer, format: int64, minimum: 0, description: Witnessed system debits exempt from credit limits.}
+        legacy_unverified_debits: {type: integer, format: int64, minimum: 0, description: Exact debit identities present when historical evidence collection was introduced.}
+        unverifiable_debits: {type: integer, format: int64, minimum: 0, description: Debits with missing or unusable forward historical evidence.}
     ConsistencyCheck:
       type: object
       required: [id, status, ok, findings, ledger_seq, audit_events, created_at]
@@ -4103,6 +4118,7 @@ components:
         ledger_seq: {type: integer, format: int64}
         audit_events: {type: integer, format: int64}
         created_at: {$ref: '#/components/schemas/Timestamp'}
+        historical_limit_coverage: {$ref: '#/components/schemas/HistoricalLimitCoverage'}
     Export:
       type: object
       required: [id, scope, format, status, created_at, expires_at, sha256, bytes, artefact_url, error]

@@ -31,10 +31,12 @@ type attentionRow struct {
 }
 
 type overviewData struct {
-	Rows    []attentionRow
-	AsOf    template.HTML
-	Check   string
-	CheckAt template.HTML
+	Rows             []attentionRow
+	AsOf             template.HTML
+	Check            string
+	CheckAt          template.HTML
+	HasCheck         bool
+	HistoricalLimits *service.HistoricalLimitCoverage
 	// Frozen is set while the network is read-only; FrozenReason is the administrator-only cause.
 	Frozen       bool
 	FrozenSince  template.HTML
@@ -73,6 +75,7 @@ func (s *server) overview(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	if ov.LastCheck != nil {
 		d.CheckAt = c.when(ov.LastCheck.At)
+		d.HasCheck, d.HistoricalLimits = true, ov.LastCheck.HistoricalLimits
 	}
 	s.render(w, r, c, "admin_home", 200, &page{Title: messages.Text("overview.title"), D: d})
 }

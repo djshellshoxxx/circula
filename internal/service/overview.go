@@ -43,8 +43,9 @@ type AdminOverview struct {
 
 // CheckSummary is the outcome of a recorded consistency check.
 type CheckSummary struct {
-	At time.Time
-	OK bool
+	At               time.Time
+	OK               bool
+	HistoricalLimits *HistoricalLimitCoverage
 }
 
 // AdminStaleProposals lists the live proposals counted by AdminOverview (FR-067).
@@ -103,7 +104,7 @@ func (s *Service) AdminOverview(ctx context.Context, actor domain.Actor, netID s
 			OpenDisputes: c.OpenDisputes, PostingPending: c.PostingPending, NearLimit: c.NearLimit,
 			ExpiringInvites: c.ExpiringInvites, InviteWithin: OverviewInviteWithin}
 		if c.LastCheck != nil {
-			out.LastCheck = &CheckSummary{At: c.LastCheck.Finished, OK: c.LastCheck.OK}
+			out.LastCheck = &CheckSummary{At: c.LastCheck.Finished, OK: c.LastCheck.OK, HistoricalLimits: c.LastCheck.HistoricalLimits}
 		}
 		if fi, ok := s.FrozenInfo(netID); ok {
 			out.Frozen = &fi

@@ -3,6 +3,7 @@
 <p class="big">{{if .OK}}{{msg "admin.check.passed"}}{{else}}{{msg "admin.check.failed"}}{{end}}</p>
 <p>{{msg "admin.check.summary" .AuditEvents (printf "%d" .LedgerSeq)}}</p>
 {{if .Findings}}<ul>{{range .Findings}}<li>{{.}}</li>{{end}}</ul>{{end}}
+{{template "historical_limit_coverage" .HistoricalLimits}}
 {{end}}
 <p><a href="/n/{{.Slug}}/admin/audit">{{msg "admin.check.back"}}</a></p>
 {{end}}

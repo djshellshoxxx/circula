@@ -91,13 +91,14 @@ func (s *server) auditList(c *reqCtx) error {
 }
 
 type checkDTO struct {
-	ID          string   `json:"id"`
-	Status      string   `json:"status"`
-	OK          bool     `json:"ok"`
-	Findings    []string `json:"findings"`
-	LedgerSeq   int64    `json:"ledger_seq"`
-	AuditEvents int64    `json:"audit_events"`
-	CreatedAt   string   `json:"created_at"`
+	ID               string                           `json:"id"`
+	Status           string                           `json:"status"`
+	OK               bool                             `json:"ok"`
+	Findings         []string                         `json:"findings"`
+	LedgerSeq        int64                            `json:"ledger_seq"`
+	AuditEvents      int64                            `json:"audit_events"`
+	CreatedAt        string                           `json:"created_at"`
+	HistoricalLimits *service.HistoricalLimitCoverage `json:"historical_limit_coverage,omitempty"`
 }
 
 func (s *server) runCheck(c *reqCtx) error { // API-063
@@ -110,7 +111,7 @@ func (s *server) runCheck(c *reqCtx) error { // API-063
 		return err
 	}
 	d := checkDTO{ID: id, Status: "complete", OK: rep.OK, Findings: append([]string{}, rep.Findings...),
-		LedgerSeq: rep.LedgerSeq, AuditEvents: rep.AuditEvents, CreatedAt: ts(s.opt.Now())}
+		LedgerSeq: rep.LedgerSeq, AuditEvents: rep.AuditEvents, CreatedAt: ts(s.opt.Now()), HistoricalLimits: rep.HistoricalLimits}
 	s.jobs.putCheck(c.netID, c.actor.PersonID, d)
 	c.w.Header().Set("Location", v1+"/admin/consistency-checks/"+id)
 	return ok(c, 201, d)
