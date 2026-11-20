@@ -47,7 +47,7 @@ func (s *server) decisionReview(w http.ResponseWriter, r *http.Request, c *rc, i
 	case rat == "":
 		s.disputeFail(w, r, c, id, domain.Invalid("rationale", messages.Text("dispute.decision.rationale_required")))
 		return
-	case utf8.RuneCountInString(rat) > 2000:
+	case utf8.RuneCountInString(in.Rationale) > 2000:
 		s.disputeFail(w, r, c, id, domain.Invalid("rationale", messages.Text("dispute.decision.rationale_too_long")))
 		return
 	}

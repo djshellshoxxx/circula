@@ -64,15 +64,17 @@ func TestDisputeRationaleCharacterLimitMatchesService(t *testing.T) {
 	path := w.base() + "/disputes/" + d.ID
 	form := br.get(path)
 	rationale := disputeTextAtLimit()
-	for _, step := range []string{"review", "confirm"} {
-		invalid := br.post(path+"/resolve", form, url.Values{"outcome": {"dismissed"}, "rationale": {rationale + "文"}, "step": {step}})
-		if invalid.Status != 422 {
-			t.Fatalf("over-limit %s status = %d", step, invalid.Status)
-		}
-		br.mustContain(invalid, `href="#f-rationale"`)
-		view := testutil.Must(w.env.Svc.GetDispute(w.env.Ctx, w.admin, w.net.ID, d.ID))
-		if view.Dispute.Status != domain.DisputeOpen {
-			t.Fatal("over-limit rationale changed the dispute")
+	for _, overLimit := range []string{rationale + "文", " " + rationale} {
+		for _, step := range []string{"review", "confirm"} {
+			invalid := br.post(path+"/resolve", form, url.Values{"outcome": {"dismissed"}, "rationale": {overLimit}, "step": {step}})
+			if invalid.Status != 422 {
+				t.Fatalf("over-limit %s status = %d", step, invalid.Status)
+			}
+			br.mustContain(invalid, `href="#f-rationale"`)
+			view := testutil.Must(w.env.Svc.GetDispute(w.env.Ctx, w.admin, w.net.ID, d.ID))
+			if view.Dispute.Status != domain.DisputeOpen {
+				t.Fatal("over-limit rationale changed the dispute")
+			}
 		}
 	}
 	values := url.Values{"outcome": {"dismissed"}, "rationale": {rationale}, "step": {"review"}}
