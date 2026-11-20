@@ -27,7 +27,7 @@ type fixture struct {
 
 func setup(t testing.TB) *fixture {
 	t.Helper()
-	f := &fixture{t: t, path: filepath.Join(t.TempDir(), "messages.sqlite"), now: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)}
+	f := &fixture{t: t, path: filepath.Join(privateFixtureDirectory(t), "messages.sqlite"), now: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)}
 	f.open()
 	if e := f.s.Migrate(ctx); e != nil {
 		t.Fatal(e)

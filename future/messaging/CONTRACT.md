@@ -89,3 +89,82 @@ The API and no-JavaScript search/continuation forms use POST, with the existing 
 Raw queries are capped at 8192 bytes and malformed URL encoding/semicolon query syntax is rejected before host callbacks. Existing route-specific pagination remains supported. Ordinary POST forms are parsed under the 64 KiB cap before Resolve; valid cached PostForm is available to host CSRF checks. Resolve may run more than once per request and must be a read-only current-session decision. After VerifyCSRF or Token, the handler requires the same current actor and an uncancelled request before private reads/mutation. Search token acquisition precedes the existing transactional private search.
 
 Host middleware must not consume malformed input and discard parse errors before invoking the handler. These bounded checks supplement transactional membership/content checks; they do not promise global atomicity across arbitrary external session stores.
+
+## Standalone Windows storage profile
+
+The standalone `Open` constructor uses an explicit Windows equivalent of the
+owner-private file contract above. This is a storage-platform adaptation;
+authorization, retention, schema and message semantics remain unchanged.
+
+The storage identity is the **process token user SID**. The process token's
+default owner must be that same SID so SQLite-created WAL, SHM and backup files
+also have that owner. Storage initialization rejects impersonating threads and
+a different default owner. The module never changes a production token, adds
+SYSTEM/Administrators/group access, or changes an existing object's ACL.
+Configure a suitable service/user process before opening its standalone store.
+
+Provision a dedicated directory explicitly with `CreatePrivateDirectory(path)`
+or an equivalent reviewed operator procedure. The helper creates only a new
+directory; an existing path is an error and is left unchanged. On Windows it
+creates a protected DACL containing one full-control allow ACE for the process
+user, inheritable by child files and directories. Existing storage directories
+must have that same owner and protected inheritable DACL. On non-Windows systems
+the helper creates mode 0700, and `Open` retains its original mode-0600 creation
+and group/world permission checks.
+
+Windows `Open` supports local fixed drives with persistent file ACLs and ordinary
+directory/file paths. UNC/device/drive-relative paths, alternate data streams,
+reserved names, trailing-dot/space aliases, malformed UTF-8, reparse points and
+multiply-linked database/sidecar files are rejected. Paths are bounded to 128
+components and 32760 UTF-8 bytes. Relative ordinary paths are resolved once to an
+absolute path. Directory components and the main file remain open without
+delete sharing until `Store.Close`, preventing their replacement while SQLite
+uses that path. Closing an owned Windows store waits for its active module
+transactions, closes the physical database connection, then releases the path
+handles. Concurrent closes share that ordered operation; new operations fail
+after closure. Lifecycle calls must run outside the store's transaction-bound
+authorizer callbacks. Always close an owned store before moving its database or
+parent directories; closing twice remains safe. Borrowed `NewStore` pools retain
+their separate host-owned lifecycle and configuration contract.
+
+The Windows-owned pool wraps the pinned driver's connector without changing its
+global registrations or supported SQL connection interfaces. Cleanup prevents
+new physical connections and waits for in-flight connection creation and actual
+driver close calls, including background rollback after context cancellation.
+It does not infer completion from pool statistics. A failed driver connection
+attempt or close can leave cleanup unproven; in that case the error is returned
+and the path handles remain held for the process lifetime. Initialization errors
+use the same conservative cleanup. There is no forced unlock of unproven state.
+
+Before SQLite writes, the constructor validates the directory, existing main
+file and existing `-wal`, `-shm` and `-journal` files. Every accepted file has the
+process user as owner and exactly one effective full-control allow ACE for that
+SID. A file's owner-only ACE may be inherited from the private directory.
+Missing/null DACLs, extra or unsupported ACEs, other owners and unsafe sidecars
+are rejected without changing their bytes or security. New main files receive
+their protected owner-only security descriptor atomically, with no truncation
+when another creator wins. SQLite-created children inherit the private
+directory's owner-only access. For this Windows-owned connection,
+`temp_store=MEMORY` keeps SQLite scratch data out of the process temporary
+directory. Trusted driver options initialize that setting and the existing busy
+timeout/WAL/foreign-key/secure-delete settings on replacement pool connections
+as well. Caller-supplied URI/query options remain rejected; Unix filenames and
+connection settings are unchanged.
+
+Create backups inside an explicitly provisioned private directory while using
+the consistent SQLite backup/VACUUM procedure above. Validate the resulting
+backup ACL and preserve the complete database state on restore. `os.Chmod(0600)`
+only toggles the Windows read-only attribute and is not a Windows privacy check.
+An existing unsafe or foreign-owned restore must be prepared explicitly by its
+operator while offline; `Open` does not silently repair it.
+
+The native test fixture configures **only its own test process's** default owner
+to its user SID, records the original value and restores it after the suite.
+That fixture satisfies the production profile; production contains no token
+mutation. Tests retain the actual `Open`, real SQLite lifecycle and snapshot
+restore assertions, inspect database/WAL/SHM/backup ACLs, and reject unsafe
+existing state without mutation. An alternate legally assignable token owner,
+when provided by the native account, exercises public-entry rejection; the
+production mismatch predicate is also tested independently. A successful
+cross-compilation is not native execution. Actual Windows provider results and
+the unchanged module/Core integration gates remain required before qualification.
