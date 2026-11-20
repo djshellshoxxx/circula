@@ -1,0 +1,72 @@
+{
+  "observed_at": "2026-11-20T23:48:15.555304+00:00",
+  "password_manifest": {
+    "path": "docs/consolidation/evidence/password-admission-20261120/manifest.json",
+    "original_commit": "0bd96859034c7341015dbaf56a137f6cb84f5b55",
+    "published_commit": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+    "same_source_path_digest_pairs": 22,
+    "all_other_fields_identical_except_qualification_notes": true,
+    "original_qualification_notes_retained_in_order": true,
+    "additional_qualification_notes": [
+      "Integration secret scanning matched nine source-file digest map entries as credential-shaped text. Their representation was changed to explicit path/sha256 rows without changing any path or digest. Scanner rules and original execution logs remain unchanged; final integration scan is recorded separately."
+    ],
+    "representation_change": "source_files_sha256 map converted to explicit path/sha256 rows"
+  },
+  "traceability": {
+    "path": "docs/TRACEABILITY.md",
+    "original_commit": "dc12dac950714c66337dbd2e98edc15eab0fa640",
+    "published_commit": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+    "only_change": "Generated input HEAD stamp changed from 025ad9d to 7685e04; all other bytes identical."
+  },
+  "continuation_report": {
+    "path": "docs/consolidation/CORE_QUALIFICATION_CONTINUATION_20261120.md",
+    "original_commit": "dc12dac950714c66337dbd2e98edc15eab0fa640",
+    "published_commit": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+    "all_original_lines_retained_in_order": true,
+    "added_lines": 61,
+    "deleted_or_replaced_lines": 0
+  },
+  "pending_documentary_staging": {
+    "commit": "cca252843196edb423def4c530049d31affca10b",
+    "branches": [
+      {
+        "branch": "audit/core-loading-continuation-20261120",
+        "head": "cca252843196edb423def4c530049d31affca10b",
+        "changed_path_count": 33,
+        "all_changed_path_blobs_match_staging": true
+      },
+      {
+        "branch": "audit/pr104-historical-evidence-20261120",
+        "head": "72cf3a267c72e588f37fbd31ed5b3410037f3284",
+        "changed_path_count": 10,
+        "all_changed_path_blobs_match_staging": true
+      },
+      {
+        "branch": "review/core-containment-20261120",
+        "head": "11912dfa28112d6c3bb9065478021b248f217660",
+        "changed_path_count": 13,
+        "all_changed_path_blobs_match_staging": true
+      },
+      {
+        "branch": "review/future-ref-refresh-20261120-late",
+        "head": "6eafbaad996fb846f3a71be735f57196164d9d37",
+        "changed_path_count": 10,
+        "all_changed_path_blobs_match_staging": true
+      }
+    ],
+    "explicit_commit_mappings": [
+      {
+        "source": "11912dfa28112d6c3bb9065478021b248f217660",
+        "staged_cherry_pick": "4f24bc9049dc76ff9091a0240d3dd61f1d53e9cb"
+      },
+      {
+        "source": "72cf3a267c72e588f37fbd31ed5b3410037f3284",
+        "staged_cherry_pick": "cca252843196edb423def4c530049d31affca10b"
+      },
+      {
+        "source": "6eafbaad996fb846f3a71be735f57196164d9d37",
+        "staged_ancestor": "6eafbaad996fb846f3a71be735f57196164d9d37"
+      }
+    ]
+  }
+}

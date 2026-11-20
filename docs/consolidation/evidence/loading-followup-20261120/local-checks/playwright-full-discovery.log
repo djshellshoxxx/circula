@@ -1,0 +1,599 @@
+Listing tests:
+  a11y-governance.spec.js:60:1 › axe: administrator terms, error state and a published version
+  a11y-governance.spec.js:73:1 › axe: network terms acceptance form and its error state
+  a11y-governance.spec.js:87:1 › axe: request to join by approval, its error state, then the waiting page
+  a11y-governance.spec.js:110:1 › axe: administrator approves the request
+  a11y-governance.spec.js:121:1 › axe: leave form of a member who can leave, and its error state
+  a11y-governance.spec.js:132:1 › axe: consistency check result and adjustment review step
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: login
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: register
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: help (anonymous)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: invitation, signed out
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: not found
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: networks list (one network, so it opens that dashboard)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: setup (network creation)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: password change
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: active sessions
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: end current session confirmation
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: end other sessions confirmation
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: help (member)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: invitation, signed in
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dashboard
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: about this network
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dashboard with pending trade
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: directory
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: member profile
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: listings
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: new listing
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: edit listing
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: trades
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: propose a trade
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: trade detail (completed)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: trade detail (pending, recipient)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: accept a trade
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: decline a trade
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: cancel a trade
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: history
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: account activity log
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute form
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: disputes
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (other party, response form)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (resolved, with response, re-review form)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (resolved, responder view)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (re-review requested, requester)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (re-review decision form)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: inbox (with notifications)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: inbox (waiting for action)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: inbox (unread only)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dashboard with announcement
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: report a listing
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: report a member
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: time zone
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: network rules and change log
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: network terms (none published)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: leave the network (blocked by an open dispute)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: join a network (invitation only)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin overview
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin waiting proposals
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin members
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin member action
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin inactive members
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin invitations
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin policy
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin terms (none published)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin adjustment
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin audit log
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin exports
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin reports (open)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin reports (all)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin announcements
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin reverse a trade
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin reverse a trade (trade chosen)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin pause or close the network
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: admin overview (needs attention)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: review queue
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (reviewer)
+  a11y.spec.js:10:3 › axe wcag 2.2 AA, light and dark: dispute detail (re-review waiting, first reviewer)
+  a11y.spec.js:21:1 › axe: validation error state of the sign-in form
+  a11y.spec.js:30:1 › axe: independent reviewer report summaries
+  a11y.spec.js:39:1 › axe: validation error state of the propose form
+  a11y.spec.js:48:1 › axe: review step of a proposal
+  a11y.spec.js:57:1 › axe: time zone validation error
+  a11y.spec.js:66:1 › axe: time zone saved
+  a11y.spec.js:78:1 › axe: announcement form error and reversal review and error states
+  a11y.spec.js:98:1 › axe: dispute decision review step and empty response error
+  a11y.spec.js:114:1 › axe and keyboard: re-review decision preview and back
+  a11y.spec.js:130:1 › axe harness detects a deliberately broken page
+  a11y.spec.js:142:1 › axe harness detects a target-size violation and a dark-only contrast failure
+  a11y.spec.js:166:1 › axe: maintenance page, and reads keep working in maintenance mode
+  a11y.spec.js:184:1 › axe and keyboard: historical balance lookup, error then result
+  a11y.spec.js:240:1 › every page template is checked by axe
+  aria.spec.js:39:3 › aria tree: sign in
+  aria.spec.js:39:3 › aria tree: register
+  aria.spec.js:39:3 › aria tree: dashboard / balance
+  aria.spec.js:39:3 › aria tree: propose a trade
+  aria.spec.js:39:3 › aria tree: trade detail (pending, recipient)
+  aria.spec.js:39:3 › aria tree: accept a trade
+  aria.spec.js:39:3 › aria tree: history
+  aria.spec.js:39:3 › aria tree: directory
+  aria.spec.js:39:3 › aria tree: dispute form
+  aria.spec.js:39:3 › aria tree: disputes
+  aria.spec.js:39:3 › aria tree: inbox
+  aria.spec.js:39:3 › aria tree: admin overview
+  aria.spec.js:72:1 › aria tree: sign-in form is a labelled form with named fields
+  aria.spec.js:82:1 › aria tree: dashboard exposes named regions, a balance statement and a credit-limit meter
+  aria.spec.js:94:1 › aria tree: a failed sign-in is exposed as an alert with a link to the field
+  aria.spec.js:102:1 › aria tree: data tables expose column headers
+  contrast.spec.js:110:1 › every colour is a token, every token has a dark value and is in the contrast matrix
+  contrast.spec.js:125:3 › contrast matrix of the colour tokens, light scheme
+  contrast.spec.js:125:3 › contrast matrix of the colour tokens, dark scheme
+  contrast.spec.js:147:1 › token reader reports an untracked token and colour literals
+  contrast.spec.js:158:1 › contrast arithmetic matches known WCAG values
+  dispute-unicode.spec.js:15:1 › dispute statements and both rationales preserve 2000 emoji through confirmation
+  freshness.spec.js:4:1 › balance snapshot retains its time through network failure and reconnection
+  freshness.spec.js:28:1 › restoring a balance page from history identifies its earlier snapshot
+  greyscale.spec.js:93:3 › UX-005: dashboard, in debt is understandable without colour
+  greyscale.spec.js:93:3 › UX-005: dashboard, in credit, with a trade waiting is understandable without colour
+  greyscale.spec.js:93:3 › UX-005: dashboard, level is understandable without colour
+  greyscale.spec.js:93:3 › UX-005: history is understandable without colour
+  greyscale.spec.js:93:3 › UX-005: trades is understandable without colour
+  greyscale.spec.js:93:3 › UX-005: trade detail, pending is understandable without colour
+  greyscale.spec.js:93:3 › UX-005: accept review, balance before and after is understandable without colour
+  greyscale.spec.js:138:1 › UX-005 guard: a colour-only balance fails the sign-and-word check
+  help-location.spec.js:24:5 › UX-049: shared Help landmark, public, portrait
+  help-location.spec.js:24:5 › UX-049: shared Help landmark, member, portrait
+  help-location.spec.js:24:5 › UX-049: shared Help landmark, administrator, portrait
+  help-location.spec.js:24:5 › UX-049: shared Help landmark, public, landscape
+  help-location.spec.js:24:5 › UX-049: shared Help landmark, member, landscape
+  help-location.spec.js:24:5 › UX-049: shared Help landmark, administrator, landscape
+  kbd-admin.spec.js:23:1 › UX-038: approve a request to join using only the keyboard
+  kbd-admin.spec.js:41:1 › UX-038: create and then edit a listing using only the keyboard
+  kbd-admin.spec.js:70:1 › UX-038: change the policy using only the keyboard
+  keyboard.spec.js:58:1 › skip link is the first Tab stop, becomes visible, and moves focus to main
+  keyboard.spec.js:79:1 › login page tab order follows the visual and reading order
+  keyboard.spec.js:89:1 › no positive tabindex and a visible focus indicator on every Tab stop
+  keyboard.spec.js:111:1 › sign in, propose a trade and accept it, using only the keyboard
+  keyboard.spec.js:161:1 › validation errors are announced and reachable from the keyboard
+  keyboard.spec.js:179:1 › focus indicator and no positive tabindex on the inbox, report, time zone and dispute pages
+  keyboard.spec.js:200:1 › focus indicator on the admin overview, reports, announcements and reverse pages
+  keyboard.spec.js:218:1 › respond to a dispute using only the keyboard
+  keyboard.spec.js:228:1 › set the time zone using only the keyboard
+  keyboard.spec.js:237:1 › mark all notifications as read using only the keyboard
+  keyboard.spec.js:245:1 › reverse a trade using only the keyboard
+  loading.spec.js:48:1 › keyboard navigation announces loading without moving focus
+  loading.spec.js:70:1 › submission feedback retains confirmation data and successful controls
+  loading.spec.js:103:1 › native validation does not announce a submission that was not sent
+  loading.spec.js:115:1 › a native export download leaves its page idle and usable
+  navigation.spec.js:110:5 › UX-002: about this network from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: directory from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: member profile from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: listings from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: new listing from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: edit own listing from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: proposal form from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: trades from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: own historical trade from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: pending trade from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: acceptance review from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: decline confirmation from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: cancel own proposal from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: history from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: disputes from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: own dispute detail from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: review queue from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: dispute reviewer detail from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin overview from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin members from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin policy from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin adjustment form from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin audit and checks from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin invitations from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin announcements from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin exports from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin reports from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: account time zone from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: account password form from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: Help from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: account security from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: two-step sign-in setup from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: password recovery codes from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: inbox from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: inbox, unread only from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: network rules and change log from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: leave the network (blocked) from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: own account activity log from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin member action from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin inactive members from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin reverse a trade from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin adjustments awaiting approval from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin pause or close from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin operator access from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin network terms from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: network terms (published) from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: leave the network (form) from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin membership requests from Home within three activations, portrait
+  navigation.spec.js:110:5 › UX-002: admin approve a request from Home within three activations, portrait
+  navigation.spec.js:119:5 › UX-002: registration from sign-in within three activations, portrait
+  navigation.spec.js:119:5 › UX-002: account recovery from sign-in within three activations, portrait
+  navigation.spec.js:129:3 › UX-002: dispute raise from Home in three activations, portrait
+  navigation.spec.js:110:5 › UX-002: about this network from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: directory from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: member profile from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: listings from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: new listing from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: edit own listing from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: proposal form from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: trades from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: own historical trade from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: pending trade from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: acceptance review from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: decline confirmation from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: cancel own proposal from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: history from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: disputes from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: own dispute detail from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: review queue from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: dispute reviewer detail from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin overview from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin members from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin policy from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin adjustment form from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin audit and checks from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin invitations from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin announcements from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin exports from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin reports from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: account time zone from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: account password form from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: Help from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: account security from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: two-step sign-in setup from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: password recovery codes from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: inbox from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: inbox, unread only from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: network rules and change log from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: leave the network (blocked) from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: own account activity log from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin member action from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin inactive members from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin reverse a trade from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin adjustments awaiting approval from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin pause or close from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin operator access from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin network terms from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: network terms (published) from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: leave the network (form) from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin membership requests from Home within three activations, landscape
+  navigation.spec.js:110:5 › UX-002: admin approve a request from Home within three activations, landscape
+  navigation.spec.js:119:5 › UX-002: registration from sign-in within three activations, landscape
+  navigation.spec.js:119:5 › UX-002: account recovery from sign-in within three activations, landscape
+  navigation.spec.js:129:3 › UX-002: dispute raise from Home in three activations, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, registration, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, invitation (signed out), portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, invitation (signed in), portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, proposal, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, acceptance, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, decline, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, balance, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, history, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, dispute raise, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, sign-in, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, account security, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, network rules, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, new listing, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, edit own listing, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, admin members, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, admin policy, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, admin approve a request, portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, network terms (to accept), portrait
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, registration, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, invitation (signed out), landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, invitation (signed in), landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, proposal, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, acceptance, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, decline, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, balance, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, history, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, dispute raise, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, sign-in, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, account security, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, network rules, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, new listing, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, edit own listing, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, admin members, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, admin policy, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, admin approve a request, landscape
+  noscript-focus.spec.js:35:5 › QA-034/UX-039/UX-040: no-script focus, network terms (to accept), landscape
+  resize.spec.js:27:5 › UX-034: proposal review with 200% text, portrait
+  resize.spec.js:27:5 › UX-034: proposal review with text spacing, portrait
+  resize.spec.js:27:5 › UX-034: proposal review with 200% text, landscape
+  resize.spec.js:27:5 › UX-034: proposal review with text spacing, landscape
+  resize.spec.js:134:5 › UX-034: registration and explicit invitation join with 200% text, portrait
+  resize.spec.js:189:5 › UX-034: proposal, acceptance and dispute with 200% text, portrait
+  resize.spec.js:224:5 › UX-034: proposal and decline with 200% text, portrait
+  resize.spec.js:244:5 › UX-034: dispute review and edit with 200% text, portrait
+  resize.spec.js:134:5 › UX-034: registration and explicit invitation join with text spacing, portrait
+  resize.spec.js:189:5 › UX-034: proposal, acceptance and dispute with text spacing, portrait
+  resize.spec.js:224:5 › UX-034: proposal and decline with text spacing, portrait
+  resize.spec.js:244:5 › UX-034: dispute review and edit with text spacing, portrait
+  resize.spec.js:134:5 › UX-034: registration and explicit invitation join with 200% text, landscape
+  resize.spec.js:189:5 › UX-034: proposal, acceptance and dispute with 200% text, landscape
+  resize.spec.js:224:5 › UX-034: proposal and decline with 200% text, landscape
+  resize.spec.js:244:5 › UX-034: dispute review and edit with 200% text, landscape
+  resize.spec.js:134:5 › UX-034: registration and explicit invitation join with text spacing, landscape
+  resize.spec.js:189:5 › UX-034: proposal, acceptance and dispute with text spacing, landscape
+  resize.spec.js:224:5 › UX-034: proposal and decline with text spacing, landscape
+  resize.spec.js:244:5 › UX-034: dispute review and edit with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: account security with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: two-step sign-in setup with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: password recovery codes with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: account recovery (signed out) with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: network rules and change log with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: leave the network (blocked) with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: network terms (published, to accept) with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: leave the network (form) with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin overview with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin members with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin suspend member form with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin set credit limit form with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin policy form with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin adjustment form with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin audit and checks with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin invitations with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin announcements with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin exports with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin reports with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin reverse a trade with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin inactive members with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin adjustments awaiting approval with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin pause or close with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin operator access with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin membership requests with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin approve a request with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: admin network terms (published) with 200% text, portrait
+  resize.spec.js:307:7 › UX-034: account security with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: two-step sign-in setup with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: password recovery codes with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: account recovery (signed out) with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: network rules and change log with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: leave the network (blocked) with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: network terms (published, to accept) with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: leave the network (form) with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin overview with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin members with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin suspend member form with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin set credit limit form with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin policy form with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin adjustment form with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin audit and checks with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin invitations with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin announcements with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin exports with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin reports with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin reverse a trade with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin inactive members with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin adjustments awaiting approval with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin pause or close with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin operator access with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin membership requests with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin approve a request with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: admin network terms (published) with text spacing, portrait
+  resize.spec.js:307:7 › UX-034: account security with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: two-step sign-in setup with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: password recovery codes with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: account recovery (signed out) with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: network rules and change log with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: leave the network (blocked) with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: network terms (published, to accept) with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: leave the network (form) with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin overview with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin members with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin suspend member form with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin set credit limit form with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin policy form with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin adjustment form with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin audit and checks with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin invitations with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin announcements with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin exports with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin reports with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin reverse a trade with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin inactive members with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin adjustments awaiting approval with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin pause or close with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin operator access with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin membership requests with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin approve a request with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: admin network terms (published) with 200% text, landscape
+  resize.spec.js:307:7 › UX-034: account security with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: two-step sign-in setup with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: password recovery codes with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: account recovery (signed out) with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: network rules and change log with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: leave the network (blocked) with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: network terms (published, to accept) with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: leave the network (form) with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin overview with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin members with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin suspend member form with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin set credit limit form with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin policy form with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin adjustment form with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin audit and checks with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin invitations with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin announcements with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin exports with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin reports with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin reverse a trade with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin inactive members with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin adjustments awaiting approval with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin pause or close with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin operator access with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin membership requests with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin approve a request with text spacing, landscape
+  resize.spec.js:307:7 › UX-034: admin network terms (published) with text spacing, landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: login, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: registration, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: help, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: dashboard, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: directory, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: new listing, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: propose trade, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: completed trade, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: history, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin overview, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin members, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin audit, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: pending trade (recipient), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: accept a trade (recipient), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: decline a trade (recipient), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: cancel own proposal, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: invitation (signed out), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: invitation (signed in), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: home (single-network redirect), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: create network form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: password change form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: help (member), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: dashboard (recipient), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: dashboard (reviewer with announcement), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: member profile, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: listings, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: edit own listing, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: trades, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: inbox (member), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: inbox (recipient), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: inbox (unread filter), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: report a listing, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: report a member, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: time zone form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: raise a dispute form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: disputes, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: dispute (opener), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: dispute (other party), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: resolved dispute (opener), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: resolved dispute (other party), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: re-review requested (requester), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: re-review requested (independent reviewer), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin suspend member form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin invitations, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin policy form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin adjustment form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin exports, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reports (open filter), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reports (all filter), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin announcements, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reversal form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reversal form (trade chosen), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: review queue, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: dispute (reviewer), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: re-review requested (original reviewer), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: account recovery (signed out), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: account security, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: two-step sign-in setup, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: password recovery codes, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: network rules and change log, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: network terms (none published), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: leave the network (blocked), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: own account activity log, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin inactive members, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin adjustments awaiting approval, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin pause or close, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin operator access, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin network terms (none published), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin set credit limit form, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: network terms (published, to accept), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: network rules (with terms), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: leave the network (form), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin overview (requests waiting), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin membership requests, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin approve a request, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin deny a request, 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: admin network terms (published), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: join by request (signed in), 320px portrait
+  responsive.spec.js:94:5 › UX-033/UX-036: login, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: registration, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: help, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: dashboard, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: directory, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: new listing, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: propose trade, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: completed trade, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: history, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin overview, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin members, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin audit, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: pending trade (recipient), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: accept a trade (recipient), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: decline a trade (recipient), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: cancel own proposal, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: invitation (signed out), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: invitation (signed in), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: home (single-network redirect), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: create network form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: password change form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: help (member), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: dashboard (recipient), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: dashboard (reviewer with announcement), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: member profile, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: listings, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: edit own listing, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: trades, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: inbox (member), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: inbox (recipient), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: inbox (unread filter), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: report a listing, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: report a member, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: time zone form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: raise a dispute form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: disputes, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: dispute (opener), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: dispute (other party), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: resolved dispute (opener), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: resolved dispute (other party), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: re-review requested (requester), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: re-review requested (independent reviewer), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin suspend member form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin invitations, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin policy form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin adjustment form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin exports, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reports (open filter), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reports (all filter), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin announcements, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reversal form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin reversal form (trade chosen), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: review queue, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: dispute (reviewer), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: re-review requested (original reviewer), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: account recovery (signed out), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: account security, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: two-step sign-in setup, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: password recovery codes, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: network rules and change log, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: network terms (none published), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: leave the network (blocked), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: own account activity log, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin inactive members, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin adjustments awaiting approval, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin pause or close, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin operator access, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin network terms (none published), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin set credit limit form, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: network terms (published, to accept), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: network rules (with terms), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: leave the network (form), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin overview (requests waiting), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin membership requests, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin approve a request, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin deny a request, 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: admin network terms (published), 640px landscape
+  responsive.spec.js:94:5 › UX-033/UX-036: join by request (signed in), 640px landscape
+  responsive.spec.js:148:3 › UX-033/UX-036: two-step sign-in setup key and password recovery codes (fresh account), 320px portrait
+  responsive.spec.js:176:3 › UX-033/UX-036: ledger consistency check result, 320px portrait
+  responsive.spec.js:148:3 › UX-033/UX-036: two-step sign-in setup key and password recovery codes (fresh account), 640px landscape
+  responsive.spec.js:176:3 › UX-033/UX-036: ledger consistency check result, 640px landscape
+  responsive.spec.js:188:3 › UX-028/UX-033: not-found state and Help recovery, 320px portrait
+  responsive.spec.js:188:3 › UX-028/UX-033: not-found state and Help recovery, 640px landscape
+  security.spec.js:59:1 › axe: security page, two-step set-up and recovery codes shown once
+  security.spec.js:92:1 › axe and keyboard: two-step sign-in challenge
+  security.spec.js:116:1 › keyboard and axe: make recovery codes, then recover the account without email
+  security.spec.js:150:1 › keyboard and axe: administrator resets a password
+  security.spec.js:168:1 › axe and keyboard: operator access page lists the session
+  security.spec.js:187:1 › axe and keyboard: dual-control pending adjustments, approve with a second administrator
+  security.spec.js:239:1 › axe and keyboard: erase my data and administrator erasure
+  security.spec.js:280:1 › axe and keyboard: password change
+  security.spec.js:299:1 › frozen network: banner for administrators, notice for members, 423 page, reads keep working
+  sessions.spec.js:7:1 › sessions: no-JS pagination, owner isolation, confirmation and selective sign-out
+  stacked-tables.spec.js:5:3 › wide admin audit table retains every value in labelled narrow rows
+  stacked-tables.spec.js:5:3 › wide alice audit table retains every value in labelled narrow rows
+  target-size.spec.js:16:3 › UX-035: target sizes on every page, 1280 px
+  target-size.spec.js:16:3 › UX-035: target sizes on every page, 320 px touch
+  target-size.spec.js:50:1 › UX-035 guard: crowded 16 px links and a 30 px button are reported
+  zz-noscript.spec.js:44:1 › QA-034: no-script keyboard sign-in, proposal, acceptance, balance and history
+  zz-noscript.spec.js:73:1 › QA-034: no-script keyboard proposal and decline with no posting
+  zz-noscript.spec.js:92:1 › QA-034: no-script keyboard registration and invitation acceptance preserve the return path
+  zz-noscript.spec.js:126:1 › QA-034: no-script keyboard dispute review, opening and other-party response
+  zz-noscript.spec.js:172:1 › QA-034/UX-022: no-script keyboard validation links retain and correct a proposal
+  zz-noscript.spec.js:207:1 › QA-034: no-script keyboard plain registration and explicit invitation join show empty history
+Total: 597 tests in 20 files

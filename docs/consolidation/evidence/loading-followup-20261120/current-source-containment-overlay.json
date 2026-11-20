@@ -1,0 +1,49 @@
+{
+  "reviewer": "core_containment_review",
+  "observed_at_utc": "2026-11-20T23:39:56Z",
+  "previous_reviewed_source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "current_repair_source": "11739c7f8f59455b4dc480294cab4d79f7933cb9",
+  "current_repair_tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "previous_source_is_current_source_ancestor": true,
+  "changed_paths": [
+    ".github/workflows/ci.yml"
+  ],
+  "all_other_source_and_documentation_paths_identical": true,
+  "changed_workflow_blob": "34d4f6ed758f1c685c1a38244a422c409687e70a",
+  "all_16_original_ancestry_classifications_preserved": true,
+  "all_7_held_sources_remain_outside_current_source": true,
+  "core_pr127_source": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+  "live_main": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "live_open_pr_count": 15,
+  "policy_prs_still_open": [
+    83,
+    85,
+    86,
+    94,
+    107
+  ],
+  "pr87": {
+    "state": "closed",
+    "merged": false,
+    "merged_at": null,
+    "closed_at": "2026-11-20T23:26:52Z",
+    "preserved_ref": "refs/heads/claude/aud4-f03-dispute-timelines",
+    "preserved_source": "b6275747df66ede81ee4267e2cd6a2595f3bd680"
+  },
+  "original_snapshot_modified": false,
+  "reviewer_mutations_performed": false,
+  "tests_executed": false,
+  "ci_outcome_claimed": false,
+  "subsequent_documentary_recovery": {
+    "worker_commit": "72cf3a267c72e588f37fbd31ed5b3410037f3284",
+    "source_pr": 104,
+    "original_source": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+    "recovered_original_files": 102,
+    "recovered_original_bytes": 5206983,
+    "archive_sha256": "6d7ad0e06ef2bb9a4cd1a70626ae328a8384828dd439e07c4bf07246ff37d385",
+    "coordinator_repeated_verification": true,
+    "publication_pending_at_record_creation": true,
+    "python_alternatives": "Superseded under the unchanged complete source comparison; 38 original methods retained plus11 additional tests, nested state and compressed-stream protections retained.",
+    "conditional_pr104_reconciliation": "After durable evidence publication/readback and qualified actual-main integration, refresh source and recheck runtime supersession and original-source retention. Close with explicit documentary recovery and runtime supersession, never claim ancestry or exact whole-tree containment."
+  }
+}

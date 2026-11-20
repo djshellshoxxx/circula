@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: offline and history warnings use supplied sentences and preserve the last snapshot literally
+ok 1 - offline and history warnings use supplied sentences and preserve the last snapshot literally
+  ---
+  duration_ms: 3.384133
+  type: 'test'
+  ...
+# Subtest: an initially offline page keeps its server snapshot and a new page starts without a stale warning
+ok 2 - an initially offline page keeps its server snapshot and a new page starts without a stale warning
+  ---
+  duration_ms: 2.022044
+  type: 'test'
+  ...
+# Subtest: session warning appears two minutes before expiry and uses the supplied time sentence
+ok 3 - session warning appears two minutes before expiry and uses the supplied time sentence
+  ---
+  duration_ms: 1.770755
+  type: 'test'
+  ...
+# Subtest: fixed sessions hide extension and retain the draft when they expire
+ok 4 - fixed sessions hide extension and retain the draft when they expire
+  ---
+  duration_ms: 1.170749
+  type: 'test'
+  ...
+# Subtest: successful extension keeps the request contract and reschedules from the server expiry
+ok 5 - successful extension keeps the request contract and reschedules from the server expiry
+  ---
+  duration_ms: 7.214159
+  type: 'test'
+  ...
+# Subtest: failed extension uses the supplied failure message without navigation or form loss
+ok 6 - failed extension uses the supplied failure message without navigation or form loss
+  ---
+  duration_ms: 2.969156
+  type: 'test'
+  ...
+# Subtest: session return links reject a network-path reference
+ok 7 - session return links reject a network-path reference
+  ---
+  duration_ms: 1.21813
+  type: 'test'
+  ...
+# Subtest: loading announces a same-window page navigation, including keyboard link activation
+ok 8 - loading announces a same-window page navigation, including keyboard link activation
+  ---
+  duration_ms: 2.710555
+  type: 'test'
+  ...
+# Subtest: native navigation feedback is synchronous even when the document blocks timer tasks
+ok 9 - native navigation feedback is synchronous even when the document blocks timer tasks
+  ---
+  duration_ms: 2.212252
+  type: 'test'
+  ...
+# Subtest: loading preserves form fields and the chosen submitter name and value
+ok 10 - loading preserves form fields and the chosen submitter name and value
+  ---
+  duration_ms: 1.255046
+  type: 'test'
+  ...
+# Subtest: GET filters and submitter overrides retain their native method and target
+ok 11 - GET filters and submitter overrides retain their native method and target
+  ---
+  duration_ms: 1.067072
+  type: 'test'
+  ...
+# Subtest: loading ignores fragments, downloads, other destinations and modified clicks
+ok 12 - loading ignores fragments, downloads, other destinations and modified clicks
+  ---
+  duration_ms: 16.05805
+  type: 'test'
+  ...
+# Subtest: loading ignores download forms, dialog forms, other windows and submitter exclusions
+ok 13 - loading ignores download forms, dialog forms, other windows and submitter exclusions
+  ---
+  duration_ms: 7.425939
+  type: 'test'
+  ...
+# Subtest: failed native validation and non-submitting async buttons leave the page idle
+ok 14 - failed native validation and non-submitting async buttons leave the page idle
+  ---
+  duration_ms: 1.075735
+  type: 'test'
+  ...
+# Subtest: an in-place handler can cancel a link or form after the loading listener
+ok 15 - an in-place handler can cancel a link or form after the loading listener
+  ---
+  duration_ms: 1.928634
+  type: 'test'
+  ...
+# Subtest: pageshow clears pending and displayed feedback when a history page returns
+ok 16 - pageshow clears pending and displayed feedback when a history page returns
+  ---
+  duration_ms: 3.890658
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 163.763988

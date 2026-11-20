@@ -1,0 +1,62 @@
+{
+  "prepared_at": "2026-11-20T23:31:46.912228+00:00",
+  "scope": "Documentation-only source containment review; product tests not requested or executed.",
+  "source_checks": {
+    "open_pr_snapshot_count": 16,
+    "candidate_ancestor_prs": 9,
+    "pr87_original_paths_reviewed": 18,
+    "pr87_byte_identical_files": 7,
+    "pr87_original_test_function_names_retained": 5,
+    "pr87_original_openapi_added_lines_retained": 7,
+    "pr104_original_pr_paths_reviewed": 118,
+    "pr104_absent_documentary_paths": 102,
+    "pr104_absent_documentary_bytes": 5206983,
+    "pr104_original_python_test_names_retained": 38,
+    "pr104_additional_python_test_names": 11,
+    "pr111_changed_paths_reviewed": 7,
+    "pr111_identical_document_files": 6,
+    "pr111_post_setup_file_suffix_identical": true,
+    "pr128_original_tree_entries_identical": 23,
+    "pr128_original_manifest_checks_passed": 22,
+    "pr128_original_manifest_checks_failed": 0,
+    "policy_held_refs_preserved_and_outside_candidate": 7
+  },
+  "product_tests": {
+    "executed": false,
+    "reason": "Assigned source/documentary review only; provider execution results are separately labeled observations."
+  },
+  "reviewer_remote_mutations": 0,
+  "runtime_changes": 0,
+  "documentation_checks": {
+    "status": "passed",
+    "checked_at": "2026-11-20T23:32:06.623875+00:00",
+    "json_files_parsed": 11,
+    "relative_markdown_links_resolved": 10,
+    "git_diff_check_exit": 0,
+    "all_changed_paths_within_assigned_evidence_directory": true,
+    "changed_paths": [
+      "docs/consolidation/evidence/core-containment-20261120/README.md",
+      "docs/consolidation/evidence/core-containment-20261120/SHA256SUMS",
+      "docs/consolidation/evidence/core-containment-20261120/conditional-reconciliation-plan.json",
+      "docs/consolidation/evidence/core-containment-20261120/core-ancestry-graph.json",
+      "docs/consolidation/evidence/core-containment-20261120/open-prs-and-ancestry.json",
+      "docs/consolidation/evidence/core-containment-20261120/pr104-source-reconciliation.json",
+      "docs/consolidation/evidence/core-containment-20261120/pr111-alternate-fixture.json",
+      "docs/consolidation/evidence/core-containment-20261120/pr128-audit-identity.json",
+      "docs/consolidation/evidence/core-containment-20261120/pr87-live-main-provider.json",
+      "docs/consolidation/evidence/core-containment-20261120/pr87-main-containment.json",
+      "docs/consolidation/evidence/core-containment-20261120/pr87-reconciliation-20261120.json",
+      "docs/consolidation/evidence/core-containment-20261120/seven-preserved-holds.json",
+      "docs/consolidation/evidence/core-containment-20261120/verification.json"
+    ],
+    "gitleaks": {
+      "version": "version is set by build process",
+      "command": "gitleaks dir docs/consolidation/evidence/core-containment-20261120 --config .gitleaks.toml --no-banner --redact",
+      "config_blob": "e138f4232f4021d8c691937d3ba30b66210fa524",
+      "config_unchanged": true,
+      "exit_code": 0,
+      "findings": 0
+    },
+    "manifest_entries": 12
+  }
+}

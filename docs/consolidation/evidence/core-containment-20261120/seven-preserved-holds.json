@@ -1,0 +1,134 @@
+{
+  "candidate": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "branches": [
+    {
+      "branch": "audit/gov021-final-core-refresh-20261119",
+      "expected_source": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "locally_fetched_origin_head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "open_pr_at_snapshot": 107,
+      "source_is_candidate_ancestor": false,
+      "decision": "GOV021 authority, independent approvers, waiting/objection interval and provisional expiry",
+      "classification": "retain independent policy/interface hold"
+    },
+    {
+      "branch": "audit/gov021-fixture-20261119",
+      "expected_source": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "locally_fetched_origin_head": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "open_pr_at_snapshot": null,
+      "source_is_candidate_ancestor": false,
+      "decision": "Same held GOV021 feature lineage; fixture does not establish policy approval",
+      "classification": "retain independent policy/interface hold"
+    },
+    {
+      "branch": "claude/gov-021-admin-recovery",
+      "expected_source": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "locally_fetched_origin_head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "open_pr_at_snapshot": 85,
+      "source_is_candidate_ancestor": false,
+      "decision": "Same held GOV021 authority and lifecycle decisions",
+      "classification": "retain independent policy/interface hold"
+    },
+    {
+      "branch": "claude/aud4-f02-reviewer-reset-policy",
+      "expected_source": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "locally_fetched_origin_head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "open_pr_at_snapshot": 83,
+      "source_is_candidate_ancestor": false,
+      "decision": "Whether reviewer resets are restricted to the platform operator",
+      "classification": "retain independent policy/interface hold"
+    },
+    {
+      "branch": "audit/sec026-independent-20261119",
+      "expected_source": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "locally_fetched_origin_head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "open_pr_at_snapshot": 94,
+      "source_is_candidate_ancestor": false,
+      "decision": "Signal defaults, subject visibility, authority to loosen/disable, retention and erasure/export lifecycle",
+      "classification": "retain independent policy/interface hold"
+    },
+    {
+      "branch": "claude/sec-026-abuse-signals",
+      "expected_source": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "locally_fetched_origin_head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "open_pr_at_snapshot": 86,
+      "source_is_candidate_ancestor": false,
+      "decision": "Same signal policy; older branch also contains GOV021 work",
+      "classification": "retain independent policy/interface hold"
+    },
+    {
+      "branch": "planning/future-cli-specs-20261110",
+      "expected_source": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "locally_fetched_origin_head": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "open_pr_at_snapshot": null,
+      "source_is_candidate_ancestor": false,
+      "decision": "Proposed CLI contract, command naming and interface selection",
+      "classification": "retain independent policy/interface hold"
+    }
+  ],
+  "distinct_policy_lineages": 4,
+  "candidate_absence_checks": [
+    {
+      "path": "internal/service/admin_recovery.go",
+      "candidate_exists": false
+    },
+    {
+      "path": "internal/service/aud4_f02_test.go",
+      "candidate_exists": false
+    },
+    {
+      "path": "internal/service/signals.go",
+      "candidate_exists": false
+    },
+    {
+      "path": "docs/future-cli-spec.md",
+      "candidate_exists": false
+    }
+  ],
+  "held_ancestry": [
+    {
+      "older": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "newer": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "is_ancestor": true
+    },
+    {
+      "older": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "newer": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "is_ancestor": true
+    },
+    {
+      "older": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "newer": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "is_ancestor": false
+    }
+  ],
+  "policy_evidence": [
+    {
+      "source": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "path": "docs/audit/consolidation-completion-2026-11/GOV-021.md",
+      "section": "Owner gate (not decided by this change)",
+      "meaning": "Temporary/session-bound authority exception, independent authenticated approvers, waiting period and seven-day expiry remain undecided."
+    },
+    {
+      "source": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "path": "docs/ops/admin-recovery.md",
+      "meaning": "Operations documentation retains policy hold."
+    },
+    {
+      "source": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "path": "internal/service/recovery.go",
+      "meaning": "Held branch additionally restricts reviewer-role reset authority; candidate retains administrator-role restriction without adopting reviewer-policy change."
+    },
+    {
+      "source": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "path": "docs/future-cli-spec.md",
+      "meaning": "PROPOSED / FUTURE ONLY; interface selection remains unapproved."
+    },
+    {
+      "source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "path": "docs/consolidation/CORE_REMAINING_WORK_20261120.md",
+      "meaning": "Retains policy and lifecycle decisions for GOV021, reviewer resets, abuse signals and CLI."
+    }
+  ],
+  "reviewer": "core_containment_review with independent read-only holds_audit_check review",
+  "closure_plan": "No blanket closure or integration of these seven references. Preserve all five open PRs and both additional held branches."
+}

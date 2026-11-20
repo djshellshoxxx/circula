@@ -1,0 +1,24 @@
+{
+  "observed_at": "2026-11-20 23:14:42 UTC",
+  "pr": 80,
+  "action": "closed as already incorporated; no new merge",
+  "source_branch": "claude/fnet-204-signed-cursors",
+  "source": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+  "actual_target": "future/fnet-204-feed-20261116",
+  "target": "108107435645db687f8ac380e6571319f419fa32",
+  "qualified_source": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+  "qualified_tree": "84ec2875c17f54219c30a2ac104db00ea9c5f5c7",
+  "original_test_files_identical": 3,
+  "original_validation_preserved_in_full": true,
+  "source_branch_preserved": true,
+  "gates": [
+    {
+      "run": 44715092592,
+      "successful_jobs": 9
+    },
+    {
+      "run": 44715092710,
+      "successful_jobs": 1
+    }
+  ]
+}

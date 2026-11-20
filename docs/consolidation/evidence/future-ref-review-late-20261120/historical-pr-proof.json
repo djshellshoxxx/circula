@@ -1,0 +1,155 @@
+{
+  "observed_at": "2026-11-20 23:13:04 UTC",
+  "feed_qualification": [
+    {
+      "run": 44715092592,
+      "jobs": [
+        {
+          "id": 136216329112,
+          "name": "build release targets",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:31:06Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329112"
+        },
+        {
+          "id": 136216329137,
+          "name": "fuzz smoke (RB-017)",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:31:18Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329137"
+        },
+        {
+          "id": 136216329179,
+          "name": "reproducible build (two builds, same sha256)",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:32:32Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329179"
+        },
+        {
+          "id": 136216329182,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:39:40Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329182"
+        },
+        {
+          "id": 136216329231,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:10:09Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329231"
+        },
+        {
+          "id": 136216329241,
+          "name": "API contract and load smoke",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:23:24Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329241"
+        },
+        {
+          "id": 136216329283,
+          "name": "test (windows-2022)",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:18:30Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329283"
+        },
+        {
+          "id": 136216329342,
+          "name": "test (ubuntu-24.04)",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:46:50Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329342"
+        },
+        {
+          "id": 136216329348,
+          "name": "test (macos-15-intel)",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:31:02Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092592/job/136216329348"
+        }
+      ]
+    },
+    {
+      "run": 44715092710,
+      "jobs": [
+        {
+          "id": 136216327530,
+          "name": "isolated feed validation",
+          "head_sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T10:17:33Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44715092710/job/136216327530"
+        }
+      ]
+    }
+  ],
+  "pr_states": [
+    {
+      "pr": 80,
+      "url": "https://github.com/djshellshoxxx/circula/pull/80",
+      "state": "open",
+      "merged": false,
+      "merged_at": null,
+      "closed_at": null,
+      "head": {
+        "ref": "claude/fnet-204-signed-cursors",
+        "sha": "0952c94a5dbab4044d7673ce9d51cec9063ab97f"
+      },
+      "base": {
+        "ref": "chatgpt/feed-signed-cursors-20261116",
+        "sha": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036"
+      }
+    },
+    {
+      "pr": 105,
+      "url": "https://github.com/djshellshoxxx/circula/pull/105",
+      "state": "closed",
+      "merged": true,
+      "merged_at": "2026-11-20T20:10:49Z",
+      "closed_at": "2026-11-20T20:10:49Z",
+      "head": {
+        "ref": "master/fnet209-utf8-20261119",
+        "sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115"
+      },
+      "base": {
+        "ref": "future/fnet-209-federation-20261116",
+        "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102"
+      }
+    },
+    {
+      "pr": 106,
+      "url": "https://github.com/djshellshoxxx/circula/pull/106",
+      "state": "closed",
+      "merged": false,
+      "merged_at": null,
+      "closed_at": "2026-11-20T20:15:34Z",
+      "head": {
+        "ref": "audit/federation-readme-20261119",
+        "sha": "d55554408ef591371768259905c70ca58d68facb"
+      },
+      "base": {
+        "ref": "master/fnet209-utf8-20261119",
+        "sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115"
+      }
+    }
+  ]
+}

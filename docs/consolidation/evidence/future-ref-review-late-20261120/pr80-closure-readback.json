@@ -1,0 +1,12 @@
+{
+  "observed_at": "2026-11-20 23:15:16 UTC",
+  "pr": 80,
+  "state": "closed",
+  "merged": false,
+  "closed_at": "2026-11-20T23:14:40Z",
+  "source": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+  "source_branch": "claude/fnet-204-signed-cursors",
+  "source_branch_preserved": true,
+  "performed_by": "coordinator after independent inclusion review",
+  "this_worker_readback_only": true
+}

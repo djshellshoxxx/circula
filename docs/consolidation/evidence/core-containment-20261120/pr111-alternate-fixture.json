@@ -1,0 +1,91 @@
+{
+  "source_head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+  "reported_base": "839e86935767288e594914ad711486616a604eca",
+  "candidate": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "merge_base": "839e86935767288e594914ad711486616a604eca",
+  "source_is_ancestor": false,
+  "source_only_commits": [
+    "45356ca10e1ecd6e6441e0171910dd918b36f5d9 docs(audit): preserve API-036 combined Core qualification receipts",
+    "b30ceeda49a61bb657202408c1dcf8d8ff330f72 merge(core): retain concurrent audit publication in API-036 qualification",
+    "ab7d64c5a31653e3a2a14ddb88940e59b4d02892 test(sqlite): preserve WAL fault evidence during connection cleanup"
+  ],
+  "changed_paths": [
+    {
+      "path": "docs/audits/API036_COMPLETION.md",
+      "source_blob": "4143d83ff7cf23d7480fa3057406b435e3635af3",
+      "candidate_blob": "4143d83ff7cf23d7480fa3057406b435e3635af3",
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/API036_QUALIFICATION.json",
+      "source_blob": "3fff5f030f6643346a84e5e0da6b6480eb63217f",
+      "candidate_blob": "3fff5f030f6643346a84e5e0da6b6480eb63217f",
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/CONSOLIDATION_FINAL_REPORT.md",
+      "source_blob": "ab82e6914207da31281aece6afd74202925d5a35",
+      "candidate_blob": "ab82e6914207da31281aece6afd74202925d5a35",
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/FEATURE_COMPLETION_STATUS.md",
+      "source_blob": "e6df43048ae75843f65825716f9b89a5e21aed81",
+      "candidate_blob": "e6df43048ae75843f65825716f9b89a5e21aed81",
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/REMAINING_BLOCKERS.md",
+      "source_blob": "70a7a42a6b966b1257f0a19f31f039c3fdf6564b",
+      "candidate_blob": "70a7a42a6b966b1257f0a19f31f039c3fdf6564b",
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/SECURITY_REVIEW.md",
+      "source_blob": "70410473218bb43d992787696f5f4ec00b5d430c",
+      "candidate_blob": "70410473218bb43d992787696f5f4ec00b5d430c",
+      "status": "identical"
+    },
+    {
+      "path": "internal/service/sqlite_ioerr_linux_test.go",
+      "source_blob": "d1d19fb96357b5eabab43d926e89dffbbcca23e9",
+      "candidate_blob": "fd0aa8d98fca3539c5a010bc22afc7ff5549d09d",
+      "status": "explicitly_superseded_fixture"
+    }
+  ],
+  "source_to_candidate_diff_sha256": "790a38e116242ca226ccbc5c4469295aeb940d6ab8c030692926c998e80bbf54",
+  "only_differences": [
+    {
+      "operation": "insert",
+      "source_lines": [
+        8,
+        7
+      ],
+      "candidate_lines": [
+        8,
+        8
+      ]
+    },
+    {
+      "operation": "replace",
+      "source_lines": [
+        218,
+        228
+      ],
+      "candidate_lines": [
+        219,
+        228
+      ]
+    }
+  ],
+  "fixture_semantics": {
+    "source": "Separate read pool; ordinary read transaction; MAX schema version snapshot with deferred cleanup.",
+    "candidate": "Separate one-connection read pool; explicit read-only transaction; sqlite_master snapshot held through failed writer close.",
+    "assertions_after_snapshot_setup_byte_identical": true,
+    "remaining_file_suffix_bytes": 1877,
+    "production_code_changes": 0
+  },
+  "classification": "Six documents byte-identical; one alternate test implementation explicitly superseded by retained accepted fixture.",
+  "closure_precondition": "After qualified PR127 reaches main, freshly verify identical source head and the six documents plus retained fixture semantics in actual main; close with explicit supersession explanation, preserve source ref.",
+  "tests_executed": false
+}

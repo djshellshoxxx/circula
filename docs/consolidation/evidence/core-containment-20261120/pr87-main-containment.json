@@ -1,0 +1,175 @@
+{
+  "pr": 87,
+  "source_head": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+  "reported_base": "82dc18e07f6b22b9c34ef026f833391705b30067",
+  "accepted_main": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "source_is_ancestor_of_main": true,
+  "source_unique_commits_vs_main": 0,
+  "original_pr_changed_path_count": 18,
+  "path_review": [
+    {
+      "path": "docs/TRACEABILITY.md",
+      "source_blob": "8866ab0f292d1b1a6230f67544c70f106e12e228",
+      "main_blob": "a9186e83473272609a24935639e039fd0b4649c7",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Generated inventory refreshed. Original dispute timeline requirement and test citations remain; inventory counters reflect additional Core work."
+    },
+    {
+      "path": "docs/api/openapi.yaml",
+      "source_blob": "c2a33728b4ec8b74900ed4a81b1466c00d5b3f88",
+      "main_blob": "c6d09c434709cd0d03fc090de46c28492fddfc93",
+      "status": "retained-or-explicitly-superseded",
+      "review": "All original prospective timeline contract text is retained verbatim; subsequent changes add session endpoints and cursor/identifier documentation."
+    },
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/AUD4-F03.md",
+      "source_blob": "2dd23b322f13334753bc3e3d440b2c63eb5f1113",
+      "main_blob": "b76a61d596d231717ce730d75da6f5de55f3fb34",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Original partial remediation account retained and explicitly marked historical; durable-binding follow-up documents migration0019, exact-version reads, regression coverage and irrecoverable ambiguity in pre-upgrade clock history."
+    },
+    {
+      "path": "docs/dev/SERVICE.md",
+      "source_blob": "1e3b51a859028e7fdaacca874b359593f697c92d",
+      "main_blob": "79703a52a1589fa64b87337b55a2d2716b80fff0",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Original timeline contract updated from timestamp reconstruction to immutable policy version stored at opening; unrelated session/token documentation added."
+    },
+    {
+      "path": "docs/specs/03-domain-model.md",
+      "source_blob": "596cc2dbe1b236f3ed34f8537ae7be9d42f8d76e",
+      "main_blob": "596cc2dbe1b236f3ed34f8537ae7be9d42f8d76e",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    },
+    {
+      "path": "docs/specs/04-functional-requirements.md",
+      "source_blob": "25a835e46a7c01a704a54b2c2f5de08e473a8865",
+      "main_blob": "02be6cea8ec08d5a787af2f936f4d090c82efd99",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Original FR076/FR078 prospective semantics retained; later differences concern export/source-status notes."
+    },
+    {
+      "path": "docs/specs/10-governance-operations.md",
+      "source_blob": "8f14983135dead067fb3ed2256ea2b91475348a3",
+      "main_blob": "ae3d21848ac55b1e0279a0b53265572b34042f8a",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Prospective timeline rule retained and extended to atomic durable binding and explicit historical backfill limitation."
+    },
+    {
+      "path": "internal/domain/closure.go",
+      "source_blob": "ab6a67a09dc279733ed4b12d96e27b2f1bb13bd6",
+      "main_blob": "ab6a67a09dc279733ed4b12d96e27b2f1bb13bd6",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    },
+    {
+      "path": "internal/repository/iface.go",
+      "source_blob": "9bfbcc96dfa47513cf6298812465132ef8510ec5",
+      "main_blob": "fe8cccb4c1a68e0c0bfaa9ec618d80603ea630f7",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Original PolicyInForceAt contract retained; GetPolicyVersion exact immutable version contract added alongside unrelated session/token additions."
+    },
+    {
+      "path": "internal/service/dispute_timelines_test.go",
+      "source_blob": "d1aae1a107d406f749206f792997f811b3439fd2",
+      "main_blob": "d1aae1a107d406f749206f792997f811b3439fd2",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    },
+    {
+      "path": "internal/service/disputes_deadlines.go",
+      "source_blob": "ffb6f11bb0dda5cc39493ee6ceeea05a1e84707f",
+      "main_blob": "3ece4a635c9bea5e81757de658a4d190a40889ed",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Timestamp reconstruction intentionally superseded by GetPolicyVersion using atomically stored d.PolicyVersion; fail-closed missing-version behavior retained. Response, re-review, reminder and view callers remain."
+    },
+    {
+      "path": "internal/service/disputes_decide.go",
+      "source_blob": "1c090c88067a4b0c5ed005efbb7d7f30a0a38730",
+      "main_blob": "1c090c88067a4b0c5ed005efbb7d7f30a0a38730",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    },
+    {
+      "path": "internal/service/disputes_response.go",
+      "source_blob": "3b3fdfc59d529f5fb6389429d88c5820740f5ae8",
+      "main_blob": "3b3fdfc59d529f5fb6389429d88c5820740f5ae8",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    },
+    {
+      "path": "internal/store/policy_in_force_test.go",
+      "source_blob": "c36f4d4f8185915b67b3dc7109f47ff323d8fa8d",
+      "main_blob": "7d7cec24b2b0eccd12b64c281da260726ead5785",
+      "status": "retained-or-explicitly-superseded",
+      "review": "All original assertions retained; additional exact-version default-preservation assertion added."
+    },
+    {
+      "path": "internal/store/sqlite_network.go",
+      "source_blob": "06264e868dc23b36361dbc3f3b452644149324c6",
+      "main_blob": "0113269f5d7d5925aecb88a63f7beea72ed1458b",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Original PolicyInForceAt implementation unchanged; GetPolicyVersion network-scoped implementation added."
+    },
+    {
+      "path": "internal/storetest/storetest.go",
+      "source_blob": "9364422e1f6f3306a312dd3296e783bf0021098b",
+      "main_blob": "28534b41ee748b785c1b6fbe6b3851104dc98324",
+      "status": "retained-or-explicitly-superseded",
+      "review": "Original PolicyInForceAt contract function and registration retained; independent DisputePolicyBinding and session/token contracts added."
+    },
+    {
+      "path": "internal/web/dispute_timelines_test.go",
+      "source_blob": "17774ef689cb648283d5beae79549124a488575b",
+      "main_blob": "17774ef689cb648283d5beae79549124a488575b",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    },
+    {
+      "path": "internal/web/h_dispute_review.go",
+      "source_blob": "61ee70117075484c5d3d97ee39b8ce5da95226ff",
+      "main_blob": "61ee70117075484c5d3d97ee39b8ce5da95226ff",
+      "status": "byte-identical",
+      "review": "Exact complete file identity."
+    }
+  ],
+  "original_pr_diff_sha256": "12b6cd987e7752b1da8fbde40c7855ab1bd75b6b8499a83c61b1c3a1a166eb76",
+  "source_to_main_changed_paths_diff_sha256": "41a78289930f2a5b77240723de7650fcaa27679aebb063d9e3f2a4534551c681",
+  "original_api_added_lines_check": {
+    "original_added_lines": 7,
+    "all_retained_verbatim": true
+  },
+  "original_test_names_presence": [
+    {
+      "path": "internal/service/dispute_timelines_test.go",
+      "function": "TestDisputeTimelinesFixedAtOpen",
+      "present_in_main": true
+    },
+    {
+      "path": "internal/service/dispute_timelines_test.go",
+      "function": "TestDisputeTimelineChangesApplyToLaterDisputes",
+      "present_in_main": true
+    },
+    {
+      "path": "internal/service/dispute_timelines_test.go",
+      "function": "TestScheduledDisputeTimelineChangeWaitsForItsDate",
+      "present_in_main": true
+    },
+    {
+      "path": "internal/store/policy_in_force_test.go",
+      "function": "TestPolicyInForceAtReadsLegacyVersionsWithDefaults",
+      "present_in_main": true
+    },
+    {
+      "path": "internal/web/dispute_timelines_test.go",
+      "function": "TestDisputePageReReviewDeadlineFixedAtOpen",
+      "present_in_main": true
+    }
+  ],
+  "source_only_work_remaining": false,
+  "historical_limitation": "Durable migration freezes the previous reconstruction for legacy disputes; it cannot prove an originally observed version for already ambiguous pre-upgrade same-time or backward-clock history. This limitation is documented in accepted main.",
+  "qualification_receipt": "pr87-live-main-provider.json",
+  "closure_plan": "Coordinator may close as incorporated into accepted main after a fresh unchanged-source/main check, preserving source branch. No dependency on PR127 integration.",
+  "verification_scope": "Source and provider-metadata inspection only. No product tests were executed by this reviewer."
+}

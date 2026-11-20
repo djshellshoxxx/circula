@@ -1,0 +1,200 @@
+{
+  "reviewed_source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "reviewed_tree": "029e5fdda2d03347389397576ec08701ae04cec2",
+  "accepted_main_at_review": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "decisions": [
+    {
+      "pr": 129,
+      "url": "https://github.com/djshellshoxxx/circula/pull/129",
+      "source_branch": "repair/core127-e2e-observer-20261120",
+      "source_head": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "active_integration",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 128,
+      "url": "https://github.com/djshellshoxxx/circula/pull/128",
+      "source_branch": "audit/read-only-security-20261119",
+      "source_head": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_incorporation_reconciliation",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 127,
+      "url": "https://github.com/djshellshoxxx/circula/pull/127",
+      "source_branch": "integration/unique-core-completion-20261120",
+      "source_head": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "active_integration",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 125,
+      "url": "https://github.com/djshellshoxxx/circula/pull/125",
+      "source_branch": "integration/core-completion-audits-20261119",
+      "source_head": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_incorporation_reconciliation",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 112,
+      "url": "https://github.com/djshellshoxxx/circula/pull/112",
+      "source_branch": "integration/core-ui-completion-20261119",
+      "source_head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_incorporation_reconciliation",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 111,
+      "url": "https://github.com/djshellshoxxx/circula/pull/111",
+      "source_branch": "codex/api036-qualification-20261119",
+      "source_head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_explicit_fixture_supersession",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 109,
+      "url": "https://github.com/djshellshoxxx/circula/pull/109",
+      "source_branch": "feature/core-catalogue-continuation-20261119",
+      "source_head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_incorporation_reconciliation",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 107,
+      "url": "https://github.com/djshellshoxxx/circula/pull/107",
+      "source_branch": "audit/gov021-final-core-refresh-20261119",
+      "source_head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "preserved_policy_hold",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 104,
+      "url": "https://github.com/djshellshoxxx/circula/pull/104",
+      "source_branch": "integration/circula-master-consolidation-20261119",
+      "source_head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "documentary_preservation_pending",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 102,
+      "url": "https://github.com/djshellshoxxx/circula/pull/102",
+      "source_branch": "integration/core-recovery-20261119",
+      "source_head": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_incorporation_reconciliation",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 94,
+      "url": "https://github.com/djshellshoxxx/circula/pull/94",
+      "source_branch": "audit/sec026-independent-20261119",
+      "source_head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "preserved_policy_hold",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 90,
+      "url": "https://github.com/djshellshoxxx/circula/pull/90",
+      "source_branch": "integration/comprehensive-audit-20261119",
+      "source_head": "839e86935767288e594914ad711486616a604eca",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "conditional_incorporation_reconciliation",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 87,
+      "url": "https://github.com/djshellshoxxx/circula/pull/87",
+      "source_branch": "claude/aud4-f03-dispute-timelines",
+      "source_head": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "closed_by_coordinator_already_in_main",
+      "source_is_candidate_ancestor": true,
+      "source_is_accepted_main_ancestor": true,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 86,
+      "url": "https://github.com/djshellshoxxx/circula/pull/86",
+      "source_branch": "claude/sec-026-abuse-signals",
+      "source_head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "preserved_policy_hold",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 85,
+      "url": "https://github.com/djshellshoxxx/circula/pull/85",
+      "source_branch": "claude/gov-021-admin-recovery",
+      "source_head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "preserved_policy_hold",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    },
+    {
+      "pr": 83,
+      "url": "https://github.com/djshellshoxxx/circula/pull/83",
+      "source_branch": "claude/aud4-f02-reviewer-reset-policy",
+      "source_head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "observed_open_at": "2026-11-20T23:19:43.768914+00:00",
+      "decision": "preserved_policy_hold",
+      "source_is_candidate_ancestor": false,
+      "source_is_accepted_main_ancestor": false,
+      "source_branch_to_preserve": true
+    }
+  ],
+  "conditions": [
+    "Complete actual-source qualification, integrate repair129 into127, then refresh/qualify actual127 source before main integration.",
+    "After127 integration, read actualmain and its provider checks; verify reviewed-source ancestry or repeat complete inclusion proof if commit identity changed.",
+    "Refresh all source refs/PRs; inspect any changed head before closure. Observe automatic PR state transitions rather than assuming them.",
+    "For128 repeat all23originalaudit tree-entry checks. For111 repeat six-document identity and explicit retained-fixture review.",
+    "Keep104 pending unique documentary recovery/reconciliation and preserve all seven policy/interface heldrefs and five heldPRs.",
+    "Preserve all original source branches; no deletion or shared-history rewrite."
+  ],
+  "later_coordinator_actions": [
+    {
+      "pr": 87,
+      "receipt": "pr87-reconciliation-20261120.json",
+      "receipt_sha256": "4097b821bc8a1321bbf1a1a7717ed179c0a85fd79abb6ad044ac9d8562a55fb5"
+    }
+  ],
+  "reviewer_remote_writes": false,
+  "future_module_source_changes": false
+}

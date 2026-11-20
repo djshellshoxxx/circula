@@ -1,0 +1,17 @@
+{
+  "observed_at": "2026-11-20T23:23:02.659935+00:00",
+  "pr": 129,
+  "source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "run_id": 44831668852,
+  "job_id": 136617856750,
+  "job_result": "success",
+  "completed_at": "2026-11-20T23:18:22Z",
+  "reported_passed": 597,
+  "reported_failed": 0,
+  "reported_duration": "6.6m",
+  "all_four_loading_cases_reported_passed": true,
+  "decoded_utf8_log_bytes": 130577,
+  "decoded_utf8_log_sha256": "ce4fb001ccfc03ce8daaf60fda443ece621e861c9f8f4cc9952f5866b8a6130d",
+  "gzip": "browser-success-136617856750.log.gz",
+  "scope": "Exact repair browser job only; remaining repair gates and new Core head qualification remain separate."
+}

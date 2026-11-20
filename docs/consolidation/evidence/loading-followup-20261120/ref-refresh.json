@@ -1,0 +1,1553 @@
+{
+  "observed_at_utc": "2026-11-20T23:40:04.168823+00:00",
+  "remote_heads": [
+    {
+      "name": "refs/remotes/origin/audit/core127-final-evidence-20261120",
+      "head": "49dc8acc781790635fca8ed32882a7a27971c8a1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/federation-readme-20261119",
+      "head": "d55554408ef591371768259905c70ca58d68facb",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/future-feed-cursors-20261119",
+      "head": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/future-notifications-binding-20261119",
+      "head": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/future-notifications-bounded-core-20261119",
+      "head": "3bdef17a87b421b1b43a666d58453749a7b06d02",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/future-pwa-browser-20261119",
+      "head": "0b2bb7a4dea18dbb3f125f41565b096d637e47f3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/gov021-final-core-refresh-20261119",
+      "head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/gov021-fixture-20261119",
+      "head": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/read-only-security-20261119",
+      "head": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/audit/sec026-independent-20261119",
+      "head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-consolidation-review-20261111",
+      "head": "02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-departure-pagination-20261115",
+      "head": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-erasure-notification-20261115",
+      "head": "26b57163d96534e79e3d35d471573d609af8a415",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-expiry-starvation-20261115",
+      "head": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-ledger-auth-guard-20261115",
+      "head": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-mfa-decider-20261115",
+      "head": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-qa042-traceability-audit-20261114",
+      "head": "fe832faced826ed2234fcd9ba0ce7f7321f04df5",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-secure-json-write-20261115",
+      "head": "e02085a6aa1a1394f874b304fdf0961cc0888423",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/circula-security-audit-20261115",
+      "head": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/consolidation-delta-qualification-20261114",
+      "head": "8f742877fb53cc39aea5e189a5452d924d8c08c8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/favorites-owner-scoped-collection-20261116",
+      "head": "372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/feed-signed-cursors-20261116",
+      "head": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex-continuation-spec-20261109",
+      "head": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/audit-20261110-a",
+      "head": "2e729346d6297075b6ff1f7828d48681d48320b6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/ci-macos-race-budget-20261110",
+      "head": "2078bf0964353892e80214b4601211e36818b889",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/ci-macos15-retirement-20261110",
+      "head": "1760551f5b03a89ec64d09269d631e72f2e95959",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/cookie-policy-adapter-20261110-b",
+      "head": "7e8481004801c01aea5d22f4720e1ead7381c4f7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/decidable-expiry-20261110-a",
+      "head": "b61a8e719030ff56044d71fee632b5ba824d7698",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/docs-20261110-a",
+      "head": "a376a4ed592451d90d2ff7b4d3db1489a2231f96",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/qualify-pr19-20261110-a",
+      "head": "63b033d842a2fa40b56ff9d79e69c259db951c83",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/chatgpt/zero-codex/terms-return-20261110-b",
+      "head": "7620d7f51913363dd013b80cc682eb670eeff3a5",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/checkpoint/circula-handoff-20261025",
+      "head": "3d0080a9c43680f69f81217af3b42374e7160bf8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/aud4-auth-fixes",
+      "head": "82dc18e07f6b22b9c34ef026f833391705b30067",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/aud4-f02-reviewer-reset-policy",
+      "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/aud4-f03-dispute-timelines",
+      "head": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/awesome-darwin-y6eaiz",
+      "head": "827e651fe151f49659cc20aefe85d4af67bdaa97",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/backup-path-hardening",
+      "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/charming-gauss-19fbfa",
+      "head": "8b4c8ba23c99d4418348d76ff8cb38a72e7b958d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-beta-completion-1npjw6",
+      "head": "bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-build",
+      "head": "fc488445af5f43165a7103f1c1fd12483b39d448",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-completeness",
+      "head": "fcd9fc5878482e1e4d340a3448a0d2294a33eb5b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-consolidation-audit-0sydm1",
+      "head": "0e5296a71f3f3802f36e14d847c0abf7b1dbf882",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-finish",
+      "head": "d350474e49522c34213d90a66904b296b9509f6c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-pr-consolidation-q6q18n",
+      "head": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/circula-security-features",
+      "head": "f8278a047392541a077d57c560823471053d1e1d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/compassionate-cannon-txdlz1",
+      "head": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/cool-gauss-vdxlod",
+      "head": "64fa4f685780b93a349a862e3741df5b4db067cc",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/cool-ramanujan-n2peag",
+      "head": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/fnet-204-signed-cursors",
+      "head": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/gov-021-admin-recovery",
+      "head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/gracious-ptolemy-dscc7v",
+      "head": "1d165989e2176e214536dd22b05f7b3a4cb2f48f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/happy-babbage-dcumwz",
+      "head": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/happy-noether-444cum",
+      "head": "34ccb81a54ab63875d4a5305076437d6b3221049",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/kind-einstein-v5ycss",
+      "head": "3bfb2f78fb0aad03ec3533af5985c394d64c1898",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/lucid-archimedes-upisa8",
+      "head": "d2c1c6090a053b62dc75002464dc96bb542d6c78",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/quirky-babbage-y9fpmm",
+      "head": "af69702be08aaf14cbe9a705ddf7f08796d5e976",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/quirky-einstein-l9ni8m",
+      "head": "4a8db9e80509d23d3937c68575c632f4650576aa",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/relaxed-hopper-8q4vhq",
+      "head": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/sec-026-abuse-signals",
+      "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/sharp-archimedes-tu76rh",
+      "head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/sweet-turing-m3ftja",
+      "head": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/ux-047-auth-catalogue",
+      "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/claude/vibrant-brahmagupta-3uofnj",
+      "head": "33b200e00c088c86ffb0d0d8176f1575376a9b49",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/api036-completion-20261119",
+      "head": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/api036-cursor-hardening-20261119",
+      "head": "94fcd018ac4227ea5a5eb803478b3bb0a1aa3677",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/api036-qualification-20261119",
+      "head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-checkpoint-recovery-20261116",
+      "head": "12175ec348d5234c27e1c72dc8df96a091cd111c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-common-ui-catalog-20261116",
+      "head": "a112c979932bc7b9e209455d3df14dfebc60243a",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-consolidate-20261030",
+      "head": "7643fb616208cc318939ded809e6cada66bb7415",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-core-checkpoint-20261116",
+      "head": "15375a8dc87544849b4a85fa128ce77be1103814",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-core-completion-20261116",
+      "head": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-evidence-20261116",
+      "head": "f6ea3213e663c7e37d678b018861b6703947e3e0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-financial-messages-20261116",
+      "head": "cf5abf5cfb00638e1772a7e34014a352048d6b35",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-integration-plan-20261030",
+      "head": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-message-catalogs-20261116",
+      "head": "96059bb4b8ae23ad6e4e45428bf69288bec4c182",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-noscript-qa",
+      "head": "ba57512918195423b25bc7958ff0b8af6df7ed7a",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-qualification-20261116",
+      "head": "dc89212a8bf1e1207e5443ffc719670623de70e1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-responsive-qa",
+      "head": "04e11989b811b4541a20b4e06e7a020beabb6af3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-resume-20261024",
+      "head": "f4bfe6bc3f81c94b859abeae902ae862ea6e143e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-staging-refresh-docs",
+      "head": "9c0bc500cb19f11f18694c76d134f4bfebf896e7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/circula-support-boundaries-20261028",
+      "head": "837d51b0d5374822b28f1b3a9206f9e2d23bd60c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/codex/dashboard-amounts-meter-20261116",
+      "head": "d53196cc6907f27222661246a7767bb0aa123a76",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/consolidation/http-persistence-regressions-20261116",
+      "head": "050798c9cf94598efd0fff15f7a8a74bb3c4f4a1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/consolidation/recover-future-specifications",
+      "head": "3a776e6304551c21ff372a8ae962606108dde4ff",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "head": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/dependabot/go_modules/golang.org/x/text-0.44.0",
+      "head": "4a6ea9ab3dff3bdf1f3597e98abd449b203afb11",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/docs/fnet-203-optional-trade-receipts",
+      "head": "3d6ed55b2e44d31f7350814d87ba44564e8344c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/docs/foundational-spec-shells",
+      "head": "d96f2e75634bff074d26965ae93c2fe00c6f7f24",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/docs/foundational-specifications",
+      "head": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/docs/future-usability-network-specs-20261111",
+      "head": "f4a051c1c1af815e7bb6a902929108e155145c97",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/docs/readme-and-wiki",
+      "head": "db7826495ec2e8bd3f5459afa5f619cdc8fe8def",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/feature/core-catalogue-continuation-20261119",
+      "head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/feature/fnet-204-completion-parallel",
+      "head": "a8aecfe8782df4782af256bbcecdf5fd1469f783",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/fix/fnet207-ci-proven-20261119",
+      "head": "ccf30e6a819d570d90d2aa02c91ec8d635040563",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-201-matching-20261116",
+      "head": "12850290c6bca7720853c33689662d751aced160",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-202-favorites-20261116",
+      "head": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-203-receipts-20261116",
+      "head": "5200c5bf940f051a86d6e502787af06892200974",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-204-feed-20261116",
+      "head": "108107435645db687f8ac380e6571319f419fa32",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-205-analytics-20261116",
+      "head": "64f1fef75d167ca322179e3e120214f9a56c6583",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-206-areas-20261116",
+      "head": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-207-recurring-20261116",
+      "head": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-208-governance-20261116",
+      "head": "5eac085005361e973ca8f358e01f039aea718bed",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fnet-209-federation-20261116",
+      "head": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fux-101-pwa-20261116",
+      "head": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fux-102-qr-20261116",
+      "head": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fux-103-discovery-20261116",
+      "head": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fux-104-notifications-20261116",
+      "head": "54a41b12a314e7652802b71d693e2594c37f172f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fux-105-messaging-20261116",
+      "head": "54d3af51aa32c022562e8041d1baa149da071db3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/fux-106-onboarding-20261116",
+      "head": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/future/module-catalog-20261116",
+      "head": "dfa4779d05a47bc0397110ecfbb14659ce3884d7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/haiku/circula-consolidation",
+      "head": "6fbfa13fb696d38e8e120377c0eee09af1ac44f0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/admin-grant-notice-pagination-20261117",
+      "head": "cb25b41febd43273cd4aa856072406b210089d81",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/backup-private-staging-20261117",
+      "head": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/browser-parity-clock-20261117",
+      "head": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/circula-master-consolidation-20261119",
+      "head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/comprehensive-audit-20261119",
+      "head": "839e86935767288e594914ad711486616a604eca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/consolidation-execution-record-20261118",
+      "head": "73244357ca136874452a6cd826ffa91ac8c3c434",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/core-completion-audits-20261119",
+      "head": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/core-consolidation-20261119",
+      "head": "9674b1a9d86d702e412779295db8425e9e5a8c82",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/core-recovery-20261119",
+      "head": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/core-ui-completion-20261119",
+      "head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/erasure-fixture-stability-20261117",
+      "head": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/release-threshold-check-20261117",
+      "head": "ec98caba7328790ef36f0f2c144644bc05155d6b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/store-untrusted-schema-20261117",
+      "head": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/throttle-documentation-20261117",
+      "head": "83de536ee373a7c4997222cf58ff563c53c8cbbc",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/integration/unique-core-completion-20261120",
+      "head": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/main",
+      "head": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/fnet207-recurring-remote-20261119",
+      "head": "9bf260d63f454868e27d2d85a3d9fb5dce4beeae",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/fnet209-utf8-20261119",
+      "head": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/fux102-camera-lifecycle-20261119",
+      "head": "a91bb5fdc97fc540a1617538073e92509ceba485",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/fux106-retention-20261119",
+      "head": "20e6c8479459f837915eb31a5d668e2bd470e5a8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/messaging-windows-private-storage-20261119",
+      "head": "ef4a11975ab9159f44bcb8fa10fa6d2a1d585c45",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/notification-transport-tests-20261119",
+      "head": "66b23f8e9e37ce6efddf56c0215c6f29f741d489",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-analytics-20261119",
+      "head": "0b67eb44811165e947d8db5ba25a3d868af892ff",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-areas-20261119",
+      "head": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-federation-20261119",
+      "head": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-governance-20261119",
+      "head": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-messaging-20261119",
+      "head": "d232d6507cb198081434284084a4ced7ed6df27c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-receipts-20261119",
+      "head": "6186416ddd83c365405a798130999cb1e4df0f31",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/master/recover-recurring-20261119",
+      "head": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/nodata/doc-sweep-20261118",
+      "head": "866adc8f2c30abd294843e43a2ba42a6fe5f7b67",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/planning/future-cli-specs-20261110",
+      "head": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/core127-e2e-observer-20261120",
+      "head": "11739c7f8f59455b4dc480294cab4d79f7933cb9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/core127-loading-regression-syntax-20261120",
+      "head": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/core127-sync-loading-20261120",
+      "head": "e5f7664c505a67fc1aa21c8d4609b55708991457",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/core99-currenthead-ci-20261119",
+      "head": "cb5920df14b716751195584f7adf9c9e43c65615",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/fnet204-feed-final-ci-20261119",
+      "head": "80c76940ce8c38226e8b917bf840541f2d845f9c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/fnet204-feed-golden-scanner-20261119",
+      "head": "80c76940ce8c38226e8b917bf840541f2d845f9c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/fnet204-qualifier-evidence-digest-20261119",
+      "head": "6c49dbccc90c1a2be03fec05fe6e5fa9292d801c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/fux101-final-ci-20261119",
+      "head": "aab3bfda4812c4e99882c8efd00cd2d9328a444e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/repair/fux104-final-ci-20261119",
+      "head": "409a00b0b36daa343cd70521b5acc2c9af9eb7c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/remotes/origin/work/spec-completion",
+      "head": "d39bfef12d4ac1430815fa49ad799fb1c4bf9964",
+      "symbolic_target": ""
+    }
+  ],
+  "symbolic_remote_refs": [
+    {
+      "name": "refs/remotes/origin/HEAD",
+      "head": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "symbolic_target": "refs/remotes/origin/main"
+    }
+  ],
+  "local_branches": [
+    {
+      "name": "refs/heads/audit/core-loading-continuation-20261120",
+      "head": "4f24bc9049dc76ff9091a0240d3dd61f1d53e9cb",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/audit/core127-final-evidence-20261120",
+      "head": "c372bb94af819daeaf34b98beaf8da44e1fa3c14",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/audit/federation-compose-20261120",
+      "head": "7d565ac2e3c1d7973d802b755b89a0ce267d0ac6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/audit/pr104-historical-evidence-20261120",
+      "head": "49dc8acc781790635fca8ed32882a7a27971c8a1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/docs/branch-refresh-20261120",
+      "head": "43e02a16c3c0eb854d34c587381ea24ab0e749bf",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/analytics-fuzz-qualification-20261120",
+      "head": "d7edb701f6b941998deaacf43ccbc8e2a49e05d0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/core-anchor-fixture-20261120",
+      "head": "dc12dac950714c66337dbd2e98edc15eab0fa640",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/core-credit-evidence-null-20261120",
+      "head": "c1aadfd91c38b360291094fbd53949b39ebff4bb",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/core-linux-qualification-budget-20261120",
+      "head": "a4becfda0f10d5fa3790bf0ee4aeff6552dfeca1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/core-password-admission-20261120",
+      "head": "0bd96859034c7341015dbaf56a137f6cb84f5b55",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/core127-portability-20261120",
+      "head": "ca62063638fa67d32d0c56e976698c1077541106",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/core127-web-ci-20261120",
+      "head": "82e61847339dd08fa8d69ebf57bc0c4c6bbf2e38",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/federation-doc-qualification-20261120",
+      "head": "99d6f4456260290fc3616599710b50de77585ad5",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/future-messaging-path-20261120",
+      "head": "882c6f39fc44c67388b1e0f1f7af5cf14384dc27",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/fix/onboarding-doc-qualification-20261120",
+      "head": "02564643d01a7fa14006efd220283e476907a36c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/integrate/core-auth-admission-20261120",
+      "head": "69ca540dd9a1c01471de613e476b76babb87b31a",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/integrate/core-loading-qualification-20261120",
+      "head": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/integration/future-notification-native-20261120",
+      "head": "e9e94fd079a718c534945548eb7308debab0ef9b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/main",
+      "head": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/recover/fnet207-recurring-consolidation-20261120",
+      "head": "86ab145b1e3f0e02c6441d1c94faa0de2b741453",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/repair/core127-final-ci-20261120",
+      "head": "e3cb6d202317406242868dbc6d5a6843b409dff3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/review/core-containment-20261120",
+      "head": "11912dfa28112d6c3bb9065478021b248f217660",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/review/core-loading-independent-20261120",
+      "head": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/review/core-loading-tests-20261120",
+      "head": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/review/future-isolated-four-20261120",
+      "head": "041af1e5777ba63d3e5d3d02332c7edc6cb6cce1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/heads/review/future-ref-refresh-20261120-late",
+      "head": "6eafbaad996fb846f3a71be735f57196164d9d37",
+      "symbolic_target": ""
+    }
+  ],
+  "fetched_pull_request_heads": [
+    {
+      "name": "refs/discovery/pull-heads/1",
+      "head": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/10",
+      "head": "ae512e51d4f7a611119a5567225b862969770207",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/100",
+      "head": "3bdef17a87b421b1b43a666d58453749a7b06d02",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/101",
+      "head": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/102",
+      "head": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/103",
+      "head": "66b23f8e9e37ce6efddf56c0215c6f29f741d489",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/104",
+      "head": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/105",
+      "head": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/106",
+      "head": "d55554408ef591371768259905c70ca58d68facb",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/107",
+      "head": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/108",
+      "head": "0b67eb44811165e947d8db5ba25a3d868af892ff",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/109",
+      "head": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/11",
+      "head": "a04fb74e2ed7857f075c4707b8339ada77c258fd",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/110",
+      "head": "ccf30e6a819d570d90d2aa02c91ec8d635040563",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/111",
+      "head": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/112",
+      "head": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/113",
+      "head": "6186416ddd83c365405a798130999cb1e4df0f31",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/114",
+      "head": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/115",
+      "head": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/116",
+      "head": "d232d6507cb198081434284084a4ced7ed6df27c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/117",
+      "head": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/118",
+      "head": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/119",
+      "head": "cb5920df14b716751195584f7adf9c9e43c65615",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/12",
+      "head": "fe111799ffabb2427d6d94feb32a037fa3ed2af8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/120",
+      "head": "a91bb5fdc97fc540a1617538073e92509ceba485",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/121",
+      "head": "20e6c8479459f837915eb31a5d668e2bd470e5a8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/122",
+      "head": "ef4a11975ab9159f44bcb8fa10fa6d2a1d585c45",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/123",
+      "head": "409a00b0b36daa343cd70521b5acc2c9af9eb7c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/124",
+      "head": "aab3bfda4812c4e99882c8efd00cd2d9328a444e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/125",
+      "head": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/126",
+      "head": "80c76940ce8c38226e8b917bf840541f2d845f9c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/127",
+      "head": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/128",
+      "head": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/129",
+      "head": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/13",
+      "head": "3d0080a9c43680f69f81217af3b42374e7160bf8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/14",
+      "head": "837d51b0d5374822b28f1b3a9206f9e2d23bd60c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/15",
+      "head": "33b200e00c088c86ffb0d0d8176f1575376a9b49",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/16",
+      "head": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/17",
+      "head": "7643fb616208cc318939ded809e6cada66bb7415",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/18",
+      "head": "9c0bc500cb19f11f18694c76d134f4bfebf896e7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/19",
+      "head": "34ccb81a54ab63875d4a5305076437d6b3221049",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/2",
+      "head": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/20",
+      "head": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/21",
+      "head": "63b033d842a2fa40b56ff9d79e69c259db951c83",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/22",
+      "head": "2e729346d6297075b6ff1f7828d48681d48320b6",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/23",
+      "head": "a376a4ed592451d90d2ff7b4d3db1489a2231f96",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/24",
+      "head": "7620d7f51913363dd013b80cc682eb670eeff3a5",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/25",
+      "head": "1760551f5b03a89ec64d09269d631e72f2e95959",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/26",
+      "head": "2078bf0964353892e80214b4601211e36818b889",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/27",
+      "head": "b61a8e719030ff56044d71fee632b5ba824d7698",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/28",
+      "head": "7e8481004801c01aea5d22f4720e1ead7381c4f7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/29",
+      "head": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/3",
+      "head": "d96f2e75634bff074d26965ae93c2fe00c6f7f24",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/30",
+      "head": "1d165989e2176e214536dd22b05f7b3a4cb2f48f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/31",
+      "head": "bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/32",
+      "head": "f4a051c1c1af815e7bb6a902929108e155145c97",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/33",
+      "head": "4a8db9e80509d23d3937c68575c632f4650576aa",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/34",
+      "head": "02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/35",
+      "head": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/36",
+      "head": "8f742877fb53cc39aea5e189a5452d924d8c08c8",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/37",
+      "head": "3bfb2f78fb0aad03ec3533af5985c394d64c1898",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/38",
+      "head": "d2c1c6090a053b62dc75002464dc96bb542d6c78",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/39",
+      "head": "92d204dc027320b1b26a05fd86e58232d89394ca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/4",
+      "head": "fc488445af5f43165a7103f1c1fd12483b39d448",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/40",
+      "head": "fe832faced826ed2234fcd9ba0ce7f7321f04df5",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/41",
+      "head": "3d6ed55b2e44d31f7350814d87ba44564e8344c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/42",
+      "head": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/43",
+      "head": "8b4c8ba23c99d4418348d76ff8cb38a72e7b958d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/44",
+      "head": "3d6ed55b2e44d31f7350814d87ba44564e8344c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/45",
+      "head": "e02085a6aa1a1394f874b304fdf0961cc0888423",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/46",
+      "head": "8fbc724fa093e91b57b6f0eda4aed4d7b649f388",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/47",
+      "head": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/48",
+      "head": "4a6ea9ab3dff3bdf1f3597e98abd449b203afb11",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/49",
+      "head": "f14c75a5cbbaea92ce89514d281c823a1fd2f00c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/5",
+      "head": "db7826495ec2e8bd3f5459afa5f619cdc8fe8def",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/50",
+      "head": "c34a9801853d5438f167757c3b2baea3afce06c0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/51",
+      "head": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/52",
+      "head": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/53",
+      "head": "26b57163d96534e79e3d35d471573d609af8a415",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/54",
+      "head": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/55",
+      "head": "64fa4f685780b93a349a862e3741df5b4db067cc",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/56",
+      "head": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/57",
+      "head": "dc89212a8bf1e1207e5443ffc719670623de70e1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/58",
+      "head": "f6ea3213e663c7e37d678b018861b6703947e3e0",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/59",
+      "head": "12175ec348d5234c27e1c72dc8df96a091cd111c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/6",
+      "head": "f8278a047392541a077d57c560823471053d1e1d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/60",
+      "head": "96059bb4b8ae23ad6e4e45428bf69288bec4c182",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/61",
+      "head": "cf5abf5cfb00638e1772a7e34014a352048d6b35",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/62",
+      "head": "a112c979932bc7b9e209455d3df14dfebc60243a",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/63",
+      "head": "d53196cc6907f27222661246a7767bb0aa123a76",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/64",
+      "head": "3a776e6304551c21ff372a8ae962606108dde4ff",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/65",
+      "head": "050798c9cf94598efd0fff15f7a8a74bb3c4f4a1",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/66",
+      "head": "372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/67",
+      "head": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/68",
+      "head": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/69",
+      "head": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/7",
+      "head": "fcd9fc5878482e1e4d340a3448a0d2294a33eb5b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/70",
+      "head": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/71",
+      "head": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/72",
+      "head": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/73",
+      "head": "cb25b41febd43273cd4aa856072406b210089d81",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/74",
+      "head": "ec98caba7328790ef36f0f2c144644bc05155d6b",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/75",
+      "head": "83de536ee373a7c4997222cf58ff563c53c8cbbc",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/76",
+      "head": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/77",
+      "head": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/78",
+      "head": "0e5296a71f3f3802f36e14d847c0abf7b1dbf882",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/79",
+      "head": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/8",
+      "head": "d350474e49522c34213d90a66904b296b9509f6c",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/80",
+      "head": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/81",
+      "head": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/82",
+      "head": "82dc18e07f6b22b9c34ef026f833391705b30067",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/83",
+      "head": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/84",
+      "head": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/85",
+      "head": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/86",
+      "head": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/87",
+      "head": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/88",
+      "head": "866adc8f2c30abd294843e43a2ba42a6fe5f7b67",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/89",
+      "head": "73244357ca136874452a6cd826ffa91ac8c3c434",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/9",
+      "head": "d39bfef12d4ac1430815fa49ad799fb1c4bf9964",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/90",
+      "head": "839e86935767288e594914ad711486616a604eca",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/91",
+      "head": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/92",
+      "head": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/93",
+      "head": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/94",
+      "head": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/95",
+      "head": "0b2bb7a4dea18dbb3f125f41565b096d637e47f3",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/96",
+      "head": "94fcd018ac4227ea5a5eb803478b3bb0a1aa3677",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/97",
+      "head": "9bf260d63f454868e27d2d85a3d9fb5dce4beeae",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/98",
+      "head": "a8aecfe8782df4782af256bbcecdf5fd1469f783",
+      "symbolic_target": ""
+    },
+    {
+      "name": "refs/discovery/pull-heads/99",
+      "head": "9674b1a9d86d702e412779295db8425e9e5a8c82",
+      "symbolic_target": ""
+    }
+  ],
+  "tags": [],
+  "source_note": "Fresh all-branch/tag/PR-head fetch completed. One initial local PR refspec conflicted with older flat tracking refs; retry used a distinct refs/discovery/pull-heads namespace without deleting any existing ref. Repair branch was fetched again after publication. PR129 discovery ref reflects earlier fetch; actual current remote head is in remote_heads."
+}

@@ -1,0 +1,153 @@
+{
+  "source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "tree": "029e5fdda2d03347389397576ec08701ae04cec2",
+  "node_version": "v24.22.3",
+  "old_control_production_source": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "current_helper_bytes_preserved_in_control": true,
+  "checks": [
+    {
+      "name": "current-helper-suite",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "scripts/test_app_messages.cjs"
+      ],
+      "cwd": "/workspace/scratch/bfba682cba37/circula-loading-tests",
+      "source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "environment_overrides": {},
+      "started_at": "2026-11-20T23:11:30.034962+00:00",
+      "wall_seconds": 0.26251,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "expected_outcome_observed": true,
+      "log": "current-helper-suite.log",
+      "log_bytes": 3768,
+      "log_sha256": "80913bebe62a828876435955baf56643ff1954b4c3927e4af67cb61e01a93853",
+      "tap_counts": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failed_test_names": [],
+      "source_kind": "exact candidate"
+    },
+    {
+      "name": "old-production-negative-control",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "scripts/test_app_messages.cjs"
+      ],
+      "cwd": "/workspace/scratch/bfba682cba37/validation-loading-tests-20261120/old-production-control",
+      "environment_overrides": {},
+      "started_at": "2026-11-20T23:11:30.297872+00:00",
+      "wall_seconds": 0.226272,
+      "exit_code": 1,
+      "expected_exit": 1,
+      "expected_outcome_observed": true,
+      "log": "old-production-negative-control.log",
+      "log_bytes": 4750,
+      "log_sha256": "0c3d1a5cca49c8d1323630c9692c2868fc0972d68ec2a0d5d6b1a4077db1cbbc",
+      "tap_counts": {
+        "tests": 16,
+        "pass": 15,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failed_test_names": [
+        "native navigation feedback is synchronous even when the document blocks timer tasks"
+      ],
+      "test_source_commit": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "production_source_commit": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+      "source_kind": "mixed-source negative control: exact candidate helper and exact prior production script"
+    },
+    {
+      "name": "playwright-full-discovery",
+      "command": [
+        "node",
+        "/workspace/scratch/bfba682cba37/circula-ci/e2e/node_modules/playwright/cli.js",
+        "test",
+        "--config=e2e/playwright.config.js",
+        "--list"
+      ],
+      "cwd": "/workspace/scratch/bfba682cba37/circula-loading-tests",
+      "source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "environment_overrides": {
+        "NODE_PATH": "/workspace/scratch/bfba682cba37/circula-ci/e2e/node_modules"
+      },
+      "started_at": "2026-11-20T23:11:30.524302+00:00",
+      "wall_seconds": 1.364684,
+      "exit_code": 0,
+      "expected_exit": 0,
+      "expected_outcome_observed": true,
+      "log": "playwright-full-discovery.log",
+      "log_bytes": 52723,
+      "log_sha256": "22043a09590af2570ee96f289412eda8f4793918aef4873f778b3198caf8b915",
+      "tap_counts": {},
+      "discovery": {
+        "tests": 597,
+        "files": 20,
+        "executed_browser_tests": 0
+      },
+      "failed_test_names": [],
+      "source_kind": "exact candidate"
+    }
+  ],
+  "source_rows": [
+    {
+      "path": "e2e/tests/loading.spec.js",
+      "sha256": "d7a75dbe48181b40d0538aa8628be25a8e600b5b4488d8bc58f314a69b240cb3"
+    },
+    {
+      "path": "internal/web/static/app.js",
+      "sha256": "1cb13acc069cdcb1de27205611c927252fed8710a54ed7212bc29a7e8dae1c75"
+    },
+    {
+      "path": "scripts/test_app_messages.cjs",
+      "sha256": "a5fcd0098f2031b19d768b1a038804f530f02cf848efe7a1509c3ffce908907c"
+    },
+    {
+      "path": "e2e/package.json",
+      "sha256": "c3066c8fe2aa1208f9bc9ed29e94ef66135586902b45ccf2a0ca6c98455cc334"
+    },
+    {
+      "path": "e2e/package-lock.json",
+      "sha256": "609fc797f2fa9f6b3381c63ad04410e09e3c54acc58e6f411fee6d6273e2adbb"
+    }
+  ],
+  "worktree_clean": true,
+  "limitations": [
+    "No native browser execution performed locally; --list is discovery only.",
+    "Previous unchanged environment Chromium socket EPERM was not retried or bypassed.",
+    "Event-time DOM and ARIA snapshot is not a physical render or assistive-technology acceptance measurement."
+  ],
+  "additional_checks": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "e2e/tests/loading.spec.js"
+      ],
+      "source": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "exit_code": 0,
+      "evidence": "Executed successfully in tool transcript; no browser execution."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "be9a5731bc93dcbf7b57301a8d2538a13af360bd..eef0c6d8c832ce994db1019eb5e7d6a41800b8ef"
+      ],
+      "exit_code": 0,
+      "evidence": "Executed successfully in tool transcript."
+    }
+  ]
+}

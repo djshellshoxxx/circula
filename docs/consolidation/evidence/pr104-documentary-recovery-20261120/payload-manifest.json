@@ -1,0 +1,928 @@
+{
+  "schema_version": 1,
+  "review_date_utc": "2026-11-20",
+  "scope": "Lossless historical documentary recovery only. No source, test, workflow, dependency or migration changes are imported. Archived patches, scripts and workflow snapshots remain inert evidence. Original historical claims are not current qualification.",
+  "source_pr": "https://github.com/djshellshoxxx/circula/pull/104",
+  "source_branch": "integration/circula-master-consolidation-20261119",
+  "source_commit": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+  "source_tree": "629fdb415e4181ee349947526f39a7387e2d4d40",
+  "comparison_candidate": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "comparison_candidate_tree": "029e5fdda2d03347389397576ec08701ae04cec2",
+  "common_ancestor": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+  "source_only_commits": [
+    {
+      "commit": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+      "tree": "7ccb0188df8416eb8fa57b8740eba400a5e01363",
+      "parents": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+      "author_time": "2026-11-19T05:03:24-08:00",
+      "committer_time": "2026-11-19T05:03:24-08:00",
+      "subject": "fix(export): complete manifest parity and qualify native reader"
+    },
+    {
+      "commit": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "tree": "629fdb415e4181ee349947526f39a7387e2d4d40",
+      "parents": "707a4363a86922d152ed2d203c9ea184fe4b323f",
+      "author_time": "2026-11-19T06:30:31-08:00",
+      "committer_time": "2026-11-19T06:30:31-08:00",
+      "subject": "docs: preserve complete consolidation inventory and qualification evidence"
+    }
+  ],
+  "source_changed_paths": 115,
+  "preserved_unique_paths": 102,
+  "preserved_original_bytes": 5206983,
+  "candidate_identical_paths": [
+    {
+      "path": ".github/workflows/export-reader.yml",
+      "source_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198",
+      "candidate_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/CORE_PROVIDER_CHECKPOINT.json",
+      "source_blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a",
+      "candidate_blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/CORE_QUALIFICATION.json",
+      "source_blob": "03344d7725d359b870459b6045e4d44d7a857367",
+      "candidate_blob": "03344d7725d359b870459b6045e4d44d7a857367"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/EXECUTION_CHECKPOINT.md",
+      "source_blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137",
+      "candidate_blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_EVIDENCE.json",
+      "source_blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6",
+      "candidate_blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_QUALIFICATION.md",
+      "source_blob": "34aebf4b77c273c530fc07cb118791dc53a3b503",
+      "candidate_blob": "34aebf4b77c273c530fc07cb118791dc53a3b503"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/pending-traceability.patch",
+      "source_blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c",
+      "candidate_blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.json",
+      "source_blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f",
+      "candidate_blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.log",
+      "source_blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1",
+      "candidate_blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.json",
+      "source_blob": "35947b9d9cc87ae28704c19a54608a44c60520e0",
+      "candidate_blob": "35947b9d9cc87ae28704c19a54608a44c60520e0"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.md",
+      "source_blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563",
+      "candidate_blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563"
+    }
+  ],
+  "candidate_different_python_paths_excluded": [
+    {
+      "path": "scripts/read-export.py",
+      "source_blob": "bde02445e22e837370fe5911cdee29d2fae3a234",
+      "candidate_blob": "60e6d81d990c0a0e6078f93543e2a2eb051411f3"
+    },
+    {
+      "path": "scripts/test_read_export.py",
+      "source_blob": "af5d950d72b4e8f2d209bb31e393b98f619cac5d",
+      "candidate_blob": "e3a87bad71ba1725995da5333086bd33876c64b3"
+    }
+  ],
+  "payload_archive": {
+    "path": "historical-evidence.tar.gz",
+    "bytes": 1205996,
+    "sha256": "6d7ad0e06ef2bb9a4cd1a70626ae328a8384828dd439e07c4bf07246ff37d385",
+    "format": "USTAR in gzip level 9, sorted original paths; regular files only, mode 0644; mtime/uid/gid zero, empty owner/group names",
+    "entries": 102,
+    "byte_preservation": "Every decompressed member was compared byte for byte with its original Git blob; SHA1 Git object preimage and SHA256 independently recomputed."
+  },
+  "entries": [
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/ANALYTICS_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "e0e0243d0161491cec54cd7dc4af1bb34f7e2d82",
+      "bytes": 31241,
+      "sha256": "2b35b7d2b359d935db038dc9d18f8ab1f05abc49d787a1ebc04067d8c78deb01",
+      "archive_entry": "docs/audits/master-consolidation-20261119/ANALYTICS_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/ARCHIVE_FEATURE_STATUS.md",
+      "git_mode": "100644",
+      "git_blob": "de8b4bc8d6ee49fa9bac2320d6d3ec2e91a410aa",
+      "bytes": 19795,
+      "sha256": "73de2146e8f2673237f4628ec16136e15ae4cb0d6c18dd4a2ba0ba047ba4d326",
+      "archive_entry": "docs/audits/master-consolidation-20261119/ARCHIVE_FEATURE_STATUS.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/ARCHIVE_MODULE_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "05c5cdee19687dd4cb2ec24c4bd76b4a996d0286",
+      "bytes": 484656,
+      "sha256": "bd61aa1480b29e6dff2653268b184dea82f2f54855aed73db98d6ecbabfd345b",
+      "archive_entry": "docs/audits/master-consolidation-20261119/ARCHIVE_MODULE_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.json",
+      "git_mode": "100644",
+      "git_blob": "aa41e57c41dc751f15c6d2106ef492b23890e9f9",
+      "bytes": 399417,
+      "sha256": "8df5dc93c55d678bec493dbc55682eb58cea951107a7e42cc6b89f7bb3bd41e2",
+      "archive_entry": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.md",
+      "git_mode": "100644",
+      "git_blob": "0b8fca45c9a81060a85ac15b04648d1d0534b3eb",
+      "bytes": 12505,
+      "sha256": "03ecffc870e7e89004a2df01f1da239296d6df851dd1d222d3fb742654c5a21c",
+      "archive_entry": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/AREAS_RECOVERY_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "5f0d231a982ae6a268fc92bff47b89eb05804a3c",
+      "bytes": 14788,
+      "sha256": "9b85df56b1ce489282fcb137e79cb9a671acc7397ce52ae94c13bc3b75482e5f",
+      "archive_entry": "docs/audits/master-consolidation-20261119/AREAS_RECOVERY_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json",
+      "git_mode": "100644",
+      "git_blob": "7d75b1aab59fcd86d29b1c1b5d8943a95ad711c5",
+      "bytes": 547367,
+      "sha256": "2d54c71ec2a926845c6afc49ee07460a3e62b3d9fa77673f8a73b28a2ee1f3ad",
+      "archive_entry": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.md",
+      "git_mode": "100644",
+      "git_blob": "975a2e0795b17e3d58420ae8697809b1037d2c60",
+      "bytes": 20137,
+      "sha256": "3fb726aaf27ba3a5d485fc64f18c98193d7f0d92ee18316a5de7b67530141c8a",
+      "archive_entry": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.json",
+      "git_mode": "100644",
+      "git_blob": "739d7fe495ca6d09335221882587d91ffafa0d63",
+      "bytes": 1442176,
+      "sha256": "71ed72a180b406c7b610f66abbba52494f68112ecf7a52705c995c331083ada6",
+      "archive_entry": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.md",
+      "git_mode": "100644",
+      "git_blob": "f14b5612b080f1e001ca20fecadb773fb8e30113",
+      "bytes": 26322,
+      "sha256": "79cf998a42f7ec690a89a2a8e92c6e9e21db625f56962294d105d35bb96f2078",
+      "archive_entry": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/CONTINUATION.md",
+      "git_mode": "100644",
+      "git_blob": "a7378dc1dc620140d5198df94addc20cb8377dd1",
+      "bytes": 12739,
+      "sha256": "41b1af40109ff81ff10b0ca16a2d9e324585722f2070602b3cbb2cd99dad9df1",
+      "archive_entry": "docs/audits/master-consolidation-20261119/CONTINUATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FEDERATION_PROVIDER_CURRENT.json",
+      "git_mode": "100644",
+      "git_blob": "6edece2e8f5b53ab4842517fd7de3a75e8ff68bb",
+      "bytes": 21450,
+      "sha256": "455f96763a7ec82a1d0b619f9062ad38e8d58186d35adcb97b8522549e33b881",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FEDERATION_PROVIDER_CURRENT.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "709cb5e401cb369fe4a27e6c7f048278cf9b7abb",
+      "bytes": 6588,
+      "sha256": "e4495556a3826860459a45a609f2a65cca880b8e80901e7bb1fdf17623154f32",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.md",
+      "git_mode": "100644",
+      "git_blob": "ef5348f3e79dd700bb589f49fbe0cade8aa87f76",
+      "bytes": 3385,
+      "sha256": "964bf9b8c42ea77cd38959ee3a8ddb0b33f6c6a91f18ce581a0d9456591d74f7",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "447236d99b0931c9ef269c3d8a1405baf15d92d6",
+      "bytes": 16543,
+      "sha256": "c723950f599d84c133c98beed5a285df934023c4ee6f644f88cf73b76deb4fb6",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.md",
+      "git_mode": "100644",
+      "git_blob": "2609ba3aaf9fe0bd46c6d2d849919a8214ba20b9",
+      "bytes": 5917,
+      "sha256": "ea8c27540aa0f75bb267a6d559184b77338c712635918b32f8b3907fef1986ba",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FOUR_MODULE_RECONCILIATION.md",
+      "git_mode": "100644",
+      "git_blob": "da502eab24bab53aae255edc31c0a39e6146ec49",
+      "bytes": 18392,
+      "sha256": "69a169129939b6f0010abd5b8c7d4f7783b228b9913da60a4929d1775e64a52b",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FOUR_MODULE_RECONCILIATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md",
+      "git_mode": "100644",
+      "git_blob": "6c6a8c33cde2aeb1800f5daa57fd821ac0393a78",
+      "bytes": 38325,
+      "sha256": "7538582325e46253a3e75453f8344a6bdcccbf2616723c0932342ac532fe8259",
+      "archive_entry": "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/GOVERNANCE_RECOVERY_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "cde0889c5a5a45b9f38ca3c6fc790cf26ed7bff8",
+      "bytes": 13904,
+      "sha256": "ed2ca63e5852d603419ee1f38542427f025bb07df79eb974e494fed284f1c481",
+      "archive_entry": "docs/audits/master-consolidation-20261119/GOVERNANCE_RECOVERY_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/MASTER_REPORT.md",
+      "git_mode": "100644",
+      "git_blob": "652891ae1feffd69d9a3f99ea1286330848ac05f",
+      "bytes": 42227,
+      "sha256": "51a94c17533da703dcaeb55b153ea53fa2e666e4065ac40f95e9a4aeb79f3172",
+      "archive_entry": "docs/audits/master-consolidation-20261119/MASTER_REPORT.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/MESSAGING_RECOVERY_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "ff9e6e7b9197ec9a2e1298cd0dd85a3f9dc161df",
+      "bytes": 13757,
+      "sha256": "b97a9ae4545996934dd68a04596be67fa46275c7e227b9662759d6752948a97d",
+      "archive_entry": "docs/audits/master-consolidation-20261119/MESSAGING_RECOVERY_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/MODULE_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "8ca4880a3ce78d694cff94087682d4d8454cca73",
+      "bytes": 44967,
+      "sha256": "3fd6b768b57403b4e2d580c0717779abc4a59f0ccb1bae5a2fa7f43fe06ea851",
+      "archive_entry": "docs/audits/master-consolidation-20261119/MODULE_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/NOTIFICATION_NATIVE_PUBLICATION.json",
+      "git_mode": "100644",
+      "git_blob": "4c1eba9124fd8438485d3a569c9c0a85f28dd7f8",
+      "bytes": 2220,
+      "sha256": "19f4bee567aaa5c3276ce4be87c5164b69a2ec25e2152b131f1412eca1e3487a",
+      "archive_entry": "docs/audits/master-consolidation-20261119/NOTIFICATION_NATIVE_PUBLICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/NOTIFICATION_PROVIDER_CHECKPOINT.json",
+      "git_mode": "100644",
+      "git_blob": "4264378a10521421f2044e09f8d57b165b5cd23e",
+      "bytes": 36609,
+      "sha256": "83d2540ed4ed2b3be40703f71d83e89a747b7e4811b4fade8f1f5d0b29509737",
+      "archive_entry": "docs/audits/master-consolidation-20261119/NOTIFICATION_PROVIDER_CHECKPOINT.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "4ad741aa8e20ed8a1ecbc6e088a1fea229712e57",
+      "bytes": 19228,
+      "sha256": "f8fe433a6cfdc571e3f6daf00aff19bc3a5560f57537d8b164c93522799a5c07",
+      "archive_entry": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.md",
+      "git_mode": "100644",
+      "git_blob": "ad509ac7a8a4da4909f98296fa6513a48e55ee12",
+      "bytes": 7017,
+      "sha256": "a10efca724d01793b79fb89809bb130766d9cd84454bf9599713152d6bd7d944",
+      "archive_entry": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/OWNERSHIP.md",
+      "git_mode": "100644",
+      "git_blob": "0507ede75d61fd1b15a34223207ea4cc02d38cf2",
+      "bytes": 10676,
+      "sha256": "577624d4f01e528e406231b12dbad3dd42ec7a3bdede8e1c4e20e1c7ba6067d6",
+      "archive_entry": "docs/audits/master-consolidation-20261119/OWNERSHIP.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/PROVIDER_STATUS_20261119T1353Z.json",
+      "git_mode": "100644",
+      "git_blob": "c86a53b3eeea727acd780134f5edb576598398fe",
+      "bytes": 49109,
+      "sha256": "584d7829cf3e23aaedbb9d042bae8c87d8585f3c45ceefc8ed8c89dfebff23b6",
+      "archive_entry": "docs/audits/master-consolidation-20261119/PROVIDER_STATUS_20261119T1353Z.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/PUBLICATIONS.json",
+      "git_mode": "100644",
+      "git_blob": "f17f38e8071e316098f01e34d1c113d3f5459b84",
+      "bytes": 8985,
+      "sha256": "b614caceb740bd704387127c6bbdf2d00c3afb73ea2a6483ea21b52889b849af",
+      "archive_entry": "docs/audits/master-consolidation-20261119/PUBLICATIONS.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/QR_CAMERA_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "dec30188f4000126c7684dfe7fc1a42bbdbba462",
+      "bytes": 2147,
+      "sha256": "8c10688a446ba3a21211e9743d7dbfd01135f1c0563af3de8be61b84ad9ad8d1",
+      "archive_entry": "docs/audits/master-consolidation-20261119/QR_CAMERA_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECEIPTS_CURRENT_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "127520201bf9e7ef07d64be80705f702ef270a26",
+      "bytes": 7531,
+      "sha256": "3a6159e0f2f9f1256d41fe12f618744c6aa2ef47e2370198e136451f21716a17",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECEIPTS_CURRENT_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECEIPTS_PUBLICATION.json",
+      "git_mode": "100644",
+      "git_blob": "a7b5f536fb69b9ca624e8c9b2f1cefa6e1d92a74",
+      "bytes": 10670,
+      "sha256": "ea37d5c6a06991cc44384bd1bb49032a72d96ff0e827be6551516f681be0644e",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECEIPTS_PUBLICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECURRING_CI.json",
+      "git_mode": "100644",
+      "git_blob": "ccc179d4e02103a222c1c779847368bae5228bd5",
+      "bytes": 3824,
+      "sha256": "0d8c1e2903ed640ba0a4f16d190400b9393a54137f7d14fde1a9fd581407b1d1",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECURRING_CI.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_FINAL_REVIEW.json",
+      "git_mode": "100644",
+      "git_blob": "a13b758dbd9de0e09e41ac9442be16dde2d28806",
+      "bytes": 1971,
+      "sha256": "c03009fc0fed739865716bbcf36926bdf41226b94256b2e0bc78b629330fa5a6",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_FINAL_REVIEW.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_VCS_REVIEW.json",
+      "git_mode": "100644",
+      "git_blob": "905769ad3815f14cb8db8bd14c34382eb6302aa4",
+      "bytes": 1488,
+      "sha256": "cbb6c76406082403fd3cf3bc44915457e554ce9c7b777335b1ac45f59c0b9713",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_VCS_REVIEW.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECURRING_PROVIDER_CURRENT.json",
+      "git_mode": "100644",
+      "git_blob": "087bc04d4f327ce65a2cb002560ed1c4d1cff639",
+      "bytes": 21191,
+      "sha256": "76377c4a955a58ba8464201e42586532afea00d9e326f66261bc462de3aab6fa",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECURRING_PROVIDER_CURRENT.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "e960bcea746ec9b24c9c0c7dc7a8818f9bc4af6d",
+      "bytes": 16459,
+      "sha256": "e5b9f4da9ddc7efacdaeb0fd20f80dc47509f5c9fcaa1b0166d0b895e15a9ea5",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.md",
+      "git_mode": "100644",
+      "git_blob": "c5d7ee67c438078d6e0f5c398c0439531fdf9622",
+      "bytes": 5781,
+      "sha256": "636ba06987f96c2f1a6e2e9994ecc37fff6a409b570b019acd10180b57d0137b",
+      "archive_entry": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/REPORT_PUBLICATION_QUALIFICATION.json",
+      "git_mode": "100644",
+      "git_blob": "6057d7ed8befc08a6837a4e855beea2678580a0d",
+      "bytes": 3174,
+      "sha256": "b7871c02def508afd8c23021315d4615aa288d140ac5ebef231ce96785e2181f",
+      "archive_entry": "docs/audits/master-consolidation-20261119/REPORT_PUBLICATION_QUALIFICATION.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/REVIEW.json",
+      "git_mode": "100644",
+      "git_blob": "628f6e9f5d3ea0e3523d61589a9b583906057700",
+      "bytes": 125713,
+      "sha256": "cb7d3b97c94b1d1afee29605f0a078458c139ed86a21297cd22a873154c773a3",
+      "archive_entry": "docs/audits/master-consolidation-20261119/REVIEW.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/REVIEW.md",
+      "git_mode": "100644",
+      "git_blob": "376c4964c8be7cf8324da1f0660e9b8cc9e82c5d",
+      "bytes": 35138,
+      "sha256": "a13ccef5e57b4424a2f292408ffb476b906f34cf7e649c0f29fa56f3ca74980b",
+      "archive_entry": "docs/audits/master-consolidation-20261119/REVIEW.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/THREE_RECOVERY_FINAL_REVIEW.json",
+      "git_mode": "100644",
+      "git_blob": "1b286a37d9bd130ba23e1aaa6e0304b032956bfe",
+      "bytes": 5359,
+      "sha256": "c9fd55b5c1f92b44a0782bb80774d198cca63fca65e03ea435fb763b3ece7984",
+      "archive_entry": "docs/audits/master-consolidation-20261119/THREE_RECOVERY_FINAL_REVIEW.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/VERIFICATION_FILES.json",
+      "git_mode": "100644",
+      "git_blob": "33fe16b1445c607bfa7044ea0904eb1fdb9f812b",
+      "bytes": 3425,
+      "sha256": "8797b0898764ac3450ff147f665376c4984a9fc115ce6fca478f2de831d8b45d",
+      "archive_entry": "docs/audits/master-consolidation-20261119/VERIFICATION_FILES.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.json",
+      "git_mode": "100644",
+      "git_blob": "dbf1520d126bd4788b3ffe1948230e9b6f51455d",
+      "bytes": 2597,
+      "sha256": "ca425d8df38132c69114c25a8bd2ee613430ab2a825882897f4f3dfbaa78a4ac",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.md",
+      "git_mode": "100644",
+      "git_blob": "2716cfe60b44782b7105a5624a04fd285dcb1980",
+      "bytes": 1281,
+      "sha256": "c230446cf9dbdd46370b1592a07f2a49d12355ee2a4ab15c441ba8918d0d7817",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.json",
+      "git_mode": "100644",
+      "git_blob": "5122e5773eb02f95d9bea8a183563ea2b1e9fb79",
+      "bytes": 11817,
+      "sha256": "f45e43925cfea2ac69aa62931743f72c0c9b6d3a833ee57a04611b4fa8429224",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.md",
+      "git_mode": "100644",
+      "git_blob": "71db0c6dd3ff7b76df901256cd512a3766c56e7c",
+      "bytes": 9309,
+      "sha256": "a3d9e0c8b917a87d589eb928bd1715e2f896d7460c8a248607818e7e94d8e072",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.json",
+      "git_mode": "100644",
+      "git_blob": "4b1f665dfe51000dc7f81ffd7b2dca1d81a87ab9",
+      "bytes": 9845,
+      "sha256": "392c89270498141071a25777e19bd7761cfcb58a393583445829ef1b022d5fc1",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.md",
+      "git_mode": "100644",
+      "git_blob": "a7fb628ba1e17057b3b03cfd5840b571b1bc3163",
+      "bytes": 7465,
+      "sha256": "6ba1036d1689529694f22e5327d6ee7b059d310e1d348e933a95986a7ea29519",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch",
+      "git_mode": "100644",
+      "git_blob": "de9ba9c17a34cc02e915a465a997fab92239796d",
+      "bytes": 11129,
+      "sha256": "275427a6ed56cbbeb84820aa02e3bfd83a91b0f6523915dd2c8862e6b30d617b",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.json",
+      "git_mode": "100644",
+      "git_blob": "027c3d37c35f3d9013ffc41b7abaa9fa41993326",
+      "bytes": 1707,
+      "sha256": "c5af497765fa21c8f3594912c075f89f811795b0896ca2f554ce5386176ba144",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.txt",
+      "git_mode": "100644",
+      "git_blob": "130724c8c256a8e475adc227a4c0324a8928f01a",
+      "bytes": 3289,
+      "sha256": "54508d8bbbd788ef7bcaa8fccef0af102dd8aa77625c9e50263d9a6b2becce09",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.json",
+      "git_mode": "100644",
+      "git_blob": "a55c6dd4d90f8e197907d41f40da43370940b437",
+      "bytes": 1791,
+      "sha256": "a3de565dc564a027ee6fbad55552507e440c03fd334ee7ffd168a70269a597ed",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.txt",
+      "git_mode": "100644",
+      "git_blob": "290cd149b9bc8055aca0437f1045ee012861d4ec",
+      "bytes": 157,
+      "sha256": "d8092b06184f9b7dd8f4ceb3623c0339b9eff6d7b9b843b742d80807eee6f6f8",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.json",
+      "git_mode": "100644",
+      "git_blob": "ca660ecbdadc3a5b1cc58764e907fe9ebf3b6bc4",
+      "bytes": 1702,
+      "sha256": "59955055e4289899aa89a73699968b1c31a181b53519d4c7d7d9a40436a133c4",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.txt",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.json",
+      "git_mode": "100644",
+      "git_blob": "0827bca8dafed3ec0b931c5bfd80c854ea9fa678",
+      "bytes": 1640,
+      "sha256": "f652ffe4bc184a954c11ae0b01a6049f9dd3d60a4aa714b8b5fd492c71bf7f27",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.txt",
+      "git_mode": "100644",
+      "git_blob": "db578740794419cd72ba17996f6ef4ceb485e839",
+      "bytes": 226,
+      "sha256": "baab46023ce88544d61a94a4dfa0b65d6ebde956018743716f15cdc52056b4ca",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.json",
+      "git_mode": "100644",
+      "git_blob": "50979e27444b1889f9de1d3287f090b1164b0f9b",
+      "bytes": 4249,
+      "sha256": "3ef43c2cc6fe57f8e68007078a4424a693a5aaf51c17d0be161be7e03a47b4e3",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.md",
+      "git_mode": "100644",
+      "git_blob": "4a5424c4fa50e155ac86a64e4a17df5ce7714d4d",
+      "bytes": 4133,
+      "sha256": "093a75ee92d8be7b057894c39353fb4d183935699a926f734587e7dd34e02e98",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch",
+      "git_mode": "100644",
+      "git_blob": "2b5f7ff0e64a17ac0aae6356fe405381b3bc7d6a",
+      "bytes": 4525,
+      "sha256": "aa359ad53b71fd7d78a78578302bc5d1387299bc5513990f120d59d19c1d62a3",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.json",
+      "git_mode": "100644",
+      "git_blob": "3f68c3abb49beb40803f69e6abd2b69c5efc569d",
+      "bytes": 1633,
+      "sha256": "e266adf5f4b7a96688e9763d3381d12fc0b311237e619c0122641efe8bf46cd3",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.txt",
+      "git_mode": "100644",
+      "git_blob": "a47eab34d9ec795d4060b7d2a76f863b15d6497a",
+      "bytes": 1245,
+      "sha256": "388b01ddb398c7b2a53c60771db1a4018d624951e4b906145a887414632864fc",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.json",
+      "git_mode": "100644",
+      "git_blob": "14cf77f6284204321cff26fcaa8405b3d9e71c74",
+      "bytes": 1688,
+      "sha256": "30d6f4fa88ba2c6555e5c903c5e318389586c68c254ff30c6040f869a9758a44",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.txt",
+      "git_mode": "100644",
+      "git_blob": "f5936d492e88a6c7849328d579885c2fee5becbe",
+      "bytes": 35,
+      "sha256": "f75772dd65d26a28388a816c26753e918be8274bf28295f0a029d3e5da6216f4",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.json",
+      "git_mode": "100644",
+      "git_blob": "e19b8401a216ca67726189e62bd82f0488f7b682",
+      "bytes": 1636,
+      "sha256": "66b95fffb289767baabfca3edc39e489b8a9bb3da2d2b9e3dabc0d75a66f5e0f",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.txt",
+      "git_mode": "100644",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.json",
+      "git_mode": "100644",
+      "git_blob": "cfc033148fb5aca564b68a2776107441dcba9f94",
+      "bytes": 3237,
+      "sha256": "e121b01e39e178e76e3c2eb1b791c6fadbfed5ab84145c0ee7605e057c13a183",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.md",
+      "git_mode": "100644",
+      "git_blob": "adc8721ab8dece3aa2254140e0cb12c19aec3d9c",
+      "bytes": 3523,
+      "sha256": "ba1d13e34529cc424046b2ee2ac79a33c0927da91dbacdb3e72384adafbc68b8",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.json",
+      "git_mode": "100644",
+      "git_blob": "70aa759803fab025f341c6b0465747a20211927c",
+      "bytes": 20969,
+      "sha256": "69afdfae36fa5f6feb6d317e966d9af8e2db74c89b31c10a6cac0722d9256cb3",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.md",
+      "git_mode": "100644",
+      "git_blob": "7caf4bc6bacc97cab7a13b17cfc5c1b311720150",
+      "bytes": 1818,
+      "sha256": "1ec83e487e73bba0ca5f995457c403764412f191d70b9561b84ea5a35e13fe34",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/RECONCILIATION.md",
+      "git_mode": "100644",
+      "git_blob": "3f29d19a9742b87eb446190d11cfc604c6253d39",
+      "bytes": 19782,
+      "sha256": "e4518266cea7a65b44b46a53e26f4d50a4aed4edb1e6895f2be3689f580a48a2",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/RECONCILIATION.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/module-name-status.txt",
+      "git_mode": "100644",
+      "git_blob": "f13afa12d565c9d29ed60c40e8cd6f94b7a763ba",
+      "bytes": 6626,
+      "sha256": "b66ed18af3060aacd8e278f86450e002babc20e8296dba25e040190cddcee282",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/module-name-status.txt"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/reconciliation.json",
+      "git_mode": "100644",
+      "git_blob": "c0893637f6461933cc1e5892c7b9fb419f443750",
+      "bytes": 3794,
+      "sha256": "5f650a3e56e7dd85e835c4ea4186acd481e7f285afa0b64ddfa4f60a213a7868",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/reconciliation.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/source-provenance.json",
+      "git_mode": "100644",
+      "git_blob": "869c6d400d0d9295a320f77c68774e6f834487f3",
+      "bytes": 55977,
+      "sha256": "5a452dfff1af296acfc83d932c37a1fcba4d559675b7a86f487b866c91afa2ff",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/source-provenance.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-green.json",
+      "git_mode": "100644",
+      "git_blob": "02492d056bf59ea1e45209ffd47026ef8620e441",
+      "bytes": 1403,
+      "sha256": "22e7ef9c6418106177c95eca8c3e55ae041a307b584417c26e9bf13e771d4be0",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-green.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-handoff.json",
+      "git_mode": "100644",
+      "git_blob": "3c7caf02b580674db23d6048eae1dba681b90934",
+      "bytes": 1990,
+      "sha256": "3f981dca444b4d1ef32381387169cc91059392e5a646bc2dfee4575d6185bcaf",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-handoff.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-red.json",
+      "git_mode": "100644",
+      "git_blob": "550f56f50d1de1d1a1c036d4be49026481924b85",
+      "bytes": 705,
+      "sha256": "98d963606ebed24d3cf3854d39d6b3ab62bcf59c5ea506514e572c1fa1724837",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-red.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.json",
+      "git_mode": "100644",
+      "git_blob": "0d6beb54452adc74ec7437e5fa249fe53609c49d",
+      "bytes": 3134,
+      "sha256": "ed8efaf63406a85d00d864ff74ebd6fd91e2e520d4f26b760b634a1f80151c42",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.md",
+      "git_mode": "100644",
+      "git_blob": "11ffb3005514059f2c095c37f8e0afc98b0ca9e1",
+      "bytes": 2472,
+      "sha256": "ac740402ed7c0fdead23a749943ae286bdf8deb6da8cdb2fb618757299a237b7",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/root-final-review.json",
+      "git_mode": "100644",
+      "git_blob": "63f2c62e2caefab9bf89e2f53dabfab635dd8c0d",
+      "bytes": 2005,
+      "sha256": "f0b73b5ab98460d57529db314fbc505b13476ec73d0ec86b9cf5d3dc87cd472e",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/root-final-review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.json",
+      "git_mode": "100644",
+      "git_blob": "46da07166006abe349ba8f287c198615b52a430d",
+      "bytes": 17930,
+      "sha256": "7f97f65f67390a81459f8a3688594fd5d187472bcc93071b54d8715e6b8448ac",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.md",
+      "git_mode": "100644",
+      "git_blob": "5c71f9214c6d707332006e8aebcd7a4fe9138a13",
+      "bytes": 4164,
+      "sha256": "396e822eae849f09e5c8be9d91f9f867103491e63dbb21526d1a759007dcca01",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/provenance-and-static-review.json",
+      "git_mode": "100644",
+      "git_blob": "2f998fd5ea4ca7718380b112129d636d8beda2c1",
+      "bytes": 71011,
+      "sha256": "6730ff80c886fa718ecb12bc301b4fb5a1935441d2c9cd8156bd8678cb0b8a14",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/provenance-and-static-review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.json",
+      "git_mode": "100644",
+      "git_blob": "75ea8874f05000b2f36ff90ae14b51a972f05680",
+      "bytes": 75457,
+      "sha256": "9fcc5f545f5023cee65f5f24eb39ef3eedbf5d750ba7ae0f31d4ed2007faecd3",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.md",
+      "git_mode": "100644",
+      "git_blob": "60553731443793899c265eca97ed3f7435013181",
+      "bytes": 7869,
+      "sha256": "29076391a565b7664881d7748f96de408674a9f8d0195c3ecbf71101ece64f57",
+      "archive_entry": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.md"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json",
+      "git_mode": "100644",
+      "git_blob": "62df10bb4529a2b29cd67fcf67773a0c05d31045",
+      "bytes": 478767,
+      "sha256": "d52ea13975c26520236e551edc4326cb09fa1ea7c0a0f8c45ceda26ae62408b7",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/race.log",
+      "git_mode": "100644",
+      "git_blob": "fbf15362b3f9ede1f6d52860043fbebe053c2423",
+      "bytes": 52746,
+      "sha256": "d91472bb47c0d7d9dc9f6717ccf2a39d4ac3a6405a10578e54df1c8d480bcf61",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/race.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+      "git_mode": "100644",
+      "git_blob": "8bf61b0a7cfc7bc9371f96df6f38e53bb4742221",
+      "bytes": 37748,
+      "sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/core-final-full-test.log",
+      "git_mode": "100644",
+      "git_blob": "60c9f44a03cd4532b4f54879187227dbcb2d2b22",
+      "bytes": 1648,
+      "sha256": "872395d0c5fe29ea09fd95f5b3106758bc3de35294da3b1cbeae4ea3c27d00d7",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/core-final-full-test.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/core-integration-first-test.log",
+      "git_mode": "100644",
+      "git_blob": "e21dcb6d1f442b5da12357d15d5c3075246e94a6",
+      "bytes": 2379,
+      "sha256": "787ff0a0bee9495668df2fba54c13eb84fde818a50571a4dd435fd36e2a688f0",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/core-integration-first-test.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/federation-core-tests-failure.log",
+      "git_mode": "100644",
+      "git_blob": "f80aea222a533d13c7cb53bdc55b94dca18c7822",
+      "bytes": 20221,
+      "sha256": "2a227c4ecf8e7e1d2942fad69ecd01b5722cf8865670f20dbbc91f7e56c187dc",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/federation-core-tests-failure.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/federation-core-vet-failure.log",
+      "git_mode": "100644",
+      "git_blob": "5d164fa62d250e5dfc7d8955fa7f90da9f69061a",
+      "bytes": 24628,
+      "sha256": "05791c9fbbfd5332436135f776949707c014206937533791ed2aac8ddf1a8178",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/federation-core-vet-failure.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-export-before.log",
+      "git_mode": "100644",
+      "git_blob": "3faca67f98beb1971737add71d605265d3c80514",
+      "bytes": 18229,
+      "sha256": "dd6e13e76c1191bc1b1ace4feee48d755c8e3aad8611e80e53c2ad7192c95785",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-export-before.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-export-complete-size.log",
+      "git_mode": "100644",
+      "git_blob": "00efb4f8b3fdbeef72e868b35f2a91a642cf6d11",
+      "bytes": 122,
+      "sha256": "d93dfe0310559cae7e5e827dc356ee3d92077ad87ca254e70489712bb6879174",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-export-complete-size.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-export-final-current.log",
+      "git_mode": "100644",
+      "git_blob": "abd8bec63e5eea0dd58ae18a586c88704302420e",
+      "bytes": 121,
+      "sha256": "b6f599fe7944fb71d1339f8ffef05120bf446c2b47e96db168d8700a51f96bb0",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-export-final-current.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.json",
+      "git_mode": "100644",
+      "git_blob": "09dec5552e033b1e5953f0466eba97c71c03dbed",
+      "bytes": 656,
+      "sha256": "9fc974243caad494c51eafa10339c17a4f8452c7f119e1c0ec42be15cbfc42fb",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.log",
+      "git_mode": "100644",
+      "git_blob": "583918329556d61c1e9c6f5049af37f9b9259329",
+      "bytes": 138,
+      "sha256": "7aa7f486108fb06a775544c02ca1b807a03a5cb64be85cafba729a97cdcbe1e8",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-export-reviewed.log",
+      "git_mode": "100644",
+      "git_blob": "6cbd5add347fcc2e10c4b5a719ebfef8d858a227",
+      "bytes": 121,
+      "sha256": "d192da07ae6cda1ebbb68673b2d1079cd25ba32ef9b0efe84789facb3932fce9",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-export-reviewed.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/python-zip-size-before.log",
+      "git_mode": "100644",
+      "git_blob": "07c81a08b5c7af4d8c93ff942402a35404cfd1b1",
+      "bytes": 4034,
+      "sha256": "4a7b13ea5334054a54982384e71808a870288ead58f5620fce99c08f319f75b7",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/python-zip-size-before.log"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.manifest.json",
+      "git_mode": "100644",
+      "git_blob": "a1dd16eb7832527b89f5eea2f7dd767eb66382c8",
+      "bytes": 41803,
+      "sha256": "3592091bfac5373e843121ee1a478ddb37dc4793f5936075a7ce94ee0efa805a",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.manifest.json"
+    },
+    {
+      "original_path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+      "git_mode": "100644",
+      "git_blob": "55c4e9817609abb9269923f86814911703165639",
+      "bytes": 522344,
+      "sha256": "ba01ee9653a3bfbc07734348594f878b45cbd5ca87ad797bff64fb09930f5d3f",
+      "archive_entry": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index dec673a..34d4f6e 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -76,7 +76,10 @@ jobs:
+   test:
+     name: test (${{ matrix.os }})
+     runs-on: ${{ matrix.os }}
+-    timeout-minutes: 30
++    # The complete service race suite has passed in 1295s; its 20m package budget
++    # expired in CI while a newly started property shard was still progressing.
++    # Keep the full workload, with bounded package time and setup/reporting headroom.
++    timeout-minutes: 45
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -92,7 +95,7 @@ jobs:
+       - name: test with race detector
+         env:
+           CIRCULA_QA001_FAILDIR: ${{ runner.temp }}/qa001-failures
+-        run: go run ./scripts/traceability -record-results "$RUNNER_TEMP/traceability-results.json" -- -race -timeout 20m ./...
++        run: go run ./scripts/traceability -record-results "$RUNNER_TEMP/traceability-results.json" -- -race -timeout 30m ./...
+       - name: Match requirement citations to recorded test results
+         if: always()
+         run: |

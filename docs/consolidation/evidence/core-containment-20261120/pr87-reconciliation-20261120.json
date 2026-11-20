@@ -1,0 +1,15 @@
+{
+  "observed_at": "2026-11-20 23:26:53 UTC",
+  "pr": 87,
+  "action": "closed as already incorporated into accepted main; no new merge",
+  "source_branch": "claude/aud4-f03-dispute-timelines",
+  "source": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+  "main": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "all_original_paths_reviewed": 18,
+  "byte_identical_paths": 7,
+  "source_only_commits": 0,
+  "source_branch_preserved": true,
+  "qualified_main_run": 44728309016,
+  "successful_jobs": 9,
+  "historical_limitation_retained": true
+}

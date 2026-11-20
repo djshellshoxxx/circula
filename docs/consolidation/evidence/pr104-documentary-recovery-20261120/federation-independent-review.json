@@ -1,0 +1,1484 @@
+{
+  "accepted_federation_commit": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+  "accepted_federation_module_tree": "53a7446a6fe456f55769543d8fa1adab37abb549",
+  "accepted_federation_tree": "6709ccb99b01574dedb554e1723dac90f959cb47",
+  "archive_bytes": 522344,
+  "archive_git_blob": "55c4e9817609abb9269923f86814911703165639",
+  "archive_path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+  "archive_sha256": "ba01ee9653a3bfbc07734348594f878b45cbd5ca87ad797bff64fb09930f5d3f",
+  "federation_entries": [
+    {
+      "bytes": 21,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/checksums.log",
+      "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd"
+    },
+    {
+      "bytes": 868,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/dependencies.log",
+      "sha256": "85e0295cdf2342247cb5185745a463d75f3c6a803bc4e9c4c8d690f28e8aced7"
+    },
+    {
+      "bytes": 0,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 427,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-legacy.log",
+      "sha256": "cb79ae41bca0cb70322496590197af73e92272a13c0765f9373ed950d2271741"
+    },
+    {
+      "bytes": 427,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-v2-strings.log",
+      "sha256": "dc7e3e71245e6f4dec0a57d3d0838a0a1a4a60eb5685a5ff323855b95b4e049c"
+    },
+    {
+      "bytes": 347,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-wire.log",
+      "sha256": "b2af24416f3403b2ab4acf2395513e4ed574856a6b75eb175c7e58bb7a5622ed"
+    },
+    {
+      "bytes": 85,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/isolation.log",
+      "sha256": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef"
+    },
+    {
+      "bytes": 246978,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/race.log",
+      "sha256": "be71d4b842446e5524d75962e2d9da39a677e1c39d7a76f7350e3875efec06b6"
+    },
+    {
+      "bytes": 13958,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/receipt.json",
+      "sha256": "ee9a61947ead62d9c1531a81a697345cfb30e221f9fe47e844c8f1bde35e29d6"
+    },
+    {
+      "bytes": 33,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/toolchain.log",
+      "sha256": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1"
+    },
+    {
+      "bytes": 0,
+      "external_manifest_bytes_match": true,
+      "external_manifest_sha256_match": true,
+      "internal_manifest_bytes_match": true,
+      "internal_manifest_sha256_match": true,
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/vet.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "federation_receipt_sha256": "ee9a61947ead62d9c1531a81a697345cfb30e221f9fe47e844c8f1bde35e29d6",
+  "fuzz_log_recount": [
+    {
+      "counts_match_receipt": true,
+      "execution_counts": [
+        46084,
+        64674,
+        100000
+      ],
+      "exit_code_recorded": 0,
+      "name": "fuzz-legacy",
+      "ok_line": "ok  \tcommand-line-arguments\t8.572s",
+      "outer_timeout_reached_recorded": false,
+      "pass_line": true,
+      "target": "^FuzzSignPreservesEventStrings$"
+    },
+    {
+      "counts_match_receipt": true,
+      "execution_counts": [
+        6761,
+        14508,
+        100000
+      ],
+      "exit_code_recorded": 0,
+      "name": "fuzz-v2-strings",
+      "ok_line": "ok  \tcommand-line-arguments\t8.651s",
+      "outer_timeout_reached_recorded": false,
+      "pass_line": true,
+      "target": "^FuzzRecoveredV2StringFidelity$"
+    },
+    {
+      "counts_match_receipt": true,
+      "execution_counts": [
+        48688,
+        100000
+      ],
+      "exit_code_recorded": 0,
+      "name": "fuzz-wire",
+      "ok_line": "ok  \tcommand-line-arguments\t5.401s",
+      "outer_timeout_reached_recorded": false,
+      "pass_line": true,
+      "target": "^FuzzDiscoveryWire$"
+    }
+  ],
+  "historical_object_checks": [
+    {
+      "command": [
+        "git",
+        "-C",
+        "/workspace/scratch/bfba682cba37/circula",
+        "cat-file",
+        "-t",
+        "ca9af7543cc560d4a798b6e446d85ec38f740595"
+      ],
+      "exit_code": 128,
+      "object": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+      "scope": "This local object database only; no conclusion about remote history.",
+      "stderr": "fatal: git cat-file: could not get object info",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/workspace/scratch/bfba682cba37/circula",
+        "cat-file",
+        "-t",
+        "2b1400be19b42ee63c86980666a71d1c88e07811"
+      ],
+      "exit_code": 128,
+      "object": "2b1400be19b42ee63c86980666a71d1c88e07811",
+      "scope": "This local object database only; no conclusion about remote history.",
+      "stderr": "fatal: git cat-file: could not get object info",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/workspace/scratch/bfba682cba37/circula",
+        "cat-file",
+        "-t",
+        "81a58c2b2b05972f977e1997ed0ce978f6ca4a12"
+      ],
+      "exit_code": 128,
+      "object": "81a58c2b2b05972f977e1997ed0ce978f6ca4a12",
+      "scope": "This local object database only; no conclusion about remote history.",
+      "stderr": "fatal: git cat-file: could not get object info",
+      "stdout": ""
+    }
+  ],
+  "limits": [
+    "Historical receipt and logs are recovered records, not product tests executed during this review.",
+    "Receipt exit statuses and source-unchanged assertions are historical records; archive hashes do not independently attest original command execution or host authenticity.",
+    "Local object absence is documented with cat-file exit codes and does not imply absence from remote history.",
+    "Matching 19 runtime/test/dependency fingerprints does not qualify the accepted commit workflow, feature metadata, publication head, provider checks, or platform matrix.",
+    "Format and vet logs are empty; successful exit status is present in the receipt only.",
+    "No new dependency vulnerability scan or active security test was executed.",
+    "Scanner evidence records reproduced detections with independent interpretation; it is not a clean scan, and no scanner rule was weakened."
+  ],
+  "manifest_external_sha256": "3592091bfac5373e843121ee1a478ddb37dc4793f5936075a7ce94ee0efa805a",
+  "manifest_internal_sha256": "3592091bfac5373e843121ee1a478ddb37dc4793f5936075a7ce94ee0efa805a",
+  "manifests_byte_identical": true,
+  "race_log_recount": {
+    "all_named_terminal_events": {
+      "fail": 0,
+      "pass": 281,
+      "skip": 0
+    },
+    "coverage_matches_receipt": true,
+    "coverage_percent_values": [
+      "74.5",
+      "74.5"
+    ],
+    "duplicate_named_terminal_events": {},
+    "failure_output_markers": [],
+    "fuzz_seed_events": {
+      "fail": 0,
+      "pass": 137,
+      "skip": 0
+    },
+    "fuzz_seed_events_by_target": {
+      "FuzzDiscoveryWire": 2,
+      "FuzzRecoveredV2StringFidelity": 80,
+      "FuzzSignPreservesEventStrings": 55
+    },
+    "invalid_json_lines": 0,
+    "json_lines": 1129,
+    "package_results": [
+      {
+        "Action": "pass",
+        "Elapsed": 24.79,
+        "Package": "github.com/djshellshoxxx/circula/future/federation",
+        "Time": "2026-11-19T05:12:41.707243905-08:00"
+      }
+    ],
+    "race_flag_in_recorded_command": true,
+    "race_warning_present": false,
+    "run_without_terminal": [],
+    "terminal_without_run": [],
+    "test_list_matches_receipt": true,
+    "test_subtest_events": {
+      "fail": 0,
+      "pass": 105,
+      "skip": 0
+    },
+    "top_level_fuzz_events": {
+      "fail": 0,
+      "pass": 3,
+      "skip": 0
+    },
+    "top_level_passed_tests": [
+      "TestAuditSafetyWritesCannotSilentlyDisappear",
+      "TestAuditSchemaMismatchRollsBackMigration",
+      "TestAuditDepartureCanWithdrawAllOrdinaryCapacity",
+      "TestAuditConsentTogglesWithoutPublicationConsumeNoReserve",
+      "TestAuditInboxPeerAndOwnerQuotaBoundaries",
+      "TestAuditCorruptProjectionFailsClosed",
+      "TestAuditConsentAndOrdinaryOutboxLimits",
+      "TestAuditCanonicalBase64Required",
+      "TestAuditMigrationRejectsViewCollision",
+      "TestAuditEndpointRejectsEmptyQuery",
+      "TestAuditDeletedListingWithdrawsWithoutSourceOrSigner",
+      "TestAuditCorruptOutboxCannotBypassProtocolBinding",
+      "TestSignedDiscoveryBoundaries",
+      "TestSignRejectsMalformedUTF8",
+      "TestSignPreservesValidUnicodeEncoding",
+      "TestVerifyRejectsMalformedUTF8Representations",
+      "TestMasterQueriesAndFormsBeforeHost",
+      "TestMasterCallbackReauthorizesBeforePrivateRead",
+      "TestMasterPaginatedNativeMemberSubmission",
+      "TestSignedButMalformedPayloadAndHeaders",
+      "TestRecoveredV2RejectsMalformedStringsBeforeSigning",
+      "TestRecoveredV2PreservesValidPublicUnicode",
+      "TestV2ProtocolFailClosed",
+      "TestInboxConcurrencyRestartAndRevocation",
+      "TestInboxAtomicRollbackAndEquivocation",
+      "TestOutboxConsentIdempotencyAndPartition",
+      "TestInterfacesAndSSRF",
+      "TestNoPrivateEgressMixedDNS",
+      "TestWithdrawalSurvivesDepartureAndSignerOutage",
+      "TestRotationRevocationAndReadPrivacy",
+      "TestMembersNoJSAndAdminControls",
+      "TestIngressResourceAndTrustBoundaries",
+      "TestDepartureAndExpiredBodies",
+      "TestQuotaAndTrustedPeerRate",
+      "TestClosedDBBackupRestore",
+      "TestTransportResourceLimitsAndRedirectPolicy"
+    ],
+    "top_level_test_events": {
+      "fail": 0,
+      "pass": 36,
+      "skip": 0
+    }
+  },
+  "receipt_identity": {
+    "commit": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+    "driver": "actual modernc.org/sqlite v1.60.1; no replacement or substitute tags",
+    "finished_at": "2026-11-19T13:13:58.772468+00:00",
+    "module": "federation",
+    "module_tree": "81a58c2b2b05972f977e1997ed0ce978f6ca4a12",
+    "provider": "separate pending exact-publication-head gate",
+    "source_unchanged": true,
+    "started_at": "2026-11-19T13:12:06.816985+00:00",
+    "state": "passed",
+    "tree": "2b1400be19b42ee63c86980666a71d1c88e07811"
+  },
+  "recorded_environment": {
+    "CGO_ENABLED": "1",
+    "GOCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-build-cache",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOGC": "10",
+    "GOMAXPROCS": "1",
+    "GOMEMLIMIT": "256MiB",
+    "GOMODCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "TMPDIR": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp"
+  },
+  "recorded_qualification_steps": [
+    {
+      "archived_log_bytes": 33,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/toolchain.log",
+      "archived_log_sha256": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "version"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/toolchain.log",
+      "name": "toolchain",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 30,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-toolchain-1795093926817500747",
+      "wall_seconds": 0.008
+    },
+    {
+      "archived_log_bytes": 85,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/isolation.log",
+      "archived_log_sha256": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+      "command": [
+        "bash",
+        "-e",
+        "-c",
+        "python - <<'PY'\nimport json\nimport subprocess\nfrom pathlib import Path\n\nfeature = json.loads(Path('feature.json').read_text())\nassert feature['id'] == 'FNET-209'\nassert feature['enabled'] is False\nassert feature['integration'] == 'HOLD'\nassert feature['depends_on_future_features'] == []\nmodule = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))\nassert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/federation'\nexpected = {\n    ('github.com/go-jose/go-jose/v4', 'v4.1.9', False),\n    ('modernc.org/sqlite', 'v1.60.1', False),\n    ('github.com/dustin/go-humanize', 'v1.0.1', True),\n    ('github.com/google/uuid', 'v1.6.0', True),\n    ('github.com/mattn/go-isatty', 'v0.0.24', True),\n    ('github.com/ncruces/go-strftime', 'v1.0.0', True),\n    ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),\n    ('golang.org/x/sys', 'v0.48.0', True),\n    ('modernc.org/libc', 'v1.77.1', True),\n    ('modernc.org/mathutil', 'v1.7.1', True),\n    ('modernc.org/memory', 'v1.12.1', True),\n}\nactual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}\nassert actual == expected, actual\nassert not module.get('Replace')\nassert not module.get('Exclude')\ndependencies = set(subprocess.check_output(\n    ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],\n    text=True,\n).split())\nallowed = {module['Module']['Path']} | {path for path, _, _ in expected}\nassert dependencies <= allowed, dependencies - allowed\nprint('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')\nPY\n"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/isolation.log",
+      "name": "isolation",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 120,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-isolation-1795093926851375620",
+      "wall_seconds": 0.266
+    },
+    {
+      "archived_log_bytes": 0,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/format.log",
+      "archived_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+        "-l",
+        "."
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/format.log",
+      "name": "format",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 30,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-format-1795093927129065012",
+      "wall_seconds": 0.066
+    },
+    {
+      "archived_log_bytes": 246978,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/race.log",
+      "archived_log_sha256": "be71d4b842446e5524d75962e2d9da39a677e1c39d7a76f7350e3875efec06b6",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-count=1",
+        "-cover",
+        "-json",
+        "-ldflags=-w",
+        "-timeout=2m",
+        "./..."
+      ],
+      "coverage": [
+        "74.5",
+        "74.5"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/race.log",
+      "name": "race",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 300,
+      "package_results": [
+        {
+          "Action": "pass",
+          "Elapsed": 24.79,
+          "Package": "github.com/djshellshoxxx/circula/future/federation",
+          "Time": "2026-11-19T05:12:41.707243905-08:00"
+        }
+      ],
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "skips": [],
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-race-1795093927209457644",
+      "top_level_tests_passed": [
+        "TestAuditSafetyWritesCannotSilentlyDisappear",
+        "TestAuditSchemaMismatchRollsBackMigration",
+        "TestAuditDepartureCanWithdrawAllOrdinaryCapacity",
+        "TestAuditConsentTogglesWithoutPublicationConsumeNoReserve",
+        "TestAuditInboxPeerAndOwnerQuotaBoundaries",
+        "TestAuditCorruptProjectionFailsClosed",
+        "TestAuditConsentAndOrdinaryOutboxLimits",
+        "TestAuditCanonicalBase64Required",
+        "TestAuditMigrationRejectsViewCollision",
+        "TestAuditEndpointRejectsEmptyQuery",
+        "TestAuditDeletedListingWithdrawsWithoutSourceOrSigner",
+        "TestAuditCorruptOutboxCannotBypassProtocolBinding",
+        "TestSignedDiscoveryBoundaries",
+        "TestSignRejectsMalformedUTF8",
+        "TestSignPreservesValidUnicodeEncoding",
+        "TestVerifyRejectsMalformedUTF8Representations",
+        "TestMasterQueriesAndFormsBeforeHost",
+        "TestMasterCallbackReauthorizesBeforePrivateRead",
+        "TestMasterPaginatedNativeMemberSubmission",
+        "TestSignedButMalformedPayloadAndHeaders",
+        "TestRecoveredV2RejectsMalformedStringsBeforeSigning",
+        "TestRecoveredV2PreservesValidPublicUnicode",
+        "TestV2ProtocolFailClosed",
+        "TestInboxConcurrencyRestartAndRevocation",
+        "TestInboxAtomicRollbackAndEquivocation",
+        "TestOutboxConsentIdempotencyAndPartition",
+        "TestInterfacesAndSSRF",
+        "TestNoPrivateEgressMixedDNS",
+        "TestWithdrawalSurvivesDepartureAndSignerOutage",
+        "TestRotationRevocationAndReadPrivacy",
+        "TestMembersNoJSAndAdminControls",
+        "TestIngressResourceAndTrustBoundaries",
+        "TestDepartureAndExpiredBodies",
+        "TestQuotaAndTrustedPeerRate",
+        "TestClosedDBBackupRestore",
+        "TestTransportResourceLimitsAndRedirectPolicy"
+      ],
+      "wall_seconds": 34.537
+    },
+    {
+      "archived_log_bytes": 0,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/vet.log",
+      "archived_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "vet",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/vet.log",
+      "name": "vet",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 150,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-vet-1795093961763872200",
+      "wall_seconds": 0.873
+    },
+    {
+      "archived_log_bytes": 21,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/checksums.log",
+      "archived_log_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/checksums.log",
+      "name": "checksums",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 90,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-checksums-1795093962651111085",
+      "wall_seconds": 2.127
+    },
+    {
+      "archived_log_bytes": 427,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-legacy.log",
+      "archived_log_sha256": "cb79ae41bca0cb70322496590197af73e92272a13c0765f9373ed950d2271741",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzSignPreservesEventStrings$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "envelope.go",
+        "envelope_test.go",
+        "envelope_utf8_test.go"
+      ],
+      "executions": [
+        46084,
+        64674,
+        100000
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-legacy.log",
+      "name": "fuzz-legacy",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 180,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-fuzz-legacy-1795093964792128486",
+      "wall_seconds": 14.379
+    },
+    {
+      "archived_log_bytes": 427,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-v2-strings.log",
+      "archived_log_sha256": "dc7e3e71245e6f4dec0a57d3d0838a0a1a4a60eb5685a5ff323855b95b4e049c",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzRecoveredV2StringFidelity$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "envelope.go",
+        "protocol.go",
+        "protocol_recovery_test.go"
+      ],
+      "executions": [
+        6761,
+        14508,
+        100000
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-v2-strings.log",
+      "name": "fuzz-v2-strings",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 180,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-fuzz-v2-strings-1795093979183994269",
+      "wall_seconds": 53.114
+    },
+    {
+      "archived_log_bytes": 347,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-wire.log",
+      "archived_log_sha256": "b2af24416f3403b2ab4acf2395513e4ed574856a6b75eb175c7e58bb7a5622ed",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzDiscoveryWire$",
+        "-fuzztime=100000x",
+        "-parallel=1",
+        "-timeout=150s",
+        "envelope.go",
+        "protocol.go",
+        "protocol_fuzz_test.go"
+      ],
+      "executions": [
+        48688,
+        100000
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-wire.log",
+      "name": "fuzz-wire",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 180,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-fuzz-wire-1795094032315596936",
+      "wall_seconds": 6.394
+    },
+    {
+      "archived_log_bytes": 868,
+      "archived_log_entry": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/dependencies.log",
+      "archived_log_sha256": "85e0295cdf2342247cb5185745a463d75f3c6a803bc4e9c4c8d690f28e8aced7",
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "list",
+        "-m",
+        "all"
+      ],
+      "exit_code": 0,
+      "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/federation-combined-qualification/dependencies.log",
+      "name": "dependencies",
+      "outer_timeout_reached": false,
+      "outer_timeout_seconds": 90,
+      "review_scope": "Recorded historical command and status; this reviewer did not execute it.",
+      "source_unchanged": true,
+      "tmpdir": "/tmp/circula-review-qualification-20261119-dyxx0yvl/tmp/federation-dependencies-1795094038737286478",
+      "wall_seconds": 0.018
+    }
+  ],
+  "review_kind": "independent historical evidence verification and scanner finding classification; no product execution",
+  "reviewed_at_utc": "2026-11-20T23:36:58.821591+00:00",
+  "reviewer_agent": "/root/historical_evidence_recovery/federation_receipt_audit",
+  "scanner_independent_review": {
+    "conclusion": "All reproduced matches have identified documentary nonsecret meanings. Scanner returns remain 1; no scanner pass is claimed. Original notifications source-byte recomputation remains unavailable locally.",
+    "config_matches_worktree_HEAD_blob": true,
+    "config_path": "/workspace/scratch/bfba682cba37/circula-pr104-evidence-recovery/.gitleaks.toml",
+    "config_sha256": "43b9c433c68a5194ec9c1e1bb40b940bb3eca61782fc34edd9982565d54f83d4",
+    "config_unchanged_during_review": true,
+    "findings_count": 24,
+    "notifications_checksum_identity": {
+      "archive_head_declared": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+      "archive_module_tree_declared": "be42783f6bbb7cc1fdc443cbcff15fa54e540fc3",
+      "archive_object_checks": [
+        {
+          "command": [
+            "git",
+            "-C",
+            "/workspace/scratch/bfba682cba37/circula",
+            "cat-file",
+            "-t",
+            "ba454e1c14d35bdd90dca8379e890f2bca6281d7"
+          ],
+          "exit_code": 128,
+          "object": "ba454e1c14d35bdd90dca8379e890f2bca6281d7",
+          "scope": "This local object database only; no conclusion about remote history.",
+          "stderr": "fatal: git cat-file: could not get object info",
+          "stdout": ""
+        },
+        {
+          "command": [
+            "git",
+            "-C",
+            "/workspace/scratch/bfba682cba37/circula",
+            "cat-file",
+            "-t",
+            "be42783f6bbb7cc1fdc443cbcff15fa54e540fc3"
+          ],
+          "exit_code": 128,
+          "object": "be42783f6bbb7cc1fdc443cbcff15fa54e540fc3",
+          "scope": "This local object database only; no conclusion about remote history.",
+          "stderr": "fatal: git cat-file: could not get object info",
+          "stdout": ""
+        }
+      ],
+      "bounded_reachable_source_search": {
+        "command": [
+          "git",
+          "-C",
+          "/workspace/scratch/bfba682cba37/circula",
+          "rev-list",
+          "--objects",
+          "--all",
+          "--",
+          "future/notifications/api.go",
+          "future/notifications/api_test.go"
+        ],
+        "exit_code": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "historical_object_store_path_exists": false,
+      "limit": "Original notifications source commit and module tree are not available in this local object database. The bounded current-path search returned no objects. No hash recomputation against original source bytes is claimed.",
+      "nested_receipt_entry": "evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/receipt.json",
+      "original_receipt_path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+      "receipt_bytes": 37748,
+      "receipt_sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+      "receipts_byte_identical": true,
+      "source_checksum_fields": [
+        {
+          "after_matches": true,
+          "before_matches": true,
+          "classification": "documented SHA256 source fingerprint, not an API key; source-byte recomputation unavailable",
+          "nested_after_matches": true,
+          "nested_before_matches": true,
+          "sha256_recorded": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+          "source_file": "api.go"
+        },
+        {
+          "after_matches": true,
+          "before_matches": true,
+          "classification": "documented SHA256 source fingerprint, not an API key; source-byte recomputation unavailable",
+          "nested_after_matches": true,
+          "nested_before_matches": true,
+          "sha256_recorded": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+          "source_file": "api_test.go"
+        }
+      ]
+    },
+    "rule_or_config_changes": false,
+    "scan_scope": "The four previously flagged immutable documentary payloads only; not a clean scan or full-population rescan.",
+    "scanner_binary_sha256": "2b98b83bfb6a29f57f779bf45a3e378459a23273e5bd0166f30c78fd2f2eeeb0",
+    "scanner_version": "version is set by build process",
+    "scans": [
+      {
+        "command": [
+          "/tmp/circula-runtime-4d30/bin/gitleaks",
+          "stdin",
+          "--config",
+          "/workspace/scratch/bfba682cba37/circula-pr104-evidence-recovery/.gitleaks.toml",
+          "--no-banner",
+          "--verbose",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<temporary-report.json>"
+        ],
+        "exit_code": 1,
+        "findings": [
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 93,
+            "EndLine": 189,
+            "Entropy": 3.6051521,
+            "File": "",
+            "Fingerprint": ":generic-api-key:189",
+            "RuleID": "generic-api-key",
+            "StartColumn": 15,
+            "StartLine": 189,
+            "candidate_length": 40,
+            "candidate_sha256": "98b8740056bb945ad941643fd07649e624e51fc7ec401b8e7bda15078aa071b1",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+            "match_sha256": "85b0b05ce82bcec736c63760f5cc97e6094f935e43d0fb52b6e789f25bb8a73e",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 73,
+            "EndLine": 207,
+            "Entropy": 3.747085,
+            "File": "",
+            "Fingerprint": ":generic-api-key:207",
+            "RuleID": "generic-api-key",
+            "StartColumn": 14,
+            "StartLine": 207,
+            "candidate_length": 40,
+            "candidate_sha256": "008218d61be6114cb9feac52e4449f4d0b37b72020e7c8f88d4741a737b8f669",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "82dc18e07f6b22b9c34ef026f833391705b30067",
+            "match_sha256": "ae0e7eb6d017e0ed0058737452b0fa56b1b2dcd1506e7f0f074c8f6ae6244944",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 79,
+            "EndLine": 236,
+            "Entropy": 3.8398228,
+            "File": "",
+            "Fingerprint": ":generic-api-key:236",
+            "RuleID": "generic-api-key",
+            "StartColumn": 14,
+            "StartLine": 236,
+            "candidate_length": 40,
+            "candidate_sha256": "f49e0576da4fab9350394062147a11f79d60f5ea41bf425e0f110ba48e322a25",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+            "match_sha256": "8c7275a572123496a9be6f93c90064bfce62d307ee58fa082e8389de165294d4",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 110,
+            "EndLine": 258,
+            "Entropy": 3.868454,
+            "File": "",
+            "Fingerprint": ":generic-api-key:258",
+            "RuleID": "generic-api-key",
+            "StartColumn": 47,
+            "StartLine": 258,
+            "candidate_length": 40,
+            "candidate_sha256": "eb1dfb28aa0588708d32277e88bbfd530f277083cb33e52a3685ec06e789d12c",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+            "match_sha256": "791939a05ba6df17430a8dbde416eab8e0dd0b239b9596a27df6b543214af615",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 1308,
+            "EndLine": 391,
+            "Entropy": 3.5465937,
+            "File": "",
+            "Fingerprint": ":generic-api-key:391",
+            "RuleID": "generic-api-key",
+            "StartColumn": 1282,
+            "StartLine": 391,
+            "candidate_length": 13,
+            "candidate_sha256": "30051d7e4fe07bb806b76e9303d5250ff0bcc3782db6bb824c4bf36604436343",
+            "classification": "ordinary feature-isolation phrase in archived pull-request prose",
+            "documentary_value": "disabled/HOLD",
+            "match_sha256": "9b805d34ff2f82530db3398953a5542eb9860cc805c951a78bc6cccb4d0fdfa7"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 97,
+            "EndLine": 4379,
+            "Entropy": 3.6051521,
+            "File": "",
+            "Fingerprint": ":generic-api-key:4379",
+            "RuleID": "generic-api-key",
+            "StartColumn": 19,
+            "StartLine": 4379,
+            "candidate_length": 40,
+            "candidate_sha256": "98b8740056bb945ad941643fd07649e624e51fc7ec401b8e7bda15078aa071b1",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+            "match_sha256": "85b0b05ce82bcec736c63760f5cc97e6094f935e43d0fb52b6e789f25bb8a73e",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 77,
+            "EndLine": 4397,
+            "Entropy": 3.747085,
+            "File": "",
+            "Fingerprint": ":generic-api-key:4397",
+            "RuleID": "generic-api-key",
+            "StartColumn": 18,
+            "StartLine": 4397,
+            "candidate_length": 40,
+            "candidate_sha256": "008218d61be6114cb9feac52e4449f4d0b37b72020e7c8f88d4741a737b8f669",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "82dc18e07f6b22b9c34ef026f833391705b30067",
+            "match_sha256": "ae0e7eb6d017e0ed0058737452b0fa56b1b2dcd1506e7f0f074c8f6ae6244944",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 83,
+            "EndLine": 4426,
+            "Entropy": 3.8398228,
+            "File": "",
+            "Fingerprint": ":generic-api-key:4426",
+            "RuleID": "generic-api-key",
+            "StartColumn": 18,
+            "StartLine": 4426,
+            "candidate_length": 40,
+            "candidate_sha256": "f49e0576da4fab9350394062147a11f79d60f5ea41bf425e0f110ba48e322a25",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+            "match_sha256": "8c7275a572123496a9be6f93c90064bfce62d307ee58fa082e8389de165294d4",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 114,
+            "EndLine": 4449,
+            "Entropy": 3.868454,
+            "File": "",
+            "Fingerprint": ":generic-api-key:4449",
+            "RuleID": "generic-api-key",
+            "StartColumn": 51,
+            "StartLine": 4449,
+            "candidate_length": 40,
+            "candidate_sha256": "eb1dfb28aa0588708d32277e88bbfd530f277083cb33e52a3685ec06e789d12c",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+            "match_sha256": "791939a05ba6df17430a8dbde416eab8e0dd0b239b9596a27df6b543214af615",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 1312,
+            "EndLine": 4933,
+            "Entropy": 3.5465937,
+            "File": "",
+            "Fingerprint": ":generic-api-key:4933",
+            "RuleID": "generic-api-key",
+            "StartColumn": 1286,
+            "StartLine": 4933,
+            "candidate_length": 13,
+            "candidate_sha256": "30051d7e4fe07bb806b76e9303d5250ff0bcc3782db6bb824c4bf36604436343",
+            "classification": "ordinary feature-isolation phrase in archived pull-request prose",
+            "documentary_value": "disabled/HOLD",
+            "match_sha256": "9b805d34ff2f82530db3398953a5542eb9860cc805c951a78bc6cccb4d0fdfa7"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 1190,
+            "EndLine": 5069,
+            "Entropy": 3.5465937,
+            "File": "",
+            "Fingerprint": ":generic-api-key:5069",
+            "RuleID": "generic-api-key",
+            "StartColumn": 1164,
+            "StartLine": 5069,
+            "candidate_length": 13,
+            "candidate_sha256": "30051d7e4fe07bb806b76e9303d5250ff0bcc3782db6bb824c4bf36604436343",
+            "classification": "ordinary feature-isolation phrase in archived pull-request prose",
+            "documentary_value": "disabled/HOLD",
+            "match_sha256": "9b805d34ff2f82530db3398953a5542eb9860cc805c951a78bc6cccb4d0fdfa7"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 97,
+            "EndLine": 5781,
+            "Entropy": 3.6051521,
+            "File": "",
+            "Fingerprint": ":generic-api-key:5781",
+            "RuleID": "generic-api-key",
+            "StartColumn": 19,
+            "StartLine": 5781,
+            "candidate_length": 40,
+            "candidate_sha256": "98b8740056bb945ad941643fd07649e624e51fc7ec401b8e7bda15078aa071b1",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+            "match_sha256": "85b0b05ce82bcec736c63760f5cc97e6094f935e43d0fb52b6e789f25bb8a73e",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 77,
+            "EndLine": 5799,
+            "Entropy": 3.747085,
+            "File": "",
+            "Fingerprint": ":generic-api-key:5799",
+            "RuleID": "generic-api-key",
+            "StartColumn": 18,
+            "StartLine": 5799,
+            "candidate_length": 40,
+            "candidate_sha256": "008218d61be6114cb9feac52e4449f4d0b37b72020e7c8f88d4741a737b8f669",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "82dc18e07f6b22b9c34ef026f833391705b30067",
+            "match_sha256": "ae0e7eb6d017e0ed0058737452b0fa56b1b2dcd1506e7f0f074c8f6ae6244944",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 83,
+            "EndLine": 5828,
+            "Entropy": 3.8398228,
+            "File": "",
+            "Fingerprint": ":generic-api-key:5828",
+            "RuleID": "generic-api-key",
+            "StartColumn": 18,
+            "StartLine": 5828,
+            "candidate_length": 40,
+            "candidate_sha256": "f49e0576da4fab9350394062147a11f79d60f5ea41bf425e0f110ba48e322a25",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+            "match_sha256": "8c7275a572123496a9be6f93c90064bfce62d307ee58fa082e8389de165294d4",
+            "proof_object_type": "commit"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 114,
+            "EndLine": 5851,
+            "Entropy": 3.868454,
+            "File": "",
+            "Fingerprint": ":generic-api-key:5851",
+            "RuleID": "generic-api-key",
+            "StartColumn": 51,
+            "StartLine": 5851,
+            "candidate_length": 40,
+            "candidate_sha256": "eb1dfb28aa0588708d32277e88bbfd530f277083cb33e52a3685ec06e789d12c",
+            "classification": "Git commit identifier in branch snapshot map",
+            "documentary_value": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+            "match_sha256": "791939a05ba6df17430a8dbde416eab8e0dd0b239b9596a27df6b543214af615",
+            "proof_object_type": "commit"
+          }
+        ],
+        "findings_count": 15,
+        "json_report_sha256": "7f99e635cc03c3987723bb2e8c3bcb5d4d82ed9718cb36b84c261310312017cc",
+        "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json",
+        "payload_bytes": 547367,
+        "payload_sha256": "2d54c71ec2a926845c6afc49ee07460a3e62b3d9fa77673f8a73b28a2ee1f3ad",
+        "stderr_redacted": "3:36PM INF scanned ~547367 bytes (547.37 KB) in 847ms\n3:36PM WRN leaks found: 15\n",
+        "stderr_sha256": "b27a6d32ed9569b7d3600c55a15a66cd446d1340cfaabec62b0abf5ba92dff06",
+        "stdout_redacted": "Finding:     \"chatgpt/circula-ledger-auth-guard-20261115\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.605152\n\nFinding:     \"claude/aud4-auth-fixes\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.747085\n\nFinding:     \"claude/ux-047-auth-catalogue\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.839823\n\nFinding:     ...s/github.com/getkin/kin-openapi-0.153.0\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.868454\n\nFinding:     ...token, no persisted credentials, \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m and standard-librar...\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.546594\n\nFinding:     \"chatgpt/circula-ledger-auth-guard-20261115\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.605152\n\nFinding:     \"claude/aud4-auth-fixes\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.747085\n\nFinding:     \"claude/ux-047-auth-catalogue\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.839823\n\nFinding:     ...s/github.com/getkin/kin-openapi-0.153.0\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.868454\n\nFinding:     ...token, no persisted credentials, \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m and standard-librar...\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.546594\n\nFinding:     ... persisted checkout credentials, \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m and standard-librar...\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.546594\n\nFinding:     \"chatgpt/circula-ledger-auth-guard-20261115\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.605152\n\nFinding:     \"claude/aud4-auth-fixes\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.747085\n\nFinding:     \"claude/ux-047-auth-catalogue\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.839823\n\nFinding:     ...s/github.com/getkin/kin-openapi-0.153.0\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.868454\n\n",
+        "stdout_sha256": "ae2a4addb885d5bfee0371839f252c999a4d1d1f447beeff2e2d471c1924b16d"
+      },
+      {
+        "command": [
+          "/tmp/circula-runtime-4d30/bin/gitleaks",
+          "stdin",
+          "--config",
+          "/workspace/scratch/bfba682cba37/circula-pr104-evidence-recovery/.gitleaks.toml",
+          "--no-banner",
+          "--verbose",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<temporary-report.json>"
+        ],
+        "exit_code": 1,
+        "findings": [
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 291,
+            "EndLine": 174,
+            "Entropy": 3.875,
+            "File": "",
+            "Fingerprint": ":generic-api-key:174",
+            "RuleID": "generic-api-key",
+            "StartColumn": 262,
+            "StartLine": 174,
+            "candidate_length": 16,
+            "candidate_sha256": "ebdd150d6b7c30e271a2a24a127dd74dae78da4f34e5f8178b5fbbcd6b32fbfb",
+            "classification": "ordinary key-custody topic phrase in architecture prose",
+            "documentary_value": "VAPID/encryption",
+            "match_sha256": "2b4d044ceac3fa9129e50be9bcf7b68c91d4153053dd1d134713d02711ea6fe4"
+          }
+        ],
+        "findings_count": 1,
+        "json_report_sha256": "25f9d88b66b083d8d9032c7ed635e8ae9968ec3bc7f211b0a9cb35b5fd089bdd",
+        "path": "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md",
+        "payload_bytes": 38325,
+        "payload_sha256": "7538582325e46253a3e75453f8344a6bdcccbf2616723c0932342ac532fe8259",
+        "stderr_redacted": "3:36PM INF scanned ~38325 bytes (38.33 KB) in 137ms\n3:36PM WRN leaks found: 1\n",
+        "stderr_sha256": "1dbb87a1e04e3c84b19ffbb85e2b24c68113619595ae74bf83ea7c7ea33d3fa6",
+        "stdout_redacted": "Finding:     ...ission/logout, SMTP credentials, \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m key custody, approv...\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.875000\n\n",
+        "stdout_sha256": "00de03d16b7b0819ccb6de1bbda9378a47de2622873405d0fcce1b18f201bc5d"
+      },
+      {
+        "command": [
+          "/tmp/circula-runtime-4d30/bin/gitleaks",
+          "stdin",
+          "--config",
+          "/workspace/scratch/bfba682cba37/circula-pr104-evidence-recovery/.gitleaks.toml",
+          "--no-banner",
+          "--verbose",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<temporary-report.json>"
+        ],
+        "exit_code": 1,
+        "findings": [
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 81,
+            "EndLine": 98,
+            "Entropy": 3.9223769,
+            "File": "",
+            "Fingerprint": ":generic-api-key:98",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 98,
+            "candidate_length": 64,
+            "candidate_sha256": "f956834b8307027c644e18547637c25417c158ece5a1cc133930dedcc9797fb9",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+            "match_sha256": "b81b88ca03d45debffcceb207cdbcb06fdbea5a92e0787acf415fc4189f64419",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api.go"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 86,
+            "EndLine": 99,
+            "Entropy": 3.7838705,
+            "File": "",
+            "Fingerprint": ":generic-api-key:99",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 99,
+            "candidate_length": 64,
+            "candidate_sha256": "77a3d6a8161565116262e2de28f2840a83ba56801092dfc247d19be1894ef26e",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+            "match_sha256": "8f6526a292af8de3c4f9d4c8722bd6c57fa882eee8eb7afcff6bb358f9da9586",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api_test.go"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 81,
+            "EndLine": 647,
+            "Entropy": 3.9223769,
+            "File": "",
+            "Fingerprint": ":generic-api-key:647",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 647,
+            "candidate_length": 64,
+            "candidate_sha256": "f956834b8307027c644e18547637c25417c158ece5a1cc133930dedcc9797fb9",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+            "match_sha256": "b81b88ca03d45debffcceb207cdbcb06fdbea5a92e0787acf415fc4189f64419",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api.go"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 86,
+            "EndLine": 648,
+            "Entropy": 3.7838705,
+            "File": "",
+            "Fingerprint": ":generic-api-key:648",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 648,
+            "candidate_length": 64,
+            "candidate_sha256": "77a3d6a8161565116262e2de28f2840a83ba56801092dfc247d19be1894ef26e",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+            "match_sha256": "8f6526a292af8de3c4f9d4c8722bd6c57fa882eee8eb7afcff6bb358f9da9586",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api_test.go"
+          }
+        ],
+        "findings_count": 4,
+        "json_report_sha256": "598eaa8a01894f780c84cbd4c1f409bce5a8d5a34113795dd4c68d3d7e5b6fc5",
+        "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+        "payload_bytes": 37748,
+        "payload_sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+        "stderr_redacted": "3:36PM INF scanned ~37748 bytes (37.75 KB) in 216ms\n3:36PM WRN leaks found: 4\n",
+        "stderr_sha256": "ce6f1e3ca78ce7f51cf5c3726a0a2c16f5d19dccf98d8eb52631afb5e24c9613",
+        "stdout_redacted": "Finding:     \"api.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.922377\n\nFinding:     \"api_test.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.783870\n\nFinding:     \"api.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.922377\n\nFinding:     \"api_test.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.783870\n\n",
+        "stdout_sha256": "6f6daa3802a9e744e93290dbc8a218d63cf42139bc7cf55b1df47ba5786ae73f"
+      },
+      {
+        "command": [
+          "/tmp/circula-runtime-4d30/bin/gitleaks",
+          "stdin",
+          "--config",
+          "/workspace/scratch/bfba682cba37/circula-pr104-evidence-recovery/.gitleaks.toml",
+          "--no-banner",
+          "--verbose",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<temporary-report.json>"
+        ],
+        "exit_code": 1,
+        "findings": [
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 81,
+            "EndLine": 98,
+            "Entropy": 3.9223769,
+            "File": "",
+            "Fingerprint": ":generic-api-key:98",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 98,
+            "candidate_length": 64,
+            "candidate_sha256": "f956834b8307027c644e18547637c25417c158ece5a1cc133930dedcc9797fb9",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+            "match_sha256": "b81b88ca03d45debffcceb207cdbcb06fdbea5a92e0787acf415fc4189f64419",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api.go"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 86,
+            "EndLine": 99,
+            "Entropy": 3.7838705,
+            "File": "",
+            "Fingerprint": ":generic-api-key:99",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 99,
+            "candidate_length": 64,
+            "candidate_sha256": "77a3d6a8161565116262e2de28f2840a83ba56801092dfc247d19be1894ef26e",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+            "match_sha256": "8f6526a292af8de3c4f9d4c8722bd6c57fa882eee8eb7afcff6bb358f9da9586",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api_test.go"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 81,
+            "EndLine": 647,
+            "Entropy": 3.9223769,
+            "File": "",
+            "Fingerprint": ":generic-api-key:647",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 647,
+            "candidate_length": 64,
+            "candidate_sha256": "f956834b8307027c644e18547637c25417c158ece5a1cc133930dedcc9797fb9",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "001b799e7af6e9950a346c7e618538d9c23765640afedb4bd752d3a11d4d475c",
+            "match_sha256": "b81b88ca03d45debffcceb207cdbcb06fdbea5a92e0787acf415fc4189f64419",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api.go"
+          },
+          {
+            "Description": "Detected a Generic API Key, potentially exposing access to various services and sensitive operations.",
+            "EndColumn": 86,
+            "EndLine": 648,
+            "Entropy": 3.7838705,
+            "File": "",
+            "Fingerprint": ":generic-api-key:648",
+            "RuleID": "generic-api-key",
+            "StartColumn": 7,
+            "StartLine": 648,
+            "candidate_length": 64,
+            "candidate_sha256": "77a3d6a8161565116262e2de28f2840a83ba56801092dfc247d19be1894ef26e",
+            "classification": "SHA256 source fingerprint in source_sha256_before/after fields",
+            "documentary_value": "f573f691d1faafce281f9d745e681efbda0f1625e99aed90442ee76921eb5922",
+            "match_sha256": "8f6526a292af8de3c4f9d4c8722bd6c57fa882eee8eb7afcff6bb358f9da9586",
+            "source_byte_recomputation": "not available locally; checksum-field identity verified",
+            "source_file": "api_test.go"
+          }
+        ],
+        "findings_count": 4,
+        "json_report_sha256": "598eaa8a01894f780c84cbd4c1f409bce5a8d5a34113795dd4c68d3d7e5b6fc5",
+        "path": "zip:evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/receipt.json",
+        "payload_bytes": 37748,
+        "payload_sha256": "7c7f39dff0f620fba0074740d70e403c1d846db22667908ab11ca17faf6ef35a",
+        "stderr_redacted": "3:36PM INF scanned ~37748 bytes (37.75 KB) in 150ms\n3:36PM WRN leaks found: 4\n",
+        "stderr_sha256": "d5134035b421cab60122b45fede718506d5021dad414d6cc7c3143a60f797519",
+        "stdout_redacted": "Finding:     \"api.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.922377\n\nFinding:     \"api_test.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.783870\n\nFinding:     \"api.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.922377\n\nFinding:     \"api_test.go\": \"\u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\"\nSecret:      \u001b[1;3;m[REDACTED CANDIDATE]\u001b[0m\nRuleID:      generic-api-key\nEntropy:     3.783870\n\n",
+        "stdout_sha256": "6f6daa3802a9e744e93290dbc8a218d63cf42139bc7cf55b1df47ba5786ae73f"
+      }
+    ],
+    "unresolved_candidates": 0,
+    "verified_commit_identifiers": [
+      {
+        "command": [
+          "git",
+          "-C",
+          "/workspace/scratch/bfba682cba37/circula",
+          "cat-file",
+          "-t",
+          "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca"
+        ],
+        "exit_code": 0,
+        "object": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+        "scope": "This local object database only; no conclusion about remote history.",
+        "stderr": "",
+        "stdout": "commit"
+      },
+      {
+        "command": [
+          "git",
+          "-C",
+          "/workspace/scratch/bfba682cba37/circula",
+          "cat-file",
+          "-t",
+          "3fa76cdb590182eaff42fc4044cf3538275eea6b"
+        ],
+        "exit_code": 0,
+        "object": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+        "scope": "This local object database only; no conclusion about remote history.",
+        "stderr": "",
+        "stdout": "commit"
+      },
+      {
+        "command": [
+          "git",
+          "-C",
+          "/workspace/scratch/bfba682cba37/circula",
+          "cat-file",
+          "-t",
+          "82dc18e07f6b22b9c34ef026f833391705b30067"
+        ],
+        "exit_code": 0,
+        "object": "82dc18e07f6b22b9c34ef026f833391705b30067",
+        "scope": "This local object database only; no conclusion about remote history.",
+        "stderr": "",
+        "stdout": "commit"
+      },
+      {
+        "command": [
+          "git",
+          "-C",
+          "/workspace/scratch/bfba682cba37/circula",
+          "cat-file",
+          "-t",
+          "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db"
+        ],
+        "exit_code": 0,
+        "object": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+        "scope": "This local object database only; no conclusion about remote history.",
+        "stderr": "",
+        "stdout": "commit"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "source_commit": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+  "source_fingerprint_comparison": [
+    {
+      "accepted_bytes": 5194,
+      "accepted_git_blob": "ba5cf2dec6e2947d3a2444c55133d713bc91616a",
+      "accepted_source_sha256": "8891514918012a5a9983901e78b58a8c402f68f3e83c17a6e486f5f08ebd558d",
+      "historical_receipt_sha256": "23b4b81fa496208d69ed9657be4be615819510dad82e7bcf23fe892d1f76145d",
+      "matches": false,
+      "path": ".github/workflows/future-federation.yml"
+    },
+    {
+      "accepted_bytes": 13666,
+      "accepted_git_blob": "99dc25b96bd04ca14523b64ad67e15c09778f3eb",
+      "accepted_source_sha256": "7c265ac1b73c0c8c4d2a7ee33604505d2999003eb8bcd2124242d2807ba5d270",
+      "historical_receipt_sha256": "7c265ac1b73c0c8c4d2a7ee33604505d2999003eb8bcd2124242d2807ba5d270",
+      "matches": true,
+      "path": "future/federation/audit_test.go"
+    },
+    {
+      "accepted_bytes": 3086,
+      "accepted_git_blob": "c13fcbb9597cf333c84ff448f459e11bc26dd295",
+      "accepted_source_sha256": "84140982f4ffb1ce0051c2e64299604c86d1a082815dc7f6ce1f114406778f12",
+      "historical_receipt_sha256": "84140982f4ffb1ce0051c2e64299604c86d1a082815dc7f6ce1f114406778f12",
+      "matches": true,
+      "path": "future/federation/envelope.go"
+    },
+    {
+      "accepted_bytes": 1020,
+      "accepted_git_blob": "9c96c65403094aa25817187ea42225595b6fbf54",
+      "accepted_source_sha256": "8d7a141b5b3dbcbd984fe0c3bba4f0095d36302a920a0802a35aa8f96bf57004",
+      "historical_receipt_sha256": "8d7a141b5b3dbcbd984fe0c3bba4f0095d36302a920a0802a35aa8f96bf57004",
+      "matches": true,
+      "path": "future/federation/envelope_test.go"
+    },
+    {
+      "accepted_bytes": 4732,
+      "accepted_git_blob": "8a8c9fde3c7cbd13bfdc466a195018410a07fb96",
+      "accepted_source_sha256": "1b5761086812a5bbabc11a88d087b5e0e81cf624ac505fa0c21bd64230ef86ef",
+      "historical_receipt_sha256": "1b5761086812a5bbabc11a88d087b5e0e81cf624ac505fa0c21bd64230ef86ef",
+      "matches": true,
+      "path": "future/federation/envelope_utf8_test.go"
+    },
+    {
+      "accepted_bytes": 2194,
+      "accepted_git_blob": "547ebe612535c520a037fc3facb516159b863376",
+      "accepted_source_sha256": "3f6dd08a4ae28522b9bc8e9f73180d8755f6fd636f158a35ea01fd0520e3d5c1",
+      "historical_receipt_sha256": "21cdd1ea263c83c6de9c83c44f41b9b7b3d1b717ac5f8cd4541ad12319411015",
+      "matches": false,
+      "path": "future/federation/feature.json"
+    },
+    {
+      "accepted_bytes": 591,
+      "accepted_git_blob": "756f8c12174a36d8c9d329e705bacc3eca079db8",
+      "accepted_source_sha256": "557621447a04907956a49f473d1c2b77875743b6b2d1cf3817d28c758204107c",
+      "historical_receipt_sha256": "557621447a04907956a49f473d1c2b77875743b6b2d1cf3817d28c758204107c",
+      "matches": true,
+      "path": "future/federation/go.mod"
+    },
+    {
+      "accepted_bytes": 4312,
+      "accepted_git_blob": "8fe352e67715300cad443dc9398fed14b4e7ee4b",
+      "accepted_source_sha256": "98d21c6f18d90ff7afeaa0fcbc8f815bea85fe2a3e1b922e157507a34bcefacd",
+      "historical_receipt_sha256": "98d21c6f18d90ff7afeaa0fcbc8f815bea85fe2a3e1b922e157507a34bcefacd",
+      "matches": true,
+      "path": "future/federation/go.sum"
+    },
+    {
+      "accepted_bytes": 11653,
+      "accepted_git_blob": "df59e9675225f5a2b683638a27f6606399d22553",
+      "accepted_source_sha256": "cf53f195a55d62dafffd9bd49d2224634c69dc87b1ebd9c75221cd5c0e17d20c",
+      "historical_receipt_sha256": "cf53f195a55d62dafffd9bd49d2224634c69dc87b1ebd9c75221cd5c0e17d20c",
+      "matches": true,
+      "path": "future/federation/interface.go"
+    },
+    {
+      "accepted_bytes": 5265,
+      "accepted_git_blob": "4a2b70694686b2f6c4b4b7e3ffdc93d6187e8b74",
+      "accepted_source_sha256": "3272b986c1214da24460df35494fa8bbdcc87dc6d3420dfda12bf23654bc74e2",
+      "historical_receipt_sha256": "3272b986c1214da24460df35494fa8bbdcc87dc6d3420dfda12bf23654bc74e2",
+      "matches": true,
+      "path": "future/federation/master_interface_test.go"
+    },
+    {
+      "accepted_bytes": 4032,
+      "accepted_git_blob": "8fbdf00cab5975aeed77f9d4bf50707d77176687",
+      "accepted_source_sha256": "64b9e95f2cb8391ada5d9555a00ef13c4eb743615ea72932de90f872760833de",
+      "historical_receipt_sha256": "64b9e95f2cb8391ada5d9555a00ef13c4eb743615ea72932de90f872760833de",
+      "matches": true,
+      "path": "future/federation/members.go"
+    },
+    {
+      "accepted_bytes": 8772,
+      "accepted_git_blob": "e76d00d532e558b5dcecfaaac4df2717a198cbe5",
+      "accepted_source_sha256": "9ad88c3417cb75bd46b64b03f6a2d5a20a55809b68da9826eaeb0cf1d58c3f46",
+      "historical_receipt_sha256": "9ad88c3417cb75bd46b64b03f6a2d5a20a55809b68da9826eaeb0cf1d58c3f46",
+      "matches": true,
+      "path": "future/federation/operations.go"
+    },
+    {
+      "accepted_bytes": 9371,
+      "accepted_git_blob": "e526e7af283f5fbfc7bbfdb23ec2510fc90a0b29",
+      "accepted_source_sha256": "59525036397e7bf2e8c7537fcb1b1bba934bf8bc9e460d691010d377609de1ff",
+      "historical_receipt_sha256": "59525036397e7bf2e8c7537fcb1b1bba934bf8bc9e460d691010d377609de1ff",
+      "matches": true,
+      "path": "future/federation/outbox.go"
+    },
+    {
+      "accepted_bytes": 5078,
+      "accepted_git_blob": "fa911231b2a5e3d7174d4f8ef3dbef3bc07dfbe9",
+      "accepted_source_sha256": "78357d5a4cb746bc2b02f27a2e7bd266ba588df419c4118f5c412cd58093fd86",
+      "historical_receipt_sha256": "78357d5a4cb746bc2b02f27a2e7bd266ba588df419c4118f5c412cd58093fd86",
+      "matches": true,
+      "path": "future/federation/protocol.go"
+    },
+    {
+      "accepted_bytes": 381,
+      "accepted_git_blob": "824ef30917a311d391391a276d09f7afda23a303",
+      "accepted_source_sha256": "cfed746f8d3c4aff023738308fa365933dfade267e5e0a172832e11a32160a92",
+      "historical_receipt_sha256": "cfed746f8d3c4aff023738308fa365933dfade267e5e0a172832e11a32160a92",
+      "matches": true,
+      "path": "future/federation/protocol_fuzz_test.go"
+    },
+    {
+      "accepted_bytes": 1580,
+      "accepted_git_blob": "80a844623b092a2563211673127114b3960946eb",
+      "accepted_source_sha256": "3128c4ceb346befb80099b5e4785eaa3543eb0df4676cf1ba4ee41259ff25b6d",
+      "historical_receipt_sha256": "3128c4ceb346befb80099b5e4785eaa3543eb0df4676cf1ba4ee41259ff25b6d",
+      "matches": true,
+      "path": "future/federation/protocol_negative_test.go"
+    },
+    {
+      "accepted_bytes": 4467,
+      "accepted_git_blob": "a8132b8e885534c5167db221ae7f5077a7112625",
+      "accepted_source_sha256": "3a9fe255fc5eb5bb07658556c34e02c9828e75560d07ae9e3f7c8e9f1c1aac2d",
+      "historical_receipt_sha256": "3a9fe255fc5eb5bb07658556c34e02c9828e75560d07ae9e3f7c8e9f1c1aac2d",
+      "matches": true,
+      "path": "future/federation/protocol_recovery_test.go"
+    },
+    {
+      "accepted_bytes": 17822,
+      "accepted_git_blob": "46ce287d2dd6a7c1c84daf9e7097103969ac557d",
+      "accepted_source_sha256": "73abc289f8018abe7a604482fface3a393596cbf7d5ae39d0fb398977f4062ad",
+      "historical_receipt_sha256": "73abc289f8018abe7a604482fface3a393596cbf7d5ae39d0fb398977f4062ad",
+      "matches": true,
+      "path": "future/federation/store.go"
+    },
+    {
+      "accepted_bytes": 20144,
+      "accepted_git_blob": "b1d4168e9475093904150081a8c9873d1aa0ea8e",
+      "accepted_source_sha256": "0480ea1586b0d43171f2482c6760d6221fbc420578f64a0b5e9aded163ea1467",
+      "historical_receipt_sha256": "0480ea1586b0d43171f2482c6760d6221fbc420578f64a0b5e9aded163ea1467",
+      "matches": true,
+      "path": "future/federation/store_test.go"
+    },
+    {
+      "accepted_bytes": 4793,
+      "accepted_git_blob": "f0332fedd0e42707c4a21b4450e5e56e4246d3d0",
+      "accepted_source_sha256": "86de5c5215fe621e5fdd584115d166f9834cfb8321e5042f511e784abc8afd49",
+      "historical_receipt_sha256": "86de5c5215fe621e5fdd584115d166f9834cfb8321e5042f511e784abc8afd49",
+      "matches": true,
+      "path": "future/federation/transport.go"
+    },
+    {
+      "accepted_bytes": 2099,
+      "accepted_git_blob": "5c80f08b34dcf5c676b896ca3c8d409c91f8320e",
+      "accepted_source_sha256": "1e1b6682e8037136c824ca79240c9d222469e2d95560d6f7ceca8902197f0bd7",
+      "historical_receipt_sha256": "1e1b6682e8037136c824ca79240c9d222469e2d95560d6f7ceca8902197f0bd7",
+      "matches": true,
+      "path": "future/federation/transport_test.go"
+    }
+  ],
+  "source_match_count": 19,
+  "source_mismatch_paths": [
+    ".github/workflows/future-federation.yml",
+    "future/federation/feature.json"
+  ],
+  "source_repository": "https://github.com/djshellshoxxx/circula",
+  "zip_entries": 206
+}

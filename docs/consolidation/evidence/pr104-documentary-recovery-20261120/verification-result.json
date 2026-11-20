@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "review_date_utc": "2026-11-20",
+  "execution_scope": "Documentary artifact checks only. No product tests, Go commands from archived receipts, fuzzing, archived scripts, network targets, migrations or CI workflows executed by this recovery worker.",
+  "original_git_blob_byte_comparisons": {
+    "passed": 102,
+    "failed": 0,
+    "bytes": 5206983
+  },
+  "original_zip_payload_hash_size_crc_checks": {
+    "passed": 205,
+    "failed": 0
+  },
+  "original_verification_index_checks": {
+    "passed": 20,
+    "failed": 0
+  },
+  "original_json_parse": {
+    "passed": 56,
+    "failed": 0
+  },
+  "nested_json_parse": {
+    "passed": 44,
+    "failed": 0
+  },
+  "integrity_verifier": {
+    "command": [
+      "python3",
+      "docs/consolidation/evidence/pr104-documentary-recovery-20261120/verify_recovery.py"
+    ],
+    "exit_code": 0,
+    "stdout": {
+      "scope": "artifact integrity only; no product execution",
+      "original_files": 102,
+      "original_bytes": 5206983,
+      "nested_payloads": 205,
+      "original_json_parsed": 56,
+      "nested_json_parsed": 44
+    },
+    "stderr": "",
+    "scope": "Integrity of preserved source bytes, containers and manifests; historical product outcomes separately recounted in independent review."
+  },
+  "historical_federation_qualification": "Recovered historical receipt/log records only; not fresh product execution. See federation-independent-review.json.",
+  "payload_secret_scan": {
+    "command_receipt": "secret-scan-review.json",
+    "exit_code": 1,
+    "findings": 24,
+    "reviewed_documentary_false_positives": 24,
+    "unclassified": 0,
+    "config_or_rule_changes": false
+  },
+  "historical_source_remote_checks": {
+    "receipt": "historical-object-remote-check.json",
+    "exact_endpoints_checked": 3,
+    "github_api_404_results": 3,
+    "limit": "Evidence unavailable through the active connection; no inference of global object loss."
+  },
+  "authored_metadata_secret_scan": {
+    "command": [
+      "/tmp/circula-runtime-4d30/bin/gitleaks",
+      "dir",
+      "docs/consolidation/evidence/pr104-documentary-recovery-20261120",
+      "--config",
+      ".gitleaks.toml",
+      "--no-banner",
+      "--no-color",
+      "--redact=100",
+      "--ignore-gitleaks-allow",
+      "--report-format",
+      "json",
+      "--report-path",
+      "/workspace/scratch/bfba682cba37/pr104-authored-package-scan-final.json"
+    ],
+    "exit_code": 0,
+    "findings": 0,
+    "reported_scanned_bytes": 225900,
+    "report_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "scope": "Authored metadata in package directory; default archive traversal depth 0. This separate result does not replace the decoded original-payload scan exit 1 and its 24 classified detections."
+  },
+  "repository_scanner_configuration_unchanged": true,
+  "repository_scanner_configuration_sha256": "43b9c433c68a5194ec9c1e1bb40b940bb3eca61782fc34edd9982565d54f83d4"
+}

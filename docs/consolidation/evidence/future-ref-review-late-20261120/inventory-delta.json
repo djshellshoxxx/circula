@@ -1,0 +1,113 @@
+{
+  "observed_at": "2026-11-20T23:13:47.171836+00:00",
+  "baseline_file": "docs/consolidation/evidence/branch-refresh-20261120.json",
+  "baseline_commit": "2eb576aec9456e93363159059ba823e796d55815",
+  "baseline_heads": 148,
+  "current_heads": 152,
+  "new": [
+    {
+      "branch": "audit/core127-final-evidence-20261120",
+      "current": "49dc8acc781790635fca8ed32882a7a27971c8a1"
+    },
+    {
+      "branch": "repair/core127-e2e-observer-20261120",
+      "current": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef"
+    },
+    {
+      "branch": "repair/core127-loading-regression-syntax-20261120",
+      "current": "bea5de25cf76b66d87689034e2529f9b40c6dff6"
+    },
+    {
+      "branch": "repair/core127-sync-loading-20261120",
+      "current": "e5f7664c505a67fc1aa21c8d4609b55708991457"
+    }
+  ],
+  "moved": [
+    {
+      "branch": "future/fnet-203-receipts-20261116",
+      "old": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "current": "5200c5bf940f051a86d6e502787af06892200974",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fnet-205-analytics-20261116",
+      "old": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "current": "64f1fef75d167ca322179e3e120214f9a56c6583",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fnet-206-areas-20261116",
+      "old": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "current": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fnet-207-recurring-20261116",
+      "old": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "current": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fnet-208-governance-20261116",
+      "old": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "current": "5eac085005361e973ca8f358e01f039aea718bed",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fnet-209-federation-20261116",
+      "old": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "current": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fux-102-qr-20261116",
+      "old": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "current": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fux-104-notifications-20261116",
+      "old": "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+      "current": "54a41b12a314e7652802b71d693e2594c37f172f",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fux-105-messaging-20261116",
+      "old": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "current": "54d3af51aa32c022562e8041d1baa149da071db3",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "future/fux-106-onboarding-20261116",
+      "old": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+      "current": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "integration/unique-core-completion-20261120",
+      "old": "d6843366dc06d723f8d9efe07242997c858a6b3f",
+      "current": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "master/recover-federation-20261119",
+      "old": "267aa7d08bbc41e89a429eec7a077c5c0b1f9778",
+      "current": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "master/recover-messaging-20261119",
+      "old": "d12805cac1d6c52d94b04800a53d6911bd8ab94f",
+      "current": "d232d6507cb198081434284084a4ced7ed6df27c",
+      "ancestor_preserved": true
+    },
+    {
+      "branch": "master/recover-recurring-20261119",
+      "old": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48",
+      "current": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+      "ancestor_preserved": true
+    }
+  ],
+  "unchanged": 134,
+  "removed": []
+}

@@ -1,0 +1,56 @@
+{
+  "observed_at": "2026-11-20 23:10:24 UTC",
+  "merges": [
+    {
+      "module": "messaging",
+      "merge_sha": "54d3af51aa32c022562e8041d1baa149da071db3",
+      "tree": "c58b7a38c802190229b26dc64be05af355b416b9",
+      "parents": [
+        "7f92251cdb0d6ed5d9559730045a021a173a278b",
+        "d232d6507cb198081434284084a4ced7ed6df27c"
+      ],
+      "target": {
+        "ref": "refs/heads/future/fux-105-messaging-20261116",
+        "sha": "54d3af51aa32c022562e8041d1baa149da071db3"
+      },
+      "source": {
+        "ref": "refs/heads/master/recover-messaging-20261119",
+        "sha": "d232d6507cb198081434284084a4ced7ed6df27c"
+      }
+    },
+    {
+      "module": "federation",
+      "merge_sha": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+      "tree": "6709ccb99b01574dedb554e1723dac90f959cb47",
+      "parents": [
+        "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+        "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0"
+      ],
+      "target": {
+        "ref": "refs/heads/future/fnet-209-federation-20261116",
+        "sha": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47"
+      },
+      "source": {
+        "ref": "refs/heads/master/recover-federation-20261119",
+        "sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0"
+      }
+    },
+    {
+      "module": "recurring",
+      "merge_sha": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f",
+      "tree": "64ca1e44dc878d7fb73bd8e30f52966813a78837",
+      "parents": [
+        "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+        "18741aa25c364e7294de8bec0ff714d0dc1ed9fc"
+      ],
+      "target": {
+        "ref": "refs/heads/future/fnet-207-recurring-20261116",
+        "sha": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f"
+      },
+      "source": {
+        "ref": "refs/heads/master/recover-recurring-20261119",
+        "sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc"
+      }
+    }
+  ]
+}

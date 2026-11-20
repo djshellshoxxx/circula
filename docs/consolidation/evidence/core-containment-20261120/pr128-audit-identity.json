@@ -1,0 +1,175 @@
+{
+  "source": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+  "candidate": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "source_is_candidate_ancestor": true,
+  "audit_path": "docs/audits/read-only-security-2026-11-19",
+  "tree": "586694a64d6b8a830466b72b866ff370438e8518",
+  "tree_entries": [
+    "100644 blob 7044c3b2142f77aea38a6228e21e64e35829d6f6\tdocs/audits/read-only-security-2026-11-19/AUTH.md",
+    "100644 blob c56b6d04433a4315eadcf77fd95a935deb3d728e\tdocs/audits/read-only-security-2026-11-19/COVERAGE_AND_VALIDATION.md",
+    "100644 blob 0cffb53079653892d08eef3d637e9b79e8d79f09\tdocs/audits/read-only-security-2026-11-19/CROSSCHECKS.md",
+    "100644 blob eb0e78e6bc9a75620c74c67b004b0f3d37cc7304\tdocs/audits/read-only-security-2026-11-19/FEATURES.md",
+    "100644 blob 8291a125c3f3ab5f718fe189c20067148b189c91\tdocs/audits/read-only-security-2026-11-19/LEDGER.md",
+    "100644 blob 403cce19bc5fddaa1ce69a7bebd66aa5b8e0df7d\tdocs/audits/read-only-security-2026-11-19/OPERATIONS.md",
+    "100644 blob 9823ff58ec874f8e64e2e336cf804b6d41aa15cb\tdocs/audits/read-only-security-2026-11-19/README.md",
+    "100644 blob e8b6e5fb1719bf55bb44ef1e8b428013185c939b\tdocs/audits/read-only-security-2026-11-19/WEB_API.md",
+    "100644 blob 7c2b42fb8014e589925fccf7d482e70f8560ebdf\tdocs/audits/read-only-security-2026-11-19/WORKER_HANDOFF.md",
+    "100644 blob eebd0ef85e592d3db952cbea51ed1d755fa3de7a\tdocs/audits/read-only-security-2026-11-19/evidence/baseline-tests.log",
+    "100644 blob cd47cf8fe1f4d70510b2f6d555711303e8025750\tdocs/audits/read-only-security-2026-11-19/evidence/branch-inventory.json",
+    "100644 blob 842da20d303aed35744d365b37931730a055cd96\tdocs/audits/read-only-security-2026-11-19/evidence/ci-scan-control-excerpt.log",
+    "100644 blob d3a6de1dc2aeaaa5523e35f8db75323ceb13b701\tdocs/audits/read-only-security-2026-11-19/evidence/cli-baseline-tests.log",
+    "100644 blob f8d3f9b2b4cc41585560d35ff19dc877ccfb3d12\tdocs/audits/read-only-security-2026-11-19/evidence/commands.json",
+    "100644 blob fa609c0bf8289468cc85c2e039ac81a0a2e857dc\tdocs/audits/read-only-security-2026-11-19/evidence/future-manifests.json",
+    "100644 blob e93cc52001403edd357be22a1b880f9a4aeb5304\tdocs/audits/read-only-security-2026-11-19/evidence/github-observations.json",
+    "100644 blob e7589224d9bb7e51ce9e542aca8235541cb6625d\tdocs/audits/read-only-security-2026-11-19/evidence/govulncheck-package.log",
+    "100644 blob 657071743f35e475271f9b70654de46fadf9048e\tdocs/audits/read-only-security-2026-11-19/evidence/govulncheck.log",
+    "100644 blob f893de6834c1db0d439c2e9faed96a7b20a8e97f\tdocs/audits/read-only-security-2026-11-19/evidence/module-verification.log",
+    "100644 blob 2adff7f44b99958e56b7652021ab59ebfb525bdd\tdocs/audits/read-only-security-2026-11-19/evidence/node-helper-tests.log",
+    "100644 blob 2db46e6024aa202a096a84f5f47079fafa04e85e\tdocs/audits/read-only-security-2026-11-19/evidence/python-export-tests.log",
+    "100644 blob d288f92200fcd16a536f50c5852243c6ef6e46d9\tdocs/audits/read-only-security-2026-11-19/evidence/report-manifest.json",
+    "100644 blob 32d33e2a9765a8376cebec967d9da35d53be2a07\tdocs/audits/read-only-security-2026-11-19/evidence/workflow-pins.log"
+  ],
+  "all_tree_entries_identical": true,
+  "entry_count": 23,
+  "manifest_path": "docs/audits/read-only-security-2026-11-19/evidence/report-manifest.json",
+  "manifest_blob": "d288f92200fcd16a536f50c5852243c6ef6e46d9",
+  "manifest_sha256": "277617b0ea59b35bfc58e2dce50b01b17242345157e60534d7c1969838d48b7b",
+  "original_manifest_checks": [
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/AUTH.md",
+      "bytes": 32012,
+      "sha256": "3bda0618631ac42fc34d85ea8a0edf84643f578b7d23da4feb211d097dad8d4a",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/COVERAGE_AND_VALIDATION.md",
+      "bytes": 10547,
+      "sha256": "8c56db823eaa40ce2b713d0ef11f1e559ff47303f790ee3416012654363e5eda",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/CROSSCHECKS.md",
+      "bytes": 24881,
+      "sha256": "03174ea80a9ae358c2084bb72f91d31bda91a52bc130e28c4d85ec3cf470daea",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/FEATURES.md",
+      "bytes": 19530,
+      "sha256": "39faf0d00295a4253fc54cb11c2a83320c6aee553dd95bf5d441c8b4590203a1",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/LEDGER.md",
+      "bytes": 29706,
+      "sha256": "a7a7f23f57997f03df052a3859cfa77e57d352269e0349085cf9dfc202f2795c",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/OPERATIONS.md",
+      "bytes": 12666,
+      "sha256": "66e4f64c38f9ee4229c53c8558a01e572721e5f2e24f4ec1515a0791d8905cfd",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/README.md",
+      "bytes": 15275,
+      "sha256": "e06999487b6261e24c5e3689b341843c71c56e3ccc488a002120c1685d2e298b",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/WEB_API.md",
+      "bytes": 22504,
+      "sha256": "917396e9d2db053332ed0d94c88a60db64ce58bdbeb99aeaf43ed11e2366dc11",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/WORKER_HANDOFF.md",
+      "bytes": 10082,
+      "sha256": "8decda4f19e56e4107d909c39de6b3af7de835b5a72ae3affd9cf2721bd05aa6",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/baseline-tests.log",
+      "bytes": 180,
+      "sha256": "3a44898dc76eba2b6cedee5e087adaee0524a86d82983ab08c3db0758433014c",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/branch-inventory.json",
+      "bytes": 39869,
+      "sha256": "2ac10f3472f7f3c482327dc0bacf1cddea4d9dd012b0780607986cad8eaedf9c",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/ci-scan-control-excerpt.log",
+      "bytes": 2423,
+      "sha256": "7b23ea3069b6ce434108f3ad0f092fb924fdc39b29a22f673435b06ee2e0f4b5",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/cli-baseline-tests.log",
+      "bytes": 182,
+      "sha256": "14cc675cb8a5bdb7368d42c0e90343f328e53e1db98e04499223441020eb6178",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/commands.json",
+      "bytes": 3474,
+      "sha256": "9de2d8c721dc4adc96e9ef2e21651284034ff6683f085317d2cb69f666e5354b",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/future-manifests.json",
+      "bytes": 13560,
+      "sha256": "562571d5ec9f1bd1f6ef66eeda1c9d86a3927e91dc3f1159f8e0769de76fcd29",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/github-observations.json",
+      "bytes": 8323,
+      "sha256": "875c9a526c5475c3bb7091dcc20b119f8e4845568cd82f4b19c43a8c1f61f919",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/govulncheck-package.log",
+      "bytes": 26,
+      "sha256": "3016e51e4eac0d421674d2128bbbdefb2924b4646e0c14a1ab034977ad73fae5",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/govulncheck.log",
+      "bytes": 256,
+      "sha256": "dd273e701bf72f6dcc5b17a6a96830938fc1b2b13d8ee2cd2414d96fd21133cf",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/module-verification.log",
+      "bytes": 21,
+      "sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/node-helper-tests.log",
+      "bytes": 1562,
+      "sha256": "96513dea0749850bc57cc573125b5e022dde852253733e20ed48c0073d201c19",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/python-export-tests.log",
+      "bytes": 141,
+      "sha256": "05dbf1760d7b80e72563c787ab71e90904c20fd7e0fbee19ccd652e8a78e1593",
+      "manifest_match": true
+    },
+    {
+      "path": "docs/audits/read-only-security-2026-11-19/evidence/workflow-pins.log",
+      "bytes": 32,
+      "sha256": "9353c7b345cda410e4d8d1110ace2932403381722b51df6065fea429ad158cd2",
+      "manifest_match": true
+    }
+  ],
+  "original_manifest_pass_count": 22,
+  "tests_executed": false,
+  "interpretation": "Original23audit files are contained without modification. Historical findings and original failed/incomplete test receipts remain historical evidence; containment does not assert all findings resolved.",
+  "closure_precondition": "After qualified127 reaches main and current128 source remains identical, verify the full original audit tree and close as incorporated, preserving source."
+}

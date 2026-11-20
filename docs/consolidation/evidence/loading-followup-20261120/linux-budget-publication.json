@@ -1,0 +1,59 @@
+{
+  "repository": "djshellshoxxx/circula",
+  "branch": "repair/core127-e2e-observer-20261120",
+  "local_commit": "a4becfda0f10d5fa3790bf0ee4aeff6552dfeca1",
+  "parent": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "blob": "34d4f6ed758f1c685c1a38244a422c409687e70a",
+  "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "published_commit": "11739c7f8f59455b4dc480294cab4d79f7933cb9",
+  "patch_sha256": "7539a262d36df1470f37091efa0d4d71231f3bad421c79c7914ae0198d2dcf48",
+  "commit": {
+    "sha": "11739c7f8f59455b4dc480294cab4d79f7933cb9",
+    "node_id": "C_kwDOVRni9toAKDExNzM5YzdmOGY1OTQ1NWI0ZGM0ODAyOTRjYWI0ZDc5Zjc5MzNjYjk",
+    "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/11739c7f8f59455b4dc480294cab4d79f7933cb9",
+    "html_url": "https://github.com/djshellshoxxx/circula/commit/11739c7f8f59455b4dc480294cab4d79f7933cb9",
+    "author": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-20T23:36:49Z"
+    },
+    "committer": {
+      "name": "sheldon",
+      "email": "127660907+djshellshoxxx@users.noreply.github.com",
+      "date": "2026-11-20T23:36:49Z"
+    },
+    "tree": {
+      "sha": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/trees/43e65ee91a90ff70b70cc69d0b517b8367a2585f"
+    },
+    "message": "ci: give the complete Linux race suite a bounded qualification budget\n\nProvider job 136617856302 reached its 20-minute service-package deadline while QA001 had run for 23 seconds. The preserved full-race qualification passed this package in 1294.982 seconds. Allow 30 minutes per package and 45 minutes for the Linux job, retaining every test, race check, property seed and evidence step.\n\nReviewed local source: a4becfda0f10d5fa3790bf0ee4aeff6552dfeca1\nComplete reviewed patch SHA-256: 7539a262d36df1470f37091efa0d4d71231f3bad421c79c7914ae0198d2dcf48",
+    "parents": [
+      {
+        "sha": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+        "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+        "html_url": "https://github.com/djshellshoxxx/circula/commit/eef0c6d8c832ce994db1019eb5e7d6a41800b8ef"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "pre_ref": {
+    "ref": "refs/heads/repair/core127-e2e-observer-20261120",
+    "node_id": "REF_kwDOVRni9toAL3JlZnMvaGVhZHMvcmVwYWlyL2NvcmUxMjctZTJlLW9ic2VydmVyLTIwMjYxMTIw",
+    "url": "https://api.github.com/repos/djshellshoxxx/circula/git/refs/heads/repair/core127-e2e-observer-20261120",
+    "object": {
+      "sha": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "type": "commit",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/eef0c6d8c832ce994db1019eb5e7d6a41800b8ef"
+    }
+  },
+  "ref_updated": true,
+  "ref_update": {
+    "success": true
+  }
+}

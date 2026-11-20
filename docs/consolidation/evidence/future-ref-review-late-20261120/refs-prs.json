@@ -1,0 +1,1005 @@
+{
+  "observed_at": "2026-11-20 23:09:11 UTC",
+  "branches": [
+    {
+      "name": "audit/core127-final-evidence-20261120",
+      "sha": "49dc8acc781790635fca8ed32882a7a27971c8a1",
+      "protected": false
+    },
+    {
+      "name": "audit/federation-readme-20261119",
+      "sha": "d55554408ef591371768259905c70ca58d68facb",
+      "protected": false
+    },
+    {
+      "name": "audit/future-feed-cursors-20261119",
+      "sha": "5f46b0cfeadda140b1b29d120766100d7e3da735",
+      "protected": false
+    },
+    {
+      "name": "audit/future-notifications-binding-20261119",
+      "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae",
+      "protected": false
+    },
+    {
+      "name": "audit/future-notifications-bounded-core-20261119",
+      "sha": "3bdef17a87b421b1b43a666d58453749a7b06d02",
+      "protected": false
+    },
+    {
+      "name": "audit/future-pwa-browser-20261119",
+      "sha": "0b2bb7a4dea18dbb3f125f41565b096d637e47f3",
+      "protected": false
+    },
+    {
+      "name": "audit/gov021-final-core-refresh-20261119",
+      "sha": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34",
+      "protected": false
+    },
+    {
+      "name": "audit/gov021-fixture-20261119",
+      "sha": "d922d4f880059f939aeca40cbcb77c60201ff0c7",
+      "protected": false
+    },
+    {
+      "name": "audit/read-only-security-20261119",
+      "sha": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+      "protected": false
+    },
+    {
+      "name": "audit/sec026-independent-20261119",
+      "sha": "45b596f12876e3f91c30b996457f7096e1fffe24",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-consolidation-review-20261111",
+      "sha": "02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-departure-pagination-20261115",
+      "sha": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-erasure-notification-20261115",
+      "sha": "26b57163d96534e79e3d35d471573d609af8a415",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-expiry-starvation-20261115",
+      "sha": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-ledger-auth-guard-20261115",
+      "sha": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-mfa-decider-20261115",
+      "sha": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-qa042-traceability-audit-20261114",
+      "sha": "fe832faced826ed2234fcd9ba0ce7f7321f04df5",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-secure-json-write-20261115",
+      "sha": "e02085a6aa1a1394f874b304fdf0961cc0888423",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/circula-security-audit-20261115",
+      "sha": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/consolidation-delta-qualification-20261114",
+      "sha": "8f742877fb53cc39aea5e189a5452d924d8c08c8",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/favorites-owner-scoped-collection-20261116",
+      "sha": "372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/feed-signed-cursors-20261116",
+      "sha": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/audit-20261110-a",
+      "sha": "2e729346d6297075b6ff1f7828d48681d48320b6",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/ci-macos15-retirement-20261110",
+      "sha": "1760551f5b03a89ec64d09269d631e72f2e95959",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/ci-macos-race-budget-20261110",
+      "sha": "2078bf0964353892e80214b4601211e36818b889",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/cookie-policy-adapter-20261110-b",
+      "sha": "7e8481004801c01aea5d22f4720e1ead7381c4f7",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/decidable-expiry-20261110-a",
+      "sha": "b61a8e719030ff56044d71fee632b5ba824d7698",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/docs-20261110-a",
+      "sha": "a376a4ed592451d90d2ff7b4d3db1489a2231f96",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/qualify-pr19-20261110-a",
+      "sha": "63b033d842a2fa40b56ff9d79e69c259db951c83",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex/terms-return-20261110-b",
+      "sha": "7620d7f51913363dd013b80cc682eb670eeff3a5",
+      "protected": false
+    },
+    {
+      "name": "chatgpt/zero-codex-continuation-spec-20261109",
+      "sha": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "protected": false
+    },
+    {
+      "name": "checkpoint/circula-handoff-20261025",
+      "sha": "3d0080a9c43680f69f81217af3b42374e7160bf8",
+      "protected": false
+    },
+    {
+      "name": "claude/aud4-auth-fixes",
+      "sha": "82dc18e07f6b22b9c34ef026f833391705b30067",
+      "protected": false
+    },
+    {
+      "name": "claude/aud4-f02-reviewer-reset-policy",
+      "sha": "af54887aa0cd63ba080e2944aa52a5b759b008ca",
+      "protected": false
+    },
+    {
+      "name": "claude/aud4-f03-dispute-timelines",
+      "sha": "b6275747df66ede81ee4267e2cd6a2595f3bd680",
+      "protected": false
+    },
+    {
+      "name": "claude/awesome-darwin-y6eaiz",
+      "sha": "827e651fe151f49659cc20aefe85d4af67bdaa97",
+      "protected": false
+    },
+    {
+      "name": "claude/backup-path-hardening",
+      "sha": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+      "protected": false
+    },
+    {
+      "name": "claude/charming-gauss-19fbfa",
+      "sha": "8b4c8ba23c99d4418348d76ff8cb38a72e7b958d",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-beta-completion-1npjw6",
+      "sha": "bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-build",
+      "sha": "fc488445af5f43165a7103f1c1fd12483b39d448",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-completeness",
+      "sha": "fcd9fc5878482e1e4d340a3448a0d2294a33eb5b",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-consolidation-audit-0sydm1",
+      "sha": "0e5296a71f3f3802f36e14d847c0abf7b1dbf882",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-finish",
+      "sha": "d350474e49522c34213d90a66904b296b9509f6c",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-pr-consolidation-q6q18n",
+      "sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "protected": false
+    },
+    {
+      "name": "claude/circula-security-features",
+      "sha": "f8278a047392541a077d57c560823471053d1e1d",
+      "protected": false
+    },
+    {
+      "name": "claude/compassionate-cannon-txdlz1",
+      "sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+      "protected": false
+    },
+    {
+      "name": "claude/cool-gauss-vdxlod",
+      "sha": "64fa4f685780b93a349a862e3741df5b4db067cc",
+      "protected": false
+    },
+    {
+      "name": "claude/cool-ramanujan-n2peag",
+      "sha": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "protected": false
+    },
+    {
+      "name": "claude/fnet-204-signed-cursors",
+      "sha": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+      "protected": false
+    },
+    {
+      "name": "claude/gov-021-admin-recovery",
+      "sha": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332",
+      "protected": false
+    },
+    {
+      "name": "claude/gracious-ptolemy-dscc7v",
+      "sha": "1d165989e2176e214536dd22b05f7b3a4cb2f48f",
+      "protected": false
+    },
+    {
+      "name": "claude/happy-babbage-dcumwz",
+      "sha": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+      "protected": false
+    },
+    {
+      "name": "claude/happy-noether-444cum",
+      "sha": "34ccb81a54ab63875d4a5305076437d6b3221049",
+      "protected": false
+    },
+    {
+      "name": "claude/kind-einstein-v5ycss",
+      "sha": "3bfb2f78fb0aad03ec3533af5985c394d64c1898",
+      "protected": false
+    },
+    {
+      "name": "claude/lucid-archimedes-upisa8",
+      "sha": "d2c1c6090a053b62dc75002464dc96bb542d6c78",
+      "protected": false
+    },
+    {
+      "name": "claude/quirky-babbage-y9fpmm",
+      "sha": "af69702be08aaf14cbe9a705ddf7f08796d5e976",
+      "protected": false
+    },
+    {
+      "name": "claude/quirky-einstein-l9ni8m",
+      "sha": "4a8db9e80509d23d3937c68575c632f4650576aa",
+      "protected": false
+    },
+    {
+      "name": "claude/relaxed-hopper-8q4vhq",
+      "sha": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "protected": false
+    },
+    {
+      "name": "claude/sec-026-abuse-signals",
+      "sha": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45",
+      "protected": false
+    },
+    {
+      "name": "claude/sharp-archimedes-tu76rh",
+      "sha": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9",
+      "protected": false
+    },
+    {
+      "name": "claude/sweet-turing-m3ftja",
+      "sha": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "protected": false
+    },
+    {
+      "name": "claude/ux-047-auth-catalogue",
+      "sha": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db",
+      "protected": false
+    },
+    {
+      "name": "claude/vibrant-brahmagupta-3uofnj",
+      "sha": "33b200e00c088c86ffb0d0d8176f1575376a9b49",
+      "protected": false
+    },
+    {
+      "name": "codex/api036-completion-20261119",
+      "sha": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0",
+      "protected": false
+    },
+    {
+      "name": "codex/api036-cursor-hardening-20261119",
+      "sha": "94fcd018ac4227ea5a5eb803478b3bb0a1aa3677",
+      "protected": false
+    },
+    {
+      "name": "codex/api036-qualification-20261119",
+      "sha": "45356ca10e1ecd6e6441e0171910dd918b36f5d9",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-checkpoint-recovery-20261116",
+      "sha": "12175ec348d5234c27e1c72dc8df96a091cd111c",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-common-ui-catalog-20261116",
+      "sha": "a112c979932bc7b9e209455d3df14dfebc60243a",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-consolidate-20261030",
+      "sha": "7643fb616208cc318939ded809e6cada66bb7415",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-core-checkpoint-20261116",
+      "sha": "15375a8dc87544849b4a85fa128ce77be1103814",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-core-completion-20261116",
+      "sha": "e3c60a62c065567ff67fc2e219a724b6fd91ca76",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-evidence-20261116",
+      "sha": "f6ea3213e663c7e37d678b018861b6703947e3e0",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-financial-messages-20261116",
+      "sha": "cf5abf5cfb00638e1772a7e34014a352048d6b35",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-integration-plan-20261030",
+      "sha": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-message-catalogs-20261116",
+      "sha": "96059bb4b8ae23ad6e4e45428bf69288bec4c182",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-noscript-qa",
+      "sha": "ba57512918195423b25bc7958ff0b8af6df7ed7a",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-qualification-20261116",
+      "sha": "dc89212a8bf1e1207e5443ffc719670623de70e1",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-responsive-qa",
+      "sha": "04e11989b811b4541a20b4e06e7a020beabb6af3",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-resume-20261024",
+      "sha": "f4bfe6bc3f81c94b859abeae902ae862ea6e143e",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-staging-refresh-docs",
+      "sha": "9c0bc500cb19f11f18694c76d134f4bfebf896e7",
+      "protected": false
+    },
+    {
+      "name": "codex/circula-support-boundaries-20261028",
+      "sha": "837d51b0d5374822b28f1b3a9206f9e2d23bd60c",
+      "protected": false
+    },
+    {
+      "name": "codex/dashboard-amounts-meter-20261116",
+      "sha": "d53196cc6907f27222661246a7767bb0aa123a76",
+      "protected": false
+    },
+    {
+      "name": "consolidation/http-persistence-regressions-20261116",
+      "sha": "050798c9cf94598efd0fff15f7a8a74bb3c4f4a1",
+      "protected": false
+    },
+    {
+      "name": "consolidation/recover-future-specifications",
+      "sha": "3a776e6304551c21ff372a8ae962606108dde4ff",
+      "protected": false
+    },
+    {
+      "name": "dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "sha": "3fa76cdb590182eaff42fc4044cf3538275eea6b",
+      "protected": false
+    },
+    {
+      "name": "dependabot/go_modules/golang.org/x/text-0.44.0",
+      "sha": "4a6ea9ab3dff3bdf1f3597e98abd449b203afb11",
+      "protected": false
+    },
+    {
+      "name": "docs/fnet-203-optional-trade-receipts",
+      "sha": "3d6ed55b2e44d31f7350814d87ba44564e8344c0",
+      "protected": false
+    },
+    {
+      "name": "docs/foundational-spec-shells",
+      "sha": "d96f2e75634bff074d26965ae93c2fe00c6f7f24",
+      "protected": false
+    },
+    {
+      "name": "docs/foundational-specifications",
+      "sha": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "protected": false
+    },
+    {
+      "name": "docs/future-usability-network-specs-20261111",
+      "sha": "f4a051c1c1af815e7bb6a902929108e155145c97",
+      "protected": false
+    },
+    {
+      "name": "docs/readme-and-wiki",
+      "sha": "db7826495ec2e8bd3f5459afa5f619cdc8fe8def",
+      "protected": false
+    },
+    {
+      "name": "feature/core-catalogue-continuation-20261119",
+      "sha": "5db3efc084e6a807bb4702c09d3235490d42b71d",
+      "protected": false
+    },
+    {
+      "name": "feature/fnet-204-completion-parallel",
+      "sha": "a8aecfe8782df4782af256bbcecdf5fd1469f783",
+      "protected": false
+    },
+    {
+      "name": "fix/fnet207-ci-proven-20261119",
+      "sha": "ccf30e6a819d570d90d2aa02c91ec8d635040563",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-201-matching-20261116",
+      "sha": "12850290c6bca7720853c33689662d751aced160",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-202-favorites-20261116",
+      "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-203-receipts-20261116",
+      "sha": "5200c5bf940f051a86d6e502787af06892200974",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-204-feed-20261116",
+      "sha": "108107435645db687f8ac380e6571319f419fa32",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-205-analytics-20261116",
+      "sha": "64f1fef75d167ca322179e3e120214f9a56c6583",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-206-areas-20261116",
+      "sha": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-207-recurring-20261116",
+      "sha": "89c6aeb6b4f73292d38a4a0803146ff5b9386e6f",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-208-governance-20261116",
+      "sha": "5eac085005361e973ca8f358e01f039aea718bed",
+      "protected": false
+    },
+    {
+      "name": "future/fnet-209-federation-20261116",
+      "sha": "0aeb5a1446798019141a3f6f5bcb1e7a24b70c47",
+      "protected": false
+    },
+    {
+      "name": "future/fux-101-pwa-20261116",
+      "sha": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+      "protected": false
+    },
+    {
+      "name": "future/fux-102-qr-20261116",
+      "sha": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "protected": false
+    },
+    {
+      "name": "future/fux-103-discovery-20261116",
+      "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "protected": false
+    },
+    {
+      "name": "future/fux-104-notifications-20261116",
+      "sha": "54a41b12a314e7652802b71d693e2594c37f172f",
+      "protected": false
+    },
+    {
+      "name": "future/fux-105-messaging-20261116",
+      "sha": "54d3af51aa32c022562e8041d1baa149da071db3",
+      "protected": false
+    },
+    {
+      "name": "future/fux-106-onboarding-20261116",
+      "sha": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+      "protected": false
+    },
+    {
+      "name": "future/module-catalog-20261116",
+      "sha": "dfa4779d05a47bc0397110ecfbb14659ce3884d7",
+      "protected": false
+    },
+    {
+      "name": "haiku/circula-consolidation",
+      "sha": "6fbfa13fb696d38e8e120377c0eee09af1ac44f0",
+      "protected": false
+    },
+    {
+      "name": "integration/admin-grant-notice-pagination-20261117",
+      "sha": "cb25b41febd43273cd4aa856072406b210089d81",
+      "protected": false
+    },
+    {
+      "name": "integration/backup-private-staging-20261117",
+      "sha": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "protected": false
+    },
+    {
+      "name": "integration/browser-parity-clock-20261117",
+      "sha": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+      "protected": false
+    },
+    {
+      "name": "integration/circula-master-consolidation-20261119",
+      "sha": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+      "protected": false
+    },
+    {
+      "name": "integration/comprehensive-audit-20261119",
+      "sha": "839e86935767288e594914ad711486616a604eca",
+      "protected": false
+    },
+    {
+      "name": "integration/consolidation-execution-record-20261118",
+      "sha": "73244357ca136874452a6cd826ffa91ac8c3c434",
+      "protected": false
+    },
+    {
+      "name": "integration/core-completion-audits-20261119",
+      "sha": "22c767a90f69d286642ef96e6b3c174836637a3c",
+      "protected": false
+    },
+    {
+      "name": "integration/core-consolidation-20261119",
+      "sha": "9674b1a9d86d702e412779295db8425e9e5a8c82",
+      "protected": false
+    },
+    {
+      "name": "integration/core-recovery-20261119",
+      "sha": "f29ebb01ff681a1276f385b8b568e41355b83505",
+      "protected": false
+    },
+    {
+      "name": "integration/core-ui-completion-20261119",
+      "sha": "7462138fb4f7110ea4f705c6f09742a2b5a253e4",
+      "protected": false
+    },
+    {
+      "name": "integration/erasure-fixture-stability-20261117",
+      "sha": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "protected": false
+    },
+    {
+      "name": "integration/release-threshold-check-20261117",
+      "sha": "ec98caba7328790ef36f0f2c144644bc05155d6b",
+      "protected": false
+    },
+    {
+      "name": "integration/store-untrusted-schema-20261117",
+      "sha": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "protected": false
+    },
+    {
+      "name": "integration/throttle-documentation-20261117",
+      "sha": "83de536ee373a7c4997222cf58ff563c53c8cbbc",
+      "protected": false
+    },
+    {
+      "name": "integration/unique-core-completion-20261120",
+      "sha": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "protected": false
+    },
+    {
+      "name": "main",
+      "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "protected": false
+    },
+    {
+      "name": "master/fnet207-recurring-remote-20261119",
+      "sha": "9bf260d63f454868e27d2d85a3d9fb5dce4beeae",
+      "protected": false
+    },
+    {
+      "name": "master/fnet209-utf8-20261119",
+      "sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115",
+      "protected": false
+    },
+    {
+      "name": "master/fux102-camera-lifecycle-20261119",
+      "sha": "a91bb5fdc97fc540a1617538073e92509ceba485",
+      "protected": false
+    },
+    {
+      "name": "master/fux106-retention-20261119",
+      "sha": "20e6c8479459f837915eb31a5d668e2bd470e5a8",
+      "protected": false
+    },
+    {
+      "name": "master/messaging-windows-private-storage-20261119",
+      "sha": "ef4a11975ab9159f44bcb8fa10fa6d2a1d585c45",
+      "protected": false
+    },
+    {
+      "name": "master/notification-transport-tests-20261119",
+      "sha": "66b23f8e9e37ce6efddf56c0215c6f29f741d489",
+      "protected": false
+    },
+    {
+      "name": "master/recover-analytics-20261119",
+      "sha": "0b67eb44811165e947d8db5ba25a3d868af892ff",
+      "protected": false
+    },
+    {
+      "name": "master/recover-areas-20261119",
+      "sha": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+      "protected": false
+    },
+    {
+      "name": "master/recover-federation-20261119",
+      "sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+      "protected": false
+    },
+    {
+      "name": "master/recover-governance-20261119",
+      "sha": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+      "protected": false
+    },
+    {
+      "name": "master/recover-messaging-20261119",
+      "sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+      "protected": false
+    },
+    {
+      "name": "master/recover-receipts-20261119",
+      "sha": "6186416ddd83c365405a798130999cb1e4df0f31",
+      "protected": false
+    },
+    {
+      "name": "master/recover-recurring-20261119",
+      "sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+      "protected": false
+    },
+    {
+      "name": "nodata/doc-sweep-20261118",
+      "sha": "866adc8f2c30abd294843e43a2ba42a6fe5f7b67",
+      "protected": false
+    },
+    {
+      "name": "planning/future-cli-specs-20261110",
+      "sha": "8e2372c064258fb8c53554ae8f6b81957932e885",
+      "protected": false
+    },
+    {
+      "name": "repair/core99-currenthead-ci-20261119",
+      "sha": "cb5920df14b716751195584f7adf9c9e43c65615",
+      "protected": false
+    },
+    {
+      "name": "repair/core127-e2e-observer-20261120",
+      "sha": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+      "protected": false
+    },
+    {
+      "name": "repair/core127-loading-regression-syntax-20261120",
+      "sha": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+      "protected": false
+    },
+    {
+      "name": "repair/core127-sync-loading-20261120",
+      "sha": "e5f7664c505a67fc1aa21c8d4609b55708991457",
+      "protected": false
+    },
+    {
+      "name": "repair/fnet204-feed-final-ci-20261119",
+      "sha": "80c76940ce8c38226e8b917bf840541f2d845f9c",
+      "protected": false
+    },
+    {
+      "name": "repair/fnet204-feed-golden-scanner-20261119",
+      "sha": "80c76940ce8c38226e8b917bf840541f2d845f9c",
+      "protected": false
+    },
+    {
+      "name": "repair/fnet204-qualifier-evidence-digest-20261119",
+      "sha": "6c49dbccc90c1a2be03fec05fe6e5fa9292d801c",
+      "protected": false
+    },
+    {
+      "name": "repair/fux101-final-ci-20261119",
+      "sha": "aab3bfda4812c4e99882c8efd00cd2d9328a444e",
+      "protected": false
+    },
+    {
+      "name": "repair/fux104-final-ci-20261119",
+      "sha": "409a00b0b36daa343cd70521b5acc2c9af9eb7c0",
+      "protected": false
+    },
+    {
+      "name": "work/spec-completion",
+      "sha": "d39bfef12d4ac1430815fa49ad799fb1c4bf9964",
+      "protected": false
+    }
+  ],
+  "open_prs": [
+    {
+      "number": 129,
+      "title": "test(e2e): observe loading state before native document navigation suspends JS",
+      "head": {
+        "ref": "repair/core127-e2e-observer-20261120",
+        "sha": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef"
+      },
+      "base": {
+        "ref": "integration/unique-core-completion-20261120",
+        "sha": "bea5de25cf76b66d87689034e2529f9b40c6dff6"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/129"
+    },
+    {
+      "number": 128,
+      "title": "docs: read-only security audit and repair-worker handoff",
+      "head": {
+        "ref": "audit/read-only-security-20261119",
+        "sha": "896d69f472652ed54c051ec82efcb7f162d1d2c4"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "aa01563fcc891da60fefebb8335eca27855678e8"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/128"
+    },
+    {
+      "number": 127,
+      "title": "Complete unique Core consolidation and accepted features",
+      "head": {
+        "ref": "integration/unique-core-completion-20261120",
+        "sha": "bea5de25cf76b66d87689034e2529f9b40c6dff6"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "aa01563fcc891da60fefebb8335eca27855678e8"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/127"
+    },
+    {
+      "number": 125,
+      "title": "Consolidate Core completion and independent audit repairs",
+      "head": {
+        "ref": "integration/core-completion-audits-20261119",
+        "sha": "22c767a90f69d286642ef96e6b3c174836637a3c"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "aa01563fcc891da60fefebb8335eca27855678e8"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/125"
+    },
+    {
+      "number": 112,
+      "title": "Complete Core catalogue, recovery verification, and CI fixture repairs",
+      "head": {
+        "ref": "integration/core-ui-completion-20261119",
+        "sha": "7462138fb4f7110ea4f705c6f09742a2b5a253e4"
+      },
+      "base": {
+        "ref": "feature/core-catalogue-continuation-20261119",
+        "sha": "5db3efc084e6a807bb4702c09d3235490d42b71d"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/112"
+    },
+    {
+      "number": 111,
+      "title": "API-036: qualify combined Core and preserve WAL fault coverage",
+      "head": {
+        "ref": "codex/api036-qualification-20261119",
+        "sha": "45356ca10e1ecd6e6441e0171910dd918b36f5d9"
+      },
+      "base": {
+        "ref": "integration/comprehensive-audit-20261119",
+        "sha": "839e86935767288e594914ad711486616a604eca"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/111"
+    },
+    {
+      "number": 109,
+      "title": "Complete Core UI flows and repair archive/WAL qualification",
+      "head": {
+        "ref": "feature/core-catalogue-continuation-20261119",
+        "sha": "5db3efc084e6a807bb4702c09d3235490d42b71d"
+      },
+      "base": {
+        "ref": "integration/comprehensive-audit-20261119",
+        "sha": "839e86935767288e594914ad711486616a604eca"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/109"
+    },
+    {
+      "number": 107,
+      "title": "Refresh held GOV-021 on reviewed core and reconcile migration 0022",
+      "head": {
+        "ref": "audit/gov021-final-core-refresh-20261119",
+        "sha": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34"
+      },
+      "base": {
+        "ref": "claude/gov-021-admin-recovery",
+        "sha": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/107"
+    },
+    {
+      "number": 104,
+      "title": "Master consolidation: harden Core export verification and preserve branch evidence",
+      "head": {
+        "ref": "integration/circula-master-consolidation-20261119",
+        "sha": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/104"
+    },
+    {
+      "number": 102,
+      "title": "Recover Core export, pagination, catalogue and traceability fixes",
+      "head": {
+        "ref": "integration/core-recovery-20261119",
+        "sha": "f29ebb01ff681a1276f385b8b568e41355b83505"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/102"
+    },
+    {
+      "number": 94,
+      "title": "Refresh isolated SEC-026 on reviewed core; retain policy hold",
+      "head": {
+        "ref": "audit/sec026-independent-20261119",
+        "sha": "45b596f12876e3f91c30b996457f7096e1fffe24"
+      },
+      "base": {
+        "ref": "integration/comprehensive-audit-20261119",
+        "sha": "992478594e5902f57a39f3772739bee6ab495d24"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/94"
+    },
+    {
+      "number": 90,
+      "title": "Consolidate reviewed core security, ledger, export and session repairs",
+      "head": {
+        "ref": "integration/comprehensive-audit-20261119",
+        "sha": "839e86935767288e594914ad711486616a604eca"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/90"
+    },
+    {
+      "number": 87,
+      "title": "fix(disputes): read dispute response and re-review periods from the policy in force at opening (AUD4-F03, partial)",
+      "head": {
+        "ref": "claude/aud4-f03-dispute-timelines",
+        "sha": "b6275747df66ede81ee4267e2cd6a2595f3bd680"
+      },
+      "base": {
+        "ref": "claude/aud4-auth-fixes",
+        "sha": "82dc18e07f6b22b9c34ef026f833391705b30067"
+      },
+      "draft": false,
+      "url": "https://github.com/djshellshoxxx/circula/pull/87"
+    },
+    {
+      "number": 86,
+      "title": "SEC-026: velocity and reciprocal-trade activity signals for administrators and reviewers",
+      "head": {
+        "ref": "claude/sec-026-abuse-signals",
+        "sha": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45"
+      },
+      "base": {
+        "ref": "claude/gov-021-admin-recovery",
+        "sha": "e11d2920a325b910bf75c1e431208b94ebb6045b"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/86"
+    },
+    {
+      "number": 85,
+      "title": "GOV-021: dual-approved administrator recovery for networks without an administrator",
+      "head": {
+        "ref": "claude/gov-021-admin-recovery",
+        "sha": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/85"
+    },
+    {
+      "number": 83,
+      "title": "[owner decision] AUD4-F02: reviewer password resets only through the platform operator",
+      "head": {
+        "ref": "claude/aud4-f02-reviewer-reset-policy",
+        "sha": "af54887aa0cd63ba080e2944aa52a5b759b008ca"
+      },
+      "base": {
+        "ref": "main",
+        "sha": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/83"
+    },
+    {
+      "number": 80,
+      "title": "FNET-204 (future): expiry, key rotation and viewer/filter binding for feed cursors",
+      "head": {
+        "ref": "claude/fnet-204-signed-cursors",
+        "sha": "0952c94a5dbab4044d7673ce9d51cec9063ab97f"
+      },
+      "base": {
+        "ref": "chatgpt/feed-signed-cursors-20261116",
+        "sha": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036"
+      },
+      "draft": true,
+      "url": "https://github.com/djshellshoxxx/circula/pull/80"
+    }
+  ]
+}

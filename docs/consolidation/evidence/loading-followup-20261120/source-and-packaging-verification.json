@@ -1,0 +1,25 @@
+{
+  "observed_at": "2026-11-20T23:17:29.715625+00:00",
+  "reviewed_repair": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "tree": "029e5fdda2d03347389397576ec08701ae04cec2",
+  "prior_core": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+  "earlier_local_qualification": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "complete_changed_paths_since_earlier_source": [
+    "e2e/tests/loading.spec.js",
+    "internal/web/static/app.js",
+    "scripts/test_app_messages.cjs"
+  ],
+  "all_recorded_source_hashes_verified": true,
+  "browser_failure": {
+    "job_id": 136563225100,
+    "run_id": 44815660965,
+    "head": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+    "raw_bytes": 136343,
+    "raw_sha256": "a7f244047ba6f5a6c32c8ae37e6d67d955868c0ed83e17d8f48979b4302d2d61",
+    "lossless_gzip_verified": true,
+    "reported_passed": 595,
+    "reported_failed": 2
+  },
+  "local_checks_original_manifest_entries": 4,
+  "local_browser_tests_executed": 0
+}

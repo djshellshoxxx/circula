@@ -1,0 +1,12 @@
+{
+  "scope": "lossless transport of original raw execution evidence",
+  "original_name": "old-production-negative-control.log",
+  "archive_name": "old-production-negative-control.log.gz",
+  "original_bytes": 4750,
+  "original_sha256": "0c3d1a5cca49c8d1323630c9692c2868fc0972d68ec2a0d5d6b1a4077db1cbbc",
+  "archive_bytes": 1404,
+  "archive_sha256": "544c87ad6a03a579da2d77735d9af1dfdc177842a9d6adc840351b27e6e70019",
+  "raw_bytes_unchanged_after_decompression": true,
+  "original_four_entry_manifest_unchanged": true,
+  "reason": "Original failure output includes two blank excerpt lines containing spaces. Preserve the exact bytes in gzip rather than rewriting evidence to satisfy a source-diff whitespace check."
+}

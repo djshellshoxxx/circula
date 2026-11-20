@@ -1,0 +1,51 @@
+{
+  "observed_at_utc": "2026-11-20T23:34:49.470255+00:00",
+  "parent": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "paths": [
+    ".github/workflows/ci.yml"
+  ],
+  "patch_sha256": "7539a262d36df1470f37091efa0d4d71231f3bad421c79c7914ae0198d2dcf48",
+  "checks": [
+    {
+      "name": "YAML semantic equality after normalizing exactly the two Linux deadlines",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "name": "git diff --check",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "name": "scripts/check-action-pins.sh",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "name": "scripts/check-hygiene.sh",
+      "result": "passed",
+      "exit_code": 0,
+      "embedded_python_tests_passed": 4
+    },
+    {
+      "name": "Prior full-race archive SHA256 and service package pass verification",
+      "result": "passed",
+      "exit_code": 0,
+      "raw_sha256": "31b2f4b9ed3b6b6750bef6052abb28261d0d1e9db33d04ed4042b9204bfeba52",
+      "package_elapsed_seconds": 1294.982
+    }
+  ],
+  "not_executed": [
+    "New local full Go suite for workflow-only change; provider exact-head suite required."
+  ],
+  "limits_unchanged": [
+    "All Go/package selectors, race detector, QA001 seed/shard budget, fuzz executions, retries, assertion code, source/dependencies, platform matrix, evidence reporting and action pins."
+  ],
+  "local_commit": "a4becfda0f10d5fa3790bf0ee4aeff6552dfeca1",
+  "tree": "43e65ee91a90ff70b70cc69d0b517b8367a2585f",
+  "workflow_blob": "34d4f6ed758f1c685c1a38244a422c409687e70a",
+  "published_commit": "11739c7f8f59455b4dc480294cab4d79f7933cb9",
+  "published_whole_tree_equals_reviewed_local_tree": true,
+  "published_parent_verified": true,
+  "post_fetch_diff_empty": true
+}

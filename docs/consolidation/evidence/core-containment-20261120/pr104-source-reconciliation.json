@@ -1,0 +1,2223 @@
+{
+  "source": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+  "candidate": "eef0c6d8c832ce994db1019eb5e7d6a41800b8ef",
+  "merge_base": "c3c991aa3c12a11edce2874e9444b9d2a99f746c",
+  "changed_paths_from_merge_base": [
+    {
+      "path": ".github/workflows/export-reader.yml",
+      "source_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198",
+      "candidate_blob": "7c251a76694d4f6670ed2442f5a54cef0007d198",
+      "source_bytes": 1481,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/ANALYTICS_QUALIFICATION.json",
+      "source_blob": "e0e0243d0161491cec54cd7dc4af1bb34f7e2d82",
+      "candidate_blob": null,
+      "source_bytes": 31241,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/ARCHIVE_FEATURE_STATUS.md",
+      "source_blob": "de8b4bc8d6ee49fa9bac2320d6d3ec2e91a410aa",
+      "candidate_blob": null,
+      "source_bytes": 19795,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/ARCHIVE_MODULE_QUALIFICATION.json",
+      "source_blob": "05c5cdee19687dd4cb2ec24c4bd76b4a996d0286",
+      "candidate_blob": null,
+      "source_bytes": 484656,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.json",
+      "source_blob": "aa41e57c41dc751f15c6d2106ef492b23890e9f9",
+      "candidate_blob": null,
+      "source_bytes": 399417,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.md",
+      "source_blob": "0b8fca45c9a81060a85ac15b04648d1d0534b3eb",
+      "candidate_blob": null,
+      "source_bytes": 12505,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/AREAS_RECOVERY_QUALIFICATION.json",
+      "source_blob": "5f0d231a982ae6a268fc92bff47b89eb05804a3c",
+      "candidate_blob": null,
+      "source_bytes": 14788,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json",
+      "source_blob": "7d75b1aab59fcd86d29b1c1b5d8943a95ad711c5",
+      "candidate_blob": null,
+      "source_bytes": 547367,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/BRANCH_DELTA.md",
+      "source_blob": "975a2e0795b17e3d58420ae8697809b1037d2c60",
+      "candidate_blob": null,
+      "source_bytes": 20137,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.json",
+      "source_blob": "739d7fe495ca6d09335221882587d91ffafa0d63",
+      "candidate_blob": null,
+      "source_bytes": 1442176,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.md",
+      "source_blob": "f14b5612b080f1e001ca20fecadb773fb8e30113",
+      "candidate_blob": null,
+      "source_bytes": 26322,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/CONTINUATION.md",
+      "source_blob": "a7378dc1dc620140d5198df94addc20cb8377dd1",
+      "candidate_blob": null,
+      "source_bytes": 12739,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/CORE_PROVIDER_CHECKPOINT.json",
+      "source_blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a",
+      "candidate_blob": "e1500e082f5ff23fbebfd92190ad2e69123a102a",
+      "source_bytes": 20551,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/CORE_QUALIFICATION.json",
+      "source_blob": "03344d7725d359b870459b6045e4d44d7a857367",
+      "candidate_blob": "03344d7725d359b870459b6045e4d44d7a857367",
+      "source_bytes": 11247,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/EXECUTION_CHECKPOINT.md",
+      "source_blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137",
+      "candidate_blob": "8931fb5bb16fe1834c3cb08dee541ca05b466137",
+      "source_bytes": 5409,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FEDERATION_PROVIDER_CURRENT.json",
+      "source_blob": "6edece2e8f5b53ab4842517fd7de3a75e8ff68bb",
+      "candidate_blob": null,
+      "source_bytes": 21450,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.json",
+      "source_blob": "709cb5e401cb369fe4a27e6c7f048278cf9b7abb",
+      "candidate_blob": null,
+      "source_bytes": 6588,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.md",
+      "source_blob": "ef5348f3e79dd700bb589f49fbe0cade8aa87f76",
+      "candidate_blob": null,
+      "source_bytes": 3385,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.json",
+      "source_blob": "447236d99b0931c9ef269c3d8a1405baf15d92d6",
+      "candidate_blob": null,
+      "source_bytes": 16543,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.md",
+      "source_blob": "2609ba3aaf9fe0bd46c6d2d849919a8214ba20b9",
+      "candidate_blob": null,
+      "source_bytes": 5917,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FOUR_MODULE_RECONCILIATION.md",
+      "source_blob": "da502eab24bab53aae255edc31c0a39e6146ec49",
+      "candidate_blob": null,
+      "source_bytes": 18392,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md",
+      "source_blob": "6c6a8c33cde2aeb1800f5daa57fd821ac0393a78",
+      "candidate_blob": null,
+      "source_bytes": 38325,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/GOVERNANCE_RECOVERY_QUALIFICATION.json",
+      "source_blob": "cde0889c5a5a45b9f38ca3c6fc790cf26ed7bff8",
+      "candidate_blob": null,
+      "source_bytes": 13904,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_EVIDENCE.json",
+      "source_blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6",
+      "candidate_blob": "1d7ef915d6f3ff47022b44598b06a5d25ceb5bc6",
+      "source_bytes": 229132,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_QUALIFICATION.md",
+      "source_blob": "34aebf4b77c273c530fc07cb118791dc53a3b503",
+      "candidate_blob": "34aebf4b77c273c530fc07cb118791dc53a3b503",
+      "source_bytes": 3803,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MASTER_REPORT.md",
+      "source_blob": "652891ae1feffd69d9a3f99ea1286330848ac05f",
+      "candidate_blob": null,
+      "source_bytes": 42227,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MESSAGING_RECOVERY_QUALIFICATION.json",
+      "source_blob": "ff9e6e7b9197ec9a2e1298cd0dd85a3f9dc161df",
+      "candidate_blob": null,
+      "source_bytes": 13757,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/MODULE_QUALIFICATION.json",
+      "source_blob": "8ca4880a3ce78d694cff94087682d4d8454cca73",
+      "candidate_blob": null,
+      "source_bytes": 44967,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_NATIVE_PUBLICATION.json",
+      "source_blob": "4c1eba9124fd8438485d3a569c9c0a85f28dd7f8",
+      "candidate_blob": null,
+      "source_bytes": 2220,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_PROVIDER_CHECKPOINT.json",
+      "source_blob": "4264378a10521421f2044e09f8d57b165b5cd23e",
+      "candidate_blob": null,
+      "source_bytes": 36609,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.json",
+      "source_blob": "4ad741aa8e20ed8a1ecbc6e088a1fea229712e57",
+      "candidate_blob": null,
+      "source_bytes": 19228,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.md",
+      "source_blob": "ad509ac7a8a4da4909f98296fa6513a48e55ee12",
+      "candidate_blob": null,
+      "source_bytes": 7017,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/OWNERSHIP.md",
+      "source_blob": "0507ede75d61fd1b15a34223207ea4cc02d38cf2",
+      "candidate_blob": null,
+      "source_bytes": 10676,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/PROVIDER_STATUS_20261119T1353Z.json",
+      "source_blob": "c86a53b3eeea727acd780134f5edb576598398fe",
+      "candidate_blob": null,
+      "source_bytes": 49109,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/PUBLICATIONS.json",
+      "source_blob": "f17f38e8071e316098f01e34d1c113d3f5459b84",
+      "candidate_blob": null,
+      "source_bytes": 8985,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/QR_CAMERA_QUALIFICATION.json",
+      "source_blob": "dec30188f4000126c7684dfe7fc1a42bbdbba462",
+      "candidate_blob": null,
+      "source_bytes": 2147,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECEIPTS_CURRENT_QUALIFICATION.json",
+      "source_blob": "127520201bf9e7ef07d64be80705f702ef270a26",
+      "candidate_blob": null,
+      "source_bytes": 7531,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECEIPTS_PUBLICATION.json",
+      "source_blob": "a7b5f536fb69b9ca624e8c9b2f1cefa6e1d92a74",
+      "candidate_blob": null,
+      "source_bytes": 10670,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECURRING_CI.json",
+      "source_blob": "ccc179d4e02103a222c1c779847368bae5228bd5",
+      "candidate_blob": null,
+      "source_bytes": 3824,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_FINAL_REVIEW.json",
+      "source_blob": "a13b758dbd9de0e09e41ac9442be16dde2d28806",
+      "candidate_blob": null,
+      "source_bytes": 1971,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_VCS_REVIEW.json",
+      "source_blob": "905769ad3815f14cb8db8bd14c34382eb6302aa4",
+      "candidate_blob": null,
+      "source_bytes": 1488,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECURRING_PROVIDER_CURRENT.json",
+      "source_blob": "087bc04d4f327ce65a2cb002560ed1c4d1cff639",
+      "candidate_blob": null,
+      "source_bytes": 21191,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.json",
+      "source_blob": "e960bcea746ec9b24c9c0c7dc7a8818f9bc4af6d",
+      "candidate_blob": null,
+      "source_bytes": 16459,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.md",
+      "source_blob": "c5d7ee67c438078d6e0f5c398c0439531fdf9622",
+      "candidate_blob": null,
+      "source_bytes": 5781,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/REPORT_PUBLICATION_QUALIFICATION.json",
+      "source_blob": "6057d7ed8befc08a6837a4e855beea2678580a0d",
+      "candidate_blob": null,
+      "source_bytes": 3174,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/REVIEW.json",
+      "source_blob": "628f6e9f5d3ea0e3523d61589a9b583906057700",
+      "candidate_blob": null,
+      "source_bytes": 125713,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/REVIEW.md",
+      "source_blob": "376c4964c8be7cf8324da1f0660e9b8cc9e82c5d",
+      "candidate_blob": null,
+      "source_bytes": 35138,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/THREE_RECOVERY_FINAL_REVIEW.json",
+      "source_blob": "1b286a37d9bd130ba23e1aaa6e0304b032956bfe",
+      "candidate_blob": null,
+      "source_bytes": 5359,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/VERIFICATION_FILES.json",
+      "source_blob": "33fe16b1445c607bfa7044ea0904eb1fdb9f812b",
+      "candidate_blob": null,
+      "source_bytes": 3425,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/pending-traceability.patch",
+      "source_blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c",
+      "candidate_blob": "71cdc5fa189be5f25ac8c6c1ded21d8b9c2d410c",
+      "source_bytes": 5398,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.json",
+      "source_blob": "dbf1520d126bd4788b3ffe1948230e9b6f51455d",
+      "candidate_blob": null,
+      "source_bytes": 2597,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.md",
+      "source_blob": "2716cfe60b44782b7105a5624a04fd285dcb1980",
+      "candidate_blob": null,
+      "source_bytes": 1281,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.json",
+      "source_blob": "5122e5773eb02f95d9bea8a183563ea2b1e9fb79",
+      "candidate_blob": null,
+      "source_bytes": 11817,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.md",
+      "source_blob": "71db0c6dd3ff7b76df901256cd512a3766c56e7c",
+      "candidate_blob": null,
+      "source_bytes": 9309,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.json",
+      "source_blob": "4b1f665dfe51000dc7f81ffd7b2dca1d81a87ab9",
+      "candidate_blob": null,
+      "source_bytes": 9845,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.md",
+      "source_blob": "a7fb628ba1e17057b3b03cfd5840b571b1bc3163",
+      "candidate_blob": null,
+      "source_bytes": 7465,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch",
+      "source_blob": "de9ba9c17a34cc02e915a465a997fab92239796d",
+      "candidate_blob": null,
+      "source_bytes": 11129,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.json",
+      "source_blob": "027c3d37c35f3d9013ffc41b7abaa9fa41993326",
+      "candidate_blob": null,
+      "source_bytes": 1707,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.txt",
+      "source_blob": "130724c8c256a8e475adc227a4c0324a8928f01a",
+      "candidate_blob": null,
+      "source_bytes": 3289,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.json",
+      "source_blob": "a55c6dd4d90f8e197907d41f40da43370940b437",
+      "candidate_blob": null,
+      "source_bytes": 1791,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.txt",
+      "source_blob": "290cd149b9bc8055aca0437f1045ee012861d4ec",
+      "candidate_blob": null,
+      "source_bytes": 157,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.json",
+      "source_blob": "ca660ecbdadc3a5b1cc58764e907fe9ebf3b6bc4",
+      "candidate_blob": null,
+      "source_bytes": 1702,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.txt",
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "candidate_blob": null,
+      "source_bytes": 0,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.json",
+      "source_blob": "0827bca8dafed3ec0b931c5bfd80c854ea9fa678",
+      "candidate_blob": null,
+      "source_bytes": 1640,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.txt",
+      "source_blob": "db578740794419cd72ba17996f6ef4ceb485e839",
+      "candidate_blob": null,
+      "source_bytes": 226,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.json",
+      "source_blob": "50979e27444b1889f9de1d3287f090b1164b0f9b",
+      "candidate_blob": null,
+      "source_bytes": 4249,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.md",
+      "source_blob": "4a5424c4fa50e155ac86a64e4a17df5ce7714d4d",
+      "candidate_blob": null,
+      "source_bytes": 4133,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch",
+      "source_blob": "2b5f7ff0e64a17ac0aae6356fe405381b3bc7d6a",
+      "candidate_blob": null,
+      "source_bytes": 4525,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.json",
+      "source_blob": "3f68c3abb49beb40803f69e6abd2b69c5efc569d",
+      "candidate_blob": null,
+      "source_bytes": 1633,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.txt",
+      "source_blob": "a47eab34d9ec795d4060b7d2a76f863b15d6497a",
+      "candidate_blob": null,
+      "source_bytes": 1245,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.json",
+      "source_blob": "14cf77f6284204321cff26fcaa8405b3d9e71c74",
+      "candidate_blob": null,
+      "source_bytes": 1688,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.txt",
+      "source_blob": "f5936d492e88a6c7849328d579885c2fee5becbe",
+      "candidate_blob": null,
+      "source_bytes": 35,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.json",
+      "source_blob": "e19b8401a216ca67726189e62bd82f0488f7b682",
+      "candidate_blob": null,
+      "source_bytes": 1636,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.txt",
+      "source_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "candidate_blob": null,
+      "source_bytes": 0,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.json",
+      "source_blob": "cfc033148fb5aca564b68a2776107441dcba9f94",
+      "candidate_blob": null,
+      "source_bytes": 3237,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.md",
+      "source_blob": "adc8721ab8dece3aa2254140e0cb12c19aec3d9c",
+      "candidate_blob": null,
+      "source_bytes": 3523,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.json",
+      "source_blob": "70aa759803fab025f341c6b0465747a20211927c",
+      "candidate_blob": null,
+      "source_bytes": 20969,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.md",
+      "source_blob": "7caf4bc6bacc97cab7a13b17cfc5c1b311720150",
+      "candidate_blob": null,
+      "source_bytes": 1818,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/RECONCILIATION.md",
+      "source_blob": "3f29d19a9742b87eb446190d11cfc604c6253d39",
+      "candidate_blob": null,
+      "source_bytes": 19782,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/module-name-status.txt",
+      "source_blob": "f13afa12d565c9d29ed60c40e8cd6f94b7a763ba",
+      "candidate_blob": null,
+      "source_bytes": 6626,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/reconciliation.json",
+      "source_blob": "c0893637f6461933cc1e5892c7b9fb419f443750",
+      "candidate_blob": null,
+      "source_bytes": 3794,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/source-provenance.json",
+      "source_blob": "869c6d400d0d9295a320f77c68774e6f834487f3",
+      "candidate_blob": null,
+      "source_bytes": 55977,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-green.json",
+      "source_blob": "02492d056bf59ea1e45209ffd47026ef8620e441",
+      "candidate_blob": null,
+      "source_bytes": 1403,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-handoff.json",
+      "source_blob": "3c7caf02b580674db23d6048eae1dba681b90934",
+      "candidate_blob": null,
+      "source_bytes": 1990,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-red.json",
+      "source_blob": "550f56f50d1de1d1a1c036d4be49026481924b85",
+      "candidate_blob": null,
+      "source_bytes": 705,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.json",
+      "source_blob": "0d6beb54452adc74ec7437e5fa249fe53609c49d",
+      "candidate_blob": null,
+      "source_bytes": 3134,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.md",
+      "source_blob": "11ffb3005514059f2c095c37f8e0afc98b0ca9e1",
+      "candidate_blob": null,
+      "source_bytes": 2472,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/root-final-review.json",
+      "source_blob": "63f2c62e2caefab9bf89e2f53dabfab635dd8c0d",
+      "candidate_blob": null,
+      "source_bytes": 2005,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.json",
+      "source_blob": "46da07166006abe349ba8f287c198615b52a430d",
+      "candidate_blob": null,
+      "source_bytes": 17930,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.md",
+      "source_blob": "5c71f9214c6d707332006e8aebcd7a4fe9138a13",
+      "candidate_blob": null,
+      "source_bytes": 4164,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/provenance-and-static-review.json",
+      "source_blob": "2f998fd5ea4ca7718380b112129d636d8beda2c1",
+      "candidate_blob": null,
+      "source_bytes": 71011,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.json",
+      "source_blob": "75ea8874f05000b2f36ff90ae14b51a972f05680",
+      "candidate_blob": null,
+      "source_bytes": 75457,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.md",
+      "source_blob": "60553731443793899c265eca97ed3f7435013181",
+      "candidate_blob": null,
+      "source_bytes": 7869,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json",
+      "source_blob": "62df10bb4529a2b29cd67fcf67773a0c05d31045",
+      "candidate_blob": null,
+      "source_bytes": 478767,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/race.log",
+      "source_blob": "fbf15362b3f9ede1f6d52860043fbebe053c2423",
+      "candidate_blob": null,
+      "source_bytes": 52746,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+      "source_blob": "8bf61b0a7cfc7bc9371f96df6f38e53bb4742221",
+      "candidate_blob": null,
+      "source_bytes": 37748,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/core-final-full-test.log",
+      "source_blob": "60c9f44a03cd4532b4f54879187227dbcb2d2b22",
+      "candidate_blob": null,
+      "source_bytes": 1648,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/core-integration-first-test.log",
+      "source_blob": "e21dcb6d1f442b5da12357d15d5c3075246e94a6",
+      "candidate_blob": null,
+      "source_bytes": 2379,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/federation-core-tests-failure.log",
+      "source_blob": "f80aea222a533d13c7cb53bdc55b94dca18c7822",
+      "candidate_blob": null,
+      "source_bytes": 20221,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/federation-core-vet-failure.log",
+      "source_blob": "5d164fa62d250e5dfc7d8955fa7f90da9f69061a",
+      "candidate_blob": null,
+      "source_bytes": 24628,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-export-before.log",
+      "source_blob": "3faca67f98beb1971737add71d605265d3c80514",
+      "candidate_blob": null,
+      "source_bytes": 18229,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-export-complete-size.log",
+      "source_blob": "00efb4f8b3fdbeef72e868b35f2a91a642cf6d11",
+      "candidate_blob": null,
+      "source_bytes": 122,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-export-final-current.log",
+      "source_blob": "abd8bec63e5eea0dd58ae18a586c88704302420e",
+      "candidate_blob": null,
+      "source_bytes": 121,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.json",
+      "source_blob": "09dec5552e033b1e5953f0466eba97c71c03dbed",
+      "candidate_blob": null,
+      "source_bytes": 656,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.log",
+      "source_blob": "583918329556d61c1e9c6f5049af37f9b9259329",
+      "candidate_blob": null,
+      "source_bytes": 138,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-export-reviewed.log",
+      "source_blob": "6cbd5add347fcc2e10c4b5a719ebfef8d858a227",
+      "candidate_blob": null,
+      "source_bytes": 121,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.json",
+      "source_blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f",
+      "candidate_blob": "e2664dcb3ab2a5b08234878a9dc43b4bc1db7d6f",
+      "source_bytes": 888,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-local.log",
+      "source_blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1",
+      "candidate_blob": "7de0176f22e06a4f0413d7d2e5d454d263918ee1",
+      "source_bytes": 138,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.json",
+      "source_blob": "35947b9d9cc87ae28704c19a54608a44c60520e0",
+      "candidate_blob": "35947b9d9cc87ae28704c19a54608a44c60520e0",
+      "source_bytes": 4036,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.md",
+      "source_blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563",
+      "candidate_blob": "7bb1418d7c5deb2920ac7d2606c47b0990d28563",
+      "source_bytes": 2038,
+      "status": "identical"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/python-zip-size-before.log",
+      "source_blob": "07c81a08b5c7af4d8c93ff942402a35404cfd1b1",
+      "candidate_blob": null,
+      "source_bytes": 4034,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.manifest.json",
+      "source_blob": "a1dd16eb7832527b89f5eea2f7dd767eb66382c8",
+      "candidate_blob": null,
+      "source_bytes": 41803,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+      "source_blob": "55c4e9817609abb9269923f86814911703165639",
+      "candidate_blob": null,
+      "source_bytes": 522344,
+      "status": "absent_from_candidate"
+    },
+    {
+      "path": "scripts/read-export.py",
+      "source_blob": "bde02445e22e837370fe5911cdee29d2fae3a234",
+      "candidate_blob": "60e6d81d990c0a0e6078f93543e2a2eb051411f3",
+      "source_bytes": 16852,
+      "status": "different"
+    },
+    {
+      "path": "scripts/test_read_export.py",
+      "source_blob": "af5d950d72b4e8f2d209bb31e393b98f619cac5d",
+      "candidate_blob": "e3a87bad71ba1725995da5333086bd33876c64b3",
+      "source_bytes": 33839,
+      "status": "different"
+    }
+  ],
+  "archive_path": "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+  "archive_entries": [
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/divergent-four-current-heads.json",
+      "bytes": 1720,
+      "compressed_bytes": 819,
+      "crc32": "9d698a39"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/divergent-four-reconciliation-update.json",
+      "bytes": 3451,
+      "compressed_bytes": 1679,
+      "crc32": "86568496"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/checksums.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/dependencies.log",
+      "bytes": 868,
+      "compressed_bytes": 368,
+      "crc32": "dc290cb2"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/format.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-legacy.log",
+      "bytes": 427,
+      "compressed_bytes": 214,
+      "crc32": "07e8a194"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-v2-strings.log",
+      "bytes": 427,
+      "compressed_bytes": 207,
+      "crc32": "eefa16da"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/fuzz-wire.log",
+      "bytes": 347,
+      "compressed_bytes": 189,
+      "crc32": "2100179b"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/isolation.log",
+      "bytes": 85,
+      "compressed_bytes": 82,
+      "crc32": "0aef768f"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/race.log",
+      "bytes": 246978,
+      "compressed_bytes": 15759,
+      "crc32": "424a4b0c"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/receipt.json",
+      "bytes": 13958,
+      "compressed_bytes": 4001,
+      "crc32": "a01a31f7"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/toolchain.log",
+      "bytes": 33,
+      "compressed_bytes": 35,
+      "crc32": "8ed2f416"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/federation-combined-qualification/vet.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/action-pins.log",
+      "bytes": 32,
+      "compressed_bytes": 33,
+      "crc32": "f64f4ca5"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-green.json",
+      "bytes": 1403,
+      "compressed_bytes": 593,
+      "crc32": "f2fdb762"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-green.log",
+      "bytes": 2466,
+      "compressed_bytes": 1001,
+      "crc32": "fca12caf"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-handoff.json",
+      "bytes": 1990,
+      "compressed_bytes": 1080,
+      "crc32": "ea3de6f7"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-red.json",
+      "bytes": 705,
+      "compressed_bytes": 449,
+      "crc32": "14a430b8"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-red.log",
+      "bytes": 4627,
+      "compressed_bytes": 1411,
+      "crc32": "5ba44366"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-syntax-script.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/followup-syntax-test.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/green-initial.json",
+      "bytes": 412,
+      "compressed_bytes": 276,
+      "crc32": "753ac45c"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/green-initial.log",
+      "bytes": 4833,
+      "compressed_bytes": 1138,
+      "crc32": "573cab9a"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/green.json",
+      "bytes": 1878,
+      "compressed_bytes": 787,
+      "crc32": "837d3256"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/handoff.json",
+      "bytes": 4252,
+      "compressed_bytes": 1955,
+      "crc32": "947f6835"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/lifecycle.log",
+      "bytes": 4840,
+      "compressed_bytes": 1154,
+      "crc32": "7a1a1189"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/red.json",
+      "bytes": 708,
+      "compressed_bytes": 460,
+      "crc32": "fa48b1d2"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/red.log",
+      "bytes": 17528,
+      "compressed_bytes": 2075,
+      "crc32": "6279579b"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-0.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-1.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-2.log",
+      "bytes": 2467,
+      "compressed_bytes": 995,
+      "crc32": "f191dacf"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-final-review.json",
+      "bytes": 2005,
+      "compressed_bytes": 911,
+      "crc32": "d1ace7ed"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-green.json",
+      "bytes": 580,
+      "compressed_bytes": 392,
+      "crc32": "37cacca7"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/root-green.log",
+      "bytes": 2145,
+      "compressed_bytes": 891,
+      "crc32": "f9b22e40"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/syntax-script.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/syntax-tests.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/qr-camera-lifecycle/whitespace.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/checksums.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/dependencies.log",
+      "bytes": 863,
+      "compressed_bytes": 368,
+      "crc32": "c8844295"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/format.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/fuzz-calendar.log",
+      "bytes": 347,
+      "compressed_bytes": 194,
+      "crc32": "a0f423e1"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/fuzz-schedule.log",
+      "bytes": 346,
+      "compressed_bytes": 187,
+      "crc32": "0eeaa3a8"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/isolation.log",
+      "bytes": 85,
+      "compressed_bytes": 82,
+      "crc32": "0aef768f"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/race.log",
+      "bytes": 143781,
+      "compressed_bytes": 10379,
+      "crc32": "89c76f9d"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/receipt.json",
+      "bytes": 14186,
+      "compressed_bytes": 4284,
+      "crc32": "4d3c54db"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/toolchain.log",
+      "bytes": 33,
+      "compressed_bytes": 35,
+      "crc32": "8ed2f416"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/attempt-20261119T131057Z/vet.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/isolation.log",
+      "bytes": 840,
+      "compressed_bytes": 434,
+      "crc32": "540d2b91"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/receipt.json",
+      "bytes": 6515,
+      "compressed_bytes": 2839,
+      "crc32": "a20ff6f2"
+    },
+    {
+      "path": "evidence/branch-inventory/legacy-recovery/recurring-combined-qualification/toolchain.log",
+      "bytes": 33,
+      "compressed_bytes": 35,
+      "crc32": "8ed2f416"
+    },
+    {
+      "path": "evidence/notification-native-review/TRANSPORT-QUALIFICATION-initial.md",
+      "bytes": 3998,
+      "compressed_bytes": 1941,
+      "crc32": "bf08684f"
+    },
+    {
+      "path": "evidence/notification-native-review/TRANSPORT-QUALIFICATION-reviewed.md",
+      "bytes": 4122,
+      "compressed_bytes": 1997,
+      "crc32": "0eb1ed68"
+    },
+    {
+      "path": "evidence/notification-native-review/module-provider.log",
+      "bytes": 23789,
+      "compressed_bytes": 6477,
+      "crc32": "0475e0c0"
+    },
+    {
+      "path": "evidence/notification-native-review/notification-transport-native.yml",
+      "bytes": 3780,
+      "compressed_bytes": 1443,
+      "crc32": "172b7a09"
+    },
+    {
+      "path": "evidence/notification-native-review/review-initial.json",
+      "bytes": 20011,
+      "compressed_bytes": 2317,
+      "crc32": "85fe72f2"
+    },
+    {
+      "path": "evidence/notification-native-review/review.json",
+      "bytes": 20969,
+      "compressed_bytes": 2762,
+      "crc32": "d4359494"
+    },
+    {
+      "path": "evidence/notification-native-review/review.md",
+      "bytes": 1818,
+      "compressed_bytes": 986,
+      "crc32": "f13db0a1"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/final-focused-replay.log",
+      "bytes": 663,
+      "compressed_bytes": 386,
+      "crc32": "23548ff0"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/invalid-replacement-final-probe.mjs",
+      "bytes": 16566,
+      "compressed_bytes": 4111,
+      "crc32": "b54f2e0d"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/invalid-replacement-probe.mjs",
+      "bytes": 16525,
+      "compressed_bytes": 4082,
+      "crc32": "2dea22dc"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/invalid-replacement-red.json",
+      "bytes": 784,
+      "compressed_bytes": 499,
+      "crc32": "6bc64c49"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/invalid-replacement-red.log",
+      "bytes": 1350,
+      "compressed_bytes": 704,
+      "crc32": "1ebf6b29"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/manual-submission-final-probe.mjs",
+      "bytes": 16281,
+      "compressed_bytes": 4049,
+      "crc32": "25a98265"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/manual-submission-probe.mjs",
+      "bytes": 16281,
+      "compressed_bytes": 4049,
+      "crc32": "816bca71"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/manual-submission-red.json",
+      "bytes": 820,
+      "compressed_bytes": 515,
+      "crc32": "6c8ce6d8"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/manual-submission-red.log",
+      "bytes": 1049,
+      "compressed_bytes": 534,
+      "crc32": "61e8c71c"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/review.json",
+      "bytes": 3134,
+      "compressed_bytes": 1437,
+      "crc32": "27bd466f"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/review.md",
+      "bytes": 2472,
+      "compressed_bytes": 1298,
+      "crc32": "80a23a4b"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/scan-frozen-2ee089e.js",
+      "bytes": 6373,
+      "compressed_bytes": 2142,
+      "crc32": "8e8dd9e0"
+    },
+    {
+      "path": "evidence/qr-camera-independent-review/scan-frozen-7a33e6e.js",
+      "bytes": 6499,
+      "compressed_bytes": 2195,
+      "crc32": "62c04133"
+    },
+    {
+      "path": "evidence/receipts-current-qualification/fuzz-certificate.log",
+      "bytes": 497,
+      "compressed_bytes": 214,
+      "crc32": "dd0ee6d4"
+    },
+    {
+      "path": "evidence/receipts-current-qualification/fuzz-create.log",
+      "bytes": 679,
+      "compressed_bytes": 280,
+      "crc32": "ac2af089"
+    },
+    {
+      "path": "evidence/receipts-current-qualification/fuzz-decode.log",
+      "bytes": 497,
+      "compressed_bytes": 215,
+      "crc32": "6a2cc7d0"
+    },
+    {
+      "path": "evidence/receipts-current-qualification/race.log",
+      "bytes": 105680,
+      "compressed_bytes": 7752,
+      "crc32": "0af95891"
+    },
+    {
+      "path": "evidence/receipts-current-qualification/receipt.json",
+      "bytes": 7531,
+      "compressed_bytes": 2414,
+      "crc32": "2f2546c4"
+    },
+    {
+      "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION-attempt1.json",
+      "bytes": 165002,
+      "compressed_bytes": 23188,
+      "crc32": "09e30cbe"
+    },
+    {
+      "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION-attempt2.json",
+      "bytes": 417187,
+      "compressed_bytes": 46310,
+      "crc32": "91c9a828"
+    },
+    {
+      "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION-attempt3.json",
+      "bytes": 478767,
+      "compressed_bytes": 52912,
+      "crc32": "0bdd18ec"
+    },
+    {
+      "path": "evidence/recovered-qualification/ARCHIVE_MODULE_QUALIFICATION.json",
+      "bytes": 484656,
+      "compressed_bytes": 54114,
+      "crc32": "d0430bab"
+    },
+    {
+      "path": "evidence/recovered-qualification/analytics-receipt.json",
+      "bytes": 24302,
+      "compressed_bytes": 3539,
+      "crc32": "4ca998a4"
+    },
+    {
+      "path": "evidence/recovered-qualification/areas-receipt.json",
+      "bytes": 30460,
+      "compressed_bytes": 4564,
+      "crc32": "153d8d3b"
+    },
+    {
+      "path": "evidence/recovered-qualification/discovery-receipt.json",
+      "bytes": 29377,
+      "compressed_bytes": 4090,
+      "crc32": "6accc9a1"
+    },
+    {
+      "path": "evidence/recovered-qualification/favorites-receipt.json",
+      "bytes": 30891,
+      "compressed_bytes": 4490,
+      "crc32": "a9a1e282"
+    },
+    {
+      "path": "evidence/recovered-qualification/federation-receipt.json",
+      "bytes": 29982,
+      "compressed_bytes": 4520,
+      "crc32": "d538f341"
+    },
+    {
+      "path": "evidence/recovered-qualification/feed-receipt.json",
+      "bytes": 30748,
+      "compressed_bytes": 4483,
+      "crc32": "1c01c2c3"
+    },
+    {
+      "path": "evidence/recovered-qualification/governance-receipt.json",
+      "bytes": 29673,
+      "compressed_bytes": 4323,
+      "crc32": "5b2bd6c5"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/analytics/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/analytics/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/analytics/race.log",
+      "bytes": 16583,
+      "compressed_bytes": 1678,
+      "crc32": "c9017ab6"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/analytics/vet.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/race-attempt2.log",
+      "bytes": 51620,
+      "compressed_bytes": 4233,
+      "crc32": "71eeb18f"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/race.log",
+      "bytes": 500,
+      "compressed_bytes": 247,
+      "crc32": "fc46d73a"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/areas/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/race-attempt2.log",
+      "bytes": 49762,
+      "compressed_bytes": 4061,
+      "crc32": "b54d2d28"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/race.log",
+      "bytes": 190,
+      "compressed_bytes": 128,
+      "crc32": "1ab62d78"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/discovery/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/race-attempt3.log",
+      "bytes": 72461,
+      "compressed_bytes": 5692,
+      "crc32": "ed607050"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/favorites/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/race-attempt2.log",
+      "bytes": 41320,
+      "compressed_bytes": 3723,
+      "crc32": "ecdd03a8"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/federation/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/race-attempt3.log",
+      "bytes": 52214,
+      "compressed_bytes": 4834,
+      "crc32": "8ee89ed3"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/feed/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/race-attempt2.log",
+      "bytes": 43876,
+      "compressed_bytes": 3782,
+      "crc32": "7da08fc7"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/governance/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/race-attempt2.log",
+      "bytes": 44679,
+      "compressed_bytes": 3806,
+      "crc32": "4e2d7b85"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/race.log",
+      "bytes": 1202,
+      "compressed_bytes": 462,
+      "crc32": "1ed67c51"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/vet-attempt2.log",
+      "bytes": 104,
+      "compressed_bytes": 93,
+      "crc32": "e7a20423"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/vet-attempt3.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/matching/vet.log",
+      "bytes": 12755,
+      "compressed_bytes": 1157,
+      "crc32": "14017305"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/race-attempt2.log",
+      "bytes": 65344,
+      "compressed_bytes": 5324,
+      "crc32": "eb6af432"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/messaging/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/race-attempt2.log",
+      "bytes": 1641,
+      "compressed_bytes": 388,
+      "crc32": "cde598f6"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/race.log",
+      "bytes": 456,
+      "compressed_bytes": 248,
+      "crc32": "6cf5bb42"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/notifications/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/race-attempt2.log",
+      "bytes": 38459,
+      "compressed_bytes": 3327,
+      "crc32": "06a48ffd"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/onboarding/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/node_unit.log",
+      "bytes": 2718,
+      "compressed_bytes": 1290,
+      "crc32": "5d002458"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/race-attempt2.log",
+      "bytes": 31445,
+      "compressed_bytes": 2775,
+      "crc32": "1984cf82"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/race.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/pwa/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/node_camera_unit.log",
+      "bytes": 1672,
+      "compressed_bytes": 769,
+      "crc32": "a0365b87"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/race-attempt2.log",
+      "bytes": 51768,
+      "compressed_bytes": 4419,
+      "crc32": "47c945df"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/race.log",
+      "bytes": 350,
+      "compressed_bytes": 209,
+      "crc32": "fb0e67f0"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/qr/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/race-attempt2.log",
+      "bytes": 73775,
+      "compressed_bytes": 5869,
+      "crc32": "12bb535a"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/race.log",
+      "bytes": 235,
+      "compressed_bytes": 161,
+      "crc32": "e2692781"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/receipts/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/gofmt.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/mod_verify-attempt2.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/mod_verify.log",
+      "bytes": 21,
+      "compressed_bytes": 23,
+      "crc32": "5b278235"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/race-attempt3.log",
+      "bytes": 37123,
+      "compressed_bytes": 3461,
+      "crc32": "615c66bb"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/race.log",
+      "bytes": 154,
+      "compressed_bytes": 123,
+      "crc32": "f6f82392"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/vet-attempt2.log",
+      "bytes": 0,
+      "compressed_bytes": 2,
+      "crc32": "00000000"
+    },
+    {
+      "path": "evidence/recovered-qualification/logs/recurring/vet.log",
+      "bytes": 105,
+      "compressed_bytes": 90,
+      "crc32": "3cc47015"
+    },
+    {
+      "path": "evidence/recovered-qualification/matching-receipt.json",
+      "bytes": 45220,
+      "compressed_bytes": 6105,
+      "crc32": "7f3c5a4e"
+    },
+    {
+      "path": "evidence/recovered-qualification/messaging-receipt.json",
+      "bytes": 30613,
+      "compressed_bytes": 4364,
+      "crc32": "e16404a2"
+    },
+    {
+      "path": "evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/race.log",
+      "bytes": 52746,
+      "compressed_bytes": 4622,
+      "crc32": "7ee950d2"
+    },
+    {
+      "path": "evidence/recovered-qualification/notifications-race-retry-20261119T132815Z/receipt.json",
+      "bytes": 37748,
+      "compressed_bytes": 8094,
+      "crc32": "7408b715"
+    },
+    {
+      "path": "evidence/recovered-qualification/notifications-receipt.json",
+      "bytes": 18521,
+      "compressed_bytes": 4068,
+      "crc32": "44a77341"
+    },
+    {
+      "path": "evidence/recovered-qualification/onboarding-receipt.json",
+      "bytes": 29669,
+      "compressed_bytes": 4136,
+      "crc32": "5a681702"
+    },
+    {
+      "path": "evidence/recovered-qualification/pwa-receipt.json",
+      "bytes": 33356,
+      "compressed_bytes": 5541,
+      "crc32": "4489c0a2"
+    },
+    {
+      "path": "evidence/recovered-qualification/qr-receipt.json",
+      "bytes": 33453,
+      "compressed_bytes": 5711,
+      "crc32": "81cfb616"
+    },
+    {
+      "path": "evidence/recovered-qualification/qualification-summary-14-of-15.json",
+      "bytes": 20420,
+      "compressed_bytes": 3830,
+      "crc32": "4eee3104"
+    },
+    {
+      "path": "evidence/recovered-qualification/qualification-summary.json",
+      "bytes": 22162,
+      "compressed_bytes": 4065,
+      "crc32": "a66ae33e"
+    },
+    {
+      "path": "evidence/recovered-qualification/qualification-summary.md",
+      "bytes": 3833,
+      "compressed_bytes": 1986,
+      "crc32": "b73a6914"
+    },
+    {
+      "path": "evidence/recovered-qualification/receipts-receipt.json",
+      "bytes": 29560,
+      "compressed_bytes": 4119,
+      "crc32": "dc2c3d42"
+    },
+    {
+      "path": "evidence/recovered-qualification/recurring-receipt.json",
+      "bytes": 31295,
+      "compressed_bytes": 4919,
+      "crc32": "946ad21e"
+    },
+    {
+      "path": "evidence/recovered-qualification/source-manifests.json",
+      "bytes": 134392,
+      "compressed_bytes": 26479,
+      "crc32": "1766a8ad"
+    },
+    {
+      "path": "EVIDENCE-MANIFEST.json",
+      "bytes": 41803,
+      "compressed_bytes": 7190,
+      "crc32": "2234ea2c"
+    }
+  ],
+  "reported_pr_base": "ead63b5ce24b2bcf8352d75fd0d1ff7be711f625",
+  "original_pr_changed_paths": [
+    ".github/workflows/export-reader.yml",
+    "cmd/circula/verify_export.go",
+    "cmd/circula/verify_export_ambiguity_test.go",
+    "cmd/circula/verify_export_boundary_test.go",
+    "docs/audits/master-consolidation-20261119/ANALYTICS_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/ARCHIVE_FEATURE_STATUS.md",
+    "docs/audits/master-consolidation-20261119/ARCHIVE_MODULE_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.json",
+    "docs/audits/master-consolidation-20261119/ARCHIVE_RECOVERY.md",
+    "docs/audits/master-consolidation-20261119/AREAS_RECOVERY_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/BRANCH_DELTA.json",
+    "docs/audits/master-consolidation-20261119/BRANCH_DELTA.md",
+    "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.json",
+    "docs/audits/master-consolidation-20261119/BRANCH_INVENTORY.md",
+    "docs/audits/master-consolidation-20261119/CONTINUATION.md",
+    "docs/audits/master-consolidation-20261119/CORE_PROVIDER_CHECKPOINT.json",
+    "docs/audits/master-consolidation-20261119/CORE_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/EXECUTION_CHECKPOINT.md",
+    "docs/audits/master-consolidation-20261119/FEDERATION_PROVIDER_CURRENT.json",
+    "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/FEDERATION_QUALIFICATION.md",
+    "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/FEDERATION_RECOVERY_QUALIFICATION.md",
+    "docs/audits/master-consolidation-20261119/FOUR_MODULE_RECONCILIATION.md",
+    "docs/audits/master-consolidation-20261119/FUTURE_MODULE_STATUS.md",
+    "docs/audits/master-consolidation-20261119/GOVERNANCE_RECOVERY_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_EVIDENCE.json",
+    "docs/audits/master-consolidation-20261119/MANIFEST_PARITY_QUALIFICATION.md",
+    "docs/audits/master-consolidation-20261119/MASTER_REPORT.md",
+    "docs/audits/master-consolidation-20261119/MESSAGING_RECOVERY_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/MODULE_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/NOTIFICATION_NATIVE_PUBLICATION.json",
+    "docs/audits/master-consolidation-20261119/NOTIFICATION_PROVIDER_CHECKPOINT.json",
+    "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/NOTIFICATION_QUALIFICATION.md",
+    "docs/audits/master-consolidation-20261119/OWNERSHIP.md",
+    "docs/audits/master-consolidation-20261119/PROVIDER_STATUS_20261119T1353Z.json",
+    "docs/audits/master-consolidation-20261119/PUBLICATIONS.json",
+    "docs/audits/master-consolidation-20261119/QR_CAMERA_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/RECEIPTS_CURRENT_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/RECEIPTS_PUBLICATION.json",
+    "docs/audits/master-consolidation-20261119/RECURRING_CI.json",
+    "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_FINAL_REVIEW.json",
+    "docs/audits/master-consolidation-20261119/RECURRING_FEDERATION_VCS_REVIEW.json",
+    "docs/audits/master-consolidation-20261119/RECURRING_PROVIDER_CURRENT.json",
+    "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/RECURRING_RECOVERY_QUALIFICATION.md",
+    "docs/audits/master-consolidation-20261119/REPORT_PUBLICATION_QUALIFICATION.json",
+    "docs/audits/master-consolidation-20261119/REVIEW.json",
+    "docs/audits/master-consolidation-20261119/REVIEW.md",
+    "docs/audits/master-consolidation-20261119/THREE_RECOVERY_FINAL_REVIEW.json",
+    "docs/audits/master-consolidation-20261119/VERIFICATION_FILES.json",
+    "docs/audits/master-consolidation-20261119/pending-traceability.patch",
+    "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/analytics-baseline-restoration-review/review.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/federation-full-source-review/review.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/messaging-windows-privacy-assessment/assessment.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/0001-notifications-archive-identity-utf8.patch",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/fail-before-dwarf-disabled.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-full-dwarf-disabled.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/green-vet.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/initial-linker-killed.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-identity-qualification/qualification.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/0001-notifications-archive-json-simplefold.patch",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/fail-before.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-race.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/green-vet.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-archive-json-qualification/qualification.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-native-review/review.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/RECONCILIATION.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/module-name-status.txt",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/reconciliation.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/notification-recovery-reconciliation/source-provenance.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-green.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-handoff.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/followup-red.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/review.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/qr-camera-independent-review/root-final-review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/receipts-composition-review/review.md",
+    "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/provenance-and-static-review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.json",
+    "docs/audits/master-consolidation-20261119/recovery-review/three-recovery-independent-review/review.md",
+    "docs/audits/master-consolidation-20261119/verification/ARCHIVE_MODULE_QUALIFICATION-previous14of15.json",
+    "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/race.log",
+    "docs/audits/master-consolidation-20261119/verification/archived-notifications-final/receipt.json",
+    "docs/audits/master-consolidation-20261119/verification/core-final-full-test.log",
+    "docs/audits/master-consolidation-20261119/verification/core-integration-first-test.log",
+    "docs/audits/master-consolidation-20261119/verification/federation-core-tests-failure.log",
+    "docs/audits/master-consolidation-20261119/verification/federation-core-vet-failure.log",
+    "docs/audits/master-consolidation-20261119/verification/python-export-before.log",
+    "docs/audits/master-consolidation-20261119/verification/python-export-complete-size.log",
+    "docs/audits/master-consolidation-20261119/verification/python-export-final-current.log",
+    "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.json",
+    "docs/audits/master-consolidation-20261119/verification/python-export-manifest-final-composed.log",
+    "docs/audits/master-consolidation-20261119/verification/python-export-reviewed.log",
+    "docs/audits/master-consolidation-20261119/verification/python-native-local.json",
+    "docs/audits/master-consolidation-20261119/verification/python-native-local.log",
+    "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.json",
+    "docs/audits/master-consolidation-20261119/verification/python-native-workflow-review.md",
+    "docs/audits/master-consolidation-20261119/verification/python-zip-size-before.log",
+    "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.manifest.json",
+    "docs/audits/master-consolidation-20261119/verification/qualification-evidence-20261119.zip",
+    "scripts/read-export.py",
+    "scripts/test_read_export.py"
+  ],
+  "additional_original_pr_paths_already_in_common_ancestry": [
+    {
+      "path": "cmd/circula/verify_export.go",
+      "source_blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae",
+      "candidate_blob": "bb00a63f67b0c2beee23db030643e7d0f55f26ae",
+      "status": "identical"
+    },
+    {
+      "path": "cmd/circula/verify_export_ambiguity_test.go",
+      "source_blob": "8d3e9d71e108035c693f04588db99291fbc61dc4",
+      "candidate_blob": "8d3e9d71e108035c693f04588db99291fbc61dc4",
+      "status": "identical"
+    },
+    {
+      "path": "cmd/circula/verify_export_boundary_test.go",
+      "source_blob": "9ce07c566ab4130f22b05f53100eb749ff763955",
+      "candidate_blob": "9ce07c566ab4130f22b05f53100eb749ff763955",
+      "status": "identical"
+    }
+  ],
+  "source_only_commits": [
+    "bcdc569cbc483761bf2d0e2d7594636ac1713d7d docs: preserve complete consolidation inventory and qualification evidence",
+    "707a4363a86922d152ed2d203c9ea184fe4b323f fix(export): complete manifest parity and qualify native reader"
+  ],
+  "python_source_to_candidate_diff_sha256": "026880d044cf7b0852ff57ef23f212a7ca35f73bbc11c2d296c1c3fbf4f85b0b",
+  "python_test_functions": {
+    "source_count": 38,
+    "candidate_count": 49,
+    "all_source_names_retained": true,
+    "candidate_added_names": [
+      "test_manifest_file_array_rejects_type_errors_and_applies_overrides",
+      "test_manifest_file_array_reset_clears_retained_fields",
+      "test_manifest_file_array_shrink_and_regrow_retains_fields",
+      "test_manifest_file_arrays_merge_existing_structs",
+      "test_manifest_nested_object_merge_applies_later_values",
+      "test_manifest_nested_object_merge_retains_scalar_nulls",
+      "test_manifest_nested_object_null_resets_prior_fields",
+      "test_manifest_nested_objects_merge_in_member_order",
+      "test_zip_compression_completion_state_must_be_available",
+      "test_zip_compression_requires_complete_streams",
+      "test_zip_compression_valid_streams"
+    ]
+  },
+  "python_review": [
+    "All original Python test methods retained; candidate adds duplicate nested-structure and repeated-array Go compatibility cases, plus compressed-stream completion coverage.",
+    "Candidate retains original manifest validation and adds previous nested state retention matching Go struct-pointer/slice reuse; null and empty-array resets clear prior state.",
+    "Candidate additionally requires a completed compressed stream or fails closed when the completion state is unavailable. These protections must not be removed by taking the older implementation.",
+    "Native reader workflow and ten scoped parity/qualification documents are byte-identical; source-only documentation outside that scoped set is preserved on the original branch and indexed here, not silently treated as integrated."
+  ],
+  "classification": "runtime superseded; unique historical documentary archive remains outside Core",
+  "closure_precondition": "Preserve and explicitly acknowledge102 missing documentary/evidence paths or retain PR104. Do not describe full documentary containment. Original remote source branch and exact commit must remain recoverable."
+}

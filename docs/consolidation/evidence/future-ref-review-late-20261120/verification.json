@@ -1,0 +1,64 @@
+{
+  "observed_at": "2026-11-20T23:13:04.444159+00:00",
+  "merge_tree_parent_and_source_checks_passed": true,
+  "no_core_go_import_containing_future_path": true,
+  "core_sha": "bea5de25cf76b66d87689034e2529f9b40c6dff6",
+  "pr80": {
+    "source": "0952c94a5dbab4044d7673ce9d51cec9063ab97f",
+    "actual_target": "108107435645db687f8ac380e6571319f419fa32",
+    "source_is_ancestor": true,
+    "all_original_test_files_preserved_byte_for_byte": true,
+    "original_validation_text_preserved_in_full": true,
+    "source_paths": [
+      {
+        "path": "future/feed/README.md",
+        "old_blob": "c20e488ebd9b989cbc4810adec2dddfd4c8f4c45",
+        "current_blob": "d056cbdb4d69ac7ab263a9d6d74779cb9ebb644d"
+      },
+      {
+        "path": "future/feed/VALIDATION.md",
+        "old_blob": "64b218b1cedbf9e9afefcd38ec0b3542ddbdfc00",
+        "current_blob": "2c306bb99e4974b5a0f3556f8a78041a28ad745d"
+      },
+      {
+        "path": "future/feed/cursor_auth.go",
+        "old_blob": "7bf3c6288ac235249d8247d94ef6365461f6ef2d",
+        "current_blob": "f632d9a9acc5e04f556e5c278a2f2169d98513de"
+      },
+      {
+        "path": "future/feed/cursor_auth_test.go",
+        "old_blob": "8d632773ce8754de31653816914633d2e66c339a",
+        "current_blob": "8d632773ce8754de31653816914633d2e66c339a"
+      },
+      {
+        "path": "future/feed/cursor_fuzz_test.go",
+        "old_blob": "af772167cbcb7e3cf41f0e89e251a63d7c09a378",
+        "current_blob": "af772167cbcb7e3cf41f0e89e251a63d7c09a378"
+      },
+      {
+        "path": "future/feed/feature.json",
+        "old_blob": "2b14918a7de6a35c69fafb2b89a9df4474ccb591",
+        "current_blob": "dea2c3e2ba2600f327cd961e03684843f55aa3ca"
+      },
+      {
+        "path": "future/feed/feed.go",
+        "old_blob": "c38c3983f06eea5ccf0ae516c29d261e75ebfa7e",
+        "current_blob": "a987747612a5abdbd5f9229dfa618b07c09dbd22"
+      },
+      {
+        "path": "future/feed/feed_test.go",
+        "old_blob": "bdf462911fc41dfe1eb7e310fefda33ca5ef24e4",
+        "current_blob": "bdf462911fc41dfe1eb7e310fefda33ca5ef24e4"
+      }
+    ],
+    "remaining_original_paths_reviewed": "README reconciliation; descriptive manifest scope/status; key-copy/ready/canonical-JSON and contradictory-source hardening; all original v2 contracts retained",
+    "recommendation": "Safe to close as already incorporated through PR92; preserve source branch. No new merge or Core activation needed."
+  },
+  "pr105_106": {
+    "both_sources_are_ancestors_of_actual_federation_target": true,
+    "pr105_already_merged": true,
+    "pr106_already_closed_unmerged": true
+  },
+  "runtime_tests_executed": false,
+  "remote_mutations_performed": false
+}

@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-20 23:41:22 UTC",
+  "scope": "Read-only GitHub Git-data endpoints for the exact original federation receipt identities; no guessed hashes, source execution, or remote mutation.",
+  "checks": [
+    {
+      "kind": "commit",
+      "object": "ca9af7543cc560d4a798b6e446d85ec38f740595",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/commits/ca9af7543cc560d4a798b6e446d85ec38f740595",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/commits#get-a-commit-object\",\"status\":\"404\"}"
+            }
+          ],
+          "structuredContent": {
+            "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/commits#get-a-commit-object\",\"status\":\"404\"}",
+            "error_code": "NOT_FOUND",
+            "error_data": {
+              "message": "Not Found",
+              "documentation_url": "https://docs.github.com/rest/git/commits#get-a-commit-object",
+              "status": "404"
+            }
+          },
+          "isError": true
+        }
+      }
+    },
+    {
+      "kind": "repository_tree",
+      "object": "2b1400be19b42ee63c86980666a71d1c88e07811",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/trees/2b1400be19b42ee63c86980666a71d1c88e07811",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/trees#get-a-tree\",\"status\":\"404\"}"
+            }
+          ],
+          "structuredContent": {
+            "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/trees#get-a-tree\",\"status\":\"404\"}",
+            "error_code": "NOT_FOUND",
+            "error_data": {
+              "message": "Not Found",
+              "documentation_url": "https://docs.github.com/rest/git/trees#get-a-tree",
+              "status": "404"
+            }
+          },
+          "isError": true
+        }
+      }
+    },
+    {
+      "kind": "module_tree",
+      "object": "81a58c2b2b05972f977e1997ed0ce978f6ca4a12",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/git/trees/81a58c2b2b05972f977e1997ed0ce978f6ca4a12",
+      "result": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/trees#get-a-tree\",\"status\":\"404\"}"
+            }
+          ],
+          "structuredContent": {
+            "error": "GitHub API error 404: {\"message\":\"Not Found\",\"documentation_url\":\"https://docs.github.com/rest/git/trees#get-a-tree\",\"status\":\"404\"}",
+            "error_code": "NOT_FOUND",
+            "error_data": {
+              "message": "Not Found",
+              "documentation_url": "https://docs.github.com/rest/git/trees#get-a-tree",
+              "status": "404"
+            }
+          },
+          "isError": true
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "An endpoint failure records unavailable evidence through this connection; it does not establish global loss of an object or disprove the original receipt.",
+    "The accepted federation source comparison remains 19 of 21 fingerprints regardless of remote object availability."
+  ]
+}

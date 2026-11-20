@@ -1,0 +1,348 @@
+{
+  "observed_at": "2026-11-20 23:09:10 UTC",
+  "verification": "all exact-head successes and explicit skips checked",
+  "runs": [
+    {
+      "pr": 116,
+      "run": 44786749088,
+      "jobs": [
+        {
+          "id": 136463507929,
+          "name": "test (ubuntu-24.04)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:23:03Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463507929"
+        },
+        {
+          "id": 136463508056,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:13:10Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463508056"
+        },
+        {
+          "id": 136463508164,
+          "name": "build release targets",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:22:16Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463508164"
+        },
+        {
+          "id": 136463508218,
+          "name": "reproducible build (two builds, same sha256)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:22:22Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463508218"
+        },
+        {
+          "id": 136463508306,
+          "name": "fuzz smoke (RB-017)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:29:02Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463508306"
+        },
+        {
+          "id": 136463508540,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:34:27Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463508540"
+        },
+        {
+          "id": 136463508880,
+          "name": "API contract and load smoke",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:36:32Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463508880"
+        },
+        {
+          "id": 136463509554,
+          "name": "test (${{ matrix.os }})",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "skipped",
+          "completed_at": "2026-11-20T17:48:08Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749088/job/136463509554"
+        }
+      ]
+    },
+    {
+      "pr": 116,
+      "run": 44786749053,
+      "jobs": [
+        {
+          "id": 136463507879,
+          "name": "isolated messaging service (macos-15-intel)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:27:01Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749053/job/136463507879"
+        },
+        {
+          "id": 136463508244,
+          "name": "isolated messaging service (windows-2022)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:27:24Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749053/job/136463508244"
+        },
+        {
+          "id": 136463508373,
+          "name": "isolated messaging service (ubuntu-24.04)",
+          "head_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:31:08Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44786749053/job/136463508373"
+        }
+      ]
+    },
+    {
+      "pr": 117,
+      "run": 44787460533,
+      "jobs": [
+        {
+          "id": 136466019503,
+          "name": "test (ubuntu-24.04)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:27:03Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466019503"
+        },
+        {
+          "id": 136466019953,
+          "name": "build release targets",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:45:44Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466019953"
+        },
+        {
+          "id": 136466019980,
+          "name": "fuzz smoke (RB-017)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:25:07Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466019980"
+        },
+        {
+          "id": 136466020082,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:43:46Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466020082"
+        },
+        {
+          "id": 136466020083,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:30:42Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466020083"
+        },
+        {
+          "id": 136466020245,
+          "name": "API contract and load smoke",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:42:59Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466020245"
+        },
+        {
+          "id": 136466020488,
+          "name": "reproducible build (two builds, same sha256)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:41:57Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466020488"
+        },
+        {
+          "id": 136466021636,
+          "name": "test (${{ matrix.os }})",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "skipped",
+          "completed_at": "2026-11-20T17:52:46Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460533/job/136466021636"
+        }
+      ]
+    },
+    {
+      "pr": 117,
+      "run": 44787460715,
+      "jobs": [
+        {
+          "id": 136465977580,
+          "name": "isolated federation service (ubuntu-24.04)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:14:43Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460715/job/136465977580"
+        },
+        {
+          "id": 136465977821,
+          "name": "isolated federation service (windows-2022)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:12:10Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460715/job/136465977821"
+        },
+        {
+          "id": 136465977915,
+          "name": "isolated federation service (macos-15-intel)",
+          "head_sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:27:31Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44787460715/job/136465977915"
+        }
+      ]
+    },
+    {
+      "pr": 118,
+      "run": 44785622422,
+      "jobs": [
+        {
+          "id": 136459581581,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:08:33Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581581"
+        },
+        {
+          "id": 136459581656,
+          "name": "test (macos-15-intel)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:27:52Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581656"
+        },
+        {
+          "id": 136459581776,
+          "name": "test (ubuntu-24.04)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:12:40Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581776"
+        },
+        {
+          "id": 136459581789,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:20:57Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581789"
+        },
+        {
+          "id": 136459581796,
+          "name": "build release targets",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:39:06Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581796"
+        },
+        {
+          "id": 136459581851,
+          "name": "test (windows-2022)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:23:12Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581851"
+        },
+        {
+          "id": 136459581852,
+          "name": "reproducible build (two builds, same sha256)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:00:55Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581852"
+        },
+        {
+          "id": 136459581927,
+          "name": "fuzz smoke (RB-017)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:20:13Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581927"
+        },
+        {
+          "id": 136459581946,
+          "name": "API contract and load smoke",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:36:07Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622422/job/136459581946"
+        }
+      ]
+    },
+    {
+      "pr": 118,
+      "run": 44785622415,
+      "jobs": [
+        {
+          "id": 136459580921,
+          "name": "isolated recurring service (macos-15-intel)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T18:14:49Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622415/job/136459580921"
+        },
+        {
+          "id": 136459581352,
+          "name": "isolated recurring service (ubuntu-24.04)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:04:32Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622415/job/136459581352"
+        },
+        {
+          "id": 136459581642,
+          "name": "isolated recurring service (windows-2022)",
+          "head_sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-20T19:01:27Z",
+          "html_url": "https://github.com/djshellshoxxx/circula/actions/runs/44785622415/job/136459581642"
+        }
+      ]
+    }
+  ]
+}

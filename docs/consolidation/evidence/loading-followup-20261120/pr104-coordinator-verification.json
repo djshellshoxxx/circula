@@ -1,0 +1,17 @@
+{
+  "observed_at_utc": "2026-11-20T23:44:43.719424+00:00",
+  "original_source": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d",
+  "worker_commit": "72cf3a267c72e588f37fbd31ed5b3410037f3284",
+  "coordinator_cherry_pick": "cca252843196edb423def4c530049d31affca10b",
+  "original_entries": 102,
+  "original_bytes": 5206983,
+  "nested_zip_payloads_verified": 205,
+  "original_json_parsed": 56,
+  "nested_json_parsed": 44,
+  "original_git_source_blob_identities_match": true,
+  "archive_sha256": "6d7ad0e06ef2bb9a4cd1a70626ae328a8384828dd439e07c4bf07246ff37d385",
+  "exact_match_to_containment_missing_path_set": true,
+  "standalone_verifier_exit_code": 0,
+  "original_package_unchanged": true,
+  "product_tests_executed": false
+}
