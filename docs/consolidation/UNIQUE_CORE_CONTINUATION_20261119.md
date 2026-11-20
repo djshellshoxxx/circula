@@ -14,16 +14,13 @@ evidence remains historical and is not rewritten as evidence for this source.
   `9c1ad082bfd7befb9914000c79d5974f1017cc27`.
 - Owned continuation: `integration/unique-core-completion-20261120`,
   [PR #127](https://github.com/djshellshoxxx/circula/pull/127), targeting main.
-- Published checkpoint: `c45c475f6ca22497072e8c8d3bc4f1e444b0f382`, tree
-  `7587e6f32b2c552c429ef65717da051c15ad9b05`, exactly matching local
-  `c7104872cc2fe049b62d175fbb95a9751bf31bdd`.
-- That checkpoint includes the completion areas below through independent
-  reviewer report reads and service authentication metrics.
-- Later local commits repair report-read error propagation and the exact
-  compatible-rebuild review registry, and integrate immutable historical-limit
-  witnesses (`2d3a163`) and explicit member/listing report case context
-  (`b00706e`). Their combined qualification and publication are still pending
-  at this checkpoint. `d662bdb` reconciles nineteen stale specification notes.
+- Published checkpoint: `2108a513fae786e1bbd3d57c6531e0a2c94d7472`, tree
+  `afdc0bd17ba15c908c7b6572cdcdea1f242db463`, exactly matching local
+  `b00a0738bc8fdf3ac92a814fd57fba4fab97d320`.
+- That checkpoint includes every completed implementation area below and its
+  focused evidence. A full normal run identified two web integration issues;
+  both are repaired locally at `d1b8723` and their focused race recheck passes.
+  The repaired combined source still requires its own full gates.
 
 Publication uses ordinary commits and expected-head branch updates through the
 connected GitHub provider because this checkout has no Git push credentials.
@@ -170,6 +167,16 @@ its preservation, rollback/retry and unchanged scanner checks pass under race.
 This does not turn the earlier full run into a pass. Full lint then completed
 at `0773308` with three style findings, all repaired at `c9dbc84`; the complete
 clean-source recheck reports zero issues.
+
+The next full normal run at `b00a073` completed in 343.141 seconds with 3,418
+passing test/subtest events, six explicit skips and two web failures. Other
+package outcomes passed or had no tests. One failure identified a missing
+localized label for `dispute_id`; the other was a support-template fixture
+that did not load the newly shared coverage template. `d1b8723` repairs both;
+all six selected tests and three subcases pass under race. The full failed run
+and exact-source recheck remain separately recorded. On `b00a073`, 65 Python
+and 23 Node helper tests, hygiene/action pins/gofmt, all ten real scanner
+controls and the zero-finding directory scan also pass.
 
 At `a29a094`, all 65 Python helper tests and 23 Node helper tests passed. Hygiene
 and workflow action checks passed at `f4f718b`, as did the existing evidence

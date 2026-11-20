@@ -1,0 +1,55 @@
+{
+  "head": "d1b8723e4aab79891ac3c43525c625e644345cb1",
+  "tree": "f3a5ebb590da79494dbf670547b7231aa15f360a",
+  "cwd": "/workspace/scratch/4d30fa819181/circula",
+  "status_before": "",
+  "command": [
+    "go",
+    "test",
+    "-json",
+    "-race",
+    "-count=1",
+    "-p",
+    "1",
+    "-timeout",
+    "10m",
+    "-run",
+    "^(TestAdminHomeLinksToSupportBoundaries|TestHelpDocumentsSupportBoundaries|TestValidationMessagesNameFieldAndFix|TestHistoricalLimitCoverageCheckPage|TestHistoricalLimitCoverageRetainedOverview|TestEveryCatalogueEntryFormats)$",
+    "./internal/web",
+    "./internal/web/messages"
+  ],
+  "environment_overrides": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "started_at_utc": "2026-11-20T09:31:52.276912+00:00",
+  "finished_at_utc": "2026-11-20T09:32:22.106055+00:00",
+  "elapsed_seconds": 29.829,
+  "exit_code": 0,
+  "timed_out": false,
+  "head_after": "d1b8723e4aab79891ac3c43525c625e644345cb1",
+  "tree_after": "f3a5ebb590da79494dbf670547b7231aa15f360a",
+  "status_after": "",
+  "source_unchanged": true,
+  "test_and_subtest_events": {
+    "pass": 9
+  },
+  "packages": {
+    "github.com/djshellshoxxx/circula/internal/web": {
+      "action": "pass",
+      "elapsed": 6.29
+    },
+    "github.com/djshellshoxxx/circula/internal/web/messages": {
+      "action": "pass",
+      "elapsed": 1.047
+    }
+  },
+  "skipped_tests": [],
+  "failed_tests": []
+}

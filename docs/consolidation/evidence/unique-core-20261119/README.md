@@ -65,8 +65,8 @@ independent source review and combined qualification:
   to their actual source and file hashes. Hygiene passed at `f4f718b` after the
   required migration-table-rebuild explanation was added, without changing SQL.
 
-`source-map.json` now covers publication through remote `c45c475` / local
-`c710487`. Later code and this evidence commit require their own publication and
+`source-map.json` now covers publication through remote `2108a51` / local
+`b00a073`. Later code and this evidence commit require their own publication and
 qualification; the mapping is not a recursive claim about its own commit.
 
 ### Reviewer projection, authentication and combined checks
@@ -126,19 +126,36 @@ context. They do not qualify those later additions or the final combined tree.
   rebuild guard; all other package outcomes passed or had no tests. It remains a
   failed provider gate, distinct from its later local repair.
 
-The combined catalogue has 1,457 messages after the additive case-context and
+The combined catalogue has 1,458 messages after the additive case-context and
 coverage changes. These focused passes remain distinct from final combined and
 provider qualification.
 
 
+### First complete integration gate and repair
+
+`b00a073-normal.*` records the complete 343.141-second normal run: 3,418
+passing test/subtest events, six explicit skips and two web failures. Every
+other package passed or had no tests. The failures were the new dispute field's
+missing localized label and an older support-page fixture that loaded only its
+page, omitting the shared coverage template. `d1b8723` adds the label and makes
+the fixture use the production template loader while retaining its assertions.
+`d1b8723-web-fix.*` records all six selected tests and three subcases passing
+under race, with clean unchanged source.
+
+On exact `b00a073`, `b00a073-helpers.*` records all 65 Python and 23 Node passes;
+`b00a073-static.*` records hygiene, action pins, gofmt and the then-current
+136-file evidence manifest; and `b00a073-secrets.*` records all ten real scanner
+controls plus zero findings in the 29.25 MB directory scan. These successful
+checks do not convert the failed normal run into a pass, nor qualify later
+source automatically.
+
 ### Publication representations
 
-`evidence-transformations.json` records original and published hashes for 7
+`evidence-transformations.json` records original and published hashes for seven
 receipts whose path/checksum maps were represented as explicit path/sha256 rows,
-and for 2 published combined-run logs whose generated test request identifiers
-were redacted. All source checksum values and test result events are preserved.
-Originals remain in the analysis workspace; earlier published forms also remain
-in Git history. These 9 files are documented derivatives, not
-byte-identical raw logs. The unchanged secret scanner flagged noncredential
-values; no scanner configuration, finding rule or control fixture was relaxed.
-The expanded-evidence scan's fifteen original findings retain their exact scope.
+and three combined-run logs whose generated test request identifiers were
+redacted. Every source checksum and test result event is preserved. Originals
+remain in analysis; earlier published forms also remain in Git history. These
+ten files are documented derivatives, not byte-identical raw logs. No scanner
+configuration, finding rule or control fixture was relaxed. The earlier
+expanded-evidence scan's fifteen findings retain their exact scope.

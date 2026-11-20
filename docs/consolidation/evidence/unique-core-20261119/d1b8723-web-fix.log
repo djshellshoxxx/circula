@@ -1,0 +1,44 @@
+{"Time":"2026-11-20T01:32:13.564072648-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/internal/web"}
+{"Time":"2026-11-20T01:32:13.60112005-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage"}
+{"Time":"2026-11-20T01:32:13.601172079-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage","Output":"=== RUN   TestHistoricalLimitCoverageCheckPage\n"}
+{"Time":"2026-11-20T01:32:13.601350028-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/old_unknown"}
+{"Time":"2026-11-20T01:32:13.601361355-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/old_unknown","Output":"=== RUN   TestHistoricalLimitCoverageCheckPage/old_unknown\n"}
+{"Time":"2026-11-20T01:32:13.882650064-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/old_unknown","Output":"--- PASS: TestHistoricalLimitCoverageCheckPage/old_unknown (0.28s)\n"}
+{"Time":"2026-11-20T01:32:13.882878099-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/old_unknown","Elapsed":0.28}
+{"Time":"2026-11-20T01:32:13.883234117-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/partial_passes"}
+{"Time":"2026-11-20T01:32:13.883245394-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/partial_passes","Output":"=== RUN   TestHistoricalLimitCoverageCheckPage/partial_passes\n"}
+{"Time":"2026-11-20T01:32:14.090473663-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/partial_passes","Output":"--- PASS: TestHistoricalLimitCoverageCheckPage/partial_passes (0.20s)\n"}
+{"Time":"2026-11-20T01:32:14.093243607-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/partial_passes","Elapsed":0.2}
+{"Time":"2026-11-20T01:32:14.093308886-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/complete_with_finding"}
+{"Time":"2026-11-20T01:32:14.093312421-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/complete_with_finding","Output":"=== RUN   TestHistoricalLimitCoverageCheckPage/complete_with_finding\n"}
+{"Time":"2026-11-20T01:32:14.297669347-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/complete_with_finding","Output":"--- PASS: TestHistoricalLimitCoverageCheckPage/complete_with_finding (0.20s)\n"}
+{"Time":"2026-11-20T01:32:14.297715266-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage/complete_with_finding","Elapsed":0.2}
+{"Time":"2026-11-20T01:32:14.297726233-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage","Output":"--- PASS: TestHistoricalLimitCoverageCheckPage (0.70s)\n"}
+{"Time":"2026-11-20T01:32:14.297736698-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageCheckPage","Elapsed":0.7}
+{"Time":"2026-11-20T01:32:14.297739513-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageRetainedOverview"}
+{"Time":"2026-11-20T01:32:14.297742878-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageRetainedOverview","Output":"=== RUN   TestHistoricalLimitCoverageRetainedOverview\n"}
+{"Time":"2026-11-20T01:32:16.030417264-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageRetainedOverview","Output":"--- PASS: TestHistoricalLimitCoverageRetainedOverview (1.73s)\n"}
+{"Time":"2026-11-20T01:32:16.030563014-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHistoricalLimitCoverageRetainedOverview","Elapsed":1.73}
+{"Time":"2026-11-20T01:32:16.030821104-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHelpDocumentsSupportBoundaries"}
+{"Time":"2026-11-20T01:32:16.03083211-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHelpDocumentsSupportBoundaries","Output":"=== RUN   TestHelpDocumentsSupportBoundaries\n"}
+{"Time":"2026-11-20T01:32:16.22400189-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHelpDocumentsSupportBoundaries","Output":"--- PASS: TestHelpDocumentsSupportBoundaries (0.19s)\n"}
+{"Time":"2026-11-20T01:32:16.224049241-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestHelpDocumentsSupportBoundaries","Elapsed":0.19}
+{"Time":"2026-11-20T01:32:16.224056863-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAdminHomeLinksToSupportBoundaries"}
+{"Time":"2026-11-20T01:32:16.224059427-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAdminHomeLinksToSupportBoundaries","Output":"=== RUN   TestAdminHomeLinksToSupportBoundaries\n"}
+{"Time":"2026-11-20T01:32:16.417577938-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAdminHomeLinksToSupportBoundaries","Output":"--- PASS: TestAdminHomeLinksToSupportBoundaries (0.19s)\n"}
+{"Time":"2026-11-20T01:32:16.417640803-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAdminHomeLinksToSupportBoundaries","Elapsed":0.19}
+{"Time":"2026-11-20T01:32:16.417741905-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestValidationMessagesNameFieldAndFix"}
+{"Time":"2026-11-20T01:32:16.417745861-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestValidationMessagesNameFieldAndFix","Output":"=== RUN   TestValidationMessagesNameFieldAndFix\n"}
+{"Time":"2026-11-20T01:32:18.844065401-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestValidationMessagesNameFieldAndFix","Output":"--- PASS: TestValidationMessagesNameFieldAndFix (2.43s)\n"}
+{"Time":"2026-11-20T01:32:18.844134876-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestValidationMessagesNameFieldAndFix","Elapsed":2.43}
+{"Time":"2026-11-20T01:32:18.844145261-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Output":"PASS\n"}
+{"Time":"2026-11-20T01:32:19.853583214-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Output":"ok  \tgithub.com/djshellshoxxx/circula/internal/web\t6.289s\n"}
+{"Time":"2026-11-20T01:32:19.853632539-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Elapsed":6.29}
+{"Time":"2026-11-20T01:32:21.03074372-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/internal/web/messages"}
+{"Time":"2026-11-20T01:32:21.068313897-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Test":"TestEveryCatalogueEntryFormats"}
+{"Time":"2026-11-20T01:32:21.06836238-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Test":"TestEveryCatalogueEntryFormats","Output":"=== RUN   TestEveryCatalogueEntryFormats\n"}
+{"Time":"2026-11-20T01:32:21.075238729-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Test":"TestEveryCatalogueEntryFormats","Output":"--- PASS: TestEveryCatalogueEntryFormats (0.01s)\n"}
+{"Time":"2026-11-20T01:32:21.075270336-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Test":"TestEveryCatalogueEntryFormats","Elapsed":0.01}
+{"Time":"2026-11-20T01:32:21.075371179-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Output":"PASS\n"}
+{"Time":"2026-11-20T01:32:22.077769541-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Output":"ok  \tgithub.com/djshellshoxxx/circula/internal/web/messages\t1.047s\n"}
+{"Time":"2026-11-20T01:32:22.077819036-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web/messages","Elapsed":1.047}

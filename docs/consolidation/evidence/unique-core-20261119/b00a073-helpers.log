@@ -1,0 +1,36 @@
+.................................................................
+----------------------------------------------------------------------
+Ran 65 tests in 14.089s
+
+OK
+✔ offline and history warnings use supplied sentences and preserve the last snapshot literally (3.807894ms)
+✔ an initially offline page keeps its server snapshot and a new page starts without a stale warning (1.696113ms)
+✔ session warning appears two minutes before expiry and uses the supplied time sentence (2.004469ms)
+✔ fixed sessions hide extension and retain the draft when they expire (0.668931ms)
+✔ successful extension keeps the request contract and reschedules from the server expiry (11.090208ms)
+✔ failed extension uses the supplied failure message without navigation or form loss (2.781503ms)
+✔ session return links reject a network-path reference (0.924287ms)
+✔ loading announces a same-window page navigation, including keyboard link activation (1.688621ms)
+✔ loading preserves form fields and the chosen submitter name and value (0.843474ms)
+✔ GET filters and submitter overrides retain their native method and target (0.779629ms)
+✔ loading ignores fragments, downloads, other destinations and modified clicks (8.059449ms)
+✔ loading ignores download forms, dialog forms, other windows and submitter exclusions (8.818466ms)
+✔ failed native validation and non-submitting async buttons leave the page idle (1.249418ms)
+✔ an in-place handler can cancel a link or form after the loading listener (2.738799ms)
+✔ pageshow clears pending and displayed feedback when a history page returns (4.071512ms)
+✔ checkbox confirmation skips the identically named error link: I want to end this session. (4.163201ms)
+✔ checkbox confirmation skips the identically named error link: I want to end all my other sessions. (0.995674ms)
+✔ a checkbox without an error summary retains ordinary Tab/Space/Enter behavior (0.913881ms)
+✔ a restored checked confirmation remains checked without another Space press (0.955254ms)
+✔ failed keyboard checking is rejected before submitting the form (1.21764ms)
+✔ a same-name link without the required checkbox is rejected before submission (4.709757ms)
+✔ text entry and intentional link activation retain their existing behavior (1.528941ms)
+✔ ordinary tabTo callers retain their explicit search budget (0.678765ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 222.182093

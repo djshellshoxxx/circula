@@ -65,6 +65,18 @@
       "published_sha256": "852fd0f9e0e1bf613131ee6dc5b7290008370b3aa1716ffdd8de8ce9612cafc5",
       "transformation": "Source path-to-SHA-256 maps represented as explicit path/sha256 rows. Every source checksum and result is preserved; original receipt remains in analysis/report_case_context_verification.json.",
       "entries": 27
+    },
+    {
+      "file": "b00a073-normal.log",
+      "original_sha256": "02172929eb2172fdeff0dac4eb0de353d90599c9f505b460a52785e359f6e464",
+      "published_sha256": "950330cee81d8ab1290d409a2592f42c376f1bba02d945eb24f9699ad698c59a",
+      "transformation": "One generated test request ID in the intentional API panic-log assertion is redacted. Original raw source-specific log remains in analysis/qualification. Test events, timing, result and failure messages are preserved.",
+      "redactions": [
+        {
+          "line": 1885,
+          "test": "TestPanicReleasesIdempotencyKey"
+        }
+      ]
     }
   ]
 }
