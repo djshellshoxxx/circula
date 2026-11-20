@@ -43,9 +43,11 @@ type Report struct {
 
 // ReportFilter selects reports; newest first by id.
 type ReportFilter struct {
-	Status  string // "" = all
-	AfterID string
-	Limit   int
+	Status     string // "" = all
+	TargetType string // optional exact target type
+	TargetID   string // optional exact target ID, always within netID
+	AfterID    string
+	Limit      int
 	// ExcludeSubjectMemberID excludes reports about this member, their listings
 	// or their side of a transaction, including unresolved subjects. Applied
 	// before pagination.

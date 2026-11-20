@@ -154,6 +154,14 @@ func (t *txImpl) ListReports(netID string, f ReportFilter) ([]*Report, error) {
 		q += ` AND status = ?`
 		args = append(args, f.Status)
 	}
+	if f.TargetType != "" {
+		q += ` AND target_type = ?`
+		args = append(args, f.TargetType)
+	}
+	if f.TargetID != "" {
+		q += ` AND target_id = ?`
+		args = append(args, f.TargetID)
+	}
 	if f.AfterID != "" {
 		q += ` AND id < ?`
 		args = append(args, f.AfterID)

@@ -85,10 +85,11 @@ type disputeDetail struct {
 	Response    *disputeResponseDTO `json:"response"`  // FR-076
 	ReReview    *reReviewDTO        `json:"re_review"` // FR-078
 	// GOV-014: deadlines visible to parties. A missed response deadline decides nothing.
-	ResponseDeadline string `json:"response_deadline"`
-	DecisionTarget   string `json:"decision_target"`
-	ResponseOverdue  bool   `json:"response_overdue"`
-	DecisionOverdue  bool   `json:"decision_overdue"`
+	ResponseDeadline      string `json:"response_deadline"`
+	DecisionTarget        string `json:"decision_target"`
+	ResponseOverdue       bool   `json:"response_overdue"`
+	DecisionOverdue       bool   `json:"decision_overdue"`
+	TransactionReportsURL string `json:"transaction_reports_url,omitempty"`
 }
 
 func (s *server) getDispute(c *reqCtx) error { // API-054
@@ -101,6 +102,9 @@ func (s *server) getDispute(c *reqCtx) error { // API-054
 		Response: toDisputeResponse(v.Response), ReReview: toReReview(v.ReReview),
 		ResponseDeadline: ts(v.Deadlines.ResponseDeadline), DecisionTarget: ts(v.Deadlines.DecisionTarget),
 		ResponseOverdue: v.Deadlines.ResponseOverdue, DecisionOverdue: v.Deadlines.DecisionOverdue}
+	if v.CanReadTransactionReports {
+		out.TransactionReportsURL = v1 + "/disputes/" + v.Dispute.ID + "/reports"
+	}
 	for _, e := range v.Events {
 		out.Events = append(out.Events, disputeEventDTO{Action: e.Action, Outcome: e.Outcome, ActorID: e.ActorID, OccurredAt: ts(e.OccurredAt)})
 	}

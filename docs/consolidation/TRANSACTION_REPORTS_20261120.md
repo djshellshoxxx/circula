@@ -38,6 +38,12 @@ established access. The earlier
 [privacy checkpoint](REPORT_PRIVACY_20261120.md) explains the complete-export
 and all-conflicted constraints.
 
+The subsequent [reviewer projection](DISPUTE_REPORT_PROJECTION_20261120.md)
+provides independent dispute reviewers with a separate, read-only summary of
+reports on that dispute's transaction. It preserves the full administrator
+queue and handling roles; reporter identity and all report free text are
+omitted from the reviewer projection.
+
 ## Related disputes
 
 Transaction reports return `related_disputes_url` in the API response and
@@ -61,10 +67,6 @@ the linked dispute list under their existing authority.
   network and original transaction counterparty are not interchangeable.
   These reports remain unsupported until that subject contract is set; the
   ordinary member-party case is complete without that decision.
-- This change preserves the established administrator report reader and
-  handler roles. It does not create wider reviewer report access. Any reviewer
-  projection still needs to reconcile SEC-025's reviewer audience with
-  FR-024's administrator-only reporter identity and the minimum-data rule.
 - Listing and member reports have no transaction or case reference. Sharing
   a member or listing does not by itself establish which disputes relate to
   those reports, so this change derives no such relationship.

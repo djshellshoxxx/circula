@@ -1468,6 +1468,24 @@
   "report.related_disputes_for": {
     "other": "Disputes for transaction %[1]s."
   },
+  "report.review_title": {
+    "other": "Transaction reports"
+  },
+  "report.review_link": {
+    "other": "Read transaction report summaries"
+  },
+  "report.review_explanation": {
+    "other": "Only the report category and handling status are shown here. Reporter identities and report notes are available only to independent administrators."
+  },
+  "report.review_reference": {
+    "other": "Report reference: %[1]s"
+  },
+  "report.review_empty": {
+    "other": "There are no transaction report summaries to show."
+  },
+  "report.review_back": {
+    "other": "Back to dispute"
+  },
   "report.reported_by": {
     "other": "Reported by %[1]s"
   },

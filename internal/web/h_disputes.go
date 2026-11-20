@@ -17,6 +17,7 @@ func (s *server) disputeRoutes() {
 	s.mux.HandleFunc("GET /n/{slug}/trades/{id}/dispute", s.netH(s.disputeForm))
 	s.mux.HandleFunc("POST /n/{slug}/trades/{id}/dispute", s.netH(s.disputePost))
 	s.mux.HandleFunc("GET /n/{slug}/disputes/{id}", s.netH(s.disputeView))
+	s.mux.HandleFunc("GET /n/{slug}/disputes/{id}/reports", s.netH(s.disputeReports))
 	s.mux.HandleFunc("POST /n/{slug}/disputes/{id}/{act}", s.netH(s.disputeAct))
 }
 

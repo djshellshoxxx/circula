@@ -1091,6 +1091,40 @@ paths:
         '500': {$ref: '#/components/responses/InternalError'}
         '503': {$ref: '#/components/responses/Unavailable'}
 
+  /api/v1/disputes/{id}/reports:
+    get:
+      operationId: listDisputeReports
+      tags: [Disputes, Reports]
+      summary: Redacted transaction report context for an independent reviewer (SEC-025, PER-003)
+      description: |
+        Current active reviewer or administrator authority and the ordinary dispute independence
+        checks are required on every page. Parties, proposers, acceptors and reversal participants
+        cannot use this projection, including when they hold reviewer or administrator roles.
+        Only reports on this dispute's exact transaction are returned, newest first. Each row
+        contains a report reference, validated category and handling status. Reporter identity,
+        all free-text notes, handling identity and timestamps are omitted. This grants neither
+        report handling nor access to the administrator report queue.
+      security: *secSafe
+      parameters:
+        - $ref: '#/components/parameters/XNetwork'
+        - $ref: '#/components/parameters/PathId'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: One page of redacted reports related to this dispute.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DisputeReportPage'}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+        '413': {$ref: '#/components/responses/PayloadTooLarge'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
+        '503': {$ref: '#/components/responses/Unavailable'}
+
   /api/v1/disputes/{id}/resolve:
     post:
       operationId: resolveDispute
@@ -3793,6 +3827,9 @@ components:
         decision_target: {type: string, format: date-time, description: 'Response deadline plus 14 days (DEC-012).'}
         response_overdue: {type: boolean}
         decision_overdue: {type: boolean}
+        transaction_reports_url:
+          type: string
+          description: Present only for a current independent reviewer or administrator. This capability link does not indicate whether reports exist; it leads to the same-dispute redacted projection.
         transaction: {$ref: '#/components/schemas/Transaction'}
         payer_display_name: {type: string}
         payee_display_name: {type: string}
@@ -3886,6 +3923,20 @@ components:
         related_disputes_url:
           type: string
           description: Present for transaction reports. Relative URL of the authorized, paginated dispute list filtered to the exact transaction; use the same network selection. The relation also includes disputes created after the report.
+    DisputeReport:
+      type: object
+      required: [id, category, status]
+      additionalProperties: false
+      properties:
+        id: {$ref: '#/components/schemas/Id'}
+        category: {type: string, enum: [spam, scam, inappropriate, harassment, other]}
+        status: {type: string, enum: [open, handled]}
+    DisputeReportPage:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+        - type: object
+          properties:
+            data: {type: array, items: {$ref: '#/components/schemas/DisputeReport'}}
     ReportPage:
       allOf:
         - $ref: '#/components/schemas/Page'

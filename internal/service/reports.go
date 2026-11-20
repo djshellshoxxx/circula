@@ -20,6 +20,15 @@ const (
 // ReportCategories are the accepted report categories.
 var ReportCategories = []string{"spam", "scam", "inappropriate", "harassment", "other"}
 
+func knownReportCategory(category string) bool {
+	for _, accepted := range ReportCategories {
+		if category == accepted {
+			return true
+		}
+	}
+	return false
+}
+
 // Report target types.
 const (
 	ReportListing     = "listing"
@@ -67,11 +76,7 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 	if err := p.requireNetworkActive(); err != nil {
 		return "", err
 	}
-	valid := false
-	for _, c := range ReportCategories {
-		valid = valid || c == in.Category
-	}
-	if !valid {
+	if !knownReportCategory(in.Category) {
 		return "", domain.Invalid("category", "must be one of "+strings.Join(ReportCategories, ", "))
 	}
 	note := strings.TrimSpace(in.Note)

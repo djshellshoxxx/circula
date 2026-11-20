@@ -282,6 +282,8 @@ func TestAPIMatchesOpenAPI(t *testing.T) {
 	h.do(200, call{method: "GET", path: "/disputes", token: aliceT})
 	h.do(200, call{method: "GET", path: "/disputes?status=open", token: adminT})
 	h.do(200, call{method: "GET", path: "/disputes/" + d, token: bobT})
+	h.do(200, call{method: "GET", path: "/disputes/" + d + "/reports", token: adminT})
+	h.do(403, call{method: "GET", path: "/disputes/" + d + "/reports", token: bobT})
 	h.do(404, call{method: "GET", path: "/disputes/" + d, token: outsiderT})
 	h.do(200, call{method: "POST", path: "/disputes/" + d + "/review", token: adminT})
 	h.do(501, call{method: "POST", path: "/disputes/" + d + "/resolve", token: adminT, idem: true, body: m{"outcome": "adjustment", "reason": "x"}})

@@ -31,11 +31,17 @@ func TestTransactionReportsMatchOpenAPI(t *testing.T) {
 	if r.RelatedDisputesURL != "/api/v1/disputes?transaction_id="+tx.ID {
 		t.Fatalf("wrong related-dispute URL: %q", r.RelatedDisputesURL)
 	}
-	tu.Must(e.Svc.OpenDispute(e.Ctx, alice, net.ID, service.OpenDisputeInput{
+	dispute := tu.Must(e.Svc.OpenDispute(e.Ctx, alice, net.ID, service.OpenDisputeInput{
 		TxID: tx.ID, Category: "other", Statement: "Ordinary dispute fixture", IdempotencyKey: e.Key(),
 	}))
 	h.do(200, call{method: "GET", path: "/admin/reports", token: adminToken})
 	h.do(200, call{method: "GET", path: strings.TrimPrefix(r.RelatedDisputesURL, "/api/v1"), token: adminToken})
 	h.do(200, call{method: "POST", path: "/admin/reports/" + r.ID + "/handle", token: adminToken, idem: true,
 		body: m{"note": "Reviewed independently"}})
+	reviewer, reviewerM := e.Member(admin, net, "reviewer")
+	tu.Must(0, e.Svc.AssignRole(e.Ctx, admin, net.ID, reviewerM.ID, domain.RoleReviewer))
+	reviewerToken := h.token(reviewer, domain.ScopeRead)
+	h.do(200, call{method: "GET", path: "/disputes/" + dispute.ID, token: reviewerToken})
+	h.do(200, call{method: "GET", path: "/disputes/" + dispute.ID + "/reports", token: reviewerToken})
+	h.do(403, call{method: "GET", path: "/disputes/" + dispute.ID + "/reports", token: aliceToken})
 }
