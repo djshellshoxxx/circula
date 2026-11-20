@@ -79,3 +79,36 @@ func TestHistoricalCreditCheckReconstructsPrefixAndSeparatesCoverage(t *testing.
 		t.Fatalf("integrity findings and historical coverage were conflated: %+v", coverage)
 	}
 }
+
+func TestHistoricalCreditCheckRejectsUnusableForwardEvidence(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		change func(*repository.CreditLimitHistoryRow)
+		want   string
+	}{
+		{"missing-policy", func(r *repository.CreditLimitHistoryRow) { r.Policy = nil }, "witness policy version is missing"},
+		{"effective-limit-mismatch", func(r *repository.CreditLimitHistoryRow) { r.Check.EffectiveLimit = 200 }, "recorded effective limit does not match"},
+		{"posting-time-mismatch", func(r *repository.CreditLimitHistoryRow) { r.Check.CheckedAt = r.Check.CheckedAt.Add(time.Millisecond) }, "witness does not match"},
+		{"system-exemption-mismatch", func(r *repository.CreditLimitHistoryRow) { r.Check.IsSystem = true }, "witness does not match"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			at := time.UnixMilli(1000)
+			row := repository.CreditLimitHistoryRow{
+				Entry:  domain.Entry{ID: "e", NetworkID: "n", AccountID: "a", Amount: -1, LedgerSeq: 1, PostedAt: at},
+				Check:  &repository.PostingCreditCheck{EntryID: "e", NetworkID: "n", CheckedAt: at, PolicyVersion: 1, EffectiveLimit: 100},
+				Policy: &domain.Policy{DefaultCreditLimit: 100},
+			}
+			tc.change(&row)
+			report := &Report{}
+			if err := checkHistoricalLimits(creditHistoryFixture{rows: []repository.CreditLimitHistoryRow{row}}, "n", report); err != nil {
+				t.Fatal(err)
+			}
+			if len(report.Findings) != 1 || !strings.Contains(report.Findings[0], tc.want) {
+				t.Fatalf("unusable evidence finding = %v, want %q", report.Findings, tc.want)
+			}
+			if coverage := report.HistoricalLimits; coverage.Status != "partial" || coverage.UnverifiableDebits != 1 || coverage.CheckedDebits != 0 || coverage.SystemDebits != 0 {
+				t.Fatalf("unusable evidence was counted as checked: %+v", coverage)
+			}
+		})
+	}
+}
