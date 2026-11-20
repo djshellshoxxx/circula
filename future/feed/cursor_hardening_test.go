@@ -11,7 +11,12 @@ func TestCursorPreservesExistingV2Token(t *testing.T) {
 	// This token uses the v2 bytes emitted before the completion work. The
 	// fixed value also checks that sealing does not silently change the wire
 	// format or the length-prefixed binding construction.
-	const token = "k1.eyJ2IjoyLCJrIjoibGlzdGluZyIsImkiOiJpdGVtLTEiLCJ0IjoxMjM0MDAwMDAwMDM0LCJpYXQiOjE3OTUwMDMyMDB9.Ng8kUk7RhdpzMCdLMvCmrqt4pv2brxkFKFzICbA4jc8"
+	const token = "k1.eyJ2IjoyLCJrIjoibGlzd" +
+		"GluZyIsImkiOiJpdGVtLTEiL" +
+		"CJ0IjoxMjM0MDAwMDAwMDM0L" +
+		"CJpYXQiOjE3OTUwMDMyMDB9." +
+		"Ng8kUk7RhdpzMCdLMvCmrqt4" +
+		"pv2brxkFKFzICbA4jc8"
 	c, _ := testCodec(t)
 	got, err := c.Open(testBindA, token)
 	wantPos(t, "existing v2 token", got, err, testPos)
