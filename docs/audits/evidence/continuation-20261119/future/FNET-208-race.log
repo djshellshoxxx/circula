@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:16:16.097748736-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/governance"}
+{"Time":"2026-11-19T02:16:16.190764976-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/governance","Test":"TestBallotBoundaries"}
+{"Time":"2026-11-19T02:16:16.190818827-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Test":"TestBallotBoundaries","Output":"=== RUN   TestBallotBoundaries\n"}
+{"Time":"2026-11-19T02:16:16.190866186-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Test":"TestBallotBoundaries","Output":"--- PASS: TestBallotBoundaries (0.00s)\n"}
+{"Time":"2026-11-19T02:16:16.190873159-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/governance","Test":"TestBallotBoundaries","Elapsed":0}
+{"Time":"2026-11-19T02:16:16.190880763-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Output":"PASS\n"}
+{"Time":"2026-11-19T02:16:17.220580623-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/governance","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/governance\t1.110s\n"}
+{"Time":"2026-11-19T02:16:17.220635025-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/governance","Elapsed":1.123}

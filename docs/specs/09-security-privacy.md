@@ -16,9 +16,9 @@ This document does not claim anonymity, cryptographic guarantees for ledger cont
 
 This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release/security approval. The audit itself identifies an AI-assisted review and pending independent professional review ([SECURITY-AUDIT-3](../audit/SECURITY-AUDIT-3.md)). Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate or independent security review is claimed here.
 
-Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. That refresh preserved the historical status labels and summary counts; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md). A separate **evidence correction dated 2026-11-19** changes only SEC-031 from built to partial because its approved-contact acceptance gate remains unresolved; all other status labels retain their historical provenance. See [the requirement evidence review](../audit/consolidation-2026-11-17/source-reviews/BUILT-REQUIREMENT-EVIDENCE.md).
 
-Summary: built 8, deferred 1, not built 7, partial 18.
+Previously recorded historical summary: built 8, deferred 1, not built 7, partial 18. Those recorded totals were already inconsistent with the listed rows before the SEC-031 correction. Counting the 34 rows below after that dated correction gives: built 10, deferred 1, not built 1, partial 22. This reconciles the table's counts; it does not requalify the other historical status declarations.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
@@ -52,7 +52,7 @@ Summary: built 8, deferred 1, not built 7, partial 18.
 | SEC-028 | P0 | partial | Backup manifest signed with key; backup not encrypted at rest; files 0600. [Refreshed 2026-11-16: optional encryption at rest is built, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md; the note above describes the default, unencrypted state] |
 | SEC-029 | P1 | partial | Module versions pinned; govulncheck and SBOM module list in CI; dependency checksum failure test not present |
 | SEC-030 | P0 | partial | Incident contacts and failure table in docs/ops; drills not recorded |
-| SEC-031 | P1 | built | SECURITY.md with private reporting channel; owner approval of contact pending (DEC-026); Source: `SECURITY.md`; private reporting policy exists, but contact/key placeholders and owner approval remain DEC-026; policy text is not a passing test. No execution result is implied |
+| SEC-031 | P1 | partial | Evidence correction 2026-11-19: `SECURITY.md` defines scope, private reporting and response targets, but fallback contact/key placeholders and confirmation that repository private reporting is enabled remain unresolved. An owner-approved contact channel is an explicit acceptance criterion (DEC-026), so policy text alone does not establish completion. Documentation inspection only; no test execution or owner approval is implied |
 | SEC-032 | P1 | partial | Grant defaults to zero; cap and open-mode confirmation not built |
 | SEC-033 | P1 | partial | Tests cover most P0 SEC items; independent review not performed |
 | SEC-034 | P2 | deferred | Tamper-evident option deferred; unkeyed chain already present (DEC-044) |

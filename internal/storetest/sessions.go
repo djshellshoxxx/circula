@@ -1,6 +1,9 @@
 package storetest
 
 import (
+	"fmt"
+	"sort"
+	"strings"
 	"testing"
 	"time"
 
@@ -28,7 +31,7 @@ func sessionOwnership(t *testing.T, s store.Store) {
 		return nil
 	}))
 	must(t, s.View(ctx, func(tx store.Tx) error {
-		rows, err := tx.ListSessions("pa")
+		rows, err := tx.ListSessions("pa", nil, 100)
 		if err != nil {
 			return err
 		}
@@ -46,6 +49,150 @@ func sessionOwnership(t *testing.T, s store.Store) {
 		}
 		if foreign.RevokedAt != nil {
 			t.Fatal("foreign session was revoked")
+		}
+		_, err = tx.GetOwnedSession("pa", foreign.PublicID)
+		wantCode(t, "foreign selector lookup", err, domain.CodeNotFound)
+		_, err = tx.GetOwnedSession("pb", "foreign")
+		wantCode(t, "credential hash is not a public selector", err, domain.CodeNotFound)
+		got, err := tx.GetOwnedSession("pb", foreign.PublicID)
+		if err != nil || got.IDHash != "foreign" || len(got.PublicID) != 64 {
+			t.Fatalf("owned selector lookup: %+v, %v", got, err)
+		}
+		return nil
+	}))
+}
+
+// Pagination is over retained rows, not only active sessions: filtering dead
+// rows before LIMIT would allow a request to scan an unbounded backlog.
+func sessionPagination(t *testing.T, s store.Store) {
+	seed(t, s, "")
+	var all []*domain.Session
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		for i := 0; i < 207; i++ {
+			sess := &domain.Session{IDHash: fmt.Sprintf("own-%03d", i), PersonID: "pa",
+				CreatedAt: t0.Add(time.Duration(i/70) * time.Millisecond), LastSeenAt: t0, ExpiresAt: t0.Add(time.Hour)}
+			if err := tx.InsertSession(sess); err != nil {
+				return err
+			}
+			if len(sess.PublicID) != 64 || strings.Trim(sess.PublicID, "0123456789abcdef") != "" {
+				t.Fatalf("insert did not assign a canonical public ID: %+v", sess)
+			}
+			all = append(all, sess)
+		}
+		return tx.InsertSession(&domain.Session{IDHash: "foreign", PersonID: "pb",
+			CreatedAt: t0.Add(time.Hour), LastSeenAt: t0, ExpiresAt: t0.Add(time.Hour)})
+	}))
+	sort.Slice(all, func(i, j int) bool {
+		if all[i].CreatedAt.Equal(all[j].CreatedAt) {
+			return all[i].PublicID > all[j].PublicID
+		}
+		return all[i].CreatedAt.After(all[j].CreatedAt)
+	})
+	must(t, s.View(ctx, func(tx store.Tx) error {
+		for _, limit := range []int{0, -1, 101, 10000} {
+			rows, err := tx.ListSessions("pa", nil, limit)
+			if err != nil || len(rows) != 100 {
+				t.Fatalf("hard cap for %d: len=%d err=%v", limit, len(rows), err)
+			}
+		}
+		var before *store.SessionPosition
+		count := 0
+		for {
+			rows, err := tx.ListSessions("pa", before, 7)
+			if err != nil {
+				return err
+			}
+			if len(rows) > 7 {
+				t.Fatal("repository exceeded requested row bound")
+			}
+			for _, row := range rows {
+				if count >= len(all) || row.PublicID != all[count].PublicID || row.PersonID != "pa" {
+					t.Fatalf("page order, duplicate or owner mismatch at %d: %+v", count, row)
+				}
+				count++
+				before = &store.SessionPosition{CreatedAt: row.CreatedAt, PublicID: row.PublicID}
+			}
+			if len(rows) < 7 {
+				break
+			}
+		}
+		if count != len(all) {
+			t.Fatalf("page traversal skipped rows: %d, want %d", count, len(all))
+		}
+		// A previous page contains the nearest newer rows, in ascending
+		// repository order. The service reverses them for the display.
+		anchor := all[17]
+		newer, err := tx.ListSessions("pa", &store.SessionPosition{
+			CreatedAt: anchor.CreatedAt, PublicID: anchor.PublicID, Reverse: true,
+		}, 7)
+		if err != nil || len(newer) != 7 {
+			t.Fatalf("reverse page: rows=%d err=%v", len(newer), err)
+		}
+		for i, row := range newer {
+			if row.PublicID != all[16-i].PublicID {
+				t.Fatalf("reverse page skipped or repeated row %d: %+v", i, row)
+			}
+		}
+		return nil
+	}))
+	boundary := all[6]
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		if err := tx.TouchSession(boundary.IDHash, t0.Add(time.Minute)); err != nil {
+			return err
+		}
+		if _, err := tx.RevokeOwnedSession("pa", boundary.IDHash, t0); err != nil {
+			return err
+		}
+		got, err := tx.GetOwnedSession("pa", boundary.PublicID)
+		if err != nil || got.PublicID != boundary.PublicID || got.RevokedAt == nil {
+			t.Fatalf("touch/revoke changed public ID or lost retained row: %+v, %v", got, err)
+		}
+		rows, err := tx.ListSessions("pa", nil, 7)
+		if err != nil || len(rows) != 7 || rows[6].PublicID != boundary.PublicID {
+			t.Fatalf("repository filtered a dead row before LIMIT: %+v, %v", rows, err)
+		}
+		n, err := tx.DeleteDeadSessions(t0.Add(-time.Hour), t0.Add(-time.Hour), t0, 1)
+		if err != nil || n != 1 {
+			t.Fatalf("delete boundary fixture: %d, %v", n, err)
+		}
+		return nil
+	}))
+	must(t, s.View(ctx, func(tx store.Tx) error {
+		rows, err := tx.ListSessions("pa", &store.SessionPosition{CreatedAt: boundary.CreatedAt, PublicID: boundary.PublicID}, 7)
+		if err != nil || len(rows) != 7 || rows[0].PublicID != all[7].PublicID {
+			t.Fatalf("deleted boundary broke continuation: %+v, %v", rows, err)
+		}
+		return nil
+	}))
+}
+
+func otherSessionRevocation(t *testing.T, s store.Store) {
+	seed(t, s, "")
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		for _, row := range []struct{ id, owner string }{{"current", "pa"}, {"other", "pa"}, {"revoked", "pa"}, {"foreign", "pb"}} {
+			if err := tx.InsertSession(&domain.Session{IDHash: row.id, PersonID: row.owner,
+				CreatedAt: t0, LastSeenAt: t0, ExpiresAt: t0.Add(time.Hour)}); err != nil {
+				return err
+			}
+		}
+		return tx.RevokeSession("revoked", t0)
+	}))
+	must(t, s.Update(ctx, func(tx store.Tx) error {
+		for _, invalid := range []string{"missing", "foreign", "revoked"} {
+			if n, err := tx.RevokeOtherOwnedSessions("pa", invalid, t0); err != nil || n != 0 {
+				t.Fatalf("unowned or dead keep ID: n=%d err=%v", n, err)
+			}
+		}
+		for _, want := range []int64{1, 0} {
+			if n, err := tx.RevokeOtherOwnedSessions("pa", "current", t0); err != nil || n != want {
+				t.Fatalf("counted owner revocation: n=%d want=%d err=%v", n, want, err)
+			}
+		}
+		for _, id := range []string{"current", "foreign"} {
+			row, err := tx.GetSession(id)
+			if err != nil || row.RevokedAt != nil {
+				t.Fatalf("bulk changed preserved row %s: %+v %v", id, row, err)
+			}
 		}
 		return nil
 	}))

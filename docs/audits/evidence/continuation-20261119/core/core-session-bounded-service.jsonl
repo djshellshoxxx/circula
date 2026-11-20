@@ -1,0 +1,20 @@
+go: downloading github.com/google/uuid v1.6.0
+go: downloading golang.org/x/crypto v0.59.0
+go: downloading golang.org/x/text v0.44.0
+go: downloading golang.org/x/sys v0.50.0
+{"Time":"2026-11-19T02:11:00.419809495-08:00","Action":"start","Package":"command-line-arguments"}
+{"Time":"2026-11-19T02:11:00.475358248-08:00","Action":"run","Package":"command-line-arguments","Test":"TestOwnSessionWorkCapReturnsUsableEmptyPage"}
+{"Time":"2026-11-19T02:11:00.475401108-08:00","Action":"output","Package":"command-line-arguments","Test":"TestOwnSessionWorkCapReturnsUsableEmptyPage","Output":"=== RUN   TestOwnSessionWorkCapReturnsUsableEmptyPage\n"}
+{"Time":"2026-11-19T02:11:00.525882763-08:00","Action":"output","Package":"command-line-arguments","Test":"TestOwnSessionWorkCapReturnsUsableEmptyPage","Output":"--- PASS: TestOwnSessionWorkCapReturnsUsableEmptyPage (0.05s)\n"}
+{"Time":"2026-11-19T02:11:00.525920414-08:00","Action":"pass","Package":"command-line-arguments","Test":"TestOwnSessionWorkCapReturnsUsableEmptyPage","Elapsed":0.05}
+{"Time":"2026-11-19T02:11:00.525928088-08:00","Action":"run","Package":"command-line-arguments","Test":"TestOwnSessionLookaheadKeepsEqualTimeRows"}
+{"Time":"2026-11-19T02:11:00.525930833-08:00","Action":"output","Package":"command-line-arguments","Test":"TestOwnSessionLookaheadKeepsEqualTimeRows","Output":"=== RUN   TestOwnSessionLookaheadKeepsEqualTimeRows\n"}
+{"Time":"2026-11-19T02:11:00.541279972-08:00","Action":"output","Package":"command-line-arguments","Test":"TestOwnSessionLookaheadKeepsEqualTimeRows","Output":"--- PASS: TestOwnSessionLookaheadKeepsEqualTimeRows (0.01s)\n"}
+{"Time":"2026-11-19T02:11:00.541829653-08:00","Action":"pass","Package":"command-line-arguments","Test":"TestOwnSessionLookaheadKeepsEqualTimeRows","Elapsed":0.01}
+{"Time":"2026-11-19T02:11:00.541839972-08:00","Action":"run","Package":"command-line-arguments","Test":"TestOwnSessionPageRejectsMalformedBoundsBeforeListing"}
+{"Time":"2026-11-19T02:11:00.541845332-08:00","Action":"output","Package":"command-line-arguments","Test":"TestOwnSessionPageRejectsMalformedBoundsBeforeListing","Output":"=== RUN   TestOwnSessionPageRejectsMalformedBoundsBeforeListing\n"}
+{"Time":"2026-11-19T02:11:00.541850281-08:00","Action":"output","Package":"command-line-arguments","Test":"TestOwnSessionPageRejectsMalformedBoundsBeforeListing","Output":"--- PASS: TestOwnSessionPageRejectsMalformedBoundsBeforeListing (0.00s)\n"}
+{"Time":"2026-11-19T02:11:00.541855411-08:00","Action":"pass","Package":"command-line-arguments","Test":"TestOwnSessionPageRejectsMalformedBoundsBeforeListing","Elapsed":0}
+{"Time":"2026-11-19T02:11:00.541858697-08:00","Action":"output","Package":"command-line-arguments","Output":"PASS\n"}
+{"Time":"2026-11-19T02:11:01.548358927-08:00","Action":"output","Package":"command-line-arguments","Output":"ok  \tcommand-line-arguments\t1.127s\n"}
+{"Time":"2026-11-19T02:11:01.548412438-08:00","Action":"pass","Package":"command-line-arguments","Elapsed":1.129}

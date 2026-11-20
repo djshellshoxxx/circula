@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Record the bounded verification of the resolved catalogue/traceability merge."""
+import collections
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import time
+
+root = Path('/workspace/scratch/bfba682cba37/circula-core')
+out = Path('/workspace/scratch/bfba682cba37/evidence')
+stem = 'core-catalogue-traceability-merged-12af211'
+go_bin = Path('/workspace/scratch/beb70d57deba/toolchain/go/bin')
+expected_head = '12af2112fb968f1c72e874e3c18b66e9e2626208'
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=root, text=True).strip()
+
+head = git('rev-parse', 'HEAD')
+tree = git('rev-parse', 'HEAD^{tree}')
+if head != expected_head or git('status', '--porcelain'):
+    raise SystemExit('Refusing to test an unexpected or dirty source tree')
+
+def catalogue(ref):
+    duplicates = []
+    def pairs(items):
+        duplicates.extend(k for k, n in collections.Counter(k for k, v in items).items() if n > 1)
+        return dict(items)
+    result = json.loads(git('show', ref + ':internal/web/messages/en.json'), object_pairs_hook=pairs)
+    if duplicates:
+        raise SystemExit('Duplicate catalogue keys: ' + repr(duplicates))
+    return result
+
+ours = catalogue('f143d90c147786183d382371a83535451427e2f5')
+candidate = catalogue('c97233fb5b795e85b4a81e19809bb9d9c76a15d1')
+merged = catalogue(head)
+expected = dict(ours)
+for key, value in candidate.items():
+    if key in expected and expected[key] != value:
+        raise SystemExit('Unexpected source catalogue conflict: ' + key)
+    expected[key] = value
+if merged != expected or len(merged) != 525:
+    raise SystemExit('Resolved catalogue is not the exact 525-key union')
+
+argv = [str(go_bin / 'go'), 'test', '-race', '-p', '1', '-count', '1', '-json',
+        './internal/web/messages', './scripts/traceability']
+overrides = {'GOTOOLCHAIN': 'local', 'GOMAXPROCS': '2', 'GOMEMLIMIT': '512MiB',
+             'GOGC': '20', 'PATH': str(go_bin) + os.pathsep + os.environ.get('PATH', '')}
+env = dict(os.environ, **overrides)
+files = [root / 'go.mod', root / 'go.sum']
+for directory in ('internal/web/messages', 'scripts/traceability'):
+    files.extend(sorted(p for p in (root / directory).rglob('*') if p.is_file()))
+meta = {
+    'source_commit': head, 'source_tree': tree, 'source_worktree_clean': True,
+    'catalogue_preflight': {'entries': len(merged), 'exact_union': True,
+                           'preserved_root_entries': len(ours), 'preserved_candidate_entries': len(candidate)},
+    'cwd': str(root), 'argv': argv, 'environment_overrides': overrides,
+    'timeout_seconds': 120,
+    'scope': 'Actual internal/web/messages and scripts/traceability packages with race detection. No SQLite or full-repository test invocation.',
+    'files_sha256': {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
+    'started_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'status': 'running',
+}
+meta_path = out / (stem + '.execution.json')
+log_path = out / (stem + '.jsonl')
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+began = time.monotonic()
+timed_out = False
+with log_path.open('wb') as log:
+    process = subprocess.Popen(argv, cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT,
+                               start_new_session=True)
+    try:
+        rc = process.wait(timeout=120)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        os.killpg(process.pid, signal.SIGKILL)
+        rc = process.wait(timeout=5)
+meta.update({
+    'finished_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'elapsed_seconds': round(time.monotonic() - began, 6),
+    'exit_code': rc, 'timed_out': timed_out,
+    'status': 'interrupted_timeout' if timed_out else ('passed' if rc == 0 else 'failed'),
+})
+counts = {kind: collections.Counter() for kind in ('top_level_tests', 'subtests', 'packages')}
+by_package = {}
+events = []
+for line in log_path.read_text(errors='replace').splitlines():
+    try:
+        event = json.loads(line)
+    except ValueError:
+        continue
+    action = event.get('Action')
+    if action not in ('pass', 'fail', 'skip'):
+        continue
+    name = event.get('Test')
+    kind = 'packages' if not name else ('subtests' if '/' in name else 'top_level_tests')
+    counts[kind][action] += 1
+    package = event.get('Package', '')
+    by_package.setdefault(package, {k: collections.Counter() for k in counts})[kind][action] += 1
+    events.append({k: event[k] for k in ('Action', 'Package', 'Test', 'Elapsed') if k in event})
+meta['completion_counts'] = {k: dict(v) for k, v in counts.items()}
+meta['counts_by_package'] = {p: {k: dict(v) for k, v in cs.items()} for p, cs in by_package.items()}
+meta['completion_events'] = events
+meta['final_worktree_status'] = git('status', '--porcelain')
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+print(json.dumps({k: meta[k] for k in ('source_commit', 'status', 'exit_code', 'timed_out', 'elapsed_seconds', 'completion_counts', 'counts_by_package', 'final_worktree_status')}, indent=2))
+print('metadata=' + str(meta_path))
+print('log=' + str(log_path))

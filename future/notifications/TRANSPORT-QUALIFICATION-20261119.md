@@ -33,3 +33,25 @@ The native workflow and this note were prepared while the local executor was una
 ## Remaining limits
 
 Loopback protocol tests establish adapter behavior, not acceptance by a live mail or Web Push provider, delivery policy, operational key custody or production scheduling. Native transport jobs do not qualify the separate SQLite persistence layer on Windows or macOS. Normal current-head checks and review requirements still apply before merging into the isolated module target. Core integration remains on HOLD.
+
+## Consolidation follow-up — 2026-11-20
+
+The accepted notification target advanced through PR #100 to
+`9d861d51b6ca0f3393795a126928fdf4317ca4eb`. Its transport runtime,
+tests and module dependencies already include this repair. The remaining
+unique work from PR #103 at `f831c45de9137b20abe3d31590433bda6348112b`
+is the native transport workflow and this qualification note.
+
+A clean Git merge preserves both source histories and produces exactly those
+two additional paths relative to the accepted target. All production module
+blobs and dependency files remain identical to the target, and the manifest
+continues to declare `enabled: false` and `integration: HOLD`. The source
+workflow retains three native platforms, race instrumentation on Linux/macOS,
+real loopback transport tests, full action pins, read-only permissions and
+module-isolation checks.
+
+The previous PR #103 source passed its nine Core, one SQLite-module and three
+native transport jobs. Those results do not qualify this new composition.
+The integrated source must pass its own applicable Core and module workflows
+before an expected-head merge into the existing notification future branch.
+No module activation, deployment or release is part of this change.

@@ -1,0 +1,20 @@
+{
+  "type": "coordinator-observed execution receipt",
+  "command": [
+    "node",
+    "--test",
+    "scripts/test_app_messages.cjs"
+  ],
+  "source_commit": "12af2112fb968f1c72e874e3c18b66e9e2626208",
+  "exit_code": 0,
+  "tests": {
+    "pass": 7,
+    "fail": 0,
+    "skip": 0,
+    "cancelled": 0
+  },
+  "files": {
+    "internal/web/static/app.js": "3358bff29eb0e63f3fb50d97454e66f1c8dd14045de8aa3e69209764abfff12c",
+    "scripts/test_app_messages.cjs": "9a0582b93d8399429d03d846ef2c2d75f51e0c85ccb59f7276a5f5a03c54f352"
+  }
+}
