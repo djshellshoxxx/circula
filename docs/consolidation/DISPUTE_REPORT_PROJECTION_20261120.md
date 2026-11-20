@@ -88,9 +88,16 @@ OpenAPI operation fixture. Migration 0023's preservation/rollback/retry fixture
 passed against the integrated pre-commit verification gate.
 
 The separate `service_test` compiler was killed before executing its tests in
-both the initial 256 MiB run and a service-only retry at 128 MiB. Its four new
-direct-service fixtures remain unexecuted at this checkpoint; neither build
-failure is a test pass. The raw JSON logs and their hashes are retained in the
-workspace verification receipt. Integrated service/full-suite and provider
-qualification remain necessary. Formatting, catalogue JSON parsing, OpenAPI
-YAML parsing and `git diff --check` passed.
+both the initial 256 MiB run and a service-only retry at 128 MiB. Those attempts
+remain recorded as inconclusive. After relocating the Circula caches from the
+memory-backed temporary filesystem and using a workspace `GOTMPDIR`, the
+unchanged service selection passed under race at the original 256 MiB setting
+in 35.018 s: 15 top-level tests and 27 subtests, including all four new direct
+service fixtures. No source or test coverage was changed for that retry.
+
+The combined focused result is therefore **41 top-level tests and 58 subtests
+passed across six packages**, with no executed-test failure, skip or reported
+race. The raw JSON logs and their hashes are retained in the workspace
+verification receipt. Integrated full-suite and provider qualification remain
+separate. Formatting, catalogue JSON parsing, OpenAPI YAML parsing and
+`git diff --check` passed.
