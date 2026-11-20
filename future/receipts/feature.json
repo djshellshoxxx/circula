@@ -1,10 +1,13 @@
 {
   "id": "FNET-203",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "standalone-master-delta-audited-external-qualification-pending",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Explicit-consent, active-party-only completed-trade projection with deterministic TXT and JSON exports; control-character rejection.",
-  "remaining": "Authoritative read-only snapshot adapter; no-JS download endpoints and redaction/audit; schema decision review; separately optional certificate signer/verifier, canonicalization ADR, key lifecycle/revocation and independent verifier tests. No signing algorithm is adopted by this module."
+  "scope": "Fresh authorized read-only versioned TXT/JSON/print HTML receipt; no-JS separate receipt/certificate HTTP and CLI seams; strict JCS/digest, standard JWS EdDSA opaque signer, offline public trust lifecycle/rotation/revocation and verifier; no artifact persistence; defaults disabled.",
+  "remaining": "external verifier interoperability; actual Circula auth/read-transaction/protected-key adapters; production cryptographic/operations approval and trust distribution; human keyboard/accessibility/Tor/browser and core regression/release qualification. Integration HOLD.",
+  "completion_percent": 83.5,
+  "completion_basis": "COMPLETION.md explicit weighted acceptance evidence; mandatory external and operational gates open",
+  "tested_source": "860a55135a4d7302642829a08387a000ac1132ed"
 }

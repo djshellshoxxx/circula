@@ -1,0 +1,7 @@
+{
+  "created_utc": "2026-11-19T12:52:10.912498+00:00",
+  "base": "7e2df8e435f3d7000c791ad46ea6f397a98c26dd",
+  "worktree": "/workspace/scratch/f47ceab29930/circula-receipts-numeric",
+  "cache_prefix": "/tmp/circula-review-qualification-20261119-dyxx0yvl",
+  "toolchain": "/workspace/scratch/beb70d57deba/toolchain/go/bin/go"
+}

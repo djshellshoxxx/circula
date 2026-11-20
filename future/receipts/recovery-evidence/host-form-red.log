@@ -1,0 +1,8 @@
+$ /workspace/scratch/0afb7942ff6b/toolchain/go/bin/go test -p 1 -count=1 -run ^TestMalformedFormCannotBeHiddenByHostParsing$ ./...
+--- FAIL: TestMalformedFormCannotBeHiddenByHostParsing (0.00s)
+    query_regression_test.go:113: malformed form accepted after host parsing: certificate=false status=200 source_reads=1
+FAIL
+FAIL	github.com/djshellshoxxx/circula/future/receipts	0.004s
+FAIL
+
+exit=1

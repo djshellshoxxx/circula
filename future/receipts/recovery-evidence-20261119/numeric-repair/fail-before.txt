@@ -1,0 +1,28 @@
+go: downloading github.com/go-jose/go-jose/v4 v4.1.9
+go: downloading github.com/gowebpki/jcs v1.0.3-0.20261110202536-7d2401783402
+--- FAIL: TestDecodeDocumentNumericRoundingRejected (0.00s)
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/amount_above_bound (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=1125899906842624 precision=2 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/amount_fraction_above_one (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=1 precision=2 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/amount_fraction_below_one (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=1 precision=2 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/amount_fraction_exponent (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=1 precision=2 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/revision_above_bound (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=2 revision=1125899906842624 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/revision_fraction_above_one (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=2 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/revision_fraction_exponent (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=2 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/precision_above_bound (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=8 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/precision_fraction_above_one (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=1 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/precision_underflow (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=0 revision=1 error=<nil>
+    --- FAIL: TestDecodeDocumentNumericRoundingRejected/precision_negative_underflow (0.00s)
+        canonical_numeric_fidelity_test.go:53: inexact integer token was accepted or exposed a partial document: amount=123 precision=0 revision=1 error=<nil>
+FAIL
+FAIL	github.com/djshellshoxxx/circula/future/receipts	0.014s
+FAIL

@@ -1,0 +1,54 @@
+{
+  "observed_utc": "2026-11-19T12:56:10.816234+00:00",
+  "phase": "green-full",
+  "base": "7e2df8e435f3d7000c791ad46ea6f397a98c26dd",
+  "head": "7e2df8e435f3d7000c791ad46ea6f397a98c26dd",
+  "tracked_changes": [
+    "future/receipts/canonical.go"
+  ],
+  "command": [
+    "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+    "test",
+    "-p",
+    "1",
+    "-count=1",
+    "-cover",
+    "-timeout=90s",
+    "./..."
+  ],
+  "cwd": "/workspace/scratch/f47ceab29930/circula-receipts-numeric/future/receipts",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-review-qualification-20261119-dyxx0yvl/go-mod-cache",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOFLAGS": "-mod=readonly -p=1"
+  },
+  "exit_code": 0,
+  "elapsed_seconds": 5.148,
+  "files_sha256": {
+    "audit_regression_test.go": "deb02180607f10fe39ed11ff40d39d0bf3763af71dfa07dd8b5310270084d129",
+    "canonical.go": "47ad75a55e8161ffba879d052a07a973227bfe34d79d4eb914657a63009a6b1f",
+    "canonical_numeric_fidelity_test.go": "2213ecae059b3c4d0cdc35ce3f92efaffb87c00a7d734e13e80241bf9a63807d",
+    "canonical_test.go": "f1f11ddb791b8797167d7a7c75b351c65bdd4d48bd6abd89442ec512d3d62869",
+    "certificate.go": "7f6a786959f7c710dc95b6ec53abc2ce6e2ecd1819c657b7e62dcc54e5bc5e65",
+    "certificate_test.go": "d42e9e9ac7595a3105c3248f2183e448bcf75c874fb0d70c5ed5e689b2e2d06a",
+    "cli.go": "3fbc60c5fb7fa359922478be00dc6ba40e80e4a700c970399449f661df71b8fe",
+    "go.mod": "662d77bdddc2e85fb1361ea9f8dd4418be5ff4008757d3158b7488b577850368",
+    "go.sum": "2a102a5cf14868d15d365b1c0c1a1ddd712f67e6effed93412587b1ada49a886",
+    "health.go": "e95a2b29ccb30ab16fce0e95101bbd0be311411d34b89717a95c74dbe0676f0d",
+    "http.go": "b8cfa29b8608259d48a5135cc8ae8859cf30a13a8ed93d166ecd5f03f28ed8ad",
+    "query_regression_test.go": "22ea098eacc08d5c2c61952b7d0292e81535f1e23a4b8930b87f04e4fc90d099",
+    "receipt.go": "ee6c110b91d3dcc31a36881de9a2526949db149d7fcd8d859bfbf5ff25c70bfc",
+    "receipt_test.go": "7f5c55e244a460bd862eeacce122e690fa6d34146796d93ad6c88c7288b316d9",
+    "service.go": "b886a8c98e03e2755f4a749ebc5412cb8d3f7b3ac95134330451480e5bef362f",
+    "service_test.go": "2664bfd236077f6365fb5db31a8941b46f051056ab2f792d1b038372aefb9f85",
+    "trust.go": "d790c456996c8712c4bef7e619b7e9c26f05098ccd12ecd4dd4056f8bac34678"
+  },
+  "log": "green-full.txt",
+  "private_tmp": "created and removed per command",
+  "dependencies": "exact original pinned JCS and go-jose; no replacement or dependency edit"
+}

@@ -1,0 +1,4 @@
+$ /workspace/scratch/0afb7942ff6b/toolchain/go/bin/go test -p 1 -count=1 -run TestMalformedFormCannotBeHiddenByHostParsing|TestCertificateChoicePostQueryAgreement|TestReceiptChoicePostQueryAgreement ./...
+ok  	github.com/djshellshoxxx/circula/future/receipts	0.022s
+
+exit=0

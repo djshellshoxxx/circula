@@ -1,5 +1,5 @@
-// Package receipts renders user-requested read-only snapshots. Certificates are
-// intentionally a separate future module, pending approval of signing decisions.
+// Package receipts renders user-requested read-only snapshots. Optional candidate
+// certificates use separate enablement and dependencies; integration stays on HOLD.
 package receipts
 
 import (
@@ -50,7 +50,7 @@ func safe(s string) bool {
 // Create accepts only an authoritative, authorized database snapshot. No public
 // route may deserialize Snapshot from a client. Snapshot status is historical.
 func Create(req Request, s Snapshot) (Receipt, error) {
-	if !req.ExplicitlyRequested || !req.Active || req.Network != s.Network || (req.Member != s.Payer && req.Member != s.Payee) || s.Payer == s.Payee || s.Status != "completed" || s.Amount <= 0 || s.CompletedAt.IsZero() {
+	if !req.ExplicitlyRequested || !req.Active || req.Network != s.Network || (req.Member != s.Payer && req.Member != s.Payee) || s.Payer == s.Payee || s.Status != "completed" || s.Amount <= 0 || s.Amount > 1<<50 || s.CompletedAt.IsZero() || s.CompletedAt.Year() < 1 || s.CompletedAt.Year() > 9999 {
 		return Receipt{}, errors.New("receipt unavailable")
 	}
 	for _, v := range []string{s.Network, s.Transaction, s.Payer, s.Payee, s.Unit} {

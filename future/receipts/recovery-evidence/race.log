@@ -1,0 +1,4 @@
+$ /workspace/scratch/0afb7942ff6b/toolchain/go/bin/go test -p 1 -race -cover -count=1 -timeout 90s ./...
+ok  	github.com/djshellshoxxx/circula/future/receipts	1.146s	coverage: 84.1% of statements
+
+exit=0

@@ -1,0 +1,103 @@
+name: future receipts module
+
+on:
+  pull_request:
+    branches: [future/fnet-203-receipts-20261116]
+    paths:
+      - 'future/receipts/**'
+      - '.github/workflows/future-receipts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-receipts-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  receipts:
+    name: isolated receipts recovery (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            cgo: '1'
+          - os: macos-15-intel
+            cgo: '1'
+          - os: windows-2022
+            cgo: '0'
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/receipts
+    env:
+      GOTOOLCHAIN: local
+      GOMAXPROCS: '2'
+      CGO_ENABLED: ${{ matrix.cgo }}
+    steps:
+      - name: Keep repository line endings stable
+        working-directory: ${{ github.workspace }}
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Record source and toolchain
+        run: |
+          git rev-parse HEAD
+          git rev-parse HEAD:future/receipts
+          go version
+      - name: Check module remains isolated and disabled
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          feature = json.loads(Path('feature.json').read_text())
+          assert feature['id'] == 'FNET-203'
+          assert feature['enabled'] is False
+          assert feature['integration'] == 'HOLD'
+          assert feature['depends_on_future_features'] == []
+          module = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))
+          assert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/receipts'
+          expected = {'github.com/gowebpki/jcs': 'v1.0.3-0.20261110202536-7d2401783402', 'github.com/go-jose/go-jose/v4': 'v4.1.9'}
+          assert {item['Path']: item['Version'] for item in module.get('Require', [])} == expected
+          assert not module.get('Replace')
+          assert not module.get('Exclude')
+          modules = set(subprocess.check_output(['go', 'list', '-deps', '-test', '-buildvcs=false', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'], text=True).split())
+          owned = 'github.com/djshellshoxxx/circula/future/receipts'
+          allowed = {owned} | set(expected)
+          assert modules <= allowed, modules - allowed
+          print('disabled/HOLD, exact declared dependencies and module boundary: PASS')
+          PY
+      - name: Verify pinned module checksums
+        run: go mod verify
+      - name: Check Go formatting
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+      - name: Vet isolated module
+        run: go vet ./...
+      - name: Race and receipts regressions
+        if: runner.os != 'Windows'
+        run: go test -race -count=1 -cover -timeout=2m ./...
+      - name: Native Windows receipts regressions
+        if: runner.os == 'Windows'
+        run: go test -count=1 -cover -timeout=2m ./...
+      - name: Bounded receipt and certificate fuzzing
+        if: runner.os == 'Linux'
+        run: |
+          for target in FuzzCreateReceipt FuzzDecodeDocument FuzzVerifyCertificate; do
+            timeout --kill-after=10s 180s go test -run '^$' -fuzz "^${target}$" -fuzztime=100000x -parallel=1 -timeout=150s ./...
+          done
