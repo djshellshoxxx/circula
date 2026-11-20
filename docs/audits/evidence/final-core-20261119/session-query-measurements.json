@@ -1,0 +1,232 @@
+{
+  "sqlite_version": "3.53.1",
+  "source_commit": "baedf4b6670f6bf39ec593978ce38780c5640215",
+  "note": "SQLite VM counts from actual production SQL; Python adapter, not Go allocation qualification.",
+  "samples": [
+    {
+      "retained_history": 100,
+      "migrations": 21,
+      "results": {
+        "first": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 316,
+          "milliseconds": 0.1407,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=?)"
+          ]
+        },
+        "deep": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 449,
+          "milliseconds": 0.1055,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))"
+          ]
+        },
+        "previous": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 443,
+          "milliseconds": 0.185,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)>(?,?))"
+          ]
+        },
+        "direct": {
+          "rows": 1,
+          "changed": 0,
+          "vm_instructions": 22,
+          "milliseconds": 0.0187,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_public_id (public_id=?)"
+          ]
+        },
+        "bulk_initial": {
+          "rows": 0,
+          "changed": 10,
+          "vm_instructions": 391,
+          "milliseconds": 0.2123,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        },
+        "bulk_repeat": {
+          "rows": 0,
+          "changed": 0,
+          "vm_instructions": 21,
+          "milliseconds": 0.0164,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        },
+        "bulk_foreign_current": {
+          "rows": 0,
+          "changed": 0,
+          "vm_instructions": 36,
+          "milliseconds": 0.0172,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        }
+      }
+    },
+    {
+      "retained_history": 10000,
+      "migrations": 21,
+      "results": {
+        "first": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 316,
+          "milliseconds": 0.0879,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=?)"
+          ]
+        },
+        "deep": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 449,
+          "milliseconds": 0.1824,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))"
+          ]
+        },
+        "previous": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 443,
+          "milliseconds": 0.1016,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)>(?,?))"
+          ]
+        },
+        "direct": {
+          "rows": 1,
+          "changed": 0,
+          "vm_instructions": 22,
+          "milliseconds": 0.0343,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_public_id (public_id=?)"
+          ]
+        },
+        "bulk_initial": {
+          "rows": 0,
+          "changed": 1000,
+          "vm_instructions": 34051,
+          "milliseconds": 7.4125,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        },
+        "bulk_repeat": {
+          "rows": 0,
+          "changed": 0,
+          "vm_instructions": 21,
+          "milliseconds": 0.0209,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        },
+        "bulk_foreign_current": {
+          "rows": 0,
+          "changed": 0,
+          "vm_instructions": 36,
+          "milliseconds": 0.0207,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        }
+      }
+    },
+    {
+      "retained_history": 100000,
+      "migrations": 21,
+      "results": {
+        "first": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 316,
+          "milliseconds": 0.3034,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=?)"
+          ]
+        },
+        "deep": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 449,
+          "milliseconds": 0.2359,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)<(?,?))"
+          ]
+        },
+        "previous": {
+          "rows": 25,
+          "changed": 0,
+          "vm_instructions": 443,
+          "milliseconds": 0.5062,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_page (person_id=? AND (created_at,public_id)>(?,?))"
+          ]
+        },
+        "direct": {
+          "rows": 1,
+          "changed": 0,
+          "vm_instructions": 22,
+          "milliseconds": 0.0305,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_public_id (public_id=?)"
+          ]
+        },
+        "bulk_initial": {
+          "rows": 0,
+          "changed": 10000,
+          "vm_instructions": 340051,
+          "milliseconds": 163.6607,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        },
+        "bulk_repeat": {
+          "rows": 0,
+          "changed": 0,
+          "vm_instructions": 21,
+          "milliseconds": 0.0235,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        },
+        "bulk_foreign_current": {
+          "rows": 0,
+          "changed": 0,
+          "vm_instructions": 36,
+          "milliseconds": 0.0217,
+          "plan": [
+            "SEARCH sessions USING INDEX sessions_owner_unrevoked (person_id=?)",
+            "SCALAR SUBQUERY 1",
+            "SEARCH current_session USING INDEX sqlite_autoindex_sessions_1 (id=?)"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 {{define "content"}}
 <p>{{msg "sessions.explain"}}</p>
-{{if .D}}
+<p><a href="/account/sessions/revoke-others">{{msg "sessions.bulk_link"}}</a></p>
+{{with .D}}
+{{if .Rows}}
 <ul class="rows">
-{{range .D}}
+{{range .Rows}}
   <li>
     <h2>{{if .Current}}{{msg "sessions.current"}}{{else}}{{msg "sessions.other"}}{{end}}</h2>
     <dl>
@@ -15,5 +17,16 @@
 {{end}}
 </ul>
 {{else}}<p>{{msg "sessions.none"}}</p>{{end}}
+{{if or .Previous .Next}}
+<nav aria-label="{{msg "sessions.pagination"}}">
+  <p class="actions">
+    {{if .Previous}}<a href="/account/sessions?before={{.Previous}}">{{msg "pager.previous"}}</a>{{end}}
+    <a href="/account/sessions">{{msg "pager.first"}}</a>
+    {{if .Next}}<a href="/account/sessions?after={{.Next}}">{{msg "pager.next"}}</a>{{end}}
+  </p>
+</nav>
+{{end}}
+{{end}}
 <p><a href="/account/security">{{msg "sessions.back_security"}}</a></p>
+<p><a href="/help#sessions">{{msg "sessions.help_link"}}</a></p>
 {{end}}

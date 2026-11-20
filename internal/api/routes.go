@@ -46,6 +46,7 @@ func (s *server) routes() {
 	R("POST "+v1+"/me/membership/departure", s.depart, idem)          // API-067
 	R("POST "+v1+"/me/password", s.changePassword, noNet, cookieOnly) // AUTH-03 / SEC-003
 	R("GET "+v1+"/me/sessions", s.listOwnSessions, noNet, cookieOnly, queryParams("limit", "cursor"))
+	R("POST "+v1+"/me/sessions/revoke-others", s.revokeOtherOwnSessions, noNet, cookieOnly, queryParams())
 	R("DELETE "+v1+"/me/sessions/{session}", s.revokeOwnSession, noNet, cookieOnly, queryParams())
 
 	// Listings.

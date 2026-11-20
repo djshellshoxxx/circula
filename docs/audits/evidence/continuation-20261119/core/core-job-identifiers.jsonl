@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:15:06.224559049-08:00","Action":"start","Package":"command-line-arguments"}
+{"Time":"2026-11-19T02:15:06.818386854-08:00","Action":"run","Package":"command-line-arguments","Test":"TestJobIDPreservesRecordsAndAllocatesUUIDv7"}
+{"Time":"2026-11-19T02:15:06.818609883-08:00","Action":"output","Package":"command-line-arguments","Test":"TestJobIDPreservesRecordsAndAllocatesUUIDv7","Output":"=== RUN   TestJobIDPreservesRecordsAndAllocatesUUIDv7\n"}
+{"Time":"2026-11-19T02:15:06.818702186-08:00","Action":"output","Package":"command-line-arguments","Test":"TestJobIDPreservesRecordsAndAllocatesUUIDv7","Output":"--- PASS: TestJobIDPreservesRecordsAndAllocatesUUIDv7 (0.00s)\n"}
+{"Time":"2026-11-19T02:15:06.818713888-08:00","Action":"pass","Package":"command-line-arguments","Test":"TestJobIDPreservesRecordsAndAllocatesUUIDv7","Elapsed":0}
+{"Time":"2026-11-19T02:15:06.818722314-08:00","Action":"output","Package":"command-line-arguments","Output":"PASS\n"}
+{"Time":"2026-11-19T02:15:07.82296525-08:00","Action":"output","Package":"command-line-arguments","Output":"ok  \tcommand-line-arguments\t1.574s\n"}
+{"Time":"2026-11-19T02:15:07.823006468-08:00","Action":"pass","Package":"command-line-arguments","Elapsed":1.599}

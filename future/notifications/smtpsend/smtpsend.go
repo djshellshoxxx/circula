@@ -98,8 +98,14 @@ func (s *Sender) client() (*gomail.Client, error) {
 		gomail.WithTimeout(c.Timeout),
 		gomail.WithTLSConfig(tc),
 	}
-	if c.TLS == Implicit {
+	if c.TLS == Implicit && c.DialContext == nil {
 		opts = append(opts, gomail.WithSSL())
+	} else if c.TLS == Implicit {
+		// A custom dialer replaces go-mail's TLS dialer too. The wrapper
+		// below must finish verified TLS before returning any connection.
+		// Let go-mail inspect that TLS connection for AUTH rather than mark
+		// an injected connection as plaintext in its implicit-SSL path.
+		opts = append(opts, gomail.WithTLSPolicy(gomail.TLSOpportunistic))
 	} else {
 		opts = append(opts, gomail.WithTLSPolicy(gomail.TLSMandatory))
 	}
@@ -111,7 +117,16 @@ func (s *Sender) client() (*gomail.Client, error) {
 	}
 	if c.DialContext != nil {
 		opts = append(opts, gomail.WithDialContextFunc(func(ctx context.Context, network, address string) (net.Conn, error) {
-			return c.DialContext(ctx, network, address)
+			conn, err := c.DialContext(ctx, network, address)
+			if err != nil || c.TLS != Implicit {
+				return conn, err
+			}
+			secure := tls.Client(conn, tc)
+			if err := secure.HandshakeContext(ctx); err != nil {
+				_ = conn.Close()
+				return nil, err
+			}
+			return secure, nil
 		}))
 	}
 	return gomail.NewClient(c.Host, opts...)

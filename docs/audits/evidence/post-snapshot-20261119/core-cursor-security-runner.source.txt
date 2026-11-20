@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""Record one bounded, production-source cursor regression run."""
+import collections
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import time
+
+root = Path('/workspace/scratch/bfba682cba37/circula-core')
+out = Path('/workspace/scratch/bfba682cba37/evidence')
+stem = 'core-cursor-security-merged-a50f90b'
+go = '/workspace/scratch/beb70d57deba/toolchain/go/bin/go'
+head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
+tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=root, text=True).strip()
+status = subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True)
+if head != 'a50f90bb120d07620159cd2d824b48e92425018b' or status:
+    raise SystemExit('Refusing to test an unexpected or dirty source tree')
+files = sorted(str(p.relative_to(root)) for p in (root / 'internal/api').glob('*.go')
+               if not p.name.endswith('_test.go'))
+files += ['internal/api/cursor_fuzz_test.go', 'internal/api/cursor_security_test.go']
+selection = '^TestPagination(CursorSecurityBoundsAndCanonicalEncoding|FilterBudgetKeepsSupportedQueries|CursorExactSizeBoundary)$'
+argv = [go, 'test', '-json', '-race', '-count=1', '-p', '1', '-run', selection] + files
+overrides = {'GOTOOLCHAIN': 'local', 'GOMAXPROCS': '1', 'GOGC': '20', 'GOMEMLIMIT': '384MiB'}
+env = dict(os.environ, **overrides)
+meta = {
+    'source_commit': head, 'source_tree': tree, 'source_worktree_clean': not status,
+    'cwd': str(root), 'argv': argv, 'environment_overrides': overrides,
+    'timeout_seconds': 60,
+    'scope': 'All production API source files plus cursor security tests. Fuzz file supplies shared helpers; fuzz target and external package/SQLite tests are not selected.',
+    'files_sha256': {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in files},
+    'started_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'status': 'running',
+}
+meta_path = out / (stem + '.execution.json')
+log_path = out / (stem + '.jsonl')
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+began = time.monotonic()
+timed_out = False
+with log_path.open('wb') as log:
+    process = subprocess.Popen(argv, cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT,
+                               start_new_session=True)
+    try:
+        rc = process.wait(timeout=60)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        os.killpg(process.pid, signal.SIGKILL)
+        rc = process.wait(timeout=5)
+meta.update({
+    'finished_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'elapsed_seconds': round(time.monotonic() - began, 6),
+    'exit_code': rc, 'timed_out': timed_out,
+    'status': 'interrupted_timeout' if timed_out else ('passed' if rc == 0 else 'failed'),
+})
+counts = {kind: collections.Counter() for kind in ('top_level_tests', 'subtests', 'packages')}
+events = []
+for line in log_path.read_text(errors='replace').splitlines():
+    try:
+        event = json.loads(line)
+    except ValueError:
+        continue
+    action = event.get('Action')
+    if action not in ('pass', 'fail', 'skip'):
+        continue
+    name = event.get('Test')
+    kind = 'packages' if not name else ('subtests' if '/' in name else 'top_level_tests')
+    counts[kind][action] += 1
+    events.append({k: event[k] for k in ('Action', 'Package', 'Test', 'Elapsed') if k in event})
+meta['completion_counts'] = {k: dict(v) for k, v in counts.items()}
+meta['completion_events'] = events
+meta_path.write_text(json.dumps(meta, indent=2) + '\n')
+print(json.dumps({k: meta[k] for k in ('source_commit', 'status', 'exit_code', 'timed_out', 'elapsed_seconds', 'completion_counts')}, indent=2))
+print('metadata=' + str(meta_path))
+print('log=' + str(log_path))

@@ -314,7 +314,15 @@ func (s *server) sendExport(w http.ResponseWriter, r *http.Request, c *rc, scope
 	z := &zipSink{w: w, name: fmt.Sprintf("circula-%s-%s-%s.zip", c.Net.Slug, scope, f)}
 	_, err := s.svc.Export(r.Context(), c.actor, c.netID(), scope, f, z)
 	if z.zw != nil {
-		_ = z.zw.Close()
+		if err == nil {
+			err = z.zw.Close()
+		}
+		if err != nil {
+			s.log.Error("web export interrupted", "request_id", reqID(r), "err", err)
+			// The response may already contain ZIP bytes. Abort instead of
+			// finalizing a partial archive or appending an HTML error page.
+			panic(http.ErrAbortHandler)
+		}
 		return
 	}
 	if err != nil {

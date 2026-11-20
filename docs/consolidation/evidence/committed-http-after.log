@@ -1,0 +1,8 @@
+=== RUN   TestWebExportCommittedReadFailureAbortsHTTP
+=== RUN   TestWebExportCommittedReadFailureAbortsHTTP/csv
+=== RUN   TestWebExportCommittedReadFailureAbortsHTTP/json
+--- PASS: TestWebExportCommittedReadFailureAbortsHTTP (0.47s)
+    --- PASS: TestWebExportCommittedReadFailureAbortsHTTP/csv (0.23s)
+    --- PASS: TestWebExportCommittedReadFailureAbortsHTTP/json (0.25s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	0.488s

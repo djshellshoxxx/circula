@@ -7,6 +7,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 type supportBoundaryPageData struct {
@@ -21,7 +23,8 @@ func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 		t.Fatal("runtime.Caller could not locate the test source")
 	}
 	path := filepath.Join(filepath.Dir(source), "templates", name)
-	tmpl, err := template.ParseFiles(path)
+	// Use the same catalogue function as production mustLoadTemplates.
+	tmpl, err := template.New(name).Funcs(template.FuncMap{"msg": messages.Text}).ParseFiles(path)
 	if err != nil {
 		t.Fatalf("parse %s: %v", name, err)
 	}
@@ -34,6 +37,9 @@ func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 
 func TestHelpDocumentsSupportBoundaries(t *testing.T) {
 	body := renderSupportBoundaryTemplate(t, "help.html", nil)
+	if !strings.Contains(body, `<h2 id="sessions">Review and end your sign-ins</h2>`) {
+		t.Error("help page did not render the localized session guidance")
+	}
 	for _, required := range []string{
 		`<h2 id="support-boundaries">Support boundaries</h2>`,
 		"network administrators",

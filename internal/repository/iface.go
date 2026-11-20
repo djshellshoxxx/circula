@@ -71,6 +71,15 @@ type NetworkRepo interface {
 	LastConsistencyRun(netID string) (*ConsistencyRun, error)
 }
 
+// SessionPosition is a public keyset boundary in descending creation-time,
+// then public-ID order. It remains usable if the boundary row is deleted.
+type SessionPosition struct {
+	CreatedAt time.Time
+	PublicID  string
+	// Reverse seeks newer rows in ascending order for a previous page.
+	Reverse bool
+}
+
 // PersonRepo covers identities, login throttling, sessions and API tokens.
 type PersonRepo interface {
 	InsertPerson(p *domain.Person, passwordHash string) error
@@ -86,11 +95,18 @@ type PersonRepo interface {
 	// DeleteStaleThrottles purges up to limit rows whose lock ended at or before cutoff (SA-12).
 	DeleteStaleThrottles(cutoff time.Time, limit int) (int64, error)
 
+	// InsertSession assigns a new, independent PublicID to s on success.
 	InsertSession(s *domain.Session) error
 	GetSession(idHash string) (*domain.Session, error)
-	// ListSessions returns only one person's sessions, including dead rows
-	// retained until maintenance. Credential hashes stay inside the service.
-	ListSessions(personID string) ([]*domain.Session, error)
+	// GetOwnedSession uses an indexed public selector and owner predicate.
+	// Retained expired/revoked rows are included for idempotent revocation.
+	GetOwnedSession(personID, publicID string) (*domain.Session, error)
+	// ListSessions seeks strictly past before (nil starts the listing), in
+	// descending (created_at, public_id) order. It reads at most limit retained
+	// rows, including dead rows: expiry filtering must not cause an unbounded
+	// scan. Limits outside 1..100 use 100. Credential hashes stay in the service.
+	// With before.Reverse it seeks strictly newer rows in ascending order.
+	ListSessions(personID string, before *SessionPosition, limit int) ([]*domain.Session, error)
 	TouchSession(idHash string, seen time.Time) error
 	RevokeSession(idHash string, at time.Time) error
 	// RevokeOwnedSession is the owner-scoped self-service mutation. It reports
@@ -99,6 +115,10 @@ type PersonRepo interface {
 	RevokeSessionsOf(personID string, at time.Time) error
 	// RevokeOtherSessionsOf revokes every live session of the person except keepID (A3-03).
 	RevokeOtherSessionsOf(personID, keepID string, at time.Time) error
+	// RevokeOtherOwnedSessions revokes retained unrevoked rows of personID,
+	// excluding keepID, and returns the number changed. A missing, revoked,
+	// or foreign keepID matches nothing; the service also checks its expiry.
+	RevokeOtherOwnedSessions(personID, keepID string, at time.Time) (int64, error)
 	// RevokeLiveSessions revokes every session not yet revoked, of one person
 	// or, with personID "", of everyone, and returns how many it revoked
 	// (SEC-027, OPS-010).
@@ -111,6 +131,10 @@ type PersonRepo interface {
 	GetTokenByHash(hash string) (*domain.APIToken, error)
 	TouchToken(id string, at time.Time) error
 	RevokeToken(personID, id string, at time.Time) (bool, error)
+	// ListTokens returns at most 100 of the owner's tokens, ordered by ID
+	// ascending. The storage query itself is bounded (API-036); expired and
+	// revoked metadata is retained, and tokens beyond this inventory remain
+	// addressable by hash and by the owner-scoped revocation operation.
 	ListTokens(personID string) ([]*domain.APIToken, error)
 	// InvalidateRestoredCredentials revokes restored bearer authority before a database swap.
 	InvalidateRestoredCredentials(at time.Time) (RestoredCredentialCounts, error)
