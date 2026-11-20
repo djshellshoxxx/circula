@@ -1,0 +1,12 @@
+--- FAIL: TestMalformedFormRejectedBeforeHostParseCache (0.02s)
+    --- FAIL: TestMalformedFormRejectedBeforeHostParseCache/&ignored=%zz (0.01s)
+        form_cache_test.go:31: invalid form reached host/mutation: status=200 auth=1 current={Network:n Listing:own-a AreaID:north Active:true Revision:1} err=<nil>
+    --- FAIL: TestMalformedFormRejectedBeforeHostParseCache/&area=%zz (0.00s)
+        form_cache_test.go:31: invalid form reached host/mutation: status=200 auth=1 current={Network:n Listing:own-a AreaID:north Active:true Revision:1} err=<nil>
+    --- FAIL: TestMalformedFormRejectedBeforeHostParseCache/&ignored=x;y (0.01s)
+        form_cache_test.go:31: invalid form reached host/mutation: status=200 auth=1 current={Network:n Listing:own-a AreaID:north Active:true Revision:1} err=<nil>
+FAIL
+FAIL	github.com/djshellshoxxx/circula/future/areas	0.025s
+FAIL
+
+exit_code=1

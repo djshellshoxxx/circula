@@ -1,0 +1,9 @@
+{
+  "module": "areas",
+  "workflow_path": "/workspace/scratch/f47ceab29930/circula-areas-recovery/.github/workflows/future-areas.yml",
+  "sha256": "11f040e357ab3a663c2c000cbd0528833435fa2b12f2a372a3457bf541429bcc",
+  "yaml_bash_python_syntax": "pass",
+  "permissions_and_action_pins": "pass",
+  "full_real_sqlite_native_matrix": true,
+  "current_source_tests": "not run yet"
+}

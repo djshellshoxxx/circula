@@ -16,11 +16,11 @@ type Area struct {
 }
 
 func Validate(a Area) error {
-	if a.Network == "" || a.ID == "" || len(a.ID) > 80 || strings.TrimSpace(a.Label) == "" || !utf8.ValidString(a.Label) || utf8.RuneCountInString(a.Label) > 100 {
+	if !validKey(a.Network) || !validKey(a.ID) || len(a.ID) > 80 || strings.TrimSpace(a.Label) == "" || !utf8.ValidString(a.Label) || utf8.RuneCountInString(a.Label) > 100 {
 		return errors.New("invalid area")
 	}
 	for _, r := range a.Label {
-		if unicode.IsControl(r) || unicode.Is(unicode.Cf, r) {
+		if unicode.IsControl(r) || unicode.Is(unicode.Cf, r) || unicode.Is(unicode.Zl, r) || unicode.Is(unicode.Zp, r) {
 			return errors.New("invalid label")
 		}
 	}
