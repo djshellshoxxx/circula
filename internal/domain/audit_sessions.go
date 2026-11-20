@@ -2,6 +2,12 @@ package domain
 
 // Audit actions of session and sign-up controls (SEC-027, OPS-010, SEC-032).
 const (
+	// ActSessionRevoked records an owner ending one session. It names the
+	// person and whether it was current, never a session identifier (DAT-031).
+	ActSessionRevoked = "session.revoked"
+	// ActOtherSessionsRevoked records an owner's bulk sign-out while keeping
+	// the current session. It contains only the count and retention flag.
+	ActOtherSessionsRevoked = "sessions.others_revoked"
 	// ActSessionsRevoked is the platform audit event of `circula
 	// revoke-sessions`: the operator ended every session, or every session of
 	// one person, for example after a suspected secret exposure or when

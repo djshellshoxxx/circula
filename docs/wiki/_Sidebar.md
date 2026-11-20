@@ -4,10 +4,12 @@
 - [User Guide](User-Guide)
 - [Developer Guide](Developer-Guide)
 
-**Authoritative references**
+**Repository**
 
-- [Current application draft PR #19](https://github.com/djshellshoxxx/circula/pull/19)
-- [Source-pinned status handoff](https://github.com/djshellshoxxx/circula/pull/21)
-- [Report security concerns privately](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/SECURITY.md)
+- [Source (branch claude/cool-gauss-vdxlod)](https://github.com/djshellshoxxx/circula/tree/claude/cool-gauss-vdxlod)
+- [README](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/README.md)
+- [Completion matrix](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/plans/circula-completion-matrix.md)
+- [Operations guide](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/ops/README.md)
+- [Security policy](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/SECURITY.md)
 
-> Wiki pages are proposed source on a draft branch until separately published and verified.
+> Not a release. Wiki pages describe the source on a branch; no instance is implied.

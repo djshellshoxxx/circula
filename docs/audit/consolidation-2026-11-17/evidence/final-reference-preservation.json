@@ -1,0 +1,230 @@
+{
+  "regression_and_fixture_files": [
+    {
+      "file": "cmd/circula/acceptance_http_test.go",
+      "preserved_from": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "619b9fa34286a97a068113fde3e8f10d74334e4ff1ef4de625d62d19fd1e16fd"
+    },
+    {
+      "file": "cmd/circula/acceptance_scenario_test.go",
+      "preserved_from": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "95dbf21d4e7582841e43549b733cae6fe8f3edd696fa3d2e9242dc98cc2e05dd"
+    },
+    {
+      "file": "internal/store/persistence_regression_test.go",
+      "preserved_from": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "7642af68717ac3a71bc4053e0402ac82935a8dd131d97f17d5570c9b0fded2e7"
+    },
+    {
+      "file": "cmd/circula/serve_test.go",
+      "preserved_from": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "4b0f10889ddb806578f9f440d82aba041eb364fbca40ad9a73085f8f07e70551"
+    },
+    {
+      "file": "internal/service/ledger_auth_integration_regression_test.go",
+      "preserved_from": "163fe1596bd7cfb8c2a22891629fc4459e6b639c",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "5894ad436afeff9b37264d62828ff2f560dd0dec4ad482ba3144468905753b74"
+    },
+    {
+      "file": "internal/api/more_test.go",
+      "preserved_from": "b53f757682bff5f488be9c2686c2e8aa8ad4054a",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "03961da89fe8457229c3467562ff55155a9960160bb8e0864b6fbabd771720e4"
+    },
+    {
+      "file": "e2e/tests/security.spec.js",
+      "preserved_from": "b53f757682bff5f488be9c2686c2e8aa8ad4054a",
+      "current_main": "b4398074ae4ca72559235ca50242cfcb7a934eec",
+      "byte_identical": true,
+      "sha256": "eaa04acb52013e2691b990aa23680b5f7f778c4a4a691082c62038450c8fd41b"
+    }
+  ],
+  "normalized_retained_records": [
+    {
+      "retained": "evidence/aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "source": "aggregate-concurrent-auth-cli-workspace-cache-race.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/final-ci/pr81-09ef8a5-browser-passed.log",
+      "source": "audit-f/final-ci/pr81-09ef8a5-browser-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/final-ci/pr81-09ef8a5-linux-passed.log",
+      "source": "audit-f/final-ci/pr81-09ef8a5-linux-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/final-ci/pr81-09ef8a5-macos-passed.log",
+      "source": "audit-f/final-ci/pr81-09ef8a5-macos-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/final-ci/pr81-09ef8a5-windows-passed.log",
+      "source": "audit-f/final-ci/pr81-09ef8a5-windows-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/final-ci/pr83-cb95bb1-traceability-failed.log",
+      "source": "audit-f/final-ci/pr83-cb95bb1-traceability-failed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/final-ci/queue-inventory-20261118-0842.json",
+      "source": "audit-f/final-ci/queue-inventory-20261118-0842.json",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/local-browser-unavailable.log",
+      "source": "audit-ui/local-browser-unavailable.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr71-native-macos-passed.log",
+      "source": "audit-f/final-ci/pr71-macos-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr71-native-windows-passed.log",
+      "source": "audit-f/final-ci/pr71-windows-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr71-original-e2e-failure.log",
+      "source": "audit-f/final-ci/pr71-e2e-failed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr72-final-provider-lint-passed.log",
+      "source": "audit-f/final-ci/pr72-faed490-lint-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr72-first-lint-failure.log",
+      "source": "audit-f/final-ci/pr72-lint-failed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr72-second-lint-failure.log",
+      "source": "audit-f/final-ci/pr72-cac2e0e-lint-failed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr73-fuzz-provider-failure.log",
+      "source": "audit-f/pr73-fuzz-job.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr73-fuzz-retry-passed.log",
+      "source": "audit-f/final-ci/pr73-fuzz-retry-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr77-final-browser-passed.log",
+      "source": "audit-f/final-ci/pr77-2f6b3e4-browser-passed.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr84-a2-08-original-evidence.txt",
+      "source": "audit-c/PR84-A2-08-original-evidence.txt",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr87/PR87-BASELINE-WEB.log",
+      "source": "audit-b/PR87-BASELINE-WEB.log",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr87/PR87-CLOCK-ROLLBACK.diff",
+      "source": "audit-b/PR87-CLOCK-ROLLBACK.diff",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr87/PR87-CURRENT-POLICY-CONTROL.diff",
+      "source": "audit-b/PR87-CURRENT-POLICY-CONTROL.diff",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "evidence/pr87/PR87-SAME-MS.diff",
+      "source": "audit-b/PR87-SAME-MS.diff",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "source-reviews/CI-QUALIFICATION.md",
+      "source": "audit-f/CI-QUALIFICATION-REVIEW.md",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "source-reviews/PR84-INITIAL-REVIEW.md",
+      "source": "audit-a/PR84-SOURCE-REVIEW-7f98b3d.md",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    },
+    {
+      "retained": "source-reviews/PR86-SOURCE-POLICY-REVIEW.md",
+      "source": "audit-a/PR86-SOURCE-POLICY-REVIEW-2e2e6f0.md",
+      "source_exists": true,
+      "source_hash_matches": true,
+      "only_documented_whitespace_changed": true
+    }
+  ]
+}

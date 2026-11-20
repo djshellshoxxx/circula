@@ -1,0 +1,62 @@
+{
+  "recorded_at": "2026-11-18T08:03:11.881Z",
+  "scope": "PRs #71 through #77: all 53 required job results successful; later additions tracked separately",
+  "results": [
+    {
+      "pr": 71,
+      "head": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "run": 44256822964,
+      "required_jobs": 9,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T07:51:03.323Z"
+    },
+    {
+      "pr": 72,
+      "head": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "run": 44256964805,
+      "required_jobs": 9,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T07:59:54.143Z"
+    },
+    {
+      "pr": 73,
+      "head": "cb25b41febd43273cd4aa856072406b210089d81",
+      "run": 44247617122,
+      "required_jobs": 7,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T06:46:48.672Z"
+    },
+    {
+      "pr": 74,
+      "head": "ec98caba7328790ef36f0f2c144644bc05155d6b",
+      "run": 44248576511,
+      "required_jobs": 7,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T06:46:48.719Z"
+    },
+    {
+      "pr": 75,
+      "head": "83de536ee373a7c4997222cf58ff563c53c8cbbc",
+      "run": 44248706120,
+      "required_jobs": 7,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T07:01:07.620Z"
+    },
+    {
+      "pr": 76,
+      "head": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "run": 44249505223,
+      "required_jobs": 7,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T06:48:44.018Z"
+    },
+    {
+      "pr": 77,
+      "head": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002",
+      "run": 44256413287,
+      "required_jobs": 7,
+      "all_required_passed": true,
+      "observed_at": "2026-11-18T07:44:25.163Z"
+    }
+  ]
+}

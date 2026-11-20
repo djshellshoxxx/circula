@@ -16,11 +16,13 @@ This document is technology-specific only where [00](00-conventions.md) already 
 
 This table records a historical audit snapshot at `925f637` on `claude/circula-build`; it is not re-derived for the current checkpoint and must not be read as current implementation status or a release approval. Current checkpoint status and remaining gates are tracked in [RESUME-2026-10-24](../audit/RESUME-2026-10-24.md). **built**, **partial**, **not built**, and **deferred** below retain the meanings assigned in that historical snapshot. Detailed historical paths and test names are in [TRACEABILITY.md](../TRACEABILITY.md); owner decisions remain in [DECISIONS.md](../DECISIONS.md). No release gate is claimed here.
 
+Selected notes labelled **Source refresh 2026-11-19** describe current mechanisms and supersede earlier absence claims. Historical status labels and summary counts are unchanged; source/test citations do not assert a current passing run. See [the focused source review](../audit/consolidation-completion-2026-11/SPEC-STATUS-REFRESH.md).
+
 Summary: built 16, deferred 1, not built 2, partial 16.
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| OPS-001 | P0 | built | One artefact for both models |
+| OPS-001 | P0 | built | One artefact for both models; Source: `scripts/package-release.sh`, `cmd/circula/config.go`; packaging and both deployment-mode smoke results require retained CI/drill artifacts. No execution result is implied |
 | OPS-002 | P0 | built | Single process; embedded database; loopback default |
 | OPS-003 | P0 | partial | Five targets built in CI with checksums; per-target smoke run not performed |
 | OPS-004 | P1 | partial | Environments and synthetic staging refresh documented in docs/ops; hosted staging execution not recorded |
@@ -37,22 +39,22 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-015 | P0 | partial | Alert table in docs/ops/monitoring.md; alerts not configured or tested in staging |
 | OPS-016 | P0 | built | Read-only verify with checksum test; CLI and admin entry points |
 | OPS-017 | P0 | built | Online snapshot with manifest and checksum; load test not run |
-| OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention |
-| OPS-019 | P0 | partial | Backups not encrypted; off-host copy is an operator procedure |
+| OPS-018 | P0 | built | Daily schedule with 30 daily and 12 monthly retention [2026-11-18: a backup whose name is dated after the current time (clock fault, misplaced file) is kept but fills no daily or monthly slot, as scheduling already ignores it (A3-F10; `TestPruneKeepsFutureDatedBackupsOutOfCounts`). The backup job logs that clock anomaly (OPS-033): each scheduling evaluation writes one warning with the count of such backups, the newest one's file name, its name time and the current time in UTC (`TestJobUntilNextBackupLogsFutureDatedBackups`)] |
+| OPS-019 | P0 | partial | [Refreshed 2026-11-16: encryption at rest is built as an option, `cmd/circula/backupcrypt.go`, addenda/OPS-019-SEC-028.md (status implemented).] Off-host copy is an operator procedure |
 | OPS-020 | P0 | built | Restore verifies, refuses while serving, writes a local record and a database.restored audit event |
 | OPS-021 | P0 | built | Drill procedure + checklist in docs/ops/backup-restore.md; scripts/restore-drill.sh records drills |
 | OPS-022 | P0 | built | Versioned forward-only migrations; newer schema refused |
-| OPS-023 | P0 | partial | Post-migration verification only; pre-migration verification and injected-failure test not present |
-| OPS-024 | P0 | partial | Upgrade sequence documented; maintenance mode not built |
+| OPS-023 | P0 | partial | Source refresh 2026-11-19: `preMigrationSafeguard` checks live SQLite integrity and verifies an on-disk backup before migration, with plain/encrypted/corrupt-database tests. `TestFailingMigrationRollsBackAndReopensCleanly` injects a mid-migration DDL conflict; `TestUpgradeFromEverySchemaVersion` checks all earlier schema fixtures. Full pre-commit ledger-invariant verification and migration-metric acceptance are not established by these checks |
+| OPS-024 | P0 | partial | Upgrade sequence documented; [Refreshed 2026-11-16; "maintenance mode not built" is stale: maintenance mode is built, `cmd/circula/maintenance.go` and `maintenance_test.go`, with reads served and writes answered 503.] |
 | OPS-025 | P1 | built | Explicit migrate mode default; auto mode takes backup |
 | OPS-026 | P0 | partial | Release notes template exists; version set by build flag |
 | OPS-027 | P0 | built | Expiry, purge, verify and backup jobs idempotent; last run recorded in metrics |
 | OPS-028 | P0 | built | Expiry uses same service path; no entries |
-| OPS-029 | P1 | not built | No mail and no stored notices |
-| OPS-030 | P1 | partial | Severity levels in docs/ops/runbook.md; not linked from incident procedure |
-| OPS-031 | P1 | partial | Support boundary documented; break-glass not built |
+| OPS-029 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Notices are stored and shown in-app (FR-038). No mail delivery and no notice queue (no SMTP code found in `internal/` or `cmd/`) |
+| OPS-030 | P1 | built | Levels, recommended targets and channels in docs/ops/incident-response.md (targets not approved, DEC-022); runbook and monitoring use the same levels (TestIncidentProcedureDocumented) |
+| OPS-031 | P1 | partial | Support boundary documented; [Refreshed 2026-11-16: break-glass is built, see SEC-013 and ARC-009.] |
 | OPS-032 | P0 | built | Structured JSON logs; log level needs restart |
-| OPS-033 | P0 | partial | Failure table documented; per-network freeze not built |
+| OPS-033 | P0 | partial | Failure table documented; per-network freeze not built [Refreshed 2026-11-16: a freeze service exists, `internal/service/freeze.go`; whether it is per network is UNVERIFIED] |
 | OPS-034 | P1 | partial | RPO and RTO recorded as DEC-016 defaults in docs/ops/rpo-rto.md; owner confirmation outstanding |
 | OPS-035 | P1 | partial | Binary, checksum and module list per target; signing deferred; no secret scan in package |
 

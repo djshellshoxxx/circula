@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Operator break-glass (SEC-013, DEC-014, TA-5).
@@ -251,6 +251,9 @@ func (s *Service) ListBreakGlass(ctx context.Context, actor domain.Actor, netID 
 		if err := p.requireAdmin(); err != nil {
 			return err
 		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
+		}
 		out, err = tx.ListBreakGlass(netID, pg.AfterID, clampPage(pg))
 		return err
 	})
@@ -306,7 +309,7 @@ func (s *Service) GrantBreakGlassAdmin(ctx context.Context, actor domain.Actor, 
 		if err != nil {
 			return err
 		}
-		person, _, err := tx.GetPersonByLogin(strings.TrimSpace(in.Login))
+		person, _, err := tx.GetPersonByLogin(normalizeLogin(in.Login))
 		if err != nil {
 			return domain.NotFound("member")
 		}

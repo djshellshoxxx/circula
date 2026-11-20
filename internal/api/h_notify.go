@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // notificationDTO is one inbox entry (FR-038). link is a path relative to the
@@ -18,7 +17,7 @@ type notificationDTO struct {
 	ReadAt    *string `json:"read_at"`
 }
 
-func toNotification(n *store.Notification) notificationDTO {
+func toNotification(n *service.Notification) notificationDTO {
 	return notificationDTO{ID: n.ID, Kind: n.Kind, Title: n.Title, Body: n.Body, Link: n.Link, Read: n.ReadAt != nil,
 		CreatedAt: ts(n.CreatedAt), ReadAt: tsPtr(n.ReadAt)}
 }
@@ -39,9 +38,9 @@ func (s *server) listNotifications(c *reqCtx) error { // FR-038
 	if err != nil {
 		return err
 	}
-	rows, next, err := collect(c, p, func(pg service.Page) ([]*store.Notification, error) {
+	rows, next, err := collect(c, p, func(pg service.Page) ([]*service.Notification, error) {
 		return s.svc.ListNotifications(c.r.Context(), c.actor, c.netID, service.NotificationQuery{UnreadOnly: unread, Page: pg})
-	}, func(n *store.Notification) string { return n.ID }, nil)
+	}, func(n *service.Notification) string { return n.ID }, nil)
 	if err != nil {
 		return err
 	}

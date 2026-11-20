@@ -1,12 +1,9 @@
 package store
 
-import "github.com/djshellshoxxx/circula/internal/domain"
+import "github.com/djshellshoxxx/circula/internal/repository"
 
-// SuspensionRepo covers network suspensions (GOV-023, GOV-024).
-type SuspensionRepo interface {
-	// PutSuspension records a suspension; false when one of that kind already exists.
-	PutSuspension(netID string, s domain.Suspension) (bool, error)
-	// DeleteSuspension lifts a suspension; false when none of that kind existed.
-	DeleteSuspension(netID string, kind domain.SuspensionKind) (bool, error)
-	ListSuspensions(netID string) ([]domain.Suspension, error)
-}
+// Compatibility aliases preserve the existing storage API and exact type
+// identity. Driver-neutral contracts live in internal/repository (ARC-004).
+type (
+	SuspensionRepo = repository.SuspensionRepo
+)

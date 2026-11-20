@@ -15,12 +15,13 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/httpx"
+	"github.com/djshellshoxxx/circula/internal/logx"
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // Options tunes the handler. The zero value is production-ready.
 type Options struct {
-	Logger *slog.Logger // default: slog.Default()
+	Logger *slog.Logger // default: slog.Default(); always wrapped by logx (SEC-020)
 	Now    func() time.Time
 	// MaxBodyBytes caps request bodies (API-037). Default 64 KiB.
 	MaxBodyBytes int64
@@ -38,6 +39,11 @@ type Options struct {
 	// Edge carries the trusted-proxy, Secure and HSTS policy shared with the
 	// HTML adapter. The zero value ignores forwarding headers.
 	Edge httpx.Edge
+	// ExportSpoolDir is the directory export archives are written to and kept
+	// in until they expire (FR-095, BR-06). Default: os.TempDir(). When no
+	// file can be created there, exports are refused with 503; archives are
+	// never held in memory instead.
+	ExportSpoolDir string
 }
 
 type server struct {
@@ -57,11 +63,17 @@ type server struct {
 // NewHandler returns the API handler. Mount it at /api/.
 func NewHandler(svc *service.Service) http.Handler { return NewHandlerWithOptions(svc, Options{}) }
 
+// CloseHandler releases cached export files and timers during shutdown.
+// Call it after the HTTP server has finished draining active requests.
+func CloseHandler(h http.Handler) {
+	if s, ok := h.(*server); ok {
+		s.jobs.close()
+	}
+}
+
 // NewHandlerWithOptions is NewHandler with explicit options.
 func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
-	if opt.Logger == nil {
-		opt.Logger = slog.Default()
-	}
+	opt.Logger = logx.New(opt.Logger) // redacts credentials, escapes control characters
 	if opt.Now == nil {
 		opt.Now = time.Now
 	}
@@ -89,6 +101,7 @@ func NewHandlerWithOptions(svc *service.Service, opt Options) http.Handler {
 	s := &server{svc: svc, opt: opt, log: opt.Logger, mux: http.NewServeMux(),
 		idem: newIdemStore(24*time.Hour, 10000), rl: newLimiter(opt.Now), jobs: newJobStore(opt.Now),
 		cursor: opt.CursorKey, csrf: httpx.CSRF{Key: opt.CSRFKey}, pwFail: newLimiter(opt.Now)}
+	s.jobs.dir = opt.ExportSpoolDir
 	s.routes()
 	s.mux.HandleFunc("/", s.notFound)
 	setErasureHook(s)

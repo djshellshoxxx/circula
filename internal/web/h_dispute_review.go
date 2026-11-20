@@ -1,11 +1,8 @@
 package web
 
 import (
-	"time"
-
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // reviewData fills the response (FR-076) and re-review (FR-078) parts of the dispute page.
@@ -27,17 +24,18 @@ func (s *server) reviewData(c *rc, v *service.DisputeView, out *disputeData) {
 	if rr != nil {
 		out.ReReviewWhy = rr.Reason
 		out.ReReviewText = "Re-review requested, waiting for a different reviewer."
-		if rr.Status == store.ReReviewDecided {
+		if rr.Status == service.ReReviewDecided {
 			out.ReReviewDone = rr.Rationale
 			out.ReReviewText = reReviewWords(rr.Outcome, domain.FormatAmount(rr.ReversalAmount, c.Net.Policy.Decimals), c.Net.Policy.CurrencyName)
 		}
 	}
-	if d.Status == domain.DisputeResolved && d.DecidedAt != nil {
-		until := d.DecidedAt.Add(time.Duration(c.Net.Policy.ReReviewWindowDays) * 24 * time.Hour)
+	if until := v.Deadlines.ReReviewCloses; d.Status == domain.DisputeResolved && !until.IsZero() {
+		// The service's date: the window of the policy in force when the
+		// dispute was opened (GOV-001), inclusive, as RequestReReview enforces it.
 		out.ReReviewUntil = fmtTime(until)
-		out.CanReReview = rr == nil && party && c.isActive() && s.opts.Clock.Now().Before(until)
+		out.CanReReview = rr == nil && party && c.isActive() && !s.opts.Clock.Now().After(until)
 	}
-	out.DecideReRev = rr != nil && rr.Status == store.ReReviewRequested && (c.isReviewer() || c.isAdmin()) && !party &&
+	out.DecideReRev = rr != nil && rr.Status == service.ReReviewRequested && (c.isReviewer() || c.isAdmin()) && !party &&
 		c.Me.ID != d.ReviewerID
 }
 

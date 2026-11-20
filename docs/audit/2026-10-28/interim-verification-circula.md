@@ -1,8 +1,8 @@
-# Interim verification results: circula
+# Verification results: circula (pass complete except the consolidated synthesis)
 
-Backup of the independent verification pass as of 2026-10-29 03:15 UTC. The pass stopped twice on a usage limit and is being resumed; the consolidated report supersedes this file.
+Final state of the independent verification pass at `bb5a36f` (recorded 2026-11-18). Every finding was re-reproduced by an independent verifier; the six Medium findings also had a skeptic and an impact check. The consolidated synthesis step never ran (usage limits), so this table and the first-wave reports are the record. Five Medium findings were later fixed on main in `c34d947` (see REMEDIATION-2026-11-04.md); A3-F02 awaits owner decision DEC-014.
 
-Findings extracted: 55; batch-verified: 55; findings with extra lens results: 5.
+Findings extracted: 55; batch-verified: 55; findings with extra lens results: 6.
 
 | ID | Auditor severity | Verifier verdict | Verifier severity | Extra checks | Summary |
 |---|---|---|---|---|---|
@@ -40,7 +40,7 @@ Findings extracted: 55; batch-verified: 55; findings with extra lens results: 5.
 | A2-21 | Info | confirmed | Info | - | API tokens and session ids are stored as plain unsalted, unkeyed SHA-256 whereas the spec requires a salted or keyed hash. |
 | A3-F01 | Medium | confirmed | Medium | refute: not refuted; impact: real (Medium) | With backup-encryption-key set, the pre-migration gate runs integrity_check on the .db.enc ciphertext, so circula migrate and serve (migrate-mode=auto) can neve |
 | A3-F02 | Medium | confirmed | Medium | refute: refuted; impact: real (Medium) | Break-glass 'no lasting changes' rule (requireLasting) covers only about 10 methods, so a break-glass admin can post adjustments, approve dual-control requests  |
-| A3-F16 | Medium | confirmed | Medium | - | Second-factor throttle is renewable by one failure at expiry and is shared with session-only DisableMFA, so a stolen session keeps the owner out of MFA sign-in  |
+| A3-F16 | Medium | confirmed | Medium | impact: real (Medium); refute: not refuted | Second-factor throttle is renewable by one failure at expiry and is shared with session-only DisableMFA, so a stolen session keeps the owner out of MFA sign-in  |
 | A3-F03 | Low | confirmed | Info | - | require-mfa-admins is not applied to admin powers reached through requireDecider, so an admin without a second factor resolves disputes and decides challenges. |
 | A3-F05 | Low | confirmed | Low | - | Erasure leaves the member's challenge text (challenges.reason) and the login in 'recover: <login>' throttle rows. |
 | A3-F06 | Low | confirmed | Low | - | DeleteThrottleFamily compares a Go byte length with SQLite character substr, so per-address throttle rows of non-ASCII logins are never removed. |

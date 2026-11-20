@@ -97,7 +97,13 @@ func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
 	if err := rows.Close(); err != nil {
 		return err
 	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
 	for v, n := range applied {
+		if v < 1 {
+			return fmt.Errorf("store: invalid recorded migration version %d (must be positive)", v)
+		}
 		if v > len(all) {
 			return fmt.Errorf("store: database schema v%d is newer than this binary (v%d)", v, len(all))
 		}
@@ -118,10 +124,11 @@ func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
 				m.version, m.name, time.Now().UnixMilli())
 		}
 		if err != nil {
-			_, _ = conn.ExecContext(context.Background(), "ROLLBACK")
+			rollbackOrDiscard(conn)
 			return fmt.Errorf("store: migration %04d_%s: %w", m.version, m.name, err)
 		}
 		if _, err := conn.ExecContext(ctx, "COMMIT"); err != nil {
+			rollbackOrDiscard(conn)
 			return err
 		}
 	}

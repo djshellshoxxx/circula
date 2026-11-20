@@ -1,0 +1,1587 @@
+{
+  "overview.pending": {
+    "one": "%[1]d membership request is waiting.",
+    "other": "%[1]d membership requests are waiting."
+  },
+  "overview.stale": {
+    "one": "%[1]d open proposal has waited at least %[2]d hours for an answer.",
+    "other": "%[1]d open proposals have waited at least %[2]d hours for an answer."
+  },
+  "overview.disputes": {
+    "one": "%[1]d dispute is open or under review.",
+    "other": "%[1]d disputes are open or under review."
+  },
+  "overview.posting": {
+    "one": "%[1]d dispute is decided but the reversal is not yet posted.",
+    "other": "%[1]d disputes are decided but the reversal is not yet posted."
+  },
+  "overview.limit": {
+    "one": "%[1]d active member is at or beyond their credit limit.",
+    "other": "%[1]d active members are at or beyond their credit limit."
+  },
+  "overview.invites": {
+    "one": "%[1]d invitation ends within %[2]d hours.",
+    "other": "%[1]d invitations end within %[2]d hours."
+  },
+  "overview.review_requests": {
+    "other": "Review requests"
+  },
+  "overview.review_waiting": {
+    "other": "Review waiting proposals"
+  },
+  "overview.review_queue": {
+    "other": "Open the review queue"
+  },
+  "overview.see_posting": {
+    "other": "See them"
+  },
+  "overview.members": {
+    "other": "Open the member list"
+  },
+  "overview.invitations": {
+    "other": "Open invitations"
+  },
+  "overview.check_none": {
+    "other": "No ledger check has been recorded yet."
+  },
+  "overview.check_ok": {
+    "other": "The last ledger check passed."
+  },
+  "overview.check_failed": {
+    "other": "The last ledger check found problems."
+  },
+  "overview.title": {
+    "other": "Network admin"
+  },
+  "queue.title": {
+    "other": "Waiting proposals"
+  },
+  "queue.party_proposal": {
+    "other": "%[1]s proposes to pay %[2]s %[3]s %[4]s"
+  },
+  "queue.waiting": {
+    "other": "Waiting for an answer"
+  },
+  "balance.credit": {
+    "other": "In credit"
+  },
+  "balance.debt": {
+    "other": "In debt"
+  },
+  "balance.level": {
+    "other": "Level"
+  },
+  "balance.spoken_credit": {
+    "other": "In credit by %[1]s %[2]s"
+  },
+  "balance.spoken_debt": {
+    "other": "In debt by %[1]s %[2]s"
+  },
+  "balance.spoken_level": {
+    "other": "Level, zero %[1]s"
+  },
+  "balance.limit_used": {
+    "other": "You are using %[1]s of your %[2]s credit limit."
+  },
+  "member.network": {
+    "other": "the network"
+  },
+  "member.hidden": {
+    "other": "another member"
+  },
+  "reversal.later": {
+    "other": "a later posting"
+  },
+  "reversal.ledger": {
+    "other": "ledger reference %[1]s"
+  },
+  "reversal.by": {
+    "other": "Reversed by %[1]s (%[2]s %[3]s)"
+  },
+  "row.ledger": {
+    "other": "Ledger reference %[1]s"
+  },
+  "status.waiting_other": {
+    "other": "Waiting for %[1]s to respond"
+  },
+  "status.waiting_you": {
+    "other": "Waiting for you to respond"
+  },
+  "status.completed": {
+    "other": "Completed"
+  },
+  "status.declined": {
+    "other": "Declined"
+  },
+  "status.cancelled": {
+    "other": "Cancelled"
+  },
+  "status.expired": {
+    "other": "Expired"
+  },
+  "status.disputed": {
+    "other": "Disputed"
+  },
+  "status.reversed": {
+    "other": "Reversed"
+  },
+  "status.explanation_1": {
+    "other": "Nothing has been posted yet. The amount is held aside from the payer's available credit until it is accepted, declined, cancelled or expires."
+  },
+  "status.explanation_2": {
+    "other": "Posted to both accounts."
+  },
+  "status.explanation_3": {
+    "other": "The other party declined. Nothing was posted."
+  },
+  "status.explanation_4": {
+    "other": "Withdrawn before it was accepted. Nothing was posted."
+  },
+  "status.explanation_5": {
+    "other": "Not answered in time. Nothing was posted."
+  },
+  "status.explanation_6": {
+    "other": "A dispute is open. Postings stay as they were until a reviewer decides."
+  },
+  "status.explanation_7": {
+    "other": "Fully reversed by a later posting."
+  },
+  "financial.row.trade.paid": {
+    "other": "You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.trade.pay": {
+    "other": "You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.trade.received": {
+    "other": "You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.trade.receive": {
+    "other": "You will receive %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.reversal.paid": {
+    "other": "Reversal: You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.reversal.pay": {
+    "other": "Reversal: You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.reversal.received": {
+    "other": "Reversal: You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.reversal.receive": {
+    "other": "Reversal: You will receive %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.adjustment.paid": {
+    "other": "Adjustment: You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.adjustment.pay": {
+    "other": "Adjustment: You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.adjustment.received": {
+    "other": "Adjustment: You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.adjustment.receive": {
+    "other": "Adjustment: You will receive %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.grant.paid": {
+    "other": "Sign-up grant: You paid %[1]s %[2]s %[3]s"
+  },
+  "financial.row.grant.pay": {
+    "other": "Sign-up grant: You pay %[1]s %[2]s %[3]s"
+  },
+  "financial.row.grant.received": {
+    "other": "Sign-up grant: You received %[2]s %[3]s from %[1]s"
+  },
+  "financial.row.grant.receive": {
+    "other": "Sign-up grant: You will receive %[2]s %[3]s from %[1]s"
+  },
+  "footer.credits": {
+    "other": "Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted."
+  },
+  "footer.help": {
+    "other": "Help: credits, balances and statuses"
+  },
+  "terms.accept": {
+    "other": "I have read and accept these terms"
+  },
+  "session.ending": {
+    "other": "Your session is about to end."
+  },
+  "common.skip": {
+    "other": "Skip to main content"
+  },
+  "balance.limit_notice": {
+    "other": "Credit limit notice:"
+  },
+  "form.problem": {
+    "other": "There is a problem"
+  },
+  "session.extend": {
+    "other": "Stay signed in"
+  },
+  "session.sign_in": {
+    "other": "Sign in again"
+  },
+  "pager.previous": {
+    "other": "Previous page"
+  },
+  "navigation.networks": {
+    "other": "All networks"
+  },
+  "pager.first": {
+    "other": "First page"
+  },
+  "account.time_zone": {
+    "other": "Time zone"
+  },
+  "common.reference": {
+    "other": "Reference"
+  },
+  "pager.next": {
+    "other": "Next page"
+  },
+  "account.password": {
+    "other": "Password"
+  },
+  "account.security": {
+    "other": "Security"
+  },
+  "account.sign_out": {
+    "other": "Sign out"
+  },
+  "session.dismiss": {
+    "other": "Dismiss"
+  },
+  "common.notice": {
+    "other": "Notice:"
+  },
+  "form.error_prefix": {
+    "other": "Error: "
+  },
+  "navigation.inbox": {
+    "other": "Inbox"
+  },
+  "navigation.main": {
+    "other": "Main"
+  },
+  "dashboard.explain": {
+    "other": "Available to spend is not your balance: pending outgoing trades reduce it."
+  },
+  "dashboard.needs_empty": {
+    "other": "Nothing is waiting for you. Proposals sent to you will appear here."
+  },
+  "dashboard.recent_empty": {
+    "other": "No completed activity yet. Completed trades will appear here."
+  },
+  "dashboard.outgoing_empty": {
+    "other": "You have no pending trades waiting for others."
+  },
+  "dashboard.awaiting": {
+    "other": "Awaiting from others (not available yet)"
+  },
+  "dashboard.reserved": {
+    "other": "Reserved for pending outgoing trades"
+  },
+  "dashboard.needs": {
+    "other": "Trades waiting for you"
+  },
+  "dashboard.used": {
+    "other": "Credit limit in use"
+  },
+  "dashboard.help": {
+    "other": "What do these mean?"
+  },
+  "dashboard.available": {
+    "other": "Available to spend"
+  },
+  "dashboard.propose": {
+    "other": "Propose a trade"
+  },
+  "dashboard.recent": {
+    "other": "Latest activity"
+  },
+  "dashboard.announcements": {
+    "other": "Announcements"
+  },
+  "dashboard.balance": {
+    "other": "Your balance"
+  },
+  "dashboard.limit": {
+    "other": "Credit limit"
+  },
+  "dashboard.history": {
+    "other": "Full history"
+  },
+  "dashboard.pending": {
+    "other": "Pending"
+  },
+  "common.unread": {
+    "other": "%[1]d unread"
+  },
+  "common.new": {
+    "other": "%[1]d new"
+  },
+  "navigation.home": {
+    "other": "Home"
+  },
+  "navigation.trades": {
+    "other": "Trades"
+  },
+  "navigation.directory": {
+    "other": "Directory"
+  },
+  "navigation.listings": {
+    "other": "Listings"
+  },
+  "navigation.history": {
+    "other": "History"
+  },
+  "navigation.disputes": {
+    "other": "Disputes"
+  },
+  "navigation.rules": {
+    "other": "Rules"
+  },
+  "navigation.review": {
+    "other": "Review queue"
+  },
+  "navigation.admin": {
+    "other": "Network admin"
+  },
+  "notice.closing_date": {
+    "other": "This network closes on %[1]s. You can keep trading until then. Download your data before the date; read access continues for a while afterwards."
+  },
+  "notice.membership_suspended": {
+    "other": "Your membership is suspended. You can view your trades and history, and decline or withdraw trades, but you cannot propose, accept or post. Contact the network administrator to ask about restoring it."
+  },
+  "notice.membership_departed": {
+    "other": "You have left this network. You can still read your history and download your data."
+  },
+  "notice.network_closed": {
+    "other": "This network is closed. History stays readable and exports are available; new trades are not possible."
+  },
+  "notice.network_closing": {
+    "other": "This network has reached its closing date and is completing its closure. New trades are not possible; history stays readable and exports are available."
+  },
+  "notice.admin_required": {
+    "other": "This network has no active administrator, so it is read-only (administrator required). You can read balances and history and download your data; nothing that moves value is possible until an administrator is appointed."
+  },
+  "notice.trading_paused": {
+    "other": "Trading in this network is paused (suspended). You can read balances and history and download your data; new trades and acceptances are not possible until it resumes."
+  },
+  "auth.title.sign_in": {
+    "other": "Sign in"
+  },
+  "auth.title.register": {
+    "other": "Create an account"
+  },
+  "auth.title.recover": {
+    "other": "Recover your account"
+  },
+  "auth.title.recovery_codes": {
+    "other": "Recovery codes"
+  },
+  "auth.title.mfa_challenge": {
+    "other": "Enter your authentication code"
+  },
+  "auth.title.security": {
+    "other": "Account security"
+  },
+  "auth.title.mfa_enrol": {
+    "other": "Turn on two-step sign-in"
+  },
+  "auth.title.mfa_save": {
+    "other": "Save your recovery codes"
+  },
+  "auth.title.mfa_save_new": {
+    "other": "Save your new recovery codes"
+  },
+  "auth.title.password": {
+    "other": "Change your password"
+  },
+  "auth.throttle.minute": {
+    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
+  },
+  "auth.throttle.few_minutes": {
+    "other": "Too many attempts. Wait a few minutes and try again. Nothing changed."
+  },
+  "auth.throttle.login": {
+    "other": "Too many attempts for this login. Wait a few minutes and try again."
+  },
+  "auth.throttle.login_nothing": {
+    "other": "Too many attempts for this login. Wait a few minutes and try again. Nothing changed."
+  },
+  "auth.throttle.account": {
+    "other": "Too many attempts for this account. Wait a few minutes and try again."
+  },
+  "auth.not_saved": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "auth.mismatch.confirm": {
+    "other": "Confirm password: the two passwords do not match. Type the same password in both fields."
+  },
+  "auth.mismatch.confirm_new": {
+    "other": "Confirm new password: the two passwords do not match. Type the same password in both fields."
+  },
+  "auth.login.failed": {
+    "other": "The login or password is not correct. Check both and try again."
+  },
+  "auth.login.failed_field": {
+    "other": "Login or password: check both and try again."
+  },
+  "auth.flash.registered": {
+    "other": "Thank you. If that login was available the account now exists. Sign in with it and your password."
+  },
+  "auth.flash.signed_out": {
+    "other": "You are signed out."
+  },
+  "auth.flash.recovered": {
+    "other": "Your password was changed and you were signed out everywhere. Sign in with the new password. Make new recovery codes after you sign in."
+  },
+  "auth.flash.password_changed": {
+    "other": "Password changed. You were signed out everywhere. Sign in with the new password."
+  },
+  "auth.flash.must_change": {
+    "other": "Your password was reset for you. Choose a new password to continue. Your current password is the temporary one you were given."
+  },
+  "auth.flash.mfa_off": {
+    "other": "Two-step sign-in is turned off."
+  },
+  "auth.flash.notices_read": {
+    "other": "Notices marked as read."
+  },
+  "auth.recover.failed": {
+    "other": "The login or recovery code is not correct, or the code was already used. Check both and try again. Nothing changed."
+  },
+  "auth.field.current_password_wrong": {
+    "other": "Current password: not correct. Check it and try again."
+  },
+  "auth.field.password_wrong": {
+    "other": "Password: not correct. Check it and try again."
+  },
+  "auth.field.code_wrong": {
+    "other": "Code: not correct. Use the current 6-digit code from your authenticator app (or an unused recovery code where allowed). Codes work once."
+  },
+  "auth.mfa.invalid_state": {
+    "other": "Not done. Two-step sign-in is not in a state that allows that (for example the setup expired, or it is not turned on). Nothing changed."
+  },
+  "auth.mfa.already_on": {
+    "other": "Not done. Two-step sign-in is already turned on. Nothing changed."
+  },
+  "auth.mfa.step_failed": {
+    "other": "The code is not correct, or the sign-in timed out. Nothing changed."
+  },
+  "auth.mfa.step_failed_field": {
+    "other": "Code: not correct, or the sign-in timed out. Check the code and try again, or sign in again."
+  },
+  "security.notice.password_changed": {
+    "other": "Your password was changed and you were signed out everywhere."
+  },
+  "security.notice.mfa_enabled": {
+    "other": "Two-step sign-in was turned on."
+  },
+  "security.notice.mfa_disabled": {
+    "other": "Two-step sign-in was turned off."
+  },
+  "security.notice.recovery_regen": {
+    "other": "Your recovery codes were replaced. Older codes no longer work."
+  },
+  "security.notice.recovery_used": {
+    "other": "A recovery code was used to sign in."
+  },
+  "security.notice.token_created": {
+    "other": "An API token was created."
+  },
+  "security.notice.token_revoked": {
+    "other": "An API token was revoked."
+  },
+  "security.notice.admin_granted": {
+    "other": "A new administrator was appointed in one of your networks."
+  },
+  "security.notice.other": {
+    "other": "A security-related change was made to your account."
+  },
+  "auth.label.login": {
+    "other": "Login"
+  },
+  "auth.label.password": {
+    "other": "Password"
+  },
+  "auth.label.confirm_password": {
+    "other": "Confirm password"
+  },
+  "auth.label.new_password": {
+    "other": "New password"
+  },
+  "auth.label.confirm_new_password": {
+    "other": "Confirm new password"
+  },
+  "auth.label.current_password": {
+    "other": "Current password"
+  },
+  "auth.label.recovery_code": {
+    "other": "Recovery code"
+  },
+  "auth.label.signin_code": {
+    "other": "Authentication or recovery code"
+  },
+  "auth.label.app_code": {
+    "other": "Code from your authenticator app"
+  },
+  "auth.label.app_code_short": {
+    "other": "Code from your app"
+  },
+  "auth.label.disable_code": {
+    "other": "Authenticator code or recovery code"
+  },
+  "auth.hint.login_new": {
+    "other": "At least 3 characters, no spaces. An email address works well."
+  },
+  "auth.hint.password_rules": {
+    "other": "At least 12 characters. A password manager is fine; pasting is allowed."
+  },
+  "auth.hint.signin_code": {
+    "other": "For example 123456, or ABCDE-FGHIJ. Each code works once."
+  },
+  "auth.hint.recovery_format": {
+    "other": "Looks like ABCD-EFGH-IJKL-MNOP. Capital letters and dashes are optional."
+  },
+  "auth.hint.older_codes": {
+    "other": "Older recovery codes stop working."
+  },
+  "auth.login.submit": {
+    "other": "Sign in"
+  },
+  "auth.login.new_here": {
+    "other": "New here?"
+  },
+  "auth.login.create_link": {
+    "other": "Create an account"
+  },
+  "auth.login.join_info": {
+    "other": "To join a network you need an invitation link from its administrator, or the network's join page."
+  },
+  "auth.login.forgot": {
+    "other": "Forgot your password?"
+  },
+  "auth.login.recover_link": {
+    "other": "Recover your account"
+  },
+  "auth.login.recover_tail": {
+    "other": "with one of your recovery codes."
+  },
+  "auth.mfa_step.intro": {
+    "other": "Your password was correct. Enter the 6-digit code from your authenticator app, or one unused recovery code. This step expires in 5 minutes."
+  },
+  "auth.mfa_step.submit": {
+    "other": "Continue"
+  },
+  "auth.mfa_step.restart": {
+    "other": "Start again"
+  },
+  "auth.register.submit": {
+    "other": "Create account"
+  },
+  "auth.register.have_account": {
+    "other": "Already have an account?"
+  },
+  "auth.register.sign_in_link": {
+    "other": "Sign in"
+  },
+  "auth.recover.intro": {
+    "other": "Lost your password? Enter your login, one of your recovery codes and a new password. Each code works once. If you have no codes left, ask your network administrator to reset your password."
+  },
+  "auth.recover.submit": {
+    "other": "Set new password"
+  },
+  "auth.recover.back": {
+    "other": "Back to sign in"
+  },
+  "auth.codes.new_heading": {
+    "other": "Your new recovery codes"
+  },
+  "auth.codes.shown_once": {
+    "other": "This is the only time they are shown."
+  },
+  "auth.codes.keep_safe": {
+    "other": "Write them down or print them and keep them somewhere safe and separate from your password manager. Each code works once. Any codes you had before no longer work."
+  },
+  "auth.codes.saved": {
+    "other": "I have saved them"
+  },
+  "auth.codes.purpose": {
+    "other": "Recovery codes let you set a new password if you forget it, without email."
+  },
+  "auth.codes.have": {
+    "other": "You have"
+  },
+  "auth.codes.replace_note": {
+    "other": "Making new codes replaces all the old ones. You need your current password."
+  },
+  "auth.codes.submit": {
+    "other": "Make new recovery codes"
+  },
+  "security.mfa.heading": {
+    "other": "Two-step sign-in"
+  },
+  "security.mfa.state_is": {
+    "other": "Two-step sign-in is"
+  },
+  "security.mfa.on": {
+    "other": "on"
+  },
+  "security.mfa.off": {
+    "other": "off"
+  },
+  "security.mfa.replace_heading": {
+    "other": "Replace recovery codes"
+  },
+  "security.mfa.turn_off_heading": {
+    "other": "Turn off"
+  },
+  "security.mfa.turn_off": {
+    "other": "Turn off two-step sign-in"
+  },
+  "security.mfa.off_explain": {
+    "other": "Turn it on to protect your account if your password is stolen. Administrators may be required to use it."
+  },
+  "security.mfa.turn_on": {
+    "other": "Turn on two-step sign-in"
+  },
+  "security.codes.heading": {
+    "other": "Password recovery codes"
+  },
+  "security.codes.explain": {
+    "other": "A recovery code lets you set a new password without email if you forget it."
+  },
+  "security.codes.link": {
+    "other": "Make or replace password recovery codes"
+  },
+  "security.notices.heading": {
+    "other": "Security notices"
+  },
+  "security.notices.unseen": {
+    "other": "%[1]d new."
+  },
+  "security.notices.mark_read": {
+    "other": "Mark all as read"
+  },
+  "security.notices.new": {
+    "other": "New:"
+  },
+  "security.notices.advice": {
+    "other": "If you do not recognise a change, change your password and turn on two-step sign-in."
+  },
+  "security.notices.none": {
+    "other": "No security notices yet."
+  },
+  "auth.enrol.already_on": {
+    "other": "Two-step sign-in is already on. Manage it on the"
+  },
+  "auth.enrol.security_link": {
+    "other": "account security"
+  },
+  "auth.enrol.page_word": {
+    "other": "page."
+  },
+  "auth.enrol.intro": {
+    "other": "Two-step sign-in asks for a code from an authenticator app each time you sign in, in addition to your password."
+  },
+  "auth.enrol.need_password": {
+    "other": "For your security, enter your password to start."
+  },
+  "auth.enrol.start": {
+    "other": "Start setup"
+  },
+  "auth.enrol.cancel": {
+    "other": "Cancel"
+  },
+  "auth.enrol.step_key": {
+    "other": "In your authenticator app choose to add an account by entering a key, and type this setup key. Choose time-based, 6 digits, 30 seconds."
+  },
+  "auth.enrol.uri_note": {
+    "other": "Apps that import links can use this address instead:"
+  },
+  "auth.enrol.step_confirm": {
+    "other": "Enter the 6-digit code the app shows to confirm."
+  },
+  "auth.enrol.confirm": {
+    "other": "Turn on two-step sign-in"
+  },
+  "auth.enrol.expiry": {
+    "other": "This setup key is shown only while setup is in progress and expires after 15 minutes."
+  },
+  "auth.enrol.back": {
+    "other": "Back to account security"
+  },
+  "auth.save.lead": {
+    "other": "Save these codes now."
+  },
+  "auth.save.body": {
+    "other": "They are shown only once and cannot be shown again. Each code works one time if you lose access to your authenticator app. Keep them somewhere safe, such as a password manager or a printed copy."
+  },
+  "auth.password.intro": {
+    "other": "Changing your password signs you out on every device. API tokens you created keep working until you revoke them."
+  },
+  "auth.password.submit": {
+    "other": "Change password"
+  },
+  "security.mfa.recovery_left": {
+    "one": "You have %[1]d unused recovery code.",
+    "other": "You have %[1]d unused recovery codes."
+  },
+  "auth.codes.unused": {
+    "one": "unused code",
+    "other": "unused codes"
+  },
+  "setup.title": {
+    "other": "Create a network"
+  },
+  "setup.intro": {
+    "other": "You will be the first administrator. You can change most of these settings later, except the number of decimal places."
+  },
+  "setup.secret.label": {
+    "other": "Setup secret"
+  },
+  "setup.secret.hint": {
+    "other": "Given to you by the person who runs this service."
+  },
+  "setup.name.label": {
+    "other": "Network name"
+  },
+  "setup.slug.label": {
+    "other": "Web address name"
+  },
+  "setup.slug.hint": {
+    "other": "Lower-case letters, numbers and hyphens, for example town-swap."
+  },
+  "setup.display_name.label": {
+    "other": "Your display name in this network"
+  },
+  "setup.currency.label": {
+    "other": "Credit unit name"
+  },
+  "setup.currency.hint": {
+    "other": "A singular word, for example credit or hour."
+  },
+  "setup.decimals.label": {
+    "other": "Decimal places"
+  },
+  "setup.decimals.whole": {
+    "other": "0 (whole units)"
+  },
+  "setup.decimals.invalid": {
+    "other": "Decimal places: choose a value from 0 to 4."
+  },
+  "setup.limit.label": {
+    "other": "Default credit limit per member"
+  },
+  "setup.limit.error_label": {
+    "other": "Default credit limit"
+  },
+  "setup.limit.hint": {
+    "other": "How far below zero a member's balance may go. Amount in credits, using the decimal places chosen above."
+  },
+  "setup.grant.label": {
+    "other": "Sign-up grant"
+  },
+  "setup.grant.hint": {
+    "other": "Credits given to each new member. Use 0 for none."
+  },
+  "setup.join_mode.label": {
+    "other": "How people join"
+  },
+  "setup.join_mode.invite": {
+    "other": "By invitation only"
+  },
+  "setup.join_mode.approval": {
+    "other": "Request, then an administrator approves"
+  },
+  "setup.join_mode.open": {
+    "other": "Open to any signed-in person"
+  },
+  "setup.grant.risk": {
+    "other": "I accept the risk of open joining together with a grant: everyone who joins receives it, including people who join by themselves, so anyone can collect it again by opening new accounts. Only needed for that combination."
+  },
+  "setup.submit": {
+    "other": "Create network"
+  },
+  "setup.secret.used": {
+    "other": "Not saved. The setup secret has already been used. Ask the person who runs this service to reset it. Nothing changed."
+  },
+  "setup.throttle": {
+    "other": "Too many attempts. Wait and try again. Nothing changed."
+  },
+  "setup.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "setup.secret.invalid": {
+    "other": "Setup secret: not correct. Ask the person who runs this service."
+  },
+  "setup.amount.invalid": {
+    "other": "%[1]s: enter a number with up to %[2]d decimal places, for example %[3]s."
+  },
+  "setup.slug.unavailable": {
+    "other": "Web address name: already in use. Choose a different one."
+  },
+  "setup.flash.created": {
+    "other": "Network created and open. You are its first administrator."
+  },
+  "join.invitation.title": {
+    "other": "Accept your invitation"
+  },
+  "join.invitation.intro": {
+    "other": "You have been invited to join a network. To accept, sign in or create an account first. You will come back to this page afterwards."
+  },
+  "join.display_name.label": {
+    "other": "Your display name"
+  },
+  "join.display_name.hint": {
+    "other": "Other members see this name."
+  },
+  "join.rules": {
+    "other": "By joining you agree to follow this network's rules. Credits are accounting units inside the network."
+  },
+  "join.invitation.submit": {
+    "other": "Join the network"
+  },
+  "join.invitation.invalid": {
+    "other": "This invitation is expired, already used or not valid. Ask the network administrator for a new invitation link. Nothing changed."
+  },
+  "join.network.title": {
+    "other": "Join %[1]s"
+  },
+  "join.network.invite_only": {
+    "other": "%[1]s is invitation only. Ask an administrator for an invitation link."
+  },
+  "join.network.approval": {
+    "other": "Your request will wait for an administrator to approve it."
+  },
+  "join.network.open": {
+    "other": "You will join straight away."
+  },
+  "join.network.request": {
+    "other": "Request to join"
+  },
+  "join.network.submit": {
+    "other": "Join"
+  },
+  "join.network.full": {
+    "other": "Not sent. This network is not accepting new members right now. Try again later. Nothing changed."
+  },
+  "join.network.closed": {
+    "other": "Not sent. This network does not accept requests to join. Ask an administrator for an invitation link. Nothing changed."
+  },
+  "join.throttle.ten_minutes": {
+    "other": "Not sent. Too many join attempts. Wait ten minutes and try again. Nothing changed."
+  },
+  "join.throttle.other": {
+    "other": "Not sent. Too many join attempts. Wait a while and try again. Nothing changed."
+  },
+  "join.flash.pending": {
+    "other": "Request sent. Your membership is pending until an administrator decides."
+  },
+  "join.flash.joined": {
+    "other": "You have joined %[1]s."
+  },
+  "join.terms.heading": {
+    "other": "Network terms (version %[1]s)"
+  },
+  "sessions.title": {
+    "other": "Active sessions"
+  },
+  "sessions.explain": {
+    "other": "These are your active sign-ins. You can end any session you no longer use. Times reflect the current session limits; activity can extend the idle timeout."
+  },
+  "sessions.current": {
+    "other": "This session"
+  },
+  "sessions.other": {
+    "other": "Other session"
+  },
+  "sessions.started": {
+    "other": "Signed in"
+  },
+  "sessions.last_active": {
+    "other": "Last active"
+  },
+  "sessions.expires": {
+    "other": "Ends by"
+  },
+  "sessions.sign_out_here": {
+    "other": "Sign out here"
+  },
+  "sessions.sign_out_other": {
+    "other": "Sign out this session"
+  },
+  "sessions.none": {
+    "other": "There are no active sessions on this page."
+  },
+  "sessions.back_security": {
+    "other": "Back to account security"
+  },
+  "sessions.confirm_title": {
+    "other": "End this session?"
+  },
+  "sessions.current_consequence": {
+    "other": "You will be signed out here and must sign in again to continue. Your other sessions and API tokens will keep working."
+  },
+  "sessions.other_consequence": {
+    "other": "This sign-in will stop working immediately. You will stay signed in here. Your other sessions and API tokens will keep working."
+  },
+  "sessions.confirm_label": {
+    "other": "I want to end this session."
+  },
+  "sessions.confirm_required": {
+    "other": "Not signed out. Confirm that you want to end this session. Nothing changed."
+  },
+  "sessions.confirm_button": {
+    "other": "End session"
+  },
+  "sessions.cancel": {
+    "other": "Keep session"
+  },
+  "sessions.current_ended": {
+    "other": "This session has ended. Sign in again to continue."
+  },
+  "sessions.other_ended": {
+    "other": "The selected session has ended. You are still signed in here."
+  },
+  "sessions.security_intro": {
+    "other": "Review your sign-ins and end sessions you no longer use."
+  },
+  "sessions.manage_link": {
+    "other": "Manage active sessions"
+  },
+  "validation.label.cursor": {
+    "other": "Page position"
+  },
+  "validation.label.login": {
+    "other": "Login"
+  },
+  "validation.label.password": {
+    "other": "Password"
+  },
+  "validation.label.display_name": {
+    "other": "Display name"
+  },
+  "validation.label.amount": {
+    "other": "Amount"
+  },
+  "validation.label.counterparty_id": {
+    "other": "Counterparty"
+  },
+  "validation.label.direction": {
+    "other": "Direction"
+  },
+  "validation.label.title": {
+    "other": "Title"
+  },
+  "validation.label.price": {
+    "other": "Price"
+  },
+  "validation.label.member_id": {
+    "other": "Member"
+  },
+  "validation.label.related_transaction_id": {
+    "other": "Related trade reference"
+  },
+  "validation.label.reason": {
+    "other": "Reason"
+  },
+  "validation.label.reason_code": {
+    "other": "Reason for removal"
+  },
+  "validation.label.transaction_id": {
+    "other": "Trade reference"
+  },
+  "validation.label.rationale": {
+    "other": "Rationale"
+  },
+  "validation.label.category": {
+    "other": "Category"
+  },
+  "validation.label.name": {
+    "other": "Name"
+  },
+  "validation.label.slug": {
+    "other": "Web address name"
+  },
+  "validation.label.limit": {
+    "other": "Credit limit"
+  },
+  "validation.label.type": {
+    "other": "Type"
+  },
+  "validation.label.outcome": {
+    "other": "Outcome"
+  },
+  "validation.label.ttl": {
+    "other": "Valid for"
+  },
+  "validation.label.status": {
+    "other": "Status"
+  },
+  "validation.label.currency_name": {
+    "other": "Credit unit name"
+  },
+  "validation.label.default_credit_limit": {
+    "other": "Default credit limit"
+  },
+  "validation.label.max_tx_amount": {
+    "other": "Largest trade"
+  },
+  "validation.label.proposal_expiry_days": {
+    "other": "Proposal expiry (days)"
+  },
+  "validation.label.dispute_window_days": {
+    "other": "Dispute window (days)"
+  },
+  "validation.label.join_mode": {
+    "other": "Join mode"
+  },
+  "validation.label.departure_rule": {
+    "other": "Departure rule"
+  },
+  "validation.label.signup_grant": {
+    "other": "Sign-up grant"
+  },
+  "validation.label.limit_warning_days": {
+    "other": "Limit warning (days)"
+  },
+  "validation.label.response_period_days": {
+    "other": "Dispute response period"
+  },
+  "validation.label.re_review_window_days": {
+    "other": "Re-review window"
+  },
+  "validation.label.limit_warning_percent": {
+    "other": "Limit warning percent"
+  },
+  "validation.label.inactivity_days": {
+    "other": "Inactivity flag"
+  },
+  "validation.label.waive_reason": {
+    "other": "Reason for not waiting"
+  },
+  "validation.label.notice_days": {
+    "other": "Notice (days)"
+  },
+  "validation.label.notice_reason": {
+    "other": "Reason for shorter notice"
+  },
+  "validation.label.terms_version": {
+    "other": "Terms"
+  },
+  "validation.label.body": {
+    "other": "Terms text"
+  },
+  "validation.label.statement": {
+    "other": "Statement"
+  },
+  "validation.label.note": {
+    "other": "Note"
+  },
+  "validation.label.expires_at": {
+    "other": "Expiry"
+  },
+  "validation.label.confirm_open_grant_risk": {
+    "other": "Open joining with a sign-up grant"
+  },
+  "validation.label.description": {
+    "other": "Description"
+  },
+  "validation.label.response": {
+    "other": "Response"
+  },
+  "validation.label.time_zone": {
+    "other": "Time zone"
+  },
+  "validation.label.version": {
+    "other": "Terms version"
+  },
+  "validation.label.effective_at": {
+    "other": "Takes effect"
+  },
+  "validation.label.supersedes_id": {
+    "other": "Replaces announcement"
+  },
+  "validation.label.listing_id": {
+    "other": "Listing"
+  },
+  "validation.label.listing": {
+    "other": "Listings"
+  },
+  "validation.label.target_type": {
+    "other": "Report about"
+  },
+  "validation.label.target_id": {
+    "other": "Reported item"
+  },
+  "validation.label.role": {
+    "other": "Role"
+  },
+  "validation.label.scopes": {
+    "other": "Token permissions"
+  },
+  "validation.label.code": {
+    "other": "Code"
+  },
+  "validation.label.format": {
+    "other": "File format"
+  },
+  "validation.label.scope": {
+    "other": "Export type"
+  },
+  "validation.label.kind": {
+    "other": "Challenge type"
+  },
+  "validation.label.decimals": {
+    "other": "Decimal places"
+  },
+  "validation.label.dual_control_threshold": {
+    "other": "Dual-control threshold"
+  },
+  "validation.label.threshold": {
+    "other": "Dual-control threshold"
+  },
+  "validation.label.report": {
+    "other": "Ledger report"
+  },
+  "validation.label.page": {
+    "other": "Page"
+  },
+  "validation.label.idempotency_key": {
+    "other": "Form key"
+  },
+  "validation.label.operator": {
+    "other": "Operator"
+  },
+  "validation.label.directory_visibility": {
+    "other": "Directory visibility"
+  },
+  "validation.label.ids": {
+    "other": "Notices"
+  },
+  "validation.choice.counterparty_id": {
+    "other": "Choose another active member from the list."
+  },
+  "validation.choice.member_id": {
+    "other": "Choose a member from the list."
+  },
+  "validation.choice.related_transaction_id": {
+    "other": "Choose a posted trade involving this member, or leave the reference empty."
+  },
+  "validation.choice.direction": {
+    "other": "Choose whether you pay or are paid."
+  },
+  "validation.choice.category": {
+    "other": "Choose one of the listed categories."
+  },
+  "validation.choice.outcome": {
+    "other": "Choose one of the listed outcomes."
+  },
+  "validation.choice.type": {
+    "other": "Choose one of the listed types."
+  },
+  "validation.choice.status": {
+    "other": "Choose one of the listed statuses."
+  },
+  "validation.choice.format": {
+    "other": "Choose CSV or JSON."
+  },
+  "validation.choice.listing_id": {
+    "other": "Start again from the other member's listing, or propose without one."
+  },
+  "validation.choice.terms_version": {
+    "other": "Read the terms shown, tick the box to accept them and try again."
+  },
+  "validation.choice.reason_code": {
+    "other": "Choose one of the listed reasons."
+  },
+  "validation.choice.confirm_open_grant_risk": {
+    "other": "Tick the box to confirm the risk, or choose another join mode or no sign-up grant, then try again."
+  },
+  "validation.detail.choice_required": {
+    "other": "nothing was chosen"
+  },
+  "validation.detail.choice_invalid": {
+    "other": "that choice is not on the list"
+  },
+  "validation.fix.required": {
+    "other": "Fill it in and try again."
+  },
+  "validation.fix.incorrect": {
+    "other": "Type it again carefully and try again."
+  },
+  "validation.fix.too_long": {
+    "other": "Shorten it and try again."
+  },
+  "validation.fix.control_characters": {
+    "other": "Remove hidden or special characters and try again."
+  },
+  "validation.fix.different": {
+    "other": "Choose a different one and try again."
+  },
+  "validation.fix.smaller": {
+    "other": "Enter a smaller amount and try again."
+  },
+  "validation.fix.check": {
+    "other": "Check the value and try again."
+  },
+  "validation.refusal.overflow": {
+    "other": "Not done. The amount is too large to record on these accounts. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.no_fields": {
+    "other": "Not saved. Something entered was not accepted. Check the form and try again. Nothing changed."
+  },
+  "validation.refusal.fields": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "validation.refusal.counterparty_inactive": {
+    "other": "Not sent. The other member is not active in this network, so they cannot take part in a trade. Nothing changed."
+  },
+  "validation.refusal.key_reused": {
+    "other": "Not sent. This form was already used with different details. Reload the page and start again. Nothing changed."
+  },
+  "validation.refusal.key_required": {
+    "other": "Not sent. The form is missing its safety key. Reload the page and try again. Nothing changed."
+  },
+  "validation.refusal.suspended": {
+    "other": "Not done. Trading in this network is paused (suspended). You can still read balances and history and download your data. Nothing changed."
+  },
+  "validation.refusal.invalid_state": {
+    "other": "Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed."
+  },
+  "validation.refusal.conflict": {
+    "other": "Not saved. That value is not available. Choose a different one. Nothing changed."
+  },
+  "validation.refusal.rate_limited": {
+    "other": "Too many attempts. Wait a minute and try again. Nothing changed."
+  },
+  "validation.fix.decimals": {
+    "other": "Use at most %[1]d decimal places and try again."
+  },
+  "validation.fix.number": {
+    "other": "Enter digits only, for example %[1]s."
+  },
+  "validation.field.message": {
+    "other": "%[1]s: %[2]s. %[3]s"
+  },
+  "validation.refusal.insufficient_credit": {
+    "other": "Not sent. This trade would take your available credit below zero. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.insufficient_credit_available": {
+    "other": "Not sent. This trade would take your available credit below zero. Available to spend is %[1]s. Try a smaller amount. Nothing changed."
+  },
+  "validation.refusal.amount_exceeds": {
+    "other": "Not sent. The amount is above the largest single trade this network allows (%[1]s). Nothing changed."
+  },
+  "validation.refusal.blocked": {
+    "other": "Not done. %[1]s. Nothing changed."
+  },
+  "validation.refusal.approval_required": {
+    "other": "Not done. The amount is above the dual-control threshold, so one administrator cannot move it alone. Settle it first with an adjustment that a second administrator approves (Adjustments), then try again. Nothing changed."
+  },
+  "admin.reset.action": {
+    "other": "Reset password"
+  },
+  "admin.reset.consequence": {
+    "other": "A one-time temporary password is created and shown to you once. The member's sessions and API tokens end, their recovery codes stop working, and they must choose a new password at next sign-in. Give them the temporary password in person or by a channel you trust."
+  },
+  "admin.reset.confirm_title": {
+    "other": "Reset password: %[1]s?"
+  },
+  "admin.reset.done_title": {
+    "other": "Temporary password"
+  },
+  "admin.reset.throttled": {
+    "other": "Not done. You have reset too many passwords in the last hour. Try again later. Nothing changed."
+  },
+  "admin.reset.for_member": {
+    "other": "Temporary password for %[1]s"
+  },
+  "admin.reset.shown_once": {
+    "other": "This is the only time it is shown."
+  },
+  "admin.reset.instructions": {
+    "other": "Give it to %[1]s in person or by a channel you trust. They must choose a new password when they sign in. All their sessions and API tokens were ended."
+  },
+  "admin.reset.back_members": {
+    "other": "Back to members"
+  },
+  "admin.member_action.heading": {
+    "other": "%[1]s: %[2]s"
+  },
+  "admin.member_action.reason_hint": {
+    "other": "Required. It is recorded in the audit log."
+  },
+  "admin.member_action.go_back": {
+    "other": "Go back"
+  },
+  "directory.title": {
+    "other": "Directory"
+  },
+  "directory.search_label": {
+    "other": "Search by name"
+  },
+  "directory.search": {
+    "other": "Search"
+  },
+  "directory.results": {
+    "one": "%[1]d member found.",
+    "other": "%[1]d members found."
+  },
+  "directory.member_reference": {
+    "other": "(member reference %[1]s)"
+  },
+  "directory.propose": {
+    "other": "Propose a trade"
+  },
+  "directory.propose_with": {
+    "other": "Propose a trade with %[1]s"
+  },
+  "directory.empty": {
+    "other": "No members match. Try a shorter search, or clear it to see everyone."
+  },
+  "directory.pages": {
+    "other": "Directory pages"
+  },
+  "listing.title": {
+    "other": "Listings"
+  },
+  "listing.new": {
+    "other": "New listing"
+  },
+  "listing.all": {
+    "other": "All listings"
+  },
+  "listing.mine": {
+    "other": "My listings"
+  },
+  "listing.kind": {
+    "other": "Kind"
+  },
+  "listing.kind_prefix": {
+    "other": "Kind:"
+  },
+  "listing.types": {
+    "other": "Offers and requests"
+  },
+  "listing.offers": {
+    "other": "Offers"
+  },
+  "listing.requests": {
+    "other": "Requests"
+  },
+  "listing.offer": {
+    "other": "Offer"
+  },
+  "listing.request": {
+    "other": "Request"
+  },
+  "listing.offer_prefix": {
+    "other": "Offer:"
+  },
+  "listing.request_prefix": {
+    "other": "Request:"
+  },
+  "listing.search": {
+    "other": "Search"
+  },
+  "listing.filter": {
+    "other": "Filter"
+  },
+  "listing.tag.active": {
+    "other": "active"
+  },
+  "listing.tag.paused": {
+    "other": "paused"
+  },
+  "listing.tag.archived": {
+    "other": "archived"
+  },
+  "listing.by_owner": {
+    "other": "By %[1]s"
+  },
+  "listing.owner_price": {
+    "other": "By %[1]s · price %[2]s %[3]s"
+  },
+  "listing.price": {
+    "other": "price %[1]s %[2]s"
+  },
+  "listing.edit": {
+    "other": "Edit"
+  },
+  "listing.edit_named": {
+    "other": "Edit %[1]s"
+  },
+  "listing.propose": {
+    "other": "Propose a trade"
+  },
+  "listing.propose_about": {
+    "other": "Propose a trade about %[1]s"
+  },
+  "listing.report": {
+    "other": "Report"
+  },
+  "listing.report_named": {
+    "other": "Report %[1]s"
+  },
+  "listing.empty": {
+    "other": "No listings to show. Offers and requests that members publish appear here."
+  },
+  "listing.publish_first": {
+    "other": "Publish the first one."
+  },
+  "listing.offer_hint": {
+    "other": "Offer: something I provide"
+  },
+  "listing.request_hint": {
+    "other": "Request: something I want"
+  },
+  "listing.field_title": {
+    "other": "Title"
+  },
+  "listing.field_description": {
+    "other": "Description (optional)"
+  },
+  "listing.field_price": {
+    "other": "Price (optional)"
+  },
+  "listing.price_hint_new": {
+    "other": "Amount in credits, up to the network's decimal places. Leave empty if open to offers."
+  },
+  "listing.price_hint_edit": {
+    "other": "Amount in credits. Empty removes the price."
+  },
+  "listing.publish": {
+    "other": "Publish listing"
+  },
+  "listing.cancel": {
+    "other": "Cancel"
+  },
+  "listing.save": {
+    "other": "Save"
+  },
+  "listing.status_label": {
+    "other": "Status"
+  },
+  "listing.status_hint": {
+    "other": "Paused listings are hidden. Archived listings are final and cannot be reopened."
+  },
+  "listing.status.active": {
+    "other": "Active"
+  },
+  "listing.status.paused": {
+    "other": "Paused"
+  },
+  "listing.status.archived": {
+    "other": "Archived"
+  },
+  "listing.edit_title": {
+    "other": "Edit listing"
+  },
+  "listing.invalid": {
+    "other": "Not saved. Fix the problems below. Nothing changed."
+  },
+  "listing.published": {
+    "other": "Listing published."
+  },
+  "listing.saved": {
+    "other": "Listing saved."
+  },
+  "listing.price_help": {
+    "one": "Price: enter a positive amount with up to %[1]d decimal place, for example %[2]s.",
+    "other": "Price: enter a positive amount with up to %[1]d decimal places, for example %[2]s."
+  },
+  "profile.reference_label": {
+    "other": "Member reference:"
+  },
+  "profile.reference_note": {
+    "other": "Display names can repeat; the reference does not."
+  },
+  "profile.reference_self": {
+    "other": "Tell it to the members you trade with so they can check it is you."
+  },
+  "profile.reference_other": {
+    "other": "Every trade confirmation shows it, so you can check you are trading with this member."
+  },
+  "profile.propose_with": {
+    "other": "Propose a trade with %[1]s"
+  },
+  "profile.report": {
+    "other": "Report %[1]s"
+  },
+  "profile.listings_by": {
+    "other": "Listings by %[1]s"
+  },
+  "profile.empty": {
+    "other": "%[1]s has no active listings."
+  },
+  "freshness.snapshot": {
+    "other": "Page generated %[1]s. Figures are a snapshot and do not update automatically."
+  },
+  "freshness.offline": {
+    "other": "The browser reports that the connection is unavailable. The figures have not refreshed. %[1]s"
+  },
+  "freshness.history": {
+    "other": "This earlier page was restored from browser history. The figures have not refreshed. %[1]s"
+  },
+  "session_warning.extendable": {
+    "other": "It ends around %[1]s. Choose Stay signed in to keep working."
+  },
+  "session_warning.fixed": {
+    "other": "It ends around %[1]s and cannot be extended. Finish what you are doing, then sign in again."
+  },
+  "session_warning.ended": {
+    "other": "Your session has ended. Sign in again to continue. Your changes on this page have not been sent."
+  },
+  "session_warning.failed": {
+    "other": "Could not extend the session. Sign in again."
+  },
+  "admin.reset.forbidden": {
+    "other": "Not done. This password cannot be reset here. Use Change password for your own account, or ask the platform operator for help. Nothing changed."
+  },
+  "sessions.pagination": {
+    "other": "Session list pages"
+  },
+  "sessions.bulk_link": {
+    "other": "Sign out other sessions"
+  },
+  "sessions.bulk_title": {
+    "other": "Sign out other sessions?"
+  },
+  "sessions.bulk_consequence": {
+    "other": "Your other sign-ins will stop working immediately, and any sign-in waiting for a two-step code will need to start again. You will stay signed in here. Your API tokens will keep working."
+  },
+  "sessions.bulk_confirm": {
+    "other": "I want to end all my other sessions."
+  },
+  "sessions.bulk_required": {
+    "other": "Not signed out. Confirm that you want to end your other sessions. Nothing changed."
+  },
+  "sessions.bulk_ended": {
+    "other": "Your other sessions have ended. You are still signed in here."
+  },
+  "sessions.bulk_cancel": {
+    "other": "Keep all sessions"
+  },
+  "sessions.help_link": {
+    "other": "Help with sessions"
+  },
+  "sessions.help_title": {
+    "other": "Review and end your sign-ins"
+  },
+  "sessions.help_inventory": {
+    "other": "Open Security, then Manage active sessions. This session identifies the browser you are using. Signed in, Last active, and Ends by show the recorded times; staying active can extend an idle timeout, but the maximum session lifetime still applies."
+  },
+  "sessions.help_paging": {
+    "other": "Use Next page for older sign-ins, Previous page for newer sign-ins, and First page to refresh the newest page. A page can contain no active sessions while more pages remain, because expired and ended sign-ins are skipped in bounded groups. New sign-ins or revocations can change a page while you browse. If the requested newer page is no longer available, the newest page is shown."
+  },
+  "sessions.help_revoke": {
+    "other": "Choose Sign out this session beside a sign-in, review its times, tick the confirmation, and choose End session. Opening the confirmation page changes nothing. Sign out here ends the browser you are using and returns you to sign-in."
+  },
+  "sessions.help_bulk": {
+    "other": "Sign out other sessions ends all your other sign-ins after confirmation and keeps this browser signed in. It also cancels sign-ins waiting for a two-step code. Session actions do not revoke API tokens. If a sign-in has already expired or ended, refresh the inventory."
+  }
+}

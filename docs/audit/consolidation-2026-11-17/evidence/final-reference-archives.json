@@ -1,0 +1,340 @@
+{
+  "scope": "Read-only validation against main b4398074 and PR69 merge ef54238e; source blobs from retained provenance",
+  "archives": [
+    {
+      "archive": "docs/archive/specs-historical/pr1/business-model-options.md",
+      "source_commit": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "source_path": "docs/brainstorming/business-model-options.md",
+      "archive_sha256": "2a4607e9571d554b629fc0bfcf91aa9ceb1e860b01a1481b406ba893c1a2d201",
+      "source_sha256": "f8698a479abbd544a0765af242045ecc222fe01d0460a9879fdd6f307403ad5f",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr1/crypto-and-crypto-libertarian-design.md",
+      "source_commit": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "source_path": "docs/brainstorming/crypto-and-crypto-libertarian-design.md",
+      "archive_sha256": "093955093be2794fb448ce553199ae3dbf94da6a85b6c20e1ed4144320fa0d91",
+      "source_sha256": "2fcf0a3cec3d79a5d17e026fc101b34d29768ba4958fd0d4cb2167f4ec1c690a",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr1/disruptive-future-ideas.md",
+      "source_commit": "22e9202f19f55aa46be4b115edbe84178e9cee0b",
+      "source_path": "docs/brainstorming/disruptive-future-ideas.md",
+      "archive_sha256": "554b9cdc94b73ea41b4b7b1a351d000c8b5605320ef8965c758d21de0e58db3b",
+      "source_sha256": "5ff45d74cfd8a31accda9e0747491bfc00a4414757cca2a1118b7423f6207974",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/15-lifecycle-state-machines.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/specs/15-lifecycle-state-machines.md",
+      "archive_sha256": "5b8b76be7dabf4fb5257bccfd11e7214fde05da9b363000385bcff8bc9f43c9c",
+      "source_sha256": "8eb2f07f938871f466dc602fff824e724618166766a9f355381c9e1d877c4777",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/16-network-policy-catalog.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/specs/16-network-policy-catalog.md",
+      "archive_sha256": "1a4754d6ec38b9568b3a88839610aa1eca1440acaacc2794bad8656c20f229cb",
+      "source_sha256": "184dae3365d0f07c769cbb6cc30bd3663f1a48a7b23249611b8a697552dc5220",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/17-notifications-and-communications.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/specs/17-notifications-and-communications.md",
+      "archive_sha256": "533fe2b6cbad48c4fa3f78b9ab5d3461752842fe9bbb055fec8ea8ff6467d731",
+      "source_sha256": "7591de8286698cf51b3247e63d4a72d2bf42dbae50f0791a8e550e393d131d4a",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/19-legal-and-regulatory-open-questions.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/specs/19-legal-and-regulatory-open-questions.md",
+      "archive_sha256": "ea41976342cc321e338e26b00253dd1234dce99ed944000f8232b26b0af3b4c2",
+      "source_sha256": "ac66b174f330079570877c07cf455dd8f13af37158af5cad384b9aaedcc000ed",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr2/research-technical-standards.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/notes/research-technical-standards.md",
+      "archive_sha256": "c528ba4adf1d89febca048481538a22f3ffe9d91c3970df2fd28bf391feab747",
+      "source_sha256": "5ca887ed5c33e2e590688bc086ca4b28f849d11a7729288ed83bc86a56aa8f9e",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/00-conventions.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/00-conventions.md",
+      "archive_sha256": "ad4c6ea403334d72f087103845c02adacf7911b82828b10a5d2a95c8b421ca1c",
+      "source_sha256": "6f5c93919cd49528ea246bfd5ae16f46b2ba639db4b7bd75bfbe1e6f79bc7e6d",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/01-product-vision-and-scope.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/01-product-vision-and-scope.md",
+      "archive_sha256": "85954bcdbc1941808c03eb33a724bd196d4cddcce8c837fcbe14cb0bc063b1f3",
+      "source_sha256": "3b06f811f653a463347e79dcaa2a00182b3c590d4d9f27d46c11a7bbdca5fcf8",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/02-personas-roles-and-journeys.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/02-personas-roles-and-journeys.md",
+      "archive_sha256": "a82121f2be71e3969b6423a8a341a745aa64b7f2c8a3e2c30dfed72de32d7df2",
+      "source_sha256": "89946365a88aa1d00f08597f59453eaeb1b5fe13e54cc02d1804beb37a1bd2e9",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/03-domain-model-and-mutual-credit-rules.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/03-domain-model-and-mutual-credit-rules.md",
+      "archive_sha256": "b215a40696c022bc5f293b26ebc7a48d7c912cb1d1cfcbe09c7ee9ceaae4e72e",
+      "source_sha256": "05c9b321430bbeab8f03643c025e6f36b0ab30d039ff1f96616cd35f445a7394",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/04-functional-requirements.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/04-functional-requirements.md",
+      "archive_sha256": "b9b7d75397c8ebf18632810c142715831fd723365cde5e76eea996a12a996bf1",
+      "source_sha256": "51d895defda2d2c5e4abf61acc8cfa1ac3c3ac377bad23a546eac549a6f86050",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/05-system-architecture.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/05-system-architecture.md",
+      "archive_sha256": "54f5179ee727da215f260511aca3600e3e0e9b261ae0843700da3aa8d00f239e",
+      "source_sha256": "074ad1239f05427d913fa17eca81d7425e900b0bf0fded859a5987515db2960b",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/06-data-model-ledger-and-audit.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/06-data-model-ledger-and-audit.md",
+      "archive_sha256": "758d7e2efbdcf4ab14ee20aaaa235db1fd9c34b5be111c75756fe98a190794b3",
+      "source_sha256": "617b7ce1e310eb25b9fc716f6f94de9bd461203320d2ceffbb65243107e41f02",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/07-api-and-integration-contract.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/07-api-and-integration-contract.md",
+      "archive_sha256": "c42a16762e55e3c5561ec19123c0c17bee02ad56599f482ff89c2bf09ee194e9",
+      "source_sha256": "de847ba9c4b17578cc3185d8dd9f799bcf0ad8dab27c9b97b44e8473f20e3051",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/08-ux-and-accessibility.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/08-ux-and-accessibility.md",
+      "archive_sha256": "5b3a05c5e9ea09981deb5551fbb4820335f8a2621827495adc6c4ef2b0a7430a",
+      "source_sha256": "819756a22c3e7c6dc9a22686ebde15beae664efc54a486123095b38d4a51be86",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/09-security-privacy-and-abuse-resistance.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/09-security-privacy-and-abuse-resistance.md",
+      "archive_sha256": "d432c6e199231a097a622845591cba16e1b311e300d2dec563d2074b7bc287dc",
+      "source_sha256": "9f2341b99b67eff1102e0b11131ccf2cc02f66ece5a90de0316dfb2819a8600a",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/10-governance-and-network-operations.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/10-governance-and-network-operations.md",
+      "archive_sha256": "f38fb6985b8963d658525284887d374a68d484336ab1a75d71bf8d6000759027",
+      "source_sha256": "f75bf9d3e41b017af931f01e46c6b3ed09012e9d6dde4e3b75089b61ecd60e6c",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/11-deployment-operations-and-support.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/11-deployment-operations-and-support.md",
+      "archive_sha256": "08abf9cab0a6b4a5761220ddd0b69026321d8c1f7ae6f7df4b28c27ffea6264f",
+      "source_sha256": "22920848e76c7d085ce8da342421b0393db50ca105dab35b85051bc49e05fe51",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/12-quality-strategy-and-test-plan.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/12-quality-strategy-and-test-plan.md",
+      "archive_sha256": "77684896cf90e05096f0742de7ce80336f6c34bd9a7c5ad2c415f9705002ccfb",
+      "source_sha256": "abfd9edf4780239b78329adb9a96ab35320fbc2005284f777cdbf77bd14b0f3e",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/13-assumptions-risks-decisions-and-roadmap.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/13-assumptions-risks-decisions-and-roadmap.md",
+      "archive_sha256": "d1eac2b9e802cca78039f09ae97c6e61e60e10e7b5891502007b5a3dd53ab229",
+      "source_sha256": "8c244347439726ecbbd8c14e1864a9a4d3b932fd2cbec6061d1f63fb7d61f885",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/archive/specs-historical/pr29/README.md",
+      "source_commit": "2da1a293ebf2f28f349fcae9bf32184737bc8619",
+      "source_path": "docs/specs/README.md",
+      "archive_sha256": "d5df0d07bda446ef4e69fe7a1b9b9b79f676eee5f99cf391786f7022cb4a4bed",
+      "source_sha256": "a8ce4e922a4a3ea4b372387347ac46c293cd2317c8036da1d6a703d36cc7bad5",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/audit/CI-WORKFLOW-QUALIFICATION-20261111.md",
+      "source_commit": "3bfcfe3d2920f5c480ef80d8368cf7401be94618",
+      "source_path": "docs/audit/CI-WORKFLOW-QUALIFICATION-20261111.md",
+      "archive_sha256": "acf30aed7cf821810a0bc775dbbaebc5b19c0c4ed5f2183d8f95df3944205c10",
+      "source_sha256": "37398f529686e121180adbd83964518177dd9e344e3cd70a46c0a3fcf1999cfd",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/audit/CONSOLIDATION-QUALIFICATION-2026-11-11.md",
+      "source_commit": "3bfcfe3d2920f5c480ef80d8368cf7401be94618",
+      "source_path": "docs/audit/CONSOLIDATION-QUALIFICATION-2026-11-11.md",
+      "archive_sha256": "620e22618b8cd6f4981dbe1ba9e95286c161805f9cd89ffcc7cb6b7a1ddbaf3b",
+      "source_sha256": "8b0f5d50879259eea562b112a0fa16b88735b88ea9ae4c71a87eaa40630b511f",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+      "source_commit": "127943ba7aa2cb154d3e65d13279e739b901416f",
+      "source_path": "docs/audit/VALIDATED-CONSOLIDATION-2026-10-30.md",
+      "archive_sha256": "93b257c71467037b95c262c1698c95d818418bd05441c6fab41bd8f310d4aa14",
+      "source_sha256": "cc4921ee9718e7e3a6fda722a91178d37bbf1116390006b793346e104ab959be",
+      "exact_body": false,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/audits/CHATGPT_SECURITY_AUDIT_HANDOFF_2026-11-15.md",
+      "source_commit": "36a80335abf54ec8d965cb350b157443ef7f2fec",
+      "source_path": "docs/security/CHATGPT_FREE_AUDIT_HANDOFF.md",
+      "archive_sha256": "d482b629e0e2ad48fd2d86cb2134e1b6778c4db469f550fddb1e3dd3f4f39864",
+      "source_sha256": "c646e981d54c5f1b723e9e526d2c887c072fe60e0e0d94cf31b2f3e4bf9f16a5",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/handoffs/archive/2026-11-09-pr20-chatgpt-zero-codex-continuation-spec.md",
+      "source_commit": "3d9c56196625fc0c158b4652cbe2b9716c7af97b",
+      "source_path": "docs/CHATGPT_ZERO_CODEX_CONTINUATION.md",
+      "archive_sha256": "cb816d23ffe1d1256751fd8ef84be2d56cb8df97e0c21211df2343191acd3811",
+      "source_sha256": "df5b3575108a98b4f12d62e7c04931ba4f0a6be6c1a9c6ffee36e23df7255322",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/qa/evidence/ci-40103567118-dual-control.md",
+      "source_commit": "001f09aad4a014ab0c4215671be923730f1fbbe9",
+      "source_path": "docs/qa/evidence/ci-40103567118-dual-control.md",
+      "archive_sha256": "9116f4d37ac9508ce42d45cc94709762ae44f37d23f50b10c83587216edb72b6",
+      "source_sha256": "c9460e836b1d6c19d30ff7f70664700cc3a8209a55d81d37f0d53642bf63c147",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/research/PRIOR-ART-MUTUAL-CREDIT.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/notes/research-prior-art-mutual-credit.md",
+      "archive_sha256": "7ce9066f67affad4c85475566eb0cbb5873adf6d25ff80558336b25dcce0e35f",
+      "source_sha256": "50d4cff29c579af1c4b1d6da75dffd68ab97c2ff1d65fe39f6ef6211458d714d",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    },
+    {
+      "archive": "docs/research/REGULATORY-PRIVACY-QUESTIONS.md",
+      "source_commit": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904",
+      "source_path": "docs/notes/research-regulatory-privacy-questions.md",
+      "archive_sha256": "ef6a2ea8a364053d247e58c3e5c7491c0546c642b0ae249771479546c6b9c02d",
+      "source_sha256": "ffe8d17a3955cb145d41d479fd39d871d28596862b95bbb7928b8e7b5e05cd04",
+      "exact_body": true,
+      "unchanged_since_pr69": true,
+      "matches_main": true
+    }
+  ],
+  "observed_link_changes": 195,
+  "unique_source_commit_targets": 21,
+  "link_change_report_matches_actual": true,
+  "errors": [],
+  "body_text_verification": {
+    "all31_preserve_source_text": true,
+    "method": "Compare after neutralizing Markdown destinations, equivalent hard-line-break escapes and whitespace; only two documented https:// insertions remain.",
+    "documented_bare_url_insertions": [
+      {
+        "archive": "docs/archive/specs-historical/pr2/research-technical-standards.md",
+        "non_link_format_differences": [
+          {
+            "tag": "insert",
+            "old": "",
+            "new": "https://"
+          },
+          {
+            "tag": "insert",
+            "old": "",
+            "new": "https://"
+          }
+        ]
+      }
+    ]
+  }
+}

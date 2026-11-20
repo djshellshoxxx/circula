@@ -2,6 +2,21 @@ package api
 
 const v1 = "/api/v1"
 
+// queryParams validates GET query names at the route boundary. Some read
+// handlers also format command responses, where validating after a write
+// could report an error despite having committed the command.
+func queryParams(allowed ...string) func(*route) {
+	return func(rt *route) {
+		h := rt.h
+		rt.h = func(c *reqCtx) error {
+			if err := c.only(allowed...); err != nil {
+				return err
+			}
+			return h(c)
+		}
+	}
+}
+
 func (s *server) routes() {
 	R := func(pattern string, h handlerFunc, f ...func(*route)) {
 		rt := route{pattern: pattern, h: h}
@@ -16,20 +31,23 @@ func (s *server) routes() {
 	cookieOnly := func(r *route) { r.cookieOnly = true }
 
 	// Network, identity, directory, account.
-	R("GET "+v1+"/network", s.getNetwork)                             // API-040
+	R("GET "+v1+"/network", s.getNetwork, queryParams())              // API-040
 	R("GET "+v1+"/network/announcements", s.listAnnouncements(false)) // API-064
-	R("GET "+v1+"/me", s.getMe, noNet)                                // API-041
+	R("GET "+v1+"/me", s.getMe, noNet, queryParams())                 // API-041
 	R("PATCH "+v1+"/me", s.patchMe, noNet)                            // extension: display time zone
-	R("GET "+v1+"/network/terms", s.getTerms)                         // GOV-009
+	R("GET "+v1+"/network/terms", s.getTerms, queryParams())          // GOV-009
 	R("POST "+v1+"/me/terms/accept", s.acceptTerms, idem)             // GOV-009
 	R("GET "+v1+"/network/policy-log", s.policyLog)                   // GOV-002, GOV-003
 	R("POST "+v1+"/admin/terms", s.publishTerms, idem)                // GOV-009
 	R("GET "+v1+"/members", s.listMembers)                            // API-042
-	R("GET "+v1+"/members/{id}", s.getMember)                         // API-043
-	R("GET "+v1+"/accounts/me", s.getAccount)                         // API-044
+	R("GET "+v1+"/members/{id}", s.getMember, queryParams())          // API-043
+	R("GET "+v1+"/accounts/me", s.getAccount, queryParams("at"))      // API-044
 	R("GET "+v1+"/accounts/me/entries", s.listEntries)                // API-045
 	R("POST "+v1+"/me/membership/departure", s.depart, idem)          // API-067
 	R("POST "+v1+"/me/password", s.changePassword, noNet, cookieOnly) // AUTH-03 / SEC-003
+	R("GET "+v1+"/me/sessions", s.listOwnSessions, noNet, cookieOnly, queryParams("limit", "cursor"))
+	R("POST "+v1+"/me/sessions/revoke-others", s.revokeOtherOwnSessions, noNet, cookieOnly, queryParams())
+	R("DELETE "+v1+"/me/sessions/{session}", s.revokeOwnSession, noNet, cookieOnly, queryParams())
 
 	// Listings.
 	R("GET "+v1+"/listings", s.listListings)         // API-046
@@ -40,7 +58,7 @@ func (s *server) routes() {
 	// Transactions.
 	R("POST "+v1+"/transactions", s.propose, idem)                // API-048
 	R("GET "+v1+"/transactions", s.listTx)                        // API-049
-	R("GET "+v1+"/transactions/{id}", s.getTx)                    // API-049
+	R("GET "+v1+"/transactions/{id}", s.getTx, queryParams())     // API-049
 	R("GET "+v1+"/transactions/{id}/events", s.txEvents)          // API-050
 	R("POST "+v1+"/transactions/{id}/accept", s.acceptTx, idem)   // API-051
 	R("POST "+v1+"/transactions/{id}/decline", s.declineTx, idem) // API-052
@@ -49,7 +67,7 @@ func (s *server) routes() {
 	// Disputes.
 	R("POST "+v1+"/disputes", s.openDispute, idem)                 // API-054
 	R("GET "+v1+"/disputes", s.listDisputes)                       // API-054
-	R("GET "+v1+"/disputes/{id}", s.getDispute)                    // API-054
+	R("GET "+v1+"/disputes/{id}", s.getDispute, queryParams())     // API-054
 	R("POST "+v1+"/disputes/{id}/resolve", s.resolveDispute, idem) // API-055
 	R("POST "+v1+"/disputes/{id}/review", s.reviewDispute)         // extension: start review
 	R("POST "+v1+"/disputes/{id}/withdraw", s.withdrawDispute)     // extension: opener withdraws
@@ -60,9 +78,9 @@ func (s *server) routes() {
 	R("POST "+v1+"/admin/transactions/{id}/reversal", s.adminReverse, idem) // API-056
 	R("POST "+v1+"/admin/adjustments", s.adminAdjust, idem)                 // API-057
 	s.dualControlRoutes(R)
-	R("GET "+v1+"/admin/policy", s.getPolicy)         // API-058
-	R("PATCH "+v1+"/admin/policy", s.patchPolicy)     // API-058
-	R("GET "+v1+"/admin/members", s.adminListMembers) // API-059
+	R("GET "+v1+"/admin/policy", s.getPolicy, queryParams()) // API-058
+	R("PATCH "+v1+"/admin/policy", s.patchPolicy)            // API-058
+	R("GET "+v1+"/admin/members", s.adminListMembers)        // API-059
 	R("POST "+v1+"/admin/members/{id}/approve", s.memberAction("approve"), idem)
 	R("POST "+v1+"/admin/members/{id}/deny", s.memberAction("deny"), idem) // FR-011
 	R("POST "+v1+"/admin/members/{id}/suspend", s.memberAction("suspend"), idem)
@@ -70,26 +88,26 @@ func (s *server) routes() {
 	R("POST "+v1+"/admin/members/{id}/remove", s.memberAction("remove"), idem)
 	R("PUT "+v1+"/admin/members/{id}/roles/{role}", s.roleAction(true))     // extension
 	R("DELETE "+v1+"/admin/members/{id}/roles/{role}", s.roleAction(false)) // extension
-	R("GET "+v1+"/admin/accounts/{id}", s.adminGetAccount)                  // extension: ETag source
+	R("GET "+v1+"/admin/accounts/{id}", s.adminGetAccount, queryParams())   // extension: ETag source
 	R("PUT "+v1+"/admin/accounts/{id}/credit-limit", s.putCreditLimit)      // API-060
 	R("POST "+v1+"/admin/invitations", s.createInvitation, idem)            // API-061
 	R("POST "+v1+"/invitations/{token}/accept", s.acceptInvitation, idem, noNet)
-	R("GET "+v1+"/admin/audit-events", s.listAudit)                    // API-062
-	R("GET "+v1+"/audit-events", s.listMyAudit)                        // FR-082, DAT-033, DAT-035
-	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)        // API-063
-	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck)          // API-063
-	R("POST "+v1+"/admin/network/suspend", s.suspendNetwork)           // GOV-023
-	R("POST "+v1+"/admin/network/resume", s.resumeNetwork)             // GOV-023
-	R("GET "+v1+"/admin/network/closure", s.closureStatus)             // FR-068
-	R("POST "+v1+"/admin/network/close", s.closeNetwork)               // FR-068, GOV-025: announce the closure date
-	R("POST "+v1+"/admin/network/close/cancel", s.cancelClosure)       // GOV-025
-	R("POST "+v1+"/admin/network/closure/verify", s.verifyClosure)     // GOV-025 e
-	R("POST "+v1+"/challenges", s.openChallenge, idem)                 // GOV-016
-	R("GET "+v1+"/challenges", s.listChallenges)                       // GOV-016
-	R("POST "+v1+"/challenges/{id}/decision", s.decideChallenge, idem) // GOV-016
-	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)   // API-064
-	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))     // API-064
-	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement)  // API-064 (retract)
+	R("GET "+v1+"/admin/audit-events", s.listAudit)                          // API-062
+	R("GET "+v1+"/audit-events", s.listMyAudit)                              // FR-082, DAT-033, DAT-035
+	R("POST "+v1+"/admin/consistency-checks", s.runCheck, idem)              // API-063
+	R("GET "+v1+"/admin/consistency-checks/{id}", s.getCheck, queryParams()) // API-063
+	R("POST "+v1+"/admin/network/suspend", s.suspendNetwork)                 // GOV-023
+	R("POST "+v1+"/admin/network/resume", s.resumeNetwork)                   // GOV-023
+	R("GET "+v1+"/admin/network/closure", s.closureStatus, queryParams())    // FR-068
+	R("POST "+v1+"/admin/network/close", s.closeNetwork)                     // FR-068, GOV-025: announce the closure date
+	R("POST "+v1+"/admin/network/close/cancel", s.cancelClosure)             // GOV-025
+	R("POST "+v1+"/admin/network/closure/verify", s.verifyClosure)           // GOV-025 e
+	R("POST "+v1+"/challenges", s.openChallenge, idem)                       // GOV-016
+	R("GET "+v1+"/challenges", s.listChallenges)                             // GOV-016
+	R("POST "+v1+"/challenges/{id}/decision", s.decideChallenge, idem)       // GOV-016
+	R("POST "+v1+"/admin/announcements", s.createAnnouncement, idem)         // API-064
+	R("GET "+v1+"/admin/announcements", s.listAnnouncements(true))           // API-064
+	R("DELETE "+v1+"/admin/announcements/{id}", s.deleteAnnouncement)        // API-064 (retract)
 
 	// Dispute response and re-review, reports, notifications (FR-076, FR-078, FR-024, FR-038).
 	R("POST "+v1+"/disputes/{id}/response", s.respondDispute, idem)
@@ -99,14 +117,14 @@ func (s *server) routes() {
 	R("GET "+v1+"/admin/reports", s.reportQueue)
 	R("POST "+v1+"/admin/reports/{id}/handle", s.closeReport, idem)
 	R("GET "+v1+"/notifications", s.listNotifications)
-	R("GET "+v1+"/notifications/unread-count", s.unreadCount)
+	R("GET "+v1+"/notifications/unread-count", s.unreadCount, queryParams())
 	R("POST "+v1+"/notifications/read", s.markNotificationsRead)
 
 	// Exports and tokens.
-	R("POST "+v1+"/exports", s.createExport, idemOpt)         // API-065
-	R("GET "+v1+"/exports/{id}", s.getExport)                 // API-065
-	R("GET "+v1+"/exports/{id}/artefact", s.getArtefact)      // API-065
-	R("GET "+v1+"/tokens", s.listTokens, noNet)               // API-066
-	R("POST "+v1+"/tokens", s.createToken, noNet, cookieOnly) // never cached: the response holds the plaintext token (A3-09)
+	R("POST "+v1+"/exports", s.createExport, idemOpt)                   // API-065
+	R("GET "+v1+"/exports/{id}", s.getExport, queryParams())            // API-065
+	R("GET "+v1+"/exports/{id}/artefact", s.getArtefact, queryParams()) // API-065
+	R("GET "+v1+"/tokens", s.listTokens, noNet, queryParams())          // API-066
+	R("POST "+v1+"/tokens", s.createToken, noNet, cookieOnly)           // never cached: the response holds the plaintext token (A3-09)
 	R("DELETE "+v1+"/tokens/{id}", s.revokeToken, noNet)
 }

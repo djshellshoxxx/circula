@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // DepartInput ends a membership, voluntarily or administratively.
@@ -59,6 +59,9 @@ func (s *Service) DepartMember(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		if adminAction {
+			if !domain.ValidRecordID(in.MemberID) {
+				return domain.NotFound("member")
+			}
 			if target, err = tx.GetMember(netID, in.MemberID); err != nil {
 				return domain.NotFound("member")
 			}
@@ -150,6 +153,9 @@ func IsRemovalConflict(err error) bool {
 func removalIndependent(tx store.Tx, netID, adminID, targetID string, in DepartInput) error {
 	var matters []*domain.Transaction
 	if in.MatterTxID != "" {
+		if !domain.ValidRecordID(in.MatterTxID) {
+			return domain.Invalid("transaction_id", "must be a transaction the member is a party to")
+		}
 		t, err := tx.GetTransaction(netID, in.MatterTxID)
 		if err != nil || !t.IsParty(targetID) {
 			return domain.Invalid("transaction_id", "must be a transaction the member is a party to")
@@ -272,7 +278,7 @@ func (s *Service) settleOnDeparture(tx store.Tx, p *principal, target *domain.Me
 		return &domain.Error{Code: domain.CodeApprovalRequired,
 			Msg: "the departure settlement exceeds the dual-control threshold; adjust the balance through an approved adjustment first"}
 	}
-	t, err := s.postAdjustment(tx, p.net, target, amt, dir, "departure settlement", p.memberID(), p.actor.RequestID)
+	t, err := s.postAdjustment(tx, p.net, target, amt, dir, "departure settlement", p.memberID(), p.actor.RequestID, "")
 	if err != nil {
 		return err
 	}

@@ -72,7 +72,9 @@ func AppliedVersion(ctx context.Context, db *sql.DB) (int, error) {
 // migrations. It is used only for read-only inspection and for online
 // snapshots (VACUUM INTO).
 func OpenRaw(path string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "file:"+path+"?_pragma=busy_timeout(10000)")
+	// Raw inspection also opens restored or otherwise untrusted databases.
+	// Apply the schema boundary before any inspection query, on every connection.
+	db, err := sql.Open("sqlite", fileURI(path)+"?_pragma=trusted_schema(0)&_pragma=busy_timeout(10000)")
 	if err != nil {
 		return nil, fmt.Errorf("open %s: %w", path, err)
 	}
@@ -162,4 +164,10 @@ func IntegrityCheck(ctx context.Context, path string) (string, error) {
 		return "", fmt.Errorf("integrity check of %s: %w", path, err)
 	}
 	return res, nil
+}
+
+// CheckStorage implements the optional driver-neutral storage check. The
+// SQLite-specific pragma requirements stay inside the SQLite adapter.
+func (s *SQLite) CheckStorage(ctx context.Context) error {
+	return CheckPragmas(ctx, s.db)
 }

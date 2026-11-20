@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:15:41.951397078-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/feed"}
+{"Time":"2026-11-19T02:15:42.067334306-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/feed","Test":"TestFeedPrivacyAndDedupe"}
+{"Time":"2026-11-19T02:15:42.06748575-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/feed","Test":"TestFeedPrivacyAndDedupe","Output":"=== RUN   TestFeedPrivacyAndDedupe\n"}
+{"Time":"2026-11-19T02:15:42.067575589-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/feed","Test":"TestFeedPrivacyAndDedupe","Output":"--- PASS: TestFeedPrivacyAndDedupe (0.00s)\n"}
+{"Time":"2026-11-19T02:15:42.06758148-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/feed","Test":"TestFeedPrivacyAndDedupe","Elapsed":0}
+{"Time":"2026-11-19T02:15:42.067590677-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/feed","Output":"PASS\n"}
+{"Time":"2026-11-19T02:15:43.092625311-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/feed","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/feed\t1.128s\n"}
+{"Time":"2026-11-19T02:15:43.09266713-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/feed","Elapsed":1.141}

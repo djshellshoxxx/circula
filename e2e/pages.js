@@ -13,6 +13,9 @@ const PAGES = [
   ['networks list (one network, so it opens that dashboard)', 'carol', () => '/', 'dashboard'],
   ['setup (network creation)', 'carol', () => '/setup', 'setup'],
   ['password change', 'alice', () => '/account/password', 'password'],
+  ['active sessions', 'alice', () => '/account/sessions', 'sessions'],
+  ['end current session confirmation', 'alice', (st) => st.sessionRevoke, 'session_revoke'],
+  ['end other sessions confirmation', 'alice', () => '/account/sessions/revoke-others', 'sessions_revoke_others'],
   ['help (member)', 'alice', () => '/help', 'help'],
   ['invitation, signed in', 'alice', (st) => st.unusedInvite, 'join'],
 
@@ -53,6 +56,7 @@ const PAGES = [
   ['join a network (invitation only)', 'carol', (st) => `${n(st)}/join`, 'joinnet'],
 
   ['admin overview', 'admin', (st) => `${n(st)}/admin`, 'admin_home'],
+  ['admin waiting proposals', 'admin', (st) => `${n(st)}/admin/proposals/stale`, 'admin_stale_proposals'],
   ['admin members', 'admin', (st) => `${n(st)}/admin/members`, 'admin_members'],
   ['admin member action', 'admin', (st) => `${n(st)}/admin/members/${st.bobId}/suspend`, 'admin_member_act'],
   ['admin inactive members', 'admin', (st) => `${n(st)}/admin/inactive`, 'admin_inactive'],

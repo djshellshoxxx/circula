@@ -32,9 +32,31 @@ network currency; each also has a `<column>_formatted` twin as a decimal string 
 | `ledger_seq` | integer | the one ledger sequence every file was read at (DAT-039) |
 | `generated_at` | string | RFC 3339 UTC |
 | `files` | array | per file: `name`, `rows` (data rows, header excluded), `bytes`, `sha256` (hex) |
+| `reconciliation` | object | reconciliation summary (GOV-022), below. Present for the scopes that hold entries (`mine`, `ledger`, `full`); absent for `members` and `audit` |
 
 For the JSON format `rows` is the total number of table rows in the document. Verification (DAT-040) recomputes `bytes`,
 `sha256` and `rows` for every listed file; any mismatch fails.
+
+## Reconciliation summary
+
+`reconciliation` lets a recipient check the exported entries against the balances without the application (GOV-022,
+QA-030). Every value is read at the manifest's `ledger_seq`, from the same snapshot as the files. Amounts are integers in
+minor units.
+
+| Field | Type | Meaning |
+|---|---|---|
+| `reconciliation.entries` | integer | number of exported `entries` rows |
+| `reconciliation.entry_sum` | integer | sum of `amount` over those rows. `0` for `ledger` and `full` in a sound ledger |
+| `reconciliation.balance_total` | integer | `ledger`, `full`: sum of `balance` over every account of the network (`0` in a sound ledger). `mine`: the caller's own balance, which equals `entry_sum` |
+| `reconciliation.accounts` | object | `ledger` and `full` only; absent for `mine`. A fingerprint of the per-account balances |
+| `reconciliation.accounts.nonzero` | integer | number of accounts whose balance is not zero |
+| `reconciliation.accounts.sha256` | string | hex SHA-256 of one line `<account_id>,<balance>\n` per account whose balance is not zero, in byte order of `account_id` |
+
+To check a `ledger` or `full` package: sum `entries.amount` per `account_id`, drop the zero sums, write the lines as
+above in byte order of `account_id` and compare the SHA-256 with `accounts.sha256`; then compare the line count with
+`accounts.nonzero`, the row count and amount sum with `entries` and `entry_sum`, and the `accounts.balance` column with
+the per-account sums. The field was added without raising `schema_version`, since readers that do not know it can ignore
+it (see the change log).
 
 ## JSON document
 
@@ -75,6 +97,13 @@ recovery material are never exported.
 ### transactions
 `id,kind,status,payer_account_id,payee_account_id,amount,amount_formatted,listing_id,note,reason,original_tx_id,created_by,accepted_by,reversed_total,reversed_total_formatted,proposed_at,expires_at,completed_at,ledger_seq`
 
+When the exported scope contains an adjustment linked to an earlier posted transaction, a final optional column
+`related_tx_id` is appended to `transactions` (including the member projection). Unlinked rows contain an empty string.
+This is adjustment context only: `original_tx_id` remains exclusive to reversals. The adjusted member must be a party
+to the related transaction. When the scope has no such links, the exact original columns and bytes above are retained,
+including existing closure checksums. Readers should resolve optional columns by name. JSON carries the same optional
+field only when the column is present for that scope. Existing records and audit events are never rewritten.
+
 ### transaction_status_events
 `id,tx_id,from_status,to_status,actor_id,request_id,occurred_at`
 
@@ -107,3 +136,5 @@ The product's own `circula verify-export` performs the same integrity check.
 | Version | Change |
 |---|---|
 | 1 | first documented version |
+| 1 | manifest field `reconciliation` added (optional object; additive, so the version is unchanged) |
+| 1 | optional trailing transaction field `related_tx_id`, present only in scopes containing linked adjustments; existing no-link exports remain byte-for-byte unchanged |

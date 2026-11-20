@@ -1,0 +1,30 @@
+--- FAIL: TestWebExportAbortsAfterReadFailure (0.22s)
+    --- FAIL: TestWebExportAbortsAfterReadFailure/csv (0.11s)
+        export_stream_test.go:112: interrupted export returned normally or with the wrong panic: <nil>
+    --- FAIL: TestWebExportAbortsAfterReadFailure/json (0.11s)
+        export_stream_test.go:112: interrupted export returned normally or with the wrong panic: <nil>
+--- FAIL: TestWebExportAbortsAfterCloseFailure (0.28s)
+    --- FAIL: TestWebExportAbortsAfterCloseFailure/csv (0.14s)
+        export_stream_test.go:143: interrupted export returned normally or with the wrong panic: <nil>
+    --- FAIL: TestWebExportAbortsAfterCloseFailure/json (0.14s)
+        export_stream_test.go:143: interrupted export returned normally or with the wrong panic: <nil>
+--- FAIL: TestListingPaginationPreservesView (0.73s)
+    --- FAIL: TestListingPaginationPreservesView/own_paused_listings (0.30s)
+        listings_pagination_test.go:78: continuation type="", want "offer"
+        listings_pagination_test.go:78: continuation q="", want "repair & care"
+        listings_pagination_test.go:78: continuation mine="true", want "1"
+        listings_pagination_test.go:87: oldest matching listing disappeared on continuation
+        listings_pagination_test.go:91: continuation broadened view to "Other member's unrelated listing"
+        listings_pagination_test.go:91: continuation broadened view to "repair & care wrong kind"
+        listings_pagination_test.go:91: continuation broadened view to "Unrelated search result"
+    --- FAIL: TestListingPaginationPreservesView/filtered_public_listings (0.26s)
+        listings_pagination_test.go:78: continuation type="", want "offer"
+        listings_pagination_test.go:78: continuation q="", want "repair & care"
+        listings_pagination_test.go:91: continuation broadened view to "Other member's unrelated listing"
+        listings_pagination_test.go:91: continuation broadened view to "repair & care wrong kind"
+        listings_pagination_test.go:91: continuation broadened view to "Unrelated search result"
+    --- FAIL: TestListingPaginationPreservesView/full_final_page (0.17s)
+        listings_pagination_test.go:64: full final page offers an empty continuation: /n/town/listings?mine=false&amp;after=018f0000-0000-7000-8000-00000000001e
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	2.140s
+FAIL

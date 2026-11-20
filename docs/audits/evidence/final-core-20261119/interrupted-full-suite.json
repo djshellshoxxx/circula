@@ -1,0 +1,8 @@
+{
+  "source": "8c47cdf4e97917757082b3ef52521836022bc84c",
+  "tool_exit_code": 130,
+  "result": "interrupted",
+  "terminal_test_or_package_result_observed": false,
+  "reason": "Environment reset removed the previously inspected warm caches; the cold-cache attempt was stopped through its own session before repeating known memory-exhausting SQLite compilation.",
+  "not_a_pass": true
+}

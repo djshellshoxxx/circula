@@ -20,11 +20,14 @@ import (
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
-	"github.com/djshellshoxxx/circula/internal/store"
 )
 
 // manifestFormat is the version of the backup manifest layout.
 const manifestFormat = 1
+
+// Version 0 denotes historical manifests without a version field. New signed
+// manifests use v2, which authenticates the verification summaries as well.
+const manifestHMACVersion = 2
 
 // LedgerSummary is the ledger verification result recorded with a backup or a
 // command run. Status is ok, failed or not-run. Only counts are recorded, not
@@ -55,16 +58,34 @@ type Manifest struct {
 	Cipher          string `json:"cipher,omitempty"`
 	PlaintextBytes  int64  `json:"plaintext_bytes,omitempty"`
 	PlaintextSHA256 string `json:"plaintext_sha256,omitempty"`
-	// HMAC is hex HMAC-SHA256 over the identifying fields, present when
-	// backup-key was configured (SA-07). Without the key it proves nothing.
-	HMAC string `json:"hmac_sha256,omitempty"`
+	// HMAC is hex HMAC-SHA256 under HMACVersion, present when backup-key was
+	// configured (SA-07). Without the key it proves nothing.
+	HMACVersion int    `json:"hmac_version,omitempty"`
+	HMAC        string `json:"hmac_sha256,omitempty"`
 }
 
-// manifestMAC computes the signature of m under key. It covers every field
-// that identifies the content (format, time, schema, size, digest), not the
-// file name, so a renamed backup still verifies.
+// manifestMAC v2 covers every manifest field except the signature itself and
+// the file name, so a renamed backup still verifies. JSON gives unambiguous
+// boundaries for free text and retains subsecond timestamps. The v1 payload
+// remains unchanged for historical manifests; domain separation prevents a
+// stripped version field from downgrading a new signature to that format.
 func manifestMAC(m *Manifest, key []byte) string {
 	h := hmac.New(sha256.New, key)
+	if m.HMACVersion == manifestHMACVersion {
+		payload := *m
+		payload.HMAC, payload.File = "", ""
+		payload.CreatedAt = payload.CreatedAt.UTC()
+		b, err := json.Marshal(payload)
+		if err != nil {
+			return "" // invalid timestamps cannot produce a valid signature
+		}
+		_, _ = h.Write([]byte("circula-backup-v2\n"))
+		_, _ = h.Write(b)
+		return hex.EncodeToString(h.Sum(nil))
+	}
+	if m.HMACVersion != 0 {
+		return ""
+	}
 	fmt.Fprintf(h, "circula-backup-v1\nformat=%d\ncreated=%s\nschema=%d\nbytes=%d\nsha256=%s\n",
 		m.Format, m.CreatedAt.UTC().Format(time.RFC3339), m.SchemaVersion, m.Bytes, m.SHA256)
 	if m.Encrypted {
@@ -82,6 +103,9 @@ func manifestMAC(m *Manifest, key []byte) string {
 func checkManifestAuth(m *Manifest, key []byte) (authenticated bool, err error) {
 	if len(key) == 0 {
 		return false, nil
+	}
+	if m.HMACVersion != 0 && m.HMACVersion != manifestHMACVersion {
+		return false, fmt.Errorf("unsupported manifest HMAC version %d", m.HMACVersion)
 	}
 	if m.HMAC == "" {
 		return false, errors.New("backup-key is configured but the manifest is not signed; refusing an unauthenticated backup")
@@ -105,15 +129,15 @@ type networkCheck struct {
 // verifyAllNetworks runs the ledger verification for every network (or only
 // the network whose id or slug equals filter, when filter is not empty) as the
 // system actor. It returns an error only when the check could not run.
-func verifyAllNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string) ([]networkCheck, error) {
-	return verifyNetworks(ctx, svc, db, requestID, filter, false)
+func verifyAllNetworks(ctx context.Context, svc *service.Service, requestID, filter string) ([]networkCheck, error) {
+	return verifyNetworks(ctx, svc, requestID, filter, false)
 }
 
 // verifyNetworks is verifyAllNetworks that can also record each run in
 // consistency_runs (scheduled job, ARC-015); the audit event is written only
 // on failure or a state change.
-func verifyNetworks(ctx context.Context, svc *service.Service, db *sql.DB, requestID, filter string, record bool) ([]networkCheck, error) {
-	nets, err := store.ListNetworks(ctx, db, filter)
+func verifyNetworks(ctx context.Context, svc *service.Service, requestID, filter string, record bool) ([]networkCheck, error) {
+	nets, err := svc.OperatorNetworks(ctx, domain.SystemActor(requestID), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +179,7 @@ type ledgerFunc func(ctx context.Context, path string) (LedgerSummary, error)
 // closes it. Verification records its run in the file, so callers pass a copy
 // whenever the file itself must stay unchanged.
 func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
-	st, err := store.OpenWith(ctx, path, storeOptions(cfg))
+	st, err := openStore(ctx, path, cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +188,7 @@ func verifyFileChecks(ctx context.Context, path string, cfg *Config) ([]networkC
 	if err != nil {
 		return nil, err
 	}
-	return verifyAllNetworks(ctx, svc, st.DB(), "backup-verify", "")
+	return verifyAllNetworks(ctx, svc, "backup-verify", "")
 }
 
 // verifyFile is verifyFileChecks reduced to a summary.
@@ -178,9 +202,12 @@ func verifyFile(ctx context.Context, path string, cfg *Config) (LedgerSummary, e
 
 // verifyCopy verifies a throw-away copy of path, leaving path untouched.
 func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, error) {
-	scratch := path + ".verify"
-	removeDBFiles(scratch)
-	defer removeDBFiles(scratch)
+	work, cleanup, err := newBackupWork(filepath.Dir(path))
+	if err != nil {
+		return nil, fmt.Errorf("private verification directory: %w", err)
+	}
+	defer cleanup()
+	scratch := filepath.Join(work, "verify.db")
 	if err := copyFileSync(path, scratch); err != nil {
 		return nil, err
 	}
@@ -189,7 +216,7 @@ func verifyCopy(ctx context.Context, path string, cfg *Config) ([]networkCheck, 
 
 // snapshot writes a consistent online copy of the database behind db to dest,
 // verifies it, and writes dest + ".manifest.json". The copy is built under a
-// .partial name and renamed only after every check passed, so an interrupted
+// private temporary directory and renamed only after every check passed, so an interrupted
 // backup never looks complete. VACUUM INTO reads a snapshot and does not hold
 // the write lock (OPS-017). The ledger check runs on a throw-away copy, because
 // verification records its run in the database it checks: the backup must stay
@@ -202,9 +229,9 @@ func snapshot(ctx context.Context, db *sql.DB, dest, reason string, now time.Tim
 
 // snapshotKeys are the secrets a snapshot may use: Sign signs the manifest
 // (SA-07) and Encrypt, when set, writes the backup as an encrypted container
-// (OPS-019). With Encrypt the plaintext copy lives only in a private temporary
-// directory next to dest and is overwritten and removed before returning,
-// whether the backup succeeded or not.
+// (OPS-019). Plaintext and verification copies always live in a private temporary
+// directory next to dest. Remaining temporary files are overwritten and removed
+// before returning, whether the backup succeeded or not.
 type snapshotKeys struct{ Sign, Encrypt []byte }
 
 func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time.Time, ledger ledgerFunc, keys snapshotKeys) (*Manifest, error) {
@@ -213,30 +240,22 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 		return nil, fmt.Errorf("backup destination %s already exists", dest)
 	}
 	encrypting := len(keys.Encrypt) > 0
-	partial := dest + ".partial"
-	if encrypting {
-		sweepStaleTemp(filepath.Dir(dest))
-		work, err := os.MkdirTemp(filepath.Dir(dest), tempDirPrefix)
-		if err != nil {
-			return nil, fmt.Errorf("private work directory: %w", err)
-		}
-		defer secureRemoveAll(work)
-		partial = filepath.Join(work, "snapshot.db")
+	sweepStaleTemp(filepath.Dir(dest))
+	work, cleanup, err := newBackupWork(filepath.Dir(dest))
+	if err != nil {
+		return nil, fmt.Errorf("private work directory: %w", err)
 	}
+	defer cleanup()
+	partial := filepath.Join(work, "snapshot.db")
 	rm := removeDBFiles
 	if encrypting {
 		rm = secureRemoveDB // plaintext copies are overwritten, not just unlinked
 	}
-	removeDBFiles(partial)
-	if err := store.VacuumInto(ctx, db, partial); err != nil {
-		removeDBFiles(partial)
+	if err := vacuumInto(ctx, db, partial); err != nil {
 		return nil, fmt.Errorf("online snapshot: %w", err)
 	}
 	fail := func(err error) (*Manifest, error) {
-		removeDBFiles(partial)
-		if encrypting {
-			_ = os.Remove(dest + ".partial")
-		}
+		// The deferred cleanup owns only this invocation's private directory.
 		return nil, err
 	}
 	if err := os.Chmod(partial, 0o600); err != nil && runtime.GOOS != "windows" {
@@ -258,7 +277,6 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 	ledgerSum := LedgerSummary{Status: "not-run", Reason: "snapshot schema is older than this binary (pre-migration copy)"}
 	if schema.Pending() == 0 && ledger != nil {
 		scratch := partial + ".verify"
-		removeDBFiles(scratch)
 		if err := copyFileSync(partial, scratch); err != nil {
 			rm(scratch)
 			return fail(fmt.Errorf("verify snapshot: %w", err))
@@ -282,8 +300,7 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 	if encrypting {
 		// Encrypt, then prove the ciphertext decrypts back to exactly the
 		// verified plaintext before it replaces anything (OPS-019).
-		encPartial := dest + ".partial"
-		_ = os.Remove(encPartial)
+		encPartial := filepath.Join(work, "snapshot.db.enc")
 		onDisk, onDiskSize, err = encryptFile(partial, encPartial, keys.Encrypt)
 		if err != nil {
 			return fail(fmt.Errorf("encrypt backup: %w", err))
@@ -314,18 +331,13 @@ func snapshotWith(ctx context.Context, db *sql.DB, dest, reason string, now time
 		m.Encrypted, m.Cipher, m.PlaintextBytes, m.PlaintextSHA256 = true, cipherName, size, sum
 	}
 	if len(key) > 0 {
+		m.HMACVersion = manifestHMACVersion
 		m.HMAC = manifestMAC(m, key)
 	}
 	if err := writeManifest(dest+".manifest.json", m); err != nil {
 		return nil, fmt.Errorf("backup %s written but manifest failed: %w", dest, err)
 	}
 	return m, nil
-}
-
-// integrityCheck runs PRAGMA integrity_check on a file and returns "ok" or the
-// first reported problem.
-func integrityCheck(ctx context.Context, path string) (string, error) {
-	return store.IntegrityCheck(ctx, path)
 }
 
 // removeDBFiles deletes a database file and its WAL side files, ignoring
@@ -386,6 +398,9 @@ func readManifest(path string) (*Manifest, error) {
 	if m.Format != manifestFormat {
 		return nil, fmt.Errorf("manifest %s has unsupported format %d", path, m.Format)
 	}
+	if m.HMACVersion != 0 && m.HMACVersion != manifestHMACVersion {
+		return nil, fmt.Errorf("manifest %s has unsupported HMAC version %d", path, m.HMACVersion)
+	}
 	return &m, nil
 }
 
@@ -402,14 +417,16 @@ func verifyBackupFile(path string, m *Manifest) error {
 	return nil
 }
 
-// backupFileName returns the backup file name for a time (UTC, second precision).
 const backupPrefix = "circula-"
 const backupSuffix = ".db"
 const encryptedSuffix = ".db.enc"
 const cipherName = "aes-256-gcm-chunked-v1"
 const tempDirPrefix = ".circula-bk-"
-const backupTimeLayout = "20060102T150405Z"
+const backupTimeLayout = "20060102T150405.000000000Z"
+const legacyBackupTimeLayout = "20060102T150405Z"
 
+// backupFileName preserves UTC nanoseconds so distinct instants within the
+// same second do not collide. snapshotWith still refuses an existing path.
 func backupFileName(t time.Time) string {
 	return backupPrefix + t.UTC().Format(backupTimeLayout) + backupSuffix
 }
@@ -428,9 +445,15 @@ func backupFileNameFor(cfg *Config, t time.Time) string {
 }
 
 // sweepStaleTemp removes plaintext work directories that a crashed backup
-// left behind. Only directories older than an hour are touched, so a backup
-// running in another process is never disturbed.
+// left behind. An age threshold limits scans; a process-held lease, rather than
+// age, protects work that is still active. Legacy unleased orphan directories
+// remain eligible for cleanup.
 func sweepStaleTemp(dir string) {
+	// Names and contents are trusted only where no other user can plant or
+	// swap them (AUD4-D02). Orphans in a shared directory are left in place.
+	if fi, err := os.Stat(dir); err != nil || !privateParent(fi) {
+		return
+	}
 	ents, err := os.ReadDir(dir)
 	if err != nil {
 		return
@@ -440,7 +463,7 @@ func sweepStaleTemp(dir string) {
 			continue
 		}
 		if fi, err := e.Info(); err == nil && time.Since(fi.ModTime()) > time.Hour {
-			secureRemoveAll(filepath.Join(dir, e.Name()))
+			trySweepBackupWork(filepath.Join(dir, e.Name()), fi)
 		}
 	}
 }
@@ -477,6 +500,10 @@ func listBackups(dir string) ([]backupEntry, error) {
 		}
 		t, err := time.Parse(backupTimeLayout, stem)
 		if err != nil {
+			// Backups made before subsecond names remain eligible for retention.
+			t, err = time.Parse(legacyBackupTimeLayout, stem)
+		}
+		if err != nil {
 			continue
 		}
 		out = append(out, backupEntry{path: filepath.Join(dir, name), at: t})
@@ -489,18 +516,35 @@ func listBackups(dir string) ([]backupEntry, error) {
 // keepMonthly calendar months that has backups, the newest backup of that
 // month. It returns the names of removed backup files.
 func pruneBackups(dir string, keepDaily, keepMonthly int) ([]string, error) {
+	return pruneBackupsAt(dir, keepDaily, keepMonthly, time.Now())
+}
+
+// pruneBackupsAt is pruneBackups evaluated at now (OPS-018).
+func pruneBackupsAt(dir string, keepDaily, keepMonthly int, now time.Time) ([]string, error) {
 	entries, err := listBackups(dir)
 	if err != nil {
 		return nil, err
 	}
 	keep := map[string]bool{}
-	for i, e := range entries {
+	var past []backupEntry
+	for _, e := range entries {
+		// A backup named after now (the clock ran ahead when it was written,
+		// or a misplaced file) is kept, but it takes no daily or monthly slot,
+		// so it cannot push real backups out early. Scheduling ignores it in
+		// the same way (untilNextBackupAt).
+		if e.at.After(now) {
+			keep[e.path] = true
+			continue
+		}
+		past = append(past, e)
+	}
+	for i, e := range past {
 		if i < keepDaily {
 			keep[e.path] = true
 		}
 	}
 	months := map[string]bool{}
-	for _, e := range entries {
+	for _, e := range past {
 		key := e.at.Format("2006-01")
 		if months[key] || len(months) >= keepMonthly {
 			continue

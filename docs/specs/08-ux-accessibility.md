@@ -27,61 +27,61 @@ Summary: built 31, not built 7, partial 22.
 | UX-002 | P0 | partial | 60 core/adjacent paths from Home met the three-activation limit at b231dc5; signup/auth/error/multi-network and other states remain |
 | UX-003 | P1 | built | Network switcher and separate network pages |
 | UX-004 | P0 | built | In credit, In debt, Level labels |
-| UX-005 | P0 | partial | Sign and words used; greyscale check not run |
-| UX-006 | P0 | built | Accessible name spells out direction in words |
-| UX-007 | P0 | built | Help text explains sign convention |
+| UX-005 | P0 | partial | Sign and words used; greyscale check not run. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/greyscale.spec.js` exists. Its result is UNVERIFIED in this refresh] |
+| UX-006 | P0 | built | Accessible name spells out direction in words; Evidence: `TestLoginTradeFlow` (rendered textual debt and credit descriptions; manual screen-reader qualification remains separate). Citations are not execution results |
+| UX-007 | P0 | built | Help text explains sign convention; Source: `internal/web/templates/help.html`; final sign-convention wording still requires the recorded counsel review (OQ-UX-04). No execution result is implied |
 | UX-008 | P0 | built | Network unit name and decimals; no currency symbols |
-| UX-009 | P0 | built | Balance card shows balance, limit, reserved, available |
-| UX-010 | P0 | built | Available labelled as available to spend with help link |
-| UX-011 | P0 | built | Text states credit in use against limit |
+| UX-009 | P0 | built | Balance card shows balance, limit, reserved, available; Evidence: `TestLoginTradeFlow`, `TestAvailableCreditTable` (labelled home values and available-credit arithmetic). Citations are not execution results |
+| UX-010 | P0 | built | Available labelled as available to spend with help link; Evidence: `TestLoginTradeFlow` (Available to spend label; help-link semantics remain an inspection item). Citations are not execution results |
+| UX-011 | P0 | built | Text states credit in use against limit; Evidence: `TestLoginTradeFlow` (credit-in-use wording and effective limit). Citations are not execution results |
 | UX-012 | P1 | built | Credit-use warning at the policy percent (default 80); OQ-UX-02 threshold default still to confirm |
-| UX-013 | P0 | built | Direction in words per transaction line |
-| UX-014 | P0 | built | Pending section excluded from balance |
-| UX-015 | P0 | built | Completed rows show posted time |
-| UX-016 | P0 | built | Status labels and explanations; accepted not shown |
-| UX-017 | P1 | partial | Reversal and adjustment rows exist; link to original not verified |
-| UX-018 | P0 | built | Review step before accept, propose, dispute |
-| UX-019 | P0 | built | Confirmation message after posting |
+| UX-013 | P0 | built | Direction in words per transaction line; Evidence: `TestLoginTradeFlow` (payer/payee directions in history text). Citations are not execution results |
+| UX-014 | P0 | built | Pending section excluded from balance; Evidence: `TestLoginTradeFlow`, `TestDashboardShowsOldProposalBehindManyTrades` (Pending section, unchanged balance and proposal visibility beyond page caps). Citations are not execution results |
+| UX-015 | P0 | built | Completed rows show posted time; Evidence: `TestLoginTradeFlow`, `TestTimeZoneDisplay` (Completed wording and time-zone formatting; combined posting-time presentation still requires review). Citations are not execution results |
+| UX-016 | P0 | built | Status labels and explanations; accepted not shown; Evidence: `TestLoginTradeFlow`, `TestTerminalStatuses` (selected rendered status explanations and terminal state rules; not an exhaustive UI status assertion). Citations are not execution results |
+| UX-017 | P1 | built | Reversals and adjustments retain their own date, reason and signed effect. Adjustments optionally link to a posted transaction involving the adjusted member via immutable `related_transaction_id`; standalone corrections remain valid. Review, approval, history/detail, audit and exports retain that context; `original_tx_id` remains reversal-only and original lines stay unchanged except for reversal links. Evidence: `TestAdjustmentRelationWebReviewAndHistory`, `TestAdjustmentRelationSurvivesDualControlAndIsImmutable`, `TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum`, `TestReversalLinksHistoryAndDetail`, `TestReversedAdjustmentLinks` |
+| UX-018 | P0 | built | Review step before accept, propose, dispute; Evidence: `TestLoginTradeFlow`, `TestAdminMembersAdjustPolicy`, `TestReReviewRequiresReviewedConfirmation` (trade, dispute, adjustment and re-review confirmation flows). Citations are not execution results |
+| UX-019 | P0 | built | Confirmation message after posting; Evidence: `TestLoginTradeFlow` (posted balance confirmation; does not independently assert available-credit copy). Citations are not execution results |
 | UX-020 | P0 | built | Refusal copy names cause and that nothing changed |
-| UX-021 | P0 | partial | Error summary and field messages present; not verified against all codes |
+| UX-021 | P0 | built | Field messages name the field, describe the problem in words and suggest a correction; table tests over every domain code and every service field name |
 | UX-022 | P0 | partial | Error summary present; focus move and value retention not verified |
 | UX-023 | P0 | partial | inputmode decimal on amount fields; format text in helper |
-| UX-024 | P1 | not built | Member time zone not supported; times shown in server zone |
+| UX-024 | P1 | partial | [Refreshed 2026-11-16; was "not built".] Member display time zone built: `PATCH /api/v1/me` (`internal/api/routes.go:22`), `GET /me` returns `time_zone`, web settings (`internal/web/h_account_f2.go`). Zone abbreviation and `time` element with `datetime` UNVERIFIED |
 | UX-025 | P0 | built | Generic 5xx page with request reference |
 | UX-026 | P0 | partial | Live region on some pages; asynchronous announcements not verified |
 | UX-027 | P0 | partial | Disabled controls explained in text; not audited for all |
 | UX-028 | P0 | partial | Loading state not implemented; empty and error states present |
-| UX-029 | P0 | built | Permission failure page with link home |
+| UX-029 | P0 | built | Permission failure page with link home; Evidence: `TestInvitationOnlyJoinHidesNetworkFromNonmembers` (identical missing/hidden network response; permission-page explanation and Home link still need inspection). Citations are not execution results |
 | UX-030 | P0 | built | Two-minute warning with Stay signed in extension |
 | UX-031 | P1 | partial | Suspended notice not verified in templates |
-| UX-032 | P0 | built | Confirmation step names object for remove and cancel |
+| UX-032 | P0 | built | Confirmation step names object for remove and cancel; Evidence: `TestAdminMembersAdjustPolicy`, `TestOpenGrantConfirmationForms` (suspension and grant confirmation forms; not every destructive action). Citations are not execution results |
 | UX-033 | P0 | partial | 112 viewport/error cases passed at d75f31e; broader data/native coverage remains; known return-link gate separate |
 | UX-034 | P0 | partial | 20 enlargement/spacing probes passed at d75f31e, including own-trade/onboarding paths; wider functionality/native coverage remains |
-| UX-035 | P0 | partial | Target sizes not measured |
+| UX-035 | P0 | partial | Target sizes not measured. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/target-size.spec.js` exists. Its result is UNVERIFIED in this refresh] |
 | UX-036 | P0 | partial | Representative portrait/landscape viewport probes passed; native-device evaluation not performed |
-| UX-037 | P1 | not built | Stacked rows for wide tables not built |
+| UX-037 | P1 | built | Wide tables already use `table.stack` and per-cell `data-label`; the narrow-width media rule stacks cells and renders those labels. `e2e/tests/stacked-tables.spec.js` checks administrator/member audit tables at 1280px and 320px, with unchanged record values and visible cell labels. Browser execution is recorded in current PR checks. |
 | UX-038 | P0 | partial | Keyboard operation verified manually for sign-in and trade form only |
 | UX-039 | P0 | partial | Reading order by template; not automated |
 | UX-040 | P0 | partial | 18 no-script key-only entry-screen focus probes passed at d75f31e; transition/manual/native review remains |
 | UX-041 | P0 | built | Skip link to main |
-| UX-042 | P0 | built | No drag interactions |
-| UX-043 | P0 | built | Actions fire on submit and link activation |
+| UX-042 | P0 | built | No drag interactions; Inspection targets: `internal/web/templates`, `internal/web/static/app.js`; no drag-specific automated requirement test is cited; manual keyboard/pointer qualification remains separate. No execution result is implied |
+| UX-043 | P0 | built | Actions fire on submit and link activation; Source: native links/forms in `internal/web/templates` and click handlers in `internal/web/static/app.js`; cancellation/pointer-release qualification remains manual. No execution result is implied |
 | UX-044 | P0 | built | Page title includes network name and screen |
 | UX-045 | P0 | built | Semantic lists, tables, landmarks |
-| UX-046 | P0 | built | Document language en |
-| UX-047 | P1 | not built | Strings not externalised into catalogues |
+| UX-046 | P0 | built | Document language en; Evidence: `TestPageStructure` (English document language on rendered pages; translation externalization is separately tracked by UX-047). Citations are not execution results |
+| UX-047 | P1 | partial | English catalogue and CLDR formatting cover overview/queue and financial formatter messages; the common-UI candidate adds shared shell/dashboard labels, navigation, network notices and badge counts. No language selection or translation is enabled. Timestamp-rich notices, remaining templates/handlers and JavaScript still need migration; the whole requirement is not complete. See `docs/dev/MESSAGES.md` and current PR checks. |
 | UX-048 | P0 | built | Visible labels and autocomplete |
-| UX-049 | P1 | partial | Six section/viewport Help-landmark cases passed at 32a8314; broader visual/all-page review remains |
+| UX-049 | P1 | built | Go tests render every page template and every GET route (anonymous, member, admin, error pages) and pin the footer Help link; earlier six section/viewport e2e cases at 32a8314 |
 | UX-050 | P0 | built | Copy avoids money and cash wording for credits |
-| UX-051 | P0 | built | Sign-in form allows paste; no cognitive test |
-| UX-052 | P0 | partial | Recovery not built; registration response uniform |
-| UX-053 | P0 | not built | Second factor not built |
-| UX-054 | P0 | partial | No automated WCAG checker in CI; structural tests only |
+| UX-051 | P0 | built | Sign-in form allows paste; no cognitive test; Evidence: `TestFormLabelsAndAutocomplete` (sign-in paste and password-manager autocomplete; recovery cognitive accessibility remains manual). Citations are not execution results |
+| UX-052 | P0 | partial | [Refreshed 2026-11-16; "Recovery not built" is stale.] Recovery built (`internal/service/recovery.go`, addenda/SEC-008.md, matrix A9). Identical error for recognised and unrecognised identifiers: matrix A6, `recovery_test.go:135`. Uniform wording across all recovery flows UNVERIFIED |
+| UX-053 | P0 | partial | [Refreshed 2026-11-16; was "not built".] TOTP second factor and recovery codes built (`internal/service/totp.go`, `internal/service/mfa.go`, `internal/web/h_security.go`; addenda/SEC-007.md). Known gap there: no QR code or WebAuthn, so enrolment and recovery codes are typed |
+| UX-054 | P0 | partial | No automated WCAG checker in CI; structural tests only. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); axe-core in `e2e/tests/a11y.spec.js`, run from `make e2e`]. The "no automated WCAG checker" wording is stale |
 | UX-055 | P0 | not built | Keyboard-only walkthrough not recorded for release |
 | UX-056 | P0 | not built | Screen-reader pass not recorded |
-| UX-057 | P0 | partial | Dark scheme token set present; contrast not measured |
-| UX-058 | P1 | built | Reduced motion media query present |
-| UX-059 | P1 | built | Session warning can be extended |
+| UX-057 | P0 | partial | Dark scheme token set present; contrast not measured. [Refreshed 2026-11-16: e2e suite `e2e/tests` exists and runs in CI (matrix W9); `e2e/tests/contrast.spec.js` exists. Its result is UNVERIFIED in this refresh] |
+| UX-058 | P1 | built | Reduced motion media query present; Source: `internal/web/static/style.css` reduced-motion media query; actual motion/flash behavior remains browser/manual qualification. No execution result is implied |
+| UX-059 | P1 | built | Session warning can be extended; Evidence: `TestSessionExpiryWarning` (expiry warning and extension endpoint behavior). Citations are not execution results |
 | UX-060 | P0 | partial | Defect logging process not evidenced in repo |
 
 ## 1. Principles
@@ -134,6 +134,8 @@ Summary: built 31, not built 7, partial 22.
 | Network admin: adjustments | Form with member, direction, amount and mandatory reason; effect preview | Submit after review |
 | Network admin: audit and checks | Filterable audit log; consistency check results | Filter, run check, export |
 | Errors | Not found, forbidden, expired session, server error | Return home, sign in, copy reference |
+
+Session inventory implementation (2026-11-19): `/account/sessions`, linked from account security, lists the person's active sign-ins in pages of up to 25 and offers an explicit confirmation before ending one. No-JS Previous, Next and First page links support navigation without retaining cursor history. Each direction uses bounded keyset scans; a continuation remains available when a scan contains only expired rows. The empty-state message describes only the current page. The view shows the current session and existing creation, activity and expiry timestamps; direct owner-scoped confirmation lookup can reach sessions beyond the first page. Sign out other sessions opens a separate labelled confirmation and retains the current browser after submitting. A help section explains paging, effective expiry, individual sign-out and bulk sign-out. The JSON equivalents are the cookie-only `/api/v1/me/sessions` routes. This completes the session-list portion of the account screen inventory without changing timeout policy, collecting device/IP data, or exposing credentials. See [session-flow review](../audit/consolidation-2026-11-17/source-reviews/OWN-SESSIONS.md) for verification and remaining runtime gates.
 
 ## 4. Balance and transaction presentation
 

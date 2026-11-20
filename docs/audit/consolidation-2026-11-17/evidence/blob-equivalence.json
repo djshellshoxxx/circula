@@ -1,0 +1,170 @@
+[
+  {
+    "label": "PR30 HTTP acceptance",
+    "source_sha": "1d165989e2176e214536dd22b05f7b3a4cb2f48f",
+    "file": "cmd/circula/acceptance_http_test.go",
+    "source_blob": "5e93a318d8e89639a67d7db4b2ca649708a71224",
+    "main_blob": "5e93a318d8e89639a67d7db4b2ca649708a71224",
+    "identical": true
+  },
+  {
+    "label": "PR35 persistence",
+    "source_sha": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+    "file": "internal/store/persistence_regression_test.go",
+    "source_blob": "bfbda54b62b41eea371099fcbbbb776bc2ab502f",
+    "main_blob": "bfbda54b62b41eea371099fcbbbb776bc2ab502f",
+    "identical": true
+  },
+  {
+    "label": "PR35 persistence",
+    "source_sha": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e",
+    "file": "cmd/circula/acceptance_http_test.go",
+    "source_blob": "5e93a318d8e89639a67d7db4b2ca649708a71224",
+    "main_blob": "5e93a318d8e89639a67d7db4b2ca649708a71224",
+    "identical": true
+  },
+  {
+    "label": "PR54 departure",
+    "source_sha": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab",
+    "file": "internal/service/departure.go",
+    "source_blob": "20d1f0aaff737a93e523e27f7a2106a605b55704",
+    "main_blob": "8053fbcea0457730663fe5014c77437c0b097faa",
+    "identical": false
+  },
+  {
+    "label": "PR54 departure",
+    "source_sha": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab",
+    "file": "internal/service/departure_pagination_regression_test.go",
+    "source_blob": "c2b6c633a3f934b9aca284e8c5b023b2d546613b",
+    "main_blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595",
+    "identical": false
+  },
+  {
+    "label": "PR51 ledger auth",
+    "source_sha": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+    "file": "internal/service/reversal.go",
+    "source_blob": "a99863f7d32585a3cdf86c108fb43c9fe510aee2",
+    "main_blob": "794106562a7f481d0047161d11b33bec28615133",
+    "identical": false
+  },
+  {
+    "label": "PR51 ledger auth",
+    "source_sha": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca",
+    "file": "internal/service/ledger_auth_regression_test.go",
+    "source_blob": "d8e14ed2358e7b6900d165da0c0438175b9759f7",
+    "main_blob": "d8e14ed2358e7b6900d165da0c0438175b9759f7",
+    "identical": true
+  },
+  {
+    "label": "PR52 MFA",
+    "source_sha": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd",
+    "file": "internal/service/principal.go",
+    "source_blob": "53cd9b6828447b9c3da96ee852b375a49d87efc0",
+    "main_blob": "0500186d52b23e729699ba5c82b1a3c327519086",
+    "identical": false
+  },
+  {
+    "label": "PR52 MFA",
+    "source_sha": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd",
+    "file": "internal/service/decider_mfa_regression_test.go",
+    "source_blob": "01df649584ebe02f9fd94e218c15963be0801d03",
+    "main_blob": "01df649584ebe02f9fd94e218c15963be0801d03",
+    "identical": true
+  },
+  {
+    "label": "PR63 dashboard",
+    "source_sha": "d53196cc6907f27222661246a7767bb0aa123a76",
+    "file": "internal/web/common_catalog_test.go",
+    "source_blob": "1b0d95752955ba164200a0a5c90c54beafebfaf6",
+    "main_blob": "1b0d95752955ba164200a0a5c90c54beafebfaf6",
+    "identical": true
+  },
+  {
+    "label": "PR63 dashboard",
+    "source_sha": "d53196cc6907f27222661246a7767bb0aa123a76",
+    "file": "internal/web/format.go",
+    "source_blob": "1636162638f9d23d9be45334a907840fb20546cb",
+    "main_blob": "1636162638f9d23d9be45334a907840fb20546cb",
+    "identical": true
+  },
+  {
+    "label": "PR63 dashboard",
+    "source_sha": "d53196cc6907f27222661246a7767bb0aa123a76",
+    "file": "internal/web/templates/dashboard.html",
+    "source_blob": "61ea074dfe3da4b72dc0f1a1f58db6a8a4b1d9b5",
+    "main_blob": "61ea074dfe3da4b72dc0f1a1f58db6a8a4b1d9b5",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "HANDOFF.md",
+    "source_blob": "b2532873f77c731c7935cca6013c689cff0066bc",
+    "main_blob": "b2532873f77c731c7935cca6013c689cff0066bc",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "docs/TODO.md",
+    "source_blob": "9c5bf7f2b067594671c85450e81f58c5e8cae8fc",
+    "main_blob": "9c5bf7f2b067594671c85450e81f58c5e8cae8fc",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "docs/TRACEABILITY.md",
+    "source_blob": "6439482ca433495e74f84f7abb02693d6ad92b7f",
+    "main_blob": "6439482ca433495e74f84f7abb02693d6ad92b7f",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "docs/legal/DEPENDENCIES.md",
+    "source_blob": "90826ccb9be20ad45ed143819f7bdad804656a6e",
+    "main_blob": "90826ccb9be20ad45ed143819f7bdad804656a6e",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "go.mod",
+    "source_blob": "39a6ea3664d9c38602ca83090027994f8ed49ca5",
+    "main_blob": "39a6ea3664d9c38602ca83090027994f8ed49ca5",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "go.sum",
+    "source_blob": "e05d465e814662e651f9e159883cb15518131bff",
+    "main_blob": "e05d465e814662e651f9e159883cb15518131bff",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "internal/web/common_catalog_test.go",
+    "source_blob": "1b0d95752955ba164200a0a5c90c54beafebfaf6",
+    "main_blob": "1b0d95752955ba164200a0a5c90c54beafebfaf6",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "internal/web/format.go",
+    "source_blob": "1636162638f9d23d9be45334a907840fb20546cb",
+    "main_blob": "1636162638f9d23d9be45334a907840fb20546cb",
+    "identical": true
+  },
+  {
+    "label": "PR68 squash",
+    "source_sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a",
+    "file": "internal/web/templates/dashboard.html",
+    "source_blob": "61ea074dfe3da4b72dc0f1a1f58db6a8a4b1d9b5",
+    "main_blob": "61ea074dfe3da4b72dc0f1a1f58db6a8a4b1d9b5",
+    "identical": true
+  }
+]

@@ -1,0 +1,6 @@
+=== RUN   TestDeciderEntryPointsRequireAdministratorMFA
+    ledger_auth_integration_regression_test.go:66: StartDisputeReview by administrator without MFA: <nil>
+--- FAIL: TestDeciderEntryPointsRequireAdministratorMFA (0.02s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/service	0.022s
+FAIL

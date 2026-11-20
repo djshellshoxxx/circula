@@ -1,0 +1,464 @@
+{
+  "observed_at": "2026-11-18T08:49:41.356Z",
+  "runs": [
+    {
+      "id": 44264463917,
+      "jobs": [
+        {
+          "id": 134665456373,
+          "name": "build release targets",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:32:07Z",
+          "completed_at": "2026-11-18T08:34:16Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060675,
+          "runner_name": "GitHub Actions 1000060675",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134665456868,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:33:07Z",
+          "completed_at": "2026-11-18T08:34:01Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060682,
+          "runner_name": "GitHub Actions 1000060682",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134665456909,
+          "name": "API contract and load smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:35:18Z",
+          "completed_at": "2026-11-18T08:35:48Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060693,
+          "runner_name": "GitHub Actions 1000060693",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134665456937,
+          "name": "test (windows-2022)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:10:33Z",
+          "completed_at": "2026-11-18T08:17:42Z",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_id": 1000060535,
+          "runner_name": "GitHub Actions 1000060535",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134665456947,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:08:40Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134665456955,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:08:40Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134665457021,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:08:40Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134665457072,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:08:40Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134665457090,
+          "name": "test (macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T08:08:40Z",
+          "started_at": "2026-11-18T08:16:56Z",
+          "completed_at": "2026-11-18T08:35:47Z",
+          "labels": [
+            "macos-15-intel"
+          ],
+          "runner_id": 1000060589,
+          "runner_name": "GitHub Actions 1000060589",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44262124202,
+      "jobs": [
+        {
+          "id": 134659549608,
+          "name": "fuzz smoke (RB-017)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:17:44Z",
+          "completed_at": "2026-11-18T08:19:18Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060594,
+          "runner_name": "GitHub Actions 1000060594",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659549723,
+          "name": "test (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:19:01Z",
+          "completed_at": "2026-11-18T08:29:48Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060604,
+          "runner_name": "GitHub Actions 1000060604",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659549782,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:17:05Z",
+          "completed_at": "2026-11-18T08:18:24Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060590,
+          "runner_name": "GitHub Actions 1000060590",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659549807,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:17:41Z",
+          "completed_at": "2026-11-18T08:18:45Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060593,
+          "runner_name": "GitHub Actions 1000060593",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659549950,
+          "name": "test (macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:11:59Z",
+          "completed_at": "2026-11-18T08:48:27Z",
+          "labels": [
+            "macos-15-intel"
+          ],
+          "runner_id": 1000060556,
+          "runner_name": "GitHub Actions 1000060556",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659550003,
+          "name": "build release targets",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:21:45Z",
+          "completed_at": "2026-11-18T08:23:53Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060617,
+          "runner_name": "GitHub Actions 1000060617",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659550068,
+          "name": "test (windows-2022)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T07:58:25Z",
+          "completed_at": "2026-11-18T08:04:53Z",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_id": 1000060480,
+          "runner_name": "GitHub Actions 1000060480",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659550075,
+          "name": "API contract and load smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:21:48Z",
+          "completed_at": "2026-11-18T08:22:11Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060618,
+          "runner_name": "GitHub Actions 1000060618",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        },
+        {
+          "id": 134659550208,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "completed",
+          "conclusion": "success",
+          "created_at": "2026-11-18T07:55:32Z",
+          "started_at": "2026-11-18T08:22:52Z",
+          "completed_at": "2026-11-18T08:31:43Z",
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 1000060624,
+          "runner_name": "GitHub Actions 1000060624",
+          "runner_group_id": 0,
+          "runner_group_name": "GitHub Actions",
+          "active_steps": []
+        }
+      ]
+    },
+    {
+      "id": 44265484103,
+      "jobs": [
+        {
+          "id": 134668836150,
+          "name": "API contract and load smoke",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668836558,
+          "name": "reproducible build (two builds, same sha256)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668836592,
+          "name": "e2e (Playwright, axe, keyboard)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668836612,
+          "name": "test (ubuntu-24.04)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668836700,
+          "name": "vet, gofmt, golangci-lint, govulncheck",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668836753,
+          "name": "build release targets",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668836775,
+          "name": "fuzz smoke (RB-017)",
+          "status": "queued",
+          "conclusion": null,
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": null,
+          "labels": [
+            "ubuntu-24.04"
+          ],
+          "runner_id": 0,
+          "runner_name": "",
+          "runner_group_id": 0,
+          "runner_group_name": "",
+          "active_steps": []
+        },
+        {
+          "id": 134668838064,
+          "name": "test (${{ matrix.os }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "created_at": "2026-11-18T08:15:52Z",
+          "started_at": "2026-11-18T08:15:52Z",
+          "completed_at": "2026-11-18T08:15:52Z",
+          "labels": [],
+          "runner_id": null,
+          "runner_name": null,
+          "runner_group_id": null,
+          "runner_group_name": null,
+          "active_steps": []
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "started_at is recorded even for queued jobs with no assigned runner; it does not prove execution has begun.",
+    "No account-wide capacity, billing, or provider queue cause is established."
+  ]
+}

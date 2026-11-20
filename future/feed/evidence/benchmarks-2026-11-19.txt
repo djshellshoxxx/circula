@@ -1,0 +1,20 @@
+Exact runtime: 949d32907f8cc2fab30ce237d95bb361023e84ba
+GOMAXPROCS=2 GOGC=100 GOMEMLIMIT=400MiB
+100 measured iterations per case; fixture setup excluded from ns/op.
+Full source hashes and qualification log: sqlite-qualification-2026-11-19.txt
+
+2026-11-19T11:01:22.647060+00:00 START benchmarks ["/tmp/fnet204-949d329-ordinary.test", "-test.run=^$", "-test.bench=BenchmarkSQLStorePage", "-test.benchmem", "-test.benchtime=100x", "-test.count=1"]
+2026-11-19T11:01:22.849561+00:00 benchmarks goos: linux
+2026-11-19T11:01:22.849625+00:00 benchmarks goarch: amd64
+2026-11-19T11:01:22.849636+00:00 benchmarks pkg: github.com/djshellshoxxx/circula/future/feed/integration
+2026-11-19T11:01:22.849645+00:00 benchmarks cpu: AMD EPYC 7763 64-Core Processor
+2026-11-19T11:01:23.095995+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_10000/tied_false-2         	     100	    495930 ns/op	   96644 B/op	    1638 allocs/op
+2026-11-19T11:01:23.488366+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_10000/tied_true-2          	     100	    631994 ns/op	   96287 B/op	    1638 allocs/op
+2026-11-19T11:01:27.477217+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_100000/tied_false-2        	     100	    666873 ns/op	   96650 B/op	    1638 allocs/op
+2026-11-19T11:01:31.111120+00:00 benchmarks BenchmarkSQLStorePageFromStore/events_100000/tied_true-2         	     100	    753996 ns/op	   96231 B/op	    1638 allocs/op
+2026-11-19T11:01:31.451606+00:00 benchmarks BenchmarkSQLStorePage/events_10000/tied_false-2                  	     100	    762203 ns/op	   44440 B/op	    1357 allocs/op
+2026-11-19T11:01:31.920799+00:00 benchmarks BenchmarkSQLStorePage/events_10000/tied_true-2                   	     100	    329148 ns/op	   44040 B/op	    1357 allocs/op
+2026-11-19T11:01:35.494740+00:00 benchmarks BenchmarkSQLStorePage/events_100000/tied_false-2                 	     100	    509034 ns/op	   44441 B/op	    1357 allocs/op
+2026-11-19T11:01:40.035865+00:00 benchmarks BenchmarkSQLStorePage/events_100000/tied_true-2                  	     100	    364024 ns/op	   44041 B/op	    1357 allocs/op
+2026-11-19T11:01:40.035969+00:00 benchmarks PASS
+2026-11-19T11:01:40.037810+00:00 END benchmarks exit=0 elapsed_seconds=17.391

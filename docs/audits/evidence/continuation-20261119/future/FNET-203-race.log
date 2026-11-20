@@ -1,0 +1,8 @@
+{"Time":"2026-11-19T02:15:31.513193003-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/future/receipts"}
+{"Time":"2026-11-19T02:15:31.626382136-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/future/receipts","Test":"TestConsentAuthorizationAndFormats"}
+{"Time":"2026-11-19T02:15:31.626745858-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/receipts","Test":"TestConsentAuthorizationAndFormats","Output":"=== RUN   TestConsentAuthorizationAndFormats\n"}
+{"Time":"2026-11-19T02:15:31.648804515-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/receipts","Test":"TestConsentAuthorizationAndFormats","Output":"--- PASS: TestConsentAuthorizationAndFormats (0.02s)\n"}
+{"Time":"2026-11-19T02:15:31.64884967-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/receipts","Test":"TestConsentAuthorizationAndFormats","Elapsed":0.02}
+{"Time":"2026-11-19T02:15:31.648864178-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/receipts","Output":"PASS\n"}
+{"Time":"2026-11-19T02:15:32.660502065-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/future/receipts","Output":"ok  \tgithub.com/djshellshoxxx/circula/future/receipts\t1.137s\n"}
+{"Time":"2026-11-19T02:15:32.660572677-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/future/receipts","Elapsed":1.147}

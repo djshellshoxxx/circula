@@ -1,0 +1,87 @@
+name: future feed module
+
+# This isolated module remains disabled and is not imported by Circula core.
+# A push to its development branch qualifies this module independently of the
+# historical core baseline. Core PR/release gates remain in ci.yml.
+on:
+  push:
+    paths:
+      - "future/feed/**"
+      - ".github/workflows/future-feed.yml"
+  pull_request:
+    paths:
+      - "future/feed/**"
+      - ".github/workflows/future-feed.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-feed-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  module:
+    name: isolated feed validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      GOMAXPROCS: "2"
+      GOTOOLCHAIN: local
+    defaults:
+      run:
+        working-directory: future/feed
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # Qualify the exact candidate, independently of the moving Core base.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version-file: go.mod # Match the pinned core toolchain.
+          cache: false # Standard-library-only nested module has no go.sum.
+      - name: Check isolated HOLD boundary
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          manifest = json.loads(Path("feature.json").read_text())
+          if manifest.get("enabled") is not False or manifest.get("integration") != "HOLD":
+              raise SystemExit("This workflow qualifies an isolated, disabled HOLD module only")
+          modules = subprocess.check_output(["go", "list", "-m", "all"], text=True).splitlines()
+          if modules != ["github.com/djshellshoxxx/circula/future/feed"]:
+              raise SystemExit("Feed isolation requires its standard-library-only module boundary")
+          PY
+      - name: gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+      - name: go vet
+        run: go vet -mod=readonly ./...
+      - name: Race and regression tests
+        run: go test -mod=readonly -race -count=1 -cover ./...
+      - name: Signed cursor fuzz smoke
+        # Fixed executions avoid the pinned Go toolchain's duration-completion
+        # race; the independent hard timeout still rejects hangs or slow runs.
+        run: go test -mod=readonly -run '^$' -fuzz '^FuzzOpenCursor$' -fuzztime=100000x -timeout=3m -parallel=2
+      - name: Encrypted snapshot cursor fuzz
+        run: go test -mod=readonly -run '^$' -fuzz '^FuzzOpenSnapshotCursor$' -fuzztime=100000x -timeout=3m -parallel=2
+      - name: Pagination property fuzz
+        run: go test -mod=readonly -run '^$' -fuzz '^FuzzPagePermutation$' -fuzztime=10000x -timeout=3m -parallel=2
+      - name: Real SQLite integration and race tests
+        working-directory: future/feed/integration
+        run: |
+          go mod download
+          go mod verify
+          go vet -mod=readonly ./...
+          go test -mod=readonly -race -count=1 -timeout=12m -v ./...
+      - name: Large-history query and allocation benchmarks
+        working-directory: future/feed/integration
+        run: go test -mod=readonly -run '^$' -bench . -benchmem -benchtime=100x -count=1 -timeout=3m ./...

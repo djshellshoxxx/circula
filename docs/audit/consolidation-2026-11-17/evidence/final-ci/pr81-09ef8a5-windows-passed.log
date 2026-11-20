@@ -1,0 +1,263 @@
+﻿2026-11-18T08:10:34.4309429Z Current runner version: '2.338.2'
+2026-11-18T08:10:34.4325600Z ##[group]Runner Image Provisioner
+2026-11-18T08:10:34.4326043Z Hosted Compute Agent
+2026-11-18T08:10:34.4326386Z Version: 20261103.629
+2026-11-18T08:10:34.4326733Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-18T08:10:34.4327144Z Build Date: 2026-11-03T17:26:59Z
+2026-11-18T08:10:34.4327526Z Worker ID: {fa909f3c-5015-4fdf-aa53-95b41b446ecb}
+2026-11-18T08:10:34.4327889Z Region: westus3
+2026-11-18T08:10:34.4328163Z Cloud: Azure
+2026-11-18T08:10:34.4328500Z ##[endgroup]
+2026-11-18T08:10:34.4329166Z ##[group]Operating System
+2026-11-18T08:10:34.4329497Z Microsoft Windows Server 2022
+2026-11-18T08:10:34.4329800Z 10.0.20348
+2026-11-18T08:10:34.4330084Z Datacenter
+2026-11-18T08:10:34.4330353Z ##[endgroup]
+2026-11-18T08:10:34.4330653Z ##[group]Runner Image
+2026-11-18T08:10:34.4330954Z Image: windows-2022
+2026-11-18T08:10:34.4331238Z Version: 20261112.366.7
+2026-11-18T08:10:34.4332246Z Included Software: https://github.com/actions/runner-images/blob/win22/20261112.366/images/windows/Windows2022-Readme.md
+2026-11-18T08:10:34.4333047Z Image Release: https://github.com/actions/runner-images/releases/tag/win22%2F20261112.366
+2026-11-18T08:10:34.4333523Z ##[endgroup]
+2026-11-18T08:10:34.4334096Z ##[group]GITHUB_TOKEN Permissions
+2026-11-18T08:10:34.4335126Z Contents: read
+2026-11-18T08:10:34.4335413Z Metadata: read
+2026-11-18T08:10:34.4335743Z ##[endgroup]
+2026-11-18T08:10:34.4336932Z Secret source: Actions
+2026-11-18T08:10:34.4337359Z Cache mode: write
+2026-11-18T08:10:34.4337729Z Prepare workflow directory
+2026-11-18T08:10:34.4533076Z Prepare all required actions
+2026-11-18T08:10:34.4563369Z Getting action download info
+2026-11-18T08:10:34.7913484Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-18T08:10:34.8644066Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+2026-11-18T08:10:35.5792760Z Complete job name: test (windows-2022)
+2026-11-18T08:10:35.7622934Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-18T08:10:35.7623722Z with:
+2026-11-18T08:10:35.7623964Z   persist-credentials: false
+2026-11-18T08:10:35.7624253Z   repository: djshellshoxxx/circula
+2026-11-18T08:10:35.7626482Z   token: ***
+2026-11-18T08:10:35.7626713Z   ssh-strict: true
+2026-11-18T08:10:35.7626951Z   ssh-user: git
+2026-11-18T08:10:35.7627181Z   clean: true
+2026-11-18T08:10:35.7627418Z   sparse-checkout-cone-mode: true
+2026-11-18T08:10:35.7627705Z   fetch-depth: 1
+2026-11-18T08:10:35.7627937Z   fetch-tags: false
+2026-11-18T08:10:35.7628181Z   show-progress: true
+2026-11-18T08:10:35.7628419Z   lfs: false
+2026-11-18T08:10:35.7628640Z   submodules: false
+2026-11-18T08:10:35.7628890Z   set-safe-directory: true
+2026-11-18T08:10:35.7629165Z   allow-unsafe-pr-checkout: false
+2026-11-18T08:10:35.7629539Z ##[endgroup]
+2026-11-18T08:10:35.8575756Z Syncing repository: djshellshoxxx/circula
+2026-11-18T08:10:35.8576856Z ##[group]Getting Git version info
+2026-11-18T08:10:35.8577300Z Working directory is 'D:\a\circula\circula'
+2026-11-18T08:10:35.9028777Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-18T08:10:36.1981461Z git version 2.56.1.windows.1
+2026-11-18T08:10:36.2009178Z ##[endgroup]
+2026-11-18T08:10:36.2019012Z Temporarily overriding HOME='D:\a\_temp\2486feb5-0de0-447c-b552-7c650de86b59' before making global git config changes
+2026-11-18T08:10:36.2020719Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T08:10:36.2025581Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\circula\circula
+2026-11-18T08:10:36.2525140Z Deleting the contents of 'D:\a\circula\circula'
+2026-11-18T08:10:36.2528037Z ##[group]Determining repository object format
+2026-11-18T08:10:36.2529771Z ##[endgroup]
+2026-11-18T08:10:36.2530818Z ##[group]Initializing the repository
+2026-11-18T08:10:36.2536286Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\circula\circula
+2026-11-18T08:10:36.3245862Z Initialized empty Git repository in D:/a/circula/circula/.git/
+2026-11-18T08:10:36.3273876Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/djshellshoxxx/circula
+2026-11-18T08:10:36.3791538Z ##[endgroup]
+2026-11-18T08:10:36.3792696Z ##[group]Disabling automatic garbage collection
+2026-11-18T08:10:36.3797180Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-11-18T08:10:36.3995730Z ##[endgroup]
+2026-11-18T08:10:36.3997161Z ##[group]Setting up auth
+2026-11-18T08:10:36.3998267Z Removing SSH command configuration
+2026-11-18T08:10:36.4003669Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T08:10:36.4208713Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T08:10:37.5584714Z Removing HTTP extra header
+2026-11-18T08:10:37.5595566Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T08:10:37.5789572Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T08:10:37.9160292Z Removing includeIf entries pointing to credentials config files
+2026-11-18T08:10:37.9167916Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T08:10:37.9365432Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T08:10:38.2941480Z [command]"C:\Program Files\Git\bin\git.exe" config --file D:\a\_temp\git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-11-18T08:10:38.3180966Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/circula/circula/.git.path D:\a\_temp\git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:38.3382283Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:D:/a/circula/circula/.git/worktrees/*.path D:\a\_temp\git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:38.3619330Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:38.3814074Z [command]"C:\Program Files\Git\bin\git.exe" config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:38.4004785Z ##[endgroup]
+2026-11-18T08:10:38.4005205Z ##[group]Fetching the repository
+2026-11-18T08:10:38.4012410Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f2dd3bdde47208d2d7132b76ae7cf2e00dd5b1fd:refs/remotes/pull/81/merge
+2026-11-18T08:10:40.0288525Z From https://github.com/djshellshoxxx/circula
+2026-11-18T08:10:40.0289128Z  * [new ref]         f2dd3bdde47208d2d7132b76ae7cf2e00dd5b1fd -> pull/81/merge
+2026-11-18T08:10:40.0311449Z ##[endgroup]
+2026-11-18T08:10:40.0312343Z ##[group]Determining the checkout info
+2026-11-18T08:10:40.0312925Z ##[endgroup]
+2026-11-18T08:10:40.0319181Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-11-18T08:10:40.0637573Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-11-18T08:10:40.0838641Z ##[group]Checking out the ref
+2026-11-18T08:10:40.0843761Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/81/merge
+2026-11-18T08:10:40.2364533Z Note: switching to 'refs/remotes/pull/81/merge'.
+2026-11-18T08:10:40.2365298Z
+2026-11-18T08:10:40.2365489Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-18T08:10:40.2366041Z changes and commit them, and you can discard any commits you make in this
+2026-11-18T08:10:40.2366486Z state without impacting any branches by switching back to a branch.
+2026-11-18T08:10:40.2366776Z
+2026-11-18T08:10:40.2367006Z If you want to create a new branch to retain commits you create, you may
+2026-11-18T08:10:40.2367443Z do so (now or later) by using -c with the switch command. Example:
+2026-11-18T08:10:40.2367675Z
+2026-11-18T08:10:40.2367801Z   git switch -c <new-branch-name>
+2026-11-18T08:10:40.2367989Z
+2026-11-18T08:10:40.2368125Z Or undo this operation with:
+2026-11-18T08:10:40.2368309Z
+2026-11-18T08:10:40.2368392Z   git switch -
+2026-11-18T08:10:40.2368523Z
+2026-11-18T08:10:40.2369675Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-18T08:10:40.2370051Z
+2026-11-18T08:10:40.2370440Z HEAD is now at f2dd3bd Merge 09ef8a5aa25f11ee4d96f043e7d686e97598b7e3 into a62071d2c4e65027f4918c90d63e804b1deceb60
+2026-11-18T08:10:40.2408616Z ##[endgroup]
+2026-11-18T08:10:40.2728687Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-11-18T08:10:40.2909650Z f2dd3bdde47208d2d7132b76ae7cf2e00dd5b1fd
+2026-11-18T08:10:40.2932947Z ##[group]Removing auth
+2026-11-18T08:10:40.2933278Z Removing SSH command configuration
+2026-11-18T08:10:40.2938340Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T08:10:40.3132225Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T08:10:40.6645129Z Removing HTTP extra header
+2026-11-18T08:10:40.6652200Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T08:10:40.6874044Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T08:10:41.0254558Z Removing includeIf entries pointing to credentials config files
+2026-11-18T08:10:41.0260146Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T08:10:41.0436770Z includeif.gitdir:D:/a/circula/circula/.git.path
+2026-11-18T08:10:41.0437294Z includeif.gitdir:D:/a/circula/circula/.git/worktrees/*.path
+2026-11-18T08:10:41.0437652Z includeif.gitdir:/github/workspace/.git.path
+2026-11-18T08:10:41.0438015Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-18T08:10:41.0461949Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/circula/circula/.git.path
+2026-11-18T08:10:41.0639314Z D:\a\_temp\git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:41.0667903Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/circula/circula/.git.path D\:\\a\\_temp\\git\-credentials\-12e30205\-3642\-4330\-96cb\-a9c3ebec332a\.config
+2026-11-18T08:10:41.0865597Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:D:/a/circula/circula/.git/worktrees/*.path
+2026-11-18T08:10:41.1036096Z D:\a\_temp\git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:41.1058588Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:D:/a/circula/circula/.git/worktrees/*.path D\:\\a\\_temp\\git\-credentials\-12e30205\-3642\-4330\-96cb\-a9c3ebec332a\.config
+2026-11-18T08:10:41.1261721Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-18T08:10:41.1432373Z /github/runner_temp/git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:41.1454411Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-12e30205\-3642\-4330\-96cb\-a9c3ebec332a\.config
+2026-11-18T08:10:41.1659038Z [command]"C:\Program Files\Git\bin\git.exe" config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-18T08:10:41.1831390Z /github/runner_temp/git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config
+2026-11-18T08:10:41.1853482Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-12e30205\-3642\-4330\-96cb\-a9c3ebec332a\.config
+2026-11-18T08:10:41.2051760Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T08:10:41.5405878Z Removing credentials config 'D:\a\_temp\git-credentials-12e30205-3642-4330-96cb-a9c3ebec332a.config'
+2026-11-18T08:10:41.5415297Z ##[endgroup]
+2026-11-18T08:10:41.5747293Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+2026-11-18T08:10:41.5747541Z with:
+2026-11-18T08:10:41.5747664Z   go-version-file: go.mod
+2026-11-18T08:10:41.5747783Z   cache: true
+2026-11-18T08:10:41.5747880Z   check-latest: false
+2026-11-18T08:10:41.5749269Z   token: ***
+2026-11-18T08:10:41.5749371Z ##[endgroup]
+2026-11-18T08:10:41.6713261Z Setup go version spec 1.26.11
+2026-11-18T08:10:41.6845248Z Found in cache @ C:\hostedtoolcache\windows\go\1.26.11\x64
+2026-11-18T08:10:41.6847436Z Added go to the path
+2026-11-18T08:10:41.6849482Z Successfully set up Go version 1.26.11
+2026-11-18T08:10:42.9389735Z [command]C:\hostedtoolcache\windows\go\1.26.11\x64\bin\go.exe env GOMODCACHE
+2026-11-18T08:10:42.9416569Z [command]C:\hostedtoolcache\windows\go\1.26.11\x64\bin\go.exe env GOCACHE
+2026-11-18T08:10:42.9582839Z C:\Users\runneradmin\go\pkg\mod
+2026-11-18T08:10:42.9592866Z C:\Users\runneradmin\AppData\Local\go-build
+2026-11-18T08:10:43.2517170Z Cache hit for: setup-go-Windows-x64-go-1.26.11-71a3db9156abbd5bb0a4f659f1caa8a1b55f5d33c396e3b1bccd3a6bb370730f
+2026-11-18T08:10:44.4732570Z Received 79691776 of 159892713 (49.8%), 75.6 MBs/sec
+2026-11-18T08:10:45.4651661Z Received 159892713 of 159892713 (100.0%), 76.4 MBs/sec
+2026-11-18T08:10:45.4685293Z Cache Size: ~152 MB (159892713 B)
+2026-11-18T08:10:45.4735772Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/54fc100b-b1dd-48e9-9223-9a00bb3879e6/cache.tzst -P -C D:/a/circula/circula --force-local --use-compress-program "zstd -d"
+2026-11-18T08:11:04.0067753Z Cache restored successfully
+2026-11-18T08:11:04.0169780Z Cache restored from key: setup-go-Windows-x64-go-1.26.11-71a3db9156abbd5bb0a4f659f1caa8a1b55f5d33c396e3b1bccd3a6bb370730f
+2026-11-18T08:11:04.0189700Z go version go1.26.11 windows/amd64
+2026-11-18T08:11:04.0189874Z
+2026-11-18T08:11:04.0190076Z ##[group]go env
+2026-11-18T08:11:04.2948277Z set AR=ar
+2026-11-18T08:11:04.2948632Z set CC=gcc
+2026-11-18T08:11:04.2949016Z set CGO_CFLAGS=-O2 -g
+2026-11-18T08:11:04.2949221Z set CGO_CPPFLAGS=
+2026-11-18T08:11:04.2949418Z set CGO_CXXFLAGS=-O2 -g
+2026-11-18T08:11:04.2949599Z set CGO_ENABLED=1
+2026-11-18T08:11:04.2949783Z set CGO_FFLAGS=-O2 -g
+2026-11-18T08:11:04.2949906Z set CGO_LDFLAGS=-O2 -g
+2026-11-18T08:11:04.2950019Z set CXX=g++
+2026-11-18T08:11:04.2950119Z set GCCGO=gccgo
+2026-11-18T08:11:04.2950230Z set GO111MODULE=
+2026-11-18T08:11:04.2950335Z set GOAMD64=v1
+2026-11-18T08:11:04.2950439Z set GOARCH=amd64
+2026-11-18T08:11:04.2950542Z set GOAUTH=netrc
+2026-11-18T08:11:04.2950644Z set GOBIN=
+2026-11-18T08:11:04.2950794Z set GOCACHE=C:\Users\runneradmin\AppData\Local\go-build
+2026-11-18T08:11:04.2950975Z set GOCACHEPROG=
+2026-11-18T08:11:04.2951081Z set GODEBUG=
+2026-11-18T08:11:04.2951432Z set GOENV=C:\Users\runneradmin\AppData\Roaming\go\env
+2026-11-18T08:11:04.2951599Z set GOEXE=.exe
+2026-11-18T08:11:04.2951703Z set GOEXPERIMENT=
+2026-11-18T08:11:04.2951809Z set GOFIPS140=off
+2026-11-18T08:11:04.2951916Z set GOFLAGS=
+2026-11-18T08:11:04.2952338Z set GOGCCFLAGS=-m64 -mthreads -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=C:\Users\RUNNER~1\AppData\Local\Temp\go-build874186196=/tmp/go-build -gno-record-gcc-switches
+2026-11-18T08:11:04.2952753Z set GOHOSTARCH=amd64
+2026-11-18T08:11:04.2952871Z set GOHOSTOS=windows
+2026-11-18T08:11:04.2952982Z set GOINSECURE=
+2026-11-18T08:11:04.2953107Z set GOMOD=D:\a\circula\circula\go.mod
+2026-11-18T08:11:04.2953273Z set GOMODCACHE=C:\Users\runneradmin\go\pkg\mod
+2026-11-18T08:11:04.2953427Z set GONOPROXY=
+2026-11-18T08:11:04.2953526Z set GONOSUMDB=
+2026-11-18T08:11:04.2953633Z set GOOS=windows
+2026-11-18T08:11:04.2953771Z set GOPATH=C:\Users\runneradmin\go
+2026-11-18T08:11:04.2953935Z set GOPRIVATE=
+2026-11-18T08:11:04.2954128Z set GOPROXY=https://proxy.golang.org,direct
+2026-11-18T08:11:04.2954329Z set GOROOT=C:\hostedtoolcache\windows\go\1.26.11\x64
+2026-11-18T08:11:04.2954501Z set GOSUMDB=sum.golang.org
+2026-11-18T08:11:04.2956040Z set GOTELEMETRY=local
+2026-11-18T08:11:04.2956244Z set GOTELEMETRYDIR=C:\Users\runneradmin\AppData\Roaming\go\telemetry
+2026-11-18T08:11:04.2956445Z set GOTMPDIR=
+2026-11-18T08:11:04.2956556Z set GOTOOLCHAIN=local
+2026-11-18T08:11:04.2956749Z set GOTOOLDIR=C:\hostedtoolcache\windows\go\1.26.11\x64\pkg\tool\windows_amd64
+2026-11-18T08:11:04.2956953Z set GOVCS=
+2026-11-18T08:11:04.2957062Z set GOVERSION=go1.26.11
+2026-11-18T08:11:04.2957179Z set GOWORK=
+2026-11-18T08:11:04.2957293Z set PKG_CONFIG=pkg-config
+2026-11-18T08:11:04.2957379Z
+2026-11-18T08:11:04.2957647Z ##[endgroup]
+2026-11-18T08:11:04.3167533Z ##[group]Run go test -count=1 ./...
+2026-11-18T08:11:04.3167812Z [36;1mgo test -count=1 ./...[0m
+2026-11-18T08:11:04.3243927Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-11-18T08:11:04.3244147Z env:
+2026-11-18T08:11:04.3244260Z   GOTOOLCHAIN: local
+2026-11-18T08:11:04.3244384Z ##[endgroup]
+2026-11-18T08:13:40.7274552Z ok  	github.com/djshellshoxxx/circula/cmd/circula	138.990s
+2026-11-18T08:14:32.7883734Z ok  	github.com/djshellshoxxx/circula/internal/api	190.201s
+2026-11-18T08:14:32.7885089Z ok  	github.com/djshellshoxxx/circula/internal/contract	11.019s
+2026-11-18T08:14:32.7885541Z ok  	github.com/djshellshoxxx/circula/internal/domain	0.076s
+2026-11-18T08:14:32.7885998Z ok  	github.com/djshellshoxxx/circula/internal/histbal	0.078s
+2026-11-18T08:14:32.7886473Z ok  	github.com/djshellshoxxx/circula/internal/httpx	0.047s
+2026-11-18T08:14:32.7886728Z ok  	github.com/djshellshoxxx/circula/internal/logx	0.054s
+2026-11-18T08:14:32.7887192Z ok  	github.com/djshellshoxxx/circula/internal/repository	2.741s
+2026-11-18T08:17:39.2199876Z ok  	github.com/djshellshoxxx/circula/internal/service	368.956s
+2026-11-18T08:17:39.2200439Z ok  	github.com/djshellshoxxx/circula/internal/store	321.187s
+2026-11-18T08:17:39.2200931Z ?   	github.com/djshellshoxxx/circula/internal/storetest	[no test files]
+2026-11-18T08:17:39.2201352Z ?   	github.com/djshellshoxxx/circula/internal/testutil	[no test files]
+2026-11-18T08:17:39.2201648Z ok  	github.com/djshellshoxxx/circula/internal/web	93.393s
+2026-11-18T08:17:39.2201910Z ok  	github.com/djshellshoxxx/circula/internal/web/messages	0.056s
+2026-11-18T08:17:39.2202170Z ok  	github.com/djshellshoxxx/circula/scripts/sbom	0.114s
+2026-11-18T08:17:39.2202431Z ok  	github.com/djshellshoxxx/circula/scripts/traceability	4.954s
+2026-11-18T08:17:39.3681504Z Post job cleanup.
+2026-11-18T08:17:39.4929155Z [command]C:\hostedtoolcache\windows\go\1.26.11\x64\bin\go.exe env GOMODCACHE
+2026-11-18T08:17:39.4963189Z [command]C:\hostedtoolcache\windows\go\1.26.11\x64\bin\go.exe env GOCACHE
+2026-11-18T08:17:39.5120173Z C:\Users\runneradmin\go\pkg\mod
+2026-11-18T08:17:39.5129274Z C:\Users\runneradmin\AppData\Local\go-build
+2026-11-18T08:17:39.5137769Z Cache hit occurred on the primary key setup-go-Windows-x64-go-1.26.11-71a3db9156abbd5bb0a4f659f1caa8a1b55f5d33c396e3b1bccd3a6bb370730f, not saving cache.
+2026-11-18T08:17:39.5361774Z Post job cleanup.
+2026-11-18T08:17:39.6386291Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-11-18T08:17:39.6587602Z git version 2.56.1.windows.1
+2026-11-18T08:17:39.6627762Z Temporarily overriding HOME='D:\a\_temp\578814cd-bc11-42a1-abd9-a426012d8bb8' before making global git config changes
+2026-11-18T08:17:39.6628420Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T08:17:39.6635749Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\circula\circula
+2026-11-18T08:17:39.6955564Z Removing SSH command configuration
+2026-11-18T08:17:39.6963062Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T08:17:39.7184158Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-11-18T08:17:40.1992032Z Removing HTTP extra header
+2026-11-18T08:17:40.1999084Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T08:17:40.2199842Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-11-18T08:17:40.5584111Z Removing includeIf entries pointing to credentials config files
+2026-11-18T08:17:40.5592362Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T08:17:40.5789392Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-11-18T08:17:40.9399566Z Cleaning up orphan processes

@@ -49,7 +49,7 @@ func (s *server) add(rt route) { s.mux.HandleFunc(rt.pattern, s.wrap(rt)) }
 
 func (s *server) wrap(rt route) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		c := &reqCtx{s: s, w: w, r: r, rid: w.Header().Get("X-Request-Id"), query: r.URL.Query()}
+		c := &reqCtx{s: s, w: w, r: r, rid: w.Header().Get("X-Request-Id")}
 		if err := s.serve(c, rt); err != nil {
 			ae, expected := fromErr(err)
 			if !expected {
@@ -87,6 +87,22 @@ func (s *server) serve(c *reqCtx, rt route) error {
 			}
 		}
 	}
+	// SEC-024: reject malformed record IDs before any resource lookup or
+	// idempotent action. Keep authentication/CSRF/network failures unchanged.
+	// Only {id} is a UUID: invitation {token} and {role} have other formats.
+	// Legacy UUIDv4 jobs and new UUIDv7 records both remain supported.
+	if id := r.PathValue("id"); id != "" {
+		if !domain.ValidRecordID(id) {
+			return notFoundErr()
+		}
+	}
+	// URL.Query silently drops malformed pairs. Refuse them before any
+	// handler or replay can mistake a damaged filter for an absent one.
+	query, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		return invalidQuery("query string is malformed")
+	}
+	c.query = query
 	if rt.idem == idemNone {
 		return rt.h(c)
 	}

@@ -21,11 +21,14 @@ func TestStrictBodyHandling(t *testing.T) {
 		status           int
 		code             string
 	}{
+		{"case-variant duplicate", good + `,"AMOUNT_MINOR":"7"}`, "", 400, "invalid-body"},
+		{"non-canonical name", strings.Replace(good, `"amount_minor"`, `"Amount_Minor"`, 1) + `}`, "", 400, "invalid-body"},
 		{"unknown field", good + `,"extra":1}`, "", 400, "invalid-body"},
 		{"client-supplied balance", good + `,"balance_minor":"5"}`, "", 400, "invalid-body"},
 		{"duplicate key", `{"direction":"pay","direction":"receive"}`, "", 400, "invalid-body"},
 		{"malformed", `{"direction":`, "", 400, "invalid-body"},
 		{"trailing data", good + `} {}`, "", 400, "invalid-body"},
+		{"overflow JSON number", strings.Replace(good, `"100"`, `1e9999`, 1) + `}`, "", 400, "invalid-body"},
 		{"number for money", strings.Replace(good, `"100"`, `100`, 1) + `}`, "", 400, "invalid-body"},
 		{"wrong content type", good + `}`, "text/plain", 415, "unsupported-media-type"},
 		{"wrong charset", good + `}`, "application/json; charset=latin1", 415, "unsupported-media-type"},

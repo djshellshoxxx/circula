@@ -4,12 +4,12 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/histbal"
 	"github.com/djshellshoxxx/circula/internal/service"
+	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 const perPage = 25
@@ -35,6 +35,10 @@ func (s *server) home(w http.ResponseWriter, r *http.Request) {
 	a, _, ok := s.authenticate(r)
 	if !ok {
 		s.toLogin(w, r)
+		return
+	}
+	if a.MustChangePassword { // SEC-008 also applies before choosing a network.
+		s.mustChange(w, r)
 		return
 	}
 	mems, err := s.svc.MyMemberships(r.Context(), a)
@@ -178,6 +182,7 @@ func (s *server) history(w http.ResponseWriter, r *http.Request, c *rc) {
 		if row.Pending {
 			h.Pending = append(h.Pending, row)
 		} else {
+			row.ReversedBy = n.reversedBy(t, c.Net.Policy.CurrencyName, c.Net.Policy.Decimals) // UX-017
 			h.Done = append(h.Done, row)
 		}
 	}
@@ -257,7 +262,7 @@ func (s *server) directory(w http.ResponseWriter, r *http.Request, c *rc) {
 			d.Pages.Next = base + "&after=" + url.QueryEscape(pg.Entries[n-1].MemberID)
 		}
 	}
-	s.render(w, r, c, "directory", 200, &page{Title: "Directory", D: d, V: map[string]string{"q": q}})
+	s.render(w, r, c, "directory", 200, &page{Title: messages.Text("directory.title"), D: d, V: map[string]string{"q": q}})
 }
 
 type profileData struct {
@@ -298,9 +303,10 @@ type listingRow struct {
 }
 
 func (s *server) listings(w http.ResponseWriter, r *http.Request, c *rc) {
+	const pageSize = 50
 	q := r.URL.Query()
 	in := service.ListingQuery{Type: domain.ListingType(q.Get("type")), Query: strings.TrimSpace(q.Get("q")),
-		Page: service.Page{AfterID: q.Get("after"), Limit: 50}}
+		Page: service.Page{AfterID: q.Get("after"), Limit: pageSize + 1}}
 	mine := q.Get("mine") == "1"
 	if mine {
 		in.MemberID = c.Me.ID
@@ -312,6 +318,23 @@ func (s *server) listings(w http.ResponseWriter, r *http.Request, c *rc) {
 	}
 	n := c.memberNames()
 	d := &listingsData{Mine: mine}
+	if len(ls) > pageSize {
+		// Preserve the selected view across every page. In particular, mine
+		// uses the same value as the request parser, and query text is encoded
+		// once before html/template escapes the complete link.
+		next := url.Values{"after": {ls[pageSize-1].ID}}
+		if mine {
+			next.Set("mine", "1")
+		}
+		if in.Type != "" {
+			next.Set("type", string(in.Type))
+		}
+		if in.Query != "" {
+			next.Set("q", in.Query)
+		}
+		d.Next = c.base() + "/listings?" + next.Encode()
+		ls = ls[:pageSize]
+	}
 	for _, l := range ls {
 		row := listingRow{Listing: l, Owner: n.of(l.MemberID), Own: l.MemberID == c.Me.ID}
 		if l.Price != nil {
@@ -319,27 +342,24 @@ func (s *server) listings(w http.ResponseWriter, r *http.Request, c *rc) {
 		}
 		d.Items = append(d.Items, row)
 	}
-	if len(ls) == 50 {
-		d.Next = ls[49].ID
-	}
-	s.render(w, r, c, "listings", 200, &page{Title: "Listings", D: d,
+	s.render(w, r, c, "listings", 200, &page{Title: messages.Text("listing.title"), D: d,
 		V: map[string]string{"type": q.Get("type"), "q": in.Query}})
 }
 
 func (s *server) listingForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	s.render(w, r, c, "listing_form", 200, &page{Title: "New listing", V: map[string]string{"type": "offer"}})
+	s.render(w, r, c, "listing_form", 200, &page{Title: messages.Text("listing.new"), V: map[string]string{"type": "offer"}})
 }
 
 func (s *server) listingCreate(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	p := &page{Title: "New listing", V: v}
+	p := &page{Title: messages.Text("listing.new"), V: v}
 	in := service.ListingInput{Type: domain.ListingType(v["type"]), Title: v["title"], Description: v["description"],
 		IdempotencyKey: idemKey(r)}
 	if strings.TrimSpace(v["price"]) != "" {
 		pr, err := domain.ParseAmount(v["price"], c.Net.Policy.Decimals)
 		if err != nil || pr <= 0 {
 			p.Errors = []fieldErr{{"price", priceHelp(c)}}
-			p.Summary = "Not saved. Fix the problems below. Nothing changed."
+			p.Summary = messages.Text("listing.invalid")
 			s.render(w, r, c, "listing_form", 422, p)
 			return
 		}
@@ -349,12 +369,12 @@ func (s *server) listingCreate(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.formFail(w, r, c, "listing_form", p, err)
 		return
 	}
-	s.setFlash(w, r, "Listing published.")
+	s.setFlash(w, r, messages.Text("listing.published"))
 	http.Redirect(w, r, c.base()+"/listings?mine=1", http.StatusSeeOther)
 }
 
 func priceHelp(c *rc) string {
-	return "Price: enter a positive amount with up to " + strconv.Itoa(c.Net.Policy.Decimals) + " decimal places, for example " + domain.FormatAmount(1250, c.Net.Policy.Decimals) + "."
+	return messages.Text("listing.price_help", c.Net.Policy.Decimals, domain.FormatAmount(1250, c.Net.Policy.Decimals))
 }
 
 // formFail re-renders a form with the refusal, or falls back to a page error.
@@ -390,13 +410,13 @@ func (s *server) listingEditForm(w http.ResponseWriter, r *http.Request, c *rc) 
 	if l.Price != nil {
 		v["price"] = domain.FormatAmount(*l.Price, c.Net.Policy.Decimals)
 	}
-	s.render(w, r, c, "listing_edit", 200, &page{Title: "Edit listing", V: v, D: l.ID})
+	s.render(w, r, c, "listing_edit", 200, &page{Title: messages.Text("listing.edit_title"), V: v, D: l.ID})
 }
 
 func (s *server) listingEdit(w http.ResponseWriter, r *http.Request, c *rc) {
 	id := r.PathValue("id")
 	v := formValues(r)
-	p := &page{Title: "Edit listing", V: v, D: id}
+	p := &page{Title: messages.Text("listing.edit_title"), V: v, D: id}
 	st := domain.ListingStatus(v["status"])
 	title, desc := v["title"], v["description"]
 	up := service.ListingUpdate{ListingID: id, Title: &title, Description: &desc, Status: &st}
@@ -406,7 +426,7 @@ func (s *server) listingEdit(w http.ResponseWriter, r *http.Request, c *rc) {
 		pr, err := domain.ParseAmount(v["price"], c.Net.Policy.Decimals)
 		if err != nil || pr <= 0 {
 			p.Errors = []fieldErr{{"price", priceHelp(c)}}
-			p.Summary = "Not saved. Fix the problems below. Nothing changed."
+			p.Summary = messages.Text("listing.invalid")
 			s.render(w, r, c, "listing_edit", 422, p)
 			return
 		}
@@ -416,6 +436,6 @@ func (s *server) listingEdit(w http.ResponseWriter, r *http.Request, c *rc) {
 		s.formFail(w, r, c, "listing_edit", p, err)
 		return
 	}
-	s.setFlash(w, r, "Listing saved.")
+	s.setFlash(w, r, messages.Text("listing.saved"))
 	http.Redirect(w, r, c.base()+"/listings?mine=1", http.StatusSeeOther)
 }
