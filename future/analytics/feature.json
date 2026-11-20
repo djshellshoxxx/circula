@@ -1,10 +1,12 @@
 {
   "id": "FNET-205",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "partial-master-scope-privacy-and-qualification-pending",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Overflow-checked gross historical completed-transfer volume, distinct trader counts, half-open periods and full small-cohort suppression.",
-  "remaining": "Ledger-backed isolated snapshots including reversal accounting; stock versus flow views; fixed periods and anti-differencing privacy policy; admin authorization; own-member trends; dormant offers; accessible tables/charts and exports. Existing core is gross volume only, not the complete analytics feature."
+  "scope": "Ledger-verified ordinary trade/reversal flow with partial/later reversals; grants/adjustments excluded from turnover and included in own historical opening/closing; explicit scoped account/offer facts, member-dominance/complementary suppression, fixed calendar periods and public-only revision fingerprints; exact monetary strings; read-only HTTP/no-JS/CSV/CLI.",
+  "remaining": "Standalone immutable-release persistence, query-budget and correction policy; production performance budgets; browser/WCAG/screen-reader acceptance. Actual authenticated historical-source adapter, core API/CLI wiring and full-ledger regression remain separately authorized integration work.",
+  "completion_percent": 78.5,
+  "tested_source": "5c239f0494ff9ee69c4e84f985ec15d638140bbd"
 }

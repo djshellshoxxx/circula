@@ -1,0 +1,8 @@
+goos: linux
+goarch: amd64
+pkg: github.com/djshellshoxxx/circula/future/analytics
+cpu: AMD EPYC 9V74 80-Core Processor                
+BenchmarkAdminVerifiedSnapshot/events-10000/periods-12         	       1	  43317595 ns/op	 9216096 B/op	   30749 allocs/op
+BenchmarkAdminVerifiedSnapshot/events-100000/periods-12        	       1	 497751914 ns/op	80868632 B/op	  302735 allocs/op
+PASS
+ok  	github.com/djshellshoxxx/circula/future/analytics	0.633s

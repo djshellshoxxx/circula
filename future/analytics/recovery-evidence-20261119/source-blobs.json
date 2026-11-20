@@ -1,0 +1,187 @@
+{
+  "archive_sha": "ef4bdf87d2bc915b26d84e548ea4e6a478079006",
+  "archive_module_tree": "759a1357efb8a432bb989da5514655e5fb078e00",
+  "files": [
+    {
+      "path": "future/analytics/AUDIT.md",
+      "archive_blob": "0aea5f23c5b06e5291b0df13d97d783c6bdbab77",
+      "candidate_blob": "0aea5f23c5b06e5291b0df13d97d783c6bdbab77",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/COMPLETION.md",
+      "archive_blob": "6e00bfc6a0a4b71ffc2d43a34aa6f1e65ff1c43d",
+      "candidate_blob": "6e00bfc6a0a4b71ffc2d43a34aa6f1e65ff1c43d",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/CONTRACT.md",
+      "archive_blob": "6190c14a7a7a2a8726f1b31c0036d34cd928ddaf",
+      "candidate_blob": "6190c14a7a7a2a8726f1b31c0036d34cd928ddaf",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/FINAL-HANDOFF.md",
+      "archive_blob": "46476b64499c4a311b1e39ce18b522088bb98a25",
+      "candidate_blob": "46476b64499c4a311b1e39ce18b522088bb98a25",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/HANDOFF-MILESTONE-MASTER1.md",
+      "archive_blob": "e8c76870e292a258c05d153106a619cf51178bfd",
+      "candidate_blob": "e8c76870e292a258c05d153106a619cf51178bfd",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/INTEGRATION.md",
+      "archive_blob": "a3680ab254496027ce73c60f343bda176cb9498c",
+      "candidate_blob": "a3680ab254496027ce73c60f343bda176cb9498c",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/README.md",
+      "archive_blob": "696401c270ae009873ec3fc5580f0d5af8f47c7e",
+      "candidate_blob": "8b3252526f9d5a13d806e38a41f040f7bc353509",
+      "identical": false
+    },
+    {
+      "path": "future/analytics/SECURITY-AUDIT.md",
+      "archive_blob": "55bf8df7398ac0eb20a6d2333c8ab4371aa8cab9",
+      "candidate_blob": "55bf8df7398ac0eb20a6d2333c8ab4371aa8cab9",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/SPEC-SNAPSHOT.md",
+      "archive_blob": "5c31747a15c3265b1209837cf81950171fcafe08",
+      "candidate_blob": "5c31747a15c3265b1209837cf81950171fcafe08",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/THIRD_PARTY_NOTICES.md",
+      "archive_blob": "4b8aeb8451af67d77a62508c42049bf39a430582",
+      "candidate_blob": "4b8aeb8451af67d77a62508c42049bf39a430582",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/UPSTREAM-RESEARCH.md",
+      "archive_blob": "d61efdf9b9bbda3e7b1c61f848e43ec2827eec7d",
+      "candidate_blob": "d61efdf9b9bbda3e7b1c61f848e43ec2827eec7d",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/UPSTREAM-REUSE-MATRIX.md",
+      "archive_blob": "a6197b9a4713706d3eeaecb5702e122185c1c61d",
+      "candidate_blob": "a6197b9a4713706d3eeaecb5702e122185c1c61d",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/VALIDATION.md",
+      "archive_blob": "25d007fa2adee66739bee7a013a08832301c9226",
+      "candidate_blob": "25d007fa2adee66739bee7a013a08832301c9226",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/aggregate.go",
+      "archive_blob": "e1baffbd0a168153f4de048a3d5db26076d980c5",
+      "candidate_blob": "e1baffbd0a168153f4de048a3d5db26076d980c5",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/aggregate_test.go",
+      "archive_blob": "b63a0cb81859b79f9d1b1c8a515fc5ff1e89883a",
+      "candidate_blob": "b63a0cb81859b79f9d1b1c8a515fc5ff1e89883a",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/audit_test.go",
+      "archive_blob": "15af2172d08891b6d04c2bb871e5efd36a2032ca",
+      "candidate_blob": "15af2172d08891b6d04c2bb871e5efd36a2032ca",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/dashboard.go",
+      "archive_blob": "6758ed08780e6fd3ed5e24d1685fb194ff36bb41",
+      "candidate_blob": "6758ed08780e6fd3ed5e24d1685fb194ff36bb41",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/dashboard_test.go",
+      "archive_blob": "f80fabb95b0521cf98dc2f26c02870f32d3c7256",
+      "candidate_blob": "f80fabb95b0521cf98dc2f26c02870f32d3c7256",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/feature.json",
+      "archive_blob": "2507b08b687d64c875480af1b993cfa97f9cfa1a",
+      "candidate_blob": "2507b08b687d64c875480af1b993cfa97f9cfa1a",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/go.mod",
+      "archive_blob": "72a443fddee07393b09238291b948b82a9670f5f",
+      "candidate_blob": "72a443fddee07393b09238291b948b82a9670f5f",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/interface.go",
+      "archive_blob": "40c0e44f884a08fa9d4e4d2ff37e408b43042a21",
+      "candidate_blob": "40c0e44f884a08fa9d4e4d2ff37e408b43042a21",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/interface_test.go",
+      "archive_blob": "29012e655ab7fb1afe57c740588ad0aaffb7dffa",
+      "candidate_blob": "29012e655ab7fb1afe57c740588ad0aaffb7dffa",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/SHA256SUMS",
+      "archive_blob": "d096f126f81b4a894d77700aab0610bc0e202e31",
+      "candidate_blob": "d096f126f81b4a894d77700aab0610bc0e202e31",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/benchmark.log",
+      "archive_blob": "56adc8df71cbc0a55452838f84203826a3395173",
+      "candidate_blob": "56adc8df71cbc0a55452838f84203826a3395173",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/focused.log",
+      "archive_blob": "b14568083c34fe69d8faa7d3539cb24d9ad77cab",
+      "candidate_blob": "b14568083c34fe69d8faa7d3539cb24d9ad77cab",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/modules.log",
+      "archive_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f",
+      "candidate_blob": "f893de6834c1db0d439c2e9faed96a7b20a8e97f",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/race.log",
+      "archive_blob": "983d659adc102eb670c6d960af73b8a1b0fb95fc",
+      "candidate_blob": "983d659adc102eb670c6d960af73b8a1b0fb95fc",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/toolchain.log",
+      "archive_blob": "1a198e76608c22c291dab2aced998b698c39e775",
+      "candidate_blob": "1a198e76608c22c291dab2aced998b698c39e775",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/master-evidence/vet.log",
+      "archive_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "candidate_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "identical": true
+    },
+    {
+      "path": "future/analytics/performance_test.go",
+      "archive_blob": "40c801db8dadded62ccab631870fcb440eb48160",
+      "candidate_blob": "40c801db8dadded62ccab631870fcb440eb48160",
+      "identical": true
+    }
+  ],
+  "runtime_and_test_blobs_identical": true
+}
