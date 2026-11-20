@@ -50,25 +50,76 @@
     "TestWebMFAEnrolAndLogin",
     "TestFrozenNetworkVisibility"
   ],
-  "source_file_sha256_before": {
-    "cmd/circula/auth_metrics_test.go": "a9e8ecd7f82ff58e01ea94c2f53a5eb54073a92ab99ac6c64bf3960d066c697c",
-    "cmd/circula/metrics.go": "db15dfb9f3290a400faaf79af2d037510587a98e1747f260d331e481f2a377ab",
-    "docs/ops/README.md": "fb8c7c2187d978a6731e2a6fd499ae6272042367e2d4f5525db8e68ee2b220ea",
-    "docs/ops/monitoring.md": "35caf22b31661eca05dd182bc17e89e57b8bcb0c5fbc8a3478a42873a6150177",
-    "docs/specs/05-architecture.md": "857a390e5988f2f33ca9cda19256ff38ca72136e8c86c8d99cda71ebcb6cd27b",
-    "docs/specs/11-deployment-operations.md": "d8231066a93690bd64c4f8a921c3e5b2d2efc563bcc0ab644b81847dee46c1c7",
-    "go.mod": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58",
-    "go.sum": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb",
-    "internal/service/auth.go": "ad85a05d82b4a132b73a1169629309ce2df9a836e5bf855d43d4c54c9a394cc5",
-    "internal/service/auth_observe.go": "8dae1802a196ec065f924084312be0419adfdbb19aaab3753c9638ed32f80f66",
-    "internal/service/auth_observe_internal_test.go": "fa1bb63eacdee3802fb72a79bed7819f8b75ada1ef0ef57281ebfd69bf76abb9",
-    "internal/service/auth_observe_test.go": "2c945f58051336a642aa050416da5520547806c6beae1e8ba55c3118b4fe41fe",
-    "internal/service/mfa.go": "d13a82eecc33fb33000e807e7c6ed49f9830f40d320d9383526acd550f441a1e",
-    "internal/service/mfa_login.go": "a6c0353e321e5c25c20321cdffd7ac6a10a5e52f2fbc20913dfa48398bc62b26",
-    "internal/service/recovery.go": "dbb4253886dfcba223244e1bfdb83a0e2a2b687338407c9c9338fa4e9a3b601f",
-    "internal/service/tokens.go": "ab4a59b1a16b32596fb9d543529e47e5abcd7b779697103b2c47f1d8b3523c35",
-    "internal/web/auth_observe_test.go": "4cf52dfe404ac2da0f45cc8bcaf071776a4fb1c783456bedbf734f61b60880a3"
-  },
+  "source_file_sha256_before": [
+    {
+      "path": "cmd/circula/auth_metrics_test.go",
+      "sha256": "a9e8ecd7f82ff58e01ea94c2f53a5eb54073a92ab99ac6c64bf3960d066c697c"
+    },
+    {
+      "path": "cmd/circula/metrics.go",
+      "sha256": "db15dfb9f3290a400faaf79af2d037510587a98e1747f260d331e481f2a377ab"
+    },
+    {
+      "path": "docs/ops/README.md",
+      "sha256": "fb8c7c2187d978a6731e2a6fd499ae6272042367e2d4f5525db8e68ee2b220ea"
+    },
+    {
+      "path": "docs/ops/monitoring.md",
+      "sha256": "35caf22b31661eca05dd182bc17e89e57b8bcb0c5fbc8a3478a42873a6150177"
+    },
+    {
+      "path": "docs/specs/05-architecture.md",
+      "sha256": "857a390e5988f2f33ca9cda19256ff38ca72136e8c86c8d99cda71ebcb6cd27b"
+    },
+    {
+      "path": "docs/specs/11-deployment-operations.md",
+      "sha256": "d8231066a93690bd64c4f8a921c3e5b2d2efc563bcc0ab644b81847dee46c1c7"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb"
+    },
+    {
+      "path": "internal/service/auth.go",
+      "sha256": "ad85a05d82b4a132b73a1169629309ce2df9a836e5bf855d43d4c54c9a394cc5"
+    },
+    {
+      "path": "internal/service/auth_observe.go",
+      "sha256": "8dae1802a196ec065f924084312be0419adfdbb19aaab3753c9638ed32f80f66"
+    },
+    {
+      "path": "internal/service/auth_observe_internal_test.go",
+      "sha256": "fa1bb63eacdee3802fb72a79bed7819f8b75ada1ef0ef57281ebfd69bf76abb9"
+    },
+    {
+      "path": "internal/service/auth_observe_test.go",
+      "sha256": "2c945f58051336a642aa050416da5520547806c6beae1e8ba55c3118b4fe41fe"
+    },
+    {
+      "path": "internal/service/mfa.go",
+      "sha256": "d13a82eecc33fb33000e807e7c6ed49f9830f40d320d9383526acd550f441a1e"
+    },
+    {
+      "path": "internal/service/mfa_login.go",
+      "sha256": "a6c0353e321e5c25c20321cdffd7ac6a10a5e52f2fbc20913dfa48398bc62b26"
+    },
+    {
+      "path": "internal/service/recovery.go",
+      "sha256": "dbb4253886dfcba223244e1bfdb83a0e2a2b687338407c9c9338fa4e9a3b601f"
+    },
+    {
+      "path": "internal/service/tokens.go",
+      "sha256": "ab4a59b1a16b32596fb9d543529e47e5abcd7b779697103b2c47f1d8b3523c35"
+    },
+    {
+      "path": "internal/web/auth_observe_test.go",
+      "sha256": "4cf52dfe404ac2da0f45cc8bcaf071776a4fb1c783456bedbf734f61b60880a3"
+    }
+  ],
   "tracked_diff_sha256": "90dfb55400ab35c82100b73662bcbf2eb64ef09e449dcf053c7e857493d60d4b",
   "started_utc": "2026-11-20T08:32:21.317016+00:00",
   "status": "passed",
@@ -78,25 +129,76 @@
   "exit_code": 0,
   "log_path": "/workspace/scratch/4d30fa819181/analysis/authentication-metrics-focused.jsonl",
   "log_sha256": "694e031c5b409c856a70895213c5bba5be06773ebd1fb73879ffef90c2b900d7",
-  "source_file_sha256_after": {
-    "cmd/circula/auth_metrics_test.go": "a9e8ecd7f82ff58e01ea94c2f53a5eb54073a92ab99ac6c64bf3960d066c697c",
-    "cmd/circula/metrics.go": "db15dfb9f3290a400faaf79af2d037510587a98e1747f260d331e481f2a377ab",
-    "docs/ops/README.md": "fb8c7c2187d978a6731e2a6fd499ae6272042367e2d4f5525db8e68ee2b220ea",
-    "docs/ops/monitoring.md": "35caf22b31661eca05dd182bc17e89e57b8bcb0c5fbc8a3478a42873a6150177",
-    "docs/specs/05-architecture.md": "857a390e5988f2f33ca9cda19256ff38ca72136e8c86c8d99cda71ebcb6cd27b",
-    "docs/specs/11-deployment-operations.md": "d8231066a93690bd64c4f8a921c3e5b2d2efc563bcc0ab644b81847dee46c1c7",
-    "go.mod": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58",
-    "go.sum": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb",
-    "internal/service/auth.go": "ad85a05d82b4a132b73a1169629309ce2df9a836e5bf855d43d4c54c9a394cc5",
-    "internal/service/auth_observe.go": "8dae1802a196ec065f924084312be0419adfdbb19aaab3753c9638ed32f80f66",
-    "internal/service/auth_observe_internal_test.go": "fa1bb63eacdee3802fb72a79bed7819f8b75ada1ef0ef57281ebfd69bf76abb9",
-    "internal/service/auth_observe_test.go": "2c945f58051336a642aa050416da5520547806c6beae1e8ba55c3118b4fe41fe",
-    "internal/service/mfa.go": "d13a82eecc33fb33000e807e7c6ed49f9830f40d320d9383526acd550f441a1e",
-    "internal/service/mfa_login.go": "a6c0353e321e5c25c20321cdffd7ac6a10a5e52f2fbc20913dfa48398bc62b26",
-    "internal/service/recovery.go": "dbb4253886dfcba223244e1bfdb83a0e2a2b687338407c9c9338fa4e9a3b601f",
-    "internal/service/tokens.go": "ab4a59b1a16b32596fb9d543529e47e5abcd7b779697103b2c47f1d8b3523c35",
-    "internal/web/auth_observe_test.go": "4cf52dfe404ac2da0f45cc8bcaf071776a4fb1c783456bedbf734f61b60880a3"
-  },
+  "source_file_sha256_after": [
+    {
+      "path": "cmd/circula/auth_metrics_test.go",
+      "sha256": "a9e8ecd7f82ff58e01ea94c2f53a5eb54073a92ab99ac6c64bf3960d066c697c"
+    },
+    {
+      "path": "cmd/circula/metrics.go",
+      "sha256": "db15dfb9f3290a400faaf79af2d037510587a98e1747f260d331e481f2a377ab"
+    },
+    {
+      "path": "docs/ops/README.md",
+      "sha256": "fb8c7c2187d978a6731e2a6fd499ae6272042367e2d4f5525db8e68ee2b220ea"
+    },
+    {
+      "path": "docs/ops/monitoring.md",
+      "sha256": "35caf22b31661eca05dd182bc17e89e57b8bcb0c5fbc8a3478a42873a6150177"
+    },
+    {
+      "path": "docs/specs/05-architecture.md",
+      "sha256": "857a390e5988f2f33ca9cda19256ff38ca72136e8c86c8d99cda71ebcb6cd27b"
+    },
+    {
+      "path": "docs/specs/11-deployment-operations.md",
+      "sha256": "d8231066a93690bd64c4f8a921c3e5b2d2efc563bcc0ab644b81847dee46c1c7"
+    },
+    {
+      "path": "go.mod",
+      "sha256": "fe5bd4976db91bd7d47f508a3f7eb057cf45bf1911f3f23418fd15b598250e58"
+    },
+    {
+      "path": "go.sum",
+      "sha256": "1194a6039df9cd4861a41a8e049735503b45814dab35362f93f642f01291eccb"
+    },
+    {
+      "path": "internal/service/auth.go",
+      "sha256": "ad85a05d82b4a132b73a1169629309ce2df9a836e5bf855d43d4c54c9a394cc5"
+    },
+    {
+      "path": "internal/service/auth_observe.go",
+      "sha256": "8dae1802a196ec065f924084312be0419adfdbb19aaab3753c9638ed32f80f66"
+    },
+    {
+      "path": "internal/service/auth_observe_internal_test.go",
+      "sha256": "fa1bb63eacdee3802fb72a79bed7819f8b75ada1ef0ef57281ebfd69bf76abb9"
+    },
+    {
+      "path": "internal/service/auth_observe_test.go",
+      "sha256": "2c945f58051336a642aa050416da5520547806c6beae1e8ba55c3118b4fe41fe"
+    },
+    {
+      "path": "internal/service/mfa.go",
+      "sha256": "d13a82eecc33fb33000e807e7c6ed49f9830f40d320d9383526acd550f441a1e"
+    },
+    {
+      "path": "internal/service/mfa_login.go",
+      "sha256": "a6c0353e321e5c25c20321cdffd7ac6a10a5e52f2fbc20913dfa48398bc62b26"
+    },
+    {
+      "path": "internal/service/recovery.go",
+      "sha256": "dbb4253886dfcba223244e1bfdb83a0e2a2b687338407c9c9338fa4e9a3b601f"
+    },
+    {
+      "path": "internal/service/tokens.go",
+      "sha256": "ab4a59b1a16b32596fb9d543529e47e5abcd7b779697103b2c47f1d8b3523c35"
+    },
+    {
+      "path": "internal/web/auth_observe_test.go",
+      "sha256": "4cf52dfe404ac2da0f45cc8bcaf071776a4fb1c783456bedbf734f61b60880a3"
+    }
+  ],
   "source_unchanged_during_run": true,
   "top_level_pass_count": 22,
   "subcase_pass_count": 2,

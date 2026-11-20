@@ -103,12 +103,13 @@ context. They do not qualify those later additions or the final combined tree.
 
 ### Publication representations
 
-`evidence-transformations.json` records original and published hashes for two
+`evidence-transformations.json` records original and published hashes for four
 receipts whose path/checksum maps were represented as explicit path/sha256 rows,
-and for one published combined-run log whose generated test request identifier
-was redacted. All source checksum values and test result events are preserved.
-The original raw log and receipts remain in the analysis workspace; the earlier
+and for two published combined-run logs whose generated test request identifiers
+were redacted. All source checksum values and test result events are preserved.
+The original raw logs and receipts remain in the analysis workspace; the earlier
 report-privacy receipt is also preserved in its existing Git history. These
-three published files are documented derivatives, not byte-identical raw logs.
+six published files are documented derivatives, not byte-identical raw logs.
 The unchanged secret scanner flagged the original noncredential values; no
-scanner configuration, finding rule, or control fixture was relaxed.
+scanner configuration, finding rule, or control fixture was relaxed. The
+expanded-evidence scan's fifteen findings are retained with this exact scope.

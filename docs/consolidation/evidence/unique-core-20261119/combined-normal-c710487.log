@@ -1782,7 +1782,7 @@
 {"Time":"2026-11-20T00:38:52.539058886-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestHistBalanceReaderErrorAndPassThrough","Elapsed":0}
 {"Time":"2026-11-20T00:38:52.53906184-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPanicReleasesIdempotencyKey"}
 {"Time":"2026-11-20T00:38:52.539063353-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPanicReleasesIdempotencyKey","Output":"=== RUN   TestPanicReleasesIdempotencyKey\n"}
-{"Time":"2026-11-20T00:38:52.575345769-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPanicReleasesIdempotencyKey","Output":"2026/11/20 00:38:52 ERROR api panic request_id=91881b5a4b1e7e03f30e5569aa4a0b65 panic=boom\n"}
+{"Time":"2026-11-20T00:38:52.575345769-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPanicReleasesIdempotencyKey","Output":"2026/11/20 00:38:52 ERROR api panic request_id=[generated-test-request-id-redacted] panic=boom\n"}
 {"Time":"2026-11-20T00:38:52.580058955-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPanicReleasesIdempotencyKey","Output":"--- PASS: TestPanicReleasesIdempotencyKey (0.04s)\n"}
 {"Time":"2026-11-20T00:38:52.580108019-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPanicReleasesIdempotencyKey","Elapsed":0.04}
 {"Time":"2026-11-20T00:38:52.580127749-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestBusyMapsTo503"}

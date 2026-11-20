@@ -22,6 +22,28 @@
       "transformation": "One generated test request ID in a panic-log assertion is redacted in the published copy. The original raw log is retained at analysis/qualification/combined-race.log. Test events, results, timing and failure messages are unchanged.",
       "line": 176,
       "redactions": 1
+    },
+    {
+      "file": "dispute-report-projection-verification.json",
+      "original_sha256": "404e465d5ab9f22e9aaaa97cebee90c51fed2796b6c484adbc3c301b9989724a",
+      "published_sha256": "48afdcaebe033b06f88836d7714676ddf8a131fac36dcdc14c04321a36f048ff",
+      "transformation": "Path-to-SHA-256 maps represented as explicit path/sha256 rows; all source checksums and test events preserved. Original receipt remains in analysis.",
+      "entries": 24
+    },
+    {
+      "file": "authentication-metrics-focused-receipt.json",
+      "original_sha256": "f3e95e1bec3d5ddd1966eb14b8dd7d8666b27b48649d45a7afec3ec659a8e4dc",
+      "published_sha256": "fce9dfd058fc404ee805812b3588b149c52ed24a8e76716d4ec65f971827a395",
+      "transformation": "Path-to-SHA-256 maps represented as explicit path/sha256 rows; all source checksums and test events preserved. Original receipt remains in analysis.",
+      "entries": 34
+    },
+    {
+      "file": "combined-normal-c710487.log",
+      "original_sha256": "65f61f27b6341405428cea5e60fa5cfe1624a9542c45d70b555d166600695659",
+      "published_sha256": "88cedf5b4d6c96317dc0ed9345481526d348c607e9c7ca80148da468270f7d3b",
+      "transformation": "One generated test request ID in a panic-log assertion is redacted in the published copy. Raw log remains at analysis/qualification/combined-normal-c710487.log. Test events, results, timing and failure messages are unchanged.",
+      "line": 1785,
+      "redactions": 1
     }
   ]
 }
