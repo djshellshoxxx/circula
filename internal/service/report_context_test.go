@@ -109,7 +109,7 @@ func TestReportDisputeContextValidatesPartyTargetAndNetwork(t *testing.T) {
 	for _, tc := range []struct {
 		name, typ, target, caseID string
 		actor                     domain.Actor
-		want                      error
+		want                      *domain.Error
 	}{
 		{"nonparty administrator", service.ReportMember, w.bM.ID, dispute.ID, w.admin, domain.ErrNotFound},
 		{"other target", service.ReportMember, otherM.ID, dispute.ID, w.a, domain.ErrValidation},
