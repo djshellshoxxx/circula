@@ -192,14 +192,22 @@ func cmdAuditAnchor(ctx context.Context, args []string, stdout, stderr io.Writer
 		fmt.Fprintf(stderr, "circula: audit-anchor verify: %v\n", err)
 		return exitFailure
 	}
-	var a auditAnchor
+	var a *auditAnchor
 	dec := json.NewDecoder(bytes.NewReader(b))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&a); err != nil {
 		fmt.Fprintf(stderr, "circula: audit-anchor verify: %s is not an anchor file: %v\n", filepath.Base(path), err)
 		return exitFailure
 	}
-	findings, err := verifyAnchor(ctx, db, &a, cfg.AuditAnchorKey)
+	if a == nil {
+		fmt.Fprintf(stderr, "circula: audit-anchor verify: %s is not an anchor file: expected a JSON object\n", filepath.Base(path))
+		return exitFailure
+	}
+	if _, err := dec.Token(); err != io.EOF {
+		fmt.Fprintf(stderr, "circula: audit-anchor verify: %s is not an anchor file: trailing content\n", filepath.Base(path))
+		return exitFailure
+	}
+	findings, err := verifyAnchor(ctx, db, a, cfg.AuditAnchorKey)
 	if err != nil {
 		fmt.Fprintf(stderr, "circula: audit-anchor verify: %v\n", err)
 		return exitFailure

@@ -267,7 +267,7 @@ func (sf *settingsFlags) Resolve(env lookupEnv, forServe bool) (*Config, map[str
 	return cfg, vals, nil
 }
 
-// readConfigFile parses a JSON object whose keys are setting names. Unknown
+// readConfigFile parses exactly one JSON object whose keys are setting names. Unknown
 // keys are rejected so that typos cannot silently fall back to defaults.
 func readConfigFile(path string) (map[string]string, error) {
 	b, err := os.ReadFile(path) //nolint:gosec // G703: operator-supplied config path
@@ -279,6 +279,14 @@ func readConfigFile(path string) (map[string]string, error) {
 	var raw map[string]any
 	if err := dec.Decode(&raw); err != nil {
 		return nil, fmt.Errorf("config file %s: invalid JSON object: %w", path, err)
+	}
+	if raw == nil {
+		return nil, fmt.Errorf("config file %s: invalid JSON object: expected an object", path)
+	}
+	// Decode accepts a value prefix. Refuse any unread content so an
+	// accidentally concatenated or truncated file cannot select a partial config.
+	if _, err := dec.Token(); err != io.EOF {
+		return nil, fmt.Errorf("config file %s: invalid JSON object: trailing content", path)
 	}
 	known := map[string]bool{}
 	for _, d := range settingDefs {
