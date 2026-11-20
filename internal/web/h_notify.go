@@ -135,6 +135,13 @@ func (c *rc) reportTarget(typ, id string) (string, bool) {
 			return "", false
 		}
 		return messages.Text("report.target_member", m.DisplayName), true
+	case service.ReportTransaction:
+		v, err := c.s.svc.GetTransaction(c.ctx, c.actor, c.netID(), id)
+		if err != nil || !v.Tx.IsParty(c.Me.ID) || v.Tx.PayerMemberID == "" ||
+			v.Tx.PayeeMemberID == "" || v.Tx.PayerMemberID == v.Tx.PayeeMemberID {
+			return "", false
+		}
+		return messages.Text("report.target_transaction", v.Tx.ID), true
 	}
 	return "", false
 }
@@ -193,6 +200,7 @@ func (s *server) reportPost(w http.ResponseWriter, r *http.Request, c *rc) {
 type reportRow struct {
 	ID, Reporter, Target, Note, Status, HandlingNote string
 	TargetHref                                       string
+	DisputesHref                                     string
 	Open                                             bool
 	Created                                          any
 	About                                            messages.Parts
@@ -227,6 +235,9 @@ func (s *server) reportQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 		row.About, row.PlainAbout = reportAbout(x.Category, x.TargetType, x.TargetLabel)
 		if x.TargetType == service.ReportMember {
 			row.TargetHref = c.base() + "/members/" + x.TargetID
+		} else if x.TargetType == service.ReportTransaction {
+			row.TargetHref = c.base() + "/trades/" + x.TargetID
+			row.DisputesHref = c.base() + "/disputes?transaction_id=" + x.TargetID
 		}
 		d.Rows = append(d.Rows, row)
 	}
@@ -246,6 +257,8 @@ func reportAbout(category, typ, target string) (messages.Parts, string) {
 		typeLabel = messages.Text("report.target_type.listing")
 	case service.ReportMember:
 		typeLabel = messages.Text("report.target_type.member")
+	case service.ReportTransaction:
+		typeLabel = messages.Text("report.target_type.transaction")
 	default:
 		return messages.Parts{}, messages.Text("report.about", categoryOf(category), typ, target)
 	}

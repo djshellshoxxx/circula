@@ -15,7 +15,8 @@ type (
 	ReReview = store.ReReview
 	// Notification is one inbox entry (FR-038).
 	Notification = store.Notification
-	// Report is an abuse report about a listing or member (FR-024).
+	// Report is an abuse report about a listing, member or two-member transaction
+	// (FR-024, SEC-025).
 	Report = store.Report
 )
 

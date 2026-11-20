@@ -1011,6 +1011,11 @@ paths:
           required: false
           description: Comma-separated dispute statuses.
           schema: {type: string, example: 'open,under_review'}
+        - name: transaction_id
+          in: query
+          required: false
+          description: Only disputes on this exact transaction. Existing party/reviewer/administrator visibility still applies; this filter discloses no reports.
+          schema: {$ref: '#/components/schemas/Id'}
       responses:
         '200':
           description: One page of disputes.
@@ -1354,11 +1359,16 @@ paths:
     post:
       operationId: createReport
       tags: [Reports]
-      summary: Report a listing or a member (FR-024)
+      summary: Report a listing, member or two-member transaction (FR-024, SEC-025)
       description: |
         Active members only. Reporting changes nothing about the target. At most one open report per
         reporter and target (409 conflict) and at most 10 reports per reporter in 24 hours (429
-        rate-limited). Own listing or self is 422. The reporter is visible to administrators only.
+        rate-limited). Own listing or self is 422. Transaction targets require the reporter to be
+        a party and both accounts to belong to distinct members; other transactions are 404 for
+        non-parties or 422 for an unsupported system-account counterpart. Reporting has no
+        completion-state or dispute-window restriction. Reporter identity is visible only to
+        administrators who are not the report subject. Transaction reports link to the ordinary
+        authorized dispute list, filtered by that exact transaction and including later cases.
       security:
         - cookieAuth: []
           csrfToken: []
@@ -1397,7 +1407,7 @@ paths:
       operationId: listReports
       tags: [Reports, Admin]
       summary: Report queue (FR-024)
-      description: Administrators only. Newest first; reporter fields are filled.
+      description: Administrators only. Newest first; reporter fields are filled. Reports about the caller, their listings or their side of a transaction are excluded before pagination.
       security: *secSafe
       parameters:
         - $ref: '#/components/parameters/XNetwork'
@@ -3846,7 +3856,7 @@ components:
       required: [target_type, target_id, category]
       additionalProperties: false
       properties:
-        target_type: {type: string, enum: [listing, member]}
+        target_type: {type: string, enum: [listing, member, transaction]}
         target_id: {$ref: '#/components/schemas/Id'}
         category: {type: string, enum: [spam, scam, inappropriate, harassment, other]}
         description: {type: string, maxLength: 500}
@@ -3861,7 +3871,7 @@ components:
       additionalProperties: false
       properties:
         id: {$ref: '#/components/schemas/Id'}
-        target_type: {type: string, enum: [listing, member]}
+        target_type: {type: string, enum: [listing, member, transaction]}
         target_id: {$ref: '#/components/schemas/Id'}
         category: {type: string}
         description: {type: string}
@@ -3873,6 +3883,9 @@ components:
         handled_by: {oneOf: [{$ref: '#/components/schemas/Id'}, {type: 'null'}]}
         handled_at: {oneOf: [{$ref: '#/components/schemas/Timestamp'}, {type: 'null'}]}
         handling_note: {type: string}
+        related_disputes_url:
+          type: string
+          description: Present for transaction reports. Relative URL of the authorized, paginated dispute list filtered to the exact transaction; use the same network selection. The relation also includes disputes created after the report.
     ReportPage:
       allOf:
         - $ref: '#/components/schemas/Page'

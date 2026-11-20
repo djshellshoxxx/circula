@@ -65,21 +65,22 @@ func (c *rc) disputeRows(ds []*domain.Dispute) []disputeRow {
 
 // disputeListData is one page of disputes. Next is the cursor of the following page, "" at the end.
 type disputeListData struct {
-	Rows   []disputeRow
-	Next   string
-	Filter string
+	Rows          []disputeRow
+	Next          string
+	Filter        string
+	TransactionID string
 }
 
 // disputePage reads one page of disputes (newest first) with a status filter. It asks for one row
 // more than the page size to learn whether a further page exists, so no fixed window hides
 // older disputes (WEB-02).
-func (c *rc) disputePage(r *http.Request, statuses []domain.DisputeStatus) (*disputeListData, error) {
+func (c *rc) disputePage(r *http.Request, statuses []domain.DisputeStatus, txID string) (*disputeListData, error) {
 	ds, err := c.s.svc.FindDisputes(r.Context(), c.actor, c.netID(), service.DisputeQuery{Statuses: statuses,
-		Page: service.Page{AfterID: r.URL.Query().Get("after"), Limit: perPage + 1}})
+		TxID: txID, Page: service.Page{AfterID: r.URL.Query().Get("after"), Limit: perPage + 1}})
 	if err != nil {
 		return nil, err
 	}
-	d := &disputeListData{}
+	d := &disputeListData{TransactionID: txID}
 	if len(ds) > perPage {
 		ds = ds[:perPage]
 		d.Next = ds[perPage-1].ID
@@ -89,7 +90,7 @@ func (c *rc) disputePage(r *http.Request, statuses []domain.DisputeStatus) (*dis
 }
 
 func (s *server) disputes(w http.ResponseWriter, r *http.Request, c *rc) {
-	d, err := c.disputePage(r, nil)
+	d, err := c.disputePage(r, nil, r.URL.Query().Get("transaction_id"))
 	if err != nil {
 		s.fail(w, r, err)
 		return
@@ -119,7 +120,7 @@ func (s *server) reviewQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 			sts = []domain.DisputeStatus{domain.DisputeStatus(f)}
 		}
 	}
-	d, err := c.disputePage(r, sts)
+	d, err := c.disputePage(r, sts, "")
 	if err != nil {
 		s.fail(w, r, err)
 		return

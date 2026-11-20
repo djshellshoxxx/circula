@@ -99,6 +99,7 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 		case "rules.announced_scheduled_notice":
 			args = []any{14, "announced", "effective"}
 		case "inbox.dispute_opened", "inbox.dispute_response", "inbox.mark_read_named", "report.target_listing", "report.target_member",
+			"report.target_transaction", "report.related_disputes_for",
 			"report.subject", "report.reported_by", "report.mark_handled_named", "report.handling_note":
 			args = []any{"example"}
 		case "inbox.unread_count":

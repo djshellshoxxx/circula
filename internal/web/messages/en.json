@@ -1381,6 +1381,9 @@
   "report.target_member": {
     "other": "Member: %[1]s"
   },
+  "report.target_transaction": {
+    "other": "Transaction: %[1]s"
+  },
   "report.category.spam": {
     "other": "Spam or advertising"
   },
@@ -1433,7 +1436,7 @@
     "other": "Cancel"
   },
   "report.queue_explanation": {
-    "other": "Reports from members about listings and members. Handling a report here only records that you looked at it; use the member and policy tools to act. The reporter is shown to administrators only."
+    "other": "Reports from members about listings, members and transactions. Handling a report here only records that you looked at it; use the ordinary member, policy and dispute tools to act. The reporter is shown only to administrators who are not the report subject."
   },
   "report.filter_label": {
     "other": "Report filter"
@@ -1455,6 +1458,15 @@
   },
   "report.target_type.member": {
     "other": "member"
+  },
+  "report.target_type.transaction": {
+    "other": "transaction"
+  },
+  "report.related_disputes": {
+    "other": "Related disputes on this transaction"
+  },
+  "report.related_disputes_for": {
+    "other": "Disputes for transaction %[1]s."
   },
   "report.reported_by": {
     "other": "Reported by %[1]s"
@@ -1723,6 +1735,9 @@
   },
   "trade.detail.dispute": {
     "other": "Raise a dispute"
+  },
+  "trade.detail.report": {
+    "other": "Report a problem with this transaction"
   },
   "trade.detail.view_dispute": {
     "other": "View the dispute"

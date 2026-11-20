@@ -21,6 +21,7 @@
   {{if .Decline}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/decline">{{msg "trade.action.decline"}}</a>{{end}}
   {{if .Cancel}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/cancel">{{msg "trade.detail.cancel"}}</a>{{end}}
   {{if .Dispute}}<a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.Tx.ID}}/dispute">{{msg "trade.detail.dispute"}}</a>{{end}}
+  {{if .Report}}<a class="btn secondary" href="/n/{{$.Slug}}/report?type=transaction&amp;id={{.Tx.ID}}">{{msg "trade.detail.report"}}</a>{{end}}
   {{if .DisputeID}}<a class="btn secondary" href="/n/{{$.Slug}}/disputes/{{.DisputeID}}">{{msg "trade.detail.view_dispute"}}</a>{{end}}
   {{if .Reverse}}<a class="btn secondary" href="/n/{{$.Slug}}/admin/reverse?tx={{.Tx.ID}}">{{msg "trade.detail.reverse"}}</a>{{end}}
 </div>

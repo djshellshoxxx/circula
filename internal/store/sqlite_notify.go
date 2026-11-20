@@ -98,6 +98,15 @@ const reportIndependentOfMemberSQL = `COALESCE((CASE r.target_type
 	WHEN 'member' THEN (SELECT m.id FROM members m WHERE m.network_id = r.network_id AND m.id = r.target_id)
 	WHEN 'listing' THEN (SELECT m.id FROM listings l JOIN members m ON m.network_id = l.network_id AND m.id = l.member_id
 		WHERE l.network_id = r.network_id AND l.id = r.target_id)
+	WHEN 'transaction' THEN (SELECT CASE
+		WHEN pa.member_id = r.reporter_id THEN pm.id
+		WHEN pb.member_id = r.reporter_id THEN am.id END
+		FROM transactions tr
+		JOIN accounts pa ON pa.network_id = tr.network_id AND pa.id = tr.payer_account_id
+		JOIN accounts pb ON pb.network_id = tr.network_id AND pb.id = tr.payee_account_id
+		JOIN members am ON am.network_id = tr.network_id AND am.id = pa.member_id
+		JOIN members pm ON pm.network_id = tr.network_id AND pm.id = pb.member_id
+		WHERE tr.network_id = r.network_id AND tr.id = r.target_id AND am.id <> pm.id)
 	END) <> ?, 0)`
 
 func (t *txImpl) InsertReport(r Report) error {

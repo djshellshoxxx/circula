@@ -145,7 +145,7 @@ func TestReportQueueCatalogue(t *testing.T) {
 		Rows: []reportRow{open, handled}, Filter: "all", Next: "next-id",
 	}})
 	wantInboxReportText(t, body,
-		"Reports from members about listings and members. Handling a report here only records that you looked at it; use the member and policy tools to act. The reporter is shown to administrators only.",
+		"Reports from members about listings, members and transactions. Handling a report here only records that you looked at it; use the ordinary member, policy and dispute tools to act. The reporter is shown only to administrators who are not the report subject.",
 		`aria-label="Report filter"`, `href="/n/town/admin/reports?status=all" aria-current="page">All</a>`,
 		`class="tag">Open</span>`, `class="tag">Handled</span>`,
 		`Looks like a scam about member <a href="/n/town/members/member-id">`, `Spam or advertising about listing <strong>`,

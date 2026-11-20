@@ -287,7 +287,8 @@ type AuditFilter struct {
 	TargetTypes   []string
 	SubjectMember string // member-visible subset
 	// ExcludeReportSubjectMemberID omits report events concerning reports
-	// about this member or their listings, before pagination. Unresolved
+	// about this member, their listings or their side of a transaction,
+	// before pagination. Unresolved
 	// report subjects are also excluded; other event types are unchanged.
 	ExcludeReportSubjectMemberID string
 	From, To                     time.Time

@@ -15,8 +15,11 @@ func TestReportSubjectPrivacyInHTMLQueue(t *testing.T) {
 	listing := testutil.Must(w.env.Svc.CreateListing(w.env.Ctx, w.bob, w.net.ID, service.ListingInput{
 		Type: domain.ListingOffer, Title: "Subject's listing", IdempotencyKey: w.env.Key(),
 	}))
+	tx := w.propose(w.alice, w.bobM, 100)
 	var reports []string
-	for _, target := range []struct{ typ, id string }{{service.ReportMember, w.bobM.ID}, {service.ReportListing, listing.ID}} {
+	for _, target := range []struct{ typ, id string }{
+		{service.ReportMember, w.bobM.ID}, {service.ReportListing, listing.ID}, {service.ReportTransaction, tx.ID},
+	} {
 		r := testutil.Must(w.env.Svc.CreateReport(w.env.Ctx, w.alice, w.net.ID, service.ReportInput{
 			TargetType: target.typ, TargetID: target.id, Category: "other", Note: "Private HTML report fixture", IdempotencyKey: w.env.Key(),
 		}))
@@ -37,7 +40,7 @@ func TestReportSubjectPrivacyInHTMLQueue(t *testing.T) {
 		}
 	}
 	visible := independent.get(path)
-	independent.mustContain(visible, reports[0], reports[1], w.aliceM.DisplayName, "Private HTML report fixture")
+	independent.mustContain(visible, reports[0], reports[1], reports[2], w.aliceM.DisplayName, "Private HTML report fixture")
 	before := testutil.Snapshot(t, w.env.Store.DB())
 	refused := subject.post(path+"/"+reports[0]+"/handle", queue, url.Values{"note": {"Subject's request"}})
 	if refused.Status != 404 {

@@ -26,8 +26,12 @@ func (s *server) openDispute(c *reqCtx) error { // API-054
 }
 
 func (s *server) listDisputes(c *reqCtx) error { // API-054
-	if err := c.only("limit", "cursor", "status"); err != nil {
+	if err := c.only("limit", "cursor", "status", "transaction_id"); err != nil {
 		return err
+	}
+	txID := c.query.Get("transaction_id")
+	if txID != "" && !domain.ValidRecordID(txID) {
+		return invalidQuery("transaction_id must be a record identifier")
 	}
 	var sts []domain.DisputeStatus
 	if raw := c.query.Get("status"); raw != "" {
@@ -43,12 +47,17 @@ func (s *server) listDisputes(c *reqCtx) error { // API-054
 			}
 		}
 	}
-	p, err := c.page(c.query.Get("status"))
+	filter := c.query.Get("status")
+	if txID != "" {
+		filter += "|transaction_id=" + txID
+	}
+	p, err := c.page(filter)
 	if err != nil {
 		return err
 	}
 	rows, next, err := collect(c, p, func(pg service.Page) ([]*domain.Dispute, error) {
-		return s.svc.ListDisputes(c.r.Context(), c.actor, c.netID, sts, pg)
+		return s.svc.FindDisputes(c.r.Context(), c.actor, c.netID,
+			service.DisputeQuery{Statuses: sts, TxID: txID, Page: pg})
 	}, func(d *domain.Dispute) string { return d.ID }, nil)
 	if err != nil {
 		return err

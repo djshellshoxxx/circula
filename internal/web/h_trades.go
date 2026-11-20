@@ -248,6 +248,7 @@ type tradeDetail struct {
 	Decline   bool
 	Cancel    bool
 	Dispute   bool
+	Report    bool
 	DisputeID string
 	WhyNot    string
 	Party     bool
@@ -271,6 +272,7 @@ func (s *server) tradeDetail(w http.ResponseWriter, r *http.Request, c *rc) {
 	t := v.Tx
 	d := &tradeDetail{Tx: t, Payer: n.of(t.PayerMemberID), Payee: n.of(t.PayeeMemberID), Explain: statusExplain(t.Status),
 		Party: t.IsParty(c.Me.ID)}
+	d.Report = c.isActive() && d.Party && t.PayerMemberID != "" && t.PayeeMemberID != "" && t.PayerMemberID != t.PayeeMemberID
 	if d.Party {
 		d.Row = c.row(t, n)
 	} else {

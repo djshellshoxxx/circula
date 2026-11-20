@@ -9,9 +9,11 @@ and [SEC-025](../specs/09-security-privacy.md) require reporter confidentiality
 from the reported party. Gaining an administrator role does not remove that
 restriction. For a listing report, the reported party is the listing owner.
 
-The existing listing and member report types are covered. This change does not
-complete the separate transaction-report and dispute-link work still recorded
-as partial under SEC-025.
+This privacy checkpoint covered the existing listing and member report types.
+The [transaction-report follow-up](TRANSACTION_REPORTS_20261120.md) extends the
+same protection to ordinary two-member transactions and adds the exact
+transaction's dispute relation. The verification counts below describe this
+earlier checkpoint.
 
 ## Implemented behavior
 

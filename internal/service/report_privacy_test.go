@@ -16,6 +16,10 @@ func reportPrivacyWorld(t *testing.T, target string) (*world, string) {
 	id := w.bM.ID
 	if target == service.ReportListing {
 		id = w.listing(w.b, "Subject's listing")
+	} else if target == service.ReportTransaction {
+		// The reporter is the payee here; pagination below covers a payer
+		// reporter as well, so both other-party resolutions are exercised.
+		id = tu.Must(w.propose(w.a, w.bM, service.ProposerIsPaid, 100)).ID
 	}
 	return w, tu.Must(w.report(w.a, target, id, "other", "Private report fixture"))
 }
@@ -29,6 +33,8 @@ func TestReportsExcludeSubjectsBeforePagination(t *testing.T) {
 	hiddenMember := tu.Must(w.report(w.a, service.ReportMember, w.bM.ID, "other", "Private member report"))
 	newer := tu.Must(w.report(w.a, service.ReportListing, w.listing(other, "Newer visible listing"), "other", "Newer visible report"))
 	hiddenListing := tu.Must(w.report(w.a, service.ReportListing, w.listing(w.b, "Subject's listing"), "other", "Private listing report"))
+	hiddenTransaction := tu.Must(w.report(w.a, service.ReportTransaction,
+		tu.Must(w.propose(w.a, w.bM, service.ProposerPays, 100)).ID, "other", "Private transaction report"))
 	tu.Must(0, w.Svc.AssignRole(w.Ctx, w.admin, w.net.ID, w.bM.ID, domain.RoleAdmin))
 
 	afterID := ""
@@ -58,7 +64,7 @@ func TestReportsExcludeSubjectsBeforePagination(t *testing.T) {
 	})); len(events) != 0 {
 		t.Fatalf("audit pagination did not finish: %+v", events)
 	}
-	for _, id := range []string{hiddenMember, hiddenListing} {
+	for _, id := range []string{hiddenMember, hiddenListing, hiddenTransaction} {
 		events := tu.Must(w.Svc.ListAudit(w.Ctx, w.b, w.net.ID, service.AuditQuery{TargetID: id, ActorID: w.aM.ID}))
 		if len(events) != 0 {
 			t.Fatal("subject audit filters returned a report event")
@@ -67,7 +73,7 @@ func TestReportsExcludeSubjectsBeforePagination(t *testing.T) {
 	for _, actor := range []domain.Actor{w.admin, domain.SystemActor("report fixture")} {
 		queue := tu.Must(w.Svc.ListReports(w.Ctx, actor, w.net.ID, "", service.Page{Limit: 10}))
 		events := tu.Must(w.Svc.ListAudit(w.Ctx, actor, w.net.ID, service.AuditQuery{Action: domain.ActReportCreated, Limit: 10}))
-		if len(queue) != 4 || len(events) != 4 {
+		if len(queue) != 5 || len(events) != 5 {
 			t.Fatalf("independent authority lost report records: queue=%d audit=%d", len(queue), len(events))
 		}
 		for _, report := range queue {
@@ -79,7 +85,7 @@ func TestReportsExcludeSubjectsBeforePagination(t *testing.T) {
 }
 
 func TestReportHandlingRequiresIndependentAdministrator(t *testing.T) {
-	for _, target := range []string{service.ReportMember, service.ReportListing} {
+	for _, target := range []string{service.ReportMember, service.ReportListing, service.ReportTransaction} {
 		for _, system := range []bool{false, true} {
 			name := target + "/administrator"
 			if system {
@@ -129,7 +135,7 @@ func TestReportHandlingRequiresIndependentAdministrator(t *testing.T) {
 }
 
 func TestReportConflictRestrictsOnlyAuditBearingExports(t *testing.T) {
-	for _, target := range []string{service.ReportMember, service.ReportListing} {
+	for _, target := range []string{service.ReportMember, service.ReportListing, service.ReportTransaction} {
 		t.Run(target, func(t *testing.T) {
 			w, id := reportPrivacyWorld(t, target)
 			for _, scope := range []service.ExportScope{service.ExportAudit, service.ExportFull} {

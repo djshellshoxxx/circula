@@ -21,6 +21,8 @@ func TestInboxReportMessages(t *testing.T) {
 		{"inbox.mark_read_named", []any{name}, "Mark as read: " + name},
 		{"report.target_listing", []any{name}, "Listing: " + name},
 		{"report.target_member", []any{name}, "Member: " + name},
+		{"report.target_transaction", []any{name}, "Transaction: " + name},
+		{"report.related_disputes_for", []any{name}, "Disputes for transaction " + name + "."},
 		{"report.subject", []any{name}, "You are reporting: " + name + "."},
 		{"report.about", []any{"Looks like a scam", "listing", name}, "Looks like a scam about listing " + name},
 		{"report.reported_by", []any{name}, "Reported by " + name},
@@ -31,7 +33,7 @@ func TestInboxReportMessages(t *testing.T) {
 		{"report.sent", nil, "Report sent. Administrators will review it. It does not change anything for the person you reported, and they are not told who reported."},
 		{"report.handled", nil, "Report marked as handled. The reporter was told it was reviewed."},
 		{"report.explanation", nil, "A report goes to the network administrators. It does not hide, suspend or change anything by itself, and the person you report is not told who reported."},
-		{"report.queue_explanation", nil, "Reports from members about listings and members. Handling a report here only records that you looked at it; use the member and policy tools to act. The reporter is shown to administrators only."},
+		{"report.queue_explanation", nil, "Reports from members about listings, members and transactions. Handling a report here only records that you looked at it; use the ordinary member, policy and dispute tools to act. The reporter is shown only to administrators who are not the report subject."},
 	} {
 		t.Run(tc.key+"/"+tc.want, func(t *testing.T) {
 			if got := Text(tc.key, tc.args...); got != tc.want {

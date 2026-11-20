@@ -42,8 +42,8 @@ func memberSafe(summary string) string {
 
 // ListAudit reads the audit log; what the caller sees depends on role (DAT-033..035, FR-082).
 // In detail:
-//   - administrators: the network log except reports about themselves or their
-//     listings; the read is itself audited. System actors retain the whole log;
+//   - administrators: the network log except reports for which they are the
+//     subject; the read is itself audited. System actors retain the whole log;
 //   - reviewers: events about disputes;
 //   - members (including suspended and departed): only events concerning their
 //     own account, with actor identity reduced to the role label, safe summary

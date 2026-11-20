@@ -13,7 +13,7 @@ import (
 // FR-024 / SEC-025: an ordinary member who becomes an administrator remains
 // excluded from report identities and correlated audit records about them.
 func TestReportSubjectPrivacyAcrossAPIViews(t *testing.T) {
-	for _, target := range []string{service.ReportMember, service.ReportListing} {
+	for _, target := range []string{service.ReportMember, service.ReportListing, service.ReportTransaction} {
 		t.Run(target, func(t *testing.T) {
 			w := newWorld(t)
 			t.Cleanup(func() { api.CloseHandler(w.h) })
@@ -21,6 +21,11 @@ func TestReportSubjectPrivacyAcrossAPIViews(t *testing.T) {
 			if target == service.ReportListing {
 				listing, _ := w.createListing(w.bobT, "Subject's listing")
 				targetID = listing.ID
+			} else if target == service.ReportTransaction {
+				tx := testutil.Must(w.env.Svc.ProposeTransaction(w.env.Ctx, w.alice, w.net.ID, service.ProposeInput{
+					CounterpartyID: w.bobM.ID, Direction: service.ProposerPays, Amount: 100, IdempotencyKey: w.env.Key(),
+				}))
+				targetID = tx.ID
 			}
 			filed := w.post(w.aliceT, "/reports", m{"target_type": target, "target_id": targetID,
 				"category": "other", "description": "Private report fixture"}, w.key())

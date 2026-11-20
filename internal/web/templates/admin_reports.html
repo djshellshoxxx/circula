@@ -12,6 +12,7 @@
   <p><span class="tag">{{if .Open}}{{msg "report.status.open"}}{{else}}{{msg "report.status.handled"}}{{end}}</span> {{if .PlainAbout}}{{.PlainAbout}}{{else}}{{.About.Before}}{{if .TargetHref}}<a href="{{.TargetHref}}">{{.Target}}</a>{{else}}<strong>{{.Target}}</strong>{{end}}{{.About.After}}{{end}}</p>
   <p>{{msg "report.reported_by" .Reporter}} &middot; {{.Created}}</p>
   {{if .Note}}<p>{{.Note}}</p>{{end}}
+  {{if .DisputesHref}}<p><a href="{{.DisputesHref}}">{{msg "report.related_disputes"}}</a></p>{{end}}
   {{if .Open}}
   <form method="post" action="/n/{{$.Slug}}/admin/reports/{{.ID}}/handle">
     {{template "csrf" $}}
