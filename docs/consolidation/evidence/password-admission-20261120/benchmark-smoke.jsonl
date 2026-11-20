@@ -1,0 +1,20 @@
+{"Time":"2026-11-20T08:33:55.040069257-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/internal/service"}
+{"Time":"2026-11-20T08:33:55.055921298-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"goos: linux\n"}
+{"Time":"2026-11-20T08:33:55.055961539-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"goarch: amd64\n"}
+{"Time":"2026-11-20T08:33:55.055963943-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"pkg: github.com/djshellshoxxx/circula/internal/service\n"}
+{"Time":"2026-11-20T08:33:55.055967939-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"cpu: AMD EPYC 9V74 80-Core Processor                \n"}
+{"Time":"2026-11-20T08:33:55.055979066-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idHash"}
+{"Time":"2026-11-20T08:33:55.055980938-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idHash","Output":"=== RUN   BenchmarkArgon2idHash\n"}
+{"Time":"2026-11-20T08:33:55.055983032-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idHash","Output":"BenchmarkArgon2idHash\n"}
+{"Time":"2026-11-20T08:33:55.280038226-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idHash","Output":"BenchmarkArgon2idHash           \t       1\t 223469489 ns/op\n"}
+{"Time":"2026-11-20T08:33:55.280098427-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerify"}
+{"Time":"2026-11-20T08:33:55.280102252-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerify","Output":"=== RUN   BenchmarkArgon2idVerify\n"}
+{"Time":"2026-11-20T08:33:55.280105958-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerify","Output":"BenchmarkArgon2idVerify\n"}
+{"Time":"2026-11-20T08:33:55.724298957-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerify","Output":"BenchmarkArgon2idVerify         \t       1\t 288931241 ns/op\n"}
+{"Time":"2026-11-20T08:33:55.724336354-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerifyParallel"}
+{"Time":"2026-11-20T08:33:55.724338917-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerifyParallel","Output":"=== RUN   BenchmarkArgon2idVerifyParallel\n"}
+{"Time":"2026-11-20T08:33:55.724346769-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerifyParallel","Output":"BenchmarkArgon2idVerifyParallel\n"}
+{"Time":"2026-11-20T08:33:56.023429659-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Test":"BenchmarkArgon2idVerifyParallel","Output":"BenchmarkArgon2idVerifyParallel \t       1\t 297965051 ns/op\n"}
+{"Time":"2026-11-20T08:33:56.023495729-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"PASS\n"}
+{"Time":"2026-11-20T08:33:56.029205336-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/service","Output":"ok  \tgithub.com/djshellshoxxx/circula/internal/service\t0.989s\n"}
+{"Time":"2026-11-20T08:33:56.029238786-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/service","Elapsed":0.989}

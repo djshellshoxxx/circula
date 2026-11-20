@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	"github.com/djshellshoxxx/circula/internal/service"
 	tu "github.com/djshellshoxxx/circula/internal/testutil"
 )
@@ -75,7 +76,12 @@ func newQA001Run(t *testing.T, seed int64, cfg qa001Config) *qa001Run {
 func runQA001Sequence(t *testing.T, seed int64, cfg qa001Config) (r *qa001Run) {
 	r = newQA001Run(t, seed, cfg)
 	defer r.captureFailure()
-	r.e = tu.NewEnvConfig(t, nil, func(c *service.Config) { c.MaxOpenRequestsPerPair = 1_000_000 })
+	r.e = tu.NewEnvConfig(t, nil, func(c *service.Config) {
+		c.MaxOpenRequestsPerPair = 1_000_000
+		// Each property sequence owns an isolated service/database. Its setup
+		// should not compete with other shards' password admission.
+		c.PasswordWork = tu.Must(passwordwork.New(1))
+	})
 	r.sequence(seed)
 	return r
 }

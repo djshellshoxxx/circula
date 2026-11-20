@@ -1,0 +1,578 @@
+{
+  "historical_receipt_checks": [
+    {
+      "module": "governance",
+      "source_hash_count": 15,
+      "source_checks": [
+        {
+          "path": "ballot_test.go",
+          "expected": "47acb3ca397385d37ad658fa109ea220d84438c119b3d79080bc1f033c749c1a",
+          "actual": "47acb3ca397385d37ad658fa109ea220d84438c119b3d79080bc1f033c749c1a"
+        },
+        {
+          "path": "strict.go",
+          "expected": "6cca5d14d416e688640d46c1af686af0ee4d90b9a86c3e283888026600e29a54",
+          "actual": "6cca5d14d416e688640d46c1af686af0ee4d90b9a86c3e283888026600e29a54"
+        },
+        {
+          "path": "strict_fuzz_test.go",
+          "expected": "4bdf7b4a967777ef1785571f8dca9770cab41ff195cdb24562142034e43ae4bc",
+          "actual": "4bdf7b4a967777ef1785571f8dca9770cab41ff195cdb24562142034e43ae4bc"
+        },
+        {
+          "path": "master_regression_test.go",
+          "expected": "4213d71889a16cee980f6f3444dd6fad5f55b5d6aea18ccbb15566833913c3aa",
+          "actual": "4213d71889a16cee980f6f3444dd6fad5f55b5d6aea18ccbb15566833913c3aa"
+        },
+        {
+          "path": "json_recovery_test.go",
+          "expected": "6f45c9ab533a2ab380ba81fea090e656b16dfa703ca8f96cba9300d87dbd278d",
+          "actual": "6f45c9ab533a2ab380ba81fea090e656b16dfa703ca8f96cba9300d87dbd278d"
+        },
+        {
+          "path": "cli.go",
+          "expected": "7c33a7a2038716f37c4e2de0382dcf45d91f0647c76a42ce5ac6fe6b5e659cf6",
+          "actual": "7c33a7a2038716f37c4e2de0382dcf45d91f0647c76a42ce5ac6fe6b5e659cf6"
+        },
+        {
+          "path": "web_test.go",
+          "expected": "0369d43ff404efb87afd490ee410e1e383c8eddd9c93ca7e97300f8c7d515758",
+          "actual": "0369d43ff404efb87afd490ee410e1e383c8eddd9c93ca7e97300f8c7d515758"
+        },
+        {
+          "path": "web.go",
+          "expected": "23dbc017301f49b4298f1a3e98f8d00e07060c084b931ab1f0e5bf3f030c858b",
+          "actual": "23dbc017301f49b4298f1a3e98f8d00e07060c084b931ab1f0e5bf3f030c858b"
+        },
+        {
+          "path": "audit_helpers.go",
+          "expected": "5e284955bd2e7eb749d141204d28e065503106ac77a70711bdcf1c84fda8f1c8",
+          "actual": "5e284955bd2e7eb749d141204d28e065503106ac77a70711bdcf1c84fda8f1c8"
+        },
+        {
+          "path": "ballot.go",
+          "expected": "7940248b45212c949d2ae1df879cff0e4b31ae960a078b39408678ada826fc85",
+          "actual": "7940248b45212c949d2ae1df879cff0e4b31ae960a078b39408678ada826fc85"
+        },
+        {
+          "path": "audit_test.go",
+          "expected": "8f1c0259a2ea5511a9654de136ac15c581e5fe4b0e945063c4999f9ab51ed7c0",
+          "actual": "8f1c0259a2ea5511a9654de136ac15c581e5fe4b0e945063c4999f9ab51ed7c0"
+        },
+        {
+          "path": "service.go",
+          "expected": "eef398797dc7bdbac525eafe689e810ea6b6034bfd5978b94d4d61ee8afb239b",
+          "actual": "eef398797dc7bdbac525eafe689e810ea6b6034bfd5978b94d4d61ee8afb239b"
+        },
+        {
+          "path": "go.sum",
+          "expected": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+          "actual": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95"
+        },
+        {
+          "path": "service_test.go",
+          "expected": "118f23bba103345b6fb48baecbbd4d3cf457dc135cd5533c6062db2a7e3561c6",
+          "actual": "118f23bba103345b6fb48baecbbd4d3cf457dc135cd5533c6062db2a7e3561c6"
+        },
+        {
+          "path": "go.mod",
+          "expected": "4a2f7ee38f70fa3e0ae69cbddb62c4d7c15d65dca9f3fd89092274aac753b4bd",
+          "actual": "4a2f7ee38f70fa3e0ae69cbddb62c4d7c15d65dca9f3fd89092274aac753b4bd"
+        }
+      ],
+      "source_mismatches": [],
+      "portable_log_checks": [
+        {
+          "kind": "gofmt",
+          "path": "current-logs/attempt2-gofmt.log",
+          "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "elapsed_seconds": 0.033,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "isolation",
+          "path": "current-logs/attempt2-isolation.log",
+          "expected": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+          "actual": "cec8f74ef20c5a3195f6a673cbce7b31e5f8ed6ffeab933c1b34676b668a83ef",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/usr/bin/python3",
+            "-B",
+            "-c",
+            "import json\nimport subprocess\nfrom pathlib import Path\n\nfeature = json.loads(Path('feature.json').read_text())\nassert feature['id'] == 'FNET-208'\nassert feature['enabled'] is False\nassert feature['integration'] == 'HOLD'\nassert feature['depends_on_future_features'] == []\nmodule = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))\nassert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/governance'\nexpected = {\n    ('modernc.org/sqlite', 'v1.60.1', False),\n    ('github.com/dustin/go-humanize', 'v1.0.1', True),\n    ('github.com/google/uuid', 'v1.6.0', True),\n    ('github.com/mattn/go-isatty', 'v0.0.24', True),\n    ('github.com/ncruces/go-strftime', 'v1.0.0', True),\n    ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),\n    ('golang.org/x/sys', 'v0.48.0', True),\n    ('modernc.org/libc', 'v1.77.1', True),\n    ('modernc.org/mathutil', 'v1.7.1', True),\n    ('modernc.org/memory', 'v1.12.1', True),\n}\nactual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}\nassert actual == expected, actual\nassert not module.get('Replace')\nassert not module.get('Exclude')\ndependencies = set(subprocess.check_output(\n    ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],\n    text=True,\n).split())\nallowed = {module['Module']['Path']} | {path for path, _, _ in expected}\nassert dependencies <= allowed, dependencies - allowed\nprint('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')"
+          ],
+          "elapsed_seconds": 0.215,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "race",
+          "path": "current-logs/attempt2-race.excerpt.log",
+          "expected": "e7c92e1eb179a279629f2cf6ae2f9143e0145ba199628e3c30aba9829a993ac4",
+          "actual": "e7c92e1eb179a279629f2cf6ae2f9143e0145ba199628e3c30aba9829a993ac4",
+          "status": "pass",
+          "passed_test_events": 59,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Exact selected raw-log lines: final package outcomes, failure/skip events and coverage. Complete original is retained at log; log_sha256 binds the complete original.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-json",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-ldflags=-w",
+            "-timeout=90s",
+            "./..."
+          ],
+          "elapsed_seconds": 264.115,
+          "coverage": [
+            "coverage: 75.7% of statements",
+            "ok  \tgithub.com/djshellshoxxx/circula/future/governance\t6.326s\tcoverage: 75.7% of statements"
+          ],
+          "package_results": [
+            {
+              "package": "github.com/djshellshoxxx/circula/future/governance",
+              "action": "pass",
+              "elapsed": 6.333
+            }
+          ],
+          "fuzz_final": []
+        },
+        {
+          "kind": "vet",
+          "path": "current-logs/attempt2-vet.log",
+          "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "elapsed_seconds": 117.645,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "mod_verify",
+          "path": "current-logs/attempt2-mod_verify.log",
+          "expected": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+          "actual": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "elapsed_seconds": 7.003,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "parser_fuzz",
+          "path": "current-logs/attempt2-parser_fuzz.log",
+          "expected": "f13e7cf94821135a4d103f09ec753c0517dc6de82932a80a1b5b722eb75b16c2",
+          "actual": "f13e7cf94821135a4d103f09ec753c0517dc6de82932a80a1b5b722eb75b16c2",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzAuditStrictJSON$",
+            "-fuzztime=100000x",
+            "-parallel=1",
+            "-ldflags=-w",
+            "-timeout=150s",
+            "strict.go",
+            "strict_fuzz_test.go"
+          ],
+          "elapsed_seconds": 6.019,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": [
+            "fuzz: elapsed: 5s, execs: 100000 (42881/sec), new interesting: 82 (total: 84)"
+          ]
+        }
+      ],
+      "log_mismatches": []
+    },
+    {
+      "module": "areas",
+      "source_hash_count": 16,
+      "source_checks": [
+        {
+          "path": "interface.go",
+          "expected": "bda0e19e5de490fad68052d014d7cc27ac67dd57fab0b685fa5ad90099564cca",
+          "actual": "bda0e19e5de490fad68052d014d7cc27ac67dd57fab0b685fa5ad90099564cca"
+        },
+        {
+          "path": "fuzz_test.go",
+          "expected": "4bf815790c1503e3eed6239b17bece2bf0142a0a15e3ad9acdb6d24efa94cac3",
+          "actual": "4bf815790c1503e3eed6239b17bece2bf0142a0a15e3ad9acdb6d24efa94cac3"
+        },
+        {
+          "path": "master_regression_test.go",
+          "expected": "f2b0cceb49ec72c269ff0382b6d6406f4352b7852f71729f49c69ef70cb95247",
+          "actual": "f2b0cceb49ec72c269ff0382b6d6406f4352b7852f71729f49c69ef70cb95247"
+        },
+        {
+          "path": "form_cache_test.go",
+          "expected": "cc8b14e059b10034379202df9d9e42d07ea795ca78fd306dc7d77ff74131b988",
+          "actual": "cc8b14e059b10034379202df9d9e42d07ea795ca78fd306dc7d77ff74131b988"
+        },
+        {
+          "path": "json_recovery_test.go",
+          "expected": "0987fe51d65959182d6d3a26d557444e829d9bb961b101663e1e953d7fa93c32",
+          "actual": "0987fe51d65959182d6d3a26d557444e829d9bb961b101663e1e953d7fa93c32"
+        },
+        {
+          "path": "areas_test.go",
+          "expected": "cb57278310463ed288cff7cc7bdf252b8bb00abdb9764452de26b78d39886870",
+          "actual": "cb57278310463ed288cff7cc7bdf252b8bb00abdb9764452de26b78d39886870"
+        },
+        {
+          "path": "json.go",
+          "expected": "74fa9767aba08bcc2312fd5d3327fee786f720a893af65a3b6e65d139b87a4f4",
+          "actual": "74fa9767aba08bcc2312fd5d3327fee786f720a893af65a3b6e65d139b87a4f4"
+        },
+        {
+          "path": "areas.go",
+          "expected": "d7e708ecea3288e19b0d4c9488b75f5148cbc006e02bf243b390b48b8ac6e66c",
+          "actual": "d7e708ecea3288e19b0d4c9488b75f5148cbc006e02bf243b390b48b8ac6e66c"
+        },
+        {
+          "path": "audit_test.go",
+          "expected": "682bf09beff8bd9fc46218bfcfac365d0c6eccdf53143791b94a787fdad200fe",
+          "actual": "682bf09beff8bd9fc46218bfcfac365d0c6eccdf53143791b94a787fdad200fe"
+        },
+        {
+          "path": "service.go",
+          "expected": "04accd21f797ef3c2b40731e81252a0f551897f4a63ab7b6575c913e60c4fe42",
+          "actual": "04accd21f797ef3c2b40731e81252a0f551897f4a63ab7b6575c913e60c4fe42"
+        },
+        {
+          "path": "go.sum",
+          "expected": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+          "actual": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95"
+        },
+        {
+          "path": "hardening.go",
+          "expected": "5905a57e29bab8ef36dfc937a29449be98527ff739069bef4d06d28c53a3c3aa",
+          "actual": "5905a57e29bab8ef36dfc937a29449be98527ff739069bef4d06d28c53a3c3aa"
+        },
+        {
+          "path": "json_fuzz_test.go",
+          "expected": "9e11c6b8084cae603bc1bc4f94ed9de6b5dfde26c3156951be7b1dba54a5545f",
+          "actual": "9e11c6b8084cae603bc1bc4f94ed9de6b5dfde26c3156951be7b1dba54a5545f"
+        },
+        {
+          "path": "service_test.go",
+          "expected": "0c8f562b00de9c229c6cdb654762647bc394fde1c960c3dcf331a3d75888c72f",
+          "actual": "0c8f562b00de9c229c6cdb654762647bc394fde1c960c3dcf331a3d75888c72f"
+        },
+        {
+          "path": "paging.go",
+          "expected": "5b21c7e7a89f13208cd81873b1db98aa8f1cbfa62c9a81be1b0d251f07948be1",
+          "actual": "5b21c7e7a89f13208cd81873b1db98aa8f1cbfa62c9a81be1b0d251f07948be1"
+        },
+        {
+          "path": "go.mod",
+          "expected": "c94ce93867e1c0161b506923ace6f0fe2051cf49cc8f788b99e9869be2b21201",
+          "actual": "c94ce93867e1c0161b506923ace6f0fe2051cf49cc8f788b99e9869be2b21201"
+        }
+      ],
+      "source_mismatches": [],
+      "portable_log_checks": [
+        {
+          "kind": "isolation",
+          "path": "current-logs/attempt2-isolation.log",
+          "expected": "8f5203a90318f768708f353147393d56d80ff9c61e8cd163bad71377457adbbe",
+          "actual": "8f5203a90318f768708f353147393d56d80ff9c61e8cd163bad71377457adbbe",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/usr/bin/python3",
+            "-B",
+            "-c",
+            "import json\nimport subprocess\nfrom pathlib import Path\n\nfeature = json.loads(Path('feature.json').read_text())\nassert feature['id'] == 'FNET-206'\nassert feature['enabled'] is False\nassert feature['integration'] == 'HOLD'\nassert feature['depends_on_future_features'] == []\nmodule = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))\nassert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/areas'\nexpected = {\n    ('modernc.org/sqlite', 'v1.60.1', False),\n    ('github.com/dustin/go-humanize', 'v1.0.1', True),\n    ('github.com/google/uuid', 'v1.6.0', True),\n    ('github.com/mattn/go-isatty', 'v0.0.24', True),\n    ('github.com/ncruces/go-strftime', 'v1.0.0', True),\n    ('github.com/remyoudompheng/bigfft', 'v0.0.0-20230129092748-24d4a6f8daec', True),\n    ('golang.org/x/sys', 'v0.48.0', True),\n    ('modernc.org/libc', 'v1.77.1', True),\n    ('modernc.org/mathutil', 'v1.7.1', True),\n    ('modernc.org/memory', 'v1.12.1', True),\n}\nactual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}\nassert actual == expected, actual\nassert not module.get('Replace')\nassert not module.get('Exclude')\ndependencies = set(subprocess.check_output(\n    ['go', 'list', '-buildvcs=false', '-deps', '-test', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],\n    text=True,\n).split())\nallowed = {module['Module']['Path']} | {path for path, _, _ in expected}\nassert dependencies <= allowed, dependencies - allowed\nprint('disabled/HOLD, exact recovered dependencies, and no core/other-feature imports: PASS')"
+          ],
+          "elapsed_seconds": 22.307,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "parser_fuzz",
+          "path": "current-logs/attempt2-parser_fuzz.log",
+          "expected": "4c528c91cb356debfcdc9e70eac25a70ac3293a894bcf477f4733ec549ece064",
+          "actual": "4c528c91cb356debfcdc9e70eac25a70ac3293a894bcf477f4733ec549ece064",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-run",
+            "^$",
+            "-fuzz",
+            "^FuzzStrictRequest$",
+            "-fuzztime=100000x",
+            "-parallel=1",
+            "-ldflags=-w",
+            "-timeout=150s",
+            "json.go",
+            "json_fuzz_test.go"
+          ],
+          "elapsed_seconds": 64.137,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": [
+            "fuzz: elapsed: 3s, execs: 100000 (348811/sec), new interesting: 58 (total: 64)"
+          ]
+        },
+        {
+          "kind": "gofmt",
+          "path": "current-logs/attempt1-gofmt.log",
+          "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/gofmt",
+            "-l",
+            "."
+          ],
+          "elapsed_seconds": 0.033,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "race",
+          "path": "current-logs/attempt1-race.excerpt.log",
+          "expected": "8d3366773c4cb05e9dafe453c5a1dd0046f7a4425fc79e101f28777e58f8015f",
+          "actual": "8d3366773c4cb05e9dafe453c5a1dd0046f7a4425fc79e101f28777e58f8015f",
+          "status": "pass",
+          "passed_test_events": 68,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Exact selected raw-log lines: final package outcomes, failure/skip events and coverage. Complete original is retained at log; log_sha256 binds the complete original.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-json",
+            "-race",
+            "-count=1",
+            "-cover",
+            "-ldflags=-w",
+            "-timeout=90s",
+            "./..."
+          ],
+          "elapsed_seconds": 10.626,
+          "coverage": [
+            "coverage: 72.1% of statements",
+            "ok  \tgithub.com/djshellshoxxx/circula/future/areas\t6.234s\tcoverage: 72.1% of statements"
+          ],
+          "package_results": [
+            {
+              "package": "github.com/djshellshoxxx/circula/future/areas",
+              "action": "pass",
+              "elapsed": 6.246
+            }
+          ],
+          "fuzz_final": []
+        },
+        {
+          "kind": "vet",
+          "path": "current-logs/attempt1-vet.log",
+          "expected": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "actual": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "./..."
+          ],
+          "elapsed_seconds": 0.869,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        },
+        {
+          "kind": "mod_verify",
+          "path": "current-logs/attempt1-mod_verify.log",
+          "expected": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+          "actual": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+          "status": "pass",
+          "passed_test_events": 0,
+          "failed_test_events": [],
+          "skipped_test_events": [],
+          "scope": "Complete unchanged raw log.",
+          "argv": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "elapsed_seconds": 0.519,
+          "coverage": [],
+          "package_results": [],
+          "fuzz_final": []
+        }
+      ],
+      "log_mismatches": []
+    },
+    {
+      "module": "receipts",
+      "qualification": [
+        {
+          "receipt": "green-full.json",
+          "exit_code": 0,
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "test",
+            "-p",
+            "1",
+            "-count=1",
+            "-cover",
+            "-timeout=90s",
+            "./..."
+          ],
+          "source_hash_count": 17,
+          "source_mismatches": [],
+          "log_path": "green-full.txt",
+          "log_sha256_observed": "b16505aa311ea09541bc69cc900ac696bb0ae5e8981e9770d93c9759d6ad9410",
+          "log_text": "ok  \tgithub.com/djshellshoxxx/circula/future/receipts\t0.044s\tcoverage: 84.6% of statements\n",
+          "elapsed_seconds": 5.148
+        },
+        {
+          "receipt": "green-vet.json",
+          "exit_code": 0,
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "vet",
+            "-p",
+            "1",
+            "./..."
+          ],
+          "source_hash_count": 17,
+          "source_mismatches": [],
+          "log_path": "green-vet.txt",
+          "log_sha256_observed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "log_text": "",
+          "elapsed_seconds": 13.845
+        },
+        {
+          "receipt": "checksums.json",
+          "exit_code": 0,
+          "command": [
+            "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+            "mod",
+            "verify"
+          ],
+          "source_hash_count": 17,
+          "source_mismatches": [],
+          "log_path": "checksums.txt",
+          "log_sha256_observed": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd",
+          "log_text": "all modules verified\n",
+          "elapsed_seconds": 0.117
+        }
+      ],
+      "scope": "Committed repaired-source ordinary/vet/checksum receipts. Current-head provider is separate and includes race/fuzz."
+    }
+  ],
+  "core_provenance": [
+    {
+      "path": "cmd/circula/auditanchor.go",
+      "accepted_commit": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d",
+      "accepted_blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "head_blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "whole_blob_equal": true
+    },
+    {
+      "path": "internal/service/departure_pagination_regression_test.go",
+      "accepted_commit": "7457b618057a8b1757ec643806e9afbfc5ba907e",
+      "accepted_blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595",
+      "head_blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595",
+      "whole_blob_equal": true
+    },
+    {
+      "path": "internal/service/notification_erasure_test.go",
+      "accepted_commit": "28326597340a4f0efad33f37feecc380db0de66f",
+      "accepted_blob": "683bee4899d66803e4f2b4193d47e492ea2baa08",
+      "head_blob": "683bee4899d66803e4f2b4193d47e492ea2baa08",
+      "whole_blob_equal": true
+    },
+    {
+      "path": "internal/service/erasure_test.go",
+      "accepted_commit": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "accepted_blob": "e5e4b3131e887ea7535140b75224c506f656490d",
+      "head_blob": "e5e4b3131e887ea7535140b75224c506f656490d",
+      "whole_blob_equal": true
+    },
+    {
+      "path": "internal/store/sqlite_erasure.go",
+      "accepted_commit": "28326597340a4f0efad33f37feecc380db0de66f",
+      "accepted_blob": "fe452fc13c626aa70fdfa9df6d8fac26a068f796",
+      "head_blob": "fe452fc13c626aa70fdfa9df6d8fac26a068f796",
+      "whole_blob_equal": true
+    },
+    {
+      "path": "cmd/circula/util.go",
+      "accepted_commit": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "accepted_blob": "dc7c6edc593a97bd746d86462c83cf5e86827e0f",
+      "head_blob": "975b54f052508b5bdf8fa627ac4d80c9cf05366a",
+      "whole_blob_equal": false,
+      "scope": "Only the two #nosec G703 comments in writeAtomicPrivateFile are restored. The older target storeOptions helper/import remain unchanged.",
+      "accepted_write_atomic_function_equal": true,
+      "base_to_head_executable_unchanged": true
+    }
+  ]
+}

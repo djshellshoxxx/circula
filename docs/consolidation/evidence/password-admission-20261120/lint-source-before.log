@@ -1,0 +1,5 @@
+internal/passwordwork/admission_test.go:187:5: SA4000: identical expressions on the left and right side of the '!=' operator (staticcheck)
+	if passwordwork.Process() != passwordwork.Process() || passwordwork.DefaultLimit != 2 {
+	   ^
+1 issues:
+* staticcheck: 1

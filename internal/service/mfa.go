@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
@@ -184,7 +185,7 @@ func (s *Service) MFAStatus(ctx context.Context, actor domain.Actor) (*MFAStatus
 // before the hash is compared. A wrong password is a validation error on the
 // "password" field. The returned hash must still match inside the caller's
 // protected write, since a password change/reset can commit during hashing.
-func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, password string) (string, error) {
+func (s *Service) checkCurrentPassword(ctx context.Context, work *passwordwork.Ticket, actor domain.Actor, password string) (string, error) {
 	var hash string
 	err := s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttempt(tx, recgenKey(actor.PersonID)); err != nil {
@@ -197,7 +198,11 @@ func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, 
 	if err != nil {
 		return "", err
 	}
-	if !verifyPassword(password, hash) {
+	ok, err := verifyPassword(ctx, work, password, hash)
+	if err != nil {
+		return "", err
+	}
+	if !ok {
 		return "", domain.Invalid("password", "is not correct") // the attempt was counted above
 	}
 	return hash, nil
@@ -213,7 +218,12 @@ func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor, pas
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
-	hash, err := s.checkCurrentPassword(ctx, actor, password)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
+	hash, err := s.checkCurrentPassword(ctx, work, actor, password)
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +294,12 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, p
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
-	hash, err := s.checkCurrentPassword(ctx, actor, password)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
+	hash, err := s.checkCurrentPassword(ctx, work, actor, password)
 	if err != nil {
 		return nil, err
 	}
@@ -352,6 +367,11 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 	if err := s.mfaActor(actor); err != nil {
 		return err
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer work.Release()
 	if err := s.reserveMFAManage(ctx, actor.PersonID); err != nil {
 		return err
 	}
@@ -359,7 +379,11 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 	if err := s.view(ctx, func(tx store.Tx) (err error) { _, hash, err = tx.GetPerson(actor.PersonID); return }); err != nil {
 		return authnErr(err)
 	}
-	if !verifyPassword(password, hash) {
+	ok, err := verifyPassword(ctx, work, password, hash)
+	if err != nil {
+		return err
+	}
+	if !ok {
 		return domain.Invalid("password", "is not correct")
 	}
 	return s.update(ctx, func(tx store.Tx) error {

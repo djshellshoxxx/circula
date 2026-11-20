@@ -71,7 +71,12 @@ func (s *Service) registerPerson(ctx context.Context, in RegisterInput, operator
 	if err := s.validatePassword(in.Password, login); err != nil {
 		return nil, err
 	}
-	hash, err := hashPassword(in.Password, s.cfg.Argon)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
+	hash, err := hashPassword(ctx, work, in.Password, s.cfg.Argon)
 	if err != nil {
 		return nil, err
 	}
@@ -125,14 +130,21 @@ func (s *Service) registerPerson(ctx context.Context, in RegisterInput, operator
 // is the password-only wrapper that refuses MFA persons.
 func (s *Service) LoginStep(ctx context.Context, login, password string) (result *LoginResult, resultErr error) {
 	defer func() { s.observeAuthentication("password", resultErr) }()
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
 	login = normalizeLogin(login)
 	if validLogin(login) != nil {
-		verifyPassword(password, s.dummyHash) // equalise effort; nothing is stored
+		if _, err := verifyPassword(ctx, work, password, s.dummyHash); err != nil {
+			return nil, err
+		}
 		return nil, domain.ErrUnauthenticated
 	}
 	var person *domain.Person
 	var hash string
-	err := s.update(ctx, func(tx store.Tx) error {
+	err = s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttemptCtx(ctx, tx, login); err != nil {
 			return err
 		}
@@ -150,9 +162,12 @@ func (s *Service) LoginStep(ctx context.Context, login, password string) (result
 	}
 	ok := false
 	if person != nil {
-		ok = s.verifyLoginPassword(password, hash) // hashes even an unusable stored hash (BR-05)
+		ok, err = s.verifyLoginPassword(ctx, work, password, hash) // hashes even an unusable stored hash (BR-05)
 	} else {
-		verifyPassword(password, s.dummyHash) // equalise effort
+		_, err = verifyPassword(ctx, work, password, s.dummyHash) // equalise effort
+	}
+	if err != nil {
+		return nil, err
 	}
 	if !ok {
 		return nil, domain.ErrUnauthenticated // the attempt was counted above
@@ -262,6 +277,11 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 	if !scoped.Can(domain.ScopeWrite) || actor.PersonID == "" {
 		return domain.ErrForbidden
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer work.Release()
 	var login string
 	if err := s.view(ctx, func(tx store.Tx) error {
 		p, _, err := tx.GetPerson(actor.PersonID)
@@ -291,10 +311,14 @@ func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW,
 	}); err != nil {
 		return err
 	}
-	if !verifyPassword(oldPW, hash) {
+	ok, err := verifyPassword(ctx, work, oldPW, hash)
+	if err != nil {
+		return err
+	}
+	if !ok {
 		return domain.ErrUnauthenticated // the attempt was counted above
 	}
-	nh, err := hashPassword(newPW, s.cfg.Argon)
+	nh, err := hashPassword(ctx, work, newPW, s.cfg.Argon)
 	if err != nil {
 		return err
 	}

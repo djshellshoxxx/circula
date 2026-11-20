@@ -25,6 +25,37 @@ reports or checksums. Its findings are pinned historical observations. The
 which ten of fourteen source findings already have substantive repairs in
 PR #127 and which source or policy gaps remain.
 
+The first repair composition was published as
+`d6843366dc06d723f8d9efe07242997c858a6b3f`, with verified tree
+`733dacda5cdbe1e12f7ab84079af2b7615cd7c81`. Subsequent AUTH-04 implementation
+is integrated locally at `025ad9d3b23abd29c99dbe3ea376ff1622844313`, preserving
+that published commit as its parent. It adds shared two-operation password-work
+admission across authentication, recovery/MFA, startup and passphrase backups.
+Its [pinned execution receipt](evidence/password-admission-20261120/README.md)
+records 116 distinct top-level tests and 239 distinct named cases passed, zero
+failed and one existing opt-in timing skip. Independent review found no
+unresolved issue within the admission scope. The
+[security reconciliation](SECURITY_HANDOFF_RECONCILIATION_20261120.md) now
+distinguishes eleven implemented source findings from the three remaining
+source/policy/platform gaps. Full combined-source checks remain required.
+
+The first complete normal Go run of this composition, at local source
+`a9cdcb80179df1469b1443dcb79f1df00b1857fb`, completed in 377.345 seconds with
+1,292 top-level tests passed, one failed and six skipped (3,456 passing events
+including subtests). The failure exposed an existing audit-anchor fixture that
+could leave an already matching hash prefix unchanged. A reviewed test-only
+repair guarantees a different digest and checks that exactly one fixture row
+changed, retaining the original clean/growth/rewrite/truncation assertions.
+The [complete-run summary](evidence/core127-qualification-20261120/auth-full-normal-before-fixture.json)
+preserves the failed result and original source; it is not reported as a pass.
+The corrected composition requires a new complete race run and final-head CI.
+
+The first combined secret scan also matched nine source-file digests in the
+AUTH-04 execution manifest as credential-shaped map entries. Their metadata
+representation now uses explicit path/sha256 rows, with all 22 source paths
+and digests verified unchanged. Execution logs and scanner rules are unchanged;
+the final complete scan must pass on the publication composition.
+
 ## Exact failures and repairs
 
 The initial PR #127
@@ -81,11 +112,54 @@ recording successful CI does not invalidate its own tested commit.
 
 ## Next bounded work and preserved future streams
 
-AUTH-04 password-work admission is a separate implementation milestone based
-on the reconciled design. It must cover shared service and backup Argon work,
-retain credential compatibility and guessing controls, and undergo independent
-review and full combined qualification before integration. OPS-04 reader
-resource budgets remain a distinct source gap. Financial-error disclosure,
+The [148-head refresh](BRANCH_REFRESH_20261120.md) and complete dependency graph
+are pinned observations; subsequent mutations are recorded separately. After
+the [independent four-module review](FUTURE_FOUR_SOURCE_REVIEW_20261120.md), the
+coordinator reread all 40 successful applicable job records and completed the
+following normal merges. All four provider merge trees equal their qualified
+source trees, both parents match the reviewed target/source, and every original
+source branch remains available. The
+[post-merge receipt](evidence/future-merges-20261120.json) records exact pins.
+
+| PR | Existing isolated target | Verified merge commit |
+|---|---|---|
+| #113 | `future/fnet-203-receipts-20261116` | `5200c5bf940f051a86d6e502787af06892200974` |
+| #114 | `future/fnet-208-governance-20261116` | `5eac085005361e973ca8f358e01f039aea718bed` |
+| #115 | `future/fnet-206-areas-20261116` | `6aac35e226135a53d69c1e6ce74e340dcfe1d85f` |
+| #120 | `future/fux-102-qr-20261116` | `6028dae56723b8488db6e52e25c83da7888777c1` |
+
+Each source passed seven applicable Core jobs and three dedicated native module
+jobs. Each older Core workflow also returned one skipped, unexpanded native
+matrix placeholder: the configured Windows/macOS Core executions did not run.
+Those skips are not passes. QR's dedicated jobs qualify Node camera-lifecycle
+tests, not a real camera or a fresh QR Go/SQLite suite. All four manifests remain
+disabled/HOLD, with their explicit host, policy and activation gates preserved.
+
+PR #103 subsequently merged into the existing notification future branch as
+`54a41b12a314e7652802b71d693e2594c37f172f`. All nine Core jobs, the dedicated
+SQLite job and all three native transport jobs passed at source
+`66b23f8e9e37ce6efddf56c0215c6f29f741d489`. The coordinator verified both
+parents and exact merge tree `774205e9de006c00181c8ef09e192ccb42489e92`.
+Only the previously reviewed native workflow and qualification document differ
+from the accepted target; runtime and the disabled/HOLD manifest are unchanged.
+The [notification merge receipt](evidence/notification-native-merge-20261120.json)
+preserves these exact references.
+
+The [remaining-work table](FUTURE_MODULE_REMAINING_WORK_20261120.md) credits the
+current implementations in all fifteen streams and estimates remaining work
+separately from policy decisions and independent production qualification. It
+does not treat old prototype descriptions or completion percentages as current
+implementation inventories.
+
+The [Core remaining-work table](CORE_REMAINING_WORK_20261120.md) separately
+records the reader-resource and Windows-support gaps, preserved policy/interface
+decisions and reference-hardware/final-qualification boundaries, with explicitly
+conditional engineering estimates.
+
+AUTH-04 password-work admission has passed its scoped implementation tests and
+independent review; its final combined qualification is still an integration
+gate. OPS-04 reader resource budgets remain a distinct source gap.
+Financial-error disclosure,
 Core Windows storage support, and the previously recorded governance/privacy
 decisions are not silently resolved here.
 
@@ -95,6 +169,14 @@ work is its native workflow and qualification note; runtime and dependencies
 are already in the accepted target. The isolated messaging follow-up repairs
 Windows path spelling validation before normalization and retains its original
 native regression. Both compositions require their own current-head checks.
+
+Additional isolated prose repairs were published on the existing federation
+recovery PR #117 at `267aa7d08bbc41e89a429eec7a077c5c0b1f9778` and onboarding
+retention PR #121 at `20e6c8479459f837915eb31a5d668e2bd470e5a8`. Each changes
+only its qualification document after ordinary prose matched the secret
+scanner. Complete directory scans passed after the wording repairs. Runtime,
+tests, workflows, scanner rules and disabled/HOLD manifests retain their
+original blobs; fresh provider checks remain required.
 
 All fifteen future modules remain disabled and on HOLD. No branch deletion,
 force push, deployment, release, or unqualified main merge is authorized by

@@ -96,8 +96,13 @@ func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor,
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) || actor.NetworkScope != "" {
 		return nil, domain.ErrForbidden
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
 	var hash string
-	err := s.update(ctx, func(tx store.Tx) error {
+	err = s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttempt(tx, recgenKey(actor.PersonID)); err != nil {
 			return err
 		}
@@ -108,7 +113,11 @@ func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor,
 	if err != nil {
 		return nil, err
 	}
-	if !verifyPassword(password, hash) {
+	ok, err := verifyPassword(ctx, work, password, hash)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
 		return nil, domain.ErrUnauthenticated // the attempt was counted above
 	}
 	codes := make([]string, RecoveryCodeCount)
@@ -180,8 +189,13 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	if validLogin(login) != nil {
 		return errRecovery()
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	defer work.Release()
 	var person *domain.Person
-	err := s.update(ctx, func(tx store.Tx) error {
+	err = s.update(ctx, func(tx store.Tx) error {
 		if err := s.reserveAttemptCtx(ctx, tx, recoverKey(login)); err != nil {
 			return err
 		}
@@ -217,7 +231,7 @@ func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword 
 	if !valid || person == nil || !wellFormed {
 		return errRecovery()
 	}
-	nh, err := hashPassword(newPassword, s.cfg.Argon)
+	nh, err := hashPassword(ctx, work, newPassword, s.cfg.Argon)
 	if err != nil {
 		return err
 	}
@@ -348,11 +362,16 @@ func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, ne
 	if err != nil {
 		return "", err
 	}
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer work.Release()
 	temp, err := s.newTempPassword()
 	if err != nil {
 		return "", err
 	}
-	th, err := hashPassword(temp, s.cfg.Argon)
+	th, err := hashPassword(ctx, work, temp, s.cfg.Argon)
 	if err != nil {
 		return "", err
 	}
@@ -434,11 +453,16 @@ func (s *Service) OperatorResetPassword(ctx context.Context, actor domain.Actor,
 		return "", err
 	}
 	login = normalizeLogin(login)
+	work, err := s.cfg.PasswordWork.Acquire(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer work.Release()
 	temp, err := s.newTempPassword()
 	if err != nil {
 		return "", err
 	}
-	th, err := hashPassword(temp, s.cfg.Argon)
+	th, err := hashPassword(ctx, work, temp, s.cfg.Argon)
 	if err != nil {
 		return "", err
 	}

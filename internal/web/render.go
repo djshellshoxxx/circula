@@ -310,7 +310,7 @@ func (s *server) renderError(w http.ResponseWriter, r *http.Request, status int)
 
 // fail maps an unexpected service error to a page-level response.
 func (s *server) fail(w http.ResponseWriter, r *http.Request, err error) {
-	if httpx.IsBusy(err) || domain.CodeOf(err) == domain.CodeUnavailable { // SQLITE_BUSY: retryable, not a fault (OPS-011)
+	if httpx.IsBusy(err) || domain.CodeOf(err) == domain.CodeUnavailable { // busy resource: retryable, not a fault (OPS-011)
 		s.renderError(w, r, 503)
 		return
 	}

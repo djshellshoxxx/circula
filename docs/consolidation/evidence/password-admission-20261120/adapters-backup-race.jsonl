@@ -1,0 +1,56 @@
+{"Time":"2026-11-20T08:24:22.385138787-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/cmd/circula"}
+{"Time":"2026-11-20T08:24:22.477676222-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionSharesAuthenticationBudget"}
+{"Time":"2026-11-20T08:24:22.477713188-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionSharesAuthenticationBudget","Output":"=== RUN   TestBackupPasswordAdmissionSharesAuthenticationBudget\n"}
+{"Time":"2026-11-20T08:24:22.479044309-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionSharesAuthenticationBudget","Output":"--- PASS: TestBackupPasswordAdmissionSharesAuthenticationBudget (0.00s)\n"}
+{"Time":"2026-11-20T08:24:22.479067644-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionSharesAuthenticationBudget","Elapsed":0}
+{"Time":"2026-11-20T08:24:22.479076668-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionRejectsCanceledDerivation"}
+{"Time":"2026-11-20T08:24:22.479079282-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionRejectsCanceledDerivation","Output":"=== RUN   TestBackupPasswordAdmissionRejectsCanceledDerivation\n"}
+{"Time":"2026-11-20T08:24:22.479081916-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionRejectsCanceledDerivation","Output":"--- PASS: TestBackupPasswordAdmissionRejectsCanceledDerivation (0.00s)\n"}
+{"Time":"2026-11-20T08:24:22.479083799-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupPasswordAdmissionRejectsCanceledDerivation","Elapsed":0}
+{"Time":"2026-11-20T08:24:22.484581054-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupCryptPassphrase"}
+{"Time":"2026-11-20T08:24:22.4846115-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupCryptPassphrase","Output":"=== RUN   TestBackupCryptPassphrase\n"}
+{"Time":"2026-11-20T08:24:23.887292841-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupCryptPassphrase","Output":"--- PASS: TestBackupCryptPassphrase (1.40s)\n"}
+{"Time":"2026-11-20T08:24:23.887341204-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/cmd/circula","Test":"TestBackupCryptPassphrase","Elapsed":1.4}
+{"Time":"2026-11-20T08:24:23.888310028-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Output":"PASS\n"}
+{"Time":"2026-11-20T08:24:24.968082036-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/cmd/circula","Output":"ok  \tgithub.com/djshellshoxxx/circula/cmd/circula\t2.577s\n"}
+{"Time":"2026-11-20T08:24:24.968367938-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/cmd/circula","Elapsed":2.583}
+{"Time":"2026-11-20T08:24:38.998649702-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/internal/api"}
+{"Time":"2026-11-20T08:24:39.059741941-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestBusyMapsTo503"}
+{"Time":"2026-11-20T08:24:39.059777945-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestBusyMapsTo503","Output":"=== RUN   TestBusyMapsTo503\n"}
+{"Time":"2026-11-20T08:24:39.059950306-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestBusyMapsTo503","Output":"--- PASS: TestBusyMapsTo503 (0.00s)\n"}
+{"Time":"2026-11-20T08:24:39.059954923-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestBusyMapsTo503","Elapsed":0}
+{"Time":"2026-11-20T08:24:39.059959359-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestUnavailableCodeMapsTo503"}
+{"Time":"2026-11-20T08:24:39.059981252-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestUnavailableCodeMapsTo503","Output":"=== RUN   TestUnavailableCodeMapsTo503\n"}
+{"Time":"2026-11-20T08:24:39.05998637-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestUnavailableCodeMapsTo503","Output":"--- PASS: TestUnavailableCodeMapsTo503 (0.00s)\n"}
+{"Time":"2026-11-20T08:24:39.059988013-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestUnavailableCodeMapsTo503","Elapsed":0}
+{"Time":"2026-11-20T08:24:39.059991097-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIChangePassword"}
+{"Time":"2026-11-20T08:24:39.059992499-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIChangePassword","Output":"=== RUN   TestAPIChangePassword\n"}
+{"Time":"2026-11-20T08:24:40.851895348-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIChangePassword","Output":"--- PASS: TestAPIChangePassword (1.79s)\n"}
+{"Time":"2026-11-20T08:24:40.851928698-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIChangePassword","Elapsed":1.79}
+{"Time":"2026-11-20T08:24:40.851934257-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIPasswordGuessesLimited"}
+{"Time":"2026-11-20T08:24:40.85193679-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIPasswordGuessesLimited","Output":"=== RUN   TestAPIPasswordGuessesLimited\n"}
+{"Time":"2026-11-20T08:24:43.876597431-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIPasswordGuessesLimited","Output":"--- PASS: TestAPIPasswordGuessesLimited (3.02s)\n"}
+{"Time":"2026-11-20T08:24:43.876745385-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestAPIPasswordGuessesLimited","Elapsed":3.02}
+{"Time":"2026-11-20T08:24:43.876755109-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPasswordAdmissionAPIReturnsRetryableServiceBusy"}
+{"Time":"2026-11-20T08:24:43.876758134-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPasswordAdmissionAPIReturnsRetryableServiceBusy","Output":"=== RUN   TestPasswordAdmissionAPIReturnsRetryableServiceBusy\n"}
+{"Time":"2026-11-20T08:24:46.042361889-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPasswordAdmissionAPIReturnsRetryableServiceBusy","Output":"--- PASS: TestPasswordAdmissionAPIReturnsRetryableServiceBusy (2.17s)\n"}
+{"Time":"2026-11-20T08:24:46.042414849-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Test":"TestPasswordAdmissionAPIReturnsRetryableServiceBusy","Elapsed":2.17}
+{"Time":"2026-11-20T08:24:46.04278583-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Output":"PASS\n"}
+{"Time":"2026-11-20T08:24:47.046660515-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/api","Output":"ok  \tgithub.com/djshellshoxxx/circula/internal/api\t8.048s\n"}
+{"Time":"2026-11-20T08:24:47.046697391-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/api","Elapsed":8.048}
+{"Time":"2026-11-20T08:25:05.491386716-08:00","Action":"start","Package":"github.com/djshellshoxxx/circula/internal/web"}
+{"Time":"2026-11-20T08:25:05.527053116-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAuthenticationObserverSeesHTMLCredentialValidation"}
+{"Time":"2026-11-20T08:25:05.527090543-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAuthenticationObserverSeesHTMLCredentialValidation","Output":"=== RUN   TestAuthenticationObserverSeesHTMLCredentialValidation\n"}
+{"Time":"2026-11-20T08:25:07.449991818-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAuthenticationObserverSeesHTMLCredentialValidation","Output":"--- PASS: TestAuthenticationObserverSeesHTMLCredentialValidation (1.92s)\n"}
+{"Time":"2026-11-20T08:25:07.450379434-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestAuthenticationObserverSeesHTMLCredentialValidation","Elapsed":1.92}
+{"Time":"2026-11-20T08:25:07.45585659-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestLoginTradeFlow"}
+{"Time":"2026-11-20T08:25:07.455870471-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestLoginTradeFlow","Output":"=== RUN   TestLoginTradeFlow\n"}
+{"Time":"2026-11-20T08:25:11.077069617-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestLoginTradeFlow","Output":"--- PASS: TestLoginTradeFlow (3.62s)\n"}
+{"Time":"2026-11-20T08:25:11.077297091-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestLoginTradeFlow","Elapsed":3.62}
+{"Time":"2026-11-20T08:25:11.078345295-08:00","Action":"run","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestPasswordAdmissionHTMLReturnsRetryableServiceBusy"}
+{"Time":"2026-11-20T08:25:11.078354318-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestPasswordAdmissionHTMLReturnsRetryableServiceBusy","Output":"=== RUN   TestPasswordAdmissionHTMLReturnsRetryableServiceBusy\n"}
+{"Time":"2026-11-20T08:25:13.127799626-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestPasswordAdmissionHTMLReturnsRetryableServiceBusy","Output":"--- PASS: TestPasswordAdmissionHTMLReturnsRetryableServiceBusy (2.05s)\n"}
+{"Time":"2026-11-20T08:25:13.127889942-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Test":"TestPasswordAdmissionHTMLReturnsRetryableServiceBusy","Elapsed":2.05}
+{"Time":"2026-11-20T08:25:13.12789499-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Output":"PASS\n"}
+{"Time":"2026-11-20T08:25:14.139167444-08:00","Action":"output","Package":"github.com/djshellshoxxx/circula/internal/web","Output":"ok  \tgithub.com/djshellshoxxx/circula/internal/web\t8.648s\n"}
+{"Time":"2026-11-20T08:25:14.139203037-08:00","Action":"pass","Package":"github.com/djshellshoxxx/circula/internal/web","Elapsed":8.648}

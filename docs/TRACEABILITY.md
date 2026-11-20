@@ -2,7 +2,7 @@
 
 Generated file (QA-042); do not edit by hand. Regenerate with `make traceability`, which runs `go run ./scripts/traceability -head "$(git rev-parse --short HEAD)" -o docs/TRACEABILITY.md`. `make traceability-check` fails when this file does not match the specs and code.
 
-Input: git HEAD `622a5a4` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
+Input: git HEAD `7685e04` (base commit supplied by the caller; this inventory can include working-tree edits and is not a tested-build claim). Without -evidence the generator reads no clock: the same tree and head give the same file.
 
 Depends on: the spec files in [specs/](specs/), [DECISIONS.md](DECISIONS.md) (DEC-028 onward count as known IDs), the source tree outside docs/, and the frozen citations in `scripts/traceability/legacy-citations.tsv`.
 

@@ -1,0 +1,174 @@
+{
+  "source": "a9cdcb80179df1469b1443dcb79f1df00b1857fb",
+  "command": [
+    "timeout",
+    "3600s",
+    "go",
+    "test",
+    "-p",
+    "1",
+    "-count=1",
+    "-timeout=45m",
+    "-json",
+    "./..."
+  ],
+  "started_at": "2026-11-20T16:42:20.603012+00:00",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "512MiB"
+  },
+  "status": "completed",
+  "exit_code": 1,
+  "ended_at": "2026-11-20T16:48:37.948207+00:00",
+  "wall_seconds": 377.345,
+  "test_events": {
+    "pass": 3456,
+    "fail": 1,
+    "skip": 6
+  },
+  "top_level_tests": {
+    "pass": 1292,
+    "fail": 1,
+    "skip": 6
+  },
+  "package_results": [
+    {
+      "Action": "fail",
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Elapsed": 79.051
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/api",
+      "Elapsed": 17.888
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/contract",
+      "Elapsed": 4.087
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/domain",
+      "Elapsed": 0.082
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "Elapsed": 0.002
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "Elapsed": 0.004
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/integrity",
+      "Elapsed": 0.002
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/logx",
+      "Elapsed": 0.006
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/passwordwork",
+      "Elapsed": 0.003
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/repository",
+      "Elapsed": 0.113
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Elapsed": 80.031
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Elapsed": 24.607
+    },
+    {
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "Elapsed": 0
+    },
+    {
+      "Action": "skip",
+      "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "Elapsed": 0
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Elapsed": 90.909
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Elapsed": 0.064
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "Elapsed": 0.033
+    },
+    {
+      "Action": "pass",
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Elapsed": 2.326
+    }
+  ],
+  "failures": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestAuditAnchorWriteVerifyAndTamper"
+    }
+  ],
+  "skips": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestBackupStagingRefusesForeignOwnedParent"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestBackupWorkLeaseChild"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestRestoreSwapCrashChild"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestLoginTimingStatistical"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestLoadConcurrentTrades"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestQA010CrashChild"
+    }
+  ],
+  "non_json_lines": [],
+  "log_sha256": "8287d0efdbbbbc2807dc0e1ef856b2dbb2fd979dcc8ce3b10f6b7fa4ea8c9ea8",
+  "corrective_change": {
+    "local_reviewed_commit": "60e98b8229a211fcf24c762c3c1ba960bb21879c",
+    "integrated_commit": "c9ea1e19f046071a43c274164237be3b89072066",
+    "scope": "Test-only deterministic audit-anchor fixture; original verification assertions preserved. Full corrected race qualification follows separately."
+  },
+  "failure_output": [
+    "=== RUN   TestAuditAnchorWriteVerifyAndTamper\n",
+    "    auditanchor_test.go:93: rewrite not detected = 0 audit anchor: ok (platform audit and 1 network(s) at 2026-11-20T16:42:45Z)\n",
+    "--- FAIL: TestAuditAnchorWriteVerifyAndTamper (0.57s)\n"
+  ]
+}

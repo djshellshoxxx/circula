@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 	"github.com/google/uuid"
 )
@@ -24,9 +25,14 @@ type Config struct {
 	Argon          Argon2Params      // password hashing cost (DEC-006 pending benchmark)
 	MinPasswordLen int               // default 12 (SEC-002)
 	PasswordDenied func(string) bool // optional breached-password check
-	SessionIdle    time.Duration     // default 30 days (DAT section 9)
-	SessionMax     time.Duration     // default 90 days
-	IdempotencyTTL time.Duration     // default 7 days (DAT section 9)
+	// PasswordWork permits an isolated admission scope for deterministic tests.
+	// Application wiring leaves it nil so every service, startup dummy hash and
+	// backup derivation shares passwordwork.Process. Capacity counts operations,
+	// not the memory requested by historical PHCs; it is never reconfigured here.
+	PasswordWork   *passwordwork.Limiter
+	SessionIdle    time.Duration // default 30 days (DAT section 9)
+	SessionMax     time.Duration // default 90 days
+	IdempotencyTTL time.Duration // default 7 days (DAT section 9)
 
 	// Authentication attempt budgets (SEC-006, OPS-008). Zero selects the
 	// existing defaults: 5 per login/address or sensitive account operation,
@@ -114,6 +120,9 @@ func New(st store.Store, cfg Config) (*Service, error) {
 	if cfg.Argon == (Argon2Params{}) {
 		cfg.Argon = DefaultArgon2Params()
 	}
+	if cfg.PasswordWork == nil {
+		cfg.PasswordWork = passwordwork.Process()
+	}
 	if cfg.MinPasswordLen == 0 {
 		cfg.MinPasswordLen = 12
 	}
@@ -155,7 +164,12 @@ func New(st store.Store, cfg Config) (*Service, error) {
 		cfg.NewAdminApprovalDelay = DefaultNewAdminApprovalDelay
 	}
 	s := &Service{st: st, cfg: cfg}
-	h, err := hashPassword("dummy-password-for-timing", cfg.Argon)
+	work, err := cfg.PasswordWork.Acquire(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	defer work.Release()
+	h, err := hashPassword(context.Background(), work, "dummy-password-for-timing", cfg.Argon)
 	if err != nil {
 		return nil, err
 	}

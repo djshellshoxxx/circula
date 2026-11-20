@@ -1,0 +1,38 @@
+[
+  {
+    "command": [
+      "/tmp/circula-runtime-4d30/go/bin/go",
+      "test",
+      "-race",
+      "-p",
+      "1",
+      "-count=1",
+      "-json",
+      "./internal/passwordwork"
+    ],
+    "log": "limiter-final-race.jsonl",
+    "started_at": "2026-11-20T16:33:50.540064+00:00",
+    "finished_at": "2026-11-20T16:33:52.742372+00:00",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/tmp/circula-runtime-4d30/go/bin/go",
+      "test",
+      "-p",
+      "1",
+      "-count=1",
+      "-json",
+      "./internal/service",
+      "-run",
+      "^$",
+      "-bench",
+      "^BenchmarkArgon2id",
+      "-benchtime=1x"
+    ],
+    "log": "benchmark-smoke.jsonl",
+    "started_at": "2026-11-20T16:33:52.742750+00:00",
+    "finished_at": "2026-11-20T16:33:56.038097+00:00",
+    "exit_code": 0
+  }
+]

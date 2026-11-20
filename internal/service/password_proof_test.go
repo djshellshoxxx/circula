@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/passwordwork"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 	"github.com/djshellshoxxx/circula/internal/service"
 	tu "github.com/djshellshoxxx/circula/internal/testutil"
@@ -30,7 +31,9 @@ func TestPasswordProtectedChangesRejectSupersededPassword(t *testing.T) {
 	} {
 		for _, operation := range []string{"begin", "resume", "confirm", "disable TOTP", "disable recovery", "account recovery codes"} {
 			t.Run(change.name+"/"+operation, func(t *testing.T) {
-				w := newWorld(t, nil)
+				// Both the observed proof and the legitimate password change
+				// use ordinary tickets in this isolated two-operation scope.
+				w := newWorldCfg(t, nil, func(c *service.Config) { c.PasswordWork = tu.Must(passwordwork.New(2)) })
 				// The actor represents a request that authenticated before the
 				// password change revoked its session.
 				token, _, err := w.Svc.Login(w.Ctx, "ana@example.org", pw)
