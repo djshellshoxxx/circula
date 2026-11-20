@@ -170,7 +170,19 @@ func (s *SQLStore) DeleteMember(ctx context.Context, k Key) error {
 }
 
 func (s *SQLStore) PurgeStale(ctx context.Context, before time.Time) (int64, error) {
-	res, err := s.db.ExecContext(ctx, `DELETE FROM member_onboarding_progress WHERE updated_at < ?`, ts(before))
+	cutoff := before.UTC()
+	// ts writes canonical UTC RFC3339Nano, whose trimmed fraction does not
+	// sort chronologically as TEXT. Pad to nine digits for this comparison;
+	// do not round through SQLite's lower-precision date/time functions.
+	// The raw bound includes the entire cutoff second and retains an indexed
+	// range over updated_at. Both canonical suffixes ('.' and 'Z') precede '~'.
+	res, err := s.db.ExecContext(ctx, `DELETE FROM member_onboarding_progress
+		WHERE updated_at < ? AND (
+			substr(updated_at, 1, 19) || '.' ||
+			substr(CASE WHEN substr(updated_at, 20, 1) = '.'
+				THEN substr(updated_at, 21, length(updated_at) - 21)
+				ELSE '' END || '000000000', 1, 9) || 'Z'
+		) < ?`, cutoff.Format("2006-01-02T15:04:05")+"~", cutoff.Format("2006-01-02T15:04:05.000000000Z"))
 	if err != nil {
 		return 0, err
 	}

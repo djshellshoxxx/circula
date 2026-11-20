@@ -1,0 +1,129 @@
+name: future onboarding retention
+
+on:
+  pull_request:
+    branches: [future/fux-106-onboarding-20261116]
+    paths:
+      - 'future/onboarding/**'
+      - '.github/workflows/future-onboarding-retention.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-onboarding-retention-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  retention:
+    name: onboarding SQLite retention (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15-intel, windows-2022]
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/onboarding
+    env:
+      GOTOOLCHAIN: local
+      GOMAXPROCS: '1'
+      GOGC: '10'
+      GOMEMLIMIT: 256MiB
+      GOWORK: 'off'
+      GOFLAGS: '-mod=readonly -p=1'
+      CGO_ENABLED: '1'
+      CC: gcc
+      CGO_CFLAGS: '-O0 -g0'
+    steps:
+      - name: Keep repository line endings stable
+        working-directory: ${{ github.workspace }}
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: future/onboarding/go.mod
+          cache: false
+      - name: Record source and native compiler versions
+        run: |
+          git rev-parse HEAD
+          git rev-parse HEAD:future/onboarding
+          go version
+          command -v gcc
+          gcc --version
+          go env GOOS GOARCH CC CGO_ENABLED
+          test "$(go env CGO_ENABLED)" = '1'
+      - name: Check disabled module and exact test-driver boundary
+        run: |
+          python_bin=python3
+          if [ "$RUNNER_OS" = 'Windows' ]; then python_bin=python; fi
+          "$python_bin" - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          feature = json.loads(Path('feature.json').read_text())
+          assert feature['id'] == 'FUX-106'
+          assert feature['enabled'] is False
+          assert feature['integration'] == 'HOLD'
+          assert feature['depends_on_future_features'] == []
+          module = json.loads(subprocess.check_output(['go', 'mod', 'edit', '-json'], text=True))
+          assert module['Module']['Path'] == 'github.com/djshellshoxxx/circula/future/onboarding'
+          expected = {('github.com/mattn/go-sqlite3', 'v1.14.53', False)}
+          actual = {(r['Path'], r['Version'], r.get('Indirect', False)) for r in module.get('Require', [])}
+          assert actual == expected, actual
+          assert not module.get('Replace')
+          assert not module.get('Exclude')
+          production = set(subprocess.check_output(
+              ['go', 'list', '-buildvcs=false', '-deps', '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],
+              text=True,
+          ).split())
+          assert production == {module['Module']['Path']}, production
+          tested = set(subprocess.check_output(
+              ['go', 'list', '-buildvcs=false', '-tags', 'sqlite_cgo_test', '-deps', '-test',
+               '-f', '{{if .Module}}{{.Module.Path}}{{end}}', './...'],
+              text=True,
+          ).split())
+          assert tested == {module['Module']['Path'], 'github.com/mattn/go-sqlite3'}, tested
+          print('disabled/HOLD, unchanged production boundary, and exact real SQLite test driver: PASS')
+          PY
+      - name: Verify downloaded module checksums
+        run: go mod verify
+      - name: Check Go formatting
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            printf '%s\n' "$unformatted"
+            exit 1
+          fi
+      - name: Vet module including real SQLite tests
+        run: go vet -tags sqlite_cgo_test ./...
+      - name: Run native module and real SQLite retention tests
+        run: |
+          race=()
+          if [ "$RUNNER_OS" != 'Windows' ]; then
+            race=(-race)
+          fi
+          if ! go test -json "${race[@]}" -p 1 -ldflags=-w -tags sqlite_cgo_test -count=1 -timeout=3m ./... > qualification.jsonl; then
+            cat qualification.jsonl
+            exit 1
+          fi
+          python_bin=python3
+          if [ "$RUNNER_OS" = 'Windows' ]; then python_bin=python; fi
+          "$python_bin" - <<'PY'
+          import json
+          from pathlib import Path
+
+          events = [json.loads(line) for line in Path('qualification.jsonl').read_text().splitlines()]
+          assert not any(event.get('Action') in ('fail', 'skip') for event in events), 'failure or skipped test'
+          passed = {event['Test'] for event in events if event.get('Action') == 'pass' and event.get('Test')}
+          required = {'TestSQLStoreContract', 'TestSQLPurgeStaleChronology', 'TestMemPurgeStaleChronology'}
+          assert required <= passed, required - passed
+          assert any(event.get('Action') == 'pass' and not event.get('Test') for event in events), 'no package pass'
+          print(f'PASS: {len(passed)} test events; mandatory real SQLite contracts ran; zero skips')
+          PY
