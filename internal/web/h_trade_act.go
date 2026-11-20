@@ -52,13 +52,27 @@ func (c *rc) actView(r *http.Request, action string) (*actData, error) {
 		}
 		a.Before = makeBalance(b.Balance, b.Decimals, pol.CurrencyName)
 		a.AvailNow = minus(plainAmt(b.Available, b.Decimals))
-		if t.PayerMemberID == c.Me.ID {
-			a.After = makeBalance(b.Balance-t.Amount, b.Decimals, pol.CurrencyName)
-			a.AvailAfter = a.AvailNow // the amount is already set aside while pending
-		} else {
-			a.After = makeBalance(b.Balance+t.Amount, b.Decimals, pol.CurrencyName)
-			a.AvailAfter = minus(plainAmt(b.Available+t.Amount, b.Decimals))
+		a.After, a.AvailAfter = a.Before, a.AvailNow
+		if t.Status != domain.TxProposed {
+			// A repeated confirmation may read an already posted transaction.
+			// Do not project its amount a second time before the service checks
+			// idempotency or rejects another terminal state.
+			break
 		}
+		delta, availableDelta := t.Amount, t.Amount
+		if t.PayerMemberID == c.Me.ID {
+			delta, availableDelta = -t.Amount, -t.Amount
+			if t.CreatedBy == t.PayerMemberID {
+				availableDelta = 0 // only payer-created proposals reserve credit
+			}
+		}
+		after, balanceOK := domain.AddBounded(b.Balance, delta)
+		available, availableOK := domain.AddChecked(b.Available, availableDelta)
+		if !balanceOK || !availableOK {
+			return nil, domain.Invalid("amount", messages.Text("trade.review.range_detail"))
+		}
+		a.After = makeBalance(after, b.Decimals, pol.CurrencyName)
+		a.AvailAfter = minus(plainAmt(available, b.Decimals))
 	case "decline":
 		a.Verb = messages.Text("trade.action.decline")
 		a.Consequence = messages.Text("trade.action.release")

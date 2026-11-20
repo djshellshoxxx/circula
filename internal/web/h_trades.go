@@ -151,6 +151,10 @@ func (s *server) proposePost(w http.ResponseWriter, r *http.Request, c *rc) {
 			msg = messages.Text("trade.propose.amount_decimals", dec)
 		}
 		fe = append(fe, fieldErr{"amount", msg})
+	} else if step != "confirm" && amount > c.Net.Policy.MaxTxAmount {
+		// Confirmation delegates the current policy and committed idempotent
+		// result to the service; a later policy change must not break a replay.
+		fe = append(fe, fieldErr{"amount", messages.Text("validation.refusal.amount_exceeds", plainAmt(c.Net.Policy.MaxTxAmount, dec))})
 	}
 	if len(fe) > 0 {
 		p.Errors, p.Summary = fe, messages.Text("trade.propose.invalid")
@@ -160,6 +164,11 @@ func (s *server) proposePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	if step != "confirm" {
 		rv, err := c.buildReview(cp, dir, amount)
 		if err != nil {
+			if sum, fields, ok := c.refuse(err); ok {
+				p.Summary, p.Errors = sum, fields
+				s.renderPropose(w, r, c, 422, p)
+				return
+			}
 			s.fail(w, r, err)
 			return
 		}
@@ -173,12 +182,21 @@ func (s *server) proposePost(w http.ResponseWriter, r *http.Request, c *rc) {
 	if err != nil {
 		if sum, f, ok := c.refuse(err); ok {
 			p.Summary, p.Errors = sum, f
-			rv, _ := c.buildReview(cp, dir, amount)
-			p.Title, p.D = messages.Text("trade.review.title"), rv
-			if domain.CodeOf(err) == domain.CodeValidation {
+			if code := domain.CodeOf(err); code == domain.CodeValidation || code == domain.CodeAmountExceeds {
 				s.renderPropose(w, r, c, 422, p)
 				return
 			}
+			rv, reviewErr := c.buildReview(cp, dir, amount)
+			if reviewErr != nil {
+				if summary, fields, ok := c.refuse(reviewErr); ok {
+					p.Summary, p.Errors = summary, fields
+					s.renderPropose(w, r, c, 422, p)
+					return
+				}
+				s.fail(w, r, reviewErr)
+				return
+			}
+			p.Title, p.D = messages.Text("trade.review.title"), rv
 			s.render(w, r, c, "propose_review", 422, p)
 			return
 		}
@@ -195,20 +213,26 @@ func (c *rc) buildReview(cp string, dir service.Direction, amount int64) (*revie
 		return nil, err
 	}
 	pol := c.Net.Policy
+	delta := amount
+	if dir == service.ProposerPays {
+		delta = -amount
+	}
+	after, balanceOK := domain.AddBounded(b.Balance, delta)
+	available, availableOK := domain.AddChecked(b.Available, delta)
+	if !balanceOK || !availableOK {
+		return nil, domain.Invalid("amount", messages.Text("trade.review.range_detail"))
+	}
 	u := unitFor(pol.CurrencyName, amount, pol.Decimals)
 	a := domain.FormatAmount(amount, pol.Decimals)
 	rv := &review{Counter: cp, Amount: a, Unit: u, Before: makeBalance(b.Balance, b.Decimals, pol.CurrencyName),
-		AvailNow: minus(plainAmt(b.Available, b.Decimals)), Expires: pol.ProposalExpiryDays}
+		After: makeBalance(after, b.Decimals, pol.CurrencyName), AvailNow: minus(plainAmt(b.Available, b.Decimals)),
+		AvailAfter: minus(plainAmt(available, b.Decimals)), Expires: pol.ProposalExpiryDays}
 	if dir == service.ProposerPays {
 		rv.Sentence = messages.Text("trade.sentence.pay", cp, a, u)
-		rv.After = makeBalance(b.Balance-amount, b.Decimals, pol.CurrencyName)
-		rv.AvailAfter = minus(plainAmt(b.Available-amount, b.Decimals))
 		rv.Reserve = true
 		rv.TooMuch = amount > b.Available
 	} else {
 		rv.Sentence = messages.Text("trade.sentence.receive", cp, a, u)
-		rv.After = makeBalance(b.Balance+amount, b.Decimals, pol.CurrencyName)
-		rv.AvailAfter = minus(plainAmt(b.Available+amount, b.Decimals))
 	}
 	return rv, nil
 }
