@@ -337,7 +337,7 @@ func (s *Service) resetPerson(tx store.Tx, personID, login, tempHash string) err
 // member of THIS network (anyone else is NotFound, so another network's
 // administrator learns nothing); never one's own account (including through a
 // second membership); the target must not hold the administrator role here nor
-// an active membership in any other network (SA2-01: those need the operator
+// a membership in any other network (SA2-01: those need the operator
 // CLI, since a reset hands over the person's whole identity); a reason is mandatory; at most adminResetsPerHour
 // successful resets per administrator per hour. Resetting another
 // administrator is flagged high_risk in the audit event.
@@ -391,7 +391,10 @@ func (s *Service) AdminResetPassword(ctx context.Context, actor domain.Actor, ne
 				return err
 			}
 			for _, o := range others {
-				if o.NetworkID != netID && o.Status != domain.MemberDeparted {
+				// Departed and anonymised memberships still authorize their own
+				// ledger and transaction history (DOM-039). A local administrator
+				// cannot replace the credentials protecting that retained access.
+				if o.NetworkID != netID {
 					return domain.Forbidden("this account can only be reset by the platform operator")
 				}
 			}
