@@ -287,8 +287,8 @@ test('loading announces a same-window page navigation, including keyboard link a
 
 test('native navigation feedback is synchronous even when the document blocks timer tasks', () => {
   for (const [name, target, message] of [
-    ['click', loadingElement('a', { href: '/n/town/history' }), 'Loading catalogue text <next> test('loading preserves form fields and the chosen submitter name and value', () => {'],
-    ['submit', loadingElement('form', { method: 'post', action: '/n/town/trades/new' }), 'Sending catalogue text <request> test('loading preserves form fields and the chosen submitter name and value', () => {'],
+    ['click', loadingElement('a', { href: '/n/town/history' }), 'Loading catalogue text <next> $&'],
+    ['submit', loadingElement('form', { method: 'post', action: '/n/town/trades/new' }), 'Sending catalogue text <request> $&'],
   ]) {
     const app = runLoading();
     // A native navigation can suspend timeout callbacks until the next
