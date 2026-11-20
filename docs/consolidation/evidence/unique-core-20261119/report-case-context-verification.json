@@ -1,0 +1,365 @@
+{
+  "task": "SEC-025 explicit member/listing report case context and exact-case independent reviewer projection",
+  "feature_commit": "5eb1da71beea1b4160011c807266d4c2c3a8ef2c",
+  "qualification_source_commit": "1f3c5c1b30a797bddee5f8e91e47e0c60a57e99f",
+  "qualification_source_tree": "4e3c5606a46252c29908ab4e4d2e141d7306782f",
+  "documentation_commit": "bea21cb8048d408f6a2b61d30717a297e0f82cfb",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-report-context",
+  "branch": "fix/report-dispute-context-20261120",
+  "worktree_clean": true,
+  "go_version": "go version go1.26.11 linux/amd64",
+  "qualification": "All 53 selected top-level cases and 75 subcases have passing evidence across three runs. The initial service build error and one service fixture assertion failure are preserved below and resolved by test-only followups. No final combined repository/provider pass is claimed.",
+  "runs": [
+    {
+      "log": "/workspace/scratch/4d30fa819181/analysis/report-context-focused.jsonl",
+      "log_sha256": "ac918934be853b5bf49ae105bcb6189efcbbf4e732c86cae39f5acffea38a4f9",
+      "source_commit": "13e070d3fb8315e982fd0113d98ece3e33bbfb47",
+      "exit_code": 1,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "GOMEMLIMIT": "256MiB",
+        "CGO_ENABLED": "1"
+      },
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/store",
+        "./internal/service",
+        "./internal/api",
+        "./internal/web",
+        "./internal/web/messages",
+        "./internal/contract",
+        "-run",
+        "^Test(DisputeReports.*|TransactionReport.*|Report.*|Reports.*|HandleReport|InboxReportMessages|EveryCatalogueEntryFormats|APIMatchesOpenAPI|RouteInventoryMatchesAuthorizationTable|RouteAuthorizationMatrix|DisputeListsAndDashboardAreNotCapped|TradeDetailLinksDisputeForDeciders|DisputeResponseAndReReviewAPI|DisputeResponseAndReReviewPages|PersonalDataInventory.*|SchemaHasNoForbiddenPersonalData)$"
+      ],
+      "packages": {
+        "github.com/djshellshoxxx/circula/internal/store": {
+          "top_level_passes": 5,
+          "subtest_passes": 0,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "pass",
+          "elapsed_seconds": 7.462
+        },
+        "github.com/djshellshoxxx/circula/internal/service": {
+          "top_level_passes": 0,
+          "subtest_passes": 0,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "fail",
+          "elapsed_seconds": 0
+        },
+        "github.com/djshellshoxxx/circula/internal/api": {
+          "top_level_passes": 10,
+          "subtest_passes": 5,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "pass",
+          "elapsed_seconds": 30.537
+        },
+        "github.com/djshellshoxxx/circula/internal/web": {
+          "top_level_passes": 12,
+          "subtest_passes": 0,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "pass",
+          "elapsed_seconds": 28.035
+        },
+        "github.com/djshellshoxxx/circula/internal/web/messages": {
+          "top_level_passes": 3,
+          "subtest_passes": 26,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "pass",
+          "elapsed_seconds": 1.08
+        },
+        "github.com/djshellshoxxx/circula/internal/contract": {
+          "top_level_passes": 3,
+          "subtest_passes": 0,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "pass",
+          "elapsed_seconds": 11.196
+        }
+      },
+      "top_level_passes": 33,
+      "subtest_passes": 31,
+      "executed_test_failures": 0,
+      "skips": 0,
+      "race_reports": 0,
+      "first_event": "2026-11-20T01:09:52.100837852-08:00",
+      "last_event": "2026-11-20T01:11:52.720472343-08:00",
+      "build_failure": "Service test compilation: report_context_test.go:130 passed an error interface to the existing wantCode helper requiring *domain.Error; no service fixture executed in this run.",
+      "resolution": "94add4a changes only the expected-error table type to *domain.Error."
+    },
+    {
+      "log": "/workspace/scratch/4d30fa819181/analysis/report-context-service-retry.jsonl",
+      "log_sha256": "89dbc45c29bd5fb674ea3a18cb9b34c4423b25739552e8107b5dcb0cec4717da",
+      "source_commit": "94add4a2c4c2b0d2f8219a34c208ff091578c58f",
+      "exit_code": 1,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "GOMEMLIMIT": "256MiB",
+        "CGO_ENABLED": "1"
+      },
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "^Test(DisputeReports.*|TransactionReport.*|Report.*|Reports.*|HandleReport|InboxReportMessages|EveryCatalogueEntryFormats|APIMatchesOpenAPI|RouteInventoryMatchesAuthorizationTable|RouteAuthorizationMatrix|DisputeListsAndDashboardAreNotCapped|TradeDetailLinksDisputeForDeciders|DisputeResponseAndReReviewAPI|DisputeResponseAndReReviewPages|PersonalDataInventory.*|SchemaHasNoForbiddenPersonalData)$"
+      ],
+      "packages": {
+        "github.com/djshellshoxxx/circula/internal/service": {
+          "top_level_passes": 19,
+          "subtest_passes": 44,
+          "failed_tests": [
+            "TestReportDisputeContextExactCaseAndProjection"
+          ],
+          "skipped_tests": [],
+          "status": "fail",
+          "elapsed_seconds": 47.503
+        }
+      },
+      "top_level_passes": 19,
+      "subtest_passes": 44,
+      "executed_test_failures": 1,
+      "skips": 0,
+      "race_reports": 0,
+      "first_event": "2026-11-20T01:15:37.676347953-08:00",
+      "last_event": "2026-11-20T01:16:25.179067376-08:00",
+      "fixture_failure": "The read-only snapshot assertion included an administrator ListAudit call, which intentionally appends audit.read; report projection and queue behavior were correct.",
+      "resolution": "1f3c5c1 places the unchanged snapshot assertion before the separately checked audit privacy query; the affected case passes in the following run."
+    },
+    {
+      "log": "/workspace/scratch/4d30fa819181/analysis/report-context-service-snapshot-retry.jsonl",
+      "log_sha256": "20724ff2cfb4cf00ea0e460346fa3b5b609e87de61c59560c30f638fbd186132",
+      "source_commit": "1f3c5c1b30a797bddee5f8e91e47e0c60a57e99f",
+      "exit_code": 0,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "GOMEMLIMIT": "256MiB",
+        "CGO_ENABLED": "1"
+      },
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-race",
+        "-p",
+        "1",
+        "-count=1",
+        "-json",
+        "./internal/service",
+        "-run",
+        "^TestReportDisputeContextExactCaseAndProjection$"
+      ],
+      "packages": {
+        "github.com/djshellshoxxx/circula/internal/service": {
+          "top_level_passes": 1,
+          "subtest_passes": 0,
+          "failed_tests": [],
+          "skipped_tests": [],
+          "status": "pass",
+          "elapsed_seconds": 2.981
+        }
+      },
+      "top_level_passes": 1,
+      "subtest_passes": 0,
+      "executed_test_failures": 0,
+      "skips": 0,
+      "race_reports": 0,
+      "first_event": "2026-11-20T01:17:14.131616057-08:00",
+      "last_event": "2026-11-20T01:17:17.112280416-08:00"
+    }
+  ],
+  "unique_top_level_passes": 53,
+  "unique_subtest_passes": 75,
+  "recorded_executed_failures": [
+    {
+      "run": "report-context-service-retry.jsonl",
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestReportDisputeContextExactCaseAndProjection"
+    }
+  ],
+  "unresolved_selected_tests": [],
+  "recorded_service_build_failures": 1,
+  "skips": 0,
+  "race_reports": 0,
+  "qualification_followup_changes": [
+    "internal/service/report_context_test.go"
+  ],
+  "production_source_changed_between_runs": false,
+  "migration_0025": {
+    "path": "internal/store/migrations/0025_report_dispute_context.sql",
+    "sha256": "4279c438c595504ec9b37af03ad9283f8ad23ed1d76d36c4e82159b84e28b29b",
+    "tested_on_real_0024_chain": true,
+    "test": "TestReportDisputeContextMigrationPreservesAndRetries",
+    "elapsed_seconds": 2.26,
+    "proof": [
+      "all original 12 columns and values preserved",
+      "historical dispute_id remains SQL NULL",
+      "late-DDL failure rolls back metadata/data/schema",
+      "successful retry and reopen",
+      "same-network nullable composite FK",
+      "immutable context",
+      "legacy named-column insert compatibility"
+    ],
+    "parent_reviewed_registry_commit": "f55ab56"
+  },
+  "integrated_dependencies": {
+    "real_0024_original": "48bb4c69b43b392cdbaf3db81dbc186120d3a9ba",
+    "real_0024_local": "460e1c8cbd9d8cafe740638e86b59222309855bd",
+    "read_error_local": "90e81988474499713c55278cf276429f7013ced7",
+    "report_switch_lint_local": "90ce2418fa690c78a78b26a5fd95b2e14d81e67d",
+    "0023_compatible_rebuild_registry_local": "6e45d266221d3187517dc49099a72ad963405390"
+  },
+  "test_only_compatibility_adapter_commit": "13e070d3fb8315e982fd0113d98ece3e33bbfb47",
+  "scope_note": "docs/consolidation/REPORT_CASE_CONTEXT_20261120.md",
+  "scope_note_sha256": "0a838aeb5ccbdfd3b41de1542a40ea46381a5af5d4a2ac51597f4b5ad91558db",
+  "catalogue_entries_at_tested_source": 1449,
+  "lightweight_checks": [
+    "gofmt",
+    "git diff --check",
+    "catalogue JSON parsing",
+    "OpenAPI YAML parsing"
+  ],
+  "remaining_decisions": [
+    "System-account transaction report subject semantics",
+    "All-conflicted administrator operational procedure"
+  ],
+  "changed_files_sha256_at_qualification_source": [
+    {
+      "path": "docs/api/openapi.yaml",
+      "sha256": "9232acf2abbf4a149d8d1bd7c9a3a1cee699aa4899d25c55591e3c281f6a3f73"
+    },
+    {
+      "path": "docs/consolidation/DISPUTE_REPORT_PROJECTION_20261120.md",
+      "sha256": "70810dccc000aa57ac701362e129cf1c5baf2dee82bd9a632ceaafe0c104ae38"
+    },
+    {
+      "path": "docs/consolidation/REPORT_CASE_CONTEXT_20261120.md",
+      "sha256": "24d55069a99ac10c422d3860869cda14492addfe2ba254901f85e421a599422e"
+    },
+    {
+      "path": "docs/consolidation/TRANSACTION_REPORTS_20261120.md",
+      "sha256": "4cb67060f783461a500fdd688b54130849861e60e4b112cad662c481a6441bc4"
+    },
+    {
+      "path": "docs/security/personal-data-inventory.md",
+      "sha256": "40432db61c25f243d59dedeea3cb25d9e754449cdef2e046de5df7d7bdb89373"
+    },
+    {
+      "path": "docs/specs/09-security-privacy.md",
+      "sha256": "cff36e7d2d3aa64f202134bb651bfba028a768e505c9f99af684eee45e2cf57e"
+    },
+    {
+      "path": "internal/api/h_reports.go",
+      "sha256": "4a49185e180fa3c9acc87706433c76369c62f4b345b5ea71d6ecb31909e2e671"
+    },
+    {
+      "path": "internal/api/report_context_test.go",
+      "sha256": "f5ab05d441af53a5cfbdda2d0973408b6660e8ec45bcb6f066a933efc360a347"
+    },
+    {
+      "path": "internal/contract/report_context_test.go",
+      "sha256": "ddcfedcc5e5e62309f9d130751886418e925c33e5e59d112bf1e0c5b4a174ed6"
+    },
+    {
+      "path": "internal/repository/iface_notify.go",
+      "sha256": "c88e8aef4ac2eb701ade6c65847b78cb6153d80b8b8432126dcb200fea5776cb"
+    },
+    {
+      "path": "internal/service/dispute_reports.go",
+      "sha256": "eb25603b25158ff92b750d068464f3444864d8b9bc91f5a28a90453235efbff3"
+    },
+    {
+      "path": "internal/service/report_context.go",
+      "sha256": "3982a5014e597e80ded5ed798cdcdb1fc87b540f5a95f649b10c12a456d5d86d"
+    },
+    {
+      "path": "internal/service/report_context_test.go",
+      "sha256": "a8c440256884418fac046dbed90d8e54a422fceb866ee834c44549764b7a4584"
+    },
+    {
+      "path": "internal/service/reports.go",
+      "sha256": "cd799d8b1dd6ee72dced3e961fffb7c937d1b4a24b63ea3ed68928bc66ca0cc5"
+    },
+    {
+      "path": "internal/store/migrations/0025_report_dispute_context.sql",
+      "sha256": "4279c438c595504ec9b37af03ad9283f8ad23ed1d76d36c4e82159b84e28b29b"
+    },
+    {
+      "path": "internal/store/report_context_migration_test.go",
+      "sha256": "75830676e266e1133594ac152da8819f26162d4ce7440f52077c5deeb7cc60d5"
+    },
+    {
+      "path": "internal/store/sqlite_notify.go",
+      "sha256": "e3123edef54517043e0d8c1af1f379c64626ca1bd8d18b43ba21d622a9c1fc99"
+    },
+    {
+      "path": "internal/store/transaction_report_migration_test.go",
+      "sha256": "5cb489ac2ddd372875d776ea03eeb45b23281d962ff656fd92e6d2cfcdd9049d"
+    },
+    {
+      "path": "internal/web/dispute_reports_test.go",
+      "sha256": "9d01ddba54318e405c0cd07e8d902470c9fffa0758396d9501bedd7902602414"
+    },
+    {
+      "path": "internal/web/h_disputes.go",
+      "sha256": "be463d87988f4bee0b3e05640477e8cbd08f16c553a71c89701a20a41360456e"
+    },
+    {
+      "path": "internal/web/h_notify.go",
+      "sha256": "a89a3c3c441a226361ba71d806bc134899f06ba71628ebe1d885df7a8cf48413"
+    },
+    {
+      "path": "internal/web/messages/en.json",
+      "sha256": "bbd0a321613578be0fd215e027d0d851980e04458cb321972e6b63eccb2c4aac"
+    },
+    {
+      "path": "internal/web/messages/messages_test.go",
+      "sha256": "d432e286027b7853b052ac4cdd310baac6a619f2bd0e1c6ccb69d13a0f8cf909"
+    },
+    {
+      "path": "internal/web/report_context_test.go",
+      "sha256": "4c68f4bb3241da3c4a9f3fdc5040b170c831e6407804af2260edd276bef1dd7d"
+    },
+    {
+      "path": "internal/web/templates/admin_reports.html",
+      "sha256": "a940428fd51e181061bfe6400b6ceee173a83de04ecc357fc7aba0cd600371fa"
+    },
+    {
+      "path": "internal/web/templates/dispute_view.html",
+      "sha256": "998a771f93a756802bb0c951e9d1d786578f4bb1b90498e1dcbe827653c5a088"
+    },
+    {
+      "path": "internal/web/templates/report_form.html",
+      "sha256": "19137c5f760faf532669772381934e771671784ca42eaf6bd32ad7c871198cce"
+    }
+  ]
+}

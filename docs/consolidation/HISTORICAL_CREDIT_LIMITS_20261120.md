@@ -73,14 +73,20 @@ regressions in `61ed3e7` are integrated as `e3f2a5d`, with final focused evidenc
 cases from `6bb9750` integrated as `56ec7f5`. Consumer source `db27af0` is
 integrated as `5c389fe`.
 
-The initial core selection passed four race tests. The consumer selection
-passed 23 top-level tests and 22 subcases under race, including real snapshot
-propagation, old signature compatibility, authentication of all new fields,
-API authorization and retained HTML states. Independent source review found a
-policy-decoder issue; the later source repair closes it without changing
-legitimate omitted defaults. The expanded core selection and final combined
-normal/race qualification remain pending at this document checkpoint and are
-recorded in [the continuation](UNIQUE_CORE_CONTINUATION_20261119.md) when observed.
+The initial core selection passed four race tests. The final expanded core
+selection at clean `6bb9750` passed 30 top-level tests and 32 subcases under race:
+integrity 1.012 seconds, store 13.704 seconds and service 25.323 seconds. It
+includes exact expiry, all posting kinds, complete rollback/replay, saved-run
+coverage, large legacy totals, read-only checks, original exports and closure
+compatibility. The source stayed clean and unchanged throughout the run.
+
+The consumer selection passed 23 top-level tests and 22 subcases under race,
+including real snapshot propagation, old signature compatibility,
+authentication of every new field, API authorization and retained HTML states.
+Independent review's policy-decoder finding is repaired and covered by the
+later core selection; legitimate omitted defaults remain supported. The final
+combined normal/race and provider gates are recorded separately in
+[the continuation](UNIQUE_CORE_CONTINUATION_20261119.md).
 
 The old history gap remains a data limitation after successful qualification.
 No current policy, clock inference or fabricated override fills it.

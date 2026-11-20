@@ -100,16 +100,45 @@ qualification; the mapping is not a recursive claim about its own commit.
 These receipts predate the historical-credit witness and member/listing case
 context. They do not qualify those later additions or the final combined tree.
 
+### Historical limits and explicit case context
+
+- `historical-credit-core.*` records four initial race passes at `48bb4c6`.
+  `historical-credit-followup-race.*` records 30 top-level tests and 32 subcases
+  passing at clean `6bb9750`, including the decoder repair, exact expiry,
+  all posting kinds, whole-database rollback/replay, saved coverage, original
+  exports, closure checkpoints and explicit legacy adoption.
+- `historical-consumers-focused.*`, its receipt and verification map record
+  23 top-level tests and 22 subcases passing at `db27af0`. The source remained
+  unchanged across every tracked file. Older signatures, all new signed fields,
+  snapshot propagation, API authorization and retained HTML states are covered.
+- `historical-limit-core-independent-review.md` records the original policy
+  decoder finding and its source repair; `report-context-independent-review.md`
+  reviews the actual integrated report/context/consumer boundary without claiming
+  additional execution.
+- `report-case-context-verification.json` references all three retained
+  `report-context-*.jsonl` attempts. A fixture error type and the position of a
+  read-only assertion around an intentionally audited read were corrected; no
+  runtime fix or assertion was removed to obtain a pass. Unique passing evidence
+  covers 53 top-level tests and 75 subcases across six packages. Migration 25
+  preservation/rollback/retry/reopen is exercised against real migration 24.
+- `windows-c45c475.*` preserves the completed provider Windows job for the older
+  published source. Its only failing test was the then-unregistered migration-23
+  rebuild guard; all other package outcomes passed or had no tests. It remains a
+  failed provider gate, distinct from its later local repair.
+
+The combined catalogue has 1,457 messages after the additive case-context and
+coverage changes. These focused passes remain distinct from final combined and
+provider qualification.
+
 
 ### Publication representations
 
-`evidence-transformations.json` records original and published hashes for four
+`evidence-transformations.json` records original and published hashes for 7
 receipts whose path/checksum maps were represented as explicit path/sha256 rows,
-and for two published combined-run logs whose generated test request identifiers
+and for 2 published combined-run logs whose generated test request identifiers
 were redacted. All source checksum values and test result events are preserved.
-The original raw logs and receipts remain in the analysis workspace; the earlier
-report-privacy receipt is also preserved in its existing Git history. These
-six published files are documented derivatives, not byte-identical raw logs.
-The unchanged secret scanner flagged the original noncredential values; no
-scanner configuration, finding rule, or control fixture was relaxed. The
-expanded-evidence scan's fifteen findings are retained with this exact scope.
+Originals remain in the analysis workspace; earlier published forms also remain
+in Git history. These 9 files are documented derivatives, not
+byte-identical raw logs. The unchanged secret scanner flagged noncredential
+values; no scanner configuration, finding rule or control fixture was relaxed.
+The expanded-evidence scan's fifteen original findings retain their exact scope.

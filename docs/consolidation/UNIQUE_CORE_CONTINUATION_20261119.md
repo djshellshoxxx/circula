@@ -91,6 +91,8 @@ repairs below; its notes are not themselves runtime changes.
 | Posting outcomes and latency | Counters distinguish posting attempts, committed work, bounded failure reasons and durable replays, including enclosing-unit rollback and posting-pending reversals. Latency has an additive route/status-class series. | Ten focused race tests pass on worker `4630a0a`, integrated as `a29a094`; real service events reach the production metrics surface and unknown labels remain bounded. |
 | Independent reviewer report projection | A currently authorized, independent dispute decider reads only report ID/category/status for that exact case; reporter identity and free text stay out of the projection. Each page rechecks authority and filters before the limit. | Six-package focused race selection: 41 top-level and 58 subtest passes. The separate read-error repair passes seven subcases; prior compiler-killed attempts remain identified. |
 | Service authentication observations | Optional service observations classify credential failure and throttling with bounded labels, avoid wrapper double-counting and keep storage/cancellation/policy errors out of bad-credential totals. HTTP counters remain separately named. | 22 top-level and two subtest race passes across service, CLI and web at worker `1a216cb`, integrated as `4449dd6`. |
+| Historical credit-limit verification | Every new debit retains immutable policy/override/expiry/balance evidence in its posting transaction. Shared verification reconstructs history; legacy inputs remain explicitly unknown, with coverage separate from invariant success. API, CLI, backups and admin views expose that distinction. | Core: 30 top-level and 32 subcase race passes at `6bb9750`; consumers: 23 top-level and 22 subcase passes at `db27af0`. Decoder review finding repaired; old signatures, exports and closure formats preserved. |
+| Explicit member/listing case context | A party can attach a report to the exact eligible dispute from its case page. Creation validates the relation in the write snapshot, stores it immutably and includes it in the minimal independent-reviewer projection. Old reports gain no inferred relation. | 53 unique top-level and 75 subcase race passes across six packages. Migration 25 preservation/rollback/retry/reopen passes on the real 24/25 chain. Two test-fixture corrections and all prior failures are retained. |
 
 
 The closure API deliberately exposes `final_export.version` and verification's
@@ -112,14 +114,18 @@ Ordinary transaction reports and exact-transaction dispute links are now built;
 so are the pre-commit migration gate, loading feedback, complete authentication
 sentences, About placement and posting outcome/status-latency metrics.
 
-The independent-reviewer projection and service authentication/throttle
-observations are complete. Two related additions are written and undergoing
-qualification: immutable forward posting-limit evidence with explicit
-legacy-unverified coverage, and optional exact-case context for member/listing
-reports. The historical-limit consumer surfaces and migration compatibility
-fixtures are being completed against the actual schema chain through 25.
-Existing records do not preserve exact historic override-expiry inputs, so
-verification must not manufacture known outcomes for earlier debits.
+All implementable gaps identified in the bounded accepted-Core reconciliation
+are now implemented and have focused passing evidence: migration semantic
+rollback, posting outcomes/status latency, announced loading, ordinary
+transaction reports and exact links, authentication messages and About
+placement, independent reviewer reads, service authentication observations,
+historical credit evidence and explicit member/listing case context. The
+nineteen stale absence notes were reconciled against existing source.
+
+This establishes implementation completion for that accepted scope. A final
+combined clean-source run and the provider gates still determine integration
+qualification. Existing records lack exact old override-expiry inputs, so
+historical verification continues to expose the legacy data gap explicitly.
 
 Member/listing context is explicitly selected at report creation, validated in
 the same write snapshot and immutable afterward. Older context-free reports
@@ -182,7 +188,10 @@ source runs the native Core macOS and Windows jobs rather than counting a
 cross-build as native execution.
 
 The earlier scanner-only PR runs were superseded when the continuation advanced.
-The newer provider checks are pending at this checkpoint. A queued, cancelled,
+The Windows job for published `c45c475` completed with the same migration-23
+registry failure subsequently repaired locally; other package outcomes passed
+or had no tests. Its full job log and source mapping are retained. Remaining
+provider jobs were queued at the last observation; later source needs new gates. A queued, cancelled,
 killed or interrupted attempt is never recorded as a pass. Main was observed
 without required status enforcement; integration will wait for observed gates
 rather than relying on an automatic-merge setting.

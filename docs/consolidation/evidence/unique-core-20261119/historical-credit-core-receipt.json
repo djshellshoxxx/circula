@@ -1,0 +1,21 @@
+{
+  "source": "48bb4c69b43b392cdbaf3db81dbc186120d3a9ba",
+  "source_state": "clean before command; unchanged until exit",
+  "command": "go test -race -p 1 ./internal/integrity ./internal/store -run ^TestHistoricalCredit -count=1 -v",
+  "go": "go1.26.11",
+  "environment": {
+    "CGO_ENABLED": "1",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "GOTOOLCHAIN": "local",
+    "GOTMPDIR": "/workspace/scratch/4d30fa819181/runtime/go-tmp"
+  },
+  "exit_code": 0,
+  "top_level_tests_passed": 4,
+  "package_elapsed_seconds": {
+    "internal/store": 5.763
+  },
+  "log": "historical-credit-core.log",
+  "limits": "Focused new core boundary tests only; no service followups or combined schema25 qualification in this command."
+}
