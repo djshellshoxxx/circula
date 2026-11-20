@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -178,12 +179,12 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	st := strings.TrimSpace(v["statement"])
-	if st == "" || len(st) > 2000 || categoryLabel(v["category"]) == v["category"] {
+	if st == "" || utf8.RuneCountInString(st) > 2000 || categoryLabel(v["category"]) == v["category"] {
 		p.Summary = messages.Text("dispute.invalid")
 		if st == "" {
 			p.Errors = append(p.Errors, fieldErr{"statement", messages.Text("dispute.statement.required")})
 		}
-		if len(st) > 2000 {
+		if utf8.RuneCountInString(st) > 2000 {
 			p.Errors = append(p.Errors, fieldErr{"statement", messages.Text("dispute.statement.too_long")})
 		}
 		if categoryLabel(v["category"]) == v["category"] {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -61,7 +62,7 @@ func (s *server) reReviewDecisionReview(w http.ResponseWriter, r *http.Request, 
 		s.disputeFail(w, r, c, id, domain.Invalid("amount", messages.Text("dispute.rereview.amount_max", domain.FormatAmount(remaining, pol.Decimals))))
 		return
 	}
-	if in.Rationale == "" || len(in.Rationale) > 2000 {
+	if in.Rationale == "" || utf8.RuneCountInString(in.Rationale) > 2000 {
 		s.disputeFail(w, r, c, id, domain.Invalid("rationale", messages.Text("dispute.rereview.rationale_required")))
 		return
 	}
