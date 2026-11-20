@@ -79,7 +79,16 @@ func toPolicyLog(e service.PolicyLogEntry) policyLogDTO {
 }
 
 func (s *server) policyLog(c *reqCtx) error { // GOV-002, GOV-003
-	rows, err := s.svc.PolicyLog(c.r.Context(), c.actor, c.netID)
+	if err := c.only("limit", "cursor"); err != nil {
+		return err
+	}
+	p, err := c.page("")
+	if err != nil {
+		return err
+	}
+	rows, next, err := collect(c, p, func(pg service.Page) ([]service.PolicyLogEntry, error) {
+		return s.svc.PolicyLogPage(c.r.Context(), c.actor, c.netID, pg)
+	}, func(e service.PolicyLogEntry) string { return itoa(e.Version) }, nil)
 	if err != nil {
 		return err
 	}
@@ -87,5 +96,5 @@ func (s *server) policyLog(c *reqCtx) error { // GOV-002, GOV-003
 	for _, e := range rows {
 		out = append(out, toPolicyLog(e))
 	}
-	return listOK(c, out, nil)
+	return listOK(c, out, next)
 }

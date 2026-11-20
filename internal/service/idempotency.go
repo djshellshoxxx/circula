@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 const maxKeyLen = 255 // matches the API edge and API-021 (D-03)

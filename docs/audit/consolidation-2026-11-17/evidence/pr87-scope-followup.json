@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-11-18T09:29:12.694221+00:00",
+  "pr": 87,
+  "previous_reviewed_head": "1a3ef0fad836067b71857d961659459d976e7e15",
+  "head": "679a3016d77c3cf34e218ecb296f1d42cc0969c8",
+  "tree": "d88d4da959d34989248c3d172da56dabf24a272e",
+  "parents": [
+    "1a3ef0fad836067b71857d961659459d976e7e15"
+  ],
+  "changed_files": [
+    {
+      "path": "docs/audit/consolidation-completion-2026-11/AUD4-F03.md",
+      "old_blob": "bdd2b9ff778eb91da9d16f8e8578f6cc9aebb1c9",
+      "new_blob": "2dd23b322f13334753bc3e3d440b2c63eb5f1113",
+      "old_sha256": "1a23add94a87a62c5ecd851bb63094acfc76b561fcc199304f03eb982bdf7056",
+      "new_sha256": "8d91ef1f86a13a230e1445abe6829d0180d104e656d753925da3f86432da750c",
+      "scope": "documentation"
+    },
+    {
+      "path": "docs/specs/10-governance-operations.md",
+      "old_blob": "a883507fcc44d9cd02ca5bd244f1b27a1df9fc08",
+      "new_blob": "8f14983135dead067fb3ed2256ea2b91475348a3",
+      "old_sha256": "0274e25806e3747aa4cac52baca3bafed34900a265121ffcf6311bb0649a5071",
+      "new_sha256": "5e5caf3c182fba6d2529c779ac6e6419c527d1fe8c01413e75e8e1e26fea0712",
+      "scope": "documentation"
+    },
+    {
+      "path": "internal/service/disputes_deadlines.go",
+      "old_blob": "99dc346e45fdc1726fbd5781d6b99ab4226e3451",
+      "new_blob": "ffb6f11bb0dda5cc39493ee6ceeea05a1e84707f",
+      "old_sha256": "81bf50cc9268f2f9a3a2208fa76539bcb83448dda93b548a80705fce20787850",
+      "new_sha256": "9043a82dd0ea5d309435fd489749a57506d05da806d620eca65de3a9ecec5432",
+      "scope": "comment-only"
+    }
+  ],
+  "tracked_file_count": 979,
+  "unchanged_blob_count": 976,
+  "go_file_count": 594,
+  "byte_identical_go_file_count": 593,
+  "test_file_count": 322,
+  "all_test_files_byte_identical": true,
+  "repository_contract_files": [
+    {
+      "path": "internal/repository/iface.go",
+      "blob": "9bfbcc96dfa47513cf6298812465132ef8510ec5",
+      "byte_identical": true
+    },
+    {
+      "path": "internal/store/sqlite_network.go",
+      "blob": "06264e868dc23b36361dbc3f3b452644149324c6",
+      "byte_identical": true
+    },
+    {
+      "path": "internal/storetest/storetest.go",
+      "blob": "9364422e1f6f3306a312dd3296e783bf0021098b",
+      "byte_identical": true
+    },
+    {
+      "path": "internal/store/policy_in_force_test.go",
+      "blob": "c36f4d4f8185915b67b3dc7109f47ff323d8fa8d",
+      "byte_identical": true
+    }
+  ],
+  "go_equivalence": {
+    "path": "internal/service/disputes_deadlines.go",
+    "all_added_removed_lines_are_full_line_comments": true,
+    "compiler_or_line_directives_added_removed": false,
+    "method": "Delete only complete lines matching ^[ \\t]*// from each complete Go file; remaining bytes including executable whitespace and string contents match exactly. No Go/compiler execution used.",
+    "remaining_bytes": 3276,
+    "remaining_sha256": "cfd1bf41463d63bbb4cdfdd4342e2a20037e6436b5d75ef491ec93d5b6978cab",
+    "remaining_bytes_identical": true
+  },
+  "scope_findings": {
+    "immutable_history_claim_corrected": true,
+    "same_millisecond_residual_explicit": true,
+    "host_clock_rollback_residual_explicit": true,
+    "aud4_f03_classified_partial_in_code_audit_and_spec_note": true,
+    "no_runtime_test_contract_or_migration_change": true,
+    "future_durable_binding_is_design_item_not_implemented_or_approved": true
+  },
+  "prior_evidence_carry_forward": {
+    "source_review": "PR87-SOURCE-REVIEW.md",
+    "machine_index": "PR87-SOURCE-REVIEW.json",
+    "basis": "All tests and all executable source are unchanged; the sole changed Go file differs only in ordinary full-line comments. Prior source/regression results apply to this equivalent executable/test content, not a claim that commands were rerun on the new commit.",
+    "residual_reproductions_remain_valid": true
+  },
+  "readiness": "Earlier documentation objection is resolved. Source is acceptable as explicitly partial remediation, subject to current-head CI and coordinator combined qualification. AUD4-F03 stays partly remediated until durable history binding is designed and verified.",
+  "executed_during_followup": "Read Git objects and diff; compare file blobs/comment-stripped bytes. No Go commands, tests, tracked-source changes, ref mutations or remote writes.",
+  "primary_commit_url": "https://github.com/djshellshoxxx/circula/commit/679a3016d77c3cf34e218ecb296f1d42cc0969c8"
+}

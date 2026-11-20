@@ -1,0 +1,12 @@
+[
+  {
+    "fixture": "clean",
+    "exit": 0,
+    "output": "scan-release: 1 archive(s) clean\n"
+  },
+  {
+    "fixture": "forbidden",
+    "exit": 1,
+    "output": "scan-release: /workspace/scratch/9ceb45b04668/audit-d/forbidden.zip: credential.key: forbidden file name\nscan-release: 1 finding(s) in 1 archive(s)\n"
+  }
+]

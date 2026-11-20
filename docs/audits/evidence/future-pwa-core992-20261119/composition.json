@@ -1,0 +1,603 @@
+{
+  "observed_at": "2026-11-19T11:51:34.531591+00:00",
+  "old_head": "f153bf5b18f933308479eea7fe75c0f60d33ca38",
+  "core_head": "992478594e5902f57a39f3772739bee6ab495d24",
+  "native_merge": {
+    "conflicts": [],
+    "pre_note_tree": "84e10b564912d480351205e73679f272b6564591"
+  },
+  "counts": {
+    "old_leaves": 1359,
+    "core_leaves": 1470,
+    "candidate_pre_note_leaves": 1515,
+    "pwa_files": 44,
+    "core_updates_from_old": 233
+  },
+  "pwa_preservation": {
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "subtree": "0c77b727466e035930b75a94f630708a849397a9",
+    "files": {
+      "future/pwa/.gitignore": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c2658d7d1b31848c3b71960543cb0368e56cd4c7"
+      },
+      "future/pwa/AUDIT-PENDING.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7ccb9584c1027a7b4c3d30287e83263ea2e58725"
+      },
+      "future/pwa/AUDIT.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b085f501dd35b4d9ad5fef3d370cdf92d284f0f0"
+      },
+      "future/pwa/BUILD-SHA256SUMS": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "63c2747cd87e06d4f22c91e0b7976232a7e672d3"
+      },
+      "future/pwa/COMPLETION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ebfae668ee594d233c9eb786a3b2b261677d6559"
+      },
+      "future/pwa/INTEGRATION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bea3f67967832d87014d3baec1fdcfeaf142fb5f"
+      },
+      "future/pwa/README.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "53fc041d16c3360a098737eb6fbc9484f9a1028f"
+      },
+      "future/pwa/SPEC-SNAPSHOT.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e9d2e47f161774d8fc216b346356c9f534e52077"
+      },
+      "future/pwa/THIRD_PARTY_NOTICES.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2dcdd1976a2a8bd14c3e5153b9d152fb1d9cc5a9"
+      },
+      "future/pwa/UPSTREAM-RESEARCH.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0691530d4455c06d0a2ca9be01c86daabbf84265"
+      },
+      "future/pwa/VALIDATION.md": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7b87eaa8007b94de83b89427122148e7f188083b"
+      },
+      "future/pwa/browser/test.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e13d58d190af19d41f6a28a1c9e151a4a2b65ad1"
+      },
+      "future/pwa/bundle.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8d9a8975b813de8f53a0e9f2994663b58bf7e3ca"
+      },
+      "future/pwa/bundle_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0dd6c0813d5dd6e6ef7127cb8cca02bf7abca043"
+      },
+      "future/pwa/cmd/demo/main.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5d8b54176f1458c00a3978d932faaca7799a14f7"
+      },
+      "future/pwa/concurrency_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cc6dd54e0839e7a1f2d2a7f7ec53f2969699a0ba"
+      },
+      "future/pwa/feature.json": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b9328faac33485ba3cc26650e28c6cdecd587012"
+      },
+      "future/pwa/go.mod": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bec58c5d1c7e9e6d8bfb86196d46f7a88ccc89da"
+      },
+      "future/pwa/hardening_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "19c159780cf4fc3ce847cab7b4a1232196f81092"
+      },
+      "future/pwa/licenses/ESBUILD-MIT.txt": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2027e8dcf3787f5aac9fcd835e2b80cb75a39211"
+      },
+      "future/pwa/licenses/PLAYWRIGHT-APACHE-2.0.txt": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "df112373eb2e23e459bf93ec412be1764dc5a38b"
+      },
+      "future/pwa/licenses/WORKBOX-MIT.txt": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "845b545fd0f5031a944cda8cf9018eb066500040"
+      },
+      "future/pwa/package-lock.json": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "567df5bb54f072b67d5da57149b560c1f254ee64"
+      },
+      "future/pwa/package.json": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bca2e26e9da0fe249a7d1c37ceb870d246263dcd"
+      },
+      "future/pwa/policy.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9419cf87157555acb5657b3d15cca915752d4983"
+      },
+      "future/pwa/policy_test.go": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5f617bde6c8c275268f36f0e712d78c90b40b748"
+      },
+      "future/pwa/public/catalog.json": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "15148bfde79d36e40fd534a51786ba83c5cd9569"
+      },
+      "future/pwa/public/client.7bac8aeb71fc8dae.js": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0f8b1391a8ccb06f7e12bd45402d8aba292d5506"
+      },
+      "future/pwa/public/icon-192.a357dff3e6591aaf.png": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "281e9464728155713f339c2ed6599610aa933ff0"
+      },
+      "future/pwa/public/icon-512.1bd78cda0fb9713e.png": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "16a8bd1e3ad65ef14904f51e671e8d3d0c4ddd2e"
+      },
+      "future/pwa/public/style.471223f5a40e4465.css": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "af181db673eb9c7be4c96fcb0005835692df9721"
+      },
+      "future/pwa/public/worker.js": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cd8563541b6e00b8081d31e12fbe13bfa21f41d6"
+      },
+      "future/pwa/scripts/build.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ef654f0f3efd505d9997e4d7a6fd6a097ac3fd29"
+      },
+      "future/pwa/src/client.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d8d40aae6f299dea9a5eb27fc162e00d30a8242a"
+      },
+      "future/pwa/src/icon-192.png": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "281e9464728155713f339c2ed6599610aa933ff0"
+      },
+      "future/pwa/src/icon-512.png": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "16a8bd1e3ad65ef14904f51e671e8d3d0c4ddd2e"
+      },
+      "future/pwa/src/policy.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3f36172ab29bac816cafa72e75fa119ccaa6fb45"
+      },
+      "future/pwa/src/policy.test.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ebce0a7df38a06c683141463ac89b05d1b2d155b"
+      },
+      "future/pwa/src/precache.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2c031949730d42c6786e6b3374cf4b3938c94d1a"
+      },
+      "future/pwa/src/precache.test.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "77b681f583348c3bf512554e3ea6d3d19e6d48b5"
+      },
+      "future/pwa/src/privacy.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "48e523c38d30657bd6c1fb09f91e573e4821e24b"
+      },
+      "future/pwa/src/privacy.test.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4bf18665ba436213ae0c294afb60ab101059437e"
+      },
+      "future/pwa/src/style.css": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "af181db673eb9c7be4c96fcb0005835692df9721"
+      },
+      "future/pwa/src/worker.mjs": {
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7cabb563d5b4f69c1c78950c8e1b756bb3473844"
+      }
+    }
+  },
+  "core_preservation": {
+    "missing": [],
+    "changed": [
+      "CONTRIBUTING.md",
+      "scripts/check-action-pins.sh"
+    ],
+    "permitted_registration_only_changes": [
+      "CONTRIBUTING.md",
+      "scripts/check-action-pins.sh"
+    ],
+    "all_core_security_session_export_source_exact": true
+  },
+  "qualification_artifacts_preserved": {
+    ".github/workflows/future-pwa.yml": {
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5869fc2f83e59b442d9f4ab3cab0a7c2fd77644a"
+    },
+    "CONTRIBUTING.md": {
+      "mode": "100644",
+      "type": "blob",
+      "sha": "94eba5ce59527d45c45ac262f188e934614529d2"
+    },
+    "scripts/check-action-pins.sh": {
+      "mode": "100755",
+      "type": "blob",
+      "sha": "e6d1ef927d4c505f45eb3ca3b290e3ff3871cb34"
+    }
+  },
+  "core_delta_paths": [
+    ".github/workflows/ci.yml",
+    "cmd/circula/export_http_interruption_test.go",
+    "cmd/circula/verify_export.go",
+    "cmd/circula/verify_export_ambiguity_test.go",
+    "cmd/circula/verify_export_boundary_test.go",
+    "docs/TRACEABILITY.md",
+    "docs/api/openapi.yaml",
+    "docs/audit/consolidation-2026-11-17/source-reviews/BUILT-REQUIREMENT-EVIDENCE.md",
+    "docs/audit/consolidation-2026-11-17/source-reviews/OWN-SESSIONS.md",
+    "docs/audits/API036_COMPLETION.md",
+    "docs/audits/API036_DATABASE_REVIEW.md",
+    "docs/audits/API036_SQL_MEASUREMENTS.json",
+    "docs/audits/BRANCH_CONSOLIDATION_MATRIX.md",
+    "docs/audits/BRANCH_DEPENDENCY_GRAPH_2026-11-19.md",
+    "docs/audits/BRANCH_INVENTORY_2026-11-19.json",
+    "docs/audits/BRANCH_REFS_2026-11-19.tsv",
+    "docs/audits/COMPREHENSIVE_REPOSITORY_AUDIT.md",
+    "docs/audits/CONCURRENT_BRANCH_SNAPSHOT_20261119.md",
+    "docs/audits/CONSOLIDATION_CONTINUATION_2026-11-19.md",
+    "docs/audits/CONSOLIDATION_FINAL_REPORT.md",
+    "docs/audits/CORE_COMPOSITION_20261119.md",
+    "docs/audits/FEATURE_COMPLETION_STATUS.md",
+    "docs/audits/FUTURE_MODULE_QUALIFICATION.md",
+    "docs/audits/POST_SNAPSHOT_BRANCH_RECONCILIATION_2026-11-19.md",
+    "docs/audits/REMAINING_BLOCKERS.md",
+    "docs/audits/SECURITY_REVIEW.md",
+    "docs/audits/api036-session-sql-probe.py",
+    "docs/audits/build_branch_inventory.py",
+    "docs/audits/evidence/continuation-20261119/README.md",
+    "docs/audits/evidence/continuation-20261119/SHA256SUMS",
+    "docs/audits/evidence/continuation-20261119/core/core-amount-fuzz.log",
+    "docs/audits/evidence/continuation-20261119/core/core-diff.log",
+    "docs/audits/evidence/continuation-20261119/core/core-exports.log",
+    "docs/audits/evidence/continuation-20261119/core/core-format.log",
+    "docs/audits/evidence/continuation-20261119/core/core-hygiene.log",
+    "docs/audits/evidence/continuation-20261119/core/core-inventory-sqlite-smoke.json",
+    "docs/audits/evidence/continuation-20261119/core/core-job-identifiers-full-api-source.jsonl",
+    "docs/audits/evidence/continuation-20261119/core/core-job-identifiers.jsonl",
+    "docs/audits/evidence/continuation-20261119/core/core-lightweight-checks.json",
+    "docs/audits/evidence/continuation-20261119/core/core-pins.log",
+    "docs/audits/evidence/continuation-20261119/core/core-production-build.log",
+    "docs/audits/evidence/continuation-20261119/core/core-qa-runner.log",
+    "docs/audits/evidence/continuation-20261119/core/core-session-bounded-service.jsonl",
+    "docs/audits/evidence/continuation-20261119/core/core-thresholds.log",
+    "docs/audits/evidence/continuation-20261119/core/future-current-run.log",
+    "docs/audits/evidence/continuation-20261119/core/security-token-authority-after.jsonl",
+    "docs/audits/evidence/continuation-20261119/core/sqlite-compile.log",
+    "docs/audits/evidence/continuation-20261119/core/traceability-regenerate.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-201-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-201-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-201-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-202-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-202-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-202-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-203-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-203-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-203-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-204-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-204-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-204-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-205-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-205-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-205-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-206-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-206-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-206-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-207-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-207-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-207-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-208-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-208-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-208-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-209-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-209-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FNET-209-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-101-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-101-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-101-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-102-format.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-102-race.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-102-vet.log",
+    "docs/audits/evidence/continuation-20261119/future/FUX-103-format.log",
+    "docs/audits/evidence/continuation-20261119/future/current-results.json",
+    "docs/audits/evidence/continuation-20261119/future/runner.source.txt",
+    "docs/audits/evidence/continuation-20261119/future/sources.json",
+    "docs/audits/evidence/continuation-20261119/manifest.json",
+    "docs/audits/evidence/final-core-20261119/README.md",
+    "docs/audits/evidence/final-core-20261119/SHA256SUMS",
+    "docs/audits/evidence/final-core-20261119/focused-tests.json",
+    "docs/audits/evidence/final-core-20261119/generation-and-static-checks.json",
+    "docs/audits/evidence/final-core-20261119/interrupted-full-suite.json",
+    "docs/audits/evidence/final-core-20261119/new99-overlap-review.json",
+    "docs/audits/evidence/final-core-20261119/security-composition-review.json",
+    "docs/audits/evidence/final-core-20261119/session-query-measurements.json",
+    "docs/audits/evidence/final-core-20261119/session-service-tests.json",
+    "docs/audits/evidence/post-snapshot-20261119/README.md",
+    "docs/audits/evidence/post-snapshot-20261119/SHA256SUMS",
+    "docs/audits/evidence/post-snapshot-20261119/core-catalogue-traceability-merged-12af211.execution.json",
+    "docs/audits/evidence/post-snapshot-20261119/core-catalogue-traceability-merged-12af211.jsonl",
+    "docs/audits/evidence/post-snapshot-20261119/core-catalogue-traceability-runner.source.txt",
+    "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.execution.json",
+    "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-merged-a50f90b.jsonl",
+    "docs/audits/evidence/post-snapshot-20261119/core-cursor-security-runner.source.txt",
+    "docs/audits/evidence/post-snapshot-20261119/node-messages.execution.json",
+    "docs/audits/evidence/post-snapshot-20261119/session_sql_smoke.json",
+    "docs/audits/evidence/post-snapshot-20261119/session_sql_smoke.py",
+    "docs/audits/evidence/post-snapshot-20261119/static-checks.execution.json",
+    "docs/consolidation/BRANCH_INVENTORY.md",
+    "docs/consolidation/BRANCH_REFRESH_20261119.md",
+    "docs/consolidation/FEATURE_MATRIX.md",
+    "docs/consolidation/HANDOFF.md",
+    "docs/consolidation/MAIN_MERGE_LOG.md",
+    "docs/consolidation/RECOVERED_WORK.md",
+    "docs/consolidation/REMAINING_WORK.md",
+    "docs/consolidation/SECURITY_AUDIT.md",
+    "docs/consolidation/TEST_RESULTS.md",
+    "docs/consolidation/evidence/branch-inventory-20261119.json",
+    "docs/consolidation/evidence/branch-refresh-20261119-0259.json",
+    "docs/consolidation/evidence/committed-http-after.log",
+    "docs/consolidation/evidence/committed-http-before.log",
+    "docs/consolidation/evidence/export-auth-after.log",
+    "docs/consolidation/evidence/export-auth-before.log",
+    "docs/consolidation/evidence/export-race.log",
+    "docs/consolidation/evidence/fuzz-amount-receipt.md",
+    "docs/consolidation/evidence/marketplace-messages-after.log",
+    "docs/consolidation/evidence/marketplace-messages-before.log",
+    "docs/consolidation/evidence/marketplace-render-after.log",
+    "docs/consolidation/evidence/marketplace-render-before.log",
+    "docs/consolidation/evidence/traceability-duplicate-recovery.md",
+    "docs/consolidation/evidence/traceability-duplicates-after.log",
+    "docs/consolidation/evidence/traceability-duplicates-before.log",
+    "docs/consolidation/evidence/ux-messages.log",
+    "docs/consolidation/evidence/verification-attempts.json",
+    "docs/consolidation/evidence/web-after.log",
+    "docs/consolidation/evidence/web-before.log",
+    "docs/dev/MESSAGES.md",
+    "docs/dev/SERVICE.md",
+    "docs/ops/runbook.md",
+    "docs/ops/sessions.md",
+    "docs/qa/E2E.md",
+    "docs/specs/05-architecture.md",
+    "docs/specs/06-data-ledger-audit.md",
+    "docs/specs/07-api-contract.md",
+    "docs/specs/08-ux-accessibility.md",
+    "docs/specs/09-security-privacy.md",
+    "e2e/pages.js",
+    "e2e/tests/sessions.spec.js",
+    "internal/api/cursor.go",
+    "internal/api/cursor_fuzz_test.go",
+    "internal/api/cursor_security_test.go",
+    "internal/api/h_export.go",
+    "internal/api/h_ops.go",
+    "internal/api/h_sessions.go",
+    "internal/api/job_id.go",
+    "internal/api/job_id_internal_test.go",
+    "internal/api/more_test.go",
+    "internal/api/path_id_test.go",
+    "internal/api/route.go",
+    "internal/api/routes.go",
+    "internal/api/sessions_completion_test.go",
+    "internal/api/testdata/route_authz.txt",
+    "internal/contract/contract_test.go",
+    "internal/domain/audit_sessions.go",
+    "internal/domain/record_id.go",
+    "internal/repository/iface.go",
+    "internal/service/export.go",
+    "internal/service/export_authorization_test.go",
+    "internal/service/service.go",
+    "internal/service/session_page_internal_test.go",
+    "internal/service/session_position_security_test.go",
+    "internal/service/sessions_others.go",
+    "internal/service/sessions_others_test.go",
+    "internal/service/sessions_self.go",
+    "internal/service/sessions_stress_test.go",
+    "internal/service/sqlite_full_test.go",
+    "internal/service/token_authority_internal_test.go",
+    "internal/service/token_authority_race_test.go",
+    "internal/service/tokens.go",
+    "internal/store/migrate.go",
+    "internal/store/migrations/0021_session_unrevoked_index.sql",
+    "internal/store/persistence_regression_test.go",
+    "internal/store/recovery_internal_test.go",
+    "internal/store/session_migration_rollback_test.go",
+    "internal/store/session_pagination_insert_test.go",
+    "internal/store/session_performance_test.go",
+    "internal/store/session_query_plan_test.go",
+    "internal/store/sqlite.go",
+    "internal/store/sqlite_person.go",
+    "internal/store/sqlite_session_others.go",
+    "internal/storetest/sessions.go",
+    "internal/storetest/storetest.go",
+    "internal/web/a11y_test.go",
+    "internal/web/admin_reset_catalog_test.go",
+    "internal/web/export_stream_test.go",
+    "internal/web/h_admin2.go",
+    "internal/web/h_home.go",
+    "internal/web/h_recover.go",
+    "internal/web/h_sessions.go",
+    "internal/web/listings_pagination_test.go",
+    "internal/web/marketplace_catalog_test.go",
+    "internal/web/messages/admin_reset_test.go",
+    "internal/web/messages/en.json",
+    "internal/web/messages/marketplace_test.go",
+    "internal/web/messages/messages.go",
+    "internal/web/messages/messages_test.go",
+    "internal/web/messages/progressive_test.go",
+    "internal/web/messages/sessions_test.go",
+    "internal/web/messages/validation_test.go",
+    "internal/web/middleware.go",
+    "internal/web/progressive_catalog_test.go",
+    "internal/web/refusal.go",
+    "internal/web/render.go",
+    "internal/web/session_templates_test.go",
+    "internal/web/sessions_completion_test.go",
+    "internal/web/static/app.js",
+    "internal/web/support_boundaries_template_test.go",
+    "internal/web/templates/admin_member_act.html",
+    "internal/web/templates/admin_reset_done.html",
+    "internal/web/templates/base.html",
+    "internal/web/templates/directory.html",
+    "internal/web/templates/help.html",
+    "internal/web/templates/listing_edit.html",
+    "internal/web/templates/listing_form.html",
+    "internal/web/templates/listings.html",
+    "internal/web/templates/profile.html",
+    "internal/web/templates/sessions.html",
+    "internal/web/templates/sessions_revoke_others.html",
+    "internal/web/validation_catalog_test.go",
+    "scripts/read-export.py",
+    "scripts/test_app_messages.cjs",
+    "scripts/test_read_export.py",
+    "scripts/traceability/check_test.go",
+    "scripts/traceability/main.go"
+  ],
+  "disabled": true,
+  "integration": "HOLD",
+  "browser_harness_blob": "e13d58d190af19d41f6a28a1c9e151a4a2b65ad1",
+  "trace": {
+    "blob": "edfbe387d78f7ddd68ecd14bcfdad2096aab2e58",
+    "sha256": "2e6dd79ff67a655a2fd3d6ddf32974dffc0b2e47731c60e1f0ebead9857acd90",
+    "same_as_core": true,
+    "freshness": {
+      "command": [
+        "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+        "run",
+        "-p=1",
+        "-mod=readonly",
+        "./scripts/traceability",
+        "-check",
+        "-o",
+        "docs/TRACEABILITY.md"
+      ],
+      "environment": {
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "2",
+        "GOGC": "50"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 2.882,
+      "stdout": "",
+      "stderr": "traceability: docs/TRACEABILITY.md is up to date\n"
+    }
+  },
+  "static_checks": [
+    {
+      "command": [
+        "bash",
+        "scripts/check-action-pins.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.479,
+      "stdout": "action pins and permissions: ok\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "scripts/check-hygiene.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.379,
+      "stdout": "hygiene checks: ok\n",
+      "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "scripts/check-action-pins.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.003,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.145,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.007,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "format_check": {
+    "command": "gofmt -l <all tracked .go files>",
+    "file_count": 665,
+    "exit_code": 0,
+    "elapsed_seconds": 0.474,
+    "unformatted": [],
+    "stderr": ""
+  },
+  "new_runtime_suites_executed": false,
+  "new_combined_head_ci_required": true
+}

@@ -1,0 +1,7 @@
+=== RUN   TestAuditGActiveBackupSurvivesStaleSweep
+    backup_work_lease_test.go:26: second backup deleted the first active backup's verification file: stat /tmp/TestAuditGActiveBackupSurvivesStaleSweep190818324/002/.circula-bk-2441164868/snapshot.db.verify: no such file or directory
+    backup_work_lease_test.go:29: first active backup failed: open /tmp/TestAuditGActiveBackupSurvivesStaleSweep190818324/002/.circula-bk-2441164868/snapshot.db: no such file or directory
+--- FAIL: TestAuditGActiveBackupSurvivesStaleSweep (0.41s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.422s
+FAIL

@@ -1,0 +1,73 @@
+{
+  "commit": "284d756a28d2b0a0e453da650446cd5b844c39db",
+  "cases": {
+    "original": {
+      "checker_errors": [
+        "line 12: 'Property-test long run (merge/release)' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 13: 'Interleavings per CI configuration' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 14: '100 disjoint concurrent trades finish within' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 15: 'Branch coverage, posting/balance/credit-limit code' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 16: 'Throughput / latency targets' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 17: 'Login timing difference, existing vs missing account' has no dated DEC-023 decision ('UNCONFIRMED')",
+        "line 18: 'Migration of fixture with >10,000 entries' has no dated DEC-023 decision ('UNCONFIRMED')"
+      ],
+      "gate_returncode": 1,
+      "threshold_rows": [
+        "| thresholds | FAIL | DEC-023 decisions unconfirmed or invalid (QA-040) |"
+      ],
+      "retained_unconfirmed": true
+    },
+    "owner_rows_deleted": {
+      "checker_errors": [
+        "threshold table is missing required row '100 disjoint concurrent trades finish within'",
+        "threshold table is missing required row 'Branch coverage, posting/balance/credit-limit code'",
+        "threshold table is missing required row 'Interleavings per CI configuration'",
+        "threshold table is missing required row 'Login timing difference, existing vs missing account'",
+        "threshold table is missing required row 'Migration of fixture with >10,000 entries'",
+        "threshold table is missing required row 'Property-test long run (merge/release)'",
+        "threshold table is missing required row 'Throughput / latency targets'"
+      ],
+      "gate_returncode": 1,
+      "threshold_rows": [
+        "| thresholds | FAIL | DEC-023 decisions unconfirmed or invalid (QA-040) |"
+      ],
+      "retained_unconfirmed": true
+    },
+    "owner_rows_converted_to_prose": {
+      "checker_errors": [
+        "threshold table is missing required row '100 disjoint concurrent trades finish within'",
+        "threshold table is missing required row 'Branch coverage, posting/balance/credit-limit code'",
+        "threshold table is missing required row 'Interleavings per CI configuration'",
+        "threshold table is missing required row 'Login timing difference, existing vs missing account'",
+        "threshold table is missing required row 'Migration of fixture with >10,000 entries'",
+        "threshold table is missing required row 'Property-test long run (merge/release)'",
+        "threshold table is missing required row 'Throughput / latency targets'"
+      ],
+      "gate_returncode": 1,
+      "threshold_rows": [
+        "| thresholds | FAIL | DEC-023 decisions unconfirmed or invalid (QA-040) |"
+      ],
+      "retained_unconfirmed": true
+    },
+    "single_arbitrary_absolute": {
+      "checker_errors": [
+        "line 3: 'Invented threshold' has no dated DEC-023 decision ('n/a (absolute)')",
+        "threshold table is missing required row '100 disjoint concurrent trades finish within'",
+        "threshold table is missing required row 'Authorization matrix mismatches'",
+        "threshold table is missing required row 'Branch coverage, posting/balance/credit-limit code'",
+        "threshold table is missing required row 'Failing P0 tests'",
+        "threshold table is missing required row 'Interleavings per CI configuration'",
+        "threshold table is missing required row 'Ledger invariant failures in any run'",
+        "threshold table is missing required row 'Login timing difference, existing vs missing account'",
+        "threshold table is missing required row 'Migration of fixture with >10,000 entries'",
+        "threshold table is missing required row 'Property-test long run (merge/release)'",
+        "threshold table is missing required row 'Throughput / latency targets'"
+      ],
+      "gate_returncode": 1,
+      "threshold_rows": [
+        "| thresholds | FAIL | DEC-023 decisions unconfirmed or invalid (QA-040) |"
+      ],
+      "retained_unconfirmed": false
+    }
+  }
+}

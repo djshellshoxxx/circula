@@ -5,6 +5,28 @@
   if (el) { el.focus(); }
 })();
 
+// PER-022: retain the last server timestamp when connectivity fails or a saved
+// page returns from browser history. Coming online is not proof of a refresh.
+(function () {
+  var freshness = document.getElementById('figure-freshness');
+  var stale = document.getElementById('figure-stale');
+  if (!freshness || !stale) { return; }
+  function show(message) {
+    // Function replacement preserves literal dollar sequences in the snapshot.
+    stale.textContent = message.replace('{snapshot}', function () { return freshness.textContent; });
+    stale.hidden = false;
+  }
+  window.addEventListener('offline', function () {
+    show(stale.getAttribute('data-offline-message'));
+  });
+  window.addEventListener('pageshow', function (event) {
+    if (event.persisted) { show(stale.getAttribute('data-history-message')); }
+  });
+  if (navigator.onLine === false) {
+    show(stale.getAttribute('data-offline-message'));
+  }
+})();
+
 // Session expiry warning (UX-030, WCAG 2.2.1): two minutes before the session
 // is expected to end, offer to extend it. Nothing is redirected automatically,
 // so unsent form values are not lost.
@@ -29,9 +51,8 @@
   function show() {
     next();
     extend.hidden = !extendable;
-    msg.textContent = extendable
-      ? 'It ends around ' + clock(expires) + '. Choose Stay signed in to keep working.'
-      : 'It ends around ' + clock(expires) + ' and cannot be extended. Finish what you are doing, then sign in again.';
+    msg.textContent = box.getAttribute(extendable ? 'data-extendable-message' : 'data-fixed-message')
+      .replace('{time}', function () { return clock(expires); });
     box.hidden = false;
     box.focus();
     clearTimeout(endTimer);
@@ -39,7 +60,7 @@
   }
   function over() {
     extend.hidden = true;
-    msg.textContent = 'Your session has ended. Sign in again to continue. Your changes on this page have not been sent.';
+    msg.textContent = box.getAttribute('data-ended-message');
     box.hidden = false;
   }
   function schedule() {
@@ -59,7 +80,7 @@
         clearTimeout(endTimer);
         box.hidden = true; schedule();
       })
-      .catch(function () { msg.textContent = 'Could not extend the session. Sign in again.'; extend.hidden = true; });
+      .catch(function () { msg.textContent = box.getAttribute('data-failed-message'); extend.hidden = true; });
   });
   document.getElementById('session-dismiss').addEventListener('click', function () { box.hidden = true; });
   schedule();

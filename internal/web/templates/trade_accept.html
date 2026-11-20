@@ -2,8 +2,8 @@
 {{with .D}}
 <p class="big">{{.Sentence}}</p>
 <dl class="kv">
-  <dt>Payer</dt><dd>{{.Payer}}</dd>
-  <dt>Payee</dt><dd>{{.Payee}}</dd>
+  <dt>Payer</dt><dd>{{.Payer}}{{with $.MemberRef .Tx.PayerMemberID}} (member reference {{.}}){{end}}</dd>
+  <dt>Payee</dt><dd>{{.Payee}}{{with $.MemberRef .Tx.PayeeMemberID}} (member reference {{.}}){{end}}</dd>
   <dt>Amount</dt><dd>{{plain .Tx.Amount $.Dec}} {{$.Unit}}s</dd>
   {{if .Tx.Note}}<dt>Note</dt><dd>{{.Tx.Note}}</dd>{{end}}
   <dt>Your balance now</dt><dd>{{template "balance" .Before}}</dd>

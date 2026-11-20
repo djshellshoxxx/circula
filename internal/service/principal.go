@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // principal is the authorised view of a call: the network and the acting

@@ -1,0 +1,137 @@
+=== RUN   TestDisputePageReReviewDeadlineFixedAtOpen
+    dispute_timelines_test.go:39: page /n/town/disputes/018f0000-0000-7000-8000-00000000002b (status 200) lacks "Ask for a re-review"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Dispute</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-04T13:00:00Z">4 Mar 2026, 13:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden></p>
+
+
+
+
+
+
+        <dl class="kv">
+          <dt>Status</dt><dd><span class="tag">Resolved</span></dd>
+          <dt>Trade</dt><dd><a href="/n/town/trades/018f0000-0000-7000-8000-000000000022">alice@example.org paid bob@example.org 10.00 credits</a></dd>
+          <dt>Reason</dt><dd>Not as described or poor quality</dd>
+          <dt>Opened by</dt><dd>alice@example.org on <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></dd>
+
+          <dt>Statement</dt><dd>broken</dd>
+          <dt>Decision</dt><dd>Dismissed: the balance stands as before.</dd>
+          <dt>Rationale</dt><dd>not enough evidence</dd>
+
+
+        </dl>
+        <h2>Timeline</h2>
+        <ol><li>Opened: <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></li><li>Resolved (dismissed): <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></li></ol>
+
+
+
+
+
+
+
+
+        <p><a href="/n/town/disputes">Back to disputes</a></p>
+
+        </main>
+        <footer class="foot">
+          <p>Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted.</p>
+          <p><a href="/help">Help: credits, balances and statuses</a> &middot; Reference <code>57e101b88407f168</code></p>
+        </footer>
+        </body>
+        </html>
+    dispute_timelines_test.go:39: page /n/town/disputes/018f0000-0000-7000-8000-00000000002b (status 200) lacks "datetime=\"2026-03-15T12:00:00Z\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Dispute</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-04T13:00:00Z">4 Mar 2026, 13:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden></p>
+
+
+
+
+
+
+        <dl class="kv">
+          <dt>Status</dt><dd><span class="tag">Resolved</span></dd>
+          <dt>Trade</dt><dd><a href="/n/town/trades/018f0000-0000-7000-8000-000000000022">alice@example.org paid bob@example.org 10.00 credits</a></dd>
+          <dt>Reason</dt><dd>Not as described or poor quality</dd>
+          <dt>Opened by</dt><dd>alice@example.org on <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></dd>
+
+          <dt>Statement</dt><dd>broken</dd>
+          <dt>Decision</dt><dd>Dismissed: the balance stands as before.</dd>
+          <dt>Rationale</dt><dd>not enough evidence</dd>
+
+
+        </dl>
+        <h2>Timeline</h2>
+        <ol><li>Opened: <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></li><li>Resolved (dismissed): <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></li></ol>
+
+
+
+
+
+
+
+
+        <p><a href="/n/town/disputes">Back to disputes</a></p>
+
+        </main>
+        <footer class="foot">
+          <p>Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted.</p>
+          <p><a href="/help">Help: credits, balances and statuses</a> &middot; Reference <code>57e101b88407f168</code></p>
+        </footer>
+        </body>
+        </html>
+    dispute_timelines_test.go:40: page /n/town/disputes/018f0000-0000-7000-8000-00000000002b/rereview (status 422) lacks "Re-review requested"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Dispute</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-04T13:00:00Z">4 Mar 2026, 13:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden></p>
+
+
+
+
+          <div id="error-summary" class="errsum" role="alert" tabindex="-1" aria-labelledby="errsum-h">
+            <h2 id="errsum-h">There is a problem</h2>
+            <p>Not done. This item is no longer in a state that allows that. Reload to see its current state. Nothing changed.</p>
+
+          </div>
+
+
+
+        <dl class="kv">
+          <dt>Status</dt><dd><span class="tag">Resolved</span></dd>
+          <dt>Trade</dt><dd><a href="/n/town/trades/018f0000-0000-7000-8000-000000000022">alice@example.org paid bob@example.org 10.00 credits</a></dd>
+          <dt>Reason</dt><dd>Not as described or poor quality</dd>
+          <dt>Opened by</dt><dd>alice@example.org on <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></dd>
+
+          <dt>Statement</dt><dd>broken</dd>
+          <dt>Decision</dt><dd>Dismissed: the balance stands as before.</dd>
+          <dt>Rationale</dt><dd>not enough evidence</dd>
+
+
+        </dl>
+        <h2>Timeline</h2>
+        <ol><li>Opened: <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></li><li>Resolved (dismissed): <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time></li></ol>
+
+
+
+
+
+
+
+
+        <p><a href="/n/town/disputes">Back to disputes</a></p>
+
+        </main>
+        <footer class="foot">
+          <p>Credits are accounting units used inside one network. They are a record of who has given and received value; they have no value outside it and are not guaranteed to be accepted.</p>
+          <p><a href="/help">Help: credits, balances and statuses</a> &middot; Reference <code>a83273ba300024fc</code></p>
+        </footer>
+        </body>
+        </html>
+--- FAIL: TestDisputePageReReviewDeadlineFixedAtOpen (0.70s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	0.717s
+FAIL

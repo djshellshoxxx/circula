@@ -172,6 +172,7 @@ type txDTO struct {
 	Description        string  `json:"description"`
 	Reason             string  `json:"reason,omitempty"`
 	OriginalTxID       *string `json:"original_transaction_id"`
+	RelatedTxID        *string `json:"related_transaction_id,omitempty"`
 	ReversedTotalMinor string  `json:"reversed_total_minor"`
 	ProposedAt         string  `json:"proposed_at"`
 	ExpiresAt          *string `json:"expires_at"`
@@ -191,7 +192,7 @@ func strPtr(s string) *string {
 func toTx(t *domain.Transaction, myMember string) txDTO {
 	d := txDTO{ID: t.ID, Kind: string(t.Kind), Status: string(t.Status), PayerMemberID: strPtr(t.PayerMemberID),
 		PayeeMemberID: strPtr(t.PayeeMemberID), AmountMinor: minor(t.Amount), ListingID: strPtr(t.ListingID),
-		Description: t.Note, Reason: t.Reason, OriginalTxID: strPtr(t.OriginalTxID), ReversedTotalMinor: minor(t.ReversedTotal),
+		Description: t.Note, Reason: t.Reason, OriginalTxID: strPtr(t.OriginalTxID), RelatedTxID: strPtr(t.RelatedTxID), ReversedTotalMinor: minor(t.ReversedTotal),
 		ProposedAt: ts(t.ProposedAt), ExpiresAt: tsPtr(t.ExpiresAt), CompletedAt: tsPtr(t.CompletedAt),
 		DisputeDeadlineAt: tsPtr(t.DisputeDeadlineAt)}
 	if t.LedgerSeq > 0 {

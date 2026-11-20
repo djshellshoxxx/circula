@@ -1,0 +1,45 @@
+{
+  "head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+  "tree": "1e47c9c30165ca27866887533586c90323e1630e",
+  "started_at": "2026-11-18T10:09:38.975417+00:00",
+  "checks": [
+    {
+      "command": [
+        "go",
+        "mod",
+        "verify"
+      ],
+      "exit_code": 0,
+      "output": "all modules verified\n",
+      "elapsed_seconds": 1.278
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "-p",
+        "1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "output": "",
+      "elapsed_seconds": 2.287
+    },
+    {
+      "command": [
+        "go",
+        "run",
+        "./scripts/traceability",
+        "-check"
+      ],
+      "exit_code": 0,
+      "output": "traceability: docs/TRACEABILITY.md is up to date\n",
+      "elapsed_seconds": 0.436
+    }
+  ],
+  "finished_at": "2026-11-18T10:09:42.976861+00:00",
+  "post_head": "17152dadad91d4e1c994ea807e7d6e2497513aa8",
+  "post_tree": "1e47c9c30165ca27866887533586c90323e1630e",
+  "post_status": "",
+  "status": "passed"
+}

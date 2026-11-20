@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 const (
@@ -88,6 +88,9 @@ func (s *Service) CreateAnnouncement(ctx context.Context, actor domain.Actor, ne
 			}
 			sup := strings.TrimSpace(in.SupersedesID)
 			if sup != "" {
+				if !domain.ValidRecordID(sup) {
+					return "", domain.Invalid("supersedes_id", "must name a live announcement of this network")
+				}
 				old, err := repo.GetAnnouncement(netID, sup)
 				if err != nil || old.DeletedAt != nil {
 					return "", domain.Invalid("supersedes_id", "must name a live announcement of this network")
@@ -126,6 +129,9 @@ func (s *Service) DeleteAnnouncement(ctx context.Context, actor domain.Actor, ne
 		repo, err := announcements(tx)
 		if err != nil {
 			return err
+		}
+		if !domain.ValidRecordID(id) {
+			return domain.NotFound("announcement")
 		}
 		done, err := repo.RetractAnnouncement(netID, id, p.memberID(), s.now())
 		if err != nil {
@@ -176,6 +182,9 @@ func (s *Service) listAnnouncements(ctx context.Context, actor domain.Actor, net
 		f := store.AnnouncementFilter{AfterID: pg.AfterID, Limit: clampPage(pg), SupersededBefore: s.now()}
 		if !admin {
 			f.EffectiveBy = s.now()
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
 		}
 		out, err = repo.ListAnnouncements(netID, f)
 		return err

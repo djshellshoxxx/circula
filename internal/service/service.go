@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 	"github.com/google/uuid"
 )
 
@@ -27,6 +27,13 @@ type Config struct {
 	SessionIdle    time.Duration     // default 30 days (DAT section 9)
 	SessionMax     time.Duration     // default 90 days
 	IdempotencyTTL time.Duration     // default 7 days (DAT section 9)
+
+	// Authentication attempt budgets (SEC-006, OPS-008). Zero selects the
+	// existing defaults: 5 per login/address or sensitive account operation,
+	// 100 per login across addresses, and a 15-minute lock. Configured values
+	// may tighten but not disable or loosen these bounds. Changes need restart.
+	AuthThrottleAttempts, AuthThrottleGlobalAttempts int
+	AuthThrottleLock                                 time.Duration
 
 	// Role-specific session lifetimes (SEC-003, DEC-005). They apply to a
 	// person who holds the administrator (Admin*) or dispute reviewer
@@ -95,6 +102,9 @@ type Service struct {
 
 // New builds a Service over st, filling defaults.
 func New(st store.Store, cfg Config) (*Service, error) {
+	if err := configureAuthThrottle(&cfg); err != nil {
+		return nil, err
+	}
 	if cfg.Clock == nil {
 		cfg.Clock = wallClock{}
 	}
@@ -223,5 +233,8 @@ func (s *Service) asOf(fn func(store.Tx) error) func(store.Tx) error {
 // listing's documented order. Limit 0 means the default (100); max 500.
 type Page struct {
 	AfterID string
-	Limit   int
+	// BeforeID is supported by the session inventory to retrieve the previous
+	// page. It is mutually exclusive with AfterID.
+	BeforeID string
+	Limit    int
 }

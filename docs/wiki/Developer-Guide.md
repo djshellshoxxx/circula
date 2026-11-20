@@ -2,92 +2,153 @@
 
 [Home](Home) · [User Guide](User-Guide)
 
-**Source status:** Application development is in **draft PR #19**, pinned here to `d98734cf1b2cc9a826397a6e43f7902de2304109`; `main` is prompt-only. These are development instructions, **not deployment authorization**. The continuation policy is draft [PR #20](https://github.com/djshellshoxxx/circula/pull/20).
+**Source status:** Development instructions for branch `claude/cool-gauss-vdxlod` of the repository. They are **not deployment authorization**. Feature state follows [`docs/plans/circula-completion-matrix.md`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/plans/circula-completion-matrix.md) (2026-11-11). Owner decisions, the licence and the release gate are still open. Nothing here has been tagged or published.
 
-## Architecture and module map
+Links below point at the `claude/cool-gauss-vdxlod` branch. Update them when that branch merges.
 
-- `cmd/circula`: CLI, HTTP process, maintenance, migrations, backups, restore, verification and operational jobs.
-- `internal/domain`: money (int64 minor units), invariants, enums, policy and state machines.
-- `internal/service`: core authorization, ledger posting, transactions, audit, member governance and recoveries.
-- `internal/store`: SQLite storage, transactions, WAL, migrations and append-only triggers.
-- `internal/api`: JSON HTTP API `/api/v1`, request validation, scoped tokens, idempotency and problem responses.
-- `internal/web`: server-rendered HTML, account, trade and administration workflows.
-- `internal/contract`: contract tests against the [OpenAPI specification](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/api/openapi.yaml).
-- `e2e`: Playwright, axe and keyboard tests; `docs/ops` and `docs/specs`: operator and normative references.
+## Module map
 
-The service is the authorized application write path and controls network-specific access. The database has a single-writer-process design; record money as integer minor units, never floating-point amounts. A trade must be revalidated before posting. Preserve append-only audit/ledger behavior and fail-closed errors.
+| Path | Role |
+|---|---|
+| `cmd/circula` | The `circula` command: HTTP process, migrations, backups, restore, ledger verification, operator jobs |
+| `internal/domain` | Money (int64 minor units), invariants, enums, policy and state machines |
+| `internal/service` | Authorization, ledger posting, trades, audit, governance (dual control, break-glass, erasure), recovery, export |
+| `internal/store` | SQLite storage, transactions, WAL, forward-only migrations, append-only triggers |
+| `internal/api` | JSON API under `/api/v1`: scoped tokens, idempotency keys, problem responses, keyset paging |
+| `internal/web` | Server-rendered HTML: templates, static assets, account, trade, dispute and administration pages |
+| `internal/httpx` | HTTP edge policy shared by the HTML and JSON adapters (cookie and host policy) |
+| `internal/histbal` | Adapter-facing contract for a member's balance at a point in time |
+| `internal/contract` | Checks the running JSON API against [`docs/api/openapi.yaml`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/api/openapi.yaml) |
+| `internal/testutil` | Deterministic service environments for tests |
+| `e2e/` | Playwright, axe and keyboard tests in headless Chromium |
+| `deploy/` | systemd unit, Dockerfile, compose file, sysusers and tmpfiles |
+| `scripts/` | Release gate, packaging, restore drill, hygiene and action-pin checks, smoke deploy |
+| `docs/` | Specs, operations, guides, QA, audits, decision log |
 
-See [service-layer reference](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/dev/SERVICE.md) and [specifications](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/README.md).
+Rules that the code depends on (from [`docs/dev/SERVICE.md`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/dev/SERVICE.md)): the service layer is the write path and enforces network scope; money is integer minor units, never floating point; a trade is re-validated before it posts; the audit and ledger are append-only; failures are closed.
 
-## Prerequisites and local setup
+## Prerequisites
 
-Work on an isolated branch based on PR #19's application head; **do not run `make` on prompt-only `main`**.
+- **Go 1.26.11**, as declared in [`go.mod`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/go.mod). The SQLite driver is pure Go, so ordinary builds need no C compiler.
+- **Race tests need cgo.** The Makefile defaults `CGO_ENABLED` to `0`, so set `CGO_ENABLED=1` and have a C compiler for `make test-race`.
+- **End-to-end tests:** Node 20 or later and a Chromium. `make e2e` reads `CHROMIUM_PATH` (default `/opt/pw-browsers`) and uses the locked `e2e/package-lock.json`.
+- Optional for `make check`: `golangci-lint` and `govulncheck` (the `vuln` target runs govulncheck through `go run`, so it needs network access to the vulnerability database).
 
-- Go **1.26.10** as declared in the pinned [go.mod](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/go.mod); pure-Go SQLite driver, no C compiler required for ordinary builds.
-- Node 20+ and Chromium for browser tests; npm dependencies locked in `e2e/package-lock.json`.
-- A C toolchain is required for `go test -race`; `golangci-lint` and `govulncheck` for full checking.
+## Local instance
 
 ```sh
-git checkout claude/happy-noether-444cum
 make build
 mkdir -p data
-export CIRCULA_DATABASE="$PWD/data/circula.db"
 export CIRCULA_PUBLIC_BASE_URL=http://127.0.0.1:8080
-export CIRCULA_COOKIE_SECURE=false  # loopback development only
+export CIRCULA_COOKIE_SECURE=false                       # loopback http only
 export CIRCULA_SETUP_SECRET="$(head -c 24 /dev/urandom | base64)"
+export CIRCULA_DATABASE="$PWD/data/circula.db"
 ./bin/circula migrate
+printf '%s\n' 'a-long-operator-password' | ./bin/circula admin create-operator -login ops-admin
 ./bin/circula serve
 ```
 
-With a local instance, browse `http://127.0.0.1:8080`. Use [README setup notes](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/README.md) for first-operator creation. Do not expose the local HTTP setup or fixtures on a public network. Confirm the configuration using `./bin/circula serve -check-config`.
+Then open `http://127.0.0.1:8080`. Check `/healthz`, `/readyz`, and `/metrics` (`/metrics` answers only from loopback or `CIRCULA_METRICS_ALLOW` addresses). Run `./bin/circula serve -check-config` to validate settings without touching the database.
 
-## Build, tests and debugging
+Notes:
+- `serve` listens on `127.0.0.1:8080` unless `CIRCULA_LISTEN` or `-listen` is set.
+- `serve` refuses an `http://` public URL on a non-loopback address.
+- Keep `CIRCULA_COOKIE_SECURE` at its default (`true`) behind TLS. Set `false` only for loopback development.
+- Secrets (setup secret, metrics token, backup keys, MFA key) come from the environment or a 0600 file, never from a flag.
+- Use a disposable database for tests and local runs. Do not expose a development instance or its setup secret on a public network.
+
+## CLI reference
+
+Run `circula help` for the built-in list. Every command accepts `-config` (or `CIRCULA_CONFIG`). Precedence: flags, then `CIRCULA_*` environment variables, then the JSON config file, then defaults.
+
+| Command | Purpose |
+|---|---|
+| `serve [-check-config]` | Run the HTTP service (web, JSON API, health, metrics) |
+| `migrate [-dry-run]` | Back up if needed, apply pending migrations, verify every network |
+| `backup <dest>` | Verified online snapshot and manifest (file, or directory for a timestamped name) |
+| `restore [-overwrite] <backup-file>` | Restore into the configured database. Stop `serve` first |
+| `verify-ledger [-network id-or-slug]` | Recompute ledger invariants. Exit `3` if a check fails |
+| `verify-export <file\|dir>` | Check an export package against its manifest |
+| `maintenance on\|off\|status` | Toggle maintenance mode of a running instance (503 for web and API) |
+| `setup-reset` | Re-arm the one-time setup secret. Stop `serve` first |
+| `keygen` | Print a random key for `backup-encryption-key` |
+| `admin create-operator -login X` | Create a person. Password from `CIRCULA_OPERATOR_PASSWORD` or stdin |
+| `reset-password -login X -reason "..."` | Set a temporary password (audited) |
+| `reset-mfa -login X -reason "..."` | Remove a lost second factor (audited) |
+| `unlock -login X` | Clear sign-in and recovery lockouts for a login (audited) |
+| `revoke-sessions -reason "..." [-login Y] [-rotate-web-key]` | Sign out everyone, or one person. `-rotate-web-key` also replaces the web signing key |
+| `suspend start\|lift` | Platform suspension of a network |
+| `dual-control -network X -threshold-minor N -reason "..."` | Set or disable a network's dual-control threshold. Administrators can only tighten it |
+| `break-glass open\|close\|list\|grant-admin` | Operator break-glass sessions. See `docs/dev/break-glass.md` |
+| `erase-member -network X -member ID -reason "..." -confirm` | Irreversibly anonymise a departed member. See `docs/dev/erasure.md` |
+| `audit-anchor write\|verify` | Write or check an off-host audit-chain checkpoint |
+| `prune-logs -dir <dir>` | Delete log files older than `log-retention` |
+| `version` | Print version, commit and build date |
+
+Exit codes: `0` success, `1` failure, `2` usage or configuration error, `3` operation completed but ledger verification failed.
+
+Full settings reference: [`docs/ops/configuration.md`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/ops/configuration.md). Operations runbooks: [`docs/ops/README.md`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/ops/README.md).
+
+## Build and test
 
 ```sh
-make build
+make build            # bin/circula, CGO_ENABLED=0, -trimpath
 make test             # go test -count=1 ./...
 make vet
-make contract         # OpenAPI vs JSON API
-make test-race        # requires cgo toolchain
-make e2e              # Node, Chromium; starts an ephemeral test instance
-make check            # fmt, vet, race, lint, vuln, action pins, hygiene
-./bin/circula verify-ledger
+make contract         # JSON API against docs/api/openapi.yaml
+make test-race        # needs CGO_ENABLED=1 and a C compiler
+make e2e              # builds the binary, installs e2e deps, runs Playwright
+make load             # concurrent-trade load test (CIRCULA_LOAD=1)
+make restore-drill    # scripts/restore-drill-full.sh
+make check            # fmt-check, vet, test-race, lint, vuln, actions-check, hygiene
+make release-gate     # scripts/release-gate.sh: evidence checks
+make release-local VERSION=vX.Y.Z   # local archives in bin/dist
 ```
 
-`make release-gate` performs evidence checks but **does not tag, push or publish**. The repository's [CI workflow](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/.github/workflows/ci.yml) includes Go on Linux/macOS/Windows, contract/load, browser accessibility, fuzz smoke and reproducible cross-build checks. At exact PR #19 head, two CI runs [41806043004](https://github.com/djshellshoxxx/circula/actions/runs/41806043004) and [41806032535](https://github.com/djshellshoxxx/circula/actions/runs/41806032535) succeeded (nine jobs each). Manual screen-reader, independent security audit and owner thresholds remain unqualified. For failures inspect the failing job and the same exact SHA; do not infer a later branch head is tested.
+`make e2e` is not part of `make check`. `make release-gate` runs evidence checks. Its script contains no tag, push or release commands. `make release-local` builds local archives only.
 
-### Exact-head CI interpretation (November 10, 2026)
+Run `make help` for the authoritative target list.
 
-A subsequent isolated terms-return regression fix exists in **draft [PR #24](https://github.com/djshellshoxxx/circula/pull/24)**, **not** in the pinned PR #19 base. Its exact-head [Actions run 42838956843](https://github.com/djshellshoxxx/circula/actions/runs/42838956843) at `7620d7f51913363dd013b80cc682eb670eeff3a5` completed with **eight successful jobs and one cancelled macOS-14 test job**. The successful jobs include Ubuntu/Windows Go tests, browser accessibility, contract/load, fuzz, lint/vulnerability checks and builds. The workflow's overall conclusion is **cancelled, not success**. A targeted retry of the macOS job was also cancelled without executed steps/logs. **Subsequent runner-image investigation identified an obsolete runner label:** GitHub's [official retirement notice](https://github.com/actions/runner-images/issues/13518) states that `macos-14` became unsupported on **2026-11-02**; this matches the observed no-step cancellations, though the specific internal cancellation reason was not returned by the job API. A workflow-only correction is proposed in stacked **draft [PR #25](https://github.com/djshellshoxxx/circula/pull/25)** at `1760551f5b03a89ec64d09269d631e72f2e95959`, changing only the macOS test runner to the supported [macOS 15 Intel image](https://github.com/actions/runner-images/issues/13045). It keeps x86_64 coverage and the full test matrix; it is **not qualified until exact-head CI passes**. Do not interpret the old cancellations as a Go test assertion failure or a successful run. Do not remove OS coverage or relax any security/CI gate; retain manual screen-reader and independent security-review holds.
+## Continuous integration
 
-**Follow-up exact-head macOS race qualification:** PR #25's replacement runner did execute the complete race suite, but its [run 42869647736](https://github.com/djshellshoxxx/circula/actions/runs/42869647736) and [run 42869590887](https://github.com/djshellshoxxx/circula/actions/runs/42869590887) each finished **8 successful jobs, 1 failed macOS test job**. Logs show Go's default `panic: test timed out after 10m0s` during SQLite-heavy tests (including `internal/service`; the second run also timed out in `cmd/circula` and `internal/api`). Unlike the retired-runner cancellation, the new macOS runner actually executed steps; no discrete test assertion failure was established by those logs. A separate stacked **draft [PR #26](https://github.com/djshellshoxxx/circula/pull/26)** at `2078bf0964353892e80214b4601211e36818b889` retains full macOS race coverage with `go test -race -count=1 -p 2 -timeout=25m ./...` and a 45-minute macOS job cap while Linux and Windows test commands remain unchanged. Its [push CI run 42880207869](https://github.com/djshellshoxxx/circula/actions/runs/42880207869) and [pull-request CI run 42880245458](https://github.com/djshellshoxxx/circula/actions/runs/42880245458) have both **completed successfully at exact commit `2078bf0964353892e80214b4601211e36818b889`**. The PR run completed **9/9 jobs**, including macOS Intel race tests, Ubuntu and Windows tests, vet/gofmt/lint/govulncheck, browser accessibility automation, OpenAPI/load, fuzz smoke, release-target builds and reproducible builds. The adjustment changes execution resource bounds, not accounting/security policy or test assertions. This result applies only to the **unmerged stacked PR #26 source**: the separate documentation/audit/handoff branches still run an older macOS-14 matrix and their exact-head workflows were cancelled; those heads are **not** fully CI-qualified. Automated browser checks also do not replace manual screen-reader or independent security-review gates.
+On `main` at revision `b4398074`, [`.github/workflows/ci.yml`](https://github.com/djshellshoxxx/circula/blob/b4398074ae4ca72559235ca50242cfcb7a934eec/.github/workflows/ci.yml) defines:
 
-### Read-only decision-hint expiry correction (draft #27; exact-head CI qualified)
+- **Every pull request:** the Linux gate. Lint (vet, gofmt, golangci-lint, govulncheck, action-pin check, repository hygiene, dependency licence check against the approved list, secret scan), race tests, build, reproducible build, fuzz smoke, API contract and load smoke, and the e2e job (Playwright, axe, keyboard).
+- **Main pushes, nightly and manual runs:** `test-cross`, the Go test suite on macOS Intel (race) and Windows. On pull requests it runs only when the PR carries the `ci:cross-platform` label (see `docs/ops/ci.md`).
 
-On the stacked, **unmerged** source, `internal/service/dualcontrol.go:DecidableAdjustments` generates a UI/API eligibility hint from stored requests; it is **not** an authorization or posting decision. `ApproveAdjustment` and `RejectAdjustment` perform authoritative checks in their write transaction. The hint originally filtered `PendingOpen` requests without checking `ExpiresAt`, so an expired, not-yet-swept request could still appear eligible even though the approval path refused it. Draft [PR #27](https://github.com/djshellshoxxx/circula/pull/27) added the expiry-boundary regression in `internal/service/dualcontrol_decidable_expiry_test.go` at test-only SHA `eaf2a0360dd409c033f6caa982428e5bf361aea2`. GitHub-hosted [PR CI 42900149246](https://github.com/djshellshoxxx/circula/actions/runs/42900149246) and [push CI 42900136716](https://github.com/djshellshoxxx/circula/actions/runs/42900136716) **both failed as expected**: Ubuntu, macOS 15 Intel and Windows each reported `dualcontrol_decidable_expiry_test.go:26: expired pending request incorrectly offered as decidable`. Other jobs in the PR run passed. The minimal correction was subsequently committed as `b61a8e719030ff56044d71fee632b5ba824d7698`, checking a single sampled current time against `ExpiresAt` in the read-only hint; authoritative approval/rejection, posting, ledger and administrator-policy code were not changed. **Exact-head implementation CI qualified on the unmerged stacked draft:** [push CI 42908887240](https://github.com/djshellshoxxx/circula/actions/runs/42908887240) completed **9/9 jobs successfully** at `b61a8e719030ff56044d71fee632b5ba824d7698`. [PR CI 42908897181](https://github.com/djshellshoxxx/circula/actions/runs/42908897181) initially passed eight of nine jobs but failed `FuzzParseAmount` with `context deadline exceeded` after its 10-second fuzz interval. A targeted retry succeeded; **attempt 2 reports 9/9 successful jobs**, including fuzz smoke and complete macOS Intel race tests. The failed first attempt is preserved in the run history; no test assertion or security gate was weakened. No local tests were run by ChatGPT. This verification applies only to the exact draft implementation head, not the documentation branch, merged `main`, security approval or a release. This is draft engineering evidence, not a merged or deployed capability. Operators must continue to treat the authoritative decision result as final.
+Run results are on the Actions tab. This page does not record them (UNVERIFIED for this update). Use the run for the exact commit you are testing; a later head is not tested by an earlier run.
 
-Use a disposable SQLite database for tests; keep `/metrics`, operator endpoints, audit data and backups private. For diagnosing frozen networks and backup issues, consult [operator runbook](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/ops/runbook.md), [configuration](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/ops/configuration.md) and [backup/restore](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/ops/backup-restore.md).
+Release artifacts come from [`.github/workflows/release.yml`](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/.github/workflows/release.yml) on a `v*` tag. Read the [release gate](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/qa/RELEASE-GATE.md) before tagging. Tagging, publishing and deployment need explicit owner authorization.
 
-## API contracts, contributions and security rules
+## Debugging and operations
 
-- [OpenAPI](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/api/openapi.yaml) — request/response contracts; check its exact-head implementation against `internal/api`.
-- [Data and ledger specs](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/06-data-ledger-audit.md), [security spec](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/specs/09-security-privacy.md), and [decision log](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/DECISIONS.md).
-- [CONTRIBUTING.md](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/CONTRIBUTING.md) — formatting, tests, dependency workflow, action pinning and release rules.
-- [SECURITY.md](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/SECURITY.md) — private vulnerability reporting and disclosure restrictions.
+- `./bin/circula verify-ledger`: recompute invariants. Exit code `3` means a ledger check failed.
+- Frozen networks, backups and restore: [runbook](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/ops/runbook.md), [backup and restore](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/ops/backup-restore.md), [upgrade](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/ops/upgrade.md).
+- Keep `/metrics`, operator endpoints, audit data and backups private.
+- Operational subsystems have their own notes in `docs/dev/`: [MFA](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/dev/mfa.md), [recovery](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/dev/recovery.md), [dual control](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/dev/dual-control.md), [durability](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/dev/durability.md), [Argon2 benchmark](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/dev/argon2-benchmark.md).
 
-Create isolated branches and draft PRs. Add a failing regression test before correcting a reproducible defect, then qualify the relevant test and broad CI. Never modify another contributor's active branch, rewrite existing tests to mask failures, or change financial policy, cryptographic trust or release permissions without approval. Do not disclose exploitable unpatched findings in public GitHub issues.
+## Specifications and contracts
 
-## Release process, ADRs/specs and outstanding engineering work
+- [Specifications index](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/specs/README.md). Data and ledger: [06](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/specs/06-data-ledger-audit.md). API contract: [07](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/specs/07-api-contract.md). Security and privacy: [09](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/specs/09-security-privacy.md). Some status columns are stale; the completion matrix takes precedence.
+- [OpenAPI document](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/api/openapi.yaml). Check changes with `make contract`.
+- [Decision log](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/DECISIONS.md).
+- [Traceability](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/TRACEABILITY.md) and [historical completeness audit](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/docs/audit/COMPLETENESS.md). Both predate the matrix; treat them as history.
 
-Release process: review [release gate](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/qa/RELEASE-GATE.md), record evidence, resolve owner thresholds and manual accessibility/security items, prepare release notes from [releases source](https://github.com/djshellshoxxx/circula/tree/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/releases), and obtain explicit owner authorization before tag/publish/deploy. `make release-local` builds local archives only.
+## Contributing and security
 
-Key open decisions include licence, SEC-033 independent review, DEC-014 (A3-F02), owner financial/security choices and manual QA-035/UX-056. Historical [completeness audit](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/audit/COMPLETENESS.md) and [traceability matrix](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/TRACEABILITY.md) need source-pinned requalification; passing automated checks is not an assertion of full completion.
+- [CONTRIBUTING.md](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/CONTRIBUTING.md): formatting, tests, dependency and action-pin rules, release rules.
+- [SECURITY.md](https://github.com/djshellshoxxx/circula/blob/claude/cool-gauss-vdxlod/SECURITY.md): private reporting. Do not disclose exploitable unpatched findings in public issues.
+- Do not change financial policy, cryptographic trust paths or release permissions without owner approval.
 
-Current work tracking: [PR #19](https://github.com/djshellshoxxx/circula/pull/19) implementation, [PR #20](https://github.com/djshellshoxxx/circula/pull/20) ChatGPT coordination proposal, and [PR #21](https://github.com/djshellshoxxx/circula/pull/21) exact-head qualification handoff. Use the active branch SHA and open PRs as truth, not a stale changelog.
+## Open engineering work
 
+From the completion matrix (2026-11-11):
 
-### Secure-cookie configuration traceability (SEC-022 / SA2-14; draft source)
+- **O2:** container build and deploy files are UNVERIFIED (Docker was not run in the evidence).
+- **O4:** CI is PARTIAL. Remove duplicate runs and move macOS and Windows tests to main or nightly.
+- **W10:** export runs in memory; the streaming or spool slice is not integrated.
+- **L9:** posting fault injection is at the store interface, not real SQLite I/O errors.
+- **A6:** account-enumeration timing equivalence is not measured.
+- **W5:** an administrator without the reviewer role may decide disputes (DEC-072).
 
-On application [PR #19](https://github.com/djshellshoxxx/circula/pull/19), `cmd/circula/serve.go:newHandlers` passes `cfg.CookieSecure` into the shared `httpx.Edge.ForceSecure` setting for both HTML and JSON API adapters. `internal/web/session.go` uses that edge policy when naming and setting cookies. With HTTPS or `cookie-secure=true`, only `__Host-` session/CSRF cookie names are accepted; the `Secure`, host-only and `Path=/` attributes are part of the boundary. Keep `cookie-secure=true` behind a TLS-terminating proxy; only disable it for isolated plain-HTTP development. See the source-pinned [operations guide](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/ops/README.md) and [configuration reference](https://github.com/djshellshoxxx/circula/blob/d98734cf1b2cc9a826397a6e43f7902de2304109/docs/ops/configuration.md).
-
-Existing source tests include `internal/httpx/hostprefix_test.go:TestHostPrefixOnlyWhenSecure` and HTML adapter security tests. A new independent, **test-only** [draft PR #28](https://github.com/djshellshoxxx/circula/pull/28) adds `cmd/circula/cookie_policy_adapter_test.go:TestServeCookieSecurePolicyReachesHTMLAdapter` to exercise both settings through `newHandlers` against a plain-HTTP backend, as occurs behind a TLS proxy. The original test-only commit `bf214f6d3bbc5a26820de7cd08e77644f650a32f` had [exact-head CI run 42926497712](https://github.com/djshellshoxxx/circula/actions/runs/42926497712): **8/9 jobs passed**, including Ubuntu, Windows and macOS 15 Intel tests, Playwright/axe/keyboard browser checks, API contract/load, fuzz and builds; **the sole failure was gofmt**, which identified this one new test file. The test passed within the completed OS matrix but the original head was **not fully CI-green**. A formatting-only correction preserving every assertion was committed at `7e8481004801c01aea5d22f4720e1ead7381c4f7`. [Fresh exact-head CI run 42934571187](https://github.com/djshellshoxxx/circula/actions/runs/42934571187) was queued when this documentation change was written; **do not claim that correction qualified** until its checks finish. Neither version is merged, deployed, independently audited, or release-authorized.
+Owner gates (not engineering work): licence, DEC-005, DEC-011, DEC-013, DEC-014, DEC-021, DEC-022, DEC-023, DEC-025, break-glass scope A3-F02, independent security review SEC-033, manual screen-reader run UX-056 and QA-035, and the first tagged release.

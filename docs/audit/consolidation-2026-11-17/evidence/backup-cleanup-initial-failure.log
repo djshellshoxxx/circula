@@ -1,0 +1,5 @@
+--- FAIL: TestAuditGLeasedCleanupPreservesReplacedDirectoryTarget (0.00s)
+    audit_g_path_probe_test.go:39: leased cleanup followed replaced work directory and changed unrelated data: "", open /tmp/TestAuditGLeasedCleanupPreservesReplacedDirectoryTarget3225682498/001/unrelated-data/keep: no such file or directory
+FAIL
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	0.010s
+FAIL

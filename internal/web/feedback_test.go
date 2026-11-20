@@ -137,7 +137,9 @@ func TestDisputeResponseAndReReviewPages(t *testing.T) {
 	if forced.Status != 403 {
 		t.Errorf("original reviewer forced status = %d", forced.Status)
 	}
-	done := r2.post(path+"/rereview-decide", r2p, url.Values{"outcome": {"upheld"}, "rationale": {"photos convince me"}})
+	review := r2.post(path+"/rereview-decide", r2p, url.Values{"outcome": {"upheld"}, "rationale": {"photos convince me"}})
+	r2.mustContain(review, "Review the re-review decision", "10.00", "photos convince me")
+	done := r2.post(path+"/rereview-decide", review, confirmationValues(t, review, "confirm"))
 	r2.mustContain(done, "Re-review decision recorded", "Re-review decided, upheld", "photos convince me", "Dismissed")
 	if strings.Contains(done.Body, "Record the re-review decision") {
 		t.Error("decision form offered after deciding")

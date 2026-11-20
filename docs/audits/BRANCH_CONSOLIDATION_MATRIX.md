@@ -1,0 +1,333 @@
+# Branch consolidation matrix
+
+> Current composition: [combined core review and qualification checkpoint](CORE_COMPOSITION_20261119.md) records the reconciled PR90/96/99/101/102/104 source, focused passing checks, unchanged main and pending full provider gates. The [bounded branch refresh](CONCURRENT_BRANCH_SNAPSHOT_20261119.md#bounded-refresh--112708-utc) records 123 retained refs at 11:27:08 UTC. Earlier sections and receipts keep their named source and observation time.
+
+## Later branch additions
+
+The following ten branches extend the earlier 113-head matrix to the frozen
+123-head cutoff. All remain preserved. Source incorporated in a candidate is
+not counted as merged into main; source approval is not a CI pass.
+
+| Branch / PR | Purpose and unique work | Defects / readiness | Action |
+|---|---|---|---|
+| `codex/api036-cursor-hardening-20261119` / #96 | Bounded, canonical signed cursor decoding and regressions | Reviewed; closed unmerged as superseded by #101 | Preserve original commits through #99 ancestry and branch |
+| `master/fnet207-recurring-remote-20261119` / #97 | Isolated weekly/monthly recurrence and exact wall-time handling | Source reviewed; one native Windows module pass, other current gates pending | Retain disabled/HOLD; qualify its own target |
+| `feature/fnet-204-completion-parallel` / #98 | Bounded SQLite feed queries, private cursor frontiers and persistent pagination tests | Reviewed source plus later evidence update; current gates pending | Compose only with the isolated feed repair after qualification |
+| `integration/core-consolidation-20261119` / #99 | Transaction/token/UUID repairs and preserved concurrent history/evidence | Reviewed latest 0a73ee42; earlier source lacks newer #101/#102/#104 additions | Included in the PR90 composition; preserve branch |
+| `audit/future-notifications-bounded-core-20261119` / #100 | Refresh notification branch to bounded core; show dependency-scan advisory details | Exact tree/source preservation and traceability check pass; CI pending | Retain isolated; reconcile #103 on this target |
+| `codex/api036-completion-20261119` / #101 | Complete bounded session navigation, selective bulk revocation and cursor hardening | Reviewed f7ac6d22; focused SQL/service/template checks pass; full gates pending | Included in the PR90 composition; preserve branch |
+| `integration/core-recovery-20261119` / #102 | Export authority/abort, listing pagination, catalogue and traceability recovery | Reviewed f29ebb01; corrected duplicate catalogue/refusal overlap | Included in the PR90 composition with newer real-client regression |
+| `master/notification-transport-tests-20261119` / #103 | Web Push success/retry bounds and verified custom-dial SMTP TLS | Four-file source reviewed; current provider checks pending | Keep isolated; combine with #100 without changing feature HOLD |
+| `integration/circula-master-consolidation-20261119` / #104 | Go/Python export verifier ambiguity and boundary fixes | Five-file source reviewed; 22 Python tests pass; full gates pending | Included in the PR90 composition; preserve branch |
+| `master/fnet209-utf8-20261119` / #105 | Isolated malformed-UTF-8 signing-input repair | Ancestry/scope/HOLD checked at cutoff; source/runtime review pending there | Retain as pending future provenance, outside core |
+
+Exact heads, evidence and observation limits are recorded in the
+[concurrent snapshot](CONCURRENT_BRANCH_SNAPSHOT_20261119.md). The original
+branch-by-branch records below remain intact.
+
+## Snapshot and interpretation
+
+The earlier pinned inventory contains **113 real remote branch heads**, **22 recovered local refs**, **95 pull requests** (including **36 closed without a merge**) and **0 tags**. Starting main is [`ead63b5ce24b`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625). The reviewed integration foundation is PR [#90](https://github.com/djshellshoxxx/circula/pull/90), [`244e1356201e`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8). The inventory was regenerated from complete Git history on 2026-11-19; all SHA comparisons are pinned, not moving branch-name comparisons.
+
+The [machine-readable inventory](BRANCH_INVENTORY_2026-11-19.json) records each merge base, full unique-commit list, changed files, changed test files, patch-equivalence results, merge simulations, dependencies, exact-head CI observations and PR provenance. [Original remote refs](BRANCH_REFS_2026-11-19.tsv) preserve the advertised starting heads. The [dependency graph](BRANCH_DEPENDENCY_GRAPH_2026-11-19.md) includes all remote branches. The prior 107-head matrix remains readable at [its original commit](https://github.com/djshellshoxxx/circula/blob/244e1356201e6477eab4694d82947f2058f3b0d8/docs/audits/BRANCH_CONSOLIDATION_MATRIX.md).
+
+The JSON uses lossless schema 2 normalization: commit metadata is keyed by SHA, comparisons by source/target pair, changed-file lists by shared ID, and ancestry edges by branch-name pair with pinned SHA mappings. No diff, file, commit, CI or provenance evidence was removed. Expand the complete original structure with `python3 docs/audits/build_branch_inventory.py --expand-json docs/audits/BRANCH_INVENTORY_2026-11-19.json > /tmp/circula-branch-inventory-expanded.json`. The generator verifies exact structural equality after normalization.
+
+Six new branch heads were published after that prior snapshot, and the GOV-021 branch advanced through PR #91. The other 106 original remote heads are unchanged. No starting branch was deleted or rewritten by this inventory.
+
+**A clean merge is not a test pass.** The workflow observations come from all 564 repository workflow records returned by six API pages. They are historical observations at the exact listed SHA. No historical test suite was rerun for this inventory, no coverage percentage is inferred from test filenames, and a missing/skipped/cancelled run is not success.
+
+Starting main's latest `ci` workflow [44296161788](https://github.com/djshellshoxxx/circula/actions/runs/44296161788) failed. The latest successful `ci` workflow found on an ancestor of starting main is [44274085093](https://github.com/djshellshoxxx/circula/actions/runs/44274085093), at [`b4398074ae4c`](https://github.com/djshellshoxxx/circula/commit/b4398074ae4ca72559235ca50242cfcb7a934eec). A successful scorecard or dependency-maintenance workflow does not qualify the complete core. PR #90's run [44490739417](https://github.com/djshellshoxxx/circula/actions/runs/44490739417) was reported `queued` in this snapshot; subsequent repaired commits require their own verification.
+
+| Disposition | Remote heads |
+|---|---:|
+| Future modules: keep isolated | 22 |
+| Requires a product or interface decision | 6 |
+| Historical work recovered or superseded | 23 |
+| Equivalent non-merge patches | 1 |
+| Already integrated into main | 52 |
+| Equivalent content: clean merge adds nothing | 3 |
+| Integrated into the reviewed candidate | 6 |
+
+| Git merge simulation | Against starting main | Against PR #90 |
+|---|---:|---:|
+| Already an ancestor | 52 | 58 |
+| Clean non-ancestor merge | 37 | 31 |
+| Non-ancestor merge with conflicts | 24 | 24 |
+
+The 24 conflicts belong to retained historical, policy-gated or future branches. They do not mean there are 24 unresolved conflicts in the consolidation worktree. Per-file conflict paths are retained in the JSON. Three non-ancestor branches produce a clean merge with no tree change; one further branch has only patch-equivalent commits despite conflicting with subsequent edits.
+
+## Core foundation and recovery decision
+
+PR #90 is an appropriate consolidation foundation, provided the bounded-session correction and full combined validation complete. Its changed-file and history review found preserved source ancestry for #82, #87, #78, #88 and #89; no future module runtime is added to core. The source review checked password-proof revalidation inside the write transaction, clearing obsolete proof locks after authorized recovery, exact integer ledger sums, immutable dispute-policy binding and migration guards, and setup precision validation before formatting.
+
+At the 244e135 snapshot PR #90 was not ready unchanged: its session list, revocation lookup and HTML confirmation materialized all retained owner rows. The current composition includes the reviewed bounded-query and complete session follow-ups; the following is their historical recovery record. Pagination of the response does not bound database work. Recover the already written correction instead of implementing a competing session subsystem:
+
+| Local source | Commit | Scope and disposition |
+|---|---|---|
+| `audit/bounded-sessions-20261119` | [`853a38826dd6`](https://github.com/djshellshoxxx/circula/commit/853a38826dd661406536753a865a27ee29a4fd84) | Durable noncredential public IDs, indexed bounded scans, direct owner lookup, service/repository contracts and migration 0020. Review and execute migration, query-plan, race and behavioral tests before acceptance. |
+| `audit/bounded-sessions-20261119` | [`04413b1a8ba0`](https://github.com/djshellshoxxx/circula/commit/04413b1a8ba0fe7a4118333fa23ac828f673cea6) | API and account-page consumers, signed pagination and contract/browser fixtures. Depends on the preceding storage/service correction. |
+| `audit/bounded-session-adapters-20261119` | [`84617110dd3b`](https://github.com/djshellshoxxx/circula/commit/84617110dd3bce755da91967782531a98e1e7762) | Alternate local adapter publication; its complete tree equals `04413b1`. Recover one copy and preserve both sources. |
+
+The two-commit source delta is 26 files, 914 insertions and 147 deletions against PR #90. These are source/change measurements, not claims that its SQLite or browser tests passed. The final integration report records subsequent review repairs and accepted commit hashes.
+
+Other recovered local implementation topics are already represented in the published candidate. For the local policy-binding source, all 15 changed source paths match the publication except repository/storetest files that gained the session contracts. All 29 session-source paths match except the English catalogue, whose existing keys and values are preserved with later additions. The same catalogue superset check covers the local spec-status topic. The local generic `audit/ledger-features-20261119` branch includes unready GOV-021 and SEC-026 code; it must never be imported wholesale into core.
+
+## New or advanced remote heads
+
+| Branch | Exact head | Change and boundary |
+|---|---|---|
+| `audit/future-feed-cursors-20261119` | [`8638f3d30f27`](https://github.com/djshellshoxxx/circula/commit/8638f3d30f27f4882c4c6424d4c8b248208b6f3d) | New: isolated repaired feed candidate, PR #92; includes #67/#80 provenance. Only the feed target may receive module runtime. |
+| `audit/future-notifications-binding-20261119` | [`9c794a5b9e6f`](https://github.com/djshellshoxxx/circula/commit/9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae) | New: isolated notification identity-binding repair, PR #93; preserve original module and core ancestry. |
+| `audit/future-pwa-browser-20261119` | [`f25d037c3cc5`](https://github.com/djshellshoxxx/circula/commit/f25d037c3cc53fbf1ebbf687831300be9bdb749f) | New: isolated PWA browser qualification, PR #95; no core feature enablement. |
+| `audit/gov021-fixture-20261119` | [`d922d4f88005`](https://github.com/djshellshoxxx/circula/commit/d922d4f880059f939aeca40cbcb77c60201ff0c7) | New: accessibility fixture repair, PR #91; already merged into the GOV-021 topic, not main. |
+| `audit/sec026-independent-20261119` | [`26f350b8aa43`](https://github.com/djshellshoxxx/circula/commit/26f350b8aa437d315c993c5555cb0b9fa2b7eba4) | New: independent repaired signals candidate, PR #94; removes the GOV-021 dependency but does not decide visibility, retention or activation policy. |
+| `claude/gov-021-admin-recovery` | [`0d480a5b348f`](https://github.com/djshellshoxxx/circula/commit/0d480a5b348f3d385df0dc9c9a3e43a0b03a8332) | Advanced: PR #91 fixture merge; administrator recovery authority and policy gates remain unresolved. |
+| `integration/comprehensive-audit-20261119` | [`244e1356201e`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8) | New: core audit candidate, PR #90; requires bounded-session correction and complete current-head checks. |
+
+## Complete remote branch inventory
+
+The merge base and ahead/behind counts below compare each source with starting main. `Files/tests` counts changed paths since that merge base and the subset recognized as tests; it is not a coverage measurement. Details and paths are in the JSON. Each classification incorporates ancestry, patch IDs, source inspection and the existing historical recovery records.
+
+### Already integrated into main (52)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `chatgpt/circula-expiry-starvation-20261115` [`2eacf7718f5b`](https://github.com/djshellshoxxx/circula/commit/2eacf7718f5bb3da3be5a288024af879076a9597) | `2eacf7718f5b` | 0 / 151 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43855362643) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/audit-20261110-a` [`2e729346d629`](https://github.com/djshellshoxxx/circula/commit/2e729346d6297075b6ff1f7828d48681d48320b6) | `2e729346d629` | 0 / 246 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42934807230) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/ci-macos-race-budget-20261110` [`2078bf096435`](https://github.com/djshellshoxxx/circula/commit/2078bf0964353892e80214b4601211e36818b889) | `2078bf096435` | 0 / 255 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42900132669) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/ci-macos15-retirement-20261110` [`1760551f5b03`](https://github.com/djshellshoxxx/circula/commit/1760551f5b03a89ec64d09269d631e72f2e95959) | `1760551f5b03` | 0 / 256 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42880201857) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/cookie-policy-adapter-20261110-b` [`7e8481004801`](https://github.com/djshellshoxxx/circula/commit/7e8481004801c01aea5d22f4720e1ead7381c4f7) | `7e8481004801` | 0 / 251 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/42934571187) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/decidable-expiry-20261110-a` [`b61a8e719030`](https://github.com/djshellshoxxx/circula/commit/b61a8e719030ff56044d71fee632b5ba824d7698) | `b61a8e719030` | 0 / 253 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42926389055) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/docs-20261110-a` [`a376a4ed5924`](https://github.com/djshellshoxxx/circula/commit/a376a4ed592451d90d2ff7b4d3db1489a2231f96) | `a376a4ed5924` | 0 / 227 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42934941672) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/qualify-pr19-20261110-a` [`63b033d842a2`](https://github.com/djshellshoxxx/circula/commit/63b033d842a2fa40b56ff9d79e69c259db951c83) | `63b033d842a2` | 0 / 245 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42935092231) | No commit recovery needed. Preserve source ref. |
+| `chatgpt/zero-codex/terms-return-20261110-b` [`7620d7f51913`](https://github.com/djshellshoxxx/circula/commit/7620d7f51913363dd013b80cc682eb670eeff3a5) | `7620d7f51913` | 0 / 257 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42869585668) | No commit recovery needed. Preserve source ref. |
+| `claude/awesome-darwin-y6eaiz` [`827e651fe151`](https://github.com/djshellshoxxx/circula/commit/827e651fe151f49659cc20aefe85d4af67bdaa97) | `827e651fe151` | 0 / 300 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/41032669029) | No commit recovery needed. Preserve source ref. |
+| `claude/backup-path-hardening` [`09ef8a5aa25f`](https://github.com/djshellshoxxx/circula/commit/09ef8a5aa25f11ee4d96f043e7d686e97598b7e3) | `09ef8a5aa25f` | 0 / 12 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44264463917) | No commit recovery needed. Preserve source ref. |
+| `claude/charming-gauss-19fbfa` [`8b4c8ba23c99`](https://github.com/djshellshoxxx/circula/commit/8b4c8ba23c99d4418348d76ff8cb38a72e7b958d) | `8b4c8ba23c99` | 0 / 161 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43784908906) | No commit recovery needed. Preserve source ref. |
+| `claude/circula-beta-completion-1npjw6` [`bffcede8c7dc`](https://github.com/djshellshoxxx/circula/commit/bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b) | `bffcede8c7dc` | 0 / 168 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43127539224) | No commit recovery needed. Preserve source ref. |
+| `claude/circula-build` [`fc488445af5f`](https://github.com/djshellshoxxx/circula/commit/fc488445af5f43165a7103f1c1fd12483b39d448) | `fc488445af5f` | 0 / 430 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/39597594942) | No commit recovery needed. Preserve source ref. |
+| `claude/circula-finish` [`d350474e4952`](https://github.com/djshellshoxxx/circula/commit/d350474e49522c34213d90a66904b296b9509f6c) | `d350474e4952` | 0 / 423 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/39601241527) | No commit recovery needed. Preserve source ref. |
+| `claude/circula-pr-consolidation-q6q18n` [`163fe1596bd7`](https://github.com/djshellshoxxx/circula/commit/163fe1596bd7cfb8c2a22891629fc4459e6b639c) | `163fe1596bd7` | 0 / 40 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44228060824) | No commit recovery needed. Preserve source ref. |
+| `claude/circula-security-features` [`f8278a047392`](https://github.com/djshellshoxxx/circula/commit/f8278a047392541a077d57c560823471053d1e1d) | `f8278a047392` | 0 / 438 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/39594488621) | No commit recovery needed. Preserve source ref. |
+| `claude/cool-gauss-vdxlod` [`64fa4f685780`](https://github.com/djshellshoxxx/circula/commit/64fa4f685780b93a349a862e3741df5b4db067cc) | `64fa4f685780` | 0 / 144 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43876355471) | No commit recovery needed. Preserve source ref. |
+| `claude/happy-babbage-dcumwz` [`dc97f7d5b0ae`](https://github.com/djshellshoxxx/circula/commit/dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d) | `dc97f7d5b0ae` | 0 / 98 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `claude/happy-noether-444cum` [`34ccb81a54ab`](https://github.com/djshellshoxxx/circula/commit/34ccb81a54ab63875d4a5305076437d6b3221049) | `34ccb81a54ab` | 0 / 255 | 0 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42938376400) | No commit recovery needed. Preserve source ref. |
+| `claude/quirky-einstein-l9ni8m` [`4a8db9e80509`](https://github.com/djshellshoxxx/circula/commit/4a8db9e80509d23d3937c68575c632f4650576aa) | `4a8db9e80509` | 0 / 110 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43793810240) | No commit recovery needed. Preserve source ref. |
+| `claude/sharp-archimedes-tu76rh` [`eb4bb08b15d4`](https://github.com/djshellshoxxx/circula/commit/eb4bb08b15d41295aa2c4b9f93040124ce4d66e9) | `eb4bb08b15d4` | 0 / 7 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44272452596) | No commit recovery needed. Preserve source ref. |
+| `claude/ux-047-auth-catalogue` [`dd3e82e27ddb`](https://github.com/djshellshoxxx/circula/commit/dd3e82e27ddb3d1cbf03460e6a5fc879f16691db) | `dd3e82e27ddb` | 0 / 28 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44260832164) | No commit recovery needed. Preserve source ref. |
+| `claude/vibrant-brahmagupta-3uofnj` [`33b200e00c08`](https://github.com/djshellshoxxx/circula/commit/33b200e00c088c86ffb0d0d8176f1575376a9b49) | `33b200e00c08` | 0 / 465 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `codex/circula-checkpoint-recovery-20261116` [`12175ec348d5`](https://github.com/djshellshoxxx/circula/commit/12175ec348d5234c27e1c72dc8df96a091cd111c) | `12175ec348d5` | 0 / 75 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43930580504) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-common-ui-catalog-20261116` [`a112c979932b`](https://github.com/djshellshoxxx/circula/commit/a112c979932bc7b9e209455d3df14dfebc60243a) | `a112c979932b` | 0 / 68 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43963324717) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-consolidate-20261030` [`7643fb616208`](https://github.com/djshellshoxxx/circula/commit/7643fb616208cc318939ded809e6cada66bb7415) | `7643fb616208` | 0 / 285 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/41047238538) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-core-checkpoint-20261116` [`15375a8dc875`](https://github.com/djshellshoxxx/circula/commit/15375a8dc87544849b4a85fa128ce77be1103814) | `15375a8dc875` | 0 / 88 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `codex/circula-core-completion-20261116` [`e3c60a62c065`](https://github.com/djshellshoxxx/circula/commit/e3c60a62c065567ff67fc2e219a724b6fd91ca76) | `e3c60a62c065` | 0 / 86 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43907084340) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-evidence-20261116` [`f6ea3213e663`](https://github.com/djshellshoxxx/circula/commit/f6ea3213e663c7e37d678b018861b6703947e3e0) | `f6ea3213e663` | 0 / 80 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43922903011) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-financial-messages-20261116` [`cf5abf5cfb00`](https://github.com/djshellshoxxx/circula/commit/cf5abf5cfb00638e1772a7e34014a352048d6b35) | `cf5abf5cfb00` | 0 / 70 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43952719310) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-message-catalogs-20261116` [`96059bb4b8ae`](https://github.com/djshellshoxxx/circula/commit/96059bb4b8ae23ad6e4e45428bf69288bec4c182) | `96059bb4b8ae` | 0 / 72 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43942206927) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-noscript-qa` [`ba5751291819`](https://github.com/djshellshoxxx/circula/commit/ba57512918195423b25bc7958ff0b8af6df7ed7a) | `ba5751291819` | 0 / 269 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `codex/circula-qualification-20261116` [`dc89212a8bf1`](https://github.com/djshellshoxxx/circula/commit/dc89212a8bf1e1207e5443ffc719670623de70e1) | `dc89212a8bf1` | 0 / 82 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43914378342) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-responsive-qa` [`04e11989b811`](https://github.com/djshellshoxxx/circula/commit/04e11989b811b4541a20b4e06e7a020beabb6af3) | `04e11989b811` | 0 / 279 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `codex/circula-resume-20261024` [`f4bfe6bc3f81`](https://github.com/djshellshoxxx/circula/commit/f4bfe6bc3f81c94b859abeae902ae862ea6e143e) | `f4bfe6bc3f81` | 0 / 303 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/41032607314) | No commit recovery needed. Preserve source ref. |
+| `codex/circula-staging-refresh-docs` [`9c0bc500cb19`](https://github.com/djshellshoxxx/circula/commit/9c0bc500cb19f11f18694c76d134f4bfebf896e7) | `9c0bc500cb19` | 0 / 283 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `codex/circula-support-boundaries-20261028` [`837d51b0d537`](https://github.com/djshellshoxxx/circula/commit/837d51b0d5374822b28f1b3a9206f9e2d23bd60c) | `837d51b0d537` | 0 / 305 | 0 / 0 | No exact-head ci record | No commit recovery needed. Preserve source ref. |
+| `consolidation/http-persistence-regressions-20261116` [`050798c9cf94`](https://github.com/djshellshoxxx/circula/commit/050798c9cf94598efd0fff15f7a8a74bb3c4f4a1) | `050798c9cf94` | 0 / 61 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43982223745) | No commit recovery needed. Preserve source ref. |
+| `consolidation/recover-future-specifications` [`3a776e630455`](https://github.com/djshellshoxxx/circula/commit/3a776e6304551c21ff372a8ae962606108dde4ff) | `3a776e630455` | 0 / 63 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43981789097) | No commit recovery needed. Preserve source ref. |
+| `dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0` [`3fa76cdb5901`](https://github.com/djshellshoxxx/circula/commit/3fa76cdb590182eaff42fc4044cf3538275eea6b) | `3fa76cdb5901` | 0 / 155 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43785332133) | No commit recovery needed. Preserve source ref. |
+| `docs/fnet-203-optional-trade-receipts` [`3d6ed55b2e44`](https://github.com/djshellshoxxx/circula/commit/3d6ed55b2e44d31f7350814d87ba44564e8344c0) | `3d6ed55b2e44` | 0 / 158 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43784932244) | No commit recovery needed. Preserve source ref. |
+| `docs/future-usability-network-specs-20261111` [`f4a051c1c1af`](https://github.com/djshellshoxxx/circula/commit/f4a051c1c1af815e7bb6a902929108e155145c97) | `f4a051c1c1af` | 0 / 165 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/42971313261) | No commit recovery needed. Preserve source ref. |
+| `integration/admin-grant-notice-pagination-20261117` [`cb25b41febd4`](https://github.com/djshellshoxxx/circula/commit/cb25b41febd43273cd4aa856072406b210089d81) | `cb25b41febd4` | 0 / 38 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44247617122) | No commit recovery needed. Preserve source ref. |
+| `integration/backup-private-staging-20261117` [`faed4906f541`](https://github.com/djshellshoxxx/circula/commit/faed4906f5419f573181bd7cf3ffdf0bdfb9992b) | `faed4906f541` | 0 / 22 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44256964805) | No commit recovery needed. Preserve source ref. |
+| `integration/browser-parity-clock-20261117` [`2f6b3e4f1b70`](https://github.com/djshellshoxxx/circula/commit/2f6b3e4f1b70d8c787c4de886cf085f5a3295002) | `2f6b3e4f1b70` | 0 / 29 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44256413287) | No commit recovery needed. Preserve source ref. |
+| `integration/erasure-fixture-stability-20261117` [`fc31dc9a6b8c`](https://github.com/djshellshoxxx/circula/commit/fc31dc9a6b8c102fe612f47bc543e94e8114df0f) | `fc31dc9a6b8c` | 0 / 38 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44249505223) | No commit recovery needed. Preserve source ref. |
+| `integration/release-threshold-check-20261117` [`ec98caba7328`](https://github.com/djshellshoxxx/circula/commit/ec98caba7328790ef36f0f2c144644bc05155d6b) | `ec98caba7328` | 0 / 38 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44248576511) | No commit recovery needed. Preserve source ref. |
+| `integration/store-untrusted-schema-20261117` [`b1cd8f38450a`](https://github.com/djshellshoxxx/circula/commit/b1cd8f38450ae966cfea99d59a131175d7b798dd) | `b1cd8f38450a` | 0 / 25 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44256822964) | No commit recovery needed. Preserve source ref. |
+| `integration/throttle-documentation-20261117` [`83de536ee373`](https://github.com/djshellshoxxx/circula/commit/83de536ee373a7c4997222cf58ff563c53c8cbbc) | `83de536ee373` | 0 / 38 | 0 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44248706120) | No commit recovery needed. Preserve source ref. |
+| `main` [`ead63b5ce24b`](https://github.com/djshellshoxxx/circula/commit/ead63b5ce24b2bcf8352d75fd0d1ff7be711f625) | `ead63b5ce24b` | 0 / 0 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/44296161788) | No commit recovery needed. Preserve source ref. |
+| `work/spec-completion` [`d39bfef12d4a`](https://github.com/djshellshoxxx/circula/commit/d39bfef12d4ac1430815fa49ad799fb1c4bf9964) | `d39bfef12d4a` | 0 / 322 | 0 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/39750077129) | No commit recovery needed. Preserve source ref. |
+
+### Integrated into the reviewed candidate (6)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `claude/aud4-auth-fixes` [`82dc18e07f6b`](https://github.com/djshellshoxxx/circula/commit/82dc18e07f6b22b9c34ef026f833391705b30067) | `ead63b5ce24b` | 9 / 0 | 8 / 2 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44288786538) | Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `claude/aud4-f03-dispute-timelines` [`b6275747df66`](https://github.com/djshellshoxxx/circula/commit/b6275747df66ede81ee4267e2cd6a2595f3bd680) | `ead63b5ce24b` | 13 / 0 | 25 / 5 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44290387452) | Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `claude/circula-consolidation-audit-0sydm1` [`0e5296a71f3f`](https://github.com/djshellshoxxx/circula/commit/0e5296a71f3f3802f36e14d847c0abf7b1dbf882) | `ead63b5ce24b` | 10 / 0 | 8 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44288798706) | Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `integration/comprehensive-audit-20261119` [`244e1356201e`](https://github.com/djshellshoxxx/circula/commit/244e1356201e6477eab4694d82947f2058f3b0d8) | `ead63b5ce24b` | 31 / 0 | 386 / 29 | [queued](https://github.com/djshellshoxxx/circula/actions/runs/44490739417) | Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `integration/consolidation-execution-record-20261118` [`73244357ca13`](https://github.com/djshellshoxxx/circula/commit/73244357ca136874452a6cd826ffa91ac8c3c434) | `b4398074ae4c` | 1 / 9 | 279 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44286700090) | Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `nodata/doc-sweep-20261118` [`866adc8f2c30`](https://github.com/djshellshoxxx/circula/commit/866adc8f2c30abd294843e43a2ba42a6fe5f7b67) | `ead63b5ce24b` | 3 / 0 | 4 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44288311142) | Already in PR #90 ancestry. Qualify repaired combined candidate. |
+
+### Equivalent content: clean merge adds nothing (3)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `chatgpt/circula-ledger-auth-guard-20261115` [`29e46e5016a0`](https://github.com/djshellshoxxx/circula/commit/29e46e5016a05a0b633a4cb23cab6a4dea38e1ca) | `3fee2a399a94` | 3 / 155 | 2 / 1 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43785743515) | Clean merge produces no candidate tree changes. Preserve without redundant source integration. |
+| `chatgpt/circula-mfa-decider-20261115` [`4ffb5c78d6b4`](https://github.com/djshellshoxxx/circula/commit/4ffb5c78d6b44e6f964f1018ed2fea16cd742abd) | `3fee2a399a94` | 4 / 155 | 2 / 1 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43785989156) | Clean merge produces no candidate tree changes. Preserve without redundant source integration. |
+| `codex/dashboard-amounts-meter-20261116` [`d53196cc6907`](https://github.com/djshellshoxxx/circula/commit/d53196cc6907f27222661246a7767bb0aa123a76) | `bf33325d4ac7` | 1 / 67 | 3 / 1 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43981603571) | Clean merge produces no candidate tree changes. Preserve without redundant source integration. |
+
+### Equivalent non-merge patches (1)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `chatgpt/circula-erasure-notification-20261115` [`26b57163d965`](https://github.com/djshellshoxxx/circula/commit/26b57163d96534e79e3d35d471573d609af8a415) | `3fee2a399a94` | 1 / 155 | 1 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43786018052) | All nonmerge patches equivalent to candidate; preserve later candidate edits. |
+
+### Historical work recovered or superseded (23)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `chatgpt/circula-consolidation-review-20261111` [`02f9f0a7bb87`](https://github.com/djshellshoxxx/circula/commit/02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e) | `3c2a577ddf31` | 22 / 187 | 53 / 27 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43167493278) | Retain; canonical evidence is in docs/audit and the historical PR ledger |
+| `chatgpt/circula-departure-pagination-20261115` [`8abff32c1b4a`](https://github.com/djshellshoxxx/circula/commit/8abff32c1b4a30507497d1e43dc4f88d0c7e6eab) | `3fee2a399a94` | 4 / 155 | 2 / 1 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43786301780) | Retain; keep current regression and paginated implementation |
+| `chatgpt/circula-qa042-traceability-audit-20261114` [`fe832faced82`](https://github.com/djshellshoxxx/circula/commit/fe832faced826ed2234fcd9ba0ce7f7321f04df5) | `8b4c8ba23c99` | 37 / 161 | 95 / 35 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43663449911) | Retain; use scripts/traceability and current fail-closed export tests |
+| `chatgpt/circula-secure-json-write-20261115` [`e02085a6aa1a`](https://github.com/djshellshoxxx/circula/commit/e02085a6aa1a1394f874b304fdf0961cc0888423) | `a4ccc84eb460` | 8 / 156 | 4 / 1 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43785303060) | Retain; preserve newer file-hardening behavior |
+| `chatgpt/circula-security-audit-20261115` [`36a80335abf5`](https://github.com/djshellshoxxx/circula/commit/36a80335abf54ec8d965cb350b157443ef7f2fec) | `8b4c8ba23c99` | 45 / 161 | 96 / 35 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43712392795) | Retain; do not mistake archived findings for fresh passes |
+| `chatgpt/consolidation-delta-qualification-20261114` [`8f742877fb53`](https://github.com/djshellshoxxx/circula/commit/8f742877fb53cc39aea5e189a5452d924d8c08c8) | `8b4c8ba23c99` | 1 / 161 | 1 / 0 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43580764126) | Retain source branch and link when needed; no product work missing |
+| `chatgpt/zero-codex-continuation-spec-20261109` [`3d9c56196625`](https://github.com/djshellshoxxx/circula/commit/3d9c56196625fc0c158b4652cbe2b9716c7af97b) | `4b422ad1e857` | 1 / 466 | 1 / 0 | No exact-head ci record | Retain; use the archive rather than reactivate the old plan |
+| `checkpoint/circula-handoff-20261025` [`3d0080a9c436`](https://github.com/djshellshoxxx/circula/commit/3d0080a9c43680f69f81217af3b42374e7160bf8) | `30d18a162642` | 6 / 320 | 7 / 2 | No exact-head ci record | Retain; preserve current tests and checkpoint provenance |
+| `claude/circula-completeness` [`fcd9fc587848`](https://github.com/djshellshoxxx/circula/commit/fcd9fc5878482e1e4d340a3448a0d2294a33eb5b) | `9a86ea69c419` | 1 / 340 | 1 / 0 | [cancelled](https://github.com/djshellshoxxx/circula/actions/runs/42934849953) | Retain; do not add an obsolete competing handoff |
+| `claude/compassionate-cannon-txdlz1` [`047e92e88a0c`](https://github.com/djshellshoxxx/circula/commit/047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a) | `b7c27b44199c` | 6 / 56 | 9 / 1 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44029146812) | Retain; no dependency downgrade |
+| `claude/cool-ramanujan-n2peag` [`c033cfa448fb`](https://github.com/djshellshoxxx/circula/commit/c033cfa448fb89d1a5cc0ca87458b40d2709fa2e) | `8b4c8ba23c99` | 40 / 161 | 95 / 35 | [success](https://github.com/djshellshoxxx/circula/actions/runs/43685188544) | Retain; behavioral equivalents are listed below and in historical PR ledger |
+| `claude/gracious-ptolemy-dscc7v` [`1d165989e217`](https://github.com/djshellshoxxx/circula/commit/1d165989e2176e214536dd22b05f7b3a4cb2f48f) | `3c2a577ddf31` | 3 / 254 | 5 / 1 | [success](https://github.com/djshellshoxxx/circula/actions/runs/42966428723) | Retain current cmd/circula/acceptance_http_test.go |
+| `claude/kind-einstein-v5ycss` [`3bfb2f78fb0a`](https://github.com/djshellshoxxx/circula/commit/3bfb2f78fb0aad03ec3533af5985c394d64c1898) | `4b422ad1e857` | 1 / 466 | 1 / 0 | No exact-head ci record | Retain branch; do not reactivate old scope |
+| `claude/lucid-archimedes-upisa8` [`d2c1c6090a05`](https://github.com/djshellshoxxx/circula/commit/d2c1c6090a053b62dc75002464dc96bb542d6c78) | `4b422ad1e857` | 15 / 466 | 15 / 0 | No exact-head ci record | Retain source and archive index; canonical specs stay authoritative |
+| `claude/quirky-babbage-y9fpmm` [`af69702be08a`](https://github.com/djshellshoxxx/circula/commit/af69702be08aaf14cbe9a705ddf7f08796d5e976) | `8b4c8ba23c99` | 41 / 161 | 104 / 35 | No exact-head ci record | Retain; do not use the obsolete one-commit classification |
+| `claude/relaxed-hopper-8q4vhq` [`2da1a293ebf2`](https://github.com/djshellshoxxx/circula/commit/2da1a293ebf2f28f349fcae9bf32184737bc8619) | `4b422ad1e857` | 22 / 466 | 17 / 0 | No exact-head ci record | Retain; archive preserves useful ideas without changing ledger policy |
+| `claude/sweet-turing-m3ftja` [`01b6e5c7cfc5`](https://github.com/djshellshoxxx/circula/commit/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904) | `4b422ad1e857` | 13 / 466 | 36 / 0 | No exact-head ci record | Retain; candidate race/policy ideas remain a documented backlog |
+| `codex/circula-integration-plan-20261030` [`127943ba7aa2`](https://github.com/djshellshoxxx/circula/commit/127943ba7aa2cb154d3e65d13279e739b901416f) | `24f417c944e4` | 1 / 461 | 3 / 0 | No exact-head ci record | Retain; current plan replaces the old prompt |
+| `dependabot/go_modules/golang.org/x/text-0.44.0` [`4a6ea9ab3dff`](https://github.com/djshellshoxxx/circula/commit/4a6ea9ab3dff3bdf1f3597e98abd449b203afb11) | `b7c27b44199c` | 1 / 56 | 2 / 0 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/43992058080) | Retain; dependency version needs no duplicate merge |
+| `docs/foundational-spec-shells` [`d96f2e75634b`](https://github.com/djshellshoxxx/circula/commit/d96f2e75634bff074d26965ae93c2fe00c6f7f24) | `4b422ad1e857` | 1 / 466 | 16 / 0 | No exact-head ci record | Retain; nothing actionable to integrate |
+| `docs/foundational-specifications` [`22e9202f19f5`](https://github.com/djshellshoxxx/circula/commit/22e9202f19f55aa46be4b115edbe84178e9cee0b) | `4b422ad1e857` | 31 / 466 | 39 / 0 | No exact-head ci record | Retain; preserve ideas in the archive and future scope only |
+| `docs/readme-and-wiki` [`db7826495ec2`](https://github.com/djshellshoxxx/circula/commit/db7826495ec2e8bd3f5459afa5f619cdc8fe8def) | `4b422ad1e857` | 1 / 466 | 2 / 0 | No exact-head ci record | Retain; no content merge |
+| `haiku/circula-consolidation` [`6fbfa13fb696`](https://github.com/djshellshoxxx/circula/commit/6fbfa13fb696d38e8e120377c0eee09af1ac44f0) | `3c2a577ddf31` | 16 / 187 | 52 / 27 | No exact-head ci record | Retain; maintain current behavior and stronger tests |
+
+### Future modules: keep isolated (22)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `audit/future-feed-cursors-20261119` [`8638f3d30f27`](https://github.com/djshellshoxxx/circula/commit/8638f3d30f27f4882c4c6424d4c8b248208b6f3d) | `ead63b5ce24b` | 38 / 0 | 399 / 33 | [queued](https://github.com/djshellshoxxx/circula/actions/runs/44491232322) | Preserve separate module path; never merge module runtime into core. |
+| `audit/future-notifications-binding-20261119` [`9c794a5b9e6f`](https://github.com/djshellshoxxx/circula/commit/9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae) | `ead63b5ce24b` | 37 / 0 | 423 / 38 | [queued](https://github.com/djshellshoxxx/circula/actions/runs/44491239020) | Preserve separate module path; never merge module runtime into core. |
+| `audit/future-pwa-browser-20261119` [`f25d037c3cc5`](https://github.com/djshellshoxxx/circula/commit/f25d037c3cc53fbf1ebbf687831300be9bdb749f) | `ead63b5ce24b` | 39 / 0 | 431 / 34 | [queued](https://github.com/djshellshoxxx/circula/actions/runs/44496951449) | Preserve separate module path; never merge module runtime into core. |
+| `chatgpt/favorites-owner-scoped-collection-20261116` [`372a8f97ae01`](https://github.com/djshellshoxxx/circula/commit/372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d) | `2eacf7718f5b` | 4 / 151 | 10 / 2 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/44011276748) | Preserve separate module path; never merge module runtime into core. |
+| `chatgpt/feed-signed-cursors-20261116` [`7a528c611bff`](https://github.com/djshellshoxxx/circula/commit/7a528c611bffdf92ef9f8cbddb98e8b088eb5036) | `2eacf7718f5b` | 4 / 151 | 10 / 2 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/44011402381) | Preserve separate module path; never merge module runtime into core. |
+| `claude/fnet-204-signed-cursors` [`0952c94a5dba`](https://github.com/djshellshoxxx/circula/commit/0952c94a5dbab4044d7673ce9d51cec9063ab97f) | `2eacf7718f5b` | 5 / 151 | 11 / 3 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/44261331550) | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-201-matching-20261116` [`12850290c6bc`](https://github.com/djshellshoxxx/circula/commit/12850290c6bca7720853c33689662d751aced160) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-202-favorites-20261116` [`efc9d696eea2`](https://github.com/djshellshoxxx/circula/commit/efc9d696eea2dd3260ecb6c5091802ef31e20572) | `2eacf7718f5b` | 9 / 151 | 42 / 15 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-203-receipts-20261116` [`bd2fbdbd3adf`](https://github.com/djshellshoxxx/circula/commit/bd2fbdbd3adf77b27fa12335ff2827359423aea3) | `2eacf7718f5b` | 2 / 151 | 10 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-204-feed-20261116` [`5d3819c3b3af`](https://github.com/djshellshoxxx/circula/commit/5d3819c3b3af031b75eceb5251da0226a4ecee77) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-205-analytics-20261116` [`0b2965101e1d`](https://github.com/djshellshoxxx/circula/commit/0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-206-areas-20261116` [`8b444b20139e`](https://github.com/djshellshoxxx/circula/commit/8b444b20139e3e687db494b3fe36bb3643148e5b) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-207-recurring-20261116` [`0437e54897c6`](https://github.com/djshellshoxxx/circula/commit/0437e54897c6d9cfb3f2577807b82dd038493850) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-208-governance-20261116` [`b4f511372ec2`](https://github.com/djshellshoxxx/circula/commit/b4f511372ec26dc63d005bb50d87c56e18fc1a88) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fnet-209-federation-20261116` [`1b3c92e03007`](https://github.com/djshellshoxxx/circula/commit/1b3c92e03007e35e3f190e719a1ea78a807d4102) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fux-101-pwa-20261116` [`a6326b8725fe`](https://github.com/djshellshoxxx/circula/commit/a6326b8725fe6d7270997b4a284cbbc129022dd1) | `2eacf7718f5b` | 7 / 151 | 44 / 5 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fux-102-qr-20261116` [`9db8a323d7dc`](https://github.com/djshellshoxxx/circula/commit/9db8a323d7dcf430d1a58a4a4d10ca3628aeb401) | `2eacf7718f5b` | 8 / 151 | 58 / 20 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fux-103-discovery-20261116` [`34d0f889631e`](https://github.com/djshellshoxxx/circula/commit/34d0f889631e2d133149a89a276cf9c71fd261a9) | `2eacf7718f5b` | 7 / 151 | 56 / 14 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fux-104-notifications-20261116` [`3bdf8e92d84a`](https://github.com/djshellshoxxx/circula/commit/3bdf8e92d84af2c660c615bcf956cf76752e86ae) | `2eacf7718f5b` | 4 / 151 | 34 / 7 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fux-105-messaging-20261116` [`7f92251cdb0d`](https://github.com/djshellshoxxx/circula/commit/7f92251cdb0d6ed5d9559730045a021a173a278b) | `2eacf7718f5b` | 2 / 151 | 8 / 1 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/fux-106-onboarding-20261116` [`473cab2fb45a`](https://github.com/djshellshoxxx/circula/commit/473cab2fb45a7b67ea0001f9fdc7833ffda45eb9) | `2eacf7718f5b` | 6 / 151 | 35 / 9 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+| `future/module-catalog-20261116` [`dfa4779d05a4`](https://github.com/djshellshoxxx/circula/commit/dfa4779d05a47bc0397110ecfbb14659ce3884d7) | `2eacf7718f5b` | 3 / 151 | 5 / 0 | No exact-head ci record | Preserve separate module path; never merge module runtime into core. |
+
+### Requires a product or interface decision (6)
+
+| Branch and head | Merge base | Ahead / behind | Files / tests | Exact-head CI | Action |
+|---|---|---:|---:|---|---|
+| `audit/gov021-fixture-20261119` [`d922d4f88005`](https://github.com/djshellshoxxx/circula/commit/d922d4f880059f939aeca40cbcb77c60201ff0c7) | `cdc8112cf80c` | 9 / 15 | 39 / 9 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44486475798) | Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `audit/sec026-independent-20261119` [`26f350b8aa43`](https://github.com/djshellshoxxx/circula/commit/26f350b8aa437d315c993c5555cb0b9fa2b7eba4) | `ead63b5ce24b` | 33 / 0 | 421 / 37 | [queued](https://github.com/djshellshoxxx/circula/actions/runs/44491136235) | Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `claude/aud4-f02-reviewer-reset-policy` [`af54887aa0cd`](https://github.com/djshellshoxxx/circula/commit/af54887aa0cd63ba080e2944aa52a5b759b008ca) | `cdc8112cf80c` | 2 / 15 | 3 / 1 | [success](https://github.com/djshellshoxxx/circula/actions/runs/44273207384) | Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `claude/gov-021-admin-recovery` [`0d480a5b348f`](https://github.com/djshellshoxxx/circula/commit/0d480a5b348f3d385df0dc9c9a3e43a0b03a8332) | `cdc8112cf80c` | 10 / 15 | 39 / 9 | No exact-head ci record | Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `claude/sec-026-abuse-signals` [`4d349c4d03bf`](https://github.com/djshellshoxxx/circula/commit/4d349c4d03bfb81760d471a2a7ef4ac4338d9c45) | `b4398074ae4c` | 13 / 9 | 76 / 19 | [failure](https://github.com/djshellshoxxx/circula/actions/runs/44274333610) | Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `planning/future-cli-specs-20261110` [`8e2372c06425`](https://github.com/djshellshoxxx/circula/commit/8e2372c064258fb8c53554ae8f6b81957932e885) | `4b422ad1e857` | 1 / 466 | 1 / 0 | No exact-head ci record | Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+
+## Recovered local refs (22)
+
+These refs came from the earlier local Circula checkout. They are not counted as remote branches. Alternate publication histories may have equal trees without an ancestry relationship; the JSON records both the tree and commit identities. Current worker branches are transient work in progress and are recorded by the final integration report, separately from this discovery snapshot.
+
+| Local branch | Exact source | Disposition |
+|---|---|---|
+| `audit/bounded-session-adapters-20261119` | `84617110dd3bce755da91967782531a98e1e7762` | Recover and qualify bounded session changes. Recover 853a388 and adapter completion; review and execute migration, service, API, browser and race suites. |
+| `audit/bounded-sessions-20261119` | `04413b1a8ba0fe7a4118333fa23ac828f673cea6` | Recover and qualify bounded session changes. Recover 853a388 and adapter completion; review and execute migration, service, API, browser and race suites. |
+| `audit/bounded-token-list-20261119` | `244e1356201e6477eab4694d82947f2058f3b0d8` | Integrated into the reviewed candidate. Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `audit/branch-inventory-20261119` | `96fd4678208fd1fa52948775b7d6a2992abd58e0` | Equivalent content: clean merge adds nothing. Clean merge produces no candidate tree changes. Preserve without redundant source integration. |
+| `audit/ci-session-fixture-20261119` | `eb760c925c70a97538c4cb0276a686a3ad6cf7e0` | Exact candidate tree, alternate local provenance. Exact candidate tree with alternate local commit provenance. Preserve. |
+| `audit/final-receipts-20261119` | `244e1356201e6477eab4694d82947f2058f3b0d8` | Integrated into the reviewed candidate. Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `audit/future-feed-cursors-20261119` | `cc07eb969c38cd1b9dc1fa63a851ba8309fae7b0` | Future modules: keep isolated. Preserve separate module path; never merge module runtime into core. |
+| `audit/future-notifications-binding-20261119` | `2ce586b25ae8a55382ff1362d5fff3a91d90acd9` | Future modules: keep isolated. Preserve separate module path; never merge module runtime into core. |
+| `audit/future-pwa-browser-20261119` | `5b62b50ef0b215202d17ccfac4a0008f3bfe18ba` | Future modules: keep isolated. Preserve separate module path; never merge module runtime into core. |
+| `audit/gov021-core-refresh-20261119` | `d69eddaf1579098f5bd114e48a30e23675a27ab0` | Requires a product or interface decision. Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `audit/gov021-fixture-20261119` | `5a7891cbe8e7d25f4c36785f51d76c79a255fd7a` | Requires a product or interface decision. Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `audit/ledger-features-20261119` | `30f78d774bacb529e4caa1d5cc37111a8dcb0ae9` | Requires a product or interface decision. Mixed GOV-021 and SEC-026 local topic; never merge the generic-name branch wholesale into core. |
+| `audit/ledger-total-overflow-20261119` | `d627af48ff4042db73adac9a72f6208db268a924` | Equivalent content: clean merge adds nothing. Clean merge produces no candidate tree changes. Preserve without redundant source integration. |
+| `audit/local-core-provenance-20261119` | `f0ecaf2b88face4cb9cdaa913cf90ed1e40d028a` | Local topic superseded by published candidate. Source changes are represented by reviewed publication commits in PR90; do not reimport older files or stale status notes. |
+| `audit/requirement-evidence-20261119` | `244e1356201e6477eab4694d82947f2058f3b0d8` | Integrated into the reviewed candidate. Already in PR #90 ancestry. Qualify repaired combined candidate. |
+| `audit/sec026-independent-20261119` | `69e005f5fa7909bfa4ae9b42b7932e153304b41f` | Requires a product or interface decision. Retain isolated; authority, privacy, interface or governance policy remains unresolved. |
+| `audit/security-core-20261119` | `bd9da088b64b402fc5b3d6b22893dfa05f0807d9` | Equivalent content: clean merge adds nothing. Clean merge produces no candidate tree changes. Preserve without redundant source integration. |
+| `audit/self-sessions-20261119` | `0bca59808ebe2048f2e467ebd97127994dd2d185` | Local topic superseded by published candidate. Source changes are represented by reviewed publication commits in PR90; do not reimport older files or stale status notes. |
+| `audit/spec-status-20261119` | `799ee535249cd809544c4fe5449de288c7cace2d` | Local topic superseded by published candidate. Source changes are represented by reviewed publication commits in PR90; do not reimport older files or stale status notes. |
+| `integration/comprehensive-audit-20261119` | `f0ecaf2b88face4cb9cdaa913cf90ed1e40d028a` | Local topic superseded by published candidate. Source changes are represented by reviewed publication commits in PR90; do not reimport older files or stale status notes. |
+| `main` | `ead63b5ce24b2bcf8352d75fd0d1ff7be711f625` | Already integrated into main. No commit recovery needed. Preserve source ref. |
+| `review/comprehensive-audit-20261119` | `71f4eec668932cd2bb34873990061979933598fe` | Exact candidate tree, alternate local provenance. Exact candidate tree with alternate local commit provenance. Preserve. |
+
+## Closed, unmerged PRs (36)
+
+Every closed unmerged PR head was compared independently, including #49 and #50 whose branch refs are no longer advertised. Both dependency versions are already in current `go.mod`; the `pull/<N>/head` refs preserve their commits. A closed PR is not assumed abandoned or content-free.
+
+| PR | Source SHA | Present in main / candidate ancestry | Disposition |
+|---|---|---|---|
+| [#1](https://github.com/djshellshoxxx/circula/pull/1) | [`22e9202f19f5`](https://github.com/djshellshoxxx/circula/commit/22e9202f19f55aa46be4b115edbe84178e9cee0b) | false / false | Historical work recovered or superseded |
+| [#2](https://github.com/djshellshoxxx/circula/pull/2) | [`01b6e5c7cfc5`](https://github.com/djshellshoxxx/circula/commit/01b6e5c7cfc5bd9d660b80aaafe2b35de3912904) | false / false | Historical work recovered or superseded |
+| [#3](https://github.com/djshellshoxxx/circula/pull/3) | [`d96f2e75634b`](https://github.com/djshellshoxxx/circula/commit/d96f2e75634bff074d26965ae93c2fe00c6f7f24) | false / false | Historical work recovered or superseded |
+| [#5](https://github.com/djshellshoxxx/circula/pull/5) | [`db7826495ec2`](https://github.com/djshellshoxxx/circula/commit/db7826495ec2e8bd3f5459afa5f619cdc8fe8def) | false / false | Historical work recovered or superseded |
+| [#7](https://github.com/djshellshoxxx/circula/pull/7) | [`fcd9fc587848`](https://github.com/djshellshoxxx/circula/commit/fcd9fc5878482e1e4d340a3448a0d2294a33eb5b) | false / false | Historical work recovered or superseded |
+| [#8](https://github.com/djshellshoxxx/circula/pull/8) | [`d350474e4952`](https://github.com/djshellshoxxx/circula/commit/d350474e49522c34213d90a66904b296b9509f6c) | true / true | Already integrated into main |
+| [#9](https://github.com/djshellshoxxx/circula/pull/9) | [`d39bfef12d4a`](https://github.com/djshellshoxxx/circula/commit/d39bfef12d4ac1430815fa49ad799fb1c4bf9964) | true / true | Already integrated into main |
+| [#13](https://github.com/djshellshoxxx/circula/pull/13) | [`3d0080a9c436`](https://github.com/djshellshoxxx/circula/commit/3d0080a9c43680f69f81217af3b42374e7160bf8) | false / false | Historical work recovered or superseded |
+| [#16](https://github.com/djshellshoxxx/circula/pull/16) | [`127943ba7aa2`](https://github.com/djshellshoxxx/circula/commit/127943ba7aa2cb154d3e65d13279e739b901416f) | false / false | Historical work recovered or superseded |
+| [#17](https://github.com/djshellshoxxx/circula/pull/17) | [`7643fb616208`](https://github.com/djshellshoxxx/circula/commit/7643fb616208cc318939ded809e6cada66bb7415) | true / true | Already integrated into main |
+| [#18](https://github.com/djshellshoxxx/circula/pull/18) | [`9c0bc500cb19`](https://github.com/djshellshoxxx/circula/commit/9c0bc500cb19f11f18694c76d134f4bfebf896e7) | true / true | Already integrated into main |
+| [#20](https://github.com/djshellshoxxx/circula/pull/20) | [`3d9c56196625`](https://github.com/djshellshoxxx/circula/commit/3d9c56196625fc0c158b4652cbe2b9716c7af97b) | false / false | Historical work recovered or superseded |
+| [#21](https://github.com/djshellshoxxx/circula/pull/21) | [`63b033d842a2`](https://github.com/djshellshoxxx/circula/commit/63b033d842a2fa40b56ff9d79e69c259db951c83) | true / true | Already integrated into main |
+| [#22](https://github.com/djshellshoxxx/circula/pull/22) | [`2e729346d629`](https://github.com/djshellshoxxx/circula/commit/2e729346d6297075b6ff1f7828d48681d48320b6) | true / true | Already integrated into main |
+| [#23](https://github.com/djshellshoxxx/circula/pull/23) | [`a376a4ed5924`](https://github.com/djshellshoxxx/circula/commit/a376a4ed592451d90d2ff7b4d3db1489a2231f96) | true / true | Already integrated into main |
+| [#24](https://github.com/djshellshoxxx/circula/pull/24) | [`7620d7f51913`](https://github.com/djshellshoxxx/circula/commit/7620d7f51913363dd013b80cc682eb670eeff3a5) | true / true | Already integrated into main |
+| [#25](https://github.com/djshellshoxxx/circula/pull/25) | [`1760551f5b03`](https://github.com/djshellshoxxx/circula/commit/1760551f5b03a89ec64d09269d631e72f2e95959) | true / true | Already integrated into main |
+| [#26](https://github.com/djshellshoxxx/circula/pull/26) | [`2078bf096435`](https://github.com/djshellshoxxx/circula/commit/2078bf0964353892e80214b4601211e36818b889) | true / true | Already integrated into main |
+| [#27](https://github.com/djshellshoxxx/circula/pull/27) | [`b61a8e719030`](https://github.com/djshellshoxxx/circula/commit/b61a8e719030ff56044d71fee632b5ba824d7698) | true / true | Already integrated into main |
+| [#28](https://github.com/djshellshoxxx/circula/pull/28) | [`7e8481004801`](https://github.com/djshellshoxxx/circula/commit/7e8481004801c01aea5d22f4720e1ead7381c4f7) | true / true | Already integrated into main |
+| [#29](https://github.com/djshellshoxxx/circula/pull/29) | [`2da1a293ebf2`](https://github.com/djshellshoxxx/circula/commit/2da1a293ebf2f28f349fcae9bf32184737bc8619) | false / false | Historical work recovered or superseded |
+| [#30](https://github.com/djshellshoxxx/circula/pull/30) | [`1d165989e217`](https://github.com/djshellshoxxx/circula/commit/1d165989e2176e214536dd22b05f7b3a4cb2f48f) | false / false | Historical work recovered or superseded |
+| [#32](https://github.com/djshellshoxxx/circula/pull/32) | [`f4a051c1c1af`](https://github.com/djshellshoxxx/circula/commit/f4a051c1c1af815e7bb6a902929108e155145c97) | true / true | Already integrated into main |
+| [#33](https://github.com/djshellshoxxx/circula/pull/33) | [`4a8db9e80509`](https://github.com/djshellshoxxx/circula/commit/4a8db9e80509d23d3937c68575c632f4650576aa) | true / true | Already integrated into main |
+| [#34](https://github.com/djshellshoxxx/circula/pull/34) | [`02f9f0a7bb87`](https://github.com/djshellshoxxx/circula/commit/02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e) | false / false | Historical work recovered or superseded |
+| [#35](https://github.com/djshellshoxxx/circula/pull/35) | [`c033cfa448fb`](https://github.com/djshellshoxxx/circula/commit/c033cfa448fb89d1a5cc0ca87458b40d2709fa2e) | false / false | Historical work recovered or superseded |
+| [#36](https://github.com/djshellshoxxx/circula/pull/36) | [`8f742877fb53`](https://github.com/djshellshoxxx/circula/commit/8f742877fb53cc39aea5e189a5452d924d8c08c8) | false / false | Historical work recovered or superseded |
+| [#37](https://github.com/djshellshoxxx/circula/pull/37) | [`3bfb2f78fb0a`](https://github.com/djshellshoxxx/circula/commit/3bfb2f78fb0aad03ec3533af5985c394d64c1898) | false / false | Historical work recovered or superseded |
+| [#38](https://github.com/djshellshoxxx/circula/pull/38) | [`d2c1c6090a05`](https://github.com/djshellshoxxx/circula/commit/d2c1c6090a053b62dc75002464dc96bb542d6c78) | false / false | Historical work recovered or superseded |
+| [#39](https://github.com/djshellshoxxx/circula/pull/39) | [`92d204dc0273`](https://github.com/djshellshoxxx/circula/commit/92d204dc027320b1b26a05fd86e58232d89394ca) | false / false | Historical work recovered or superseded |
+| [#41](https://github.com/djshellshoxxx/circula/pull/41) | [`3d6ed55b2e44`](https://github.com/djshellshoxxx/circula/commit/3d6ed55b2e44d31f7350814d87ba44564e8344c0) | true / true | Already integrated into main |
+| [#42](https://github.com/djshellshoxxx/circula/pull/42) | [`36a80335abf5`](https://github.com/djshellshoxxx/circula/commit/36a80335abf54ec8d965cb350b157443ef7f2fec) | false / false | Historical work recovered or superseded |
+| [#48](https://github.com/djshellshoxxx/circula/pull/48) | [`4a6ea9ab3dff`](https://github.com/djshellshoxxx/circula/commit/4a6ea9ab3dff3bdf1f3597e98abd449b203afb11) | false / false | Historical work recovered or superseded |
+| [#49](https://github.com/djshellshoxxx/circula/pull/49) | [`f14c75a5cbba`](https://github.com/djshellshoxxx/circula/commit/f14c75a5cbbaea92ce89514d281c823a1fd2f00c) | false / false | dependency_version_already_recovered |
+| [#50](https://github.com/djshellshoxxx/circula/pull/50) | [`c34a9801853d`](https://github.com/djshellshoxxx/circula/commit/c34a9801853d5438f167757c3b2baea3afce06c0) | false / false | dependency_version_already_recovered |
+| [#63](https://github.com/djshellshoxxx/circula/pull/63) | [`d53196cc6907`](https://github.com/djshellshoxxx/circula/commit/d53196cc6907f27222661246a7767bb0aa123a76) | false / false | Equivalent content: clean merge adds nothing |
+
+## Independent historical content checks
+
+| Preserved source work | Current evidence / reason not to import an old implementation |
+|---|---|
+| Startup migration gate in #35 | `cmd/circula/serve.go` calls `startupMigrationGate`; `serve_test.go` includes explicit-mode/new-database coverage. Recovery is already in merged #69. |
+| Old export erasure and memory-budget tests | `internal/api/export_spool_test.go` contains `TestErasureDropsNetworkExports`, `TestExportRefusedWithoutSpoolDir`, `TestExportRefusedLeavesNoSpool` and `TestParallelExportWritesStayWithinCap`. Current fail-closed behavior supersedes old in-memory fallback. |
+| Sign-in enumeration work | `internal/service/enum_timing_test.go` includes `TestLoginRefusalsDoEqualWork`; deterministic password-work assertions supersede fragile timing-only tests. |
+| Sequence/interleaving/crash/backup qualification | Current symbols include `TestQA001InvariantSequences`, `TestQA007OversubscriptionInterleavings`, `TestQA010CrashDuringPosting`, `TestQA028BackupUnderLoadAndRestore`, and `TestQA026UpgradeWithFailedMigrationAndRollback`. Different filenames do not mean missing behavior. |
+| Departure, private JSON and erasure branches | Current service contains the >500-proposal cancellation regression; later private-file hardening and relation-based erasure supersede older source versions. Their old branches conflict with later improvements. |
+| Dashboard units and two authorization topics | Three independently rerun clean merge simulations produce the identical PR #90 tree: dashboard amounts/meter, ledger administrator-required guard, and administrator-MFA decider entry points. |
+| QA-042 Python variants | Superseded by `scripts/traceability`. The newest historical `claude/quirky-babbage-y9fpmm` includes Python source and four tracked compiled caches; do not import duplicate tooling or generated caches. |
+| Earlier foundational specifications | `docs/archive/specs-historical/README.md` maps drafts, retained research and incompatible IDs. Old capacity, reversal, decimals and public-directory rules conflict with canonical decisions. Preserve and index; do not choose competing requirements implicitly. |
+| Older handoffs/continuation prompts | Dated receipts are archived under `docs/audit` and `docs/handoffs/archive`; obsolete live prompts and `docs/HANDOFF.md` must not replace current instructions. |
+| Additional core source recovery | No additional compatible core implementation was identified outside PR #90 and the bounded-session local repair. This is a source-inventory conclusion, not a guarantee that all latent defects or unimplemented specification criteria are absent. |
+
+## Preservation and validation boundaries
+
+The inventory generator uses read-only Git history queries and `git merge-tree`; it does not modify refs, the index or source. It writes the report files and unreferenced merge-tree objects only. Source diffs are hashed in the JSON. No branch was deleted, force-pushed, deployed or released. Final qualification, current-main refresh and permitted merge decisions belong to the final integration report.
+
+## Concurrent bounded-inventory publication
+
+After the pinned discovery snapshot, PR #90 advanced from `244e1356201e6477eab4694d82947f2058f3b0d8` to `1e2f369a541963540d93c3b7f455b052827839c7`. The latter independently publishes the recovered session changes and a bounded token query. The continuation merges this exact head, retains its additional token revocation/ownership regressions, and retains the continuation's production query-plan test. The weaker duplicate token API test is removed. Original commits and both lines of ancestry remain preserved. This does not change the pinned discovery counts above.

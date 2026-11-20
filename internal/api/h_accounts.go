@@ -2,13 +2,15 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"strings"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 func limitETag(b *service.BalanceView) string {
-	return etagOf("limit", b.MemberID, minor(b.CreditLimit))
+	return etagOf("limit", b.MemberID, b.CreditLimitRevision)
 }
 
 // adminGetAccount shows a member's balance view and the ETag for the
@@ -57,8 +59,6 @@ func (s *server) putCreditLimit(c *reqCtx) error {
 		exp = &t
 	}
 	id := c.r.PathValue("id")
-	s.casMu.Lock()
-	defer s.casMu.Unlock()
 	cur, err := s.svc.PeekMemberBalance(c.r.Context(), c.actor, c.netID, id)
 	if err != nil {
 		return err
@@ -66,8 +66,20 @@ func (s *server) putCreditLimit(c *reqCtx) error {
 	if err := c.requireIfMatch(limitETag(cur)); err != nil {
 		return err
 	}
+	expected := cur.CreditLimitRevision
+	// Wildcard If-Match intentionally checks existence only. Explicit ETags
+	// are checked again in the service write unit, covering web/CLI writers.
+	for _, tag := range strings.Split(c.r.Header.Get("If-Match"), ",") {
+		if strings.TrimSpace(tag) == "*" {
+			expected = ""
+			break
+		}
+	}
 	b, err := s.svc.SetCreditLimitView(c.r.Context(), c.actor, c.netID, service.SetLimitInput{MemberID: id, Limit: lim,
-		ExpiresAt: exp, Reason: in.Reason})
+		ExpiresAt: exp, Reason: in.Reason, ExpectedRevision: expected})
+	if errors.Is(err, service.ErrCreditLimitChanged) {
+		return &apiError{status: 412, code: "precondition-failed", detail: "If-Match does not match the current version"}
+	}
 	if err != nil {
 		return err
 	}

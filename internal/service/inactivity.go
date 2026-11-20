@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 // Inactivity rule (GOV-012). A network may set Policy.InactivityDays. A member
@@ -119,6 +119,9 @@ func (s *Service) ListInactiveMembers(ctx context.Context, actor domain.Actor, n
 		}
 		if net.Policy.InactivityDays == 0 {
 			return nil
+		}
+		if err := validatePageIDs(pg.AfterID); err != nil {
+			return err
 		}
 		out, err = tx.ListInactiveMembers(netID, inactivityCutoff(s.now(), net.Policy.InactivityDays), pg.AfterID, clampPage(pg))
 		return err

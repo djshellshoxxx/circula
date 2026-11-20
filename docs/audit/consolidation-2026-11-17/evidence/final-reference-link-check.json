@@ -1,0 +1,72 @@
+{
+  "primary_files": [
+    {
+      "path": "docs/audit/consolidation-2026-11-17/README.md",
+      "sha256": "399cb3762c6fe1452d281789ad731d6abad52299d93dfe69fd65fa01eedb1c92",
+      "lines": 155,
+      "links": 92
+    },
+    {
+      "path": "docs/audit/consolidation-2026-11-17/SECURITY-DISPOSITIONS.md",
+      "sha256": "302b8e9c724d69e0121162682d5c1405f909b13c5deec4b4fa8e534a0ba020df",
+      "lines": 88,
+      "links": 6
+    },
+    {
+      "path": "docs/audit/consolidation-2026-11-17/HISTORICAL-PR-DISPOSITIONS.md",
+      "sha256": "013a73b11958f02b11b885651e531c02440650d7fb9535141c39cab862bcafe9",
+      "lines": 45,
+      "links": 13
+    },
+    {
+      "path": "docs/audit/consolidation-2026-11-17/REMAINING-INTEGRATION-GATES.md",
+      "sha256": "2875b0b3959696c3b2e618c3b84d889e5f948553cf0acecf27a2848112e57468",
+      "lines": 41,
+      "links": 17
+    },
+    {
+      "path": "docs/audit/consolidation-2026-11-17/source-reviews/README.md",
+      "sha256": "e821c0e3cc1e2c7340eed96c9eae0a9d0de7154992956adaeec9eb7fee5077e5",
+      "lines": 9,
+      "links": 5
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "36618af4f8ac4d9121ec3889b5b05f35896abad205ad1fe1c787f0023c4ab50c",
+      "lines": 278,
+      "links": 17
+    },
+    {
+      "path": "docs/TODO.md",
+      "sha256": "171cd30139d5942263e968dd18239abeb91b493fa3990b7d4f22c1349c8f8601",
+      "lines": 110,
+      "links": 10
+    },
+    {
+      "path": "docs/plans/BRANCH-CONSOLIDATION-2026-11-17.md",
+      "sha256": "a91ae80e85f23db7315e7801208ade5042753ec89c3857c62fe26602fc26a0cc",
+      "lines": 132,
+      "links": 3
+    },
+    {
+      "path": "docs/plans/PR-CONSOLIDATION-2026-11-17.md",
+      "sha256": "52e8f127c85e420763d29a94fd5f9bafa30e05dab974ef08ae00d4f59b8f9ea8",
+      "lines": 202,
+      "links": 35
+    },
+    {
+      "path": "docs/security/security-review.md",
+      "sha256": "68b9f83384f8d3b12188f04b1434c8bbafaab2b7715e13560409dd7726bde6d7",
+      "lines": 108,
+      "links": 13
+    }
+  ],
+  "primary_markdown_links_checked": 211,
+  "broken_primary_links": [],
+  "absolute_local_primary_links": [],
+  "manifest_entries": 246,
+  "manifest_mismatches": [],
+  "annotated_manifest_records": 25,
+  "refreshed_at_utc": "2026-11-18T10:25:07.480873+00:00",
+  "refresh_note": "Rechecked primary targets and manifest after four .diff JSON wrappers and three typed-digest wrappers. C owns transform semantic review; retained raw provenance links were not rewritten."
+}

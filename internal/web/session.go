@@ -136,9 +136,10 @@ type rc struct {
 	actor domain.Actor
 	token string
 	// Set by net():
-	Info *service.NetworkInfo
-	Net  *domain.Network
-	Me   *domain.Member
+	Info                *service.NetworkInfo
+	Net                 *domain.Network
+	Me                  *domain.Member
+	canAdmin, canReview bool
 	// loc is the person's display time zone; nil means UTC. Pages show times in it, the API stays UTC.
 	loc *time.Location
 }
@@ -146,10 +147,10 @@ type rc struct {
 func (c *rc) netID() string { return c.Net.ID }
 
 func (c *rc) isAdmin() bool {
-	return c.Me != nil && c.Me.Status == domain.MemberActive && c.Me.HasRole(domain.RoleAdmin)
+	return c.canAdmin
 }
 func (c *rc) isReviewer() bool {
-	return c.Me != nil && c.Me.Status == domain.MemberActive && c.Me.HasRole(domain.RoleReviewer)
+	return c.canReview
 }
 func (c *rc) isActive() bool { return c.Me != nil && c.Me.Status == domain.MemberActive }
 
@@ -202,22 +203,15 @@ func (s *server) netH(h func(http.ResponseWriter, *http.Request, *rc)) http.Hand
 			s.fail(w, r, domain.NotFound("network"))
 			return
 		}
-		mems, err := s.svc.MyMemberships(r.Context(), c.actor)
+		access, err := s.svc.GetNetworkAccess(r.Context(), c.actor, info.ID)
 		if err != nil {
 			s.fail(w, r, err)
 			return
 		}
-		for _, m := range mems {
-			if m.NetworkID == info.ID {
-				c.Me = m
-			}
-		}
+		c.Net, c.Me = access.Network, access.Member
+		c.canAdmin, c.canReview = access.CanAdmin, access.CanReview
 		if c.Me == nil {
 			s.fail(w, r, domain.NotFound("network"))
-			return
-		}
-		if c.Net, err = s.svc.GetNetwork(r.Context(), c.actor, info.ID); err != nil {
-			s.fail(w, r, err)
 			return
 		}
 		c.Info = info

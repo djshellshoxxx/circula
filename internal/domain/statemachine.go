@@ -195,4 +195,7 @@ type Dispute struct {
 	Rationale      string
 	OpenedAt       time.Time
 	DecidedAt      *time.Time
+	// PolicyVersion binds response and re-review periods at opening. It is
+	// immutable even when a later policy has an equal or earlier timestamp.
+	PolicyVersion int
 }

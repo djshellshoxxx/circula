@@ -127,8 +127,16 @@ func (t *txImpl) ListChallenges(netID, memberID, status string, limit int) ([]Ch
 	if limit <= 0 || limit > 200 {
 		limit = 200
 	}
+	return t.ListChallengesPage(netID, memberID, status, "", limit)
+}
+
+func (t *txImpl) ListChallengesPage(netID, memberID, status, afterID string, limit int) ([]Challenge, error) {
 	rows, err := t.query(`SELECT `+challengeCols+` FROM challenges WHERE network_id = ? AND (? = '' OR member_id = ?)
-		AND (? = '' OR status = ?) ORDER BY created_at DESC, id DESC LIMIT ?`, netID, memberID, memberID, status, status, limit)
+		AND (? = '' OR status = ?)
+		AND (? = '' OR (created_at, id) < (SELECT created_at, id FROM challenges
+			WHERE network_id = ? AND id = ? AND (? = '' OR member_id = ?)))
+		ORDER BY created_at DESC, id DESC LIMIT ?`, netID, memberID, memberID, status, status,
+		afterID, netID, afterID, memberID, memberID, limitOf(limit))
 	if err != nil {
 		return nil, err
 	}

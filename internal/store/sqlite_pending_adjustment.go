@@ -2,13 +2,14 @@ package store
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 )
 
 const pendCols = `id,network_id,proposer_member_id,target_member_id,amount,direction,reason,status,created_at,expires_at,
-	COALESCE(decided_by,''),decided_at,COALESCE(tx_id,'')`
+	COALESCE(decided_by,''),decided_at,COALESCE(tx_id,''),COALESCE(related_tx_id,'')`
 
 func scanPending(r rowScanner) (*domain.PendingAdjustment, error) {
 	var p domain.PendingAdjustment
@@ -16,7 +17,7 @@ func scanPending(r rowScanner) (*domain.PendingAdjustment, error) {
 	var dec sql.NullInt64
 	var st string
 	if err := r.Scan(&p.ID, &p.NetworkID, &p.Proposer, &p.Target, &p.Amount, &p.Direction, &p.Reason, &st,
-		&created, &exp, &p.DecidedBy, &dec, &p.TxID); err != nil {
+		&created, &exp, &p.DecidedBy, &dec, &p.TxID, &p.RelatedTxID); err != nil {
 		return nil, err
 	}
 	p.Status = domain.PendingStatus(st)
@@ -25,9 +26,9 @@ func scanPending(r rowScanner) (*domain.PendingAdjustment, error) {
 }
 
 func (t *txImpl) InsertPendingAdjustment(p *domain.PendingAdjustment) error {
-	_, err := t.exec(`INSERT INTO pending_adjustments(id,network_id,proposer_member_id,target_member_id,amount,direction,reason,status,created_at,expires_at)
-		VALUES (?,?,?,?,?,?,?,?,?,?)`, p.ID, p.NetworkID, p.Proposer, p.Target, p.Amount, p.Direction, p.Reason,
-		string(domain.PendingOpen), ms(p.CreatedAt), ms(p.ExpiresAt))
+	_, err := t.exec(`INSERT INTO pending_adjustments(id,network_id,proposer_member_id,target_member_id,amount,direction,reason,status,created_at,expires_at,related_tx_id)
+		VALUES (?,?,?,?,?,?,?,?,?,?,?)`, p.ID, p.NetworkID, p.Proposer, p.Target, p.Amount, p.Direction, p.Reason,
+		string(domain.PendingOpen), ms(p.CreatedAt), ms(p.ExpiresAt), nullStr(p.RelatedTxID))
 	return err
 }
 
@@ -87,7 +88,19 @@ func (t *txImpl) DecidePendingAdjustment(netID, id string, to domain.PendingStat
 	return n == 1, nil
 }
 
-func (t *txImpl) ListExpiredPendingAdjustments(now time.Time, limit int) ([]*domain.PendingAdjustment, error) {
-	return t.listPending(`SELECT `+pendCols+` FROM pending_adjustments WHERE status = 'pending' AND expires_at <= ?
-		ORDER BY expires_at, id LIMIT ?`, []any{ms(now), limit})
+func (t *txImpl) ListExpiredPendingAdjustments(now time.Time, limit int, excludedNetworkIDs []string) ([]*domain.PendingAdjustment, error) {
+	q := `SELECT ` + pendCols + ` FROM pending_adjustments WHERE status = 'pending' AND expires_at <= ?`
+	args := []any{ms(now)}
+	if len(excludedNetworkIDs) > 0 {
+		// One parameter keeps large freeze sets within SQLite's variable limit.
+		excluded, err := json.Marshal(excludedNetworkIDs)
+		if err != nil {
+			return nil, err
+		}
+		q += ` AND network_id NOT IN (SELECT value FROM json_each(?))`
+		args = append(args, string(excluded))
+	}
+	q += ` ORDER BY expires_at, id LIMIT ?`
+	args = append(args, limitOf(limit))
+	return t.listPending(q, args)
 }

@@ -1,0 +1,73 @@
+name: QA-001 manual invariant sequences
+
+# Explicit investigation workload, not an approved merge/release threshold.
+on:
+  workflow_dispatch:
+    inputs:
+      sequences:
+        description: Number of sequences (ignored for a single-seed replay)
+        type: string
+        default: '100000'
+      start_seed:
+        description: First seed; use disjoint ranges for separate batches
+        type: string
+        default: '100000'
+      seed:
+        description: Optional single failure seed to replay
+        type: string
+        default: ''
+      shards:
+        description: Concurrent workers, 1 through 8
+        type: string
+        default: '2'
+      timeout_seconds:
+        description: Test timeout, at most 19800 seconds; artifacts upload afterward
+        type: string
+        default: '18000'
+      race:
+        description: Enable race instrumentation (slower)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  sequences:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Verify manual runner
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts -p 'test_run_qa001.py'
+      - name: Run selected seed range
+        env:
+          QA_SEQUENCES: ${{ inputs.sequences }}
+          QA_START: ${{ inputs.start_seed }}
+          QA_SEED: ${{ inputs.seed }}
+          QA_SHARDS: ${{ inputs.shards }}
+          QA_TIMEOUT: ${{ inputs.timeout_seconds }}
+          QA_RACE: ${{ inputs.race }}
+        run: |
+          args=(--shards "$QA_SHARDS" --timeout-seconds "$QA_TIMEOUT" --output bin/qa001-run)
+          if [ -n "$QA_SEED" ]; then
+            args+=(--seed "$QA_SEED")
+          else
+            args+=(--sequences "$QA_SEQUENCES" --start-seed "$QA_START")
+          fi
+          if [ "$QA_RACE" = true ]; then args+=(--race); fi
+          python3 scripts/run_qa001.py "${args[@]}"
+      - name: Preserve test logs, metadata and failure fixtures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: qa001-${{ github.run_id }}-${{ github.run_attempt }}
+          path: bin/qa001-run
+          if-no-files-found: warn
+          retention-days: 30

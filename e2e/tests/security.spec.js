@@ -210,15 +210,19 @@ test('axe and keyboard: dual-control pending adjustments, approve with a second 
   await expect(b.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
   // admin2 may not decide the founder's request (appointed by the requester),
   // so no approve or reject button is offered for it.
-  await expect(b.page.getByRole('button', { name: /Approve and post|Reject/ })).toHaveCount(0);
+  await expect(b.page.getByRole('button', { name: /Review approval|Reject/ })).toHaveCount(0);
   await expect(b.page.getByText('Another administrator must decide this.')).toBeVisible();
   await checkPage(b.page, 'pending adjustments (second administrator)');
 
   await a.page.goto(`/n/${SLUG}/admin/adjustments/pending`);
   await expect(a.page.getByRole('button', { name: /Cancel request/ }).first()).toBeVisible();
-  await expect(a.page.getByRole('button', { name: /Approve and post/ })).toHaveCount(1); // admin2's only, not your own
+  await expect(a.page.getByRole('button', { name: /Review approval/ })).toHaveCount(1); // admin2's only, not your own
   await checkPage(a.page, 'pending adjustments (founder view)');
-  // keyboard only: Tab to the Approve button and press Enter
+  // keyboard only: review, then explicitly confirm the displayed effects.
+  await tabTo(a.page, /^Review approval/);
+  await Promise.all([a.page.waitForNavigation(), a.page.keyboard.press('Enter')]);
+  await expect(a.page.getByRole('heading', { name: 'Review adjustment approval' })).toBeVisible();
+  await checkPage(a.page, 'review adjustment approval');
   await tabTo(a.page, /^Approve and post/);
   await Promise.all([a.page.waitForNavigation(), a.page.keyboard.press('Enter')]);
   await expect(a.page.locator('#flash')).toBeVisible();

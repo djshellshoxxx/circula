@@ -1,0 +1,4 @@
+{
+  "media_type": "text/x-diff",
+  "original_utf8": "--- /workspace/scratch/9ceb45b04668/audit-b/pr87-fixed/internal/service/dispute_timelines_test.go\t2026-11-18 00:45:31.000000000 -0800\n+++ /workspace/scratch/9ceb45b04668/audit-b/pr87-same-ms/internal/service/dispute_timelines_test.go\t2026-11-18 01:20:58.693102211 -0800\n@@ -43,7 +43,7 @@\n \tnoErr(t, w.respond(w.b, decided.ID, \"it was delivered\"))\n \tdecided = tu.Must(w.resolve(rev, decided.ID, domain.OutcomeDismissed, 0, \"delivered\"))\n \n-\tw.Clock.Advance(time.Hour)\n+\t// Review control: keep the later policy write in the opening millisecond.\n \ttu.Must(w.setPolicy(func(p *domain.Policy) { p.ResponsePeriodDays = 0; p.ReReviewWindowDays = 1 }, nil, \"\"))\n \tif p := w.netNow().Policy; p.ResponsePeriodDays != 0 || p.ReReviewWindowDays != 1 {\n \t\tt.Fatalf(\"precondition: the change is in force at once: %d/%d\", p.ResponsePeriodDays, p.ReReviewWindowDays)\n"
+}

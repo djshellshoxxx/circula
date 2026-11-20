@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
-	"github.com/djshellshoxxx/circula/internal/store"
+	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
 const tokenPrefix = "cir_"
@@ -17,6 +17,26 @@ type TokenInput struct {
 	Scopes    []domain.Scope // subset of the caller's own scopes
 	NetworkID string         // optional: restrict the token to one network
 	ExpiresAt *time.Time
+}
+
+// tokenMutationAuthority checks the current credential state inside the same
+// write unit as token creation/revocation. Authentication at the HTTP edge may
+// have preceded a concurrent logout, password change or account reset.
+// Trusted non-session service callers retain their existing scope rules, but
+// cannot override a password restriction that changed after authentication.
+func (s *Service) tokenMutationAuthority(tx store.Tx, actor domain.Actor) error {
+	if actor.SessionID != "" {
+		_, _, err := s.ownSessionGate(tx, actor, domain.ScopeWrite)
+		return err
+	}
+	mustChange, err := tx.MustChangePassword(actor.PersonID)
+	if err != nil {
+		return authnErr(err)
+	}
+	if mustChange {
+		return domain.PasswordChangeRequired()
+	}
+	return nil
 }
 
 // CreateAPIToken returns the bearer value once; only its hash is stored. A
@@ -54,7 +74,13 @@ func (s *Service) CreateAPIToken(ctx context.Context, actor domain.Actor, in Tok
 	t := &domain.APIToken{ID: s.id(), PersonID: actor.PersonID, NetworkID: in.NetworkID, Name: name,
 		TokenHash: hashToken(plain), Scopes: in.Scopes, CreatedAt: s.now(), ExpiresAt: in.ExpiresAt}
 	err = s.update(ctx, func(tx store.Tx) error {
+		if err := s.tokenMutationAuthority(tx, actor); err != nil {
+			return err
+		}
 		if in.NetworkID != "" {
+			if !domain.ValidRecordID(in.NetworkID) {
+				return domain.NotFound("network")
+			}
 			if _, err := tx.GetMemberByPerson(in.NetworkID, actor.PersonID); err != nil {
 				return domain.NotFound("network")
 			}
@@ -100,7 +126,8 @@ func (s *Service) AuthenticateToken(ctx context.Context, token string) (domain.A
 	return domain.Actor{PersonID: t.PersonID, Scopes: t.Scopes, NetworkScope: t.NetworkID, MustChangePassword: must}, nil
 }
 
-// RevokeAPIToken revokes one of the caller's own tokens.
+// RevokeAPIToken revokes one of the caller's own tokens. Network-scoped
+// credentials cannot manage the person's tokens across networks.
 func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenID string) error {
 	if actor.MustChangePassword {
 		return domain.PasswordChangeRequired() // SEC-008
@@ -108,7 +135,16 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 	if actor.PersonID == "" || !actor.Can(domain.ScopeWrite) {
 		return domain.Forbidden("write scope required")
 	}
+	if actor.NetworkScope != "" {
+		return domain.Forbidden("an unrestricted person is required to manage API tokens")
+	}
 	return s.update(ctx, func(tx store.Tx) error {
+		if err := s.tokenMutationAuthority(tx, actor); err != nil {
+			return err
+		}
+		if !domain.ValidRecordID(tokenID) {
+			return domain.NotFound("token")
+		}
 		ok, err := tx.RevokeToken(actor.PersonID, tokenID, s.now())
 		if err != nil {
 			return err
@@ -123,10 +159,15 @@ func (s *Service) RevokeAPIToken(ctx context.Context, actor domain.Actor, tokenI
 	})
 }
 
-// ListAPITokens lists the caller's tokens (never the secret values).
+// ListAPITokens lists the caller's first 100 tokens in ascending ID order
+// (never the secret values), the existing unpaginated API-036 contract.
+// Network-scoped credentials cannot enumerate person-wide token metadata.
 func (s *Service) ListAPITokens(ctx context.Context, actor domain.Actor) ([]*domain.APIToken, error) {
 	if actor.PersonID == "" || !actor.Can(domain.ScopeRead) {
 		return nil, domain.Forbidden("read scope required")
+	}
+	if actor.NetworkScope != "" {
+		return nil, domain.Forbidden("an unrestricted person is required to manage API tokens")
 	}
 	var out []*domain.APIToken
 	err := s.view(ctx, func(tx store.Tx) (err error) { out, err = tx.ListTokens(actor.PersonID); return })

@@ -1,0 +1,91 @@
+{
+  "head": {
+    "git_object_sha1": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa"
+  },
+  "tree": {
+    "git_object_sha1": "c7077653183021a006821c71926be3a089da502b"
+  },
+  "baseline": {
+    "git_object_sha1": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a"
+  },
+  "baseline_tree": {
+    "git_object_sha1": "f41365f8ee4f42f4cbd33fb4e1a78cad85caedd1"
+  },
+  "api_baseline_changes": [
+    "Copied only the exact supplied problem_catalogue_test.go from PR84"
+  ],
+  "retention_mutation": "PR84 snapshot, removed only four-line future-entry filter; kept pruneBackupsAt seam. Not literal old-tree execution.",
+  "snapshots": {
+    "/workspace/scratch/9ceb45b04668/audit-c-pr84/fixed": {
+      "internal/api/problem_catalogue_test.go": {
+        "sha256_digest": "6e43e31fc1dfeab9753b28136569244cb5760548fe4a170950ff09e3cb84f4d7"
+      },
+      "cmd/circula/snapshot.go": {
+        "sha256_digest": "da0bc52dc4b6954a099349517bd85e13241f224303cc524bbdf8992b933c9e00"
+      },
+      "cmd/circula/backup_test.go": {
+        "sha256_digest": "c4625f7e5759c5741ba7f6eea714e77aa34f1a64c38832b84483e1945ccabc34"
+      },
+      "cmd/circula/jobs_regress_test.go": {
+        "sha256_digest": "3b07cbedd929398636b1efc7baca4ee5389322f972820f98da572da4ad3160ad"
+      },
+      "docs/specs/07-api-contract.md": {
+        "sha256_digest": "9cea7782e198a07330dce365209185e05168e6ba1bc58690fcc65d1ea994f06e"
+      }
+    },
+    "/workspace/scratch/9ceb45b04668/audit-c-pr84/api-baseline": {
+      "internal/api/problem_catalogue_test.go": {
+        "sha256_digest": "6e43e31fc1dfeab9753b28136569244cb5760548fe4a170950ff09e3cb84f4d7"
+      },
+      "cmd/circula/snapshot.go": {
+        "sha256_digest": "14d31780380e551f6863843bd084fb195cc3e61df128314335ffd80d32eba188"
+      },
+      "cmd/circula/backup_test.go": {
+        "sha256_digest": "9a939880fd415b90b2584c601131e1512edf98f0ae1a4f9fbe08a5e98eb61e90"
+      },
+      "cmd/circula/jobs_regress_test.go": {
+        "sha256_digest": "3fdf3a852a969c80b96cb5367153dbf2e2bd434966d483e1deac337e8f26b603"
+      },
+      "docs/specs/07-api-contract.md": {
+        "sha256_digest": "102bfa506e890233ef6d25b777ecb21b2cf428de97b25111a60a389f40af3dba"
+      }
+    },
+    "/workspace/scratch/9ceb45b04668/audit-c-pr84/retention-prior-algorithm": {
+      "internal/api/problem_catalogue_test.go": {
+        "sha256_digest": "6e43e31fc1dfeab9753b28136569244cb5760548fe4a170950ff09e3cb84f4d7"
+      },
+      "cmd/circula/snapshot.go": {
+        "sha256_digest": "b304ec4613bed7b164aaf087bf512f6048deca524a976b8ae7c6a605c4381bd6"
+      },
+      "cmd/circula/backup_test.go": {
+        "sha256_digest": "c4625f7e5759c5741ba7f6eea714e77aa34f1a64c38832b84483e1945ccabc34"
+      },
+      "cmd/circula/jobs_regress_test.go": {
+        "sha256_digest": "3b07cbedd929398636b1efc7baca4ee5389322f972820f98da572da4ad3160ad"
+      },
+      "docs/specs/07-api-contract.md": {
+        "sha256_digest": "9cea7782e198a07330dce365209185e05168e6ba1bc58690fcc65d1ea994f06e"
+      }
+    }
+  },
+  "git_blobs": {
+    "internal/api/problem_catalogue_test.go": {
+      "git_object_sha1": "4eff2343bd7293754ef4a2ea00f286a081a96fde"
+    },
+    "cmd/circula/snapshot.go": {
+      "git_object_sha1": "fcec927773bf4f965744c9e709ef0e45ddcd2b4a"
+    },
+    "cmd/circula/backup_test.go": {
+      "git_object_sha1": "4b7aa65aed259800226a512e8a68b7bb67c5ef7b"
+    },
+    "cmd/circula/jobs_regress_test.go": {
+      "git_object_sha1": "5eae6f3f9d3ab66f11612c6206f1574658403ca2"
+    },
+    "docs/specs/07-api-contract.md": {
+      "git_object_sha1": "4f6b1a626efbd72d72a083e1e987ce26ca063474"
+    }
+  },
+  "baseline_catalogue_blob": {
+    "git_object_sha1": "3dcf4f2da6af1ffac015f207511c3ce8ad5a27e6"
+  }
+}

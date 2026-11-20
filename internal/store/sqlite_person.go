@@ -64,8 +64,11 @@ func (t *txImpl) DeleteThrottle(login string) error {
 }
 
 func (t *txImpl) DeleteThrottleFamily(key string) (int64, error) {
-	res, err := t.exec(`DELETE FROM login_throttle WHERE login = ? OR substr(login, 1, ?) = ?`,
-		key, len(key)+1, key+" ")
+	// SQLite length/substr both count Unicode characters. Go len counts UTF-8
+	// bytes and would leave address-specific rows behind for non-ASCII keys.
+	// Equality keeps '%' and '_' literal instead of treating them as patterns.
+	res, err := t.exec(`DELETE FROM login_throttle WHERE login = ? OR substr(login, 1, length(?) + 1) = ?`,
+		key, key, key+" ")
 	if err != nil {
 		return 0, err
 	}
@@ -99,17 +102,27 @@ func (t *txImpl) DeleteDeadSessions(now, idleBefore, revokedBefore time.Time, li
 }
 
 func (t *txImpl) InsertSession(s *domain.Session) error {
-	_, err := t.exec(`INSERT INTO sessions(id,person_id,created_at,last_seen_at,expires_at) VALUES (?,?,?,?,?)`,
-		s.IDHash, s.PersonID, ms(s.CreatedAt), ms(s.LastSeenAt), ms(s.ExpiresAt))
-	return err
+	return mapErr(t.row(`INSERT INTO sessions(id,person_id,created_at,last_seen_at,expires_at,public_id)
+		VALUES (?,?,?,?,?,lower(hex(randomblob(32)))) RETURNING public_id`,
+		s.IDHash, s.PersonID, ms(s.CreatedAt), ms(s.LastSeenAt), ms(s.ExpiresAt)).Scan(&s.PublicID))
 }
 
-func (t *txImpl) GetSession(idHash string) (*domain.Session, error) {
+const sessionColumns = `id,public_id,person_id,created_at,last_seen_at,expires_at,revoked_at`
+const sessionOwnedSQL = `SELECT ` + sessionColumns + ` FROM sessions WHERE public_id = ? AND person_id = ?`
+const sessionListFirstSQL = `SELECT ` + sessionColumns + ` FROM sessions
+	WHERE person_id = ? ORDER BY created_at DESC,public_id DESC LIMIT ?`
+const sessionListAfterSQL = `SELECT ` + sessionColumns + ` FROM sessions
+	WHERE person_id = ? AND (created_at,public_id) < (?,?)
+	ORDER BY created_at DESC,public_id DESC LIMIT ?`
+const sessionListBeforeSQL = `SELECT ` + sessionColumns + ` FROM sessions
+	WHERE person_id = ? AND (created_at,public_id) > (?,?)
+	ORDER BY created_at ASC,public_id ASC LIMIT ?`
+
+func scanSession(r rowScanner) (*domain.Session, error) {
 	var s domain.Session
 	var created, seen, exp int64
 	var rev sql.NullInt64
-	err := t.row(`SELECT id,person_id,created_at,last_seen_at,expires_at,revoked_at FROM sessions WHERE id = ?`,
-		idHash).Scan(&s.IDHash, &s.PersonID, &created, &seen, &exp, &rev)
+	err := r.Scan(&s.IDHash, &s.PublicID, &s.PersonID, &created, &seen, &exp, &rev)
 	if err != nil {
 		return nil, notFound(err, "session")
 	}
@@ -117,9 +130,54 @@ func (t *txImpl) GetSession(idHash string) (*domain.Session, error) {
 	return &s, nil
 }
 
+func (t *txImpl) GetSession(idHash string) (*domain.Session, error) {
+	return scanSession(t.row(`SELECT `+sessionColumns+` FROM sessions WHERE id = ?`, idHash))
+}
+
+func (t *txImpl) GetOwnedSession(personID, publicID string) (*domain.Session, error) {
+	return scanSession(t.row(sessionOwnedSQL, publicID, personID))
+}
+
 func (t *txImpl) TouchSession(idHash string, seen time.Time) error {
 	_, err := t.exec(`UPDATE sessions SET last_seen_at = ? WHERE id = ?`, ms(seen), idHash)
 	return err
+}
+
+func (t *txImpl) ListSessions(personID string, before *SessionPosition, limit int) ([]*domain.Session, error) {
+	if limit < 1 || limit > 100 {
+		limit = 100
+	}
+	query, args := sessionListFirstSQL, []any{personID, limit}
+	if before != nil {
+		query, args = sessionListAfterSQL, []any{personID, ms(before.CreatedAt), before.PublicID, limit}
+		if before.Reverse {
+			query = sessionListBeforeSQL
+		}
+	}
+	rows, err := t.query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = rows.Close() }()
+	var out []*domain.Session
+	for rows.Next() {
+		s, err := scanSession(rows)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, s)
+	}
+	return out, mapErr(rows.Err())
+}
+
+func (t *txImpl) RevokeOwnedSession(personID, idHash string, at time.Time) (bool, error) {
+	res, err := t.exec(`UPDATE sessions SET revoked_at = ? WHERE person_id = ? AND id = ? AND revoked_at IS NULL`,
+		ms(at), personID, idHash)
+	if err != nil {
+		return false, err
+	}
+	n, err := res.RowsAffected()
+	return n != 0, err
 }
 
 func (t *txImpl) RevokeSession(idHash string, at time.Time) error {
@@ -215,8 +273,10 @@ func (t *txImpl) RevokeToken(personID, id string, at time.Time) (bool, error) {
 	return n > 0, nil
 }
 
+const tokenListSQL = `SELECT ` + tokenCols + ` FROM api_tokens WHERE person_id = ? ORDER BY id LIMIT 100`
+
 func (t *txImpl) ListTokens(personID string) ([]*domain.APIToken, error) {
-	rows, err := t.query(`SELECT `+tokenCols+` FROM api_tokens WHERE person_id = ? ORDER BY id`, personID)
+	rows, err := t.query(tokenListSQL, personID)
 	if err != nil {
 		return nil, err
 	}

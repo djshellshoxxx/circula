@@ -1,8 +1,9 @@
 {{define "content"}}
 {{with .D}}
-{{if not .Self}}<div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new?to={{.ID}}">Propose a trade with {{.Name}}</a> <a class="btn secondary" href="/n/{{$.Slug}}/report?type=member&amp;id={{.ID}}">Report {{.Name}}</a></div>{{end}}
-<h2>Listings by {{.Name}}</h2>
-{{if .Listings}}<ul class="rows">{{range .Listings}}<li><strong>{{if eq (printf "%s" .Type) "offer"}}Offer{{else}}Request{{end}}:</strong> {{.Title}}{{if .Price}} &middot; price {{plain (deref .Price) $.Dec}} {{$.Unit}}s{{end}}<br>{{.Description}}</li>{{end}}</ul>
-{{else}}<p>{{.Name}} has no active listings.</p>{{end}}
+<p>{{msg "profile.reference_label"}} <strong>{{$.MemberRef .ID}}</strong>. {{msg "profile.reference_note"}}{{if .Self}} {{msg "profile.reference_self"}}{{else}} {{msg "profile.reference_other"}}{{end}}</p>
+{{if not .Self}}<div class="actions"><a class="btn" href="/n/{{$.Slug}}/trades/new?to={{.ID}}">{{msg "profile.propose_with" .Name}}</a> <a class="btn secondary" href="/n/{{$.Slug}}/report?type=member&amp;id={{.ID}}">{{msg "profile.report" .Name}}</a></div>{{end}}
+<h2>{{msg "profile.listings_by" .Name}}</h2>
+{{if .Listings}}<ul class="rows">{{range .Listings}}<li><strong>{{if eq (printf "%s" .Type) "offer"}}{{msg "listing.offer_prefix"}}{{else}}{{msg "listing.request_prefix"}}{{end}}</strong> {{.Title}}{{if .Price}} &middot; {{msg "listing.price" (plain (deref .Price) $.Dec) (unit $.Unit (deref .Price) $.Dec)}}{{end}}<br>{{.Description}}</li>{{end}}</ul>
+{{else}}<p>{{msg "profile.empty" .Name}}</p>{{end}}
 {{end}}
 {{end}}

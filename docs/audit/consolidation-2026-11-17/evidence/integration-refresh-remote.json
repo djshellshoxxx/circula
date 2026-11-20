@@ -1,0 +1,36 @@
+{
+  "method": "GitHub connector GET of /git/commits/<sha>; independently retrieved by Agent G",
+  "commits": [
+    {
+      "sha": "b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "tree": "756fed2f703fd9ec882b0ed3d92ef3dab99b2ffc",
+      "parents": [
+        "1a0202001e422a3aefb09139f1237fc0b19b5747",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "url": "https://github.com/djshellshoxxx/circula/commit/b1cd8f38450ae966cfea99d59a131175d7b798dd",
+      "message": "Merge current main and reviewed browser repair into SQLite qualification\n\nPreserve the SQLite fix and refresh its CI candidate with accepted core changes and the PR77 test repair. PR77 and all required native/current-head gates must pass before main integration."
+    },
+    {
+      "sha": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "tree": "b10a55a019ab37b149d33649fba1f6615acfeac4",
+      "parents": [
+        "6dd208660969f02100b2b5bbed04dcb6780c0b99",
+        "ffa2758ffc2fe29133a46b1d8d3f0a6138c404e4",
+        "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+      ],
+      "url": "https://github.com/djshellshoxxx/circula/commit/faed4906f5419f573181bd7cf3ffdf0bdfb9992b",
+      "message": "Merge current main and reviewed browser repair into backup qualification\n\nPreserve the private backup staging and liveness leases, incorporate complete lint qualification, and refresh the candidate with accepted core changes and PR77's reviewed assertion repair."
+    },
+    {
+      "sha": "6dd208660969f02100b2b5bbed04dcb6780c0b99",
+      "tree": "399e1e7854e2342bc851b64f6a320b2211dc2edc",
+      "parents": [
+        "cac2e0e148abde6c7666c4064f792e3acdaf1eb3"
+      ],
+      "url": "https://github.com/djshellshoxxx/circula/commit/6dd208660969f02100b2b5bbed04dcb6780c0b99",
+      "message": "chore: document remaining backup cleanup path provenance\n\nExplain the final two owned-path cleanup sinks. Verify the complete pinned linter output with no diagnostic caps; runtime and scanner checks remain unchanged."
+    }
+  ]
+}

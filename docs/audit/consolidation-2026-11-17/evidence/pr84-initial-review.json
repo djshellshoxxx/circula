@@ -1,0 +1,44 @@
+{
+  "head": "7f98b3db8d032fc107599a3da4a6e1747c3e00aa",
+  "base": "cdc8112cf80ca51fdd220cd2f86c5180180cbe2a",
+  "tree": "c7077653183021a006821c71926be3a089da502b",
+  "status": "active-draft-unique-core-work",
+  "merge_approval": false,
+  "source_verdict": "No source blocker found in the current API catalogue/retention slices; logging work actively incomplete and runtime gates not independently run.",
+  "runtime_tests_performed": false,
+  "probes_performed": false,
+  "remote_mutations": false,
+  "frozen_pr70_head": "1ee699f4e41c2779f32bd27063b14a4ff22e3a7d",
+  "pr70_merge": "e67bad5e2dbee95cff05536aa79f53f3afbccc84",
+  "frozen_head_preserved": true,
+  "original_branches_present": 89,
+  "original_heads_unchanged": 87,
+  "forward_advance_exceptions": [
+    "main",
+    "claude/sharp-archimedes-tu76rh"
+  ],
+  "branch_snapshot_count": 104,
+  "author": "djshellshoxxx",
+  "body_attributed_session": "session_01KtKj8iYFjoCXACy4iwbKai",
+  "a3_f10": {
+    "cadence": "fixed on main",
+    "retention": "unique current PR84 fix; source-reviewed, runtime not independently run",
+    "clock_logging": "still pending; author actively working",
+    "historical_full_fixed_classification": "needs narrowing",
+    "original_finding_includes_retention": true
+  },
+  "owner_policy_preserved": [
+    "A3-F02/DEC-014",
+    "PRIV-02",
+    "PRIV-03",
+    "A1-04-G2",
+    "A3-F18"
+  ],
+  "artifacts": [
+    "PR84-SOURCE-REVIEW-7f98b3d.md",
+    "PR84-API-METADATA.json",
+    "PR84-ANCESTRY-AND-OVERLAP.json",
+    "PR84-ORIGINAL89-PRESERVATION.json",
+    "pr84-full.diff"
+  ]
+}

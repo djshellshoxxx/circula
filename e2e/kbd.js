@@ -11,25 +11,39 @@ async function focused(page) {
   });
 }
 
-/** Presses Tab until the focused element's name matches; returns the Tab count. */
-async function tabTo(page, re, max = 80) {
+/**
+ * Presses Tab until an element with the requested name is focused. Checkbox
+ * fields must skip same-named error-summary links and reach the actual input.
+ */
+async function tabTo(page, re, max = 80, requireCheckbox = false) {
   for (let i = 1; i <= max; i++) {
     await page.keyboard.press('Tab');
-    if (re.test(await focused(page))) return i;
+    if (!re.test(await focused(page))) continue;
+    if (requireCheckbox && !(await page.evaluate(() => document.activeElement?.matches('input[type="checkbox"]') === true))) continue;
+    return i;
   }
-  throw new Error(`could not reach an element named ${re} by Tab within ${max} presses; last focus: "${await focused(page)}"`);
+  throw new Error(`could not reach ${requireCheckbox ? 'a checkbox' : 'an element'} named ${re} by Tab within ${max} presses; last focus: "${await focused(page)}"`);
 }
 
 /**
  * Fills a form with the keyboard only and activates the named button with Enter. fields is a list of
- * [labelRegExp, text] pairs in page order; text === true toggles a checkbox with Space. Resolves after the
+ * [labelRegExp, text] pairs in page order; text === true checks a checkbox with Space. Resolves after the
  * resulting navigation.
  */
 async function kbSubmit(page, fields, button) {
   for (const [re, text] of fields) {
-    await tabTo(page, re);
-    if (text === true) await page.keyboard.press('Space');
-    else await page.keyboard.type(text, { delay: 3 });
+    if (text === true) {
+      await tabTo(page, re, 80, true);
+      // After validation an error-summary link may have the same accessible
+      // name. Tabbing must reach the checkbox rather than toggling the link.
+      // Do not uncheck an already-selected restored form control.
+      const checkbox = page.locator('input[type="checkbox"]:focus');
+      if (!(await checkbox.isChecked())) await page.keyboard.press('Space');
+      if (!(await checkbox.isChecked())) throw new Error(`keyboard failed to check ${re}`);
+    } else {
+      await tabTo(page, re);
+      await page.keyboard.type(text, { delay: 3 });
+    }
   }
   await tabTo(page, button);
   await Promise.all([page.waitForNavigation(), page.keyboard.press('Enter')]);

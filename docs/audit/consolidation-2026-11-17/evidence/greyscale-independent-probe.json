@@ -1,0 +1,50 @@
+{
+  "scope": "Actual test body and readScreen callback with minimal controlled DOM objects; not browser rendering or emulation.",
+  "test_sha256": "d0de3ff70b26c2d2051b18589abec83784a15af100992defdf1ea7f0d5a821a7",
+  "results": {
+    "rollover": {
+      "pass": true,
+      "modes": 3
+    },
+    "missing_time": {
+      "pass": false,
+      "modes": 0,
+      "error": "expected a nonempty generation time on the network page"
+    },
+    "blank_time": {
+      "pass": false,
+      "modes": 0,
+      "error": "expected a nonempty generation time on the network page"
+    },
+    "missing_footer": {
+      "pass": false,
+      "modes": 0,
+      "error": "expected a nonempty generation time on the network page"
+    },
+    "footer_word_change": {
+      "pass": false,
+      "modes": 0,
+      "error": "trade detail, pending: the fresh page has the same content\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated [generation time]. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated [generation time]. Figures update automatically.\""
+    },
+    "body_omission": {
+      "pass": false,
+      "modes": 0,
+      "error": "trade detail, pending: the fresh page has the same content\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated [generation time]. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 5.00 hours. Waiting for Bob to respond. Page generated [generation time]. Figures are a snapshot and do not update automatically.\""
+    },
+    "amount_change": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 9.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\""
+    },
+    "time_change": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: the same words as in colour\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:34 UTC. Figures are a snapshot and do not update automatically.\"\nReceived: \"Trade 5.00 hours. Waiting for Bob to respond. Check the details before responding. Page generated 18 Nov 2026, 06:35 UTC. Figures are a snapshot and do not update automatically.\""
+    },
+    "contrast_change": {
+      "pass": false,
+      "modes": 1,
+      "error": "trade detail, pending, greyscale: status tag \"Waiting for Bob to respond\" visible (contrast 1)\n\nexpect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false"
+    }
+  }
+}

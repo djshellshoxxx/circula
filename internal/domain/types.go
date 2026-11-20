@@ -169,6 +169,7 @@ type Transaction struct {
 	Note           string
 	Reason         string
 	OriginalTxID   string
+	RelatedTxID    string // optional adjustment context; never changes reversal accounting
 	CreatedBy      string // member id of proposer / admin / actor; empty for system
 	AcceptedBy     string
 	ReversedTotal  int64
@@ -181,6 +182,13 @@ type Transaction struct {
 	DisputeDeadlineAt *time.Time
 	// DisputePolicyVersion is the policy version the deadline came from (DAT-051).
 	DisputePolicyVersion int
+}
+
+// IsPosted reports whether the transaction has completed its ledger posting.
+// A sequence on an open proposal alone is not evidence of a completed posting.
+func (t *Transaction) IsPosted() bool {
+	return t.LedgerSeq > 0 && t.CompletedAt != nil &&
+		(t.Status == TxCompleted || t.Status == TxDisputed || t.Status == TxReversed)
 }
 
 // IsParty reports whether member id is the payer or payee.
@@ -263,10 +271,12 @@ type Invitation struct {
 	CreatedAt time.Time
 }
 
-// Session is a server-side revocable login session. ID is the SHA-256 hex of
-// the bearer token; the token itself is never stored.
+// Session is a server-side revocable login session. IDHash is the SHA-256 hex
+// of the bearer token; the token itself is never stored. PublicID is an
+// independent, immutable noncredential selector assigned by the repository.
 type Session struct {
 	IDHash     string
+	PublicID   string
 	PersonID   string
 	CreatedAt  time.Time
 	LastSeenAt time.Time

@@ -1,0 +1,141 @@
+{
+  "recorded_at": "2026-11-18T08:10:57.324Z",
+  "jobs_observed_at": "2026-11-18T08:10:15.733Z",
+  "pr": 81,
+  "head": "5776be13613ddbf172bc73c97a9fd83e26c9f989",
+  "run": 44263466849,
+  "superseded_by": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3",
+  "note": "All jobs cancelled as the author advanced the head during review; this is not a passing qualification.",
+  "jobs": [
+    {
+      "id": 134662176488,
+      "name": "test (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662176942,
+      "name": "e2e (Playwright, axe, keyboard)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662176990,
+      "name": "API contract and load smoke",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662177027,
+      "name": "fuzz smoke (RB-017)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662177047,
+      "name": "test (windows-2022)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "test with race detector (macOS Intel, bounded parallelism)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5
+        },
+        {
+          "name": "Post Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        }
+      ]
+    },
+    {
+      "id": 134662177067,
+      "name": "test (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662177115,
+      "name": "build release targets",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662177193,
+      "name": "reproducible build (two builds, same sha256)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 134662177297,
+      "name": "vet, gofmt, golangci-lint, govulncheck",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_id": 44263466849,
+      "logs_url": null,
+      "steps": null
+    }
+  ]
+}

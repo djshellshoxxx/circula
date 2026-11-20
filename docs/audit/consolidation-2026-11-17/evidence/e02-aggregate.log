@@ -1,0 +1,16 @@
+ok  	github.com/djshellshoxxx/circula/cmd/circula	36.210s
+ok  	github.com/djshellshoxxx/circula/internal/api	14.659s
+ok  	github.com/djshellshoxxx/circula/internal/contract	3.175s
+ok  	github.com/djshellshoxxx/circula/internal/domain	0.081s
+ok  	github.com/djshellshoxxx/circula/internal/histbal	0.006s
+ok  	github.com/djshellshoxxx/circula/internal/httpx	0.007s
+ok  	github.com/djshellshoxxx/circula/internal/logx	0.011s
+ok  	github.com/djshellshoxxx/circula/internal/repository	0.198s
+ok  	github.com/djshellshoxxx/circula/internal/service	33.757s
+ok  	github.com/djshellshoxxx/circula/internal/store	4.195s
+?   	github.com/djshellshoxxx/circula/internal/storetest	[no test files]
+?   	github.com/djshellshoxxx/circula/internal/testutil	[no test files]
+ok  	github.com/djshellshoxxx/circula/internal/web	13.652s
+ok  	github.com/djshellshoxxx/circula/internal/web/messages	0.006s
+ok  	github.com/djshellshoxxx/circula/scripts/sbom	0.042s
+ok  	github.com/djshellshoxxx/circula/scripts/traceability	1.156s
