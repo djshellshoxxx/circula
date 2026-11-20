@@ -184,6 +184,10 @@ def validate_manifest_object(value, kind="manifest", label="manifest.json", prev
         for name in integer_fields + string_fields + nullable_fields:
             if name in previous:
                 resolved[name] = previous[name]
+    # Go reuses the backing elements of a nonempty []ManifestFile across
+    # duplicate fields. Keep populated slots after a temporary shrink; an
+    # empty or null whole array resets that state. Only known fields survive.
+    file_slots = []
     for original, item in value.pairs:
         name = original.translate(MANIFEST_FIELD_FOLD)
         field = "%s.%s" % (label, original)
@@ -197,11 +201,26 @@ def validate_manifest_object(value, kind="manifest", label="manifest.json", prev
             if item is not None:
                 manifest_timestamp(item, field)
         elif kind == "manifest" and name == "files":
-            if item is not None:
+            if item is None:
+                file_slots = []
+            else:
                 if not isinstance(item, list):
                     raise ValueError("%s must be an array" % field)
+                if not item:
+                    file_slots = []
                 for index, entry in enumerate(item):
-                    validate_manifest_object(entry, "file", "%s[%d]" % (field, index))
+                    prior = file_slots[index] if index < len(file_slots) else {}
+                    if entry is None:
+                        # Null into a struct leaves that element unchanged.
+                        item[index] = dict(prior)
+                    else:
+                        validate_manifest_object(entry, "file", "%s[%d]" % (field, index), prior)
+                    state = {key: item[index][key] for group in MANIFEST_FIELDS["file"]
+                             for key in group if key in item[index]}
+                    if index < len(file_slots):
+                        file_slots[index] = state
+                    else:
+                        file_slots.append(state)
         elif kind == "manifest" and name == "reconciliation":
             validate_manifest_object(item, "reconciliation", field, resolved.get(name))
         elif kind == "reconciliation" and name == "accounts":

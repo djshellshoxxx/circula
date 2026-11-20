@@ -596,6 +596,55 @@ class ReferenceExportTests(unittest.TestCase):
             with self.subTest(target=target, final="complete"):
                 self.assert_valid(*fixture(), corrupt=replace)
 
+    def test_manifest_file_arrays_merge_existing_structs(self):
+        # Go reuses existing slice elements when another files array is decoded.
+        # Empty objects and null elements retain the earlier file fields.
+        for later in ({}, None, {"ROWS": None, "BYTES": None, "SHA256": None}):
+            def update(man, files):
+                man["FILES"] = [copy.deepcopy(later) for entry in man["files"]]
+            for fmt in ("json", "csv"):
+                for same_name in (False, True):
+                    def transform(data):
+                        return data.replace(b'"FILES":', b'"files":') if same_name else data
+                    with self.subTest(later=later, fmt=fmt, same_name=same_name):
+                        self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+                                          transform_manifest=transform)
+
+    def test_manifest_file_array_shrink_and_regrow_retains_fields(self):
+        # Shortening a nonempty Go slice does not zero its backing array. A
+        # later array can expose and reuse those previously populated slots.
+        def update(man, files):
+            self.assertEqual(len(man["files"]), 2)
+            man["FILES"] = [{}]
+            man["Files"] = [{}, None]
+        self.assert_valid(*fixture(), fmt="csv", zipped=True, corrupt=update)
+
+    def test_manifest_file_array_reset_clears_retained_fields(self):
+        for reset in (None, []):
+            for complete in (False, True):
+                def update(man, files):
+                    original = copy.deepcopy(man["files"])
+                    man["FILES"] = reset
+                    man["Files"] = original if complete else [{} for entry in original]
+                with self.subTest(reset=reset, complete=complete):
+                    check = self.assert_valid if complete else self.assert_invalid
+                    check(*fixture(), fmt="csv", corrupt=update)
+
+    def test_manifest_file_array_rejects_type_errors_and_applies_overrides(self):
+        for later in ({"BYTES": 0}, {"ROWS": True}, {"SHA256": "0" * 64}, {"NAME": "absent.json"}):
+            def update(man, files):
+                man["FILES"] = [later]
+            with self.subTest(later=later):
+                self.assert_invalid(*fixture(), corrupt=update)
+        # A later complete array cannot hide an earlier struct type error.
+        for earlier in (False, {"bytes": False}):
+            def update(man, files):
+                original = man["files"]
+                man["files"] = [earlier]
+                man["FILES"] = original
+            with self.subTest(earlier=earlier):
+                self.assert_invalid(*fixture(), corrupt=update)
+
     def test_manifest_case_aliases_do_not_fold_ligatures(self):
         # Python full casefold/upper would treat some of these as ASCII keys;
         # Go's simple-fold matching leaves all three as unknown extensions.
