@@ -1,0 +1,22 @@
+{
+  "reviewer": "/root/password_admission/recurring_source_review",
+  "reviewed_commit": "1e0838e04310bb2a19a585d69e40426b3c50fb71",
+  "reviewed_tree": "d34913b1dc28aa735bc180d3b152b3394144ddb2",
+  "ordered_parents": [
+    "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+    "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48"
+  ],
+  "result": "No unresolved source-review finding; no source repair requested. Current runtime and provider qualification remain separate.",
+  "checks": {
+    "runtime_manifest_hashes": 24,
+    "retained_target_hashes": 8,
+    "static_source_hashes": 4,
+    "hash_mismatches": 0,
+    "original_failed_logs_verified": 5,
+    "source_paths_lost": 0,
+    "foreign_future_module_changes": 0
+  },
+  "scope": "Read-only complete recovered production/module overlap review, exact rename resolution, retained accepted-target and Core-test blobs, provider diagnostic receipts and handoff documentation. No tests, fuzzing, builds or mutations performed by reviewer.",
+  "qualification_followup": "A later qualification-only follow-up retains this source disposition if production/test/dependency/workflow bytes remain unchanged and receipts accurately identify tested source.",
+  "whitespace": "Only the original source-identical LICENSE-MMAP-GO final blank line was reported by full merge diff-check."
+}

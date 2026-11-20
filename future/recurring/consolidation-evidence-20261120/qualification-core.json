@@ -1,0 +1,118 @@
+{
+  "phase": "core",
+  "tested_commit": "1e0838e04310bb2a19a585d69e40426b3c50fb71",
+  "tested_tree": "d34913b1dc28aa735bc180d3b152b3394144ddb2",
+  "toolchain": "go version go1.26.11 linux/amd64",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "source_sha256": {
+    "future/recurring/audit_test.go": "205589b3e12f2abdb1163d1d2b43a2b495c1ec81f3ab2699dcb5dc6bd0284023",
+    "future/recurring/calendar.go": "a7e9c4c414dfea08757a7907ee2a8e095f5074a032c4fc22ead758008234b830",
+    "future/recurring/calendar_fuzz_test.go": "9fe11281c3d1b8185130da1ff900a51557fae162e954f375b818e5dcd3bd5f4a",
+    "future/recurring/calendar_recovery_test.go": "beca09e1be63d5750ea93d7d60794e01f455a6c999dd7d98e7783369b8d2ef14",
+    "future/recurring/calendar_test.go": "4f08eb425996bd9d2ef3e0cf3aa5c05cc062660857c629cb0ec44e78e79aa674",
+    "future/recurring/cleanup_recovery_test.go": "de4609b306bc4c23501ffccf101cc77995f3e0864ea68446eb474c1072ce62f9",
+    "future/recurring/cli.go": "60c977389b86f292d5cdba01a8cf07be0641e0985f8670fb75191b4e9fa989b0",
+    "future/recurring/due_with_schedule_test.go": "1a6bda9cca2b8b0533c4c2bdc2c7557c324969bb30d64cfce520c296a6b4c7be",
+    "future/recurring/feature.json": "8ad8a6790ff3777a56767189e89543f719879e160b4cf448a5a498d51514f924",
+    "future/recurring/firing.go": "19684b5f956926307ac91e39e72df085523f83ee4443b7f0acdf13ac441248cd",
+    "future/recurring/form_cache_test.go": "2e725af3e82186fdfc02a2887bb1e441743803784a833c78241623186a8e82ea",
+    "future/recurring/go.mod": "15fcfee9932fad901fa1934bbfe9eeffbd01b96d1290d55645de723efbc8ed72",
+    "future/recurring/go.sum": "37fd96edc03644960aef1452a11aa7ea4bdad56a3e4d01618794abd7155bac47",
+    "future/recurring/http.go": "9ce81759e1b573ef4d29ae3ed3fb2c2cab83b0b525b6acbfc30602b3f0ac1708",
+    "future/recurring/http_test.go": "b0bfa9db3cc015afe3a257e827014dd1ccac50698af76e4c230ace7bf89137e4",
+    "future/recurring/invariants.go": "5382773545c6e9b7e4999ecfe519297e37b351010b76fa001f0206aa12ce613d",
+    "future/recurring/json.go": "57c4836bd90903294cc4f7988f8b45fd064459170a4dde37f0b71ccae83d5fe2",
+    "future/recurring/json_recovery_test.go": "7f3812a3d6e8f0a372ac3bf0f519b9890956c009ef25deb3195bf5c48d8d9217",
+    "future/recurring/master_query_test.go": "3664c09cfd8e93092dd0310207889382d941c4a24572a2abde8ea7e26564b246",
+    "future/recurring/schedule.go": "b561f560549b68b1940774e3db08f6a4b9790af2f1e4b2ea7cf28e5a479e68df",
+    "future/recurring/schedule_regression_test.go": "b9437c89da933498bc1575d6091e6e6e7cb6423f0c9070f3ee2e061f4986f0bd",
+    "future/recurring/schedule_test.go": "576d6cb571a64017531e9eeb52c069ca2a5503007f574cebcedd8e06d802f714",
+    "future/recurring/store.go": "cc61f5c4a42e181f4361064059e9b313ab6a79e410a3c3909bac00441b4869d0",
+    "future/recurring/store_test.go": "f5792de111b2510d3fb10eeb99eb2725af2f99544dba9d2271378e9886bfa167",
+    "go.mod": "6337f14b3279345b72f056d08f436f00250fe17cf1e81ed021117659f445c79e",
+    "go.sum": "51ce2cbdee3192b93a547130186ffd4f691ae6787f410f3fbb9ccac9230cec23",
+    ".github/workflows/ci.yml": "d22526c17cfe8193e790c24d5af34ce7c5c68ba69c2f9070a3bbf8c8f06a50a4",
+    ".github/workflows/future-recurring.yml": "128dca45bb6ac4ae100bdb88515d6deb15c04dca301e09b17adf470cadb31b5f",
+    "cmd/circula/auditanchor.go": "d35ca6a2032b09ac29a43ad049effa1403a0e11fadd336ea96e7162b6eca6e8e",
+    "internal/service/departure_pagination_regression_test.go": "1df9236f975302ff5c659da14e8f62b9f6b5f864be6715974a5842fa97e32add",
+    "internal/service/erasure_test.go": "ae914cecfa657eb75f6e5d6848761ee8a2c119b9c1c96ecb60519ef2a4b1652d",
+    "internal/service/notification_erasure_test.go": "5c072d0c327e0638c6aba75af23b7d0ae6f64a4eaf677a13bf64ea0960838a75",
+    "internal/service/erasure_notification_regression_test.go": "7d98a10db418388e7a175b4c3e23e31b5d2d91e23d2f5692f3b13f1b1e010b29",
+    "internal/store/sqlite_erasure.go": "b6a90901d2f10d901b88e21506f3ab19517a4a85adcfd5d98d4bf6b3663d0cc3"
+  },
+  "steps": [
+    {
+      "name": "core-fixtures",
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "test",
+        "-p",
+        "1",
+        "-race",
+        "-json",
+        "-count=1",
+        "-ldflags=-w",
+        "-timeout=5m",
+        "-run",
+        "^(TestDepartureCancelsMoreThanFiveHundredProposals|TestAnonymiseMemberKeepsLedger|TestNotificationErasureUsesResourceRelations|TestErasureRedactsCounterpartyNotificationsWithoutCollateral)$",
+        "./cmd/circula",
+        "./internal/service"
+      ],
+      "cwd": "/workspace/scratch/bfba682cba37/circula-recurring-recovery",
+      "started_utc": "2026-11-20T17:17:30.905784+00:00",
+      "outer_timeout_seconds": 600,
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 171.493,
+      "log": "core-fixtures.log",
+      "log_sha256": "ffb7c394fa59c6fc8e72a24142a01a12eee401d2cea654f5c08e8a8e8c2b3476",
+      "source_unchanged": true,
+      "passed_test_events": 6,
+      "top_level_passed_tests": [
+        "TestDepartureCancelsMoreThanFiveHundredProposals",
+        "TestErasureRedactsCounterpartyNotificationsWithoutCollateral",
+        "TestAnonymiseMemberKeepsLedger",
+        "TestNotificationErasureUsesResourceRelations"
+      ],
+      "failed_tests": [],
+      "skipped_tests": [],
+      "package_results": [
+        {
+          "Time": "2026-11-20T09:19:34.504845652-08:00",
+          "Action": "pass",
+          "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+          "Elapsed": 1.028
+        },
+        {
+          "Time": "2026-11-20T09:20:22.34677167-08:00",
+          "Action": "pass",
+          "Package": "github.com/djshellshoxxx/circula/internal/service",
+          "Elapsed": 35.32
+        }
+      ],
+      "final_output_lines": [
+        "{\"Time\":\"2026-11-20T09:20:20.496142231-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Test\":\"TestNotificationErasureUsesResourceRelations/ana@example.org\",\"Output\":\"=== RUN   TestNotificationErasureUsesResourceRelations/ana@example.org\\n\"}",
+        "{\"Time\":\"2026-11-20T09:20:21.342224294-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Test\":\"TestNotificationErasureUsesResourceRelations/ana@example.org\",\"Output\":\"--- PASS: TestNotificationErasureUsesResourceRelations/ana@example.org (0.85s)\\n\"}",
+        "{\"Time\":\"2026-11-20T09:20:21.342265726-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Test\":\"TestNotificationErasureUsesResourceRelations/ana@example.org\",\"Elapsed\":0.85}",
+        "{\"Time\":\"2026-11-20T09:20:21.342276262-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Test\":\"TestNotificationErasureUsesResourceRelations\",\"Output\":\"--- PASS: TestNotificationErasureUsesResourceRelations (1.75s)\\n\"}",
+        "{\"Time\":\"2026-11-20T09:20:21.342281901-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Test\":\"TestNotificationErasureUsesResourceRelations\",\"Elapsed\":1.75}",
+        "{\"Time\":\"2026-11-20T09:20:21.342511017-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Output\":\"PASS\\n\"}",
+        "{\"Time\":\"2026-11-20T09:20:22.346721575-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Output\":\"ok  \\tgithub.com/djshellshoxxx/circula/internal/service\\t35.320s\\n\"}",
+        "{\"Time\":\"2026-11-20T09:20:22.34677167-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/internal/service\",\"Elapsed\":35.32}"
+      ]
+    }
+  ],
+  "scope": "Actual bounded local qualification. No provider or native macOS/Windows pass is inferred. -ldflags=-w omits DWARF only.",
+  "all_executed_steps_passed": true,
+  "completed_utc": "2026-11-20T17:20:22.408110+00:00"
+}

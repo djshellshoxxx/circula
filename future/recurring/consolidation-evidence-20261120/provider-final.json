@@ -1,0 +1,42 @@
+{
+  "observed_at_utc": "2026-11-20T17:22:47.853Z",
+  "source_commit_tested_locally": "1e0838e04310bb2a19a585d69e40426b3c50fb71",
+  "pull_request": {
+    "url": "https://github.com/djshellshoxxx/circula/pull/118",
+    "number": 118,
+    "state": "open",
+    "merged": false,
+    "mergeable": false,
+    "draft": true,
+    "title": "FNET-207: recover durable recurrence and repair calendar/retention ordering",
+    "base": "master/fnet207-recurring-remote-20261119",
+    "base_sha": "73a911a9bec387381633c031d8a4083c9fc724ad",
+    "head": "master/recover-recurring-20261119",
+    "head_sha": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48",
+    "updated_at": "2026-11-19T15:31:46Z"
+  },
+  "actual_target_comparison": {
+    "repository_full_name": "djshellshoxxx/circula",
+    "base": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+    "head": "future/fnet-207-recurring-20261116",
+    "status": "identical",
+    "ahead_by": 0,
+    "behind_by": 0,
+    "total_commits": 0,
+    "too_large": null,
+    "base_commit": {
+      "sha": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/commits/94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "html_url": "https://github.com/djshellshoxxx/circula/commit/94deb0a20df07a3b38c8a905254645d6cd3019f2"
+    },
+    "merge_base_commit": {
+      "sha": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "url": "https://api.github.com/repos/djshellshoxxx/circula/commits/94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "html_url": "https://github.com/djshellshoxxx/circula/commit/94deb0a20df07a3b38c8a905254645d6cd3019f2"
+    },
+    "files": []
+  },
+  "source_drift": false,
+  "target_drift": false,
+  "scope": "Read-only provider state. Local composition has not been published; original source checks do not qualify the local composition."
+}

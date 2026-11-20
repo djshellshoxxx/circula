@@ -1,0 +1,454 @@
+{
+  "source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48",
+  "accepted_target": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+  "merge_base": "73a911a9bec387381633c031d8a4083c9fc724ad",
+  "source_unique_commits": [
+    "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48 fix(core): restore accepted notification redaction and regression coverage",
+    "035dd1c0d7c3de901cb1d2e1854ac4fde4cbdad4 feat(recurring): recover durable service and exact chronology"
+  ],
+  "target_unique_commits": [
+    "94deb0a20df07a3b38c8a905254645d6cd3019f2 Merge pull request #97 from djshellshoxxx/master/fnet207-recurring-remote-20261119",
+    "9bf260d63f454868e27d2d85a3d9fb5dce4beeae Merge pull request #110 from djshellshoxxx/fix/fnet207-ci-proven-20261119",
+    "ccf30e6a819d570d90d2aa02c91ec8d635040563 ci: correct fixed-execution fuzz workflow lines without altering other steps",
+    "6753bd43af2168baeb15127266607ddbd80ddb0b ci: resolve verified legacy fuzz deadline and atomic-file lint findings",
+    "3739ed9714c55c060f7189608e3b18ab69421dd0 ci: qualify recurring repair with opt-in native PR matrix",
+    "813619b48013d92a4c6aaba2d3d2039287e2dbfc style(test): gofmt regression fixture for cross-platform CI",
+    "d9f34b733e9e923620ee503fb86bb72bb9e91601 fix(ci): restore reviewed erasure notice redaction and prevent collateral loss",
+    "aeb70db0255d482eb45aa6e0515f09fc32518d81 fix(ci): restore accepted core test fixtures and retain recurring digest golden guard"
+  ],
+  "conflict_paths": [
+    "future/recurring/calendar_test.go"
+  ],
+  "resolution": "Source calendar_test.go retained exactly; due_with_schedule_test.go takes the exact target calendar_test.go blob; all target/source assertions preserved.",
+  "runtime_and_manifest_checks": [
+    {
+      "path": "future/recurring/audit_test.go",
+      "sha256": "205589b3e12f2abdb1163d1d2b43a2b495c1ec81f3ab2699dcb5dc6bd0284023",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/audit_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/calendar.go",
+      "sha256": "a7e9c4c414dfea08757a7907ee2a8e095f5074a032c4fc22ead758008234b830",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/calendar.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/calendar_fuzz_test.go",
+      "sha256": "9fe11281c3d1b8185130da1ff900a51557fae162e954f375b818e5dcd3bd5f4a",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/calendar_fuzz_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/calendar_recovery_test.go",
+      "sha256": "beca09e1be63d5750ea93d7d60794e01f455a6c999dd7d98e7783369b8d2ef14",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/calendar_recovery_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/calendar_test.go",
+      "sha256": "4f08eb425996bd9d2ef3e0cf3aa5c05cc062660857c629cb0ec44e78e79aa674",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/calendar_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/cleanup_recovery_test.go",
+      "sha256": "de4609b306bc4c23501ffccf101cc77995f3e0864ea68446eb474c1072ce62f9",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/cleanup_recovery_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/cli.go",
+      "sha256": "60c977389b86f292d5cdba01a8cf07be0641e0985f8670fb75191b4e9fa989b0",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/cli.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/due_with_schedule_test.go",
+      "sha256": "1a6bda9cca2b8b0533c4c2bdc2c7557c324969bb30d64cfce520c296a6b4c7be",
+      "expected_source": "94deb0a20df07a3b38c8a905254645d6cd3019f2:future/recurring/calendar_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/feature.json",
+      "sha256": "8ad8a6790ff3777a56767189e89543f719879e160b4cf448a5a498d51514f924",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/feature.json",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/firing.go",
+      "sha256": "19684b5f956926307ac91e39e72df085523f83ee4443b7f0acdf13ac441248cd",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/firing.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/form_cache_test.go",
+      "sha256": "2e725af3e82186fdfc02a2887bb1e441743803784a833c78241623186a8e82ea",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/form_cache_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/go.mod",
+      "sha256": "15fcfee9932fad901fa1934bbfe9eeffbd01b96d1290d55645de723efbc8ed72",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/go.mod",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/go.sum",
+      "sha256": "37fd96edc03644960aef1452a11aa7ea4bdad56a3e4d01618794abd7155bac47",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/go.sum",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/http.go",
+      "sha256": "9ce81759e1b573ef4d29ae3ed3fb2c2cab83b0b525b6acbfc30602b3f0ac1708",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/http.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/http_test.go",
+      "sha256": "b0bfa9db3cc015afe3a257e827014dd1ccac50698af76e4c230ace7bf89137e4",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/http_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/invariants.go",
+      "sha256": "5382773545c6e9b7e4999ecfe519297e37b351010b76fa001f0206aa12ce613d",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/invariants.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/json.go",
+      "sha256": "57c4836bd90903294cc4f7988f8b45fd064459170a4dde37f0b71ccae83d5fe2",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/json.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/json_recovery_test.go",
+      "sha256": "7f3812a3d6e8f0a372ac3bf0f519b9890956c009ef25deb3195bf5c48d8d9217",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/json_recovery_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/master_query_test.go",
+      "sha256": "3664c09cfd8e93092dd0310207889382d941c4a24572a2abde8ea7e26564b246",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/master_query_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/schedule.go",
+      "sha256": "b561f560549b68b1940774e3db08f6a4b9790af2f1e4b2ea7cf28e5a479e68df",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/schedule.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/schedule_regression_test.go",
+      "sha256": "b9437c89da933498bc1575d6091e6e6e7cb6423f0c9070f3ee2e061f4986f0bd",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/schedule_regression_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/schedule_test.go",
+      "sha256": "576d6cb571a64017531e9eeb52c069ca2a5503007f574cebcedd8e06d802f714",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/schedule_test.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/store.go",
+      "sha256": "cc61f5c4a42e181f4361064059e9b313ab6a79e410a3c3909bac00441b4869d0",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/store.go",
+      "matches_expected": true
+    },
+    {
+      "path": "future/recurring/store_test.go",
+      "sha256": "f5792de111b2510d3fb10eeb99eb2725af2f99544dba9d2271378e9886bfa167",
+      "expected_source": "1e0e7e2f12a77d6d8969d1593ecdb6309bb13c48:future/recurring/store_test.go",
+      "matches_expected": true
+    }
+  ],
+  "accepted_target_core_and_workflow_checks": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "target_blob": "4ea3e102bf396ea86a0ad834855cdd0b95865ccb",
+      "sha256": "d22526c17cfe8193e790c24d5af34ce7c5c68ba69c2f9070a3bbf8c8f06a50a4",
+      "matches_target": true
+    },
+    {
+      "path": "cmd/circula/auditanchor.go",
+      "target_blob": "e2a0d8ee5d2d340b5222fcc2b86ad50104255587",
+      "sha256": "d35ca6a2032b09ac29a43ad049effa1403a0e11fadd336ea96e7162b6eca6e8e",
+      "matches_target": true
+    },
+    {
+      "path": "cmd/circula/util.go",
+      "target_blob": "975b54f052508b5bdf8fa627ac4d80c9cf05366a",
+      "sha256": "ce8a341b7b5e4b75e6f41b84343e593eaa122d23868c16dae9f7321bf3da8aa2",
+      "matches_target": true
+    },
+    {
+      "path": "internal/service/departure_pagination_regression_test.go",
+      "target_blob": "3b117ecfe2f01e7e2363b9d201503cde6e0f5595",
+      "sha256": "1df9236f975302ff5c659da14e8f62b9f6b5f864be6715974a5842fa97e32add",
+      "matches_target": true
+    },
+    {
+      "path": "internal/store/sqlite_erasure.go",
+      "target_blob": "fe452fc13c626aa70fdfa9df6d8fac26a068f796",
+      "sha256": "b6a90901d2f10d901b88e21506f3ab19517a4a85adcfd5d98d4bf6b3663d0cc3",
+      "matches_target": true
+    },
+    {
+      "path": "internal/service/erasure_notification_regression_test.go",
+      "target_blob": "fc1aafe769de6e41f6084a9077d57d6c4b3d16e1",
+      "sha256": "7d98a10db418388e7a175b4c3e23e31b5d2d91e23d2f5692f3b13f1b1e010b29",
+      "matches_target": true
+    },
+    {
+      "path": "go.mod",
+      "target_blob": "bb97a7177d68b20f2cbeae6c039b84953e88e03a",
+      "sha256": "6337f14b3279345b72f056d08f436f00250fe17cf1e81ed021117659f445c79e",
+      "matches_target": true
+    },
+    {
+      "path": "go.sum",
+      "target_blob": "e6c12a6135b2548b887bf2490532f59fcf4fb9f8",
+      "sha256": "51ce2cbdee3192b93a547130186ffd4f691ae6787f410f3fbb9ccac9230cec23",
+      "matches_target": true
+    }
+  ],
+  "accepted_recovery_core_test_checks": [
+    {
+      "path": "internal/service/erasure_test.go",
+      "accepted_commit": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f",
+      "accepted_blob": "e5e4b3131e887ea7535140b75224c506f656490d",
+      "matches_accepted": true
+    },
+    {
+      "path": "internal/service/notification_erasure_test.go",
+      "accepted_commit": "28326597340a4f0efad33f37feecc380db0de66f",
+      "accepted_blob": "683bee4899d66803e4f2b4193d47e492ea2baa08",
+      "matches_accepted": true
+    }
+  ],
+  "historical_receipt_fingerprints": [
+    {
+      "path": "future/recurring/audit_test.go",
+      "recorded": "205589b3e12f2abdb1163d1d2b43a2b495c1ec81f3ab2699dcb5dc6bd0284023",
+      "original_recovery_sha256": "205589b3e12f2abdb1163d1d2b43a2b495c1ec81f3ab2699dcb5dc6bd0284023",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/calendar.go",
+      "recorded": "a7e9c4c414dfea08757a7907ee2a8e095f5074a032c4fc22ead758008234b830",
+      "original_recovery_sha256": "a7e9c4c414dfea08757a7907ee2a8e095f5074a032c4fc22ead758008234b830",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/calendar_fuzz_test.go",
+      "recorded": "9fe11281c3d1b8185130da1ff900a51557fae162e954f375b818e5dcd3bd5f4a",
+      "original_recovery_sha256": "9fe11281c3d1b8185130da1ff900a51557fae162e954f375b818e5dcd3bd5f4a",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/calendar_recovery_test.go",
+      "recorded": "beca09e1be63d5750ea93d7d60794e01f455a6c999dd7d98e7783369b8d2ef14",
+      "original_recovery_sha256": "beca09e1be63d5750ea93d7d60794e01f455a6c999dd7d98e7783369b8d2ef14",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/calendar_test.go",
+      "recorded": "4f08eb425996bd9d2ef3e0cf3aa5c05cc062660857c629cb0ec44e78e79aa674",
+      "original_recovery_sha256": "4f08eb425996bd9d2ef3e0cf3aa5c05cc062660857c629cb0ec44e78e79aa674",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/cleanup_recovery_test.go",
+      "recorded": "de4609b306bc4c23501ffccf101cc77995f3e0864ea68446eb474c1072ce62f9",
+      "original_recovery_sha256": "de4609b306bc4c23501ffccf101cc77995f3e0864ea68446eb474c1072ce62f9",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/cli.go",
+      "recorded": "60c977389b86f292d5cdba01a8cf07be0641e0985f8670fb75191b4e9fa989b0",
+      "original_recovery_sha256": "60c977389b86f292d5cdba01a8cf07be0641e0985f8670fb75191b4e9fa989b0",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/due_with_schedule_test.go",
+      "recorded": "941167c99fea12d1700179a85e9ec55dacb0637bc4345e23e5d88ad6e5951df8",
+      "original_recovery_sha256": "941167c99fea12d1700179a85e9ec55dacb0637bc4345e23e5d88ad6e5951df8",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/firing.go",
+      "recorded": "19684b5f956926307ac91e39e72df085523f83ee4443b7f0acdf13ac441248cd",
+      "original_recovery_sha256": "19684b5f956926307ac91e39e72df085523f83ee4443b7f0acdf13ac441248cd",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/form_cache_test.go",
+      "recorded": "2e725af3e82186fdfc02a2887bb1e441743803784a833c78241623186a8e82ea",
+      "original_recovery_sha256": "2e725af3e82186fdfc02a2887bb1e441743803784a833c78241623186a8e82ea",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/http.go",
+      "recorded": "9ce81759e1b573ef4d29ae3ed3fb2c2cab83b0b525b6acbfc30602b3f0ac1708",
+      "original_recovery_sha256": "9ce81759e1b573ef4d29ae3ed3fb2c2cab83b0b525b6acbfc30602b3f0ac1708",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/http_test.go",
+      "recorded": "b0bfa9db3cc015afe3a257e827014dd1ccac50698af76e4c230ace7bf89137e4",
+      "original_recovery_sha256": "b0bfa9db3cc015afe3a257e827014dd1ccac50698af76e4c230ace7bf89137e4",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/invariants.go",
+      "recorded": "5382773545c6e9b7e4999ecfe519297e37b351010b76fa001f0206aa12ce613d",
+      "original_recovery_sha256": "5382773545c6e9b7e4999ecfe519297e37b351010b76fa001f0206aa12ce613d",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/json.go",
+      "recorded": "57c4836bd90903294cc4f7988f8b45fd064459170a4dde37f0b71ccae83d5fe2",
+      "original_recovery_sha256": "57c4836bd90903294cc4f7988f8b45fd064459170a4dde37f0b71ccae83d5fe2",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/json_recovery_test.go",
+      "recorded": "7f3812a3d6e8f0a372ac3bf0f519b9890956c009ef25deb3195bf5c48d8d9217",
+      "original_recovery_sha256": "7f3812a3d6e8f0a372ac3bf0f519b9890956c009ef25deb3195bf5c48d8d9217",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/master_query_test.go",
+      "recorded": "3664c09cfd8e93092dd0310207889382d941c4a24572a2abde8ea7e26564b246",
+      "original_recovery_sha256": "3664c09cfd8e93092dd0310207889382d941c4a24572a2abde8ea7e26564b246",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/schedule.go",
+      "recorded": "b561f560549b68b1940774e3db08f6a4b9790af2f1e4b2ea7cf28e5a479e68df",
+      "original_recovery_sha256": "b561f560549b68b1940774e3db08f6a4b9790af2f1e4b2ea7cf28e5a479e68df",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/schedule_regression_test.go",
+      "recorded": "b9437c89da933498bc1575d6091e6e6e7cb6423f0c9070f3ee2e061f4986f0bd",
+      "original_recovery_sha256": "b9437c89da933498bc1575d6091e6e6e7cb6423f0c9070f3ee2e061f4986f0bd",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/schedule_test.go",
+      "recorded": "576d6cb571a64017531e9eeb52c069ca2a5503007f574cebcedd8e06d802f714",
+      "original_recovery_sha256": "576d6cb571a64017531e9eeb52c069ca2a5503007f574cebcedd8e06d802f714",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/store.go",
+      "recorded": "cc61f5c4a42e181f4361064059e9b313ab6a79e410a3c3909bac00441b4869d0",
+      "original_recovery_sha256": "cc61f5c4a42e181f4361064059e9b313ab6a79e410a3c3909bac00441b4869d0",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/store_test.go",
+      "recorded": "f5792de111b2510d3fb10eeb99eb2725af2f99544dba9d2271378e9886bfa167",
+      "original_recovery_sha256": "f5792de111b2510d3fb10eeb99eb2725af2f99544dba9d2271378e9886bfa167",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/go.mod",
+      "recorded": "15fcfee9932fad901fa1934bbfe9eeffbd01b96d1290d55645de723efbc8ed72",
+      "original_recovery_sha256": "15fcfee9932fad901fa1934bbfe9eeffbd01b96d1290d55645de723efbc8ed72",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/go.sum",
+      "recorded": "37fd96edc03644960aef1452a11aa7ea4bdad56a3e4d01618794abd7155bac47",
+      "original_recovery_sha256": "37fd96edc03644960aef1452a11aa7ea4bdad56a3e4d01618794abd7155bac47",
+      "matches_original_recovery": true
+    },
+    {
+      "path": "future/recurring/feature.json",
+      "recorded": "564da83a07d525d6a9ac1bce28087384563e00437d20538f25ace53a48bbf2b5",
+      "original_recovery_sha256": "8ad8a6790ff3777a56767189e89543f719879e160b4cf448a5a498d51514f924",
+      "matches_original_recovery": false
+    },
+    {
+      "path": ".github/workflows/future-recurring.yml",
+      "recorded": "943962ce7bce3be62099608ad528c902b491efd668437529dab1732967cad694",
+      "original_recovery_sha256": "128dca45bb6ac4ae100bdb88515d6deb15c04dca301e09b17adf470cadb31b5f",
+      "matches_original_recovery": false
+    }
+  ],
+  "old_failed_job_diagnostics": [
+    {
+      "job_id": 135670117290,
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44555387657/jobs/135670117290",
+      "full_log_sha256": "846397475dc6712f6459cf9b264eeb6cc5dabf1c89bdb81ba6087827c9581afa",
+      "full_log_bytes": 16913,
+      "full_log_local_path": "/workspace/scratch/bfba682cba37/recurring-consolidation-raw-20261120/old-job-135670117290.log",
+      "diagnostic_exact_lines": [
+        "2026-11-19T16:50:34.9082234Z ##[error]cmd/circula/auditanchor.go:189:12: undefined: os",
+        "2026-11-19T16:50:34.9554943Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job_id": 135670117906,
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44555387657/jobs/135670117906",
+      "full_log_sha256": "e83e9c5f83e68bf0349e2bcacd32ff2cc671621b0712c9c4f18f5c4f43476e91",
+      "full_log_bytes": 24207,
+      "full_log_local_path": "/workspace/scratch/bfba682cba37/recurring-consolidation-raw-20261120/old-job-135670117906.log",
+      "diagnostic_exact_lines": [
+        "2026-11-19T16:56:12.5472699Z RuleID:      generic-api-key",
+        "2026-11-19T16:56:12.5501647Z File:        future/recurring/due_with_schedule_test.go",
+        "2026-11-19T16:56:12.5502810Z Fingerprint: future/recurring/due_with_schedule_test.go:generic-api-key:137",
+        "2026-11-19T16:56:13.5569023Z \u001b[90m4:56PM\u001b[0m \u001b[33mWRN\u001b[0m \u001b[1mleaks found: 1\u001b[0m",
+        "2026-11-19T16:56:13.5968547Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job_id": 135670118048,
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44555387657/jobs/135670118048",
+      "full_log_sha256": "07ddc8c76c672b38e964d0bc61f06ab57bbd29f8c4142705e89c6a8f0712ffb8",
+      "full_log_bytes": 43512,
+      "full_log_local_path": "/workspace/scratch/bfba682cba37/recurring-consolidation-raw-20261120/old-job-135670118048.log",
+      "diagnostic_exact_lines": [
+        "2026-11-19T17:08:43.2965043Z ##[error]cmd/circula/auditanchor.go:189:12: undefined: os",
+        "2026-11-19T17:08:43.3665068Z ##[error]Process completed with exit code 2."
+      ]
+    },
+    {
+      "job_id": 135670118059,
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44555387657/jobs/135670118059",
+      "full_log_sha256": "676b86199945e61fe04fda0f4c99c03777ece059d088a77147ca0a965a876426",
+      "full_log_bytes": 20387,
+      "full_log_local_path": "/workspace/scratch/bfba682cba37/recurring-consolidation-raw-20261120/old-job-135670118059.log",
+      "diagnostic_exact_lines": [
+        "2026-11-19T17:09:33.6524639Z ##[error]cmd/circula/auditanchor.go:189:12: undefined: os",
+        "2026-11-19T17:13:39.6778655Z --- FAIL: TestDepartureCancelsMoreThanFiveHundredProposals (10.01s)",
+        "2026-11-19T17:13:39.6780479Z panic: testutil.Must: unexpected error: rate-limited: too many open proposals; wait for some to be answered or withdraw them [recovered, repanicked]",
+        "2026-11-19T17:13:39.9197870Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job_id": 135670118140,
+      "url": "https://github.com/djshellshoxxx/circula/actions/runs/44555387657/jobs/135670118140",
+      "full_log_sha256": "b545a47dad349fcb708d43c2671a493cd9ff095116ca3590f1038516b0ffae31",
+      "full_log_bytes": 18028,
+      "full_log_local_path": "/workspace/scratch/bfba682cba37/recurring-consolidation-raw-20261120/old-job-135670118140.log",
+      "diagnostic_exact_lines": [
+        "2026-11-19T17:03:42.8658002Z ##[error]cmd/circula/auditanchor.go:189:12: undefined: os",
+        "2026-11-19T17:03:42.8861813Z ##[error]Process completed with exit code 1."
+      ]
+    }
+  ],
+  "qualification_status": "Composed runtime not yet executed; source/target checks and formatting only. Separate actual test receipts will follow.",
+  "preserved_upstream_whitespace": {
+    "path": "future/recurring/third_party/modernc_org_memory/LICENSE-MMAP-GO",
+    "diagnostic": "git diff --cached --check reports new blank line at EOF at line25 because an unmodified upstream notice is newly recovered.",
+    "source_blob": "8f05f338ac5a0543e5cef2898cf5c06208b761aa",
+    "unchanged": true
+  }
+}

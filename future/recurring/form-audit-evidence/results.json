@@ -1,0 +1,11 @@
+{
+  "tested_source": "b4b8aec884c53a78a8586e0d94fad95e9416dc53",
+  "predecessor": "053ffac736f3ba5d7aef04e17dd6f7ec0c5fac1f",
+  "red_expected_failure": true,
+  "focused": "pass 0.013s",
+  "race": "pass 2.611s 78.6%",
+  "vet": "pass no diagnostics",
+  "module_verify": "all modules verified",
+  "integration": "HOLD",
+  "enabled": false
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "Actual source/static checks before the composition merge commit; no Go suite run yet.",
+  "workflow_yaml_shell": "passed",
+  "immutable_action_pins_read_only_permissions": "passed",
+  "actual_future_target_and_three_platform_matrix": "passed",
+  "complete_real_driver_suite_and_two_100000_execution_fuzz_steps_retained": "passed",
+  "gofmt_all_recurring": "passed; gofmt -l future/recurring returned no paths",
+  "manifest_disabled_hold_no_future_dependencies": "passed",
+  "source_sha256": {
+    ".github/workflows/future-recurring.yml": "128dca45bb6ac4ae100bdb88515d6deb15c04dca301e09b17adf470cadb31b5f",
+    "future/recurring/feature.json": "8ad8a6790ff3777a56767189e89543f719879e160b4cf448a5a498d51514f924",
+    "future/recurring/calendar_test.go": "4f08eb425996bd9d2ef3e0cf3aa5c05cc062660857c629cb0ec44e78e79aa674",
+    "future/recurring/due_with_schedule_test.go": "1a6bda9cca2b8b0533c4c2bdc2c7557c324969bb30d64cfce520c296a6b4c7be"
+  }
+}
