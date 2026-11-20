@@ -32,6 +32,7 @@
   <p><strong>{{msg "session.ending"}}</strong> <span id="session-msg"></span></p>
   <p><button type="button" id="session-extend">{{msg "session.extend"}}</button> <a id="session-login" href="/login">{{msg "session.sign_in"}}</a> <button type="button" id="session-dismiss" class="link">{{msg "session.dismiss"}}</button></p>
 </div>{{end}}
+<p id="page-loading" class="page-loading" role="status" aria-live="polite" aria-atomic="true" data-navigation-message="{{msg "loading.navigation"}}" data-submission-message="{{msg "loading.submission"}}"></p>
 <main id="main" tabindex="-1">
   <h1 id="page-title">{{.Title}}</h1>
   {{if .SnapshotAt}}{{$fresh := msgAround "freshness.snapshot"}}<p id="figure-freshness">{{$fresh.Before}}{{.SnapshotAt}}{{$fresh.After}}</p>
@@ -50,7 +51,7 @@
 </main>
 <footer class="foot">
   <p>{{msg "footer.credits"}}</p>
-  <p><a href="/help">{{msg "footer.help"}}</a>{{if .ReqID}} &middot; {{msg "common.reference"}} <code>{{.ReqID}}</code>{{end}}</p>
+  <p><a href="/help">{{msg "footer.help"}}</a>{{if .Slug}} &middot; <a href="/n/{{.Slug}}/about">{{msg "footer.about"}}</a>{{end}}{{if .ReqID}} &middot; {{msg "common.reference"}} <code>{{.ReqID}}</code>{{end}}</p>
 </footer>
 </body>
 </html>{{end}}

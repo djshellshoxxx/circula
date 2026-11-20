@@ -13,7 +13,7 @@
 </ul>
 <section aria-labelledby="leave-export-h"><h2 id="leave-export-h">{{msg "leave.download_heading"}}</h2>
 {{$download := msgAround "leave.download_explanation"}}<p>{{$download.Before}}<a href="/n/{{.Slug}}/history">{{msg "leave.history_link"}}</a>{{$download.After}}</p>
-<form method="post" action="/n/{{.Slug}}/export">
+<form method="post" action="/n/{{.Slug}}/export" data-loading-ignore>
   {{template "csrf" .}}
   <div class="field"><label for="f-format">{{msg "leave.format_label"}}</label>
   <select id="f-format" name="format"><option value="csv">{{msg "leave.format_csv"}}</option><option value="json">{{msg "leave.format_json"}}</option></select></div>

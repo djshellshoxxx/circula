@@ -23,6 +23,7 @@ const applyRequests = apply('/admin/members?status=pending');
 
 // [screen, role, actual link destinations in order]
 const PATHS = [
+  ['about this network', 'alice', [route('/about')]],
   ['directory', 'alice', [directory]],
   ['member profile', 'alice', [directory, (st) => st.bobProfile]],
   ['listings', 'alice', [listings]],

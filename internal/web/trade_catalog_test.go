@@ -264,7 +264,7 @@ func TestTradeListAndHistoryTemplates(t *testing.T) {
 				}
 			} else {
 				wantTradeText(t, body, `value="proposed">Pending</option>`, "Posted and closed",
-					`href="/n/town/audit">Account activity log</a>`, "Download your data", `<form method="post" action="/n/town/export">`,
+					`href="/n/town/audit">Account activity log</a>`, "Download your data", `<form method="post" action="/n/town/export" data-loading-ignore>`,
 					`name="csrf" value="csrf-value"`, `for="f-format">File format</label>`, `value="csv">CSV (spreadsheet)</option>`,
 					`value="json">JSON</option>`, ">Download my transactions</button>")
 				if populated {

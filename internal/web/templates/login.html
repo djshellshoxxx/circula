@@ -6,6 +6,6 @@
   {{template "field" dict "P" . "Name" "password" "Label" (msg "auth.label.password") "Type" "password" "Auto" "current-password" "Req" true}}
   <div class="actions"><button type="submit">{{msg "auth.login.submit"}}</button></div>
 </form>
-<p>{{msg "auth.login.new_here"}} <a href="/register{{if .Next}}?next={{.Next}}{{end}}">{{msg "auth.login.create_link"}}</a>. {{msg "auth.login.join_info"}}</p>
-<p>{{msg "auth.login.forgot"}} <a href="/recover">{{msg "auth.login.recover_link"}}</a> {{msg "auth.login.recover_tail"}}</p>
+{{$create := msgAround "auth.login.create_prompt"}}<p>{{$create.Before}}<a href="/register{{if .Next}}?next={{.Next}}{{end}}">{{msg "auth.login.create_link"}}</a>{{$create.After}}</p>
+{{$recover := msgAround "auth.login.recovery_prompt"}}<p>{{$recover.Before}}<a href="/recover">{{msg "auth.login.recover_link"}}</a>{{$recover.After}}</p>
 {{end}}

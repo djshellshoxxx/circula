@@ -200,6 +200,18 @@
   "footer.help": {
     "other": "Help: credits, balances and statuses"
   },
+  "footer.about": {
+    "other": "About this network"
+  },
+  "about.title": {
+    "other": "About %[1]s"
+  },
+  "loading.navigation": {
+    "other": "Loading the next page. Please wait."
+  },
+  "loading.submission": {
+    "other": "Sending your request. Please wait."
+  },
   "terms.accept": {
     "other": "I have read and accept these terms"
   },
@@ -551,23 +563,17 @@
   "auth.login.submit": {
     "other": "Sign in"
   },
-  "auth.login.new_here": {
-    "other": "New here?"
+  "auth.login.create_prompt": {
+    "other": "New here? %[1]s. To join a network you need an invitation link from its administrator, or the network's join page."
   },
   "auth.login.create_link": {
     "other": "Create an account"
   },
-  "auth.login.join_info": {
-    "other": "To join a network you need an invitation link from its administrator, or the network's join page."
-  },
-  "auth.login.forgot": {
-    "other": "Forgot your password?"
+  "auth.login.recovery_prompt": {
+    "other": "Forgot your password? %[1]s with one of your recovery codes."
   },
   "auth.login.recover_link": {
     "other": "Recover your account"
-  },
-  "auth.login.recover_tail": {
-    "other": "with one of your recovery codes."
   },
   "auth.mfa_step.intro": {
     "other": "Your password was correct. Enter the 6-digit code from your authenticator app, or one unused recovery code. This step expires in 5 minutes."
@@ -582,7 +588,7 @@
     "other": "Create account"
   },
   "auth.register.have_account": {
-    "other": "Already have an account?"
+    "other": "Already have an account? %[1]s."
   },
   "auth.register.sign_in_link": {
     "other": "Sign in"
@@ -608,11 +614,12 @@
   "auth.codes.saved": {
     "other": "I have saved them"
   },
-  "auth.codes.purpose": {
-    "other": "Recovery codes let you set a new password if you forget it, without email."
+  "auth.codes.remaining": {
+    "one": "Recovery codes let you set a new password if you forget it, without email. You have %[2]s unused code.",
+    "other": "Recovery codes let you set a new password if you forget it, without email. You have %[2]s unused codes."
   },
-  "auth.codes.have": {
-    "other": "You have"
+  "auth.codes.count": {
+    "other": "%[1]d"
   },
   "auth.codes.replace_note": {
     "other": "Making new codes replaces all the old ones. You need your current password."
@@ -623,8 +630,8 @@
   "security.mfa.heading": {
     "other": "Two-step sign-in"
   },
-  "security.mfa.state_is": {
-    "other": "Two-step sign-in is"
+  "security.mfa.state": {
+    "other": "Two-step sign-in is %[1]s."
   },
   "security.mfa.on": {
     "other": "on"
@@ -675,13 +682,10 @@
     "other": "No security notices yet."
   },
   "auth.enrol.already_on": {
-    "other": "Two-step sign-in is already on. Manage it on the"
+    "other": "Two-step sign-in is already on. Manage it on the %[1]s page."
   },
   "auth.enrol.security_link": {
     "other": "account security"
-  },
-  "auth.enrol.page_word": {
-    "other": "page."
   },
   "auth.enrol.intro": {
     "other": "Two-step sign-in asks for a code from an authenticator app each time you sign in, in addition to your password."
@@ -699,7 +703,7 @@
     "other": "In your authenticator app choose to add an account by entering a key, and type this setup key. Choose time-based, 6 digits, 30 seconds."
   },
   "auth.enrol.uri_note": {
-    "other": "Apps that import links can use this address instead:"
+    "other": "Apps that import links can use this address instead: %[1]s"
   },
   "auth.enrol.step_confirm": {
     "other": "Enter the 6-digit code the app shows to confirm."
@@ -728,10 +732,6 @@
   "security.mfa.recovery_left": {
     "one": "You have %[1]d unused recovery code.",
     "other": "You have %[1]d unused recovery codes."
-  },
-  "auth.codes.unused": {
-    "one": "unused code",
-    "other": "unused codes"
   },
   "validation.label.cursor": {
     "other": "Page position"

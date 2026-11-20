@@ -178,6 +178,7 @@ web  GET    /n/{slug}/admin/reverse                      admin
 web  POST   /n/{slug}/admin/reverse                      admin
 web  GET    /n/{slug}/admin/terms                        admin
 web  POST   /n/{slug}/admin/terms                        admin
+web  GET    /n/{slug}/about                              member
 web  GET    /n/{slug}/audit                              member
 web  GET    /n/{slug}/directory                          member
 web  GET    /n/{slug}/disputes                           member

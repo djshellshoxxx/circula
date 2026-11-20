@@ -17,6 +17,7 @@ const perPage = 25
 func (s *server) homeRoutes() {
 	s.mux.HandleFunc("GET /{$}", s.home)
 	s.mux.HandleFunc("GET /n/{slug}/{$}", s.netH(s.dashboard))
+	s.mux.HandleFunc("GET /n/{slug}/about", s.netH(s.aboutNetwork))
 	s.mux.HandleFunc("GET /n/{slug}/history", s.netH(s.history))
 	s.mux.HandleFunc("GET /n/{slug}/audit", s.netH(s.myAuditPage)) // FR-082
 	s.mux.HandleFunc("POST /n/{slug}/export", s.netH(s.exportMine))
@@ -27,6 +28,11 @@ func (s *server) homeRoutes() {
 	s.mux.HandleFunc("POST /n/{slug}/listings/new", s.netH(s.listingCreate))
 	s.mux.HandleFunc("GET /n/{slug}/listings/{id}/edit", s.netH(s.listingEditForm))
 	s.mux.HandleFunc("POST /n/{slug}/listings/{id}/edit", s.netH(s.listingEdit))
+}
+
+// VIS-002: network information uses the same read boundary as its history.
+func (s *server) aboutNetwork(w http.ResponseWriter, r *http.Request, c *rc) {
+	s.render(w, r, c, "about", 200, &page{Title: messages.Text("about.title", c.Net.Name)})
 }
 
 type netLink struct{ Name, Slug, Status string }

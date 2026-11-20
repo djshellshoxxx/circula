@@ -23,7 +23,7 @@
 {{end}}
 <p><a href="/n/{{$.Slug}}/audit">{{msg "trade.history.activity_log"}}</a></p>
 <h2>{{msg "trade.history.download"}}</h2>
-<form method="post" action="/n/{{.Slug}}/export">
+<form method="post" action="/n/{{.Slug}}/export" data-loading-ignore>
   {{template "csrf" .}}
   <div class="field"><label for="f-format">{{msg "trade.history.file_format"}}</label>
   <select id="f-format" name="format"><option value="csv">{{msg "trade.history.format_csv"}}</option><option value="json">{{msg "trade.history.format_json"}}</option></select></div>

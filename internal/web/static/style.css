@@ -41,6 +41,8 @@ legend{font-weight:600;padding:0 .4rem}
 .errsum h2{margin-top:0;color:var(--bad)}
 .flash{border:3px solid var(--ok);background:var(--okbg);padding:.75rem 1rem;margin:1rem 0;border-radius:6px}
 .notice{border:2px solid var(--line);background:var(--note);padding:.75rem 1rem;margin:1rem 0;border-radius:6px}
+.page-loading{max-width:60rem;margin:0 auto}
+.page-loading:not(:empty){border:2px solid var(--line);background:var(--note);padding:.75rem 1rem;border-radius:6px}
 .card{border:1px solid var(--line);border-radius:8px;padding:1rem;margin:1rem 0}
 dl.kv{display:grid;grid-template-columns:minmax(8rem,14rem) 1fr;gap:.35rem 1rem;margin:0}
 dl.kv dt{font-weight:600}

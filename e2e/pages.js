@@ -20,6 +20,7 @@ const PAGES = [
   ['invitation, signed in', 'alice', (st) => st.unusedInvite, 'join'],
 
   ['dashboard', 'alice', (st) => n(st), 'dashboard'],
+  ['about this network', 'alice', (st) => `${n(st)}/about`, 'about'],
   ['dashboard with pending trade', 'bob', (st) => n(st), 'dashboard'],
   ['directory', 'alice', (st) => `${n(st)}/directory`, 'directory'],
   ['member profile', 'alice', (st) => st.bobProfile, 'profile'],

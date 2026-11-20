@@ -7,5 +7,5 @@
   {{template "field" dict "P" . "Name" "password2" "Label" (msg "auth.label.confirm_password") "Type" "password" "Auto" "new-password" "Req" true}}
   <div class="actions"><button type="submit">{{msg "auth.register.submit"}}</button></div>
 </form>
-<p>{{msg "auth.register.have_account"}} <a href="/login{{if .Next}}?next={{.Next}}{{end}}">{{msg "auth.register.sign_in_link"}}</a>.</p>
+{{$signin := msgAround "auth.register.have_account"}}<p>{{$signin.Before}}<a href="/login{{if .Next}}?next={{.Next}}{{end}}">{{msg "auth.register.sign_in_link"}}</a>{{$signin.After}}</p>
 {{end}}

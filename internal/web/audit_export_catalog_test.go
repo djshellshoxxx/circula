@@ -112,7 +112,7 @@ func TestLedgerCheckCatalogueCountsAndFindings(t *testing.T) {
 func TestAdminExportsCatalogueControls(t *testing.T) {
 	body := renderAuditExportPage(t, "admin_exports", &page{Slug: "town", CSRF: "csrf-value"})
 	wantAuditExportText(t, body, "Exports are recorded in the audit log and download as one zip file.",
-		`<form method="post" action="/n/town/admin/exports">`, `name="csrf" value="csrf-value"`,
+		`<form method="post" action="/n/town/admin/exports" data-loading-ignore>`, `name="csrf" value="csrf-value"`,
 		`<label for="f-scope">What to export</label>`, `<select id="f-scope" name="scope">`,
 		`<label for="f-format">File format</label>`, `<select id="f-format" name="format">`,
 		">Download export</button>")

@@ -1,6 +1,6 @@
 {{define "content"}}
 <p>{{msg "admin.exports.explanation"}}</p>
-<form method="post" action="/n/{{.Slug}}/admin/exports">
+<form method="post" action="/n/{{.Slug}}/admin/exports" data-loading-ignore>
   {{template "csrf" .}}
   <div class="field"><label for="f-scope">{{msg "admin.exports.scope_label"}}</label>
   <select id="f-scope" name="scope"><option value="ledger">{{msg "admin.exports.scope.ledger"}}</option><option value="members">{{msg "admin.exports.scope.members"}}</option><option value="audit">{{msg "admin.exports.scope.audit"}}</option><option value="full">{{msg "admin.exports.scope.full"}}</option></select></div>

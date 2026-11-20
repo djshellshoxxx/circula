@@ -3,8 +3,9 @@
 <p>{{msg "sessions.security_intro"}} <a href="/account/sessions">{{msg "sessions.manage_link"}}</a></p>
 
 <h2>{{msg "security.mfa.heading"}}</h2>
+{{$state := msgAround "security.mfa.state"}}
 {{if .D.MFA.Enabled}}
-  <p>{{msg "security.mfa.state_is"}} <strong>{{msg "security.mfa.on"}}</strong>. {{msg "security.mfa.recovery_left" .D.MFA.RecoveryRemaining}}</p>
+  <p>{{$state.Before}}<strong>{{msg "security.mfa.on"}}</strong>{{$state.After}} {{msg "security.mfa.recovery_left" .D.MFA.RecoveryRemaining}}</p>
   <h3>{{msg "security.mfa.replace_heading"}}</h3>
   <form method="post" action="/account/security/mfa/recovery" novalidate>
     {{template "csrf" .}}
@@ -19,7 +20,7 @@
     <div class="actions"><button type="submit" class="secondary">{{msg "security.mfa.turn_off"}}</button></div>
   </form>
 {{else}}
-  <p>{{msg "security.mfa.state_is"}} <strong>{{msg "security.mfa.off"}}</strong>. {{msg "security.mfa.off_explain"}}</p>
+  <p>{{$state.Before}}<strong>{{msg "security.mfa.off"}}</strong>{{$state.After}} {{msg "security.mfa.off_explain"}}</p>
   <p><a href="/account/security/mfa/enrol">{{msg "security.mfa.turn_on"}}</a></p>
 {{end}}
 

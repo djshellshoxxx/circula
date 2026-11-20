@@ -80,6 +80,12 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"Default credit limit", 2, "12.50"}
 		case "freshness.snapshot", "freshness.offline", "freshness.history", "session_warning.extendable", "session_warning.fixed":
 			args = []any{"example"}
+		case "auth.login.create_prompt", "auth.login.recovery_prompt", "auth.enrol.already_on", "auth.enrol.uri_note", "auth.register.have_account", "security.mfa.state", "about.title":
+			args = []any{"example"}
+		case "auth.codes.remaining":
+			args = []any{1000, "1,000"}
+		case "auth.codes.count":
+			args = []any{1000}
 		case "time_zone.display":
 			args = []any{"19 Nov 2026, 17:30 IST", "Asia/Kolkata"}
 		case "terms.accepted_flash", "terms.accept_version", "terms.accepted_version", "terms.admin.published_flash",

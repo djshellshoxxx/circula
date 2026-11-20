@@ -5,7 +5,7 @@
 <ol class="codes">{{range .D.Codes}}<li><code>{{.}}</code></li>{{end}}</ol>
 <p><a class="btn secondary" href="/account/recovery-codes">{{msg "auth.codes.saved"}}</a></p>
 {{else}}
-<p>{{msg "auth.codes.purpose"}} {{msg "auth.codes.have"}} <strong>{{.D.Remaining}}</strong> {{msg "auth.codes.unused" .D.Remaining}}.</p>
+{{$remaining := msgAroundCount "auth.codes.remaining" .D.Remaining}}<p>{{$remaining.Before}}<strong>{{msg "auth.codes.count" .D.Remaining}}</strong>{{$remaining.After}}</p>
 <p>{{msg "auth.codes.replace_note"}}</p>
 <form method="post" action="/account/recovery-codes" novalidate>
   {{template "csrf" .}}
