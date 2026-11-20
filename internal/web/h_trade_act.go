@@ -106,28 +106,36 @@ func (s *server) renderAct(w http.ResponseWriter, r *http.Request, c *rc, st int
 
 func (s *server) tradeActionPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	act := r.PathValue("action")
-	a, err := c.actView(r, act)
-	if err != nil {
-		s.fail(w, r, err)
-		return
-	}
-	ref := service.TxRef{TxID: a.Tx.ID, IdempotencyKey: idemKey(r)}
+	ref := service.TxRef{TxID: r.PathValue("id"), IdempotencyKey: idemKey(r)}
+	// Let the service check authorization, state and idempotency atomically.
+	// A balance preview read before this command could include a concurrent
+	// acceptance and incorrectly refuse a replay of that same command.
+	var tx *domain.Transaction
+	var err error
 	var msg string
 	switch act {
 	case "accept":
-		_, err = s.svc.AcceptTransaction(r.Context(), c.actor, c.netID(), ref)
+		tx, err = s.svc.AcceptTransaction(r.Context(), c.actor, c.netID(), ref)
 		msg = messages.Text("trade.action.completed")
 	case "decline":
-		_, err = s.svc.DeclineTransaction(r.Context(), c.actor, c.netID(), ref)
+		tx, err = s.svc.DeclineTransaction(r.Context(), c.actor, c.netID(), ref)
 		msg = messages.Text("trade.action.declined")
 	case "cancel":
-		_, err = s.svc.CancelTransaction(r.Context(), c.actor, c.netID(), service.CancelInput{TxID: ref.TxID,
+		tx, err = s.svc.CancelTransaction(r.Context(), c.actor, c.netID(), service.CancelInput{TxID: ref.TxID,
 			Reason: r.PostFormValue("reason"), IdempotencyKey: ref.IdempotencyKey})
 		msg = messages.Text("trade.action.cancelled")
+	default:
+		s.fail(w, r, domain.NotFound("page"))
+		return
 	}
 	if err != nil {
 		p := &page{V: formValues(r)}
 		if sum, fe, ok := c.refuse(err); ok {
+			a, viewErr := c.actView(r, act)
+			if viewErr != nil {
+				s.fail(w, r, viewErr)
+				return
+			}
 			p.Summary, p.Errors = sum, fe
 			st := 422
 			if domain.CodeOf(err) == domain.CodeInvalidState {
@@ -146,5 +154,5 @@ func (s *server) tradeActionPost(w http.ResponseWriter, r *http.Request, c *rc) 
 		}
 	}
 	s.setFlash(w, r, msg)
-	http.Redirect(w, r, c.base()+"/trades/"+a.Tx.ID, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix, server-generated id
+	http.Redirect(w, r, c.base()+"/trades/"+tx.ID, http.StatusSeeOther) //nolint:gosec // G710: fixed local prefix, server-generated id
 }
