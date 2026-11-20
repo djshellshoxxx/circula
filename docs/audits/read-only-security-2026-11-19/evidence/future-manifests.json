@@ -1,0 +1,234 @@
+[
+  {
+    "branch": "origin/future/fnet-201-matching-20261116",
+    "sha": "12850290c6bca7720853c33689662d751aced160",
+    "path": "future/matching/feature.json",
+    "manifest": {
+      "id": "FNET-201",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Deterministic opt-in offer/request category pairing with bounded candidate count, bilateral exclusion checks and reason codes.",
+      "remaining": "Persistent preferences/dismissals; authorized snapshot provider; normalized term scoring; per-member caps; optional three-way cycle detection; rescore/invalidation; explanation UI and no-JS adapter. Current algorithm only matches categories."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-202-favorites-20261116",
+    "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+    "path": "future/favorites/feature.json",
+    "manifest": {
+      "id": "FNET-202",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Network-scoped favorite validation and quick-repeat drafts with blank amount and fresh random intent; blocked/inactive target rejection.",
+      "remaining": "Owner-private persistent favorites; pin/reorder/delete; departure cleanup; current authorization adapter; confirmation form; idempotency persistence; account/network switching UI tests."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-203-receipts-20261116",
+    "sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+    "path": "future/receipts/feature.json",
+    "manifest": {
+      "id": "FNET-203",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Explicit-consent, active-party-only completed-trade projection with deterministic TXT and JSON exports; control-character rejection.",
+      "remaining": "Authoritative read-only snapshot adapter; no-JS download endpoints and redaction/audit; schema decision review; separately optional certificate signer/verifier, canonicalization ADR, key lifecycle/revocation and independent verifier tests. No signing algorithm is adopted by this module."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-204-feed-20261116",
+    "sha": "5d3819c3b3af031b75eceb5251da0226a4ecee77",
+    "path": "future/feed/feature.json",
+    "manifest": {
+      "id": "FNET-204",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Listing/announcement-only projection, read-time permission callback, source deduplication and stable keyset ordering.",
+      "remaining": "Database snapshot and source joins; authenticated HMAC cursors; preferences/mute/follow; committed source IDs; expiry/moderation; no-JS paging and deletion/revocation race tests. No trade events."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-205-analytics-20261116",
+    "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+    "path": "future/analytics/feature.json",
+    "manifest": {
+      "id": "FNET-205",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Overflow-checked gross historical completed-transfer volume, distinct trader counts, half-open periods and full small-cohort suppression.",
+      "remaining": "Ledger-backed isolated snapshots including reversal accounting; stock versus flow views; fixed periods and anti-differencing privacy policy; admin authorization; own-member trends; dormant offers; accessible tables/charts and exports. Existing core is gross volume only, not the complete analytics feature."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-206-areas-20261116",
+    "sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+    "path": "future/areas/feature.json",
+    "manifest": {
+      "id": "FNET-206",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Validated named-area catalog, deterministic sorting and optional area resolution restricted to the selected network. No coordinates.",
+      "remaining": "Admin-authorized durable area CRUD; listing association constraints; disabled/deleted area semantics; accessible selection/filtering; export privacy; optional broad geometry/map policy. No GPS/geocoder required."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-207-recurring-20261116",
+    "sha": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+    "path": "future/recurring/feature.json",
+    "manifest": {
+      "id": "FNET-207",
+      "status": "calendar-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Daily, weekly and monthly IANA-local reminder windows, stable per-date dedupe keys, DST gap skipping/fold first-occurrence selection, exact historical second-offset handling, strict identity/timezone validation and no catch-up backlog.",
+      "remaining": "Persistent templates/firings; atomic reminder plus unique firing; pause/skip/edit audit; explicit quotas, retention and timezone-edit policy; optional manually confirmed draft adapter; crash/concurrent worker tests; current authorization adapters; accessible HTTP/CLI/UI acceptance; and core policy approval. No production Core recurring feature is enabled."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-208-governance-20261116",
+    "sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+    "path": "future/governance/feature.json",
+    "manifest": {
+      "id": "FNET-208",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Eligibility/current-activity checks, duplicate/late/wrong-network ballot rejection and deterministic advisory yes/no/abstain tally.",
+      "remaining": "Persistent eligibility snapshots and unique ballots; proposal creation/moderation/withdrawal; current-membership adapter; outcome certification; privacy disclosures; admin policy-link audit; no-JS ballot UI; concurrent/restart tests. Never applies policy automatically."
+    }
+  },
+  {
+    "branch": "origin/future/fnet-209-federation-20261116",
+    "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+    "path": "future/federation/feature.json",
+    "manifest": {
+      "id": "FNET-209",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Experimental domain-separated Ed25519 discovery envelopes with pinned peer key, explicit audience, expiry, strict JSON bytes and publish/revoke kind restriction.",
+      "remaining": "Wire-format/key-rotation ADR and audit; bilateral admin trust UI; durable bounded inbox/outbox; atomic replay journal and out-of-order revocation rules; listing consent/content projection; SSRF-safe bounded transport; rate limits; partition/restart/adversarial tests. Cross-network settlement remains excluded pending separate accounting design."
+    }
+  },
+  {
+    "branch": "origin/future/fux-101-pwa-20261116",
+    "sha": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+    "path": "future/pwa/feature.json",
+    "manifest": {
+      "id": "FUX-101",
+      "status": "isolated-implementation-tested-chromium-passed-platform-qualification-pending",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Pinned locally bundled Workbox PWA: manifest/icons/install help, strict public-asset integrity cache, network-only private/unsafe requests, offline-unavailable fallback, DOM/session lifecycle, opt-in Go adapter and synthetic demo.",
+      "remaining": "Real Chromium 153 suite passes; Android/iOS installation, real BFCache (Chromium excludes no-store pages), Safari/Firefox, cross-tab/resume privacy on devices, screen-reader/zoom, WCAG automation and production adapter/ledger qualification pending. No persistence is implemented by design. Self-audit in AUDIT.md; independent audit still pending. Integration remains HOLD.",
+      "upstream": {
+        "project": "GoogleChrome/workbox",
+        "version": "7.4.1",
+        "commit": "62b9d8ba8eb3c1a2ab8aac9d84c90cda7865d6a3",
+        "license": "MIT-style",
+        "adoption": "locally bundled dependency"
+      }
+    }
+  },
+  {
+    "branch": "origin/future/fux-102-qr-20261116",
+    "sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+    "path": "future/qr/feature.json",
+    "manifest": {
+      "id": "FUX-102",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "128-bit random opaque tokens, hashed token storage input, trusted-origin URL parser, expiry/revocation/claimed-intent preflight.",
+      "remaining": "Static aliases and rotation; QR renderer/scanner/manual-entry UI; durable hashed requests; atomic request claim plus existing proposal creation; idempotent retries; current membership/limit authorization and concurrent/restart tests."
+    }
+  },
+  {
+    "branch": "origin/future/fux-103-discovery-20261116",
+    "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+    "path": "future/discovery/feature.json",
+    "manifest": {
+      "id": "FUX-103",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Bounded category/area/text filtering with deterministic keyset ordering over an authorized snapshot.",
+      "remaining": "Taxonomy administration; moderated tags; bounded photo upload/decode/re-encode/EXIF stripping; retention; availability/expiry; transactional snapshot pagination and signed cursors; accessible gallery and search adapters."
+    }
+  },
+  {
+    "branch": "origin/future/fux-104-notifications-20261116",
+    "sha": "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+    "path": "future/notifications/feature.json",
+    "manifest": {
+      "id": "FUX-104",
+      "status": "isolated-service-and-transports-implemented-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "SQL preferences and encrypted targets, confirmation/unsubscribe tokens, transactional idempotent outbox, quiet-hour/retry dispatch, current-directory checks, key rotation, SMTP/Web Push adapters, unambiguous target AAD and valid-UTF-8 identity binding.",
+      "remaining": "Production transaction/current-authorization adapters, worker crash/restart qualification, real transport and egress acceptance, bounce handling, operator CLI, accessible/no-JS preferences, credential custody/rotation, backup/restore and browser opt-in/logout acceptance."
+    }
+  },
+  {
+    "branch": "origin/future/fux-105-messaging-20261116",
+    "sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+    "path": "future/messaging/feature.json",
+    "manifest": {
+      "id": "FUX-105",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Participant and tenant access policy, block/closed-thread enforcement, bounded UTF-8 text, maximum 30-day inactivity retention.",
+      "remaining": "Durable ordered threads/messages/read positions; atomic idempotency; fresh membership and block reads; moderation/reporting; legal holds and per-participant deletion; quotas; escaped no-JS UI; restart/concurrency and retention tests. Server-readable, no E2EE claim."
+    }
+  },
+  {
+    "branch": "origin/future/fux-106-onboarding-20261116",
+    "sha": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+    "path": "future/onboarding/feature.json",
+    "manifest": {
+      "id": "FUX-106",
+      "status": "initial-core-tested-feature-incomplete",
+      "integration": "HOLD",
+      "enabled": false,
+      "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+      "depends_on_future_features": [],
+      "scope": "Versioned idempotent checklist transitions and checked integer synthetic balance previews with credit/reservation limits.",
+      "remaining": "Persist per-network/member checklist; separate practice origin/database with canned fixtures and distinct credentials; guided skip/resume templates; admin copy; accessibility and production-ledger isolation acceptance tests."
+    }
+  }
+]
