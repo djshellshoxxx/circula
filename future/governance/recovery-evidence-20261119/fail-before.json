@@ -1,0 +1,70 @@
+{
+  "stage": "fail-before",
+  "environment": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOGC": "10",
+    "GOMEMLIMIT": "256MiB",
+    "GOMAXPROCS": "1",
+    "CGO_ENABLED": "1",
+    "GOFLAGS": "-mod=readonly -p=1",
+    "GOCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-build-cache",
+    "GOMODCACHE": "/tmp/circula-recovered-qualification-8lm6pgwy/go-mod-cache",
+    "TMPDIR": "/tmp/circula-recovered-qualification-8lm6pgwy/tmp"
+  },
+  "check": {
+    "module": "governance",
+    "argv": [
+      "/workspace/scratch/beb70d57deba/toolchain/go/bin/go",
+      "test",
+      "-json",
+      "-count=1",
+      "-ldflags=-w",
+      "-run",
+      "^TestRecovery",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/workspace/scratch/f47ceab29930/circula-governance-recovery/future/governance",
+    "source_sha256": {
+      "ballot_test.go": "47acb3ca397385d37ad658fa109ea220d84438c119b3d79080bc1f033c749c1a",
+      "strict.go": "56616c9a32097ea6cb86de0ec51d77bb967eb2b71e1c91719997acce51d6ec80",
+      "strict_fuzz_test.go": "4bdf7b4a967777ef1785571f8dca9770cab41ff195cdb24562142034e43ae4bc",
+      "master_regression_test.go": "4213d71889a16cee980f6f3444dd6fad5f55b5d6aea18ccbb15566833913c3aa",
+      "json_recovery_test.go": "6f45c9ab533a2ab380ba81fea090e656b16dfa703ca8f96cba9300d87dbd278d",
+      "cli.go": "7c33a7a2038716f37c4e2de0382dcf45d91f0647c76a42ce5ac6fe6b5e659cf6",
+      "web_test.go": "0369d43ff404efb87afd490ee410e1e383c8eddd9c93ca7e97300f8c7d515758",
+      "web.go": "23dbc017301f49b4298f1a3e98f8d00e07060c084b931ab1f0e5bf3f030c858b",
+      "audit_helpers.go": "5e284955bd2e7eb749d141204d28e065503106ac77a70711bdcf1c84fda8f1c8",
+      "ballot.go": "7940248b45212c949d2ae1df879cff0e4b31ae960a078b39408678ada826fc85",
+      "audit_test.go": "8f1c0259a2ea5511a9654de136ac15c581e5fe4b0e945063c4999f9ab51ed7c0",
+      "service.go": "eef398797dc7bdbac525eafe689e810ea6b6034bfd5978b94d4d61ee8afb239b",
+      "go.sum": "3ca6de191cbcf41056b3b2c7abdcbe4b55c7ececa358c900df16bad0a700ee95",
+      "service_test.go": "118f23bba103345b6fb48baecbbd4d3cf457dc135cd5533c6062db2a7e3561c6",
+      "go.mod": "4a2f7ee38f70fa3e0ae69cbddb62c4d7c15d65dca9f3fd89092274aac753b4bd"
+    },
+    "log": "/workspace/scratch/f47ceab29930/evidence/branch-inventory/legacy-recovery/three-recovery-regressions/governance-fail-before.log",
+    "tmp_free_before": 376881152,
+    "exit_code": 1,
+    "timed_out": false,
+    "elapsed_seconds": 19.084,
+    "failed_tests": [
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Revision\":1,\"Revi\u017fion\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Revi\u017fion\":1,\"Revision\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Revision\":1,\"Revi\\u017fion\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Proposal\":\"one\",\"Propo\u017fal\":\"two\"}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"\u03a3\":1,\"\u03c2\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Nested\":{\"Revision\":1,\"Revi\u017fion\":2}}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields"
+    ],
+    "passed_tests": [
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"revision\":1,\"REVISION\":2}",
+      "TestRecoveryRejectsUnicodeAliasedJSONFields/{\"Key\":1,\"\u212aey\":2}",
+      "TestRecoveryJSONSingleAliasesAndDistinctUnicode"
+    ],
+    "resource_or_compile_failure": false,
+    "source_unchanged": true,
+    "log_sha256": "1e61706f8c7703d9364b7c4db536852b3581321b0c5782a1d12acdc1878ff26a",
+    "output_tail": "\":2}}\",\"Output\":\"--- FAIL: TestRecoveryRejectsUnicodeAliasedJSONFields/{\\\"Nested\\\":{\\\"Revision\\\":1,\\\"Revi\u017fion\\\":2}} (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:39:04.101070242-08:00\",\"Action\":\"fail\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryRejectsUnicodeAliasedJSONFields/{\\\"Nested\\\":{\\\"Revision\\\":1,\\\"Revi\u017fion\\\":2}}\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:39:04.101073257-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryRejectsUnicodeAliasedJSONFields\",\"Output\":\"--- FAIL: TestRecoveryRejectsUnicodeAliasedJSONFields (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:39:04.101075782-08:00\",\"Action\":\"fail\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryRejectsUnicodeAliasedJSONFields\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:39:04.101078607-08:00\",\"Action\":\"run\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\"}\n{\"Time\":\"2026-11-19T04:39:04.101089448-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\",\"Output\":\"=== RUN   TestRecoveryJSONSingleAliasesAndDistinctUnicode\\n\"}\n{\"Time\":\"2026-11-19T04:39:04.10126165-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\",\"Output\":\"--- PASS: TestRecoveryJSONSingleAliasesAndDistinctUnicode (0.00s)\\n\"}\n{\"Time\":\"2026-11-19T04:39:04.101280676-08:00\",\"Action\":\"pass\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Test\":\"TestRecoveryJSONSingleAliasesAndDistinctUnicode\",\"Elapsed\":0}\n{\"Time\":\"2026-11-19T04:39:04.101286136-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Output\":\"FAIL\\n\"}\n{\"Time\":\"2026-11-19T04:39:04.103659536-08:00\",\"Action\":\"output\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Output\":\"FAIL\\tgithub.com/djshellshoxxx/circula/future/governance\\t0.009s\\n\"}\n{\"Time\":\"2026-11-19T04:39:04.103878878-08:00\",\"Action\":\"fail\",\"Package\":\"github.com/djshellshoxxx/circula/future/governance\",\"Elapsed\":0.01}\n"
+  }
+}

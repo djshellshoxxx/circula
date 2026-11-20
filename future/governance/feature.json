@@ -1,10 +1,12 @@
 {
   "id": "FNET-208",
-  "status": "initial-core-tested-feature-incomplete",
+  "status": "standalone-master-corrections-tested-independently-reviewed-external-gates-pending",
   "integration": "HOLD",
   "enabled": false,
   "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
   "depends_on_future_features": [],
-  "scope": "Eligibility/current-activity checks, duplicate/late/wrong-network ballot rejection and deterministic advisory yes/no/abstain tally.",
-  "remaining": "Persistent eligibility snapshots and unique ballots; proposal creation/moderation/withdrawal; current-membership adapter; outcome certification; privacy disclosures; admin policy-link audit; no-JS ballot UI; concurrent/restart tests. Never applies policy automatically."
+  "scope": "Transactional proposals/frozen electorate/unique ballots/advisory outcomes, current authorization, private ballot reads, comments/moderation/process disputes, independent certification/read-only policy links, idempotency/audit, no-JS HTTP and CLI interfaces. Strict pre-host query/form validation and current-session form rendering.",
+  "remaining": "Actual Circula transactional auth/admin-MFA/store/policy-history adapter; full core/API/ledger regression; browser/screen-reader/translation qualification; host deployment/retention policy; owner-selected integration and rollout.",
+  "tested_source": "8b74e7db0e237df15acb46a27609f6015eadb4ed",
+  "completion_percent": 84
 }

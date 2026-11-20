@@ -1,0 +1,9 @@
+{
+  "module": "governance",
+  "workflow_path": "/workspace/scratch/f47ceab29930/circula-governance-recovery/.github/workflows/future-governance.yml",
+  "sha256": "2f575cf54d677232731b14850e881941f9659a03cc17b5c9e68e1acf0a3fe744",
+  "yaml_bash_python_syntax": "pass",
+  "permissions_and_action_pins": "pass",
+  "full_real_sqlite_native_matrix": true,
+  "current_source_tests": "not run yet"
+}
