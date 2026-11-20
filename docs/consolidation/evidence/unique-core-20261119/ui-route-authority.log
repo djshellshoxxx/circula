@@ -1,0 +1,6 @@
+=== RUN   TestRouteInventoryMatchesAuthorizationTable
+--- PASS: TestRouteInventoryMatchesAuthorizationTable (0.15s)
+=== RUN   TestRouteAuthorizationMatrix
+--- PASS: TestRouteAuthorizationMatrix (11.34s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	12.532s

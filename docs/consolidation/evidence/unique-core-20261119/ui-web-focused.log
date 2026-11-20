@@ -1,0 +1,320 @@
+=== RUN   TestPageStructure
+--- PASS: TestPageStructure (4.36s)
+=== RUN   TestNetworkAboutPageAndReadAuthority
+    about_test.go:77: fixture did not erase the former member's only account
+--- FAIL: TestNetworkAboutPageAndReadAuthority (1.27s)
+=== RUN   TestNetworkAboutDuringClosure
+--- PASS: TestNetworkAboutDuringClosure (1.26s)
+=== RUN   TestWebAdminReadsAndNavigationRequireCurrentMFA
+--- PASS: TestWebAdminReadsAndNavigationRequireCurrentMFA (1.31s)
+=== RUN   TestWebAdminReadsAndNavigationUseLiveBreakGlass
+--- PASS: TestWebAdminReadsAndNavigationUseLiveBreakGlass (1.20s)
+=== RUN   TestAdminAdjustmentCatalogueStatusFallback
+--- PASS: TestAdminAdjustmentCatalogueStatusFallback (0.00s)
+=== RUN   TestAnnouncementsCatalogueControls
+--- PASS: TestAnnouncementsCatalogueControls (0.39s)
+=== RUN   TestAnnouncementCatalogueDeleteNames
+--- PASS: TestAnnouncementCatalogueDeleteNames (0.18s)
+=== RUN   TestAdminOverviewCatalogueControls
+--- PASS: TestAdminOverviewCatalogueControls (0.35s)
+=== RUN   TestStaleQueueCatalogueCountsAndControls
+--- PASS: TestStaleQueueCatalogueCountsAndControls (1.46s)
+=== RUN   TestBreakGlassCatalogueReadOnlyControls
+--- PASS: TestBreakGlassCatalogueReadOnlyControls (0.35s)
+=== RUN   TestBreakGlassCatalogueStatusLabels
+--- PASS: TestBreakGlassCatalogueStatusLabels (1.10s)
+=== RUN   TestAdminHistoryCatalogueEscapesMessages
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_announcements
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_home
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_stale_proposals
+=== RUN   TestAdminHistoryCatalogueEscapesMessages/admin_break_glass
+--- PASS: TestAdminHistoryCatalogueEscapesMessages (0.70s)
+    --- PASS: TestAdminHistoryCatalogueEscapesMessages/admin_announcements (0.18s)
+    --- PASS: TestAdminHistoryCatalogueEscapesMessages/admin_home (0.17s)
+    --- PASS: TestAdminHistoryCatalogueEscapesMessages/admin_stale_proposals (0.17s)
+    --- PASS: TestAdminHistoryCatalogueEscapesMessages/admin_break_glass (0.17s)
+=== RUN   TestAdministratorResetPagesCatalogue
+=== RUN   TestAdministratorResetPagesCatalogue/confirmation
+=== RUN   TestAdministratorResetPagesCatalogue/reason_error
+=== RUN   TestAdministratorResetPagesCatalogue/admin.reset.forbidden
+=== RUN   TestAdministratorResetPagesCatalogue/admin.reset.throttled
+=== RUN   TestAdministratorResetPagesCatalogue/temporary_password
+=== RUN   TestAdministratorResetPagesCatalogue/other_member_action
+--- PASS: TestAdministratorResetPagesCatalogue (1.04s)
+    --- PASS: TestAdministratorResetPagesCatalogue/confirmation (0.17s)
+    --- PASS: TestAdministratorResetPagesCatalogue/reason_error (0.17s)
+    --- PASS: TestAdministratorResetPagesCatalogue/admin.reset.forbidden (0.17s)
+    --- PASS: TestAdministratorResetPagesCatalogue/admin.reset.throttled (0.17s)
+    --- PASS: TestAdministratorResetPagesCatalogue/temporary_password (0.18s)
+    --- PASS: TestAdministratorResetPagesCatalogue/other_member_action (0.19s)
+=== RUN   TestAuditCatalogueDataAndControls
+=== RUN   TestAuditCatalogueDataAndControls/admin_audit
+=== RUN   TestAuditCatalogueDataAndControls/my_audit
+--- PASS: TestAuditCatalogueDataAndControls (0.65s)
+    --- PASS: TestAuditCatalogueDataAndControls/admin_audit (0.33s)
+    --- PASS: TestAuditCatalogueDataAndControls/my_audit (0.32s)
+=== RUN   TestLedgerCheckCatalogueCountsAndFindings
+--- PASS: TestLedgerCheckCatalogueCountsAndFindings (0.54s)
+=== RUN   TestAdminExportsCatalogueControls
+--- PASS: TestAdminExportsCatalogueControls (0.19s)
+=== RUN   TestSignInPagesCatalogue
+--- PASS: TestSignInPagesCatalogue (0.51s)
+=== RUN   TestRecoveryAndPasswordPagesCatalogue
+--- PASS: TestRecoveryAndPasswordPagesCatalogue (1.28s)
+=== RUN   TestSecurityPagesCatalogue
+--- PASS: TestSecurityPagesCatalogue (0.75s)
+=== RUN   TestMFAEnrolPagesCatalogue
+--- PASS: TestMFAEnrolPagesCatalogue (0.64s)
+=== RUN   TestDashboardCatalogueAndUnitNames
+=== RUN   TestDashboardCatalogueAndUnitNames/credit
+=== RUN   TestDashboardCatalogueAndUnitNames/Hours
+=== RUN   TestDashboardCatalogueAndUnitNames/<hours>&
+--- PASS: TestDashboardCatalogueAndUnitNames (0.57s)
+    --- PASS: TestDashboardCatalogueAndUnitNames/credit (0.16s)
+    --- PASS: TestDashboardCatalogueAndUnitNames/Hours (0.22s)
+    --- PASS: TestDashboardCatalogueAndUnitNames/<hours>& (0.19s)
+=== RUN   TestDisputeCatalogueEnumFallbacks
+--- PASS: TestDisputeCatalogueEnumFallbacks (0.00s)
+=== RUN   TestDisputeCatalogueOutcomeKeepsExactAmount
+--- PASS: TestDisputeCatalogueOutcomeKeepsExactAmount (0.00s)
+=== RUN   TestReReviewCatalogueKeepsAmountAndUnit
+--- PASS: TestReReviewCatalogueKeepsAmountAndUnit (0.00s)
+=== RUN   TestErasureCatalogueForms
+--- PASS: TestErasureCatalogueForms (0.83s)
+=== RUN   TestErasureActionCatalogue
+--- PASS: TestErasureActionCatalogue (0.18s)
+=== RUN   TestErasureCatalogueEscapesMessages
+--- PASS: TestErasureCatalogueEscapesMessages (0.41s)
+=== RUN   TestWebExportAbortsAfterReadFailure
+=== RUN   TestWebExportAbortsAfterReadFailure/csv
+=== RUN   TestWebExportAbortsAfterReadFailure/json
+--- PASS: TestWebExportAbortsAfterReadFailure (1.77s)
+    --- PASS: TestWebExportAbortsAfterReadFailure/csv (0.88s)
+    --- PASS: TestWebExportAbortsAfterReadFailure/json (0.89s)
+=== RUN   TestWebExportAbortsAfterCloseFailure
+=== RUN   TestWebExportAbortsAfterCloseFailure/csv
+=== RUN   TestWebExportAbortsAfterCloseFailure/json
+--- PASS: TestWebExportAbortsAfterCloseFailure (1.97s)
+    --- PASS: TestWebExportAbortsAfterCloseFailure/csv (1.04s)
+    --- PASS: TestWebExportAbortsAfterCloseFailure/json (0.93s)
+=== RUN   TestWebExportCompletesValidArchive
+=== RUN   TestWebExportCompletesValidArchive/csv
+=== RUN   TestWebExportCompletesValidArchive/json
+--- PASS: TestWebExportCompletesValidArchive (2.04s)
+    --- PASS: TestWebExportCompletesValidArchive/csv (1.11s)
+    --- PASS: TestWebExportCompletesValidArchive/json (0.92s)
+=== RUN   TestWebExportEarlyRefusalKeepsErrorPage
+=== RUN   TestWebExportEarlyRefusalKeepsErrorPage/csv
+=== RUN   TestWebExportEarlyRefusalKeepsErrorPage/json
+--- PASS: TestWebExportEarlyRefusalKeepsErrorPage (1.89s)
+    --- PASS: TestWebExportEarlyRefusalKeepsErrorPage/csv (0.93s)
+    --- PASS: TestWebExportEarlyRefusalKeepsErrorPage/json (0.95s)
+=== RUN   TestBalanceCatalogueMessages
+--- PASS: TestBalanceCatalogueMessages (0.00s)
+=== RUN   TestTransactionCatalogueRows
+=== RUN   TestTransactionCatalogueRows/trade/outgoing=false/pending=false
+=== RUN   TestTransactionCatalogueRows/trade/outgoing=false/pending=true
+=== RUN   TestTransactionCatalogueRows/trade/outgoing=true/pending=false
+=== RUN   TestTransactionCatalogueRows/trade/outgoing=true/pending=true
+=== RUN   TestTransactionCatalogueRows/reversal/outgoing=false/pending=false
+=== RUN   TestTransactionCatalogueRows/reversal/outgoing=false/pending=true
+=== RUN   TestTransactionCatalogueRows/reversal/outgoing=true/pending=false
+=== RUN   TestTransactionCatalogueRows/reversal/outgoing=true/pending=true
+=== RUN   TestTransactionCatalogueRows/adjustment/outgoing=false/pending=false
+=== RUN   TestTransactionCatalogueRows/adjustment/outgoing=false/pending=true
+=== RUN   TestTransactionCatalogueRows/adjustment/outgoing=true/pending=false
+=== RUN   TestTransactionCatalogueRows/adjustment/outgoing=true/pending=true
+=== RUN   TestTransactionCatalogueRows/grant/outgoing=false/pending=false
+=== RUN   TestTransactionCatalogueRows/grant/outgoing=false/pending=true
+=== RUN   TestTransactionCatalogueRows/grant/outgoing=true/pending=false
+=== RUN   TestTransactionCatalogueRows/grant/outgoing=true/pending=true
+--- PASS: TestTransactionCatalogueRows (0.00s)
+    --- PASS: TestTransactionCatalogueRows/trade/outgoing=false/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/trade/outgoing=false/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/trade/outgoing=true/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/trade/outgoing=true/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/reversal/outgoing=false/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/reversal/outgoing=false/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/reversal/outgoing=true/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/reversal/outgoing=true/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/adjustment/outgoing=false/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/adjustment/outgoing=false/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/adjustment/outgoing=true/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/adjustment/outgoing=true/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/grant/outgoing=false/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/grant/outgoing=false/pending=true (0.00s)
+    --- PASS: TestTransactionCatalogueRows/grant/outgoing=true/pending=false (0.00s)
+    --- PASS: TestTransactionCatalogueRows/grant/outgoing=true/pending=true (0.00s)
+=== RUN   TestLeaveOffersSelfExport
+--- PASS: TestLeaveOffersSelfExport (1.40s)
+=== RUN   TestInboxCatalogueCountsAndActions
+--- PASS: TestInboxCatalogueCountsAndActions (0.58s)
+=== RUN   TestReportFormCatalogue
+--- PASS: TestReportFormCatalogue (0.41s)
+=== RUN   TestReportCatalogueCategoryValues
+--- PASS: TestReportCatalogueCategoryValues (0.00s)
+=== RUN   TestReportCatalogueSubjectEnumProvenance
+--- PASS: TestReportCatalogueSubjectEnumProvenance (0.62s)
+=== RUN   TestReportQueueCatalogue
+--- PASS: TestReportQueueCatalogue (0.77s)
+=== RUN   TestMarketplacePagesCatalogue
+--- PASS: TestMarketplacePagesCatalogue (1.95s)
+=== RUN   TestDirectoryCatalogueCountsAndReferences
+--- PASS: TestDirectoryCatalogueCountsAndReferences (0.81s)
+=== RUN   TestMemberCatalogueRowsAndActions
+--- PASS: TestMemberCatalogueRowsAndActions (1.39s)
+=== RUN   TestMemberActionCatalogueControls
+=== RUN   TestMemberActionCatalogueControls/approve
+=== RUN   TestMemberActionCatalogueControls/deny
+=== RUN   TestMemberActionCatalogueControls/suspend
+=== RUN   TestMemberActionCatalogueControls/restore
+=== RUN   TestMemberActionCatalogueControls/remove
+=== RUN   TestMemberActionCatalogueControls/grant-admin
+=== RUN   TestMemberActionCatalogueControls/revoke-admin
+=== RUN   TestMemberActionCatalogueControls/grant-reviewer
+=== RUN   TestMemberActionCatalogueControls/revoke-reviewer
+=== RUN   TestMemberActionCatalogueControls/flag
+=== RUN   TestMemberActionCatalogueControls/unflag
+=== RUN   TestMemberActionCatalogueControls/limit
+=== RUN   TestMemberActionCatalogueControls/reset-password
+--- PASS: TestMemberActionCatalogueControls (2.53s)
+    --- PASS: TestMemberActionCatalogueControls/approve (0.17s)
+    --- PASS: TestMemberActionCatalogueControls/deny (0.17s)
+    --- PASS: TestMemberActionCatalogueControls/suspend (0.20s)
+    --- PASS: TestMemberActionCatalogueControls/restore (0.17s)
+    --- PASS: TestMemberActionCatalogueControls/remove (0.21s)
+    --- PASS: TestMemberActionCatalogueControls/grant-admin (0.18s)
+    --- PASS: TestMemberActionCatalogueControls/revoke-admin (0.17s)
+    --- PASS: TestMemberActionCatalogueControls/grant-reviewer (0.20s)
+    --- PASS: TestMemberActionCatalogueControls/revoke-reviewer (0.18s)
+    --- PASS: TestMemberActionCatalogueControls/flag (0.18s)
+    --- PASS: TestMemberActionCatalogueControls/unflag (0.18s)
+    --- PASS: TestMemberActionCatalogueControls/limit (0.20s)
+    --- PASS: TestMemberActionCatalogueControls/reset-password (0.15s)
+=== RUN   TestInvitationCatalogueStateAndValues
+--- PASS: TestInvitationCatalogueStateAndValues (0.33s)
+=== RUN   TestInactiveMembersCatalogue
+--- PASS: TestInactiveMembersCatalogue (0.62s)
+=== RUN   TestMemberInvitationCatalogueEscapesMessages
+=== RUN   TestMemberInvitationCatalogueEscapesMessages/admin_members
+=== RUN   TestMemberInvitationCatalogueEscapesMessages/admin_member_act
+=== RUN   TestMemberInvitationCatalogueEscapesMessages/admin_invites
+=== RUN   TestMemberInvitationCatalogueEscapesMessages/admin_inactive
+--- PASS: TestMemberInvitationCatalogueEscapesMessages (0.80s)
+    --- PASS: TestMemberInvitationCatalogueEscapesMessages/admin_members (0.21s)
+    --- PASS: TestMemberInvitationCatalogueEscapesMessages/admin_member_act (0.18s)
+    --- PASS: TestMemberInvitationCatalogueEscapesMessages/admin_invites (0.19s)
+    --- PASS: TestMemberInvitationCatalogueEscapesMessages/admin_inactive (0.21s)
+=== RUN   TestNavigationMatchesCurrentReadableSections
+=== RUN   TestNavigationMatchesCurrentReadableSections/active
+=== RUN   TestNavigationMatchesCurrentReadableSections/suspended
+=== RUN   TestNavigationMatchesCurrentReadableSections/restored
+=== RUN   TestNavigationMatchesCurrentReadableSections/departed
+--- PASS: TestNavigationMatchesCurrentReadableSections (2.58s)
+    --- PASS: TestNavigationMatchesCurrentReadableSections/active (0.31s)
+    --- PASS: TestNavigationMatchesCurrentReadableSections/suspended (0.31s)
+    --- PASS: TestNavigationMatchesCurrentReadableSections/restored (0.37s)
+    --- PASS: TestNavigationMatchesCurrentReadableSections/departed (0.35s)
+=== RUN   TestNetworkPickerCatalogue
+=== RUN   TestNetworkPickerCatalogue/empty
+=== RUN   TestNetworkPickerCatalogue/memberships
+--- PASS: TestNetworkPickerCatalogue (0.43s)
+    --- PASS: TestNetworkPickerCatalogue/empty (0.19s)
+    --- PASS: TestNetworkPickerCatalogue/memberships (0.24s)
+=== RUN   TestNetworkPickerCatalogueTextIsEscaped
+--- PASS: TestNetworkPickerCatalogueTextIsEscaped (0.49s)
+=== RUN   TestOnboardingPagesCatalogue
+--- PASS: TestOnboardingPagesCatalogue (1.44s)
+=== RUN   TestPolicyCatalogueControls
+--- PASS: TestPolicyCatalogueControls (0.53s)
+=== RUN   TestPolicyCatalogueUnitHints
+--- PASS: TestPolicyCatalogueUnitHints (0.69s)
+=== RUN   TestNetworkCatalogueStateControls
+=== RUN   TestNetworkCatalogueStateControls/active
+=== RUN   TestNetworkCatalogueStateControls/administrator_pause
+=== RUN   TestNetworkCatalogueStateControls/both_pauses
+=== RUN   TestNetworkCatalogueStateControls/platform_pause
+=== RUN   TestNetworkCatalogueStateControls/blocked
+=== RUN   TestNetworkCatalogueStateControls/announced
+=== RUN   TestNetworkCatalogueStateControls/awaiting_disputes
+=== RUN   TestNetworkCatalogueStateControls/closed
+=== RUN   TestNetworkCatalogueStateControls/closed_retention
+--- PASS: TestNetworkCatalogueStateControls (2.26s)
+    --- PASS: TestNetworkCatalogueStateControls/active (0.26s)
+    --- PASS: TestNetworkCatalogueStateControls/administrator_pause (0.28s)
+    --- PASS: TestNetworkCatalogueStateControls/both_pauses (0.26s)
+    --- PASS: TestNetworkCatalogueStateControls/platform_pause (0.25s)
+    --- PASS: TestNetworkCatalogueStateControls/blocked (0.25s)
+    --- PASS: TestNetworkCatalogueStateControls/announced (0.24s)
+    --- PASS: TestNetworkCatalogueStateControls/awaiting_disputes (0.23s)
+    --- PASS: TestNetworkCatalogueStateControls/closed (0.24s)
+    --- PASS: TestNetworkCatalogueStateControls/closed_retention (0.24s)
+=== RUN   TestNetworkCatalogueCounts
+--- PASS: TestNetworkCatalogueCounts (0.68s)
+=== RUN   TestNetworkCatalogueSuspensionCategories
+--- PASS: TestNetworkCatalogueSuspensionCategories (1.50s)
+=== RUN   TestPolicyNetworkCatalogueEscapesMessages
+=== RUN   TestPolicyNetworkCatalogueEscapesMessages/admin_policy
+=== RUN   TestPolicyNetworkCatalogueEscapesMessages/admin_network
+--- PASS: TestPolicyNetworkCatalogueEscapesMessages (0.48s)
+    --- PASS: TestPolicyNetworkCatalogueEscapesMessages/admin_policy (0.25s)
+    --- PASS: TestPolicyNetworkCatalogueEscapesMessages/admin_network (0.23s)
+=== RUN   TestProgressiveCatalogueTemplate
+--- PASS: TestProgressiveCatalogueTemplate (0.24s)
+=== RUN   TestProgressiveCatalogueEscapesAttributesAndTimeSurroundings
+--- PASS: TestProgressiveCatalogueEscapesAttributesAndTimeSurroundings (0.21s)
+=== RUN   TestRefusePrecisionCatalogue
+=== RUN   TestRefusePrecisionCatalogue/0
+=== RUN   TestRefusePrecisionCatalogue/1
+=== RUN   TestRefusePrecisionCatalogue/4
+=== RUN   TestRefusePrecisionCatalogue/missing_context
+=== RUN   TestRefusePrecisionCatalogue/missing_network
+--- PASS: TestRefusePrecisionCatalogue (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/0 (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/1 (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/4 (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/missing_context (0.00s)
+    --- PASS: TestRefusePrecisionCatalogue/missing_network (0.00s)
+=== RUN   TestTermsPagesCatalogue
+--- PASS: TestTermsPagesCatalogue (1.04s)
+=== RUN   TestRulesCatalogueRowsAndStates
+--- PASS: TestRulesCatalogueRowsAndStates (0.64s)
+=== RUN   TestLeaveCataloguePreviewAndControls
+--- PASS: TestLeaveCataloguePreviewAndControls (2.41s)
+=== RUN   TestTermsRulesLeaveCatalogueEscapesMessages
+=== RUN   TestTermsRulesLeaveCatalogueEscapesMessages/terms
+=== RUN   TestTermsRulesLeaveCatalogueEscapesMessages/admin_terms
+=== RUN   TestTermsRulesLeaveCatalogueEscapesMessages/rules
+=== RUN   TestTermsRulesLeaveCatalogueEscapesMessages/leave
+--- PASS: TestTermsRulesLeaveCatalogueEscapesMessages (0.79s)
+    --- PASS: TestTermsRulesLeaveCatalogueEscapesMessages/terms (0.19s)
+    --- PASS: TestTermsRulesLeaveCatalogueEscapesMessages/admin_terms (0.17s)
+    --- PASS: TestTermsRulesLeaveCatalogueEscapesMessages/rules (0.23s)
+    --- PASS: TestTermsRulesLeaveCatalogueEscapesMessages/leave (0.19s)
+=== RUN   TestTimeZoneCatalogueRetainsValuesAndMarkup
+=== RUN   TestTimeZoneCatalogueRetainsValuesAndMarkup/default_UTC
+=== RUN   TestTimeZoneCatalogueRetainsValuesAndMarkup/saved_IANA_ID
+=== RUN   TestTimeZoneCatalogueRetainsValuesAndMarkup/invalid_retained_input
+--- PASS: TestTimeZoneCatalogueRetainsValuesAndMarkup (0.61s)
+    --- PASS: TestTimeZoneCatalogueRetainsValuesAndMarkup/default_UTC (0.18s)
+    --- PASS: TestTimeZoneCatalogueRetainsValuesAndMarkup/saved_IANA_ID (0.18s)
+    --- PASS: TestTimeZoneCatalogueRetainsValuesAndMarkup/invalid_retained_input (0.25s)
+=== RUN   TestTimeZoneCatalogueLabelsAreEscaped
+--- PASS: TestTimeZoneCatalogueLabelsAreEscaped (0.29s)
+=== RUN   TestTimeZoneCataloguePartsAreEscaped
+--- PASS: TestTimeZoneCataloguePartsAreEscaped (0.24s)
+=== RUN   TestTradeListAndHistoryTemplates
+--- PASS: TestTradeListAndHistoryTemplates (0.83s)
+=== RUN   TestTradeCatalogueStatusAndAmountHelp
+--- PASS: TestTradeCatalogueStatusAndAmountHelp (0.00s)
+=== RUN   TestValidationCatalogueRendersEscapedFieldDetails
+--- PASS: TestValidationCatalogueRendersEscapedFieldDetails (0.23s)
+=== RUN   TestAdminResetPagesCatalogue
+=== RUN   TestAdminResetPagesCatalogue/Zoë_100%
+=== RUN   TestAdminResetPagesCatalogue/"><script>alert(1)</script>
+--- PASS: TestAdminResetPagesCatalogue (0.92s)
+    --- PASS: TestAdminResetPagesCatalogue/Zoë_100% (0.45s)
+    --- PASS: TestAdminResetPagesCatalogue/"><script>alert(1)</script> (0.47s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	61.052s
+FAIL

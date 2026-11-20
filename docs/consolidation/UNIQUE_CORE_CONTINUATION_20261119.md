@@ -1,4 +1,4 @@
-# Unique Core consolidation — 2026-11-19 Pacific
+# Unique Core consolidation — continued 2026-11-20 Pacific
 
 This is the current continuation of the owner's request to consolidate unique
 Circula code and finish the approved Core features. It supersedes the active
@@ -14,13 +14,16 @@ evidence remains historical and is not rewritten as evidence for this source.
   `9c1ad082bfd7befb9914000c79d5974f1017cc27`.
 - Owned continuation: `integration/unique-core-completion-20261120`,
   [PR #127](https://github.com/djshellshoxxx/circula/pull/127), targeting main.
-- Published checkpoint: `e1438e2d5b3d7a5cfce5b20d272a448e99da1882`, tree
-  `bb7ed87c3512348913424f2b422c7aa1d164bc90`, exactly matching local
-  `18a33b9cf283e01e1bf594e6f5f1dbce8c771ab2`.
-- Local integrated runtime through `df4d8fd336b1f9db41b0abdf05864d695be5d33e`
-  additionally contains closure, platform-audit, report-privacy and bounded
-  audit-mirror repairs, plus two persisted-identifier acceptance tests. Its
-  combined qualification and publication are pending at this checkpoint.
+- Published checkpoint: `1a3cefe4011459aa93317477090360f754dc296a`, tree
+  `dc967e5b5eeda27cc2b328fccfb3614bce126dd2`, exactly matching local
+  `f4fce9b62e812da756bb3c0078f264f7409e557b`.
+- That checkpoint includes closure, platform audit, report privacy, bounded
+  audit mirror, persisted-ID acceptance, the migration invariant gate, loading
+  and authentication messages, About placement, and ordinary transaction reports.
+- Local runtime `a29a0943258be14d292a0d0998c0f0661c80d248` adds posting outcomes
+  and request latency by status class. `f4f718b` adds the required reviewed
+  explanation to migration 0023 without changing its SQL behavior. Their
+  combined qualification and publication remain pending at this checkpoint.
 
 Publication uses ordinary commits and expected-head branch updates through the
 connected GitHub provider because this checkout has no Git push credentials.
@@ -82,6 +85,11 @@ repairs below; its notes are not themselves runtime changes.
 | Report subject privacy | The subject and listing owner cannot read or handle their own report, correlated audit rows, cached handling responses or retained audit/full exports. Independent administrators and existing System authority retain complete access. | 22 top-level and 44 subtest passes under race across service/API/HTML, with pagination and role/snapshot changes. The all-conflicted operational procedure remains held. |
 | Optional audit mirror | A single delivery worker uses a 256-record FIFO and a 16 KiB encoded-record cap; acknowledgement never waits for destination I/O. Observable drop counters and a two-second drain retain the documented best-effort contract. | Exact committed-source race checks pass for ordinary transactions, ordering, size limits, overflow, write errors, blocked Write/Close and concurrent shutdown; lint reports zero issues. |
 | Persisted identifiers | Production default UUIDv7 and configured generator injection are checked through actual person registration and SQLite reads. | Two focused race tests pass; no generator, historical ID or session-selector change. |
+| Migration invariant gate | Every migration checks the same ledger/audit invariants before and after its SQL on the same locked connection; a new finding or verification error rolls back before version recording and commit. | 24 migration/control and 14 verifier-compatibility race tests pass. The original-schema 10,000-transaction / 61-account golden upgrade and damaged-fixture control pass; migration itself took 162.441 seconds under race on one CPU. |
+| Ordinary transaction reports | Either member party can report a two-member transaction. The opposite party is excluded from report queue/audit/export/handling/replay; exact-transaction dispute links preserve normal case authorization and pagination. | 31 top-level and 58 subtest race passes across six packages; migration 0023 rollback/retry/reopen and API contract checks are included. Independent source review also checks the integrated catalogue and migration-gate interaction. |
+| Shared UI completion | Native navigation and form submission announce loading, complete authentication messages preserve markup/plurals, and authenticated network About plus README contain the established acceptance disclaimer. | Focused HTML, catalogue and route-authority race checks pass; 23 Node helper tests pass. New Playwright scenarios are discovered, not yet executed. |
+| Posting outcomes and latency | Counters distinguish posting attempts, committed work, bounded failure reasons and durable replays, including enclosing-unit rollback and posting-pending reversals. Latency has an additive route/status-class series. | Ten focused race tests pass on worker `4630a0a`, integrated as `a29a094`; real service events reach the production metrics surface and unknown labels remain bounded. |
+
 
 The closure API deliberately exposes `final_export.version` and verification's
 `checkpoint_version`. An unversioned or unsupported checkpoint returns an
@@ -97,13 +105,22 @@ The closure-focused receipts were produced on worker `f32c4525aef4f4af22f7033d31
 
 ## Remaining feature-contract reconciliation
 
-The reviewed fixes above are integrated. A final source reconciliation is
-checking historical partial/not-built rows against current implementation,
-accepted contracts and recorded holds. In particular, the report-privacy fix
-does not implement SEC-025 transaction reports or related-dispute links; their
-remaining contract must be reconciled before claiming complete abuse reporting.
-No new report type, reviewer privilege or escalation policy was silently added.
+The accepted source reconciliation is retained in the evidence directory.
+Ordinary transaction reports and exact-transaction dispute links are now built;
+so are the pre-commit migration gate, loading feedback, complete authentication
+sentences, About placement and posting outcome/status-latency metrics.
 
+Three concrete follow-ups are active at this checkpoint: a same-dispute,
+independent-reviewer report projection with reporter identity and free-text
+omitted; service-level authentication/throttle observations; and immutable
+forward posting-limit evidence with explicit legacy-unverified coverage.
+Existing records do not preserve exact historic override-expiry inputs, so the
+last feature cannot truthfully manufacture verification of earlier debits.
+
+System-account report subjects and explicit case context for member/listing
+reports are not defined by the ordinary two-member implementation. The existing
+all-conflicted operational decision remains separate. These narrower boundaries
+do not erase the completed ordinary reporting behavior.
 Report-privacy worker `1c8a4777f9eee5e1076c7581228c2501ec38b0cb` is integrated as
 `da1c032`; its focused verification record is retained. Identifier worker
 `7fe8dc4d11a6e6b52c9d06a5498f3ac8a2c6cf71` is integrated as `ca01990`. Mirror worker
@@ -122,6 +139,18 @@ source-specific logs and records. Independent review found and resolved both
 the repeated-file-array compatibility gap and the concurrent acceptance replay
 regression. That review is a bounded source review, not SEC-033 external review
 or a GitHub approval.
+
+The combined race run at `0168500` did not pass. It completed 1,176 test/subtest
+pass events, but the CLI process and service/web compilation were killed. Store
+checks found a legacy export-fixture/schema projection mismatch and a missing
+personal-data inventory column. Both were corrected at `09e4674` / `4b56b15`
+and passed their race recheck. Full-tree lint at `f4f718b` was separately blocked
+by a killed service-test compiler; no ordinary lint defect was emitted. Neither
+attempt is converted into a complete pass.
+
+At `a29a094`, all 65 Python helper tests and 23 Node helper tests passed. Hygiene
+and workflow action checks passed at `f4f718b`, as did the existing evidence
+SHA-256 manifest. These are source-specific checks, not a later combined gate.
 
 The final combined normal/race, lint, vulnerability, hygiene, traceability,
 helper, browser and native-platform results must identify the source actually

@@ -1,0 +1,27 @@
+{
+  "reason": "The unchanged secret scanner identified three source checksum values and one generated test request identifier as generic API-key patterns. The publication representation avoids ambiguous credential-shaped metadata; no scanner exception or policy was changed.",
+  "changes": [
+    {
+      "file": "report-privacy-verification.json",
+      "original_sha256": "650effaf6ca799dfd23f91bd90bbe61070b41523f3ad49f96c004f2bb03406ef",
+      "published_sha256": "db0e008d6059d5025eab0c1978f845c48a0403dd87f071742a5cc8119e90dca3",
+      "transformation": "Path-to-SHA-256 map represented as path/sha256 rows. All paths and checksum values preserved; avoids classifying an auth/API filename as a credential field.",
+      "entries": 13
+    },
+    {
+      "file": "transaction-reports-verification.json",
+      "original_sha256": "8d99a3345f070cbabc9d99a71846fea357d9c5703c2572be64a16b1c04f1b599",
+      "published_sha256": "4e59e4379753933bc1f3cdd6be753c235b4e1e09d5eea73f7e3602bc7d6d5fe2",
+      "transformation": "Path-to-SHA-256 map represented as path/sha256 rows. All paths and checksum values preserved; avoids classifying an auth/API filename as a credential field.",
+      "entries": 31
+    },
+    {
+      "file": "combined-race-0168500.log",
+      "original_sha256": "199283b029c694ee5533ae0f8bfd38a9579b15a86f72a45f5029da31e3a935c0",
+      "published_sha256": "2ade8b0946102260b17c0ae4f5e2c321de565ebed859ea28f789437b0421bba8",
+      "transformation": "One generated test request ID in a panic-log assertion is redacted in the published copy. The original raw log is retained at analysis/qualification/combined-race.log. Test events, results, timing and failure messages are unchanged.",
+      "line": 176,
+      "redactions": 1
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+=== RUN   TestAuditHashPreservesOriginalFormat
+--- PASS: TestAuditHashPreservesOriginalFormat (0.00s)
+PASS
+ok  	command-line-arguments	1.017s

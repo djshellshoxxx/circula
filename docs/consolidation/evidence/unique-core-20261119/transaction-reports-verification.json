@@ -1,0 +1,225 @@
+{
+  "task": "SEC-025 ordinary two-member transaction reports and exact-transaction dispute relation",
+  "base_commit": "01685005573bf36bcbec07f06a4c14c8bb4a73fa",
+  "commit": "d885af837b7d5b1a10c7b0c885265a6504b684dd",
+  "branch": "fix/transaction-reports-20261120",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-transaction-report",
+  "worktree_clean": true,
+  "go_version": "go version go1.26.11 linux/amd64",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "256MiB",
+    "CGO_ENABLED": "1"
+  },
+  "command": [
+    "/tmp/circula-runtime-4d30/go/bin/go",
+    "test",
+    "-race",
+    "-p",
+    "1",
+    "-count=1",
+    "-json",
+    "./internal/store",
+    "./internal/service",
+    "./internal/api",
+    "./internal/web",
+    "./internal/web/messages",
+    "./internal/contract",
+    "-run",
+    "^Test(TransactionReport.*|Reports.*|Report.*|HandleReport|InboxReportMessages|EveryCatalogueEntryFormats|CursorPagination|DisputeListsAndDashboardAreNotCapped|TradeDetailLinksDisputeForDeciders)$"
+  ],
+  "exit_code": 0,
+  "run_started": "2026-11-19T23:56:53.920697864-08:00",
+  "run_finished": "2026-11-19T23:58:53.75087119-08:00",
+  "packages": {
+    "github.com/djshellshoxxx/circula/internal/store": {
+      "top_level_passes": 1,
+      "subtest_passes": 0,
+      "status": "passed",
+      "elapsed_seconds": 2.611
+    },
+    "github.com/djshellshoxxx/circula/internal/service": {
+      "top_level_passes": 11,
+      "subtest_passes": 27,
+      "status": "passed",
+      "elapsed_seconds": 25.917
+    },
+    "github.com/djshellshoxxx/circula/internal/api": {
+      "top_level_passes": 6,
+      "subtest_passes": 5,
+      "status": "passed",
+      "elapsed_seconds": 11.103
+    },
+    "github.com/djshellshoxxx/circula/internal/web": {
+      "top_level_passes": 9,
+      "subtest_passes": 0,
+      "status": "passed",
+      "elapsed_seconds": 16.496
+    },
+    "github.com/djshellshoxxx/circula/internal/web/messages": {
+      "top_level_passes": 3,
+      "subtest_passes": 26,
+      "status": "passed",
+      "elapsed_seconds": 1.058
+    },
+    "github.com/djshellshoxxx/circula/internal/contract": {
+      "top_level_passes": 1,
+      "subtest_passes": 0,
+      "status": "passed",
+      "elapsed_seconds": 2.868
+    }
+  },
+  "top_level_passes": 31,
+  "subtest_passes": 58,
+  "failures": 0,
+  "skips": 0,
+  "race_reports": 0,
+  "log": "/workspace/scratch/4d30fa819181/analysis/transaction-report-focused.jsonl",
+  "log_sha256": "d54af130b4a9ed2622b2ec5ced4b0a5946bc6847c99310a3712a6b6145bc7b53",
+  "migration_version": 23,
+  "lightweight_checks": [
+    "gofmt",
+    "git diff --check",
+    "catalogue JSON parsing",
+    "OpenAPI YAML parsing"
+  ],
+  "diff_sha256": "f801f4593e9d17cb9ec1be79e7634525ceef0a52ebae492352ed781423d0b4f8",
+  "changed_files_sha256": [
+    {
+      "path": "docs/api/openapi.yaml",
+      "sha256": "1475c9df247fd2934a5d957cbe9edef090d78ced654a001ecdc653c51f563f69"
+    },
+    {
+      "path": "docs/consolidation/REPORT_PRIVACY_20261120.md",
+      "sha256": "ec1e72a10625e4f703b2f28adadc079f0317b8d49a8b4364da9737722987d6b1"
+    },
+    {
+      "path": "docs/consolidation/TRANSACTION_REPORTS_20261120.md",
+      "sha256": "099ca83b9186075638f691922de6a4eb362e13e1acdff319df6fc04e86ffad5e"
+    },
+    {
+      "path": "docs/specs/09-security-privacy.md",
+      "sha256": "8d365cb8201e8e59127c0976b48ae0ba1a477c49c3fa04e9ae886edf94d07071"
+    },
+    {
+      "path": "internal/api/h_disputes.go",
+      "sha256": "9b4155e4df6ca5cb5588e9b8f6e3c79194acd9e83b419331b0189a61e7695dc1"
+    },
+    {
+      "path": "internal/api/h_reports.go",
+      "sha256": "eff2dc3469a634b7ffd43cd82f6f829097fd7e4b570505b4a922722199542871"
+    },
+    {
+      "path": "internal/api/report_privacy_test.go",
+      "sha256": "05f0121e750cca98de63232ae7ff5c73364a6e456d6fc11aedd786e0c22da822"
+    },
+    {
+      "path": "internal/api/transaction_reports_test.go",
+      "sha256": "ea7579bdd1ac915ba6f449b4dc56d41cfd8dd37beb341a52c71845ef6bb46a31"
+    },
+    {
+      "path": "internal/contract/transaction_reports_test.go",
+      "sha256": "074483b65230afa4add44167ae4a8fc56525424d68c60e32ecd0fd4b033223f3"
+    },
+    {
+      "path": "internal/repository/iface.go",
+      "sha256": "cdec511e37116d20e96ce4465a14b2444a2bc6d2b7c0570868eb4694ca07b1ec"
+    },
+    {
+      "path": "internal/repository/iface_notify.go",
+      "sha256": "45d19d96488cbd38c16a412087e39479d3ff5ca31d263f0551d81e78b893f6d1"
+    },
+    {
+      "path": "internal/service/audit_read.go",
+      "sha256": "0b8212fdaea18a31fcf70474d6de124f303b602fe821cf89356dd18b6b4032fa"
+    },
+    {
+      "path": "internal/service/records.go",
+      "sha256": "591b9b6ec94a380a2fb18950b436e42ea090adffee9d5eaadafd3854e492b462"
+    },
+    {
+      "path": "internal/service/report_privacy_test.go",
+      "sha256": "a36f8e20d72648e633d6effc87b1f46447ac5c91a315af1c6e5c7601cd5a95f1"
+    },
+    {
+      "path": "internal/service/reports.go",
+      "sha256": "eb3634d04c0c482bc0dc22612d8aee8e4fb3474f86db29c3c9fb0f77427190d8"
+    },
+    {
+      "path": "internal/service/transaction_reports_test.go",
+      "sha256": "4e9bcf36399211301a132956b71f22a780dcea829289a7e8579c7d8d795c502c"
+    },
+    {
+      "path": "internal/store/migrations/0023_transaction_reports.sql",
+      "sha256": "59476d76e47a041997f5b66fec8f331727cdf884febbeb389ebac7775da5e509"
+    },
+    {
+      "path": "internal/store/sqlite_notify.go",
+      "sha256": "947f8add4b197a221b54fbb265520599310471595a5a7b9a1b47601bdc24a754"
+    },
+    {
+      "path": "internal/store/transaction_report_migration_test.go",
+      "sha256": "f6dc3f5336f690960d4e82169b4b2af8bf788df233422a1244805e48223c8131"
+    },
+    {
+      "path": "internal/web/h_disputes.go",
+      "sha256": "662015619a469b3e5f06ba33297a9ff00202cf3baa5919f456727c0d5d1bd60d"
+    },
+    {
+      "path": "internal/web/h_notify.go",
+      "sha256": "1c1c2117c5c26484cff68b2de1fade046653db63c2cf530103c9654b97a4ce80"
+    },
+    {
+      "path": "internal/web/h_trades.go",
+      "sha256": "3f9aeb3092404f48306a31b7c415cbee98e450331a66c4dd6a052d30eef3527a"
+    },
+    {
+      "path": "internal/web/inbox_report_catalog_test.go",
+      "sha256": "d59be113a78adb2fcb9c8dd9f3587bc7798260fda6198c53e9439fb3fce64b4d"
+    },
+    {
+      "path": "internal/web/messages/en.json",
+      "sha256": "bc830005b9efff38d17565a9b47a455246abee712a9d76a3b174abbe07b320a2"
+    },
+    {
+      "path": "internal/web/messages/inbox_report_test.go",
+      "sha256": "603d0590265f5a928fa91bd1a74b8e277bb2d352ddbd983353b1f188e03122e8"
+    },
+    {
+      "path": "internal/web/messages/messages_test.go",
+      "sha256": "04886228ece1e5181253b8e33762f0aaf96475c868dc5b1a03ea80902dd4f83e"
+    },
+    {
+      "path": "internal/web/report_privacy_test.go",
+      "sha256": "078832a19c06c4c200bfbbe955118e093d5b94276ec96af90a53469c37ebebd5"
+    },
+    {
+      "path": "internal/web/templates/admin_reports.html",
+      "sha256": "efab868446b85669d76d8cb111c0053fe41847612a86e9e88031c2a003d80cdc"
+    },
+    {
+      "path": "internal/web/templates/disputes.html",
+      "sha256": "9d0a4e2e8558b81868e8b26b9b678faaad7bdb9ecd8136c0f717f68d586b3064"
+    },
+    {
+      "path": "internal/web/templates/trade_detail.html",
+      "sha256": "5adca49fb2d62796f8cce6a6c3adc04b212e7ccc3d24d39a8a86c37cb1822e94"
+    },
+    {
+      "path": "internal/web/transaction_reports_test.go",
+      "sha256": "13abe67e959e6b11bafc4ac818ccc99f353f60a15d76ecf1519754dc08ff2fff"
+    }
+  ],
+  "scope_note": "docs/consolidation/TRANSACTION_REPORTS_20261120.md",
+  "qualification_limit": "Focused local execution. Consolidated exact-current and provider checks remain parent-owned. Only the verification paragraph changed after the successful run.",
+  "remaining_boundaries": [
+    "System-account transaction subject semantics",
+    "Reviewer report projection while retaining administrator-only reporter identity",
+    "No derived dispute relation for member/listing reports lacking explicit transaction context",
+    "All-conflicted administrator operational procedure"
+  ]
+}

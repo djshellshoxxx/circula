@@ -35,3 +35,49 @@ preserves the evidence even after those worktrees disappear. No credentials or
 production data were used. Provider run URLs and final combined qualification
 are recorded in the continuation when observed; this directory does not turn
 pending jobs into passing results.
+
+
+## Accepted-feature completion checkpoint — 2026-11-20 Pacific
+
+The additional records preserve the distinction between author execution,
+independent source review and combined qualification:
+
+- `migration-integrity-*` and `migration-service-compatibility.log` cover the
+  pre-commit migration gate at `d65f5a0`, including the original-schema golden
+  upgrade. `migration-baseline-fixes.log` records the successful corrected legacy-fixture
+  and inventory recheck. The original combined failures remain in the combined
+  run log.
+- `ui-*` records the loading, complete authentication messages and network About
+  slice integrated at `e8c8f6a`. The Playwright list proves discovery only.
+- `transaction-report-focused.jsonl` and its receipt qualify worker `d885af83`,
+  integrated at `f4fce9b`. The independent review also checks the combined
+  catalogue and migration-gate seams. Its review does not execute tests.
+- `posting-metrics-tests.log` and its receipt record ten focused race passes on
+  worker `4630a0a`, integrated at `a29a094`. The two earlier files retain the
+  corrected test-constant and fixture-assumption failures.
+- `combined-race-0168500.*` records a failed combined run: 1,176 passing
+  test/subtest events, two store test failures, and killed CLI/service/web
+  processes. The two genuine store fixture/inventory failures were fixed at
+  `09e4674` and `4b56b15` and then passed under race; the killed work is incomplete.
+- `lint-f4f718b.*` records a clean-source lint attempt blocked by a killed
+  service-test compiler. It is not a lint pass.
+- `helper-results.json` ties 65 Python helper passes and 23 Node helper passes
+  to their actual source and file hashes. Hygiene passed at `f4f718b` after the
+  required migration-table-rebuild explanation was added, without changing SQL.
+
+`source-map.json` now covers publication through remote `1a3cefe` / local
+`f4fce9b`. Later code and this evidence commit require their own publication and
+qualification; the mapping is not a recursive claim about its own commit.
+
+
+### Publication representations
+
+`evidence-transformations.json` records original and published hashes for two
+receipts whose path/checksum maps were represented as explicit path/sha256 rows,
+and for one published combined-run log whose generated test request identifier
+was redacted. All source checksum values and test result events are preserved.
+The original raw log and receipts remain in the analysis workspace; the earlier
+report-privacy receipt is also preserved in its existing Git history. These
+three published files are documented derivatives, not byte-identical raw logs.
+The unchanged secret scanner flagged the original noncredential values; no
+scanner configuration, finding rule, or control fixture was relaxed.

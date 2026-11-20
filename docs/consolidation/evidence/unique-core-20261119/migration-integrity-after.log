@@ -1,0 +1,122 @@
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/cached_balances
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/reversal_total
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/platform_audit
+=== RUN   TestMigrationRejectsNewLedgerFindingsBeforeCommit/verification_query
+--- PASS: TestMigrationRejectsNewLedgerFindingsBeforeCommit (4.37s)
+    --- PASS: TestMigrationRejectsNewLedgerFindingsBeforeCommit/cached_balances (1.13s)
+    --- PASS: TestMigrationRejectsNewLedgerFindingsBeforeCommit/reversal_total (1.00s)
+    --- PASS: TestMigrationRejectsNewLedgerFindingsBeforeCommit/platform_audit (1.08s)
+    --- PASS: TestMigrationRejectsNewLedgerFindingsBeforeCommit/verification_query (1.15s)
+=== RUN   TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes
+=== RUN   TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/unchanged
+=== RUN   TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/new_failure
+--- PASS: TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes (1.77s)
+    --- PASS: TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/unchanged (0.86s)
+    --- PASS: TestMigrationPreservesExistingFindingsWithoutAllowingNewOnes/new_failure (0.90s)
+=== RUN   TestMigrationBaselineReadFailurePreventsDDL
+--- PASS: TestMigrationBaselineReadFailurePreventsDDL (0.97s)
+=== RUN   TestMigrationChecksNewAuditHeadsFromOriginalSchema
+--- PASS: TestMigrationChecksNewAuditHeadsFromOriginalSchema (1.16s)
+=== RUN   TestFailedRollbackDiscardsConnection
+=== RUN   TestFailedRollbackDiscardsConnection/error
+=== RUN   TestFailedRollbackDiscardsConnection/panic
+--- PASS: TestFailedRollbackDiscardsConnection (0.01s)
+    --- PASS: TestFailedRollbackDiscardsConnection/error (0.01s)
+    --- PASS: TestFailedRollbackDiscardsConnection/panic (0.01s)
+=== RUN   TestMigrationMetadataReadFailureStopsBeforeDDL
+--- PASS: TestMigrationMetadataReadFailureStopsBeforeDDL (0.84s)
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_succeeds
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_fails
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_succeeds
+=== RUN   TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_fails
+--- PASS: TestMigrationWriteFailureRollsBackAndRecovers (3.27s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_succeeds (0.80s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/metadata/rollback_fails (0.87s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_succeeds (0.82s)
+    --- PASS: TestMigrationWriteFailureRollsBackAndRecovers/commit/rollback_fails (0.79s)
+=== RUN   TestAdjustmentRelationMigrationLeavesExistingLedgerUntouched
+--- PASS: TestAdjustmentRelationMigrationLeavesExistingLedgerUntouched (0.86s)
+=== RUN   TestClosureCheckpointMigrationPreservesLegacyRecords
+--- PASS: TestClosureCheckpointMigrationPreservesLegacyRecords (0.81s)
+=== RUN   TestDisputeDeadlineBackfillUsesPolicyInForceAtCompletion
+--- PASS: TestDisputeDeadlineBackfillUsesPolicyInForceAtCompletion (0.87s)
+=== RUN   TestDisputeDeadlineBackfillStopsWithoutApplicablePolicy
+--- PASS: TestDisputeDeadlineBackfillStopsWithoutApplicablePolicy (0.52s)
+=== RUN   TestDisputePolicyBackfillAndBindingSurviveRestart
+--- PASS: TestDisputePolicyBackfillAndBindingSurviveRestart (0.94s)
+=== RUN   TestDisputePolicyBackfillStopsWithoutApplicablePolicy
+--- PASS: TestDisputePolicyBackfillStopsWithoutApplicablePolicy (0.83s)
+=== RUN   TestDisputePolicyBindingGuards
+--- PASS: TestDisputePolicyBindingGuards (0.85s)
+=== RUN   TestEventOrderMigrationPreservesLegacyInsertionOrder
+--- PASS: TestEventOrderMigrationPreservesLegacyInsertionOrder (0.83s)
+=== RUN   TestMigrationsExpandThenContract
+--- PASS: TestMigrationsExpandThenContract (0.03s)
+=== RUN   TestMigration0002BackfillsAuditHeads
+--- PASS: TestMigration0002BackfillsAuditHeads (0.83s)
+=== RUN   TestUpgradeFromEverySchemaVersion
+=== RUN   TestUpgradeFromEverySchemaVersion/0001_init
+=== RUN   TestUpgradeFromEverySchemaVersion/0002_hardening
+=== RUN   TestUpgradeFromEverySchemaVersion/0003_mfa
+=== RUN   TestUpgradeFromEverySchemaVersion/0004_recovery
+=== RUN   TestUpgradeFromEverySchemaVersion/0005_dualcontrol
+=== RUN   TestUpgradeFromEverySchemaVersion/0006_breakglass
+=== RUN   TestUpgradeFromEverySchemaVersion/0007_erasure
+=== RUN   TestUpgradeFromEverySchemaVersion/0008_notify_reports
+=== RUN   TestUpgradeFromEverySchemaVersion/0009_overview_announcements_tz
+=== RUN   TestUpgradeFromEverySchemaVersion/0010_announcement_supersedes
+=== RUN   TestUpgradeFromEverySchemaVersion/0011_terms_policy_notice
+=== RUN   TestUpgradeFromEverySchemaVersion/0012_suspension
+=== RUN   TestUpgradeFromEverySchemaVersion/0013_person_activity
+=== RUN   TestUpgradeFromEverySchemaVersion/0014_closure_challenges
+=== RUN   TestUpgradeFromEverySchemaVersion/0015_balance_bound
+=== RUN   TestUpgradeFromEverySchemaVersion/0016_dispute_deadline
+=== RUN   TestUpgradeFromEverySchemaVersion/0017_event_order
+=== RUN   TestUpgradeFromEverySchemaVersion/0018_adjustment_relation
+=== RUN   TestUpgradeFromEverySchemaVersion/0019_dispute_policy_binding
+=== RUN   TestUpgradeFromEverySchemaVersion/0020_session_public_id
+=== RUN   TestUpgradeFromEverySchemaVersion/0021_session_unrevoked_index
+--- PASS: TestUpgradeFromEverySchemaVersion (20.54s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0001_init (1.09s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0002_hardening (1.10s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0003_mfa (1.08s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0004_recovery (1.15s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0005_dualcontrol (1.03s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0006_breakglass (1.01s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0007_erasure (1.00s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0008_notify_reports (0.98s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0009_overview_announcements_tz (0.98s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0010_announcement_supersedes (0.95s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0011_terms_policy_notice (1.02s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0012_suspension (0.92s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0013_person_activity (0.97s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0014_closure_challenges (0.93s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0015_balance_bound (0.90s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0016_dispute_deadline (0.97s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0017_event_order (0.95s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0018_adjustment_relation (0.98s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0019_dispute_policy_binding (0.87s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0020_session_public_id (0.84s)
+    --- PASS: TestUpgradeFromEverySchemaVersion/0021_session_unrevoked_index (0.82s)
+=== RUN   TestMigrationRejectsNonPositiveRecordedVersion
+=== RUN   TestMigrationRejectsNonPositiveRecordedVersion/0
+=== RUN   TestMigrationRejectsNonPositiveRecordedVersion/-1
+=== RUN   TestMigrationRejectsNonPositiveRecordedVersion/-17
+--- PASS: TestMigrationRejectsNonPositiveRecordedVersion (0.02s)
+    --- PASS: TestMigrationRejectsNonPositiveRecordedVersion/0 (0.01s)
+    --- PASS: TestMigrationRejectsNonPositiveRecordedVersion/-1 (0.01s)
+    --- PASS: TestMigrationRejectsNonPositiveRecordedVersion/-17 (0.01s)
+=== RUN   TestFreshDatabaseRecordsEveryMigration
+--- PASS: TestFreshDatabaseRecordsEveryMigration (0.80s)
+=== RUN   TestFailingMigrationRollsBackAndReopensCleanly
+--- PASS: TestFailingMigrationRollsBackAndReopensCleanly (0.91s)
+=== RUN   TestFailingHeadMigrationRollsBackAndReopensCleanly
+--- PASS: TestFailingHeadMigrationRollsBackAndReopensCleanly (1.06s)
+=== RUN   TestSessionMigrationFailureRollsBackAndRetries
+--- PASS: TestSessionMigrationFailureRollsBackAndRetries (0.90s)
+=== RUN   TestMigrationsIdempotentAndVersioned
+--- PASS: TestMigrationsIdempotentAndVersioned (0.91s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	45.923s

@@ -1,0 +1,18 @@
+=== RUN   TestNetworkAboutPageAndReadAuthority
+--- PASS: TestNetworkAboutPageAndReadAuthority (1.26s)
+=== RUN   TestNetworkAboutDuringClosure
+--- PASS: TestNetworkAboutDuringClosure (1.17s)
+=== RUN   TestSignInPagesCatalogue
+--- PASS: TestSignInPagesCatalogue (0.55s)
+=== RUN   TestRecoveryAndPasswordPagesCatalogue
+--- PASS: TestRecoveryAndPasswordPagesCatalogue (1.28s)
+=== RUN   TestSecurityPagesCatalogue
+--- PASS: TestSecurityPagesCatalogue (0.69s)
+=== RUN   TestMFAEnrolPagesCatalogue
+--- PASS: TestMFAEnrolPagesCatalogue (0.73s)
+=== RUN   TestProgressiveCatalogueTemplate
+--- PASS: TestProgressiveCatalogueTemplate (0.17s)
+=== RUN   TestProgressiveCatalogueEscapesAttributesAndTimeSurroundings
+--- PASS: TestProgressiveCatalogueEscapesAttributesAndTimeSurroundings (0.21s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/web	7.156s

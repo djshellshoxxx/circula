@@ -1,0 +1,4 @@
+internal/service/a3_mfa_test.go:1: : /tmp/circula-runtime-4d30/go/pkg/tool/linux_amd64/compile: signal: killed (typecheck)
+package service_test
+1 issues:
+* typecheck: 1
