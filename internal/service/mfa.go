@@ -208,7 +208,8 @@ func (s *Service) checkCurrentPassword(ctx context.Context, actor domain.Actor, 
 // Resuming returns the same pending secret so a mistyped confirmation does not
 // strand the authenticator app. Conflict when MFA is already enabled. It needs
 // the current password (A3-03).
-func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor, password string) (*MFAEnrolment, error) {
+func (s *Service) BeginMFAEnrolment(ctx context.Context, actor domain.Actor, password string) (result *MFAEnrolment, resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
@@ -278,7 +279,8 @@ func (s *Service) issueRecoveryCodes(tx store.Tx, personID string) ([]string, er
 // current password as well as the code (A3-03), and on success revokes every
 // other session of the person, so a session stolen earlier cannot ride along
 // with the new second factor.
-func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, password, code string) ([]string, error) {
+func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, password, code string) (result []string, resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}
@@ -345,7 +347,8 @@ func (s *Service) ConfirmMFAEnrolment(ctx context.Context, actor domain.Actor, p
 // valid TOTP or recovery code. Existing sessions stay valid. Attempts are
 // throttled with the other session second-factor attempts (reserveMFAManage),
 // not on the sign-in counter.
-func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, code string) error {
+func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, code string) (resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return err
 	}
@@ -397,7 +400,8 @@ func (s *Service) DisableMFA(ctx context.Context, actor domain.Actor, password, 
 
 // RegenerateRecoveryCodes replaces all recovery codes with ten new ones. It
 // needs a current TOTP code (a recovery code is not accepted here).
-func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Actor, code string) ([]string, error) {
+func (s *Service) RegenerateRecoveryCodes(ctx context.Context, actor domain.Actor, code string) (result []string, resultErr error) {
+	defer func() { s.observeAuthentication("mfa_management", resultErr) }()
 	if err := s.mfaActor(actor); err != nil {
 		return nil, err
 	}

@@ -123,7 +123,8 @@ func (s *Service) registerPerson(ctx context.Context, in RegisterInput, operator
 // A person with a second factor gets LoginResult.MFAChallenge instead of a
 // token (SEC-007); CompleteMFA then issues the session. Login (mfa_login.go)
 // is the password-only wrapper that refuses MFA persons.
-func (s *Service) LoginStep(ctx context.Context, login, password string) (*LoginResult, error) {
+func (s *Service) LoginStep(ctx context.Context, login, password string) (result *LoginResult, resultErr error) {
+	defer func() { s.observeAuthentication("password", resultErr) }()
 	login = normalizeLogin(login)
 	if validLogin(login) != nil {
 		verifyPassword(password, s.dummyHash) // equalise effort; nothing is stored
@@ -216,7 +217,8 @@ func authnErr(err error) error {
 // friends, DEC-005); the role is judged on every request, so a role granted
 // after sign-in shortens the running session at once. last_seen is refreshed
 // at most once a minute.
-func (s *Service) Authenticate(ctx context.Context, token string) (domain.Actor, error) {
+func (s *Service) Authenticate(ctx context.Context, token string) (result domain.Actor, resultErr error) {
+	defer func() { s.observeAuthentication("session", resultErr) }()
 	id := hashToken(token)
 	var sess *domain.Session
 	var must bool
@@ -251,7 +253,8 @@ func (s *Service) Logout(ctx context.Context, token string) error {
 
 // ChangePassword verifies the old password, sets the new one and revokes every
 // session of the person, including the caller's (SEC-003). API tokens stay valid.
-func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW, newPW string) error {
+func (s *Service) ChangePassword(ctx context.Context, actor domain.Actor, oldPW, newPW string) (resultErr error) {
+	defer func() { s.observeAuthentication("password_proof", resultErr) }()
 	// A pending forced change must not block the change itself (SEC-008), but
 	// the scope rule still applies, so judge the scope without the flag.
 	scoped := actor

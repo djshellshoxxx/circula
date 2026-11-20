@@ -35,6 +35,8 @@ No label carries a member, network, balance or personal data.
 | `circula_http_request_duration_by_status_seconds_{sum,count}{route,class}` | counter | Latency by route template and response status class; the original route aggregate remains available. |
 | `circula_http_auth_failures_total` | counter | Responses with status 401. |
 | `circula_http_rate_limited_total` | counter | Responses with status 429. |
+| `circula_authentication_failures_total{reason}` | counter | Failed service credential operations by fixed operation class; excludes throttle refusals and storage errors. |
+| `circula_authentication_throttled_total{reason}` | counter | Service credential operations refused by an authentication throttle, by fixed operation class. |
 | `circula_job_runs_total{job,result}` | counter | Scheduled jobs: `expiry`, `verify`, `backup`; result `ok` or `failed`. |
 | `circula_migrations_total{result}` | counter | Migration runs at start-up (`applied`, `failed`, `refused`). |
 | `circula_ledger_verification_ok` | gauge | Last network ledger and platform audit verification: `1` pass, `0` fail, `-1` not run in this process. |
@@ -62,19 +64,48 @@ two seconds. Counters reset with the process, so retain scrapes and application 
 [audit mirror configuration](configuration.md#audit-mirror-rb-012) for ordering, size and shutdown semantics.
 
 Posting attempts begin at the central financial posting boundary; earlier authentication, input and authorization
-refusals remain represented by HTTP metrics. A reversal refused by its capacity preflight also counts, including when
+refusals add no posting attempt. Credential operations have the separate metrics described below, and HTTP responses
+remain visible in the HTTP metrics. A reversal refused by its capacity preflight also counts, including when
 the surrounding dispute decision commits a `posting_pending` state. Attempts that otherwise finish posting are only
 successful when their enclosing write unit returns success. A later audit, idempotency or COMMIT error counts as an
 observed failure; this does not prove that an uncertain COMMIT wrote nothing. Retry through the ordinary idempotent
 operation and verify ledger state rather than inferring balances from process-local counters.
 
-Failure classes are `credit_limit`, `validation`, `state`, `authorization`, `rate_limited`, `unavailable`, `cancelled`,
+Posting failure classes are `credit_limit`, `validation`, `state`, `authorization`, `rate_limited`, `unavailable`, `cancelled`,
 `timeout`, and `internal`. Labels never include error messages, transaction/member/network IDs, names or amounts.
-Counters reset with the process; they are operational observations, not durable accounting records. Authentication
-failures are currently measured through HTTP 401/429 responses; service-only coverage remains in
-[the known gaps](README.md#known-gaps).
+Counters reset with the process; they are operational observations, not durable accounting records.
 
 The verification job runs hourly, and every start and every backup also verifies the ledger.
+
+### Authentication observations
+
+The service counters measure refused credential operations, including calls made without HTTP. Each public credential
+operation reports at most once after its transactions finish. A throttle refusal increments
+`circula_authentication_throttled_total` only; it does not also count as a failed credential check. The `reason` label
+identifies the operation, using only this fixed vocabulary:
+
+| Class | Credential operation |
+|---|---|
+| `password` | First-factor sign-in through `LoginStep` (including its `Login` wrapper). |
+| `mfa` | Completing a sign-in challenge with a second factor. |
+| `recovery` | Recovering a forgotten password with an account recovery code. |
+| `session` | Resolving a session, including an expired or revoked session. |
+| `api_token` | Resolving an API token, including an expired or revoked token. |
+| `password_proof` | Proving the current password for a password change or account recovery-code generation. |
+| `mfa_management` | Proving the current password or factor during MFA enrolment, confirmation, disablement or MFA recovery-code regeneration. |
+| `other` | An unexpected class supplied to the metrics observer; raw input is never exported as a label. |
+
+Failures use typed authentication refusals. MFA management also uses its existing typed `password` or `code` field
+validation errors, so an HTML 422 refusal is observed. The successful first password step that asks for an MFA challenge
+is not a failed check, and its password-only wrapper adds no second observation. New-password policy validation,
+authorization and state refusals, and storage or cancellation errors do not increase the credential-failure counter.
+Metric callbacks receive no passwords, codes, tokens, identities, addresses or error text.
+
+The original `circula_http_auth_failures_total` and `circula_http_rate_limited_total` still count HTTP 401 and 429
+responses. An HTTP request can perform several credential operations, and a refusal at the HTTP edge may perform none.
+A session refusal can also lead to a sign-in redirect, and an MFA-management refusal can return 422. Therefore the
+service counters are neither unique-person counts nor HTTP request counts. Do not add the HTTP and service counters:
+the same operation may contribute to both. All these counters reset when the process restarts.
 
 ## Alerts (OPS-015)
 

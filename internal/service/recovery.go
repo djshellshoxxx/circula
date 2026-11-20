@@ -88,7 +88,8 @@ func recoveryHash(personID, norm string) string {
 // hashes are stored. It needs the current password and a full-scope session
 // or token (not a network-restricted one). Every previous code stops working.
 // Password guesses are throttled like login guesses.
-func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor, password string) ([]string, error) {
+func (s *Service) GenerateRecoveryCodes(ctx context.Context, actor domain.Actor, password string) (result []string, resultErr error) {
+	defer func() { s.observeAuthentication("password_proof", resultErr) }()
 	if actor.MustChangePassword {
 		return nil, domain.PasswordChangeRequired()
 	}
@@ -170,7 +171,8 @@ func (s *Service) RecoveryCodesRemaining(ctx context.Context, actor domain.Actor
 //     unit; of N parallel uses of one code exactly one succeeds.
 //   - The remaining codes are deleted because a code in the wrong hands means
 //     the sheet may be compromised; generate a new batch after signing in.
-func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword string) error {
+func (s *Service) RecoverPassword(ctx context.Context, login, code, newPassword string) (resultErr error) {
+	defer func() { s.observeAuthentication("recovery", resultErr) }()
 	if err := s.validatePassword(newPassword, login); err != nil {
 		return err // says nothing about the code; the login is the caller's own input
 	}

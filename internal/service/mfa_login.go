@@ -59,7 +59,8 @@ func (s *Service) mfaChallengeIfEnabled(tx store.Tx, personID string) (string, b
 // own key and cannot lock sign-in (A3-F16). A recovery code is consumed,
 // audited and notified. All failures except throttling return
 // ErrUnauthenticated.
-func (s *Service) CompleteMFA(ctx context.Context, challenge, code string) (string, *domain.Person, error) {
+func (s *Service) CompleteMFA(ctx context.Context, challenge, code string) (tokenResult string, personResult *domain.Person, resultErr error) {
+	defer func() { s.observeAuthentication("mfa", resultErr) }()
 	h := hashToken(challenge)
 	var pid string
 	err := s.update(ctx, func(tx store.Tx) error {

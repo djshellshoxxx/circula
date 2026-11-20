@@ -20,19 +20,21 @@ type metrics struct {
 
 	started time.Time
 
-	requests      map[[2]string]uint64  // route, status class
-	durSum        map[string]float64    // route, seconds
-	durCount      map[string]uint64     // route
-	durSumClass   map[[2]string]float64 // route, status class
-	durCountClass map[[2]string]uint64  // route, status class
-	authFailures  uint64                // 401 responses
-	rateLimited   uint64                // 429 responses
-	jobRuns       map[[2]string]uint64  // job, result
-	migrations    map[string]uint64     // result
-	postings      uint64                // ledger postings committed (service.Observer)
-	postAttempts  uint64                // centralized posting attempts, including refusals
-	postFailures  map[string]uint64     // fixed reason classes only
-	replays       uint64                // idempotent retries answered from a stored record
+	requests            map[[2]string]uint64  // route, status class
+	durSum              map[string]float64    // route, seconds
+	durCount            map[string]uint64     // route
+	durSumClass         map[[2]string]float64 // route, status class
+	durCountClass       map[[2]string]uint64  // route, status class
+	authFailures        uint64                // 401 responses
+	rateLimited         uint64                // 429 responses
+	credentialFailures  map[string]uint64     // fixed credential-operation classes
+	credentialThrottled map[string]uint64     // refused operations, separate from failures
+	jobRuns             map[[2]string]uint64  // job, result
+	migrations          map[string]uint64     // result
+	postings            uint64                // ledger postings committed (service.Observer)
+	postAttempts        uint64                // centralized posting attempts, including refusals
+	postFailures        map[string]uint64     // fixed reason classes only
+	replays             uint64                // idempotent retries answered from a stored record
 
 	ledgerOK        int          // 1 pass, 0 fail, -1 not yet run
 	ledgerFailing   int          // networks failing at the last run
@@ -43,16 +45,18 @@ type metrics struct {
 
 func newMetrics(now time.Time) *metrics {
 	return &metrics{
-		started:       now,
-		requests:      map[[2]string]uint64{},
-		durSum:        map[string]float64{},
-		durCount:      map[string]uint64{},
-		durSumClass:   map[[2]string]float64{},
-		durCountClass: map[[2]string]uint64{},
-		jobRuns:       map[[2]string]uint64{},
-		migrations:    map[string]uint64{},
-		postFailures:  map[string]uint64{},
-		ledgerOK:      -1,
+		started:             now,
+		requests:            map[[2]string]uint64{},
+		durSum:              map[string]float64{},
+		durCount:            map[string]uint64{},
+		durSumClass:         map[[2]string]float64{},
+		durCountClass:       map[[2]string]uint64{},
+		jobRuns:             map[[2]string]uint64{},
+		migrations:          map[string]uint64{},
+		postFailures:        map[string]uint64{},
+		credentialFailures:  map[string]uint64{},
+		credentialThrottled: map[string]uint64{},
+		ledgerOK:            -1,
 	}
 }
 
@@ -104,6 +108,20 @@ func (m *metrics) PostingFailed(n int, reason string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.postFailures[reason] += uint64(n) //nolint:gosec // G115: nonpositive counts are refused above
+}
+
+func (m *metrics) AuthenticationFailed(reason string) {
+	reason = service.NormalizeAuthenticationFailureClass(reason)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.credentialFailures[reason]++
+}
+
+func (m *metrics) AuthenticationThrottled(reason string) {
+	reason = service.NormalizeAuthenticationFailureClass(reason)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.credentialThrottled[reason]++
 }
 
 func (m *metrics) jobRan(job, result string) {
@@ -206,6 +224,14 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 	fmt.Fprintf(&b, "circula_http_auth_failures_total %d\n", m.authFailures)
 	counter("circula_http_rate_limited_total", "Responses with status 429 (throttling seen at the edge).")
 	fmt.Fprintf(&b, "circula_http_rate_limited_total %d\n", m.rateLimited)
+	counter("circula_authentication_failures_total", "Credential operations that refused a proof, by fixed operation class; excludes throttling and storage errors.")
+	for _, reason := range service.AuthenticationFailureClasses() {
+		fmt.Fprintf(&b, "circula_authentication_failures_total{reason=%q} %d\n", reason, m.credentialFailures[reason])
+	}
+	counter("circula_authentication_throttled_total", "Credential operations refused by a service authentication throttle, by fixed operation class.")
+	for _, reason := range service.AuthenticationFailureClasses() {
+		fmt.Fprintf(&b, "circula_authentication_throttled_total{reason=%q} %d\n", reason, m.credentialThrottled[reason])
+	}
 
 	counter("circula_ledger_postings_total", "Ledger postings committed since start.")
 	fmt.Fprintf(&b, "circula_ledger_postings_total %d\n", m.postings)
