@@ -150,8 +150,20 @@ func runServe(ctx context.Context, cfg *Config, logger *slog.Logger) error {
 		if err != nil {
 			return fmt.Errorf("audit-mirror-file: %w", err)
 		}
-		defer func() { _ = mir.close() }()
+		m.auditMirror = mir
 		st.SetAuditSink(mir.write)
+		defer func() {
+			st.SetAuditSink(nil)
+			drainCtx, cancel := context.WithTimeout(context.Background(), auditMirrorDrainTime)
+			defer cancel()
+			if err := mir.close(drainCtx); err != nil {
+				state := mir.stats()
+				logger.Error("audit mirror shutdown did not finish cleanly; any pending delivery is unconfirmed",
+					"error", err, "pending", state.Pending, "written", state.Written, "write_failures", state.Failed,
+					"dropped_shutdown", state.Dropped[mirrorDropShutdown], "dropped_full", state.Dropped[mirrorDropFull],
+					"dropped_oversize", state.Dropped[mirrorDropOversize])
+			}
+		}()
 	}
 	if state.Pending() > 0 {
 		m.migrationRan("applied")

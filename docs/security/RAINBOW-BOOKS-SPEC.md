@@ -166,7 +166,10 @@ Swarm column: the overlap with the security swarm areas (auth, MFA, recovery, du
 
 - Source: NIST AU-9(2) (per snippet); Tan.
 - Requirement: audit records copied to a store the audited application cannot modify.
-- Circula: **Not built**. Audit lives in the same SQLite file as the ledger.
+- Circula: **Partial**. `audit-mirror-file` copies committed chain metadata through a bounded best-effort FIFO to an
+  operator-selected append-only JSONL destination. Ordering, explicit loss counters and bounded shutdown are documented
+  in [configuration](../ops/configuration.md#audit-mirror-rb-012). The authoritative audit still lives in the same SQLite
+  file as the ledger; the application does not guarantee complete delivery or independently enforce destination immutability.
 - Recommendation: stream audit events (or the checkpoints from RB-010) to a remote append-only sink (object storage with object lock, or a remote syslog collector). Keep the local copy for queries.
 - Priority: P1. Swarm: Free.
 - Verification: test that the sink receives each event in order. Test that the sink can be verified independently of the database file.

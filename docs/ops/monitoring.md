@@ -46,6 +46,17 @@ No label carries a member, network, balance or personal data.
 | `circula_maintenance_mode` | gauge | `1` while maintenance mode is active (OPS-024). |
 | `circula_schema_version`, `circula_schema_pending_migrations` | gauge | Applied schema version and migrations the binary knows that the database lacks. |
 | `circula_database_size_bytes`, `circula_database_wal_size_bytes` | gauge | Sizes of the database and WAL files. |
+| `circula_audit_mirror_enabled` | gauge | `1` when the optional best-effort audit mirror is configured. |
+| `circula_audit_mirror_pending_records` | gauge | Admitted records still queued or in a delivery attempt. Remains readable when the destination is stalled. |
+| `circula_audit_mirror_written_total` | counter | Complete record writes that returned successfully. This does not certify remote durability. |
+| `circula_audit_mirror_write_failures_total` | counter | Write errors and short writes. A failed attempt may leave a partial line. |
+| `circula_audit_mirror_dropped_total{reason}` | counter | Records skipped without a write attempt: `queue_full`, `oversize`, `encoding`, `closed`, or `shutdown`. |
+
+When the mirror is configured, monitor increases in its write-failure and dropped-record counters and a pending count
+that does not drain. Investigate the destination and retain the database audit history; a gap in the mirror can reflect
+its documented best-effort loss policy. The FIFO is limited to 256 records of 16 KiB each and shutdown drains for at most
+two seconds. Counters reset with the process, so retain scrapes and application logs if you need the history. See
+[audit mirror configuration](configuration.md#audit-mirror-rb-012) for ordering, size and shutdown semantics.
 
 Metrics that the specification requires but the service cannot yet count (refused posting attempts, authentication
 failures as seen by the service) are listed under known gaps in [README.md](README.md#known-gaps).

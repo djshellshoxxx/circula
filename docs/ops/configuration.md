@@ -69,7 +69,7 @@ Validation runs before the database is opened or a port is bound. A failure name
 | `tls-key-file` | `CIRCULA_TLS_KEY_FILE` | none | no | PEM private key for `tls-cert-file`. On Unix it must not be readable by group or others. Setting only one of the two refuses to start. |
 | `audit-anchor-key-file` | `CIRCULA_AUDIT_ANCHOR_KEY_FILE` | none | no | Key that HMACs audit anchors (RB-010). Keep a copy off the database host. See [Audit anchors](#audit-anchors-rb-010). |
 | `audit-anchor-with-backups` | `CIRCULA_AUDIT_ANCHOR_WITH_BACKUPS` | `true` | no | Write `<backup>.anchor.json` beside each scheduled backup. Removed together with the backup it belongs to. |
-| `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Append every audit event (chain metadata only) to this JSONL file after commit (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
+| `audit-mirror-file` | `CIRCULA_AUDIT_MIRROR_FILE` | none | no | Offer committed audit metadata to a bounded, best-effort JSONL mirror (RB-012). See [Audit mirror](#audit-mirror-rb-012). |
 | `state-dir` | `CIRCULA_STATE_DIR` | directory of `database` | no | Where runtime state lives: today only the web signing key `circula-web.key` (see below). Created `0700` when missing. |
 | `export-spool-dir` | `CIRCULA_EXPORT_SPOOL_DIR` | `<state-dir>/export-spool` | no | Where API export archives are written and kept until they expire. Created `0700` when missing; `serve` refuses to start if it cannot write there. See [Export spool](#export-spool-fr-095-br-06). |
 
@@ -267,12 +267,38 @@ it holds only short-lived copies of data that is in the database.
 
 ## Audit mirror (RB-012)
 
-`audit-mirror-file` makes the service append one JSON line per audit event after the database commit. Only chain metadata is
-written (ids, seq, time, actor, action, target, request id, `prev_hash`, `hash`); summaries, reasons and subject ids stay in
-the database so that erasure of personal data is not undone by the mirror. Limits: best effort (a crash between commit and
-write, or a write error, loses lines; the first failure is logged), and the file is only as tamper-proof as its location.
-Point it at a path the service account can append to but not rewrite (`chattr +a`, a log-shipper pipe or an object-locked
-mount) and ship it off-host. The mirror lets you compare `hash` and `prev_hash` linkage against the database independently.
+`audit-mirror-file` offers one metadata record after each audit event commits in the database. A single background worker
+appends admitted records as JSON lines in FIFO order. Only chain metadata is written (ids, seq, time, actor, action,
+target, request id, `prev_hash`, `hash`); summaries, reasons and subject ids stay in the database so that erasure of
+personal data is not undone by the mirror. A slow destination does not delay transaction acknowledgement or keep the
+store's writer gate occupied. The callback performs bounded encoding and a nonblocking queue offer, with no file writes
+or logging on that path. The destination is opened during startup.
+
+The mirror remains **best effort**, with these fixed limits:
+
+- At most **256 queued records**, each at most **16 KiB including its newline**: at most 4 MiB of queued encoded data,
+  plus one record being delivered. Oversized metadata is rejected before a large encoding allocation; the encoded size
+  is checked again after JSON escaping. Records are dropped whole, never truncated to fit. Full queues drop new offers.
+- One worker writes admitted records in order. Failed writes are not retried, because a partial write has an uncertain
+  result. A write error or short write may leave a partial JSON line; subsequent records continue in admission order.
+  A successful write means the destination accepted those bytes, not that another system durably retained them.
+- Shutdown detaches the store callback and allows **two seconds** to drain. At the deadline, queued records are discarded
+  and counted. A write already in progress is **unconfirmed** and may finish later. The shutdown caller does not wait for
+  a blocked destination `Write` or `Close`; that one existing worker may remain until the destination returns or the
+  process exits. No additional worker is started for a timeout or an event.
+- A crash can lose admitted records that have not reached the destination. The database audit rows remain the primary
+  committed copy under the configured database durability mode; this queue is not a durable outbox or a delivery receipt.
+
+`/metrics` exposes pending records, successful writes, write failures and drops by reason (`queue_full`, `oversize`,
+`encoding`, `closed`, `shutdown`). These counters remain readable even while the destination is stalled. The worker logs
+the first write failure and coalesces drop summaries to at most once per minute, plus a final summary when it exits;
+those messages can be delayed by a blocked destination. An incomplete shutdown is logged with its pending and loss counts.
+See [monitoring](monitoring.md#metrics) for the metric names. Check these counters when using mirror gaps as evidence;
+absence from this best-effort copy does not establish absence from the database.
+
+The file is only as tamper-proof as its location. Point it at a path the service account can append to but not rewrite
+(`chattr +a`, a log-shipper pipe or an object-locked mount) and ship it off-host. Retained `hash` and `prev_hash` values let
+you compare audit-chain linkage against the database independently; the mirror does not claim complete delivery.
 
 ## Secure delete (RB-003)
 

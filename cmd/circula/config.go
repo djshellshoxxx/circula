@@ -95,7 +95,7 @@ var settingDefs = []settingDef{
 	{key: "audit-anchor-with-backups", def: "true", help: "write <backup>.anchor.json beside each scheduled backup (RB-010); copy these off-host"},
 	{key: "tls-cert-file", help: "PEM certificate chain: serve HTTPS directly (RB-013); requires tls-key-file; reloaded on SIGHUP"},
 	{key: "tls-key-file", help: "PEM private key for tls-cert-file; must not be readable by group or others"},
-	{key: "audit-mirror-file", help: "append-only JSONL file receiving every audit event after commit (RB-012); best effort, point it at a path the service cannot rewrite"},
+	{key: "audit-mirror-file", help: "bounded best-effort JSONL mirror of committed audit metadata (RB-012); point it at a path the service cannot rewrite"},
 	{key: "backup-key-file", help: "file holding the key that signs backup manifests and is required to restore them (SA-07); or env " + envPrefix + "BACKUP_KEY"},
 }
 

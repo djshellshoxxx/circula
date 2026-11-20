@@ -28,10 +28,11 @@ type metrics struct {
 	postings     uint64               // ledger postings committed (service.Observer)
 	replays      uint64               // idempotent retries answered from a stored record
 
-	ledgerOK        int     // 1 pass, 0 fail, -1 not yet run
-	ledgerFailing   int     // networks failing at the last run
-	ledgerCheckedAt float64 // unix seconds of the last run
-	backupOKAt      float64 // unix seconds of the last successful backup
+	ledgerOK        int          // 1 pass, 0 fail, -1 not yet run
+	ledgerFailing   int          // networks failing at the last run
+	ledgerCheckedAt float64      // unix seconds of the last run
+	backupOKAt      float64      // unix seconds of the last successful backup
+	auditMirror     *auditMirror // fixed during startup; its counters are atomic
 }
 
 func newMetrics(now time.Time) *metrics {
@@ -138,6 +139,23 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 	gauge("circula_schema_pending_migrations", "Migrations this binary knows that the database does not have.", dyn.schemaPend)
 	gauge("circula_database_size_bytes", "Size of the database file.", dyn.dbBytes)
 	gauge("circula_database_wal_size_bytes", "Size of the write-ahead log file.", dyn.walBytes)
+
+	var mirror auditMirrorStats
+	mirrorEnabled := 0
+	if m.auditMirror != nil {
+		mirrorEnabled = 1
+		mirror = m.auditMirror.stats()
+	}
+	gauge("circula_audit_mirror_enabled", "1 when the best-effort audit mirror is configured.", mirrorEnabled)
+	gauge("circula_audit_mirror_pending_records", "Admitted audit mirror records still queued or in a delivery attempt.", mirror.Pending)
+	counter("circula_audit_mirror_written_total", "Audit mirror records whose complete write returned successfully; not a durability guarantee.")
+	fmt.Fprintf(&b, "circula_audit_mirror_written_total %d\n", mirror.Written)
+	counter("circula_audit_mirror_write_failures_total", "Audit mirror write errors and short writes; records may be incomplete.")
+	fmt.Fprintf(&b, "circula_audit_mirror_write_failures_total %d\n", mirror.Failed)
+	counter("circula_audit_mirror_dropped_total", "Audit mirror records skipped without a delivery attempt, by fixed reason.")
+	for reason, count := range mirror.Dropped {
+		fmt.Fprintf(&b, "circula_audit_mirror_dropped_total{reason=%q} %d\n", mirrorDropNames[reason], count)
+	}
 
 	counter("circula_http_requests_total", "HTTP requests by route template and status class.")
 	for _, k := range sortedKeys2(m.requests) {
