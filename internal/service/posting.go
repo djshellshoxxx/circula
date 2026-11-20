@@ -37,7 +37,8 @@ func checkCapacity(net *domain.Network, payer *domain.Account, amount int64, now
 // balance updates, status proposed -> completed with its status event. It
 // does NOT write the audit event; the caller does, in the same unit (LED-6).
 // On any error the caller must return it so the unit rolls back (LED-4).
-func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction, actorMember string, requestID string) error {
+func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction, actorMember string, requestID string) (err error) {
+	defer func() { s.recordPostingAttempt(err) }()
 	now := s.now()
 	payer, err := tx.GetAccount(net.ID, t.PayerAccountID)
 	if err != nil {

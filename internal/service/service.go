@@ -196,19 +196,20 @@ func (s *Service) update(ctx context.Context, fn func(store.Tx) error) error {
 	if s.obs == nil {
 		return s.st.Update(ctx, s.asOf(fn))
 	}
-	var posts, replays int
+	var stats unitStats
 	err := s.st.Update(ctx, s.asOf(func(tx store.Tx) error {
 		s.unit = unitStats{}
 		ferr := fn(tx)
-		posts, replays = s.unit.posts, s.unit.replays
+		stats = s.unit
 		return ferr
 	}))
+	s.observePostingUnit(stats, err)
 	if err == nil {
-		if posts > 0 {
-			s.obs.Posted(posts)
+		if stats.posts > 0 {
+			s.obs.Posted(stats.posts)
 		}
-		if replays > 0 {
-			s.obs.Replayed(replays)
+		if stats.replays > 0 {
+			s.obs.Replayed(stats.replays)
 		}
 	}
 	return err

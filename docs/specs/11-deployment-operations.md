@@ -35,7 +35,7 @@ Summary: built 16, deferred 1, not built 2, partial 16.
 | OPS-011 | P0 | built | WAL, foreign keys, busy timeout, startup pragma check; durability fixed (CMD-06) |
 | OPS-012 | P0 | built | Short write units; busy returns retryable 503 |
 | OPS-013 | P0 | built | healthz, readyz, metrics with allow-list and token |
-| OPS-014 | P0 | partial | HTTP and job metrics built; posting attempt and idempotent-replay counters absent |
+| OPS-014 | P0 | partial | HTTP/job metrics, route/status-class latency, committed postings, attempts, bounded failure classes and idempotent replays are built. `TestServiceObserverWiredToMetrics` checks real posting/refusal/replay events at the metrics surface; rollback and posting-pending outcomes have service tests. Service-only authentication and complete deployment acceptance remain separate; citations are not execution results |
 | OPS-015 | P0 | partial | Alert table in docs/ops/monitoring.md; alerts not configured or tested in staging |
 | OPS-016 | P0 | built | Read-only verify with checksum test; CLI and admin entry points |
 | OPS-017 | P0 | built | Online snapshot with manifest and checksum; load test not run |

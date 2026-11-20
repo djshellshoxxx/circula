@@ -62,9 +62,9 @@ rely on them until the gap is closed and this list is updated.
 - **Frozen-network visibility (OPS-033).** A network that fails verification is frozen (read-only) and the rest serve;
   administrators see the refusal when they try to write, and operators see `circula_frozen_networks` and the error log.
   There is no administrator dashboard indicator yet, and the frozen state is not stored (a restart re-derives it).
-- **Posting metrics (OPS-014).** Committed postings and idempotent replays are counted (`circula_ledger_postings_total`,
-  `circula_idempotent_replays_total`). Refused or failed posting attempts and authentication failures as seen by the
-  service are not; `/metrics` counts HTTP 401 and 429 responses instead.
+- **Service-only authentication metrics (OPS-014).** Posting attempts, committed postings, bounded failure classes and
+  idempotent replays are counted; see [monitoring](monitoring.md). Authentication failures are measured through HTTP
+  401 and 429 responses. Calls that bypass HTTP do not yet produce an authentication-failure metric.
 - **Mail (OPS-029, DEC-009).** No mail settings exist yet.
 - **Operator password input (OPS-009).** Setup, metrics, backup-signing, backup-encryption and MFA secrets already support
   dedicated `*-file` configuration options; see [configuration.md](configuration.md#secrets). The operator password

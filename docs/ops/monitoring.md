@@ -32,6 +32,7 @@ No label carries a member, network, balance or personal data.
 | `circula_process_start_time_seconds`, `circula_uptime_seconds` | gauge | Process start time and uptime. |
 | `circula_http_requests_total{route,class}` | counter | Requests by route template (`/api/`, `/`, `/healthz`, `/readyz`, `/metrics`) and status class (`2xx`...). |
 | `circula_http_request_duration_seconds_{sum,count}{route}` | counter | Latency by route template. |
+| `circula_http_request_duration_by_status_seconds_{sum,count}{route,class}` | counter | Latency by route template and response status class; the original route aggregate remains available. |
 | `circula_http_auth_failures_total` | counter | Responses with status 401. |
 | `circula_http_rate_limited_total` | counter | Responses with status 429. |
 | `circula_job_runs_total{job,result}` | counter | Scheduled jobs: `expiry`, `verify`, `backup`; result `ok` or `failed`. |
@@ -41,6 +42,8 @@ No label carries a member, network, balance or personal data.
 | `circula_ledger_verification_timestamp_seconds` | gauge | Time of the last verification. |
 | `circula_backup_last_success_timestamp_seconds` | gauge | Time of the last successful backup in this process (`0` if none). |
 | `circula_ledger_postings_total` | counter | Ledger postings committed since start (OPS-014). |
+| `circula_ledger_posting_attempts_total` | counter | Central posting attempts, including refused reversal-capacity preflights; a durable replay adds no attempt. |
+| `circula_ledger_posting_failures_total{reason}` | counter | Observed unsuccessful attempts, including enclosing-unit failures, using fixed reason classes. |
 | `circula_idempotent_replays_total` | counter | Retries answered from a stored idempotency record since start (OPS-014). |
 | `circula_frozen_networks` | gauge | Networks refusing writes after a ledger verification failure (CMD-07). Alert when above 0. |
 | `circula_maintenance_mode` | gauge | `1` while maintenance mode is active (OPS-024). |
@@ -58,8 +61,18 @@ its documented best-effort loss policy. The FIFO is limited to 256 records of 16
 two seconds. Counters reset with the process, so retain scrapes and application logs if you need the history. See
 [audit mirror configuration](configuration.md#audit-mirror-rb-012) for ordering, size and shutdown semantics.
 
-Metrics that the specification requires but the service cannot yet count (refused posting attempts, authentication
-failures as seen by the service) are listed under known gaps in [README.md](README.md#known-gaps).
+Posting attempts begin at the central financial posting boundary; earlier authentication, input and authorization
+refusals remain represented by HTTP metrics. A reversal refused by its capacity preflight also counts, including when
+the surrounding dispute decision commits a `posting_pending` state. Attempts that otherwise finish posting are only
+successful when their enclosing write unit returns success. A later audit, idempotency or COMMIT error counts as an
+observed failure; this does not prove that an uncertain COMMIT wrote nothing. Retry through the ordinary idempotent
+operation and verify ledger state rather than inferring balances from process-local counters.
+
+Failure classes are `credit_limit`, `validation`, `state`, `authorization`, `rate_limited`, `unavailable`, `cancelled`,
+`timeout`, and `internal`. Labels never include error messages, transaction/member/network IDs, names or amounts.
+Counters reset with the process; they are operational observations, not durable accounting records. Authentication
+failures are currently measured through HTTP 401/429 responses; service-only coverage remains in
+[the known gaps](README.md#known-gaps).
 
 The verification job runs hourly, and every start and every backup also verifies the ledger.
 

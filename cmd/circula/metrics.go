@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/djshellshoxxx/circula/internal/service"
 )
 
 // metrics holds the in-process counters and gauges exposed at /metrics in the
@@ -18,15 +20,19 @@ type metrics struct {
 
 	started time.Time
 
-	requests     map[[2]string]uint64 // route, status class
-	durSum       map[string]float64   // route, seconds
-	durCount     map[string]uint64    // route
-	authFailures uint64               // 401 responses
-	rateLimited  uint64               // 429 responses
-	jobRuns      map[[2]string]uint64 // job, result
-	migrations   map[string]uint64    // result
-	postings     uint64               // ledger postings committed (service.Observer)
-	replays      uint64               // idempotent retries answered from a stored record
+	requests      map[[2]string]uint64  // route, status class
+	durSum        map[string]float64    // route, seconds
+	durCount      map[string]uint64     // route
+	durSumClass   map[[2]string]float64 // route, status class
+	durCountClass map[[2]string]uint64  // route, status class
+	authFailures  uint64                // 401 responses
+	rateLimited   uint64                // 429 responses
+	jobRuns       map[[2]string]uint64  // job, result
+	migrations    map[string]uint64     // result
+	postings      uint64                // ledger postings committed (service.Observer)
+	postAttempts  uint64                // centralized posting attempts, including refusals
+	postFailures  map[string]uint64     // fixed reason classes only
+	replays       uint64                // idempotent retries answered from a stored record
 
 	ledgerOK        int          // 1 pass, 0 fail, -1 not yet run
 	ledgerFailing   int          // networks failing at the last run
@@ -37,13 +43,16 @@ type metrics struct {
 
 func newMetrics(now time.Time) *metrics {
 	return &metrics{
-		started:    now,
-		requests:   map[[2]string]uint64{},
-		durSum:     map[string]float64{},
-		durCount:   map[string]uint64{},
-		jobRuns:    map[[2]string]uint64{},
-		migrations: map[string]uint64{},
-		ledgerOK:   -1,
+		started:       now,
+		requests:      map[[2]string]uint64{},
+		durSum:        map[string]float64{},
+		durCount:      map[string]uint64{},
+		durSumClass:   map[[2]string]float64{},
+		durCountClass: map[[2]string]uint64{},
+		jobRuns:       map[[2]string]uint64{},
+		migrations:    map[string]uint64{},
+		postFailures:  map[string]uint64{},
+		ledgerOK:      -1,
 	}
 }
 
@@ -51,7 +60,10 @@ func newMetrics(now time.Time) *metrics {
 func (m *metrics) observe(route string, status int, d time.Duration) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.requests[[2]string{route, fmt.Sprintf("%dxx", status/100)}]++
+	key := [2]string{route, fmt.Sprintf("%dxx", status/100)}
+	m.requests[key]++
+	m.durSumClass[key] += d.Seconds()
+	m.durCountClass[key]++
 	m.durSum[route] += d.Seconds()
 	m.durCount[route]++
 	switch status {
@@ -73,6 +85,25 @@ func (m *metrics) Replayed(n int) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.replays += uint64(n) //nolint:gosec // G115: the service passes a positive count
+}
+
+func (m *metrics) PostingAttempted(n int) {
+	if n <= 0 {
+		return
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.postAttempts += uint64(n) //nolint:gosec // G115: nonpositive counts are refused above
+}
+
+func (m *metrics) PostingFailed(n int, reason string) {
+	if n <= 0 {
+		return
+	}
+	reason = service.NormalizePostingFailureClass(reason)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.postFailures[reason] += uint64(n) //nolint:gosec // G115: nonpositive counts are refused above
 }
 
 func (m *metrics) jobRan(job, result string) {
@@ -166,6 +197,11 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 		fmt.Fprintf(&b, "circula_http_request_duration_seconds_sum{route=%q} %g\n", r, m.durSum[r])
 		fmt.Fprintf(&b, "circula_http_request_duration_seconds_count{route=%q} %d\n", r, m.durCount[r])
 	}
+	fmt.Fprintf(&b, "# HELP circula_http_request_duration_by_status_seconds Request latency by route template and status class (sum and count, no quantiles).\n# TYPE circula_http_request_duration_by_status_seconds summary\n")
+	for _, k := range sortedKeys2(m.durCountClass) {
+		fmt.Fprintf(&b, "circula_http_request_duration_by_status_seconds_sum{route=%q,class=%q} %g\n", k[0], k[1], m.durSumClass[k])
+		fmt.Fprintf(&b, "circula_http_request_duration_by_status_seconds_count{route=%q,class=%q} %d\n", k[0], k[1], m.durCountClass[k])
+	}
 	counter("circula_http_auth_failures_total", "Responses with status 401 (authentication failures seen at the edge).")
 	fmt.Fprintf(&b, "circula_http_auth_failures_total %d\n", m.authFailures)
 	counter("circula_http_rate_limited_total", "Responses with status 429 (throttling seen at the edge).")
@@ -173,6 +209,12 @@ func (m *metrics) write(w io.Writer, dyn dynamicMetrics) {
 
 	counter("circula_ledger_postings_total", "Ledger postings committed since start.")
 	fmt.Fprintf(&b, "circula_ledger_postings_total %d\n", m.postings)
+	counter("circula_ledger_posting_attempts_total", "Central posting attempts since start; durable replays do not add attempts.")
+	fmt.Fprintf(&b, "circula_ledger_posting_attempts_total %d\n", m.postAttempts)
+	counter("circula_ledger_posting_failures_total", "Posting attempts that returned a failure or whose enclosing unit failed, by bounded reason class.")
+	for _, reason := range service.PostingFailureClasses() {
+		fmt.Fprintf(&b, "circula_ledger_posting_failures_total{reason=%q} %d\n", reason, m.postFailures[reason])
+	}
 	counter("circula_idempotent_replays_total", "Retries answered from a stored idempotency record since start.")
 	fmt.Fprintf(&b, "circula_idempotent_replays_total %d\n", m.replays)
 	gauge("circula_maintenance_mode", "1 while maintenance mode is active.", map[bool]int{true: 1, false: 0}[dyn.maintenance])
