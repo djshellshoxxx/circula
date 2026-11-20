@@ -1,0 +1,14 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/87 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 87/87 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 75475 (25153/sec), new interesting: 1 (total: 88)
+fuzz: elapsed: 6s, execs: 186018 (36846/sec), new interesting: 2 (total: 89)
+fuzz: elapsed: 9s, execs: 297097 (37033/sec), new interesting: 2 (total: 89)
+fuzz: elapsed: 12s, execs: 411512 (38133/sec), new interesting: 4 (total: 91)
+fuzz: elapsed: 15s, execs: 526222 (38238/sec), new interesting: 4 (total: 91)
+fuzz: elapsed: 18s, execs: 646980 (40253/sec), new interesting: 5 (total: 92)
+fuzz: elapsed: 21s, execs: 766958 (39989/sec), new interesting: 6 (total: 93)
+fuzz: elapsed: 24s, execs: 881763 (38274/sec), new interesting: 6 (total: 93)
+fuzz: elapsed: 27s, execs: 995417 (37879/sec), new interesting: 7 (total: 94)
+fuzz: elapsed: 27s, execs: 1000000 (59764/sec), new interesting: 8 (total: 95)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/domain	27.099s

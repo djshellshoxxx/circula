@@ -1,0 +1,28 @@
+{
+  "source": "a9cdcb80179df1469b1443dcb79f1df00b1857fb",
+  "command": [
+    "timeout",
+    "3600s",
+    "go",
+    "test",
+    "-p",
+    "1",
+    "-count=1",
+    "-timeout=45m",
+    "-json",
+    "./..."
+  ],
+  "started_at": "2026-11-20T16:42:20.603012+00:00",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "512MiB"
+  },
+  "status": "completed",
+  "exit_code": 1,
+  "ended_at": "2026-11-20T16:48:37.948207+00:00",
+  "wall_seconds": 377.345
+}

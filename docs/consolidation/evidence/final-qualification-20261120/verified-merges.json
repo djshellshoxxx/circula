@@ -1,0 +1,118 @@
+{
+  "observed_at": "2026-11-20 18:19:52 UTC",
+  "scope": "Seven ordinary merges in this continuation: six isolated future targets and one intermediate messaging recovery branch. Earlier accepted integrations remain separately documented.",
+  "merges": [
+    {
+      "pr": 103,
+      "url": "https://github.com/djshellshoxxx/circula/pull/103",
+      "source_branch": "master/notification-transport-tests-20261119",
+      "source_sha": "66b23f8e9e37ce6efddf56c0215c6f29f741d489",
+      "target_branch": "future/fux-104-notifications-20261116",
+      "original_base_sha": "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+      "merge_sha": "54a41b12a314e7652802b71d693e2594c37f172f",
+      "merge_tree": "774205e9de006c00181c8ef09e192ccb42489e92",
+      "parents": [
+        "9d861d51b6ca0f3393795a126928fdf4317ca4eb",
+        "66b23f8e9e37ce6efddf56c0215c6f29f741d489"
+      ],
+      "merged_at": "2026-11-20T17:10:36Z",
+      "verified": true
+    },
+    {
+      "pr": 113,
+      "url": "https://github.com/djshellshoxxx/circula/pull/113",
+      "source_branch": "master/recover-receipts-20261119",
+      "source_sha": "6186416ddd83c365405a798130999cb1e4df0f31",
+      "target_branch": "future/fnet-203-receipts-20261116",
+      "original_base_sha": "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+      "merge_sha": "5200c5bf940f051a86d6e502787af06892200974",
+      "merge_tree": "f611a03c49b5862052271789e9b353e09ecbb7da",
+      "parents": [
+        "bd2fbdbd3adf77b27fa12335ff2827359423aea3",
+        "6186416ddd83c365405a798130999cb1e4df0f31"
+      ],
+      "merged_at": "2026-11-20T16:56:45Z",
+      "verified": true
+    },
+    {
+      "pr": 114,
+      "url": "https://github.com/djshellshoxxx/circula/pull/114",
+      "source_branch": "master/recover-governance-20261119",
+      "source_sha": "711833c510b14e84c3a7441b3b63f2f990bc8368",
+      "target_branch": "future/fnet-208-governance-20261116",
+      "original_base_sha": "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+      "merge_sha": "5eac085005361e973ca8f358e01f039aea718bed",
+      "merge_tree": "3c776a8d327c37798cffdcc27b6b8ed6c6c5cddd",
+      "parents": [
+        "b4f511372ec26dc63d005bb50d87c56e18fc1a88",
+        "711833c510b14e84c3a7441b3b63f2f990bc8368"
+      ],
+      "merged_at": "2026-11-20T16:56:51Z",
+      "verified": true
+    },
+    {
+      "pr": 115,
+      "url": "https://github.com/djshellshoxxx/circula/pull/115",
+      "source_branch": "master/recover-areas-20261119",
+      "source_sha": "52cf9c3afadb950e4dd428807319e3c96f3004a9",
+      "target_branch": "future/fnet-206-areas-20261116",
+      "original_base_sha": "8b444b20139e3e687db494b3fe36bb3643148e5b",
+      "merge_sha": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "merge_tree": "0f4b70bcf024b5993d41165ef1905f0b9b64d8f3",
+      "parents": [
+        "8b444b20139e3e687db494b3fe36bb3643148e5b",
+        "52cf9c3afadb950e4dd428807319e3c96f3004a9"
+      ],
+      "merged_at": "2026-11-20T16:56:56Z",
+      "verified": true
+    },
+    {
+      "pr": 120,
+      "url": "https://github.com/djshellshoxxx/circula/pull/120",
+      "source_branch": "master/fux102-camera-lifecycle-20261119",
+      "source_sha": "a91bb5fdc97fc540a1617538073e92509ceba485",
+      "target_branch": "future/fux-102-qr-20261116",
+      "original_base_sha": "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+      "merge_sha": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "merge_tree": "05ea33f8cadd386e717b7ed836e76bc7e8abea90",
+      "parents": [
+        "9db8a323d7dcf430d1a58a4a4d10ca3628aeb401",
+        "a91bb5fdc97fc540a1617538073e92509ceba485"
+      ],
+      "merged_at": "2026-11-20T16:57:01Z",
+      "verified": true
+    },
+    {
+      "pr": 121,
+      "url": "https://github.com/djshellshoxxx/circula/pull/121",
+      "source_branch": "master/fux106-retention-20261119",
+      "source_sha": "20e6c8479459f837915eb31a5d668e2bd470e5a8",
+      "target_branch": "future/fux-106-onboarding-20261116",
+      "original_base_sha": "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+      "merge_sha": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+      "merge_tree": "5dc2e6f672b3d1e307395d926cb7e3e878daa5fb",
+      "parents": [
+        "473cab2fb45a7b67ea0001f9fdc7833ffda45eb9",
+        "20e6c8479459f837915eb31a5d668e2bd470e5a8"
+      ],
+      "merged_at": "2026-11-20T18:15:49Z",
+      "verified": true
+    },
+    {
+      "pr": 122,
+      "url": "https://github.com/djshellshoxxx/circula/pull/122",
+      "source_branch": "master/messaging-windows-private-storage-20261119",
+      "source_sha": "ef4a11975ab9159f44bcb8fa10fa6d2a1d585c45",
+      "target_branch": "master/recover-messaging-20261119",
+      "original_base_sha": "d12805cac1d6c52d94b04800a53d6911bd8ab94f",
+      "merge_sha": "d232d6507cb198081434284084a4ced7ed6df27c",
+      "merge_tree": "c58b7a38c802190229b26dc64be05af355b416b9",
+      "parents": [
+        "d12805cac1d6c52d94b04800a53d6911bd8ab94f",
+        "ef4a11975ab9159f44bcb8fa10fa6d2a1d585c45"
+      ],
+      "merged_at": "2026-11-20T17:48:00Z",
+      "verified": true
+    }
+  ]
+}

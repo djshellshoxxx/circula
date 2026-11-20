@@ -1,0 +1,38 @@
+{
+  "observed_at": "2026-11-20T18:32:32.794620+00:00",
+  "published_head": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "published_tree": "7ba56914025bccada81f90a326e05233c45189a7",
+  "full_race_source": "36112a8614f4719415ec2e208521aef28ff3e69c",
+  "later_runtime_changes": [],
+  "later_documentation_paths": [
+    "docs/TRACEABILITY.md",
+    "docs/consolidation/BRANCH_REFRESH_20261120.md",
+    "docs/consolidation/CORE_QUALIFICATION_CONTINUATION_20261120.md",
+    "docs/consolidation/CORE_REMAINING_WORK_20261120.md",
+    "docs/consolidation/FUTURE_FOUR_SOURCE_REVIEW_20261120.md",
+    "docs/consolidation/FUTURE_MODULE_REMAINING_WORK_20261120.md",
+    "docs/consolidation/evidence/branch-refresh-20261120.json",
+    "docs/consolidation/evidence/future-four-review-20261120/README.md",
+    "docs/consolidation/evidence/future-four-review-20261120/SHA256SUMS",
+    "docs/consolidation/evidence/future-four-review-20261120/final-verification.json",
+    "docs/consolidation/evidence/future-four-review-20261120/provider-final.json",
+    "docs/consolidation/evidence/future-four-review-20261120/provider-initial.json",
+    "docs/consolidation/evidence/future-four-review-20261120/receipt-verification.json",
+    "docs/consolidation/evidence/future-four-review-20261120/source-inventory.json",
+    "docs/consolidation/evidence/future-merges-20261120.json",
+    "docs/consolidation/evidence/notification-native-merge-20261120.json",
+    "docs/consolidation/evidence/password-admission-20261120/independent-review.md"
+  ],
+  "local_final_head": "69ca540dd9a1c01471de613e476b76babb87b31a",
+  "local_and_published_trees_identical": true,
+  "normal_run_source": "a9cdcb80179df1469b1443dcb79f1df00b1857fb",
+  "non_documentary_changes_after_failed_normal_run": [
+    "cmd/circula/auditanchor_test.go"
+  ],
+  "future_path_delta_from_main": [],
+  "main_reference": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "original_audit_commit": "896d69f472652ed54c051ec82efcb7f162d1d2c4",
+  "original_audit_path": "docs/audits/read-only-security-2026-11-19",
+  "original_audit_files_preserved_byte_for_byte": 23,
+  "all_checks_passed": true
+}

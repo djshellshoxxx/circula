@@ -1,0 +1,44 @@
+{
+  "source": "69ca540dd9a1c01471de613e476b76babb87b31a",
+  "tree": "7ba56914025bccada81f90a326e05233c45189a7",
+  "published_equivalent": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "command": [
+    "timeout",
+    "600s",
+    "go",
+    "test",
+    "-p",
+    "1",
+    "-run",
+    "^$",
+    "-fuzz",
+    "^FuzzSessionPosition$",
+    "-fuzztime",
+    "100000x",
+    "-parallel=1",
+    "-timeout",
+    "3m",
+    "./internal/service"
+  ],
+  "cwd": "/workspace/scratch/bfba682cba37/circula",
+  "started_at": "2026-11-20T17:58:42.193850+00:00",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "512MiB",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly -p=1"
+  },
+  "status": "completed",
+  "exit_code": 0,
+  "wall_seconds": 48.725,
+  "ended_at": "2026-11-20T17:59:30.918628+00:00",
+  "log": {
+    "path": "session-position.log",
+    "bytes": 759,
+    "sha256": "cf86434d28c29fe1c67a7cf997bca4c86edc24021c8fab13a4eb28277bf52c83"
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "receipt": {
+    "source": "36112a8614f4719415ec2e208521aef28ff3e69c",
+    "command": [
+      "timeout",
+      "3600s",
+      "go",
+      "test",
+      "-race",
+      "-p",
+      "1",
+      "-count=1",
+      "-timeout=45m",
+      "-json",
+      "./..."
+    ],
+    "started_at": "2026-11-20T16:52:49.624092+00:00",
+    "environment": {
+      "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+      "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+      "GOTOOLCHAIN": "local",
+      "GOMAXPROCS": "1",
+      "GOGC": "20",
+      "GOMEMLIMIT": "512MiB"
+    },
+    "status": "completed",
+    "exit_code": 0,
+    "ended_at": "2026-11-20T17:50:19.827718+00:00",
+    "wall_seconds": 3450.203
+  },
+  "published_equivalent": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "source_difference": "Only documentation/evidence differs from tested source; independent final composition review completed.",
+  "log": {
+    "path": "full-race.jsonl",
+    "bytes": 2916856,
+    "sha256": "31b2f4b9ed3b6b6750bef6052abb28261d0d1e9db33d04ed4042b9204bfeba52"
+  },
+  "terminal_test_events": {
+    "pass": 3255,
+    "skip": 6
+  },
+  "unique_named_test_cases": {
+    "pass": 3255,
+    "skip": 6
+  },
+  "top_level": {
+    "pass": 1293,
+    "skip": 6
+  },
+  "top_level_kinds": {
+    "test": {
+      "pass": 1270,
+      "skip": 6
+    },
+    "fuzz_seed_entrypoint": {
+      "pass": 23
+    }
+  },
+  "packages": [
+    {
+      "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "Action": "pass",
+      "Elapsed": 350.391
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/api",
+      "Action": "pass",
+      "Elapsed": 458.78
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/contract",
+      "Action": "pass",
+      "Elapsed": 47.604
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/domain",
+      "Action": "pass",
+      "Elapsed": 1.704
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/histbal",
+      "Action": "pass",
+      "Elapsed": 1.023
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/httpx",
+      "Action": "pass",
+      "Elapsed": 1.012
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/integrity",
+      "Action": "pass",
+      "Elapsed": 1.013
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/logx",
+      "Action": "pass",
+      "Elapsed": 1.038
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/passwordwork",
+      "Action": "pass",
+      "Elapsed": 1.011
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/repository",
+      "Action": "pass",
+      "Elapsed": 1.268
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/service",
+      "Action": "pass",
+      "Elapsed": 1294.982
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/store",
+      "Action": "pass",
+      "Elapsed": 698.939
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/storetest",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/testutil",
+      "Action": "skip",
+      "Elapsed": 0
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web",
+      "Action": "pass",
+      "Elapsed": 487.684
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/internal/web/messages",
+      "Action": "pass",
+      "Elapsed": 1.245
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/scripts/sbom",
+      "Action": "pass",
+      "Elapsed": 1.42
+    },
+    {
+      "Package": "github.com/djshellshoxxx/circula/scripts/traceability",
+      "Action": "pass",
+      "Elapsed": 7.152
+    }
+  ],
+  "skipped_tests": [
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestBackupStagingRefusesForeignOwnedParent",
+      "last_output": "--- SKIP: TestBackupStagingRefusesForeignOwnedParent (0.00s)"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestBackupWorkLeaseChild",
+      "last_output": "--- SKIP: TestBackupWorkLeaseChild (0.00s)"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/cmd/circula",
+      "test": "TestRestoreSwapCrashChild",
+      "last_output": "--- SKIP: TestRestoreSwapCrashChild (0.00s)"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestLoginTimingStatistical",
+      "last_output": "--- SKIP: TestLoginTimingStatistical (0.00s)"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestLoadConcurrentTrades",
+      "last_output": "--- SKIP: TestLoadConcurrentTrades (0.00s)"
+    },
+    {
+      "package": "github.com/djshellshoxxx/circula/internal/service",
+      "test": "TestQA010CrashChild",
+      "last_output": "--- SKIP: TestQA010CrashChild (0.00s)"
+    }
+  ],
+  "failed_tests": [],
+  "non_json_lines": []
+}

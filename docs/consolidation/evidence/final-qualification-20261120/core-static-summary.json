@@ -1,0 +1,120 @@
+{
+  "completed_utc": "2026-11-20T18:04:39.174817+00:00",
+  "published_commit": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "published_tree": "7ba56914025bccada81f90a326e05233c45189a7",
+  "local_head": "69ca540dd9a1c01471de613e476b76babb87b31a",
+  "source_file_count": 2024,
+  "source_files_verified_unchanged_after_every_command": true,
+  "passed_commands": 3,
+  "failed_commands": 0,
+  "timed_out_commands": 0,
+  "retries": 0,
+  "checks": {
+    "lint": {
+      "command": [
+        "/tmp/circula-runtime-4d30/bin/golangci-lint",
+        "run",
+        "--concurrency",
+        "1",
+        "--timeout",
+        "10m",
+        "--verbose",
+        "./..."
+      ],
+      "started_utc": "2026-11-20T18:01:35.931277+00:00",
+      "completed_utc": "2026-11-20T18:02:22.408544+00:00",
+      "elapsed_seconds": 46.477,
+      "exit_code": 0,
+      "outer_timed_out": false,
+      "source_after_matches": true,
+      "log": "lint.log",
+      "log_sha256": "3e7b65dde2a028077533875650f2585a3f33f32203207bbc8b4571ad2ab05844"
+    },
+    "govulncheck": {
+      "command": [
+        "/tmp/circula-runtime-4d30/bin/govulncheck",
+        "-json",
+        "-db",
+        "https://vuln.go.dev",
+        "./..."
+      ],
+      "started_utc": "2026-11-20T18:02:37.171348+00:00",
+      "completed_utc": "2026-11-20T18:03:00.404463+00:00",
+      "elapsed_seconds": 23.233,
+      "exit_code": 0,
+      "outer_timed_out": false,
+      "source_after_matches": true,
+      "log": "govulncheck.log",
+      "log_sha256": "1ab3dfe031b9de64fde15119eb3534f1f8740016b011acabe8c219be4b12c833"
+    },
+    "mod-verify": {
+      "command": [
+        "/tmp/circula-runtime-4d30/go/bin/go",
+        "mod",
+        "verify"
+      ],
+      "started_utc": "2026-11-20T18:03:27.500130+00:00",
+      "completed_utc": "2026-11-20T18:03:31.735853+00:00",
+      "elapsed_seconds": 4.235,
+      "exit_code": 0,
+      "outer_timed_out": false,
+      "source_after_matches": true,
+      "log": "mod-verify.log",
+      "log_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd"
+    }
+  },
+  "lint": {
+    "scope": "Full root-module ./... with repository .golangci.yml; no changed-source filter or analyzer override",
+    "active_linters": [
+      "bodyclose",
+      "depguard",
+      "errcheck",
+      "gofmt",
+      "gosec",
+      "govet",
+      "ineffassign",
+      "misspell",
+      "nilerr",
+      "staticcheck",
+      "unconvert",
+      "unused"
+    ],
+    "reported_issues": 0,
+    "preexisting_test_gosec_exclusion_count": 107,
+    "preexisting_nolint_filtered_count": 23,
+    "tool_version": "2.15.0",
+    "tool_build_go": "go1.27.0",
+    "analyzed_project_go": "go1.26.11",
+    "reported_peak_memory_mb": 360.2
+  },
+  "govulncheck": {
+    "configuration": {
+      "protocol_version": "v1.0.0",
+      "scanner_name": "govulncheck",
+      "scanner_version": "v1.1.4",
+      "db": "https://vuln.go.dev",
+      "db_last_modified": "2026-11-11T02:51:11Z",
+      "go_version": "go1.26.11",
+      "scan_level": "symbol",
+      "scan_mode": "source"
+    },
+    "json_event_counts": {
+      "config": 1,
+      "SBOM": 1,
+      "progress": 2,
+      "osv": 227
+    },
+    "finding_events": 0,
+    "root_package_count": 18,
+    "module_count_including_project_and_stdlib": 12,
+    "actual_database_used": true,
+    "database_snapshot_scope": "Reported last-modified timestamp is preserved exactly; no up-to-the-minute advisory coverage beyond that database response is claimed."
+  },
+  "limitations": [
+    "This qualifies the root Go module; independent nested future modules are separately scoped.",
+    "Lint uses the existing approved repository exclusions, unchanged.",
+    "No unit/race/fuzz/native/browser workflow was rerun by this static qualification worker.",
+    "The earlier killed full-lint attempt remains historical and is not relabeled as a pass. This is a separate successfully executed attempt.",
+    "No source, configuration, dependency, tool version, remote branch or PR was changed."
+  ]
+}

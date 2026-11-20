@@ -1,0 +1,54 @@
+{
+  "receipt": {
+    "source": "69ca540dd9a1c01471de613e476b76babb87b31a",
+    "tree": "7ba56914025bccada81f90a326e05233c45189a7",
+    "published_equivalent": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+    "command": [
+      "timeout",
+      "600s",
+      "go",
+      "test",
+      "-p",
+      "1",
+      "-count=1",
+      "-json",
+      "-timeout=5m",
+      "-run",
+      "LoadConcurrentTrades|QA008",
+      "./internal/service"
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly -p=1",
+      "GOMAXPROCS": "1",
+      "GOGC": "20",
+      "GOMEMLIMIT": "512MiB",
+      "CIRCULA_LOAD": "1",
+      "CIRCULA_LOAD_WORKERS": "4",
+      "CIRCULA_LOAD_MEMBERS": "20",
+      "CIRCULA_LOAD_TRADES": "25"
+    },
+    "started_at": "2026-11-20T18:07:47.294008+00:00",
+    "status": "completed",
+    "exit_code": 0,
+    "wall_seconds": 3.646,
+    "ended_at": "2026-11-20T18:07:50.941525+00:00",
+    "log": {
+      "path": "load-smoke.jsonl",
+      "bytes": 4650,
+      "sha256": "888288ce5653586599cacc524d181fd14b77ad24e9bd1e621ea8875e753b8268"
+    },
+    "source_tree_unchanged": true
+  },
+  "test_events": {
+    "pass": 2
+  },
+  "top_level": {
+    "pass": 2
+  },
+  "observed_output": [
+    "loadtest_test.go:189: CONFIG workers=4 members=20 trades_per_worker=25 attempted=100",
+    "loadtest_test.go:191: RESULT throughput trades/s=315.4 write_ops/s=630.8"
+  ]
+}

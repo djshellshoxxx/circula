@@ -1,0 +1,44 @@
+{
+  "source": "69ca540dd9a1c01471de613e476b76babb87b31a",
+  "tree": "7ba56914025bccada81f90a326e05233c45189a7",
+  "published_equivalent": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "command": [
+    "timeout",
+    "600s",
+    "go",
+    "test",
+    "-p",
+    "1",
+    "-run",
+    "^$",
+    "-fuzz",
+    "^FuzzStrictUnmarshal$",
+    "-fuzztime",
+    "100000x",
+    "-parallel=1",
+    "-timeout",
+    "3m",
+    "./internal/api"
+  ],
+  "cwd": "/workspace/scratch/bfba682cba37/circula",
+  "started_at": "2026-11-20T17:55:51.826477+00:00",
+  "environment": {
+    "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+    "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+    "GOTOOLCHAIN": "local",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "512MiB",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly -p=1"
+  },
+  "status": "completed",
+  "exit_code": 0,
+  "wall_seconds": 144.746,
+  "ended_at": "2026-11-20T17:58:16.572610+00:00",
+  "log": {
+    "path": "strict-json.log",
+    "bytes": 910,
+    "sha256": "acbc40e8e5a6e9d37e16d414c97318d51aa4de28ecf63abc88e9c3451104823e"
+  }
+}

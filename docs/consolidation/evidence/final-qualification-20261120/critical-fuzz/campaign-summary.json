@@ -1,0 +1,96 @@
+{
+  "source": "69ca540dd9a1c01471de613e476b76babb87b31a",
+  "tree": "7ba56914025bccada81f90a326e05233c45189a7",
+  "published_equivalent": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "campaigns": [
+    {
+      "target": "^FuzzParseAmount$",
+      "exit_code": 0,
+      "actual_executions": 1000000,
+      "wall_seconds": 36.629,
+      "log_tail": [
+        "fuzz: elapsed: 27s, execs: 995417 (37879/sec), new interesting: 7 (total: 94)",
+        "fuzz: elapsed: 27s, execs: 1000000 (59764/sec), new interesting: 8 (total: 95)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/domain\t27.099s"
+      ],
+      "log": {
+        "path": "amount.log",
+        "bytes": 999,
+        "sha256": "d744b1c9721308208b1a9807017ac482e745ce1f9c8e5212cf556f109c4d4165"
+      }
+    },
+    {
+      "target": "^FuzzStrictUnmarshal$",
+      "exit_code": 0,
+      "actual_executions": 100000,
+      "wall_seconds": 144.746,
+      "log_tail": [
+        "fuzz: elapsed: 24s, execs: 43300 (0/sec), new interesting: 66 (total: 151)",
+        "fuzz: elapsed: 25s, execs: 100000 (48506/sec), new interesting: 67 (total: 152)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t25.204s"
+      ],
+      "log": {
+        "path": "strict-json.log",
+        "bytes": 910,
+        "sha256": "acbc40e8e5a6e9d37e16d414c97318d51aa4de28ecf63abc88e9c3451104823e"
+      }
+    },
+    {
+      "target": "^FuzzOpenCursor$",
+      "exit_code": 0,
+      "actual_executions": 100000,
+      "wall_seconds": 25.617,
+      "log_tail": [
+        "fuzz: elapsed: 21s, execs: 84655 (14119/sec), new interesting: 45 (total: 70)",
+        "fuzz: elapsed: 24s, execs: 100000 (5339/sec), new interesting: 47 (total: 72)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t23.899s"
+      ],
+      "log": {
+        "path": "cursor.log",
+        "bytes": 822,
+        "sha256": "8bf8701656e7f2e0d3a032d12382b28380c2b3e5d943d2ae2561052d94eca2f9"
+      }
+    },
+    {
+      "target": "^FuzzSessionPosition$",
+      "exit_code": 0,
+      "actual_executions": 100000,
+      "wall_seconds": 48.725,
+      "log_tail": [
+        "fuzz: elapsed: 18s, execs: 98757 (4835/sec), new interesting: 18 (total: 30)",
+        "fuzz: elapsed: 18s, execs: 100000 (5028/sec), new interesting: 18 (total: 30)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t18.273s"
+      ],
+      "log": {
+        "path": "session-position.log",
+        "bytes": 759,
+        "sha256": "cf86434d28c29fe1c67a7cf997bca4c86edc24021c8fab13a4eb28277bf52c83"
+      }
+    },
+    {
+      "target": "^FuzzSessionSelector$",
+      "exit_code": 0,
+      "actual_executions": 100000,
+      "wall_seconds": 19.303,
+      "log_tail": [
+        "fuzz: elapsed: 15s, execs: 87705 (4761/sec), new interesting: 11 (total: 20)",
+        "fuzz: elapsed: 17s, execs: 100000 (5046/sec), new interesting: 11 (total: 20)",
+        "PASS",
+        "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t17.458s"
+      ],
+      "log": {
+        "path": "session-selector.log",
+        "bytes": 679,
+        "sha256": "4f517e3f820beba4d519b4bb54129537c230dc2b955f25e700d4368c3a9c1f55"
+      }
+    }
+  ],
+  "total_executions": 1400000,
+  "all_exit_zero": true,
+  "source_tree_unchanged": true,
+  "git_status": ""
+}

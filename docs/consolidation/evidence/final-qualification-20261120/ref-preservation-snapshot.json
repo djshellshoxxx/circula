@@ -1,0 +1,984 @@
+{
+  "observed_at": "2026-11-20T18:23:46.816834+00:00",
+  "remote_tracking_count": 148,
+  "tag_count": 0,
+  "local_branch_count": 18,
+  "remote_refs": [
+    {
+      "ref": "refs/remotes/origin/audit/federation-readme-20261119",
+      "branch": "audit/federation-readme-20261119",
+      "sha": "d55554408ef591371768259905c70ca58d68facb"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/future-feed-cursors-20261119",
+      "branch": "audit/future-feed-cursors-20261119",
+      "sha": "5f46b0cfeadda140b1b29d120766100d7e3da735"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/future-notifications-binding-20261119",
+      "branch": "audit/future-notifications-binding-20261119",
+      "sha": "9c794a5b9e6ff7aa4eaa57c6e8fb5e2b145307ae"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/future-notifications-bounded-core-20261119",
+      "branch": "audit/future-notifications-bounded-core-20261119",
+      "sha": "3bdef17a87b421b1b43a666d58453749a7b06d02"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/future-pwa-browser-20261119",
+      "branch": "audit/future-pwa-browser-20261119",
+      "sha": "0b2bb7a4dea18dbb3f125f41565b096d637e47f3"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/gov021-final-core-refresh-20261119",
+      "branch": "audit/gov021-final-core-refresh-20261119",
+      "sha": "b8cb63bfc6d2a969d972f55937cdc2070d5eba34"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/gov021-fixture-20261119",
+      "branch": "audit/gov021-fixture-20261119",
+      "sha": "d922d4f880059f939aeca40cbcb77c60201ff0c7"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/read-only-security-20261119",
+      "branch": "audit/read-only-security-20261119",
+      "sha": "896d69f472652ed54c051ec82efcb7f162d1d2c4"
+    },
+    {
+      "ref": "refs/remotes/origin/audit/sec026-independent-20261119",
+      "branch": "audit/sec026-independent-20261119",
+      "sha": "45b596f12876e3f91c30b996457f7096e1fffe24"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-consolidation-review-20261111",
+      "branch": "chatgpt/circula-consolidation-review-20261111",
+      "sha": "02f9f0a7bb87f54611e2fe0b0837a519d2bcca9e"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-departure-pagination-20261115",
+      "branch": "chatgpt/circula-departure-pagination-20261115",
+      "sha": "8abff32c1b4a30507497d1e43dc4f88d0c7e6eab"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-erasure-notification-20261115",
+      "branch": "chatgpt/circula-erasure-notification-20261115",
+      "sha": "26b57163d96534e79e3d35d471573d609af8a415"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-expiry-starvation-20261115",
+      "branch": "chatgpt/circula-expiry-starvation-20261115",
+      "sha": "2eacf7718f5bb3da3be5a288024af879076a9597"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-ledger-auth-guard-20261115",
+      "branch": "chatgpt/circula-ledger-auth-guard-20261115",
+      "sha": "29e46e5016a05a0b633a4cb23cab6a4dea38e1ca"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-mfa-decider-20261115",
+      "branch": "chatgpt/circula-mfa-decider-20261115",
+      "sha": "4ffb5c78d6b44e6f964f1018ed2fea16cd742abd"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-qa042-traceability-audit-20261114",
+      "branch": "chatgpt/circula-qa042-traceability-audit-20261114",
+      "sha": "fe832faced826ed2234fcd9ba0ce7f7321f04df5"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-secure-json-write-20261115",
+      "branch": "chatgpt/circula-secure-json-write-20261115",
+      "sha": "e02085a6aa1a1394f874b304fdf0961cc0888423"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/circula-security-audit-20261115",
+      "branch": "chatgpt/circula-security-audit-20261115",
+      "sha": "36a80335abf54ec8d965cb350b157443ef7f2fec"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/consolidation-delta-qualification-20261114",
+      "branch": "chatgpt/consolidation-delta-qualification-20261114",
+      "sha": "8f742877fb53cc39aea5e189a5452d924d8c08c8"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/favorites-owner-scoped-collection-20261116",
+      "branch": "chatgpt/favorites-owner-scoped-collection-20261116",
+      "sha": "372a8f97ae01c0af3b4a96c4a5ce8b1bcc75cd8d"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/feed-signed-cursors-20261116",
+      "branch": "chatgpt/feed-signed-cursors-20261116",
+      "sha": "7a528c611bffdf92ef9f8cbddb98e8b088eb5036"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex-continuation-spec-20261109",
+      "branch": "chatgpt/zero-codex-continuation-spec-20261109",
+      "sha": "3d9c56196625fc0c158b4652cbe2b9716c7af97b"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/audit-20261110-a",
+      "branch": "chatgpt/zero-codex/audit-20261110-a",
+      "sha": "2e729346d6297075b6ff1f7828d48681d48320b6"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/ci-macos-race-budget-20261110",
+      "branch": "chatgpt/zero-codex/ci-macos-race-budget-20261110",
+      "sha": "2078bf0964353892e80214b4601211e36818b889"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/ci-macos15-retirement-20261110",
+      "branch": "chatgpt/zero-codex/ci-macos15-retirement-20261110",
+      "sha": "1760551f5b03a89ec64d09269d631e72f2e95959"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/cookie-policy-adapter-20261110-b",
+      "branch": "chatgpt/zero-codex/cookie-policy-adapter-20261110-b",
+      "sha": "7e8481004801c01aea5d22f4720e1ead7381c4f7"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/decidable-expiry-20261110-a",
+      "branch": "chatgpt/zero-codex/decidable-expiry-20261110-a",
+      "sha": "b61a8e719030ff56044d71fee632b5ba824d7698"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/docs-20261110-a",
+      "branch": "chatgpt/zero-codex/docs-20261110-a",
+      "sha": "a376a4ed592451d90d2ff7b4d3db1489a2231f96"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/qualify-pr19-20261110-a",
+      "branch": "chatgpt/zero-codex/qualify-pr19-20261110-a",
+      "sha": "63b033d842a2fa40b56ff9d79e69c259db951c83"
+    },
+    {
+      "ref": "refs/remotes/origin/chatgpt/zero-codex/terms-return-20261110-b",
+      "branch": "chatgpt/zero-codex/terms-return-20261110-b",
+      "sha": "7620d7f51913363dd013b80cc682eb670eeff3a5"
+    },
+    {
+      "ref": "refs/remotes/origin/checkpoint/circula-handoff-20261025",
+      "branch": "checkpoint/circula-handoff-20261025",
+      "sha": "3d0080a9c43680f69f81217af3b42374e7160bf8"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/aud4-auth-fixes",
+      "branch": "claude/aud4-auth-fixes",
+      "sha": "82dc18e07f6b22b9c34ef026f833391705b30067"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/aud4-f02-reviewer-reset-policy",
+      "branch": "claude/aud4-f02-reviewer-reset-policy",
+      "sha": "af54887aa0cd63ba080e2944aa52a5b759b008ca"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/aud4-f03-dispute-timelines",
+      "branch": "claude/aud4-f03-dispute-timelines",
+      "sha": "b6275747df66ede81ee4267e2cd6a2595f3bd680"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/awesome-darwin-y6eaiz",
+      "branch": "claude/awesome-darwin-y6eaiz",
+      "sha": "827e651fe151f49659cc20aefe85d4af67bdaa97"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/backup-path-hardening",
+      "branch": "claude/backup-path-hardening",
+      "sha": "09ef8a5aa25f11ee4d96f043e7d686e97598b7e3"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/charming-gauss-19fbfa",
+      "branch": "claude/charming-gauss-19fbfa",
+      "sha": "8b4c8ba23c99d4418348d76ff8cb38a72e7b958d"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-beta-completion-1npjw6",
+      "branch": "claude/circula-beta-completion-1npjw6",
+      "sha": "bffcede8c7dca0d702e1a5cd5b5e8b5d363c7c3b"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-build",
+      "branch": "claude/circula-build",
+      "sha": "fc488445af5f43165a7103f1c1fd12483b39d448"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-completeness",
+      "branch": "claude/circula-completeness",
+      "sha": "fcd9fc5878482e1e4d340a3448a0d2294a33eb5b"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-consolidation-audit-0sydm1",
+      "branch": "claude/circula-consolidation-audit-0sydm1",
+      "sha": "0e5296a71f3f3802f36e14d847c0abf7b1dbf882"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-finish",
+      "branch": "claude/circula-finish",
+      "sha": "d350474e49522c34213d90a66904b296b9509f6c"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-pr-consolidation-q6q18n",
+      "branch": "claude/circula-pr-consolidation-q6q18n",
+      "sha": "163fe1596bd7cfb8c2a22891629fc4459e6b639c"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/circula-security-features",
+      "branch": "claude/circula-security-features",
+      "sha": "f8278a047392541a077d57c560823471053d1e1d"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/compassionate-cannon-txdlz1",
+      "branch": "claude/compassionate-cannon-txdlz1",
+      "sha": "047e92e88a0ccf7ed8b4c6ed1a1df78a90cc523a"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/cool-gauss-vdxlod",
+      "branch": "claude/cool-gauss-vdxlod",
+      "sha": "64fa4f685780b93a349a862e3741df5b4db067cc"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/cool-ramanujan-n2peag",
+      "branch": "claude/cool-ramanujan-n2peag",
+      "sha": "c033cfa448fb89d1a5cc0ca87458b40d2709fa2e"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/fnet-204-signed-cursors",
+      "branch": "claude/fnet-204-signed-cursors",
+      "sha": "0952c94a5dbab4044d7673ce9d51cec9063ab97f"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/gov-021-admin-recovery",
+      "branch": "claude/gov-021-admin-recovery",
+      "sha": "0d480a5b348f3d385df0dc9c9a3e43a0b03a8332"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/gracious-ptolemy-dscc7v",
+      "branch": "claude/gracious-ptolemy-dscc7v",
+      "sha": "1d165989e2176e214536dd22b05f7b3a4cb2f48f"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/happy-babbage-dcumwz",
+      "branch": "claude/happy-babbage-dcumwz",
+      "sha": "dc97f7d5b0ae64306a8e2b1e57ec83f233d3d09d"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/happy-noether-444cum",
+      "branch": "claude/happy-noether-444cum",
+      "sha": "34ccb81a54ab63875d4a5305076437d6b3221049"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/kind-einstein-v5ycss",
+      "branch": "claude/kind-einstein-v5ycss",
+      "sha": "3bfb2f78fb0aad03ec3533af5985c394d64c1898"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/lucid-archimedes-upisa8",
+      "branch": "claude/lucid-archimedes-upisa8",
+      "sha": "d2c1c6090a053b62dc75002464dc96bb542d6c78"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/quirky-babbage-y9fpmm",
+      "branch": "claude/quirky-babbage-y9fpmm",
+      "sha": "af69702be08aaf14cbe9a705ddf7f08796d5e976"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/quirky-einstein-l9ni8m",
+      "branch": "claude/quirky-einstein-l9ni8m",
+      "sha": "4a8db9e80509d23d3937c68575c632f4650576aa"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/relaxed-hopper-8q4vhq",
+      "branch": "claude/relaxed-hopper-8q4vhq",
+      "sha": "2da1a293ebf2f28f349fcae9bf32184737bc8619"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/sec-026-abuse-signals",
+      "branch": "claude/sec-026-abuse-signals",
+      "sha": "4d349c4d03bfb81760d471a2a7ef4ac4338d9c45"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/sharp-archimedes-tu76rh",
+      "branch": "claude/sharp-archimedes-tu76rh",
+      "sha": "eb4bb08b15d41295aa2c4b9f93040124ce4d66e9"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/sweet-turing-m3ftja",
+      "branch": "claude/sweet-turing-m3ftja",
+      "sha": "01b6e5c7cfc5bd9d660b80aaafe2b35de3912904"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/ux-047-auth-catalogue",
+      "branch": "claude/ux-047-auth-catalogue",
+      "sha": "dd3e82e27ddb3d1cbf03460e6a5fc879f16691db"
+    },
+    {
+      "ref": "refs/remotes/origin/claude/vibrant-brahmagupta-3uofnj",
+      "branch": "claude/vibrant-brahmagupta-3uofnj",
+      "sha": "33b200e00c088c86ffb0d0d8176f1575376a9b49"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/api036-completion-20261119",
+      "branch": "codex/api036-completion-20261119",
+      "sha": "f7ac6d22a1bd1718f6f4e3a840da7a28c83d0cb0"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/api036-cursor-hardening-20261119",
+      "branch": "codex/api036-cursor-hardening-20261119",
+      "sha": "94fcd018ac4227ea5a5eb803478b3bb0a1aa3677"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/api036-qualification-20261119",
+      "branch": "codex/api036-qualification-20261119",
+      "sha": "45356ca10e1ecd6e6441e0171910dd918b36f5d9"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-checkpoint-recovery-20261116",
+      "branch": "codex/circula-checkpoint-recovery-20261116",
+      "sha": "12175ec348d5234c27e1c72dc8df96a091cd111c"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-common-ui-catalog-20261116",
+      "branch": "codex/circula-common-ui-catalog-20261116",
+      "sha": "a112c979932bc7b9e209455d3df14dfebc60243a"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-consolidate-20261030",
+      "branch": "codex/circula-consolidate-20261030",
+      "sha": "7643fb616208cc318939ded809e6cada66bb7415"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-core-checkpoint-20261116",
+      "branch": "codex/circula-core-checkpoint-20261116",
+      "sha": "15375a8dc87544849b4a85fa128ce77be1103814"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-core-completion-20261116",
+      "branch": "codex/circula-core-completion-20261116",
+      "sha": "e3c60a62c065567ff67fc2e219a724b6fd91ca76"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-evidence-20261116",
+      "branch": "codex/circula-evidence-20261116",
+      "sha": "f6ea3213e663c7e37d678b018861b6703947e3e0"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-financial-messages-20261116",
+      "branch": "codex/circula-financial-messages-20261116",
+      "sha": "cf5abf5cfb00638e1772a7e34014a352048d6b35"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-integration-plan-20261030",
+      "branch": "codex/circula-integration-plan-20261030",
+      "sha": "127943ba7aa2cb154d3e65d13279e739b901416f"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-message-catalogs-20261116",
+      "branch": "codex/circula-message-catalogs-20261116",
+      "sha": "96059bb4b8ae23ad6e4e45428bf69288bec4c182"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-noscript-qa",
+      "branch": "codex/circula-noscript-qa",
+      "sha": "ba57512918195423b25bc7958ff0b8af6df7ed7a"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-qualification-20261116",
+      "branch": "codex/circula-qualification-20261116",
+      "sha": "dc89212a8bf1e1207e5443ffc719670623de70e1"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-responsive-qa",
+      "branch": "codex/circula-responsive-qa",
+      "sha": "04e11989b811b4541a20b4e06e7a020beabb6af3"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-resume-20261024",
+      "branch": "codex/circula-resume-20261024",
+      "sha": "f4bfe6bc3f81c94b859abeae902ae862ea6e143e"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-staging-refresh-docs",
+      "branch": "codex/circula-staging-refresh-docs",
+      "sha": "9c0bc500cb19f11f18694c76d134f4bfebf896e7"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/circula-support-boundaries-20261028",
+      "branch": "codex/circula-support-boundaries-20261028",
+      "sha": "837d51b0d5374822b28f1b3a9206f9e2d23bd60c"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/dashboard-amounts-meter-20261116",
+      "branch": "codex/dashboard-amounts-meter-20261116",
+      "sha": "d53196cc6907f27222661246a7767bb0aa123a76"
+    },
+    {
+      "ref": "refs/remotes/origin/consolidation/http-persistence-regressions-20261116",
+      "branch": "consolidation/http-persistence-regressions-20261116",
+      "sha": "050798c9cf94598efd0fff15f7a8a74bb3c4f4a1"
+    },
+    {
+      "ref": "refs/remotes/origin/consolidation/recover-future-specifications",
+      "branch": "consolidation/recover-future-specifications",
+      "sha": "3a776e6304551c21ff372a8ae962606108dde4ff"
+    },
+    {
+      "ref": "refs/remotes/origin/dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "branch": "dependabot/go_modules/github.com/getkin/kin-openapi-0.153.0",
+      "sha": "3fa76cdb590182eaff42fc4044cf3538275eea6b"
+    },
+    {
+      "ref": "refs/remotes/origin/dependabot/go_modules/golang.org/x/text-0.44.0",
+      "branch": "dependabot/go_modules/golang.org/x/text-0.44.0",
+      "sha": "4a6ea9ab3dff3bdf1f3597e98abd449b203afb11"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/fnet-203-optional-trade-receipts",
+      "branch": "docs/fnet-203-optional-trade-receipts",
+      "sha": "3d6ed55b2e44d31f7350814d87ba44564e8344c0"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/foundational-spec-shells",
+      "branch": "docs/foundational-spec-shells",
+      "sha": "d96f2e75634bff074d26965ae93c2fe00c6f7f24"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/foundational-specifications",
+      "branch": "docs/foundational-specifications",
+      "sha": "22e9202f19f55aa46be4b115edbe84178e9cee0b"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/future-usability-network-specs-20261111",
+      "branch": "docs/future-usability-network-specs-20261111",
+      "sha": "f4a051c1c1af815e7bb6a902929108e155145c97"
+    },
+    {
+      "ref": "refs/remotes/origin/docs/readme-and-wiki",
+      "branch": "docs/readme-and-wiki",
+      "sha": "db7826495ec2e8bd3f5459afa5f619cdc8fe8def"
+    },
+    {
+      "ref": "refs/remotes/origin/feature/core-catalogue-continuation-20261119",
+      "branch": "feature/core-catalogue-continuation-20261119",
+      "sha": "5db3efc084e6a807bb4702c09d3235490d42b71d"
+    },
+    {
+      "ref": "refs/remotes/origin/feature/fnet-204-completion-parallel",
+      "branch": "feature/fnet-204-completion-parallel",
+      "sha": "a8aecfe8782df4782af256bbcecdf5fd1469f783"
+    },
+    {
+      "ref": "refs/remotes/origin/fix/fnet207-ci-proven-20261119",
+      "branch": "fix/fnet207-ci-proven-20261119",
+      "sha": "ccf30e6a819d570d90d2aa02c91ec8d635040563"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-201-matching-20261116",
+      "branch": "future/fnet-201-matching-20261116",
+      "sha": "12850290c6bca7720853c33689662d751aced160"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-202-favorites-20261116",
+      "branch": "future/fnet-202-favorites-20261116",
+      "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-203-receipts-20261116",
+      "branch": "future/fnet-203-receipts-20261116",
+      "sha": "5200c5bf940f051a86d6e502787af06892200974"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-204-feed-20261116",
+      "branch": "future/fnet-204-feed-20261116",
+      "sha": "108107435645db687f8ac380e6571319f419fa32"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-205-analytics-20261116",
+      "branch": "future/fnet-205-analytics-20261116",
+      "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-206-areas-20261116",
+      "branch": "future/fnet-206-areas-20261116",
+      "sha": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-207-recurring-20261116",
+      "branch": "future/fnet-207-recurring-20261116",
+      "sha": "94deb0a20df07a3b38c8a905254645d6cd3019f2"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-208-governance-20261116",
+      "branch": "future/fnet-208-governance-20261116",
+      "sha": "5eac085005361e973ca8f358e01f039aea718bed"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fnet-209-federation-20261116",
+      "branch": "future/fnet-209-federation-20261116",
+      "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fux-101-pwa-20261116",
+      "branch": "future/fux-101-pwa-20261116",
+      "sha": "3415fe24df7b87a2803552b37ca31bf898f7aa8e"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fux-102-qr-20261116",
+      "branch": "future/fux-102-qr-20261116",
+      "sha": "6028dae56723b8488db6e52e25c83da7888777c1"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fux-103-discovery-20261116",
+      "branch": "future/fux-103-discovery-20261116",
+      "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fux-104-notifications-20261116",
+      "branch": "future/fux-104-notifications-20261116",
+      "sha": "54a41b12a314e7652802b71d693e2594c37f172f"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fux-105-messaging-20261116",
+      "branch": "future/fux-105-messaging-20261116",
+      "sha": "7f92251cdb0d6ed5d9559730045a021a173a278b"
+    },
+    {
+      "ref": "refs/remotes/origin/future/fux-106-onboarding-20261116",
+      "branch": "future/fux-106-onboarding-20261116",
+      "sha": "4c3ce1d7b7f2b4ed809669985d5e38981408494b"
+    },
+    {
+      "ref": "refs/remotes/origin/future/module-catalog-20261116",
+      "branch": "future/module-catalog-20261116",
+      "sha": "dfa4779d05a47bc0397110ecfbb14659ce3884d7"
+    },
+    {
+      "ref": "refs/remotes/origin/haiku/circula-consolidation",
+      "branch": "haiku/circula-consolidation",
+      "sha": "6fbfa13fb696d38e8e120377c0eee09af1ac44f0"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/admin-grant-notice-pagination-20261117",
+      "branch": "integration/admin-grant-notice-pagination-20261117",
+      "sha": "cb25b41febd43273cd4aa856072406b210089d81"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/backup-private-staging-20261117",
+      "branch": "integration/backup-private-staging-20261117",
+      "sha": "faed4906f5419f573181bd7cf3ffdf0bdfb9992b"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/browser-parity-clock-20261117",
+      "branch": "integration/browser-parity-clock-20261117",
+      "sha": "2f6b3e4f1b70d8c787c4de886cf085f5a3295002"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/circula-master-consolidation-20261119",
+      "branch": "integration/circula-master-consolidation-20261119",
+      "sha": "bcdc569cbc483761bf2d0e2d7594636ac1713d7d"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/comprehensive-audit-20261119",
+      "branch": "integration/comprehensive-audit-20261119",
+      "sha": "839e86935767288e594914ad711486616a604eca"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/consolidation-execution-record-20261118",
+      "branch": "integration/consolidation-execution-record-20261118",
+      "sha": "73244357ca136874452a6cd826ffa91ac8c3c434"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/core-completion-audits-20261119",
+      "branch": "integration/core-completion-audits-20261119",
+      "sha": "22c767a90f69d286642ef96e6b3c174836637a3c"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/core-consolidation-20261119",
+      "branch": "integration/core-consolidation-20261119",
+      "sha": "9674b1a9d86d702e412779295db8425e9e5a8c82"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/core-recovery-20261119",
+      "branch": "integration/core-recovery-20261119",
+      "sha": "f29ebb01ff681a1276f385b8b568e41355b83505"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/core-ui-completion-20261119",
+      "branch": "integration/core-ui-completion-20261119",
+      "sha": "7462138fb4f7110ea4f705c6f09742a2b5a253e4"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/erasure-fixture-stability-20261117",
+      "branch": "integration/erasure-fixture-stability-20261117",
+      "sha": "fc31dc9a6b8c102fe612f47bc543e94e8114df0f"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/release-threshold-check-20261117",
+      "branch": "integration/release-threshold-check-20261117",
+      "sha": "ec98caba7328790ef36f0f2c144644bc05155d6b"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/store-untrusted-schema-20261117",
+      "branch": "integration/store-untrusted-schema-20261117",
+      "sha": "b1cd8f38450ae966cfea99d59a131175d7b798dd"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/throttle-documentation-20261117",
+      "branch": "integration/throttle-documentation-20261117",
+      "sha": "83de536ee373a7c4997222cf58ff563c53c8cbbc"
+    },
+    {
+      "ref": "refs/remotes/origin/integration/unique-core-completion-20261120",
+      "branch": "integration/unique-core-completion-20261120",
+      "sha": "be9a5731bc93dcbf7b57301a8d2538a13af360bd"
+    },
+    {
+      "ref": "refs/remotes/origin/main",
+      "branch": "main",
+      "sha": "aa01563fcc891da60fefebb8335eca27855678e8"
+    },
+    {
+      "ref": "refs/remotes/origin/master/fnet207-recurring-remote-20261119",
+      "branch": "master/fnet207-recurring-remote-20261119",
+      "sha": "9bf260d63f454868e27d2d85a3d9fb5dce4beeae"
+    },
+    {
+      "ref": "refs/remotes/origin/master/fnet209-utf8-20261119",
+      "branch": "master/fnet209-utf8-20261119",
+      "sha": "059b0e4508a6c4f8e29f6a4cccd06f92b14ea115"
+    },
+    {
+      "ref": "refs/remotes/origin/master/fux102-camera-lifecycle-20261119",
+      "branch": "master/fux102-camera-lifecycle-20261119",
+      "sha": "a91bb5fdc97fc540a1617538073e92509ceba485"
+    },
+    {
+      "ref": "refs/remotes/origin/master/fux106-retention-20261119",
+      "branch": "master/fux106-retention-20261119",
+      "sha": "20e6c8479459f837915eb31a5d668e2bd470e5a8"
+    },
+    {
+      "ref": "refs/remotes/origin/master/messaging-windows-private-storage-20261119",
+      "branch": "master/messaging-windows-private-storage-20261119",
+      "sha": "ef4a11975ab9159f44bcb8fa10fa6d2a1d585c45"
+    },
+    {
+      "ref": "refs/remotes/origin/master/notification-transport-tests-20261119",
+      "branch": "master/notification-transport-tests-20261119",
+      "sha": "66b23f8e9e37ce6efddf56c0215c6f29f741d489"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-analytics-20261119",
+      "branch": "master/recover-analytics-20261119",
+      "sha": "0b67eb44811165e947d8db5ba25a3d868af892ff"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-areas-20261119",
+      "branch": "master/recover-areas-20261119",
+      "sha": "52cf9c3afadb950e4dd428807319e3c96f3004a9"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-federation-20261119",
+      "branch": "master/recover-federation-20261119",
+      "sha": "d00b5ca897ad7b6fbebed6572a9270845ef9c2c0"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-governance-20261119",
+      "branch": "master/recover-governance-20261119",
+      "sha": "711833c510b14e84c3a7441b3b63f2f990bc8368"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-messaging-20261119",
+      "branch": "master/recover-messaging-20261119",
+      "sha": "d232d6507cb198081434284084a4ced7ed6df27c"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-receipts-20261119",
+      "branch": "master/recover-receipts-20261119",
+      "sha": "6186416ddd83c365405a798130999cb1e4df0f31"
+    },
+    {
+      "ref": "refs/remotes/origin/master/recover-recurring-20261119",
+      "branch": "master/recover-recurring-20261119",
+      "sha": "18741aa25c364e7294de8bec0ff714d0dc1ed9fc"
+    },
+    {
+      "ref": "refs/remotes/origin/nodata/doc-sweep-20261118",
+      "branch": "nodata/doc-sweep-20261118",
+      "sha": "866adc8f2c30abd294843e43a2ba42a6fe5f7b67"
+    },
+    {
+      "ref": "refs/remotes/origin/planning/future-cli-specs-20261110",
+      "branch": "planning/future-cli-specs-20261110",
+      "sha": "8e2372c064258fb8c53554ae8f6b81957932e885"
+    },
+    {
+      "ref": "refs/remotes/origin/repair/core99-currenthead-ci-20261119",
+      "branch": "repair/core99-currenthead-ci-20261119",
+      "sha": "cb5920df14b716751195584f7adf9c9e43c65615"
+    },
+    {
+      "ref": "refs/remotes/origin/repair/fnet204-feed-final-ci-20261119",
+      "branch": "repair/fnet204-feed-final-ci-20261119",
+      "sha": "80c76940ce8c38226e8b917bf840541f2d845f9c"
+    },
+    {
+      "ref": "refs/remotes/origin/repair/fnet204-feed-golden-scanner-20261119",
+      "branch": "repair/fnet204-feed-golden-scanner-20261119",
+      "sha": "80c76940ce8c38226e8b917bf840541f2d845f9c"
+    },
+    {
+      "ref": "refs/remotes/origin/repair/fnet204-qualifier-evidence-digest-20261119",
+      "branch": "repair/fnet204-qualifier-evidence-digest-20261119",
+      "sha": "6c49dbccc90c1a2be03fec05fe6e5fa9292d801c"
+    },
+    {
+      "ref": "refs/remotes/origin/repair/fux101-final-ci-20261119",
+      "branch": "repair/fux101-final-ci-20261119",
+      "sha": "aab3bfda4812c4e99882c8efd00cd2d9328a444e"
+    },
+    {
+      "ref": "refs/remotes/origin/repair/fux104-final-ci-20261119",
+      "branch": "repair/fux104-final-ci-20261119",
+      "sha": "409a00b0b36daa343cd70521b5acc2c9af9eb7c0"
+    },
+    {
+      "ref": "refs/remotes/origin/work/spec-completion",
+      "branch": "work/spec-completion",
+      "sha": "d39bfef12d4ac1430815fa49ad799fb1c4bf9964"
+    }
+  ],
+  "local_refs": [
+    {
+      "ref": "audit/core127-final-evidence-20261120",
+      "sha": "be9a5731bc93dcbf7b57301a8d2538a13af360bd"
+    },
+    {
+      "ref": "audit/federation-compose-20261120",
+      "sha": "7d565ac2e3c1d7973d802b755b89a0ce267d0ac6"
+    },
+    {
+      "ref": "docs/branch-refresh-20261120",
+      "sha": "43e02a16c3c0eb854d34c587381ea24ab0e749bf"
+    },
+    {
+      "ref": "fix/analytics-fuzz-qualification-20261120",
+      "sha": "d7edb701f6b941998deaacf43ccbc8e2a49e05d0"
+    },
+    {
+      "ref": "fix/core-anchor-fixture-20261120",
+      "sha": "dc12dac950714c66337dbd2e98edc15eab0fa640"
+    },
+    {
+      "ref": "fix/core-credit-evidence-null-20261120",
+      "sha": "c1aadfd91c38b360291094fbd53949b39ebff4bb"
+    },
+    {
+      "ref": "fix/core-password-admission-20261120",
+      "sha": "0bd96859034c7341015dbaf56a137f6cb84f5b55"
+    },
+    {
+      "ref": "fix/core127-portability-20261120",
+      "sha": "ca62063638fa67d32d0c56e976698c1077541106"
+    },
+    {
+      "ref": "fix/core127-web-ci-20261120",
+      "sha": "82e61847339dd08fa8d69ebf57bc0c4c6bbf2e38"
+    },
+    {
+      "ref": "fix/federation-doc-qualification-20261120",
+      "sha": "99d6f4456260290fc3616599710b50de77585ad5"
+    },
+    {
+      "ref": "fix/future-messaging-path-20261120",
+      "sha": "882c6f39fc44c67388b1e0f1f7af5cf14384dc27"
+    },
+    {
+      "ref": "fix/onboarding-doc-qualification-20261120",
+      "sha": "02564643d01a7fa14006efd220283e476907a36c"
+    },
+    {
+      "ref": "integrate/core-auth-admission-20261120",
+      "sha": "69ca540dd9a1c01471de613e476b76babb87b31a"
+    },
+    {
+      "ref": "integration/future-notification-native-20261120",
+      "sha": "e9e94fd079a718c534945548eb7308debab0ef9b"
+    },
+    {
+      "ref": "main",
+      "sha": "aa01563fcc891da60fefebb8335eca27855678e8"
+    },
+    {
+      "ref": "recover/fnet207-recurring-consolidation-20261120",
+      "sha": "86ab145b1e3f0e02c6441d1c94faa0de2b741453"
+    },
+    {
+      "ref": "repair/core127-final-ci-20261120",
+      "sha": "e3cb6d202317406242868dbc6d5a6843b409dff3"
+    },
+    {
+      "ref": "review/future-isolated-four-20261120",
+      "sha": "041af1e5777ba63d3e5d3d02332c7edc6cb6cce1"
+    }
+  ],
+  "future_targets": [
+    {
+      "branch": "future/fnet-201-matching-20261116",
+      "sha": "12850290c6bca7720853c33689662d751aced160",
+      "manifest_path": "future/matching/feature.json",
+      "manifest_blob": "43bc991b59976c9f12a613fffbca106573f17eb0",
+      "feature_id": "FNET-201",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-202-favorites-20261116",
+      "sha": "efc9d696eea2dd3260ecb6c5091802ef31e20572",
+      "manifest_path": "future/favorites/feature.json",
+      "manifest_blob": "4beec20056a98e995c5e6115b239aded2f15ea9e",
+      "feature_id": "FNET-202",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-203-receipts-20261116",
+      "sha": "5200c5bf940f051a86d6e502787af06892200974",
+      "manifest_path": "future/receipts/feature.json",
+      "manifest_blob": "d8096428f13dac807f88c3b6ac5468176889f9ea",
+      "feature_id": "FNET-203",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-204-feed-20261116",
+      "sha": "108107435645db687f8ac380e6571319f419fa32",
+      "manifest_path": "future/feed/feature.json",
+      "manifest_blob": "dea2c3e2ba2600f327cd961e03684843f55aa3ca",
+      "feature_id": "FNET-204",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-205-analytics-20261116",
+      "sha": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+      "manifest_path": "future/analytics/feature.json",
+      "manifest_blob": "02e2fa2802886eeb212eab462efcc359ebcab0c2",
+      "feature_id": "FNET-205",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-206-areas-20261116",
+      "sha": "6aac35e226135a53d69c1e6ce74e340dcfe1d85f",
+      "manifest_path": "future/areas/feature.json",
+      "manifest_blob": "a1fe86449b5e910833a130748e28536bb0512c85",
+      "feature_id": "FNET-206",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-207-recurring-20261116",
+      "sha": "94deb0a20df07a3b38c8a905254645d6cd3019f2",
+      "manifest_path": "future/recurring/feature.json",
+      "manifest_blob": "ff5e5c9c5cc5ec062841f3f38781588f9bd437cb",
+      "feature_id": "FNET-207",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-208-governance-20261116",
+      "sha": "5eac085005361e973ca8f358e01f039aea718bed",
+      "manifest_path": "future/governance/feature.json",
+      "manifest_blob": "44b76724eb5b0b5743e10f8565a1f3f3ca312d38",
+      "feature_id": "FNET-208",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fnet-209-federation-20261116",
+      "sha": "1b3c92e03007e35e3f190e719a1ea78a807d4102",
+      "manifest_path": "future/federation/feature.json",
+      "manifest_blob": "cbb1953b904fdfcead369eefb3b7c64271b8b339",
+      "feature_id": "FNET-209",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fux-101-pwa-20261116",
+      "sha": "3415fe24df7b87a2803552b37ca31bf898f7aa8e",
+      "manifest_path": "future/pwa/feature.json",
+      "manifest_blob": "b9328faac33485ba3cc26650e28c6cdecd587012",
+      "feature_id": "FUX-101",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fux-102-qr-20261116",
+      "sha": "6028dae56723b8488db6e52e25c83da7888777c1",
+      "manifest_path": "future/qr/feature.json",
+      "manifest_blob": "4a4247d78aa8e0d0918a8e333eb2930ba77bf2f0",
+      "feature_id": "FUX-102",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fux-103-discovery-20261116",
+      "sha": "34d0f889631e2d133149a89a276cf9c71fd261a9",
+      "manifest_path": "future/discovery/feature.json",
+      "manifest_blob": "008d52d9d4d59bf5929181eb191091cb8daacab5",
+      "feature_id": "FUX-103",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fux-104-notifications-20261116",
+      "sha": "54a41b12a314e7652802b71d693e2594c37f172f",
+      "manifest_path": "future/notifications/feature.json",
+      "manifest_blob": "15827422569370ec231e6bfc11814c7c3991d274",
+      "feature_id": "FUX-104",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fux-105-messaging-20261116",
+      "sha": "7f92251cdb0d6ed5d9559730045a021a173a278b",
+      "manifest_path": "future/messaging/feature.json",
+      "manifest_blob": "bea5d20c38598023b2ac9d444baa21f602203b06",
+      "feature_id": "FUX-105",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    },
+    {
+      "branch": "future/fux-106-onboarding-20261116",
+      "sha": "4c3ce1d7b7f2b4ed809669985d5e38981408494b",
+      "manifest_path": "future/onboarding/feature.json",
+      "manifest_blob": "81ac3e69d0ec10ddaf599fd8fb2b6bd4b2e70b43",
+      "feature_id": "FUX-106",
+      "enabled": false,
+      "integration": "HOLD",
+      "depends_on_future_features": []
+    }
+  ],
+  "core_source": "be9a5731bc93dcbf7b57301a8d2538a13af360bd",
+  "main": "aa01563fcc891da60fefebb8335eca27855678e8",
+  "changed_future_paths_in_core": "",
+  "symbolic_refs": [
+    {
+      "ref": "refs/remotes/origin/HEAD",
+      "sha": "aa01563fcc891da60fefebb8335eca27855678e8",
+      "target": "refs/remotes/origin/main"
+    }
+  ]
+}

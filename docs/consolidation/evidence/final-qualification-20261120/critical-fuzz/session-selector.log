@@ -1,0 +1,10 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/9 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 9/9 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 20700 (6895/sec), new interesting: 6 (total: 15)
+fuzz: elapsed: 6s, execs: 40300 (6536/sec), new interesting: 11 (total: 20)
+fuzz: elapsed: 9s, execs: 58256 (5986/sec), new interesting: 11 (total: 20)
+fuzz: elapsed: 12s, execs: 73426 (5056/sec), new interesting: 11 (total: 20)
+fuzz: elapsed: 15s, execs: 87705 (4761/sec), new interesting: 11 (total: 20)
+fuzz: elapsed: 17s, execs: 100000 (5046/sec), new interesting: 11 (total: 20)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	17.458s

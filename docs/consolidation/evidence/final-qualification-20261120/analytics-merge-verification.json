@@ -1,0 +1,21 @@
+{
+  "observed_at": "2026-11-20 18:30:31 UTC",
+  "pr": 108,
+  "url": "https://github.com/djshellshoxxx/circula/pull/108",
+  "target": "future/fnet-205-analytics-20261116",
+  "source_branch": "master/recover-analytics-20261119",
+  "source": "0b67eb44811165e947d8db5ba25a3d868af892ff",
+  "base_before": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+  "merge": "64f1fef75d167ca322179e3e120214f9a56c6583",
+  "tree": "8b0496cbd61f059f20e2a7b67b88ad42077ecdfd",
+  "parents": [
+    "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+    "0b67eb44811165e947d8db5ba25a3d868af892ff"
+  ],
+  "merged_at": "2026-11-20T18:30:20Z",
+  "source_branch_preserved": true,
+  "normal_merge": true,
+  "core_jobs_passed": 7,
+  "module_jobs_passed": 3,
+  "conditional_core_placeholder": "skipped"
+}

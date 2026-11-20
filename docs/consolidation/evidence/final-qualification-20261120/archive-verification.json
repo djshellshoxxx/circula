@@ -1,0 +1,26 @@
+{
+  "compressed_logs": [
+    {
+      "file": "full-race.jsonl.gz",
+      "raw_name": "full-race.jsonl",
+      "raw_bytes": 2916856,
+      "raw_sha256": "31b2f4b9ed3b6b6750bef6052abb28261d0d1e9db33d04ed4042b9204bfeba52",
+      "compressed_bytes": 217082
+    },
+    {
+      "file": "full-normal.jsonl.gz",
+      "raw_name": "full-normal.jsonl",
+      "raw_bytes": 3096970,
+      "raw_sha256": "8287d0efdbbbbc2807dc0e1ef856b2dbb2fd979dcc8ce3b10f6b7fa4ea8c9ea8",
+      "compressed_bytes": 216379
+    }
+  ],
+  "static_archive": {
+    "file": "core-static-20261120.tar.gz",
+    "bytes": 192383,
+    "original_manifest_sha256": "cb7a2d199c1e0381ca0fdb6d1d8578f080f0d6edc0462e2d97e3cf7a94c87b13",
+    "verified_original_manifest_entries": 18,
+    "all_archived_bytes_match": true
+  },
+  "purpose": "Preserve exact source-bound execution output without changing the qualified Core candidate."
+}
