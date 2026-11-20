@@ -2,6 +2,10 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
+	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -121,6 +125,30 @@ type ListingUpdate struct {
 	Price       *int64 // set price; use ClearPrice to remove
 	ClearPrice  bool
 	Status      *domain.ListingStatus // active | paused | archived
+	// ExpectedRevision, when supplied, must match inside the write unit.
+	// Empty preserves unconditional edits, including wildcard API updates.
+	ExpectedRevision string `json:"-"`
+}
+
+// ErrListingChanged means a conditional owner edit lost its precondition
+// inside the write transaction. No listing or audit change was written.
+var ErrListingChanged = errors.New("listing changed since it was read")
+
+// ListingRevision fingerprints the editable values and stored update time.
+// This retains the existing API validator's UTC millisecond representation,
+// field order and 96-bit digest so issued listing ETags remain compatible.
+func ListingRevision(l *domain.Listing) string {
+	price := "-"
+	if l.Price != nil {
+		price = strconv.FormatInt(*l.Price, 10)
+	}
+	h := sha256.New()
+	for _, part := range []string{"listing", l.ID, l.UpdatedAt.UTC().Format("2006-01-02T15:04:05.000Z"),
+		string(l.Status), l.Title, l.Description, price} {
+		h.Write([]byte(part))
+		h.Write([]byte{0})
+	}
+	return hex.EncodeToString(h.Sum(nil)[:12])
 }
 
 // UpdateListing edits, pauses or archives the caller's own listing (FR-022).
@@ -141,6 +169,9 @@ func (s *Service) UpdateListing(ctx context.Context, actor domain.Actor, netID s
 		l, err := tx.GetListing(netID, in.ListingID)
 		if err != nil || l.MemberID != p.member.ID {
 			return domain.NotFound("listing")
+		}
+		if in.ExpectedRevision != "" && in.ExpectedRevision != ListingRevision(l) {
+			return ErrListingChanged
 		}
 		before := l.Status
 		if l.Status == domain.ListingArchived {
