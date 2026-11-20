@@ -1,0 +1,18 @@
+{
+  "started_utc": "2026-11-20T17:08:46.708671+00:00",
+  "command": [
+    "/tmp/circula-runtime-4d30/bin/gitleaks",
+    "dir",
+    ".",
+    "--no-banner",
+    "--redact",
+    "--verbose"
+  ],
+  "tool_module": "github.com/zricethezav/gitleaks/v8@v8.28.0",
+  "toolchain": "go1.26.11",
+  "exit_code": 0,
+  "elapsed_seconds": 4.906,
+  "log_sha256": "b63518e66ed303c4bc047f65701202970e0e59caa08d5d3eb32cc4f643a94e0d",
+  "config": "unchanged repository .gitleaks.toml",
+  "scope": "Current worktree, before source composition commit; runtime tests not yet executed."
+}

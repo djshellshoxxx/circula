@@ -1,0 +1,21 @@
+{
+  "source_commit": "1e0838e04310bb2a19a585d69e40426b3c50fb71",
+  "started_utc": "2026-11-20T17:24:28.928682+00:00",
+  "completed_utc": "2026-11-20T17:24:33.720217+00:00",
+  "command": [
+    "/tmp/circula-runtime-4d30/bin/gitleaks",
+    "dir",
+    ".",
+    "--no-banner",
+    "--redact",
+    "--verbose"
+  ],
+  "cwd": "/workspace/scratch/bfba682cba37/circula-recurring-recovery",
+  "tool_module": "github.com/zricethezav/gitleaks/v8@v8.28.0",
+  "exit_code": 0,
+  "elapsed_seconds": 4.792,
+  "log_sha256": "a600bc6f08f26a9157591fe7f191ce363503fde5a1522cd058cb1d2102a56100",
+  "config": "unchanged repository .gitleaks.toml",
+  "config_sha256": "738955e9a8e81210fb7eabefaa8001533e228ccc16070ef2d9dc8bb00d977d65",
+  "scope": "Entire assembled worktree including qualification documentation and receipts. Scanner output captured outside scanned tree before this log/receipt are copied into the evidence directory. No scanner rule/configuration change."
+}

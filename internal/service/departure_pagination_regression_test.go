@@ -10,7 +10,10 @@ import (
 
 // A1-06: departure must not leave proposals after the first 500.
 func TestDepartureCancelsMoreThanFiveHundredProposals(t *testing.T) {
-	w := newWorld(t, nil)
+	// The default per-member open-proposal cap (200) would stop setup
+	// before 501 proposals exist. Raise it here; the cap itself is covered
+	// by its own tests and the production default is unchanged.
+	w := newWorldCfg(t, nil, func(c *service.Config) { c.MaxOpenProposalsPerMember = 1000 })
 	const count = 501
 	ids := make([]string, 0, count)
 	for i := 0; i < count; i++ {
