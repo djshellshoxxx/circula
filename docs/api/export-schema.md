@@ -37,6 +37,30 @@ network currency; each also has a `<column>_formatted` twin as a decimal string 
 For the JSON format `rows` is the total number of table rows in the document. Verification (DAT-040) recomputes `bytes`,
 `sha256` and `rows` for every listed file; any mismatch fails.
 
+## Final closure checkpoints
+
+The closure checkpoint version is separate from this package's `schema_version`. The network API exposes it as
+`closure.final_export.version`; the verification response uses `checkpoint_version`.
+
+- **Checkpoint version 1** hashes the JSON `ledger` package using export schema 1, with `generated_at` fixed to the
+  persisted closure `closed_at` in UTC. The closure digest is SHA-256 of one line per manifest file in manifest order:
+  `name<TAB>rows<TAB>sha256<LF>`. Per-file hashes cover every serialized byte. Checkpoint creation and verification stream
+  through the ordinary export writer to a discard sink; they retain the manifest and running reconciliation totals,
+  not the serialized ledger. Authorization, export quota and auditing still apply. The reconciliation summary and
+  ledger sequence are read from the same snapshot as the hashed rows.
+- **Version 0** identifies an existing unversioned checkpoint. Older writers included their current generation time
+  in the hashed JSON but did not save that exact time. `closed_at` cannot reconstruct it: completion and export are
+  separate operations, and an export may have been retried later. These hashes remain unchanged. Online verification
+  returns `409 invalid-transaction-state` with a legacy-checkpoint explanation, rather than reporting a mismatch or
+  claiming verification. An unsupported version likewise returns 409. A retained original export package can still
+  be checked against its own manifest with the reference reader and against the stored closure digest.
+
+Ordinary downloads continue to report the actual generation time. Their bytes may therefore differ from a closure
+checkpoint even when the underlying ledger is unchanged. Elapsed time and process restart alone do not change a
+version 1 checkpoint. Actual changes to covered data change its digest; after personal-data erasure a difference may
+be expected. Future changes to exported bytes must retain the version 1 checkpoint representation or introduce a new
+checkpoint version with its own verifier. No upgrade silently replaces a historical checksum.
+
 ## Reconciliation summary
 
 `reconciliation` lets a recipient check the exported entries against the balances without the application (GOV-022,

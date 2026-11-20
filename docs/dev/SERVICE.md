@@ -384,10 +384,14 @@ func (s *Service) CancelClosure(ctx context.Context, actor domain.Actor, netID, 
 func (s *Service) FinaliseClosures(ctx context.Context, actor domain.Actor) (int, error)
 // FinaliseClosures (System actor, hourly job) cancels open proposals with notices, completes closures with no
 // unresolved dispute and records the final ledger export checksum (SHA-256 over "name TAB rows TAB sha256" lines
-// of the manifest) with the entries sum and balance total.
+// of the manifest) with the entries sum and balance total. The current announcement, due date and consistency
+// freeze are rechecked in the write transaction before any effects. Checkpoint version 1 streams export schema 1
+// JSON with generated_at fixed to persisted ClosedAt; the reconciliation summary comes from that same snapshot.
 
 func (s *Service) VerifyClosureExport(ctx context.Context, actor domain.Actor, netID string) (*ClosureCheck, error)
-// VerifyClosureExport recomputes that checksum (administrator).
+// VerifyClosureExport recomputes that checksum (administrator), retaining no serialized ledger. It returns
+// invalid-transaction-state for legacy version 0 (original generation time unavailable) or unsupported versions,
+// without rewriting the stored hash; those cases are distinct from a successful comparison with Match=false.
 
 func (s *Service) EraseClosedNetworks(ctx context.Context, actor domain.Actor) (int, error)
 // EraseClosedNetworks (System actor) runs 90 days after completion: marks remaining members departed (status only,

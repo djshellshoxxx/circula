@@ -7,6 +7,7 @@ import (
 
 // finalExportDTO is the final export record of a completed closure (GOV-025 e).
 type finalExportDTO struct {
+	Version           int    `json:"version"`
 	SHA256            string `json:"sha256"`
 	LedgerSeq         int64  `json:"ledger_seq"`
 	EntriesSumMinor   string `json:"entries_sum_minor"`
@@ -33,7 +34,7 @@ func toClosure(c *domain.Closure) *closureDTO {
 		t, u := c.ClosedAt, c.ReadOnlyUntil()
 		d.ClosedAt, d.ReadOnlyUntil = tsPtr(&t), tsPtr(&u)
 		if c.FinalSHA256 != "" {
-			d.FinalExport = &finalExportDTO{SHA256: c.FinalSHA256, LedgerSeq: c.FinalLedgerSeq,
+			d.FinalExport = &finalExportDTO{Version: c.FinalExportVersion, SHA256: c.FinalSHA256, LedgerSeq: c.FinalLedgerSeq,
 				EntriesSumMinor: minor(c.FinalEntriesSum), BalanceTotalMinor: minor(c.FinalBalanceTotal)}
 		}
 	}
@@ -76,7 +77,7 @@ func (s *server) verifyClosure(c *reqCtx) error { // GOV-025 e
 	if err != nil {
 		return err
 	}
-	return ok(c, 200, map[string]any{"stored_sha256": chk.Stored, "recomputed_sha256": chk.Recomputed, "match": chk.Match,
+	return ok(c, 200, map[string]any{"checkpoint_version": chk.Version, "stored_sha256": chk.Stored, "recomputed_sha256": chk.Recomputed, "match": chk.Match,
 		"ledger_seq": chk.LedgerSeq, "entries_sum_minor": minor(chk.EntriesSum), "balance_total_minor": minor(chk.BalanceTotal), "erased": chk.Erased})
 }
 

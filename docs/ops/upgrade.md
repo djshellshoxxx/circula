@@ -126,6 +126,21 @@ Review these before you restart; each is a behaviour change, not a schema change
 Upgrades are tested from the first schema: `TestUpgradeFromMigration0001` builds a database as migration 0001 wrote it,
 runs `circula migrate` and checks the data, SQLite integrity and foreign keys, and ledger and audit-chain verification.
 
+## Closure checkpoint versioning (migration 0022)
+
+Migration `0022_closure_export_version` adds a version column to the closure record and sets existing rows to version 0.
+It does not rewrite stored checksums, closure dates, reconciliation totals, ledger rows or audit history. A closure that
+already has a checksum remains a legacy checkpoint. Its original JSON export included a generation timestamp that was
+not saved, so the online verifier returns `409 invalid-transaction-state` with a legacy-checkpoint explanation instead
+of treating it as either verified or mismatched. Retain original export packages and their manifests for offline checks;
+do not replace a historical hash with a newly generated one.
+
+New checkpoints use version 1 and the persisted `closed_at` as the JSON export's generation timestamp. An unchanged
+ledger can therefore be verified after elapsed time and restart. A closure that completed without saving a checksum
+because of an earlier failure is retried with version 1; an existing checksum is never a retry candidate. The checkpoint
+version is distinct from export schema version 1. Ordinary downloads retain their actual generation timestamps. See
+[the export schema](../api/export-schema.md#final-closure-checkpoints) for the byte representation and compatibility rules.
+
 ## Migration mode
 
 - `explicit` (default, recommended, and required for hosted deployments): migrations of an existing database run only

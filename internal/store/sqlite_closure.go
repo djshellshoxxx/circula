@@ -16,13 +16,13 @@ func zfrom(v int64) time.Time {
 }
 
 const closureCols = `network_id,reason,scheduled_by,scheduled_at,closing_at,notice_days,read_only_days,closed_at,
-	final_ledger_seq,final_sha256,final_balance_total,final_entries_sum,erased_at`
+	final_export_version,final_ledger_seq,final_sha256,final_balance_total,final_entries_sum,erased_at`
 
 func scanClosure(r rowScanner) (*domain.Closure, error) {
 	var c domain.Closure
 	var sched, closing, closed, erased int64
 	if err := r.Scan(&c.NetworkID, &c.Reason, &c.ScheduledBy, &sched, &closing, &c.NoticeDays, &c.ReadOnlyDays, &closed,
-		&c.FinalLedgerSeq, &c.FinalSHA256, &c.FinalBalanceTotal, &c.FinalEntriesSum, &erased); err != nil {
+		&c.FinalExportVersion, &c.FinalLedgerSeq, &c.FinalSHA256, &c.FinalBalanceTotal, &c.FinalEntriesSum, &erased); err != nil {
 		return nil, err
 	}
 	c.ScheduledAt, c.ClosingAt, c.ClosedAt, c.ErasedAt = fromMS(sched), fromMS(closing), zfrom(closed), zfrom(erased)
@@ -61,9 +61,9 @@ func (t *txImpl) SetClosureDone(netID string, at time.Time) error {
 	return err
 }
 
-func (t *txImpl) SetClosureFinal(netID string, seq int64, sha string, bal, sum int64) error {
-	_, err := t.exec(`UPDATE network_closures SET final_ledger_seq = ?, final_sha256 = ?, final_balance_total = ?, final_entries_sum = ?
-		WHERE network_id = ?`, seq, sha, bal, sum, netID)
+func (t *txImpl) SetClosureFinal(netID string, version int, seq int64, sha string, bal, sum int64) error {
+	_, err := t.exec(`UPDATE network_closures SET final_export_version = ?, final_ledger_seq = ?, final_sha256 = ?, final_balance_total = ?, final_entries_sum = ?
+		WHERE network_id = ?`, version, seq, sha, bal, sum, netID)
 	return err
 }
 

@@ -30,10 +30,13 @@ type Closure struct {
 	ClosedAt     time.Time // zero until the closure completes
 
 	// Final export (GOV-025 e): the checksum covers the ledger package manifest.
-	FinalLedgerSeq    int64
-	FinalSHA256       string
-	FinalBalanceTotal int64
-	FinalEntriesSum   int64
+	// Version 0 is an unversioned legacy checkpoint. Version 1 fixes the JSON
+	// generated_at to ClosedAt, so unchanged data can be verified later.
+	FinalExportVersion int
+	FinalLedgerSeq     int64
+	FinalSHA256        string
+	FinalBalanceTotal  int64
+	FinalEntriesSum    int64
 
 	ErasedAt time.Time // zero until the post-period erasure ran
 }

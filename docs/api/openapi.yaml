@@ -2690,9 +2690,13 @@ paths:
       summary: Recompute the final export checksum (GOV-025)
       description: |
         Administrator only. Recomputes the checksum of the ledger export and compares it with the one
-        stored when the closure completed. 409 until the closure has completed. After the erasure the
-        recomputed value legitimately differs (erased is true). The checksum is SHA-256 over one line per
-        file of the export manifest ("name TAB rows TAB sha256").
+        stored when the closure completed. Checkpoint version 1 uses JSON ledger export schema 1 and
+        fixes generated_at to the persisted closed_at, so elapsed time and a restart do not change the
+        digest. Ordinary downloads retain their actual generation time. Returns 409 until a checkpoint
+        exists, for unversioned legacy checkpoints (version 0, whose generation time was not saved), or
+        for an unsupported checkpoint version; those cases are not a checksum mismatch and the stored
+        hash is unchanged. After erasure the recomputed value may legitimately differ (erased is true).
+        The checksum is SHA-256 over one line per file of the export manifest ("name TAB rows TAB sha256").
       security:
         - cookieAuth: []
           csrfToken: []
@@ -2706,9 +2710,10 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [stored_sha256, recomputed_sha256, match, ledger_seq, entries_sum_minor, balance_total_minor, erased]
+                required: [checkpoint_version, stored_sha256, recomputed_sha256, match, ledger_seq, entries_sum_minor, balance_total_minor, erased]
                 additionalProperties: false
                 properties:
+                  checkpoint_version: {type: integer, const: 1}
                   stored_sha256: {type: string}
                   recomputed_sha256: {type: string}
                   match: {type: boolean}
@@ -3507,9 +3512,13 @@ components:
           description: The final ledger export record (GOV-025 e); null until produced.
           oneOf:
             - type: object
-              required: [sha256, ledger_seq, entries_sum_minor, balance_total_minor]
+              required: [version, sha256, ledger_seq, entries_sum_minor, balance_total_minor]
               additionalProperties: false
               properties:
+                version:
+                  type: integer
+                  minimum: 0
+                  description: 'Checkpoint representation: 0 is unversioned legacy; 1 fixes the JSON ledger export generation time to closed_at. This is separate from the downloadable export schema version.'
                 sha256: {type: string}
                 ledger_seq: {type: integer}
                 entries_sum_minor: {$ref: '#/components/schemas/Money'}
