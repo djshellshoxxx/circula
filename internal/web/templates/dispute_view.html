@@ -46,7 +46,7 @@
     <option value="upheld"{{if eq ($.Val "outcome") "upheld"}} selected{{end}}>{{msg "dispute.rereview_upheld_option"}}</option>
     <option value="partially_upheld"{{if eq ($.Val "outcome") "partially_upheld"}} selected{{end}}>{{msg "dispute.partial_option"}}</option></select></div>
   {{template "field" dict "P" $ "Name" "amount" "Label" (msg "dispute.amount_label") "Hint" (msg "dispute.amount_hint" $.Dec) "Mode" "decimal"}}
-  {{template "field" dict "P" $ "Name" "rationale" "Label" (msg "dispute.rationale") "Hint" (msg "dispute.rationale_hint") "Type" "textarea" "Max" 2000 "Req" true}}
+  {{template "field" dict "P" $ "Name" "rationale" "Label" (msg "dispute.rationale") "Hint" (msg "dispute.rationale_hint") "Type" "textarea" "Req" true}}
   <div class="actions"><button type="submit" name="step" value="review">{{msg "dispute.rereview_review_action"}}</button></div>
 </form>
 {{end}}
@@ -60,7 +60,7 @@
     <option value="upheld"{{if eq ($.Val "outcome") "upheld"}} selected{{end}}>{{msg "dispute.upheld_option"}}</option>
     <option value="partially_upheld"{{if eq ($.Val "outcome") "partially_upheld"}} selected{{end}}>{{msg "dispute.partial_option"}}</option></select></div>
   {{template "field" dict "P" $ "Name" "amount" "Label" (msg "dispute.amount_label") "Hint" (msg "dispute.amount_hint" $.Dec) "Mode" "decimal"}}
-  {{template "field" dict "P" $ "Name" "rationale" "Label" (msg "dispute.rationale") "Hint" (msg "dispute.rationale_hint") "Type" "textarea" "Max" 2000 "Req" true}}
+  {{template "field" dict "P" $ "Name" "rationale" "Label" (msg "dispute.rationale") "Hint" (msg "dispute.rationale_hint") "Type" "textarea" "Req" true}}
   <div class="field"><label><input type="checkbox" name="waive_response" value="1"{{if $.Val "waive_response"}} checked{{end}}> {{msg "dispute.waive_response"}}</label></div>
   {{template "field" dict "P" $ "Name" "waive_reason" "Label" (msg "dispute.waive_reason") "Hint" (msg "dispute.waive_hint") "Max" 500}}
   <div class="actions"><button type="submit">{{msg "dispute.review_decision"}}</button></div>

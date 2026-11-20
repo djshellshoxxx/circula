@@ -111,7 +111,8 @@ func TestDisputeOpeningCatalogueFormControls(t *testing.T) {
 	body := renderDisputeTemplate(t, "dispute_form", p)
 	requireDisputeText(t, body, `action="/n/town/trades/trade-123/dispute" novalidate`, `name="csrf" value="csrf-value"`,
 		`name="idem" value="idem-value"`, `name="step" value="review"`, `<label for="f-statement">What went wrong?</label>`,
-		`maxlength="2000" aria-invalid="true" aria-describedby="h-statement e-statement" required`,
+		`rows="4" aria-invalid="true" aria-describedby="h-statement e-statement" required`,
+		`id="h-statement">Up to 2000 characters. The other party and the reviewer will read this.</p>`,
 		`<option value="quality" selected>Not as described or poor quality</option>`, string(deadline), unsafe+"</textarea>")
 	if strings.Contains(body, "<img") {
 		t.Fatal("opening form rendered statement as markup")
@@ -176,7 +177,8 @@ func TestDisputeDetailCatalogueConditionalControls(t *testing.T) {
 			requireDisputeText(t, body, tc.want...)
 			if tc.flag == "Decide" || tc.flag == "DecideReRev" {
 				requireDisputeText(t, body, `value="90071992547409.93" inputmode="decimal"`, "Amount in credits, up to 2 decimal places.",
-					`aria-describedby="h-rationale" required`, unsafe+"</textarea>")
+					`<textarea id="f-rationale" name="rationale" rows="4" aria-describedby="h-rationale" required`,
+					`id="h-rationale">Required. Both parties will see it.</p>`, unsafe+"</textarea>")
 			}
 			if strings.Contains(body, "<img") || !strings.Contains(body, template.HTMLEscapeString(unsafe)) {
 				t.Fatal("retained form text crossed the escaping boundary")

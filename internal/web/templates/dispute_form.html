@@ -14,7 +14,7 @@
   {{template "csrf" $}}{{template "idem" $}}
   <input type="hidden" name="step" value="review">
   {{template "select" dict "P" $ "Name" "category" "Label" (msg "dispute.reason") "Opts" .Cats}}
-  {{template "field" dict "P" $ "Name" "statement" "Label" (msg "dispute.statement_label") "Hint" (msg "dispute.statement_hint") "Type" "textarea" "Max" 2000 "Req" true}}
+  {{template "field" dict "P" $ "Name" "statement" "Label" (msg "dispute.statement_label") "Hint" (msg "dispute.statement_hint") "Type" "textarea" "Req" true}}
   <div class="actions"><button type="submit">{{msg "dispute.review_action"}}</button> <a class="btn secondary" href="/n/{{$.Slug}}/trades/{{.TxID}}">{{msg "dispute.cancel"}}</a></div>
 </form>
 {{end}}

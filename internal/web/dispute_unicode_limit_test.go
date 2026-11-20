@@ -14,6 +14,28 @@ import (
 // two-, three-, and four-byte characters at its exact 2,000-character bound.
 func disputeTextAtLimit() string { return strings.Repeat("é文😀", 666) + "é文" }
 
+// Native maxlength counts UTF-16 code units, so it would prevent valid
+// supplementary-plane characters from reaching the service's code-point check.
+func requireDisputeCharacterInput(t *testing.T, p *pg, name, hint string) {
+	t.Helper()
+	for _, control := range controlRe.FindAllStringSubmatch(p.Body, -1) {
+		if control[1] != "textarea" || !strings.Contains(control[2], `name="`+name+`"`) {
+			continue
+		}
+		if strings.Contains(control[2], "maxlength=") {
+			t.Errorf("%s has a native UTF-16 length limit", name)
+		}
+		if !strings.Contains(control[2], " required") || !strings.Contains(control[2], `aria-describedby="h-`+name+`"`) {
+			t.Errorf("%s lost its required marker or hint association", name)
+		}
+		if !strings.Contains(p.Body, `id="h-`+name+`">`+hint+`</p>`) {
+			t.Errorf("%s lost its visible guidance", name)
+		}
+		return
+	}
+	t.Fatalf("missing %s textarea", name)
+}
+
 // FR-070, UX-021: valid non-ASCII evidence follows the same review/confirm
 // path as ASCII. Refusing a longer statement must not open a dispute.
 func TestDisputeStatementCharacterLimitMatchesService(t *testing.T) {
@@ -23,6 +45,7 @@ func TestDisputeStatementCharacterLimitMatchesService(t *testing.T) {
 	br.login("alice@example.org")
 	path := w.base() + "/trades/" + tx.ID + "/dispute"
 	form := br.get(path)
+	requireDisputeCharacterInput(t, form, "statement", "Up to 2000 characters. The other party and the reviewer will read this.")
 	statement := disputeTextAtLimit()
 	for _, step := range []string{"review", "confirm"} {
 		invalid := br.post(path, form, url.Values{"category": {"quality"}, "statement": {statement + "文"}, "step": {step}})
@@ -63,6 +86,7 @@ func TestDisputeRationaleCharacterLimitMatchesService(t *testing.T) {
 	br.login("admin@example.org")
 	path := w.base() + "/disputes/" + d.ID
 	form := br.get(path)
+	requireDisputeCharacterInput(t, form, "rationale", "Required. Both parties will see it.")
 	rationale := disputeTextAtLimit()
 	for _, overLimit := range []string{rationale + "文", " " + rationale} {
 		for _, step := range []string{"review", "confirm"} {
@@ -102,6 +126,7 @@ func TestReReviewRationaleCharacterLimitMatchesService(t *testing.T) {
 	br.login("second@example.org")
 	path := w.base() + "/disputes/" + id
 	form := br.get(path)
+	requireDisputeCharacterInput(t, form, "rationale", "Required. Both parties will see it.")
 	rationale := disputeTextAtLimit()
 	invalid := br.post(path+"/rereview-decide", form, url.Values{"outcome": {"confirmed"}, "rationale": {rationale + "文"}})
 	if invalid.Status != 422 {
