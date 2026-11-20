@@ -1,0 +1,395 @@
+=== RUN   TestDisputeStatementCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:41: 2,000-character statement review status = 422
+--- FAIL: TestDisputeStatementCharacterLimitMatchesService (2.62s)
+=== RUN   TestDisputeRationaleCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:81: 2,000-character rationale review status = 422
+--- FAIL: TestDisputeRationaleCharacterLimitMatchesService (1.82s)
+=== RUN   TestReReviewRationaleCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:112: 2,000-character re-review status = 422
+--- FAIL: TestReReviewRationaleCharacterLimitMatchesService (1.94s)
+=== RUN   TestTradeAcceptanceAvailablePreviewMatchesPosting
+=== RUN   TestTradeAcceptanceAvailablePreviewMatchesPosting/pay
+=== RUN   TestTradeAcceptanceAvailablePreviewMatchesPosting/request
+    trade_available_preview_test.go:36: page /n/town/trades/018f0000-0000-7000-8000-00000000001c/accept (status 200) lacks "<dt>Available to spend after posting</dt><dd>93.00</dd>"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review before accepting</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 5.00 credits</p>
+        <dl class="kv">
+          <dt>Payer</dt><dd>alice@example.org (member reference 0000-000E)</dd>
+          <dt>Payee</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>5.00 credits</dd>
+          
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance after posting</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−5.00</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 5.00 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>98.00</dd>
+          <dt>Available to spend after posting</dt><dd>98.00</dd>
+        </dl>
+        <p>Accepting posts this trade to both accounts straight away.</p>
+        <form method="post" action="/n/town/trades/018f0000-0000-7000-8000-00000000001c/accept">
+          <input type="hidden" name="csrf" value="0DDiyM6-zAP4GCH0gsiLu1qbFAKjrqv4AACSBXkZm5Q"><input type="hidden" name="idem" value="d08b98b674a049cf6ad2102735cc731d">
+          <div class="actions"><button type="submit">Confirm and accept</button> <a class="btn secondary" href="/n/town/trades/018f0000
+--- FAIL: TestTradeAcceptanceAvailablePreviewMatchesPosting (4.20s)
+    --- PASS: TestTradeAcceptanceAvailablePreviewMatchesPosting/pay (1.64s)
+    --- FAIL: TestTradeAcceptanceAvailablePreviewMatchesPosting/request (2.55s)
+=== RUN   TestTradeProposalReviewChecksAmountLimit
+    trade_preview_bounds_test.go:28: pay amount 1000000.01 review status = 200
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "href=\"#f-amount\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 1000000.01 credits</p>
+        <div class="notice" role="note">This is more than your available to spend (100.00). It will be refused if you send it. Go back and enter a smaller amount.</div>
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>1000000.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−1000000.01</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 1000000.01 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>−999900.01 (the amount is set aside while the trade is pending)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3szgfm-uPTa0G6JE-xZbk"><input type="hidden" name="idem
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "largest single trade"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 1000000.01 credits</p>
+        <div class="notice" role="note">This is more than your available to spend (100.00). It will be refused if you send it. Go back and enter a smaller amount.</div>
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>1000000.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−1000000.01</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 1000000.01 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>−999900.01 (the amount is set aside while the trade is pending)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3szgfm-uPTa0G6JE-xZbk"><input type="hidden" name="idem
+    trade_preview_bounds_test.go:32: an over-limit amount received a confirmation control
+    trade_preview_bounds_test.go:28: pay amount 92233720368547758.07 review status = 200
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "href=\"#f-amount\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 92233720368547758.07 credits</p>
+        <div class="notice" role="note">This is more than your available to spend (100.00). It will be refused if you send it. Go back and enter a smaller amount.</div>
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>92233720368547758.07 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−92233720368547758.07</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 92233720368547758.07 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>−92233720368547658.07 (the amount is set aside while the trade is pending)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3sz
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "largest single trade"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 92233720368547758.07 credits</p>
+        <div class="notice" role="note">This is more than your available to spend (100.00). It will be refused if you send it. Go back and enter a smaller amount.</div>
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>92233720368547758.07 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−92233720368547758.07</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 92233720368547758.07 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>−92233720368547658.07 (the amount is set aside while the trade is pending)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3sz
+    trade_preview_bounds_test.go:32: an over-limit amount received a confirmation control
+    trade_preview_bounds_test.go:28: request amount 1000000.01 review status = 200
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "href=\"#f-amount\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">bob@example.org pays you 1000000.01 credits</p>
+        
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>1000000.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;1000000.01</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 1000000.01 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>100.00 (it rises only once the trade is accepted)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3szgfm-uPTa0G6JE-xZbk"><input type="hidden" name="idem" value="5bf1f7ee244e4209b2cf95503ddcaf6e">
+          <input type="hidden" name="counterparty_id" value="018f0000-0000-7000-8000-000000000015">
+          <input type="hidden" name="dire
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "largest single trade"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">bob@example.org pays you 1000000.01 credits</p>
+        
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>1000000.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;1000000.01</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 1000000.01 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>100.00 (it rises only once the trade is accepted)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3szgfm-uPTa0G6JE-xZbk"><input type="hidden" name="idem" value="5bf1f7ee244e4209b2cf95503ddcaf6e">
+          <input type="hidden" name="counterparty_id" value="018f0000-0000-7000-8000-000000000015">
+          <input type="hidden" name="dire
+    trade_preview_bounds_test.go:32: an over-limit amount received a confirmation control
+    trade_preview_bounds_test.go:28: request amount 92233720368547758.07 review status = 200
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "href=\"#f-amount\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">bob@example.org pays you 92233720368547758.07 credits</p>
+        
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>92233720368547758.07 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;92233720368547758.07</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 92233720368547758.07 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>100.00 (it rises only once the trade is accepted)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3szgfm-uPTa0G6JE-xZbk"><input type="hidden" name="idem" value="25089fb431966f1b3ee91943400761db">
+          <input type="hidden" name="counterparty_id" value="018f0000-0000-7000-8000-00000000
+    trade_preview_bounds_test.go:30: page /n/town/trades/new (status 200) lacks "largest single trade"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">bob@example.org pays you 92233720368547758.07 credits</p>
+        
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>92233720368547758.07 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">0.00</span> &middot; <strong>Level</strong></span><span class="sr">Level, zero credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;92233720368547758.07</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 92233720368547758.07 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>100.00</dd>
+          <dt>Available to spend after sending</dt><dd>100.00 (it rises only once the trade is accepted)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="uFsNWkKDI1FJo27943Wx9d3szgfm-uPTa0G6JE-xZbk"><input type="hidden" name="idem" value="25089fb431966f1b3ee91943400761db">
+          <input type="hidden" name="counterparty_id" value="018f0000-0000-7000-8000-00000000
+    trade_preview_bounds_test.go:32: an over-limit amount received a confirmation control
+--- FAIL: TestTradeProposalReviewChecksAmountLimit (1.80s)
+=== RUN   TestTradeProposalReviewChecksProjectedBalance
+    trade_preview_bounds_test.go:73: request out-of-range projected balance review status = 200
+    trade_preview_bounds_test.go:75: page /n/town/trades/new (status 200) lacks "href=\"#f-amount\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">bob@example.org pays you 0.01 credits</p>
+        
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>0.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;46116860184273879.04</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 46116860184273879.04 credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;46116860184273879.05</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 46116860184273879.05 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>46116860184273979.04</dd>
+          <dt>Available to spend after sending</dt><dd>46116860184273979.04 (it rises only once the trade is accepted)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="A90HjaDlFmpqgeabFKmB4PG-OkinKtCs44PpN1Z26Vg"><input type="hidden" name="idem" value="09d90c8ac197b6e0d47c4fefa249c634">
+          <input type="hidden" name="counterparty_
+    trade_preview_bounds_test.go:75: page /n/town/trades/new (status 200) lacks "supported range"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">bob@example.org pays you 0.01 credits</p>
+        
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>0.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;46116860184273879.04</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 46116860184273879.04 credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">&#43;46116860184273879.05</span> &middot; <strong>In credit</strong></span><span class="sr">In credit by 46116860184273879.05 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>46116860184273979.04</dd>
+          <dt>Available to spend after sending</dt><dd>46116860184273979.04 (it rises only once the trade is accepted)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" name="csrf" value="A90HjaDlFmpqgeabFKmB4PG-OkinKtCs44PpN1Z26Vg"><input type="hidden" name="idem" value="09d90c8ac197b6e0d47c4fefa249c634">
+          <input type="hidden" name="counterparty_
+    trade_preview_bounds_test.go:77: an out-of-range projected balance received a confirmation control
+    trade_preview_bounds_test.go:73: pay out-of-range projected balance review status = 200
+    trade_preview_bounds_test.go:75: page /n/town/trades/new (status 200) lacks "href=\"#f-amount\""
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 0.01 credits</p>
+        <div class="notice" role="note">This is more than your available to spend (−46116860184273779.04). It will be refused if you send it. Go back and enter a smaller amount.</div>
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>0.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−46116860184273879.04</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 46116860184273879.04 credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−46116860184273879.05</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 46116860184273879.05 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>−46116860184273779.04</dd>
+          <dt>Available to spend after sending</dt><dd>−46116860184273779.05 (the amount is set aside while the trade is pending)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" n
+    trade_preview_bounds_test.go:75: page /n/town/trades/new (status 200) lacks "supported range"
+        <main id="main" tabindex="-1">
+          <h1 id="page-title">Review your trade</h1>
+          <p id="figure-freshness">Page generated <time datetime="2026-03-01T12:00:00Z">1 Mar 2026, 12:00 UTC</time>. Figures are a snapshot and do not update automatically.</p>
+          <p id="figure-stale" class="notice" role="status" hidden data-offline-message="The browser reports that the connection is unavailable. The figures have not refreshed. {snapshot}" data-history-message="This earlier page was restored from browser history. The figures have not refreshed. {snapshot}"></p>
+          
+          
+          
+          
+          
+        
+        <p class="big">You pay bob@example.org 0.01 credits</p>
+        <div class="notice" role="note">This is more than your available to spend (−46116860184273779.04). It will be refused if you send it. Go back and enter a smaller amount.</div>
+        <dl class="kv">
+          <dt>With</dt><dd>bob@example.org (member reference 0000-0015)</dd>
+          <dt>Amount</dt><dd>0.01 credits</dd>
+          <dt>Your balance now</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−46116860184273879.04</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 46116860184273879.04 credits</span></span></dd>
+          <dt>Your balance if accepted</dt><dd><span class="bal"><span aria-hidden="true"><span class="num">−46116860184273879.05</span> &middot; <strong>In debt</strong></span><span class="sr">In debt by 46116860184273879.05 credits</span></span></dd>
+          <dt>Available to spend now</dt><dd>−46116860184273779.04</dd>
+          <dt>Available to spend after sending</dt><dd>−46116860184273779.05 (the amount is set aside while the trade is pending)</dd>
+          <dt>Expires</dt><dd>after 7 days if not answered</dd>
+        </dl>
+        
+        
+        <p>Nothing is posted until the other member accepts.</p>
+        <form method="post" action="/n/town/trades/new">
+          <input type="hidden" n
+    trade_preview_bounds_test.go:77: an out-of-range projected balance received a confirmation control
+--- FAIL: TestTradeProposalReviewChecksProjectedBalance (1.73s)
+=== RUN   TestTradeAcceptanceProjectedBalanceBoundaryAndReplay
+    trade_preview_bounds_test.go:92: out-of-range acceptance preview status = 200
+--- FAIL: TestTradeAcceptanceProjectedBalanceBoundaryAndReplay (1.21s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	15.434s
+FAIL

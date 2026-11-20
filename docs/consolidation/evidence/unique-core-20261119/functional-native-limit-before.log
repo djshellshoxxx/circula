@@ -1,0 +1,29 @@
+=== RUN   TestDisputeStatementCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:48: statement has a native UTF-16 length limit
+--- FAIL: TestDisputeStatementCharacterLimitMatchesService (2.35s)
+=== RUN   TestDisputeRationaleCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:89: rationale has a native UTF-16 length limit
+--- FAIL: TestDisputeRationaleCharacterLimitMatchesService (2.97s)
+=== RUN   TestReReviewRationaleCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:129: rationale has a native UTF-16 length limit
+--- FAIL: TestReReviewRationaleCharacterLimitMatchesService (2.15s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	7.599s
+=== RUN   TestDisputeOpeningCatalogueFormControls
+    dispute_templates_test.go:112: missing "rows=\"4\" aria-invalid=\"true\" aria-describedby=\"h-statement e-statement\" required" in dispute page
+--- FAIL: TestDisputeOpeningCatalogueFormControls (0.01s)
+=== RUN   TestDisputeDetailCatalogueConditionalControls
+=== RUN   TestDisputeDetailCatalogueConditionalControls/CanRespond
+=== RUN   TestDisputeDetailCatalogueConditionalControls/CanReReview
+=== RUN   TestDisputeDetailCatalogueConditionalControls/Decide
+    dispute_templates_test.go:179: missing "<textarea id=\"f-rationale\" name=\"rationale\" rows=\"4\" aria-describedby=\"h-rationale\" required" in dispute page
+=== RUN   TestDisputeDetailCatalogueConditionalControls/DecideReRev
+    dispute_templates_test.go:179: missing "<textarea id=\"f-rationale\" name=\"rationale\" rows=\"4\" aria-describedby=\"h-rationale\" required" in dispute page
+--- FAIL: TestDisputeDetailCatalogueConditionalControls (0.02s)
+    --- PASS: TestDisputeDetailCatalogueConditionalControls/CanRespond (0.00s)
+    --- PASS: TestDisputeDetailCatalogueConditionalControls/CanReReview (0.00s)
+    --- FAIL: TestDisputeDetailCatalogueConditionalControls/Decide (0.00s)
+    --- FAIL: TestDisputeDetailCatalogueConditionalControls/DecideReRev (0.00s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web/messages	0.051s
+FAIL

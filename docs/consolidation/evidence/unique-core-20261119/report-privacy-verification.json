@@ -1,0 +1,51 @@
+{
+  "task": "WAPI-01: preserve reporter confidentiality from member and listing subjects with administrator authority",
+  "base_commit": "18a33b9cf283e01e1bf594e6f5f1dbce8c771ab2",
+  "commit": "1c8a4777f9eee5e1076c7581228c2501ec38b0cb",
+  "branch": "fix/report-subject-conflicts-20261120",
+  "worktree": "/workspace/scratch/4d30fa819181/circula-report-privacy",
+  "environment": {
+    "go": "1.26.11",
+    "GOMAXPROCS": "1",
+    "GOGC": "25",
+    "GOMEMLIMIT": "512MiB",
+    "CGO_ENABLED": "1",
+    "GOTOOLCHAIN": "local"
+  },
+  "verification": {
+    "exit_code": 0,
+    "top_level_passes": 22,
+    "subtest_passes": 44,
+    "failed_tests": 0,
+    "skipped_tests": 0,
+    "race_reports": 0,
+    "log": "/workspace/scratch/4d30fa819181/analysis/report-privacy-tests.log",
+    "sha256": "c3cd11ea5b200a9e05caaaf837dfc03ade99af5a5822aa88778945b8a8dc60e5",
+    "command": "go test -race -p 1 -count=1 -v -run '^(TestReport.*|TestHandleReport|TestCachedRouteReplayAuthorizationInventory|TestReplayRechecksAdministratorRole|TestExportRechecksNetworkAuthorityAtSnapshot|TestMemberExportIsScoped)$' -timeout 4m ./internal/service ./internal/api ./internal/web",
+    "packages": [
+      "ok  \tgithub.com/djshellshoxxx/circula/internal/service\t33.761s",
+      "ok  \tgithub.com/djshellshoxxx/circula/internal/api\t7.389s",
+      "ok  \tgithub.com/djshellshoxxx/circula/internal/web\t7.289s"
+    ],
+    "fixture_scope": "Ordinary local role-overlap fixtures on the corrected implementation; no vulnerability reproduction against an unpatched service."
+  },
+  "format_and_diff_checks": "gofmt -l empty; git diff --check passed; working tree clean after commit",
+  "files": {
+    "docs/consolidation/REPORT_PRIVACY_20261120.md": "75b9fac7f6440037591db70499155f1d2a32d69128d945d8bbb39caf051ea51b",
+    "internal/api/replay_auth.go": "b59e364be704b2bcce8c6decfae8dcdf1aa01418b9257051b4197045f43b16cc",
+    "internal/api/report_privacy_test.go": "fe163a64e0d74c15679886e1666b578e781673f2f101cdc4086a714102727326",
+    "internal/repository/iface.go": "ebef0e206fb0da46da34c48632bed7ca6cd7414cb4ee60b2ed0e94dab0e501a0",
+    "internal/repository/iface_notify.go": "eed4d0e92e12464f0123ae5041fd46555645593191aaea8815ff87983b810512",
+    "internal/service/audit_read.go": "d9bf1eaa6d6bb07b6a077e133f477627ee7370df2c582c1ae251b4392f01dd01",
+    "internal/service/export.go": "00da95b5ad69fd2cd370c04cbdc5747ae070e0ed48d6245f8c9054743e6bd143",
+    "internal/service/replay_auth.go": "ad724d4f678e4ffce39c59512c1472b1855570d924a0acfa28fc839d9c10132f",
+    "internal/service/report_privacy_test.go": "19fbdf7e9c268d272c4903c0e3e5f9f4b8eb7ee1932d40d5bdf44fc5c02372c5",
+    "internal/service/reports.go": "bc39c52df955d2e88976ecbb1813b970cce485a97e203d6586febaac0ebd34e1",
+    "internal/store/sqlite_audit.go": "837358dd210078dfe0c0962b6273e23dacce41d4a92afb875b4f340d5088cf69",
+    "internal/store/sqlite_notify.go": "3c3d7098e7f3b1a80179b743b3e4feb62d8982c4f2bbe1848539cd4e2708570c",
+    "internal/web/report_privacy_test.go": "3a1f637bdc713e7cd7de704607b8946a628ba2beeb860da352e943752f16597d"
+  },
+  "scope": "Nine production files, three focused test files, one maintained note. No schema, new privilege, additional report type, stored-audit mutation, or export writer changes. No remote writes. Full repository suite and remote CI are not claimed.",
+  "integration_note": "The sole export.go edit is within authorizeExport, independent of the closure worker public/private export timestamp wrapper. Replay files were confirmed outside the authority worker scope.",
+  "held": "All-conflicted operational escalation has no dedicated operator report command or established procedure. Existing System service authority is retained; no policy or privilege is invented. Retained handled reports continue to restrict their subjects from complete audit/full exports."
+}

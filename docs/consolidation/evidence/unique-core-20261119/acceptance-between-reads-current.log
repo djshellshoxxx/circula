@@ -1,0 +1,6 @@
+=== RUN   TestReviewerAcceptanceCommitBetweenPreviewReads
+    reviewer_acceptance_snapshot_test.go:94: same-key acceptance committed between reads returned 422, want successful replay
+--- FAIL: TestReviewerAcceptanceCommitBetweenPreviewReads (1.75s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	1.801s
+FAIL

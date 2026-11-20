@@ -1,0 +1,38 @@
+{
+  "source_base": "acdc3485ad9c7355050f12b426c973b45a5f42b8",
+  "commit": "acaf8610b870d2ff913cebcd350f0a15c209e2a1",
+  "scope": "Complete local operator JSON files: config parsing/preflight and audit-anchor verification",
+  "before": {
+    "config_failed_subcases": 9,
+    "anchor_failed_subcases": 6,
+    "first_attempt": "killed after config assertions before anchor cases; not a complete test result",
+    "anchor_retry": "completed with expected assertion failures"
+  },
+  "after": {
+    "exit_code": 0,
+    "top_level_passed": 6,
+    "subcases_passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "race_report": false,
+    "package_seconds": 3.415
+  },
+  "environment": {
+    "go": "1.26.11",
+    "CGO_ENABLED": "1",
+    "GOMAXPROCS": "1",
+    "GOGC": "20",
+    "GOMEMLIMIT": "384MiB"
+  },
+  "command": "go test -race -p 1 -count=1 -v -run '^Test(ConfigFileRequiresExactlyOneObject|ConfigFilePreservesWhitespaceAndScalarValues|ConfigPreflightRejectsIncompleteFileValidation|AuditAnchorRequiresExactlyOneObject|Precedence|UnknownFileKeyRejected)$' -timeout 3m ./cmd/circula",
+  "logs": {
+    "operator-json-before.log": "9a5a6ba5d0a3cf24e3d865dc6b79d14503b9de0f039dafc4e28fe800839d615e",
+    "operator-anchor-before.log": "a960beedcc751b84f9e4c014f2c34c07d23ccadbd1faf187fba3eba4f62f2b29",
+    "operator-json-after.log": "1bfb22aa475fa65f0498979d6dc821a1aa678b7e3c0cae165227a35f27d1d14b"
+  },
+  "limits": [
+    "Targeted package tests only, not combined-head or full CI qualification.",
+    "No remote writes or production systems exercised.",
+    "Original killed attempt remains inconclusive outside its observed config assertions."
+  ]
+}

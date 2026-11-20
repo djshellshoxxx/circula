@@ -566,7 +566,7 @@ These capabilities are **not** part of the MVP. No route, screen or configuratio
 | Third-party integrations (payments, accounting, identity providers, chat) | Not needed; adds trust boundaries | Architecture spec |
 | Email notifications | Open question OQ-VIS-4 | Product decision |
 | Mutual reversal without dispute (DOM-034) | Adds a consent path to reversals; requires further design | Domain review |
-| Tamper-evident audit chain (FR-085) | P2; integrity evidence beyond append-only | Audit design |
+| Keyed audit chains or automatic external publication beyond the as-built unkeyed chain (FR-085, DEC-044) | Further integrity features need an approved design; the existing unkeyed per-scope chain is already recorded as built, with owner confirmation still open | Audit design and owner confirmation |
 | Import of exported data (restore into a new network) | P2; needs conflict rules | Migration design |
 | Recurring or subscription trades; escrow; multi-party trades | Would change the two-entry trade model | Domain review |
 | Multi-currency or multiple units within one network | Would change balance semantics | Domain review |

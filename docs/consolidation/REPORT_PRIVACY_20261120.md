@@ -1,9 +1,9 @@
-# Report subject confidentiality — 2026-11-20
+# Report subject confidentiality — 2026-11-19 Pacific
 
 ## Scope and contract
 
 This follow-up completes the ordinary role-overlap protection in WAPI-01 from
-the [read-only web/API audit](../audits/read-only-security-2026-11-19/WEB_API.md).
+the [read-only web/API audit](https://github.com/djshellshoxxx/circula/blob/896d69f472652ed54c051ec82efcb7f162d1d2c4/docs/audits/read-only-security-2026-11-19/WEB_API.md).
 [FR-024](../specs/04-functional-requirements.md#fr-024--p1--report-a-listing-or-member)
 and [SEC-025](../specs/09-security-privacy.md) require reporter confidentiality
 from the reported party. Gaining an administrator role does not remove that

@@ -1,0 +1,6 @@
+=== RUN   TestDisputeRationaleCharacterLimitMatchesService
+    dispute_unicode_limit_test.go:71: over-limit review status = 200
+--- FAIL: TestDisputeRationaleCharacterLimitMatchesService (6.08s)
+FAIL
+FAIL	github.com/djshellshoxxx/circula/internal/web	6.218s
+FAIL

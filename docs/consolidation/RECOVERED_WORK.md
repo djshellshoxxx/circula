@@ -2,18 +2,15 @@
 
 ## Current continuation
 
-Current integration authority, recovered source, actual test results and next
-actions are recorded in [CORE_VERIFICATION_20261119.md](CORE_VERIFICATION_20261119.md).
-The frozen UI candidate is retained in [CORE_UI_COMPLETION_20261119.md](CORE_UI_COMPLETION_20261119.md)
-and the first batch in [CONTINUATION_20261119.md](CONTINUATION_20261119.md).
-Main remains observed at `ead63b5`; published PR #112 at `08d4b00` targets
-PR #109 at `5db3efc`, which targets active PR #90 at `839e869`.
-The frozen UI source passes the complete normal suite (3,080 test/subtest events),
-ledger load smoke, binary and package-level vulnerability checks. Its full race
-run failed in the service package; exact failures and remaining gate states are
-preserved in the current record. The follow-up also carries the reconciled 41-test export reader, passing
-COMMIT acknowledgment-loss regression and exact secret-scanner evidence repair.
-The snapshot below is the historical initial recovery record.
+The current source, recovered implementation, completed repairs, verification
+boundaries and remaining gates are recorded in
+[UNIQUE_CORE_CONTINUATION_20261119.md](UNIQUE_CORE_CONTINUATION_20261119.md).
+The owned continuation is [PR #127](https://github.com/djshellshoxxx/circula/pull/127),
+which recovers PR #125 and adds the reviewed correctness repairs. Main was last
+observed at `aa01563f`. Complete combined qualification and a main merge remain
+pending in that record; focused worker passes do not qualify a later combination.
+All earlier reports and the snapshot below remain historical source-specific
+records. Existing future-module and policy holds continue to apply.
 
 ## Historical initial-recovery checkpoint
 

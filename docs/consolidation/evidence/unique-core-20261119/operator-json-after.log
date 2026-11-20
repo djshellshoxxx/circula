@@ -1,0 +1,66 @@
+=== RUN   TestPrecedence
+--- PASS: TestPrecedence (0.00s)
+=== RUN   TestUnknownFileKeyRejected
+--- PASS: TestUnknownFileKeyRejected (0.00s)
+=== RUN   TestConfigFileRequiresExactlyOneObject
+=== RUN   TestConfigFileRequiresExactlyOneObject/second_object
+=== RUN   TestConfigFileRequiresExactlyOneObject/second_array
+=== RUN   TestConfigFileRequiresExactlyOneObject/trailing_null
+=== RUN   TestConfigFileRequiresExactlyOneObject/trailing_text
+=== RUN   TestConfigFileRequiresExactlyOneObject/incomplete_second_value
+=== RUN   TestConfigFileRequiresExactlyOneObject/null
+=== RUN   TestConfigFileRequiresExactlyOneObject/array
+=== RUN   TestConfigFileRequiresExactlyOneObject/scalar
+=== RUN   TestConfigFileRequiresExactlyOneObject/unknown_field
+=== RUN   TestConfigFileRequiresExactlyOneObject/unsupported_setting_value
+--- PASS: TestConfigFileRequiresExactlyOneObject (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/second_object (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/second_array (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/trailing_null (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/trailing_text (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/incomplete_second_value (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/null (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/array (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/scalar (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/unknown_field (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/unsupported_setting_value (0.00s)
+=== RUN   TestConfigFilePreservesWhitespaceAndScalarValues
+--- PASS: TestConfigFilePreservesWhitespaceAndScalarValues (0.00s)
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/whole_object
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/concatenated_objects
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/trailing_text
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/null
+--- PASS: TestConfigPreflightRejectsIncompleteFileValidation (0.00s)
+    --- PASS: TestConfigPreflightRejectsIncompleteFileValidation/whole_object (0.00s)
+    --- PASS: TestConfigPreflightRejectsIncompleteFileValidation/concatenated_objects (0.00s)
+    --- PASS: TestConfigPreflightRejectsIncompleteFileValidation/trailing_text (0.00s)
+    --- PASS: TestConfigPreflightRejectsIncompleteFileValidation/null (0.00s)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/whole_signed_object
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/surrounding_whitespace
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/second_object
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/second_array
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/trailing_null
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/trailing_text
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/incomplete_second_value
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/null
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/array
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/scalar
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/unknown_field
+=== RUN   TestAuditAnchorRequiresExactlyOneObject/unsupported_version
+--- PASS: TestAuditAnchorRequiresExactlyOneObject (2.31s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/whole_signed_object (0.06s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/surrounding_whitespace (0.05s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/second_object (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/second_array (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/trailing_null (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/trailing_text (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/incomplete_second_value (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/null (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/array (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/scalar (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/unknown_field (0.00s)
+    --- PASS: TestAuditAnchorRequiresExactlyOneObject/unsupported_version (0.00s)
+PASS
+ok  	github.com/djshellshoxxx/circula/cmd/circula	3.415s

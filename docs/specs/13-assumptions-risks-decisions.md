@@ -202,7 +202,7 @@ The following are deferred. Each requires its own specification, decision record
 - Third-party integrations, including accounting exports beyond GOV-022
 - Dispute evidence uploads (GOV-017)
 - Member voting on policy (GOV-006, DEC-021)
-- Tamper-evident audit chain (SEC-034, DEC-015)
+- Further audit-chain features beyond the as-built unkeyed per-scope chain (SEC-034, DEC-015, DEC-044), including keyed chains or automatic external publication; DEC-044 owner confirmation remains open
 - Alternative databases and multi-node operation (OPS-005)
 - Code signing and notarisation (DEC-027)
 - Internationalisation beyond the initial language decided in 08

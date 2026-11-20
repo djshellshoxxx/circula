@@ -1,0 +1,56 @@
+=== RUN   TestClosureChecksumSinkDoesNotRetainOutput
+--- PASS: TestClosureChecksumSinkDoesNotRetainOutput (0.00s)
+=== RUN   TestClosureChecksumSinkReportsCancellation
+--- PASS: TestClosureChecksumSinkReportsCancellation (0.00s)
+=== RUN   TestClosureCheckpointPersistsAfterClockAdvanceAndRestart
+--- PASS: TestClosureCheckpointPersistsAfterClockAdvanceAndRestart (1.71s)
+=== RUN   TestClosureCheckpointDetectsChangedContent
+--- PASS: TestClosureCheckpointDetectsChangedContent (0.89s)
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/legacy_with_later_generation_time
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/legacy_with_coincidentally_equal_digest
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/unsupported
+--- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes (2.36s)
+    --- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/legacy_with_later_generation_time (0.80s)
+    --- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/legacy_with_coincidentally_equal_digest (0.79s)
+    --- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/unsupported (0.77s)
+=== RUN   TestClosureCheckpointCancellationIsRetryable
+--- PASS: TestClosureCheckpointCancellationIsRetryable (0.75s)
+=== RUN   TestClosureFinaliserRechecksAnnouncement
+=== RUN   TestClosureFinaliserRechecksAnnouncement/cancelled
+=== RUN   TestClosureFinaliserRechecksAnnouncement/replacement_still_in_notice
+=== RUN   TestClosureFinaliserRechecksAnnouncement/replacement_now_due
+--- PASS: TestClosureFinaliserRechecksAnnouncement (2.68s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/cancelled (0.81s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/replacement_still_in_notice (0.92s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/replacement_now_due (0.95s)
+=== RUN   TestClosureFinaliserChecksDeadlineAtWrite
+--- PASS: TestClosureFinaliserChecksDeadlineAtWrite (1.05s)
+=== RUN   TestClosureFinaliserRechecksFreeze
+--- PASS: TestClosureFinaliserRechecksFreeze (0.85s)
+=== RUN   TestClosureFinalExportRetriesAfterFailure
+--- PASS: TestClosureFinalExportRetriesAfterFailure (0.72s)
+=== RUN   TestClosureBlockersPreviewAndNotice
+--- PASS: TestClosureBlockersPreviewAndNotice (1.51s)
+=== RUN   TestClosureFinalExportChecksum
+--- PASS: TestClosureFinalExportChecksum (0.86s)
+=== RUN   TestClosureCancel
+--- PASS: TestClosureCancel (1.16s)
+=== RUN   TestClosureWaitsForDispute
+--- PASS: TestClosureWaitsForDispute (0.85s)
+=== RUN   TestClosureErasureAfterReadOnlyPeriod
+--- PASS: TestClosureErasureAfterReadOnlyPeriod (1.25s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	17.715s
+=== RUN   TestClosureCheckpointMigrationPreservesLegacyRecords
+--- PASS: TestClosureCheckpointMigrationPreservesLegacyRecords (1.13s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	2.154s
+=== RUN   TestClosureCheckpointVersionContract
+--- PASS: TestClosureCheckpointVersionContract (0.91s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	1.967s
+=== RUN   TestClosureCheckpointMatchesOpenAPI
+--- PASS: TestClosureCheckpointMatchesOpenAPI (1.54s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/contract	2.590s

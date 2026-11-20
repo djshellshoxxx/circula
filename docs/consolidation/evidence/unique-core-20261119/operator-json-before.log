@@ -1,0 +1,47 @@
+=== RUN   TestConfigFileRequiresExactlyOneObject
+=== RUN   TestConfigFileRequiresExactlyOneObject/second_object
+    operator_json_test.go:35: invalid complete file accepted: values=map[maintenance:true] err=<nil>
+=== RUN   TestConfigFileRequiresExactlyOneObject/second_array
+    operator_json_test.go:35: invalid complete file accepted: values=map[] err=<nil>
+=== RUN   TestConfigFileRequiresExactlyOneObject/trailing_null
+    operator_json_test.go:35: invalid complete file accepted: values=map[] err=<nil>
+=== RUN   TestConfigFileRequiresExactlyOneObject/trailing_text
+    operator_json_test.go:35: invalid complete file accepted: values=map[] err=<nil>
+=== RUN   TestConfigFileRequiresExactlyOneObject/incomplete_second_value
+    operator_json_test.go:35: invalid complete file accepted: values=map[] err=<nil>
+=== RUN   TestConfigFileRequiresExactlyOneObject/null
+    operator_json_test.go:35: invalid complete file accepted: values=map[] err=<nil>
+=== RUN   TestConfigFileRequiresExactlyOneObject/array
+=== RUN   TestConfigFileRequiresExactlyOneObject/scalar
+=== RUN   TestConfigFileRequiresExactlyOneObject/unknown_field
+=== RUN   TestConfigFileRequiresExactlyOneObject/unsupported_setting_value
+--- FAIL: TestConfigFileRequiresExactlyOneObject (0.00s)
+    --- FAIL: TestConfigFileRequiresExactlyOneObject/second_object (0.00s)
+    --- FAIL: TestConfigFileRequiresExactlyOneObject/second_array (0.00s)
+    --- FAIL: TestConfigFileRequiresExactlyOneObject/trailing_null (0.00s)
+    --- FAIL: TestConfigFileRequiresExactlyOneObject/trailing_text (0.00s)
+    --- FAIL: TestConfigFileRequiresExactlyOneObject/incomplete_second_value (0.00s)
+    --- FAIL: TestConfigFileRequiresExactlyOneObject/null (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/array (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/scalar (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/unknown_field (0.00s)
+    --- PASS: TestConfigFileRequiresExactlyOneObject/unsupported_setting_value (0.00s)
+=== RUN   TestConfigFilePreservesWhitespaceAndScalarValues
+--- PASS: TestConfigFilePreservesWhitespaceAndScalarValues (0.00s)
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/whole_object
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/concatenated_objects
+    operator_json_test.go:83: preflight code=0, want 2; stderr=
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/trailing_text
+    operator_json_test.go:83: preflight code=0, want 2; stderr=
+=== RUN   TestConfigPreflightRejectsIncompleteFileValidation/null
+    operator_json_test.go:83: preflight code=0, want 2; stderr=
+--- FAIL: TestConfigPreflightRejectsIncompleteFileValidation (0.00s)
+    --- PASS: TestConfigPreflightRejectsIncompleteFileValidation/whole_object (0.00s)
+    --- FAIL: TestConfigPreflightRejectsIncompleteFileValidation/concatenated_objects (0.00s)
+    --- FAIL: TestConfigPreflightRejectsIncompleteFileValidation/trailing_text (0.00s)
+    --- FAIL: TestConfigPreflightRejectsIncompleteFileValidation/null (0.00s)
+=== RUN   TestAuditAnchorRequiresExactlyOneObject
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	3.457s
+FAIL

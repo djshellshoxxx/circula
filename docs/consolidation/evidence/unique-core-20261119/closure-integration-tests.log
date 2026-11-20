@@ -1,0 +1,151 @@
+=== RUN   TestClosureCheckpointVersionContract
+--- PASS: TestClosureCheckpointVersionContract (0.05s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	0.068s
+=== RUN   TestClosureChecksumSinkDoesNotRetainOutput
+--- PASS: TestClosureChecksumSinkDoesNotRetainOutput (0.00s)
+=== RUN   TestClosureChecksumSinkReportsCancellation
+--- PASS: TestClosureChecksumSinkReportsCancellation (0.00s)
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/mine/csv
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/ledger/csv
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/full/csv
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/mine/json
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/ledger/json
+=== RUN   TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/full/json
+--- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum (0.62s)
+    --- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/mine/csv (0.13s)
+    --- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/ledger/csv (0.07s)
+    --- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/full/csv (0.07s)
+    --- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/mine/json (0.06s)
+    --- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/ledger/json (0.13s)
+    --- PASS: TestAdjustmentRelationPreservesLegacyExportBytesAndClosureChecksum/full/json (0.08s)
+=== RUN   TestClosureCheckpointPersistsAfterClockAdvanceAndRestart
+--- PASS: TestClosureCheckpointPersistsAfterClockAdvanceAndRestart (0.43s)
+=== RUN   TestClosureCheckpointDetectsChangedContent
+--- PASS: TestClosureCheckpointDetectsChangedContent (0.05s)
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/legacy
+=== RUN   TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/unsupported
+--- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes (0.09s)
+    --- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/legacy (0.05s)
+    --- PASS: TestClosureCheckpointRefusesUnversionedAndUnsupportedHashes/unsupported (0.05s)
+=== RUN   TestClosureCheckpointCancellationIsRetryable
+--- PASS: TestClosureCheckpointCancellationIsRetryable (0.06s)
+=== RUN   TestClosureFinaliserRechecksAnnouncement
+=== RUN   TestClosureFinaliserRechecksAnnouncement/cancelled
+=== RUN   TestClosureFinaliserRechecksAnnouncement/replacement_still_in_notice
+=== RUN   TestClosureFinaliserRechecksAnnouncement/replacement_now_due
+--- PASS: TestClosureFinaliserRechecksAnnouncement (0.12s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/cancelled (0.04s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/replacement_still_in_notice (0.04s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/replacement_now_due (0.04s)
+=== RUN   TestClosureFinaliserChecksDeadlineAtWrite
+--- PASS: TestClosureFinaliserChecksDeadlineAtWrite (0.08s)
+=== RUN   TestClosureFinaliserRechecksFreeze
+--- PASS: TestClosureFinaliserRechecksFreeze (0.32s)
+=== RUN   TestClosureFinalExportRetriesAfterFailure
+--- PASS: TestClosureFinalExportRetriesAfterFailure (0.04s)
+=== RUN   TestClosureBlockersPreviewAndNotice
+--- PASS: TestClosureBlockersPreviewAndNotice (0.07s)
+=== RUN   TestClosureFinalExportChecksum
+--- PASS: TestClosureFinalExportChecksum (0.05s)
+=== RUN   TestClosureCancel
+--- PASS: TestClosureCancel (0.32s)
+=== RUN   TestClosureWaitsForDispute
+--- PASS: TestClosureWaitsForDispute (0.04s)
+=== RUN   TestClosureErasureAfterReadOnlyPeriod
+--- PASS: TestClosureErasureAfterReadOnlyPeriod (0.04s)
+=== RUN   TestDepartureSettlementRefusedAfterClosure
+--- PASS: TestDepartureSettlementRefusedAfterClosure (0.05s)
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/members/json/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/members/json/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/members/json/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/removed
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/full/json/demoted_to_reviewer
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/full/json/suspended
+=== RUN   TestExportRechecksNetworkAuthorityAtSnapshot/full/json/removed
+--- PASS: TestExportRechecksNetworkAuthorityAtSnapshot (0.87s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/demoted_to_reviewer (0.05s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/suspended (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/csv/removed (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/demoted_to_reviewer (0.05s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/suspended (0.05s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/ledger/json/removed (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/demoted_to_reviewer (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/suspended (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/members/csv/removed (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/members/json/demoted_to_reviewer (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/members/json/suspended (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/members/json/removed (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/demoted_to_reviewer (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/suspended (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/audit/csv/removed (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/demoted_to_reviewer (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/suspended (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/audit/json/removed (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/demoted_to_reviewer (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/suspended (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/full/csv/removed (0.04s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/full/json/demoted_to_reviewer (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/full/json/suspended (0.03s)
+    --- PASS: TestExportRechecksNetworkAuthorityAtSnapshot/full/json/removed (0.03s)
+=== RUN   TestExportRefusesErasedMembership
+=== RUN   TestExportRefusesErasedMembership/csv/before_admission
+=== RUN   TestExportRefusesErasedMembership/csv/before_snapshot
+=== RUN   TestExportRefusesErasedMembership/json/before_admission
+=== RUN   TestExportRefusesErasedMembership/json/before_snapshot
+--- PASS: TestExportRefusesErasedMembership (0.13s)
+    --- PASS: TestExportRefusesErasedMembership/csv/before_admission (0.03s)
+    --- PASS: TestExportRefusesErasedMembership/csv/before_snapshot (0.03s)
+    --- PASS: TestExportRefusesErasedMembership/json/before_admission (0.04s)
+    --- PASS: TestExportRefusesErasedMembership/json/before_snapshot (0.03s)
+=== RUN   TestExportOwnHistorySurvivesMembershipChangeAtSnapshot
+=== RUN   TestExportOwnHistorySurvivesMembershipChangeAtSnapshot/suspended
+=== RUN   TestExportOwnHistorySurvivesMembershipChangeAtSnapshot/departed
+--- PASS: TestExportOwnHistorySurvivesMembershipChangeAtSnapshot (0.07s)
+    --- PASS: TestExportOwnHistorySurvivesMembershipChangeAtSnapshot/suspended (0.03s)
+    --- PASS: TestExportOwnHistorySurvivesMembershipChangeAtSnapshot/departed (0.04s)
+=== RUN   TestExportReconciliationSummary
+--- PASS: TestExportReconciliationSummary (0.05s)
+=== RUN   TestExportSchemaDocMatches
+--- PASS: TestExportSchemaDocMatches (0.03s)
+=== RUN   TestReferenceReader
+--- PASS: TestReferenceReader (0.14s)
+=== RUN   TestReferenceReaderMemberReconciliation
+--- PASS: TestReferenceReaderMemberReconciliation (0.13s)
+=== RUN   TestExportManifestFieldsDocumented
+--- PASS: TestExportManifestFieldsDocumented (0.03s)
+=== RUN   TestLedgerExportCSV
+--- PASS: TestLedgerExportCSV (0.03s)
+=== RUN   TestMemberExportIsScoped
+--- PASS: TestMemberExportIsScoped (0.03s)
+=== RUN   TestFullExportJSON
+--- PASS: TestFullExportJSON (0.04s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	3.984s
+=== RUN   TestClosureCheckpointMigrationPreservesLegacyRecords
+--- PASS: TestClosureCheckpointMigrationPreservesLegacyRecords (0.08s)
+=== RUN   TestGoldenMigrationV1With10000Transactions
+    golden_migration_test.go:224: DAT-048 migration v1->v22: 10000 transactions, 61 accounts: migrate 156ms, verify 130ms (fixture build 1.423s)
+--- PASS: TestGoldenMigrationV1With10000Transactions (1.88s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/store	1.991s

@@ -1,0 +1,4 @@
+ok  	github.com/djshellshoxxx/circula/internal/service	4.191s
+signal: killed
+FAIL	github.com/djshellshoxxx/circula/cmd/circula	3.966s
+FAIL

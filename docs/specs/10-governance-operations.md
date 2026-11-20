@@ -42,7 +42,7 @@ Summary: built 11, not built 6, partial 10.
 | GOV-014 | P0 | built | Statement and decision with reasons; response deadline and 14-day decision target shown to parties; a missed deadline decides nothing and reviewers are reminded once |
 | GOV-015 | P0 | built | Reversal and adjustment are new transactions; originals unchanged |
 | GOV-016 | P0 | built | Challenges to removal, credit-limit and listing decisions (non-involved decider, reasons, audit, notice); dispute appeal is the one re-review with its own period; objections to policy changes not built |
-| GOV-017 | P1 | built | No dispute upload route; Inspection targets: `internal/api/routes.go`, `internal/web/routes.go` and dispute input types; absence of an upload capability is not established by a dedicated test. No execution result is implied |
+| GOV-017 | P1 | built | No dispute upload route; Inspection targets: `internal/api/routes.go`, `internal/web/web.go`, `internal/web/h_disputes.go` and dispute input types; absence of an upload capability is not established by a dedicated test. No execution result is implied |
 | GOV-018 | P0 | partial | Trades continue within limits; write-off by approved adjustment not built (SEC-011) |
 | GOV-019 | P0 | built | Limit reduction posts nothing; increases refused |
 | GOV-020 | P0 | built | Last-admin guard; a network with no active administrator is read-only (administrator required) and visible to members |

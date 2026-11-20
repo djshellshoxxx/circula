@@ -1,0 +1,148 @@
+..FFFFFFFFFFFFF
+======================================================================
+FAIL: test_manifest_file_array_shrink_and_regrow_retains_fields (test_read_export.ReferenceExportTests.test_manifest_file_array_shrink_and_regrow_retains_fields)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 620, in test_manifest_file_array_shrink_and_regrow_retains_fields
+    self.assert_valid(*fixture(), fmt="csv", zipped=True, corrupt=update)
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={}, fmt='json', same_name=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={}, fmt='json', same_name=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={}, fmt='csv', same_name=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={}, fmt='csv', same_name=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later=None, fmt='json', same_name=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'NoneType' object is not subscriptable
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later=None, fmt='json', same_name=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'NoneType' object is not subscriptable
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later=None, fmt='csv', same_name=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'NoneType' object is not subscriptable
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later=None, fmt='csv', same_name=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'NoneType' object is not subscriptable
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={'ROWS': None, 'BYTES': None, 'SHA256': None}, fmt='json', same_name=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={'ROWS': None, 'BYTES': None, 'SHA256': None}, fmt='json', same_name=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={'ROWS': None, 'BYTES': None, 'SHA256': None}, fmt='csv', same_name=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+======================================================================
+FAIL: test_manifest_file_arrays_merge_existing_structs (test_read_export.ReferenceExportTests.test_manifest_file_arrays_merge_existing_structs) (later={'ROWS': None, 'BYTES': None, 'SHA256': None}, fmt='csv', same_name=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 610, in test_manifest_file_arrays_merge_existing_structs
+    self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=update,
+  File "/workspace/scratch/4d30fa819181/circula/scripts/test_read_export.py", line 114, in assert_valid
+    self.assertEqual(code, 0, output)
+AssertionError: 1 != 0 : FAIL export verification failed: 'name'
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.271s
+
+FAILED (failures=13)

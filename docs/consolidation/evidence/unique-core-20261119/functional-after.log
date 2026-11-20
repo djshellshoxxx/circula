@@ -1,0 +1,20 @@
+=== RUN   TestDisputeStatementCharacterLimitMatchesService
+--- PASS: TestDisputeStatementCharacterLimitMatchesService (1.91s)
+=== RUN   TestDisputeRationaleCharacterLimitMatchesService
+--- PASS: TestDisputeRationaleCharacterLimitMatchesService (1.55s)
+=== RUN   TestReReviewRationaleCharacterLimitMatchesService
+--- PASS: TestReReviewRationaleCharacterLimitMatchesService (1.32s)
+=== RUN   TestTradeAcceptanceAvailablePreviewMatchesPosting
+=== RUN   TestTradeAcceptanceAvailablePreviewMatchesPosting/pay
+=== RUN   TestTradeAcceptanceAvailablePreviewMatchesPosting/request
+--- PASS: TestTradeAcceptanceAvailablePreviewMatchesPosting (2.97s)
+    --- PASS: TestTradeAcceptanceAvailablePreviewMatchesPosting/pay (1.44s)
+    --- PASS: TestTradeAcceptanceAvailablePreviewMatchesPosting/request (1.54s)
+=== RUN   TestTradeProposalReviewChecksAmountLimit
+--- PASS: TestTradeProposalReviewChecksAmountLimit (1.82s)
+=== RUN   TestTradeProposalReviewChecksProjectedBalance
+--- PASS: TestTradeProposalReviewChecksProjectedBalance (1.71s)
+=== RUN   TestTradeAcceptanceProjectedBalanceBoundaryAndReplay
+--- PASS: TestTradeAcceptanceProjectedBalanceBoundaryAndReplay (1.65s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/web	14.089s

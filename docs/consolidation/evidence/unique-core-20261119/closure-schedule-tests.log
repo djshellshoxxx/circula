@@ -1,0 +1,20 @@
+=== RUN   TestClosureFinaliserRechecksAnnouncement
+=== RUN   TestClosureFinaliserRechecksAnnouncement/cancelled
+=== RUN   TestClosureFinaliserRechecksAnnouncement/replacement_still_in_notice
+=== RUN   TestClosureFinaliserRechecksAnnouncement/replacement_now_due
+--- PASS: TestClosureFinaliserRechecksAnnouncement (0.14s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/cancelled (0.05s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/replacement_still_in_notice (0.04s)
+    --- PASS: TestClosureFinaliserRechecksAnnouncement/replacement_now_due (0.05s)
+=== RUN   TestClosureFinaliserChecksDeadlineAtWrite
+--- PASS: TestClosureFinaliserChecksDeadlineAtWrite (0.04s)
+=== RUN   TestClosureFinaliserRechecksFreeze
+--- PASS: TestClosureFinaliserRechecksFreeze (0.03s)
+=== RUN   TestClosureBlockersPreviewAndNotice
+--- PASS: TestClosureBlockersPreviewAndNotice (0.04s)
+=== RUN   TestClosureCancel
+--- PASS: TestClosureCancel (0.05s)
+=== RUN   TestClosureWaitsForDispute
+--- PASS: TestClosureWaitsForDispute (0.04s)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/service	0.364s
