@@ -31,6 +31,10 @@ var contractSteps = map[string]string{
 // A byte-level digest prevents later edits from silently inheriting a review
 // of a different rebuild, even when they retain the same migration filename.
 var compatibleRebuilds = map[string]struct{ digest, reason string }{
+	"0025_report_dispute_context.sql": {
+		digest: "4279c438c595504ec9b37af03ad9283f8ad23ed1d76d36c4e82159b84e28b29b",
+		reason: "same reports table, all twelve prior columns/values/defaults, reporter FK and three indexes retained; nullable network-bound immutable case reference added without inferring old links; TestReportDisputeContextMigrationPreservesAndRetries verifies preservation, late-DDL rollback, retry and reopen",
+	},
 	"0023_transaction_reports.sql": {
 		digest: "3710e9efe663d2b4bca4bb6b2b4bcb8089a4923130938abedf569fab2c00651f",
 		reason: "same reports table, all twelve columns/values/defaults, reporter FK and three indexes retained; only target_type CHECK widened; TestTransactionReportMigrationPreservesAndRetries verifies preservation, late-DDL rollback, retry and reopen",
