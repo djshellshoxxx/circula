@@ -115,8 +115,10 @@ workspace, specifically `red-20261119T142101Z`,
 
 The new `future-onboarding-retention.yml` workflow targets this isolated
 module on Ubuntu 24.04, macOS 15 Intel and Windows Server 2022. It retains the
-repository's immutable checkout/setup-go action pins, a read-only token,
-disabled/HOLD and dependency-boundary checks, and a ten-minute job deadline.
+repository's immutable checkout/setup-go action pins and read-only repository
+permissions. Checks require that the module remains disabled, its integration
+gate remains HOLD, and dependencies stay within their approved boundary. Each
+job has a ten-minute deadline.
 It changes no existing shared workflow.
 
 All three runners require `CGO_ENABLED=1`, an available `gcc` command and the
@@ -153,3 +155,31 @@ or Windows execution, provider checks on a subsequently published commit,
 production integration, feature activation or the wider onboarding acceptance
 criteria. The original module's policy, host authorization, practice isolation,
 browser/accessibility and integration gates remain.
+
+## Documentation scan continuation — 2026-11-20
+
+This follow-up starts at PR #121 source
+`1c4b03f5383fdffa9a30f6393159b41b85cd2e24`, targeting
+`future/fux-106-onboarding-20261116` at
+`473cab2fb45a7b67ea0001f9fdc7833ffda45eb9`.
+[Core job 135669982022](https://github.com/djshellshoxxx/circula/actions/runs/44555392230/job/135669982022)
+failed on a generic API heuristic match in the ordinary workflow description
+at the former line 118. The complete local directory scan with the same
+Gitleaks v8.28.0 reproduced exactly that documentation finding.
+
+Only this document changes. The workflow description now names its read-only
+repository permissions, disabled feature, integration gate and dependency
+boundary in separate sentences. The meaning, scanner rules and full scan
+scope are preserved. No ignore annotation, runtime, test, workflow, dependency
+or feature-manifest changes accompany this repair.
+
+The repaired complete directory scan passed with zero findings; whitespace,
+workflow pin and repository hygiene checks also passed. The directory scan was
+repeated after this receipt was added. Git comparison verified that all other
+tracked files retain their original blobs. These checks qualify the prose
+repair only. The previous three-platform native module success and six
+successful Core jobs remain dated evidence; current-head provider qualification
+is still required. The older shared workflow skipped its conditional Core
+native matrix on this PR, and its failed scan prevented later lint/vulnerability
+steps from running. The module remains disabled and its integration gate
+remains HOLD.
