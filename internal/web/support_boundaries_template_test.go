@@ -2,13 +2,8 @@ package web
 
 import (
 	"bytes"
-	"html/template"
-	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
-
-	"github.com/djshellshoxxx/circula/internal/web/messages"
 )
 
 type supportBoundaryPageData struct {
@@ -18,15 +13,10 @@ type supportBoundaryPageData struct {
 
 func renderSupportBoundaryTemplate(t *testing.T, name string, data any) string {
 	t.Helper()
-	_, source, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("runtime.Caller could not locate the test source")
-	}
-	path := filepath.Join(filepath.Dir(source), "templates", name)
-	// Use the same catalogue function as production mustLoadTemplates.
-	tmpl, err := template.New(name).Funcs(template.FuncMap{"msg": messages.Text, "msgAround": messages.Around}).ParseFiles(path)
-	if err != nil {
-		t.Fatalf("parse %s: %v", name, err)
+	// Load the same page and shared template definitions as production.
+	tmpl := mustLoadTemplates()[strings.TrimSuffix(name, ".html")]
+	if tmpl == nil {
+		t.Fatalf("missing page template %s", name)
 	}
 	var output bytes.Buffer
 	if err := tmpl.ExecuteTemplate(&output, "content", data); err != nil {

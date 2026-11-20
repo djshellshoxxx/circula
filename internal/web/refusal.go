@@ -25,6 +25,7 @@ var fieldLabels = map[string]string{
 	"reason":                  messages.Text("validation.label.reason"),
 	"reason_code":             messages.Text("validation.label.reason_code"),
 	"transaction_id":          messages.Text("validation.label.transaction_id"),
+	"dispute_id":              messages.Text("validation.label.dispute_id"),
 	"rationale":               messages.Text("validation.label.rationale"),
 	"category":                messages.Text("validation.label.category"),
 	"name":                    messages.Text("validation.label.name"),

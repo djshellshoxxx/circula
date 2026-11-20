@@ -898,6 +898,9 @@
   "validation.label.target_id": {
     "other": "Reported item"
   },
+  "validation.label.dispute_id": {
+    "other": "Related dispute"
+  },
   "validation.label.role": {
     "other": "Role"
   },
