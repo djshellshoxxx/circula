@@ -22,7 +22,7 @@ INSERT INTO reports_next(id,network_id,reporter_id,target_type,target_id,categor
   handled_by,handled_at,handling_note)
   SELECT id,network_id,reporter_id,target_type,target_id,category,note,status,created_at,
     handled_by,handled_at,handling_note FROM reports ORDER BY rowid;
-DROP TABLE reports;
+DROP TABLE reports; -- allow-destructive: all twelve columns are copied above; transactional rebuild widens only target_type and rollback preserves the original table
 ALTER TABLE reports_next RENAME TO reports;
 
 CREATE UNIQUE INDEX reports_open_dup ON reports(network_id, reporter_id, target_type, target_id)
