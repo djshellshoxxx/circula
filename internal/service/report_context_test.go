@@ -83,11 +83,13 @@ func TestReportDisputeContextExactCaseAndProjection(t *testing.T) {
 	if queue := tu.Must(w.Svc.ListReports(w.Ctx, w.b, w.net.ID, "", service.Page{})); len(queue) != 0 {
 		t.Fatal("subject administrator received reports with case context")
 	}
-	if events := tu.Must(w.Svc.ListAudit(w.Ctx, w.b, w.net.ID, service.AuditQuery{Action: domain.ActReportCreated})); len(events) != 0 {
-		t.Fatal("subject audit read disclosed case reports")
-	}
 	if changed := before.Changed(tu.Snapshot(t, w.Store.DB())); len(changed) != 0 {
 		t.Fatalf("projection/privacy reads changed durable state: %v", changed)
+	}
+	// Administrator audit reads append their own audit.read event. Check their
+	// filtering separately from the read-only report projection and queue.
+	if events := tu.Must(w.Svc.ListAudit(w.Ctx, w.b, w.net.ID, service.AuditQuery{Action: domain.ActReportCreated})); len(events) != 0 {
+		t.Fatal("subject audit read disclosed case reports")
 	}
 }
 
