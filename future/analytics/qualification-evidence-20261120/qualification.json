@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-20",
+  "toolchain": "go1.26.11 linux/amd64",
+  "source": "9eb06fc9b56905133aa9ec2d2786b8f80dbcf94c",
+  "source_tree": "68657bdf61b1b14f81092de379e2b2945795e5a2",
+  "outer_command_deadline_seconds": 240,
+  "campaigns": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzParseAmount$",
+        "-fuzztime",
+        "1200000x",
+        "-timeout",
+        "3m",
+        "./internal/domain"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 88.786,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "GOMEMLIMIT": "512MiB",
+        "GOFLAGS": "-p=1",
+        "GOWORK": "off"
+      },
+      "observed_executions": 1200000,
+      "package_seconds": 32.397,
+      "log": "amount.log",
+      "log_sha256": "fdc3a0f06341d6b7526173bf5f94c96ac70b4fee5655b96a4b0da5d06a5819c6"
+    },
+    {
+      "command": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-fuzz",
+        "^FuzzStrictUnmarshal$",
+        "-fuzztime",
+        "100000x",
+        "-timeout",
+        "3m",
+        "./internal/api"
+      ],
+      "exit_code": 0,
+      "wall_seconds": 219.005,
+      "environment": {
+        "GOPATH": "/tmp/circula-runtime-4d30/gopath",
+        "GOCACHE": "/tmp/circula-runtime-4d30/gocache",
+        "GOTOOLCHAIN": "local",
+        "GOMAXPROCS": "1",
+        "GOGC": "20",
+        "GOMEMLIMIT": "512MiB",
+        "GOFLAGS": "-p=1",
+        "GOWORK": "off"
+      },
+      "observed_executions": 100000,
+      "package_seconds": 23.189,
+      "log": "strict-json.log",
+      "log_sha256": "2b4f46101bd4115fe1682ea76761ee96c4e79459e8436847caa2ff58d49801ab"
+    }
+  ]
+}

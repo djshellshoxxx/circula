@@ -1,0 +1,15 @@
+go: downloading golang.org/x/crypto v0.58.0
+go: downloading golang.org/x/sys v0.49.0
+go: downloading modernc.org/libc v1.79.0
+fuzz: elapsed: 0s, gathering baseline coverage: 0/14 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 14/14 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 4357 (1451/sec), new interesting: 28 (total: 42)
+fuzz: elapsed: 6s, execs: 9577 (1741/sec), new interesting: 50 (total: 64)
+fuzz: elapsed: 9s, execs: 15446 (1956/sec), new interesting: 64 (total: 78)
+fuzz: elapsed: 12s, execs: 17650 (735/sec), new interesting: 67 (total: 81)
+fuzz: elapsed: 15s, execs: 17650 (0/sec), new interesting: 67 (total: 81)
+fuzz: elapsed: 18s, execs: 17650 (0/sec), new interesting: 67 (total: 81)
+fuzz: elapsed: 21s, execs: 92982 (25107/sec), new interesting: 68 (total: 82)
+fuzz: elapsed: 23s, execs: 100000 (3247/sec), new interesting: 71 (total: 85)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/api	23.189s

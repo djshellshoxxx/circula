@@ -161,10 +161,14 @@ jobs:
           cache: true
       - name: seed corpora of every fuzz target (also part of go test ./...)
         run: go test -count=1 -run '^Fuzz' ./internal/...
-      - name: fuzz amount parser for 10s
-        run: go test -run '^$' -fuzz '^FuzzParseAmount$' -fuzztime 10s ./internal/domain
-      - name: fuzz strict JSON decoder for 10s
-        run: go test -run '^$' -fuzz '^FuzzStrictUnmarshal$' -fuzztime 10s ./internal/api
+      # Run 44555360653 reached the duration deadline without a parser assertion
+      # failure. Retain both complete targets and let execution budgets finish
+      # before an independent three-minute package deadline. The amount budget
+      # exceeds that run's 1,154,206 executions.
+      - name: fuzz amount parser for 1200000 executions
+        run: go test -run '^$' -fuzz '^FuzzParseAmount$' -fuzztime 1200000x -timeout 3m ./internal/domain
+      - name: fuzz strict JSON decoder for 100000 executions
+        run: go test -run '^$' -fuzz '^FuzzStrictUnmarshal$' -fuzztime 100000x -timeout 3m ./internal/api
 
   contract:
     name: API contract and load smoke

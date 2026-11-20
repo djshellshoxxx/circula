@@ -1,0 +1,102 @@
+{
+  "source": "9eb06fc9b56905133aa9ec2d2786b8f80dbcf94c",
+  "source_tree": "68657bdf61b1b14f81092de379e2b2945795e5a2",
+  "target": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+  "target_branch": "future/fnet-205-analytics-20261116",
+  "merge_base": "0b2965101e1d5d1e3e6447e7c24197efc7f0cb9f",
+  "unique_commits": [
+    "9eb06fc9b56905133aa9ec2d2786b8f80dbcf94c",
+    "38b9bcd0e049d97167d793baba933d5e79d8030d",
+    "29a0312c5c4d446eb47c4f1d4555b58ff52c99b8"
+  ],
+  "unique_changed_paths": [
+    ".github/workflows/future-analytics.yml",
+    "cmd/circula/auditanchor.go",
+    "cmd/circula/util.go",
+    "future/analytics/AUDIT.md",
+    "future/analytics/COMPLETION.md",
+    "future/analytics/CONTRACT.md",
+    "future/analytics/FINAL-HANDOFF.md",
+    "future/analytics/HANDOFF-MILESTONE-MASTER1.md",
+    "future/analytics/INTEGRATION.md",
+    "future/analytics/README.md",
+    "future/analytics/RECOVERY-20261119.md",
+    "future/analytics/SECURITY-AUDIT.md",
+    "future/analytics/THIRD_PARTY_NOTICES.md",
+    "future/analytics/UPSTREAM-REUSE-MATRIX.md",
+    "future/analytics/VALIDATION.md",
+    "future/analytics/aggregate.go",
+    "future/analytics/audit_test.go",
+    "future/analytics/dashboard.go",
+    "future/analytics/dashboard_test.go",
+    "future/analytics/feature.json",
+    "future/analytics/interface.go",
+    "future/analytics/interface_test.go",
+    "future/analytics/master-evidence/SHA256SUMS",
+    "future/analytics/master-evidence/benchmark.log",
+    "future/analytics/master-evidence/focused.log",
+    "future/analytics/master-evidence/modules.log",
+    "future/analytics/master-evidence/race.log",
+    "future/analytics/master-evidence/toolchain.log",
+    "future/analytics/master-evidence/vet.log",
+    "future/analytics/performance_test.go",
+    "future/analytics/recovery-evidence-20261119/accepted-core-baseline.json",
+    "future/analytics/recovery-evidence-20261119/archive-qualification.json",
+    "future/analytics/recovery-evidence-20261119/fuzz.json",
+    "future/analytics/recovery-evidence-20261119/fuzz.log",
+    "future/analytics/recovery-evidence-20261119/gofmt.log",
+    "future/analytics/recovery-evidence-20261119/mod_verify.log",
+    "future/analytics/recovery-evidence-20261119/race.log",
+    "future/analytics/recovery-evidence-20261119/source-blobs.json",
+    "future/analytics/recovery-evidence-20261119/vet.log",
+    "internal/service/departure_pagination_regression_test.go",
+    "internal/service/erasure_test.go",
+    "internal/service/notification_erasure_test.go",
+    "internal/store/sqlite_erasure.go"
+  ],
+  "manifest_blob": "2507b08b687d64c875480af1b993cfa97f9cfa1a",
+  "manifest_sha256": "4cb561a82ad810465c169aa82e51af9f0e88a6ad9ddc0d82bb26f212be46f479",
+  "manifest": {
+    "id": "FNET-205",
+    "status": "partial-master-scope-privacy-and-qualification-pending",
+    "integration": "HOLD",
+    "enabled": false,
+    "baseline": "2eacf7718f5bb3da3be5a288024af879076a9597",
+    "depends_on_future_features": [],
+    "scope": "Ledger-verified ordinary trade/reversal flow with partial/later reversals; grants/adjustments excluded from turnover and included in own historical opening/closing; explicit scoped account/offer facts, member-dominance/complementary suppression, fixed calendar periods and public-only revision fingerprints; exact monetary strings; read-only HTTP/no-JS/CSV/CLI.",
+    "remaining": "Standalone immutable-release persistence, query-budget and correction policy; production performance budgets; browser/WCAG/screen-reader acceptance. Actual authenticated historical-source adapter, core API/CLI wiring and full-ledger regression remain separately authorized integration work.",
+    "completion_percent": 78.5,
+    "tested_source": "5c239f0494ff9ee69c4e84f985ec15d638140bbd"
+  },
+  "component_trees": [
+    {
+      "tree": "c9f638fde0756ca6aad0009a878b25fe82bdec06",
+      "path": "internal/api"
+    },
+    {
+      "tree": "5b623fdbd0a4d165684aaba7049bb6dbf02bfeed",
+      "path": "internal/domain"
+    },
+    {
+      "tree": "541342d699200e75a3a34fc6250b2f1a646ec4e2",
+      "path": "future/analytics"
+    }
+  ],
+  "test_source_blobs": {
+    "internal/api/fuzz_test.go": "9c85bec3786a6a3668c13b90f8cdbc2df778e4af",
+    "internal/domain/fuzz_test.go": "51b05eb735f09f078ac51c38f8677da96c2b830a",
+    "go.mod": "bb97a7177d68b20f2cbeae6c039b84953e88e03a",
+    "go.sum": "e6c12a6135b2548b887bf2490532f59fcf4fb9f8"
+  },
+  "review_scope": [
+    "Complete unique path/commit inventory and module/CI composition",
+    "All three analytics production diffs and four added test diffs",
+    "Dedicated native workflow and six inherited accepted Core repair paths",
+    "Both unchanged Core fuzz target bodies, complete shared workflow and two-step invocation delta"
+  ],
+  "review_limits": [
+    "This continuation makes no fresh archive-bundle identity claim; archived objects are not present in this checkout. Original archive verification receipts remain unchanged.",
+    "Policy and host-adapter holds remain as specified by the original manifest.",
+    "This is engineering source review, not a GitHub approval or provider test pass."
+  ]
+}

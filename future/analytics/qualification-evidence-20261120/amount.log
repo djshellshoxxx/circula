@@ -1,0 +1,16 @@
+go: downloading golang.org/x/text v0.43.0
+fuzz: elapsed: 0s, gathering baseline coverage: 0/21 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 21/21 completed, now fuzzing with 1 workers
+fuzz: elapsed: 3s, execs: 94383 (31457/sec), new interesting: 50 (total: 71)
+fuzz: elapsed: 6s, execs: 212345 (39323/sec), new interesting: 53 (total: 74)
+fuzz: elapsed: 9s, execs: 321954 (36535/sec), new interesting: 56 (total: 77)
+fuzz: elapsed: 12s, execs: 415570 (31205/sec), new interesting: 59 (total: 80)
+fuzz: elapsed: 15s, execs: 519393 (34603/sec), new interesting: 59 (total: 80)
+fuzz: elapsed: 18s, execs: 643897 (41495/sec), new interesting: 62 (total: 83)
+fuzz: elapsed: 21s, execs: 755580 (37236/sec), new interesting: 64 (total: 85)
+fuzz: elapsed: 24s, execs: 869657 (38031/sec), new interesting: 65 (total: 86)
+fuzz: elapsed: 27s, execs: 1004102 (44812/sec), new interesting: 66 (total: 87)
+fuzz: elapsed: 30s, execs: 1111340 (35723/sec), new interesting: 66 (total: 87)
+fuzz: elapsed: 32s, execs: 1200000 (37800/sec), new interesting: 66 (total: 87)
+PASS
+ok  	github.com/djshellshoxxx/circula/internal/domain	32.397s
