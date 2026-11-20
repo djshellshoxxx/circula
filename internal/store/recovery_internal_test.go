@@ -25,6 +25,9 @@ type storageFaultConnector struct {
 	rollback, migrationRead error
 	readPrefix              string
 	readErr                 error
+	afterStatement          string
+	afterStatementSQL       string
+	afterStatementRuns      int
 	rollbackFailures        int
 	statement               string
 	statementErr            error
@@ -94,6 +97,23 @@ func (c *storageFaultConn) ExecContext(ctx context.Context, query string, args [
 		}
 	}
 	result, err := c.Conn.(driver.ExecerContext).ExecContext(ctx, query, args)
+	if err == nil {
+		c.faults.mu.Lock()
+		var after string
+		if query == c.faults.afterStatement {
+			after = c.faults.afterStatementSQL
+			c.faults.afterStatementSQL = ""
+			if after != "" {
+				c.faults.afterStatementRuns++
+			}
+		}
+		c.faults.mu.Unlock()
+		if after != "" {
+			// Test-only migration faults execute on this same physical
+			// connection after the real statement, before its transaction ends.
+			_, err = c.Conn.(driver.ExecerContext).ExecContext(ctx, after, nil)
+		}
+	}
 	c.faults.mu.Lock()
 	defer c.faults.mu.Unlock()
 	if rollback && err != nil {

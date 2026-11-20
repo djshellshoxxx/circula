@@ -58,8 +58,11 @@ func SchemaVersion() int {
 
 // migrateTo applies pending migrations in order, each inside its own
 // BEGIN IMMEDIATE transaction (DDL is transactional in SQLite), so a failed
-// migration leaves no partial schema (DAT-042). It refuses to run against a
-// database newer than the binary or one whose recorded names differ. limit
+// migration leaves no partial schema (DAT-042). The ledger and audit checks
+// run before and after its SQL in that same transaction; any new finding or
+// verification error refuses the migration before version recording (OPS-023).
+// It refuses to run against a database newer than the binary or one whose
+// recorded names differ. limit
 // stops after that version (0 = all); upgrade tests use it to build a
 // database at an earlier schema (DAT-047).
 func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
@@ -118,7 +121,22 @@ func (s *SQLite) migrateTo(ctx context.Context, limit int) error {
 		if _, err := conn.ExecContext(ctx, "BEGIN IMMEDIATE"); err != nil {
 			return err
 		}
-		_, err := conn.ExecContext(ctx, m.sql)
+		before, err := migrationFindings(ctx, conn, m.version-1)
+		if err != nil {
+			err = fmt.Errorf("verification before migration: %w", err)
+		}
+		if err == nil {
+			_, err = conn.ExecContext(ctx, m.sql)
+		}
+		if err == nil {
+			var after []migrationFinding
+			after, err = migrationFindings(ctx, conn, m.version)
+			if err != nil {
+				err = fmt.Errorf("verification after migration: %w", err)
+			} else {
+				err = refuseNewMigrationFindings(before, after)
+			}
+		}
 		if err == nil {
 			_, err = conn.ExecContext(ctx, `INSERT INTO schema_migrations(version,name,applied_at) VALUES (?,?,?)`,
 				m.version, m.name, time.Now().UnixMilli())

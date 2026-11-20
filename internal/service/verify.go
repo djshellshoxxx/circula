@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
+	"github.com/djshellshoxxx/circula/internal/integrity"
 	store "github.com/djshellshoxxx/circula/internal/repository"
 )
 
@@ -83,37 +83,11 @@ func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		rep.Started = s.now()
-		add := func(f string, a ...any) { rep.Findings = append(rep.Findings, fmt.Sprintf(f, a...)) }
-		mm, err := tx.BalanceMismatches(netID)
+		checked, err := integrity.CheckLedger(tx, netID, integrity.Options{})
 		if err != nil {
 			return err
 		}
-		for _, m := range mm {
-			add("account %s cached balance %d != sum of entries %d", m.AccountID, m.Cached, m.Summed)
-		}
-		probs, err := tx.TxProblems(netID)
-		if err != nil {
-			return err
-		}
-		rep.Findings = append(rep.Findings, probs...)
-		bal, ent, err := tx.Totals(netID)
-		if err != nil {
-			return err
-		}
-		if bal != 0 || ent != 0 {
-			add("network totals not zero: balances %d, entries %d", bal, ent)
-		}
-		rev, err := tx.ReversalMismatches(netID)
-		if err != nil {
-			return err
-		}
-		rep.Findings = append(rep.Findings, rev...)
-		if err := s.verifyAuditChain(tx, netID, rep); err != nil {
-			return err
-		}
-		if rep.LedgerSeq, err = tx.LedgerSeq(netID); err != nil {
-			return err
-		}
+		rep.Findings, rep.LedgerSeq, rep.AuditEvents = checked.Findings, checked.LedgerSeq, checked.AuditEvents
 		rep.OK = len(rep.Findings) == 0
 		rep.Finished = s.now()
 		return nil
@@ -185,43 +159,11 @@ func (s *Service) VerifyAndRecordLedger(ctx context.Context, actor domain.Actor,
 }
 
 func (s *Service) verifyAuditChain(tx store.Tx, netID string, rep *LedgerReport) error {
-	var after int64
-	prev := ""
-	for {
-		evs, err := tx.ListAudit(netID, store.AuditFilter{AfterSeq: after, Limit: 500})
-		if err != nil {
-			return err
-		}
-		if len(evs) == 0 {
-			break
-		}
-		for _, e := range evs {
-			rep.AuditEvents++
-			switch {
-			case e.Seq != after+1:
-				rep.Findings = append(rep.Findings, fmt.Sprintf("audit sequence gap before %d", e.Seq))
-			case e.PrevHash != prev:
-				rep.Findings = append(rep.Findings, fmt.Sprintf("audit event %d breaks the hash chain", e.Seq))
-			case AuditHash(e) != e.Hash:
-				rep.Findings = append(rep.Findings, fmt.Sprintf("audit event %d content does not match its hash", e.Seq))
-			}
-			after, prev = e.Seq, e.Hash
-		}
-	}
-	// The chain must end exactly at the head recorded in the same unit as the
-	// last append; this catches deletion of the newest events (SA-09).
-	hs, hh, found, err := tx.AuditHead(netID)
+	checked, err := integrity.CheckAudit(tx, netID, integrity.Options{})
 	if err != nil {
 		return err
 	}
-	switch {
-	case !found && after > 0:
-		rep.Findings = append(rep.Findings, fmt.Sprintf("audit head record missing (chain ends at %d)", after))
-	case found && hs <= 0:
-		rep.Findings = append(rep.Findings, fmt.Sprintf("recorded audit head has invalid sequence %d", hs))
-	case found && (hs != after || hh != prev):
-		rep.Findings = append(rep.Findings, fmt.Sprintf(
-			"audit chain ends at event %d but the recorded head is %d: events were removed or the head was altered", after, hs))
-	}
+	rep.Findings = append(rep.Findings, checked.Findings...)
+	rep.AuditEvents += checked.AuditEvents
 	return nil
 }
