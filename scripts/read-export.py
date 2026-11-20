@@ -164,8 +164,8 @@ def manifest_timestamp(value, label):
     raise ValueError("%s must be an RFC 3339 timestamp" % label)
 
 
-def validate_manifest_object(value, kind="manifest", label="manifest.json"):
-    """Validate and resolve known Go fields in original JSON member order."""
+def validate_manifest_object(value, kind="manifest", label="manifest.json", previous=None):
+    """Validate Go fields in member order, retaining reused nested struct state."""
     # Go accepts null while decoding these scalar, struct, slice and pointer
     # fields. Preserve that at this stage; existing final version/files/count/
     # reconciliation checks still decide whether the resulting package is valid.
@@ -176,6 +176,14 @@ def validate_manifest_object(value, kind="manifest", label="manifest.json"):
     integer_fields, string_fields = MANIFEST_FIELDS[kind]
     nullable_fields = MANIFEST_NULLABLE_FIELDS.get(kind, ())
     resolved = {}
+    # A repeated non-null reconciliation/accounts object decodes into Go's
+    # existing struct pointer. Retain its known fields, including nested
+    # pointers, but do not repeatedly copy ignored extension data. A null
+    # pointer is stored as None below and therefore starts fresh next time.
+    if previous is not None:
+        for name in integer_fields + string_fields + nullable_fields:
+            if name in previous:
+                resolved[name] = previous[name]
     for original, item in value.pairs:
         name = original.translate(MANIFEST_FIELD_FOLD)
         field = "%s.%s" % (label, original)
@@ -195,9 +203,9 @@ def validate_manifest_object(value, kind="manifest", label="manifest.json"):
                 for index, entry in enumerate(item):
                     validate_manifest_object(entry, "file", "%s[%d]" % (field, index))
         elif kind == "manifest" and name == "reconciliation":
-            validate_manifest_object(item, "reconciliation", field)
+            validate_manifest_object(item, "reconciliation", field, resolved.get(name))
         elif kind == "reconciliation" and name == "accounts":
-            validate_manifest_object(item, "accounts", field)
+            validate_manifest_object(item, "accounts", field, resolved.get(name))
         else:
             # Unknown additive fields stay ignored, including nested values.
             resolved[original] = item

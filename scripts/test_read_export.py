@@ -517,6 +517,85 @@ class ReferenceExportTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assert_invalid(*fixture(), corrupt=corrupt)
 
+    def test_manifest_nested_objects_merge_in_member_order(self):
+        # Go decodes repeated objects into an existing struct pointer. A later
+        # partial object retains earlier fields, including nested account data.
+        for target in ("reconciliation", "accounts", "both"):
+            def split(man, files):
+                rec = man["reconciliation"]
+                digest = rec["accounts"]
+                if target == "reconciliation":
+                    man["reconciliation"] = {"entries": rec["entries"]}
+                    man["RECONCILIATION"] = {key: value for key, value in rec.items() if key != "entries"}
+                elif target == "accounts":
+                    rec["accounts"] = {"nonzero": digest["nonzero"]}
+                    rec["ACCOUNTS"] = {"sha256": digest["sha256"]}
+                else:
+                    man["reconciliation"] = {"entries": rec["entries"],
+                                              "accounts": {"nonzero": digest["nonzero"]}}
+                    man["RECONCILIATION"] = {"entry_sum": rec["entry_sum"],
+                                             "balance_total": rec["balance_total"],
+                                             "ACCOUNTS": {"sha256": digest["sha256"]}}
+            for same_names in (False, True):
+                def transform(data):
+                    if same_names:
+                        return data.replace(b'"RECONCILIATION":', b'"reconciliation":').replace(
+                            b'"ACCOUNTS":', b'"accounts":')
+                    return data
+                for fmt in ("json", "csv"):
+                    with self.subTest(target=target, same_names=same_names, fmt=fmt):
+                        self.assert_valid(*fixture(), fmt=fmt, zipped=True, corrupt=split,
+                                          transform_manifest=transform)
+
+    def test_manifest_nested_object_merge_retains_scalar_nulls(self):
+        cases = (("reconciliation", {}), ("reconciliation", {"ENTRIES": None}),
+                 ("accounts", {}), ("accounts", {"NONZERO": None, "SHA256": None}))
+        for target, later in cases:
+            def update(man, files):
+                obj = man if target == "reconciliation" else man["reconciliation"]
+                obj[target.upper()] = later
+            with self.subTest(target=target, later=later):
+                self.assert_valid(*fixture(), corrupt=update)
+
+    def test_manifest_nested_object_merge_applies_later_values(self):
+        cases = (("reconciliation", {"entries": 0}),
+                 ("reconciliation", {"entry_sum": 1}),
+                 ("reconciliation", {"entries": True}),
+                 ("accounts", {"nonzero": 0}),
+                 ("accounts", {"sha256": "0" * 64}),
+                 ("accounts", {"nonzero": True}))
+        for target, later in cases:
+            def update(man, files):
+                obj = man if target == "reconciliation" else man["reconciliation"]
+                obj[target.upper()] = later
+            with self.subTest(target=target, later=later):
+                self.assert_invalid(*fixture(), corrupt=update)
+        # A later valid object cannot hide an earlier decoding type error.
+        for target, field in (("reconciliation", "entries"), ("accounts", "nonzero")):
+            def update(man, files):
+                obj = man if target == "reconciliation" else man["reconciliation"]
+                valid = obj[target]
+                obj[target] = {field: False}
+                obj[target.upper()] = valid
+            with self.subTest(target=target, earlier_type_error=True):
+                self.assert_invalid(*fixture(), corrupt=update)
+
+    def test_manifest_nested_object_null_resets_prior_fields(self):
+        for target in ("reconciliation", "accounts"):
+            def reset(man, files):
+                obj = man if target == "reconciliation" else man["reconciliation"]
+                obj[target.upper()] = None
+                obj[target.capitalize()] = {}
+            with self.subTest(target=target, final="partial"):
+                self.assert_invalid(*fixture(), corrupt=reset)
+
+            def replace(man, files):
+                obj = man if target == "reconciliation" else man["reconciliation"]
+                obj[target.upper()] = None
+                obj[target.capitalize()] = copy.deepcopy(obj[target])
+            with self.subTest(target=target, final="complete"):
+                self.assert_valid(*fixture(), corrupt=replace)
+
     def test_manifest_case_aliases_do_not_fold_ligatures(self):
         # Python full casefold/upper would treat some of these as ASCII keys;
         # Go's simple-fold matching leaves all three as unknown extensions.
