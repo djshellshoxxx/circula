@@ -26,7 +26,7 @@ func TestTransactionReportMigrationPreservesAndRetries(t *testing.T) {
 	t.Cleanup(func() { _ = legacy.Close() })
 	ids := &tu.IDs{}
 	cfg := service.Config{IDs: ids, Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}}
-	e := &tu.Env{T: t, Ctx: ctx, Store: legacy, Svc: tu.Must(service.New(legacy, cfg))}
+	e := &tu.Env{T: t, Ctx: ctx, Store: legacy, Svc: tu.Must(service.New(reportMigrationPriorCreditStore(t, legacy), cfg))}
 	admin := e.Person("administrator")
 	net, adminM := e.Network(admin, "reports", nil)
 	alice, aliceM := e.Member(admin, net, "alice")
@@ -215,3 +215,31 @@ func readHistoricalReport(t *testing.T, db *sql.DB, netID, id string) *store.Rep
 	}
 	return &r
 }
+
+// Seed the v22 fixture with the prior release's posting behavior. Every real
+// posting, audit, balance and idempotency operation still reaches SQLite; the
+// single witness write introduced by v24 is absent from that historical
+// release. This adapter is test-only and refuses to wrap an adopted schema.
+func reportMigrationPriorCreditStore(t *testing.T, st *store.SQLite) store.Store {
+	t.Helper()
+	version := tu.Must(store.AppliedVersion(context.Background(), st.DB()))
+	if version >= 24 {
+		t.Fatal("prior-credit fixture adapter cannot wrap an adopted schema")
+	}
+	return reportPriorCreditStore{Store: st}
+}
+
+type reportPriorCreditStore struct{ store.Store }
+
+func (s reportPriorCreditStore) Update(ctx context.Context, fn func(store.Tx) error) error {
+	return s.Store.Update(ctx, func(tx store.Tx) error {
+		return fn(reportPriorCreditTx{Tx: tx, GovRepo: tx.(store.GovRepo)})
+	})
+}
+
+type reportPriorCreditTx struct {
+	store.Tx
+	store.GovRepo
+}
+
+func (reportPriorCreditTx) InsertPostingCreditCheck(store.PostingCreditCheck) error { return nil }
