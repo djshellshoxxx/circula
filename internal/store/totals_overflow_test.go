@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -97,8 +98,19 @@ func TestTotalsOverflowCancelsBeforeSaturation(t *testing.T) {
 // uses large postings to keep the test small; it does not relax any schema
 // guard or edit historical entries. Every posted transaction remains balanced,
 // and each cached balance equals that account's entries within the bound.
+// It predates posting-time credit witnesses, so migration must retain honest
+// legacy coverage rather than invent inputs for these aggregate-only rows.
 func TestVerifyLedgerAcceptsLargeBalancedTotals(t *testing.T) {
-	st := openStore(t)
+	path := filepath.Join(t.TempDir(), "aggregate-v23.db")
+	st, err := store.OpenAtVersion(context.Background(), path, 23)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if st != nil {
+			_ = st.Close()
+		}
+	})
 	netID, _, _, _ := seed(t, st)
 	ids := aggregateAccounts(t, st, netID, 4)
 	now := time.Date(2026, 3, 1, 12, 0, 0, 0, time.UTC)
@@ -133,6 +145,13 @@ func TestVerifyLedgerAcceptsLargeBalancedTotals(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
+	if err := st.Close(); err != nil {
+		t.Fatal(err)
+	}
+	st, err = store.Open(context.Background(), path)
+	if err != nil {
+		t.Fatal(err)
+	}
 	svc, err := service.New(st, service.Config{Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}})
 	if err != nil {
 		t.Fatal(err)
@@ -143,5 +162,8 @@ func TestVerifyLedgerAcceptsLargeBalancedTotals(t *testing.T) {
 	}
 	if !rep.OK {
 		t.Fatalf("balanced ledger was rejected: %v", rep.Findings)
+	}
+	if rep.HistoricalLimits == nil || rep.HistoricalLimits.Status != "partial" || rep.HistoricalLimits.LegacyUnverifiedDebits != 2 {
+		t.Fatalf("legacy aggregate fixture invented historical limit inputs: %+v", rep.HistoricalLimits)
 	}
 }

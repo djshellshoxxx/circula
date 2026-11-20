@@ -1,6 +1,7 @@
 package store
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -30,55 +31,77 @@ func (t *txImpl) CreditLimitHistory(netID string, visit func(repository.CreditLi
 	}
 	defer func() { _ = rows.Close() }()
 	for rows.Next() {
-		var r repository.CreditLimitHistoryRow
-		var posted int64
-		var accountSystem, legacy, checked, version, before, system, override, until, effective sql.NullInt64
-		var entryID, networkID, policyJSON sql.NullString
-		if err := rows.Scan(&r.Entry.ID, &r.Entry.NetworkID, &r.Entry.TxID, &r.Entry.AccountID,
-			&r.Entry.Amount, &r.Entry.LedgerSeq, &posted, &accountSystem, &entryID, &networkID,
-			&legacy, &checked, &version, &before, &system, &override, &until, &effective, &policyJSON); err != nil {
+		r, err := scanCreditLimitHistory(rows)
+		if err != nil {
 			return err
-		}
-		r.Entry.PostedAt = fromMS(posted)
-		if !accountSystem.Valid || accountSystem.Int64 != 0 && accountSystem.Int64 != 1 {
-			r.Problem = "entry account has a missing or invalid system marker"
-		} else {
-			r.AccountIsSystem = accountSystem.Int64 == 1
-		}
-		if entryID.Valid {
-			if !networkID.Valid || networkID.String != r.Entry.NetworkID {
-				r.Problem = "credit evidence belongs to a different network"
-			}
-			if legacy.Valid && legacy.Int64 == 1 {
-				r.LegacyUnverified = true
-				if checked.Valid || version.Valid || before.Valid || system.Valid || override.Valid || until.Valid || effective.Valid {
-					r.Problem = "legacy credit marker contains invented decision inputs"
-				}
-			} else if !legacy.Valid || legacy.Int64 != 0 || !checked.Valid || !version.Valid || version.Int64 <= 0 ||
-				int64(int(version.Int64)) != version.Int64 || !before.Valid || !system.Valid ||
-				system.Int64 != 0 && system.Int64 != 1 || !effective.Valid || effective.Int64 < 0 ||
-				override.Valid && override.Int64 < 0 || until.Valid && !override.Valid {
-				r.Problem = "credit witness has missing or invalid decision inputs"
-			} else {
-				r.Check = &repository.PostingCreditCheck{EntryID: entryID.String, NetworkID: networkID.String,
-					CheckedAt: fromMS(checked.Int64), PolicyVersion: int(version.Int64), BalanceBefore: before.Int64,
-					IsSystem: system.Int64 == 1, EffectiveLimit: effective.Int64, LimitOverrideUntil: ptrTime(until)}
-				if override.Valid {
-					value := override.Int64
-					r.Check.LimitOverride = &value
-				}
-				if policyJSON.Valid {
-					policy := domain.DefaultPolicy()
-					if err := json.Unmarshal([]byte(policyJSON.String), &policy); err != nil {
-						return fmt.Errorf("credit witness policy for entry %s: %w", r.Entry.ID, err)
-					}
-					r.Policy = &policy
-				}
-			}
 		}
 		if err := visit(r); err != nil {
 			return err
 		}
 	}
 	return rows.Err()
+}
+
+func scanCreditLimitHistory(source rowScanner) (repository.CreditLimitHistoryRow, error) {
+	var r repository.CreditLimitHistoryRow
+	var posted int64
+	var accountSystem, legacy, checked, version, before, system, override, until, effective sql.NullInt64
+	var entryID, networkID, policyJSON sql.NullString
+	if err := source.Scan(&r.Entry.ID, &r.Entry.NetworkID, &r.Entry.TxID, &r.Entry.AccountID,
+		&r.Entry.Amount, &r.Entry.LedgerSeq, &posted, &accountSystem, &entryID, &networkID,
+		&legacy, &checked, &version, &before, &system, &override, &until, &effective, &policyJSON); err != nil {
+		return r, err
+	}
+	r.Entry.PostedAt = fromMS(posted)
+	if !accountSystem.Valid || accountSystem.Int64 != 0 && accountSystem.Int64 != 1 {
+		r.Problem = "entry account has a missing or invalid system marker"
+	} else {
+		r.AccountIsSystem = accountSystem.Int64 == 1
+	}
+	if entryID.Valid {
+		if !networkID.Valid || networkID.String != r.Entry.NetworkID {
+			r.Problem = "credit evidence belongs to a different network"
+		}
+		if legacy.Valid && legacy.Int64 == 1 {
+			r.LegacyUnverified = true
+			if checked.Valid || version.Valid || before.Valid || system.Valid || override.Valid || until.Valid || effective.Valid {
+				r.Problem = "legacy credit marker contains invented decision inputs"
+			}
+		} else if !legacy.Valid || legacy.Int64 != 0 || !checked.Valid || !version.Valid || version.Int64 <= 0 ||
+			int64(int(version.Int64)) != version.Int64 || !before.Valid || !system.Valid ||
+			system.Int64 != 0 && system.Int64 != 1 || !effective.Valid || effective.Int64 < 0 || effective.Int64 > domain.MaxPolicyAmount ||
+			override.Valid && (override.Int64 < 0 || override.Int64 > domain.MaxPolicyAmount) || until.Valid && !override.Valid {
+			r.Problem = "credit witness has missing or invalid decision inputs"
+		} else {
+			r.Check = &repository.PostingCreditCheck{EntryID: entryID.String, NetworkID: networkID.String,
+				CheckedAt: fromMS(checked.Int64), PolicyVersion: int(version.Int64), BalanceBefore: before.Int64,
+				IsSystem: system.Int64 == 1, EffectiveLimit: effective.Int64, LimitOverrideUntil: ptrTime(until)}
+			if override.Valid {
+				value := override.Int64
+				r.Check.LimitOverride = &value
+			}
+			if policyJSON.Valid {
+				// Missing old fields retain their historical defaults. JSON null is
+				// not a policy object and an explicit null limit is not a number.
+				var fields map[string]json.RawMessage
+				if err := json.Unmarshal([]byte(policyJSON.String), &fields); err != nil {
+					return r, fmt.Errorf("credit witness policy for entry %s: %w", r.Entry.ID, err)
+				}
+				if fields == nil || bytes.Equal(bytes.TrimSpace(fields["default_credit_limit"]), []byte("null")) {
+					r.Problem = "credit witness policy has a missing object or invalid default limit"
+					return r, nil
+				}
+				policy := domain.DefaultPolicy()
+				if err := json.Unmarshal([]byte(policyJSON.String), &policy); err != nil {
+					return r, fmt.Errorf("credit witness policy for entry %s: %w", r.Entry.ID, err)
+				}
+				if policy.DefaultCreditLimit < 0 || policy.DefaultCreditLimit > domain.MaxPolicyAmount {
+					r.Problem = "credit witness policy has an invalid default limit"
+					return r, nil
+				}
+				r.Policy = &policy
+			}
+		}
+	}
+	return r, nil
 }
