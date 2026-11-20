@@ -50,7 +50,10 @@ func (s *Service) ListDisputeReports(ctx context.Context, actor domain.Actor, ne
 		}
 		d, err := tx.GetDispute(netID, disputeID)
 		if err != nil {
-			return domain.NotFound("dispute")
+			if domain.CodeOf(err) == domain.CodeNotFound {
+				return domain.NotFound("dispute")
+			}
+			return err
 		}
 		t, err := tx.GetTransaction(netID, d.TxID)
 		if err != nil {
