@@ -100,8 +100,24 @@ exact-case reviewer pagination, subject role overlap, legacy and explicit
 replays, the HTML journey and validation retention, OpenAPI compatibility,
 and migration preservation, late-DDL rollback, retry, reopen, nullable FK
 behavior and context immutability. Formatting and JSON/YAML parsing passed.
-Execution results will be recorded after qualification on the combined real
-0024/0025 migration chain; no placeholder or incomplete chain is qualified.
+
+Qualification used Go 1.26.11 with race instrumentation, one CPU and the real
+0024/0025 migration chain. The focused store, API, HTML, catalogue and OpenAPI
+contract selections passed at `13e070d`. The service selection subsequently
+passed 19 top-level cases and 44 subcases at `94add4a`; its remaining case
+passed at `1f3c5c1` after a fixture correction. Together, all 53 selected
+top-level cases and 75 subcases have passing evidence, without skips or race
+reports. Migration 0025 preservation, late-DDL rollback, retry, reopen and
+relation-constraint checks passed in 2.26 seconds.
+
+Two test-only corrections are retained in the execution history: the expected
+error table now uses the domain error type required by the existing assertion
+helper, and the read-only snapshot assertion runs before the administrator
+audit query, which intentionally records its own `audit.read` event. No
+production source changed between the qualification runs. The earlier failed
+attempts remain in `analysis/report_case_context_verification.json` and its
+three raw logs. This is focused qualification; the parent integration owns
+the final combined repository and provider gates.
 
 The remaining distinct decisions are system-account transaction subject
 semantics and the all-conflicted operational procedure. Ordinary member,
