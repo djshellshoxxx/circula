@@ -90,11 +90,24 @@ func (t *txImpl) GetErasure(netID, memberID string) (*domain.ErasureRecord, erro
 	return &e, nil
 }
 
-// RedactNotificationNames blanks inbox bodies that name the member (fixed text
-// plus the display name, see migration 0008) and the member's own inbox.
+// RedactNotificationNames clears the member's inbox and notifications linked
+// to their member record, trades or disputes. Resource relations identify the
+// affected notices; a shared name or name substring never selects other mail.
 func (t *txImpl) RedactNotificationNames(netID, memberID, _ string) (int64, error) {
-	res, err := t.exec(`UPDATE notifications SET body = '' WHERE network_id = ? AND body <> ''
-		AND member_id = ?`, netID, memberID)
+	res, err := t.exec(`WITH member_trades AS (
+		SELECT tr.id FROM transactions tr
+		JOIN accounts a ON a.network_id = tr.network_id AND a.member_id = ?
+		WHERE tr.network_id = ? AND (a.id = tr.payer_account_id OR a.id = tr.payee_account_id)
+	), related_links AS (
+		SELECT '/trades/' || id AS link FROM member_trades
+		UNION SELECT '/disputes/' || id FROM disputes
+			WHERE network_id = ? AND tx_id IN (SELECT id FROM member_trades)
+		UNION SELECT '/members/' || ?
+		UNION SELECT '/admin/members/' || ?
+	)
+	UPDATE notifications SET body = '' WHERE network_id = ? AND body <> ''
+		AND (member_id = ? OR link IN (SELECT link FROM related_links))`,
+		memberID, netID, netID, memberID, memberID, netID, memberID)
 	if err != nil {
 		return 0, err
 	}

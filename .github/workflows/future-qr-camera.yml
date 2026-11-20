@@ -1,0 +1,59 @@
+name: future QR camera lifecycle
+
+on:
+  pull_request:
+    branches: [future/fux-102-qr-20261116]
+    paths:
+      - 'future/qr/**'
+      - '.github/workflows/future-qr-camera.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: future-qr-camera-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  camera:
+    name: QR camera lifecycle (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15-intel, windows-2022]
+    defaults:
+      run:
+        shell: bash
+        working-directory: future/qr
+    steps:
+      - name: Keep repository line endings stable
+        working-directory: ${{ github.workspace }}
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Record source and hosted Node version
+        run: |
+          git rev-parse HEAD
+          git rev-parse HEAD:future/qr
+          node --version
+      - name: Check module remains disabled and isolated
+        run: |
+          node - <<'JS'
+          const assert = require('node:assert/strict');
+          const fs = require('node:fs');
+          const feature = JSON.parse(fs.readFileSync('feature.json', 'utf8'));
+          assert.equal(feature.id, 'FUX-102');
+          assert.equal(feature.enabled, false);
+          assert.equal(feature.integration, 'HOLD');
+          assert.deepEqual(feature.depends_on_future_features, []);
+          JS
+      - name: Check script syntax
+        run: |
+          node --check web/static/scan.js
+          node --check web/scan_lifecycle_test.mjs
+      - name: Check deferred camera and image lifecycles
+        run: node --experimental-vm-modules --test --test-timeout=15000 web/scan_lifecycle_test.mjs
