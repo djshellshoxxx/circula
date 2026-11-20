@@ -65,9 +65,40 @@ independent source review and combined qualification:
   to their actual source and file hashes. Hygiene passed at `f4f718b` after the
   required migration-table-rebuild explanation was added, without changing SQL.
 
-`source-map.json` now covers publication through remote `1a3cefe` / local
-`f4fce9b`. Later code and this evidence commit require their own publication and
+`source-map.json` now covers publication through remote `c45c475` / local
+`c710487`. Later code and this evidence commit require their own publication and
 qualification; the mapping is not a recursive claim about its own commit.
+
+### Reviewer projection, authentication and combined checks
+
+- `dispute-report-projection-verification.json` identifies the worker and
+  integrated source. Five packages passed first; the full service package
+  passed unchanged after the Go cache and temporary build files were moved
+  from RAM-backed storage to disk. The earlier killed attempts remain in the
+  evidence. In total, six packages recorded 41 top-level and 58 subtest passes
+  under race. This is still a focused selection.
+- `reviewer-projection-independent-review.md` records the separate source
+  review. Its read-error finding is fixed in `0773308`;
+  `dispute-report-read-errors-*` records the focused race check, including
+  preservation of ordinary not-found behavior and propagation of read errors.
+- `authentication-metrics-focused.*`, its receipt, and the verification map
+  record 22 top-level and two subtest race passes. The optional observer's
+  bounded classes do not count storage/cancellation/policy validation as bad
+  credentials, and the outer sign-in operation avoids double-counting.
+- `combined-normal-c710487.*` records a failed full normal run with 3,317 pass
+  events, six skips and one migration-review test failure. Every package
+  compiled. CLI, service, API, contract and web package tests passed; the store
+  package failed its unregistered migration-0023 rebuild guard. The six skips
+  are identified individually in the receipt.
+- `compatible-rebuild-check.jsonl` records the exact reviewed migration-0023
+  registry repair, preservation/rollback/retry fixture and unchanged scanner
+  controls passing under race. An exact SQL digest scopes that registry entry;
+  it is not a waiver for arbitrary DROP/RENAME statements.
+- `lint-0773308.*` retains the three style findings. `lint-c9dbc84.*` records
+  the succeeding full lint run, zero issues, with clean unchanged source.
+
+These receipts predate the historical-credit witness and member/listing case
+context. They do not qualify those later additions or the final combined tree.
 
 
 ### Publication representations

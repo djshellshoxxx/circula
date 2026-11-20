@@ -1,0 +1,45 @@
+{
+  "feature": "OPS-014 service credential failure and throttle observations",
+  "written_utc": "2026-11-20T08:35:25.179416+00:00",
+  "source_commit": "1a216cb51e411bce2d8fa842a7e7881d25ecd2a0",
+  "source_tree": "76b9af3adb72edfde9fbe0826ad73858810c1884",
+  "base_commit": "a29a0943258be14d292a0d0998c0f0661c80d248",
+  "tested_file_count": 17,
+  "committed_files_match_tested_hashes": true,
+  "execution_receipt": {
+    "path": "/workspace/scratch/4d30fa819181/analysis/authentication-metrics-focused-receipt.json",
+    "sha256": "f3e95e1bec3d5ddd1966eb14b8dd7d8666b27b48649d45a7afec3ec659a8e4dc"
+  },
+  "raw_log": {
+    "path": "/workspace/scratch/4d30fa819181/analysis/authentication-metrics-focused.jsonl",
+    "sha256": "694e031c5b409c856a70895213c5bba5be06773ebd1fb73879ffef90c2b900d7"
+  },
+  "result": {
+    "status": "passed",
+    "exit_code": 0,
+    "wall_seconds": 93.842,
+    "top_level_pass_count": 22,
+    "subcase_pass_count": 2,
+    "package_passes": [
+      {
+        "Package": "github.com/djshellshoxxx/circula/internal/service",
+        "Elapsed": 14.915
+      },
+      {
+        "Package": "github.com/djshellshoxxx/circula/cmd/circula",
+        "Elapsed": 3.958
+      },
+      {
+        "Package": "github.com/djshellshoxxx/circula/internal/web",
+        "Elapsed": 7.166
+      }
+    ],
+    "race_warning_seen": false,
+    "source_unchanged_during_run": true
+  },
+  "limitations": [
+    "Focused full-package race selection only; no full-suite claim.",
+    "No hosted staging or deployment acceptance claim.",
+    "Parent AI source review is not GitHub approval or external security qualification."
+  ]
+}

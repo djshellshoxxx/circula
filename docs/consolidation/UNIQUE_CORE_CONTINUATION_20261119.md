@@ -14,16 +14,16 @@ evidence remains historical and is not rewritten as evidence for this source.
   `9c1ad082bfd7befb9914000c79d5974f1017cc27`.
 - Owned continuation: `integration/unique-core-completion-20261120`,
   [PR #127](https://github.com/djshellshoxxx/circula/pull/127), targeting main.
-- Published checkpoint: `1a3cefe4011459aa93317477090360f754dc296a`, tree
-  `dc967e5b5eeda27cc2b328fccfb3614bce126dd2`, exactly matching local
-  `f4fce9b62e812da756bb3c0078f264f7409e557b`.
-- That checkpoint includes closure, platform audit, report privacy, bounded
-  audit mirror, persisted-ID acceptance, the migration invariant gate, loading
-  and authentication messages, About placement, and ordinary transaction reports.
-- Local runtime `a29a0943258be14d292a0d0998c0f0661c80d248` adds posting outcomes
-  and request latency by status class. `f4f718b` adds the required reviewed
-  explanation to migration 0023 without changing its SQL behavior. Their
-  combined qualification and publication remain pending at this checkpoint.
+- Published checkpoint: `c45c475f6ca22497072e8c8d3bc4f1e444b0f382`, tree
+  `7587e6f32b2c552c429ef65717da051c15ad9b05`, exactly matching local
+  `c7104872cc2fe049b62d175fbb95a9751bf31bdd`.
+- That checkpoint includes the completion areas below through independent
+  reviewer report reads and service authentication metrics.
+- Later local commits repair report-read error propagation and the exact
+  compatible-rebuild review registry, and integrate immutable historical-limit
+  witnesses (`2d3a163`) and explicit member/listing report case context
+  (`b00706e`). Their combined qualification and publication are still pending
+  at this checkpoint. `d662bdb` reconciles nineteen stale specification notes.
 
 Publication uses ordinary commits and expected-head branch updates through the
 connected GitHub provider because this checkout has no Git push credentials.
@@ -89,6 +89,8 @@ repairs below; its notes are not themselves runtime changes.
 | Ordinary transaction reports | Either member party can report a two-member transaction. The opposite party is excluded from report queue/audit/export/handling/replay; exact-transaction dispute links preserve normal case authorization and pagination. | 31 top-level and 58 subtest race passes across six packages; migration 0023 rollback/retry/reopen and API contract checks are included. Independent source review also checks the integrated catalogue and migration-gate interaction. |
 | Shared UI completion | Native navigation and form submission announce loading, complete authentication messages preserve markup/plurals, and authenticated network About plus README contain the established acceptance disclaimer. | Focused HTML, catalogue and route-authority race checks pass; 23 Node helper tests pass. New Playwright scenarios are discovered, not yet executed. |
 | Posting outcomes and latency | Counters distinguish posting attempts, committed work, bounded failure reasons and durable replays, including enclosing-unit rollback and posting-pending reversals. Latency has an additive route/status-class series. | Ten focused race tests pass on worker `4630a0a`, integrated as `a29a094`; real service events reach the production metrics surface and unknown labels remain bounded. |
+| Independent reviewer report projection | A currently authorized, independent dispute decider reads only report ID/category/status for that exact case; reporter identity and free text stay out of the projection. Each page rechecks authority and filters before the limit. | Six-package focused race selection: 41 top-level and 58 subtest passes. The separate read-error repair passes seven subcases; prior compiler-killed attempts remain identified. |
+| Service authentication observations | Optional service observations classify credential failure and throttling with bounded labels, avoid wrapper double-counting and keep storage/cancellation/policy errors out of bad-credential totals. HTTP counters remain separately named. | 22 top-level and two subtest race passes across service, CLI and web at worker `1a216cb`, integrated as `4449dd6`. |
 
 
 The closure API deliberately exposes `final_export.version` and verification's
@@ -110,17 +112,22 @@ Ordinary transaction reports and exact-transaction dispute links are now built;
 so are the pre-commit migration gate, loading feedback, complete authentication
 sentences, About placement and posting outcome/status-latency metrics.
 
-Three concrete follow-ups are active at this checkpoint: a same-dispute,
-independent-reviewer report projection with reporter identity and free-text
-omitted; service-level authentication/throttle observations; and immutable
-forward posting-limit evidence with explicit legacy-unverified coverage.
-Existing records do not preserve exact historic override-expiry inputs, so the
-last feature cannot truthfully manufacture verification of earlier debits.
+The independent-reviewer projection and service authentication/throttle
+observations are complete. Two related additions are written and undergoing
+qualification: immutable forward posting-limit evidence with explicit
+legacy-unverified coverage, and optional exact-case context for member/listing
+reports. The historical-limit consumer surfaces and migration compatibility
+fixtures are being completed against the actual schema chain through 25.
+Existing records do not preserve exact historic override-expiry inputs, so
+verification must not manufacture known outcomes for earlier debits.
 
-System-account report subjects and explicit case context for member/listing
-reports are not defined by the ordinary two-member implementation. The existing
-all-conflicted operational decision remains separate. These narrower boundaries
-do not erase the completed ordinary reporting behavior.
+Member/listing context is explicitly selected at report creation, validated in
+the same write snapshot and immutable afterward. Older context-free reports
+remain SQL NULL; sharing a member or listing does not infer a historical link.
+System-account report subjects still require an accepted human-subject rule;
+the implementation does not silently choose the creating administrator or
+operator. The all-conflicted operational decision remains separate.
+
 Report-privacy worker `1c8a4777f9eee5e1076c7581228c2501ec38b0cb` is integrated as
 `da1c032`; its focused verification record is retained. Identifier worker
 `7fe8dc4d11a6e6b52c9d06a5498f3ac8a2c6cf71` is integrated as `ca01990`. Mirror worker
@@ -148,6 +155,16 @@ and passed their race recheck. Full-tree lint at `f4f718b` was separately blocke
 by a killed service-test compiler; no ordinary lint defect was emitted. Neither
 attempt is converted into a complete pass.
 
+After relocating Go cache/module data and temporary builds from RAM-backed
+storage to disk, the full normal run at `c710487` reached every package without
+compiler kills: 3,317 passing test/subtest events, six explicit skips and one
+failure in the migration-review registry. That registry was repaired at
+`7acede5` with the exact migration-0023 digest and a preserving-rebuild reason;
+its preservation, rollback/retry and unchanged scanner checks pass under race.
+This does not turn the earlier full run into a pass. Full lint then completed
+at `0773308` with three style findings, all repaired at `c9dbc84`; the complete
+clean-source recheck reports zero issues.
+
 At `a29a094`, all 65 Python helper tests and 23 Node helper tests passed. Hygiene
 and workflow action checks passed at `f4f718b`, as did the existing evidence
 SHA-256 manifest. These are source-specific checks, not a later combined gate.
@@ -169,6 +186,10 @@ The newer provider checks are pending at this checkpoint. A queued, cancelled,
 killed or interrupted attempt is never recorded as a pass. Main was observed
 without required status enforcement; integration will wait for observed gates
 rather than relying on an automatic-merge setting.
+
+[The nineteen-note source refresh](SPEC_STATUS_REFRESH_20261120.md) corrects
+obsolete absence claims without changing historical labels, owner decisions or
+manual/deployment acceptance boundaries.
 
 The generated inventory contains 531 requirement IDs. A bounded review
 identified 15 built rows without automated test citations; these are mapped in
