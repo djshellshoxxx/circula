@@ -75,9 +75,10 @@ the linked dispute list under their existing authority.
   network and original transaction counterparty are not interchangeable.
   These reports remain unsupported until that subject contract is set; the
   ordinary member-party case is complete without that decision.
-- Listing and member reports have no transaction or case reference. Sharing
-  a member or listing does not by itself establish which disputes relate to
-  those reports, so this change derives no such relationship.
+- The subsequent [explicit case-context extension](REPORT_CASE_CONTEXT_20261120.md)
+  lets a newly filed member or listing report select its exact authorized
+  dispute. Legacy reports remain context-free; sharing a member or listing
+  still does not infer a historical relation.
 - The existing all-conflicted administrator case remains retained for the
   established operational decision. No escalation privilege, quorum,
   role-grant policy or operator report-handling command is introduced.

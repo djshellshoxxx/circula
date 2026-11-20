@@ -21,16 +21,21 @@ type reportDTO struct {
 	HandledAt          *string `json:"handled_at"`
 	HandlingNote       string  `json:"handling_note"`
 	RelatedDisputesURL string  `json:"related_disputes_url,omitempty"`
+	DisputeID          string  `json:"dispute_id,omitempty"`
+	RelatedDisputeURL  string  `json:"related_dispute_url,omitempty"`
 }
 
 func toReport(r *service.Report) reportDTO {
 	d := reportDTO{ID: r.ID, TargetType: r.TargetType, TargetID: r.TargetID, Category: r.Category, Description: r.Note,
 		Status: r.Status, CreatedAt: ts(r.CreatedAt), ReporterMemberID: r.ReporterID, HandledBy: strPtr(r.HandledBy),
-		HandledAt: tsPtr(r.HandledAt), HandlingNote: r.HandlingNote}
+		HandledAt: tsPtr(r.HandledAt), HandlingNote: r.HandlingNote, DisputeID: r.DisputeID}
 	if r.TargetType == service.ReportTransaction {
 		// The destination is the ordinary authorized, paginated dispute list.
 		// Its exact-transaction relation includes cases filed after the report.
 		d.RelatedDisputesURL = v1 + "/disputes?transaction_id=" + r.TargetID
+	}
+	if r.DisputeID != "" {
+		d.RelatedDisputeURL = v1 + "/disputes/" + r.DisputeID
 	}
 	return d
 }
@@ -41,12 +46,13 @@ func (s *server) fileReport(c *reqCtx) error { // FR-024, SEC-025
 		TargetID    string `json:"target_id"`
 		Category    string `json:"category"`
 		Description string `json:"description"`
+		DisputeID   string `json:"dispute_id"`
 	}
 	if err := c.decode(&in); err != nil {
 		return err
 	}
 	r, err := s.svc.CreateReport(c.r.Context(), c.actor, c.netID, service.ReportInput{TargetType: in.TargetType,
-		TargetID: in.TargetID, Category: in.Category, Note: in.Description, IdempotencyKey: c.idemKey})
+		TargetID: in.TargetID, Category: in.Category, Note: in.Description, DisputeID: in.DisputeID, IdempotencyKey: c.idemKey})
 	if err != nil {
 		return err
 	}

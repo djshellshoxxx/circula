@@ -65,9 +65,10 @@ no database write or migration.
 
 System-account transaction subject semantics and the all-conflicted
 operational procedure remain outside this implementation. Member and listing
-reports still need explicit case context before a reviewer can receive them;
-sharing a member or listing alone does not establish that relation. These
-remaining boundaries do not defer the implemented transaction context.
+reports receive an exact case relation through the subsequent
+[explicit context extension](REPORT_CASE_CONTEXT_20261120.md); sharing a member
+or listing alone still establishes no historical relation. The verification
+below records the original transaction projection checkpoint.
 
 ## Verification
 

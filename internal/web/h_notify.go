@@ -110,8 +110,9 @@ func (s *server) inboxRead(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 type reportFormData struct {
-	Type, ID, Label string
-	Cats            []option
+	Type, ID, Label                      string
+	Cats                                 []option
+	DisputeID, CaseDescription, CaseHref string
 }
 
 var reportCats = []option{
@@ -146,9 +147,30 @@ func (c *rc) reportTarget(typ, id string) (string, bool) {
 	return "", false
 }
 
-func (s *server) reportFormData(r *http.Request, c *rc, typ, id string) (*reportFormData, error) {
+func (s *server) reportFormData(r *http.Request, c *rc, typ, id, disputeID string) (*reportFormData, error) {
 	if !c.isActive() {
 		return nil, domain.ErrForbidden
+	}
+	if disputeID != "" {
+		caseContext, err := s.svc.GetReportDisputeContext(r.Context(), c.actor, c.netID(), disputeID)
+		if err != nil {
+			return nil, err
+		}
+		var label string
+		switch {
+		case typ == service.ReportMember && id == caseContext.MemberID:
+			label = messages.Text("report.target_member", caseContext.MemberName)
+		case typ == service.ReportListing && id != "" && id == caseContext.ListingID:
+			label = messages.Text("report.target_case_listing")
+			if caseContext.ListingTitle != "" {
+				label = messages.Text("report.target_listing", caseContext.ListingTitle)
+			}
+		default:
+			return nil, domain.Invalid("dispute_id", "the selected case does not match the report target")
+		}
+		return &reportFormData{Type: typ, ID: id, Label: label, Cats: reportCats, DisputeID: caseContext.DisputeID,
+			CaseDescription: messages.Text("report.case_description", caseContext.MemberName, c.at(caseContext.OpenedAt).Format("2 Jan 2006")),
+			CaseHref:        c.base() + "/disputes/" + caseContext.DisputeID}, nil
 	}
 	label, ok := c.reportTarget(typ, id)
 	if !ok {
@@ -158,7 +180,7 @@ func (s *server) reportFormData(r *http.Request, c *rc, typ, id string) (*report
 }
 
 func (s *server) reportForm(w http.ResponseWriter, r *http.Request, c *rc) {
-	d, err := s.reportFormData(r, c, r.URL.Query().Get("type"), r.URL.Query().Get("id"))
+	d, err := s.reportFormData(r, c, r.URL.Query().Get("type"), r.URL.Query().Get("id"), r.URL.Query().Get("dispute_id"))
 	if err != nil {
 		s.fail(w, r, err)
 		return
@@ -168,13 +190,13 @@ func (s *server) reportForm(w http.ResponseWriter, r *http.Request, c *rc) {
 
 func (s *server) reportPost(w http.ResponseWriter, r *http.Request, c *rc) {
 	v := formValues(r)
-	d, err := s.reportFormData(r, c, v["type"], v["id"])
+	d, err := s.reportFormData(r, c, v["type"], v["id"], v["dispute_id"])
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
 	_, err = s.svc.CreateReport(r.Context(), c.actor, c.netID(), service.ReportInput{TargetType: d.Type, TargetID: d.ID,
-		Category: v["category"], Note: v["note"], IdempotencyKey: idemKey(r)})
+		Category: v["category"], Note: v["note"], DisputeID: d.DisputeID, IdempotencyKey: idemKey(r)})
 	if err != nil {
 		p := &page{Title: messages.Text("report.title"), D: d, V: v}
 		switch domain.CodeOf(err) {
@@ -194,13 +216,18 @@ func (s *server) reportPost(w http.ResponseWriter, r *http.Request, c *rc) {
 		return
 	}
 	s.setFlash(w, r, messages.Text("report.sent"))
-	http.Redirect(w, r, c.base(), http.StatusSeeOther)
+	next := c.base()
+	if d.CaseHref != "" {
+		next = d.CaseHref
+	}
+	http.Redirect(w, r, next, http.StatusSeeOther)
 }
 
 type reportRow struct {
 	ID, Reporter, Target, Note, Status, HandlingNote string
 	TargetHref                                       string
 	DisputesHref                                     string
+	DisputeHref                                      string
 	Open                                             bool
 	Created                                          any
 	About                                            messages.Parts
@@ -239,6 +266,9 @@ func (s *server) reportQueue(w http.ResponseWriter, r *http.Request, c *rc) {
 		case service.ReportTransaction:
 			row.TargetHref = c.base() + "/trades/" + x.TargetID
 			row.DisputesHref = c.base() + "/disputes?transaction_id=" + x.TargetID
+		}
+		if x.DisputeID != "" {
+			row.DisputeHref = c.base() + "/disputes/" + x.DisputeID
 		}
 		d.Rows = append(d.Rows, row)
 	}

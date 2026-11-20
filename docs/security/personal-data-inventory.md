@@ -141,7 +141,7 @@ in append-only audit summaries. Standalone adjustments leave the reference empty
 | `person_prefs` | `person_id`, `updated_at` |
 | `persons` | `id`, `created_at`, `must_change_password` |
 | `recovery_codes` | `person_id`, `used_at` |
-| `reports` | `id`, `network_id`, `reporter_id`, `target_type`, `target_id`, `category`, `status`, `created_at`, `handled_by`, `handled_at` |
+| `reports` | `id`, `network_id`, `reporter_id`, `target_type`, `target_id`, `category`, `status`, `created_at`, `handled_by`, `handled_at`, `dispute_id` |
 | `role_assignments` | `id`, `network_id`, `member_id`, `role`, `granted_at`, `granted_by`, `revoked_at` |
 | `schema_migrations` | `version`, `name`, `applied_at` |
 | `security_notices` | `id`, `person_id`, `kind`, `created_at`, `seen_at` |

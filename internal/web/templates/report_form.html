@@ -2,12 +2,14 @@
 {{with .D}}
 {{$subject := msgAround "report.subject"}}<p>{{$subject.Before}}<strong>{{.Label}}</strong>{{$subject.After}}</p>
 <p>{{msg "report.explanation"}}</p>
+{{if .DisputeID}}<p>{{.CaseDescription}} <a href="{{.CaseHref}}">{{msg "report.view_case"}}</a></p><p>{{msg "report.case_privacy"}}</p>{{end}}
 <form method="post" action="/n/{{$.Slug}}/report" novalidate>
   {{template "csrf" $}}{{template "idem" $}}
   <input type="hidden" name="type" value="{{.Type}}"><input type="hidden" name="id" value="{{.ID}}">
+  {{if .DisputeID}}<input type="hidden" name="dispute_id" value="{{.DisputeID}}">{{end}}
   {{template "select" dict "P" $ "Name" "category" "Label" (msg "report.category_label") "Opts" .Cats}}
   {{template "field" dict "P" $ "Name" "note" "Label" (msg "report.note_label") "Hint" (msg "report.note_hint") "Type" "textarea" "Max" 500}}
-  <div class="actions"><button type="submit">{{msg "report.send"}}</button> <a class="btn secondary" href="/n/{{$.Slug}}">{{msg "report.cancel"}}</a></div>
+  <div class="actions"><button type="submit">{{msg "report.send"}}</button> <a class="btn secondary" href="{{if .CaseHref}}{{.CaseHref}}{{else}}/n/{{$.Slug}}{{end}}">{{msg "report.cancel"}}</a></div>
 </form>
 {{end}}
 {{end}}

@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/djshellshoxxx/circula/internal/domain"
 	"github.com/djshellshoxxx/circula/internal/service"
@@ -27,22 +28,22 @@ func TestTransactionReportMigrationPreservesAndRetries(t *testing.T) {
 	cfg := service.Config{IDs: ids, Argon: service.Argon2Params{MemoryKiB: 64, Time: 1, Threads: 1, KeyLen: 16, SaltLen: 8}}
 	e := &tu.Env{T: t, Ctx: ctx, Store: legacy, Svc: tu.Must(service.New(legacy, cfg))}
 	admin := e.Person("administrator")
-	net, _ := e.Network(admin, "reports", nil)
+	net, adminM := e.Network(admin, "reports", nil)
 	alice, aliceM := e.Member(admin, net, "alice")
 	bob, bobM := e.Member(admin, net, "bob")
 	trade := e.Trade(net.ID, alice, bob, aliceM, bobM, 100)
 	listing := tu.Must(e.Svc.CreateListing(ctx, bob, net.ID, service.ListingInput{
 		Type: domain.ListingOffer, Title: "Existing listing", IdempotencyKey: e.Key(),
 	}))
-	memberReport := tu.Must(e.Svc.CreateReport(ctx, alice, net.ID, service.ReportInput{
-		TargetType: service.ReportMember, TargetID: bobM.ID, Category: "other", Note: "Preserve open note", IdempotencyKey: e.Key(),
-	}))
-	listingReport := tu.Must(e.Svc.CreateReport(ctx, alice, net.ID, service.ReportInput{
-		TargetType: service.ReportListing, TargetID: listing.ID, Category: "other", Note: "Preserve handled note", IdempotencyKey: e.Key(),
-	}))
-	listingReport = tu.Must(e.Svc.HandleReport(ctx, admin, net.ID, service.HandleReportInput{
-		ReportID: listingReport.ID, Note: "Preserve handling details", IdempotencyKey: e.Key(),
-	}))
+	created := time.Date(2026, 3, 1, 12, 0, 0, 0, time.UTC)
+	memberReport := &store.Report{ID: ids.New(), NetworkID: net.ID, ReporterID: aliceM.ID,
+		TargetType: service.ReportMember, TargetID: bobM.ID, Category: "other", Note: "Preserve open note",
+		Status: "open", CreatedAt: created}
+	listingReport := &store.Report{ID: ids.New(), NetworkID: net.ID, ReporterID: aliceM.ID,
+		TargetType: service.ReportListing, TargetID: listing.ID, Category: "other", Note: "Preserve handled note",
+		Status: "handled", CreatedAt: created, HandledBy: adminM.ID, HandledAt: &created, HandlingNote: "Preserve handling details"}
+	tu.Must(0, insertHistoricalReport(legacy.DB(), *memberReport))
+	tu.Must(0, insertHistoricalReport(legacy.DB(), *listingReport))
 	wantReports := []*store.Report{memberReport, listingReport}
 	before := tu.Snapshot(t, legacy.DB())
 	shape := reportSchemaShape(t, legacy.DB())
@@ -58,7 +59,7 @@ func TestTransactionReportMigrationPreservesAndRetries(t *testing.T) {
 	if err := legacy.Close(); err != nil {
 		t.Fatal(err)
 	}
-	failed, err := store.Open(ctx, path)
+	failed, err := store.OpenAtVersion(ctx, path, 23)
 	if err == nil {
 		_ = failed.Close()
 		t.Fatal("the conflicting final index did not fail migration 23")
@@ -95,7 +96,7 @@ func TestTransactionReportMigrationPreservesAndRetries(t *testing.T) {
 	}
 	delete(before.Tables, "schema_migrations")
 	for pass := 0; pass < 2; pass++ {
-		upgraded := tu.Must(store.Open(ctx, path))
+		upgraded := tu.Must(store.OpenAtVersion(ctx, path, 23))
 		t.Cleanup(func() { _ = upgraded.Close() })
 		after := tu.Snapshot(t, upgraded.DB())
 		delete(after.Tables, "schema_migrations")
@@ -108,38 +109,32 @@ func TestTransactionReportMigrationPreservesAndRetries(t *testing.T) {
 		if err := upgraded.DB().QueryRow("SELECT MAX(version) FROM schema_migrations").Scan(&version); err != nil {
 			t.Fatal(err)
 		}
-		if version != store.SchemaVersion() {
+		if version != 23 {
 			t.Fatalf("report migration retry stopped at version %d", version)
 		}
-		if err := upgraded.View(ctx, func(tx store.Tx) error {
-			for _, want := range wantReports {
-				got, err := tx.GetReport(net.ID, want.ID)
-				if err != nil {
-					return err
-				}
-				if !reflect.DeepEqual(got, want) {
-					t.Fatalf("report fields changed: got %+v want %+v", got, want)
-				}
+		for _, want := range wantReports {
+			if got := readHistoricalReport(t, upgraded.DB(), net.ID, want.ID); !reflect.DeepEqual(got, want) {
+				t.Fatalf("report fields changed: got %+v want %+v", got, want)
 			}
-			return nil
-		}); err != nil {
-			t.Fatal(err)
 		}
 		if pass == 1 {
 			duplicate := *memberReport
 			duplicate.ID = ids.New()
-			if err := upgraded.Update(ctx, func(tx store.Tx) error { return tx.InsertReport(duplicate) }); domain.CodeOf(err) != domain.CodeConflict {
+			if err := insertHistoricalReport(upgraded.DB(), duplicate); err == nil || !strings.Contains(err.Error(), "UNIQUE constraint failed") {
 				t.Fatalf("existing duplicate-open constraint was lost: %v", err)
 			}
 			invalidReporter := *memberReport
 			invalidReporter.ID, invalidReporter.ReporterID = ids.New(), ids.New()
-			if err := upgraded.Update(ctx, func(tx store.Tx) error { return tx.InsertReport(invalidReporter) }); err == nil {
+			if err := insertHistoricalReport(upgraded.DB(), invalidReporter); err == nil {
 				t.Fatal("existing reporter membership foreign key was lost")
 			}
-			e.Svc = tu.Must(service.New(upgraded, cfg))
-			filed := tu.Must(e.Svc.CreateReport(ctx, alice, net.ID, service.ReportInput{
-				TargetType: service.ReportTransaction, TargetID: trade.ID, Category: "other", IdempotencyKey: e.Key(),
-			}))
+			// Exercise the widened schema directly. Current service/store report
+			// readers include fields added by later migrations and are qualified
+			// separately on the current schema.
+			transactionReport := store.Report{ID: ids.New(), NetworkID: net.ID, ReporterID: aliceM.ID,
+				TargetType: service.ReportTransaction, TargetID: trade.ID, Category: "other", Status: "open", CreatedAt: created}
+			tu.Must(0, insertHistoricalReport(upgraded.DB(), transactionReport))
+			filed := readHistoricalReport(t, upgraded.DB(), net.ID, transactionReport.ID)
 			if filed.TargetID != trade.ID || filed.TargetType != service.ReportTransaction {
 				t.Fatalf("upgraded store did not persist the new report type: %+v", filed)
 			}
@@ -183,4 +178,40 @@ func reportSchemaShape(t *testing.T, db *sql.DB) map[string]string {
 		t.Fatal(err)
 	}
 	return out
+}
+
+// These fixture helpers use exactly the report columns present in schemas
+// 0008..0024, so an upgrade test does not use future readers to seed old data.
+func insertHistoricalReport(db *sql.DB, r store.Report) error {
+	var handledBy, handledAt any
+	if r.HandledBy != "" {
+		handledBy = r.HandledBy
+	}
+	if r.HandledAt != nil {
+		handledAt = r.HandledAt.UnixMilli()
+	}
+	_, err := db.Exec(`INSERT INTO reports(id,network_id,reporter_id,target_type,target_id,category,note,status,
+		created_at,handled_by,handled_at,handling_note) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+		r.ID, r.NetworkID, r.ReporterID, r.TargetType, r.TargetID, r.Category, r.Note, r.Status,
+		r.CreatedAt.UnixMilli(), handledBy, handledAt, r.HandlingNote)
+	return err
+}
+
+func readHistoricalReport(t *testing.T, db *sql.DB, netID, id string) *store.Report {
+	t.Helper()
+	var r store.Report
+	var created int64
+	var handled sql.NullInt64
+	if err := db.QueryRow(`SELECT id,network_id,reporter_id,target_type,target_id,category,note,status,
+		created_at,COALESCE(handled_by,''),handled_at,handling_note FROM reports WHERE network_id=? AND id=?`, netID, id).
+		Scan(&r.ID, &r.NetworkID, &r.ReporterID, &r.TargetType, &r.TargetID, &r.Category, &r.Note,
+			&r.Status, &created, &r.HandledBy, &handled, &r.HandlingNote); err != nil {
+		t.Fatal(err)
+	}
+	r.CreatedAt = time.UnixMilli(created).UTC()
+	if handled.Valid {
+		at := time.UnixMilli(handled.Int64).UTC()
+		r.HandledAt = &at
+	}
+	return &r
 }

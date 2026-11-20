@@ -43,6 +43,7 @@ type ReportInput struct {
 	TargetID       string
 	Category       string
 	Note           string // optional, bounded
+	DisputeID      string `json:",omitempty"` // optional member/listing case context; omit to preserve legacy fingerprints
 	IdempotencyKey string `json:"-"`
 }
 
@@ -121,6 +122,22 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 	default:
 		return "", domain.Invalid("target_type", "must be listing, member or transaction")
 	}
+	if in.DisputeID != "" {
+		if in.TargetType != ReportMember && in.TargetType != ReportListing {
+			return "", domain.Invalid("dispute_id", "case context is available for member or listing reports")
+		}
+		caseContext, err := reportDisputeContext(tx, p, in.DisputeID)
+		if err != nil {
+			return "", err
+		}
+		wantID := caseContext.MemberID
+		if in.TargetType == ReportListing {
+			wantID = caseContext.ListingID
+		}
+		if wantID == "" || in.TargetID != wantID {
+			return "", domain.Invalid("dispute_id", "the selected case does not match the report target")
+		}
+	}
 	now := s.now()
 	n, err := tx.CountReportsSince(netID, p.member.ID, now.Add(-24*time.Hour))
 	if err != nil {
@@ -130,7 +147,7 @@ func (s *Service) createReport(tx store.Tx, p *principal, in ReportInput) (strin
 		return "", domain.Errf(domain.CodeRateLimited, "too many reports today; try again tomorrow")
 	}
 	r := store.Report{ID: s.id(), NetworkID: netID, ReporterID: p.member.ID, TargetType: in.TargetType, TargetID: in.TargetID,
-		Category: in.Category, Note: note, Status: "open", CreatedAt: now}
+		Category: in.Category, Note: note, Status: "open", CreatedAt: now, DisputeID: in.DisputeID}
 	if err := tx.InsertReport(r); err != nil {
 		if domain.CodeOf(err) == domain.CodeConflict {
 			return "", domain.Errf(domain.CodeConflict, "you already have an open report about this")

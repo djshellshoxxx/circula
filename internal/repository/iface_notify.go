@@ -35,6 +35,7 @@ const (
 // (FR-024, SEC-025).
 type Report struct {
 	ID, NetworkID, ReporterID, TargetType, TargetID, Category, Note string
+	DisputeID                                                       string // optional immutable member/listing case context
 	Status                                                          string // open | handled
 	CreatedAt                                                       time.Time
 	HandledBy, HandlingNote                                         string
@@ -43,11 +44,12 @@ type Report struct {
 
 // ReportFilter selects reports; newest first by id.
 type ReportFilter struct {
-	Status     string // "" = all
-	TargetType string // optional exact target type
-	TargetID   string // optional exact target ID, always within netID
-	AfterID    string
-	Limit      int
+	Status string // "" = all
+	// DisputeID selects explicitly attached member/listing reports plus
+	// transaction reports for that dispute's exact transaction, before paging.
+	DisputeID string
+	AfterID   string
+	Limit     int
 	// ExcludeSubjectMemberID excludes reports about this member, their listings
 	// or their side of a transaction, including unresolved subjects. Applied
 	// before pagination.

@@ -13,6 +13,7 @@
   <p>{{msg "report.reported_by" .Reporter}} &middot; {{.Created}}</p>
   {{if .Note}}<p>{{.Note}}</p>{{end}}
   {{if .DisputesHref}}<p><a href="{{.DisputesHref}}">{{msg "report.related_disputes"}}</a></p>{{end}}
+  {{if .DisputeHref}}<p><a href="{{.DisputeHref}}">{{msg "report.view_case"}}</a></p>{{end}}
   {{if .Open}}
   <form method="post" action="/n/{{$.Slug}}/admin/reports/{{.ID}}/handle">
     {{template "csrf" $}}

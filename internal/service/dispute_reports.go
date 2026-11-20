@@ -30,9 +30,10 @@ func requireIndependentDisputeReportReader(tx store.Tx, p *principal, t *domain.
 	return independent(tx, p.net.ID, t, p.member.ID)
 }
 
-// ListDisputeReports reads only transaction reports on this dispute's exact
-// transaction. It grants no report handling or full-queue access. Authorization
-// is repeated for every page; the caller cannot supply a report target filter.
+// ListDisputeReports reads transaction reports on this dispute's exact
+// transaction and member/listing reports explicitly attached to this case.
+// It grants no report handling or full-queue access. Authorization is repeated
+// for every page; the caller cannot supply a report target filter.
 func (s *Service) ListDisputeReports(ctx context.Context, actor domain.Actor, netID, disputeID string, pg Page) ([]DisputeReport, error) {
 	var out []DisputeReport
 	err := s.view(ctx, func(tx store.Tx) error {
@@ -66,8 +67,8 @@ func (s *Service) ListDisputeReports(ctx context.Context, actor domain.Actor, ne
 			return err
 		}
 		reports, err := tx.ListReports(netID, store.ReportFilter{
-			TargetType: ReportTransaction, TargetID: t.ID,
-			AfterID: pg.AfterID, Limit: clampPage(pg), ExcludeSubjectMemberID: p.memberID(),
+			DisputeID: d.ID,
+			AfterID:   pg.AfterID, Limit: clampPage(pg), ExcludeSubjectMemberID: p.memberID(),
 		})
 		if err != nil {
 			return err

@@ -161,7 +161,7 @@ func TestEveryCatalogueEntryFormats(t *testing.T) {
 			args = []any{"Ana", "Ben", "90071992547409.93", "Hours"}
 		case "dispute.outcome.upheld_pending", "dispute.outcome.upheld_posted", "dispute.outcome.partial_pending", "dispute.outcome.partial_posted":
 			args = []any{"90071992547409.93", "Hours"}
-		case "dispute.event_with_outcome", "dispute.form.trade":
+		case "dispute.event_with_outcome", "dispute.form.trade", "report.case_description":
 			args = []any{"example", "example"}
 		case "dispute.not_eligible_deadline", "dispute.form.deadline", "dispute.opened_at", "dispute.response_from",
 			"dispute.request_reason", "dispute.rationale_value", "dispute.rereview_explanation", "dispute.row", "dispute.empty":

@@ -16,6 +16,8 @@
 <h2>{{msg "dispute.timeline"}}</h2>
 <ol>{{range .Events}}<li>{{.Text}}: {{.At}}</li>{{end}}</ol>
 {{if .V.CanReadTransactionReports}}<p><a href="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/reports">{{msg "report.review_link"}}</a></p>{{end}}
+{{if .ReportMemberHref}}<p><a href="{{.ReportMemberHref}}">{{msg "report.case_member_action"}}</a></p>{{end}}
+{{if .ReportListingHref}}<p><a href="{{.ReportListingHref}}">{{msg "report.case_listing_action"}}</a></p>{{end}}
 {{if .Withdraw}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/withdraw">{{template "csrf" $}}<div class="actions"><button type="submit" class="secondary">{{msg "dispute.withdraw_action"}}</button></div></form>{{end}}
 {{if .Review}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/start-review">{{template "csrf" $}}<div class="actions"><button type="submit">{{msg "dispute.start_review"}}</button></div></form>{{end}}
 {{if .Retry}}<form method="post" action="/n/{{$.Slug}}/disputes/{{.V.Dispute.ID}}/retry">{{template "csrf" $}}<div class="actions"><button type="submit">{{msg "dispute.retry_action"}}</button></div></form>{{end}}

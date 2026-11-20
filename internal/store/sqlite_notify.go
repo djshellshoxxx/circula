@@ -88,7 +88,7 @@ func (t *txImpl) UpdateReReview(r ReReview) error {
 }
 
 const reportCols = `id,network_id,reporter_id,target_type,target_id,category,note,status,created_at,
-	COALESCE(handled_by,''),handled_at,handling_note`
+	COALESCE(handled_by,''),handled_at,handling_note,dispute_id`
 
 // reportIndependentOfMemberSQL resolves a report's subject in its network.
 // The report alias is r and the one argument is the reviewing member ID.
@@ -110,9 +110,9 @@ const reportIndependentOfMemberSQL = `COALESCE((CASE r.target_type
 	END) <> ?, 0)`
 
 func (t *txImpl) InsertReport(r Report) error {
-	_, err := t.exec(`INSERT INTO reports(id,network_id,reporter_id,target_type,target_id,category,note,status,created_at)
-		VALUES (?,?,?,?,?,?,?,?,?)`, r.ID, r.NetworkID, r.ReporterID, r.TargetType, r.TargetID, r.Category, r.Note,
-		r.Status, ms(r.CreatedAt))
+	_, err := t.exec(`INSERT INTO reports(id,network_id,reporter_id,target_type,target_id,category,note,status,created_at,dispute_id)
+		VALUES (?,?,?,?,?,?,?,?,?,?)`, r.ID, r.NetworkID, r.ReporterID, r.TargetType, r.TargetID, r.Category, r.Note,
+		r.Status, ms(r.CreatedAt), nullStr(r.DisputeID))
 	return err
 }
 
@@ -120,11 +120,13 @@ func scanReport(s rowScanner) (*Report, error) {
 	var r Report
 	var created int64
 	var handled sql.NullInt64
+	var dispute sql.NullString
 	if err := s.Scan(&r.ID, &r.NetworkID, &r.ReporterID, &r.TargetType, &r.TargetID, &r.Category, &r.Note,
-		&r.Status, &created, &r.HandledBy, &handled, &r.HandlingNote); err != nil {
+		&r.Status, &created, &r.HandledBy, &handled, &r.HandlingNote, &dispute); err != nil {
 		return nil, err
 	}
 	r.CreatedAt, r.HandledAt = fromMS(created), ptrTime(handled)
+	r.DisputeID = dispute.String
 	return &r, nil
 }
 
@@ -154,13 +156,10 @@ func (t *txImpl) ListReports(netID string, f ReportFilter) ([]*Report, error) {
 		q += ` AND status = ?`
 		args = append(args, f.Status)
 	}
-	if f.TargetType != "" {
-		q += ` AND target_type = ?`
-		args = append(args, f.TargetType)
-	}
-	if f.TargetID != "" {
-		q += ` AND target_id = ?`
-		args = append(args, f.TargetID)
+	if f.DisputeID != "" {
+		q += ` AND (r.dispute_id = ? OR (r.target_type = 'transaction' AND r.target_id =
+			(SELECT d.tx_id FROM disputes d WHERE d.network_id = r.network_id AND d.id = ?)))`
+		args = append(args, f.DisputeID, f.DisputeID)
 	}
 	if f.AfterID != "" {
 		q += ` AND id < ?`

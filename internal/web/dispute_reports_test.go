@@ -46,10 +46,10 @@ func TestDisputeReportsHTMLProjectionAndPagination(t *testing.T) {
 	reader.login("reviewer@example.org")
 	path := w.base() + "/disputes/" + dispute.ID + "/reports"
 	detail := reader.get(w.base() + "/disputes/" + dispute.ID)
-	reader.mustContain(detail, path, "Read transaction report summaries")
+	reader.mustContain(detail, path, "Read report summaries for this dispute")
 	before := tu.Snapshot(t, e.Store.DB())
 	first := reader.get(path)
-	reader.mustContain(first, "Transaction reports", "Reporter identities and report notes are available only to independent administrators.",
+	reader.mustContain(first, "Reports for this dispute", "Reporter identities and report notes are available only to independent administrators.",
 		ids[len(ids)-1], path+"?after="+ids[1])
 	last := reader.get(path + "?after=" + ids[1])
 	reader.mustContain(last, ids[0], "Back to dispute")
@@ -83,7 +83,7 @@ func TestDisputeReportsHTMLProjectionAndPagination(t *testing.T) {
 		browser := w.browser(t)
 		browser.login(party.login)
 		view := browser.get(w.base() + "/disputes/" + dispute.ID)
-		if view.Status != 200 || strings.Contains(view.Body, path) || strings.Contains(view.Body, "Read transaction report summaries") {
+		if view.Status != 200 || strings.Contains(view.Body, path) || strings.Contains(view.Body, "Read report summaries for this dispute") {
 			t.Fatal("party dispute page gained a report-context link from its roles")
 		}
 		refused := browser.get(path)

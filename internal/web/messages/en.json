@@ -1468,11 +1468,29 @@
   "report.related_disputes_for": {
     "other": "Disputes for transaction %[1]s."
   },
+  "report.case_member_action": {
+    "other": "Report the other member about this dispute"
+  },
+  "report.target_case_listing": {
+    "other": "The listing attached to this disputed trade"
+  },
+  "report.case_listing_action": {
+    "other": "Report the listing about this dispute"
+  },
+  "report.case_description": {
+    "other": "This report is linked to your dispute with %[1]s, opened on %[2]s."
+  },
+  "report.view_case": {
+    "other": "View related dispute"
+  },
+  "report.case_privacy": {
+    "other": "Independent reviewers of this dispute can see the report category and whether it has been handled. Your identity and notes are shown only to independent administrators."
+  },
   "report.review_title": {
-    "other": "Transaction reports"
+    "other": "Reports for this dispute"
   },
   "report.review_link": {
-    "other": "Read transaction report summaries"
+    "other": "Read report summaries for this dispute"
   },
   "report.review_explanation": {
     "other": "Only the report category and handling status are shown here. Reporter identities and report notes are available only to independent administrators."
@@ -1481,7 +1499,7 @@
     "other": "Report reference: %[1]s"
   },
   "report.review_empty": {
-    "other": "There are no transaction report summaries to show."
+    "other": "There are no report summaries for this dispute."
   },
   "report.review_back": {
     "other": "Back to dispute"

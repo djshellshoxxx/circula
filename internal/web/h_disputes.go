@@ -226,19 +226,20 @@ func (s *server) disputePost(w http.ResponseWriter, r *http.Request, c *rc) {
 }
 
 type disputeData struct {
-	V        *service.DisputeView
-	Category string
-	Status   string
-	Outcome  string
-	Opener   string
-	Party    bool
-	Withdraw bool
-	Review   bool
-	Decide   bool
-	Retry    bool
-	Events   []evRow
-	Amount   string
-	Unit     string
+	V                                   *service.DisputeView
+	Category                            string
+	Status                              string
+	Outcome                             string
+	Opener                              string
+	Party                               bool
+	ReportMemberHref, ReportListingHref string
+	Withdraw                            bool
+	Review                              bool
+	Decide                              bool
+	Retry                               bool
+	Events                              []evRow
+	Amount                              string
+	Unit                                string
 	// FR-076 response and FR-078 re-review.
 	Response      string // response text, "" until submitted
 	ResponseBy    string
@@ -313,6 +314,17 @@ func (s *server) showDispute(w http.ResponseWriter, r *http.Request, c *rc, id s
 	d := v.Dispute
 	pol := c.Net.Policy
 	out := &disputeData{V: v, Category: categoryLabel(d.Category), Status: statusWords(d.Status), Party: v.Tx.IsParty(c.Me.ID)}
+	if out.Party && c.isActive() && v.Tx.PayerMemberID != "" && v.Tx.PayeeMemberID != "" && v.Tx.PayerMemberID != v.Tx.PayeeMemberID {
+		caseContext, err := s.svc.GetReportDisputeContext(r.Context(), c.actor, c.netID(), d.ID)
+		if err != nil {
+			s.fail(w, r, err)
+			return
+		}
+		out.ReportMemberHref = c.base() + "/report?type=member&id=" + caseContext.MemberID + "&dispute_id=" + d.ID
+		if caseContext.ListingID != "" {
+			out.ReportListingHref = c.base() + "/report?type=listing&id=" + caseContext.ListingID + "&dispute_id=" + d.ID
+		}
+	}
 	out.Amount = domain.FormatAmount(v.Tx.Amount, pol.Decimals)
 	out.Unit = unitFor(pol.CurrencyName, v.Tx.Amount, pol.Decimals)
 	out.OpenedAt = c.when(d.OpenedAt)

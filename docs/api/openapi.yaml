@@ -1095,12 +1095,13 @@ paths:
     get:
       operationId: listDisputeReports
       tags: [Disputes, Reports]
-      summary: Redacted transaction report context for an independent reviewer (SEC-025, PER-003)
+      summary: Redacted dispute report context for an independent reviewer (SEC-025, PER-003)
       description: |
         Current active reviewer or administrator authority and the ordinary dispute independence
         checks are required on every page. Parties, proposers, acceptors and reversal participants
         cannot use this projection, including when they hold reviewer or administrator roles.
-        Only reports on this dispute's exact transaction are returned, newest first. Each row
+        Reports on this dispute's exact transaction and member/listing reports explicitly
+        attached to this case are returned, newest first. Each row
         contains a report reference, validated category and handling status. Reporter identity,
         all free-text notes, handling identity and timestamps are omitted. This grants neither
         report handling nor access to the administrator report queue.
@@ -3829,7 +3830,7 @@ components:
         decision_overdue: {type: boolean}
         transaction_reports_url:
           type: string
-          description: Present only for a current independent reviewer or administrator. This capability link does not indicate whether reports exist; it leads to the same-dispute redacted projection.
+          description: Present only for a current independent reviewer or administrator. This capability link does not indicate whether reports exist; it leads to the same-dispute redacted projection, including explicit member/listing case context and reports on the transaction.
         transaction: {$ref: '#/components/schemas/Transaction'}
         payer_display_name: {type: string}
         payee_display_name: {type: string}
@@ -3897,6 +3898,9 @@ components:
         target_id: {$ref: '#/components/schemas/Id'}
         category: {type: string, enum: [spam, scam, inappropriate, harassment, other]}
         description: {type: string, maxLength: 500}
+        dispute_id:
+          allOf: [{$ref: '#/components/schemas/Id'}]
+          description: Optional immutable case context for a member or listing report. The reporter must be a party to this same-network dispute's two-member transaction; the target must be the other party or that transaction's listing owned by the other party. Transaction reports use their existing derived relation and omit this field. No case status or age restriction is added.
     HandleReportRequest:
       type: object
       additionalProperties: false
@@ -3923,6 +3927,12 @@ components:
         related_disputes_url:
           type: string
           description: Present for transaction reports. Relative URL of the authorized, paginated dispute list filtered to the exact transaction; use the same network selection. The relation also includes disputes created after the report.
+        dispute_id:
+          allOf: [{$ref: '#/components/schemas/Id'}]
+          description: The exact case selected when a member or listing report was filed. Omitted for context-free reports and legacy records; never inferred or changed after creation.
+        related_dispute_url:
+          type: string
+          description: Present with dispute_id. Relative URL of that exact authorized dispute detail; use the same network selection.
     DisputeReport:
       type: object
       required: [id, category, status]
