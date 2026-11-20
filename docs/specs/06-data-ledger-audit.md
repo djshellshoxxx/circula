@@ -23,8 +23,8 @@ Summary for the historical implementation snapshot: built 38, not built 3, requi
 
 | ID | Priority | Status | Note |
 |---|---|---|---|
-| DAT-001 | P0 | built | Identifiers are UUIDv7 text; Source: `internal/service/service.go:uuidV7.New`; dedicated production UUID format/version assertion is not cited. No execution result is implied |
-| DAT-002 | P0 | built | IDs from injected generator; Source: `internal/domain/types.go:IDGen`, `internal/service/service.go:Service.id`; a dedicated generator-substitution assertion is not cited. No execution result is implied |
+| DAT-001 | P0 | built | Identifiers are UUIDv7 text; Source: `internal/service/service.go:uuidV7.New`; `internal/service/id_generation_test.go:TestDefaultIDGeneratorPersistsCanonicalUUIDv7` asserts canonical lowercase UUIDv7 text, version and variant for a person created with the production default generator and read from persistence. This citation is not an all-entity or release qualification result |
+| DAT-002 | P0 | built | IDs from injected generator; Source: `internal/domain/types.go:IDGen`, `internal/service/service.go:Service.id`; `internal/service/id_generation_test.go:TestInjectedIDGeneratorReachesPersistedPerson` asserts that a substituted generator supplies the returned and persisted person ID. This citation is not an assertion about every identifier or a release qualification result |
 | DAT-003 | P0 | built | IDs carry no personal data; Source: `internal/service/service.go:uuidV7.New`; generated IDs take no member/network input; privacy of identifiers still needs inspection. No execution result is implied |
 | DAT-004 | P1 | built | Invitation and session tokens random and stored hashed; Evidence: `TestLoginSessionLifecycle`, `TestInvitations` assert distinct session secrets and hashed session/invitation storage; internal/public identifier identity and token entropy remain source-inspection items. No execution result is implied |
 | DAT-005 | P0 | built | Composite foreign keys with network id |
