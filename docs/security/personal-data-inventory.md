@@ -128,7 +128,7 @@ in append-only audit summaries. Standalone adjustments leave the reference empty
 | `member_erasures` | `member_id`, `network_id`, `person_id`, `erased_at`, `person_erased` |
 | `members` | `id`, `network_id`, `person_id`, `status`, `join_method`, `joined_at`, `departed_at` |
 | `mfa_challenges` | `person_id`, `created_at`, `expires_at`, `used_at` |
-| `network_closures` | `network_id`, `scheduled_by`, `scheduled_at`, `closing_at`, `notice_days`, `read_only_days`, `closed_at`, `final_ledger_seq`, `final_sha256`, `final_balance_total`, `final_entries_sum`, `erased_at` |
+| `network_closures` | `network_id`, `scheduled_by`, `scheduled_at`, `closing_at`, `notice_days`, `read_only_days`, `closed_at`, `final_export_version`, `final_ledger_seq`, `final_sha256`, `final_balance_total`, `final_entries_sum`, `erased_at` |
 | `network_policies` | `network_id`, `version`, `policy_json`, `changed_by`, `effective_at`, `announced_at`, `notice_days` |
 | `network_suspensions` | `network_id`, `kind`, `category`, `suspended_at` |
 | `network_terms` | `network_id`, `version`, `published_by`, `published_at` |

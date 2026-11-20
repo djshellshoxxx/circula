@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -110,6 +111,10 @@ func TestEventOrderMigrationPreservesExportChecksum(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+	// Freeze the actual v16 network projection as well as its transaction
+	// rows. The current network reader includes newer closure columns and
+	// must not be used to read a genuinely unupgraded fixture.
+	legacyNetwork := eventOrderReadLegacyNetwork(t, legacy.DB())
 	export := func(st store.Store, format service.ExportFormat) (*service.Manifest, *service.MemSink) {
 		t.Helper()
 		svc, err := service.New(st, service.Config{Clock: eventOrderClock{time.Unix(1700000000, 0)}})
@@ -127,7 +132,7 @@ func TestEventOrderMigrationPreservesExportChecksum(t *testing.T) {
 	manifests := map[service.ExportFormat]*service.Manifest{}
 	sinks := map[service.ExportFormat]*service.MemSink{}
 	for _, format := range formats {
-		manifests[format], sinks[format] = export(eventOrderLegacyExportStore{Store: legacy, db: legacy.DB()}, format)
+		manifests[format], sinks[format] = export(eventOrderLegacyExportStore{Store: legacy, db: legacy.DB(), network: legacyNetwork}, format)
 	}
 	if err := legacy.Close(); err != nil {
 		t.Fatal(err)
@@ -157,16 +162,58 @@ func TestEventOrderMigrationPreservesExportChecksum(t *testing.T) {
 // sees the same rows. All other ledger tables retain their legacy projections.
 type eventOrderLegacyExportStore struct {
 	store.Store
-	db *sql.DB
+	db      *sql.DB
+	network *domain.Network
 }
 
 func (s eventOrderLegacyExportStore) View(ctx context.Context, fn func(store.Tx) error) error {
-	return s.Store.View(ctx, func(tx store.Tx) error { return fn(eventOrderLegacyExportTx{Tx: tx, db: s.db}) })
+	return s.Store.View(ctx, func(tx store.Tx) error { return fn(eventOrderLegacyExportTx{Tx: tx, db: s.db, network: s.network}) })
+}
+
+func (s eventOrderLegacyExportStore) Update(ctx context.Context, fn func(store.Tx) error) error {
+	return s.Store.Update(ctx, func(tx store.Tx) error { return fn(eventOrderLegacyExportTx{Tx: tx, db: s.db, network: s.network}) })
 }
 
 type eventOrderLegacyExportTx struct {
 	store.Tx
-	db *sql.DB
+	db      *sql.DB
+	network *domain.Network
+}
+
+func eventOrderReadLegacyNetwork(t *testing.T, db *sql.DB) *domain.Network {
+	t.Helper()
+	var n domain.Network
+	var policy string
+	var created int64
+	err := db.QueryRow(`SELECT n.id,n.name,n.slug,n.status,n.ledger_seq,n.created_at,p.version,p.policy_json,
+		(SELECT id FROM accounts WHERE network_id=n.id AND is_system=1)
+		FROM networks n JOIN network_policies p ON p.network_id=n.id
+		WHERE n.id='n1' AND p.version=(SELECT MAX(version) FROM network_policies WHERE network_id=n.id)`).
+		Scan(&n.ID, &n.Name, &n.Slug, &n.Status, &n.LedgerSeq, &created, &n.PolicyVersion, &policy, &n.SystemAccountID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	n.CreatedAt, n.Policy = time.UnixMilli(created).UTC(), domain.DefaultPolicy()
+	if err := json.Unmarshal([]byte(policy), &n.Policy); err != nil {
+		t.Fatal(err)
+	}
+	var lifecycleRows int
+	if err := db.QueryRow(`SELECT (SELECT COUNT(*) FROM network_closures WHERE network_id='n1')+
+		(SELECT COUNT(*) FROM network_suspensions WHERE network_id='n1')`).Scan(&lifecycleRows); err != nil {
+		t.Fatal(err)
+	}
+	if lifecycleRows != 0 {
+		t.Fatal("legacy network fixture requires its lifecycle projection to be extended")
+	}
+	return &n
+}
+
+func (t eventOrderLegacyExportTx) GetNetwork(id string) (*domain.Network, error) {
+	if id != t.network.ID {
+		return nil, domain.NotFound("network")
+	}
+	n := *t.network // this static fixture never changes network policy or lifecycle
+	return &n, nil
 }
 
 func (t eventOrderLegacyExportTx) StreamTable(table store.ExportTable, netID, memberID string, fn func([]string, []any) error) error {
