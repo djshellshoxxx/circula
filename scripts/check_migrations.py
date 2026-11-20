@@ -15,6 +15,7 @@ PROTECTED = {
     "dispute_events", "consistency_runs", "network_policies", "network_terms",
     "terms_acceptances", "member_erasures", "break_glass_grants",
     "transaction_status_event_order", "dispute_event_order",
+    "posting_credit_checks",
 }
 TOKEN = re.compile(
     r"(?P<comment>--[^\n]*|/\*[\s\S]*?\*/)"

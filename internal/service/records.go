@@ -7,6 +7,8 @@ import store "github.com/djshellshoxxx/circula/internal/repository"
 // packages (ARC-002; depguard rule "adapters" in .golangci.yml). They are value types
 // only: reading or changing them goes through the service methods.
 type (
+	// HistoricalLimitCoverage is evidence coverage, separate from integrity findings.
+	HistoricalLimitCoverage = store.HistoricalLimitCoverage
 	// Challenge is a member's challenge to an administrator decision (GOV-016).
 	Challenge = store.Challenge
 	// DisputeResponse is the other party's answer to a dispute (FR-076).

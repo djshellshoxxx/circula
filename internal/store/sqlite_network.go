@@ -109,8 +109,16 @@ func (t *txImpl) LedgerSeq(netID string) (int64, error) {
 }
 
 func (t *txImpl) InsertConsistencyRun(r ConsistencyRun) error {
-	_, err := t.exec(`INSERT INTO consistency_runs(id,network_id,started_at,finished_at,ok,findings) VALUES (?,?,?,?,?,?)`,
-		r.ID, r.NetworkID, ms(r.Started), ms(r.Finished), b2i(r.OK), r.Findings)
+	var coverage any
+	if r.HistoricalLimits != nil {
+		b, err := json.Marshal(r.HistoricalLimits)
+		if err != nil {
+			return err
+		}
+		coverage = string(b)
+	}
+	_, err := t.exec(`INSERT INTO consistency_runs(id,network_id,started_at,finished_at,ok,findings,historical_limit_coverage) VALUES (?,?,?,?,?,?,?)`,
+		r.ID, r.NetworkID, ms(r.Started), ms(r.Finished), b2i(r.OK), r.Findings, coverage)
 	return err
 }
 
@@ -118,9 +126,10 @@ func (t *txImpl) LastConsistencyRun(netID string) (*ConsistencyRun, error) {
 	var run ConsistencyRun
 	var started, finished int64
 	var ok int
-	err := t.row(`SELECT id,network_id,started_at,finished_at,ok,findings FROM consistency_runs
+	var coverage sql.NullString
+	err := t.row(`SELECT id,network_id,started_at,finished_at,ok,findings,historical_limit_coverage FROM consistency_runs
 		WHERE network_id = ? ORDER BY finished_at DESC, id DESC LIMIT 1`, netID).
-		Scan(&run.ID, &run.NetworkID, &started, &finished, &ok, &run.Findings)
+		Scan(&run.ID, &run.NetworkID, &started, &finished, &ok, &run.Findings, &coverage)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -128,5 +137,10 @@ func (t *txImpl) LastConsistencyRun(netID string) (*ConsistencyRun, error) {
 		return nil, mapErr(err)
 	}
 	run.Started, run.Finished, run.OK = fromMS(started), fromMS(finished), ok == 1
+	if coverage.Valid {
+		if err := json.Unmarshal([]byte(coverage.String), &run.HistoricalLimits); err != nil {
+			return nil, err
+		}
+	}
 	return &run, nil
 }

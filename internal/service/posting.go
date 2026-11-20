@@ -73,6 +73,14 @@ func (s *Service) postTx(tx store.Tx, net *domain.Network, t *domain.Transaction
 		if err := tx.InsertEntry(e); err != nil {
 			return err
 		}
+		if e.Amount < 0 {
+			if err := tx.InsertPostingCreditCheck(store.PostingCreditCheck{EntryID: e.ID, NetworkID: net.ID,
+				CheckedAt: now, PolicyVersion: net.PolicyVersion, BalanceBefore: payer.Balance, IsSystem: payer.IsSystem,
+				LimitOverride: payer.LimitOverride, LimitOverrideUntil: payer.LimitOverrideExpires,
+				EffectiveLimit: payer.EffectiveLimit(net.Policy.DefaultCreditLimit, now)}); err != nil {
+				return err
+			}
+		}
 		if err := tx.AddBalance(net.ID, e.AccountID, e.Amount); err != nil {
 			return err
 		}

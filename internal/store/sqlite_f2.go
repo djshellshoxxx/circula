@@ -148,19 +148,10 @@ func (t *txImpl) OverviewCounts(netID string, p OverviewParams) (OverviewCounts,
 		netID, now, ms(p.Now.Add(p.InviteWithin))); err != nil {
 		return c, err
 	}
-	var run ConsistencyRun
-	var started, finished int64
-	var ok int
-	err := t.row(`SELECT id,network_id,started_at,finished_at,ok,findings FROM consistency_runs
-		WHERE network_id = ? ORDER BY finished_at DESC, id DESC LIMIT 1`, netID).
-		Scan(&run.ID, &run.NetworkID, &started, &finished, &ok, &run.Findings)
-	switch {
-	case err == sql.ErrNoRows:
-	case err != nil:
-		return c, mapErr(err)
-	default:
-		run.Started, run.Finished, run.OK = fromMS(started), fromMS(finished), ok == 1
-		c.LastCheck = &run
+	last, err := t.LastConsistencyRun(netID)
+	if err != nil {
+		return c, err
 	}
+	c.LastCheck = last
 	return c, nil
 }

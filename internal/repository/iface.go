@@ -242,6 +242,7 @@ type TxnRepo interface {
 	// supplied networks before applying the batch limit.
 	ListExpiredProposals(now time.Time, limit int, excludedNetworkIDs []string) ([]*domain.Transaction, error)
 	InsertEntry(e *domain.Entry) error
+	InsertPostingCreditCheck(c PostingCreditCheck) error
 	ListEntries(netID, txID string) ([]*domain.Entry, error)
 	SumEntries(accountID string, uptoSeq int64) (int64, error)
 	// SumEntriesAsOf sums an account's entries with posted_at <= asOf (inclusive, millisecond
@@ -330,6 +331,7 @@ type ConsistencyRun struct {
 	ID, NetworkID, Findings string
 	Started, Finished       time.Time
 	OK                      bool
+	HistoricalLimits        *HistoricalLimitCoverage
 }
 
 // BalanceMismatch is a cached balance that differs from the entry sum (LED-3).
@@ -348,6 +350,9 @@ type VerifyRepo interface {
 	Totals(netID string) (balances, entries int64, err error)
 	// ReversalMismatches lists originals whose reversed_total differs from their reversals.
 	ReversalMismatches(netID string) ([]string, error)
+	// CreditLimitHistory streams entries in account/sequence/ID order from
+	// the caller's read snapshot, including legacy or forward limit evidence.
+	CreditLimitHistory(netID string, visit func(CreditLimitHistoryRow) error) error
 }
 
 // ExportTable names a table that can be exported.

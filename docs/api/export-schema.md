@@ -63,6 +63,12 @@ checkpoint version with its own verifier. No upgrade silently replaces a histori
 
 ## Reconciliation summary
 
+Schema 1 does not contain the historical credit-limit witnesses introduced by database migration 0024. Its
+reconciliation verifies the exported entry/balance relationships described below; it does not establish the effective
+credit limit of each past debit. Historical-limit verification, including explicit legacy-unverified coverage, is
+available against the live database or a restored SQLite backup. The schema-1 projections and closure checkpoint
+version-1 bytes remain unchanged by this additional database evidence.
+
 `reconciliation` lets a recipient check the exported entries against the balances without the application (GOV-022,
 QA-030). Every value is read at the manifest's `ledger_seq`, from the same snapshot as the files. Amounts are integers in
 minor units.

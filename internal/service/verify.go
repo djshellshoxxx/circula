@@ -12,13 +12,14 @@ import (
 
 // LedgerReport is the result of VerifyLedger (DAT-020, ARC-015).
 type LedgerReport struct {
-	NetworkID   string
-	OK          bool
-	Findings    []string
-	LedgerSeq   int64
-	AuditEvents int64
-	Started     time.Time
-	Finished    time.Time
+	NetworkID        string
+	OK               bool
+	Findings         []string
+	LedgerSeq        int64
+	AuditEvents      int64
+	Started          time.Time
+	Finished         time.Time
+	HistoricalLimits *store.HistoricalLimitCoverage
 	// RunID is the consistency_runs id; set only by RecordConsistencyRun /
 	// VerifyAndRecordLedger.
 	RunID string
@@ -72,6 +73,9 @@ func (s *Service) VerifyPlatformAudit(ctx context.Context, actor domain.Actor) (
 // equal the sum of their reversals (DOM-020); and the audit hash chain is
 // contiguous, unmodified and ends at the recorded head so tail truncation is
 // detected (DAT-030, SA-09). Administrators or System only.
+// Forward debits are also checked against immutable posting-time limit
+// inputs. Explicit legacy markers report unavailable historical coverage,
+// separately from findings; current limits never reinterpret older postings.
 func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID string) (*LedgerReport, error) {
 	rep := &LedgerReport{NetworkID: netID}
 	err := s.view(ctx, func(tx store.Tx) error {
@@ -88,6 +92,7 @@ func (s *Service) VerifyLedger(ctx context.Context, actor domain.Actor, netID st
 			return err
 		}
 		rep.Findings, rep.LedgerSeq, rep.AuditEvents = checked.Findings, checked.LedgerSeq, checked.AuditEvents
+		rep.HistoricalLimits = checked.HistoricalLimits
 		rep.OK = len(rep.Findings) == 0
 		rep.Finished = s.now()
 		return nil
@@ -131,7 +136,7 @@ func (s *Service) recordConsistencyRun(ctx context.Context, actor domain.Actor, 
 		}
 		id := s.id()
 		if err := tx.InsertConsistencyRun(store.ConsistencyRun{ID: id, NetworkID: rep.NetworkID, Started: rep.Started,
-			Finished: rep.Finished, OK: rep.OK, Findings: strings.Join(rep.Findings, "\n")}); err != nil {
+			Finished: rep.Finished, OK: rep.OK, Findings: strings.Join(rep.Findings, "\n"), HistoricalLimits: rep.HistoricalLimits}); err != nil {
 			return err
 		}
 		rep.RunID = id
@@ -140,8 +145,16 @@ func (s *Service) recordConsistencyRun(ctx context.Context, actor domain.Actor, 
 		if quiet && rep.OK && (prev == nil || prev.OK) {
 			return nil
 		}
+		after := map[string]any{"status": map[bool]string{true: "ok", false: "findings"}[rep.OK]}
+		if coverage := rep.HistoricalLimits; coverage != nil {
+			after["historical_limit_coverage"] = coverage.Status
+			after["checked_debits"] = coverage.CheckedDebits
+			after["system_debits"] = coverage.SystemDebits
+			after["legacy_unverified_debits"] = coverage.LegacyUnverifiedDebits
+			after["unverifiable_debits"] = coverage.UnverifiableDebits
+		}
 		return s.audit(tx, p, auditEntry{Type: p.actorType(domain.ActorAdmin), Action: domain.ActVerify, TargetType: "network", TargetID: rep.NetworkID,
-			After: map[string]any{"status": map[bool]string{true: "ok", false: "findings"}[rep.OK]}})
+			After: after})
 	})
 }
 

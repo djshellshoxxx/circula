@@ -27,18 +27,20 @@ type LedgerReader interface {
 	LedgerSeq(string) (int64, error)
 }
 
-// Options supports the original schema before migration 0002 introduced
-// audit_heads. Ordinary service verification must use the zero value.
+// Options supports schemas before migrations 0002 and 0024 introduced audit
+// heads and credit witnesses. Ordinary service verification uses the zero value.
 type Options struct {
-	LegacyAuditWithoutHead bool
+	LegacyAuditWithoutHead           bool
+	LegacyCreditLimitsWithoutWitness bool
 }
 
 // Report contains the invariant findings from the supplied snapshot.
 // Time, authorization and recording belong to the caller.
 type Report struct {
-	Findings    []string
-	LedgerSeq   int64
-	AuditEvents int64
+	Findings         []string
+	LedgerSeq        int64
+	AuditEvents      int64
+	HistoricalLimits *repository.HistoricalLimitCoverage
 }
 
 // CheckLedger evaluates the same ledger and audit invariants for service
@@ -70,6 +72,11 @@ func CheckLedger(tx LedgerReader, netID string, options Options) (*Report, error
 		return nil, err
 	}
 	rep.Findings = append(rep.Findings, rev...)
+	if !options.LegacyCreditLimitsWithoutWitness {
+		if err := checkHistoricalLimits(tx, netID, rep); err != nil {
+			return nil, err
+		}
+	}
 	if err := checkAudit(tx, netID, rep, options); err != nil {
 		return nil, err
 	}

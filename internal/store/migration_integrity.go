@@ -44,7 +44,7 @@ func migrationFindings(ctx context.Context, conn *sql.Conn, version int) ([]migr
 	}
 
 	tx := &txImpl{ctx: ctx, q: conn}
-	options := integrity.Options{LegacyAuditWithoutHead: version == 1}
+	options := integrity.Options{LegacyAuditWithoutHead: version == 1, LegacyCreditLimitsWithoutWitness: version < 24}
 	var findings []migrationFinding
 	for _, id := range networks {
 		report, err := integrity.CheckLedger(tx, id, options)

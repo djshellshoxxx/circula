@@ -113,7 +113,7 @@ in append-only audit summaries. Standalone adjustments leave the reference empty
 | `break_glass_grants` | `id`, `session_id`, `network_id`, `member_id`, `role`, `granted_at` |
 | `break_glass_sessions` | `id`, `network_id`, `opened_at`, `expires_at`, `closed_at` |
 | `challenges` | `id`, `network_id`, `member_id`, `kind`, `subject_id`, `involved_id`, `status`, `outcome`, `decided_by`, `created_at`, `decided_at` |
-| `consistency_runs` | `id`, `network_id`, `started_at`, `finished_at`, `ok`, `findings` |
+| `consistency_runs` | `id`, `network_id`, `started_at`, `finished_at`, `ok`, `findings`, `historical_limit_coverage` |
 | `dispute_deadline_notices` | `network_id`, `dispute_id`, `kind`, `notified_at` |
 | `dispute_events` | `id`, `network_id`, `dispute_id`, `actor_id`, `action`, `outcome`, `occurred_at` |
 | `dispute_event_order` | `seq`, `event_id` |
@@ -121,6 +121,7 @@ in append-only audit summaries. Standalone adjustments leave the reference empty
 | `dispute_responses` | `id`, `network_id`, `dispute_id`, `responder_id`, `submitted_at` |
 | `disputes` | `id`, `network_id`, `tx_id`, `opened_by`, `category`, `status`, `outcome`, `reversal_amount`, `reviewer_id`, `opened_at`, `decided_at`, `policy_version` |
 | `entries` | `id`, `network_id`, `tx_id`, `account_id`, `amount`, `ledger_seq`, `posted_at` |
+| `posting_credit_checks` | `entry_id`, `network_id`, `legacy_unverified`, `checked_at`, `policy_version`, `balance_before`, `is_system`, `limit_override`, `limit_override_until`, `effective_limit` |
 | `idempotency_keys` | `network_id`, `actor_id`, `operation`, `key`, `fingerprint`, `result_ref`, `created_at`, `expires_at` |
 | `invitations` | `id`, `network_id`, `created_by`, `created_at`, `expires_at`, `used_at`, `used_by`, `revoked_at` |
 | `listings` | `id`, `network_id`, `member_id`, `type`, `price`, `status`, `created_at`, `updated_at` |
