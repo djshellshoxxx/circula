@@ -28,13 +28,14 @@
   function sameWindow(target) { return !target || target.toLowerCase() === '_self'; }
   function announce(event, message) {
     clearTimeout(pending);
-    // Another listener may cancel this event for an in-place interaction.
-    // Wait until all listeners have had that opportunity.
+    // Update before native navigation can suspend timers while awaiting the
+    // document response. Keep the next-task check so later listeners can
+    // cancel an in-place interaction without leaving the page busy.
+    status.textContent = status.getAttribute(message);
+    main.setAttribute('aria-busy', 'true');
     pending = setTimeout(function () {
       pending = null;
-      if (event.defaultPrevented) { return; }
-      status.textContent = status.getAttribute(message);
-      main.setAttribute('aria-busy', 'true');
+      if (event.defaultPrevented) { reset(); }
     }, 0);
   }
   document.addEventListener('click', function (event) {
